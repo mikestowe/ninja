@@ -1,0 +1,235 @@
+<!DOCTYPE HTML>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="text-properties.css">
+
+        <script type="text/montage-serialization">
+        {
+
+            "owner": {
+                "module": "js/components/tools-properties/text-properties.reel",
+                "name": "TextProperties",
+                "properties": {
+                    "element": {"#": "textProperties"},
+                    "className": {"@": "className"},
+                    "tagType": {"@": "tagType"},
+                    "fontSelection": {"@": "fontSelection"},
+                    "fontSettings": {"@": "fontSettings"},
+                    "fontSize": {"@": "fontSize"},
+                    "fontColor": {"@": "fontColor"},
+                    "btnBold": {"@": "btnBold"},
+                    "btnItalic": {"@": "btnItalic"},
+                    "btnUnderline": {"@": "btnUnderline"},
+                    "btnStrikethrough": {"@": "btnStrikethrough"},
+                    "txtLink": {"@": "txtLink"},
+                    "linkTarget": {"@": "linkTarget"},
+                    "alignLeft": {"@": "alignLeft"},
+                    "alignCenter": {"@": "alignCenter"},
+                    "alignRight": {"@": "alignRight"},
+                    "alignJustify": {"@": "alignJustify"},
+                    "indentRight": {"@": "indentRight"},
+                    "indentLeft": {"@": "indentLeft"},
+                    "numberedList": {"@": "numberedList"},
+                    "bulletedList": {"@": "bulletedList"}
+                }
+            },
+            "className": {
+                "module": "js/components/textfield.reel",
+                "name": "TextField",
+                "properties": {
+                    "element": {"#": "className"}
+                }
+            },
+            "tagType": {
+                "module": "js/components/combobox.reel",
+                "name": "Combobox",
+                "properties": {
+                    "element": {"#": "tagType"}
+                }
+            },
+            "fontSelection": {
+                "module": "js/components/combobox.reel",
+                "name": "Combobox",
+                "properties": {
+                    "element": {"#": "fontSelection"}
+                }
+            },
+            "fontSettings": {
+                "module": "js/components/button.reel",
+                "name": "Button",
+                "properties": {
+                    "element": {"#": "fontSettings"}
+                }
+            },
+
+            "fontSize": {
+                "module": "js/components/hottextunit.reel",
+                "name": "HotTextUnit",
+                "properties": {
+                    "element": {"#": "fontSize"}
+                }
+            },
+
+            "fontColor": {
+                "module": "js/components/button.reel",
+                "name": "Button",
+                "properties": {
+                    "element": {"#": "fontColor"}
+                }
+            },
+            "btnBold": {
+                "module": "js/components/button.reel",
+                "name": "Button",
+                "properties": {
+                    "element": {"#": "btnBold"},
+                    "_isToggleButton": true
+                }
+            },
+            "btnItalic": {
+                "module": "js/components/button.reel",
+                "name": "Button",
+                "properties": {
+                    "element": {"#": "btnItalic"},
+                    "_isToggleButton": true
+                }
+            },
+            "btnUnderline": {
+                "module": "js/components/button.reel",
+                "name": "Button",
+                "properties": {
+                    "element": {"#": "btnUnderline"},
+                    "_isToggleButton": true
+                }
+            },
+            "btnStrikethrough": {
+                "module": "js/components/button.reel",
+                "name": "Button",
+                "properties": {
+                    "element": {"#": "btnStrikethrough"},
+                    "_isToggleButton": true
+                }
+            },
+            "txtLink": {
+                "module": "js/components/textfield.reel",
+                "name": "TextField",
+                "properties": {
+                    "element": {"#": "txtLink"}
+                }
+            },
+            "linkTarget": {
+                "module": "js/components/combobox.reel",
+                "name": "Combobox",
+                "properties": {
+                    "element": {"#": "linkTarget"}
+                }
+            },
+
+            "alignLeft": {
+                "module": "js/components/button.reel",
+                "name": "Button",
+                "properties": {
+                    "element": {"#": "alignLeft"}
+                }
+            },
+            "alignCenter": {
+                "module": "js/components/button.reel",
+                "name": "Button",
+                "properties": {
+                    "element": {"#": "alignCenter"}
+                }
+            },
+            "alignRight": {
+                "module": "js/components/button.reel",
+                "name": "Button",
+                "properties": {
+                    "element": {"#": "alignRight"}
+                }
+            },
+            "alignJustify": {
+                "module": "js/components/button.reel",
+                "name": "Button",
+                "properties": {
+                    "element": {"#": "alignJustify"}
+                }
+            },
+            "indentRight": {
+                "module": "js/components/button.reel",
+                "name": "Button",
+                "properties": {
+                    "element": {"#": "indentRight"}
+                }
+            },
+            "indentLeft": {
+                "module": "js/components/button.reel",
+                "name": "Button",
+                "properties": {
+                    "element": {"#": "indentLeft"}
+                }
+            },
+            "bulletedList": {
+                "module": "js/components/button.reel",
+                "name": "Button",
+                "properties": {
+                    "element": {"#": "bulletedList"}
+                }
+            },
+            "numberedList": {
+                "module": "js/components/button.reel",
+                "name": "Button",
+                "properties": {
+                    "element": {"#": "numberedList"}
+                }
+            },
+            "fontColor": {
+               "module" : "js/components/ui/color-chip.reel",
+               "name" : "ColorChip",
+               "properties" : {
+                   "element" : {"#": "fontColor"},
+                   "mode": "chip"
+               }
+           }
+
+    	}
+	    </script>
+
+    </head>
+
+    <body>
+        <div id="textProperties" class="subToolHolderPanel optionsTextTool">
+            <label class="label">Class:</label>
+            <input id="className" />
+            <label class="label">Tag:</label>
+            <select id="tagType"></select>
+            <label class="label">Font:</label>
+            <select id="fontSelection"></select>
+            <button id="fontSettings"></button>
+            <label class="label">Size:</label>
+            <input id="fontSize"/>
+            <div id="fontColor" style="display:none"></div>
+            <button id="btnBold" class="btnBold"></button>
+            <button id="btnItalic" class="btnItalic"></button>
+            <button id="btnUnderline" class="btnItalic"></button>
+            <button id="btnStrikethrough" class="btnStriketrough"></button>
+            <label class="label">Link:</label>
+            <input id="txtLink" />
+            <select id="linkTarget"></select>
+            <div id="btnsAlign">
+                <button id="alignLeft"></button>
+                <button id="alignCenter"></button>
+                <button id="alignRight"></button>
+            </div>
+            <button id="alignJustify"></button>
+            <button id="indentRight"></button>
+            <button id="indentLeft"></button>
+            <button id="bulletedList"></button>
+            <button id="numberedList"></button>
+        </div>
+    </body>
+
+</html>

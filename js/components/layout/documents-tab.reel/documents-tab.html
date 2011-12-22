@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+        <link rel="stylesheet" type="text/css" href="documents-tab.css">
+
+        <script type="text/montage-serialization">
+        {
+
+            "owner": {
+                "module": "js/components/layout/documents-tab.reel",
+                "name": "DocumentsTab",
+                "properties": {
+                    "element": {"#": "openDocumentsTabComponent"}
+                }
+            },
+
+            "documentEntry": {
+                "module": "js/components/layout/document-entry.reel",
+                "name": "DocumentEntry",
+                "properties": {
+                    "element": {"#": "document"}
+                },
+                "bindings": {
+                    "document": {
+                        "boundObject": {"@": "repetition1"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration",
+                        "oneway": true
+                    },
+                    "name": {
+                        "boundObject": {"@": "repetition1"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration.name",
+                        "oneway": true
+                    },
+                    "active": {
+                        "boundObject": {"@": "repetition1"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration.isActive",
+                        "oneway": true
+                    }
+                }
+            },
+            
+            "repetition1": {
+                "module": "montage/ui/repetition.reel",
+                "name": "Repetition",
+                "properties": {
+                    "element": {"#": "openDocuments"}
+                },
+                "bindings": {
+                    "objects": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "openDocuments",
+                        "oneway": true
+                    }
+                }
+            }
+
+        }
+        </script>
+
+    </head>
+
+    <body>
+        <div id="openDocumentsTabComponent" class="documentsTab">
+            <ul id="openDocuments" class="openDocuments">
+                <li id="document"></li>
+            </ul>
+        </div>
+    </body>
+
+</html>

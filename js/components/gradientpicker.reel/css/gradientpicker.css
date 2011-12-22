@@ -1,0 +1,134 @@
+@charset "UTF-8";
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+/* line 9, gradientpicker.scss */
+input[type=radio], .gradientpicker .type .radio {
+  width: 10px;
+  height: 10px;
+  margin: 2px;
+  display: block;
+  float: left;
+  border-radius: 5px;
+  border: 1px solid #222;
+  background: -webkit-linear-gradient(top, #666666 0%, #333333 100%);
+}
+
+/* line 21, gradientpicker.scss */
+input[type=radio]:checked, .radio:checked, .gradientpicker .type .radio:checked {
+  border: 1px solid #000;
+  background: -webkit-radial-gradient(center, circle cover, white 0%, white 15%, #cccccc 30%, rgba(204, 204, 204, 0.01) 31%), -webkit-linear-gradient(top, #666666 0%, #333333 100%);
+}
+
+/* line 41, gradientpicker.scss */
+.gradientpicker .type label {
+  display: block;
+  float: left;
+  margin: 0px 0px 0px 1px;
+}
+
+/* line 48, gradientpicker.scss */
+.gradientpicker .type :nth-child(3) {
+  margin-left: 10px;
+}
+
+/* line 55, gradientpicker.scss */
+.gradientpicker .type, .gradientpicker .cp_gp_slider {
+  overflow: visible;
+}
+
+/* line 60, gradientpicker.scss */
+.gradientpicker .cp_gp_slider {
+  float: left;
+  clear: both;
+}
+
+/* line 66, gradientpicker.scss */
+.gradientpicker .cp_gp_slider .track_container {
+  width: 187px;
+  height: 20px;
+  margin: 6px 0px 0px 6px;
+  border: 1px solid #333;
+  background: url(../../../../images/colorpanel/transparent.png) repeat;
+  float: left;
+  clear: both;
+}
+
+/* line 77, gradientpicker.scss */
+.gradientpicker .cp_gp_slider .track {
+  width: 187px;
+  height: 20px;
+  cursor: crosshair;
+}
+
+/* line 84, gradientpicker.scss */
+.gradientpicker .cp_gp_slider .cover {
+  overflow: hidden;
+  width: 202px;
+  height: 22px;
+  float: left;
+  position: absolute;
+  bottom: 12px;
+  z-index: 20;
+  display: none;
+}
+
+/* line 96, gradientpicker.scss */
+.gradientpicker .cp_gp_slider .chips {
+  overflow: hidden;
+  width: 202px;
+  height: 22px;
+  float: left;
+  clear: both;
+  position: relative;
+  z-index: 1;
+}
+
+/* line 107, gradientpicker.scss */
+.gradientpicker .cp_gp_slider .chips div {
+  width: 14px;
+  position: absolute;
+  top: 3px;
+  cursor: pointer;
+}
+
+/* line 115, gradientpicker.scss */
+.gradientpicker .cp_gp_slider .chips span {
+  display: block;
+  width: 8px;
+  height: 8px;
+  background: #333;
+  margin: 0px 0px -4px 3px;
+  -webkit-transform: rotate(45deg);
+  float: left;
+  position: relative;
+  cursor: pointer;
+}
+
+/* line 128, gradientpicker.scss */
+.gradientpicker .cp_gp_slider .chips button {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border: 1px solid #333;
+  padding: 0;
+  margin: 0;
+  background: #FFF;
+  float: left;
+  position: relative;
+  cursor: pointer;
+}
+
+/* line 142, gradientpicker.scss */
+.gradientpicker .cp_gp_slider .chips div div {
+  display: block;
+  width: 14px;
+  height: 14px;
+  float: left;
+  top: 0px;
+  position: relative;
+  cursor: pointer;
+  background: url(../../../../images/colorpanel/transparent.png) repeat;
+}

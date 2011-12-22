@@ -1,0 +1,4 @@
+/* <notice>
+ Code from https://github.com/toji/gl-matrix<br/>
+ License https://github.com/toji/gl-matrix/blob/master/LICENSE.md<br/>
+ </notice> */

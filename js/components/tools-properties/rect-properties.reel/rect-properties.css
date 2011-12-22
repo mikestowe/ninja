@@ -1,0 +1,40 @@
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
+.button {
+    border:none;
+    cursor:default;
+    text-align:center;
+    -webkit-user-select:none;
+    opacity:0.8;
+    display:table-cell;
+    vertical-align:middle;
+    width:100%;
+    height:100%;
+    background-color:#333333;
+    color:white;
+}
+
+.button:hover
+{
+    opacity:1;
+}
+
+.button:active
+{
+    outline:solid 1px black;
+}
+
+.button.on
+{
+    background-color: #333333;
+}
+
+.button.off
+{
+    background-color: #cccccc;
+    color:black;
+}

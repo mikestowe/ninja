@@ -1,0 +1,33 @@
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
+.optionsTextTool {
+    display: -webkit-box;
+    -webkit-box-orient:horizontal;
+    -webkit-box-align: stretch;
+    padding: 5px;
+}
+
+
+.optionsTextTool > * {
+    -webkit-box-flex:0;
+}
+
+.optionsTextTool .button {
+    width: auto;
+
+}
+
+.optionsTextTool .hottextunit {
+    padding-top:5px;
+}
+
+.optionsTextTool .label, .optionsTextTool .hottextunit {
+    float:none;
+    font-size:11px;
+}
+
+

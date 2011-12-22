@@ -1,0 +1,27 @@
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
+.bread_crumb{
+    border-style: double;
+    height: 26px;
+}
+.breadcrumbtrail{
+    -webkit-box-flex: 0;
+}
+.bread_crumb_button{
+    background-color: #575757;
+    float: left;
+    width: 40px;
+    height: 20px;
+    margin-left: 5px;
+    margin-top: 3px;
+
+    font-family: 'Droid Sans', sans-serif;
+    font-size: 12px;
+    text-shadow: 1px 1px 1px black;
+
+    color: white;
+} 

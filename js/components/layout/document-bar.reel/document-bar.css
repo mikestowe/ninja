@@ -1,0 +1,43 @@
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+.documentBar {
+    height: 25px;
+    width: 1000px;
+    position: relative;
+    overflow: hidden;
+    color: white;
+}
+
+.documentBar .active {
+    text-decoration: underline;
+    cursor: pointer;
+    color: #666666;
+}
+
+.documentBar .active:hover {
+    color: #ffffff;
+}
+
+.documentBar .selected {
+    text-decoration: underline;
+    cursor: default;
+    color: #ffffff;
+}
+
+.documentBar .selected {
+    color: #ffffff;
+}
+
+.documentBar span{
+    text-decoration: none;
+    cursor: default;
+    color: #3a3a3a;
+}
+
+.documentBar .zoomHotText span {
+    color: white;
+}
+

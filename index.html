@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html>
+
+	<head lang="en">
+		
+		<title>Ninja</title>
+		
+    	<meta charset="utf-8"/>
+	    <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+    	<meta http-equiv="cache-control" content="no-store, no-cache, must-revalidate" />
+	    <meta http-equiv="Pragma" content="no-store, no-cache" />
+	    <meta http-equiv="Expires" content="0" />
+    	
+    	<link rel="icon" href="images/favicon.png" sizes="16x16">
+    	
+    	<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700|Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+	
+    	<style type="text/css">
+
+			html, body
+			{
+				width: 100%;
+				height: 100%;
+				overflow: hidden;
+				background: #000;
+				margin: 0;
+				padding: 0;
+			}
+			
+			body
+			{
+				position: absolute;
+				top: 0%;
+				left: 0%;
+				width: 100%;
+				height: 100%;
+				background-image: -webkit-radial-gradient(center, ellipse cover, rgba(40, 40, 40, 1) 0%, rgba(5, 5, 5, 1) 50%, rgba(0, 0, 0, 1) 100%);
+				background-size: auto, 115%;
+				background-color: rgba(150, 0, 0, 1);
+				background-position: center center;
+				background-repeat: no-repeat;/*
+
+				-webkit-animation-name: background-animation;
+				-webkit-animation-duration: 3s;
+				-webkit-animation-iteration-count: infinite;
+				-webkit-animation-timing-function: linear;
+*/
+			}
+			
+	        .montage-app-loaded body
+	        {
+	        	background: #000;
+	        	background-image: none;
+	        }
+	        
+	        .main
+	        {
+    	        opacity: 0;
+    	        -webkit-transition: opacity 250ms ease-in-out;
+    	        /* This is a hack, trying to smooth the draw */
+    	        -webkit-transition-delay: 500ms;
+            }
+
+	        .montage-app-loaded .main
+	        {
+    	        opacity: 1;
+            }
+			
+			#ninja_logo
+			{
+				width: 320px;
+				height: 320px;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin: -160px 0px 0px -160px;
+				overflow: visible;
+				-webkit-animation-name: zoom;
+				-webkit-animation-duration: 3s;
+				-webkit-animation-iteration-count: infinite;
+				-webkit-animation-timing-function: ease-in-out;
+			}
+			
+			#ninja_logo .gradient
+			{
+				background: -webkit-radial-gradient(center, ellipse cover, rgba(255, 0, 0, 1) 0%, rgba(102, 0, 0, .5) 100%);
+				width: 312px;
+				height: 312px;
+				border: 4px solid #000000;
+				border-radius: 50%;
+				position: absolute;
+				top: 0px;
+				left: 0px;
+			}
+			
+			#ninja_logo .gradient span
+			{
+				display: block;
+				width: 292px;
+				height: 292px;
+				border: 3px solid #000000;
+				border-radius: 50%;
+				margin: 7px;
+			}
+			
+			#ninja_logo .solid
+			{
+				background: #000;
+				width: 312px;
+				height: 312px;
+				border: 4px solid #000000;
+				border-radius: 50%;
+				position: absolute;
+				top: 0px;
+				left: 0px;/*
+
+				-webkit-animation-name: solid-animation;
+				-webkit-animation-duration: 3s;
+				-webkit-animation-iteration-count: infinite;
+				-webkit-animation-timing-function: linear;
+*/
+			}
+			
+			#ninja_logo canvas
+			{
+				position: absolute;
+				margin: -45px -110px;/*
+
+				-webkit-animation-name: rotate;
+				-webkit-animation-duration: 1.5s;
+				-webkit-animation-iteration-count: infinite;
+				-webkit-animation-timing-function: linear;
+*/
+			}
+			
+			@-webkit-keyframes solid-animation {
+				0% {background: #000;}
+				50% {background: #666;}
+				100% {background: #000;}
+			}
+			
+			@-webkit-keyframes background-animation {
+				0% {background-size: 200%}
+				50% {background-size: 100%}
+				100% {background-size: 200%}
+			}
+			
+			@-webkit-keyframes rotate {
+				0% 		{-webkit-transform: rotate(0deg); margin: -45px -110px;}				
+				25% 	{-webkit-transform: rotate(90deg); margin: -90px -55px;}	
+				50% 	{-webkit-transform: rotate(180deg); margin: -55px 0px;}	
+				75% 	{-webkit-transform: rotate(270deg); margin: 0px -55px;}
+				100% 	{-webkit-transform: rotate(360deg); margin: -45px -110px;}	
+			}
+			
+			@-webkit-keyframes zoom {
+				0% {-webkit-transform: scale(.9);}
+				50% {-webkit-transform: scale(.5);}
+				100% {-webkit-transform: scale(.9);}
+			}
+			
+		</style>
+		
+		<script type="text/javascript">
+			window.onload = function() {
+				//
+				var star = document.getElementById('star');
+				//
+				njstar(star.getContext("2d"));
+			}
+			function njstar (ctx) {
+				ctx.save();
+				ctx.translate(0,0);
+				ctx.beginPath();
+				ctx.moveTo(0,0);
+				ctx.lineTo(550,0);
+				ctx.lineTo(550,400);
+				ctx.lineTo(0,400);
+				ctx.closePath();
+				ctx.clip();
+				ctx.translate(0,0);
+				ctx.translate(0,0);
+				ctx.scale(1,1);
+				ctx.translate(0,0);
+				ctx.strokeStyle = 'rgba(0,0,0,0)';
+				ctx.lineCap = 'butt';
+				ctx.lineJoin = 'miter';
+				ctx.miterLimit = 4;
+				ctx.save();
+				ctx.beginPath();
+				ctx.moveTo(275.05,187.4);
+				ctx.bezierCurveTo(271.05,187.4,267.63300000000004,188.817,264.8,191.65);
+				ctx.bezierCurveTo(261.967,194.483,260.55,197.9,260.55,201.9);
+				ctx.bezierCurveTo(260.55,205.9,261.967,209.316,264.8,212.15);
+				ctx.bezierCurveTo(267.63300000000004,214.983,271.05,216.4,275.05,216.4);
+				ctx.bezierCurveTo(279.05,216.4,282.467,214.983,285.3,212.15);
+				ctx.bezierCurveTo(288.134,209.316,289.55,205.9,289.55,201.9);
+				ctx.bezierCurveTo(289.55,197.9,288.134,194.483,285.3,191.65);
+				ctx.bezierCurveTo(282.467,188.817,279.05,187.4,275.05,187.4);
+				ctx.closePath();
+				ctx.moveTo(351.55,126.15);
+				ctx.bezierCurveTo(351.55,123.917,351.366,121.783,351,119.75);
+				ctx.lineTo(450.1,99.95);
+				ctx.lineTo(384.451,176.85000000000002);
+				ctx.bezierCurveTo(378.418,171.61700000000002,371.317,169.00000000000003,363.151,169.00000000000003);
+				ctx.bezierCurveTo(354.117,169.00000000000003,346.401,172.20000000000002,340.00100000000003,178.60000000000002);
+				ctx.bezierCurveTo(333.60100000000006,185.00000000000003,330.401,192.717,330.401,201.75000000000003);
+				ctx.bezierCurveTo(330.401,210.78300000000004,333.6,218.50000000000003,340.00100000000003,224.90000000000003);
+				ctx.bezierCurveTo(346.401,231.29900000000004,354.117,234.50000000000003,363.151,234.50000000000003);
+				ctx.bezierCurveTo(371.48400000000004,234.50000000000003,378.701,231.78300000000002,384.8,226.35000000000002);
+				ctx.lineTo(451.55,302.35);
+				ctx.lineTo(352.15,283.95);
+				ctx.bezierCurveTo(352.483,282.01599999999996,352.65,280.01599999999996,352.65,277.95);
+				ctx.bezierCurveTo(352.65,268.917,349.45,261.2,343.049,254.79999999999998);
+				ctx.bezierCurveTo(342.44899999999996,254.2,341.832,253.61599999999999,341.19899999999996,253.04999999999998);
+				ctx.bezierCurveTo(335.16599999999994,247.81699999999998,328.06499999999994,245.2,319.89899999999994,245.2);
+				ctx.bezierCurveTo(310.86499999999995,245.2,303.14899999999994,248.39999999999998,296.74899999999997,254.79999999999998);
+				ctx.bezierCurveTo(290.349,261.2,287.14899999999994,268.917,287.14899999999994,277.95);
+				ctx.bezierCurveTo(287.14899999999994,286.983,290.34799999999996,294.7,296.74899999999997,301.099);
+				ctx.bezierCurveTo(300.51599999999996,304.866,304.73199999999997,307.51599999999996,309.39899999999994,309.049);
+				ctx.lineTo(276.94899999999996,404.74899999999997);
+				ctx.lineTo(243.24899999999997,309.59899999999993);
+				ctx.bezierCurveTo(247.11599999999996,308.23299999999995,250.66599999999997,306.09899999999993,253.89899999999997,303.19999999999993);
+				ctx.bezierCurveTo(254.39899999999997,302.73299999999995,254.89899999999997,302.24999999999994,255.39899999999997,301.74999999999994);
+				ctx.bezierCurveTo(260.33299999999997,296.8159999999999,263.366,291.09999999999997,264.49899999999997,284.59999999999997);
+				ctx.bezierCurveTo(264.832,282.667,264.99899999999997,280.667,264.99899999999997,278.59999999999997);
+				ctx.bezierCurveTo(264.99899999999997,269.56699999999995,261.799,261.84999999999997,255.39899999999997,255.45099999999996);
+				ctx.bezierCurveTo(254.79899999999998,254.84999999999997,254.18199999999996,254.26699999999997,253.54899999999998,253.70099999999996);
+				ctx.bezierCurveTo(247.516,248.46799999999996,240.41599999999997,245.84999999999997,232.24899999999997,245.84999999999997);
+				ctx.bezierCurveTo(223.21599999999998,245.84999999999997,215.49899999999997,249.04999999999995,209.09899999999996,255.45099999999996);
+				ctx.bezierCurveTo(202.69899999999996,261.84999999999997,199.49899999999997,269.56699999999995,199.49899999999997,278.59999999999997);
+				ctx.bezierCurveTo(199.49899999999997,280.83299999999997,199.69899999999996,282.984,200.09899999999996,285.04999999999995);
+				ctx.lineTo(100.94899999999996,304.79999999999995);
+				ctx.lineTo(166.64899999999994,227.90099999999995);
+				ctx.bezierCurveTo(169.91599999999994,230.76699999999997,173.49899999999994,232.83399999999995,177.39899999999994,234.09999999999997);
+				ctx.bezierCurveTo(180.66599999999994,235.20099999999996,184.16599999999994,235.74999999999997,187.89899999999994,235.74999999999997);
+				ctx.bezierCurveTo(191.79899999999995,235.74999999999997,195.46599999999995,235.16699999999997,198.89899999999994,233.99999999999997);
+				ctx.bezierCurveTo(202.76599999999993,232.63399999999996,206.31599999999995,230.49999999999997,209.54899999999995,227.59999999999997);
+				ctx.bezierCurveTo(210.04899999999995,227.13399999999996,210.54899999999995,226.65099999999995,211.04899999999995,226.15099999999995);
+				ctx.bezierCurveTo(215.98299999999995,221.21699999999996,219.01599999999996,215.50099999999995,220.14899999999994,209.00099999999995);
+				ctx.bezierCurveTo(220.48199999999994,207.06699999999995,220.64899999999994,205.06699999999995,220.64899999999994,203.00099999999995);
+				ctx.bezierCurveTo(220.64899999999994,193.96799999999996,217.44899999999996,186.25099999999995,211.04899999999995,179.85099999999994);
+				ctx.bezierCurveTo(210.44899999999996,179.25099999999995,209.83299999999994,178.66699999999994,209.19899999999996,178.10099999999994);
+				ctx.bezierCurveTo(203.16499999999996,172.86799999999994,196.06599999999995,170.25099999999995,187.89899999999994,170.25099999999995);
+				ctx.bezierCurveTo(179.56599999999995,170.25099999999995,172.36599999999996,172.96799999999996,166.29899999999995,178.40099999999995);
+				ctx.lineTo(99.49899999999995,102.45099999999995);
+				ctx.lineTo(198.89899999999994,120.85099999999994);
+				ctx.bezierCurveTo(198.56599999999995,122.75099999999995,198.39899999999994,124.73399999999994,198.39899999999994,126.80099999999995);
+				ctx.bezierCurveTo(198.39899999999994,129.03399999999993,198.59899999999993,131.18399999999994,198.99899999999994,133.25099999999995);
+				ctx.bezierCurveTo(200.16599999999994,139.55099999999996,203.16599999999994,145.11799999999994,207.99899999999994,149.95099999999994);
+				ctx.bezierCurveTo(208.59899999999993,150.55099999999993,209.23199999999994,151.13399999999993,209.89899999999994,151.70099999999994);
+				ctx.bezierCurveTo(213.16599999999994,154.56799999999993,216.74899999999994,156.63399999999993,220.64899999999994,157.90099999999993);
+				ctx.bezierCurveTo(223.91599999999994,159.00099999999992,227.41599999999994,159.55099999999993,231.14899999999994,159.55099999999993);
+				ctx.bezierCurveTo(235.04899999999995,159.55099999999993,238.71599999999995,158.96799999999993,242.14899999999994,157.80099999999993);
+				ctx.bezierCurveTo(246.01599999999993,156.43399999999994,249.56599999999995,154.30099999999993,252.79899999999995,151.40099999999993);
+				ctx.bezierCurveTo(253.29899999999995,150.9339999999999,253.79899999999995,150.45099999999994,254.29899999999995,149.95099999999994);
+				ctx.bezierCurveTo(259.23299999999995,145.01699999999994,262.26599999999996,139.30099999999993,263.39899999999994,132.80099999999993);
+				ctx.bezierCurveTo(263.73199999999997,130.86799999999994,263.89899999999994,128.86799999999994,263.89899999999994,126.80099999999993);
+				ctx.bezierCurveTo(263.89899999999994,117.76799999999993,260.69899999999996,110.05099999999993,254.29899999999995,103.65099999999993);
+				ctx.bezierCurveTo(253.69899999999996,103.05099999999993,253.08299999999994,102.46799999999992,252.44899999999996,101.90099999999993);
+				ctx.bezierCurveTo(249.18199999999996,99.06799999999993,245.59899999999996,97.00099999999992,241.69899999999996,95.70099999999992);
+				ctx.lineTo(274.1,0);
+				ctx.lineTo(307.85,95.2);
+				ctx.bezierCurveTo(303.98400000000004,96.533,300.434,98.65,297.201,101.55);
+				ctx.bezierCurveTo(296.668,102.017,296.151,102.5,295.651,103);
+				ctx.bezierCurveTo(290.717,107.93299999999999,287.684,113.667,286.55,120.2);
+				ctx.bezierCurveTo(286.217,122.10000000000001,286.05,124.083,286.05,126.15);
+				ctx.bezierCurveTo(286.05,128.383,286.25,130.53300000000002,286.651,132.6);
+				ctx.bezierCurveTo(287.817,138.9,290.817,144.46699999999998,295.651,149.29999999999998);
+				ctx.bezierCurveTo(296.25100000000003,149.89999999999998,296.884,150.48399999999998,297.55,151.04999999999998);
+				ctx.bezierCurveTo(300.817,153.91699999999997,304.401,155.98399999999998,308.3,157.24999999999997);
+				ctx.bezierCurveTo(311.567,158.34999999999997,315.067,158.89999999999998,318.8,158.89999999999998);
+				ctx.bezierCurveTo(322.7,158.89999999999998,326.366,158.31699999999998,329.8,157.14999999999998);
+				ctx.bezierCurveTo(333.66700000000003,155.783,337.217,153.64999999999998,340.45,150.74999999999997);
+				ctx.bezierCurveTo(340.95,150.28299999999996,341.45,149.79999999999998,341.95,149.29999999999998);
+				ctx.bezierCurveTo(346.884,144.367,349.917,138.64999999999998,351.05,132.14999999999998);
+				ctx.bezierCurveTo(351.384,130.217,351.55,128.217,351.55,126.15);
+				ctx.closePath();
+				ctx.fill();
+				ctx.stroke();
+				ctx.restore();
+			};
+		</script>
+
+    	<script type="text/javascript" src="node_modules/montage/montage.js"></script>
+
+	    <script type="text/montage-serialization">
+    	    {
+            	"owner": {
+                	"module": "montage/ui/loader.reel",
+	                "name": "Loader",
+    	            "properties": {
+        	            "mainModule": "js/ninja.reel",
+            	        "mainName": "Ninja",
+                        "minimumBootstrappingDuration": 4000
+                    }
+	            }
+        	}
+        </script>
+    	
+	</head>
+
+	<body>
+		
+		<div id="ninja_logo">
+			
+			<div class="solid"></div>
+			
+			<div class="gradient"><span></span></div>
+			
+			<canvas width="450" height="400" id="star"></canvas>
+			
+		</div>
+		
+	</body>
+
+</html>

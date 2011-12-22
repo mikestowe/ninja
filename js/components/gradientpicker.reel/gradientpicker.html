@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!-- 
+ <copyright>
+	This file contains proprietary software owned by Motorola Mobility, Inc.
+	No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.
+	(c) Copyright 2011 Motorola Mobility, Inc. All Rights Reserved.
+</copyright>
+-->
+<html lang="en">
+	<head>
+    	
+    	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    	
+    	<link rel="stylesheet" type="text/css" href="css/gradientpicker.css">
+   		
+   		<script type="text/m-objects">
+    		{
+        		"$rootObject": U("m-obj://gradientpicker/uuid?mId=js/components/gradientpicker", {
+            		"element": E("#gradientpicker")
+        		})
+    		}
+		</script>
+		
+		<script type="text/montage-serialization">
+   			{
+            	"owner": {
+                	"module": "js/components/gradientpicker.reel",
+                	"name": "GradientPicker",
+                	"properties": {
+                    	"element": {"#": "gradientpicker"}
+
+                	}
+            	}
+        	}
+		</script>
+		
+	</head>
+	
+	<body>
+    
+    	<div id="gradientpicker" class="gradientpicker">
+    		
+    		<div class="type">
+    			<input type="radio" class="cp_gp_linear radio" name="gradient" value="linear" id="cp_gp_linear" checked="like a boss"/><label for="cp_gp_linear">Linear Gradient</label>
+    			<input type="radio" class="cp_gp_radial radio" name="gradient" value="radial" id="cp_gp_radial"/><label for="cp_gp_radial">Radial Gradient</label>
+    		</div>
+    		
+    		<div class="cp_gp_slider">
+    			<div class="track_container"><div class="track"></div></div>
+    			<div class="cover"></div>
+    			<div class="chips"></div>
+    		</div>
+    	
+    	</div>
+    
+	</body>
+
+</html>

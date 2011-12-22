@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="menu-entry.css">
+
+    <script type="text/montage-serialization">
+        {
+            "entriesController": {
+                "name": "ArrayController",
+                "module": "montage/ui/controller/array-controller",
+                "properties": {
+                    "automaticallyOrganizeObjects": false
+                },
+                "bindings": {
+                    "content": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "data.entries",
+                        "oneway": true
+                    }
+                }
+            },
+
+            "repetition": {
+                "module": "montage/ui/repetition.reel",
+                "name": "Repetition",
+                "properties": {
+                    "element": { "#": "subEntries" },
+                    "contentController": {"@": "entriesController"}
+                }
+            },
+
+            "menuItem": {
+                "module": "js/components/menu/menu-item.reel",
+                "name": "MenuItem",
+                "properties": {
+                    "element": { "#": "menuEntryItem" }
+                },
+                "bindings": {
+                    "data": {
+                        "boundObject": {"@": "repetition"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration",
+                        "oneway": true
+                    }
+                }
+            },
+
+            "owner": {
+                "module": "js/components/menu/menu-entry.reel",
+                "name": "MenuEntry",
+                "properties": {
+                    "element":              {"#": "menuItem"},
+                    "topHeader":            {"#": "topHeaderBackground"},
+                    "topHeaderText":        {"#": "topHeaderText"},
+                    "subEntries":           {"#": "subEntries"}
+                }
+            }
+        }
+    </script>
+
+</head>
+<body>
+
+    <li id="menuItem" class="topMenuItem">
+        <div id="topHeaderBackground" class="menubg">
+            <span id="topHeaderText" class="menu-label"></span>
+        </div>
+
+        <ul id="subEntries" class="subEntries" style="z-index: 9991;">
+            <li id="menuEntryItem"></li>
+        </ul>
+
+    </li>
+
+</body>
+</html>

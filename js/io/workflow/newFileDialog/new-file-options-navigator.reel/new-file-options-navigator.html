@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="new-file-options-navigator.css">
+    <script type="text/montage-serialization">
+    {
+
+        "owner":{
+            "module": "js/io/workflow/newFileDialog/new-file-options-navigator.reel",
+            "name": "NewFileOptionsNavigator",
+            "properties": {
+                "element": {"#": "newfile"},
+                "projectTypeTree": {"#": "projectTypeTree"},
+                "cancelButton": {"#": "cancelButton"},
+                "okButton": {"#": "okButton"},
+                "templateIcons": {"#": "templateIcons"},
+                "templatesContainer": {"#": "right-top"},
+                "locationSelection": {"#": "right-bottom"}
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+<div id="newfile" class="newfile">
+    <div class="container left-nav">
+        <div class="projectTypeHeader"><span>Project Type</span></div>
+        <div id="projectTypeTree" class="projectTypeTree"></div>
+    </div>
+    <div class="container right-nav">
+        <div id="right-top" class="right-top">
+            <div id="templateIcons" class="templateIcons" style="display:block;"></div>
+        </div>
+        <div  id="right-bottom" class="right-bottom">
+            <div class="templateIcon">templateIcon</div>
+            <div class="selections">selections</div>
+        </div>
+    </div>
+    <div class="buttons">
+        <input id="cancelButton" type="button" value="CANCEL" class="cancelButton" />
+        <input id="okButton" disabled="true" type="button" value="OK" class="okButton" />
+    </div>
+</div>
+</body>
+</html>

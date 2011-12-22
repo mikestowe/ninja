@@ -1,0 +1,43 @@
+@charset "UTF-8";
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+/* line 12, popup.scss */
+.default_popup {
+  position: absolute;
+  width: auto;
+  float: left;
+  font-family: 'Droid Sans', sans-serif;
+  color: #FFF;
+  background: #494949;
+  border: 1px solid #292929;
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.8);
+  pointerEvents: auto;
+}
+
+/* line 32, popup.scss */
+.default_popup .content {
+  overflow: auto;
+  float: left;
+}
+
+/* line 38, popup.scss */
+.default_popup .tooltip {
+  position: absolute;
+  overflow: hidden;
+}
+
+/* line 44, popup.scss */
+.default_popup .tooltip span {
+  -webkit-transform: rotate(45deg);
+  width: 12px;
+  height: 12px;
+  margin: 3px;
+  display: block;
+  background: #494949;
+  border: 1px solid #292929;
+}

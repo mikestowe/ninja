@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="rect-properties.css">
+
+        <script type="text/montage-serialization">
+        {
+            "hottext1": {
+                "module": "js/components/hottextunit.reel",
+                "name": "HotTextUnit",
+                "properties": {
+                    "element": {"#": "TLRadiusControl"},
+                    "acceptableUnits" : ["px", "pt", "%"]
+                }
+            },
+
+            "hottext2": {
+                "module": "js/components/hottextunit.reel",
+                "name": "HotTextUnit",
+                "properties": {
+                    "element": {"#": "TRRadiusControl"},
+                    "acceptableUnits" : ["px", "pt", "%"],
+                    "enabled": false
+                }
+            },
+
+            "hottext3": {
+                "module": "js/components/hottextunit.reel",
+                "name": "HotTextUnit",
+                "properties": {
+                    "element": {"#": "BLRadiusControl"},
+                    "acceptableUnits" : ["px", "pt", "%"],
+                    "enabled": false
+                }
+            },
+
+            "hottext4": {
+                "module": "js/components/hottextunit.reel",
+                "name": "HotTextUnit",
+                "properties": {
+                    "element": {"#": "BRRadiusControl"},
+                    "acceptableUnits" : ["px", "pt", "%"],
+                    "enabled": false
+                }
+            },
+
+            "owner": {
+                "module": "js/components/tools-properties/rect-properties.reel",
+                "name": "RectProperties",
+                "properties": {
+                    "element": {"#": "rectProperties"},
+                    "lockButton": {"#": "lockButton"},
+                    "TLRadiusControl": {"@": "hottext1"},
+                    "TRRadiusControl": {"@": "hottext2"},
+                    "BLRadiusControl": {"@": "hottext3"},
+                    "BRRadiusControl": {"@": "hottext4"}
+                }
+            }
+    	}
+	    </script>
+
+    </head>
+
+    <body>
+        <div id="rectProperties">
+            <button id="lockButton" class="unselectable subToolButton button LockToolUp" style=" margin-left:20px"></button>
+            <div id="TLRadiusLabel" class="unselectable subToolButton cornerRadius topLeft"></div>
+            <div id="TLRadiusControl" class="label"></div>
+            <div id="TRRadiusLabel" class="unselectable subToolButton cornerRadius topRight"></div>
+            <div id="TRRadiusControl" class="label"></div>
+            <div id="BLRadiusLabel" class="unselectable subToolButton cornerRadius bottomLeft"></div>
+            <div id="BLRadiusControl" class="label"></div>
+            <div id="BRRadiusLabel" class="unselectable subToolButton cornerRadius bottomRight"></div>
+            <div id="BRRadiusControl" class="label"></div>
+        </div>
+    </body>
+
+</html>

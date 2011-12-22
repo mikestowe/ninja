@@ -1,0 +1,93 @@
+// <copyright>
+// This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+// No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+// (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+// </copyright>
+
+/*
+ * _colors.scss
+ * Defines the colors for the UI of the application.
+ * To create a new theme, copy this file and change the values as desired.
+ * Note: Some colors are defined as both rgb and rgba; some of the rgba versions have multiple a values.
+ */
+
+/* Colors for radio buttons and other form elements */
+$color-radio-border: rgb(40,40,40);
+$color-radio-shadow: rgba(200,200,200,0.5);
+$color-radio-gradient-top: rgb(100,100,100);
+$color-radio-gradient-bottom: rgb(60,60,60);
+$color-radio-bg: rgb(0,0,0);
+$color-radio: rgb(200,200,200);
+$color-input: rgb(255,255,255);
+$color-input-bg: rgb(68, 68, 68);
+$color-input-border: rgb(49, 49, 49);
+$color-focus-outline: rgb(180, 180, 180);
+
+/* Base colors for dividers 
+ *
+ * Dividers consist of a div with a background color and either 
+ * a top & bottom border (in the case of horizontal dividers)
+ * or a left & right border (in the case of vertical dividers),
+ * for a total of three different colors.
+ * 
+ */
+$color-divider-first: rgb(35,35,35); /* top and left */
+$color-divider-second: rgb(0,0,0); /* Middle */
+$color-divider-third: rgb(58,58,58); /* Bottom and right */
+
+/* Main background color of entire app */
+$color-app-bg: rgb(0,0,0); /* Main app background color. */
+$color-app-bg-a1: rgba(0,0,0,1);  /* rgba version */
+$color-app-border: rgb(51,51,51); /* Main app border color */
+$color-app-shadow: rgba(0,0,0,.5); /* color of drop shadows */
+$color-stage: rgb(128,128,128); /* Stage color */
+$color-body-border: rgb(0,0,0); /* body border color */
+$color-body-bg: rgb(255,255,255); /* Body background color */
+
+/* Colors for main dropdown menus: background & text for both regular and highlighted states, dividers */
+$color-menu-bg: rgb(71,71,71);
+$color-menu-text: rgb(255,255,255);
+$color-menu-hilite-bg: rgb(178,178,178);
+$color-menu-hilite-text: rgb(36,36,36);
+$color-menu-divider: rgb(80,80,80);
+$color-menu-border: rgb(0,0,0);
+$color-menu-active-bg: rgb(181,122,10);
+
+
+/* Colors for tools: background, text, how they interact with the UI */
+$color-tool-bg: rgb(41,41,41);
+$color-tool-bg-active: rgb(178,178,178);
+$color-tool-border-selected: rgb(89,89,89);
+$color-tool-bg-a1: rgba(41,41,41,1);
+$color-tool-text: rgb(255,255,255);
+$color-tool-text-a1: rgba(255,255,255,1);
+$color-tool-separator-top: $color-divider-first;
+$color-tool-separator-middle: $color-divider-second;
+$color-tool-separator-bottom: $color-divider-third;
+$color-tool-select-bg: rgb(102,102,102);
+$color-tool-select-border: rgb(0,0,0);
+$color-tool-select-hover-bg: rgb(221,221,221);
+
+
+/* Colors for panels: background & text, both regular and highlighted states, dividers, borders, shadows, etc. */
+$color-panel-bg: $color-menu-bg;
+$color-panel-text: $color-menu-text;
+$color-panel-input: $color-panel-text;
+$color-panel-hilite-bg: $color-menu-hilite-bg;
+$color-panel-hilite-text: $color-menu-hilite-text;
+$color-panel-clickable: rgb(215,215,215); /* used for editable items in their non-edit state, etc. */
+$color-panel-border: $color-menu-border; /* Border for panel and for block elements */
+$color-panel-shadow: rgb(58,58,58); /* Shadow for text and block elements */
+$color-panel-input-bg: rgb(68, 68, 68);
+$color-panel-dividerlabel-bg: rgb(62, 62, 62);
+$color-panel-input-border: rgb(49, 49, 49);
+$color-panel-divider-top: rgb(62, 62, 62);
+$color-panel-divider: $color-menu-divider;
+$color-panel-divider-bottom: rgb(86, 86, 86);
+
+/* Colors for scroll bars */
+$color-sb-border: rgb(0,0,0);
+$color-sb-1: rgb(140,140,140);
+$color-sb-2: rgb(173,173,173);
+$color-sb-hover-1: rgb(190,190,190);
+$color-sb-hover-2: rgb(255,255,255);

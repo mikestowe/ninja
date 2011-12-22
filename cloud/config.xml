@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- COPY TO 'MainApp/cloud' and set your own URLs -->
+<services>
+	<file><![CDATA[http://file.services.ninja.motorola.com/]]></file>
+	<directory><![CDATA[http://directory.services.ninja.motorola.com/]]></directory>
+</services>

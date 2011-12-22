@@ -1,0 +1,76 @@
+// <copyright>
+// This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+// No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+// (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+// </copyright>
+
+/*
+ * MenuUI.scss
+ * Styles governing the main dropdown menu.
+ * Note that colors and font definitions go in 
+ * _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss
+ */
+.menuBar {
+    width:100%;
+    border-style: solid;
+    border-width: 1px;
+    height: 22px;
+    color: $color-menu-text;
+    background: $color-menu-bg;
+    border-color: $color-menu-border;
+}
+
+.menuBar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    float: left;
+    cursor: default;
+}
+
+.menuBar li {
+    font-size: 9pt;
+    padding: 4px 10px;
+    display: block;
+    position: relative;
+    background : $color-menu-bg;
+    color : $color-menu-text;
+}
+
+.menuBar li li {
+    width: 10em;
+}
+.menuBar li:hover {
+    background : $color-menu-hilite-bg;
+    color : $color-menu-hilite-text;
+}
+
+.menuBar li:active {
+    background : $color-menu-active-bg;
+}
+
+/*Styles for positioning and display
+Supports fly-out of sub-menus two levels deep only */
+
+.menuBar ul ul {
+    position: absolute;
+    z-index: 500;
+}
+
+.menuBar ul ul ul {
+    position: absolute;
+    top: 0;
+    left: 100%;
+}
+
+nav.menuBar ul ul,
+nav.menuBar ul li:hover ul ul,
+nav.menuBar ul ul li:hover ul ul {
+    display: none;
+}
+
+nav.menuBar ul li:hover ul,
+nav.menuBar ul ul li:hover ul,
+nav.menuBar ul ul ul li:hover ul {
+    display: block;
+}

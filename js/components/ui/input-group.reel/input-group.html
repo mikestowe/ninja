@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="input-group.css">
+    <script type="text/montage-serialization">
+    {
+        "eventDelegator": {
+                "module": "montage/event/action-event-listener",
+                "name": "ActionEventListener",
+                "properties": {
+                    "handler": {"@": "owner"},
+                    "action": "forwardEvent"
+                }
+            },
+        "propControl1": {
+            "module": "js/components/ui/property-control",
+            "name": "PropertyControl",
+            "properties": {
+                "element": {"#": "inputPair"}
+            },
+            "bindings": {
+                "data": {
+                    "boundObject": {"@": "propList"},
+                    "boundObjectPropertyPath": "objectAtCurrentIteration"
+                }
+            },
+            "listeners": [
+                                {
+                                    "type": "propertyChange",
+                                    "listener": {"@": "eventDelegator"},
+                                    "capture": false
+                                },
+                                {
+                                    "type": "propertyChanging",
+                                    "listener": {"@": "eventDelegator"},
+                                    "capture": false
+                                }
+                            ]
+        },
+        "propList": {
+            "module": "montage/ui/repetition",
+            "name": "Repetition",
+            "properties": {
+                "element": {"#": "inputList"}
+            },
+            "bindings": {
+                "objects": {
+                    "boundObject": {"@": "owner"},
+                    "boundObjectPropertyPath": "data",
+                    "oneway": true
+                }
+            }
+        },
+        "owner": {
+            "module": "js/components/ui/input-group",
+            "name": "InputGroup",
+            "properties": {
+                "element": {"#": "inputRow"},
+                "controlsList": {"@": "propList"}
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+    <div id="inputRow" style="-webkit-user-select: none;">
+        <div id="inputList">
+            <div id="inputPair"></div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,7 @@
+{
+    "name": "Ninja",
+    "version": "0.1.0",
+    "mappings": {
+        "montage": "node_modules/montage/"
+    }
+}

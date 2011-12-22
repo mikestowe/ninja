@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="menu-item.css">
+
+    <script type="text/montage-serialization">
+        {
+            "entriesController": {
+                "name": "ArrayController",
+                "module": "montage/ui/controller/array-controller",
+                "properties": {
+                    "automaticallyOrganizeObjects": false
+                },
+                "bindings": {
+                    "content": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "subentries",
+                        "oneway": true
+                    }
+                }
+            },
+
+            "repetition": {
+                "module": "montage/ui/repetition.reel",
+                "name": "Repetition",
+                "properties": {
+                    "element": {"#": "subEntries"},
+                    "contentController": {"@": "entriesController"}
+                }
+            },
+
+            "menuItem": {
+                "module": "js/components/menu/menu-item.reel",
+                "name": "MenuItem",
+                "properties": {
+                    "element": {"#": "menuEntryItem" }
+                },
+                "bindings": {
+                    "data": {
+                        "boundObject": {"@": "repetition"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration",
+                        "oneway": true
+                    }
+                }
+            },
+
+            "owner": {
+                "module": "js/components/menu/menu-item.reel",
+                "name": "MenuItem",
+                "properties": {
+                    "element":          {"#": "menuItem"},
+                    "itemBackground":   {"#": "menuItemBackground"},
+                    "itemText":         {"#": "menuItemText"},
+                    "subMenu":          {"#": "subEntries"}
+                }
+            }
+        }
+    </script>
+
+</head>
+<body>
+
+    <li id="menuItem" class="menuItem">
+        <div id="menuItemBackground" class="menubg">
+            <span class="check"></span>
+            <span id="menuItemText" class="menu-label"></span>
+            <span class="rightArrow"></span>
+
+            <ul id="subEntries" class="subEntries" style="display: none">
+                <li id="menuEntryItem"></li>
+            </ul>
+
+        </div>
+    </li>
+
+</body>
+</html>

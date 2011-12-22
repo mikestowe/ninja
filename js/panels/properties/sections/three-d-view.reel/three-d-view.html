@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<!-- <copyright>
+This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+(c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+</copyright> -->
+<html lang="en">
+<head>
+    <script type="text/montage-serialization">
+    {
+        "owner": {
+            "module": "js/panels/properties/sections/three-d-view.reel",
+            "name": "ThreeD",
+            "properties": {
+                "element": {"#": "section"},
+                "x3DControl": {"@": "threeDPosX"},
+                "y3DControl": {"@": "threeDPosY"},
+                "z3DControl": {"@": "threeDPosZ"},
+                "x3DLabel": {"#": "lblthreeDX"},
+                "y3DLabel": {"#": "lblthreeDY"},
+                "z3DLabel": {"#": "lblthreeDZ"},
+                "xAngleControl": {"@": "threeDRotX"},
+                "yAngleControl": {"@": "threeDRotY"},
+                "zAngleControl": {"@": "threeDRotZ"},
+                "axisModeGroupControl": {"@": "axisModeGroup"}
+            }
+        },
+
+        "threeDPosX": {
+            "module": "js/components/hottextunit.reel",
+            "name": "HotTextUnit",
+            "properties": {
+                "element": {"#": "threeDPosX"},
+                "identifier": "x3D",
+                "maxValue": 10000,
+                "minValue": -10000
+            },
+            "bindings": {
+                "value": {
+                    "boundObject": {"@": "owner"},
+                    "boundObjectPropertyPath": "x3D",
+                    "oneway": false
+                }
+            },
+            "listeners": [
+                {
+                    "type": "change",
+                    "listener": {"@": "owner"},
+                    "capture": false
+                },
+                {
+                    "type": "changing",
+                    "listener": {"@": "owner"},
+                    "capture": false
+                }
+            ]
+        },
+        "threeDPosY": {
+            "module": "js/components/hottextunit.reel",
+            "name": "HotTextUnit",
+            "properties": {
+                "element": {"#": "threeDPosY"},
+                "identifier": "y3D",
+                "maxValue": 10000,
+                "minValue": -10000
+            },
+            "bindings": {
+                "value": {
+                    "boundObject": {"@": "owner"},
+                    "boundObjectPropertyPath": "y3D",
+                    "oneway": false
+                }
+            },
+            "listeners": [
+                {
+                    "type": "change",
+                    "listener": {"@": "owner"},
+                    "capture": false
+                },
+                {
+                    "type": "changing",
+                    "listener": {"@": "owner"},
+                    "capture": false
+                }
+            ]
+        },
+        "threeDPosZ": {
+            "module": "js/components/hottextunit.reel",
+            "name": "HotTextUnit",
+            "properties": {
+                "element": {"#": "threeDPosZ"},
+                "identifier": "z3D",
+                "maxValue": 10000,
+                "minValue": -10000
+            },
+            "bindings": {
+                "value": {
+                    "boundObject": {"@": "owner"},
+                    "boundObjectPropertyPath": "z3D",
+                    "oneway": false
+                }
+            },
+            "listeners": [
+                {
+                    "type": "change",
+                    "listener": {"@": "owner"},
+                    "capture": false
+                },
+                {
+                    "type": "changing",
+                    "listener": {"@": "owner"},
+                    "capture": false
+                }
+            ]
+        },
+        "threeDRotX": {
+            "module": "js/components/hottextunit.reel",
+            "name": "HotTextUnit",
+            "properties": {
+                "element": {"#": "threeDRotX"},
+                "identifier": "xAngle",
+                "minValue": -360,
+                "maxValue": 360,
+                "acceptableUnits": ["\u00B0"],
+                "units": "\u00B0"
+            },
+            "bindings": {
+                "value": {
+                    "boundObject": {"@": "owner"},
+                    "boundObjectPropertyPath": "xAngle",
+                    "oneway": false
+                }
+            },
+            "listeners": [
+                {
+                    "type": "change",
+                    "listener": {"@": "owner"},
+                    "capture": false
+                },
+                {
+                    "type": "changing",
+                    "listener": {"@": "owner"},
+                    "capture": false
+                }
+            ]
+        },
+        "threeDRotY": {
+            "module": "js/components/hottextunit.reel",
+            "name": "HotTextUnit",
+            "properties": {
+                "element": {"#": "threeDRotY"},
+                "identifier": "yAngle",
+                "minValue": -360,
+                "maxValue": 360,
+                "acceptableUnits": ["\u00B0"],
+                "units": "\u00B0"
+            },
+            "bindings": {
+                "value": {
+                    "boundObject": {"@": "owner"},
+                    "boundObjectPropertyPath": "yAngle",
+                    "oneway": false
+                }
+            },
+            "listeners": [
+                {
+                    "type": "change",
+                    "listener": {"@": "owner"},
+                    "capture": false
+                },
+                {
+                    "type": "changing",
+                    "listener": {"@": "owner"},
+                    "capture": false
+                }
+            ]
+        },
+        "threeDRotZ": {
+            "module": "js/components/hottextunit.reel",
+            "name": "HotTextUnit",
+            "properties": {
+                "element": {"#": "threeDRotZ"},
+                "identifier": "zAngle",
+                "minValue": -360,
+                "maxValue": 360,
+                "acceptableUnits": ["\u00B0"],
+                "units": "\u00B0"
+            },
+            "bindings": {
+                "value": {
+                    "boundObject": {"@": "owner"},
+                    "boundObjectPropertyPath": "zAngle",
+                    "oneway": false
+                }
+            },
+            "listeners": [
+                {
+                    "type": "change",
+                    "listener": {"@": "owner"},
+                    "capture": false
+                },
+                {
+                    "type": "changing",
+                    "listener": {"@": "owner"},
+                    "capture": false
+                }
+            ]
+        },
+        "threeDPerspectiveDistance": {
+            "module": "js/components/hottextunit.reel",
+            "name": "HotTextUnit",
+            "properties": {
+                "element": {"#": "threeDPerspectiveDistance"}
+            }
+        },
+        "axisModeGroup": {
+            "module": "js/components/radio.reel",
+            "name": "RadioGroup",
+            "properties": {
+                "name": "rotationLG",
+                "selectedItem": {"@": "rdioLocal"},
+                "selectedIndex": 0
+            }
+        },
+        "rdioLocal": {
+            "module": "js/components/radio.reel",
+            "name": "Radio",
+            "properties": {
+                "element": {"#": "rdioLocal"},
+                "label": "Local",
+                "value": "Local",
+                "group": {"@": "axisModeGroup"},
+                "checked": true
+            }
+        },
+        "rdioGlobal": {
+            "module": "js/components/radio.reel",
+            "name": "Radio",
+            "properties": {
+                "element": {"#": "rdioGlobal"},
+                "label": "Global",
+                "value": "Global",
+                "group": {"@": "axisModeGroup"}
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+<section id="section" class="sectional">
+    <section id="axisMode" class="fieldCol rotation">
+        <label>Axis:</label>
+        <article class="fieldRow">
+            <div class="inputField">
+                <div id="rdioLocal"></div>
+            </div>
+        </article>
+        <article class="fieldRow">
+            <div class="inputField">
+                <div id="rdioGlobal"></div>
+            </div>
+        </article>
+    </section>
+    <hr />
+    <section class="fieldCol">
+        <label id="lblthreeDX">X:</label>
+        <article class="fieldRow threeCol">
+            <div>
+                <div class="inputField">
+                    <div id="threeDPosX"></div>
+                </div>
+            </div>
+            <div>
+                <div>
+                    <label id="lblthreeDY">Y: </label>
+                </div>
+                <div class="inputField">
+                    <div id="threeDPosY"></div>
+                </div>
+            </div>
+            <div>
+                <div>
+                    <label id="lblthreeDZ">Z: </label>
+                </div>
+                <div class="inputField">
+                    <div id="threeDPosZ"></div>
+                </div>
+            </div>
+        </article>
+    </section>
+    <hr />
+    <section class="fieldCol">
+        <label>X:</label>
+        <article class="fieldRow threeCol">
+            <div>
+                <div class="inputField">
+                    <div id="threeDRotX"></div>
+                </div>
+            </div>
+            <div>
+                <div>
+                    <label>Y: </label>
+                </div>
+                <div class="inputField">
+                    <div id="threeDRotY"></div>
+                </div>
+            </div>
+            <div>
+                <div>
+                    <label>Z: </label>
+                </div>
+                <div class="inputField">
+                    <div id="threeDRotZ"></div>
+                </div>
+            </div>
+        </article>
+    </section>
+    <hr />
+    <section class="fieldCol">
+        <label></label>
+        <article class="fieldRow oneCol">
+            <div>
+                <div>
+                    <label style="padding-right:14px;">Perspective Distance: </label>
+                </div>
+                <div class="inputField" >
+                    <div id="threeDPerspectiveDistance"></div>
+                </div>
+            </div>
+        </article>
+    </section>
+    <hr />
+    <section class="fieldCol">
+        <label></label>
+        <article class="fieldRow oneCol checkbox">
+            <div>
+                <div class="inputField">
+                    <input class="nj-skinned" type="checkbox" />
+                </div>
+                <div>
+                    <label> Flatten</label>
+                </div>
+            </div>
+        </article>
+    </section>
+</section>
+</body>
+</html>

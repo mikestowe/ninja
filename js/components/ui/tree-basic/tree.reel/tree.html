@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="tree.css">
+    <script type="text/montage-serialization">
+    {
+        "treeItem": {
+            "module" : "js/components/ui/tree-basic/treeItem.reel",
+            "name": "TreeItem",
+            "properties": {
+                "element": {"#": "treeItem"}
+            },
+            "bindings": {
+                "treeItemData": {
+                    "boundObject": {"@": "repetition1"},
+                    "boundObjectPropertyPath": "objectAtCurrentIteration",
+                    "oneway": true
+                },
+                "showIcon": {
+                    "boundObject": {"@": "owner"},
+                    "boundObjectPropertyPath": "showIcons",
+                    "oneway": true
+                }
+            }
+        },
+
+        "repetition1" : {
+            "module": "montage/ui/repetition.reel",
+            "name": "Repetition",
+            "properties": {
+                "element": {"#": "treeView"}
+            },
+            "bindings": {
+                "objects": {
+                    "boundObject": {"@": "owner"},
+                    "boundObjectPropertyPath": "treeViewDataObject",
+                    "oneway": true
+                }
+            }
+        },
+
+        "owner":{
+            "module": "js/components/ui/tree-basic/tree.reel",
+            "name": "Tree",
+            "properties" : {
+                "element": {"#": "atree"},
+                "components": [{"@": "repetition1"}]
+            }
+        }
+
+    }
+    </script>
+</head>
+<body>
+<div id="atree" class="atree">
+    <ul id="treeView" style="display:block;">
+        <li id="treeItem"></li>
+    </ul>
+</div>
+</body>
+</html>

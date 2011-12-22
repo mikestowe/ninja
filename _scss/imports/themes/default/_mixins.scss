@@ -1,0 +1,39 @@
+// <copyright>
+// This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+// No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+// (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+// </copyright>
+
+/*
+ * themes/themename/mixins.scss
+ * Mixins that are theme-dependent (e.g. sprite mixins, etc)
+ */
+
+$Mx:0;
+$My:0;
+$opacity:1;
+
+//Mixin to set the Image Sprite Sheet
+@mixin background-pos($Mx, $My, $Size_x,$Size_y) {
+
+background-image: url('../images/SpriteSheets/NinjaSpriteSheet2_5.png');
+@if $Size_x == 26px
+  {
+      @if $Size_y == 23px
+       {
+        $offset_x:30px;
+        $offset_y:27px;
+
+        $offset_x:$offset_x*$Mx* -1;
+        $offset_y:$offset_y*$My* -1;
+
+        background-position: $offset_x $offset_y;
+        background-repeat:no-repeat;
+        height:$Size_y;
+        width: $Size_x;
+        }
+  }
+
+
+}
+

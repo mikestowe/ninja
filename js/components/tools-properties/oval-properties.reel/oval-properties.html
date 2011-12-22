@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="oval-properties.css">
+
+        <script type="text/montage-serialization">
+        {
+            "hottext1": {
+                "module": "js/components/hottextunit.reel",
+                "name": "HotTextUnit",
+                "properties": {
+                    "element": {"#": "innerRadiusControl"},
+                    "minValue":0,
+                    "maxValue" :99,
+                    "value" :0,
+                    "acceptableUnits" : ["%"],
+                    "units" : "%"
+                }
+            },
+
+            "owner": {
+                "module": "js/components/tools-properties/oval-properties.reel",
+                "name": "OvalProperties",
+                "properties": {
+                    "element": {"#": "ovalProperties"},
+                    "innerRadius": {"@": "hottext1"}
+                }
+            }
+    	}
+	    </script>
+    </head>
+
+    <body>
+        <div id="ovalProperties">
+            <label class="label">Inner Radius:</label>
+            <div id="innerRadiusControl" class="label"></div>
+        </div>
+    </body>
+
+</html>

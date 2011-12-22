@@ -1,0 +1,33 @@
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
+.propControl .inputRow div
+{
+    float: left;
+}
+
+.propControl div div .propControl
+{
+    width: auto !important;
+}
+
+.propControl .inputRow div .prop-label
+{
+    width: 20px;
+    float:left;
+    margin: 3px 4px 2px 0;
+}
+
+.propControl .inputRow div .hottext,
+.propControl .inputRow div .hottextInput,
+.prop-controller .textfield
+{
+    border: 1px solid black;
+    width: 30px !important;
+    float:left;
+    margin: 2px 0;
+    text-align: center;
+}

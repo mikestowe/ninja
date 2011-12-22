@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<tree id="Materials">
+    <folder id="ninjaMaterials" label="Ninja Materials">
+	  <leaf id="UberMaterial" label="Uber" />
+        <leaf id="BumpMetalMaterial" label="Bump Metal" />
+    </folder>
+    <folder id="customMaterials" label="Custom Materials">
+        <leaf id="CheckerBoard" label="CheckerBoard" />
+        <leaf id="ShinyMetal" label="Shiny Metal" />
+    </folder>
+</tree>

@@ -1,0 +1,31 @@
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
+.colorChipContainer {
+    display:block;
+    cursor:default;
+    -webkit-user-select:none;
+    width:18px !important;
+    height:18px !important;
+    background-color: #000000;
+}
+
+.colorChipContainer .chipContainer button {
+    display: block;
+    border: 0;
+    padding: 0;
+    background: none;
+}
+
+.colortoolbar .chipContainer {
+	margin: 1px 1px 1px 1px !important;
+	width: 40px !important;
+	height: 20px !important;
+    border: 0;
+    padding: 0;
+    background-image: url(../../../../images/colorpanel/transparent.png) !important;
+    background-repeat: repeat !important;
+}

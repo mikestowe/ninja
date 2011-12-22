@@ -1,0 +1,97 @@
+<!DOCTYPE HTML>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="ink-bottle-properties.css">
+
+        <script type="text/montage-serialization">
+        {
+            "borderWidthHT": {
+                "module": "js/components/hottextunit.reel",
+                "name": "HotTextUnit",
+                "properties": {
+                    "element": {"#": "borderWidth"},
+                    "minValue": 1,
+                    "maxValue": 100,
+                    "value": 1,
+                    "acceptableUnits" : ["px", "pt"]
+                }
+            },
+
+            "strokeSizeHT": {
+                "module": "js/components/hottextunit.reel",
+                "name": "HotTextUnit",
+                "properties": {
+                    "element": {"#": "strokeSize"},
+                    "minValue": 1,
+                    "maxValue": 100,
+                    "value": 1,
+                    "decimalPlace": 10,
+                    "acceptableUnits" : ["px", "pt"]
+                }
+            },
+
+            "owner": {
+                "module": "js/components/tools-properties/ink-bottle-properties.reel",
+                "name": "InkBottleProperties",
+                "properties": {
+                    "element": {"#": "inkBottleProperties"},
+
+                    "_borderWidth": {"@": "borderWidthHT"},
+                    "_borderStyle": {"#": "borderStyleCB"},
+
+                    "_strokeSize": {"@": "strokeSizeHT"},
+
+                    "_useWebGL": {"#": "useWebGLCHIB"},
+                    "_materialsContainer": {"#": "materialsContainerIB"},
+                    "_strokeMaterial": {"#": "strokeMaterialIBCB"}
+                }
+            }
+        }
+	    </script>
+        
+    </head>
+
+    <body>
+        <div id="inkBottleProperties" class="subToolHolderPanel">
+
+            <div id="bordersContainer" class="leftLabel" style="padding-top: 3px;">
+                <label class="label"> Border:</label>
+                <div id="borderWidth" class="label"></div>
+                <label class="label"> Style:</label>
+                <select id="borderStyleCB" class="nj-skinned">
+                    <option value="none">none</option>
+                    <option value="solid" selected>solid</option>
+                    <option value="hidden">hidden</option>
+                    <option value="dotted">dotted</option>
+                    <option value="dashed">dashed</option>
+                    <option value="double">double</option>
+                    <option value="groove">groove</option>
+                    <option value="ridge">ridge</option>
+                    <option value="inset">inset</option>
+                    <option value="outset">outset</option>
+                </select>
+            </div>
+
+            <div id="strokesContainer" class="leftLabel" style="margin-left:25px; padding-top: 3px;">
+                <label class="label"> Stroke:</label>
+                <div id="strokeSize" class="label"></div>
+            </div>
+
+            <label class="label subOption"><input id="useWebGLCHIB" type="checkbox" name="useWebGLControl" class="checkBoxAlign"/> Use WebGL</label>
+
+            <div id="materialsContainerIB" class="leftLabel" style="padding-top: 3px;">
+                <label class="label"> Materials:</label>
+                <div id="strokeIconIB" class="pencilToolUp" style="float: left;"></div>
+                <select id="strokeMaterialIBCB" class="nj-skinned">
+                </select>
+            </div>
+        </div>
+    </body>
+
+</html>

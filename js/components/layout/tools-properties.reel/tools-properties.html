@@ -1,0 +1,196 @@
+<!DOCTYPE HTML>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="tools-properties.css">
+
+        <script type="text/montage-serialization">
+        {
+
+            "selectionProperties1": {
+                "module": "js/components/tools-properties/selection-properties.reel",
+                "name": "SelectionProperties",
+                "properties": {
+                    "element": {"#": "selectionProperties"}
+                }
+            },
+            "subSelectionProperties1": {
+                "module": "js/components/tools-properties/subselection-properties.reel",
+                "name": "SubSelectionProperties",
+                "properties": {
+                    "element": {"#": "subSelectionProperties"}
+                }
+            },
+            "object3DProperties1": {
+                "module": "js/components/tools-properties/object3d-properties.reel",
+                "name": "Object3DProperties",
+                "properties": {
+                    "element": {"#": "object3DProperties"}
+                }
+            },
+            "tagProperties1": {
+                "module": "js/components/tools-properties/tag-properties.reel",
+                "name": "TagProperties",
+                "properties": {
+                    "element": {"#": "tagProperties"}
+                }
+            },
+            "penProperties1": {
+                "module": "js/components/tools-properties/pen-properties.reel",
+                "name": "PenProperties",
+                "properties": {
+                    "element": {"#": "penProperties"}
+                }
+            },
+            "textProperties1": {
+                "module": "js/components/tools-properties/text-properties.reel",
+                "name": "TextProperties",
+                "properties": {
+                    "element": {"#": "textProperties"}
+                }
+            },
+            "shapeProperties1": {
+                "module": "js/components/tools-properties/shape-properties.reel",
+                "name": "ShapeProperties",
+                "properties": {
+                    "element": {"#": "shapeProperties"}
+                },
+                "bindings": {
+                    "selectedSubTool": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "toolsData.selectedSubTool",
+                        "oneway": true
+                    },
+                    "toolsData": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "toolsData",
+                        "oneway": true
+                    }
+                }
+            },
+            "pencilProperties1": {
+                "module": "js/components/tools-properties/pencil-properties.reel",
+                "name": "PencilProperties",
+                "properties": {
+                    "element": {"#": "pencilProperties"}
+                }
+            },
+            "brushProperties1": {
+                "module": "js/components/tools-properties/brush-properties.reel",
+                "name": "BrushProperties",
+                "properties": {
+                    "element": {"#": "brushProperties"}
+                }
+            },
+            "fillProperties1": {
+                "module": "js/components/tools-properties/fill-properties.reel",
+                "name": "FillProperties",
+                "properties": {
+                    "element": {"#": "fillProperties"}
+                }
+            },
+            "inkbottleProperties1": {
+                "module": "js/components/tools-properties/ink-bottle-properties.reel",
+                "name": "InkBottleProperties",
+                "properties": {
+                    "element": {"#": "inkbottleProperties"}
+                }
+            },
+            "eyedropperProperties1": {
+                "module": "js/components/tools-properties/eyedropper-properties.reel",
+                "name": "EyedropperProperties",
+                "properties": {
+                    "element": {"#": "eyedropperProperties"}
+                }
+            },
+            "eraserProperties1": {
+                "module": "js/components/tools-properties/eraser-properties.reel",
+                "name": "EraserProperties",
+                "properties": {
+                    "element": {"#": "eraserProperties"}
+                }
+            },
+            "rotateStageProperties1": {
+                "module": "js/components/tools-properties/rotate-stage-properties.reel",
+                "name": "RotateStageProperties",
+                "properties": {
+                    "element": {"#": "rotateStageProperties"}
+                }
+            },
+            "panProperties1": {
+                "module": "js/components/tools-properties/pan-properties.reel",
+                "name": "PanProperties",
+                "properties": {
+                    "element": {"#": "panProperties"}
+                }
+            },
+            "zoomProperties1": {
+                "module": "js/components/tools-properties/zoom-properties.reel",
+                "name": "ZoomProperties",
+                "properties": {
+                    "element": {"#": "zoomProperties"}
+                }
+            },
+            
+            "owner": {
+                "module": "js/components/layout/tools-properties.reel",
+                "name": "ToolsProperties",
+                "properties": {
+                    "element": {"#": "toolsProperties"},
+                    "selectionProperties":          {"@": "selectionProperties1"},
+                    "subSelectionProperties":       {"@": "subSelectionProperties1"},
+                    "rotate3DProperties":           {"@": "object3DProperties1"},
+                    "translate3DProperties":        {"@": "object3DProperties1"},
+                    "tagProperties":                {"@": "tagProperties1"},
+                    "penProperties":                {"@": "penProperties1"},
+                    "textProperties":               {"@": "textProperties1"},
+                    "shapeProperties":              {"@": "shapeProperties1"},
+                    "pencilProperties":             {"@": "pencilProperties1"},
+                    "brushProperties":              {"@": "brushProperties1"},
+                    "fillProperties":               {"@": "fillProperties1"},
+                    "inkbottleProperties":          {"@": "inkbottleProperties1"},
+                    "eyedropperProperties":         {"@": "eyedropperProperties1"},
+                    "eraserProperties":             {"@": "eraserProperties1"},
+                    "rotateStageProperties":        {"@": "rotateStageProperties1"},
+                    "panProperties":                {"@": "panProperties1"},
+                    "zoomProperties":               {"@": "zoomProperties1"}
+                },
+                "bindings": {
+                    "currentSelectedTool": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "toolsData.selectedTool",
+                        "oneway": true
+                    }
+                }
+            }
+    	}
+	    </script>
+        
+    </head>
+
+    <body>
+        <div id="toolsProperties" class="panelBackground">
+            <div id="selectionProperties"></div>
+            <div id="subSelectionProperties"></div>
+            <div id="object3DProperties"></div>
+            <div id="tagProperties"></div>
+            <div id="penProperties"></div>
+            <div id="textProperties"></div>
+            <div id="shapeProperties"></div>
+            <div id="pencilProperties"></div>
+            <div id="brushProperties"></div>
+            <div id="fillProperties"></div>
+            <div id="inkbottleProperties"></div>
+            <div id="eyedropperProperties"></div>
+            <div id="eraserProperties"></div>
+            <div id="rotateStageProperties"></div>
+            <div id="panProperties"></div>
+            <div id="zoomProperties"></div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,38 @@
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
+.documentEntry span
+{
+    /*display: inline-block;*/
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Causes ... to appear ?? */
+    max-width:100px;
+}
+
+.documentEntry img {
+    opacity: 0.5; /* 50% */
+    padding-left: 5px;
+    width: 12px;
+    height: 12px;
+    -webkit-transition: opacity 0.2s ease;
+    transition: opacity 0.2s ease;
+}
+
+.documentEntry:hover,
+.documentEntry:active,
+.documentEntry.activeTab {
+    /*background-color: #7f7f7f; *//* rgb(127, 127, 127); */
+}
+
+.documentEntry img:hover {
+    opacity: 1.0; /* 100% */
+}
+
+
+.documentEntry span.dirty:before{
+    content: "*";
+}

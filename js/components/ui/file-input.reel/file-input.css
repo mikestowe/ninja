@@ -1,0 +1,34 @@
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
+.fileInput {
+    float: left;
+}
+
+.fileInput .file-path {
+    width: 80% !important;
+    float: left;
+}
+
+.fileInput .browse-button {
+    display: block;
+    width: 20px;
+    height: 20px;
+    float: left;
+    background-color: transparent !important;
+    border: 0 !important;
+    text-indent: -9999px;
+    padding: 0 !important;
+    background: url(../../../../images/tools/zoom_up.png) transparent no-repeat right !important;
+
+    opacity: 0.7;
+    margin: 1px 0 0 4px;
+    cursor: pointer;
+}
+
+.fileInput .browse-button:hover {
+    opacity: 1;
+}

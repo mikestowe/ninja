@@ -1,0 +1,4 @@
+/* <notice>
+ Code from http://http://codemirror.net/ and https://github.com/marijnh/CodeMirror<br/>
+ License https://github.com/marijnh/CodeMirror/blob/master/LICENSE<br/>
+ </notice> */

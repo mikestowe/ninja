@@ -1,0 +1,174 @@
+<!DOCTYPE HTML>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="tools-list.css">
+        <script type="text/montage-serialization">
+        {
+            "toolbutton1": {
+                "module": "js/components/layout/tool-button.reel",
+                "name": "ToolButton",
+                "properties": {
+                    "element": {"#": "toolbutton"}
+                },
+                "bindings": {
+                    "data": {
+                        "boundObject": {"@": "repetition1"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration",
+                        "oneway": true
+                    }
+                }
+            },
+
+            "repetition1": {
+                "module": "montage/ui/repetition.reel",
+                "name": "Repetition",
+                "properties": {
+                    "element": {"#": "toolscontainer"}
+                },
+                "bindings": {
+                    "objects": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "toolsData.defaultToolsData",
+                        "oneway": true
+                    }
+                }
+            },
+
+            "SelectionTool1": {
+                "module": "js/tools/SelectionTool",
+                "name": "SelectionTool"
+            },
+            "SubselectionTool1": {
+                "module": "js/tools/SubSelectTool",
+                "name": "SubSelectTool"
+            },
+            "Rotate3DTool1": {
+                "module": "js/tools/RotateObject3DTool",
+                "name": "RotateObject3DTool"
+            },
+            "Translate3DTool1": {
+                "module": "js/tools/TranslateObject3DTool",
+                "name": "TranslateObject3DTool"
+            },
+            "TagTool1": {
+                "module": "js/tools/TagTool",
+                "name": "TagTool"
+            },
+            "PenTool1": {
+                "module": "js/tools/PenTool",
+                "name": "PenTool"
+            },
+            "TextTool1": {
+                "module": "js/tools/TextTool",
+                "name": "TextTool"
+            },
+            "ShapeTool1": {
+                "module": "js/tools/ShapeTool",
+                "name": "ShapeTool"
+            },
+            "OvalTool1": {
+                "module": "js/tools/OvalTool",
+                "name": "OvalTool"
+            },
+            "RectTool1": {
+                "module": "js/tools/RectTool",
+                "name": "RectTool"
+            },
+            "LineTool1": {
+                "module": "js/tools/LineTool",
+                "name": "LineTool"
+            },
+            "PencilTool1": {
+                "module": "js/tools/PencilTool",
+                "name": "PencilTool"
+            },
+            "BrushTool1": {
+                "module": "js/tools/BrushTool",
+                "name": "BrushTool"
+            },
+            "FillTool1": {
+                "module": "js/tools/FillTool",
+                "name": "FillTool"
+            },
+            "InkBottleTool1": {
+                "module": "js/tools/InkBottleTool",
+                "name": "InkBottleTool"
+            },
+            "EyedropperTool1": {
+                "module": "js/tools/EyedropperTool",
+                "name": "EyedropperTool"
+            },
+            "EraserTool1": {
+                "module": "js/tools/EraserTool",
+                "name": "EraserTool"
+            },
+            "RotateStageTool3D1": {
+                "module": "js/tools/RotateStage3DTool",
+                "name": "RotateStage3DTool"
+            },
+            "PanTool1": {
+                "module": "js/tools/PanTool",
+                "name": "PanTool"
+            },
+            "ZoomTool1": {
+                "module": "js/tools/ZoomTool",
+                "name": "ZoomTool"
+            },
+
+            "owner": {
+                "module": "js/components/layout/tools-list.reel",
+                "name": "ToolsList",
+                "properties": {
+                    "element": {"#": "toolsList"},
+                    "SelectionTool":          {"@": "SelectionTool1"},
+                    "SubselectionTool":       {"@": "SubselectionTool1"},
+                    "Rotate3DTool":           {"@": "Rotate3DTool1"},
+                    "Translate3DTool":        {"@": "Translate3DTool1"},
+                    "TagTool":                {"@": "TagTool1"},
+                    "PenTool":                {"@": "PenTool1"},
+                    "TextTool":               {"@": "TextTool1"},
+                    "ShapeTool":              {"@": "ShapeTool1"},
+                    "OvalTool":               {"@": "OvalTool1"},
+                    "RectTool":               {"@": "RectTool1"},
+                    "LineTool":               {"@": "LineTool1"},
+                    "PencilTool":             {"@": "PencilTool1"},
+                    "BrushTool":              {"@": "BrushTool1"},
+                    "FillTool":               {"@": "FillTool1"},
+                    "InkBottleTool":          {"@": "InkBottleTool1"},
+                    "EyedropperTool":         {"@": "EyedropperTool1"},
+                    "EraserTool":             {"@": "EraserTool1"},
+                    "RotateStageTool3D":      {"@": "RotateStageTool3D1"},
+                    "PanTool":                {"@": "PanTool1"},
+                    "ZoomTool":               {"@": "ZoomTool1"},
+                    "components": [
+                        {"@": "repetition1"}
+                    ]
+                }
+            }
+
+
+
+    	}
+	    </script>
+
+    </head>
+
+    <body>
+        <div id="toolsList" class="toolsList">
+            <div id="toolscontainer" class="toolscontainer">
+                <div id="toolbutton" class="toolbutton"></div>
+            </div>
+            <!-- TODO: Remove and add as a component -->
+            <hr class="toolbar_hr" />
+            <div id="colortoolbar"></div>
+        </div>
+
+    </body>
+
+</html>

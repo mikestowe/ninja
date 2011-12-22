@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html lang="en">
+<head>
+    <script type="text/montage-serialization">
+        {
+            "resizer1": {
+                "module": "js/panels/Resizer",
+                "name": "Resizer",
+                "properties": {
+                    "element": {"#": "resizeBar"},
+                    "panel": {"#": "panel"},
+                    "isVertical": true
+                }
+            },
+
+            "slot1": {
+                "module": "montage/ui/slot.reel",
+                "name": "Slot",
+                "properties": {
+                    "element": {"#": "panelObject"}
+                }
+            },
+
+            "owner": {
+                "module": "js/panels/Panel.reel",
+                "name": "Panel",
+                "properties": {
+                    "element": {"#": "panel"},
+                    "resizer": {"@": "resizer1"},
+                    "panelContent": {"@": "slot1"}
+
+                }
+            }
+        }
+        </script>
+
+	</head>
+<body>
+
+<article id="panel">
+    <div id="head" class="head">
+        <span class="arrowIcon"></span>
+        <span class="panelTitle">Panel</span>
+        <span class="closeBtn"></span>
+    </div>
+    <div class="panelBody">
+        <div class="panelBodyContent">
+            <div id="panelObject" class="panelObjects">
+
+            </div>
+        </div>
+    </div>
+    <div id="resizeBar" class="resizeBar"></div>
+</article>
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+       "directories": {
+           "lib": ""
+       },
+       "mappings": {
+           "montage": "m-js/"
+       }
+}

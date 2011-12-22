@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="document-bar.css">
+
+    <script type="text/montage-serialization">
+        {
+            "hottext1": {
+                "module": "js/components/hottextunit.reel",
+                "name": "HotTextUnit",
+                "properties": {
+                    "element": {"#": "zoomControlHT"},
+                    "minValue":25,
+                    "maxValue" :2000,
+                    "stepSize" :5,
+                    "acceptableUnits" : ["%"],
+                    "units" : "%"
+                },
+                "bindings": {
+                    "value": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "zoomFactor",
+                        "oneway": false
+                    }
+                }
+            },
+
+            "owner": {
+                "module": "js/components/layout/document-bar.reel",
+                "name": "DocumentBar",
+                "properties": {
+                    "element": {"#": "documentBar"},
+                    "designView": {"#": "design"},
+                    "codeView": {"#": "code"},
+                    "zoomControl": {"@": "hottext1"}
+                }
+            }
+    	}
+	</script>
+   
+
+</head>
+
+<body>
+    <div id="documentBar">
+        <input class="zoomHotText label" id="zoomControlHT"/>
+        <span class="design-view" id="design">Design View</span>
+        <span class="code-view" id="code">Code View</span>
+    </div>
+</body>
+</html>

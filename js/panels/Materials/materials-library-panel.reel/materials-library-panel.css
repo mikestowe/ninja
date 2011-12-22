@@ -1,0 +1,47 @@
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
+.materials_library_panel hr {
+  float: left;
+  clear: both;
+  width: 100%;
+  display: block;
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0.5, #1d1d1d), color-stop(0.75, #424242));
+  border: none;
+  height: 2px;
+  margin: 4px 0px 4px 0px;
+}
+
+
+#ml_buttons {
+    clear:both;
+    float: left;
+    margin: 0px -4px 0px 4px;
+    width: 97%;
+}
+
+#ml_buttons button {
+  height: 22px;
+  overflow: hidden;
+  display: block;
+  cursor: pointer;
+  margin: 0px 1px;
+}
+
+#materialsLibraryPanel-ml_add_btn {
+    float: left;
+    width: 60px;
+}
+
+#materialsLibraryPanel-ml_copy_btn {
+    float: left;
+    width: 60px;
+}
+
+#materialsLibraryPanel-ml_delete_btn {
+    float: right;
+    width: 60px;
+}

@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="iconsList.css">
+    <script type="text/montage-serialization">
+    {
+        "pickerIcon": {
+            "module" : "js/components/ui/icon-list-basic/icon.reel",
+            "name": "Icon",
+            "properties": {
+                "element": {"#": "icon"}
+            },
+            "bindings": {
+                "icondata": {
+                    "boundObject": {"@": "repetition1"},
+                    "boundObjectPropertyPath": "objectAtCurrentIteration",
+                    "oneway": true
+                }
+            }
+        },
+
+        "repetition1" : {
+            "module": "montage/ui/repetition.reel",
+            "name": "Repetition",
+            "properties": {
+                "element": {"#": "iconsView"}
+            },
+            "bindings": {
+                "objects": {
+                    "boundObject": {"@": "owner"},
+                    "boundObjectPropertyPath": "iconsViewDataObject",
+                    "oneway": true
+                }
+            }
+
+        },
+
+        "owner" : {
+            "module" : "js/components/ui/icon-list-basic/iconsList.reel",
+            "name" : "IconsList",
+            "properties" : {
+                "element" : {"#": "list"},
+                "components": [{"@": "repetition1"}]
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+<div id="list" class="list">
+    <div id="iconsView">
+        <div id="icon"></div>
+    </div>
+</div>
+</body>
+</html>

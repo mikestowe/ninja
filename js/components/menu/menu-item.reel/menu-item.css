@@ -1,0 +1,72 @@
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
+.menuItem .menuName {
+    font-family: 'Droid Sans', sans-serif;
+    font-size: 10pt;
+    padding: 3px 12px 3px 8px;
+    text-shadow : 1px 1px 1px #000000;
+}
+
+.menuItem:hover {
+    background-color: #7f7f7f;
+}
+
+.menubg .subEntries {
+    top: 0%;
+    left: 100%;
+    width: auto;
+    white-space:nowrap;
+}
+
+.itemSeparator:hover {
+    background-color: #474747;
+}
+
+.separator{
+    width:100%;
+    height:2px;
+    position: relative;
+    border: 1px groove #474747 ;
+    border-radius: 2px;
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#474747), to(#cccccc));
+    opacity: 0.5;
+}
+
+.disabled {
+    opacity: 0.5;
+}
+
+.disabled:hover {
+    background-color: #474747;
+}
+
+.menubg .check {
+    float:left;
+    background-image: url(../../../../images/menu/checkmark.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 10px;
+    height: 15px;
+    opacity: 0;
+}
+
+.menubg.submenu .rightArrow {
+    float: right;
+    background-image:url('../../../../images/menu/arrow.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 10px;
+    height: 15px;
+    position: absolute;
+    right:4px;
+    top: 5px;
+    margin-left: 8px;
+}
+
+.subEntries.subMenu .rightArrow {
+    opacity: 0;
+}

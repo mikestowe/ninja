@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<tree id="Components">
+    <folder id="montageComponents" label="Montage Components">
+        <leaf id="Button" label="Button" />
+        <leaf id="Checkbox" label="Checkbox" />
+        <leaf id="DynamicText" label="Dynamic Text" />
+        <leaf id="FlowController" label="FlowController" />
+        <leaf id="HotText" label="HotText" />
+        <leaf id="HotTextUnit" label="HotTextUnit" />
+        <leaf id="ImageContainer" label="Image Container" />
+        <leaf id="Progress" label="Progress" />
+        <leaf id="Scrollview" label="Scrollview" />
+        <leaf id="Slider" label="Slider" />
+        <leaf id="TextArea" label="TextArea" />
+        <leaf id="Textfield" label="Textfield" />
+        <leaf id="Toggle" label="Toggle" />
+    </folder>
+    <folder id="metaComponents" label="Meta Components">
+        <leaf id="Condition" label="Condition" />
+        <leaf id="Repetition" label="Repetition" />
+        <leaf id="Slot" label="Slot" />
+        <leaf id="Substitution" label="Substitution" />
+    </folder>
+    <folder id="htmlPresets" label="HTML Components">
+        <leaf id="html_button" label="Button" />
+        <leaf id="html_input" label="Text Input" />
+    </folder>
+</tree>
