@@ -10,12 +10,61 @@
     <link rel="stylesheet" type="text/css" href="new-file-location.css">
     <script type="text/montage-serialization">
     {
+        "hottextHeight": {
+            "module": "js/components/hottextunit.reel",
+            "name": "HotTextUnit",
+            "properties": {
+                "element": {"#": "templateHeight"},
+                "minValue":25,
+                "maxValue" :2000,
+                "stepSize" :5,
+                "acceptableUnits" : ["px"],
+                "units" : "px"
+            },
+            "bindings": {
+                "value": {
+                    "boundObject": {"@": "owner"},
+                    "boundObjectPropertyPath": "templateHeight",
+                    "oneway": false
+                }
+            }
+        },
+
+        "hottextWidth": {
+            "module": "js/components/hottextunit.reel",
+            "name": "HotTextUnit",
+            "properties": {
+                "element": {"#": "templateWidth"},
+                "minValue":25,
+                "maxValue" :2000,
+                "stepSize" :5,
+                "acceptableUnits" : ["px"],
+                "units" : "px"
+            },
+            "bindings": {
+                "value": {
+                    "boundObject": {"@": "owner"},
+                    "boundObjectPropertyPath": "templateWidth",
+                    "oneway": false
+                }
+            }
+        },
+
+        "fileInputField":{
+            "module": "js/components/ui/FilePicker/file-input-field.reel",
+            "name": "FileInputField",
+            "properties": {
+                "element": {"#": "fileInputField"}
+            }
+        },
 
         "owner":{
             "module": "js/io/workflow/newFileDialog/new-file-location.reel",
             "name": "NewFileLocation",
             "properties": {
-                "element": {"#": "newfileLocation"}
+                "element": {"#": "newfileLocation"},
+                "fileInputField": {"@": "fileInputField"},
+                "newFileName": {"#": "newFileName"}
             }
         }
     }
@@ -27,14 +76,14 @@
         <div class="template"></div>
     </div>
     <div class="locationSelection">
-        <div><span>NAME:</span><input id="newFileName" class="nj-skinned newFileName" type="search" value="" /></div>
+        <div><span class="nameText">NAME:</span><input id="newFileName" class="nj-skinned newFileName" type="search" value="" /></div>
         <div>
             <span>DIRECTORY:</span>
-            <input type="search" id="newFileDirectory" class="nj-skinned newFileDirectory" />
-            <img id="findDirectory" class="findDirectory" src="images/panels/project-panel/icon-button-search.png" />
+            <div id="fileInputField"></div>
         </div>
-        <div><span>HEIGHT:</span><span class="templateHeight" id="templateHeight">176 px</span></div>
-        <div><span>WIDTH:</span><span class="templateWidth" id="templateWidth">220 px</span></div>
+        <br />
+        <div><span>WIDTH:</span><span class="templatePx" id="templateWidth"></span></div>
+        <div><span>HEIGHT:</span><span class="templatePx" id="templateHeight"></span></div>
     </div>
 </div>
 </body>

@@ -6,11 +6,21 @@
 
 .newfile{
     font-size:12px;
-    width:510px;
-    height:500px;
+    width:650px;
+    height:350px;
     padding-left: 15px;
-    padding-top: 15px;
+    padding-bottom:25px;
     background-color:#313131;
+    color:#ffffff;
+}
+
+.newfile .title{
+    font-size:14px;
+    height:15px;
+    padding:5px;
+    text-align: center;
+    font-weight: bold;
+    color: #C1C1C1;
 }
 
 .newfile .container{
@@ -23,7 +33,7 @@
     float:left;
     width:27%;
     height:90%;
-    overflow-x:hidden;
+    overflow-x:auto;
     overflow-y:auto
 }
 
@@ -38,24 +48,16 @@
     border: 1px groove #000000;
     overflow: auto;
     min-height:150px;
-    height:55%;
+    height:58%;
     width:auto;
+    padding:5px;
 }
 
 .newfile .right-bottom{
     border: 1px groove #000000;
     overflow: auto;
-    height:45%;
-    padding: 10px;
-}
-
-.newfile .driversList{
-    padding: 3px;
-    text-align: center;
-}
-
-.newfile .driversList:hover{
-    cursor:pointer;
+    height:42%;
+    padding: 15px;
 }
 
 .newfile .projectTypeHeader{
@@ -65,18 +67,18 @@
     font-weight: bold;
 }
 
-
-
-.newfile .highlighted{
-    background-color: #343434;
-}
-
-
 .newfile .buttons{
     float:right;
     margin-top: 7px;
 }
 
+.newfile .errorMsg{
+    float:left;
+    margin-top: 7px;
+}
+.newfile .errorMsg span{
+    color: #BF3B3B;
+}
 
 .newfile .disable{
     color:#5f5f5f;
@@ -91,5 +93,64 @@
     font-weight: bold;
 }
 
+.newfile .atreeItem .name{
+    padding: 3px;
+}
 
+.newfile .atreeItem .selected{
+    background-color: #3f3f3f;
+}
 
+.newfile .icon .selected{
+    background-color: #7f7f7f;
+}
+
+.newfile .icon{
+    height:90px;
+}
+
+.newfile .icon .iconLabel{
+    margin-top:4px;
+    max-width:90%;
+    white-space: normal;
+    padding-bottom:4px;
+    overflow: visible;
+}
+
+.newfile .icon .iconImg{
+    margin-left:25px;
+}
+
+.newfile .okButton{
+    margin-right:25px;
+    -webkit-box-align: center;
+    text-align: center;
+    cursor: default;
+    padding: 0px 6px 0px;
+    border:2px solid #d1d1d1;
+    background-color: #e1e1e1;
+    box-sizing: border-box;
+    border-radius:10px;
+    background-image: -webkit-linear-gradient(bottom, #e1e1e1 13%, #d1d1d1 58%, #e1e1e1 40%);
+    cursor:pointer;
+}
+
+.newfile .cancelButton{
+    -webkit-box-align: center;
+    text-align: center;
+    cursor: default;
+    padding: 0px 6px 0px;
+    border:2px solid #d1d1d1;
+    background-color: #e1e1e1;
+    box-sizing: border-box;
+    border-radius:10px;
+    background-image: -webkit-linear-gradient(bottom, #e1e1e1 13%, #d1d1d1 58%, #e1e1e1 40%);
+    cursor:pointer;
+}
+
+.newfile input[type="button"]:disabled{
+    background-color: #a1a1a1;
+    border:2px solid #a1a1a1;
+    background-image:none;
+    cursor:auto;
+}

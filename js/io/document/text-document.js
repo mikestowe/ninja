@@ -17,16 +17,8 @@ var TextDocument = exports.TextDocument = Montage.create(baseDocumentModule.Base
         }
     },
 
-    _textArea: { value: null, enumerable: false },
-
-    // Temporary Save the source
     _source: { value: null, enumerable: false},
 
-    textArea: {
-        get: function() { return this._textArea;},
-        set: function(value) { this._textArea = value; }
-    },
-    
     source: {
         get: function() { return this._source;},
         set: function(value) { this._source = value;}
@@ -53,10 +45,11 @@ var TextDocument = exports.TextDocument = Montage.create(baseDocumentModule.Base
     // PUBLIC METHODS
     initialize: {
         value: function(doc, uuid, textArea, callback) {
-            this.init(doc.name, doc.uri, doc.type, textArea, uuid, callback);
-            this.textArea = textArea.firstChild;
+            this.init(doc.name, doc.uri, doc.type, textArea, uuid);
+
             this.currentView = "code";
-            this._loadContent();
+            this.textArea = textArea;
+//            this._loadContent();
         }
     },
 

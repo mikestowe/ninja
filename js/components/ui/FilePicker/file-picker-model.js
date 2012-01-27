@@ -79,6 +79,12 @@ exports.FilePickerModel = (require("montage/core/core").Montage).create(require(
             value:null
         },
 
+        callbackScope:{
+            writable:true,
+            enumerable:true,
+            value:null
+        },
+
         /**
          * stores the previously viewed directory uris in an array [FILO] per file picker instance
          */

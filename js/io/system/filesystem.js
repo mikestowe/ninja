@@ -4,31 +4,23 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var FileIo = require("js/io/system/fileio").FileIo,
-	ProjectIo = 				require("js/io/system/projectio").ProjectIo,
-	ShellApi =					require("js/io/system/shellapi").ShellApi,
-	ComponentsPanelBase = 		require("js/panels/Components/ComponentsPanelBase.reel").ComponentsPanelBase;
+////////////////////////////////////////////////////////////////////////
+//
+var Montage = 		require("montage/core/core").Montage, 
+	FileIo = 		require("js/io/system/fileio").FileIo,
+	ProjectIo = 	require("js/io/system/projectio").ProjectIo,
+	CoreIoApi =		require("js/io/system/coreioapi").CoreIoApi;
 ////////////////////////////////////////////////////////////////////////
 //Exporting as File System
-exports.FileSystem = (require("montage/core/core").Montage).create(Object.prototype, {
+exports.FileSystem = Montage.create(Object.prototype, {
     ////////////////////////////////////////////////////////////////////
     //
-    init: {
-    	enumerable: false,
-    	value: function () {
-    		//Called by NinjaMain
-    		
-    		
-    		
-    		//Calling Shell API to initialize
-    		ShellApi.init();
-    	}
-    },
+    
     
     shellApiHandler :{
         enumerable:true,
         writable:false,
-        value:ShellApi
+        value:CoreIoApi
     },
     
     
@@ -78,8 +70,8 @@ exports.FileSystem = (require("montage/core/core").Montage).create(Object.protot
                 //documentManagerModule.DocumentManager.openDocument({"type": "html"});
     		} else {
     			//
-	    		var file = {uri: ShellApi.openShellDialog({type: 'file', action: 'new'})}, type;
-    			var check = ShellApi.fileExists(file);
+	    		var file = {uri: CoreIoApi.openShellDialog({type: 'file', action: 'new'})}, type;
+    			var check = CoreIoApi.fileExists(file);
     			
     			
     			
@@ -117,13 +109,13 @@ exports.FileSystem = (require("montage/core/core").Montage).create(Object.protot
     						
     						//TODO: Improve logic
     						//Checking for file to exist in files template folder
-    						var templateCheck = ShellApi.fileExists({uri: window.NativeShellApp.GetKnownFolder('appsource')+'\\document-templates\\files\\template.'+type}), content;
+    						var templateCheck = CoreIoApi.fileExists({uri: window.NativeShellApp.GetKnownFolder('appsource')+'\\document-templates\\files\\template.'+type}), content;
     						//
     						if (templateCheck.success) {
     							switch (check.status) {
     								case 204:
     									//Template exists, so opening and getting contents to be used when creating file
-    									content = ShellApi.openFile({uri: 'template.'+type});
+    									content = CoreIoApi.openFile({uri: 'template.'+type});
     									if (content.content) {
     										file.content = content.content;
     									} else {
@@ -169,7 +161,7 @@ switch (type.toLowerCase()) {
     						
     						
     						
-    						var create = ShellApi.createFile(file);
+    						var create = CoreIoApi.createFile(file);
     						if (create.success) {
     							switch (create.status) {
     								case 201:
@@ -239,8 +231,8 @@ switch (type.toLowerCase()) {
                 //documentManagerModule.DocumentManager.openDocument({"type": "html"});
     		} else {
     			//
-	    		var directory = {uri: ShellApi.openShellDialog({type: 'directory', action: 'new'})};
-    			var check = ShellApi.directoryExists(directory);
+	    		var directory = {uri: CoreIoApi.openShellDialog({type: 'directory', action: 'new'})};
+    			var check = CoreIoApi.directoryExists(directory);
     			//
     			if (check.success) {
     				switch (check.status) {
@@ -249,7 +241,7 @@ switch (type.toLowerCase()) {
     						break;
     					case 404:
     						//Directory does not exists, ready to be created
-    						var create = ShellApi.createDirectory(directory);
+    						var create = CoreIoApi.createDirectory(directory);
     						if (create.success) {
     							switch (create.status) {
     								case 201:
@@ -294,7 +286,7 @@ switch (type.toLowerCase()) {
     	enumerable: false,
     	value: function (file) {
     		//Checking for file to exist
-    		var check = ShellApi.fileExists(file), createdFile = null;
+    		var check = CoreIoApi.fileExists(file), createdFile = null;
     		//
     		if (check.success) {
     			switch (check.status) {
@@ -303,7 +295,7 @@ switch (type.toLowerCase()) {
     					break;
     				case 404:
     					//File does not exists, ready to be created
-    					var create = ShellApi.createFile(file);
+    					var create = CoreIoApi.createFile(file);
     					if (create.success) {
     						switch (create.status) {
     							case 201:
@@ -357,7 +349,7 @@ switch (type.toLowerCase()) {
     				//TODO: Add cloud integration
     			} else {
     				//Getting file URI from native prompt
-    				uri = ShellApi.openShellDialog({type: 'file', action: 'open'});
+    				uri = CoreIoApi.openShellDialog({type: 'file', action: 'open'});
     			}
     		}
     		//Checking for a valid URI
@@ -378,7 +370,7 @@ switch (type.toLowerCase()) {
        		//Opening file via shell
        		function shellOpenFile (f) {
        			//Getting string from file
-	       		var doc = ShellApi.openFile({uri: f}), type = f.split('.');
+	       		var doc = CoreIoApi.openFile({uri: f}), type = f.split('.');
 	       		//Splitting to get file extension
 	       		type = type[type.length-1];
 	       		//TODO: Fix this HACK to generate string
@@ -387,7 +379,7 @@ switch (type.toLowerCase()) {
 	       			dir_str += dir[i] + '\\';
 	       		}
 	       		//Starting an instance of the shell server on directory
-	       		server = ShellApi.startServer(dir_str);
+	       		server = CoreIoApi.startServer(dir_str);
     			//Opening file in app
     			FileIo.open(doc, type, f, server);
        		}
@@ -439,7 +431,7 @@ switch (type.toLowerCase()) {
     	value: function (directory) {
     		var mjs_dir = {uri: directory.uri};
     		mjs_dir.uri += '\\m-js';
-    		var mjs_check = ShellApi.directoryExists(mjs_dir);
+    		var mjs_check = CoreIoApi.directoryExists(mjs_dir);
     		//
     		if (mjs_check.success) {
     			switch (mjs_check.status) {
@@ -455,7 +447,7 @@ switch (type.toLowerCase()) {
     					
     					
     					//Creating m-js folder and copying contents
-    					var mjs_folder = ShellApi.createDirectory(mjs_dir);
+    					var mjs_folder = CoreIoApi.createDirectory(mjs_dir);
     					if (mjs_folder.success) {
     						switch (mjs_folder.status) {
     							case 201:
@@ -463,12 +455,12 @@ switch (type.toLowerCase()) {
     								
     								
     								var temp_dir = window.NativeShellApp.GetKnownFolder('appsource')+'\\user-document-templates\\montage-application\\systemio\\new\\project\\montage';
-    								var mjs_deps = ShellApi.createDirectory({uri: mjs_dir.uri+'\\deps'});
+    								var mjs_deps = CoreIoApi.createDirectory({uri: mjs_dir.uri+'\\deps'});
     								
     								//Folder created, now copying contents
-    								var copy_lib 	= ShellApi.copyDirectory({sourceUri: window.NativeShellApp.GetKnownFolder('frameworksource')+'\\lib', destUri: mjs_dir.uri+'\\lib'}),
-    									copy_deps 	= ShellApi.copyDirectory({sourceUri: window.NativeShellApp.GetKnownFolder('frameworksource')+'\\deps\\require', destUri: mjs_dir.uri+'\\deps\\require'}),
-    									copy_components = ShellApi.copyDirectory({sourceUri: window.NativeShellApp.GetKnownFolder('appsource')+'\\montage-components', destUri: directory.uri+'\\montage-components'});
+    								var copy_lib 	= CoreIoApi.copyDirectory({sourceUri: window.NativeShellApp.GetKnownFolder('frameworksource')+'\\lib', destUri: mjs_dir.uri+'\\lib'}),
+    									copy_deps 	= CoreIoApi.copyDirectory({sourceUri: window.NativeShellApp.GetKnownFolder('frameworksource')+'\\deps\\require', destUri: mjs_dir.uri+'\\deps\\require'}),
+    									copy_components = CoreIoApi.copyDirectory({sourceUri: window.NativeShellApp.GetKnownFolder('appsource')+'\\montage-components', destUri: directory.uri+'\\montage-components'});
     								
     								//Checking for lib operation's result
     								if (copy_lib.success) {
@@ -496,11 +488,11 @@ switch (type.toLowerCase()) {
     								
     								var prj_tmplt = window.NativeShellApp.GetKnownFolder('appsource')+'\\document-templates\\projects\\montage';
     								//TODO: Add error handling for file copying, clean up this HACK
-    								var copy_packagemjs = ShellApi.copyFile({sourceUri: window.NativeShellApp.GetKnownFolder('frameworksource')+'\\package.json', destUri: mjs_dir.uri+'\\package.json'}),
-    									copy_styles = ShellApi.copyFile({sourceUri: prj_tmplt+'\\styles.css', destUri: directory.uri+'\\styles.css'}),
-    									copy_appdelegate = ShellApi.copyFile({sourceUri: prj_tmplt+'\\appdelegate.js', destUri: directory.uri+'\\appdelegate.js'}),
-    									copy_package = ShellApi.copyFile({sourceUri: prj_tmplt+'\\package.json', destUri: directory.uri+'\\package.json'}),
-    									copy_index = ShellApi.copyFile({sourceUri: prj_tmplt+'\\index.html', destUri: directory.uri+'\\index.html'});
+    								var copy_packagemjs = CoreIoApi.copyFile({sourceUri: window.NativeShellApp.GetKnownFolder('frameworksource')+'\\package.json', destUri: mjs_dir.uri+'\\package.json'}),
+    									copy_styles = CoreIoApi.copyFile({sourceUri: prj_tmplt+'\\styles.css', destUri: directory.uri+'\\styles.css'}),
+    									copy_appdelegate = CoreIoApi.copyFile({sourceUri: prj_tmplt+'\\appdelegate.js', destUri: directory.uri+'\\appdelegate.js'}),
+    									copy_package = CoreIoApi.copyFile({sourceUri: prj_tmplt+'\\package.json', destUri: directory.uri+'\\package.json'}),
+    									copy_index = CoreIoApi.copyFile({sourceUri: prj_tmplt+'\\index.html', destUri: directory.uri+'\\index.html'});
     								
     								//
     								this.openProject(directory);
@@ -567,7 +559,7 @@ switch (type.toLowerCase()) {
     				//TODO: Add cloud integration
     			} else {
     				//Getting file URI from native prompt
-    				uri = ShellApi.openShellDialog({type: 'directory', action: 'open'});
+    				uri = CoreIoApi.openShellDialog({type: 'directory', action: 'open'});
     			}
     		}
     		//Checking for a valid URI
@@ -608,7 +600,7 @@ switch (type.toLowerCase()) {
 			////////////////////////////////////////////////////////////////////
     		
     		if (f) {
-    			var s = ShellApi.updateFile(f);
+    			var s = CoreIoApi.updateFile(f);
     		} else {
     			//HACK
 				this.saveProject();    		

@@ -12,25 +12,34 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 @requires js/document/text-document
 */
 
-// TODO : Fix deps from Montage V4 Archi
-
 var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component,
-    Uuid = require("montage/core/uuid").Uuid;
+    Uuid = require("montage/core/uuid").Uuid,
+    fileSystem = require("js/io/system/filesystem").FileSystem;
 
 var HTMLDocument = require("js/io/document/html-document").HTMLDocument;
 var TextDocument = require("js/io/document/text-document").TextDocument;
 
 var DocumentController = exports.DocumentController = Montage.create(Component, {
-    hasTemplate: { value: false },
+    hasTemplate: {
+        value: false
+    },
 
-    _documents: { value: [] },
-    _documentsHash: { value: {} },
+    _documents: {
+        value: []
+    },
+
     _activeDocument: { value: null },
     _iframeCounter: { value: 1, enumerable: false },
     _iframeHolder: { value: null, enumerable: false },
     _textHolder: { value: null, enumerable: false },
     _codeMirrorCounter: {value: 1, enumerable: false},
+
+    tmpSourceForTesting: {
+        value: "function CodeMirror(place, givenOptions) {" +
+                "// Determine effective options based on given values and defaults." +
+                "var options = {}, defaults = CodeMirror.defaults; }"
+    },
 
     _codeEditor: {
         value: {
@@ -50,33 +59,21 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             return this._activeDocument;
         },
         set: function(doc) {
-            if(this._activeDocument) {
-                if(this.activeDocument.documentType === "htm" || this.activeDocument.documentType === "html") {
-                    // TODO selection should use the document own selectionModel
-                    //this._activeDocument.selectionModel = selectionManagerModule.selectionManager._selectedItems;
-                }
-                
-                this._activeDocument.isActive = false;
-            }
+            if(this._activeDocument)  this._activeDocument.isActive = false;
 
-            if(this._documents.indexOf(doc) === -1) {
-                //this._documentsHash[doc.uuid] = this._documents.push(doc) - 1;
-                this._documents.push(doc);
-            }
+            if(this._documents.indexOf(doc) === -1) this._documents.push(doc);
 
             this._activeDocument = doc;
             this._activeDocument.isActive = true;
 
-            if(this.activeDocument.documentType === "htm" || this.activeDocument.documentType === "html") {
-                // TODO selection should use the document own selectionModel
-                //selectionManagerModule.selectionManager._selectedItems = this._activeDocument.selectionModel;
-            }
         }
     },
 
     deserializedFromTemplate: {
         value: function() {
             this.eventManager.addEventListener("appLoaded", this, false);
+
+            this.eventManager.addEventListener("executeFileOpen", this, false);
         }
     },
 
@@ -86,27 +83,125 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         }
     },
 
+    handleExecuteFileOpen: {
+        value: function(event) {
+            var pickerSettings = event._event.settings || {};
+            pickerSettings.callback = this.openFileWithURI;
+            pickerSettings.callbackScope = this;
+            this.application.ninja.filePickerController.showFilePicker(pickerSettings);
+
+            //this.openDocument({"type": "js", "source": this.tmpSourceForTesting});
+        }
+    },
+
+    openFileWithURI: {
+        value: function(uriArrayObj) {
+            var uri = "", fileContent = "", response=null;
+            if(!!uriArrayObj && !!uriArrayObj.uri && (uriArrayObj.uri.length > 0)){
+                uri = uriArrayObj.uri[0];
+            }
+            console.log("URI is: ", uri);
+
+            // Get file from Jose Code with a callback to here
+            if(!!uri){
+                response = fileSystem.shellApiHandler.openFile({"uri":uri});
+                if((response.success === true) && ((response.status === 200) || (response.status === 304))){
+                    fileContent = response.content;
+                }
+
+                console.log("$$$ "+uri+"\n content = \n\n\n"+ fileContent+"\n\n\n");
+                this.openDocument({"type": "js", "name": "tmp.js", "source": fileContent});
+            }
+
+        }
+    },
+
+    openProjectWithURI: {
+        value: function(uri) {
+            console.log("URI is: ", uri);
+
+            // Get project from Jose Code with a callback to here
+        }
+    },
+
     /** Open a Document **/
     openDocument: {
         value: function(doc) {
-            var d;
+            var newDoc;
 
             if(!doc) return false;
 
-            try {
+           // try {
                 if (doc.type === 'html' || doc.type === 'htm') {
-                    d = Montage.create(HTMLDocument);
-                    d.initialize(doc, Uuid.generate(), this._createIframeElement(), this._onOpenDocument);
+                    newDoc = Montage.create(HTMLDocument);
+                    newDoc.initialize(doc, Uuid.generate(), this._createIframeElement(), this._onOpenDocument);
                 } else {
-                    d = Montage.create(TextDocument);
-                    d.initialize(doc, Uuid.generate(), this._createTextAreaElement(), this._onOpenTextDocument);
+                    newDoc = Montage.create(TextDocument, {
+                        "source": { value: doc.source }
+                    });
+                    newDoc.initialize(doc, Uuid.generate(), this._createTextAreaElement());
+
+                    // Tmp this will be filled with the real content
+                    newDoc.textArea.innerHTML = doc.source; //this.tmpSourceForTesting;
+
+                    this.textDocumentOpened(newDoc);
+
                 }
 
-            } catch (err) {
-                console.log("Could not open Document ",  err);
-            }
+           // } catch (err) {
+           //     console.log("Could not open Document ",  err);
+           // }
         }
     },
+
+    // Document has been loaded into the Iframe. Dispatch the event.
+    // Event Detail: Contains the current ActiveDocument
+    _onOpenDocument: {
+        value: function(doc){
+
+            DocumentController.activeDocument = doc;
+
+            NJevent("onOpenDocument", doc);
+
+       }
+   },
+
+    textDocumentOpened: {
+       value: function(doc) {
+
+           this.activeDocument = doc;
+
+           this.application.ninja.stage.stageView.createTextView(doc);
+
+           /*
+           DocumentManager._hideCurrentDocument();
+           stageManagerModule.stageManager._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
+           DocumentManager.activeDocument = doc;
+
+           var type;
+
+           switch(doc.documentType) {
+               case  "css" :
+                   type = "css";
+                   break;
+               case "js" :
+                   type = "javascript";
+                   break;
+           }
+
+           DocumentManager._codeEditor.editor = CodeMirror.fromTextArea(doc.textArea, {
+                       lineNumbers: true,
+                       mode: type,
+                       onCursorActivity: function() {
+                           DocumentManager._codeEditor.editor.setLineClass(DocumentManager._codeEditor.hline, null);
+                           DocumentManager._codeEditor.hline = DocumentManager._codeEditor.editor.setLineClass(DocumentManager._codeEditor.editor.getCursor().line, "activeline");
+                       }
+           });
+           DocumentManager._codeEditor.hline = DocumentManager._codeEditor.editor.setLineClass(0, "activeline");
+           */
+
+       }
+   },
 
     closeDocument: {
         value: function(id) {
@@ -168,6 +263,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         }
     },
 
+
     // Document has been loaded into the Iframe. Dispatch the event.
     // Event Detail: Contains the current ActiveDocument
     _onOpenDocument: {
@@ -184,6 +280,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
         }
     },
+
 
     _onOpenTextDocument: {
         value: function(doc) {
@@ -306,7 +403,10 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         }
     },
 
-    _createTextAreaElement: {
+    /**
+     * Creates a text area which will contain the content of the opened text document.
+     */
+_createTextAreaElement: {
         value: function() {
             var codeMirrorDiv = document.createElement("div");
             codeMirrorDiv.id = "codeMirror_"  + (this._codeMirrorCounter++);

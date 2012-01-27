@@ -1,0 +1,36 @@
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
+.codeViewContainer {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  margin: 0px;
+  padding: 0px;
+  background: black;
+  width: 100%;
+  height: 100%;
+  /*display: none;*/
+}
+
+/* OLD CSS for reference
+#mainContent #codeMirror_1 {
+    height:100%;
+}
+*/
+
+.CodeMirror {
+    width: 100%;
+    height: 100%;
+    background: white;
+}
+
+.CodeMirror .CodeMirror-scroll {
+    height: 100%;
+    overflow: scroll;
+    overflow-x: auto;
+    overflow-y: auto;
+}

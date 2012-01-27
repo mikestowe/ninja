@@ -209,26 +209,27 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
             this.refreshButton.addEventListener("click", this, false);//refresh - gets from file system directly
             this.backArrow.addEventListener("click", this, false);
             this.forwardArrow.addEventListener("click", this, false);
-            this.okButton.addEventListener("click", this, false);
-            this.cancelButton.addEventListener("click", this, false);
 
-            //populate filters
-            var filtersDD = this.element.querySelector(".filters .dropdown");
-            if(!!this.pickerModel.fileFilters
-                && (typeof this.pickerModel.fileFilters === "object")
-                && ('splice' in this.pickerModel.fileFilters)
-                && ('join' in this.pickerModel.fileFilters)){
-                this.pickerModel.fileFilters.forEach(function(aFilter){
-                    var newDiv = document.createElement("div");
-                    newDiv.innerHTML = aFilter;
-                    filtersDD.appendChild(newDiv);
-                    newDiv.addEventListener("click", function(evt){that.handleFilterClick(evt, aFilter, filtersDD)}, false);
-                }, this);
+            //populate filters if in file selection mode
+            if(this.pickerModel.inFileMode === true){
+                var filtersDD = this.element.querySelector(".filters .dropdown");
+                if(!!this.pickerModel.fileFilters
+                    && (typeof this.pickerModel.fileFilters === "object")
+                    && ('splice' in this.pickerModel.fileFilters)
+                    && ('join' in this.pickerModel.fileFilters)){
+                    this.pickerModel.fileFilters.forEach(function(aFilter){
+                        var newDiv = document.createElement("div");
+                        newDiv.innerHTML = aFilter;
+                        filtersDD.appendChild(newDiv);
+                        newDiv.addEventListener("click", function(evt){that.handleFilterClick(evt, aFilter, filtersDD)}, false);
+                    }, this);
+                }
+
+                var renderedWidth = this.getComputedWidth(filtersDD);
+                this.filters.style.width = "" + (parseInt((renderedWidth.substring(0, (renderedWidth.length - 2)))) + 20) + "px";
+            }else{
+                this.filters.style.display = "none";
             }
-
-            var renderedWidth = this.getComputedWidth(filtersDD);
-            this.filters.style.width = "" + (parseInt((renderedWidth.substring(0, (renderedWidth.length - 2)))) + 20) + "px";
-
             /**
              * attach click event listeners to the addressbar dropdown arrows
              */
@@ -263,11 +264,11 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
         }
     },
 
-    //TODO: add uri pattern validation 
-    validateUri:{
+    cleanupUri:{
         writable: false,
         enumerable:true,
         value: function(folderUri){
+            folderUri = folderUri.replace(/^\s+|\s+$/g,"");  // strip any leading or trailing spaces
             //remove unnecessary / from end - for Win and Mac .... don't trim for the root
             if(((folderUri.charAt(folderUri.length - 1) === "/") || (folderUri.charAt(folderUri.length - 1) === "\\")) && (folderUri !== "/")){
                 folderUri = folderUri.substring(0, (folderUri.length - 1));
@@ -324,7 +325,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
         writable:false,
         enumerable:true,
         value:function(uri){
-            uri = this.validateUri(uri);
+            uri = this.cleanupUri(uri);
             var arr = [];
             var temp = new String(uri);
             while(temp.indexOf("/") != -1){
@@ -532,8 +533,6 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
             this.refreshButton.identifier = "refreshButton";
             this.backArrow.identifier = "backArrow";
             this.forwardArrow.identifier = "forwardArrow";
-            this.okButton.identifier = "okButton";
-            this.cancelButton.identifier = "cancelButton";
             this.iconView.identifier = "iconView";
             this.treeView.identifier = "treeView";
             this.resultsArea.identifier = "resultsArea";
@@ -651,7 +650,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
 
                     if(this.addressBarUri.value !== ""){
                         var uri = this.addressBarUri.value;
-                        uri = this.validateUri(uri);
+                        uri = this.cleanupUri(uri);
 
                         this.currentURI = uri;
                         var status = this.pickerViews()[this.selectedPickerView].call(this, uri);//dynamically calls the update function of the current picker view
@@ -676,7 +675,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
         value: function(evt){
                     if(evt.keyCode === 13 ){
                         var uri = this.addressBarUri.value;
-                        uri = this.validateUri(uri);
+                        uri = this.cleanupUri(uri);
 
                         this.currentURI = uri;
 
@@ -699,7 +698,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
     handleRefreshButtonClick:{
         value:function(evt){
                 var uri = this.addressBarUri.value;
-                uri = this.validateUri(uri);
+                uri = this.cleanupUri(uri);
 
                 var status = this.pickerViews()[this.selectedPickerView].call(this, uri, false);//dynamically calls the update function of the current picker view
 
@@ -768,22 +767,22 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
             }
     },
 
-    handleOkButtonClick : {
+    handleOkButtonAction : {
         value: function(evt){
-                    alert("selected "+ this.selectedItems.toString());
+                    console.log("$$$ File Picker : selected "+ this.selectedItems.toString());
                     var success = true;
-                    if(!!this.pickerModel.callback && (this.selectedItems.length > 0)){//call the callback if it is available
+                    if(!!this.pickerModel.callback && !!this.pickerModel.callbackScope && (this.selectedItems.length > 0)){//call the callback if it is available
                         try{
-                            this.pickerModel.callback({"uri":this.selectedItems});
+                            this.pickerModel.callback.call(this.pickerModel.callbackScope, {"uri":this.selectedItems});
                         }catch(e){
                             success = false;
-                            console.log("[ERROR] File IO failed to open URIs:  "+ this.selectedItems.toString());
+                            console.log(e.stack);
                         }
                     }else{//else send an event with the selected files
                         var pickerSelectionEvent = document.createEvent("Events");
                         pickerSelectionEvent.initEvent("pickerSelectionsDone", false, false);
                         pickerSelectionEvent.selectedItems = this.selectedItems;
-                        document.dispatchEvent(pickerSelectionEvent);//TODO: use eventManager when it is available
+                        this.eventManager.dispatchEvent(pickerSelectionEvent);
                     }
 
                     //store last opened/saved folder, and view after IO is successful
@@ -813,7 +812,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
               }
     },
 
-    handleCancelButtonClick :{
+    handleCancelButtonAction :{
         value:function(evt){
                 //clean up memory
                 this.cleanup();
@@ -1005,8 +1004,6 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
                 this.refreshButton.removeEventListener("click", this, false);//refresh - gets from file system directly
                 this.backArrow.removeEventListener("click", this, false);
                 this.forwardArrow.removeEventListener("click", this, false);
-                this.okButton.removeEventListener("click", this, false);
-                this.cancelButton.removeEventListener("click", this, false);
                 this.iconView.removeEventListener("click", this, false);
                 this.treeView.removeEventListener("click", this, false);
                 this.element.removeEventListener("drawTree", this, false);

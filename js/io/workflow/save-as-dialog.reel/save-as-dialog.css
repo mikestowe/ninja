@@ -1,0 +1,60 @@
+.saveAsDialog{
+    font-size:12px;
+    width:450px;
+    height:150px;
+    padding-left: 15px;
+    padding-right: 15px;
+    background-color:#313131;
+    color: #ffffff;
+}
+
+.saveAsDialog .title{
+    font-size:14px;
+    height:15px;
+    padding:5px;
+    text-align: center;
+    font-weight: bold;
+    color: #C1C1C1;
+}
+
+.saveAsDialog .locationSelection{
+    border: 1px groove #000000;
+    overflow: auto;
+    height:38%;
+    padding: 15px;
+    background-color:#5f5f5f;
+}
+
+.saveAsDialog .newFileName{
+    width:80%;
+    margin-left:5px;
+}
+
+.saveAsDialog .fileInputField .newFileDirectory{
+    width: 80%;
+}
+
+.saveAsDialog .nameText{
+    margin-right:10px;
+}
+
+.saveAsDialog .buttons{
+    float:right;
+    margin-top: 10px;
+}
+
+.saveAsDialog .filename{
+    margin-bottom: 10px;
+}
+
+.saveAsDialog .errorMsg{
+    float:left;
+    margin-top: 7px;
+}
+.saveAsDialog .errorMsg span{
+    color: #BF3B3B;
+}
+
+.saveAsDialog .fileInputField{
+    margin-left:3px;
+}

@@ -21,36 +21,22 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
         enumerable:true,
         value:function(){
             var that = this;
-            this.eventManager.addEventListener("executeFileOpen", function(evt){
 
-                var callback, pickerMode, currentFilter, allFileFilters,inFileMode, allowNewFileCreation, allowMultipleSelections;
-
-                if(!!evt.callback){
-                    callback = evt.callback;
+            this.eventManager.addEventListener("openFilePicker", function(evt){
+                var settings;
+                if(typeof evt._event.settings !== "undefined"){
+                    settings = evt._event.settings;
                 }
-                if(!!evt.pickerMode){
-                    pickerMode = evt.pickerMode;
-                }
-                if(!!evt.currentFilter){
-                    currentFilter = evt.currentFilter;
-                }
-                if(!!evt.inFileMode){
-                    inFileMode = evt.inFileMode;
-                }
-                if(!!evt.allFileFilters){
-                    allFileFilters = evt.allFileFilters;
-                }
-                if(!!evt.allowNewFileCreation){
-                    allowNewFileCreation = evt.allowNewFileCreation;
-                }
-                if(!!evt.allowMultipleSelections){
-                    allowMultipleSelections = evt.allowMultipleSelections;
-                }
-
-                that.showFilePicker(callback, pickerMode, currentFilter, allFileFilters,inFileMode, allowNewFileCreation, allowMultipleSelections);
-
+                that.showFilePicker(settings);
             }, false);
+
         }
+    },
+
+    filePickerPopupType:{
+        writable: true,
+        enumerable: false,
+        value: "filePicker"
     },
 
     /**
@@ -81,14 +67,16 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
      *this function is used to create an instance of a file picker
      *
      * parameters:
-     * callback: the call back function which will be used to send the selected URIs back
-     * pickerMode: ["read", "write"] : specifies if the file picker is opened to read a file/folder or to save a file
-     * currentFilter: if a current filter needs to be applied [ex: .psd]
-     * allFileFilters: list of filters that user can use to filter the view
-     * inFileMode: true => allow file selection , false => allow directory selection
-     * allowNewFileCreation:  flag to specify whether or not it should return URI(s) to item(s) that do not exist. i.e. a user can type a filename to a new file that doesn't yet exist in the file system.
-     * allowMultipleSelections: allowMultipleSelections
-     *rootDirectories: invoker of this function can mention a subset of the allowed root directories to show in the file picker
+     * settings is an object containing :
+     *      callback [optional]: the call back function which will be used to send the selected URIs back. If undefined then an event is fired with the selected uri
+     *      callbackScope : required if callback is set
+     *      pickerMode [optional]: ["read", "write"] : specifies if the file picker is opened to read a file/folder or to save a file
+     *      currentFilter [optional]: if a current filter needs to be applied [ex: .psd]
+     *      allFileFilters [optional]: list of filters that user can use to filter the view
+     *      inFileMode [optional]: true => allow file selection , false => allow directory selection
+     *      allowNewFileCreation [optional]:  flag to specify whether or not it should return URI(s) to item(s) that do not exist. i.e. a user can type a filename to a new file that doesn't yet exist in the file system.
+     *      allowMultipleSelections [optional]: allowMultipleSelections
+     *      pickerName: name for montage custom popup
      *
      * return: none
      */
@@ -96,7 +84,19 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
     showFilePicker:{
         writable:false,
         enumerable:true,
-        value:function(callback, pickerMode, currentFilter, allFileFilters,inFileMode, allowNewFileCreation, allowMultipleSelections){
+        value:function(settings){
+            var callback, callbackScope, pickerMode, currentFilter, allFileFilters, inFileMode, allowNewFileCreation, allowMultipleSelections, pickerName;
+            if(!!settings){
+                if(typeof settings.callback !== "undefined"){callback = settings.callback;}
+                if(typeof settings.callbackScope !== "undefined"){callbackScope = settings.callbackScope;}
+                if(typeof settings.pickerMode !== "undefined"){pickerMode = settings.pickerMode;}
+                if(typeof settings.currentFilter !== "undefined"){currentFilter = settings.currentFilter;}
+                if(typeof settings.allFileFilters !== "undefined"){allFileFilters = settings.allFileFilters;}
+                if(typeof settings.inFileMode !== "undefined"){inFileMode = settings.inFileMode;}
+                if(typeof settings.allowNewFileCreation !== "undefined"){allowNewFileCreation = settings.allowNewFileCreation;}
+                if(typeof settings.allowMultipleSelections !== "undefined"){allowMultipleSelections = settings.allowMultipleSelections;}
+                if(typeof settings.pickerName !== "undefined"){this.filePickerPopupType = settings.pickerName;}
+            }
 
             var aModel = filePickerModelModule.FilePickerModel.create();
 
@@ -114,8 +114,17 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
                 aModel.fatalError = " ** Unable to get files [Error: "+ errorCause +"]";
             }
 
-            aModel.currentFilter = currentFilter;
-            aModel.inFileMode = inFileMode;
+            //dummy data - TODO:remove after testing
+            //aModel.currentFilter = "*.html, *.png";
+            //aModel.currentFilter = "*.jpg";
+            aModel.currentFilter = "*.*";
+            aModel.inFileMode = true;
+            aModel.fileFilters = [".html, .htm", ".jpg, .jpeg, .png, .gif", ".js, .json", ".css", ".txt, .rtf", ".doc, .docx", ".pdf", ".avi, .mov, .mpeg, .ogg, .webm", "*.*"];
+            //-end - dummy data
+
+            if(!!currentFilter){aModel.currentFilter = currentFilter;}
+            if(typeof inFileMode !== "undefined"){aModel.inFileMode = inFileMode;}
+
             aModel.topLevelDirectories = topLevelDirectories;
 
             if(!!topLevelDirectories && !!topLevelDirectories[0]){
@@ -136,17 +145,12 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
                 aModel.currentRoot = unescape(storedUri);
             }
 
-            aModel.fileFilters = allFileFilters;
-            aModel.callback = callback;
-            aModel.pickerMode = pickerMode;
+            if(!!allFileFilters){aModel.fileFilters = allFileFilters;}
+            if(!!callback){aModel.callback = callback;}
+            if(!!callbackScope){aModel.callbackScope = callbackScope;}
+            if(typeof pickerMode !== "undefined"){aModel.pickerMode = pickerMode;}
 
-            //dummy data - TODO:remove after testing
-            //aModel.currentFilter = "*.html, *.png";
-            //aModel.currentFilter = "*.jpg";
-            aModel.currentFilter = "*.*";
-            aModel.inFileMode = true;
-            aModel.fileFilters = [".html, .htm", ".jpg, .jpeg, .png, .gif", ".js, .json", ".css", ".txt, .rtf", ".doc, .docx", ".pdf", ".avi, .mov, .mpeg, .ogg, .webm", "*.*"];
-            //-end - dummy data
+
 
             //logic: get file content data onDemand from the REST api for the default or last opened root. Cache the data in page [in local cache ? dirty fs? ]. Filter on client side to reduce network calls.
             this.openFilePickerAsModal(callback, aModel);
@@ -172,6 +176,12 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
 
             var pickerNavChoices = Montage.create(pickerNavigatorReel);
             var initUri = aModel.currentRoot;
+
+            //remove extra / at the end
+            if((initUri.length > 1) && (initUri.charAt(initUri.length - 1) === "/")){
+                initUri = initUri.substring(0, (initUri.length - 1));
+            }
+
             pickerNavChoices.mainContentData = this.prepareContentList(initUri, aModel);
             pickerNavChoices.pickerModel = aModel;
             pickerNavChoices.element = pickerNavContent;
@@ -182,8 +192,8 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
             var popup = Popup.create();
             popup.content = pickerNavChoices;
             popup.modal = true;
+            popup.type = this.filePickerPopupType;//should be set always to not default to the single custom popup layer
             popup.show();
-
             pickerNavChoices.popup = popup;//handle to be used for hiding the popup
         }
     },

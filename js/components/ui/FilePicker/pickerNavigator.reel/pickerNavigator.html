@@ -10,6 +10,35 @@
     <link rel="stylesheet" type="text/css" href="pickerNavigator.css">
     <script type="text/montage-serialization">
         {
+            "okButton": {
+                "module": "montage/ui/button.reel",
+                "name": "Button",
+                "properties": {
+                    "element": {"#": "okButton"},
+                    "identifier": "okButton"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            },
+
+            "cancelButton": {
+                "module": "montage/ui/button.reel",
+                "name": "Button",
+                "properties": {
+                    "element": {"#": "cancelButton"},
+                    "identifier": "cancelButton"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            },
 
             "owner":{
                 "module": "js/components/ui/FilePicker/pickerNavigator.reel",
@@ -71,7 +100,7 @@
         <input id="cancelButton" type="button" value="CANCEL" class="cancelButton" />
         <input id="okButton" disabled="true" type="button" value="OK" class="okButton" />
     </div>
-    <div id="filters" class="filters">
+    <div id="filters" class="filters" style="display:block;">
         <div class="dropdown hide"></div>
         <span class="dropdownArrow">&#9660</span>
         <span id="filterVal" class="filterVal">*.*</span>

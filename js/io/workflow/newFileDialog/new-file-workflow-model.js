@@ -22,14 +22,30 @@ exports.NewFileWorkflowModel = Object.create(Object.prototype, {
             return contents;
         }
     },
+
+    defaultProjectType:{
+        writable: true,
+        enumerable: true,
+        value: null
+    },
+
+    callback : {
+        enumerable: true,
+        writable: true,
+        value: null
+    },
+
+    callbackScope : {
+        enumerable: true,
+        writable: true,
+        value: null
+    },
+
     projectTypeData:{
             writable:false,
             enumerable:false,
             value:{//dummy data for testing
-                "projectTypes":{
-                    "name":"Project Type",
-                    "type":"directory",
-                    "uri":"projectTypes",
+                "categories":{
                     "children":["newFile", "newProject", "fromTemplate"]
                 },
                 "newProject":{
@@ -104,18 +120,27 @@ exports.NewFileWorkflowModel = Object.create(Object.prototype, {
                 "htmlTemplate":{
                     "name":"HTML",
                     "uri":"htmlTemplate",
-                    "type":"file"
+                    "type":"file",
+                    "children":["defaultTemplate", "xoomApp", "iosApp", "androidApp", "bannerAd"]
                 },
                 "cssTemplate":{
                     "name":"CSS",
                     "uri":"cssTemplate",
-                    "type":"file"
+                    "type":"file",
+                    "children":["defaultTemplate"]
                 },
                 "javascriptTemplate":{
-                    "name":"Javascript",
+                    "name":"JavaScript",
                     "uri":"javascriptTemplate",
+                    "type":"file",
+                    "children":["defaultTemplate"]
+                },
+                defaultTemplate:{
+                    "name": "default",
+                    "uri": "defaultTemplate",
                     "type":"file"
                 }
+
             }
     }
 });

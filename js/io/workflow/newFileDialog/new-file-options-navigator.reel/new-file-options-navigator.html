@@ -10,6 +10,43 @@
     <link rel="stylesheet" type="text/css" href="new-file-options-navigator.css">
     <script type="text/montage-serialization">
     {
+        "okButton": {
+            "module": "montage/ui/button.reel",
+            "name": "Button",
+            "properties": {
+                "element": {"#": "okButton"},
+                "identifier": "okButton"
+            },
+            "listeners": [
+                {
+                    "type": "action",
+                    "listener": {"@": "owner"}
+                }
+            ]
+        },
+
+        "cancelButton": {
+            "module": "montage/ui/button.reel",
+            "name": "Button",
+            "properties": {
+                "element": {"#": "cancelButton"},
+                "identifier": "cancelButton"
+            },
+            "listeners": [
+                {
+                    "type": "action",
+                    "listener": {"@": "owner"}
+                }
+            ]
+        },
+
+        "newFileLocation":{
+            "module": "js/io/workflow/newFileDialog/new-file-location.reel",
+            "name": "NewFileLocation",
+            "properties": {
+                "element": {"#": "right-bottom"}
+            }
+        },
 
         "owner":{
             "module": "js/io/workflow/newFileDialog/new-file-options-navigator.reel",
@@ -21,7 +58,9 @@
                 "okButton": {"#": "okButton"},
                 "templateIcons": {"#": "templateIcons"},
                 "templatesContainer": {"#": "right-top"},
-                "locationSelection": {"#": "right-bottom"}
+                "locationSelection": {"#": "right-bottom"},
+                "newFileLocation": {"@": "newFileLocation"},
+                "error": {"#": "error"}
             }
         }
     }
@@ -29,8 +68,9 @@
 </head>
 <body>
 <div id="newfile" class="newfile">
+    <div class="title">Create New File</div>
     <div class="container left-nav">
-        <div class="projectTypeHeader"><span>Project Type</span></div>
+        <div class="projectTypeHeader"><span>File Type</span></div>
         <div id="projectTypeTree" class="projectTypeTree"></div>
     </div>
     <div class="container right-nav">
@@ -42,6 +82,7 @@
             <div class="selections">selections</div>
         </div>
     </div>
+    <div class="errorMsg"><span id="error" class="error"></span></div>
     <div class="buttons">
         <input id="cancelButton" type="button" value="CANCEL" class="cancelButton" />
         <input id="okButton" disabled="true" type="button" value="OK" class="okButton" />

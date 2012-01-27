@@ -38,13 +38,22 @@
     padding-bottom: 5px;
 }
 
-.newfileLocation .locationSelection span{
-    padding-right: 5px;
+.newfileLocation .locationSelection input{
+    margin-left: 5px;
     white-space: nowrap;
 }
 
-.newfileLocation .findDirectory{
-    width: 17px;
-    height:17px;
-    vertical-align: bottom;
+.newfileLocation .templatePx{
+    padding-left: 5px;
+    white-space: nowrap;
 }
+
+.newfileLocation .nameText{
+    margin-right:31px;
+}
+
+.newfileLocation .hottextunit{
+    float: none;
+    display: inline;
+}
+
