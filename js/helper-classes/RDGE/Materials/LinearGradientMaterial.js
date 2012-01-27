@@ -98,6 +98,8 @@ function LinearGradientMaterial()
 													this._shader.default.u_cos_sin_angle.set([Math.cos(a), Math.sin(a)]);
 											}
 
+	this.isAnimated			= function()			{  return true;					}
+
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
@@ -146,6 +148,8 @@ function LinearGradientMaterial()
 
 		// send the current values to the shader
 		this.updateShaderValues();
+
+		console.log( "**** LinearGradientMaterial initialized" );
 	}
 
 	this.updateShaderValues= function()

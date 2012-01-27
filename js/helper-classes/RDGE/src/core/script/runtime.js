@@ -121,7 +121,7 @@ function RDGEStart(canvasOrID)
 
 	g_Engine.registerCanvas(canvas);
 
-	canvas.task = new RDGETask(canvas, true);
+	//canvas.task = new RDGETask(canvas, true);
 
 	if (!g_shaderMan)
 		g_shaderMan = new ShaderManager();

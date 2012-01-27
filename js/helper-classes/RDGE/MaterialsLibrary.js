@@ -170,28 +170,28 @@ var MaterialsLibrary = Object.create(Object.prototype, {
 // create the library of stroke and fill materials
 
 var uberMaterial				= new UberMaterial();
-//var linearGradientMaterial		= new LinearGradientMaterial();
-//var radialGradientMaterial		= new RadialGradientMaterial();
-//var radialBlurMaterial			= new RadialBlurMaterial();
-//var pulseMaterial				= new PulseMaterial();
-//var tunnelMaterial				= new TunnelMaterial();
-//var twistMaterial				= new TwistMaterial();
-//var keleidoscopeMaterial		= new KeleidoscopeMaterial();
-//var juliaMaterial				= new JuliaMaterial();
-//var mandelMaterial				= new MandelMaterial();
-//var plasmaMaterial				= new PlasmaMaterial();
+var linearGradientMaterial		= new LinearGradientMaterial();
+var radialGradientMaterial		= new RadialGradientMaterial();
+var radialBlurMaterial			= new RadialBlurMaterial();
+var pulseMaterial				= new PulseMaterial();
+var tunnelMaterial				= new TunnelMaterial();
+var twistMaterial				= new TwistMaterial();
+var keleidoscopeMaterial		= new KeleidoscopeMaterial();
+var juliaMaterial				= new JuliaMaterial();
+var mandelMaterial				= new MandelMaterial();
+var plasmaMaterial				= new PlasmaMaterial();
 var bumpMetalMaterial			= new BumpMetalMaterial();
 
-//MaterialsLibrary.addMaterial(linearGradientMaterial);
-//MaterialsLibrary.addMaterial(radialGradientMaterial);
-//MaterialsLibrary.addMaterial(radialBlurMaterial);
-//MaterialsLibrary.addMaterial(pulseMaterial);
-//MaterialsLibrary.addMaterial(tunnelMaterial);
-//MaterialsLibrary.addMaterial(twistMaterial);
-//MaterialsLibrary.addMaterial(keleidoscopeMaterial);
-//MaterialsLibrary.addMaterial(juliaMaterial);
-//MaterialsLibrary.addMaterial(mandelMaterial);
-//MaterialsLibrary.addMaterial(plasmaMaterial);
+MaterialsLibrary.addMaterial(linearGradientMaterial);
+MaterialsLibrary.addMaterial(radialGradientMaterial);
+MaterialsLibrary.addMaterial(radialBlurMaterial);
+MaterialsLibrary.addMaterial(pulseMaterial);
+MaterialsLibrary.addMaterial(tunnelMaterial);
+MaterialsLibrary.addMaterial(twistMaterial);
+MaterialsLibrary.addMaterial(keleidoscopeMaterial);
+MaterialsLibrary.addMaterial(juliaMaterial);
+MaterialsLibrary.addMaterial(mandelMaterial);
+MaterialsLibrary.addMaterial(plasmaMaterial);
 MaterialsLibrary.addMaterial(bumpMetalMaterial);
 MaterialsLibrary.addMaterial(uberMaterial);
 

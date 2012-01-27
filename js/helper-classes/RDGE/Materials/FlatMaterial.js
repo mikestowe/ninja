@@ -29,6 +29,8 @@ function FlatMaterial()
 	this.getColor			= function()	{  return this._color;		}
 	this.getShaderName		= function()	{  return this._shaderName;	}
 
+	this.isAnimated			= function()	{  return true;				}
+
     //////////////////////////////////s/////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////

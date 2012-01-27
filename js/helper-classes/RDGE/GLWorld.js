@@ -65,6 +65,11 @@ function GLWorld( canvas, use3D )
 
 	this._camera;
 
+	// keep a flag indicating whether a render has been completed.
+	// this allows us to turn off automatic updating if there are
+	// no animated materials
+	this._firstRender = true;
+
     ///////////////////////////////////////////////////////////////////////
     // Property accessors
     ///////////////////////////////////////////////////////////////////////
@@ -103,6 +108,8 @@ function GLWorld( canvas, use3D )
 
 	this.isWebGL				= function()		{  return this._useWebGL;			}
 
+	this.getRenderer			= function()		{  return this.renderer;			}
+
   ////////////////////////////////////////////////////////////////////////////////////
   // RDGE
   // local variables
@@ -113,6 +120,10 @@ function GLWorld( canvas, use3D )
     this.fillShader = null;
     this.strokeShader = null;
     this.renderer = null;
+
+	// keep an array of texture maps that need to be loaded
+	this._texMapsToLoad = [];
+	this._allMapsLoaded = true;
 
 	// this is the node to which objects get hung
 	this._rootNode;
@@ -214,18 +225,149 @@ function GLWorld( canvas, use3D )
     {
 		if (this._useWebGL)
 		{
-			var ctx = g_Engine.getContext();
-			//console.log( "RDGE state: " + ctx.ctxStateManager.currentState().name);
+			if (this._allMapsLoaded)
+			{
+				var ctx = g_Engine.getContext();
+				//console.log( "RDGE state: " + ctx.ctxStateManager.currentState().name);
 
-			var renderer = ctx.renderer;
-			renderer.disableCulling();
-			this.myScene.render();
+				/////////////////////////////
+				var ctx1 = g_Engine.ctxMan.handleToObject(this._canvas.rdgeCtxHandle);
+				if (ctx1 != ctx)  console.log( "***** different contexts (2) *****" );
+				var aRenderer = ctx1.renderer;
+				//////////////////////////////////////////
+
+				var renderer = ctx.renderer;
+				if (renderer != aRenderer)  console.log( "***** DIFFERENT RENDERERS *****" );
+				renderer.disableCulling();
+				this.myScene.render();
+
+				if (this._firstRender)
+				{
+					this._firstRender = false;
+
+					if (!this.hasAnimatedMaterials())
+					{
+						this.myScene.render();
+						this._canvas.task.stop();
+					}
+				}
+			}
 		}
 		else
 		{
 			this.render();
 		}
     }
+	
+    this.onRunState = function()
+	{
+		console.log( "GLWorld.onRunState" );
+	}
+	
+    this.onLoadState = function()
+	{
+		console.log( "GLWorld.onLoadState" );
+	}
+
+	this.textureToLoad = function( texture )
+	{
+		if (!texture.previouslyReferenced)
+		{
+			var name = texture.lookUpName;
+			texture._world = this;
+			texture.callback = this.textureMapLoaded;
+			this._texMapsToLoad[name] = true;
+			this._allMapsLoaded = false;
+
+			// stop the draw loop until all textures have been loaded
+			this._canvas.task.stop();
+		}
+	}
+
+	this.textureMapLoaded = function( texture )
+	{
+		var world = texture._world;
+		if (!world)
+		{
+			console.log( "**** loaded texture does not have world defined ****" );
+			return;
+		}
+
+		var name = texture.lookUpName;
+		if (!world._texMapsToLoad[name])
+		{
+			console.log( "loaded an unregistered texture map: " + name );
+		}
+		else
+		{
+			//console.log( "loaded a registered texture map: " + name );
+			world._texMapsToLoad[name] = undefined;
+		}
+
+		// check if all the texture maps are loaded.  if so, resume the render loop
+		world._allMapsLoaded = world.allTextureMapsLoaded();
+		if (world._allMapsLoaded)
+			world._canvas.task.start();
+	}
+
+	this.allTextureMapsLoaded = function()
+	{
+		for (var name in this._texMapsToLoad)
+		{
+			var needsLoad = this._texMapsToLoad[name];
+			if (needsLoad)  return false;
+		}
+
+		return true;
+	}
+
+	this.textureLoadedCallback = function( name )
+	{
+		console.log( "*** material texture loaded: " + name );
+
+		var world = this._world;
+		if (!world)
+			console.log( "**** world not defined for loaded texture map: " + name );
+		else
+			world.textureMapLoaded( name );
+	}
+	
+	this.hasAnimatedMaterials = function()
+	{
+		var root = this.getGeomRoot();
+		var rtnVal = false;
+		if (root)
+			rtnVal = this.hHasAnimatedMaterials( root );
+
+		return rtnVal;
+	}
+
+	this.hHasAnimatedMaterials = function( obj )
+	{
+		if (obj)
+		{
+			if (obj.getFillMaterial())
+			{
+				if (obj.getFillMaterial().isAnimated())  return true;
+			}
+
+			if (obj.getStrokeMaterial())
+			{
+				if (obj.getStrokeMaterial().isAnimated())  return true;
+			}
+
+
+			// do the sibling
+			var hasAnim = false;
+			if  (obj.getNext())  hasAnim = this.hHasAnimatedMaterials( obj.getNext() );
+			if (hasAnim)  return true;
+			if  (obj.getChild())  hasAnim = this.hHasAnimatedMaterials( obj.getChild() );
+			if (hasAnim)  return true;
+		}
+
+		return false;
+	}
+
 
 	// END RDGE
 	////////////////////////////////////////////////////////////////////////////////////
@@ -233,23 +375,20 @@ function GLWorld( canvas, use3D )
     
     // start RDGE passing your runtime object, and false to indicate we don't need a an initialization state
     // in the case of a procedurally built scene an init state is not needed for loading data
-	//if (this._useWebGL)
+	if (this._useWebGL)
 	{
-		if (this._useWebGL)
-		{
-			rdgeStarted = true;
+		rdgeStarted = true;
 
-            // TODO - temporary fix for RDGE id's
-            this._canvas.id = this._canvas.uuid;
+        // TODO - temporary fix for RDGE id's
+        this._canvas.id = this._canvas.uuid;
 
-			g_Engine.registerCanvas(this._canvas, this);
-			RDGEStart( this._canvas );
+		g_Engine.registerCanvas(this._canvas, this);
+		RDGEStart( this._canvas );
 
-			//this._canvas.fpsTracker = new fpsTracker( '0' );
-			//this._canvas.task = new RDGETask(this._canvas, true);
-			//this._canvas.task.stop()
-			//this._canvas.task.start()
-		}
+		//this._canvas.fpsTracker = new fpsTracker( '0' );
+		this._canvas.task = new RDGETask(this._canvas, false);
+		this._canvas.task.stop()
+		//this._canvas.task.start()
 	}
 }
 
@@ -334,10 +473,6 @@ GLWorld.prototype.addObject = function( obj )
 
         obj.setWorld( this );
 
-		// build the WebGL buffers
-		if (this._useWebGL)
-			obj.buildBuffers();
-
         if (this._geomRoot == null)
         {
             this._geomRoot = obj;
@@ -349,6 +484,13 @@ GLWorld.prototype.addObject = function( obj )
             go.setNext( obj );
             obj.setPrev( go );
         }
+
+		// build the WebGL buffers
+		if (this._useWebGL)
+		{
+			obj.buildBuffers();
+			this.restartRenderLoop();
+		}
     }
     catch(e)
     {
@@ -356,16 +498,23 @@ GLWorld.prototype.addObject = function( obj )
     }
 }
 
+GLWorld.prototype.restartRenderLoop = function()
+{
+	this._firstRender = true;
+	if (this._allMapsLoaded)
+		this._canvas.task.start();
+	else
+		this._canvas.task.stop();
+}
+
 //append to the list of objects if obj doesn't already exist
 //if obj exists, then don't add to list of objects
-GLWorld.prototype.addIfNewObject = function (obj) {
+GLWorld.prototype.addIfNewObject = function (obj)
+{
     if (!obj) return;
 
     try {
         obj.setWorld(this);
-        // build the WebGL buffers
-		if (this._useWebGL)
-            obj.buildBuffers();
 
         if (this._geomRoot == null) {
             this._geomRoot = obj;
@@ -384,8 +533,16 @@ GLWorld.prototype.addIfNewObject = function (obj) {
 
                 go.setNext(obj);
                 obj.setPrev(go);
+
             }
         }
+
+		// build the WebGL buffers
+		if (this._useWebGL)
+		{
+			obj.buildBuffers();
+			this.restartRenderLoop();
+		}
     }
     catch (e) {
         alert("Exception in GLWorld.addIfNewObject " + e);
