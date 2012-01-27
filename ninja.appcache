@@ -1,0 +1,17 @@
+CACHE MANIFEST
+
+CACHE:
+/~kgq387/MOTOROLA/ninja/ninja-internal/js/io/templates/files/css.txt
+/~kgq387/MOTOROLA/ninja/ninja-internal/js/io/templates/files/html.txt
+/~kgq387/MOTOROLA/ninja/ninja-internal/js/io/templates/files/js.txt
+/~kgq387/MOTOROLA/ninja/ninja-internal/js/io/templates/files/json.txt
+/~kgq387/MOTOROLA/ninja/ninja-internal/js/io/templates/files/php.txt
+/~kgq387/MOTOROLA/ninja/ninja-internal/js/io/templates/files/py.txt
+/~kgq387/MOTOROLA/ninja/ninja-internal/js/io/templates/files/rb.txt
+/~kgq387/MOTOROLA/ninja/ninja-internal/js/io/templates/files/pl.txt
+/~kgq387/MOTOROLA/ninja/ninja-internal/js/io/templates/files/xml.txt
+
+NETWORK:
+*
+http://fonts.googleapis.com/
+http://themes.googleusercontent.com/
