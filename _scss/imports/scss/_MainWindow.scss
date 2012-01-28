@@ -4,12 +4,12 @@
 // (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 // </copyright>
 
-/*
- * MainWindow.scss
- * Styles governing the main window and overall layout of the application.
- * Note that colors and font definitions go in
- * _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss
- */
+
+// MainWindow.scss
+// Styles governing the main window and overall layout of the application.
+// Note that colors and font definitions go in
+// _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss
+  
 
  body {
     position: absolute;
@@ -83,9 +83,9 @@
 }
 
 #bottomPanelContainer {
-    /*border: 1px solid #333;
+    //border: 1px solid #333;
     background: transparent;
-    */
+     
     min-height:80px;
     max-height:50%;
     overflow:auto;
@@ -200,14 +200,14 @@
 }
 
 #mainContainer #rulerTop {
-    /* TODO: temporary background please replace when component is implemented */
+    // TODO: temporary background please replace when component is implemented  
     background: url("../images/temp/ruler-top.png");
     height:15px;
     margin-bottom: 0px;
 }
 
 #rulerLeft {
-    /* TODO: temporary background please replace when component is implemented */
+    // TODO: temporary background please replace when component is implemented  
     background: url("../images/temp/ruler-left.png");
     width:16px;
 }
@@ -246,7 +246,7 @@
 
 .resizeBar { -webkit-transition: all 0.15s linear; }
 
-/* Splitters Collapsed */
+// Splitters Collapsed  
 .panelContainer, .panelContainer.collapsed { -webkit-transition: all 0.15s ease-in;  }
 .panel.disableTransition { -webkit-transition: none !important; -webkit-box-flex:0.1 !important; }
 .disableTransition { -webkit-transition: none !important; -webkit-box-flex:0 !important; }
@@ -258,7 +258,7 @@
 .topSplitter.collapsed { -webkit-transform:rotate(180deg); }
 .bottomSplitter.collapsed { -webkit-transform:rotate(0deg); }
 
-/*
+//
 
 
 .stageContentShadow {
@@ -267,15 +267,15 @@
     box-shadow: 3px 5px 4px $color-app-shadow;
 }
 
-*/
-/*
+ 
+//
 .baseBox {
     display:-webkit-box;
     display:-moz-box;
     display: box;
 }
 
-/* Generic style to make any element unselectable */
+// Generic style to make any element unselectable  
 .unselectable {
     -webkit-user-select: none;
 }

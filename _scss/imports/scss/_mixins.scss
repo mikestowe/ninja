@@ -4,11 +4,11 @@
 // (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 // </copyright>
 
-/*
- * mixins.scss
- * Generic mixins.  Theme-specific mixins (e.g. for sprites) 
- * should go in the theme/themename/mixins.scss file.
- */
+
+// mixins.scss
+// Generic mixins.  Theme-specific mixins (e.g. for sprites) 
+// should go in the theme/themename/mixins.scss file.
+
 
 // Mixin to set the Opacity of an Element
 @mixin opacity($opacity){
