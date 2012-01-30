@@ -4,7 +4,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var fileSystem = require("js/io/system/filesystem").FileSystem;
+var fileSystem = require("js/io/system/coreioapi").CoreIoApi;
 
 var FileUtils = exports.FileUtils = Object.create(Object.prototype, {
 
@@ -61,7 +61,7 @@ var FileUtils = exports.FileUtils = Object.create(Object.prototype, {
 
             uri = ""+folderUri+fileUri;
 
-            response = fileSystem.shellApiHandler.fileExists({"uri":uri});
+            response = fileSystem.fileExists({"uri":uri});
             if(!!response && response.success && (response.status === 204)){
                 status = true;
             }else if(!!response && response.success && (response.status === 404)){
