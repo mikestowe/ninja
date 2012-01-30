@@ -15,7 +15,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component,
     Uuid = require("montage/core/uuid").Uuid,
-    fileSystem = require("js/io/system/filesystem").FileSystem;
+    fileSystem = require("js/io/system/coreioapi").CoreIoApi;
 
 var HTMLDocument = require("js/io/document/html-document").HTMLDocument;
 var TextDocument = require("js/io/document/text-document").TextDocument;
@@ -104,7 +104,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
             // Get file from Jose Code with a callback to here
             if(!!uri){
-                response = fileSystem.shellApiHandler.openFile({"uri":uri});
+                response = fileSystem.openFile({"uri":uri});
                 if((response.success === true) && ((response.status === 200) || (response.status === 304))){
                     fileContent = response.content;
                 }
