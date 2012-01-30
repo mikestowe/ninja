@@ -417,10 +417,10 @@ _createTextAreaElement: {
 
             codeMirrorDiv.appendChild(textArea);
 
-            if(!this._textHolder) this._textHolder = document.getElementById("codeViewContainer");
-            this._textHolder.appendChild(codeMirrorDiv);
+//            if(!this._textHolder) this._textHolder = document.getElementById("codeViewContainer");
+//            this._textHolder.appendChild(codeMirrorDiv);
 
-            return codeMirrorDiv;
+            return textArea;
         }
     }
 });
