@@ -175,7 +175,7 @@ exports.Stage = Montage.create(Component, {
             }
             else if(this.updatedStage) {
                 this.layout.draw();
-                this.layout.draw3DInfo();
+                this.layout.draw3DInfo(true);
             }
         }
     },

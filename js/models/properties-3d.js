@@ -36,6 +36,8 @@ exports.Properties3D = Montage.create(Component, {
     perspectiveDist :   { value : 1400, enumerable: true},
     perspectiveMode :   { value : null, enumerable: true},
 
+    elementPlane :   { value : null, enumerable: true},
+
     init : {
         value : function(elt) {
 
