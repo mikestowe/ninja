@@ -3,22 +3,139 @@ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
 No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
+/* /////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+NOTES:
 
-//Required modules 
-var Serializer = 				require("montage/core/serializer").Serializer;
+	For newFile, only the 'uri' is required, if contents is empty, such
+	empty file will be created. 'contents' should be a string to be saved
+	as the file. 'contentType' is the mime type of the file.
+	
+////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////// */
+//
+var Montage = 		require("montage/core/core").Montage,
+	CoreIoApi =		require("js/io/system/coreioapi").CoreIoApi;
+////////////////////////////////////////////////////////////////////////
 //Exporting as File I/O
-exports.FileIo = (require("montage/core/core").Montage).create(Object.prototype, {
-	/*
-create: {
-		enumerable: true,
-		value: function (type) {
-			//
-		}
-	},
-*/
+exports.FileIo = Montage.create(Object.prototype, {
 	////////////////////////////////////////////////////////////////////
-    //
-    open: {
+    //newFile Object (*required): {uri*, contents, contentType}
+    //Return codes
+    //	204: File exists | 400: File exists | 404: File does not exists
+    //	201: File succesfully created | 500: Unknown | undefined: Unknown
+    newFile: {
+    	enumerable: true,
+    	value: function(file) {
+    		//Checking for API to be available
+    		if (!CoreIoApi.isIoServiceActive()) {
+    			//API not available, no IO action taken
+    			return null;
+    		}
+    		//Peforming check for file to exist
+    		var check = CoreIoApi.fileExists(file.uri), status, create;
+    		//Upon successful check, handling results
+    		if (check.success) {
+    			//Handling status of check
+    			switch (check.status) {
+    				case 204:
+    					//Storing status to be returned (for UI handling)
+    					status = check.status;
+    					break;
+    				case 404:
+    					//File does not exists, ready to be created
+    					create = CoreIoApi.createFile(file);
+    					//Storing status to be returned (for UI handling)
+    					if (create.success) {
+    						status = check.status;
+    					}
+    					break;
+    				default:
+    					//Unknown Error
+    					break;
+    			}
+	   		} else {
+	    		//Unknown Error
+    		}
+    		//Returning resulting code
+    		return status;
+    	}
+    },
+    readFile: {
+    	enumerable: true,
+    	value: function() {
+    		//
+    	}
+    },
+    saveFile: {
+    	enumerable: true,
+    	value: function() {
+    		//
+    	}
+    },
+    copyFile: {
+    	enumerable: true,
+    	value: function() {
+    		//
+    	}
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /*
+open: {
     	enumerable: true,
     	value: function(doc, type, uri, server) {
     		//
@@ -70,32 +187,7 @@ create: {
     	enumerable: true,
     	value: function(type, id, components) {
     		
-    		/*
     		
-    		GETS HTML IN LOADED DOCUMENT
-    		document.getElementById('userDocument').contentDocument.documentElement.outerHTML
-    		
-    		GETS HTML IN <HEAD> AND <BODY> OR ANYTHING INSIDE <HTML>
-    		document.getElementById('userDocument').contentDocument.documentElement.innerHTML
-    		
-    		THE ABOVE METHOD SEEMS TO BE BETTER JUST IN CASE PEOPLE REMOVE THE BODY TAG SINCE NOT REQUIRED IN HTML5
-    		
-    		GETS HTML IN <BODY> ONLY
-    		document.getElementById('userDocument').contentDocument.body.innerHTML
-    		
-    		HACK TO GET THE STYLES OF THE ELEMENTS ADDED WHILE DRAWING
-    		document.getElementById('userDocument').contentDocument.styleSheets[document.getElementById('userDocument').contentDocument.styleSheets.length-1]
-    		
-    		CSS SEEMS TO BE RESERVED WHEN APPENDED, MEANING 0 IN THE ARRAY IS ACTUALLY THE LAST DEFINED STYLE IN THE CSS
-    		
-    		//GETS CSS RULES APPLIED TO ALL OBJECTS CREATED BY THE APP
-    		document.getElementById('userDocument').contentDocument.styleSheets[document.getElementById('userDocument').contentDocument.styleSheets.length-1].cssRules
-    		
-    		document.getElementById('userDocument').contentDocument.getElementById('userHead').innerHTML
-    		document.getElementById('userDocument').contentDocument.getElementById('UserContent').innerHTML
-    		this.getCssFromRules(document.getElementById('userDocument').contentDocument.styleSheets[document.getElementById('userDocument').contentDocument.styleSheets.length-1].cssRules)
-    		
-    		*/
     		
     		//
     		var contents, counter = 0;
@@ -215,6 +307,7 @@ create: {
     		return css;
     	}
     }
+*/
     
     
     

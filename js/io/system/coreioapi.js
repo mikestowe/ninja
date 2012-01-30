@@ -7,7 +7,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 /* /////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 NOTES:
-These methods should only be access through the file and project IO classes.
 ////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////// */
 var Montage = 		require("montage/core/core").Montage,
@@ -20,22 +19,29 @@ exports.CoreIoApi = Montage.create(Component, {
 	deserializedFromTemplate: {
 		enumerable: false,
 		value: function () {
-			////////////////////////////////////////////////////////////
-			
-			//TODO: Add logic for getting rooUrl from local storage
-			
-			////////////////////////////////////////////////////////////
-			
-			
-			
-			//Checking for status of I/O API
-			this.ioDetected = this.isActive();
-			//TODO: Add welcome screen logic, probably externally
+			//Checking for local storage of URL for IO
+			if (window.localStorage['ioRootUrl']) {
+				//Getting URL from local storage
+				this.rootUrl = window.localStorage['ioRootUrl'];
+				//Checks for IO API to be active
+				this.ioServiceDetected = this.isIoServiceActive();
+				//
+				console.log('FileIO: localStorage URL detected | IO Service Detected: '+ this.ioServiceDetected);
+				//
+			} else {
+				//TODO: Remove, automatically prompt user on welcome
+				this.rootUrl = 'http://localhost:16380';
+				//TODO: Changed to false, welcome screen prompts user
+				this.ioServiceDetected = this.isIoServiceActive();
+				//
+				console.log('FileIO: localStorage URL NOT detected | IO Service Detected: '+ this.ioServiceDetected);
+				//
+			}
 		}
 	},
 	////////////////////////////////////////////////////////////////////
     //Method to check status of I/O API, will return false if not active
-	isActive: {
+	isIoServiceActive: {
 		enumerable: false,
 		value: function () {
 			//Doing a directory root check, a 200 status means running
@@ -47,27 +53,27 @@ exports.CoreIoApi = Montage.create(Component, {
 		}
 	},
 	////////////////////////////////////////////////////////////////////
-    //Root API URL
-    _ioDetected: {
+    //
+    _ioServiceDetected: {
         enumerable: false,
         value: false
     },
     ////////////////////////////////////////////////////////////////////
-    //
-    ioDetected: {
+    //Checking for service availability on boot
+    ioServiceDetected: {
     	enumerable: false,
     	get: function() {
-            return this._ioDetected;
+            return this._ioServiceDetected;
         },
         set: function(value) {
-        	this._ioDetected = value;
+        	this._ioServiceDetected = value;
         }
     },
 	////////////////////////////////////////////////////////////////////
     //Root API URL
     _rootUrl: {
         enumerable: false,
-        value: 'http://localhost:16380'
+        value: null
     },
     ////////////////////////////////////////////////////////////////////
     //
@@ -78,6 +84,24 @@ exports.CoreIoApi = Montage.create(Component, {
         },
         set: function(value) {
         	this._rootUrl = value;
+        	window.localStorage["ioRootUrl"] = value;
+        }
+    },
+	////////////////////////////////////////////////////////////////////
+    //API service URL
+    _apiServiceURL: {
+        enumerable: false,
+        value: '/'
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    apiServiceURL: {
+    	enumerable: false,
+    	get: function() {
+            return this.rootUrl+this._apiServiceURL;
+        },
+        set: function(value) {
+        	this._apiServiceURL = value;
         }
     },
 	////////////////////////////////////////////////////////////////////
