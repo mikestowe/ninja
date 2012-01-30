@@ -155,6 +155,32 @@ function GLSubpath() {
         return retAnchor;
     }
 
+    this.deselectAnchorPoint = function(){
+        this._selectedAnchorIndex = -1;
+    }
+    
+    this.reversePath = function() {
+        var revAnchors = [];
+        var numAnchors = this._Anchors.length;
+        var lastIndex = numAnchors-1;
+        if (lastIndex<0){
+            return; //cannot reverse empty path
+        }
+        for (var i=lastIndex;i>=0;i--) {
+            var newAnchor = new GLAnchorPoint();
+            var oldAnchor = this._Anchors[i];
+            newAnchor.setPos(oldAnchor.getPosX(),oldAnchor.getPosY(),oldAnchor.getPosZ());
+            newAnchor.setPrevPos(oldAnchor.getNextX(),oldAnchor.getNextY(),oldAnchor.getNextZ());
+            newAnchor.setNextPos(oldAnchor.getPrevX(),oldAnchor.getPrevY(),oldAnchor.getPrevZ());
+            revAnchors.push(newAnchor);
+        }
+        if (this._selectedAnchorIndex >= 0){
+            this._selectedAnchorIndex = (numAnchors-1) - this._selectedAnchorIndex;
+        }
+        this._Anchors = revAnchors;
+        this._dirty=true;
+    }
+
     //remove all the anchor points
     this.clearAllAnchors = function () {
         this._Anchors = [];
@@ -220,7 +246,10 @@ function GLSubpath() {
         //check whether the point is within the radius distance from the curve represented as a polyline in _samples
         //return the parametric distance along the curve if there is an intersection, else return null
         //will assume that the BBox test is performed outside this function
-
+        if (endIndex<startIndex){
+            //go from startIndex to the end of the samples
+            endIndex = this._samples.length/3;
+        }
         for (var i=startIndex; i<endIndex; i++){
             var seg0 = Vector.create([this._samples[3*i], this._samples[3*i + 1], this._samples[3*i + 2]]);
             var j=i+1;
@@ -386,6 +415,7 @@ function GLSubpath() {
                 if (this._isWithinBoundingBox(point, controlPoints, radius)) {
                     //var intersectParam = this._checkIntersection(controlPoints, 0.0, 1.0, point, radius);
                     var intersectParam = this._checkIntersectionWithSamples(this._anchorSampleIndex[i], this._anchorSampleIndex[nextIndex], point, radius);
+                    console.log("intersectParam:"+intersectParam);
                     if (intersectParam){
                         retCode = retCode | this.SEL_PATH;
                         retParam = intersectParam-i; //make the retParam go from 0 to 1
@@ -1137,6 +1167,7 @@ function GLSubpath() {
     this.buildBuffers = function () {
         if (this._useCanvasDrawing)
             return;
+
         // get the world
         var world = this.getWorld();
         if (!world) throw ("null world in GLSubpath buildBuffers");
@@ -1368,7 +1399,7 @@ function GLSubpath() {
         ctx.strokeStyle = "black";
         if (this._strokeColor)
             ctx.strokeStyle = MathUtils.colorToHex( this._strokeColor );
-        ctx.fillStyle = "blue";
+        ctx.fillStyle = "white";
         if (this._fillColor)
             ctx.fillStyle = MathUtils.colorToHex( this._fillColor );
         var lineCap = ['butt','round','square'];
@@ -1387,7 +1418,9 @@ function GLSubpath() {
             prevAnchor = currAnchor;
         }
         ctx.stroke();
-        //ctx.fill();
+        if (this._isClosed){
+            ctx.fill();
+        }
 
 
 

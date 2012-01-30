@@ -5,6 +5,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var ShapeTool = require("js/tools/ShapeTool").ShapeTool;
+var ShapesController = 	require("js/controllers/elements/shapes-controller").ShapesController;
 var DrawingToolBase = require("js/tools/drawing-tool-base").DrawingToolBase;
 var defaultEventManager = require("montage/core/event/event-manager").defaultEventManager;
 var Montage = require("montage/core/core").Montage;
@@ -187,6 +188,8 @@ exports.PenTool = Montage.create(ShapeTool, {
                             //we have picked the endpoint of this path...reverse the path if necessary
                             if (selAnchorIndex ===0){
                                 //reverse this path
+                                this._selectedSubpath.reversePath();
+                                selAnchorIndex = this._selectedSubpath.getSelectedAnchorIndex();
                             }
                             this._isPickedEndPointInSelectPathMode = true;
                         }
@@ -219,6 +222,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                         }
                     }
                 }
+                //else if (whichPoint === this._selectedSubpath.SEL_NONE) {
                 if (whichPoint === this._selectedSubpath.SEL_NONE) {
                     if (this._entryEditMode !== this.ENTRY_SELECT_PATH) {
                         //add an anchor point to end of the subpath, and make it the selected anchor point
@@ -234,7 +238,18 @@ exports.PenTool = Montage.create(ShapeTool, {
                         }
                     } else {
                         if (this._isPickedEndPointInSelectPathMode){
-                            
+                        //if (0){
+                            //TODO clean up this code...very similar to the code block above
+                            if (!this._selectedSubpath.getIsClosed()) {
+                                this._selectedSubpath.addAnchor(new GLAnchorPoint());
+                                var newAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
+                                newAnchor.setPos(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2]);
+                                newAnchor.setPrevPos(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2]);
+                                newAnchor.setNextPos(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2]);
+
+                                //set the mode so that dragging will update the next and previous locations
+                                this._editMode = this.EDIT_PREV_NEXT;
+                            }
                         }
                         //if the edit mode was ENTRY_SELECT_PATH and no anchor point was selected, so we should de-select this path and revert to ENTRY_SELECT_NONE
                         //this._entryEditMode = this.ENTRY_SELECT_NONE; //TODO revisit this after implementing code for adding points to any end of selected path
@@ -352,10 +367,10 @@ exports.PenTool = Montage.create(ShapeTool, {
         value: function() {
             if (this._penCanvas!==null) {
                 //obtain the 2D translation of the canvas due to the Selection tool...assuming this is called in Configure
-                var penCanvasLeft = parseFloat(ElementMediator.getProperty(this._penCanvas, "left"));//parseFloat(DocumentControllerModule.DocumentController.GetElementStyle(this._penCanvas, "left"));
+                var penCanvasLeft = parseInt(ElementMediator.getProperty(this._penCanvas, "left"));//parseFloat(DocumentControllerModule.DocumentController.GetElementStyle(this._penCanvas, "left"));
                 var penCanvasTop = parseFloat(ElementMediator.getProperty(this._penCanvas, "top"));//parseFloat(DocumentControllerModule.DocumentController.GetElementStyle(this._penCanvas, "top"));
-                var penCanvasWidth = this._penCanvas.width;
-                var penCanvasHeight = this._penCanvas.height;
+                var penCanvasWidth = parseInt(ElementMediator.getProperty(this._penCanvas, "width"));//this._penCanvas.width;
+                var penCanvasHeight = parseInt(ElementMediator.getProperty(this._penCanvas, "height"));//this._penCanvas.height;
                 var penCanvasOldX = penCanvasLeft + 0.5 * penCanvasWidth;
                 var penCanvasOldY = penCanvasTop + 0.5 * penCanvasHeight;
 
@@ -373,17 +388,20 @@ exports.PenTool = Montage.create(ShapeTool, {
 
     ShowSelectedSubpath:{
         value: function() {
-            var bboxMin = this._selectedSubpath.getBBoxMin();
-            var bboxMax = this._selectedSubpath.getBBoxMax();
-            var bboxWidth = bboxMax[0] - bboxMin[0];
-            var bboxHeight = bboxMax[1] - bboxMin[1];
-            var bboxMid = Vector.create([0.5 * (bboxMax[0] + bboxMin[0]), 0.5 * (bboxMax[1] + bboxMin[1]), 0.5 * (bboxMax[2] + bboxMin[2])]);
+            if (this._selectedSubpath){
+                this._selectedSubpath.createSamples(); //dirty bit is checked here
+                var bboxMin = this._selectedSubpath.getBBoxMin();
+                var bboxMax = this._selectedSubpath.getBBoxMax();
+                var bboxWidth = bboxMax[0] - bboxMin[0];
+                var bboxHeight = bboxMax[1] - bboxMin[1];
+                var bboxMid = Vector.create([0.5 * (bboxMax[0] + bboxMin[0]), 0.5 * (bboxMax[1] + bboxMin[1]), 0.5 * (bboxMax[2] + bboxMin[2])]);
 
-            this._selectedSubpath.setCanvasX(bboxMid[0]);
-            this._selectedSubpath.setCanvasY(bboxMid[1]);
+                this._selectedSubpath.setCanvasX(bboxMid[0]);
+                this._selectedSubpath.setCanvasY(bboxMid[1]);
 
-            //call render shape with the bbox width and height
-            this.RenderShape(bboxWidth, bboxHeight, this._penPlaneMat, bboxMid, this._penCanvas);
+                //call render shape with the bbox width and height
+                this.RenderShape(bboxWidth, bboxHeight, this._penPlaneMat, bboxMid, this._penCanvas);
+            }
         }
     },
 
@@ -429,11 +447,17 @@ exports.PenTool = Montage.create(ShapeTool, {
                 }
 
                 if (this._isNewPath) {
-                    var strokeSize = 10.0;
+                    var strokeSize = 1.0;//default stroke width
                     if (this.options.strokeSize) {
-                        strokeSize = this.GetValueInPixels(this.options.strokeSize.value, this.options.strokeSize.units);
+                        strokeSize = ShapesController.GetValueInPixels(this.options.strokeSize.value, this.options.strokeSize.units);
                     }
                     this._selectedSubpath.setStrokeWidth(strokeSize);
+                    if (this.application.ninja.colorController.colorToolbar.stroke.webGlColor){
+                        this._selectedSubpath.setStrokeColor(this.application.ninja.colorController.colorToolbar.stroke.webGlColor);
+                    }
+                    if (this.application.ninja.colorController.colorToolbar.fill.webGlColor){
+                        this._selectedSubpath.setFillColor(this.application.ninja.colorController.colorToolbar.fill.webGlColor);
+                    }
                 }
 
                 this._selectedSubpath.makeDirty();
@@ -541,55 +565,10 @@ exports.PenTool = Montage.create(ShapeTool, {
             var left = Math.round(midPt[0] - 0.5 * w);
             var top = Math.round(midPt[1] - 0.5 * h);
 
-
-            var strokeStyle = this.options.strokeStyle;
-            var strokeSize = 4.0;
-            if (this.options.strokeSize) {
-                strokeSize = this.GetValueInPixels(this.options.strokeSize.value, this.options.strokeSize.units, h);
-            }
-            var strokeColor = [1.0, 0.3, 0.3, 1.0];
-            var fillColor = [1, .2, .5, 1.0];
-            //var s = ColorPanelModule.ColorPanel.strokeToolbar.webGlColor;
-            var s = strokeColor;
-            if(s)
-            {
-                strokeColor = [s.r/255, s.g/255, s.b/255, s.a];
-            }
-
-
-           //var f = ColorPanelModule.ColorPanel.fillToolbar.webGlColor;
-            var f = fillColor;
-            if(f)
-            {
-                fillColor = [f.r/255, f.g/255, f.b/255, f.a];
-            }
-
-            // for default stroke and fill/no materials
-            var strokeMaterial = null;
-            var fillMaterial = null;
-
-            var strokeIndex = parseInt(this.options.strokeMaterial);
-            if(strokeIndex > 0)
-            {
-                strokeMaterial = Object.create(MaterialsLibrary.getMaterialAt(strokeIndex-1));
-            }
-
-            var fillIndex = parseInt(this.options.fillMaterial);
-            if(fillIndex > 0)
-            {
-                fillMaterial = Object.create(MaterialsLibrary.getMaterialAt(fillIndex-1));
-            }
-
             if (!canvas) {
                 var newCanvas = null;
-                //if (this._useExistingCanvas()) {
-                //    newCanvas = this._targetedCanvas; //TODO...when is this condition true? I would like to reuse canvas when continuing path or when drawing on div tool canvas
-                //}else {
-                    //newCanvas = this.createCanvas(left, top, w, h,"Subpath");
-                //}
-
                 newCanvas = NJUtils.makeNJElement("canvas", "Subpath", "shape", null, true);
-                var elementModel = TagTool.makeElement(w, h, planeMat, midPt, newCanvas);
+                var elementModel = TagTool.makeElement(parseInt(w), parseInt(h), planeMat, midPt, newCanvas);
                 ElementMediator.addElement(newCanvas, elementModel.data, true);
 
                 // create all the GL stuff
@@ -599,12 +578,6 @@ exports.PenTool = Montage.create(ShapeTool, {
 
                 var subpath = this._selectedSubpath; //new GLSubpath();
                 subpath.setWorld(world);
-                subpath.setStrokeMaterial(strokeMaterial);
-                subpath.setFillMaterial(fillMaterial);
-                subpath.setFillColor(fillColor);
-                subpath.setStrokeColor(strokeColor);
-                subpath.setStrokeStyle(strokeStyle);
-
                 subpath.setPlaneMatrix(planeMat);
                 var planeMatInv = glmat4.inverse( planeMat, [] );
                 subpath.setPlaneMatrixInverse(planeMatInv);
@@ -628,8 +601,8 @@ exports.PenTool = Montage.create(ShapeTool, {
                     var canvasArray=[canvas];
                     ElementMediator.setProperty(canvasArray, "left", [parseInt(left)+"px"],"Changing", "penTool");//DocumentControllerModule.DocumentController.SetElementStyle(canvas, "left", parseInt(left) + "px");
                     ElementMediator.setProperty(canvasArray, "top", [parseInt(top) + "px"],"Changing", "penTool");//DocumentControllerModule.DocumentController.SetElementStyle(canvas, "top", parseInt(top) + "px");
-                    canvas.width = w;
-                    canvas.height = h;
+                    ElementMediator.setProperty(canvasArray, "width", [w+"px"], "Changing", "penTool");//canvas.width = w;
+                    ElementMediator.setProperty(canvasArray, "height", [h+"px"], "Changing", "penTool");//canvas.height = h;
                     //update the viewport and projection to reflect the new canvas width and height
                     world.setViewportFromCanvas(canvas);
                     if (this._useWebGL){
@@ -645,16 +618,9 @@ exports.PenTool = Montage.create(ShapeTool, {
                 var planeMatInv = glmat4.inverse( planeMat, [] );
                 subpath.setPlaneMatrixInverse(planeMatInv);
                 subpath.setPlaneCenter(midPt);
-
                 subpath.setWorld(world);
-                subpath.setStrokeMaterial(strokeMaterial);
-                subpath.setStrokeColor(strokeColor);
-                subpath.setStrokeStyle(strokeStyle);
-                subpath.setFillMaterial(fillMaterial);
-                subpath.setFillColor(fillColor);
-                
+
                 world.addIfNewObject(subpath);
-                //world.addObject(subpath);
                 world.render();
 
                 //TODO this will not work if there are multiple shapes in the same canvas
@@ -1094,8 +1060,6 @@ exports.PenTool = Montage.create(ShapeTool, {
                 return;
             }
 
-
-
             if (this._subpaths === null) {
                 return;
             }
@@ -1161,6 +1125,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                                     this._entryEditMode = this.ENTRY_SELECT_PATH;
                                     this._selectedSubpath = go;
                                     this.TranslateSelectedSubpathPerPenCanvas();
+                                    this._selectedSubpath.deselectAnchorPoint();
                                     this.DrawSubpathAnchors(this._selectedSubpath);
                                 }
                             }

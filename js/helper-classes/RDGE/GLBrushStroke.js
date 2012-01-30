@@ -6,7 +6,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var VecUtils = require("js/helper-classes/3D/vec-utils").VecUtils;
 
-
 ///////////////////////////////////////////////////////////////////////
 // Class GLBrushStroke
 //      representation a sequence points (polyline) created by brush tool.
