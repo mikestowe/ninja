@@ -5,7 +5,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var Montage = require("montage/core/core").Montage,
-    Component = require("montage/ui/component").Component;
+    Component = require("montage/ui/component").Component,
+    fileUtils = require("js/io/utils/file-utils").FileUtils;
 
 var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
 
@@ -14,6 +15,12 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
     },
 
     fileName : {
+        enumerable: true,
+        writable: true,
+        value: ""
+    },
+
+    folderUri:{
         enumerable: true,
         writable: true,
         value: ""
@@ -42,10 +49,48 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
     didDraw: {
         enumerable: false,
         value: function() {
+            var self = this;
             this.fileInputField.selectDirectory = true;
             this.fileInputField.pickerName = "saveAsDirectoryPicker";
             this.newFileName.value = this.fileName;
             this.fileInputField.newFileDirectory.value = this.folderUri;
+
+            this.newFileName.addEventListener("blur", function(evt){self.handleNewFileNameOnblur(evt);}, false);
+            this.eventManager.addEventListener("newFileDirectorySet", function(evt){self.handleNewFileDirectorySet(evt);}, false);
+
+            this.enableOk();
+        }
+    },
+
+    handleNewFileDirectorySet:{
+         value:function(evt){
+             if(!!evt._event.newFileDirectory){
+                 this.folderUri = evt._event.newFileDirectory;
+                 if(this.folderUri !== ""){
+                     this.enableOk();
+                 }
+             }
+         }
+     },
+
+    handleNewFileNameOnblur:{
+          value:function(evt){
+              this.fileName = this.newFileName.value;
+              if(this.fileName !== ""){
+                  if(this.fileName !== ""){
+                      this.enableOk();
+                  }
+              }
+          }
+    },
+
+
+    enableOk:{
+        value: function(){
+            if(this.isValidFileName(this.fileName) && this.isValidUri(this.folderUri) && !this.checkFileExists(this.fileName, this.folderUri)){
+                this.okButton.removeAttribute("disabled");
+                this.error.innerHTML="";
+            }
         }
     },
 
@@ -66,29 +111,40 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
             var filename = this.fileName,
                 newFileDirectory = this.newFileDirectory,
                 success = true;
-            try{
-                //validate file name and folder path
-                //check if file already exists
-                if(!!this.callback && !!this.callbackScope){//inform document-controller if save successful
-                    this.callback.call(this.callbackScope, {"filename":filename, "destination": newFileDirectory});//document-controller api
-                }else{
-                    //send save as event
-                    var saveAsEvent = document.createEvent("Events");
-                    saveAsEvent.initEvent("saveAsFile", false, false);
-                    saveAsEvent.saveAsOptions = {"filename":filename, "destination": newFileDirectory};
-                    this.eventManager.dispatchEvent(saveAsEvent);
+            if(this.isValidFileName(this.fileName) && this.isValidUri(this.folderUri) && !this.checkFileExists(this.fileName, this.folderUri)){
+                try{
+                    //validate file name and folder path
+                    //check if file already exists
+                    if(!!this.callback && !!this.callbackScope){//inform document-controller if save successful
+                        this.callback.call(this.callbackScope, {"filename":filename, "destination": newFileDirectory});//document-controller api
+                    }else{
+                        //send save as event
+                        var saveAsEvent = document.createEvent("Events");
+                        saveAsEvent.initEvent("saveAsFile", false, false);
+                        saveAsEvent.saveAsOptions = {"filename":filename, "destination": newFileDirectory};
+                        this.eventManager.dispatchEvent(saveAsEvent);
+                    }
+                }catch(e){
+                        success = false;
+                        console.log("[ERROR] Failed to save:  "+ this.fileName + " at "+ this.newFileDirectory);
+                        console.log(e.stack);
                 }
-            }catch(e){
-                    success = false;
-                    console.log("[ERROR] Failed to save:  "+ this.fileName + " at "+ this.newFileDirectory);
-            }
 
-            if(success){
-                //clean up memory
-                //this.cleanup();
+                if(success){
+                    //clean up memory
+                    //this.cleanup();
 
-                if(this.popup){
-                    this.popup.hide();
+                    if(this.popup){
+                        this.popup.hide();
+                    }
+                }
+            }else{
+                if(this.error.innerHTML !== ""){
+                    this.showError("! Name and Location should be valid.");
+                }
+                //disable ok
+                if(!this.okButton.hasAttribute("disabled")){
+                    this.okButton.setAttribute("disabled", "true");
                 }
             }
         }
@@ -96,30 +152,44 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
 
     isValidUri:{
         value: function(uri){
-            var isWindowsUri=false, isUnixUri=false,status=false;
+            var status= fileUtils.isValidUri(uri);
             if(uri !== ""){
-                uri = uri.replace(/^\s+|\s+$/g,"");  // strip any leading or trailing spaces
-
-                //for local machine folder uri
-                isWindowsUri = /^([a-zA-Z]:)(\\[^<>:"/\\|?*]+)*\\?$/gi.test(uri);
-                isUnixUri = /^(\/)?(\/(?![.])[^/]*)*\/?$/gi.test(uri);//folders beginning with . are hidden on Mac / Unix
-                status = isWindowsUri || isUnixUri;
-                if(isWindowsUri && isUnixUri){status = false;}
+                if(!status){
+                    this.showError("! Invalid directory.");
+                }
             }
             return status;
         }
     },
     isValidFileName:{
         value: function(fileName){
-            var status = false;
+            var status = fileUtils.isValidFileName(fileName);
             if(fileName !== ""){
-                fileName = fileName.replace(/^\s+|\s+$/g,"");
-                status = !(/[/\\]/g.test(fileName));
-                if(status && navigator.userAgent.indexOf("Macintosh") != -1){//for Mac files beginning with . are hidden
-                    status = !(/^\./g.test(fileName));
+                if(!status){
+                    this.showError("! Invalid file name.");
                 }
             }
             return status;
+        }
+    },
+    checkFileExists:{
+        value: function(fileUri, folderUri, fileType){
+            var status= fileUtils.checkFileExists(fileUri, folderUri, fileType);
+            if(status){
+                this.showError("! File already exists.");
+            }
+            return status;
+        }
+    },
+
+    showError:{
+        value:function(errorString){
+            this.error.innerHTML = "";
+            this.error.innerHTML=errorString;
+            //disable ok
+            if(!this.okButton.hasAttribute("disabled")){
+                this.okButton.setAttribute("disabled", "true");
+            }
         }
     }
 

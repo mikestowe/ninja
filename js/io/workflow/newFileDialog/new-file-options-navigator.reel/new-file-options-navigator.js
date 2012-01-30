@@ -9,7 +9,7 @@ var Montage = require("montage/core/core").Montage,
      iconsListModule = require("js/components/ui/icon-list-basic/iconsList.reel"),
     treeModule = require("js/components/ui/tree-basic/tree.reel"),
     newFileLocationSelectionModule = require("js/io/workflow/newFileDialog/new-file-workflow-controller"),
-    fileSystem = require("js/io/system/filesystem").FileSystem;
+    fileUtils = require("js/io/utils/file-utils").FileUtils;
 
 var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(Component, {
 
@@ -244,7 +244,6 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
                     this.okButton.setAttribute("disabled", "true");
                 }
             }
-
         }
     },
 
@@ -336,16 +335,8 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
 
     isValidUri:{
         value: function(uri){
-            var isWindowsUri=false, isUnixUri=false,status=false;
+            var status= fileUtils.isValidUri(uri);
             if(uri !== ""){
-                uri = uri.replace(/^\s+|\s+$/g,"");  // strip any leading or trailing spaces
-
-                //for local machine folder uri
-                isWindowsUri = /^([a-zA-Z]:)(\\[^<>:"/\\|?*]+)*\\?$/gi.test(uri);
-                isUnixUri = /^(\/)?(\/(?![.])[^/]*)*\/?$/gi.test(uri);//folders beginning with . are hidden on Mac / Unix
-                status = isWindowsUri || isUnixUri;
-                if(isWindowsUri && isUnixUri){status = false;}
-
                 if(!status){
                     this.showError("! Invalid directory.");
                 }
@@ -355,14 +346,8 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
     },
     isValidFileName:{
         value: function(fileName){
-            var status = false;
+            var status = fileUtils.isValidFileName(fileName);
             if(fileName !== ""){
-                fileName = fileName.replace(/^\s+|\s+$/g,"");
-                status = !(/[/\\]/g.test(fileName));
-                if(status && navigator.userAgent.indexOf("Macintosh") != -1){//for Mac files beginning with . are hidden
-                    status = !(/^\./g.test(fileName));
-                }
-
                 if(!status){
                     this.showError("! Invalid file name.");
                 }
@@ -372,25 +357,9 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
     },
     checkFileExists:{
         value: function(fileUri, folderUri, fileType){
-            var uri = "", response=null, status=true;
-
-            //prepare absolute uri
-            if(/[^/\\]$/g.test(folderUri)){
-                folderUri = folderUri + "/";
-            }
-
-            //todo:add file extension check
-
-            uri = ""+folderUri+fileUri;
-
-            response = fileSystem.shellApiHandler.fileExists({"uri":uri});
-            if(!!response && response.success && (response.status === 204)){
+            var status= fileUtils.checkFileExists(fileUri, folderUri, fileType);
+            if(status){
                 this.showError("! File already exists.");
-                status = true;
-            }else if(!!response && response.success && (response.status === 404)){
-                status = false;
-            }else{
-                this.showError("! Cloud Service Error.");
             }
             return status;
         }
