@@ -22,7 +22,7 @@ exports.Properties3D = Montage.create(Component, {
 	_world :            {value : null, enumerable:true}, // keep a referenceto the GLWorld (if any)
 
     // Keep track of 3d properties
-    matrix3d : {value : [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1], enumerable: true},
+    matrix3d : {value : null, enumerable: true},
 
     xAngle : {value : 0, enumerable: true},
     yAngle : {value : 0, enumerable: true},
@@ -33,7 +33,7 @@ exports.Properties3D = Montage.create(Component, {
     z3D : {value : 0, enumerable: true},
 
     //TODO - not sure if this should be part of the tool or stage or a utility
-    perspectiveDist :   { value : 1400, enumerable: true},
+    perspectiveDist :   { value : null, enumerable: true},
     perspectiveMode :   { value : null, enumerable: true},
 
     elementPlane :   { value : null, enumerable: true},
