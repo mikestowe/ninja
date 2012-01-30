@@ -1417,10 +1417,11 @@ function GLSubpath() {
             ctx.bezierCurveTo(prevAnchor.getNextX()-bboxMin[0],prevAnchor.getNextY()-bboxMin[1], currAnchor.getPrevX()-bboxMin[0], currAnchor.getPrevY()-bboxMin[1], currAnchor.getPosX()-bboxMin[0], currAnchor.getPosY()-bboxMin[1]);
             prevAnchor = currAnchor;
         }
-        ctx.stroke();
         if (this._isClosed){
             ctx.fill();
         }
+        ctx.stroke();
+                
 
 
 
