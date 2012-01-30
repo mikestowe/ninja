@@ -16,16 +16,103 @@ var Montage = 		require("montage/core/core").Montage,
 //Exporting as Project I/O
 exports.CoreIoApi = Montage.create(Component, {
 	////////////////////////////////////////////////////////////////////
-    // private property containing the file service URL to use for all file IO calls
-    _fileServiceURL: {
+    //
+	deserializedFromTemplate: {
+		enumerable: false,
+		value: function () {
+			////////////////////////////////////////////////////////////
+			
+			//TODO: Add logic for getting rooUrl from local storage
+			
+			////////////////////////////////////////////////////////////
+			
+			
+			
+			//Checking for status of I/O API
+			this.ioDetected = this.isActive();
+			//TODO: Add welcome screen logic, probably externally
+		}
+	},
+	////////////////////////////////////////////////////////////////////
+    //Method to check status of I/O API, will return false if not active
+	isActive: {
+		enumerable: false,
+		value: function () {
+			//Doing a directory root check, a 200 status means running
+			if (this.getDirectoryContents({uri:'/'}).status === 200) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	},
+	////////////////////////////////////////////////////////////////////
+    //Root API URL
+    _ioDetected: {
         enumerable: false,
-        value: "http://localhost:16380/file"
+        value: false
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    ioDetected: {
+    	enumerable: false,
+    	get: function() {
+            return this._ioDetected;
+        },
+        set: function(value) {
+        	this._ioDetected = value;
+        }
     },
 	////////////////////////////////////////////////////////////////////
-    // private property containing the directory service URL to use for all file IO calls
+    //Root API URL
+    _rootUrl: {
+        enumerable: false,
+        value: 'http://localhost:16380'
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    rootUrl: {
+    	enumerable: false,
+    	get: function() {
+            return this._rootUrl;
+        },
+        set: function(value) {
+        	this._rootUrl = value;
+        }
+    },
+	////////////////////////////////////////////////////////////////////
+    //File service API URL
+    _fileServiceURL: {
+        enumerable: false,
+        value: '/file'
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    fileServiceURL: {
+    	enumerable: false,
+    	get: function() {
+            return this.rootUrl+this._fileServiceURL;
+        },
+        set: function(value) {
+        	this._fileServiceURL = value;
+        }
+    },
+	////////////////////////////////////////////////////////////////////
+    //Directory service API URL
     _directoryServiceURL: {
         enumerable: false,
-        value: "http://localhost:16380/directory"
+        value: '/directory'
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    directoryServiceURL: {
+    	enumerable: false,
+    	get: function() {
+            return this.rootUrl+this._directoryServiceURL;
+        },
+        set: function(value) {
+        	this._directoryServiceURL = value;
+        }
     },
 	////////////////////////////////////////////////////////////////////
     // private helper to parse URIs and append them to the service URL
@@ -68,7 +155,7 @@ exports.CoreIoApi = Montage.create(Component, {
             //
             if(file && file.uri && file.uri.length) {
                 try {
-                    var serviceURL = this._prepareServiceURL(this._fileServiceURL, file.uri),
+                    var serviceURL = this._prepareServiceURL(this.fileServiceURL, file.uri),
                     	xhr = new XMLHttpRequest();
                     //	
                     xhr.open("GET", serviceURL, false);
@@ -111,7 +198,7 @@ exports.CoreIoApi = Montage.create(Component, {
             var retValue = { success:null, status:null };
             if(file && file.uri && file.uri.length) {
                 try {
-                    var serviceURL = this._prepareServiceURL(this._fileServiceURL, file.uri),
+                    var serviceURL = this._prepareServiceURL(this.fileServiceURL, file.uri),
                     	xhr = new XMLHttpRequest();
                     //
                     xhr.open("POST", serviceURL, false);
@@ -161,7 +248,7 @@ exports.CoreIoApi = Montage.create(Component, {
             var retValue = { success:null, status:null };
             if(file && file.uri && file.uri.length && file.contents && file.contents.length) {
                 try {
-                    var serviceURL = this._prepareServiceURL(this._fileServiceURL, file.uri),
+                    var serviceURL = this._prepareServiceURL(this.fileServiceURL, file.uri),
                     	xhr = new XMLHttpRequest();
                     //
                     xhr.open("PUT", serviceURL, false);
@@ -208,7 +295,7 @@ exports.CoreIoApi = Montage.create(Component, {
             var retValue = { success:null, status:null };
             if(file && file.sourceUri && file.sourceUri.length && file.destUri && file.destUri.length) {
                 try {
-                    var serviceURL = this._prepareServiceURL(this._fileServiceURL, file.destUri),
+                    var serviceURL = this._prepareServiceURL(this.fileServiceURL, file.destUri),
                     	xhr = new XMLHttpRequest();
                     //
                     xhr.open("PUT", serviceURL, false);
@@ -256,7 +343,7 @@ exports.CoreIoApi = Montage.create(Component, {
             var retValue = { success:null, status:null };
             if(file && file.sourceUri && file.sourceUri.length && file.destUri && file.destUri.length) {
                 try {
-                    var serviceURL = this._prepareServiceURL(this._fileServiceURL, file.destUri),
+                    var serviceURL = this._prepareServiceURL(this.fileServiceURL, file.destUri),
                     	xhr = new XMLHttpRequest();
                     //
                     xhr.open("PUT", serviceURL, false);
@@ -302,7 +389,7 @@ exports.CoreIoApi = Montage.create(Component, {
             var retValue = { success:null, status:null };
             if(file && file.uri && file.uri.length) {
                 try {
-                    var serviceURL = this._prepareServiceURL(this._fileServiceURL, file.uri),
+                    var serviceURL = this._prepareServiceURL(this.fileServiceURL, file.uri),
                     	xhr = new XMLHttpRequest();
                     //
                     xhr.open("DELETE", serviceURL, false);
@@ -344,7 +431,7 @@ exports.CoreIoApi = Montage.create(Component, {
             //
             if(file && file.uri && file.uri.length) {
                 try {
-                    var serviceURL = this._prepareServiceURL(this._fileServiceURL, file.uri),
+                    var serviceURL = this._prepareServiceURL(this.fileServiceURL, file.uri),
                     	xhr = new XMLHttpRequest();
                     //
                     xhr.open("GET", serviceURL, false);
@@ -386,7 +473,7 @@ exports.CoreIoApi = Montage.create(Component, {
             var retValue = { success:null, status:null };
             if(dir && dir.uri && dir.uri.length) {
                 try {
-                    var serviceURL = this._prepareServiceURL(this._directoryServiceURL, dir.uri),
+                    var serviceURL = this._prepareServiceURL(this.directoryServiceURL, dir.uri),
                     	xhr = new XMLHttpRequest();
                     //
                     xhr.open("POST", serviceURL, false);
@@ -425,7 +512,7 @@ exports.CoreIoApi = Montage.create(Component, {
             var retValue = { success:null, status:null };
             if(dir && dir.uri && dir.uri.length) {
                 try {
-                    var serviceURL = this._prepareServiceURL(this._directoryServiceURL, dir.uri),
+                    var serviceURL = this._prepareServiceURL(this.directoryServiceURL, dir.uri),
                     	xhr = new XMLHttpRequest();
                     //
                     xhr.open("DELETE", serviceURL, false);
@@ -468,7 +555,7 @@ exports.CoreIoApi = Montage.create(Component, {
             var retValue = { success:null, content:null, status:null };
             if(!!dir && (typeof dir.uri !== "undefined") && (dir.uri !== null) ) {
                 try {
-                    var serviceURL = this._prepareServiceURL(this._directoryServiceURL, dir.uri),
+                    var serviceURL = this._prepareServiceURL(this.directoryServiceURL, dir.uri),
                     	xhr = new XMLHttpRequest();
                     //
                     xhr.open("GET", serviceURL, false);
@@ -526,7 +613,7 @@ exports.CoreIoApi = Montage.create(Component, {
             var retValue = { success:null, content:null, status:null };
             if(dir && dir.uri && dir.uri.length) {
                 try {
-                    var serviceURL = this._prepareServiceURL(this._directoryServiceURL, dir.uri),	
+                    var serviceURL = this._prepareServiceURL(this.directoryServiceURL, dir.uri),	
                     	xhr = new XMLHttpRequest();
                     //
                     xhr.open("GET", serviceURL, false);
@@ -619,7 +706,7 @@ exports.CoreIoApi = Montage.create(Component, {
     		var retValue = {};
             if(sourceDir && sourceDir.length && destDir && destDir.length && operation && operation.length) {
                 try {
-                    var serviceURL = this._prepareServiceURL(this._directoryServiceURL, destDir),
+                    var serviceURL = this._prepareServiceURL(this.directoryServiceURL, destDir),
                     	xhr = new XMLHttpRequest();
                     //
                     xhr.open("PUT", serviceURL, false);
@@ -665,7 +752,7 @@ exports.CoreIoApi = Montage.create(Component, {
             var retValue = { success:null, status:null };
             if(file && file.uri && (typeof lastQueriedTimestamp !== "undefined")) {
                 try {
-                    var serviceURL = this._prepareServiceURL(this._fileServiceURL, file.uri),
+                    var serviceURL = this._prepareServiceURL(this.fileServiceURL, file.uri),
                     xhr = new XMLHttpRequest();
                     xhr.open("GET", serviceURL, false);
                     xhr.setRequestHeader("if-modified-since", lastQueriedTimestamp);
@@ -707,7 +794,7 @@ exports.CoreIoApi = Montage.create(Component, {
             var retValue = { success:null, status:null };
             if(file && file.uri && (typeof lastQueriedTimestamp !== "undefined")) {
                 try {
-                    var serviceURL = this._prepareServiceURL(this._directoryServiceURL, file.uri),
+                    var serviceURL = this._prepareServiceURL(this.directoryServiceURL, file.uri),
                     xhr = new XMLHttpRequest();
                     xhr.open("GET", serviceURL, false);
                     xhr.setRequestHeader("if-modified-since", lastQueriedTimestamp);
@@ -747,7 +834,7 @@ exports.CoreIoApi = Montage.create(Component, {
             var retValue = { success:null, status:null };
             if(file && file.uri) {
                 try {
-                    var serviceURL = this._prepareServiceURL(this._fileServiceURL, file.uri),
+                    var serviceURL = this._prepareServiceURL(this.fileServiceURL, file.uri),
                     xhr = new XMLHttpRequest();
                     xhr.open("GET", serviceURL, false);
                     xhr.setRequestHeader("get-attributes", "true");
@@ -790,7 +877,7 @@ exports.CoreIoApi = Montage.create(Component, {
             var retValue = { success:null, status:null };
             if(file && file.uri) {
                 try {
-                    var serviceURL = this._prepareServiceURL(this._directoryServiceURL, file.uri),
+                    var serviceURL = this._prepareServiceURL(this.directoryServiceURL, file.uri),
                     xhr = new XMLHttpRequest();
                     xhr.open("GET", serviceURL, false);
                     xhr.setRequestHeader("get-attributes", "true");
