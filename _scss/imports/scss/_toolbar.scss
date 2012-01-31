@@ -4,14 +4,14 @@
 // (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 // </copyright>
 
-/*
- * toolbar.scss
- * Styles governing the individual tools.
- * Note that colors and font definitions go in 
- * _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss
- */
+// 
+// toolbar.scss
+// Styles governing the individual tools.
+// Note that colors and font definitions go in 
+// _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss
+  
 
-/* New Tool List CSS */
+//  New Tool List CSS  
 .SelectionToolPressed {
     @include background-pos(12,1,26px,23px);
     @include opacity(1.0);
@@ -219,7 +219,7 @@
     opacity: 0.7;
 }
 
-/* Selection Tool Options */
+//  Selection Tool Options  
 .topAlignUp {
 
   @include background-pos(8,2,26px,23px);
