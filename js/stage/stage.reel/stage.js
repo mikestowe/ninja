@@ -787,14 +787,9 @@ exports.Stage = Montage.create(Component, {
                 var userContent = this.application.ninja.currentDocument.documentRoot;
                 if (userContent)
                 {
-                    var w = userContent.offsetWidth,
-                        h = userContent.offsetHeight;
-                    if(userContent.width)
-                        w = userContent.width;
-                    if(userContent.height)
-                        h = userContent.height;
-                    var localPt = [ w/2,  h/2, 0];
-                    var globalPt = this.stageDeps.viewUtils.localToGlobal( localPt, userContent );
+                    var w = this._canvas.width,
+                        h = this._canvas.height;
+					var globalPt = [w/2, h/2, 0];
 
                     this.stageDeps.viewUtils.setStageZoom( globalPt,  value/100 );
 
@@ -811,6 +806,36 @@ exports.Stage = Montage.create(Component, {
         }
     },
 
+	getPlaneForView:
+	{
+		value: function( side )
+		{
+			var plane = [0,0,1,0];
+            switch(side)
+			{
+                case "top":
+					plane[1] = 1;
+ 					plane[3] = this.application.ninja.currentDocument.documentRoot.offsetHeight / 2.0;
+                   break;
+
+                case "side":
+					plane[0] = 1;
+ 					plane[3] = this.application.ninja.currentDocument.documentRoot.offsetWidth / 2.0;
+                   break;
+
+                case "front":
+                    plane = [0,0,1,0];
+                    break;
+
+				default:
+					console.log( "unrecognized view in snapManager.getPlaneForView: " + side );
+					break;
+            }
+
+			return plane;
+		}
+	},
+
     setStageView: {
         value: function(side) {
             var mat,
@@ -821,32 +846,26 @@ exports.Stage = Montage.create(Component, {
             currentDoc.elementModel.props3D.ResetRotationValues();
 
 
-            switch(side) {
+            switch(side){
                 case "top":
                     mat = Matrix.RotationX(Math.PI * 270.0/180.0);
-
                     drawUtils.drawXY = drawUtils.drawYZ = false;
                     drawUtils.drawXZ = drawUtils.isDrawingGrid();
-                    workingPlane = [0,1,0,0];
                     break;
 
                 case "side":
                     mat = Matrix.RotationY(Math.PI * 270/180);
-
                     drawUtils.drawXY = drawUtils.drawXZ = false;
                     drawUtils.drawYZ = drawUtils.isDrawingGrid();
-                    workingPlane = [1,0,0,0];
                     break;
 
                 case "front":
                     mat = Matrix.I(4);
-
                     drawUtils.drawYZ = drawUtils.drawXZ = false;
                     drawUtils.drawXY = drawUtils.isDrawingGrid();
-                    workingPlane = [0,0,1,0];
                     break;
             }
-
+			workingPlane = this.getPlaneForView( side );
 
             this.stageDeps.viewUtils.setMatrixForElement(currentDoc, mat, false);
 

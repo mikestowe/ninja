@@ -248,9 +248,17 @@ function GLWorld( canvas, use3D )
 					if (!this.hasAnimatedMaterials())
 					{
 						this.myScene.render();
-						this._canvas.task.stop();
+						//this._canvas.task.stop();
+						this._renderCount = 3;
 					}
 				}
+				else if (this._renderCount >= 0)
+				{
+					this._renderCount--;
+					if (this._renderCount == 0)
+						this._canvas.task.stop();
+				}
+
 			}
 		}
 		else

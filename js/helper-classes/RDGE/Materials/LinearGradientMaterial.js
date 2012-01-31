@@ -98,7 +98,7 @@ function LinearGradientMaterial()
 													this._shader.default.u_cos_sin_angle.set([Math.cos(a), Math.sin(a)]);
 											}
 
-	this.isAnimated			= function()			{  return true;					}
+	this.isAnimated			= function()			{  return false;					}
 
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors

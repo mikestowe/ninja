@@ -92,7 +92,7 @@ function RadialGradientMaterial()
 													this._shader.default.u_colorCount.set([c]);
 										}
 
-	this.isAnimated		= function()	{  return true;					}
+	this.isAnimated		= function()	{  return false;					}
 
 
     ///////////////////////////////////////////////////////////////////////
