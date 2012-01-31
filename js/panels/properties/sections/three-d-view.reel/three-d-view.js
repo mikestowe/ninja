@@ -40,19 +40,16 @@ exports.ThreeD = Montage.create(Component, {
             else
             {
                 this.inGlobalMode = true;
-                if(this.application.ninja.selectedElements.length)
+                var item = this.item;
+                if(item)
                 {
-                    var item = this.application.ninja.selectedElements[0]._element;
-                    if(item)
-                    {
-                        this.x3D = item.elementModel.props3D.x3D;
-                        this.y3D = item.elementModel.props3D.y3D;
-                        this.z3D = item.elementModel.props3D.z3D;
+                    this.x3D = item.elementModel.props3D.x3D;
+                    this.y3D = item.elementModel.props3D.y3D;
+                    this.z3D = item.elementModel.props3D.z3D;
 
-                        this.xAngle = item.elementModel.props3D.xAngle;
-                        this.yAngle = item.elementModel.props3D.yAngle;
-                        this.zAngle = item.elementModel.props3D.zAngle;
-                    }
+                    this.xAngle = item.elementModel.props3D.xAngle;
+                    this.yAngle = item.elementModel.props3D.yAngle;
+                    this.zAngle = item.elementModel.props3D.zAngle;
                 }
             }
         }
@@ -98,6 +95,10 @@ exports.ThreeD = Montage.create(Component, {
         }
     },
 
+    item: {
+        value: null
+    },
+
     handleChange: {
         value: function(event) {
             if(event.wasSetByCode) {
@@ -106,7 +107,7 @@ exports.ThreeD = Montage.create(Component, {
 
             this.apply3DProperties(event.currentTarget.identifier,
                                     event.currentTarget,
-                                    this.application.ninja.selectedElements[0]._element,
+                                    this.item,
                                     this.inGlobalMode,
                                     false);
         }
@@ -120,7 +121,7 @@ exports.ThreeD = Montage.create(Component, {
 
             this.apply3DProperties(event.currentTarget.identifier,
                             event.currentTarget,
-                            this.application.ninja.selectedElements[0]._element,
+                            this.item,
                             this.inGlobalMode,
                             true);
         }
@@ -128,9 +129,8 @@ exports.ThreeD = Montage.create(Component, {
 
     apply3DProperties : {
         value : function(prop, value, item, inGlobalMode, isChanging){
-            // TODO - May want to use mediator instead
-            var curMat = item.elementModel.props3D.matrix3d;
-            var delta = value.value - item.elementModel.props3D[prop];
+            var curMat = this.application.ninja.elementMediator.getMatrix(item);
+            var delta = value.value - this.application.ninja.elementMediator.get3DProperty(item, prop);
 
             var xFormMat = Matrix.I(4);
             switch (prop)
@@ -183,12 +183,31 @@ exports.ThreeD = Montage.create(Component, {
 
     templateDidLoad : {
         value: function() {
-        Object.defineBinding(this, "axisMode", {
-                        boundObject: this.axisModeGroupControl,
-                        boundObjectPropertyPath: "selectedIndex",
-                        oneway: false
-                    });
+            Object.defineBinding(this, "axisMode", {
+                            boundObject: this.axisModeGroupControl,
+                            boundObjectPropertyPath: "selectedIndex",
+                            oneway: false
+                        });
 
+            Object.defineBinding(this, "item", {
+                    boundObject: this,
+                    boundObjectPropertyPath: "application.ninja.selectedElements",
+                    boundValueMutator: this._getSelectedItem
+                });
+        }
+    },
+
+    _getSelectedItem: {
+        value: function(els)
+        {
+            if(els.length)
+            {
+                return els[0]._element || els[0];
+            }
+            else
+            {
+                return this.boundObject.application.ninja.currentDocument.documentRoot;
+            }
         }
     },
 
