@@ -28,7 +28,7 @@ exports.FileIo = Montage.create(Object.prototype, {
     	enumerable: true,
     	value: function(file) {
     		//Checking for API to be available
-    		if (!CoreIoApi.isIoServiceActive()) {
+    		if (!CoreIoApi.cloudAvailable()) {
     			//API not available, no IO action taken
     			return null;
     		}
@@ -74,6 +74,12 @@ exports.FileIo = Montage.create(Object.prototype, {
     	}
     },
     copyFile: {
+    	enumerable: true,
+    	value: function() {
+    		//
+    	}
+    },
+    infoFile: {
     	enumerable: true,
     	value: function() {
     		//
