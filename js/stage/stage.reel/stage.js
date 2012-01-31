@@ -175,7 +175,7 @@ exports.Stage = Montage.create(Component, {
             }
             else if(this.updatedStage) {
                 this.layout.draw();
-                this.layout.draw3DInfo();
+                this.layout.draw3DInfo(true);
             }
         }
     },
@@ -839,8 +839,8 @@ exports.Stage = Montage.create(Component, {
     setStageView: {
         value: function(side) {
             var mat,
-                workingPlane = null,
-                currentDoc = this.application.ninja.currentDocument.documentRoot;
+                currentDoc = this.application.ninja.currentDocument.documentRoot,
+                isDrawingGrid = this.application.ninja.appModel.show3dGrid;
             // Stage 3d Props.
             currentDoc.elementModel.props3D.ResetTranslationValues();
             currentDoc.elementModel.props3D.ResetRotationValues();
@@ -850,19 +850,19 @@ exports.Stage = Montage.create(Component, {
                 case "top":
                     mat = Matrix.RotationX(Math.PI * 270.0/180.0);
                     drawUtils.drawXY = drawUtils.drawYZ = false;
-                    drawUtils.drawXZ = drawUtils.isDrawingGrid();
+                    drawUtils.drawXZ = isDrawingGrid;
                     break;
 
                 case "side":
                     mat = Matrix.RotationY(Math.PI * 270/180);
                     drawUtils.drawXY = drawUtils.drawXZ = false;
-                    drawUtils.drawYZ = drawUtils.isDrawingGrid();
+                    drawUtils.drawYZ = isDrawingGrid;
                     break;
 
                 case "front":
                     mat = Matrix.I(4);
                     drawUtils.drawYZ = drawUtils.drawXZ = false;
-                    drawUtils.drawXY = drawUtils.isDrawingGrid();
+                    drawUtils.drawXY = isDrawingGrid;
                     break;
             }
 			workingPlane = this.getPlaneForView( side );

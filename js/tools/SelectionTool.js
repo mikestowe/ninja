@@ -180,7 +180,6 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                 this._handleMode = null;
                 this._delta = null;
                 this.DrawHandles();
-				console.log( "move: (" + dx + ", " + dy + ")" );
             }
 
             this.endDraw(event);
