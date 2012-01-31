@@ -59,15 +59,20 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
 
     addComponentToStage:{
         value:function(componentType, dropX, dropY){
-            var compW = 100,
-                compH = 100,
-                elementType = "div",
-                componentContainer,
-                componentElement;
+//            var compW = 100,
+//                compH = 100,
+//                elementType = "div",
+//                componentContainer,
+//                componentElement;
+            var componentEl;
 
             if(componentType == "Button"){
-                compW = 118;
-                compH = 52;
+                componentEl = NJUtils.makeNJElement("button", componentType, "component");//, {"type": "button"});
+                componentEl.setAttribute("type", "button");
+                componentEl.innerHTML = "Button";
+                console.log(componentEl);
+//                compW = 118;
+//                compH = 52;
             }else if(componentType == "Checkbox"){
                 compW = 53;
                 compH = 53;
@@ -117,28 +122,31 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                 compH = 25;
             }
 
+
+            /*
             componentContainer = NJUtils.makeNJElement("div", componentType, "component");
             componentContainer.elementModel.isComponent = true;
-
+            */
             var styles = {
                 'position': 'absolute',
                 'top'       : dropY + 'px',
                 'left'      : dropX + 'px',
-                'width'     : compW + 'px',
-                'height'    : compH + 'px',
+//                'width'     : compW + 'px',
+//                'height'    : compH + 'px',
                 '-webkit-transform-style' : 'preserve-3d',
                 '-webkit-transform' : 'perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
             };
 
 
-            componentElement = NJUtils.makeNJElement(elementType, "ComponentDiv", "block");
+            //componentElement = NJUtils.makeNJElement(elementType, "ComponentDiv", "block");
 
-            componentContainer.appendChild(componentElement);
+            //componentContainer.appendChild(componentElement);
 
-            NJevent("elementAdding", {"el": componentContainer, "data":styles});
-
+            NJevent("elementAdding", {"el": componentEl, "data":styles});
+            /*
             var componentRef = this.application.ninja.currentDocument._window.addComponent(componentElement, componentType);
             this.application.ninja.currentDocument._userComponentSet[componentContainer.uuid] = componentRef;
+            */
 
         }
     }

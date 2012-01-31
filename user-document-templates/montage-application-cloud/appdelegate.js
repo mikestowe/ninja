@@ -7,30 +7,30 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
-var Button = require("montage/ui/button.reel").Button,
-    Checkbox = require("montage/ui/checkbox.reel").Checkbox,
-    Condition = require("montage/ui/condition.reel").Condition,
-    DynamicText = require("montage/ui/dynamic-text.reel").DynamicText,
-
-    FlowController = require("montage/ui/flow-controller.reel").FlowController,
-
-    HotText = require("montage/ui/hottext.reel").HotText,
-    HotTextUnit = require("montage/ui/hottextunit.reel").HotTextUnit,
-
-    ImageContainer = require("montage/ui/photo-editor.reel").PhotoEditor,
-    Progress = require("montage/ui/progress.reel").Progress,
-
-    Repetition = require("montage/ui/repetition.reel").Repetition,
-    Scrollview = require("montage/ui/scrollview.reel").Scrollview,
-    Slider  = require("montage/ui/slider.reel").Slider,
-    Slot = require("montage/ui/slot.reel").Slot,
-    Substitution = require("montage/ui/substitution.reel").Substitution,
-
-    TextArea = require("montage/ui/textarea.reel").TextArea,
-    Textfield = require("montage/ui/textfield.reel").Textfield,
-
-    Toggle = require("montage/ui/toggle.reel").Toggle,
-    ToggleButton = require("montage/ui/button.reel").ToggleButton;
+//var Button = ("montage/ui/button.reel").Button,
+//    Checkbox = ("montage/ui/checkbox.reel").Checkbox,
+//    Condition = ("montage/ui/condition.reel").Condition,
+//    DynamicText = ("montage/ui/dynamic-text.reel").DynamicText,
+//
+//    FlowController = ("montage/ui/flow-controller.reel").FlowController,
+//
+//    HotText = ("montage/ui/hottext.reel").HotText,
+//    HotTextUnit = ("montage/ui/hottextunit.reel").HotTextUnit,
+//
+//    ImageContainer = ("montage/ui/photo-editor.reel").PhotoEditor,
+//    Progress = ("montage/ui/progress.reel").Progress,
+//
+//    Repetition = ("montage/ui/repetition.reel").Repetition,
+//    Scrollview = ("montage/ui/scrollview.reel").Scrollview,
+//    Slider  = ("montage/ui/slider.reel").Slider,
+//    Slot = ("montage/ui/slot.reel").Slot,
+//    Substitution = ("montage/ui/substitution.reel").Substitution,
+//
+//    TextArea = ("montage/ui/textarea.reel").TextArea,
+//    Textfield = ("montage/ui/textfield.reel").Textfield,
+//
+//    Toggle = ("montage/ui/toggle.reel").Toggle,
+//    ToggleButton = ("montage/ui/button.reel").ToggleButton;
 
 exports.MyAppDelegate = Montage.create(Component, {
     templateDidLoad: {

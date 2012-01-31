@@ -505,6 +505,10 @@ exports.PiData = Montage.create( Montage, {
                 ]
             }
         ]
+    },
+
+    componentPi: {
+        value: []
     }
 });
 
