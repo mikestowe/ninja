@@ -7,7 +7,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 /* /////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 NOTES:
-These methods should only be access through the file and project IO classes.
 ////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////// */
 var Montage = 		require("montage/core/core").Montage,
@@ -20,54 +19,64 @@ exports.CoreIoApi = Montage.create(Component, {
 	deserializedFromTemplate: {
 		enumerable: false,
 		value: function () {
-			////////////////////////////////////////////////////////////
-			
-			//TODO: Add logic for getting rooUrl from local storage
-			
-			////////////////////////////////////////////////////////////
-			
-			
-			
-			//Checking for status of I/O API
-			this.ioDetected = this.isActive();
-			//TODO: Add welcome screen logic, probably externally
+			//Checking for local storage of URL for IO
+			if (window.localStorage['ioRootUrl']) {
+				//Getting URL from local storage
+				this.rootUrl = window.localStorage['ioRootUrl'];
+				//Checks for IO API to be active
+				this.ioServiceDetected = this.cloudAvailable();
+				//
+				console.log('FileIO: localStorage URL detected | IO Service Detected: '+ this.ioServiceDetected);
+				//
+			} else {
+				//TODO: Remove, automatically prompt user on welcome
+				this.rootUrl = 'http://localhost:16380';
+				//TODO: Changed to false, welcome screen prompts user
+				this.ioServiceDetected = this.cloudAvailable();
+				//
+				console.log('FileIO: localStorage URL NOT detected | IO Service Detected: '+ this.ioServiceDetected);
+				//
+			}
 		}
 	},
 	////////////////////////////////////////////////////////////////////
     //Method to check status of I/O API, will return false if not active
-	isActive: {
+	cloudAvailable: {
 		enumerable: false,
 		value: function () {
-			//Doing a directory root check, a 200 status means running
-			if (this.getDirectoryContents({uri:'/'}).status === 200) {
+			//
+			if (this.getCloudStatus().status === 200) {
+				//Active
 				return true;
 			} else {
+				//Inactive
+				//TODO: Logic to prompt the user for cloud, otherwise return false
 				return false;
 			}
 		}
 	},
 	////////////////////////////////////////////////////////////////////
-    //Root API URL
-    _ioDetected: {
+    //
+    _ioServiceDetected: {
         enumerable: false,
         value: false
     },
     ////////////////////////////////////////////////////////////////////
-    //
-    ioDetected: {
+    //Checking for service availability on boot
+    ioServiceDetected: {
     	enumerable: false,
     	get: function() {
-            return this._ioDetected;
+            return this._ioServiceDetected;
         },
         set: function(value) {
-        	this._ioDetected = value;
+        	this._ioServiceDetected = value;
         }
     },
 	////////////////////////////////////////////////////////////////////
     //Root API URL
     _rootUrl: {
         enumerable: false,
-        value: 'http://localhost:16380'
+        value: null
     },
     ////////////////////////////////////////////////////////////////////
     //
@@ -77,7 +86,24 @@ exports.CoreIoApi = Montage.create(Component, {
             return this._rootUrl;
         },
         set: function(value) {
-        	this._rootUrl = value;
+        	this._rootUrl = window.localStorage["ioRootUrl"] = value;
+        }
+    },
+	////////////////////////////////////////////////////////////////////
+    //API service URL
+    _apiServiceURL: {
+        enumerable: false,
+        value: '/cloudstatus'
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    apiServiceURL: {
+    	enumerable: false,
+    	get: function() {
+            return String(this.rootUrl+this._apiServiceURL);
+        },
+        set: function(value) {
+        	this._apiServiceURL = value;
         }
     },
 	////////////////////////////////////////////////////////////////////
@@ -91,7 +117,7 @@ exports.CoreIoApi = Montage.create(Component, {
     fileServiceURL: {
     	enumerable: false,
     	get: function() {
-            return this.rootUrl+this._fileServiceURL;
+            return String(this.rootUrl+this._fileServiceURL);
         },
         set: function(value) {
         	this._fileServiceURL = value;
@@ -108,7 +134,10 @@ exports.CoreIoApi = Montage.create(Component, {
     directoryServiceURL: {
     	enumerable: false,
     	get: function() {
-            return this.rootUrl+this._directoryServiceURL;
+            if(!this.rootUrl){
+                this.rootUrl = 'http://localhost:16380';
+            }
+            return String(this.rootUrl+this._directoryServiceURL);
         },
         set: function(value) {
         	this._directoryServiceURL = value;
@@ -854,8 +883,38 @@ exports.CoreIoApi = Montage.create(Component, {
             }
             return retValue;
         }
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+	getCloudStatus: {
+        enumerable: false,
+        writable:false,
+        value: function() {
+        	//
+            var retValue = {success:null, status:null};
+            //
+            try {
+           		var serviceURL = this._prepareServiceURL(this.apiServiceURL, '/'),
+           			xhr = new XMLHttpRequest();
+               	//
+            	xhr.open("GET", serviceURL, false);
+              	xhr.send();
+				//
+               	if (xhr.readyState === 4) {
+                 	retValue.status = xhr.status;
+                  	retValue.success = true;
+               	}
+           	}
+            catch(error) {
+           		xhr = null;
+              	retValue.success = false;
+            }
+			//
+            return retValue;
+        }
     }
-
+	////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////
 });
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////

@@ -136,7 +136,6 @@ exports.Preloader = Montage.create(Component, {
 
     deserializedFromTemplate: {
         value: function() {
-            console.log("Start Preloading");
 
             this.filesTotal = this.ninjaJsRequire.length + this.ninjaCssRequire.length;
 
