@@ -363,6 +363,23 @@ function GLSubpath() {
         return true;
     }
 
+    this.pickAnchor = function (pickX, pickY, pickZ, radius) {
+        var numAnchors = this._Anchors.length;
+        var selAnchorIndex = -1;
+        var retCode = this.SEL_NONE;
+        var radSq = radius * radius;
+        var minDistance = Infinity;
+        for (var i = 0; i < numAnchors; i++) {
+            var distSq = this._Anchors[i].getDistanceSq(pickX, pickY, pickZ);
+            //check the anchor point
+            if (distSq < minDistance && distSq < radSq) {
+                selAnchorIndex = i;
+                minDistance = distSq;
+            }
+        }//for every anchor i
+        return selAnchorIndex;
+    }
+
     //pick the path point closest to the specified location, return null if some anchor point (or its handles) is within radius, else return the parameter distance
     this.pickPath = function (pickX, pickY, pickZ, radius) {
         var numAnchors = this._Anchors.length;
