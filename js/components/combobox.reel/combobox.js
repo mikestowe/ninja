@@ -67,7 +67,7 @@ exports.Combobox = Montage.create(Component, {
                 var e = document.createEvent("CustomEvent");
                 e.initEvent("change", true, true);
                 e.type = "change";
-                e._wasSetByCode = this._wasSetByCode;
+                e.wasSetByCode = this._wasSetByCode;
                 e.value = this._value;
                 this.dispatchEvent(e);
 

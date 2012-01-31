@@ -41,7 +41,7 @@ exports.RadioGroup = Montage.create(Component, {
                     e = document.createEvent("CustomEvent");
                     e.initEvent("change", true, true);
                     e.type = "change";
-                    e._wasSetByCode = this._wasSetByCode;
+                    e.wasSetByCode = this._wasSetByCode;
                     e.selectedIndex = i;
                     e.selectedItem = value;
                     this.dispatchEvent(e);
@@ -77,7 +77,7 @@ exports.RadioGroup = Montage.create(Component, {
     {
         value:function(event)
         {
-            this._wasSetByCode = event._event._wasSetByCode;
+            this._wasSetByCode = event._event.wasSetByCode;
             this.selectedItem = event._event.value;
         }
     }
@@ -126,7 +126,7 @@ exports.Radio = Montage.create(Component, {
             var e = document.createEvent("CustomEvent");
             e.initEvent("change", true, true);
             e.type = "change";
-            e._wasSetByCode = this._wasSetByCode;
+            e.wasSetByCode = this._wasSetByCode;
             e.value = this;
             this.dispatchEvent(e);
 
