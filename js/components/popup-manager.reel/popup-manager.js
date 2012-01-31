@@ -32,7 +32,8 @@ exports.PopupMananger = Montage.create(Component, {
     addPopup: {
     	enumerable: true,
     	value: function (popup, depth, blackout) {
-    		//
+    		//Fix to ensure always highest
+    		this.element.style.zIndex = this._getNextHighestZindex(document.body); // Highest z-index in body
     		//TODO: Add blackout background
     		//Checking for manual or setting auto to next highest depth
     		if (depth) {

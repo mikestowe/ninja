@@ -1,0 +1,122 @@
+@charset "UTF-8";
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
+$grey_dark: #292929;
+$grey_light: #494949;
+
+.cloud_popup
+{
+	font-size: 12px;
+  	text-shadow: 1px 1px 1px #000;
+  	font-family: 'Droid Sans', sans-serif;
+}
+
+.cloud_popup .content
+{
+	width: 360px;
+}
+
+.cloud_popup .content h3
+{
+	text-transform: uppercase;
+	font-weight: normal;
+	font-size: 14px;
+  	text-shadow: 1px 1px 1px #000;
+  	font-family: 'Droid Sans', sans-serif;
+  	display: block;
+  	float: left;
+  	clear: both;
+  	margin: 4px 0px 8px 0px;
+  	padding: 0px;
+  	width: 100%;
+  	text-align: center;
+}
+
+.cloud_popup .content p
+{
+  	text-shadow: 1px 1px 1px #333;
+  	margin: 0px 0px 12px 0px;
+  	text-align: justify;
+  	color: #EEE;
+}
+
+.cloud_popup .content .test
+{
+	float: right;
+	clear: right;
+	margin: 0px 0px 0px 8px;
+}
+
+.cloud_popup .content label
+{
+	float: left;
+	margin: 5px 8px 0px 0px;
+	display: block;
+	width: 96px;
+	text-align: right;
+}
+
+.cloud_popup .content input
+{
+	display: block;
+	border: 0px;
+	padding: 4px;
+	margin: 0px;
+	background: $grey_dark -webkit-gradient(linear, left top, left bottom, color-stop(45%, lighten($grey_dark, 10%)), color-stop(100%, $grey_dark));
+	border: 1px lighten($grey_dark, 20%) solid;
+	color: #FFF;
+	float: left;
+	width: 202px;
+	border-radius: 4px;
+}
+
+.cloud_popup .content input:focus {
+    background: #FFF;
+    border: 1px $grey_dark solid;
+    color: $grey_dark;
+}
+
+.cloud_popup .content button
+{
+	display: block;
+	border: 0px;
+	margin: 0px;
+	padding: 4px;
+	border: 1px #333 solid;
+	background: $grey_dark -webkit-gradient(linear, left top, left bottom, color-stop(0%, $grey_light), color-stop(100%, $grey_dark));
+	border-radius: 4px;
+	color: #FFF;
+	text-transform: uppercase;
+	cursor: pointer;
+	text-shadow: 1px 1px 1px #000;
+}
+
+.cloud_popup .content button:hover
+{
+	
+	border: 1px #222 solid;
+	background: $grey_dark -webkit-gradient(linear, left top, left bottom, color-stop(0%, lighten($grey_dark, 20%)), color-stop(100%, darken($grey_light, 20%)));
+	color: #EEE;
+}
+
+.cloud_popup .content .status
+{
+	color: red;
+	float: left;
+	clear: right;
+	margin: 5px 0px 0px 6px;
+	text-shadow: 1px 1px 1px #333;
+	width: 240px;
+}
+
+.cloud_popup .content .handle_ok, .cloud_popup .content .handle_cancel
+{
+	width: 80px;
+	text-align: center;
+	float: right;
+	margin: 4px 0px 0px 8px;
+}

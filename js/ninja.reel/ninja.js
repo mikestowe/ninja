@@ -97,6 +97,10 @@ exports.Ninja = Montage.create(Component, {
     didDraw: {
         value: function() {
             NJevent("appLoaded");
+            //
+            if (!this.application.ninja.coreIoApi.ioServiceDetected) {
+            	var check = this.application.ninja.coreIoApi.cloudAvailable();
+            }
         }
     },
 

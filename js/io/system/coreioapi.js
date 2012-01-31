@@ -10,7 +10,9 @@ NOTES:
 ////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////// */
 var Montage = 		require("montage/core/core").Montage,
-    Component = 	require("montage/ui/component").Component;
+    Component = 	require("montage/ui/component").Component,
+    Popup = 		require("js/components/popup.reel").Popup,
+    CloudPopup = 	require("js/io/ui/cloudpopup.reel").CloudPopup;
 ////////////////////////////////////////////////////////////////////////
 //Exporting as Project I/O
 exports.CoreIoApi = Montage.create(Component, {
@@ -26,16 +28,11 @@ exports.CoreIoApi = Montage.create(Component, {
 				//Checks for IO API to be active
 				this.ioServiceDetected = this.cloudAvailable();
 				//
-				console.log('FileIO: localStorage URL detected | IO Service Detected: '+ this.ioServiceDetected);
-				//
+				console.log('Cloud Status: URL detected in localStorage as '+this.rootUrl);
 			} else {
-				//TODO: Remove, automatically prompt user on welcome
-				this.rootUrl = 'http://localhost:16380';
-				//TODO: Changed to false, welcome screen prompts user
-				this.ioServiceDetected = this.cloudAvailable();
 				//
-				console.log('FileIO: localStorage URL NOT detected | IO Service Detected: '+ this.ioServiceDetected);
-				//
+				this.ioServiceDetected = false;
+				console.log('Cloud Status: No URL detected in localStorage');
 			}
 		}
 	},
@@ -45,16 +42,81 @@ exports.CoreIoApi = Montage.create(Component, {
 		enumerable: false,
 		value: function () {
 			//
-			if (this.getCloudStatus().status === 200) {
+			if (this.rootUrl && this.getCloudStatus().status === 200) {
 				//Active
 				return true;
 			} else {
 				//Inactive
-				//TODO: Logic to prompt the user for cloud, otherwise return false
+				if (!this._cloudDialogOpen || this.application.ninja) {
+					this.showCloudDialog();
+				}
 				return false;
 			}
 		}
 	},
+	////////////////////////////////////////////////////////////////////
+    //
+    _cloudDialogOpen: {
+    	enumerable: false,
+		value: false
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    _cloudDialogComponents: {
+    	enumerable: false,
+		value: {blackout: null, popup: null, dialog: null}
+    },
+	////////////////////////////////////////////////////////////////////
+    //
+    showCloudDialog: {
+    	enumerable: false,
+		value: function () {
+			//
+			this._cloudDialogComponents.blackout = document.createElement('div');
+			this._cloudDialogComponents.blackout.style.width = '100%';
+			this._cloudDialogComponents.blackout.style.height = '100%';
+			this._cloudDialogComponents.blackout.style.background = 'rgba(0, 0, 0, .6)';
+			this.application.ninja.popupManager.addPopup(this._cloudDialogComponents.blackout);
+    		//
+    		////////////////////////////////////////////////////
+    		//Creating popup from m-js component
+    		var popup = document.createElement('div');
+    		//
+    		this._cloudDialogComponents.dialog = CloudPopup.create();
+    		//
+    		document.body.appendChild(popup);
+    		//
+    		this._cloudDialogComponents.dialog.element = popup;
+    		this._cloudDialogComponents.dialog.needsDraw = true;
+    		this._cloudDialogComponents.dialog.element.style.opacity = 0;
+    		//
+    		this._cloudDialogComponents.dialog.addEventListener('firstDraw', this, false);
+		}
+    },
+    
+    handleFirstDraw: {
+    	value: function (e) {
+			if (e._target._element.className === 'cloud_popup') {
+	    		this._cloudDialogComponents.dialog.removeEventListener('firstDraw', this, false);
+		    	//
+				this._cloudDialogComponents.popup = this.application.ninja.popupManager.createPopup(this._cloudDialogComponents.dialog.element, {x: '200px', y: '200px'});
+				this._cloudDialogComponents.popup.addEventListener('firstDraw', this, false);
+			} else {
+				//
+				this._cloudDialogComponents.dialog.element.style.opacity = 1;
+				this._cloudDialogComponents.popup.element.style.opacity = 1;
+			}
+    	}
+    },
+    
+    
+    ////////////////////////////////////////////////////////////////////
+    //
+    hideCloudDialog: {
+    	enumerable: false,
+		value: function () {
+		}
+    },
 	////////////////////////////////////////////////////////////////////
     //
     _ioServiceDetected: {
