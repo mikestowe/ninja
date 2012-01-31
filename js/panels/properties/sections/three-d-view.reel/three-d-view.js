@@ -99,6 +99,14 @@ exports.ThreeD = Montage.create(Component, {
         value: null
     },
 
+    _curMat: {
+        value: null
+    },
+
+    _curProp: {
+        value: null
+    },
+
     handleChange: {
         value: function(event) {
             if(event.wasSetByCode) {
@@ -110,6 +118,9 @@ exports.ThreeD = Montage.create(Component, {
                                     this.item,
                                     this.inGlobalMode,
                                     false);
+
+            this._curMat = null;
+            this._curProp = null;
         }
     },
 
@@ -129,8 +140,20 @@ exports.ThreeD = Montage.create(Component, {
 
     apply3DProperties : {
         value : function(prop, value, item, inGlobalMode, isChanging){
-            var curMat = this.application.ninja.elementMediator.getMatrix(item);
-            var delta = value.value - this.application.ninja.elementMediator.get3DProperty(item, prop);
+            if(!this._curMat)
+            {
+                this._curMat = this.application.ninja.elementMediator.getMatrix(item);
+            }
+            var curMat = this._curMat;
+            var delta = value.value;
+            if(inGlobalMode)
+            {
+                if(!this._curProp)
+                {
+                    this._curProp = this.application.ninja.elementMediator.get3DProperty(item, prop);
+                }
+                delta -= this._curProp;
+            }
 
             var xFormMat = Matrix.I(4);
             switch (prop)
