@@ -8,7 +8,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage,
     pickerNavigatorReel = require("js/components/ui/FilePicker/pickerNavigator.reel").PickerNavigator,
     filePickerModelModule = require("js/components/ui/FilePicker/file-picker-model"),
-    fileSystem = require("js/io/system/filesystem").FileSystem,
+    fileSystem = require("js/io/system/coreioapi").CoreIoApi,
     Popup = require("montage/ui/popup/popup.reel").Popup;
 
 //singleton with functions to create a new file picker instance and utilities to format or filter the model data
@@ -101,7 +101,7 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
             var aModel = filePickerModelModule.FilePickerModel.create();
 
             var topLevelDirectories = null;
-            var driveData = fileSystem.shellApiHandler.getDirectoryContents({uri:"", recursive:false, returnType:"all"});
+            var driveData = fileSystem.getDirectoryContents({uri:"", recursive:false, returnType:"all"});
             if(driveData.success){
                 topLevelDirectories = (JSON.parse(driveData.content)).children;
             }else{
@@ -244,7 +244,7 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
                 || !this._directoryContentCache[folderUri].children){
                 //get data using IO api
                 try{
-                    var iodata = fileSystem.shellApiHandler.getDirectoryContents({uri:folderUri, recursive:false, returnType:"all"});
+                    var iodata = fileSystem.getDirectoryContents({uri:folderUri, recursive:false, returnType:"all"});
                     //console.log("IO:getDirectoryContents:Response:\n"+"uri="+folderUri+"\n status="+iodata.status+"\n content= "+iodata.content);
                     if(iodata.success && (iodata.status === 200) && (iodata.content !== null)){
                         folderContent = JSON.parse(iodata.content);
@@ -456,7 +456,7 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
             //check for directory staleness.... if stale query filesystem
             if((new Date()).getTime() > (this._directoryContentCache[folderUri].queriedTimeStamp + this.cacheStaleTime)){
                 try{
-                    var ifModifiedResponse = fileSystem.shellApiHandler.isDirectoryModified({uri:folderUri, recursive:false, returnType:"all"}, this._directoryContentCache[folderUri].queriedTimeStamp);
+                    var ifModifiedResponse = fileSystem.isDirectoryModified({uri:folderUri, recursive:false, returnType:"all"}, this._directoryContentCache[folderUri].queriedTimeStamp);
                     //console.log("ifModifiedResponse");
                     //console.log(ifModifiedResponse);
                 }catch(e){
@@ -468,7 +468,7 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
                     wasStale = true;
                     //uri has changed. so update cache
                     try{
-                        var iodata = fileSystem.shellApiHandler.getDirectoryContents({uri:folderUri, recursive:false, returnType:"all"});
+                        var iodata = fileSystem.getDirectoryContents({uri:folderUri, recursive:false, returnType:"all"});
                         //console.log("IO:getDirectoryContents:Response:\n"+"uri="+folderUri+"\n status="+iodata.status+"\n content= "+iodata.content);
                         if(iodata.success && (iodata.status === 200) && (iodata.content !== null)){
                             folderContent = JSON.parse(iodata.content);
