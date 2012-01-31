@@ -837,50 +837,7 @@ exports.CoreIoApi = Montage.create(Component, {
                     var serviceURL = this._prepareServiceURL(this.fileServiceURL, file.uri),
                     xhr = new XMLHttpRequest();
                     xhr.open("GET", serviceURL, false);
-                    xhr.setRequestHeader("get-attributes", "true");
-                    xhr.send();
-                    if (xhr.readyState === 4) {
-                        retValue.status = xhr.status;
-                        if(xhr.status == 200) {
-                            retValue.content = xhr.responseText;
-                        }
-                        retValue.success = true;
-                    }
-                }
-                catch(error) {
-                    xhr = null;
-                    retValue.success = false;
-                }
-            }
-            return retValue;
-        }
-    },
-
-    ////////////////////////////////////////////////////////////////////
-    // Checks if the directory is writable
-    // Parameters:
-    //      the file parameter must contain the following properties
-    //          uri: string value containing the full directory path/URI i.e. "c:/foo"
-    //
-    // Return values:
-    //    returns an object with two properties
-    //      success: boolean indicating if the call succeeded or failed
-    //      status: int indicating the request HTTP status code
-    //              204 -  The file exists and response body has writable flag
-    //              404 - the file does not exist
-    //              500 - unknown server error occurred
-    //TODO:to be finalized
-    isDirectoryWritable:{
-        enumerable:true,
-        writable:false,
-        value:function(file){
-            var retValue = { success:null, status:null };
-            if(file && file.uri) {
-                try {
-                    var serviceURL = this._prepareServiceURL(this.directoryServiceURL, file.uri),
-                    xhr = new XMLHttpRequest();
-                    xhr.open("GET", serviceURL, false);
-                    xhr.setRequestHeader("get-attributes", "true");
+                    xhr.setRequestHeader("get-file-info", "true");
                     xhr.send();
                     if (xhr.readyState === 4) {
                         retValue.status = xhr.status;
@@ -898,8 +855,6 @@ exports.CoreIoApi = Montage.create(Component, {
             return retValue;
         }
     }
-
-
 
 });
 ////////////////////////////////////////////////////////////////////////
