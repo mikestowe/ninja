@@ -36,6 +36,7 @@ exports.Ninja = Montage.create(Component, {
 
     prepareForDraw: {
         value: function() {
+            console.log("Loading Ninja --> ", window.ninjaVersion.ninja.version);
 
             this.application.ninja = this;
 
