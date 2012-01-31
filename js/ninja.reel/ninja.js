@@ -13,6 +13,10 @@ exports.Ninja = Montage.create(Component, {
     _appLoaded: { value: false },
     _preload: { value: false },
 
+    ninjaVersion: {
+        value: window.ninjaVersion.ninja.version
+    },
+
     toolsData: { value: null },
     appData:    { value: AppData },
 
@@ -36,6 +40,7 @@ exports.Ninja = Montage.create(Component, {
 
     prepareForDraw: {
         value: function() {
+            console.log("Loading Ninja --> ", this.ninjaVersion);
 
             this.application.ninja = this;
 
