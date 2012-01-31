@@ -417,7 +417,11 @@ exports.PenTool = Montage.create(ShapeTool, {
 
     HandleLeftButtonUp: {
         value: function (event) {
-            if (this._isDrawing) {
+            if (this._isAltDown) {
+                var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(event.pageX, event.pageY));
+                this.mouseUpHitRec = DrawingToolBase.getUpdatedSnapPoint(point.x, point.y, false, this.mouseDownHitRec);
+            }
+            else if (this._isDrawing) {
                 this.doDraw(event); //needed to get the mouse up point in case there was no mouse move
             }
 
@@ -468,7 +472,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                     if (this.application.ninja.colorController.colorToolbar.fill.webGlColor){
                         this._selectedSubpath.setFillColor(this.application.ninja.colorController.colorToolbar.fill.webGlColor);
                     }
-                }
+                } //if this is a new path being rendered
 
                 this._selectedSubpath.makeDirty();
 
