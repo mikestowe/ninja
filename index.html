@@ -168,6 +168,10 @@
 		
 		<script type="text/javascript">
 			window.onload = function() {
+                // Check if we are running in Chrome
+                if(navigator.userAgent.toLowerCase().indexOf("chrome") === -1) {
+                    window.location = "./redirect.html";
+                }
                 // Load the version json
                 var req = new XMLHttpRequest();
                 req.open("GET", "versions.json");
