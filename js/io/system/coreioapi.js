@@ -207,6 +207,7 @@ exports.CoreIoApi = Montage.create(Component, {
     directoryServiceURL: {
     	enumerable: false,
     	get: function() {
+    		console.log(this);
             return String(this.rootUrl+this._directoryServiceURL);
         },
         set: function(value) {
@@ -1015,7 +1016,7 @@ exports.CoreIoApi = Montage.create(Component, {
 				//
                	if (xhr.readyState === 4) {
                  	retValue.status = xhr.status;
-                 	eval('retValue.response = '+xhr.response);
+                 	retValue.response = JSON.parse(xhr.response);
                   	retValue.success = true;
                	}
            	}
