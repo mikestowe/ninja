@@ -141,6 +141,7 @@ function GLSubpath() {
         var lineCap = ['butt','round','square'];
         ctx.lineCap = lineCap[1];
         ctx.beginPath();
+
         var prevAnchor = this.getAnchor(0);
         ctx.moveTo(prevAnchor.getPosX()-bboxMin[0],prevAnchor.getPosY()-bboxMin[1]);
         for (var i = 1; i < numAnchors; i++) {
@@ -156,8 +157,15 @@ function GLSubpath() {
         if (this._isClosed){
             ctx.fill();
         }
-        ctx.stroke();
 
+        /*
+        var numPoints = this._samples.length/3;
+        ctx.moveTo(this._samples[0],this._samples[1]);
+        for (var i=0;i<numPoints;i++){
+            ctx.lineTo(this._samples[3*i]-bboxMin[0],this._samples[3*i + 1]-bboxMin[1]);
+        }
+        */
+        ctx.stroke();
         ctx.restore();
     } //render()
 
