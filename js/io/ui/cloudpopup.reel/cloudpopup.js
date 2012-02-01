@@ -28,9 +28,9 @@ exports.CloudPopup = Montage.create(Component, {
     	enumerable: false,
     	value: function () {
     		//
-    		this.components.test_btn = this.element.getElementsByClassName('btn_test')[0];
-    		this.components.ok_btn = this.element.getElementsByClassName('btn_ok')[0];
-    		this.components.cancel_btn = this.element.getElementsByClassName('btn_cancel')[0];
+    		this.components.test_btn = this.element.getElementsByClassName('btn_test nj-skinned')[0];
+    		this.components.ok_btn = this.element.getElementsByClassName('btn_ok nj-skinned')[0];
+    		this.components.cancel_btn = this.element.getElementsByClassName('btn_cancel nj-skinned')[0];
     		this.components.status = this.element.getElementsByClassName('status')[0];
     		this.components.url = this.element.getElementsByClassName('cloud_url')[0];
     	}

@@ -72,6 +72,7 @@ $grey_light: #494949;
 	width: 176px;
 	border-radius: 4px;
 	text-shadow: 1px 1px 1px #222;
+	font-family: 'Droid Sans', sans-serif;
 	border: 1px lighten($grey_dark, 20%) solid;
 	background: $grey_dark -webkit-gradient(linear, left top, left bottom, color-stop(45%, lighten($grey_dark, 10%)), color-stop(100%, $grey_dark));
 }
@@ -82,29 +83,6 @@ $grey_light: #494949;
     background: #FFF;
     border: 1px $grey_dark solid;
     color: $grey_dark;
-}
-
-.cloud_popup .content button
-{
-	display: block;
-	border: 0px;
-	margin: 0px;
-	padding: 4px;
-	border: 1px #333 solid;
-	background: $grey_dark -webkit-gradient(linear, left top, left bottom, color-stop(0%, $grey_light), color-stop(100%, $grey_dark));
-	border-radius: 4px;
-	color: #FFF;
-	text-transform: uppercase;
-	cursor: pointer;
-	text-shadow: 1px 1px 1px #000;
-}
-
-.cloud_popup .content button:hover
-{
-	
-	border: 1px #222 solid;
-	background: $grey_dark -webkit-gradient(linear, left top, left bottom, color-stop(0%, lighten($grey_dark, 20%)), color-stop(100%, darken($grey_light, 20%)));
-	color: #EEE;
 }
 
 .cloud_popup .content .status

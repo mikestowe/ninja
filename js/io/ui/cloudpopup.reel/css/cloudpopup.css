@@ -68,11 +68,12 @@
   width: 176px;
   border-radius: 4px;
   text-shadow: 1px 1px 1px #222;
+  font-family: 'Droid Sans', sans-serif;
   border: 1px #5c5c5c solid;
   background: #292929 -webkit-gradient(linear, left top, left bottom, color-stop(45%, #434343), color-stop(100%, #292929));
 }
 
-/* line 80, cloudpopup.scss */
+/* line 81, cloudpopup.scss */
 .cloud_popup .content input:focus {
   text-shadow: none;
   background: #FFF;
@@ -80,29 +81,7 @@
   color: #292929;
 }
 
-/* line 88, cloudpopup.scss */
-.cloud_popup .content button {
-  display: block;
-  border: 0px;
-  margin: 0px;
-  padding: 4px;
-  border: 1px #333 solid;
-  background: #292929 -webkit-gradient(linear, left top, left bottom, color-stop(0%, #494949), color-stop(100%, #292929));
-  border-radius: 4px;
-  color: #FFF;
-  text-transform: uppercase;
-  cursor: pointer;
-  text-shadow: 1px 1px 1px #000;
-}
-
-/* line 103, cloudpopup.scss */
-.cloud_popup .content button:hover {
-  border: 1px #222 solid;
-  background: #292929 -webkit-gradient(linear, left top, left bottom, color-stop(0%, #5c5c5c), color-stop(100%, #161616));
-  color: #EEE;
-}
-
-/* line 111, cloudpopup.scss */
+/* line 89, cloudpopup.scss */
 .cloud_popup .content .status {
   float: left;
   clear: right;
@@ -111,7 +90,7 @@
   width: 240px;
 }
 
-/* line 120, cloudpopup.scss */
+/* line 98, cloudpopup.scss */
 .cloud_popup .content .btn_ok, .cloud_popup .content .btn_cancel {
   width: 80px;
   text-align: center;
