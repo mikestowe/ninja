@@ -814,12 +814,12 @@ exports.Stage = Montage.create(Component, {
             switch(side)
 			{
                 case "top":
-					plane[1] = 1;
+					plane = [0,1,0,0];
  					plane[3] = this.application.ninja.currentDocument.documentRoot.offsetHeight / 2.0;
                    break;
 
                 case "side":
-					plane[0] = 1;
+					plane = [1,0,0,0];
  					plane[3] = this.application.ninja.currentDocument.documentRoot.offsetWidth / 2.0;
                    break;
 
