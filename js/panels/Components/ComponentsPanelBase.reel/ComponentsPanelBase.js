@@ -27,18 +27,6 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
             this.eventManager.addEventListener( "executeAddComponent", this, false);
     	}
     },
-    willDraw: {
-    	enumerable: false,
-    	value: function() {
-
-    	}
-    },
-    draw: {
-    	enumerable: false,
-    	value: function() {
-
-    	}
-    },
 
     _loadXMLDoc: {
         value:function(dname) {
@@ -61,18 +49,17 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
         value:function(componentType, dropX, dropY){
 //            var compW = 100,
 //                compH = 100,
-//                elementType = "div",
-//                componentContainer,
-//                componentElement;
-            var componentEl;
+//
+            var componentEl, componentInstance;
 
             if(componentType == "Button"){
                 componentEl = NJUtils.makeNJElement("button", componentType, "component");//, {"type": "button"});
                 componentEl.setAttribute("type", "button");
-                componentEl.innerHTML = "Button";
-                console.log(componentEl);
-//                compW = 118;
-//                compH = 52;
+                //componentEl.innerHTML = "Button";
+
+                componentInstance = this.application.ninja.currentDocument._window.addComponent(componentEl, {type: componentType, path: "montage/ui/button.reel", name: "Button"});
+
+
             }else if(componentType == "Checkbox"){
                 compW = 53;
                 compH = 53;
@@ -142,11 +129,15 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
 
             //componentContainer.appendChild(componentElement);
 
+            this.application.ninja.currentDocument.setComponentInstance(componentInstance, componentEl);
+
             NJevent("elementAdding", {"el": componentEl, "data":styles});
             /*
             var componentRef = this.application.ninja.currentDocument._window.addComponent(componentElement, componentType);
-            this.application.ninja.currentDocument._userComponentSet[componentContainer.uuid] = componentRef;
+
             */
+
+
 
         }
     }

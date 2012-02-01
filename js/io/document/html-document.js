@@ -27,6 +27,7 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
     _initialUserDocument: { value: null, enumerable: false },
     _htmlSource: {value: "<html></html>", enumerable: false},
     _glData: {value: null, enumerable: false },
+    _userComponents: { value: {}, enumarable: false},
 
     _elementCounter: { value: 1, enumerable: false },
     _snapping : { value: true, enumerable: false },
@@ -108,23 +109,11 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
         }
     },
 
-    _userComponentSet: {
-        value: {},
-        writable: true,
-        enumerable:true
+    userComponents: {
+        get: function() {
+            return this._userComponents;
+        }
     },
-
-//    userComponentSet:{
-//        enumerable: true,
-//        get: function() {
-//            return this._userComponentSet;
-//        },
-//        set: function(value) {
-//            this._userComponentSet = value;
-//            this._drawUserComponentsOnOpen();
-//        }
-//    },
-//
 //    _drawUserComponentsOnOpen:{
 //        value:function(){
 //            for(var i in this._userComponentSet){
@@ -189,6 +178,29 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
     zoomFactor: {
         get: function() { return this._zoomFactor; },
         set: function(value) { this._zoomFactor = value; }
+    },
+
+    /**
+     * Add a reference to a component instance to the userComponents hash using the
+     * element UUID
+     */
+    setComponentInstance: {
+        value: function(instance, el) {
+            this.userComponents[el.uuid] = instance;
+        }
+    },
+
+    /**
+     * Returns the component instance obj from the element
+     */
+    getComponentFromElement: {
+        value: function(el) {
+            if(el) {
+                if(el.uuid) return this.userComponents[el.uuid];
+            } else {
+                return null;
+            }
+        }
     },
 
     //****************************************//
@@ -353,9 +365,6 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
                         this.callback(this);
                     }
                 }.bind(this), 50);
-                
-                // TODO - Not sure where this goes
-                this._userComponentSet = {};
             } else {
                 this._styles = this._document.styleSheets[this._document.styleSheets.length - 1];
                 this._stylesheets = this._document.styleSheets; // Entire stlyesheets array

@@ -9,4 +9,27 @@ var Montage = require("montage/core/core").Montage,
 
 exports.ComponentController = Montage.create(ElementController, {
 
+    getProperty: {
+        value: function(el, prop) {
+            switch(prop) {
+                case "label":
+                    return this.application.ninja.currentDocument.getComponentFromElement(el).label;
+                    break;
+                default:
+                    return ElementController.getProperty(el, prop);
+            }
+        }
+    },
+
+    setProperty: {
+        value: function(el, p, value) {
+            switch(p) {
+                case "label":
+                    this.application.ninja.currentDocument.getComponentFromElement(el).label = value;
+                    break;
+                default:
+                    ElementController.setProperty(el, p, value);
+            }
+        }
+    }
 });
