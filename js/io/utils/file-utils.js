@@ -4,7 +4,10 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var FileUtils = exports.FileUtils = Object.create(Object.prototype, {
+var Montage = 		require("montage/core/core").Montage,
+    Component = 	require("montage/ui/component").Component;
+
+var FileUtils = exports.FileUtils = Montage.create(Component, {
 
     /***
      * checks for valid uri pattern
