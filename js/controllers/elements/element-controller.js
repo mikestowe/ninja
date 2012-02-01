@@ -206,7 +206,7 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
             el.elementModel.props3D.matrix3d = mat;
             el.elementModel.props3D.perspectiveDist = dist;
 
-//            if(update3DModel)
+            if(update3DModel)
             {
                 this._update3DProperties(el, mat, dist);
             }
