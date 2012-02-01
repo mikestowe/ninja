@@ -16,7 +16,7 @@
 
 .layout-table .flexor div:last-child { float: right; }
 
-input.nj-skinned, textarea.nj-skinned, button.nj-skinned, select.nj-skinned, select.nj-skinned option, button.nj-skinned { -webkit-appearance: none; outline: none; }
+input.nj-skinned, textarea.nj-skinned, button.nj-skinned, select.nj-skinned, select.nj-skinned option { -webkit-appearance: none; outline: none; }
 
 input[type="text"].nj-skinned, input[type="password"].nj-skinned, input[type="search"].nj-skinned, textarea.nj-skinned, select.nj-skinned, select.nj-skinned option { border: 1px solid #313131; color: white; background-color: #444444; font-size: 12px; font-family: 'Droid Sans', sans-serif; }
 
@@ -34,7 +34,9 @@ input[type="search"].nj-skinned::-webkit-search-cancel-button { -webkit-appearan
 
 input[type="search"].nj-skinned::-webkit-search-cancel-button:after { content: "\2716"; }
 
-button.nj-skinned { font-size: 9px; cursor: pointer; }
+button.nj-skinned { font-size: 9px; cursor: pointer; display: block; border: 0px; margin: 0px; padding: 4px; border: 1px #313131 solid; background-color: #474747; background-image: -webkit-linear-gradient(top, #646464 0%, #3c3c3c 100%); border-radius: 4px; color: white; text-transform: uppercase; cursor: pointer; text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5); }
+
+button.nj-skinned:hover { background-image: -webkit-linear-gradient(top, #3c3c3c 0%, #646464 100%); }
 
 input[type="radio"].nj-skinned { background-color: #474747; background-image: -webkit-linear-gradient(top, #646464 0%, #3c3c3c 100%); color: #c8c8c8; border: 2px solid #282828; width: 12px; height: 12px; overflow: hidden; border-radius: 10px; font-size: 16px; line-height: 7px; text-indent: -7px; cursor: pointer; -webkit-box-shadow: 0px 0px 2px rgba(200, 200, 200, 0.5); -moz-box-shadow: 0px 0px 2px rgba(200, 200, 200, 0.5); box-shadow: 0px 0px 2px rgba(200, 200, 200, 0.5); }
 
