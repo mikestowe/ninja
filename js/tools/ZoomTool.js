@@ -240,19 +240,6 @@ exports.ZoomTool = Montage.create(DrawingTool, {
 				var p1 = [this._layerX, this._layerY, 0];
 				globalPt = vecUtils.vecAdd(3, p0, p1);
 				vecUtils.vecScale(3, globalPt, 0.5);
-
-				var hitRec = snapManager.snap( globalPt[0], globalPt[1], true );
-				if (hitRec)
-				{
-					var elt = hitRec.getElement();
-					if (elt)
-					{
-//						console.log( "hit: " + hitRec.getElement().id );
-						var localToGlobalMat = viewUtils.getLocalToGlobalMatrix( elt );
-						var localPt  = hitRec.calculateElementPreTransformScreenPoint();
-						globalPt = MathUtils.transformAndDivideHomogeneousPoint( localPt,  localToGlobalMat );
-					}
-				}
 			}
 			else if (this._mode === "doubleClickReset")
 			{
