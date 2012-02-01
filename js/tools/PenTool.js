@@ -378,7 +378,7 @@ exports.PenTool = Montage.create(ShapeTool, {
             if (this._penCanvas!==null) {
                 //obtain the 2D translation of the canvas due to the Selection tool...assuming this is called in Configure
                 var penCanvasLeft = parseInt(ElementMediator.getProperty(this._penCanvas, "left"));//parseFloat(DocumentControllerModule.DocumentController.GetElementStyle(this._penCanvas, "left"));
-                var penCanvasTop = parseFloat(ElementMediator.getProperty(this._penCanvas, "top"));//parseFloat(DocumentControllerModule.DocumentController.GetElementStyle(this._penCanvas, "top"));
+                var penCanvasTop = parseInt(ElementMediator.getProperty(this._penCanvas, "top"));//parseFloat(DocumentControllerModule.DocumentController.GetElementStyle(this._penCanvas, "top"));
                 var penCanvasWidth = parseInt(ElementMediator.getProperty(this._penCanvas, "width"));//this._penCanvas.width;
                 var penCanvasHeight = parseInt(ElementMediator.getProperty(this._penCanvas, "height"));//this._penCanvas.height;
                 var penCanvasOldX = penCanvasLeft + 0.5 * penCanvasWidth;
@@ -390,7 +390,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                 //update the canvasX and canvasY parameters for this subpath and also translate the subpath points (since they're stored in stage world space)
                 this._selectedSubpath.setCanvasX(translateCanvasX + this._selectedSubpath.getCanvasX());
                 this._selectedSubpath.setCanvasY(translateCanvasY + this._selectedSubpath.getCanvasY());
-                this._selectedSubpath.translate(translateCanvasX, translateCanvasY, 0);
+                this._selectedSubpath.translateAnchors(translateCanvasX, translateCanvasY, 0);
                 this._selectedSubpath.createSamples(); //updates the bounding box
             }
         }

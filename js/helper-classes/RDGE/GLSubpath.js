@@ -578,7 +578,7 @@ GLSubpath.prototype.copyFromSubpath = function (subpath) {
     this.setStrokeWidth(subpath.getStrokeWidth());
 }
 
-GLSubpath.prototype.translate = function (tx, ty, tz) {
+GLSubpath.prototype.translateAnchors = function (tx, ty, tz) {
     for (var i=0;i<this._Anchors.length;i++){
         this._Anchors[i].translateAll(tx,ty,tz);
     }
