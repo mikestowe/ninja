@@ -15,10 +15,9 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component,
     Uuid = require("montage/core/uuid").Uuid,
-    fileSystem = require("js/io/system/coreioapi").CoreIoApi;
-
-var HTMLDocument = require("js/io/document/html-document").HTMLDocument;
-var TextDocument = require("js/io/document/text-document").TextDocument;
+    nj= require("js/lib/NJUtils.js").NJUtils,
+    HTMLDocument = require("js/io/document/html-document").HTMLDocument,
+    TextDocument = require("js/io/document/text-document").TextDocument;
 
 var DocumentController = exports.DocumentController = Montage.create(Component, {
     hasTemplate: {
@@ -96,7 +95,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
     openFileWithURI: {
         value: function(uriArrayObj) {
-            var uri = "", fileContent = "", response=null;
+            var uri = "", fileContent = "", response=null, filename="", fileType="js";
             if(!!uriArrayObj && !!uriArrayObj.uri && (uriArrayObj.uri.length > 0)){
                 uri = uriArrayObj.uri[0];
             }
@@ -104,17 +103,22 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
             // Get file from Jose Code with a callback to here
             if(!!uri){
-                response = fileSystem.openFile({"uri":uri});
+                response = this.application.ninja.coreIoApi.openFile({"uri":uri});
                 if((response.success === true) && ((response.status === 200) || (response.status === 304))){
                     fileContent = response.content;
                 }
 
-                console.log("$$$ "+uri+"\n content = \n\n\n"+ fileContent+"\n\n\n");
-                this.openDocument({"type": "js", "name": "tmp.js", "source": fileContent});
+                //console.log("$$$ "+uri+"\n content = \n\n\n"+ fileContent+"\n\n\n");
+                filename = nj.getFileNameFromPath(uri);
+                if(uri.indexOf('.') != -1){
+                    fileType = uri.substr(uri.lastIndexOf('.') + 1);
+                }
+                this.openDocument({"type": ""+fileType, "name": ""+filename, "source": fileContent});
             }
 
         }
     },
+
 
     openProjectWithURI: {
         value: function(uri) {
@@ -211,7 +215,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             this._documents.splice(this._findIndexByUUID(id), 1);
 
             if(this.activeDocument.uuid === id && this._documents.length > 0) {
-                this.switchDocument(this._documents[0].uuid)
+                this.switchDocument(this._documents[0].uuid);
             }
         }
     },
@@ -254,11 +258,11 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                             lineNumbers: true,
                             mode: "htmlmixed",
                             onCursorActivity: function() {
-                                DocumentManager._codeEditor.editor.setLineClass(DocumentManager._codeEditor.hline, null);
-                                DocumentManager._codeEditor.hline = DocumentManager._codeEditor.editor.setLineClass(DocumentManager._codeEditor.editor.getCursor().line, "activeline");
+                                DocumentController._codeEditor.editor.setLineClass(DocumentController._codeEditor.hline, null);
+                                DocumentController._codeEditor.hline = DocumentController._codeEditor.editor.setLineClass(DocumentController._codeEditor.editor.getCursor().line, "activeline");
                             }
                 });
-                this._codeEditor.hline = DocumentManager._codeEditor.editor.setLineClass(0, "activeline");
+                this._codeEditor.hline = DocumentController._codeEditor.editor.setLineClass(0, "activeline");
             }
         }
     },
@@ -284,9 +288,9 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
     _onOpenTextDocument: {
         value: function(doc) {
-            DocumentManager._hideCurrentDocument();
+            this._hideCurrentDocument();
             this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
-            DocumentManager.activeDocument = doc;
+            this.activeDocument = doc;
 
             var type;
 
@@ -299,15 +303,15 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                     break;
             }
 
-            DocumentManager._codeEditor.editor = CodeMirror.fromTextArea(doc.textArea, {
+            DocumentController._codeEditor.editor = CodeMirror.fromTextArea(doc.textArea, {
                         lineNumbers: true,
                         mode: type,
                         onCursorActivity: function() {
-                            DocumentManager._codeEditor.editor.setLineClass(DocumentManager._codeEditor.hline, null);
-                            DocumentManager._codeEditor.hline = DocumentManager._codeEditor.editor.setLineClass(DocumentManager._codeEditor.editor.getCursor().line, "activeline");
+                            DocumentController._codeEditor.editor.setLineClass(DocumentController._codeEditor.hline, null);
+                            DocumentController._codeEditor.hline = DocumentController._codeEditor.editor.setLineClass(DocumentController._codeEditor.editor.getCursor().line, "activeline");
                         }
             });
-            DocumentManager._codeEditor.hline = DocumentManager._codeEditor.editor.setLineClass(0, "activeline");
+            DocumentController._codeEditor.hline = DocumentController._codeEditor.editor.setLineClass(0, "activeline");
 
         }
     },
@@ -349,7 +353,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value: function() {
             if(this.activeDocument) {
                 this.activeDocument.container.style["display"] = "none";
-                if(this.activeDocument.documentType === "htm" || this.activeDocument.documentType === "html") this.application.ninja.stage.toggleCanvas();
+                //if(this.activeDocument.documentType === "htm" || this.activeDocument.documentType === "html") this.application.ninja.stage.toggleCanvas();
             }
         }
     },
@@ -358,7 +362,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value: function() {
             if(this.activeDocument) {
                 this.activeDocument.container.style["display"] = "block";
-                if(this.activeDocument.documentType === "htm" || this.activeDocument.documentType === "html") this.application.ninja.stage.toggleCanvas();
+                //if(this.activeDocument.documentType === "htm" || this.activeDocument.documentType === "html") this.application.ninja.stage.toggleCanvas();
             }
         }
     },
@@ -415,7 +419,7 @@ _createTextAreaElement: {
             textArea.id = "code";
             textArea.name = "code";
 
-            codeMirrorDiv.appendChild(textArea);
+            //codeMirrorDiv.appendChild(textArea);
 
 //            if(!this._textHolder) this._textHolder = document.getElementById("codeViewContainer");
 //            this._textHolder.appendChild(codeMirrorDiv);
