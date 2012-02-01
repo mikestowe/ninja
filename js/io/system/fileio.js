@@ -11,7 +11,7 @@ NOTES:
 	empty file will be created. 'contents' should be a string to be saved
 	as the file. 'contentType' is the mime type of the file.
 	
-	coreIoApi: this.application.ninja.coreIoApi
+	Core API reference in NINJA: this.application.ninja.coreIoApi
 	
 ////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////// */
@@ -65,24 +65,44 @@ exports.FileIo = Montage.create(Object.prototype, {
     readFile: {
     	enumerable: true,
     	value: function() {
+    		//Checking for API to be available
+    		if (!this.application.ninja.coreIoApi.cloudAvailable()) {
+    			//API not available, no IO action taken
+    			return null;
+    		}
     		//
     	}
     },
     saveFile: {
     	enumerable: true,
     	value: function() {
+    		//Checking for API to be available
+    		if (!this.application.ninja.coreIoApi.cloudAvailable()) {
+    			//API not available, no IO action taken
+    			return null;
+    		}
     		//
     	}
     },
     copyFile: {
     	enumerable: true,
     	value: function() {
+    		//Checking for API to be available
+    		if (!this.application.ninja.coreIoApi.cloudAvailable()) {
+    			//API not available, no IO action taken
+    			return null;
+    		}
     		//
     	}
     },
     infoFile: {
     	enumerable: true,
     	value: function() {
+    		//Checking for API to be available
+    		if (!this.application.ninja.coreIoApi.cloudAvailable()) {
+    			//API not available, no IO action taken
+    			return null;
+    		}
     		//
     	}
     }
