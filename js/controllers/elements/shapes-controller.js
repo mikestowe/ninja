@@ -168,7 +168,7 @@ exports.ShapesController = Montage.create(CanvasController, {
     setColor: {
         value: function(el, color, isFill) {
             // TODO - Format color for webGL before setting
-            color = color.webGlColor;
+            color = color.webGlColor || color.color.webGlColor;
             if(isFill)
             {
                 el.elementModel.shapeModel.GLGeomObj.setFillColor(color);

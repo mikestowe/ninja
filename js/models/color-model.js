@@ -415,8 +415,10 @@ exports.ColorModel = Montage.create(Component, {
 	            colorEvent.alpha = this.alpha.value;
            	if (this.hsl)
            		colorEvent.hsla = {h: this.hsl.h, s: this.hsl.s, l: this.hsl.l, a: this.alpha.value, css: 'hsla('+this.hsl.h+', '+this.hsl.s+'%, '+this.hsl.l+'%, '+this.alpha.value+')'};
-            if (this.rgb)
+            if (this.rgb) {
 	            colorEvent.rgba = {r: this.rgb.r, g: this.rgb.g, b: this.rgb.b, a: this.alpha.value, css: 'rgba('+ this.rgb.r +', '+this.rgb.g+', '+this.rgb.b+', '+this.alpha.value+')'};
+                colorEvent.webGlColor = [this.rgb.r/255, this.rgb.g/255, this.rgb.b/255, this.alpha.value];
+            }
            	if (this.hex)
 	           	colorEvent.hex = this.hex;
 			//Standard values that apply to any event	           

@@ -83,13 +83,52 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
 
     setColor: {
         value: function(el, color, isFill) {
+            var mode = color.mode;
             if(isFill)
             {
-                this.application.ninja.stylesController.setElementStyle(el, "background-color", color.color.css);
+                if(mode)
+                {
+                    switch (mode) {
+                        case 'nocolor':
+                            this.setProperty(el, "background-image", "none");
+                            this.setProperty(el, "background-color", "none");
+                            break;
+                        case 'gradient':
+                            this.setProperty(el, "background-image", color.color.css);
+                            this.setProperty(el, "background-color", "none");
+                            break;
+                        default:
+                            this.setProperty(el, "background-image", "none");
+                            this.setProperty(el, "background-color", color.color.css);
+                    }
+                }
+                else
+                {
+                    this.application.ninja.stylesController.setElementStyle(el, "background-color", color.color.css);
+                }
             }
             else
             {
-                this.application.ninja.stylesController.setElementStyle(el, "border-color", color.color.css);
+                if(mode)
+                {
+                    switch (mode) {
+                        case 'nocolor':
+                            this.setProperty(el, "border-image", "none");
+                            this.setProperty(el, "border-color", "none");
+                            break;
+                        case 'gradient':
+                            this.setProperty(el, "border-image", color.color.css);
+                            this.setProperty(el, "border-color", "none");
+                            break;
+                        default:
+                            this.setProperty(el, "border-image", "none");
+                            this.setProperty(el, "border-color", color.color.css);
+                    }
+                }
+                else
+                {
+                    this.application.ninja.stylesController.setElementStyle(el, "border-color", color.color.css);
+                }
             }
         }
     },

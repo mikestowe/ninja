@@ -457,7 +457,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
                 if(!currentValue) {
                     var that = this;
                     currentValue = els.map(function(item) {
-                        return that.getColor(item._element);
+                        return that.getColor(item._element, isFill);
                     });
                 }
 
