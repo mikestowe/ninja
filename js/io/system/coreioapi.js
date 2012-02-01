@@ -47,7 +47,7 @@ exports.CoreIoApi = Montage.create(Component, {
 				return true;
 			} else {
 				//Inactive
-				if (!this._cloudDialogOpen || this.application.ninja) {
+				if (!this._cloudDialogOpen && this.application.ninja) {
 					this.showCloudDialog();
 				}
 				return false;
@@ -72,10 +72,12 @@ exports.CoreIoApi = Montage.create(Component, {
     	enumerable: false,
 		value: function () {
 			//
+			this._cloudDialogOpen = true;
+			//
 			this._cloudDialogComponents.blackout = document.createElement('div');
 			this._cloudDialogComponents.blackout.style.width = '100%';
 			this._cloudDialogComponents.blackout.style.height = '100%';
-			this._cloudDialogComponents.blackout.style.background = 'rgba(0, 0, 0, .6)';
+			this._cloudDialogComponents.blackout.style.background = '-webkit-radial-gradient(center, ellipse cover, rgba(0,0,0,.65) 0%, rgba(0,0,0,0.8) 80%)';
 			this.application.ninja.popupManager.addPopup(this._cloudDialogComponents.blackout);
     		//
     		////////////////////////////////////////////////////
@@ -93,28 +95,31 @@ exports.CoreIoApi = Montage.create(Component, {
     		this._cloudDialogComponents.dialog.addEventListener('firstDraw', this, false);
 		}
     },
-    
+    ////////////////////////////////////////////////////////////////////
+    //
     handleFirstDraw: {
     	value: function (e) {
 			if (e._target._element.className === 'cloud_popup') {
 	    		this._cloudDialogComponents.dialog.removeEventListener('firstDraw', this, false);
 		    	//
-				this._cloudDialogComponents.popup = this.application.ninja.popupManager.createPopup(this._cloudDialogComponents.dialog.element, {x: '200px', y: '200px'});
+				this._cloudDialogComponents.popup = this.application.ninja.popupManager.createPopup(this._cloudDialogComponents.dialog.element, {x: '50%', y: '50%'});
 				this._cloudDialogComponents.popup.addEventListener('firstDraw', this, false);
 			} else {
 				//
 				this._cloudDialogComponents.dialog.element.style.opacity = 1;
 				this._cloudDialogComponents.popup.element.style.opacity = 1;
+				this._cloudDialogComponents.popup.element.style.margin = '-100px 0px 0px -190px';
 			}
     	}
     },
-    
-    
     ////////////////////////////////////////////////////////////////////
     //
     hideCloudDialog: {
     	enumerable: false,
 		value: function () {
+			//
+			this.application.ninja.popupManager.removePopup(this._cloudDialogComponents.blackout);
+			this.application.ninja.popupManager.removePopup(this._cloudDialogComponents.popup.element);
 		}
     },
 	////////////////////////////////////////////////////////////////////

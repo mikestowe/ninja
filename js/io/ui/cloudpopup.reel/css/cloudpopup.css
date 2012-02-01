@@ -34,20 +34,21 @@
 
 /* line 40, cloudpopup.scss */
 .cloud_popup .content p {
-  text-shadow: 1px 1px 1px #333;
+  text-shadow: 1px 1px 1px #222;
   margin: 0px 0px 12px 0px;
   text-align: justify;
   color: #EEE;
 }
 
 /* line 48, cloudpopup.scss */
-.cloud_popup .content .test {
+.cloud_popup .content .btn_test {
   float: right;
   clear: right;
   margin: 0px 0px 0px 8px;
+  width: 60px;
 }
 
-/* line 55, cloudpopup.scss */
+/* line 56, cloudpopup.scss */
 .cloud_popup .content label {
   float: left;
   margin: 5px 8px 0px 0px;
@@ -56,28 +57,30 @@
   text-align: right;
 }
 
-/* line 64, cloudpopup.scss */
+/* line 65, cloudpopup.scss */
 .cloud_popup .content input {
   display: block;
+  float: left;
+  color: #FFF;
   border: 0px;
   padding: 4px;
   margin: 0px;
-  background: #292929 -webkit-gradient(linear, left top, left bottom, color-stop(45%, #434343), color-stop(100%, #292929));
-  border: 1px #5c5c5c solid;
-  color: #FFF;
-  float: left;
-  width: 202px;
+  width: 176px;
   border-radius: 4px;
+  text-shadow: 1px 1px 1px #222;
+  border: 1px #5c5c5c solid;
+  background: #292929 -webkit-gradient(linear, left top, left bottom, color-stop(45%, #434343), color-stop(100%, #292929));
 }
 
-/* line 77, cloudpopup.scss */
+/* line 80, cloudpopup.scss */
 .cloud_popup .content input:focus {
+  text-shadow: none;
   background: #FFF;
   border: 1px #292929 solid;
   color: #292929;
 }
 
-/* line 84, cloudpopup.scss */
+/* line 88, cloudpopup.scss */
 .cloud_popup .content button {
   display: block;
   border: 0px;
@@ -92,16 +95,15 @@
   text-shadow: 1px 1px 1px #000;
 }
 
-/* line 99, cloudpopup.scss */
+/* line 103, cloudpopup.scss */
 .cloud_popup .content button:hover {
   border: 1px #222 solid;
   background: #292929 -webkit-gradient(linear, left top, left bottom, color-stop(0%, #5c5c5c), color-stop(100%, #161616));
   color: #EEE;
 }
 
-/* line 107, cloudpopup.scss */
+/* line 111, cloudpopup.scss */
 .cloud_popup .content .status {
-  color: red;
   float: left;
   clear: right;
   margin: 5px 0px 0px 6px;
@@ -109,8 +111,8 @@
   width: 240px;
 }
 
-/* line 117, cloudpopup.scss */
-.cloud_popup .content .handle_ok, .cloud_popup .content .handle_cancel {
+/* line 120, cloudpopup.scss */
+.cloud_popup .content .btn_ok, .cloud_popup .content .btn_cancel {
   width: 80px;
   text-align: center;
   float: right;

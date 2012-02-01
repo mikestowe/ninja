@@ -38,17 +38,18 @@ $grey_light: #494949;
 
 .cloud_popup .content p
 {
-  	text-shadow: 1px 1px 1px #333;
+  	text-shadow: 1px 1px 1px #222;
   	margin: 0px 0px 12px 0px;
   	text-align: justify;
   	color: #EEE;
 }
 
-.cloud_popup .content .test
+.cloud_popup .content .btn_test
 {
 	float: right;
 	clear: right;
 	margin: 0px 0px 0px 8px;
+	width: 60px;
 }
 
 .cloud_popup .content label
@@ -63,18 +64,21 @@ $grey_light: #494949;
 .cloud_popup .content input
 {
 	display: block;
+	float: left;
+	color: #FFF;
 	border: 0px;
 	padding: 4px;
 	margin: 0px;
-	background: $grey_dark -webkit-gradient(linear, left top, left bottom, color-stop(45%, lighten($grey_dark, 10%)), color-stop(100%, $grey_dark));
-	border: 1px lighten($grey_dark, 20%) solid;
-	color: #FFF;
-	float: left;
-	width: 202px;
+	width: 176px;
 	border-radius: 4px;
+	text-shadow: 1px 1px 1px #222;
+	border: 1px lighten($grey_dark, 20%) solid;
+	background: $grey_dark -webkit-gradient(linear, left top, left bottom, color-stop(45%, lighten($grey_dark, 10%)), color-stop(100%, $grey_dark));
 }
 
-.cloud_popup .content input:focus {
+.cloud_popup .content input:focus
+{
+	text-shadow: none;
     background: #FFF;
     border: 1px $grey_dark solid;
     color: $grey_dark;
@@ -105,7 +109,6 @@ $grey_light: #494949;
 
 .cloud_popup .content .status
 {
-	color: red;
 	float: left;
 	clear: right;
 	margin: 5px 0px 0px 6px;
@@ -113,7 +116,7 @@ $grey_light: #494949;
 	width: 240px;
 }
 
-.cloud_popup .content .handle_ok, .cloud_popup .content .handle_cancel
+.cloud_popup .content .btn_ok, .cloud_popup .content .btn_cancel
 {
 	width: 80px;
 	text-align: center;
