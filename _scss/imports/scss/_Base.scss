@@ -48,8 +48,7 @@ input.nj-skinned,
 textarea.nj-skinned, 
 button.nj-skinned,
 select.nj-skinned,
-select.nj-skinned option,
-button.nj-skinned {
+select.nj-skinned option {
 	-webkit-appearance: none;
 	outline: none;
 }
@@ -122,6 +121,21 @@ input[type="search"].nj-skinned::-webkit-search-cancel-button:after {
 button.nj-skinned {
 	font-size: 9px;
     cursor: pointer;
+	display: block;
+	border: 0px;
+	margin: 0px;
+	padding: 4px;
+	border: 1px $color-input-border solid;
+	background-color: $color-menu-bg;
+	background-image: -webkit-linear-gradient(top, $color-radio-gradient-top 0%, $color-radio-gradient-bottom 100%);
+	border-radius: 4px;
+	color: $color-menu-text;
+	text-transform: uppercase;
+	cursor: pointer;
+	text-shadow: 1px 1px 1px $color-app-shadow
+}
+button.nj-skinned:hover {
+	background-image: -webkit-linear-gradient(top, $color-radio-gradient-bottom 0%, $color-radio-gradient-top 100%); 
 }
 
 // Radio buttons 
