@@ -75,7 +75,7 @@ exports.CloudPopup = Montage.create(Component, {
     		//
    			if (this.application.ninja.coreIoApi.cloudAvailable()) {
     			this.components.status.style.color = '#77FF00';
-    			this.components.status.innerHTML = 'Connected';
+    			this.components.status.innerHTML = 'Connected to '+this.application.ninja.coreIoApi.cloudData.name;
     		} else {
     			this.components.status.style.color = '#FF3A3A';
     			this.components.status.innerHTML = 'Disconnected';

@@ -27,12 +27,9 @@ exports.CoreIoApi = Montage.create(Component, {
 				this.rootUrl = window.localStorage['ioRootUrl'];
 				//Checks for IO API to be active
 				this.ioServiceDetected = this.cloudAvailable();
-				//
-				console.log('Cloud Status: URL detected in localStorage as '+this.rootUrl);
 			} else {
-				//
+				//IO API to be inactive
 				this.ioServiceDetected = false;
-				console.log('Cloud Status: No URL detected in localStorage');
 			}
 		}
 	},
@@ -41,9 +38,12 @@ exports.CoreIoApi = Montage.create(Component, {
 	cloudAvailable: {
 		enumerable: false,
 		value: function () {
+			var cloud = this.getCloudStatus();
 			//
-			if (this.rootUrl && this.getCloudStatus().status === 200) {
+			if (this.rootUrl && cloud.status === 200) {
 				//Active
+				this.cloudData.name = cloud.response['name'];
+				this.cloudData.root = cloud.response['server-root'];
 				return true;
 			} else {
 				//Inactive
@@ -59,6 +59,12 @@ exports.CoreIoApi = Montage.create(Component, {
     _cloudDialogOpen: {
     	enumerable: false,
 		value: false
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    cloudData: {
+    	enumerable: false,
+		value: {name: null, root: ''}
     },
     ////////////////////////////////////////////////////////////////////
     //
@@ -223,8 +229,8 @@ exports.CoreIoApi = Montage.create(Component, {
             if((urlOut.length > 1) && (urlOut.charAt(urlOut.length - 1) === "/")){
                 urlOut = urlOut.substring(0, (urlOut.length - 1));
             }
-
-            return serviceURL + urlOut;
+			//
+            return String(serviceURL+urlOut);
         }
     },
     ////////////////////////////////////////////////////////////////////
@@ -1009,6 +1015,7 @@ exports.CoreIoApi = Montage.create(Component, {
 				//
                	if (xhr.readyState === 4) {
                  	retValue.status = xhr.status;
+                 	eval('retValue.response = '+xhr.response);
                   	retValue.success = true;
                	}
            	}
