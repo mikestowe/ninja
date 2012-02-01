@@ -63,6 +63,7 @@
 
 .picker .driversList:hover{
     cursor:pointer;
+    background-color: #444444;
 }
 
 .picker .highlighted{

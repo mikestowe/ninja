@@ -621,6 +621,16 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
                         this.currentSelectedNode = evt.target;
 
                     }else{
+
+
+                        //test: highlight non-selectable icons too
+                        if(!evt.target.classList.contains("selected")){
+                            evt.target.classList.add("selected");
+                        }
+                        this.currentSelectedNode = evt.target;
+                        //end- test
+
+
                         //disable OK
                         if(!this.okButton.hasAttribute("disabled")){
                             this.okButton.setAttribute("disabled", "true");
@@ -776,6 +786,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
                             this.pickerModel.callback.call(this.pickerModel.callbackScope, {"uri":this.selectedItems});
                         }catch(e){
                             success = false;
+                            console.log("[Error] Failed to open "+ this.selectedItems.toString());
                             console.log(e.stack);
                         }
                     }else{//else send an event with the selected files

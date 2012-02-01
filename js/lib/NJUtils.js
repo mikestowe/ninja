@@ -206,6 +206,8 @@ exports.NJUtils = Object.create(Object.prototype, {
     ///// Return the last part of a path (e.g. filename)
     getFileNameFromPath : {
         value: function(path) {
+            path = path.replace(/[/\\]$/g,"");
+            path = path.replace(/\\/g,"/");
             return path.substr(path.lastIndexOf('/') + 1);
         }
     }

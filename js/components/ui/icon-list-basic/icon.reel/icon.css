@@ -17,15 +17,18 @@
 }
 
 .icon .selected{
-    /*background-color: #d1d1d1;*/
     background-color: #919191;
 }
+
+/*highlight on hover*/
+.icon:hover{
+    background-color: #919191;
+}
+/*end- test*/
 
 .icon .iconImg{
     width:35px;
     height:35px;
-    /*border: 1px solid #000000;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.8);*/
     margin-left: 20px;
     margin-top: 10px;
 }

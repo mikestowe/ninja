@@ -81,7 +81,7 @@ exports.DocumentEntry = Montage.create(Component, {
     prepareForDraw: {
         enumerable: false,
         value: function() {
-           //this.element.addEventListener("click", this, false);
+           this.element.addEventListener("click", this, false);
         }
     },
 
@@ -98,10 +98,10 @@ exports.DocumentEntry = Montage.create(Component, {
     handleClick: {
         value: function(event) {
             if(event._event.target.nodeName === "IMG") {
-                documentManagerModule.DocumentManager.closeDocument(this._uuid);
+                this.application.ninja.documentController.closeDocument(this._uuid);
             } else {
                 if(!this._document.isActive) {
-                    documentManagerModule.DocumentManager.switchDocument(this._uuid);
+                    this.application.ninja.stage.stageView.switchCodeView(this.application.ninja.documentController._findDocumentByUUID(this._uuid));
                 }
             }
         }

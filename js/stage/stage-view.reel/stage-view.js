@@ -49,28 +49,80 @@ exports.StageView = Montage.create(Component, {
     // Temporary function to create a Codemirror text view
     createTextView: {
         value: function(doc) {
-//            DocumentManager._hideCurrentDocument();
+            this.application.ninja.documentController._hideCurrentDocument();
 
             this.application.ninja.currentDocument.container.parentNode.style["display"] = "none";
 
-//            stageManagerModule.stageManager._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
-//            DocumentManager.activeDocument = doc;
+            this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
+            this.application.ninja.documentController.activeDocument = doc;
 
             this.element.appendChild(doc.textArea);
 
+            var type;
+
+            switch(doc.documentType) {
+                case  "css" :
+                    type = "css";
+                    break;
+                case "js" :
+                    type = "javascript";
+                    break;
+            }
+
+            //remove any previous Codemirror div
+            var codemirrorDiv = this.element.querySelector(".CodeMirror");
+            if(!!codemirrorDiv){
+                codemirrorDiv.parentNode.removeChild(codemirrorDiv);
+            }
 
             var codeM = CodeMirror.fromTextArea(doc.textArea, {
                 lineNumbers: true,
-                       mode: "javascript"
-//                       onCursorActivity: function() {
-//                           DocumentManager._codeEditor.editor.setLineClass(DocumentManager._codeEditor.hline, null);
-//                           DocumentManager._codeEditor.hline = DocumentManager._codeEditor.editor.setLineClass(DocumentManager._codeEditor.editor.getCursor().line, "activeline");
-//                       }
+                       mode: type,
+                       onCursorActivity: function() {
+                           this.application.ninja.documentController._codeEditor.editor.setLineClass(this.application.ninja.documentController._codeEditor.hline, null);
+                           this.application.ninja.documentController._codeEditor.hline = this.application.ninja.documentController._codeEditor.editor.setLineClass(this.application.ninja.documentController._codeEditor.editor.getCursor().line, "activeline");
+                       }
            });
 
-//           DocumentManager._codeEditor.hline = DocumentManager._codeEditor.editor.setLineClass(0, "activeline");
+           //this.application.ninja.documentController._codeEditor.hline = this.application.ninja.documentController._codeEditor.editor.setLineClass(0, "activeline");
 
-            this.application.ninja.stage.hideCanvas(true);
+           this.application.ninja.stage.hideCanvas(true);
+
+        }
+    },
+
+    switchCodeView:{
+        value: function(doc){
+
+            this.application.ninja.documentController._hideCurrentDocument();
+
+            //remove any previous Codemirror div
+            var codemirrorDiv = this.element.querySelector(".CodeMirror");
+            if(!!codemirrorDiv){
+                codemirrorDiv.parentNode.removeChild(codemirrorDiv);
+            }
+
+            var type;
+
+            switch(doc.documentType) {
+                case  "css" :
+                    type = "css";
+                    break;
+                case "js" :
+                    type = "javascript";
+                    break;
+            }
+
+            var codeM = CodeMirror.fromTextArea(doc.textArea, {
+                lineNumbers: true,
+                       mode: type,
+                       onCursorActivity: function() {
+                           this.application.ninja.documentController._codeEditor.editor.setLineClass(this.application.ninja.documentController._codeEditor.hline, null);
+                           this.application.ninja.documentController._codeEditor.hline = this.application.ninja.documentController._codeEditor.editor.setLineClass(this.application.ninja.documentController._codeEditor.editor.getCursor().line, "activeline");
+                       }
+           });
+
+           //this.application.ninja.documentController._codeEditor.hline = this.application.ninja.documentController._codeEditor.editor.setLineClass(0, "activeline");
 
         }
     }
