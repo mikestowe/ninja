@@ -44,6 +44,7 @@ exports.PanTool = Montage.create(toolBase,
     HandleLeftButtonDown: {
         value : function ( event ) {
             this._isDrawing = true;
+			this.isDrawing = true;
  
 				this.mouseDown( event );
        }
@@ -69,6 +70,7 @@ exports.PanTool = Montage.create(toolBase,
 			    this.application.ninja.stage.clearDrawingCanvas();
                 this._hasDraw = false;
                 this._isDrawing = false;
+                this.isDrawing = false;
             }
         }
     },
