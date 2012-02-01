@@ -240,6 +240,7 @@ function GLWorld( canvas, use3D )
 				if (renderer != aRenderer)  console.log( "***** DIFFERENT RENDERERS *****" );
 				renderer.disableCulling();
 				this.myScene.render();
+				console.log( "render" );
 
 				if (this._firstRender)
 				{
@@ -247,15 +248,15 @@ function GLWorld( canvas, use3D )
 
 					if (!this.hasAnimatedMaterials())
 					{
-						this.myScene.render();
+						//this.myScene.render();
 						//this._canvas.task.stop();
-						this._renderCount = 3;
+						this._renderCount = 10;
 					}
 				}
 				else if (this._renderCount >= 0)
 				{
 					this._renderCount--;
-					if (this._renderCount == 0)
+					if (this._renderCount <= 0)
 						this._canvas.task.stop();
 				}
 
@@ -270,6 +271,7 @@ function GLWorld( canvas, use3D )
     this.onRunState = function()
 	{
 		console.log( "GLWorld.onRunState" );
+		this.restartRenderLoop();
 	}
 	
     this.onLoadState = function()
@@ -387,16 +389,13 @@ function GLWorld( canvas, use3D )
 	{
 		rdgeStarted = true;
 
-        // TODO - temporary fix for RDGE id's
-        this._canvas.id = this._canvas.uuid;
-
+        this._canvas.rdgeid = this._canvas.uuid;
 		g_Engine.registerCanvas(this._canvas, this);
 		RDGEStart( this._canvas );
 
 		//this._canvas.fpsTracker = new fpsTracker( '0' );
-		this._canvas.task = new RDGETask(this._canvas, false);
+		//this._canvas.task = new RDGETask(this._canvas, false);
 		this._canvas.task.stop()
-		//this._canvas.task.start()
 	}
 }
 
@@ -508,11 +507,16 @@ GLWorld.prototype.addObject = function( obj )
 
 GLWorld.prototype.restartRenderLoop = function()
 {
+	console.log( "restartRenderLoop" );
+
 	this._firstRender = true;
-	if (this._allMapsLoaded)
-		this._canvas.task.start();
-	else
-		this._canvas.task.stop();
+	if (this._canvas.task)
+	{
+		if (this._allMapsLoaded)
+			this._canvas.task.start();
+		else
+			this._canvas.task.stop();
+	}
 }
 
 //append to the list of objects if obj doesn't already exist
@@ -563,7 +567,7 @@ GLWorld.prototype.clearTree = function()
 	{
 		var root = this._rootNode;
 		root.children = new Array();
-		g_Engine.unregisterCanvas( this._canvas.id )
+		g_Engine.unregisterCanvas( this._canvas.rdgeid )
 
 		this.update( 0 );
 		this.draw();
@@ -805,7 +809,7 @@ GLWorld.prototype.getShapeFromPoint = function( offsetX, offsetY )
 GLWorld.prototype.export = function()
 {
 	var exportStr = "GLWorld 1.0\n";
-	exportStr += "id: " + this._canvas.id + "\n";
+	exportStr += "id: " + this._canvas.rdgeid + "\n";
 	exportStr += "fov: " + this._fov + "\n";
 	exportStr += "zNear: " + this._zNear + "\n";
 	exportStr += "zFar: " + this._zFar + "\n";

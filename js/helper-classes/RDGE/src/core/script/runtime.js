@@ -121,7 +121,7 @@ function RDGEStart(canvasOrID)
 
 	g_Engine.registerCanvas(canvas);
 
-	//canvas.task = new RDGETask(canvas, true);
+	canvas.task = new RDGETask(canvas, true);
 
 	if (!g_shaderMan)
 		g_shaderMan = new ShaderManager();
@@ -179,7 +179,7 @@ RDGERequestAnimationFrame = (function() {
 RDGETask = (function() {
     var tasks = {};
     return function(canvas, startNow) {
-        this.id = canvas.id;
+        this.id = canvas.rdgeid;
         this.currTime = 0.0;
         this.lastTime = 0.0;
         this.running = false;
