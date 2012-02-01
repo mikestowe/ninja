@@ -74,10 +74,12 @@ exports.ZoomTool = Montage.create(DrawingTool, {
            if(wasSelected) {
                 this.AddCustomFeedback();
                 this.eventManager.addEventListener( "toolDoubleClick", this, false);
+				this.application.ninja.stage.drawingCanvas.addEventListener("mousewheel", this, false);
 
            } else {
                 this.RemoveCustomFeedback();
                 this.eventManager.removeEventListener( "toolDoubleClick", this, false);
+				this.application.ninja.stage.drawingCanvas.removeEventListener("mousewheel", this, false);
            }
         }
     },
@@ -270,19 +272,9 @@ exports.ZoomTool = Montage.create(DrawingTool, {
 			}
 			else if (this._mode === "mouseWheelZoom")
 			{
-				if (userContent)
-				{
-					var w = userContent.offsetWidth,
-						h = userContent.offsetHeight;
-					if(userContent.width)
-						w = userContent.width;
-					if(userContent.height)
-						h = userContent.height;
-					var localPt = [ w/2,  h/2, 0];
-					globalPt = viewUtils.localToGlobal( localPt, userContent );
-				}
-				else
-					globalPt = [0,0,0];
+                var w = this.application.ninja.stage._canvas.width,
+                    h = this.application.ninja.stage._canvas.height;
+				globalPt = [w/2, h/2, 0];
 			}
 			else
 			{
