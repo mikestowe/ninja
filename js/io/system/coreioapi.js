@@ -10,7 +10,9 @@ NOTES:
 ////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////// */
 var Montage = 		require("montage/core/core").Montage,
-    Component = 	require("montage/ui/component").Component;
+    Component = 	require("montage/ui/component").Component,
+    Popup = 		require("js/components/popup.reel").Popup,
+    CloudPopup = 	require("js/io/ui/cloudpopup.reel").CloudPopup;
 ////////////////////////////////////////////////////////////////////////
 //Exporting as Project I/O
 exports.CoreIoApi = Montage.create(Component, {
@@ -25,17 +27,9 @@ exports.CoreIoApi = Montage.create(Component, {
 				this.rootUrl = window.localStorage['ioRootUrl'];
 				//Checks for IO API to be active
 				this.ioServiceDetected = this.cloudAvailable();
-				//
-				console.log('FileIO: localStorage URL detected | IO Service Detected: '+ this.ioServiceDetected);
-				//
 			} else {
-				//TODO: Remove, automatically prompt user on welcome
-				this.rootUrl = 'http://localhost:16380';
-				//TODO: Changed to false, welcome screen prompts user
-				this.ioServiceDetected = this.cloudAvailable();
-				//
-				console.log('FileIO: localStorage URL NOT detected | IO Service Detected: '+ this.ioServiceDetected);
-				//
+				//IO API to be inactive
+				this.ioServiceDetected = false;
 			}
 		}
 	},
@@ -44,17 +38,96 @@ exports.CoreIoApi = Montage.create(Component, {
 	cloudAvailable: {
 		enumerable: false,
 		value: function () {
+			var cloud = this.getCloudStatus();
 			//
-			if (this.getCloudStatus().status === 200) {
+			if (this.rootUrl && cloud.status === 200) {
 				//Active
+				this.cloudData.name = cloud.response['name'];
+				this.cloudData.root = cloud.response['server-root'];
 				return true;
 			} else {
 				//Inactive
-				//TODO: Logic to prompt the user for cloud, otherwise return false
+				if (!this._cloudDialogOpen && this.application.ninja) {
+					this.showCloudDialog();
+				}
 				return false;
 			}
 		}
 	},
+	////////////////////////////////////////////////////////////////////
+    //
+    _cloudDialogOpen: {
+    	enumerable: false,
+		value: false
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    cloudData: {
+    	enumerable: false,
+		value: {name: null, root: ''}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    _cloudDialogComponents: {
+    	enumerable: false,
+		value: {blackout: null, popup: null, dialog: null}
+    },
+	////////////////////////////////////////////////////////////////////
+    //
+    showCloudDialog: {
+    	enumerable: false,
+		value: function () {
+			//
+			this._cloudDialogOpen = true;
+			//
+			this._cloudDialogComponents.blackout = document.createElement('div');
+			this._cloudDialogComponents.blackout.style.width = '100%';
+			this._cloudDialogComponents.blackout.style.height = '100%';
+			this._cloudDialogComponents.blackout.style.background = '-webkit-radial-gradient(center, ellipse cover, rgba(0,0,0,.65) 0%, rgba(0,0,0,0.8) 80%)';
+			this.application.ninja.popupManager.addPopup(this._cloudDialogComponents.blackout);
+    		//
+    		////////////////////////////////////////////////////
+    		//Creating popup from m-js component
+    		var popup = document.createElement('div');
+    		//
+    		this._cloudDialogComponents.dialog = CloudPopup.create();
+    		//
+    		document.body.appendChild(popup);
+    		//
+    		this._cloudDialogComponents.dialog.element = popup;
+    		this._cloudDialogComponents.dialog.needsDraw = true;
+    		this._cloudDialogComponents.dialog.element.style.opacity = 0;
+    		//
+    		this._cloudDialogComponents.dialog.addEventListener('firstDraw', this, false);
+		}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    handleFirstDraw: {
+    	value: function (e) {
+			if (e._target._element.className === 'cloud_popup') {
+	    		this._cloudDialogComponents.dialog.removeEventListener('firstDraw', this, false);
+		    	//
+				this._cloudDialogComponents.popup = this.application.ninja.popupManager.createPopup(this._cloudDialogComponents.dialog.element, {x: '50%', y: '50%'});
+				this._cloudDialogComponents.popup.addEventListener('firstDraw', this, false);
+			} else {
+				//
+				this._cloudDialogComponents.dialog.element.style.opacity = 1;
+				this._cloudDialogComponents.popup.element.style.opacity = 1;
+				this._cloudDialogComponents.popup.element.style.margin = '-100px 0px 0px -190px';
+			}
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    hideCloudDialog: {
+    	enumerable: false,
+		value: function () {
+			//
+			this.application.ninja.popupManager.removePopup(this._cloudDialogComponents.blackout);
+			this.application.ninja.popupManager.removePopup(this._cloudDialogComponents.popup.element);
+		}
+    },
 	////////////////////////////////////////////////////////////////////
     //
     _ioServiceDetected: {
@@ -134,6 +207,7 @@ exports.CoreIoApi = Montage.create(Component, {
     directoryServiceURL: {
     	enumerable: false,
     	get: function() {
+    		console.log(this);
             return String(this.rootUrl+this._directoryServiceURL);
         },
         set: function(value) {
@@ -156,8 +230,8 @@ exports.CoreIoApi = Montage.create(Component, {
             if((urlOut.length > 1) && (urlOut.charAt(urlOut.length - 1) === "/")){
                 urlOut = urlOut.substring(0, (urlOut.length - 1));
             }
-
-            return serviceURL + urlOut;
+			//
+            return String(serviceURL+urlOut);
         }
     },
     ////////////////////////////////////////////////////////////////////
@@ -899,6 +973,7 @@ exports.CoreIoApi = Montage.create(Component, {
 				//
                	if (xhr.readyState === 4) {
                  	retValue.status = xhr.status;
+                 	retValue.response = JSON.parse(xhr.response);
                   	retValue.success = true;
                	}
            	}

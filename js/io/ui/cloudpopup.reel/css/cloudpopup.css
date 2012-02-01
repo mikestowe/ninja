@@ -1,0 +1,99 @@
+@charset "UTF-8";
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+/* line 12, cloudpopup.scss */
+.cloud_popup {
+  font-size: 12px;
+  text-shadow: 1px 1px 1px #000;
+  font-family: 'Droid Sans', sans-serif;
+}
+
+/* line 19, cloudpopup.scss */
+.cloud_popup .content {
+  width: 360px;
+}
+
+/* line 24, cloudpopup.scss */
+.cloud_popup .content h3 {
+  text-transform: uppercase;
+  font-weight: normal;
+  font-size: 14px;
+  text-shadow: 1px 1px 1px #000;
+  font-family: 'Droid Sans', sans-serif;
+  display: block;
+  float: left;
+  clear: both;
+  margin: 4px 0px 8px 0px;
+  padding: 0px;
+  width: 100%;
+  text-align: center;
+}
+
+/* line 40, cloudpopup.scss */
+.cloud_popup .content p {
+  text-shadow: 1px 1px 1px #222;
+  margin: 0px 0px 12px 0px;
+  text-align: justify;
+  color: #EEE;
+}
+
+/* line 48, cloudpopup.scss */
+.cloud_popup .content .btn_test {
+  float: right;
+  clear: right;
+  margin: 0px 0px 0px 8px;
+  width: 60px;
+}
+
+/* line 56, cloudpopup.scss */
+.cloud_popup .content label {
+  float: left;
+  margin: 5px 8px 0px 0px;
+  display: block;
+  width: 96px;
+  text-align: right;
+}
+
+/* line 65, cloudpopup.scss */
+.cloud_popup .content input {
+  display: block;
+  float: left;
+  color: #FFF;
+  border: 0px;
+  padding: 4px;
+  margin: 0px;
+  width: 176px;
+  border-radius: 4px;
+  text-shadow: 1px 1px 1px #222;
+  font-family: 'Droid Sans', sans-serif;
+  border: 1px #5c5c5c solid;
+  background: #292929 -webkit-gradient(linear, left top, left bottom, color-stop(45%, #434343), color-stop(100%, #292929));
+}
+
+/* line 81, cloudpopup.scss */
+.cloud_popup .content input:focus {
+  text-shadow: none;
+  background: #FFF;
+  border: 1px #292929 solid;
+  color: #292929;
+}
+
+/* line 89, cloudpopup.scss */
+.cloud_popup .content .status {
+  float: left;
+  clear: right;
+  margin: 5px 0px 0px 6px;
+  text-shadow: 1px 1px 1px #333;
+  width: 240px;
+}
+
+/* line 98, cloudpopup.scss */
+.cloud_popup .content .btn_ok, .cloud_popup .content .btn_cancel {
+  width: 80px;
+  text-align: center;
+  float: right;
+  margin: 8px 0px 0px 8px;
+}

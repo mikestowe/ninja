@@ -11,11 +11,12 @@ NOTES:
 	empty file will be created. 'contents' should be a string to be saved
 	as the file. 'contentType' is the mime type of the file.
 	
+	coreIoApi: this.application.ninja.coreIoApi
+	
 ////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////// */
 //
-var Montage = 		require("montage/core/core").Montage,
-	CoreIoApi =		require("js/io/system/coreioapi").CoreIoApi;
+var Montage = 		require("montage/core/core").Montage;
 ////////////////////////////////////////////////////////////////////////
 //Exporting as File I/O
 exports.FileIo = Montage.create(Object.prototype, {
@@ -28,12 +29,12 @@ exports.FileIo = Montage.create(Object.prototype, {
     	enumerable: true,
     	value: function(file) {
     		//Checking for API to be available
-    		if (!CoreIoApi.cloudAvailable()) {
+    		if (!this.application.ninja.coreIoApi.cloudAvailable()) {
     			//API not available, no IO action taken
     			return null;
     		}
     		//Peforming check for file to exist
-    		var check = CoreIoApi.fileExists(file.uri), status, create;
+    		var check = this.application.ninja.coreIoApi.fileExists(file.uri), status, create;
     		//Upon successful check, handling results
     		if (check.success) {
     			//Handling status of check
@@ -44,7 +45,7 @@ exports.FileIo = Montage.create(Object.prototype, {
     					break;
     				case 404:
     					//File does not exists, ready to be created
-    					create = CoreIoApi.createFile(file);
+    					create = this.application.ninja.coreIoApi.createFile(file);
     					//Storing status to be returned (for UI handling)
     					if (create.success) {
     						status = check.status;
