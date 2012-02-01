@@ -51,6 +51,9 @@ exports.CloudPopup = Montage.create(Component, {
     	value: function() {
     		//
     		this.testConnection();
+    		if (this.application.ninja.coreIoApi.cloudAvailable()) {
+    			this.closeDialog();
+    		}
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -62,7 +65,7 @@ exports.CloudPopup = Montage.create(Component, {
     		this.components.test_btn.addEventListener('click', this.testConnection.bind(this), false);
     		//
     		this.components.ok_btn.addEventListener('click', this.closeDialog.bind(this), false);
-    		this.components.cancel_btn.addEventListener('click', this.closeDialog.bind(this), false);
+    		this.components.cancel_btn.addEventListener('click', this.cancelDialog.bind(this), false);
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -88,6 +91,16 @@ exports.CloudPopup = Montage.create(Component, {
     	enumerable: false,
     	value: function() {
     		//
+    		this.application.ninja.coreIoApi.hideCloudDialog();
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    cancelDialog: {
+    	enumerable: false,
+    	value: function() {
+    		//
+    		this.application.ninja.coreIoApi.rootUrl = null;
     		this.application.ninja.coreIoApi.hideCloudDialog();
     	}
     }
