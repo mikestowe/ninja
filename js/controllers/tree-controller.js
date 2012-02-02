@@ -53,37 +53,15 @@ var TreeController = exports.TreeController = Montage.create(ObjectController, /
         value: function() {
             var self = this;
 
-            ///// Declare function to initialize controller for each node
-            ///// that is a branch
-
-            function initController(array, depth) {
-                var controller = Montage.create(ArrayController, {
-                    content            : { value: array },
-                    delegate           : { value: self },
-                    isSelectionEnabled : { value: true }});
-
-                if(depth === 0) {
-                    self.rootController = controller;
-                }
-
-                self.branchControllers.push({
-                    depth      : depth,
-                    controller : controller
-
-                });
-            }
-
             ///// Recursive function that finds all branch nodes and initializes
-            ///// an array controller
+            ///// sets the tree node type to "branch" or "leaf"
 
             function walk(node, init, depth) {
-                var children = node[self.branchKey];
+                var branch = node[self.branchKey];
 
-                if(children) {
-                    //init(children, depth);
-
-                    children.forEach(function(child) {
-                        walk(child, init, ++depth);
+                if(branch) {
+                    branch.forEach(function(node) {
+                        walk(node, init, ++depth);
                     });
 
                     node['treeNodeType'] = 'branch';
@@ -92,7 +70,7 @@ var TreeController = exports.TreeController = Montage.create(ObjectController, /
                 }
             }
 
-            walk(this._root, initController, 0);
+            walk(this._root, 0);
 
         }
     },
@@ -117,10 +95,6 @@ var TreeController = exports.TreeController = Montage.create(ObjectController, /
         set: function(value) {
 
         }
-    },
-
-    lazyLoad : {
-        value: false
     },
 
     branchControllers: {
@@ -160,7 +134,6 @@ var TreeController = exports.TreeController = Montage.create(ObjectController, /
 
             this._content = value;
 
-            //TODO for right now assume that any content change invalidates the selection completely; we'll need to address this of course
             this.selectedObjects = null;
 
             if (this.rootKey) {
@@ -172,7 +145,6 @@ var TreeController = exports.TreeController = Montage.create(ObjectController, /
             } else {
                 this.root = value;
             }
-
 
         }
     },
@@ -208,12 +180,6 @@ var TreeController = exports.TreeController = Montage.create(ObjectController, /
             }
 
         }
-    },
-
-    insertChildBefore : { value : function() {} },
-
-    insertChildAfter : { value : function() {} }
-
-
+    }
 
 });
