@@ -127,15 +127,18 @@ button.nj-skinned {
 	padding: 4px;
 	border: 1px $color-input-border solid;
 	background-color: $color-menu-bg;
-	background-image: -webkit-linear-gradient(top, $color-radio-gradient-top 0%, $color-radio-gradient-bottom 100%);
+	background-image: -webkit-linear-gradient(top, $color-formgrad-top 0%, $color-formgrad-bottom 100%);
 	border-radius: 4px;
 	color: $color-menu-text;
 	text-transform: uppercase;
 	cursor: pointer;
 	text-shadow: 1px 1px 1px $color-app-shadow
 }
+button.nj-skinned:active {
+	background-image: -webkit-linear-gradient(top, $color-formgrad-bottom 0%, $color-formgrad-top 100%); 
+}
 button.nj-skinned:hover {
-	background-image: -webkit-linear-gradient(top, $color-radio-gradient-bottom 0%, $color-radio-gradient-top 100%); 
+	-webkit-box-shadow: 0px 0px 3px $color-focus-outline;
 }
 
 // Radio buttons 

@@ -577,11 +577,11 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
             	arrLinkedScrollersLength = arrLinkedScrollers.length,
 				i = 0,
 				that = this;
-
+			/*
 			if (this.firstTimeDraw) {
 				this.hasActiveProject="large";
 			}
-			
+			*/
 
 
     		if (!this.hasActiveProject) {
