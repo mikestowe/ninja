@@ -37,6 +37,8 @@ function RadialBlurMaterial()
 	this.getTextureMap			= function()		{  return this._texMap.slice(0);	}
 	this.setTextureMap			= function(m)		{  this._propValues[this._propNames[0]] = m.slice(0);  this.updateTexture();  	}	
 
+	this.isAnimated				= function()		{  return true;		}
+
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
