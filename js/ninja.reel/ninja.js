@@ -34,8 +34,6 @@ exports.Ninja = Montage.create(Component, {
 
     templateDidLoad: {
         value: function() {
-            this.application.njutils = this.njUtils;
-
             this.eventManager.addEventListener( "preloadFinish", this, false);
         }
     },
