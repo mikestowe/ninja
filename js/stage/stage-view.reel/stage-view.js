@@ -49,6 +49,8 @@ exports.StageView = Montage.create(Component, {
     // Temporary function to create a Codemirror text view
     createTextView: {
         value: function(doc) {
+            var documentController = this.application.ninja.documentController;
+
             this.application.ninja.documentController._hideCurrentDocument();
 
             this.application.ninja.currentDocument.container.parentNode.style["display"] = "none";
@@ -79,8 +81,8 @@ exports.StageView = Montage.create(Component, {
                 lineNumbers: true,
                        mode: type,
                        onCursorActivity: function() {
-                           this.application.ninja.documentController._codeEditor.editor.setLineClass(this.application.ninja.documentController._codeEditor.hline, null);
-                           this.application.ninja.documentController._codeEditor.hline = this.application.ninja.documentController._codeEditor.editor.setLineClass(this.application.ninja.documentController._codeEditor.editor.getCursor().line, "activeline");
+                           //documentController._codeEditor.editor.setLineClass(documentController._codeEditor.hline, null);
+                           //documentController._codeEditor.hline = documentController._codeEditor.editor.setLineClass(documentController._codeEditor.editor.getCursor().line, "activeline");
                        }
            });
 
@@ -93,8 +95,14 @@ exports.StageView = Montage.create(Component, {
 
     switchCodeView:{
         value: function(doc){
-
+            var documentController = this.application.ninja.documentController;
             this.application.ninja.documentController._hideCurrentDocument();
+
+            this.application.ninja.documentController.activeDocument = doc;
+
+            this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
+
+
 
             //remove any previous Codemirror div
             var codemirrorDiv = this.element.querySelector(".CodeMirror");
@@ -117,13 +125,49 @@ exports.StageView = Montage.create(Component, {
                 lineNumbers: true,
                        mode: type,
                        onCursorActivity: function() {
-                           this.application.ninja.documentController._codeEditor.editor.setLineClass(this.application.ninja.documentController._codeEditor.hline, null);
-                           this.application.ninja.documentController._codeEditor.hline = this.application.ninja.documentController._codeEditor.editor.setLineClass(this.application.ninja.documentController._codeEditor.editor.getCursor().line, "activeline");
+                           //documentController._codeEditor.editor.setLineClass(documentController._codeEditor.hline, null);
+                           //documentController._codeEditor.hline = documentController._codeEditor.editor.setLineClass(documentController._codeEditor.editor.getCursor().line, "activeline");
                        }
            });
 
            //this.application.ninja.documentController._codeEditor.hline = this.application.ninja.documentController._codeEditor.editor.setLineClass(0, "activeline");
 
+        }
+    },
+    refreshCodeDocument:{
+        value:function(doc){
+
+        }
+    },
+    addCodeDocument:{
+        value:function(doc){
+            var type;
+            switch(doc.documentType) {
+                case  "css" :
+                    type = "css";
+                    break;
+                case "js" :
+                    type = "javascript";
+                    break;
+            }
+
+            var codeM = CodeMirror.fromTextArea(doc.textArea, {
+                lineNumbers: true,
+                       mode: type,
+                       onCursorActivity: function() {
+                           //documentController._codeEditor.editor.setLineClass(documentController._codeEditor.hline, null);
+                           //documentController._codeEditor.hline = documentController._codeEditor.editor.setLineClass(documentController._codeEditor.editor.getCursor().line, "activeline");
+                       }
+           });
+        }
+    },
+    removeCodeDocument:{
+        value:function(){
+            //remove any previous Codemirror div
+            var codemirrorDiv = this.element.querySelector(".CodeMirror");
+            if(!!codemirrorDiv){
+                codemirrorDiv.parentNode.removeChild(codemirrorDiv);
+            }
         }
     }
 });

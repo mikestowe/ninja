@@ -12,6 +12,7 @@ var BaseDocument = exports.BaseDocument = Montage.create(Montage, {
     /** Private Members **/
     _name: { value: null, enumerable: false },
     _uri: { value: null, enumerable: false },
+    _externalUri: {value: null, enumerable:false},
     _documentType: { value: null, enumerable: false },
     _container: {value: null, enumerable: false },
     _uuid: { value: null, enumerable: false },
@@ -29,6 +30,11 @@ var BaseDocument = exports.BaseDocument = Montage.create(Montage, {
     uri: {
         get: function() { return this._uri; },
         set: function(value) { this._uri = value; }
+    },
+
+    externalUri: {
+        get: function() { return this._externalUri; },
+        set: function(value) { this._externalUri = value; }
     },
 
     documentType: {
@@ -68,13 +74,18 @@ var BaseDocument = exports.BaseDocument = Montage.create(Montage, {
 
     /** Base Methods **/
     init: {
-        value: function(name, uri, type, container, uuid, callback) {
+        value: function(name, uri, type, container, uuid, callback, externalUri) {
             this.name = name;
             this.uri = uri;
             this.documentType = type;
             this.container = container;
             this.uuid = uuid;
             this.callback = callback;
+            if(!!externalUri){
+                this.externalUri = externalUri;
+                this.container.setAttribute("data-uri", externalUri);
+            }
+
         }
     },
 

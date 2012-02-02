@@ -45,10 +45,10 @@ var TextDocument = exports.TextDocument = Montage.create(baseDocumentModule.Base
     // PUBLIC METHODS
     initialize: {
         value: function(doc, uuid, textArea, callback) {
-            this.init(doc.name, doc.uri, doc.type, textArea, uuid);
-
+            this.init(doc.name, doc.uri, doc.type, textArea, uuid, null, doc.externalUri);
             this.currentView = "code";
             this.textArea = textArea;
+
 //            this._loadContent();
         }
     },

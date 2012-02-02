@@ -99,9 +99,8 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             if(!!uriArrayObj && !!uriArrayObj.uri && (uriArrayObj.uri.length > 0)){
                 uri = uriArrayObj.uri[0];
             }
-            console.log("URI is: ", uri);
+            //console.log("URI is: ", uri);
 
-            // Get file from Jose Code with a callback to here
             if(!!uri){
                 response = this.application.ninja.coreIoApi.openFile({"uri":uri});
                 if((response.success === true) && ((response.status === 200) || (response.status === 304))){
@@ -113,7 +112,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                 if(uri.indexOf('.') != -1){
                     fileType = uri.substr(uri.lastIndexOf('.') + 1);
                 }
-                this.openDocument({"type": ""+fileType, "name": ""+filename, "source": fileContent});
+                this.openDocument({"type": ""+fileType, "name": ""+filename, "source": fileContent, "externalUri": uri});
             }
 
         }
@@ -124,7 +123,6 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value: function(uri) {
             console.log("URI is: ", uri);
 
-            // Get project from Jose Code with a callback to here
         }
     },
 
@@ -157,18 +155,6 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
            // }
         }
     },
-
-    // Document has been loaded into the Iframe. Dispatch the event.
-    // Event Detail: Contains the current ActiveDocument
-    _onOpenDocument: {
-        value: function(doc){
-
-            DocumentController.activeDocument = doc;
-
-            NJevent("onOpenDocument", doc);
-
-       }
-   },
 
     textDocumentOpened: {
        value: function(doc) {
@@ -209,13 +195,31 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
     closeDocument: {
         value: function(id) {
+
+            //if file dirty then save
+
             var doc = this._findDocumentByUUID(id);
             this._removeDocumentView(doc.container);
 
             this._documents.splice(this._findIndexByUUID(id), 1);
 
             if(this.activeDocument.uuid === id && this._documents.length > 0) {
+
+                var closeDocumentIndex = this._findIndexByUUID(id);
+                var nextDocumentIndex = -1 ;
+                if((this._documents.length > 0) && (closeDocumentIndex === 0)){
+                    nextDocumentIndex = 1;
+                }else if((this._documents.length > 0) && (closeDocumentIndex > 0)){
+                    nextDocumentIndex = closeDocumentIndex - 1;
+                }
+
+                //remove the codemirror div if this is for a code view
+                /////test
+
+                ////end- test
+
                 this.switchDocument(this._documents[0].uuid);
+
             }
         }
     },
