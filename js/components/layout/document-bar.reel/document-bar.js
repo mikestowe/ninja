@@ -86,7 +86,7 @@ exports.DocumentBar = Montage.create(Component, {
         value: function() {
             this.designView.addEventListener("click", this, false);
             this.codeView.addEventListener("click", this, false);
-         
+
         }
     },
 
@@ -95,7 +95,13 @@ exports.DocumentBar = Montage.create(Component, {
             if(event._event.target.id === this.currentView) return;
 
             this.currentView = event._event.target.id;
-            documentManagerModule.DocumentManager.switchViews();
+            this.application.ninja.documentController.switchViews(event._event.target.id);//switch between design view
+        }
+    },
+
+    handleOnDocumentChanged:{
+        value:function(event){
+
         }
     }
 });

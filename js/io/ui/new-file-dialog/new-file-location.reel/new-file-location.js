@@ -6,7 +6,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var Montage = require("montage/core/core").Montage;
 var Component = require("montage/ui/component").Component;
-var newFileWorkflowControllerModule = require("js/io/workflow/newFileDialog/new-file-workflow-controller");
+var newFileWorkflowControllerModule = require("js/io/ui/new-file-dialog/new-file-workflow-controller");
 
 var NewFileLocation = exports.NewFileLocation = Montage.create(Component, {
 

@@ -8,8 +8,8 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component,
      iconsListModule = require("js/components/ui/icon-list-basic/iconsList.reel"),
     treeModule = require("js/components/ui/tree-basic/tree.reel"),
-    newFileLocationSelectionModule = require("js/io/workflow/newFileDialog/new-file-workflow-controller"),
-    fileUtils = require("js/io/utils/file-utils").FileUtils;
+    newFileLocationSelectionModule = require("js/io/ui/new-file-dialog/new-file-workflow-controller"),
+    nj= require("js/lib/NJUtils.js").NJUtils;
 
 var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(Component, {
 
@@ -335,7 +335,7 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
 
     isValidUri:{
         value: function(uri){
-            var status= fileUtils.isValidUri(uri);
+            var status= nj.isValidUri(uri);
             if(uri !== ""){
                 if(!status){
                     this.showError("! Invalid directory.");
@@ -346,7 +346,7 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
     },
     isValidFileName:{
         value: function(fileName){
-            var status = fileUtils.isValidFileName(fileName);
+            var status = nj.isValidFileName(fileName);
             if(fileName !== ""){
                 if(!status){
                     this.showError("! Invalid file name.");
@@ -357,7 +357,7 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
     },
     checkFileExists:{
         value: function(fileUri, folderUri, fileType){
-            var status= fileUtils.checkFileExists(fileUri, folderUri, fileType);
+            var status= this.application.ninja.coreIoApi.checkFileExists(fileUri, folderUri, fileType);
             if(status){
                 this.showError("! File already exists.");
             }

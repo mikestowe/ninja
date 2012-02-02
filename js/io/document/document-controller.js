@@ -244,6 +244,9 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
     switchViews: {
         value: function() {
+
+            //save file if dirty
+
             this.application.ninja.stage.saveScroll();
             this._hideCurrentDocument();
 

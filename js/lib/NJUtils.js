@@ -210,6 +210,43 @@ exports.NJUtils = Object.create(Object.prototype, {
             path = path.replace(/\\/g,"/");
             return path.substr(path.lastIndexOf('/') + 1);
         }
+    },
+
+    /***
+     * checks for valid uri pattern
+     * also flags if Windows uri pattern and Unix uri patterns are mixed
+     */
+    isValidUri:{
+        value: function(uri){
+            var isWindowsUri=false, isUnixUri=false,status=false;
+            if(uri !== ""){
+                uri = uri.replace(/^\s+|\s+$/g,"");  // strip any leading or trailing spaces
+
+                //for local machine folder uri
+                isWindowsUri = /^([a-zA-Z]:)(\\[^<>:"/\\|?*]+)*\\?$/gi.test(uri);
+                isUnixUri = /^(\/)?(\/(?![.])[^/]*)*\/?$/gi.test(uri);//folders beginning with . are hidden on Mac / Unix
+                status = isWindowsUri || isUnixUri;
+                if(isWindowsUri && isUnixUri){status = false;}
+            }
+            return status;
+        }
+    },
+
+    /***
+     * file name validation
+     */
+    isValidFileName:{
+        value: function(fileName){
+            var status = false;
+            if(fileName !== ""){
+                fileName = fileName.replace(/^\s+|\s+$/g,"");
+                status = !(/[/\\]/g.test(fileName));
+                if(status && navigator.userAgent.indexOf("Macintosh") != -1){//for Mac files beginning with . are hidden
+                    status = !(/^\./g.test(fileName));
+                }
+            }
+            return status;
+        }
     }
     
 });

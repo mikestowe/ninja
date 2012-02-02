@@ -6,9 +6,9 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var Montage = require("montage/core/core").Montage,
     Popup = require("montage/ui/popup/popup.reel").Popup,
-    newFileOptionsNavigatorModule = require("js/io/workflow/newFileDialog/new-file-options-navigator.reel"),
-    newFileWorkflowModelModule = require("js/io/workflow/newFileDialog/new-file-workflow-model");
-    saveAsModule = require("js/io/workflow/save-as-dialog.reel");
+    newFileOptionsNavigatorModule = require("js/io/ui/new-file-dialog/new-file-options-navigator.reel"),
+    newFileWorkflowModelModule = require("js/io/ui/new-file-dialog/new-file-workflow-model");
+    saveAsModule = require("js/io/ui/save-as-dialog.reel");
 
 //singleton
 var NewFileWorkflowController =  exports.NewFileWorkflowController = Montage.create(require("montage/ui/component").Component, {

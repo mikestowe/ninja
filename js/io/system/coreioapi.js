@@ -983,8 +983,35 @@ exports.CoreIoApi = Montage.create(Component, {
 			//
             return retValue;
         }
-    }
+    },
 	////////////////////////////////////////////////////////////////////
+    /***
+     * check if the file exists
+     */
+    checkFileExists:{
+        value: function(fileUri, folderUri, fileType){
+            var uri = "", response=null, status=true;
+
+            //prepare absolute uri
+            if(/[^/\\]$/g.test(folderUri)){
+                folderUri = folderUri + "/";
+            }
+
+            //todo:add file extension check if fileType present
+
+            uri = ""+folderUri+fileUri;
+
+            response = this.fileExists({"uri":uri});
+            if(!!response && response.success && (response.status === 204)){
+                status = true;
+            }else if(!!response && response.success && (response.status === 404)){
+                status = false;
+            }else{
+                status = false;
+            }
+            return status;
+        }
+    }
 	////////////////////////////////////////////////////////////////////
 });
 ////////////////////////////////////////////////////////////////////////

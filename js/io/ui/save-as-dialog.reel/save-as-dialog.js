@@ -6,7 +6,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component,
-    fileUtils = require("js/io/utils/file-utils").FileUtils;
+    nj= require("js/lib/NJUtils.js").NJUtils;
 
 var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
 
@@ -152,7 +152,7 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
 
     isValidUri:{
         value: function(uri){
-            var status= fileUtils.isValidUri(uri);
+            var status= nj.isValidUri(uri);
             if(uri !== ""){
                 if(!status){
                     this.showError("! Invalid directory.");
@@ -163,7 +163,7 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
     },
     isValidFileName:{
         value: function(fileName){
-            var status = fileUtils.isValidFileName(fileName);
+            var status = nj.isValidFileName(fileName);
             if(fileName !== ""){
                 if(!status){
                     this.showError("! Invalid file name.");
@@ -174,7 +174,7 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
     },
     checkFileExists:{
         value: function(fileUri, folderUri, fileType){
-            var status= fileUtils.checkFileExists(fileUri, folderUri, fileType);
+            var status= this.application.ninja.coreIoApi.checkFileExists(fileUri, folderUri, fileType);
             if(status){
                 this.showError("! File already exists.");
             }
