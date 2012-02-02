@@ -171,7 +171,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             if(argType === 'string') {
                 ruleText += '{' + declaration + '}';
             } else if(argType === 'object') {
-                ruleText += '{' + nj.cssFromObject(declaration) + '}';
+                ruleText += '{' + this.cssFromObject(declaration) + '}';
             }
             
             stylesheet.insertRule(ruleText, index);
@@ -199,25 +199,42 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             
             ///// Locally-scoped function to de-clutter variable declarations
             function getSelector(el, rule) {
-
                 return this._getMostSpecificSelectorForElement(el, rule[this.CONST.SPECIFICITY_KEY]).selector;
             }
 
             var selectorToOverride = getSelector.bind(this)(element, ruleToOverride),
-                tokens             = selectorToOverride.split(/\s/),
-                newClass           = this.generateClassName(element.nodeName),
-                lastToken, pseudoSplit, base, pseudo, newToken, newSelector, rule;
+                overrideData, rule;
+
+            ///// Get the overriding selector and className
+            overrideData = this.createOverrideSelector(selectorToOverride, element.nodeName);
+
+            ///// Create new rule with selector and insert it after the rule we're overriding
+            rule = this.addRule(overrideData.selector + ' { }', this.getRuleIndex(ruleToOverride)+1);
+            
+            return {
+                className : overrideData.className,
+                rule      : rule
+            };
+            
+        }
+    },
+
+    createOverrideSelector : {
+        value: function(selectorToOverride, classPrefix, className) {
+            var tokens = selectorToOverride.split(/\s/),
+                newClass = className || this.generateClassName(classPrefix, true),
+                lastToken, pseudoSplit, base, pseudo, newToken, newSelector;
 
             ///// Creating an overriding selector by replacing the last
             ///// class, attribute or type selector in passed-in rule's selector
-            
+
             ///// Grab the last token
             lastToken   = tokens[tokens.length-1];
             pseudoSplit = lastToken.split(':');
             ///// The last token can have pseudo class. Let's preserve it
             base   = pseudoSplit[0];
             pseudo = (pseudoSplit[1]) ? ':'+pseudoSplit[1] : '';
-            
+
             ///// Now, all we want to do is replace the last token with a
             ///// generated class name, except if the last token is an ID selector,
             ///// in which case we append the generated class name to the ID selector
@@ -231,18 +248,15 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 ///// Append the generated class
                 newToken += '.' + newClass + pseudo;
             }
-            
+
             ///// Now we can build the new selector by replacing the last token
             tokens[tokens.length-1] = newToken;
             newSelector = tokens.join(' ');
-            
-            rule = this.addRule(newSelector + ' { }', this.getRuleIndex(ruleToOverride)+1);
-            
+
             return {
                 className : newClass,
-                rule      : rule
+                selector  : newSelector
             };
-            
         }
     },
     
@@ -370,7 +384,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     ///// from which an overriding rule can be created.
 
     getDominantRuleForGroup : {
-        value : function(elements, property) {
+        value : function(elements, property, forceOverride) {
             var selectorsToOverride = [],
                 commonRules, dominantRules, useImportant;
 
@@ -639,7 +653,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     },
     
     ///// Get Most Specific Selector For Element
-    ///// Given a selector+specificty array, find the most specific
+    ///// Given a selector+specificity array, find the most specific
     ///// selector for the passed-in element
     
     _getMostSpecificSelectorForElement : {
@@ -721,7 +735,11 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     ///// Calculate specificity
     ///// Returns the specificity value of passed-in selector
     ///// WARNING: Do not pass in grouped selectors!
-    ///// Helpful for determining precedence of style rules   
+    ///// Helpful for determining precedence of style rules
+    ///// Calculation javascript code courtesy of David Owens:
+    ///// http://gbradley.com/2009/10/02/css-specificity-in-javascript
+    ///// Used with author's permission
+
     calculateSpecificity : {
         value : function(selector) {
             var s   = selector.replace(/\([^\)]+\)/,''),
@@ -922,6 +940,43 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             }
         }
     },
+
+    setGroupStyles : {
+        value : function(elements, styles) {
+            var properties = Object.keys(styles),
+                newClass = this.generateClassName(null, true),
+                selectors;
+
+            ///// TODO: move this: Locally-scoped function to de-clutter variable declarations
+            function getSelector(el, rule) {
+                return this._getMostSpecificSelectorForElement(el, rule[this.CONST.SPECIFICITY_KEY]).selector;
+            }
+
+            selectors = elements.map(function(el) {
+                ///// for each element, we want to find the most specific selector
+                var matchingRules = this.getMatchingRules(el, true);
+
+                this.addClass(el, newClass);
+
+                if(matchingRules.length === 0) {
+                    return null;
+                }
+
+                var mostSpecificRule = matchingRules[0], // TODO: iterate over properties to find most specific
+                    selectorToOverride = getSelector.bind(this)(el, mostSpecificRule),
+                    override = this.createOverrideSelector(selectorToOverride, null, newClass);
+
+                return override.selector;
+
+            }, this);
+
+            selectors.filter(function(item) {
+                return item !== null;
+            });
+
+            this.addRule(selectors.join(', '), styles);
+        }
+    },
     
     ///// Get Element Style
     ///// Gets the style value that is currently applied to the element
@@ -1055,6 +1110,21 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             }
 
             return className.toLowerCase() + '-' + this._generateRandomAlphaNumeric();
+        }
+    },
+
+    ///// CSS From Object
+    ///// Returns css text from object with key/value pairs
+    ///// representing css styles
+
+    cssFromObject : {
+        value : function(obj) {
+            var cssText = '';
+            ///// For each key/value pair, create css text
+            for(var prop in obj) {
+                cssText += prop + ':' + obj[prop] + ';';
+            }
+            return cssText;
         }
     },
 
