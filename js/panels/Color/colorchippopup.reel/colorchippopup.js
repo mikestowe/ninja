@@ -109,7 +109,7 @@ exports.ColorChipPopup = Montage.create(Component, {
    			this.cc_hexinput.labelFunction = this._hexLabel.bind(this);
     		this.cc_hexinput.inputFunction = this._hexInput.bind(this);
    			//
-   			if (this.application.ninja.colorController.colorView.currentChip && this.application.ninja.colorController.colorView.currentChip.colorValue.a) {
+   			if (this.application.ninja.colorController.colorView.currentChip && this.application.ninja.colorController.colorView.currentChip.colorValue && this.application.ninja.colorController.colorView.currentChip.colorValue.a) {
    				this.combo.slider.value = Math.round(this.application.ninja.colorController.colorView.currentChip.colorValue.a*100);
    			} else {
    				this.combo.slider.value = 100;
