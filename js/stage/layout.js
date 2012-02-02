@@ -112,6 +112,7 @@ exports.Layout = Montage.create(Component, {
             }
 
             this.draw(); // Not a reel yet :)
+            this.draw3DInfo(false);
 
 
         }
@@ -128,9 +129,16 @@ exports.Layout = Montage.create(Component, {
     },
 
     draw3DInfo: {
-        value: function() {
-            drawUtils.updatePlanes();
-            if(this.stage.appModel.show3dGrid) drawUtils.drawWorkingPlane();
+        value: function(updatePlanes) {
+            if(updatePlanes)
+            {
+                drawUtils.updatePlanes();
+            }
+            if(this.stage.appModel.show3dGrid)
+            {
+                this.application.ninja.stage.stageDeps.snapManager.updateWorkingPlaneFromView();
+                drawUtils.drawWorkingPlane();
+            }
             drawUtils.draw3DCompass();
         }
     },

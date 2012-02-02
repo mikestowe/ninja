@@ -19,6 +19,7 @@ exports.PanTool = Montage.create(toolBase,
 	_globalPt :{value: [0,0] , writable:true},
 	_globalToUCWorld :{value: [] , writable:true},
 	_lastGPt :{value: [0,0], writable:true},
+	_lastY :{value: 0, writable:true},
 
     Configure: {
         value: function ( doActivate )
@@ -43,6 +44,7 @@ exports.PanTool = Montage.create(toolBase,
     HandleLeftButtonDown: {
         value : function ( event ) {
             this._isDrawing = true;
+			this.isDrawing = true;
  
 				this.mouseDown( event );
        }
@@ -68,6 +70,7 @@ exports.PanTool = Montage.create(toolBase,
 			    this.application.ninja.stage.clearDrawingCanvas();
                 this._hasDraw = false;
                 this._isDrawing = false;
+                this.isDrawing = false;
             }
         }
     },
@@ -220,6 +223,7 @@ exports.PanTool = Montage.create(toolBase,
 					var tmpLocal   = MathUtils.transformAndDivideHomogeneousPoint( this._globalPt, globalToLocalMat );
 
 					this._lastGPt = this._globalPt.slice();
+					this._lastY = this._lastGPt[1];
 
 					// set up the matrices we will be needing
 					var eltToStageWorldMat = glmat4.multiply( ucMat, viewUtils.getObjToStageWorldMatrix(elt, true), []);
@@ -275,14 +279,19 @@ exports.PanTool = Montage.create(toolBase,
 		{
 			if (this._isDrawing)
 			{
-				//console.log( "PanTool.mouseMove (drag)" );
-
 				// get the global screen point
 				var gPt = [point.x, point.y, this._globalPt[2]];
+				if (this._altKeyDown)
+				{
+					var dy = 5*(point.y - this._lastY);
+					this._globalPt[2] += dy;
+					gPt = [this._lastGPt[0], this._lastGPt[1], this._globalPt[2]];
+				}
 
 				// update the scrollbars
 				var deltaGPt = VecUtils.vecSubtract(2, gPt, this._lastGPt);
 				this._lastGPt = gPt.slice();
+				this._lastY = point.y;
 
 				var oldLeft = this.application.ninja.stage._iframeContainer.scrollLeft,
 					oldTop  = this.application.ninja.stage._iframeContainer.scrollTop;
@@ -297,26 +306,12 @@ exports.PanTool = Montage.create(toolBase,
 				this.updateGlobalToUCWorldMatrix();
 
 				var wPt = MathUtils.transformAndDivideHomogeneousPoint( gPt, this._globalToUCWorld );
-				//console.log( "wPt: " + wPt );
 				var delta = vecUtils.vecSubtract( 3, wPt, this._worldPt );
-				if (this._altKeyDown)
-				{
-					//console.log( "moveZ" );
-					var dist = vecUtils.vecMag(2, delta);
-					delta[0] = 0;  delta[1] = 0;  delta[2] = dist;
-					var dy = point.y - this._globalPt[1];
-					if (dy < 0)  delta[2] = -delta[2];
-				}
-				else
-				{
-					console.log( "NOT MOVING Z" );
+				
+				if (!this._altKeyDown)
 					delta[2] = 0;
-				}
 				var transMat = Matrix.Translation( delta );
 				this._worldPt = wPt;
-
-				if (this._altKeyDown)
-					this._globalPt[1] = point.y;
 
 				// update everything
 				this.applyDeltaMat( transMat );
