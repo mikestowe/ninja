@@ -240,7 +240,7 @@ function GLWorld( canvas, use3D )
 				if (renderer != aRenderer)  console.log( "***** DIFFERENT RENDERERS *****" );
 				renderer.disableCulling();
 				this.myScene.render();
-				console.log( "render" );
+				//console.log( "render" );
 
 				if (this._firstRender)
 				{
@@ -510,6 +510,7 @@ GLWorld.prototype.restartRenderLoop = function()
 	console.log( "restartRenderLoop" );
 
 	this._firstRender = true;
+	this._renderCount  = -1;
 	if (this._canvas.task)
 	{
 		if (this._allMapsLoaded)
