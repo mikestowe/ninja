@@ -246,6 +246,13 @@ exports.MaterialsPopup = Montage.create(Component, {
  					(materialID ===  "RadialBlurMaterial")			||
  					(materialID ===  "PulseMaterial")				||
  					(materialID ===  "TunnelMaterial")				||
+ 					(materialID ===  "ReliefTunnelMaterial")		||
+ 					(materialID ===  "SquareTunnelMaterial")		||
+ 					(materialID ===  "FlyMaterial")					||
+ 					(materialID ===  "WaterMaterial")				||
+ 					(materialID ===  "ZInvertMaterial")				||
+ 					(materialID ===  "DeformMaterial")				||
+ 					(materialID ===  "StarMaterial")				||
  					(materialID ===  "TwistMaterial")				||
  					(materialID ===  "KeleidoscopeMaterial")		||
  					(materialID ===  "JuliaMaterial")				||

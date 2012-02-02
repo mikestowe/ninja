@@ -5,6 +5,13 @@
       <leaf id="RadialBlurMaterial" label="Radial Blur" />
       <leaf id="PulseMaterial" label="Pulse" />
       <leaf id="TunnelMaterial" label="Tunnel" />
+      <leaf id="ReliefTunnelMaterial" label="Relief Tunnel" />
+       <leaf id="SquareTunnelMaterial" label="Square Tunnel" />
+      <leaf id="FlyMaterial" label="Fly" />
+      <leaf id="WaterMaterial" label="Water" />
+      <leaf id="ZInvertMaterial" label="ZInvert" />
+      <leaf id="DeformMaterial" label="Deform" />
+      <leaf id="StarMaterial" label="Star" />
       <leaf id="TwistMaterial" label="Twist" />
       <leaf id="KeleidoscopeMaterial" label="Keleidoscope" />
       <leaf id="JuliaMaterial" label="Julia" />
