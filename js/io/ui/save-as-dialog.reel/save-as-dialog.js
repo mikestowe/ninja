@@ -152,7 +152,7 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
 
     isValidUri:{
         value: function(uri){
-            var status= nj.isValidUri(uri);
+            var status= this.application.ninja.coreIoApi.isValidUri(uri);
             if(uri !== ""){
                 if(!status){
                     this.showError("! Invalid directory.");

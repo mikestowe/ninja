@@ -335,7 +335,7 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
 
     isValidUri:{
         value: function(uri){
-            var status= nj.isValidUri(uri);
+            var status= this.application.ninja.coreIoApi.isValidUri(uri);
             if(uri !== ""){
                 if(!status){
                     this.showError("! Invalid directory.");
