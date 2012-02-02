@@ -112,7 +112,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                 if(uri.indexOf('.') != -1){
                     fileType = uri.substr(uri.lastIndexOf('.') + 1);
                 }
-                this.openDocument({"type": ""+fileType, "name": ""+filename, "source": fileContent, "externalUri": uri});
+                this.openDocument({"type": ""+fileType, "name": ""+filename, "source": fileContent, "uri": uri});
             }
 
         }
@@ -141,7 +141,9 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                     newDoc = Montage.create(TextDocument, {
                         "source": { value: doc.source }
                     });
-                    newDoc.initialize(doc, Uuid.generate(), this._createTextAreaElement());
+                    var docUuid = Uuid.generate();
+                    var textArea = this.application.ninja.stage.stageView.createTextAreaElement(docUuid);
+                    newDoc.initialize(doc, docUuid, textArea, textArea.parentNode);
 
                     // Tmp this will be filled with the real content
                     newDoc.textArea.innerHTML = doc.source; //this.tmpSourceForTesting;
@@ -254,19 +256,20 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
             } else {
                 this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
-                var codeview = this._createTextAreaElement();
-                this._textHolder.style.display = "block";
-                codeview.firstChild.innerHTML = this.activeDocument.iframe.contentWindow.document.body.parentNode.innerHTML;
 
-                this._codeEditor.editor = CodeMirror.fromTextArea(codeview.firstChild, {
-                            lineNumbers: true,
-                            mode: "htmlmixed",
-                            onCursorActivity: function() {
-                                DocumentController._codeEditor.editor.setLineClass(DocumentController._codeEditor.hline, null);
-                                DocumentController._codeEditor.hline = DocumentController._codeEditor.editor.setLineClass(DocumentController._codeEditor.editor.getCursor().line, "activeline");
-                            }
-                });
-                this._codeEditor.hline = DocumentController._codeEditor.editor.setLineClass(0, "activeline");
+                var codeview = this.activeDocument.container;
+                //this._textHolder.style.display = "block";
+                //codeview.firstChild.innerHTML = this.activeDocument.iframe.contentWindow.document.body.parentNode.innerHTML;
+
+//                this._codeEditor.editor = CodeMirror.fromTextArea(codeview.firstChild, {
+//                            lineNumbers: true,
+//                            mode: "htmlmixed",
+//                            onCursorActivity: function() {
+//                                DocumentController._codeEditor.editor.setLineClass(DocumentController._codeEditor.hline, null);
+//                                DocumentController._codeEditor.hline = DocumentController._codeEditor.editor.setLineClass(DocumentController._codeEditor.editor.getCursor().line, "activeline");
+//                            }
+//                });
+//                this._codeEditor.hline = DocumentController._codeEditor.editor.setLineClass(0, "activeline");
             }
         }
     },
@@ -408,27 +411,6 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     _createIframeID: {
         value: function() {
             return "userDocument_" + (this._iframeCounter++);
-        }
-    },
-
-    /**
-     * Creates a text area which will contain the content of the opened text document.
-     */
-_createTextAreaElement: {
-        value: function() {
-            var codeMirrorDiv = document.createElement("div");
-            codeMirrorDiv.id = "codeMirror_"  + (this._codeMirrorCounter++);
-
-            var textArea = document.createElement("textarea");
-            textArea.id = "code";
-            textArea.name = "code";
-
-            //codeMirrorDiv.appendChild(textArea);
-
-//            if(!this._textHolder) this._textHolder = document.getElementById("codeViewContainer");
-//            this._textHolder.appendChild(codeMirrorDiv);
-
-            return textArea;
         }
     }
 });

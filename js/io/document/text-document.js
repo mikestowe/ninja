@@ -17,6 +17,8 @@ var TextDocument = exports.TextDocument = Montage.create(baseDocumentModule.Base
         }
     },
 
+    _textArea: {value: null, enumerable: false },
+
     _source: { value: null, enumerable: false},
 
     source: {
@@ -31,6 +33,10 @@ var TextDocument = exports.TextDocument = Montage.create(baseDocumentModule.Base
 
 
     // GETTERS / SETTERS
+    textArea: {
+        get: function() { return this._textArea; },
+        set: function(value) { this._textArea = value; }
+    },
     editor: {
         get: function() { return this._codeEditor.editor; },
         set: function(value) { this._codeEditor.editor = value}
@@ -44,8 +50,8 @@ var TextDocument = exports.TextDocument = Montage.create(baseDocumentModule.Base
     
     // PUBLIC METHODS
     initialize: {
-        value: function(doc, uuid, textArea, callback) {
-            this.init(doc.name, doc.uri, doc.type, textArea, uuid, null, doc.externalUri);
+        value: function(doc, uuid, textArea, container, callback) {
+            this.init(doc.name, doc.uri, doc.type, container, uuid);
             this.currentView = "code";
             this.textArea = textArea;
 

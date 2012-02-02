@@ -36,6 +36,13 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
 
     _zoomFactor: { value: 100, enumerable: false },
 
+    _codeEditor: {
+            value: {
+                "editor": { value: null, enumerable: false },
+                "hline": { value: null, enumerable: false }
+            }
+        },
+
     // PUBLIC MEMBERS
     cssLoadInterval: { value: null, enumerable: false },
 
@@ -44,6 +51,11 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
      */
 
     // GETTERS / SETTERS
+    editor: {
+           get: function() { return this._codeEditor.editor; },
+           set: function(value) { this._codeEditor.editor = value}
+       },
+
     selectionExclude: {
         get: function() { return this._selectionExclude; },
         set: function(value) { this._selectionExclude = value; }

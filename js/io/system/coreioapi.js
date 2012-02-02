@@ -926,7 +926,6 @@ exports.CoreIoApi = Montage.create(Component, {
     //              204 -  The file exists and response body has writable flag
     //              404 - the file does not exist
     //              500 - unknown server error occurred
-    //TODO:to be finalized
     isFileWritable:{
         enumerable:true,
         writable:false,
