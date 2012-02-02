@@ -11,10 +11,25 @@ var Montage = require("montage/core/core").Montage,
 var treeControlModule = require("js/components/tree.reel");
 
 var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component, {
-    _hasFocus: {
-    	enumerable: false,
-    	value: false
+
+    components: {
+        value: null
     },
+
+    didCreate: {
+        value: function() {
+            this._loadComponents();
+        }
+    },
+
+    _loadComponents: {
+        value: function() {
+            this.photos = [
+                {component: "Button", data: "montage/ui/button.reel/button.json"}
+            ];
+        }
+    },
+
     prepareForDraw: {
     	enumerable: false,
     	value: function() {
@@ -57,7 +72,7 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                 componentEl.setAttribute("type", "button");
                 //componentEl.innerHTML = "Button";
 
-                componentInstance = this.application.ninja.currentDocument._window.addComponent(componentEl, {type: componentType, path: "montage/ui/button.reel", name: "Button"});
+                componentInstance = this.application.ninja.currentDocument._window.addComponent(componentEl, {type: componentType, path: "montage/ui/button.reel", name: "Button"}, this.callback);
 
 
             }else if(componentType == "Checkbox"){
@@ -139,6 +154,12 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
 
 
 
+        }
+    },
+
+    callback: {
+        value: function() {
+            console.log("the callback");
         }
     }
 });

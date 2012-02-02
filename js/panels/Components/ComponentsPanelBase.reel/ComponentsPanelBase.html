@@ -11,6 +11,17 @@
 
         <script type="text/montage-serialization">
         {
+            "componentController": {
+                "module": "montage/ui/controller/array-controller",
+                "name": "ArrayController",
+                "bindings": {
+                    "content": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "components"
+                    }
+                }
+            },
+
             "owner": {
                 "module": "js/panels/Components/ComponentsPanelBase.reel",
                 "name": "ComponentsPanelBase",

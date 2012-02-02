@@ -32,17 +32,24 @@ exports.Main = Montage.create(Component, {
     },
 
     addComponentToUserDocument:{
-        value:function(containerElement, componentType){
+        value:function(containerElement, componentType, callback){
             var component = null;
             switch(componentType.type){
                 case "Button":
 
-                    //var tmpFix = require("montage/ui/button.reel");
+                    //var tmpFix = ("montage/ui/button.reel");
                     //var str = "montage/ui/button.reel";
                     var stro = componentType.path;
 
-                    var button = require(stro);
+//                    var button = (stro);
 
+                    var button = require.async(stro)
+                    .then(function (button) {
+                       callback();
+                    })
+                    .end();
+
+                    /*
                     var buttonInstance = button[componentType.name];
 
                     buttonInstance.element = containerElement;
@@ -52,6 +59,7 @@ exports.Main = Montage.create(Component, {
                     buttonInstance.label = "Button";
 
                     return buttonInstance;
+                    */
                     break;
                 case "Checkbox":
                     component = Checkbox.create();
