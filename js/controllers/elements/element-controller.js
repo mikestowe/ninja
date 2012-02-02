@@ -69,15 +69,56 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
     // Routines to get/set color properties
     getColor: {
         value: function(el, isFill) {
+            var colorObj,
+                color,
+                image;
+
+            // Return cached value if one exists
             if(isFill)
             {
-                return this.application.ninja.stylesController.getElementStyle(el, "background-color");
+                if(el.elementModel.fill)
+                {
+                    return el.elementModel.fill;
+                }
+//                return this.application.ninja.stylesController.getElementStyle(el, "background-color");
+                //TODO: Once logic for color and gradient is established, this needs to be revised
+                color = this.getProperty(el, "background-color");
+                image = this.getProperty(el, "background-image");
             }
             else
             {
                 // TODO - Need to figure out which border side user wants
-                return this.application.ninja.stylesController.getElementStyle(el, "border-color");
+                if(el.elementModel.stroke)
+                {
+                    return el.elementModel.stroke;
+                }
+                // TODO - Need to figure out which border side user wants
+//                return this.application.ninja.stylesController.getElementStyle(el, "border-color");
+                color = this.getProperty(el, "border-color");
+                image = this.getProperty(el, "border-image");
             }
+
+            if(color || image) {
+                if (image && image !== 'none' && image.indexOf('-webkit') >= 0) {
+                    //Gradient
+                    colorObj = this.application.ninja.colorController.getColorObjFromCss(image);
+                } else {
+                    //Solid
+                    colorObj = this.application.ninja.colorController.getColorObjFromCss(color);
+                }
+            }
+
+            // Update cache
+            if(isFill)
+            {
+                el.elementModel.fill = colorObj;
+            }
+            else
+            {
+                el.elementModel.stroke = colorObj;
+            }
+
+            return colorObj;
         }
     },
 
@@ -92,7 +133,8 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
                         case 'nocolor':
                             this.setProperty(el, "background-image", "none");
                             this.setProperty(el, "background-color", "none");
-                            break;
+                            el.elementModel.fill = null;
+                            return;
                         case 'gradient':
                             this.setProperty(el, "background-image", color.color.css);
                             this.setProperty(el, "background-color", "none");
@@ -106,6 +148,7 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
                 {
                     this.application.ninja.stylesController.setElementStyle(el, "background-color", color.color.css);
                 }
+                el.elementModel.fill = color;
             }
             else
             {
@@ -115,7 +158,8 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
                         case 'nocolor':
                             this.setProperty(el, "border-image", "none");
                             this.setProperty(el, "border-color", "none");
-                            break;
+                            el.elementModel.stroke = null;
+                            return;
                         case 'gradient':
                             this.setProperty(el, "border-image", color.color.css);
                             this.setProperty(el, "border-color", "none");
@@ -129,6 +173,7 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
                 {
                     this.application.ninja.stylesController.setElementStyle(el, "border-color", color.color.css);
                 }
+                el.elementModel.stroke = color;
             }
         }
     },

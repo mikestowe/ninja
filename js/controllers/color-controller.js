@@ -218,6 +218,9 @@ exports.ColorController = Montage.create(Component, {
             } else if (mode === 'gradient'){
             	color = e._event.value.value;
             }
+            color.mode = panelMode;
+            color.wasSetByCode = true;
+            color.type = "change";
             ////////////////////////////////////////////////////////////
             ////////////////////////////////////////////////////////////
             //

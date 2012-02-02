@@ -75,6 +75,14 @@ exports.OvalTool = Montage.create(ShapeTool, {
                 canvas.elementModel.shapeModel.strokeSize = this.options.strokeSize.value + " " + this.options.strokeSize.units;
                 canvas.elementModel.shapeModel.stroke = strokeColor;
                 canvas.elementModel.shapeModel.fill = fillColor;
+                if(strokeColor)
+                {
+                    canvas.elementModel.shapeModel.border = this.application.ninja.colorController.colorToolbar.stroke;
+                }
+                if(fillColor)
+                {
+                    canvas.elementModel.shapeModel.background = this.application.ninja.colorController.colorToolbar.fill;
+                }
 
                 canvas.elementModel.shapeModel.innerRadius = this.options.innerRadius.value  + " " + this.options.innerRadius.units;
 
