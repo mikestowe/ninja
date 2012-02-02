@@ -144,10 +144,6 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
                             this.setProperty(el, "background-color", color.color.css);
                     }
                 }
-                else
-                {
-                    this.application.ninja.stylesController.setElementStyle(el, "background-color", color.color.css);
-                }
                 el.elementModel.fill = color;
             }
             else
@@ -169,10 +165,6 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
                             this.setProperty(el, "border-color", color.color.css);
                     }
                 }
-                else
-                {
-                    this.application.ninja.stylesController.setElementStyle(el, "border-color", color.color.css);
-                }
                 el.elementModel.stroke = color;
             }
         }
@@ -187,8 +179,9 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
 
     setStroke: {
         value: function(el, stroke) {
-            var border = stroke.borderWidth + stroke.borderUnits + " " + stroke.borderStyle + " " + stroke.color.color.css;
-            this.application.ninja.stylesController.setElementStyle(el, "border", border);
+            this.application.ninja.stylesController.setElementStyle(el, "border-width", stroke.borderWidth + stroke.borderUnits);
+            this.application.ninja.stylesController.setElementStyle(el, "border-style", stroke.borderStyle);
+            this.setColor(el, stroke.color, false);
         }
     },
 

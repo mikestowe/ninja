@@ -198,7 +198,6 @@ exports.Content = Montage.create(Component, {
                                 this.application.ninja.colorController.colorModel.input = "fill";
                             }
 
-                            debugger;
                             if(currentValue)
                             {
                                 if(currentValue.mode === "gradient")
@@ -269,12 +268,6 @@ exports.Content = Montage.create(Component, {
             var newValue;
 
             e.units ? newValue = e.value + e.units : newValue = e.value;
-
-            if(e.prop === "border-width") {// || e.prop === "border-style") {
-                ElementsMediator.setProperty(this.application.ninja.selectedElements, "border-style", [this.customSections[0].content.controls.borderStyle], "Change", "pi");
-            } else if(e.prop === "border-style") {
-                ElementsMediator.setProperty(this.application.ninja.selectedElements, "border-width", [this.customSections[0].content.controls.borderWidth + "px"], "Change", "pi");
-            }
 
             ElementsMediator.setProperty(this.application.ninja.selectedElements, e.prop, [newValue], "Change", "pi");
 
