@@ -4,7 +4,7 @@
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> -->
-<!-- <html manifest="ninja.appcache"> -->
+
 <html>
 
 	<head lang="en">
@@ -44,13 +44,7 @@
 				background-size: auto, 115%;
 				background-color: rgba(150, 0, 0, 1);
 				background-position: center center;
-				background-repeat: no-repeat;/*
-
-				-webkit-animation-name: background-animation;
-				-webkit-animation-duration: 3s;
-				-webkit-animation-iteration-count: infinite;
-				-webkit-animation-timing-function: linear;
-*/
+				background-repeat: no-repeat;
 			}
 			
 	        .montage-app-loaded body
@@ -81,10 +75,6 @@
 				left: 50%;
 				margin: -160px 0px 0px -160px;
 				overflow: visible;
-				-webkit-animation-name: zoom;
-				-webkit-animation-duration: 3s;
-				-webkit-animation-iteration-count: infinite;
-				-webkit-animation-timing-function: ease-in-out;
 			}
 			
 			#ninja_logo .gradient
@@ -118,51 +108,13 @@
 				border-radius: 50%;
 				position: absolute;
 				top: 0px;
-				left: 0px;/*
-
-				-webkit-animation-name: solid-animation;
-				-webkit-animation-duration: 3s;
-				-webkit-animation-iteration-count: infinite;
-				-webkit-animation-timing-function: linear;
-*/
+				left: 0px;
 			}
 			
 			#ninja_logo canvas
 			{
 				position: absolute;
-				margin: -45px -110px;/*
-
-				-webkit-animation-name: rotate;
-				-webkit-animation-duration: 1.5s;
-				-webkit-animation-iteration-count: infinite;
-				-webkit-animation-timing-function: linear;
-*/
-			}
-			
-			@-webkit-keyframes solid-animation {
-				0% {background: #000;}
-				50% {background: #666;}
-				100% {background: #000;}
-			}
-			
-			@-webkit-keyframes background-animation {
-				0% {background-size: 200%}
-				50% {background-size: 100%}
-				100% {background-size: 200%}
-			}
-			
-			@-webkit-keyframes rotate {
-				0% 		{-webkit-transform: rotate(0deg); margin: -45px -110px;}				
-				25% 	{-webkit-transform: rotate(90deg); margin: -90px -55px;}	
-				50% 	{-webkit-transform: rotate(180deg); margin: -55px 0px;}	
-				75% 	{-webkit-transform: rotate(270deg); margin: 0px -55px;}
-				100% 	{-webkit-transform: rotate(360deg); margin: -45px -110px;}	
-			}
-			
-			@-webkit-keyframes zoom {
-				0% {-webkit-transform: scale(.9);}
-				50% {-webkit-transform: scale(.5);}
-				100% {-webkit-transform: scale(.9);}
+				margin: -45px -110px;
 			}
 			
 		</style>

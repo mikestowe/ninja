@@ -1,0 +1,51 @@
+{
+	"categories":{
+		"children":["newFile"]
+	},
+	"newFile":{
+		"name":"Blank Template",
+		"uri":"/",
+		"type":"directory",
+		"children":["html", "js", "css", "json", "php", "pl", "py", "rb"]
+	},
+	"html":{
+		"name":"HTML",
+		"uri":"files/html.txt",
+		"type":"file"
+	},
+	"js":{
+		"name":"JavaScript",
+		"uri":"files/js.txt",
+		"type":"file"
+	},
+	"css":{
+		"name":"Cascading Style Sheets",
+		"uri":"files/css.txt",
+		"type":"file"
+	},
+	"json":{
+		"name":"JSON",
+		"uri":"files/json.txt",
+		"type":"file"
+	},
+	"php":{
+		"name":"PHP",
+		"uri":"files/php.txt",
+		"type":"file"
+	},
+	"pl":{
+		"name":"Perl",
+		"uri":"files/pl.txt",
+		"type":"file"
+	},
+	"py":{
+		"name":"Python",
+		"uri":"files/py.txt",
+		"type":"file"
+	},
+	"rb":{
+		"name":"Ruby",
+		"uri":"files/rb.txt",
+		"type":"file"
+	}
+}
