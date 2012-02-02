@@ -80,7 +80,6 @@ exports.PanTool = Montage.create(toolBase,
             if(event.altKey)
 			{
                 this._altKeyDown = true;
-				//console.log( "altKeyDown" );
             }
         }
     },
@@ -90,7 +89,6 @@ exports.PanTool = Montage.create(toolBase,
             if(event.keyCode === Keyboard.ALT)
 			{
                 this._altKeyDown = false;
-				console.log( "altKeyUp" );
             }
         }
     },

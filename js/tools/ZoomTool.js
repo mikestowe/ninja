@@ -140,9 +140,11 @@ exports.ZoomTool = Montage.create(DrawingTool, {
 	{
 		value : function (event)
 		{
-			// check for some reasonable amount of mouse movement
-			var dx = Math.abs(event.layerX - this.downPoint.x),
-				dy = Math.abs(event.layerY - this.downPoint.y);
+            var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas,
+                                                                    new WebKitPoint(event.pageX, event.pageY));
+            // check for some reasonable amount of mouse movement
+			var dx = Math.abs(point.x - this.downPoint.x),
+				dy = Math.abs(point.y - this.downPoint.y);
 
 			if ((dx >= 4) || (dy >= 4))
 			{
