@@ -207,7 +207,6 @@ exports.CoreIoApi = Montage.create(Component, {
     directoryServiceURL: {
     	enumerable: false,
     	get: function() {
-    		console.log(this);
             return String(this.rootUrl+this._directoryServiceURL);
         },
         set: function(value) {
