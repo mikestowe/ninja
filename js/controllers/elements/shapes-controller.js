@@ -24,6 +24,26 @@ exports.ShapesController = Montage.create(CanvasController, {
                     el.elementModel.shapeModel.GLGeomObj.setInnerRadius(val/100);
                     el.elementModel.shapeModel.GLGeomObj.buildBuffers();
                     break;
+                case "tlRadius":
+                    this.setShapeProperty(el, "tlRadius", value);
+                    el.elementModel.shapeModel.GLGeomObj.setTLRadius(val);
+                    el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                    break;
+                case "trRadius":
+                    this.setShapeProperty(el, "trRadius", value);
+                    el.elementModel.shapeModel.GLGeomObj.setTRRadius(val);
+                    el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                    break;
+                case "blRadius":
+                    this.setShapeProperty(el, "blRadius", value);
+                    el.elementModel.shapeModel.GLGeomObj.setBLRadius(val);
+                    el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                    break;
+                case "brRadius":
+                    this.setShapeProperty(el, "brRadius", value);
+                    el.elementModel.shapeModel.GLGeomObj.setBRRadius(val);
+                    el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                    break;
                 case "width":
                     el.elementModel.shapeModel.GLGeomObj.setWidth(val);
                     CanvasController.setProperty(el, p, value);
@@ -46,8 +66,16 @@ exports.ShapesController = Montage.create(CanvasController, {
     getProperty: {
         value: function(el, p) {
             switch(p) {
+                case "stroke":
+                case "fill":
                 case "strokeSize":
                 case "innerRadius":
+                case "tlRadius":
+                case "trRadius":
+                case "blRadius":
+                case "brRadius":
+                case "strokeMaterial":
+                case "fillMaterial":
                     return this.getShapeProperty(el, p);
                 default:
                     return CanvasController.getProperty(el, p);

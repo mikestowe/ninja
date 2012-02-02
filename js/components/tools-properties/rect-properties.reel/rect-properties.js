@@ -113,7 +113,7 @@ exports.RectProperties = Montage.create(ToolProperties, {
 
     handleChange: {
         value: function(event) {
-            var hotTxt = event.currentTarget
+            var hotTxt = event.currentTarget;
             if(hotTxt.units === "%") {
                 if(hotTxt.value > 50) {
                     hotTxt.maxValue = 50;
