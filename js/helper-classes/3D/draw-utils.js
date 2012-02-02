@@ -1089,7 +1089,8 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			var resMat = glmat4.multiply( tMat, mat, [] );
 			var origin = [0,0,0,1];
 
-			var arrowSize = 50;
+			var zoomFactor = this.application.ninja.documentBar.zoomFactor/100.0;
+			var arrowSize = 50 / zoomFactor;
 			var xAxis = [arrowSize,0,0,1];
 			//var rO = resMat.multiply(origin);
 			var rO = glmat4.multiplyVec3( resMat, origin, []);  
