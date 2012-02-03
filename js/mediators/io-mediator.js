@@ -6,9 +6,9 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 ////////////////////////////////////////////////////////////////////////
 //
-var Montage = 		require("montage/core/core").Montage,
-	FileIo = 		require("js/io/system/fileio").FileIo,
-	ProjectIo = 	require("js/io/system/projectio").ProjectIo;
+var Montage = 	require("montage/core/core").Montage,
+	FileIo = 	require("js/io/system/fileio").FileIo,
+	ProjectIo = require("js/io/system/projectio").ProjectIo;
 ////////////////////////////////////////////////////////////////////////
 //
 exports.IoMediator = Montage.create(Object.prototype, {

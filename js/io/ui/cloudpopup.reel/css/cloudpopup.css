@@ -43,7 +43,7 @@
 .cloud_popup .content .btn_test {
   float: right;
   clear: right;
-  margin: 0px 0px 0px 8px;
+  margin: 1px 2px 0px 8px;
   width: 60px;
 }
 
@@ -94,5 +94,5 @@
   width: 80px;
   text-align: center;
   float: right;
-  margin: 8px 0px 0px 8px;
+  margin: 8px 2px 2px 8px;
 }
