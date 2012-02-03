@@ -81,6 +81,9 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
             this.eventManager.addEventListener("newFileDirectorySet", function(evt){that.handleNewFileDirectorySet(evt);}, false);
             this.eventManager.addEventListener("newFileNameSet", function(evt){that.handleNewFileNameSet(evt);}, false);
 
+            this.okButton.addEventListener("click", function(evt){that.handleOkButtonAction(evt);}, false);
+            this.cancelButton.addEventListener("click", function(evt){that.handleCancelButtonAction(evt);}, false);
+
             if(!!this.newFileModel.defaultProjectType){
                 var templates = this.newFileModel.prepareContents(this.newFileModel.defaultProjectType);
                 this.templateList = iconsListModule.IconsList.create();

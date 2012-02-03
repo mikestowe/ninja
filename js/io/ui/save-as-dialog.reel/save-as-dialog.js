@@ -57,6 +57,9 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
             this.newFileName.addEventListener("blur", function(evt){self.handleNewFileNameOnblur(evt);}, false);
             this.eventManager.addEventListener("newFileDirectorySet", function(evt){self.handleNewFileDirectorySet(evt);}, false);
 
+            this.okButton.addEventListener("click", function(evt){self.handleOkButtonAction(evt);}, false);
+            this.cancelButton.addEventListener("click", function(evt){self.handleCancelButtonAction(evt);}, false);
+
             this.enableOk();
         }
     },

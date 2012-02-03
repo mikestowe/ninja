@@ -10,36 +10,6 @@
     <link rel="stylesheet" type="text/css" href="pickerNavigator.css">
     <script type="text/montage-serialization">
         {
-            "okButton": {
-                "module": "montage/ui/button.reel",
-                "name": "Button",
-                "properties": {
-                    "element": {"#": "okButton"},
-                    "identifier": "okButton"
-                },
-                "listeners": [
-                    {
-                        "type": "action",
-                        "listener": {"@": "owner"}
-                    }
-                ]
-            },
-
-            "cancelButton": {
-                "module": "montage/ui/button.reel",
-                "name": "Button",
-                "properties": {
-                    "element": {"#": "cancelButton"},
-                    "identifier": "cancelButton"
-                },
-                "listeners": [
-                    {
-                        "type": "action",
-                        "listener": {"@": "owner"}
-                    }
-                ]
-            },
-
             "owner":{
                 "module": "js/components/ui/FilePicker/pickerNavigator.reel",
                 "name":"PickerNavigator",

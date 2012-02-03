@@ -245,6 +245,9 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
             this.resultsArea.addEventListener("click", function(evt){that.handleResultsAreaClick(evt);}, false);
             this.element.addEventListener("click", function(evt){that.handlePickerNavClick(evt);}, false);
 
+            this.okButton.addEventListener("click", function(evt){that.handleOkButtonAction(evt);}, false);
+            this.cancelButton.addEventListener("click", function(evt){that.handleCancelButtonAction(evt);}, false);
+
             //ready to show picker now
             this.element.style.visibility = "visible";
     	}
