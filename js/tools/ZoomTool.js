@@ -74,10 +74,12 @@ exports.ZoomTool = Montage.create(DrawingTool, {
            if(wasSelected) {
                 this.AddCustomFeedback();
                 this.eventManager.addEventListener( "toolDoubleClick", this, false);
+				this.application.ninja.stage.drawingCanvas.addEventListener("mousewheel", this, false);
 
            } else {
                 this.RemoveCustomFeedback();
                 this.eventManager.removeEventListener( "toolDoubleClick", this, false);
+				this.application.ninja.stage.drawingCanvas.removeEventListener("mousewheel", this, false);
            }
         }
     },
@@ -138,9 +140,11 @@ exports.ZoomTool = Montage.create(DrawingTool, {
 	{
 		value : function (event)
 		{
-			// check for some reasonable amount of mouse movement
-			var dx = Math.abs(event.layerX - this.downPoint.x),
-				dy = Math.abs(event.layerY - this.downPoint.y);
+            var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas,
+                                                                    new WebKitPoint(event.pageX, event.pageY));
+            // check for some reasonable amount of mouse movement
+			var dx = Math.abs(point.x - this.downPoint.x),
+				dy = Math.abs(point.y - this.downPoint.y);
 
 			if ((dx >= 4) || (dy >= 4))
 			{
@@ -238,19 +242,6 @@ exports.ZoomTool = Montage.create(DrawingTool, {
 				var p1 = [this._layerX, this._layerY, 0];
 				globalPt = vecUtils.vecAdd(3, p0, p1);
 				vecUtils.vecScale(3, globalPt, 0.5);
-
-				var hitRec = snapManager.snap( globalPt[0], globalPt[1], true );
-				if (hitRec)
-				{
-					var elt = hitRec.getElement();
-					if (elt)
-					{
-//						console.log( "hit: " + hitRec.getElement().id );
-						var localToGlobalMat = viewUtils.getLocalToGlobalMatrix( elt );
-						var localPt  = hitRec.calculateElementPreTransformScreenPoint();
-						globalPt = MathUtils.transformAndDivideHomogeneousPoint( localPt,  localToGlobalMat );
-					}
-				}
 			}
 			else if (this._mode === "doubleClickReset")
 			{
@@ -270,19 +261,9 @@ exports.ZoomTool = Montage.create(DrawingTool, {
 			}
 			else if (this._mode === "mouseWheelZoom")
 			{
-				if (userContent)
-				{
-					var w = userContent.offsetWidth,
-						h = userContent.offsetHeight;
-					if(userContent.width)
-						w = userContent.width;
-					if(userContent.height)
-						h = userContent.height;
-					var localPt = [ w/2,  h/2, 0];
-					globalPt = viewUtils.localToGlobal( localPt, userContent );
-				}
-				else
-					globalPt = [0,0,0];
+                var w = this.application.ninja.stage._canvas.width,
+                    h = this.application.ninja.stage._canvas.height;
+				globalPt = [w/2, h/2, 0];
 			}
 			else
 			{

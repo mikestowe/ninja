@@ -10,7 +10,6 @@ var Component = require("montage/ui/component").Component;
 var snapManager = require("js/helper-classes/3D/snap-manager").SnapManager;
 var viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
 var vecUtils = require("js/helper-classes/3D/vec-utils").VecUtils;
-var Properties3D = require("js/helper-classes/Properties3D").Properties3D;
 var drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils;
 
 exports.DrawingToolBase = Montage.create(Montage, {

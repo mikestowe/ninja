@@ -92,6 +92,11 @@ exports.ElementMediator = Montage.create(NJComponent, {
     _addElement: {
         value: function(el, rules, noEvent) {
             ElementController.addElement(el, rules);
+            var p3d = this.get3DProperties(el);
+            if(p3d)
+            {
+                el.elementModel.controller["set3DProperties"](el, [p3d], 0, true);
+            }
             if(!noEvent) NJevent("elementAdded", el);
         }
     },

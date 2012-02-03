@@ -175,7 +175,7 @@ exports.Stage = Montage.create(Component, {
             }
             else if(this.updatedStage) {
                 this.layout.draw();
-                this.layout.draw3DInfo();
+                this.layout.draw3DInfo(true);
             }
         }
     },
@@ -787,14 +787,9 @@ exports.Stage = Montage.create(Component, {
                 var userContent = this.application.ninja.currentDocument.documentRoot;
                 if (userContent)
                 {
-                    var w = userContent.offsetWidth,
-                        h = userContent.offsetHeight;
-                    if(userContent.width)
-                        w = userContent.width;
-                    if(userContent.height)
-                        h = userContent.height;
-                    var localPt = [ w/2,  h/2, 0];
-                    var globalPt = this.stageDeps.viewUtils.localToGlobal( localPt, userContent );
+                    var w = this._canvas.width,
+                        h = this._canvas.height;
+					var globalPt = [w/2, h/2, 0];
 
                     this.stageDeps.viewUtils.setStageZoom( globalPt,  value/100 );
 
@@ -811,42 +806,66 @@ exports.Stage = Montage.create(Component, {
         }
     },
 
+	getPlaneForView:
+	{
+		value: function( side )
+		{
+			var plane = [0,0,1,0];
+            switch(side)
+			{
+                case "top":
+					plane = [0,1,0,0];
+ 					plane[3] = this.application.ninja.currentDocument.documentRoot.offsetHeight / 2.0;
+                   break;
+
+                case "side":
+					plane = [1,0,0,0];
+ 					plane[3] = this.application.ninja.currentDocument.documentRoot.offsetWidth / 2.0;
+                   break;
+
+                case "front":
+                    plane = [0,0,1,0];
+                    break;
+
+				default:
+					console.log( "unrecognized view in snapManager.getPlaneForView: " + side );
+					break;
+            }
+
+			return plane;
+		}
+	},
+
     setStageView: {
         value: function(side) {
             var mat,
-                workingPlane = null,
-                currentDoc = this.application.ninja.currentDocument.documentRoot;
+                currentDoc = this.application.ninja.currentDocument.documentRoot,
+                isDrawingGrid = this.application.ninja.appModel.show3dGrid;
             // Stage 3d Props.
             currentDoc.elementModel.props3D.ResetTranslationValues();
             currentDoc.elementModel.props3D.ResetRotationValues();
 
 
-            switch(side) {
+            switch(side){
                 case "top":
                     mat = Matrix.RotationX(Math.PI * 270.0/180.0);
-
                     drawUtils.drawXY = drawUtils.drawYZ = false;
-                    drawUtils.drawXZ = drawUtils.isDrawingGrid();
-                    workingPlane = [0,1,0,0];
+                    drawUtils.drawXZ = isDrawingGrid;
                     break;
 
                 case "side":
                     mat = Matrix.RotationY(Math.PI * 270/180);
-
                     drawUtils.drawXY = drawUtils.drawXZ = false;
-                    drawUtils.drawYZ = drawUtils.isDrawingGrid();
-                    workingPlane = [1,0,0,0];
+                    drawUtils.drawYZ = isDrawingGrid;
                     break;
 
                 case "front":
                     mat = Matrix.I(4);
-
                     drawUtils.drawYZ = drawUtils.drawXZ = false;
-                    drawUtils.drawXY = drawUtils.isDrawingGrid();
-                    workingPlane = [0,0,1,0];
+                    drawUtils.drawXY = isDrawingGrid;
                     break;
             }
-
+			workingPlane = this.getPlaneForView( side );
 
             this.stageDeps.viewUtils.setMatrixForElement(currentDoc, mat, false);
 

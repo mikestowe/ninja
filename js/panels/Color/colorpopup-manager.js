@@ -161,11 +161,13 @@ exports.ColorPopupManager = Montage.create(Component, {
     			////////////////////////////////////////////////////
     			//Creating popup from m-js component
     			var popup = document.createElement('div');
+    			document.body.appendChild(popup);
     			//
     			this._popupBase = ColorPanelPopup.create();
-    			this._popupBase.content = document.createElement('div');
+    			this._popupBase.element = popup;
     			this._popupBase.props = {x: x, y: y, side: side, align: align};
-    			
+    			this._popupBase.colorManager = this.colorManager;
+    			//TODO: Remove
     			if (this._hackOffset) {
     				this._popupBase.hack = {x: 53, y: 235};
     			} else {
@@ -173,20 +175,10 @@ exports.ColorPopupManager = Montage.create(Component, {
     				this._popupBase.hack = {x: 0, y: 0};
     			}
     			//
-    			document.body.appendChild(popup);
-    			document.body.appendChild(this._popupBase.content);
-    			//Setting color panel for reference when drawing
-   				//this._popupBase.colorPanel = this;
-    			this._popupBase.colorManager = this.colorManager;	
-    			//Setting up events
     			this._popupBase.addEventListener('change', this, false);
-		    	this._popupBase.addEventListener('changing', this, false);	
-    			//TODO: Use m-js popup or check m-js fix of nested drawing components
-    			this._popupBase.element = popup;
-   				this._popupBase.needsDraw = true;
-   				//Adding drawn element to container
-    			this._popupBase.content.appendChild(this._popupBase.element);
-    			//Waiting for content to drawn before loading popup
+		    	this._popupBase.addEventListener('changing', this, false);
+    			//
+    			this._popupBase.needsDraw = true;
     			this._popupBase.addEventListener('firstDraw', this, false);
         	}		
     	}
@@ -286,41 +278,33 @@ exports.ColorPopupManager = Montage.create(Component, {
     			////////////////////////////////////////////////////
     			//Creating popup from m-js component
     			var popup = document.createElement('div');
+    			document.body.appendChild(popup);
     			//
-    			this._popupChipBase = ColorChipPopup.create();
-    			this._popupChipBase.content = document.createElement('div');
     			this._popupChip.event = e._event;
-    			//
+    			this._popupChipBase = ColorChipPopup.create();
+    			this._popupChipBase.element = popup;
+    			this._popupChipBase.colorManager = this.colorManager;
     			if (e._event.srcElement.props) {
     				this.colorChipProps = e._event.srcElement.props;
     			} else {
     				this.colorChipProps = {side: 'top', align: 'center', wheel: true, palette: true, gradient: true, image: true, panel: false};
     			}
     			//
-			    if (!this.colorChipProps.panel) {
+    			if (!this.colorChipProps.panel) {
 			    	this.hideColorPopup();
 			    }
     			//
-    			document.body.appendChild(popup);
-    			document.body.appendChild(this._popupChipBase.content);
-    			//Setting color panel for reference when drawing
-   				//popupBase.colorPanel = this;
-    			this._popupChipBase.colorManager = this.colorManager;
-    			//
+    			this._popupChipBase.popupModes = {};
     			this._popupChipBase.popupModes.gradient = this.colorChipProps.gradient;
     			this._popupChipBase.popupModes.image = this.colorChipProps.image;
     			this._popupChipBase.popupModes.wheel = this.colorChipProps.wheel;
     			this._popupChipBase.popupModes.palette = this.colorChipProps.palette;
-    			this._popupChipBase.popupModes.nocolor = this.colorChipProps.nocolor; 			
-    			//Setting up events
+    			this._popupChipBase.popupModes.nocolor = this.colorChipProps.nocolor; 	
+    			//
     			this._popupChipBase.addEventListener('change', this, false);
-		    	this._popupChipBase.addEventListener('changing', this, false);	
-    			//TODO: Use m-js popup or check m-js fix of nested drawing components
-    			this._popupChipBase.element = popup;
-   				this._popupChipBase.needsDraw = true;
-   				//Adding drawn element to container
-    			this._popupChipBase.content.appendChild(this._popupChipBase.element);
-    			//Waiting for content to drawn before loading popup
+		    	this._popupChipBase.addEventListener('changing', this, false);
+    			//
+    			this._popupChipBase.needsDraw = true;
     			this._popupChipBase.addEventListener('firstDraw', this, false);
         	}
     	}
@@ -354,14 +338,14 @@ exports.ColorPopupManager = Montage.create(Component, {
     		if (e._target._element.className === 'cpp_popup') {
     			this._popupBase.removeEventListener('firstDraw', this, false);
 	    		//Creating an instance of the popup and sending in created color popup content
-				this._popupPanel.popup = this.application.ninja.popupManager.createPopup(this._popupBase.content, {x: this._popupBase.props.x, y: this._popupBase.props.y}, {side: this._popupBase.props.side, align: this._popupBase.props.align});
+				this._popupPanel.popup = this.application.ninja.popupManager.createPopup(this._popupBase.element, {x: this._popupBase.props.x, y: this._popupBase.props.y}, {side: this._popupBase.props.side, align: this._popupBase.props.align});
 				//Displaying popup once it's drawn
 				this._popupPanel.popup.addEventListener('firstDraw', this, false);
 				//Hiding popup while it draws
 				this._popupPanel.popup.element.style.opacity = 0;
 				//Storing popup for use when closing
 				this._popupPanel.popup.base = this._popupBase;
-			} else if (e._target._element.className === 'default_popup' && e._target._content.firstChild.className === 'cpp_popup') {
+			} else if (e._target._element.className === 'default_popup' && e._target._content.className === 'cpp_popup') {
 				//
 				this._colorPopupDrawing = false;
 	    		//
@@ -371,11 +355,12 @@ exports.ColorPopupManager = Montage.create(Component, {
 				//Popup was added, so it's opened
 		        this._popupPanel.opened = true;
 	        } else if (e._target._element.className === 'cc_popup') {
+	        	this._popupChipBase.removeEventListener('firstDraw', this, false);
 	        	//Creating an instance of the popup and sending in created color popup content
     			if (this.colorChipProps.offset) {
-			       	this._popupChip.popup = this.application.ninja.popupManager.createPopup(this._popupChipBase.content, {x: (this._popupChip.event.clientX - this._popupChip.event.offsetX + this.colorChipProps.offset)+'px', y: (this._popupChip.event.target.clientHeight/2+this._popupChip.event.clientY - this._popupChip.event.offsetY)+'px'}, {side: this.colorChipProps.side, align: this.colorChipProps.align});
+			       	this._popupChip.popup = this.application.ninja.popupManager.createPopup(this._popupChipBase.element, {x: (this._popupChip.event.clientX - this._popupChip.event.offsetX + this.colorChipProps.offset)+'px', y: (this._popupChip.event.target.clientHeight/2+this._popupChip.event.clientY - this._popupChip.event.offsetY)+'px'}, {side: this.colorChipProps.side, align: this.colorChipProps.align});
 		     	} else {
-			        this._popupChip.popup = this.application.ninja.popupManager.createPopup(this._popupChipBase.content, {x: (this._popupChip.event.clientX - this._popupChip.event.offsetX)+'px', y: (this._popupChip.event.target.clientHeight/2+this._popupChip.event.clientY - this._popupChip.event.offsetY)+'px'}, {side: this.colorChipProps.side, align: this.colorChipProps.align});
+			        this._popupChip.popup = this.application.ninja.popupManager.createPopup(this._popupChipBase.element, {x: (this._popupChip.event.clientX - this._popupChip.event.offsetX)+'px', y: (this._popupChip.event.target.clientHeight/2+this._popupChip.event.clientY - this._popupChip.event.offsetY)+'px'}, {side: this.colorChipProps.side, align: this.colorChipProps.align});
 		        }
 			    //
 		    	if (!this.colorChipProps.panel) {
@@ -387,7 +372,8 @@ exports.ColorPopupManager = Montage.create(Component, {
 				this._popupChip.popup.base = this._popupChipBase;
 				//Displaying popup once it's drawn
 				this._popupChip.popup.addEventListener('firstDraw', this, false);
-	        } else if (e._target._element.className === 'default_popup' && e._target._content.firstChild.className === 'cc_popup') {
+	        } else if (e._target._element.className === 'default_popup' && e._target._content.className === 'cc_popup') {
+	        	this._popupChip.popup.removeEventListener('firstDraw', this, false);
 	        	//
 	        	this._colorChipPopupDrawing = false;
 	        	//

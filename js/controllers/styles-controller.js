@@ -7,7 +7,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage,
     Component        = require("montage/ui/component").Component,
     cssShorthandMap  = require("js/panels/CSSPanel/css-shorthand-map").CSS_SHORTHAND_MAP,
-    nj               = require("js/lib/NJUtils.js").NJUtils;
+    nj               = require("js/lib/NJUtils").NJUtils;
 
 /*
 

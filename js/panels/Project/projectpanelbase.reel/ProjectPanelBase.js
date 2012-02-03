@@ -6,7 +6,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var TreeControl = require("js/components/tree.reel").Tree,
 	ResizerControl = require("js/panels/Resizer").Resizer,
-	nj = require("js/lib/NJUtils.js").NJUtils;
+	nj = require("js/lib/NJUtils").NJUtils;
 
 exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require("montage/ui/component").Component, {
 	hasTemplate: {
@@ -577,11 +577,11 @@ exports.ProjectPanelBase = (require("montage/core/core").Montage).create(require
             	arrLinkedScrollersLength = arrLinkedScrollers.length,
 				i = 0,
 				that = this;
-
+			/*
 			if (this.firstTimeDraw) {
 				this.hasActiveProject="large";
 			}
-			
+			*/
 
 
     		if (!this.hasActiveProject) {
