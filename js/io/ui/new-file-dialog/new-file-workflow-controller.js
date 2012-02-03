@@ -7,7 +7,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage,
     Popup = require("montage/ui/popup/popup.reel").Popup,
     newFileOptionsNavigatorModule = require("js/io/ui/new-file-dialog/new-file-options-navigator.reel"),
-    newFileWorkflowModelModule = require("js/io/ui/new-file-dialog/new-file-workflow-model");
+    newFileWorkflowModelModule = require("js/io/ui/new-file-dialog/new-file-workflow-model").NewFileWorkflowModel;
     saveAsModule = require("js/io/ui/save-as-dialog.reel");
 
 //singleton
@@ -20,10 +20,6 @@ var NewFileWorkflowController =  exports.NewFileWorkflowController = Montage.cre
         enumerable:true,
         value:function(){
             var that = this;
-            this.eventManager.addEventListener("executeNewFile", function(evt){
-                var data = evt._event.data || {};//data will contain callback
-                that.showNewFileDialog(data);
-            }, false);
 
             this.eventManager.addEventListener("saveAs", function(evt){
                 var data = evt._event.data || {};//data will contain the current file name, directory location and callback
@@ -35,15 +31,20 @@ var NewFileWorkflowController =  exports.NewFileWorkflowController = Montage.cre
     model:{
         writable: true,
         enumerable:true,
-        value: newFileWorkflowModelModule.NewFileWorkflowModel
+        value: null
     },
 
     showNewFileDialog:{
         writable:false,
         enumerable:true,
         value:function(data){
+            this.model = newFileWorkflowModelModule;
+
+            //read file descriptor to populate model
+            this.model.projectTypeData = this.loadDescriptor("js/io/templates/descriptor.json");
+
             //get default project type
-            this.model.defaultProjectType = "htmlTemplate";
+            this.model.defaultProjectType = "files/html.txt";
             this.model.callback = data.callback || null;
             this.model.callbackScope = data.callbackScope || null;
 
@@ -111,6 +112,28 @@ var NewFileWorkflowController =  exports.NewFileWorkflowController = Montage.cre
             popup.show();
 
             saveAsDialog.popup = popup;//handle to be used for hiding the popup
+        }
+    },
+
+    loadDescriptor:{
+        value: function(descriptorPath){
+            var content = null, descriptorObj=null;
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", descriptorPath, false);
+            xhr.send();
+            if (xhr.readyState === 4) {
+                if(xhr.status == 200) {
+                    content = xhr.responseText;
+                }
+            }
+            if(!!content && (content.length > 0)){
+                try{
+                    descriptorObj = JSON.parse(content);
+                }catch(e){
+                    console.log(e,stack);
+                }
+            }
+            return descriptorObj;
         }
     }
 });

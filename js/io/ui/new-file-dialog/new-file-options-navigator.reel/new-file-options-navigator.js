@@ -92,6 +92,14 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
 
                 this.selectedProjectType = {"uri":this.newFileModel.defaultProjectType, "element":null};
             }
+
+            //update file Extension
+            if(!!this.newFileModel.projectTypeData[this.newFileModel.defaultProjectType].fileExtension){
+                var fileExtensionEl = this.element.querySelector(".fileExtension");
+                if(!!fileExtensionEl){
+                    fileExtensionEl.innerHTML = ""+this.newFileModel.projectTypeData[this.newFileModel.defaultProjectType].fileExtension;
+                }
+            }
         }
 
     },
@@ -128,7 +136,15 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
 
                 //clear current template selection
                 if((!!this.selectedTemplate) && (this.selectedTemplate.element.classList.contains("selected"))){
-                                    this.selectedTemplate.element.classList.remove("selected");
+                    this.selectedTemplate.element.classList.remove("selected");
+                }
+
+                //update file Extension
+                if(!!this.newFileModel.projectTypeData[evt.uri].fileExtension){
+                    var fileExtensionEl = this.element.querySelector(".fileExtension");
+                    if(!!fileExtensionEl){
+                        fileExtensionEl.innerHTML = ""+this.newFileModel.projectTypeData[evt.uri].fileExtension;
+                    }
                 }
 
                 //disable ok
@@ -186,6 +202,7 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
                 projectWidth = this.newFileLocation.templateWidth,
                 projectHeight = this.newFileLocation.templateHeight,
 
+                newFilePath = "", fileExtension=this.newFileModel.projectTypeData[selectedProjectTypeID].fileExtension,
 
                 selectionlog= "selectedProjectTypeID="+selectedProjectTypeID +"\n"+
                             "templateID="+templateID+ "\n"+
@@ -194,29 +211,30 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
                             "projectWidth="+projectWidth+"\n"+
                             "projectHeight="+projectHeight;
 
+
+            if(/[^/\\]$/g.test(projectDirectory)){
+                projectDirectory = projectDirectory + "/";
+            }
+            if(!!fileExtension && (projectName.lastIndexOf(fileExtension) !== (projectName.length - fileExtension.length))){
+                projectName = projectName+fileExtension;
+            }
+            newFilePath = "" + projectDirectory + projectName;
+
+
             if(!!this.selectedProjectType && !!this.selectedTemplate
                 && this.isValidFileName(projectName) && this.isValidUri(projectDirectory)
                 && !this.checkFileExists(projectName, projectDirectory, this.selectedProjectType)
             ){
                 this.error.innerHTML="";
-                console.log("$$$ new file selections: \n" + selectionlog);
+                //console.log("$$$ new file selections: \n" + selectionlog);
                 if(!!this.newFileModel.callback && !!this.newFileModel.callbackScope){//inform document-controller if save successful
-                    this.newFileModel.callback.call(this.newFileModel.callbackScope, {"selectedProjectTypeID":selectedProjectTypeID,
-                                                                                 "templateID":templateID,
-                                                                                 "projectName": projectName,
-                                                                                 "projectDirectory":projectDirectory,
-                                                                                 "projectWidth":projectWidth,
-                                                                                 "projectHeight":projectHeight});//document-controller api
+                    this.newFileModel.callback.call(this.newFileModel.callbackScope, {"fileTemplateUri":selectedProjectTypeID,
+                                                                                 "newFilePath":newFilePath});//document-controller api
                 }else{
                     //send selection event
                     var newFileSelectionEvent = document.createEvent("Events");
                     newFileSelectionEvent.initEvent("createNewFile", false, false);
-                    newFileSelectionEvent.newFileOptions = {"selectedProjectTypeID":selectedProjectTypeID,
-                                                             "templateID":templateID,
-                                                             "projectName": projectName,
-                                                             "projectDirectory":projectDirectory,
-                                                             "projectWidth":projectWidth,
-                                                             "projectHeight":projectHeight};
+                    newFileSelectionEvent.newFileOptions = {"fileTemplateUri":selectedProjectTypeID, "newFilePath":newFilePath};
                     this.eventManager.dispatchEvent(newFileSelectionEvent);
                 }
                 //store last selected project type
@@ -306,7 +324,7 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
 
             if(!!this.selectedProjectType && !!this.selectedTemplate
                 && this.isValidFileName(this.newFileName) && this.isValidUri(this.newFileDirectory)
-                && !this.checkFileExists(this.newFileName, this.newFileDirectory, this.selectedProjectType)
+                && !this.checkFileExists(this.newFileName, this.newFileDirectory, this.newFileModel.projectTypeData[this.selectedProjectType.uri].fileExtension)
                 ){
                 status = true;
                 this.okButton.removeAttribute("disabled");

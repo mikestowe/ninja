@@ -71,8 +71,8 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     deserializedFromTemplate: {
         value: function() {
             this.eventManager.addEventListener("appLoaded", this, false);
-
             this.eventManager.addEventListener("executeFileOpen", this, false);
+            this.eventManager.addEventListener("executeNewFile", this, false);
         }
     },
 
@@ -90,6 +90,21 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             this.application.ninja.filePickerController.showFilePicker(pickerSettings);
 
             //this.openDocument({"type": "js", "source": this.tmpSourceForTesting});
+        }
+    },
+
+    handleExecuteNewFile: {
+            value: function(event) {
+                var newFileSettings = event._event.settings || {};
+                newFileSettings.callback = this.createNewFile;
+                newFileSettings.callbackScope = this;
+                this.application.ninja.newFileController.showNewFileDialog(newFileSettings);
+            }
+    },
+
+    createNewFile:{
+        value:function(newFileObj){
+            //console.log(newFileObj);
         }
     },
 
