@@ -99,6 +99,7 @@ exports.LineTool = Montage.create(ShapeTool, {
                 }
                 this.RenderShape(w, h, drawData.planeMat, drawData.midPt,
                                     canvas, slope, xAdj, yAdj);
+                NJevent("elementAdded", canvas);
             }
 
             this.endDraw(event);
