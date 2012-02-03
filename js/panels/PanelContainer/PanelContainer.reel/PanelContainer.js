@@ -91,7 +91,7 @@ exports.PanelContainer = Montage.create(Component, {
                 this.panelSplitter.disabled = true;
             }
 
-            this.needsDraw = true;
+//            this.needsDraw = true;
 
             this.addEventListener("change@appModel.PropertiesPanel", this, false);
             this.addEventListener("change@appModel.ProjectPanel", this, false);
@@ -198,7 +198,7 @@ exports.PanelContainer = Montage.create(Component, {
                             minHeights += this.repeater.childComponents[i].element.offsetHeight;
                         } else {
                             this._panels[i].isLocked = false;
-                            this.repeater.childComponents[i].needsDraw = true;
+                            if(this.repeater.childComponents[i]) this.repeater.childComponents[i].needsDraw = true;
                             minHeights += this._panels[i].minHeight;
                         }
                 }
