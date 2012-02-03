@@ -16,6 +16,24 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
         value: null
     },
 
+    _testButtonJson: {
+        value: {
+            "component": "button",
+
+            "module": "montage/ui/button.reel",
+
+            "name": "Button",
+
+            "properties": [
+                {
+                    "name": "label",
+                    "type": "string",
+                    "default": "Button"
+                }
+            ]
+        }
+    },
+
     didCreate: {
         value: function() {
             this._loadComponents();
@@ -24,7 +42,7 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
 
     _loadComponents: {
         value: function() {
-            this.photos = [
+            this.components = [
                 {component: "Button", data: "montage/ui/button.reel/button.json"}
             ];
         }
@@ -54,14 +72,75 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
         }
     },
 
+    _stash: {
+        value: {}
+    },
+
     handleExecuteAddComponent: {
         value: function(evt) {
-            this.addComponentToStage(evt.detail.component, evt.detail.dropX, evt.detail.dropY)
+            //var component = evt.detail.component;
+            // Get the data from the event detail component
+            var component = this._testButtonJson;
+            this._stash.dropx = evt.detail.dropX;
+            this._stash.dropy = evt.detail.dropY;
+            this.addComponentToStage(component);// evt.detail.dropX, evt.detail.dropY);
         }
     },
 
-    addComponentToStage:{
-        value:function(componentType, dropX, dropY){
+    /**
+     * Send a request to add a component to the user document and waits for a callback to continue
+     */
+    addComponentToStage: {
+        value: function(component) {
+            var that = this;
+            var element = this.makeComponent(component.component);
+            this.application.ninja.currentDocument._window.addComponent(element, {type: "Button", path: component.module, name: "Button"}, function(instance, element) {
+
+                var styles = {
+                                'position': 'absolute',
+                                'top'       : that._stash.dropx + 'px',
+                                'left'      : that._stash.dropy + 'px',
+                                '-webkit-transform-style' : 'preserve-3d',
+                                '-webkit-transform' : 'perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
+                            };
+
+                that.application.ninja.currentDocument.setComponentInstance(instance, element);
+
+                NJevent("elementAdding", {"el": element, "data":styles});
+            });
+        }
+    },
+
+    callback: {
+        value: function(instance, element) {
+            console.log(instance);
+
+            var styles = {
+                'position': 'absolute',
+                'top'       : this._stash.dropx + 'px',
+                'left'      : this._stash.dropy + 'px',
+                '-webkit-transform-style' : 'preserve-3d',
+                '-webkit-transform' : 'perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
+            };
+
+            this.application.ninja.currentDocument.setComponentInstance(instance, element);
+
+            NJevent("elementAdding", {"el": element, "data":styles});
+
+        }
+    },
+
+    makeComponent: {
+        value: function(name) {
+            var el;
+            el = NJUtils.makeNJElement(name, "Button", "component");
+            el.setAttribute("type", "button");
+            return el;
+        }
+    },
+
+    ___addComponentToStage:{
+        value:function(component, dropX, dropY){
 //            var compW = 100,
 //                compH = 100,
 //
@@ -154,12 +233,6 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
 
 
 
-        }
-    },
-
-    callback: {
-        value: function() {
-            console.log("the callback");
         }
     }
 });

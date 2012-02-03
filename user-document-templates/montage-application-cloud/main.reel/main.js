@@ -45,7 +45,14 @@ exports.Main = Montage.create(Component, {
 
                     var button = require.async(stro)
                     .then(function (button) {
-                       callback();
+                            var btIns = button["Button"];
+
+                            btIns.element = containerElement;
+                            btIns.deserializedFromTemplate();
+
+                            btIns.needsDraw = true;
+                            btIns.label = "Button";
+                       callback(btIns, containerElement);
                     })
                     .end();
 
