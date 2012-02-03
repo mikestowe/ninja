@@ -168,7 +168,10 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                 for(i=0; i < len; i++) {
                     item = els[i];
                     el = item._element || item;
-                    el.elementModel.props3D.elementPlane.init();
+                    if(el.elementModel.props3D.elementPlane)
+                    {
+                        el.elementModel.props3D.elementPlane.init();
+                    }
                 }
 
                 this.application.ninja.stage.layout.draw();
@@ -1097,7 +1100,6 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			var tmpCanvas = this.application.ninja.stage.canvas;
 			var tmpStage = this.application.ninja.currentDocument.documentRoot;
 			this.viewUtils.pushViewportObj( tmpCanvas );
-			var tmpStage = this.application.ninja.currentDocument.documentRoot;
 
 			// save the source space object and set to the target object
 			var saveSource = this._sourceSpaceElt;
