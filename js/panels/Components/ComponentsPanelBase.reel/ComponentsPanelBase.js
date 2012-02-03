@@ -97,12 +97,13 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
             this.application.ninja.currentDocument._window.addComponent(element, {type: "Button", path: component.module, name: "Button"}, function(instance, element) {
 
                 var styles = {
-                                'position': 'absolute',
-                                'top'       : that._stash.dropx + 'px',
-                                'left'      : that._stash.dropy + 'px',
-                                '-webkit-transform-style' : 'preserve-3d',
-                                '-webkit-transform' : 'perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
-                            };
+                    'position': 'absolute',
+                    'top'       : that._stash.dropy + 'px',
+                    'left'      : that._stash.dropx + 'px',
+                    '-webkit-transform-style' : 'preserve-3d',
+                    '-webkit-transform' : 'perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
+                };
+
 
                 that.application.ninja.currentDocument.setComponentInstance(instance, element);
 
@@ -134,6 +135,7 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
         value: function(name) {
             var el;
             el = NJUtils.makeNJElement(name, "Button", "component");
+            //el.elementModel.pi = "buttonPi";
             el.setAttribute("type", "button");
             return el;
         }

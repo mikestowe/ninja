@@ -37,36 +37,20 @@ exports.Main = Montage.create(Component, {
             switch(componentType.type){
                 case "Button":
 
-                    //var tmpFix = ("montage/ui/button.reel");
-                    //var str = "montage/ui/button.reel";
-                    var stro = componentType.path;
-
-//                    var button = (stro);
-
-                    var button = require.async(stro)
+                    var button = require.async(componentType.path)
                     .then(function (button) {
-                            var btIns = button["Button"];
+                        var buttonObj = button["Button"];
+                        var btIns = buttonObj.create();
 
-                            btIns.element = containerElement;
-                            btIns.deserializedFromTemplate();
+                        btIns.element = containerElement;
+                        btIns.deserializedFromTemplate();
 
-                            btIns.needsDraw = true;
-                            btIns.label = "Button";
-                       callback(btIns, containerElement);
+                        btIns.needsDraw = true;
+                        btIns.label = "Button";
+                        callback(btIns, containerElement);
                     })
                     .end();
 
-                    /*
-                    var buttonInstance = button[componentType.name];
-
-                    buttonInstance.element = containerElement;
-                    buttonInstance.deserializedFromTemplate();
-
-                    buttonInstance.needsDraw = true;
-                    buttonInstance.label = "Button";
-
-                    return buttonInstance;
-                    */
                     break;
                 case "Checkbox":
                     component = Checkbox.create();
