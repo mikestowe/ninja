@@ -97,8 +97,22 @@ exports.Content = Montage.create(Component, {
         value: function(event) {
 //            console.log("Element Change PI ", event.detail.source); // If the event comes from the pi don't need to update
             if(event.detail.source && event.detail.source !== "pi") {
-                this.positionSize.leftPosition = parseFloat(ElementsMediator.getProperty(this.application.ninja.selectedElements[0]._element, "left"));
-                this.positionSize.topPosition = parseFloat(ElementsMediator.getProperty(this.application.ninja.selectedElements[0]._element, "top"));
+                // TODO - This should only update the properties that were changed.
+                var el = this.application.ninja.selectedElements[0]._element || this.application.ninja.selectedElements[0];
+                this.positionSize.leftPosition = parseFloat(ElementsMediator.getProperty(el, "left"));
+                this.positionSize.topPosition = parseFloat(ElementsMediator.getProperty(el, "top"));
+                this.positionSize.heightSize = parseFloat(ElementsMediator.getProperty(el, "height"));
+                this.positionSize.widthSize = parseFloat(ElementsMediator.getProperty(el, "width"));
+
+                if(this.threeD.inGlobalMode)
+                {
+                    this.threeD.x3D = ElementsMediator.get3DProperty(el, "x3D");
+                    this.threeD.y3D = ElementsMediator.get3DProperty(el, "y3D");
+                    this.threeD.z3D = ElementsMediator.get3DProperty(el, "z3D");
+                    this.threeD.xAngle = ElementsMediator.get3DProperty(el, "xAngle");
+                    this.threeD.yAngle = ElementsMediator.get3DProperty(el, "yAngle");
+                    this.threeD.zAngle = ElementsMediator.get3DProperty(el, "zAngle");
+                }
             }
         }
     },
