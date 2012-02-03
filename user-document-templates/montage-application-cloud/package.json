@@ -3,6 +3,6 @@
            "lib": ""
        },
        "mappings": {
-           "montage": "../../node_modules/montage-user/"
+           "montage": "../../node_modules/montage/"
        }
 }
