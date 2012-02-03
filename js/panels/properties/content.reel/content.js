@@ -112,8 +112,8 @@ exports.Content = Montage.create(Component, {
                     this.threeD.xAngle = ElementsMediator.get3DProperty(el, "xAngle");
                     this.threeD.yAngle = ElementsMediator.get3DProperty(el, "yAngle");
                     this.threeD.zAngle = ElementsMediator.get3DProperty(el, "zAngle");
-                }
             }
+        }
         }
     },
 
@@ -155,7 +155,8 @@ exports.Content = Montage.create(Component, {
 
     displayElementProperties: {
         value: function (el) {
-            var customPI;
+            var customPI,
+                currentValue;
 
             this.elementName = el.elementModel.selection;
             this.elementId.value = el.getAttribute("id") || "";
@@ -194,90 +195,49 @@ exports.Content = Montage.create(Component, {
                 for(var j = 0, fields; fields = customSec.Section[j]; j++) {
                     for(var k = 0, control; control = fields[k]; k++) {
 
-                        if(control.prop !== "border-color" && control.prop !== "background-color") {
-                            var currentValue = ElementsMediator.getProperty(el, control.prop, control.valueMutator);
-                            if(currentValue === null)
+                        if(control.type !== "color") {
+                            currentValue = ElementsMediator.getProperty(el, control.prop, control.valueMutator);
+                            currentValue ? currentValue = currentValue : currentValue = control.defaultValue;
+                            this.customSections[0].content.controls[control.id] = currentValue;
+                        }
+                        else
+                        {
+                            currentValue = ElementsMediator.getColor2(el, control.prop, control.valueMutator);
+                            if(control.prop === "border")
                             {
-                                currentValue = control.defaultValue;
+                                this.application.ninja.colorController.colorModel.input = "stroke";
                             }
-                            this.customSections[i].content.controls[control.id] = currentValue;
+                            else if(control.prop === "background")
+                            {
+                                this.application.ninja.colorController.colorModel.input = "fill";
+                            }
+
+                            if(currentValue)
+                            {
+                                if(currentValue.mode === "gradient")
+                                {
+                                    this.application.ninja.colorController.colorModel["gradient"] =
+                                                    {value: currentValue.color, wasSetByCode: true, type: 'change'};
+                                }
+                                else
+                                {
+                                    if (currentValue.color.a !== undefined)
+                                    {
+                                        this.application.ninja.colorController.colorModel.alpha =
+                                                        {value: currentValue.color.a, wasSetByCode: true, type: 'change'};
+                                    }
+                                    this.application.ninja.colorController.colorModel[currentValue.color.mode] = currentValue.color;
+                                }
+                            }
+                            else
+                            {
+                                this.application.ninja.colorController.colorModel.alpha = {value: 1, wasSetByCode: true, type: 'change'};
+                                this.application.ninja.colorController.colorModel.applyNoColor();
+                            }
                         }
                     }
                 }
             }
-
-            
-            //TODO: Once logic for color and gradient is established, this needs to be revised
-
-            var color, background, backgroundImage, borderColor = ElementsMediator.getProperty(el, "border-color"), borderImage = ElementsMediator.getProperty(el, "border-image");
-            this.application.ninja.colorController.colorModel.input = "stroke";
-            if(borderColor || borderImage) {
-            	if (borderImage && borderImage !== 'none' && borderImage.indexOf('-webkit') >= 0) {
-            		//Gradient
-            		color = this.application.ninja.colorController.getColorObjFromCss(borderImage);
-            		if (color && color.value) {
-    		        	this.application.ninja.colorController.colorModel[color.mode] = {value: color.value, wasSetByCode: true, type: 'change'};
-    	        	} else {
-    	        		this.application.ninja.colorController.colorModel.alpha = {value: 1, wasSetByCode: true, type: 'change'};
-	            		this.application.ninja.colorController.colorModel.applyNoColor();
-            		}
-            	} else {
-            		//Solid
-            		color = this.application.ninja.colorController.getColorObjFromCss(borderColor);
-            		if (color && color.value) {
-        	    		color.value.wasSetByCode = true;
-						color.value.type = 'change';
-	    	        	if (color.value.a) {
-	    	        		this.application.ninja.colorController.colorModel.alpha = {value: color.value.a, wasSetByCode: true, type: 'change'};
-	    	        	}
-	    	        	this.application.ninja.colorController.colorModel[color.mode] = color.value;
-	            	} else {
-	            		this.application.ninja.colorController.colorModel.alpha = {value: 1, wasSetByCode: true, type: 'change'};
-            			this.application.ninja.colorController.colorModel.applyNoColor();
-            		}
-            	}
-            } else {
-            	this.application.ninja.colorController.colorModel.alpha = {value: 1, wasSetByCode: true, type: 'change'};
-                this.application.ninja.colorController.colorModel.applyNoColor();
-            }
-			//
-            background = ElementsMediator.getProperty(el, "background-color");
-            backgroundImage = ElementsMediator.getProperty(el, "background-image");
-            this.application.ninja.colorController.colorModel.input = "fill";
-            if(background || backgroundImage) {
-            	if (backgroundImage && backgroundImage !== 'none' && backgroundImage.indexOf('-webkit') >= 0) {
-            		//Gradient
-            		color = this.application.ninja.colorController.getColorObjFromCss(backgroundImage);
-            		if (color && color.value) {
-    		        	this.application.ninja.colorController.colorModel[color.mode] = {value: color.value, wasSetByCode: true, type: 'change'};
-    	        	} else {
-    	        		this.application.ninja.colorController.colorModel.alpha = {value: 1, wasSetByCode: true, type: 'change'};
-	            		this.application.ninja.colorController.colorModel.applyNoColor();
-            		}
-            	} else {
-            		//Solid
-            		color = this.application.ninja.colorController.getColorObjFromCss(background);
-            		if (color && color.value) {
-        	    		color.value.wasSetByCode = true;
-						color.value.type = 'change';
-	    	        	if (color.value.a) {
-	    	        		this.application.ninja.colorController.colorModel.alpha = {value: color.value.a, wasSetByCode: true, type: 'change'};
-	    	        	}
-	    	        	this.application.ninja.colorController.colorModel[color.mode] = color.value;
-	            	} else {
-	            		this.application.ninja.colorController.colorModel.alpha = {value: 1, wasSetByCode: true, type: 'change'};
-            			this.application.ninja.colorController.colorModel.applyNoColor();
-            		}
-            	}
-            } else {
-            	this.application.ninja.colorController.colorModel.alpha = {value: 1, wasSetByCode: true, type: 'change'};
-                this.application.ninja.colorController.colorModel.applyNoColor();
-            }
-
-
-
-
-
         }
     },
 
@@ -317,15 +277,11 @@ exports.Content = Montage.create(Component, {
 
     handlePropertyChange: {
         value: function(e) {
+            if(e.wasSetByCode) return;
+
             var newValue;
 
             e.units ? newValue = e.value + e.units : newValue = e.value;
-
-            if(e.prop === "border-width") {// || e.prop === "border-style") {
-                ElementsMediator.setProperty(this.application.ninja.selectedElements, "border-style", [this.customSections[0].content.controls.borderStyle], "Change", "pi");
-            } else if(e.prop === "border-style") {
-                ElementsMediator.setProperty(this.application.ninja.selectedElements, "border-width", [this.customSections[0].content.controls.borderWidth + "px"], "Change", "pi");
-            }
 
             ElementsMediator.setProperty(this.application.ninja.selectedElements, e.prop, [newValue], "Change", "pi");
 
@@ -334,6 +290,7 @@ exports.Content = Montage.create(Component, {
 
     handlePropertyChanging: {
         value: function(e) {
+            if(e.wasSetByCode) return;
 
 //            ElementsMediator.setProperty(this.application.ninja.selectedElements, "border-style", [this.customSections[0].content.controls.borderStyle], "Changing", "pi");
             ElementsMediator.setProperty(this.application.ninja.selectedElements, e.prop, [e.value + "px"], "Changing", "pi");

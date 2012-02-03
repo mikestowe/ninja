@@ -436,7 +436,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
     getColor: {
         value: function(el, isFill) {
             if(!el.elementModel) {
-                NJUtils.makeElementModel(el, "Div", "block");
+                NJUtils.makeElementModel2(el);
             }
             return el.elementModel.controller["getColor"](el, isFill);
         }
@@ -462,7 +462,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
                 if(!currentValue) {
                     var that = this;
                     currentValue = els.map(function(item) {
-                        return that.getColor(item._element);
+                        return that.getColor(item._element, isFill);
                     });
                 }
 
@@ -594,6 +594,15 @@ exports.ElementMediator = Montage.create(NJComponent, {
         }
     },
 
+    getColor2: {
+        value: function(el, prop, mutator) {
+            if(!el.elementModel) {
+                NJUtils.makeElementModel2(el);
+            }
+
+            return this.getColor(el, (prop === "background"));
+        }
+    },
 
     //--------------------------------------------------------------------------------------------------------
     // Routines to get/set 3D properties

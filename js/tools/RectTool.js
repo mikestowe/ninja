@@ -94,6 +94,14 @@ exports.RectTool = Montage.create(ShapeTool, {
                 canvas.elementModel.shapeModel.strokeSize = this.options.strokeSize.value + " " + this.options.strokeSize.units;
                 canvas.elementModel.shapeModel.stroke = strokeColor;
                 canvas.elementModel.shapeModel.fill = fillColor;
+                if(strokeColor)
+                {
+                    canvas.elementModel.shapeModel.border = this.application.ninja.colorController.colorToolbar.stroke;
+                }
+                if(fillColor)
+                {
+                    canvas.elementModel.shapeModel.background = this.application.ninja.colorController.colorToolbar.fill;
+                }
 
                 canvas.elementModel.shapeModel.tlRadius = this.options.TLRadiusControl.value + " " + this.options.TLRadiusControl.units;
                 canvas.elementModel.shapeModel.trRadius = this.options.TRRadiusControl.value + " " + this.options.TRRadiusControl.units;
