@@ -8,8 +8,8 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component,
      iconsListModule = require("js/components/ui/icon-list-basic/iconsList.reel"),
     treeModule = require("js/components/ui/tree-basic/tree.reel"),
-    newFileLocationSelectionModule = require("js/io/ui/new-file-dialog/new-file-workflow-controller"),
-    nj= require("js/lib/NJUtils.js").NJUtils;
+    newFileLocationSelectionModule = require("js/io/ui/new-file-dialog/new-file-workflow-controller");
+    //nj= ("js/lib/NJUtils.js").NJUtils;
 
 var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(Component, {
 

@@ -5,8 +5,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var Montage = require("montage/core/core").Montage,
-    Component = require("montage/ui/component").Component,
-    nj= require("js/lib/NJUtils.js").NJUtils;
+    Component = require("montage/ui/component").Component;
+    //nj= ("js/lib/NJUtils.js").NJUtils;
 
 var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
 

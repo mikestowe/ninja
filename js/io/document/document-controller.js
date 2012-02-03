@@ -15,7 +15,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component,
     Uuid = require("montage/core/uuid").Uuid,
-    nj= require("js/lib/NJUtils.js").NJUtils,
+    //nj= ("js/lib/NJUtils.js").NJUtils,
     HTMLDocument = require("js/io/document/html-document").HTMLDocument,
     TextDocument = require("js/io/document/text-document").TextDocument;
 
