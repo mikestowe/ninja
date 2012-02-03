@@ -14,9 +14,34 @@ var Montage = 		require("montage/core/core").Montage,
 exports.IoMediator = Montage.create(Object.prototype, {
 	////////////////////////////////////////////////////////////////////
     //
-    name: {
+    fileNew: {
     	enumerable: false,
-    	value: function () {
+    	value: function (file, template, callback) {
+    		//
+    		
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    fileOpen: {
+    	enumerable: false,
+    	value: function (file, callback) {
+    		//
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    fileSave: {
+    	enumerable: false,
+    	value: function (file, callback) {
+    		//
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    fileSaveAs: {
+    	enumerable: false,
+    	value: function (file, copy, callback) {
     		//
     	}
     }
