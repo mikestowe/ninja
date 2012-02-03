@@ -6,17 +6,42 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 ////////////////////////////////////////////////////////////////////////
 //
-var Montage = 		require("montage/core/core").Montage,
-	FileIo = 		require("js/io/system/fileio").FileIo,
-	ProjectIo = 	require("js/io/system/projectio").ProjectIo;
+var Montage = 	require("montage/core/core").Montage,
+	FileIo = 	require("js/io/system/fileio").FileIo,
+	ProjectIo = require("js/io/system/projectio").ProjectIo;
 ////////////////////////////////////////////////////////////////////////
 //
 exports.IoMediator = Montage.create(Object.prototype, {
 	////////////////////////////////////////////////////////////////////
     //
-    name: {
+    fileNew: {
     	enumerable: false,
-    	value: function () {
+    	value: function (file, template, callback) {
+    		//
+    		
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    fileOpen: {
+    	enumerable: false,
+    	value: function (file, callback) {
+    		//
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    fileSave: {
+    	enumerable: false,
+    	value: function (file, callback) {
+    		//
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    fileSaveAs: {
+    	enumerable: false,
+    	value: function (file, copy, callback) {
     		//
     	}
     }

@@ -7,6 +7,9 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 /* /////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 NOTES:
+
+	Core API reference in NINJA: this.application.ninja.coreIoApi
+	
 ////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////// */
 var Montage = 		require("montage/core/core").Montage,
@@ -21,6 +24,80 @@ exports.CoreIoApi = Montage.create(Component, {
 	deserializedFromTemplate: {
 		enumerable: false,
 		value: function () {
+		
+			
+			
+			////////////////////////////////////////////////////////////
+			////////////////////////////////////////////////////////////
+			//TODO: Remove, this is only for testing
+		
+			
+			window.webkitRequestFileSystem(window.PERSISTENT, 10*1024*1024 /*10MB*/, function (fs) {
+				
+				
+				console.log(fs);
+				
+				var start = new Date().getTime();
+				
+				for (var i=0; i<250; i++) {
+					
+					fs.root.getFile('test'+i+'.txt', {create: true}, function(fileEntry) {
+					
+						fileEntry.createWriter(function(fileWriter) {
+						
+							var bb = new window.WebKitBlobBuilder;
+      						bb.append('In condimentum facilisis porta. Sed nec diam eu diam mattis viverra. Nulla fringilla, orci ac euismod semper, magna diam porttitor mauris, quis sollicitudin sapien justo in libero. Vestibulum mollis mauris enim. Morbi euismod magna ac lorem rutrum elementum. Donec viverra auctor lobortis. Pellentesque eu est a nulla placerat dignissim. Morbi a enim in magna semper bibendum. Etiam scelerisque, nunc ac egestas consequat, odio nibh euismod nulla, eget auctor orci nibh vel nisi. Aliquam erat volutpat. Mauris vel neque sit amet nunc gravida congue sed sit amet purus. Quisque lacus quam, egestas ac tincidunt a, lacinia vel velit. Aenean facilisis nulla vitae urna tincidunt congue sed ut dui. Morbi malesuada nulla nec purus convallis consequat. Vivamus id mollis quam. Morbi ac commodo nulla. In condimentum orci id nisl volutpat bibendum. Quisque commodo hendrerit lorem quis egestas. Maecenas quis tortor arcu. Vivamus rutrum nunc non neque consectetur quis placerat neque lobortis. Nam vestibulum, arcu sodales feugiat consectetur, nisl orci bibendum elit, eu euismod magna sapien ut nibh. Donec semper quam scelerisque tortor dictum gravida. In hac habitasse platea dictumst. Nam pulvinar, odio sed rhoncus suscipit, sem diam ultrices mauris, eu consequat purus metus eu velit. Proin metus odio, aliquam eget molestie nec, gravida ut sapien. Phasellus quis est sed turpis sollicitudin venenatis sed eu odio. Praesent eget neque eu eros interdum malesuada non vel leo. Sed fringilla porta ligula egestas tincidunt. Nullam risus magna, ornare vitae varius eget, scelerisque a libero. Morbi eu porttitor ipsum. Nullam lorem nisi, posuere quis volutpat eget, luctus nec massa. Pellentesque aliquam lacinia tellus sit amet bibendum. Ut posuere justo in enim pretium scelerisque. Etiam ornare vehicula euismod. Vestibulum at risus augue. Sed non semper dolor. Sed fringilla consequat velit a porta. Pellentesque sed lectus pharetra ipsum ultricies commodo non sit amet velit. Suspendisse volutpat lobortis ipsum, in scelerisque nisi iaculis a. Duis pulvinar lacinia commodo. Integer in lorem id nibh luctus aliquam. Sed elementum, est ac sagittis porttitor, neque metus ultricies ante, in accumsan massa nisl non metus. Vivamus sagittis quam a lacus dictum tempor. Nullam in semper ipsum. Cras a est id massa malesuada tincidunt. Etiam a urna tellus. Ut rutrum vehicula dui, eu cursus magna tincidunt pretium. Donec malesuada accumsan quam, et commodo orci viverra et. Integer tincidunt sagittis lectus. Mauris ac ligula quis orci auctor tincidunt. Suspendisse odio justo, varius id posuere sit amet, iaculis sit amet orci. Suspendisse potenti. Suspendisse potenti. Aliquam erat volutpat. Sed posuere dignissim odio, nec cursus odio mollis et. Praesent cursus, orci ut dictum adipiscing, tellus ante porttitor leo, vel gravida lacus lorem vitae est. Duis ultricies feugiat ante nec aliquam. Maecenas varius, nulla vel fermentum semper, metus nibh bibendum nunc, vitae suscipit mauris velit ac nunc. Mauris nunc eros, egestas at vehicula tincidunt, commodo ac mauris. Nulla facilisi. Nunc eros sem, lobortis non pulvinar id, blandit in eros. In bibendum suscipit');
+      						fileWriter.write(bb.getBlob('text/plain'));
+      							
+						});
+					
+					});
+				
+				}
+				
+				var end = new Date().getTime();
+				var time = end - start;
+				console.log('Create execution time: ' + time);
+				
+				start = new Date().getTime();
+				
+				for (var j=0; j<250; j++) {
+				
+					fs.root.getFile('test'+j+'.txt', {create: true}, function(fileEntry) {
+						
+						fileEntry.file(function(file) {
+						
+							var reader = new FileReader();
+							reader.onloadend = function(e) {
+         						console.log(this.result);
+      		 				};
+
+       						reader.readAsText(file);
+							
+						});
+						
+					});
+				
+				}
+				
+				
+				end = new Date().getTime();
+				time = end - start;
+				console.log('Read execution time: ' + time);
+  	
+  
+  			
+				
+				
+				
+			}.bind(this));
+			
+			
+			////////////////////////////////////////////////////////////
+			////////////////////////////////////////////////////////////
+		
+		
+		
 			//Checking for local storage of URL for IO
 			if (window.localStorage['ioRootUrl']) {
 				//Getting URL from local storage
@@ -71,62 +148,6 @@ exports.CoreIoApi = Montage.create(Component, {
     _cloudDialogComponents: {
     	enumerable: false,
 		value: {blackout: null, popup: null, dialog: null}
-    },
-	////////////////////////////////////////////////////////////////////
-    //
-    showCloudDialog: {
-    	enumerable: false,
-		value: function () {
-			//
-			this._cloudDialogOpen = true;
-			//
-			this._cloudDialogComponents.blackout = document.createElement('div');
-			this._cloudDialogComponents.blackout.style.width = '100%';
-			this._cloudDialogComponents.blackout.style.height = '100%';
-			this._cloudDialogComponents.blackout.style.background = '-webkit-radial-gradient(center, ellipse cover, rgba(0,0,0,.65) 0%, rgba(0,0,0,0.8) 80%)';
-			this.application.ninja.popupManager.addPopup(this._cloudDialogComponents.blackout);
-    		//
-    		////////////////////////////////////////////////////
-    		//Creating popup from m-js component
-    		var popup = document.createElement('div');
-    		//
-    		this._cloudDialogComponents.dialog = CloudPopup.create();
-    		//
-    		document.body.appendChild(popup);
-    		//
-    		this._cloudDialogComponents.dialog.element = popup;
-    		this._cloudDialogComponents.dialog.needsDraw = true;
-    		this._cloudDialogComponents.dialog.element.style.opacity = 0;
-    		//
-    		this._cloudDialogComponents.dialog.addEventListener('firstDraw', this, false);
-		}
-    },
-    ////////////////////////////////////////////////////////////////////
-    //
-    handleFirstDraw: {
-    	value: function (e) {
-			if (e._target._element.className === 'cloud_popup') {
-	    		this._cloudDialogComponents.dialog.removeEventListener('firstDraw', this, false);
-		    	//
-				this._cloudDialogComponents.popup = this.application.ninja.popupManager.createPopup(this._cloudDialogComponents.dialog.element, {x: '50%', y: '50%'});
-				this._cloudDialogComponents.popup.addEventListener('firstDraw', this, false);
-			} else {
-				//
-				this._cloudDialogComponents.dialog.element.style.opacity = 1;
-				this._cloudDialogComponents.popup.element.style.opacity = 1;
-				this._cloudDialogComponents.popup.element.style.margin = '-100px 0px 0px -190px';
-			}
-    	}
-    },
-    ////////////////////////////////////////////////////////////////////
-    //
-    hideCloudDialog: {
-    	enumerable: false,
-		value: function () {
-			//
-			this.application.ninja.popupManager.removePopup(this._cloudDialogComponents.blackout);
-			this.application.ninja.popupManager.removePopup(this._cloudDialogComponents.popup.element);
-		}
     },
 	////////////////////////////////////////////////////////////////////
     //
@@ -232,6 +253,62 @@ exports.CoreIoApi = Montage.create(Component, {
 			//
             return String(serviceURL+urlOut);
         }
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    showCloudDialog: {
+    	enumerable: false,
+		value: function () {
+			//
+			this._cloudDialogOpen = true;
+			//
+			this._cloudDialogComponents.blackout = document.createElement('div');
+			this._cloudDialogComponents.blackout.style.width = '100%';
+			this._cloudDialogComponents.blackout.style.height = '100%';
+			this._cloudDialogComponents.blackout.style.background = '-webkit-radial-gradient(center, ellipse cover, rgba(0,0,0,.65) 0%, rgba(0,0,0,0.8) 80%)';
+			this.application.ninja.popupManager.addPopup(this._cloudDialogComponents.blackout);
+    		//
+    		////////////////////////////////////////////////////
+    		//Creating popup from m-js component
+    		var popup = document.createElement('div');
+    		//
+    		this._cloudDialogComponents.dialog = CloudPopup.create();
+    		//
+    		document.body.appendChild(popup);
+    		//
+    		this._cloudDialogComponents.dialog.element = popup;
+    		this._cloudDialogComponents.dialog.needsDraw = true;
+    		this._cloudDialogComponents.dialog.element.style.opacity = 0;
+    		//
+    		this._cloudDialogComponents.dialog.addEventListener('firstDraw', this, false);
+		}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    handleFirstDraw: {
+    	value: function (e) {
+			if (e._target._element.className === 'cloud_popup') {
+	    		this._cloudDialogComponents.dialog.removeEventListener('firstDraw', this, false);
+		    	//
+				this._cloudDialogComponents.popup = this.application.ninja.popupManager.createPopup(this._cloudDialogComponents.dialog.element, {x: '50%', y: '50%'});
+				this._cloudDialogComponents.popup.addEventListener('firstDraw', this, false);
+			} else {
+				//
+				this._cloudDialogComponents.dialog.element.style.opacity = 1;
+				this._cloudDialogComponents.popup.element.style.opacity = 1;
+				this._cloudDialogComponents.popup.element.style.margin = '-100px 0px 0px -190px';
+			}
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    hideCloudDialog: {
+    	enumerable: false,
+		value: function () {
+			//
+			this.application.ninja.popupManager.removePopup(this._cloudDialogComponents.blackout);
+			this.application.ninja.popupManager.removePopup(this._cloudDialogComponents.popup.element);
+		}
     },
     ////////////////////////////////////////////////////////////////////
     // Checks for the existence of a file

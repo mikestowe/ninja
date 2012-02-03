@@ -107,6 +107,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 
             this.eventManager.addEventListener("elementAdded", this, false);
             this.eventManager.addEventListener("elementDeleted", this, false);
+            this.eventManager.addEventListener("elementChange", this, false);
 		}
 	},
 
@@ -123,6 +124,27 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
         }
     },
 
+
+    handleElementChange: {
+        value: function(event) {
+            var els = event.detail.data.els;
+            if(els)
+            {
+                var len = els.length,
+                    i = 0,
+                    item,
+                    el;
+
+                for(i=0; i < len; i++) {
+                    item = els[i];
+                    el = item._element || item;
+                    el.elementModel.props3D.elementPlane.init();
+                }
+
+                this.drawWorkingPlane();
+            }
+        }
+    },
 
 	///////////////////////////////////////////////////////////////////////
 	// Methods
@@ -150,6 +172,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			plane.setElement( elt );
 			plane.init();
 			this._planesArray.push( plane );
+            elt.elementModel.props3D.elementPlane = plane;
 		}
 	},
 
@@ -166,6 +189,8 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 
 					// Then remove the element
 					this._eltArray.splice(i, 1);
+
+                    // TODO - May need to delete props3D and elementPlane as well
 					return;
 				}
 			}
@@ -1064,7 +1089,8 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			var resMat = glmat4.multiply( tMat, mat, [] );
 			var origin = [0,0,0,1];
 
-			var arrowSize = 50;
+			var zoomFactor = this.application.ninja.documentBar.zoomFactor/100.0;
+			var arrowSize = 50 / zoomFactor;
 			var xAxis = [arrowSize,0,0,1];
 			//var rO = resMat.multiply(origin);
 			var rO = glmat4.multiplyVec3( resMat, origin, []);  

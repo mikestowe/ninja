@@ -6,7 +6,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var Montage = require("montage/core/core").Montage;
 var Component = require("montage/ui/component").Component;
-var nj = require("js/lib/NJUtils.js").NJUtils;
+var nj = require("js/lib/NJUtils").NJUtils;
 
 exports.Tree = Montage.create(Component, {
 

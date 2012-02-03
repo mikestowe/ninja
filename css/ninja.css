@@ -34,9 +34,11 @@ input[type="search"].nj-skinned::-webkit-search-cancel-button { -webkit-appearan
 
 input[type="search"].nj-skinned::-webkit-search-cancel-button:after { content: "\2716"; }
 
-button.nj-skinned { font-size: 9px; cursor: pointer; display: block; border: 0px; margin: 0px; padding: 4px; border: 1px #313131 solid; background-color: #474747; background-image: -webkit-linear-gradient(top, #646464 0%, #3c3c3c 100%); border-radius: 4px; color: white; text-transform: uppercase; cursor: pointer; text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5); }
+button.nj-skinned { font-size: 9px; cursor: pointer; display: block; border: 0px; margin: 0px; padding: 4px; border: 1px #313131 solid; background-color: #474747; background-image: -webkit-linear-gradient(top, #505050 0%, #3c3c3c 100%); border-radius: 4px; color: white; text-transform: uppercase; cursor: pointer; text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5); }
 
-button.nj-skinned:hover { background-image: -webkit-linear-gradient(top, #3c3c3c 0%, #646464 100%); }
+button.nj-skinned:active { background-image: -webkit-linear-gradient(top, #3c3c3c 0%, #505050 100%); }
+
+button.nj-skinned:hover { -webkit-box-shadow: 0px 0px 3px #b4b4b4; }
 
 input[type="radio"].nj-skinned { background-color: #474747; background-image: -webkit-linear-gradient(top, #646464 0%, #3c3c3c 100%); color: #c8c8c8; border: 2px solid #282828; width: 12px; height: 12px; overflow: hidden; border-radius: 10px; font-size: 16px; line-height: 7px; text-indent: -7px; cursor: pointer; -webkit-box-shadow: 0px 0px 2px rgba(200, 200, 200, 0.5); -moz-box-shadow: 0px 0px 2px rgba(200, 200, 200, 0.5); box-shadow: 0px 0px 2px rgba(200, 200, 200, 0.5); }
 
@@ -337,8 +339,6 @@ ul.treeComponent > img:first-child { margin-left: -35px; margin-right: 5px; -web
 .pp-scroll-main .pp-scroll-linked { display: block; position: absolute; height: auto; bottom: 0; top: 0; left: 0; right: 0; overflow: visible; }
 
 #pp-view-assets { display: none; }
-
-#pp-container-assets .pp-scroll-linked, #pp-container-list .pp-scroll-linked { width: 420px; }
 
 .pp-header-container { position: relative; overflow: hidden; border-bottom: 1px solid black; background-color: #3a3a3a; min-width: 390px; }
 

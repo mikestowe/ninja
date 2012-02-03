@@ -94,12 +94,18 @@ exports.Ninja = Montage.create(Component, {
         }
     },
 
+    _didDraw: {
+        value: false
+    },
+    
     didDraw: {
         value: function() {
-            NJevent("appLoaded");
-            //
-            if (!this.application.ninja.coreIoApi.ioServiceDetected) {
-            	var check = this.application.ninja.coreIoApi.cloudAvailable();
+            if(!this._didDraw) {
+            	if (!this.application.ninja.coreIoApi.ioServiceDetected) {
+            		var check = this.application.ninja.coreIoApi.cloudAvailable();
+            	}
+                NJevent("appLoaded");
+                this._didDraw = true;
             }
         }
     },
@@ -164,12 +170,6 @@ exports.Ninja = Montage.create(Component, {
     userTemplateDidLoad: {
         value: function(){
             this.currentSelectedContainer = this.currentDocument.documentRoot;
-        }
-    },
-
-    handleLivePreview: {
-        value: function(event) {
-
         }
     },
 

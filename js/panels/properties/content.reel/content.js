@@ -182,8 +182,11 @@ exports.Content = Montage.create(Component, {
 
                         if(control.prop !== "border-color" && control.prop !== "background-color") {
                             var currentValue = ElementsMediator.getProperty(el, control.prop, control.valueMutator);
-                            currentValue ? currentValue = currentValue : currentValue = control.defaultValue;
-                            this.customSections[0].content.controls[control.id] = currentValue;
+                            if(currentValue === null)
+                            {
+                                currentValue = control.defaultValue;
+                            }
+                            this.customSections[i].content.controls[control.id] = currentValue;
                         }
                     }
                 }
