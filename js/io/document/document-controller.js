@@ -15,7 +15,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component,
     Uuid = require("montage/core/uuid").Uuid,
-    nj= require("js/lib/NJUtils.js").NJUtils,
     HTMLDocument = require("js/io/document/html-document").HTMLDocument,
     TextDocument = require("js/io/document/text-document").TextDocument;
 
@@ -123,7 +122,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                 }
 
                 //console.log("$$$ "+uri+"\n content = \n\n\n"+ fileContent+"\n\n\n");
-                filename = nj.getFileNameFromPath(uri);
+                filename = this.getFileNameFromPath(uri);
                 if(uri.indexOf('.') != -1){
                     fileType = uri.substr(uri.lastIndexOf('.') + 1);
                 }
@@ -430,5 +429,14 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value: function() {
             return "userDocument_" + (this._iframeCounter++);
         }
-    }
+    },
+
+    ///// Return the last part of a path (e.g. filename)
+        getFileNameFromPath : {
+            value: function(path) {
+                path = path.replace(/[/\\]$/g,"");
+                path = path.replace(/\\/g,"/");
+                return path.substr(path.lastIndexOf('/') + 1);
+            }
+        }
 });

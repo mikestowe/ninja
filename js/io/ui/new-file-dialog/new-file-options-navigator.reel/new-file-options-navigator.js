@@ -8,8 +8,7 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component,
      iconsListModule = require("js/components/ui/icon-list-basic/iconsList.reel"),
     treeModule = require("js/components/ui/tree-basic/tree.reel"),
-    newFileLocationSelectionModule = require("js/io/ui/new-file-dialog/new-file-workflow-controller"),
-    nj= require("js/lib/NJUtils.js").NJUtils;
+    newFileLocationSelectionModule = require("js/io/ui/new-file-dialog/new-file-workflow-controller");
 
 var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(Component, {
 
@@ -364,7 +363,7 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
     },
     isValidFileName:{
         value: function(fileName){
-            var status = nj.isValidFileName(fileName);
+            var status = this.isValidFileName(fileName);
             if(fileName !== ""){
                 if(!status){
                     this.showError("! Invalid file name.");
@@ -391,6 +390,23 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
                 this.okButton.setAttribute("disabled", "true");
             }
         }
-    }
+    },
+
+        /***
+         * file name validation
+         */
+        isValidFileName:{
+            value: function(fileName){
+                var status = false;
+                if(fileName !== ""){
+                    fileName = fileName.replace(/^\s+|\s+$/g,"");
+                    status = !(/[/\\]/g.test(fileName));
+                    if(status && navigator.userAgent.indexOf("Macintosh") != -1){//for Mac files beginning with . are hidden
+                        status = !(/^\./g.test(fileName));
+                    }
+                }
+                return status;
+            }
+        }
 
 });
