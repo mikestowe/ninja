@@ -5,6 +5,7 @@
  </copyright> */
 
 .bread_crumb{
+    background-color: #282828;
     border-style: double;
     height: 26px;
 }

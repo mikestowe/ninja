@@ -94,9 +94,16 @@ exports.Ninja = Montage.create(Component, {
         }
     },
 
+    _didDraw: {
+        value: false
+    },
+    
     didDraw: {
         value: function() {
-            NJevent("appLoaded");
+            if(!this._didDraw) {
+                NJevent("appLoaded");
+                this._didDraw = true;
+            }
         }
     },
 
@@ -160,12 +167,6 @@ exports.Ninja = Montage.create(Component, {
     userTemplateDidLoad: {
         value: function(){
             this.currentSelectedContainer = this.currentDocument.documentRoot;
-        }
-    },
-
-    handleLivePreview: {
-        value: function(event) {
-
         }
     },
 
