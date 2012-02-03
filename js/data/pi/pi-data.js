@@ -23,13 +23,13 @@ exports.PiData = Montage.create( Montage, {
                         {
                             type : "color",
                             id : "colorStroke",
-                            prop: "border-color",
+                            prop: "border",
                             label : "Stroke"
                         },
                         {
                             type : "color",
                             id : "colorFill",
-                            prop: "background-color",
+                            prop: "background",
                             divider : true
                         }
                     ],
@@ -102,11 +102,13 @@ exports.PiData = Montage.create( Montage, {
                         {
                             type : "color",
                             id : "colorStroke",
+                            prop: "border",
                             label : "Stroke"
                         },
                         {
                             type : "color",
                             id : "colorFill",
+                            prop: "background",
                             divider : true
                         }
                     ],
@@ -221,13 +223,13 @@ exports.PiData = Montage.create( Montage, {
                         {
                             type : "color",
                             id : "colorStroke",
-                            prop: "border-color",
+                            prop: "border",
                             label : "Stroke"
                         },
                         {
                             type : "color",
                             id : "colorFill",
-                            prop: "background-color",
+                            prop: "background",
                             divider : true
                         }
                     ],
@@ -279,11 +281,12 @@ exports.PiData = Montage.create( Montage, {
                     [
                         {
                             type : "color",
-                            id : "stroke",
-                            prop : "stroke"
+                            prop: "border",
+                            id : "stroke"
                         },
                         {
                             type : "color",
+                            prop: "background",
                             id : "fill",
                             prop : "fill",
                             divider : true
@@ -399,12 +402,13 @@ exports.PiData = Montage.create( Montage, {
                     [
                         {
                             type : "color",
-                            id : "stroke",
-                            prop : "stroke"
+                            prop: "border",
+                            id : "stroke"
                         },
                         {
                             type : "color",
                             id : "fill",
+                            prop: "background",
                             visible : false,
                             divider : true
                         }
@@ -451,11 +455,12 @@ exports.PiData = Montage.create( Montage, {
                     [
                         {
                             type : "color",
-                            id : "stroke",
-                            prop : "stroke"
+                            prop: "border",
+                            id : "stroke"
                         },
                         {
                             type : "color",
+                            prop: "background",
                             id : "fill",
                             prop : "fill",
                             divider : true
@@ -467,6 +472,7 @@ exports.PiData = Montage.create( Montage, {
                             id : "strokeSize",
                             prop : "strokeSize",
                             label : "Stroke",
+                            valueMutator: parseFloat,
                             min :   0,
                             max :   100,
                             value : 1,
