@@ -44,12 +44,16 @@ exports.ElementMediator = Montage.create(NJComponent, {
                 this.deleteDelegate.handleDelete();
             } else {
                 // Add the Undo/Redo
-                var els = [];
+                var els = [],
+                    len = this.application.ninja.selectedElements.length;
 
-                if(this.application.ninja.selectedElements.length > 0) {
-                    for(var i=0, item; item = this.application.ninja.selectedElements[i]; i++) {
-                        ElementController.removeElement(item._element);
-                        els.push(item._element);
+                if(len) {
+                    for(var i = 0; i<len; i++)
+                    {
+                        els.push(this.application.ninja.selectedElements[i]);
+                    }
+                    for(i=0; i<len; i++) {
+                        this._removeElement(els[i]._element);
                     }
 
                     NJevent( "deleteSelection", els );

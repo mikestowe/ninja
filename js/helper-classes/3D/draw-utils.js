@@ -110,6 +110,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 
             this.eventManager.addEventListener("elementAdded", this, false);
             this.eventManager.addEventListener("elementDeleted", this, false);
+            this.eventManager.addEventListener("deleteSelection", this, false);
             this.eventManager.addEventListener("elementChange", this, false);
 		}
 	},
@@ -124,6 +125,12 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
     handleElementDeleted: {
         value: function(event) {
             this.removeElement(event.detail);
+        }
+    },
+
+    handleDeleteSelection: {
+        value: function(event) {
+            this.drawWorkingPlane();
         }
     },
 
