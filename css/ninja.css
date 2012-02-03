@@ -271,6 +271,10 @@ background: transparent;
 
 #mainContent .CodeMirror-scroll { height: 100%; overflow: scroll; overflow-x: auto; overflow-y: auto; }
 
+.montage-editor-frame { position: absolute; z-index: 7; top: 0; left: 0; display: none; -webkit-user-select: initial; }
+
+.montage-editor { padding: 0px; word-wrap: normal; }
+
 /* PanelUI.scss Styles governing the panels in the UI. Note that colors and font definitions go in  _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss */
 /* layout for the container of all panels within a dock area */
 .panelContainer { margin: 0px; padding: 0px 0px; position: relative; /*
