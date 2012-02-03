@@ -121,6 +121,7 @@ function FlatMaterial()
 flatShaderDef  = 
 {
     'shaders':  { // shader files
+		//'defaultVShader':"assets/shaders/Taper.vert.glsl",
 		'defaultVShader':"assets/shaders/Basic.vert.glsl",
 		'defaultFShader':"assets/shaders/Basic.frag.glsl",
         },

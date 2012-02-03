@@ -225,19 +225,15 @@ function GLWorld( canvas, use3D )
     {
 		if (this._useWebGL)
 		{
-			if (this._allMapsLoaded)
+			var ctx = g_Engine.getContext();
+			var ctx1 = g_Engine.ctxMan.handleToObject(this._canvas.rdgeCtxHandle);
+			if (ctx1 != ctx)  console.log( "***** different contexts (2) *****" );
+			var aRenderer = ctx1.renderer;
+			var renderer = ctx.renderer;
+			if (renderer != aRenderer)  console.log( "***** DIFFERENT RENDERERS *****" );
+				
+			if (renderer.unloadedTextureCount <= 0)
 			{
-				var ctx = g_Engine.getContext();
-				//console.log( "RDGE state: " + ctx.ctxStateManager.currentState().name);
-
-				/////////////////////////////
-				var ctx1 = g_Engine.ctxMan.handleToObject(this._canvas.rdgeCtxHandle);
-				if (ctx1 != ctx)  console.log( "***** different contexts (2) *****" );
-				var aRenderer = ctx1.renderer;
-				//////////////////////////////////////////
-
-				var renderer = ctx.renderer;
-				if (renderer != aRenderer)  console.log( "***** DIFFERENT RENDERERS *****" );
 				renderer.disableCulling();
 				this.myScene.render();
 				//console.log( "render" );
@@ -249,8 +245,8 @@ function GLWorld( canvas, use3D )
 					if (!this.hasAnimatedMaterials())
 					{
 						//this.myScene.render();
-						//this._canvas.task.stop();
-						this._renderCount = 10;
+						this._canvas.task.stop();
+						//this._renderCount = 10;
 					}
 				}
 				else if (this._renderCount >= 0)
@@ -259,7 +255,6 @@ function GLWorld( canvas, use3D )
 					if (this._renderCount <= 0)
 						this._canvas.task.stop();
 				}
-
 			}
 		}
 		else

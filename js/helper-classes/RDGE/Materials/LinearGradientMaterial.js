@@ -135,8 +135,10 @@ function LinearGradientMaterial()
 	// duplcate method requirde
 	this.dup = function()	{  return new LinearGradientMaterial();	} 
 
-	this.init = function()
+	this.init = function( world )
 	{
+		this.setWorld( world );
+
 		// set up the shader
 		this._shader = new jshader();
 		this._shader.def = linearGradientMaterialDef;

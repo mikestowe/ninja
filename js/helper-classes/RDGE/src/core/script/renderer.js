@@ -359,9 +359,11 @@ _renderer = function(canvas) {
     *	@param wrap - optional "CLAMP or "REPEAT", default is clamp
     *	@param mips - optional true/false value to create mipmaps, the default is true
     */
+	this.unloadedTextureCount = 0;
     _texparams = function(wrap, mips) { this.wrap = wrap, this.mips = mips };
     this.createTexture = function(url, wrap, mips) {
         var texture = this.ctx.createTexture();
+		this.unloadedTextureCount++;
 
         if (wrap === undefined)
             wrap = "CLAMP";
@@ -379,7 +381,18 @@ _renderer = function(canvas) {
                 stateMan.RDGEInitState.loadTexture(texture);
 				//console.log( "loaded texture: " + texture.lookUpName );
 				if (texture.callback)  texture.callback( texture );
+				this.context.renderer.unloadedTextureCount--;
+				if (this.context.renderer.unloadedTextureCount < 0)
+					console.log( "more textures loaded then created..." );
             };
+			texture.image.onerror = function() {
+				this.context.renderer.unloadedTextureCount--;
+				if (texture.callback)  texture.callback( texture );
+				console.log( "Error loading texture: " + texture.image.src );
+				if (this.context.renderer.unloadedTextureCount < 0)
+					console.log( "more textures loaded then created..." );
+			}
+				
         }
         return texture;
     }

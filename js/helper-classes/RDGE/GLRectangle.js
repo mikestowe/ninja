@@ -280,7 +280,7 @@ function GLRectangle()
 
 		// stroke
 		var strokeMaterial = this.makeStrokeMaterial();
-		prim = this.createStroke([x,y],  2*xFill,  2*yFill,  strokeSize,  tlRadius, blRadius, brRadius, trRadius, strokeMaterial)
+		prim = this.createStroke([x,y],  2*xFill,  2*yFill,  strokeSize,  tlRadius, blRadius, brRadius, trRadius);
         this._primArray.push( prim );
 		this._materialNodeArray.push( strokeMaterial.getMaterialNode() );
 
@@ -486,7 +486,7 @@ function GLRectangle()
 	this.createStroke = function(ctr,  width,  height,  strokeWidth,  tlRad, blRad, brRad, trRad, material)
 	{
 		// create the geometry
-		var prim = RectangleStroke.create( ctr,  width, height, strokeWidth,  tlRad, blRad,  brRad, trRad)
+		var prim = RectangleStroke.create( ctr,  width, height, strokeWidth,  tlRad, blRad,  brRad, trRad, material)
 		return prim;
 	}
 
@@ -496,9 +496,9 @@ function GLRectangle()
 		// special the (common) case of no rounded corners
 		var prim
 		if ((tlRad <= 0) && (blRad <= 0) && (brRad <= 0) && (trRad <= 0))
-			prim = RectangleGeometry.create( ctr, width, height );
+			prim = RectangleGeometry.create( ctr, width, height, material );
 		else
-			prim = RectangleFill.create( ctr,  width, height,  tlRad, blRad,  brRad, trRad);
+			prim = RectangleFill.create( ctr,  width, height,  tlRad, blRad,  brRad, trRad, material);
 
 		return prim;
 	}
@@ -747,7 +747,7 @@ function GLRectangle()
  }
 
 RectangleFill = {};
-RectangleFill.create = function( rectCtr,  width, height, tlRad, blRad,  brRad, trRad)
+RectangleFill.create = function( rectCtr,  width, height, tlRad, blRad,  brRad, trRad,  material)
 {
 	var x = rectCtr[0],  y = rectCtr[1],  z = 0.0;
 	var	hw = 0.5*width,  hh = 0.5*height;
@@ -834,6 +834,17 @@ RectangleFill.create = function( rectCtr,  width, height, tlRad, blRad,  brRad, 
 		j++;
 	}
 
+	//refine the mesh for vertex deformations
+	if (material)
+	{
+		if (material.hasVertexDeformation())
+		{
+			var paramRange = material.getVertexDeformationRange();
+			var tolerance = material.getVertexDeformationTolerance();
+			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
+		}
+	}
+
 	// create the RDGE primitive
 	var prim = ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.TRIANGLES, nVertices);
 	return prim;
@@ -906,7 +917,7 @@ RectangleFill.getRoundedCorner = function(ctr, startPt,  vertices)
 
 
 RectangleStroke = {};
-RectangleStroke.create = function( rectCtr,  width, height, strokeWidth,  tlRad, blRad,  brRad, trRad)
+RectangleStroke.create = function( rectCtr,  width, height, strokeWidth,  tlRad, blRad,  brRad, trRad, material)
 {
 	var x = rectCtr[0],  y = rectCtr[1],  z = 0.0;
 	var	hw = 0.5*width,  hh = 0.5*height,  sw = strokeWidth;
@@ -1097,6 +1108,17 @@ RectangleStroke.create = function( rectCtr,  width, height, strokeWidth,  tlRad,
 		k++;
 	}
 
+	//refine the mesh for vertex deformations
+	if (material)
+	{
+		if (material.hasVertexDeformation())
+		{
+			var paramRange = material.getVertexDeformationRange();
+			var tolerance = material.getVertexDeformationTolerance();
+			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
+		}
+	}
+
 	// create the RDGE primitive
 	var prim = ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.TRIANGLES, nVertices);
 	return prim;
@@ -1141,7 +1163,7 @@ RectangleStroke.getUV		= RectangleFill.getUV;
 
 // Helper function for generating Three.js geometry
 RectangleGeometry = {};
-RectangleGeometry.create = function( ctr,  width, height )
+RectangleGeometry.create = function( ctr,  width, height, material )
 {
 	var x = ctr[0],  y = ctr[1],  z = 0.0;
 	var	hw = 0.5*width,  hh = 0.5*height;
@@ -1178,6 +1200,17 @@ RectangleGeometry.create = function( ctr,  width, height )
 //	RectangleGeometry.pushIndices( 2, 3, 0 );
 	RectangleGeometry.pushIndices( 2, 1, 0 );
 	RectangleGeometry.pushIndices( 0, 3, 2 );
+
+	//refine the mesh for vertex deformations
+	if (material)
+	{
+		if (material.hasVertexDeformation())
+		{
+			var paramRange = material.getVertexDeformationRange();
+			var tolerance = material.getVertexDeformationTolerance();
+			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
+		}
+	}
 
 	// create the RDGE primitive
 	var prim = ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.TRIANGLES, nVertices);
@@ -1250,3 +1283,102 @@ ShapePrimitive.create = function(coords,  normals,  uvs,  indices, primType, ver
 
 	return prim;
 }
+
+
+ShapePrimitive.refineMesh = function( verts, norms, uvs, indices, nVertices,  paramRange,  tolerance )
+{
+	// get the param range
+	var pUMin = paramRange[0],  pVMin = paramRange[1],
+		pUMax = paramRange[2],  pVMax = paramRange[3];
+	var iTriangle = 0;
+	var nTriangles = indices.length/3;
+	var index = 0;
+	while (iTriangle < nTriangles)
+	{
+		// get the indices of the 3 vertices
+		var i0 = indices[index],
+			i1 = indices[index+1],
+			i2 = indices[index+2];
+
+		// get the uv values
+		var vrtIndex = 3*iTriangle;
+		var iuv0 = 2 * i0,
+			iuv1 = 2 * i1,
+			iuv2 = 2 * i2;
+		var u0 = uvs[iuv0],  v0 = uvs[iuv0+1],
+			u1 = uvs[iuv1],  v1 = uvs[iuv1+1],
+			u2 = uvs[iuv2],  v2 = uvs[iuv2+1];
+
+		// find the u and v range
+		var uMin = u0,  vMin = v0;
+		if (u1 < uMin)  uMin = u1;  if (v1 < vMin)  vMin = v1;
+		if (u2 < uMin)  uMin = u2;  if (v2 < vMin)  vMin = v2;
+		var uMax = u0,  vMax = v0;
+		if (u1 > uMax)  uMax = u1;  if (v1 > vMax)  vMax = v1;
+		if (u2 > uMax)  uMax = u2;  if (v2 > vMax)  vMax = v2;
+
+		// if the parameter range of the triangle is outside the
+		// desired parameter range, advance to the next polygon and continue
+		if ((uMin > pUMax) || (uMax < pUMin) || (vMin > pVMax) || (vMax < pVMin))
+		{
+			// go to the next triangle
+			iTriangle++;
+			index += 3;
+		}
+		else
+		{
+			// check thesize of the triangle in uv space.  If small enough, advance
+			// to the next triangle.  If not small enough, split the triangle into 3;
+			var du = uMax - uMin,  dv = vMax - vMin;
+			if ((du < tolerance) && (dv < tolerance))
+			{
+				iTriangle++;
+				index += 3;
+			}
+			else	// split the triangle
+			{
+				//calculate the position of the new vertex
+				var iPt0 = 3 * i0,
+					iPt1 = 3 * i1,
+					iPt2 = 3 * i2;
+				var x0 = verts[iPt0],  y0 = verts[iPt0+1],  z0 = verts[iPt0+2],
+					x1 = verts[iPt1],  y1 = verts[iPt1+1],  z1 = verts[iPt1+2],
+					x2 = verts[iPt2],  y2 = verts[iPt2+1],  z2 = verts[iPt2+2];
+				var xMid = (x0 + x1 + x2)/3.0,
+					yMid = (y0 + y1 + y2)/3.0,
+					zMid = (z0 + z1 + z2)/3.0;
+
+				// calculate the uv value of the new coordinate
+				var uMid = (u0 + u1 + u2)/3.0,
+					vMid = (v0 + v1 + v2)/3.0;
+
+				// calculate the normal for the new coordinate
+				var nx0 = norms[iPt0],  ny0 = norms[iPt0+1],  nz0 = norms[iPt0+2],
+					nx1 = norms[iPt1],  ny1 = norms[iPt1+1],  nz1 = norms[iPt1+2],
+					nx2 = norms[iPt2],  ny2 = norms[iPt2+1],  nz2 = norms[iPt2+2];
+				var nxMid = (nx0 + nx1 + nx2),
+					nyMid = (ny0 + ny1 + ny2),
+					nzMid = (nz0 + nz1 + nz2);
+				var nrm = VecUtils.vecNormalize(3, [nxMid, nyMid, nzMid], 1.0 );
+
+				// push the new vertex
+				verts.push(nrm[0]);  verts.push(nrm[1]);  verts.push(nrm[2]);
+				uvs.push(uMid),  uvs.push(vMid);
+				norms.push(nrm[0]);  norms.push(nrm[1]);  norms.push(nrm[2]);
+				var iMidVrt = nVertices;
+				nVertices++;
+
+				// split the current triangle into 3
+				indices[index+2] = iMidVrt;
+				indices.push(i1);  indices.push(i2);  indices.push(iMidVrt);  nTriangles++;
+				indices.push(i2);  indices.push(i0);  indices.push(iMidVrt);  nTriangles++;
+
+				// by not advancing 'index', we examine the first of the 3 triangles generated above
+			}
+		}
+	}
+	return nVertices;
+}
+
+
+
