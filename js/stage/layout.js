@@ -74,6 +74,9 @@ exports.Layout = Montage.create(Component, {
     handleElementAdded: {
         value: function(event) {
             this.domTree.push(event.detail);
+
+            this.draw();
+            this.draw3DInfo(false);
         }
     },
 
@@ -82,6 +85,7 @@ exports.Layout = Montage.create(Component, {
             this.domTree.splice(this.domTree.indexOf(event.detail), 1);
 
             this.draw();
+            this.draw3DInfo(false);
         }
     },
 

@@ -20,7 +20,7 @@ exports.ColorToolbar = Montage.create(Component, {
     //Storing stroke (stores color in mode use to select color)
     _stroke: {
         enumerable: false,
-        value: {colorMode: 'rgb', color: {r: 0, g: 0, b: 0, a: 1, css: 'rgb(0,0,0)', mode:'rgb', wasSetByCode: false, type: 'change'}, webGlColor: [0, 0, 0, 1]}
+        value: {colorMode: 'rgb', color: {r: 0, g: 0, b: 0, a: 1, css: 'rgb(0,0,0)', mode:'rgb', wasSetByCode: true, type: 'change'}, webGlColor: [0, 0, 0, 1]}
     },
     ////////////////////////////////////////////////////////////////////
     //
@@ -39,7 +39,7 @@ exports.ColorToolbar = Montage.create(Component, {
     //Storing fill (stores color in mode use to select color)
     _fill: {
         enumerable: false,
-        value: {colorMode: 'rgb', color: {r: 255, g: 255, b: 255, a: 1, css: 'rgb(255,255,255)', mode:'rgb', wasSetByCode: false, type: 'change'}, webGlColor: [1, 1, 1, 1]}
+        value: {colorMode: 'rgb', color: {r: 255, g: 255, b: 255, a: 1, css: 'rgb(255,255,255)', mode:'rgb', wasSetByCode: true, type: 'change'}, webGlColor: [1, 1, 1, 1]}
     },
     ////////////////////////////////////////////////////////////////////
     //
@@ -86,8 +86,8 @@ exports.ColorToolbar = Montage.create(Component, {
     		this.application.ninja.colorController.addButton('chip', this.fill_btn);
             this.application.ninja.colorController.addButton('chip', this.stroke_btn);
             //
-            this.fill_btn.color('rgb', {wasSetByCode: false, type: 'change', color: {r: 255, g: 255, b: 255}, css: 'rgb(255,255,255)'});
-            this.stroke_btn.color('rgb', {wasSetByCode: false, type: 'change', color: {r: 0, g: 0, b: 0}, css: 'rgb(0,0,0)'});
+            this.fill_btn.color('rgb', {wasSetByCode: true, type: 'change', color: {r: 255, g: 255, b: 255}, css: 'rgb(255,255,255)'});
+            this.stroke_btn.color('rgb', {wasSetByCode: true, type: 'change', color: {r: 0, g: 0, b: 0}, css: 'rgb(0,0,0)'});
     	}
     },
     ////////////////////////////////////////////////////////////////////

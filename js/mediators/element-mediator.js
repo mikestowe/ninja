@@ -425,7 +425,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
                 el.elementModel.controller["set3DProperties"](el, props, i, update3DModel);
             }
 
-            NJevent("element" + eventType, {type : "set3DProperties", source: source, data: {"els": els, "prop": props, "value": props}, redraw: null});
+            NJevent("element" + eventType, {type : "set3DProperties", source: source, data: {"els": els, "prop": "matrix", "value": props}, redraw: null});
         }
     },
 
@@ -660,11 +660,11 @@ exports.ElementMediator = Montage.create(NJComponent, {
 
             if(isChanging)
             {
-                NJevent("elementChanging", {type : "setMatrix", source: null, data: {"el": el, "prop": "matrix", "value": mat}, redraw: null});
+                NJevent("elementChanging", {type : "setMatrix", source: null, data: {"els": [el], "prop": "matrix", "value": mat}, redraw: null});
             }
             else
             {
-                NJevent("elementChange", {type : "setMatrix", source: null, data: {"el": el, "prop": "matrix", "value": mat}, redraw: null});
+                NJevent("elementChange", {type : "setMatrix", source: null, data: {"els": [el], "prop": "matrix", "value": mat}, redraw: null});
             }
         }
     },

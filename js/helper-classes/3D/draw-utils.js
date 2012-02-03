@@ -71,6 +71,9 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 
 	_selectionCtr : {value: null, writable: true },
 
+    // Properties that require element planes to be updated
+	_updatePlaneProps : {value: ["matrix", "left", "top", "width", "height"], writable: false },
+
 	///////////////////////////////////////////////////////////////////////
 	// Property accessors
 	///////////////////////////////////////////////////////////////////////
@@ -124,11 +127,38 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
         }
     },
 
+    _shouldUpdatePlanes: {
+        value: function(props) {
+            if(!props)
+            {
+                return false;
+            }
+            else if (typeof props === "string")
+            {
+                return (this._updatePlaneProps.indexOf(props) !== -1);
+            }
 
+            for (var p in props)
+            {
+                if(this._updatePlaneProps.indexOf(p) !== -1)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    },
+
+    // TODO - Check why handleElementChange is being fired before handleAddElement
     handleElementChange: {
         value: function(event) {
+            if(!event.detail || !event.detail.data)
+            {
+                return;
+            }
             var els = event.detail.data.els;
-            if(els)
+            if(els && this._shouldUpdatePlanes(event.detail.data.prop))
             {
                 var len = els.length,
                     i = 0,
@@ -141,7 +171,9 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                     el.elementModel.props3D.elementPlane.init();
                 }
 
+                this.application.ninja.stage.layout.draw();
                 this.drawWorkingPlane();
+                this.draw3DCompass();
             }
         }
     },
