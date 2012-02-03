@@ -525,26 +525,6 @@ exports.PiData = Montage.create( Montage, {
                 ]
             }
         ]
-    },
-
-    componentPi: {
-        value: [
-            {
-                label: "Button",
-
-                Section: [
-                    [
-                        {
-                            type: "textbox",
-                            id: "Label",
-                            prop: "label",
-                            defaultValue: "Button",
-                            label: "Label"
-                        }
-                    ]
-                ]
-            }
-        ]
     }
 });
 

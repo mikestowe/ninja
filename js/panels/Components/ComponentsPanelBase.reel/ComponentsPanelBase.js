@@ -4,11 +4,12 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var Montage = require("montage/core/core").Montage,
-    Component = require("montage/ui/component").Component,
-    NJUtils = require("js/lib/NJUtils").NJUtils;
+var Montage     = require("montage/core/core").Montage,
+    Component   = require("montage/ui/component").Component,
+    NJUtils     = require("js/lib/NJUtils").NJUtils;
 
-var treeControlModule = require("js/components/tree.reel");
+var treeControlModule   = require("js/components/tree.reel");
+var PIData              = require("js/data/pi/pi-data").PiData;
 
 var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component, {
 
@@ -29,6 +30,11 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                     "name": "label",
                     "type": "string",
                     "default": "Button"
+                },
+                {
+                    "name": "enabled",
+                    "type": "boolean",
+                    "default": "true"
                 }
             ]
         }
@@ -43,8 +49,48 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
     _loadComponents: {
         value: function() {
             this.components = [
-                {component: "Button", data: "montage/ui/button.reel/button.json"}
+                {name: "Button", data: "montage/ui/button.reel/button.json"}
             ];
+
+            // Build the PI objects for each component
+            for(var i = 0, component; component = this.components[i]; i++) {
+                var piIdentifier = component.name + "Pi";
+                var piObj = [];
+                var section = {};
+
+
+                section.label = component.name + " Properties";
+                section.Section = [];
+
+                for(var j = 0, props; props = this._testButtonJson.properties[j]; j++) {
+                    var row = {};
+                    row.type = this.getControlType(props.type);
+                    row.id = props.name;
+                    row.prop = props.name;
+                    row.defaultValue = props["default"];
+                    row.label = props.name;
+
+                    section.Section.push([row]);
+                }
+
+                PIData[piIdentifier] = [];
+                PIData[piIdentifier].push(section);
+
+            }
+
+        }
+    },
+
+    getControlType: {
+        value: function(type) {
+            switch(type) {
+                case "string":
+                    return "textbox";
+                case "boolean":
+                    return "checkbox";
+                default:
+                    alert("Conversion not implemented for ", type);
+            }
         }
     },
 
@@ -135,7 +181,7 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
         value: function(name) {
             var el;
             el = NJUtils.makeNJElement(name, "Button", "component");
-            //el.elementModel.pi = "buttonPi";
+            el.elementModel.pi = "ButtonPi";
             el.setAttribute("type", "button");
             return el;
         }
@@ -151,10 +197,8 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
             if(componentType == "Button"){
                 componentEl = NJUtils.makeNJElement("button", componentType, "component");//, {"type": "button"});
                 componentEl.setAttribute("type", "button");
-                //componentEl.innerHTML = "Button";
 
                 componentInstance = this.application.ninja.currentDocument._window.addComponent(componentEl, {type: componentType, path: "montage/ui/button.reel", name: "Button"}, this.callback);
-
 
             }else if(componentType == "Checkbox"){
                 compW = 53;
