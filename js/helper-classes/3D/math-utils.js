@@ -891,36 +891,32 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
         }
     },
 
+/**
+* decompose matrix in javascript found at https://github.com/joelambert/morf/blob/master/js/src/WebkitCSSMatrix.ext.js
+* used with permission from Joe Lambert: "as long as the original licence text and attribution is left in then you're
+* good to use it as you see fit."
+*
+* WebKitCSSMatrix Extensions
+*
+* Copyright 2011, Joe Lambert (http://www.joelambert.co.uk)
+* Free to use under the MIT license.
+* http://joelambert.mit-license.org/
+*/
+
+/**
+* Decomposes the matrix into its component parts.
+* A Javascript implementation of the pseudo code available from http://www.w3.org/TR/css3-2d-transforms/#matrix-decomposition
+* @author Joe Lambert
+* @returns {Object} An object with each of the components of the matrix (perspective, translate, skew, scale, rotate) or identity matrix on failure
+*/
+
 //      Input: matrix       ; a 4x4 matrix
 //      Output: translation ; a 3 component vector
 //              rotation    ; Euler angles, represented as a 3 component vector
 //              scale       ; a 3 component vector
 //              skew        ; skew factors XY,XZ,YZ represented as a 3 component vector
 //              perspective ; a 4 component vector
-//      Returns false if the matrix cannot be decomposed, an object with the above output values if it can
-//
-//        Supporting functions (point is a 3 component vector, matrix is a 4x4 matrix):
-//          float  determinant(matrix)          returns the 4x4 determinant of the matrix
-//          matrix inverse(matrix)              returns the inverse of the passed matrix
-//          matrix transpose(matrix)            returns the transpose of the passed matrix
-//          point  multVecMatrix(point, matrix) multiplies the passed point by the passed matrix
-//                                              and returns the transformed point
-//          float  length(point)                returns the length of the passed vector
-//          point  normalize(point)             normalizes the length of the passed point to 1
-//          float  dot(point, point)            returns the dot product of the passed points
-//          float  cos(float)                   returns the cosine of the passed angle in radians
-//          float  asin(float)                  returns the arcsine in radians of the passed value
-//          float  atan2(float y, float x)      returns the principal value of the arc tangent of
-//                                              y/x, using the signs of both arguments to determine
-//                                              the quadrant of the return value
-//
-//        Decomposition also makes use of the following function:
-//          point combine(point a, point b, float ascl, float bscl)
-//              result[0] = (ascl * a[0]) + (bscl * b[0])
-//              result[1] = (ascl * a[1]) + (bscl * b[1])
-//              result[2] = (ascl * a[2]) + (bscl * b[2])
-//              return result
-//
+//      Returns false if the matrix cannot be decomposed. An object with the above output values if it can.
     decomposeMatrix2: {
         value: function(m)
         {
@@ -1077,7 +1073,6 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
                 rotate[2] = 0;
             }
 
-//        return true;
             return {translation: translate,
                 rotation: rotate,
                 scale: scale,
@@ -1087,6 +1082,15 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
         }
     },
 
+/**
+* Helper function required for matrix decomposition
+* A Javascript implementation of pseudo code available from http://www.w3.org/TR/css3-2d-transforms/#matrix-decomposition
+* @param {Vector4} aPoint A 3D point
+* @param {float} ascl
+* @param {float} bscl
+* @author Joe Lambert
+* @returns {Vector4}
+*/
     combine: {
         value: function(a, b, ascl, bscl)
         {
