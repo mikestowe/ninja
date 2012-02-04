@@ -101,7 +101,7 @@ exports.DocumentEntry = Montage.create(Component, {
                 this.application.ninja.documentController.closeDocument(this._uuid);
             } else {
                 if(!this._document.isActive) {
-                    this.application.ninja.stage.stageView.switchCodeView(this.application.ninja.documentController._findDocumentByUUID(this._uuid));
+                    this.application.ninja.stage.stageView.switchDocument(this.application.ninja.documentController._findDocumentByUUID(this._uuid));
                 }
             }
         }

@@ -1064,6 +1064,7 @@ exports.CoreIoApi = Montage.create(Component, {
     /***
      * checks for valid uri pattern
      * also flags if Windows uri pattern and Unix uri patterns are mixed
+     * Todo: need to augment when files can be accessed via other protocols like http, ftp, ssh, etc.
      */
     isValidUri:{
         value: function(uri){

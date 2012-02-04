@@ -11,14 +11,17 @@ var Montage = 	require("montage/core/core").Montage,
 	ProjectIo = require("js/io/system/projectio").ProjectIo;
 ////////////////////////////////////////////////////////////////////////
 //
-exports.IoMediator = Montage.create(Object.prototype, {
+exports.IoMediator = Montage.create(require("montage/ui/component").Component, {
 	////////////////////////////////////////////////////////////////////
     //
     fileNew: {
     	enumerable: false,
-    	value: function (file, template, callback) {
+    	value: function (file, template, callback, callbackScope) {
     		//
-    		
+
+
+            var returnObj = null; //like {"type": "js", "name": "filename", "source": "test file content", "uri": "/fs/fsd/"}
+    		callback.call(callbackScope, returnObj);
     	}
     },
     ////////////////////////////////////////////////////////////////////

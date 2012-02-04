@@ -216,6 +216,11 @@
                 "name": "ElementMediator"
             },
 
+            "ioMediator": {
+                "module": "js/mediators/io-mediator",
+                "name": "IoMediator"
+            },
+
             "undocontroller1": {
                 "module": "js/controllers/undo-controller",
                 "name": "UndoController"
@@ -285,7 +290,8 @@
                     "filePickerController": {"@": "filePickerController"},
                     "newFileController":    {"@": "newFileController"},
                     "coreIoApi":    		{"@": "coreIoApi1"},
-                    "documentBar":          {"@": "documentBar"}
+                    "documentBar":          {"@": "documentBar"},
+                    "ioMediator":           {"@": "ioMediator"}
                 }
             }
 

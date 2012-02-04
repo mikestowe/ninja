@@ -103,7 +103,32 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
     createNewFile:{
         value:function(newFileObj){
-            //console.log(newFileObj);
+            //console.log(newFileObj);//contains the template uri and the new file uri
+            if(!newFileObj) return;
+            this.application.ninja.ioMediator.fileNew(newFileObj.newFilePath, newFileObj.fileTemplateUri, this.openNewFile, this);
+
+            if((newFileObj.fileExtension !== ".html") && (newFileObj.fileExtension !== ".htm")){//open code view
+
+            }else{
+                //open design view
+            }
+        }
+    },
+
+    /**
+     * Public method
+     * doc contains:
+     *      type : file type, like js, css, etc
+     *      name : file name
+     *      source : file content
+     *      uri : file uri
+     */
+    openNewFile:{
+        value:function(doc){
+            if(!doc){
+                doc = {"type": "js", "name": "filename", "source": "test file content", "uri": "/fs/fsd/"}  ;
+            }
+            this.openDocument(doc);
         }
     },
 
@@ -160,7 +185,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                     newDoc.initialize(doc, docUuid, textArea, textArea.parentNode);
 
                     // Tmp this will be filled with the real content
-                    newDoc.textArea.innerHTML = doc.source; //this.tmpSourceForTesting;
+                    newDoc.textArea.value = doc.source; //this.tmpSourceForTesting;
 
                     this.textDocumentOpened(newDoc);
 
@@ -175,7 +200,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     textDocumentOpened: {
        value: function(doc) {
 
-           this.activeDocument = doc;
+
 
            this.application.ninja.stage.stageView.createTextView(doc);
 
@@ -377,7 +402,10 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value: function() {
             if(this.activeDocument) {
                 this.activeDocument.container.style["display"] = "none";
-                //if(this.activeDocument.documentType === "htm" || this.activeDocument.documentType === "html") this.application.ninja.stage.toggleCanvas();
+                if(this.activeDocument.currentView === "design" || this.activeDocument.currentView === "design"){
+                    this.activeDocument.container.parentNode.style["display"] = "none";
+                    this.application.ninja.stage.hideCanvas(true);
+                }
             }
         }
     },
@@ -386,7 +414,10 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value: function() {
             if(this.activeDocument) {
                 this.activeDocument.container.style["display"] = "block";
-                //if(this.activeDocument.documentType === "htm" || this.activeDocument.documentType === "html") this.application.ninja.stage.toggleCanvas();
+                if(this.activeDocument.currentView === "design" || this.activeDocument.currentView === "design"){
+                    this.activeDocument.container.parentNode.style["display"] = "block";
+                    this.application.ninja.stage.hideCanvas(false);
+                }
             }
         }
     },

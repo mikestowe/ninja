@@ -43,8 +43,15 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
             }
         },
 
+
     // PUBLIC MEMBERS
     cssLoadInterval: { value: null, enumerable: false },
+
+    codeViewDocument:{
+        writable: true,
+        enumerable: true,
+        value:null
+    },
 
     /*
      * PUBLIC API
@@ -431,6 +438,27 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
                 this._swfObject = true;
                 */
             }
+        }
+    },
+
+    /**
+     * public method
+     * parameter:
+     * removeCodeMirrorDivFlag - for code view, tell to remove the codemirror div after saving
+     */
+    save:{
+        value:function(removeCodeMirrorDivFlag){
+            if(this.currentView === "design"){
+                //generate html and save
+            }else if((this.currentView === "code") && (this.codeViewDocument !== null)){
+                if(removeCodeMirrorDivFlag === true){
+                    this.codeViewDocument.save(true);
+                }else{
+                    this.codeViewDocument.save();
+                }
+                //persist to filesystem
+            }
+
         }
     }
 });
