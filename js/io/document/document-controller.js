@@ -105,7 +105,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value:function(newFileObj){
             //console.log(newFileObj);//contains the template uri and the new file uri
             if(!newFileObj) return;
-            this.application.ninja.ioMediator.fileNew(newFileObj.newFilePath, newFileObj.fileTemplateUri, this.openNewFile, this);
+            this.application.ninja.ioMediator.fileNew(newFileObj.newFilePath, newFileObj.fileTemplateUri, {"operation":this.openNewFileCallback, "thisScope":this});
 
             if((newFileObj.fileExtension !== ".html") && (newFileObj.fileExtension !== ".htm")){//open code view
 
@@ -123,7 +123,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
      *      source : file content
      *      uri : file uri
      */
-    openNewFile:{
+    openNewFileCallback:{
         value:function(doc){
             if(!doc){
                 doc = {"type": "js", "name": "filename", "source": "test file content", "uri": "/fs/fsd/"}  ;
@@ -140,20 +140,21 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             }
             //console.log("URI is: ", uri);
 
-            if(!!uri){
-                response = this.application.ninja.coreIoApi.openFile({"uri":uri});
-                if((response.success === true) && ((response.status === 200) || (response.status === 304))){
-                    fileContent = response.content;
-                }
+            this.application.ninja.ioMediator.fileOpen({"uri":uri}, {"operation":this.openFileCallback, "thisScope":this});
+        }
+    },
 
-                //console.log("$$$ "+uri+"\n content = \n\n\n"+ fileContent+"\n\n\n");
-                filename = this.getFileNameFromPath(uri);
-                if(uri.indexOf('.') != -1){
-                    fileType = uri.substr(uri.lastIndexOf('.') + 1);
-                }
-                this.openDocument({"type": ""+fileType, "name": ""+filename, "source": fileContent, "uri": uri});
-            }
-
+    /**
+     * Public method
+     * doc contains:
+     *      type : file type, like js, css, etc
+     *      name : file name
+     *      source : file content
+     *      uri : file uri
+     */
+    openFileCallback:{
+        value:function(doc){
+            this.openDocument(doc);
         }
     },
 
@@ -460,14 +461,5 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value: function() {
             return "userDocument_" + (this._iframeCounter++);
         }
-    },
-
-    ///// Return the last part of a path (e.g. filename)
-        getFileNameFromPath : {
-            value: function(path) {
-                path = path.replace(/[/\\]$/g,"");
-                path = path.replace(/\\/g,"/");
-                return path.substr(path.lastIndexOf('/') + 1);
-            }
-        }
+    }
 });

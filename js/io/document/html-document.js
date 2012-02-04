@@ -216,8 +216,9 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
         value: function(doc, uuid, iframe, callback) {
             // Shell mode is not used anymore
             //if(!window.IsInShellMode()) {
-
-                this.init("index-cloud", this._cloudTemplateUri, doc.type, iframe, uuid, callback);
+                if(!doc.name){doc.name = "index-cloud"};
+                if(!doc.uri){doc.uri = this._cloudTemplateUri};
+                this.init(doc.name, doc.uri, doc.type, iframe, uuid, callback);
             /*
             } else {
                 var tmpurl = doc.uri.split('\\');
