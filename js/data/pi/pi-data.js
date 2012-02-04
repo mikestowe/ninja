@@ -288,7 +288,6 @@ exports.PiData = Montage.create( Montage, {
                             type : "color",
                             prop: "background",
                             id : "fill",
-                            prop : "fill",
                             divider : true
                         }
                     ],
@@ -462,7 +461,6 @@ exports.PiData = Montage.create( Montage, {
                             type : "color",
                             prop: "background",
                             id : "fill",
-                            prop : "fill",
                             divider : true
                         }
                     ],
