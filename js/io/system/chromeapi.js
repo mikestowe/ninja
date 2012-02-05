@@ -7,6 +7,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 /* /////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 NOTES:
+	The init function starts up the file system API, and a size must be
+	set, no unlimited available as of now.
 ////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////// */
 //
@@ -24,9 +26,11 @@ exports.ChromeApi = Montage.create(Object.prototype, {
     			//Current way to init Chrome's fileSystem API
     			window.webkitRequestFileSystem(window.PERSISTENT, size*1024*1024, function (fs) {
     				this.fileSystem = fs;
-    			}).bind(this);
+    			}.bind(this));
+    			return true;
     		} else {
     			//No fileSystem API
+    			return false;
     		}
     	}
     },
@@ -46,6 +50,49 @@ exports.ChromeApi = Montage.create(Object.prototype, {
         set: function(value) {
         	this._fileSystem = value;
         }
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    directoryNew: {
+    	enumerable: true,
+    	value: function() {
+    	}
+    },
+    
+    ////////////////////////////////////////////////////////////////////
+    //
+    directoryDelete: {//TODO: Make sure it uses a force delete
+    	enumerable: true,
+    	value: function() {
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    directoryContents: {
+    	enumerable: true,
+    	value: function() {
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    directoryCopy: {
+    	enumerable: true,
+    	value: function() {
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    directoryRename: {
+    	enumerable: true,
+    	value: function() {
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    directoryMove: {
+    	enumerable: true,
+    	value: function() {
+    	}
     }
     ////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////   

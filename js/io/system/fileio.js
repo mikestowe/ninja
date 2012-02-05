@@ -91,6 +91,19 @@ exports.FileIo = Montage.create(Object.prototype, {
     },
     ////////////////////////////////////////////////////////////////////
     //
+    deleteFile: {
+    	enumerable: true,
+    	value: function() {
+    		//Checking for API to be available
+    		if (!this.application.ninja.coreIoApi.cloudAvailable()) {
+    			//API not available, no IO action taken
+    			return null;
+    		}
+    		//
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
     copyFile: {
     	enumerable: true,
     	value: function() {

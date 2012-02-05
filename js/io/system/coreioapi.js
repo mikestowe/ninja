@@ -28,6 +28,12 @@ exports.CoreIoApi = Montage.create(Component, {
 			////////////////////////////////////////////////////////////
 			//Getting reference of chrome file system API
 			this.chromeFileSystem = ChromeApi;
+			//Sending size in MBs for file system storage
+			if (this.chromeFileSystem.init(20)) {
+				//Available
+			} else {
+				//Not available
+			}
 			////////////////////////////////////////////////////////////
 			//Checking for local storage of URL for IO
 			if (window.localStorage['ioRootUrl']) {
