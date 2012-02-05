@@ -10,36 +10,6 @@
     <link rel="stylesheet" type="text/css" href="new-file-options-navigator.css">
     <script type="text/montage-serialization">
     {
-        "okButton": {
-            "module": "montage/ui/button.reel",
-            "name": "Button",
-            "properties": {
-                "element": {"#": "okButton"},
-                "identifier": "okButton"
-            },
-            "listeners": [
-                {
-                    "type": "action",
-                    "listener": {"@": "owner"}
-                }
-            ]
-        },
-
-        "cancelButton": {
-            "module": "montage/ui/button.reel",
-            "name": "Button",
-            "properties": {
-                "element": {"#": "cancelButton"},
-                "identifier": "cancelButton"
-            },
-            "listeners": [
-                {
-                    "type": "action",
-                    "listener": {"@": "owner"}
-                }
-            ]
-        },
-
         "newFileLocation":{
             "module": "js/io/ui/new-file-dialog/new-file-location.reel",
             "name": "NewFileLocation",
@@ -70,7 +40,7 @@
 <div id="newfile" class="newfile">
     <div class="title">Create New File</div>
     <div class="container left-nav">
-        <div class="projectTypeHeader"><span>File Type</span></div>
+        <div class="projectTypeHeader"><span>Choose Type</span></div>
         <div id="projectTypeTree" class="projectTypeTree"></div>
     </div>
     <div class="container right-nav">

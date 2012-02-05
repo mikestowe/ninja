@@ -1,51 +1,73 @@
 {
 	"categories":{
-		"children":["newFile"]
+		"children":["/"]
 	},
-	"newFile":{
-		"name":"Blank Template",
+	"/":{
+		"name":"Blank File",
 		"uri":"/",
 		"type":"directory",
-		"children":["html", "js", "css", "json", "php", "pl", "py", "rb"]
+		"children":["files/html.txt", "files/js.txt", "files/css.txt", "files/json.txt", "files/php.txt", "files/pl.txt", "files/py.txt", "files/rb.txt"]
 	},
-	"html":{
+	"files/html.txt":{
 		"name":"HTML",
 		"uri":"files/html.txt",
-		"type":"file"
+		"type":"file",
+        "fileExtension":".html",
+        "children":["defaultTemplate"]
 	},
-	"js":{
+	"files/js.txt":{
 		"name":"JavaScript",
 		"uri":"files/js.txt",
-		"type":"file"
+		"type":"file",
+        "fileExtension":".js",
+        "children":["defaultTemplate"]
 	},
-	"css":{
+	"files/css.txt":{
 		"name":"Cascading Style Sheets",
 		"uri":"files/css.txt",
-		"type":"file"
+		"type":"file",
+        "fileExtension":".css",
+        "children":["defaultTemplate"]
 	},
-	"json":{
+	"files/json.txt":{
 		"name":"JSON",
 		"uri":"files/json.txt",
-		"type":"file"
+		"type":"file",
+        "fileExtension":".json",
+        "children":["defaultTemplate"]
 	},
-	"php":{
+	"files/php.txt":{
 		"name":"PHP",
 		"uri":"files/php.txt",
-		"type":"file"
+		"type":"file",
+        "fileExtension":".php",
+        "children":["defaultTemplate"]
 	},
-	"pl":{
+	"files/pl.txt":{
 		"name":"Perl",
 		"uri":"files/pl.txt",
-		"type":"file"
+		"type":"file",
+        "fileExtension":".pl",
+        "children":["defaultTemplate"]
 	},
-	"py":{
+	"files/py.txt":{
 		"name":"Python",
 		"uri":"files/py.txt",
-		"type":"file"
+		"type":"file",
+        "fileExtension":".py",
+        "children":["defaultTemplate"]
 	},
-	"rb":{
+	"files/rb.txt":{
 		"name":"Ruby",
 		"uri":"files/rb.txt",
-		"type":"file"
-	}
+		"type":"file",
+        "fileExtension":".rb",
+        "children":["defaultTemplate"]
+	},
+    "defaultTemplate":{
+        "name": "Basic",
+        "uri": "defaultTemplate",
+        "type":"file"
+    }
+
 }

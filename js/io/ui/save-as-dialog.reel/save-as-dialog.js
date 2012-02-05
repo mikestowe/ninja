@@ -6,7 +6,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
-    //nj= ("js/lib/NJUtils.js").NJUtils;
 
 var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
 
@@ -57,6 +56,9 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
 
             this.newFileName.addEventListener("blur", function(evt){self.handleNewFileNameOnblur(evt);}, false);
             this.eventManager.addEventListener("newFileDirectorySet", function(evt){self.handleNewFileDirectorySet(evt);}, false);
+
+            this.okButton.addEventListener("click", function(evt){self.handleOkButtonAction(evt);}, false);
+            this.cancelButton.addEventListener("click", function(evt){self.handleCancelButtonAction(evt);}, false);
 
             this.enableOk();
         }
@@ -163,7 +165,7 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
     },
     isValidFileName:{
         value: function(fileName){
-            var status = nj.isValidFileName(fileName);
+            var status = this.isValidFileName(fileName);
             if(fileName !== ""){
                 if(!status){
                     this.showError("! Invalid file name.");
@@ -191,6 +193,23 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
                 this.okButton.setAttribute("disabled", "true");
             }
         }
-    }
+    },
+
+       /***
+         * file name validation
+         */
+        isValidFileName:{
+            value: function(fileName){
+                var status = false;
+                if(fileName !== ""){
+                    fileName = fileName.replace(/^\s+|\s+$/g,"");
+                    status = !(/[/\\]/g.test(fileName));
+                    if(status && navigator.userAgent.indexOf("Macintosh") != -1){//for Mac files beginning with . are hidden
+                        status = !(/^\./g.test(fileName));
+                    }
+                }
+                return status;
+            }
+        }
 
 });

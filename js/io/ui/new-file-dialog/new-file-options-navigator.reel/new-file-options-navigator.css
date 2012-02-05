@@ -154,3 +154,7 @@
     background-image:none;
     cursor:auto;
 }
+
+.newfile .atree ul{
+    -webkit-padding-start: 10px;
+}

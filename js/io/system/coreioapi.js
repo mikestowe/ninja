@@ -1013,6 +1013,7 @@ exports.CoreIoApi = Montage.create(Component, {
     /***
      * checks for valid uri pattern
      * also flags if Windows uri pattern and Unix uri patterns are mixed
+     * Todo: need to augment when files can be accessed via other protocols like http, ftp, ssh, etc.
      */
     isValidUri:{
         value: function(uri){
@@ -1035,7 +1036,7 @@ exports.CoreIoApi = Montage.create(Component, {
      * check if the file exists
      */
     checkFileExists:{
-        value: function(fileUri, folderUri, fileType){
+        value: function(fileName, folderUri, fileType){
             var uri = "", response=null, status=true;
 
             //prepare absolute uri
@@ -1043,9 +1044,11 @@ exports.CoreIoApi = Montage.create(Component, {
                 folderUri = folderUri + "/";
             }
 
-            //todo:add file extension check if fileType present
+            if(!!fileType && (fileName.lastIndexOf(fileType) !== (fileName.length - fileType.length))){
+                fileName = fileName+fileType;
+            }
 
-            uri = ""+folderUri+fileUri;
+            uri = ""+folderUri+fileName;
 
             response = this.fileExists({"uri":uri});
             if(!!response && response.success && (response.status === 204)){

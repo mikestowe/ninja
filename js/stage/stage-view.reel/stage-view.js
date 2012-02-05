@@ -76,17 +76,13 @@ exports.StageView = Montage.create(Component, {
     // Temporary function to create a Codemirror text view
     createTextView: {
         value: function(doc) {
-            var documentController = this.application.ninja.documentController;
-
+            //save current document
+            if(this.application.ninja.documentController.activeDocument.currentView === "code"){
+                this.application.ninja.documentController.activeDocument.save(true);
+            }
             this.application.ninja.documentController._hideCurrentDocument();
-
-            this.application.ninja.currentDocument.container.parentNode.style["display"] = "none";
-
-            this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
-            this.application.ninja.documentController.activeDocument = doc;
-
+            this.hideOtherDocuments(doc.uuid);
             var type;
-
             switch(doc.documentType) {
                 case  "css" :
                     type = "css";
@@ -96,14 +92,8 @@ exports.StageView = Montage.create(Component, {
                     break;
             }
 
-            //hide other Codemirror divs
-            this.hideOtherCodeView(doc.uuid);
-
-
             //fix hack
             document.getElementById("codeMirror_"+doc.uuid).style.display="block";
-
-
 
             doc.editor = CodeMirror.fromTextArea(doc.textArea, {
                 lineNumbers: true,
@@ -115,25 +105,20 @@ exports.StageView = Montage.create(Component, {
            });
 
            //this.application.ninja.documentController._codeEditor.hline = this.application.ninja.documentController._codeEditor.editor.setLineClass(0, "activeline");
-
-           this.application.ninja.stage.hideCanvas(true);
-
+            this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
+            this.application.ninja.documentController.activeDocument = doc;
+            this.application.ninja.stage.hideCanvas(true);
         }
     },
 
 
 
-    switchCodeView:{
+    switchDocument:{
         value: function(doc){
 
             //if dirty SAVE codemirror into textarea
-            //this.application.ninja.documentController.activeDocument.editor.save();
-
-            //remove the codemirror div
-            var codemirrorDiv = this.application.ninja.documentController.activeDocument.container.querySelector(".CodeMirror");
-            if(!!codemirrorDiv){
-                codemirrorDiv.parentNode.removeChild(codemirrorDiv);
-                this.application.ninja.documentController.activeDocument.editor = null;
+            if(this.application.ninja.documentController.activeDocument.currentView === "code"){
+                this.application.ninja.documentController.activeDocument.save(true);
             }
 
             this.application.ninja.documentController._hideCurrentDocument();
@@ -143,28 +128,29 @@ exports.StageView = Montage.create(Component, {
             this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
             this.application.ninja.documentController._showCurrentDocument();
 
-            var type;
-            switch(doc.documentType) {
-                case  "css" :
-                    type = "css";
-                    break;
-                case "js" :
-                    type = "javascript";
-                    break;
+            if(this.application.ninja.documentController.activeDocument.currentView === "code"){
+                var type;
+                switch(doc.documentType) {
+                    case  "css" :
+                        type = "css";
+                        break;
+                    case "js" :
+                        type = "javascript";
+                        break;
+                }
+
+                //add the codemirror div again for editting
+                doc.editor = CodeMirror.fromTextArea(doc.textArea, {
+                               lineNumbers: true,
+                               mode: type,
+                               onCursorActivity: function() {
+                                   //documentController._codeEditor.editor.setLineClass(documentController._codeEditor.hline, null);
+                                   //documentController._codeEditor.hline = documentController._codeEditor.editor.setLineClass(documentController._codeEditor.editor.getCursor().line, "activeline");
+                               }
+                   });
+
+                //this.application.ninja.documentController._codeEditor.hline = this.application.ninja.documentController._codeEditor.editor.setLineClass(0, "activeline");
             }
-
-            //add the codemirror div again for editting
-            doc.editor = CodeMirror.fromTextArea(doc.textArea, {
-                            lineNumbers: true,
-                                   mode: type,
-                                   onCursorActivity: function() {
-                                       //documentController._codeEditor.editor.setLineClass(documentController._codeEditor.hline, null);
-                                       //documentController._codeEditor.hline = documentController._codeEditor.editor.setLineClass(documentController._codeEditor.editor.getCursor().line, "activeline");
-                                   }
-                       });
-
-            //this.application.ninja.documentController._codeEditor.hline = this.application.ninja.documentController._codeEditor.editor.setLineClass(0, "activeline");
-
 
         }
     },
@@ -201,16 +187,16 @@ exports.StageView = Montage.create(Component, {
 
         }
     },
-    hideOtherCodeView:{
+    hideOtherDocuments:{
         value:function(docUuid){
-            var i=0;
-            if(this.element.hasChildNodes()){
-                for(i=0;i<this.element.childNodes.length;i++){
-                    if(this.element.childNodes[i].id !== ("codeMirror_"+docUuid)){
-                        this.element.childNodes[i].style.display = "none";
-                    }
+            //use CodeMirror toTextArea() to remove editor and save content into textarea
+            this.application.ninja.documentController._documents.forEach(function(aDoc){
+                if(aDoc.currentView === "design"){
+                    aDoc.container.parentNode.style["display"] = "none";
+                }else if((aDoc.currentView === "code") && (aDoc.uuid !== docUuid)){
+                    aDoc.container.style["display"] = "none";
                 }
-            }
+            }, this);
         }
     }
 });

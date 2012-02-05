@@ -15,7 +15,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component,
     Uuid = require("montage/core/uuid").Uuid,
-    //nj= ("js/lib/NJUtils.js").NJUtils,
     HTMLDocument = require("js/io/document/html-document").HTMLDocument,
     TextDocument = require("js/io/document/text-document").TextDocument;
 
@@ -71,8 +70,8 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     deserializedFromTemplate: {
         value: function() {
             this.eventManager.addEventListener("appLoaded", this, false);
-
             this.eventManager.addEventListener("executeFileOpen", this, false);
+            this.eventManager.addEventListener("executeNewFile", this, false);
         }
     },
 
@@ -93,6 +92,46 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         }
     },
 
+    handleExecuteNewFile: {
+            value: function(event) {
+                var newFileSettings = event._event.settings || {};
+                newFileSettings.callback = this.createNewFile;
+                newFileSettings.callbackScope = this;
+                this.application.ninja.newFileController.showNewFileDialog(newFileSettings);
+            }
+    },
+
+    createNewFile:{
+        value:function(newFileObj){
+            //console.log(newFileObj);//contains the template uri and the new file uri
+            if(!newFileObj) return;
+            this.application.ninja.ioMediator.fileNew(newFileObj.newFilePath, newFileObj.fileTemplateUri, {"operation":this.openNewFileCallback, "thisScope":this});
+
+            if((newFileObj.fileExtension !== ".html") && (newFileObj.fileExtension !== ".htm")){//open code view
+
+            }else{
+                //open design view
+            }
+        }
+    },
+
+    /**
+     * Public method
+     * doc contains:
+     *      type : file type, like js, css, etc
+     *      name : file name
+     *      source : file content
+     *      uri : file uri
+     */
+    openNewFileCallback:{
+        value:function(doc){
+            if(!doc){
+                doc = {"type": "js", "name": "filename", "source": "test file content", "uri": "/fs/fsd/"}  ;
+            }
+            this.openDocument(doc);
+        }
+    },
+
     openFileWithURI: {
         value: function(uriArrayObj) {
             var uri = "", fileContent = "", response=null, filename="", fileType="js";
@@ -101,20 +140,21 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             }
             //console.log("URI is: ", uri);
 
-            if(!!uri){
-                response = this.application.ninja.coreIoApi.openFile({"uri":uri});
-                if((response.success === true) && ((response.status === 200) || (response.status === 304))){
-                    fileContent = response.content;
-                }
+            this.application.ninja.ioMediator.fileOpen({"uri":uri}, {"operation":this.openFileCallback, "thisScope":this});
+        }
+    },
 
-                //console.log("$$$ "+uri+"\n content = \n\n\n"+ fileContent+"\n\n\n");
-                filename = nj.getFileNameFromPath(uri);
-                if(uri.indexOf('.') != -1){
-                    fileType = uri.substr(uri.lastIndexOf('.') + 1);
-                }
-                this.openDocument({"type": ""+fileType, "name": ""+filename, "source": fileContent, "uri": uri});
-            }
-
+    /**
+     * Public method
+     * doc contains:
+     *      type : file type, like js, css, etc
+     *      name : file name
+     *      source : file content
+     *      uri : file uri
+     */
+    openFileCallback:{
+        value:function(doc){
+            this.openDocument(doc);
         }
     },
 
@@ -146,7 +186,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                     newDoc.initialize(doc, docUuid, textArea, textArea.parentNode);
 
                     // Tmp this will be filled with the real content
-                    newDoc.textArea.innerHTML = doc.source; //this.tmpSourceForTesting;
+                    newDoc.textArea.value = doc.source; //this.tmpSourceForTesting;
 
                     this.textDocumentOpened(newDoc);
 
@@ -161,7 +201,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     textDocumentOpened: {
        value: function(doc) {
 
-           this.activeDocument = doc;
+
 
            this.application.ninja.stage.stageView.createTextView(doc);
 
@@ -363,7 +403,10 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value: function() {
             if(this.activeDocument) {
                 this.activeDocument.container.style["display"] = "none";
-                //if(this.activeDocument.documentType === "htm" || this.activeDocument.documentType === "html") this.application.ninja.stage.toggleCanvas();
+                if(this.activeDocument.currentView === "design" || this.activeDocument.currentView === "design"){
+                    this.activeDocument.container.parentNode.style["display"] = "none";
+                    this.application.ninja.stage.hideCanvas(true);
+                }
             }
         }
     },
@@ -372,7 +415,10 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value: function() {
             if(this.activeDocument) {
                 this.activeDocument.container.style["display"] = "block";
-                //if(this.activeDocument.documentType === "htm" || this.activeDocument.documentType === "html") this.application.ninja.stage.toggleCanvas();
+                if(this.activeDocument.currentView === "design" || this.activeDocument.currentView === "design"){
+                    this.activeDocument.container.parentNode.style["display"] = "block";
+                    this.application.ninja.stage.hideCanvas(false);
+                }
             }
         }
     },

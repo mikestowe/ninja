@@ -9,7 +9,6 @@ var Montage = require("montage/core/core").Montage,
      iconsListModule = require("js/components/ui/icon-list-basic/iconsList.reel"),
     treeModule = require("js/components/ui/tree-basic/tree.reel"),
     newFileLocationSelectionModule = require("js/io/ui/new-file-dialog/new-file-workflow-controller");
-    //nj= ("js/lib/NJUtils.js").NJUtils;
 
 var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(Component, {
 
@@ -82,6 +81,9 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
             this.eventManager.addEventListener("newFileDirectorySet", function(evt){that.handleNewFileDirectorySet(evt);}, false);
             this.eventManager.addEventListener("newFileNameSet", function(evt){that.handleNewFileNameSet(evt);}, false);
 
+            this.okButton.addEventListener("click", function(evt){that.handleOkButtonAction(evt);}, false);
+            this.cancelButton.addEventListener("click", function(evt){that.handleCancelButtonAction(evt);}, false);
+
             if(!!this.newFileModel.defaultProjectType){
                 var templates = this.newFileModel.prepareContents(this.newFileModel.defaultProjectType);
                 this.templateList = iconsListModule.IconsList.create();
@@ -91,6 +93,14 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
 
 
                 this.selectedProjectType = {"uri":this.newFileModel.defaultProjectType, "element":null};
+            }
+
+            //update file Extension
+            if(!!this.newFileModel.projectTypeData[this.newFileModel.defaultProjectType].fileExtension){
+                var fileExtensionEl = this.element.querySelector(".fileExtension");
+                if(!!fileExtensionEl){
+                    fileExtensionEl.innerHTML = ""+this.newFileModel.projectTypeData[this.newFileModel.defaultProjectType].fileExtension;
+                }
             }
         }
 
@@ -128,7 +138,15 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
 
                 //clear current template selection
                 if((!!this.selectedTemplate) && (this.selectedTemplate.element.classList.contains("selected"))){
-                                    this.selectedTemplate.element.classList.remove("selected");
+                    this.selectedTemplate.element.classList.remove("selected");
+                }
+
+                //update file Extension
+                if(!!this.newFileModel.projectTypeData[evt.uri].fileExtension){
+                    var fileExtensionEl = this.element.querySelector(".fileExtension");
+                    if(!!fileExtensionEl){
+                        fileExtensionEl.innerHTML = ""+this.newFileModel.projectTypeData[evt.uri].fileExtension;
+                    }
                 }
 
                 //disable ok
@@ -186,6 +204,7 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
                 projectWidth = this.newFileLocation.templateWidth,
                 projectHeight = this.newFileLocation.templateHeight,
 
+                newFilePath = "", fileExtension=this.newFileModel.projectTypeData[selectedProjectTypeID].fileExtension,
 
                 selectionlog= "selectedProjectTypeID="+selectedProjectTypeID +"\n"+
                             "templateID="+templateID+ "\n"+
@@ -194,29 +213,31 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
                             "projectWidth="+projectWidth+"\n"+
                             "projectHeight="+projectHeight;
 
+
+            if(/[^/\\]$/g.test(projectDirectory)){
+                projectDirectory = projectDirectory + "/";
+            }
+            if(!!fileExtension && (projectName.lastIndexOf(fileExtension) !== (projectName.length - fileExtension.length))){
+                projectName = projectName+fileExtension;
+            }
+            newFilePath = "" + projectDirectory + projectName;
+
+
             if(!!this.selectedProjectType && !!this.selectedTemplate
                 && this.isValidFileName(projectName) && this.isValidUri(projectDirectory)
                 && !this.checkFileExists(projectName, projectDirectory, this.selectedProjectType)
             ){
                 this.error.innerHTML="";
-                console.log("$$$ new file selections: \n" + selectionlog);
+                //console.log("$$$ new file selections: \n" + selectionlog);
                 if(!!this.newFileModel.callback && !!this.newFileModel.callbackScope){//inform document-controller if save successful
-                    this.newFileModel.callback.call(this.newFileModel.callbackScope, {"selectedProjectTypeID":selectedProjectTypeID,
-                                                                                 "templateID":templateID,
-                                                                                 "projectName": projectName,
-                                                                                 "projectDirectory":projectDirectory,
-                                                                                 "projectWidth":projectWidth,
-                                                                                 "projectHeight":projectHeight});//document-controller api
+                    this.newFileModel.callback.call(this.newFileModel.callbackScope, {"fileTemplateUri":selectedProjectTypeID,
+                                                                                 "newFilePath":newFilePath,
+                                                                                  "fileExtension":fileExtension});//document-controller api
                 }else{
                     //send selection event
                     var newFileSelectionEvent = document.createEvent("Events");
                     newFileSelectionEvent.initEvent("createNewFile", false, false);
-                    newFileSelectionEvent.newFileOptions = {"selectedProjectTypeID":selectedProjectTypeID,
-                                                             "templateID":templateID,
-                                                             "projectName": projectName,
-                                                             "projectDirectory":projectDirectory,
-                                                             "projectWidth":projectWidth,
-                                                             "projectHeight":projectHeight};
+                    newFileSelectionEvent.newFileOptions = {"fileTemplateUri":selectedProjectTypeID, "newFilePath":newFilePath,"fileExtension":fileExtension};
                     this.eventManager.dispatchEvent(newFileSelectionEvent);
                 }
                 //store last selected project type
@@ -306,7 +327,7 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
 
             if(!!this.selectedProjectType && !!this.selectedTemplate
                 && this.isValidFileName(this.newFileName) && this.isValidUri(this.newFileDirectory)
-                && !this.checkFileExists(this.newFileName, this.newFileDirectory, this.selectedProjectType)
+                && !this.checkFileExists(this.newFileName, this.newFileDirectory, this.newFileModel.projectTypeData[this.selectedProjectType.uri].fileExtension)
                 ){
                 status = true;
                 this.okButton.removeAttribute("disabled");
@@ -346,7 +367,7 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
     },
     isValidFileName:{
         value: function(fileName){
-            var status = nj.isValidFileName(fileName);
+            var status = this.isValidFileName(fileName);
             if(fileName !== ""){
                 if(!status){
                     this.showError("! Invalid file name.");
@@ -373,6 +394,23 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
                 this.okButton.setAttribute("disabled", "true");
             }
         }
-    }
+    },
+
+        /***
+         * file name validation
+         */
+        isValidFileName:{
+            value: function(fileName){
+                var status = false;
+                if(fileName !== ""){
+                    fileName = fileName.replace(/^\s+|\s+$/g,"");
+                    status = !(/[/\\]/g.test(fileName));
+                    if(status && navigator.userAgent.indexOf("Macintosh") != -1){//for Mac files beginning with . are hidden
+                        status = !(/^\./g.test(fileName));
+                    }
+                }
+                return status;
+            }
+        }
 
 });

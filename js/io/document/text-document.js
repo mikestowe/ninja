@@ -85,6 +85,22 @@ var TextDocument = exports.TextDocument = Montage.create(baseDocumentModule.Base
             
             xhr.send('');
         }
+    },
+
+    /**
+     * public method
+     * parameter:
+     * removeCodeMirrorDivFlag - for code view, tell to remove the codemirror div after saving
+     */
+    save:{
+        value:function(removeCodeMirrorDivFlag){
+            this.editor.save();
+            if(removeCodeMirrorDivFlag === true){
+                var codemirrorDiv = this.textArea.parentNode.querySelector(".CodeMirror");
+                if(!!codemirrorDiv){codemirrorDiv.parentNode.removeChild(codemirrorDiv);}
+            }
+            //persist to filesystem
+        }
     }
     
 });

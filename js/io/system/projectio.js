@@ -10,7 +10,7 @@ var Montage = 	require("montage/core/core").Montage,
 	FileIo = 	require("js/io/system/fileio").FileIo;
 ////////////////////////////////////////////////////////////////////////
 //
-exports.ProjectIo = = Montage.create(Object.prototype, {
+exports.ProjectIo = Montage.create(Object.prototype, {
 	////////////////////////////////////////////////////////////////////
     //
     newProject: {

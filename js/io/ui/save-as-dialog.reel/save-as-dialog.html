@@ -10,36 +10,6 @@
     <link rel="stylesheet" type="text/css" href="save-as-dialog.css">
     <script type="text/montage-serialization">
     {
-        "okButton": {
-            "module": "montage/ui/button.reel",
-            "name": "Button",
-            "properties": {
-                "element": {"#": "okButton"},
-                "identifier": "okButton"
-            },
-            "listeners": [
-                {
-                    "type": "action",
-                    "listener": {"@": "owner"}
-                }
-            ]
-        },
-
-        "cancelButton": {
-            "module": "montage/ui/button.reel",
-            "name": "Button",
-            "properties": {
-                "element": {"#": "cancelButton"},
-                "identifier": "cancelButton"
-            },
-            "listeners": [
-                {
-                    "type": "action",
-                    "listener": {"@": "owner"}
-                }
-            ]
-        },
-
         "fileInputField":{
             "module": "js/components/ui/FilePicker/file-input-field.reel",
             "name": "FileInputField",
@@ -56,7 +26,8 @@
                 "fileInputField": {"@": "fileInputField"},
                 "newFileName": {"#": "newFileName"},
                 "error":{"#": "error"},
-                "okButton":{"#": "okButton"}
+                "okButton":{"#": "okButton"},
+                "cancelButton":{"#": "cancelButton"}
             }
         }
     }
