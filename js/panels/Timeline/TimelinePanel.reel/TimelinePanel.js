@@ -74,6 +74,20 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
+    _selectedKeyframes:{
+        value:[]
+    },
+
+    selectedKeyframes:{
+        serializable:true,
+        get:function () {
+            return this._selectedKeyframes;
+        },
+        set:function (newVal) {
+            this._selectedKeyframes = newVal;
+        }
+    },
+
 
     /* === END: Models === */
    
@@ -150,6 +164,16 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:function(){
             this.user_layers.scrollTop = this.layer_tracks.scrollTop;
             this.master_track.scrollLeft = this.layer_tracks.scrollLeft;
+        }
+    },
+
+    deselectKeyframes:{
+        value:function () {
+            for (var i = 0; i < this.selectedKeyframes.length; i++) {
+                this.selectedKeyframes[i].deselect();
+            }
+            this.selectedKeyframes = null;
+            this.selectedKeyframes = new Array();
         }
     },
 
