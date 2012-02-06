@@ -15,89 +15,26 @@ NOTES:
 var Montage = 		require("montage/core/core").Montage,
     Component = 	require("montage/ui/component").Component,
     Popup = 		require("js/components/popup.reel").Popup,
-    CloudPopup = 	require("js/io/ui/cloudpopup.reel").CloudPopup;
+    CloudPopup = 	require("js/io/ui/cloudpopup.reel").CloudPopup,
+    ChromeApi =		require("js/io/system/chromeapi").ChromeApi;
 ////////////////////////////////////////////////////////////////////////
 //Exporting as Project I/O
 exports.CoreIoApi = Montage.create(Component, {
-	////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
     //
 	deserializedFromTemplate: {
 		enumerable: false,
 		value: function () {
-		
-			
-			
 			////////////////////////////////////////////////////////////
+			//Getting reference of chrome file system API
+			this.chromeFileSystem = ChromeApi;
+			//Sending size in MBs for file system storage
+			if (this.chromeFileSystem.init(20)) {
+				//Available
+			} else {
+				//Not available
+			}
 			////////////////////////////////////////////////////////////
-			//TODO: Remove, this is only for testing
-		
-			
-			window.webkitRequestFileSystem(window.PERSISTENT, 10*1024*1024 /*10MB*/, function (fs) {
-				
-				
-				console.log(fs);
-				
-				var start = new Date().getTime();
-				
-				for (var i=0; i<250; i++) {
-					
-					fs.root.getFile('test'+i+'.txt', {create: true}, function(fileEntry) {
-					
-						fileEntry.createWriter(function(fileWriter) {
-						
-							var bb = new window.WebKitBlobBuilder;
-      						bb.append('In condimentum facilisis porta. Sed nec diam eu diam mattis viverra. Nulla fringilla, orci ac euismod semper, magna diam porttitor mauris, quis sollicitudin sapien justo in libero. Vestibulum mollis mauris enim. Morbi euismod magna ac lorem rutrum elementum. Donec viverra auctor lobortis. Pellentesque eu est a nulla placerat dignissim. Morbi a enim in magna semper bibendum. Etiam scelerisque, nunc ac egestas consequat, odio nibh euismod nulla, eget auctor orci nibh vel nisi. Aliquam erat volutpat. Mauris vel neque sit amet nunc gravida congue sed sit amet purus. Quisque lacus quam, egestas ac tincidunt a, lacinia vel velit. Aenean facilisis nulla vitae urna tincidunt congue sed ut dui. Morbi malesuada nulla nec purus convallis consequat. Vivamus id mollis quam. Morbi ac commodo nulla. In condimentum orci id nisl volutpat bibendum. Quisque commodo hendrerit lorem quis egestas. Maecenas quis tortor arcu. Vivamus rutrum nunc non neque consectetur quis placerat neque lobortis. Nam vestibulum, arcu sodales feugiat consectetur, nisl orci bibendum elit, eu euismod magna sapien ut nibh. Donec semper quam scelerisque tortor dictum gravida. In hac habitasse platea dictumst. Nam pulvinar, odio sed rhoncus suscipit, sem diam ultrices mauris, eu consequat purus metus eu velit. Proin metus odio, aliquam eget molestie nec, gravida ut sapien. Phasellus quis est sed turpis sollicitudin venenatis sed eu odio. Praesent eget neque eu eros interdum malesuada non vel leo. Sed fringilla porta ligula egestas tincidunt. Nullam risus magna, ornare vitae varius eget, scelerisque a libero. Morbi eu porttitor ipsum. Nullam lorem nisi, posuere quis volutpat eget, luctus nec massa. Pellentesque aliquam lacinia tellus sit amet bibendum. Ut posuere justo in enim pretium scelerisque. Etiam ornare vehicula euismod. Vestibulum at risus augue. Sed non semper dolor. Sed fringilla consequat velit a porta. Pellentesque sed lectus pharetra ipsum ultricies commodo non sit amet velit. Suspendisse volutpat lobortis ipsum, in scelerisque nisi iaculis a. Duis pulvinar lacinia commodo. Integer in lorem id nibh luctus aliquam. Sed elementum, est ac sagittis porttitor, neque metus ultricies ante, in accumsan massa nisl non metus. Vivamus sagittis quam a lacus dictum tempor. Nullam in semper ipsum. Cras a est id massa malesuada tincidunt. Etiam a urna tellus. Ut rutrum vehicula dui, eu cursus magna tincidunt pretium. Donec malesuada accumsan quam, et commodo orci viverra et. Integer tincidunt sagittis lectus. Mauris ac ligula quis orci auctor tincidunt. Suspendisse odio justo, varius id posuere sit amet, iaculis sit amet orci. Suspendisse potenti. Suspendisse potenti. Aliquam erat volutpat. Sed posuere dignissim odio, nec cursus odio mollis et. Praesent cursus, orci ut dictum adipiscing, tellus ante porttitor leo, vel gravida lacus lorem vitae est. Duis ultricies feugiat ante nec aliquam. Maecenas varius, nulla vel fermentum semper, metus nibh bibendum nunc, vitae suscipit mauris velit ac nunc. Mauris nunc eros, egestas at vehicula tincidunt, commodo ac mauris. Nulla facilisi. Nunc eros sem, lobortis non pulvinar id, blandit in eros. In bibendum suscipit');
-      						fileWriter.write(bb.getBlob('text/plain'));
-      							
-						});
-					
-					});
-				
-				}
-				
-				var end = new Date().getTime();
-				var time = end - start;
-				console.log('Create execution time: ' + time);
-				
-				start = new Date().getTime();
-				
-				for (var j=0; j<250; j++) {
-				
-					fs.root.getFile('test'+j+'.txt', {create: true}, function(fileEntry) {
-						
-						fileEntry.file(function(file) {
-						
-							var reader = new FileReader();
-							reader.onloadend = function(e) {
-         						console.log(this.result);
-      		 				};
-
-       						reader.readAsText(file);
-							
-						});
-						
-					});
-				
-				}
-				
-				
-				end = new Date().getTime();
-				time = end - start;
-				console.log('Read execution time: ' + time);
-  	
-  
-  			
-				
-				
-				
-			}.bind(this));
-			
-			
-			////////////////////////////////////////////////////////////
-			////////////////////////////////////////////////////////////
-		
-		
-		
 			//Checking for local storage of URL for IO
 			if (window.localStorage['ioRootUrl']) {
 				//Getting URL from local storage
@@ -108,46 +45,25 @@ exports.CoreIoApi = Montage.create(Component, {
 				//IO API to be inactive
 				this.ioServiceDetected = false;
 			}
+			////////////////////////////////////////////////////////////
 		}
 	},
-	////////////////////////////////////////////////////////////////////
-    //Method to check status of I/O API, will return false if not active
-	cloudAvailable: {
-		enumerable: false,
-		value: function () {
-			var cloud = this.getCloudStatus();
-			//
-			if (this.rootUrl && cloud.status === 200) {
-				//Active
-				this.cloudData.name = cloud.response['name'];
-				this.cloudData.root = cloud.response['server-root'];
-				return true;
-			} else {
-				//Inactive
-				if (!this._cloudDialogOpen && this.application.ninja) {
-					this.showCloudDialog();
-				}
-				return false;
-			}
-		}
-	},
-	////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
     //
-    _cloudDialogOpen: {
-    	enumerable: false,
-		value: false
+    _chromeFileSystem: {
+        enumerable: false,
+        value: null
     },
     ////////////////////////////////////////////////////////////////////
     //
-    cloudData: {
+    chromeFileSystem: {
     	enumerable: false,
-		value: {name: null, root: ''}
-    },
-    ////////////////////////////////////////////////////////////////////
-    //
-    _cloudDialogComponents: {
-    	enumerable: false,
-		value: {blackout: null, popup: null, dialog: null}
+    	get: function() {
+            return this._chromeFileSystem;
+        },
+        set: function(value) {
+        	this._chromeFileSystem = value;
+        }
     },
 	////////////////////////////////////////////////////////////////////
     //
@@ -253,6 +169,45 @@ exports.CoreIoApi = Montage.create(Component, {
 			//
             return String(serviceURL+urlOut);
         }
+    },
+    ////////////////////////////////////////////////////////////////////
+    //Method to check status of I/O API, will return false if not active
+	cloudAvailable: {
+		enumerable: false,
+		value: function () {
+			var cloud = this.getCloudStatus();
+			//
+			if (this.rootUrl && cloud.status === 200) {
+				//Active
+				this.cloudData.name = cloud.response['name'];
+				this.cloudData.root = cloud.response['server-root'];
+				return true;
+			} else {
+				//Inactive
+				if (!this._cloudDialogOpen && this.application.ninja) {
+					this.showCloudDialog();
+				}
+				return false;
+			}
+		}
+	},
+	////////////////////////////////////////////////////////////////////
+    //
+    _cloudDialogOpen: {
+    	enumerable: false,
+		value: false
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    cloudData: {
+    	enumerable: false,
+		value: {name: null, root: ''}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    _cloudDialogComponents: {
+    	enumerable: false,
+		value: {blackout: null, popup: null, dialog: null}
     },
     ////////////////////////////////////////////////////////////////////
     //

@@ -17,7 +17,7 @@ NOTES:
 ////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////// */
 //
-var Montage = 		require("montage/core/core").Montage;
+var Montage = require("montage/core/core").Montage;
 ////////////////////////////////////////////////////////////////////////
 //Exporting as File I/O
 exports.FileIo = Montage.create(Object.prototype, {
@@ -79,6 +79,19 @@ exports.FileIo = Montage.create(Object.prototype, {
     ////////////////////////////////////////////////////////////////////
     //
     saveFile: {
+    	enumerable: true,
+    	value: function() {
+    		//Checking for API to be available
+    		if (!this.application.ninja.coreIoApi.cloudAvailable()) {
+    			//API not available, no IO action taken
+    			return null;
+    		}
+    		//
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    deleteFile: {
     	enumerable: true,
     	value: function() {
     		//Checking for API to be available
