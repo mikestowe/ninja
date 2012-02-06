@@ -95,6 +95,7 @@ var TextDocument = exports.TextDocument = Montage.create(baseDocumentModule.Base
     save:{
         value:function(removeCodeMirrorDivFlag){
             this.editor.save();
+            this.dirtyFlag=false;
             if(removeCodeMirrorDivFlag === true){
                 var codemirrorDiv = this.textArea.parentNode.querySelector(".CodeMirror");
                 if(!!codemirrorDiv){codemirrorDiv.parentNode.removeChild(codemirrorDiv);}
