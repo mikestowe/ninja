@@ -56,6 +56,10 @@ exports.ShapesController = Montage.create(CanvasController, {
                     el.elementModel.shapeModel.GLWorld.setViewportFromCanvas(el);
                     el.elementModel.shapeModel.GLGeomObj.buildBuffers();
                     break;
+                case "useWebGl":
+                    this.toggleWebGlMode(el, value);
+                    el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                    break;
                 default:
                     CanvasController.setProperty(el, p, value);
             }
@@ -275,6 +279,60 @@ exports.ShapesController = Montage.create(CanvasController, {
         value: function(el)
         {
             return (el.elementModel && el.elementModel.isShape);
+        }
+    },
+
+    toggleWebGlMode: {
+        value: function(el, useWebGl)
+        {
+            if(useWebGl)
+            {
+                this.convertToWebGlWorld(el);
+            }
+            else
+            {
+                this.convertTo2DWorld(el);
+            }
+        }
+    },
+
+    convertToWebGlWorld: {
+        value: function(el)
+        {
+            if(el.elementModel.shapeModel.useWebGl)
+            {
+                return;
+            }
+            var world,
+                worldData = el.elementModel.shapeModel.GLWorld.export();
+            if(worldData)
+            {
+                world = new GLWorld(el, true);
+                el.elementModel.shapeModel.GLWorld = world;
+                el.elementModel.shapeModel.useWebGl = true;
+                world.import(worldData);
+            }
+
+        }
+    },
+
+    convertTo2DWorld: {
+        value: function(el)
+        {
+            if(!el.elementModel.shapeModel.useWebGl)
+            {
+                return;
+            }
+            var world,
+                worldData = el.elementModel.shapeModel.GLWorld.export();
+            if(worldData)
+            {
+                world = new GLWorld(el, false);
+                el.elementModel.shapeModel.GLWorld = world;
+                el.elementModel.shapeModel.useWebGl = false;
+                world.import(worldData);
+            }
+
         }
     }
 
