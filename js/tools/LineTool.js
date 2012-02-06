@@ -238,6 +238,7 @@ exports.LineTool = Montage.create(ShapeTool, {
                 canvas.elementModel.shapeModel.strokeStyle = strokeStyle;
 
                 canvas.elementModel.shapeModel.GLGeomObj = line;
+                canvas.elementModel.shapeModel.useWebGl = this.options.use3D;
             }
             else
             {

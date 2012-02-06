@@ -95,6 +95,7 @@ exports.OvalTool = Montage.create(ShapeTool, {
                 canvas.elementModel.shapeModel.strokeStyle = strokeStyle;
 
                 canvas.elementModel.shapeModel.GLGeomObj = oval;
+                canvas.elementModel.shapeModel.useWebGl = this.options.use3D;
             }
             else
             {
