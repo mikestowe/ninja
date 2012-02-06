@@ -415,8 +415,10 @@ exports.ColorModel = Montage.create(Component, {
 	            colorEvent.alpha = this.alpha.value;
            	if (this.hsl)
            		colorEvent.hsla = {h: this.hsl.h, s: this.hsl.s, l: this.hsl.l, a: this.alpha.value, css: 'hsla('+this.hsl.h+', '+this.hsl.s+'%, '+this.hsl.l+'%, '+this.alpha.value+')'};
-            if (this.rgb)
+            if (this.rgb) {
 	            colorEvent.rgba = {r: this.rgb.r, g: this.rgb.g, b: this.rgb.b, a: this.alpha.value, css: 'rgba('+ this.rgb.r +', '+this.rgb.g+', '+this.rgb.b+', '+this.alpha.value+')'};
+                colorEvent.webGlColor = [this.rgb.r/255, this.rgb.g/255, this.rgb.b/255, this.alpha.value];
+            }
            	if (this.hex)
 	           	colorEvent.hex = this.hex;
 			//Standard values that apply to any event	           
@@ -560,7 +562,44 @@ exports.ColorModel = Montage.create(Component, {
 			//Returning RGB object
 			return {r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255)};
     	}
-	}
+	},
+    ////////////////////////////////////////////////////////////////////
+    //Returns WebGL color array in [r, g, b, a] format where the values are [0,1] given a color object
+    colorToWebGl: {
+        enumerable: true,
+        value: function (color) {
+            var temp;
+            if (color) {
+                if(color.l !== undefined) {
+                    temp = this.hslToRgb(color.h/360, color.s/100, color.l/100);
+                } else if (color.r !== undefined) {
+                    temp = color;
+                }
+                temp.a = color.a;
+            }
+            //WebGL uses array
+            if (temp) {
+                return [temp.r/255, temp.g/255, temp.b/255, temp.a];
+            } else {
+                return null;
+            }
+        }
+    },
+    ////////////////////////////////////////////////////////////////////
+    //Returns CSS string given a WebGL color array in [r, g, b, a] format where the values are [0,1]
+    webGlToCss: {
+        enumerable: true,
+        value: function (color) {
+            if(color && (color.length === 4))
+            {
+                return 'rgba(' + color[0]*255 + ', ' + color[1]*255 + ', ' + color[2]*255 + ', ' + color[3] +')';
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
 	////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
