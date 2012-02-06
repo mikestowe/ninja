@@ -26,15 +26,6 @@ exports.CoreIoApi = Montage.create(Component, {
 		enumerable: false,
 		value: function () {
 			////////////////////////////////////////////////////////////
-			//Getting reference of chrome file system API
-			this.chromeFileSystem = ChromeApi;
-			//Sending size in MBs for file system storage
-			if (this.chromeFileSystem.init(20)) {
-				//Available
-			} else {
-				//Not available
-			}
-			////////////////////////////////////////////////////////////
 			//Checking for local storage of URL for IO
 			if (window.localStorage['ioRootUrl']) {
 				//Getting URL from local storage
@@ -46,8 +37,45 @@ exports.CoreIoApi = Montage.create(Component, {
 				this.ioServiceDetected = false;
 			}
 			////////////////////////////////////////////////////////////
+			//Getting reference of chrome file system API
+			this.chromeFileSystem = ChromeApi;
+			//Sending size in MBs for file system storage
+			var chromeFs = this.chromeFileSystem.init(20);
+			//Checking for availability of API
+			if (chromeFs) {
+				this.chromeFileSystem.addEventListener('ready', this, false);
+			} else {
+				//Error, Chrome File System API not detected
+			}
+			////////////////////////////////////////////////////////////
 		}
 	},
+	////////////////////////////////////////////////////////////////////
+    //
+	handleReady: {
+		enumerable: false,
+        value: function (e) {
+        	this.chromeFileSystem.removeEventListener('ready', this, false);
+        	this.chromeNinjaLibrary = this.chromeFileSystem.getLocalLibrary();
+        }
+	},
+    ////////////////////////////////////////////////////////////////////
+    //
+    _chromeNinjaLibrary: {
+        enumerable: false,
+        value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    chromeNinjaLibrary: {
+    	enumerable: false,
+    	get: function() {
+            return this._chromeNinjaLibrary;
+        },
+        set: function(value) {
+        	this._chromeNinjaLibrary = value;
+        }
+    },
     ////////////////////////////////////////////////////////////////////
     //
     _chromeFileSystem: {

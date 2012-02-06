@@ -25,8 +25,14 @@ exports.ChromeApi = Montage.create(Object.prototype, {
     		if (window.webkitRequestFileSystem) {
     			//Current way to init Chrome's fileSystem API
     			window.webkitRequestFileSystem(window.PERSISTENT, size*1024*1024, function (fs) {
+    				//Storing reference to instance
     				this.fileSystem = fs;
-    			}.bind(this));
+    				//Dispatching action ready event
+    				var readyEvent = document.createEvent("CustomEvent");
+            		readyEvent.initEvent('ready', true, true);
+            		this.dispatchEvent(readyEvent);
+    			}.bind(this), function (e) {return false}); //Returns false on error (not able to init)
+    			//
     			return true;
     		} else {
     			//No fileSystem API
@@ -93,6 +99,15 @@ exports.ChromeApi = Montage.create(Object.prototype, {
     	enumerable: true,
     	value: function() {
     	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    getLocalLibrary: {
+    	enumerable: false,
+        value: function () {
+        	//
+        	return {};
+        }
     }
     ////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////   
