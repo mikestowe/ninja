@@ -48,10 +48,10 @@ exports.ElementMediator = Montage.create(NJComponent, {
                     len = this.application.ninja.selectedElements.length;
 
                 if(len) {
-                    for(var i = 0; i<len; i++)
-                    {
+                    for(var i = 0; i<len; i++) {
                         els.push(this.application.ninja.selectedElements[i]);
                     }
+                    
                     for(i=0; i<len; i++) {
                         this._removeElement(els[i]._element);
                     }
