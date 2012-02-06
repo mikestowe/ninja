@@ -971,7 +971,6 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 		value: function( screenPt,  hitRecs ) {
 			// start at the stage.
 			var stage = this.getStage();
-			//var stagePt = viewUtils.parentToChild( screenPt, stage );
 
 			// the root should be the 'view' canvas, so the first matrix is the camera
 			viewUtils.setViewportObj( stage );
@@ -997,7 +996,6 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 					hit = this.snapToElement( elt, globalScrPt );
 					if (hit)
 					{
-						//hitRecs.push( hit );
 						if (!hit.checkType())
 						{
 							console.log( "invalid hit record: " + hit.getTypeString() );
@@ -1016,17 +1014,14 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
             }
 			// test the rest of the tree
 			var n = elt.childElementCount;
-			//var eltPt = viewUtils.parentToChild( parentPt, elt, true );
 			if (n > 0)
 			{
 				for (var i=0;  i<n;  i++)
 				{
 					var child = elt.children[i];
-					//var childPt = viewUtils.parentToChild( scrPt, child );
 					hit = this.hSnapToElements( child,  hitRecs, (depth+1), globalScrPt );
 					if (hit)
 					{
-						//hitRecs.push( hit );
 						if (!hit.checkType())
 						{
 							console.log( "invalid hit record: " + hit.getTypeString() );
@@ -1034,7 +1029,6 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 						}
 						else
 							hitRecs.push( hit );
-
 					}
 				}
 			}
