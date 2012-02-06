@@ -5,7 +5,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var Montage = 			require("montage/core/core").Montage,
-    CanvasController = require("js/controllers/elements/canvas-controller").CanvasController;
+    CanvasController = require("js/controllers/elements/canvas-controller").CanvasController,
+    njModule = require("js/lib/NJUtils");
 
 exports.ShapesController = Montage.create(CanvasController, {
 
@@ -57,9 +58,11 @@ exports.ShapesController = Montage.create(CanvasController, {
                     el.elementModel.shapeModel.GLGeomObj.buildBuffers();
                     break;
                 case "useWebGl":
-//                    this.toggleWebGlMode(el, value);
-//                    el.elementModel.shapeModel.GLGeomObj.buildBuffers();
-                    el.elementModel.shapeModel.useWebGl = value;
+                    var canvas = njModule.NJUtils.makeNJElement("canvas", "Canvas", "shape", el.className, true);
+                    this.application.ninja.elementMediator.replaceElement(el, canvas);
+                    el = canvas;
+                    this.toggleWebGlMode(el, value);
+                    el.elementModel.shapeModel.GLGeomObj.buildBuffers();
                     break;
                 default:
                     CanvasController.setProperty(el, p, value);
