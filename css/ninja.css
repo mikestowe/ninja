@@ -236,7 +236,7 @@ body { position: absolute; margin: 0px; width: 100%; height: 100%; background-co
 
 #toolPropertiesPanel { height: 32px; margin: 0px; }
 
-#timelinePanel { height: 116px; }
+#timelinePanel { height: 100%; }
 
 .treeComponent { -webkit-user-select: none; font-size: 11px; margin-left: 20px; cursor: default; color: white; }
 
