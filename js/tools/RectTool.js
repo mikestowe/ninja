@@ -117,6 +117,7 @@ exports.RectTool = Montage.create(ShapeTool, {
                 canvas.elementModel.shapeModel.strokeStyle = strokeStyle;
 
                 canvas.elementModel.shapeModel.GLGeomObj = rect;
+                canvas.elementModel.shapeModel.useWebGl = this.options.use3D;
             }
             else
             {

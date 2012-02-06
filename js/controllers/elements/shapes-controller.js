@@ -76,6 +76,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                 case "fillMaterial":
                 case "border":
                 case "background":
+                case "useWebGl":
                     return this.getShapeProperty(el, p);
                 default:
                     return CanvasController.getProperty(el, p);

@@ -369,6 +369,16 @@ exports.PiData = Montage.create( Montage, {
                 Section: [
                     [
                         {
+                            type: "checkbox",
+                            id: "useWebGl",
+                            prop: "useWebGl",
+                            defaultValue: false,
+                            value: "Use WebGL",
+                            checked: false
+                        }
+                    ],
+                    [
+                        {
                             type: "dropdown",
                             id:   "strokeMaterial",
                             prop:   "strokeMaterial",
@@ -432,6 +442,16 @@ exports.PiData = Montage.create( Montage, {
                 label: "Materials",
 
                 Section: [
+                    [
+                        {
+                            type: "checkbox",
+                            id: "useWebGl",
+                            prop: "useWebGl",
+                            defaultValue: false,
+                            value: "Use WebGL",
+                            checked: false
+                        }
+                    ],
                     [
                         {
                             type: "dropdown",
@@ -505,6 +525,16 @@ exports.PiData = Montage.create( Montage, {
                 label: "Materials",
 
                 Section: [
+                    [
+                        {
+                            type: "checkbox",
+                            id: "useWebGl",
+                            prop: "useWebGl",
+                            defaultValue: false,
+                            value: "Use WebGL",
+                            checked: false
+                        }
+                    ],
                     [
                         {
                             type: "dropdown",
