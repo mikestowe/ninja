@@ -55,8 +55,25 @@ exports.CoreIoApi = Montage.create(Component, {
 	handleReady: {
 		enumerable: false,
         value: function (e) {
+        	//
         	this.chromeFileSystem.removeEventListener('ready', this, false);
-        	this.chromeNinjaLibrary = this.chromeFileSystem.getLocalLibrary();
+        	//
+        	this.chromeFileSystem.addEventListener('library', this, false);
+        }
+	},
+	////////////////////////////////////////////////////////////////////
+    //
+	handleLibrary: {
+		enumerable: false,
+        value: function (e) {
+        	//
+        	this.chromeFileSystem.removeEventListener('library', this, false);
+        	//
+        	if (e._event.ninjaChromeLibrary.length < 1) {
+        		console.log('no libraries');
+        	} else {
+        		console.log('found libraries');
+        	}
         }
 	},
     ////////////////////////////////////////////////////////////////////

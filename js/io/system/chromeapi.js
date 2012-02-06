@@ -31,6 +31,8 @@ exports.ChromeApi = Montage.create(Object.prototype, {
     				var readyEvent = document.createEvent("CustomEvent");
             		readyEvent.initEvent('ready', true, true);
             		this.dispatchEvent(readyEvent);
+    				//Building data of local Ninja Library
+    				this._listNinjaChromeLibrary();
     			}.bind(this), function (e) {return false}); //Returns false on error (not able to init)
     			//
     			return true;
@@ -73,10 +75,17 @@ exports.ChromeApi = Montage.create(Object.prototype, {
     	}
     },
     ////////////////////////////////////////////////////////////////////
-    //
+    //Returns the directory contents to a callback function
     directoryContents: {
     	enumerable: true,
-    	value: function() {
+    	value: function(directory, callback) {
+    		//Creating instance of directory reader
+    		this.fileSystem.directoryReader = directory.createReader();
+    		//Getting directory contents and sending results to callback
+    		this.fileSystem.directoryReader.readEntries(function(results) {
+    			//Calling callback with results (null if invalid directory)
+    			callback(results);
+    		}, function (e) {callback(null)});
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -102,11 +111,24 @@ exports.ChromeApi = Montage.create(Object.prototype, {
     },
     ////////////////////////////////////////////////////////////////////
     //
-    getLocalLibrary: {
+    _listNinjaChromeLibrary: {
     	enumerable: false,
         value: function () {
+        	function parseLibrary (contents) {
+        		//
+        		var lib = [];
+        		//
+        		
+        		
+        		
+        		//Dispatching action ready event
+    			var libraryEvent = document.createEvent("CustomEvent");
+            	libraryEvent.initEvent('library', true, true);
+            	libraryEvent.ninjaChromeLibrary = lib;
+            	this.dispatchEvent(libraryEvent);
+        	};
         	//
-        	return {};
+        	this.directoryContents(this.fileSystem.root, parseLibrary.bind(this));
         }
     }
     ////////////////////////////////////////////////////////////////////
