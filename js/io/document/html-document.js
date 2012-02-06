@@ -449,17 +449,22 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
      */
     save:{
         value:function(removeCodeMirrorDivFlag){
-            if(this.currentView === "design"){
-                //generate html and save
-            }else if((this.currentView === "code") && (this.codeViewDocument !== null)){
-                if(removeCodeMirrorDivFlag === true){
-                    this.codeViewDocument.save(true);
-                }else{
-                    this.codeViewDocument.save();
+            try{
+                if(this.currentView === "design"){
+                    //generate html and save
+                }else if((this.currentView === "code") && (this.codeViewDocument !== null)){
+                    if(removeCodeMirrorDivFlag === true){
+                        this.codeViewDocument.save(true);
+                    }else{
+                        this.codeViewDocument.save();
+                    }
+                    //persist to filesystem
                 }
-                //persist to filesystem
+                this.dirtyFlag=false;
+            }catch(e){
+                console.log("Error while saving "+this.uri);
+                console.log(e.stack);
             }
-
         }
     }
 });

@@ -239,45 +239,25 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value: function(id) {
 
             //if file dirty then save
+            if(this.activeDocument.dirtyFlag === true){
+                this.activeDocument.save(true);
+                this.activeDocument.dirtyFlag=false;
+            }
 
             var doc = this._findDocumentByUUID(id);
             this._removeDocumentView(doc.container);
 
+            var closeDocumentIndex = this._findIndexByUUID(id);
             this._documents.splice(this._findIndexByUUID(id), 1);
 
             if(this.activeDocument.uuid === id && this._documents.length > 0) {
-
-                var closeDocumentIndex = this._findIndexByUUID(id);
                 var nextDocumentIndex = -1 ;
                 if((this._documents.length > 0) && (closeDocumentIndex === 0)){
                     nextDocumentIndex = 1;
                 }else if((this._documents.length > 0) && (closeDocumentIndex > 0)){
                     nextDocumentIndex = closeDocumentIndex - 1;
                 }
-
-                //remove the codemirror div if this is for a code view
-                /////test
-
-                ////end- test
-
-                this.switchDocument(this._documents[0].uuid);
-
-            }
-        }
-    },
-
-    switchDocument: {
-        value: function(id) {
-            this._hideCurrentDocument();
-            this.activeDocument = this._findDocumentByUUID(id);
-
-            this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
-            this._showCurrentDocument();
-
-            if(this.activeDocument.documentType === "htm" || this.activeDocument.documentType === "html") {
-                this.application.ninja.stage._scrollFlag = true; // TODO HACK to prevent type error on Hide/Show Iframe
-                // TODO dispatch event here
-//                appDelegateModule.MyAppDelegate.onSetActiveDocument();
+                this.application.ninja.stage.stageView.switchDocument(this._documents[nextDocumentIndex]);
             }
         }
     },
@@ -406,6 +386,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                 if(this.activeDocument.currentView === "design" || this.activeDocument.currentView === "design"){
                     this.activeDocument.container.parentNode.style["display"] = "none";
                     this.application.ninja.stage.hideCanvas(true);
+                    this.application.ninja.stage.stageView.hideRulers();
                 }
             }
         }
@@ -418,6 +399,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                 if(this.activeDocument.currentView === "design" || this.activeDocument.currentView === "design"){
                     this.activeDocument.container.parentNode.style["display"] = "block";
                     this.application.ninja.stage.hideCanvas(false);
+                    this.application.ninja.stage.stageView.showRulers();
                 }
             }
         }

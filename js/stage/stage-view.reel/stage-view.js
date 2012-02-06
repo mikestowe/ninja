@@ -95,9 +95,12 @@ exports.StageView = Montage.create(Component, {
             //fix hack
             document.getElementById("codeMirror_"+doc.uuid).style.display="block";
 
+            var documentController = this.application.ninja.documentController;
+
             doc.editor = CodeMirror.fromTextArea(doc.textArea, {
                 lineNumbers: true,
                        mode: type,
+                       onChange: function(){doc.dirtyFlag=true;},
                        onCursorActivity: function() {
                            //documentController._codeEditor.editor.setLineClass(documentController._codeEditor.hline, null);
                            //documentController._codeEditor.hline = documentController._codeEditor.editor.setLineClass(documentController._codeEditor.editor.getCursor().line, "activeline");
@@ -128,6 +131,8 @@ exports.StageView = Montage.create(Component, {
             this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
             this.application.ninja.documentController._showCurrentDocument();
 
+            var documentController = this.application.ninja.documentController;
+
             if(this.application.ninja.documentController.activeDocument.currentView === "code"){
                 var type;
                 switch(doc.documentType) {
@@ -143,6 +148,7 @@ exports.StageView = Montage.create(Component, {
                 doc.editor = CodeMirror.fromTextArea(doc.textArea, {
                                lineNumbers: true,
                                mode: type,
+                               onChange: function(){doc.dirtyFlag=true;},
                                onCursorActivity: function() {
                                    //documentController._codeEditor.editor.setLineClass(documentController._codeEditor.hline, null);
                                    //documentController._codeEditor.hline = documentController._codeEditor.editor.setLineClass(documentController._codeEditor.editor.getCursor().line, "activeline");
@@ -152,8 +158,15 @@ exports.StageView = Montage.create(Component, {
                 //this.application.ninja.documentController._codeEditor.hline = this.application.ninja.documentController._codeEditor.editor.setLineClass(0, "activeline");
             }
 
+            if(this.application.ninja.documentController.activeDocument.documentType === "htm" || this.application.ninja.documentController.activeDocument.documentType === "html") {
+                this.application.ninja.stage._scrollFlag = true; // TODO HACK to prevent type error on Hide/Show Iframe
+                // TODO dispatch event here
+    //                appDelegateModule.MyAppDelegate.onSetActiveDocument();
+            }
+
         }
     },
+
     refreshCodeDocument:{
         value:function(doc){
 
@@ -197,6 +210,18 @@ exports.StageView = Montage.create(Component, {
                     aDoc.container.style["display"] = "none";
                 }
             }, this);
+        }
+    },
+    showRulers:{
+        value:function(){
+            this.application.ninja.rulerTop.style.display = "block";
+            this.application.ninja.rulerLeft.style.display = "block";
+        }
+    },
+    hideRulers:{
+        value:function(){
+            this.application.ninja.rulerTop.style.display = "none";
+            this.application.ninja.rulerLeft.style.display = "none";
         }
     }
 });

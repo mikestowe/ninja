@@ -31,11 +31,6 @@ var BaseDocument = exports.BaseDocument = Montage.create(Montage, {
         set: function(value) { this._uri = value; }
     },
 
-    externalUri: {
-        get: function() { return this._externalUri; },
-        set: function(value) { this._externalUri = value; }
-    },
-
     documentType: {
         get: function() { return this._documentType; },
         set: function(value) { this._documentType = value;  }
