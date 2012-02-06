@@ -54,10 +54,24 @@ exports.FillTool = Montage.create(ModifierToolBase, {
         value: function(event) {
             this.isDrawing = true;
 
-            if(this._canColor)
+            if(this._canColor && this.application.ninja.selectedElements.length)
             {
-                var color = this.application.ninja.colorController.colorToolbar.fill;
-                ElementsMediator.setColor(this.application.ninja.selectedElements, color, true, "Change", "fillTool");
+                var color = this.application.ninja.colorController.colorToolbar.fill,
+                    colorInfo;
+                if(color && color.color)
+                {
+                    colorInfo = { mode:color.colorMode,
+                                       color:color.color
+                                    };
+                    ElementsMediator.setColor(this.application.ninja.selectedElements, colorInfo, true, "Change", "fillTool");
+                }
+                else
+                {
+                    colorInfo = { mode:"nocolor",
+                                       color:color.color
+                                    };
+                    ElementsMediator.setColor(this.application.ninja.selectedElements, colorInfo, true, "Change", "fillTool");
+                }
             }
         }
     }

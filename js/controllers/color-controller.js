@@ -175,76 +175,21 @@ exports.ColorController = Montage.create(Component, {
     },
     ////////////////////////////////////////////////////////////////////
     //
-    setBackground: {
+    setColor: {
         enumerable: true,
-        value: function (type, background, selection) {
-            //TODO: Remove hack
-            var elements, i, hack = [], hackNone = [];
+        value: function (mode, color, isFill, selection) {
+            var elements;
             //The selection is optional, if none, it asks for the currently selected elements
             if (selection) {
                 elements = selection;
             } else {
                 elements = this.application.ninja.selectedElements;
             }
-            //
-            for (i=0; elements[i]; i++) {
-            	hack[i] = background;
-            	hackNone[i] = 'none';
-            }
-            //
-            if (elements && elements.length > 0) {
-                switch (type) {
-                    case 'image':
-                    	ElementsMediator.setProperty(elements, "background-image", hack, {"background-image": background}, "Change", "color-controller");
-                    	ElementsMediator.setProperty(elements, "background-color", hackNone, {"background-color": 'none'}, "Change", "color-controller");
-                        break;
-                    case 'color':
-                    	//TODO: Add logic to handle setting color when image (like gradients) is applied
-                    	//TODO: Handle applying to multiple items, currently, we need to create a dummy array of the same value
-                    	ElementsMediator.setProperty(elements, "background-image", hackNone, {"background-image": 'none'}, "Change", "color-controller");
-                        ElementsMediator.setProperty(elements, "background-color", hack, {"background-color": background}, "Change", "color-controller");
-                        break;
-                    case 'background':
-                        break;
-                }
-                //
-                //console.log(this.getColorObjFromCss('#333'));
-            }
-        }
-    },
-    ////////////////////////////////////////////////////////////////////
-    //
-    setBorder: {
-        enumerable: true,
-        value: function (type, border, selection) {
-            //
-            var elements, i, hack = [], hackNone = [];
-            //The selection is optional, if none, it asks for the currently selected elements
-            if (selection) {
-                elements = selection;
-            } else {
-                elements = this.application.ninja.selectedElements;
-            }
-            //
-            for (i=0; elements[i]; i++) {
-            	hack[i] = border;
-            	hackNone[i] = 'none';
-            }
-            //
-            if (elements && elements.length > 0) {
-                switch (type) {
-                    case 'image':
-                    	//TODO: Figure out why color must be removed, might be related to the CSS
-                    	ElementsMediator.setProperty(elements, "border-color", hackNone, {"border-color": 'none'}, "Change", "color-controller");
-                    	ElementsMediator.setProperty(elements, "border-image", hack, {"border-image": border}, "Change", "color-controller");
-                        break;
-                    case 'color':
-                    	ElementsMediator.setProperty(elements, "border-image", hackNone, {"border-image": 'none'}, "Change", "color-controller");
-                        ElementsMediator.setProperty(elements, "border-color", hack, {"border-color": border}, "Change", "color-controller");
-                        break;
-                    case 'border':
-                        break;
-                }
+            if (elements && elements.length) {
+                var colorInfo = { mode:mode,
+                               color:color
+                             };
+                ElementsMediator.setColor(elements, colorInfo, isFill, "Change", "color-controller");
             }
         }
     },
@@ -264,13 +209,18 @@ exports.ColorController = Montage.create(Component, {
             	color = {value: null, css: 'none'};
             } else if (panelMode === 'rgb' && e._event.rgba && mode !== 'gradient') {
                 color = e._event.rgba;
+                color.webGlColor = e._event.webGlColor;
             } else if (panelMode === 'hsl' && e._event.hsla && mode !== 'gradient') {
                 color = e._event.hsla;
+                color.webGlColor = e._event.webGlColor;
             } else if (mode !== 'gradient'){
                 color = {value: e._event.hex, css: '#'+e._event.hex};
             } else if (mode === 'gradient'){
             	color = e._event.value.value;
             }
+            color.mode = panelMode;
+            color.wasSetByCode = true;
+            color.type = "change";
             ////////////////////////////////////////////////////////////
             ////////////////////////////////////////////////////////////
             //
@@ -280,32 +230,14 @@ exports.ColorController = Montage.create(Component, {
                 //
                 if(e._event.wasSetByCode) return;
             	//
-            	if (mode === 'nocolor') {
-            		//TODO: Add a check instead of setting properties
-            		this.setBackground('image', color.css, false);
-            		this.setBackground('color', color.css, false);
-            		this.setBackground('background', color.css, false);
-            	} else if (mode === 'gradient') {
-            		this.setBackground('image', color.css, false);
-            	} else {
-                	this.setBackground('color', color.css, false);
-                }
+                this.setColor(mode, color, true);
             } else if (input === 'stroke') {
             	//
             	this.stroke = color;
                 //
                 if(e._event.wasSetByCode) return;
-            	//
-               	if (mode === 'nocolor') {
-            		//TODO: Add a check instead of setting properties
-            		this.setBorder('image', color.css, false);
-            		this.setBorder('color', color.css, false);
-            		this.setBorder('border', color.css, false);
-            	} else if (mode === 'gradient') {
-                	this.setBorder('image', color.css, false);
-                } else {
-                	this.setBorder('color', color.css, false);
-                }
+
+                this.setColor(mode, color, false);
             }
             ////////////////////////////////////////////////////////////
             ////////////////////////////////////////////////////////////

@@ -37,6 +37,12 @@ exports.ElementModel = Montage.create(Montage, {
     /**
      * SnapManager 2d Snap Cache Info
      */
-    isIn2DSnapCache : { value: false }
+    isIn2DSnapCache : { value: false },
+
+    /**
+     * Color info
+     */
+    fill:           { value: null },
+    stroke:         { value: null }
 
 });
