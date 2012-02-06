@@ -1,0 +1,11 @@
+.tween_keyframe{
+    position: absolute;
+    height: 16px;
+    width: 4px;
+    background-color: white;
+    z-index: 23;
+}
+
+.tween_keyframe.keyframeSelected{
+    background-color: blue;
+}

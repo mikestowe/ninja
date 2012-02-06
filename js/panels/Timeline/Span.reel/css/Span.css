@@ -1,0 +1,6 @@
+.tween_span{
+    position: absolute;
+    height: 16px;
+    opacity: 0.3;
+    background-color: white;
+}
