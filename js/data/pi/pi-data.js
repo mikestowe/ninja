@@ -385,6 +385,7 @@ exports.PiData = Montage.create( Montage, {
                             label: "Stroke",
                             labelField: "_name",
                             items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" },
+                            enabled: { boundObject: "this.controls", boundProperty: "useWebGl" },
                             divider : true
                         }
                     ],
@@ -395,7 +396,8 @@ exports.PiData = Montage.create( Montage, {
                             prop:   "fillMaterial",
                             label: "Fill",
                             labelField: "_name",
-                            items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" }
+                            items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" },
+                            enabled: { boundObject: "this.controls", boundProperty: "useWebGl" }
                         }
                     ]
                 ]
@@ -458,7 +460,8 @@ exports.PiData = Montage.create( Montage, {
                             id:   "stroke",
                             label: "Stroke",
                             labelField: "_name",
-                            items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" }
+                            items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" },
+                            enabled: { boundObject: "this.controls", boundProperty: "useWebGl" }
                         }
                     ]
                 ]
@@ -543,6 +546,7 @@ exports.PiData = Montage.create( Montage, {
                             label: "Stroke",
                             labelFunction: function(item) { return item.getName(); },
                             items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" },
+                            enabled: { boundObject: "this.controls", boundProperty: "useWebGl" },
                             divider : true
                         }
                     ],
@@ -553,7 +557,8 @@ exports.PiData = Montage.create( Montage, {
                             prop:   "fillMaterial",
                             label: "Fill",
                             labelField: "_name",
-                            items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" }
+                            items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" },
+                            enabled: { boundObject: "this.controls", boundProperty: "useWebGl" }
                         }
                     ]
                 ]

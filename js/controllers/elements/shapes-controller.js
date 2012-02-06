@@ -57,8 +57,9 @@ exports.ShapesController = Montage.create(CanvasController, {
                     el.elementModel.shapeModel.GLGeomObj.buildBuffers();
                     break;
                 case "useWebGl":
-                    this.toggleWebGlMode(el, value);
-                    el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+//                    this.toggleWebGlMode(el, value);
+//                    el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                    el.elementModel.shapeModel.useWebGl = value;
                     break;
                 default:
                     CanvasController.setProperty(el, p, value);

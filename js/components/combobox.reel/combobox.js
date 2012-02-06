@@ -76,6 +76,26 @@ exports.Combobox = Montage.create(Component, {
         }
     },
 
+    _enabled: {
+        enumerable: false,
+        value: true
+    },
+
+    enabled: {
+        enumerable: true,
+        serializable: true,
+        get: function() {
+            return this._enabled;
+        },
+        set: function(value) {
+            if(value !== this._enabled)
+            {
+                this._enabled = value;
+                this.needsDraw = true;
+            }
+        }
+    },
+
     handleChange:
     {
         value:function(event)
@@ -117,6 +137,7 @@ exports.Combobox = Montage.create(Component, {
                     }
                     this.element.appendChild(optionItem);
                 }
+                this.element.disabled = !this._enabled;
             }
         }
     },
