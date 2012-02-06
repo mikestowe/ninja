@@ -43,17 +43,34 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
     didCreate: {
         value: function() {
             this._loadComponents();
+
+//            var req = new XMLHttpRequest();
+//            req.identifier = "searchRequest";
+//            req.open("GET", url);
+//            req.addEventListener("load", this, false);
+//            req.addEventListener("error", this, false);
+//            req.send();
+
         }
     },
 
     _loadComponents: {
         value: function() {
             this.components = [
-                {name: "Button", data: "montage/ui/button.reel/button.json"}
+                {name: "Button", data: "node_modules/components-data/button.json"},
+                {name: "Textfield", data: "node_modules/components-data/textfield.json"}
             ];
 
             // Build the PI objects for each component
             for(var i = 0, component; component = this.components[i]; i++) {
+                var req = new XMLHttpRequest();
+                //req.identifier = "searchRequest";
+                req.open("GET", component.data);
+                req.addEventListener("load", this, false);
+                req.addEventListener("error", this, false);
+                req.send();
+
+/*
                 var piIdentifier = component.name + "Pi";
                 var piObj = [];
                 var section = {};
@@ -75,8 +92,17 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
 
                 PIData[piIdentifier] = [];
                 PIData[piIdentifier].push(section);
+                */
 
             }
+
+        }
+    },
+
+    handleLoad: {
+        value: function(evt) {
+            var response = JSON.parse(evt.target.responseText);
+            console.log(response);
 
         }
     },
