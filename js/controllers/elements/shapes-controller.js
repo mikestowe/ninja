@@ -66,8 +66,6 @@ exports.ShapesController = Montage.create(CanvasController, {
     getProperty: {
         value: function(el, p) {
             switch(p) {
-                case "stroke":
-                case "fill":
                 case "strokeSize":
                 case "innerRadius":
                 case "tlRadius":
@@ -76,6 +74,8 @@ exports.ShapesController = Montage.create(CanvasController, {
                 case "brRadius":
                 case "strokeMaterial":
                 case "fillMaterial":
+                case "border":
+                case "background":
                     return this.getShapeProperty(el, p);
                 default:
                     return CanvasController.getProperty(el, p);
@@ -182,30 +182,44 @@ exports.ShapesController = Montage.create(CanvasController, {
     // Routines to get/set color properties
     getColor: {
         value: function(el, isFill) {
+            var color,
+                css;
             if(isFill)
             {
-                return this.getShapeProperty(el, "fill");
+                if(el.elementModel.shapeModel.background)
+                {
+                    return el.elementModel.shapeModel.background;
+                }
+                color = this.getShapeProperty(el, "fill");
             }
             else
             {
-                return this.getShapeProperty(el, "stroke");
+                if(el.elementModel.shapeModel.border)
+                {
+                    return el.elementModel.shapeModel.border;
+                }
+                color = this.getShapeProperty(el, "stroke");
             }
+
+            css = this.application.ninja.colorController.colorModel.webGlToCss(color);
+            return this.application.ninja.colorController.getColorObjFromCss(css);
         }
     },
 
     setColor: {
         value: function(el, color, isFill) {
-            // TODO - Format color for webGL before setting
-            color = color.webGlColor;
+            var webGl = color.webGlColor || color.color.webGlColor;
             if(isFill)
             {
-                el.elementModel.shapeModel.GLGeomObj.setFillColor(color);
-                this.setShapeProperty(el, "fill", color);
+                el.elementModel.shapeModel.GLGeomObj.setFillColor(webGl);
+                this.setShapeProperty(el, "fill", webGl);
+                this.setShapeProperty(el, "background", color);
             }
             else
             {
-                el.elementModel.shapeModel.GLGeomObj.setStrokeColor(color);
-                this.setShapeProperty(el, "stroke", color);
+                el.elementModel.shapeModel.GLGeomObj.setStrokeColor(webGl);
+                this.setShapeProperty(el, "stroke", webGl);
+                this.setShapeProperty(el, "border", color);
             }
             el.elementModel.shapeModel.GLWorld.render();
         }
