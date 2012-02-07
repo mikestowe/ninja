@@ -136,8 +136,11 @@ function GLSubpath() {
         if (this._strokeColor)
             ctx.strokeStyle = MathUtils.colorToHex( this._strokeColor );
         ctx.fillStyle = "white";
-        if (this._fillColor)
-            ctx.fillStyle = MathUtils.colorToHex( this._fillColor );
+        if (this._fillColor){
+            //ctx.fillStyle = MathUtils.colorToHex( this._fillColor );
+            var fillColorStr = "rgba("+parseInt(255*this._fillColor[0])+","+parseInt(255*this._fillColor[1])+","+parseInt(255*this._fillColor[2])+","+this._fillColor[3]+")";
+            ctx.fillStyle = fillColorStr;
+        }
         var lineCap = ['butt','round','square'];
         ctx.lineCap = lineCap[1];
         ctx.beginPath();
