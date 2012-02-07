@@ -174,6 +174,22 @@ exports.Combobox = Montage.create(Component, {
 
     prepareForDraw: {
         value: function() {
+            if( (this._value === null) && this._items.length )
+            {
+                var current = this._items[0];
+                if(this.dataFunction)
+                {
+                    this.value = this.dataFunction(current);
+                }
+                else if(this.dataField)
+                {
+                    this.value = current[this.dataField];
+                }
+                else
+                {
+                    this.value = current;
+                }
+            }
             this.element.addEventListener("change", this, false);
         }
     }

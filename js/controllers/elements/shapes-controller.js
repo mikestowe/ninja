@@ -108,7 +108,15 @@ exports.ShapesController = Montage.create(CanvasController, {
                     return this.getShapeProperty(el, p);
                 case "strokeMaterial":
                 case "fillMaterial":
-                    return this.getShapeProperty(el, p).getName();
+                    var m = this.getShapeProperty(el, p);
+                    if(m)
+                    {
+                        return this.getShapeProperty(el, p).getName();
+                    }
+                    else
+                    {
+                        return "FlatMaterial";
+                    }
                 default:
                     return CanvasController.getProperty(el, p);
             }
