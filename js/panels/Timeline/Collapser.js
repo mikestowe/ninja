@@ -206,6 +206,7 @@ var Montage = require("montage/core/core").Montage,
 					
 					// Add a handler for the end of the transition, so we can tidy things up after
 					// the transition completes
+                    this.myContent.identifier = "myContent";
 					this.myContent.addEventListener("webkitTransitionEnd", this, false);	
 					
 					this.myContent.style.overflow = "hidden";
@@ -236,7 +237,7 @@ var Montage = require("montage/core/core").Montage,
 				// Special cases:  If transition does not happen (in the case of a contentHeight of 0 
 				// or isAnimated = false) we need to manually fire it here to do the cleanup.
 				if ((this.contentHeight < 3) || (!this.isAnimated)) {
-					this.handleWebkitTransitionEnd();
+					this.handleMyContentWebkitTransitionEnd();
 				}
 			}
 		}
@@ -284,7 +285,7 @@ var Montage = require("montage/core/core").Montage,
 	
 	// This handler is bound to the transitionEnd event.  If transitions
 	// are disabled, it is called manually.
-	handleWebkitTransitionEnd: {
+    handleMyContentWebkitTransitionEnd: {
 		value: function(event) {
 			
 			// Are we animating the transitions?

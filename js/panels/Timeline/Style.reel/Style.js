@@ -521,7 +521,7 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
     			"property" : "text-indent",
     			"tweener" : "hottext",
     			"units" : "px",
-    			"min" : 0,
+    			"min" : -9999,
     			"max" : 9999,
     			"default" : 0
     		},
