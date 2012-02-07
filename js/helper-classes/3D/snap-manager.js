@@ -9,14 +9,13 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 //      Class to do hit testing of objects in the html page
 ///////////////////////////////////////////////////////////////////////
 var Montage = require("montage/core/core").Montage,
-    Component = require("montage/ui/component").Component;
-
-var viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
-var vecUtils = require("js/helper-classes/3D/vec-utils").VecUtils;
-var drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils;
-var HitRecord = require("js/helper-classes/3D/hit-record").HitRecord;
-var Snap2DRecord = require("js/helper-classes/3D/snap-2d-record").Snap2DRecord;
-var NJUtils = require("js/lib/NJUtils").NJUtils;
+    Component = require("montage/ui/component").Component,
+    viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils,
+    vecUtils = require("js/helper-classes/3D/vec-utils").VecUtils,
+    drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils,
+    HitRecord = require("js/helper-classes/3D/hit-record").HitRecord,
+    Snap2DRecord = require("js/helper-classes/3D/snap-2d-record").Snap2DRecord,
+    NJUtils = require("js/lib/NJUtils").NJUtils;
 
 var SnapManager = exports.SnapManager = Montage.create(Component, {
 	///////////////////////////////////////////////////////////////////////

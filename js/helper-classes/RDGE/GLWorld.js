@@ -389,8 +389,10 @@ function GLWorld( canvas, use3D )
 		rdgeStarted = true;
 
         this._canvas.rdgeid = this._canvas.uuid;
-		g_Engine.registerCanvas(this._canvas, this);
-		RDGEStart( this._canvas );
+            this._canvas.id = this._canvas.uuid;
+
+			g_Engine.registerCanvas(this._canvas, this);
+			RDGEStart( this._canvas );
 
 		//this._canvas.fpsTracker = new fpsTracker( '0' );
 		//this._canvas.task = new RDGETask(this._canvas, false);

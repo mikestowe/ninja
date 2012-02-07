@@ -43,16 +43,16 @@ exports.OvalTool = Montage.create(ShapeTool, {
             var strokeMaterial = null;
             var fillMaterial = null;
 
-            var strokeIndex = parseInt(this.options.strokeMaterial);
-            if(strokeIndex > 0)
+            var strokeM = this.options.strokeMaterial;
+            if(strokeM)
             {
-                strokeMaterial = Object.create(MaterialsLibrary.getMaterialAt(strokeIndex-1));
+                strokeMaterial = Object.create(MaterialsLibrary.getMaterial(strokeM));
             }
 
-            var fillIndex = parseInt(this.options.fillMaterial);
-            if(fillIndex > 0)
+            var fillM = this.options.fillMaterial;
+            if(fillM)
             {
-                fillMaterial = Object.create(MaterialsLibrary.getMaterialAt(fillIndex-1));
+                fillMaterial = Object.create(MaterialsLibrary.getMaterial(fillM));
             }
 
 
@@ -88,8 +88,6 @@ exports.OvalTool = Montage.create(ShapeTool, {
 
                 canvas.elementModel.shapeModel.strokeMaterial = strokeMaterial;
                 canvas.elementModel.shapeModel.fillMaterial = fillMaterial;
-                canvas.elementModel.shapeModel.strokeMaterialIndex = strokeIndex;
-                canvas.elementModel.shapeModel.fillMaterialIndex = fillIndex;
 
                 canvas.elementModel.shapeModel.strokeStyleIndex = strokeStyleIndex;
                 canvas.elementModel.shapeModel.strokeStyle = strokeStyle;

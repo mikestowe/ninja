@@ -15,7 +15,7 @@ exports.Combobox = Montage.create(Component, {
     },
 
     _wasSetByCode: {
-        enumerable: false,
+        enumerable: true,
         value: true
     },
 
@@ -24,6 +24,14 @@ exports.Combobox = Montage.create(Component, {
     },
 
     labelFunction: {
+        value: null
+    },
+
+    dataField: {
+        value: null
+    },
+
+    dataFunction: {
         value: null
     },
 
@@ -71,7 +79,27 @@ exports.Combobox = Montage.create(Component, {
                 e.value = this._value;
                 this.dispatchEvent(e);
 
-                this._wasSetByCode = false;
+                this._wasSetByCode = true;
+            }
+        }
+    },
+
+    _enabled: {
+        enumerable: false,
+        value: true
+    },
+
+    enabled: {
+        enumerable: true,
+        serializable: true,
+        get: function() {
+            return this._enabled;
+        },
+        set: function(value) {
+            if(value !== this._enabled)
+            {
+                this._enabled = value;
+                this.needsDraw = true;
             }
         }
     },
@@ -102,7 +130,19 @@ exports.Combobox = Montage.create(Component, {
                 {
                     var current = items[i];
                     optionItem = document.createElement("option");
-                    optionItem.value = current;
+                    if(this.dataFunction)
+                    {
+                        optionItem.value = this.dataFunction(current);
+                    }
+                    else if(this.dataField)
+                    {
+                        optionItem.value = current[this.dataField];
+                    }
+                    else
+                    {
+                        optionItem.value = current;
+                    }
+
                     if(this.labelFunction)
                     {
                         optionItem.innerText = this.labelFunction(current);
@@ -117,6 +157,7 @@ exports.Combobox = Montage.create(Component, {
                     }
                     this.element.appendChild(optionItem);
                 }
+                this.element.disabled = !this._enabled;
             }
         }
     },
@@ -133,6 +174,22 @@ exports.Combobox = Montage.create(Component, {
 
     prepareForDraw: {
         value: function() {
+            if( (this._value === null) && this._items.length )
+            {
+                var current = this._items[0];
+                if(this.dataFunction)
+                {
+                    this.value = this.dataFunction(current);
+                }
+                else if(this.dataField)
+                {
+                    this.value = current[this.dataField];
+                }
+                else
+                {
+                    this.value = current;
+                }
+            }
             this.element.addEventListener("change", this, false);
         }
     }

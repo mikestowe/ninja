@@ -16,8 +16,17 @@ exports.ShapeProperties = Montage.create(ToolProperties, {
         value: function() {
             this.rectProperties.visible = true;
 
-            ShapesController.DisplayMaterials(this._strokeMaterial);
-            ShapesController.DisplayMaterials(this._fillMaterial);
+            Object.defineBinding(this._strokeMaterial, "items", {
+                boundObject: this.application.ninja.appModel,
+                boundObjectPropertyPath: "materials",
+                oneway: false
+            });
+
+            Object.defineBinding(this._fillMaterial, "items", {
+                boundObject: this.application.ninja.appModel,
+                boundObjectPropertyPath: "materials",
+                oneway: false
+            });
 
             this.handleChange(null);
             this._useWebGL.addEventListener("change", this, false);
@@ -36,13 +45,13 @@ exports.ShapeProperties = Montage.create(ToolProperties, {
                 this._selectedSubTool = value;
                 this[this._selectedSubTool.properties].visible = true;
 
-                if(this._selectedSubTool.id === "LineTool") {
-                    this._fillIcon.style["display"] = "none";
-                    this._fillMaterial.style["display"] = "none";
-                } else {
-                    this._fillIcon.style["display"] = "";
-                    this._fillMaterial.style["display"] = "";
-                }
+//                if(this._selectedSubTool.id === "LineTool") {
+//                    this._fillIcon.style["display"] = "none";
+//                    this._fillMaterial.style["display"] = "none";
+//                } else {
+//                    this._fillIcon.style["display"] = "";
+//                    this._fillMaterial.style["display"] = "";
+//                }
                 
             }
         }
@@ -53,23 +62,23 @@ exports.ShapeProperties = Montage.create(ToolProperties, {
             if(this._useWebGL.checked)
             {
                 this._use3D = true;
-                this._materialLabel.style["display"] = "";
-                this._strokeIcon.style["display"] = "";
-                this._strokeMaterial.style["display"] = "";
-                if(this.selectedSubTool.id !== "LineTool")
-                {
-                    this._fillIcon.style["display"] = "";
-                    this._fillMaterial.style["display"] = "";
-                }
+//                this._materialLabel.style["display"] = "";
+//                this._strokeIcon.style["display"] = "";
+//                this._strokeMaterial.style["display"] = "";
+//                if(this.selectedSubTool.id !== "LineTool")
+//                {
+//                    this._fillIcon.style["display"] = "";
+//                    this._fillMaterial.style["display"] = "";
+//                }
             }
             else
             {
                 this._use3D = false;
-                this._materialLabel.style["display"] = "none";
-                this._strokeIcon.style["display"] = "none";
-                this._strokeMaterial.style["display"] = "none";
-                this._fillIcon.style["display"] = "none";
-                this._fillMaterial.style["display"] = "none";
+//                this._materialLabel.style["display"] = "none";
+//                this._strokeIcon.style["display"] = "none";
+//                this._strokeMaterial.style["display"] = "none";
+//                this._fillIcon.style["display"] = "none";
+//                this._fillMaterial.style["display"] = "none";
             }
         }
     }

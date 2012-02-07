@@ -27,12 +27,6 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
 
     this._strokeWidth = 0.25;
 
-    // stroke colors
-	this._strokeColor = [0.4, 0.4, 0.4, 1.0];
-
-	// stroke materials
-	this._strokeMaterial;
-
     this._strokeStyle = "Solid";
 
     if (arguments.length > 0)
@@ -267,26 +261,11 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
         }
 
 		var prim = ShapePrimitive.create(strokeVertices, strokeNormals, strokeTextures, indices, g_Engine.getContext().renderer.TRIANGLES, indices.length);
-		this._primArray.push( prim );
 
-		var strokeMaterial;
-		if (this.getStrokeMaterial())
-			strokeMaterial = this.getStrokeMaterial().dup();
-		else
-			strokeMaterial = new FlatMaterial();
+        var strokeMaterial = this.makeStrokeMaterial();
 
-		if (strokeMaterial)
-        {
-			strokeMaterial.init( this.getWorld() );
-            if(!this.getStrokeMaterial() && this._strokeColor)
-            {
-                strokeMaterial.setProperty("color", this._strokeColor);
-            }
-        }
-		
-		this._materialArray.push( strokeMaterial );
-		this._materialTypeArray.push( "stroke" );
-		this._materialNodeArray.push( strokeMaterial.getMaterialNode() );
+        this._primArray.push( prim );
+        this._materialNodeArray.push( strokeMaterial.getMaterialNode() );
 
         world.updateObject(this);
     }

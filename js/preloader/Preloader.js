@@ -60,6 +60,7 @@ exports.Preloader = Montage.create(Component, {
 				{"type":"js", "url":"js/helper-classes/RDGE/src/core/script/util/dbgpanel.js"},
 				/* */
 
+                {"type":"js", "url":"js/helper-classes/3D/ParseUtils.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/GLLine.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/GLMaterial.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/GLLight.js"},
