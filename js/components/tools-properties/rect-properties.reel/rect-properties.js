@@ -55,19 +55,25 @@ exports.RectProperties = Montage.create(ToolProperties, {
     },
 
     strokeStyle : {
-        get: function() { return this.base._strokeStyle.options[this.base._strokeStyle.value].text; }
+        get: function() {
+//            return this.base._strokeStyle.options[this.base._strokeStyle.value].text;
+            return "Solid";
+        }
     },
 
     strokeStyleIndex : {
-        get: function() { return this.base._strokeStyle.options[this.base._strokeStyle.value].value; }
+        get: function() {
+//            return this.base._strokeStyle.options[this.base._strokeStyle.value].value;
+            return 1;
+        }
     },
 
     strokeMaterial: {
-        get: function() { return this.base._strokeMaterial.options[this.base._strokeMaterial.value].value; }
+        get: function() { return this.base._strokeMaterial.value; }
     },
 
     fillMaterial: {
-        get: function() { return this.base._fillMaterial.options[this.base._fillMaterial.value].value; }
+        get: function() { return this.base._fillMaterial.value; }
     },
 
     _setBindings: {

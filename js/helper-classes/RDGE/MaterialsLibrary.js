@@ -169,6 +169,7 @@ var MaterialsLibrary = Object.create(Object.prototype, {
 
 // create the library of stroke and fill materials
 
+var flatMaterial				= new FlatMaterial();
 var uberMaterial				= new UberMaterial();
 //var linearGradientMaterial		= new LinearGradientMaterial();
 //var radialGradientMaterial		= new RadialGradientMaterial();
@@ -182,6 +183,7 @@ var uberMaterial				= new UberMaterial();
 //var plasmaMaterial				= new PlasmaMaterial();
 var bumpMetalMaterial			= new BumpMetalMaterial();
 
+MaterialsLibrary.addMaterial(flatMaterial);
 //MaterialsLibrary.addMaterial(linearGradientMaterial);
 //MaterialsLibrary.addMaterial(radialGradientMaterial);
 //MaterialsLibrary.addMaterial(radialBlurMaterial);

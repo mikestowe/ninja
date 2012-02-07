@@ -27,6 +27,14 @@ exports.Combobox = Montage.create(Component, {
         value: null
     },
 
+    dataField: {
+        value: null
+    },
+
+    dataFunction: {
+        value: null
+    },
+
     _items: {
         value: []
     },
@@ -122,7 +130,19 @@ exports.Combobox = Montage.create(Component, {
                 {
                     var current = items[i];
                     optionItem = document.createElement("option");
-                    optionItem.value = current;
+                    if(this.dataFunction)
+                    {
+                        optionItem.value = this.dataFunction(current);
+                    }
+                    else if(this.dataField)
+                    {
+                        optionItem.value = current[this.dataField];
+                    }
+                    else
+                    {
+                        optionItem.value = current;
+                    }
+
                     if(this.labelFunction)
                     {
                         optionItem.innerText = this.labelFunction(current);

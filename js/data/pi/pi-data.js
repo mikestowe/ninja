@@ -544,7 +544,7 @@ exports.PiData = Montage.create( Montage, {
                             id:   "strokeMaterial",
                             prop:   "strokeMaterial",
                             label: "Stroke",
-                            labelFunction: function(item) { return item.getName(); },
+                            labelField: "_name",
                             items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" },
                             enabled: { boundObject: "this.controls", boundProperty: "useWebGl" },
                             divider : true

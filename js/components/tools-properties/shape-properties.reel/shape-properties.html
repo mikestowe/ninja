@@ -53,6 +53,26 @@
                 }
             },
 
+            "_strokeMaterial1": {
+                "module": "js/components/combobox.reel",
+                "name": "Combobox",
+                "properties": {
+                    "element": {"#": "strokeMaterialCB"},
+                    "labelField": "_name",
+                    "dataField": "_name"
+                }
+            },
+
+            "_fillMaterial1": {
+                "module": "js/components/combobox.reel",
+                "name": "Combobox",
+                "properties": {
+                    "element": {"#": "fillMaterialCB"},
+                    "labelField": "_name",
+                    "dataField": "_name"
+                }
+            },
+
             "toolbutton1": {
                 "module": "js/components/layout/subtool-button.reel",
                 "name": "SubToolButton",
@@ -89,10 +109,9 @@
                 "name": "ShapeProperties",
                 "properties": {
                     "element": {"#": "shapeProperties"},
-                    "_strokeStyle": {"#": "strokeStyleCB"},
-                    "_strokeMaterial": {"#": "strokeMaterialCB"},
+                    "_strokeMaterial": {"@": "_strokeMaterial1"},
                     "_fillIcon": {"#": "fillIcon"},
-                    "_fillMaterial": {"#": "fillMaterialCB"},
+                    "_fillMaterial": {"@": "_fillMaterial1"},
 
                     "_useWebGL": {"#": "useWebGLCH"},
                     "_materialLabel": {"#": "materialLabel"},
@@ -125,14 +144,6 @@
             <label class="label">Stroke:</label>
             <div id="strokeControl" class="label"></div>
 
-            <label class="label">Style:</label>
-            <select id="strokeStyleCB" class="selectBox">
-                <option value="0">Hairline</option>
-                <option value="1" selected>Solid</option>
-                <option value="2">Dashed</option>
-                <option value="3">Dotted</option>
-            </select>
-
             <div id="customProperties">
                 <div id="ovalProperties" class="label"></div>
                 <div id="rectProperties" class="label"></div>
@@ -142,7 +153,7 @@
             <label class="label subOption optionLabel"><input id="useWebGLCH" type="checkbox" name="useWebGLControl" class="checkBoxAlign"/>Use WebGL</label>
 
             <label id="materialLabel" class="label">Material:</label>
-            <div id="strokeIcon" class="pencilToolUp"></div>
+            <div id="strokeIcon" class="pencilToolUp" style="float: left;"></div>
 
             <select class="selectBox" id="strokeMaterialCB">
             </select>

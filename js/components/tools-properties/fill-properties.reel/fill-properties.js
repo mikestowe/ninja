@@ -14,7 +14,11 @@ exports.FillProperties = Montage.create(ToolProperties, {
     
     _subPrepare: {
         value: function() {
-            ShapesController.DisplayMaterials(this._fillMaterial);
+            Object.defineBinding(this._fillMaterial, "items", {
+                boundObject: this.application.ninja.appModel,
+                boundObjectPropertyPath: "materials",
+                oneway: false
+            });
 
             this.handleChange(null);
             this._useWebGL.addEventListener("change", this, false);
