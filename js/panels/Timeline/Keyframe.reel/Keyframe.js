@@ -1,5 +1,6 @@
 var Montage = require("montage/core/core").Montage;
 var Component = require("montage/ui/component").Component;
+var ElementsMediator = require("js/mediators/element-mediator").ElementMediator;
 
 var Keyframe = exports.Keyframe = Montage.create(Component, {
 
@@ -82,6 +83,7 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
             this.tweenkeyframe.addEventListener("click", this, false);
             this.animatedProperties = new Array();
 
+            // should element mediator be used here?
             this.animatedProperties["top"] = this.containingTrack.animatedElement.offsetTop;
             this.animatedProperties["left"] = this.containingTrack.animatedElement.offsetLeft;
         }
@@ -96,7 +98,7 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
     handleElementChange:{
         value:function (event) {
 
-            if(event.detail.source && event.detail.source !== "pi") {
+            if(event.detail.source && event.detail.source !== "keyframe") {
 
                 var items = this.application.ninja.selectedElements;
 
@@ -131,8 +133,8 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
             var currentTop = this.animatedProperties["top"] + "px";
             var currentLeft = this.animatedProperties["left"] + "px";
 
-            this.containingTrack.ninjaStylesContoller.setElementStyle(this.containingTrack.animatedElement, "top", currentTop);
-            this.containingTrack.ninjaStylesContoller.setElementStyle(this.containingTrack.animatedElement, "left", currentLeft);
+            ElementsMediator.setProperty([this.containingTrack.animatedElement], "top", [currentTop], "Change", "keyframe");
+            ElementsMediator.setProperty([this.containingTrack.animatedElement], "left", [currentLeft], "Change", "keyframe");
 
             // turn on element change event listener
             this.eventManager.addEventListener("elementChange", this, false);
