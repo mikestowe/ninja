@@ -34,6 +34,18 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
         	this._chromeApi = value;
         }
     },
+    ////////////////////////////////////////////////////////////////////
+    //
+    _libsToSync: {
+    	enumerable: false,
+        value: 0
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    _syncedLibs: {
+    	enumerable: false,
+        value: 0
+    },
 	////////////////////////////////////////////////////////////////////
     //
     synchronize: {
@@ -42,7 +54,7 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
     		//
     		this.chromeApi = chrome;
     		//
-    		var i, l, libs, libjson, xhr = new XMLHttpRequest(), tocopylibs = [];
+    		var i, l, libs, libjson, xhr = new XMLHttpRequest(), tocopylibs = [], copied;
             //Getting known json list of libraries to copy to chrome
            	xhr.open("GET", '/ninja-internal/js/io/system/ninjalibrary.json', false);
             xhr.send();
@@ -52,10 +64,27 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
             	libs = JSON.parse(xhr.response);
             	//
             	if (chromeLibs.length > 0) {
-            		//TODO: Remove
+            		//
 	            	for (i=0; chromeLibs[i]; i++) {
-	            		this.chromeApi.directoryDelete(chromeLibs[i]);
+	            		copied = false;
+	            		for (var j in libs.libraries) {
+	            			if (String(libs.libraries[j].name+libs.libraries[j].version).toLowerCase() === chromeLibs[i]) {
+	            				copied = true;
+	            			}
+	            		}
+	            		//
+	            		if (!copied) {
+	            			if (libs.libraries[j].file) {
+            					tocopylibs.push({name: String(libs.libraries[j].name+libs.libraries[j].version).toLowerCase(), path: libs.libraries[j].path, file: libs.libraries[j].file});
+        		    		} else {
+		            			tocopylibs.push({name: String(libs.libraries[j].name+libs.libraries[j].version).toLowerCase(), path: libs.libraries[j].path});
+            				}
+	            		} else {
+	            			//TODO: Remove, currently manually removing copied libraries
+	            			this.chromeApi.directoryDelete(chromeLibs[i]);
+	            		}
             		}
+            		
             	} else {
             		//No library is present, must copy all
             		for (var j in libs.libraries) {
@@ -70,6 +99,8 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
             		}
             	}
             	//
+            	this._libsToSync = tocopylibs.length;
+            	//
             	if (tocopylibs.length > 0) {
             		for (i=0; tocopylibs[i]; i++) {
             			//Checking for library to be single file
@@ -83,7 +114,7 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
             				//Checking for status
             				if (xhr.readyState === 4) { //TODO: add check for mime type
             					//Creating new file from loaded content
-            					this.chromeApi.fileNew('/'+tocopylibs[i].name+'/'+tocopylibs[i].file, xhr.response);
+            					this.chromeApi.fileNew('/'+tocopylibs[i].name+'/'+tocopylibs[i].file, xhr.response, function (status) {if(status) this.libraryCopied()}.bind(this));
             				} else {
             					//Error creating single file library
             				}
@@ -104,8 +135,8 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
             						libjson.dirsCreated = 0;
             						libjson.filesToCreate = libjson.files.length;
             						libjson.filesCreated = 0;
-            						libjson.api = this.chromeApi;
             						libjson.local = tocopylibs[i].name;
+            						libjson.main = this;
                						this.createDirectory(tocopylibs[i].name, libjson.directories[l], function (status) {
                							//Checking for success on directories created
                							if (status) {
@@ -120,12 +151,12 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
             									xhr.send();
             									//Checking for status
             									if (xhr.readyState === 4) {
-               										this.api.fileNew(this.local+'/'+this.files[i], xhr.response, function (status) {
+               										this.main.chromeApi.fileNew(this.local+'/'+this.files[i], xhr.response, function (status) {
                											if (status) {
                												this.filesCreated++;
                											}
                											if (this.filesCreated === this.filesToCreate) {
-               												//TODO: Add logic for task completed
+               												this.main.libraryCopied();
                											}
                										}.bind(this));
                									}	
@@ -139,7 +170,8 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
             			}
             		}
             	} else {
-            		//No libraries to copy
+            		//Dispatching ready event since nothing to copy
+            		this._dispatchEvent();
             	}
             } else {
             	//Error
@@ -171,6 +203,27 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
 			    	}
 			    }
 			}
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    libraryCopied: {
+    	enumerable: true,
+    	value: function() {
+    		this._syncedLibs++;
+    		if (this._syncedLibs === this._libsToSync) {
+    			this._dispatchEvent();
+    		}
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    _dispatchEvent: {
+    	enumerable: true,
+    	value: function () {
+    		var syncEvent = document.createEvent("CustomEvent");
+            syncEvent.initEvent('sync', true, true);
+            this.dispatchEvent(syncEvent);
     	}
     }
     ////////////////////////////////////////////////////////////////////

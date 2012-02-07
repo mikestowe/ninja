@@ -58,9 +58,9 @@ exports.CoreIoApi = Montage.create(Component, {
 	handleReady: {
 		enumerable: false,
         value: function (e) {
-        	//
+        	//Removing events
         	this.chromeFileSystem.removeEventListener('ready', this, false);
-        	//
+        	//Listening for library to be copied event (builds list)
         	this.chromeFileSystem.addEventListener('library', this, false);
         }
 	},
@@ -71,10 +71,24 @@ exports.CoreIoApi = Montage.create(Component, {
         value: function (e) {
         	//Removing events
         	this.chromeFileSystem.removeEventListener('library', this, false);
-        	//
+        	//Listening for synced library event
+        	this.ninjaLibrary.addEventListener('sync', this, false);
+        	//Sending library to be synced to chrome
         	this.ninjaLibrary.synchronize(e._event.ninjaChromeLibrary, this.chromeFileSystem);
+        	
         }
 	},
+	////////////////////////////////////////////////////////////////////
+    //
+	handleSync: {
+		enumerable: false,
+        value: function (e) {
+        	//Removing events
+        	console.log('Ninja Local Library: Ready');
+        	this.ninjaLibrary.removeEventListener('sync', this, false);
+        	//TODO: Add sync loading screen logic
+        }
+    },
     ////////////////////////////////////////////////////////////////////
     //
     _chromeNinjaLibrary: {
