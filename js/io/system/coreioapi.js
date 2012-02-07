@@ -17,6 +17,7 @@ var Montage = 		require("montage/core/core").Montage,
     Popup = 		require("js/components/popup.reel").Popup,
     CloudPopup = 	require("js/io/ui/cloudpopup.reel").CloudPopup,
     ChromeApi =		require("js/io/system/chromeapi").ChromeApi;
+    NinjaLibrary = 	require("js/io/system/ninjalibrary").NinjaLibrary;
 ////////////////////////////////////////////////////////////////////////
 //Exporting as Project I/O
 exports.CoreIoApi = Montage.create(Component, {
@@ -37,6 +38,8 @@ exports.CoreIoApi = Montage.create(Component, {
 				this.ioServiceDetected = false;
 			}
 			////////////////////////////////////////////////////////////
+			//Instance of ninja library
+			this.ninjaLibrary = NinjaLibrary;
 			//Getting reference of chrome file system API
 			this.chromeFileSystem = ChromeApi;
 			//Sending size in MBs for file system storage
@@ -69,36 +72,7 @@ exports.CoreIoApi = Montage.create(Component, {
         	//Removing events
         	this.chromeFileSystem.removeEventListener('library', this, false);
         	//
-        	var xhr = new XMLHttpRequest(), libs, tocopylibs = [];
-            //Getting known json list of libraries to copy to chrome
-           	xhr.open("GET", '/ninja-internal/js/io/system/ninjalibrary.json', false);
-            xhr.send();
-            //Checkng for correct reponse
-            if (xhr.readyState === 4) {
-            	//Parsing json libraries
-            	libs = JSON.parse(xhr.response);
-            	//
-            	if (e._event.ninjaChromeLibrary.length > 0) {
-            		//Compare
-            	} else {
-            		//No library is present, must copy all
-            		for (var i in libs.libraries) {
-            			if (libs.libraries[i].singular) {
-            				tocopylibs.push({name: String(libs.libraries[i].name+libs.libraries[i].version).toLowerCase(), path: libs.libraries[i].path, singular: true});
-            			} else {
-            				tocopylibs.push({name: String(libs.libraries[i].name+libs.libraries[i].version).toLowerCase(), path: libs.libraries[i].path, singular: false});
-            			}
-            		}
-            	}
-            	//
-            	if (tocopylibs.length > 0) {
-            		//Copy libraries
-            	} else {
-            		//No libraries to copy
-            	}
-            } else {
-            	//Error
-            }
+        	this.ninjaLibrary.synchronize(e._event.ninjaChromeLibrary, this.chromeFileSystem);
         }
 	},
     ////////////////////////////////////////////////////////////////////

@@ -9,6 +9,9 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 NOTES:
 	The init function starts up the file system API, and a size must be
 	set, no unlimited available as of now.
+	
+	Core API reference in NINJA: this.application.ninja.coreIoApi
+	
 ////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////// */
 //
@@ -61,24 +64,51 @@ exports.ChromeApi = Montage.create(Object.prototype, {
     },
     ////////////////////////////////////////////////////////////////////
     //
-    directoryNew: {
+    fileNew: {
     	enumerable: true,
-    	value: function() {
+    	value: function(filePath, content, mime, callback) {
+    		//
+    		this.fileSystem.root.getFile(filePath, {create: true}, function(f) {
+				//
+				f.createWriter(function(writer) {
+					//
+					var b = new window.WebKitBlobBuilder;
+               		b.append(content);
+               		writer.write(b.getBlob(mime));
+               		//
+               		if (callback) callback(true);
+				}, function (e) {if (callback) callback(false)});
+			}, function (e) {if (callback) callback(false)});
     	}
     },
-    
+    ////////////////////////////////////////////////////////////////////
+    //Creating directory from path, callback optional
+    directoryNew: {
+    	enumerable: true,
+    	value: function(directoryPath, callback) {
+    		//Checking for directory not to already exist
+    		this.fileSystem.root.getDirectory(directoryPath, {}, function(dir) {
+    			if (callback) callback(false);
+    			return; //Directory already exists
+    		});
+    		//Creating new directory
+    		this.fileSystem.root.getDirectory(directoryPath, {create: true}, function(dir) {
+				if (callback) callback(true);
+			}, function (e) {if (callback) callback(false)});
+    	}
+    },
     ////////////////////////////////////////////////////////////////////
     //
     directoryDelete: {
     	enumerable: true,
     	value: function(directoryPath, callback) {
     		//
-    		this.fileSystem.getDirectory(directoryPath, {}, function(dirEntry) {
+    		this.fileSystem.root.getDirectory(directoryPath, {}, function(dir) {
     			//
-    			dirEntry.removeRecursively(function() {
-      				callback(true);
+    			dir.removeRecursively(function() {
+      				if (callback) callback(true);
     			});
-    		}, function (e) {callback(false)});
+    		}, function (e) {if (callback) callback(false)});
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -125,9 +155,12 @@ exports.ChromeApi = Montage.create(Object.prototype, {
         		//
         		var lib = [];
         		//
-        		
-        		
-        		
+        		for(var i=0; contents[i]; i++) {
+        			//
+        			if (contents[i].isDirectory) {
+        				lib.push(contents[i].name);
+        			}
+        		}
         		//Dispatching action ready event
     			var libraryEvent = document.createEvent("CustomEvent");
             	libraryEvent.initEvent('library', true, true);
