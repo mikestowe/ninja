@@ -158,15 +158,15 @@ exports.TagTool = Montage.create(DrawingTool, {
             selectedTag = this.options.selectedElement;
 
             if(selectedTag === "divTool") {
-                newTag = NJUtils.makeNJElement("div", "Div", "block");
+                newTag = NJUtils.makeNJElement("div", "div", "block");
             } else if(selectedTag === "imageTool") {
-                newTag = NJUtils.makeNJElement("image", "Image", "image");
+                newTag = NJUtils.makeNJElement("image", "image", "image");
             } else if(selectedTag === "videoTool") {
-                newTag = NJUtils.makeNJElement("video", "Video", "video", {
+                newTag = NJUtils.makeNJElement("video", "video", "video", {
                         innerHTML: "Your browser does not support the VIDEO element."
                 });
             } else if(selectedTag === "canvasTool") {
-                newTag = NJUtils.makeNJElement("canvas", "Canvas", "canvas");
+                newTag = NJUtils.makeNJElement("canvas", "canvas", "canvas");
             } else if(selectedTag === "customTool") {
                 newTag = document.createElement(this.options.customName.value);
                 newTag.Ninja = {};
