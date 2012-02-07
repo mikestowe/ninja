@@ -14,6 +14,7 @@ var fragmentShaderSource = "";
 var rdgeStarted = false;
 
 var nodeCounter = 0;
+var worldCounter = 0;
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -69,6 +70,9 @@ function GLWorld( canvas, use3D )
 	// this allows us to turn off automatic updating if there are
 	// no animated materials
 	this._firstRender = true;
+
+	this._worldCount = worldCounter;
+	worldCounter++;
 
     ///////////////////////////////////////////////////////////////////////
     // Property accessors
@@ -236,7 +240,7 @@ function GLWorld( canvas, use3D )
 			{
 				renderer.disableCulling();
 				this.myScene.render();
-				//console.log( "render" );
+				console.log( "render" );
 
 				if (this._firstRender)
 				{

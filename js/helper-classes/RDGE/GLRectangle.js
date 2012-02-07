@@ -1121,6 +1121,7 @@ RectangleStroke.create = function( rectCtr,  width, height, strokeWidth,  tlRad,
 
 	// create the RDGE primitive
 	var prim = ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.TRIANGLES, nVertices);
+	//var prim = ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.LINES, nVertices);
 	return prim;
 }
 
@@ -1214,6 +1215,7 @@ RectangleGeometry.create = function( ctr,  width, height, material )
 
 	// create the RDGE primitive
 	var prim = ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.TRIANGLES, nVertices);
+	//var prim = ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.LINES, nVertices);
 	return prim;
 }
 
@@ -1301,7 +1303,7 @@ ShapePrimitive.refineMesh = function( verts, norms, uvs, indices, nVertices,  pa
 			i2 = indices[index+2];
 
 		// get the uv values
-		var vrtIndex = 3*iTriangle;
+		//var vrtIndex = 3*iTriangle;
 		var iuv0 = 2 * i0,
 			iuv1 = 2 * i1,
 			iuv2 = 2 * i2;
@@ -1335,7 +1337,7 @@ ShapePrimitive.refineMesh = function( verts, norms, uvs, indices, nVertices,  pa
 				iTriangle++;
 				index += 3;
 			}
-			else	// split the triangle
+			else	// split the triangle into 4 parts
 			{
 				//calculate the position of the new vertex
 				var iPt0 = 3 * i0,
@@ -1344,34 +1346,42 @@ ShapePrimitive.refineMesh = function( verts, norms, uvs, indices, nVertices,  pa
 				var x0 = verts[iPt0],  y0 = verts[iPt0+1],  z0 = verts[iPt0+2],
 					x1 = verts[iPt1],  y1 = verts[iPt1+1],  z1 = verts[iPt1+2],
 					x2 = verts[iPt2],  y2 = verts[iPt2+1],  z2 = verts[iPt2+2];
-				var xMid = (x0 + x1 + x2)/3.0,
-					yMid = (y0 + y1 + y2)/3.0,
-					zMid = (z0 + z1 + z2)/3.0;
+				
+				// calculate the midpoints of the edges
+				var xA = (x0 + x1)/2.0,  yA = (y0 + y1)/2.0,  zA = (z0 + z1)/2.0,
+					xB = (x1 + x2)/2.0,  yB = (y1 + y2)/2.0,  zB = (z1 + z2)/2.0,
+					xC = (x2 + x0)/2.0,  yC = (y2 + y0)/2.0,  zC = (z2 + z0)/2.0;
 
-				// calculate the uv value of the new coordinate
-				var uMid = (u0 + u1 + u2)/3.0,
-					vMid = (v0 + v1 + v2)/3.0;
+				// calculate the uv values of the new coordinates
+				var uA = (u0 + u1)/2.0,  vA = (v0 + v1)/2.0,
+					uB = (u1 + u2)/2.0,  vB = (v1 + v2)/2.0,
+					uC = (u2 + u0)/2.0,  vC = (v2 + v0)/2.0;
 
-				// calculate the normal for the new coordinate
+				// calculate the normals for the new points
 				var nx0 = norms[iPt0],  ny0 = norms[iPt0+1],  nz0 = norms[iPt0+2],
 					nx1 = norms[iPt1],  ny1 = norms[iPt1+1],  nz1 = norms[iPt1+2],
 					nx2 = norms[iPt2],  ny2 = norms[iPt2+1],  nz2 = norms[iPt2+2];
-				var nxMid = (nx0 + nx1 + nx2),
-					nyMid = (ny0 + ny1 + ny2),
-					nzMid = (nz0 + nz1 + nz2);
-				var nrm = VecUtils.vecNormalize(3, [nxMid, nyMid, nzMid], 1.0 );
+				var nxA = (nx0 + nx1),  nyA = (ny0 + ny1),  nzA = (nz0 + nz1);  var nrmA = VecUtils.vecNormalize(3, [nxA, nyA, nzA], 1.0 ),
+					nxB = (nx1 + nx2),  nyB = (ny1 + ny2),  nzB = (nz1 + nz2);  var nrmB = VecUtils.vecNormalize(3, [nxB, nyB, nzB], 1.0 ),
+					nxC = (nx2 + nx0),  nyC = (ny2 + ny0),  nzC = (nz2 + nz0);  var nrmC = VecUtils.vecNormalize(3, [nxC, nyC, nzC], 1.0 );
 
-				// push the new vertex
-				verts.push(nrm[0]);  verts.push(nrm[1]);  verts.push(nrm[2]);
-				uvs.push(uMid),  uvs.push(vMid);
-				norms.push(nrm[0]);  norms.push(nrm[1]);  norms.push(nrm[2]);
-				var iMidVrt = nVertices;
-				nVertices++;
+				// push everything
+				verts.push(xA);  verts.push(yA);  verts.push(zA);
+				verts.push(xB);  verts.push(yB);  verts.push(zB);
+				verts.push(xC);  verts.push(yC);  verts.push(zC);
+				uvs.push(uA),  uvs.push(vA);
+				uvs.push(uB),  uvs.push(vB);
+				uvs.push(uC),  uvs.push(vC);
+				norms.push(nrmA[0]);  norms.push(nrmA[1]);  norms.push(nrmA[2]);
+				norms.push(nrmB[0]);  norms.push(nrmB[1]);  norms.push(nrmB[2]);
+				norms.push(nrmC[0]);  norms.push(nrmC[1]);  norms.push(nrmC[2]);
 
-				// split the current triangle into 3
-				indices[index+2] = iMidVrt;
-				indices.push(i1);  indices.push(i2);  indices.push(iMidVrt);  nTriangles++;
-				indices.push(i2);  indices.push(i0);  indices.push(iMidVrt);  nTriangles++;
+				// split the current triangle into 4
+				indices[index+1] = nVertices;  indices[index+2] = nVertices+2;
+				indices.push(nVertices);    indices.push(i1);           indices.push(nVertices+1);  nTriangles++;
+				indices.push(nVertices+1);  indices.push(i2);           indices.push(nVertices+2);  nTriangles++;
+				indices.push(nVertices);    indices.push(nVertices+1);  indices.push(nVertices+2);  nTriangles++;
+				nVertices += 3;
 
 				// by not advancing 'index', we examine the first of the 3 triangles generated above
 			}

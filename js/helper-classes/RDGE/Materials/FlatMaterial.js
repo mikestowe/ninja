@@ -26,10 +26,13 @@ function FlatMaterial()
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
     ///////////////////////////////////////////////////////////////////////
-	this.getColor			= function()	{  return this._color;		}
-	this.getShaderName		= function()	{  return this._shaderName;	}
+	this.getColor				= function()	{  return this._color;		}
+	this.getShaderName			= function()	{  return this._shaderName;	}
 
-	this.isAnimated			= function()	{  return false;				}
+	this.isAnimated				= function()	{  return false;			}
+	this.hasVertexDeformation	= function()	{  return true;				}
+	this._hasVertexDeformation = true;
+	this._vertexDeformationTolerance = 0.2;
 
     //////////////////////////////////s/////////////////////////////////////
     // Methods
@@ -55,6 +58,7 @@ function FlatMaterial()
 //		this._shader.colorMe.u_limit1.set( [0.25] );
 //		this._shader.colorMe.u_limit2.set( [0.5] );
 //		this._shader.colorMe.u_limit3.set( [0.75] );
+//		this._shader.colorMe.u_center.set( [0.0] );
 //		this._shader.colorMe.u_taperAmount.set( [0.5] );
 	}
 
@@ -146,6 +150,7 @@ flatShaderDef  =
 					//'u_limit1': { 'type': 'float' },
 					//'u_limit2': { 'type': 'float' },
 					//'u_limit3': { 'type': 'float' },
+					//'u_center': { 'type': 'float' },
 					//'u_taperAmount': { 'type': 'float' }
                  },
             },
