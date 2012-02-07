@@ -11,11 +11,73 @@ var Montage     = require("montage/core/core").Montage,
 var treeControlModule   = require("js/components/tree.reel");
 var PIData              = require("js/data/pi/pi-data").PiData;
 
+String.prototype.capitalizeFirstChar = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+};
+
+
 var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component, {
 
     components: {
         value: null
     },
+
+    componentsToLoad: {
+        value: null
+    },
+
+    componentsLoaded: {
+        value: 0
+    },
+
+    data2: {
+            value: {
+                "text": "styles",
+                "children": [{
+                    "text": "Box Styles",
+                    "children": [
+                        {
+                            "text": "Border-Radius",
+                            "classNameBase" : "border-radius",
+                            "styles" : {
+                                "border-radius": "100px",
+                                "border" : "1px solid #333"
+                            }
+                        },
+                        {
+                            "text": "Drop Shadow",
+                            "classNameBase" : "drop-shadow",
+                            "styles" : {
+                                "box-shadow": "2px 2px 50px rgba(0,0,0,0.5)",
+                                "border" : "1px solid #CCC"
+                            }
+                        },
+                        {
+                            "text": "Fancy Box",
+                            "classNameBase" : "fancy-box",
+                            "styles" : {
+                                "box-shadow": "inset 0 0 0 1px #666, inset 0 0 0 2px rgba(225, 225, 225, 0.4), 0 0 20px -10px #333",
+                                "border" : "1px solid #FFF",
+                                "border-radius": "30px",
+                                "background-color": "#7db9e8",
+                                "background-image": "-webkit-linear-gradient(top, rgba(255,255,255,0.74) 0%,rgba(255,255,255,0) 100%)"
+                            }
+                        }]
+                }, {
+                    "text": "Text Styles",
+                    "children": [
+                        { "text": "Italic" },
+                        { "text": "Text Shadow" },
+                        { "text": "Text Color" } ]
+                }, {
+                    "text": "Color Styles",
+                    "children": [
+                        { "text": "Background Gradient" },
+                        { "text": "Background Color" },
+                        { "text": "Text Highlight" } ]
+                }]
+            }
+        },
 
     _testButtonJson: {
         value: {
@@ -42,14 +104,8 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
 
     didCreate: {
         value: function() {
-            this._loadComponents();
 
-//            var req = new XMLHttpRequest();
-//            req.identifier = "searchRequest";
-//            req.open("GET", url);
-//            req.addEventListener("load", this, false);
-//            req.addEventListener("error", this, false);
-//            req.send();
+            this._loadComponents();
 
         }
     },
@@ -61,6 +117,8 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                 {name: "Textfield", data: "node_modules/components-data/textfield.json"}
             ];
 
+            this.componentsToLoad = this.components.length;
+
             // Build the PI objects for each component
             for(var i = 0, component; component = this.components[i]; i++) {
                 var req = new XMLHttpRequest();
@@ -70,30 +128,6 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                 req.addEventListener("error", this, false);
                 req.send();
 
-/*
-                var piIdentifier = component.name + "Pi";
-                var piObj = [];
-                var section = {};
-
-
-                section.label = component.name + " Properties";
-                section.Section = [];
-
-                for(var j = 0, props; props = this._testButtonJson.properties[j]; j++) {
-                    var row = {};
-                    row.type = this.getControlType(props.type);
-                    row.id = props.name;
-                    row.prop = props.name;
-                    row.defaultValue = props["default"];
-                    row.label = props.name;
-
-                    section.Section.push([row]);
-                }
-
-                PIData[piIdentifier] = [];
-                PIData[piIdentifier].push(section);
-                */
-
             }
 
         }
@@ -102,7 +136,36 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
     handleLoad: {
         value: function(evt) {
             var response = JSON.parse(evt.target.responseText);
-            console.log(response);
+
+            var component = response.component.capitalizeFirstChar();
+
+            var piIdentifier = component + "Pi";
+            var piObj = [];
+            var section = {};
+
+
+            section.label = component + " Properties";
+            section.Section = [];
+
+            for(var j = 0, props; props = response.properties[j]; j++) {
+                var row = {};
+                row.type = this.getControlType(props.type);
+                row.id = props.name;
+                row.prop = props.name;
+                row.defaultValue = props["default"];
+                row.label = props.name;
+
+                section.Section.push([row]);
+            }
+
+            PIData[piIdentifier] = [];
+            PIData[piIdentifier].push(section);
+
+            this.componentsLoaded++;
+
+            if(this.componentsLoaded === this.componentsToLoad) {
+                console.log("all loaded");
+            }
 
         }
     },
@@ -123,6 +186,7 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
     prepareForDraw: {
     	enumerable: false,
     	value: function() {
+
             var treeHolderDiv = document.getElementById("comp_tree");
             var componentsTree = treeControlModule.Tree.create();
             componentsTree.element = treeHolderDiv;
@@ -130,6 +194,7 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
             componentsTree.needsDraw = true;
 
             this.eventManager.addEventListener( "executeAddComponent", this, false);
+
     	}
     },
 

@@ -11,7 +11,7 @@
 
         <script type="text/montage-serialization">
         {
-            "componentController": {
+            "componentControllerArrayTemp": {
                 "module": "montage/ui/controller/array-controller",
                 "name": "ArrayController",
                 "bindings": {
@@ -28,6 +28,38 @@
                 "properties": {
                     "element": {"#": "components_panel"}
                 }
+            },
+
+            "componentsController" : {
+                "module": "js/components/controllers/tree-controller",
+                "name": "TreeController",
+                "properties" : {
+                    "branchKey" : "children",
+                    "labelKey" : "text",
+                    "delegate": {"@": "owner" }
+                },
+                "bindings": {
+                    "content": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "data2"
+                    }
+                }
+            },
+
+            "componentsTree" : {
+                "module" : "js/components/treeview/treeview.reel",
+                "name" : "Treeview",
+                "properties" : {
+                    "element" : {"#": "componentsContainer"},
+                    "branchComponent" : {"@": "branch" },
+                    "contentController": {"@": "componentsController"},
+                    "showRoot" : false
+                }
+            },
+
+            "branch" : {
+                "module" : "js/components/treeview/ninja-branch.reel",
+                "name" : "Branch"
             }
         }
         </script>
@@ -37,8 +69,9 @@
     
     	<div id="components_panel" class="components_panel">
             <div class="treeHolder">
-                <ul id="comp_tree"></ul>
+               <ul id="comp_tree"></ul>
             </div>
+           <div id="componentsContainer"></div>
     	</div>
 
     </body>
