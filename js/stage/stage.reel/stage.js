@@ -876,5 +876,20 @@ exports.Stage = Montage.create(Component, {
 
             this.stageDeps.snapManager.updateWorkingPlaneFromView();
         }
+    },
+
+    saveStageScroll:{
+        value: function(){
+            this.savedLeftScroll = this._iframeContainer.scrollLeft;
+            this.savedTopScroll = this._iframeContainer.scrollTop;
+        }
+    },
+    applySavedScroll:{
+        value: function(){
+            this._iframeContainer.scrollLeft = this.savedLeftScroll;
+            this._scrollLeft = this.savedLeftScroll;
+            this._iframeContainer.scrollTop = this.savedTopScroll;
+            this._scrollTop = this.savedTopScroll;
+        }
     }
 });

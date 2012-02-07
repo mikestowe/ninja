@@ -76,10 +76,7 @@ exports.StageView = Montage.create(Component, {
     // Temporary function to create a Codemirror text view
     createTextView: {
         value: function(doc) {
-            //save current document
-            if(this.application.ninja.documentController.activeDocument.currentView === "code"){
-                this.application.ninja.documentController.activeDocument.save(true);
-            }
+            this.application.ninja.documentController.activeDocument.save(true /*remove the codemirror div after saving*/);
             this.application.ninja.documentController._hideCurrentDocument();
             this.hideOtherDocuments(doc.uuid);
             var type;
@@ -100,7 +97,14 @@ exports.StageView = Montage.create(Component, {
             doc.editor = CodeMirror.fromTextArea(doc.textArea, {
                 lineNumbers: true,
                        mode: type,
-                       onChange: function(){doc.dirtyFlag=true;},
+                       onChange: function(){
+                           var historySize = doc.editor.historySize();
+                           if((historySize.undo===0 && historySize.redo===0) || (historySize.undo>0)){
+                                doc.dirtyFlag=true;
+                           }else if(historySize.undo===0 && historySize.redo>0){
+                               doc.dirtyFlag=false;
+                           }
+                       },
                        onCursorActivity: function() {
                            //documentController._codeEditor.editor.setLineClass(documentController._codeEditor.hline, null);
                            //documentController._codeEditor.hline = documentController._codeEditor.editor.setLineClass(documentController._codeEditor.editor.getCursor().line, "activeline");
@@ -118,13 +122,16 @@ exports.StageView = Montage.create(Component, {
 
     switchDocument:{
         value: function(doc){
-
-            //if dirty SAVE codemirror into textarea
-            if(this.application.ninja.documentController.activeDocument.currentView === "code"){
-                this.application.ninja.documentController.activeDocument.save(true);
-            }
+            this.application.ninja.documentController.activeDocument.save(true /*remove the codemirror div after saving*/);
 
             this.application.ninja.documentController._hideCurrentDocument();
+
+
+            if(this.application.ninja.documentController.activeDocument.currentView === "design"){
+                console.log("scrollLeft: "+ this.application.ninja.stage._iframeContainer.scrollLeft);
+                console.log("scrollTop: "+ this.application.ninja.stage._iframeContainer.scrollTop);
+            }
+
 
             this.application.ninja.documentController.activeDocument = doc;
 
@@ -148,7 +155,7 @@ exports.StageView = Montage.create(Component, {
                 doc.editor = CodeMirror.fromTextArea(doc.textArea, {
                                lineNumbers: true,
                                mode: type,
-                               onChange: function(){doc.dirtyFlag=true;},
+                               onChange: function(){doc.dirtyFlag=true;console.log("undo stack:",doc.editor.historySize());},
                                onCursorActivity: function() {
                                    //documentController._codeEditor.editor.setLineClass(documentController._codeEditor.hline, null);
                                    //documentController._codeEditor.hline = documentController._codeEditor.editor.setLineClass(documentController._codeEditor.editor.getCursor().line, "activeline");
@@ -160,6 +167,8 @@ exports.StageView = Montage.create(Component, {
 
             if(this.application.ninja.documentController.activeDocument.documentType === "htm" || this.application.ninja.documentController.activeDocument.documentType === "html") {
                 this.application.ninja.stage._scrollFlag = true; // TODO HACK to prevent type error on Hide/Show Iframe
+
+
                 // TODO dispatch event here
     //                appDelegateModule.MyAppDelegate.onSetActiveDocument();
             }

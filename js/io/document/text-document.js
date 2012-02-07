@@ -100,6 +100,7 @@ var TextDocument = exports.TextDocument = Montage.create(baseDocumentModule.Base
                 var codemirrorDiv = this.textArea.parentNode.querySelector(".CodeMirror");
                 if(!!codemirrorDiv){codemirrorDiv.parentNode.removeChild(codemirrorDiv);}
             }
+            //console.log("$$$saved : "+this.uri+" : "+this.textArea.value);
             //persist to filesystem
         }
     }

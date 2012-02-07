@@ -72,6 +72,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             this.eventManager.addEventListener("appLoaded", this, false);
             this.eventManager.addEventListener("executeFileOpen", this, false);
             this.eventManager.addEventListener("executeNewFile", this, false);
+            this.eventManager.addEventListener("executeSave", this, false);
         }
     },
 
@@ -87,8 +88,6 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             pickerSettings.callback = this.openFileWithURI;
             pickerSettings.callbackScope = this;
             this.application.ninja.filePickerController.showFilePicker(pickerSettings);
-
-            //this.openDocument({"type": "js", "source": this.tmpSourceForTesting});
         }
     },
 
@@ -98,6 +97,12 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                 newFileSettings.callback = this.createNewFile;
                 newFileSettings.callbackScope = this;
                 this.application.ninja.newFileController.showNewFileDialog(newFileSettings);
+            }
+    },
+
+    handleExecuteSave: {
+            value: function(event) {
+                this.activeDocument.save();
             }
     },
 
@@ -240,7 +245,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
             //if file dirty then save
             if(this.activeDocument.dirtyFlag === true){
-                this.activeDocument.save(true);
+                this.activeDocument.save(true /*remove the codemirror div after saving*/);
                 this.activeDocument.dirtyFlag=false;
             }
 
@@ -382,12 +387,13 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     _hideCurrentDocument: {
         value: function() {
             if(this.activeDocument) {
-                this.activeDocument.container.style["display"] = "none";
-                if(this.activeDocument.currentView === "design" || this.activeDocument.currentView === "design"){
+                if(this.activeDocument.currentView === "design"){
+                    this.application.ninja.stage.saveStageScroll();
                     this.activeDocument.container.parentNode.style["display"] = "none";
                     this.application.ninja.stage.hideCanvas(true);
                     this.application.ninja.stage.stageView.hideRulers();
                 }
+                this.activeDocument.container.style["display"] = "none";
             }
         }
     },
@@ -396,8 +402,9 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value: function() {
             if(this.activeDocument) {
                 this.activeDocument.container.style["display"] = "block";
-                if(this.activeDocument.currentView === "design" || this.activeDocument.currentView === "design"){
+                if(this.activeDocument.currentView === "design"){
                     this.activeDocument.container.parentNode.style["display"] = "block";
+                    this.application.ninja.stage.applySavedScroll();
                     this.application.ninja.stage.hideCanvas(false);
                     this.application.ninja.stage.stageView.showRulers();
                 }
