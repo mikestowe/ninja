@@ -314,8 +314,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                             this.arrTracks.splice(myIndex, 0, newTrack);
                             this.layerRepetition.selectedIndexes = [myIndex];
                         } else {
-                            this.arrLayers.push(thingToPush);
-                            this.arrTracks.push(newTrack);
+                            this.arrLayers.splice(0, 0, thingToPush);
+                            this.arrTracks.splice(0, 0, newTrack);
                             thingToPush.layerPosition=this.arrLayers.length-1;
                             newTrack.trackPosition=this.arrTracks.length-1;
                             this.hashInstance.setItem(this._hashKey,thingToPush,thingToPush.layerPosition);
