@@ -142,15 +142,12 @@ exports.PenTool = Montage.create(ShapeTool, {
                 //NOTE: this will work on Webkit only...IE has different codes (left: 1, middle: 4, right: 2)
                 return;
             }
-            //BEGIN ShapeTool code
             if (this._canDraw) {
                 this._isDrawing = true;
             }
 
-            //this._targetedCanvas = stageManagerModule.stageManager.GetObjectFromPoint(event.layerX, event.layerY, this._canOperateOnStage);
 
             this.startDraw(event);
-            //END ShapeTool code
 
             //assume we are not starting a new path as we will set this to true if we create a new GLSubpath()
             this._isNewPath = false;
@@ -269,6 +266,8 @@ exports.PenTool = Montage.create(ShapeTool, {
             if (!g_DoPenToolMouseMove){
                 NJevent("enableStageMove");
             }
+
+            this._hoveredAnchorIndex = -1;
         } //value: function (event) {
     }, //HandleLeftButtonDown
 
@@ -370,7 +369,7 @@ exports.PenTool = Montage.create(ShapeTool, {
             }
 
         }//value: function(event)
-    },
+    },//HandleMouseMove
 
     //TODO Optimize! This function is probably no longer needed
     TranslateSelectedSubpathPerPenCanvas:{
@@ -499,6 +498,7 @@ exports.PenTool = Montage.create(ShapeTool, {
             if (!g_DoPenToolMouseMove){
                 NJevent("disableStageMove");
             }
+            this._hoveredAnchorIndex = -1;
         }
     },
 
@@ -664,15 +664,17 @@ exports.PenTool = Montage.create(ShapeTool, {
     }, //BuildSecondCtrlPoint:{
 
 
+    /*
     deleteSelection: {
         value: function() {
              //clear the selected subpath...the only new additions to this function w.r.t. ToolBase
             if (this._selectedSubpath){
                 if (this._selectedSubpath.getSelectedAnchorIndex()>=0){
                     this._selectedSubpath.removeAnchor(this._selectedSubpath.getSelectedAnchorIndex());
+                    this._selectedSubpath.createSamples(); 
                     //clear the canvas
-                    this.application.ninja.stage.clearDrawingCanvas();//stageManagerModule.stageManager.clearDrawingCanvas();
-                    this.DrawSubpathAnchors(this._selectedSubpath); 
+                    this.application.ninja.stage.clearDrawingCanvas();
+                    this.DrawSubpathAnchors(this._selectedSubpath);
                     this.ShowSelectedSubpath();
                 }
                 else {
@@ -681,28 +683,14 @@ exports.PenTool = Montage.create(ShapeTool, {
                     this._selectedSubpath.createSamples();
                     this._selectedSubpath = null;
                     //clear the canvas
-                    this.application.ninja.stage.clearDrawingCanvas();//stageManagerModule.stageManager.clearDrawingCanvas();
-
-                    //TODO begin code block taken from ToolBase...figure out how to override it correctly
-                    var item;
-                    /*
-                    if(!selectionManagerModule.selectionManager.isDocument) {
-                        for(var i=0; item = selectionManagerModule.selectionManager.selectedItems[i]; i++) {
-                            drawUtils.removeElement(item._element);                         // TODO This was called twice - After the event.
-                            window.snapManager.removeElementFrom2DCache( item._element );   // TODO Check with Nivesh about it.
-                            DocumentControllerModule.DocumentController.RemoveElement(item._element);
-                        }
-
-                        NJevent( "deleteSelection" );
-                    }
-                    */
-                    //end code block taken from ToolBase
-
+                    this.application.ninja.stage.clearDrawingCanvas();
                     this._penCanvas = null;
                 }
             }
         }
     },
+    */
+
 
     HandleDoubleClick: {
         value: function () {
@@ -710,9 +698,6 @@ exports.PenTool = Montage.create(ShapeTool, {
             if (this._selectedSubpath && this._selectedSubpath.getSelectedAnchorIndex() !== -1) {
                 var selAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
                 var pos = Vector.create([selAnchor.getPosX(), selAnchor.getPosY(), selAnchor.getPosZ()]);
-                //var prev = Vector.create([selAnchor.getPrevX(), selAnchor.getPrevY(), selAnchor.getPrevZ()]);
-                //var next = Vector.create([selAnchor.getNextX(), selAnchor.getNextY(), selAnchor.getNextZ()]);
-
                 var distToPrev = selAnchor.getPrevDistanceSq(pos[0], pos[1], pos[2]);
                 var distToNext = selAnchor.getNextDistanceSq(pos[0], pos[1], pos[2]);
                 var threshSq = 0; // 4 * this._PICK_POINT_RADIUS * this._PICK_POINT_RADIUS;
@@ -820,8 +805,8 @@ exports.PenTool = Montage.create(ShapeTool, {
             if (ctx.lineWidth == subpath.getStrokeWidth())
                 ctx.lineWidth = 3;
             ctx.strokeStyle = "black";
-            if (subpath.getStrokeColor())
-			    ctx.strokeStyle = MathUtils.colorToHex( subpath.getStrokeColor() );
+            //if (subpath.getStrokeColor())
+			//    ctx.strokeStyle = MathUtils.colorToHex( subpath.getStrokeColor() );
             ctx.beginPath();
             var p0x = subpath.getAnchor(0).getPosX()+ horizontalOffset;
             var p0y = subpath.getAnchor(0).getPosY()+ verticalOffset;
@@ -884,7 +869,7 @@ exports.PenTool = Montage.create(ShapeTool, {
             //display the hovered over anchor point
             ctx.lineWidth = 2;
             ctx.strokeStyle = "black";
-            if (this._hoveredAnchorIndex>=0) {
+            if (this._hoveredAnchorIndex && this._hoveredAnchorIndex>=0) {
                 var px = subpath.getAnchor(this._hoveredAnchorIndex).getPosX();
                 var py = subpath.getAnchor(this._hoveredAnchorIndex).getPosY();
                 ctx.beginPath();
@@ -1061,6 +1046,7 @@ exports.PenTool = Montage.create(ShapeTool, {
              //clear the selected subpath...the only new additions to this function w.r.t. ToolBase
             if (this._selectedSubpath){
                 if (this._selectedSubpath.getSelectedAnchorIndex()>=0){
+                    this._hoveredAnchorIndex=-1;
                     this._selectedSubpath.removeAnchor(this._selectedSubpath.getSelectedAnchorIndex());
                     this._selectedSubpath.createSamples();
                     //clear the canvas

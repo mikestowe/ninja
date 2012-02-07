@@ -146,6 +146,8 @@ function GLSubpath() {
         ctx.lineCap = lineCap[1];
         ctx.beginPath();
 
+        /*
+        commenting this out for now because of Chrome bug where coincident endpoints of bezier curve cause the curve to not be rendered
         var prevAnchor = this.getAnchor(0);
         ctx.moveTo(prevAnchor.getPosX()-bboxMin[0],prevAnchor.getPosY()-bboxMin[1]);
         for (var i = 1; i < numAnchors; i++) {
@@ -157,18 +159,19 @@ function GLSubpath() {
             var currAnchor = this.getAnchor(0);
             ctx.bezierCurveTo(prevAnchor.getNextX()-bboxMin[0],prevAnchor.getNextY()-bboxMin[1], currAnchor.getPrevX()-bboxMin[0], currAnchor.getPrevY()-bboxMin[1], currAnchor.getPosX()-bboxMin[0], currAnchor.getPosY()-bboxMin[1]);
             prevAnchor = currAnchor;
-        }
-        if (this._isClosed){
             ctx.fill();
         }
+        */
 
-        /*
         var numPoints = this._samples.length/3;
-        ctx.moveTo(this._samples[0],this._samples[1]);
+        ctx.moveTo(this._samples[0]-bboxMin[0],this._samples[1]-bboxMin[1]);
         for (var i=0;i<numPoints;i++){
             ctx.lineTo(this._samples[3*i]-bboxMin[0],this._samples[3*i + 1]-bboxMin[1]);
         }
-        */
+        if (this._isClosed === true) {
+            ctx.lineTo(this._samples[0]-bboxMin[0],this._samples[1]-bboxMin[1]);
+            ctx.fill();
+        }
         ctx.stroke();
         ctx.restore();
     } //render()
@@ -224,10 +227,8 @@ GLSubpath.prototype.removeAnchor = function (index) {
         retAnchor = this._Anchors.splice(index, 1);
         this._dirty = true;
     }
-    //deselect the removed anchor if necessary
-    if (this._selectedAnchorIndex === index){
-        this._selectedAnchorIndex = -1;
-    }
+    //deselect the removed anchor
+    this._selectedAnchorIndex = -1;
     return retAnchor;
 }
 
