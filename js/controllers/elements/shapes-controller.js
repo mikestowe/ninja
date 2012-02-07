@@ -59,7 +59,11 @@ exports.ShapesController = Montage.create(CanvasController, {
                     break;
                 case "useWebGl":
                     var canvas = njModule.NJUtils.makeNJElement("canvas", "Canvas", "shape", el.className, true);
+                    canvas.width = el.width;
+                    canvas.height = el.height;
                     this.application.ninja.elementMediator.replaceElement(el, canvas);
+                    NJevent("elementDeleted", el);
+                    this.application.ninja.selectionController.selectElement(canvas);
                     el = canvas;
                     this.toggleWebGlMode(el, value);
                     el.elementModel.shapeModel.GLGeomObj.buildBuffers();
