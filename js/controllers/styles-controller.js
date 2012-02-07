@@ -736,7 +736,6 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     ///// Returns the specificity value of passed-in selector
     ///// WARNING: Do not pass in grouped selectors!
     ///// Helpful for determining precedence of style rules
-    ///// Calculation javascript code courtesy of David Owens:
     ///// http://gbradley.com/2009/10/02/css-specificity-in-javascript
     ///// Used with author's permission
 
@@ -1177,15 +1176,24 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
     _clearCache: {
         value: function(element) {
-            var itemsToClear = this._cacheHistory;
+            var itemsToNullify = this._cacheHistory,
+                itemsToRemove = [],
+                i;
 
+
+            ///// If clearing the cache for an element, filter by element
+            ///// and keep track of indices to remove from cache
             if(element) {
-                itemsToClear = itemsToClear.filter(function(item) {
-                    return item.element === element;
+                itemsToNullify = itemsToNullify.filter(function(item, index) {
+                    if(item.element === element) {
+                        itemsToRemove.push(index);
+                        return true;
+                    }
+                    return false;
                 });
             }
 
-            itemsToClear.forEach(function(item) {
+            itemsToNullify.forEach(function(item) {
                 //var identifier = item.element.nodeName;
                 //identifier += '#'+item.element.id || '.'+item.element.className;
                 //console.log("clearing cache for \"" + item.property +"\" and element \"" + identifier+ "");
@@ -1193,6 +1201,17 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                     item.element.elementModel[item.property] = null;
                 }
             });
+
+            ///// Remove the nullified items from the cache
+            ///// Start at the end to not mess up index references
+            for(i = itemsToRemove.length-1; i >= 0; i--) {
+                this._cacheHistory.splice(itemsToRemove[i], 1);
+            }
+
+            if(!element) {
+                this._cacheHistory = null;
+                this._cacheHistory = [];
+            }
 
         }
     },
