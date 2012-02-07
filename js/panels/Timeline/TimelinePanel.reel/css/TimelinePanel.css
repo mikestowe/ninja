@@ -27,6 +27,7 @@
 }
 .tl_leftpane{
     min-width: 200px;
+    max-width: 500px;
     position: relative;
     overflow: hidden;
     -webkit-box-flex: 0;
