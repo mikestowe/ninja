@@ -82,7 +82,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                     if(fm)
                     {
                         el.elementModel.shapeModel.GLGeomObj.setFillMaterial(fm);
-                        el.elementModel.shapeModel.strokeMaterial = fm;
+                        el.elementModel.shapeModel.fillMaterial = fm;
                         el.elementModel.shapeModel.GLGeomObj.buildBuffers();
                     }
                     break;

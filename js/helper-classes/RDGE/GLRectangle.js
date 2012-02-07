@@ -271,8 +271,8 @@ function GLRectangle()
 
 		// stroke
 		var strokeMaterial = this.makeStrokeMaterial();
-		prim = this.createStroke([x,y],  2*xFill,  2*yFill,  strokeSize,  tlRadius, blRadius, brRadius, trRadius, strokeMaterial)
-        this._primArray.push( prim );
+		var strokePrim = this.createStroke([x,y],  2*xFill,  2*yFill,  strokeSize,  tlRadius, blRadius, brRadius, trRadius, strokeMaterial);
+        this._primArray.push( strokePrim );
 		this._materialNodeArray.push( strokeMaterial.getMaterialNode() );
 
 		// fill
@@ -283,8 +283,8 @@ function GLRectangle()
 		xFill -= strokeSize;
 		yFill -= strokeSize;
 		var fillMaterial = this.makeFillMaterial();
-		prim = this.createFill([x,y],  2*xFill,  2*yFill,  tlRadius, blRadius, brRadius, trRadius, fillMaterial)
-        this._primArray.push( prim );
+		var fillPrim = this.createFill([x,y],  2*xFill,  2*yFill,  tlRadius, blRadius, brRadius, trRadius, fillMaterial);
+        this._primArray.push( fillPrim );
 		this._materialNodeArray.push( fillMaterial.getMaterialNode() );
 
         world.updateObject(this);
