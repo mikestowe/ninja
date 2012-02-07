@@ -145,6 +145,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     // Initialize the timeline
     initTimelineView : {
         value:function(){
+        	
+        	// Get some selectors to make life easier.
+        	this.layout_tracks = this.element.querySelector(".layout-tracks");
+        	this.layout_markers = this.element.querySelector(".layout_markers");
 
             // Add event handlers on the buttons.
             this.newlayer_button.identifier = "addLayer";
@@ -153,7 +157,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.deletelayer_button.addEventListener("click", this, false);
 
             // Simultaneous scrolling of the layer and tracks
-            this.layer_tracks.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
+            this.layout_tracks.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
             this.user_layers.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
 
             // Calculate and draw time markers
@@ -172,8 +176,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     updateLayerScroll:{
         value:function(){
-            this.user_layers.scrollTop = this.layer_tracks.scrollTop;
-            this.master_track.scrollLeft = this.layer_tracks.scrollLeft;
+        	console.log(this.layout_tracks.scrollLeft)
+            this.user_layers.scrollTop = this.layout_tracks.scrollTop;
+            this.layout_markers.scrollLeft = this.layout_tracks.scrollLeft;
         }
     },
 
