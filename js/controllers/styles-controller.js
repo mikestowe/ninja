@@ -804,7 +804,34 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             return browserValues;
         }
     },
-    
+
+    ///// Set Keyframe Style
+    ///// For a given CSSKeyframesRule, we may add a style to the keyframe at
+    ///// given index.
+
+    setKeyframeStyle : {
+        value : function(rule, keyframeIndex, property, value, useImportant) {
+            return this.setStyle(rule.cssRules[keyframeIndex], property, value, useImportant);
+        }
+    },
+
+    ///// Set Keyframe Styles
+    ///// For a given CSSKeyframesRule, we may add styles to the keyframe at
+    ///// given index.
+
+    setKeyframeStyle : {
+        value : function(rule, keyframeIndex, property, value, useImportant) {
+            return this.setStyles(rule.cssRules[keyframeIndex], property, value, useImportant);
+        }
+    },
+
+    insertKeyframe : {
+        value : function() {
+
+        }
+    },
+
+
     ///// Delete style
     ///// Removes the property from the style declaration/rule
     ///// Returns the rule
