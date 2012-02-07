@@ -68,6 +68,24 @@ exports.ShapesController = Montage.create(CanvasController, {
                     this.toggleWebGlMode(el, value);
                     el.elementModel.shapeModel.GLGeomObj.buildBuffers();
                     break;
+                case "strokeMaterial":
+                    var sm = Object.create(MaterialsLibrary.getMaterial(value));
+                    if(sm)
+                    {
+                        el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(sm);
+                        el.elementModel.shapeModel.strokeMaterial = sm;
+                        el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                    }
+                    break;
+                case "fillMaterial":
+                    var fm = Object.create(MaterialsLibrary.getMaterial(value));
+                    if(fm)
+                    {
+                        el.elementModel.shapeModel.GLGeomObj.setFillMaterial(fm);
+                        el.elementModel.shapeModel.strokeMaterial = fm;
+                        el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                    }
+                    break;
                 default:
                     CanvasController.setProperty(el, p, value);
             }
@@ -84,12 +102,13 @@ exports.ShapesController = Montage.create(CanvasController, {
                 case "trRadius":
                 case "blRadius":
                 case "brRadius":
-                case "strokeMaterial":
-                case "fillMaterial":
                 case "border":
                 case "background":
                 case "useWebGl":
                     return this.getShapeProperty(el, p);
+                case "strokeMaterial":
+                case "fillMaterial":
+                    return this.getShapeProperty(el, p).getName();
                 default:
                     return CanvasController.getProperty(el, p);
             }

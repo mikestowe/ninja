@@ -15,7 +15,7 @@ exports.Combobox = Montage.create(Component, {
     },
 
     _wasSetByCode: {
-        enumerable: false,
+        enumerable: true,
         value: true
     },
 
@@ -79,7 +79,7 @@ exports.Combobox = Montage.create(Component, {
                 e.value = this._value;
                 this.dispatchEvent(e);
 
-                this._wasSetByCode = false;
+                this._wasSetByCode = true;
             }
         }
     },

@@ -186,6 +186,8 @@ exports.CustomSection = Montage.create(Component, {
             if (aField.value)       obj.value = aField.value;
             if (aField.labelField)  obj.labelField = aField.labelField;
             if (aField.labelFunction)  obj.labelFunction = aField.labelFunction;
+            if (aField.dataField)  obj.dataField = aField.dataField;
+            if (aField.dataFunction)  obj.dataFunction = aField.dataFunction;
             if (aField.items) {
                 if(aField.items.boundObject) {
                     obj.items = eval(aField.items.boundObject)[aField.items.boundProperty];
