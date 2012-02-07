@@ -736,6 +736,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     ///// Returns the specificity value of passed-in selector
     ///// WARNING: Do not pass in grouped selectors!
     ///// Helpful for determining precedence of style rules
+    ///// Calculation javascript code courtesy of Graham Bradley:
     ///// http://gbradley.com/2009/10/02/css-specificity-in-javascript
     ///// Used with author's permission
 
