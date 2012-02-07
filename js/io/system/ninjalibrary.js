@@ -83,7 +83,7 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
             				//Checking for status
             				if (xhr.readyState === 4) { //TODO: add check for mime type
             					//Creating new file from loaded content
-            					this.chromeApi.fileNew('/'+tocopylibs[i].name+'/'+tocopylibs[i].file, xhr.response, 'text/plain');
+            					this.chromeApi.fileNew('/'+tocopylibs[i].name+'/'+tocopylibs[i].file, xhr.response);
             				} else {
             					//Error creating single file library
             				}
@@ -120,7 +120,7 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
             									xhr.send();
             									//Checking for status
             									if (xhr.readyState === 4) {
-               										this.api.fileNew(this.local+'/'+this.files[i], xhr.response, 'text/plain', function (status) {
+               										this.api.fileNew(this.local+'/'+this.files[i], xhr.response, function (status) {
                											if (status) {
                												this.filesCreated++;
                											}
