@@ -15,6 +15,7 @@ var CSSPanel        = require("js/panels/CSSPanel/CSSPanel").CSSPanel;
 var ComponentsPanel = require("js/panels/Components/ComponentsPanel").ComponentsPanel;
 var ProjectPanel    = require("js/panels/Project/ProjectPanel").ProjectPanel;
 var MaterialsPanel  = require("js/panels/Materials/MaterialsPanel").MaterialsPanel;
+var PresetsPanel    = require("js/panels/presets/presets-panel").PresetsPanel;
 
 exports.PanelContainer = Montage.create(Component, {
     lastOffset: {
@@ -44,7 +45,7 @@ exports.PanelContainer = Montage.create(Component, {
     },
 
     initPanelOrder: {
-        value: ['PropertiesPanel','ColorPanel','ComponentsPanel','ProjectPanel','CSSPanel','MaterialsPanel']
+        value: ['PresetsPanel','PropertiesPanel','ColorPanel','ComponentsPanel','ProjectPanel','CSSPanel','MaterialsPanel']
     },
 
     panelOrder: {
@@ -93,6 +94,7 @@ exports.PanelContainer = Montage.create(Component, {
 
 //            this.needsDraw = true;
 
+            this.addEventListener("change@appModel.PresetsPanel", this, false);
             this.addEventListener("change@appModel.PropertiesPanel", this, false);
             this.addEventListener("change@appModel.ProjectPanel", this, false);
             this.addEventListener("change@appModel.ColorPanel", this, false);
