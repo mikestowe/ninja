@@ -42,7 +42,7 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
     		//
     		this.chromeApi = chrome;
     		//
-    		var i, libs, xhr = new XMLHttpRequest(), tocopylibs = [];
+    		var i, l, libs, libjson, xhr = new XMLHttpRequest(), tocopylibs = [];
             //Getting known json list of libraries to copy to chrome
            	xhr.open("GET", '/ninja-internal/js/io/system/ninjalibrary.json', false);
             xhr.send();
@@ -52,9 +52,9 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
             	libs = JSON.parse(xhr.response);
             	//
             	if (chromeLibs.length > 0) {
-            		//Compare (always deleting for testing)
-            		for (i=0; chromeLibs[i]; i++) {
-            			this.chromeApi.directoryDelete(chromeLibs[i]);
+            		//TODO: Remove
+	            	for (i=0; chromeLibs[i]; i++) {
+	            		this.chromeApi.directoryDelete(chromeLibs[i]);
             		}
             	} else {
             		//No library is present, must copy all
@@ -84,12 +84,58 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
             				if (xhr.readyState === 4) { //TODO: add check for mime type
             					//Creating new file from loaded content
             					this.chromeApi.fileNew('/'+tocopylibs[i].name+'/'+tocopylibs[i].file, xhr.response, 'text/plain');
-            					//this.chromeApi.fileNew('/'+tocopylibs[i].name+'/'+tocopylibs[i].file, xhr.response, 'text/plain', function (v){console.log(v)});
+            				} else {
+            					//Error creating single file library
+            				}
+            			} else {
+            				//Creating root folder
+            				this.chromeApi.directoryNew('/'+tocopylibs[i].name);
+            				//Getting file contents
+            				xhr = new XMLHttpRequest();
+            				xhr.open("GET", tocopylibs[i].path, false);
+            				xhr.send();
+            				//Checking for status
+            				if (xhr.readyState === 4) {
+            					//
+            					libjson = JSON.parse(xhr.response);
+            					//
+            					for (l=0; libjson.directories[l]; l++) {
+            						libjson.dirsToCreate = libjson.directories.length;
+            						libjson.dirsCreated = 0;
+            						libjson.filesToCreate = libjson.files.length;
+            						libjson.filesCreated = 0;
+            						libjson.api = this.chromeApi;
+            						libjson.local = tocopylibs[i].name;
+               						this.createDirectory(tocopylibs[i].name, libjson.directories[l], function (status) {
+               							//Checking for success on directories created
+               							if (status) {
+               								this.dirsCreated++;
+               							}
+               							//All directories created
+               							if (this.dirsCreated === this.dirsToCreate) {
+               								var xhr, i;
+               								for (i=0; this.files[i]; i++) {
+               									xhr = new XMLHttpRequest();
+            									xhr.open("GET", this.root+this.files[i], false);
+            									xhr.send();
+            									//Checking for status
+            									if (xhr.readyState === 4) {
+               										this.api.fileNew(this.local+'/'+this.files[i], xhr.response, 'text/plain', function (status) {
+               											if (status) {
+               												this.filesCreated++;
+               											}
+               											if (this.filesCreated === this.filesToCreate) {
+               												//TODO: Add logic for task completed
+               											}
+               										}.bind(this));
+               									}	
+               								}
+               							}
+               						}.bind(libjson));
+               					}
             				} else {
             					//Error
             				}
-            			} else {
-            				//
             			}
             		}
             	} else {
@@ -99,18 +145,34 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
             	//Error
             }
     	}
-    }/*
-,
+    },
     ////////////////////////////////////////////////////////////////////
     //
-    createFolder: {
+    createDirectory: {
     	enumerable: true,
-    	value: function(name) {
+    	value: function(root, folder, callback) {
     		//
-    		this.chromeApi.directoryNew(name);
+    		if (folder.name) {
+			    if (root) {
+					dir = root+'/'+folder.name;
+			    } else {
+			    	dir = folder.name;
+			    }
+			    //
+			    this.chromeApi.directoryNew(dir, function (status) {if (callback)callback(status)});
+			}
+			//
+			if (folder.children) {
+				for (var j in folder.children) {
+					if (root) {
+						this.createDirectory(root+'/'+folder.name, folder.children[j]);
+			   		} else {
+			   			this.createDirectory(folder.name, folder.children[j]);
+			    	}
+			    }
+			}
     	}
     }
-*/
     ////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////   
 });
