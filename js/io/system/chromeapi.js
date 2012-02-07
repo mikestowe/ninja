@@ -69,9 +69,16 @@ exports.ChromeApi = Montage.create(Object.prototype, {
     
     ////////////////////////////////////////////////////////////////////
     //
-    directoryDelete: {//TODO: Make sure it uses a force delete
+    directoryDelete: {
     	enumerable: true,
-    	value: function() {
+    	value: function(directoryPath, callback) {
+    		//
+    		this.fileSystem.getDirectory(directoryPath, {}, function(dirEntry) {
+    			//
+    			dirEntry.removeRecursively(function() {
+      				callback(true);
+    			});
+    		}, function (e) {callback(false)});
     	}
     },
     ////////////////////////////////////////////////////////////////////

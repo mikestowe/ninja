@@ -117,7 +117,7 @@ exports.PopupMananger = Montage.create(Component, {
     _getNextHighestZindex: {
     	numerable: false,
     	value: function (parent) {
-    		//Adapcted from: http://greengeckodesign.com/blog/2007/07/get-highest-z-index-in-javascript.html
+    		//CSS specificity in javascript found at http://gbradley.com/2009/10/02/css-specificity-in-javascript used with permission from Graham Bradley
 			var high = 0, current = 0, children = [], i;
    			//
    			if (parent) {

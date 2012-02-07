@@ -66,14 +66,39 @@ exports.CoreIoApi = Montage.create(Component, {
 	handleLibrary: {
 		enumerable: false,
         value: function (e) {
-        	//
+        	//Removing events
         	this.chromeFileSystem.removeEventListener('library', this, false);
         	//
-        	if (e._event.ninjaChromeLibrary.length < 1) {
-        		console.log('no libraries');
-        	} else {
-        		console.log('found libraries');
-        	}
+        	var xhr = new XMLHttpRequest(), libs, tocopylibs = [];
+            //Getting known json list of libraries to copy to chrome
+           	xhr.open("GET", '/ninja-internal/js/io/system/ninjalibrary.json', false);
+            xhr.send();
+            //Checkng for correct reponse
+            if (xhr.readyState === 4) {
+            	//Parsing json libraries
+            	libs = JSON.parse(xhr.response);
+            	//
+            	if (e._event.ninjaChromeLibrary.length > 0) {
+            		//Compare
+            	} else {
+            		//No library is present, must copy all
+            		for (var i in libs.libraries) {
+            			if (libs.libraries[i].singular) {
+            				tocopylibs.push({name: String(libs.libraries[i].name+libs.libraries[i].version).toLowerCase(), path: libs.libraries[i].path, singular: true});
+            			} else {
+            				tocopylibs.push({name: String(libs.libraries[i].name+libs.libraries[i].version).toLowerCase(), path: libs.libraries[i].path, singular: false});
+            			}
+            		}
+            	}
+            	//
+            	if (tocopylibs.length > 0) {
+            		//Copy libraries
+            	} else {
+            		//No libraries to copy
+            	}
+            } else {
+            	//Error
+            }
         }
 	},
     ////////////////////////////////////////////////////////////////////
