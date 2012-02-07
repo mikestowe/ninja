@@ -45,13 +45,16 @@ exports.ShapeProperties = Montage.create(ToolProperties, {
                 this._selectedSubTool = value;
                 this[this._selectedSubTool.properties].visible = true;
 
-//                if(this._selectedSubTool.id === "LineTool") {
-//                    this._fillIcon.style["display"] = "none";
-//                    this._fillMaterial.style["display"] = "none";
-//                } else {
-//                    this._fillIcon.style["display"] = "";
-//                    this._fillMaterial.style["display"] = "";
-//                }
+                if(this._useWebGL.checked)
+                {
+                    if(this._selectedSubTool.id === "LineTool") {
+                        this._fillIcon.style["display"] = "none";
+                        this._fillMaterial.visible = false;
+                    } else {
+                        this._fillIcon.style["display"] = "";
+                        this._fillMaterial.visible = true;
+                    }
+                }
                 
             }
         }
@@ -62,23 +65,23 @@ exports.ShapeProperties = Montage.create(ToolProperties, {
             if(this._useWebGL.checked)
             {
                 this._use3D = true;
-//                this._materialLabel.style["display"] = "";
-//                this._strokeIcon.style["display"] = "";
-//                this._strokeMaterial.style["display"] = "";
-//                if(this.selectedSubTool.id !== "LineTool")
-//                {
-//                    this._fillIcon.style["display"] = "";
-//                    this._fillMaterial.style["display"] = "";
-//                }
+                this._materialLabel.style["display"] = "";
+                this._strokeIcon.style["display"] = "";
+                this._strokeMaterial.visible = true;
+                if(this.selectedSubTool.id !== "LineTool")
+                {
+                    this._fillIcon.style["display"] = "";
+                    this._fillMaterial.visible = true;
+                }
             }
             else
             {
                 this._use3D = false;
-//                this._materialLabel.style["display"] = "none";
-//                this._strokeIcon.style["display"] = "none";
-//                this._strokeMaterial.style["display"] = "none";
-//                this._fillIcon.style["display"] = "none";
-//                this._fillMaterial.style["display"] = "none";
+                this._materialLabel.style["display"] = "none";
+                this._strokeIcon.style["display"] = "none";
+                this._strokeMaterial.visible = false;
+                this._fillIcon.style["display"] = "none";
+                this._fillMaterial.visible = false;
             }
         }
     }
