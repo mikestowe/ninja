@@ -1,0 +1,16 @@
+.treeRoot > .branch > ul {
+    margin-top: 0;
+}
+.branch > .branch-label {
+    font-weight: bold;
+    cursor: pointer;
+}
+.branch ul {
+    list-style: none;
+}
+.branch ul {
+    padding-left: 30px;
+}
+.branch .collapse {
+    display: none;
+}

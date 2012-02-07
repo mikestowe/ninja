@@ -4,6 +4,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
+// Todo: This shoudl be converted to a module
 var VecUtils = require("js/helper-classes/3D/vec-utils").VecUtils;
 
 ///////////////////////////////////////////////////////////////////////

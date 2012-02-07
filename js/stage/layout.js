@@ -58,7 +58,7 @@ exports.Layout = Montage.create(Component, {
 
             this.eventManager.addEventListener("selectionChange", this, false);
 
-            this.eventManager.addEventListener("deleteSelection", this, true);
+            this.eventManager.addEventListener("deleteSelection", this, false);
 
 //            this.addEventListener("change@stage.appModel.layoutView", this.handleLayoutView, false);
 
@@ -74,26 +74,23 @@ exports.Layout = Montage.create(Component, {
     handleElementAdded: {
         value: function(event) {
             this.domTree.push(event.detail);
+
+            this.draw();
+            this.draw3DInfo(false);
         }
     },
 
     handleElementDeleted: {
         value: function(event) {
             this.domTree.splice(this.domTree.indexOf(event.detail), 1);
-
-            this.draw();
         }
     },
 
-    captureDeleteSelection: {
+    // Redraw stage only once after all deletion is completed
+    handleDeleteSelection: {
         value: function(event) {
-            //this.redrawDocument();
-
-            var len = event.detail.length;
-            for(var i = 0; i < len ; i++) {
-                this.domTree.splice(this.domTree.indexOf(event.detail[i]),1);
-            }
-
+            this.draw();
+            this.draw3DInfo(false);
         }
     },
 
@@ -290,8 +287,9 @@ exports.Layout = Montage.create(Component, {
         }
     },
 
-    // Alternate dashed line method.
-    ___dashedLine: {
+    // Dashed line function found at http://stackoverflow.com/questions/4576724/dotted-stroke-in-canvas/
+    // Portions used with permission of Gavin Kistner (phrogz)
+    _dashedLine: {
         value: function(x, y, x2, y2, dashArray) {
             this.ctx.lineCap = "square";
             this.ctx.beginPath();
@@ -311,7 +309,7 @@ exports.Layout = Montage.create(Component, {
                 var step = Math.sqrt(dashLength * dashLength / (1 + slope * slope));
                 if(xSlope){
                     if(dx < 0) step = -step;
-                    x += step
+                    x += step;
                     y += slope * step;
                 }else{
                     if(dy < 0) step = -step;
@@ -325,52 +323,6 @@ exports.Layout = Montage.create(Component, {
             }
 
             this.ctx.closePath();
-            this.ctx.stroke();
-        }
-    },
-
-    _dashedLine: {
-        value: function (fromX, fromY, toX, toY, pattern){
-            this.ctx.beginPath();
-            // Our growth rate for our line can be one of the following:
-            //   (+,+), (+,-), (-,+), (-,-)
-            // Because of this, our algorithm needs to understand if the x-coord and
-            // y-coord should be getting smaller or larger and properly cap the values
-            // based on (x,y).
-            var lt = function (a, b) { return a <= b; };
-            var gt = function (a, b) { return a >= b; };
-            var capmin = function (a, b) { return Math.min(a, b); };
-            var capmax = function (a, b) { return Math.max(a, b); };
-
-            var checkX = { thereYet: gt, cap: capmin };
-            var checkY = { thereYet: gt, cap: capmin };
-
-            if (fromY - toY > 0) {
-                checkY.thereYet = lt;
-                checkY.cap = capmax;
-            }
-            if (fromX - toX > 0) {
-                checkX.thereYet = lt;
-                checkX.cap = capmax;
-              }
-
-            this.ctx.moveTo(fromX, fromY);
-            var offsetX = fromX;
-            var offsetY = fromY;
-            var idx = 0, dash = true;
-            while (!(checkX.thereYet(offsetX, toX) && checkY.thereYet(offsetY, toY))) {
-                var ang = Math.atan2(toY - fromY, toX - fromX);
-                var len = pattern[idx];
-
-                offsetX = checkX.cap(toX, offsetX + (Math.cos(ang) * len));
-                offsetY = checkY.cap(toY, offsetY + (Math.sin(ang) * len));
-
-                if (dash) this.ctx.lineTo(offsetX, offsetY);
-                else this.ctx.moveTo(offsetX, offsetY);
-
-                idx = (idx + 1) % pattern.length;
-                dash = !dash;
-            }
             this.ctx.stroke();
         }
     },
