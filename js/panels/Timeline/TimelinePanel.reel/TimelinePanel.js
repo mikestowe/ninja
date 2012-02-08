@@ -118,8 +118,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         writable:true
     },
 
-    _firstLayerDraw:{
-        value:false,
+    _arrLayersNonEmpty:{
+        value:true,
         writable:true
     },
 
@@ -186,14 +186,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             event.stopPropagation();
             this._isLayer = true;
             this.needsDraw = true;
-
         }
     },
 
     handleDeleteLayerClick:{
         value:function(event){
             event.stopPropagation();
-            this._deleteKeyDown=false;
             if(this.application.ninja.currentSelectedContainer.id==="UserContent"){
                 this._hashKey="123";
             }
@@ -237,6 +235,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             // Or at the end, if no layer is selected.
              var hashIndex =0 ,hashVariable=0,layerResult,trackResult,layerObject,trackObject,dLayer,parentNode;
 
+             this._arrLayersNonEmpty= true;
              if(this._hashFind){
                 while(layerResult = this.returnedObject[hashIndex]){
                     trackResult=this.returnedTrack[hashIndex];
@@ -254,10 +253,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                                 dLayer=this.hashInstance.getItem(event.detail._el.parentElementUUID);
                                 while(dLayer[hashVariable]){
                                      if(dLayer[hashVariable]._layerID === event.detail._el._layerID){
-                                                         dLayer[hashVariable].deleted=false;
-                                                         this.arrLayers.splice(event.detail._layerPosition,1,event.detail._el);
-                                                         this.arrTracks.splice(event.detail._layerPosition,1,event.detail._track);
-                                                         break;
+                                         dLayer[hashVariable].deleted=false;
+                                         this.arrLayers.splice(event.detail._layerPosition,1,event.detail._el);
+                                         this.arrTracks.splice(event.detail._layerPosition,1,event.detail._track);
+                                         break;
 
                                                 }
                                      hashVariable++;
@@ -346,6 +345,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                             this.arrTracks.splice(myIndex, 0, newTrack);
                             this._LayerUndoPosition = myIndex;
                             this.currentLayerSelected= this.arrLayers[myIndex];
+                            this.currentTrackSelected=this.arrTracks[myIndex];                            
                             this.layerRepetition.selectedIndexes = [myIndex];
                             this.hashInstance.setItem(this._hashKey,thingToPush,myIndex);
                             this.hashTrackInstance.setItem(this._hashKey,newTrack,myIndex);
@@ -355,6 +355,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                             thingToPush.layerPosition=this.arrLayers.length-1;
                             newTrack.trackPosition=this.arrTracks.length-1;
                             this.currentLayerSelected= this.arrLayers[this.arrLayers.length-1];
+                            this.currentTrackSelected=this.arrTracks[this.arrTracks.length-1];
                             this._LayerUndoPosition = this.arrLayers.length-1;
                             this.hashInstance.setItem(this._hashKey,thingToPush,thingToPush.layerPosition);
                             this.hashTrackInstance.setItem(this._hashKey,newTrack,newTrack.trackPosition);
@@ -376,6 +377,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
              var dLayer,dTrack,parentNode,hashVariable=0,k=0,index=0,j=0;
 
                 if (this.arrLayers.length > 0) {
+                    if(this.arrLayers.length===1){
+                        this._arrLayersNonEmpty=false;
+                        alert("cannot delete further");
+                        return;
+                    }
                     if(event.detail._undoStatus){
                         if(this.application.ninja.currentSelectedContainer.id==="UserContent" && event.detail._el.parentElementUUID===123 ){
                                 dLayer=this.hashInstance.getItem(event.detail._el.parentElementUUID);
@@ -517,7 +523,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
            this.layerElement=event.detail;
            if(!!this.layerRepetition.selectedIndexes){
                this.currentLayerSelected = this.arrLayers[this.layerRepetition.selectedIndexes];
+               this.currentTrackSelected = this.arrTracks[this.layerRepetition.selectedIndexes];
+               if(this.currentTrackSelected.isAnimated){
+               alert("cannot add divs an further since the track is animated");
+               }else{
                this.currentLayerSelected.element.push(event.detail)
+               }
            }
            else{
                this.currentLayerSelected.element.push(event.detail);
@@ -728,7 +739,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     cmd._undoStatus = this._LayerUndoStatus;
                     cmd._track = this._TrackUndoObject;
 
+                    if(this._arrLayersNonEmpty){
                     NJevent("sendToUndo", cmd);
+                    }
 
 
             }
@@ -752,6 +765,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
                         execute: {
                             value: function() {
+
                                 NJevent('newLayer',this)
 
                             }
