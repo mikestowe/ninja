@@ -69,27 +69,103 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
     // Routines to get/set color properties
     getColor: {
         value: function(el, isFill) {
+            var colorObj,
+                color,
+                image;
+
+            // Return cached value if one exists
             if(isFill)
             {
-                return this.application.ninja.stylesController.getElementStyle(el, "background-color");
+                if(el.elementModel.fill)
+                {
+                    return el.elementModel.fill;
+                }
+//                return this.application.ninja.stylesController.getElementStyle(el, "background-color");
+                //TODO: Once logic for color and gradient is established, this needs to be revised
+                color = this.getProperty(el, "background-color");
+                image = this.getProperty(el, "background-image");
             }
             else
             {
                 // TODO - Need to figure out which border side user wants
-                return this.application.ninja.stylesController.getElementStyle(el, "border-color");
+                if(el.elementModel.stroke)
+                {
+                    return el.elementModel.stroke;
+                }
+                // TODO - Need to figure out which border side user wants
+//                return this.application.ninja.stylesController.getElementStyle(el, "border-color");
+                color = this.getProperty(el, "border-color");
+                image = this.getProperty(el, "border-image");
             }
+
+            if(color || image) {
+                if (image && image !== 'none' && image.indexOf('-webkit') >= 0) {
+                    //Gradient
+                    colorObj = this.application.ninja.colorController.getColorObjFromCss(image);
+                } else {
+                    //Solid
+                    colorObj = this.application.ninja.colorController.getColorObjFromCss(color);
+                }
+            }
+
+            // Update cache
+            if(isFill)
+            {
+                el.elementModel.fill = colorObj;
+            }
+            else
+            {
+                el.elementModel.stroke = colorObj;
+            }
+
+            return colorObj;
         }
     },
 
     setColor: {
         value: function(el, color, isFill) {
+            var mode = color.mode;
             if(isFill)
             {
-                this.application.ninja.stylesController.setElementStyle(el, "background-color", color.color.css);
+                if(mode)
+                {
+                    switch (mode) {
+                        case 'nocolor':
+                            this.setProperty(el, "background-image", "none");
+                            this.setProperty(el, "background-color", "none");
+                            el.elementModel.fill = null;
+                            return;
+                        case 'gradient':
+                            this.setProperty(el, "background-image", color.color.css);
+                            this.setProperty(el, "background-color", "none");
+                            break;
+                        default:
+                            this.setProperty(el, "background-image", "none");
+                            this.setProperty(el, "background-color", color.color.css);
+                    }
+                }
+                el.elementModel.fill = color;
             }
             else
             {
-                this.application.ninja.stylesController.setElementStyle(el, "border-color", color.color.css);
+                if(mode)
+                {
+                    switch (mode) {
+                        case 'nocolor':
+                            this.setProperty(el, "border-image", "none");
+                            this.setProperty(el, "border-color", "none");
+                            el.elementModel.stroke = null;
+                            return;
+                        case 'gradient':
+                            this.setProperty(el, "border-image", color.color.css);
+                            this.setProperty(el, "border-color", "none");
+                            break;
+                        default:
+                            this.setProperty(el, "border-image", "none");
+                            this.setProperty(el, "border-color", color.color.css);
+                    }
+                }
+                el.elementModel.stroke = color;
             }
         }
     },
@@ -103,8 +179,9 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
 
     setStroke: {
         value: function(el, stroke) {
-            var border = stroke.borderWidth + stroke.borderUnits + " " + stroke.borderStyle + " " + stroke.color.color.css;
-            this.application.ninja.stylesController.setElementStyle(el, "border", border);
+            this.application.ninja.stylesController.setElementStyle(el, "border-width", stroke.borderWidth + stroke.borderUnits);
+            this.application.ninja.stylesController.setElementStyle(el, "border-style", stroke.borderStyle);
+            this.setColor(el, stroke.color, false);
         }
     },
 
@@ -127,36 +204,35 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
             }
             else
             {
-                // TODO - for now, just return the identity matrix
-                return Matrix.I(4);
-//                var mat;
-//
-//                if (elt)
-//                {
-//                    var xformStr = ElementsMediator.getProperty(elt, "-webkit-transform");
-//                    if (xformStr)
-//                        mat = this.transformStringToMat( xformStr );
-//                    if (!mat)
-//                        mat = Matrix.I(4);
-//
-//                    if (elt.style && elt.style.zoom)
-//                    {
-//                        var zoom = Number(elt.style.zoom);
-//                        if (zoom != 1)
-//                        {
-//                            var zoomMat = Matrix.create(  [
-//                                [ zoom,    0,    0, 0],
-//                                [    0, zoom,    0, 0],
-//                                [    0,    0, zoom, 0],
-//                                [    0,    0,    0, 1]
-//                            ] );
-//                            glmat4.multiply( zoomMat, mat, mat );
-//                        }
-//                    }
-//                }
-//
-//                elt.elementModel.props3D.matrix3d = mat;
-//                return mat;
+                var mat;
+
+                if (el)
+                {
+                    var xformStr = this.application.ninja.elementMediator.getProperty(el, "-webkit-transform");
+                    if (xformStr)
+                        mat = this.transformStringToMat( xformStr );
+                    if (!mat)
+                        mat = Matrix.I(4);
+
+                    var zoom = this.application.ninja.elementMediator.getProperty(el, "zoom");
+                    if (zoom)
+                    {
+                        zoom = Number(zoom);
+                        if (zoom != 1)
+                        {
+                            var zoomMat = Matrix.create(  [
+                                [ zoom,    0,    0, 0],
+                                [    0, zoom,    0, 0],
+                                [    0,    0, zoom, 0],
+                                [    0,    0,    0, 1]
+                            ] );
+                            glmat4.multiply( zoomMat, mat, mat );
+                        }
+                    }
+                }
+
+                el.elementModel.props3D.matrix3d = mat;
+                return mat;
             }
         }
     },
@@ -207,7 +283,7 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
             el.elementModel.props3D.matrix3d = mat;
             el.elementModel.props3D.perspectiveDist = dist;
 
-//            if(update3DModel)
+            if(update3DModel)
             {
                 this._update3DProperties(el, mat, dist);
             }

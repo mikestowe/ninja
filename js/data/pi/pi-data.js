@@ -23,13 +23,13 @@ exports.PiData = Montage.create( Montage, {
                         {
                             type : "color",
                             id : "colorStroke",
-                            prop: "border-color",
+                            prop: "border",
                             label : "Stroke"
                         },
                         {
                             type : "color",
                             id : "colorFill",
-                            prop: "background-color",
+                            prop: "background",
                             divider : true
                         }
                     ],
@@ -102,11 +102,13 @@ exports.PiData = Montage.create( Montage, {
                         {
                             type : "color",
                             id : "colorStroke",
+                            prop: "border",
                             label : "Stroke"
                         },
                         {
                             type : "color",
                             id : "colorFill",
+                            prop: "background",
                             divider : true
                         }
                     ],
@@ -221,13 +223,13 @@ exports.PiData = Montage.create( Montage, {
                         {
                             type : "color",
                             id : "colorStroke",
-                            prop: "border-color",
+                            prop: "border",
                             label : "Stroke"
                         },
                         {
                             type : "color",
                             id : "colorFill",
-                            prop: "background-color",
+                            prop: "background",
                             divider : true
                         }
                     ],
@@ -279,10 +281,12 @@ exports.PiData = Montage.create( Montage, {
                     [
                         {
                             type : "color",
+                            prop: "border",
                             id : "stroke"
                         },
                         {
                             type : "color",
+                            prop: "background",
                             id : "fill",
                             divider : true
                         }
@@ -313,10 +317,11 @@ exports.PiData = Montage.create( Montage, {
                             id: "tlRadius",
                             prop : "tlRadius",
                             label: "TL",
+                            valueMutator: parseFloat,
                             value : 0,
                             min :   0,
                             max :   100,
-                            unit : "%",
+                            unit : "px",
                             acceptableUnits: ["px", "pt", "%"]
                         },
                         {
@@ -324,10 +329,12 @@ exports.PiData = Montage.create( Montage, {
                             id : "trRadius",
                             prop : "trRadius",
                             label : "TR",
+                            valueMutator: parseFloat,
                             min :   0,
                             max :   100,
-                            unit : "%",
-                            acceptableUnits: ["px", "pt", "%"]
+                            unit : "px",
+                            acceptableUnits: ["px", "pt", "%"],
+                            divider: true
                         }
                     ],
                     [
@@ -336,9 +343,10 @@ exports.PiData = Montage.create( Montage, {
                             id : "blRadius",
                             prop : "blRadius",
                             label : "BL",
+                            valueMutator: parseFloat,
                             min :   0,
                             max :   100,
-                            unit : "%",
+                            unit : "px",
                             acceptableUnits: ["px", "pt", "%"]
                         },
                         {
@@ -346,9 +354,10 @@ exports.PiData = Montage.create( Montage, {
                             id : "brRadius",
                             prop : "brRadius",
                             label : "BR",
+                            valueMutator: parseFloat,
                             min :   0,
                             max :   100,
-                            unit : "%",
+                            unit : "px",
                             acceptableUnits: ["px", "pt", "%"]
                         }
                     ]
@@ -362,13 +371,18 @@ exports.PiData = Montage.create( Montage, {
                         {
                             type: "dropdown",
                             id:   "strokeMaterial",
+                            prop:   "strokeMaterial",
                             label: "Stroke",
                             labelField: "_name",
-                            items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" }
-                        },
+                            items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" },
+                            divider : true
+                        }
+                    ],
+                    [
                         {
                             type: "dropdown",
                             id:   "fillMaterial",
+                            prop:   "fillMaterial",
                             label: "Fill",
                             labelField: "_name",
                             items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" }
@@ -387,11 +401,13 @@ exports.PiData = Montage.create( Montage, {
                     [
                         {
                             type : "color",
+                            prop: "border",
                             id : "stroke"
                         },
                         {
                             type : "color",
                             id : "fill",
+                            prop: "background",
                             visible : false,
                             divider : true
                         }
@@ -438,10 +454,12 @@ exports.PiData = Montage.create( Montage, {
                     [
                         {
                             type : "color",
+                            prop: "border",
                             id : "stroke"
                         },
                         {
                             type : "color",
+                            prop: "background",
                             id : "fill",
                             divider : true
                         }
@@ -471,7 +489,8 @@ exports.PiData = Montage.create( Montage, {
                             type: "hottext",
                             id: "innerRadius",
                             prop: "innerRadius",
-                            label: "Inner Radius",
+                            label: "Inner R",
+                            valueMutator: parseFloat,
                             value : 0,
                             min :   0,
                             max :   100,
@@ -490,13 +509,18 @@ exports.PiData = Montage.create( Montage, {
                         {
                             type: "dropdown",
                             id:   "strokeMaterial",
+                            prop:   "strokeMaterial",
                             label: "Stroke",
                             labelFunction: function(item) { return item.getName(); },
-                            items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" }
-                        },
+                            items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" },
+                            divider : true
+                        }
+                    ],
+                    [
                         {
                             type: "dropdown",
                             id:   "fillMaterial",
+                            prop:   "fillMaterial",
                             label: "Fill",
                             labelField: "_name",
                             items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" }

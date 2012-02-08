@@ -4,12 +4,12 @@
 // (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 // </copyright>
 
-/*
- * Base.scss
- * Base styles for entire application.
- * Note that colors and font definitions go in 
- * _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss
- */
+
+//Base.scss
+//Base styles for entire application.
+//Note that colors and font definitions go in 
+//_scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss
+
 
 .clear {
     display: block;
@@ -42,19 +42,18 @@
     float: right;
 }
 
-/* Begin: Basic skinning for form fields */
-/* Reset all */
+// Begin: Basic skinning for form fields 
+// Reset all 
 input.nj-skinned, 
 textarea.nj-skinned, 
 button.nj-skinned,
 select.nj-skinned,
-select.nj-skinned option,
-button.nj-skinned {
+select.nj-skinned option {
 	-webkit-appearance: none;
 	outline: none;
 }
 
-/* Base styles */
+// Base styles
 input[type="text"].nj-skinned,
 input[type="password"].nj-skinned,
 input[type="search"].nj-skinned,
@@ -68,7 +67,7 @@ select.nj-skinned option {
 	font-family: 'Droid Sans', sans-serif;
 }
 
-/* Disabled styles */
+// Disabled styles
 input.nj-skinned:disabled,
 textarea.nj-skinned:disabled,
 select.nj-skinned:disabled,
@@ -76,7 +75,7 @@ button.nj-skinned:disabled {
 	opacity: 0.4;
 }
 
-/* Text inputs and select boxes */
+// Text inputs and select boxes 
 input[type="text"].nj-skinned,
 input[type="password"].nj-skinned,
 input[type="search"].nj-skinned,
@@ -84,7 +83,7 @@ select.nj-skinned,
 select.nj-skinned option {
 	height: 13px;
 }
-/*
+//
 input[type="text"].nj-skinned:focus,
 input[type="password"].nj-skinned:focus,
 input[type="search"].nj-skinned:focus,
@@ -93,7 +92,7 @@ select.nj-skinned:focus,
 select.nj-skinned option:focus {
 	-webkit-box-shadow: 0px 0px 3px $color-focus-outline;
 }
-*/
+
 
 select.nj-skinned {
     background-image: url("../images/dropdown-bg.png");
@@ -118,13 +117,31 @@ input[type="search"].nj-skinned::-webkit-search-cancel-button:after {
 	content:"\2716";
 }
 
-/* Buttons */
+// Buttons 
 button.nj-skinned {
 	font-size: 9px;
     cursor: pointer;
+	display: block;
+	border: 0px;
+	margin: 0px;
+	padding: 4px;
+	border: 1px $color-input-border solid;
+	background-color: $color-menu-bg;
+	background-image: -webkit-linear-gradient(top, $color-formgrad-top 0%, $color-formgrad-bottom 100%);
+	border-radius: 4px;
+	color: $color-menu-text;
+	text-transform: uppercase;
+	cursor: pointer;
+	text-shadow: 1px 1px 1px $color-app-shadow
+}
+button.nj-skinned:active {
+	background-image: -webkit-linear-gradient(top, $color-formgrad-bottom 0%, $color-formgrad-top 100%); 
+}
+button.nj-skinned:hover {
+	-webkit-box-shadow: 0px 0px 3px $color-focus-outline;
 }
 
-/* Radio buttons */
+// Radio buttons 
 input[type="radio"].nj-skinned {
 	background-color: $color-menu-bg;
 	background-image: -webkit-linear-gradient(top, $color-radio-gradient-top 0%, $color-radio-gradient-bottom 100%);
@@ -143,14 +160,17 @@ input[type="radio"].nj-skinned {
     box-shadow: 0px 0px 2px $color-radio-shadow;
 }
 input[type="radio"].nj-skinned:checked {
-	background-image: -webkit-linear-gradient(top, $color-radio-gradient-top 0%, $color-radio-gradient-bottom 100%);
+	background: -webkit-radial-gradient(center, 
+										circle cover, 
+										$color-radio 0%, 
+										$color-radio 15%, 
+										$color-radio 30%, 
+										$color-transparent 31%), 
+										-webkit-linear-gradient(top, $color-radio-gradient-top 0%, $color-radio-gradient-bottom 100%);
 	border: 2px solid $color-radio-border;
 }
 input[type="radio"].nj-skinned:hover {
 	border: 2px solid $color-radio-border;
-}
-input[type="radio"].nj-skinned:checked:after {
-	content:"\a0 \a0 \2022";
 }
 input[type="radio"].nj-skinned:active {
 	background-image: -webkit-linear-gradient(top, $color-radio-gradient-bottom 0%, $color-radio-gradient-top 100%);
@@ -160,7 +180,7 @@ input[type="radio"].nj-skinned:disabled {
 	border: 2px solid $color-radio-border;
 	cursor: default;
 }
-/* Checkboxes */
+// Checkboxes 
 input[type="checkbox"].nj-skinned {
 	background-color: $color-menu-bg;
 	background-image: -webkit-linear-gradient(top, $color-radio-gradient-top 0%, $color-radio-gradient-bottom 100%);
@@ -190,9 +210,9 @@ input[type="checkbox"].nj-skinned:disabled {
 	background-image: -webkit-linear-gradient(top, $color-radio-gradient-top 0%, $color-radio-gradient-bottom 100%);
 	cursor: default;
 }
-/* End: Basic skinning for form fields */
+// End: Basic skinning for form fields 
 
-/* Begin:  Basic skinning for visual dividers */
+// Begin:  Basic skinning for visual dividers 
 .nj-divider {
 	background-color: $color-divider-second;
 	border-width: 0px;
@@ -208,4 +228,4 @@ input[type="checkbox"].nj-skinned:disabled {
 	border-right: 1px solid $color-divider-third;
 	width: 1px;
 }
-/* End: Basic skinning for visual dividers */
+// End: Basic skinning for visual dividers 

@@ -4,15 +4,15 @@
 // (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 // </copyright>
 
-/*
- * Tools.scss
- * For individual tool styles in the toolbar, see toolbar.scss.
- * Note that colors and font definitions go in 
- * _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss
- * 
- */
+// 
+// Tools.scss
+// For individual tool styles in the toolbar, see toolbar.scss.
+// Note that colors and font definitions go in 
+// _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss
+// 
+  
 
-/*Made changes to toolButton */
+// Made changes to toolButton  
 
 .toolButton {
     width:26px;
@@ -33,7 +33,7 @@
 
 .subOption{
     float:left;
-    /*margin:10px;*/
+    // margin:10px; 
     margin-top: 5px;
     margin-left: 10px;
     margin-right: 10px;
@@ -57,8 +57,8 @@
 .toolSeparator {
     height:1px;
     width:30px;
-    /*margin-left: 3px;*/
-    /*margin-right: 3px;*/
+    // margin-left: 3px; 
+    // margin-right: 3px; 
 }
 
 .toolSeparatorTop {
@@ -94,13 +94,13 @@
 }
 
 
-/* Added new styling Sub Tool Shape Options*/
+//  Added new styling Sub Tool Shape Options 
 
 .textBox {
 
    padding-top:3px;
    min-width:10em;
-   /*height:14px;*/
+   // height:14px; 
    margin-left:5px;
    position:relative;
    margin-top:0px;
@@ -113,7 +113,7 @@
    float:left;
    display:block;
    background-color: $color-tool-select-bg;
-   /*-webkit-border-radius: 0;*/
+   // -webkit-border-radius: 0; 
    border: 1px solid $color-tool-select-border;
    color:$color-tool-text;
    outline:none;
@@ -129,8 +129,8 @@
    padding-top:3px;
    margin-left:10px;
    font-size:12px;
-   /*display:inline;*/
-   /*line-height:10px;*/
+   // display:inline; 
+   // line-height:10px; 
    float:left;
    margin-right:5px;
 }
@@ -201,7 +201,7 @@
 {
     display:inline;
     float:left;
-    /*margin-left: 20px;*/
+    // margin-left: 20px; 
 }
 
 .leftLabel{
@@ -209,7 +209,7 @@
 	float:left;
 }
 
-/* Skin Radio Buttons */
+//  Skin Radio Buttons  
 input[type="radio"] {
     -webkit-appearance: none;
     background: $color-radio-bg;
@@ -236,7 +236,7 @@ input[type="radio"]:checked {
     border-style: solid;
 }
 
-/*disabled settings for checkbox and radiobutton*/
+// disabled settings for checkbox and radiobutton 
 input[type="radio"]:disabled {
     opacity: .3;
     background: $color-radio-border;
@@ -258,8 +258,8 @@ input[type="radio"]:disabled {
 }
 
 .checkBoxLabel{
-    /*margin-top:0.5em;*/
-    /*margin-left:-5em;*/
+    // margin-top:0.5em; 
+    // margin-left:-5em; 
     padding-top:3px;
     font-size:12px;
     float:left;
@@ -286,7 +286,7 @@ input[type="radio"]:disabled {
 .toolButtonSelectedColor {
     border-top-color: $color-tool-border-selected;
     border-left-color: $color-tool-border-selected;
-  /*  background: $color-tool-bg-active;*/
+  //   background: $color-tool-bg-active; 
 
 }
 
@@ -328,7 +328,7 @@ input[type="radio"]:disabled {
   @include marginTop(5px);
 }
 
-/* Begin: styles for tag toolbar */
+//  Begin: styles for tag toolbar  
 #tagToolContainer input.tag-type,
 #rotateObjectToolContainer input.tag-type,
 #translateObjectToolContainer input.tag-type {
@@ -484,4 +484,4 @@ input[type="radio"]:disabled {
 
 }
 
-/* Endi: styles for tag toolbar */
+//  Endi: styles for tag toolbar  

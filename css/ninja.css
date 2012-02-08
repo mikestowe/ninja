@@ -1,33 +1,5 @@
 @charset "UTF-8";
 /* <copyright> This file contains proprietary software owned by Motorola Mobility, Inc.<br/> No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/> (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved. </copyright> */
-/*  */
-/* ninja.scss Main SCSS file for ninja, compiled by SASS into the file ninja.css. */
-/* _colors.scss Defines the colors for the UI of the application. To create a new theme, copy this file and change the values as desired. Note: Some colors are defined as both rgb and rgba; some of the rgba versions have multiple a values. */
-/* Colors for radio buttons and other form elements */
-/* Base colors for dividers   Dividers consist of a div with a background color and either  a top & bottom border (in the case of horizontal dividers) or a left & right border (in the case of vertical dividers), for a total of three different colors.  */
-/* top and left */
-/* Middle */
-/* Bottom and right */
-/* Main background color of entire app */
-/* Main app background color. */
-/* rgba version */
-/* Main app border color */
-/* color of drop shadows */
-/* Stage color */
-/* body border color */
-/* Body background color */
-/* Colors for main dropdown menus: background & text for both regular and highlighted states, dividers */
-/* Colors for tools: background, text, how they interact with the UI */
-/* Colors for panels: background & text, both regular and highlighted states, dividers, borders, shadows, etc. */
-/* used for editable items in their non-edit state, etc. */
-/* Border for panel and for block elements */
-/* Shadow for text and block elements */
-/* Colors for scroll bars */
-/* _fonts.scss Defines the fonts for the application. */
-/* Droid Sans: Normal, bold asdf*/
-/* themes/themename/mixins.scss Mixins that are theme-dependent (e.g. sprite mixins, etc) */
-/* mixins.scss Generic mixins.  Theme-specific mixins (e.g. for sprites)  should go in the theme/themename/mixins.scss file. */
-/* Base.scss Base styles for entire application. Note that colors and font definitions go in  _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss */
 .clear { display: block; clear: both; height: 0px; overflow: hidden; }
 
 .bold { font-weight: bold; }
@@ -44,29 +16,16 @@
 
 .layout-table .flexor div:last-child { float: right; }
 
-/* Begin: Basic skinning for form fields */
-/* Reset all */
-input.nj-skinned, textarea.nj-skinned, button.nj-skinned, select.nj-skinned, select.nj-skinned option, button.nj-skinned { -webkit-appearance: none; outline: none; }
+input.nj-skinned, textarea.nj-skinned, button.nj-skinned, select.nj-skinned, select.nj-skinned option { -webkit-appearance: none; outline: none; }
 
-/* Base styles */
 input[type="text"].nj-skinned, input[type="password"].nj-skinned, input[type="search"].nj-skinned, textarea.nj-skinned, select.nj-skinned, select.nj-skinned option { border: 1px solid #313131; color: white; background-color: #444444; font-size: 12px; font-family: 'Droid Sans', sans-serif; }
 
-/* Disabled styles */
 input.nj-skinned:disabled, textarea.nj-skinned:disabled, select.nj-skinned:disabled, button.nj-skinned:disabled { opacity: 0.4; }
 
-/* Text inputs and select boxes */
 input[type="text"].nj-skinned, input[type="password"].nj-skinned, input[type="search"].nj-skinned, select.nj-skinned, select.nj-skinned option { height: 13px; }
 
-/*
-input[type="text"].nj-skinned:focus,
-input[type="password"].nj-skinned:focus,
-input[type="search"].nj-skinned:focus,
-textarea.nj-skinned:focus,
-select.nj-skinned:focus,
-select.nj-skinned option:focus {
-	-webkit-box-shadow: 0px 0px 3px $color-focus-outline;
-}
-*/
+input[type="text"].nj-skinned:focus, input[type="password"].nj-skinned:focus, input[type="search"].nj-skinned:focus, textarea.nj-skinned:focus, select.nj-skinned:focus, select.nj-skinned option:focus { -webkit-box-shadow: 0px 0px 3px #b4b4b4; }
+
 select.nj-skinned { background-image: url("../images/dropdown-bg.png"); background-repeat: no-repeat; background-position: right center; font-size: 12px; height: 16px; padding-right: 20px; }
 
 input[type="search"].nj-skinned { height: 17px; -webkit-box-shadow: none; }
@@ -75,23 +34,22 @@ input[type="search"].nj-skinned::-webkit-search-cancel-button { -webkit-appearan
 
 input[type="search"].nj-skinned::-webkit-search-cancel-button:after { content: "\2716"; }
 
-/* Buttons */
-button.nj-skinned { font-size: 9px; cursor: pointer; }
+button.nj-skinned { font-size: 9px; cursor: pointer; display: block; border: 0px; margin: 0px; padding: 4px; border: 1px #313131 solid; background-color: #474747; background-image: -webkit-linear-gradient(top, #505050 0%, #3c3c3c 100%); border-radius: 4px; color: white; text-transform: uppercase; cursor: pointer; text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5); }
 
-/* Radio buttons */
+button.nj-skinned:active { background-image: -webkit-linear-gradient(top, #3c3c3c 0%, #505050 100%); }
+
+button.nj-skinned:hover { -webkit-box-shadow: 0px 0px 3px #b4b4b4; }
+
 input[type="radio"].nj-skinned { background-color: #474747; background-image: -webkit-linear-gradient(top, #646464 0%, #3c3c3c 100%); color: #c8c8c8; border: 2px solid #282828; width: 12px; height: 12px; overflow: hidden; border-radius: 10px; font-size: 16px; line-height: 7px; text-indent: -7px; cursor: pointer; -webkit-box-shadow: 0px 0px 2px rgba(200, 200, 200, 0.5); -moz-box-shadow: 0px 0px 2px rgba(200, 200, 200, 0.5); box-shadow: 0px 0px 2px rgba(200, 200, 200, 0.5); }
 
-input[type="radio"].nj-skinned:checked { background-image: -webkit-linear-gradient(top, #646464 0%, #3c3c3c 100%); border: 2px solid #282828; }
+input[type="radio"].nj-skinned:checked { background: -webkit-radial-gradient(center, circle cover, #c8c8c8 0%, #c8c8c8 15%, #c8c8c8 30%, rgba(0, 0, 0, 0) 31%), -webkit-linear-gradient(top, #646464 0%, #3c3c3c 100%); border: 2px solid #282828; }
 
 input[type="radio"].nj-skinned:hover { border: 2px solid #282828; }
-
-input[type="radio"].nj-skinned:checked:after { content: "\a0 \a0 \2022"; }
 
 input[type="radio"].nj-skinned:active { background-image: -webkit-linear-gradient(top, #3c3c3c 0%, #646464 100%); }
 
 input[type="radio"].nj-skinned:disabled { background-image: -webkit-linear-gradient(top, #646464 0%, #3c3c3c 100%); border: 2px solid #282828; cursor: default; }
 
-/* Checkboxes */
 input[type="checkbox"].nj-skinned { background-color: #474747; background-image: -webkit-linear-gradient(top, #646464 0%, #3c3c3c 100%); color: #c8c8c8; border: 1px solid #282828; width: 10px; height: 10px; font-size: 12px; overflow: visible; cursor: pointer; -webkit-box-shadow: 0px 0px 2px rgba(200, 200, 200, 0.5); -moz-box-shadow: 0px 0px 2px rgba(200, 200, 200, 0.5); box-shadow: 0px 0px 2px rgba(200, 200, 200, 0.5); line-height: 9px; }
 
 input[type="checkbox"].nj-skinned:checked:after { content: "\2714"; }
@@ -100,16 +58,12 @@ input[type="checkbox"].nj-skinned:active { background-image: -webkit-linear-grad
 
 input[type="checkbox"].nj-skinned:disabled { background-image: -webkit-linear-gradient(top, #646464 0%, #3c3c3c 100%); cursor: default; }
 
-/* End: Basic skinning for form fields */
-/* Begin:  Basic skinning for visual dividers */
 .nj-divider { background-color: black; border-width: 0px; overflow: hidden; }
 
 .nj-divider.divider-horizontal { border-top: 1px solid #232323; border-bottom: 1px solid #3a3a3a; height: 1px; }
 
 .nj-divider.divider-vertical { border-left: 1px solid #232323; border-right: 1px solid #3a3a3a; width: 1px; }
 
-/* End: Basic skinning for visual dividers */
-/* MainWindow.scss Styles governing the main window and overall layout of the application. Note that colors and font definitions go in _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss */
 body { position: absolute; margin: 0px; width: 100%; height: 100%; background-color: black; overflow: hidden; -webkit-user-select: none; font-family: 'Droid Sans', sans-serif; }
 
 #appContainer { position: absolute; margin: 0px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-box-align: stretch; width: 100%; height: 100%; border-left: 16px solid #000; border-right: 16px solid #000; border-top: 28px solid #000; -webkit-box-sizing: border-box; max-width: 100%; max-height: 100%; }
@@ -126,9 +80,7 @@ body { position: absolute; margin: 0px; width: 100%; height: 100%; background-co
 
 #topPanelContainer { overflow: hidden; margin-bottom: 2px; height: 32px; }
 
-#bottomPanelContainer { /*border: 1px solid #333;
-background: transparent;
-*/ min-height: 80px; max-height: 50%; overflow: auto; }
+#bottomPanelContainer { background: transparent; min-height: 80px; max-height: 50%; overflow: auto; }
 
 .panelContainer { display: block; -webkit-box-orient: vertical; position: relative; }
 
@@ -166,9 +118,9 @@ background: transparent;
 
 #sceneBar { height: 70px; background-color: #474747; }
 
-#mainContainer #rulerTop { /* TODO: temporary background please replace when component is implemented */ background: url("../images/temp/ruler-top.png"); height: 15px; margin-bottom: 0px; }
+#mainContainer #rulerTop { background: url("../images/temp/ruler-top.png"); height: 15px; margin-bottom: 0px; }
 
-#rulerLeft { /* TODO: temporary background please replace when component is implemented */ background: url("../images/temp/ruler-left.png"); width: 16px; }
+#rulerLeft { background: url("../images/temp/ruler-left.png"); width: 16px; }
 
 #stateBar { height: 20px; background-color: #282828; margin-bottom: 0px; }
 
@@ -184,7 +136,6 @@ background: transparent;
 
 .resizeBar { -webkit-transition: all 0.15s linear; }
 
-/* Splitters Collapsed */
 .panelContainer, .panelContainer.collapsed { -webkit-transition: all 0.15s ease-in; }
 
 .panel.disableTransition { -webkit-transition: none !important; -webkit-box-flex: 0.1 !important; }
@@ -203,18 +154,10 @@ background: transparent;
 
 .bottomSplitter.collapsed { -webkit-transform: rotate(0deg); }
 
-/*
+.stageContentShadow { -webkit-box-shadow: 3px 5px 4px rgba(0, 0, 0, 0.5); -moz-box-shadow: 3px 5px 4px rgba(0, 0, 0, 0.5); box-shadow: 3px 5px 4px rgba(0, 0, 0, 0.5); }
 
+.baseBox { display: -webkit-box; display: -moz-box; display: box; }
 
-.stageContentShadow { -webkit-box-shadow: 3px 5px 4px $color-app-shadow; -moz-box-shadow: 3px 5px 4px $color-app-shadow; box-shadow: 3px 5px 4px $color-app-shadow;
-}
-
-*/
-/*
-.baseBox { display:-webkit-box; display:-moz-box; display: box;
-}
-
-/* Generic style to make any element unselectable */
 .unselectable { -webkit-user-select: none; }
 
 .verticalBox { -webkit-box-orient: vertical; -moz-box-orient: vertical; box-orient: vertical; }
@@ -235,19 +178,17 @@ background: transparent;
 
 #middleDocArea { -webkit-box-orient: horizontal; -moz-box-orient: horizontal; box-orient: horizontal; -moz-box-flex: 1; -webkit-box-flex: 1; box-flex: 1; margin: 1px; margin-bottom: 3px; border-style: solid; border-width: 1px; }
 
-/* Used for the Iframe Version
-#mainStageIFrame { border: none; margin: 4px;
-}
-*/
+#mainStageIFrame { border: none; margin: 4px; }
+
 #mainStageArea { -moz-box-flex: 1; -webkit-box-flex: 1; box-flex: 1; overflow: scroll; position: relative; margin: 0px; padding: 0px; border: none; }
 
-#pasteBoard { /*position: relative;*/ top: 0px; left: 0px; margin: 0px; padding: 0px; border: none; /*overflow: scroll;*/ }
+#pasteBoard { top: 0px; left: 0px; margin: 0px; padding: 0px; border: none; }
 
 #stageBG { width: 100%; height: 100%; background-color: red; position: absolute; margin-left: auto; margin-right: auto; left: 0; right: 0; top: 150px; z-index: 0; }
 
 #stageUserContent { width: 100%; height: 100%; background-color: transparent; border: 1px solid black; position: absolute; margin-left: auto; margin-right: auto; left: 0; right: 0; top: 150px; z-index: 1; }
 
-#stageParent { /* we aren't entirely sure why this works but putting a slight opacity on this div seems to keep the users content from breaking through the overlay canvas and eating mouse events John Mayhew */ z-index: 2; opacity: 0.99; /*height: 1000px;*/ /*width: 2000px;*/ position: absolute; margin: 0px; border: none; padding: 0px; top: 0px; left: 0px; /*background-color: red;*/ }
+#stageParent { z-index: 2; opacity: 0.99; position: absolute; margin: 0px; border: none; padding: 0px; top: 0px; left: 0px; }
 
 .global3DSettings { -webkit-transform-style: preserve-3d; -webkit-transform: perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); }
 
@@ -271,19 +212,13 @@ background: transparent;
 
 #mainContent .CodeMirror-scroll { height: 100%; overflow: scroll; overflow-x: auto; overflow-y: auto; }
 
-/* PanelUI.scss Styles governing the panels in the UI. Note that colors and font definitions go in  _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss */
-/* layout for the container of all panels within a dock area */
-.panelContainer { margin: 0px; padding: 0px 0px; position: relative; /*
-this is here to hopefully show vertical scroll bars when the panels exceed the height of the panel
-unfortunately it doesn't seem to work properly. this is probably due to some of our box styling or positioning
-overflow: auto;  */ }
+.panelContainer { margin: 0px; padding: 0px 0px; position: relative; overflow: auto; }
 
-/* base layout style for all panels*/
 .panelDisclosureIcon { background-image: url("../images/panels/panelDisclosureIcon.png"); background-repeat: no-repeat; width: 16px; height: 16px; float: left; -webkit-transition-property: rotate; -webkit-transition-duration: 0.2s; -webkit-transition-timing-function: linear; padding-right: 2px; }
 
 .panelBackground { color: white; background: #292929; }
 
-.panelCollapseArrowFill { color: #4c4c4c; /* this is never really used but is set so we can get it via javascript to draw the control via script on the canvas */ padding: 0px 4px; }
+.panelCollapseArrowFill { color: #4c4c4c; padding: 0px 4px; }
 
 .panelContentColor { background: #474747; border-color: black; }
 
@@ -297,31 +232,26 @@ overflow: auto;  */ }
 
 .panelCloseIcon:hover { opacity: 1.0; }
 
-.toolsPanelContainer { margin-top: -2px; margin-left: -2px; padding-top: 20px; padding-left: 3px; padding-right: 3px; width: 32px; /*This is a hack to get the tools panel to extend all the way to the bottom.*/ padding-bottom: 450px; }
+.toolsPanelContainer { margin-top: -2px; margin-left: -2px; padding-top: 20px; padding-left: 3px; padding-right: 3px; width: 32px; padding-bottom: 450px; }
 
-/* sizes for the specific panels */
 #toolPropertiesPanel { height: 32px; margin: 0px; }
 
 #timelinePanel { height: 116px; }
 
-/* Only used by Animation Presets Panel currently */
 .treeComponent { -webkit-user-select: none; font-size: 11px; margin-left: 20px; cursor: default; color: white; }
 
 .treeComponent ul { position: relative; list-style: none; }
 
-/*This sets the style for a tree folder's icon*/
 ul.treeComponent > img:first-child { margin-left: -35px; margin-right: 5px; -webkit-transition: -webkit-transform 0.1s linear; }
 
 .treeComponent li { position: relative; list-style: none; border-bottom: 1px solid #505050; }
 
-.treeComponent li img { margin-left: -20px; padding-right: 10px; vertical-align: middle; /*border-bottom:1px solid #555555;*/ }
+.treeComponent li img { margin-left: -20px; padding-right: 10px; vertical-align: middle; }
 
 .treeCategory { font-weight: bold; }
 
 .treeItem { font-weight: normal; vertical-align: middle; color: white; }
 
-/* ======  Used by Properties Panel ====== */
-/* Removed the outline text input style -> Causing problems with the Canvas */
 .propertiesPanel { min-height: 300px; margin-top: 4px; }
 
 .panelHRule { border: none; display: block; float: left; clear: both; width: 100%; height: 3px; background-color: #505050; }
@@ -332,7 +262,6 @@ ul.treeComponent > img:first-child { margin-left: -35px; margin-right: 5px; -web
 
 .piCollapsibleSectionHeader { font-size: 12px; padding-left: 10px; vertical-align: top; height: 16px; background-color: #3a3a3a; }
 
-/* ======  Indexed table row and column classes for Properties Panel layout ====== */
 .propRow1 { width: 100%; }
 
 .propRow1Col1 { width: 30%; text-align: right; }
@@ -393,7 +322,6 @@ ul.treeComponent > img:first-child { margin-left: -35px; margin-right: 5px; -web
 
 .splitterBackground { background: black; }
 
-/* Begin: Project Panel UI classes */
 .Project-Panel { height: 100%; }
 
 #pp-container { height: 100%; background-color: #292929; border: 0px; overflow-y: hidden !IMPORTANT; position: relative; }
@@ -404,23 +332,14 @@ ul.treeComponent > img:first-child { margin-left: -35px; margin-right: 5px; -web
 
 #pp-col-files { display: block; position: absolute; height: auto; overflow: hidden; bottom: 0; top: 0; left: 0; right: 0; border: 2px solid black; border-bottom-width: 0px; background-color: #474747; margin-left: 30px; margin-right: 10px; margin-bottom: 36px; }
 
-/*
-#pp-container-list,
-#pp-container-assets { height: 310px; width: 100%; overflow: auto;
-}
-*/
+#pp-container-list, #pp-container-assets { height: 310px; width: 100%; overflow: auto; }
+
 .pp-scroll-main { display: block; position: absolute; height: auto; bottom: 0; top: 0; left: 0; right: 0; margin-top: 18px; overflow: auto; }
 
 .pp-scroll-main .pp-scroll-linked { display: block; position: absolute; height: auto; bottom: 0; top: 0; left: 0; right: 0; overflow: visible; }
 
 #pp-view-assets { display: none; }
 
-/*
-#pp-container-assets .pp-scroll-linked,
-#pp-container-list .pp-scroll-linked {
-	width: 420px;
-}
-*/
 .pp-header-container { position: relative; overflow: hidden; border-bottom: 1px solid black; background-color: #3a3a3a; min-width: 390px; }
 
 .pp-header { border-right: 1px solid black; color: white; padding-top: 4px; padding-left: 6px; font-weight: bold; display: block; float: left; overflow: visible; position: relative; }
@@ -473,10 +392,7 @@ span.pp-span-all:focus { -webkit-box-shadow: none; background-color: #b4b4b4; bo
 
 .pp-sort-arrow { display: none; }
 
-.pp-sort .pp-sort-arrow { display: block; width: 9px; height: 5px; /*
-margin-right: 10px;
-margin-top: 2px;
-*/ background-image: url("../images/panels/project-panel/icon-sort-arrow.png"); background-repeat: no-repeat; position: absolute; top: 5px; right: 10px; }
+.pp-sort .pp-sort-arrow { display: block; width: 9px; height: 5px; margin-right: 10px; margin-top: 2px; background-image: url("../images/panels/project-panel/icon-sort-arrow.png"); background-repeat: no-repeat; position: absolute; top: 5px; right: 10px; }
 
 .pp-sort.sort-ascending .pp-sort-arrow { background-position: 0 0; }
 
@@ -490,7 +406,6 @@ margin-top: 2px;
 
 #pp-view-assets #pp-container-assets :focus, #pp-view-assets #pp-container-assets .focused { background-color: #b4b4b4; border-color: #b4b4b4; color: #474747; }
 
-/* Icons! */
 #pp-container-list li, #pp-container-list span.span-space { background-repeat: no-repeat; }
 
 #pp-container-list li.directory.open > span.pp-span-all > span.pp-col-files > span.span-space { background-image: url("../images/panels/project-panel/icon-file-folderopen.png"); background-position: 100% 0px; }
@@ -531,7 +446,6 @@ margin-top: 2px;
 
 #pp-container-list span.span-space { display: block; float: left; margin-right: 5px; height: 15px; }
 
-/* Buttons */
 .pp-button, #pp-col-buttons .pp-button div { margin: 0px; padding: 0px; width: 26px; height: 25px; background-repeat: no-repeat; overflow: hidden; }
 
 .pp-button { margin-top: 5px; cursor: pointer; position: relative; left: 2px; }
@@ -576,7 +490,6 @@ div.pp-button.button-divider div { height: 1px; width: 24px; background-color: b
 
 .pp-button.button-undefined { display: none; }
 
-/* Hide and Show different types of assets */
 .pp-type-script, .pp-type-video, .pp-type-audio, .pp-type-image, .pp-type-flash, .pp-type-other { display: none; }
 
 .pp-show-all .pp-asset-col div { display: block; }
@@ -591,12 +504,10 @@ div.pp-button.button-divider div { height: 1px; width: 24px; background-color: b
 
 .pp-show-flash .pp-type-flash { display: block; }
 
-/* New file flyout */
 .pp-popup { position: absolute; top: -53px; left: -40px; width: 80px; height: 50px; overflow: hidden; border-radius: 5px; background-color: #292929; border: 2px solid #333333; z-index: 100; display: none; }
 
 .pp-popup p { color: white; margin: 0px; padding: 0px; }
 
-/* Search subwidget */
 #pp-search { position: absolute; display: block; height: 24px; border: 2px solid black; background-color: #474747; margin-left: 30px; margin-right: 10px; left: 0px; bottom: 10px; right: 0px; }
 
 #pp-search label { position: absolute; top: 7px; left: 12px; width: 20px; height: 20px; background-image: url("../images/panels/project-panel/icon-button-search.png"); background-repeat: no-repeat; z-index: 10; }
@@ -611,21 +522,14 @@ div.pp-button.button-divider div { height: 1px; width: 24px; background-color: b
 
 #pp-view-assets #pp-container-assets .pp-filter-hidden { display: none; }
 
-/* Inline editor styling */
 #pp-container-assets input.inline-editor { height: 11px; width: 80%; background-color: #242424 !important; color: #b2b2b2 !important; top: -2px; border-width: 0px; font-size: 11px; }
 
-/* End: Tree component for Project Panel */
 .subToolHolderPanel { margin-left: 42px; }
 
 .subToolPanel { margin-top: -6px; }
 
-/*.marginposition{*/
-/*margin-top:-26px*/
-/*}*/
-/* Begin: Properties Panel styles */
 .properties_panel { overflow-x: hidden; color: white; }
 
-/* Begin: styling the form elements */
 .properties_panel select { -webkit-appearance: none; font-size: 9px; color: white; background-color: #444444; border: 1px solid #313131; width: 120px; height: 15px; outline: none; background-image: url("../images/dropdown-bg.png"); background-repeat: no-repeat; background-position: right center; }
 
 .properties_panel select:focus { outline: none; border: 1px solid #313131; }
@@ -638,20 +542,16 @@ button.panel-button { -webkit-appearance: none; font-size: 9px; color: white; ba
 
 .properties_panel .hottextunit input { width: 40px; height: 12px; font-size: 10px; -webkit-appearance: none; border-color: #313131; background-color: #444444; color: white; }
 
-/* End: styling the form elements */
-/* main section styles */
 .pp_sectionHeader { font-size: 12px; padding-left: 37px; height: 15px; background-color: #3e3e3e; background-image: url("../images/panels/panelDisclosureIcon.png"); background-repeat: no-repeat; background-position: 11px 0px; margin-bottom: 8px; }
 
 .pp_section { width: 227px; margin-top: 5px; }
 
-/* control groups */
 .pp_group { width: 100%; clear: both; margin-left: 5px; }
 
 .pp_propset { float: left; width: auto; height: 20px; }
 
 .pp_lock { position: absolute; top: -2px; left: 25px; }
 
-/* controls */
 .pp_proplabel { float: left; width: auto; }
 
 .pp_proplabel_sm { float: left; width: auto; }
@@ -664,7 +564,6 @@ button.panel-button { -webkit-appearance: none; font-size: 9px; color: white; ba
 
 .properties_panel label { display: block; float: left; line-height: 12px; height: 16px; }
 
-/* Style overrides/extensions for tabular layout classes within panels */
 .panel .layout-cell { vertical-align: top; text-align: left; }
 
 #props_defaultids label, .panel .layout-table .layout-cell:first-child, .panel .layout-table.table-2col .layout-cell:first-child { width: 70px; text-align: right; margin-right: 7px; }
@@ -675,7 +574,6 @@ button.panel-button { -webkit-appearance: none; font-size: 9px; color: white; ba
 
 .panel .layout-table.table-2col-wide .layout-cell { width: 50%; }
 
-/* Slider properties */
 .slider_props .layout-table.table-2col-wide .layout-cell:first-child, .button_props .layout-table.table-2col-wide .layout-cell:first-child, .hottext_props .layout-table.table-2col-wide .layout-cell:first-child, .imagecont_props .layout-table.table-2col-wide .layout-cell:first-child, .toggle_props .layout-table.table-2col-wide .layout-cell:first-child, .image_props .layout-table.table-2col-wide .layout-cell:first-child { width: 100%; }
 
 .image_props .layout-table.table-2col-wide .layout-cell:first-child { width: 200%; }
@@ -698,16 +596,12 @@ button.panel-button { -webkit-appearance: none; font-size: 9px; color: white; ba
 
 .properties_panel .layout-table { position: relative; margin-bottom: 10px; }
 
-/* Begin: Styles for DivPIProperties */
 .pp_colorpicker { width: 35px; height: 20px; overflow: hidden; text-indent: -9999px; padding: 0px 0px 0px 0px; display: block; float: left; cursor: pointer; background-color: #333; border: solid 1px #000; }
 
 .pp_strokelabel { border: none; margin: -1px 8px 0px 27px; }
 
 .pp_filllabel { border-width: none; margin: -1px 8px 0px 34px; }
 
-/* End Styles for DivPIProperties */
-/* End: Properties Panel styles */
-/* New Panel Layout Stuff */
 .panels { display: -webkit-box; position: absolute; -webkit-box-orient: vertical; -webkit-box-align: stretch; height: 100%; width: 100%; }
 
 .panel .resizeBar { height: 4px; cursor: row-resize; }
@@ -754,7 +648,6 @@ button.panel-button { -webkit-appearance: none; font-size: 9px; color: white; ba
 
 .over { border-top: 1px solid #0000FF; }
 
-/* MenuUI.scss Styles governing the main dropdown menu. Note that colors and font definitions go in  _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss */
 .menuBar { width: 100%; border-style: solid; border-width: 1px; height: 22px; color: white; background: #474747; border-color: black; }
 
 .menuBar ul { list-style: none; margin: 0; padding: 0; float: left; cursor: default; }
@@ -767,9 +660,7 @@ button.panel-button { -webkit-appearance: none; font-size: 9px; color: white; ba
 
 .menuBar li:active { background: #b57a0a; }
 
-/*Styles for positioning and display
-Supports fly-out of sub-menus two levels deep only */
-.menuBar ul ul { position: absolute; z-index: 500; }
+Supports fly-out of sub-menus two levels deep only .menuBar ul ul { position: absolute; z-index: 500; }
 
 .menuBar ul ul ul { position: absolute; top: 0; left: 100%; }
 
@@ -777,19 +668,17 @@ nav.menuBar ul ul, nav.menuBar ul li:hover ul ul, nav.menuBar ul ul li:hover ul 
 
 nav.menuBar ul li:hover ul, nav.menuBar ul ul li:hover ul, nav.menuBar ul ul ul li:hover ul { display: block; }
 
-/* Tools.scss For individual tool styles in the toolbar, see toolbar.scss. Note that colors and font definitions go in  _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss  */
-/*Made changes to toolButton */
 .toolButton { width: 26px; height: 23px; padding: 0px; margin: 1px; border-width: 1px; border-style: solid; }
 
 .subToolButton { float: left; }
 
-.subOption { float: left; /*margin:10px;*/ margin-top: 5px; margin-left: 10px; margin-right: 10px; }
+.subOption { float: left; margin-top: 5px; margin-left: 10px; margin-right: 10px; }
 
 .toolButton:active { border-top-width: 1px; border-top-style: solid; border-left-width: 1px; border-left-style: solid; }
 
 .toolButtonSelected { border-top-width: 1px; border-top-style: solid; border-left-width: 1px; border-left-style: solid; }
 
-.toolSeparator { height: 1px; width: 30px; /*margin-left: 3px;*/ /*margin-right: 3px;*/ }
+.toolSeparator { height: 1px; width: 30px; }
 
 .toolSeparatorTop { margin-top: 3px; margin-bottom: 0px; }
 
@@ -803,14 +692,13 @@ nav.menuBar ul li:hover ul, nav.menuBar ul ul li:hover ul, nav.menuBar ul ul ul 
 
 .drawingMode { outline: blue solid thin; }
 
-/* Added new styling Sub Tool Shape Options*/
-.textBox { padding-top: 3px; min-width: 10em; /*height:14px;*/ margin-left: 5px; position: relative; margin-top: 0px; }
+.textBox { padding-top: 3px; min-width: 10em; margin-left: 5px; position: relative; margin-top: 0px; }
 
-.selectBox { width: 10em; opacity: 0.9; margin-left: 10px; float: left; display: block; background-color: #666666; /*-webkit-border-radius: 0;*/ border: 1px solid black; color: white; outline: none; }
+.selectBox { width: 10em; opacity: 0.9; margin-left: 10px; float: left; display: block; background-color: #666666; border: 1px solid black; color: white; outline: none; }
 
 .selectBox:hover, .selectBox:active { background-color: #dddddd; opacity: 1; color: black; }
 
-.label { padding-top: 3px; margin-left: 10px; font-size: 12px; /*display:inline;*/ /*line-height:10px;*/ float: left; margin-right: 5px; }
+.label { padding-top: 3px; margin-left: 10px; font-size: 12px; float: left; margin-right: 5px; }
 
 .subToolPropertiespanel { margin-left: 43px; }
 
@@ -830,25 +718,23 @@ nav.menuBar ul li:hover ul, nav.menuBar ul ul li:hover ul, nav.menuBar ul ul ul 
 
 .cornerRadius.bottomRight { margin-top: 3px; -webkit-transform: rotate(180deg); margin-right: -2px; }
 
-#toolOptionsContainer { display: inline; float: left; /*margin-left: 20px;*/ }
+#toolOptionsContainer { display: inline; float: left; }
 
 .leftLabel { margin-top: 3px; float: left; }
 
-/* Skin Radio Buttons */
 input[type="radio"] { -webkit-appearance: none; background: black; width: 28px; height: 24px; vertical-align: middle; border-width: 1px; border-style: solid; border-color: #282828; font-size: 10px; color: #c8c8c8; margin: 4px; }
 
 input[type="radio"]:hover { border-width: 1px; border-style: solid; }
 
 input[type="radio"]:checked { background: #282828; border-width: 1px; border-style: solid; }
 
-/*disabled settings for checkbox and radiobutton*/
 input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1px; border-style: solid; }
 
 .toolPropertiesContainer { float: left; margin-left: 10%; width: 100%; }
 
 .optionButtons { padding: 2px; margin: 1px 4px; float: left; }
 
-.checkBoxLabel { /*margin-top:0.5em;*/ /*margin-left:-5em;*/ padding-top: 3px; font-size: 12px; float: left; margin-right: 5px; }
+.checkBoxLabel { padding-top: 3px; font-size: 12px; float: left; margin-right: 5px; }
 
 .customTextBox { float: right; margin-left: 2em; margin-right: 4em; margin-top: 3px; height: 15px; }
 
@@ -856,7 +742,7 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .toolButtonColor:active { background: #b2b2b2; }
 
-.toolButtonSelectedColor { border-top-color: #595959; border-left-color: #595959; /*  background: $color-tool-bg-active;*/ }
+.toolButtonSelectedColor { border-top-color: #595959; border-left-color: #595959; }
 
 .toolSeparatorTopColor { background: #232323; }
 
@@ -874,7 +760,6 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .optionLabel { margin-top: 5px; }
 
-/* Begin: styles for tag toolbar */
 #tagToolContainer input.tag-type, #rotateObjectToolContainer input.tag-type, #translateObjectToolContainer input.tag-type { background: none; width: 20px; height: 20px; display: block; float: left; margin: 0px; padding: 0px; margin-right: 5px; margin-top: 4px; background-repeat: no-repeat; opacity: 0.8; text-indent: -9999px; cursor: pointer; -webkit-border-radius: 3px; -webkit-user-select: none; border: 1px solid transparent; }
 
 #tagToolContainer input.tag-type { background-image: url("../images/tools/sprite-toolbar-tag.png"); }
@@ -929,9 +814,6 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 #zoomToolOptionHolder input.zoom-option { background: none; }
 
-/* Endi: styles for tag toolbar */
-/* toolbar.scss Styles governing the individual tools. Note that colors and font definitions go in  _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss */
-/* New Tool List CSS */
 .SelectionToolPressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -360px -27px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 1; }
 
 .SelectionToolUnpressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -390px -27px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 0.7; }
@@ -1016,7 +898,6 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .InkBottleToolUnpressed { background-image: url("../images/tools/inkbottle_down.png"); background-repeat: no-repeat; height: 23px; width: 26px; opacity: 0.7; }
 
-/* Selection Tool Options */
 .topAlignUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -240px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
 
 .rightAlignUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -270px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
@@ -1047,35 +928,26 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .blueDiv { background: blue; opacity: 0.2; }
 
-/* Begin: Scroll Bar skinning */
 ::-webkit-scrollbar { width: 11px; height: 11px; }
 
-/* Turn off single button up on top, and down on bottom */
-::-webkit-scrollbar-button:start:decrement, ::-webkit-scrollbar-button:end:increment { display: none; /*we have these off by default */ }
+::-webkit-scrollbar-button:start:decrement, ::-webkit-scrollbar-button:end:increment { display: none; }
 
-/* Turn off the down area up on top, and up area on bottom */
 ::-webkit-scrollbar-button:vertical:start:increment, ::-webkit-scrollbar-button:vertical:end:decrement { display: none; }
 
-/* Turn off the down area up on top, and up area on bottom */
 ::-webkit-scrollbar-button:horizontal:start:increment, ::-webkit-scrollbar-button:horizontal:end:decrement { display: none; }
 
 ::-webkit-scrollbar-track:vertical { background-color: black; }
 
 ::-webkit-scrollbar-track:horizontal { background-color: black; }
 
-/* Track area above thumb and below up button */
 ::-webkit-scrollbar-track-piece:vertical:start { background-color: transparent; }
 
-/* Track area left of thumb and right of button */
 ::-webkit-scrollbar-track-piece:horizontal:start { background-color: transparent; }
 
-/* Track area below thumb and down button */
 ::-webkit-scrollbar-track-piece:vertical:end { background-color: transparent; }
 
-/* Track area right of thumb and left of button */
 ::-webkit-scrollbar-track-piece:horizontal:end { background-color: transparent; }
 
-/* The thumb itself */
 ::-webkit-scrollbar-thumb:vertical { border-color: black; border-style: solid; border-width: 2px; -webkit-border-radius: 6px; background: -webkit-gradient(linear, left top, right top, color-stop(0.16, #8c8c8c), color-stop(0.49, #adadad), color-stop(0.82, #8c8c8c)); }
 
 ::-webkit-scrollbar-thumb:vertical:hover { border-color: black; border-style: solid; border-width: 2px; -webkit-border-radius: 6px; background: -webkit-gradient(linear, left top, right top, color-stop(0.1, #bebebe), color-stop(0.5, white), color-stop(0.9, #bebebe)); }
@@ -1084,8 +956,7 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 ::-webkit-scrollbar-thumb:horizontal:hover { border-color: black; border-style: solid; border-width: 2px; -webkit-border-radius: 6px; background: -webkit-gradient(linear, left top, left bottom, color-stop(0.16, #bebebe), color-stop(0.49, white), color-stop(0.82, #bebebe)); }
 
-::-webkit-scrollbar-corner { /*background-color: black;*/ /* For some reason this is the only way I can find to not show the corner. Setting the ::-webkit-scrollbar-corner:disabled style doesn't work as that pseudo-class seems to be ignored. John Mayhew
-*/ background-color: black; }
+::-webkit-scrollbar-corner { background-color: black; }
 
 ::-webkit-scrollbar-corner:window-inactive { background-color: black; }
 
@@ -1093,35 +964,24 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 ::-webkit-resizer:window-inactive { background-image: url("../images/scrollbars/scrollbar_resizer.png"); background-repeat: no-repeat; }
 
-/* disabled state */
 ::-webkit-scrollbar-track:disabled { display: none; }
 
-/* These don't seem to be necessary or in some cases, they just seem to be ignored
-:-webkit-scrollbar-track:vertical:disabled { display: none;
-}
+:-webkit-scrollbar-track:vertical:disabled { display: none; }
 
-::-webkit-scrollbar-track:horizontal:disabled { display: none;
-}
+::-webkit-scrollbar-track:horizontal:disabled { display: none; }
 
-::-webkit-scrollbar-track-piece:disabled { display: none;
-}
+::-webkit-scrollbar-track-piece:disabled { display: none; }
 
-::-webkit-scrollbar-button:disabled { display: none;
-}
+::-webkit-scrollbar-button:disabled { display: none; }
 
-::-webkit-scrollbar-corner:disabled { display: none;
-}
+::-webkit-scrollbar-corner:disabled { display: none; }
 
-::-webkit-resizer:disabled { display: none;
-}
-*/
-/* End: Scroll Bar Skinning */
-/* Begin: Styles for the Tree component */
+::-webkit-resizer:disabled { display: none; }
+
 .tree { -webkit-user-select: none; cursor: default; float: left; padding-left: 0; color: white; }
 
 .tree li { -webkit-margin-before: 0px; -webkit-margin-after: 0px; list-style-type: none; }
 
 .tree li > text > img { margin-right: 8px; -webkit-transition: -webkit-transform 0.05s linear; }
 
-/* End: styles for the Tree component */
 /*77*/

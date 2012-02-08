@@ -13,6 +13,10 @@ exports.Ninja = Montage.create(Component, {
     _appLoaded: { value: false },
     _preload: { value: false },
 
+    ninjaVersion: {
+        value: window.ninjaVersion.ninja.version
+    },
+
     toolsData: { value: null },
     appData:    { value: AppData },
 
@@ -36,6 +40,7 @@ exports.Ninja = Montage.create(Component, {
 
     prepareForDraw: {
         value: function() {
+            console.log("Loading Ninja --> ", this.ninjaVersion);
 
             this.application.ninja = this;
 
@@ -89,9 +94,16 @@ exports.Ninja = Montage.create(Component, {
         }
     },
 
+    _didDraw: {
+        value: false
+    },
+    
     didDraw: {
         value: function() {
-            NJevent("appLoaded");
+            if(!this._didDraw) {
+                NJevent("appLoaded");
+                this._didDraw = true;
+            }
         }
     },
 
@@ -155,12 +167,6 @@ exports.Ninja = Montage.create(Component, {
     userTemplateDidLoad: {
         value: function(){
             this.currentSelectedContainer = this.currentDocument.documentRoot;
-        }
-    },
-
-    handleLivePreview: {
-        value: function(event) {
-
         }
     },
 

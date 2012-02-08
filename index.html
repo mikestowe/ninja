@@ -168,11 +168,31 @@
 		
 		<script type="text/javascript">
 			window.onload = function() {
+                // Check if we are running in Chrome
+                if(navigator.userAgent.toLowerCase().indexOf("chrome") === -1) {
+                    window.location = "./redirect.html";
+                }
+                // Load the version json
+                var req = new XMLHttpRequest();
+                req.open("GET", "versions.json");
+                req.onreadystatechange = (function(req) {
+                    return function(event) {
+                        if (req.readyState === 4) {
+                            if (req.status === 200) {
+                                window.ninjaVersion = JSON.parse(req.responseText);
+                            } else {
+                                console.log("Ninja version file could not be loaded");
+                            }
+                        }
+                    }
+                })(req);
+                req.send();
 				//
 				var star = document.getElementById('star');
 				//
 				njstar(star.getContext("2d"));
-			}
+			};
+
 			function njstar (ctx) {
 				ctx.save();
 				ctx.translate(0,0);
