@@ -114,27 +114,21 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value: false
     },
 
-    _isLayerAdded:{
-        value:false
+    _firstTimeLoaded:{
+        value:true,
+        writable:true
     },
 
-    addButtonClicked:{
-        value:true
-    },
-
-    _firstLayerDraw:{
-        value:false,
+    _arrLayersNonEmpty:{
+        value:true,
         writable:true
     },
 
     willDraw: {
         value: function() {
             if (this._isLayer) {
-                this.addButtonClicked=false;
-                this._isElementAdded=true;
-                NJevent('newLayer',this)
-                this._isLayer = false;
-                this.addButtonClicked=true;
+                this.insertLayer();
+                this._isLayer = false;;
             }
         }
     },
@@ -204,7 +198,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             //event.stopPropagation();
             this._isLayer = true;
             this.needsDraw = true;
-
         }
     },
 
@@ -215,7 +208,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             if(this.application.ninja.currentSelectedContainer.id==="UserContent"){
                 this._hashKey="123";
             }
-            NJevent('deleteLayer')
+            this.removeLayer();
         }
     },
 
@@ -223,23 +216,28 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:function(event){
              var i=0;
              this.currentParentNode=this.application.ninja.currentSelectedContainer.parentNode;
-             this.removeLayerFromParentUUid = this.application.ninja.currentSelectedContainer.parentNode.uuid;
-             this.currentElement= event.detail.element;
 
-//             if(this._firstLayerDraw===false){
-//                 while(this.arrLayers.pop()){
-//                 }
-//                 while(this.arrTracks.pop()){
-//                 }
-//             }
+             if(this._firstTimeLoaded){
+                     this._firstTimeLoaded=false;
+             }else{
+                     while(this.arrLayers.pop()){
+                     }
+                     while(this.arrTracks.pop()){
+                     }
 
-             this._hashKey = event.detail.element.uuid;
-             if(this.returnedObject = this.hashInstance.getItem(this._hashKey)){
-                this.returnedTrack = this.hashTrackInstance.getItem(this._hashKey);
-                this._hashFind = true;
-                NJevent('newLayer');
+                     if(event.detail.element.id==="UserContent"){
+                         this._hashKey= "123";
+                     }else{
+                         this._hashKey = event.detail.element.uuid;
+                     }
 
-            }
+                     if(this.returnedObject = this.hashInstance.getItem(this._hashKey)){
+                        this.returnedTrack = this.hashTrackInstance.getItem(this._hashKey);
+                        this._hashFind = true;
+                     }
+                     NJevent('newLayer',event.detail);
+
+             }
 
         }
     },
@@ -276,6 +274,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             // Or at the end, if no layer is selected.
              var hashIndex =0 ,hashVariable=0,layerResult,trackResult,layerObject,trackObject,dLayer,parentNode;
 
+             this._arrLayersNonEmpty= true;
              if(this._hashFind){
                 while(layerResult = this.returnedObject[hashIndex]){
                     trackResult=this.returnedTrack[hashIndex];
@@ -288,40 +287,52 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
              this._hashFind=false;
              return;
              }
+             if(event.detail._undoStatus){
+                        if(this.application.ninja.currentSelectedContainer.id==="UserContent" && event.detail._el.parentElementUUID===123 ){
+                                dLayer=this.hashInstance.getItem(event.detail._el.parentElementUUID);
+                                while(dLayer[hashVariable]){
+                                     if(dLayer[hashVariable]._layerID === event.detail._el._layerID){
+                                         dLayer[hashVariable].deleted=false;
+                                         this.arrLayers.splice(event.detail._layerPosition,1,event.detail._el);
+                                         this.arrTracks.splice(event.detail._layerPosition,1,event.detail._track);
+                                         break;
+
+                                                }
+                                     hashVariable++;
+                                }
+
+                                }
+
+                        else if(event.detail._el.parentElementUUID!==this.application.ninja.currentSelectedContainer.uuid){
+                                dLayer=this.hashInstance.getItem(event.detail._el.parentElementUUID);
+                                while(dLayer[hashVariable]){
+                                    if(dLayer[hashVariable]._layerID===event.detail._el._layerID){
+                                        dLayer[hashVariable].deleted=false;
+                                        parentNode=dLayer[hashVariable].parentElement;
+                                        break;
+                                    }
+                                    hashVariable++;
+                                }
+                                this._setBreadCrumb=true;
+                                NJevent('breadCrumbTrail',{"element":parentNode,"setFlag":this._setBreadCrumb});
+                          }else{
+                                dLayer=this.hashInstance.getItem(event.detail._el.parentElementUUID);
+                                while(dLayer[hashVariable]){
+                                     if(dLayer[hashVariable]._layerID === event.detail._el._layerID){
+                                         dLayer[hashVariable].deleted=false;
+                                         this.arrLayers.splice(event.detail._layerPosition,1,event.detail._el);
+                                         this.arrTracks.splice(event.detail._layerPosition,1,event.detail._track);
+                                         break;
+
+                                    }
+                                    hashVariable++;
+                                }
+                            }
+             }
 
 
-//                if(this.addButtonClicked){
-//                    layerObject = this.hashInstance.getItem(this.application.ninja.currentSelectedContainer.uuid);
-//                    trackObject = this.hashTrackInstance.getItem(this.application.ninja.currentSelectedContainer.uuid);
-//                    if(layerObject!==undefined){
-//                            while(layerObject[hashVariable]){
-//                                if(event.detail.parentElement!==this.application.ninja.currentSelectedContainer){
-//                                    dLayer=this.hashInstance.getItem(event.detail.parentNode.uuid);
-//                                        while(dLayer[hashVariable]){
-//                                            if(dLayer[hashVariable].element===event.detail){
-//                                                dLayer[hashVariable].deleted=true;
-//                                                parentNode=dLayer[hashVariable].parentElement;
-//                                                break;
-//                                            }
-//                                            hashVariable++;
-//                                        }
-//                                        this._setBreadCrumb=true;
-//                                        NJevent('breadCrumbTrail',{"element":parentNode,"setFlag":this._setBreadCrumb});
-//
-//                                }
-//                                else if(layerObject[hashVariable].element===event.detail){
-//                                    this.arrLayers.splice(layerObject[hashVariable].layerPosition,0,layerObject[hashVariable]);
-//                                    this.arrTracks.splice(trackObject[hashVariable].trackPosition,0,trackObject[hashVariable]);
-//                                    this._isLayerAdded=true;
-//                                    break;
-//                                }
-//                                hashVariable++;
-//                                this._isLayerAdded=false;
-//                            }
-//                    }
-//                }
 
-
+            else{
                       var newLayerName = "",
                         //thingToPush = Layer.create(),
                         thingToPush = {},
@@ -330,11 +341,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                         myIndex = 0;
 
                     // Build the thingToPush object
-                        if(_firstLayerDraw){
-                            if(this.application.ninja.currentSelectedContainer.id==="UserContent"){
-                                this._hashKey="123";
-                            }
-                        }
 
                         this.currentLayerNumber = this.currentLayerNumber +1;
                         newLayerName = "Layer " + this.currentLayerNumber;
@@ -348,8 +354,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                         thingToPush.element=[];
                         thingToPush.deleted=false;
                         thingToPush.isSelected = false;
+                        if(_firstLayerDraw){
+                        thingToPush.parentElementUUID=this.application.ninja.currentSelectedContainer.uuid;
                         thingToPush.parentElement=this.application.ninja.currentSelectedContainer;
-                       // this.layerElement.dataset.parentUUID=this.application.ninja.currentSelectedContainer.uuid;
+                        }
+
 
                         newTrack.trackID = this.currentLayerNumber;
                         newTrack.isMainCollapsed = true;
@@ -358,20 +367,27 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                         newTrack.isStyleCollapsed = false;
                         newTrack.tweens = [];
 
+                        if(_firstLayerDraw){
+                            if(this.application.ninja.currentSelectedContainer.id==="UserContent"){
+                            this._hashKey="123";
+                            thingToPush.parentElementUUID = 123;
+                            }
+                        }
+
                         // If a layer is selcted, splice the new layer on top
                         // Otherwise, just push the new layer in at the bottom.
 
                         if (!!this.layerRepetition.selectedIndexes) {
                             myIndex = this.layerRepetition.selectedIndexes[0];
-                            this.hashInstance.setItem(this._hashKey,thingToPush,myIndex);
-                            this.hashTrackInstance.setItem(this._hashKey,newTrack,myIndex);
                             thingToPush.layerPosition=myIndex;
                             thingToPush.isSelected = true;
                             newTrack.trackPosition=myIndex;
                             this.arrLayers.splice(myIndex, 0, thingToPush);
                             this.arrTracks.splice(myIndex, 0, newTrack);
+                            this._LayerUndoPosition = myIndex;
                             /*
                             this.currentLayerSelected= this.arrLayers[myIndex];
+                            this.currentTrackSelected=this.arrTracks[myIndex];                            
                             var i = 0,
 								arrLayersLength = this.arrLayers.length;
 							for (i = 0; i < arrLayersLength; i++) {
@@ -386,19 +402,26 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                            
                            this.selectLayer(myIndex);
                            
+                            this.hashInstance.setItem(this._hashKey,thingToPush,myIndex);
+                            this.hashTrackInstance.setItem(this._hashKey,newTrack,myIndex);
                         } else {
                             this.arrLayers.splice(0, 0, thingToPush);
                             this.arrTracks.splice(0, 0, newTrack);
                             thingToPush.layerPosition=this.arrLayers.length-1;
                             newTrack.trackPosition=this.arrTracks.length-1;
                             this.currentLayerSelected= this.arrLayers[this.arrLayers.length-1];
-
+                            this.currentTrackSelected=this.arrTracks[this.arrTracks.length-1];
+                            this._LayerUndoPosition = this.arrLayers.length-1;
                             this.hashInstance.setItem(this._hashKey,thingToPush,thingToPush.layerPosition);
                             this.hashTrackInstance.setItem(this._hashKey,newTrack,newTrack.trackPosition);
 
                           }
+                        this._LayerUndoObject = thingToPush;
+                        this._LayerUndoIndex = thingToPush.layerID ;
+                        this._LayerUndoStatus = true;
+                        this._TrackUndoObject = newTrack;
 
-
+            }
 
 
         }
@@ -409,27 +432,20 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
              var dLayer,dTrack,parentNode,hashVariable=0,k=0,index=0,j=0;
 
                 if (this.arrLayers.length > 0) {
-                     if(this._undoElementDeleted){
-                        if(event.detail.dataset.parentUUID!==this.application.ninja.currentSelectedContainer.uuid){
-                            dLayer=this.hashInstance.getItem(event.detail.dataset.parentUUID);
-                            while(dLayer[hashVariable]){
-                                if(dLayer[hashVariable].element===event.detail){
-                                    dLayer[hashVariable].deleted=true;
-                                    parentNode=dLayer[hashVariable].parentElement;
-                                    break;
-                                }
-                                hashVariable++;
-                            }
-                            this._setBreadCrumb=true;
-                            NJevent('breadCrumbTrail',{"element":parentNode,"setFlag":this._setBreadCrumb});
-                        }else{
-                            dLayer=this.hashInstance.getItem(event.detail.dataset.parentUUID)
-                            while(dLayer[hashVariable]){
+                    if(this.arrLayers.length===1){
+                        this._arrLayersNonEmpty=false;
+                        alert("cannot delete further");
+                        return;
+                    }
+                    if(event.detail._undoStatus){
+                        if(this.application.ninja.currentSelectedContainer.id==="UserContent" && event.detail._el.parentElementUUID===123 ){
+                                dLayer=this.hashInstance.getItem(event.detail._el.parentElementUUID);
+                                while(dLayer[hashVariable]){
                                   if(dLayer[hashVariable].deleted===true){
 
-                                  }else if(dLayer[hashVariable].element.uuid === event.detail.uuid){
+                                  }else if(dLayer[hashVariable]._layerID === event.detail._el._layerID){
                                             while(this.arrLayers.length){
-                                               if(dLayer[hashVariable].layerID===this.arrLayers[k].layerID){
+                                               if(dLayer[hashVariable]._layerID===this.arrLayers[k]._layerID){
                                                      dLayer[hashVariable].deleted=true;
                                                      this.arrLayers.splice(k,1);
                                                      this.arrTracks.splice(k,1);
@@ -439,113 +455,139 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                                             }
                                         }
                                   hashVariable++;
+                                }
+
+                        }else if(event.detail._el.parentElementUUID!==this.application.ninja.currentSelectedContainer.uuid){
+                                dLayer=this.hashInstance.getItem(event.detail._el.parentElementUUID);
+                                while(dLayer[hashVariable]){
+                                    if(dLayer[hashVariable]._layerID===event.detail._el._layerID){
+                                        dLayer[hashVariable].deleted=true;
+                                        parentNode=dLayer[hashVariable].parentElement;
+                                        break;
+                                    }
+                                    hashVariable++;
+                                }
+                                this._setBreadCrumb=true;
+                                NJevent('breadCrumbTrail',{"element":parentNode,"setFlag":this._setBreadCrumb});
+                        }
+                            else{
+                            dLayer=this.hashInstance.getItem(event.detail._el.parentElementUUID);
+                            while(dLayer[hashVariable]){
+                              if(dLayer[hashVariable].deleted===true){
+
+                              }else if(dLayer[hashVariable]._layerID === event.detail._el._layerID){
+                                        while(this.arrLayers.length){
+                                           if(dLayer[hashVariable]._layerID===this.arrLayers[k]._layerID){
+                                                 dLayer[hashVariable].deleted=true;
+                                                 this.arrLayers.splice(k,1);
+                                                 this.arrTracks.splice(k,1);
+                                                 break;
+                                           }
+                                           k++;
+                                        }
+                                    }
+                              hashVariable++;
                             }
                         }
-                     }
+
+
+
+                    }
                     else{
                             if (!!this.layerRepetition.selectedIndexes) {
                                     var myIndex = this.layerRepetition.selectedIndexes[0];
+                                    this._LayerUndoObject=this.arrLayers[myIndex];
+                                    this._TrackUndoObject=this.arrTracks[myIndex];
+
                                     dLayer = this.hashInstance.getItem(this._hashKey);
                                     dTrack = this.hashTrackInstance.getItem(this._hashKey);
                                     dLayer[myIndex].deleted=true;
 
                                     this.arrLayers.splice(myIndex, 1);
                                     this.arrTracks.splice(myIndex, 1);
-
-                        }   else if(this._deleteKeyDown) {
-                                  dLayer = this.hashInstance.getItem(this._hashKey);
-                                  dTrack = this.hashTrackInstance.getItem(this._hashKey);
-
-                                      if(this.deleteElement === this.application.ninja.currentSelectedContainer){
-                                          while(dLayer[hashVariable]){
-                                                dLayer[hashVariable].deleted=true;
-                                                hashVariable++;
-                                          }
-
-                                          this.dObject=this.hashInstance.getItem(this.removeLayerFromParentUUid);
-                                          hashVariable=0;
-                                          while(this.dObject[hashVariable]){
-                                             if(this.application.ninja.currentSelectedContainer===this.dObject[hashVariable].element){
-                                                      this.dObject[hashVariable].deleted=true;
-                                                      this._setBreadCrumb=true;
-                                                      NJevent('breadCrumbTrail',{"element":this.currentParentNode,"setFlag":this._setBreadCrumb});
-                                                      this._setBreadCrumb=false;
-                                                      break;
-                                             }
-                                             hashVariable++;
-                                          }
-                                          this._deleteKeyDown=false;
-                                  } else if(this.deleteElement!== this.application.ninja.currentSelectedContainer){
-
-                                          while(dLayer[hashVariable]){
-                                              if(dLayer[hashVariable].deleted===true){
-
-                                              }else if(dLayer[hashVariable].element.uuid === this.deleteElement.uuid){
-                                                   while(this.arrLayers.length){
-                                                       if(dLayer[hashVariable].layerID===this.arrLayers[k].layerID){
-                                                             dLayer[hashVariable].deleted=true;
-                                                             this.arrLayers.splice(k,1);
-                                                             this.arrTracks.splice(k,1);
-                                                             break;
-                                                       }
-                                                       k++;
-                                                   }
-                                              }
-                                              hashVariable++;
-                                         }
-                                  }
+                                    this._LayerUndoIndex = this._LayerUndoObject.layerID;
+                                    this._LayerUndoPosition = myIndex;
+                            }else{
+                                    dLayer = this.hashInstance.getItem(this._hashKey);
+                                    dTrack = this.hashTrackInstance.getItem(this._hashKey);
+                                    dLayer[this.arrLayers.length-1].deleted=true;
+                                    this._LayerUndoPosition = this.arrLayers.length-1;
+                                    this._LayerUndoObject = this.arrLayers.pop();
+                                    this._LayerUndoIndex = this._LayerUndoObject.layerID;
+                                    this._TrackUndoObject = this.arrTracks.pop();
                             }
-                              else{
-                                        dLayer = this.hashInstance.getItem(this._hashKey);
-                                        dTrack = this.hashTrackInstance.getItem(this._hashKey);
-                                        dLayer[this.arrLayers.length-1].deleted=true;
-                                        this.arrLayers.pop();
-                                        this.arrTracks.pop();
-                                  }
+
+//                           else if(this._deleteKeyDown) {
+//                                  dLayer = this.hashInstance.getItem(this._hashKey);
+//                                  dTrack = this.hashTrackInstance.getItem(this._hashKey);
+//
+//                                      if(this.deleteElement === this.application.ninja.currentSelectedContainer){
+//                                          while(dLayer[hashVariable]){
+//                                                dLayer[hashVariable].deleted=true;
+//                                                hashVariable++;
+//                                          }
+//
+//                                          this.dObject=this.hashInstance.getItem(this.removeLayerFromParentUUid);
+//                                          hashVariable=0;
+//                                          while(this.dObject[hashVariable]){
+//                                             if(this.application.ninja.currentSelectedContainer===this.dObject[hashVariable].element){
+//                                                      this.dObject[hashVariable].deleted=true;
+//                                                      this._setBreadCrumb=true;
+//                                                      NJevent('breadCrumbTrail',{"element":this.currentParentNode,"setFlag":this._setBreadCrumb});
+//                                                      this._setBreadCrumb=false;
+//                                                      break;
+//                                             }
+//                                             hashVariable++;
+//                                          }
+//                                          this._deleteKeyDown=false;
+//                                  } else if(this.deleteElement!== this.application.ninja.currentSelectedContainer){
+//
+//                                          while(dLayer[hashVariable]){
+//                                              if(dLayer[hashVariable].deleted===true){
+//
+//                                              }else if(dLayer[hashVariable].element.uuid === this.deleteElement.uuid){
+//                                                   while(this.arrLayers.length){
+//                                                       if(dLayer[hashVariable].layerID===this.arrLayers[k].layerID){
+//                                                             dLayer[hashVariable].deleted=true;
+//                                                             this.arrLayers.splice(k,1);
+//                                                             this.arrTracks.splice(k,1);
+//                                                             break;
+//                                                       }
+//                                                       k++;
+//                                                   }
+//                                              }
+//                                              hashVariable++;
+//                                         }
+//                                  }
+//                            }
+//                              else{
+//                                        dLayer = this.hashInstance.getItem(this._hashKey);
+//                                        dTrack = this.hashTrackInstance.getItem(this._hashKey);
+//                                        dLayer[this.arrLayers.length-1].deleted=true;
+//                                        this.arrLayers.pop();
+//                                        this.arrTracks.pop();
+//                                  }
                     }
 
-               }else  if (this.arrLayers.length <=  0) {
-                            if(this._undoElementDeleted){
-                                if(event.detail.dataset.parentUUID!==this.application.ninja.currentSelectedContainer.uuid){
-                                        dLayer=this.hashInstance.getItem(event.detail.dataset.parentUUID);
-                                        while(dLayer[hashVariable]){
-                                            if(dLayer[hashVariable].element===event.detail){
-                                                dLayer[hashVariable].deleted=true;
-                                                parentNode=dLayer[hashVariable].parentElement;
-                                                break;
-                                            }
-                                            hashVariable++;
-                                        }
-                                        this._setBreadCrumb=true;
-                                        NJevent('breadCrumbTrail',{"element":parentNode,"setFlag":this._setBreadCrumb});
-                                }
-                            }else
-                                if(this._deleteKeyDown) {
-                                          this.dObject=this.hashInstance.getItem(this.removeLayerFromParentUUid);
-                                          hashVariable=0;
-                                          while(this.dObject[hashVariable]){
-                                             if(this.application.ninja.currentSelectedContainer===this.dObject[hashVariable].element){
-                                                      this.dObject[hashVariable].deleted=true;
-                                                      this._setBreadCrumb=true;
-                                                      NJevent('breadCrumbTrail',{"element":this.currentParentNode,"setFlag":this._setBreadCrumb});
-                                                      this._setBreadCrumb=false;
-                                                      break;
-                                             }
-                                             hashVariable++;
-                                          }
-                                }
-                }
-                // TODO: actually remove the selected style from the layer. (Maybe by publishing an event?)
-
+             }
         }
     },
 
     handleElementAdded: {
         value: function(event) {
            this.layerElement=event.detail;
-           this._isElementAdded=true;
-           this.currentLayerSelected.element.push(event.detail);
-           this._isElementAdded=false;
+           if(!!this.layerRepetition.selectedIndexes){
+               this.currentLayerSelected = this.arrLayers[this.layerRepetition.selectedIndexes];
+               this.currentTrackSelected = this.arrTracks[this.layerRepetition.selectedIndexes];
+               if(this.currentTrackSelected.isAnimated){
+               alert("cannot add divs an further since the track is animated");
+               }else{
+               this.currentLayerSelected.element.push(event.detail)
+               }
+           }
+           else{
+               this.currentLayerSelected.element.push(event.detail);
+           }
         }
     },
 
@@ -569,8 +611,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     handleElementDeleted: {
         value: function(event) {
             var length;
-             this._deleteKeyDown=true;
              this.deleteElement = event.detail;
+
+             if(!!this.layerRepetition.selectedIndexes){
+                  this.currentLayerSelected = this.arrLayers[this.layerRepetition.selectedIndexes];
+             }
              length =this.currentLayerSelected.element.length-1;
              while(length >= 0){
                 if(this.currentLayerSelected.element[length]===this.deleteElement){
@@ -658,6 +703,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                                    }
                                    hashLayerObject[key][index] = value;
                                    this.counter=0;
+//                                   console.log(hashLayerObject)
                            }
                        },
 
@@ -780,6 +826,105 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		
     		return returnVal;
     	}
+    },
+
+    insertLayer: {
+            value: function() {
+
+                    var cmd = this.addLayerCommand();
+                    cmd.execute();
+                    cmd._el=this._LayerUndoObject;
+                    cmd._layerID = this._LayerUndoIndex;
+                    cmd._layerPosition = this._LayerUndoPosition
+                    cmd._undoStatus = this._LayerUndoStatus;
+                    cmd._track = this._TrackUndoObject;
+
+                    NJevent("sendToUndo", cmd);
+
+
+
+            }
+    },
+
+    removeLayer: {
+            value: function() {
+
+                    var cmd = this.deleteLayerCommand();
+                    cmd.execute();
+                    cmd._el=this._LayerUndoObject;
+                    cmd._layerID = this._LayerUndoIndex;
+                    cmd._layerPosition = this._LayerUndoPosition
+                    cmd._undoStatus = this._LayerUndoStatus;
+                    cmd._track = this._TrackUndoObject;
+
+                    if(this._arrLayersNonEmpty){
+                    NJevent("sendToUndo", cmd);
+                    }
+
+
+            }
+    },
+
+    addLayerCommand: {
+                value : function(){
+                var command;
+
+                    command = Object.create(Object.prototype, {
+
+                    _el:{value:null,writable:true},
+                    _layerID:{value:null,writable:true},
+                    _layerPosition:{value:null,writable:true},
+                    _undoStatus:{value:false,writable:true},
+                    _track:{value:null,writable:true},
+
+
+                        description: { value: "Add Layer"},
+                        receiver : {value: TimelinePanel},
+
+                        execute: {
+                            value: function() {
+
+                                NJevent('newLayer',this)
+
+                            }
+                        },
+
+                        unexecute: {
+                            value: function() {
+                                NJevent('deleteLayer',this)
+
+                            }
+                        }
+                    });
+
+                    return command;
+                }
+    },
+
+    deleteLayerCommand: {
+                   value : function(){
+                   var command;
+                       command = Object.create(Object.prototype, {
+
+                           description: { value: "Delete Layer"},
+                           receiver : {value: TimelinePanel},
+
+                           execute: {
+                               value: function() {
+                                   NJevent('deleteLayer',this)
+                               }
+                           },
+
+                           unexecute: {
+                               value: function() {
+                                   NJevent('newLayer',this)
+
+                               }
+                           }
+                       });
+
+                       return command;
+                   }
     }
 
     /* === END: Controllers === */
