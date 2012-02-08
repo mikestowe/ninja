@@ -179,10 +179,14 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             this.styleSheetModified(stylesheet);
             
             rule = stylesheet.rules[index];
-            
+
             ///// attach specificity to rule object
+            ///// if rule is css keyframes, return rule and don't attach specificity
+            if (rule instanceof WebKitCSSKeyframesRule) {
+                return rule;
+            }
             rule[this.CONST.SPECIFICITY_KEY] = this.getSpecificity(rule.selectorText);
-            
+
             ///// return the rule we just inserted
             return rule;
         }
@@ -840,6 +844,27 @@ var stylesController = exports.StylesController = Montage.create(Component, {
         }
     },
 
+    ///// Get Animation Rule With Name
+    ///// Returns the CSSKeyframesRule with given name
+
+    getAnimationRuleWithName : {
+        value: function(name) {
+            var sheets = this._activeDocument._document.styleSheets,
+                rules, i, j, rule;
+
+            for(i = 0; i < sheets.length; i++) {
+                rules = sheets[i].rules;
+                for(j = 0; j < rules.length; j++) {
+                    rule = rules[j];
+                    if(rule instanceof WebKitCSSKeyframesRule && rule.name === name) {
+                        return rule;
+                    }
+                }
+            }
+
+            return;
+        }
+    },
 
     ///// Delete style
     ///// Removes the property from the style declaration/rule
@@ -1042,6 +1067,21 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             }
 
             return value;
+        }
+    },
+
+    ///// Get Element Animation Rule
+    ///// Returns the CSSKeyframesRule applied to an element
+
+    getElementAnimationRule : {
+        value: function(element) {
+            var animationName = this.getElementStyle(element, '-webkit-animation-name');
+
+            if(!animationName) {
+                return null;
+            }
+
+            return this.getAnimationRuleWithName(animationName);
         }
     },
 
