@@ -240,7 +240,7 @@ function GLWorld( canvas, use3D )
 			rdgeStarted = true;
 
             // TODO - temporary fix for RDGE id's
-            this._canvas.id = this._canvas.uuid;
+            this._canvas.id = "rdge_" + this._canvas.uuid;
 
 			g_Engine.registerCanvas(this._canvas, this);
 			RDGEStart( this._canvas );

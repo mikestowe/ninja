@@ -58,7 +58,7 @@ exports.Layout = Montage.create(Component, {
 
             this.eventManager.addEventListener("selectionChange", this, false);
 
-            this.eventManager.addEventListener("deleteSelection", this, true);
+            this.eventManager.addEventListener("deleteSelection", this, false);
 
 //            this.addEventListener("change@stage.appModel.layoutView", this.handleLayoutView, false);
 
@@ -74,26 +74,23 @@ exports.Layout = Montage.create(Component, {
     handleElementAdded: {
         value: function(event) {
             this.domTree.push(event.detail);
+
+            this.draw();
+            this.draw3DInfo(false);
         }
     },
 
     handleElementDeleted: {
         value: function(event) {
             this.domTree.splice(this.domTree.indexOf(event.detail), 1);
-
-            this.draw();
         }
     },
 
-    captureDeleteSelection: {
+    // Redraw stage only once after all deletion is completed
+    handleDeleteSelection: {
         value: function(event) {
-            //this.redrawDocument();
-
-            var len = event.detail.length;
-            for(var i = 0; i < len ; i++) {
-                this.domTree.splice(this.domTree.indexOf(event.detail[i]),1);
-            }
-
+            this.draw();
+            this.draw3DInfo(false);
         }
     },
 

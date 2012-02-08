@@ -44,12 +44,16 @@ exports.ElementMediator = Montage.create(NJComponent, {
                 this.deleteDelegate.handleDelete();
             } else {
                 // Add the Undo/Redo
-                var els = [];
+                var els = [],
+                    len = this.application.ninja.selectedElements.length;
 
-                if(this.application.ninja.selectedElements.length > 0) {
-                    for(var i=0, item; item = this.application.ninja.selectedElements[i]; i++) {
-                        ElementController.removeElement(item._element);
-                        els.push(item._element);
+                if(len) {
+                    for(var i = 0; i<len; i++) {
+                        els.push(this.application.ninja.selectedElements[i]);
+                    }
+                    
+                    for(i=0; i<len; i++) {
+                        this._removeElement(els[i]._element);
                     }
 
                     NJevent( "deleteSelection", els );
@@ -105,6 +109,13 @@ exports.ElementMediator = Montage.create(NJComponent, {
         value: function(el, rules) {
             ElementController.removeElement(el, rules);
             NJevent("elementDeleted", el);
+        }
+    },
+
+    replaceElement: {
+        value: function(el, el2) {
+            el2.elementModel = el.elementModel;
+            this.application.ninja.currentDocument.documentRoot.replaceChild(el2, el);
         }
     },
 
@@ -425,7 +436,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
                 el.elementModel.controller["set3DProperties"](el, props, i, update3DModel);
             }
 
-            NJevent("element" + eventType, {type : "set3DProperties", source: source, data: {"els": els, "prop": props, "value": props}, redraw: null});
+            NJevent("element" + eventType, {type : "set3DProperties", source: source, data: {"els": els, "prop": "matrix", "value": props}, redraw: null});
         }
     },
 
@@ -660,11 +671,11 @@ exports.ElementMediator = Montage.create(NJComponent, {
 
             if(isChanging)
             {
-                NJevent("elementChanging", {type : "setMatrix", source: null, data: {"el": el, "prop": "matrix", "value": mat}, redraw: null});
+                NJevent("elementChanging", {type : "setMatrix", source: null, data: {"els": [el], "prop": "matrix", "value": mat}, redraw: null});
             }
             else
             {
-                NJevent("elementChange", {type : "setMatrix", source: null, data: {"el": el, "prop": "matrix", "value": mat}, redraw: null});
+                NJevent("elementChange", {type : "setMatrix", source: null, data: {"els": [el], "prop": "matrix", "value": mat}, redraw: null});
             }
         }
     },
