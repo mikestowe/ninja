@@ -7,10 +7,9 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 /* /////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 NOTES:
+
 	The init function starts up the file system API, and a size must be
 	set, no unlimited available as of now.
-	
-	Core API reference in NINJA: this.application.ninja.coreIoApi
 	
 ////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////// */
@@ -120,6 +119,46 @@ exports.ChromeApi = Montage.create(Object.prototype, {
                		if (callback) callback(true);
 				}, function (e) {if (callback) callback(false)});
 			}, function (e) {if (callback) callback(false)});
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    fileDelete: {
+    	enumerable: true,
+    	value: function(filePath, callback) {
+    		this.fileSystem.root.getFile(filePath, {create: false}, function(file) {
+    			file.remove(function() {
+    				if (callback) callback(true);
+    			});
+    		}, function (e) {if (callback) callback(false)});
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    fileContent: {
+    	enumerable: true,
+    	value: function() {
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    fileCopy: {
+    	enumerable: true,
+    	value: function() {
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    fileRename: {
+    	enumerable: true,
+    	value: function() {
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    fileMove: {
+    	enumerable: true,
+    	value: function() {
     	}
     },
     ////////////////////////////////////////////////////////////////////

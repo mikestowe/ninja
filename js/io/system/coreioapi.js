@@ -83,10 +83,21 @@ exports.CoreIoApi = Montage.create(Component, {
 	handleSync: {
 		enumerable: false,
         value: function (e) {
-        	//Removing events
         	console.log('Ninja Local Library: Ready');
+        	//Removing events
         	this.ninjaLibrary.removeEventListener('sync', this, false);
+        	this.ninjaLibrary.coreApi = this;
         	//TODO: Add sync loading screen logic
+        	
+        	
+        	
+        	
+        	//TODO: Remove test
+        	this.ninjaLibrary.copyLibToCloud('Users/kgq387/Desktop/Ninja Cloud/Disk', 'montage0.6.0');
+        	
+        	
+        	
+        	
         }
     },
     ////////////////////////////////////////////////////////////////////

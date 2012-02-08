@@ -8,8 +8,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 ////////////////////////////////////////////////////////////////////////
 NOTES:
 
-	Core API reference in NINJA: this.application.ninja.coreIoApi
-
 ////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////// */
 //
@@ -36,6 +34,23 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
     },
     ////////////////////////////////////////////////////////////////////
     //
+    _coreApi: {
+        enumerable: false,
+        value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    coreApi: {
+    	enumerable: false,
+    	get: function() {
+            return this._coreApi;
+        },
+        set: function(value) {
+        	this._coreApi = value;
+        }
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
     _libsToSync: {
     	enumerable: false,
         value: 0
@@ -45,6 +60,62 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
     _syncedLibs: {
     	enumerable: false,
         value: 0
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    copyLibToCloud: {
+    	enumerable: false,
+        value: function (path, libName) {
+        	//
+        	if(this.coreApi.directoryExists({uri: '/'+path+'/'+libName+'/'}).status === 404) {
+        		this.chromeApi.directoryContents(this.chromeApi.fileSystem.root, function (contents) {
+        			for (var i in contents) {
+    	    			if (libName === contents[i].name) {
+	        				//Getting contents of library to be copied
+        					this.chromeApi.directoryContents(contents[i], function (lib) {
+        						//Creating directory structure from subfolders
+        						this.copyDirectoryToCloud(path, contents[i], function (status) {console.log(status)});
+        					}.bind(this));
+        					break;
+        				}
+    	    		}
+	        	}.bind(this));
+        	} else {
+        		//Error
+        	}
+        }
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    copyDirectoryToCloud: {
+    	enumerable: true,
+    	value: function(root, folder, callback) {
+    		if (folder.name) {
+    			var dir;
+			    if (root) {
+					dir = root+'/'+folder.name;
+			    } else {
+			    	dir = folder.name;
+			    }
+			    //
+			    if (!this.coreApi.createDirectory({uri: '/'+dir+'/'})) {
+			    	//Error occured while creating folders
+			    	return;
+			    }
+			}
+			//
+			if (folder.isDirectory) {
+				this.chromeApi.directoryContents(folder, function (contents) {
+					for (var i in contents) {
+						if (contents[i].isDirectory) {
+							this.copyDirectoryToCloud(dir, contents[i]);
+						} else if (contents[i].isFile){
+							//File to copy
+						}
+					}
+				}.bind(this));
+			}
+    	}
     },
 	////////////////////////////////////////////////////////////////////
     //
@@ -81,7 +152,7 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
             				}
 	            		} else {
 	            			//TODO: Remove, currently manually removing copied libraries
-	            			this.chromeApi.directoryDelete(chromeLibs[i]);
+	            			//this.chromeApi.directoryDelete(chromeLibs[i]);
 	            		}
             		}
             		
