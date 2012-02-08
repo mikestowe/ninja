@@ -186,7 +186,7 @@ function GLMaterial( world )
 		var endKey = "endMaterial\n";
 		var index = importStr.indexOf( endKey );
 		index += endKey.length;
-		rtnStr = importStr.substr( index );
+		var rtnStr = importStr.substr( index );
 
 		return rtnStr;
 	}
