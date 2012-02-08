@@ -36,18 +36,13 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
 
     _zoomFactor: { value: 100, enumerable: false },
 
-    _codeEditor: {
-            value: {
-                "editor": { value: null, enumerable: false },
-                "hline": { value: null, enumerable: false }
-            }
-        },
-
-
     // PUBLIC MEMBERS
     cssLoadInterval: { value: null, enumerable: false },
 
-    codeViewDocument:{
+    _savedLeftScroll: {value:null},
+    _savedTopScroll: {value:null},
+
+    _codeViewDocument:{
         writable: true,
         enumerable: true,
         value:null
@@ -58,10 +53,21 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
      */
 
     // GETTERS / SETTERS
-    editor: {
-           get: function() { return this._codeEditor.editor; },
-           set: function(value) { this._codeEditor.editor = value}
-       },
+
+    codeViewDocument:{
+        get: function() { return this._codeViewDocument; },
+        set: function(value) { this._codeViewDocument = value}
+    },
+
+    savedLeftScroll:{
+        get: function() { return this._savedLeftScroll; },
+        set: function(value) { this._savedLeftScroll = value}
+    },
+
+    savedTopScroll:{
+        get: function() { return this._savedTopScroll; },
+        set: function(value) { this._savedTopScroll = value}
+    },
 
     selectionExclude: {
         get: function() { return this._selectionExclude; },
@@ -233,6 +239,7 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
             this.currentView = "design";
 
             this._loadDocument(this.uri);
+
         }
     },
 
@@ -444,20 +451,15 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
 
     /**
      * public method
-     * parameter:
-     * removeCodeMirrorDivFlag - for code view, tell to remove the codemirror div after saving
+     *
      */
     save:{
-        value:function(removeCodeMirrorDivFlag){
+        value:function(){
             try{
                 if(this.currentView === "design"){
                     //generate html and save
                 }else if((this.currentView === "code") && (this.codeViewDocument !== null)){
-                    if(removeCodeMirrorDivFlag === true){
-                        this.codeViewDocument.save(true);
-                    }else{
-                        this.codeViewDocument.save();
-                    }
+                    this.codeViewDocument.editor.save();
                     //persist to filesystem
                 }
                 this.dirtyFlag=false;
@@ -467,4 +469,5 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
             }
         }
     }
+
 });
