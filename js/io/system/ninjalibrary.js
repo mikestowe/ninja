@@ -114,8 +114,18 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
 							//File to copy
 							this.chromeApi.fileContent(contents[i].fullPath, function (result) {
 								//
-								this.coreApi.createFile({uri: fileRoot+result.file.fullPath, contents: result.content, contentType: result.data.type});
-								//this.coreApi.createFile({uri: fileRoot+result.file.fullPath, contents: result.content});
+								
+								/*
+var ui8a = new Uint8Array(result.content);
+								console.log(ui8a);
+								
+								var blob = new window.WebKitBlobBuilder;
+								blob.append(result.content);
+*/
+								//console.log(blob.getBlob(result.data.type));
+								//this.coreApi.createFile({uri: fileRoot+result.file.fullPath, contents: result.content, contentType: result.data.type});
+								//this.coreApi.createFile({uri: fileRoot+result.file.fullPath, contents: blob.getBlob(result.data.type), contentType: result.data.type});
+								this.coreApi.createFile({uri: fileRoot+result.file.fullPath, contents: result.content});
 							}.bind(this));
 						}
 					}
@@ -187,11 +197,12 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
             				//Getting file contents
             				xhr = new XMLHttpRequest();
             				xhr.open("GET", tocopylibs[i].path, false);
+            				xhr.responseType = "arraybuffer"; 
             				xhr.send();
             				//Checking for status
             				if (xhr.readyState === 4) { //TODO: add check for mime type
             					//Creating new file from loaded content
-            					//this.chromeApi.fileNew('/'+tocopylibs[i].name+'/'+tocopylibs[i].file, xhr.response, function (status) {if(status) this.libraryCopied()}.bind(this));
+            					this.chromeApi.fileNew('/'+tocopylibs[i].name+'/'+tocopylibs[i].file, xhr.response, function (status) {if(status) this.libraryCopied()}.bind(this));
             				} else {
             					//Error creating single file library
             				}
@@ -225,6 +236,7 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
                								for (i=0; this.files[i]; i++) {
                									xhr = new XMLHttpRequest();
             									xhr.open("GET", this.root+this.files[i], false);
+            									xhr.responseType = "arraybuffer"; 
             									xhr.send();
             									//Checking for status
             									if (xhr.readyState === 4) {

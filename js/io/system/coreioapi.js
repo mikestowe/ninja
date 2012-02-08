@@ -402,15 +402,16 @@ exports.CoreIoApi = Montage.create(Component, {
                     	xhr = new XMLHttpRequest();
                     //
                     xhr.open("POST", serviceURL, false);
+                    xhr.responseType = "arraybuffer"; 
                     if(file.contentType && file.contentType.length)
                         xhr.setRequestHeader("Content-Type", file.contentType);
                     else
                         xhr.setRequestHeader("Content-Type", "text/plain");
 
-                    if(file.contents && file.contents.length)
+                    if (file.contents)
                         xhr.send(file.contents);
                     else
-                        xhr.send();
+                      	xhr.send();
 
                     if (xhr.readyState === 4) {
                         retValue.status = xhr.status;

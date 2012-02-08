@@ -146,7 +146,7 @@ exports.ChromeApi = Montage.create(Object.prototype, {
          					callback({content: this.result, data: file, file: f, url: f.toURL()});
          				}
        				};
-       				reader.readAsText(file);
+       				reader.readAsArrayBuffer(file);
     			}, function (e) {if (callback) callback(false)});
     		}, function (e) {if (callback) callback(false)});
     	}
