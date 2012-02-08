@@ -175,6 +175,8 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             }
             
             stylesheet.insertRule(ruleText, index);
+
+            this.styleSheetModified(stylesheet);
             
             rule = stylesheet.rules[index];
             
@@ -282,6 +284,8 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             if(index > -1) {
                 sheet.deleteRule(index);
             }
+
+            this.styleSheetModified(sheet);
 
             return index;
         }
@@ -531,6 +535,9 @@ var stylesController = exports.StylesController = Montage.create(Component, {
         value : function(rule, selector) {
             rule.selectorText = selector;
             rule[this.CONST.SPECIFICITY_KEY] = this.getSpecificity(selector);
+
+            this.styleSheetModified(rule.parentStyleSheet);
+
             return rule;
         }
     },
@@ -780,6 +787,8 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             ///// method to apply/test the new value
             dec.setProperty(property, value, priority);
 
+            this.styleSheetModified(rule.parentStyleSheet);
+
             ///// Return browser value for value we just set
             return dec.getPropertyValue(property);
         }
@@ -838,7 +847,10 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     
     deleteStyle : {
         value : function(rule, property) {
+            this.styleSheetModified(rule.parentStyleSheet);
+
             rule.style.removeProperty(property);
+
             return rule;
         }
     },
@@ -1070,9 +1082,10 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     
     createStylesheet : {
         value: function(id, document) {
-            var doc = document || this._activeDocument;
+            var doc = document || this._activeDocument._document,
+                sheetElement, sheet;
             
-            sheet = nj.make('style', { 
+            sheetElement = nj.make('style', {
                 type  : 'text/css',
                 rel   : 'stylesheet',
                 id    : id || "",
@@ -1080,9 +1093,12 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 title : 'Temp'
             });
 
-            doc.head.appendChild(sheet);
-            
-            return this.getSheetFromElement(sheet, doc);
+            doc.head.appendChild(sheetElement);
+            sheet = this.getSheetFromElement(sheetElement, doc);
+
+            this.styleSheetModified(sheet);
+
+            return sheet;
         }
     },
     
@@ -1103,7 +1119,52 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             
         }
     },
-    
+
+    ///// Style Sheet Modified
+    ///// Method to call whenever a stylesheet change is made
+    ///// Dispatches an event, and keeps list of dirty style sheets
+
+    styleSheetModified : {
+        value: function(sheet, eventData) {
+            var sheetSearch = this.dirtyStyleSheets.filter(function(sheetObj) {
+                return sheetObj.stylesheet === sheet;
+            });
+
+            ///// If the sheet doesn't already exist in the list of modified
+            ///// sheets, dispatch dirty event and add the sheet to the list
+            if(sheetSearch.length === 0) {
+                NJevent('styleSheetDirty', eventData);
+                this.dirtyStyleSheets.push({
+                    document : sheet.ownerNode.ownerDocument,
+                    stylesheet : sheet
+                });
+            }
+        }
+    },
+
+    ///// Dirty Style Sheets
+    ///// List of modified style sheets
+
+    dirtyStyleSheets : {
+        value : []
+    },
+
+    ///// Clear Dirty Style Sheets
+    ///// Refreshes the list of dirty style sheets
+    ///// If optional document object is supplied, only the styles sheets
+    ///// of a particular document are cleared
+    ///// Useful to call after a "Save" or "Save All" event
+
+    clearDirtyStyleSheets : {
+        value: function(doc) {
+            if(!doc) {
+                this.dirtyStyleSheets = null;
+                this.dirtyStyleSheets = [];
+            }
+
+        }
+    },
+
     /* ----------------- Utils ------------------- */
 
     _generateRandomAlphaNumeric : {
