@@ -77,11 +77,16 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
 	this.getStrokeMaterial	= function()		{  return this._strokeMaterial;	}
 	this.setStrokeMaterial	= function(m)		{  this._strokeMaterial = m;	}
 
-    this.getStrokeColor	= function()		{  return this._strokeColor;	}
+    this.getStrokeColor		= function()		{  return this._strokeColor;	}
 	//this.setStrokeColor	= function(c)		{  this._strokeColor = c;		}
 
-    this.getStrokeStyle	= function()		{  return this._strokeStyle;	}
-	this.setStrokeStyle	= function(s)		{  this._strokeStyle = s;		}
+    this.getStrokeStyle		= function()		{  return this._strokeStyle;	}
+	this.setStrokeStyle		= function(s)		{  this._strokeStyle = s;		}
+
+	this.getFillMaterial	= function()		{  return null;		}
+	
+	this.setStrokeMaterial  = function(m)		 {  this._strokeMaterial = m;		 }
+	this.getStrokeMaterial	= function()		{  return this._strokeMaterial;		}
 
     this.getWidth			= function()		{  return this._width;				}
 	this.setWidth			= function(w)		{  this._width = w;					}
@@ -187,9 +192,9 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
                     xFill+x, yFill+y,  0.0,
                     -xFill+x, -yFill+y,  0.0,
 
-                    xFill+x, yFill+y,  0.0,
+                    xFill+x, -yFill+y,  0.0,
                     -xFill+x, -yFill+y,  0.0,
-                    xFill+x, -yFill+y,  0.0
+                    xFill+x, yFill+y,  0.0
                 ];
             }
             else if(this._slope === "horizontal")
@@ -202,10 +207,10 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
                     xFill+x, yFill+y,  0.0,
                     -xFill+x, -yFill+y,  0.0,
 
-                    xFill+x, yFill+y,  0.0,
+                     xFill+x, -yFill+y,  0.0,
                     -xFill+x, -yFill+y,  0.0,
-                    xFill+x, -yFill+y,  0.0
-                ];
+                    xFill+x, yFill+y,  0.0
+               ];
             }
             else if(this._slope > 0)
             {
@@ -215,9 +220,9 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
                     -xFill+2*xAdj+x, yFill+y,  0.0,
                     xFill-2*xAdj+x, -yFill+y,  0.0,
 
-                    -xFill+2*xAdj+x, yFill+y,  0.0,
+                    xFill+x, -yFill+2*yAdj+y,  0.0,
                     xFill-2*xAdj+x, -yFill+y,  0.0,
-                    xFill+x, -yFill+2*yAdj+y,  0.0
+                    -xFill+2*xAdj+x, yFill+y,  0.0
                 ];
             }
             else
@@ -228,9 +233,9 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
                     -xFill+2*xAdj+x, -yFill+y,  0.0,
                     xFill-2*xAdj+x, yFill+y,  0.0,
 
-                    -xFill+2*xAdj+x, -yFill+y,  0.0,
+                    xFill+x, yFill-2*yAdj+y,  0.0,
                     xFill-2*xAdj+x, yFill+y,  0.0,
-                    xFill+x, yFill-2*yAdj+y,  0.0
+                    -xFill+2*xAdj+x, -yFill+y,  0.0
                 ];
             }
         }
