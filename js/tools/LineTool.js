@@ -203,10 +203,10 @@ exports.LineTool = Montage.create(ShapeTool, {
             // for default stroke and fill/no materials
             var strokeMaterial = null;
 
-            var strokeIndex = parseInt(this.options.strokeMaterial);
-            if(strokeIndex > 0)
+            var strokeM = this.options.strokeMaterial;
+            if(strokeM)
             {
-                strokeMaterial = Object.create(MaterialsLibrary.getMaterialAt(strokeIndex-1));
+                strokeMaterial = Object.create(MaterialsLibrary.getMaterial(strokeM));
             }
 
             var world = this.getGLWorld(canvas, this.options.use3D);
@@ -232,12 +232,12 @@ exports.LineTool = Montage.create(ShapeTool, {
                 }
 
                 canvas.elementModel.shapeModel.strokeMaterial = strokeMaterial;
-                canvas.elementModel.shapeModel.strokeMaterialIndex = strokeIndex;
 
                 canvas.elementModel.shapeModel.strokeStyleIndex = strokeStyleIndex;
                 canvas.elementModel.shapeModel.strokeStyle = strokeStyle;
 
                 canvas.elementModel.shapeModel.GLGeomObj = line;
+                canvas.elementModel.shapeModel.useWebGl = this.options.use3D;
             }
             else
             {
