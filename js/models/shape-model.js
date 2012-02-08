@@ -20,10 +20,12 @@ exports.ShapeModel = Montage.create(Component, {
     strokeMaterialIndex:    { value: null },
     strokeStyle:            { value: null },
     strokeStyleIndex:       { value: null },
+    border:                 { value: null },    // Store css value for ColorController
 
     fill:                   { value: null },
     fillMaterial:           { value: null },
     fillMaterialIndex:      { value: null },
+    background:             { value: null },    // Store css value for ColorController
 
     // Line-specific
     slope:                  { value: null },

@@ -4,12 +4,11 @@
 // (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 // </copyright>
 
-/*
- * MenuUI.scss
- * Styles governing the main dropdown menu.
- * Note that colors and font definitions go in 
- * _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss
- */
+// MenuUI.scss
+// Styles governing the main dropdown menu.
+// Note that colors and font definitions go in 
+// _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss
+  
 .menuBar {
     width:100%;
     border-style: solid;
@@ -49,8 +48,8 @@
     background : $color-menu-active-bg;
 }
 
-/*Styles for positioning and display
-Supports fly-out of sub-menus two levels deep only */
+// Styles for positioning and display
+Supports fly-out of sub-menus two levels deep only  
 
 .menuBar ul ul {
     position: absolute;

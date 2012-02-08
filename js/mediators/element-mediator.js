@@ -44,12 +44,16 @@ exports.ElementMediator = Montage.create(NJComponent, {
                 this.deleteDelegate.handleDelete();
             } else {
                 // Add the Undo/Redo
-                var els = [];
+                var els = [],
+                    len = this.application.ninja.selectedElements.length;
 
-                if(this.application.ninja.selectedElements.length > 0) {
-                    for(var i=0, item; item = this.application.ninja.selectedElements[i]; i++) {
-                        ElementController.removeElement(item._element);
-                        els.push(item._element);
+                if(len) {
+                    for(var i = 0; i<len; i++) {
+                        els.push(this.application.ninja.selectedElements[i]);
+                    }
+                    
+                    for(i=0; i<len; i++) {
+                        this._removeElement(els[i]._element);
                     }
 
                     NJevent( "deleteSelection", els );
@@ -92,6 +96,11 @@ exports.ElementMediator = Montage.create(NJComponent, {
     _addElement: {
         value: function(el, rules, noEvent) {
             ElementController.addElement(el, rules);
+            var p3d = this.get3DProperties(el);
+            if(p3d)
+            {
+                el.elementModel.controller["set3DProperties"](el, [p3d], 0, true);
+            }
             if(!noEvent) NJevent("elementAdded", el);
         }
     },
@@ -420,7 +429,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
                 el.elementModel.controller["set3DProperties"](el, props, i, update3DModel);
             }
 
-            NJevent("element" + eventType, {type : "set3DProperties", source: source, data: {"els": els, "prop": props, "value": props}, redraw: null});
+            NJevent("element" + eventType, {type : "set3DProperties", source: source, data: {"els": els, "prop": "matrix", "value": props}, redraw: null});
         }
     },
 
@@ -431,7 +440,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
     getColor: {
         value: function(el, isFill) {
             if(!el.elementModel) {
-                NJUtils.makeElementModel(el, "Div", "block");
+                NJUtils.makeElementModel2(el);
             }
             return el.elementModel.controller["getColor"](el, isFill);
         }
@@ -457,7 +466,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
                 if(!currentValue) {
                     var that = this;
                     currentValue = els.map(function(item) {
-                        return that.getColor(item._element);
+                        return that.getColor(item._element, isFill);
                     });
                 }
 
@@ -589,6 +598,15 @@ exports.ElementMediator = Montage.create(NJComponent, {
         }
     },
 
+    getColor2: {
+        value: function(el, prop, mutator) {
+            if(!el.elementModel) {
+                NJUtils.makeElementModel2(el);
+            }
+
+            return this.getColor(el, (prop === "background"));
+        }
+    },
 
     //--------------------------------------------------------------------------------------------------------
     // Routines to get/set 3D properties
@@ -646,11 +664,11 @@ exports.ElementMediator = Montage.create(NJComponent, {
 
             if(isChanging)
             {
-                NJevent("elementChanging", {type : "setMatrix", source: null, data: {"el": el, "prop": "matrix", "value": mat}, redraw: null});
+                NJevent("elementChanging", {type : "setMatrix", source: null, data: {"els": [el], "prop": "matrix", "value": mat}, redraw: null});
             }
             else
             {
-                NJevent("elementChange", {type : "setMatrix", source: null, data: {"el": el, "prop": "matrix", "value": mat}, redraw: null});
+                NJevent("elementChange", {type : "setMatrix", source: null, data: {"els": [el], "prop": "matrix", "value": mat}, redraw: null});
             }
         }
     },

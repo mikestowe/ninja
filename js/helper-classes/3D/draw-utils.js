@@ -71,6 +71,9 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 
 	_selectionCtr : {value: null, writable: true },
 
+    // Properties that require element planes to be updated
+	_updatePlaneProps : {value: ["matrix", "left", "top", "width", "height"], writable: false },
+
 	///////////////////////////////////////////////////////////////////////
 	// Property accessors
 	///////////////////////////////////////////////////////////////////////
@@ -107,6 +110,8 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 
             this.eventManager.addEventListener("elementAdded", this, false);
             this.eventManager.addEventListener("elementDeleted", this, false);
+            this.eventManager.addEventListener("deleteSelection", this, false);
+            this.eventManager.addEventListener("elementChange", this, false);
 		}
 	},
 
@@ -123,6 +128,65 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
         }
     },
 
+    handleDeleteSelection: {
+        value: function(event) {
+            this.drawWorkingPlane();
+        }
+    },
+
+    _shouldUpdatePlanes: {
+        value: function(props) {
+            if(!props)
+            {
+                return false;
+            }
+            else if (typeof props === "string")
+            {
+                return (this._updatePlaneProps.indexOf(props) !== -1);
+            }
+
+            for (var p in props)
+            {
+                if(this._updatePlaneProps.indexOf(p) !== -1)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    },
+
+    // TODO - Check why handleElementChange is being fired before handleAddElement
+    handleElementChange: {
+        value: function(event) {
+            if(!event.detail || !event.detail.data)
+            {
+                return;
+            }
+            var els = event.detail.data.els;
+            if(els && this._shouldUpdatePlanes(event.detail.data.prop))
+            {
+                var len = els.length,
+                    i = 0,
+                    item,
+                    el;
+
+                for(i=0; i < len; i++) {
+                    item = els[i];
+                    el = item._element || item;
+                    if(el.elementModel.props3D.elementPlane)
+                    {
+                        el.elementModel.props3D.elementPlane.init();
+                    }
+                }
+
+                this.application.ninja.stage.layout.draw();
+                this.drawWorkingPlane();
+                this.draw3DCompass();
+            }
+        }
+    },
 
 	///////////////////////////////////////////////////////////////////////
 	// Methods
@@ -150,6 +214,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			plane.setElement( elt );
 			plane.init();
 			this._planesArray.push( plane );
+            elt.elementModel.props3D.elementPlane = plane;
 		}
 	},
 
@@ -166,6 +231,8 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 
 					// Then remove the element
 					this._eltArray.splice(i, 1);
+
+                    // TODO - May need to delete props3D and elementPlane as well
 					return;
 				}
 			}
@@ -1040,7 +1107,6 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			var tmpCanvas = this.application.ninja.stage.canvas;
 			var tmpStage = this.application.ninja.currentDocument.documentRoot;
 			this.viewUtils.pushViewportObj( tmpCanvas );
-			var tmpStage = this.application.ninja.currentDocument.documentRoot;
 
 			// save the source space object and set to the target object
 			var saveSource = this._sourceSpaceElt;
@@ -1064,7 +1130,8 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			var resMat = glmat4.multiply( tMat, mat, [] );
 			var origin = [0,0,0,1];
 
-			var arrowSize = 50;
+			var zoomFactor = this.application.ninja.documentBar.zoomFactor/100.0;
+			var arrowSize = 50 / zoomFactor;
 			var xAxis = [arrowSize,0,0,1];
 			//var rO = resMat.multiply(origin);
 			var rO = glmat4.multiplyVec3( resMat, origin, []);  

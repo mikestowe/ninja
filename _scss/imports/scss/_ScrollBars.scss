@@ -4,25 +4,25 @@
 // (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 // </copyright>
 
-/* Begin: Scroll Bar skinning */
+//  Begin: Scroll Bar skinning  
 ::-webkit-scrollbar {
     width: 11px;
     height: 11px;
 }
 
-/* Turn off single button up on top, and down on bottom */
+//  Turn off single button up on top, and down on bottom  
 ::-webkit-scrollbar-button:start:decrement,
 ::-webkit-scrollbar-button:end:increment {
-    display: none;  /*we have these off by default */
+    display: none;  // we have these off by default  
 }
 
-/* Turn off the down area up on top, and up area on bottom */
+//  Turn off the down area up on top, and up area on bottom  
 ::-webkit-scrollbar-button:vertical:start:increment,
 ::-webkit-scrollbar-button:vertical:end:decrement {
     display: none;
 }
 
-/* Turn off the down area up on top, and up area on bottom */
+//  Turn off the down area up on top, and up area on bottom  
 ::-webkit-scrollbar-button:horizontal:start:increment,
 ::-webkit-scrollbar-button:horizontal:end:decrement {
     display: none;
@@ -36,27 +36,27 @@
     background-color: $color-sb-border;
 }
 
-/* Track area above thumb and below up button */
+//  Track area above thumb and below up button  
 ::-webkit-scrollbar-track-piece:vertical:start {
     background-color: transparent;
 }
 
-/* Track area left of thumb and right of button */
+//  Track area left of thumb and right of button  
 ::-webkit-scrollbar-track-piece:horizontal:start {
     background-color: transparent;
 }
 
-/* Track area below thumb and down button */
+//  Track area below thumb and down button  
 ::-webkit-scrollbar-track-piece:vertical:end {
     background-color: transparent;
 }
 
-/* Track area right of thumb and left of button */
+//  Track area right of thumb and left of button  
 ::-webkit-scrollbar-track-piece:horizontal:end {
     background-color: transparent;
 }
 
-/* The thumb itself */
+//  The thumb itself  
 ::-webkit-scrollbar-thumb:vertical {
     border-color: $color-sb-border;
     border-style: solid;
@@ -101,13 +101,13 @@
 }
 
 ::-webkit-scrollbar-corner {
-    /*background-color: black;*/
-    /*
-        For some reason this is the only way I can find to not show the corner.
-        Setting the ::-webkit-scrollbar-corner:disabled style doesn't work as that
-        pseudo-class seems to be ignored.
-        John Mayhew
-    */
+    // background-color: black; 
+
+	//For some reason this is the only way I can find to not show the corner.
+	//Setting the ::-webkit-scrollbar-corner:disabled style doesn't work as that
+	//pseudo-class seems to be ignored.
+	//John Mayhew
+     
     background-color: $color-sb-border;
 }
 ::-webkit-scrollbar-corner:window-inactive {
@@ -124,12 +124,12 @@
     background-repeat: no-repeat;
 }
 
-/* disabled state */
+//  disabled state  
 ::-webkit-scrollbar-track:disabled {
     display: none;
 }
 
-/* These don't seem to be necessary or in some cases, they just seem to be ignored
+//  These don't seem to be necessary or in some cases, they just seem to be ignored
 :-webkit-scrollbar-track:vertical:disabled {
     display: none;
 }
@@ -153,6 +153,6 @@
 ::-webkit-resizer:disabled {
     display: none;
 }
-*/
-/* End: Scroll Bar Skinning */
+ 
+//  End: Scroll Bar Skinning  
 

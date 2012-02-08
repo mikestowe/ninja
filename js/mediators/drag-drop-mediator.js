@@ -62,7 +62,7 @@ exports.DragDropMediator = Montage.create(Component, {
 
     handleDropEvent: {
         value: function(evt){
-            var xferString, component;
+            var xferString, component, file, files, idx, len;
 
             this.baseX = evt.offsetX - this.application.ninja.stage.userContentLeft;
             this.baseY = evt.offsetY - this.application.ninja.stage.userContentTop;
@@ -85,11 +85,8 @@ exports.DragDropMediator = Montage.create(Component, {
                 return;
             }
 
-            var file;
-            const files = evt.dataTransfer.files;
-            var idx;
-            const len = files.length;
-
+            files = evt.dataTransfer.files;
+            len = files.length;
 
             // Loop over all dragged files...
             for (idx = 0; idx < len; idx++) {

@@ -83,6 +83,7 @@ exports.ShapeTool = Montage.create(DrawingTool, {
                     }
                 }
                 this.RenderShape(drawData.width, drawData.height, drawData.planeMat, drawData.midPt, canvas);
+                NJevent("elementAdded", canvas);
             }
 
 			this.endDraw(event);

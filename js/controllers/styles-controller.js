@@ -7,7 +7,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage,
     Component        = require("montage/ui/component").Component,
     cssShorthandMap  = require("js/panels/CSSPanel/css-shorthand-map").CSS_SHORTHAND_MAP,
-    nj               = require("js/lib/NJUtils.js").NJUtils;
+    nj               = require("js/lib/NJUtils").NJUtils;
 
 /*
 
@@ -171,7 +171,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             if(argType === 'string') {
                 ruleText += '{' + declaration + '}';
             } else if(argType === 'object') {
-                ruleText += '{' + nj.cssFromObject(declaration) + '}';
+                ruleText += '{' + this.cssFromObject(declaration) + '}';
             }
             
             stylesheet.insertRule(ruleText, index);
@@ -199,25 +199,42 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             
             ///// Locally-scoped function to de-clutter variable declarations
             function getSelector(el, rule) {
-
                 return this._getMostSpecificSelectorForElement(el, rule[this.CONST.SPECIFICITY_KEY]).selector;
             }
 
             var selectorToOverride = getSelector.bind(this)(element, ruleToOverride),
-                tokens             = selectorToOverride.split(/\s/),
-                newClass           = this.generateClassName(element.nodeName),
-                lastToken, pseudoSplit, base, pseudo, newToken, newSelector, rule;
+                overrideData, rule;
+
+            ///// Get the overriding selector and className
+            overrideData = this.createOverrideSelector(selectorToOverride, element.nodeName);
+
+            ///// Create new rule with selector and insert it after the rule we're overriding
+            rule = this.addRule(overrideData.selector + ' { }', this.getRuleIndex(ruleToOverride)+1);
+            
+            return {
+                className : overrideData.className,
+                rule      : rule
+            };
+            
+        }
+    },
+
+    createOverrideSelector : {
+        value: function(selectorToOverride, classPrefix, className) {
+            var tokens = selectorToOverride.split(/\s/),
+                newClass = className || this.generateClassName(classPrefix, true),
+                lastToken, pseudoSplit, base, pseudo, newToken, newSelector;
 
             ///// Creating an overriding selector by replacing the last
             ///// class, attribute or type selector in passed-in rule's selector
-            
+
             ///// Grab the last token
             lastToken   = tokens[tokens.length-1];
             pseudoSplit = lastToken.split(':');
             ///// The last token can have pseudo class. Let's preserve it
             base   = pseudoSplit[0];
             pseudo = (pseudoSplit[1]) ? ':'+pseudoSplit[1] : '';
-            
+
             ///// Now, all we want to do is replace the last token with a
             ///// generated class name, except if the last token is an ID selector,
             ///// in which case we append the generated class name to the ID selector
@@ -231,18 +248,15 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 ///// Append the generated class
                 newToken += '.' + newClass + pseudo;
             }
-            
+
             ///// Now we can build the new selector by replacing the last token
             tokens[tokens.length-1] = newToken;
             newSelector = tokens.join(' ');
-            
-            rule = this.addRule(newSelector + ' { }', this.getRuleIndex(ruleToOverride)+1);
-            
+
             return {
                 className : newClass,
-                rule      : rule
+                selector  : newSelector
             };
-            
         }
     },
     
@@ -370,7 +384,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     ///// from which an overriding rule can be created.
 
     getDominantRuleForGroup : {
-        value : function(elements, property) {
+        value : function(elements, property, forceOverride) {
             var selectorsToOverride = [],
                 commonRules, dominantRules, useImportant;
 
@@ -639,7 +653,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     },
     
     ///// Get Most Specific Selector For Element
-    ///// Given a selector+specificty array, find the most specific
+    ///// Given a selector+specificity array, find the most specific
     ///// selector for the passed-in element
     
     _getMostSpecificSelectorForElement : {
@@ -721,7 +735,11 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     ///// Calculate specificity
     ///// Returns the specificity value of passed-in selector
     ///// WARNING: Do not pass in grouped selectors!
-    ///// Helpful for determining precedence of style rules   
+    ///// Helpful for determining precedence of style rules
+    ///// Calculation javascript code courtesy of Graham Bradley:
+    ///// http://gbradley.com/2009/10/02/css-specificity-in-javascript
+    ///// Used with author's permission
+
     calculateSpecificity : {
         value : function(selector) {
             var s   = selector.replace(/\([^\)]+\)/,''),
@@ -786,7 +804,34 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             return browserValues;
         }
     },
-    
+
+    ///// Set Keyframe Style
+    ///// For a given CSSKeyframesRule, we may add a style to the keyframe at
+    ///// given index.
+
+    setKeyframeStyle : {
+        value : function(rule, keyframeIndex, property, value, useImportant) {
+            return this.setStyle(rule.cssRules[keyframeIndex], property, value, useImportant);
+        }
+    },
+
+    ///// Set Keyframe Styles
+    ///// For a given CSSKeyframesRule, we may add styles to the keyframe at
+    ///// given index.
+
+    setKeyframeStyle : {
+        value : function(rule, keyframeIndex, property, value, useImportant) {
+            return this.setStyles(rule.cssRules[keyframeIndex], property, value, useImportant);
+        }
+    },
+
+    insertKeyframe : {
+        value : function() {
+
+        }
+    },
+
+
     ///// Delete style
     ///// Removes the property from the style declaration/rule
     ///// Returns the rule
@@ -920,6 +965,43 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                     this.setElementStyle(element, property, styles[property], isStageElement);
                 }
             }
+        }
+    },
+
+    setGroupStyles : {
+        value : function(elements, styles) {
+            var properties = Object.keys(styles),
+                newClass = this.generateClassName(null, true),
+                selectors;
+
+            ///// TODO: move this: Locally-scoped function to de-clutter variable declarations
+            function getSelector(el, rule) {
+                return this._getMostSpecificSelectorForElement(el, rule[this.CONST.SPECIFICITY_KEY]).selector;
+            }
+
+            selectors = elements.map(function(el) {
+                ///// for each element, we want to find the most specific selector
+                var matchingRules = this.getMatchingRules(el, true);
+
+                this.addClass(el, newClass);
+
+                if(matchingRules.length === 0) {
+                    return null;
+                }
+
+                var mostSpecificRule = matchingRules[0], // TODO: iterate over properties to find most specific
+                    selectorToOverride = getSelector.bind(this)(el, mostSpecificRule),
+                    override = this.createOverrideSelector(selectorToOverride, null, newClass);
+
+                return override.selector;
+
+            }, this);
+
+            selectors.filter(function(item) {
+                return item !== null;
+            });
+
+            this.addRule(selectors.join(', '), styles);
         }
     },
     
@@ -1058,6 +1140,21 @@ var stylesController = exports.StylesController = Montage.create(Component, {
         }
     },
 
+    ///// CSS From Object
+    ///// Returns css text from object with key/value pairs
+    ///// representing css styles
+
+    cssFromObject : {
+        value : function(obj) {
+            var cssText = '';
+            ///// For each key/value pair, create css text
+            for(var prop in obj) {
+                cssText += prop + ':' + obj[prop] + ';';
+            }
+            return cssText;
+        }
+    },
+
     /* ----------------- Element model (rule cache) related methods ----------------- */
 
     ///// Get Cached Rule For Property
@@ -1107,15 +1204,24 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
     _clearCache: {
         value: function(element) {
-            var itemsToClear = this._cacheHistory;
+            var itemsToNullify = this._cacheHistory,
+                itemsToRemove = [],
+                i;
 
+
+            ///// If clearing the cache for an element, filter by element
+            ///// and keep track of indices to remove from cache
             if(element) {
-                itemsToClear = itemsToClear.filter(function(item) {
-                    return item.element === element;
+                itemsToNullify = itemsToNullify.filter(function(item, index) {
+                    if(item.element === element) {
+                        itemsToRemove.push(index);
+                        return true;
+                    }
+                    return false;
                 });
             }
 
-            itemsToClear.forEach(function(item) {
+            itemsToNullify.forEach(function(item) {
                 //var identifier = item.element.nodeName;
                 //identifier += '#'+item.element.id || '.'+item.element.className;
                 //console.log("clearing cache for \"" + item.property +"\" and element \"" + identifier+ "");
@@ -1123,6 +1229,17 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                     item.element.elementModel[item.property] = null;
                 }
             });
+
+            ///// Remove the nullified items from the cache
+            ///// Start at the end to not mess up index references
+            for(i = itemsToRemove.length-1; i >= 0; i--) {
+                this._cacheHistory.splice(itemsToRemove[i], 1);
+            }
+
+            if(!element) {
+                this._cacheHistory = null;
+                this._cacheHistory = [];
+            }
 
         }
     },

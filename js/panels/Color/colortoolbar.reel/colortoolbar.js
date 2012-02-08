@@ -20,7 +20,7 @@ exports.ColorToolbar = Montage.create(Component, {
     //Storing stroke (stores color in mode use to select color)
     _stroke: {
         enumerable: false,
-        value: {colorMode: 'rgb', color: {r: 0, g: 0, b: 0, a: 1, css: 'rgb(0,0,0)'}, webGlColor: [0, 0, 0, 1]}
+        value: {colorMode: 'rgb', color: {r: 0, g: 0, b: 0, a: 1, css: 'rgb(0,0,0)', mode:'rgb', wasSetByCode: true, type: 'change'}, webGlColor: [0, 0, 0, 1]}
     },
     ////////////////////////////////////////////////////////////////////
     //
@@ -39,7 +39,7 @@ exports.ColorToolbar = Montage.create(Component, {
     //Storing fill (stores color in mode use to select color)
     _fill: {
         enumerable: false,
-        value: {colorMode: 'rgb', color: {r: 255, g: 255, b: 255, a: 1, css: 'rgb(255,255,255)'}, webGlColor: [1, 1, 1, 1]}
+        value: {colorMode: 'rgb', color: {r: 255, g: 255, b: 255, a: 1, css: 'rgb(255,255,255)', mode:'rgb', wasSetByCode: true, type: 'change'}, webGlColor: [1, 1, 1, 1]}
     },
     ////////////////////////////////////////////////////////////////////
     //
@@ -86,8 +86,8 @@ exports.ColorToolbar = Montage.create(Component, {
     		this.application.ninja.colorController.addButton('chip', this.fill_btn);
             this.application.ninja.colorController.addButton('chip', this.stroke_btn);
             //
-            this.fill_btn.color('rgb', {wasSetByCode: false, type: 'change', color: {r: 255, g: 255, b: 255}, css: 'rgb(255,255,255)'});
-            this.stroke_btn.color('rgb', {wasSetByCode: false, type: 'change', color: {r: 0, g: 0, b: 0}, css: 'rgb(0,0,0)'});
+            this.fill_btn.color('rgb', {wasSetByCode: true, type: 'change', color: {r: 255, g: 255, b: 255}, css: 'rgb(255,255,255)'});
+            this.stroke_btn.color('rgb', {wasSetByCode: true, type: 'change', color: {r: 0, g: 0, b: 0}, css: 'rgb(0,0,0)'});
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -95,76 +95,38 @@ exports.ColorToolbar = Montage.create(Component, {
     didDraw: {
     	enumerable: false,
     	value: function() {
-    		//
+
     		this.fill_btn.addEventListener('change', function (e) {
-    			//
-    			var temp;
-            	//
-            	this.fill = e._event;
-            	//
-            	if (e._event.color && e._event.color.l) {
-            		temp = this.application.ninja.colorController.colorModel.hslToRgb(e._event.color.h/360, e._event.color.s/100, e._event.color.l/100);
-            		temp.a = e._event.color.a;
-            	} else if (e._event.color && e._event.color.r){
-            		temp = e._event.color;
-            		temp.a = e._event.color.a;
-            	} else {
-            		temp = null;
-            	}
-            	//WebGL uses array
-            	if (temp) {
-            		this.fill.webGlColor = [temp.r/255, temp.g/255, temp.b/255, temp.a];
-            	} else {
-            		this.fill.webGlColor = null;
-            	}
-            	//
+                this.fill = e._event;
+                this.fill.webGlColor = this.application.ninja.colorController.colorModel.colorToWebGl(e._event.color);
             	this.application.ninja.colorController.colorModel.input = 'fill';
-            	//	
-            	var color = e._event.color;
+
+                var color = e._event.color;
             	if (e._event.colorMode !== 'nocolor' && color) {
             		color.wasSetByCode = false;
 	            	color.type = 'change';
+	            	color.mode = e._event.colorMode;
             		this.application.ninja.colorController.colorModel[e._event.colorMode] = color;
             	} else {
             		this.application.ninja.colorController.colorModel.applyNoColor();
             	}
-            	//
             	this.application.ninja.colorController.colorModel.input = 'chip';
        		}.bind(this));
-           	//
-           	this.stroke_btn.addEventListener('change', function (e) {
-           		//
-           		var temp;
-            	//
+
+            this.stroke_btn.addEventListener('change', function (e) {
             	this.stroke = e._event;
-            	//
-            	if (e._event.color && e._event.color.l) {
-            		temp = this.application.ninja.colorController.colorModel.hslToRgb(e._event.color.h/360, e._event.color.s/100, e._event.color.l/100);
-            		temp.a = e._event.color.a;
-            	} else if (e._event.color && e._event.color.r){
-            		temp = e._event.color;
-            		temp.a = e._event.color.a;
-            	} else {
-            		temp = null;
-            	}
-            	//WebGL uses array
-            	if (temp) {
-            		this.stroke.webGlColor = [temp.r/255, temp.g/255, temp.b/255, temp.a];
-            	} else {
-            		this.stroke.webGlColor = null;
-            	}
-            	//
+                this.stroke.webGlColor = this.application.ninja.colorController.colorModel.colorToWebGl(e._event.color);
             	this.application.ninja.colorController.colorModel.input = 'stroke';
-            	//	
+
             	var color = e._event.color;
             	if (e._event.colorMode !== 'nocolor' && color) {
             		color.wasSetByCode = false;
             		color.type = 'change';
+                    color.mode = e._event.colorMode;
             		this.application.ninja.colorController.colorModel[e._event.colorMode] = color;
            		} else {
            			this.application.ninja.colorController.colorModel.applyNoColor();
            		}
-           		//
             	this.application.ninja.colorController.colorModel.input = 'chip';
             }.bind(this));
     	}

@@ -178,6 +178,12 @@ exports.KeyboardMediator = Montage.create(Component, {
                 return;
             }
 
+            if(evt.keyCode === Keyboard.H ) {
+                evt.preventDefault();
+                this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[15]});
+                return;
+            }
+
             if(evt.keyCode === Keyboard.Z ) {
                 evt.preventDefault();
                 this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[16]});
