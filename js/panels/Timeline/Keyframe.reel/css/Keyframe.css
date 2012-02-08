@@ -1,11 +1,15 @@
 .tween_keyframe{
     position: absolute;
     height: 16px;
-    width: 4px;
+    width: 5px;
     background-color: white;
     z-index: 23;
+    border-radius: 3px;
 }
 
 .tween_keyframe.keyframeSelected{
-    background-color: blue;
+    background-color: #570e19;
+    border-style: solid;
+    border-width: thin;
+    border-color: #d6d1cf;
 }

@@ -78,6 +78,10 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
         }
     },
 
+    containingSpan:{
+        value: null
+    },
+
     prepareForDraw:{
         value:function(){
             this.tweenkeyframe.addEventListener("click", this, false);
@@ -91,7 +95,7 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
 
     draw:{
         value:function(){
-            this.tweenkeyframe.style.left = (this.position - 2) + "px";
+            this.tweenkeyframe.style.left = (this.position - 3) + "px";
         }
     },
 
@@ -101,16 +105,15 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
             if(event.detail.source && event.detail.source !== "keyframe") {
 
                 var items = this.application.ninja.selectedElements;
-
-                // update this keyframe's animated properties from the item[0] element props
-                this.animatedProperties["top"] = items[0]._element.offsetTop;
-                this.animatedProperties["left"] = items[0]._element.offsetLeft;
-                this.containingTrack.keyFramePropertyData[this.id] = this.animatedProperties;
-
-                this.containingTrack.updateKeyframeRule();
+                this.containingSpan.highlightSpan();
+                if(items[0]._element.offsetTop != this.animatedProperties["top"] && items[0]._element.offsetLeft != this.animatedProperties["left"]){
+                    // update this keyframe's animated properties from the item[0] element props
+                    this.animatedProperties["top"] = items[0]._element.offsetTop;
+                    this.animatedProperties["left"] = items[0]._element.offsetLeft;
+                    this.containingTrack.keyFramePropertyData[this.id] = this.animatedProperties;
+                    this.containingTrack.updateKeyframeRule();
+                }
             }
-
-
         }
     },
 
