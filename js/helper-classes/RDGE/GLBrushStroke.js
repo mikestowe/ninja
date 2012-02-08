@@ -4,7 +4,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-// Todo: This shoudl be converted to a module
+// Todo: This entire class should be converted to a module
 var VecUtils = require("js/helper-classes/3D/vec-utils").VecUtils;
 
 ///////////////////////////////////////////////////////////////////////
@@ -139,6 +139,10 @@ function GLBrushStroke() {
         }
         this._dirty = false;
     }
+
+    this.buildBuffers = function () {
+        return; //no need to do anything for now
+    }//buildBuffers()
 
     //render
     //  specify how to render the subpath in Canvas2D

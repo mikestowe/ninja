@@ -4,7 +4,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-// Todo: This shoudl be converted to a module
+// Todo: This entire class should be converted to a module
 var VecUtils = require("js/helper-classes/3D/vec-utils").VecUtils;
 
 
@@ -163,6 +163,7 @@ function GLSubpath() {
         }
         */
 
+
         var numPoints = this._samples.length/3;
         ctx.moveTo(this._samples[0]-bboxMin[0],this._samples[1]-bboxMin[1]);
         for (var i=0;i<numPoints;i++){
@@ -172,6 +173,7 @@ function GLSubpath() {
             ctx.lineTo(this._samples[0]-bboxMin[0],this._samples[1]-bboxMin[1]);
             ctx.fill();
         }
+
         ctx.stroke();
         ctx.restore();
     } //render()

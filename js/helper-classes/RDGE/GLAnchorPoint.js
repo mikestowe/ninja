@@ -55,6 +55,11 @@ GLAnchorPoint.prototype.setNextFromPrev = function () {
 
 //translate the next point from the translation that was applied to the prev. point
 GLAnchorPoint.prototype.translateNextFromPrev = function (tx, ty, tz) {
+    //do nothing if the total translation is zero
+    var totalTransSq = (tx*tx) + (ty*ty) + (tz*tz);
+    if (totalTransSq < 0.0000001)
+        return;
+    
     // *** compute the rotation of the prev vector ***
     var oldP = Vector.create([this._prevX + tx - this._x, this._prevY + ty - this._y, this._prevZ + tz - this._z]);
     var newP = Vector.create([this._prevX - this._x, this._prevY - this._y, this._prevZ - this._z]);
@@ -71,6 +76,7 @@ GLAnchorPoint.prototype.translateNextFromPrev = function (tx, ty, tz) {
 
     //TEMP for some situations the axis angle computation returns NaNs
     if (isNaN(newN[0]) || isNaN(newN[1]) || isNaN(newN[2])) {
+        console.log("NaN in translateNextFromPrev");
         return;
     }
     //end TEMP
@@ -80,6 +86,11 @@ GLAnchorPoint.prototype.translateNextFromPrev = function (tx, ty, tz) {
 }
 //translate the next point from the translation that was applied to the prev. point
 GLAnchorPoint.prototype.translatePrevFromNext = function (tx, ty, tz) {
+    //do nothing if the total translation is zero
+    var totalTransSq = (tx*tx) + (ty*ty) + (tz*tz);
+    if (totalTransSq < 0.0000001)
+        return;
+        
     // *** compute the rotation of the next vector ***
     var oldN = Vector.create([this._nextX + tx - this._x, this._nextY + ty - this._y, this._nextZ + tz - this._z]);
     var newN = Vector.create([this._nextX - this._x, this._nextY - this._y, this._nextZ - this._z]);
