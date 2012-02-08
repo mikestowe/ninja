@@ -74,7 +74,7 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
 	        				//Getting contents of library to be copied
         					this.chromeApi.directoryContents(contents[i], function (lib) {
         						//Creating directory structure from subfolders
-        						this.copyDirectoryToCloud(path, contents[i], function (status) {console.log(status)});
+        						this.copyDirectoryToCloud(path, contents[i], '/'+path, function (status) {console.log(status)});
         					}.bind(this));
         					break;
         				}
@@ -89,7 +89,8 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
     //
     copyDirectoryToCloud: {
     	enumerable: true,
-    	value: function(root, folder, callback) {
+    	value: function(root, folder, fileRoot, callback) {
+    		//
     		if (folder.name) {
     			var dir;
 			    if (root) {
@@ -108,9 +109,14 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
 				this.chromeApi.directoryContents(folder, function (contents) {
 					for (var i in contents) {
 						if (contents[i].isDirectory) {
-							this.copyDirectoryToCloud(dir, contents[i]);
+							this.copyDirectoryToCloud(dir, contents[i], fileRoot);
 						} else if (contents[i].isFile){
 							//File to copy
+							this.chromeApi.fileContent(contents[i].fullPath, function (result) {
+								//
+								this.coreApi.createFile({uri: fileRoot+result.file.fullPath, contents: result.content, contentType: result.data.type});
+								//this.coreApi.createFile({uri: fileRoot+result.file.fullPath, contents: result.content});
+							}.bind(this));
 						}
 					}
 				}.bind(this));
@@ -185,7 +191,7 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
             				//Checking for status
             				if (xhr.readyState === 4) { //TODO: add check for mime type
             					//Creating new file from loaded content
-            					this.chromeApi.fileNew('/'+tocopylibs[i].name+'/'+tocopylibs[i].file, xhr.response, function (status) {if(status) this.libraryCopied()}.bind(this));
+            					//this.chromeApi.fileNew('/'+tocopylibs[i].name+'/'+tocopylibs[i].file, xhr.response, function (status) {if(status) this.libraryCopied()}.bind(this));
             				} else {
             					//Error creating single file library
             				}

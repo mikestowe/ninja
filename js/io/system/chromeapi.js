@@ -71,7 +71,7 @@ exports.ChromeApi = Montage.create(Object.prototype, {
 				//
 				f.createWriter(function(writer) {
 					//
-					var b, mime, type = filePath.split('.');
+					var mime, blob = new window.WebKitBlobBuilder, type = filePath.split('.');
 					type = type[type.length-1];
 					switch (type) {
 						case 'bmp':
@@ -112,9 +112,8 @@ exports.ChromeApi = Montage.create(Object.prototype, {
 							break;
 					}
 					//
-					b = new window.WebKitBlobBuilder;
-               		b.append(content);
-               		writer.write(b.getBlob(mime));
+               		blob.append(content);
+               		writer.write(blob.getBlob(mime));
                		//
                		if (callback) callback(true);
 				}, function (e) {if (callback) callback(false)});
@@ -137,7 +136,19 @@ exports.ChromeApi = Montage.create(Object.prototype, {
     //
     fileContent: {
     	enumerable: true,
-    	value: function() {
+    	value: function(filePath, callback) {
+    		//
+    		this.fileSystem.root.getFile(filePath, {}, function(f) {
+    			f.file(function(file) {
+    				var reader = new FileReader();
+    				reader.onloadend = function(e) {
+         				if (callback) {
+         					callback({content: this.result, data: file, file: f, url: f.toURL()});
+         				}
+       				};
+       				reader.readAsText(file);
+    			}, function (e) {if (callback) callback(false)});
+    		}, function (e) {if (callback) callback(false)});
     	}
     },
     ////////////////////////////////////////////////////////////////////
