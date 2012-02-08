@@ -37,6 +37,10 @@ function GLGeomObj()
 
     this.m_world = null;
 
+    // stroke and fill colors
+    this._strokeColor;
+    this._fillColor;
+
 	// stroke and fill materials
 	this._fillMaterial;
 	this._strokeMaterial;
@@ -106,6 +110,53 @@ function GLGeomObj()
 
 	this.setFillColor   = function(c)		{  this.setMaterialColor(c, "fill");		}
 	this.setStrokeColor = function(c)		{  this.setMaterialColor(c, "stroke");		}
+
+    this.makeStrokeMaterial = function()
+    {
+        var strokeMaterial;
+        if (this.getStrokeMaterial())
+            strokeMaterial = this.getStrokeMaterial().dup();
+        else
+            strokeMaterial = new FlatMaterial();
+
+        if (strokeMaterial)
+        {
+            strokeMaterial.init( this.getWorld() );
+            if(this._strokeColor)
+             {
+                strokeMaterial.setProperty("color", this._strokeColor);
+            }
+        }
+
+        this._materialArray.push( strokeMaterial );
+        this._materialTypeArray.push( "stroke" );
+
+        return strokeMaterial;
+    }
+
+    this.makeFillMaterial = function()
+    {
+        var fillMaterial;
+        if (this.getFillMaterial())
+            fillMaterial = this.getFillMaterial().dup();
+        else
+            fillMaterial = new FlatMaterial();
+
+        if (fillMaterial)
+        {
+            fillMaterial.init( this.getWorld() );
+            //if(!this.getFillMaterial() && this._fillColor)
+            if (this._fillColor)
+            {
+                fillMaterial.setProperty("color", this._fillColor);
+            }
+        }
+
+        this._materialArray.push( fillMaterial );
+        this._materialTypeArray.push( "fill" );
+
+        return fillMaterial;
+    }
 
 
     this.translate   = function(v)

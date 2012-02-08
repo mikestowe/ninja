@@ -33,14 +33,6 @@ function GLCircle()
 
 		this._ovalHeight = this._ovalHeight = 2.0*this.radius;
 
-		// stroke and fill colors
-		this._strokeColor = [0.4, 0.4, 0.4, 1.0];
-		this._fillColor = [0.0, 0.6,  0.0,  1.0];
-
-		// stroke and fill materials
-		this._fillMaterial;
-		this._strokeMaterial;
-
 		this._strokeStyle = "Solid";
 
 		this._aspectRatio = 1.0;
@@ -191,19 +183,19 @@ function GLCircle()
 		var reverseRotMat = Matrix.RotationZ( -angle );
 
 		// calculate matrices to scale the circle and stroke to fit the bounds of the ellipse
-		strokeScaleMat = Matrix.I(4);
+		var strokeScaleMat = Matrix.I(4);
 		strokeScaleMat[0] = xRad;
 		strokeScaleMat[5] = yRad;
 
-		fillScaleMat = Matrix.I(4);
+		var fillScaleMat = Matrix.I(4);
 		fillScaleMat[0] = xRad - xStroke;
 		fillScaleMat[5] = yRad - yStroke;
 
-		innerRadiusScaleMat = Matrix.I(4);
+		var innerRadiusScaleMat = Matrix.I(4);
 		innerRadiusScaleMat[0] = xInnRad;
 		innerRadiusScaleMat[5] = yInnRad;
 
-		innerStrokeScaleMat = Matrix.I(4);
+		var innerStrokeScaleMat = Matrix.I(4);
 		innerStrokeScaleMat[0] = xInnRad - xStroke;
 		innerStrokeScaleMat[5] = yInnRad - yStroke;
 
@@ -235,69 +227,24 @@ function GLCircle()
 
 		if (fillPrim)
 		{
-			this._primArray.push(   fillPrim  );
+            fillMaterial = this.makeFillMaterial();
 
-			if (this.getFillMaterial())
-				fillMaterial = this.getFillMaterial().dup();
-			else
-				fillMaterial = new FlatMaterial();
-
-			if (fillMaterial)
-			{
-				fillMaterial.init( this.getWorld() );
-                if(!this.getFillMaterial() && this._fillColor)
-                {
-                    fillMaterial.setProperty("color", this._fillColor);
-                }
-				this._materialArray.push( fillMaterial );
-				this._materialTypeArray.push( "fill" );
-				var matNode = fillMaterial.getMaterialNode();
-				this._materialNodeArray.push( matNode );
-			}
+            this._primArray.push( fillPrim );
+            this._materialNodeArray.push( fillMaterial.getMaterialNode() );
 		}
 		if (strokePrim0)
 		{
-			if (this.getStrokeMaterial())
-				strokeMaterial = this.getStrokeMaterial().dup();
-			else
-				strokeMaterial = new FlatMaterial();
+            strokeMaterial0 = this.makeStrokeMaterial();
 
-			if (strokeMaterial)
-			{
-				strokeMaterial.init( this.getWorld() );
-                if(!this.getStrokeMaterial() && this._strokeColor)
-                {
-                    strokeMaterial.setProperty("color", this._strokeColor);
-                }
-				this._primArray.push( strokePrim0 );
-
-				var materialNode = createMaterialNode("ovalFillMaterial");
-				this._materialArray.push( strokeMaterial );
-				this._materialTypeArray.push( "stroke" );
-				this._materialNodeArray.push( strokeMaterial.getMaterialNode() );
-			}
+            this._primArray.push( strokePrim0 );
+            this._materialNodeArray.push( strokeMaterial0.getMaterialNode() );
 		}
 		if (strokePrim1)
 		{
-			if (this.getStrokeMaterial())
-				strokeMaterial = this.getStrokeMaterial().dup();
-			else
-				strokeMaterial = new FlatMaterial();
+            strokeMaterial2 = this.makeStrokeMaterial();
 
-			if (strokeMaterial)
-			{
-				strokeMaterial.init( this.getWorld() );
-                if(!this.getStrokeMaterial() && this._strokeColor)
-                {
-                    strokeMaterial.setProperty("color", this._strokeColor);
-                }
-				this._primArray.push( strokePrim1 );
-
-				var materialNode = createMaterialNode("ovalFillMaterial");
-				this._materialArray.push( strokeMaterial );
-				this._materialTypeArray.push( "stroke" );
-				this._materialNodeArray.push( strokeMaterial.getMaterialNode() );
-			}
+            this._primArray.push( strokePrim1 );
+            this._materialNodeArray.push( strokeMaterial2.getMaterialNode() );
 		}
 
         world.updateObject(this);

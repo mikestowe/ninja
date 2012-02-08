@@ -33,14 +33,6 @@ function GLRectangle()
 
 	this._strokeWidth = 0.25;
 
-	// stroke and fill colors
-	this._strokeColor;
-	this._fillColor;
-
-	// stroke and fill materials
-	this._fillMaterial;
-	this._strokeMaterial;
-
 	this._strokeStyle = "Solid";
 	this.init = function(world, xOffset, yOffset, width, height, strokeSize, strokeColor, fillColor,
                       tlRadius, trRadius, blRadius, brRadius, strokeMaterial, fillMaterial, strokeStyle)
@@ -280,8 +272,8 @@ function GLRectangle()
 
 		// stroke
 		var strokeMaterial = this.makeStrokeMaterial();
-		prim = this.createStroke([x,y],  2*xFill,  2*yFill,  strokeSize,  tlRadius, blRadius, brRadius, trRadius, strokeMaterial)
-        this._primArray.push( prim );
+		var strokePrim = this.createStroke([x,y],  2*xFill,  2*yFill,  strokeSize,  tlRadius, blRadius, brRadius, trRadius, strokeMaterial);
+        this._primArray.push( strokePrim );
 		this._materialNodeArray.push( strokeMaterial.getMaterialNode() );
 
 		// fill
@@ -292,58 +284,11 @@ function GLRectangle()
 		xFill -= strokeSize;
 		yFill -= strokeSize;
 		var fillMaterial = this.makeFillMaterial();
-		prim = this.createFill([x,y],  2*xFill,  2*yFill,  tlRadius, blRadius, brRadius, trRadius, fillMaterial)
-        this._primArray.push( prim );
+		var fillPrim = this.createFill([x,y],  2*xFill,  2*yFill,  tlRadius, blRadius, brRadius, trRadius, fillMaterial);
+        this._primArray.push( fillPrim );
 		this._materialNodeArray.push( fillMaterial.getMaterialNode() );
 
         world.updateObject(this);
-	}
-
-	this.makeStrokeMaterial = function()
-	{
-		var strokeMaterial;
-		if (this.getStrokeMaterial())
-			strokeMaterial = this.getStrokeMaterial().dup();
-		else
-			strokeMaterial = new FlatMaterial();
-
-		if (strokeMaterial)
-        {
-			strokeMaterial.init( this.getWorld() );
-            if(this._strokeColor)
-			 {
-                strokeMaterial.setProperty("color", this._strokeColor);
-            }
-        }
-
-		this._materialArray.push( strokeMaterial );
-		this._materialTypeArray.push( "stroke" );
-
-		return strokeMaterial;
-	}
-
-    this.makeFillMaterial = function()
-	{
-		var fillMaterial;
-		if (this.getFillMaterial())
-			fillMaterial = this.getFillMaterial().dup();
-		else
-			fillMaterial = new FlatMaterial();
-
-		if (fillMaterial)
-        {
-			fillMaterial.init( this.getWorld() );
-            //if(!this.getFillMaterial() && this._fillColor)
-			if (this._fillColor)
-            {
-                fillMaterial.setProperty("color", this._fillColor);
-            }
-        }
-
-		this._materialArray.push( fillMaterial );
-		this._materialTypeArray.push( "fill" );
-
-		return fillMaterial;
 	}
 
 	this.renderQuadraticBezier = function( bPts, ctx )
@@ -1218,7 +1163,7 @@ ShapePrimitive.create = function(coords,  normals,  uvs,  indices, primType, ver
 		"a_normal":{'type':renderer.VS_ELEMENT_FLOAT3, 'bufferIndex':1, 'bufferUsage': renderer.BUFFER_STATIC},
 
 		"texcoord":{'type':renderer.VS_ELEMENT_FLOAT2, 'bufferIndex':2, 'bufferUsage': renderer.BUFFER_STATIC},
-		"a_texcoord":{'type':renderer.VS_ELEMENT_FLOAT2, 'bufferIndex':2, 'bufferUsage': renderer.BUFFER_STATIC},
+		"a_texcoord":{'type':renderer.VS_ELEMENT_FLOAT2, 'bufferIndex':2, 'bufferUsage': renderer.BUFFER_STATIC}
 	};
 
 
