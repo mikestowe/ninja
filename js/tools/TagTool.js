@@ -168,9 +168,7 @@ exports.TagTool = Montage.create(DrawingTool, {
             } else if(selectedTag === "canvasTool") {
                 newTag = NJUtils.makeNJElement("canvas", "canvas", "canvas");
             } else if(selectedTag === "customTool") {
-                newTag = document.createElement(this.options.customName.value);
-                newTag.Ninja = {};
-                newTag.Ninja.selectionType = this.options.customName.value;
+                newTag = NJUtils.makeNJElement(this.options.customName.value, this.options.customName.value, "block");
             }
             /* SWF Tag tool - Not used for now. Will revisit this at a later time.
             else if(selectedTag === "flashTool") {
