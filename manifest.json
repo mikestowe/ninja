@@ -1,15 +1,25 @@
 {
-	"name": "Motorola Mobility Ninja",
-	"description": "Local Development Version",
-	"version": "0.0",
-	"icons": {"128": "ninja_icon.png"},
-	"app": {
-		"launch": {"local_path": "index.html"}
-	},
-	"permissions": ["unlimitedStorage"],
-	"requirements": { 
-		"3D": {
-    		"features": ["css3d", "webgl"]
-  		}
-	}
+  "name": "Motorola Ninja",
+  "description": "Motorola Ninja HTML5 Authoring Tool Pre-Alpha",
+  "version": "0.5.0.0",
+  "app": {
+    "launch": {
+      "local_path": "index.html"
+    }
+  },
+  "icons": {
+    "128": "ninja_icon_128.png"
+  },
+  "permissions": [
+    "unlimitedStorage",
+    "notifications"
+  ],
+  "requirements": {
+    "3D": {
+      "features": ["css3d", "webgl"]
+    }
+  },
+  "minimum_chrome_version": "16.0.0.0",
+  "offline_enabled": true,
+  "update_url": "http://tetsubo.org/go/ninjaupdate"
 }

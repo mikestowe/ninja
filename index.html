@@ -125,21 +125,35 @@
                 if(navigator.userAgent.toLowerCase().indexOf("chrome") === -1) {
                     window.location = "./redirect.html";
                 }
-                // Load the version json
-                var req = new XMLHttpRequest();
-                req.open("GET", "versions.json");
-                req.onreadystatechange = (function(req) {
-                    return function(event) {
-                        if (req.readyState === 4) {
-                            if (req.status === 200) {
-                                window.ninjaVersion = JSON.parse(req.responseText);
-                            } else {
-                                console.log("Ninja version file could not be loaded");
+                window.ninjaVersion = {};
+                window.ninjaVersion.ninja = {};
+                if (window.chrome.app.isInstalled) {
+                    // Ninja is running as an installed app, started via the app launcher.
+                    var info = chrome.app.getDetails();
+                    if(info) {
+                        window.ninjaVersion.ninja.version = info.version;
+                    }
+                } else {
+                    // Ninja is running via a bookmark/link as a hosted web application.
+                    // Load the version json
+                    var req = new XMLHttpRequest();
+                    req.open("GET", "manifest.json");
+                    req.onreadystatechange = (function(req) {
+                        return function(event) {
+                            if (req.readyState === 4) {
+                                if (req.status === 200) {
+                                    var manifestInfo = JSON.parse(req.responseText);
+                                    if(manifestInfo) {
+                                        window.ninjaVersion.ninja.version = manifestInfo.version;
+                                    }
+                                } else {
+                                    console.log("Ninja version file could not be loaded");
+                                }
                             }
                         }
-                    }
-                })(req);
-                req.send();
+                    })(req);
+                    req.send();
+                }
 				//
 				var star = document.getElementById('star');
 				//
