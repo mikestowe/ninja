@@ -151,10 +151,10 @@ function UberMaterial()
 	{
 		// ubershader material properties. 
 		'material' : {
-			'ambientColor'    : this._ambientColor,     // material ambient color
-			'diffuseColor'    : this._diffuseColor,     // material diffuse color
-			'specularColor'   : this._specularColor,    // material specular color
-			'specularPower'   : this._specularPower,    // material specular power (shininess)
+			'ambientColor'    : this._ambientColor,    // material ambient color
+			'diffuseColor'    : this._diffuseColor,    // material diffuse color
+			'specularColor'   : this._specularColor,   // material specular color
+			'specularPower'   : this._specularPower    // material specular power (shininess)
 		},
  
 		// ubershader supports up to four lights. 
@@ -162,7 +162,7 @@ function UberMaterial()
 			'light0' : this._lights[0],
 			'light1' : this._lights[1],
 			'light2' : this._lights[2],        
-			'light3' : this._lights[3],                                     
+			'light3' : this._lights[3]                                     
 		},
     
 		// uvTransform can be used to scale or offset the texture coordinates.
@@ -178,7 +178,7 @@ function UberMaterial()
 		'specularMap' : this._specularMapOb,
     
 		// optional environment map
-		'environmentMap' : this._environmentMapOb,
+		'environmentMap' : this._environmentMapOb
 	};
 
 	this.updateAmbientColor = function()
