@@ -192,6 +192,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     handleDeleteLayerClick:{
         value:function(event){
             event.stopPropagation();
+            this._deleteKeyDown=false;
             if(this.application.ninja.currentSelectedContainer.id==="UserContent"){
                 this._hashKey="123";
             }
@@ -574,7 +575,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     drawTimeMarkers:{
         value:function(){
             var i;
-            var totalMarkers = Math.floor(this.track_container.offsetWidth / 80);
+            var totalMarkers = Math.floor(this.time_markers.offsetWidth / 80);
             for(i=0;i<totalMarkers;i++){
                 var timeMark = document.createElement("div");
                 var markValue = this.calculateTimeMarkerValue(i);

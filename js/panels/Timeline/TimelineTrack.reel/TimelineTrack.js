@@ -199,11 +199,16 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             // TEMP - if the SHIFT key is down, add a new keyframe or split an existing span
             // This needs to move to a keyboard shortcut that is TBD
             if (ev.shiftKey) {
-                if (this.tweens.length < 1) {
-                    this.addAnimationRuleToElement();
-                    this.insertTween(0);
+                if(this.application.ninja.timeline.arrLayers[this.trackID - 1].element.length == 1){
+                    if (this.tweens.length < 1) {
+                        this.addAnimationRuleToElement();
+                        this.insertTween(0);
+                    }
+                    this.handleNewTween(ev);
+                } else {
+                    alert("There much be only one element in an animated layer.")
                 }
-                this.handleNewTween(ev);
+
             }
         }
     },
@@ -268,7 +273,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     addAnimationRuleToElement:{
         value: function(){
-            var theElement = this.application.ninja.currentDocument._document.getElementById(this.application.ninja.timeline.arrLayers[this.trackID - 1].layerName);
+            var theElement = this.application.ninja.timeline.arrLayers[this.trackID - 1].element[0];
             this.animatedElement = theElement;
 
             var initAnimatedProperties = new Array();

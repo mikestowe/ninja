@@ -31,5 +31,11 @@ var Span = exports.Span = Montage.create(Component, {
         value: function(){
             this.tweenspan.style.width = this.spanWidth + "px";
         }
+    },
+
+    highlightSpan:{
+        value: function(){
+            this.tweenspan.classList.add("spanHighlight");
+        }
     }
 });

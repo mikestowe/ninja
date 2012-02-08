@@ -1,0 +1,22 @@
+.treeRoot .leaf-label {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAIAAAD9iXMrAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw%2FeHBhY2tldCBiZWdpbj0i77u%2FIiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8%2BIDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpEQzcwMEU1RjQxM0MxMUUxQUM0MERBNzM1MUVEMUQxMCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpEQzcwMEU2MDQxM0MxMUUxQUM0MERBNzM1MUVEMUQxMCI%2BIDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkRDNzAwRTVENDEzQzExRTFBQzQwREE3MzUxRUQxRDEwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkRDNzAwRTVFNDEzQzExRTFBQzQwREE3MzUxRUQxRDEwIi8%2BIDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY%2BIDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8%2BUcaK3QAAANFJREFUeNqMULEOREAQdYjvuE%2FYWlSUQqKQ7A%2FsD6n0SoVCFHpRa0SllvgFlpvzZO9OcfGSnbx9M%2FNmMpp2Dw96VVX9L%2FJ93wRrmkZJIKrZcRyK%2Bs25p5%2BU8pK4KCakMAzxL4oCJIqivu8Nw0DDu25ZFtW3ritIkiS0tGVZtm1%2F6rZtu4yr67osSyJBEJx3ybKsbVukOecU4zh2XRfKMAzTNJmYpWxgPM%2BzEIIxRrzrOs%2FzdMyVvyAxTdPxAJFzv%2BeBbz8cfN93kDzPb55ZewkwAF0Ddf6ATSsHAAAAAElFTkSuQmCC);
+    background-position: 3px center;
+    background-repeat: no-repeat;
+    border-bottom: 1px solid #505050;
+    cursor: pointer;
+    padding: 3px 0 4px;
+}
+/* First level */
+.branch .leaf-label {
+    padding-left: 25px;
+}
+/* Second level */
+.branch .branch .leaf-label {
+    background-position: 25px center;
+    padding-left: 45px;
+}
+/* Third level */
+.branch .branch .branch .leaf-label {
+    background-position: 45px center;
+    padding-left: 65px;
+}

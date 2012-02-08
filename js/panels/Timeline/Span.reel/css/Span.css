@@ -4,3 +4,7 @@
     opacity: 0.3;
     background-color: white;
 }
+
+.tween_span.spanHighlight{
+    background-color: #a0c8ff;
+}

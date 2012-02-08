@@ -1,0 +1,4 @@
+.leaf > .leaf-label {
+    opacity: 0.8;
+    cursor: pointer;
+}
