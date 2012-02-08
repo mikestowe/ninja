@@ -53,7 +53,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
 
     millisecondsOffset:{
-        value:5000
+        value:1000
     },
 
     // Track model
