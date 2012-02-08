@@ -806,6 +806,24 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		
     	}
     },
+    
+    getLayerIndexByName : {
+    	value: function(layerName) {
+    		// Get the index in this.arrLayers that matches a particular layerName
+    		// Returns false if no match
+    		var i = 0, 
+    			returnVal = false,
+    			arrLayersLength = this.arrLayers.length;
+    			
+    		for (i=0; i < arrLayersLength; i++) {
+    			if (this.arrLayers[i].layerName === layerName) {
+    				returnVal = i;
+    			}
+    		}
+    		
+    		return returnVal;
+    	}
+    },
 
     insertLayer: {
             value: function() {
