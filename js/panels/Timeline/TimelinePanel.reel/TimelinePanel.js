@@ -725,6 +725,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		// use layerIndex = "none" to deselect all layers.
     		var i = 0,
     			arrLayersLength = this.arrLayers.length;
+    			
+    		// First, update this.arrLayers[].isSelected
     		for (i = 0; i < arrLayersLength; i++) {
     			if (i === layerIndex) {
     				this.arrLayers[i].isSelected = true;
@@ -733,6 +735,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     			}
     		}
     		
+    		// Next, update this.layerRepetition.selectedIndexes and this.currentLayerSelected.
     		if (layerIndex !== "none") {
     			this.layerRepetition.selectedIndexes = [layerIndex];
     			this.currentLayerSelected = this.arrLayers[layerIndex]
