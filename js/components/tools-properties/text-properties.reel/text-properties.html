@@ -33,8 +33,8 @@
                     "alignCenter": {"@": "alignCenter"},
                     "alignRight": {"@": "alignRight"},
                     "alignJustify": {"@": "alignJustify"},
-                    "indentRight": {"@": "indentRight"},
-                    "indentLeft": {"@": "indentLeft"},
+                    "indent": {"@": "indent"},
+                    "outdent": {"@": "outdent"},
                     "numberedList": {"@": "numberedList"},
                     "bulletedList": {"@": "bulletedList"}
                 }
@@ -57,8 +57,16 @@
                 "module": "js/components/combobox.reel",
                 "name": "Combobox",
                 "properties": {
-                    "element": {"#": "fontSelection"}
-                }
+                    "element": {"#": "fontSelection"},
+                    "identifier": "fontSelection"
+                },
+                "listeners": [
+                    {
+                        "type": "change",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+
             },
             "fontSettings": {
                 "module": "js/components/button.reel",
@@ -72,48 +80,90 @@
                 "module": "js/components/hottextunit.reel",
                 "name": "HotTextUnit",
                 "properties": {
-                    "element": {"#": "fontSize"}
-                }
+                    "element": {"#": "fontSize"},
+                    "value": 12,
+                    "identifier": "fontSize"
+                },
+                "listeners": [
+                    {
+                        "type": "change",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "changing",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+
             },
 
-            "fontColor": {
-                "module": "js/components/button.reel",
-                "name": "Button",
-                "properties": {
-                    "element": {"#": "fontColor"}
-                }
-            },
+          "fontColor": {
+               "module" : "js/components/ui/color-chip.reel",
+               "name" : "ColorChip",
+               "properties" : {
+                   "element" : {"#": "fontColor"},
+                   "mode": "chip"
+               }
+           },
             "btnBold": {
                 "module": "js/components/button.reel",
                 "name": "Button",
                 "properties": {
                     "element": {"#": "btnBold"},
-                    "_isToggleButton": true
-                }
+                    "_isToggleButton": true,
+                    "identifier": "btnBold"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
             "btnItalic": {
                 "module": "js/components/button.reel",
                 "name": "Button",
                 "properties": {
                     "element": {"#": "btnItalic"},
-                    "_isToggleButton": true
-                }
+                    "_isToggleButton": true,
+                    "identifier": "btnItalic"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
             "btnUnderline": {
                 "module": "js/components/button.reel",
                 "name": "Button",
                 "properties": {
                     "element": {"#": "btnUnderline"},
-                    "_isToggleButton": true
-                }
+                    "_isToggleButton": true,
+                    "identifier": "btnUnderline"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
             "btnStrikethrough": {
                 "module": "js/components/button.reel",
                 "name": "Button",
                 "properties": {
                     "element": {"#": "btnStrikethrough"},
-                    "_isToggleButton": true
-                }
+                    "_isToggleButton": true,
+                    "identifier": "btnStrikethrough"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
             "txtLink": {
                 "module": "js/components/textfield.reel",
@@ -134,66 +184,106 @@
                 "module": "js/components/button.reel",
                 "name": "Button",
                 "properties": {
-                    "element": {"#": "alignLeft"}
-                }
+                    "element": {"#": "alignLeft"},
+                    "_isToggleButton": true,
+                    "identifier": "alignLeft"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
             "alignCenter": {
                 "module": "js/components/button.reel",
                 "name": "Button",
                 "properties": {
-                    "element": {"#": "alignCenter"}
-                }
+                    "element": {"#": "alignCenter"},
+                    "_isToggleButton": true,
+                    "identifier": "alignCenter"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
             "alignRight": {
                 "module": "js/components/button.reel",
                 "name": "Button",
                 "properties": {
-                    "element": {"#": "alignRight"}
-                }
+                    "element": {"#": "alignRight"},
+                    "_isToggleButton": true,
+                    "identifier": "alignRight"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
             "alignJustify": {
                 "module": "js/components/button.reel",
                 "name": "Button",
                 "properties": {
-                    "element": {"#": "alignJustify"}
-                }
+                    "element": {"#": "alignJustify"},
+                    "_isToggleButton": true,
+                    "identifier": "alignJustify"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
-            "indentRight": {
+            "indent": {
                 "module": "js/components/button.reel",
                 "name": "Button",
                 "properties": {
-                    "element": {"#": "indentRight"}
+                    "element": {"#": "indent"}
                 }
             },
-            "indentLeft": {
+            "outdent": {
                 "module": "js/components/button.reel",
                 "name": "Button",
                 "properties": {
-                    "element": {"#": "indentLeft"}
+                    "element": {"#": "outdent"}
                 }
             },
             "bulletedList": {
                 "module": "js/components/button.reel",
                 "name": "Button",
                 "properties": {
-                    "element": {"#": "bulletedList"}
-                }
+                    "element": {"#": "bulletedList"},
+                    "_isToggleButton": true,
+                    "identifier": "bulletedList"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
             "numberedList": {
                 "module": "js/components/button.reel",
                 "name": "Button",
                 "properties": {
-                    "element": {"#": "numberedList"}
-                }
-            },
-            "fontColor": {
-               "module" : "js/components/ui/color-chip.reel",
-               "name" : "ColorChip",
-               "properties" : {
-                   "element" : {"#": "fontColor"},
-                   "mode": "chip"
-               }
-           }
+                    "element": {"#": "numberedList"},
+                    "_isToggleButton": true,
+                    "identifier": "numberedList"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            }
 
     	}
 	    </script>
@@ -202,16 +292,16 @@
 
     <body>
         <div id="textProperties" class="subToolHolderPanel optionsTextTool">
-            <label class="label">Class:</label>
-            <input id="className" />
-            <label class="label">Tag:</label>
-            <select id="tagType"></select>
+            <label class="label" style="display: none">Class:</label>
+            <input id="className" style="display: none" />
+            <label class="label" style="display: none">Tag:</label>
+            <select id="tagType" style="display: none"></select>
             <label class="label">Font:</label>
-            <select id="fontSelection"></select>
-            <button id="fontSettings"></button>
+            <select id="fontSelection" class="fontSelection"></select>
+            <button id="fontSettings" style="display: none"></button>
             <label class="label">Size:</label>
             <input id="fontSize"/>
-            <div id="fontColor" style="display:none"></div>
+            <button id="fontColor"></button>
             <button id="btnBold" class="btnBold"></button>
             <button id="btnItalic" class="btnItalic"></button>
             <button id="btnUnderline" class="btnItalic"></button>
@@ -223,10 +313,10 @@
                 <button id="alignLeft"></button>
                 <button id="alignCenter"></button>
                 <button id="alignRight"></button>
+                <button id="alignJustify" style="display: none;"></button>
             </div>
-            <button id="alignJustify"></button>
-            <button id="indentRight"></button>
-            <button id="indentLeft"></button>
+            <button id="indent"></button>
+            <button id="outdent"></button>
             <button id="bulletedList"></button>
             <button id="numberedList"></button>
         </div>

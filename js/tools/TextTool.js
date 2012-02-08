@@ -17,10 +17,20 @@ exports.TextTool = Montage.create(DrawingTool, {
             return this._selectedElement;
         },
         set: function(val) {
-            if(this._selectedElement !== null) {
-                
+            if (this._selectedElement !== null) {
+                this.selectedElement.innerHTML = this.application.ninja.stage.textTool.value;
+                this.application.ninja.stage.textTool.value = "";
+                this.application.ninja.stage.textTool.element.style.display = "none";
             }
+            //Set Selected Element
             this._selectedElement = val;
+            if(val !== null) {
+                this.drawTextTool();
+                this.handleScroll();
+                this.application.ninja.stage._iframeContainer.addEventListener("scroll", this, false);
+            } else {
+                this.application.ninja.stage._iframeContainer.removeEventListener("scroll", this);
+            }
         }
     },
     
@@ -29,8 +39,16 @@ exports.TextTool = Montage.create(DrawingTool, {
 
     HandleLeftButtonDown: {
         value: function(event) {
-            this.deselectText();
             this.startDraw(event);
+        }
+    },
+
+    handleScroll: {
+        value: function(e) {
+            // Set Top & Left Positions
+            var textToolCoordinates = this.application.ninja.stage.toViewportCoordinates(this.selectedElement.offsetLeft, this.selectedElement.offsetTop);
+            this.application.ninja.stage.textTool.element.style.left = textToolCoordinates[0] + "px";
+            this.application.ninja.stage.textTool.element.style.top = textToolCoordinates[1] + "px";
         }
     },
 
@@ -73,12 +91,9 @@ exports.TextTool = Montage.create(DrawingTool, {
                 this.endDraw(event);
             } else {
                 this.doSelection(event);
-                console.log("im here");
                 if (this.application.ninja.selectedElements.length !== 0 ) {
                     this.selectedElement = this.application.ninja.selectedElements[0]._element;
-                    this.drawTextTool();
                 }
-
                 this._isDrawing = false;
             }
         }
@@ -88,7 +103,6 @@ exports.TextTool = Montage.create(DrawingTool, {
         value: function(fromElement, toElement, styles) {
             styles.forEach(function(style) {
                 var styleCamelCase = style.replace(/(\-[a-z])/g, function($1){return $1.toUpperCase().replace('-','');});
-                console.log(styleCamelCase, style, window.getComputedStyle(fromElement)[style]);
                 toElement.style[styleCamelCase] = window.getComputedStyle(fromElement)[style];
             }, this);
         }
@@ -96,7 +110,6 @@ exports.TextTool = Montage.create(DrawingTool, {
 
     drawTextTool: {
         value: function() {
-            console.log(" now im here");
             this.application.ninja.stage.textTool.value = this.selectedElement.innerHTML;
             if(this.application.ninja.stage.textTool.value === "") { this.application.ninja.stage.textTool.value = " "; }
             this.selectedElement.innerHTML = "";
@@ -104,11 +117,6 @@ exports.TextTool = Montage.create(DrawingTool, {
             //Styling Options for text tool to look identical to the text you are manipulating.
             this.application.ninja.stage.textTool.element.style.display = "block";
             this.application.ninja.stage.textTool.element.style.position = "absolute";
-
-            // Set Top & Left Positions
-            var textToolCoordinates = this.application.ninja.stage.toViewportCoordinates(this.selectedElement.offsetLeft, this.selectedElement.offsetTop);
-            this.application.ninja.stage.textTool.element.style.left = textToolCoordinates[0] + "px";
-            this.application.ninja.stage.textTool.element.style.top = textToolCoordinates[1] + "px";
 
             // Set Width, Height
             this.application.ninja.stage.textTool.element.style.width = this.selectedElement.offsetWidth + "px";
@@ -127,18 +135,7 @@ exports.TextTool = Montage.create(DrawingTool, {
                 range.selectNodeContents(this.application.ninja.stage.textTool.element.firstChild);
                 sel.addRange(range);
                 this.didDraw = function() {};
-                console.log("im drew here");
             }
-            console.log("i end here");
-        }
-    },
-
-
-    deselectText: {
-        value: function() {
-            this.application.ninja.stage.textTool.element.style.display = "none";
-            this.selectedElement.innerHTML = this.application.ninja.stage.textTool.value;
-            this.application.ninja.stage.textTool.value = "";
         }
     },
 
@@ -162,7 +159,7 @@ exports.TextTool = Montage.create(DrawingTool, {
                 NJevent("enableStageMove");
                 this.application.ninja.stage.stageDeps.snapManager.setupDragPlaneFromPlane( workingPlane );
             } else {
-                this.deselectText();
+                this.selectedElement = null;
                 NJevent("disableStageMove");
             }
         }
