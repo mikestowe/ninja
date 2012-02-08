@@ -103,6 +103,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     _isSelected:{
         value: false,
         writable: true,
+        serializable: true,
         enumerable: false
     },
 
@@ -111,7 +112,22 @@ var Layer = exports.Layer = Montage.create(Component, {
             return this._isSelected;
         },
         set:function(value){
-            this._isSelected = value;
+        	if (value !== this._isSelected) {
+        		// Only concerned about different values
+        		if (value === false) {
+        			// Deselect all of the styles
+        			var i = 0, arrLayerStylesLength = this.arrLayerStyles.length;
+        			if (arrLayerStylesLength > 0) {
+	        			for (i = 0; i < arrLayerStylesLength; i++) {
+	        				this.arrLayerStyles[i].isSelected = false;
+	        			}
+	        			this.styleRepetition.selectedIndexes = null;
+        			}
+        		}
+        		this._isSelected = value;
+        		this.needsDraw = true;
+        	}
+            
         }
     },
     _isAnimated:{
@@ -335,6 +351,12 @@ var Layer = exports.Layer = Montage.create(Component, {
             	this.styleCollapser.bypassAnimation = true;
             	this.styleCollapser.toggle();
             }
+            
+            if (this.isSelected) {
+            	this.element.classList.add("selected");
+            } else {
+            	this.element.classList.remove("selected");
+            }
     	}
     },
 	/* End: Draw cycle */
@@ -398,6 +420,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 			newStyle.editorProperty = "";
 			newStyle.editorValue = "";
 			newStyle.ruleTweener = false;
+			newStyle.isSelected = true;
 			
 			if (!!this.styleRepetition.selectedIndexes) {
 				mySelection = this.styleRepetition.selectedIndexes[0];
@@ -450,13 +473,13 @@ var Layer = exports.Layer = Montage.create(Component, {
 	handleAddStyleClick: {
 		value: function(event) {
 			// Stop the event propagation
-			event.stopPropagation();
+			//event.stopPropagation();
 			this.addStyle();
 		}
 	},
 	handleDeleteStyleClick: {
 		value: function(event) {
-			event.stopPropagation();
+			//event.stopPropagation();
 			this.deleteStyle();
 		}
 	},

@@ -19,6 +19,23 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
     },
     
     /* === BEGIN: Models === */
+	// isSelected: whether or not the style is selected
+	_isSelected: {
+		serializable: true,
+		value: false
+	},
+	isSelected: {
+		serializable: true,
+		get: function() {
+			return this._isSelected;
+		},
+		set: function(newVal) {
+			if (newVal !== this._isSelected) {
+				this._isSelected = newVal;
+				this.needsDraw = true;
+			}
+		}
+	},
    
    // Property for this editor
     _editorProperty: {
@@ -151,6 +168,11 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
     		if (this._swapViews === true) {
     			// Show the right thing
     			this._showView();
+    		}
+    		if (this.isSelected) {
+    			this.element.classList.add("selected");
+    		} else {
+    			this.element.classList.remove("selected");
     		}
     	}
     },

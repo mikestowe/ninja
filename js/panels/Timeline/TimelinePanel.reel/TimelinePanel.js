@@ -2,6 +2,7 @@ var Montage = require("montage/core/core").Montage;
 var Component = require("montage/ui/component").Component;
 var Layer = require("js/panels/Timeline/Layer.reel").Layer;
 var TimelineTrack = require("js/panels/Timeline/TimelineTrack.reel").TimelineTrack;
+var nj = require("js/lib/NJUtils").NJUtils;
 
 // var Track = require("js/panels/Timeline/Track.reel").Track;
 
@@ -155,6 +156,13 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.newlayer_button.addEventListener("click", this, false);
             this.deletelayer_button.identifier = "deleteLayer";
             this.deletelayer_button.addEventListener("click", this, false);
+            
+            // New click listener to handle select/deselect events
+            this.timeline_leftpane.addEventListener("click", this.timelineLeftPaneClick.bind(this), false);
+            this.timeline_leftpane.addEventListener("blur", this.timelineLeftPanelBlur.bind(this), false);
+            this.timeline_leftpane.addEventListener("mousedown", this.timelineLeftPanelMousedown.bind(this), false);
+            
+            
 
             // Simultaneous scrolling of the layer and tracks
             this.layout_tracks.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
@@ -194,7 +202,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     handleAddLayerClick:{
         value:function(event){
-            event.stopPropagation();
+            //event.stopPropagation();
             this._isLayer = true;
             this.needsDraw = true;
 
@@ -203,7 +211,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     handleDeleteLayerClick:{
         value:function(event){
-            event.stopPropagation();
+            //event.stopPropagation();
             this._deleteKeyDown=false;
             if(this.application.ninja.currentSelectedContainer.id==="UserContent"){
                 this._hashKey="123";
@@ -236,6 +244,60 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
         }
     },
+
+	timelineLeftPaneClick : {
+		value: function(event) {
+			// Check ALL THE CLICKS
+			// Are they in a particular layer? If so, we need to select that layer and
+			// deselect the others.
+			var ptrParent = nj.queryParentSelector(event.target, ".container-layer");
+			if (ptrParent !== false) {
+				// Why yes, the click was within a layer.  But which one?
+				var strLabel = ptrParent.querySelector(".label-layer .collapsible-label").innerText,
+					myIndex = 0,
+					i = 0,
+					arrLayersLength = this.arrLayers.length;
+					console.log(strLabel);
+				for (i = 0; i < arrLayersLength; i++) {
+					if (this.arrLayers[i].layerName === strLabel) {
+						myIndex = i;
+						this.arrLayers[i].isSelected = true;
+					} else {
+						this.arrLayers[i].isSelected = false;
+					}
+				}
+			}
+		}
+	},
+	
+	timelineLeftPanelBlur: {
+		value: function(event) {
+			console.log('blur called with ' + this._skipNextBlur);
+			if (this._skipNextBlur === true) {
+				this._skipNextBlur = false;
+			} else {
+				var i = 0,
+					arrLayersLength = this.arrLayers.length;
+				for (i = 0; i < arrLayersLength; i++) {
+					this.arrLayers[i].isSelected = false;
+				}
+				this.layerRepetition.selectedIndexes = null;
+			}
+		}
+	},
+	_skipNextBlur : {
+		value: false
+	},
+	timelineLeftPanelMousedown : {
+		value: function(event) {
+			console.log(event.target.classList)
+			var ptrParent = nj.queryParentSelector(event.target, ".label-style");
+			console.log('mousedown with ' + ptrParent)
+			if (ptrParent !== false) {
+				this._skipNextBlur = true;
+			}
+		}
+	},
 
      handleNewLayer:{
         value:function(event){
@@ -314,6 +376,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                         thingToPush.arrLayerStyles = [];
                         thingToPush.element=[];
                         thingToPush.deleted=false;
+                        thingToPush.isSelected = false;
                         thingToPush.parentElement=this.application.ninja.currentSelectedContainer;
                        // this.layerElement.dataset.parentUUID=this.application.ninja.currentSelectedContainer.uuid;
 
@@ -332,14 +395,24 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                             this.hashInstance.setItem(this._hashKey,thingToPush,myIndex);
                             this.hashTrackInstance.setItem(this._hashKey,newTrack,myIndex);
                             thingToPush.layerPosition=myIndex;
+                            thingToPush.isSelected = true;
                             newTrack.trackPosition=myIndex;
                             this.arrLayers.splice(myIndex, 0, thingToPush);
                             this.arrTracks.splice(myIndex, 0, newTrack);
                             this.currentLayerSelected= this.arrLayers[myIndex];
+                            var i = 0,
+								arrLayersLength = this.arrLayers.length;
+							for (i = 0; i < arrLayersLength; i++) {
+								if (i === myIndex) {
+									this.arrLayers[i].isSelected = true;
+								} else {
+									this.arrLayers[i].isSelected = false;
+								}
+							}
                             this.layerRepetition.selectedIndexes = [myIndex];
                         } else {
-                            this.arrLayers.push(thingToPush);
-                            this.arrTracks.push(newTrack);
+                            this.arrLayers.splice(0, 0, thingToPush);
+                            this.arrTracks.splice(0, 0, newTrack);
                             thingToPush.layerPosition=this.arrLayers.length-1;
                             newTrack.trackPosition=this.arrTracks.length-1;
                             this.currentLayerSelected= this.arrLayers[this.arrLayers.length-1];
