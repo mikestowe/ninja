@@ -122,7 +122,7 @@ exports.DragDropMediator = Montage.create(Component, {
 
                     NJUtils.makeElementModel(domElem, "SVG", "block");
                 } else { // treat as a regular image
-                    domElem = NJUtils.makeNJElement("image", "Image", "block");
+                    domElem = NJUtils.makeNJElement("image", "image", "image");
                     domElem.src = evt2.currentTarget.result;
                 }
 
