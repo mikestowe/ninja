@@ -1,0 +1,15 @@
+{
+	"name": "Motorola Mobility Ninja",
+	"description": "Local Development Version",
+	"version": "0.0",
+	"icons": {"128": "ninja_icon.png"},
+	"app": {
+		"launch": {"local_path": "index.html"}
+	},
+	"permissions": ["unlimitedStorage"],
+	"requirements": { 
+		"3D": {
+    		"features": ["css3d", "webgl"]
+  		}
+	}
+}

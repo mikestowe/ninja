@@ -114,16 +114,6 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
 							//File to copy
 							this.chromeApi.fileContent(contents[i].fullPath, function (result) {
 								//
-								
-								/*
-var ui8a = new Uint8Array(result.content);
-								console.log(ui8a);
-								
-								var blob = new window.WebKitBlobBuilder;
-								blob.append(result.content);
-*/
-								//console.log(blob.getBlob(result.data.type));
-								//this.coreApi.createFile({uri: fileRoot+result.file.fullPath, contents: result.content, contentType: result.data.type});
 								//this.coreApi.createFile({uri: fileRoot+result.file.fullPath, contents: blob.getBlob(result.data.type), contentType: result.data.type});
 								this.coreApi.createFile({uri: fileRoot+result.file.fullPath, contents: result.content});
 							}.bind(this));
@@ -143,7 +133,7 @@ var ui8a = new Uint8Array(result.content);
     		//
     		var i, l, libs, libjson, xhr = new XMLHttpRequest(), tocopylibs = [], copied;
             //Getting known json list of libraries to copy to chrome
-           	xhr.open("GET", '/ninja-internal/js/io/system/ninjalibrary.json', false);
+           	xhr.open("GET", '/js/io/system/ninjalibrary.json', false);
             xhr.send();
             //Checkng for correct reponse
             if (xhr.readyState === 4) {
