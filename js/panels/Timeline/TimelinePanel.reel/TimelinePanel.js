@@ -38,9 +38,18 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this._layerRepetition = newVal;
         }
     },
-   
+	_currentLayerNumber: {
+		value: 0
+	},
     currentLayerNumber:{
-        value:0
+        get: function() {
+        	return this._currentLayerNumber;
+        },
+        set: function(newVal) {
+        	if (newVal !== this._currentLayerNumber) {
+        		this._currentLayerNumber = newVal;
+        	}
+        }
     },
 
     millisecondsOffset:{
@@ -153,9 +162,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             
             // New click listener to handle select/deselect events
             this.timeline_leftpane.addEventListener("click", this.timelineLeftPaneClick.bind(this), false);
-            
-            // New click listener on body to handle "blurring" the panel
-            document.addEventListener("click", this.handleBlur.bind(this), false);
 
             // Simultaneous scrolling of the layer and tracks
             this.layout_tracks.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
@@ -170,6 +176,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             _firstLayerDraw = false;
             NJevent('newLayer',this._hashKey);
             _firstLayerDraw = true;
+            this.selectLayer(0);
 
             // TODO - add condition for existing doc and parse DOM for top level elements
         }
@@ -253,17 +260,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 				var strLabel = ptrParent.querySelector(".label-layer .collapsible-label").innerText,
 					myIndex = this.getLayerIndexByName(strLabel);
 				this.selectLayer(myIndex);
-			}
-		}
-	},
-	
-	handleBlur: {
-		value: function(event) {
-			var ptrParent = nj.queryParentSelector(event.target, ".tl_leftpane");
-			if (ptrParent !== false) {
-				// We were clicking somewhere within the left pane, so we shouldn't blur.
-			} else {
-				this.selectLayer("none");
 			}
 		}
 	},
@@ -400,7 +396,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                             this.layerRepetition.selectedIndexes = [myIndex];
                             */
                            
-                           this.selectLayer(myIndex);
+							this.selectLayer(myIndex);
                            
                             this.hashInstance.setItem(this._hashKey,thingToPush,myIndex);
                             this.hashTrackInstance.setItem(this._hashKey,newTrack,myIndex);
@@ -808,23 +804,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		
     		return returnVal;
     		
-    	}
-    },
-    getLayerIndexByName : {
-    	value: function(layerName) {
-    		// Get the index in this.arrLayers that matches a particular layerName
-    		// Returns false if no match
-    		var i = 0, 
-    			returnVal = false,
-    			arrLayersLength = this.arrLayers.length;
-    			
-    		for (i=0; i < arrLayersLength; i++) {
-    			if (this.arrLayers[i].layerName === layerName) {
-    				returnVal = i;
-    			}
-    		}
-    		
-    		return returnVal;
     	}
     },
 
