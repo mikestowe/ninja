@@ -61,7 +61,6 @@ exports.TextProperties = Montage.create(ToolProperties, {
 
     handleEditorSelect: {
         value: function(e) {
-            console.log("hello");
             this.application.ninja.stage.textTool.updateStates();
         }
     },
