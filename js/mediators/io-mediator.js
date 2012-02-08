@@ -20,8 +20,8 @@ exports.IoMediator = Montage.create(require("montage/ui/component").Component, {
     		//
 
 
-            var returnObj = null; //like {"type": "js", "name": "filename", "source": "test file content", "uri": "/fs/fsd/"}
-    		callback.operation.call(callback.thisScope, returnObj);
+            var returnObj = null; //like {"uri": "/gfdg/gdf/dfg.js", "success": true,...}
+    		callback(returnObj);
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ exports.IoMediator = Montage.create(require("montage/ui/component").Component, {
                 fileType = file.uri.substr(file.uri.lastIndexOf('.') + 1);
             }
             returnObj = {"type": ""+fileType, "name": ""+filename, "source": fileContent, "uri": file.uri};
-            callback.operation.call(callback.thisScope, returnObj);
+            callback(returnObj);
     	}
     },
     ////////////////////////////////////////////////////////////////////

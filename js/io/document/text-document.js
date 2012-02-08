@@ -13,9 +13,12 @@ var TextDocument = exports.TextDocument = Montage.create(baseDocumentModule.Base
     _codeEditor: {
         value: {
             "editor": { value: null, enumerable: false },
-            "hline": { value: null, enumerable: false }
+
         }
     },
+
+    _editor: { value: null, enumerable: false },
+    _hline: { value: null, enumerable: false },
 
     _textArea: {value: null, enumerable: false },
 
@@ -28,23 +31,37 @@ var TextDocument = exports.TextDocument = Montage.create(baseDocumentModule.Base
 
     // PUBLIC MEMBERS
 
+    _savedLeftScroll: {value:null},
+    _savedTopScroll: {value:null},
+
     //****************************************//
     //PUBLIC API
 
 
     // GETTERS / SETTERS
+
+    savedLeftScroll:{
+        get: function() { return this._savedLeftScroll; },
+        set: function(value) { this._savedLeftScroll = value}
+    },
+
+    savedTopScroll:{
+        get: function() { return this._savedTopScroll; },
+        set: function(value) { this._savedTopScroll = value}
+    },
+
     textArea: {
         get: function() { return this._textArea; },
         set: function(value) { this._textArea = value; }
     },
     editor: {
-        get: function() { return this._codeEditor.editor; },
-        set: function(value) { this._codeEditor.editor = value}
+        get: function() { return this._editor; },
+        set: function(value) { this._editor = value}
     },
 
     hline: {
-        get: function() { return this._codeEditor.hline; },
-        set: function(value) {this._codeEditor.hline = value; }
+        get: function() { return this._hline; },
+        set: function(value) {this._hline = value; }
     },
 
     
@@ -56,6 +73,7 @@ var TextDocument = exports.TextDocument = Montage.create(baseDocumentModule.Base
             this.textArea = textArea;
 
 //            this._loadContent();
+
         }
     },
 
@@ -89,20 +107,17 @@ var TextDocument = exports.TextDocument = Montage.create(baseDocumentModule.Base
 
     /**
      * public method
-     * parameter:
-     * removeCodeMirrorDivFlag - for code view, tell to remove the codemirror div after saving
      */
     save:{
-        value:function(removeCodeMirrorDivFlag){
-            this.editor.save();
-            this.dirtyFlag=false;
-            if(removeCodeMirrorDivFlag === true){
-                var codemirrorDiv = this.textArea.parentNode.querySelector(".CodeMirror");
-                if(!!codemirrorDiv){codemirrorDiv.parentNode.removeChild(codemirrorDiv);}
+        value:function(){
+            try{
+                this.editor.save();
+                //persist textArea.value to filesystem
+                this.dirtyFlag=false;
+            }catch(e){
+                console.log("Error while saving "+this.uri);
+                console.log(e.stack);
             }
-            //console.log("$$$saved : "+this.uri+" : "+this.textArea.value);
-            //persist to filesystem
         }
     }
-    
 });
