@@ -51,7 +51,7 @@ function BumpMetalMaterial()
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
-	this._propNames			= ["lightDiff",		"diffuseMap",	"normalMap",	"specularMap"];
+	this._propNames			= ["lightDiff",		"diffuseTexture",	"normalMap",	"specularTexture"];
 	this._propLabels		= ["Diffuse Color",	"Diffuse Map",	"Bump Map",		"Specular Map"];
 	this._propTypes			= ["color",			"file",			"file",			"file"];
 	this._propValues		= [];
@@ -151,7 +151,7 @@ function BumpMetalMaterial()
 		exportStr += "lightDiff: "			+ this.getLightDiff()		+ "\n";
 		exportStr += "diffuseTexture: "		+ this.getDiffuseTexture()	+ "\n";
 		exportStr += "specularTexture: "	+ this.getSpecularTexture()	+ "\n";
-		exportStr += "normalTexture: "		+ this.getNormalTexture()	+ "\n";
+		exportStr += "normalMap: "		+ this.getNormalTexture()	+ "\n";
 
 		// every material needs to terminate like this
 		exportStr += "endMaterial\n";
@@ -172,12 +172,12 @@ function BumpMetalMaterial()
 			var lightDiff  = eval( "[" + pu.nextValue( "lightDiff: " ) + "]" ),
 				dt = pu.nextValue( "diffuseTexture: " ),
 				st = pu.nextValue( "specularTexture: " ),
-				nt = pu.nextValue( "normalTexture: " );
+				nt = pu.nextValue( "normalMap: " );
 		
-			this.setProperty( "lightDiff",  lightDif);
+			this.setProperty( "lightDiff",  lightDiff);
 			this.setProperty( "diffuseTexture", dt );
 			this.setProperty( "specularTexture", st );
-			this.setProperty( "normalTexture", nt ); 
+			this.setProperty( "normalMap", nt );
 
 			var endKey = "endMaterial\n";
 			var index = importStr.indexOf( endKey );

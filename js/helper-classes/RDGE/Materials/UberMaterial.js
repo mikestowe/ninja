@@ -45,9 +45,9 @@ function UberMaterial()
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
-	this._propNames			= ["ambientColor",	"diffuseColor",		"specularColor",	"specularPower"	,	"diffuseMap",	"normalMap",	"specularMap",		"environmentMap",		"environmentAmount",			"dummy" ];
-	this._propLabels		= ["Ambient Color",	"Diffuse Color",	"Specular Color",	"Specular Power",	"Texture Map",	"Bump Map",		"Specular Map",		"Environment Map",		"Environment Map Amount",		"Dummy" ];
-	this._propTypes			= ["color",			"color",			"color",			"float",			"file",			"file",			"file",				"file",					"float",						"checkbox"];
+	this._propNames			= ["ambientColor",	"diffuseColor",		"specularColor",	"specularPower"	,	"diffuseMap",	"normalMap",	"specularMap",		"environmentMap",		"environmentAmount" ];
+	this._propLabels		= ["Ambient Color",	"Diffuse Color",	"Specular Color",	"Specular Power",	"Texture Map",	"Bump Map",		"Specular Map",		"Environment Map",		"Environment Map Amount" ];
+	this._propTypes			= ["color",			"color",			"color",			"float",			"file",			"file",			"file",				"file",					"float"		];
 	this._propValues		= [];
 
 	this._propValues[ this._propNames[0] ] = this._ambientColor.slice(0);
