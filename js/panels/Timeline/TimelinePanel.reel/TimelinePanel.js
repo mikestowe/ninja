@@ -159,10 +159,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             
             // New click listener to handle select/deselect events
             this.timeline_leftpane.addEventListener("click", this.timelineLeftPaneClick.bind(this), false);
-            this.timeline_leftpane.addEventListener("blur", this.timelineLeftPanelBlur.bind(this), false);
-            this.timeline_leftpane.addEventListener("mousedown", this.timelineLeftPanelMousedown.bind(this), false);
             
-            
+            // New click listener on body to handle "blurring" the panel
+            document.addEventListener("click", this.handleBlur.bind(this), false);
 
             // Simultaneous scrolling of the layer and tracks
             this.layout_tracks.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
@@ -254,47 +253,19 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 			if (ptrParent !== false) {
 				// Why yes, the click was within a layer.  But which one?
 				var strLabel = ptrParent.querySelector(".label-layer .collapsible-label").innerText,
-					myIndex = 0,
-					i = 0,
-					arrLayersLength = this.arrLayers.length;
-					console.log(strLabel);
-				for (i = 0; i < arrLayersLength; i++) {
-					if (this.arrLayers[i].layerName === strLabel) {
-						myIndex = i;
-						this.arrLayers[i].isSelected = true;
-					} else {
-						this.arrLayers[i].isSelected = false;
-					}
-				}
+					myIndex = this.getLayerIndexByName(strLabel);
+				this.selectLayer(myIndex);
 			}
 		}
 	},
 	
-	timelineLeftPanelBlur: {
+	handleBlur: {
 		value: function(event) {
-			console.log('blur called with ' + this._skipNextBlur);
-			if (this._skipNextBlur === true) {
-				this._skipNextBlur = false;
-			} else {
-				var i = 0,
-					arrLayersLength = this.arrLayers.length;
-				for (i = 0; i < arrLayersLength; i++) {
-					this.arrLayers[i].isSelected = false;
-				}
-				this.layerRepetition.selectedIndexes = null;
-			}
-		}
-	},
-	_skipNextBlur : {
-		value: false
-	},
-	timelineLeftPanelMousedown : {
-		value: function(event) {
-			console.log(event.target.classList)
-			var ptrParent = nj.queryParentSelector(event.target, ".label-style");
-			console.log('mousedown with ' + ptrParent)
+			var ptrParent = nj.queryParentSelector(event.target, ".tl_leftpane");
 			if (ptrParent !== false) {
-				this._skipNextBlur = true;
+				// We were clicking somewhere within the left pane, so we shouldn't blur.
+			} else {
+				this.selectLayer("none");
 			}
 		}
 	},
@@ -399,6 +370,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                             newTrack.trackPosition=myIndex;
                             this.arrLayers.splice(myIndex, 0, thingToPush);
                             this.arrTracks.splice(myIndex, 0, newTrack);
+                            /*
                             this.currentLayerSelected= this.arrLayers[myIndex];
                             var i = 0,
 								arrLayersLength = this.arrLayers.length;
@@ -410,6 +382,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 								}
 							}
                             this.layerRepetition.selectedIndexes = [myIndex];
+                            */
+                           
+                           this.selectLayer(myIndex);
+                           
                         } else {
                             this.arrLayers.splice(0, 0, thingToPush);
                             this.arrTracks.splice(0, 0, newTrack);
@@ -741,6 +717,66 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                        return hashTrackObject;
 
         }
+    },
+    
+    selectLayer : {
+    	value: function(layerIndex) {
+    		// Select a layer based on its index.
+    		// use layerIndex = "none" to deselect all layers.
+    		var i = 0,
+    			arrLayersLength = this.arrLayers.length;
+    		for (i = 0; i < arrLayersLength; i++) {
+    			if (i === layerIndex) {
+    				this.arrLayers[i].isSelected = true;
+    			} else {
+    				this.arrLayers[i].isSelected = false;
+    			}
+    		}
+    		
+    		if (layerIndex !== "none") {
+    			this.layerRepetition.selectedIndexes = [layerIndex];
+    			this.currentLayerSelected = this.arrLayers[layerIndex]
+    		} else {
+    			this.layerRepetition.selectedIndexes = null;
+    			this.currentLayerSelected = null;
+    		}
+    	}
+    },
+    
+    getLayerIndexByID : {
+    	value: function(layerID) {
+    		// Get the index in this.arrLayers that matches a particular layerID.
+    		// Returns false if no match.
+    		var i = 0, 
+    			returnVal = false,
+    			arrLayersLength = this.arrLayers.length;
+    			
+    		for (i=0; i < arrLayersLength; i++) {
+    			if (this.arrLayers[i].layerID === layerID) {
+    				returnVal = i;
+    			}
+    		}
+    		
+    		return returnVal;
+    		
+    	}
+    },
+    getLayerIndexByName : {
+    	value: function(layerName) {
+    		// Get the index in this.arrLayers that matches a particular layerName
+    		// Returns false if no match
+    		var i = 0, 
+    			returnVal = false,
+    			arrLayersLength = this.arrLayers.length;
+    			
+    		for (i=0; i < arrLayersLength; i++) {
+    			if (this.arrLayers[i].layerName === layerName) {
+    				returnVal = i;
+    			}
+    		}
+    		
+    		return returnVal;
+    	}
     }
 
     /* === END: Controllers === */
