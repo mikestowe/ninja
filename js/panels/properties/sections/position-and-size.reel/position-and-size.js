@@ -28,6 +28,14 @@ exports.PosSize = Montage.create(Component, {
         value: null
     },
 
+    aspectRatioWidth: {
+        value: null
+    },
+
+    aspectRatioHeight: {
+        value: null
+    },
+
     _disablePosition: {
         value: true
     },
@@ -62,9 +70,8 @@ exports.PosSize = Montage.create(Component, {
             this.widthControl.addEventListener("change", this, false);
             this.widthControl.addEventListener("changing", this, false);
 
-            
-            //this._controlList[0].control.addEventListener("action", this._handleStageEvent.bind(this), false);
-            //PropertiesPanelModule.PropertiesPanelBase.PIControlList["stageWidthHeightLock"] = this._controlList[0].control;
+            this.bindButton.identifier = "ratio";
+            this.bindButton.addEventListener("action", this, false);
 
         }
     },
@@ -83,6 +90,25 @@ exports.PosSize = Montage.create(Component, {
                 this.topControl.enabled = true;
                 this.leftLabel.classList.remove("disabled");
                 this.topLabel.classList.remove("disabled");
+            }
+        }
+    },
+
+    /**
+     * Calculate the current aspect ration when the bind button is pressed.
+     * If one of the values is 0, then use 1:1 as the ratio;
+     */
+    handleRatioAction: {
+        value: function() {
+            if(this.bindButton.value) {
+                this.aspectRatioWidth = this.heightControl.value / this.widthControl.value;
+                if(isNaN(this.aspectRatioWidth) || !isFinite(this.aspectRatioWidth) || this.aspectRatioWidth === 0) this.aspectRatioWidth = 1;
+
+                this.aspectRatioHeight = this.widthControl.value / this.heightControl.value;
+                if(isNaN(this.aspectRatioHeight) || !isFinite(this.aspectRatioHeight) || this.aspectRatioHeight === 0) this.aspectRatioHeight = 1;
+            } else {
+                this.aspectRatioWidth = 1;
+                this.aspectRatioHeight = 1;
             }
         }
     },
@@ -121,6 +147,16 @@ exports.PosSize = Montage.create(Component, {
                 if(this.savedPosition) prevPosition = [this.savedPosition + "px"];
 
                 this.application.ninja.selectedElements.length ? items = this.application.ninja.selectedElements : items = [this.application.ninja.currentDocument.documentRoot];
+
+                if(this.bindButton.value) {
+                    var newWidth = Math.round(this.aspectRatioHeight * this.heightControl.value);
+
+                    if(!isFinite(newWidth)) newWidth = this.heightControl.value;
+
+                    this.widthControl.value = newWidth;
+                    this.application.ninja.elementMediator.setProperty(items, "width", [newWidth + "px"] , "Change", "pi");
+                }
+
                 this.application.ninja.elementMediator.setProperty(items, "height", [this.heightControl.value + "px"] , "Change", "pi", prevPosition);
                 this.savedPosition = null;
             }
@@ -135,9 +171,25 @@ exports.PosSize = Montage.create(Component, {
                 if(this.savedPosition) prevPosition = [this.savedPosition + "px"];
 
                 this.application.ninja.selectedElements.length ? items = this.application.ninja.selectedElements : items = [this.application.ninja.currentDocument.documentRoot];
-                this.application.ninja.elementMediator.setProperty(items, "width", [this.widthControl.value + "px"] , "Change", "pi", prevPosition);
-                this.savedPosition = null;
+
+                if(this.bindButton.value) {
+
+                    var newHeight = Math.round(this.aspectRatioWidth * this.widthControl.value);
+
+                    if(!isFinite(newHeight)) newHeight = this.widthControl.value;
+
+                    this.heightControl.value = newHeight;
+                    this.application.ninja.elementMediator.setProperty(items, "height", [newHeight + "px"] , "Change", "pi");
+
+                } else {
+
+                    this.application.ninja.elementMediator.setProperty(items, "width", [this.widthControl.value + "px"] , "Change", "pi", prevPosition);
+                    this.savedPosition = null;
+                }
+
+
             }
+
         }
     },
 
@@ -166,24 +218,22 @@ exports.PosSize = Montage.create(Component, {
             var items;
             if(!event.wasSetByCode) {
 
+                if(!this.savedPosition) this.savedPosition = this.heightSize;
+
+                this.application.ninja.selectedElements.length ? items = this.application.ninja.selectedElements : items = [this.application.ninja.currentDocument.documentRoot];
+
                 if(this.bindButton.value) {
-                    if(!this.savedPosition) this.savedPosition = this.heightSize;
-                    var delta = this.heightControl.value - this.savedPosition;
 
-                    var hwRatio = Math.round(Math.round(this.widthControl.value / this.savedPosition * 10) / 10);
-                    var newWidth = this.widthControl.value + hwRatio * delta;
+                    var newWidth = Math.round(this.aspectRatioHeight * this.heightControl.value);
 
-                    this.application.ninja.selectedElements.length ? items = this.application.ninja.selectedElements : items = [this.application.ninja.currentDocument.documentRoot];
+                    if(!isFinite(newWidth)) newWidth = this.heightControl.value;
+
                     this.widthControl.value = newWidth;
-                    this.application.ninja.elementMediator.setProperty(items, "height", [this.heightControl.value + "px"] , "Changing", "pi");
                     this.application.ninja.elementMediator.setProperty(items, "width", [newWidth + "px"] , "Changing", "pi");
-                } else {
-
-                    if(!this.savedPosition) this.savedPosition = this.heightSize;
-
-                    this.application.ninja.selectedElements.length ? items = this.application.ninja.selectedElements : items = [this.application.ninja.currentDocument.documentRoot];
-                    this.application.ninja.elementMediator.setProperty(items, "height", [this.heightControl.value + "px"] , "Changing", "pi");
                 }
+
+                this.application.ninja.elementMediator.setProperty(items, "height", [this.heightControl.value + "px"] , "Changing", "pi");
+
             }
         }
     },
@@ -192,8 +242,20 @@ exports.PosSize = Montage.create(Component, {
         value: function(event) {
             var items;
             if(!event.wasSetByCode) {
+
                 if(!this.savedPosition) this.savedPosition = this.widthSize;
+
                 this.application.ninja.selectedElements.length ? items = this.application.ninja.selectedElements : items = [this.application.ninja.currentDocument.documentRoot];
+
+                if(this.bindButton.value) {
+                    var newHeight = Math.round(this.aspectRatioWidth * this.widthControl.value);
+
+                    if(!isFinite(newHeight)) newHeight = this.widthControl.value;
+
+                    this.heightControl.value = newHeight;
+                    this.application.ninja.elementMediator.setProperty(items, "height", [newHeight + "px"] , "Changing", "pi");
+                }
+
                 this.application.ninja.elementMediator.setProperty(items, "width", [this.widthControl.value + "px"] , "Changing", "pi");
             }
         }
