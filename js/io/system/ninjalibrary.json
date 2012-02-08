@@ -1,0 +1,6 @@
+{
+	"libraries": [
+		{"name": "Montage", "path": "/ninja-internal/node_modules/descriptor.json", "version": "0.6.0"}, 
+		{"name": "RDGE", "path": "/ninja-internal/js/helper-classes/RDGE/rdge-compiled.js", "version": "0.6.0", "file": "rdge-compiled.js"}
+	]
+}

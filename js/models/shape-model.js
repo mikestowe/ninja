@@ -10,6 +10,7 @@ var Montage = require("montage/core/core").Montage,
 exports.ShapeModel = Montage.create(Component, {
 
     shapeCount:             { value: 0 },
+    useWebGl:           { value: false },
 
     GLWorld:                { value: null },
     GLGeomObj:              { value: null },
@@ -17,13 +18,13 @@ exports.ShapeModel = Montage.create(Component, {
     strokeSize:             { value: null },
     stroke:                 { value: null },
     strokeMaterial:         { value: null },
-    strokeMaterialIndex:    { value: null },
     strokeStyle:            { value: null },
     strokeStyleIndex:       { value: null },
+    border:                 { value: null },    // Store css value for ColorController
 
     fill:                   { value: null },
     fillMaterial:           { value: null },
-    fillMaterialIndex:      { value: null },
+    background:             { value: null },    // Store css value for ColorController
 
     // Line-specific
     slope:                  { value: null },

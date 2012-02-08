@@ -17,6 +17,7 @@ var Montage = 		require("montage/core/core").Montage,
     Popup = 		require("js/components/popup.reel").Popup,
     CloudPopup = 	require("js/io/ui/cloudpopup.reel").CloudPopup,
     ChromeApi =		require("js/io/system/chromeapi").ChromeApi;
+    NinjaLibrary = 	require("js/io/system/ninjalibrary").NinjaLibrary;
 ////////////////////////////////////////////////////////////////////////
 //Exporting as Project I/O
 exports.CoreIoApi = Montage.create(Component, {
@@ -37,6 +38,8 @@ exports.CoreIoApi = Montage.create(Component, {
 				this.ioServiceDetected = false;
 			}
 			////////////////////////////////////////////////////////////
+			//Instance of ninja library
+			this.ninjaLibrary = NinjaLibrary;
 			//Getting reference of chrome file system API
 			this.chromeFileSystem = ChromeApi;
 			//Sending size in MBs for file system storage
@@ -55,10 +58,48 @@ exports.CoreIoApi = Montage.create(Component, {
 	handleReady: {
 		enumerable: false,
         value: function (e) {
+        	//Removing events
         	this.chromeFileSystem.removeEventListener('ready', this, false);
-        	this.chromeNinjaLibrary = this.chromeFileSystem.getLocalLibrary();
+        	//Listening for library to be copied event (builds list)
+        	this.chromeFileSystem.addEventListener('library', this, false);
         }
 	},
+	////////////////////////////////////////////////////////////////////
+    //
+	handleLibrary: {
+		enumerable: false,
+        value: function (e) {
+        	//Removing events
+        	this.chromeFileSystem.removeEventListener('library', this, false);
+        	//Listening for synced library event
+        	this.ninjaLibrary.addEventListener('sync', this, false);
+        	//Sending library to be synced to chrome
+        	this.ninjaLibrary.synchronize(e._event.ninjaChromeLibrary, this.chromeFileSystem);
+        	
+        }
+	},
+	////////////////////////////////////////////////////////////////////
+    //
+	handleSync: {
+		enumerable: false,
+        value: function (e) {
+        	console.log('Ninja Local Library: Ready');
+        	//Removing events
+        	this.ninjaLibrary.removeEventListener('sync', this, false);
+        	this.ninjaLibrary.coreApi = this;
+        	//TODO: Add sync loading screen logic
+        	
+        	
+        	
+        	
+        	//TODO: Remove test
+        	this.ninjaLibrary.copyLibToCloud('Users/kgq387/Desktop/Ninja Cloud/Disk', 'montage0.6.0');
+        	
+        	
+        	
+        	
+        }
+    },
     ////////////////////////////////////////////////////////////////////
     //
     _chromeNinjaLibrary: {
@@ -361,15 +402,16 @@ exports.CoreIoApi = Montage.create(Component, {
                     	xhr = new XMLHttpRequest();
                     //
                     xhr.open("POST", serviceURL, false);
+                    xhr.responseType = "arraybuffer"; 
                     if(file.contentType && file.contentType.length)
                         xhr.setRequestHeader("Content-Type", file.contentType);
                     else
                         xhr.setRequestHeader("Content-Type", "text/plain");
 
-                    if(file.contents && file.contents.length)
+                    if (file.contents)
                         xhr.send(file.contents);
                     else
-                        xhr.send();
+                      	xhr.send();
 
                     if (xhr.readyState === 4) {
                         retValue.status = xhr.status;

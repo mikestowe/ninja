@@ -99,6 +99,7 @@ exports.LineTool = Montage.create(ShapeTool, {
                 }
                 this.RenderShape(w, h, drawData.planeMat, drawData.midPt,
                                     canvas, slope, xAdj, yAdj);
+                NJevent("elementAdded", canvas);
             }
 
             this.endDraw(event);
@@ -202,10 +203,10 @@ exports.LineTool = Montage.create(ShapeTool, {
             // for default stroke and fill/no materials
             var strokeMaterial = null;
 
-            var strokeIndex = parseInt(this.options.strokeMaterial);
-            if(strokeIndex > 0)
+            var strokeM = this.options.strokeMaterial;
+            if(strokeM)
             {
-                strokeMaterial = Object.create(MaterialsLibrary.getMaterialAt(strokeIndex-1));
+                strokeMaterial = Object.create(MaterialsLibrary.getMaterial(strokeM));
             }
 
             var world = this.getGLWorld(canvas, this.options.use3D);
@@ -225,14 +226,18 @@ exports.LineTool = Montage.create(ShapeTool, {
                 canvas.elementModel.pi = "LinePi";
                 canvas.elementModel.shapeModel.strokeSize = this.options.strokeSize.value + " " + this.options.strokeSize.units;
                 canvas.elementModel.shapeModel.stroke = strokeColor;
+                if(strokeColor)
+                {
+                    canvas.elementModel.shapeModel.border = this.application.ninja.colorController.colorToolbar.stroke;
+                }
 
                 canvas.elementModel.shapeModel.strokeMaterial = strokeMaterial;
-                canvas.elementModel.shapeModel.strokeMaterialIndex = strokeIndex;
 
                 canvas.elementModel.shapeModel.strokeStyleIndex = strokeStyleIndex;
                 canvas.elementModel.shapeModel.strokeStyle = strokeStyle;
 
                 canvas.elementModel.shapeModel.GLGeomObj = line;
+                canvas.elementModel.shapeModel.useWebGl = this.options.use3D;
             }
             else
             {

@@ -5,7 +5,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var Montage = 			require("montage/core/core").Montage,
-    CanvasController = require("js/controllers/elements/canvas-controller").CanvasController;
+    CanvasController = require("js/controllers/elements/canvas-controller").CanvasController,
+    njModule = require("js/lib/NJUtils");
 
 exports.ShapesController = Montage.create(CanvasController, {
 
@@ -56,6 +57,35 @@ exports.ShapesController = Montage.create(CanvasController, {
                     el.elementModel.shapeModel.GLWorld.setViewportFromCanvas(el);
                     el.elementModel.shapeModel.GLGeomObj.buildBuffers();
                     break;
+                case "useWebGl":
+                    var canvas = njModule.NJUtils.makeNJElement("canvas", "Canvas", "shape", el.className, true);
+                    canvas.width = el.width;
+                    canvas.height = el.height;
+                    this.application.ninja.elementMediator.replaceElement(el, canvas);
+                    NJevent("elementDeleted", el);
+                    this.application.ninja.selectionController.selectElement(canvas);
+                    el = canvas;
+                    this.toggleWebGlMode(el, value);
+                    el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                    break;
+                case "strokeMaterial":
+                    var sm = Object.create(MaterialsLibrary.getMaterial(value));
+                    if(sm)
+                    {
+                        el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(sm);
+                        el.elementModel.shapeModel.strokeMaterial = sm;
+                        el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                    }
+                    break;
+                case "fillMaterial":
+                    var fm = Object.create(MaterialsLibrary.getMaterial(value));
+                    if(fm)
+                    {
+                        el.elementModel.shapeModel.GLGeomObj.setFillMaterial(fm);
+                        el.elementModel.shapeModel.fillMaterial = fm;
+                        el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                    }
+                    break;
                 default:
                     CanvasController.setProperty(el, p, value);
             }
@@ -66,17 +96,27 @@ exports.ShapesController = Montage.create(CanvasController, {
     getProperty: {
         value: function(el, p) {
             switch(p) {
-                case "stroke":
-                case "fill":
                 case "strokeSize":
                 case "innerRadius":
                 case "tlRadius":
                 case "trRadius":
                 case "blRadius":
                 case "brRadius":
+                case "border":
+                case "background":
+                case "useWebGl":
+                    return this.getShapeProperty(el, p);
                 case "strokeMaterial":
                 case "fillMaterial":
-                    return this.getShapeProperty(el, p);
+                    var m = this.getShapeProperty(el, p);
+                    if(m)
+                    {
+                        return this.getShapeProperty(el, p).getName();
+                    }
+                    else
+                    {
+                        return "FlatMaterial";
+                    }
                 default:
                     return CanvasController.getProperty(el, p);
             }
@@ -182,30 +222,44 @@ exports.ShapesController = Montage.create(CanvasController, {
     // Routines to get/set color properties
     getColor: {
         value: function(el, isFill) {
+            var color,
+                css;
             if(isFill)
             {
-                return this.getShapeProperty(el, "fill");
+                if(el.elementModel.shapeModel.background)
+                {
+                    return el.elementModel.shapeModel.background;
+                }
+                color = this.getShapeProperty(el, "fill");
             }
             else
             {
-                return this.getShapeProperty(el, "stroke");
+                if(el.elementModel.shapeModel.border)
+                {
+                    return el.elementModel.shapeModel.border;
+                }
+                color = this.getShapeProperty(el, "stroke");
             }
+
+            css = this.application.ninja.colorController.colorModel.webGlToCss(color);
+            return this.application.ninja.colorController.getColorObjFromCss(css);
         }
     },
 
     setColor: {
         value: function(el, color, isFill) {
-            // TODO - Format color for webGL before setting
-            color = color.webGlColor;
+            var webGl = color.webGlColor || color.color.webGlColor;
             if(isFill)
             {
-                el.elementModel.shapeModel.GLGeomObj.setFillColor(color);
-                this.setShapeProperty(el, "fill", color);
+                el.elementModel.shapeModel.GLGeomObj.setFillColor(webGl);
+                this.setShapeProperty(el, "fill", webGl);
+                this.setShapeProperty(el, "background", color);
             }
             else
             {
-                el.elementModel.shapeModel.GLGeomObj.setStrokeColor(color);
-                this.setShapeProperty(el, "stroke", color);
+                el.elementModel.shapeModel.GLGeomObj.setStrokeColor(webGl);
+                this.setShapeProperty(el, "stroke", webGl);
+                this.setShapeProperty(el, "border", color);
             }
             el.elementModel.shapeModel.GLWorld.render();
         }
@@ -260,6 +314,60 @@ exports.ShapesController = Montage.create(CanvasController, {
         value: function(el)
         {
             return (el.elementModel && el.elementModel.isShape);
+        }
+    },
+
+    toggleWebGlMode: {
+        value: function(el, useWebGl)
+        {
+            if(useWebGl)
+            {
+                this.convertToWebGlWorld(el);
+            }
+            else
+            {
+                this.convertTo2DWorld(el);
+            }
+        }
+    },
+
+    convertToWebGlWorld: {
+        value: function(el)
+        {
+            if(el.elementModel.shapeModel.useWebGl)
+            {
+                return;
+            }
+            var world,
+                worldData = el.elementModel.shapeModel.GLWorld.export();
+            if(worldData)
+            {
+                world = new GLWorld(el, true);
+                el.elementModel.shapeModel.GLWorld = world;
+                el.elementModel.shapeModel.useWebGl = true;
+                world.import(worldData);
+            }
+
+        }
+    },
+
+    convertTo2DWorld: {
+        value: function(el)
+        {
+            if(!el.elementModel.shapeModel.useWebGl)
+            {
+                return;
+            }
+            var world,
+                worldData = el.elementModel.shapeModel.GLWorld.export();
+            if(worldData)
+            {
+                world = new GLWorld(el, false);
+                el.elementModel.shapeModel.GLWorld = world;
+                el.elementModel.shapeModel.useWebGl = false;
+                world.import(worldData);
+            }
+
         }
     }
 

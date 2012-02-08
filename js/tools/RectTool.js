@@ -62,16 +62,16 @@ exports.RectTool = Montage.create(ShapeTool, {
             var strokeMaterial = null;
             var fillMaterial = null;
 
-            var strokeIndex = parseInt(this.options.strokeMaterial);
-            if(strokeIndex > 0)
+            var strokeM = this.options.strokeMaterial;
+            if(strokeM)
             {
-                strokeMaterial = Object.create(MaterialsLibrary.getMaterialAt(strokeIndex-1));
+                strokeMaterial = Object.create(MaterialsLibrary.getMaterial(strokeM));
             }
 
-            var fillIndex = parseInt(this.options.fillMaterial);
-            if(fillIndex > 0)
+            var fillM = this.options.fillMaterial;
+            if(fillM)
             {
-                fillMaterial = Object.create(MaterialsLibrary.getMaterialAt(fillIndex-1));
+                fillMaterial = Object.create(MaterialsLibrary.getMaterial(fillM));
             }
 
             var world = this.getGLWorld(canvas, this.options.use3D);
@@ -94,6 +94,14 @@ exports.RectTool = Montage.create(ShapeTool, {
                 canvas.elementModel.shapeModel.strokeSize = this.options.strokeSize.value + " " + this.options.strokeSize.units;
                 canvas.elementModel.shapeModel.stroke = strokeColor;
                 canvas.elementModel.shapeModel.fill = fillColor;
+                if(strokeColor)
+                {
+                    canvas.elementModel.shapeModel.border = this.application.ninja.colorController.colorToolbar.stroke;
+                }
+                if(fillColor)
+                {
+                    canvas.elementModel.shapeModel.background = this.application.ninja.colorController.colorToolbar.fill;
+                }
 
                 canvas.elementModel.shapeModel.tlRadius = this.options.TLRadiusControl.value + " " + this.options.TLRadiusControl.units;
                 canvas.elementModel.shapeModel.trRadius = this.options.TRRadiusControl.value + " " + this.options.TRRadiusControl.units;
@@ -102,13 +110,12 @@ exports.RectTool = Montage.create(ShapeTool, {
 
                 canvas.elementModel.shapeModel.strokeMaterial = strokeMaterial;
                 canvas.elementModel.shapeModel.fillMaterial = fillMaterial;
-                canvas.elementModel.shapeModel.strokeMaterialIndex = strokeIndex;
-                canvas.elementModel.shapeModel.fillMaterialIndex = fillIndex;
 
                 canvas.elementModel.shapeModel.strokeStyleIndex = strokeStyleIndex;
                 canvas.elementModel.shapeModel.strokeStyle = strokeStyle;
 
                 canvas.elementModel.shapeModel.GLGeomObj = rect;
+                canvas.elementModel.shapeModel.useWebGl = this.options.use3D;
             }
             else
             {

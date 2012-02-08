@@ -36,6 +36,16 @@
                 }
             },
 
+            "_strokeMaterialCB": {
+                "module": "js/components/combobox.reel",
+                "name": "Combobox",
+                "properties": {
+                    "element": {"#": "strokeMaterialIBCB"},
+                    "labelField": "_name",
+                    "dataField": "_name"
+                }
+            },
+
             "owner": {
                 "module": "js/components/tools-properties/ink-bottle-properties.reel",
                 "name": "InkBottleProperties",
@@ -49,7 +59,7 @@
 
                     "_useWebGL": {"#": "useWebGLCHIB"},
                     "_materialsContainer": {"#": "materialsContainerIB"},
-                    "_strokeMaterial": {"#": "strokeMaterialIBCB"}
+                    "_strokeMaterial": {"@": "_strokeMaterialCB"}
                 }
             }
         }
