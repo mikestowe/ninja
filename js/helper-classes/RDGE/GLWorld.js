@@ -151,6 +151,7 @@ function GLWorld( canvas, use3D )
 			ctx2 = g_Engine.getContext();
 		if (ctx1 != ctx2)  console.log( "***** different contexts *****" );
 		this.renderer = ctx1.renderer;
+		this.renderer._world = this;
       
 		// create a camera, set its perspective, and then point it at the origin
 		var cam = new camera();
@@ -229,18 +230,24 @@ function GLWorld( canvas, use3D )
     {
 		if (this._useWebGL)
 		{
+			g_Engine.setContext( this._canvas.uuid );
 			var ctx = g_Engine.getContext();
 			var ctx1 = g_Engine.ctxMan.handleToObject(this._canvas.rdgeCtxHandle);
-			if (ctx1 != ctx)  console.log( "***** different contexts (2) *****" );
+			if (ctx1 != ctx)
+				console.log( "***** different contexts (2) *****" );
 			var aRenderer = ctx1.renderer;
 			var renderer = ctx.renderer;
-			if (renderer != aRenderer)  console.log( "***** DIFFERENT RENDERERS *****" );
+			if (renderer != aRenderer)
+			{
+				console.log( "***** DIFFERENT RENDERERS *****" );
+				renderer = aRenderer;
+			}
 				
 			if (renderer.unloadedTextureCount <= 0)
 			{
 				renderer.disableCulling();
+				//console.log( "GLWorld.draw " + renderer._world._worldCount );
 				this.myScene.render();
-				console.log( "render" );
 
 				if (this._firstRender)
 				{
@@ -389,7 +396,6 @@ function GLWorld( canvas, use3D )
 		rdgeStarted = true;
 
         this._canvas.rdgeid = this._canvas.uuid;
-            this._canvas.id = this._canvas.uuid;
 
 			g_Engine.registerCanvas(this._canvas, this);
 			RDGEStart( this._canvas );
@@ -508,16 +514,22 @@ GLWorld.prototype.addObject = function( obj )
 
 GLWorld.prototype.restartRenderLoop = function()
 {
-	console.log( "restartRenderLoop" );
+	//console.log( "restartRenderLoop" );
 
 	this._firstRender = true;
 	this._renderCount  = -1;
 	if (this._canvas.task)
 	{
 		if (this._allMapsLoaded)
+		{
+			//console.log( "starting task" );
 			this._canvas.task.start();
+		}
 		else
+		{
+			//console.log( "stopping task" );
 			this._canvas.task.stop();
+		}
 	}
 }
 
@@ -757,7 +769,10 @@ GLWorld.prototype.render = function()
 	}
 	else
 	{
-		this.draw();
+		console.log( "GLWorld.render, " + this._worldCount );
+		g_Engine.setContext( this._canvas.uuid );
+		//this.draw();
+		this.restartRenderLoop();
 	}
 }
 

@@ -210,8 +210,11 @@ function GLRectangle()
 		// get the world
 		var world = this.getWorld();
 		if (!world)  throw( "null world in buildBuffers" );
-
+		//console.log( "GLRectangle.buildBuffers " + world._worldCount );
 		if (!world._useWebGL)  return;
+		
+		// make sure RDGE has the correct context
+		g_Engine.setContext( world.getCanvas().uuid );
 
 		// create the gl buffer
 		var gl = world.getGLContext();
@@ -284,6 +287,7 @@ function GLRectangle()
 		xFill -= strokeSize;
 		yFill -= strokeSize;
 		var fillMaterial = this.makeFillMaterial();
+		//console.log( "fillMaterial: " + fillMaterial.getName() );
 		var fillPrim = this.createFill([x,y],  2*xFill,  2*yFill,  tlRadius, blRadius, brRadius, trRadius, fillMaterial);
         this._primArray.push( fillPrim );
 		this._materialNodeArray.push( fillMaterial.getMaterialNode() );

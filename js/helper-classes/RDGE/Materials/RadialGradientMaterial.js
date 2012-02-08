@@ -264,7 +264,6 @@ var radialGradientMaterialDef =
 						'u_colorStop2':		{ 'type' : 'float' },									
 						'u_colorStop3':		{ 'type' : 'float' },									
 						'u_colorStop4':		{ 'type' : 'float' },									
-						'u_cos_sin_angle' : { 'type' : 'vec2' }
 						//'u_colorCount':		{'type' : 'int' }
 				},
 

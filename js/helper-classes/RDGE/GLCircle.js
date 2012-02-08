@@ -133,6 +133,9 @@ function GLCircle()
         if (!world)  throw( "null world in buildBuffers" );
 
 		if (!world._useWebGL)  return;
+		
+		// make sure RDGE has the correct context
+		g_Engine.setContext( world.getCanvas().uuid );
 
          // create the gl buffer
         var gl = world.getGLContext();
