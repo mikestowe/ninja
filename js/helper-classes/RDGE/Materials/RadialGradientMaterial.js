@@ -29,7 +29,7 @@ function RadialGradientMaterial()
 	this._colorStop2	= 0.3;
 	this._colorStop3	= 0.6;
 	this._colorStop4	= 1.0;
-	this._colorCount	= 4;
+//	this._colorCount	= 4;
 
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
@@ -98,14 +98,20 @@ function RadialGradientMaterial()
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
-	this._propNames			= ["color1",		"color2",		"angle"];
-	this._propLabels		= ["Start Color",	"Stop Color",	"Angle"];
-	this._propTypes			= ["color",			"color",		"float"];
-	this._propValues		= [];
+    this._propNames			= ["color1",		"color2",		"color3",		"color4",   "colorStop1",		"colorStop2",		"colorStop3",		        "colorStop4",       "angle"];
+    this._propLabels		= ["Color 1",	    "Color 2",	    "Color 3",	    "Color 4",  "Color Stop 1",	    "Color Stop 2",      "Color Stop 3",	        "Color Stop 4",     "Angle"];
+    this._propTypes			= ["color",			"color",		"color",        "color",    "float",            "float",             "float",                     "float",          "float"];
+    this._propValues		= [];
 
-	this._propValues[ this._propNames[0] ] = this._color1.slice(0);
-	this._propValues[ this._propNames[1] ] = this._color4.slice(0);
-	this._propValues[ this._propNames[2] ] = this._angle;
+    this._propValues[ this._propNames[0] ] = this._color1.slice(0);
+    this._propValues[ this._propNames[1] ] = this._color2.slice(0);
+    this._propValues[ this._propNames[2] ] = this._color3.slice(0);
+    this._propValues[ this._propNames[3] ] = this._color4.slice(0);
+
+    this._propValues[ this._propNames[4] ] = this._colorStop1;
+    this._propValues[ this._propNames[5] ] = this._colorStop2;
+    this._propValues[ this._propNames[6] ] = this._colorStop3;
+    this._propValues[ this._propNames[7] ] = this._colorStop4;
 
     this.setProperty = function( prop, value )
 	{
@@ -116,14 +122,20 @@ function RadialGradientMaterial()
 		if (!ok)
 			console.log( "invalid property in Radial Gradient Material:" + prop + " : " + value );
 
-		switch (prop)
-		{
-			case "color1":		this.setColor1( value );		break;
-			case "color2":		this.setColor2( value );		break;
-			case "angle":		this.setAngle( value );			break;
-		}
+        switch (prop)
+        {
+            case "color1":		    this.setColor1( value );		    break;
+            case "color2":		    this.setColor2( value );		    break;
+            case "color3":		    this.setColor3( value );		    break;
+            case "color4":		    this.setColor4( value );		    break;
+            case "colorStop1":		this.setColorStop1( value );		break;
+            case "colorStop2":		this.setColorStop2( value );		break;
+            case "colorStop3":		this.setColorStop3( value );		break;
+            case "colorStop4":		this.setColorStop4( value );		break;
+            case "angle":		    this.setAngle( value );			    break;
+        }
 
-		this.updateValuesInShader();
+		//this.updateValuesInShader();
 	}
     ///////////////////////////////////////////////////////////////////////
 
@@ -183,10 +195,15 @@ function RadialGradientMaterial()
 		var exportStr = "material: " + this.getShaderName() + "\n";
 		exportStr += "name: " + this.getName() + "\n";
 
-		exportStr += "innerCircleRadius: "	+ this.getInnerCircleRadius()			+ "\n";
-		exportStr += "mainCircleRadius: "	+ this.getMainCircleRadius()			+ "\n";
-		exportStr += "innerCircleCenter: "	+ String(this.getInnerCircleCenter())	+ "\n";
-		exportStr += "mainCircleCenter: "	+ String(this.getMainCircleCenter())	+ "\n";
+        exportStr += "color1: "		+ this.getColor1()	+ "\n";
+        exportStr += "color2: "		+ this.getColor2()	+ "\n";
+        exportStr += "color3: "		+ this.getColor3()	+ "\n";
+        exportStr += "color4: "		+ this.getColor4()	+ "\n";
+
+        exportStr += "colorStop1: "		+ this.getColorStop1()	+ "\n";
+        exportStr += "colorStop2: "		+ this.getColorStop2()	+ "\n";
+        exportStr += "colorStop3: "		+ this.getColorStop3()	+ "\n";
+        exportStr += "colorStop4: "		+ this.getColorStop4()	+ "\n";
 		
 		// every material needs to terminate like this
 		exportStr += "endMaterial\n";
@@ -204,16 +221,23 @@ function RadialGradientMaterial()
 		var rtnStr;
 		try
 		{
-			var innerCircleRadius	= Number( pu.nextValue("innerCircleRadius: ") ),
-				mainCircleRadius	= Number( pu.nextValue("mainCircleRadius: ") ),
-				innerCircleCenter	= eval( "[" + pu.nextValue( "innerCircleCenter: " )		+ "]" );
-				mainCircleCenter	= eval( "[" + pu.nextValue( "mainCircleCenter: " )		+ "]" );
+			var color1	= eval( "[" + pu.nextValue( "color1: " )	+ "]" ),
+                color2	= eval( "[" + pu.nextValue( "color2: " )		+ "]" ),
+                color3	= eval( "[" + pu.nextValue( "color3: " )		+ "]" ),
+                color4	= eval( "[" + pu.nextValue( "color4: " )		+ "]" ),
+                colorStop1	= Number(pu.nextValue( "colorStop1: " )),
+                colorStop2	= Number(pu.nextValue( "colorStop2: " )),
+                colorStop3	= Number(pu.nextValue( "colorStop3: " )),
+                colorStop4	= Number(pu.nextValue( "colorStop4: " ));
 
-			this._innerCircleRadius		= innerCircleRadius;
-			this._mainCircleRadius		= mainCircleRadius;
-			this._innerCircleCenter		= innerCircleCenter;
-			this.mainCircleCenter		= mainCircleCenter;
-			this.updateValuesInShader();
+            this.setProperty( "color1", color1 );
+            this.setProperty( "color2", color2 );
+            this.setProperty( "color3", color3 );
+            this.setProperty( "color4", color4 );
+            this.setProperty( "colorStop1", colorStop1 );
+            this.setProperty( "colorStop2", colorStop2 );
+            this.setProperty( "colorStop3", colorStop3 );
+            this.setProperty( "colorStop4", colorStop4 );
 
 			var endKey = "endMaterial\n";
 			var index = importStr.indexOf( endKey );
@@ -263,7 +287,7 @@ var radialGradientMaterialDef =
 						'u_colorStop1':		{ 'type' : 'float' },									
 						'u_colorStop2':		{ 'type' : 'float' },									
 						'u_colorStop3':		{ 'type' : 'float' },									
-						'u_colorStop4':		{ 'type' : 'float' },									
+						'u_colorStop4':		{ 'type' : 'float' }
 						//'u_colorCount':		{'type' : 'int' }
 				},
 

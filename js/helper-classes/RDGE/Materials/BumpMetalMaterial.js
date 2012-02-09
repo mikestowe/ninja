@@ -29,24 +29,24 @@ function BumpMetalMaterial()
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
     ///////////////////////////////////////////////////////////////////////
-	this.getName			= function()		{	return this._name;								}
-	this.getShaderName		= function()		{	return this._shaderName;						}
+	this.getName			= function()		{	return this._name;								};
+	this.getShaderName		= function()		{	return this._shaderName;						};
 
-	this.getLightDiff		= function()		{	return this._lightDiff;							}
+	this.getLightDiff		= function()		{	return this._lightDiff;							};
 	this.setLightDiff		= function(ld)		{	this._lightDiff = ld;
 													if (this._shader && this._shader.default)
-														this._shader.default.u_light0Diff.set( ld );	}
+														this._shader.default.u_light0Diff.set( ld );	};
 
-	this.getDiffuseTexture	= function()		{  return this._propValues[this._propNames[1]] ? this._propValues[this._propNames[1]].slice() : null	}
-	this.setDiffuseTexture	= function(m)		{  this._propValues[this._propNames[1]] = m ? m.slice(0) : null;  this.updateTexture(1);  	}	
+	this.getDiffuseTexture	= function()		{  return this._propValues[this._propNames[1]] ? this._propValues[this._propNames[1]].slice() : null	};
+	this.setDiffuseTexture	= function(m)		{  this._propValues[this._propNames[1]] = m ? m.slice(0) : null;  this.updateTexture(1);  	};
 
-	this.getNormalTexture	= function()		{  return this._propValues[this._propNames[2]] ? this._propValues[this._propNames[2]].slice() : null	}
-	this.setNormalTexture	= function(m)		{  this._propValues[this._propNames[2]] = m ? m.slice(0) : null;  this.updateTexture(2);  	}	
+	this.getNormalTexture	= function()		{  return this._propValues[this._propNames[2]] ? this._propValues[this._propNames[2]].slice() : null	};
+	this.setNormalTexture	= function(m)		{  this._propValues[this._propNames[2]] = m ? m.slice(0) : null;  this.updateTexture(2);  	};
 
-	this.getSpecularTexture	= function()		{  return this._propValues[this._propNames[3]] ? this._propValues[this._propNames[3]].slice() : null	}
-	this.setSpecularTexture	= function(m)		{  this._propValues[this._propNames[3]] = m ? m.slice(0) : null;  this.updateTexture(3);  	}	
+	this.getSpecularTexture	= function()		{  return this._propValues[this._propNames[3]] ? this._propValues[this._propNames[3]].slice() : null	};
+	this.setSpecularTexture	= function(m)		{  this._propValues[this._propNames[3]] = m ? m.slice(0) : null;  this.updateTexture(3);  	};
 
-	this.isAnimated			= function()		{  return true;					}
+	this.isAnimated			= function()		{  return true;					};
 
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
@@ -86,13 +86,13 @@ function BumpMetalMaterial()
 				console.log( "invalid property to Bump Metal Material: " + prop + ", value: " + value );
 				break;
 		}
-	}
+	};
 
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
 	// duplcate method requirde
-	this.dup = function()	{  return new BumpMetalMaterial();	} 
+	this.dup = function()	{  return new BumpMetalMaterial();	};
 
 	this.init = function( world )
 	{
@@ -113,7 +113,7 @@ function BumpMetalMaterial()
 		this.updateTexture(1);
         this.updateTexture(2);
         this.updateTexture(3);
-	}
+	};
 
 	this.updateTexture = function( index )
 	{
@@ -140,7 +140,7 @@ function BumpMetalMaterial()
 				}
 			}
 		}
-	}
+	};
 
 	this.export = function()
 	{
@@ -157,7 +157,7 @@ function BumpMetalMaterial()
 		exportStr += "endMaterial\n";
 
 		return exportStr;
-	}
+	};
 
 	this.import = function( importStr )
 	{
@@ -190,7 +190,7 @@ function BumpMetalMaterial()
 		}
 		
 		return rtnStr;
-	}
+	};
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -237,7 +237,7 @@ bumpMetalShaderDef =
                 float alpha1 = max(0.0, 1.0 - ( (light1.x*light1.x)/range + (light1.y*light1.y)/range + (light1.z*light1.z)/range));\
                 float alpha2 = max(0.0, 1.0 - ( (light2.x*light2.x)/range + (light2.y*light2.y)/range + (light2.z*light2.z)/range));\
                 gl_FragColor = vec4((u_light2Diff*alpha2 + u_light1Diff*alpha1).rgb, 1.0);\
-            }",
+            }"
 	},
 	'techniques':
 	{ 
@@ -251,7 +251,7 @@ bumpMetalShaderDef =
 				{
 					'vert'  :   { 'type' : 'vec3' },
 					'normal' :  { 'type' : 'vec3' },
-					'texcoord'  :   { 'type' : 'vec2' },
+					'texcoord'  :   { 'type' : 'vec2' }
 				},
 				// parameters
 				'params' : 
@@ -260,7 +260,7 @@ bumpMetalShaderDef =
 					//'u_matDiffuse' : { 'type' : 'vec4' }
 					'u_colMap': { 'type' : 'tex2d' },
 					'u_normalMap': { 'type' : 'tex2d' },
-					'u_glowMap': { 'type' : 'tex2d' },
+					'u_glowMap': { 'type' : 'tex2d' }
 				},
 
                 // render states
@@ -268,7 +268,7 @@ bumpMetalShaderDef =
                     {
                     'depthEnable' : true,
                     'offset':[1.0, 0.1]
-                    },
+                    }
 			},
             {   // light pass
                 'vshader' : 'dirLightVShader',
@@ -277,7 +277,7 @@ bumpMetalShaderDef =
                 'attributes' :
                     {
                     'a_pos' :   { 'type' : 'vec3' },
-                    'a_nrm' :   { 'type' : 'vec3' },
+                    'a_nrm' :   { 'type' : 'vec3' }
                     },
                 // parameters
                 'params' : 
@@ -290,8 +290,8 @@ bumpMetalShaderDef =
                     'depthEnable' : true,
                     "blendEnable" : true,
                     "srcBlend" : "SRC_ALPHA",
-                    "dstBlend" : "DST_ALPHA",
-                    },
+                    "dstBlend" : "DST_ALPHA"
+                    }
             }	// light pass
 		]
 	}	// techniques

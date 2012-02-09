@@ -21,7 +21,7 @@ function UberMaterial()
     ///////////////////////////////////////////////////////////////////////
 	this._name = "UberMaterial";
 	this._shaderName = "uber";
-	this.getShaderName = function()	{  return this._shaderName;  }
+	this.getShaderName = function()	{  return this._shaderName;  };
 
 	// set some default values
 	this._ambientColor  = [ 0.0, 0.0, 0.0, 1.0 ];
@@ -99,7 +99,7 @@ function UberMaterial()
 					break;
 			}
 		}
-	}
+	};
     ///////////////////////////////////////////////////////////////////////
 
 	// define the 4 lights
@@ -190,7 +190,7 @@ function UberMaterial()
 			var technique = material.shaderProgram.defaultTechnique;    
 			technique.u_ambientColor.set(this._ambientColor);
 		}
-	}
+	};
 
 	this.updateDiffuseColor = function()
 	{
@@ -202,7 +202,7 @@ function UberMaterial()
 			var technique = material.shaderProgram.defaultTechnique;    
 			technique.u_diffuseColor.set(this._diffuseColor);
 		}
-	}
+	};
 
 	this.updateSpecularColor = function( value )
 	{
@@ -214,7 +214,7 @@ function UberMaterial()
 			var technique = material.shaderProgram.defaultTechnique;    
 			technique.u_specularColor.set(this._specularColor);
 		}
-	}
+	};
 
 	this.updateSpecularPower = function( value)
 	{
@@ -226,7 +226,7 @@ function UberMaterial()
 			var technique = material.shaderProgram.defaultTechnique;    
 			technique.u_specularPower.set([this._specularPower]);
 		}
-	}
+	};
 
 	this.updateEnvironmentAmount = function(value)
 	{
@@ -238,7 +238,7 @@ function UberMaterial()
 			var technique = material.shaderProgram.defaultTechnique;
 			technique.u_envReflection.set([this._environmentMapOb.envReflection]);
 		}
-	}
+	};
 
 	this.updateEnvironmentMap = function()
 	{
@@ -276,7 +276,7 @@ function UberMaterial()
 				}
 			}
 		}
-	}
+	};
 
 	this.updateDiffuseMap = function(value)
 	{
@@ -314,7 +314,7 @@ function UberMaterial()
 				}
 			}
 		}
-	}
+	};
 
 	this.updateSpecularMap = function()
 	{
@@ -352,7 +352,7 @@ function UberMaterial()
 				}
 			}
 		}
-	}
+	};
 
 	this.updateNormalMap = function(value)
 	{
@@ -390,7 +390,7 @@ function UberMaterial()
 				}
 			}
 		}
-	}
+	};
 	
 	// duplcate method requirde
 	this.dup = function()
@@ -413,7 +413,7 @@ function UberMaterial()
 			newMat.setProperty( propNames[i], propValues[i] );
 
 		return newMat;
-	} 
+	};
 
 	this.init = function( world )
 	{
@@ -426,7 +426,7 @@ function UberMaterial()
 		// set up the material node
 		this._materialNode = createMaterialNode("uberMaterial");
 		this._materialNode.setShader(this._shader);
-	}
+	};
 
 	this.buildUberShader = function(caps)
 	{
@@ -446,7 +446,7 @@ function UberMaterial()
 		{
 			preproc += '#define LIGHTING\n';
 			preproc += '#define SPECULAR\n';
-			for(i = 0; i < 4; ++i) {
+			for(var i = 0; i < 4; ++i) {
 				var light = caps.lighting['light' + i];
 				var t;
 				if (typeof light != 'undefined') {
@@ -507,7 +507,7 @@ function UberMaterial()
 		var fshader = preproc + uberFShader;
 
 		// build output jshader  
-		uberJShader = new jshader();
+		var uberJShader = new jshader();
 		uberJShader.def = {
 			'shaders': {
 				'defaultVShader': vshader,				
@@ -520,18 +520,18 @@ function UberMaterial()
 					'attributes' : {
 						'a_pos' : { 'type' : 'vec3' },
 						'a_normal' : { 'type' : 'vec3' },
-						'a_texcoord' : { 'type' : 'vec2' },
+						'a_texcoord' : { 'type' : 'vec2' }
 					},
 					'params' : paramBlock,
 					 'states' : {	
 						'depthEnable' : true,
 						'blendEnable' : false,
 						'culling' : true,
-						'cullFace' : "FRONT",
-					 },						 
+						'cullFace' : "FRONT"
+					 }
 				}]
 			}												
-		}
+		};
 		// initialize the jshader
 		try
 		{
@@ -584,7 +584,7 @@ function UberMaterial()
 		}
 		technique.u_uvMatrix.set(caps.uvTransform || mat4.identity());
 	
-		renderer = g_Engine.getContext().renderer;
+		var renderer = g_Engine.getContext().renderer;
 		if(this._useDiffuseMap) {
 			var tex = renderer.getTextureByName(caps.diffuseMap.texture, caps.diffuseMap.wrap, caps.diffuseMap.mips);
 			this.registerTexture( tex );
@@ -608,7 +608,7 @@ function UberMaterial()
 		}
 
 		return uberJShader;
-	}
+	};
 
 	this.rebuildShader = function()
 	{
@@ -667,7 +667,7 @@ function UberMaterial()
 		var material = this._materialNode;  
 		if (material)  
 			material.setShader( buildUbershader(this._ubershaderCaps) );
-	}
+	};
 }
 
 
