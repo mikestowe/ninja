@@ -16,7 +16,7 @@ var Montage = 		require("montage/core/core").Montage,
     Component = 	require("montage/ui/component").Component,
     Popup = 		require("js/components/popup.reel").Popup,
     CloudPopup = 	require("js/io/ui/cloudpopup.reel").CloudPopup,
-    ChromeApi =		require("js/io/system/chromeapi").ChromeApi;
+    ChromeApi =		require("js/io/system/chromeapi").ChromeApi,
     NinjaLibrary = 	require("js/io/system/ninjalibrary").NinjaLibrary;
 ////////////////////////////////////////////////////////////////////////
 //Exporting as Project I/O

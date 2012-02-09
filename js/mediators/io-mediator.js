@@ -7,21 +7,52 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 ////////////////////////////////////////////////////////////////////////
 //
 var Montage = 	require("montage/core/core").Montage,
+	Component = require("montage/ui/component").Component,
 	FileIo = 	require("js/io/system/fileio").FileIo,
 	ProjectIo = require("js/io/system/projectio").ProjectIo;
 ////////////////////////////////////////////////////////////////////////
 //
-exports.IoMediator = Montage.create(require("montage/ui/component").Component, {
+exports.IoMediator = Montage.create(Component, {
+	////////////////////////////////////////////////////////////////////
+    //
+	deserializedFromTemplate: {
+		enumerable: false,
+		value: function () {
+		}
+	},
+	////////////////////////////////////////////////////////////////////
+    //
+    fio: {
+    	enumerable: false,
+    	value: FileIo
+    },
 	////////////////////////////////////////////////////////////////////
     //
     fileNew: {
     	enumerable: false,
     	value: function (file, template, callback) {
     		//
+    		var xhr = new XMLHttpRequest();
+    		xhr.open("GET", template, false);
+            xhr.send();
+    		if (xhr.readyState === 4) {
+    			//
+    			console.log(this.fio.newFile({uri: file, contents: xhr.response}));
+    		} else {
+    			//Error
+    		}
+    		
+    		
+    		
+    		
+    		
+    		
 
-
-            var returnObj = null; //like {"uri": "/gfdg/gdf/dfg.js", "success": true,...}
+			//callback('win');
+            /*
+var returnObj = null; //like {"uri": "/gfdg/gdf/dfg.js", "success": true,...}
     		callback(returnObj);
+*/
     	}
     },
     ////////////////////////////////////////////////////////////////////
