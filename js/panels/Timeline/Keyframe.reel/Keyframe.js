@@ -133,6 +133,10 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
             this.application.ninja.timeline.playheadmarker.style.left = this.timelinePosition + "px";
             this.application.ninja.timeline.selectedKeyframes.push(this);
 
+            var currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
+            var currentMillisec = currentMillisecPerPixel * this.timelinePosition;
+            this.application.ninja.timeline.updateTimeText(currentMillisec);
+
             var currentTop = this.animatedProperties["top"] + "px";
             var currentLeft = this.animatedProperties["left"] + "px";
 

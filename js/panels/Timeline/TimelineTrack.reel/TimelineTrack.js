@@ -6,7 +6,7 @@ var defaultEventManager = require("montage/core/event/event-manager").defaultEve
 var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     hasTemplate:{
-        value: true
+        value:true
     },
 
     _trackID:{
@@ -18,83 +18,83 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     trackID:{
         serializable:true,
-        get:function(){
+        get:function () {
             return this._trackID;
         },
-        set:function(value){
+        set:function (value) {
             this._trackID = value;
             this.needsDraw = true;
         }
     },
-    
+
     // Are the various collapsers collapsed or not
-    _isMainCollapsed : {
-    	value: ""
+    _isMainCollapsed:{
+        value:""
     },
-    isMainCollapsed : {
-    	get: function() {
-    		return this._isMainCollapsed;
-    	},
-    	set: function(newVal) {
-    		if (newVal !== this._isMainCollapsed) {
-    			this._isMainCollapsed = newVal;
-    			this.needsDraw = true;
-    		}
-    		
-    	}
+    isMainCollapsed:{
+        get:function () {
+            return this._isMainCollapsed;
+        },
+        set:function (newVal) {
+            if (newVal !== this._isMainCollapsed) {
+                this._isMainCollapsed = newVal;
+                this.needsDraw = true;
+            }
+
+        }
     },
-    _isTransformCollapsed : {
-    	value: true
+    _isTransformCollapsed:{
+        value:true
     },
-    isTransformCollapsed : {
-    	get: function() {
-    		return this._isTransformCollapsed;
-    	},
-    	set: function(newVal) {
-    		if (newVal !== this._isTransformCollapsed) {
-    			this._isTransformCollapsed = newVal;
-    			this.needsDraw = true;
-    		}
-    	}
+    isTransformCollapsed:{
+        get:function () {
+            return this._isTransformCollapsed;
+        },
+        set:function (newVal) {
+            if (newVal !== this._isTransformCollapsed) {
+                this._isTransformCollapsed = newVal;
+                this.needsDraw = true;
+            }
+        }
     },
-    _isPositionCollapsed : {
-    	value: true
+    _isPositionCollapsed:{
+        value:true
     },
-    isPositionCollapsed : {
-    	get: function() {
-    		return this._isPositionCollapsed;
-    	},
-    	set: function(newVal) {
-    		if (newVal !== this._isPositionCollapsed) {
-    			this._isPositionCollapsed = newVal;
-    			this.needsDraw = true;
-    		}
-    	}
+    isPositionCollapsed:{
+        get:function () {
+            return this._isPositionCollapsed;
+        },
+        set:function (newVal) {
+            if (newVal !== this._isPositionCollapsed) {
+                this._isPositionCollapsed = newVal;
+                this.needsDraw = true;
+            }
+        }
     },
-    _isStyleCollapsed : {
-    	value: true
+    _isStyleCollapsed:{
+        value:true
     },
-    isStyleCollapsed : {
-    	get: function() {
-    		return this._isStyleCollapsed;
-    	},
-    	set: function(newVal) {
-    		if (newVal !== this._isStyleCollapsed) {
-    			this._isStyleCollapsed = newVal;
-    			this.needsDraw = true;
-    		}
-    	}
+    isStyleCollapsed:{
+        get:function () {
+            return this._isStyleCollapsed;
+        },
+        set:function (newVal) {
+            if (newVal !== this._isStyleCollapsed) {
+                this._isStyleCollapsed = newVal;
+                this.needsDraw = true;
+            }
+        }
     },
 
     _tweens:{
-    	serializable: true,
-		enumerable: true,
-	    value: []
+        serializable:true,
+        enumerable:true,
+        value:[]
     },
 
     tweens:{
-    	serializable: true,
-		enumerable: true,
+        serializable:true,
+        enumerable:true,
         get:function () {
             return this._spans;
         },
@@ -131,7 +131,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     },
 
     currentMillisecClicked:{
-        value: 0
+        value:0
     },
 
     isAnimated:{
@@ -151,47 +151,47 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     },
 
     ninjaStylesContoller:{
-        value: null
+        value:null
     },
 
-	_positionCollapser : {
-		value: null
-	},
-	_mainCollapser: {
-		value: null
-	},
-	_transformCollapser: {
-		value: null
-	},
-	_styleCollapser: {
-		value: null
-	},
-    
-    prepareForDraw: {
-        value: function() {
-        	this.init();
+    _positionCollapser:{
+        value:null
+    },
+    _mainCollapser:{
+        value:null
+    },
+    _transformCollapser:{
+        value:null
+    },
+    _styleCollapser:{
+        value:null
+    },
+
+    prepareForDraw:{
+        value:function () {
+            this.init();
             this.ninjaStylesContoller = this.application.ninja.stylesController;
             this.track_lane.addEventListener("click", this, false);
             this.keyFramePropertyData = new Array();
             //this.insertTween(0);
         }
     },
-    
-    draw: {
-    	value: function() {
-    		 if (this._mainCollapser.isCollapsed !== this.isMainCollapsed) {
-            	this._mainCollapser.toggle(false);
+
+    draw:{
+        value:function () {
+            if (this._mainCollapser.isCollapsed !== this.isMainCollapsed) {
+                this._mainCollapser.toggle(false);
             }
-    		 if (this._positionCollapser.isCollapsed !== this.isPositionCollapsed) {
-            	this._positionCollapser.toggle(false);
+            if (this._positionCollapser.isCollapsed !== this.isPositionCollapsed) {
+                this._positionCollapser.toggle(false);
             }
-    		 if (this._transformCollapser.isCollapsed !== this.isTransformCollapsed) {
-            	this._transformCollapser.toggle(false);
+            if (this._transformCollapser.isCollapsed !== this.isTransformCollapsed) {
+                this._transformCollapser.toggle(false);
             }
-    		 if (this._styleCollapser.isCollapsed !== this.isStyleCollapsed) {
-            	this._styleCollapser.toggle(false);
+            if (this._styleCollapser.isCollapsed !== this.isStyleCollapsed) {
+                this._styleCollapser.toggle(false);
             }
-    	}
+        }
     },
 
     handleClick:{
@@ -199,23 +199,22 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             // TEMP - if the SHIFT key is down, add a new keyframe or split an existing span
             // This needs to move to a keyboard shortcut that is TBD
             if (ev.shiftKey) {
-                if(this.application.ninja.timeline.arrLayers[this.trackID - 1].element.length == 1){
+                if (this.application.ninja.timeline.arrLayers[this.trackID - 1].element.length == 1) {
                     if (this.tweens.length < 1) {
-                        this.addAnimationRuleToElement();
                         this.insertTween(0);
+                        this.addAnimationRuleToElement();
                     }
                     this.handleNewTween(ev);
                 } else {
-                    alert("There much be only one element in an animated layer.")
+                    alert("There must be exactly one element in an animated layer.")
                 }
-
             }
         }
     },
 
     handleNewTween:{
-        value: function(ev){
-            if(ev.offsetX > this.tweens[this.tweens.length-1].keyFramePosition){
+        value:function (ev) {
+            if (ev.offsetX > this.tweens[this.tweens.length - 1].keyFramePosition) {
                 this.insertTween(ev.offsetX);
             } else {
                 this.splitTween(ev);
@@ -234,7 +233,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.trackDuration = currentMillisec;
 
             var newTween = {};
-            if (this.tweens.length < 1) {
+            if (clickPos == 0) {
                 newTween.spanWidth = 0;
                 newTween.keyFramePosition = 0;
                 newTween.keyFrameMillisec = 0;
@@ -243,7 +242,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 newTween.timelineTrack = this;
                 this.tweens.push(newTween);
             } else {
-                newTween.spanWidth = clickPos - this.tweens[this.tweens.length-1].keyFramePosition;
+                newTween.spanWidth = clickPos - this.tweens[this.tweens.length - 1].keyFramePosition;
                 newTween.keyFramePosition = clickPos;
                 newTween.keyFrameMillisec = currentMillisec;
                 newTween.keyframeID = this.nextKeyframe;
@@ -257,7 +256,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 this.keyFramePropertyData[this.nextKeyframe] = animatedProperties;
 
                 // update the animation duration
-                var animationDuration = Math.round(this.trackDuration/1000) + "s";
+                var animationDuration = Math.round(this.trackDuration / 1000) + "s";
                 this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-duration", animationDuration);
 
                 this.nextKeyframe += 1;
@@ -265,14 +264,14 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         }
     },
 
-    splitTween: {
-        value: function(ev){
+    splitTween:{
+        value:function (ev) {
             console.log("splitting tween at span offsetX: " + ev.offsetX);
         }
     },
 
     addAnimationRuleToElement:{
-        value: function(){
+        value:function () {
             var theElement = this.application.ninja.timeline.arrLayers[this.trackID - 1].element[0];
             this.animatedElement = theElement;
 
@@ -281,14 +280,16 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             initAnimatedProperties["left"] = theElement.offsetLeft;
             this.keyFramePropertyData[0] = initAnimatedProperties;
 
-            var animationDuration = Math.round(this.trackDuration/1000) + "s";
-            this.animationName = "testAnimation" + this.trackID;
+            var animationDuration = Math.round(this.trackDuration / 1000) + "s";
+            //console.log(this.application.ninja.timeline.arrLayers[this.trackID - 1].element[0]);
+            //console.log(this.trackID);
+            this.animationName = this.application.ninja.timeline.arrLayers[this.trackID - 1].element[0].className + this.trackID;
 
             this.ninjaStylesContoller.setElementStyle(theElement, "-webkit-animation-name", this.animationName);
             this.ninjaStylesContoller.setElementStyle(theElement, "-webkit-animation-duration", animationDuration);
             this.ninjaStylesContoller.setElementStyle(theElement, "-webkit-animation-iteration-count", "infinite");
 
-            var initRule = "@-webkit-keyframes testAnim { 0% {top: "+theElement.offsetTop+"px; left: "+theElement.offsetLeft+"px;} 100% {top: "+theElement.offsetTop+"px; left: "+theElement.offsetLeft+"px;} }";
+            var initRule = "@-webkit-keyframes " + this.animationName + " { 0% {top: " + theElement.offsetTop + "px; left: " + theElement.offsetLeft + "px;} 100% {top: " + theElement.offsetTop + "px; left: " + theElement.offsetLeft + "px;} }";
             this.currentKeyframeRule = this.ninjaStylesContoller.addRule(initRule);
 
             this.isAnimated = true;
@@ -296,16 +297,16 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     },
 
     updateKeyframeRule:{
-        value:function(){
+        value:function () {
             // delete the current rule
             this.ninjaStylesContoller.deleteRule(this.currentKeyframeRule);
 
             // build the new keyframe string
             var keyframeString = "@-webkit-keyframes " + this.animationName + " {";
 
-            for(var i=0;i < this.keyFramePropertyData.length;i++){
+            for (var i = 0; i < this.keyFramePropertyData.length; i++) {
 
-                var keyframePercent = Math.round((this.tweens[i].keyFrameMillisec/this.trackDuration)*100) + "%";
+                var keyframePercent = Math.round((this.tweens[i].keyFrameMillisec / this.trackDuration) * 100) + "%";
 
                 var keyframePropertyString = " " + keyframePercent + " {";
                 keyframePropertyString += "top: " + this.keyFramePropertyData[i]["top"] + "px;";
@@ -321,106 +322,100 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     },
 
     // Init and event handler for layer expand/collapse
-    init: {
-    	value: function() {
-    		var that = this;
-    		
-    		this.label = this.element.querySelector(".label-main");
-    		this.myContent = this.element.querySelector(".content-main");
-    		this.labelPosition = this.element.querySelector(".label-position");
-    		this.contentPosition = this.element.querySelector(".content-position");
-    		this.labelTransform = this.element.querySelector(".label-transform");
-    		this.contentTransform = this.element.querySelector(".content-transform");
-    		this.labelStyles = this.element.querySelector(".label-styles");
-    		this.contentStyles = this.element.querySelector(".content-styles");
+    init:{
+        value:function () {
+            var that = this;
 
-    		this._mainCollapser = Collapser.create();
-    		this._mainCollapser.clicker = this.label;
-    		this._mainCollapser.myContent = this.myContent;
-    		this._mainCollapser.contentHeight = 60;
-    		this._mainCollapser.isLabelClickable = false;
-    		this._mainCollapser.element = this.element;
-    		this._mainCollapser.isCollapsed = this.isMainCollapsed;
-    		this._mainCollapser.isAnimated = true;
-            this._mainCollapser.labelClickEvent = function() {
-				that.isMainCollapsed = that._mainCollapser.isCollapsed;
-            }
-    		this._mainCollapser.needsDraw = true;
+            this.label = this.element.querySelector(".label-main");
+            this.myContent = this.element.querySelector(".content-main");
+            this.labelPosition = this.element.querySelector(".label-position");
+            this.contentPosition = this.element.querySelector(".content-position");
+            this.labelTransform = this.element.querySelector(".label-transform");
+            this.contentTransform = this.element.querySelector(".content-transform");
+            this.labelStyles = this.element.querySelector(".label-styles");
+            this.contentStyles = this.element.querySelector(".content-styles");
 
-    		this._positionCollapser = Collapser.create();
-    		this._positionCollapser.clicker = this.labelPosition;
-    		this._positionCollapser.myContent = this.contentPosition;
-    		this._positionCollapser.contentHeight = 60;
-    		this._positionCollapser.isLabelClickable = true;
-    		this._positionCollapser.element = this.element;
-    		this._positionCollapser.isCollapsed = this.isPositionCollapsed;
-    		this._positionCollapser.isAnimated = true;
-            this._positionCollapser.labelClickEvent = function() {
-				that.isPositionCollapsed = that._positionCollapser.isCollapsed;
+            this._mainCollapser = Collapser.create();
+            this._mainCollapser.clicker = this.label;
+            this._mainCollapser.myContent = this.myContent;
+            this._mainCollapser.contentHeight = 60;
+            this._mainCollapser.isLabelClickable = false;
+            this._mainCollapser.element = this.element;
+            this._mainCollapser.isCollapsed = this.isMainCollapsed;
+            this._mainCollapser.isAnimated = true;
+            this._mainCollapser.labelClickEvent = function () {
+                that.isMainCollapsed = that._mainCollapser.isCollapsed;
             }
-    		this._positionCollapser.needsDraw = true;
-    		
-    		this._transformCollapser = Collapser.create();
-    		this._transformCollapser.clicker = this.labelTransform;
-    		this._transformCollapser.myContent = this.contentTransform;
-    		this._transformCollapser.contentHeight = 100;
-    		this._transformCollapser.isLabelClickable = false;
-    		this._transformCollapser.element = this.element;
-    		this._transformCollapser.isCollapsed = this.isTransformCollapsed;
-    		this._transformCollapser.isAnimated = true;
-            this._transformCollapser.labelClickEvent = function() {
-				that.isTransformCollapsed = that._transformCollapser.isCollapsed;
-            }
-    		this._transformCollapser.needsDraw = true;
- 		
-    		this._styleCollapser = Collapser.create();
-    		this._styleCollapser.clicker = this.labelStyles;
-    		this._styleCollapser.myContent = this.contentStyles;
-    		this._styleCollapser.contentHeight = 60;
-    		this._styleCollapser.isLabelClickable = false;
-    		this._styleCollapser.element = this.element;
-    		this._styleCollapser.isCollapsed = this.isStyleCollapsed;
-    		this._styleCollapser.isAnimated = true;
-            this._styleCollapser.labelClickEvent = function() {
-				that.isStyleCollapsed = that._styleCollapser.isCollapsed;
-            }
-    		this._styleCollapser.needsDraw = true;
+            this._mainCollapser.needsDraw = true;
 
-			// Register event handler for layer events.
-			var that = this;
-			defaultEventManager.addEventListener("layerEvent", this, false);
-    		
-    	}
+            this._positionCollapser = Collapser.create();
+            this._positionCollapser.clicker = this.labelPosition;
+            this._positionCollapser.myContent = this.contentPosition;
+            this._positionCollapser.contentHeight = 60;
+            this._positionCollapser.isLabelClickable = true;
+            this._positionCollapser.element = this.element;
+            this._positionCollapser.isCollapsed = this.isPositionCollapsed;
+            this._positionCollapser.isAnimated = true;
+            this._positionCollapser.labelClickEvent = function () {
+                that.isPositionCollapsed = that._positionCollapser.isCollapsed;
+            }
+            this._positionCollapser.needsDraw = true;
+
+            this._transformCollapser = Collapser.create();
+            this._transformCollapser.clicker = this.labelTransform;
+            this._transformCollapser.myContent = this.contentTransform;
+            this._transformCollapser.contentHeight = 100;
+            this._transformCollapser.isLabelClickable = false;
+            this._transformCollapser.element = this.element;
+            this._transformCollapser.isCollapsed = this.isTransformCollapsed;
+            this._transformCollapser.isAnimated = true;
+            this._transformCollapser.labelClickEvent = function () {
+                that.isTransformCollapsed = that._transformCollapser.isCollapsed;
+            }
+            this._transformCollapser.needsDraw = true;
+
+            this._styleCollapser = Collapser.create();
+            this._styleCollapser.clicker = this.labelStyles;
+            this._styleCollapser.myContent = this.contentStyles;
+            this._styleCollapser.contentHeight = 60;
+            this._styleCollapser.isLabelClickable = false;
+            this._styleCollapser.element = this.element;
+            this._styleCollapser.isCollapsed = this.isStyleCollapsed;
+            this._styleCollapser.isAnimated = true;
+            this._styleCollapser.labelClickEvent = function () {
+                that.isStyleCollapsed = that._styleCollapser.isCollapsed;
+            }
+            this._styleCollapser.needsDraw = true;
+
+            // Register event handler for layer events.
+            var that = this;
+            defaultEventManager.addEventListener("layerEvent", this, false);
+
+        }
     },
-	handleLayerEvent : {
-		value: function(layerEvent) {
 
-			if (layerEvent.layerID !== this.trackID) {
-				return;
-			}
+    handleLayerEvent:{
+        value:function (layerEvent) {
 
-			if (layerEvent.layerEventType === "labelClick") {
-				if (layerEvent.layerEventLocale === "content-main") {
-					this._mainCollapser.bypassAnimation = layerEvent.bypassAnimation;
-					this._mainCollapser.toggle();
-				} else if (layerEvent.layerEventLocale === "content-position") {
-					this._positionCollapser.bypassAnimation = layerEvent.bypassAnimation;
-					this._positionCollapser.handleCollapserLabelClick();
-				} else if (layerEvent.layerEventLocale === "content-transform") {
-					this._transformCollapser.bypassAnimation = layerEvent.bypassAnimation;
-					this._transformCollapser.handleCollapserLabelClick();
-				} else if (layerEvent.layerEventLocale === "content-style") {
-					this._styleCollapser.bypassAnimation = layerEvent.bypassAnimation;
-					this._styleCollapser.handleCollapserLabelClick();
-				}
-			}
-			/*
-			if (layerEvent.layerEventType === "newStyle") {
-				var newDiv = document.createElement("div");
-				newDiv.classList.add("timeline-track");
-				this.contentStyles.appendChild(newDiv);
-			}
-			*/
-		}
-	}
+            if (layerEvent.layerID !== this.trackID) {
+                return;
+            }
+
+            if (layerEvent.layerEventType === "labelClick") {
+                if (layerEvent.layerEventLocale === "content-main") {
+                    this._mainCollapser.bypassAnimation = layerEvent.bypassAnimation;
+                    this._mainCollapser.toggle();
+                } else if (layerEvent.layerEventLocale === "content-position") {
+                    this._positionCollapser.bypassAnimation = layerEvent.bypassAnimation;
+                    this._positionCollapser.handleCollapserLabelClick();
+                } else if (layerEvent.layerEventLocale === "content-transform") {
+                    this._transformCollapser.bypassAnimation = layerEvent.bypassAnimation;
+                    this._transformCollapser.handleCollapserLabelClick();
+                } else if (layerEvent.layerEventLocale === "content-style") {
+                    this._styleCollapser.bypassAnimation = layerEvent.bypassAnimation;
+                    this._styleCollapser.handleCollapserLabelClick();
+                }
+            }
+        }
+    }
 });
