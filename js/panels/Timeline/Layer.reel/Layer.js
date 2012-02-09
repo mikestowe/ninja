@@ -5,6 +5,7 @@ var Hintable = require("js/components/hintable.reel").Hintable;
 var LayerStyle = require("js/panels/Timeline/Style.reel").LayerStyle;
 var DynamicText = require("montage/ui/dynamic-text.reel").DynamicText;
 var defaultEventManager = require("montage/core/event/event-manager").defaultEventManager;
+var nj = require("js/lib/NJUtils").NJUtils;
 
 var Layer = exports.Layer = Montage.create(Component, {
 
@@ -100,6 +101,8 @@ var Layer = exports.Layer = Montage.create(Component, {
             this._layerID = value;
         }
     },
+    
+    /* isSelected: whether or not the layer is currently selected. */
     _isSelected:{
         value: false,
         writable: true,
@@ -115,14 +118,8 @@ var Layer = exports.Layer = Montage.create(Component, {
         	if (value !== this._isSelected) {
         		// Only concerned about different values
         		if (value === false) {
-        			// Deselect all of the styles
-        			var i = 0, arrLayerStylesLength = this.arrLayerStyles.length;
-        			if (arrLayerStylesLength > 0) {
-	        			for (i = 0; i < arrLayerStylesLength; i++) {
-	        				this.arrLayerStyles[i].isSelected = false;
-	        			}
-	        			this.styleRepetition.selectedIndexes = null;
-        			}
+        			// If changing from false to true, we need to deselect any associated styles
+        			this.selectStyle(false);
         		}
         		this._isSelected = value;
         		this.needsDraw = true;
@@ -130,6 +127,23 @@ var Layer = exports.Layer = Montage.create(Component, {
             
         }
     },
+    
+    /* isActive:  Whether or not the user is actively clicking within the layer; used to communicate state with
+     * TimelinePanel.
+     */
+    _isActive: {
+    	value: false
+    },
+    isActive: {
+    	get: function() {
+    		return this._isActive;
+    	},
+    	set: function(newVal) {
+    		this._isActive = newVal;
+    	}
+    },
+    
+    
     _isAnimated:{
         value: false,
         writable: true,
@@ -328,6 +342,10 @@ var Layer = exports.Layer = Montage.create(Component, {
             
             this.buttonDeleteStyle.identifier = "deleteStyle";
             this.buttonDeleteStyle.addEventListener("click", this, false);
+            
+            // Add mousedown listener to set isActive
+            this.element.addEventListener("mousedown", this, false);
+            //this.element.addEventListener("click", this, false);
 
         }
     },
@@ -408,7 +426,9 @@ var Layer = exports.Layer = Montage.create(Component, {
 				// newStyle = LayerStyle.create(),
 				newStyle = {},
 				newEvent = document.createEvent("CustomEvent");
-				
+			
+			this.isStyleCollapsed = false;
+			
 			newEvent.initCustomEvent("layerEvent", false, true);
 			newEvent.layerEventLocale = "styles";
 			newEvent.layerEventType = "newStyle";
@@ -420,17 +440,19 @@ var Layer = exports.Layer = Montage.create(Component, {
 			newStyle.editorProperty = "";
 			newStyle.editorValue = "";
 			newStyle.ruleTweener = false;
-			newStyle.isSelected = true;
-			
+			newStyle.isSelected = false;
+
 			if (!!this.styleRepetition.selectedIndexes) {
 				mySelection = this.styleRepetition.selectedIndexes[0];
 				this.arrLayerStyles.splice(mySelection, 0, newStyle);
-				this.styleRepetition.selectedIndexes = [mySelection];
+				//this.styleRepetition.selectedIndexes = [mySelection];
+				this.selectStyle(mySelection);
 			} else {
 				newLength = this.arrLayerStyles.length;
 				this.arrLayerStyles.push(newStyle);
 				mySelection = this.arrLayerStyles.length;
-				this.styleRepetition.selectedIndexes = [mySelection-1];
+				// this.styleRepetition.selectedIndexes = [mySelection-1];
+				this.selectStyle(mySelection-1);
 			}
 			
 			// Set up the event info and dispatch the event
@@ -467,6 +489,49 @@ var Layer = exports.Layer = Montage.create(Component, {
 			}
 		}
 	},
+	selectStyle : {
+		value: function(styleIndex) {
+
+    		// Select a style based on its index.
+    		// use layerIndex = false to deselect all styles.
+    		var i = 0,
+    			arrLayerStylesLength = this.arrLayerStyles.length;
+
+    		// First, update this.arrStyles[].isSelected
+    		for (i = 0; i < arrLayerStylesLength; i++) {
+    			if (i === styleIndex) {
+    				this.arrLayerStyles[i].isSelected = true;
+    			} else {
+    				this.arrLayerStyles[i].isSelected = false;
+    			}
+    		}
+    		
+    		// Next, update this.styleRepetition.selectedIndexes.
+    		if (styleIndex !== false) {
+    			this.styleRepetition.selectedIndexes = [styleIndex];
+    		} else {
+    			this.styleRepetition.selectedIndexes = null;
+    		}
+			
+		}
+	},
+    getActiveStyleIndex : {
+    	value: function() {
+    		// Searches through the styles and looks for one that has
+    		// set its isActive flag to true.
+    		var i = 0, 
+    			returnVal = false,
+    			arrLayerStylesLength = this.arrLayerStyles.length;
+    		
+    		for (i = 0; i < arrLayerStylesLength; i++) {
+    			if (this.arrLayerStyles[i].isActive === true) {
+    				returnVal = i;
+    				this.arrLayerStyles[i].isActive = false;
+    			}
+    		}
+    		return returnVal;
+    	}
+    },
 	/* End: Controllers */
     
 	/* Begin: Event handlers */
@@ -496,6 +561,33 @@ var Layer = exports.Layer = Montage.create(Component, {
 		value: function(event) {
 			this.layerName = this.dynamicLayerName.value;
 			this.needsDraw = true;
+		}
+	},
+	handleMousedown: {
+		value: function(event) {
+			this.isActive = true;
+			// Check ALL THE CLICKS
+			// Are they in a particular style? If so, we need to select that style and
+			// deselect the others.
+			var ptrParent = nj.queryParentSelector(event.target, ".content-style");
+			if (ptrParent !== false) {
+				// Why yes, the click was within a layer.  But which one?
+				var myIndex = this.getActiveStyleIndex();
+				this.selectStyle(myIndex);
+			}
+		}
+	},
+	handleLayerClick : {
+		value: function(event) {
+			// Check ALL THE CLICKS
+			// Are they in a particular style? If so, we need to select that style and
+			// deselect the others.
+			var ptrParent = nj.queryParentSelector(event.target, ".content-style");
+			if (ptrParent !== false) {
+				// Why yes, the click was within a layer.  But which one?
+				var myIndex = this.getActiveStyleIndex();
+				this.selectStyle(myIndex);
+			}
 		}
 	},
 	/* End: Event handlers */

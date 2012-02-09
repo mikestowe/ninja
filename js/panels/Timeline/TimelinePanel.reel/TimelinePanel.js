@@ -184,7 +184,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     updateLayerScroll:{
         value:function(){
-        	console.log(this.layout_tracks.scrollLeft)
             this.user_layers.scrollTop = this.layout_tracks.scrollTop;
             this.layout_markers.scrollLeft = this.layout_tracks.scrollLeft;
         }
@@ -257,8 +256,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 			var ptrParent = nj.queryParentSelector(event.target, ".container-layer");
 			if (ptrParent !== false) {
 				// Why yes, the click was within a layer.  But which one?
-				var strLabel = ptrParent.querySelector(".label-layer .collapsible-label").innerText,
-					myIndex = this.getLayerIndexByName(strLabel);
+				var myIndex = this.getActiveLayerIndex();
 				this.selectLayer(myIndex);
 			}
 		}
@@ -345,7 +343,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                         thingToPush.isMainCollapsed = true;
                         thingToPush.isPositionCollapsed = true;
                         thingToPush.isTransformCollapsed = true;
-                        thingToPush.isStyleCollapsed = false;
+                        thingToPush.isStyleCollapsed = true;
                         thingToPush.arrLayerStyles = [];
                         thingToPush.element=[];
                         thingToPush.deleted=false;
@@ -764,7 +762,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     selectLayer : {
     	value: function(layerIndex) {
     		// Select a layer based on its index.
-    		// use layerIndex = "none" to deselect all layers.
+    		// use layerIndex = false to deselect all layers.
     		var i = 0,
     			arrLayersLength = this.arrLayers.length;
     			
@@ -778,7 +776,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		}
     		
     		// Next, update this.layerRepetition.selectedIndexes and this.currentLayerSelected.
-    		if (layerIndex !== "none") {
+    		if (layerIndex !== false) {
     			this.layerRepetition.selectedIndexes = [layerIndex];
     			this.currentLayerSelected = this.arrLayers[layerIndex]
     		} else {
@@ -821,6 +819,23 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     			}
     		}
     		
+    		return returnVal;
+    	}
+    },
+    getActiveLayerIndex : {
+    	value: function() {
+    		// Searches through the layers and looks for one that has
+    		// set its isActive flag to true.
+    		var i = 0, 
+    			returnVal = false,
+    			arrLayersLength = this.arrLayers.length;
+    		
+    		for (i = 0; i < arrLayersLength; i++) {
+    			if (this.arrLayers[i].isActive === true) {
+    				returnVal = i;
+    				this.arrLayers[i].isActive = false;
+    			}
+    		}
     		return returnVal;
     	}
     },

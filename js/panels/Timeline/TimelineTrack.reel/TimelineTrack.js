@@ -414,6 +414,13 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 					this._styleCollapser.handleCollapserLabelClick();
 				}
 			}
+			/*
+			if (layerEvent.layerEventType === "newStyle") {
+				var newDiv = document.createElement("div");
+				newDiv.classList.add("timeline-track");
+				this.contentStyles.appendChild(newDiv);
+			}
+			*/
 		}
 	}
 });

@@ -36,6 +36,21 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 			}
 		}
 	},
+	
+    /* isActive:  Whether or not the user is actively clicking within the style; used to communicate state with
+     * parent Layer.
+     */
+    _isActive: {
+    	value: false
+    },
+    isActive: {
+    	get: function() {
+    		return this._isActive;
+    	},
+    	set: function(newVal) {
+    		this._isActive = newVal;
+    	}
+    },
    
    // Property for this editor
     _editorProperty: {
@@ -153,6 +168,12 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
  			this.needsDraw = true;
  		}
  	},
+ 	
+ 	handleMousedown: {
+ 		value: function(event) {
+ 			this.isActive = true;
+ 		}
+ 	},
     
     /* === END: Models === */
     
@@ -238,6 +259,8 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 			this.containerPropvals = this.element.querySelector(".container-propvals");
 			this.valueEditorInput = this.element.querySelector(".editor-input input");
         	
+        	// mousedown listener to handle 
+        	this.element.addEventListener("mousedown", this, false);
 		}
 	},
 	
