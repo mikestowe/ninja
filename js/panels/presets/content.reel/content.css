@@ -47,9 +47,6 @@
     -webkit-box-flex: 1;
     overflow: auto;
     background-color: #474747;
-
-    color: #FFF;
-
     position: relative;
     z-index: 1000;
 }
