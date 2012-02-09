@@ -31,7 +31,7 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                             "component": "button"
                         },
                         {
-                            "text": "Text Field",
+                            "text": "Textfield",
                             "dataFile" : "node_modules/components-data/textfield.json",
                             "component": "textfield"
                         }
@@ -53,20 +53,24 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
         value: 0
     },
 
+    centerStage: {
+        value: null
+    },
+
     didCreate: {
         value: function() {
             // Loop through the component and load the JSON data for them
             this._loadComponents();
-
         }
     },
 
+    // Load all the data files for each component
+    // TODO: Implement the error case
     _loadComponents: {
         value: function() {
 
             this.componentsToLoad = this.components.children[0].children.length;
 
-            // Build the PI objects for each component
             for(var i = 0, component; component = this.components.children[0].children[i]; i++) {
                 var req = new XMLHttpRequest();
                 //req.identifier = "searchRequest";
@@ -74,25 +78,22 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                 req.addEventListener("load", this, false);
                 req.addEventListener("error", this, false);
                 req.send();
-
             }
-
-
         }
     },
 
     handleLoad: {
         value: function(evt) {
-            var componentData = JSON.parse(evt.target.responseText);
+            var componentData, component, piID, piObj, section;
 
-            //var component = response.component.capitalizeFirstChar();
-            var component = componentData.name;
+            componentData = JSON.parse(evt.target.responseText);
 
-            var piIdentifier = component + "Pi";
-            var piObj = [];
-            var section = {};
+            component = componentData.name;
 
-
+            // Build the PI data and create a new object for Ninja PI
+            piID = component + "Pi";
+            piObj = [];
+            section = {};
             section.label = component + " Properties";
             section.Section = [];
 
@@ -107,21 +108,23 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                 section.Section.push([row]);
             }
 
-            PIData[piIdentifier] = [];
-            PIData[piIdentifier].push(section);
+            PIData[piID] = [];
+            PIData[piID].push(section);
 
-            // Setup the componentsData
+            // Setup the component hash object to store references to each component data
             this.componentsData[componentData.component] = componentData;
 
             this.componentsLoaded++;
 
             if(this.componentsLoaded === this.componentsToLoad) {
-                console.log("all loaded");
+                // console.log("all loaded");
+                // Here we need to stop some sort of loading animation
             }
 
         }
     },
 
+    // PI conversion method. This will convert the property type into a Ninja component
     getControlType: {
         value: function(type) {
             switch(type) {
@@ -137,27 +140,15 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
 
     applySelection: {
         value: function(selection) {
-            console.log(selection);
-            console.log(this.componentsData[selection.component]);
-            this._stash.dropx = 200;
-            this._stash.dropy = 200;
-            this.addComponentToStage(this.componentsData[selection.component]);// evt.detail.dropX, evt.detail.dropY);
-
+            //console.log(selection);
+            //console.log(this.componentsData[selection.component]);
+            this.addComponentToStage(this.componentsData[selection.component]);
         }
     },
 
-    _stash: {
-        value: {}
-    },
-
+    // This method will be used once we handle drag and drop
     handleExecuteAddComponent: {
         value: function(evt) {
-            //var component = evt.detail.component;
-            // Get the data from the event detail component
-            var component = this._testButtonJson;
-            this._stash.dropx = evt.detail.dropX;
-            this._stash.dropy = evt.detail.dropY;
-            this.addComponentToStage(component);// evt.detail.dropX, evt.detail.dropY);
         }
     },
 
@@ -168,40 +159,23 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
         value: function(component) {
             var that = this;
             var element = this.makeComponent(component.component);
+
             this.application.ninja.currentDocument._window.addComponent(element, {type: component.name, path: component.module, name: "Button"}, function(instance, element) {
+
+                var pos = that.getStageCenter();
 
                 var styles = {
                     'position': 'absolute',
-                    'top'       : that._stash.dropy + 'px',
-                    'left'      : that._stash.dropx + 'px',
+                    'left'      : pos[0] + 'px',
+                    'top'       : pos[1] + 'px',
                     '-webkit-transform-style' : 'preserve-3d',
                     '-webkit-transform' : 'perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
                 };
-
 
                 that.application.ninja.currentDocument.setComponentInstance(instance, element);
 
                 NJevent("elementAdding", {"el": element, "data":styles});
             });
-        }
-    },
-
-    callback: {
-        value: function(instance, element) {
-            console.log(instance);
-
-            var styles = {
-                'position': 'absolute',
-                'top'       : this._stash.dropx + 'px',
-                'left'      : this._stash.dropy + 'px',
-                '-webkit-transform-style' : 'preserve-3d',
-                '-webkit-transform' : 'perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
-            };
-
-            this.application.ninja.currentDocument.setComponentInstance(instance, element);
-
-            NJevent("elementAdding", {"el": element, "data":styles});
-
         }
     },
 
@@ -216,7 +190,7 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                     return el;
                 case "textfield": {
                     var el;
-                    el = NJUtils.makeNJElement(name, "Text Field", "component");
+                    el = NJUtils.makeNJElement("input", "Text Field", "component");
                     el.elementModel.pi = "TextfieldPi";
                     el.setAttribute("type", "text");
                     return el;
@@ -243,51 +217,7 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                 compW = 53;
                 compH = 53;
 //                elementType = "input";
-            }else if(componentType == "DynamicText"){
-                compW = 100;
-                compH = 20;
-            }else if(componentType == "FlowController"){
-                compW = 800;
-                compH = 320;
-            }else if(componentType == "HotText"){
-                compW = 50;
-                compH = 18;
-//                elementType = "input";
-            }else if(componentType == "HotTextUnit"){
-                compW = 45;
-                compH = 18;
-            }else if(componentType == "ImageContainer"){
-                compW = 285;
-                compH = 232;
-            }else if(componentType == "Progress"){
-                compW = 300;
-                compH = 9;
-            }else if(componentType == "Scrollview"){
-                compW = 200;
-                compH = 200;
-            }else if(componentType == "Slider"){
-                compW = 200;
-                compH = 55;
-            }else if(componentType == "TextArea"){
-                compW = 312;
-                compH = 112;
-                elementType = "textarea";
-            }else if(componentType == "Textfield"){
-                compW = 312;
-                compH = 34;
-                elementType = "input";
-            }else if(componentType == "Toggle"){
-                compW = 60;
-                compH = 22;
-                elementType = "span";
-            }else if(componentType == "ToggleButton"){
-                compW = 118;
-                compH = 52;
-            }else{
-                compW = 100;
-                compH = 25;
             }
-
 
             /*
             componentContainer = NJUtils.makeNJElement("div", componentType, "component");
@@ -318,6 +248,24 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
 
 
 
+        }
+    },
+
+    /**
+     *
+     */
+    getStageCenter: {
+        value: function() {
+            //if(!this.centerStage) {
+                var top, left;
+
+                top = ~~((parseFloat(this.application.ninja.elementMediator.getProperty(this.application.ninja.currentDocument.documentRoot, "height"))) / 2);
+                left = ~~((parseFloat(this.application.ninja.elementMediator.getProperty(this.application.ninja.currentDocument.documentRoot, "width"))) / 2);
+                //this.centerStage = [top, left];
+                return [left, top];
+            //}
+
+            //return this.centerStage;
         }
     }
 });
