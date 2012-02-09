@@ -178,8 +178,8 @@ function GLRectangle()
 		this._strokeWidth		= Number( this.getPropertyFromString( "strokeWidth: ",	importStr )  );
 		this._innerRadius		= Number( this.getPropertyFromString( "innerRadius: ",	importStr )  );
 		this._strokeStyle		= Number( this.getPropertyFromString( "strokeStyle: ",	importStr )  );
-		var strokeMaterialName	= Number( this.getPropertyFromString( "strokeMat: ",	importStr )  );
-		var fillMaterialName	= Number( this.getPropertyFromString( "fillMat: ",		importStr )  );
+		var strokeMaterialName	= this.getPropertyFromString( "strokeMat: ",	importStr );
+		var fillMaterialName	= this.getPropertyFromString( "fillMat: ",		importStr );
 		this._strokeStyle		=  Number( this.getPropertyFromString( "strokeColor: ",	importStr )  );
 		this._fillColor			=  eval( "[" + this.getPropertyFromString( "fillColor: ",	importStr ) + "]" );
 		this._strokeColor		=  eval( "[" + this.getPropertyFromString( "strokeColor: ",	importStr ) + "]" );
@@ -313,72 +313,71 @@ function GLRectangle()
 		var width  = Math.round(this.getWidth()),
 			height = Math.round(this.getHeight());
 
-		// get the top left point
 		pt = [inset, inset];	// top left corner
-		rad = this.getTLRadius() - inset;
-		if (rad < 0)  rad = 0;
-		pt[1] += rad;
-		if (MathUtils.fpSign(rad) == 0)  pt[1] = 0;
-		ctx.moveTo( pt[0],  pt[1] );
 
-		// get the bottom left point
-		pt = [inset, height - inset];
-		rad = this.getBLRadius() - inset;
-		if (rad < 0)  rad = 0;
-		pt[1] -= rad;
-		ctx.lineTo( pt[0],  pt[1] );
+		var tlRad = this._tlRadius; //top-left radius
+		var trRad = this._trRadius;
+		var blRad = this._blRadius;
+		var brRad = this._brRadius;
 
-		// get the bottom left arc
-		if (MathUtils.fpSign(rad) > 0)
+		if ((tlRad <= 0) && (blRad <= 0) && (brRad <= 0) && (trRad <= 0))
 		{
-			ctr = [ this.getBLRadius(),  height - this.getBLRadius() ];
-			//this.renderQuadraticBezier( MathUtils.circularArcToBezier( ctr, pt, -0.5*Math.PI ), ctx  );
-			ctx.arc( ctr[0], ctr[1],    rad,    Math.PI,   0.5*Math.PI,  true );
+			ctx.rect(pt[0], pt[1], width - 2*inset, height - 2*inset);
 		}
-
-		// do the bottom of the rectangle
-		pt = [width - inset,  height - inset];
-		rad = this.getBRRadius() - inset;
-		if (rad < 0)  rad = 0;
-		pt[0] -= rad;
-		ctx.lineTo( pt[0], pt[1] );
-
-		// get the bottom right arc
-		if (MathUtils.fpSign(rad) > 0)
+		else
 		{
-			ctr = [width - this.getBRRadius(),  height - this.getBRRadius()];
-			//this.renderQuadraticBezier( MathUtils.circularArcToBezier( ctr, pt, -0.5*Math.PI ), ctx  );
-			ctx.arc( ctr[0], ctr[1],   rad,   0.5*Math.PI,  0.0,  true );
-		}
+			// get the top left point
+			rad = tlRad - inset;
+			if (rad < 0)  rad = 0;
+			pt[1] += rad;
+			if (MathUtils.fpSign(rad) == 0)  pt[1] = inset;
+			ctx.moveTo( pt[0],  pt[1] );
 
-		// get the right of the rectangle
-		pt = [width - inset,  inset];
-		rad = this.getTRRadius() - inset;
-		if (rad < 0)  rad = 0;
-		pt[1] += rad;
-		ctx.lineTo( pt[0], pt[1] );
+			// get the bottom left point
+			pt = [inset, height - inset];
+			rad = blRad - inset;
+			if (rad < 0)  rad = 0;
+			pt[1] -= rad;
+			ctx.lineTo( pt[0],  pt[1] );
 
-		// do the top right corner
-		if (MathUtils.fpSign(rad) > 0)
-		{
-			ctr = [width - this.getTRRadius(),  this.getTRRadius()];
-			//this.renderQuadraticBezier( MathUtils.circularArcToBezier( ctr, pt, -0.5*Math.PI ), ctx );
-			ctx.arc( ctr[0], ctr[1],   rad,   0.0,  -0.5*Math.PI,  true );
-		}
+			// get the bottom left curve
+			if (MathUtils.fpSign(rad) > 0)
+				ctx.quadraticCurveTo( inset, height-inset,  inset+rad, height-inset );
 
-		// do the top of the rectangle
-		pt = [inset, inset]
-		rad = this.getTLRadius() - inset;
-		if (rad < 0)  rad = 0;
-		pt[0] += rad;
-		ctx.lineTo( pt[0], pt[1] );
+			// do the bottom of the rectangle
+			pt = [width - inset,  height - inset];
+			rad = brRad - inset;
+			if (rad < 0)  rad = 0;
+			pt[0] -= rad;
+			ctx.lineTo( pt[0], pt[1] );
 
-		// do the top left corner
-		if (MathUtils.fpSign(rad) > 0)
-		{
-			ctr = [this.getTLRadius(),  this.getTLRadius()];
-			//this.renderQuadraticBezier( MathUtils.circularArcToBezier( ctr, pt, -0.5*Math.PI ), ctx );
-			ctx.arc( ctr[0], ctr[1],   rad,   -0.5*Math.PI,  Math.PI,  true );
+			// get the bottom right arc
+			if (MathUtils.fpSign(rad) > 0)
+				ctx.quadraticCurveTo( width-inset, height-inset,  width-inset, height-inset-rad );
+
+			// get the right of the rectangle
+			pt = [width - inset,  inset];
+			rad = trRad - inset;
+			if (rad < 0)  rad = 0;
+			pt[1] += rad;
+			ctx.lineTo( pt[0], pt[1] );
+
+			// do the top right corner
+			if (MathUtils.fpSign(rad) > 0)
+				ctx.quadraticCurveTo( width-inset, inset,  width-inset-rad, inset );
+
+			// do the top of the rectangle
+			pt = [inset, inset]
+			rad = tlRad - inset;
+			if (rad < 0)  rad = 0;
+			pt[0] += rad;
+			ctx.lineTo( pt[0], pt[1] );
+
+			// do the top left corner
+			if (MathUtils.fpSign(rad) > 0)
+				ctx.quadraticCurveTo( inset, inset, inset, inset+rad );
+			else
+				ctx.lineTo( inset, 2*inset );
 		}
 	}
 
@@ -397,32 +396,20 @@ function GLRectangle()
 		var	w = world.getViewportWidth(),
 			h = world.getViewportHeight();
 		
-		// draw the fill
+		// set the fill
 		ctx.beginPath();
 		ctx.fillStyle   = "#990000";
-		//ctx.strokeStyle = "#0000ff";
 		if (this._fillColor)
 			ctx.fillStyle = MathUtils.colorToHex( this._fillColor );
 
-		//ctx.lineWidth	= 0;
-		//ctx.rect( lw, lw,  w - 2*lw,  h- 2*lw );
-		//this.renderPath( lw, ctx )
-		//ctx.fill();
-		//ctx.closePath();
-
-		// draw the stroke
-		//ctx.beginPath();
-		//ctx.fillStyle   = "#990000";
+		// set the stroke
 		ctx.strokeStyle = "#0000ff";
 		if (this._strokeColor)
 			ctx.strokeStyle = MathUtils.colorToHex( this._strokeColor );
 
 		ctx.lineWidth	= lw;
-		//ctx.rect( 0.5*lw, 0.5*lw,  w-lw,  h-lw );
 		var inset = Math.ceil( 0.5*lw ) + 0.5;
-//		console.log( "linewidth: " + lw + ", inset: " + inset+ ", width: " + Math.round(this.getWidth()) + ", height: " + Math.round(this.getHeight()) );
 		this.renderPath( inset, ctx );
-		//this.renderPath( lw, ctx );
 		ctx.fill();
 		ctx.stroke();
 		ctx.closePath();
