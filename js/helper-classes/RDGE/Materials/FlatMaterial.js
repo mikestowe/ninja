@@ -71,10 +71,11 @@ function FlatMaterial()
 
     this.setProperty = function( prop, value )
 	{
-		// make sure we have legitimate imput
+		// make sure we have legitimate input
 		if (this.validateProperty( prop, value ))
 		{
-			this._color = value.slice(0);
+            this._propValues[prop] = value;
+            if (this._shader && this._shader.colorMe)
 			this._shader.colorMe[prop].set(value);
 		}
 	}
@@ -84,7 +85,7 @@ function FlatMaterial()
 	{
 		// this function should be overridden by subclasses
 		var exportStr = "material: " + this.getShaderName() + "\n";
-		exportStr = "name: " + this.getName() + "\n";
+		exportStr += "name: " + this.getName() + "\n";
 		
 		if (this._shader)
 			exportStr += "color: " + String(this._shader.colorMe.color) + "\n";
@@ -100,19 +101,35 @@ function FlatMaterial()
 		var pu = new ParseUtils( importStr );
 		var material = pu.nextValue( "material: " );
 		if (material != this.getShaderName())  throw new Error( "ill-formed material" );
-		this.setName(  pu.nextValue( "material: ") );
-		var color = pu.nextValue( "color: " );
+        this.setName(  pu.nextValue( "name: ") );
+
+        var rtnStr;
+        try
+        {
+            var color  = eval( "[" + pu.nextValue( "color: " ) + "]" );
+
+            this.setProperty( "color",  color);
 
 		var endKey = "endMaterial\n";
-		var index = importStr.indexOf( endKey ) + endKey.len;
-		var rtnStr = importStr.substr( index );
+            var index = importStr.indexOf( endKey );
+            index += endKey.length;
+            rtnStr = importStr.substr( index );
+        }
+        catch (e)
+        {
+            throw new Error( "could not import material: " + importStr );
+        }
+
 		return rtnStr;
 	}
 
 	this.update = function( time )
 	{
 	}
+
 }
+// used to create unique names
+var flatMaterialCounter = 0;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // RDGE shader

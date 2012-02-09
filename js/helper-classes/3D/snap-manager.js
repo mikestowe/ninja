@@ -970,13 +970,12 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 		value: function( screenPt,  hitRecs ) {
 			// start at the stage.
 			var stage = this.getStage();
-			//var stagePt = viewUtils.parentToChild( screenPt, stage );
 
 			// the root should be the 'view' canvas, so the first matrix is the camera
 			viewUtils.setViewportObj( stage );
 
 			MathUtils.makeDimension3( screenPt );
-			this.hSnapToElements( stage,  screenPt, hitRecs, 0, screenPt );
+			this.hSnapToElements( stage,  hitRecs, 0, screenPt );
 
 			return;
 		}
@@ -984,7 +983,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
 	hSnapToElements : 
 	{
-		value: function( elt, parentPt, hitRecs, depth, globalScrPt )
+		value: function( elt, hitRecs, depth, globalScrPt )
 		{
 			// hit test the current object
 			var hit;
@@ -993,11 +992,9 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 				// if the element is in the 2D cache snapping is done there
 				if (elt.elementModel && !elt.elementModel.isIn2DSnapCache)
 				{
-					var scrPt = viewUtils.parentToChild( parentPt, elt, false );
-					hit = this.snapToElement( elt, scrPt, globalScrPt );
+					hit = this.snapToElement( elt, globalScrPt );
 					if (hit)
 					{
-						//hitRecs.push( hit );
 						if (!hit.checkType())
 						{
 							console.log( "invalid hit record: " + hit.getTypeString() );
@@ -1016,17 +1013,14 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
             }
 			// test the rest of the tree
 			var n = elt.childElementCount;
-			var eltPt = viewUtils.parentToChild( parentPt, elt, true );
 			if (n > 0)
 			{
 				for (var i=0;  i<n;  i++)
 				{
 					var child = elt.children[i];
-					//var childPt = viewUtils.parentToChild( scrPt, child );
-					hit = this.hSnapToElements( child,  eltPt, hitRecs, (depth+1), globalScrPt );
+					hit = this.hSnapToElements( child,  hitRecs, (depth+1), globalScrPt );
 					if (hit)
 					{
-						//hitRecs.push( hit );
 						if (!hit.checkType())
 						{
 							console.log( "invalid hit record: " + hit.getTypeString() );
@@ -1034,7 +1028,6 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 						}
 						else
 							hitRecs.push( hit );
-
 					}
 				}
 			}
@@ -1043,7 +1036,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
 	snapToElement : 
 	{
-		value: function( elt, scrPt, globalScrPt ) 
+		value: function( elt, globalScrPt ) 
 		{
 			if (this.isAvoidedElement(elt) )  return null;
 

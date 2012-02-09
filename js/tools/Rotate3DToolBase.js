@@ -254,7 +254,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
     captureSelectionDrawn: {
         value: function(event){
             this._origin = null;
-            this._targets = null;
+            this._targets = [];
             this._startOriginArray = null;
 
             var len = this.application.ninja.selectedElements.length;
