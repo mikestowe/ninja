@@ -171,9 +171,8 @@ function GLSubpath() {
         }
         if (this._isClosed === true) {
             ctx.lineTo(this._samples[0]-bboxMin[0],this._samples[1]-bboxMin[1]);
-            ctx.fill();
         }
-
+        ctx.fill();
         ctx.stroke();
         ctx.restore();
     } //render()
