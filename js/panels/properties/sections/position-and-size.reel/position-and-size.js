@@ -149,6 +149,7 @@ exports.PosSize = Montage.create(Component, {
                 this.application.ninja.selectedElements.length ? items = this.application.ninja.selectedElements : items = [this.application.ninja.currentDocument.documentRoot];
 
                 if(this.bindButton.value) {
+
                     var newWidth = Math.round(this.aspectRatioHeight * this.heightControl.value);
 
                     if(!isFinite(newWidth)) newWidth = this.heightControl.value;
@@ -181,12 +182,10 @@ exports.PosSize = Montage.create(Component, {
                     this.heightControl.value = newHeight;
                     this.application.ninja.elementMediator.setProperty(items, "height", [newHeight + "px"] , "Change", "pi");
 
-                } else {
-
-                    this.application.ninja.elementMediator.setProperty(items, "width", [this.widthControl.value + "px"] , "Change", "pi", prevPosition);
-                    this.savedPosition = null;
                 }
 
+                this.application.ninja.elementMediator.setProperty(items, "width", [this.widthControl.value + "px"] , "Change", "pi", prevPosition);
+                this.savedPosition = null;
 
             }
 
