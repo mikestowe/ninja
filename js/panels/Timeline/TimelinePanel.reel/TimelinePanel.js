@@ -756,6 +756,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 if(this._captureSelection){
                 this.application.ninja.selectionController.selectElements(this.currentLayerSelected.element)
                 }
+                this._captureSelection = true;
             } else {
                 this.layerRepetition.selectedIndexes = null;
                 this.trackRepetition.selectedIndexes = null;
