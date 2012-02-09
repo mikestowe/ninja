@@ -173,7 +173,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.ninjaStylesContoller = this.application.ninja.stylesController;
             this.track_lane.addEventListener("click", this, false);
             this.keyFramePropertyData = new Array();
-            //this.insertTween(0);
         }
     },
 
@@ -202,9 +201,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 if (this.application.ninja.timeline.arrLayers[this.trackID - 1].element.length == 1) {
                     if (this.tweens.length < 1) {
                         this.insertTween(0);
-                        this.addAnimationRuleToElement();
+                        this.addAnimationRuleToElement(ev);
+                    } else {
+                        this.handleNewTween(ev);
                     }
-                    this.handleNewTween(ev);
                 } else {
                     alert("There must be exactly one element in an animated layer.")
                 }
@@ -266,12 +266,13 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     splitTween:{
         value:function (ev) {
-            console.log("splitting tween at span offsetX: " + ev.offsetX);
+            alert("Splitting an existing span with a new keyframe is not yet supported.")
+            //console.log("splitting tween at span offsetX: " + ev.offsetX);
         }
     },
 
     addAnimationRuleToElement:{
-        value:function () {
+        value:function (tweenEvent) {
             var theElement = this.application.ninja.timeline.arrLayers[this.trackID - 1].element[0];
             this.animatedElement = theElement;
 
@@ -293,6 +294,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.currentKeyframeRule = this.ninjaStylesContoller.addRule(initRule);
 
             this.isAnimated = true;
+
+            this.insertTween(tweenEvent.offsetX);
         }
     },
 

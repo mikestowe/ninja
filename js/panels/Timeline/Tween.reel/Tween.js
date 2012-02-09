@@ -92,17 +92,17 @@ var Tween = exports.Tween = Montage.create(Component, {
     },
 
     prepareForDraw:{
-        value:function(){
+        value:function () {
             this.keyframe.containingTrack = this.timelineTrack;
+            this.keyframe.position = this.spanWidth;
+            this.keyframe.timelinePosition = this.keyFramePosition;
+            this.keyframe.id = this.keyframeID;
         }
     },
 
     draw:{
-        value:function(){
+        value:function () {
             this.span.spanWidth = this.spanWidth;
-            this.keyframe.position = this.spanWidth;
-            this.keyframe.timelinePosition = this.keyFramePosition;
-            this.keyframe.id = this.keyframeID;
             this.tweencontainer.style.left = this.spanPosition + "px";
         }
     }

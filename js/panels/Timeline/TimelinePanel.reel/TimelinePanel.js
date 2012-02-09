@@ -50,6 +50,14 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
+    currentLayerSelected:{
+        value: null
+    },
+
+    currentTrackSelected:{
+        value: null
+    },
+
     millisecondsOffset:{
         value:1000
     },
@@ -291,7 +299,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     handleNewLayer:{
         value:function (event) {
             // Add a new layer.  It should be added above the currently selected layer,
-            // Or at the end, if no layer is selected.
+            // Or at the top, if no layer is selected.
             var hashIndex = 0 , hashVariable = 0, layerResult, trackResult, layerObject, trackObject, dLayer, parentNode;
 
             this._arrLayersNonEmpty = true;
@@ -520,8 +528,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     handleElementAdded:{
         value:function (event) {
             this.currentLayerSelected.element.push(event.detail);
-            //console.log(this.currentLayerSelected.layerPosition);
-            //console.log(this.arrTracks);
         }
     },
 
@@ -719,10 +725,14 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             // Next, update this.layerRepetition.selectedIndexes and this.currentLayerSelected.
             if (layerIndex !== false) {
                 this.layerRepetition.selectedIndexes = [layerIndex];
-                this.currentLayerSelected = this.arrLayers[layerIndex]
+                this.trackRepetition.selectedIndexes = [layerIndex];
+                this.currentLayerSelected = this.arrLayers[layerIndex];
+                this.currentTrackSelected = this.arrTracks[layerIndex];
             } else {
                 this.layerRepetition.selectedIndexes = null;
+                this.trackRepetition.selectedIndexes = null;
                 this.currentLayerSelected = null;
+                this.currentTrackSelected = null;
             }
         }
     },
