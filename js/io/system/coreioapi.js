@@ -89,15 +89,9 @@ exports.CoreIoApi = Montage.create(Component, {
         	this.ninjaLibrary.coreApi = this;
         	//TODO: Add sync loading screen logic
         	
-        	
-        	
-        	
         	//TODO: Remove test
-        	this.ninjaLibrary.copyLibToCloud('Users/kgq387/Desktop/Ninja Cloud/Disk', 'montage0.6.0');
-        	
-        	
-        	
-        	
+        	//this.ninjaLibrary.copyLibToCloud('Users/kgq387/Desktop/Ninja Cloud/Disk', 'montage0.6.0');
+        	//this.ninjaLibrary.deleteLibraries();
         }
     },
     ////////////////////////////////////////////////////////////////////

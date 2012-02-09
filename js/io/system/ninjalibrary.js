@@ -297,6 +297,24 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
     },
     ////////////////////////////////////////////////////////////////////
     //
+    deleteLibraries: {
+    	enumerable: true,
+    	value: function () {
+    		function parseLibrary (contents) {
+        		//
+        		for(var i=0; contents[i]; i++) {
+        			//
+        			if (contents[i].isDirectory) {
+        				this.chromeApi.directoryDelete(contents[i].name);
+        			}
+        		}
+        	};
+        	//
+        	this.chromeApi.directoryContents(this.chromeApi.fileSystem.root, parseLibrary.bind(this));
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
     _dispatchEvent: {
     	enumerable: true,
     	value: function () {
