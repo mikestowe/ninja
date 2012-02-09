@@ -173,7 +173,7 @@ jshader = function(addr) {
 
         // if the parameter does not exist in the shader cull it from the pass
         if (this.loc == null) {
-            window.console.log("ctx:" + ctx.canvas.id + ", technique: " + technique + ", uniform: " + name + " was not found, jshader param will have no affect");
+            window.console.log("ctx:" + ctx.canvas.rdgeid + ", technique: " + technique + ", uniform: " + name + " was not found, jshader param will have no affect");
             //return;
         }
 
@@ -308,7 +308,7 @@ jshader = function(addr) {
                     }
                 }
 
-                program.ctxId = this.ctx.canvas.id;
+                program.ctxId = this.ctx.canvas.rdgeid;
                 if (!program) {
                     this.renderer.console.log("Build errors found in technique: " + t);
                     this.def[t] = null; // remove bad technique
@@ -322,7 +322,7 @@ jshader = function(addr) {
                     var gp = new globalParam(this.ctx, p, rdgeGlobalParameters[p], program);
 
                     if (gp.loc != null) {
-                        gp.loc.ctxID = this.ctx.canvas.id;
+                        gp.loc.ctxID = this.ctx.canvas.rdgeid;
                         this[t].passes[i].defParams[p] = gp;
                         this.global[p] = gp;
                     }
