@@ -64,13 +64,40 @@ exports.FileIo = Montage.create(Component, {
     //
     readFile: {
     	enumerable: true,
-    	value: function() {
+    	value: function(file) {
     		//Checking for API to be available
     		if (!this.application.ninja.coreIoApi.cloudAvailable()) {
     			//API not available, no IO action taken
     			return null;
     		}
-    		//
+    		//Peforming check for file to exist
+    		var check = this.application.ninja.coreIoApi.fileExists({uri: file.uri}), status, create, result;
+    		//Upon successful check, handling results
+    		if (check.success) {
+    			//Handling status of check
+    			switch (check.status) {
+    				case 204:
+    					//File exists
+    					result = {};
+    					result.content = this.application.ninja.coreIoApi.readFile(file).content;
+    					result.details = this.infoFile(file);
+    					status = check.status;
+    					break;
+    				case 404:
+    					//File does not exists, ready to be created
+    					status = check.status;
+    					break;
+    				default:
+    					//Unknown Error
+    					status = 500;
+    					break;
+    			}
+	   		} else {
+	    		//Unknown Error
+	    		status = 500;
+    		}
+    		//Returning resulting code
+    		return {status: status, file: result};
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -116,14 +143,49 @@ exports.FileIo = Montage.create(Component, {
     //
     infoFile: {
     	enumerable: true,
-    	value: function() {
+    	value: function(file) {
     		//Checking for API to be available
     		if (!this.application.ninja.coreIoApi.cloudAvailable()) {
     			//API not available, no IO action taken
     			return null;
     		}
     		//
+    		var check = this.application.ninja.coreIoApi.fileExists({uri: file.uri}), details;
+    		//
+    		if (check.success) {
+    			//Handling status of check
+    			switch (check.status) {
+    				case 204:
+    					//File exists
+    					details = JSON.parse(this.application.ninja.coreIoApi.isFileWritable(file).content);
+    					details.uri = file.uri;
+    					details.name = this.getFileNameFromPath(file.uri);
+    					details.extension = details.name.split('.')[details.name.split('.').length-1];
+    					break;
+    				case 404:
+    					//File does not exists, ready to be created
+    					
+    					break;
+    				default:
+    					//Unknown Error
+    					
+    					break;
+    			}
+	   		} else {
+	    		//Unknown Error
+	    		
+    		}
+    		return details;
     	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    getFileNameFromPath : {
+        value: function(path) {
+            path = path.replace(/[/\\]$/g,"");
+            path = path.replace(/\\/g,"/");
+            return path.substr(path.lastIndexOf('/') + 1);
+        }
     }
     ////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////

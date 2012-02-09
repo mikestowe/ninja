@@ -92,9 +92,15 @@ exports.CoreIoApi = Montage.create(Component, {
         	//TODO: Remove test
         	//this.ninjaLibrary.copyLibToCloud('Users/kgq387/Desktop/Ninja Cloud/Disk', 'montage0.6.0');
         	//this.ninjaLibrary.deleteLibraries();
-        	window.hack = function (name, type) {
+        	/*
+window.hack = function (name, type) {
         		this.application.ninja.ioMediator.fileNew('Users/kgq387/Desktop/Ninja Cloud/Disk/'+name+'.'+type, '/js/io/templates/files/'+type+'.txt', function (status) {console.log(status)});
         	}.bind(this);
+*/			
+			window.hack = function (path) {
+				//
+				this.application.ninja.ioMediator.fileOpen('Users/kgq387/Desktop/Ninja Cloud/Disk/'+path, function (result) {console.log(result)});
+			}.bind(this);
         }
     },
     ////////////////////////////////////////////////////////////////////
@@ -621,7 +627,7 @@ exports.CoreIoApi = Montage.create(Component, {
     //              200 - the file was read and its contents were returned
     //              404 - the file does not exist
     //              500 - unknown server error occurred
-    openFile: {
+    readFile: {
     	enumerable: false,
     	value: function(file) {
     		//
