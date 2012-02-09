@@ -26,8 +26,13 @@ function FlatMaterial()
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
     ///////////////////////////////////////////////////////////////////////
-	this.getColor			= function()	{  return this._color;		}
-	this.getShaderName		= function()	{  return this._shaderName;	}
+	this.getColor				= function()	{  return this._color;		}
+	this.getShaderName			= function()	{  return this._shaderName;	}
+
+	this.isAnimated				= function()	{  return false;			}
+	this.hasVertexDeformation	= function()	{  return true;				}
+	this._hasVertexDeformation = true;
+	this._vertexDeformationTolerance = 0.2;
 
     //////////////////////////////////s/////////////////////////////////////
     // Methods
@@ -48,6 +53,13 @@ function FlatMaterial()
 		// set up the material node
 		this._materialNode = createMaterialNode("flatMaterial");
 		this._materialNode.setShader(this._shader);
+
+		// initialize the taper properties
+//		this._shader.colorMe.u_limit1.set( [0.25] );
+//		this._shader.colorMe.u_limit2.set( [0.5] );
+//		this._shader.colorMe.u_limit3.set( [0.75] );
+//		this._shader.colorMe.u_center.set( [0.0] );
+//		this._shader.colorMe.u_taperAmount.set( [0.5] );
 	}
 
 
@@ -114,10 +126,11 @@ function FlatMaterial()
 
         return rtnStr;
     }
-}
 
-// used to create unique names
-var flatMaterialCounter = 0;
+	this.update = function( time )
+	{
+	}
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // RDGE shader
@@ -126,35 +139,33 @@ var flatMaterialCounter = 0;
 flatShaderDef  = 
 {
     'shaders':  { // shader files
-        'defaultVShader': "\
-            uniform mat4 u_mvMatrix;\
-            uniform mat4 u_projMatrix;\
-            attribute vec3  a_pos;\
-            void main() {\
-                gl_Position = u_projMatrix * u_mvMatrix * vec4(a_pos,1.0);\
-            }",             
-        'defaultFShader': "\
-            precision highp float;\
-            uniform vec4 color;\
-            void main() {\
-                gl_FragColor = color;\
-            }",
+		//'defaultVShader':"assets/shaders/Taper.vert.glsl",
+		'defaultVShader':"assets/shaders/Basic.vert.glsl",
+		'defaultFShader':"assets/shaders/Basic.frag.glsl",
         },
     'techniques': { // rendering control
         'colorMe':[ // simple color pass
             {
                 'vshader' : 'defaultVShader',
                 'fshader' : 'defaultFShader',
-            
+           
                 // attributes
                 'attributes' :
                  {
-                    'a_pos' :   { 'type' : 'vec3' } // only using position for this shader
+						'vert'	:	{ 'type' : 'vec3' },
+						'normal' :	{ 'type' : 'vec3' },
+						'texcoord'	:	{ 'type' : 'vec2' },
                  },
                 // attributes
                 'params' :
                  {
-                    'color' :   { 'type' : 'vec4' }
+                    'color' :   { 'type' : 'vec4' },
+
+					//'u_limit1': { 'type': 'float' },
+					//'u_limit2': { 'type': 'float' },
+					//'u_limit3': { 'type': 'float' },
+					//'u_center': { 'type': 'float' },
+					//'u_taperAmount': { 'type': 'float' }
                  },
             },
         ]

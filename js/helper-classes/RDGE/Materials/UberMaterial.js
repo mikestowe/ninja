@@ -151,10 +151,10 @@ function UberMaterial()
 	{
 		// ubershader material properties. 
 		'material' : {
-			'ambientColor'    : this._ambientColor,     // material ambient color
-			'diffuseColor'    : this._diffuseColor,     // material diffuse color
-			'specularColor'   : this._specularColor,    // material specular color
-			'specularPower'   : this._specularPower,    // material specular power (shininess)
+			'ambientColor'    : this._ambientColor,    // material ambient color
+			'diffuseColor'    : this._diffuseColor,    // material diffuse color
+			'specularColor'   : this._specularColor,   // material specular color
+			'specularPower'   : this._specularPower    // material specular power (shininess)
 		},
  
 		// ubershader supports up to four lights. 
@@ -162,7 +162,7 @@ function UberMaterial()
 			'light0' : this._lights[0],
 			'light1' : this._lights[1],
 			'light2' : this._lights[2],        
-			'light3' : this._lights[3],                                     
+			'light3' : this._lights[3]                                     
 		},
     
 		// uvTransform can be used to scale or offset the texture coordinates.
@@ -178,7 +178,7 @@ function UberMaterial()
 		'specularMap' : this._specularMapOb,
     
 		// optional environment map
-		'environmentMap' : this._environmentMapOb,
+		'environmentMap' : this._environmentMapOb
 	};
 
 	this.updateAmbientColor = function()
@@ -270,6 +270,7 @@ function UberMaterial()
 					if (renderer && technique)
 					{
 						var tex = renderer.getTextureByName(value, caps.environmentMap.wrap);
+						this.registerTexture( tex );
 						technique.s_environmentMap.set( tex );
 					}
 				}
@@ -307,6 +308,7 @@ function UberMaterial()
 					if (renderer && technique)
 					{
 						var tex = renderer.getTextureByName(value, caps.diffuseMap.wrap);
+						this.registerTexture( tex );
 						technique.s_diffuseMap.set( tex );
 					}
 				}
@@ -344,6 +346,7 @@ function UberMaterial()
 					if (renderer && technique)
 					{
 						var tex = renderer.getTextureByName(value, caps.specularMap.wrap);
+						this.registerTexture( tex );
 						technique.s_specularMap.set( tex );
 					}
 				}
@@ -381,6 +384,7 @@ function UberMaterial()
 					if (renderer && technique)
 					{
 						var tex = renderer.getTextureByName(value, caps.normalMap.wrap);
+						this.registerTexture( tex );
 						technique.s_normalMap.set( tex );
 					}
 				}
@@ -411,8 +415,11 @@ function UberMaterial()
 		return newMat;
 	} 
 
-	this.init = function()
+	this.init = function( world )
 	{
+		// save the world
+		if (world)  this.setWorld( world );
+
 		// set up the shader
 		this._shader = this.buildUberShader( this._ubershaderCaps );
 
@@ -579,16 +586,24 @@ function UberMaterial()
 	
 		renderer = g_Engine.getContext().renderer;
 		if(this._useDiffuseMap) {
-			technique.s_diffuseMap.set(renderer.getTextureByName(caps.diffuseMap.texture, caps.diffuseMap.wrap, caps.diffuseMap.mips));
+			var tex = renderer.getTextureByName(caps.diffuseMap.texture, caps.diffuseMap.wrap, caps.diffuseMap.mips);
+			this.registerTexture( tex );
+			technique.s_diffuseMap.set( tex );
 		}
 		if(this._useNormalMap) {
-			technique.s_normalMap.set(renderer.getTextureByName(caps.normalMap.texture, caps.normalMap.wrap, caps.normalMap.mips));
+			var tex = renderer.getTextureByName(caps.normalMap.texture, caps.normalMap.wrap, caps.normalMap.mips);
+			this.registerTexture( tex );
+			technique.s_normalMap.set( tex );
 		}    
 		if(this._useSpecularMap) {
-			technique.s_specMap.set(renderer.getTextureByName(caps.specularMap.texture, caps.specularMap.wrap));
+			var tex = renderer.getTextureByName(caps.specularMap.texture, caps.specularMap.wrap);
+			this.registerTexture( tex );
+			technique.s_specMap.set( tex );
 		}
 		if(this._useEnvironmentMap) {
-			technique.s_envMap.set(renderer.getTextureByName(caps.environmentMap.texture, caps.environmentMap.wrap));
+			var tex = renderer.getTextureByName(caps.environmentMap.texture, caps.environmentMap.wrap);
+			this.registerTexture( tex );
+			technique.s_envMap.set( tex );
 			technique.u_envReflection.set([ caps.environmentMap.envReflection || 1.0 ] );
 		}
 

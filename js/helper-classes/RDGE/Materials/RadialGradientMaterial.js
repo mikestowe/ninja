@@ -21,13 +21,15 @@ function RadialGradientMaterial()
 	this._name = "RadialGradientMaterial";
 	this._shaderName = "radialGradient";
 
-	this._startColor = [1, 0, 0, 1];
-	this._stopColor  = [0, 1, 0, 1];
-
-	this._mainCircleRadius = 0.5;
-	this._innerCircleRadius = 0.05;
-	this._innerCircleCenter = [0.5, 0.5];
-	this._mainCircleCenter = [0.5, 0.5];
+	this._color1		= [1,0,0,1];
+	this._color2		= [0,1,0,1];
+	this._color3		= [0,0,1,1];
+	this._color4		= [0,1,1,1];
+	this._colorStop1	= 0.0;
+	this._colorStop2	= 0.3;
+	this._colorStop3	= 0.6;
+	this._colorStop4	= 1.0;
+	this._colorCount	= 4;
 
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
@@ -35,42 +37,79 @@ function RadialGradientMaterial()
 	this.getName		= function()	{ return this._name;			}
 	this.getShaderName	= function()	{  return this._shaderName;		}
 
-	this.getStartColor			= function()		{  return this._startColor.slice(0);	}
-	this.setStartColor			= function(c)		{  this._startColor = c.slice(0);		}	
+	
+	this.getColor1	= function()		{	return this._color1;		}
+	this.setColor1	= function(c)		{	this._color1 = c.slice();
+												if (this._shader && this._shader.default)
+													this._shader.default.u_color1.set(c);
+										}
 
-	this.getStopColor			= function()		{  return this._stopColor.slice(0);		}
-	this.setStopColor			= function(c)		{  this._stopColor = c.slice(0);		}	
+	this.getColor2	= function()		{	return this._color2;		}
+	this.setColor2	= function(c)		{	this._color2 = c.slice();
+												if (this._shader && this._shader.default)
+													this._shader.default.u_color2.set(c);
+										}
 
-	this.getMainCircleRadius	= function()		{  return this._mainCircleRadius;		}
-	this.setMainCircleRadius	= function(r)		{  this._mainCircleRadius = r;			}
+	this.getColor3	= function()		{	return this._color3;		}
+	this.setColor3	= function(c)		{	this._color3 = c.slice();
+												if (this._shader && this._shader.default)
+													this._shader.default.u_color3.set(c);
+										}
 
-	this.getInnerCircleRadius	= function()		{  return this._innerCircleRadius;		}
-	this.setInnerCircleRadius	= function(r)		{  this._innerCircleRadius = r;			}
+	this.getColor4	= function()		{	return this._color4;		}
+	this.setColor4	= function(c)		{	this._color4 = c.slice();
+												if (this._shader && this._shader.default)
+													this._shader.default.u_color4.set(c);
+										}
 
-	this.getInnerCircleCenter	= function()		{  return this._innerCircleCenter;		}
-	this.setInnerCircleCenter	= function(c)		{  this._innerCircleCenter = c;			}
+	this.getColorStop1 = function()		{  return this._colorStop1;		}
+	this.setColorStop1 = function(s)	{  this._colorStop1 = s;
+												if (this._shader && this._shader.default)
+													this._shader.default.u_colorStop1.set([s]);
+										}
 
-	this.getMainCircleCenter	= function()		{  return this._mainCircleCenter;		}
-	this.setMainCircleCenter	= function(c)		{  this._mainCircleCenter = c;			}
+	this.getColorStop2 = function()		{  return this._colorStop2;		}
+	this.setColorStop2 = function(s)	{  this._colorStop2 = s;
+												if (this._shader && this._shader.default)
+													this._shader.default.u_colorStop2.set([s]);
+										}
+
+	this.getColorStop3 = function()		{  return this._colorStop3;		}
+	this.setColorStop3 = function(s)	{  this._colorStop3 = s;
+												if (this._shader && this._shader.default)
+													this._shader.default.u_colorStop3.set([s]);
+										}
+
+	this.getColorStop4 = function()		{  return this._colorStop4;		}
+	this.setColorStop4 = function(s)	{  this._colorStop4 = s;
+												if (this._shader && this._shader.default)
+													this._shader.default.u_colorStop4.set([s]);
+										}
+
+	this.getColorCount	= function()	{  return this._colorCount;		}
+	this.setColorCount	= function(c)	{  this._colorCount = c;
+												if (this._shader && this._shader.default)
+													this._shader.default.u_colorCount.set([c]);
+										}
+
+	this.isAnimated		= function()	{  return false;					}
+
 
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
-	this._propNames			= ["startColor",	"stopColor",	"mainCircleRadius",		"innerCircleRadius",	"mainCircleCenter",		"innerCircleCenter"];
-	this._propLabels		= ["Start Color",	"Stop Color",	"Main Circle Radius",	"Inner Circle Radius",	"Main Circle Center",	"Inner Circle Center"];
-	this._propTypes			= ["color",			"color",		"float",				"float",				"vector2d",				"vector2d"];
+	this._propNames			= ["color1",		"color2",		"angle"];
+	this._propLabels		= ["Start Color",	"Stop Color",	"Angle"];
+	this._propTypes			= ["color",			"color",		"float"];
 	this._propValues		= [];
 
-	this._propValues[ this._propNames[0] ] = this._startColor.slice(0);
-	this._propValues[ this._propNames[1] ] = this._stopColor.slice(0);
-	this._propValues[ this._propNames[2] ] = this.getMainCircleRadius();
-	this._propValues[ this._propNames[3] ] = this.getInnerCircleRadius();
-	this._propValues[ this._propNames[4] ] = this.getMainCircleCenter();
-	this._propValues[ this._propNames[5] ] = this.getInnerCircleCenter();
+	this._propValues[ this._propNames[0] ] = this._color1.slice(0);
+	this._propValues[ this._propNames[1] ] = this._color4.slice(0);
+	this._propValues[ this._propNames[2] ] = this._angle;
 
     this.setProperty = function( prop, value )
 	{
-		if (prop === "color")  prop = "startColor";
+		if (prop === "color")  prop = "color1";
 
 		// make sure we have legitimate imput
 		var ok = this.validateProperty( prop, value );
@@ -79,12 +118,9 @@ function RadialGradientMaterial()
 
 		switch (prop)
 		{
-			case "startColor":				this.setStartColor(value);				break;
-			case "stopColor":				this.setStopColor(value);				break;
-			case "innerCircleRadius":		this.setInnerCircleRadius( value );		break;
-			case "mainCircleRadius":		this.setMainCircleRadius( value );		break;
-			case "innerCircleCenter":		this.setInnerCircleCenter( value );		break;
-			case "mainCircleCenter":		this.setMainCircleCenter( value );		break;
+			case "color1":		this.setColor1( value );		break;
+			case "color2":		this.setColor2( value );		break;
+			case "angle":		this.setAngle( value );			break;
 		}
 
 		this.updateValuesInShader();
@@ -115,25 +151,30 @@ function RadialGradientMaterial()
 
 	this.updateValuesInShader = function()
 	{
-		if (!this._shader || !this._shader.default)  return;
+		if (this._shader && this._shader.default)
+		{
+			//this._shader.default.u_colorCount.set( [4] );
 
-		// calculate values
-		var mainCircleRadius  = this.getMainCircleRadius();
-		var innerCircleRadius = this.getInnerCircleRadius();
-		var innerCircleCenter = this.getInnerCircleCenter();
-		var mainCircleCenter  = this.getMainCircleCenter();
-		var radiusDelta = innerCircleRadius - mainCircleRadius;
-		var innerCircleCenterMinusCenter = VecUtils.vecSubtract( 2, innerCircleCenter,  mainCircleCenter );
-		var	u_A = VecUtils.vecDot( 2, innerCircleCenterMinusCenter, innerCircleCenterMinusCenter) - (radiusDelta * radiusDelta)
+			var c;
+			c = this.getColor1();
+			this._shader.default.u_color1.set( c );
+			c = this.getColor2();
+			this._shader.default.u_color2.set( c );
+			c = this.getColor3();
+			this._shader.default.u_color3.set( c );
+			c = this.getColor4();
+			this._shader.default.u_color4.set( c );
 
-		// set values
-		this._shader.default.u_center.set( innerCircleCenter );
-		this._shader.default.u_startColor.set( this.getStartColor() );
-		this._shader.default.u_stopColor.set( this.getStopColor() );
-		this._shader.default.u_innerCircleCenterMinusCenter.set( innerCircleCenterMinusCenter );
-		this._shader.default.u_radius.set( [mainCircleRadius] );
-		this._shader.default.u_A.set( [ u_A] );
-		this._shader.default.u_radiusDelta.set( [radiusDelta] );
+			var s;
+			s = this.getColorStop1();
+			this._shader.default.u_colorStop1.set( [s] );
+			s = this.getColorStop2();
+			this._shader.default.u_colorStop2.set( [s] );
+			s = this.getColorStop3();
+			this._shader.default.u_colorStop3.set( [s] );
+			s = this.getColorStop4();
+			this._shader.default.u_colorStop4.set( [s] );
+		}
 	}
 
 	this.export = function()
@@ -190,13 +231,13 @@ function RadialGradientMaterial()
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // RDGE shader
- 
+
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
 var radialGradientMaterialDef =
 {'shaders': 
 	{
 		'defaultVShader':"assets/shaders/radialGradient.vert.glsl",
-		'defaultFShader':"assets/shaders/radialGradient.frag.glsl",
+		'defaultFShader':"assets/shaders/radialGradient.frag.glsl"
 	},
 	'techniques':
 	{ 
@@ -210,18 +251,20 @@ var radialGradientMaterialDef =
 				{
 					'vert'	:	{ 'type' : 'vec3' },
 					'normal' :	{ 'type' : 'vec3' },
-					'texcoord'	:	{ 'type' : 'vec2' },
+					'texcoord'	:	{ 'type' : 'vec2' }
 				},
 				// parameters
 				'params' : 
 				{
-					'u_startColor' : { 'type' : 'vec4' },									
-					'u_stopColor' : { 'type' : 'vec4' },
-					'u_center' : { 'type' : 'vec2' },
-					'u_radius' : { 'type' : 'float' },
-					'u_A' : { 'type' : 'float' },
-					'u_radiusDelta' : { 'type' : 'float' },									
-					'u_innerCircleCenterMinusCenter' : { 'type' : 'vec2' },
+						'u_color1' :		{ 'type' : 'vec4' },									
+						'u_color2' :		{ 'type' : 'vec4' },									
+						'u_color3' :		{ 'type' : 'vec4' },									
+						'u_color4' :		{ 'type' : 'vec4' },
+						'u_colorStop1':		{ 'type' : 'float' },									
+						'u_colorStop2':		{ 'type' : 'float' },									
+						'u_colorStop3':		{ 'type' : 'float' },									
+						'u_colorStop4':		{ 'type' : 'float' },									
+						//'u_colorCount':		{'type' : 'int' }
 				},
 
 				// render states
@@ -229,12 +272,8 @@ var radialGradientMaterialDef =
 				{
 					'depthEnable' : true,
 					'offset':[1.0, 0.1]
-				},
-			},
+				}
+			}
 		]
 	}
 };
-
-
-
-

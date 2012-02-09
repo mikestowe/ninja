@@ -98,6 +98,8 @@ function LinearGradientMaterial()
 													this._shader.default.u_cos_sin_angle.set([Math.cos(a), Math.sin(a)]);
 											}
 
+	this.isAnimated			= function()			{  return false;					}
+
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
@@ -133,8 +135,10 @@ function LinearGradientMaterial()
 	// duplcate method requirde
 	this.dup = function()	{  return new LinearGradientMaterial();	} 
 
-	this.init = function()
+	this.init = function( world )
 	{
+		this.setWorld( world );
+
 		// set up the shader
 		this._shader = new jshader();
 		this._shader.def = linearGradientMaterialDef;
@@ -146,6 +150,8 @@ function LinearGradientMaterial()
 
 		// send the current values to the shader
 		this.updateShaderValues();
+
+		console.log( "**** LinearGradientMaterial initialized" );
 	}
 
 	this.updateShaderValues= function()
