@@ -217,8 +217,9 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
             if(/[^/\\]$/g.test(projectDirectory)){
                 projectDirectory = projectDirectory + "/";
             }
-            if(!!fileExtension && (projectName.lastIndexOf(fileExtension) !== (projectName.length - fileExtension.length))){
-                projectName = projectName+fileExtension;
+
+            if(!!fileExtension && ((projectName.lastIndexOf(fileExtension) === -1) || (projectName.lastIndexOf(fileExtension) !== (projectName.length - fileExtension.length)))){
+                projectName = projectName+fileExtension;//append file extension if file extension is already not present or is actually part of the file name
             }
             newFilePath = "" + projectDirectory + projectName;
 
@@ -367,7 +368,7 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
     },
     isValidFileName:{
         value: function(fileName){
-            var status = this.isValidFileName(fileName);
+            var status = this.validateFileName(fileName);
             if(fileName !== ""){
                 if(!status){
                     this.showError("! Invalid file name.");
@@ -399,7 +400,7 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
         /***
          * file name validation
          */
-        isValidFileName:{
+        validateFileName:{
             value: function(fileName){
                 var status = false;
                 if(fileName !== ""){

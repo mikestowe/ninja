@@ -37,12 +37,12 @@ var NewFileLocation = exports.NewFileLocation = Montage.create(Component, {
 
             this.fileInputField.selectDirectory = true;
 
-            this.newFileName.addEventListener("blur", function(evt){that.handleNewFileNameOnblur(evt);}, false);
+            this.newFileName.addEventListener("keyup", function(evt){that.handleNewFileNameOnkeyup(evt);}, false);
     }
 
     },
 
-    handleNewFileNameOnblur:{
+    handleNewFileNameOnkeyup:{
           value:function(evt){
               if(this.newFileName.value !== ""){
                   var newFileNameSetEvent = document.createEvent("Events");

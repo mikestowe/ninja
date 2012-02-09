@@ -54,7 +54,7 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
             this.newFileName.value = this.fileName;
             this.fileInputField.newFileDirectory.value = this.folderUri;
 
-            this.newFileName.addEventListener("blur", function(evt){self.handleNewFileNameOnblur(evt);}, false);
+            this.newFileName.addEventListener("keyup", function(evt){self.handleNewFileNameOnkeyup(evt);}, false);
             this.eventManager.addEventListener("newFileDirectorySet", function(evt){self.handleNewFileDirectorySet(evt);}, false);
 
             this.okButton.addEventListener("click", function(evt){self.handleOkButtonAction(evt);}, false);
@@ -68,18 +68,18 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
          value:function(evt){
              if(!!evt._event.newFileDirectory){
                  this.folderUri = evt._event.newFileDirectory;
-                 if(this.folderUri !== ""){
+                 if(this.isValidUri(this.folderUri)){
                      this.enableOk();
                  }
              }
          }
      },
 
-    handleNewFileNameOnblur:{
+    handleNewFileNameOnkeyup:{
           value:function(evt){
               this.fileName = this.newFileName.value;
               if(this.fileName !== ""){
-                  if(this.fileName !== ""){
+                  if(this.isValidFileName(this.fileName)){
                       this.enableOk();
                   }
               }
@@ -165,7 +165,7 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
     },
     isValidFileName:{
         value: function(fileName){
-            var status = this.isValidFileName(fileName);
+            var status = this.validateFileName(fileName);
             if(fileName !== ""){
                 if(!status){
                     this.showError("! Invalid file name.");
@@ -198,7 +198,7 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
        /***
          * file name validation
          */
-        isValidFileName:{
+       validateFileName:{
             value: function(fileName){
                 var status = false;
                 if(fileName !== ""){
