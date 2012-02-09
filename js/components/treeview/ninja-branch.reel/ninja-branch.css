@@ -1,3 +1,9 @@
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
 .treeRoot > .branch > ul {
     margin-top: 0;
 }
@@ -12,14 +18,15 @@
     width: 100%;
 }
 .treeRoot .branch .branch-label {
-    border-bottom: 1px solid #505050;
-    cursor: pointer;
-    padding: 3px 0 4px;
     background-repeat: no-repeat;
     background-position: 3px 2px;
-    box-shadow: 0 0 0 0 rgba(0,0,0,0);
-    font-weight: bold;
+    border-bottom: 1px solid #505050;
     box-shadow: 0 3px 4px -4px rgba(0,0,0,0.2);
+    color: #FFF;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 3px 0 4px;
+    text-shadow: 1px 1px 0 #000;
 }
 
 /* First Level */
