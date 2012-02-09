@@ -127,6 +127,7 @@ function FlatMaterial()
 	{
 	}
 
+}
 // used to create unique names
 var flatMaterialCounter = 0;
 
