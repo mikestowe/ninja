@@ -43,10 +43,15 @@ LoadState.prototype.Init = function()
 	{
 		this.loadScene("assets_web/mesh/" + this.sceneName + ".json", this.sceneName);
 	}
+
+	if (this.hasUserState && this.userRunState && this.userRunState.onLoadState)
+		this.userRunState.onLoadState();
 }
 
 LoadState.prototype.ReInit = function() 
 {
+	if (this.hasUserState && this.userRunState && this.userRunState.onLoadState)
+		this.userRunState.onLoadState();
 }
 
 LoadState.prototype.Resize = function() 

@@ -62,6 +62,10 @@ function GLMaterial( world )
 	this.getShader			= function()			{  return this._shader;				}
 	this.getMaterialNode	= function()			{  return this._materialNode;		}
 
+	// a material can be animated or not. default is not.  
+	// Any material needing continuous rendering should override this method
+	this.isAnimated			= function()			{  return false;					}
+
 
     ///////////////////////////////////////////////////////////////////////
     // Common Material Methods
@@ -172,6 +176,31 @@ function GLMaterial( world )
 	this.update = function( time )
 	{
 		// animated materials should implement the update method
+	}
+
+	this.registerTexture = function( texture )
+	{
+		// the world needs to know about the texture map
+		var world = this.getWorld();
+		if (!world)
+			console.log( "**** world not defined for registering texture map: " + texture.lookUpName );
+		else
+			world.textureToLoad( texture );
+	}
+
+	this.loadTexture = function( texMapName, wrap, mips )
+	{
+		var tex;
+		var world = this.getWorld();
+		if (!world)
+			console.log( "world not defined for material with texture map" );
+		else
+		{
+			var renderer = world.getRenderer();
+			tex = renderer.getTextureByName(texMapName, wrap, mips );
+			this.registerTexture( tex );
+		}
+		return tex;
 	}
 
 	this.export = function()

@@ -335,14 +335,19 @@ _renderer = function(canvas) {
 
         var tex = this.textureMap[name];
 
-        if (tex === undefined) {
-
-
+        if (tex === undefined)
+		{
             // load the texture
             tex = this.createTexture(name + ext, wrap, mips);
             this.textureMap[name] = tex;
             tex.lookUpName = name;
+			tex.previouslyReferenced = false;
         }
+		else
+		{
+			//console.log( "texture already loaded: " + name );
+			tex.previouslyReferenced = true;
+		}
 
         return tex;
 
@@ -364,6 +369,7 @@ _renderer = function(canvas) {
             mips = true;
 
         if (texture) {
+			//console.log( "createTexture: " + url );
             texture.image = new Image();
             texture.image.src = url;
             texture.image.context = g_Engine.getContext();
@@ -371,6 +377,8 @@ _renderer = function(canvas) {
             texture.image.onload = function() {
                 var stateMan = this.context.ctxStateManager;
                 stateMan.RDGEInitState.loadTexture(texture);
+				//console.log( "loaded texture: " + texture.lookUpName );
+				if (texture.callback)  texture.callback( texture );
             };
         }
         return texture;

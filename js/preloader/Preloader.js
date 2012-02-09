@@ -65,7 +65,6 @@ exports.Preloader = Montage.create(Component, {
                 {"type":"js", "url":"js/helper-classes/RDGE/GLMaterial.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/GLLight.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/Materials/FlatMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/BrickMaterial.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/Materials/UberMaterial.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/Materials/PlasmaMaterial.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/Materials/RadialGradientMaterial.js"},
