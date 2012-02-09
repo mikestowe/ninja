@@ -408,7 +408,7 @@ span.pp-span-all:focus { -webkit-box-shadow: none; background-color: #b4b4b4; bo
 
 #pp-container-list li, #pp-container-list span.span-space { background-repeat: no-repeat; }
 
-#pp-container-list li.directory.open > span.pp-span-all > span.pp-col-files > span.span-space { background-image: url("../images/panels/project-panel/icon-file-folderopen.png"); background-position: 100% 0px; }
+#pp-container-list li.directory.open > span.pp-span-all > span.pp-col-files > span.span-space, .branch-label { background-image: url("../images/panels/project-panel/icon-file-folderopen.png"); background-position: 100% 0px; }
 
 #pp-container-list li.directory.closed > span.pp-span-all > span.pp-col-files > span.span-space { background-image: url("../images/panels/project-panel/icon-file-folderclosed.png"); background-position: 100% 0px; }
 
