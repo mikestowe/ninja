@@ -346,8 +346,10 @@ exports.ShapesController = Montage.create(CanvasController, {
             {
                 world = new GLWorld(el, true);
                 el.elementModel.shapeModel.GLWorld = world;
-                el.elementModel.shapeModel.GLGeomObj.setWorld(world);
                 el.elementModel.shapeModel.useWebGl = true;
+                world.import(worldData);
+                el.elementModel.shapeModel.GLGeomObj = world.getGeomRoot();
+
                 sm = Object.create(MaterialsLibrary.getMaterial("FlatMaterial"));
                 fm = Object.create(MaterialsLibrary.getMaterial("FlatMaterial"));
                 if(sm && fm)
@@ -356,9 +358,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                     el.elementModel.shapeModel.GLGeomObj.setFillMaterial(fm);
                     el.elementModel.shapeModel.strokeMaterial = sm;
                     el.elementModel.shapeModel.fillMaterial = fm;
-                    el.elementModel.shapeModel.GLGeomObj.buildBuffers();
                 }
-                world.import(worldData);
             }
 
         }
@@ -378,13 +378,13 @@ exports.ShapesController = Montage.create(CanvasController, {
                 world = new GLWorld(el, false);
                 el.elementModel.shapeModel.GLWorld = world;
                 el.elementModel.shapeModel.useWebGl = false;
+                world.import(worldData);
+                el.elementModel.shapeModel.GLGeomObj = world.getGeomRoot();
                 el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(null);
                 el.elementModel.shapeModel.GLGeomObj.setFillMaterial(null);
                 el.elementModel.shapeModel.strokeMaterial = null;
                 el.elementModel.shapeModel.fillMaterial = null;
-                world.import(worldData);
             }
-
         }
     }
 
