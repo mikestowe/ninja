@@ -279,7 +279,8 @@
                     "stylesController":     {"@": "stylesController"},
                     "filePickerController": {"@": "filePickerController"},
                     "newFileController":    {"@": "newFileController"},
-                    "documentBar":          {"@": "documentBar"}
+                    "documentBar":          {"@": "documentBar"},
+                    "timeline":             {"@": "timeline"}
                 }
             }
 
@@ -344,13 +345,10 @@
                         </section>
 
                         <section id="timelineResizer" class="timelineResizer resizeBar"></section>
-
+                        <section id="breadCrumbTrail">
+                                                        <div id="breadCrumbComponent"></div>
+                                                    </section>
                         <section id="bottomPanelContainer" class="panelContainer">
-
-                            <section id="breadCrumbTrail">
-                                <div id="breadCrumbComponent"></div>
-                            </section>
-
                             <section id="timelinePanel" class="panel">
                                 <div id="timelinePanelComponent"></div>
                             </section>

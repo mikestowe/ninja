@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+    	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    	<link rel="stylesheet" type="text/css" href="css/Style.css">
+   		<script type="text/montage-serialization">
+            {
+                "owner": {
+                    "module": "js/panels/Timeline/Style.reel",
+                    "name": "Style",
+                    "properties": {
+                        "element": {"#": "style-container"},
+                        "styleContainer" : {"#" : "style-container"},
+                        "styleHintable" : {"#" : "style-hintable"},
+                        "styleProperty" : {"#": "container-property"},
+                        "valueEditorHottext" : {"@":"hottextunit"},
+                        "dtextProperty" : {"@":"dtext1"},
+                        "myHintable" : {"@" :"hintable"}
+                    }
+                },
+	            "dtext1" : {
+	            	"module" : "montage/ui/dynamic-text.reel",
+	            	"name" : "DynamicText",
+	            	"properties" : {
+	            		"element" : {"#" : "container-property"}
+	            	},
+	            	"bindings" : {
+	            		"value" : {
+	            			"boundObject" : {"@" : "owner"},
+	            			"boundObjectPropertyPath" : "editorProperty",
+	            			"oneway" : false
+	            		}
+	            	}
+	            },
+	            "hottextunit" : {
+	            	"module" : "js/components/hottextunit.reel",
+	            	"name" : "HotTextUnit",
+	            	"properties" : {
+	            		"element" : {"#":"value-editor-hottext"}
+	            	},
+	            	"bindings" : {
+	            		"value" : {
+	            			"boundObject" : {"@" : "owner"},
+	            			"boundObjectPropertyPath" : "editorValue",
+	            			"oneway" : false
+	            		}
+	            	}
+	            },
+	            "hintable" : {
+	            	"module" : "js/components/hintable.reel",
+	            	"name" : "Hintable",
+	            	"properties" : {
+	            		"element" : {"#":"style-hintable"}
+	            	},
+	            	"bindings" : {
+	            		"value" : {
+	            			"boundObject" : {"@" : "owner"},
+	            			"boundObjectPropertyPath" : "editorProperty",
+	            			"oneway" : false
+	            		}
+	            	}
+	            }
+            }
+        </script>
+	</head>
+	<body>
+		<div id="style-container">
+			<div class="style-padding">
+				<div class="row-hintable hidden">
+					<div id="style-hintable"></div>
+				</div>
+				<div class="container-propvals hidden">
+					<div class="cell-property">
+						<div id="container-property">property</div>
+					</div>
+					<div class="cell-value value-editor editor-hottext hidden">
+						<div id="value-editor-hottext"></div>
+					</div>
+					<div class="cell-value value-editor editor-color hidden">
+						<div id="value-editor-color">[&nbsp;]</div>
+					</div>
+					<div class="cell-value value-editor editor-input hidden">
+						<!-- <div id="value-editor-input"></div> -->
+						<input type="text" class="nj-skinned" value="" />
+					</div>
+				</div>
+
+			</div>
+		</div>
+    </body>
+</html>
