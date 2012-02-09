@@ -32,7 +32,7 @@ exports.IoMediator = Montage.create(Component, {
     	enumerable: false,
     	value: function (file, template, callback) {
     		//
-    		var xhr = new XMLHttpRequest();
+    		var xhr = new XMLHttpRequest(), returnObj=null;
     		xhr.open("GET", template, false);
             xhr.send();
     		if (xhr.readyState === 4) {
@@ -49,10 +49,11 @@ exports.IoMediator = Montage.create(Component, {
     		
 
 			//callback('win');
-            /*
-var returnObj = null; //like {"uri": "/gfdg/gdf/dfg.js", "success": true,...}
-    		callback(returnObj);
-*/
+
+
+            ///please keep until real data is ready so that I can test the flow
+    		callback(returnObj);//returnObj will be like {"uri": "/gfdg/gdf/dfg.js", "success": true,...}
+            ////end - please keep until real data is ready
     	}
     },
     ////////////////////////////////////////////////////////////////////

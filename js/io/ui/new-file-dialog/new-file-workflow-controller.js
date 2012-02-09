@@ -44,7 +44,7 @@ var NewFileWorkflowController =  exports.NewFileWorkflowController = Montage.cre
             this.model.projectTypeData = this.loadDescriptor("js/io/templates/descriptor.json");
 
             //get default project type
-            this.model.defaultProjectType = "files/html.txt";
+            this.model.defaultProjectType = "/js/io/templates/files/html.txt";
             this.model.callback = data.callback || null;
             this.model.callbackScope = data.callbackScope || null;
 

@@ -30,7 +30,7 @@ var FileInputField = exports.FileInputField = Montage.create(Component, {
 
             this.eventManager.addEventListener("pickerSelectionsDone", function(evt){that.handleFileInputPickerSelectionsDone(evt);}, false);
 
-            this.newFileDirectory.addEventListener("blur", function(evt){that.handleNewFileDirectoryOnblur(evt);}, false);
+            this.newFileDirectory.addEventListener("keyup", function(evt){that.handleNewFileDirectoryOnkeyup(evt);}, false);
         }
     },
 
@@ -77,7 +77,7 @@ var FileInputField = exports.FileInputField = Montage.create(Component, {
         }
     },
 
-    handleNewFileDirectoryOnblur:{
+    handleNewFileDirectoryOnkeyup:{
           value:function(evt){
               if(this.newFileDirectory.value !== ""){
                   var newFileDirectorySetEvent = document.createEvent("Events");

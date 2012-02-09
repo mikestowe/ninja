@@ -20,7 +20,7 @@ NOTES:
 var Montage = require("montage/core/core").Montage;
 ////////////////////////////////////////////////////////////////////////
 //Exporting as File I/O
-exports.FileIo = Montage.create(Object.prototype, {
+exports.FileIo = Montage.create(require("montage/ui/component").Component, {
 	////////////////////////////////////////////////////////////////////
     //newFile Object (*required): {uri*, contents, contentType}
     //Return codes
