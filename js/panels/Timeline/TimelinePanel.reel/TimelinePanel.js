@@ -11,11 +11,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
 
     /* === BEGIN: Models === */
-
-    // Layer models: arrays for the data and repetition,  current layer number,
     _arrLayers:{
         value:[]
     },
+
     arrLayers:{
         get:function () {
             return this._arrLayers;
@@ -28,6 +27,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     _layerRepetition:{
         value:null
     },
+
     layerRepetition:{
         get:function () {
             return this._layerRepetition;
@@ -36,9 +36,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this._layerRepetition = newVal;
         }
     },
+
     _currentLayerNumber:{
         value:0
     },
+
     currentLayerNumber:{
         get:function () {
             return this._currentLayerNumber;
@@ -62,11 +64,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:1000
     },
 
-    // Track model
     _arrTracks:{
         serializable:true,
         value:[]
     },
+
     arrTracks:{
         serializable:true,
         get:function () {
@@ -76,10 +78,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this._arrTracks = newVal;
         }
     },
+
     _trackRepetition:{
         serializable:true,
         value:null
     },
+
     trackRepetition:{
         serializable:true,
         get:function () {
@@ -104,11 +108,22 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
+    _isLayer:{
+        value:false
+    },
 
+    _firstTimeLoaded:{
+        value:true,
+        writable:true
+    },
+
+    _arrLayersNonEmpty:{
+        value:true,
+        writable:true
+    },
     /* === END: Models === */
 
     /* === BEGIN: Draw cycle === */
-
     prepareForDraw:{
         value:function () {
 
@@ -126,20 +141,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
-    _isLayer:{
-        value:false
-    },
-
-    _firstTimeLoaded:{
-        value:true,
-        writable:true
-    },
-
-    _arrLayersNonEmpty:{
-        value:true,
-        writable:true
-    },
-
     willDraw:{
         value:function () {
             if (this._isLayer) {
@@ -148,43 +149,29 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             }
         }
     },
-
     /* === END: Draw cycle === */
 
     /* === BEGIN: Controllers === */
-
     initTimelineView:{
         value:function () {
-
-            // Get some selectors to make life easier.
             this.layout_tracks = this.element.querySelector(".layout-tracks");
             this.layout_markers = this.element.querySelector(".layout_markers");
 
-            // Add event handlers on the buttons.
             this.newlayer_button.identifier = "addLayer";
             this.newlayer_button.addEventListener("click", this, false);
             this.deletelayer_button.identifier = "deleteLayer";
             this.deletelayer_button.addEventListener("click", this, false);
-
-            // New click listener to handle select/deselect events
             this.timeline_leftpane.addEventListener("click", this.timelineLeftPaneClick.bind(this), false);
-
-            // Simultaneous scrolling of the layer and tracks
             this.layout_tracks.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
             this.user_layers.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
 
-            // Calculate and draw time markers
             this.drawTimeMarkers();
 
-            // Default to one layer for new doc
-//            this.newLayer();
             this._hashKey = "123";
             _firstLayerDraw = false;
             NJevent('newLayer', this._hashKey);
             _firstLayerDraw = true;
             this.selectLayer(0);
-
-            // TODO - add condition for existing doc and parse DOM for top level elements
         }
     },
 
@@ -234,7 +221,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     handleAddLayerClick:{
         value:function (event) {
-            //event.stopPropagation();
             this._isLayer = true;
             this.needsDraw = true;
         }
@@ -242,7 +228,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     handleDeleteLayerClick:{
         value:function (event) {
-            //event.stopPropagation();
             this._deleteKeyDown = false;
             if (this.application.ninja.currentSelectedContainer.id === "UserContent") {
                 this._hashKey = "123";
@@ -260,17 +245,14 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this._firstTimeLoaded = false;
             } else {
                 while (this.arrLayers.pop()) {
-
                 }
                 while (this.arrTracks.pop()) {
                 }
-
                 if (event.detail.element.id === "UserContent") {
                     this._hashKey = "123";
                 } else {
                     this._hashKey = event.detail.element.uuid;
                 }
-
                 if (this.returnedObject = this.hashInstance.getItem(this._hashKey)) {
                     this.returnedTrack = this.hashTrackInstance.getItem(this._hashKey);
                     this._hashFind = true;
@@ -284,12 +266,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     timelineLeftPaneClick:{
         value:function (event) {
-            // Check ALL THE CLICKS
-            // Are they in a particular layer? If so, we need to select that layer and
-            // deselect the others.
             var ptrParent = nj.queryParentSelector(event.target, ".container-layer");
             if (ptrParent !== false) {
-                // Why yes, the click was within a layer.  But which one?
                 var myIndex = this.getActiveLayerIndex();
                 this.selectLayer(myIndex);
             }
@@ -298,8 +276,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     handleNewLayer:{
         value:function (event) {
-            // Add a new layer.  It should be added above the currently selected layer,
-            // Or at the top, if no layer is selected.
             var hashIndex = 0 , hashVariable = 0, layerResult, trackResult, layerObject, trackObject, dLayer, parentNode;
 
             this._arrLayersNonEmpty = true;
@@ -400,9 +376,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                         thingToPush.parentElementUUID = 123;
                     }
                 }
-
-                // If a layer is selcted, splice the new layer on top
-                // Otherwise, just push the new layer in at the bottom.
 
                 if (!!this.layerRepetition.selectedIndexes) {
                     myIndex = this.layerRepetition.selectedIndexes[0];
@@ -600,7 +573,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
                 setItem:{
                     value:function (key, value, index) {
-//                               console.log(this.application.ninja.currentSelectedContainer)
                         if (hashLayerObject[key] === undefined) {
                             hashLayerObject[key] = {};
                         }
@@ -618,7 +590,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                         }
                         hashLayerObject[key][index] = value;
                         this.counter = 0;
-//                                   console.log(hashLayerObject)
                     }
                 },
 
@@ -635,7 +606,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     createTrackHashTable:{
         value:function (key, value) {
             var hashTrackObject;
-
             hashTrackObject = Object.create(Object.prototype, {
                 counter:{
                     value:0,
@@ -648,14 +618,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                             hashTrackObject[key] = {};
 
                         }
-
                         if (hashTrackObject[key][index] !== undefined) {
-
                             this.counter = index;
                             while (hashTrackObject[key][this.counter]) {
                                 this.counter++;
                             }
-
                             while (this.counter !== index) {
                                 hashTrackObject[key][this.counter] = hashTrackObject[key][this.counter - 1];
                                 this.counter = this.counter - 1;
@@ -663,7 +630,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                         }
                         hashTrackObject[key][index] = value;
                         this.counter = 0;
-//                                       console.log(hashTrackObject)
                     }
                 },
 
@@ -680,15 +646,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     createLayerNumberHash:{
         value:function (key, value) {
             var hashLayerNumberObject;
-
             hashLayerNumberObject = Object.create(Object.prototype, {
-
                 setItem:{
                     value:function (key, value) {
                         if (value !== undefined) {
-
                             hashLayerNumberObject[key] = value.layerID;
-
                         }
                     }
                 },
@@ -708,12 +670,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     selectLayer:{
         value:function (layerIndex) {
-            // Select a layer based on its index.
-            // use layerIndex = false to deselect all layers.
             var i = 0,
                 arrLayersLength = this.arrLayers.length;
 
-            // First, update this.arrLayers[].isSelected
             for (i = 0; i < arrLayersLength; i++) {
                 if (i === layerIndex) {
                     this.arrLayers[i].isSelected = true;
@@ -722,7 +681,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 }
             }
 
-            // Next, update this.layerRepetition.selectedIndexes and this.currentLayerSelected.
             if (layerIndex !== false) {
                 this.layerRepetition.selectedIndexes = [layerIndex];
                 this.trackRepetition.selectedIndexes = [layerIndex];
@@ -739,8 +697,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     getLayerIndexByID:{
         value:function (layerID) {
-            // Get the index in this.arrLayers that matches a particular layerID.
-            // Returns false if no match.
             var i = 0,
                 returnVal = false,
                 arrLayersLength = this.arrLayers.length;
@@ -750,16 +706,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     returnVal = i;
                 }
             }
-
             return returnVal;
-
         }
     },
 
     getLayerIndexByName:{
         value:function (layerName) {
-            // Get the index in this.arrLayers that matches a particular layerName
-            // Returns false if no match
             var i = 0,
                 returnVal = false,
                 arrLayersLength = this.arrLayers.length;
@@ -769,14 +721,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     returnVal = i;
                 }
             }
-
             return returnVal;
         }
     },
     getActiveLayerIndex:{
         value:function () {
-            // Searches through the layers and looks for one that has
-            // set its isActive flag to true.
             var i = 0,
                 returnVal = false,
                 arrLayersLength = this.arrLayers.length;
@@ -793,7 +742,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     insertLayer:{
         value:function () {
-
             var cmd = this.addLayerCommand();
             cmd.execute();
             cmd._el = this._LayerUndoObject;
@@ -801,16 +749,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             cmd._layerPosition = this._LayerUndoPosition;
             cmd._undoStatus = this._LayerUndoStatus;
             cmd._track = this._TrackUndoObject;
-
             NJevent("sendToUndo", cmd);
-
-
         }
     },
 
     removeLayer:{
         value:function () {
-
             var cmd = this.deleteLayerCommand();
             cmd.execute();
             cmd._el = this._LayerUndoObject;
@@ -818,31 +762,23 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             cmd._layerPosition = this._LayerUndoPosition;
             cmd._undoStatus = this._LayerUndoStatus;
             cmd._track = this._TrackUndoObject;
-
             if (this._arrLayersNonEmpty) {
                 NJevent("sendToUndo", cmd);
             }
-
-
         }
     },
 
     addLayerCommand:{
         value:function () {
             var command;
-
             command = Object.create(Object.prototype, {
-
                 _el:{value:null, writable:true},
                 _layerID:{value:null, writable:true},
                 _layerPosition:{value:null, writable:true},
                 _undoStatus:{value:false, writable:true},
                 _track:{value:null, writable:true},
-
-
                 description:{ value:"Add Layer"},
                 receiver:{value:TimelinePanel},
-
                 execute:{
                     value:function () {
 
@@ -850,7 +786,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
                     }
                 },
-
                 unexecute:{
                     value:function () {
                         NJevent('deleteLayer', this)
@@ -858,7 +793,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     }
                 }
             });
-
             return command;
         }
     },
@@ -867,28 +801,21 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:function () {
             var command;
             command = Object.create(Object.prototype, {
-
                 description:{ value:"Delete Layer"},
                 receiver:{value:TimelinePanel},
-
                 execute:{
                     value:function () {
                         NJevent('deleteLayer', this)
                     }
                 },
-
                 unexecute:{
                     value:function () {
                         NJevent('newLayer', this)
-
                     }
                 }
             });
-
             return command;
         }
     }
-
     /* === END: Controllers === */
-
 });
