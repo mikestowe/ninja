@@ -378,12 +378,12 @@ Engine.prototype.getRDGEPanel=function(panelID)
 }
 
 Engine.prototype.registerCanvas = function(canvas, runState) {
-    if (canvas && this.getContext(canvas.id))
+    if (canvas && this.getContext(canvas.rdgeid))
 	    return;
  
     canvas.renderer = new _renderer(canvas); 	// create the renderer for the context
-    this.canvasToRendererMap[canvas.id] = canvas; // store the canvas in the context map
-    canvas.renderer.id = canvas.id;
+    this.canvasToRendererMap[canvas.rdgeid] = canvas; // store the canvas in the context map
+    canvas.renderer.id = canvas.rdgeid;
 
     // configure the state manager for this context
     var stateMan = new stateManager();
@@ -391,11 +391,11 @@ Engine.prototype.registerCanvas = function(canvas, runState) {
     // add this context to the contextManager and attach the handle to DOM canvas for user retrieval
     var context = new contextDef();
 
-    context.id = canvas.id;
+    context.id = canvas.rdgeid;
     context.renderer = canvas.renderer;
     context.ctxStateManager = stateMan;
     context.startUpState;
-    context.fpsTracker = new fpsTracker(canvas.id);
+    context.fpsTracker = new fpsTracker(canvas.rdgeid);
 
     context.renderer.mvMatrix = mat4.identity();
     context.renderer.invMvMatrix = mat4.identity();
@@ -471,7 +471,7 @@ Engine.prototype.registerCanvas = function(canvas, runState) {
 }
 
 Engine.prototype.unregisterCanvas = function(canvas) {
-    stat.closePage(canvas.id + "_fps");
+    stat.closePage(canvas.rdgeid + "_fps");
     contextManager.removeObject(canvas.rdgeCtxHandle);
 
 }

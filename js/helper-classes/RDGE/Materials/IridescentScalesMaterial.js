@@ -80,8 +80,11 @@ function IridescentScalesMaterial()
     /////////////////////////////////////////////////////////////////////// 
 	this.dup = function()	{  return new IridescentScalesMaterial();	}
 
-	this.init = function()
+	this.init = function( world )
 	{
+		// save the world
+		if (world)  this.setWorld( world );
+
 		// set up the shader
 		this._shader = new jshader();
 		this._shader.def = iridescentScalesShaderDef;

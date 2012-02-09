@@ -55,14 +55,16 @@ function GLCircle()
 
 		this.m_world = world;
 
+
 		if(strokeMaterial)
-		{
 			this._strokeMaterial = strokeMaterial;
-		}
+		else
+			this._strokeMaterial = new FlatMaterial();
+
 		if(fillMaterial)
-		{
 			this._fillMaterial = fillMaterial;
-		}
+		else 
+			this._fillMaterial = new FlatMaterial();
 	}
 
     ///////////////////////////////////////////////////////////////////////

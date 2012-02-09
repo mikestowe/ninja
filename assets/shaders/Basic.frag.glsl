@@ -4,11 +4,14 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var Montage = require("montage/core/core").Montage;
-var ToolProperties = require("js/components/tools-properties/tool-properties").ToolProperties;
 
-exports.PenProperties = Montage.create(ToolProperties, {
-    strokeSize: {
-        get: function() { return this._strokeSize; }
-    }
-});
+#ifdef GL_ES
+precision highp float;
+#endif
+
+
+uniform vec4 color;
+
+void main() {
+    gl_FragColor = color;
+}

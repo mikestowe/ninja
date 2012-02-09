@@ -72,13 +72,14 @@ function GLRectangle()
 		this._materialSpecular = [0.4, 0.4, 0.4,  1.0];
 
 		if(strokeMaterial)
-		{
 			this._strokeMaterial = strokeMaterial;
-		}
+		else
+			this._strokeMaterial = new FlatMaterial();
+
 		if(fillMaterial)
-		{
 			this._fillMaterial = fillMaterial;
-		}
+		else 
+			this._fillMaterial = new FlatMaterial();
 	}
 
 	///////////////////////////////////////////////////////////////////////
