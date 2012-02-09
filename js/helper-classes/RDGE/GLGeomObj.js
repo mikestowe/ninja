@@ -103,6 +103,9 @@ function GLGeomObj()
 				}
 			}
 		}
+
+		var world = this.getWorld();
+		if (world)  world.restartRenderLoop();
 	}
 
 	this.setFillColor   = function(c)		{  this.setMaterialColor(c, "fill");		}

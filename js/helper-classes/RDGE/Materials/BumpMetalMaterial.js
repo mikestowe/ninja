@@ -22,9 +22,9 @@ function BumpMetalMaterial()
 	this._shaderName = "bumpMetal";
 
 	this._lightDiff = [0.3, 0.3, 0.3, 1.0];
-	this._diffuseTexture = "metal";
-	this._specularTexture = "silver";
-	this._normalTexture = "normalMap";
+	this._diffuseTexture = "assets/images/metal.png";
+	this._specularTexture = "assets/images/silver.png";
+	this._normalTexture = "assets/images/normalMap.png";
 
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
@@ -37,17 +37,16 @@ function BumpMetalMaterial()
 													if (this._shader && this._shader.default)
 														this._shader.default.u_light0Diff.set( ld );	}
 
-	this.getDiffuseTexture	= function()		{	return this._diffuseTexture;					}
-	this.setDiffuseTexture	= function(dt)		{	this._diffuseTexture = dt;
-													if (this._materialNode)  this._materialNode.setDiffuseTexture( dt );	}
+	this.getDiffuseTexture	= function()		{  return this._propValues[this._propNames[1]] ? this._propValues[this._propNames[1]].slice() : null	}
+	this.setDiffuseTexture	= function(m)		{  this._propValues[this._propNames[1]] = m ? m.slice(0) : null;  this.updateTexture(1);  	}	
 
-	this.getSpecularTexture	= function()		{	return this._specularTexture;					}
-	this.setSpecularTexture	= function(st)		{	this._specularTexture = st;
-													if (this._materialNode)  this._materialNode.setSpecularTexture( st );	}
+	this.getNormalTexture	= function()		{  return this._propValues[this._propNames[2]] ? this._propValues[this._propNames[2]].slice() : null	}
+	this.setNormalTexture	= function(m)		{  this._propValues[this._propNames[2]] = m ? m.slice(0) : null;  this.updateTexture(2);  	}	
 
-	this.getNormalTexture	= function()		{	return this._normalTexture;						}
-	this.setNormalTexture	= function(nt)		{	this._normalTexture = nt;
-													if (this._materialNode)  this._materialNode.setNormalTexture( nt );		}
+	this.getSpecularTexture	= function()		{  return this._propValues[this._propNames[3]] ? this._propValues[this._propNames[3]].slice() : null	}
+	this.setSpecularTexture	= function(m)		{  this._propValues[this._propNames[3]] = m ? m.slice(0) : null;  this.updateTexture(3);  	}	
+
+	this.isAnimated			= function()		{  return true;					}
 
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
@@ -59,7 +58,7 @@ function BumpMetalMaterial()
 
 	this._propValues[ this._propNames[0] ] = this._lightDiff.slice(0);
 	this._propValues[ this._propNames[1] ] = this._diffuseTexture.slice(0);
-	this._propValues[ this._propNames[2] ] = this._specularTexture.slice(0);
+	this._propValues[ this._propNames[2] ] = this._normalTexture.slice(0);
 	this._propValues[ this._propNames[3] ] = this._specularTexture.slice(0);
 
     // TODO - shader techniques are not all named the same, i.e., FlatMaterial uses "colorMe" and BrickMaterial uses "default"
@@ -95,8 +94,11 @@ function BumpMetalMaterial()
 	// duplcate method requirde
 	this.dup = function()	{  return new BumpMetalMaterial();	} 
 
-	this.init = function()
+	this.init = function( world )
 	{
+		// save the world
+		if (world)  this.setWorld( world );
+
 		// set up the shader
 		this._shader = new jshader();
 		this._shader.def = bumpMetalMaterialDef;
@@ -108,9 +110,36 @@ function BumpMetalMaterial()
 		this._materialNode.setShader(this._shader);
 
 		// set some image maps
-		this._materialNode.setDiffuseTexture( this.getDiffuseTexture() );
-        this._materialNode.setSpecTexture( this.getSpecularTexture() );
-        this._materialNode.setNormalTexture( this.getNormalTexture() );
+		this.updateTexture(1);
+        this.updateTexture(2);
+        this.updateTexture(3);
+	}
+
+	this.updateTexture = function( index )
+	{
+		var material = this._materialNode;
+		if (material)
+		{
+			var technique = material.shaderProgram.default;
+			var renderer = g_Engine.getContext().renderer;
+			if (renderer && technique)
+			{
+				var texMapName = this._propValues[this._propNames[index]];
+				var wrap = 'REPEAT',  mips = true;
+				var tex = this.loadTexture( texMapName, wrap, mips );
+
+				if (tex)
+				{
+					switch (index)
+					{
+						case 1:		technique.u_colMap.set( tex );		break;
+						case 2:		technique.u_normalMap.set( tex );	break;
+						case 3:		technique.u_glowMap.set( tex );		break;
+						default:	console.log( "invalid map index in BumpMetalMaterial, " + index );
+					}
+				}
+			}
+		}
 	}
 
 	this.export = function()
@@ -229,6 +258,9 @@ bumpMetalShaderDef =
 				{
 					'u_light0Diff' : { 'type' : 'vec4' },
 					//'u_matDiffuse' : { 'type' : 'vec4' }
+					'u_colMap': { 'type' : 'tex2d' },
+					'u_normalMap': { 'type' : 'tex2d' },
+					'u_glowMap': { 'type' : 'tex2d' },
 				},
 
                 // render states

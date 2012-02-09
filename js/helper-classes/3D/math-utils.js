@@ -897,19 +897,21 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
     getAxisAngleBetween3DVectors: {
         value: function (vec1, vec2, axis) {
             //compute magnitudes of the vectors
-            var mag1 = VecUtils.vecMag(3, vec1);
-            var mag2 = VecUtils.vecMag(3, vec2);
-
-            if (mag1 < this.EPSILON || mag2 < this.EPSILON) {
-                return 0; //if angle 0 is returned nothing from this function should be used
-            }
+            var v1n = VecUtils.vecNormalize(3, vec1, 1.0);
+            var v2n = VecUtils.vecNormalize(3, vec2, 1.0);
             //angle between the vectors (acos for now...)
-            var angle = Math.acos(VecUtils.vecDot(3, vec1, vec2) / (mag1 * mag2));
+            var angle = Math.acos(VecUtils.vecDot(3, v1n, v2n));
             if (Math.abs(angle) < this.EPSILON) {
                 return 0;
             }
+            //TODO testing...remove this block
+            console.log("getAxisAngleBetween3DVectors Angle: "+angle);
+            if (isNaN(angle)){
+                console.log("getAxisAngleBetween3DVectors Angle is NaN");
+            }
+            //TODO end testing block
             //optionally, if axis is provided, create the axis of rotation as well
-            var rotAxis = VecUtils.vecCross(3, vec1, vec2);
+            var rotAxis = VecUtils.vecCross(3, v1n, v2n);
             rotAxis = VecUtils.vecNormalize(3, rotAxis, 1);
             axis[0] = rotAxis[0];
             axis[1] = rotAxis[1];

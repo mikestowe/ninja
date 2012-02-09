@@ -33,8 +33,10 @@ function PulseMaterial()
 	this.getName		= function()	{ return this._name;			}
 	this.getShaderName	= function()	{  return this._shaderName;		}
 
-	this.getTextureMap			= function()		{  return this._texMap.slice(0);	}
+	this.getTextureMap			= function()		{  return this._propValues[this._propNames[0]] ? this._propValues[this._propNames[0]].slice() : null	}
 	this.setTextureMap			= function(m)		{  this._propValues[this._propNames[0]] = m ? m.slice(0) : null;  this.updateTexture();  	}	
+
+	this.isAnimated			= function()			{  return true;					}
 
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
@@ -72,6 +74,9 @@ function PulseMaterial()
 	// duplcate method requirde
 	this.dup = function( world )
 	{
+		// save the world
+		if (world)  this.setWorld( world );
+
 		// allocate a new uber material
 		var newMat = new PulseMaterial();
 
@@ -87,6 +92,9 @@ function PulseMaterial()
 
 	this.init = function( world )
 	{
+		// save the world
+		if (world)  this.setWorld( world );
+
 		// set up the shader
 		this._shader = new jshader();
 		this._shader.def = pulseMaterialDef;
@@ -116,7 +124,10 @@ function PulseMaterial()
 			if (renderer && technique)
 			{
 				var texMapName = this._propValues[this._propNames[0]];
-				var tex = renderer.getTextureByName(texMapName, 'REPEAT');
+				var wrap = 'REPEAT',  mips = true;
+				//var tex = renderer.getTextureByName(texMapName, wrap, mips );
+				//this.registerTexture( tex );
+				var tex = this.loadTexture( texMapName, wrap, mips );
 				if (tex)
 					technique.u_tex0.set( tex );
 			}
