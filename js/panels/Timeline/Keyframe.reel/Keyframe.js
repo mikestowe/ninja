@@ -86,8 +86,6 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
         value:function(){
             this.tweenkeyframe.addEventListener("click", this, false);
             this.animatedProperties = new Array();
-
-            // should element mediator be used here?
             this.animatedProperties["top"] = this.containingTrack.animatedElement.offsetTop;
             this.animatedProperties["left"] = this.containingTrack.animatedElement.offsetLeft;
         }
@@ -101,15 +99,16 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
 
     handleElementChange:{
         value:function (event) {
+            if(this.application.ninja.selectedElements[0]._element != this.containingTrack.animatedElement){
+                alert("Wrong element selected for this keyframe track");
+                return;
+            }
 
             if(event.detail.source && event.detail.source !== "keyframe") {
-
-                var items = this.application.ninja.selectedElements;
                 this.containingSpan.highlightSpan();
-                if(items[0]._element.offsetTop != this.animatedProperties["top"] && items[0]._element.offsetLeft != this.animatedProperties["left"]){
-                    // update this keyframe's animated properties from the item[0] element props
-                    this.animatedProperties["top"] = items[0]._element.offsetTop;
-                    this.animatedProperties["left"] = items[0]._element.offsetLeft;
+                if(this.containingTrack.animatedElement.offsetTop != this.animatedProperties["top"] && this.containingTrack.animatedElement.offsetLeft != this.animatedProperties["left"]){
+                    this.animatedProperties["top"] = this.containingTrack.animatedElement.offsetTop;
+                    this.animatedProperties["left"] = this.containingTrack.animatedElement.offsetLeft;
                     this.containingTrack.keyFramePropertyData[this.id] = this.animatedProperties;
                     this.containingTrack.updateKeyframeRule();
                 }
@@ -120,7 +119,6 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
     deselect:{
         value:function(){
             this.tweenkeyframe.classList.remove("keyframeSelected");
-
             this.eventManager.removeEventListener("elementChange", this, false);
         }
     },

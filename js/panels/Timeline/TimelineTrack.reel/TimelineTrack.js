@@ -138,8 +138,21 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         value:false
     },
 
-    animatedElement:{
+    _animatedElement:{
+        serializable:true,
+        enumerable:true,
+        writable:true,
         value:null
+    },
+
+    animatedElement:{
+        serializable:true,
+        get:function () {
+            return this._animatedElement;
+        },
+        set:function (val) {
+            this._animatedElement = val;
+        }
     },
 
     animationName:{
@@ -273,24 +286,20 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     addAnimationRuleToElement:{
         value:function (tweenEvent) {
-            var theElement = this.application.ninja.timeline.arrLayers[this.trackID - 1].element[0];
-            this.animatedElement = theElement;
-
+            this.animatedElement = this.application.ninja.timeline.currentLayerSelected.element[0];
             var initAnimatedProperties = new Array();
-            initAnimatedProperties["top"] = theElement.offsetTop;
-            initAnimatedProperties["left"] = theElement.offsetLeft;
+            initAnimatedProperties["top"] = this.animatedElement.offsetTop;
+            initAnimatedProperties["left"] = this.animatedElement.offsetLeft;
             this.keyFramePropertyData[0] = initAnimatedProperties;
 
             var animationDuration = Math.round(this.trackDuration / 1000) + "s";
-            //console.log(this.application.ninja.timeline.arrLayers[this.trackID - 1].element[0]);
-            //console.log(this.trackID);
-            this.animationName = this.application.ninja.timeline.arrLayers[this.trackID - 1].element[0].className + this.trackID;
+            this.animationName = this.animatedElement.className + this.trackID;
 
-            this.ninjaStylesContoller.setElementStyle(theElement, "-webkit-animation-name", this.animationName);
-            this.ninjaStylesContoller.setElementStyle(theElement, "-webkit-animation-duration", animationDuration);
-            this.ninjaStylesContoller.setElementStyle(theElement, "-webkit-animation-iteration-count", "infinite");
+            this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-name", this.animationName);
+            this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-duration", animationDuration);
+            this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-iteration-count", "infinite");
 
-            var initRule = "@-webkit-keyframes " + this.animationName + " { 0% {top: " + theElement.offsetTop + "px; left: " + theElement.offsetLeft + "px;} 100% {top: " + theElement.offsetTop + "px; left: " + theElement.offsetLeft + "px;} }";
+            var initRule = "@-webkit-keyframes " + this.animationName + " { 0% {top: " + this.animatedElement.offsetTop + "px; left: " + this.animatedElement.offsetLeft + "px;} 100% {top: " + this.animatedElement.offsetTop + "px; left: " + this.animatedElement.offsetLeft + "px;} }";
             this.currentKeyframeRule = this.ninjaStylesContoller.addRule(initRule);
 
             this.isAnimated = true;
