@@ -52,6 +52,21 @@ exports.Main = Montage.create(Component, {
                     .end();
 
                     break;
+                case "Textfield":
+                    var tf = require.async(componentType.path)
+                    .then(function (tf) {
+                        var buttonObj = tf["Textfield"];
+                        var btIns = buttonObj.create();
+
+                        btIns.element = containerElement;
+                        btIns.deserializedFromTemplate();
+
+                        btIns.needsDraw = true;
+                        btIns.value = "Button";
+                        callback(btIns, containerElement);
+                    })
+                    .end();
+                    break
                 case "Checkbox":
                     component = Checkbox.create();
                     component.element = containerElement;
@@ -132,11 +147,6 @@ exports.Main = Montage.create(Component, {
                     break;
                 case "TextArea":
                     component = TextArea.create();
-                    component.element = containerElement;
-                    component.needsDraw = true;
-                    break;
-                case "Textfield":
-                    component = Textfield.create();
                     component.element = containerElement;
                     component.needsDraw = true;
                     break;

@@ -11,22 +11,12 @@
 
         <script type="text/montage-serialization">
         {
-            "componentControllerArrayTemp": {
-                "module": "montage/ui/controller/array-controller",
-                "name": "ArrayController",
-                "bindings": {
-                    "content": {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "components"
-                    }
-                }
-            },
-
             "owner": {
                 "module": "js/panels/Components/ComponentsPanelBase.reel",
                 "name": "ComponentsPanelBase",
                 "properties": {
-                    "element": {"#": "components_panel"}
+                    "element": {"#": "components_panel"},
+                    "controller": {"@": "componentsTree"}
                 }
             },
 
@@ -41,7 +31,7 @@
                 "bindings": {
                     "content": {
                         "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "data2"
+                        "boundObjectPropertyPath": "components"
                     }
                 }
             },
@@ -68,9 +58,6 @@
 	<body>
     
     	<div id="components_panel" class="components_panel">
-            <div class="treeHolder">
-               <ul id="comp_tree"></ul>
-            </div>
            <div id="componentsContainer"></div>
     	</div>
 

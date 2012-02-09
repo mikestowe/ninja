@@ -19,14 +19,14 @@ exports.Leaf = Montage.create(TreeNode, {
     },
     prepareForDraw: {
         value : function() {
-            this.activationEvent = this.activationEvent || 'click';
+            this.activationEvent = this.activationEvent || 'dblclick';
             this.label._element.addEventListener(this.activationEvent, this.handleNodeActivation.bind(this), false);
         }
     },
     handleNodeActivation: {
         value: function(e) {
-            console.log(this.sourceObject);
-            this.treeView.contentController.delegate.applyPresetSelection(this.sourceObject);
+            //console.log(this.sourceObject);
+            this.treeView.contentController.delegate.applySelection(this.sourceObject);
         }
     },
     draw : {

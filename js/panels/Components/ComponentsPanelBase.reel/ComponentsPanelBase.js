@@ -19,7 +19,30 @@ String.prototype.capitalizeFirstChar = function() {
 var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component, {
 
     components: {
-        value: null
+        value: {
+            "text": "styles",
+            "children": [
+                {
+                    "text": "Montage Components",
+                    "children": [
+                        {
+                            "text": "Button",
+                            "dataFile" : "node_modules/components-data/button.json",
+                            "component": "button"
+                        },
+                        {
+                            "text": "Text Field",
+                            "dataFile" : "node_modules/components-data/textfield.json",
+                            "component": "textfield"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+
+    componentsData: {
+        value: {}
     },
 
     componentsToLoad: {
@@ -30,81 +53,9 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
         value: 0
     },
 
-    data2: {
-            value: {
-                "text": "styles",
-                "children": [{
-                    "text": "Box Styles",
-                    "children": [
-                        {
-                            "text": "Border-Radius",
-                            "classNameBase" : "border-radius",
-                            "styles" : {
-                                "border-radius": "100px",
-                                "border" : "1px solid #333"
-                            }
-                        },
-                        {
-                            "text": "Drop Shadow",
-                            "classNameBase" : "drop-shadow",
-                            "styles" : {
-                                "box-shadow": "2px 2px 50px rgba(0,0,0,0.5)",
-                                "border" : "1px solid #CCC"
-                            }
-                        },
-                        {
-                            "text": "Fancy Box",
-                            "classNameBase" : "fancy-box",
-                            "styles" : {
-                                "box-shadow": "inset 0 0 0 1px #666, inset 0 0 0 2px rgba(225, 225, 225, 0.4), 0 0 20px -10px #333",
-                                "border" : "1px solid #FFF",
-                                "border-radius": "30px",
-                                "background-color": "#7db9e8",
-                                "background-image": "-webkit-linear-gradient(top, rgba(255,255,255,0.74) 0%,rgba(255,255,255,0) 100%)"
-                            }
-                        }]
-                }, {
-                    "text": "Text Styles",
-                    "children": [
-                        { "text": "Italic" },
-                        { "text": "Text Shadow" },
-                        { "text": "Text Color" } ]
-                }, {
-                    "text": "Color Styles",
-                    "children": [
-                        { "text": "Background Gradient" },
-                        { "text": "Background Color" },
-                        { "text": "Text Highlight" } ]
-                }]
-            }
-        },
-
-    _testButtonJson: {
-        value: {
-            "component": "button",
-
-            "module": "montage/ui/button.reel",
-
-            "name": "Button",
-
-            "properties": [
-                {
-                    "name": "label",
-                    "type": "string",
-                    "default": "Button"
-                },
-                {
-                    "name": "enabled",
-                    "type": "boolean",
-                    "default": "true"
-                }
-            ]
-        }
-    },
-
     didCreate: {
         value: function() {
-
+            // Loop through the component and load the JSON data for them
             this._loadComponents();
 
         }
@@ -112,32 +63,30 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
 
     _loadComponents: {
         value: function() {
-            this.components = [
-                {name: "Button", data: "node_modules/components-data/button.json"},
-                {name: "Textfield", data: "node_modules/components-data/textfield.json"}
-            ];
 
-            this.componentsToLoad = this.components.length;
+            this.componentsToLoad = this.components.children[0].children.length;
 
             // Build the PI objects for each component
-            for(var i = 0, component; component = this.components[i]; i++) {
+            for(var i = 0, component; component = this.components.children[0].children[i]; i++) {
                 var req = new XMLHttpRequest();
                 //req.identifier = "searchRequest";
-                req.open("GET", component.data);
+                req.open("GET", component.dataFile);
                 req.addEventListener("load", this, false);
                 req.addEventListener("error", this, false);
                 req.send();
 
             }
 
+
         }
     },
 
     handleLoad: {
         value: function(evt) {
-            var response = JSON.parse(evt.target.responseText);
+            var componentData = JSON.parse(evt.target.responseText);
 
-            var component = response.component.capitalizeFirstChar();
+            //var component = response.component.capitalizeFirstChar();
+            var component = componentData.name;
 
             var piIdentifier = component + "Pi";
             var piObj = [];
@@ -147,7 +96,7 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
             section.label = component + " Properties";
             section.Section = [];
 
-            for(var j = 0, props; props = response.properties[j]; j++) {
+            for(var j = 0, props; props = componentData.properties[j]; j++) {
                 var row = {};
                 row.type = this.getControlType(props.type);
                 row.id = props.name;
@@ -160,6 +109,9 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
 
             PIData[piIdentifier] = [];
             PIData[piIdentifier].push(section);
+
+            // Setup the componentsData
+            this.componentsData[componentData.component] = componentData;
 
             this.componentsLoaded++;
 
@@ -183,29 +135,14 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
         }
     },
 
-    prepareForDraw: {
-    	enumerable: false,
-    	value: function() {
+    applySelection: {
+        value: function(selection) {
+            console.log(selection);
+            console.log(this.componentsData[selection.component]);
+            this._stash.dropx = 200;
+            this._stash.dropy = 200;
+            this.addComponentToStage(this.componentsData[selection.component]);// evt.detail.dropX, evt.detail.dropY);
 
-            var treeHolderDiv = document.getElementById("comp_tree");
-            var componentsTree = treeControlModule.Tree.create();
-            componentsTree.element = treeHolderDiv;
-            componentsTree.dataProvider = this._loadXMLDoc("js/panels/Components/Components.xml");
-            componentsTree.needsDraw = true;
-
-            this.eventManager.addEventListener( "executeAddComponent", this, false);
-
-    	}
-    },
-
-    _loadXMLDoc: {
-        value:function(dname) {
-            if (window.XMLHttpRequest) {
-                xhttp = new XMLHttpRequest();
-            }
-            xhttp.open("GET", dname, false);
-            xhttp.send();
-            return xhttp.responseXML;
         }
     },
 
@@ -231,7 +168,7 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
         value: function(component) {
             var that = this;
             var element = this.makeComponent(component.component);
-            this.application.ninja.currentDocument._window.addComponent(element, {type: "Button", path: component.module, name: "Button"}, function(instance, element) {
+            this.application.ninja.currentDocument._window.addComponent(element, {type: component.name, path: component.module, name: "Button"}, function(instance, element) {
 
                 var styles = {
                     'position': 'absolute',
@@ -270,11 +207,22 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
 
     makeComponent: {
         value: function(name) {
-            var el;
-            el = NJUtils.makeNJElement(name, "Button", "component");
-            el.elementModel.pi = "ButtonPi";
-            el.setAttribute("type", "button");
-            return el;
+            switch(name) {
+                case "button":
+                    var el;
+                    el = NJUtils.makeNJElement(name, "Button", "component");
+                    el.elementModel.pi = "ButtonPi";
+                    el.setAttribute("type", "button");
+                    return el;
+                case "textfield": {
+                    var el;
+                    el = NJUtils.makeNJElement(name, "Text Field", "component");
+                    el.elementModel.pi = "TextfieldPi";
+                    el.setAttribute("type", "text");
+                    return el;
+                }
+            }
+
         }
     },
 
