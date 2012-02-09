@@ -67,7 +67,23 @@ function GLBrushStroke() {
 
     this.getNumPoints = function () { return this._Points.length; }
     this.getPoint = function (index) { return this._Points[index]; }
-    this.addPoint = function (anchorPt) { this._Points.push(anchorPt); this._dirty=true; }
+    this.addPoint = function (pt)
+    {
+        //add the point if it is some epsilon away from the previous point
+        var doAddPoint=true;
+        var numPoints = this._Points.length;
+        if (numPoints>0) {
+            var prevPt = this._Points[numPoints-1];
+            var diffPt = [prevPt[0]-pt[0], prevPt[1]-pt[1]];
+            var diffPtMag = diffPt[0]*diffPt[0] + diffPt[1]*diffPt[1];
+            if (diffPtMag<4)
+                doAddPoint=false;
+        }
+        if (doAddPoint) {
+            this._Points.push(pt);
+            this._dirty=true;
+        }
+    }
     this.insertPoint = function(pt, index){ this._Points.splice(index, 0, pt); this._dirty=true;}
     this.isDirty = function(){return this._dirty;}
     this.makeDirty = function(){this._dirty=true;}
@@ -167,7 +183,9 @@ function GLBrushStroke() {
         var bboxWidth = bboxMax[0] - bboxMin[0];
         var bboxHeight = bboxMax[1] - bboxMin[1];
         ctx.clearRect(0, 0, bboxWidth, bboxHeight);
-/*
+
+
+        /*
         ctx.lineWidth = this._strokeWidth;
         ctx.strokeStyle = "black";
         if (this._strokeColor)
@@ -185,7 +203,35 @@ function GLBrushStroke() {
             ctx.lineTo(pt[0]-bboxMin[0], pt[1]-bboxMin[1]);
         }
         ctx.stroke();
- */
+        */
+
+        var firstPt = this._Points[0];
+        var prevX = firstPt[0]-bboxMin[0];
+        var prevY = firstPt[1]-bboxMin[1];
+        for (var i = 1; i < numPoints; i++) {
+            var pt = this._Points[i];
+            ctx.globalCompositeOperation = 'source-over';
+            var x = pt[0]-bboxMin[0];
+            var y = pt[1]-bboxMin[1];
+            var r = ctx.createLinearGradient(prevX, prevY, x, y);
+            r.addColorStop(1, 'rgba(0,0,0,0.01)');
+            r.addColorStop(0.5,'rgba(255,0,0,1.0)');
+            r.addColorStop(0, 'rgba(0,0,0,0.01)');
+
+            ctx.fillStyle = r;
+            //ctx.fillStyle = "rgba(0,128,0,0.15)";
+            var w2 = this._strokeWidth*0.5;
+            ctx.moveTo(prevX-w2, prevY);
+            ctx.lineTo(prevX+w2, prevY);
+            ctx.lineTo(x+w2, y);
+            ctx.lineTo(x-w2, y);
+            ctx.fill();
+
+            prevX = x;
+            prevY = y;
+        }
+
+        /*
         var R2 = this._strokeWidth;
         var R = R2*0.5;
         var hardness = 0.25; //for a pencil, this is always 1 //TODO get hardness parameter from user interface
@@ -209,6 +255,8 @@ function GLBrushStroke() {
             //ctx.globalCompositeOperation = 'source-in';
             //ctx.rect(x-R, y-R, R2, R2);
         }
+        */
+
         ctx.restore();
     } //render()
 
