@@ -19,6 +19,8 @@
 /* Second level */
 .branch .branch .leaf-label {
     background-position: 25px center;
+    box-shadow: 0 3px 4px -4px rgba(0,0,0,0.2);
+    color: #FFF;
     padding-left: 45px;
 }
 /* Third level */
