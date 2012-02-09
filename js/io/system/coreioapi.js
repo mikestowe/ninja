@@ -92,6 +92,9 @@ exports.CoreIoApi = Montage.create(Component, {
         	//TODO: Remove test
         	//this.ninjaLibrary.copyLibToCloud('Users/kgq387/Desktop/Ninja Cloud/Disk', 'montage0.6.0');
         	//this.ninjaLibrary.deleteLibraries();
+        	window.hack = function (name, type) {
+        		this.application.ninja.ioMediator.fileNew('Users/kgq387/Desktop/Ninja Cloud/Disk/'+name+'.'+type, '/js/io/templates/files/'+type+'.txt', function (status) {console.log(status)});
+        	}.bind(this);
         }
     },
     ////////////////////////////////////////////////////////////////////

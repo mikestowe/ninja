@@ -14,10 +14,17 @@ var Montage = 	require("montage/core/core").Montage,
 //
 exports.IoMediator = Montage.create(Component, {
 	////////////////////////////////////////////////////////////////////
+	//
+	hasTemplate: {
+		enumerable: false,
+        value: false
+    },
+	////////////////////////////////////////////////////////////////////
     //
 	deserializedFromTemplate: {
 		enumerable: false,
 		value: function () {
+			//
 		}
 	},
 	////////////////////////////////////////////////////////////////////
@@ -32,27 +39,30 @@ exports.IoMediator = Montage.create(Component, {
     	enumerable: false,
     	value: function (file, template, callback) {
     		//
-    		var xhr = new XMLHttpRequest();
+    		var xhr = new XMLHttpRequest(), result;
     		xhr.open("GET", template, false);
             xhr.send();
     		if (xhr.readyState === 4) {
     			//
-    			console.log(this.fio.newFile({uri: file, contents: xhr.response}));
+    			switch (this.fio.newFile({uri: file, contents: xhr.response})) {
+    				case 201:
+    					result = {status: 201, success: true, uri: file};
+    					break;
+    				case 204:
+    					result = {status: 204, success: false, uri: file};
+    					break;
+    				case 400:
+    					result = {status: 400, success: false, uri: file};
+    					break;
+    				default:
+    					result = {status: 500, success: false, uri: file};
+    					break;
+    			}
     		} else {
-    			//Error
+    			result = {status: 500, success: false, uri: file};
     		}
-    		
-    		
-    		
-    		
-    		
-    		
-
-			//callback('win');
-            /*
-var returnObj = null; //like {"uri": "/gfdg/gdf/dfg.js", "success": true,...}
-    		callback(returnObj);
-*/
+    		//
+    		if (callback) callback(result);
     	}
     },
     ////////////////////////////////////////////////////////////////////

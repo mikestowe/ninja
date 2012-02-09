@@ -17,15 +17,13 @@ NOTES:
 ////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////// */
 //
-var Montage = require("montage/core/core").Montage;
+var Montage = 	require("montage/core/core").Montage,
+	Component = require("montage/ui/component").Component;
 ////////////////////////////////////////////////////////////////////////
 //Exporting as File I/O
-exports.FileIo = Montage.create(Object.prototype, {
+exports.FileIo = Montage.create(Component, {
 	////////////////////////////////////////////////////////////////////
     //newFile Object (*required): {uri*, contents, contentType}
-    //Return codes
-    //	204: File exists | 400: File exists | 404: File does not exists
-    //	201: File succesfully created | 500: Unknown | undefined: Unknown
     newFile: {
     	enumerable: true,
     	value: function(file) {
@@ -35,7 +33,7 @@ exports.FileIo = Montage.create(Object.prototype, {
     			return null;
     		}
     		//Peforming check for file to exist
-    		var check = this.application.ninja.coreIoApi.fileExists(file.uri), status, create;
+    		var check = this.application.ninja.coreIoApi.fileExists({uri: file.uri}), status, create;
     		//Upon successful check, handling results
     		if (check.success) {
     			//Handling status of check
@@ -47,10 +45,7 @@ exports.FileIo = Montage.create(Object.prototype, {
     				case 404:
     					//File does not exists, ready to be created
     					create = this.application.ninja.coreIoApi.createFile(file);
-    					//Storing status to be returned (for UI handling)
-    					if (create.success) {
-    						status = check.status;
-    					}
+    					status = create.status;
     					break;
     				default:
     					//Unknown Error
@@ -61,6 +56,8 @@ exports.FileIo = Montage.create(Object.prototype, {
     		}
     		//Returning resulting code
     		return status;
+		    //	204: File exists | 400: File exists | 404: File does not exists
+		    //	201: File succesfully created | 500: Unknown | undefined: Unknown
     	}
     },
     ////////////////////////////////////////////////////////////////////
