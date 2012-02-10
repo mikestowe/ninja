@@ -230,10 +230,10 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
             ){
                 this.error.innerHTML="";
                 //console.log("$$$ new file selections: \n" + selectionlog);
-                if(!!this.newFileModel.callback && !!this.newFileModel.callbackScope){//inform document-controller if save successful
-                    this.newFileModel.callback.call(this.newFileModel.callbackScope, {"fileTemplateUri":selectedProjectTypeID,
-                                                                                 "newFilePath":newFilePath,
-                                                                                  "fileExtension":fileExtension});//document-controller api
+                if(!!this.newFileModel.callback){//inform document-controller if save successful
+                    this.newFileModel.callback({"fileTemplateUri":selectedProjectTypeID,
+                                                 "newFilePath":newFilePath,
+                                                  "fileExtension":fileExtension});//document-controller api
                 }else{
                     //send selection event
                     var newFileSelectionEvent = document.createEvent("Events");
