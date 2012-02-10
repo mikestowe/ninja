@@ -34,6 +34,14 @@
                     }
                 }
             },
+
+            "textTool": {
+                "module": "node_modules/labs/rich-text-editor.reel",
+                "name": "RichTextEditor",
+                "properties": {
+                    "element" : {"#": "textToolObject"}
+                }
+            },
             
             "owner": {
                 "module": "js/stage/stage.reel",
@@ -46,7 +54,8 @@
                     "_canvas":  {"#": "stageCanvas"},
                     "_drawingCanvas":  {"#": "drawingCanvas"},
                     "stageDeps": {"@": "StageDeps1"},
-                    "layout":   {"@": "layout1"}
+                    "layout":   {"@": "layout1"},
+                    "textTool": {"@": "textTool"}
                 },
                 "bindings": {
                     "currentDocumentStageView": {
@@ -64,6 +73,7 @@
 
     <section id="stageAndScenesContainer" class="stageAndScenesContainer">
         <section id="iframeContainer"></section>
+        <section id="textToolObject">asdasd asd asd asd asd asd </section>
         <section id="codeViewContainer"></section>
         <canvas id="layoutCanvas"></canvas>
         <canvas id="stageCanvas"></canvas>

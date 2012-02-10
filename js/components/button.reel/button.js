@@ -179,7 +179,7 @@ var Button = exports.Button = Montage.create(Component, {
         value: function() {
             if(this.isToggleButton)
             {
-                if(this._value)
+                if(this._value === true)
                 {
                     this.element.classList.remove(this.offState);
                     this.element.classList.add(this.onState);
