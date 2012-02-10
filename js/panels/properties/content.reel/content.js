@@ -54,8 +54,17 @@ exports.Content = Montage.create(Component, {
                 this.eventManager.addEventListener( "elementChanging", this, false);
             }
 
+            this.eventManager.addEventListener("openDocument", this, false);
+        }
+    },
+
+    // Document is opened - Display the current selection
+    handleOpenDocument: {
+        value: function() {
+
             this.eventManager.addEventListener( "elementChange", this, false);
 
+            // For now always assume that the stage is selected by default
             if(this.application.ninja.selectedElements.length === 0) {
                 this.displayStageProperties();
             }
