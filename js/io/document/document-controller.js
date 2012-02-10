@@ -87,8 +87,9 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     handleExecuteFileOpen: {
         value: function(event) {
             var pickerSettings = event._event.settings || {};
-            pickerSettings.callback = this.openFileWithURI;
-            pickerSettings.callbackScope = this;
+            pickerSettings.callback = this.openFileWithURI.bind(this);
+            pickerSettings.pickerMode = "read";
+            pickerSettings.inFileMode = true;
             this.application.ninja.filePickerController.showFilePicker(pickerSettings);
         }
     },
@@ -96,8 +97,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     handleExecuteNewFile: {
             value: function(event) {
                 var newFileSettings = event._event.settings || {};
-                newFileSettings.callback = this.createNewFile;
-                newFileSettings.callbackScope = this;
+                newFileSettings.callback = this.createNewFile.bind(this);
                 this.application.ninja.newFileController.showNewFileDialog(newFileSettings);
             }
     },
@@ -132,9 +132,9 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
      */
     openNewFileCallback:{
         value:function(doc){
-            var response = doc || {"uri":"/Users/xhdq84/Documents/test.js", "success":true};//default just for testing
+            var response = doc || null;//default just for testing
             if(!!response && response.success && !!response.uri){
-                this.application.ninja.ioMediator.fileOpen({"uri":response.uri}, this.openFileCallback.bind(this));
+                this.application.ninja.ioMediator.fileOpen(response.uri, this.openFileCallback.bind(this));
             }
         }
     },
@@ -146,25 +146,56 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                 uri = uriArrayObj.uri[0];
             }
             //console.log("URI is: ", uri);
-
-            this.application.ninja.ioMediator.fileOpen({"uri":uri}, this.openFileCallback.bind(this));
+            if(!!uri){
+                this.application.ninja.ioMediator.fileOpen(uri, this.openFileCallback.bind(this));
+            }
         }
     },
 
     /**
      * Public method
-     * doc contains:
-     *      type : file type, like js, css, etc
-     *      name : file name
-     *      source : file content
-     *      uri : file uri
      */
     openFileCallback:{
-        value:function(doc){
-            this.openDocument(doc);
-            }
-    },
+        value:function(response){
+            //Return Object Description
+//            Object.status (Always presents for handling)
+//            204: File exists (Success)
+//            404: File does not exists (Failure)
+//            500: Unknown (Probably cloud API not running)
+//
+//            (Below only present if succesfull 204)
+//
+//            Object.content
+//            Object.extension
+//            Object.name
+//            Object.uri
+//            Object.creationDate
+//            Object.modifiedDate
+//            Object.readOnly
+//            Object.size
 
+            var fileDetails = {};
+            if(!!response && (response.status === 204)){
+                /**
+                 * fileDetails format:
+                 * {"type": "js", "name": "test", "source": fileContent, "uri": uri}
+                 */
+                fileDetails.type = response.extension;
+                fileDetails.source = response.content;
+                fileDetails.name = response.name;
+                fileDetails.uri = response.uri;
+
+                this.openDocument(fileDetails);
+            }else if(!!response && (response.status === 404)){
+                alert("Unable to open file.\n [Error: File does not exist]");
+            }else if(!!response && (response.status === 500)){
+                alert("Unable to open file.\n Check if Ninja Local Cloud is running.");
+            }else{
+                alert("Unable to open file.");
+            }
+
+        }
+    },
 
     openProjectWithURI: {
         value: function(uri) {
@@ -371,7 +402,10 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                     this.application.ninja.stage.restoreScroll();
                     this.application.ninja.stage.hideCanvas(false);
                     this.application.ninja.stage.stageView.showRulers();
-            }
+                }else{
+                    //hide the iframe when switching to code view
+                    document.getElementById("iframeContainer").style.display="none";
+                }
         }
         }
     },

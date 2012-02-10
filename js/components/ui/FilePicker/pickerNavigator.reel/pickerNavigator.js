@@ -7,7 +7,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component,
     iconsListModule = require("js/components/ui/icon-list-basic/iconsList.reel"),
-    filePickerControllerModule = require("js/components/ui/FilePicker/file-picker-controller"),
     treeModule = require("js/components/ui/tree-basic/tree.reel");
 
 var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
@@ -335,7 +334,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
                 temp = temp.substring(0, temp.lastIndexOf("/"));
 
                 //populate dropdown irrespective of validity
-//                if(!!filePickerControllerModule.FilePickerController._directoryContentCache[temp]){//check if it is a valid location
+//                if(!!this.application.ninja.filePickerController._directoryContentCache[temp]){//check if it is a valid location
 //                    arr.push(temp);
 //                }else{
 //                    break;
@@ -358,7 +357,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
         value:function(element, uri){
             if(!!element){
                 var tree = treeModule.Tree.create();
-                tree.treeViewDataObject = filePickerControllerModule.FilePickerController.prepareContentList(uri, this.pickerModel);
+                tree.treeViewDataObject = this.application.ninja.filePickerController.prepareContentList(uri, this.pickerModel);
                 //console.log("renderTree() for "+ uri);
                 //console.log(tree.treeViewDataObject);
                 tree.element = element;
@@ -374,10 +373,10 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
             var status = true;
             var iconViewContainer = this.element.querySelector(".iconViewContainer");
             if((typeof fromCache === 'undefined') || (fromCache === true)){
-            this.newContent = filePickerControllerModule.FilePickerController.prepareContentList(uri, this.pickerModel);
+            this.newContent = this.application.ninja.filePickerController.prepareContentList(uri, this.pickerModel);
             }
             else{
-                this.newContent = filePickerControllerModule.FilePickerController.prepareContentList(uri, this.pickerModel, false);
+                this.newContent = this.application.ninja.filePickerController.prepareContentList(uri, this.pickerModel, false);
             }
             if(!!this.newContent && this.newContent.length > 0){
                 //clear selection
@@ -423,10 +422,10 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
             if(!!treeViewContainer){
                 var data = [];
                 if((typeof fromCache === 'undefined') || (fromCache === true)){
-                    data = filePickerControllerModule.FilePickerController.prepareContentList(uri, this.pickerModel);
+                    data = this.application.ninja.filePickerController.prepareContentList(uri, this.pickerModel);
                 }
                 else{
-                    data = filePickerControllerModule.FilePickerController.prepareContentList(uri, this.pickerModel, false);
+                    data = this.application.ninja.filePickerController.prepareContentList(uri, this.pickerModel, false);
                 }
 
                 if(data.length > 0){
@@ -475,7 +474,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
         enumerable: false,
         writable:false,
         value:function(currentUri){
-            var data = filePickerControllerModule.FilePickerController._directoryContentCache[currentUri];
+            var data = this.application.ninja.filePickerController._directoryContentCache[currentUri];
             var metadata = "";
             if(!!data){
                 if(data.name !== ""){
@@ -610,8 +609,8 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
                         this.currentSelectedNode = null;
                     }
                     //enable OK button if the selection is valid as per the picker mode
-                    if((this.pickerModel.inFileMode && (filePickerControllerModule.FilePickerController._directoryContentCache[uri].type === "file"))
-                        || (!this.pickerModel.inFileMode && (filePickerControllerModule.FilePickerController._directoryContentCache[uri].type === "directory"))){
+                    if((this.pickerModel.inFileMode && (this.application.ninja.filePickerController._directoryContentCache[uri].type === "file"))
+                        || (!this.pickerModel.inFileMode && (this.application.ninja.filePickerController._directoryContentCache[uri].type === "directory"))){
                         this.okButton.removeAttribute("disabled");
 
                         //put into selectedItems..currently single selection is supported
@@ -784,9 +783,9 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
         value: function(evt){
                     console.log("$$$ File Picker : selected "+ this.selectedItems.toString());
                     var success = true;
-                    if(!!this.pickerModel.callback && !!this.pickerModel.callbackScope && (this.selectedItems.length > 0)){//call the callback if it is available
+                    if(!!this.pickerModel.callback && (this.selectedItems.length > 0)){//call the callback if it is available
                         try{
-                            this.pickerModel.callback.call(this.pickerModel.callbackScope, {"uri":this.selectedItems});
+                            this.pickerModel.callback({"uri":this.selectedItems});
                         }catch(e){
                             success = false;
                             console.log("[Error] Failed to open "+ this.selectedItems.toString());
@@ -803,12 +802,12 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
                     var dataStore = window.sessionStorage;
                     try {
                         if(this.pickerModel.pickerMode === "write"){
-                            filePickerControllerModule.FilePickerController._lastSavedFolderURI.lastSavedFolderUri_local = this.currentURI;
                             dataStore.setItem('lastSavedFolderURI',escape(""+this.currentURI));
                         }
-                        else{
-                            filePickerControllerModule.FilePickerController._lastOpenedFolderURI.lastFolderUri_local = this.currentURI;
-                            dataStore.setItem('lastOpenedFolderURI',escape(""+this.currentURI));
+                        else if(this.pickerModel.inFileMode === true){
+                            dataStore.setItem('lastOpenedFolderURI_fileSelection',escape(""+this.currentURI));
+                        }else if(this.pickerModel.inFileMode === false){
+                            dataStore.setItem('lastOpenedFolderURI_folderSelection',escape(""+this.currentURI));
                         }
                     }
                     catch(e){
@@ -962,9 +961,9 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
 
     handlePickerNavRefreshTreeSegment:{
         value: function(evt){
-//                if(filePickerControllerModule.FilePickerController.checkIfStale(evt.uri)){
+//                if(this.application.ninja.filePickerController.checkIfStale(evt.uri)){
 //                    //update tree segment if was stale
-//                    evt.treeSegment.treeViewDataObject = filePickerControllerModule.FilePickerController.prepareContentList(evt.uri, this.pickerModel, true, false);
+//                    evt.treeSegment.treeViewDataObject = this.application.ninja.filePickerController.prepareContentList(evt.uri, this.pickerModel, true, false);
 //                }
             }
     },
@@ -1007,7 +1006,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
             value:function(){
                 //clear memory - TODO:check for more memory leaks
                 this.pickerModel = null;
-                filePickerControllerModule.FilePickerController._directoryContentCache = {};
+                this.application.ninja.filePickerController._directoryContentCache = {};
                 //remove listeners
                 this.element.removeEventListener("openFolder", this, false);//add icon double click event listener to reload iconList with new set of data
                 this.element.removeEventListener("selectedItem", this, false);//for single selection only

@@ -25,7 +25,7 @@ exports.MenuData = Montage.create( Montage, {
                         "action":   "executeNewFile"
                     },
                     {
-                        "displayText" : "Open...",
+                        "displayText" : "Open File",
                         "hasSubMenu" : false,
                         "enabled": true,
                         "action": "executeFileOpen"

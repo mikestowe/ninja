@@ -70,8 +70,7 @@ var FileInputField = exports.FileInputField = Montage.create(Component, {
                 settings.inFileMode = true;
                 settings.pickerName = this.pickerName || "fileSelector";
             }
-            settings.callback = this.filePickerCallback;
-            settings.callbackScope = this;
+            settings.callback = this.filePickerCallback.bind(this);
             openFilePicker.settings = settings;
             this.eventManager.dispatchEvent(openFilePicker);
         }

@@ -39,30 +39,6 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
     },
 
     /**
-     * this will be stored in the local storage and in the cloud may be, for the cloud one.
-     */
-    _lastOpenedFolderURI:{
-        writable:true,
-        enumerable:true,
-        value:{
-            lastFolderUri_local:null,
-            lastFolderUri_cloud:null
-        }
-    },
-
-    /**
-     * this will be stored in the local storage and in the cloud may be, for the cloud one.
-     */
-    _lastSavedFolderURI:{
-        writable:true,
-        enumerable:true,
-        value:{
-            lastSavedFolderUri_local:null,
-            lastSavedFolderUri_cloud:null
-        }
-    },
-
-    /**
      *this function is used to create an instance of a file picker
      *
      * parameters:
@@ -87,7 +63,6 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
             var callback, callbackScope, pickerMode, currentFilter, allFileFilters, inFileMode, allowNewFileCreation, allowMultipleSelections, pickerName;
             if(!!settings){
                 if(typeof settings.callback !== "undefined"){callback = settings.callback;}
-                if(typeof settings.callbackScope !== "undefined"){callbackScope = settings.callbackScope;}
                 if(typeof settings.pickerMode !== "undefined"){pickerMode = settings.pickerMode;}
                 if(typeof settings.currentFilter !== "undefined"){currentFilter = settings.currentFilter;}
                 if(typeof settings.allFileFilters !== "undefined"){allFileFilters = settings.allFileFilters;}
@@ -95,6 +70,12 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
                 if(typeof settings.allowNewFileCreation !== "undefined"){allowNewFileCreation = settings.allowNewFileCreation;}
                 if(typeof settings.allowMultipleSelections !== "undefined"){allowMultipleSelections = settings.allowMultipleSelections;}
                 if(typeof settings.pickerName !== "undefined"){this.filePickerPopupType = settings.pickerName;}
+            }
+
+            if(settings.pickerName === "saveAsDirectoryPicker"){//need to set the picker mode in a better way
+                pickerMode = "write";
+            }else{
+                pickerMode = "read";
             }
 
             var aModel = filePickerModelModule.FilePickerModel.create();
@@ -131,13 +112,20 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
             }
 
             //populate the last opened folder first, if none then populate default root
-            var sessionStorage = window.sessionStorage;
             var storedUri = null;
-
-            if(pickerMode === "write"){
-                storedUri = sessionStorage.getItem("lastSavedFolderURI");
-            }else{
-                storedUri = sessionStorage.getItem("lastOpenedFolderURI");
+            var sessionStorage = window.sessionStorage;
+            try{
+                if(pickerMode === "write"){
+                    storedUri = sessionStorage.getItem("lastSavedFolderURI");
+                }else if(inFileMode === true){
+                    storedUri = sessionStorage.getItem("lastOpenedFolderURI_fileSelection");
+                }else if(inFileMode === false){
+                    storedUri = sessionStorage.getItem("lastOpenedFolderURI_folderSelection");
+                }
+            }catch(e){
+                if(e.code == 22){
+                    sessionStorage.clear();
+                }
             }
 
             if(!!storedUri){
