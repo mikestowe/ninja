@@ -11,7 +11,7 @@ var Montage = require("montage/core/core").Montage,
 var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.BaseDocument, {
     // PRIVATE MEMBERS
     _selectionExclude: { value: null, enumerable: false },
-    _cloudTemplateUri: { value: "user-document-templates/montage-application-cloud/index.html", enumerable: false},
+    _htmlTemplateUrl: { value: "user-document-templates/montage-application-cloud/index.html", enumerable: false},
     _iframe: { value: null, enumerable: false },
     _server: { value: null, enumerable: false },
     _selectionModel: { value: [], enumerable: false },
@@ -24,7 +24,7 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
     _styles: { value: null, enumerable: false },
     _stylesheets: { value: null, enumerable: false },
     _stageStyleSheetId : { value: 'nj-stage-stylesheet', enumerable: false },
-    _initialUserDocument: { value: null, enumerable: false },
+    _userDocument: { value: null, enumerable: false },
     _htmlSource: {value: "<html></html>", enumerable: false},
     _glData: {value: null, enumerable: false },
 
@@ -218,30 +218,27 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
 
     //****************************************//
     // PUBLIC METHODS
-    initialize: {
-        value: function(doc, uuid, iframe, callback) {
-            // Shell mode is not used anymore
-            //if(!window.IsInShellMode()) {
-                if(!doc.name){doc.name = "index-cloud"};
-                if(!doc.uri){doc.uri = this._cloudTemplateUri};
-                this.init(doc.name, doc.uri, doc.type, iframe, uuid, callback);
-            /*
-            } else {
-                var tmpurl = doc.uri.split('\\');
-                var fileUrl =  doc.server.url + "/" + tmpurl[tmpurl.length -1] + "?fileio=true&template=/user-document-templates/montage-application/index.html";
-                this.init(name, fileUrl, doc.type, iframe, uuid, callback);
-                this.server = doc.server;
-                this._initialUserDocument = doc;
-            }
-            */
-            this.iframe = iframe;
-            this.selectionExclude = ["HTML", "BODY", "Viewport", "UserContent", "stageBG"];
-            this.currentView = "design";
-
-            this._loadDocument(this.uri);
-
+    
+    
+    ////////////////////////////////////////////////////////////////////
+	//
+	initialize: {
+		value: function(file, uuid, iframe, callback) {
+			//
+			this._userDocument = file;
+			//
+			this.init(file.name, file.uri, file.extension, iframe, uuid, callback);
+			//
+			this.iframe = iframe;
+			this.selectionExclude = ["HTML", "BODY", "Viewport", "UserContent", "stageBG"];
+			this.currentView = "design";
+			//
+			this.iframe.src = this._htmlTemplateUrl;
+            this.iframe.addEventListener("load", this, true);
         }
     },
+    ////////////////////////////////////////////////////////////////////
+
 
 	collectGLData: {
 		value: function( elt,  dataArray )
@@ -345,7 +342,8 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
         }
     },
 
-    // Private
+    /*
+// Private
     _loadDocument: {
         value: function(uri) {
             // Load the document into the Iframe
@@ -353,23 +351,32 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
             this.iframe.addEventListener("load", this, true);
         }
     },
-
+*/
+	
+	
+	
+	////////////////////////////////////////////////////////////////////
+	//
     handleEvent: {
         value: function(event){
-            this.documentRoot = this.iframe.contentWindow.document.getElementById("UserContent");
+        	//
+        	this.documentRoot = this.iframe.contentWindow.document.getElementById("UserContent");
             this.stageBG = this.iframe.contentWindow.document.getElementById("stageBG");
             this.stageBG.onclick = null;
             this._document = this.iframe.contentWindow.document;
             this._window = this.iframe.contentWindow;
-            if(!this.documentRoot.Ninja)
-            {
-                this.documentRoot.Ninja = {};
-            }
-
-            if(this._initialUserDocument) {
-                // Now load the user content
-                this.documentRoot.innerHTML = this._initialUserDocument.body;
-                this.iframe.contentWindow.document.getElementById("userHead").innerHTML = this._initialUserDocument.head;
+            //
+            if(!this.documentRoot.Ninja) this.documentRoot.Ninja = {};
+            //
+            
+            this.documentRoot.innerHTML = this._userDocument.content.body;
+            this.iframe.contentWindow.document.getElementById("userHead").innerHTML = this._userDocument.content.head;
+            
+          
+            
+            	
+            	
+            
 
                 this.cssLoadInterval = setInterval(function() {
                     if(this._document.styleSheets.length > 1) {
@@ -383,7 +390,8 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
                 
                 // TODO - Not sure where this goes
                 this._userComponentSet = {};
-            } else {
+
+            
                 this._styles = this._document.styleSheets[this._document.styleSheets.length - 1];
                 this._stylesheets = this._document.styleSheets; // Entire stlyesheets array
 
@@ -429,7 +437,7 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
                 }
 
                 this.callback(this);
-            }
+            
         }
     },
 
