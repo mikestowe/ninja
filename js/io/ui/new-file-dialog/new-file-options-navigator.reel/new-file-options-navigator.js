@@ -226,7 +226,7 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
 
             if(!!this.selectedProjectType && !!this.selectedTemplate
                 && this.isValidFileName(projectName) && this.isValidUri(projectDirectory)
-                && !this.checkFileExists(projectName, projectDirectory, this.selectedProjectType)
+                && !this.checkFileExists(projectName, projectDirectory, fileExtension)
             ){
                 this.error.innerHTML="";
                 //console.log("$$$ new file selections: \n" + selectionlog);
@@ -258,7 +258,7 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
                     this.popup.hide();
                 }
             }else{
-                if(this.error.innerHTML !== ""){
+                if(this.error.innerHTML === ""){
                     this.showError("! Project Template, Name and Directory should be valid.");
                 }
                 //disable ok
@@ -328,7 +328,6 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
 
             if(!!this.selectedProjectType && !!this.selectedTemplate
                 && this.isValidFileName(this.newFileName) && this.isValidUri(this.newFileDirectory)
-                && !this.checkFileExists(this.newFileName, this.newFileDirectory, this.newFileModel.projectTypeData[this.selectedProjectType.uri].fileExtension)
                 ){
                 status = true;
                 this.okButton.removeAttribute("disabled");

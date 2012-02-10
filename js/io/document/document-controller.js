@@ -293,6 +293,9 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                     nextDocumentIndex = closeDocumentIndex - 1;
                 }
                 this.application.ninja.stage.stageView.switchDocument(this._documents[nextDocumentIndex]);
+            }else{
+                //if there are no documents to switch to then just show the iframeContainer
+                document.getElementById("iframeContainer").style.display="block";
             }
         }
     },

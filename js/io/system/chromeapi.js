@@ -180,7 +180,7 @@ exports.ChromeApi = Montage.create(Object.prototype, {
     		//Checking for directory not to already exist
     		this.fileSystem.root.getDirectory(directoryPath, {}, function(dir) {
     			if (callback) callback(false);
-    			return; //Directory already exists
+    			return false; //Directory already exists
     		});
     		//Creating new directory
     		this.fileSystem.root.getDirectory(directoryPath, {create: true}, function(dir) {
