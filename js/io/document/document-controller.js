@@ -68,13 +68,13 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             this.eventManager.addEventListener("recordStyleChanged", this, false);
 
 			// Temporary testing opening a new file after Ninja has loaded
-			this.eventManager.addEventListener("executeNewProject", this, false);
+			//this.eventManager.addEventListener("executeNewProject", this, false);
         }
     },
 
     handleAppLoaded: {
         value: function() {
-            //this.openDocument({"type": "html"});
+            this.openDocument({"type": "html"});
         }
     },
 	
