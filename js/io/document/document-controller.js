@@ -37,7 +37,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value: "function CodeMirror(place, givenOptions) {" +
                 "// Determine effective options based on given values and defaults." +
                 "var options = {}, defaults = CodeMirror.defaults; }"
-    },
+            },
 
     activeDocument: {
         get: function() {
@@ -45,7 +45,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         },
         set: function(doc) {
             if(this._activeDocument)  this._activeDocument.isActive = false;
-
+                
             if(this._documents.indexOf(doc) === -1) this._documents.push(doc);
 
             this._activeDocument = doc;
@@ -66,10 +66,19 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             this.eventManager.addEventListener("executeSave", this, false);
 
             this.eventManager.addEventListener("recordStyleChanged", this, false);
+
+			// Temporary testing opening a new file after Ninja has loaded
+			this.eventManager.addEventListener("executeNewProject", this, false);
         }
     },
 
     handleAppLoaded: {
+        value: function() {
+            //this.openDocument({"type": "html"});
+        }
+    },
+	
+	handleExecuteNewProject: {
         value: function() {
             this.openDocument({"type": "html"});
         }
@@ -107,9 +116,9 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
             if((newFileObj.fileExtension !== ".html") && (newFileObj.fileExtension !== ".htm")){//open code view
 
-            }else{
+                } else {
                 //open design view
-            }
+                }
         }
     },
 
@@ -153,7 +162,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     openFileCallback:{
         value:function(doc){
             this.openDocument(doc);
-        }
+            }
     },
 
 
@@ -188,7 +197,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
                     this.textDocumentOpened(newDoc);
 
-                }
+            }
 
            // } catch (err) {
            //     console.log("Could not open Document ",  err);
@@ -220,24 +229,24 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
            }
 
            DocumentManager._codeEditor.editor = CodeMirror.fromTextArea(doc.textArea, {
-                       lineNumbers: true,
+                            lineNumbers: true,
                        mode: type,
-                       onCursorActivity: function() {
-                           DocumentManager._codeEditor.editor.setLineClass(DocumentManager._codeEditor.hline, null);
-                           DocumentManager._codeEditor.hline = DocumentManager._codeEditor.editor.setLineClass(DocumentManager._codeEditor.editor.getCursor().line, "activeline");
-                       }
-           });
+                            onCursorActivity: function() {
+                                DocumentManager._codeEditor.editor.setLineClass(DocumentManager._codeEditor.hline, null);
+                                DocumentManager._codeEditor.hline = DocumentManager._codeEditor.editor.setLineClass(DocumentManager._codeEditor.editor.getCursor().line, "activeline");
+                            }
+                });
            DocumentManager._codeEditor.hline = DocumentManager._codeEditor.editor.setLineClass(0, "activeline");
            */
 
-       }
+            }
    },
 
     closeDocument: {
         value: function(id) {
             if(this.activeDocument.dirtyFlag === true){
                 //if file dirty then alert user to save
-            }
+        }
 
             var doc = this._findDocumentByUUID(id);
             this._removeDocumentView(doc.container);
@@ -362,8 +371,8 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                     this.application.ninja.stage.restoreScroll();
                     this.application.ninja.stage.hideCanvas(false);
                     this.application.ninja.stage.stageView.showRulers();
-                }
             }
+        }
         }
     },
 
@@ -405,5 +414,5 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value: function() {
             return "userDocument_" + (this._iframeCounter++);
         }
-    }
+        }
 });
