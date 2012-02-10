@@ -17,10 +17,15 @@ exports.CloudPopup = Montage.create(Component, {
         value: true
     },
     ////////////////////////////////////////////////////////////////////
+	//
+	_os: {
+        value: null
+    },
+    ////////////////////////////////////////////////////////////////////
     //
     components: {
     	enumerable: false,
-    	value: {test_btn: null, ok_btn: null, cancel_btn: null, status: null, url: null}
+    	value: {test_btn: null, ok_btn: null, cancel_btn: null, download_btn: null, status: null, url: null}
     },
     ////////////////////////////////////////////////////////////////////
     //
@@ -33,6 +38,7 @@ exports.CloudPopup = Montage.create(Component, {
     		this.components.cancel_btn = this.element.getElementsByClassName('btn_cancel nj-skinned')[0];
     		this.components.status = this.element.getElementsByClassName('status')[0];
     		this.components.url = this.element.getElementsByClassName('cloud_url')[0];
+    		this.components.download_btn = this.element.getElementsByClassName('btn_download nj-skinned')[0];
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -41,7 +47,11 @@ exports.CloudPopup = Montage.create(Component, {
     	enumerable: false,
     	value: function() {
     		//
-    		
+    		if (navigator.appVersion.indexOf("Win")!=-1) {
+    			this._os = 'windows';
+    		} else if (navigator.appVersion.indexOf("Mac")!=-1) {
+    			this._os = 'mac';
+    		}
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -62,6 +72,8 @@ exports.CloudPopup = Montage.create(Component, {
     	enumerable: false,
     	value: function() {
     		//
+    		this.components.download_btn.addEventListener('click', this.downloadCloudApp.bind(this), false);
+    		//
     		this.components.test_btn.addEventListener('click', this.testConnection.bind(this), false);
     		//
     		this.components.ok_btn.addEventListener('click', this.closeDialog.bind(this), false);
@@ -69,7 +81,15 @@ exports.CloudPopup = Montage.create(Component, {
     	}
     },
     ////////////////////////////////////////////////////////////////////
-    //this.application.ninja.coreIoApi.hideCloudDialog
+    //
+    downloadCloudApp: {
+    	enumerable: false,
+    	value: function() {
+    		console.log(this._os);
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
     testConnection: {
     	enumerable: false,
     	value: function() {

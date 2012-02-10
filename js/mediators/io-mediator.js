@@ -86,10 +86,17 @@ exports.IoMediator = Montage.create(Component, {
     			case 204:
     				//Creating and formatting result object for callbak
     				result = read.file.details;
-    				//TODO: Add handling for converting HTML to Ninja format
-    				result.content = read.file.content;
+    				//Checking for type of content to returns
+    				if (result.extension !== 'html' && result.extension !== 'htm') {
+    					//Simple string
+    					result.content = read.file.content;
+    				} else {
+    					//Object to be used by Ninja Template
+						result.content = this.parseHtmlToNinjaTemplate(read.file.content);
+    				}
+    				//Status of call
     				result.status = read.status;
-    				//
+    				//Calling back with result
     				if (callback) callback(result);
     				break;
     			case 404:
@@ -137,8 +144,21 @@ exports.IoMediator = Montage.create(Component, {
     //
     fileSaveAs: {
     	enumerable: false,
-    	value: function (file, copy, callback) {
+    	value: function (copyTo, copyFrom, callback) {
     		//
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    parseHtmlToNinjaTemplate: {
+    	enumerable: false,
+    	value: function (html) {
+    		//Creating temp object to mimic HTML
+    		var doc = window.document.implementation.createHTMLDocument(), template;
+    		//Setting content to temp
+    		doc.getElementsByTagName('html')[0].innerHTML = html;
+    		//Creating return object
+    		return {head: doc.head.innerHTML, body: doc.body.innerHTML, document: doc};
     	}
     }
     ////////////////////////////////////////////////////////////////////
