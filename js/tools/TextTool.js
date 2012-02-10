@@ -39,6 +39,7 @@ exports.TextTool = Montage.create(DrawingTool, {
 
     HandleLeftButtonDown: {
         value: function(event) {
+            this.selectedElement = null;
             this.startDraw(event);
         }
     },
@@ -157,6 +158,7 @@ exports.TextTool = Montage.create(DrawingTool, {
             
             if(wasSelected) {
                 NJevent("enableStageMove");
+                this.options.defineInitialProperties();
                 this.application.ninja.stage.stageDeps.snapManager.setupDragPlaneFromPlane( workingPlane );
             } else {
                 this.selectedElement = null;

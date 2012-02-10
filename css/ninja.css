@@ -36,7 +36,7 @@ input[type="search"].nj-skinned::-webkit-search-cancel-button:after { content: "
 
 button.nj-skinned { font-size: 9px; cursor: pointer; display: block; border: 0px; margin: 0px; padding: 4px; border: 1px #313131 solid; background-color: #474747; background-image: -webkit-linear-gradient(top, #505050 0%, #3c3c3c 100%); border-radius: 4px; color: white; text-transform: uppercase; cursor: pointer; text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5); }
 
-button.nj-skinned:active { background-image: -webkit-linear-gradient(top, #3c3c3c 0%, #505050 100%); }
+button.nj-skinned:active, button.nj-skinned.active { background-image: -webkit-linear-gradient(top, #3c3c3c 0%, #505050 100%); }
 
 button.nj-skinned:hover { -webkit-box-shadow: 0px 0px 3px #b4b4b4; }
 
@@ -211,6 +211,10 @@ body { position: absolute; margin: 0px; width: 100%; height: 100%; background-co
 #mainContent .CodeMirror { width: 100%; height: 100%; background: white; }
 
 #mainContent .CodeMirror-scroll { height: 100%; overflow: scroll; overflow-x: auto; overflow-y: auto; }
+
+.montage-editor-frame { position: absolute; z-index: 7; top: 0; left: 0; display: none; -webkit-user-select: initial; }
+
+.montage-editor { padding: 0px; word-wrap: normal; }
 
 .panelContainer { margin: 0px; padding: 0px 0px; position: relative; overflow: auto; }
 

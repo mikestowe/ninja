@@ -77,41 +77,30 @@
             },
 
             "fontSize": {
-                "module": "js/components/hottextunit.reel",
-                "name": "HotTextUnit",
+                "module": "js/components/combobox.reel",
+                "name": "Combobox",
                 "properties": {
                     "element": {"#": "fontSize"},
-                    "value": 12,
                     "identifier": "fontSize"
                 },
                 "listeners": [
                     {
                         "type": "change",
                         "listener": {"@": "owner"}
-                    },
-                    {
-                        "type": "changing",
-                        "listener": {"@": "owner"}
                     }
                 ]
 
             },
-
-          "fontColor": {
-               "module" : "js/components/ui/color-chip.reel",
-               "name" : "ColorChip",
-               "properties" : {
-                   "element" : {"#": "fontColor"},
-                   "mode": "chip"
-               }
-           },
+        
             "btnBold": {
-                "module": "js/components/button.reel",
-                "name": "Button",
+                "module": "montage/ui/toggle-button.reel",
+                "name": "ToggleButton",
                 "properties": {
                     "element": {"#": "btnBold"},
-                    "_isToggleButton": true,
-                    "identifier": "btnBold"
+                    "pressedClass": "active",
+                    "preventFocus": true,
+                    "identifier": "btnBold",
+                    "label": "B"
                 },
                 "listeners": [
                     {
@@ -121,12 +110,14 @@
                 ]
             },
             "btnItalic": {
-                "module": "js/components/button.reel",
-                "name": "Button",
+                "module": "montage/ui/toggle-button.reel",
+                "name": "ToggleButton",
                 "properties": {
                     "element": {"#": "btnItalic"},
-                    "_isToggleButton": true,
-                    "identifier": "btnItalic"
+                    "pressedClass": "active",
+                    "preventFocus": true,
+                    "identifier": "btnItalic",
+                    "label": "I"
                 },
                 "listeners": [
                     {
@@ -136,12 +127,14 @@
                 ]
             },
             "btnUnderline": {
-                "module": "js/components/button.reel",
-                "name": "Button",
+                "module": "montage/ui/toggle-button.reel",
+                "name": "ToggleButton",
                 "properties": {
                     "element": {"#": "btnUnderline"},
-                    "_isToggleButton": true,
-                    "identifier": "btnUnderline"
+                    "pressedClass": "active",
+                    "preventFocus": true,
+                    "identifier": "btnUnderline",
+                    "label": "U"
                 },
                 "listeners": [
                     {
@@ -151,12 +144,14 @@
                 ]
             },
             "btnStrikethrough": {
-                "module": "js/components/button.reel",
-                "name": "Button",
+                "module": "montage/ui/toggle-button.reel",
+                "name": "ToggleButton",
                 "properties": {
                     "element": {"#": "btnStrikethrough"},
-                    "_isToggleButton": true,
-                    "identifier": "btnStrikethrough"
+                    "pressedClass": "active",
+                    "preventFocus": true,
+                    "identifier": "btnStrikethrough",
+                    "label": "S"
                 },
                 "listeners": [
                     {
@@ -165,28 +160,16 @@
                     }
                 ]
             },
-            "txtLink": {
-                "module": "js/components/textfield.reel",
-                "name": "TextField",
-                "properties": {
-                    "element": {"#": "txtLink"}
-                }
-            },
-            "linkTarget": {
-                "module": "js/components/combobox.reel",
-                "name": "Combobox",
-                "properties": {
-                    "element": {"#": "linkTarget"}
-                }
-            },
-
+            
             "alignLeft": {
-                "module": "js/components/button.reel",
-                "name": "Button",
+                "module": "montage/ui/toggle-button.reel",
+                "name": "ToggleButton",
                 "properties": {
                     "element": {"#": "alignLeft"},
-                    "_isToggleButton": true,
-                    "identifier": "alignLeft"
+                    "pressedClass": "active",
+                    "preventFocus": true,
+                    "identifier": "alignLeft",
+                    "label": "Left"
                 },
                 "listeners": [
                     {
@@ -196,12 +179,14 @@
                 ]
             },
             "alignCenter": {
-                "module": "js/components/button.reel",
-                "name": "Button",
+                "module": "montage/ui/toggle-button.reel",
+                "name": "ToggleButton",
                 "properties": {
                     "element": {"#": "alignCenter"},
-                    "_isToggleButton": true,
-                    "identifier": "alignCenter"
+                    "pressedClass": "active",
+                    "preventFocus": true,
+                    "identifier": "alignCenter",
+                    "label": "Center"
                 },
                 "listeners": [
                     {
@@ -211,12 +196,14 @@
                 ]
             },
             "alignRight": {
-                "module": "js/components/button.reel",
-                "name": "Button",
+                "module": "montage/ui/toggle-button.reel",
+                "name": "ToggleButton",
                 "properties": {
                     "element": {"#": "alignRight"},
-                    "_isToggleButton": true,
-                    "identifier": "alignRight"
+                    "pressedClass": "active",
+                    "preventFocus": true,
+                    "identifier": "alignRight",
+                    "label": "Right"
                 },
                 "listeners": [
                     {
@@ -226,12 +213,14 @@
                 ]
             },
             "alignJustify": {
-                "module": "js/components/button.reel",
-                "name": "Button",
+                "module": "montage/ui/toggle-button.reel",
+                "name": "ToggleButton",
                 "properties": {
                     "element": {"#": "alignJustify"},
-                    "_isToggleButton": true,
-                    "identifier": "alignJustify"
+                    "pressedClass": "active",
+                    "preventFocus": true,
+                    "identifier": "alignJustify",
+                    "label": "Justify"
                 },
                 "listeners": [
                     {
@@ -241,26 +230,48 @@
                 ]
             },
             "indent": {
-                "module": "js/components/button.reel",
+                "module": "montage/ui/button.reel",
                 "name": "Button",
                 "properties": {
-                    "element": {"#": "indent"}
-                }
+                    "element": {"#": "indent"},
+                    "pressedClass": "active",
+                    "preventFocus": true,
+                    "identifier": "outdent",
+                    "label": ">>"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
             "outdent": {
-                "module": "js/components/button.reel",
+                "module": "montage/ui/button.reel",
                 "name": "Button",
                 "properties": {
-                    "element": {"#": "outdent"}
-                }
+                    "element": {"#": "outdent"},
+                    "pressedClass": "active",
+                    "preventFocus": true,
+                    "identifier": "<<",
+                    "label": "<<"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
             "bulletedList": {
-                "module": "js/components/button.reel",
-                "name": "Button",
+                "module": "montage/ui/toggle-button.reel",
+                "name": "ToggleButton",
                 "properties": {
                     "element": {"#": "bulletedList"},
-                    "_isToggleButton": true,
-                    "identifier": "bulletedList"
+                    "pressedClass": "active",
+                    "preventFocus": true,
+                    "identifier": "bulletedList",
+                    "label": "• • •"
                 },
                 "listeners": [
                     {
@@ -270,12 +281,14 @@
                 ]
             },
             "numberedList": {
-                "module": "js/components/button.reel",
-                "name": "Button",
+                "module": "montage/ui/toggle-button.reel",
+                "name": "ToggleButton",
                 "properties": {
                     "element": {"#": "numberedList"},
-                    "_isToggleButton": true,
-                    "identifier": "numberedList"
+                    "pressedClass": "active",
+                    "preventFocus": true,
+                    "identifier": "numberedList",
+                    "label": "1 2 3"
                 },
                 "listeners": [
                     {
@@ -301,24 +314,27 @@
             <button id="fontSettings" style="display: none"></button>
             <label class="label">Size:</label>
             <input id="fontSize"/>
-            <button id="fontColor"></button>
-            <button id="btnBold" class="btnBold"></button>
-            <button id="btnItalic" class="btnItalic"></button>
-            <button id="btnUnderline" class="btnItalic"></button>
-            <button id="btnStrikethrough" class="btnStriketrough"></button>
-            <label class="label">Link:</label>
-            <input id="txtLink" />
-            <select id="linkTarget"></select>
-            <div id="btnsAlign">
-                <button id="alignLeft"></button>
-                <button id="alignCenter"></button>
-                <button id="alignRight"></button>
-                <button id="alignJustify" style="display: none;"></button>
+            <div class="fontColor"></div>
+            <div class="btnGroup">
+                <button id="btnBold" class="btnBold nj-skinned" style="font-weight:bold"></button>
+                <button id="btnItalic" class="btnItalic nj-skinned" style="font-style: italic;"></button>
+                <button id="btnUnderline" class="btnUnderline nj-skinned" style="text-decoration: underline;"></button>
+                <button id="btnStrikethrough" class="btnStriketrough nj-skinned" style="text-decoration: line-through;"></button>
             </div>
-            <button id="indent"></button>
-            <button id="outdent"></button>
-            <button id="bulletedList"></button>
-            <button id="numberedList"></button>
+            <div class="btnGroup">
+                <button id="alignLeft" class="nj-skinned"></button>
+                <button id="alignCenter" class="nj-skinned"></button>
+                <button id="alignRight" class="nj-skinned"></button>
+                <button id="alignJustify" class="nj-skinned"></button>
+            </div>
+            <div class="btnGroup">
+                <button id="indent" class="nj-skinned"></button>
+                <button id="outdent" class="nj-skinned"></button>
+            </div>
+            <div class="btnGroup">
+                <button id="bulletedList" class="nj-skinned"></button>
+                <button id="numberedList" class="nj-skinned"></button>
+            </div>
         </div>
     </body>
 

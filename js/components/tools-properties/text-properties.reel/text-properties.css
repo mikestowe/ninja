@@ -5,31 +5,33 @@
  </copyright> */
 
 .optionsTextTool {
-    display: -webkit-box;
-    -webkit-box-orient:horizontal;
-    -webkit-box-align: stretch;
-    padding: 5px;
+    padding: 6px;
 }
 
-
-.optionsTextTool > * {
-    -webkit-box-flex:0;
+.optionsTextTool .btnGroup {
+    padding: 0px 8px;
 }
 
-.optionsTextTool .button {
+.optionsTextTool > *, .optionsTextTool .btnGroup > * {
+    float:left;
+}
+
+.optionsTextTool button {
     width: auto;
-
-}
-
-.optionsTextTool .hottextunit {
-    padding-top:5px;
+    padding: 4px 8px !important;
+    margin-left:4px;
 }
 
 .optionsTextTool .label, .optionsTextTool .hottextunit {
-    float:none;
     font-size:11px;
 }
 
 .optionsTextTool .fontSelection {
     width:100px;
+}
+
+.optionsTextTool .fontColor {
+    width: 20px;
+    height: 18px;
+    margin: 2px 6px;
 }
