@@ -323,7 +323,7 @@ window.hack = function (name, type) {
 				//
 				this._cloudDialogComponents.dialog.element.style.opacity = 1;
 				this._cloudDialogComponents.popup.element.style.opacity = 1;
-				this._cloudDialogComponents.popup.element.style.margin = '-100px 0px 0px -190px';
+				this._cloudDialogComponents.popup.element.style.margin = '-170px 0px 0px -190px';
 			}
     	}
     },

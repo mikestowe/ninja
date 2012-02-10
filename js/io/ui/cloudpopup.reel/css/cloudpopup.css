@@ -96,3 +96,49 @@
   float: right;
   margin: 8px 2px 2px 8px;
 }
+
+/* line 105, cloudpopup.scss */
+.cloud_popup section {
+  float: left;
+  clear: both;
+  margin: 16px 0px 0px 0px;
+  background: #333333 -webkit-linear-gradient(top, #323232 0%, #3c3c3c 100%);
+  border: 1px solid #333;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+/* line 116, cloudpopup.scss */
+.cloud_popup section h4 {
+  text-transform: uppercase;
+  font-weight: normal;
+  font-size: 12px;
+  text-shadow: 1px 1px 1px #000;
+  font-family: 'Droid Sans', sans-serif;
+  display: block;
+  float: left;
+  clear: both;
+  margin: 2px 0px 6px 0px;
+  padding: 0px;
+  width: 100%;
+  text-align: center;
+}
+
+/* line 132, cloudpopup.scss */
+.cloud_popup section .btn_download {
+  width: 120px;
+  text-align: center;
+  margin: 10px 0px 2px 4px;
+  float: left;
+  font-size: 11px;
+}
+
+/* line 141, cloudpopup.scss */
+.cloud_popup section .cloud_icon {
+  background-image: url(../../../../../ninja_icon_128.png);
+  background-size: 100% 100%;
+  width: 60px;
+  height: 60px;
+  float: left;
+  margin: -10px 0px -6px 56px;
+}
