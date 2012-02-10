@@ -18,6 +18,12 @@ exports.ComponentController = Montage.create(ElementController, {
                 case "enabled":
                     return this.application.ninja.currentDocument.getComponentFromElement(el).enabled;
                     break;
+                case "disabled":
+                    return this.application.ninja.currentDocument.getComponentFromElement(el).disabled;
+                    break;
+                case "value":
+                    return this.application.ninja.currentDocument.getComponentFromElement(el).value;
+                    break;
                 default:
                     return ElementController.getProperty(el, prop, true);
             }
@@ -32,6 +38,12 @@ exports.ComponentController = Montage.create(ElementController, {
                     break;
                 case "enabled":
                     this.application.ninja.currentDocument.getComponentFromElement(el).enabled = value;
+                    break;
+                case "disabled":
+                    this.application.ninja.currentDocument.getComponentFromElement(el).disabled = value;
+                    break;
+                case "value":
+                    this.application.ninja.currentDocument.getComponentFromElement(el).value = value;
                     break;
                 default:
                     ElementController.setProperty(el, p, value);

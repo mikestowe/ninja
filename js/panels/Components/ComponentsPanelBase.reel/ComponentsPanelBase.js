@@ -160,7 +160,7 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
             var that = this;
             var element = this.makeComponent(component.component);
 
-            this.application.ninja.currentDocument._window.addComponent(element, {type: component.name, path: component.module, name: "Button"}, function(instance, element) {
+            this.application.ninja.currentDocument._window.addComponent(element, {name: component.name, path: component.module}, function(instance, element) {
 
                 var pos = that.getStageCenter();
 
@@ -181,73 +181,24 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
 
     makeComponent: {
         value: function(name) {
+            var el;
+
             switch(name) {
                 case "button":
-                    var el;
                     el = NJUtils.makeNJElement(name, "Button", "component");
                     el.elementModel.pi = "ButtonPi";
                     el.setAttribute("type", "button");
-                    return el;
+                    el.innerHTML = "Button";
+                    break;
                 case "textfield": {
-                    var el;
-                    el = NJUtils.makeNJElement("input", "Text Field", "component");
+                    el = NJUtils.makeNJElement("input", "Textfield", "component");
                     el.elementModel.pi = "TextfieldPi";
                     el.setAttribute("type", "text");
-                    return el;
+                    break;
                 }
             }
 
-        }
-    },
-
-    ___addComponentToStage:{
-        value:function(component, dropX, dropY){
-//            var compW = 100,
-//                compH = 100,
-//
-            var componentEl, componentInstance;
-
-            if(componentType == "Button"){
-                componentEl = NJUtils.makeNJElement("button", componentType, "component");//, {"type": "button"});
-                componentEl.setAttribute("type", "button");
-
-                componentInstance = this.application.ninja.currentDocument._window.addComponent(componentEl, {type: componentType, path: "montage/ui/button.reel", name: "Button"}, this.callback);
-
-            }else if(componentType == "Checkbox"){
-                compW = 53;
-                compH = 53;
-//                elementType = "input";
-            }
-
-            /*
-            componentContainer = NJUtils.makeNJElement("div", componentType, "component");
-            componentContainer.elementModel.isComponent = true;
-            */
-            var styles = {
-                'position': 'absolute',
-                'top'       : dropY + 'px',
-                'left'      : dropX + 'px',
-//                'width'     : compW + 'px',
-//                'height'    : compH + 'px',
-                '-webkit-transform-style' : 'preserve-3d',
-                '-webkit-transform' : 'perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
-            };
-
-
-            //componentElement = NJUtils.makeNJElement(elementType, "ComponentDiv", "block");
-
-            //componentContainer.appendChild(componentElement);
-
-            this.application.ninja.currentDocument.setComponentInstance(componentInstance, componentEl);
-
-            NJevent("elementAdding", {"el": componentEl, "data":styles});
-            /*
-            var componentRef = this.application.ninja.currentDocument._window.addComponent(componentElement, componentType);
-
-            */
-
-
-
+            return el;
         }
     },
 

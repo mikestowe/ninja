@@ -32,140 +32,23 @@ exports.Main = Montage.create(Component, {
     },
 
     addComponentToUserDocument:{
-        value:function(containerElement, componentType, callback){
-            var component = null;
-            switch(componentType.type){
-                case "Button":
+        value:function(element, data, callback){
 
-                    var button = require.async(componentType.path)
-                    .then(function (button) {
-                        var buttonObj = button["Button"];
-                        var btIns = buttonObj.create();
+            var component;
 
-                        btIns.element = containerElement;
-                        btIns.deserializedFromTemplate();
+            component = require.async(data.path)
+                .then(function(component) {
+                    var componentRequire = component[data.name];
+                    var componentInstance = componentRequire.create();
 
-                        btIns.needsDraw = true;
-                        btIns.label = "Button";
-                        callback(btIns, containerElement);
-                    })
-                    .end();
+                    componentInstance.element = element;
+                    componentInstance.deserializedFromTemplate();
+                    componentInstance.needsDraw = true;
 
-                    break;
-                case "Textfield":
-                    var tf = require.async(componentType.path)
-                    .then(function (tf) {
-                        var buttonObj = tf["Textfield"];
-                        var btIns = buttonObj.create();
+                    callback(componentInstance, element);
+                })
+                .end();
 
-                        btIns.element = containerElement;
-                        btIns.deserializedFromTemplate();
-
-                        btIns.needsDraw = true;
-                        btIns.value = "Button";
-                        callback(btIns, containerElement);
-                    })
-                    .end();
-                    break
-                case "Checkbox":
-                    component = Checkbox.create();
-                    component.element = containerElement;
-                    component.needsDraw = true;
-                    break;
-                case "Condition":
-                    component = Condition.create();
-                    component.element = containerElement;
-                    component.needsDraw = true;
-                    break;
-                case "DynamicText":
-                    component = DynamicText.create();
-                    component.element = containerElement;
-                    component.value = "Label";
-                    component.needsDraw = true;
-                    break;
-                case "HotText":
-                    component = HotText.create();
-                    component.element = containerElement;
-                    component.needsDraw = true;
-                    break;
-                case "HotTextUnit":
-                    component = HotTextUnit.create();
-                    component.element = containerElement;
-                    component.needsDraw = true;
-                    break;
-                case "FlowController":
-                    component = FlowController.create();
-                    component.element = containerElement;
-                    component.needsDraw = true;
-                    break;
-                case "ImageContainer":
-                    component = ImageContainer.create();
-                    component.element = containerElement;
-                    component.element.style.width = "285px";
-                    component.element.style.height = "235px";
-                    component.src = "placeholder.jpg";
-                    component.needsDraw = true;
-                    break;
-                case "Progress":
-                    component = Progress.create();
-                    component.element = containerElement;
-                    component.loading = true;
-                    component.needsDraw = true;
-                    break;
-                case "Repetition":
-                    component = Repetition.create();
-                    component.element = containerElement;
-                    component.needsDraw = true;
-                    break;
-                case "Scrollview":
-                    component = Scrollview.create();
-                    component.element = containerElement;
-                    component.element.style.width = "200px";
-                    component.element.style.height = "200px";
-                    var dummyContent = document.createElement("div");
-                    dummyContent.innerHTML = "<img src='image3.jpg'/>";
-                    component.element.appendChild(dummyContent);
-                    component.needsDraw = true;
-                    break;
-                case "Slider":
-                    component = Slider.create();
-                    component.element = containerElement;
-//                    component.value = 0;
-//                    component._minValue = 0;
-//                    component._maxValue = 100;
-                    component.needsDraw = true;
-                    break;
-                case "Slot":
-                    component = Slot.create();
-                    component.element = containerElement;
-                    component.needsDraw = true;
-                    break;
-                case "Substitution":
-                    component = Substitution.create();
-                    component.element = containerElement;
-                    component.needsDraw = true;
-                    break;
-                case "TextArea":
-                    component = TextArea.create();
-                    component.element = containerElement;
-                    component.needsDraw = true;
-                    break;
-                case "Toggle":
-                    component = Toggle.create();
-                    component.element = containerElement;
-                    component.needsDraw = true;
-                    break;
-                case "ToggleButton":
-                    component = ToggleButton.create();
-                    component.element = containerElement;
-                    component.element.classList.add("text");
-                    component.needsDraw = true;
-                    break;
-                default:
-                    console.log("Unrecognized component type");
-            }
-            //console.log(component);
-            return component;
         }
     }
 
