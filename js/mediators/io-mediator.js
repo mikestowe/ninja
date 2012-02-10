@@ -87,7 +87,13 @@ exports.IoMediator = Montage.create(Component, {
     				//Creating and formatting result object for callbak
     				result = read.file.details;
     				//TODO: Add handling for converting HTML to Ninja format
-    				result.content = read.file.content;
+    				if (result.extension !== 'html' && result.extension !== 'htm') {
+    					result.content = read.file.content;
+    				} else {
+    					//
+						result.content = this.parseHtmlToNinjaTemplate(read.file.content);
+    				}
+    				
     				result.status = read.status;
     				//
     				if (callback) callback(result);
@@ -139,6 +145,20 @@ exports.IoMediator = Montage.create(Component, {
     	enumerable: false,
     	value: function (file, copy, callback) {
     		//
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    parseHtmlToNinjaTemplate: {
+    	enumerable: false,
+    	value: function (html) {
+    		var doc = window.document.implementation.createHTMLDocument(), template;
+    		//
+    		doc.getElementsByTagName('html')[0].innerHTML = html;
+    		template = {head: doc.head, body: doc.body, document: doc};
+    		doc = null;
+			//
+    		return template;
     	}
     }
     ////////////////////////////////////////////////////////////////////
