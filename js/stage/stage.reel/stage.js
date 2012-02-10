@@ -12,6 +12,7 @@ var vecUtils = require("js/helper-classes/3D/vec-utils").VecUtils;
 
 exports.Stage = Montage.create(Component, {
 
+    textTool: { value: null },
     // TODO - Need to figure out how to remove this dependency
     // Needed by some tools that depend on selectionDrawn event to set up some logic
     drawNow: { value : false },
@@ -776,6 +777,12 @@ exports.Stage = Montage.create(Component, {
     toUserContentCoordinates: {
         value: function(x,y) {
             return [x - this._userContentLeft, y - this._userContentTop];
+        }
+    },
+
+    toViewportCoordinates: {
+        value: function(x,y) {
+            return [x + this._userContentLeft, y + this._userContentTop];
         }
     },
 
