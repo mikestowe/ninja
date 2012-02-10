@@ -113,6 +113,8 @@ exports.StageView = Montage.create(Component, {
             this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
             this.application.ninja.documentController.activeDocument = doc;
             this.application.ninja.stage.hideCanvas(true);
+
+            document.getElementById("iframeContainer").style.display="none";//hide the iframe when switching to code view
         }
     },
 
