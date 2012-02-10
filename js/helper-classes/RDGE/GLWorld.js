@@ -276,13 +276,13 @@ function GLWorld( canvas, use3D )
 	
     this.onRunState = function()
 	{
-		console.log( "GLWorld.onRunState" );
+//		console.log( "GLWorld.onRunState" );
 		this.restartRenderLoop();
 	}
 	
     this.onLoadState = function()
 	{
-		console.log( "GLWorld.onLoadState" );
+//		console.log( "GLWorld.onLoadState" );
 	}
 
 	this.textureToLoad = function( texture )
@@ -339,7 +339,7 @@ function GLWorld( canvas, use3D )
 
 	this.textureLoadedCallback = function( name )
 	{
-		console.log( "*** material texture loaded: " + name );
+//		console.log( "*** material texture loaded: " + name );
 
 		var world = this._world;
 		if (!world)
@@ -769,7 +769,7 @@ GLWorld.prototype.render = function()
 	}
 	else
 	{
-		console.log( "GLWorld.render, " + this._worldCount );
+//		console.log( "GLWorld.render, " + this._worldCount );
 		g_Engine.setContext( this._canvas.uuid );
 		//this.draw();
 		this.restartRenderLoop();
@@ -809,7 +809,7 @@ GLWorld.prototype.getShapeFromPoint = function( offsetX, offsetY )
 	var go = this._geomRoot;
 	if(go.collidesWithPoint(x,y))
 	{
-		console.log("collision found");
+//		console.log("collision found");
 		return go;
 	}
 	while (go.getNext())
@@ -817,7 +817,7 @@ GLWorld.prototype.getShapeFromPoint = function( offsetX, offsetY )
 		go = go.getNext();
 		if(go.collidesWithPoint(x,y))
 		{
-			console.log("collision found");
+//			console.log("collision found");
 			return go;
 		}
 	}
