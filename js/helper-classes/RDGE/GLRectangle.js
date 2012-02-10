@@ -180,7 +180,7 @@ function GLRectangle()
 		this._strokeStyle		= Number( this.getPropertyFromString( "strokeStyle: ",	importStr )  );
 		var strokeMaterialName	= this.getPropertyFromString( "strokeMat: ",	importStr );
 		var fillMaterialName	= this.getPropertyFromString( "fillMat: ",		importStr );
-		this._strokeStyle		=  Number( this.getPropertyFromString( "strokeColor: ",	importStr )  );
+		this._strokeStyle		=  this.getPropertyFromString( "strokeStyle: ",	importStr );
 		this._fillColor			=  eval( "[" + this.getPropertyFromString( "fillColor: ",	importStr ) + "]" );
 		this._strokeColor		=  eval( "[" + this.getPropertyFromString( "strokeColor: ",	importStr ) + "]" );
 		this._tlRadius			=  Number( this.getPropertyFromString( "tlRadius: ",	importStr )  );

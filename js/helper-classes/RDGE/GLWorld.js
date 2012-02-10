@@ -973,7 +973,11 @@ GLWorld.prototype.importObject = function( objStr,  parentNode )
 			obj.import( objStr );
 			break;
 
-		case 3:		// line - not implemented
+		case 3:		// line
+            obj = new GLLine();
+            obj.import( objStr );
+            break;
+
 		default:
 			throw new Error( "Unrecognized object type: " + type );
 			break;

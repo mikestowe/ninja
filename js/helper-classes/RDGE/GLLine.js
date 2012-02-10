@@ -28,6 +28,8 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
     this._strokeWidth = 0.25;
 
     this._strokeStyle = "Solid";
+    this._scaleX = 1.0;
+    this._scaleY = 1.0;
 
     if (arguments.length > 0)
     {
@@ -44,12 +46,8 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
         this._strokeColor = strokeColor;
 
         this._strokeStyle = strokeStyle;
+        this._scaleX = (world.getViewportWidth())/(world.getViewportHeight());
     }
-
-    this._scaleX = 1.0;
-    this._scaleY = 1.0;
-
-    this._scaleX = (world._viewportWidth)/(world._viewportHeight);
 
     this._strokeVerticesLen = 0;
 
@@ -104,7 +102,64 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
 	this.setSlope            = function(m)		{  this._slope = m;				}
 
     this.geomType	= function()				{  return this.GEOM_TYPE_LINE;	}
-    
+
+    	///////////////////////////////////////////////////////////////////////
+	// Methods
+	///////////////////////////////////////////////////////////////////////
+	this.export = function()
+	{
+		var rtnStr = "type: " + this.geomType() + "\n";
+
+		rtnStr += "xoff: "			+ this._xOffset		+ "\n";
+		rtnStr += "yoff: "			+ this._yOffset		+ "\n";
+		rtnStr += "width: "			+ this._width		+ "\n";
+		rtnStr += "height: "		+ this._height		+ "\n";
+		rtnStr += "xAdj: "		    + this._xAdj		+ "\n";
+		rtnStr += "yAdj: "		    + this._yAdj		+ "\n";
+		rtnStr += "strokeWidth: "	+ this._strokeWidth	+ "\n";
+		rtnStr += "strokeColor: "	+ String(this._strokeColor)  + "\n";
+		rtnStr += "strokeStyle: "	+ this._strokeStyle	+ "\n";
+		rtnStr += "slope: "	        + String(this._slope)	+ "\n";
+
+		rtnStr += "strokeMat: ";
+		if (this._strokeMaterial)
+			rtnStr += this._strokeMaterial.getName();
+		else
+			rtnStr += "flatMaterial";
+		rtnStr += "\n";
+
+		return rtnStr;
+	}
+
+	this.import = function( importStr )
+	{
+		this._xOffset			= Number( this.getPropertyFromString( "xoff: ",			importStr )  );
+		this._yOffset			= Number( this.getPropertyFromString( "yoff: ",			importStr )  );
+		this._width				= Number( this.getPropertyFromString( "width: ",		importStr )  );
+		this._height			= Number( this.getPropertyFromString( "height: ",		importStr )  );
+        this._xAdj			    = Number( this.getPropertyFromString( "xAdj: ",			importStr )  );
+        this._yAdj			    = Number( this.getPropertyFromString( "yAdj: ",			importStr )  );
+		this._strokeWidth		= Number( this.getPropertyFromString( "strokeWidth: ",	importStr )  );
+		var slope 		        = this.getPropertyFromString( "slope: ",	importStr );
+        if(isNaN(Number(slope)))
+            this._slope		    = slope;
+        else
+            this._slope         = Number(slope);
+
+		var strokeMaterialName	= this.getPropertyFromString( "strokeMat: ",	importStr );
+		this._strokeStyle		= this.getPropertyFromString( "strokeStyle: ",	importStr );
+		this._strokeColor		= eval( "[" + this.getPropertyFromString( "strokeColor: ",	importStr ) + "]" );
+
+		var strokeMat = MaterialsLibrary.getMaterial( strokeMaterialName );
+		if (!strokeMat)
+		{
+			console.log( "object material not found in library: " + strokeMaterialName );
+			strokeMat = new FlatMaterial();
+		}
+		this._strokeMaterial = strokeMat;
+
+	}
+
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
