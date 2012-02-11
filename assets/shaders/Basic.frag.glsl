@@ -4,10 +4,14 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var Montage = require("montage/core/core").Montage;
 
-var TimelineController = exports.TimelineController = Montage.create(Montage, {
+#ifdef GL_ES
+precision highp float;
+#endif
 
-    
 
-});
+uniform vec4 color;
+
+void main() {
+    gl_FragColor = color;
+}

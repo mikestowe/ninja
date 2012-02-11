@@ -8,7 +8,9 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 // Class Utils
 //      Math Utility functions
 ///////////////////////////////////////////////////////////////////////
-var VecUtils = require("js/helper-classes/3D/vec-utils").VecUtils;
+var VecUtils = require("js/helper-classes/3D/vec-utils").VecUtils,
+	ViewUtils = require("js/helper-classes/3D/view-utils").ViewUtils,
+	Rectangle = require("js/helper-classes/3D/rectangle").Rectangle;
 
 var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
     ///////////////////////////////////////////////////////////////////////
@@ -536,6 +538,99 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
         }
     },
 
+	rectsOverlap:
+	{
+		value: function( pt, width, height,  elt )
+		{
+			// only consider rectangles with non-zero area
+			if ((width == 0) || (height == 0))  return false;
+
+			// get the mins/maxs of the onput rectangle
+			var xMin, xMax, yMin, yMax;
+			if (width > 0)  {  xMin = pt[0];   xMax = pt[0] + width;  }
+			else  {  xMax = pt[0];  xMin = pt[0] + width;  }
+			if (height > 0)  {  yMin = pt[1];   yMax = pt[1] + height;  }
+			else  {  yMax = pt[1];  yMin = pt[1] + height;  }
+
+			// get the bounds of the element in global screen space
+			var bounds = ViewUtils.getElementViewBounds3D( elt );
+			var bounds3D = [];
+			for (var i=0;  i<4;  i++)
+				bounds3D[i] = ViewUtils.localToGlobal( bounds[i],  elt );
+
+			// get the min/maxs for the element
+			var xMinElt = bounds3D[0][0],  xMaxElt = bounds3D[0][0],
+				yMinElt = bounds3D[0][1],  yMaxElt = bounds3D[0][1];
+			for (var i=1;  i<4;  i++)
+			{
+				if (bounds3D[i][0] < xMinElt)  xMinElt = bounds3D[i][0];
+				else if  (bounds3D[i][0] > xMaxElt)  xMaxElt = bounds3D[i][0];
+				if (bounds3D[i][1] < yMinElt)  yMinElt = bounds3D[i][1];
+				else if  (bounds3D[i][1] > yMaxElt)  yMaxElt = bounds3D[i][1];
+			}
+
+			// test 1.  Overall bounding box test
+			if ((xMaxElt < xMin) || (xMinElt > xMax) || (yMaxElt < yMin) || (yMinElt > yMax))
+				return false;
+			
+			// test 2.  See if any of the corners of the element are contained in the rectangle
+			var rect = Object.create(Rectangle, {});
+			rect.set( pt[0], pt[1], width, height );
+			for (var i=0;  i<4;  i++)
+			{
+				if (rect.contains( bounds3D[i][0], bounds3D[i][1] ))  return true;
+			}
+
+			// test 3.  Bounding box tests on individual edges of the element
+			for (var i=0;  i<4;  i++)
+			{
+				var pt0 = bounds3D[i],
+					pt1 = bounds3D[(i+1)%4];
+
+				// get the extremes of the edge
+				if (pt0[0] < pt1[0])  {  xMinElt = pt0[0];  xMaxElt = pt1[0];  }
+				else {  xMaxElt = pt0[0];  xMinElt = pt1[0]; }
+				if (pt0[1] < pt1[1])  {  yMinElt = pt0[1];  yMaxElt = pt1[1];  }
+				else {  yMaxElt = pt0[1];  yMinElt = pt1[1]; }
+
+				if ((xMaxElt < xMin) || (xMinElt > xMax) || (yMaxElt < yMin) || (yMinElt > yMax))
+					continue;
+				else
+				{
+					// intersect the element edge with the 4 sides of the rectangle
+					// vertical edges
+					var xRect = xMin;
+					for (var j=0;  j<2;  j++)
+					{
+						if ((xMinElt < xRect) && (xMaxElt > xRect))
+						{
+							var t = (xRect - pt0[0])/(pt1[0] - pt0[0]);
+							var y = pt0[1] + t*(pt1[1] - pt0[1]);
+							if ((y >= yMin) && (y <= yMax))  return true;
+						}
+						xRect = xMax;
+					}
+
+					// horizontal edges
+					var yRect = yMin;
+					for (var j=0;  j<2;  j++)
+					{
+						if ((yMinElt < yRect) && (yMaxElt > yRect))
+						{
+							var t = (yRect - pt0[1])/(pt1[1] - pt0[1]);
+							var x = pt0[0] + t*(pt1[0] - pt0[0]);
+							if ((x >= xMin) && (x <= xMax))  return true;
+						}
+						yRect = yMax;
+					}
+				}
+			}
+
+			// if we get here there is no overlap
+			return false;
+		}
+	},
+
     ///////////////////////////////////////////////////////////////////////
     // Bezier Methods
     ///////////////////////////////////////////////////////////////////////
@@ -802,19 +897,21 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
     getAxisAngleBetween3DVectors: {
         value: function (vec1, vec2, axis) {
             //compute magnitudes of the vectors
-            var mag1 = VecUtils.vecMag(3, vec1);
-            var mag2 = VecUtils.vecMag(3, vec2);
-
-            if (mag1 < this.EPSILON || mag2 < this.EPSILON) {
-                return 0; //if angle 0 is returned nothing from this function should be used
-            }
+            var v1n = VecUtils.vecNormalize(3, vec1, 1.0);
+            var v2n = VecUtils.vecNormalize(3, vec2, 1.0);
             //angle between the vectors (acos for now...)
-            var angle = Math.acos(VecUtils.vecDot(3, vec1, vec2) / (mag1 * mag2));
+            var angle = Math.acos(VecUtils.vecDot(3, v1n, v2n));
             if (Math.abs(angle) < this.EPSILON) {
                 return 0;
             }
+            //TODO testing...remove this block
+            console.log("getAxisAngleBetween3DVectors Angle: "+angle);
+            if (isNaN(angle)){
+                console.log("getAxisAngleBetween3DVectors Angle is NaN");
+            }
+            //TODO end testing block
             //optionally, if axis is provided, create the axis of rotation as well
-            var rotAxis = VecUtils.vecCross(3, vec1, vec2);
+            var rotAxis = VecUtils.vecCross(3, v1n, v2n);
             rotAxis = VecUtils.vecNormalize(3, rotAxis, 1);
             axis[0] = rotAxis[0];
             axis[1] = rotAxis[1];

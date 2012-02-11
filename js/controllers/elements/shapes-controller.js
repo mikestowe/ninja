@@ -63,11 +63,11 @@ exports.ShapesController = Montage.create(CanvasController, {
                     canvas.height = el.height;
                     this.application.ninja.elementMediator.replaceElement(el, canvas);
                     NJevent("elementDeleted", el);
-                    this.application.ninja.selectionController.selectElement(canvas);
                     el = canvas;
                     this.toggleWebGlMode(el, value);
-                    el.elementModel.shapeModel.GLGeomObj.buildBuffers();
-                    break;
+                    el.elementModel.shapeModel.GLWorld.render();
+                    this.application.ninja.selectionController.selectElement(el);
+                    return;
                 case "strokeMaterial":
                     var sm = Object.create(MaterialsLibrary.getMaterial(value));
                     if(sm)
@@ -338,13 +338,26 @@ exports.ShapesController = Montage.create(CanvasController, {
             {
                 return;
             }
-            var world,
+            var sm,
+                fm,
+                world,
                 worldData = el.elementModel.shapeModel.GLWorld.export();
             if(worldData)
             {
                 world = new GLWorld(el, true);
                 el.elementModel.shapeModel.GLWorld = world;
+                el.elementModel.shapeModel.GLGeomObj.setWorld(world);
                 el.elementModel.shapeModel.useWebGl = true;
+                sm = Object.create(MaterialsLibrary.getMaterial("FlatMaterial"));
+                fm = Object.create(MaterialsLibrary.getMaterial("FlatMaterial"));
+                if(sm && fm)
+                {
+                    el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(sm);
+                    el.elementModel.shapeModel.GLGeomObj.setFillMaterial(fm);
+                    el.elementModel.shapeModel.strokeMaterial = sm;
+                    el.elementModel.shapeModel.fillMaterial = fm;
+                    el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                }
                 world.import(worldData);
             }
 
@@ -365,6 +378,10 @@ exports.ShapesController = Montage.create(CanvasController, {
                 world = new GLWorld(el, false);
                 el.elementModel.shapeModel.GLWorld = world;
                 el.elementModel.shapeModel.useWebGl = false;
+                el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(null);
+                el.elementModel.shapeModel.GLGeomObj.setFillMaterial(null);
+                el.elementModel.shapeModel.strokeMaterial = null;
+                el.elementModel.shapeModel.fillMaterial = null;
                 world.import(worldData);
             }
 

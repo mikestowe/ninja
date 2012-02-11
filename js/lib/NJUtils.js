@@ -183,6 +183,27 @@ exports.NJUtils = Object.create(Object.prototype, {
     	
     },
 
+    // Returns the numerical value and unit string from a string.
+    // Useful for element properties.
+    // 100px will return the following array: [100, px]
+    getValueAndUnits: {
+        value: function(input) {
+            var numberValue = parseFloat(input);
+
+            // Ignore all whitespace, digits, negative sign and "." when looking for units label
+            // The units must come after one or more digits
+            var objRegExp = /(\-*\d+\.*\d*)(\s*)(\w*\%*)/;
+            var unitsString = input.replace(objRegExp, "$3");
+            if(unitsString) {
+                var noSpaces = /(\s*)(\S*)(\s*)/;
+                // strip out spaces and convert to lower case
+                var match = (unitsString.replace(noSpaces, "$2")).toLowerCase();
+            }
+
+            return [numberValue, match];
+        }
+    },
+
     /* ================= Style methods ================= */
     
     ///// Get computed height of element

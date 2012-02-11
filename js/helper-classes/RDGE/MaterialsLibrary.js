@@ -141,7 +141,7 @@ var MaterialsLibrary = Object.create(Object.prototype, {
 					case "julia":				mat = new JuliaMaterial();				break;
 					case "mandel":				mat = new MandelMaterial();				break;
 					case "plasma":				mat = new PlasmaMaterial();				break;
-					case "bumpMetal":			mat = new PlasmaMaterial();				break;
+					case "bumpMetal":			mat = new BumpMetalMaterial();			break;
 					case "uber":				mat = new UberMaterial();				break;
 
 					default:

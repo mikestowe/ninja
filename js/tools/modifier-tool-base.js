@@ -437,16 +437,19 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 
     startDraw: {
         value: function(event) {
-            this.isDrawing = true;
-            this.application.ninja.stage.showSelectionBounds = false;
+            if(this._target)
+            {
+                this.isDrawing = true;
+                this.application.ninja.stage.showSelectionBounds = false;
 
-            if(this._canSnap)
-            {
-                this.initializeSnapping(event);
-            }
-            else
-            {
-                this.drawWithoutSnapping(event);
+                if(this._canSnap)
+                {
+                    this.initializeSnapping(event);
+                }
+                else
+                {
+                    this.drawWithoutSnapping(event);
+                }
             }
         }
     },
@@ -674,11 +677,15 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
     		return this._targets;
     	},
     	set: function (value) {
-    		this._target = value;
-    		if (value === null)
+    		this._targets = value;
+    		if (value !== null && value.length)
             {
-    			return;
+    			this.target = value[0];
     		}
+            else
+            {
+                this.target = null;
+            }
     	}
     },
 
@@ -723,7 +730,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
             } else {
                 this.eventManager.removeEventListener("selectionChange", this, true);
                 this.application.ninja.stage._iframeContainer.removeEventListener("scroll", this, false);
-                this._targets = null;
+                this._targets = [];
 
                 // Clean up
                 NJevent("disableStageMove");
@@ -749,7 +756,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 
 	captureSelectionDrawn: {
 		value: function(event){
-			this._targets = null;
+			this._targets = [];
 
 			var len = this.application.ninja.selectedElements.length;
 			if(len)
