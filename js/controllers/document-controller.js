@@ -181,45 +181,11 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
 					var code = Montage.create(TextDocument, {"source": {value: doc.content}}), docuuid = Uuid.generate(), textArea;
 					textArea = this.application.ninja.stage.stageView.createTextAreaElement(docuuid);
 					code.initialize(doc, docuuid, textArea, textArea.parentNode);
-					code._documentType = doc.extension;
+					code.init(doc.name, doc.uri, doc.extension, null, docuuid);
 					code.textArea.value = doc.content;
 					this.application.ninja.stage.stageView.createTextView(code);
 					break;
 			}
-			
-			return;
-            
-            
-            
-            
-            
-            var newDoc;
-
-            if(!doc) return false;
-
-           // try {
-                if (doc.type === 'html' || doc.type === 'htm') {
-                	console.log('hello');
-                    newDoc = Montage.create(HTMLDocument);
-                    newDoc.initialize(doc, Uuid.generate(), this._createIframeElement(), this._onOpenDocument);
-                } else {
-                    newDoc = Montage.create(TextDocument, {
-                        "source": { value: doc.source }
-                    });
-                    var docUuid = Uuid.generate();
-                    var textArea = this.application.ninja.stage.stageView.createTextAreaElement(docUuid);
-                    newDoc.initialize(doc, docUuid, textArea, textArea.parentNode);
-
-                    // Tmp this will be filled with the real content
-                    newDoc.textArea.value = doc.source; //this.tmpSourceForTesting;
-
-                    this.textDocumentOpened(newDoc);
-
-            }
-
-           // } catch (err) {
-           //     console.log("Could not open Document ",  err);
-           // }
         }
     },
 	////////////////////////////////////////////////////////////////////
