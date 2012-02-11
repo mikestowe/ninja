@@ -2,17 +2,10 @@
 <tree id="Materials">
     <folder id="ninjaMaterials" label="Ninja Materials">
 	  <leaf id="UberMaterial" label="Uber" />
-      <leaf id="RadialBlurMaterial" label="Radial Blur" />
-      <leaf id="PulseMaterial" label="Pulse" />
-      <leaf id="TunnelMaterial" label="Tunnel" />
-      <leaf id="TwistMaterial" label="Twist" />
-      <leaf id="KeleidoscopeMaterial" label="Keleidoscope" />
-      <leaf id="JuliaMaterial" label="Julia" />
-      <leaf id="MandelMaterial" label="Mandel" />
-     <leaf id="PlasmaMaterial" label="Plasma" />
         <leaf id="BumpMetalMaterial" label="Bump Metal" />
-      <leaf id="LinearGradientMaterial" label="Linear Gradient" />
-      <leaf id="RadialGradientMaterial" label="Radial Gradient" />
+        <leaf id="LinearGradientMaterial" label="Linear Gradient" />
+        <leaf id="RadialGradientMaterial" label="Radial Gradient" />
+        <leaf id="FlatMaterial" label="Flat" />
     </folder>
     <folder id="customMaterials" label="Custom Materials">
         <leaf id="CheckerBoard" label="CheckerBoard" />

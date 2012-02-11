@@ -31,6 +31,11 @@ function GLMaterial( world )
 
 	this._texture;
 
+	// vertex deformation variables
+	this._hasVertexDeformation = false;
+	this._vertexDeformationRange = [0, 0, 1, 1];	// (xMin, yMin, xMax, yMax)
+	this._vertexDeformationTolerance = 0.1;
+
 	// RDGE variables
 	this._shader;
 	this._materialNode;
@@ -65,6 +70,12 @@ function GLMaterial( world )
 	// a material can be animated or not. default is not.  
 	// Any material needing continuous rendering should override this method
 	this.isAnimated			= function()			{  return false;					}
+
+	// the vertex shader can apply deformations requiring refinement in
+	// certain areas.
+	this.hasVertexDeformation			= function()	{  return this._hasVertexDeformation;			}
+	this.getVertexDeformationRange		= function()	{  return this._vertexDeformationRange.slice();	}	
+	this.getVertexDeformationTolerance	= function()	{  return this._vertexDeformationTolerance;		}
 
 
     ///////////////////////////////////////////////////////////////////////
