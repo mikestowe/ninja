@@ -92,7 +92,7 @@ exports.Resizer = Montage.create(Component, {
  
     handleDblclick: {
         value : function() {
-            this.panel.addEventListener("webkitTransitionEnd", this, true);
+            this.panel.addEventListener("webkitTransitionEnd", this, false);
             if (this.isVertical) {
                 this.panel.style.height = "";
             } else {
@@ -102,7 +102,7 @@ exports.Resizer = Montage.create(Component, {
         }
     },
 
-    captureWebkitTransitionEnd: {
+    handleWebkitTransitionEnd: {
         value: function() {
             if(this.redrawStage) {
                 this.application.ninja.stage.resizeCanvases = true;
