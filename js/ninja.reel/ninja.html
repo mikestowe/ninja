@@ -232,7 +232,7 @@
             },
 
             "documentController1": {
-                "module": "js/controllers/document-controller",
+                "module": "js/io/document/document-controller",
                 "name": "DocumentController"
             },
 
@@ -293,8 +293,7 @@
                     "newFileController":    {"@": "newFileController"},
                     "coreIoApi":    		{"@": "coreIoApi1"},
                     "documentBar":          {"@": "documentBar"},
-                    "ioMediator":           {"@": "ioMediator"},
-                    "timeline":             {"@": "timeline"}
+                    "ioMediator":           {"@": "ioMediator"}
                 }
             }
 
@@ -359,10 +358,13 @@
                         </section>
 
                         <section id="timelineResizer" class="timelineResizer resizeBar"></section>
-                        <section id="breadCrumbTrail">
-                                                        <div id="breadCrumbComponent"></div>
-                                                    </section>
+
                         <section id="bottomPanelContainer" class="panelContainer">
+
+                            <section id="breadCrumbTrail">
+                                <div id="breadCrumbComponent"></div>
+                            </section>
+
                             <section id="timelinePanel" class="panel">
                                 <div id="timelinePanelComponent"></div>
                             </section>

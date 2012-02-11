@@ -51,9 +51,6 @@ exports.CloudPopup = Montage.create(Component, {
     			this._os = 'windows';
     		} else if (navigator.appVersion.indexOf("Mac")!=-1) {
     			this._os = 'mac';
-    		} else {
-    			//Alternate message for no OS detected (probably Linux)
-    			this.element.getElementsByTagName('section')[0].style.display = 'none';
     		}
     	}
     },

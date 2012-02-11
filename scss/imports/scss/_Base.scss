@@ -134,7 +134,7 @@ button.nj-skinned {
 	cursor: pointer;
 	text-shadow: 1px 1px 1px $color-app-shadow
 }
-button.nj-skinned:active, button.nj-skinned.active {
+button.nj-skinned:active {
 	background-image: -webkit-linear-gradient(top, $color-formgrad-bottom 0%, $color-formgrad-top 100%); 
 }
 button.nj-skinned:hover {

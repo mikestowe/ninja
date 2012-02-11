@@ -20,9 +20,9 @@ exports.CSSPanel = Montage.create(PanelBase, {
     init : {
         enumerable:true,
         value : function (){
-            this.minHeight = 195;
-            this.contentHeight = 195;
-            this.defaultHeight= 195;
+            this.minHeight = 300;
+            this.contentHeight = 300;
+            this.defaultHeight= 300;
 
             /* OLD WAY -- Removing the temporary div
             // TODO: Remove this comment once this is tested.

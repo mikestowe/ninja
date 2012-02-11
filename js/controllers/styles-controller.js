@@ -181,10 +181,6 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             rule = stylesheet.rules[index];
             
             ///// attach specificity to rule object
-            // if rule is css keyframes, return rule and don't attach specificity
-            if (rule instanceof WebKitCSSKeyframesRule) {
-                return rule;
-            }
             rule[this.CONST.SPECIFICITY_KEY] = this.getSpecificity(rule.selectorText);
             
             ///// return the rule we just inserted

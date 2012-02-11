@@ -4,17 +4,21 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-////////////////////////////////////////////////////////////////////////
-//
-var Montage = 		require("montage/core/core").Montage,
-    Component = 	require("montage/ui/component").Component,
-    Uuid = 			require("montage/core/uuid").Uuid,
-    HTMLDocument =	require("js/io/document/html-document").HTMLDocument,
-    TextDocument =	require("js/io/document/text-document").TextDocument,
-    DocumentController;
-////////////////////////////////////////////////////////////////////////
-//
-DocumentController = exports.DocumentController = Montage.create(Component, {
+/**
+@module js/document/documentManager
+@requires montage/core/core
+@requires montage/ui/component
+@requires js/document/html-document
+@requires js/document/text-document
+*/
+
+var Montage = require("montage/core/core").Montage,
+    Component = require("montage/ui/component").Component,
+    Uuid = require("montage/core/uuid").Uuid,
+    HTMLDocument = require("js/io/document/html-document").HTMLDocument,
+    TextDocument = require("js/io/document/text-document").TextDocument;
+
+var DocumentController = exports.DocumentController = Montage.create(Component, {
     hasTemplate: {
         value: false
     },
@@ -148,52 +152,67 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
         }
     },
 
-    ////////////////////////////////////////////////////////////////////
-    //
+    /**
+     * Public method
+     */
     openFileCallback:{
         value:function(response){
-            //TODO: Add UI to handle error codes, shouldn't be alert windows
-            if(!!response && (response.status === 204)) {
-            	//Sending full response object
-            	this.openDocument(response);   
-            } else if (!!response && (response.status === 404)){
+            //Return Object Description
+//            Object.status (Always presents for handling)
+//            204: File exists (Success)
+//            404: File does not exists (Failure)
+//            500: Unknown (Probably cloud API not running)
+//
+//            (Below only present if succesfull 204)
+//
+//            Object.content
+//            Object.extension
+//            Object.name
+//            Object.uri
+//            Object.creationDate
+//            Object.modifiedDate
+//            Object.readOnly
+//            Object.size
+
+            var fileDetails = {};
+            if(!!response && (response.status === 204)){
+                /**
+                 * fileDetails format:
+                 * {"type": "js", "name": "test", "source": fileContent, "uri": uri}
+                 */
+                fileDetails.type = response.extension;
+                fileDetails.source = response.content;
+                fileDetails.name = response.name;
+                fileDetails.uri = response.uri;
+
+                this.openDocument(fileDetails);
+            }else if(!!response && (response.status === 404)){
                 alert("Unable to open file.\n [Error: File does not exist]");
-            } else if (!!response && (response.status === 500)){
+            }else if(!!response && (response.status === 500)){
                 alert("Unable to open file.\n Check if Ninja Local Cloud is running.");
-            } else{
+            }else{
                 alert("Unable to open file.");
             }
 
         }
     },
-	////////////////////////////////////////////////////////////////////
-	//
-	openDocument: {
-		value: function(doc) {
-			//
-			switch (doc.extension) {
-				case 'html': case 'html':
-					//Open in designer view
-					Montage.create(HTMLDocument).initialize(doc, Uuid.generate(), this._createIframeElement(), this._onOpenDocument);
-					break;
-				default:
-					//Open in code view
-					break;
-			}
-			
-			return;
-            
-            
-            
-            
-            
+
+    openProjectWithURI: {
+        value: function(uri) {
+            console.log("URI is: ", uri);
+
+        }
+    },
+
+    /** Open a Document **/
+    openDocument: {
+        value: function(doc) {
             var newDoc;
 
             if(!doc) return false;
 
            // try {
                 if (doc.type === 'html' || doc.type === 'htm') {
-                	console.log('hello');
                     newDoc = Montage.create(HTMLDocument);
                     newDoc.initialize(doc, Uuid.generate(), this._createIframeElement(), this._onOpenDocument);
                 } else {
@@ -216,14 +235,7 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
            // }
         }
     },
-	////////////////////////////////////////////////////////////////////
-	
-	openProjectWithURI: {
-        value: function(uri) {
-            console.log("URI is: ", uri);
-        }
-    },
-    
+
     textDocumentOpened: {
        value: function(doc) {
 
