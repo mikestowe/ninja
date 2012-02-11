@@ -150,6 +150,43 @@ exports.Content = Montage.create(Component, {
                 this.customPi = stage.elementModel.pi;
                 this.displayCustomProperties(stage, stage.elementModel.pi);
             }
+
+            // For now hardcode the background since it is the only custom property
+            // No need to loop through all the properties.
+            var backgroundChip = this.customSections[0].content.controls["background"];
+            backgroundChip.initialColor = ElementsMediator.getProperty(stage, "background");
+
+            // Get stage color
+            //var backgroundColor =
+            //console.log(backgroundColor);
+
+            /*
+            var customPI = PiData[this.customPi];
+            // Get all the custom section for the custom PI
+            for(var i = 0, customSec; customSec = customPI[i]; i++) {
+
+                // Now set the Fields for the custom PI
+                for(var j = 0, fields; fields = customSec.Section[j]; j++) {
+                    for(var k = 0, control; control = fields[k]; k++) {
+
+                        var colorChipEl = this.customSections[i].content.controls[control.id];
+                        this.foo = colorChipEl;
+                        colorChipEl.addEventListener("firstDraw", this, false);
+
+                    }
+                }
+            }
+            */
+        }
+    },
+
+    foo: {
+        value: null
+    },
+
+    handleFirstDraw: {
+        value: function() {
+            this.foo.chipBtn.color('rgb', {wasSetByCode: true, type: 'change', color: {r: 255, g: 0, b: 0}, css: 'rgb(255,0,0)'});
         }
     },
 
