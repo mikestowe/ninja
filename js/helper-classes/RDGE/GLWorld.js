@@ -14,6 +14,7 @@ var fragmentShaderSource = "";
 var rdgeStarted = false;
 
 var nodeCounter = 0;
+var worldCounter = 0;
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -69,6 +70,9 @@ function GLWorld( canvas, use3D )
 	// this allows us to turn off automatic updating if there are
 	// no animated materials
 	this._firstRender = true;
+
+	this._worldCount = worldCounter;
+	worldCounter++;
 
     ///////////////////////////////////////////////////////////////////////
     // Property accessors
@@ -147,6 +151,7 @@ function GLWorld( canvas, use3D )
 			ctx2 = g_Engine.getContext();
 		if (ctx1 != ctx2)  console.log( "***** different contexts *****" );
 		this.renderer = ctx1.renderer;
+		this.renderer._world = this;
       
 		// create a camera, set its perspective, and then point it at the origin
 		var cam = new camera();
@@ -225,22 +230,24 @@ function GLWorld( canvas, use3D )
     {
 		if (this._useWebGL)
 		{
-			if (this._allMapsLoaded)
+			g_Engine.setContext( this._canvas.uuid );
+			var ctx = g_Engine.getContext();
+			var ctx1 = g_Engine.ctxMan.handleToObject(this._canvas.rdgeCtxHandle);
+			if (ctx1 != ctx)
+				console.log( "***** different contexts (2) *****" );
+			var aRenderer = ctx1.renderer;
+			var renderer = ctx.renderer;
+			if (renderer != aRenderer)
 			{
-				var ctx = g_Engine.getContext();
-				//console.log( "RDGE state: " + ctx.ctxStateManager.currentState().name);
-
-				/////////////////////////////
-				var ctx1 = g_Engine.ctxMan.handleToObject(this._canvas.rdgeCtxHandle);
-				if (ctx1 != ctx)  console.log( "***** different contexts (2) *****" );
-				var aRenderer = ctx1.renderer;
-				//////////////////////////////////////////
-
-				var renderer = ctx.renderer;
-				if (renderer != aRenderer)  console.log( "***** DIFFERENT RENDERERS *****" );
+				console.log( "***** DIFFERENT RENDERERS *****" );
+				renderer = aRenderer;
+			}
+				
+			if (renderer.unloadedTextureCount <= 0)
+			{
 				renderer.disableCulling();
+				//console.log( "GLWorld.draw " + renderer._world._worldCount );
 				this.myScene.render();
-				//console.log( "render" );
 
 				if (this._firstRender)
 				{
@@ -249,8 +256,8 @@ function GLWorld( canvas, use3D )
 					if (!this.hasAnimatedMaterials())
 					{
 						//this.myScene.render();
-						//this._canvas.task.stop();
-						this._renderCount = 10;
+						this._canvas.task.stop();
+						//this._renderCount = 10;
 					}
 				}
 				else if (this._renderCount >= 0)
@@ -259,7 +266,6 @@ function GLWorld( canvas, use3D )
 					if (this._renderCount <= 0)
 						this._canvas.task.stop();
 				}
-
 			}
 		}
 		else
@@ -270,13 +276,13 @@ function GLWorld( canvas, use3D )
 	
     this.onRunState = function()
 	{
-		console.log( "GLWorld.onRunState" );
+//		console.log( "GLWorld.onRunState" );
 		this.restartRenderLoop();
 	}
 	
     this.onLoadState = function()
 	{
-		console.log( "GLWorld.onLoadState" );
+//		console.log( "GLWorld.onLoadState" );
 	}
 
 	this.textureToLoad = function( texture )
@@ -333,7 +339,7 @@ function GLWorld( canvas, use3D )
 
 	this.textureLoadedCallback = function( name )
 	{
-		console.log( "*** material texture loaded: " + name );
+//		console.log( "*** material texture loaded: " + name );
 
 		var world = this._world;
 		if (!world)
@@ -389,10 +395,10 @@ function GLWorld( canvas, use3D )
 	{
 		rdgeStarted = true;
 
-        // TODO - temporary fix for RDGE id's
-            this._canvas.id = "rdge_" + this._canvas.uuid;
-		g_Engine.registerCanvas(this._canvas, this);
-		RDGEStart( this._canvas );
+        this._canvas.rdgeid = this._canvas.uuid;
+
+			g_Engine.registerCanvas(this._canvas, this);
+			RDGEStart( this._canvas );
 
 		//this._canvas.fpsTracker = new fpsTracker( '0' );
 		//this._canvas.task = new RDGETask(this._canvas, false);
@@ -508,16 +514,22 @@ GLWorld.prototype.addObject = function( obj )
 
 GLWorld.prototype.restartRenderLoop = function()
 {
-	console.log( "restartRenderLoop" );
+	//console.log( "restartRenderLoop" );
 
 	this._firstRender = true;
 	this._renderCount  = -1;
 	if (this._canvas.task)
 	{
 		if (this._allMapsLoaded)
+		{
+			//console.log( "starting task" );
 			this._canvas.task.start();
+		}
 		else
+		{
+			//console.log( "stopping task" );
 			this._canvas.task.stop();
+		}
 	}
 }
 
@@ -757,7 +769,10 @@ GLWorld.prototype.render = function()
 	}
 	else
 	{
-		this.draw();
+//		console.log( "GLWorld.render, " + this._worldCount );
+		g_Engine.setContext( this._canvas.uuid );
+		//this.draw();
+		this.restartRenderLoop();
 	}
 }
 
@@ -794,7 +809,7 @@ GLWorld.prototype.getShapeFromPoint = function( offsetX, offsetY )
 	var go = this._geomRoot;
 	if(go.collidesWithPoint(x,y))
 	{
-		console.log("collision found");
+//		console.log("collision found");
 		return go;
 	}
 	while (go.getNext())
@@ -802,7 +817,7 @@ GLWorld.prototype.getShapeFromPoint = function( offsetX, offsetY )
 		go = go.getNext();
 		if(go.collidesWithPoint(x,y))
 		{
-			console.log("collision found");
+//			console.log("collision found");
 			return go;
 		}
 	}
@@ -958,7 +973,11 @@ GLWorld.prototype.importObject = function( objStr,  parentNode )
 			obj.import( objStr );
 			break;
 
-		case 3:		// line - not implemented
+		case 3:		// line
+            obj = new GLLine();
+            obj.import( objStr );
+            break;
+
 		default:
 			throw new Error( "Unrecognized object type: " + type );
 			break;

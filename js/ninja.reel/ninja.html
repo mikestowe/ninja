@@ -269,13 +269,18 @@
                 "name": "CoreIoApi"
             },
 
+            "mainMenuController": {
+                "module": "js/controllers/main-menu-controller",
+                "name": "MainMenuController"
+            },
+
             "owner": {
                 "module": "js/ninja.reel",
                 "name": "Ninja",
                 "properties": {
                     "element":              {"#": "main"},
-                    "rulerTop":        {"#": "rulerTop"},
-                    "rulerLeft":        {"#": "rulerLeft"},
+                    "rulerTop":        		{"#": "rulerTop"},
+                    "rulerLeft":        	{"#": "rulerLeft"},
                     "appModel":             {"@": "appModel"},
                     "toolsData":            {"@": "toolsData1"},
                     "toolsList":            {"@": "toolsList1"},
@@ -294,10 +299,10 @@
                     "coreIoApi":    		{"@": "coreIoApi1"},
                     "documentBar":          {"@": "documentBar"},
                     "ioMediator":           {"@": "ioMediator"},
-                    "timeline":             {"@": "timeline"}
+                    "timeline":             {"@": "timeline"},
+                    "mainMenuController":   {"@": "mainMenuController"}
                 }
             }
-
         }
     </script>
 
@@ -359,9 +364,9 @@
                         </section>
 
                         <section id="timelineResizer" class="timelineResizer resizeBar"></section>
-                        <section id="breadCrumbTrail">
-                                                        <div id="breadCrumbComponent"></div>
-                                                    </section>
+                            <section id="breadCrumbTrail">
+                                <div id="breadCrumbComponent"></div>
+                            </section>
                         <section id="bottomPanelContainer" class="panelContainer">
                             <section id="timelinePanel" class="panel">
                                 <div id="timelinePanelComponent"></div>

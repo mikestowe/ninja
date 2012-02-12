@@ -17,10 +17,10 @@ exports.Preloader = Montage.create(Component, {
             [
                 {"type":"js", "url":"js/helper-classes/3D/GLMatrix/gl-matrix.js"},
 
-                //{"type":"js", "url":"js/helper-classes/RDGE/rdge-compiled.js"},
+                {"type":"js", "url":"js/helper-classes/RDGE/rdge-compiled.js"},
 
 			// source RDGE
-				/* */
+				/*
 				{"type":"js", "url":"js/helper-classes/RDGE/src/core/script/math/vec2.js"},
 				{"type":"js", "url":"js/helper-classes/RDGE/src/core/script/math/vec3.js"},
 				{"type":"js", "url":"js/helper-classes/RDGE/src/core/script/math/vec4.js"},
@@ -58,7 +58,7 @@ exports.Preloader = Montage.create(Component, {
 				{"type":"js", "url":"js/helper-classes/RDGE/src/core/script/init_state.js"},
 				{"type":"js", "url":"js/helper-classes/RDGE/src/core/script/runtime.js"},
 				{"type":"js", "url":"js/helper-classes/RDGE/src/core/script/util/dbgpanel.js"},
-				/* */
+				*/
 
                 {"type":"js", "url":"js/helper-classes/3D/ParseUtils.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/GLLine.js"},
@@ -66,17 +66,7 @@ exports.Preloader = Montage.create(Component, {
                 {"type":"js", "url":"js/helper-classes/RDGE/GLLight.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/Materials/FlatMaterial.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/Materials/UberMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/PlasmaMaterial.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/Materials/RadialGradientMaterial.js"},
-				{"type":"js", "url":"js/helper-classes/RDGE/Materials/RadialBlurMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/PulseMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/TunnelMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/TwistMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/KeleidoscopeMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/JuliaMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/MandelMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/IridescentScalesMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/PlasmaMaterial.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/Materials/LinearGradientMaterial.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/Materials/BumpMetalMaterial.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/GLWorld.js"},
