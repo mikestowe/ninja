@@ -55,14 +55,16 @@ function GLCircle()
 
 		this.m_world = world;
 
+
 		if(strokeMaterial)
-		{
 			this._strokeMaterial = strokeMaterial;
-		}
+		else
+			this._strokeMaterial = new FlatMaterial();
+
 		if(fillMaterial)
-		{
 			this._fillMaterial = fillMaterial;
-		}
+		else 
+			this._fillMaterial = new FlatMaterial();
 	}
 
     ///////////////////////////////////////////////////////////////////////
@@ -131,6 +133,9 @@ function GLCircle()
         if (!world)  throw( "null world in buildBuffers" );
 
 		if (!world._useWebGL)  return;
+		
+		// make sure RDGE has the correct context
+		g_Engine.setContext( world.getCanvas().uuid );
 
          // create the gl buffer
         var gl = world.getGLContext();

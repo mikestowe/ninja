@@ -43,11 +43,11 @@ exports.ShapesController = Montage.create(CanvasController, {
                     canvas.height = el.height;
                     this.application.ninja.elementMediator.replaceElement(el, canvas);
                     NJevent("elementDeleted", el);
-                    this.application.ninja.selectionController.selectElement(canvas);
                     el = canvas;
                     this.toggleWebGlMode(el, value);
-                    el.elementModel.shapeModel.GLGeomObj.buildBuffers();
-                    break;
+                    el.elementModel.shapeModel.GLWorld.render();
+                    this.application.ninja.selectionController.selectElement(el);
+                    return;
                 case "strokeMaterial":
                     var sm = Object.create(MaterialsLibrary.getMaterial(value));
                     if(sm)
@@ -318,7 +318,9 @@ exports.ShapesController = Montage.create(CanvasController, {
             {
                 return;
             }
-            var world,
+            var sm,
+                fm,
+                world,
                 worldData = el.elementModel.shapeModel.GLWorld.export();
             if(worldData)
             {
@@ -326,6 +328,22 @@ exports.ShapesController = Montage.create(CanvasController, {
                 el.elementModel.shapeModel.GLWorld = world;
                 el.elementModel.shapeModel.useWebGl = true;
                 world.import(worldData);
+                el.elementModel.shapeModel.GLGeomObj = world.getGeomRoot();
+
+                sm = Object.create(MaterialsLibrary.getMaterial("FlatMaterial"));
+                if(sm)
+                {
+                    el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(sm);
+                    el.elementModel.shapeModel.strokeMaterial = sm;
+                }
+                fm = Object.create(MaterialsLibrary.getMaterial("FlatMaterial"));
+                // TODO - Use consts after GL code is converted to object literal notation
+//                if( fm && (el.elementModel.shapeModel.GLGeomObj.geomType() !== GLGeomObj.GEOM_TYPE_LINE) )
+                if( fm && (el.elementModel.shapeModel.GLGeomObj.geomType() !== 3) )
+                {
+                    el.elementModel.shapeModel.GLGeomObj.setFillMaterial(fm);
+                    el.elementModel.shapeModel.fillMaterial = fm;
+                }
             }
 
         }
@@ -346,8 +364,16 @@ exports.ShapesController = Montage.create(CanvasController, {
                 el.elementModel.shapeModel.GLWorld = world;
                 el.elementModel.shapeModel.useWebGl = false;
                 world.import(worldData);
+                el.elementModel.shapeModel.GLGeomObj = world.getGeomRoot();
+                el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(null);
+                el.elementModel.shapeModel.strokeMaterial = null;
+                // TODO - Use consts after GL code is converted to object literal notation
+                if(el.elementModel.shapeModel.GLGeomObj.geomType() !== 3)
+                {
+                    el.elementModel.shapeModel.GLGeomObj.setFillMaterial(null);
+                    el.elementModel.shapeModel.fillMaterial = null;
+                }
             }
-
         }
     }
 

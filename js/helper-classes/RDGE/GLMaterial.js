@@ -31,6 +31,11 @@ function GLMaterial( world )
 
 	this._texture;
 
+	// vertex deformation variables
+	this._hasVertexDeformation = false;
+	this._vertexDeformationRange = [0, 0, 1, 1];	// (xMin, yMin, xMax, yMax)
+	this._vertexDeformationTolerance = 0.1;
+
 	// RDGE variables
 	this._shader;
 	this._materialNode;
@@ -61,6 +66,16 @@ function GLMaterial( world )
 
 	this.getShader			= function()			{  return this._shader;				}
 	this.getMaterialNode	= function()			{  return this._materialNode;		}
+
+	// a material can be animated or not. default is not.  
+	// Any material needing continuous rendering should override this method
+	this.isAnimated			= function()			{  return false;					}
+
+	// the vertex shader can apply deformations requiring refinement in
+	// certain areas.
+	this.hasVertexDeformation			= function()	{  return this._hasVertexDeformation;			}
+	this.getVertexDeformationRange		= function()	{  return this._vertexDeformationRange.slice();	}	
+	this.getVertexDeformationTolerance	= function()	{  return this._vertexDeformationTolerance;		}
 
 
     ///////////////////////////////////////////////////////////////////////
@@ -174,6 +189,31 @@ function GLMaterial( world )
 		// animated materials should implement the update method
 	}
 
+	this.registerTexture = function( texture )
+	{
+		// the world needs to know about the texture map
+		var world = this.getWorld();
+		if (!world)
+			console.log( "**** world not defined for registering texture map: " + texture.lookUpName );
+		else
+			world.textureToLoad( texture );
+	}
+
+	this.loadTexture = function( texMapName, wrap, mips )
+	{
+		var tex;
+		var world = this.getWorld();
+		if (!world)
+			console.log( "world not defined for material with texture map" );
+		else
+		{
+			var renderer = world.getRenderer();
+			tex = renderer.getTextureByName(texMapName, wrap, mips );
+			this.registerTexture( tex );
+		}
+		return tex;
+	}
+
 	this.export = function()
 	{
 		// this function should be overridden by subclasses
@@ -186,7 +226,7 @@ function GLMaterial( world )
 		var endKey = "endMaterial\n";
 		var index = importStr.indexOf( endKey );
 		index += endKey.length;
-		rtnStr = importStr.substr( index );
+		var rtnStr = importStr.substr( index );
 
 		return rtnStr;
 	}

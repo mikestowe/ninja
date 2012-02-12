@@ -4,7 +4,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-
 #ifdef GL_ES
 precision highp float;
 #endif
@@ -15,18 +14,18 @@ uniform vec4 u_light0Diff;
 uniform vec4 u_light0Amb;
 
 // diffuse map
-uniform sampler2D colMap;
+uniform sampler2D u_colMap;
 
 // environment map	
 uniform sampler2D envMap;
 
 // normal map
-uniform sampler2D normalMap;
+uniform sampler2D u_normalMap;
 
-// glow map
-uniform sampler2D glowMap;
+// specular map
+uniform sampler2D u_glowMap;
 
-// glow map
+// depth map
 uniform sampler2D depthMap;
 
 //material uniforms
@@ -45,7 +44,7 @@ varying vec4 vShadowCoord;
 varying vec2 vEnvTexCoord;
 varying float vDiffuseIntensity;
 
-#ifdef PC
+#if defined( PC )
 
 void main()
 {
@@ -57,14 +56,14 @@ void main()
 	
   vec4 colMapTexel = vec4(0);
   if (u_renderGlow <= 0.5) {
-    colMapTexel = vec4(texture2D(colMap, vec2(vNormal.w, vECPos.w)).rgb, 1.0);
+    colMapTexel = vec4(texture2D(u_colMap, vec2(vNormal.w, vECPos.w)).rgb, 1.0);
   } else {
-    colMapTexel = vec4(texture2D(glowMap, vec2(vNormal.w, vECPos.w)).rgb, 1.0);
+    colMapTexel = vec4(texture2D(u_glowMap, vec2(vNormal.w, vECPos.w)).rgb, 1.0);
   }
 
   // normal mapping
   vec3 normal = normalize(vNormal.xyz);
-  vec3 mapNormal = texture2D(normalMap, vec2(vNormal.w, vECPos.w)).xyz * 2.0 - 1.0;
+  vec3 mapNormal = texture2D(u_normalMap, vec2(vNormal.w, vECPos.w)).xyz * 2.0 - 1.0;
   mapNormal = normalize(mapNormal.x*vec3(normal.z, 0.0, -normal.x) + vec3(0.0, mapNormal.y, 0.0) + mapNormal.z*normal);
   
   // create envmap coordinates
@@ -108,15 +107,15 @@ void main()
 
 #endif
 
-#ifdef DEVICE
+#if defined( DEVICE )
 
 void main()
 {
-  vec4 colMapTexel = vec4(texture2D(colMap, vec2(vNormal.w, vECPos.w)).rgb, 1.0);
+  vec4 colMapTexel = vec4(texture2D(u_colMap, vec2(vNormal.w, vECPos.w)).rgb, 1.0);
 
 //   // normal mapping
 	vec3 normal = normalize(vNormal.xyz);
-//   vec3 mapNormal = texture2D(normalMap, vec2(vNormal.w, vECPos.w)).xyz * 2.0 - 1.0;
+//   vec3 mapNormal = texture2D(u_normalMap, vec2(vNormal.w, vECPos.w)).xyz * 2.0 - 1.0;
 //   mapNormal = normalize(mapNormal.x*vec3(normal.z, 0.0, -normal.x) + vec3(0.0, mapNormal.y, 0.0) + mapNormal.z*normal);
 //   
 //   // create envmap coordinates

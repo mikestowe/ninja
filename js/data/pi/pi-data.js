@@ -452,12 +452,14 @@ exports.PiData = Montage.create( Montage, {
                     [
                         {
                             type: "dropdown",
-                            id:   "stroke",
+                            id:   "strokeMaterial",
+                            prop:   "strokeMaterial",
                             label: "Stroke",
                             labelField: "_name",
                             dataField: "_name",
                             items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" },
-                            enabled: { boundObject: "this.controls", boundProperty: "useWebGl" }
+                            enabled: { boundObject: "this.controls", boundProperty: "useWebGl" },
+                            divider : true
                         }
                     ]
                 ]

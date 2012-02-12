@@ -26,14 +26,19 @@ function FlatMaterial()
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
     ///////////////////////////////////////////////////////////////////////
-	this.getColor			= function()	{  return this._color;		}
-	this.getShaderName		= function()	{  return this._shaderName;	}
+	this.getColor				= function()	{  return this._color;		};
+	this.getShaderName			= function()	{  return this._shaderName;	};
+
+	this.isAnimated				= function()	{  return false;			};
+	this.hasVertexDeformation	= function()	{  return true;				};
+	this._hasVertexDeformation = true;
+	this._vertexDeformationTolerance = 0.2;
 
     //////////////////////////////////s/////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
 	// duplcate method requirde
-	this.dup = function()	{  return new FlatMaterial();	} 
+	this.dup = function()	{  return new FlatMaterial();	} ;
 
 	this.init = function()
 	{
@@ -48,7 +53,7 @@ function FlatMaterial()
 		// set up the material node
 		this._materialNode = createMaterialNode("flatMaterial");
 		this._materialNode.setShader(this._shader);
-	}
+	};
 
 
     ///////////////////////////////////////////////////////////////////////
@@ -63,20 +68,21 @@ function FlatMaterial()
 
     this.setProperty = function( prop, value )
 	{
-		// make sure we have legitimate imput
+		// make sure we have legitimate input
 		if (this.validateProperty( prop, value ))
 		{
-			this._color = value.slice(0);
-			this._shader.colorMe[prop].set(value);
+            this._propValues[prop] = value;
+            if (this._shader && this._shader.colorMe)
+                this._shader.colorMe[prop].set(value);
 		}
-	}
+	};
     ///////////////////////////////////////////////////////////////////////
 
 	this.export = function()
 	{
 		// this function should be overridden by subclasses
 		var exportStr = "material: " + this.getShaderName() + "\n";
-		exportStr = "name: " + this.getName() + "\n";
+		exportStr += "name: " + this.getName() + "\n";
 		
 		if (this._shader)
 			exportStr += "color: " + String(this._shader.colorMe.color) + "\n";
@@ -85,25 +91,40 @@ function FlatMaterial()
 		exportStr += "endMaterial\n";
 
 		return exportStr;
-	}
+	};
 
-	this.import = function( importStr )
+    this.import = function( importStr )
+    {
+        var pu = new ParseUtils( importStr );
+        var material = pu.nextValue( "material: " );
+        if (material != this.getShaderName())  throw new Error( "ill-formed material" );
+        this.setName(  pu.nextValue( "name: ") );
+
+        var rtnStr;
+        try
+        {
+            var color  = eval( "[" + pu.nextValue( "color: " ) + "]" );
+
+            this.setProperty( "color",  color);
+
+            var endKey = "endMaterial\n";
+            var index = importStr.indexOf( endKey );
+            index += endKey.length;
+            rtnStr = importStr.substr( index );
+        }
+        catch (e)
+        {
+            throw new Error( "could not import material: " + importStr );
+        }
+
+        return rtnStr;
+    };
+
+	this.update = function( time )
 	{
-		var pu = new ParseUtils( importStr );
-		var material = pu.nextValue( "material: " );
-		if (material != this.getShaderName())  throw new Error( "ill-formed material" );
-		this.setName(  pu.nextValue( "material: ") );
-		var color = pu.nextValue( "color: " );
+	};
 
-		var endKey = "endMaterial\n";
-		var index = importStr.indexOf( endKey ) + endKey.len;
-		var rtnStr = importStr.substr( index );
-		return rtnStr;
-	}
 }
-
-// used to create unique names
-var flatMaterialCounter = 0;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // RDGE shader
@@ -112,37 +133,28 @@ var flatMaterialCounter = 0;
 flatShaderDef  = 
 {
     'shaders':  { // shader files
-        'defaultVShader': "\
-            uniform mat4 u_mvMatrix;\
-            uniform mat4 u_projMatrix;\
-            attribute vec3  a_pos;\
-            void main() {\
-                gl_Position = u_projMatrix * u_mvMatrix * vec4(a_pos,1.0);\
-            }",             
-        'defaultFShader': "\
-            precision highp float;\
-            uniform vec4 color;\
-            void main() {\
-                gl_FragColor = color;\
-            }",
+		'defaultVShader':"assets/shaders/Basic.vert.glsl",
+		'defaultFShader':"assets/shaders/Basic.frag.glsl"
         },
     'techniques': { // rendering control
         'colorMe':[ // simple color pass
             {
                 'vshader' : 'defaultVShader',
                 'fshader' : 'defaultFShader',
-            
+           
                 // attributes
                 'attributes' :
                  {
-                    'a_pos' :   { 'type' : 'vec3' } // only using position for this shader
+						'vert'	:	{ 'type' : 'vec3' },
+						'normal' :	{ 'type' : 'vec3' },
+						'texcoord'	:	{ 'type' : 'vec2' }
                  },
                 // attributes
                 'params' :
                  {
                     'color' :   { 'type' : 'vec4' }
-                 },
-            },
+                 }
+            }
         ]
      }
 };
