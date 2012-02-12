@@ -10,7 +10,7 @@ $grey_light: #494949;
 
 .cpp_popup
 {
-	overflow: none;
+	overflow: hidden;
 	font-size: 12px;
   	text-shadow: 1px 1px 1px #000;
   	font-family: 'Droid Sans', sans-serif;
@@ -32,7 +32,7 @@ $grey_light: #494949;
 	text-indent: -9999px;
 	overflow: hidden;
 	float: right;
-	padding: none;
+	padding: 0;
 	cursor: pointer;
 	border: 1px solid transparent;
 }

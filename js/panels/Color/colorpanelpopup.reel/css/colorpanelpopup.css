@@ -6,7 +6,7 @@
  </copyright> */
 /* line 12, colorpanelpopup.scss */
 .cpp_popup {
-  overflow: none;
+  overflow: hidden;
   font-size: 12px;
   text-shadow: 1px 1px 1px #000;
   font-family: 'Droid Sans', sans-serif;
@@ -28,7 +28,7 @@
   text-indent: -9999px;
   overflow: hidden;
   float: right;
-  padding: none;
+  padding: 0;
   cursor: pointer;
   border: 1px solid transparent;
 }
