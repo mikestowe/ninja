@@ -30,6 +30,9 @@ RunState.prototype.Init = function()
 		this.userRunState.init();
 	}
 
+	if (this.hasUserState && this.userRunState && this.userRunState.onRunState)
+		this.userRunState.onRunState();
+
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -95,6 +98,11 @@ RunState.prototype.ReInit = function()
 	{
 		this.Init();
 	}
+	else
+	{
+		if (this.hasUserState && this.userRunState && this.userRunState.onRunState)
+			this.userRunState.onRunState();
+	}
 }
 
 RunState.prototype.Update = function(dt) 
@@ -117,7 +125,7 @@ RunState.prototype.Draw = function ()
 	var width = this.renderer.vpWidth;
 	var height = this.renderer.vpHeight;
 	
-	this.renderer._clear();
+//	this.renderer._clear();
 	
 	this.userRunState.draw();
 	
