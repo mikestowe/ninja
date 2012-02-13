@@ -102,7 +102,7 @@ exports.EyedropperTool = Montage.create(toolBase, {
                 var c = ElementsMediator.getColor(obj, true);
                 if(c)
                 {
-                    var color = this.application.ninja.colorController.getColorObjFromCss(c);
+                    var color = this.application.ninja.colorController.getColorObjFromCss(c.color.css);
                     if (color && color.value) {
                         color.value.wasSetByCode = true;
                         color.value.type = 'changing';
