@@ -249,6 +249,10 @@ exports.ShapesController = Montage.create(CanvasController, {
     setColor: {
         value: function(el, color, isFill) {
             var webGl = color.webGlColor || color.color.webGlColor;
+            if(!webGl)
+            {
+                webGl = this.application.ninja.colorController.colorModel.colorToWebGl(color.color);
+            }
             if(isFill)
             {
                 el.elementModel.shapeModel.GLGeomObj.setFillColor(webGl);
