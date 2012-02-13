@@ -5,7 +5,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var Montage = 			require("montage/core/core").Montage,
-    CanvasController = require("js/controllers/elements/canvas-controller").CanvasController;
+    CanvasController = require("js/controllers/elements/canvas-controller").CanvasController,
+    njModule = require("js/lib/NJUtils");
 
 exports.ShapesController = Montage.create(CanvasController, {
 
@@ -56,6 +57,35 @@ exports.ShapesController = Montage.create(CanvasController, {
                     el.elementModel.shapeModel.GLWorld.setViewportFromCanvas(el);
                     el.elementModel.shapeModel.GLGeomObj.buildBuffers();
                     break;
+                case "useWebGl":
+                    var canvas = njModule.NJUtils.makeNJElement("canvas", "Canvas", "shape", el.className, true);
+                    canvas.width = el.width;
+                    canvas.height = el.height;
+                    this.application.ninja.elementMediator.replaceElement(el, canvas);
+                    NJevent("elementDeleted", el);
+                    el = canvas;
+                    this.toggleWebGlMode(el, value);
+                    el.elementModel.shapeModel.GLWorld.render();
+                    this.application.ninja.selectionController.selectElement(el);
+                    return;
+                case "strokeMaterial":
+                    var sm = Object.create(MaterialsLibrary.getMaterial(value));
+                    if(sm)
+                    {
+                        el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(sm);
+                        el.elementModel.shapeModel.strokeMaterial = sm;
+                        el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                    }
+                    break;
+                case "fillMaterial":
+                    var fm = Object.create(MaterialsLibrary.getMaterial(value));
+                    if(fm)
+                    {
+                        el.elementModel.shapeModel.GLGeomObj.setFillMaterial(fm);
+                        el.elementModel.shapeModel.fillMaterial = fm;
+                        el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                    }
+                    break;
                 default:
                     CanvasController.setProperty(el, p, value);
             }
@@ -72,11 +102,21 @@ exports.ShapesController = Montage.create(CanvasController, {
                 case "trRadius":
                 case "blRadius":
                 case "brRadius":
-                case "strokeMaterial":
-                case "fillMaterial":
                 case "border":
                 case "background":
+                case "useWebGl":
                     return this.getShapeProperty(el, p);
+                case "strokeMaterial":
+                case "fillMaterial":
+                    var m = this.getShapeProperty(el, p);
+                    if(m)
+                    {
+                        return this.getShapeProperty(el, p).getName();
+                    }
+                    else
+                    {
+                        return "FlatMaterial";
+                    }
                 default:
                     return CanvasController.getProperty(el, p);
             }
@@ -274,6 +314,86 @@ exports.ShapesController = Montage.create(CanvasController, {
         value: function(el)
         {
             return (el.elementModel && el.elementModel.isShape);
+        }
+    },
+
+    toggleWebGlMode: {
+        value: function(el, useWebGl)
+        {
+            if(useWebGl)
+            {
+                this.convertToWebGlWorld(el);
+            }
+            else
+            {
+                this.convertTo2DWorld(el);
+            }
+        }
+    },
+
+    convertToWebGlWorld: {
+        value: function(el)
+        {
+            if(el.elementModel.shapeModel.useWebGl)
+            {
+                return;
+            }
+            var sm,
+                fm,
+                world,
+                worldData = el.elementModel.shapeModel.GLWorld.export();
+            if(worldData)
+            {
+                world = new GLWorld(el, true);
+                el.elementModel.shapeModel.GLWorld = world;
+                el.elementModel.shapeModel.useWebGl = true;
+                world.import(worldData);
+                el.elementModel.shapeModel.GLGeomObj = world.getGeomRoot();
+
+                sm = Object.create(MaterialsLibrary.getMaterial("FlatMaterial"));
+                if(sm)
+                {
+                    el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(sm);
+                    el.elementModel.shapeModel.strokeMaterial = sm;
+                }
+                fm = Object.create(MaterialsLibrary.getMaterial("FlatMaterial"));
+                // TODO - Use consts after GL code is converted to object literal notation
+//                if( fm && (el.elementModel.shapeModel.GLGeomObj.geomType() !== GLGeomObj.GEOM_TYPE_LINE) )
+                if( fm && (el.elementModel.shapeModel.GLGeomObj.geomType() !== 3) )
+                {
+                    el.elementModel.shapeModel.GLGeomObj.setFillMaterial(fm);
+                    el.elementModel.shapeModel.fillMaterial = fm;
+                }
+            }
+
+        }
+    },
+
+    convertTo2DWorld: {
+        value: function(el)
+        {
+            if(!el.elementModel.shapeModel.useWebGl)
+            {
+                return;
+            }
+            var world,
+                worldData = el.elementModel.shapeModel.GLWorld.export();
+            if(worldData)
+            {
+                world = new GLWorld(el, false);
+                el.elementModel.shapeModel.GLWorld = world;
+                el.elementModel.shapeModel.useWebGl = false;
+                world.import(worldData);
+                el.elementModel.shapeModel.GLGeomObj = world.getGeomRoot();
+                el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(null);
+                el.elementModel.shapeModel.strokeMaterial = null;
+                // TODO - Use consts after GL code is converted to object literal notation
+                if(el.elementModel.shapeModel.GLGeomObj.geomType() !== 3)
+                {
+                    el.elementModel.shapeModel.GLGeomObj.setFillMaterial(null);
+                    el.elementModel.shapeModel.fillMaterial = null;
+                }
+            }
         }
     }
 

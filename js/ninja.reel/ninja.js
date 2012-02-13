@@ -14,7 +14,7 @@ exports.Ninja = Montage.create(Component, {
     _preload: { value: false },
 
     ninjaVersion: {
-        value: window.ninjaVersion.ninja.version
+        value: null
     },
 
     toolsData: { value: null },
@@ -34,6 +34,7 @@ exports.Ninja = Montage.create(Component, {
 
     templateDidLoad: {
         value: function() {
+            this.ninjaVersion = window.ninjaVersion.ninja.version;
             this.eventManager.addEventListener( "preloadFinish", this, false);
         }
     },

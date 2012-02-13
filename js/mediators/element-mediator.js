@@ -105,10 +105,36 @@ exports.ElementMediator = Montage.create(NJComponent, {
         }
     },
 
+    deleteElements: {
+         value: function(items) {
+            // Add the Undo/Redo
+            var len, el;
+
+            len = items.length;
+
+            if(len) {
+
+                for(var i = len - 1; i >= 0; i--) {
+                    el = items[i]._element || items[i];
+                    this._removeElement(el);
+                }
+
+                NJevent( "deleteSelection", items );
+            }
+         }
+    },
+
     _removeElement: {
         value: function(el, rules) {
             ElementController.removeElement(el, rules);
             NJevent("elementDeleted", el);
+        }
+    },
+
+    replaceElement: {
+        value: function(el, el2) {
+            el2.elementModel = el.elementModel;
+            this.application.ninja.currentDocument.documentRoot.replaceChild(el2, el);
         }
     },
 

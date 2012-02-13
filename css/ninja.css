@@ -80,7 +80,7 @@ body { position: absolute; margin: 0px; width: 100%; height: 100%; background-co
 
 #topPanelContainer { overflow: hidden; margin-bottom: 2px; height: 32px; }
 
-#bottomPanelContainer { background: transparent; min-height: 80px; max-height: 50%; overflow: auto; }
+#bottomPanelContainer { background: transparent; height: 150px; min-height: 80px; max-height: 50%; overflow: auto; }
 
 .panelContainer { display: block; -webkit-box-orient: vertical; position: relative; }
 
@@ -164,8 +164,6 @@ body { position: absolute; margin: 0px; width: 100%; height: 100%; background-co
 
 #rightPanelContent { overflow-y: hidden; }
 
-.contextMenu { position: absolute; z-index: 999; }
-
 #openDocumentsTabComponent { height: 25px; position: relative; overflow: hidden; color: white; }
 
 #openDocuments { float: left; height: 25px; width: 100%; font-size: 12px; list-style: none; margin: 0; padding: 0; position: relative; text-decoration: none; }
@@ -240,7 +238,7 @@ body { position: absolute; margin: 0px; width: 100%; height: 100%; background-co
 
 #toolPropertiesPanel { height: 32px; margin: 0px; }
 
-#timelinePanel { height: 116px; }
+#timelinePanel { height: 100%; }
 
 .treeComponent { -webkit-user-select: none; font-size: 11px; margin-left: 20px; cursor: default; color: white; }
 
@@ -412,7 +410,7 @@ span.pp-span-all:focus { -webkit-box-shadow: none; background-color: #b4b4b4; bo
 
 #pp-container-list li, #pp-container-list span.span-space { background-repeat: no-repeat; }
 
-#pp-container-list li.directory.open > span.pp-span-all > span.pp-col-files > span.span-space { background-image: url("../images/panels/project-panel/icon-file-folderopen.png"); background-position: 100% 0px; }
+#pp-container-list li.directory.open > span.pp-span-all > span.pp-col-files > span.span-space, .branch-label { background-image: url("../images/panels/project-panel/icon-file-folderopen.png"); background-position: 100% 0px; }
 
 #pp-container-list li.directory.closed > span.pp-span-all > span.pp-col-files > span.span-space { background-image: url("../images/panels/project-panel/icon-file-folderclosed.png"); background-position: 100% 0px; }
 

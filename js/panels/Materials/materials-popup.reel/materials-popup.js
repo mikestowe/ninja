@@ -236,21 +236,11 @@ exports.MaterialsPopup = Montage.create(Component, {
 		{
            this._materialName = materialID;
             if(	
-					(materialID === "BrickMaterial")				||
-					(materialID ===  "UberMaterial")				|| 
+					(materialID ===  "UberMaterial")				||
 					(materialID ===  "FlatMaterial")				||
  					(materialID ===  "BumpMetalMaterial")			||
- 					(materialID ===  "PlasmaMaterial")				||
  					(materialID ===  "LinearGradientMaterial")		||
- 					(materialID ===  "RadialGradientMaterial")		||
- 					(materialID ===  "RadialBlurMaterial")			||
- 					(materialID ===  "PulseMaterial")				||
- 					(materialID ===  "TunnelMaterial")				||
- 					(materialID ===  "TwistMaterial")				||
- 					(materialID ===  "KeleidoscopeMaterial")		||
- 					(materialID ===  "JuliaMaterial")				||
- 					(materialID ===  "MandelMaterial")				||
- 					(materialID ===  "IridescentScalesMaterial")
+ 					(materialID ===  "RadialGradientMaterial")
 				)
 			{
 				var material = MaterialsLibrary.getMaterial( materialID );

@@ -186,11 +186,25 @@ exports.CustomSection = Montage.create(Component, {
             if (aField.value)       obj.value = aField.value;
             if (aField.labelField)  obj.labelField = aField.labelField;
             if (aField.labelFunction)  obj.labelFunction = aField.labelFunction;
+            if (aField.dataField)  obj.dataField = aField.dataField;
+            if (aField.dataFunction)  obj.dataFunction = aField.dataFunction;
             if (aField.items) {
                 if(aField.items.boundObject) {
                     obj.items = eval(aField.items.boundObject)[aField.items.boundProperty];
                 } else {
                     obj.items = aField.items;
+                }
+            }
+            if (aField.enabled) {
+                if(aField.enabled.boundObject) {
+                    // TODO - For now, always bind to this.controls[someProperty]
+                    Object.defineBinding(obj, "enabled", {
+                                    boundObject: this.controls,
+                                    boundObjectPropertyPath: aField.enabled.boundProperty,
+                                    oneway: false
+                                });
+                } else {
+                    obj.enabled = aField.enabled;
                 }
             }
 
