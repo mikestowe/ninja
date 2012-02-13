@@ -33,14 +33,6 @@ function GLRectangle()
 
 	this._strokeWidth = 0.25;
 
-	// stroke and fill colors
-	this._strokeColor;
-	this._fillColor;
-
-	// stroke and fill materials
-	this._fillMaterial;
-	this._strokeMaterial;
-
 	this._strokeStyle = "Solid";
 	this.init = function(world, xOffset, yOffset, width, height, strokeSize, strokeColor, fillColor,
                       tlRadius, trRadius, blRadius, brRadius, strokeMaterial, fillMaterial, strokeStyle)
@@ -80,13 +72,14 @@ function GLRectangle()
 		this._materialSpecular = [0.4, 0.4, 0.4,  1.0];
 
 		if(strokeMaterial)
-		{
 			this._strokeMaterial = strokeMaterial;
-		}
+		else
+			this._strokeMaterial = new FlatMaterial();
+
 		if(fillMaterial)
-		{
 			this._fillMaterial = fillMaterial;
-		}
+		else 
+			this._fillMaterial = new FlatMaterial();
 	}
 
 	///////////////////////////////////////////////////////////////////////
@@ -185,9 +178,9 @@ function GLRectangle()
 		this._strokeWidth		= Number( this.getPropertyFromString( "strokeWidth: ",	importStr )  );
 		this._innerRadius		= Number( this.getPropertyFromString( "innerRadius: ",	importStr )  );
 		this._strokeStyle		= Number( this.getPropertyFromString( "strokeStyle: ",	importStr )  );
-		var strokeMaterialName	= Number( this.getPropertyFromString( "strokeMat: ",	importStr )  );
-		var fillMaterialName	= Number( this.getPropertyFromString( "fillMat: ",		importStr )  );
-		this._strokeStyle		=  Number( this.getPropertyFromString( "strokeColor: ",	importStr )  );
+		var strokeMaterialName	= this.getPropertyFromString( "strokeMat: ",	importStr );
+		var fillMaterialName	= this.getPropertyFromString( "fillMat: ",		importStr );
+		this._strokeStyle		=  this.getPropertyFromString( "strokeStyle: ",	importStr );
 		this._fillColor			=  eval( "[" + this.getPropertyFromString( "fillColor: ",	importStr ) + "]" );
 		this._strokeColor		=  eval( "[" + this.getPropertyFromString( "strokeColor: ",	importStr ) + "]" );
 		this._tlRadius			=  Number( this.getPropertyFromString( "tlRadius: ",	importStr )  );
@@ -217,8 +210,11 @@ function GLRectangle()
 		// get the world
 		var world = this.getWorld();
 		if (!world)  throw( "null world in buildBuffers" );
-
+		//console.log( "GLRectangle.buildBuffers " + world._worldCount );
 		if (!world._useWebGL)  return;
+		
+		// make sure RDGE has the correct context
+		g_Engine.setContext( world.getCanvas().uuid );
 
 		// create the gl buffer
 		var gl = world.getGLContext();
@@ -279,8 +275,8 @@ function GLRectangle()
 
 		// stroke
 		var strokeMaterial = this.makeStrokeMaterial();
-		prim = this.createStroke([x,y],  2*xFill,  2*yFill,  strokeSize,  tlRadius, blRadius, brRadius, trRadius, strokeMaterial)
-        this._primArray.push( prim );
+		var strokePrim = this.createStroke([x,y],  2*xFill,  2*yFill,  strokeSize,  tlRadius, blRadius, brRadius, trRadius, strokeMaterial);
+        this._primArray.push( strokePrim );
 		this._materialNodeArray.push( strokeMaterial.getMaterialNode() );
 
 		// fill
@@ -291,58 +287,12 @@ function GLRectangle()
 		xFill -= strokeSize;
 		yFill -= strokeSize;
 		var fillMaterial = this.makeFillMaterial();
-		prim = this.createFill([x,y],  2*xFill,  2*yFill,  tlRadius, blRadius, brRadius, trRadius, fillMaterial)
-        this._primArray.push( prim );
+		//console.log( "fillMaterial: " + fillMaterial.getName() );
+		var fillPrim = this.createFill([x,y],  2*xFill,  2*yFill,  tlRadius, blRadius, brRadius, trRadius, fillMaterial);
+        this._primArray.push( fillPrim );
 		this._materialNodeArray.push( fillMaterial.getMaterialNode() );
 
         world.updateObject(this);
-	}
-
-	this.makeStrokeMaterial = function()
-	{
-		var strokeMaterial;
-		if (this.getStrokeMaterial())
-			strokeMaterial = this.getStrokeMaterial().dup();
-		else
-			strokeMaterial = new FlatMaterial();
-
-		if (strokeMaterial)
-        {
-			strokeMaterial.init( this.getWorld() );
-            if(this._strokeColor)
-			 {
-                strokeMaterial.setProperty("color", this._strokeColor);
-            }
-        }
-
-		this._materialArray.push( strokeMaterial );
-		this._materialTypeArray.push( "stroke" );
-
-		return strokeMaterial;
-	}
-
-    this.makeFillMaterial = function()
-	{
-		var fillMaterial;
-		if (this.getFillMaterial())
-			fillMaterial = this.getFillMaterial().dup();
-		else
-			fillMaterial = new FlatMaterial();
-
-		if (fillMaterial)
-        {
-			fillMaterial.init( this.getWorld() );
-            //if(!this.getFillMaterial() && this._fillColor)
-			if (this._fillColor)
-            {
-                fillMaterial.setProperty("color", this._fillColor);
-            }
-        }
-
-		this._materialArray.push( fillMaterial );
-		this._materialTypeArray.push( "fill" );
-
-		return fillMaterial;
 	}
 
 	this.renderQuadraticBezier = function( bPts, ctx )
@@ -367,72 +317,71 @@ function GLRectangle()
 		var width  = Math.round(this.getWidth()),
 			height = Math.round(this.getHeight());
 
-		// get the top left point
 		pt = [inset, inset];	// top left corner
-		rad = this.getTLRadius() - inset;
-		if (rad < 0)  rad = 0;
-		pt[1] += rad;
-		if (MathUtils.fpSign(rad) == 0)  pt[1] = 0;
-		ctx.moveTo( pt[0],  pt[1] );
 
-		// get the bottom left point
-		pt = [inset, height - inset];
-		rad = this.getBLRadius() - inset;
-		if (rad < 0)  rad = 0;
-		pt[1] -= rad;
-		ctx.lineTo( pt[0],  pt[1] );
+		var tlRad = this._tlRadius; //top-left radius
+		var trRad = this._trRadius;
+		var blRad = this._blRadius;
+		var brRad = this._brRadius;
 
-		// get the bottom left arc
-		if (MathUtils.fpSign(rad) > 0)
+		if ((tlRad <= 0) && (blRad <= 0) && (brRad <= 0) && (trRad <= 0))
 		{
-			ctr = [ this.getBLRadius(),  height - this.getBLRadius() ];
-			//this.renderQuadraticBezier( MathUtils.circularArcToBezier( ctr, pt, -0.5*Math.PI ), ctx  );
-			ctx.arc( ctr[0], ctr[1],    rad,    Math.PI,   0.5*Math.PI,  true );
+			ctx.rect(pt[0], pt[1], width - 2*inset, height - 2*inset);
 		}
-
-		// do the bottom of the rectangle
-		pt = [width - inset,  height - inset];
-		rad = this.getBRRadius() - inset;
-		if (rad < 0)  rad = 0;
-		pt[0] -= rad;
-		ctx.lineTo( pt[0], pt[1] );
-
-		// get the bottom right arc
-		if (MathUtils.fpSign(rad) > 0)
+		else
 		{
-			ctr = [width - this.getBRRadius(),  height - this.getBRRadius()];
-			//this.renderQuadraticBezier( MathUtils.circularArcToBezier( ctr, pt, -0.5*Math.PI ), ctx  );
-			ctx.arc( ctr[0], ctr[1],   rad,   0.5*Math.PI,  0.0,  true );
-		}
+			// get the top left point
+			rad = tlRad - inset;
+			if (rad < 0)  rad = 0;
+			pt[1] += rad;
+			if (MathUtils.fpSign(rad) == 0)  pt[1] = inset;
+			ctx.moveTo( pt[0],  pt[1] );
 
-		// get the right of the rectangle
-		pt = [width - inset,  inset];
-		rad = this.getTRRadius() - inset;
-		if (rad < 0)  rad = 0;
-		pt[1] += rad;
-		ctx.lineTo( pt[0], pt[1] );
+			// get the bottom left point
+			pt = [inset, height - inset];
+			rad = blRad - inset;
+			if (rad < 0)  rad = 0;
+			pt[1] -= rad;
+			ctx.lineTo( pt[0],  pt[1] );
 
-		// do the top right corner
-		if (MathUtils.fpSign(rad) > 0)
-		{
-			ctr = [width - this.getTRRadius(),  this.getTRRadius()];
-			//this.renderQuadraticBezier( MathUtils.circularArcToBezier( ctr, pt, -0.5*Math.PI ), ctx );
-			ctx.arc( ctr[0], ctr[1],   rad,   0.0,  -0.5*Math.PI,  true );
-		}
+			// get the bottom left curve
+			if (MathUtils.fpSign(rad) > 0)
+				ctx.quadraticCurveTo( inset, height-inset,  inset+rad, height-inset );
 
-		// do the top of the rectangle
-		pt = [inset, inset]
-		rad = this.getTLRadius() - inset;
-		if (rad < 0)  rad = 0;
-		pt[0] += rad;
-		ctx.lineTo( pt[0], pt[1] );
+			// do the bottom of the rectangle
+			pt = [width - inset,  height - inset];
+			rad = brRad - inset;
+			if (rad < 0)  rad = 0;
+			pt[0] -= rad;
+			ctx.lineTo( pt[0], pt[1] );
 
-		// do the top left corner
-		if (MathUtils.fpSign(rad) > 0)
-		{
-			ctr = [this.getTLRadius(),  this.getTLRadius()];
-			//this.renderQuadraticBezier( MathUtils.circularArcToBezier( ctr, pt, -0.5*Math.PI ), ctx );
-			ctx.arc( ctr[0], ctr[1],   rad,   -0.5*Math.PI,  Math.PI,  true );
+			// get the bottom right arc
+			if (MathUtils.fpSign(rad) > 0)
+				ctx.quadraticCurveTo( width-inset, height-inset,  width-inset, height-inset-rad );
+
+			// get the right of the rectangle
+			pt = [width - inset,  inset];
+			rad = trRad - inset;
+			if (rad < 0)  rad = 0;
+			pt[1] += rad;
+			ctx.lineTo( pt[0], pt[1] );
+
+			// do the top right corner
+			if (MathUtils.fpSign(rad) > 0)
+				ctx.quadraticCurveTo( width-inset, inset,  width-inset-rad, inset );
+
+			// do the top of the rectangle
+			pt = [inset, inset]
+			rad = tlRad - inset;
+			if (rad < 0)  rad = 0;
+			pt[0] += rad;
+			ctx.lineTo( pt[0], pt[1] );
+
+			// do the top left corner
+			if (MathUtils.fpSign(rad) > 0)
+				ctx.quadraticCurveTo( inset, inset, inset, inset+rad );
+			else
+				ctx.lineTo( inset, 2*inset );
 		}
 	}
 
@@ -451,32 +400,20 @@ function GLRectangle()
 		var	w = world.getViewportWidth(),
 			h = world.getViewportHeight();
 		
-		// draw the fill
+		// set the fill
 		ctx.beginPath();
 		ctx.fillStyle   = "#990000";
-		//ctx.strokeStyle = "#0000ff";
 		if (this._fillColor)
 			ctx.fillStyle = MathUtils.colorToHex( this._fillColor );
 
-		//ctx.lineWidth	= 0;
-		//ctx.rect( lw, lw,  w - 2*lw,  h- 2*lw );
-		//this.renderPath( lw, ctx )
-		//ctx.fill();
-		//ctx.closePath();
-
-		// draw the stroke
-		//ctx.beginPath();
-		//ctx.fillStyle   = "#990000";
+		// set the stroke
 		ctx.strokeStyle = "#0000ff";
 		if (this._strokeColor)
 			ctx.strokeStyle = MathUtils.colorToHex( this._strokeColor );
 
 		ctx.lineWidth	= lw;
-		//ctx.rect( 0.5*lw, 0.5*lw,  w-lw,  h-lw );
 		var inset = Math.ceil( 0.5*lw ) + 0.5;
-//		console.log( "linewidth: " + lw + ", inset: " + inset+ ", width: " + Math.round(this.getWidth()) + ", height: " + Math.round(this.getHeight()) );
 		this.renderPath( inset, ctx );
-		//this.renderPath( lw, ctx );
 		ctx.fill();
 		ctx.stroke();
 		ctx.closePath();
@@ -485,7 +422,7 @@ function GLRectangle()
 	this.createStroke = function(ctr,  width,  height,  strokeWidth,  tlRad, blRad, brRad, trRad, material)
 	{
 		// create the geometry
-		var prim = RectangleStroke.create( ctr,  width, height, strokeWidth,  tlRad, blRad,  brRad, trRad)
+		var prim = RectangleStroke.create( ctr,  width, height, strokeWidth,  tlRad, blRad,  brRad, trRad, material)
 		return prim;
 	}
 
@@ -495,9 +432,9 @@ function GLRectangle()
 		// special the (common) case of no rounded corners
 		var prim
 		if ((tlRad <= 0) && (blRad <= 0) && (brRad <= 0) && (trRad <= 0))
-			prim = RectangleGeometry.create( ctr, width, height );
+			prim = RectangleGeometry.create( ctr, width, height, material );
 		else
-			prim = RectangleFill.create( ctr,  width, height,  tlRad, blRad,  brRad, trRad);
+			prim = RectangleFill.create( ctr,  width, height,  tlRad, blRad,  brRad, trRad, material);
 
 		return prim;
 	}
@@ -746,7 +683,7 @@ function GLRectangle()
  }
 
 RectangleFill = {};
-RectangleFill.create = function( rectCtr,  width, height, tlRad, blRad,  brRad, trRad)
+RectangleFill.create = function( rectCtr,  width, height, tlRad, blRad,  brRad, trRad,  material)
 {
 	var x = rectCtr[0],  y = rectCtr[1],  z = 0.0;
 	var	hw = 0.5*width,  hh = 0.5*height;
@@ -833,6 +770,17 @@ RectangleFill.create = function( rectCtr,  width, height, tlRad, blRad,  brRad, 
 		j++;
 	}
 
+	//refine the mesh for vertex deformations
+	if (material)
+	{
+		if (material.hasVertexDeformation())
+		{
+			var paramRange = material.getVertexDeformationRange();
+			var tolerance = material.getVertexDeformationTolerance();
+			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
+		}
+	}
+
 	// create the RDGE primitive
 	var prim = ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.TRIANGLES, nVertices);
 	return prim;
@@ -905,7 +853,7 @@ RectangleFill.getRoundedCorner = function(ctr, startPt,  vertices)
 
 
 RectangleStroke = {};
-RectangleStroke.create = function( rectCtr,  width, height, strokeWidth,  tlRad, blRad,  brRad, trRad)
+RectangleStroke.create = function( rectCtr,  width, height, strokeWidth,  tlRad, blRad,  brRad, trRad, material)
 {
 	var x = rectCtr[0],  y = rectCtr[1],  z = 0.0;
 	var	hw = 0.5*width,  hh = 0.5*height,  sw = strokeWidth;
@@ -1096,8 +1044,20 @@ RectangleStroke.create = function( rectCtr,  width, height, strokeWidth,  tlRad,
 		k++;
 	}
 
+	//refine the mesh for vertex deformations
+	if (material)
+	{
+		if (material.hasVertexDeformation())
+		{
+			var paramRange = material.getVertexDeformationRange();
+			var tolerance = material.getVertexDeformationTolerance();
+			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
+		}
+	}
+
 	// create the RDGE primitive
 	var prim = ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.TRIANGLES, nVertices);
+	//var prim = ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.LINES, nVertices);
 	return prim;
 }
 
@@ -1140,7 +1100,7 @@ RectangleStroke.getUV		= RectangleFill.getUV;
 
 // Helper function for generating Three.js geometry
 RectangleGeometry = {};
-RectangleGeometry.create = function( ctr,  width, height )
+RectangleGeometry.create = function( ctr,  width, height, material )
 {
 	var x = ctr[0],  y = ctr[1],  z = 0.0;
 	var	hw = 0.5*width,  hh = 0.5*height;
@@ -1178,8 +1138,20 @@ RectangleGeometry.create = function( ctr,  width, height )
 	RectangleGeometry.pushIndices( 2, 1, 0 );
 	RectangleGeometry.pushIndices( 0, 3, 2 );
 
+	//refine the mesh for vertex deformations
+	if (material)
+	{
+		if (material.hasVertexDeformation())
+		{
+			var paramRange = material.getVertexDeformationRange();
+			var tolerance = material.getVertexDeformationTolerance();
+			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
+		}
+	}
+
 	// create the RDGE primitive
 	var prim = ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.TRIANGLES, nVertices);
+	//var prim = ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.LINES, nVertices);
 	return prim;
 }
 
@@ -1217,7 +1189,7 @@ ShapePrimitive.create = function(coords,  normals,  uvs,  indices, primType, ver
 		"a_normal":{'type':renderer.VS_ELEMENT_FLOAT3, 'bufferIndex':1, 'bufferUsage': renderer.BUFFER_STATIC},
 
 		"texcoord":{'type':renderer.VS_ELEMENT_FLOAT2, 'bufferIndex':2, 'bufferUsage': renderer.BUFFER_STATIC},
-		"a_texcoord":{'type':renderer.VS_ELEMENT_FLOAT2, 'bufferIndex':2, 'bufferUsage': renderer.BUFFER_STATIC},
+		"a_texcoord":{'type':renderer.VS_ELEMENT_FLOAT2, 'bufferIndex':2, 'bufferUsage': renderer.BUFFER_STATIC}
 	};
 
 
@@ -1249,3 +1221,110 @@ ShapePrimitive.create = function(coords,  normals,  uvs,  indices, primType, ver
 
 	return prim;
 }
+
+
+ShapePrimitive.refineMesh = function( verts, norms, uvs, indices, nVertices,  paramRange,  tolerance )
+{
+	// get the param range
+	var pUMin = paramRange[0],  pVMin = paramRange[1],
+		pUMax = paramRange[2],  pVMax = paramRange[3];
+	var iTriangle = 0;
+	var nTriangles = indices.length/3;
+	var index = 0;
+	while (iTriangle < nTriangles)
+	{
+		// get the indices of the 3 vertices
+		var i0 = indices[index],
+			i1 = indices[index+1],
+			i2 = indices[index+2];
+
+		// get the uv values
+		//var vrtIndex = 3*iTriangle;
+		var iuv0 = 2 * i0,
+			iuv1 = 2 * i1,
+			iuv2 = 2 * i2;
+		var u0 = uvs[iuv0],  v0 = uvs[iuv0+1],
+			u1 = uvs[iuv1],  v1 = uvs[iuv1+1],
+			u2 = uvs[iuv2],  v2 = uvs[iuv2+1];
+
+		// find the u and v range
+		var uMin = u0,  vMin = v0;
+		if (u1 < uMin)  uMin = u1;  if (v1 < vMin)  vMin = v1;
+		if (u2 < uMin)  uMin = u2;  if (v2 < vMin)  vMin = v2;
+		var uMax = u0,  vMax = v0;
+		if (u1 > uMax)  uMax = u1;  if (v1 > vMax)  vMax = v1;
+		if (u2 > uMax)  uMax = u2;  if (v2 > vMax)  vMax = v2;
+
+		// if the parameter range of the triangle is outside the
+		// desired parameter range, advance to the next polygon and continue
+		if ((uMin > pUMax) || (uMax < pUMin) || (vMin > pVMax) || (vMax < pVMin))
+		{
+			// go to the next triangle
+			iTriangle++;
+			index += 3;
+		}
+		else
+		{
+			// check thesize of the triangle in uv space.  If small enough, advance
+			// to the next triangle.  If not small enough, split the triangle into 3;
+			var du = uMax - uMin,  dv = vMax - vMin;
+			if ((du < tolerance) && (dv < tolerance))
+			{
+				iTriangle++;
+				index += 3;
+			}
+			else	// split the triangle into 4 parts
+			{
+				//calculate the position of the new vertex
+				var iPt0 = 3 * i0,
+					iPt1 = 3 * i1,
+					iPt2 = 3 * i2;
+				var x0 = verts[iPt0],  y0 = verts[iPt0+1],  z0 = verts[iPt0+2],
+					x1 = verts[iPt1],  y1 = verts[iPt1+1],  z1 = verts[iPt1+2],
+					x2 = verts[iPt2],  y2 = verts[iPt2+1],  z2 = verts[iPt2+2];
+				
+				// calculate the midpoints of the edges
+				var xA = (x0 + x1)/2.0,  yA = (y0 + y1)/2.0,  zA = (z0 + z1)/2.0,
+					xB = (x1 + x2)/2.0,  yB = (y1 + y2)/2.0,  zB = (z1 + z2)/2.0,
+					xC = (x2 + x0)/2.0,  yC = (y2 + y0)/2.0,  zC = (z2 + z0)/2.0;
+
+				// calculate the uv values of the new coordinates
+				var uA = (u0 + u1)/2.0,  vA = (v0 + v1)/2.0,
+					uB = (u1 + u2)/2.0,  vB = (v1 + v2)/2.0,
+					uC = (u2 + u0)/2.0,  vC = (v2 + v0)/2.0;
+
+				// calculate the normals for the new points
+				var nx0 = norms[iPt0],  ny0 = norms[iPt0+1],  nz0 = norms[iPt0+2],
+					nx1 = norms[iPt1],  ny1 = norms[iPt1+1],  nz1 = norms[iPt1+2],
+					nx2 = norms[iPt2],  ny2 = norms[iPt2+1],  nz2 = norms[iPt2+2];
+				var nxA = (nx0 + nx1),  nyA = (ny0 + ny1),  nzA = (nz0 + nz1);  var nrmA = VecUtils.vecNormalize(3, [nxA, nyA, nzA], 1.0 ),
+					nxB = (nx1 + nx2),  nyB = (ny1 + ny2),  nzB = (nz1 + nz2);  var nrmB = VecUtils.vecNormalize(3, [nxB, nyB, nzB], 1.0 ),
+					nxC = (nx2 + nx0),  nyC = (ny2 + ny0),  nzC = (nz2 + nz0);  var nrmC = VecUtils.vecNormalize(3, [nxC, nyC, nzC], 1.0 );
+
+				// push everything
+				verts.push(xA);  verts.push(yA);  verts.push(zA);
+				verts.push(xB);  verts.push(yB);  verts.push(zB);
+				verts.push(xC);  verts.push(yC);  verts.push(zC);
+				uvs.push(uA),  uvs.push(vA);
+				uvs.push(uB),  uvs.push(vB);
+				uvs.push(uC),  uvs.push(vC);
+				norms.push(nrmA[0]);  norms.push(nrmA[1]);  norms.push(nrmA[2]);
+				norms.push(nrmB[0]);  norms.push(nrmB[1]);  norms.push(nrmB[2]);
+				norms.push(nrmC[0]);  norms.push(nrmC[1]);  norms.push(nrmC[2]);
+
+				// split the current triangle into 4
+				indices[index+1] = nVertices;  indices[index+2] = nVertices+2;
+				indices.push(nVertices);    indices.push(i1);           indices.push(nVertices+1);  nTriangles++;
+				indices.push(nVertices+1);  indices.push(i2);           indices.push(nVertices+2);  nTriangles++;
+				indices.push(nVertices);    indices.push(nVertices+1);  indices.push(nVertices+2);  nTriangles++;
+				nVertices += 3;
+
+				// by not advancing 'index', we examine the first of the 3 triangles generated above
+			}
+		}
+	}
+	return nVertices;
+}
+
+
+

@@ -12,12 +12,25 @@
         <script type="text/montage-serialization">
         {
 
+            "strokeSizeHT": {
+                "module": "js/components/hottextunit.reel",
+                "name": "HotTextUnit",
+                "properties": {
+                    "element": {"#": "strokeSize"},
+                    "minValue": 1,
+                    "maxValue": 100,
+                    "value": 1,
+                    "decimalPlace": 10,
+                    "acceptableUnits" : ["px", "pt"]
+                }
+            },
+
             "owner": {
                 "module": "js/components/tools-properties/pen-properties.reel",
                 "name": "PenProperties",
                 "properties": {
                     "element": {"#": "penProperties"},
-                    "reset": {"#": "resetPenTool"}
+                    "_strokeSize": {"@": "strokeSizeHT"}
                 }
             }
     	}
@@ -26,9 +39,12 @@
     </head>
 
     <body>
-        <div id="penProperties" class="subToolHolderPanel">
-            <button id="resetPenTool" tabindex="0" class="montage-button" aria-role="button" aria-busy="false">Reset</button>
+    <div id="penProperties" class="subToolHolderPanel">
+        <div id="strokesContainer" class="leftLabel" style="margin-left:25px; padding-top: 3px;">
+            <label class="label"> Stroke:</label>
+            <div id="strokeSize" class="label"></div>
         </div>
+    </div>
     </body>
 
 </html>

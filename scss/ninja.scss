@@ -1,0 +1,43 @@
+@charset "UTF-8";
+
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+ 
+
+
+// ninja.scss
+// Main SCSS file for ninja, compiled by SASS into the file ninja.css.
+
+
+// Import theme settings
+@import "imports/themes/default/colors";
+@import "imports/themes/default/fonts";
+@import "imports/themes/default/mixins";
+
+// Import generic mixins and styles
+@import "imports/scss/mixins";
+@import "imports/scss/Base";
+ 
+// Import everything else
+@import "imports/scss/MainWindow";
+@import "imports/scss/Stage";
+@import "imports/scss/PanelUI";
+@import "imports/scss/MenuUI";
+@import "imports/scss/Tools";
+@import "imports/scss/toolbar";
+@import "imports/scss/UserContent";
+@import "imports/scss/ScrollBars";
+@import "imports/scss/Components";
+
+body {
+}
+
+
+// Codemirror
+//@import "imports/codemirror/_codemirror";
+//@import "imports/codemirror/_javascript";
+//@import "imports/codemirror/_css";
+/*77*/

@@ -27,13 +27,9 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
 
     this._strokeWidth = 0.25;
 
-    // stroke colors
-	this._strokeColor = [0.4, 0.4, 0.4, 1.0];
-
-	// stroke materials
-	this._strokeMaterial;
-
     this._strokeStyle = "Solid";
+    this._scaleX = 1.0;
+    this._scaleY = 1.0;
 
     if (arguments.length > 0)
     {
@@ -50,12 +46,8 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
         this._strokeColor = strokeColor;
 
         this._strokeStyle = strokeStyle;
+        this._scaleX = (world.getViewportWidth())/(world.getViewportHeight());
     }
-
-    this._scaleX = 1.0;
-    this._scaleY = 1.0;
-
-    this._scaleX = (world._viewportWidth)/(world._viewportHeight);
 
     this._strokeVerticesLen = 0;
 
@@ -83,11 +75,16 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
 	this.getStrokeMaterial	= function()		{  return this._strokeMaterial;	}
 	this.setStrokeMaterial	= function(m)		{  this._strokeMaterial = m;	}
 
-    this.getStrokeColor	= function()		{  return this._strokeColor;	}
+    this.getStrokeColor		= function()		{  return this._strokeColor;	}
 	//this.setStrokeColor	= function(c)		{  this._strokeColor = c;		}
 
-    this.getStrokeStyle	= function()		{  return this._strokeStyle;	}
-	this.setStrokeStyle	= function(s)		{  this._strokeStyle = s;		}
+    this.getStrokeStyle		= function()		{  return this._strokeStyle;	}
+	this.setStrokeStyle		= function(s)		{  this._strokeStyle = s;		}
+
+	this.getFillMaterial	= function()		{  return null;		}
+	
+	this.setStrokeMaterial  = function(m)		 {  this._strokeMaterial = m;		 }
+	this.getStrokeMaterial	= function()		{  return this._strokeMaterial;		}
 
     this.getWidth			= function()		{  return this._width;				}
 	this.setWidth			= function(w)		{  this._width = w;					}
@@ -105,7 +102,64 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
 	this.setSlope            = function(m)		{  this._slope = m;				}
 
     this.geomType	= function()				{  return this.GEOM_TYPE_LINE;	}
-    
+
+    	///////////////////////////////////////////////////////////////////////
+	// Methods
+	///////////////////////////////////////////////////////////////////////
+	this.export = function()
+	{
+		var rtnStr = "type: " + this.geomType() + "\n";
+
+		rtnStr += "xoff: "			+ this._xOffset		+ "\n";
+		rtnStr += "yoff: "			+ this._yOffset		+ "\n";
+		rtnStr += "width: "			+ this._width		+ "\n";
+		rtnStr += "height: "		+ this._height		+ "\n";
+		rtnStr += "xAdj: "		    + this._xAdj		+ "\n";
+		rtnStr += "yAdj: "		    + this._yAdj		+ "\n";
+		rtnStr += "strokeWidth: "	+ this._strokeWidth	+ "\n";
+		rtnStr += "strokeColor: "	+ String(this._strokeColor)  + "\n";
+		rtnStr += "strokeStyle: "	+ this._strokeStyle	+ "\n";
+		rtnStr += "slope: "	        + String(this._slope)	+ "\n";
+
+		rtnStr += "strokeMat: ";
+		if (this._strokeMaterial)
+			rtnStr += this._strokeMaterial.getName();
+		else
+			rtnStr += "flatMaterial";
+		rtnStr += "\n";
+
+		return rtnStr;
+	}
+
+	this.import = function( importStr )
+	{
+		this._xOffset			= Number( this.getPropertyFromString( "xoff: ",			importStr )  );
+		this._yOffset			= Number( this.getPropertyFromString( "yoff: ",			importStr )  );
+		this._width				= Number( this.getPropertyFromString( "width: ",		importStr )  );
+		this._height			= Number( this.getPropertyFromString( "height: ",		importStr )  );
+        this._xAdj			    = Number( this.getPropertyFromString( "xAdj: ",			importStr )  );
+        this._yAdj			    = Number( this.getPropertyFromString( "yAdj: ",			importStr )  );
+		this._strokeWidth		= Number( this.getPropertyFromString( "strokeWidth: ",	importStr )  );
+		var slope 		        = this.getPropertyFromString( "slope: ",	importStr );
+        if(isNaN(Number(slope)))
+            this._slope		    = slope;
+        else
+            this._slope         = Number(slope);
+
+		var strokeMaterialName	= this.getPropertyFromString( "strokeMat: ",	importStr );
+		this._strokeStyle		= this.getPropertyFromString( "strokeStyle: ",	importStr );
+		this._strokeColor		= eval( "[" + this.getPropertyFromString( "strokeColor: ",	importStr ) + "]" );
+
+		var strokeMat = MaterialsLibrary.getMaterial( strokeMaterialName );
+		if (!strokeMat)
+		{
+			console.log( "object material not found in library: " + strokeMaterialName );
+			strokeMat = new FlatMaterial();
+		}
+		this._strokeMaterial = strokeMat;
+
+	}
+
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
@@ -115,6 +169,9 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
         var world = this.getWorld();
         if (!world)  throw( "null world in buildBuffers" );
 		if (!world._useWebGL)  return;
+		
+		// make sure RDGE has the correct context
+		g_Engine.setContext( world.getCanvas().uuid );
 
          // create the gl buffer
         var gl = world.getGLContext();
@@ -190,9 +247,9 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
                     xFill+x, yFill+y,  0.0,
                     -xFill+x, -yFill+y,  0.0,
 
-                    xFill+x, yFill+y,  0.0,
+                    xFill+x, -yFill+y,  0.0,
                     -xFill+x, -yFill+y,  0.0,
-                    xFill+x, -yFill+y,  0.0
+                    xFill+x, yFill+y,  0.0
                 ];
             }
             else if(this._slope === "horizontal")
@@ -205,10 +262,10 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
                     xFill+x, yFill+y,  0.0,
                     -xFill+x, -yFill+y,  0.0,
 
-                    xFill+x, yFill+y,  0.0,
+                     xFill+x, -yFill+y,  0.0,
                     -xFill+x, -yFill+y,  0.0,
-                    xFill+x, -yFill+y,  0.0
-                ];
+                    xFill+x, yFill+y,  0.0
+               ];
             }
             else if(this._slope > 0)
             {
@@ -218,9 +275,9 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
                     -xFill+2*xAdj+x, yFill+y,  0.0,
                     xFill-2*xAdj+x, -yFill+y,  0.0,
 
-                    -xFill+2*xAdj+x, yFill+y,  0.0,
+                    xFill+x, -yFill+2*yAdj+y,  0.0,
                     xFill-2*xAdj+x, -yFill+y,  0.0,
-                    xFill+x, -yFill+2*yAdj+y,  0.0
+                    -xFill+2*xAdj+x, yFill+y,  0.0
                 ];
             }
             else
@@ -231,9 +288,9 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
                     -xFill+2*xAdj+x, -yFill+y,  0.0,
                     xFill-2*xAdj+x, yFill+y,  0.0,
 
-                    -xFill+2*xAdj+x, -yFill+y,  0.0,
+                    xFill+x, yFill-2*yAdj+y,  0.0,
                     xFill-2*xAdj+x, yFill+y,  0.0,
-                    xFill+x, yFill-2*yAdj+y,  0.0
+                    -xFill+2*xAdj+x, -yFill+y,  0.0
                 ];
             }
         }
@@ -267,26 +324,11 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
         }
 
 		var prim = ShapePrimitive.create(strokeVertices, strokeNormals, strokeTextures, indices, g_Engine.getContext().renderer.TRIANGLES, indices.length);
-		this._primArray.push( prim );
 
-		var strokeMaterial;
-		if (this.getStrokeMaterial())
-			strokeMaterial = this.getStrokeMaterial().dup();
-		else
-			strokeMaterial = new FlatMaterial();
+        var strokeMaterial = this.makeStrokeMaterial();
 
-		if (strokeMaterial)
-        {
-			strokeMaterial.init( this.getWorld() );
-            if(!this.getStrokeMaterial() && this._strokeColor)
-            {
-                strokeMaterial.setProperty("color", this._strokeColor);
-            }
-        }
-		
-		this._materialArray.push( strokeMaterial );
-		this._materialTypeArray.push( "stroke" );
-		this._materialNodeArray.push( strokeMaterial.getMaterialNode() );
+        this._primArray.push( prim );
+        this._materialNodeArray.push( strokeMaterial.getMaterialNode() );
 
         world.updateObject(this);
     }

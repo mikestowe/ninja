@@ -11,6 +11,15 @@
 
         <script type="text/montage-serialization">
         {
+            "_fillMaterialCB": {
+                "module": "js/components/combobox.reel",
+                "name": "Combobox",
+                "properties": {
+                    "element": {"#": "fillMaterialCB"},
+                    "labelField": "_name",
+                    "dataField": "_name"
+                }
+            },
             "owner": {
                 "module": "js/components/tools-properties/fill-properties.reel",
                 "name": "FillProperties",
@@ -18,7 +27,7 @@
                     "element": {"#": "fillProperties"},
                     "_useWebGL": {"#": "useWebGLCH"},
                     "_materialsContainer": {"#": "materialsContainer"},
-                    "_fillMaterial": {"#": "fillMaterialCB"}
+                    "_fillMaterial": {"@": "_fillMaterialCB"}
                 }
             }
     	}
