@@ -259,6 +259,11 @@
                 "name": "NewFileWorkflowController"
             },
 
+            "mainMenuController": {
+                "module": "js/controllers/main-menu-controller",
+                "name": "MainMenuController"
+            },
+
             "owner": {
                 "module": "js/ninja.reel",
                 "name": "Ninja",
@@ -279,10 +284,11 @@
                     "stylesController":     {"@": "stylesController"},
                     "filePickerController": {"@": "filePickerController"},
                     "newFileController":    {"@": "newFileController"},
-                    "documentBar":          {"@": "documentBar"}
+                    "documentBar":          {"@": "documentBar"},
+                    "timeline":             {"@": "timeline"},
+                    "mainMenuController":   {"@": "mainMenuController"}
                 }
             }
-
         }
     </script>
 
@@ -344,13 +350,10 @@
                         </section>
 
                         <section id="timelineResizer" class="timelineResizer resizeBar"></section>
-
-                        <section id="bottomPanelContainer" class="panelContainer">
-
                             <section id="breadCrumbTrail">
                                 <div id="breadCrumbComponent"></div>
                             </section>
-
+                        <section id="bottomPanelContainer" class="panelContainer">
                             <section id="timelinePanel" class="panel">
                                 <div id="timelinePanelComponent"></div>
                             </section>

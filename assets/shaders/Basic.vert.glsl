@@ -12,7 +12,7 @@ precision highp float;
 
 // attributes
 attribute vec3 a_pos;
-
+attribute vec2 texcoord;
 
 
 // matrix uniforms

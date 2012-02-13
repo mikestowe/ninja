@@ -135,18 +135,16 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                     var box = [];
                     selectedItems = [];
 
-                    box[0] = this.downPoint.x - this.application.ninja.stage.documentOffsetLeft + this.application.ninja.stage.scrollLeft;
-                    box[1] = this.downPoint.y - this.application.ninja.stage.documentOffsetTop + this.application.ninja.stage.scrollTop;
-                    box[2] = box[0] + (point.x - this.downPoint.x);
-                    box[3] = box[1] + (point.y - this.downPoint.y);
-                    box = this.absoluteRectangle(box[0], box[1],box[2],box[3]);
-
+                    box[0] = this.downPoint.x;
+					box[1] = this.downPoint.y;
+					box[2] = point.x;
+					box[3] = point.y;
 
                     //selectionManagerModule.selectionManager.marqueeSelection(box);
                     var childNodes = this.application.ninja.currentDocument.documentRoot.childNodes;
                     childNodes = Array.prototype.slice.call(childNodes, 0);
                     childNodes.forEach(function(item) {
-                        if(item.nodeType == 1 && SelectionTool._simpleCollisionDetection(item, box)) {
+                        if(item.nodeType == 1 && SelectionTool._complicatedCollisionDetection(item, box)) {
                             selectedItems.push(item);
                         }
                     });
@@ -799,6 +797,34 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             this._handles[7].draw(x, y);
 
             context.closePath();
+        }
+    },
+
+    // TODO : Use the new element mediator to get element offsets
+    _complicatedCollisionDetection:
+	{
+        value: function(elt, box)
+		{
+            var left, top, width, height;
+
+            left = box[0];
+			width = box[2] - left;
+			if (width < 0)
+			{
+				left = box[2];
+				width = -width;
+			}
+            top = box[1];
+			height = box[3] - top;
+			if (height < 0)
+			{
+				top = box[3];
+				height = -height;
+			}
+
+            var rtnVal = MathUtils.rectsOverlap( [left,top], width, height,  elt );
+
+            return rtnVal;
         }
     },
 

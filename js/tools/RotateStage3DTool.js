@@ -83,7 +83,7 @@ exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
     captureSelectionDrawn: {
         value: function(event){
             this._origin = null;
-            this._targets = null;
+            this._targets = [];
             this._startOriginArray = null;
 
             var stage = this.application.ninja.currentDocument.documentRoot;

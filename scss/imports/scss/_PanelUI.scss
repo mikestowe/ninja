@@ -98,7 +98,7 @@
 }
 
 #timelinePanel {
-    height: 116px;
+    height: 100%;
 }
 
 //  Only used by Animation Presets Panel currently  
@@ -563,7 +563,7 @@ span.pp-span-all:focus {
 #pp-container-list span.span-space {
     background-repeat: no-repeat;
 }
-#pp-container-list li.directory.open > span.pp-span-all > span.pp-col-files > span.span-space {
+#pp-container-list li.directory.open > span.pp-span-all > span.pp-col-files > span.span-space, .branch-label {
     background-image:url("../images/panels/project-panel/icon-file-folderopen.png");
     background-position: 100% 0px;
 }

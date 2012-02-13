@@ -215,7 +215,8 @@ exports.ThreeD = Montage.create(Component, {
             Object.defineBinding(this, "item", {
                     boundObject: this,
                     boundObjectPropertyPath: "application.ninja.selectedElements",
-                    boundValueMutator: this._getSelectedItem
+                    boundValueMutator: this._getSelectedItem,
+                    oneway: true
                 });
         }
     },
