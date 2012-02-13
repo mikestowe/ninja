@@ -260,6 +260,14 @@ exports.ShapesController = Montage.create(CanvasController, {
                 el.elementModel.shapeModel.GLGeomObj.setStrokeColor(webGl);
                 this.setShapeProperty(el, "stroke", webGl);
                 this.setShapeProperty(el, "border", color);
+                if(color.strokeInfo)
+                {
+                    var strokeWidth = this.GetValueInPixels(color.strokeInfo.strokeSize,
+                                                            color.strokeInfo.strokeUnits);
+                    el.elementModel.shapeModel.GLGeomObj.setStrokeWidth(strokeWidth);
+                    this.setShapeProperty(el, "strokeSize", color.strokeInfo.strokeSize + " "
+                                                                + color.strokeInfo.strokeUnits);
+                }
             }
             el.elementModel.shapeModel.GLWorld.render();
         }
