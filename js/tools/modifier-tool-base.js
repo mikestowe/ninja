@@ -867,8 +867,8 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
             {
                 this._handleMode = null;
                 this._delta = null;
-                this.DrawHandles();
             }
+            this.DrawHandles();
         }
     },
 
