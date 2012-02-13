@@ -1499,13 +1499,13 @@ exports.ColorPanelBase = Montage.create(Component, {
     				//
     				if (type._event.clientX && type._event.clientY) {
     					//
-    					if (type._event.clientX > (parseInt(document.width)/2)) {
+    					//if (type._event.clientX > (parseInt(document.width)/2)) {
     						//TODO: Fix offset hack
     						this.application.ninja.colorController.colorPopupManager.showColorPopup((type._event.clientX - type._event.offsetX) +'px', (type._event.target.clientHeight/2+type._event.clientY - type._event.offsetY)+'px', 'right', 'top');
-		    			} else {
+		    			//} else {
     						//
-    						this.application.ninja.colorController.colorPopupManager.showColorPopup((type._event.clientX - type._event.offsetX)+parseInt(type._event.target.offsetWidth)+'px', (type._event.target.offsetHeight/2+type._event.clientY - type._event.offsetY)+'px', 'left', 'top');
-    					}
+    					//	this.application.ninja.colorController.colorPopupManager.showColorPopup((type._event.clientX - type._event.offsetX)+parseInt(type._event.target.offsetWidth)+'px', (type._event.target.offsetHeight/2+type._event.clientY - type._event.offsetY)+'px', 'left', 'top');
+    					//}
     				}
     			}
     		} else {
