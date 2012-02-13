@@ -315,7 +315,7 @@ exports.TextProperties = Montage.create(ToolProperties, {
     validateFontSize: {
         value: function(val) {
             val = parseInt(val);
-            return this.fontSize.items[val];
+            return this.fontSize.items[val - 1];
         }
     },
 
