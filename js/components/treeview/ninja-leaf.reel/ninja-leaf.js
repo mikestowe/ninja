@@ -41,7 +41,6 @@ exports.Leaf = Montage.create(TreeNode, {
     },
     callDelegateMethod : {
         value: function(methodName) {
-            console.log("Delegate method name: ", methodName);
             var delegate = this.treeView.contentController.delegate;
             if(delegate && typeof delegate[methodName] === 'function') {
                 delegate[methodName](this.sourceObject);
