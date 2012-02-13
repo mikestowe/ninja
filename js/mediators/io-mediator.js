@@ -150,6 +150,7 @@ exports.IoMediator = Montage.create(Component, {
     				contents = file.document.content.document.documentElement.outerHTML;
     				break;
     			default:
+    				contents = file.content;
     				break;
     		}
     		//

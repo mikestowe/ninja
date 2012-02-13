@@ -471,9 +471,12 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
 	save: {
 		enumerable: false,
     	value: function () {
-    		//console.log(this._styles, this._stylesheets);
     		//TODO: Add code view logic and also styles for HTML
-    		return {mode: 'html', document: this._userDocument, style: this._styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
+    		if (this.currentView === 'design') {
+    			return {mode: 'html', document: this._userDocument, style: this._styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
+    		} else if(this.currentView === "code"){
+    			//TODO: Would this get call when we are in code of HTML?
+    		}
     	}
 	}
 	////////////////////////////////////////////////////////////////////

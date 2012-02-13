@@ -100,10 +100,10 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
 	
 	
 	////////////////////////////////////////////////////////////////////
-	//TODO: Improve logic and make functions
+	//TODO: Check for appropiate structures
     handleExecuteSave: {
     	value: function(event) {
-    		//
+    		//Text and HTML document classes should return the same save object for fileSave
     		this.application.ninja.ioMediator.fileSave(this.activeDocument.save());
 		}
     },
