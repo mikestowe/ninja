@@ -12,6 +12,10 @@
     padding: 0px 8px;
 }
 
+.optionsTextTool select {
+    margin: 2px;
+}
+
 .optionsTextTool > *, .optionsTextTool .btnGroup > * {
     float:left;
 }
