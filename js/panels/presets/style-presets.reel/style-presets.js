@@ -79,10 +79,14 @@ exports.StylesLibrary = Montage.create(Component, {
 //            });
         }
     },
-    applyPresetSelection : {
+    handleNodeActivation: {
         value: function(presetData) {
             var selection = this.application.ninja.selectedElements,
                 self = this;
+
+            if(!selection || !selection.length || selection.length === 0) {
+                return false;
+            }
 
             function setStopRuleSelector(selector) {
                 self.application.ninja
@@ -104,6 +108,11 @@ exports.StylesLibrary = Montage.create(Component, {
                 this.application.ninja.stylesController.setElementStyles(el._element, presetData.styles);
             }, this);
 
+        }
+    },
+    handleDragEnd : {
+        value: function(sourceObject) {
+            console.log(sourceObject);
         }
     },
     shouldChangeSelection : {
