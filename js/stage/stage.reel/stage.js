@@ -780,6 +780,12 @@ exports.Stage = Montage.create(Component, {
         }
     },
 
+    toViewportCoordinates: {
+        value: function(x,y) {
+            return [x + this._userContentLeft, y + this._userContentTop];
+        }
+    },
+
     setZoom: {
         value: function(value) {
             if(!this._firstDraw)
