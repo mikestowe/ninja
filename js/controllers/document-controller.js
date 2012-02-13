@@ -97,13 +97,19 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
                 this.application.ninja.newFileController.showNewFileDialog(newFileSettings);
             }
     },
-
+	
+	
+	////////////////////////////////////////////////////////////////////
+	//TODO: Improve logic and make functions
     handleExecuteSave: {
-            value: function(event) {
-                this.activeDocument.save();
-            }
+    	value: function(event) {
+    		//
+    		this.application.ninja.ioMediator.fileSave(this.activeDocument.save());
+		}
     },
-
+	////////////////////////////////////////////////////////////////////
+	
+	
     createNewFile:{
         value:function(newFileObj){
             //console.log(newFileObj);//contains the template uri and the new file uri

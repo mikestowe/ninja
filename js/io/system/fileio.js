@@ -104,13 +104,39 @@ exports.FileIo = Montage.create(Component, {
     //
     saveFile: {
     	enumerable: true,
-    	value: function() {
+    	value: function(file) {
     		//Checking for API to be available
     		if (!this.application.ninja.coreIoApi.cloudAvailable()) {
     			//API not available, no IO action taken
     			return null;
     		}
+    		//Peforming check for file to exist
+    		var check = this.application.ninja.coreIoApi.fileExists({uri: file.uri}), status, result;
+    		//Upon successful check, handling results
+    		if (check.success) {
+    			//Handling status of check
+    			switch (check.status) {
+    				case 204:
+    					//File exists
+    					result = this.application.ninja.coreIoApi.updateFile(file);
+    					status = 204;
+    					break;
+    				case 404://createFile
+    					//File does not exists, ready to be created
+    					result = this.application.ninja.coreIoApi.createFile(file);
+    					status = 404;
+    					break;
+    				default:
+    					//Unknown Error
+    					status = 500;
+    					break;
+    			}
+	   		} else {
+	    		//Unknown Error
+	    		status = 500;
+    		}
     		//
+    		return {status: status, result: result};
     	}
     },
     ////////////////////////////////////////////////////////////////////

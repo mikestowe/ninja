@@ -14,6 +14,7 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
     _htmlTemplateUrl: { value: "user-document-templates/montage-application-cloud/index.html", enumerable: false},
     _iframe: { value: null, enumerable: false },
     _server: { value: null, enumerable: false },
+    _templateDocument: { value: null, enumerable: false },
     _selectionModel: { value: [], enumerable: false },
     _undoModel: { value: { "queue" : [], "position" : 0 }, enumerable: false},
 
@@ -359,6 +360,10 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
 	//
     handleEvent: {
         value: function(event){
+        	//TODO: Clean up, using for prototyping save
+        	this._templateDocument = {};
+        	this._templateDocument.head = this.iframe.contentWindow.document.getElementById("userHead");;
+        	this._templateDocument.body = this.iframe.contentWindow.document.getElementById("UserContent");;
         	//
         	this.documentRoot = this.iframe.contentWindow.document.getElementById("UserContent");
             this.stageBG = this.iframe.contentWindow.document.getElementById("stageBG");
@@ -373,7 +378,7 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
             this.iframe.contentWindow.document.getElementById("userHead").innerHTML = this._userDocument.content.head;
             
           
-            
+            //TODO: Look at code below and clean up
             	
             	
             
@@ -461,7 +466,21 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
      * public method
      *
      */
-    save:{
+	////////////////////////////////////////////////////////////////////
+	//
+	save: {
+		enumerable: false,
+    	value: function () {
+    		//TODO: Add code view logic
+    		return {mode: 'html', document: this._userDocument, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
+    	}
+	}
+	////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////
+	
+	
+    /*
+save:{
         value:function(){
             try{
                 if(this.currentView === "design"){
@@ -477,5 +496,6 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
             }
         }
     }
+*/
 
 });

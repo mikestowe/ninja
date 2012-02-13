@@ -138,6 +138,20 @@ exports.IoMediator = Montage.create(Component, {
     	enumerable: false,
     	value: function (file, callback) {
     		//
+    		var contents, save;
+    		//
+    		switch (file.mode) {
+    			case 'html':
+    				file.document.content.document.body.innerHTML = file.body;
+    				file.document.content.document.head.innerHTML = file.head;
+    				contents = file.document.content.document.documentElement.outerHTML;
+    				break;
+    			default:
+    				break;
+    		}
+    		//
+    		save = this.fio.saveFile({uri: file.document.uri, contents: contents})
+    		console.log(save);
     	}
     },
     ////////////////////////////////////////////////////////////////////
