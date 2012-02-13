@@ -5,78 +5,29 @@
  </copyright> */
 
 var Montage = require("montage/core/core").Montage,
-    Component = require("montage/ui/component").Component;
+    Component = require("montage/ui/component").Component,
+    DefaultPresets = require("js/panels/presets/default-style-presets").stylePresets;
 
 exports.StylesLibrary = Montage.create(Component, {
     hasTemplate: {
         value: true
+    },
+    presetData : {
+        value : null
     },
     contentPanel : {
         value: "presets" // get from local storage
     },
     templateDidLoad : {
         value: function() {
-            console.log('deserialized');
+            this.presetData = DefaultPresets;
         }
     },
     treeList : {
         value : null
     },
-    data2: {
-        value: {
-            "text": "styles",
-            "children": [{
-                "text": "Box Styles",
-                "children": [
-                    {
-                        "text": "Border-Radius",
-                        "classNameBase" : "border-radius",
-                        "styles" : {
-                            "border-radius": "100px",
-                            "border" : "1px solid #333"
-                        }
-                    },
-                    {
-                        "text": "Drop Shadow",
-                        "classNameBase" : "drop-shadow",
-                        "styles" : {
-                            "box-shadow": "2px 2px 50px rgba(0,0,0,0.5)",
-                            "border" : "1px solid #CCC"
-                        }
-                    },
-                    {
-                        "text": "Fancy Box",
-                        "classNameBase" : "fancy-box",
-                        "styles" : {
-                            "box-shadow": "inset 0 0 0 1px #666, inset 0 0 0 2px rgba(225, 225, 225, 0.4), 0 0 20px -10px #333",
-                            "border" : "1px solid #FFF",
-                            "border-radius": "30px",
-                            "background-color": "#7db9e8",
-                            "background-image": "-webkit-linear-gradient(top, rgba(255,255,255,0.74) 0%,rgba(255,255,255,0) 100%)"
-                        }
-                    }]
-            }, {
-                "text": "Text Styles",
-                "children": [
-                    { "text": "Italic" },
-                    { "text": "Text Shadow" },
-                    { "text": "Text Color" } ]
-            }, {
-                "text": "Color Styles",
-                "children": [
-                    { "text": "Background Gradient" },
-                    { "text": "Background Color" },
-                    { "text": "Text Highlight" } ]
-            }]
-        }
-    },
     didDraw: {
         value : function() {
-            console.log('Presets Panel prepare for draw.');
-//            this.treeList.items.push({
-//                label : "Box Style",
-//                type : 'leaf'
-//            });
         }
     },
     handleNodeActivation: {
