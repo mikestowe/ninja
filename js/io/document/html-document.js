@@ -471,8 +471,9 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
 	save: {
 		enumerable: false,
     	value: function () {
-    		//TODO: Add code view logic
-    		return {mode: 'html', document: this._userDocument, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
+    		//console.log(this._styles, this._stylesheets);
+    		//TODO: Add code view logic and also styles for HTML
+    		return {mode: 'html', document: this._userDocument, style: this._styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
     	}
 	}
 	////////////////////////////////////////////////////////////////////
