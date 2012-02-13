@@ -179,7 +179,7 @@ RDGERequestAnimationFrame = (function() {
 RDGETask = (function() {
     var tasks = {};
     return function(canvas, startNow) {
-        this.id = canvas.id;
+        this.id = canvas.rdgeid;
         this.currTime = 0.0;
         this.lastTime = 0.0;
         this.running = false;
