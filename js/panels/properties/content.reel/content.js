@@ -156,10 +156,6 @@ exports.Content = Montage.create(Component, {
             var backgroundChip = this.customSections[0].content.controls["background"];
             backgroundChip.initialColor = ElementsMediator.getProperty(stage, "background");
 
-            // Get stage color
-            //var backgroundColor =
-            //console.log(backgroundColor);
-
             /*
             var customPI = PiData[this.customPi];
             // Get all the custom section for the custom PI
@@ -178,10 +174,6 @@ exports.Content = Montage.create(Component, {
             }
             */
         }
-    },
-
-    foo: {
-        value: null
     },
 
     handleFirstDraw: {

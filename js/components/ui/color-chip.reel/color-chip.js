@@ -53,19 +53,6 @@ var ColorChip = exports.ColorChip = Montage.create(Component, {
             this.chipBtn.props = {side: 'right', align: 'top', wheel: true, palette: true, gradient: true, image: true, offset: this.offset};
             this.application.ninja.colorController.addButton(this.mode, this.chipBtn);
 
-            /*
-            if(this.chip) {
-                //this.application.ninja.colorController.addButton('fillIcon', this.icon);
-                this.chipBtn.props = {side: 'right', align: 'top', wheel: true, palette: true, gradient: true, image: true, offset: 0};
-                this.application.ninja.colorController.addButton(this.mode, this.chipBtn);
-            } else {
-                //if(this.hasIcon) this.application.ninja.colorController.addButton(this.mode + 'Icon', this.icon);
-                this.chipBtn.props = {side: 'right', align: 'top', wheel: true, palette: true, gradient: true, image: true, offset: 20};
-                this.application.ninja.colorController.addButton(this.mode, this.chipBtn);
-            }
-            */
-
-
         }
     },
 
@@ -76,7 +63,6 @@ var ColorChip = exports.ColorChip = Montage.create(Component, {
                 var mode = "rgb", r = 0, g = 0, b = 0, a = 1, css = "rgb(255,0,0)";
 
                 if(this.initialColor) {
-                    console.log(this.initialColor);
                     var colorObj = this.application.ninja.colorController.getColorObjFromCss(this.initialColor);
                     mode = colorObj.mode;
                     r = colorObj.value.r;
@@ -87,8 +73,6 @@ var ColorChip = exports.ColorChip = Montage.create(Component, {
                 }
 
                 this.chipBtn.color(mode, {wasSetByCode: true, type: 'change', color: {r: r, g: g, b: b}, css: css});
-                //this.chipBtn.color('rgb', {wasSetByCode: true, type: 'change', color: {r: 255, g: 0, b: 0}, css: 'rgb(255,0,0)'});
-
                 this.chipBtn.addEventListener("change", this, false);
             }
         }

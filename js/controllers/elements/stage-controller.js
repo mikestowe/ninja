@@ -94,7 +94,6 @@ exports.StageController = Montage.create(ElementController, {
         value: function(el, p, value) {
             switch(p) {
                 case "background":
-                    console.log(value);
                     el.elementModel.stageBackground.style.setProperty(p, value);
                     break;
                 case "overflow":

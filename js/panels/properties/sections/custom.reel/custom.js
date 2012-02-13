@@ -105,13 +105,14 @@ exports.CustomSection = Montage.create(Component, {
 		}
 	},
 
+    /**
+     * Color change handler. Hard coding the stage for now since only the stage PI uses this color chip
+     */
     handleColorChange: {
         value: function(event) {
             // Change the stage color for now
-            console.log(this);
-            console.log(event);
-            console.log(event._event.color.css);
-            ElementsMediator.setProperty([this.application.ninja.currentDocument.documentRoot], "background", [event._event.color.css], "Change", "pi", 'foo');
+            //console.log(this, event);
+            ElementsMediator.setProperty([this.application.ninja.currentDocument.documentRoot], this.id, [event._event.color.css], "Change", "pi", '');
             /*
             var propEvent = document.createEvent("CustomEvent");
             propEvent.initEvent("propertyChange", true, true);
@@ -330,10 +331,14 @@ exports.CustomSection = Montage.create(Component, {
     createColorChip: {
         value: function(aField) {
             var obj = ColorChip.create();
+
             obj.chip = true;
             obj.iconType = "fillIcon";
             obj.mode = "chip";
             obj.offset = 0;
+
+            if (aField.id)          obj.id = aField.id;
+            if (aField.prop)        obj.prop = aField.prop;
 
             obj.changeDelegate = this.handleColorChange;
 
