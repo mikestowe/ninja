@@ -128,7 +128,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 } else {
                     this._defaultStylesheet = sheets[lastIndex];
                 }
-                
+
             }
         }
     },
@@ -848,21 +848,55 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     ///// Returns the CSSKeyframesRule with given name
 
     getAnimationRuleWithName : {
-        value: function(name) {
-            var sheets = this._activeDocument._document.styleSheets,
-                rules, i, j, rule;
+        value: function(name, document) {
+            var doc = document || this._activeDocument._document,
+                animRules = this.getDocumentAnimationRules(doc),
+                rule, i;
 
-            for(i = 0; i < sheets.length; i++) {
-                rules = sheets[i].rules;
-                for(j = 0; j < rules.length; j++) {
-                    rule = rules[j];
-                    if(rule instanceof WebKitCSSKeyframesRule && rule.name === name) {
-                        return rule;
-                    }
+            for(i = 0; i < animRules.length; i++) {
+                rule = animRules[i];
+                if(rule.name === name) {
+                    return rule;
                 }
             }
 
             return;
+        }
+    },
+
+    ///// Get Document Animation Rules
+    ///// Returns all CSSKeyframesRules in active document, or in
+    ///// optionally passed-in document
+    ///// If none are found, returns an empty array
+
+    getDocumentAnimationRules : {
+        value: function(document) {
+            var sheets = (document) ? document.styleSheets : this._activeDocument._document.styleSheets,
+                rules = [];
+
+            nj.toArray(sheets).forEach(function(sheet) {
+                rules = rules.concat(this.getStyleSheetAnimationRules(sheet));
+            }, this);
+
+            return rules;
+        }
+    },
+
+    ///// Get Style Sheet Animation Rules
+    ///// Returns all CSSKeyframesRules from the given stylesheet
+    ///// If none are found, returns an empty array
+
+    getStyleSheetAnimationRules : {
+        value: function(sheet) {
+            var rules = [];
+
+            if(sheet.rules) {
+                rules = rules.concat(nj.toArray(sheet.rules).filter(function(rule) {
+                    return rule instanceof WebKitCSSKeyframesRule;
+                }));
+            }
+
+            return rules;
         }
     },
 
