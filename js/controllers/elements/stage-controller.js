@@ -92,7 +92,11 @@ exports.StageController = Montage.create(ElementController, {
 
     setProperty: {
         value: function(el, p, value) {
+
             switch(p) {
+                case "body-background":
+                    el.elementModel.body.style.setProperty("background", value);
+                    break;
                 case "background":
                     el.elementModel.stageBackground.style.setProperty(p, value);
                     break;
