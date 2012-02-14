@@ -986,4 +986,8 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .tree li > text > img { margin-right: 8px; -webkit-transition: -webkit-transform 0.05s linear; }
 
+.montage-modal { border: 0px; }
+
+.montage-popup-container { background: none; }
+
 /*77*/
