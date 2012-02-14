@@ -10,7 +10,7 @@ var Montage = 		require("montage/core/core").Montage,
     Component = 	require("montage/ui/component").Component,
     Uuid = 			require("montage/core/uuid").Uuid,
     HTMLDocument =	require("js/document/models/html-document").HTMLDocument,
-    TextDocument =	require("js/document/models/text-document").TextDocument,
+    BaseDocument =	require("js/document/models/base-document").BaseDocument,
     DocumentController;
 ////////////////////////////////////////////////////////////////////////
 //
@@ -203,7 +203,7 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
 					break;
 				default:
 					//Open in code view
-					var code = Montage.create(TextDocument, {"source": {value: doc.content}}), docuuid = Uuid.generate(), textArea;
+					var code = Montage.create(BaseDocument, {"source": {value: doc.content}}), docuuid = Uuid.generate(), textArea;
 					textArea = this.application.ninja.stage.stageView.createTextAreaElement(docuuid);
 					code.initialize(doc, docuuid, textArea, textArea.parentNode);
 					//code.init(doc.name, doc.uri, doc.extension, null, docuuid);
