@@ -6,6 +6,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var Montage = require("montage/core/core").Montage;
 var Component = require("montage/ui/component").Component;
+var ElementsMediator = require("js/mediators/element-mediator").ElementMediator;
 
 //Custom Rows
 var SingleRow = require("js/panels/properties/sections/custom-rows/single-row.reel").SingleRow;
@@ -18,7 +19,7 @@ var Dropdown = require("js/components/combobox.reel").Combobox;
 var TextField = require("js/components/textfield.reel").TextField;
 var FileInput = require("js/components/ui/file-input.reel").FileInput;
 var Checkbox = require("js/components/checkbox.reel").Checkbox;
-
+var ColorChip = require("js/components/ui/color-chip.reel").ColorChip;
 
 exports.CustomSection = Montage.create(Component, {
 
@@ -88,10 +89,8 @@ exports.CustomSection = Montage.create(Component, {
         value:{}
     },
 
-    handleChanging:
-	{
-		value:function(event)
-		{
+    handleChanging: {
+		value:function(event) {
             var obj = event.currentTarget;
             this._dispatchPropEvent({"type": "changing", "id": obj.id, "prop": obj.prop, "value": obj.value, "control": obj});
 		}
@@ -105,6 +104,27 @@ exports.CustomSection = Montage.create(Component, {
             this._dispatchPropEvent({"type": "change", "id": obj.id, "prop": obj.prop, "value": obj.value, "control": obj});
 		}
 	},
+
+    /**
+     * Color change handler. Hard coding the stage for now since only the stage PI uses this color chip
+     */
+    handleColorChange: {
+        value: function(event) {
+            // Change the stage color for now
+            //console.log(this, event);
+            ElementsMediator.setProperty([this.application.ninja.currentDocument.documentRoot], this.id, [event._event.color.css], "Change", "pi", '');
+            /*
+            var propEvent = document.createEvent("CustomEvent");
+            propEvent.initEvent("propertyChange", true, true);
+            propEvent.type = "propertyChange";
+
+            propEvent.prop = "background";//event.prop;
+            propEvent.value = event._event.color.css;
+
+            this.dispatchEvent(propEvent);
+            */
+        }
+    },
 
     _dispatchPropEvent: {
         value: function(event) {
@@ -140,6 +160,7 @@ exports.CustomSection = Montage.create(Component, {
                 case "textbox"  : return this.createTextField(fields);
                 case "file"     : return this.createFileInput(fields);
                 case "checkbox" : return this.createCheckbox(fields);
+                case "chip"     : return this.createColorChip(fields);
             }
         }
     },
@@ -302,6 +323,26 @@ exports.CustomSection = Montage.create(Component, {
               boundObject: obj,
               boundObjectPropertyPath: "checked"
             });
+
+            return obj;
+        }
+    },
+
+    createColorChip: {
+        value: function(aField) {
+            var obj = ColorChip.create();
+
+            obj.chip = true;
+            obj.iconType = "fillIcon";
+            obj.mode = "chip";
+            obj.offset = 0;
+
+            if (aField.id)          obj.id = aField.id;
+            if (aField.prop)        obj.prop = aField.prop;
+
+            obj.changeDelegate = this.handleColorChange;
+
+            this.controls[aField.id] = obj;
 
             return obj;
         }

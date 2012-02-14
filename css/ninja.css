@@ -36,7 +36,7 @@ input[type="search"].nj-skinned::-webkit-search-cancel-button:after { content: "
 
 button.nj-skinned { font-size: 9px; cursor: pointer; display: block; border: 0px; margin: 0px; padding: 4px; border: 1px #313131 solid; background-color: #474747; background-image: -webkit-linear-gradient(top, #505050 0%, #3c3c3c 100%); border-radius: 4px; color: white; text-transform: uppercase; cursor: pointer; text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5); }
 
-button.nj-skinned:active { background-image: -webkit-linear-gradient(top, #3c3c3c 0%, #505050 100%); }
+button.nj-skinned:active, button.nj-skinned.active { background-image: -webkit-linear-gradient(top, #3c3c3c 0%, #505050 100%); }
 
 button.nj-skinned:hover { -webkit-box-shadow: 0px 0px 3px #b4b4b4; }
 
@@ -80,7 +80,7 @@ body { position: absolute; margin: 0px; width: 100%; height: 100%; background-co
 
 #topPanelContainer { overflow: hidden; margin-bottom: 2px; height: 32px; }
 
-#bottomPanelContainer { background: transparent; min-height: 80px; max-height: 50%; overflow: auto; }
+#bottomPanelContainer { background: transparent; height: 150px; min-height: 80px; max-height: 50%; overflow: auto; }
 
 .panelContainer { display: block; -webkit-box-orient: vertical; position: relative; }
 
@@ -164,8 +164,6 @@ body { position: absolute; margin: 0px; width: 100%; height: 100%; background-co
 
 #rightPanelContent { overflow-y: hidden; }
 
-.contextMenu { position: absolute; z-index: 999; }
-
 #openDocumentsTabComponent { height: 25px; position: relative; overflow: hidden; color: white; }
 
 #openDocuments { float: left; height: 25px; width: 100%; font-size: 12px; list-style: none; margin: 0; padding: 0; position: relative; text-decoration: none; }
@@ -212,6 +210,10 @@ body { position: absolute; margin: 0px; width: 100%; height: 100%; background-co
 
 #mainContent .CodeMirror-scroll { height: 100%; overflow: scroll; overflow-x: auto; overflow-y: auto; }
 
+.montage-editor-frame { position: absolute; z-index: 7; top: 0; left: 0; display: none; -webkit-user-select: initial; }
+
+.montage-editor { padding: 0px; word-wrap: normal; }
+
 .panelContainer { margin: 0px; padding: 0px 0px; position: relative; overflow: auto; }
 
 .panelDisclosureIcon { background-image: url("../images/panels/panelDisclosureIcon.png"); background-repeat: no-repeat; width: 16px; height: 16px; float: left; -webkit-transition-property: rotate; -webkit-transition-duration: 0.2s; -webkit-transition-timing-function: linear; padding-right: 2px; }
@@ -236,7 +238,7 @@ body { position: absolute; margin: 0px; width: 100%; height: 100%; background-co
 
 #toolPropertiesPanel { height: 32px; margin: 0px; }
 
-#timelinePanel { height: 116px; }
+#timelinePanel { height: 100%; }
 
 .treeComponent { -webkit-user-select: none; font-size: 11px; margin-left: 20px; cursor: default; color: white; }
 
@@ -983,5 +985,9 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 .tree li { -webkit-margin-before: 0px; -webkit-margin-after: 0px; list-style-type: none; }
 
 .tree li > text > img { margin-right: 8px; -webkit-transition: -webkit-transform 0.05s linear; }
+
+.montage-modal { border: 0px; }
+
+.montage-popup-container { background: none; }
 
 /*77*/

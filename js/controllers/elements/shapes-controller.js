@@ -346,19 +346,24 @@ exports.ShapesController = Montage.create(CanvasController, {
             {
                 world = new GLWorld(el, true);
                 el.elementModel.shapeModel.GLWorld = world;
-                el.elementModel.shapeModel.GLGeomObj.setWorld(world);
                 el.elementModel.shapeModel.useWebGl = true;
+                world.import(worldData);
+                el.elementModel.shapeModel.GLGeomObj = world.getGeomRoot();
+
                 sm = Object.create(MaterialsLibrary.getMaterial("FlatMaterial"));
-                fm = Object.create(MaterialsLibrary.getMaterial("FlatMaterial"));
-                if(sm && fm)
+                if(sm)
                 {
                     el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(sm);
-                    el.elementModel.shapeModel.GLGeomObj.setFillMaterial(fm);
                     el.elementModel.shapeModel.strokeMaterial = sm;
-                    el.elementModel.shapeModel.fillMaterial = fm;
-                    el.elementModel.shapeModel.GLGeomObj.buildBuffers();
                 }
-                world.import(worldData);
+                fm = Object.create(MaterialsLibrary.getMaterial("FlatMaterial"));
+                // TODO - Use consts after GL code is converted to object literal notation
+//                if( fm && (el.elementModel.shapeModel.GLGeomObj.geomType() !== GLGeomObj.GEOM_TYPE_LINE) )
+                if( fm && (el.elementModel.shapeModel.GLGeomObj.geomType() !== 3) )
+                {
+                    el.elementModel.shapeModel.GLGeomObj.setFillMaterial(fm);
+                    el.elementModel.shapeModel.fillMaterial = fm;
+                }
             }
 
         }
@@ -378,13 +383,17 @@ exports.ShapesController = Montage.create(CanvasController, {
                 world = new GLWorld(el, false);
                 el.elementModel.shapeModel.GLWorld = world;
                 el.elementModel.shapeModel.useWebGl = false;
-                el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(null);
-                el.elementModel.shapeModel.GLGeomObj.setFillMaterial(null);
-                el.elementModel.shapeModel.strokeMaterial = null;
-                el.elementModel.shapeModel.fillMaterial = null;
                 world.import(worldData);
+                el.elementModel.shapeModel.GLGeomObj = world.getGeomRoot();
+                el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(null);
+                el.elementModel.shapeModel.strokeMaterial = null;
+                // TODO - Use consts after GL code is converted to object literal notation
+                if(el.elementModel.shapeModel.GLGeomObj.geomType() !== 3)
+                {
+                    el.elementModel.shapeModel.GLGeomObj.setFillMaterial(null);
+                    el.elementModel.shapeModel.fillMaterial = null;
+                }
             }
-
         }
     }
 
