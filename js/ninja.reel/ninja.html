@@ -216,6 +216,11 @@
                 "name": "ElementMediator"
             },
 
+            "ioMediator": {
+                "module": "js/mediators/io-mediator",
+                "name": "IoMediator"
+            },
+
             "undocontroller1": {
                 "module": "js/controllers/undo-controller",
                 "name": "UndoController"
@@ -227,7 +232,7 @@
             },
 
             "documentController1": {
-                "module": "js/io/document/document-controller",
+                "module": "js/controllers/document-controller",
                 "name": "DocumentController"
             },
 
@@ -255,8 +260,13 @@
             },
 
             "newFileController": {
-                "module": "js/io/workflow/newFileDialog/new-file-workflow-controller",
+                "module": "js/io/ui/new-file-dialog/new-file-workflow-controller",
                 "name": "NewFileWorkflowController"
+            },
+            
+            "coreIoApi1": {
+                "module": "js/io/system/coreioapi",
+                "name": "CoreIoApi"
             },
 
             "mainMenuController": {
@@ -269,6 +279,8 @@
                 "name": "Ninja",
                 "properties": {
                     "element":              {"#": "main"},
+                    "rulerTop":        		{"#": "rulerTop"},
+                    "rulerLeft":        	{"#": "rulerLeft"},
                     "appModel":             {"@": "appModel"},
                     "toolsData":            {"@": "toolsData1"},
                     "toolsList":            {"@": "toolsList1"},
@@ -284,7 +296,9 @@
                     "stylesController":     {"@": "stylesController"},
                     "filePickerController": {"@": "filePickerController"},
                     "newFileController":    {"@": "newFileController"},
+                    "coreIoApi":    		{"@": "coreIoApi1"},
                     "documentBar":          {"@": "documentBar"},
+                    "ioMediator":           {"@": "ioMediator"},
                     "timeline":             {"@": "timeline"},
                     "mainMenuController":   {"@": "mainMenuController"}
                 }

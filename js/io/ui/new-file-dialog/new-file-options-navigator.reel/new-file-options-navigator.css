@@ -1,0 +1,188 @@
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
+.newfile{
+    font-size:12px;
+    width:650px;
+    height:350px;
+    padding-left: 15px;
+    padding-bottom:32px;
+    background-color:#494949;
+    color:#ffffff;
+    font-family: 'Droid Sans', sans-serif;
+    border-radius: 8px;
+	box-shadow: 0px 0px 8px rgba(0, 0, 0, .8);
+}
+
+.newfile .title{
+    font-size:14px;
+    height:15px;
+    padding:5px;
+    text-align: center;
+    text-transform: uppercase;
+	font-weight: normal;
+  	text-shadow: 1px 1px 1px #000;
+}
+
+.newfile .container{
+    border: 1px solid #000000;
+    border-right: none;
+    overflow: auto;
+    background-color:#5f5f5f;
+}
+
+.newfile .left-nav{
+    float:left;
+    width:27%;
+    height:90%;
+    overflow-x:auto;
+    overflow-y:auto
+}
+
+.newfile .right-nav{
+    float:left;
+    width:70%;
+    height:90%;
+    overflow: hidden;
+}
+
+.newfile .right-top{
+    border-right: 1px solid #000000;
+    overflow: auto;
+    min-height:150px;
+    height:58%;
+    width:auto;
+    padding:5px;
+}
+
+.newfile .right-bottom{
+    border: 1px solid #000000;
+  	border-left: none;
+    overflow: auto;
+    height:42%;
+    padding: 15px;
+}
+
+.newfile .projectTypeHeader{
+    border-bottom:1px solid #000000;
+    padding:5px;
+    text-align: center;
+    text-transform: uppercase;
+	font-weight: normal;
+  	text-shadow: 1px 1px 1px #000;
+}
+
+.newfile .buttons{
+    float:right;
+    margin-top: 7px;
+}
+
+.newfile .errorMsg{
+    float:left;
+    margin-top: 12px;
+    text-shadow: 1px 1px 1px #333;
+    text-transform: uppercase;
+    clear: left;
+    width: 200px;
+}
+.newfile .errorMsg span{
+    color: #FF3A3A;
+}
+
+.newfile .disable{
+    color:#5f5f5f;
+    cursor:auto;
+}
+
+.newfile .hide{
+    display: none;
+}
+
+.newfile .treeArrow + .name{
+    font-weight: bold;
+}
+
+.newfile .atreeItem {
+	text-shadow: 1px 1px 1px #000;
+}
+
+.newfile .atreeItem .name{
+    padding: 3px;
+}
+
+.newfile .atreeItem .selected{
+    background-color: #3f3f3f;
+}
+
+.newfile .icon .selected{
+    background-color: #7f7f7f;
+}
+
+.newfile .icon{
+    height:90px;
+}
+
+.newfile .icon .iconLabel{
+    margin-top:4px;
+    max-width:90%;
+    white-space: normal;
+    padding-bottom:4px;
+    overflow: visible;
+    text-shadow: 1px 1px 1px #000;
+}
+
+.newfile .icon .iconImg{
+    margin-left:25px;
+}
+
+.newfile .buttons button {
+	float: left;
+	width: 100px;
+	margin-top: 3px;
+}
+
+.newfile .okButton{
+	margin: 0px 18px 0px 8px; 
+    /*
+margin-right:25px;
+    -webkit-box-align: center;
+    text-align: center;
+    cursor: default;
+    padding: 0px 6px 0px;
+    border:2px solid #d1d1d1;
+    background-color: #e1e1e1;
+    box-sizing: border-box;
+    border-radius:10px;
+    background-image: -webkit-linear-gradient(bottom, #e1e1e1 13%, #d1d1d1 58%, #e1e1e1 40%);
+    cursor:pointer;
+*/
+}
+
+.newfile .cancelButton{
+    /*
+-webkit-box-align: center;
+    text-align: center;
+    cursor: default;
+    padding: 0px 6px 0px;
+    border:2px solid #d1d1d1;
+    background-color: #e1e1e1;
+    box-sizing: border-box;
+    border-radius:10px;
+    background-image: -webkit-linear-gradient(bottom, #e1e1e1 13%, #d1d1d1 58%, #e1e1e1 40%);
+    cursor:pointer;
+*/
+}
+
+.newfile input[type="button"]:disabled{
+    background-color: #a1a1a1;
+    border:2px solid #a1a1a1;
+    background-image:none;
+    cursor:auto;
+}
+
+.newfile .atree ul{
+    -webkit-padding-start: 10px;
+}

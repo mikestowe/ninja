@@ -4,18 +4,15 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var Montage = require("montage/core/core").Montage,
-    Component = require("montage/ui/component").Component;
-
-var snapManager = require("js/helper-classes/3D/snap-manager").SnapManager;
-var viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
-var drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils;
-var ElementPlanes = require("js/helper-classes/3D/element-planes").ElementPlanes;
-var MathUtilsClass = require("js/helper-classes/3D/math-utils").MathUtilsClass;
-var VecUtils = require("js/helper-classes/3D/vec-utils").VecUtils;
-
-//TODO : This dependency needs to be reworked
-var DrawingToolBase = require("js/tools/drawing-tool-base").DrawingToolBase;
+var Montage = 			require("montage/core/core").Montage,
+    Component = 		require("montage/ui/component").Component,
+    snapManager = 		require("js/helper-classes/3D/snap-manager").SnapManager,
+    viewUtils = 		require("js/helper-classes/3D/view-utils").ViewUtils,
+    drawUtils = 		require("js/helper-classes/3D/draw-utils").DrawUtils,
+    ElementPlanes = 	require("js/helper-classes/3D/element-planes").ElementPlanes,
+    MathUtilsClass = 	require("js/helper-classes/3D/math-utils").MathUtilsClass,
+    VecUtils = 			require("js/helper-classes/3D/vec-utils").VecUtils,
+    DrawingToolBase =	require("js/tools/drawing-tool-base").DrawingToolBase;
 
 exports.StageDeps = Montage.create(Component, {
     viewUtils: {

@@ -82,7 +82,12 @@ var BaseDocument = exports.BaseDocument = Montage.create(Montage, {
         value: function() {
             // Have the XHR here?
         }
-    }
+    },
 
+    save:{
+        value:function(){
+            //base function - to be overridden
+        }
+    }
 
 });

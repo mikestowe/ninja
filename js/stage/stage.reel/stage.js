@@ -4,11 +4,10 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var Montage = require("montage/core/core").Montage,
-    Component = require("montage/ui/component").Component;
-
-var drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils;
-var vecUtils = require("js/helper-classes/3D/vec-utils").VecUtils;
+var Montage = 	require("montage/core/core").Montage,
+    Component = require("montage/ui/component").Component,
+    drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils,
+    vecUtils = 	require("js/helper-classes/3D/vec-utils").VecUtils;
 
 exports.Stage = Montage.create(Component, {
 
@@ -117,9 +116,6 @@ exports.Stage = Montage.create(Component, {
     _userContentLeft:       { value: 0 },
     _userContentTop:        { value: 0 },
     _userContentBorder:     { value: 0 },
-    savedLeftScroll:        { value: null },
-    savedTopScroll:         { value: null },
-
 
     documentRoot: {
         get: function () { return this._documentRoot; },
@@ -248,6 +244,8 @@ exports.Stage = Montage.create(Component, {
 
             this._scrollLeft = this._iframeContainer.scrollLeft;
             this._scrollTop = this._iframeContainer.scrollTop;
+            this.application.ninja.currentDocument.savedLeftScroll = this._iframeContainer.scrollLeft;
+            this.application.ninja.currentDocument.savedTopScroll = this._iframeContainer.scrollTop;
 
             this.userContentBorder = parseInt(this._documentRoot.elementModel.controller.getProperty(this._documentRoot, "border"));
 
@@ -883,5 +881,20 @@ exports.Stage = Montage.create(Component, {
 
             this.stageDeps.snapManager.updateWorkingPlaneFromView();
         }
-    }
+    },
+
+    saveScroll:{
+       value: function(){
+           this.application.ninja.documentController.activeDocument.savedLeftScroll = this._iframeContainer.scrollLeft;
+           this.application.ninja.documentController.activeDocument.savedTopScroll = this._iframeContainer.scrollTop;
+       }
+   },
+   restoreScroll:{
+       value: function(){
+           this._iframeContainer.scrollLeft = this.application.ninja.documentController.activeDocument.savedLeftScroll;
+           this._scrollLeft = this.application.ninja.documentController.activeDocument.savedLeftScroll;
+           this._iframeContainer.scrollTop = this.application.ninja.documentController.activeDocument.savedTopScroll;
+           this._scrollTop = this.application.ninja.documentController.activeDocument.savedTopScroll;
+       }
+   }
 });
