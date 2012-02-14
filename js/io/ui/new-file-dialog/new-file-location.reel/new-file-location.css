@@ -7,11 +7,13 @@
 .newfileLocation .newFileName{
     width:65%;
     margin-left:5px;
+    text-shadow: 1px 1px 1px #000;
 }
 
 .newfileLocation .newFileDirectory{
     width:70%;
     margin-left:5px;
+    text-shadow: 1px 1px 1px #000;
 }
 
 .newfileLocation .templateSelection{
@@ -32,6 +34,7 @@
 .newfileLocation .locationSelection{
     float:left;
     width:75%;
+    text-shadow: 1px 1px 1px #000;
 }
 
 .newfileLocation .locationSelection div{
@@ -41,6 +44,7 @@
 .newfileLocation .locationSelection input{
     margin-left: 5px;
     white-space: nowrap;
+    text-shadow: 1px 1px 1px #333;
 }
 
 .newfileLocation .templatePx{
@@ -50,6 +54,7 @@
 
 .newfileLocation .nameText{
     margin-right:28px;
+    text-shadow: 1px 1px 1px #000;
 }
 
 .newfileLocation .hottextunit{
@@ -58,5 +63,6 @@
 }
 
 .newfileLocation .fileExtension{
-    color:#d7d7d7;
+    color:#FFF;
+    text-shadow: 1px 1px 1px #000;
 }

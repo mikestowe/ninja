@@ -4,11 +4,14 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var Montage = require("montage/core/core").Montage,
-    baseDocumentModule = require("js/io/document/base-document"),
-    NJUtils = require("js/lib/NJUtils").NJUtils;
-
-var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.BaseDocument, {
+////////////////////////////////////////////////////////////////////////
+//
+var Montage = 		require("montage/core/core").Montage,
+    BaseDocument =	require("js/io/document/base-document").BaseDocument,
+    NJUtils = 		require("js/lib/NJUtils").NJUtils;
+////////////////////////////////////////////////////////////////////////
+//
+exports.HTMLDocument = Montage.create(BaseDocument, {
     // PRIVATE MEMBERS
     _selectionExclude: { value: null, enumerable: false },
     _htmlTemplateUrl: { value: "user-document-templates/montage-application-cloud/index.html", enumerable: false},
@@ -477,32 +480,13 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
     		//TODO: Add code view logic and also styles for HTML
     		if (this.currentView === 'design') {
     			return {mode: 'html', document: this._userDocument, style: this._styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
-    		} else if(this.currentView === "code"){
+    		} else if (this.currentView === "code"){
     			//TODO: Would this get call when we are in code of HTML?
+    		} else {
+    			//Error
     		}
     	}
 	}
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
-	
-	
-    /*
-save:{
-        value:function(){
-            try{
-                if(this.currentView === "design"){
-                    //generate html and save
-                }else if((this.currentView === "code") && (this.codeViewDocument !== null)){
-                    this.codeViewDocument.editor.save();
-                    //persist to filesystem
-                }
-                this.dirtyFlag=false;
-            }catch(e){
-                console.log("Error while saving "+this.uri);
-                console.log(e.stack);
-            }
-        }
-    }
-*/
-
 });

@@ -10,7 +10,7 @@ var Montage = 		require("montage/core/core").Montage,
 	BaseDocument =	require("js/io/document/base-document").BaseDocument;
 ////////////////////////////////////////////////////////////////////////
 //
-var TextDocument = exports.TextDocument = Montage.create(BaseDocument, {
+exports.TextDocument = Montage.create(BaseDocument, {
     // PRIVATE MEMBERS
     _codeEditor: {
         value: {

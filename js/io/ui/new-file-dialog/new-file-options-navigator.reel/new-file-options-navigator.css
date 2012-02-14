@@ -9,9 +9,12 @@
     width:650px;
     height:350px;
     padding-left: 15px;
-    padding-bottom:25px;
-    background-color:#313131;
+    padding-bottom:32px;
+    background-color:#494949;
     color:#ffffff;
+    font-family: 'Droid Sans', sans-serif;
+    border-radius: 8px;
+	box-shadow: 0px 0px 8px rgba(0, 0, 0, .8);
 }
 
 .newfile .title{
@@ -19,12 +22,14 @@
     height:15px;
     padding:5px;
     text-align: center;
-    font-weight: bold;
-    color: #C1C1C1;
+    text-transform: uppercase;
+	font-weight: normal;
+  	text-shadow: 1px 1px 1px #000;
 }
 
 .newfile .container{
-    border: 1px groove #000000;
+    border: 1px solid #000000;
+    border-right: none;
     overflow: auto;
     background-color:#5f5f5f;
 }
@@ -45,7 +50,7 @@
 }
 
 .newfile .right-top{
-    border: 1px groove #000000;
+    border-right: 1px solid #000000;
     overflow: auto;
     min-height:150px;
     height:58%;
@@ -54,7 +59,8 @@
 }
 
 .newfile .right-bottom{
-    border: 1px groove #000000;
+    border: 1px solid #000000;
+  	border-left: none;
     overflow: auto;
     height:42%;
     padding: 15px;
@@ -64,7 +70,9 @@
     border-bottom:1px solid #000000;
     padding:5px;
     text-align: center;
-    font-weight: bold;
+    text-transform: uppercase;
+	font-weight: normal;
+  	text-shadow: 1px 1px 1px #000;
 }
 
 .newfile .buttons{
@@ -74,10 +82,14 @@
 
 .newfile .errorMsg{
     float:left;
-    margin-top: 7px;
+    margin-top: 12px;
+    text-shadow: 1px 1px 1px #333;
+    text-transform: uppercase;
+    clear: left;
+    width: 200px;
 }
 .newfile .errorMsg span{
-    color: #BF3B3B;
+    color: #FF3A3A;
 }
 
 .newfile .disable{
@@ -91,6 +103,10 @@
 
 .newfile .treeArrow + .name{
     font-weight: bold;
+}
+
+.newfile .atreeItem {
+	text-shadow: 1px 1px 1px #000;
 }
 
 .newfile .atreeItem .name{
@@ -115,14 +131,23 @@
     white-space: normal;
     padding-bottom:4px;
     overflow: visible;
+    text-shadow: 1px 1px 1px #000;
 }
 
 .newfile .icon .iconImg{
     margin-left:25px;
 }
 
+.newfile .buttons button {
+	float: left;
+	width: 100px;
+	margin-top: 3px;
+}
+
 .newfile .okButton{
-    margin-right:25px;
+	margin: 0px 18px 0px 8px; 
+    /*
+margin-right:25px;
     -webkit-box-align: center;
     text-align: center;
     cursor: default;
@@ -133,10 +158,12 @@
     border-radius:10px;
     background-image: -webkit-linear-gradient(bottom, #e1e1e1 13%, #d1d1d1 58%, #e1e1e1 40%);
     cursor:pointer;
+*/
 }
 
 .newfile .cancelButton{
-    -webkit-box-align: center;
+    /*
+-webkit-box-align: center;
     text-align: center;
     cursor: default;
     padding: 0px 6px 0px;
@@ -146,6 +173,7 @@
     border-radius:10px;
     background-image: -webkit-linear-gradient(bottom, #e1e1e1 13%, #d1d1d1 58%, #e1e1e1 40%);
     cursor:pointer;
+*/
 }
 
 .newfile input[type="button"]:disabled{
