@@ -6,7 +6,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 
 var Montage = require("montage/core/core").Montage,
-    Component = require("montage/ui/component").Component;
+    Component = require("montage/ui/component").Component,
+    AboutBoxPopup = require("js/components/about-box.reel").AboutBox;
 
 exports.MainMenuController = Montage.create(Component, {
     deserializedFromTemplate:{
@@ -36,8 +37,7 @@ exports.MainMenuController = Montage.create(Component, {
     },
     handleExecuteHelpAbout:{
         value:function () {
-            // TODO
-            console.log("Pull up the about popup");
+            AboutBoxPopup.show();
         }
     }
 });
