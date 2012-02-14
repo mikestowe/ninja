@@ -104,8 +104,14 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
     handleExecuteSave: {
     	value: function(event) {
     		//Text and HTML document classes should return the same save object for fileSave
-    		this.application.ninja.ioMediator.fileSave(this.activeDocument.save());
+    		this.application.ninja.ioMediator.fileSave(this.activeDocument.save(), this.clearDocumentDirtyFlag().bind(this));
 		}
+    },
+
+    clearDocumentDirtyFlag:{
+        value: function(){
+            this.activeDocument.dirtyFlag = false;
+        }
     },
 	////////////////////////////////////////////////////////////////////
 	
@@ -135,8 +141,11 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
     openNewFileCallback:{
         value:function(doc){
             var response = doc || null;//default just for testing
-            if(!!response && response.success && !!response.uri){
+            if(!!response && response.success && (response.status!== 500) && !!response.uri){
                 this.application.ninja.ioMediator.fileOpen(response.uri, this.openFileCallback.bind(this));
+            }else if(!!response && !response.success){
+                //Todo: restrict directory path to the sandbox, in the dialog itself
+                alert("Unable to create file.\n [Error: Forbidden directory]");
             }
         }
     },
