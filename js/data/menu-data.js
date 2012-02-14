@@ -10,7 +10,7 @@ exports.MenuData = Montage.create( Montage, {
     topLevelMenu: {
         value: [
             {
-                "header": "FILE",
+                "header": "File",
                 "entries": [
                     {
                         "displayText" : "New Project",
@@ -74,7 +74,7 @@ exports.MenuData = Montage.create( Montage, {
                 ]
             },
             {
-                "header": "EDIT",
+                "header": "Edit",
                 "entries": [
                     {
                         "displayText" : "Undo",
@@ -114,7 +114,7 @@ exports.MenuData = Montage.create( Montage, {
                 ]
             },
             {
-                "header": "VIEW",
+                "header": "View",
                 "entries": [
                     {
                         "displayText" : "Zoom In",
@@ -285,7 +285,7 @@ exports.MenuData = Montage.create( Montage, {
                 ]
             },
             {
-                "header": "WINDOW",
+                "header": "Window",
                 "entries": [
                     {
                         "displayText" : "Tools",
@@ -359,41 +359,34 @@ exports.MenuData = Montage.create( Montage, {
                 ]
             },
             {
-                "header": "HELP",
+                "header": "Help",
                 "entries": [
                     {
-                        "displayText" : "About",
+                        "displayText" : "Ninja FAQ",
                         "hasSubMenu" : false,
-                        "enabled": true
+                        "enabled": true,
+                        "action":   "executeHelpFAQ"
                     },
                     {
-                        "displayText" : "FAQ",
+                        "displayText" : "Ninja Forums",
                         "hasSubMenu" : false,
-                        "enabled": true
+                        "enabled": true,
+                        "action":   "executeHelpForums"
                     },
                     {
-                        "displayText" : "Forums",
+                        "displayText" : "Help Topics",
                         "hasSubMenu" : false,
-                        "enabled": true
-                    }
-                ]
-            },
-            {
-                "header": "TEST",
-                "entries": [
-                    {
-                        "displayText" : "Open CSS View",
-                        "hasSubMenu" : false,
-                        "enabled": true
+                        "enabled": true,
+                        "action":   "executeHelpTopics"
                     },
                     {
-                        "displayText" : "Open JS View",
+                        "displayText" : "About Ninja...",
                         "hasSubMenu" : false,
-                        "enabled": true
+                        "enabled": true,
+                        "action":   "executeHelpAbout"
                     }
                 ]
             }
-
         ]
     }
 });

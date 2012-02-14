@@ -450,7 +450,7 @@ window.hack = function (name, type) {
     	enumerable: false,
     	value: function(file) {
             var retValue = { success:null, status:null };
-            if(file && file.uri && file.uri.length && file.contents && file.contents.length) {
+            if(file && file.uri && file.uri.length && file.contents) {
                 try {
                     var serviceURL = this._prepareServiceURL(this.fileServiceURL, file.uri),
                     	xhr = new XMLHttpRequest();

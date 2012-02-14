@@ -138,6 +138,23 @@ exports.IoMediator = Montage.create(Component, {
     	enumerable: false,
     	value: function (file, callback) {
     		//
+    		var contents, save;
+    		//
+    		switch (file.mode) {
+    			case 'html':
+    				file.document.content.document.body.innerHTML = file.body;
+    				file.document.content.document.head.innerHTML = file.head;
+    				if (file.style) {
+    					file.document.content.document.head.getElementsByTagName('style')[0].innerHTML = this.getCssFromRules(file.style.cssRules);
+    				}
+    				contents = file.document.content.document.documentElement.outerHTML;
+    				break;
+    			default:
+    				contents = file.content;
+    				break;
+    		}
+    		//
+    		save = this.fio.saveFile({uri: file.document.uri, contents: contents})
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -159,6 +176,28 @@ exports.IoMediator = Montage.create(Component, {
     		doc.getElementsByTagName('html')[0].innerHTML = html;
     		//Creating return object
     		return {head: doc.head.innerHTML, body: doc.body.innerHTML, document: doc};
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //Method to return a string from CSS rules (to be saved to a file)
+    getCssFromRules: {
+    	enumerable: false,
+    	value: function (list) {
+    		//Variable to store CSS definitions
+    		var i, str, css = '';
+    		//Looping through list
+    		if (list && list.length > 0) {
+    			//Adding each list item to string and also adding breaks
+    			for (i = 0; list[i]; i++) {
+    				str = list[i].cssText+' ';
+    				str = str.replace( new RegExp( "{", "gi" ), "{\n\t" );
+    				str = str.replace( new RegExp( "}", "gi" ), "}\n" );
+    				str = str.replace( new RegExp( ";", "gi" ), ";\n\t" );
+    				css += '\n'+str;
+    			}
+    		}
+    		//Returning the CSS string
+    		return css;
     	}
     }
     ////////////////////////////////////////////////////////////////////

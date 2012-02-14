@@ -1,0 +1,26 @@
+.tracklane{
+    height: 19px;
+    width: 100%;
+    color: white;
+    padding-top: 2px;
+    border-bottom: #444;
+    border-bottom-style: solid;
+    border-bottom-width: thin;
+    background-image: url("../images/gridline.jpg");
+    overflow: hidden;
+}
+
+.keyframe{
+    position: absolute;
+    height: 16px;
+    width: 4px;
+    background-color: white;
+
+}
+
+.defaultSpan{
+    position: absolute;
+    height: 16px;
+    opacity: 0.3;
+    background-color: white;
+}

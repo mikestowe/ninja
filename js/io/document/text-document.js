@@ -4,11 +4,13 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var Montage = require("montage/core/core").Montage;
-var baseDocumentModule = require("js/io/document/base-document");
-
-
-var TextDocument = exports.TextDocument = Montage.create(baseDocumentModule.BaseDocument, {
+////////////////////////////////////////////////////////////////////////
+//
+var Montage = 		require("montage/core/core").Montage,
+	BaseDocument =	require("js/io/document/base-document").BaseDocument;
+////////////////////////////////////////////////////////////////////////
+//
+var TextDocument = exports.TextDocument = Montage.create(BaseDocument, {
     // PRIVATE MEMBERS
     _codeEditor: {
         value: {
@@ -21,7 +23,9 @@ var TextDocument = exports.TextDocument = Montage.create(baseDocumentModule.Base
     _hline: { value: null, enumerable: false },
 
     _textArea: {value: null, enumerable: false },
-
+	
+	_userDocument: {value: null, enumerable: false },
+	
     _source: { value: null, enumerable: false},
 
     source: {
@@ -65,19 +69,43 @@ var TextDocument = exports.TextDocument = Montage.create(baseDocumentModule.Base
     },
 
     
-    // PUBLIC METHODS
+    ////////////////////////////////////////////////////////////////////
+	//
     initialize: {
-        value: function(doc, uuid, textArea, container, callback) {
-            this.init(doc.name, doc.uri, doc.type, container, uuid);
-            this.currentView = "code";
-            this.textArea = textArea;
-
-//            this._loadContent();
-
+    	value: function(file, uuid, textArea, container, callback) {
+        	//
+			this._userDocument = file;
+			//
+			this.init(file.name, file.uri, file.extension, container, uuid, callback);
+	        //
+    	    this.currentView = "code";
+        	this.textArea = textArea;
         }
     },
+    ////////////////////////////////////////////////////////////////////
+    //
+	save: {
+		enumerable: false,
+    	value: function () {
+    		//TODO: Improve sequence
+    		this.editor.save();
+    		return {mode: this._userDocument.extension, document: this._userDocument, content: this.textArea.value};
+    	}
+	}
+	////////////////////////////////////////////////////////////////////
 
-    // PRIVATE METHODS
+
+
+
+
+
+
+
+
+
+
+    /*
+// PRIVATE METHODS
     _loadContent: {
         value: function() {
             // Start and AJAX call to load the HTML Document as a String
@@ -104,11 +132,15 @@ var TextDocument = exports.TextDocument = Montage.create(baseDocumentModule.Base
             xhr.send('');
         }
     },
+*/
+    ////////////////////////////////////////////////////////////////////
+	
 
     /**
      * public method
      */
-    save:{
+    /*
+save:{
         value:function(){
             try{
                 this.editor.save();
@@ -120,4 +152,5 @@ var TextDocument = exports.TextDocument = Montage.create(baseDocumentModule.Base
             }
         }
     }
+*/
 });
