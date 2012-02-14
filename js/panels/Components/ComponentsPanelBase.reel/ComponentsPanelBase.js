@@ -53,12 +53,27 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
         value: 0
     },
 
+    dragComponent: {
+        value: null
+    },
+
+    dragPosition: {
+        value: null
+    },
+
     centerStage: {
         value: null
     },
 
+
+    /*********************************************************************
+     * Components Tree and Model Creation
+     *********************************************************************/
+
     didCreate: {
         value: function() {
+            // Setup the drop delegate
+            this.application.ninja.dragDropMediator.dropDelegate = this;
             // Loop through the component and load the JSON data for them
             this._loadComponents();
         }
@@ -138,36 +153,56 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
         }
     },
 
-    applySelection: {
-        value: function(selection) {
-            //console.log(selection);
-            //console.log(this.componentsData[selection.component]);
-            this.addComponentToStage(this.componentsData[selection.component]);
+    /*********************************************************************
+     * Handle Tree / Drag-Drop events
+     *********************************************************************/
+
+    handleDblclick: {
+        value: function(obj) {
+            this.addComponentToStage(this.componentsData[obj.component]);
         }
     },
 
-    // This method will be used once we handle drag and drop
-    handleExecuteAddComponent: {
-        value: function(evt) {
+    handleDragStart: {
+        value: function(obj, event) {
+            this.dragComponent = obj;
+            event.dataTransfer.effectAllowed = 'move';
+            event.dataTransfer.setData('text/plain', 'componentDrop');
         }
     },
+
+    handleComponentDrop: {
+        value: function(left, top) {
+            this.addComponentToStage(this.componentsData[this.dragComponent.component], [left, top]);
+        }
+    },
+
 
     /**
      * Send a request to add a component to the user document and waits for a callback to continue
      */
     addComponentToStage: {
-        value: function(component) {
-            var that = this;
-            var element = this.makeComponent(component.component);
+        value: function(component, position) {
+            var that, element;
+
+            // Check for position. If none then center on the stage
+            if(position) {
+                this.dragPosition = position;
+            } else {
+                this.dragPosition = this.getStageCenter();
+
+            }
+            that = this;
+            element = this.makeComponent(component.component);
 
             this.application.ninja.currentDocument._window.addComponent(element, {name: component.name, path: component.module}, function(instance, element) {
 
-                var pos = that.getStageCenter();
+                //var pos = that.getStageCenter();
 
                 var styles = {
                     'position': 'absolute',
-                    'left'      : pos[0] + 'px',
-                    'top'       : pos[1] + 'px',
+                    'left'      : that.dragPosition[0] + 'px',
+                    'top'       : that.dragPosition[1] + 'px',
                     '-webkit-transform-style' : 'preserve-3d',
                     '-webkit-transform' : 'perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
                 };
