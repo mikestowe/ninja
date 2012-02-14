@@ -4,11 +4,10 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var Montage = require("montage/core/core").Montage,
-    Component = require("montage/ui/component").Component;
-
-var drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils;
-var vecUtils = require("js/helper-classes/3D/vec-utils").VecUtils;
+var Montage = 	require("montage/core/core").Montage,
+    Component = require("montage/ui/component").Component,
+    drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils,
+    vecUtils = 	require("js/helper-classes/3D/vec-utils").VecUtils;
 
 exports.Stage = Montage.create(Component, {
 
