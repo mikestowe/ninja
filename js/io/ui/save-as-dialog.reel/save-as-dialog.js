@@ -89,7 +89,7 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
 
     enableOk:{
         value: function(){
-            if(this.isValidFileName(this.fileName) && this.isValidUri(this.folderUri) && !this.checkFileExists(this.fileName, this.folderUri)){
+            if(this.isValidFileName(this.fileName) && this.isValidUri(this.folderUri)){
                 this.okButton.removeAttribute("disabled");
                 this.error.innerHTML="";
             }
@@ -141,7 +141,7 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
                     }
                 }
             }else{
-                if(this.error.innerHTML !== ""){
+                if(this.error.innerHTML === ""){
                     this.showError("! Name and Location should be valid.");
                 }
                 //disable ok
