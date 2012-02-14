@@ -1101,7 +1101,7 @@ window.hack = function (name, type) {
                 uri = uri.replace(/^\s+|\s+$/g,"");  // strip any leading or trailing spaces
 
                 //for local machine folder uri
-                isWindowsUri = /^([a-zA-Z]:)(\\[^<>:"/\\|?*]+)*\\?$/gi.test(uri);
+                isWindowsUri = /^([a-zA-Z]:)([\\/][^<>:"/\\|?*]+)*[\\/]?$/gi.test(uri);
                 isUnixUri = /^(\/)?(\/(?![.])[^/]*)*\/?$/gi.test(uri);//folders beginning with . are hidden on Mac / Unix
                 status = isWindowsUri || isUnixUri;
                 if(isWindowsUri && isUnixUri){status = false;}
