@@ -88,6 +88,9 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
                 var templates = this.newFileModel.prepareContents(this.newFileModel.defaultProjectType);
                 this.templateList = iconsListModule.IconsList.create();
                 this.templateList.iconsViewDataObject = templates;
+                if(templates.length >0){
+                    this.templateList.selected = templates[0].uri;
+                }
                 this.templateList.element = this.templateIcons;
                 this.templateList.needsDraw = true;
 
@@ -161,9 +164,15 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
                 var templates = this.newFileModel.prepareContents(evt.uri);
                 if(this.templatesContainer.querySelectorAll(".list").length > 0){
                     this.templateList.iconsViewDataObject = templates;
+                    if(templates.length >0){
+                        this.templateList.selected = templates[0].uri;
+                    }
                 }else{
                     this.templateList = iconsListModule.IconsList.create();
                     this.templateList.iconsViewDataObject = templates;
+                    if(templates.length >0){
+                        this.templateList.selected = templates[0].uri;
+                    }
                     this.templateList.element = this.templateIcons;
                     this.templateList.needsDraw = true;
                 }
