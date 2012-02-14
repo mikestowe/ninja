@@ -104,16 +104,26 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
     handleExecuteSave: {
     	value: function(event) {
     		//Text and HTML document classes should return the same save object for fileSave
-    		this.application.ninja.ioMediator.fileSave(this.activeDocument.save(), this.clearDocumentDirtyFlag.bind(this));
+    		this.application.ninja.ioMediator.fileSave(this.activeDocument.save(), this.fileSaveResult.bind(this));
 		}
     },
-
+    ////////////////////////////////////////////////////////////////////
+    //
+    fileSaveResult: {
+    	value: function (result) {
+    		if(result.status === 204){
+            	this.clearDocumentDirtyFlag();
+            }
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+	
+	
     clearDocumentDirtyFlag:{
         value: function(){
             this.activeDocument.dirtyFlag = false;
         }
     },
-	////////////////////////////////////////////////////////////////////
 	
 	
     createNewFile:{

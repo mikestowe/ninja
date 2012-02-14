@@ -155,9 +155,8 @@ exports.IoMediator = Montage.create(Component, {
     		}
     		//
     		save = this.fio.saveFile({uri: file.document.uri, contents: contents});
-            if(save.status === 204){
-                callback();
-            }
+            //
+            if (callback) callback(save);
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -165,6 +164,14 @@ exports.IoMediator = Montage.create(Component, {
     fileSaveAs: {
     	enumerable: false,
     	value: function (copyTo, copyFrom, callback) {
+    		//
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    fileDelete: {
+    	enumerable: false,
+    	value: function (file, callback) {
     		//
     	}
     },
