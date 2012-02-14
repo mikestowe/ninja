@@ -251,7 +251,7 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
             var closeDocumentIndex = this._findIndexByUUID(id);
             this._documents.splice(this._findIndexByUUID(id), 1);
 
-            if(this.activeDocument.uuid === id && this._documents.length > 0) {
+            if(this.activeDocument.uuid === id && this._documents.length > 0) {//closing the active document tab
                 var nextDocumentIndex = -1 ;
                 if((this._documents.length > 0) && (closeDocumentIndex === 0)){
                     nextDocumentIndex = 1;
@@ -259,7 +259,7 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
                     nextDocumentIndex = closeDocumentIndex - 1;
                 }
                 this.application.ninja.stage.stageView.switchDocument(this._documents[nextDocumentIndex]);
-            }else{
+            }else if(this._documents.length === 0){
                 //if there are no documents to switch to then just show the iframeContainer
                 document.getElementById("iframeContainer").style.display="block";
             }
