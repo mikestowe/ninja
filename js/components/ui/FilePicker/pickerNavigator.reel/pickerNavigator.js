@@ -149,6 +149,12 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
                     leftNav.appendChild(newDiv);
                     if(dirObj.uri === this.pickerModel.currentRoot){
                         newDiv.classList.add("highlighted");
+                        //enable ok for logical drive selections, when in directory selection mode
+                        if(this.pickerModel.inFileMode === false){
+                            this.okButton.removeAttribute("disabled");
+                            //put into selectedItems..currently single selection is supported
+                            this.selectedItems = [dirObj.uri];
+                        }
                     }
 
                     newDiv.addEventListener("click", function(evt){that.handleTopLevelDirectoryClicks(evt, dirObj);}, false);
@@ -570,6 +576,13 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
                     }
                     if(!evt.target.classList.contains("highlighted")){
                         evt.target.classList.add("highlighted");
+                    }
+
+                    //enable ok for logical drive selections, when in directory selection mode
+                    if(this.pickerModel.inFileMode === false){
+                        this.okButton.removeAttribute("disabled");
+                        //put into selectedItems..currently single selection is supported
+                        this.selectedItems = [dirObj.uri];
                     }
                 }
     },
