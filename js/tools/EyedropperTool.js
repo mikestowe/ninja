@@ -15,6 +15,9 @@ exports.EyedropperTool = Montage.create(toolBase, {
     _isMouseDown: { value: false },
     _previousColor: { value: null},
     _color: { value: null},
+    _elementUnderMouse: { value: null },
+    _imageDataCanvas: { value: null },
+    _imageDataContext: { value: null },
 
     Configure: {
         value: function ( doActivate )
@@ -96,27 +99,68 @@ exports.EyedropperTool = Montage.create(toolBase, {
 
     _updateColorFromPoint: {
         value : function (event) {
-            var obj = this.application.ninja.stage.GetElement(event);
+            var c,
+                color,
+                obj = this.application.ninja.stage.GetElement(event);
             if (obj)
             {
-                // TODO - figure out if user clicked on a border - for now, just get fill
-                var c = ElementsMediator.getColor(obj, this._isOverBorder(obj, event));
-                if(c)
+                this._elementUnderMouse = obj;
+                // Depending on the object type, we need to get different colors
+                if(obj.elementModel.type === "IMG")
                 {
-                    var color = this.application.ninja.colorController.getColorObjFromCss(c.color.css);
-                    if (color && color.value) {
-                        color.value.wasSetByCode = true;
-                        color.value.type = 'changing';
-                        if (color.value.a) {
-                            this.application.ninja.colorController.colorModel.alpha = {value: color.value.a,
-                                                                                        wasSetByCode: true,
-                                                                                        type: 'changing'};
-                        }
-                        this.application.ninja.colorController.colorModel[color.mode] = color.value;
-                        this._color = color;
+                    c = this._getColorAtPoint(obj, event);
+                    if(c)
+                    {
+                        color = this.application.ninja.colorController.getColorObjFromCss(c);
                     }
                 }
+                else if (obj.elementModel.type === "CANVAS")
+                {
+                    this._imageDataCanvas = null;
+                    this._imageDataContext = null;
+
+                    var pt = webkitConvertPointFromPageToNode(obj,
+                                                                new WebKitPoint(event.pageX, event.pageY)),
+                        ctx = obj.getContext("2d");
+
+                    c = this._getColorFromCanvas(ctx, pt);
+                    if(c)
+                    {
+                        color = this.application.ninja.colorController.getColorObjFromCss(c);
+                    }
+                }
+                else
+                {
+                    this._imageDataCanvas = null;
+                    this._imageDataContext = null;
+
+                    // TODO - figure out if user clicked on a border - for now, just get fill
+                    c = ElementsMediator.getColor(obj, this._isOverBackground(obj, event));
+                    if(c)
+                    {
+                        color = this.application.ninja.colorController.getColorObjFromCss(c.color.css);
+                    }
+                }
+
+                if (color && color.value) {
+                    color.value.wasSetByCode = true;
+                    color.value.type = 'changing';
+                    if (color.value.a) {
+                        this.application.ninja.colorController.colorModel.alpha = {value: color.value.a,
+                                                                                    wasSetByCode: true,
+                                                                                    type: 'changing'};
+                    }
+                    this.application.ninja.colorController.colorModel[color.mode] = color.value;
+                    this._color = color;
+                }
             }
+            else
+            {
+                this._elementUnderMouse = null;
+                this._imageDataCanvas = null;
+                this._imageDataContext = null;
+            }
+
         }
     },
 
@@ -151,7 +195,7 @@ exports.EyedropperTool = Montage.create(toolBase, {
     },
 
     // TODO - We don't want to calculate this repeatedly
-    _isOverBorder: {
+    _isOverBackground: {
         value: function(elt, event)
         {
             var border = ElementsMediator.getProperty(elt, "border", parseFloat);
@@ -168,8 +212,8 @@ exports.EyedropperTool = Montage.create(toolBase, {
 
 //                this.application.ninja.stage.viewUtils.setViewportObj( elt );
                 bounds3D = this.application.ninja.stage.viewUtils.getElementViewBounds3D( elt );
-                console.log("bounds");
-                console.dir(bounds3D);
+//                console.log("bounds");
+//                console.dir(bounds3D);
 
                 var xAdj = bl || border,
                     yAdj = bt || border;
@@ -183,8 +227,8 @@ exports.EyedropperTool = Montage.create(toolBase, {
 
                 yAdj = bt || border;
                 innerBounds.push([bounds3D[3][0] - xAdj, bounds3D[3][1] + yAdj, 0]);
-                console.log("innerBounds");
-                console.dir(innerBounds);
+//                console.log("innerBounds");
+//                console.dir(innerBounds);
 
                 var tmpPt = this.application.ninja.stage.viewUtils.globalToLocal([pt.x, pt.y], elt);
                 var x = tmpPt[0],
@@ -194,117 +238,56 @@ exports.EyedropperTool = Montage.create(toolBase, {
                 if(x > innerBounds[2][0]) return false;
                 if(y < innerBounds[0][1]) return false;
                 if(y > innerBounds[1][1]) return false;
+            }
+            return true;
+        }
+    },
 
-                return true;
+    _getColorAtPoint: {
+        value: function(elt, event)
+        {
+            var imageData;
+            if(!this._imageDataCanvas)
+            {
+                this._imageDataCanvas = document.createElement("canvas");
+                this._imageDataCanvas.style.display = "block";
+                this._imageDataCanvas.style.position = "absolute";
 
+                var eltCoords = this.application.ninja.stage.toViewportCoordinates(elt.offsetLeft, elt.offsetTop);
+                this._imageDataCanvas.style.left = eltCoords[0] + "px";
+                this._imageDataCanvas.style.top = eltCoords[1] + "px";
+                this._imageDataCanvas.style.width = elt.offsetWidth + "px";
+                this._imageDataCanvas.style.height = elt.offsetHeight + "px";
+                this._imageDataCanvas.width = elt.offsetWidth;
+                this._imageDataCanvas.height = elt.offsetHeight;
 
-//                var contain = MathUtils.boundaryContainsPoint(innerBounds, tmpPt, false);
-//                console.log("contain is " + contain);
-//                var tmpMat = this.application.ninja.stage.viewUtils.getLocalToGlobalMatrix( elt );
-////                var zoomFactor = 1;
-////                if (this.application.ninja.stage.viewport.style && this.application.ninja.stage.viewport.style.zoom)
-////                {
-////                    zoomFactor = Number(this.application.ninja.stage.viewport.style.zoom);
-////                }
-//
-//                for (var j=0;  j<4;  j++)
-//                {
-//                    var localPt = innerBounds[j];
-//                    var tmpPt = this.application.ninja.stage.viewUtils.localToGlobal2(localPt, tmpMat);
-//
-////                    if(zoomFactor !== 1)
-////                    {
-////                        tmpPt = vecUtils.vecScale(3, tmpPt, zoomFactor);
-////                        tmpPt[0] += this.application.ninja.stage.scrollLeft*(zoomFactor - 1);
-////                        tmpPt[1] += this.application.ninja.stage.scrollTop*(zoomFactor - 1);
-////                    }
-//                    innerBounds[j]  = tmpPt;
-//                }
-//
-//                var contain = MathUtils.boundaryContainsPoint(innerBounds, [pt.x, pt.y], false);
-//                console.log("contain is " + contain);
+                this.application.ninja.stage.element.appendChild(this._imageDataCanvas);
 
-
-
-//                var bounds,
-//                    innerBounds = [],
-//                    plane = ElementsMediator.get3DProperty(elt, "elementPlane"),
-//                    pt = webkitConvertPointFromPageToNode(drawUtils.getDrawingSurfaceElement(), new WebKitPoint(event.pageX, event.pageY)),
-//                    bt = ElementsMediator.getProperty(elt, "border-top", parseFloat),
-//                    br = ElementsMediator.getProperty(elt, "border-right", parseFloat),
-//                    bb = ElementsMediator.getProperty(elt, "border-bottom", parseFloat),
-//                    bl = ElementsMediator.getProperty(elt, "border-left", parseFloat);
-//
-//                if(plane)
-//                {
-//                    bounds = plane.getBoundaryPoints().slice(0);
-//                    var b = bl || border;
-//                    var dirV = vecUtils.vecSubtract(2, bounds[3], bounds[0]);
-//                    dirV = vecUtils.vecNormalize(2, dirV, b);
-//                    innerBounds.push(vecUtils.vecAdd(2, bounds[0], dirV));
-//
-//                    b = bb || border;
-//                    dirV = vecUtils.vecSubtract(2, bounds[1], bounds[0]);
-//                    dirV = vecUtils.vecNormalize(2, dirV, b);
-//                    innerBounds.push(vecUtils.vecAdd(2, bounds[0], dirV));
-//
-//                    b = br || border;
-//                    dirV = vecUtils.vecSubtract(2, bounds[2], bounds[1]);
-//                    dirV = vecUtils.vecNormalize(2, dirV, b);
-//                    innerBounds.push(vecUtils.vecAdd(2, bounds[1], dirV));
-//
-//                    b = bt || border;
-//                    dirV = vecUtils.vecSubtract(2, bounds[2], bounds[3]);
-//                    dirV = vecUtils.vecNormalize(2, dirV, b);
-//                    innerBounds.push(vecUtils.vecAdd(2, bounds[3], dirV));
-//
-//                    console.log("outerBounds");
-//                    console.dir(bounds);
-//
-//                    console.log("innerBounds");
-//                    console.dir(innerBounds);
-//                }
-
-//                var contain = MathUtils.boundaryContainsPoint( bounds,  pt,  plane.isBackFacing() );
-//                if (contain == MathUtils.OUTSIDE)
-//                {
-//
-//                }
-//                if (contain == MathUtils.ON)
-//                {
-//
-//                }
-//
-//                var bt = ElementsMediator.getProperty(elt, "border-top", parseFloat),
-//                    br = ElementsMediator.getProperty(elt, "border-right", parseFloat),
-//                    bb = ElementsMediator.getProperty(elt, "border-bottom", parseFloat),
-//                    bl = ElementsMediator.getProperty(elt, "border-left", parseFloat),
-//                    left = ElementsMediator.getProperty(elt, "left", parseFloat),
-//                    top = ElementsMediator.getProperty(elt, "top", parseFloat),
-//                    width = ElementsMediator.getProperty(elt, "width", parseFloat),
-//                    height = ElementsMediator.getProperty(elt, "height", parseFloat);
-//
-//                left1 = elt.offsetLeft;
-//                left2 = box[0];
-//                right1 = elt.offsetLeft + ele.offsetWidth;
-//                right2 = box[2];
-//                top1 = ele.offsetTop;
-//                top2 = box[1];
-//                bottom1 = ele.offsetTop + ele.offsetHeight;
-//                bottom2 = box[3];
-//
-//                if (bottom1 < top2) return false;
-//                if (top1 > bottom2) return false;
-//                if (right1 < left2) return false;
-//                if (left1 > right2) return false;
-//
-//                return true;
-
+                this._imageDataContext = this._imageDataCanvas.getContext("2d");
+//                this._imageDataContext.drawImage(elt, eltCoords[0], eltCoords[1]);
+                this._imageDataContext.drawImage(elt, 0, 0);
             }
 
+            var pt = webkitConvertPointFromPageToNode(this._imageDataCanvas,
+                                                        new WebKitPoint(event.pageX, event.pageY));
 
+            return this._getColorFromCanvas(this._imageDataContext, pt);
         }
+    },
 
+    _getColorFromCanvas: {
+        value: function(ctx, pt)
+        {
+            var imageData = ctx.getImageData(pt.x, pt.y, 1, 1).data;
+            if(imageData)
+            {
+                return ("rgba(" + imageData[0] + "," + imageData[1] + "," + imageData[2] + "," + imageData[3] + ")");
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 
 });
