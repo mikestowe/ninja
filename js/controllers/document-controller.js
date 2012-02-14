@@ -187,7 +187,7 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
 					var code = Montage.create(TextDocument, {"source": {value: doc.content}}), docuuid = Uuid.generate(), textArea;
 					textArea = this.application.ninja.stage.stageView.createTextAreaElement(docuuid);
 					code.initialize(doc, docuuid, textArea, textArea.parentNode);
-					code.init(doc.name, doc.uri, doc.extension, null, docuuid);
+					//code.init(doc.name, doc.uri, doc.extension, null, docuuid);
 					code.textArea.value = doc.content;
 					this.application.ninja.stage.stageView.createTextView(code);
 					break;
