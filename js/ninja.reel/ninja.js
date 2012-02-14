@@ -186,7 +186,7 @@ exports.Ninja = Montage.create(Component, {
                 transitionStopRule = "*"
             }
 
-            this.currentDocument.documentRoot.elementModel.controller.setProperty(this.currentDocument.documentRoot, "background", background);
+            this.currentDocument.documentRoot.elementModel.controller.setProperty(this.currentDocument.documentRoot, "body-background", background);
             this.currentDocument.documentRoot.elementModel.controller.setProperty(this.currentDocument.documentRoot, "overflow", overflow);
             this.currentDocument.documentRoot.elementModel.controller.changeSelector(this.currentDocument.documentRoot, "transitionStopRule", transitionStopRule);
 
