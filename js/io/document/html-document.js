@@ -438,6 +438,9 @@ var HTMLDocument = exports.HTMLDocument = Montage.create(baseDocumentModule.Base
 
                         this.documentRoot.elementModel.stageView = this.documentRoot.elementModel.defaultRule.cssRules[j];
 
+                    } else if(this.documentRoot.elementModel.defaultRule.cssRules[j].selectorText === "#stageBG") {
+
+                        this.documentRoot.elementModel.stageBackground = this.documentRoot.elementModel.defaultRule.cssRules[j];
                     }
                 }
 
