@@ -50,6 +50,13 @@ exports.EyedropperTool = Montage.create(toolBase, {
             {
                 this._isMouseDown = false;
                 this._escape = false;
+                this._elementUnderMouse = null;
+                if(this._imageDataCanvas)
+                {
+                    this.application.ninja.stage.element.removeChild(this._imageDataCanvas);
+                    this._imageDataCanvas = null;
+                    this._imageDataContext = null;
+                }
             }
             if(this._isMouseDown)
             {
@@ -71,6 +78,14 @@ exports.EyedropperTool = Montage.create(toolBase, {
                 this._updateColor(this._color);
 
                 this._color = null;
+
+                this._elementUnderMouse = null;
+                if(this._imageDataCanvas)
+                {
+                    this.application.ninja.stage.element.removeChild(this._imageDataCanvas);
+                    this._imageDataCanvas = null;
+                    this._imageDataContext = null;
+                }
             }
         }
     },
@@ -116,8 +131,12 @@ exports.EyedropperTool = Montage.create(toolBase, {
                 }
                 else if (obj.elementModel.type === "CANVAS")
                 {
-                    this._imageDataCanvas = null;
-                    this._imageDataContext = null;
+                    if(this._imageDataCanvas)
+                    {
+                        this.application.ninja.stage.element.removeChild(this._imageDataCanvas);
+                        this._imageDataCanvas = null;
+                        this._imageDataContext = null;
+                    }
 
                     var pt = webkitConvertPointFromPageToNode(obj,
                                                                 new WebKitPoint(event.pageX, event.pageY)),
@@ -131,8 +150,12 @@ exports.EyedropperTool = Montage.create(toolBase, {
                 }
                 else
                 {
-                    this._imageDataCanvas = null;
-                    this._imageDataContext = null;
+                    if(this._imageDataCanvas)
+                    {
+                        this.application.ninja.stage.element.removeChild(this._imageDataCanvas);
+                        this._imageDataCanvas = null;
+                        this._imageDataContext = null;
+                    }
 
                     // TODO - figure out if user clicked on a border - for now, just get fill
                     c = ElementsMediator.getColor(obj, this._isOverBackground(obj, event));
@@ -157,8 +180,12 @@ exports.EyedropperTool = Montage.create(toolBase, {
             else
             {
                 this._elementUnderMouse = null;
-                this._imageDataCanvas = null;
-                this._imageDataContext = null;
+                if(this._imageDataCanvas)
+                {
+                    this.application.ninja.stage.element.removeChild(this._imageDataCanvas);
+                    this._imageDataCanvas = null;
+                    this._imageDataContext = null;
+                }
             }
 
         }
@@ -264,7 +291,6 @@ exports.EyedropperTool = Montage.create(toolBase, {
                 this.application.ninja.stage.element.appendChild(this._imageDataCanvas);
 
                 this._imageDataContext = this._imageDataCanvas.getContext("2d");
-//                this._imageDataContext.drawImage(elt, eltCoords[0], eltCoords[1]);
                 this._imageDataContext.drawImage(elt, 0, 0);
             }
 
