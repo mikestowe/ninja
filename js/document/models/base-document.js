@@ -8,7 +8,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var Montage = require("montage/core/core").Montage;
 
-var TextDocument = exports.TextDocument = Montage.create(Montage, {
+var BaseDocument = exports.BaseDocument = Montage.create(Montage, {
 	
 	
 	//TODO: Clean up, test
