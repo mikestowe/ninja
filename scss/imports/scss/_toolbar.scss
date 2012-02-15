@@ -131,6 +131,11 @@
     background-image:url("../images/tools/Tool-FillColor.png");
 }
 
+.toolsList .colortoolbar {
+    padding-left: 1px;
+    padding-top:4px;
+}
+
 .toolsList .colortoolbar button
 {
 	width: 27px;
@@ -146,12 +151,15 @@
 	width: 27px;
 	height: 27px;
 	margin: 0;
+   margin-top:3px;
 }
 
 .toolsList .colortoolbar div.cpe_colortoolbar_container
 {
 	margin: 0;
 }
+
+
 
 /*.InkBottleToolPressed {*/
     /*background-image: url("../images/tools/inkbottle_down.png");*/

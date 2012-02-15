@@ -860,9 +860,11 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .InkBottleTool { background-image: url("../images/tools/Tool-FillColor.png"); }
 
+.toolsList .colortoolbar { padding-left: 1px; padding-top: 4px; }
+
 .toolsList .colortoolbar button { width: 27px; height: 27px; background: black; border: 1px solid #000; padding: 0; margin: 0px; }
 
-.toolsList .colortoolbar div { width: 27px; height: 27px; margin: 0; }
+.toolsList .colortoolbar div { width: 27px; height: 27px; margin: 0; margin-top: 3px; }
 
 .toolsList .colortoolbar div.cpe_colortoolbar_container { margin: 0; }
 
@@ -984,5 +986,7 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 .montage-modal { border: 0px; }
 
 .montage-popup-container { background: none; }
+
+.montage-invisible { display: none; }
 
 /*77*/
