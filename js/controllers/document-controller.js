@@ -9,8 +9,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = 		require("montage/core/core").Montage,
     Component = 	require("montage/ui/component").Component,
     Uuid = 			require("montage/core/uuid").Uuid,
-    HTMLDocument =	require("js/document/models/html-document").HTMLDocument,
-    BaseDocument =	require("js/document/models/base-document").BaseDocument,
+    HTMLDocument =	require("js/document/html-document").HTMLDocument,
+    TextDocument =	require("js/document/text-document").TextDocument,
     DocumentController;
 ////////////////////////////////////////////////////////////////////////
 //
@@ -28,13 +28,7 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
     _iframeHolder: { value: null, enumerable: false },
     _textHolder: { value: null, enumerable: false },
     _codeMirrorCounter: {value: 1, enumerable: false},
-
-    tmpSourceForTesting: {
-        value: "function CodeMirror(place, givenOptions) {" +
-                "// Determine effective options based on given values and defaults." +
-                "var options = {}, defaults = CodeMirror.defaults; }"
-            },
-
+    
     activeDocument: {
         get: function() {
             return this._activeDocument;
@@ -62,21 +56,12 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
             this.eventManager.addEventListener("executeSave", this, false);
 
             this.eventManager.addEventListener("recordStyleChanged", this, false);
-
-			// Temporary testing opening a new file after Ninja has loaded
-			this.eventManager.addEventListener("executeNewProject", this, false);
         }
     },
 
     handleAppLoaded: {
         value: function() {
-            //this.openDocument({"type": "html"});
-        }
-    },
-	
-	handleExecuteNewProject: {
-        value: function() {
-            this.openDocument({"type": "html"});
+            //
         }
     },
 
@@ -203,7 +188,7 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
 					break;
 				default:
 					//Open in code view
-					var code = Montage.create(BaseDocument, {"source": {value: doc.content}}), docuuid = Uuid.generate(), textArea;
+					var code = Montage.create(TextDocument, {"source": {value: doc.content}}), docuuid = Uuid.generate(), textArea;
 					textArea = this.application.ninja.stage.stageView.createTextAreaElement(docuuid);
 					code.initialize(doc, docuuid, textArea, textArea.parentNode);
 					//code.init(doc.name, doc.uri, doc.extension, null, docuuid);

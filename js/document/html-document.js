@@ -7,11 +7,11 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 ////////////////////////////////////////////////////////////////////////
 //
 var Montage = 		require("montage/core/core").Montage,
-    BaseDocument =	require("js/document/models/base-document").BaseDocument,
+    TextDocument =	require("js/document/text-document").TextDocument,
     NJUtils = 		require("js/lib/NJUtils").NJUtils;
 ////////////////////////////////////////////////////////////////////////
 //
-exports.HTMLDocument = Montage.create(BaseDocument, {
+exports.HTMLDocument = Montage.create(TextDocument, {
     // PRIVATE MEMBERS
     _selectionExclude: { value: null, enumerable: false },
     _htmlTemplateUrl: { value: "user-document-templates/montage-application-cloud/index.html", enumerable: false},
