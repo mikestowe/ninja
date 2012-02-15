@@ -268,6 +268,8 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                 case "anchor":
                     el = NJUtils.makeNJElement("a", "Anchor", "component");
                     el.elementModel.pi = "AnchorPi";
+                    el.setAttribute("href", "http://www.motorola.com");
+                    el.innerHTML = "link";
                     break;
                 case "button":
                     el = NJUtils.makeNJElement(name, "Button", "component");
