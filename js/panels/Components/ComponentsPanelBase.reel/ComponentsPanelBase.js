@@ -164,6 +164,7 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                 row.prop = props.name;
                 row.defaultValue = props["default"];
                 row.label = props.name;
+                row.items = props.possibleValues;
 
                 section.Section.push([row]);
             }
@@ -192,6 +193,8 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                     return "textbox";
                 case "boolean":
                     return "checkbox";
+                case "select":
+                    return "dropdown";
                 default:
                     alert("Conversion not implemented for ", type);
             }
