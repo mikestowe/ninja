@@ -7,7 +7,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 ////////////////////////////////////////////////////////////////////////
 //
 var Montage = 		require("montage/core/core").Montage,
-    BaseDocument =	require("js/document/models/base-document").BaseDocument,
+    BaseDocument =	require("js/io/document/base-document").BaseDocument,
     NJUtils = 		require("js/lib/NJUtils").NJUtils;
 ////////////////////////////////////////////////////////////////////////
 //
