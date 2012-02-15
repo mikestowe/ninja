@@ -14,15 +14,6 @@
 
 // Made changes to toolButton  
 
-.toolButton {
-    width:26px;
-    height:23px;
-    padding: 0px;
-    margin:1px;
-    border-width: 1px;
-    border-style: solid; 
-}
-
 .subToolButton {
     float:left;
 }
@@ -37,21 +28,6 @@
     margin-top: 5px;
     margin-left: 10px;
     margin-right: 10px;
-}
-
-.toolButton:active {   
-    border-top-width: 1px;
-    border-top-style: solid; 
-    border-left-width: 1px;
-    border-left-style: solid; 
-}
-
-.toolButtonSelected {
-    border-top-width: 1px;
-    border-top-style: solid; 
-    border-left-width: 1px;
-    border-left-style: solid;
-
 }
 
 .toolSeparator {

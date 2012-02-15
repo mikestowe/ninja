@@ -25,6 +25,21 @@
                 }
             },
 
+            "groupLine": {
+                "module": "js/components/layout/tool-button.reel",
+                "name": "ToolButton",
+                "properties": {
+                    "element": {"#": "groupLine"}
+                },
+                "bindings": {
+                    "data": {
+                        "boundObject": {"@": "repetition1"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration",
+                        "oneway": true
+                    }
+                }
+            },
+
             "repetition1": {
                 "module": "montage/ui/repetition.reel",
                 "name": "Repetition",
@@ -163,9 +178,9 @@
         <div id="toolsList" class="toolsList">
             <div id="toolscontainer" class="toolscontainer">
                 <div id="toolbutton" class="toolbutton"></div>
+                <hr id="groupLine" />
             </div>
             <!-- TODO: Remove and add as a component -->
-            <hr class="toolbar_hr" />
             <div id="colortoolbar"></div>
         </div>
 

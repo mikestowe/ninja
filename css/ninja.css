@@ -210,10 +210,6 @@ body { position: absolute; margin: 0px; width: 100%; height: 100%; background-co
 
 #mainContent .CodeMirror-scroll { height: 100%; overflow: scroll; overflow-x: auto; overflow-y: auto; }
 
-.montage-editor-frame { position: absolute; z-index: 7; top: 0; left: 0; display: none; -webkit-user-select: initial; }
-
-.montage-editor { padding: 0px; word-wrap: normal; }
-
 .panelContainer { margin: 0px; padding: 0px 0px; position: relative; overflow: auto; }
 
 .panelDisclosureIcon { background-image: url("../images/panels/panelDisclosureIcon.png"); background-repeat: no-repeat; width: 16px; height: 16px; float: left; -webkit-transition-property: rotate; -webkit-transition-duration: 0.2s; -webkit-transition-timing-function: linear; padding-right: 2px; }
@@ -670,15 +666,9 @@ nav.menuBar ul ul, nav.menuBar ul li:hover ul ul, nav.menuBar ul ul li:hover ul 
 
 nav.menuBar ul li:hover ul, nav.menuBar ul ul li:hover ul, nav.menuBar ul ul ul li:hover ul { display: block; }
 
-.toolButton { width: 26px; height: 23px; padding: 0px; margin: 1px; border-width: 1px; border-style: solid; }
-
 .subToolButton { float: left; }
 
 .subOption { float: left; margin-top: 5px; margin-left: 10px; margin-right: 10px; }
-
-.toolButton:active { border-top-width: 1px; border-top-style: solid; border-left-width: 1px; border-left-style: solid; }
-
-.toolButtonSelected { border-top-width: 1px; border-top-style: solid; border-left-width: 1px; border-left-style: solid; }
 
 .toolSeparator { height: 1px; width: 30px; }
 
@@ -816,118 +806,123 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 #zoomToolOptionHolder input.zoom-option { background: none; }
 
-.SelectionToolPressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -360px -27px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 1; }
+#toolsPanelContent { width: 40px; }
 
-.SelectionToolUnpressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -390px -27px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 0.7; }
+.toolsList { width: 30px; margin: auto; }
 
-.SubselectionToolPressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -420px -27px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 1; }
+.toolsList hr { border: 0px; border-top: 1px solid #232323; border-bottom: 1px solid #3A3A3A; margin: 2px; }
 
-.SubselectionToolUnpressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -450px -27px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 0.7; }
+.toolbutton { width: 30px; height: 30px; background-position: center center; background-repeat: no-repeat; -webkit-border-radius: 4px; opacity: 0.6; margin-bottom: 2px; }
 
-.RotateTool3DPressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: 0px 0px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 1; }
+.toolsList .toolbutton:hover, .toolsList .active { box-shadow: inset 0px 0px 8px #999; opacity: 1; }
 
-.RotateTool3DUnpressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -30px 0px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 0.7; }
+.toolsList .active { background-color: #555; }
 
-.Translate3DPressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -120px 0px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 1; }
+.SelectionTool { background-image: url("../images/tools/Tool-Selection.png"); }
 
-.Translate3DUnpressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -150px 0px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 0.7; }
+.SubselectionTool { background-image: url("../images/tools/Tool-Subselect.png"); }
 
-.TagToolPressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: 0px -54px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 1; }
+.RotateTool3D { background-image: url("../images/tools/Tool-3DRotate.png"); }
 
-.TagToolUnpressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -30px -54px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 0.7; }
+.Translate3D { background-image: url("../images/tools/Tool-3DTranslate.png"); }
 
-.PenToolPressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -180px -27px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 1; }
+.TagTool { background-image: url("../images/tools/Tool-Tag.png"); }
 
-.PenToolUnpressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -210px -27px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 0.7; }
+.PenTool { background-image: url("../images/tools/Tool-Pen.png"); }
 
-.TextToolPressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -60px -54px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 1; }
+.TextTool { background-image: url("../images/tools/Tool-Text.png"); }
 
-.TextToolUnpressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -90px -54px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 0.7; }
+.ShapeContainer { background-image: url("../images/tools/Tool-Rectangle.png"); }
 
-.ShapeContainerPressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -120px -27px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 1; }
+.OvalTool { background-image: url("../images/tools/Tool-Oval.png"); }
 
-.ShapeContainerUnpressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -150px -27px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 0.7; }
+.RectangleTool { background-image: url("../images/tools/Tool-Rectangle.png"); }
 
-.OvalToolPressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -120px -27px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 1; }
+.LineTool { background-image: url("../images/tools/Tool-Stroke.png"); }
 
-.OvalToolUnpressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -150px -27px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 0.7; }
+.PencilTool { background-image: url("../images/tools/Tool-Pencil.png"); }
 
-.RectangleToolPressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -300px -27px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 1; }
+.BrushTool { background-image: url("../images/tools/Tool-PaintBrush.png"); }
 
-.RectangleToolUnpressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -330px -27px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 0.7; }
+.FillTool { background-image: url("../images/tools/Tool-Fill.png"); }
 
-.LineToolPressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -60px -27px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 1; }
+.EyedropperTool { background-image: url("../images/tools/Tool-EyeDropper.png"); }
 
-.LineToolUnpressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -90px -27px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 0.7; }
+.EraserTool { background-image: url("../images/tools/Tool-Erase.png"); }
 
-.PencilToolPressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -240px -27px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 1; }
+.RotateStageTool3D { background-image: url("../images/tools/Tool-3DRotateStage.png"); }
 
-.PencilToolUnpressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -270px -27px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 0.7; }
+.TranslateStageTool3D { background-image: url("../images/tools/Tool-3DTranslateStage.png"); }
 
-.BrushToolPressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -240px 0px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 1; }
+.PanTool { background-image: url("../images/tools/Tool-Pan.png"); }
 
-.BrushToolUnpressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -270px 0px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 0.7; }
+.ZoomTool { background-image: url("../images/tools/Tool-Zoom.png"); }
 
-.FillToolPressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -300px 0px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 1; }
+.InkBottleTool { background-image: url("../images/tools/Tool-FillColor.png"); }
 
-.FillToolUnpressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -330px 0px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 0.7; }
+.toolsList .colortoolbar button { width: 27px; height: 27px; background: black; border: 1px solid #000; padding: 0; margin: 0px; }
 
-.EyedropperToolPressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -420px 0px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 1; }
+.toolsList .colortoolbar div { width: 27px; height: 27px; margin: 0; }
 
-.EyedropperToolUnpressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -450px 0px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 0.7; }
+.toolsList .colortoolbar div.cpe_colortoolbar_container { margin: 0; }
 
-.EraserToolPressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -360px 0px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 1; }
-
-.EraserToolUnpressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -390px 0px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 0.7; }
-
-.RotateStageTool3DPressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -60px 0px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 1; }
-
-.RotateStageTool3DUnpressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -90px 0px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 0.7; }
-
-.TranslateStageTool3DPressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -180px 0px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 1; }
-
-.TranslateStageTool3DUnpressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -210px 0px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 0.7; }
-
-.PanToolPressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: 0px -27px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 1; }
-
-.PanToolUnpressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -30px -27px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 0.7; }
-
-.ZoomToolPressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -180px -54px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 1; }
-
-.ZoomToolUnpressed { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -210px -54px; background-repeat: no-repeat; height: 23px; width: 26px; opacity: 0.7; }
-
-.InkBottleToolPressed { background-image: url("../images/tools/inkbottle_down.png"); background-repeat: no-repeat; height: 23px; width: 26px; opacity: 1; }
-
-.InkBottleToolUnpressed { background-image: url("../images/tools/inkbottle_down.png"); background-repeat: no-repeat; height: 23px; width: 26px; opacity: 0.7; }
-
-.topAlignUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -240px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.rightAlignUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -270px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.bottomAlignUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -300px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.verticalLeftUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -330px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.verticalCenterUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -360px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.verticalRightUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -390px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.distRightUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: 0px -81px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.distLeftUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -420px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.distCenterUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -60px -81px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.distTopUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -30px -81px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.distBottomUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -90px -81px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.distVCenterUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -450px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.bucketToolUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -330px 0px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.pencilToolUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -270px -27px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
+/*.InkBottleToolPressed {*/
+/*background-image: url("../images/tools/inkbottle_down.png");*/
+/*background-repeat: no-repeat;*/
+/*height: 23px;*/
+/*width: 26px;*/
+/*opacity: 1;*/
+/*}*/
+/*.InkBottleToolUnpressed {*/
+/*background-image: url("../images/tools/inkbottle_down.png");*/
+/*background-repeat: no-repeat;*/
+/*height: 23px;*/
+/*width: 26px;*/
+/*opacity: 0.7;*/
+/*}*/
+/*//  Selection Tool Options  */
+/*.topAlignUp {*/
+/*@include background-pos(8,2,26px,23px);*/
+/*}*/
+/*.rightAlignUp {*/
+/*@include background-pos(9,2,26px,23px);*/
+/*}*/
+/*.bottomAlignUp {*/
+/*@include background-pos(10,2,26px,23px);*/
+/*}*/
+/*.verticalLeftUp {*/
+/*@include background-pos(11,2,26px,23px);*/
+/*}*/
+/*.verticalCenterUp {*/
+/*@include background-pos(12,2,26px,23px);*/
+/*}*/
+/*.verticalRightUp {*/
+/*@include background-pos(13,2,26px,23px);*/
+/*}*/
+/*.distRightUp {*/
+/*@include background-pos(0,3,26px,23px);*/
+/*}*/
+/*.distLeftUp {*/
+/*@include background-pos(14,2,26px,23px);*/
+/*}*/
+/*.distCenterUp {*/
+/*@include background-pos(2,3,26px,23px);*/
+/*}*/
+/*.distTopUp {*/
+/*@include background-pos(1,3,26px,23px);*/
+/*}*/
+/*.distBottomUp {*/
+/*@include background-pos(3,3,26px,23px);*/
+/*}*/
+/*.distVCenterUp {*/
+/*@include background-pos(15,2,26px,23px);*/
+/*}*/
+/*.bucketToolUp {*/
+/*@include background-pos(11,0,26px,23px);*/
+/*}*/
+/*.pencilToolUp {*/
+/*@include background-pos(9,1,26px,23px);*/
+/*}*/
 .blueDiv { background: blue; opacity: 0.2; }
 
 ::-webkit-scrollbar { width: 11px; height: 11px; }
