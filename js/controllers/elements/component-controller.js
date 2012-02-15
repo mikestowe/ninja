@@ -18,7 +18,11 @@ exports.ComponentController = Montage.create(ElementController, {
                 case "top":
                 case "width":
                 case "height":
-                    return ElementController.getProperty(el, prop, true);
+                    if(el.nodeName === "IMG" && (prop === "width" || prop === "height")) {
+                        return this.application.ninja.currentDocument.getComponentFromElement(el)[prop];
+                    } else {
+                        return ElementController.getProperty(el, prop, true);
+                    }
                 default:
                     return this.application.ninja.currentDocument.getComponentFromElement(el)[prop];
             }
@@ -34,9 +38,15 @@ exports.ComponentController = Montage.create(ElementController, {
                 case "top":
                 case "width":
                 case "height":
-                    ElementController.setProperty(el, p, value);
+                    if(el.nodeName === "IMG" && (p === "width" || p === "height")) {
+                        this.application.ninja.currentDocument.getComponentFromElement(el)[p] = value;
+                    } else {
+                        ElementController.setProperty(el, p, value);
+                    }
                     break;
                 default:
+                    if(p === "min" || p === "max") value = parseFloat(value);
+
                     this.application.ninja.currentDocument.getComponentFromElement(el)[p] = value;
                     break;
 

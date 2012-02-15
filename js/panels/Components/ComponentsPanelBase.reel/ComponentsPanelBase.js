@@ -195,6 +195,8 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                     return "checkbox";
                 case "select":
                     return "dropdown";
+                case "number":
+                    return "hottext";
                 default:
                     alert("Conversion not implemented for ", type);
             }
@@ -287,7 +289,9 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                     break;
                 case "imageComponent":
                     el = NJUtils.makeNJElement("image", "Image", "component");
-                    el.elementModel.pi = "ImageComponentPi";
+                    el.elementModel.pi = "ImagePi";
+                    el.setAttribute("width", 200);
+                    el.setAttribute("height", 200);
                     break;
                 case "numberInput":
                     el = NJUtils.makeNJElement("input", "Number Input", "component");
@@ -315,7 +319,7 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                     break;
                 case "textarea":
                     el = NJUtils.makeNJElement("textarea", "TextArea", "component");
-                    el.elementModel.pi = "TextArea";
+                    el.elementModel.pi = "TextAreaPi";
                     break;
                 case "toggleButton":
                     el = NJUtils.makeNJElement("button", "Toggle Button", "component");
