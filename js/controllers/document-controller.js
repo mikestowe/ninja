@@ -9,8 +9,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = 		require("montage/core/core").Montage,
     Component = 	require("montage/ui/component").Component,
     Uuid = 			require("montage/core/uuid").Uuid,
-    HTMLDocument =	require("js/io/document/html-document").HTMLDocument,
-    TextDocument =	require("js/io/document/text-document").TextDocument,
+    HTMLDocument =	require("js/document/models/html-document").HTMLDocument,
+    TextDocument =	require("js/document/models/text-document").TextDocument,
     DocumentController;
 ////////////////////////////////////////////////////////////////////////
 //
