@@ -142,12 +142,7 @@ exports.IoMediator = Montage.create(Component, {
     		//
     		switch (file.mode) {
     			case 'html':
-    				file.document.content.document.body.innerHTML = file.body;
-    				file.document.content.document.head.innerHTML = file.head;
-    				if (file.style) {
-    					file.document.content.document.head.getElementsByTagName('style')[0].innerHTML = this.getCssFromRules(file.style.cssRules);
-    				}
-    				contents = file.document.content.document.documentElement.outerHTML;
+    				contents = this.parseNinjaTemplateToHtml(file);
     				break;
     			default:
     				contents = file.content;
@@ -186,6 +181,21 @@ exports.IoMediator = Montage.create(Component, {
     		doc.getElementsByTagName('html')[0].innerHTML = html;
     		//Creating return object
     		return {head: doc.head.innerHTML, body: doc.body.innerHTML, document: doc};
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //TODO: Expand to allow more templates
+    parseNinjaTemplateToHtml: {
+    	enumerable: false,
+    	value: function (template) {
+    		//
+    		template.document.content.document.body.innerHTML = template.body;
+    		template.document.content.document.head.innerHTML = template.head;
+    		//TODO: Remove temp fix for styles
+    		if (template.style) {
+    			template.document.content.document.head.getElementsByTagName('style')[0].innerHTML = this.getCssFromRules(template.style.cssRules);
+    		}
+    		return template.document.content.document.documentElement.outerHTML;
     	}
     },
     ////////////////////////////////////////////////////////////////////
