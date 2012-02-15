@@ -97,10 +97,12 @@ window.hack = function (name, type) {
         		this.application.ninja.ioMediator.fileNew('Users/kgq387/Desktop/Ninja Cloud/Disk/'+name+'.'+type, '/js/io/templates/files/'+type+'.txt', function (status) {console.log(status)});
         	}.bind(this);
 */			
-			window.hack = function (path) {
+			/*
+window.hack = function (path) {
 				//
 				this.application.ninja.ioMediator.fileOpen('Users/kgq387/Desktop/Ninja Cloud/Disk/'+path, function (result) {console.log(result)});
 			}.bind(this);
+*/
         }
     },
     ////////////////////////////////////////////////////////////////////
