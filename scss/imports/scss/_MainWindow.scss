@@ -200,18 +200,16 @@
 }
 
 #mainContainer #rulerTop {
-    // TODO: temporary background please replace when component is implemented  
-    background: url("../images/temp/ruler-top.png");
+    // TODO: temporary background please replace when component is implemented
+    background:$color-stage;
     height:15px;
     margin-bottom: 0px;
-    display:none;
 }
 
 #rulerLeft {
-    // TODO: temporary background please replace when component is implemented  
-    background: url("../images/temp/ruler-left.png");
+    // TODO: temporary background please replace when component is implemented
+    background:$color-stage;
     width:16px;
-    display:none;
 }
 
 #stateBar {
