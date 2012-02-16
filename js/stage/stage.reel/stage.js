@@ -11,7 +11,6 @@ var Montage = 	require("montage/core/core").Montage,
 
 exports.Stage = Montage.create(Component, {
 
-    textTool: { value: null },
     // TODO - Need to figure out how to remove this dependency
     // Needed by some tools that depend on selectionDrawn event to set up some logic
     drawNow: { value : false },

@@ -31,6 +31,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     _userDocument: { value: null, enumerable: false },
     _htmlSource: {value: "<html></html>", enumerable: false},
     _glData: {value: null, enumerable: false },
+    _userComponents: { value: {}, enumarable: false},
 
     _elementCounter: { value: 1, enumerable: false },
     _snapping : { value: true, enumerable: false },
@@ -137,23 +138,11 @@ exports.HTMLDocument = Montage.create(TextDocument, {
         }
     },
 
-    _userComponentSet: {
-        value: {},
-        writable: true,
-        enumerable:true
+    userComponents: {
+        get: function() {
+            return this._userComponents;
+        }
     },
-
-//    userComponentSet:{
-//        enumerable: true,
-//        get: function() {
-//            return this._userComponentSet;
-//        },
-//        set: function(value) {
-//            this._userComponentSet = value;
-//            this._drawUserComponentsOnOpen();
-//        }
-//    },
-//
 //    _drawUserComponentsOnOpen:{
 //        value:function(){
 //            for(var i in this._userComponentSet){
@@ -220,22 +209,45 @@ exports.HTMLDocument = Montage.create(TextDocument, {
         set: function(value) { this._zoomFactor = value; }
     },
 
+    /**
+     * Add a reference to a component instance to the userComponents hash using the
+     * element UUID
+     */
+    setComponentInstance: {
+        value: function(instance, el) {
+            this.userComponents[el.uuid] = instance;
+        }
+    },
+
+    /**
+     * Returns the component instance obj from the element
+     */
+    getComponentFromElement: {
+        value: function(el) {
+            if(el) {
+                if(el.uuid) return this.userComponents[el.uuid];
+            } else {
+                return null;
+            }
+        }
+    },
+
     //****************************************//
     // PUBLIC METHODS
     
     
     ////////////////////////////////////////////////////////////////////
 	//
-	initialize: {
+    initialize: {
 		value: function(file, uuid, iframe, callback) {
 			//
 			this._userDocument = file;
 			//
 			this.init(file.name, file.uri, file.extension, iframe, uuid, callback);
 			//
-			this.iframe = iframe;
-			this.selectionExclude = ["HTML", "BODY", "Viewport", "UserContent", "stageBG"];
-			this.currentView = "design";
+            this.iframe = iframe;
+            this.selectionExclude = ["HTML", "BODY", "Viewport", "UserContent", "stageBG"];
+            this.currentView = "design";
 			//
 			this.iframe.src = this._htmlTemplateUrl;
             this.iframe.addEventListener("load", this, true);
@@ -347,7 +359,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     },
 
     /*
-// Private
+    // Private
     _loadDocument: {
         value: function(uri) {
             // Load the document into the Iframe
@@ -356,7 +368,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
         }
     },
 */
-	
+
 	
 	
 	////////////////////////////////////////////////////////////////////
@@ -368,7 +380,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
         	this._templateDocument.head = this.iframe.contentWindow.document.getElementById("userHead");;
         	this._templateDocument.body = this.iframe.contentWindow.document.getElementById("UserContent");;
         	//
-        	this.documentRoot = this.iframe.contentWindow.document.getElementById("UserContent");
+            this.documentRoot = this.iframe.contentWindow.document.getElementById("UserContent");
             this.stageBG = this.iframe.contentWindow.document.getElementById("stageBG");
             this.stageBG.onclick = null;
             this._document = this.iframe.contentWindow.document;
@@ -376,10 +388,10 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             //
             if(!this.documentRoot.Ninja) this.documentRoot.Ninja = {};
             //
-            
+
             this.documentRoot.innerHTML = this._userDocument.content.body;
             this.iframe.contentWindow.document.getElementById("userHead").innerHTML = this._userDocument.content.head;
-            
+
           
             //TODO: Look at code below and clean up
             	
@@ -395,10 +407,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
                         this.callback(this);
                     }
                 }.bind(this), 50);
-                
-                // TODO - Not sure where this goes
-                this._userComponentSet = {};
-
             
                 this._styles = this._document.styleSheets[this._document.styleSheets.length - 1];
                 this._stylesheets = this._document.styleSheets; // Entire stlyesheets array
@@ -449,7 +457,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 
                 this.callback(this);
             
-        }
+            }
     },
 
     _setSWFObjectScript: {
@@ -484,7 +492,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     			//TODO: Would this get call when we are in code of HTML?
     		} else {
     			//Error
-    		}
+    }
     	}
 	}
 	////////////////////////////////////////////////////////////////////
