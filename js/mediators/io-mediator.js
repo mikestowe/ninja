@@ -86,6 +86,7 @@ exports.IoMediator = Montage.create(Component, {
     			case 204:
     				//Creating and formatting result object for callbak
     				result = read.file.details;
+    				result.root = read.file.details.uri.replace(read.file.details.name, "");
     				//Checking for type of content to returns
     				if (result.extension !== 'html' && result.extension !== 'htm') {
     					//Simple string
@@ -142,12 +143,7 @@ exports.IoMediator = Montage.create(Component, {
     		//
     		switch (file.mode) {
     			case 'html':
-    				file.document.content.document.body.innerHTML = file.body;
-    				file.document.content.document.head.innerHTML = file.head;
-    				if (file.style) {
-    					file.document.content.document.head.getElementsByTagName('style')[0].innerHTML = this.getCssFromRules(file.style.cssRules);
-    				}
-    				contents = file.document.content.document.documentElement.outerHTML;
+    				contents = this.parseNinjaTemplateToHtml(file);
     				break;
     			default:
     				contents = file.content;
@@ -155,9 +151,8 @@ exports.IoMediator = Montage.create(Component, {
     		}
     		//
     		save = this.fio.saveFile({uri: file.document.uri, contents: contents});
-            if(save.status === 204){
-                callback();
-            }
+            //
+            if (callback) callback(save);
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -165,6 +160,14 @@ exports.IoMediator = Montage.create(Component, {
     fileSaveAs: {
     	enumerable: false,
     	value: function (copyTo, copyFrom, callback) {
+    		//
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    fileDelete: {
+    	enumerable: false,
+    	value: function (file, callback) {
     		//
     	}
     },
@@ -179,6 +182,32 @@ exports.IoMediator = Montage.create(Component, {
     		doc.getElementsByTagName('html')[0].innerHTML = html;
     		//Creating return object
     		return {head: doc.head.innerHTML, body: doc.body.innerHTML, document: doc};
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //TODO: Expand to allow more templates
+    parseNinjaTemplateToHtml: {
+    	enumerable: false,
+    	value: function (template) {
+    		//
+    		template.document.content.document.body.innerHTML = template.body;
+    		template.document.content.document.head.innerHTML = template.head;
+    		//
+    		if (template.webgl.length > 0) {
+    			for (var i in this.application.ninja.coreIoApi.ninjaLibrary.libs) {
+    				if (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'Assets' || this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'RDGE') {
+    					this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.document.root, (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name+this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version).toLowerCase());
+    				}
+    			}
+    		
+    			//this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(path, libname);
+    			//console.log(this.application.ninja.coreIoApi.ninjaLibrary.libs);
+    		}
+    		//TODO: Remove temp fix for styles
+    		if (template.style) {
+    			template.document.content.document.head.getElementsByTagName('style')[0].innerHTML = this.getCssFromRules(template.style.cssRules);
+    		}
+    		return template.document.content.document.documentElement.outerHTML;
     	}
     },
     ////////////////////////////////////////////////////////////////////
