@@ -12,7 +12,7 @@ var Montage = 		require("montage/core/core").Montage,
 ////////////////////////////////////////////////////////////////////////
 //
 exports.HTMLDocument = Montage.create(TextDocument, {
-    // PRIVATE MEMBERS
+    
     _selectionExclude: { value: null, enumerable: false },
     _htmlTemplateUrl: { value: "user-document-templates/montage-application-cloud/index.html", enumerable: false},
     _iframe: { value: null, enumerable: false },
@@ -41,7 +41,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 
     _zoomFactor: { value: 100, enumerable: false },
 
-    // PUBLIC MEMBERS
     cssLoadInterval: { value: null, enumerable: false },
 
     _savedLeftScroll: {value:null},
@@ -53,9 +52,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
         value:null
     },
 
-    /*
-     * PUBLIC API
-     */
+
 
     // GETTERS / SETTERS
 
@@ -231,9 +228,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             }
         }
     },
-
-    //****************************************//
-    // PUBLIC METHODS
+    
     
     
     ////////////////////////////////////////////////////////////////////
@@ -357,19 +352,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             return this._window.getElement(x,y);
         }
     },
-
-    /*
-    // Private
-    _loadDocument: {
-        value: function(uri) {
-            // Load the document into the Iframe
-            this.iframe.src = uri;
-            this.iframe.addEventListener("load", this, true);
-        }
-    },
-*/
-
-	
+    
+    
 	
 	////////////////////////////////////////////////////////////////////
 	//
@@ -475,11 +459,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             }
         }
     },
-
-    /**
-     * public method
-     *
-     */
+    
 	////////////////////////////////////////////////////////////////////
 	//
 	save: {
@@ -487,12 +467,12 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     	value: function () {
     		//TODO: Add code view logic and also styles for HTML
     		if (this.currentView === 'design') {
-    			return {mode: 'html', document: this._userDocument, style: this._styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
+    			return {mode: 'html', document: this._userDocument, webgl: this.glData, style: this._styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
     		} else if (this.currentView === "code"){
     			//TODO: Would this get call when we are in code of HTML?
     		} else {
     			//Error
-    }
+    		}
     	}
 	}
 	////////////////////////////////////////////////////////////////////
