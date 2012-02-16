@@ -10,6 +10,11 @@
 	-webkit-box-orient: vertical;
     height:100%;
 }
+.css_panel .resizer {
+    background-color: #333;
+    cursor: row-resize;
+    height: 1px;
+}
 .nj-section-header {
 	background-color: #333;
 	border-top: 1px solid #3D3D3D;
@@ -37,7 +42,6 @@
     -webkit-box-flex: 0;
     background-color: #474747;
     color: #FFF;
-    max-height: 68px;
     overflow-y: scroll;
 }
 #nj-section-styles {
