@@ -15,7 +15,7 @@ exports.MenuData = Montage.create( Montage, {
                     {
                         "displayText" : "New Project",
                         "hasSubMenu" : false,
-                        "enabled": true,
+                        "enabled": false,
                         "action":   "executeNewProject"
                     },
                     {
@@ -25,7 +25,7 @@ exports.MenuData = Montage.create( Montage, {
                         "action":   "executeNewFile"
                     },
                     {
-                        "displayText" : "Open...",
+                        "displayText" : "Open File",
                         "hasSubMenu" : false,
                         "enabled": true,
                         "action": "executeFileOpen"
@@ -37,17 +37,20 @@ exports.MenuData = Montage.create( Montage, {
                     {
                         "displayText" : "Save",
                         "hasSubMenu" : false,
-                        "enabled": false
+                        "enabled": true,
+                        "action": "executeSave"
                     },
                     {
                         "displayText" : "Save As",
                         "hasSubMenu" : false,
-                        "enabled": false
+                        "enabled": true,
+                        "action":"saveAs"
                     },
                     {
                         "displayText" : "Save All",
                         "hasSubMenu" : false,
-                        "enabled": false
+                        "enabled": true,
+                        "action": "executeSaveAll"
                     },
                     {
                         "displayText" : "",
@@ -56,12 +59,12 @@ exports.MenuData = Montage.create( Montage, {
                     {
                         "displayText" : "Open Project",
                         "hasSubMenu" : false,
-                        "enabled": true
+                        "enabled": false
                     },
                     {
                         "displayText" : "Open Recent",
                         "hasSubMenu" : false,
-                        "enabled": true
+                        "enabled": false
                     },
                     {
                         "displayText" : "Close Project",

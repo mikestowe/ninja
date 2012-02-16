@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="new-file-options-navigator.css">
+    <script type="text/montage-serialization">
+    {
+        "newFileLocation":{
+            "module": "js/io/ui/new-file-dialog/new-file-location.reel",
+            "name": "NewFileLocation",
+            "properties": {
+                "element": {"#": "right-bottom"}
+            }
+        },
+
+        "owner":{
+            "module": "js/io/ui/new-file-dialog/new-file-options-navigator.reel",
+            "name": "NewFileOptionsNavigator",
+            "properties": {
+                "element": {"#": "newfile"},
+                "projectTypeTree": {"#": "projectTypeTree"},
+                "cancelButton": {"#": "cancelButton"},
+                "okButton": {"#": "okButton"},
+                "templateIcons": {"#": "templateIcons"},
+                "templatesContainer": {"#": "right-top"},
+                "locationSelection": {"#": "right-bottom"},
+                "newFileLocation": {"@": "newFileLocation"},
+                "error": {"#": "error"}
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+<div id="newfile" class="newfile">
+    <div class="title">Create New File</div>
+    <div class="container left-nav">
+        <div class="projectTypeHeader"><span>Choose Type</span></div>
+        <div id="projectTypeTree" class="projectTypeTree"></div>
+    </div>
+    <div class="container right-nav">
+        <div id="right-top" class="right-top">
+            <div id="templateIcons" class="templateIcons" style="display:block;"></div>
+        </div>
+        <div  id="right-bottom" class="right-bottom">
+            <div class="templateIcon">templateIcon</div>
+            <div class="selections">selections</div>
+        </div>
+    </div>
+    <div class="errorMsg"><span id="error" class="error"></span></div>
+    <div class="buttons">
+        <button id="cancelButton" value="CANCEL" class="nj-skinned cancelButton">Cancel</button>
+        <button id="okButton" value="OK" disabled="true" class="nj-skinned okButton">Ok</button>
+    </div>
+</div>
+</body>
+</html>

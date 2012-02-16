@@ -8,14 +8,14 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component,
     defaultEventManager = require("montage/core/event/event-manager").defaultEventManager;
 
-exports.Preloader = Montage.create(Component, {
+var codeMirrorPath = "imports/codemirror";
 
+exports.Preloader = Montage.create(Component, {
 
     ninjaJsRequire: {
         value:
             [
                 {"type":"js", "url":"js/helper-classes/3D/GLMatrix/gl-matrix.js"},
-                {"type":"js", "url":"js/codemirror/lib/codemirror.js"},
 
                 {"type":"js", "url":"js/helper-classes/RDGE/rdge-compiled.js"},
 
@@ -81,18 +81,18 @@ exports.Preloader = Montage.create(Component, {
                 {"type":"js", "url":"js/helper-classes/RDGE/precompiled.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/MaterialsLibrary.js"},
                 {"type":"js", "url":"js/helper-classes/3D/glUtils.js"},                
-                {"type":"js", "url":"js/codemirror/mode/htmlmixed/htmlmixed.js"},
-                {"type":"js", "url":"js/codemirror/mode/xml/xml.js"},
-                {"type":"js", "url":"js/codemirror/mode/javascript/javascript.js"},
-                {"type":"js", "url":"js/codemirror/mode/css/css.js"}
+                {"type":"js", "url": codeMirrorPath + "/lib/codemirror.js"},
+                {"type":"js", "url": codeMirrorPath + "/mode/htmlmixed/htmlmixed.js"},
+                {"type":"js", "url": codeMirrorPath + "/mode/xml/xml.js"},
+                {"type":"js", "url": codeMirrorPath + "/mode/javascript/javascript.js"},
+                {"type":"js", "url": codeMirrorPath + "/mode/css/css.js"}
             ]
     },
 
     ninjaCssRequire: {
         value:
             [
-                {"type":"css", "url":"js/codemirror/lib/codemirror.css"},
-                {"type":"css", "url":"js/codemirror/theme/default.css"}
+                {"type":"css", "url": codeMirrorPath + "/lib/codemirror.css"}
             ]
     },
 

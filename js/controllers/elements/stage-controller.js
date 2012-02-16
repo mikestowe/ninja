@@ -75,6 +75,8 @@ exports.StageController = Montage.create(ElementController, {
     getProperty: {
         value: function(el, p) {
             switch(p) {
+                case "background" :
+                    return el.elementModel.stageBackground.style.getProperty(p);
                 case "border":
                     return el.elementModel.stageView.style.getProperty(p);
                 case "height":
@@ -90,9 +92,13 @@ exports.StageController = Montage.create(ElementController, {
 
     setProperty: {
         value: function(el, p, value) {
+
             switch(p) {
+                case "body-background":
+                    el.elementModel.body.style.setProperty("background", value);
+                    break;
                 case "background":
-                    el.elementModel.body.style.setProperty(p, value);
+                    el.elementModel.stageBackground.style.setProperty(p, value);
                     break;
                 case "overflow":
                     el.elementModel.viewPort.style.setProperty(p, value);

@@ -15,9 +15,15 @@ var IconsList = exports.IconsList = Montage.create(Component, {
     },
 
     iconsViewDataObject:{
-         writable:true,
+        writable:true,
         enumerable:true,
         value:[]
+    },
+
+    selected:{
+        writable:true,
+        enumerable:true,
+        value:null
     },
 
     willDraw: {

@@ -15,8 +15,41 @@
                 "module": "js/panels/Components/ComponentsPanelBase.reel",
                 "name": "ComponentsPanelBase",
                 "properties": {
-                    "element": {"#": "components_panel"}
+                    "element": {"#": "components_panel"},
+                    "controller": {"@": "componentsTree"}
                 }
+            },
+
+            "componentsController" : {
+                "module": "js/components/controllers/tree-controller",
+                "name": "TreeController",
+                "properties" : {
+                    "branchKey" : "children",
+                    "labelKey" : "text",
+                    "delegate": {"@": "owner" }
+                },
+                "bindings": {
+                    "content": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "components"
+                    }
+                }
+            },
+
+            "componentsTree" : {
+                "module" : "js/components/treeview/treeview.reel",
+                "name" : "Treeview",
+                "properties" : {
+                    "element" : {"#": "componentsContainer"},
+                    "branchComponent" : {"@": "branch" },
+                    "contentController": {"@": "componentsController"},
+                    "showRoot" : false
+                }
+            },
+
+            "branch" : {
+                "module" : "js/components/treeview/ninja-branch.reel",
+                "name" : "Branch"
             }
         }
         </script>
@@ -25,9 +58,7 @@
 	<body>
     
     	<div id="components_panel" class="components_panel">
-            <div class="treeHolder">
-                <ul id="comp_tree"></ul>
-            </div>
+           <div id="componentsContainer"></div>
     	</div>
 
     </body>

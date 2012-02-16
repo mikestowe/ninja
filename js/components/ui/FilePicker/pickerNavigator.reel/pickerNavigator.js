@@ -7,7 +7,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component,
     iconsListModule = require("js/components/ui/icon-list-basic/iconsList.reel"),
-    filePickerControllerModule = require("js/components/ui/FilePicker/file-picker-controller"),
     treeModule = require("js/components/ui/tree-basic/tree.reel");
 
 var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
@@ -150,6 +149,12 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
                     leftNav.appendChild(newDiv);
                     if(dirObj.uri === this.pickerModel.currentRoot){
                         newDiv.classList.add("highlighted");
+                        //enable ok for logical drive selections, when in directory selection mode
+                        if(this.pickerModel.inFileMode === false){
+                            this.okButton.removeAttribute("disabled");
+                            //put into selectedItems..currently single selection is supported
+                            this.selectedItems = [dirObj.uri];
+                        }
                     }
 
                     newDiv.addEventListener("click", function(evt){that.handleTopLevelDirectoryClicks(evt, dirObj);}, false);
@@ -209,26 +214,27 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
             this.refreshButton.addEventListener("click", this, false);//refresh - gets from file system directly
             this.backArrow.addEventListener("click", this, false);
             this.forwardArrow.addEventListener("click", this, false);
-            this.okButton.addEventListener("click", this, false);
-            this.cancelButton.addEventListener("click", this, false);
 
-            //populate filters
-            var filtersDD = this.element.querySelector(".filters .dropdown");
-            if(!!this.pickerModel.fileFilters
-                && (typeof this.pickerModel.fileFilters === "object")
-                && ('splice' in this.pickerModel.fileFilters)
-                && ('join' in this.pickerModel.fileFilters)){
-                this.pickerModel.fileFilters.forEach(function(aFilter){
-                    var newDiv = document.createElement("div");
-                    newDiv.innerHTML = aFilter;
-                    filtersDD.appendChild(newDiv);
-                    newDiv.addEventListener("click", function(evt){that.handleFilterClick(evt, aFilter, filtersDD)}, false);
-                }, this);
+            //populate filters if in file selection mode
+            if(this.pickerModel.inFileMode === true){
+                var filtersDD = this.element.querySelector(".filters .dropdown");
+                if(!!this.pickerModel.fileFilters
+                    && (typeof this.pickerModel.fileFilters === "object")
+                    && ('splice' in this.pickerModel.fileFilters)
+                    && ('join' in this.pickerModel.fileFilters)){
+                    this.pickerModel.fileFilters.forEach(function(aFilter){
+                        var newDiv = document.createElement("div");
+                        newDiv.innerHTML = aFilter;
+                        filtersDD.appendChild(newDiv);
+                        newDiv.addEventListener("click", function(evt){that.handleFilterClick(evt, aFilter, filtersDD)}, false);
+                    }, this);
+                }
+
+                var renderedWidth = this.getComputedWidth(filtersDD);
+                this.filters.style.width = "" + (parseInt((renderedWidth.substring(0, (renderedWidth.length - 2)))) + 20) + "px";
+            }else{
+                this.filters.style.display = "none";
             }
-
-            var renderedWidth = this.getComputedWidth(filtersDD);
-            this.filters.style.width = "" + (parseInt((renderedWidth.substring(0, (renderedWidth.length - 2)))) + 20) + "px";
-
             /**
              * attach click event listeners to the addressbar dropdown arrows
              */
@@ -243,6 +249,9 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
             this.element.addEventListener("refreshTreeSegment", function(evt){that.handlePickerNavRefreshTreeSegment(evt);}, false);
             this.resultsArea.addEventListener("click", function(evt){that.handleResultsAreaClick(evt);}, false);
             this.element.addEventListener("click", function(evt){that.handlePickerNavClick(evt);}, false);
+
+            this.okButton.addEventListener("click", function(evt){that.handleOkButtonAction(evt);}, false);
+            this.cancelButton.addEventListener("click", function(evt){that.handleCancelButtonAction(evt);}, false);
 
             //ready to show picker now
             this.element.style.visibility = "visible";
@@ -263,11 +272,11 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
         }
     },
 
-    //TODO: add uri pattern validation 
-    validateUri:{
+    cleanupUri:{
         writable: false,
         enumerable:true,
         value: function(folderUri){
+            folderUri = folderUri.replace(/^\s+|\s+$/g,"");  // strip any leading or trailing spaces
             //remove unnecessary / from end - for Win and Mac .... don't trim for the root
             if(((folderUri.charAt(folderUri.length - 1) === "/") || (folderUri.charAt(folderUri.length - 1) === "\\")) && (folderUri !== "/")){
                 folderUri = folderUri.substring(0, (folderUri.length - 1));
@@ -324,14 +333,14 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
         writable:false,
         enumerable:true,
         value:function(uri){
-            uri = this.validateUri(uri);
+            uri = this.cleanupUri(uri);
             var arr = [];
             var temp = new String(uri);
             while(temp.indexOf("/") != -1){
                 temp = temp.substring(0, temp.lastIndexOf("/"));
 
                 //populate dropdown irrespective of validity
-//                if(!!filePickerControllerModule.FilePickerController._directoryContentCache[temp]){//check if it is a valid location
+//                if(!!this.application.ninja.filePickerController._directoryContentCache[temp]){//check if it is a valid location
 //                    arr.push(temp);
 //                }else{
 //                    break;
@@ -354,7 +363,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
         value:function(element, uri){
             if(!!element){
                 var tree = treeModule.Tree.create();
-                tree.treeViewDataObject = filePickerControllerModule.FilePickerController.prepareContentList(uri, this.pickerModel);
+                tree.treeViewDataObject = this.application.ninja.filePickerController.prepareContentList(uri, this.pickerModel);
                 //console.log("renderTree() for "+ uri);
                 //console.log(tree.treeViewDataObject);
                 tree.element = element;
@@ -370,10 +379,10 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
             var status = true;
             var iconViewContainer = this.element.querySelector(".iconViewContainer");
             if((typeof fromCache === 'undefined') || (fromCache === true)){
-            this.newContent = filePickerControllerModule.FilePickerController.prepareContentList(uri, this.pickerModel);
+            this.newContent = this.application.ninja.filePickerController.prepareContentList(uri, this.pickerModel);
             }
             else{
-                this.newContent = filePickerControllerModule.FilePickerController.prepareContentList(uri, this.pickerModel, false);
+                this.newContent = this.application.ninja.filePickerController.prepareContentList(uri, this.pickerModel, false);
             }
             if(!!this.newContent && this.newContent.length > 0){
                 //clear selection
@@ -419,10 +428,10 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
             if(!!treeViewContainer){
                 var data = [];
                 if((typeof fromCache === 'undefined') || (fromCache === true)){
-                    data = filePickerControllerModule.FilePickerController.prepareContentList(uri, this.pickerModel);
+                    data = this.application.ninja.filePickerController.prepareContentList(uri, this.pickerModel);
                 }
                 else{
-                    data = filePickerControllerModule.FilePickerController.prepareContentList(uri, this.pickerModel, false);
+                    data = this.application.ninja.filePickerController.prepareContentList(uri, this.pickerModel, false);
                 }
 
                 if(data.length > 0){
@@ -471,7 +480,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
         enumerable: false,
         writable:false,
         value:function(currentUri){
-            var data = filePickerControllerModule.FilePickerController._directoryContentCache[currentUri];
+            var data = this.application.ninja.filePickerController._directoryContentCache[currentUri];
             var metadata = "";
             if(!!data){
                 if(data.name !== ""){
@@ -532,8 +541,6 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
             this.refreshButton.identifier = "refreshButton";
             this.backArrow.identifier = "backArrow";
             this.forwardArrow.identifier = "forwardArrow";
-            this.okButton.identifier = "okButton";
-            this.cancelButton.identifier = "cancelButton";
             this.iconView.identifier = "iconView";
             this.treeView.identifier = "treeView";
             this.resultsArea.identifier = "resultsArea";
@@ -569,6 +576,13 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
                     }
                     if(!evt.target.classList.contains("highlighted")){
                         evt.target.classList.add("highlighted");
+                    }
+
+                    //enable ok for logical drive selections, when in directory selection mode
+                    if(this.pickerModel.inFileMode === false){
+                        this.okButton.removeAttribute("disabled");
+                        //put into selectedItems..currently single selection is supported
+                        this.selectedItems = [dirObj.uri];
                     }
                 }
     },
@@ -608,8 +622,8 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
                         this.currentSelectedNode = null;
                     }
                     //enable OK button if the selection is valid as per the picker mode
-                    if((this.pickerModel.inFileMode && (filePickerControllerModule.FilePickerController._directoryContentCache[uri].type === "file"))
-                        || (!this.pickerModel.inFileMode && (filePickerControllerModule.FilePickerController._directoryContentCache[uri].type === "directory"))){
+                    if((this.pickerModel.inFileMode && (this.application.ninja.filePickerController._directoryContentCache[uri].type === "file"))
+                        || (!this.pickerModel.inFileMode && (this.application.ninja.filePickerController._directoryContentCache[uri].type === "directory"))){
                         this.okButton.removeAttribute("disabled");
 
                         //put into selectedItems..currently single selection is supported
@@ -622,6 +636,16 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
                         this.currentSelectedNode = evt.target;
 
                     }else{
+
+
+                        //test: highlight non-selectable icons too
+                        if(!evt.target.classList.contains("selected")){
+                            evt.target.classList.add("selected");
+                        }
+                        this.currentSelectedNode = evt.target;
+                        //end- test
+
+
                         //disable OK
                         if(!this.okButton.hasAttribute("disabled")){
                             this.okButton.setAttribute("disabled", "true");
@@ -651,7 +675,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
 
                     if(this.addressBarUri.value !== ""){
                         var uri = this.addressBarUri.value;
-                        uri = this.validateUri(uri);
+                        uri = this.cleanupUri(uri);
 
                         this.currentURI = uri;
                         var status = this.pickerViews()[this.selectedPickerView].call(this, uri);//dynamically calls the update function of the current picker view
@@ -676,7 +700,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
         value: function(evt){
                     if(evt.keyCode === 13 ){
                         var uri = this.addressBarUri.value;
-                        uri = this.validateUri(uri);
+                        uri = this.cleanupUri(uri);
 
                         this.currentURI = uri;
 
@@ -699,7 +723,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
     handleRefreshButtonClick:{
         value:function(evt){
                 var uri = this.addressBarUri.value;
-                uri = this.validateUri(uri);
+                uri = this.cleanupUri(uri);
 
                 var status = this.pickerViews()[this.selectedPickerView].call(this, uri, false);//dynamically calls the update function of the current picker view
 
@@ -768,34 +792,35 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
             }
     },
 
-    handleOkButtonClick : {
+    handleOkButtonAction : {
         value: function(evt){
-                    alert("selected "+ this.selectedItems.toString());
+                    console.log("$$$ File Picker : selected "+ this.selectedItems.toString());
                     var success = true;
                     if(!!this.pickerModel.callback && (this.selectedItems.length > 0)){//call the callback if it is available
                         try{
                             this.pickerModel.callback({"uri":this.selectedItems});
                         }catch(e){
                             success = false;
-                            console.log("[ERROR] File IO failed to open URIs:  "+ this.selectedItems.toString());
+                            console.log("[Error] Failed to open "+ this.selectedItems.toString());
+                            console.log(e.stack);
                         }
                     }else{//else send an event with the selected files
                         var pickerSelectionEvent = document.createEvent("Events");
                         pickerSelectionEvent.initEvent("pickerSelectionsDone", false, false);
                         pickerSelectionEvent.selectedItems = this.selectedItems;
-                        document.dispatchEvent(pickerSelectionEvent);//TODO: use eventManager when it is available
+                        this.eventManager.dispatchEvent(pickerSelectionEvent);
                     }
 
                     //store last opened/saved folder, and view after IO is successful
                     var dataStore = window.sessionStorage;
                     try {
                         if(this.pickerModel.pickerMode === "write"){
-                            filePickerControllerModule.FilePickerController._lastSavedFolderURI.lastSavedFolderUri_local = this.currentURI;
                             dataStore.setItem('lastSavedFolderURI',escape(""+this.currentURI));
                         }
-                        else{
-                            filePickerControllerModule.FilePickerController._lastOpenedFolderURI.lastFolderUri_local = this.currentURI;
-                            dataStore.setItem('lastOpenedFolderURI',escape(""+this.currentURI));
+                        else if(this.pickerModel.inFileMode === true){
+                            dataStore.setItem('lastOpenedFolderURI_fileSelection',escape(""+this.currentURI));
+                        }else if(this.pickerModel.inFileMode === false){
+                            dataStore.setItem('lastOpenedFolderURI_folderSelection',escape(""+this.currentURI));
                         }
                     }
                     catch(e){
@@ -813,7 +838,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
               }
     },
 
-    handleCancelButtonClick :{
+    handleCancelButtonAction :{
         value:function(evt){
                 //clean up memory
                 this.cleanup();
@@ -949,9 +974,9 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
 
     handlePickerNavRefreshTreeSegment:{
         value: function(evt){
-//                if(filePickerControllerModule.FilePickerController.checkIfStale(evt.uri)){
+//                if(this.application.ninja.filePickerController.checkIfStale(evt.uri)){
 //                    //update tree segment if was stale
-//                    evt.treeSegment.treeViewDataObject = filePickerControllerModule.FilePickerController.prepareContentList(evt.uri, this.pickerModel, true, false);
+//                    evt.treeSegment.treeViewDataObject = this.application.ninja.filePickerController.prepareContentList(evt.uri, this.pickerModel, true, false);
 //                }
             }
     },
@@ -994,7 +1019,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
             value:function(){
                 //clear memory - TODO:check for more memory leaks
                 this.pickerModel = null;
-                filePickerControllerModule.FilePickerController._directoryContentCache = {};
+                this.application.ninja.filePickerController._directoryContentCache = {};
                 //remove listeners
                 this.element.removeEventListener("openFolder", this, false);//add icon double click event listener to reload iconList with new set of data
                 this.element.removeEventListener("selectedItem", this, false);//for single selection only
@@ -1005,8 +1030,6 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
                 this.refreshButton.removeEventListener("click", this, false);//refresh - gets from file system directly
                 this.backArrow.removeEventListener("click", this, false);
                 this.forwardArrow.removeEventListener("click", this, false);
-                this.okButton.removeEventListener("click", this, false);
-                this.cancelButton.removeEventListener("click", this, false);
                 this.iconView.removeEventListener("click", this, false);
                 this.treeView.removeEventListener("click", this, false);
                 this.element.removeEventListener("drawTree", this, false);

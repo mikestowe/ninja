@@ -5,7 +5,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var Montage   = require("montage/core/core").Montage,
-    Component = require("montage/ui/component").Component;
     TreeNode = require("js/components/treeview/tree-node").TreeNode;
 
 exports.Leaf = Montage.create(TreeNode, {
@@ -14,19 +13,38 @@ exports.Leaf = Montage.create(TreeNode, {
     },
     templateDidLoad : {
         value: function() {
-            this.needsDraw = true;
+            var event = this.treeView.activationEvent;
+
+            ///// Re-set the activation event
+            if(event && event !== this.activationEvent) {
+                this.delegateEventMap[event] = this.delegateEventMap[this.activationEvent];
+                delete this.delegateEventMap[this.activationEvent];
+                this.activationEvent = this.treeView.activationEvent;
+            }
         }
     },
     prepareForDraw: {
         value : function() {
-            this.activationEvent = this.activationEvent || 'click';
-            this.label._element.addEventListener(this.activationEvent, this.handleNodeActivation.bind(this), false);
+            var el = this.label._element;
+
+            Object.keys(this.delegateEventMap).forEach(function(event) {
+                el.addEventListener(event, this, false);
+            }, this);
+
         }
     },
-    handleNodeActivation: {
+    handleEvent : {
         value: function(e) {
-            console.log(this.sourceObject);
-            this.treeView.contentController.delegate.applyPresetSelection(this.sourceObject);
+            var delegateMethod = this.delegateEventMap[e._event.type];
+            this.callDelegateMethod(delegateMethod, e);
+        }
+    },
+    callDelegateMethod : {
+        value: function(methodName, evt) {
+            var delegate = this.treeView.contentController.delegate;
+            if(delegate && typeof delegate[methodName] === 'function') {
+                delegate[methodName](this.sourceObject, evt);
+            }
         }
     },
     draw : {
@@ -34,6 +52,17 @@ exports.Leaf = Montage.create(TreeNode, {
             if(this.sourceObject[this.labelKey]) {
                 this._labelText = this.sourceObject[this.labelKey];
             }
+        }
+    },
+    activationEvent : {
+        value : 'click'
+    },
+    delegateEventMap : {
+        value: {
+            'click'     : 'handleNodeActivation',
+            'dblclick'  : 'handleDblclick',
+            'dragstart' : 'handleDragStart',
+            'dragend'   : 'handleDragEnd'
         }
     }
 
