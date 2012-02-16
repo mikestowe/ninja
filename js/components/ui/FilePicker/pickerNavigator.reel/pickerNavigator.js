@@ -203,6 +203,13 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
                 this.pickerModel.storeHistory(this.pickerModel.currentRoot);//populate history
 
                 this.updateMetadata(this.currentURI);
+
+                //for directory selection, selected url is the folder entered
+                if(!this.pickerModel.inFileMode ){
+                    this.okButton.removeAttribute("disabled");
+                    //put into selectedItems..currently single selection is supported
+                    this.selectedItems = [this.pickerModel.currentRoot];
+                }
             }
 
             this.element.addEventListener("openFolder", function(evt){that.handlePickerNavOpenFolder(evt);}, false);//add icon double click event listener to reload iconList with new set of data
@@ -211,6 +218,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
             this.element.addEventListener("updateMetadata", function(evt){that.handlePickerNavUpdateMetadata(evt);}, false);//show metadata on click of icon
             //this.addressGo.addEventListener("click", this, false);
             this.addressBarUri.addEventListener("keydown", this, false);
+            this.addressBarUri.addEventListener("keyup", this, false);
             this.refreshButton.addEventListener("click", this, false);//refresh - gets from file system directly
             this.backArrow.addEventListener("click", this, false);
             this.forwardArrow.addEventListener("click", this, false);
@@ -608,6 +616,13 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
                         this.backArrow.classList.remove("disable");
                     }
 
+                    //for directory selection, selected url is the folder entered
+                    if(!this.pickerModel.inFileMode ){
+                        this.okButton.removeAttribute("disabled");
+                        //put into selectedItems..currently single selection is supported
+                        this.selectedItems = [evt.folderUri];
+                    }
+
                 }
     },
 
@@ -720,6 +735,21 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
               }
     },
 
+    handleAddressBarUriKeyup:{
+        value: function(evt){
+            //disable ok if user enters an invalid uri
+            if(!this.application.ninja.coreIoApi.isValidUri(this.addressBarUri.value)){
+                //disable OK
+                if(!this.okButton.hasAttribute("disabled")){
+                    this.okButton.setAttribute("disabled", "true");
+                }
+            }else{
+                this.okButton.removeAttribute("disabled");
+                this.selectedItems = [this.addressBarUri.value];
+            }
+        }
+    },
+
     handleRefreshButtonClick:{
         value:function(evt){
                 var uri = this.addressBarUri.value;
@@ -794,7 +824,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
 
     handleOkButtonAction : {
         value: function(evt){
-                    console.log("$$$ File Picker : selected "+ this.selectedItems.toString());
+                    //console.log("$$$ File Picker : selected "+ this.selectedItems.toString());
                     var success = true;
                     if(!!this.pickerModel.callback && (this.selectedItems.length > 0)){//call the callback if it is available
                         try{
