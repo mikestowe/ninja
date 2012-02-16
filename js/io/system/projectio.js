@@ -4,56 +4,76 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var FileIo = require("js/io/system/fileio").FileIo;
 ////////////////////////////////////////////////////////////////////////
-//Exporting as Project I/O
-exports.ProjectIo = (require("montage/core/core").Montage).create(Object.prototype, {
+//
+var Montage = 	require("montage/core/core").Montage,
+	FileIo = 	require("js/io/system/fileio").FileIo;
+////////////////////////////////////////////////////////////////////////
+//
+exports.ProjectIo = Montage.create(Object.prototype, {
 	////////////////////////////////////////////////////////////////////
     //
-    create: {
+    newProject: {
     	enumerable: false,
     	value: function () {
+    		//Checking for API to be available
+    		if (!this.application.ninja.coreIoApi.cloudAvailable()) {
+    			//API not available, no IO action taken
+    			return null;
+    		}
+    		//
     	}
     },
 	////////////////////////////////////////////////////////////////////
     //
-    open: {
+    readProject: {
     	enumerable: false,
     	value: function(e) {
-    		//TODO: Add functionality
-    		console.log('ProjectIO: open');
-    	}
-    },
-    ////////////////////////////////////////////////////////////////////
-    //
-    save: {
-    	enumerable: false,
-    	value: function(type, id, components) {
-    		//
-    		var rObj;
-    		//
-    		switch (type) {
-    			case 'montageapp':
-    				//
-    				var css = FileIo.save('css', id);
-    				var html = FileIo.save('html', id, components);
-    				//
-    				rObj = {html: html, css: css};
-    				break;
-    			default:
-    				break;
+    		//Checking for API to be available
+    		if (!this.application.ninja.coreIoApi.cloudAvailable()) {
+    			//API not available, no IO action taken
+    			return null;
     		}
     		//
-    		return rObj;
     	}
     },
     ////////////////////////////////////////////////////////////////////
     //
-    saveAs: {
+    saveProject: {
+    	enumerable: false,
+    	value: function() {
+    		//Checking for API to be available
+    		if (!this.application.ninja.coreIoApi.cloudAvailable()) {
+    			//API not available, no IO action taken
+    			return null;
+    		}
+    		//
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    copyProject: {
     	enumerable: false,
     	value: function(e) {
-    		//TODO: Add functionality
-    		console.log('ProjectIO: saveAs');
+    		//Checking for API to be available
+    		if (!this.application.ninja.coreIoApi.cloudAvailable()) {
+    			//API not available, no IO action taken
+    			return null;
+    		}
+    		//
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    infoProject: {
+    	enumerable: false,
+    	value: function(e) {
+    		//Checking for API to be available
+    		if (!this.application.ninja.coreIoApi.cloudAvailable()) {
+    			//API not available, no IO action taken
+    			return null;
+    		}
+    		//
     	}
     }
     ////////////////////////////////////////////////////////////////////

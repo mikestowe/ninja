@@ -1,1 +1,0 @@
-Codemirror Version: 2.12

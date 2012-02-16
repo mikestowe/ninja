@@ -77,11 +77,28 @@ exports.DocumentEntry = Montage.create(Component, {
         }
     },
 
+    _dirtyFlag:{
+        enumerable:false,
+        value:false
+    },
+    dirtyFlag:{
+        get: function() {
+            return this._dirtyFlag;
+        },
+        set: function(value) {
+            var previousValue = this._dirtyFlag;
+            this._dirtyFlag = value;
+
+            if (previousValue !== this._dirtyFlag) {
+                this.needsDraw = true;
+            }
+        }
+    },
 
     prepareForDraw: {
         enumerable: false,
         value: function() {
-           //this.element.addEventListener("click", this, false);
+           this.element.addEventListener("click", this, false);
         }
     },
 
@@ -92,16 +109,22 @@ exports.DocumentEntry = Montage.create(Component, {
             this.label.innerText = this._name ? this._name : "";
 
             this._active ? this.element.classList.add("activeTab") : this.element.classList.remove("activeTab");
+
+            if(this.dirtyFlag === true){
+                if(!this.label.classList.contains("dirty")){this.label.classList.add("dirty");}
+            }else{
+                if(this.label.classList.contains("dirty")){this.label.classList.remove("dirty");}
+            }
         }
     },
 
     handleClick: {
         value: function(event) {
             if(event._event.target.nodeName === "IMG") {
-                documentManagerModule.DocumentManager.closeDocument(this._uuid);
+                this.application.ninja.documentController.closeDocument(this._uuid);
             } else {
                 if(!this._document.isActive) {
-                    documentManagerModule.DocumentManager.switchDocument(this._uuid);
+                    this.application.ninja.stage.stageView.switchDocument(this.application.ninja.documentController._findDocumentByUUID(this._uuid));
                 }
             }
         }

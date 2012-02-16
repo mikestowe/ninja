@@ -21,4 +21,6 @@ js/components/gradientpicker.reel/.sass-cache/6f8390f69a31f1a976968b9c18d0824d78
 cloud/
 
 /.idea/scopes/scope_settings.xml
-/_scss/compass_app_log.txt
+_scss/imports/scss/_Stage.scss
+compass_app_log.txt
+js/io/ui/cloudpopup.reel/.sass-cache/5fd824121af95f6044b06681535cf0639ffb5db3/cloudpopup.scssc

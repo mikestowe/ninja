@@ -35,4 +35,5 @@
 
 .documentEntry span.dirty:before{
     content: "*";
+    display:inline;
 }

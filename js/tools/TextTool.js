@@ -21,6 +21,7 @@ exports.TextTool = Montage.create(DrawingTool, {
                 this.selectedElement.innerHTML = this.application.ninja.stage.textTool.value;
                 this.application.ninja.stage.textTool.value = "";
                 this.application.ninja.stage.textTool.element.style.display = "none";
+                this.applyElementStyles(this.application.ninja.stage.textTool.element.firstChild, this.selectedElement, ["color"]);
             }
             //Set Selected Element
             this._selectedElement = val;

@@ -4,29 +4,30 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var Montage = require("montage/core/core").Montage;
-var baseDocumentModule = require("js/io/document/base-document");
-
-
-var TextDocument = exports.TextDocument = Montage.create(baseDocumentModule.BaseDocument, {
+////////////////////////////////////////////////////////////////////////
+//
+var Montage = 		require("montage/core/core").Montage,
+	BaseDocument =	require("js/io/document/base-document").BaseDocument;
+////////////////////////////////////////////////////////////////////////
+//
+exports.TextDocument = Montage.create(BaseDocument, {
     // PRIVATE MEMBERS
     _codeEditor: {
         value: {
             "editor": { value: null, enumerable: false },
-            "hline": { value: null, enumerable: false }
+
         }
     },
 
-    _textArea: { value: null, enumerable: false },
+    _editor: { value: null, enumerable: false },
+    _hline: { value: null, enumerable: false },
 
-    // Temporary Save the source
+    _textArea: {value: null, enumerable: false },
+	
+	_userDocument: {value: null, enumerable: false },
+	
     _source: { value: null, enumerable: false},
 
-    textArea: {
-        get: function() { return this._textArea;},
-        set: function(value) { this._textArea = value; }
-    },
-    
     source: {
         get: function() { return this._source;},
         set: function(value) { this._source = value;}
@@ -34,33 +35,77 @@ var TextDocument = exports.TextDocument = Montage.create(baseDocumentModule.Base
 
     // PUBLIC MEMBERS
 
+    _savedLeftScroll: {value:null},
+    _savedTopScroll: {value:null},
+
     //****************************************//
     //PUBLIC API
 
 
     // GETTERS / SETTERS
+
+    savedLeftScroll:{
+        get: function() { return this._savedLeftScroll; },
+        set: function(value) { this._savedLeftScroll = value}
+    },
+
+    savedTopScroll:{
+        get: function() { return this._savedTopScroll; },
+        set: function(value) { this._savedTopScroll = value}
+    },
+
+    textArea: {
+        get: function() { return this._textArea; },
+        set: function(value) { this._textArea = value; }
+    },
     editor: {
-        get: function() { return this._codeEditor.editor; },
-        set: function(value) { this._codeEditor.editor = value}
+        get: function() { return this._editor; },
+        set: function(value) { this._editor = value}
     },
 
     hline: {
-        get: function() { return this._codeEditor.hline; },
-        set: function(value) {this._codeEditor.hline = value; }
+        get: function() { return this._hline; },
+        set: function(value) {this._hline = value; }
     },
 
     
-    // PUBLIC METHODS
+    ////////////////////////////////////////////////////////////////////
+	//
     initialize: {
-        value: function(doc, uuid, textArea, callback) {
-            this.init(doc.name, doc.uri, doc.type, textArea, uuid, callback);
-            this.textArea = textArea.firstChild;
-            this.currentView = "code";
-            this._loadContent();
+    	value: function(file, uuid, textArea, container, callback) {
+        	//
+			this._userDocument = file;
+			//
+			this.init(file.name, file.uri, file.extension, container, uuid, callback);
+	        //
+    	    this.currentView = "code";
+        	this.textArea = textArea;
         }
     },
+    ////////////////////////////////////////////////////////////////////
+    //
+	save: {
+		enumerable: false,
+    	value: function () {
+    		//TODO: Improve sequence
+    		this.editor.save();
+    		return {mode: this._userDocument.extension, document: this._userDocument, content: this.textArea.value};
+    	}
+	}
+	////////////////////////////////////////////////////////////////////
 
-    // PRIVATE METHODS
+
+
+
+
+
+
+
+
+
+
+    /*
+// PRIVATE METHODS
     _loadContent: {
         value: function() {
             // Start and AJAX call to load the HTML Document as a String
@@ -86,6 +131,26 @@ var TextDocument = exports.TextDocument = Montage.create(baseDocumentModule.Base
             
             xhr.send('');
         }
+    },
+*/
+    ////////////////////////////////////////////////////////////////////
+	
+
+    /**
+     * public method
+     */
+    /*
+save:{
+        value:function(){
+            try{
+                this.editor.save();
+                //persist textArea.value to filesystem
+                this.dirtyFlag=false;
+            }catch(e){
+                console.log("Error while saving "+this.uri);
+                console.log(e.stack);
+            }
+        }
     }
-    
+*/
 });

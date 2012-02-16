@@ -22,6 +22,13 @@ var Icon = exports.Icon = Montage.create(Component, {
             this.needsDraw = true;
         }
     },
+
+    selectedUri:{
+        writable:true,
+        enumerable:true,
+        value:null
+    },
+
     metadata:{
         enumerable:true,
         writable:true,
@@ -83,6 +90,13 @@ var Icon = exports.Icon = Montage.create(Component, {
             if(this.icondata.creationDate){this.metadata = this.metadata + "<br />" + "Creation date: "+ this.formatTimestamp(this.icondata.creationDate);}
             if(this.icondata.modifiedDate){this.metadata = this.metadata + "<br />" + "Modified date: "+ this.formatTimestamp(this.icondata.modifiedDate);}
 
+            //show default selection
+            if(this.icondata.uri === this.selectedUri){
+                var selectedItemEvent = document.createEvent("Events");
+                selectedItemEvent.initEvent("selectedItem", false, false);
+                selectedItemEvent.uri = this.icondata.uri;
+                this.element.dispatchEvent(selectedItemEvent);
+            }
     	}
     },
 

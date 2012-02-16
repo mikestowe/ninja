@@ -1,0 +1,100 @@
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
+.saveAsDialog{
+    font-size:12px;
+    width:450px;
+    height:150px;
+    padding-left: 15px;
+    padding-right: 15px;
+    background-color:#313131;
+    color: #ffffff;
+}
+
+.saveAsDialog .title{
+    font-size:14px;
+    height:15px;
+    padding:5px;
+    text-align: center;
+    font-weight: bold;
+    color: #C1C1C1;
+}
+
+.saveAsDialog .locationSelection{
+    border: 1px groove #000000;
+    overflow: auto;
+    height:38%;
+    padding: 15px;
+    background-color:#5f5f5f;
+}
+
+.saveAsDialog .newFileName{
+    width:80%;
+    margin-left:5px;
+}
+
+.saveAsDialog .fileInputField .newFileDirectory{
+    width: 80%;
+}
+
+.saveAsDialog .nameText{
+    margin-right:10px;
+}
+
+.saveAsDialog .buttons{
+    float:right;
+    margin-top: 10px;
+}
+
+.saveAsDialog .filename{
+    margin-bottom: 10px;
+}
+
+.saveAsDialog .errorMsg{
+    float:left;
+    margin-top: 7px;
+}
+.saveAsDialog .errorMsg span{
+    color: #BF3B3B;
+}
+
+.saveAsDialog .fileInputField{
+    margin-left:3px;
+}
+
+.saveAsDialog .okButton{
+    margin-right:25px;
+    -webkit-box-align: center;
+    text-align: center;
+    cursor: default;
+    padding: 0px 6px 0px;
+    border:2px solid #d1d1d1;
+    background-color: #e1e1e1;
+    box-sizing: border-box;
+    border-radius:10px;
+    background-image: -webkit-linear-gradient(bottom, #e1e1e1 13%, #d1d1d1 58%, #e1e1e1 40%);
+    cursor:pointer;
+}
+
+.saveAsDialog .cancelButton{
+    -webkit-box-align: center;
+    text-align: center;
+    cursor: default;
+    padding: 0px 6px 0px;
+    border:2px solid #d1d1d1;
+    background-color: #e1e1e1;
+    box-sizing: border-box;
+    border-radius:10px;
+    background-image: -webkit-linear-gradient(bottom, #e1e1e1 13%, #d1d1d1 58%, #e1e1e1 40%);
+    cursor:pointer;
+}
+
+.saveAsDialog input[type="button"]:disabled{
+    background-color: #a1a1a1;
+    border:2px solid #a1a1a1;
+    background-image:none;
+    cursor:auto;
+}
