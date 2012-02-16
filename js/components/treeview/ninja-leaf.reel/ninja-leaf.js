@@ -63,7 +63,8 @@ exports.Leaf = Montage.create(TreeNode, {
             'dblclick'  : 'handleDblclick',
             'dragstart' : 'handleDragStart',
             'dragend'   : 'handleDragEnd'
-        }
+        },
+        distinct: true
     }
 
 
