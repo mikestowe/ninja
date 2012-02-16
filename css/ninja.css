@@ -666,7 +666,9 @@ nav.menuBar ul ul, nav.menuBar ul li:hover ul ul, nav.menuBar ul ul li:hover ul 
 
 nav.menuBar ul li:hover ul, nav.menuBar ul ul li:hover ul, nav.menuBar ul ul ul li:hover ul { display: block; }
 
-.subToolButton { float: left; }
+.subToolHolderPanel .toolbutton { float: left; -webkit-transform: scale(0.6); }
+
+.subToolHolderPanel .toolbutton:hover, .subToolHolderPanel .toolbutton.active { -webkit-transform: scale(0.75); }
 
 .subOption { float: left; margin-top: 5px; margin-left: 10px; margin-right: 10px; }
 
@@ -814,11 +816,11 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .toolbutton { width: 29px; height: 29px; background-position: center center; background-repeat: no-repeat; border-radius: 3px; opacity: 1; margin-bottom: 2px; -webkit-transform: scale(0.8); -webkit-transition: 0.15s all cubic-bezier(0.44, 0.19, 0, 0.99); }
 
-.toolsList .toolbutton:hover, .toolsList .active { box-shadow: 0px 0px 2px 2px #999; -webkit-transform: scale(1); opacity: 1; }
+.toolbutton:hover, .toolbutton.active { box-shadow: 0px 0px 2px 2px #999; -webkit-transform: scale(1); opacity: 1; }
 
-.toolsList .toolbutton:active { background-color: #8c8c8c; }
+.toolbutton:active { background-color: #8c8c8c; }
 
-.toolsList .active { box-shadow: inset 0px 0px 2px 2px #555; background-color: #363636; }
+.toolbutton.active { box-shadow: inset 0px 0px 2px 2px #555; background-color: #363636; }
 
 .SelectionTool { background-image: url("../images/tools/Tool-Selection.png"); }
 
