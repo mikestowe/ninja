@@ -12,17 +12,19 @@ exports.content = Montage.create(Component, {
         value: true
     },
     contentPanel : {
-        value: "presets" // get from local storage
+        value: null
     },
     templateDidLoad : {
         value: function() {
-            console.log('deserialized');
+            var storedTabIndex = window.localStorage.presetsTabIndex;
+            if(storedTabIndex) {
+                this.activeTabIndex = storedTabIndex;
+            }
         }
     },
     prepareForDraw : {
         value: function() {
             this.activeTab = this.tabs[this.activeTabIndex];
-
             this.tabBar.addEventListener('click', this, false);
         }
     },
@@ -48,59 +50,30 @@ exports.content = Montage.create(Component, {
         },
         set: function(tabObject) {
             this.contentPanel = tabObject.key;
-
-            if(this.activeTab) {
-                this._activeTab.tab.classList.remove('active-tab');
-            }
-
-            tabObject.tab.classList.add('active-tab');
+            window.localStorage.presetsTabIndex = this.tabs.indexOf(tabObject);
+            this._tabToDeactivate = this._activeTab;
             this._activeTab = tabObject;
+
+            this.needsDraw = this._needsTabSwitch = true;
         }
     },
-    treeList : {
-        value : null
+    _tabToDeactivate : {
+        value: null,
+        enumarable: false
     },
-    data2: {
-       value: {
-        "meta": "Blah",
-        "status": "OK",
-        "text" : "Root",
-        "data" : {
-            "date": "1.1.01",
-            "text": "Root",
-            "children": [{
-                "date": "3.3.01",
-                "text": "Child 1"
-            },
-                {
-                    "date": "3.3.01",
-                    "text": "Child 2",
-                    "children": [{
-                        "date": "3.4.01",
-                        "text": "Grand Child 1",
-                        "children": [{
-                            "date": "4.4.01",
-                            "text": "Great Grand Child 1"
-                        }]
-                    }]
-
-                },{
-                    "date": "5.5.01",
-                    "text": "Child 3"
-                }]
-        }
-       }
+    _needsTabSwitch : {
+        value: null,
+        enumerable: false
     },
+    draw : {
+        value: function() {
+            if(this._needsTabSwitch) {
+                if(this._tabToDeactivate) {
+                    this._tabToDeactivate.tab.classList.remove('active-tab');
+                }
 
-    didDraw: {
-        value : function() {
-            console.log('Presets Panel prepare for draw.');
-//            this.treeList.items.push({
-//                label : "Box Style",
-//                type : 'leaf'
-//            });
+                this._activeTab.tab.classList.add('active-tab');
+            }
         }
     }
-
-
 });
