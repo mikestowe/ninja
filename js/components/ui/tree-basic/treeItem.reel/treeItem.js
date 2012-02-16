@@ -29,6 +29,17 @@ exports.TreeItem = Montage.create(Component, {
         value:true
     },
 
+    expandAfterDraw:{
+        writable:true,
+        enumerable:true,
+        value:false
+    },
+    highlightedUri:{
+        writable:true,
+        enumerable:true,
+        value:null
+    },
+
     directoryBold :{
         writable:true,
         enumerable:true,
@@ -85,6 +96,9 @@ exports.TreeItem = Montage.create(Component, {
             this.element.identifier = "treeItem";
             this.treeArrow.identifier = "treeArrow";
 
+            this.element.setAttribute("data-uri", this.treeItemData.uri);
+            this.element.setAttribute("data-type", this.treeItemData.type);
+
             //add arrow click handler for directory
             if(this.treeItemData.type === "directory"){
                 this.treeArrow.addEventListener("click", this, false);
@@ -107,7 +121,14 @@ exports.TreeItem = Montage.create(Component, {
             if(this.treeItemData.size){this.metadata = this.metadata + "<br />" + "Size: "+this.treeItemData.size;}
             if(this.treeItemData.creationDate){this.metadata = this.metadata + "<br />" + "Creation date: "+ this.formatTimestamp(this.treeItemData.creationDate);}
             if(this.treeItemData.modifiedDate){this.metadata = this.metadata + "<br />" + "Modified date: "+ this.formatTimestamp(this.treeItemData.modifiedDate);}
-    	}
+
+            if((this.treeItemData.type === "directory") && (this.expandAfterDraw === true)){
+                this.toggleContent(this.treeArrow);
+            }
+            if(this.treeItemData.uri === this.highlightedUri){
+                this.itemName.classList.add("selected");
+            }
+        }
     },
 
     toggleContent:{

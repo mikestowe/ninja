@@ -1,0 +1,73 @@
+{
+	"categories":{
+		"children":["/"]
+	},
+	"/":{
+		"name":"Blank File",
+		"uri":"/",
+		"type":"directory",
+        "children":["js/io/templates/files/html.txt", "js/io/templates/files/js.txt", "js/io/templates/files/css.txt", "js/io/templates/files/json.txt", "js/io/templates/files/php.txt", "js/io/templates/files/pl.txt", "js/io/templates/files/py.txt", "js/io/templates/files/rb.txt"]
+	},
+	"js/io/templates/files/html.txt":{
+		"name":"HTML",
+		"uri":"js/io/templates/files/html.txt",
+		"type":"file",
+        "fileExtension":".html",
+        "children":["defaultTemplate"]
+	},
+	"js/io/templates/files/js.txt":{
+		"name":"JavaScript",
+		"uri":"js/io/templates/files/js.txt",
+		"type":"file",
+        "fileExtension":".js",
+        "children":["defaultTemplate"]
+	},
+	"js/io/templates/files/css.txt":{
+		"name":"Cascading Style Sheets",
+		"uri":"js/io/templates/files/css.txt",
+		"type":"file",
+        "fileExtension":".css",
+        "children":["defaultTemplate"]
+	},
+	"js/io/templates/files/json.txt":{
+		"name":"JSON",
+		"uri":"js/io/templates/files/json.txt",
+		"type":"file",
+        "fileExtension":".json",
+        "children":["defaultTemplate"]
+	},
+	"js/io/templates/files/php.txt":{
+		"name":"PHP",
+		"uri":"js/io/templates/files/php.txt",
+		"type":"file",
+        "fileExtension":".php",
+        "children":["defaultTemplate"]
+	},
+	"js/io/templates/files/pl.txt":{
+		"name":"Perl",
+		"uri":"js/io/templates/files/pl.txt",
+		"type":"file",
+        "fileExtension":".pl",
+        "children":["defaultTemplate"]
+	},
+	"js/io/templates/files/py.txt":{
+		"name":"Python",
+		"uri":"js/io/templates/files/py.txt",
+		"type":"file",
+        "fileExtension":".py",
+        "children":["defaultTemplate"]
+	},
+	"js/io/templates/files/rb.txt":{
+		"name":"Ruby",
+		"uri":"js/io/templates/files/rb.txt",
+		"type":"file",
+        "fileExtension":".rb",
+        "children":["defaultTemplate"]
+	},
+    "defaultTemplate":{
+        "name": "Basic",
+        "uri": "defaultTemplate",
+        "type":"file"
+    }
+
+}

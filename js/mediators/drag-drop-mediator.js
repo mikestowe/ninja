@@ -24,6 +24,10 @@ exports.DragDropMediator = Montage.create(Component, {
         writable: true
     },
 
+    dropDelegate: {
+        value: null
+    },
+
     deserializedFromTemplate: {
         value: function() {
             this.eventManager.addEventListener("appLoaded", this, false);
@@ -69,13 +73,14 @@ exports.DragDropMediator = Montage.create(Component, {
 
             xferString = evt.dataTransfer.getData("text/plain");
             if(xferString) {
-
-                if(xferString.lastIndexOf("-Component") !== -1) {
-                    component = xferString.substring(0, xferString.lastIndexOf("-Component"));
-                    NJevent( "executeAddComponent", { "component": component, "dropX": this.baseX, "dropY": this.baseY });
-//                    ComponentPanelModule.ComponentsPanelBase.addComponentToStage(componentStr.substring(0, compInd), this.baseX, this.baseY);
+                // If the drop is a component, call the delegate with the top,left coordinates
+                if(xferString.indexOf("componentDrop") > -1) {
+                    if(this.dropDelegate && typeof this.dropDelegate === 'object') {
+                        this.dropDelegate.handleComponentDrop(this.baseX, this.baseY);
+                        return;
+                    }
                 }
-                return;
+
             }
 
             // Verify that browser supports FileReader API.

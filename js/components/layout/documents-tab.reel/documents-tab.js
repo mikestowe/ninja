@@ -7,8 +7,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage;
 var Component = require("montage/ui/component").Component;
 
-var documentManagerModule = require("js/io/document/document-controller");
-
 exports.DocumentsTab = Montage.create(Component, {
 
     openDocuments: {
@@ -19,7 +17,7 @@ exports.DocumentsTab = Montage.create(Component, {
         enumerable: false,
         value: function() {
 //            console.log("Change this to be inside the Ninja Reel");
-            this.openDocuments = documentManagerModule.DocumentController._documents;
+            this.openDocuments = this.application.ninja.documentController._documents;
 //            this.eventManager.addEventListener( "appLoaded", this, false);
         }
     },
