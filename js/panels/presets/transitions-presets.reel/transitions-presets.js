@@ -5,63 +5,42 @@
  </copyright> */
 
 var Montage = require("montage/core/core").Montage,
-    Component = require("montage/ui/component").Component;
+    Component = require("montage/ui/component").Component,
+    DefaultPresets = require("js/panels/presets/default-transition-presets").transitionPresets;
 
 exports.TransitionsLibrary = Montage.create(Component, {
     hasTemplate: {
         value: true
     },
-    contentPanel : {
-        value: "presets" // get from local storage
+    presetData : {
+        value: null
     },
-    templateDidLoad : {
+    deserializedFromTemplate : {
         value: function() {
-            console.log('deserialized');
+            this.presetData = DefaultPresets;
         }
     },
-    treeList : {
-        value : null
-    },
-    data2: {
-        value: {
-            "meta": "Blah",
-            "status": "OK",
-            "text" : "Root",
-            "data" : {
-                "date": "1.1.01",
-                "text": "Transitions",
-                "children": [{
-                    "date": "3.3.01",
-                    "text": "Kid 1"
-                },
-                    {
-                        "date": "3.3.01",
-                        "text": "Kid 2",
-                        "children": [{
-                            "date": "3.4.01",
-                            "text": "Grand Kid 1",
-                            "children": [{
-                                "date": "4.4.01",
-                                "text": "Great Grand Kid 1"
-                            }]
-                        }]
+    handleNodeActivation: {
+        value: function(presetData) {
+            var selection = this.application.ninja.selectedElements,
+                stylesController = this.application.ninja.stylesController,
+                selectorBase = presetData.selectorBase,
+                self = this;
 
-                    },{
-                        "date": "5.5.01",
-                        "text": "Kid 3"
-                    }]
+            if(!selection || !selection.length || selection.length === 0) {
+                return false;
             }
-        }
-    },
-    didDraw: {
-        value : function() {
-            console.log('Presets Panel prepare for draw.');
-//            this.treeList.items.push({
-//                label : "Box Style",
-//                type : 'leaf'
-//            });
+
+            selectorBase = stylesController.generateClassName(selectorBase);
+
+            presetData.rules.forEach(function(rule) {
+                this.application.ninja.stylesController.addRule('.' + selectorBase + rule.selectorSuffix, rule.styles);
+            }, this);
+
+            selection.forEach(function(el) {
+                el._element.classList.add(selectorBase);
+            }, this);
+
         }
     }
-
-
 });

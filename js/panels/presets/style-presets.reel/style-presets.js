@@ -15,25 +15,17 @@ exports.StylesLibrary = Montage.create(Component, {
     presetData : {
         value : null
     },
-    contentPanel : {
-        value: "presets" // get from local storage
-    },
     templateDidLoad : {
         value: function() {
             this.presetData = DefaultPresets;
         }
     },
-    treeList : {
-        value : null
-    },
-    didDraw: {
-        value : function() {
-        }
-    },
     handleNodeActivation: {
         value: function(presetData) {
             var selection = this.application.ninja.selectedElements,
-                self = this;
+                stylesController = this.application.ninja.stylesController,
+                selectorBase = presetData.selectorBase,
+                self = this, className;
 
             if(!selection || !selection.length || selection.length === 0) {
                 return false;
@@ -46,18 +38,26 @@ exports.StylesLibrary = Montage.create(Component, {
                     .changeSelector(self.application.ninja.currentDocument.documentRoot, null, selector);
             }
 
+            selectorBase = stylesController.generateClassName(selectorBase);
+
+            presetData.rules.forEach(function(rule) {
+                stylesController.addRule('.'+selectorBase + rule.selectorSuffix, rule.styles);
+            }, this);
+
             selection.forEach(function(el) {
                 el._element.style.webkitTransition = "all 450ms linear";
 
                 el._element.addEventListener("webkitTransitionEnd", function(e) {
-                    console.log("calling transition end");
+                    el._element.style.webkitTransition = '';
                     setStopRuleSelector("*");
-                });
-
+                }, true);
                 setStopRuleSelector("transitionStopRule");
+                el._element.classList.add(selectorBase);
 
-                this.application.ninja.stylesController.setElementStyles(el._element, presetData.styles);
+                //// Keep track of elements with presets and don't add duplicates
+
             }, this);
+
 
         }
     },
