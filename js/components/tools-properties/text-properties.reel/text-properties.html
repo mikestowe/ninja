@@ -236,7 +236,7 @@
                     "element": {"#": "indent"},
                     "pressedClass": "active",
                     "preventFocus": true,
-                    "identifier": "outdent",
+                    "identifier": "indent",
                     "label": ">>"
                 },
                 "listeners": [
@@ -253,7 +253,7 @@
                     "element": {"#": "outdent"},
                     "pressedClass": "active",
                     "preventFocus": true,
-                    "identifier": "<<",
+                    "identifier": "outdent",
                     "label": "<<"
                 },
                 "listeners": [
@@ -310,10 +310,10 @@
             <label class="label" style="display: none">Tag:</label>
             <select id="tagType" style="display: none"></select>
             <label class="label">Font:</label>
-            <select id="fontSelection" class="fontSelection"></select>
+            <select id="fontSelection" class="nj-skinned fontSelection"></select>
             <button id="fontSettings" style="display: none"></button>
             <label class="label">Size:</label>
-            <input id="fontSize"/>
+            <select id="fontSize" class="nj-skinned"></select>
             <div class="fontColor"></div>
             <div class="btnGroup">
                 <button id="btnBold" class="btnBold nj-skinned" style="font-weight:bold"></button>

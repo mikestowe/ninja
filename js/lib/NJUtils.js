@@ -227,7 +227,25 @@ exports.NJUtils = Object.create(Object.prototype, {
     ///// Return the last part of a path (e.g. filename)
     getFileNameFromPath : {
         value: function(path) {
+            path = path.replace(/[/\\]$/g,"");
+            path = path.replace(/\\/g,"/");
             return path.substr(path.lastIndexOf('/') + 1);
+        }
+    },
+    /***
+     * file name validation
+     */
+    isValidFileName:{
+        value: function(fileName){
+            var status = false;
+            if(fileName !== ""){
+                fileName = fileName.replace(/^\s+|\s+$/g,"");
+                status = !(/[/\\]/g.test(fileName));
+                if(status && navigator.userAgent.indexOf("Macintosh") != -1){//for Mac files beginning with . are hidden
+                    status = !(/^\./g.test(fileName));
+                }
+            }
+            return status;
         }
     }
     

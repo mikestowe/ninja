@@ -42,7 +42,7 @@ exports.ToolButton = Montage.create(Component, {
     },
 
     _currentSubSelected: { value: 0},
-    
+
     prepareForDraw: {
         enumerable: false,
         value: function() {
