@@ -455,7 +455,8 @@ exports.HTMLDocument = Montage.create(BaseDocument, {
                     }
                 }
 
-                this.callback(this);
+                // Remving this callback and using the callback from the css load
+                // this.callback(this);
             
             }
     },
