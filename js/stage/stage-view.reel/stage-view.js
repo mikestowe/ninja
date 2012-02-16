@@ -187,7 +187,6 @@ exports.StageView = Montage.create(Component, {
     },
     hideOtherDocuments:{
         value:function(docUuid){
-            //use CodeMirror toTextArea() to remove editor and save content into textarea
             this.application.ninja.documentController._documents.forEach(function(aDoc){
                 if(aDoc.currentView === "design"){
                     aDoc.container.parentNode.style["display"] = "none";

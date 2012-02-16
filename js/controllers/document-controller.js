@@ -34,17 +34,17 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
             return this._activeDocument;
         },
         set: function(doc) {
-            if(this._activeDocument)  this._activeDocument.isActive = false;
-                
-            if(this._documents.indexOf(doc) === -1) this._documents.push(doc);
+            if(!!this._activeDocument) this._activeDocument.isActive = false;
 
             this._activeDocument = doc;
-            this._activeDocument.isActive = true;
+            if(!!this._activeDocument){
 
-            if(!!this._activeDocument.editor){
-                this._activeDocument.editor.focus();
+                if(this._documents.indexOf(doc) === -1) this._documents.push(doc);
+                this._activeDocument.isActive = true;
+                if(!!this._activeDocument.editor){
+                    this._activeDocument.editor.focus();
+                }
             }
-
         }
     },
 
@@ -184,7 +184,7 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
 			switch (doc.extension) {
 				case 'html': case 'html':
 					//Open in designer view
-					Montage.create(HTMLDocument).initialize(doc, Uuid.generate(), this._createIframeElement(), this._onOpenDocument);
+					Montage.create(HTMLDocument).initialize(doc, Uuid.generate(), this._createIframeElement(), this._onOpenDocument.bind(this));
 					break;
 				default:
 					//Open in code view
@@ -250,7 +250,6 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
         }
 
             var doc = this._findDocumentByUUID(id);
-            this._removeDocumentView(doc.container);
 
             var closeDocumentIndex = this._findIndexByUUID(id);
             this._documents.splice(this._findIndexByUUID(id), 1);
@@ -263,8 +262,11 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
                     nextDocumentIndex = closeDocumentIndex - 1;
                 }
                 this.application.ninja.stage.stageView.switchDocument(this._documents[nextDocumentIndex]);
+                this._removeDocumentView(doc.container);
             }else if(this._documents.length === 0){
-                //if there are no documents to switch to then just show the iframeContainer
+                this.activeDocument = null;
+                this._removeDocumentView(doc.container);
+                this.application.ninja.stage.stageView.hideRulers();
                 document.getElementById("iframeContainer").style.display="block";
             }
         }
@@ -275,11 +277,15 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
     _onOpenDocument: {
         value: function(doc){
             //var data = DocumentManager.activeDocument;
-            //DocumentManager._hideCurrentDocument();
 
-            //stageManagerModule.stageManager.toggleCanvas();
+            this._hideCurrentDocument();
+            this.application.ninja.stage.stageView.hideOtherDocuments(doc.uuid);
 
-            DocumentController.activeDocument = doc;
+            this.application.ninja.stage.hideCanvas(false);
+
+            this.activeDocument = doc;
+
+            this._showCurrentDocument();
 
             NJevent("onOpenDocument", doc);
 //            appDelegateModule.MyAppDelegate.onSetActiveDocument();

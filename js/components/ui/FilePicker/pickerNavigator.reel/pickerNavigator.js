@@ -794,7 +794,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
 
     handleOkButtonAction : {
         value: function(evt){
-                    console.log("$$$ File Picker : selected "+ this.selectedItems.toString());
+                    //console.log("$$$ File Picker : selected "+ this.selectedItems.toString());
                     var success = true;
                     if(!!this.pickerModel.callback && (this.selectedItems.length > 0)){//call the callback if it is available
                         try{
