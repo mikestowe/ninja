@@ -808,15 +808,17 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 #toolsPanelContent { width: 40px; }
 
-.toolsList { width: 30px; margin: auto; }
+.toolsList { width: 29px; margin: auto; }
 
 .toolsList hr { border: 0px; border-top: 1px solid #232323; border-bottom: 1px solid #3A3A3A; margin: 2px; }
 
-.toolbutton { width: 30px; height: 30px; background-position: center center; background-repeat: no-repeat; -webkit-border-radius: 4px; opacity: 0.6; margin-bottom: 2px; }
+.toolbutton { width: 29px; height: 29px; background-position: center center; background-repeat: no-repeat; border-radius: 3px; opacity: 1; margin-bottom: 2px; -webkit-transform: scale(0.8); -webkit-transition: 0.15s all cubic-bezier(0.44, 0.19, 0, 0.99); }
 
-.toolsList .toolbutton:hover, .toolsList .active { box-shadow: inset 0px 0px 8px #999; opacity: 1; }
+.toolsList .toolbutton:hover, .toolsList .active { box-shadow: 0px 0px 2px 2px #999; -webkit-transform: scale(1); opacity: 1; }
 
-.toolsList .active { background-color: #555; }
+.toolsList .toolbutton:active { background-color: #8c8c8c; }
+
+.toolsList .active { box-shadow: inset 0px 0px 2px 2px #555; background-color: #363636; }
 
 .SelectionTool { background-image: url("../images/tools/Tool-Selection.png"); }
 
