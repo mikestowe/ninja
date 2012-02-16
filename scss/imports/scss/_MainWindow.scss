@@ -204,12 +204,14 @@
     background: url("../images/temp/ruler-top.png");
     height:15px;
     margin-bottom: 0px;
+    display:none;
 }
 
 #rulerLeft {
     // TODO: temporary background please replace when component is implemented  
     background: url("../images/temp/ruler-left.png");
     width:16px;
+    display:none;
 }
 
 #stateBar {
