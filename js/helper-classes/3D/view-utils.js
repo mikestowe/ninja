@@ -4,16 +4,16 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var vecUtils = require("js/helper-classes/3D/vec-utils").VecUtils,
-    snapManagerModule = require("js/helper-classes/3D/snap-manager"),
+var Montage = require("montage/core/core").Montage,
+    Component = require("montage/ui/component").Component,
+    vecUtils = require("js/helper-classes/3D/vec-utils").VecUtils,
     Rectangle = require("js/helper-classes/3D/rectangle").Rectangle,
     ElementsMediator = require("js/mediators/element-mediator").ElementMediator;
 ///////////////////////////////////////////////////////////////////////
 // Class ViewUtils
 //      Viewing Utility functions
 ///////////////////////////////////////////////////////////////////////
-var ViewUtils = exports.ViewUtils = Object.create(Object.prototype,
-{
+exports.ViewUtils = Montage.create(Component, {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
@@ -133,7 +133,7 @@ var ViewUtils = exports.ViewUtils = Object.create(Object.prototype,
             var xVec = [mat[0],  mat[1],  mat[2],  mat[3]];
             var yVec = [mat[4],  mat[5],  mat[6],  mat[7]];
 
-            var stage = snapManagerModule.SnapManager.getStage();
+            var stage = this.application.ninja.currentDocument.documentRoot;
             var stageMat = this.getMatrixFromElement(stage);
             var stagePlane = [stageMat[8],  stageMat[9],  stageMat[10],  stageMat[11]];
 
@@ -412,7 +412,7 @@ var ViewUtils = exports.ViewUtils = Object.create(Object.prototype,
             // get the four corners of the element in global space
             var bounds = this.getElementViewBounds3D( elt );
             var bounds3D = new Array();
-            var stage = snapManagerModule.SnapManager.getStage();
+            var stage = this.application.ninja.currentDocument.documentRoot;
             for (var i=0;  i<3;  i++)
             {
                 var gPt = this.localToGlobal( bounds[i],  elt );
@@ -789,7 +789,7 @@ var ViewUtils = exports.ViewUtils = Object.create(Object.prototype,
 
     getStageWorldToGlobalMatrix: {
         value: function() {
-            var stage = snapManagerModule.SnapManager.getStage();
+            var stage = this.application.ninja.currentDocument.documentRoot;
             this.pushViewportObj( stage );
 
                 // get the matrix to the parent
@@ -1190,12 +1190,7 @@ var ViewUtils = exports.ViewUtils = Object.create(Object.prototype,
 //	drawLayoutModule.drawLayout.redrawDocument()							OR
 //	window.stageManager.drawSelectionRec(true)			this.getStage().draw();
 //	drawLayoutModule.drawLayout.redrawDocument();
-//
-//	SNAP MANAGER
-//	snapManager:					snapManagerModule.SnapManager
-//	snapManagerModule:				snapManagerModule = r_equire("js/helper-classes/3D/snap-manager")
-//	stage							stage = snapManagerModule.SnapManager.getStage();
-//
+
 //	SELECTION MANAGER
 //	selected elements:				this.application.ninja.selectedElements
 //	selectionManager				this.application.ninja.selectionController
@@ -1213,10 +1208,10 @@ var ViewUtils = exports.ViewUtils = Object.create(Object.prototype,
 
     clearStageTranslation: {
         value: function() {
-            if (snapManagerModule.SnapManager.application.ninja.currentDocument)
+            if (this.application.ninja.currentDocument)
             {
                 // get the user content object
-                var userContent = snapManagerModule.SnapManager.application.ninja.currentDocument.documentRoot;
+                var userContent = this.application.ninja.currentDocument.documentRoot;
                 if (!userContent)  return;
                 this.setViewportObj( userContent );
 
@@ -1235,9 +1230,10 @@ var ViewUtils = exports.ViewUtils = Object.create(Object.prototype,
         value:function( globalPt,  zoomFactor ) {
             var localPt;
             var tmp1, tmp2, tmp3;
-            if (snapManagerModule.SnapManager.application.ninja.currentDocument)
+
+            if (this.application.ninja.currentDocument)
             {
-                var userContent = snapManagerModule.SnapManager.application.ninja.currentDocument.documentRoot;
+                var userContent = this.application.ninja.currentDocument.documentRoot;
                 if (!userContent)  return;
                 this.setViewportObj( userContent );
                 var userContentMat = this.getMatrixFromElement(userContent);
@@ -1285,7 +1281,7 @@ var ViewUtils = exports.ViewUtils = Object.create(Object.prototype,
 					tmp2 = this.localToGlobal( localPt,  userContent );	// DEBUG - remove this line
 
 					// apply to the stage background
-//					var stageBG = snapManagerModule.SnapManager.application.ninja.currentDocument.stageBG;
+//					var stageBG = this.application.ninja.currentDocument.stageBG;
 //					var stageBGMat = this.getMatrixFromElement(stageBG);
 //					var newStageBGMat = glmat4.multiply( mat, stageBGMat, []);
 //					this.setMatrixForElement(stageBG, newStageBGMat );
@@ -1298,15 +1294,7 @@ var ViewUtils = exports.ViewUtils = Object.create(Object.prototype,
 	{
 		value: function()
 		{
-			return this.getStage.canvas;
-		}
-	},
-
-	getSnapManager:
-	{
-		value: function()
-		{
-			return snapManagerModule.SnapManager;
+			return this.application.ninjs.stage.canvas;
 		}
 	},
 
