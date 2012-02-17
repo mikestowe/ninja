@@ -6,8 +6,6 @@
 var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
-//var Button = ("montage/ui/button.reel").Button;
-
 exports.Main = Montage.create(Component, {
 
     hasTemplate: {
@@ -43,7 +41,7 @@ exports.Main = Montage.create(Component, {
                     var componentInstance = componentRequire.create();
 
                     componentInstance.element = element;
-                    componentInstance.deserializedFromTemplate();
+                    //componentInstance.deserializedFromTemplate();
                     componentInstance.needsDraw = true;
 
                     callback(componentInstance, element);
