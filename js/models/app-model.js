@@ -325,6 +325,19 @@ exports.AppModel = Montage.create(Component, {
         }
     },
 
+    _presetsPanel: {
+        value: true
+    },
+
+    PresetsPanel: {
+        get: function() {
+            return this._presetsPanel;
+        },
+        set: function(value) {
+            this._presetsPanel = value;
+        }
+    },
+
     _materials: {
         value: []
     },
