@@ -26,14 +26,59 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                     "text": "Montage Components",
                     "children": [
                         {
+                            "text": "Anchor",
+                            "dataFile" : "node_modules/components-data/anchor.json",
+                            "component": "anchor"
+                        },
+                        {
                             "text": "Button",
                             "dataFile" : "node_modules/components-data/button.json",
                             "component": "button"
                         },
                         {
+                            "text": "Checkbox",
+                            "dataFile" : "node_modules/components-data/checkbox.json",
+                            "component": "checkbox"
+                        },
+                        {
+                            "text": "Image Component",
+                            "dataFile" : "node_modules/components-data/image.json",
+                            "component": "imageComponent"
+                        },
+                        {
+                            "text": "NumberInput",
+                            "dataFile" : "node_modules/components-data/number-input.json",
+                            "component": "numberInput"
+                        },
+                        {
+                            "text": "Select Input",
+                            "dataFile" : "node_modules/components-data/select.json",
+                            "component": "select"
+                        },
+                        {
+                            "text": "Radio Button",
+                            "dataFile" : "node_modules/components-data/radio-button.json",
+                            "component": "radioButton"
+                        },
+                        {
+                            "text": "Range Input",
+                            "dataFile" : "node_modules/components-data/range-input.json",
+                            "component": "rangeInput"
+                        },
+                        {
+                            "text": "TextArea",
+                            "dataFile" : "node_modules/components-data/textarea.json",
+                            "component": "textarea"
+                        },
+                        {
                             "text": "Textfield",
                             "dataFile" : "node_modules/components-data/textfield.json",
                             "component": "textfield"
+                        },
+                        {
+                            "text": "Toogle Button",
+                            "dataFile" : "node_modules/components-data/toggle-button.json",
+                            "component": "toggleButton"
                         }
                     ]
                 }
@@ -119,6 +164,7 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                 row.prop = props.name;
                 row.defaultValue = props["default"];
                 row.label = props.name;
+                row.items = props.possibleValues;
 
                 section.Section.push([row]);
             }
@@ -147,6 +193,10 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                     return "textbox";
                 case "boolean":
                     return "checkbox";
+                case "select":
+                    return "dropdown";
+                case "number":
+                    return "hottext";
                 default:
                     alert("Conversion not implemented for ", type);
             }
@@ -211,6 +261,7 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
 
                 NJevent("elementAdding", {"el": element, "data":styles});
             });
+
         }
     },
 
@@ -219,18 +270,62 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
             var el;
 
             switch(name) {
+                case "anchor":
+                    el = NJUtils.makeNJElement("a", "Anchor", "component");
+                    el.elementModel.pi = "AnchorPi";
+                    el.setAttribute("href", "http://www.motorola.com");
+                    el.innerHTML = "link";
+                    break;
                 case "button":
                     el = NJUtils.makeNJElement(name, "Button", "component");
                     el.elementModel.pi = "ButtonPi";
                     el.setAttribute("type", "button");
                     el.innerHTML = "Button";
                     break;
-                case "textfield": {
+                case "checkbox":
+                    el = NJUtils.makeNJElement("input", "Checkbox", "component");
+                    el.elementModel.pi = "CheckboxPi";
+                    el.setAttribute("type", "checkbox");
+                    break;
+                case "imageComponent":
+                    el = NJUtils.makeNJElement("image", "Image", "component");
+                    el.elementModel.pi = "ImagePi";
+                    el.setAttribute("width", 200);
+                    el.setAttribute("height", 200);
+                    break;
+                case "numberInput":
+                    el = NJUtils.makeNJElement("input", "Number Input", "component");
+                    el.elementModel.pi = "NumberInputPi";
+                    el.setAttribute("type", "number");
+                    break;
+                case "select":
+                    el = NJUtils.makeNJElement("select", "Select", "component");
+                    el.elementModel.pi = "SelectInputPi";
+                    break;
+                case "radioButton":
+                    el = NJUtils.makeNJElement("input", "Radio Button", "component");
+                    el.elementModel.pi = "RadioButtonPi";
+                    el.setAttribute("type", "radio");
+                    break;
+                case "rangeInput":
+                    el = NJUtils.makeNJElement("input", "Range Input", "component");
+                    el.elementModel.pi = "RangeInputPi";
+                    el.setAttribute("type", "range");
+                    break;
+                case "textfield":
                     el = NJUtils.makeNJElement("input", "Textfield", "component");
                     el.elementModel.pi = "TextfieldPi";
                     el.setAttribute("type", "text");
                     break;
-                }
+                case "textarea":
+                    el = NJUtils.makeNJElement("textarea", "TextArea", "component");
+                    el.elementModel.pi = "TextAreaPi";
+                    break;
+                case "toggleButton":
+                    el = NJUtils.makeNJElement("button", "Toggle Button", "component");
+                    el.elementModel.pi = "ToggleButtonPi";
+                    el.innerHTML = "Off";
+                    break;
             }
 
             return el;
