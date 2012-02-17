@@ -50,12 +50,21 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
 
     deserializedFromTemplate: {
         value: function() {
+            var self = this;
+
             this.eventManager.addEventListener("appLoaded", this, false);
             this.eventManager.addEventListener("executeFileOpen", this, false);
             this.eventManager.addEventListener("executeNewFile", this, false);
             this.eventManager.addEventListener("executeSave", this, false);
 
             this.eventManager.addEventListener("recordStyleChanged", this, false);
+
+            //event listener to detect a change in the html design view
+            this.eventManager.addEventListener("elementAdded", function(evt){self.markCurrentDocumentChanged()}, false);
+            this.eventManager.addEventListener("elementDeleted", function(evt){self.markCurrentDocumentChanged()}, false);
+            //todo: add all applicable event listeners
+            //end-event listener to detect a change in the html design view
+
         }
     },
 
@@ -88,8 +97,10 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
 	//TODO: Check for appropiate structures
     handleExecuteSave: {
     	value: function(event) {
-    		//Text and HTML document classes should return the same save object for fileSave
-    		this.application.ninja.ioMediator.fileSave(this.activeDocument.save(), this.fileSaveResult.bind(this));
+            if(!!this.activeDocument){
+                //Text and HTML document classes should return the same save object for fileSave
+                this.application.ninja.ioMediator.fileSave(this.activeDocument.save(), this.fileSaveResult.bind(this));
+            }
 		}
     },
     ////////////////////////////////////////////////////////////////////
@@ -427,5 +438,11 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
         value: function() {
             return "userDocument_" + (this._iframeCounter++);
         }
+    },
+
+    markCurrentDocumentChanged:{
+        value: function(){
+            this.activeDocument.dirtyFlag = true;
         }
+    }
 });
