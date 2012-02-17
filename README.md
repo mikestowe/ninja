@@ -13,7 +13,7 @@ To run the Ninja Application you will need the following:
 
 ###Setup and Run Ninja as an unpackaged application
 
-If you’re already familiar with using Git, GitHub, and how to configure a local web server,
+If you're already familiar with using Git, GitHub, and how to configure a local web server,
 
 1.  Download Ninja Local Cloud:
     Win: get Ninja Local Cloud.exe from \\ninjateam.am.mot.com\users\jmayhew\Ninja Local Cloud,
