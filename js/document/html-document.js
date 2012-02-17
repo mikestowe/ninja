@@ -14,7 +14,7 @@ var Montage = 		require("montage/core/core").Montage,
 exports.HTMLDocument = Montage.create(TextDocument, {
     
     _selectionExclude: { value: null, enumerable: false },
-    _htmlTemplateUrl: { value: "user-document-templates/montage-application-cloud/index.html", enumerable: false},
+    _htmlTemplateUrl: { value: "js/document/templates/montage-html/index.html", enumerable: false},
     _iframe: { value: null, enumerable: false },
     _server: { value: null, enumerable: false },
     _templateDocument: { value: null, enumerable: false },
@@ -235,6 +235,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 	//
     initialize: {
 		value: function(file, uuid, iframe, callback) {
+			//console.log('allow');
 			//
 			this._userDocument = file;
 			//
@@ -359,6 +360,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 	//
     handleEvent: {
         value: function(event){
+        	//console.log('end');
+        	//console.log('file content start');
         	//TODO: Clean up, using for prototyping save
         	this._templateDocument = {};
         	this._templateDocument.head = this.iframe.contentWindow.document.getElementById("userHead");;
@@ -389,6 +392,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
                         this._stylesheets = this._document.styleSheets; // Entire stlyesheets array
 
                         this.callback(this);
+                        
+                        //console.log('file content end');
                     }
                 }.bind(this), 50);
             
@@ -440,7 +445,9 @@ exports.HTMLDocument = Montage.create(TextDocument, {
                 }
 
                 // Remving this callback and using the callback from the css load
-                // this.callback(this);
+                //this.callback(this);
+                
+                
             
             }
     },
