@@ -300,7 +300,7 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                     break;
                 case "select":
                     el = NJUtils.makeNJElement("select", "Select", "component");
-                    el.elementModel.pi = "SelectPi";
+                    el.elementModel.pi = "SelectInputPi";
                     break;
                 case "radioButton":
                     el = NJUtils.makeNJElement("input", "Radio Button", "component");
