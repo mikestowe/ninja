@@ -1,7 +1,7 @@
 {
   "name": "Motorola Ninja",
   "description": "Motorola Ninja HTML5 Authoring Tool Pre-Alpha",
-  "version": "0.5.0.0",
+  "version": "0.5.0.1",
   "app": {
     "launch": {
       "local_path": "index.html"
@@ -19,7 +19,7 @@
       "features": ["css3d", "webgl"]
     }
   },
-  "minimum_chrome_version": "16.0.0.0",
+  "minimum_chrome_version": "17.0.0.0",
   "offline_enabled": true,
-  "update_url": "http://tetsubo.org/go/ninjaupdate"
+  "update_url": "http://ninjateam.am.mot.com/NinjaApp/update.xml"
 }
