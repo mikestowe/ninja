@@ -61,11 +61,10 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
             this.eventManager.addEventListener("recordStyleChanged", this, false);
             
-            
-            
         }
     },
     
+   
     
     handleWebRequest: {
     	value: function (request) {

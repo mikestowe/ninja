@@ -201,6 +201,12 @@ exports.KeyboardMediator = Montage.create(Component, {
                 if(this.application.ninja.toolsData) this.application.ninja.toolsData.selectedToolInstance.HandleEscape(evt);
                 //menuViewManagerModule.MenuViewManager.closeMenu("mainMenuBar");
             }
+            
+            // Check if cmd+a/ctrl+a for Select All
+            if((evt.keyCode == Keyboard.ENTER) && (evt.ctrlKey || evt.metaKey)) {
+                this.application.ninja.executeChromePreview();
+                return;
+            }
 
             if(this.application.ninja.toolsData) this.application.ninja.toolsData.selectedToolInstance.HandleKeyPress(evt);
 

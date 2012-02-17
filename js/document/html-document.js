@@ -363,6 +363,9 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 	//
     handleEvent: {
         value: function(event){
+        	//TODO: Remove
+        	window.hackPreview = this.livePreview.bind(this);
+        
         	this.application.ninja.documentController._hackRootFlag = true;
  			//console.log(this._userDocument.root, this);
         	//TODO: Clean up, using for prototyping save
@@ -470,6 +473,48 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             }
         }
     },
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    ////////////////////////////////////////////////////////////////////
+	//
+    livePreview: {
+    	enumerable: false,
+    	value: function () {
+    		//this.application.ninja.documentController
+    		//console.log(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);
+			chrome.tabs.create({url: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]});		
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    
+    
+    
+    
+    
+    
+    
+    
     
 	////////////////////////////////////////////////////////////////////
 	//
