@@ -6,9 +6,10 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 //BaseDocument Object for all files types and base class for HTML documents.
 
-var Montage = require("montage/core/core").Montage;
+var Montage = 	require("montage/core/core").Montage,
+	Component = require("montage/ui/component").Component;
 
-var TextDocument = exports.TextDocument = Montage.create(Montage, {
+var TextDocument = exports.TextDocument = Montage.create(Component, {
 	
 	
 	//TODO: Clean up, test

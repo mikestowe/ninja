@@ -51,6 +51,23 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
     },
     ////////////////////////////////////////////////////////////////////
     //
+    _libs: {
+        enumerable: false,
+        value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    libs: {
+    	enumerable: false,
+    	get: function() {
+            return this._libs;
+        },
+        set: function(value) {
+        	this._libs = value;
+        }
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
     _libsToSync: {
     	enumerable: false,
         value: 0
@@ -67,14 +84,14 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
     	enumerable: false,
         value: function (path, libName) {
         	//
-        	if(this.coreApi.directoryExists({uri: '/'+path+'/'+libName+'/'}).status === 404) {
+        	if(this.coreApi.directoryExists({uri: path+libName}).status === 404) {
         		this.chromeApi.directoryContents(this.chromeApi.fileSystem.root, function (contents) {
         			for (var i in contents) {
     	    			if (libName === contents[i].name) {
 	        				//Getting contents of library to be copied
         					this.chromeApi.directoryContents(contents[i], function (lib) {
         						//Creating directory structure from subfolders
-        						this.copyDirectoryToCloud(path, contents[i], '/'+path, function (status) {console.log(status)});
+        						this.copyDirectoryToCloud(path, contents[i], path, function (status) {console.log(status)});
         					}.bind(this));
         					break;
         				}
@@ -99,7 +116,7 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
 			    	dir = folder.name;
 			    }
 			    //
-			    if (!this.coreApi.createDirectory({uri: '/'+dir+'/'})) {
+			    if (!this.coreApi.createDirectory({uri: dir})) {
 			    	//Error occured while creating folders
 			    	return;
 			    }
@@ -128,6 +145,8 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
     synchronize: {
     	enumerable: true,
     	value: function(chromeLibs, chrome) {
+    		//TODO: Remove
+    		window.wipeLibrary = this.deleteLibraries.bind(this);
     		//
     		this.chromeApi = chrome;
     		//
@@ -139,6 +158,8 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
             if (xhr.readyState === 4) {
             	//Parsing json libraries
             	libs = JSON.parse(xhr.response);
+            	//
+            	this.libs = libs.libraries;
             	//
             	if (chromeLibs.length > 0) {
             		//

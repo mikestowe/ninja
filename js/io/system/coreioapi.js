@@ -40,6 +40,7 @@ exports.CoreIoApi = Montage.create(Component, {
 			////////////////////////////////////////////////////////////
 			//Instance of ninja library
 			this.ninjaLibrary = NinjaLibrary;
+			this.ninjaLibrary.coreApi = this;
 			//Getting reference of chrome file system API
 			this.chromeFileSystem = ChromeApi;
 			//Sending size in MBs for file system storage
@@ -62,6 +63,7 @@ exports.CoreIoApi = Montage.create(Component, {
         	this.chromeFileSystem.removeEventListener('ready', this, false);
         	//Listening for library to be copied event (builds list)
         	this.chromeFileSystem.addEventListener('library', this, false);
+        	//TODO: Add sync loading screen logic (Add screen here)
         }
 	},
 	////////////////////////////////////////////////////////////////////
@@ -86,23 +88,7 @@ exports.CoreIoApi = Montage.create(Component, {
         	console.log('Ninja Local Library: Ready');
         	//Removing events
         	this.ninjaLibrary.removeEventListener('sync', this, false);
-        	this.ninjaLibrary.coreApi = this;
-        	//TODO: Add sync loading screen logic
-        	
-        	//TODO: Remove test
-        	//this.ninjaLibrary.copyLibToCloud('Users/kgq387/Desktop/Ninja Cloud/Disk', 'montage0.6.0');
-        	//this.ninjaLibrary.deleteLibraries();
-        	/*
-window.hack = function (name, type) {
-        		this.application.ninja.ioMediator.fileNew('Users/kgq387/Desktop/Ninja Cloud/Disk/'+name+'.'+type, '/js/io/templates/files/'+type+'.txt', function (status) {console.log(status)});
-        	}.bind(this);
-*/			
-			/*
-window.hack = function (path) {
-				//
-				this.application.ninja.ioMediator.fileOpen('Users/kgq387/Desktop/Ninja Cloud/Disk/'+path, function (result) {console.log(result)});
-			}.bind(this);
-*/
+        	//TODO: Add sync loading screen logic (Remove screen here)
         }
     },
     ////////////////////////////////////////////////////////////////////

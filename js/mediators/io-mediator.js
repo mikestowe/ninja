@@ -86,6 +86,7 @@ exports.IoMediator = Montage.create(Component, {
     			case 204:
     				//Creating and formatting result object for callbak
     				result = read.file.details;
+    				result.root = read.file.details.uri.replace(read.file.details.name, "");
     				//Checking for type of content to returns
     				if (result.extension !== 'html' && result.extension !== 'htm') {
     					//Simple string
@@ -142,6 +143,16 @@ exports.IoMediator = Montage.create(Component, {
     		//
     		switch (file.mode) {
     			case 'html':
+    				//Copy webGL library if needed
+    				if (file.webgl.length > 0) {
+    					for (var i in this.application.ninja.coreIoApi.ninjaLibrary.libs) {
+		    				//if (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'Assets' || this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'RDGE') {
+		    				if (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'RDGE') {
+    							this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(file.document.root, (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name+this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version).toLowerCase());
+    						}
+    					}
+    				}
+    				//
     				contents = this.parseNinjaTemplateToHtml(file);
     				break;
     			default:

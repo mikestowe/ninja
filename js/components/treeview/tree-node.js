@@ -44,7 +44,9 @@ exports.TreeNode = Montage.create(Component, {
             if(!object) {
                 return;
             }
+
             if(object[this.branchKey]) {
+                this.childNodes.length = 0;
                 object[this.branchKey].forEach(function(node) {
                     this.childNodes.push(node);
                 }, this);
