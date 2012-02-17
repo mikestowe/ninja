@@ -191,5 +191,17 @@ var TextDocument = exports.TextDocument = Montage.create(Montage, {
         value: function() {
             // Have the XHR here?
         }
+    },
+
+    markDocumentEditted:{
+        value: function() {
+            this.dirtyFlag = true;
+        }
+    },
+
+    markDocumentUneditted:{
+        value: function() {
+            this.dirtyFlag = false;
+        }
     }
 });

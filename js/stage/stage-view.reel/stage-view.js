@@ -98,9 +98,9 @@ exports.StageView = Montage.create(Component, {
                        onChange: function(){
                            var historySize = doc.editor.historySize();
                            if(historySize.undo>0){
-                                doc.dirtyFlag=true;
+                                doc.markDocumentEditted();
                            }else if(historySize.undo===0 && historySize.redo>0){
-                               doc.dirtyFlag=false;
+                               doc.markDocumentUneditted();
                            }
                        },
                        onCursorActivity: function() {
