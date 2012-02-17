@@ -201,6 +201,7 @@ exports.Stage = Montage.create(Component, {
             this._drawingCanvas.addEventListener("mousedown", this, false);
             this._drawingCanvas.addEventListener("mouseup", this, false);
             this._drawingCanvas.addEventListener("dblclick", this, false);
+            this._drawingCanvas.addEventListener("mousewheel", this, false);
 
             // Hide the canvas
             this.hideCanvas(true);
@@ -357,6 +358,16 @@ exports.Stage = Montage.create(Component, {
         value: function(event) {
             event.preventDefault();
             this.application.ninja.toolsData.selectedToolInstance.HandleDoubleClick(event);
+        }
+    },
+
+    handleMousewheel: {
+        value: function(event) {
+            if(event._event.wheelDelta > 0) {
+                this._iframeContainer.scrollTop -= 20;
+            } else {
+                this._iframeContainer.scrollTop += 20;
+            }
         }
     },
 
