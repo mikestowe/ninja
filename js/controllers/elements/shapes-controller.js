@@ -39,6 +39,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                     break;
                 case "useWebGl":
                     var canvas = njModule.NJUtils.makeNJElement("canvas", "Canvas", "shape", el.className, true);
+                    canvas.setAttribute("data-RDGE-id", njModule.NJUtils.generateRandom());
                     canvas.width = el.width;
                     canvas.height = el.height;
                     this.application.ninja.elementMediator.replaceElement(el, canvas);

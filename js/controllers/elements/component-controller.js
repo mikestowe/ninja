@@ -12,20 +12,19 @@ exports.ComponentController = Montage.create(ElementController, {
     getProperty: {
         value: function(el, prop) {
             switch(prop) {
-                case "label":
-                    return this.application.ninja.currentDocument.getComponentFromElement(el).label;
-                    break;
-                case "enabled":
-                    return this.application.ninja.currentDocument.getComponentFromElement(el).enabled;
-                    break;
-                case "disabled":
-                    return this.application.ninja.currentDocument.getComponentFromElement(el).disabled;
-                    break;
-                case "value":
-                    return this.application.ninja.currentDocument.getComponentFromElement(el).value;
-                    break;
+                case "id":
+                case "class":
+                case "left":
+                case "top":
+                case "width":
+                case "height":
+                    if(el.nodeName === "IMG" && (prop === "width" || prop === "height")) {
+                        return this.application.ninja.currentDocument.getComponentFromElement(el)[prop];
+                    } else {
+                        return ElementController.getProperty(el, prop, true);
+                    }
                 default:
-                    return ElementController.getProperty(el, prop, true);
+                    return this.application.ninja.currentDocument.getComponentFromElement(el)[prop];
             }
         }
     },
@@ -33,20 +32,24 @@ exports.ComponentController = Montage.create(ElementController, {
     setProperty: {
         value: function(el, p, value) {
             switch(p) {
-                case "label":
-                    this.application.ninja.currentDocument.getComponentFromElement(el).label = value;
-                    break;
-                case "enabled":
-                    this.application.ninja.currentDocument.getComponentFromElement(el).enabled = value;
-                    break;
-                case "disabled":
-                    this.application.ninja.currentDocument.getComponentFromElement(el).disabled = value;
-                    break;
-                case "value":
-                    this.application.ninja.currentDocument.getComponentFromElement(el).value = value;
+                case "id":
+                case "class":
+                case "left":
+                case "top":
+                case "width":
+                case "height":
+                    if(el.nodeName === "IMG" && (p === "width" || p === "height")) {
+                        this.application.ninja.currentDocument.getComponentFromElement(el)[p] = value;
+                    } else {
+                        ElementController.setProperty(el, p, value);
+                    }
                     break;
                 default:
-                    ElementController.setProperty(el, p, value);
+                    if(p === "min" || p === "max") value = parseFloat(value);
+
+                    this.application.ninja.currentDocument.getComponentFromElement(el)[p] = value;
+                    break;
+
             }
         }
     }
