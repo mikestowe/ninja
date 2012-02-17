@@ -355,13 +355,15 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     },
     
     
+    
+    
+    
 	
 	////////////////////////////////////////////////////////////////////
 	//
     handleEvent: {
         value: function(event){
-        	//console.log('end');
-        	//console.log('file content start');
+ 			
         	//TODO: Clean up, using for prototyping save
         	this._templateDocument = {};
         	this._templateDocument.head = this.iframe.contentWindow.document.getElementById("userHead");;

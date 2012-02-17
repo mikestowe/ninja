@@ -56,12 +56,37 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
             this.eventManager.addEventListener("executeSave", this, false);
 
             this.eventManager.addEventListener("recordStyleChanged", this, false);
+            
+            
+            
         }
     },
+    
+    
+    handleWebRequest: {
+    	value: function (request) {
+    		if (request.url.indexOf('js/document/templates/montage-html') !== -1) {
+    			
+    			console.log(request);
+    			
+    			//TODO: Figure out why active document is not available here
+    			
+				/*
+if (request.url.indexOf('calculator.css') !== -1) {
+					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+'/calculator/components/calculator.reel/calculator.css'};
+				}
+*/
+			}
+    	}
+    },
+    
 
     handleAppLoaded: {
         value: function() {
             //
+            
+            chrome.webRequest.onBeforeRequest.addListener(this.handleWebRequest.bind(this), {urls: ["<all_urls>"]}, ["blocking"]);
+            
         }
     },
 
