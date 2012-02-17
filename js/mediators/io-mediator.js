@@ -143,6 +143,16 @@ exports.IoMediator = Montage.create(Component, {
     		//
     		switch (file.mode) {
     			case 'html':
+    				//Copy webGL library if needed
+    				if (file.webgl.length > 0) {
+    					for (var i in this.application.ninja.coreIoApi.ninjaLibrary.libs) {
+		    				//if (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'Assets' || this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'RDGE') {
+		    				if (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'RDGE') {
+    							this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(file.document.root, (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name+this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version).toLowerCase());
+    						}
+    					}
+    				}
+    				//
     				contents = this.parseNinjaTemplateToHtml(file);
     				break;
     			default:
@@ -192,17 +202,6 @@ exports.IoMediator = Montage.create(Component, {
     		//
     		template.document.content.document.body.innerHTML = template.body;
     		template.document.content.document.head.innerHTML = template.head;
-    		//
-    		if (template.webgl.length > 0) {
-    			for (var i in this.application.ninja.coreIoApi.ninjaLibrary.libs) {
-    				if (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'Assets' || this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'RDGE') {
-    					this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.document.root, (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name+this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version).toLowerCase());
-    				}
-    			}
-    		
-    			//this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(path, libname);
-    			//console.log(this.application.ninja.coreIoApi.ninjaLibrary.libs);
-    		}
     		//TODO: Remove temp fix for styles
     		if (template.style) {
     			template.document.content.document.head.getElementsByTagName('style')[0].innerHTML = this.getCssFromRules(template.style.cssRules);

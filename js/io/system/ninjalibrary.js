@@ -145,6 +145,8 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
     synchronize: {
     	enumerable: true,
     	value: function(chromeLibs, chrome) {
+    		//TODO: Remove
+    		window.wipeLibrary = this.deleteLibraries.bind(this);
     		//
     		this.chromeApi = chrome;
     		//
