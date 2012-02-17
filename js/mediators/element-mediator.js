@@ -189,6 +189,8 @@ exports.ElementMediator = Montage.create(NJComponent, {
                 NJUtils.makeElementModel(el, "Canvas", "block", true);
             }
 
+            this.application.ninja.documentController.activeDocument.dirtyFlag = true;
+
             return el.elementModel.controller["setShapeProperty"](el, prop, value);
         }
     },
@@ -255,6 +257,8 @@ exports.ElementMediator = Montage.create(NJComponent, {
             var item = el._element || el;
 
             item.elementModel.controller["setAttribute"](item, att, value);
+
+            this.application.ninja.documentController.activeDocument.dirtyFlag = true;
 
             NJevent("attribute" + eventType, {type : "setAttribute", source: source, data: {"els": el, "prop": att, "value": value}, redraw: null});
         }
@@ -328,6 +332,8 @@ exports.ElementMediator = Montage.create(NJComponent, {
                 el.elementModel.controller["setProperty"](el, p, value[i]);
             }
 
+            this.application.ninja.documentController.activeDocument.dirtyFlag = true;
+
             NJevent("element" + eventType, {type : "setProperty", source: source, data: {"els": els, "prop": p, "value": value}, redraw: null});
         }
     },
@@ -386,6 +392,8 @@ exports.ElementMediator = Montage.create(NJComponent, {
                 el = item._element || item;
                 el.elementModel.controller["setProperties"](el, props, i);
             }
+
+            this.application.ninja.documentController.activeDocument.dirtyFlag = true;
 
             NJevent("element" + eventType, {type : "setProperties", source: source, data: {"els": els, "prop": props, "value": props}, redraw: null});
         }
@@ -458,6 +466,8 @@ exports.ElementMediator = Montage.create(NJComponent, {
                 el = item._element || item;
                 el.elementModel.controller["set3DProperties"](el, props, i, update3DModel);
             }
+
+            this.application.ninja.documentController.activeDocument.dirtyFlag = true;
 
             NJevent("element" + eventType, {type : "set3DProperties", source: source, data: {"els": els, "prop": "matrix", "value": props}, redraw: null});
         }
@@ -543,6 +553,8 @@ exports.ElementMediator = Montage.create(NJComponent, {
                 el.elementModel.controller["setColor"](el, value, isFill);
             }
 
+            this.application.ninja.documentController.activeDocument.dirtyFlag = true;
+
             NJevent("element" + eventType, {type : "setColor", source: source, data: {"els": els, "prop": "color", "value": value, "isFill": isFill}, redraw: null});
         }
     },
@@ -624,6 +636,8 @@ exports.ElementMediator = Montage.create(NJComponent, {
                 el.elementModel.controller["setStroke"](el, value);
             }
 
+            this.application.ninja.documentController.activeDocument.dirtyFlag = true;
+
             NJevent("element" + eventType, {type : "setStroke", source: source, data: {"els": els, "prop": "stroke", "value": value}, redraw: null});
         }
     },
@@ -698,6 +712,8 @@ exports.ElementMediator = Montage.create(NJComponent, {
             }
             else
             {
+                this.application.ninja.documentController.activeDocument.dirtyFlag = true;
+
                 NJevent("elementChange", {type : "setMatrix", source: null, data: {"els": [el], "prop": "matrix", "value": mat}, redraw: null});
             }
         }
