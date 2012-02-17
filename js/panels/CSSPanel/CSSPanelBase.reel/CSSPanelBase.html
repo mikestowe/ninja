@@ -10,6 +10,16 @@
 		<link rel="stylesheet" href="CSSPanelBase.css" type="text/css">
         <script type="text/montage-serialization">
         {
+            "resizer1": {
+                "module": "js/panels/Resizer",
+                "name": "Resizer",
+                "properties": {
+                    "element": {"#": "subPanelResizer"},
+                    "panel": {"#": "nj-section-stylesheets"},
+                    "isVertical": true
+                }
+            },
+
             "ComputedStyleSubPanel1": {
                 "module": "js/panels/CSSPanel/ComputedStyleSubPanel.reel",
                 "name": "ComputedStyleSubPanel",
@@ -43,6 +53,7 @@
 		<div  id="nj-css-stylesheet-toolbar" class="nj-css-toolbar">
 			<a href="#" id="nj-css-add-stylesheet" title="Add Stylesheet">Add Rule</a>
 		</div>
+        <div id="subPanelResizer" class="resizer"></div>
 		<!-- Style Rule list subsection -->
 		<h2 id="nj-css-styles-header" class="nj-section-header">
 			<div id="nj-css-styles-arrow" class="panelDisclosureIcon"></div>

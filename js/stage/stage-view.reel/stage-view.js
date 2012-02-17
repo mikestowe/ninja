@@ -123,7 +123,7 @@ exports.StageView = Montage.create(Component, {
     switchDocument:{
         value: function(doc){
             //save editor cursor position
-            if(!!this.application.ninja.documentController.activeDocument.editor){
+            if(!!this.application.ninja.documentController.activeDocument && !!this.application.ninja.documentController.activeDocument.editor){
                 this.application.ninja.documentController.activeDocument.hline = this.application.ninja.documentController.activeDocument.editor.getCursor(true);
             }
             this.application.ninja.documentController._hideCurrentDocument();
@@ -136,7 +136,7 @@ exports.StageView = Montage.create(Component, {
             var documentController = this.application.ninja.documentController;
 
             //restore editor cursor position
-            if(!!this.application.ninja.documentController.activeDocument.editor){
+            if(!!this.application.ninja.documentController.activeDocument && !!this.application.ninja.documentController.activeDocument.editor){
                 this.application.ninja.documentController.activeDocument.editor.setCursor(this.application.ninja.documentController.activeDocument.hline);
                 document.getElementById("codeMirror_"+this.application.ninja.documentController.activeDocument.uuid).getElementsByClassName("CodeMirror")[0].focus();
             }
@@ -187,7 +187,6 @@ exports.StageView = Montage.create(Component, {
     },
     hideOtherDocuments:{
         value:function(docUuid){
-            //use CodeMirror toTextArea() to remove editor and save content into textarea
             this.application.ninja.documentController._documents.forEach(function(aDoc){
                 if(aDoc.currentView === "design"){
                     aDoc.container.parentNode.style["display"] = "none";
@@ -199,14 +198,14 @@ exports.StageView = Montage.create(Component, {
     },
     showRulers:{
         value:function(){
-            this.application.ninja.rulerTop.style.display = "block";
-            this.application.ninja.rulerLeft.style.display = "block";
+            this.application.ninja.rulerTop.style.background = "url('../images/temp/ruler-top.png')";
+            this.application.ninja.rulerLeft.style.background = "url('../images/temp/ruler-left.png')";
         }
     },
     hideRulers:{
         value:function(){
-            this.application.ninja.rulerTop.style.display = "none";
-            this.application.ninja.rulerLeft.style.display = "none";
+            this.application.ninja.rulerTop.style.background = "rgb(128,128,128)";
+            this.application.ninja.rulerLeft.style.background = "rgb(128,128,128)";
         }
     },
 
