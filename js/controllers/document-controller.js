@@ -59,12 +59,6 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
 
             this.eventManager.addEventListener("recordStyleChanged", this, false);
 
-            //event listener to detect a change in the html design view
-            this.eventManager.addEventListener("elementAdded", function(evt){self.markCurrentDocumentChanged()}, false);
-            this.eventManager.addEventListener("elementDeleted", function(evt){self.markCurrentDocumentChanged()}, false);
-            //todo: add all applicable event listeners
-            //end-event listener to detect a change in the html design view
-
         }
     },
 
@@ -437,12 +431,6 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
     _createIframeID: {
         value: function() {
             return "userDocument_" + (this._iframeCounter++);
-        }
-    },
-
-    markCurrentDocumentChanged:{
-        value: function(){
-            this.activeDocument.dirtyFlag = true;
         }
     }
 });
