@@ -45,7 +45,7 @@ exports.PanelContainer = Montage.create(Component, {
     },
 
     initPanelOrder: {
-        value: ['PresetsPanel','PropertiesPanel','ColorPanel','ComponentsPanel','ProjectPanel','CSSPanel','MaterialsPanel']
+        value: ['PropertiesPanel','ColorPanel','ComponentsPanel','ProjectPanel','CSSPanel','MaterialsPanel','PresetsPanel']
     },
 
     panelOrder: {
@@ -94,13 +94,13 @@ exports.PanelContainer = Montage.create(Component, {
 
 //            this.needsDraw = true;
 
-            this.addEventListener("change@appModel.PresetsPanel", this, false);
             this.addEventListener("change@appModel.PropertiesPanel", this, false);
             this.addEventListener("change@appModel.ProjectPanel", this, false);
             this.addEventListener("change@appModel.ColorPanel", this, false);
             this.addEventListener("change@appModel.ComponentsPanel", this, false);
             this.addEventListener("change@appModel.CSSPanel", this, false);
             this.addEventListener("change@appModel.MaterialsPanel", this, false);
+            this.addEventListener("change@appModel.PresetsPanel", this, false);
         }
     },
 

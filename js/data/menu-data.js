@@ -352,6 +352,15 @@ exports.MenuData = Montage.create( Montage, {
                         }
                     },
                     {
+                        "displayText" : "Presets",
+                        "hasSubMenu" : false,
+                        "enabled": true,
+                        "checked": {
+                            "value": true,
+                            "boundProperty": "PresetsPanel"
+                        }
+                    },
+                    {
                         "displayText" : "Code",
                         "hasSubMenu" : false,
                         "enabled": true
