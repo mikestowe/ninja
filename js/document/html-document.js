@@ -235,7 +235,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 	//
     initialize: {
 		value: function(file, uuid, iframe, callback) {
-			//console.log('allow');
+			this.application.ninja.documentController._hackRootFlag = false;
 			//
 			this._userDocument = file;
 			//
@@ -363,7 +363,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 	//
     handleEvent: {
         value: function(event){
- 			
+        	this.application.ninja.documentController._hackRootFlag = true;
+ 			//console.log(this._userDocument.root, this);
         	//TODO: Clean up, using for prototyping save
         	this._templateDocument = {};
         	this._templateDocument.head = this.iframe.contentWindow.document.getElementById("userHead");;

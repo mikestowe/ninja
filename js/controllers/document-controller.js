@@ -14,13 +14,17 @@ var Montage = 		require("montage/core/core").Montage,
     DocumentController;
 ////////////////////////////////////////////////////////////////////////
 //
-DocumentController = exports.DocumentController = Montage.create(Component, {
+var DocumentController = exports.DocumentController = Montage.create(Component, {
     hasTemplate: {
         value: false
     },
 
     _documents: {
         value: []
+    },
+    
+    _hackRootFlag: {
+    	value: false
     },
 
     _activeDocument: { value: null },
@@ -71,11 +75,13 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
     			
     			//TODO: Figure out why active document is not available here
     			
-				/*
-if (request.url.indexOf('calculator.css') !== -1) {
-					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+'/calculator/components/calculator.reel/calculator.css'};
+				if (this._hackRootFlag) {
+					
+					//console.log(request.url.split('/')[request.url.split('/').length-1]);
+					//console.log(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split('/')[request.url.split('/').length-1]);
+					
+					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split('/')[request.url.split('/').length-1]};
 				}
-*/
 			}
     	}
     },
@@ -205,6 +211,9 @@ if (request.url.indexOf('calculator.css') !== -1) {
 	//
 	openDocument: {
 		value: function(doc) {
+			
+			//
+			this.documentHackReference = doc;
 			//
 			switch (doc.extension) {
 				case 'html': case 'html':
@@ -302,7 +311,6 @@ if (request.url.indexOf('calculator.css') !== -1) {
     _onOpenDocument: {
         value: function(doc){
             //var data = DocumentManager.activeDocument;
-
             this._hideCurrentDocument();
             this.application.ninja.stage.stageView.hideOtherDocuments(doc.uuid);
 
