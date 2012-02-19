@@ -59,10 +59,12 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             this.eventManager.addEventListener("executeNewFile", this, false);
             this.eventManager.addEventListener("executeSave", this, false);
 
-            this.eventManager.addEventListener("recordStyleChanged", this, false);           
+            this.eventManager.addEventListener("recordStyleChanged", this, false);
+            
         }
     },
     
+   
     
     handleWebRequest: {
     	value: function (request) {

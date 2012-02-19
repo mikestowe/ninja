@@ -140,6 +140,15 @@ exports.MenuData = Montage.create( Montage, {
                         }
                     },
                     {
+                        "displayText" : "Chrome Preview",
+                        "hasSubMenu" : false,
+                        "enabled": true,
+                        "checked": {
+                            "value": false,
+                            "boundProperty": "chromePreview"
+                        }
+                    },
+                    {
                         "displayText" : "Layout View",
                         "hasSubMenu" : false,
                         "enabled": true,
