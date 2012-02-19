@@ -85,7 +85,8 @@ exports.KeyboardMediator = Montage.create(Component, {
 
     handleKeydown: {
         value: function(evt) {
-            if((document.activeElement.nodeName !== "BODY") && (this.application.ninja.documentController.activeDocument.currentView === "design")) {
+            if((document.activeElement.nodeName !== "BODY") && (!!this.application.ninja.documentController.activeDocument)
+                && (this.application.ninja.documentController.activeDocument.currentView === "design")) {
                 // Don't do anything if an input or other control is focused
                 return;
             }
