@@ -6,8 +6,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 
 var Montage = require("montage/core/core").Montage,
-    pickerNavigatorReel = require("js/components/ui/FilePicker/pickerNavigator.reel").PickerNavigator,
-    filePickerModelModule = require("js/components/ui/FilePicker/file-picker-model"),
+    pickerNavigatorReel = require("js/io/ui/file-picker/picker-navigator.reel").PickerNavigator,
+    filePickerModelModule = require("js/io/ui/file-picker/file-picker-model"),
     Popup = require("montage/ui/popup/popup.reel").Popup;
 
 //singleton with functions to create a new file picker instance and utilities to format or filter the model data

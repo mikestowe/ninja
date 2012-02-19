@@ -204,12 +204,14 @@
     background:$color-stage;
     height:15px;
     margin-bottom: 0px;
+    display:none;
 }
 
 #rulerLeft {
     // TODO: temporary background please replace when component is implemented
     background:$color-stage;
     width:16px;
+    display:none;
 }
 
 #stateBar {

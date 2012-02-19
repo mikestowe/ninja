@@ -118,8 +118,10 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 	//TODO: Check for appropiate structures
     handleExecuteSave: {
     	value: function(event) {
-    		//Text and HTML document classes should return the same save object for fileSave
-    		this.application.ninja.ioMediator.fileSave(this.activeDocument.save(), this.fileSaveResult.bind(this));
+            if(!!this.activeDocument){
+                //Text and HTML document classes should return the same save object for fileSave
+                this.application.ninja.ioMediator.fileSave(this.activeDocument.save(), this.fileSaveResult.bind(this));
+            }
 		}
     },
     ////////////////////////////////////////////////////////////////////
@@ -459,5 +461,5 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value: function() {
             return "userDocument_" + (this._iframeCounter++);
         }
-        }
+    }
 });

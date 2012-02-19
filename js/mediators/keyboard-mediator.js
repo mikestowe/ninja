@@ -85,7 +85,8 @@ exports.KeyboardMediator = Montage.create(Component, {
 
     handleKeydown: {
         value: function(evt) {
-            if(document.activeElement.nodeName !== "BODY") {
+            if((document.activeElement.nodeName !== "BODY") && (!!this.application.ninja.documentController.activeDocument)
+                && (this.application.ninja.documentController.activeDocument.currentView === "design")) {
                 // Don't do anything if an input or other control is focused
                 return;
             }
@@ -107,6 +108,13 @@ exports.KeyboardMediator = Montage.create(Component, {
             if ((evt.keyCode == Keyboard.Z) && (evt.ctrlKey || evt.metaKey) && !evt.shiftKey) {
                 NJevent("executeUndo");
                 //menuViewManagerModule.MenuViewManager.closeMenu("mainMenuBar");
+                return;
+            }
+
+            // Check if cmd+s/ctrl+s for Save (Windows/Mac)
+            if ((evt.keyCode == Keyboard.S) && (evt.ctrlKey || evt.metaKey) && !evt.shiftKey) {
+                NJevent("executeSave");
+                evt.preventDefault();
                 return;
             }
 

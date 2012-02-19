@@ -27,7 +27,7 @@ var TextDocument = exports.TextDocument = Montage.create(Component, {
 	// PRIVATE MEMBERS
     _codeEditor: {
         value: {
-            "editor": { value: null, enumerable: false },
+            "editor": { value: null, enumerable: false }
 
         }
     },
@@ -191,6 +191,18 @@ var TextDocument = exports.TextDocument = Montage.create(Component, {
     loadDocument: {
         value: function() {
             // Have the XHR here?
+        }
+    },
+
+    markEdited:{
+        value: function() {
+            this.dirtyFlag = true;
+        }
+    },
+
+    markUnedited:{
+        value: function() {
+            this.dirtyFlag = false;
         }
     }
 });
