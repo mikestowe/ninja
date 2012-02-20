@@ -82,7 +82,7 @@ exports.LineTool = Montage.create(ShapeTool, {
                         h += ~~(yAdj*2);
                     }
 
-                    canvas = NJUtils.makeNJElement("canvas", "Canvas", "shape", null, true);
+                    canvas = NJUtils.makeNJElement("canvas", "Canvas", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
                     var elementModel = TagTool.makeElement(w, h, drawData.planeMat, drawData.midPt, canvas);
 
                     ElementMediator.addElement(canvas, elementModel.data, true);

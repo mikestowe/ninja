@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="save-as-dialog.css">
+    <script type="text/montage-serialization">
+    {
+        "fileInputField":{
+            "module": "js/components/ui/FilePicker/file-input-field.reel",
+            "name": "FileInputField",
+            "properties": {
+                "element": {"#": "fileInputField"}
+            }
+        },
+
+        "owner":{
+            "module": "js/io/ui/new-file-dialog/new-file-location.reel",
+            "name": "SaveAsDialog",
+            "properties": {
+                "element": {"#": "saveAsDialog"},
+                "fileInputField": {"@": "fileInputField"},
+                "newFileName": {"#": "newFileName"},
+                "error":{"#": "error"},
+                "okButton":{"#": "okButton"},
+                "cancelButton":{"#": "cancelButton"}
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+<div id="saveAsDialog" class="saveAsDialog">
+    <div class="title">Save As</div>
+    <div class="locationSelection">
+        <div class="filename">
+            <span class="nameText">Save As :</span>
+            <input id="newFileName" class="nj-skinned newFileName" type="search" value="" />
+        </div>
+        <div>
+            <span>Location :</span>
+            <div id="fileInputField"></div>
+        </div>
+    </div>
+    <div class="errorMsg"><span id="error" class="error"></span></div>
+    <div class="buttons">
+        <button id="cancelButton" type="button" value="CANCEL" class="cancelButton nj-skinned" >CANCEL</button>
+        <button id="okButton" disabled="true" type="button" value="OK" class="okButton nj-skinned" >OK</button>
+    </div>
+
+</div>
+</body>
+</html>

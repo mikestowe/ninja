@@ -60,10 +60,17 @@ exports.Ninja = Montage.create(Component, {
             this.eventManager.addEventListener( "onOpenDocument", this, false);
 
             this.addEventListener("change@appModel.livePreview", this.executeLivePreview, false);
+            this.addEventListener("change@appModel.chromePreview", this.executeChromePreview, false);
             this.addEventListener("change@appModel.debug", this.toggleDebug, false);
 
             NJevent("appLoading");
         }
+    },
+    
+    executeChromePreview: {
+    	value: function () {
+    		this.application.ninja.documentController.activeDocument.livePreview();
+    	}
     },
 
     handleResize: {
@@ -102,6 +109,9 @@ exports.Ninja = Montage.create(Component, {
     didDraw: {
         value: function() {
             if(!this._didDraw) {
+            	if (!this.application.ninja.coreIoApi.ioServiceDetected) {
+            		var check = this.application.ninja.coreIoApi.cloudAvailable();
+            	}
                 NJevent("appLoaded");
                 this._didDraw = true;
             }

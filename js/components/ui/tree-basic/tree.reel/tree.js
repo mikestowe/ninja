@@ -21,6 +21,18 @@ exports.Tree = Montage.create(Component, {
         value:true
     },
 
+    expandTreeAfterDraw:{
+        writable:true,
+        enumerable:true,
+        value:false
+    },
+
+    highlightedUri:{
+        writable:true,
+        enumerable:true,
+        value:null
+    },
+
     willDraw: {
     	enumerable: false,
     	value: function() {

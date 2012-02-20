@@ -6,13 +6,17 @@
 
 .picker{
     font-size:12px;
-    width:510px;
+    width:523px;
     height:500px;
     padding-top:15px;
     padding-left:15px;
     padding-bottom:15px;
     color:#ffffff;
-    background-color:#313131;
+    background-color:#494949;
+    font-family: 'Droid Sans', sans-serif;
+    border-radius: 8px;
+	box-shadow: 0px 0px 8px rgba(0, 0, 0, .8);
+	text-shadow: 1px 1px 1px #000;
 }
 
 .picker .pickerHeader{
@@ -20,7 +24,7 @@
 }
 
 .picker .container{
-    border: 1px groove #000000;
+    border: 1px solid #000000;
     overflow: auto;
     background-color:#5f5f5f;
 }
@@ -39,21 +43,27 @@
     width:75%;
     height:88%;
     overflow: hidden;
+    border-left: none;
 }
 
 .picker .right-top{
-    border: 1px groove #000000;
+    border-right: 1px solid #000000;
     overflow: auto;
     min-height:150px;
     height:75%;
     width:auto;
+    border-right: none;
+    margin: 8px 0px 0px 8px;
 }
 
 .picker .right-bottom{
-    border: 1px groove #000000;
+    border: 1px solid #000000;
+    border-left: none;
     overflow: auto;
     height:20%;
     padding: 10px;
+    border-bottom: none;
+    border-right: none;
 }
 
 .picker .driversList{
@@ -63,6 +73,7 @@
 
 .picker .driversList:hover{
     cursor:pointer;
+    background-color: #444444;
 }
 
 .picker .highlighted{
@@ -193,8 +204,49 @@
     pointer:auto;
 }
 
+.picker .buttons button {
+	float: left;
+	width: 100px;
+	margin-top: 3px;
+}
+
 .picker .okButton{
-    margin-right:25px;
+	margin: 0px 22px 0px 8px; 
+    /*
+margin-right:25px;
+    -webkit-box-align: center;
+    text-align: center;
+    cursor: default;
+    padding: 0px 6px 0px;
+    border:2px solid #d1d1d1;
+    background-color: #e1e1e1;
+    box-sizing: border-box;
+    border-radius:10px;
+    background-image: -webkit-linear-gradient(bottom, #e1e1e1 13%, #d1d1d1 58%, #e1e1e1 40%);
+    cursor:pointer;
+*/
+}
+
+.picker .cancelButton{
+    /*
+-webkit-box-align: center;
+    text-align: center;
+    cursor: default;
+    padding: 0px 6px 0px;
+    border:2px solid #d1d1d1;
+    background-color: #e1e1e1;
+    box-sizing: border-box;
+    border-radius:10px;
+    background-image: -webkit-linear-gradient(bottom, #e1e1e1 13%, #d1d1d1 58%, #e1e1e1 40%);
+    cursor:pointer;
+*/
+}
+
+.picker input[type="button"]:disabled{
+    background-color: #a1a1a1;
+    border:2px solid #a1a1a1;
+    background-image:none;
+    cursor:auto;
 }
 
 

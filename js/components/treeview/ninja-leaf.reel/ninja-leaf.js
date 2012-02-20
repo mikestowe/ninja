@@ -36,14 +36,14 @@ exports.Leaf = Montage.create(TreeNode, {
     handleEvent : {
         value: function(e) {
             var delegateMethod = this.delegateEventMap[e._event.type];
-            this.callDelegateMethod(delegateMethod);
+            this.callDelegateMethod(delegateMethod, e);
         }
     },
     callDelegateMethod : {
-        value: function(methodName) {
+        value: function(methodName, evt) {
             var delegate = this.treeView.contentController.delegate;
             if(delegate && typeof delegate[methodName] === 'function') {
-                delegate[methodName](this.sourceObject);
+                delegate[methodName](this.sourceObject, evt);
             }
         }
     },
@@ -60,9 +60,11 @@ exports.Leaf = Montage.create(TreeNode, {
     delegateEventMap : {
         value: {
             'click'     : 'handleNodeActivation',
+            'dblclick'  : 'handleDblclick',
             'dragstart' : 'handleDragStart',
             'dragend'   : 'handleDragEnd'
-        }
+        },
+        distinct: true
     }
 
 

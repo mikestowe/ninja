@@ -9,4 +9,48 @@ var Montage = require("montage/core/core").Montage,
 
 exports.ComponentController = Montage.create(ElementController, {
 
+    getProperty: {
+        value: function(el, prop) {
+            switch(prop) {
+                case "id":
+                case "class":
+                case "left":
+                case "top":
+                case "width":
+                case "height":
+                    if(el.nodeName === "IMG" && (prop === "width" || prop === "height")) {
+                        return this.application.ninja.currentDocument.getComponentFromElement(el)[prop];
+                    } else {
+                        return ElementController.getProperty(el, prop, true);
+                    }
+                default:
+                    return this.application.ninja.currentDocument.getComponentFromElement(el)[prop];
+            }
+        }
+    },
+
+    setProperty: {
+        value: function(el, p, value) {
+            switch(p) {
+                case "id":
+                case "class":
+                case "left":
+                case "top":
+                case "width":
+                case "height":
+                    if(el.nodeName === "IMG" && (p === "width" || p === "height")) {
+                        this.application.ninja.currentDocument.getComponentFromElement(el)[p] = value;
+                    } else {
+                        ElementController.setProperty(el, p, value);
+                    }
+                    break;
+                default:
+                    if(p === "min" || p === "max") value = parseFloat(value);
+
+                    this.application.ninja.currentDocument.getComponentFromElement(el)[p] = value;
+                    break;
+
+            }
+        }
+    }
 });
