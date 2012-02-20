@@ -23,6 +23,12 @@ exports.CloudPopup = Montage.create(Component, {
     },
     ////////////////////////////////////////////////////////////////////
     //
+    callback:{
+        writable:true,
+        enumerable:true,
+        value:null
+    },
+    //
     components: {
     	enumerable: false,
     	value: {test_btn: null, ok_btn: null, cancel_btn: null, download_btn: null, status: null, url: null}
@@ -121,6 +127,10 @@ exports.CloudPopup = Montage.create(Component, {
     	value: function() {
     		//
     		this.application.ninja.coreIoApi.hideCloudDialog();
+            this.application.ninja.coreIoApi._cloudDialogOpen=false;
+            if(!!this.callback){
+                this.callback();
+            }
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -131,6 +141,7 @@ exports.CloudPopup = Montage.create(Component, {
     		//
     		this.application.ninja.coreIoApi.rootUrl = null;
     		this.application.ninja.coreIoApi.hideCloudDialog();
+            this.application.ninja.coreIoApi._cloudDialogOpen=false;
     	}
     }
     ////////////////////////////////////////////////////////////////////
