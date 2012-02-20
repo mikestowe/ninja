@@ -674,8 +674,9 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             }
             
             var matchingElements, i;
+
             for(i = 0; i < specArr.length; i++) {
-                matchingElements = win.document.querySelectorAll(specArr[i].selector);
+                matchingElements = element.ownerDocument.querySelectorAll(specArr[i].selector);
                 if(nj.toArray(matchingElements).indexOf(element) !== -1) {
                     return specArr[i];
                 }
