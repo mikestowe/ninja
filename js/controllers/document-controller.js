@@ -14,13 +14,17 @@ var Montage = 		require("montage/core/core").Montage,
     DocumentController;
 ////////////////////////////////////////////////////////////////////////
 //
-DocumentController = exports.DocumentController = Montage.create(Component, {
+var DocumentController = exports.DocumentController = Montage.create(Component, {
     hasTemplate: {
         value: false
     },
 
     _documents: {
         value: []
+    },
+    
+    _hackRootFlag: {
+    	value: false
     },
 
     _activeDocument: { value: null },
@@ -56,12 +60,38 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
             this.eventManager.addEventListener("executeSave", this, false);
 
             this.eventManager.addEventListener("recordStyleChanged", this, false);
+            
         }
     },
+    
+   
+    
+    handleWebRequest: {
+    	value: function (request) {
+    		if (request.url.indexOf('js/document/templates/montage-html') !== -1) {
+    			
+    			console.log(request);
+    			
+    			//TODO: Figure out why active document is not available here
+    			
+				if (this._hackRootFlag) {
+					
+					//console.log(request.url.split('/')[request.url.split('/').length-1]);
+					//console.log(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split('/')[request.url.split('/').length-1]);
+					
+					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split('/')[request.url.split('/').length-1]};
+				}
+			}
+    	}
+    },
+    
 
     handleAppLoaded: {
         value: function() {
             //
+            
+            chrome.webRequest.onBeforeRequest.addListener(this.handleWebRequest.bind(this), {urls: ["<all_urls>"]}, ["blocking"]);
+            
         }
     },
 
@@ -180,6 +210,9 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
 	//
 	openDocument: {
 		value: function(doc) {
+			
+			//
+			this.documentHackReference = doc;
 			//
 			switch (doc.extension) {
 				case 'html': case 'html':
@@ -277,7 +310,6 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
     _onOpenDocument: {
         value: function(doc){
             //var data = DocumentManager.activeDocument;
-
             this._hideCurrentDocument();
             this.application.ninja.stage.stageView.hideOtherDocuments(doc.uuid);
 

@@ -14,7 +14,7 @@ var Montage = 		require("montage/core/core").Montage,
 exports.HTMLDocument = Montage.create(TextDocument, {
     
     _selectionExclude: { value: null, enumerable: false },
-    _htmlTemplateUrl: { value: "user-document-templates/montage-application-cloud/index.html", enumerable: false},
+    _htmlTemplateUrl: { value: "js/document/templates/montage-html/index.html", enumerable: false},
     _iframe: { value: null, enumerable: false },
     _server: { value: null, enumerable: false },
     _templateDocument: { value: null, enumerable: false },
@@ -235,6 +235,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 	//
     initialize: {
 		value: function(file, uuid, iframe, callback) {
+			this.application.ninja.documentController._hackRootFlag = false;
 			//
 			this._userDocument = file;
 			//
@@ -354,11 +355,19 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     },
     
     
+    
+    
+    
 	
 	////////////////////////////////////////////////////////////////////
 	//
     handleEvent: {
         value: function(event){
+        	//TODO: Remove
+        	window.hackPreview = this.livePreview.bind(this);
+        
+        	this.application.ninja.documentController._hackRootFlag = true;
+ 			//console.log(this._userDocument.root, this);
         	//TODO: Clean up, using for prototyping save
         	this._templateDocument = {};
         	this._templateDocument.head = this.iframe.contentWindow.document.getElementById("userHead");;
@@ -389,6 +398,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
                         this._stylesheets = this._document.styleSheets; // Entire stlyesheets array
 
                         this.callback(this);
+                        
+                        //console.log('file content end');
                     }
                 }.bind(this), 50);
             
@@ -440,7 +451,9 @@ exports.HTMLDocument = Montage.create(TextDocument, {
                 }
 
                 // Remving this callback and using the callback from the css load
-                // this.callback(this);
+                //this.callback(this);
+                
+                
             
             }
     },
@@ -460,6 +473,48 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             }
         }
     },
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    ////////////////////////////////////////////////////////////////////
+	//
+    livePreview: {
+    	enumerable: false,
+    	value: function () {
+    		//this.application.ninja.documentController
+    		//console.log(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);
+			chrome.tabs.create({url: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]});		
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    
+    
+    
+    
+    
+    
+    
+    
     
 	////////////////////////////////////////////////////////////////////
 	//

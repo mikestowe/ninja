@@ -12,7 +12,9 @@
   },
   "permissions": [
     "unlimitedStorage",
-    "notifications"
+    "notifications",
+    "webRequestBlocking",
+    "webRequest"
   ],
   "requirements": {
     "3D": {
