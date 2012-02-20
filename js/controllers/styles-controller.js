@@ -571,6 +571,10 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 rules = [],
                 win = element.ownerDocument.defaultView,
                 self = this;
+
+            if(!win) {
+                return null;
+            }
                 
             if(!omitPseudos) {
                 pseudos.concat(['link', 'visited', 'active', 'hover', 'focus', 'first-letter', 
