@@ -317,7 +317,11 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                     isInlineStyle : true,
                     style         : element.style
                 };
-                
+
+                if((typeof matchedRules === "undefined") || (matchedRules === null)){
+                    return null;
+                }
+
                 ///// Now splice it into the matched rules
                 ///// By inserting the inline style at the beginning,
                 ///// we keep the correct order of specificity
