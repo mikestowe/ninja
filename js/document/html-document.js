@@ -290,15 +290,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
         }
     },
 
-
-
-    AppendElement: {
-        value: function(element, parent) {
-            this.dirtyFlag = true;
-        }
-    },
-
-
     /**
      * Return the specified inline attribute from the element.
      */

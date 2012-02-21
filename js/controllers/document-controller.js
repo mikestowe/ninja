@@ -131,20 +131,11 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     fileSaveResult: {
     	value: function (result) {
     		if(result.status === 204){
-            	this.clearDocumentDirtyFlag();
+                this.activeDocument.needsSave = false;
             }
     	}
     },
-    ////////////////////////////////////////////////////////////////////
-	
-	
-    clearDocumentDirtyFlag:{
-        value: function(){
-            this.activeDocument.dirtyFlag = false;
-        }
-    },
-	
-	
+
     createNewFile:{
         value:function(newFileObj){
             //console.log(newFileObj);//contains the template uri and the new file uri
@@ -282,7 +273,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
     closeDocument: {
         value: function(id) {
-            if(this.activeDocument.dirtyFlag === true){
+            if(this.activeDocument.needsSave === true){
                 //if file dirty then alert user to save
         }
 

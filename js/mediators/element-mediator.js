@@ -102,7 +102,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
                 el.elementModel.controller["set3DProperties"](el, [p3d], 0, true);
             }
             if(!noEvent) {
-                this.application.ninja.documentController.activeDocument.markEdited();
+                this.application.ninja.documentController.activeDocument.needsSave = true;
                 NJevent("elementAdded", el);
             }
         }
@@ -130,7 +130,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
     _removeElement: {
         value: function(el, rules) {
             ElementController.removeElement(el, rules);
-            this.application.ninja.documentController.activeDocument.markEdited();
+            this.application.ninja.documentController.activeDocument.needsSave = true;
             NJevent("elementDeleted", el);
         }
     },
