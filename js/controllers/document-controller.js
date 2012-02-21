@@ -70,7 +70,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     	value: function (request) {
     		if (request.url.indexOf('js/document/templates/montage-html') !== -1) {
     			
-    			console.log(request);
+    			//console.log(request);
     			
     			//TODO: Figure out why active document is not available here
     			
