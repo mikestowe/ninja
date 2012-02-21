@@ -58,6 +58,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             this.eventManager.addEventListener("executeFileOpen", this, false);
             this.eventManager.addEventListener("executeNewFile", this, false);
             this.eventManager.addEventListener("executeSave", this, false);
+            this.eventManager.addEventListener("executeSaveAs", this, false);
 
             this.eventManager.addEventListener("recordStyleChanged", this, false);
             
@@ -100,33 +101,47 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     handleExecuteFileOpen: {
         value: function(event) {
             var pickerSettings = event._event.settings || {};
-            pickerSettings.callback = this.openFileWithURI.bind(this);
-            pickerSettings.pickerMode = "read";
-            pickerSettings.inFileMode = true;
-            this.application.ninja.filePickerController.showFilePicker(pickerSettings);
+            if (this.application.ninja.coreIoApi.cloudAvailable()) {
+                pickerSettings.callback = this.openFileWithURI.bind(this);
+                pickerSettings.pickerMode = "read";
+                pickerSettings.inFileMode = true;
+                this.application.ninja.filePickerController.showFilePicker(pickerSettings);
+            }
         }
     },
 
     handleExecuteNewFile: {
             value: function(event) {
                 var newFileSettings = event._event.settings || {};
-                newFileSettings.callback = this.createNewFile.bind(this);
-                this.application.ninja.newFileController.showNewFileDialog(newFileSettings);
+                if (this.application.ninja.coreIoApi.cloudAvailable()) {
+                    newFileSettings.callback = this.createNewFile.bind(this);
+                    this.application.ninja.newFileController.showNewFileDialog(newFileSettings);
+                }
             }
     },
-	
-	
 	////////////////////////////////////////////////////////////////////
 	//TODO: Check for appropiate structures
     handleExecuteSave: {
     	value: function(event) {
-            if(!!this.activeDocument){
+            if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
                 //Text and HTML document classes should return the same save object for fileSave
                 this.application.ninja.ioMediator.fileSave(this.activeDocument.save(), this.fileSaveResult.bind(this));
             }
 		}
     },
     ////////////////////////////////////////////////////////////////////
+    handleExecuteSaveAs: {
+        value: function(event) {
+            var saveAsSettings = event._event.settings || {};
+            if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
+                saveAsSettings.fileName = this.activeDocument.name;
+                saveAsSettings.folderUri = this.activeDocument.uri.substring(0, this.activeDocument.uri.lastIndexOf("/"));
+                //add callback
+                this.application.ninja.newFileController.showSaveAsDialog(saveAsSettings);
+            }
+        }
+    },
+
     //
     fileSaveResult: {
     	value: function (result) {

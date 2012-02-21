@@ -19,12 +19,6 @@ var NewFileWorkflowController =  exports.NewFileWorkflowController = Montage.cre
         writable:false,
         enumerable:true,
         value:function(){
-            var that = this;
-
-            this.eventManager.addEventListener("saveAs", function(evt){
-                var data = evt._event.data || {};//data will contain the current file name, directory location and callback
-                that.showSaveAsDialog(data);
-            }, false);
         }
     },
 
@@ -99,7 +93,6 @@ var NewFileWorkflowController =  exports.NewFileWorkflowController = Montage.cre
             saveAsDialog.fileName = fileName;
             saveAsDialog.folderUri = folderUri;
             saveAsDialog.callback = data.callback;
-            saveAsDialog.callbackScope = data.callbackScope;
             saveAsDialog.element = saveAsDialogContainer;
 
             //remove after rendering and add in modal dialog
