@@ -66,35 +66,37 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     
    
     
+    
+    
+    
+    
+    ////////////////////////////////////////////////////////////////////
+	//
     handleWebRequest: {
     	value: function (request) {
-    		if (request.url.indexOf('js/document/templates/montage-html') !== -1) {
-    			
-    			//console.log(request);
-    			
-    			//TODO: Figure out why active document is not available here
-    			
-				if (this._hackRootFlag) {
-					
-					//console.log(request.url.split('/')[request.url.split('/').length-1]);
-					//console.log(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split('/')[request.url.split('/').length-1]);
-					
-					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split('/')[request.url.split('/').length-1]};
-				}
+    		if (this._hackRootFlag && request.url.indexOf('js/document/templates/montage-html') !== -1) {
+    			//TODO: Optimize creating string
+				return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split('/')[request.url.split('/').length-1]};
 			}
     	}
     },
-    
-
+    ////////////////////////////////////////////////////////////////////
+	//
     handleAppLoaded: {
         value: function() {
-            //
-            
+            //Adding an intercept to resources loaded to ensure user assets load from cloud simulator
             chrome.webRequest.onBeforeRequest.addListener(this.handleWebRequest.bind(this), {urls: ["<all_urls>"]}, ["blocking"]);
-            
         }
     },
-
+	////////////////////////////////////////////////////////////////////
+	
+	
+	
+	
+	
+	
+	
+	
     handleExecuteFileOpen: {
         value: function(event) {
             var pickerSettings = event._event.settings || {};
