@@ -305,6 +305,8 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                 this._removeDocumentView(doc.container);
                 this.application.ninja.stage.stageView.hideRulers();
                 document.getElementById("iframeContainer").style.display="block";
+
+                this.application.ninja.stage.hideCanvas(true);
             }
         }
     },
