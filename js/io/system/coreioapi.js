@@ -234,19 +234,18 @@ exports.CoreIoApi = Montage.create(Component, {
     //Method to check status of I/O API, will return false if not active
 	cloudAvailable: {
 		enumerable: false,
-		value: function (callback) {
+		value: function () {
 			var cloud = this.getCloudStatus();
 			//
 			if (this.rootUrl && cloud.status === 200) {
 				//Active
 				this.cloudData.name = cloud.response['name'];
 				this.cloudData.root = cloud.response['server-root'];
-                if(!!callback){callback();}
-				else{return true};
+				return true;
 			} else {
 				//Inactive
 				if (!this._cloudDialogOpen && this.application.ninja) {
-					this.showCloudDialog(callback);
+					this.showCloudDialog();
 				}
 				return false;
 			}
@@ -274,7 +273,7 @@ exports.CoreIoApi = Montage.create(Component, {
     //
     showCloudDialog: {
     	enumerable: false,
-		value: function (callback) {
+		value: function () {
 			//
 			this._cloudDialogOpen = true;
 			//
@@ -295,7 +294,6 @@ exports.CoreIoApi = Montage.create(Component, {
     		this._cloudDialogComponents.dialog.element = popup;
     		this._cloudDialogComponents.dialog.needsDraw = true;
     		this._cloudDialogComponents.dialog.element.style.opacity = 0;
-            this._cloudDialogComponents.dialog.callback = callback;
     		//
     		this._cloudDialogComponents.dialog.addEventListener('firstDraw', this, false);
 		}

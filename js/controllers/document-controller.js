@@ -100,26 +100,18 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     handleExecuteFileOpen: {
         value: function(event) {
             var pickerSettings = event._event.settings || {};
-            //adding callback so that file picker can be opened after checking cloud status
-            this.application.ninja.coreIoApi.cloudAvailable(function(){
-                pickerSettings.callback = this.openFileWithURI.bind(this);
-                pickerSettings.pickerMode = "read";
-                pickerSettings.inFileMode = true;
-                this.application.ninja.filePickerController.showFilePicker(pickerSettings);
-            }.bind(this));
-
+            pickerSettings.callback = this.openFileWithURI.bind(this);
+            pickerSettings.pickerMode = "read";
+            pickerSettings.inFileMode = true;
+            this.application.ninja.filePickerController.showFilePicker(pickerSettings);
         }
     },
 
     handleExecuteNewFile: {
             value: function(event) {
                 var newFileSettings = event._event.settings || {};
-                //adding callback so that new file dialog can be opened after checking cloud status
-                this.application.ninja.coreIoApi.cloudAvailable(function(){
-                    newFileSettings.callback = this.createNewFile.bind(this);
-                    this.application.ninja.newFileController.showNewFileDialog(newFileSettings);
-                }.bind(this));
-
+                newFileSettings.callback = this.createNewFile.bind(this);
+                this.application.ninja.newFileController.showNewFileDialog(newFileSettings);
             }
     },
 	
