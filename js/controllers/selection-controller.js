@@ -20,6 +20,27 @@ exports.SelectionController = Montage.create(Component, {
         }
     },
 
+    /*
+     * Bound property to the ninja currentSelectedContainer
+     */
+    _selectionContainer: {
+        value: null
+    },
+
+    selectionContainer: {
+        get: function() {
+            return this._selectionContainer
+        },
+        set: function(value) {
+            if(this._selectionContainer && this._selectionContainer !== value) {
+                console.log("setting container in the selection tool");
+                this.executeSelectElement();
+            }
+
+            this._selectionContainer = value;
+        }
+    },
+
     deserializedFromTemplate: {
         value: function() {
             this.eventManager.addEventListener("openDocument", this, false);
@@ -53,7 +74,9 @@ exports.SelectionController = Montage.create(Component, {
                 }
             }
 
-            this.dispatchEvent(selectionEvent.event);
+            //
+            this._selectionContainer = this.application.ninja.currentSelectedContainer;
+
         }
     },
 
@@ -66,13 +89,10 @@ exports.SelectionController = Montage.create(Component, {
     handleElementDeleted: {
         value: function(event) {
             if(!this._isDocument) {
-
                 if(this.findSelectedElement(event.detail) !== -1) {
                     this.executeSelectElement();
                 }
-
             }
-
         }
     },
 
@@ -130,12 +150,17 @@ exports.SelectionController = Montage.create(Component, {
                     this.executeSelectElement();    // Else execute selection with no item
                 } else {
 
-                    if(item.parentNode.id == "UserContent") {
+//                    if(item.parentNode.id === "UserContent") {
+                    if(item.parentNode.uuid === this.selectionContainer.uuid) {
                         this.executeSelectElement(item);
                     } else {
                         var outerElement = item.parentNode;
 
-                        while(outerElement.parentNode && outerElement.parentNode.id !== "UserContent") {
+                        while(outerElement.parentNode && outerElement.parentNode.uuid !== this.selectionContainer.uuid) {
+                        //while(outerElement.parentNode && outerElement.parentNode.id !== "UserContent") {
+                            // If element is higher up than current container then return
+                            if(outerElement.id === "UserContent") return;
+                            // else keep going up the chain
                             outerElement = outerElement.parentNode;
                         }
 

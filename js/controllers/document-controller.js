@@ -66,19 +66,19 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     
    
     
-    
-    
-    
-    
+    			
+    			
+    			
+					
     ////////////////////////////////////////////////////////////////////
 	//
     handleWebRequest: {
     	value: function (request) {
     		if (this._hackRootFlag && request.url.indexOf('js/document/templates/montage-html') !== -1) {
     			//TODO: Optimize creating string
-				return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split('/')[request.url.split('/').length-1]};
+					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split('/')[request.url.split('/').length-1]};
+				}
 			}
-    	}
     },
     ////////////////////////////////////////////////////////////////////
 	//
@@ -89,7 +89,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         }
     },
 	////////////////////////////////////////////////////////////////////
-	
+
 	
 	
 	
@@ -121,9 +121,9 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     handleExecuteSave: {
     	value: function(event) {
             if(!!this.activeDocument){
-                //Text and HTML document classes should return the same save object for fileSave
-                this.application.ninja.ioMediator.fileSave(this.activeDocument.save(), this.fileSaveResult.bind(this));
-            }
+    		//Text and HTML document classes should return the same save object for fileSave
+    		this.application.ninja.ioMediator.fileSave(this.activeDocument.save(), this.fileSaveResult.bind(this));
+		}
 		}
     },
     ////////////////////////////////////////////////////////////////////
@@ -135,7 +135,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             }
     	}
     },
-
+	
     createNewFile:{
         value:function(newFileObj){
             //console.log(newFileObj);//contains the template uri and the new file uri
@@ -456,5 +456,5 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value: function() {
             return "userDocument_" + (this._iframeCounter++);
         }
-    }
+        }
 });
