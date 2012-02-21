@@ -183,18 +183,21 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
         }
     },
 
+    /**
+     * Double click handler
+     *
+     * Sets the currentSelectionContainer to the current selected element. If no elements are selected set the
+     * currentSelectionContainer to the userDocument div.
+     */
     HandleDoubleClick: {
-            value: function(event) {
-
-                // Temporary Code for Breadcrumb
-                if(this.application.ninja.selectedElements.length > 0) {
-                    this.application.ninja.currentSelectedContainer = this.application.ninja.selectedElements[0]._element;
-                } else {
-                    this.application.ninja.currentSelectedContainer = this.application.ninja.currentDocument.documentRoot;
-                }
-
+        value: function(event) {
+            if(this.application.ninja.selectedElements.length > 0) {
+                this.application.ninja.currentSelectedContainer = this.application.ninja.selectedElements[0]._element;
+            } else {
+                this.application.ninja.currentSelectedContainer = this.application.ninja.currentDocument.documentRoot;
             }
-        },
+        }
+    },
 
     HandleKeyPress: {
         value: function(event){
