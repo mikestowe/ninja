@@ -51,12 +51,7 @@ exports.EyedropperTool = Montage.create(toolBase, {
                 this._isMouseDown = false;
                 this._escape = false;
                 this._elementUnderMouse = null;
-                if(this._imageDataCanvas)
-                {
-                    this.application.ninja.stage.element.removeChild(this._imageDataCanvas);
-                    this._imageDataCanvas = null;
-                    this._imageDataContext = null;
-                }
+                this._deleteImageDataCanvas();
             }
             if(this._isMouseDown)
             {
@@ -80,12 +75,7 @@ exports.EyedropperTool = Montage.create(toolBase, {
                 this._color = null;
 
                 this._elementUnderMouse = null;
-                if(this._imageDataCanvas)
-                {
-                    this.application.ninja.stage.element.removeChild(this._imageDataCanvas);
-                    this._imageDataCanvas = null;
-                    this._imageDataContext = null;
-                }
+                this._deleteImageDataCanvas();
             }
         }
     },
@@ -119,9 +109,15 @@ exports.EyedropperTool = Montage.create(toolBase, {
                 obj = this.application.ninja.stage.GetElement(event);
             if (obj)
             {
+                if(this.application.ninja.currentDocument.inExclusion(obj) !== -1)
+                {
+                    this._elementUnderMouse = null;
+                    this._deleteImageDataCanvas();
+                    return;
+                }
                 this._elementUnderMouse = obj;
                 // Depending on the object type, we need to get different colors
-                if(obj.elementModel.type === "IMG")
+                if(obj.elementModel.selection === "image")
                 {
                     c = this._getColorAtPoint(obj, event);
                     if(c)
@@ -129,14 +125,9 @@ exports.EyedropperTool = Montage.create(toolBase, {
                         color = this.application.ninja.colorController.getColorObjFromCss(c);
                     }
                 }
-                else if (obj.elementModel.type === "CANVAS")
+                else if (obj.elementModel.selection === "canvas")
                 {
-                    if(this._imageDataCanvas)
-                    {
-                        this.application.ninja.stage.element.removeChild(this._imageDataCanvas);
-                        this._imageDataCanvas = null;
-                        this._imageDataContext = null;
-                    }
+                    this._deleteImageDataCanvas();
 
                     var pt = webkitConvertPointFromPageToNode(obj,
                                                                 new WebKitPoint(event.pageX, event.pageY)),
@@ -150,14 +141,8 @@ exports.EyedropperTool = Montage.create(toolBase, {
                 }
                 else
                 {
-                    if(this._imageDataCanvas)
-                    {
-                        this.application.ninja.stage.element.removeChild(this._imageDataCanvas);
-                        this._imageDataCanvas = null;
-                        this._imageDataContext = null;
-                    }
+                    this._deleteImageDataCanvas();
 
-                    // TODO - figure out if user clicked on a border - for now, just get fill
                     c = ElementsMediator.getColor(obj, this._isOverBackground(obj, event));
                     if(c)
                     {
@@ -180,12 +165,7 @@ exports.EyedropperTool = Montage.create(toolBase, {
             else
             {
                 this._elementUnderMouse = null;
-                if(this._imageDataCanvas)
-                {
-                    this.application.ninja.stage.element.removeChild(this._imageDataCanvas);
-                    this._imageDataCanvas = null;
-                    this._imageDataContext = null;
-                }
+                this._deleteImageDataCanvas();
             }
 
         }
@@ -273,38 +253,44 @@ exports.EyedropperTool = Montage.create(toolBase, {
     _getColorAtPoint: {
         value: function(elt, event)
         {
-            var imageData;
             if(!this._imageDataCanvas)
             {
                 this._imageDataCanvas = document.createElement("canvas");
-                this._imageDataCanvas.style.display = "block";
-                this._imageDataCanvas.style.position = "absolute";
 
-                var eltCoords = this.application.ninja.stage.toViewportCoordinates(elt.offsetLeft, elt.offsetTop);
+                this._applyElementStyles(elt, this._imageDataCanvas, ["display", "position", "width", "height",
+                                                                "-webkit-transform", "-webkit-transform-style"]);
+
+                var l = this.application.ninja.elementMediator.getProperty(elt, "left", parseInt),
+                    t = this.application.ninja.elementMediator.getProperty(elt, "top", parseInt),
+                    w = this.application.ninja.elementMediator.getProperty(elt, "width", parseInt),
+                    h = this.application.ninja.elementMediator.getProperty(elt, "height", parseInt);
+
+                var eltCoords = this.application.ninja.stage.toViewportCoordinates(l, t);
                 this._imageDataCanvas.style.left = eltCoords[0] + "px";
                 this._imageDataCanvas.style.top = eltCoords[1] + "px";
-                this._imageDataCanvas.style.width = elt.offsetWidth + "px";
-                this._imageDataCanvas.style.height = elt.offsetHeight + "px";
-                this._imageDataCanvas.width = elt.offsetWidth;
-                this._imageDataCanvas.height = elt.offsetHeight;
+                this._imageDataCanvas.width = w;
+                this._imageDataCanvas.height = h;
 
-                this.application.ninja.stage.element.appendChild(this._imageDataCanvas);
+//                this.application.ninja.currentDocument.documentRoot.appendChild(this._imageDataCanvas);
 
                 this._imageDataContext = this._imageDataCanvas.getContext("2d");
                 this._imageDataContext.drawImage(elt, 0, 0);
             }
 
-            var pt = webkitConvertPointFromPageToNode(this._imageDataCanvas,
+            var pt = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas,
                                                         new WebKitPoint(event.pageX, event.pageY));
 
-            return this._getColorFromCanvas(this._imageDataContext, pt);
+            var tmpPt = this.application.ninja.stage.viewUtils.globalToLocal([pt.x, pt.y], elt);
+
+            return this._getColorFromCanvas(this._imageDataContext, tmpPt);
         }
     },
 
     _getColorFromCanvas: {
         value: function(ctx, pt)
         {
-            var imageData = ctx.getImageData(pt.x, pt.y, 1, 1).data;
+//            var imageData = ctx.getImageData(pt.x, pt.y, 1, 1).data;
+            var imageData = ctx.getImageData(pt[0], pt[1], 1, 1).data;
             if(imageData)
             {
                 return ("rgba(" + imageData[0] + "," + imageData[1] + "," + imageData[2] + "," + imageData[3] + ")");
@@ -313,6 +299,27 @@ exports.EyedropperTool = Montage.create(toolBase, {
             {
                 return null;
             }
+        }
+    },
+
+    _deleteImageDataCanvas : {
+        value: function()
+        {
+            if(this._imageDataCanvas)
+            {
+//                this.application.ninja.currentDocument.documentRoot.removeChild(this._imageDataCanvas);
+                this._imageDataCanvas = null;
+                this._imageDataContext = null;
+            }
+        }
+    },
+
+    _applyElementStyles : {
+        value: function(fromElement, toElement, styles) {
+            styles.forEach(function(style) {
+                var styleCamelCase = style.replace(/(\-[a-z])/g, function($1){return $1.toUpperCase().replace('-','');});
+                toElement.style[styleCamelCase] = window.getComputedStyle(fromElement)[style];
+            }, this);
         }
     }
 
