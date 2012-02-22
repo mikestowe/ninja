@@ -11,46 +11,55 @@ var newFileWorkflowControllerModule = require("js/io/ui/new-file-dialog/new-file
 var NewFileLocation = exports.NewFileLocation = Montage.create(Component, {
 
     templateHeight:{
-        enumerable: true,
         value:"25 px"
     },
 
     templateWidth:{
-        enumerable: true,
         value:"25 px"
     },
 
-    willDraw: {
-       	enumerable: false,
-       	value: function() {}
-       },
+    prepareForDraw: {
+        value: function() {
+            // Populate the file input field by using the session storage or the default user folder
+            var defaultSaveDirectory;
 
-    draw: {
-       	enumerable: false,
-       	value: function() {}
+            if(window.sessionStorage) {
+                var storedFolder = window.sessionStorage.getItem("lastOpenedFolderURI_folderSelection");
+                if(storedFolder)  defaultSaveDirectory = decodeURI(window.sessionStorage.getItem("lastOpenedFolderURI_folderSelection"));
+            }
+
+            if(!defaultSaveDirectory) {
+                var driveData = this.application.ninja.coreIoApi.getDirectoryContents({uri:"", recursive:false, returnType:"all"});
+                if(driveData.success){
+                    var topLevelDirectories = (JSON.parse(driveData.content)).children;
+                    defaultSaveDirectory = topLevelDirectories[0].uri;
+                } else {
+                    console.log("** Error ** Cannot get directory listing");
+                    defaultSaveDirectory = "";
+                }
+            }
+
+            this.fileInputField.newFileDirectory.value = defaultSaveDirectory;
+        }
     },
 
     didDraw: {
-       	enumerable: false,
         value: function() {
-            var that=this;
-
             this.fileInputField.selectDirectory = true;
 
-            this.newFileName.addEventListener("keyup", function(evt){that.handleNewFileNameOnkeyup(evt);}, false);
-    }
-
+            this.newFileName.addEventListener("keyup", this, false);
+        }
     },
 
-    handleNewFileNameOnkeyup:{
-          value:function(evt){
-              if(this.newFileName.value !== ""){
-                  var newFileNameSetEvent = document.createEvent("Events");
-                  newFileNameSetEvent.initEvent("newFileNameSet", false, false);
-                  newFileNameSetEvent.newFileName = this.newFileName.value;
-                  this.eventManager.dispatchEvent(newFileNameSetEvent);
-              }
-          }
+    handleKeyup:{
+        value:function(evt){
+            if(this.newFileName.value !== "") {
+                var newFileNameSetEvent = document.createEvent("Events");
+                newFileNameSetEvent.initEvent("newFileNameSet", false, false);
+                newFileNameSetEvent.newFileName = this.newFileName.value;
+                this.eventManager.dispatchEvent(newFileNameSetEvent);
+            }
+        }
     }
 
 });
