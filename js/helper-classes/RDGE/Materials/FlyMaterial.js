@@ -20,7 +20,7 @@ function FlyMaterial()
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
 	this._name = "FlyMaterial";
-	this._shaderName = "tunnel";
+	this._shaderName = "fly";
 
 	this._texMap = 'assets/images/rocky-normal.jpg';
 

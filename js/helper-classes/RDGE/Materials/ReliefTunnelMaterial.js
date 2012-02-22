@@ -20,7 +20,7 @@ function ReliefTunnelMaterial()
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
 	this._name = "ReliefTunnelMaterial";
-	this._shaderName = "tunnel";
+	this._shaderName = "reliefTunnel";
 
 	this._texMap = 'assets/images/rocky-normal.jpg';
 
