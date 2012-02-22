@@ -19,8 +19,6 @@ exports.Stage = Montage.create(Component, {
     zoomFactor: {value : 1 },
 
     _canvasSelectionPrefs:  { value: { "thickness" : 1.0, "color" : "#46a1ff" } },
-    _editSymbolPrefs:       { value: { "thickness" : 2.0, "color" : "#C61F00" } },
-
     _canvasDrawingPrefs:    { value: { "thickness" : 1.0, "color" : "#000" } },
     drawingContextPreferences: { get: function() { return this._canvasDrawingPrefs; } },
 
@@ -260,7 +258,6 @@ exports.Stage = Montage.create(Component, {
             this.application.ninja.toolsData.selectedToolInstance._configure(true);
 
             this.addEventListener("change@appModel.show3dGrid", this, false);
-
         }
     },
 
@@ -558,8 +555,7 @@ exports.Stage = Montage.create(Component, {
             drawUtils.updatePlanes();
 
             //TODO Set this variable in the needs draw so that it does not have to be calculated again for each draw for selection change
-            if(this.application.ninja.selectedElements.length)
-            {
+            if(this.application.ninja.selectedElements.length) {
                 // drawUtils.drawSelectionBounds handles the single selection case as well,
                 // so we don't have to special-case the single selection case.
                 // TODO drawUtils.drawSelectionBounds expects an array of elements.
@@ -567,8 +563,7 @@ exports.Stage = Montage.create(Component, {
                 // TODO to work on _element instead of re-creating a new Array here.
                 var selArray = new Array();
 
-                for(var i = 0; this.application.ninja.selectedElements[i];i++)
-                {
+                for(var i = 0; this.application.ninja.selectedElements[i];i++) {
                     var curElement = this.application.ninja.selectedElements[i]._element;
 
                     // Add element to array that is used to calculate 3d-bounding box of all elements
@@ -601,7 +596,7 @@ exports.Stage = Montage.create(Component, {
      * @params: x, y, w, h
      */
     draw3DSelectionRectangle: {
-        value:function(x0,y0, x1,y1, x2,y2, x3,y3){
+        value:function(x0,y0, x1,y1, x2,y2, x3,y3) {
 //            this.clearCanvas();
             this.clearDrawingCanvas();
             this._drawingContext.strokeStyle = this._canvasDrawingPrefs.color;
@@ -646,7 +641,7 @@ exports.Stage = Montage.create(Component, {
      * Draws selection highlight and reg. point for a given element
      */
     drawElementBoundingBox: {
-        value: function(elt, editMode) {
+        value: function(elt) {
             this.stageDeps.viewUtils.setViewportObj( elt );
             var bounds3D = this.stageDeps.viewUtils.getElementViewBounds3D( elt );
 
@@ -657,18 +652,16 @@ exports.Stage = Montage.create(Component, {
 //            }
 
             var zoomFactor = 1;
-            if (this._viewport.style && this._viewport.style.zoom)
-            {
+            if (this._viewport.style && this._viewport.style.zoom) {
 				zoomFactor = Number(this._viewport.style.zoom);
             }
+
             var tmpMat = this.stageDeps.viewUtils.getLocalToGlobalMatrix( elt );
-            for (var j=0;  j<4;  j++)
-            {
+            for (var j=0;  j<4;  j++) {
                 var localPt = bounds3D[j];
                 var tmpPt = this.stageDeps.viewUtils.localToGlobal2(localPt, tmpMat);
 
-                if(zoomFactor !== 1)
-                {
+                if(zoomFactor !== 1) {
                     tmpPt = vecUtils.vecScale(3, tmpPt, zoomFactor);
 
                     tmpPt[0] += this._scrollLeft*(zoomFactor - 1);
@@ -678,13 +671,9 @@ exports.Stage = Montage.create(Component, {
             }
 
             // draw it
-            if(editMode) {
-                this.context.strokeStyle = this._editSymbolPrefs.color;
-                this.context.lineWidth = this._editSymbolPrefs.thickness;
-            } else {
-                this.context.strokeStyle = this._canvasSelectionPrefs.color;
-                this.context.lineWidth = this._canvasSelectionPrefs.thickness;
-            }
+            this.context.strokeStyle = this._canvasSelectionPrefs.color;
+            this.context.lineWidth = this._canvasSelectionPrefs.thickness;
+
 
             this.context.beginPath();
 
@@ -698,13 +687,6 @@ exports.Stage = Montage.create(Component, {
 
             this.context.closePath();
             this.context.stroke();
-
-            /** Bug #25 - Do Not Draw the Registration point anymore on the top left since it's assumed there.
-            this.context.beginPath();
-            this.context.arc(bounds3D[0][0], bounds3D[0][1] , 5, 0, Math.PI*2, false);
-            this.context.stroke();
-            */
-
         }
     },
 
@@ -716,10 +698,8 @@ exports.Stage = Montage.create(Component, {
      *
      * @params: x, y, w, h
      */
-    draw3DProjectedAndUnprojectedRectangles:
-	{
-        value:function(unProjPts,  projPts)
-		{
+    draw3DProjectedAndUnprojectedRectangles: {
+        value:function(unProjPts,  projPts) {
             this.clearDrawingCanvas();
             this._drawingContext.strokeStyle = this._canvasDrawingPrefs.color;
             this._drawingContext.lineWidth = this._canvasDrawingPrefs.thickness;
@@ -773,7 +753,7 @@ exports.Stage = Montage.create(Component, {
      * @params: x0, y0, x1, y1
      */
     drawLine: {
-        value:function(x0, y0, x1, y1, strokeSize, strokeColor){
+        value:function(x0, y0, x1, y1, strokeSize, strokeColor) {
             this.clearDrawingCanvas();
             this._drawingContext.strokeStyle = strokeColor;
             this._drawingContext.lineWidth = strokeSize;

@@ -1096,37 +1096,6 @@ exports.CoreIoApi = Montage.create(Component, {
             }
             return status;
         }
-    },
-
-	////////////////////////////////////////////////////////////////////
-    /***
-     * check if the file exists
-     */
-    checkFileExists:{
-        value: function(fileName, folderUri, fileType){
-            var uri = "", response=null, status=true;
-
-            //prepare absolute uri
-            if(/[^/\\]$/g.test(folderUri)){
-                folderUri = folderUri + "/";
-            }
-
-            if(!!fileType && (fileName.lastIndexOf(fileType) !== (fileName.length - fileType.length))){
-                fileName = fileName+fileType;
-            }
-
-            uri = ""+folderUri+fileName;
-
-            response = this.fileExists({"uri":uri});
-            if(!!response && response.success && (response.status === 204)){
-                status = true;
-            }else if(!!response && response.success && (response.status === 404)){
-                status = false;
-            }else{
-                status = false;
-            }
-            return status;
-        }
     }
 	////////////////////////////////////////////////////////////////////
 });

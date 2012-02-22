@@ -115,8 +115,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
     HandleLeftButtonUp: {
         value: function(event) {
             var selectedItems,
-                point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas,
-                                                                    new WebKitPoint(event.pageX, event.pageY));
+                point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(event.pageX, event.pageY));
 
             this.isDrawing = false;
             this.application.ninja.stage.showSelectionBounds = true;
@@ -184,28 +183,21 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
         }
     },
 
+    /**
+     * Double click handler
+     *
+     * Sets the currentSelectionContainer to the current selected element. If no elements are selected set the
+     * currentSelectionContainer to the userDocument div.
+     */
     HandleDoubleClick: {
-            value: function(event) {
-                /*
-                var selectedObject = stageManagerModule.stageManager.GetObjectFromPoint(event.layerX, event.layerY, this._canOperateOnStage);
-
-                if(selectedObject) {
-                    if(selectionManagerModule.selectionManager.findSelectedElement(selectedObject) === -1) {
-                        selectionManagerModule.selectionManager.setSingleSelection(selectedObject);
-                    }
-                }
-                */
-
-                // Temporary Code for Breadcrumb
-                if(this.application.ninja.selectedElements.length > 0) {
-                    this.application.ninja.currentSelectedContainer = this.application.ninja.selectedElements[0]._element;
-                } else {
-                    console.log(this.application.ninja.currentDocument.documentRoot.uuid);
-                    this.application.ninja.currentSelectedContainer = this.application.ninja.currentDocument.documentRoot;
-                }
-
+        value: function(event) {
+            if(this.application.ninja.selectedElements.length > 0) {
+                this.application.ninja.currentSelectedContainer = this.application.ninja.selectedElements[0]._element;
+            } else {
+                this.application.ninja.currentSelectedContainer = this.application.ninja.currentDocument.documentRoot;
             }
-        },
+        }
+    },
 
     HandleKeyPress: {
         value: function(event){

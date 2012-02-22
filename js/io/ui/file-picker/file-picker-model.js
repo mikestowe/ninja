@@ -4,7 +4,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var filePickerControllerModule = require("js/components/ui/FilePicker/file-picker-controller");
+var filePickerControllerModule = require("js/io/ui/file-picker/file-picker-controller");
 
 //this is per file picker instance
 exports.FilePickerModel = (require("montage/core/core").Montage).create(require("montage/ui/component").Component, {
