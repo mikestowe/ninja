@@ -78,7 +78,7 @@ exports.StageController = Montage.create(ElementController, {
                 case "background" :
                     return this.application.ninja.colorController.getColorObjFromCss(el.elementModel.stageBackground.style.getProperty(p));
                 case "border":
-                    return this.application.ninja.colorController.getColorObjFromCss(el.elementModel.stageView.style.getProperty(p));
+                    return el.elementModel.stageView.style.getProperty(p);
                 case "height":
                     return el.elementModel.stageDimension.style.getProperty(p);
                 case "width":
