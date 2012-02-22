@@ -163,9 +163,52 @@ var radialGradientMaterial		= new RadialGradientMaterial();
 var bumpMetalMaterial			= new BumpMetalMaterial();
 var uberMaterial				= new UberMaterial();
 
+
+var taperMaterial				= new TaperMaterial();
+var twistVertMaterial			= new TwistVertMaterial();
+var radialBlurMaterial			= new RadialBlurMaterial();
+var plasmaMaterial				= new PlasmaMaterial();
+var pulseMaterial				= new PulseMaterial();
+var tunnelMaterial				= new TunnelMaterial();
+var reliefTunnelMaterial		= new ReliefTunnelMaterial();
+var squareTunnelMaterial		= new SquareTunnelMaterial();
+var flyMaterial					= new FlyMaterial();
+var waterMaterial				= new WaterMaterial();
+var zInvertMaterial				= new ZInvertMaterial();
+var deformMaterial				= new DeformMaterial();
+var starMaterial				= new StarMaterial();
+var bumpMetalMaterial			= new BumpMetalMaterial();
+var twistMaterial				= new TwistMaterial();
+var juliaMaterial				= new JuliaMaterial();
+var keleidoscopeMaterial		= new KeleidoscopeMaterial();
+var mandelMaterial				= new MandelMaterial();
+
+
 MaterialsLibrary.addMaterial(flatMaterial);
 MaterialsLibrary.addMaterial(linearGradientMaterial);
 MaterialsLibrary.addMaterial(radialGradientMaterial);
 MaterialsLibrary.addMaterial(bumpMetalMaterial);
 MaterialsLibrary.addMaterial(uberMaterial);
+
+MaterialsLibrary.addMaterial(taperMaterial);
+MaterialsLibrary.addMaterial(twistVertMaterial);
+
+MaterialsLibrary.addMaterial(radialBlurMaterial);
+MaterialsLibrary.addMaterial(plasmaMaterial);
+MaterialsLibrary.addMaterial(pulseMaterial);
+MaterialsLibrary.addMaterial(tunnelMaterial);
+MaterialsLibrary.addMaterial(reliefTunnelMaterial);
+MaterialsLibrary.addMaterial(squareTunnelMaterial);
+MaterialsLibrary.addMaterial(flyMaterial);
+MaterialsLibrary.addMaterial(waterMaterial);
+MaterialsLibrary.addMaterial(zInvertMaterial);
+MaterialsLibrary.addMaterial(deformMaterial);
+MaterialsLibrary.addMaterial(starMaterial);
+MaterialsLibrary.addMaterial(bumpMetalMaterial);
+MaterialsLibrary.addMaterial(twistMaterial);
+MaterialsLibrary.addMaterial(juliaMaterial);
+MaterialsLibrary.addMaterial(keleidoscopeMaterial);
+MaterialsLibrary.addMaterial(mandelMaterial);
+
+
 
