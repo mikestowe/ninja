@@ -23,7 +23,6 @@ var NewFileWorkflowController =  exports.NewFileWorkflowController = Montage.cre
     },
 
     model:{
-        writable: true,
         enumerable:true,
         value: null
     },
@@ -50,19 +49,8 @@ var NewFileWorkflowController =  exports.NewFileWorkflowController = Montage.cre
                 this.model.defaultProjectType = lastSelectedProjectType;
             }
 
-            //render modal dialog
-            var newFileNavContent = document.createElement("div");
-            newFileNavContent.id = "newFileDialog";
-
-            //elements needs to be on DOM to be drawn
-            document.getElementById('modalContainer').appendChild(newFileNavContent);
-
             var newFileOptionsNav = newFileOptionsNavigatorModule.NewFileOptionsNavigator.create();
             newFileOptionsNav.newFileModel = this.model;
-            newFileOptionsNav.element = newFileNavContent;
-
-            //remove after rendering and add in modal dialog
-            document.getElementById('modalContainer').removeChild(newFileNavContent);
 
             var popup = Popup.create();
             popup.content = newFileOptionsNav;

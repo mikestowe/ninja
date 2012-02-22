@@ -28,13 +28,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
     // TODO use the specific controller to be able to subclass the functionality
     handleElementAdding: {
         value: function(event) {
-            /*
-            var cmd = ElementControllerCommands.addElementCommand(event.detail.el, event.detail.data);
-            NJevent("sendToUndo", cmd);
-            cmd.execute();
-            */
             this.addElement(event.detail.el, event.detail.data);
-
         }
     },
 
@@ -97,12 +91,11 @@ exports.ElementMediator = Montage.create(NJComponent, {
         value: function(el, rules, noEvent) {
             ElementController.addElement(el, rules);
             var p3d = this.get3DProperties(el);
-            if(p3d)
-            {
+            if(p3d) {
                 el.elementModel.controller["set3DProperties"](el, [p3d], 0, true);
             }
             if(!noEvent) {
-                this.application.ninja.documentController.activeDocument.markEdited();
+                this.application.ninja.documentController.activeDocument.needsSave = true;
                 NJevent("elementAdded", el);
             }
         }
@@ -130,7 +123,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
     _removeElement: {
         value: function(el, rules) {
             ElementController.removeElement(el, rules);
-            this.application.ninja.documentController.activeDocument.markEdited();
+            this.application.ninja.documentController.activeDocument.needsSave = true;
             NJevent("elementDeleted", el);
         }
     },

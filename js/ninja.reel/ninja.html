@@ -228,7 +228,15 @@
 
             "selectionController1": {
                 "module": "js/controllers/selection-controller",
-                "name": "SelectionController"
+                "name": "SelectionController",
+                "bindings" : {
+                    "selectionContainer": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "currentSelectedContainer",
+                        "oneway": true
+                    }
+                }
+
             },
 
             "documentController1": {
