@@ -425,6 +425,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 								tag = this.iframe.contentWindow.document.createElement('style');
 								tag.setAttribute('ninjauri', fileUri);
 								tag.setAttribute('ninjafileurl', cssUrl);
+								tag.setAttribute('ninjafilename', cssUrl.split('/')[cssUrl.split('/').length-1]);
 								tag.innerHTML = cssData.content;
 								//Looping through DOM to insert style tag at location of link element
 								query = this._templateDocument.html.querySelectorAll(['link']);
