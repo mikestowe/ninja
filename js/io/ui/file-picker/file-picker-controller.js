@@ -33,7 +33,6 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
     },
 
     filePickerPopupType:{
-        writable: true,
         enumerable: false,
         value: "filePicker"
     },
@@ -152,15 +151,6 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
           writable:false,
         enumerable:true,
         value:function(callback, aModel){
-            //render modal dialog
-            var pickerNavContent = document.createElement("div");
-            pickerNavContent.id = "filePicker";
-
-            pickerNavContent.style.color = "#fff";
-
-            //hack (elements needs to be on DOM to be drawn)
-            document.getElementById('modalContainer').appendChild(pickerNavContent);
-
             var pickerNavChoices = Montage.create(pickerNavigatorReel);
             var initUri = aModel.currentRoot;
 
@@ -171,10 +161,6 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
 
             pickerNavChoices.mainContentData = this.prepareContentList(initUri, aModel);
             pickerNavChoices.pickerModel = aModel;
-            pickerNavChoices.element = pickerNavContent;
-
-            //hack - remove after rendering and add in modal dialog
-            document.getElementById('modalContainer').removeChild(pickerNavContent);
 
             var popup = Popup.create();
             popup.content = pickerNavChoices;
