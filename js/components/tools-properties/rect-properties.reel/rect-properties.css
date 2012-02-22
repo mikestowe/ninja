@@ -4,7 +4,7 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
-.button {
+.rectProperties .button {
     border:none;
     cursor:default;
     text-align:center;
@@ -12,28 +12,26 @@
     opacity:0.8;
     display:table-cell;
     vertical-align:middle;
-    width:100%;
-    height:100%;
     background-color:#333333;
     color:white;
 }
 
-.button:hover
+.rectProperties .button:hover
 {
     opacity:1;
 }
 
-.button:active
+.rectProperties .button:active
 {
     outline:solid 1px black;
 }
 
-.button.on
+.rectProperties .button.on
 {
     background-color: #333333;
 }
 
-.button.off
+.rectProperties .button.off
 {
     background-color: #cccccc;
     color:black;
