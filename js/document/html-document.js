@@ -377,6 +377,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
         value: function(event){
         	//TODO: Clean up, using for prototyping save
         	this._templateDocument = {};
+        	this._templateDocument.html = this.iframe.contentWindow.document;
         	this._templateDocument.head = this.iframe.contentWindow.document.getElementById("userHead");
         	this._templateDocument.body = this.documentRoot = this.iframe.contentWindow.document.getElementById("UserContent");
         	//TODO: Remove, also for prototyping
@@ -390,7 +391,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             if(!this.documentRoot.Ninja) this.documentRoot.Ninja = {};
             //Inserting user's document into template
             this._templateDocument.head.innerHTML = this._userDocument.content.head;
-            //this._templateDocument.body.innerHTML = this._userDocument.content.body;
+            this._templateDocument.body.innerHTML = this._userDocument.content.body;
             
             //Adding a handler for the main user document reel to finish loading
             this._document.body.addEventListener("userTemplateDidLoad",  this.userTemplateDidLoad.bind(this), false);
@@ -411,36 +412,42 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 					for (var i in this._document.styleSheets) {
 						//If rules are null, assuming cross-origin issue
 						if(this._document.styleSheets[i].rules === null) {
-							//Disabling style sheet to reload via inserting in style tag
-							this._document.styleSheets[i].disabled = 'true';
 							//TODO: Revisit URLs and URI creation logic, very hack right now
-							var fileUri, cssUrl, cssData, tag;
+							var fileUri, cssUrl, cssData, tag, query;
 							if (this._document.styleSheets[i].href.indexOf('js/document/templates/montage-html') !== -1) {
 								//Getting the url of the CSS file
 								cssUrl = this._document.styleSheets[i].href.split('js/document/templates/montage-html')[1];
-								//Creating the URI of the file
+								//Creating the URI of the file (this is wrong should not be splitting cssUrl)
 								fileUri = this.application.ninja.coreIoApi.cloudData.root+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+cssUrl.split('/')[1];
 								//Loading the data from the file
 								cssData = this.application.ninja.coreIoApi.readFile({uri: fileUri});
 								//Creating tag with file content
-								tag = document.createElement('style');
-								tag.ninjauri = fileUri;
+								tag = this.iframe.contentWindow.document.createElement('style');
+								tag.setAttribute('ninjauri', fileUri);
+								tag.setAttribute('ninjafileurl', cssUrl);
 								tag.innerHTML = cssData.content;
-								this._templateDocument.head.appendChild(tag);
+								//Looping through DOM to insert style tag at location of link element
+								query = this._templateDocument.html.querySelectorAll(['link']);
+								for (var j in query) {
+									if (query[j].href === this._document.styleSheets[i].href) {
+										//Disabling style sheet to reload via inserting in style tag
+										query[j].setAttribute('disabled', 'true');
+										//Inserting tag
+										this._templateDocument.head.insertBefore(tag, query[j]);
+									}
+								}
 							}
                     	}
 					}
 					
 					//TODO: Revisit this logic
-					this._styles = this._document.styleSheets[this._document.styleSheets.length - 1];
+					this._styles = this._document.styleSheets[1];
 					this._stylesheets = this._document.styleSheets; // Entire stlyesheets array
 					
+					console.log(this._document.styleSheets);
 					
-					this._templateDocument.body.innerHTML = this._userDocument.content.body;
-					
-					
-					
-					
+					////////////////////////////////////////////////////////////////////////////
+					////////////////////////////////////////////////////////////////////////////
 					
 					//TODO Finish this implementation once we start caching Core Elements
 					// Assign a model to the UserContent and add the ViewPort reference to it.
