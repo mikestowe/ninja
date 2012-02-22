@@ -382,24 +382,23 @@ exports.HTMLDocument = Montage.create(TextDocument, {
         	//TODO: Remove, also for prototyping
         	this.application.ninja.documentController._hackRootFlag = true;
         	//
-            //this.documentRoot = this.iframe.contentWindow.document.getElementById("UserContent");
             this.stageBG = this.iframe.contentWindow.document.getElementById("stageBG");
             this.stageBG.onclick = null;
             this._document = this.iframe.contentWindow.document;
             this._window = this.iframe.contentWindow;
             //
             if(!this.documentRoot.Ninja) this.documentRoot.Ninja = {};
-            //
+            //Inserting user's document into template
             this._templateDocument.head.innerHTML = this._userDocument.content.head;
-            this._templateDocument.body.innerHTML = this._userDocument.content.body;
-
-            // Adding a handler for the main user document reel to finish loading.
+            //this._templateDocument.body.innerHTML = this._userDocument.content.body;
+            
+            //Adding a handler for the main user document reel to finish loading
             this._document.body.addEventListener("userTemplateDidLoad",  this.userTemplateDidLoad.bind(this), false);
 
             
             /* this.iframe.contentWindow.document.addEventListener('DOMSubtreeModified', function (e) { */ //TODO: Remove events upon loading once
 
-            //TODO: When written, the best way to initialize the document is to listen for the DOM tree being modified
+            //TODO: When re-written, the best way to initialize the document is to listen for the DOM tree being modified
             setTimeout(function () {
             	
             	
@@ -408,8 +407,40 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             	if(this._document.styleSheets.length > 1) {
+					//Checking all styleSheets in document
+					for (var i in this._document.styleSheets) {
+						//If rules are null, assuming cross-origin issue
+						if(this._document.styleSheets[i].rules === null) {
+							//Disabling style sheet to reload via inserting in style tag
+							this._document.styleSheets[i].disabled = 'true';
+							//TODO: Revisit URLs and URI creation logic, very hack right now
+							var fileUri, cssUrl, cssData, tag;
+							if (this._document.styleSheets[i].href.indexOf('js/document/templates/montage-html') !== -1) {
+								//Getting the url of the CSS file
+								cssUrl = this._document.styleSheets[i].href.split('js/document/templates/montage-html')[1];
+								//Creating the URI of the file
+								fileUri = this.application.ninja.coreIoApi.cloudData.root+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+cssUrl.split('/')[1];
+								//Loading the data from the file
+								cssData = this.application.ninja.coreIoApi.readFile({uri: fileUri});
+								//Creating tag with file content
+								tag = document.createElement('style');
+								tag.ninjauri = fileUri;
+								tag.innerHTML = cssData.content;
+								this._templateDocument.head.appendChild(tag);
+							}
+                    	}
+					}
+					
+					//TODO: Revisit this logic
 					this._styles = this._document.styleSheets[this._document.styleSheets.length - 1];
 					this._stylesheets = this._document.styleSheets; // Entire stlyesheets array
+					
+					
+					this._templateDocument.body.innerHTML = this._userDocument.content.body;
+					
+					
+					
+					
 					
 					//TODO Finish this implementation once we start caching Core Elements
 					// Assign a model to the UserContent and add the ViewPort reference to it.
