@@ -4,6 +4,7 @@
 	"root": "/assets/",
 	"directories": [{"name": "images"}, {"name": "shaders"}],
 	"files": [
+		"rdge-compiled.js",
 		"images/black.png",
 		"images/blue.png",
 		"images/BoxB2_AO.png",

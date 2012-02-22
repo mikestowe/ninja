@@ -85,28 +85,128 @@ exports.KeyboardMediator = Montage.create(Component, {
 
     handleKeydown: {
         value: function(evt) {
-            if(document.activeElement.nodeName !== "BODY") {
+
+            //keyboard controls for html design view
+            if((!!this.application.ninja.documentController.activeDocument) && (this.application.ninja.documentController.activeDocument.currentView === "design")){
+
                 // Don't do anything if an input or other control is focused
-                return;
-            }
+                if(document.activeElement.nodeName !== "BODY") {
+                    return;
+                }
 
-            // Disable defaults for the Arrow Keys
-            if((evt.keyCode == Keyboard.LEFT) || (evt.keyCode == Keyboard.RIGHT) || (evt.keyCode == Keyboard.UP) || (evt.keyCode == Keyboard.DOWN)) {
-                evt.preventDefault();
-            }
+                // Disable defaults for the Arrow Keys
+                if((evt.keyCode == Keyboard.LEFT) || (evt.keyCode == Keyboard.RIGHT) || (evt.keyCode == Keyboard.UP) || (evt.keyCode == Keyboard.DOWN)) {
+                    evt.preventDefault();
+                }
 
-            // Check DELETE OR BACKSPACE
-            if((evt.keyCode == Keyboard.BACKSPACE) || (evt.keyCode == Keyboard.DELETE)) {
-                evt.stopImmediatePropagation();
-                evt.preventDefault();
-                NJevent("deleting");
-                return;
+                // Check DELETE OR BACKSPACE
+                if((evt.keyCode == Keyboard.BACKSPACE) || (evt.keyCode == Keyboard.DELETE)) {
+                    evt.stopImmediatePropagation();
+                    evt.preventDefault();
+                    NJevent("deleting");
+                    return;
+                }
+
+
+                // Shortcut for Selection Tool is V
+                if(evt.keyCode === Keyboard.V) {
+                    evt.preventDefault();
+                    this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[0]});
+                    return;
+                }
+
+                // Shortcut for Tag Tool is D
+                if(evt.keyCode === Keyboard.D){
+                    evt.preventDefault();
+                    this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[4]});
+                    return;
+                }
+
+                // Shortcut for Rotate Tool is W
+                if(evt.keyCode === Keyboard.W){
+                    evt.preventDefault();
+                    this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[2]});
+                    return;
+                }
+
+                // Shortcut for Translate Tool is G
+                if(evt.keyCode === Keyboard.G){
+                    evt.preventDefault();
+                    this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[3]});
+                    return;
+                }
+
+                // Shortcut for Rectangle Tool is R
+                // unless the user is pressing the command key.
+                // If the user is pressing the command key, they want to refresh the browser.
+                if((evt.keyCode === Keyboard.R) && !evt.metaKey) {
+                    evt.preventDefault();
+                    this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[7]});
+                    this.application.ninja.handleSelectSubTool({"detail": this.application.ninja.toolsData.defaultToolsData[7].subtools[1]});
+                    return;
+                }
+
+                // Shortcut for Oval Tool is O
+                if(evt.keyCode === Keyboard.O) {
+                    evt.preventDefault();
+                    this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[7]});
+                    this.application.ninja.handleSelectSubTool({"detail": this.application.ninja.toolsData.defaultToolsData[7].subtools[0]});
+                    return;
+                }
+
+                // Shortcut for Line Tool is L
+                if(evt.keyCode === Keyboard.L ) {
+                    evt.preventDefault();
+                    this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[7]});
+                    this.application.ninja.handleSelectSubTool({"detail": this.application.ninja.toolsData.defaultToolsData[7].subtools[2]});
+                    return;
+                }
+
+                if(evt.keyCode === Keyboard.H ) {
+                    evt.preventDefault();
+                    this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[15]});
+                    return;
+                }
+
+                if(evt.keyCode === Keyboard.Z ) {
+                    evt.preventDefault();
+                    this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[16]});
+                    return;
+                }
+
+                // Check if cmd+a/ctrl+a for Select All
+                if((evt.keyCode == Keyboard.A) && (evt.ctrlKey || evt.metaKey)) {
+                    NJevent("selectAll");
+                    return;
+                }
+
+                if(evt.keyCode === Keyboard.ESCAPE){//ESC key
+                    //console.log("ESC key pressed");
+                    if(this.application.ninja.toolsData) this.application.ninja.toolsData.selectedToolInstance.HandleEscape(evt);
+                    //menuViewManagerModule.MenuViewManager.closeMenu("mainMenuBar");
+                }
+
+
+                if((evt.keyCode == Keyboard.ENTER) && (evt.ctrlKey || evt.metaKey)) {
+                    this.application.ninja.executeChromePreview();
+                    return;
+                }
+
+                if(this.application.ninja.toolsData) this.application.ninja.toolsData.selectedToolInstance.HandleKeyPress(evt);
+
             }
 
             // Check if cmd+z/ctrl+z for Undo (Windows/Mac)
             if ((evt.keyCode == Keyboard.Z) && (evt.ctrlKey || evt.metaKey) && !evt.shiftKey) {
                 NJevent("executeUndo");
                 //menuViewManagerModule.MenuViewManager.closeMenu("mainMenuBar");
+                return;
+            }
+
+            // Check if cmd+s/ctrl+s for Save (Windows/Mac)
+            if ((evt.keyCode == Keyboard.S) && (evt.ctrlKey || evt.metaKey) && !evt.shiftKey) {
+                NJevent("executeSave");
+                evt.preventDefault();
                 return;
             }
 
@@ -124,97 +224,21 @@ exports.KeyboardMediator = Montage.create(Component, {
                 return;
             }
 
-            // Shortcut for Selection Tool is V
-            if(evt.keyCode === Keyboard.V) {
-                evt.preventDefault();
-                this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[0]});
-                return;
-            }
-
-            // Shortcut for Tag Tool is D
-            if(evt.keyCode === Keyboard.D){
-                evt.preventDefault();
-                this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[4]});
-                return;
-            }
-
-            // Shortcut for Rotate Tool is W
-            if(evt.keyCode === Keyboard.W){
-                evt.preventDefault();
-                this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[2]});
-                return;
-            }
-
-            // Shortcut for Translate Tool is G
-            if(evt.keyCode === Keyboard.G){
-                evt.preventDefault();
-                this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[3]});
-                return;
-            }
-
-            // Shortcut for Rectangle Tool is R
-            // unless the user is pressing the command key.
-            // If the user is pressing the command key, they want to refresh the browser.
-            if((evt.keyCode === Keyboard.R) && !evt.metaKey) {
-                evt.preventDefault();
-                this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[7]});
-                this.application.ninja.handleSelectSubTool({"detail": this.application.ninja.toolsData.defaultToolsData[7].subtools[1]});
-                return;
-            }
-
-            // Shortcut for Oval Tool is O
-            if(evt.keyCode === Keyboard.O) {
-                evt.preventDefault();
-                this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[7]});
-                this.application.ninja.handleSelectSubTool({"detail": this.application.ninja.toolsData.defaultToolsData[7].subtools[0]});
-                return;
-            }
-
-            // Shortcut for Line Tool is L
-            if(evt.keyCode === Keyboard.L ) {
-                evt.preventDefault();
-                this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[7]});
-                this.application.ninja.handleSelectSubTool({"detail": this.application.ninja.toolsData.defaultToolsData[7].subtools[2]});
-                return;
-            }
-
-            if(evt.keyCode === Keyboard.H ) {
-                evt.preventDefault();
-                this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[15]});
-                return;
-            }
-
-            if(evt.keyCode === Keyboard.Z ) {
-                evt.preventDefault();
-                this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[16]});
-                return;
-            }
-
-            // Check if cmd+a/ctrl+a for Select All
-            if((evt.keyCode == Keyboard.A) && (evt.ctrlKey || evt.metaKey)) {
-                NJevent("selectAll");
-                return;
-            }
-
-            if(evt.keyCode === Keyboard.ESCAPE){//ESC key
-                //console.log("ESC key pressed");
-                if(this.application.ninja.toolsData) this.application.ninja.toolsData.selectedToolInstance.HandleEscape(evt);
-                //menuViewManagerModule.MenuViewManager.closeMenu("mainMenuBar");
-            }
-
-            if(this.application.ninja.toolsData) this.application.ninja.toolsData.selectedToolInstance.HandleKeyPress(evt);
 
         }
     },
 
     handleKeyup: {
         value: function(evt) {
-            if(document.activeElement.nodeName !== "BODY") {
-                // Don't do anything if an input or other control is focused
-                return;
-            }
+             //keyboard controls for html design view
+            if((!!this.application.ninja.documentController.activeDocument) && (this.application.ninja.documentController.activeDocument.currentView === "design")){
+                if(document.activeElement.nodeName !== "BODY") {
+                    // Don't do anything if an input or other control is focused
+                    return;
+                }
 
-            if(this.application.ninja.toolsData) this.application.ninja.toolsData.selectedToolInstance.HandleKeyUp(evt);
+                if(this.application.ninja.toolsData) this.application.ninja.toolsData.selectedToolInstance.HandleKeyUp(evt);
+            }
         }
     },
     

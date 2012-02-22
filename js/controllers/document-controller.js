@@ -14,13 +14,17 @@ var Montage = 		require("montage/core/core").Montage,
     DocumentController;
 ////////////////////////////////////////////////////////////////////////
 //
-DocumentController = exports.DocumentController = Montage.create(Component, {
+var DocumentController = exports.DocumentController = Montage.create(Component, {
     hasTemplate: {
         value: false
     },
 
     _documents: {
         value: []
+    },
+    
+    _hackRootFlag: {
+    	value: false
     },
 
     _activeDocument: { value: null },
@@ -56,15 +60,43 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
             this.eventManager.addEventListener("executeSave", this, false);
 
             this.eventManager.addEventListener("recordStyleChanged", this, false);
+            
         }
     },
-
+    
+   
+    
+    			
+    			
+    			
+					
+    ////////////////////////////////////////////////////////////////////
+	//
+    handleWebRequest: {
+    	value: function (request) {
+    		if (this._hackRootFlag && request.url.indexOf('js/document/templates/montage-html') !== -1) {
+    			//TODO: Optimize creating string
+					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split('/')[request.url.split('/').length-1]};
+				}
+			}
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
     handleAppLoaded: {
         value: function() {
-            //
+            //Adding an intercept to resources loaded to ensure user assets load from cloud simulator
+            chrome.webRequest.onBeforeRequest.addListener(this.handleWebRequest.bind(this), {urls: ["<all_urls>"]}, ["blocking"]);
         }
     },
+	////////////////////////////////////////////////////////////////////
 
+	
+	
+	
+	
+	
+	
+	
     handleExecuteFileOpen: {
         value: function(event) {
             var pickerSettings = event._event.settings || {};
@@ -88,8 +120,10 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
 	//TODO: Check for appropiate structures
     handleExecuteSave: {
     	value: function(event) {
+            if(!!this.activeDocument){
     		//Text and HTML document classes should return the same save object for fileSave
     		this.application.ninja.ioMediator.fileSave(this.activeDocument.save(), this.fileSaveResult.bind(this));
+		}
 		}
     },
     ////////////////////////////////////////////////////////////////////
@@ -97,19 +131,10 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
     fileSaveResult: {
     	value: function (result) {
     		if(result.status === 204){
-            	this.clearDocumentDirtyFlag();
+                this.activeDocument.needsSave = false;
             }
     	}
     },
-    ////////////////////////////////////////////////////////////////////
-	
-	
-    clearDocumentDirtyFlag:{
-        value: function(){
-            this.activeDocument.dirtyFlag = false;
-        }
-    },
-	
 	
     createNewFile:{
         value:function(newFileObj){
@@ -180,6 +205,9 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
 	//
 	openDocument: {
 		value: function(doc) {
+			
+			//
+			this.documentHackReference = doc;
 			//
 			switch (doc.extension) {
 				case 'html': case 'html':
@@ -245,7 +273,7 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
 
     closeDocument: {
         value: function(id) {
-            if(this.activeDocument.dirtyFlag === true){
+            if(this.activeDocument.needsSave === true){
                 //if file dirty then alert user to save
         }
 
@@ -268,6 +296,8 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
                 this._removeDocumentView(doc.container);
                 this.application.ninja.stage.stageView.hideRulers();
                 document.getElementById("iframeContainer").style.display="block";
+
+                this.application.ninja.stage.hideCanvas(true);
             }
         }
     },
@@ -277,7 +307,6 @@ DocumentController = exports.DocumentController = Montage.create(Component, {
     _onOpenDocument: {
         value: function(doc){
             //var data = DocumentManager.activeDocument;
-
             this._hideCurrentDocument();
             this.application.ninja.stage.stageView.hideOtherDocuments(doc.uuid);
 

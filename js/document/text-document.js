@@ -6,9 +6,10 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 //BaseDocument Object for all files types and base class for HTML documents.
 
-var Montage = require("montage/core/core").Montage;
+var Montage = 	require("montage/core/core").Montage,
+	Component = require("montage/ui/component").Component;
 
-var TextDocument = exports.TextDocument = Montage.create(Montage, {
+var TextDocument = exports.TextDocument = Montage.create(Component, {
 	
 	
 	//TODO: Clean up, test
@@ -26,7 +27,7 @@ var TextDocument = exports.TextDocument = Montage.create(Montage, {
 	// PRIVATE MEMBERS
     _codeEditor: {
         value: {
-            "editor": { value: null, enumerable: false },
+            "editor": { value: null, enumerable: false }
 
         }
     },
@@ -119,15 +120,15 @@ var TextDocument = exports.TextDocument = Montage.create(Montage, {
 	
 	
     /** Private Members **/
-    _name: { value: null, enumerable: false },
-    _uri: { value: null, enumerable: false },
-    _documentType: { value: null, enumerable: false },
-    _container: {value: null, enumerable: false },
-    _uuid: { value: null, enumerable: false },
-    _isActive: { value: true, enumerable: false },
-    _dirtyFlag: { value: false, enumerable: false },
-    _callback: { value: null, enumerable: false },
-    _currentView: { value: null, enumerable: false},
+    _name:          { value: null, enumerable: false },
+    _uri:           { value: null, enumerable: false },
+    _documentType:  { value: null, enumerable: false },
+    _container:     { value: null, enumerable: false },
+    _uuid:          { value: null, enumerable: false },
+    _isActive:      { value: true, enumerable: false },
+    _needsSave:     { value: false, enumarable: false },
+    _callback:      { value: null, enumerable: false },
+    _currentView:   { value: null, enumerable: false},
 
     /** Getters/Setters **/
     name: {
@@ -160,9 +161,9 @@ var TextDocument = exports.TextDocument = Montage.create(Montage, {
         set: function(value) { this._isActive = value; }
     },
 
-    dirtyFlag: {
-        get: function() { return this._dirtyFlag; },
-        set: function(value) { this._dirtyFlag = value; }
+    needsSave: {
+        get: function() { return this._needsSave; },
+        set: function(value) { this._needsSave = value }
     },
 
     callback: {
