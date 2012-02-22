@@ -168,16 +168,7 @@ exports.Ninja = Montage.create(Component, {
 
             this.appModel.show3dGrid = this.currentDocument.draw3DGrid;
 
-            this.currentDocument._document.body.addEventListener("userTemplateDidLoad",  this.userTemplateDidLoad.bind(this), false);
-
-
             NJevent("openDocument");
-        }
-    },
-
-    userTemplateDidLoad: {
-        value: function(){
-            this.currentSelectedContainer = this.currentDocument.documentRoot;
         }
     },
 

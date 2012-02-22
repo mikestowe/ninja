@@ -33,7 +33,6 @@ exports.SelectionController = Montage.create(Component, {
         },
         set: function(value) {
             if(this._selectionContainer && this._selectionContainer !== value) {
-                console.log("setting container in the selection tool");
                 this.executeSelectElement();
             }
 

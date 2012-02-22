@@ -392,9 +392,10 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             //
             this._templateDocument.head.innerHTML = this._userDocument.content.head;
             this._templateDocument.body.innerHTML = this._userDocument.content.body;
-            
-            
-            
+
+            // Adding a handler for the main user document reel to finish loading.
+            this._document.body.addEventListener("userTemplateDidLoad",  this.userTemplateDidLoad.bind(this), false);
+
             
             /* this.iframe.contentWindow.document.addEventListener('DOMSubtreeModified', function (e) { */ //TODO: Remove events upon loading once
 
@@ -472,12 +473,20 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             
      	}
     },
-    ////////////////////////////////////////////////////////////////////
-    
-    
-    
-    
 
+    ////////////////////////////////////////////////////////////////////
+
+    // Handler for user content main reel. Gets called once the main reel of the template
+    // gets deserialized.
+    // Setting up the currentSelectedContainer to the document body.
+    userTemplateDidLoad: {
+        value: function(){
+            this.application.ninja.currentSelectedContainer = this.documentRoot;
+        }
+    },
+    
+    
+    ////////////////////////////////////////////////////////////////////
     _setSWFObjectScript: {
         value: function() {
             if(!this._swfObject) {
