@@ -10,10 +10,6 @@ var Montage = require("montage/core/core").Montage,
 
 exports.Settings = Montage.create( Component, {
 
-    version: {
-        value: "11.1213"
-    },
-
     _settings: {
         value: null
     },
@@ -53,19 +49,6 @@ exports.Settings = Montage.create( Component, {
             } catch(e) {
                 return null;
             }
-        }
-    },
-    
-    deserializedFromSerialization: {
-        value: function() {
-
-            if (LocalStorage.getItem("version") != this.version) {
-                this.settings = {}
-                LocalStorage.setItem("version",this.version);
-            } else {
-                this.settings = LocalStorage.getItem("settings");
-            }
-
         }
     }
 });

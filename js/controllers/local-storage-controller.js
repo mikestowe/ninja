@@ -7,7 +7,46 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage,
     Component       = require("montage/ui/component").Component;
 
-exports.LocalStorage = Montage.create( Montage, {
+exports.LocalStorage = Montage.create( Component, {
+
+    canStore: {
+        value: null
+    },
+
+    deserializedFromTemplate: {
+        value: function() {
+            this.canStore = window.localStorage;
+            this.application.localStorage = this;
+
+            // Redefine setItem and getItem if local storage is not available.
+            if(!this.canStore) {
+                this._getItem = function() {
+                    console.log("Local Storage is not supported on your browser");
+                    return "";
+                };
+
+                this._setItem = function() {
+                    console.log("Local Storage is not supported on your browser");
+                    return false;
+                }
+            }
+        }
+    },
+
+    _getItem: {
+        value: function(key) {
+            var value = window.localStorage.getItem("ninja-" + key);
+            if(value !== null) value = JSON.parse(value);
+
+            return value;
+        }
+    },
+
+    _setItem: {
+        value: function(key, value) {
+            window.localStorage.setItem("ninja-" + key, JSON.stringify(value));
+        }
+    },
 
     getItem: {
         value: function(item) {
@@ -22,16 +61,6 @@ exports.LocalStorage = Montage.create( Montage, {
                 return null;
             }
 
-            /*
-            if (window.localStorage) {
-                this.getItem = function(item) {
-                    return window.localStorage.getItem(item);
-                }(item);
-            } else {
-                alert("Local Storage is not supported on your browser");
-
-            }
-            */
         }
     },
 
