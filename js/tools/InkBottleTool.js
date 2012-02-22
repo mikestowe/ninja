@@ -48,20 +48,33 @@ exports.InkBottleTool = Montage.create(ModifierToolBase, {
         value: function(event) {
             this.isDrawing = true;
 
-            if(this._canColor)
+            if(this._canColor && this.application.ninja.selectedElements.length)
             {
-//                var color = this.application.ninja.colorController.colorToolbar.stroke;
-//                ElementsMediator.setColor(this.application.ninja.selectedElements, color, false, "Change", "inkBottleTool");
+                var color = this.application.ninja.colorController.colorToolbar.stroke,
+                    colorInfo;
+                if(color && color.color)
+                {
+                    colorInfo = { mode:color.colorMode,
+                                   color:color.color
+                                };
+                }
+                else
+                {
+                    colorInfo = { mode:"nocolor",
+                                   color:color.color
+                                };
+                }
 
-                var strokeInfo = {  borderStyle:this.options._borderStyle.value,
-                                    borderWidth:this.options._borderWidth.value,
-                                    borderUnits:this.options._borderWidth.units,
-                                    strokeSize:this.options._strokeSize.value,
-                                    strokeUnits:this.options._strokeSize.units,
-                                    color:this.application.ninja.colorController.colorToolbar.stroke
-                                 };
+                colorInfo.borderInfo = { borderStyle:this.options._borderStyle.value,
+                                         borderWidth:this.options._borderWidth.value,
+                                         borderUnits:this.options._borderWidth.units
+                                       };
 
-                ElementsMediator.setStroke(this.application.ninja.selectedElements, strokeInfo, "Change", "inkBottleTool");
+                colorInfo.strokeInfo = { strokeSize:this.options._strokeSize.value,
+                                         strokeUnits:this.options._strokeSize.units
+                                       };
+
+                ElementsMediator.setColor(this.application.ninja.selectedElements, colorInfo, false, "Change", "inkBottleTool");
             }
         }
     }

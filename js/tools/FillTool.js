@@ -63,15 +63,14 @@ exports.FillTool = Montage.create(ModifierToolBase, {
                     colorInfo = { mode:color.colorMode,
                                        color:color.color
                                     };
-                    ElementsMediator.setColor(this.application.ninja.selectedElements, colorInfo, true, "Change", "fillTool");
                 }
                 else
                 {
                     colorInfo = { mode:"nocolor",
                                        color:color.color
                                     };
-                    ElementsMediator.setColor(this.application.ninja.selectedElements, colorInfo, true, "Change", "fillTool");
                 }
+                ElementsMediator.setColor(this.application.ninja.selectedElements, colorInfo, true, "Change", "fillTool");
             }
         }
     }
