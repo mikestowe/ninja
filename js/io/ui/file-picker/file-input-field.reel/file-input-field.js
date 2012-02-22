@@ -9,24 +9,13 @@ var Montage = require("montage/core/core").Montage,
 
 var FileInputField = exports.FileInputField = Montage.create(Component, {
 
-	hasReel: {
-        value: true
-    },
-
-    willDraw: {
-        enumerable: false,
-        value: function() {}
-    },
-    draw: {
-        enumerable: false,
-        value: function() {}
-    },
     didDraw: {
         enumerable: false,
         value: function() {
             var that = this;
             this.findDirectory.identifier = "findDirectory";
-            this.findDirectory.addEventListener("click", function(evt){that.handleFindDirectoryClick(evt);}, false);
+
+            this.findDirectory.addEventListener("click", this, false);
 
             this.eventManager.addEventListener("pickerSelectionsDone", function(evt){that.handleFileInputPickerSelectionsDone(evt);}, false);
 
@@ -60,8 +49,6 @@ var FileInputField = exports.FileInputField = Montage.create(Component, {
 
     handleFindDirectoryClick: {
         value: function(evt){
-            var openFilePicker = document.createEvent("Events");
-            openFilePicker.initEvent("openFilePicker", false, false);
             var settings = {};
             if(this.selectDirectory === true){
                 settings.inFileMode = false;
@@ -71,8 +58,8 @@ var FileInputField = exports.FileInputField = Montage.create(Component, {
                 settings.pickerName = this.pickerName || "fileSelector";
             }
             settings.callback = this.filePickerCallback.bind(this);
-            openFilePicker.settings = settings;
-            this.eventManager.dispatchEvent(openFilePicker);
+
+            NJevent("openFilePicker", settings);
         }
     },
 
