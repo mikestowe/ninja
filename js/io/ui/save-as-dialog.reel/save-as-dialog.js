@@ -175,8 +175,25 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
         }
     },
     checkFileExists:{
-        value: function(fileUri, folderUri, fileType){
-            var status= this.application.ninja.coreIoApi.checkFileExists(fileUri, folderUri, fileType);
+        value: function(fileName, folderUri, fileType){
+            var uri = "", response=null, status=true;
+            //prepare absolute uri
+            if(/[^/\\]$/g.test(folderUri)){
+                folderUri = folderUri + "/";
+            }
+            if(!!fileType && (fileName.lastIndexOf(fileType) !== (fileName.length - fileType.length))){
+                fileName = fileName+fileType;
+            }
+            uri = ""+folderUri+fileName;
+            response= this.application.ninja.coreIoApi.fileExists({"uri":uri});
+            if(!!response && response.success && (response.status === 204)){
+                status = true;
+            }else if(!!response && response.success && (response.status === 404)){
+                status = false;
+            }else{
+                status = false;
+            }
+
             if(status){
                 this.showError("! File already exists.");
             }

@@ -77,19 +77,17 @@ exports.DocumentEntry = Montage.create(Component, {
         }
     },
 
-    _dirtyFlag:{
-        enumerable:false,
-        value:false
+    _saveFlag: {
+        value: false
     },
-    dirtyFlag:{
+
+    saveFlag: {
         get: function() {
-            return this._dirtyFlag;
+            return this._saveFlag;
         },
         set: function(value) {
-            var previousValue = this._dirtyFlag;
-            this._dirtyFlag = value;
-
-            if (previousValue !== this._dirtyFlag) {
+            if(this._saveFlag !== value) {
+                this._saveFlag = value;
                 this.needsDraw = true;
             }
         }
@@ -110,10 +108,10 @@ exports.DocumentEntry = Montage.create(Component, {
 
             this._active ? this.element.classList.add("activeTab") : this.element.classList.remove("activeTab");
 
-            if(this.dirtyFlag === true){
-                if(!this.label.classList.contains("dirty")){this.label.classList.add("dirty");}
-            }else{
-                if(this.label.classList.contains("dirty")){this.label.classList.remove("dirty");}
+            if(this.saveFlag) {
+                this.label.classList.add("dirty");
+            } else {
+                this.label.classList.remove("dirty");
             }
         }
     },

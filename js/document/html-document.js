@@ -290,15 +290,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
         }
     },
 
-
-
-    AppendElement: {
-        value: function(element, parent) {
-            this.dirtyFlag = true;
-        }
-    },
-
-
     /**
      * Return the specified inline attribute from the element.
      */
@@ -358,22 +349,40 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     
     
     
-	
+    
+    
+    
+	/* 		
+            DOM Mutation Events:
+          		
+            DOMActivate, DOMFocusIn, DOMFocusOut, DOMAttrModified,
+           	DOMCharacterDataModified, DOMNodeInserted, DOMNodeInsertedIntoDocument,
+       		DOMNodeRemoved, DOMNodeRemovedFromDocument, DOMSubtreeModified, DOMContentLoaded
+            		
+  	*/
+  	
+  	
+  	
+  	/*
+//TODO: Remove and clean up event listener (DOMSubtreeModified)
+  	_hackCount: {
+  		value: 0
+  	},
+*/
+  	
+  	
 	////////////////////////////////////////////////////////////////////
 	//
     handleEvent: {
         value: function(event){
-        	//TODO: Remove
-        	window.hackPreview = this.livePreview.bind(this);
-        
-        	this.application.ninja.documentController._hackRootFlag = true;
- 			//console.log(this._userDocument.root, this);
         	//TODO: Clean up, using for prototyping save
         	this._templateDocument = {};
-        	this._templateDocument.head = this.iframe.contentWindow.document.getElementById("userHead");;
-        	this._templateDocument.body = this.iframe.contentWindow.document.getElementById("UserContent");;
+        	this._templateDocument.head = this.iframe.contentWindow.document.getElementById("userHead");
+        	this._templateDocument.body = this.documentRoot = this.iframe.contentWindow.document.getElementById("UserContent");
+        	//TODO: Remove, also for prototyping
+        	this.application.ninja.documentController._hackRootFlag = true;
         	//
-            this.documentRoot = this.iframe.contentWindow.document.getElementById("UserContent");
+            //this.documentRoot = this.iframe.contentWindow.document.getElementById("UserContent");
             this.stageBG = this.iframe.contentWindow.document.getElementById("stageBG");
             this.stageBG.onclick = null;
             this._document = this.iframe.contentWindow.document;
@@ -381,83 +390,103 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             //
             if(!this.documentRoot.Ninja) this.documentRoot.Ninja = {};
             //
+            this._templateDocument.head.innerHTML = this._userDocument.content.head;
+            this._templateDocument.body.innerHTML = this._userDocument.content.body;
 
-            this.documentRoot.innerHTML = this._userDocument.content.body;
-            this.iframe.contentWindow.document.getElementById("userHead").innerHTML = this._userDocument.content.head;
+            // Adding a handler for the main user document reel to finish loading.
+            this._document.body.addEventListener("userTemplateDidLoad",  this.userTemplateDidLoad.bind(this), false);
 
-          
-            //TODO: Look at code below and clean up
+            
+            /* this.iframe.contentWindow.document.addEventListener('DOMSubtreeModified', function (e) { */ //TODO: Remove events upon loading once
+
+            //TODO: When written, the best way to initialize the document is to listen for the DOM tree being modified
+            setTimeout(function () {
             	
             	
+            	
+            	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            	if(this._document.styleSheets.length > 1) {
+					this._styles = this._document.styleSheets[this._document.styleSheets.length - 1];
+					this._stylesheets = this._document.styleSheets; // Entire stlyesheets array
+					
+					//TODO Finish this implementation once we start caching Core Elements
+					// Assign a model to the UserContent and add the ViewPort reference to it.
+					NJUtils.makeElementModel(this.documentRoot, "Stage", "stage");
+					//this.documentRoot.elementModel.viewPort = this.iframe.contentWindow.document.getElementById("Viewport");
+					NJUtils.makeElementModel(this.stageBG, "Stage", "stage");
+					NJUtils.makeElementModel(this.iframe.contentWindow.document.getElementById("Viewport"), "Stage", "stage");
+					 
+					for(i = 0; i < this._stylesheets.length; i++) {
+						if(this._stylesheets[i].ownerNode.id === this._stageStyleSheetId) {
+							this.documentRoot.elementModel.defaultRule = this._stylesheets[i];
+							break;
+						}
+					}
+					 
+					//Temporary create properties for each rule we need to save the index of the rule
+					var len = this.documentRoot.elementModel.defaultRule.cssRules.length;
+					for(var j = 0; j < len; j++) {
+						//console.log(this.documentRoot.elementModel.defaultRule.cssRules[j].selectorText);
+						if(this.documentRoot.elementModel.defaultRule.cssRules[j].selectorText === "*") {
+						
+							this.documentRoot.elementModel.transitionStopRule = this.documentRoot.elementModel.defaultRule.cssRules[j];
+						
+						} else if(this.documentRoot.elementModel.defaultRule.cssRules[j].selectorText === "body") {
+							
+							this.documentRoot.elementModel.body = this.documentRoot.elementModel.defaultRule.cssRules[j];
+						
+						} else if(this.documentRoot.elementModel.defaultRule.cssRules[j].selectorText === "#Viewport") {
+						
+							this.documentRoot.elementModel.viewPort = this.documentRoot.elementModel.defaultRule.cssRules[j];
+							
+						} else if(this.documentRoot.elementModel.defaultRule.cssRules[j].selectorText === ".stageDimension") {
+						
+							this.documentRoot.elementModel.stageDimension = this.documentRoot.elementModel.defaultRule.cssRules[j];
+							
+						} else if(this.documentRoot.elementModel.defaultRule.cssRules[j].selectorText === ".stageView") {
+							
+							this.documentRoot.elementModel.stageView = this.documentRoot.elementModel.defaultRule.cssRules[j];
+							
+						} else if(this.documentRoot.elementModel.defaultRule.cssRules[j].selectorText === "#stageBG") {
+							
+							this.documentRoot.elementModel.stageBackground = this.documentRoot.elementModel.defaultRule.cssRules[j];
+						}
+					}
+					
+					this.callback(this);
+					
+				}
+				////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+				////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+				////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			
+			
+			
+			
+			
+			}.bind(this), 1000);
+			
+			
             
-
-                this.cssLoadInterval = setInterval(function() {
-                    if(this._document.styleSheets.length > 1) {
-                        clearInterval(this.cssLoadInterval);
-                        this._styles = this._document.styleSheets[this._document.styleSheets.length - 1];
-                        this._stylesheets = this._document.styleSheets; // Entire stlyesheets array
-
-                        this.callback(this);
-                        
-                        //console.log('file content end');
-                    }
-                }.bind(this), 50);
             
-                this._styles = this._document.styleSheets[this._document.styleSheets.length - 1];
-                this._stylesheets = this._document.styleSheets; // Entire stlyesheets array
-
-                /* TODO Finish this implementation once we start caching Core Elements */
-                // Assign a model to the UserContent and add the ViewPort reference to it.
-                NJUtils.makeElementModel(this.documentRoot, "Stage", "stage");
-                //this.documentRoot.elementModel.viewPort = this.iframe.contentWindow.document.getElementById("Viewport");
-                NJUtils.makeElementModel(this.stageBG, "Stage", "stage");
-                NJUtils.makeElementModel(this.iframe.contentWindow.document.getElementById("Viewport"), "Stage", "stage");
-
-                for(i = 0; i < this._stylesheets.length; i++) {
-                    if(this._stylesheets[i].ownerNode.id === this._stageStyleSheetId) {
-                        this.documentRoot.elementModel.defaultRule = this._stylesheets[i];
-                        break;
-                    }
-                }
-
-                // Temporary create properties for each rule we need to save the index of the rule.
-                var len = this.documentRoot.elementModel.defaultRule.cssRules.length;
-                for(var j = 0; j < len; j++) {
-//                    console.log(this.documentRoot.elementModel.defaultRule.cssRules[j].selectorText);
-                    if(this.documentRoot.elementModel.defaultRule.cssRules[j].selectorText === "*") {
-
-                        this.documentRoot.elementModel.transitionStopRule = this.documentRoot.elementModel.defaultRule.cssRules[j];
-
-                    } else if(this.documentRoot.elementModel.defaultRule.cssRules[j].selectorText === "body") {
-
-                        this.documentRoot.elementModel.body = this.documentRoot.elementModel.defaultRule.cssRules[j];
-
-                    } else if(this.documentRoot.elementModel.defaultRule.cssRules[j].selectorText === "#Viewport") {
-
-                        this.documentRoot.elementModel.viewPort = this.documentRoot.elementModel.defaultRule.cssRules[j];
-
-                    } else if(this.documentRoot.elementModel.defaultRule.cssRules[j].selectorText === ".stageDimension") {
-
-                        this.documentRoot.elementModel.stageDimension = this.documentRoot.elementModel.defaultRule.cssRules[j];
-
-                    } else if(this.documentRoot.elementModel.defaultRule.cssRules[j].selectorText === ".stageView") {
-
-                        this.documentRoot.elementModel.stageView = this.documentRoot.elementModel.defaultRule.cssRules[j];
-
-                    } else if(this.documentRoot.elementModel.defaultRule.cssRules[j].selectorText === "#stageBG") {
-
-                        this.documentRoot.elementModel.stageBackground = this.documentRoot.elementModel.defaultRule.cssRules[j];
-                    }
-                }
-
-                // Remving this callback and using the callback from the css load
-                //this.callback(this);
-                
-                
-            
-            }
+     	}
     },
 
+    ////////////////////////////////////////////////////////////////////
+
+    // Handler for user content main reel. Gets called once the main reel of the template
+    // gets deserialized.
+    // Setting up the currentSelectedContainer to the document body.
+    userTemplateDidLoad: {
+        value: function(){
+            this.application.ninja.currentSelectedContainer = this.documentRoot;
+        }
+    },
+    
+    
+    ////////////////////////////////////////////////////////////////////
     _setSWFObjectScript: {
         value: function() {
             if(!this._swfObject) {
@@ -478,44 +507,17 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     ////////////////////////////////////////////////////////////////////
 	//
     livePreview: {
     	enumerable: false,
     	value: function () {
-    		//this.application.ninja.documentController
-    		//console.log(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);
-			chrome.tabs.create({url: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]});		
+    		//TODO: Add logic to handle save before preview
+    		this.save();
+    		//Launching 'blank' tab for testing movie
+    		chrome.tabs.create({url: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]});		
     	}
     },
-    ////////////////////////////////////////////////////////////////////
-    
-    
-    
-    
-    
-    
-    
-    
-    
 	////////////////////////////////////////////////////////////////////
 	//
 	save: {

@@ -791,8 +791,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
     HandleLeftButtonDown: {
         value: function(event) {
 
-            var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas,
-                                                        new WebKitPoint(event.pageX, event.pageY));
+            var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(event.pageX, event.pageY));
             this.downPoint.x = point.x;
             this.downPoint.y = point.y;
 
