@@ -1226,14 +1226,6 @@ exports.ViewUtils = Montage.create(Component, {
 	    }
     },
 
-	getCurrentDocument:
-	{
-		value: function()
-		{
-			return snapManagerModule.SnapManager.application.ninja.currentDocument;
-		}
-	},
-
 	setStageZoom: {
         value:function( globalPt,  zoomFactor ) {
             var localPt;
