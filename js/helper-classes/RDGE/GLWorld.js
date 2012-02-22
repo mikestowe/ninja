@@ -163,7 +163,7 @@ function GLWorld( canvas, use3D )
 		this.renderer.cameraManager().setActiveCamera(cam);
 
 		// change clear color
-		//this.renderer.setClearFlags(g_Engine.getContext().DEPTH_BUFFER_BIT);
+		this.renderer.setClearFlags(g_Engine.getContext().DEPTH_BUFFER_BIT);
 		this.renderer.setClearColor([1.0, 1.0, 1.0, 0.0]);
 		//this.renderer.NinjaWorld = this;
         
@@ -206,7 +206,6 @@ function GLWorld( canvas, use3D )
     {
 		if (!dt)  dt = 0.2;
         
-		dt = 0.01;	// use our own internal throttle
 		this.elapsed += dt;
         
 		if (this._useWebGL)
@@ -233,35 +232,39 @@ function GLWorld( canvas, use3D )
 		{
 			g_Engine.setContext( this._canvas.uuid );
 			var ctx = g_Engine.getContext();
+			var ctx1 = g_Engine.ctxMan.handleToObject(this._canvas.rdgeCtxHandle);
+			if (ctx1 != ctx)
+				console.log( "***** different contexts (2) *****" );
+			var aRenderer = ctx1.renderer;
 			var renderer = ctx.renderer;
+			if (renderer != aRenderer)
+			{
+				console.log( "***** DIFFERENT RENDERERS *****" );
+				renderer = aRenderer;
+			}
+				
 			if (renderer.unloadedTextureCount <= 0)
 			{
 				renderer.disableCulling();
 				//console.log( "GLWorld.draw " + renderer._world._worldCount );
-				renderer._clear();
 				this.myScene.render();
 
 				if (this._firstRender)
 				{
-					if (this._canvas.task)
-					{
-						this._firstRender = false;
+					this._firstRender = false;
 
-						if (!this.hasAnimatedMaterials())
-						{
-							this._canvas.task.stop();
-							//this._renderCount = 10;
-						}
+					if (!this.hasAnimatedMaterials())
+					{
+						//this.myScene.render();
+						this._canvas.task.stop();
+						//this._renderCount = 10;
 					}
 				}
 				else if (this._renderCount >= 0)
 				{
-					if (this._canvas.task)
-					{
-						this._renderCount--;
-						if (this._renderCount <= 0)
-							this._canvas.task.stop();
-					}
+					this._renderCount--;
+					if (this._renderCount <= 0)
+						this._canvas.task.stop();
 				}
 			}
 		}
@@ -391,9 +394,11 @@ function GLWorld( canvas, use3D )
 	if (this._useWebGL)
 	{
 		rdgeStarted = true;
-		this._canvas.rdgeid = this._canvas.uuid;
-		g_Engine.registerCanvas(this._canvas, this);
-		RDGEStart( this._canvas );
+
+        this._canvas.rdgeid = this._canvas.uuid;
+
+			g_Engine.registerCanvas(this._canvas, this);
+			RDGEStart( this._canvas );
 
 		//this._canvas.fpsTracker = new fpsTracker( '0' );
 		//this._canvas.task = new RDGETask(this._canvas, false);

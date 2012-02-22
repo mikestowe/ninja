@@ -63,10 +63,6 @@ exports.CloudPopup = Montage.create(Component, {
     	enumerable: false,
     	value: function() {
     		//
-    		if (window.localStorage['ioRootUrl']) {
-    			this.components.url.value = window.localStorage['ioRootUrl'];
-    		}
-    		//
     		this.testConnection();
     		if (this.application.ninja.coreIoApi.cloudAvailable()) {
     			this.closeDialog();

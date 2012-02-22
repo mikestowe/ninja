@@ -132,25 +132,6 @@ var MaterialsLibrary = Object.create(Object.prototype, {
 					case "bumpMetal":			mat = new BumpMetalMaterial();			break;
 					case "uber":				mat = new UberMaterial();				break;
 
-					case "taper":				mat = new TaperMaterial();				break;
-					case "twistVert":			mat = new TwistVertMaterial();			break;
-					case "radialBlur":			mat = new RadialBlurMaterial();			break;
-					case "plasma":				mat = new PlasmaMaterial();				break;
-					case "pulse":				mat = new PulseMaterial();				break;
-					case "tunnel":				mat = new TunnelMaterial();				break;
-					case "reliefTunnel":		mat = new ReliefTunnelMaterial();		break;
-					case "squareTunnel":		mat = new SquareTunnelMaterial();		break;
-					case "fly":					mat = new FlyMaterial();				break;
-					case "water":				mat = new WaterMaterial();				break;
-					case "zinvert":				mat = new ZInvertMaterial();			break;
-					case "deform":				mat = new DeformMaterial();				break;
-					case "star":				mat = new StarMaterial();				break;
-					case "twist":				mat = new TwistMaterial();				break;
-					case "julia":				mat = new JuliaMaterial();				break;
-					case "keleidoscope":		mat = new KeleidoscopeMaterial();		break;
-					case "mandel":				mat = new MandelMaterial();				break;
-
-
 					default:
 						throw new Error( "Unrecognized material type: " + type );
 						pu.advancePastToken( "endMaterial\n" );
@@ -182,49 +163,9 @@ var radialGradientMaterial		= new RadialGradientMaterial();
 var bumpMetalMaterial			= new BumpMetalMaterial();
 var uberMaterial				= new UberMaterial();
 
-//var taperMaterial				= new TaperMaterial();
-//var twistVertMaterial			= new TwistVertMaterial();
-var radialBlurMaterial			= new RadialBlurMaterial();
-var plasmaMaterial				= new PlasmaMaterial();
-var pulseMaterial				= new PulseMaterial();
-var tunnelMaterial				= new TunnelMaterial();
-var reliefTunnelMaterial		= new ReliefTunnelMaterial();
-var squareTunnelMaterial		= new SquareTunnelMaterial();
-var flyMaterial					= new FlyMaterial();
-var waterMaterial				= new WaterMaterial();
-var zInvertMaterial				= new ZInvertMaterial();
-var deformMaterial				= new DeformMaterial();
-var starMaterial				= new StarMaterial();
-var twistMaterial				= new TwistMaterial();
-var juliaMaterial				= new JuliaMaterial();
-var keleidoscopeMaterial		= new KeleidoscopeMaterial();
-var mandelMaterial				= new MandelMaterial();
-
-
 MaterialsLibrary.addMaterial(flatMaterial);
 MaterialsLibrary.addMaterial(linearGradientMaterial);
 MaterialsLibrary.addMaterial(radialGradientMaterial);
 MaterialsLibrary.addMaterial(bumpMetalMaterial);
 MaterialsLibrary.addMaterial(uberMaterial);
-
-//MaterialsLibrary.addMaterial(taperMaterial);
-//MaterialsLibrary.addMaterial(twistVertMaterial);
-
-MaterialsLibrary.addMaterial(radialBlurMaterial);
-MaterialsLibrary.addMaterial(plasmaMaterial);
-MaterialsLibrary.addMaterial(pulseMaterial);
-MaterialsLibrary.addMaterial(tunnelMaterial);
-MaterialsLibrary.addMaterial(reliefTunnelMaterial);
-MaterialsLibrary.addMaterial(squareTunnelMaterial);
-MaterialsLibrary.addMaterial(flyMaterial);
-MaterialsLibrary.addMaterial(waterMaterial);
-MaterialsLibrary.addMaterial(zInvertMaterial);
-MaterialsLibrary.addMaterial(deformMaterial);
-MaterialsLibrary.addMaterial(starMaterial);
-MaterialsLibrary.addMaterial(twistMaterial);
-MaterialsLibrary.addMaterial(juliaMaterial);
-MaterialsLibrary.addMaterial(keleidoscopeMaterial);
-MaterialsLibrary.addMaterial(mandelMaterial);
-
-
 

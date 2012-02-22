@@ -321,10 +321,10 @@ materialNodeTemplate = function(matNode)
 		var renderer = g_Engine.getContext().renderer;
 	    matNode.textureList = 
 	    [
-//	        {'name':"colMap",	'handle':renderer.getTextureByName("assets/images/white"),         'unit': TEX_DIF,    "type":UNIFORMTYPE.TEXTURE2D},
-//		    {'name':"envMap",	'handle':renderer.getTextureByName("assets/images/material_paint"),'unit': TEX_SPEC,   "type":UNIFORMTYPE.TEXTURE2D},
-//		    {'name':"normalMap",'handle':renderer.getTextureByName("assets/images/blue"),          'unit': TEX_NORM,   "type":UNIFORMTYPE.TEXTURE2D},
-//		    {'name':"glowMap",	'handle':renderer.getTextureByName("assets/images/black"),         'unit': TEX_GLOW,   "type":UNIFORMTYPE.TEXTURE2D}
+	        {'name':"colMap",	'handle':renderer.getTextureByName("assets/images/white"),         'unit': TEX_DIF,    "type":UNIFORMTYPE.TEXTURE2D},
+		    {'name':"envMap",	'handle':renderer.getTextureByName("assets/images/material_paint"),'unit': TEX_SPEC,   "type":UNIFORMTYPE.TEXTURE2D},
+		    {'name':"normalMap",'handle':renderer.getTextureByName("assets/images/blue"),          'unit': TEX_NORM,   "type":UNIFORMTYPE.TEXTURE2D},
+		    {'name':"glowMap",	'handle':renderer.getTextureByName("assets/images/black"),         'unit': TEX_GLOW,   "type":UNIFORMTYPE.TEXTURE2D}
 	    ];
 	}
 	
