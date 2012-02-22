@@ -146,7 +146,7 @@ exports.ZoomTool = Montage.create(DrawingTool, {
 			var dx = Math.abs(point.x - this.downPoint.x),
 				dy = Math.abs(point.y - this.downPoint.y);
 
-			if ((dx >= 4) || (dy >= 4))
+			if ((dx >= 10) || (dy >= 10))
 			{
 				// Drawing the Marquee
 				if(this.options.selectedElement==="zoomInTool")
