@@ -195,11 +195,30 @@ exports.Layout = Montage.create(Component, {
                 bounds3D[j] = tmpPt;
             }
 
-            // Draw the Item ouline
-            this._dashedLine(bounds3D[3][0] - 0.5,bounds3D[3][1]- 0.5,bounds3D[0][0] + 2.5, bounds3D[0][1] - 0.5,[5,5]);
-            this._dashedLine(bounds3D[0][0] - 0.5, bounds3D[0][1] - 0.5, bounds3D[1][0]- 0.5, bounds3D[1][1] + 0.5, [5,5] );
-            this._dashedLine(bounds3D[1][0] - 0.5 , bounds3D[1][1] + 0.5, bounds3D[2][0]+ 0.5, bounds3D[2][1] + 0.5, [5,5] );
-            this._dashedLine(bounds3D[2][0] + 0.5, bounds3D[2][1] + 0.5, bounds3D[3][0] + 0.5, bounds3D[3][1] - 0.5, [5,5] );
+            if(item.uuid === this.application.ninja.currentSelectedContainer.uuid) {
+                this.ctx.save();
+                this.ctx.strokeStyle = "#C61F00";
+
+                this.ctx.beginPath();
+
+                this.ctx.moveTo( bounds3D[3][0] + 0.5 ,  bounds3D[3][1] - 0.5 );
+
+                this.ctx.lineTo( bounds3D[0][0] - 0.5 ,  bounds3D[0][1] - 0.5 );
+                this.ctx.lineTo( bounds3D[1][0] - 0.5 ,  bounds3D[1][1] + 0.5 );
+                this.ctx.lineTo( bounds3D[2][0] + 0.5  ,  bounds3D[2][1] + 0.5 );
+                this.ctx.lineTo( bounds3D[3][0] + 0.5  ,  bounds3D[3][1] + 0.5 );
+
+                this.ctx.closePath();
+                this.ctx.stroke();
+
+                this.ctx.restore();
+            } else {
+                // Draw the Item ouline
+                this._dashedLine(bounds3D[3][0] - 0.5,bounds3D[3][1]- 0.5,bounds3D[0][0] + 2.5, bounds3D[0][1] - 0.5,[5,5]);
+                this._dashedLine(bounds3D[0][0] - 0.5, bounds3D[0][1] - 0.5, bounds3D[1][0]- 0.5, bounds3D[1][1] + 0.5, [5,5] );
+                this._dashedLine(bounds3D[1][0] - 0.5 , bounds3D[1][1] + 0.5, bounds3D[2][0]+ 0.5, bounds3D[2][1] + 0.5, [5,5] );
+                this._dashedLine(bounds3D[2][0] + 0.5, bounds3D[2][1] + 0.5, bounds3D[3][0] + 0.5, bounds3D[3][1] - 0.5, [5,5] );
+            }
 
             // Draw the Label is all mode
             if(this.layoutView === "layoutAll") {
