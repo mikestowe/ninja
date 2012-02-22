@@ -309,7 +309,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             if(this.activeDocument.uuid === id && this._documents.length > 0) {//closing the active document tab
                 var nextDocumentIndex = -1 ;
                 if((this._documents.length > 0) && (closeDocumentIndex === 0)){
-                    nextDocumentIndex = 1;
+                    nextDocumentIndex = 0;
                 }else if((this._documents.length > 0) && (closeDocumentIndex > 0)){
                     nextDocumentIndex = closeDocumentIndex - 1;
                 }
