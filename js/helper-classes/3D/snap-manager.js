@@ -521,7 +521,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
 						if (!elt.elementModel)
 						{
-                            NJUtils.makeElementModel2(elt);
+                            NJUtils.makeModelFromElement(elt);
 						}
 						elt.elementModel.isIn2DSnapCache = true;
 					}
@@ -588,7 +588,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
 					if (!elt.elementModel)
 					{
-						NJUtils.makeElementModel2(elt);
+						NJUtils.makeModelFromElement(elt);
 					}
 					elt.elementModel.isIn2DSnapCache = true;
 				}
@@ -1087,7 +1087,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
 			// we need to check the orientation of the bounds
 			var nrm = MathUtils.getNormalFromBounds3D( bounds3D );
-            if (MathUtils.fpSign(nrm[2]) == 0)  return null;
+			if (MathUtils.fpSign(nrm[2]) == 0)  return null;
 			var zNrm = nrm[2];
 			var dist;
 

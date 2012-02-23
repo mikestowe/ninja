@@ -59,6 +59,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             this.eventManager.addEventListener("executeNewFile", this, false);
             this.eventManager.addEventListener("executeSave", this, false);
             this.eventManager.addEventListener("executeSaveAs", this, false);
+            this.eventManager.addEventListener("executeSaveAll", this, false);
 
             this.eventManager.addEventListener("recordStyleChanged", this, false);
             
@@ -85,8 +86,11 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 	//
     handleAppLoaded: {
         value: function() {
-            //Adding an intercept to resources loaded to ensure user assets load from cloud simulator
-            chrome.webRequest.onBeforeRequest.addListener(this.handleWebRequest.bind(this), {urls: ["<all_urls>"]}, ["blocking"]);
+            //Checking for app not to be loaded via http/https to add app only listener
+            if (window.location.protocol !== 'http:' && window.location.protocol !== 'https:') {
+            	//Adding an intercept to resources loaded to ensure user assets load from cloud simulator
+            	chrome.webRequest.onBeforeRequest.addListener(this.handleWebRequest.bind(this), {urls: ["<all_urls>"]}, ["blocking"]);
+            }
         }
     },
 	////////////////////////////////////////////////////////////////////
@@ -126,6 +130,16 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
                 //Text and HTML document classes should return the same save object for fileSave
                 this.application.ninja.ioMediator.fileSave(this.activeDocument.save(), this.fileSaveResult.bind(this));
+            }
+		}
+    },
+    ////////////////////////////////////////////////////////////////////
+	//TODO: Check for appropiate structures
+    handleExecuteSaveAll: {
+    	value: function(event) {
+            if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
+                //Text and HTML document classes should return the same save object for fileSave
+                this.application.ninja.ioMediator.fileSave(this.activeDocument.saveAll(), this.fileSaveResult.bind(this));
             }
 		}
     },
