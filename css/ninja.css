@@ -840,9 +840,9 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .OvalTool { background-image: url("../images/tools/Tool-Oval.png"); }
 
-.RectangleTool { background-image: url("../images/tools/Tool-Rectangle.png"); }
+.RectangleTool { background-image: url("../images/tools/Tool-Square.png"); }
 
-.LineTool { background-image: url("../images/tools/Tool-Stroke.png"); }
+.LineTool { background-image: url("../images/tools/Tool-Line.png"); }
 
 .PencilTool { background-image: url("../images/tools/Tool-Pencil.png"); }
 
