@@ -164,8 +164,13 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     /* === BEGIN: Draw cycle === */
     prepareForDraw:{
-        value:function () {
+            value:function () {
+                this.eventManager.addEventListener( "onOpenDocument", this, false);
+            }
+        },
 
+    handleOnOpenDocument:{
+        value:function(){
             this.eventManager.addEventListener("deleteLayerClick", this, false);
             this.eventManager.addEventListener("newLayer", this, false);
             this.eventManager.addEventListener("deleteLayer", this, false);
@@ -179,9 +184,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.hashLayerNumber = this.createLayerNumberHash();
             this.hashElementMapToLayer = this.createElementMapToLayer();
             this.initTimelineView();
+
+
         }
     },
-
     willDraw:{
         value:function () {
             if (this._isLayer) {
