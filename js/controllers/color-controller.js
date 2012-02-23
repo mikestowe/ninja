@@ -322,7 +322,19 @@ exports.ColorController = Montage.create(Component, {
         		//Simple solid color
         		color = this.parseCssToColor(css);
         	}
-        	//Returning color object (or null if none)
+            // TODO - Hack for inconsistent color object -- some workflows set color.color and some color.value
+            if(color)
+            {
+                if(color.value && !color.color)
+                {
+                    color.color = color.value;
+                }
+                else if(color.color && !color.value)
+                {
+                    color.value = color.color;
+                }
+            }
+            //Returning color object (or null if none)
         	return color;
         }
     },

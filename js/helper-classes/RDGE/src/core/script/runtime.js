@@ -206,11 +206,15 @@ RDGETask = (function() {
             self.lastTime = self.currTime;
         }
 
-        this.start = function() {
-            this.running = true;
-            this.currTime = new Date().getTime();
-            this.lastTime = this.currTime;
-            tasks[this.id]();
+        this.start = function()
+		{
+			if (!this.running)
+			{
+				this.running = true;
+				this.currTime = new Date().getTime();
+				this.lastTime = this.currTime;
+				tasks[this.id]();
+			}
         }
 
         this.stop = function() {

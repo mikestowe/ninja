@@ -163,7 +163,7 @@ exports.Content = Montage.create(Component, {
             // For now hardcode the background since it is the only custom property
             // No need to loop through all the properties.
             var backgroundChip = this.customSections[0].content.controls["background"];
-            backgroundChip.initialColor = ElementsMediator.getProperty(stage, "background");
+            backgroundChip.color = ElementsMediator.getProperty(stage, "background");
 
             /*
             var customPI = PiData[this.customPi];

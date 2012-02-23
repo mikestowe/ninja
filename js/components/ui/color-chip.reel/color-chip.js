@@ -29,12 +29,20 @@ var ColorChip = exports.ColorChip = Montage.create(Component, {
         value: 20
     },
 
-    initialColor: {
-        value: false
+    color: {
+        value: {r:0, g:0, b:0, a:1, css:'rgb(0,0,0)', mode:'rgb'}
     },
 
     changeDelegate: {
-        value: null
+        value: function(event) {
+            this.color = event._event.color;
+
+            var evt = document.createEvent("CustomEvent");
+            evt.initEvent("change", true, true);
+            evt.type = "change";
+
+            this.dispatchEvent(evt);
+        }
     },
 
     prepareForDraw: {
@@ -60,10 +68,10 @@ var ColorChip = exports.ColorChip = Montage.create(Component, {
         value: function(evt) {
             if(this.chip) {
                 // This is a single chip - Not related to the color panel -- Set the initial color if found
-                var mode = "rgb", r = 0, g = 0, b = 0, a = 1, css = "rgb(255,0,0)";
+                var mode = "rgb", r = 0, g = 0, b = 0, a = 1, css = "rgb(0,0,0)";
 
-                if(this.initialColor) {
-                    var colorObj = this.application.ninja.colorController.getColorObjFromCss(this.initialColor);
+                if(this.color) {
+                    var colorObj = this.application.ninja.colorController.getColorObjFromCss(this.color.css);
                     mode = colorObj.mode;
                     r = colorObj.value.r;
                     g = colorObj.value.g;
