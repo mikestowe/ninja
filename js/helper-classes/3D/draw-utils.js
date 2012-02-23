@@ -115,6 +115,26 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 		}
 	},
 
+    initializeFromDocument:{
+        value:function(){
+            var documentRootChildren = null, i;
+            //initialize with current document
+            this._eltArray = [];
+            this._planesArray = [];
+            this.setDrawingSurfaceElement(this.application.ninja.stage.canvas);
+            this.setSourceSpaceElement( this.application.ninja.stage.stageDeps.currentStage );
+            this.setWorkingPlane( Vector.create( [0,0,1,0] ) );
+
+            //Loop through all the top-level children of the current document and call drawUtils.addElement on them
+            if(this.application.ninja.currentDocument.documentRoot.hasChildNodes()){
+                documentRootChildren = this.application.ninja.currentDocument.documentRoot.childNodes;
+                for(i=0;i<documentRootChildren.length;i++){
+                    this.addElement(documentRootChildren[i]);
+                }
+            }
+        }
+    },
+
     handleElementAdded: {
         value: function(event) {
             this.addElement(event.detail);

@@ -37,6 +37,10 @@ exports.Stage = Montage.create(Component, {
 		get: function()  {  return this.stageDeps.snapManager;  }
 	},
 
+    drawUtils: {
+        get: function()  {  return this.stageDeps.drawUtils;  }
+    },
+
     resizeCanvases: {
         get: function() {
             return this._resizeCanvases;

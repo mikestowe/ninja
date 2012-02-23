@@ -23,6 +23,10 @@ exports.StageDeps = Montage.create(Component, {
         value: snapManager
     },
 
+    drawUtils: {
+        value: drawUtils
+    },
+
     currentStage: {
         value: null
     },
@@ -119,29 +123,31 @@ exports.StageDeps = Montage.create(Component, {
     },
 
     handleOpenDocument: {
-        value: function() {
+            value: function() {
 
-            workingPlane = Vector.create( [0,0,1,0] );
+                workingPlane = Vector.create( [0,0,1,0] );
 
-            snapManager.setCurrentStage(this.currentStage);
+                snapManager.setCurrentStage(this.currentStage);
 
-            viewUtils.setCurrentDocument(this.currentDocument);
-            viewUtils.setRootElement(this.currentStage.parentNode);
-            viewUtils.setStageElement(this.currentStage);
+                viewUtils.setCurrentDocument(this.currentDocument);
+                viewUtils.setRootElement(this.currentStage.parentNode);
+                viewUtils.setStageElement(this.currentStage);
 
-            drawUtils.setDrawingSurfaceElement(this.stage.canvas);
-            drawUtils.setSourceSpaceElement( this.currentStage );
-            drawUtils.setWorkingPlane( workingPlane );
-            drawUtils.viewUtils = viewUtils;
-            drawUtils.snapManager = snapManager;
-            drawUtils.ElementPlanes = ElementPlanes;
+                drawUtils.viewUtils = viewUtils;
+                drawUtils.snapManager = snapManager;
+                drawUtils.ElementPlanes = ElementPlanes;
 
-            snapManager.setupDragPlaneFromPlane ( workingPlane );
+                snapManager._isCacheInvalid=true;
 
-            DrawingToolBase.stage = this.currentStage;
-            DrawingToolBase.stageComponent = this.stage;
+                snapManager.setupDragPlaneFromPlane ( workingPlane );
 
+                DrawingToolBase.stage = this.currentStage;
+                DrawingToolBase.stageComponent = this.stage;
+
+                drawUtils.initializeFromDocument();
+            }
         }
-    }
+
+
 
 });

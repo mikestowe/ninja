@@ -53,6 +53,11 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     },
 
 
+    //drawUtils state
+    _gridHorizontalSpacing: {value:0},
+    _gridVerticalSpacing: {value:0},
+    //end - drawUtils state
+
 
     // GETTERS / SETTERS
 
@@ -69,6 +74,16 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     savedTopScroll:{
         get: function() { return this._savedTopScroll; },
         set: function(value) { this._savedTopScroll = value}
+    },
+
+    gridHorizontalSpacing:{
+        get: function() { return this._gridHorizontalSpacing; },
+        set: function(value) { this._gridHorizontalSpacing = value}
+    },
+
+    gridVerticalSpacing:{
+        get: function() { return this._gridVerticalSpacing; },
+        set: function(value) { this._gridVerticalSpacing = value}
     },
 
     selectionExclude: {
@@ -444,7 +459,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 					this._styles = this._document.styleSheets[1];
 					this._stylesheets = this._document.styleSheets; // Entire stlyesheets array
 					
-					console.log(this._document.styleSheets);
+					//console.log(this._document.styleSheets);
 					
 					////////////////////////////////////////////////////////////////////////////
 					////////////////////////////////////////////////////////////////////////////
@@ -570,7 +585,47 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     			//Error
     		}
     	}
-	}
+	},
 	////////////////////////////////////////////////////////////////////
+    saveAppState:{
+        enumerable: false,
+        value: function () {
+
+            this.savedLeftScroll = this.application.ninja.stage._iframeContainer.scrollLeft;
+            this.savedTopScroll = this.application.ninja.stage._iframeContainer.scrollTop;
+
+            this.gridHorizontalSpacing = this.application.ninja.stage.drawUtils.gridHorizontalSpacing;
+            this.gridVerticalSpacing = this.application.ninja.stage.drawUtils.gridVerticalSpacing;
+
+            //TODO:selection should be saved as an element state data, to avoid duplicate dom elements store in memory
+            if(typeof this.application.ninja.selectedElements !== 'undefined'){
+                this.selectionModel = this.application.ninja.selectedElements;
+            }
+        }
+    },
+
+    ////////////////////////////////////////////////////////////////////
+    restoreAppState:{
+        enumerable: false,
+        value: function () {
+            if((this.savedLeftScroll!== null) && (this.savedTopScroll !== null)){
+                this.application.ninja.stage._iframeContainer.scrollLeft = this.savedLeftScroll;
+                this.application.ninja.stage._scrollLeft = this.savedLeftScroll;
+                this.application.ninja.stage._iframeContainer.scrollTop = this.savedTopScroll;
+                this.application.ninja.stage._scrollTop = this.savedTopScroll;
+            }
+
+            this.application.ninja.stage.drawUtils.gridHorizontalSpacing = this.gridHorizontalSpacing;
+            this.application.ninja.stage.drawUtils.gridVerticalSpacing = this.gridVerticalSpacing;
+
+            //TODO:selectionController.initWithDocument should loop over elements in documentRoot to repopulate
+            if((typeof this.selectionModel !== 'undefined') && (this.selectionModel !== null) && (this.selectionModel.length > 0)){
+                this.application.ninja.selectionController.initWithDocument(this.selectionModel);
+            }
+            
+
+        }
+    }
+
 	////////////////////////////////////////////////////////////////////
 });

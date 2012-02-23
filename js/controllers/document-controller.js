@@ -321,7 +321,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     // Event Detail: Contains the current ActiveDocument
     _onOpenDocument: {
         value: function(doc){
-            //var data = DocumentManager.activeDocument;
+            this.application.ninja.currentDocument = doc;
             this._hideCurrentDocument();
             this.application.ninja.stage.stageView.hideOtherDocuments(doc.uuid);
 
@@ -405,7 +405,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value: function() {
             if(this.activeDocument) {
                 if(this.activeDocument.currentView === "design"){
-                    this.application.ninja.stage.saveScroll();
+                    this.activeDocument.saveAppState();
                     this.activeDocument.container.parentNode.style["display"] = "none";
                     this.application.ninja.stage.hideCanvas(true);
                     this.application.ninja.stage.stageView.hideRulers();
@@ -422,7 +422,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                 this.activeDocument.container.style["display"] = "block";
                 if(this.activeDocument.currentView === "design"){
                     this.activeDocument.container.parentNode.style["display"] = "block";
-                    this.application.ninja.stage.restoreScroll();
+                    this.activeDocument.restoreAppState();
                     this.application.ninja.stage.hideCanvas(false);
                     this.application.ninja.stage.stageView.showRulers();
                 }else{
