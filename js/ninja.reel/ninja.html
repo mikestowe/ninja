@@ -228,7 +228,15 @@
 
             "selectionController1": {
                 "module": "js/controllers/selection-controller",
-                "name": "SelectionController"
+                "name": "SelectionController",
+                "bindings" : {
+                    "selectionContainer": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "currentSelectedContainer",
+                        "oneway": true
+                    }
+                }
+
             },
 
             "documentController1": {
@@ -255,7 +263,7 @@
             },
 
             "filePickerController": {
-                "module": "js/components/ui/FilePicker/file-picker-controller",
+                "module": "js/io/ui/file-picker/file-picker-controller",
                 "name": "FilePickerController"
             },
 
@@ -355,9 +363,6 @@
                             <section id="rulerLeft"></section>
                             <section id="stageAndScenesContainer"></section>
                         </section>
-
-                        <section id="sceneBar" style="display: none;"></section>
-
                         <section id="stateBar">
                             <section id="documentBarContainer">
                                 <div id="documentBar" class="documentBar"><a href="#">HTML</a></div>

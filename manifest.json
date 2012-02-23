@@ -11,10 +11,11 @@
     "128": "ninja_icon_128.png"
   },
   "permissions": [
+  	"tabs",
     "unlimitedStorage",
     "notifications",
-    "webRequestBlocking",
-    "webRequest"
+    "webRequest",
+    "webRequestBlocking"
   ],
   "requirements": {
     "3D": {

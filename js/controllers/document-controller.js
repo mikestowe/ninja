@@ -66,35 +66,39 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     
    
     
+    			
+    			
+    			
+					
+    ////////////////////////////////////////////////////////////////////
+	//
     handleWebRequest: {
     	value: function (request) {
-    		if (request.url.indexOf('js/document/templates/montage-html') !== -1) {
-    			
-    			console.log(request);
-    			
-    			//TODO: Figure out why active document is not available here
-    			
-				if (this._hackRootFlag) {
-					
-					//console.log(request.url.split('/')[request.url.split('/').length-1]);
-					//console.log(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split('/')[request.url.split('/').length-1]);
-					
+    		if (this._hackRootFlag && request.url.indexOf('js/document/templates/montage-html') !== -1) {
+    			//TODO: Optimize creating string
 					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split('/')[request.url.split('/').length-1]};
 				}
 			}
-    	}
     },
-    
-
+    ////////////////////////////////////////////////////////////////////
+	//
     handleAppLoaded: {
         value: function() {
-            //
-            
-            chrome.webRequest.onBeforeRequest.addListener(this.handleWebRequest.bind(this), {urls: ["<all_urls>"]}, ["blocking"]);
-            
+            //Adding an intercept to resources loaded to ensure user assets load from cloud simulator
+            if (window.chrome.app.isInstalled) {
+                chrome.webRequest.onBeforeRequest.addListener(this.handleWebRequest.bind(this), {urls: ["<all_urls>"]}, ["blocking"]);
+            }
         }
     },
+	////////////////////////////////////////////////////////////////////
 
+	
+	
+	
+	
+	
+	
+	
     handleExecuteFileOpen: {
         value: function(event) {
             var pickerSettings = event._event.settings || {};
@@ -118,8 +122,10 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 	//TODO: Check for appropiate structures
     handleExecuteSave: {
     	value: function(event) {
+            if(!!this.activeDocument){
     		//Text and HTML document classes should return the same save object for fileSave
     		this.application.ninja.ioMediator.fileSave(this.activeDocument.save(), this.fileSaveResult.bind(this));
+		}
 		}
     },
     ////////////////////////////////////////////////////////////////////
@@ -127,19 +133,10 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     fileSaveResult: {
     	value: function (result) {
     		if(result.status === 204){
-            	this.clearDocumentDirtyFlag();
+                this.activeDocument.needsSave = false;
             }
     	}
     },
-    ////////////////////////////////////////////////////////////////////
-	
-	
-    clearDocumentDirtyFlag:{
-        value: function(){
-            this.activeDocument.dirtyFlag = false;
-        }
-    },
-	
 	
     createNewFile:{
         value:function(newFileObj){
@@ -278,7 +275,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
     closeDocument: {
         value: function(id) {
-            if(this.activeDocument.dirtyFlag === true){
+            if(this.activeDocument.needsSave === true){
                 //if file dirty then alert user to save
         }
 
@@ -301,6 +298,8 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                 this._removeDocumentView(doc.container);
                 this.application.ninja.stage.stageView.hideRulers();
                 document.getElementById("iframeContainer").style.display="block";
+
+                this.application.ninja.stage.hideCanvas(true);
             }
         }
     },
