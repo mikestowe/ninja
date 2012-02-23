@@ -312,6 +312,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:function (event) {
             this._isLayer = true;
             this.needsDraw = true;
+            this.application.ninja.selectionController.executeSelectElement();
         }
     },
 
@@ -513,9 +514,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this._LayerUndoIndex = thingToPush.layerID;
                 this._LayerUndoStatus = true;
                 this._TrackUndoObject = newTrack;
-//                if(_firstLayerDraw){
-//                this.application.ninja.selectionController.executeSelectElement();
-//                }
+
 
             }
         }
@@ -840,9 +839,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this.trackRepetition.selectedIndexes = [layerIndex];
                 this.currentLayerSelected = this.arrLayers[layerIndex];
                 this.currentTrackSelected = this.arrTracks[layerIndex];
-                /*if(this._captureSelection){
-                this.application.ninja.selectionController.selectElements(this.currentLayerSelected.elementsList)
-                }*/
+                if(this._captureSelection){
+                    this.application.ninja.selectionController.selectElements(this.currentLayerSelected.elementsList)
+                }
                 this._captureSelection = true;
             } else {
                 this.layerRepetition.selectedIndexes = null;
