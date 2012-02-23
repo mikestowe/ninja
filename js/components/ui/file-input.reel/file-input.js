@@ -5,7 +5,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var Montage = require("montage/core/core").Montage,
-Component = require("montage/ui/component").Component;
+    Component = require("montage/ui/component").Component;
 
 var FileInput = exports.FileInput = Montage.create(Component, {
 

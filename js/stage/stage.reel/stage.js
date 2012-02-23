@@ -517,12 +517,37 @@ exports.Stage = Montage.create(Component, {
      */
     GetElement: {
         value: function(pos) {
-            var point = webkitConvertPointFromPageToNode(this.canvas, new WebKitPoint(pos.pageX, pos.pageY));
-            return this.application.ninja.currentDocument.GetElementFromPoint(point.x + this.scrollLeft,point.y + this.scrollTop);
+            var point = webkitConvertPointFromPageToNode(this.canvas, new WebKitPoint(pos.pageX, pos.pageY)),
+                elt = this.application.ninja.currentDocument.GetElementFromPoint(point.x + this.scrollLeft,point.y + this.scrollTop);
+
+            // workaround Chrome 3d bug
+            if(this.application.ninja.currentDocument.inExclusion(elt) !== -1)
+            {
+                return this._getElementUsingSnapping(point);
+            } else {
+                return elt;
+            }
         }
     },
 
-
+    /**
+     * _getElementUsingSnapping: Returns the object at point using snap manager
+     *
+     * @param: point
+     * @return: Returns the Object in the user document under the point
+     */
+    _getElementUsingSnapping: {
+        value: function(point) {
+            this.stageDeps.snapManager.enableElementSnap( true );
+            var hitRec = this.stageDeps.snapManager.snap(point.x, point.y, true);
+            this.stageDeps.snapManager.enableElementSnap( this.stageDeps.snapManager.elementSnapEnabledAppLevel() );
+            if (hitRec) {
+                return hitRec.getElement();
+            } else {
+                return null;
+            }
+        }
+    },
 
 
     draw: {

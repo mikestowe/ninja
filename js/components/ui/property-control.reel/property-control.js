@@ -6,16 +6,16 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component,
-    HotText = require("js/components/hottext").HotText,
-    HotTextUnit = require("js/components/hottextunit").HotTextUnit,
-    Slider = require("js/components/slider").Slider,
-    Button = require("js/components/button").Button,
-    Checkbox = require("js/components/checkbox").Checkbox,
-    Combobox = require("js/components/combobox").Combobox,
-    TextField = require("js/components/TextField").TextField,
-    ColorChip = require("js/components/ui/color-chip").ColorChip,
-    FileInput = require("js/components/ui/file-input").FileInput,
-    InputGroup = require("js/components/ui/input-group").InputGroup;
+    HotText = require("js/components/hottext.reel").HotText,
+    HotTextUnit = require("js/components/hottextunit.reel").HotTextUnit,
+    Slider = require("js/components/slider.reel").Slider,
+    Button = require("js/components/button.reel").Button,
+    Checkbox = require("js/components/checkbox.reel").Checkbox,
+    Combobox = require("js/components/combobox.reel").Combobox,
+    TextField = require("js/components/TextField.reel").TextField,
+    ColorChip = require("js/components/ui/color-chip.reel").ColorChip,
+    FileInput = require("js/components/ui/file-input.reel").FileInput,
+    InputGroup = require("js/components/ui/input-group.reel").InputGroup;
 
 var PropertyControl = exports.PropertyControl = Montage.create(Component, {
 
@@ -134,7 +134,7 @@ var PropertyControl = exports.PropertyControl = Montage.create(Component, {
             {
                 this._control[n] = defaults[n];
             }
-
+            this._labelField.innerHTML = this._label;
             this._control.needsDraw = true;
         }
     },
@@ -170,8 +170,6 @@ var PropertyControl = exports.PropertyControl = Montage.create(Component, {
 
     prepareForDraw: {
         value: function() {
-            this._labelField.innerHTML = this._label;
-            
             switch(this._controlType)
             {
                 case "HotText":
@@ -199,6 +197,9 @@ var PropertyControl = exports.PropertyControl = Montage.create(Component, {
                     break;
                 case "ColorChip":
                     this._control = ColorChip.create();
+                    this._control.chip = true;
+                    this._control.hasIcon = false;
+                    this._control.mode = "chip";
                     this._control.addEventListener("change", this, false);
                     this._prop = "color";
                     break;

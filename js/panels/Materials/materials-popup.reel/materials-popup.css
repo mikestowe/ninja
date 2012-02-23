@@ -6,24 +6,22 @@
  </copyright> */
 
 .materials_popup {
-  font-size: 12px;
-  text-shadow: 1px 1px 1px #000;
+    width:400px;
+    font-size: 12px;
     overflow: hidden;
-}
-
-.materials_popup a:hover {
-  color: #CCC;
+    background: #494949;
+    color: white;
 }
 
 .materials_popup hr {
-  float: left;
-  clear: both;
-  width: 100%;
-  display: block;
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0.5, #1d1d1d), color-stop(0.75, #424242));
-  border: none;
-  height: 2px;
-  margin: 4px 0px 4px 0px;
+    float: left;
+    clear: both;
+    width: 100%;
+    display: block;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0.5, #1d1d1d), color-stop(0.75, #424242));
+    border: none;
+    height: 2px;
+    margin: 4px 0px 4px 0px;
 }
 
 #mp_title {
@@ -36,127 +34,46 @@
     text-align: center;
 }
 
-#mp_maps div div,
-#mp_maps div div:focus,
-#mp_maps div input,
-#mp_maps div input:focus {
-    margin: 0px 0px 2px 0px;
+.mp_property
+{
+    height:40px;
 }
 
-#mp_properties_labels,
-#mp_maps_labels {
-  display:block;
+.mp_property > .prop-label
+{
   float: left;
-  width:86px;
+  /*width:86px;*/
   margin: 0px 8px 2px 5px;
-  font-family: 'Droid Sans', sans-serif;
-  font-size: 12px;
 }
 
-#mp_properties_labels div,
-#mp_maps_labels div {
+.mp_property > .prop-controller
+{
   float: right;
   clear: left;
   width: auto;
   margin: 0px 0px 3px 0px;
 }
 
-#mp_maps_labels div {
-  margin: 2px 0px 3px 0px !important;
-}
-
-#mp_properties_labels div {
-  margin: 6px 0px 6px 0px !important;
-}
-
-#mp_properties_colors
-{
-    float:left;
-    width: 24px;
-    margin: 0px -8px 0px 10px;
-}
-
-#mp_properties_colors button {
-  width: 22px;
-  height: 22px;
-  margin:  2px 0;
-}
-
-#mp_properties_colors input.hottext {
-  background: none;
-  float: right;
-  margin: 4px 0px;
-  padding: 0px;
-  width: 23px;
-  color: #FFF;
-  text-shadow: 1px 1px 1px #000;
-  font-family: 'Droid Sans', sans-serif;
-  font-size: 11px;
-  text-align: center;
-}
-
-#mp_properties_colors input.hottextInput {
-  background: #FFF;
-  color: #000;
-  text-shadow: none;
-  border: 1px solid #333;
-  margin: 3px -2px 5px 1px;
-  padding: 1px;
-  text-decoration: none;
-  outline: none;
-}
-
-#mp_maps_inputs
-{
-    float: left;
-    width: auto;
-}
-
-#mp_maps_inputs input {
-  float:left;
-  clear:both;
-  width: 100px;
-  background: #555;
-  border: 1px solid #333;
-  color: #FFF;
-  padding: 1px 0px 1px 0px;
-  margin: 0px 0px 0px 10px;
-  text-decoration: none !important;
-  text-shadow: 1px 1px 1px #000;
-  font-family: 'Droid Sans', sans-serif;
-  font-size: 11px;
-  letter-spacing: 1px;
-}
-
-#mp_maps_inputs input:focus {
-  outline: none;
-  margin: -1px 0px -1px 10px;
-  background: #FFF;
-  color: #000;
-  text-shadow: none;
-}
-
-
-#mp_buttons {
+.mp_buttons {
     clear:both;
     float: left;
     margin: 0px -4px 0px 4px;
     width: 97%;
 }
 
-#mp_buttons button {
+.mp_buttons button {
   height: 22px;
   overflow: hidden;
   display: block;
   cursor: pointer;
 }
 
-#mp_cancel_btn {
+.mp_buttons .mp_cancel_btn {
     float: left;
     width: 60px;
 }
 
-#mp_ok_btn {
+.mp_buttons .mp_ok_btn {
     float: right;
     width: 30px;
 }

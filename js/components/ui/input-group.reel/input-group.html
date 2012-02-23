@@ -11,7 +11,7 @@
     <script type="text/montage-serialization">
     {
         "eventDelegator": {
-                "module": "montage/event/action-event-listener",
+                "module": "montage/core/event/action-event-listener",
                 "name": "ActionEventListener",
                 "properties": {
                     "handler": {"@": "owner"},
@@ -19,7 +19,7 @@
                 }
             },
         "propControl1": {
-            "module": "js/components/ui/property-control",
+            "module": "js/components/ui/property-control.reel",
             "name": "PropertyControl",
             "properties": {
                 "element": {"#": "inputPair"}
@@ -44,7 +44,7 @@
                             ]
         },
         "propList": {
-            "module": "montage/ui/repetition",
+            "module": "montage/ui/repetition.reel",
             "name": "Repetition",
             "properties": {
                 "element": {"#": "inputList"}
@@ -58,7 +58,7 @@
             }
         },
         "owner": {
-            "module": "js/components/ui/input-group",
+            "module": "js/components/ui/input-group.reel",
             "name": "InputGroup",
             "properties": {
                 "element": {"#": "inputRow"},
@@ -69,7 +69,7 @@
     </script>
 </head>
 <body>
-    <div id="inputRow" style="-webkit-user-select: none;">
+    <div id="inputRow" class="inputRow" style="-webkit-user-select: none;">
         <div id="inputList">
             <div id="inputPair"></div>
         </div>

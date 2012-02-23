@@ -174,7 +174,7 @@ exports.ToolsData = Montage.create(Montage, {
                 "spriteSheet":  true,
                 "action":       "EyedropperTool",
                 "toolTip":      "Eyedropper Tool",
-                "cursor":       "url('images/tools/eyedropper_down.png'), default",
+                "cursor":       "url('images/tools/eyedropper_down.png') 6 20, default",
                 "lastInGroup":  false,
                 "container":    false,
                 "selected":     false
