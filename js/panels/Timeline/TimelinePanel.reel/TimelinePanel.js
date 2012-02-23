@@ -201,6 +201,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     /* === BEGIN: Controllers === */
     initTimelineView:{
         value:function () {
+            var myIndex;
             this.layout_tracks = this.element.querySelector(".layout-tracks");
             this.layout_markers = this.element.querySelector(".layout_markers");
 
@@ -217,7 +218,17 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
             this._hashKey = "123";
             _firstLayerDraw = false;
-            NJevent('newLayer', this._hashKey);
+            if(this.application.ninja.currentDocument.documentRoot.children[0]){
+                myIndex=0;
+                while(this.application.ninja.currentDocument.documentRoot.children[myIndex])
+                {
+                    this.application.ninja.currentDocument.documentRoot.children[myIndex];
+                    NJevent('newLayer',{key:this._hashKey,element:this.application.ninja.currentDocument.documentRoot.children[myIndex]});
+                    myIndex++;
+                }
+            }else{
+                NJevent('newLayer', this._hashKey);
+            }
             _firstLayerDraw = true;
             this.selectLayer(0);
         }
