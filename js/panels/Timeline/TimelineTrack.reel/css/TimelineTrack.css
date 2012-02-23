@@ -53,14 +53,3 @@
   background-color: #474747;
   color: white;
 }
-
-/* line 63, ../scss/TimelineTrack.scss */
-.tl_layertracks .collapsible-content .timeline-track {
-  height: 20px;
-  border-bottom: 1px solid #505050;
-}
-
-/* line 69, ../scss/TimelineTrack.scss */
-.timeline-track .content-main {
-  background-color: #474747;
-}

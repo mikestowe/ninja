@@ -1,0 +1,13 @@
+/* PropertyTrack.scss
+ * Main SCSS file for PropertyTrack component, compiled by SASS into the file css/PropertyTrack.css.
+ */
+/* line 13, ../scss/PropertyTrack.scss */
+.content-main .collapsible-content .timeline-track {
+  height: 20px;
+  border-bottom: 1px solid #505050;
+}
+
+/* line 19, ../scss/PropertyTrack.scss */
+.timeline-track .content-main {
+  background-color: #474747;
+}

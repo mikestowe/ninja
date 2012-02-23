@@ -114,6 +114,71 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     		this.needsDraw = true;
     	}
     },
+    
+    /* Position Property Tracks */
+    _arrPositionTracks : {
+        serializable:true,
+        enumerable:true,
+    	value: []
+    },
+    arrPositionTracks: {
+        serializable:true,
+        enumerable:true,
+    	get: function() {
+    		return this._arrPositionTracks;
+    	},
+    	set: function(newVal) {
+    		this._arrPositionTracks = newVal;
+    		this.needsDraw = true;
+    	}
+    },
+    _positionTracksRepetition: {
+    	serializable: true,
+    	value: null
+    },
+    positionTracksRepetition : {
+    	serializable: true,
+    	get: function() {
+    		return this._positionTracksRepetition;
+    	},
+    	set: function(newVal) {
+    		this._positionTracksRepetition = newVal;
+    		this.needsDraw = true;
+    	}
+    },
+    
+    
+    /* Transform Property Tracks */
+    _arrTransformTracks : {
+        serializable:true,
+        enumerable:true,
+    	value: []
+    },
+    arrTransformTracks: {
+        serializable:true,
+        enumerable:true,
+    	get: function() {
+    		return this._arrTransformTracks;
+    	},
+    	set: function(newVal) {
+    		this._arrTransformTracks = newVal;
+    		this.needsDraw = true;
+    	}
+    },
+    _transformTracksRepetition: {
+    	serializable: true,
+    	value: null
+    },
+    transformTracksRepetition : {
+    	serializable: true,
+    	get: function() {
+    		return this._transformTracksRepetition;
+    	},
+    	set: function(newVal) {
+    		this._transformTracksRepetition = newVal;
+    		this.needsDraw = true;
+    	}
+    },
 
     _tweens:{
         enumerable: false,
@@ -414,6 +479,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     init:{
         value:function () {
             var that = this;
+            
+            this.arrPositionTracks = [0, 1, 2];
+            this.arrTransformTracks = [0, 1, 2, 3, 4];
+            
             this.label = this.element.querySelector(".label-main");
             this.myContent = this.element.querySelector(".content-main");
             this.labelPosition = this.element.querySelector(".label-position");

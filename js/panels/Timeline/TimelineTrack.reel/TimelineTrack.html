@@ -91,7 +91,51 @@
                    	           "oneway": false
                    	       }
                    	   }
-                   }
+                   },
+                   "positionTracksRepetition": {
+                       "module": "montage/ui/repetition.reel",
+                   	   "name": "Repetition",
+                   	   "properties": {
+                   	       "element": {"#": "content-position-tracks"},
+                   	       "isSelectionEnabled" : false
+                   	   },
+                   	   "bindings": {
+                   	       "objects": {
+                   	           "boundObject": {"@": "owner"},
+                   	           "boundObjectPropertyPath": "arrPositionTracks",
+                   	           "oneway": false
+                   	       }
+                   	   }
+                   },
+					"positionPropertyTrack" : {
+						"module" : "js/panels/Timeline/PropertyTrack.reel",
+						"name" : "PropertyTrack",
+						"properties" : {
+							"element":{"#": "position-track-base"}
+						}
+					},
+                   "transformTracksRepetition": {
+                       "module": "montage/ui/repetition.reel",
+                   	   "name": "Repetition",
+                   	   "properties": {
+                   	       "element": {"#": "content-transform-tracks"},
+                   	       "isSelectionEnabled" : false
+                   	   },
+                   	   "bindings": {
+                   	       "objects": {
+                   	           "boundObject": {"@": "owner"},
+                   	           "boundObjectPropertyPath": "arrTransformTracks",
+                   	           "oneway": false
+                   	       }
+                   	   }
+                   },
+					"transformPropertyTrack" : {
+						"module" : "js/panels/Timeline/PropertyTrack.reel",
+						"name" : "PropertyTrack",
+						"properties" : {
+							"element":{"#": "transform-track-base"}
+						}
+					}
                    
                    
                }
@@ -108,20 +152,14 @@
             	<div class="label-position collapsible-label collapsible-collapsed">
             		
             	</div>
-            	<div class="content-position collapsible-content collapsible-collapsed">
-            		<div class="timeline-track"></div>
-            		<div class="timeline-track"></div>
-            		<div class="timeline-track"></div>
+            	<div class="content-position collapsible-content collapsible-collapsed" id="content-position-tracks">
+            		<div id="position-track-base"></div>
             	</div>
             	<div class="label-transform collapsible-label collapsible-collapsed">
             		
             	</div>
-            	<div class="content-transform collapsible-content collapsible-collapsed">
-            		<div class="timeline-track"></div>
-            		<div class="timeline-track"></div>
-            		<div class="timeline-track"></div>
-            		<div class="timeline-track"></div>
-            		<div class="timeline-track"></div>
+            	<div class="content-transform collapsible-content collapsible-collapsed" id="content-transform-tracks">
+            		<div id="transform-track-base"></div>
             	</div>
             	<div class="label-styles collapsible-label collapsible-collapsed">
             		
