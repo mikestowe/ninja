@@ -280,7 +280,7 @@ exports.IoMediator = Montage.create(Component, {
     	enumerable: false,
     	value: function (list) {
     		//Variable to store CSS definitions
-    		var i, str, css = '';
+    		var i, str, url, css = '';
     		//Looping through list
     		if (list && list.length > 0) {
     			//Adding each list item to string and also adding breaks
@@ -292,8 +292,10 @@ exports.IoMediator = Montage.create(Component, {
     				css += '\n'+str;
     			}
     		}
+    		//TODO: Add better logic for creating this string
+    		url = new RegExp(window.location.protocol+'//'+window.location.host+'/js/document/templates/montage-html/', 'gi');
     		//Returning the CSS string
-    		return css;
+    		return css.replace(url, '');
     	}
     }
     ////////////////////////////////////////////////////////////////////
