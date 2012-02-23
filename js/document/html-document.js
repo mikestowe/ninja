@@ -378,23 +378,29 @@ exports.HTMLDocument = Montage.create(TextDocument, {
         value: function(event){
         	//TODO: Clean up, using for prototyping save
         	this._templateDocument = {};
+        	this._templateDocument.html = this.iframe.contentWindow.document;
         	this._templateDocument.head = this.iframe.contentWindow.document.getElementById("userHead");
         	this._templateDocument.body = this.documentRoot = this.iframe.contentWindow.document.getElementById("UserContent");
         	//TODO: Remove, also for prototyping
         	this.application.ninja.documentController._hackRootFlag = true;
         	//
-            //this.documentRoot = this.iframe.contentWindow.document.getElementById("UserContent");
             this.stageBG = this.iframe.contentWindow.document.getElementById("stageBG");
             this.stageBG.onclick = null;
             this._document = this.iframe.contentWindow.document;
             this._window = this.iframe.contentWindow;
             //
-            if(!this.documentRoot.Ninja) this.documentRoot.Ninja = {};
+            for (var k in this._document.styleSheets) {
+            	if (this._document.styleSheets[k].ownerNode && this._document.styleSheets[k].ownerNode.setAttribute) {
+            		this._document.styleSheets[k].ownerNode.setAttribute('ninjatemplate', 'true');
+            	}
+            }
             //
+            if(!this.documentRoot.Ninja) this.documentRoot.Ninja = {};
+            //Inserting user's document into template
             this._templateDocument.head.innerHTML = this._userDocument.content.head;
             this._templateDocument.body.innerHTML = this._userDocument.content.body;
-
-            // Adding a handler for the main user document reel to finish loading.
+            
+            //Adding a handler for the main user document reel to finish loading
             this._document.body.addEventListener("userTemplateDidLoad",  this.userTemplateDidLoad.bind(this), false);
 
             // Live node list of the current loaded document
@@ -409,7 +415,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 
             /* this.iframe.contentWindow.document.addEventListener('DOMSubtreeModified', function (e) { */ //TODO: Remove events upon loading once
 
-            //TODO: When written, the best way to initialize the document is to listen for the DOM tree being modified
+            //TODO: When re-written, the best way to initialize the document is to listen for the DOM tree being modified
             setTimeout(function () {
             	
             	
@@ -418,8 +424,47 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             	if(this._document.styleSheets.length > 1) {
-					this._styles = this._document.styleSheets[this._document.styleSheets.length - 1];
-					this._stylesheets = this._document.styleSheets; // Entire stlyesheets array
+					//Checking all styleSheets in document
+					for (var i in this._document.styleSheets) {
+						//If rules are null, assuming cross-origin issue
+						if(this._document.styleSheets[i].rules === null) {
+							//TODO: Revisit URLs and URI creation logic, very hack right now
+							var fileUri, cssUrl, cssData, tag, query;
+							if (this._document.styleSheets[i].href.indexOf('js/document/templates/montage-html') !== -1) {
+								//Getting the url of the CSS file
+								cssUrl = this._document.styleSheets[i].href.split('js/document/templates/montage-html')[1];
+								//Creating the URI of the file (this is wrong should not be splitting cssUrl)
+								fileUri = this.application.ninja.coreIoApi.cloudData.root+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+cssUrl.split('/')[1];
+								//Loading the data from the file
+								cssData = this.application.ninja.coreIoApi.readFile({uri: fileUri});
+								//Creating tag with file content
+								tag = this.iframe.contentWindow.document.createElement('style');
+								tag.setAttribute('type', 'text/css');
+								tag.setAttribute('ninjauri', fileUri);
+								tag.setAttribute('ninjafileurl', cssUrl);
+								tag.setAttribute('ninjafilename', cssUrl.split('/')[cssUrl.split('/').length-1]);
+								tag.innerHTML = cssData.content;
+								//Looping through DOM to insert style tag at location of link element
+								query = this._templateDocument.html.querySelectorAll(['link']);
+								for (var j in query) {
+									if (query[j].href === this._document.styleSheets[i].href) {
+										//Disabling style sheet to reload via inserting in style tag
+										query[j].setAttribute('disabled', 'true');
+										//Inserting tag
+										this._templateDocument.head.insertBefore(tag, query[j]);
+									}
+								}
+							}
+                    	}
+					}
+					////////////////////////////////////////////////////////////////////////////
+					////////////////////////////////////////////////////////////////////////////
+					
+					//TODO: Check if this is needed
+					this._stylesheets = this._document.styleSheets;
+					
+					////////////////////////////////////////////////////////////////////////////
+					////////////////////////////////////////////////////////////////////////////
 					
 					//TODO Finish this implementation once we start caching Core Elements
 					// Assign a model to the UserContent and add the ViewPort reference to it.
@@ -523,7 +568,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     	enumerable: false,
     	value: function () {
     		//TODO: Add logic to handle save before preview
-    		this.save();
+    		this.saveAll();
     		//Launching 'blank' tab for testing movie
     		chrome.tabs.create({url: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]});		
     	}
@@ -535,7 +580,38 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     	value: function () {
     		//TODO: Add code view logic and also styles for HTML
     		if (this.currentView === 'design') {
-    			return {mode: 'html', document: this._userDocument, webgl: this.glData, style: this._styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
+    			var styles = [];
+    			for (var k in this._document.styleSheets) {
+    				if (this._document.styleSheets[k].ownerNode && this._document.styleSheets[k].ownerNode.getAttribute) {
+            			if (this._document.styleSheets[k].ownerNode.getAttribute('ninjatemplate') === null) {
+            				styles.push(this._document.styleSheets[k]);
+            			}
+            		}
+            	}
+    			return {mode: 'html', document: this._userDocument, webgl: this.glData, styles: styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
+    		} else if (this.currentView === "code"){
+    			//TODO: Would this get call when we are in code of HTML?
+    		} else {
+    			//Error
+    		}
+    	}
+	},
+	////////////////////////////////////////////////////////////////////
+	//
+	saveAll: {
+		enumerable: false,
+    	value: function () {
+    		//TODO: Add code view logic and also styles for HTML
+    		if (this.currentView === 'design') {
+    			var css = [];
+    			for (var k in this._document.styleSheets) {
+    				if (this._document.styleSheets[k].ownerNode && this._document.styleSheets[k].ownerNode.getAttribute) {
+            			if (this._document.styleSheets[k].ownerNode.getAttribute('ninjatemplate') === null) {
+            				css.push(this._document.styleSheets[k]);
+            			}
+            		}
+            	}
+    			return {mode: 'html', document: this._userDocument, webgl: this.glData, css: css, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
     		} else if (this.currentView === "code"){
     			//TODO: Would this get call when we are in code of HTML?
     		} else {
