@@ -11,7 +11,8 @@
                        "properties": {
                            "element": {"#": "track"},
                            "tweenRepetition" : {"@" : "tweenRepetition"},
-                           "track_lane": {"#": "track_lanes"}
+                           "styleTracksRepetition" : {"@" : "styleTracksRepetition"},
+                           "tween": {"@" : "tween"}
                        }
                    },
 
@@ -37,19 +38,24 @@
                                "boundObjectPropertyPath" : "objectAtCurrentIteration.spanPosition",
                                "oneway" : false
                            },
-                           "timelineTrack" : {
-                               "boundObject" : {"@": "tweenRepetition"},
-                               "boundObjectPropertyPath" : "objectAtCurrentIteration.timelineTrack",
-                               "oneway" : false
-                           },
                            "keyFrameMillisec" : {
                                "boundObject" : {"@": "tweenRepetition"},
                                "boundObjectPropertyPath" : "objectAtCurrentIteration.keyFrameMillisec",
                                "oneway" : false
                            },
-                           "keyframeID" : {
+                           "tweenID" : {
                                "boundObject" : {"@": "tweenRepetition"},
-                               "boundObjectPropertyPath" : "objectAtCurrentIteration.keyframeID",
+                               "boundObjectPropertyPath" : "objectAtCurrentIteration.tweenID",
+                               "oneway" : false
+                           },
+                           "tweenedProperties" : {
+                               "boundObject" : {"@": "tweenRepetition"},
+                               "boundObjectPropertyPath" : "objectAtCurrentIteration.tweenedProperties",
+                               "oneway" : false
+                           },
+                           "isTweenAnimated" : {
+                               "boundObject" : {"@": "tweenRepetition"},
+                               "boundObjectPropertyPath" : "objectAtCurrentIteration.isTweenAnimated",
                                "oneway" : false
                            }
                        }
@@ -69,7 +75,25 @@
                    	           "oneway": false
                    	       }
                    	   }
+                   },
+
+                   "styleTrackRepetition": {
+                       "module": "montage/ui/repetition.reel",
+                   	   "name": "Repetition",
+                   	   "properties": {
+                   	       "element": {"#": "content-styles"},
+                   	       "isSelectionEnabled" : false
+                   	   },
+                   	   "bindings": {
+                   	       "objects": {
+                   	           "boundObject": {"@": "owner"},
+                   	           "boundObjectPropertyPath": "arrStyleTracks",
+                   	           "oneway": false
+                   	       }
+                   	   }
                    }
+                   
+                   
                }
            </script>
 	</head>
@@ -102,8 +126,8 @@
             	<div class="label-styles collapsible-label collapsible-collapsed">
             		
             	</div>
-            	<div class="content-styles collapsible-content collapsible-collapsed">
-            		
+            	<div id="content-styles" class="content-styles collapsible-content collapsible-collapsed">
+            		<div class="timeline-track"></div>
             	</div>
             </div>
     	</div>

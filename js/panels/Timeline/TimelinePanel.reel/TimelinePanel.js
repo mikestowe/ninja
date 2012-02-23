@@ -65,6 +65,22 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:1000
     },
 
+    _masterDuration:{
+        serializable: true,
+        value:0
+    },
+
+    masterDuration:{
+        serializable:true,
+        get:function(){
+            return this._masterDuration;
+        },
+        set:function(val){
+            this._masterDuration = val;
+            this.timebar.style.width = (this._masterDuration / 12) + "px";
+        }
+    },
+
     _arrTracks:{
         serializable:true,
         value:[]
@@ -106,6 +122,20 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         },
         set:function (newVal) {
             this._selectedKeyframes = newVal;
+        }
+    },
+
+    _selectedTweens:{
+        value:[]
+    },
+
+    selectedTweens:{
+        serializable:true,
+        get:function () {
+            return this._selectedTweens;
+        },
+        set:function (newVal) {
+            this._selectedTweens = newVal;
         }
     },
 
@@ -234,13 +264,13 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
-    deselectKeyframes:{
+    deselectTweens:{
         value:function () {
-            for (var i = 0; i < this.selectedKeyframes.length; i++) {
-                this.selectedKeyframes[i].deselect();
+            for (var i = 0; i < this.selectedTweens.length; i++) {
+                this.selectedTweens[i].deselectTween();
             }
-            this.selectedKeyframes = null;
-            this.selectedKeyframes = new Array();
+            this.selectedTweens = null;
+            this.selectedTweens = new Array();
         }
     },
 
@@ -253,6 +283,14 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     handleDeleteLayerClick:{
         value:function (event) {
+        	if (this.arrLayers.length === 1) {
+        		// do not delete last layer
+        		return;
+        	}
+        	if (this.layerRepetition.selectedIndexes === null) {
+        		// nothing is selected, do not delete
+        		return;
+        	}
             this._deleteKeyDown = false;
             if (this.application.ninja.currentSelectedContainer.id === "UserContent") {
                 this._hashKey = "123";
@@ -269,10 +307,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             if (this._firstTimeLoaded) {
                 this._firstTimeLoaded = false;
             } else {
-                while (this.arrLayers.pop()) {
-                }
-                while (this.arrTracks.pop()) {
-                }
+                this.arrLayers.length = 0;
+                this.arrTracks.length = 0;
+
                 if (event.detail.element.id === "UserContent") {
                     this._hashKey = "123";
                 } else {
@@ -308,8 +345,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 while (layerResult = this.returnedObject[hashIndex]) {
                     trackResult = this.returnedTrack[hashIndex];
                     if (layerResult.deleted !== true) {
-                        this.arrLayers.push(layerResult);
                         this.arrTracks.push(trackResult);
+                        this.arrLayers.push(layerResult);
+
                     }
                     hashIndex++;
                 }
@@ -322,8 +360,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     while (dLayer[hashVariable]) {
                         if (dLayer[hashVariable]._layerID === event.detail._el._layerID) {
                             dLayer[hashVariable].deleted = false;
-                            this.arrLayers.splice(event.detail._layerPosition, 1, event.detail._el);
-                            this.arrTracks.splice(event.detail._layerPosition, 1, event.detail._track);
+                            this.arrTracks.splice(event.detail._layerPosition, 0, event.detail._track);
+                            this.arrLayers.splice(event.detail._layerPosition, 0, event.detail._el);
+
                             break;
 
                         }
@@ -349,8 +388,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     while (dLayer[hashVariable]) {
                         if (dLayer[hashVariable]._layerID === event.detail._el._layerID) {
                             dLayer[hashVariable].deleted = false;
-                            this.arrLayers.splice(event.detail._layerPosition, 1, event.detail._el);
-                            this.arrTracks.splice(event.detail._layerPosition, 1, event.detail._track);
+                            this.arrTracks.splice(event.detail._layerPosition, 0, event.detail._track);
+                            this.arrLayers.splice(event.detail._layerPosition, 0, event.detail._el);
                             break;
 
                         }
@@ -387,12 +426,15 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     thingToPush.parentElement = this.application.ninja.currentSelectedContainer;
                 }
 
-
                 newTrack.trackID = this.currentLayerNumber;
                 newTrack.isMainCollapsed = true;
                 newTrack.isPositionCollapsed = true;
                 newTrack.isTransformCollapsed = true;
-                newTrack.isStyleCollapsed = false;
+                newTrack.isStyleCollapsed = true;
+                newTrack.isTrackAnimated = false;
+                newTrack.currentKeyframeRule = null;
+                newTrack.trackPosition = 0;
+                newTrack.arrStyleTracks = [];
                 newTrack.tweens = [];
 
                 if (_firstLayerDraw) {
@@ -407,16 +449,16 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     thingToPush.layerPosition = myIndex;
                     thingToPush.isSelected = true;
                     newTrack.trackPosition = myIndex;
-                    this.arrLayers.splice(myIndex, 0, thingToPush);
                     this.arrTracks.splice(myIndex, 0, newTrack);
+                    this.arrLayers.splice(myIndex, 0, thingToPush);
                     this._LayerUndoPosition = myIndex;
                     this.selectLayer(myIndex);
                     this.hashLayerNumber.setItem(this._hashKey, thingToPush);
                     this.hashInstance.setItem(this._hashKey, thingToPush, myIndex);
                     this.hashTrackInstance.setItem(this._hashKey, newTrack, myIndex);
                 } else {
-                    this.arrLayers.splice(0, 0, thingToPush);
                     this.arrTracks.splice(0, 0, newTrack);
+                    this.arrLayers.splice(0, 0, thingToPush);
                     thingToPush.layerPosition = this.arrLayers.length - 1;
                     newTrack.trackPosition = this.arrTracks.length - 1;
                     this._LayerUndoPosition = this.arrLayers.length - 1;
@@ -429,13 +471,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this._LayerUndoIndex = thingToPush.layerID;
                 this._LayerUndoStatus = true;
                 this._TrackUndoObject = newTrack;
-
-                // Removing clearing the selection - Handled by the selection-controller
-                /*
                 if(_firstLayerDraw){
-                    this.application.ninja.selectionController.executeSelectElement();
+                this.application.ninja.selectionController.executeSelectElement();
                 }
-                */
 
             }
         }
@@ -461,7 +499,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                                 while (this.arrLayers.length) {
                                     if (dLayer[hashVariable]._layerID === this.arrLayers[k]._layerID) {
                                         dLayer[hashVariable].deleted = true;
-                                        ElementMediator.deleteElements(dLayer[myIndex].element);
+//                                        ElementMediator.deleteElements(dLayer[myIndex].element);
                                         this.arrLayers.splice(k, 1);
                                         this.arrTracks.splice(k, 1);
                                         break;
@@ -477,7 +515,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                         while (dLayer[hashVariable]) {
                             if (dLayer[hashVariable]._layerID === event.detail._el._layerID) {
                                 dLayer[hashVariable].deleted = true;
-                                ElementMediator.deleteElements(dLayer[myIndex].element);
+//                                ElementMediator.deleteElements(dLayer[myIndex].element);
                                 parentNode = dLayer[hashVariable].parentElement;
                                 break;
                             }
@@ -495,7 +533,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                                 while (this.arrLayers.length) {
                                     if (dLayer[hashVariable]._layerID === this.arrLayers[k]._layerID) {
                                         dLayer[hashVariable].deleted = true;
-                                        ElementMediator.deleteElements(dLayer[myIndex].element);
+//                                        ElementMediator.deleteElements(dLayer[myIndex].element);
                                         this.arrLayers.splice(k, 1);
                                         this.arrTracks.splice(k, 1);
                                         break;
@@ -516,12 +554,13 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                         dLayer = this.hashInstance.getItem(this._hashKey);
                         dTrack = this.hashTrackInstance.getItem(this._hashKey);
                         dLayer[myIndex].deleted = true;
-                        ElementMediator.deleteElements(dLayer[myIndex].element);
 
                         this.arrLayers.splice(myIndex, 1);
                         this.arrTracks.splice(myIndex, 1);
                         this._LayerUndoIndex = this._LayerUndoObject.layerID;
                         this._LayerUndoPosition = myIndex;
+                        ElementMediator.deleteElements(dLayer[myIndex].element);
+
                     } else {
                         dLayer = this.hashInstance.getItem(this._hashKey);
                         dTrack = this.hashTrackInstance.getItem(this._hashKey);
@@ -744,6 +783,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             var i = 0,
                 arrLayersLength = this.arrLayers.length;
 
+            if(this.selectedKeyframes){
+                this.deselectTweens();
+            }
+                        
             for (i = 0; i < arrLayersLength; i++) {
                 if (i === layerIndex) {
                     this.arrLayers[i].isSelected = true;
@@ -757,12 +800,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this.trackRepetition.selectedIndexes = [layerIndex];
                 this.currentLayerSelected = this.arrLayers[layerIndex];
                 this.currentTrackSelected = this.arrTracks[layerIndex];
-                // Selection is being handled by the selection controller
-                /*
                 if(this._captureSelection){
-                    this.application.ninja.selectionController.selectElements(this.currentLayerSelected.element)
+                this.application.ninja.selectionController.selectElements(this.currentLayerSelected.element)
                 }
-                */
                 this._captureSelection = true;
             } else {
                 this.layerRepetition.selectedIndexes = null;
