@@ -28,8 +28,12 @@ exports.StyleSheetsView = Montage.create(Component, {
     },
     handleStyleSheetsReady : {
         value: function(e) {
-            //this.styleSheets = null;
-            this.styleSheets = this.stylesController.userStyleSheets;
+            this.noDocumentCondition = false;
+
+            this.stylesController.userStyleSheets.forEach(function(sheet) {
+                this.styleSheets.push(sheet);
+            }, this);
+
         }
     },
     prepareForDraw : {

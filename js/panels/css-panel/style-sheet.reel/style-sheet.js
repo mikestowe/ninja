@@ -34,19 +34,21 @@ exports.StyleSheet = Montage.create(Component, {
             this._name = text;
         }
     },
-    _styleSheet : {
+    _source : {
         value: null
     },
-    styleSheet : {
+    source : {
         get: function() {
-            return this._styleSheet;
+            return this._source;
         },
         set: function(sheet) {
+            console.log('sheet being set');
             if(sheet.href) {
                 this.name = sheet.href.substring(sheet.href.lastIndexOf('/'));
             } else {
                 this.name = 'Style Tag';
             }
+            this._source = sheet;
         }
     }
 });

@@ -16,22 +16,31 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                     "element" : {"#" : "style-sheet-view-container"}
                 }
             },
+            "arrayController" : {
+                "module" : "montage/ui/controller/array-controller",
+                "name": "ArrayController",
+                "bindings": {
+                    "content": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "styleSheets",
+                        "oneway": true
+                    }
+                }
+            },
             "styleSheetList": {
                 "module" : "montage/ui/list.reel",
                 "name": "List",
                 "properties": {
-                    "element": {"#": "sheet-list" }
-                },
-                "bindings": {
-                    "content": {
-                        "boundObject": {"@": "owner" },
-                        "boundObjectPropertyPath": "styleSheets"
-                    }
+                    "element": {"#": "sheet-list" },
+                    "contentController": {"@": "arrayController"}
                 }
             },
             "sheet": {
                 "module": "js/panels/css-panel/style-sheet.reel",
                 "name": "StyleSheet",
+                "properties": {
+                    "element": {"#": "sheet-item"}
+                },
                 "bindings": {
                     "source": {
                         "boundObject": {"@": "styleSheetList"},
@@ -61,7 +70,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 <div id="style-sheet-view-container" class="style-sheet-view-container">
     <h3 id="no-document-message">No document loaded. Please Open or Create a new document.</h3>
     <ul id="sheet-list">
-        <li id="sheet-item"></li>
+        <li><div id="sheet-item"></div></li>
     </ul>
 </div>
 </body>

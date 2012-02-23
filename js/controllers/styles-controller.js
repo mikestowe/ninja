@@ -94,10 +94,17 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             // Returns null if sheet not found (as in non-ninja projects)
             // Setter will handle null case
             this.defaultStylesheet = this.getSheetFromElement(this.CONST.DEFAULT_SHEET_ID);
-                        
-            //debugger;
+
+            this.userStyleSheets = nj.toArray(document._document.styleSheets).filter(function(sheet) {
+                return sheet !== this._stageStylesheet;
+            }, this);
+
+            NJevent('styleSheetsReady', this);
         },
         enumerable : false
+    },
+    userStyleSheets : {
+        value : null
     },
     _stageStylesheet : {
         value : null
