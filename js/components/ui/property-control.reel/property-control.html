@@ -11,14 +11,14 @@
     <script type="text/montage-serialization">
     {
         "substitution1": {
-            "module": "montage/ui/substitution",
+            "module": "montage/ui/substitution.reel",
             "name": "Substitution",
             "properties": {
                 "element": {"#": "propController"}
             }
         },
         "owner": {
-            "module": "js/components/ui/property-control",
+            "module": "js/components/ui/property-control.reel",
             "name": "PropertyControl",
             "properties": {
                 "element": {"#": "propControl"},
@@ -30,7 +30,7 @@
     </script>
 </head>
 <body>
-    <div id="propControl">
+    <div id="propControl" class="propControl">
         <div id="propLabel" class="prop-label"></div>
         <div id="propController" class="prop-controller">
             <div id="subDummy"></div>

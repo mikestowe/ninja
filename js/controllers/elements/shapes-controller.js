@@ -230,6 +230,10 @@ exports.ShapesController = Montage.create(CanvasController, {
     setColor: {
         value: function(el, color, isFill) {
             var webGl = color.webGlColor || color.color.webGlColor;
+            if(!webGl)
+            {
+                webGl = this.application.ninja.colorController.colorModel.colorToWebGl(color.color);
+            }
             if(isFill)
             {
                 el.elementModel.shapeModel.GLGeomObj.setFillColor(webGl);
@@ -241,6 +245,14 @@ exports.ShapesController = Montage.create(CanvasController, {
                 el.elementModel.shapeModel.GLGeomObj.setStrokeColor(webGl);
                 this.setShapeProperty(el, "stroke", webGl);
                 this.setShapeProperty(el, "border", color);
+                if(color.strokeInfo)
+                {
+                    var strokeWidth = this.GetValueInPixels(color.strokeInfo.strokeSize,
+                                                            color.strokeInfo.strokeUnits);
+                    el.elementModel.shapeModel.GLGeomObj.setStrokeWidth(strokeWidth);
+                    this.setShapeProperty(el, "strokeSize", color.strokeInfo.strokeSize + " "
+                                                                + color.strokeInfo.strokeUnits);
+                }
             }
             el.elementModel.shapeModel.GLWorld.render();
         }
