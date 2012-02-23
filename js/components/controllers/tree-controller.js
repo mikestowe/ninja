@@ -28,7 +28,7 @@ var TreeController = exports.TreeController = Montage.create(ObjectController, /
     },
 
     branchKey : {
-        value: 'children'
+        value: null
     },
 
     _root : {
@@ -98,7 +98,8 @@ var TreeController = exports.TreeController = Montage.create(ObjectController, /
    },
 
     branchControllers: {
-        value: []
+        value: [],
+        distinct: true
     },
 
     addBranchController : {

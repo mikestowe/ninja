@@ -1,0 +1,52 @@
+.presetsPanel {
+    display: -webkit-box;
+    text-shadow: 1px 1px 1px #000;
+    -webkit-box-orient: vertical;
+    -webkit-box-flex: 1;
+}
+.presetsPanel .treeRoot {
+    margin: 0 8px;
+}
+.tab-bar {
+    -webkit-box-flex: 0;
+    background-color: #282828;
+    color: #FFF;
+    display: -webkit-box;
+    font-size: 12px;
+    -webkit-box-orient: horizontal;
+}
+
+.tab-bar div {
+    -webkit-box-flex: 0;
+    border-top-right-radius: 2px;
+    border-top-left-radius: 2px;
+    background-color: #474747;
+    background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.2) 0,rgba(0,0,0,0) 3px);
+    border-top: 1px solid rgb(100, 100, 100);
+    border-left: 1px solid rgba(100, 100, 100, 0.3);
+    border-right: 1px solid rgba(100, 100, 100, 0.3);
+    padding: 4px 9px;
+    cursor: pointer;
+    opacity: 0.6;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    position: relative;
+    z-index: 999;
+}
+.tab-bar div.active-tab {
+    background-image: none;
+    box-shadow: 0 -5px 2px 3px rgba(0,0,0,0.2);
+    position: relative;
+    opacity: 1;
+    text-overflow: clip;
+    z-index: 1001;
+}
+
+.librarySlot {
+    -webkit-box-flex: 1;
+    overflow: auto;
+    background-color: #474747;
+    position: relative;
+    z-index: 1000;
+}

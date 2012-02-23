@@ -4,11 +4,10 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var Montage = require("montage/core/core").Montage,
-    Component = require("montage/ui/component").Component;
-
-var drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils;
-var vecUtils = require("js/helper-classes/3D/vec-utils").VecUtils;
+var Montage = 	require("montage/core/core").Montage,
+    Component = require("montage/ui/component").Component,
+    drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils,
+    vecUtils = 	require("js/helper-classes/3D/vec-utils").VecUtils;
 
 exports.Stage = Montage.create(Component, {
 
@@ -20,8 +19,6 @@ exports.Stage = Montage.create(Component, {
     zoomFactor: {value : 1 },
 
     _canvasSelectionPrefs:  { value: { "thickness" : 1.0, "color" : "#46a1ff" } },
-    _editSymbolPrefs:       { value: { "thickness" : 2.0, "color" : "#C61F00" } },
-
     _canvasDrawingPrefs:    { value: { "thickness" : 1.0, "color" : "#000" } },
     drawingContextPreferences: { get: function() { return this._canvasDrawingPrefs; } },
 
@@ -116,9 +113,6 @@ exports.Stage = Montage.create(Component, {
     _userContentLeft:       { value: 0 },
     _userContentTop:        { value: 0 },
     _userContentBorder:     { value: 0 },
-    savedLeftScroll:        { value: null },
-    savedTopScroll:         { value: null },
-
 
     documentRoot: {
         get: function () { return this._documentRoot; },
@@ -205,6 +199,7 @@ exports.Stage = Montage.create(Component, {
             this._drawingCanvas.addEventListener("mousedown", this, false);
             this._drawingCanvas.addEventListener("mouseup", this, false);
             this._drawingCanvas.addEventListener("dblclick", this, false);
+            this._drawingCanvas.addEventListener("mousewheel", this, false);
 
             // Hide the canvas
             this.hideCanvas(true);
@@ -247,6 +242,8 @@ exports.Stage = Montage.create(Component, {
 
             this._scrollLeft = this._iframeContainer.scrollLeft;
             this._scrollTop = this._iframeContainer.scrollTop;
+            this.application.ninja.currentDocument.savedLeftScroll = this._iframeContainer.scrollLeft;
+            this.application.ninja.currentDocument.savedTopScroll = this._iframeContainer.scrollTop;
 
             this.userContentBorder = parseInt(this._documentRoot.elementModel.controller.getProperty(this._documentRoot, "border"));
 
@@ -261,7 +258,6 @@ exports.Stage = Montage.create(Component, {
             this.application.ninja.toolsData.selectedToolInstance._configure(true);
 
             this.addEventListener("change@appModel.show3dGrid", this, false);
-
         }
     },
 
@@ -359,6 +355,16 @@ exports.Stage = Montage.create(Component, {
         value: function(event) {
             event.preventDefault();
             this.application.ninja.toolsData.selectedToolInstance.HandleDoubleClick(event);
+        }
+    },
+
+    handleMousewheel: {
+        value: function(event) {
+            if(event._event.wheelDelta > 0) {
+                this._iframeContainer.scrollTop -= 20;
+            } else {
+                this._iframeContainer.scrollTop += 20;
+            }
         }
     },
 
@@ -524,8 +530,7 @@ exports.Stage = Montage.create(Component, {
             drawUtils.updatePlanes();
 
             //TODO Set this variable in the needs draw so that it does not have to be calculated again for each draw for selection change
-            if(this.application.ninja.selectedElements.length)
-            {
+            if(this.application.ninja.selectedElements.length) {
                 // drawUtils.drawSelectionBounds handles the single selection case as well,
                 // so we don't have to special-case the single selection case.
                 // TODO drawUtils.drawSelectionBounds expects an array of elements.
@@ -533,8 +538,7 @@ exports.Stage = Montage.create(Component, {
                 // TODO to work on _element instead of re-creating a new Array here.
                 var selArray = new Array();
 
-                for(var i = 0; this.application.ninja.selectedElements[i];i++)
-                {
+                for(var i = 0; this.application.ninja.selectedElements[i];i++) {
                     var curElement = this.application.ninja.selectedElements[i]._element;
 
                     // Add element to array that is used to calculate 3d-bounding box of all elements
@@ -567,7 +571,7 @@ exports.Stage = Montage.create(Component, {
      * @params: x, y, w, h
      */
     draw3DSelectionRectangle: {
-        value:function(x0,y0, x1,y1, x2,y2, x3,y3){
+        value:function(x0,y0, x1,y1, x2,y2, x3,y3) {
 //            this.clearCanvas();
             this.clearDrawingCanvas();
             this._drawingContext.strokeStyle = this._canvasDrawingPrefs.color;
@@ -612,7 +616,7 @@ exports.Stage = Montage.create(Component, {
      * Draws selection highlight and reg. point for a given element
      */
     drawElementBoundingBox: {
-        value: function(elt, editMode) {
+        value: function(elt) {
             this.stageDeps.viewUtils.setViewportObj( elt );
             var bounds3D = this.stageDeps.viewUtils.getElementViewBounds3D( elt );
 
@@ -623,18 +627,16 @@ exports.Stage = Montage.create(Component, {
 //            }
 
             var zoomFactor = 1;
-            if (this._viewport.style && this._viewport.style.zoom)
-            {
+            if (this._viewport.style && this._viewport.style.zoom) {
 				zoomFactor = Number(this._viewport.style.zoom);
             }
+
             var tmpMat = this.stageDeps.viewUtils.getLocalToGlobalMatrix( elt );
-            for (var j=0;  j<4;  j++)
-            {
+            for (var j=0;  j<4;  j++) {
                 var localPt = bounds3D[j];
                 var tmpPt = this.stageDeps.viewUtils.localToGlobal2(localPt, tmpMat);
 
-                if(zoomFactor !== 1)
-                {
+                if(zoomFactor !== 1) {
                     tmpPt = vecUtils.vecScale(3, tmpPt, zoomFactor);
 
                     tmpPt[0] += this._scrollLeft*(zoomFactor - 1);
@@ -644,13 +646,9 @@ exports.Stage = Montage.create(Component, {
             }
 
             // draw it
-            if(editMode) {
-                this.context.strokeStyle = this._editSymbolPrefs.color;
-                this.context.lineWidth = this._editSymbolPrefs.thickness;
-            } else {
-                this.context.strokeStyle = this._canvasSelectionPrefs.color;
-                this.context.lineWidth = this._canvasSelectionPrefs.thickness;
-            }
+            this.context.strokeStyle = this._canvasSelectionPrefs.color;
+            this.context.lineWidth = this._canvasSelectionPrefs.thickness;
+
 
             this.context.beginPath();
 
@@ -664,13 +662,6 @@ exports.Stage = Montage.create(Component, {
 
             this.context.closePath();
             this.context.stroke();
-
-            /** Bug #25 - Do Not Draw the Registration point anymore on the top left since it's assumed there.
-            this.context.beginPath();
-            this.context.arc(bounds3D[0][0], bounds3D[0][1] , 5, 0, Math.PI*2, false);
-            this.context.stroke();
-            */
-
         }
     },
 
@@ -682,10 +673,8 @@ exports.Stage = Montage.create(Component, {
      *
      * @params: x, y, w, h
      */
-    draw3DProjectedAndUnprojectedRectangles:
-	{
-        value:function(unProjPts,  projPts)
-		{
+    draw3DProjectedAndUnprojectedRectangles: {
+        value:function(unProjPts,  projPts) {
             this.clearDrawingCanvas();
             this._drawingContext.strokeStyle = this._canvasDrawingPrefs.color;
             this._drawingContext.lineWidth = this._canvasDrawingPrefs.thickness;
@@ -739,7 +728,7 @@ exports.Stage = Montage.create(Component, {
      * @params: x0, y0, x1, y1
      */
     drawLine: {
-        value:function(x0, y0, x1, y1, strokeSize, strokeColor){
+        value:function(x0, y0, x1, y1, strokeSize, strokeColor) {
             this.clearDrawingCanvas();
             this._drawingContext.strokeStyle = strokeColor;
             this._drawingContext.lineWidth = strokeSize;
@@ -777,6 +766,12 @@ exports.Stage = Montage.create(Component, {
     toUserContentCoordinates: {
         value: function(x,y) {
             return [x - this._userContentLeft, y - this._userContentTop];
+        }
+    },
+
+    toViewportCoordinates: {
+        value: function(x,y) {
+            return [x + this._userContentLeft, y + this._userContentTop];
         }
     },
 
@@ -876,5 +871,20 @@ exports.Stage = Montage.create(Component, {
 
             this.stageDeps.snapManager.updateWorkingPlaneFromView();
         }
-    }
+    },
+
+    saveScroll:{
+       value: function(){
+           this.application.ninja.documentController.activeDocument.savedLeftScroll = this._iframeContainer.scrollLeft;
+           this.application.ninja.documentController.activeDocument.savedTopScroll = this._iframeContainer.scrollTop;
+       }
+   },
+   restoreScroll:{
+       value: function(){
+           this._iframeContainer.scrollLeft = this.application.ninja.documentController.activeDocument.savedLeftScroll;
+           this._scrollLeft = this.application.ninja.documentController.activeDocument.savedLeftScroll;
+           this._iframeContainer.scrollTop = this.application.ninja.documentController.activeDocument.savedTopScroll;
+           this._scrollTop = this.application.ninja.documentController.activeDocument.savedTopScroll;
+       }
+   }
 });

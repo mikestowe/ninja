@@ -67,7 +67,7 @@
     width:100%;
     top:0px;
     left:0px;
-    z-index: 9999;
+    z-index: 6995;
 }
 
 #topPanelContainer,
@@ -200,15 +200,15 @@
 }
 
 #mainContainer #rulerTop {
-    // TODO: temporary background please replace when component is implemented  
-    background: url("../images/temp/ruler-top.png");
+    // TODO: temporary background please replace when component is implemented
+    background:$color-stage;
     height:15px;
     margin-bottom: 0px;
 }
 
 #rulerLeft {
-    // TODO: temporary background please replace when component is implemented  
-    background: url("../images/temp/ruler-left.png");
+    // TODO: temporary background please replace when component is implemented
+    background:$color-stage;
     width:16px;
 }
 
@@ -330,4 +330,10 @@
 	position: relative;
 	overflow: hidden;
 	color: white;
+}
+
+.montage-popup-modal-mask
+{
+	opacity: 1;
+	background: -webkit-radial-gradient(center, ellipse cover, rgba(0,0,0,.65) 0%, rgba(0,0,0,0.8) 80%);
 }
