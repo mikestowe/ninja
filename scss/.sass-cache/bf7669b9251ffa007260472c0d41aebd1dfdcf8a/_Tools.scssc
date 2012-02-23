@@ -1,598 +1,0 @@
-3.0.24 (Classy Cassidy)
-b621b9b6f8ebccf9ea7facc45dd7388d550fb0e5
-o:Sass::Tree::RootNode
-:
-@linei:@options{:
-style:compact:load_paths[",/Users/DHG637/Sites/ninja-internal/scss"o/Applications/compass.app/Contents/Resources/ruby/gem/gems/compass-0.10.6/frameworks/blueprint/stylesheets"~/Applications/compass.app/Contents/Resources/ruby/gem/gems/compass-0.10.6/frameworks/_blueprint_deprecated_imports/stylesheets"m/Applications/compass.app/Contents/Resources/ruby/gem/gems/compass-0.10.6/frameworks/compass/stylesheets"|/Applications/compass.app/Contents/Resources/ruby/gem/gems/compass-0.10.6/frameworks/_compass_deprecated_imports/stylesheets"l/Applications/compass.app/Contents/Resources/ruby/gem/gems/compass-960-plugin-0.10.0/lib/../stylesheets"j/Applications/compass.app/Contents/Resources/ruby/gem/gems/html5-boilerplate-0.2.6/lib/../stylesheets:
-cacheT:cache_location"8/Users/DHG637/Sites/ninja-internal/scss/.sass-cache:syntax:	scss:
-quietT:filename"E/Users/DHG637/Sites/ninja-internal/scss/imports/scss/_Tools.scss:css_filename"=/Users/DHG637/Sites/ninja-internal/scss/../css/ninja.css:line_comments0:property_syntax0:@has_childrenT:@template"%// <copyright>
-// This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
-// No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
-// (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
-// </copyright>
-
-// 
-// Tools.scss
-// For individual tool styles in the toolbar, see toolbar.scss.
-// Note that colors and font definitions go in 
-// _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss
-// 
-  
-
-// Made changes to toolButton  }
-
-.subToolHolderPanel .toolbutton {
-    float:left;
-    -webkit-transform: scale(0.6);
-}
-
-.subToolHolderPanel .toolbutton:hover, .subToolHolderPanel .toolbutton.active {
-    -webkit-transform: scale(0.75);
-}
-
-.subOption{
-    float:left;
-    // margin:10px; 
-    margin-top: 5px;
-    margin-left: 10px;
-    margin-right: 10px;
-}
-
-.toolSeparator {
-    height:1px;
-    width:30px;
-    // margin-left: 3px; 
-    // margin-right: 3px; 
-}
-
-.toolSeparatorTop {
-    margin-top: 3px;
-    margin-bottom: 0px;
-}
-
-.toolSeparatorMiddle {
-    margin-top: 0px;
-    margin-bottom: 0px;
-}
-
-.toolSeparatorBottom {
-    margin-top: 0px;
-    margin-bottom: 3px;
-}
-
-.toolImageBase {
-    padding: 0px;
-    width: 26px;
-    height: 23px;
-    opacity: 0.7;
-    background-repeat:no-repeat;
-}
-
-.toolImageBase:hover {
-   opacity: 1.0;
-   }
-
-
-.drawingMode {
-    outline:blue solid thin;
-}
-
-
-//  Added new styling Sub Tool Shape Options 
-
-.textBox {
-
-   padding-top:3px;
-   min-width:10em;
-   // height:14px; 
-   margin-left:5px;
-   position:relative;
-   margin-top:0px;
-}
-
-.selectBox {
-   width:10em;
-   opacity: 0.9;
-   margin-left: 10px;
-   float:left;
-   display:block;
-   background-color: $color-tool-select-bg;
-   // -webkit-border-radius: 0; 
-   border: 1px solid $color-tool-select-border;
-   color:$color-tool-text;
-   outline:none;
-}
-
-.selectBox:hover, .selectBox:active {
-    background-color: $color-tool-select-hover-bg;
-    opacity: 1;
-    color:$color-tool-select-border;
-}
-
-.label{
-   padding-top:3px;
-   margin-left:10px;
-   font-size:12px;
-   // display:inline; 
-   // line-height:10px; 
-   float:left;
-   margin-right:5px;
-}
-
-.subToolPropertiespanel{
-   margin-left:43px;
-}
-
-
-.LockToolUp {
-    background-image: url("../images/optionsbar/link.png");
-    background-repeat:no-repeat;
-    width:17px;
-    height:18px;
-
-    margin-right:10px;
-}
-
-.UnLockToolUp {
-    background-image: url("../images/optionsbar/unlinked.png");
-
-    background-repeat:no-repeat;
-    width:17px;
-    height:18px;
-
-    margin-right:10px;
-}
-
-
-.cornerRadius {
-    background-image: url("../images/optionsbar/rectangle/cornerRadius.png");
-    background-repeat:no-repeat;
-    width:16px;
-    height:16px;
-
-    opacity:0.7;
-}
-
-.cornerRadius:hover, .cornerRadius:active {
-    opacity:1;
-}
-
-.cornerRadius.topLeft
-{
-    -webkit-transform: rotate(0deg);
-}
-
-.cornerRadius.topRight
-{
-    -webkit-transform: rotate(90deg);
-    margin-right : -2px;
-}
-
-.cornerRadius.bottomLeft
-{
-    margin-top: 3px;
-    -webkit-transform: rotate(270deg);
-}
-
-.cornerRadius.bottomRight
-{
-    margin-top: 3px;
-    -webkit-transform: rotate(180deg);
-    margin-right : -2px;
-}
-
-#toolOptionsContainer
-{
-    display:inline;
-    float:left;
-    // margin-left: 20px; 
-}
-
-.leftLabel{
-	margin-top: 3px;
-	float:left;
-}
-
-//  Skin Radio Buttons  
-input[type="radio"] {
-    -webkit-appearance: none;
-    background: $color-radio-bg;
-    width: 28px;
-    height: 24px;
-    vertical-align: middle;
-    border-width: 1px;
-    border-style: solid;
-    border-color:$color-radio-border;
-    font-size:10px;
-    color:$color-radio;
-    margin:4px;
-       
-}
-
-input[type="radio"]:hover {
-    border-width: 1px;
-    border-style: solid;
-}
-
-input[type="radio"]:checked {
-    background:$color-radio-border;
-    border-width: 1px;
-    border-style: solid;
-}
-
-// disabled settings for checkbox and radiobutton 
-input[type="radio"]:disabled {
-    opacity: .3;
-    background: $color-radio-border;
-    border-width: 1px;
-    border-style: solid;
-}
-
-.toolPropertiesContainer{
-    float:left;
-    margin-left:10%;
-    width:100%;
-}
-
-
-.optionButtons{
-    padding:2px;
-    margin:1px 4px;
-    float:left;
-}
-
-.checkBoxLabel{
-    // margin-top:0.5em; 
-    // margin-left:-5em; 
-    padding-top:3px;
-    font-size:12px;
-    float:left;
-    margin-right:5px;
-}
-
-.customTextBox{
-    float:right;
-    margin-left:2em;
-    margin-right:4em;
-    margin-top:3px;
-    height:15px;
-    
-}
-.toolButtonColor {
-    background: $color-tool-bg;
-    border-color: $color-tool-bg;
-}
-
-.toolButtonColor:active {
-    background: $color-tool-bg-active;
-}
-
-.toolButtonSelectedColor {
-    border-top-color: $color-tool-border-selected;
-    border-left-color: $color-tool-border-selected;
-  //   background: $color-tool-bg-active; 
-
-}
-
-.toolSeparatorTopColor {
-    background: $color-tool-separator-top;
-}
-
-.toolSeparatorMiddleColor {
-    background: $color-tool-separator-middle;
-}
-
-.toolSeparatorBottomColor {
-    background: $color-tool-separator-bottom;
-}
-
-
-.selectedOption{
-   background: $color-tool-bg-active;
-   padding:2px;
-   border:3px;
-
-
-}
-.noBorder{
-    border-style:none;
-}
-
-.deselectedOption{
-   background: $color-tool-bg;
-   border-style:none;
-   border:3px;
-}
-
-.checkBoxAlign{
-  @include marginTop(-2px);
-}
-
-.optionLabel{
-  @include marginTop(5px);
-}
-
-//  Begin: styles for tag toolbar  
-#tagToolContainer input.tag-type,
-#rotateObjectToolContainer input.tag-type,
-#translateObjectToolContainer input.tag-type {
-	background: none;
-	width: 20px;
-	height: 20px;
-	display: block;
-	float: left;
-	margin: 0px;
-	padding: 0px;
-	margin-right: 5px;
-	margin-top: 4px;
-	background-repeat: no-repeat;
-	opacity: 0.8;
-	text-indent: -9999px;
-	cursor: pointer;
-	-webkit-border-radius: 3px;
-	-webkit-user-select: none;
-	border: 1px solid transparent;
-}
-#tagToolContainer input.tag-type {
-	background-image: url("../images/tools/sprite-toolbar-tag.png");
-}
-#rotateObjectToolContainer input.tag-type {
-	background-image: url("../images/tools/sprite-toolbar-3d.png");
-}
-#translateObjectToolContainer input.tag-type {
-	background-image: url("../images/tools/sprite-toolbar-3d.png");
-}
-
-#tagToolContainer input.tag-type:active,
-#rotateObjectToolContainer input.tag-type:active,
-#translateObjectToolContainer input.tag-type:active {
-	border: 1px solid transparent;
-}
-#tagToolContainer input.tag-type:hover,
-#rotateObjectToolContainer input.tag-type:hover,
-#translateObjectToolContainer input.tag-type:hover {
-	opacity: 1.0;
-	-webkit-box-shadow: 0px 0px 4px #fff;
-}
-#tagToolContainer input.tag-type:checked,
-#rotateObjectToolContainer input.tag-type:checked,
-#translateObjectToolContainer input.tag-type:checked {
-	background-color: transparent;
-	opacity: 1.0;
-	cursor: default;
-	-webkit-box-shadow: none;
-}
-#tagToolContainer input#divTool {
-	background-position: -40px 0px;
-}
-#tagToolContainer input#divTool:checked {
-	background-position: -40px -20px;
-}
-#tagToolContainer input#imageTool {
-	background-position: -60px 0px;
-}
-#tagToolContainer input#imageTool:checked {
-	background-position: -60px -20px;
-}
-#tagToolContainer input#videoTool {
-	background-position: -100px 0px;
-}
-#tagToolContainer input#videoTool:checked {
-	background-position: -100px -20px;
-}
-#tagToolContainer input#canvasTool,
-#rotateObjectToolContainer input#rotateLocally,
-#translateObjectToolContainer input#translateLocally   {
-	background-position: -20px 0px;
-}
-#tagToolContainer input#canvasTool:checked,
-#rotateObjectToolContainer input#rotateLocally:checked,
-#translateObjectToolContainer input#translateLocally:checked {
-	background-position: -20px -20px;
-}
-#tagToolContainer input#flashTool {
-	background-position: -80px 0px;
-}
-#tagToolContainer input#flashTool:checked {
-	background-position: -80px -20px;
-}
-#tagToolContainer input#customTool,
-#rotateObjectToolContainer input#rotateGlobally,
-#translateObjectToolContainer input#translateGlobally {
-	background-position: 0px 0px;
-}
-#tagToolContainer input#customTool:checked,
-#rotateObjectToolContainer input#rotateGlobally:checked,
-#translateObjectToolContainer input#translateGlobally:checked {
-	background-position: 0px -20px;
-}
-
-
-#tagToolContainer .nj-divider {
-	height: 100%;
-	float: left;
-	position: relative;
-	top: 5px;
-}
-
-#tagToolContainer select.nj-skinned {
-	visibility: visible;
-	position: relative;
-}
-
-#tagToolContainer select[disabled="true"].nj-skinned,
-#tagToolContainer select[disabled].nj-skinned  {
-	visibility: hidden;
-}
-
-#zoomToolOptionHolder input#zoomInTool:checked{
-    border-style:solid;
-    border-width:1px ;
-    border-color: $color-input;
-    background-image:url("../images/optionsbar/zoom/zoom_plus.png");
-    background-repeat: no-repeat;
-    background-position:4px 3px;
-  
-}
-
-#zoomToolOptionHolder input#zoomOutTool:checked{
-    border-style:solid;
-    border-width:1px ;
-    border-color: $color-input;
-    background-image:url("../images/optionsbar/zoom/zoom_minus.png");
-    background-repeat: no-repeat;
-    background-position:4px 3px;
-
-
-}
-
-#zoomToolOptionHolder input#zoomInTool{
-    border-style:solid;
-    border-width:1px ;
-    background-image:url("../images/optionsbar/zoom/zoom_plus.png");
-    background-repeat: no-repeat;
-    background-position:4px 3px;
-
-}
-
-#zoomToolOptionHolder input#zoomOutTool{
-    border-style:solid;
-    border-width:1px ;
-    background-image:url("../images/optionsbar/zoom/zoom_minus.png");
-    background-repeat: no-repeat;
-    background-position:4px 3px;
-
-}
-#zoomToolOptionHolder input.zoom-option {
-    background:none;
-
-}
-
-//  Endi: styles for tag toolbar  :@children[To:Sass::Tree::CommentNode;@:@silenti :@lines[ :@value"./* <copyright>
- * This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
- * No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
- * (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
- * </copyright> */;i;[ o;;@;i ;[ ;"÷/* 
- * Tools.scss
- * For individual tool styles in the toolbar, see toolbar.scss.
- * Note that colors and font definitions go in 
- * _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss
- *  */;i;[ o;;@;i ;[ ;"(/* Made changes to toolButton  } */;i;[ o:Sass::Tree::RuleNode:
-@tabsi ;@:
-@rule["$.subToolHolderPanel .toolbutton;T;i;[o:Sass::Tree::PropNode;i :
-@name["
-float;@:@prop_syntax:new;o:Sass::Script::String:@context:default:
-@type:identifier;"	left;i;[ o;;i ;["-webkit-transform;@; ;!;o:Sass::Script::Funcall
-:
-@args[o:Sass::Script::Number;#;$;{ ;f0.6:@numerator_units[ ;i:@original"0.6:@denominator_units[ ;#;$;"
-scale;i;@0;i;[ o;;i ;@;["R.subToolHolderPanel .toolbutton:hover, .subToolHolderPanel .toolbutton.active;T;i;[o;;i ;["-webkit-transform;@; ;!;o;'
-;([o;);#;$;{ ;f	0.75;*[ ;i;+"	0.75;,[ ;#;$;"
-scale;i;@A;i;[ o;;i ;@;[".subOption;T;i;[
-o;;i ;["
-float;@; ;!;o;";#;$;%;&;"	left;i ;[ o;;@;i ;[ ;"/* margin:10px;  */;i!;[ o;;i ;["margin-top;@; ;!;o;";#;$;%;&;"5px;i";[ o;;i ;["margin-left;@; ;!;o;";#;$;%;&;"	10px;i#;[ o;;i ;["margin-right;@; ;!;o;";#;$;%;&;"	10px;i$;[ o;;i ;@;[".toolSeparator;T;i';[o;;i ;["height;@; ;!;o;";#;$;%;&;"1px;i(;[ o;;i ;["
-width;@; ;!;o;";#;$;%;&;"	30px;i);[ o;;@;i ;[ ;"4/* margin-left: 3px; 
- * margin-right: 3px;  */;i*;[ o;;i ;@;[".toolSeparatorTop;T;i.;[o;;i ;["margin-top;@; ;!;o;";#;$;%;&;"3px;i/;[ o;;i ;["margin-bottom;@; ;!;o;";#;$;%;&;"0px;i0;[ o;;i ;@;[".toolSeparatorMiddle;T;i3;[o;;i ;["margin-top;@; ;!;o;";#;$;%;&;"0px;i4;[ o;;i ;["margin-bottom;@; ;!;o;";#;$;%;&;"0px;i5;[ o;;i ;@;[".toolSeparatorBottom;T;i8;[o;;i ;["margin-top;@; ;!;o;";#;$;%;&;"0px;i9;[ o;;i ;["margin-bottom;@; ;!;o;";#;$;%;&;"3px;i:;[ o;;i ;@;[".toolImageBase;T;i=;[
-o;;i ;["padding;@; ;!;o;";#;$;%;&;"0px;i>;[ o;;i ;["
-width;@; ;!;o;";#;$;%;&;"	26px;i?;[ o;;i ;["height;@; ;!;o;";#;$;%;&;"	23px;i@;[ o;;i ;["opacity;@; ;!;o;";#;$;%;&;"0.7;iA;[ o;;i ;["background-repeat;@; ;!;o;";#;$;%;&;"no-repeat;iB;[ o;;i ;@;[".toolImageBase:hover;T;iE;[o;;i ;["opacity;@; ;!;o;";#;$;%;&;"1.0;iF;[ o;;i ;@;[".drawingMode;T;iJ;[o;;i ;["outline;@; ;!;o;";#;$;%;&;"blue solid thin;iK;[ o;;@;i ;[ ;"5/*  Added new styling Sub Tool Shape Options  */;iO;[ o;;i ;@;[".textBox;T;iQ;[o;;i ;["padding-top;@; ;!;o;";#;$;%;&;"3px;iS;[ o;;i ;["min-width;@; ;!;o;";#;$;%;&;"	10em;iT;[ o;;@;i ;[ ;"/* height:14px;  */;iU;[ o;;i ;["margin-left;@; ;!;o;";#;$;%;&;"5px;iV;[ o;;i ;["position;@; ;!;o;";#;$;%;&;"relative;iW;[ o;;i ;["margin-top;@; ;!;o;";#;$;%;&;"0px;iX;[ o;;i ;@;[".selectBox;T;i[;[o;;i ;["
-width;@; ;!;o;";#;$;%;&;"	10em;i\;[ o;;i ;["opacity;@; ;!;o;";#;$;%;&;"0.9;i];[ o;;i ;["margin-left;@; ;!;o;";#;$;%;&;"	10px;i^;[ o;;i ;["
-float;@; ;!;o;";#;$;%;&;"	left;i_;[ o;;i ;["display;@; ;!;o;";#;$;%;&;"
-block;i`;[ o;;i ;["background-color;@; ;!;o:Sass::Script::Variable	;#;$;"color-tool-select-bg;ia;{ ;ia;[ o;;@;i ;[ ;"%/* -webkit-border-radius: 0;  */;ib;[ o;;i ;["border;@; ;!;o:Sass::Script::Operation;#;$;ic:@operator:concat;{ :@operand1o;.;#;$;ic;/;0;@8;1o;);#;$;@8;i;*["px;ic;+"1px;,[ :@operand2o;"
-;#;$;ic;@8;%;&;"
-solid;2o;-	;#;$;"color-tool-select-border;ic;@8;ic;[ o;;i ;["
-color;@; ;!;o;-	;#;$;"color-tool-text;id;{ ;id;[ o;;i ;["outline;@; ;!;o;";#;$;%;&;"	none;ie;[ o;;i ;@;["(.selectBox:hover, .selectBox:active;T;ih;[o;;i ;["background-color;@; ;!;o;-	;#;$;"color-tool-select-hover-bg;ii;{ ;ii;[ o;;i ;["opacity;@; ;!;o;";#;$;%;&;"1;ij;[ o;;i ;["
-color;@; ;!;o;-	;#;$;"color-tool-select-border;ik;{ ;ik;[ o;;i ;@;[".label;T;in;[o;;i ;["padding-top;@; ;!;o;";#;$;%;&;"3px;io;[ o;;i ;["margin-left;@; ;!;o;";#;$;%;&;"	10px;ip;[ o;;i ;["font-size;@; ;!;o;";#;$;%;&;"	12px;iq;[ o;;@;i ;[ ;"1/* display:inline; 
- * line-height:10px;  */;ir;[ o;;i ;["
-float;@; ;!;o;";#;$;%;&;"	left;it;[ o;;i ;["margin-right;@; ;!;o;";#;$;%;&;"5px;iu;[ o;;i ;@;[".subToolPropertiespanel;T;ix;[o;;i ;["margin-left;@; ;!;o;";#;$;%;&;"	43px;iy;[ o;;i ;@;[".LockToolUp;T;i};[
-o;;i ;["background-image;@; ;!;o;'
-;([o;"
-;#;$;i~;{ ;%:string;""../images/optionsbar/link.png;#;$;"url;i~;@£;i~;[ o;;i ;["background-repeat;@; ;!;o;";#;$;%;&;"no-repeat;i;[ o;;i ;["
-width;@; ;!;o;";#;$;%;&;"	17px;i{;[ o;;i ;["height;@; ;!;o;";#;$;%;&;"	18px;i|;[ o;;i ;["margin-right;@; ;!;o;";#;$;%;&;"	10px;i~;[ o;;i ;@;[".UnLockToolUp;T;iÅ;[
-o;;i ;["background-image;@; ;!;o;'
-;([o;"
-;#;$;iÇ;{ ;%;3;"&../images/optionsbar/unlinked.png;#;$;"url;iÇ;@…;iÇ;[ o;;i ;["background-repeat;@; ;!;o;";#;$;%;&;"no-repeat;iÑ;[ o;;i ;["
-width;@; ;!;o;";#;$;%;&;"	17px;iÖ;[ o;;i ;["height;@; ;!;o;";#;$;%;&;"	18px;iÜ;[ o;;i ;["margin-right;@; ;!;o;";#;$;%;&;"	10px;ià;[ o;;i ;@;[".cornerRadius;T;iå;[
-o;;i ;["background-image;@; ;!;o;'
-;([o;"
-;#;$;iç;{ ;%;3;"4../images/optionsbar/rectangle/cornerRadius.png;#;$;"url;iç;@Ô;iç;[ o;;i ;["background-repeat;@; ;!;o;";#;$;%;&;"no-repeat;ié;[ o;;i ;["
-width;@; ;!;o;";#;$;%;&;"	16px;iè;[ o;;i ;["height;@; ;!;o;";#;$;%;&;"	16px;iê;[ o;;i ;["opacity;@; ;!;o;";#;$;%;&;"0.7;ií;[ o;;i ;@;["..cornerRadius:hover, .cornerRadius:active;T;iï;[o;;i ;["opacity;@; ;!;o;";#;$;%;&;"1;iñ;[ o;;i ;@;[".cornerRadius.topLeft;T;iö;[o;;i ;["-webkit-transform;@; ;!;o;'
-;([o;);#;$;{ ;i ;*["deg;iõ;+"	0deg;,[ ;#;$;"rotate;iõ;@;iõ;[ o;;i ;@;[".cornerRadius.topRight;T;iü;[o;;i ;["-webkit-transform;@; ;!;o;'
-;([o;);#;$;{ ;i_;*["deg;i†;+"
-90deg;,[ ;#;$;"rotate;i†;@0;i†;[ o;;i ;["margin-right;@; ;!;o;);#;$;{ ;i˘;*["px;i°;+"	-2px;,[ ;i°;[ o;;i ;@;[".cornerRadius.bottomLeft;T;i•;[o;;i ;["margin-top;@; ;!;o;";#;$;%;&;"3px;i¶;[ o;;i ;["-webkit-transform;@; ;!;o;'
-;([o;);#;$;{ ;i;*["deg;iß;+"270deg;,[ ;#;$;"rotate;iß;@Q;iß;[ o;;i ;@;[".cornerRadius.bottomRight;T;i´;[o;;i ;["margin-top;@; ;!;o;";#;$;%;&;"3px;i¨;[ o;;i ;["-webkit-transform;@; ;!;o;'
-;([o;);#;$;{ ;i¥;*["deg;i≠;+"180deg;,[ ;#;$;"rotate;i≠;@h;i≠;[ o;;i ;["margin-right;@; ;!;o;);#;$;{ ;i˘;*["px;iÆ;+"	-2px;,[ ;iÆ;[ o;;i ;@;["#toolOptionsContainer;T;i≤;[o;;i ;["display;@; ;!;o;";#;$;%;&;"inline;i≥;[ o;;i ;["
-float;@; ;!;o;";#;$;%;&;"	left;i¥;[ o;;@;i ;[ ;"/* margin-left: 20px;  */;iµ;[ o;;i ;@;[".leftLabel;T;i∏;[o;;i ;["margin-top;@; ;!;o;";#;$;%;&;"3px;iπ;[ o;;i ;["
-float;@; ;!;o;";#;$;%;&;"	left;i∫;[ o;;@;i ;[ ;" /*  Skin Radio Buttons   */;iΩ;[ o;;i ;@;["input[type="radio"];T;iæ;[o;;i ;["-webkit-appearance;@; ;!;o;";#;$;%;&;"	none;iø;[ o;;i ;["background;@; ;!;o;-	;#;$;"color-radio-bg;i¿;{ ;i¿;[ o;;i ;["
-width;@; ;!;o;";#;$;%;&;"	28px;i¡;[ o;;i ;["height;@; ;!;o;";#;$;%;&;"	24px;i¬;[ o;;i ;["vertical-align;@; ;!;o;";#;$;%;&;"middle;i√;[ o;;i ;["border-width;@; ;!;o;";#;$;%;&;"1px;iƒ;[ o;;i ;["border-style;@; ;!;o;";#;$;%;&;"
-solid;i≈;[ o;;i ;["border-color;@; ;!;o;-	;#;$;"color-radio-border;i∆;{ ;i∆;[ o;;i ;["font-size;@; ;!;o;";#;$;%;&;"	10px;i«;[ o;;i ;["
-color;@; ;!;o;-	;#;$;"color-radio;i»;{ ;i»;[ o;;i ;["margin;@; ;!;o;";#;$;%;&;"4px;i…;[ o;;i ;@;["input[type="radio"]:hover;T;iÕ;[o;;i ;["border-width;@; ;!;o;";#;$;%;&;"1px;iŒ;[ o;;i ;["border-style;@; ;!;o;";#;$;%;&;"
-solid;iœ;[ o;;i ;@;[" input[type="radio"]:checked;T;i“;[o;;i ;["background;@; ;!;o;-	;#;$;"color-radio-border;i”;{ ;i”;[ o;;i ;["border-width;@; ;!;o;";#;$;%;&;"1px;i‘;[ o;;i ;["border-style;@; ;!;o;";#;$;%;&;"
-solid;i’;[ o;;@;i ;[ ;":/* disabled settings for checkbox and radiobutton  */;iÿ;[ o;;i ;@;["!input[type="radio"]:disabled;T;iŸ;[	o;;i ;["opacity;@; ;!;o;";#;$;%;&;".3;i⁄;[ o;;i ;["background;@; ;!;o;-	;#;$;"color-radio-border;i€;{ ;i€;[ o;;i ;["border-width;@; ;!;o;";#;$;%;&;"1px;i‹;[ o;;i ;["border-style;@; ;!;o;";#;$;%;&;"
-solid;i›;[ o;;i ;@;[".toolPropertiesContainer;T;i‡;[o;;i ;["
-float;@; ;!;o;";#;$;%;&;"	left;i·;[ o;;i ;["margin-left;@; ;!;o;";#;$;%;&;"10%;i‚;[ o;;i ;["
-width;@; ;!;o;";#;$;%;&;"	100%;i„;[ o;;i ;@;[".optionButtons;T;iÁ;[o;;i ;["padding;@; ;!;o;";#;$;%;&;"2px;iË;[ o;;i ;["margin;@; ;!;o;";#;$;%;&;"1px 4px;iÈ;[ o;;i ;["
-float;@; ;!;o;";#;$;%;&;"	left;iÍ;[ o;;i ;@;[".checkBoxLabel;T;iÌ;[
-o;;@;i ;[ ;"3/* margin-top:0.5em; 
- * margin-left:-5em;  */;iÓ;[ o;;i ;["padding-top;@; ;!;o;";#;$;%;&;"3px;i;[ o;;i ;["font-size;@; ;!;o;";#;$;%;&;"	12px;iÒ;[ o;;i ;["
-float;@; ;!;o;";#;$;%;&;"	left;iÚ;[ o;;i ;["margin-right;@; ;!;o;";#;$;%;&;"5px;iÛ;[ o;;i ;@;[".customTextBox;T;iˆ;[
-o;;i ;["
-float;@; ;!;o;";#;$;%;&;"
-right;i˜;[ o;;i ;["margin-left;@; ;!;o;";#;$;%;&;"2em;i¯;[ o;;i ;["margin-right;@; ;!;o;";#;$;%;&;"4em;i˘;[ o;;i ;["margin-top;@; ;!;o;";#;$;%;&;"3px;i˙;[ o;;i ;["height;@; ;!;o;";#;$;%;&;"	15px;i˚;[ o;;i ;@;[".toolButtonColor;T;i˛;[o;;i ;["background;@; ;!;o;-	;#;$;"color-tool-bg;iˇ;{ ;iˇ;[ o;;i ;["border-color;@; ;!;o;-	;#;$;"color-tool-bg;i ;{ ;i ;[ o;;i ;@;[".toolButtonColor:active;T;i;[o;;i ;["background;@; ;!;o;-	;#;$;"color-tool-bg-active;i;{ ;i;[ o;;i ;@;[".toolButtonSelectedColor;T;i;[o;;i ;["border-top-color;@; ;!;o;-	;#;$;"color-tool-border-selected;i;{ ;i;[ o;;i ;["border-left-color;@; ;!;o;-	;#;$;"color-tool-border-selected;i	;{ ;i	;[ o;;@;i ;[ ;"0/*   background: $color-tool-bg-active;  */;i
-;[ o;;i ;@;[".toolSeparatorTopColor;T;i;[o;;i ;["background;@; ;!;o;-	;#;$;"color-tool-separator-top;i;{ ;i;[ o;;i ;@;[".toolSeparatorMiddleColor;T;i;[o;;i ;["background;@; ;!;o;-	;#;$;" color-tool-separator-middle;i;{ ;i;[ o;;i ;@;[".toolSeparatorBottomColor;T;i;[o;;i ;["background;@; ;!;o;-	;#;$;" color-tool-separator-bottom;i;{ ;i;[ o;;i ;@;[".selectedOption;T;i;[o;;i ;["background;@; ;!;o;-	;#;$;"color-tool-bg-active;i;{ ;i;[ o;;i ;["padding;@; ;!;o;";#;$;%;&;"2px;i;[ o;;i ;["border;@; ;!;o;";#;$;%;&;"3px;i;[ o;;i ;@;[".noBorder;T;i";[o;;i ;["border-style;@; ;!;o;";#;$;%;&;"	none;i#;[ o;;i ;@;[".deselectedOption;T;i&;[o;;i ;["background;@; ;!;o;-	;#;$;"color-tool-bg;i';{ ;i';[ o;;i ;["border-style;@; ;!;o;";#;$;%;&;"	none;i(;[ o;;i ;["border;@; ;!;o;";#;$;%;&;"3px;i);[ o;;i ;@;[".checkBoxAlign;T;i,;[o:Sass::Tree::MixinNode
-;([o;);#;$;{ ;i˘;*["px;i-;+"	-2px;,[ ;"marginTop;i-;@;[ o;;i ;@;[".optionLabel;T;i0;[o;4
-;([o;);#;$;{ ;i
-;*["px;i1;+"5px;,[ ;"marginTop;i1;@;[ o;;@;i ;[ ;"+/*  Begin: styles for tag toolbar   */;i4;[ o;;i ;@;["~#tagToolContainer input.tag-type,
-#rotateObjectToolContainer input.tag-type,
-#translateObjectToolContainer input.tag-type;T;i7;[o;;i ;["background;@; ;!;o;";#;$;%;&;"	none;i8;[ o;;i ;["
-width;@; ;!;o;";#;$;%;&;"	20px;i9;[ o;;i ;["height;@; ;!;o;";#;$;%;&;"	20px;i:;[ o;;i ;["display;@; ;!;o;";#;$;%;&;"
-block;i;;[ o;;i ;["
-float;@; ;!;o;";#;$;%;&;"	left;i<;[ o;;i ;["margin;@; ;!;o;";#;$;%;&;"0px;i=;[ o;;i ;["padding;@; ;!;o;";#;$;%;&;"0px;i>;[ o;;i ;["margin-right;@; ;!;o;";#;$;%;&;"5px;i?;[ o;;i ;["margin-top;@; ;!;o;";#;$;%;&;"4px;i@;[ o;;i ;["background-repeat;@; ;!;o;";#;$;%;&;"no-repeat;iA;[ o;;i ;["opacity;@; ;!;o;";#;$;%;&;"0.8;iB;[ o;;i ;["text-indent;@; ;!;o;);#;$;{ ;i˛Òÿ;*["px;iC;+"-9999px;,[ ;iC;[ o;;i ;["cursor;@; ;!;o;";#;$;%;&;"pointer;iD;[ o;;i ;["-webkit-border-radius;@; ;!;o;";#;$;%;&;"3px;iE;[ o;;i ;["-webkit-user-select;@; ;!;o;";#;$;%;&;"	none;iF;[ o;;i ;["border;@; ;!;o;";#;$;%;&;"1px solid transparent;iG;[ o;;i ;@;["%#tagToolContainer input.tag-type;T;iI;[o;;i ;["background-image;@; ;!;o;'
-;([o;"
-;#;$;iJ;{ ;%;3;"+../images/tools/sprite-toolbar-tag.png;#;$;"url;iJ;@æ;iJ;[ o;;i ;@;[".#rotateObjectToolContainer input.tag-type;T;iL;[o;;i ;["background-image;@; ;!;o;'
-;([o;"
-;#;$;iM;{ ;%;3;"*../images/tools/sprite-toolbar-3d.png;#;$;"url;iM;@Ã;iM;[ o;;i ;@;["1#translateObjectToolContainer input.tag-type;T;iO;[o;;i ;["background-image;@; ;!;o;'
-;([o;"
-;#;$;iP;{ ;%;3;"*../images/tools/sprite-toolbar-3d.png;#;$;"url;iP;@⁄;iP;[ o;;i ;@;["é#tagToolContainer input.tag-type:active,
-#rotateObjectToolContainer input.tag-type:active,
-#translateObjectToolContainer input.tag-type:active;T;iU;[o;;i ;["border;@; ;!;o;";#;$;%;&;"1px solid transparent;iV;[ o;;i ;@;["ã#tagToolContainer input.tag-type:hover,
-#rotateObjectToolContainer input.tag-type:hover,
-#translateObjectToolContainer input.tag-type:hover;T;iZ;[o;;i ;["opacity;@; ;!;o;";#;$;%;&;"1.0;i[;[ o;;i ;["-webkit-box-shadow;@; ;!;o;";#;$;%;&;"0px 0px 4px #fff;i\;[ o;;i ;@;["ë#tagToolContainer input.tag-type:checked,
-#rotateObjectToolContainer input.tag-type:checked,
-#translateObjectToolContainer input.tag-type:checked;T;i`;[	o;;i ;["background-color;@; ;!;o;";#;$;%;&;"transparent;ia;[ o;;i ;["opacity;@; ;!;o;";#;$;%;&;"1.0;ib;[ o;;i ;["cursor;@; ;!;o;";#;$;%;&;"default;ic;[ o;;i ;["-webkit-box-shadow;@; ;!;o;";#;$;%;&;"	none;id;[ o;;i ;@;["$#tagToolContainer input#divTool;T;if;[o;;i ;["background-position;@; ;!;o;.;#;$;ig;/;0;{ ;1o;);#;$;@;i”;*["px;ig;+"
--40px;,[ ;2o;);#;$;@;i ;*["px;ig;+"0px;,[ ;ig;[ o;;i ;@;[",#tagToolContainer input#divTool:checked;T;ii;[o;;i ;["background-position;@; ;!;o;.;#;$;ij;/;0;{ ;1o;);#;$;@0;i”;*["px;ij;+"
--40px;,[ ;2o;);#;$;@0;iÁ;*["px;ij;+"
--20px;,[ ;ij;[ o;;i ;@;["&#tagToolContainer input#imageTool;T;il;[o;;i ;["background-position;@; ;!;o;.;#;$;im;/;0;{ ;1o;);#;$;@D;iø;*["px;im;+"
--60px;,[ ;2o;);#;$;@D;i ;*["px;im;+"0px;,[ ;im;[ o;;i ;@;[".#tagToolContainer input#imageTool:checked;T;io;[o;;i ;["background-position;@; ;!;o;.;#;$;ip;/;0;{ ;1o;);#;$;@X;iø;*["px;ip;+"
--60px;,[ ;2o;);#;$;@X;iÁ;*["px;ip;+"
--20px;,[ ;ip;[ o;;i ;@;["&#tagToolContainer input#videoTool;T;ir;[o;;i ;["background-position;@; ;!;o;.;#;$;is;/;0;{ ;1o;);#;$;@l;ió;*["px;is;+"-100px;,[ ;2o;);#;$;@l;i ;*["px;is;+"0px;,[ ;is;[ o;;i ;@;[".#tagToolContainer input#videoTool:checked;T;iu;[o;;i ;["background-position;@; ;!;o;.;#;$;iv;/;0;{ ;1o;);#;$;@Ä;ió;*["px;iv;+"-100px;,[ ;2o;);#;$;@Ä;iÁ;*["px;iv;+"
--20px;,[ ;iv;[ o;;i ;@;["à#tagToolContainer input#canvasTool,
-#rotateObjectToolContainer input#rotateLocally,
-#translateObjectToolContainer input#translateLocally;T;iz;[o;;i ;["background-position;@; ;!;o;.;#;$;i{;/;0;{ ;1o;);#;$;@î;iÁ;*["px;i{;+"
--20px;,[ ;2o;);#;$;@î;i ;*["px;i{;+"0px;,[ ;i{;[ o;;i ;@;["†#tagToolContainer input#canvasTool:checked,
-#rotateObjectToolContainer input#rotateLocally:checked,
-#translateObjectToolContainer input#translateLocally:checked;T;i;[o;;i ;["background-position;@; ;!;o;.;#;$;iÄ;/;0;{ ;1o;);#;$;@®;iÁ;*["px;iÄ;+"
--20px;,[ ;2o;);#;$;@®;iÁ;*["px;iÄ;+"
--20px;,[ ;iÄ;[ o;;i ;@;["&#tagToolContainer input#flashTool;T;iÇ;[o;;i ;["background-position;@; ;!;o;.;#;$;iÉ;/;0;{ ;1o;);#;$;@º;i´;*["px;iÉ;+"
--80px;,[ ;2o;);#;$;@º;i ;*["px;iÉ;+"0px;,[ ;iÉ;[ o;;i ;@;[".#tagToolContainer input#flashTool:checked;T;iÖ;[o;;i ;["background-position;@; ;!;o;.;#;$;iÜ;/;0;{ ;1o;);#;$;@–;i´;*["px;iÜ;+"
--80px;,[ ;2o;);#;$;@–;iÁ;*["px;iÜ;+"
--20px;,[ ;iÜ;[ o;;i ;@;["ä#tagToolContainer input#customTool,
-#rotateObjectToolContainer input#rotateGlobally,
-#translateObjectToolContainer input#translateGlobally;T;iä;[o;;i ;["background-position;@; ;!;o;";#;$;%;&;"0px 0px;iã;[ o;;i ;@;["¢#tagToolContainer input#customTool:checked,
-#rotateObjectToolContainer input#rotateGlobally:checked,
-#translateObjectToolContainer input#translateGlobally:checked;T;iè;[o;;i ;["background-position;@; ;!;o;.;#;$;iê;/;0;{ ;1o;);#;$;@Ó;i ;*["px;iê;+"0px;,[ ;2o;);#;$;@Ó;iÁ;*["px;iê;+"
--20px;,[ ;iê;[ o;;i ;@;[""#tagToolContainer .nj-divider;T;iî;[	o;;i ;["height;@; ;!;o;";#;$;%;&;"	100%;iï;[ o;;i ;["
-float;@; ;!;o;";#;$;%;&;"	left;iñ;[ o;;i ;["position;@; ;!;o;";#;$;%;&;"relative;ió;[ o;;i ;["top;@; ;!;o;";#;$;%;&;"5px;iò;[ o;;i ;@;["(#tagToolContainer select.nj-skinned;T;iõ;[o;;i ;["visibility;@; ;!;o;";#;$;%;&;"visible;iú;[ o;;i ;["position;@; ;!;o;";#;$;%;&;"relative;iù;[ o;;i ;@;["h#tagToolContainer select[disabled="true"].nj-skinned,
-#tagToolContainer select[disabled].nj-skinned;T;i°;[o;;i ;["visibility;@; ;!;o;";#;$;%;&;"hidden;i¢;[ o;;i ;@;["3#zoomToolOptionHolder input#zoomInTool:checked;T;i•;[o;;i ;["border-style;@; ;!;o;";#;$;%;&;"
-solid;i¶;[ o;;i ;["border-width;@; ;!;o;";#;$;%;&;"1px;iß;[ o;;i ;["border-color;@; ;!;o;-	;#;$;"color-input;i®;{ ;i®;[ o;;i ;["background-image;@; ;!;o;'
-;([o;"
-;#;$;i©;{ ;%;3;",../images/optionsbar/zoom/zoom_plus.png;#;$;"url;i©;@M;i©;[ o;;i ;["background-repeat;@; ;!;o;";#;$;%;&;"no-repeat;i™;[ o;;i ;["background-position;@; ;!;o;";#;$;%;&;"4px 3px;i´;[ o;;i ;@;["4#zoomToolOptionHolder input#zoomOutTool:checked;T;iØ;[o;;i ;["border-style;@; ;!;o;";#;$;%;&;"
-solid;i∞;[ o;;i ;["border-width;@; ;!;o;";#;$;%;&;"1px;i±;[ o;;i ;["border-color;@; ;!;o;-	;#;$;"color-input;i≤;{ ;i≤;[ o;;i ;["background-image;@; ;!;o;'
-;([o;"
-;#;$;i≥;{ ;%;3;"-../images/optionsbar/zoom/zoom_minus.png;#;$;"url;i≥;@z;i≥;[ o;;i ;["background-repeat;@; ;!;o;";#;$;%;&;"no-repeat;i¥;[ o;;i ;["background-position;@; ;!;o;";#;$;%;&;"4px 3px;iµ;[ o;;i ;@;["+#zoomToolOptionHolder input#zoomInTool;T;i∫;[
-o;;i ;["border-style;@; ;!;o;";#;$;%;&;"
-solid;iª;[ o;;i ;["border-width;@; ;!;o;";#;$;%;&;"1px;iº;[ o;;i ;["background-image;@; ;!;o;'
-;([o;"
-;#;$;iΩ;{ ;%;3;",../images/optionsbar/zoom/zoom_plus.png;#;$;"url;iΩ;@†;iΩ;[ o;;i ;["background-repeat;@; ;!;o;";#;$;%;&;"no-repeat;iæ;[ o;;i ;["background-position;@; ;!;o;";#;$;%;&;"4px 3px;iø;[ o;;i ;@;[",#zoomToolOptionHolder input#zoomOutTool;T;i√;[
-o;;i ;["border-style;@; ;!;o;";#;$;%;&;"
-solid;iƒ;[ o;;i ;["border-width;@; ;!;o;";#;$;%;&;"1px;i≈;[ o;;i ;["background-image;@; ;!;o;'
-;([o;"
-;#;$;i∆;{ ;%;3;"-../images/optionsbar/zoom/zoom_minus.png;#;$;"url;i∆;@∆;i∆;[ o;;i ;["background-repeat;@; ;!;o;";#;$;%;&;"no-repeat;i«;[ o;;i ;["background-position;@; ;!;o;";#;$;%;&;"4px 3px;i»;[ o;;i ;@;[",#zoomToolOptionHolder input.zoom-option;T;iÀ;[o;;i ;["background;@; ;!;o;";#;$;%;&;"	none;iÃ;[ o;;@;i ;[ ;"*/*  Endi: styles for tag toolbar   */;i–;[ 
