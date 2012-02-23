@@ -23,7 +23,7 @@
 
 .propControl .inputRow div .hottext,
 .propControl .inputRow div .hottextInput,
-.prop-controller .textfield
+.prop-controller .nj-skinned
 {
     border: 1px solid black;
     width: 30px !important;

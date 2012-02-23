@@ -255,6 +255,12 @@ exports.Content = Montage.create(Component, {
 
                             if(currentValue)
                             {
+                                if(currentValue.color)
+                                {
+                                    currentValue.color.wasSetByCode = true;
+                                    currentValue.color.type = "change";
+                                }
+
                                 if(currentValue.mode === "gradient")
                                 {
                                     this.application.ninja.colorController.colorModel["gradient"] =
@@ -267,7 +273,14 @@ exports.Content = Montage.create(Component, {
                                         this.application.ninja.colorController.colorModel.alpha =
                                                         {value: currentValue.color.a, wasSetByCode: true, type: 'change'};
                                     }
-                                    this.application.ninja.colorController.colorModel[currentValue.color.mode] = currentValue.color;
+                                    if(currentValue.color.mode)
+                                    {
+                                        this.application.ninja.colorController.colorModel[currentValue.color.mode] = currentValue.color;
+                                    }
+                                    else
+                                    {
+                                        this.application.ninja.colorController.colorModel["rgb"] = currentValue.color;
+                                    }
                                 }
                             }
                             else

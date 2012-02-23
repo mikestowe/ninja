@@ -236,7 +236,7 @@
     position: absolute;
     top: 6px;
     left: -3px;
-    z-index: 912;
+    z-index: 92;
     background-color: #b50003;
     opacity: 0.5;
 }
@@ -244,8 +244,25 @@
     height: 100%;
     width: 1px;
     background-color: #cccccc;
-    top: 0px;
-    left: 0px;
+    top: 0;
+    left: 0;
     position: absolute;
-    z-index: 913;
+    z-index: 91;
+}
+.timebar{
+    height: 3px;
+    width:0;
+    background-color: #ff0003;
+    opacity: 0.3;
+    top:10px;
+    position: absolute;
+    border-top: #c7a19f thin solid;
+    border-right: #ffffff thin solid;
+}
+.endhottext{
+    float: right;
+    font-family: 'Droid Sans';
+    font-size: 12px;
+    text-shadow: 1px 1px 1px black;
+    color: white;
 }

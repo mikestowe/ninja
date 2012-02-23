@@ -16,6 +16,10 @@
     color:white;
 }
 
+.rectProperties .subToolButton {
+    float:left;
+}
+
 .rectProperties .button:hover
 {
     opacity:1;
