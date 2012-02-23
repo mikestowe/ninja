@@ -18,24 +18,19 @@ var Span = exports.Span = Montage.create(Component, {
         },
         set:function (value) {
             this._spanWidth = value;
-        }
-    },
-
-    prepareForDraw:{
-        value:function(){
-
+            this.needsDraw = true;
         }
     },
 
     draw:{
         value: function(){
-            this.tweenspan.style.width = this.spanWidth + "px";
+            this.element.style.width = this.spanWidth + "px";
         }
     },
 
     highlightSpan:{
         value: function(){
-            this.tweenspan.classList.add("spanHighlight");
+            this.element.classList.add("spanHighlight");
         }
     }
 });

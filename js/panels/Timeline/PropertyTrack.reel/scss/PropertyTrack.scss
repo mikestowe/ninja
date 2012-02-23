@@ -1,0 +1,21 @@
+/* PropertyTrack.scss
+ * Main SCSS file for PropertyTrack component, compiled by SASS into the file css/PropertyTrack.css.
+ */
+ 
+// Import theme settings
+@import "../../../../../scss/imports/themes/default/colors";
+@import "../../../../../scss/imports/themes/default/mixins";
+
+// Import generic mixins and styles
+@import "../../../../../scss/imports/scss/mixins";
+
+
+.content-main .collapsible-content .timeline-track {
+ 	height: 20px;
+	border-bottom: 1px solid $color-menu-divider;
+ }
+
+
+.timeline-track .content-main {
+	background-color: $color-menu-bg;
+}

@@ -11,8 +11,7 @@
                             "properties": {
                                 "element": {"#": "tweenspace"},
                                 "keyframe": {"@": "keyframe"},
-                                "span": {"@": "span"},
-                                "tweencontainer": {"#": "tweencontainer"}
+                                "tweenspan": {"@": "span"}
                             }
                         },
                         
@@ -28,8 +27,7 @@
                             "module": "js/panels/Timeline/Keyframe.reel",
                             "name": "Keyframe",
                             "properties": {
-                                "element": {"#": "keyframe_container"},
-                                "containingSpan": {"@": "span"}
+                                "element": {"#": "keyframe_container"}
                             }
                         }
                     }
@@ -37,12 +35,10 @@
 	</head>
 	<body>
 
-    	<div id="tweenspace">
-            <div id="tweencontainer" class="tween_container">
-                <div id="span_container"></div>
-                <div id="keyframe_container"></div>
-            </div>
-    	</div>
+    <div id="tweenspace" class="tween_container">
+        <div id="span_container"></div>
+        <div id="keyframe_container"></div>
+    </div>
 
     </body>
 </html>
