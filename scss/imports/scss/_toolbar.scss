@@ -11,280 +11,247 @@
 // _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss
   
 
-//  New Tool List CSS  
-.SelectionToolPressed {
-    @include background-pos(12,1,26px,23px);
-    @include opacity(1.0);
+//  New Tool List CSS
+#toolsPanelContent {
+    width:40px;
 }
 
-.SelectionToolUnpressed {
-    @include background-pos(13,1,26px,23px);
-    @include opacity(0.7);
+.toolsList {
+    width:29px;
+    margin:auto;
 }
 
-.SubselectionToolPressed {
-    @include background-pos(14,1,26px,23px);
-    @include opacity(1.0);
+.toolsList hr {
+    border:0px;
+    border-top: 1px solid #232323;
+    border-bottom: 1px solid #3A3A3A;
+    margin:2px;
 }
 
-.SubselectionToolUnpressed {
-    @include background-pos(15,1,26px,23px);
-    @include opacity(0.7);
-}
-
-.RotateTool3DPressed {
-    @include background-pos(0,0,26px,23px);
-    @include opacity(1.0);
-}
-
-.RotateTool3DUnpressed {
-    @include background-pos(1,0,26px,23px);
-    @include opacity(0.7);
-}
-
-.Translate3DPressed {
-    @include background-pos(4,0,26px,23px);
-    @include opacity(1.0);
-}
-
-.Translate3DUnpressed {
-    @include background-pos(5,0,26px,23px);
-    @include opacity(0.7);
-}
-
-.TagToolPressed {
-    @include background-pos(0,2,26px,23px);
-    @include opacity(1.0);
-}
-
-.TagToolUnpressed {
-    @include background-pos(1,2,26px,23px);
-    @include opacity(0.7);
-}
-
-.PenToolPressed {
-    @include background-pos(6,1,26px,23px);
-    @include opacity(1.0);
-}
-
-.PenToolUnpressed {
-    @include background-pos(7,1,26px,23px);
-    @include opacity(0.7);
-}
-
-.TextToolPressed {
-    @include background-pos(2,2,26px,23px);
-    @include opacity(1.0);
-}
-
-.TextToolUnpressed {
-    @include background-pos(3,2,26px,23px);
-    @include opacity(0.7);
-}
-
-.ShapeContainerPressed {
-    @include background-pos(4,1,26px,23px);
-    @include opacity(1.0);
-}
-.ShapeContainerUnpressed {
-    @include background-pos(5,1,26px,23px);
-    @include opacity(0.7);
-}
-
-.OvalToolPressed {
-    @include background-pos(4,1,26px,23px);
-    @include opacity(1.0);
-}
-
-.OvalToolUnpressed {
-    @include background-pos(5,1,26px,23px);
-    @include opacity(0.7);
-}
-
-.RectangleToolPressed {
-    @include background-pos(10,1,26px,23px);
-    @include opacity(1.0);
-}
-
-.RectangleToolUnpressed {
-    @include background-pos(11,1,26px,23px);
-    @include opacity(0.7);
-}
-
-.LineToolPressed {
-    @include background-pos(2,1,26px,23px);
-    @include opacity(1.0);
-}
-
-.LineToolUnpressed {
-    @include background-pos(3,1,26px,23px);
-    @include opacity(0.7);
-}
-
-.PencilToolPressed {
-    @include background-pos(8,1,26px,23px);
-    @include opacity(1.0);
-}
-
-.PencilToolUnpressed {
-    @include background-pos(9,1,26px,23px);
-    @include opacity(0.7);
-}
-
-.BrushToolPressed {
-    @include background-pos(8,0,26px,23px);
-    @include opacity(1.0);
-}
-
-.BrushToolUnpressed {
-    @include background-pos(9,0,26px,23px);
-    @include opacity(0.7);
-}
-
-.FillToolPressed {
-    @include background-pos(10,0,26px,23px);
-    @include opacity(1.0);
-}
-
-.FillToolUnpressed {
-    @include background-pos(11,0,26px,23px);
-    @include opacity(0.7);
-}
-
-.EyedropperToolPressed {
-    @include background-pos(14,0,26px,23px);
-    @include opacity(1.0);
-}
-
-.EyedropperToolUnpressed {
-    @include background-pos(15,0,26px,23px);
-    @include opacity(0.7);
-}
-
-.EraserToolPressed {
-    @include background-pos(12,0,26px,23px);
-    @include opacity(1.0);
-}
-.EraserToolUnpressed {
-    @include background-pos(13,0,26px,23px);
-    @include opacity(0.7);
-}
-.RotateStageTool3DPressed {
-    @include background-pos(2,0,26px,23px);
-    @include opacity(1.0);
-}
-.RotateStageTool3DUnpressed {
-    @include background-pos(3,0,26px,23px);
-    @include opacity(0.7);
-}
-.TranslateStageTool3DPressed {
-    @include background-pos(6,0,26px,23px);
-    @include opacity(1.0);
-}
-.TranslateStageTool3DUnpressed {
-    @include background-pos(7,0,26px,23px);
-    @include opacity(0.7);
-}
-.PanToolPressed {
-    @include background-pos(0,1,26px,23px);
-    @include opacity(1.0);
-}
-.PanToolUnpressed {
-    @include background-pos(1,1,26px,23px);
-    @include opacity(0.7);
-}
-.ZoomToolPressed {
-    @include background-pos(6,2,26px,23px);
-    @include opacity(1.0);
-}
-
-.ZoomToolUnpressed {
-    @include background-pos(7,2,26px,23px);
-    @include opacity(0.7);
-}
-
-.InkBottleToolPressed {
-    background-image: url("../images/tools/inkbottle_down.png");
+.toolbutton {
+    width:29px;
+    height:29px;
+    background-position: center center;
     background-repeat: no-repeat;
-    height: 23px;
-    width: 26px;
+    border-radius:3px;
+    opacity: 1;
+    margin-bottom: 2px;
+    -webkit-transform: scale(0.8);
+    -webkit-transition: 0.15s all cubic-bezier(.44,.19,0,.99);
+}
+
+.toolbutton:hover, .toolbutton.active {
+    box-shadow:  0px 0px 2px 2px #999;
+
+    -webkit-transform: scale(1);
     opacity: 1;
 }
 
-.InkBottleToolUnpressed {
-    background-image: url("../images/tools/inkbottle_down.png");
-    background-repeat: no-repeat;
-    height: 23px;
-    width: 26px;
-    opacity: 0.7;
+.toolbutton:active {
+    background-color: #8c8c8c;
 }
 
-//  Selection Tool Options  
-.topAlignUp {
-
-  @include background-pos(8,2,26px,23px);
+.toolbutton.active {
+    box-shadow: inset 0px 0px 2px 2px #555;
+    background-color:#363636;
 }
 
-.rightAlignUp {
-
-  @include background-pos(9,2,26px,23px);
+.SelectionTool {
+    background-image:url("../images/tools/Tool-Selection.png");
 }
 
-.bottomAlignUp {
-
-  @include background-pos(10,2,26px,23px);
+.SubselectionTool {
+    background-image:url("../images/tools/Tool-Subselect.png");
 }
 
-.verticalLeftUp {
-
-  @include background-pos(11,2,26px,23px);
+.RotateTool3D {
+    background-image:url("../images/tools/Tool-3DRotate.png");
 }
 
-.verticalCenterUp {
-
-  @include background-pos(12,2,26px,23px);
+.Translate3D {
+    background-image:url("../images/tools/Tool-3DTranslate.png");
 }
 
-.verticalRightUp {
-
-  @include background-pos(13,2,26px,23px);
+.TagTool {
+    background-image:url("../images/tools/Tool-Tag.png");
 }
 
-.distRightUp {
-
-  @include background-pos(0,3,26px,23px);
+.PenTool {
+    background-image:url("../images/tools/Tool-Pen.png");
 }
 
-.distLeftUp {
-
-  @include background-pos(14,2,26px,23px);
+.TextTool {
+    background-image:url("../images/tools/Tool-Text.png");
 }
 
-.distCenterUp {
-
-  @include background-pos(2,3,26px,23px);
+.ShapeContainer {
+    background-image:url("../images/tools/Tool-Rectangle.png");
 }
 
-.distTopUp {
-
-  @include background-pos(1,3,26px,23px);
+.OvalTool {
+    background-image:url("../images/tools/Tool-Oval.png");
 }
 
-.distBottomUp {
-
-  @include background-pos(3,3,26px,23px);
+.RectangleTool {
+    background-image:url("../images/tools/Tool-Square.png");
 }
 
-.distVCenterUp {
-
-  @include background-pos(15,2,26px,23px);
+.LineTool {
+    background-image:url("../images/tools/Tool-Line.png");
 }
 
-.bucketToolUp {
-   @include background-pos(11,0,26px,23px);
+.PencilTool {
+    background-image:url("../images/tools/Tool-Pencil.png");
 }
 
-.pencilToolUp {
-   @include background-pos(9,1,26px,23px);
+.BrushTool {
+    background-image:url("../images/tools/Tool-PaintBrush.png");
 }
+
+.FillTool {
+    background-image:url("../images/tools/Tool-Fill.png");
+}
+
+.EyedropperTool {
+    background-image:url("../images/tools/Tool-EyeDropper.png");
+}
+
+.EraserTool {
+    background-image:url("../images/tools/Tool-Erase.png");
+}
+
+.RotateStageTool3D {
+    background-image:url("../images/tools/Tool-3DRotateStage.png");
+}
+
+.TranslateStageTool3D {
+    background-image:url("../images/tools/Tool-3DTranslateStage.png");
+}
+
+.PanTool {
+    background-image:url("../images/tools/Tool-Pan.png");
+}
+
+.ZoomTool {
+    background-image:url("../images/tools/Tool-Zoom.png");
+}
+
+.InkBottleTool {
+    background-image:url("../images/tools/Tool-FillColor.png");
+}
+
+.toolsList .colortoolbar {
+    padding-left: 1px;
+    padding-top:4px;
+}
+
+.toolsList .colortoolbar button
+{
+	width: 27px;
+	height: 27px;
+	background: black;
+	border: 1px solid #000;
+	padding: 0;
+	margin: 0px;
+}
+
+.toolsList .colortoolbar div
+{
+	width: 27px;
+	height: 27px;
+	margin: 0;
+   margin-top:3px;
+}
+
+.toolsList .colortoolbar div.cpe_colortoolbar_container
+{
+	margin: 0;
+}
+
+
+
+/*.InkBottleToolPressed {*/
+    /*background-image: url("../images/tools/inkbottle_down.png");*/
+    /*background-repeat: no-repeat;*/
+    /*height: 23px;*/
+    /*width: 26px;*/
+    /*opacity: 1;*/
+/*}*/
+
+/*.InkBottleToolUnpressed {*/
+    /*background-image: url("../images/tools/inkbottle_down.png");*/
+    /*background-repeat: no-repeat;*/
+    /*height: 23px;*/
+    /*width: 26px;*/
+    /*opacity: 0.7;*/
+/*}*/
+
+/*//  Selection Tool Options  */
+/*.topAlignUp {*/
+
+  /*@include background-pos(8,2,26px,23px);*/
+/*}*/
+
+/*.rightAlignUp {*/
+
+  /*@include background-pos(9,2,26px,23px);*/
+/*}*/
+
+/*.bottomAlignUp {*/
+
+  /*@include background-pos(10,2,26px,23px);*/
+/*}*/
+
+/*.verticalLeftUp {*/
+
+  /*@include background-pos(11,2,26px,23px);*/
+/*}*/
+
+/*.verticalCenterUp {*/
+
+  /*@include background-pos(12,2,26px,23px);*/
+/*}*/
+
+/*.verticalRightUp {*/
+
+  /*@include background-pos(13,2,26px,23px);*/
+/*}*/
+
+/*.distRightUp {*/
+
+  /*@include background-pos(0,3,26px,23px);*/
+/*}*/
+
+/*.distLeftUp {*/
+
+  /*@include background-pos(14,2,26px,23px);*/
+/*}*/
+
+/*.distCenterUp {*/
+
+  /*@include background-pos(2,3,26px,23px);*/
+/*}*/
+
+/*.distTopUp {*/
+
+  /*@include background-pos(1,3,26px,23px);*/
+/*}*/
+
+/*.distBottomUp {*/
+
+  /*@include background-pos(3,3,26px,23px);*/
+/*}*/
+
+/*.distVCenterUp {*/
+
+  /*@include background-pos(15,2,26px,23px);*/
+/*}*/
+
+/*.bucketToolUp {*/
+   /*@include background-pos(11,0,26px,23px);*/
+/*}*/
+
+/*.pencilToolUp {*/
+   /*@include background-pos(9,1,26px,23px);*/
+/*}*/
 

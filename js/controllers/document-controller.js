@@ -85,7 +85,9 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     handleAppLoaded: {
         value: function() {
             //Adding an intercept to resources loaded to ensure user assets load from cloud simulator
-            chrome.webRequest.onBeforeRequest.addListener(this.handleWebRequest.bind(this), {urls: ["<all_urls>"]}, ["blocking"]);
+            if (window.chrome.app.isInstalled) {
+                chrome.webRequest.onBeforeRequest.addListener(this.handleWebRequest.bind(this), {urls: ["<all_urls>"]}, ["blocking"]);
+            }
         }
     },
 	////////////////////////////////////////////////////////////////////

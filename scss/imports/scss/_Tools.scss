@@ -12,23 +12,15 @@
 // 
   
 
-// Made changes to toolButton  
+// Made changes to toolButton  }
 
-.toolButton {
-    width:26px;
-    height:23px;
-    padding: 0px;
-    margin:1px;
-    border-width: 1px;
-    border-style: solid; 
-}
-
-.subToolButton {
+.subToolHolderPanel .toolbutton {
     float:left;
+    -webkit-transform: scale(0.6);
 }
 
-#topPanelContainer .subToolButton {
-
+.subToolHolderPanel .toolbutton:hover, .subToolHolderPanel .toolbutton.active {
+    -webkit-transform: scale(0.75);
 }
 
 .subOption{
@@ -37,21 +29,6 @@
     margin-top: 5px;
     margin-left: 10px;
     margin-right: 10px;
-}
-
-.toolButton:active {   
-    border-top-width: 1px;
-    border-top-style: solid; 
-    border-left-width: 1px;
-    border-left-style: solid; 
-}
-
-.toolButtonSelected {
-    border-top-width: 1px;
-    border-top-style: solid; 
-    border-left-width: 1px;
-    border-left-style: solid;
-
 }
 
 .toolSeparator {
