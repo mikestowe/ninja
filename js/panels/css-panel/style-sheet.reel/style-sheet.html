@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<!-- <copyright>
+This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+(c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+</copyright> -->
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <script type="text/montage-serialization">
+        {
+            "owner": {
+                "module" : "js/panels/css-panel/style-sheet.reel",
+                "name" : "StyleSheet",
+                "properties" : {
+                    "element" : {"#" : "style-sheet-container"}
+                }
+            },
+            "name": {
+                "module": "montage/ui/dynamic-text.reel",
+                "name": "DynamicText",
+                "properties": {
+                    "element": {"#": "sheet-name"}
+                },
+                "bindings": {
+                    "value": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "name",
+                        "onewway": true
+                    }
+                }
+
+            }
+        }
+    </script>
+</head>
+<body>
+<div id="style-sheet-container" class="style-sheet-container">
+    <span id="sheet-name"></span>
+</div>
+</body>
+</html>

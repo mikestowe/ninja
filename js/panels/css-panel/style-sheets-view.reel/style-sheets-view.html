@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<!-- <copyright>
+This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+(c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+</copyright> -->
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <script type="text/montage-serialization">
+        {
+            "owner": {
+                "module" : "js/panels/css-panel/style-sheets-view.reel",
+                "name" : "StyleSheetsView",
+                "properties" : {
+                    "element" : {"#" : "style-sheet-view-container"}
+                }
+            },
+            "styleSheetList": {
+                "module" : "montage/ui/list.reel",
+                "name": "List",
+                "properties": {
+                    "element": {"#": "sheet-list" }
+                },
+                "bindings": {
+                    "content": {
+                        "boundObject": {"@": "owner" },
+                        "boundObjectPropertyPath": "styleSheets"
+                    }
+                }
+            },
+            "sheet": {
+                "module": "js/panels/css-panel/style-sheet.reel",
+                "name": "StyleSheet",
+                "bindings": {
+                    "source": {
+                        "boundObject": {"@": "styleSheetList"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration",
+                        "oneway": true
+                    }
+                }
+            },
+            "noDocumentCondition": {
+                "module": "montage/ui/condition.reel",
+                "name": "Condition",
+                "properties": {
+                    "element": {"#": "no-document-message" }
+                },
+                "bindings": {
+                    "condition": {
+                        "boundObject": {"@": "owner" },
+                        "boundObjectPropertyPath": "noDocumentCondition",
+                        "oneway": true
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<div id="style-sheet-view-container" class="style-sheet-view-container">
+    <h3 id="no-document-message">No document loaded. Please Open or Create a new document.</h3>
+    <ul id="sheet-list">
+        <li id="sheet-item"></li>
+    </ul>
+</div>
+</body>
+</html>

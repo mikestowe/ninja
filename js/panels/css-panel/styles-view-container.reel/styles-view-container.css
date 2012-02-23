@@ -1,0 +1,11 @@
+.styles-view-container h3 {
+    background-color: rgba(255,255,255, 0.1);
+    border: 1px dashed rgba(255,255,255, 0.2);
+    border-radius: 4px;
+    color: #CCC;
+    font-size: 11px;
+    font-weight: normal;
+    margin: 5px;
+    padding: 10px;
+    text-shadow: 1px 1px 0px #333;
+}
