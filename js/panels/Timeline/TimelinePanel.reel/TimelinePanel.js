@@ -157,6 +157,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:false,
         writable:true
     },
+    timeMarkerHolder:{
+        value: null
+    },
     /* === END: Models === */
 
     /* === BEGIN: Draw cycle === */
@@ -202,6 +205,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.timeline_leftpane.addEventListener("click", this.timelineLeftPaneClick.bind(this), false);
             this.layout_tracks.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
             this.user_layers.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
+            this.end_hottext.addEventListener("changing", this.updateTrackContainerWidth.bind(this), false);
 
             this.drawTimeMarkers();
 
@@ -210,6 +214,16 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             NJevent('newLayer', this._hashKey);
             _firstLayerDraw = true;
             this.selectLayer(0);
+        }
+    },
+
+    updateTrackContainerWidth:{
+        value: function(){
+            this.container_tracks.style.width = (this.end_hottext.value * 80) + "px";
+            this.master_track.style.width = (this.end_hottext.value * 80) + "px";
+            this.time_markers.style.width = (this.end_hottext.value * 80) + "px";
+            this.time_markers.removeChild(this.timeMarkerHolder);
+            this.drawTimeMarkers();
         }
     },
 
@@ -602,6 +616,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     drawTimeMarkers:{
         value:function () {
+            this.timeMarkerHolder = document.createElement("div");
+            this.time_markers.appendChild(this.timeMarkerHolder);
             var i;
             var totalMarkers = Math.floor(this.time_markers.offsetWidth / 80);
             for (i = 0; i < totalMarkers; i++) {
@@ -609,7 +625,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 var markValue = this.calculateTimeMarkerValue(i);
                 timeMark.className = "timemark";
                 timeMark.innerHTML = markValue;
-                this.time_markers.appendChild(timeMark);
+                this.timeMarkerHolder.appendChild(timeMark);
             }
         }
     },

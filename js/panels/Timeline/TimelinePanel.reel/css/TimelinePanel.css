@@ -251,16 +251,18 @@
 }
 .timebar{
     height: 3px;
-    width:1px;
+    width:0;
     background-color: #ff0003;
     opacity: 0.3;
     top:10px;
     position: absolute;
     border-top: #c7a19f thin solid;
     border-right: #ffffff thin solid;
-
 }
 .endhottext{
     float: right;
-    padding-right: 8px;
+    font-family: 'Droid Sans';
+    font-size: 12px;
+    text-shadow: 1px 1px 1px black;
+    color: white;
 }

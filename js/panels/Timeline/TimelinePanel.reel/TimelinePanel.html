@@ -25,7 +25,9 @@
                         "playhead": {"#": "playhead"},
                         "playheadmarker": {"#": "playhead_marker"},
                         "timetext" : {"#": "time_text"},
-                        "timebar" : {"#": "time_bar"}
+                        "timebar" : {"#": "time_bar"},
+                        "container_tracks" : {"#" : "container-tracks"},
+                        "end_hottext" : {"@" : "endHottext"}
                     }
                 },
 
@@ -200,7 +202,19 @@
             	            "oneway" : false
                         }
 	            	}
-	            }
+	            },
+                "endHottext" : {
+                    "module": "js/components/hottextunit.reel",
+            	    "name": "HotTextUnit",
+            	    "properties": {
+            	        "element": {"#": "end_hottext"},
+            	        "maxValue" : 100000,
+                        "minValue" : 1,
+                        "acceptableUnits" : "sec",
+                        "units" : "sec",
+                        "value" : 25
+            	    }
+                }
             }
         </script>
 
@@ -240,7 +254,7 @@
                         <div id="timeline_gutter" class="timelinegutter">
                             <div id="newlayer_button" class="newlayerbutton"></div>
                             <div id="deletelayer_button" class="deletelayerbutton"></div>
-                            <input id="end_hottext" class="endhottext hottext">
+                            <input id="end_hottext" class="endhottext">
                         </div>
                     </div>
                 </div>
@@ -250,9 +264,8 @@
                 <div id="timeline_rightpane" class="tl_rightpane">
                     <div id="right_inside" class="rightinside">
                     	<div class="layout_markers">
-	                        <div id="timeline_markers" class="timelinemarkers">
-	                            <div id="playhead" class="playhead"></div>
-	                        </div>
+                            <div id="playhead" class="playhead"></div>
+	                        <div id="timeline_markers" class="timelinemarkers"></div>
                     	</div>
 
 
