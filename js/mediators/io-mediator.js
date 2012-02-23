@@ -202,10 +202,54 @@ exports.IoMediator = Montage.create(Component, {
     		//
     		template.document.content.document.body.innerHTML = template.body;
     		template.document.content.document.head.innerHTML = template.head;
-    		//TODO: Remove temp fix for styles
-    		if (template.style) {
-    			template.document.content.document.head.getElementsByTagName('style')[0].innerHTML = this.getCssFromRules(template.style.cssRules);
+    		//
+    		var styletags = template.document.content.document.getElementsByTagName('style'),
+    			linktags = template.document.content.document.getElementsByTagName('link');
+    		//
+    		for (var j in styletags) {
+    			if (styletags[j].getAttribute) {
+    				if(styletags[j].getAttribute('ninjauri') !== null) {
+    					try {
+    						template.document.content.document.head.removeChild(styletags[j]);
+    					} catch (e) {
+    						try {
+    							template.document.content.document.body.removeChild(styletags[j]);
+    						} catch (e) {
+    							//
+    						}
+    					}
+    					
+    				}
+    			}
     		}
+    		//
+    		for (var l in linktags) {
+    			if (linktags[l].getAttribute && linktags[l].getAttribute('disabled')) {
+    				linktags[l].removeAttribute('disabled');
+    			}
+    		}
+    		//
+    		if (template.styles) {
+    			//
+    			var styleCounter = 0,
+    				docStyles = template.document.content.document.getElementsByTagName('style');
+    			for(var i in template.styles) {
+    				if (template.styles[i].ownerNode) {
+    					if (template.styles[i].ownerNode.getAttribute) {
+    						if (template.styles[i].ownerNode.getAttribute('ninjauri') === null) {
+    							//console.log(docStyles[styleCounter], template.styles[i].cssRules);
+    							docStyles[styleCounter].innerHTML = this.getCssFromRules(template.styles[i].cssRules);
+    							styleCounter++;
+    						}
+    					}
+    				}
+    			}
+    			
+    			//template.document.content.document.head.getElementsByTagName('style')[0].innerHTML = this.getCssFromRules(template.style.cssRules);
+    		} else if (template.css) {
+    			console.log('Save all css and style');
+    		}
+    		//
     		return template.document.content.document.documentElement.outerHTML;
     	}
     },

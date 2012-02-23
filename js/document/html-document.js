@@ -388,6 +388,11 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             this._document = this.iframe.contentWindow.document;
             this._window = this.iframe.contentWindow;
             //
+            for (var k in this._document.styleSheets) {
+            	this._document.styleSheets[k].ninjatemplate = true;
+            	//TODO: Add as attribute
+            }
+            //
             if(!this.documentRoot.Ninja) this.documentRoot.Ninja = {};
             //Inserting user's document into template
             this._templateDocument.head.innerHTML = this._userDocument.content.head;
@@ -423,6 +428,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 								cssData = this.application.ninja.coreIoApi.readFile({uri: fileUri});
 								//Creating tag with file content
 								tag = this.iframe.contentWindow.document.createElement('style');
+								tag.setAttribute('type', 'text/css');
 								tag.setAttribute('ninjauri', fileUri);
 								tag.setAttribute('ninjafileurl', cssUrl);
 								tag.setAttribute('ninjafilename', cssUrl.split('/')[cssUrl.split('/').length-1]);
@@ -440,9 +446,11 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 							}
                     	}
 					}
+					////////////////////////////////////////////////////////////////////////////
+					////////////////////////////////////////////////////////////////////////////
 					
 					//TODO: Revisit this logic
-					this._styles = this._document.styleSheets[1];
+					/* this._styles = this._document.styleSheets[1]; */
 					this._stylesheets = this._document.styleSheets; // Entire stlyesheets array
 					
 					console.log(this._document.styleSheets);
@@ -564,7 +572,34 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     	value: function () {
     		//TODO: Add code view logic and also styles for HTML
     		if (this.currentView === 'design') {
-    			return {mode: 'html', document: this._userDocument, webgl: this.glData, style: this._styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
+    			var styles = [];
+    			for (var k in this._document.styleSheets) {
+            		if (!this._document.styleSheets[k].ninjatemplate) {
+            			styles.push(this._document.styleSheets[k]);
+            		}
+            	}
+    			return {mode: 'html', document: this._userDocument, webgl: this.glData, styles: styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
+    		} else if (this.currentView === "code"){
+    			//TODO: Would this get call when we are in code of HTML?
+    		} else {
+    			//Error
+    		}
+    	}
+	},
+	////////////////////////////////////////////////////////////////////
+	//
+	saveAll: {
+		enumerable: false,
+    	value: function () {
+    		//TODO: Add code view logic and also styles for HTML
+    		if (this.currentView === 'design') {
+    			var css = [];
+    			for (var k in this._document.styleSheets) {
+            		if (!this._document.styleSheets[k].ninjatemplate) {
+            			css.push(this._document.styleSheets[k]);
+            		}
+            	}
+    			return {mode: 'html', document: this._userDocument, webgl: this.glData, css: css, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
     		} else if (this.currentView === "code"){
     			//TODO: Would this get call when we are in code of HTML?
     		} else {
