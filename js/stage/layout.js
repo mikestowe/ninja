@@ -53,36 +53,38 @@ exports.Layout = Montage.create(Component, {
             this.ctx.lineWidth = this.ctxLineWidth;
             this.ctx.fillStyle = this.drawFillColor;
 
-            this.eventManager.addEventListener("elementAdded", this, false);
+//            this.eventManager.addEventListener("elementAdded", this, false);
             this.eventManager.addEventListener("elementDeleted", this, false);
 
             this.eventManager.addEventListener("selectionChange", this, false);
 
             this.eventManager.addEventListener("deleteSelection", this, false);
-
-//            this.addEventListener("change@stage.appModel.layoutView", this.handleLayoutView, false);
-
         }
     },
 
-    handleLayoutView: {
+    handleOpenDocument: {
         value: function() {
-            console.log(this.stage.appModel.layoutView);
-        }
-    },
+            // Initial elements to draw is the entire node list
+            this.elementsToDraw = this.application.ninja.documentController.activeDocument._liveNodeList;
 
-    handleElementAdded: {
-        value: function(event) {
-            this.domTree.push(event.detail);
-
+            // Draw the elements and the 3d info
             this.draw();
             this.draw3DInfo(false);
         }
     },
 
+    // No need to keep track of the added elements. We now have a live node list of the dom
+    handleElementAdded: {
+        value: function(event) {
+            // this.domTree.push(event.detail);
+            // this.draw();
+            // this.draw3DInfo(false);
+        }
+    },
+
     handleElementDeleted: {
         value: function(event) {
-            this.domTree.splice(this.domTree.indexOf(event.detail), 1);
+            //this.domTree.splice(this.domTree.indexOf(event.detail), 1);
         }
     },
 
@@ -96,8 +98,13 @@ exports.Layout = Montage.create(Component, {
 
     handleSelectionChange: {
         value: function(event) {
-            this.elementsToDraw = [];
+            // Make an array copy of the line node list which is not an array like object
+            this.domTree = Array.prototype.slice.call(this.application.ninja.documentController.activeDocument._liveNodeList, 0);
 
+            // Clear the elements to draw
+            this.elementsToDraw.length = 0;
+
+            // Draw the non selected elements
             if(!event.detail.isDocument) {
                 var tmp = event.detail.elements.map(function(element){ return element._element});
 
@@ -111,13 +118,15 @@ exports.Layout = Montage.create(Component, {
             this.draw(); // Not a reel yet :)
             this.draw3DInfo(false);
 
-
+            // Clear the domTree copy
+            this.domTree.length = 0;
         }
     },
 
     draw: {
         value: function() {
             this.clearCanvas();
+
             var els = this.elementsToDraw.length;
             for(var i = 0, el; i < els; i++){
                 this.drawTagOutline(this.elementsToDraw[i]);
@@ -127,15 +136,15 @@ exports.Layout = Montage.create(Component, {
 
     draw3DInfo: {
         value: function(updatePlanes) {
-            if(updatePlanes)
-            {
+            if(updatePlanes) {
                 drawUtils.updatePlanes();
             }
-            if(this.stage.appModel.show3dGrid)
-            {
+
+            if(this.stage.appModel.show3dGrid) {
                 this.application.ninja.stage.stageDeps.snapManager.updateWorkingPlaneFromView();
                 drawUtils.drawWorkingPlane();
             }
+
             drawUtils.draw3DCompass();
         }
     },
@@ -152,29 +161,22 @@ exports.Layout = Montage.create(Component, {
             if(!item) return;
 
             // TODO Bind the layoutview mode to the current document
-//            var mode  = this.application.ninja.currentDocument.layoutMode;
+            // var mode  = this.application.ninja.currentDocument.layoutMode;
 
             if(this.layoutView === "layoutOff") return;
             
             // Don't draw outlines for shapes.
             // TODO Use the element mediator/controller/model to see if its a shape
-            /*
-            if (utilsModule.utils.isElementAShape(item))
-            {
-                return;
-            }
-            */
+            // if (utilsModule.utils.isElementAShape(item)) return;
 
-            /**
-             * New Drawing layout code using 3D calculations
-            */
+
+            // draw the layout
             viewUtils.setViewportObj( item );
             var bounds3D = viewUtils.getElementViewBounds3D( item );
             var tmpMat = viewUtils.getLocalToGlobalMatrix( item );
 
             var zoomFactor = 1;
-            if (this.stage._viewport.style && this.stage._viewport.style.zoom)
-            {
+            if (this.stage._viewport.style && this.stage._viewport.style.zoom) {
 				zoomFactor = Number(this.stage._viewport.style.zoom);
             }
 
@@ -185,8 +187,7 @@ exports.Layout = Montage.create(Component, {
                 var localPt = bounds3D[j];
                 var tmpPt = viewUtils.localToGlobal2(localPt, tmpMat);
 
-                if(zoomFactor !== 1)
-                {
+                if(zoomFactor !== 1) {
                     tmpPt = vecUtils.vecScale(3, tmpPt, zoomFactor);
 
                     tmpPt[0] += sSL*(zoomFactor - 1);
@@ -255,14 +256,6 @@ exports.Layout = Montage.create(Component, {
         value: function(elements) {
             this.clearCanvas();
             this.WalkDOM(this.application.ninja.currentDocument.documentRoot, elements);
-
-            //drawUtils.updatePlanes();
-
-            if(this.application.ninja.currentDocument.draw3DGrid) {
-                //drawUtils.drawWorkingPlane();
-            }
-            
-            //drawUtils.draw3DCompass();
         }
     },
 

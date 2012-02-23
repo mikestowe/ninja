@@ -258,6 +258,8 @@ exports.Stage = Montage.create(Component, {
             this.application.ninja.toolsData.selectedToolInstance._configure(true);
 
             this.addEventListener("change@appModel.show3dGrid", this, false);
+
+            this.layout.handleOpenDocument();
         }
     },
 

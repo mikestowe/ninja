@@ -23,6 +23,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 
     _document: { value: null, enumerable: false },
     _documentRoot: { value: null, enumerable: false },
+    _liveNodeList: { value: null, enumarable: false },
     _stageBG: { value: null, enumerable: false },
     _window: { value: null, enumerable: false },
     _styles: { value: null, enumerable: false },
@@ -396,7 +397,16 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             // Adding a handler for the main user document reel to finish loading.
             this._document.body.addEventListener("userTemplateDidLoad",  this.userTemplateDidLoad.bind(this), false);
 
-            
+            // Live node list of the current loaded document
+            this._liveNodeList = this.documentRoot.getElementsByTagName('*');
+
+            // TODO Move this to the appropriate location
+            var len = this._liveNodeList.length;
+
+            for(var i = 0; i < len; i++) {
+                NJUtils.makeElementModel2(this._liveNodeList[i]);
+            }
+
             /* this.iframe.contentWindow.document.addEventListener('DOMSubtreeModified', function (e) { */ //TODO: Remove events upon loading once
 
             //TODO: When written, the best way to initialize the document is to listen for the DOM tree being modified
