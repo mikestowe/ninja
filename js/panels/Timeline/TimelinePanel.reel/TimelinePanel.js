@@ -494,7 +494,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     this.arrTracks.splice(myIndex, 0, newTrack);
                     this.arrLayers.splice(myIndex, 0, thingToPush);
                     this._LayerUndoPosition = myIndex;
-//                    this.selectLayer(myIndex);
+                    this.selectLayer(myIndex);
                     this.hashLayerNumber.setItem(this._hashKey, thingToPush);
                     this.hashInstance.setItem(this._hashKey, thingToPush, myIndex);
                     this.hashTrackInstance.setItem(this._hashKey, newTrack, myIndex);
@@ -507,7 +507,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     this.hashLayerNumber.setItem(this._hashKey, thingToPush);
                     this.hashInstance.setItem(this._hashKey, thingToPush, thingToPush.layerPosition);
                     this.hashTrackInstance.setItem(this._hashKey, newTrack, newTrack.trackPosition);
-//                    this.selectLayer(0);
+                    this.selectLayer(0);
 
                 }
                 this._LayerUndoObject = thingToPush;
