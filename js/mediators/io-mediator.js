@@ -205,7 +205,8 @@ exports.IoMediator = Montage.create(Component, {
     		template.document.content.document.head.innerHTML = template.head;
     		//Getting all CSS (style or link) tags
     		var styletags = template.document.content.document.getElementsByTagName('style'),
-    			linktags = template.document.content.document.getElementsByTagName('link');
+    			linktags = template.document.content.document.getElementsByTagName('link'),
+    			url = new RegExp(window.location.protocol+'//'+window.location.host+'/js/document/templates/montage-html/', 'gi');
     		//Looping through link tags and removing file recreated elements
     		for (var j in styletags) {
     			if (styletags[j].getAttribute) {
@@ -271,7 +272,7 @@ exports.IoMediator = Montage.create(Component, {
     			}
     		}
     		//
-    		return template.document.content.document.documentElement.outerHTML;
+    		return template.document.content.document.documentElement.outerHTML.replace(url, '');
     	}
     },
     ////////////////////////////////////////////////////////////////////
