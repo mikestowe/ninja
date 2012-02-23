@@ -347,6 +347,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             if (this._styleCollapser.isCollapsed !== this.isStyleCollapsed) {
                 this._styleCollapser.toggle(false);
             }
+            this.retrieveStoredTweens();
         }
     },
 
@@ -436,6 +437,59 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             //console.log("splitting tween at span offsetX: " + ev.offsetX);
         }
     },
+
+    retrieveStoredTweens:{
+            value:function(){
+                var animationDuration,trackDuration,currentMilliSec , currentMillisecPerPixel,clickPos,i=0,k=0;
+                if(this.application.ninja.timeline.currentLayerSelected.element[0]){
+                this.animatedElement = this.application.ninja.timeline.currentLayerSelected.element[0];
+                this.animationName = this.ninjaStylesContoller.getElementStyle(this.animatedElement,"-webkit-animation-name");
+                animationDuration = this.ninjaStylesContoller.getElementStyle(this.animatedElement,"-webkit-animation-duration");
+                trackDuration = animationDuration.split("s");
+                currentMilliSec =trackDuration[0]*1000;
+                currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
+                clickPos = currentMilliSec / currentMillisecPerPixel;
+
+                this.currentKeyframeRule = this.ninjaStylesContoller.getAnimationRuleWithName(this.animationName , this.application.ninja.currentDocument._document);
+
+                    var newTween = {};
+                    if( this.currentKeyframeRule[i].keyText==="0%"){
+                        newTween.spanWidth = 0;
+                        newTween.keyFramePosition = 0;
+                        newTween.keyFrameMillisec = 0;
+                        newTween.keyframeID = i;
+                        newTween.spanPosition = 0;
+                        this.tweens.push(newTween);
+
+                    }else{
+
+                        newTween.spanWidth = clickPos - this.tweens[this.tweens.length - 1].keyFramePosition;
+                        newTween.keyFramePosition = clickPos;
+                        newTween.keyFrameMillisec = currentMilliSec;
+                        newTween.keyframeID = i;
+                        newTween.spanPosition = clickPos - newTween.spanWidth;
+                        this.tweens.push(newTween);
+
+                    }
+                    this.needsDraw=true;
+                //    this.retrieveAnimationRuleToElement();
+                    this.i++;
+
+               //  this.ninjaStylesContoller.deleteRule(this.currentKeyframeRule);
+
+                }
+
+            }
+        },
+
+        retrieveAnimationRuleToElement:{
+            value:function(){
+    //            this.animatedElement = this.tempArray[0];
+    //            var initAnimatedProperties = new Array();
+    //            initAnimatedProperties["top"] = this.currentKeyframeRule[this.i].style[0];
+    //            initAnimatedProperties["left"] = this.currentKeyframeRule[this.i].style[1];
+            }
+        },
 
     addAnimationRuleToElement:{
         value:function (tweenEvent) {
