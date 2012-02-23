@@ -241,7 +241,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 key = this.application.ninja.selectedElements[0].uuid;
                 switchSelectedLayer = this.hashElementMapToLayer.getItem(key);
                 if(switchSelectedLayer!==undefined){
-                    layerIndex = this.getLayerIndexByID(switchSelectedLayer.layerID)
+                    layerIndex = this.getLayerIndexByID(switchSelectedLayer.layerID);
                     this._captureSelection=false;
                     this.selectLayer(layerIndex);
                     this._captureSelection=true;
@@ -767,7 +767,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
    
     createElementMapToLayer:{
         value:function(){
-            var hashMappingObject
+            var hashMappingObject;
             hashMappingObject = Object.create(Object.prototype, {
                 mappingArray:{
                     value:{},
