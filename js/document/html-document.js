@@ -389,8 +389,9 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             this._window = this.iframe.contentWindow;
             //
             for (var k in this._document.styleSheets) {
-            	this._document.styleSheets[k].ninjatemplate = true;
-            	//TODO: Add as attribute
+            	if (this._document.styleSheets[k].ownerNode && this._document.styleSheets[k].ownerNode.setAttribute) {
+            		this._document.styleSheets[k].ownerNode.setAttribute('ninjatemplate', 'true');
+            	}
             }
             //
             if(!this.documentRoot.Ninja) this.documentRoot.Ninja = {};
@@ -449,11 +450,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 					////////////////////////////////////////////////////////////////////////////
 					////////////////////////////////////////////////////////////////////////////
 					
-					//TODO: Revisit this logic
-					/* this._styles = this._document.styleSheets[1]; */
-					this._stylesheets = this._document.styleSheets; // Entire stlyesheets array
-					
-					console.log(this._document.styleSheets);
+					//TODO: Check if this is needed
+					this._stylesheets = this._document.styleSheets;
 					
 					////////////////////////////////////////////////////////////////////////////
 					////////////////////////////////////////////////////////////////////////////
@@ -574,8 +572,10 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     		if (this.currentView === 'design') {
     			var styles = [];
     			for (var k in this._document.styleSheets) {
-            		if (!this._document.styleSheets[k].ninjatemplate) {
-            			styles.push(this._document.styleSheets[k]);
+    				if (this._document.styleSheets[k].ownerNode && this._document.styleSheets[k].ownerNode.getAttribute) {
+            			if (this._document.styleSheets[k].ownerNode.getAttribute('ninjatemplate') === null) {
+            				styles.push(this._document.styleSheets[k]);
+            			}
             		}
             	}
     			return {mode: 'html', document: this._userDocument, webgl: this.glData, styles: styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
@@ -595,8 +595,10 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     		if (this.currentView === 'design') {
     			var css = [];
     			for (var k in this._document.styleSheets) {
-            		if (!this._document.styleSheets[k].ninjatemplate) {
-            			css.push(this._document.styleSheets[k]);
+    				if (this._document.styleSheets[k].ownerNode && this._document.styleSheets[k].ownerNode.getAttribute) {
+            			if (this._document.styleSheets[k].ownerNode.getAttribute('ninjatemplate') === null) {
+            				css.push(this._document.styleSheets[k]);
+            			}
             		}
             	}
     			return {mode: 'html', document: this._userDocument, webgl: this.glData, css: css, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};

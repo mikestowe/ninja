@@ -59,6 +59,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             this.eventManager.addEventListener("executeNewFile", this, false);
             this.eventManager.addEventListener("executeSave", this, false);
             this.eventManager.addEventListener("executeSaveAs", this, false);
+            this.eventManager.addEventListener("executeSaveAll", this, false);
 
             this.eventManager.addEventListener("recordStyleChanged", this, false);
             
@@ -126,6 +127,16 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
                 //Text and HTML document classes should return the same save object for fileSave
                 this.application.ninja.ioMediator.fileSave(this.activeDocument.save(), this.fileSaveResult.bind(this));
+            }
+		}
+    },
+    ////////////////////////////////////////////////////////////////////
+	//TODO: Check for appropiate structures
+    handleExecuteSaveAll: {
+    	value: function(event) {
+            if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
+                //Text and HTML document classes should return the same save object for fileSave
+                this.application.ninja.ioMediator.fileSave(this.activeDocument.saveAll(), this.fileSaveResult.bind(this));
             }
 		}
     },

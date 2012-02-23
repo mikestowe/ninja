@@ -199,55 +199,76 @@ exports.IoMediator = Montage.create(Component, {
     parseNinjaTemplateToHtml: {
     	enumerable: false,
     	value: function (template) {
-    		//
+    		//TODO: Clean up variables
+    		//Injecting head and body into old document
     		template.document.content.document.body.innerHTML = template.body;
     		template.document.content.document.head.innerHTML = template.head;
-    		//
+    		//Getting all CSS (style or link) tags
     		var styletags = template.document.content.document.getElementsByTagName('style'),
     			linktags = template.document.content.document.getElementsByTagName('link');
-    		//
+    		//Looping through link tags and removing file recreated elements
     		for (var j in styletags) {
     			if (styletags[j].getAttribute) {
     				if(styletags[j].getAttribute('ninjauri') !== null) {
     					try {
+    						//Checking head first
     						template.document.content.document.head.removeChild(styletags[j]);
     					} catch (e) {
     						try {
+    							//Checking body if not in head
     							template.document.content.document.body.removeChild(styletags[j]);
     						} catch (e) {
-    							//
+    							//Error, not found!
     						}
     					}
     					
     				}
     			}
     		}
-    		//
+    		//TODO: Add logic to only enble tags we disabled
     		for (var l in linktags) {
     			if (linktags[l].getAttribute && linktags[l].getAttribute('disabled')) {
     				linktags[l].removeAttribute('disabled');
     			}
     		}
-    		//
+    		//Checking for type of save: styles = <style> only | css = <style> and <link> (all CSS)
     		if (template.styles) {
-    			//
+    			//Getting all style tags
     			var styleCounter = 0,
     				docStyles = template.document.content.document.getElementsByTagName('style');
+    			//Looping through all style tags
     			for(var i in template.styles) {
     				if (template.styles[i].ownerNode) {
     					if (template.styles[i].ownerNode.getAttribute) {
+    						//Checking for node not to be loaded from file
     						if (template.styles[i].ownerNode.getAttribute('ninjauri') === null) {
-    							//console.log(docStyles[styleCounter], template.styles[i].cssRules);
+    							//Inseting data from rules array into tag as string
     							docStyles[styleCounter].innerHTML = this.getCssFromRules(template.styles[i].cssRules);
+    							//Syncing <style> tags count since it might be mixed with <link>
     							styleCounter++;
     						}
     					}
     				}
     			}
-    			
-    			//template.document.content.document.head.getElementsByTagName('style')[0].innerHTML = this.getCssFromRules(template.style.cssRules);
     		} else if (template.css) {
-    			console.log('Save all css and style');
+    			//Getting all style and link tags
+    			var styleCounter = 0,
+    				docStyles = template.document.content.document.getElementsByTagName('style'),
+    				docLinks = template.document.content.document.getElementsByTagName('link');
+    			for(var i in template.css) {
+    				if (template.css[i].ownerNode) {
+    					if (template.css[i].ownerNode.getAttribute) {
+    						if (template.css[i].ownerNode.getAttribute('ninjauri') === null) {
+    							//Inseting data from rules array into <style> as string
+    							docStyles[styleCounter].innerHTML = this.getCssFromRules(template.css[i].cssRules);
+    							styleCounter++;
+    						} else {
+    							//Saving data from rules array converted to string into <link> file
+    							var save = this.fio.saveFile({uri: template.css[i].ownerNode.getAttribute('ninjauri'), contents: this.getCssFromRules(template.css[i].cssRules)});
+    						}
+    					}
+    				}
+    			}
     		}
     		//
     		return template.document.content.document.documentElement.outerHTML;
