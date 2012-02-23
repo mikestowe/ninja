@@ -463,7 +463,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
     getColor: {
         value: function(el, isFill) {
             if(!el.elementModel) {
-                NJUtils.makeElementModel2(el);
+                NJUtils.makeModelFromElement(el);
             }
             return el.elementModel.controller["getColor"](el, isFill);
         }
@@ -624,7 +624,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
     getColor2: {
         value: function(el, prop, mutator) {
             if(!el.elementModel) {
-                NJUtils.makeElementModel2(el);
+                NJUtils.makeModelFromElement(el);
             }
 
             return this.getColor(el, (prop === "background"));
@@ -636,7 +636,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
     get3DProperty: {
         value: function(el, prop) {
             if(!el.elementModel) {
-                NJUtils.makeElementModel2(el);
+                NJUtils.makeModelFromElement(el);
             }
             return el.elementModel.controller["get3DProperty"](el, prop);
         }
@@ -645,7 +645,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
     get3DProperties: {
         value: function(el) {
             if(!el.elementModel) {
-                NJUtils.makeElementModel2(el);
+                NJUtils.makeModelFromElement(el);
             }
 //            var mat = this.getMatrix(el);
 //            var dist = this.getPerspectiveDist(el);
@@ -658,7 +658,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
     getMatrix: {
         value: function(el) {
             if(!el.elementModel) {
-                NJUtils.makeElementModel2(el);
+                NJUtils.makeModelFromElement(el);
             }
             return el.elementModel.controller["getMatrix"](el);
         }
@@ -667,7 +667,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
     getPerspectiveDist: {
         value: function(el) {
             if(!el.elementModel) {
-                NJUtils.makeElementModel2(el);
+                NJUtils.makeModelFromElement(el);
             }
             return el.elementModel.controller["getPerspectiveDist"](el);
         }

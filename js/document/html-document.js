@@ -404,7 +404,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             var len = this._liveNodeList.length;
 
             for(var i = 0; i < len; i++) {
-                NJUtils.makeElementModel2(this._liveNodeList[i]);
+                NJUtils.makeModelFromElement(this._liveNodeList[i]);
             }
 
             /* this.iframe.contentWindow.document.addEventListener('DOMSubtreeModified', function (e) { */ //TODO: Remove events upon loading once
