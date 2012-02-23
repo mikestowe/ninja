@@ -200,7 +200,17 @@ function PulseMaterial()
 		this.setName(  pu.nextValue( "name: ") );
 
 		var rtnStr;
-		
+        try
+        {
+            var endKey = "endMaterial\n";
+            var index = importStr.indexOf( endKey );
+            index += endKey.length;
+            rtnStr = importStr.substr( index );
+        }
+        catch (e)
+        {
+            throw new Error( "could not import material: " + importStr );
+        }
 		return rtnStr;
 	}
 }
