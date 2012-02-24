@@ -162,15 +162,15 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 				cdm.collectGLData( elt,  this._glData );
 			}
 				
-			return this._glData
+			return this._glData;
 		},
 
         set: function(value)
 		{
-			var elt = this.iframe.contentWindow.document.getElementById("UserContent");
+			var elt = this.documentRoot;
 			if (elt)
 			{
-				console.log( "load canvas data: " + value );
+				console.log( "load canvas data: " , value );
 				var cdm = new CanvasDataManager();
 				cdm.loadGLData(elt,  value);
 			}
@@ -374,6 +374,25 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             //Inserting user's document into template
             this._templateDocument.head.innerHTML = this._userDocument.content.head;
             this._templateDocument.body.innerHTML = this._userDocument.content.body;
+            //TODO: Use querySelectorAll
+            var scripttags = this._templateDocument.html.getElementsByTagName('script'), webgldata;
+            //
+            for (var w in scripttags) {
+            	if (scripttags[w].getAttribute) {
+            		if (scripttags[w].getAttribute('data-ninja-webgl') !== null) {
+            			//TODO: Add logic to handle more than one data tag
+            			webgldata = JSON.parse((scripttags[w].innerHTML.replace("(", "")).replace(")", ""));
+            		}
+            	}
+            }
+            //
+            if (webgldata) {
+            	for (var n=0; webgldata.data[n]; n++) {
+            		webgldata.data[n] = unescape(webgldata.data[n]);
+            	}
+            	this._templateDocument.webgl = webgldata.data;
+            }
+            
             
             //Adding a handler for the main user document reel to finish loading
             this._document.body.addEventListener("userTemplateDidLoad",  this.userTemplateDidLoad.bind(this), false);
@@ -487,6 +506,10 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 					
 					this.callback(this);
 					
+					//Setting webGL data
+					if (this._templateDocument.webgl) {
+						this.glData = this._templateDocument.webgl;
+					}
 				}
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

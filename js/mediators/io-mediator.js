@@ -195,11 +195,10 @@ exports.IoMediator = Montage.create(Component, {
     	}
     },
     ////////////////////////////////////////////////////////////////////
-    //TODO: Expand to allow more templates
+    //TODO: Expand to allow more templates, clean up variables
     parseNinjaTemplateToHtml: {
     	enumerable: false,
     	value: function (template) {
-    		//TODO: Clean up variables
     		//Injecting head and body into old document
     		template.document.content.document.body.innerHTML = template.body;
     		template.document.content.document.head.innerHTML = template.head;
@@ -210,7 +209,7 @@ exports.IoMediator = Montage.create(Component, {
     		//Looping through link tags and removing file recreated elements
     		for (var j in styletags) {
     			if (styletags[j].getAttribute) {
-    				if(styletags[j].getAttribute('ninjauri') !== null) {
+    				if(styletags[j].getAttribute('ninjauri') !== null) {//TODO: Use querySelectorAll
     					try {
     						//Checking head first
     						template.document.content.document.head.removeChild(styletags[j]);
@@ -228,7 +227,7 @@ exports.IoMediator = Montage.create(Component, {
     		}
     		//TODO: Add logic to only enble tags we disabled
     		for (var l in linktags) {
-    			if (linktags[l].getAttribute && linktags[l].getAttribute('disabled')) {
+    			if (linktags[l].getAttribute && linktags[l].getAttribute('disabled')) {//TODO: Use querySelectorAll
     				linktags[l].removeAttribute('disabled');
     			}
     		}
@@ -259,7 +258,7 @@ exports.IoMediator = Montage.create(Component, {
     			for(var i in template.css) {
     				if (template.css[i].ownerNode) {
     					if (template.css[i].ownerNode.getAttribute) {
-    						if (template.css[i].ownerNode.getAttribute('ninjauri') === null) {
+    						if (template.css[i].ownerNode.getAttribute('ninjauri') === null) {//TODO: Use querySelectorAll
     							//Inseting data from rules array into <style> as string
     							docStyles[styleCounter].innerHTML = this.getCssFromRules(template.css[i].cssRules);
     							styleCounter++;
@@ -270,6 +269,44 @@ exports.IoMediator = Montage.create(Component, {
     					}
     				}
     			}
+    		}
+    		//Checking for webGL elements in document
+    		if (template.webgl.length) {
+    			//
+    			var json, matchingtags = [], webgltag, scripts = template.document.content.document.getElementsByTagName('script');
+    			//
+    			for (var i in scripts) {
+    				if (scripts[i].getAttribute) {
+    					if (scripts[i].getAttribute('data-ninja-webgl') !== null) {//TODO: Use querySelectorAll
+    						matchingtags.push(scripts[i]);
+    					}
+    				}
+    			}
+    			//
+    			if (matchingtags.length) {
+    				if (matchingtags.length === 1) {
+    					webgltag = matchingtags[0];
+    				} else {
+    					//TODO: Add logic to handle multiple tags, perhaps combine to one
+    					webgltag = matchingtags[matchingtags.length-1]; //Saving all data to last one...
+    				}
+    			}
+    			//
+    			if (!webgltag) {
+    				webgltag = template.document.content.document.createElement('script');
+    				webgltag.setAttribute('data-ninja-webgl', 'true');
+    				template.document.content.document.head.appendChild(webgltag);
+    			}
+    			//
+    			json = '\n\t\t({\n\t\t\t"version": "X.X.X.X",\n\t\t\t"data": [';
+    			//
+    			for (var j=0; template.webgl[j]; j++) {
+    				json += '\n\t\t\t\t"'+escape(template.webgl[j])+'"';
+    			}
+    			//
+    			json += ']\n\t\t})\n\t';
+    			//
+    			webgltag.innerHTML = json;
     		}
     		//
     		return template.document.content.document.documentElement.outerHTML.replace(url, '');
