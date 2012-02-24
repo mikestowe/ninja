@@ -11,35 +11,12 @@ var Button = 			require("js/components/button.reel").Button;
 ////////////////////////////////////////////////////////////////////////
 //Exporting as MaterialsPopup
 exports.MaterialsPopup = Montage.create(Component, {
-	////////////////////////////////////////////////////////////////////
-    okButton: {
-        enumerable: false,
-        value: null
-    },
-
-    cancelButton: {
-        enumerable: false,
-        value: null
-    },
-
     ////////////////////////////////////////////////////////////////////
 	// Material Properties
-
-    materialsProperties: {
-        enumerable: true,
-        serializable: true,
-        value: null
-    },
-
     _materialName: {
         enumerable: true,
-        value: "Material"
+        value: ""
     },
-
-	materialTitle: {
-		enumerable: true,
-		value: null
-	},
 
 	captureAction: {
 		value:function(event) {
@@ -69,6 +46,9 @@ exports.MaterialsPopup = Montage.create(Component, {
                     }
 					break;
 			}
+
+            // Notify Materials Library to close popup
+            NJevent("hideMaterialPopup");
 		}
 	},
 
@@ -235,12 +215,12 @@ exports.MaterialsPopup = Montage.create(Component, {
 		value: function(materialID)
 		{
            this._materialName = materialID;
-            if(	
+            if(
 					(materialID ===  "UberMaterial")				||
 					(materialID ===  "FlatMaterial")				||
- 					(materialID ===  "BumpMetalMaterial")			||
- 					(materialID ===  "LinearGradientMaterial")		||
- 					(materialID ===  "RadialGradientMaterial")
+					(materialID ===  "BumpMetalMaterial")			||
+					(materialID ===  "LinearGradientMaterial")		||
+					(materialID ===  "RadialGradientMaterial")
 				)
 			{
 				var material = MaterialsLibrary.getMaterial( materialID );
@@ -323,6 +303,8 @@ exports.MaterialsPopup = Montage.create(Component, {
 	{
 		value:  function( label,  color )
 		{
+            var css = 'rgba(' + color[0]*255 + ',' + color[1]*255 + ',' + color[2]*255 + ',' + color[3] + ')';
+            var colorObj = this.application.ninja.colorController.getColorObjFromCss(css)
 			var obj =
 			{
 				"label":		label,
@@ -330,7 +312,7 @@ exports.MaterialsPopup = Montage.create(Component, {
 				"controlType":	"ColorChip",
                 "defaults":
                 {
-					"color":	{ r:color[0]*255, g:color[1]*255, b:color[2]*255, a:color[3] }
+					"color":	colorObj
 				}
 			};
 
@@ -644,7 +626,7 @@ exports.MaterialsPopup = Montage.create(Component, {
     _materialsData: {
 		enumerable: true,
         serializable: true,
-	    value: this._dummyData1
+	    value: []
     
 	},
 
@@ -656,7 +638,10 @@ exports.MaterialsPopup = Montage.create(Component, {
             },
         set: function(data) {
             this._materialsData = data;
-            this.materialsProperties.needsDraw = true;
+            if(this.materialsProperties)
+            {
+                this.materialsProperties.needsDraw = true;
+            }
         }
     }
 

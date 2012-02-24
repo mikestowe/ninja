@@ -19,7 +19,7 @@ exports.ImageController = Montage.create(ElementController, {
                     return el.getAttribute(prop);
                     break;
                 default:
-                    return ElementController.getProperty(el, prop);
+                    return ElementController.getProperty(el, prop, true);
             }
         }
     },
