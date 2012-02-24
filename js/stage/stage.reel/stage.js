@@ -519,7 +519,7 @@ exports.Stage = Montage.create(Component, {
                 elt = this.application.ninja.currentDocument.GetElementFromPoint(point.x + this.scrollLeft,point.y + this.scrollTop);
 
             // workaround Chrome 3d bug
-            if(this.application.ninja.currentDocument.inExclusion(elt) !== -1)
+            if(this.application.ninja.toolsData.selectedToolInstance._canSnap && this.application.ninja.currentDocument.inExclusion(elt) !== -1)
             {
                 return this._getElementUsingSnapping(point);
             } else {

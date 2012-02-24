@@ -18,6 +18,7 @@ exports.EyedropperTool = Montage.create(toolBase, {
     _elementUnderMouse: { value: null },
     _imageDataCanvas: { value: null },
     _imageDataContext: { value: null },
+    _canSnap: { value: false },
 
     Configure: {
         value: function ( doActivate )
@@ -143,10 +144,14 @@ exports.EyedropperTool = Montage.create(toolBase, {
                 {
                     this._deleteImageDataCanvas();
 
-                    c = ElementsMediator.getColor(obj, this._isOverBackground(obj, event));
-                    if(c)
+                    c = this._getColorFromElement(obj, event);
+                    if(typeof(c) === "string")
                     {
-                        color = this.application.ninja.colorController.getColorObjFromCss(c.color.css);
+                        color = this.application.ninja.colorController.getColorObjFromCss(c);
+                    }
+                    else
+                    {
+                        color = c;
                     }
                 }
 
@@ -202,51 +207,63 @@ exports.EyedropperTool = Montage.create(toolBase, {
     },
 
     // TODO - We don't want to calculate this repeatedly
-    _isOverBackground: {
+    _getColorFromElement: {
         value: function(elt, event)
         {
-            var border = ElementsMediator.getProperty(elt, "border", parseFloat);
-
+            var border = ElementsMediator.getProperty(elt, "border"),
+                borderWidth,
+                bounds3D,
+                innerBounds,
+                pt,
+                bt,
+                br,
+                bb,
+                bl,
+                xAdj,
+                yAdj,
+                tmpPt,
+                x,
+                y;
             if(border)
             {
-                var bounds3D,
-                    innerBounds = [],
-                    pt = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(event.pageX, event.pageY)),
-                    bt = ElementsMediator.getProperty(elt, "border-top", parseFloat),
-                    br = ElementsMediator.getProperty(elt, "border-right", parseFloat),
-                    bb = ElementsMediator.getProperty(elt, "border-bottom", parseFloat),
-                    bl = ElementsMediator.getProperty(elt, "border-left", parseFloat);
-
-//                this.application.ninja.stage.viewUtils.setViewportObj( elt );
                 bounds3D = this.application.ninja.stage.viewUtils.getElementViewBounds3D( elt );
-//                console.log("bounds");
-//                console.dir(bounds3D);
+                innerBounds = [];
+                pt = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas,
+                                                                        new WebKitPoint(event.pageX, event.pageY));
+                borderWidth = parseFloat(border);
+                if(isNaN(borderWidth))
+                {
+                    bt = ElementsMediator.getProperty(elt, "border-top", parseFloat);
+                    br = ElementsMediator.getProperty(elt, "border-right", parseFloat);
+                    bb = ElementsMediator.getProperty(elt, "border-bottom", parseFloat);
+                    bl = ElementsMediator.getProperty(elt, "border-left", parseFloat);
+                    borderWidth = 0;
+                }
+                xAdj = bl || borderWidth;
+                yAdj = bt || borderWidth;
 
-                var xAdj = bl || border,
-                    yAdj = bt || border;
                 innerBounds.push([bounds3D[0][0] + xAdj, bounds3D[0][1] + yAdj, 0]);
 
-                yAdj += bb || border;
+                yAdj = bb || borderWidth;
                 innerBounds.push([bounds3D[1][0] + xAdj, bounds3D[1][1] - yAdj, 0]);
 
-                xAdj += br || border;
+                xAdj = br || borderWidth;
                 innerBounds.push([bounds3D[2][0] - xAdj, bounds3D[2][1] - yAdj, 0]);
 
-                yAdj = bt || border;
+                yAdj = bt || borderWidth;
                 innerBounds.push([bounds3D[3][0] - xAdj, bounds3D[3][1] + yAdj, 0]);
-//                console.log("innerBounds");
-//                console.dir(innerBounds);
 
-                var tmpPt = this.application.ninja.stage.viewUtils.globalToLocal([pt.x, pt.y], elt);
-                var x = tmpPt[0],
-                    y = tmpPt[1];
+                tmpPt = this.application.ninja.stage.viewUtils.globalToLocal([pt.x, pt.y], elt);
+                x = tmpPt[0];
+                y = tmpPt[1];
 
-                if(x < innerBounds[0][0]) return false;
-                if(x > innerBounds[2][0]) return false;
-                if(y < innerBounds[0][1]) return false;
-                if(y > innerBounds[1][1]) return false;
+                if(x < innerBounds[0][0]) return ElementsMediator.getProperty(elt, "border-left-color");
+                if(x > innerBounds[2][0]) return ElementsMediator.getProperty(elt, "border-right-color");
+                if(y < innerBounds[0][1]) return ElementsMediator.getProperty(elt, "border-top-color");
+                if(y > innerBounds[1][1]) return ElementsMediator.getProperty(elt, "border-bottom-color");
             }
-            return true;
+
+            return ElementsMediator.getColor(elt, true);
         }
     },
 
