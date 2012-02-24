@@ -195,6 +195,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value:function(doc){
             var response = doc || null;//default just for testing
             if(!!response && response.success && (response.status!== 500) && !!response.uri){
+                this.creatingNewFile = true;//flag for timeline to identify new file flow
                 this.application.ninja.ioMediator.fileOpen(response.uri, this.openFileCallback.bind(this));
             }else if(!!response && !response.success){
                 //Todo: restrict directory path to the sandbox, in the dialog itself
@@ -222,6 +223,11 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value:function(response){
             //TODO: Add UI to handle error codes, shouldn't be alert windows
             if(!!response && (response.status === 204)) {
+
+            	if((typeof this.creatingNewFile === 'undefined') || (this.creatingNewFile !== true)){//not from new file flow
+                    this.creatingNewFile = false;
+                }
+
             	//Sending full response object
             	this.openDocument(response);   
             } else if (!!response && (response.status === 404)){
@@ -332,6 +338,10 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
                 this.application.ninja.stage.hideCanvas(true);
             }
+
+            NJevent("closeDocument", doc.uri);
+
+            doc=null;
         }
     },
 
@@ -339,7 +349,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     // Event Detail: Contains the current ActiveDocument
     _onOpenDocument: {
         value: function(doc){
-            //var data = DocumentManager.activeDocument;
+            this.application.ninja.currentDocument = doc;
             this._hideCurrentDocument();
             this.application.ninja.stage.stageView.hideOtherDocuments(doc.uuid);
 
@@ -423,7 +433,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value: function() {
             if(this.activeDocument) {
                 if(this.activeDocument.currentView === "design"){
-                    this.application.ninja.stage.saveScroll();
+                    this.activeDocument.saveAppState();
                     this.activeDocument.container.parentNode.style["display"] = "none";
                     this.application.ninja.stage.hideCanvas(true);
                     this.application.ninja.stage.stageView.hideRulers();
@@ -440,7 +450,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                 this.activeDocument.container.style["display"] = "block";
                 if(this.activeDocument.currentView === "design"){
                     this.activeDocument.container.parentNode.style["display"] = "block";
-                    this.application.ninja.stage.restoreScroll();
+                    this.activeDocument.restoreAppState();
                     this.application.ninja.stage.hideCanvas(false);
                     this.application.ninja.stage.stageView.showRulers();
                 }else{

@@ -54,6 +54,11 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     },
 
 
+    //drawUtils state
+    _gridHorizontalSpacing: {value:0},
+    _gridVerticalSpacing: {value:0},
+    //end - drawUtils state
+
 
     // GETTERS / SETTERS
 
@@ -70,6 +75,16 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     savedTopScroll:{
         get: function() { return this._savedTopScroll; },
         set: function(value) { this._savedTopScroll = value}
+    },
+
+    gridHorizontalSpacing:{
+        get: function() { return this._gridHorizontalSpacing; },
+        set: function(value) { this._gridHorizontalSpacing = value}
+    },
+
+    gridVerticalSpacing:{
+        get: function() { return this._gridVerticalSpacing; },
+        set: function(value) { this._gridVerticalSpacing = value}
     },
 
     selectionExclude: {
@@ -616,7 +631,43 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     			//Error
     		}
     	}
-	}
+	},
 	////////////////////////////////////////////////////////////////////
+    saveAppState:{
+        enumerable: false,
+        value: function () {
+
+            this.savedLeftScroll = this.application.ninja.stage._iframeContainer.scrollLeft;
+            this.savedTopScroll = this.application.ninja.stage._iframeContainer.scrollTop;
+
+            this.gridHorizontalSpacing = this.application.ninja.stage.drawUtils.gridHorizontalSpacing;
+            this.gridVerticalSpacing = this.application.ninja.stage.drawUtils.gridVerticalSpacing;
+
+            if(typeof this.application.ninja.selectedElements !== 'undefined'){
+                this.selectionModel = this.application.ninja.selectedElements;
+            }
+        }
+    },
+
+    ////////////////////////////////////////////////////////////////////
+    restoreAppState:{
+        enumerable: false,
+        value: function () {
+            this.application.ninja.stage.drawUtils.gridHorizontalSpacing = this.gridHorizontalSpacing;
+            this.application.ninja.stage.drawUtils.gridVerticalSpacing = this.gridVerticalSpacing;
+
+            if((typeof this.selectionModel !== 'undefined') && (this.selectionModel !== null) && (this.selectionModel.length > 0)){
+                this.application.ninja.selectionController.initWithDocument(this.selectionModel);
+            }
+
+            if((this.savedLeftScroll!== null) && (this.savedTopScroll !== null)){
+                this.application.ninja.stage._iframeContainer.scrollLeft = this.savedLeftScroll;
+                this.application.ninja.stage._scrollLeft = this.savedLeftScroll;
+                this.application.ninja.stage._iframeContainer.scrollTop = this.savedTopScroll;
+                this.application.ninja.stage._scrollLeft = this.savedTopScroll;
+            }
+            this.application.ninja.stage.handleScroll();
+        }
+    }
 	////////////////////////////////////////////////////////////////////
 });

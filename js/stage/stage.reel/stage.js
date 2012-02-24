@@ -37,6 +37,10 @@ exports.Stage = Montage.create(Component, {
 		get: function()  {  return this.stageDeps.snapManager;  }
 	},
 
+    drawUtils: {
+        get: function()  {  return this.stageDeps.drawUtils;  }
+    },
+
     resizeCanvases: {
         get: function() {
             return this._resizeCanvases;
@@ -144,12 +148,12 @@ exports.Stage = Montage.create(Component, {
 
     userContentLeft: {
         get: function() { return this._userContentLeft; },
-        set: function(value) { this._userContentLeft = value; }
+        set: function(value) { this._userContentLeft = value;}
     },
 
     userContentTop: {
         get: function() { return this._userContentTop; },
-        set: function(value) { this._userContentTop = value; }
+        set: function(value) { this._userContentTop = value;}
     },
 
     userContentBorder: {
@@ -435,12 +439,11 @@ exports.Stage = Montage.create(Component, {
      */
     handleScroll: {
         value: function() {
-
             this._scrollLeft = this._iframeContainer.scrollLeft;
             this._scrollTop = this._iframeContainer.scrollTop;
 
-            this._userContentLeft = this._documentOffsetLeft - this._scrollLeft + this._userContentBorder;
-            this._userContentTop = this._documentOffsetTop - this._scrollTop + this._userContentBorder;
+            this.userContentLeft = this._documentOffsetLeft - this._scrollLeft + this._userContentBorder;
+            this.userContentTop = this._documentOffsetTop - this._scrollTop + this._userContentBorder;
 
             // Need to clear the snap cache and set up the drag plane
             //snapManager.setupDragPlaneFromPlane( workingPlane );
@@ -448,7 +451,6 @@ exports.Stage = Montage.create(Component, {
 
             this.needsDraw = true;
             this.layout.draw();
-
             //this._toolsList.action("DrawHandles");
 
         }

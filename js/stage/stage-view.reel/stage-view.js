@@ -118,14 +118,9 @@ exports.StageView = Montage.create(Component, {
         }
     },
 
-
-
+    //called for switching between html documents
     switchDocument:{
         value: function(doc){
-            //save editor cursor position
-            if(!!this.application.ninja.documentController.activeDocument && !!this.application.ninja.documentController.activeDocument.editor){
-                this.application.ninja.documentController.activeDocument.hline = this.application.ninja.documentController.activeDocument.editor.getCursor(true);
-            }
             this.application.ninja.documentController._hideCurrentDocument();
 
             this.application.ninja.documentController.activeDocument = doc;
@@ -133,21 +128,25 @@ exports.StageView = Montage.create(Component, {
             this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
             this.application.ninja.documentController._showCurrentDocument();
 
-            var documentController = this.application.ninja.documentController;
-
-            //restore editor cursor position
+            //focus current document
             if(!!this.application.ninja.documentController.activeDocument && !!this.application.ninja.documentController.activeDocument.editor){
-                this.application.ninja.documentController.activeDocument.editor.setCursor(this.application.ninja.documentController.activeDocument.hline);
                 document.getElementById("codeMirror_"+this.application.ninja.documentController.activeDocument.uuid).getElementsByClassName("CodeMirror")[0].focus();
             }
 
             if(this.application.ninja.documentController.activeDocument.currentView === "design") {
                 this.application.ninja.stage._scrollFlag = true; // TODO HACK to prevent type error on Hide/Show Iframe
-               this.application.ninja.currentDocument = this.application.ninja.documentController.activeDocument;
+                this.application.ninja.currentDocument = this.application.ninja.documentController.activeDocument;
+
+                //reinitialize draw-util, snapmanager and view-util
+                this.application.ninja.stage.stageDeps.reinitializeForSwitchDocument();
+
+                //this.application.ninja.stage.layout.reinitializeForSwitchDocument();
 
                 // TODO dispatch event here
     //                appDelegateModule.MyAppDelegate.onSetActiveDocument();
             }
+
+            NJevent("switchDocument");
 
         }
     },
