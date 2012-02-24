@@ -56,14 +56,14 @@ exports.Splitter = Montage.create(Component, {
         set: function(value) {
             this._collapsed = value;
 
-            this.application.localStorage._setItem(this.element.getAttribute("data-montage-id"), {"version": this.version, "value": value});
+            this.application.localStorage.setItem(this.element.getAttribute("data-montage-id"), {"version": this.version, "value": value});
         }
     },
 
     prepareForDraw: {
         value: function() {
             //Get splitter initial value from SettingManager
-            var storedData = this.application.localStorage._getItem(this.element.getAttribute("data-montage-id"));
+            var storedData = this.application.localStorage.getItem(this.element.getAttribute("data-montage-id"));
             if(storedData && this.element.getAttribute("data-montage-id") !== null) {
                 this._collapsed = storedData.value;
             } else {

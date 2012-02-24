@@ -12,6 +12,10 @@ exports.Resizer = Montage.create(Component, {
     hasTemplate: {
         value: false
     },
+
+    ownerId: {
+        value: ""
+    },
  
     _isInversed: {
         value: false
@@ -74,7 +78,6 @@ exports.Resizer = Montage.create(Component, {
             e.preventDefault();
             this.panel.addEventListener("webkitTransitionEnd", this, true);
             if (this.isVertical) {
-                //console.log("y: " + e.y + "    startPosition: " + this._startPosition + "  initDimension: " + this._initDimension);
                 this._startPosition = e.y;
                 this._initDimension = this.panel.offsetHeight;
             }
@@ -98,7 +101,7 @@ exports.Resizer = Montage.create(Component, {
             } else {
                 this.panel.style.width = "";
             }
-            this.application.ninja.settings.setSetting(this.element.id,"value", "");
+//            this.application.ninja.settings.setSetting(this.element.id,"value", "");
         }
     },
 
@@ -113,6 +116,8 @@ exports.Resizer = Montage.create(Component, {
  
     prepareForDraw: {
         value: function() {
+//            console.log("owner id: ", this.ownerId);
+            console.log("resizer for ", this.element.getAttribute("data-montage-id") + this.ownerId);
             if(this.value != null) {
                 if (this.isVertical) {
                     this.panel.style.height = this.value + "px";
@@ -142,7 +147,7 @@ exports.Resizer = Montage.create(Component, {
             } else {
                 this.panel.style.width = this.panel.offsetWidth;
             }
-            this.application.ninja.settings.setSetting(this.element.id,"value", this.value);
+//            this.application.ninja.settings.setSetting(this.element.id,"value", this.value);
             if(this.redrawStage) {
                 this.application.ninja.stage.resizeCanvases = true;
             }
@@ -154,7 +159,6 @@ exports.Resizer = Montage.create(Component, {
         value: function(e) {
             if(this.isVertical) {
                 this.value = this._isInversed ? this._initDimension + (this._startPosition - e.y) : this._initDimension + (e.y - this._startPosition);
-                //console.log("y: " + e.y + "    startPosition: " + this._startPosition + "  initDimension: " + this._initDimension + "    finalPosition: " + pos);
                 this.panel.style.height = this.value + "px";
             }
             else {
@@ -184,12 +188,14 @@ exports.Resizer = Montage.create(Component, {
  
     value: {
         get: function() {
+            /*
             if(this.application.ninja.settings) {
                 var gottenValue = this.application.ninja.settings.getSetting(this.id, "value");
                 if (this._value == null && gottenValue !=null) {
                     this.value = gottenValue;
                 }
             }
+            */
             return this._value;
         },
         set: function(val) {

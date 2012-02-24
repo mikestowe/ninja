@@ -20,20 +20,25 @@ exports.LocalStorage = Montage.create( Component, {
 
             // Redefine setItem and getItem if local storage is not available.
             if(!this.canStore) {
-                this._getItem = function() {
+                this.getItem = function() {
                     console.log("Local Storage is not supported on your browser");
                     return "";
                 };
 
-                this._setItem = function() {
+                this.setItem = function() {
                     console.log("Local Storage is not supported on your browser");
                     return false;
                 }
             }
+
+            // Temporary clear the local storage if we find the version key
+            if(window.localStorage.version) {
+                window.localStorage.clear();
+            }
         }
     },
 
-    _getItem: {
+    getItem: {
         value: function(key) {
             var value = window.localStorage.getItem("ninja-" + key);
             if(value !== null) value = JSON.parse(value);
@@ -42,38 +47,11 @@ exports.LocalStorage = Montage.create( Component, {
         }
     },
 
-    _setItem: {
+    setItem: {
         value: function(key, value) {
             window.localStorage.setItem("ninja-" + key, JSON.stringify(value));
-        }
-    },
 
-    getItem: {
-        value: function(item) {
-            var item;
-
-            if (window.localStorage) {
-                item  = window.localStorage.getItem(item);
-                if(item !== null) return JSON.parse(item)
-                return null;
-            } else {
-                alert("Local Storage is not supported on your browser");
-                return null;
-            }
-
-        }
-    },
-
-    setItem: {
-        value: function(item, value) {
-            if (window.localStorage) {
-                window.localStorage.setItem(item, JSON.stringify(value));
-                return true;
-            } else {
-                alert("Local Storage is not supported on your browser");
-                return false;
-            }
+            return value;
         }
     }
-
 });
