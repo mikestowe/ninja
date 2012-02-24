@@ -645,7 +645,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             this.gridHorizontalSpacing = this.application.ninja.stage.drawUtils.gridHorizontalSpacing;
             this.gridVerticalSpacing = this.application.ninja.stage.drawUtils.gridVerticalSpacing;
 
-            //TODO:selection should be saved as an element state data, to avoid duplicate dom elements store in memory
             if(typeof this.application.ninja.selectedElements !== 'undefined'){
                 this.selectionModel = this.application.ninja.selectedElements;
             }
@@ -656,24 +655,21 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     restoreAppState:{
         enumerable: false,
         value: function () {
+            this.application.ninja.stage.drawUtils.gridHorizontalSpacing = this.gridHorizontalSpacing;
+            this.application.ninja.stage.drawUtils.gridVerticalSpacing = this.gridVerticalSpacing;
+
+            if((typeof this.selectionModel !== 'undefined') && (this.selectionModel !== null) && (this.selectionModel.length > 0)){
+                this.application.ninja.selectionController.initWithDocument(this.selectionModel);
+            }
+
             if((this.savedLeftScroll!== null) && (this.savedTopScroll !== null)){
                 this.application.ninja.stage._iframeContainer.scrollLeft = this.savedLeftScroll;
                 this.application.ninja.stage._scrollLeft = this.savedLeftScroll;
                 this.application.ninja.stage._iframeContainer.scrollTop = this.savedTopScroll;
-                this.application.ninja.stage._scrollTop = this.savedTopScroll;
+                this.application.ninja.stage._scrollLeft = this.savedTopScroll;
             }
-
-            this.application.ninja.stage.drawUtils.gridHorizontalSpacing = this.gridHorizontalSpacing;
-            this.application.ninja.stage.drawUtils.gridVerticalSpacing = this.gridVerticalSpacing;
-
-            //TODO:selectionController.initWithDocument should loop over elements in documentRoot to repopulate
-            if((typeof this.selectionModel !== 'undefined') && (this.selectionModel !== null) && (this.selectionModel.length > 0)){
-                this.application.ninja.selectionController.initWithDocument(this.selectionModel);
-            }
-            
-
+            this.application.ninja.stage.handleScroll();
         }
     }
-
 	////////////////////////////////////////////////////////////////////
 });

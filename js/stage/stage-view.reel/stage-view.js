@@ -118,8 +118,7 @@ exports.StageView = Montage.create(Component, {
         }
     },
 
-
-
+    //called for switching between html documents
     switchDocument:{
         value: function(doc){
             this.application.ninja.documentController._hideCurrentDocument();
@@ -138,8 +137,10 @@ exports.StageView = Montage.create(Component, {
                 this.application.ninja.stage._scrollFlag = true; // TODO HACK to prevent type error on Hide/Show Iframe
                 this.application.ninja.currentDocument = this.application.ninja.documentController.activeDocument;
 
-                this.application.ninja.stage.snapManager._isCacheInvalid=true;
-                this.application.ninja.stage.drawUtils.initializeFromDocument();
+                //reinitialize draw-util, snapmanager and view-util
+                this.application.ninja.stage.stageDeps.reinitializeForSwitchDocument();
+
+                //this.application.ninja.stage.layout.reinitializeForSwitchDocument();
 
                 // TODO dispatch event here
     //                appDelegateModule.MyAppDelegate.onSetActiveDocument();
