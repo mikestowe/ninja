@@ -358,10 +358,12 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     didDraw:{
         value:function () {
-            if (this._openDocRedrawCheck) {
-                this.retrieveStoredTweens();
-                this._openDocRedrawCheck = false;
-            }
+        	if(this.application.ninja.currentDocument.documentRoot.children[0]){
+	            if (this._openDocRedrawCheck) {
+	                this.retrieveStoredTweens();
+	                this._openDocRedrawCheck = false;
+	            }
+           }
         }
     },
 
@@ -542,7 +544,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         value:function () {
             var that = this;
             
-            this.arrPositionTracks = [0, 1, 2];
+            this.arrPositionTracks = [0, 1];
             this.arrTransformTracks = [0, 1, 2, 3, 4];
             
             this.label = this.element.querySelector(".label-main");

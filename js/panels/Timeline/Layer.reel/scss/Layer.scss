@@ -191,11 +191,17 @@
 .collapsible-content .layout-table:first-child {
 	border-top: 1px solid $color-menu-divider;
 }
+
+.collapsible-content .hottextunit {
+	width: auto;
+}
 .collapsible-transition {
 	-webkit-transition-property: height;
 	-webkit-transition-duration: 200ms;
 	-webkit-transition-timing-function: ease-in;
 }
+
+
 
 .editable2 {
 	height: 20px;
