@@ -26,16 +26,19 @@ function FlatMaterial()
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
     ///////////////////////////////////////////////////////////////////////
-	this.getColor			= function()	{  return this._color;		}
-	this.getShaderName		= function()	{  return this._shaderName;	}
+	this.getColor				= function()	{  return this._color;		};
+	this.getShaderName			= function()	{  return this._shaderName;	};
 
-	this.isAnimated			= function()	{  return false;				}
+	this.isAnimated				= function()	{  return false;			};
+	this.hasVertexDeformation	= function()	{  return true;				};
+	this._hasVertexDeformation = true;
+	this._vertexDeformationTolerance = 0.2;
 
     //////////////////////////////////s/////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
 	// duplcate method requirde
-	this.dup = function()	{  return new FlatMaterial();	} 
+	this.dup = function()	{  return new FlatMaterial();	} ;
 
 	this.init = function()
 	{
@@ -50,13 +53,7 @@ function FlatMaterial()
 		// set up the material node
 		this._materialNode = createMaterialNode("flatMaterial");
 		this._materialNode.setShader(this._shader);
-
-		// initialize the taper properties
-//		this._shader.colorMe.u_limit1.set( [0.25] );
-//		this._shader.colorMe.u_limit2.set( [0.5] );
-//		this._shader.colorMe.u_limit3.set( [0.75] );
-//		this._shader.colorMe.u_taperAmount.set( [0.5] );
-	}
+	};
 
 
     ///////////////////////////////////////////////////////////////////////
@@ -76,9 +73,9 @@ function FlatMaterial()
 		{
             this._propValues[prop] = value;
             if (this._shader && this._shader.colorMe)
-			this._shader.colorMe[prop].set(value);
+                this._shader.colorMe[prop].set(value);
 		}
-	}
+	};
     ///////////////////////////////////////////////////////////////////////
 
 	this.export = function()
@@ -94,13 +91,13 @@ function FlatMaterial()
 		exportStr += "endMaterial\n";
 
 		return exportStr;
-	}
+	};
 
-	this.import = function( importStr )
-	{
-		var pu = new ParseUtils( importStr );
-		var material = pu.nextValue( "material: " );
-		if (material != this.getShaderName())  throw new Error( "ill-formed material" );
+    this.import = function( importStr )
+    {
+        var pu = new ParseUtils( importStr );
+        var material = pu.nextValue( "material: " );
+        if (material != this.getShaderName())  throw new Error( "ill-formed material" );
         this.setName(  pu.nextValue( "name: ") );
 
         var rtnStr;
@@ -110,7 +107,7 @@ function FlatMaterial()
 
             this.setProperty( "color",  color);
 
-		var endKey = "endMaterial\n";
+            var endKey = "endMaterial\n";
             var index = importStr.indexOf( endKey );
             index += endKey.length;
             rtnStr = importStr.substr( index );
@@ -120,16 +117,14 @@ function FlatMaterial()
             throw new Error( "could not import material: " + importStr );
         }
 
-		return rtnStr;
-	}
+        return rtnStr;
+    };
 
 	this.update = function( time )
 	{
-	}
+	};
 
 }
-// used to create unique names
-var flatMaterialCounter = 0;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // RDGE shader
@@ -139,7 +134,7 @@ flatShaderDef  =
 {
     'shaders':  { // shader files
 		'defaultVShader':"assets/shaders/Basic.vert.glsl",
-		'defaultFShader':"assets/shaders/Basic.frag.glsl",
+		'defaultFShader':"assets/shaders/Basic.frag.glsl"
         },
     'techniques': { // rendering control
         'colorMe':[ // simple color pass
@@ -152,19 +147,14 @@ flatShaderDef  =
                  {
 						'vert'	:	{ 'type' : 'vec3' },
 						'normal' :	{ 'type' : 'vec3' },
-						'texcoord'	:	{ 'type' : 'vec2' },
+						'texcoord'	:	{ 'type' : 'vec2' }
                  },
                 // attributes
                 'params' :
                  {
-                    'color' :   { 'type' : 'vec4' },
-
-					//'u_limit1': { 'type': 'float' },
-					//'u_limit2': { 'type': 'float' },
-					//'u_limit3': { 'type': 'float' },
-					//'u_taperAmount': { 'type': 'float' }
-                 },
-            },
+                    'color' :   { 'type' : 'vec4' }
+                 }
+            }
         ]
      }
 };

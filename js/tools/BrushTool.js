@@ -208,7 +208,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
                 var top = Math.round(midPt[1] - 0.5 * h);
 
                 if (!canvas) {
-                    var newCanvas = NJUtils.makeNJElement("canvas", "Brushstroke", "shape", null, true);
+                var newCanvas = NJUtils.makeNJElement("canvas", "Brushstroke", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
                     var elementModel = TagTool.makeElement(w, h, planeMat, midPt, newCanvas);
                     ElementMediator.addElement(newCanvas, elementModel.data, true);
 

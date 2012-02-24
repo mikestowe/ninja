@@ -8,19 +8,19 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component,
     defaultEventManager = require("montage/core/event/event-manager").defaultEventManager;
 
-exports.Preloader = Montage.create(Component, {
+var codeMirrorPath = "imports/codemirror";
 
+exports.Preloader = Montage.create(Component, {
 
     ninjaJsRequire: {
         value:
             [
                 {"type":"js", "url":"js/helper-classes/3D/GLMatrix/gl-matrix.js"},
-                {"type":"js", "url":"js/codemirror/lib/codemirror.js"},
 
-                //{"type":"js", "url":"js/helper-classes/RDGE/rdge-compiled.js"},
+                {"type":"js", "url":"js/helper-classes/RDGE/rdge-compiled.js"},
 
 			// source RDGE
-				/* */
+				/*
 				{"type":"js", "url":"js/helper-classes/RDGE/src/core/script/math/vec2.js"},
 				{"type":"js", "url":"js/helper-classes/RDGE/src/core/script/math/vec3.js"},
 				{"type":"js", "url":"js/helper-classes/RDGE/src/core/script/math/vec4.js"},
@@ -58,27 +58,36 @@ exports.Preloader = Montage.create(Component, {
 				{"type":"js", "url":"js/helper-classes/RDGE/src/core/script/init_state.js"},
 				{"type":"js", "url":"js/helper-classes/RDGE/src/core/script/runtime.js"},
 				{"type":"js", "url":"js/helper-classes/RDGE/src/core/script/util/dbgpanel.js"},
-				/* */
+				*/
 
                 {"type":"js", "url":"js/helper-classes/3D/ParseUtils.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/GLLine.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/GLMaterial.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/GLLight.js"},
+
                 {"type":"js", "url":"js/helper-classes/RDGE/Materials/FlatMaterial.js"},
+                {"type":"js", "url":"js/helper-classes/RDGE/Materials/TaperMaterial.js"},
+                {"type":"js", "url":"js/helper-classes/RDGE/Materials/TwistVertMaterial.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/Materials/UberMaterial.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/Materials/PlasmaMaterial.js"},
+                {"type":"js", "url":"js/helper-classes/RDGE/Materials/LinearGradientMaterial.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/Materials/RadialGradientMaterial.js"},
 				{"type":"js", "url":"js/helper-classes/RDGE/Materials/RadialBlurMaterial.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/Materials/PulseMaterial.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/Materials/TunnelMaterial.js"},
+                {"type":"js", "url":"js/helper-classes/RDGE/Materials/ReliefTunnelMaterial.js"},
+                {"type":"js", "url":"js/helper-classes/RDGE/Materials/SquareTunnelMaterial.js"},
+                {"type":"js", "url":"js/helper-classes/RDGE/Materials/FlyMaterial.js"},
+                {"type":"js", "url":"js/helper-classes/RDGE/Materials/WaterMaterial.js"},
+                {"type":"js", "url":"js/helper-classes/RDGE/Materials/ZInvertMaterial.js"},
+                {"type":"js", "url":"js/helper-classes/RDGE/Materials/DeformMaterial.js"},
+                {"type":"js", "url":"js/helper-classes/RDGE/Materials/StarMaterial.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/Materials/TwistMaterial.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/Materials/KeleidoscopeMaterial.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/Materials/JuliaMaterial.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/Materials/MandelMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/IridescentScalesMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/PlasmaMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/LinearGradientMaterial.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/Materials/BumpMetalMaterial.js"},
+
                 {"type":"js", "url":"js/helper-classes/RDGE/GLWorld.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/GLGeomObj.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/GLCircle.js"},
@@ -91,18 +100,18 @@ exports.Preloader = Montage.create(Component, {
                 {"type":"js", "url":"js/helper-classes/RDGE/precompiled.js"},
                 {"type":"js", "url":"js/helper-classes/RDGE/MaterialsLibrary.js"},
                 {"type":"js", "url":"js/helper-classes/3D/glUtils.js"},                
-                {"type":"js", "url":"js/codemirror/mode/htmlmixed/htmlmixed.js"},
-                {"type":"js", "url":"js/codemirror/mode/xml/xml.js"},
-                {"type":"js", "url":"js/codemirror/mode/javascript/javascript.js"},
-                {"type":"js", "url":"js/codemirror/mode/css/css.js"}
+                {"type":"js", "url": codeMirrorPath + "/lib/codemirror.js"},
+                {"type":"js", "url": codeMirrorPath + "/mode/htmlmixed/htmlmixed.js"},
+                {"type":"js", "url": codeMirrorPath + "/mode/xml/xml.js"},
+                {"type":"js", "url": codeMirrorPath + "/mode/javascript/javascript.js"},
+                {"type":"js", "url": codeMirrorPath + "/mode/css/css.js"}
             ]
     },
 
     ninjaCssRequire: {
         value:
             [
-                {"type":"css", "url":"js/codemirror/lib/codemirror.css"},
-                {"type":"css", "url":"js/codemirror/theme/default.css"}
+                {"type":"css", "url": codeMirrorPath + "/lib/codemirror.css"}
             ]
     },
 

@@ -21,6 +21,18 @@ exports.AppModel = Montage.create(Component, {
             this._livePreview = value;
         }
     },
+    _chromePreview: {
+        value: false
+    },
+
+    chromePreview: {
+        get: function() {
+            return this._chromePreview;
+        },
+        set: function(value) {
+            this._chromePreview = value;
+        }
+    },
 
     _layoutView: {
         value: "layoutAll"
@@ -322,6 +334,19 @@ exports.AppModel = Montage.create(Component, {
         },
         set: function(value) {
             this._materialsPanel = value;
+        }
+    },
+
+    _presetsPanel: {
+        value: true
+    },
+
+    PresetsPanel: {
+        get: function() {
+            return this._presetsPanel;
+        },
+        set: function(value) {
+            this._presetsPanel = value;
         }
     },
 

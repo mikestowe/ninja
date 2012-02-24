@@ -5,7 +5,6 @@
  </copyright> */
 
 var Montage = require("montage").Montage,
-    Component = require("montage/ui/component").Component,
     TreeNode = require("js/components/treeview/tree-node").TreeNode;
 
 var Branch = exports.Branch = Montage.create(TreeNode, {

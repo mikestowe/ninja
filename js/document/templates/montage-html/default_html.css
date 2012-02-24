@@ -1,0 +1,75 @@
+/* <copyright>
+This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+(c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+</copyright> */
+
+* {
+    -webkit-transition-duration: 0s !important;
+    -webkit-animation-duration: 0s !important;
+    -webkit-animation-name: none !important;
+}
+
+html{
+    overflow:hidden;
+}
+
+body
+{
+	background: #808080;
+}
+
+#Viewport 
+{
+	margin: 0px;
+	padding: 0px;
+	top: 200px;
+	left: 700px;
+    /*position: absolute;*/
+	/*height: 600px;*/
+	/*width: 800px;*/
+	opacity: 0.99;
+	z-index:2;
+}
+
+#stageBG
+{
+	background: #ffffff;
+	top: 200px;
+	left: 700px;
+	z-index:1;
+}
+        
+.stageDimension
+{
+	position: absolute;
+    height: 600px;
+    width: 800px;
+}
+
+.stageView
+{
+    border:  1px solid black;
+    -webkit-transform-style: preserve-3d;
+    -webkit-transform: perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+}
+
+.stageContentShadow {
+	-webkit-box-shadow: 3px 5px 4px rgba(0,0,0,.5);
+	-moz-box-shadow: 3px 5px 4px rgba(0,0,0,.5);
+	box-shadow: 3px 5px 4px rgba(0,0,0,.5);
+}
+
+#userHead
+{
+	display: none;
+}
+
+.global3DSettings {
+  -webkit-transform-style: preserve-3d;
+  -webkit-transform: perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+}
+
+.elem-red-outline {
+  outline: red solid thin;
+}

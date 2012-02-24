@@ -133,6 +133,9 @@ function GLCircle()
         if (!world)  throw( "null world in buildBuffers" );
 
 		if (!world._useWebGL)  return;
+		
+		// make sure RDGE has the correct context
+		g_Engine.setContext( world.getCanvas().uuid );
 
          // create the gl buffer
         var gl = world.getGLContext();
@@ -397,7 +400,10 @@ function GLCircle()
 			ctx.lineWidth = 0;
 			ctx.fillStyle   = "#990000";
 			if (this._fillColor)
-				ctx.fillStyle = MathUtils.colorToHex( this._fillColor );
+			{
+				var c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";  
+				ctx.fillStyle = c;
+			}
 
 			// draw the fill
 			ctx.beginPath();
@@ -457,7 +463,10 @@ function GLCircle()
 			ctx.lineWidth	= lineWidth;
 			ctx.strokeStyle = "#0000ff";
 			if (this._strokeColor)
-				ctx.strokeStyle = MathUtils.colorToHex( this._strokeColor );
+			{
+				var c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";  
+				ctx.strokeStyle = c;
+			}
 			
 			// draw the stroke
 			p = MathUtils.transformPoint( bezPts[0],   mat );

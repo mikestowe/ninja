@@ -25,7 +25,7 @@ function TunnelMaterial()
 	this._texMap = 'assets/images/rocky-normal.jpg';
 
 	this._time = 0.0;
-	this._dTime = 0.01;
+	this._dTime = 0.001;
 
     ///////////////////////////////////////////////////////////////////////
     // Properties

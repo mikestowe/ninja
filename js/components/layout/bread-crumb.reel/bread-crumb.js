@@ -7,12 +7,11 @@
 var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
-exports.Breadcrumb = Montage.create(Component, {
+var Breadcrumb = exports.Breadcrumb = Montage.create(Component, {
 
     _container:{
         value:null
     },
-
 
     container: {
         set: function(value) {
@@ -30,10 +29,10 @@ exports.Breadcrumb = Montage.create(Component, {
         value: []
     },
 
+
     deserializedFromTemplate : {
         value: function() {
             this.eventManager.addEventListener( "appLoaded", this, false);
-            this.eventManager.addEventListener( "openDocument", this, false);
             this.eventManager.addEventListener( "breadCrumbTrail", this, false);
         }
     },
@@ -46,6 +45,7 @@ exports.Breadcrumb = Montage.create(Component, {
                     boundObjectPropertyPath: "currentSelectedContainer",
                     oneway: false
             });
+
         }
     },
 
@@ -53,47 +53,47 @@ exports.Breadcrumb = Montage.create(Component, {
         value: function() {
             var parentNode;
 
-            while(this.containerElements.pop()){
-              // To empty the array to get the new parentNode of the new currentLevel
-            }
+            this.containerElements.length = 0
 
             if(this.container.id === "UserContent") {
-                this.containerElements.push({selected:false,element:this.container});
+                this.containerElements.push({selected:false, element:this.container});
             } else {
-
                 parentNode = this.container;
 
-                while(parentNode.id !== "UserContent") {
-                      this.containerElements.unshift ({selected:false,element:parentNode});
-                      parentNode = parentNode.parentNode;
-                  }
+                while(parentNode.id!=="UserContent") {
+                    this.containerElements.unshift({selected:false,element:parentNode});
+                    parentNode = parentNode.parentNode;
+                }
 
                 this.containerElements.unshift({selected:false,element:parentNode});
-
             }
 
-            NJevent('layerBinding',this.container);
+            NJevent('layerBinding',{selected:false ,element:this.container})
         }
     },
 
-
     handleBreadCrumbTrail: {
         value: function(event) {
-            var newLength, revaluatedLength, tmpvalue, i=0;
+            var newLength,revaluatedLength,tmpvalue;
+            var i=0;
+
+            if(event.detail.setFlag ){
+                this.application.ninja.currentSelectedContainer = event.detail.element;
+                return;
+            }
 
             newLength = this.containerElements.length;
 
-            while(i < newLength ) {
+            while(i < newLength ){
                 if(this.containerElements[i].selected){
-                    tmpvalue = i ;
+                    tmpvalue = i;
                     break;
                 }
-
                 i++;
             }
 
             for(i = newLength -1 ; i >= 1 ; i--) {
-                if(tmpvalue!==i) {
+                if(tmpvalue !== i) {
                     this.containerElements.pop();
                 } else {
                     break;
@@ -105,6 +105,5 @@ exports.Breadcrumb = Montage.create(Component, {
 
         }
     }
-
-
 });
+

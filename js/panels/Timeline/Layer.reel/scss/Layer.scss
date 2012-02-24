@@ -1,0 +1,231 @@
+@charset "UTF-8";
+
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
+/* Layer.scss
+ * Main SCSS file for Layer component, compiled by SASS into the file css/Layer.css.
+ */
+ 
+// Import theme settings
+@import "../../../../../scss/imports/themes/default/colors";
+// @import "../../../../../scss/imports/themes/default/fonts";
+@import "../../../../../scss/imports/themes/default/mixins";
+
+// Import generic mixins and styles
+@import "../../../../../scss/imports/scss/mixins";
+// @import "../../../../../scss/imports/scss/Base";
+
+.layerLabel{
+    width: 100%;
+    color: $color-panel-text;
+    height: 21px;
+    font-family: 'Droid Sans';
+    font-size: 12px;
+    text-shadow: 1px 1px 1px $color-panel-shadow;
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+}
+.layerLabel.layerSelected {
+	background-color: $color-panel-hilite-bg;
+	color: $color-panel-hilite-text;
+}
+.layerLabel{
+    width:100%;
+    height:18px;
+    padding-left: 25px;
+    padding-top: 2px;
+    -webkit-box-flex: 1;
+}
+.layerDisclosure{
+    background-image: url('../images/panelDisclosureIcon.png');
+    background-repeat: no-repeat;
+    width: 16px;
+    height: 16px;
+    /*float: left;*/
+
+    -webkit-transition-property: rotate;
+    -webkit-transition-duration: 0.2s;
+    -webkit-transition-timing-function: linear;
+    padding-right: 2px;
+    -webkit-box-flex: 0;
+}
+.layerHide{
+    background-image: url('../images/eye.png');
+    background-repeat: no-repeat;
+    /*float: right;*/
+    width: 16px;
+    height: 16px;
+    padding-right: 4px;
+    -webkit-box-flex: 0;
+}
+.layerLock{
+    background-image: url('../images/lock_open.png');
+    background-repeat: no-repeat;
+    /*float: right;*/
+    width: 16px;
+    height: 16px;
+    padding-right: 4px;
+    -webkit-box-flex: 0;
+}
+
+/******************************************/
+
+.container-layer {
+	background-color: $color-panel-bg;
+	color: $color-panel-text;
+	font-size: 12px;
+	text-shadow: 1px 1px 1px $color-app-shadow;
+}
+.selected .container-layer {
+	background-color: $color-panel-bg;
+}
+.selected .container-layer .label-layer {
+	background-color: $color-panel-hilite-bg;
+	color: $color-panel-hilite-text;
+}
+
+.userlayers .collapsible-label {
+	display: block;
+	width: 100px;
+    height: 21px;
+    line-height: 20px;
+	color: $color-panel-text;
+	margin-left: 30px;
+	margin-right: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.layerSelected .label-layer {
+	background-color: $color-panel-hilite-bg;
+	color: $color-panel-hilite-text;
+}
+.content-layer {
+	background-color: $color-panel-bg;
+	color: $color-panel-text;
+}
+.content-layer .collapsible-label {
+	background-position: 14px 5px;
+	border-width: 0px;
+}
+.label-layer,
+.label-position,
+.label-transform,
+.label-style,
+.label-styles {
+	position: relative;
+	border-bottom: 1px solid #505050;
+	cursor: pointer;
+}
+
+.content-layer .collapsible-label,
+.content-layer .collapsible-content {
+	font-size: 11px;
+}
+
+.collapsible-clicker {
+	position: absolute;
+	width: 10px;
+	height: 10px;
+	top: 5px;
+	left: 5px;
+	margin: 0px;
+	padding: 0px;
+    background-image: url(../images/icon-open.png);
+    background-repeat: no-repeat;
+}
+.collapsible-clicker.collapsible-collapsed {
+	background-image: url(../images/icon-collapsed.png);
+}
+.collapsible-content .collapsible-clicker {
+	left: 12px;
+}
+.content-layer.collapsible-collapsed {
+	height: 0px;
+	overflow: hidden;
+}
+
+.label-layer .cssbutton,
+.label-style .cssbutton {
+	width: 14px;
+	height: 14px;
+	overflow: hidden;
+	position: absolute;
+	background-repeat: no-repeat;
+}
+.label-layer .button-lock {
+	background-image: url(../images/icon-lock.png);
+	top: 3px;
+	right: 27px;
+}
+.label-layer .button-visible {
+	background-image: url(../images/icon-eye.png);
+	top: 3px;
+	right: 7px;
+}
+.label-style .button-add {
+	background-image: url(../images/icon-plus.png);
+	width: 15px;
+	height: 15px;
+	top: 3px;
+	right: 11px;
+}
+.label-style .button-delete {
+	background-image: url(../images/icon-minus.png);
+	width: 15px;
+	height: 15px;
+	top: 3px;
+	right: 31px;
+}
+.collapsible-content .layout-table {
+	width: 99.9%;
+}
+.content-layer .collapsible-content {
+	padding-left: 30px;
+}
+.collapsible-content .collapsible-content .layout-table .layout-row .layout-cell {
+	width: 40%;
+	height: 20px;
+	border-bottom: 1px solid $color-menu-divider;
+	line-height: 20px;
+	text-align: left;
+}
+.collapsible-content .layout-table:first-child {
+	border-top: 1px solid $color-menu-divider;
+}
+.collapsible-transition {
+	-webkit-transition-property: height;
+	-webkit-transition-duration: 200ms;
+	-webkit-transition-timing-function: ease-in;
+}
+
+.editable2 {
+	height: 20px;
+	background-color: $color-panel-hilite-text !IMPORTANT;
+	color: $color-panel-hilite-bg !IMPORTANT;
+	border-width: 0px;
+	font-size: 11px;
+	overflow: hidden;
+    -webkit-user-select: text;
+    text-overflow: clip;
+}
+
+.label-style .disabled {
+	cursor: default;
+}
+
+/* styles elements */
+.content-style .item-template {
+	display: none;
+}
+.content-style .layout-row.selected .layout-cell {
+	background-color: $color-panel-hilite-bg;
+	color: $color-panel-hilite-text;
+}
+.style-row {
+	height: 20px;
+}

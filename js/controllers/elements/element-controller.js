@@ -12,6 +12,9 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
     addElement: {
         value: function(el, styles) {
             this.application.ninja.currentDocument.documentRoot.appendChild(el);
+            // Nested elements -
+            // TODO make sure the CSS is correct before nesting elements
+            // this.application.ninja.currentSelectedContainer.appendChild(el);
             this.application.ninja.stylesController.setElementStyles(el, styles);
         }
     },
@@ -115,6 +118,7 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
             }
             else
             {
+                // TODO - Need to update border style and width also
                 el.elementModel.stroke = colorObj;
             }
 
@@ -159,10 +163,22 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
                         case 'gradient':
                             this.setProperty(el, "border-image", color.color.css);
                             this.setProperty(el, "border-color", "none");
+                            if(color.borderInfo)
+                            {
+                                this.setProperty(el, "border-width", color.borderInfo.borderWidth +
+                                                                        color.borderInfo.borderUnits);
+                                this.setProperty(el, "border-style", color.borderInfo.borderStyle);
+                            }
                             break;
                         default:
                             this.setProperty(el, "border-image", "none");
                             this.setProperty(el, "border-color", color.color.css);
+                            if(color.borderInfo)
+                            {
+                                this.setProperty(el, "border-width", color.borderInfo.borderWidth +
+                                                                        color.borderInfo.borderUnits);
+                                this.setProperty(el, "border-style", color.borderInfo.borderStyle);
+                            }
                     }
                 }
                 el.elementModel.stroke = color;

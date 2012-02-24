@@ -1,0 +1,62 @@
+@charset "UTF-8";
+
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
+/* TimelineTrack.scss
+ * Main SCSS file for TimelineTrack component, compiled by SASS into the file css/TimelineTrack.css.
+ */
+/* line 16, ../scss/TimelineTrack.scss */
+.tracklane {
+  height: 19px;
+  width: 100%;
+  color: white;
+  padding-top: 2px;
+  border-bottom: #444;
+  border-bottom-style: solid;
+  border-bottom-width: thin;
+  background-image: url("../images/gridline.jpg");
+  overflow: hidden;
+}
+
+/* line 28, ../scss/TimelineTrack.scss */
+.keyframe {
+  position: absolute;
+  height: 16px;
+  width: 4px;
+  background-color: white;
+}
+
+/* line 36, ../scss/TimelineTrack.scss */
+.defaultSpan {
+  position: absolute;
+  height: 16px;
+  opacity: 0.3;
+  background-color: white;
+}
+
+/* line 45, ../scss/TimelineTrack.scss */
+.tl_layertracks .content-position {
+  height: 63px;
+}
+
+/* line 48, ../scss/TimelineTrack.scss */
+.tl_layertracks .content-transform {
+  height: 106px;
+}
+
+/* line 52, ../scss/TimelineTrack.scss */
+.tl_layertracks .collapsible-content.collapsible-collapsed {
+  overflow: hidden;
+  height: 0px;
+}
+
+/* line 57, ../scss/TimelineTrack.scss */
+.tl_layertracks .collapsible-content .collapsible-label {
+  height: 21px;
+  background-color: #474747;
+  color: white;
+}

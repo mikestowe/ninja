@@ -7,26 +7,289 @@
 <html lang="en">
 	<head>
     	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    	<link rel="stylesheet" type="text/css" href="TimelinePanel.css">
+    	<link rel="stylesheet" type="text/css" href="css/TimelinePanel.css">
+   		
+
         <script type="text/montage-serialization">
-               {
-                   "owner": {
-                       "module": "js/panels/Timeline/TimelinePanel.reel",
-                       "name": "TimelinePanel",
-                       "properties": {
-                           "element": {"#": "timeline_panel"}
-                       }
-                   }
+            {
+                "owner": {
+                    "module": "js/panels/Timeline/TimelinePanel.reel",
+                    "name": "TimelinePanel",
+                    "properties": {
+                        "element": {"#": "timeline_panel"},
+                        "user_layers": {"#": "user_layers"},
+                        "track_container": {"#": "right_inside"},
+                        "timeline_leftpane" : {"#" : "timeline_leftpane"},
+                        "layer_tracks": {"#": "layer_tracks"},
+                        "master_track": {"#": "master_track"},
+                        "newlayer_button": {"#": "newlayer_button"},
+                        "deletelayer_button": {"#": "deletelayer_button"},
+                        "time_markers" : {"#": "timeline_markers"},
+                        "layerRepetition" : {"@": "repetition1"},
+                        "trackRepetition" : {"@" : "repetition2"},
+                        "playhead": {"#": "playhead"},
+                        "playheadmarker": {"#": "playhead_marker"},
+                        "timetext" : {"#": "time_text"},
+                        "timebar" : {"#": "time_bar"},
+                        "container_tracks" : {"#" : "container-tracks"},
+                        "end_hottext" : {"@" : "endHottext"}
+                    }
+                },
 
-               }
+                "timelineResize" : {
+                    "module": "js/panels/Resizer",
+                    "name": "Resizer",
+                    "properties": {
+                        "element": {"#": "layer_resizer"},
+                        "panel" : {"#" : "timeline_leftpane"},
+                        "isVertical" : false,
+                        "isInversed" : false,
+                        "isPanel"    : false
+                    }
+                },
+
+                
+	            "repetition1": {
+	                "module": "montage/ui/repetition.reel",
+	                "name": "Repetition",
+	                "properties": {
+	                    "element": {"#": "container-layers"},
+	                    "isSelectionEnabled" : true
+	                },
+	                "bindings": {
+	                    "objects": {
+	                        "boundObject": {"@": "owner"},
+	                        "boundObjectPropertyPath": "arrLayers",
+	                        "oneway": false
+	                    }
+	                }
+	            },
+	            "layer" : {
+	            	"module" : "js/panels/Timeline/Layer.reel",
+	            	"name" : "Layer",
+	            	"properties" : {
+	            		"element": {"#": "container-layer"}
+	            	},
+	            	"bindings" : {
+	            		"layerName" : {
+	            			"boundObject" : {"@" : "repetition1"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.layerName",
+	            			"oneway" : false
+	            		},
+	            		"layerID" : {
+	            			"boundObject" : {"@" : "repetition1"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.layerID",
+	            			"oneway" : false
+	            		},
+	            		"arrLayerStyles" : {
+	            			"boundObject" : {"@" : "repetition1"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.arrLayerStyles",
+	            			"oneway" : false
+	            		},
+	            		"isMainCollapsed" : {
+	            			"boundObject" : {"@" : "repetition1"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isMainCollapsed",
+	            			"oneway" : false
+	            		},
+	            		"isPositionCollapsed" : {
+	            			"boundObject" : {"@" : "repetition1"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isPositionCollapsed",
+	            			"oneway" : false
+	            		},
+	            		"isTransformCollapsed" : {
+	            			"boundObject" : {"@" : "repetition1"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isTransformCollapsed",
+	            			"oneway" : false
+	            		},
+	            		"isSelected" : {
+	            			"boundObject" : {"@" : "repetition1"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isSelected",
+	            			"oneway" : false
+	            		},
+	            		"isActive" : {
+	            			"boundObject" : {"@" : "repetition1"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isActive",
+	            			"oneway" : false
+	            		},
+	            		"isStyleCollapsed" : {
+	            			"boundObject" : {"@" : "repetition1"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isStyleCollapsed",
+	            			"oneway" : false
+	            		}
+	            	}
+	            },
+	            
+	            "repetition2" : {
+	                "module": "montage/ui/repetition.reel",
+	                "name": "Repetition",
+	                "properties": {
+	                    "element": {"#": "container-tracks"},
+	                    "isSelectionEnabled" : false
+	                },
+	                "bindings": {
+	                    "objects": {
+	                        "boundObject": {"@": "owner"},
+	                        "boundObjectPropertyPath": "arrTracks",
+	                        "oneway": false
+	                    }
+	                }
+	            },
+	            "track" : {
+	            	"module" : "js/panels/Timeline/TimelineTrack.reel",
+	            	"name" : "TimelineTrack",
+	            	"properties" : {
+	            		"element": {"#": "container-track"}
+	            	},
+	            	"bindings" : {
+	            		"trackID" : {
+	            			"boundObject" : {"@" : "repetition2"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.trackID",
+	            			"oneway" : false
+	            		},
+	            		"tweens" : {
+	            			"boundObject" : {"@" : "repetition2"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.tweens",
+	            			"oneway" : false
+	            		},
+                        "animatedElement" : {
+                            "boundObject" : {"@" : "repetition2"},
+            	            "boundObjectPropertyPath" : "objectAtCurrentIteration.animatedElement",
+            	            "oneway" : false
+                        },
+	            		"arrStyleTracks" : {
+	            			"boundObject" : {"@" : "repetition2"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.arrStyleTracks",
+	            			"oneway" : false
+	            		},
+                        "isTrackAnimated" : {
+                            "boundObject" : {"@" : "repetition2"},
+            	            "boundObjectPropertyPath" : "objectAtCurrentIteration.isTrackAnimated",
+            	            "oneway" : false
+                        },
+                        "trackDuration" : {
+                            "boundObject" : {"@" : "repetition2"},
+                        	"boundObjectPropertyPath" : "objectAtCurrentIteration.trackDuration",
+                        	"oneway" : false
+                        },
+                        "animationName" : {
+                            "boundObject" : {"@" : "repetition2"},
+                            "boundObjectPropertyPath" : "objectAtCurrentIteration.animationName",
+                            "oneway" : false
+                        },
+                        "currentKeyframeRule" : {
+                            "boundObject" : {"@" : "repetition2"},
+                        	"boundObjectPropertyPath" : "objectAtCurrentIteration.currentKeyframeRule",
+                        	"oneway" : false
+                        },
+	            		"isMainCollapsed" : {
+	            			"boundObject" : {"@" : "repetition2"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isMainCollapsed",
+	            			"oneway" : false
+	            		},
+	            		"isPositionCollapsed" : {
+	            			"boundObject" : {"@" : "repetition2"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isPositionCollapsed",
+	            			"oneway" : false
+	            		},
+	            		"isTransformCollapsed" : {
+	            			"boundObject" : {"@" : "repetition2"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isTransformCollapsed",
+	            			"oneway" : false
+	            		},
+	            		"isStyleCollapsed" : {
+	            			"boundObject" : {"@" : "repetition2"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isStyleCollapsed",
+	            			"oneway" : false
+	            		},
+                        "trackPosition" : {
+                            "boundObject" : {"@" : "repetition2"},
+            	            "boundObjectPropertyPath" : "objectAtCurrentIteration.trackPosition",
+            	            "oneway" : false
+                        }
+	            	}
+	            },
+                "endHottext" : {
+                    "module": "js/components/hottextunit.reel",
+            	    "name": "HotTextUnit",
+            	    "properties": {
+            	        "element": {"#": "end_hottext"},
+            	        "maxValue" : 100000,
+                        "minValue" : 1,
+                        "acceptableUnits" : "sec",
+                        "units" : "sec",
+                        "value" : 25
+            	    }
+                }
+            }
         </script>
-
 
 	</head>
 	<body>
     
-    	<div id="timeline_panel">
-            
+    	<div id="timeline_panel" class="tl_container">
+
+            <div id="bread_crumb"></div>
+
+            <div id="main_timeline" class="maintimeline">
+
+
+                <div id="timeline_leftpane" class="tl_leftpane">
+                    <div id="leftpane_inside" class="leftinside">
+                        <div id="timeline_controller" class="timelinecontroller">
+                            <div id="timeline_controls" class="timelinecontrols">
+                                <div id="rewind_button" class="rewindbutton"></div>
+                                <div id="play_button" class="playbutton"></div>
+                                <div id="pause_button" class="pausebutton"></div>
+                                <div id="forward_button" class="forwardbutton"></div>
+                                <div id="time_text" class="timetext">00:00:00</div>
+                            </div>
+                        </div>
+
+
+                        
+                        <div id="user_layers" class="userlayers">
+                            <div id="master_layer" class="masterlayer">
+                                <div>Master Layer</div>
+                            </div>
+                            <div id="container-layers">
+                            	<div id="container-layer"></div>
+                            </div>
+                        </div>
+
+                        <div id="timeline_gutter" class="timelinegutter">
+                            <div id="newlayer_button" class="newlayerbutton"></div>
+                            <div id="deletelayer_button" class="deletelayerbutton"></div>
+                            <input id="end_hottext" class="endhottext">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="layer_resizer" class="layerresizer"></div>
+
+                <div id="timeline_rightpane" class="tl_rightpane">
+                    <div id="right_inside" class="rightinside">
+                    	<div class="layout_markers">
+                            <div id="playhead" class="playhead"></div>
+	                        <div id="timeline_markers" class="timelinemarkers"></div>
+                    	</div>
+
+
+                        <div id="layer_tracks" class="tl_layertracks">
+                        	<div class="layout-tracks">
+	                            <div id="playhead_marker" class="playheadmarker"></div>
+	                            <div id="master_track" class="mastertrack">
+                                    <div id="time_bar" class="timebar"></div>
+	                            </div>
+	                            <div id="container-tracks" class="container-tracks">
+	                            	<div id="container-track"></div>
+	                            </div>
+                        	</div>
+
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
     	</div>
 
     </body>

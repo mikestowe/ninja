@@ -128,7 +128,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 } else {
                     this._defaultStylesheet = sheets[lastIndex];
                 }
-                
+
             }
         }
     },
@@ -179,10 +179,14 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             this.styleSheetModified(stylesheet);
             
             rule = stylesheet.rules[index];
-            
+
             ///// attach specificity to rule object
+            ///// if rule is css keyframes, return rule and don't attach specificity
+            if (rule instanceof WebKitCSSKeyframesRule) {
+                return rule;
+            }
             rule[this.CONST.SPECIFICITY_KEY] = this.getSpecificity(rule.selectorText);
-            
+
             ///// return the rule we just inserted
             return rule;
         }
@@ -567,6 +571,10 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 rules = [],
                 win = element.ownerDocument.defaultView,
                 self = this;
+
+            if(!win) {
+                return null;
+            }
                 
             if(!omitPseudos) {
                 pseudos.concat(['link', 'visited', 'active', 'hover', 'focus', 'first-letter', 
@@ -670,8 +678,9 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             }
             
             var matchingElements, i;
+
             for(i = 0; i < specArr.length; i++) {
-                matchingElements = win.document.querySelectorAll(specArr[i].selector);
+                matchingElements = element.ownerDocument.querySelectorAll(specArr[i].selector);
                 if(nj.toArray(matchingElements).indexOf(element) !== -1) {
                     return specArr[i];
                 }
@@ -840,6 +849,61 @@ var stylesController = exports.StylesController = Montage.create(Component, {
         }
     },
 
+    ///// Get Animation Rule With Name
+    ///// Returns the CSSKeyframesRule with given name
+
+    getAnimationRuleWithName : {
+        value: function(name, document) {
+            var doc = document || this._activeDocument._document,
+                animRules = this.getDocumentAnimationRules(doc),
+                rule, i;
+
+            for(i = 0; i < animRules.length; i++) {
+                rule = animRules[i];
+                if(rule.name === name) {
+                    return rule;
+                }
+            }
+
+            return;
+        }
+    },
+
+    ///// Get Document Animation Rules
+    ///// Returns all CSSKeyframesRules in active document, or in
+    ///// optionally passed-in document
+    ///// If none are found, returns an empty array
+
+    getDocumentAnimationRules : {
+        value: function(document) {
+            var sheets = (document) ? document.styleSheets : this._activeDocument._document.styleSheets,
+                rules = [];
+
+            nj.toArray(sheets).forEach(function(sheet) {
+                rules = rules.concat(this.getStyleSheetAnimationRules(sheet));
+            }, this);
+
+            return rules;
+        }
+    },
+
+    ///// Get Style Sheet Animation Rules
+    ///// Returns all CSSKeyframesRules from the given stylesheet
+    ///// If none are found, returns an empty array
+
+    getStyleSheetAnimationRules : {
+        value: function(sheet) {
+            var rules = [];
+
+            if(sheet.rules) {
+                rules = rules.concat(nj.toArray(sheet.rules).filter(function(rule) {
+                    return rule instanceof WebKitCSSKeyframesRule;
+                }));
+            }
+
+            return rules;
+        }
+    },
 
     ///// Delete style
     ///// Removes the property from the style declaration/rule
@@ -1042,6 +1106,21 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             }
 
             return value;
+        }
+    },
+
+    ///// Get Element Animation Rule
+    ///// Returns the CSSKeyframesRule applied to an element
+
+    getElementAnimationRule : {
+        value: function(element) {
+            var animationName = this.getElementStyle(element, '-webkit-animation-name');
+
+            if(!animationName) {
+                return null;
+            }
+
+            return this.getAnimationRuleWithName(animationName);
         }
     },
 

@@ -28,7 +28,7 @@ exports.ToolsData = Montage.create(Montage, {
                 "action":       "SubselectionTool",
                 "toolTip":      "Subselect Tool",
                 "cursor":       "auto",
-                "lastInGroup":  false,
+                "lastInGroup":  true,
                 "container":    false,
                 "selected":     false
             },
@@ -164,7 +164,7 @@ exports.ToolsData = Montage.create(Montage, {
                 "action":       "InkBottleTool",
                 "toolTip":      "Ink Bottle Tool",
                 "cursor":       "url('images/tools/inkbottle_down.png'), default",
-                "lastInGroup":  false,
+                "lastInGroup":  true,
                 "container":    false,
                 "selected":     false
             },
@@ -174,22 +174,22 @@ exports.ToolsData = Montage.create(Montage, {
                 "spriteSheet":  true,
                 "action":       "EyedropperTool",
                 "toolTip":      "Eyedropper Tool",
-                "cursor":       "url('images/tools/eyedropper_down.png'), default",
+                "cursor":       "url('images/tools/eyedropper_down.png') 6 20, default",
                 "lastInGroup":  false,
                 "container":    false,
                 "selected":     false
             },
-            {
-                "id":           "EraserTool",
-                "properties":   "eraserProperties",
-                "spriteSheet":  true,
-                "action":       "EraserTool",
-                "toolTip":      "Eraser Tool",
-                "cursor":       "auto",
-                "lastInGroup":  false,
-                "container":    false,
-                "selected":     false
-            },
+//            {
+//                "id":           "EraserTool",
+//                "properties":   "eraserProperties",
+//                "spriteSheet":  true,
+//                "action":       "EraserTool",
+//                "toolTip":      "Eraser Tool",
+//                "cursor":       "auto",
+//                "lastInGroup":  false,
+//                "container":    false,
+//                "selected":     false
+//            },
             {
                 "id":           "RotateStageTool3D",
                 "properties":   "rotateStageProperties",
@@ -219,7 +219,7 @@ exports.ToolsData = Montage.create(Montage, {
                 "action":       "ZoomTool",
                 "toolTip":      "Zoom Tool (Z)",
                 "cursor":       "url('images/cursors/zoom.png'),default",
-                "lastInGroup":  false,
+                "lastInGroup":  true,
                 "container":    false,
                 "selected":     false
             }

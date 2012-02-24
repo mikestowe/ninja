@@ -5,6 +5,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var Montage = require("montage/core/core").Montage,
+    Uuid = require("montage/core/uuid").Uuid,
     ElementModel        = require("js/models/element-model").ElementModel,
     Properties3D    = require("js/models/properties-3d").Properties3D,
     ShapeModel    = require("js/models/shape-model").ShapeModel,
@@ -56,13 +57,18 @@ exports.NJUtils = Object.create(Object.prototype, {
     
     ///// Quick "createElement" function "attr" can be classname or object
     ///// with attribute key/values
+    ///// Suppor for data attributes
     make : {
         value: function(tag, attr) {
             var el = document.createElement(tag);
             if (typeof attr === 'object') {
                 for (var a in attr) {
                     if (attr.hasOwnProperty(a)) {
-                        el[a] = attr[a];
+                        if(a.indexOf("data-") > -1) {
+                            el.setAttribute(a, attr[a]);
+                        } else {
+                            el[a] = attr[a];
+                        }
                     }
                 }
             } else if (typeof attr === 'string') {
@@ -183,6 +189,27 @@ exports.NJUtils = Object.create(Object.prototype, {
     	
     },
 
+    // Returns the numerical value and unit string from a string.
+    // Useful for element properties.
+    // 100px will return the following array: [100, px]
+    getValueAndUnits: {
+        value: function(input) {
+            var numberValue = parseFloat(input);
+
+            // Ignore all whitespace, digits, negative sign and "." when looking for units label
+            // The units must come after one or more digits
+            var objRegExp = /(\-*\d+\.*\d*)(\s*)(\w*\%*)/;
+            var unitsString = input.replace(objRegExp, "$3");
+            if(unitsString) {
+                var noSpaces = /(\s*)(\S*)(\s*)/;
+                // strip out spaces and convert to lower case
+                var match = (unitsString.replace(noSpaces, "$2")).toLowerCase();
+            }
+
+            return [numberValue, match];
+        }
+    },
+
     /* ================= Style methods ================= */
     
     ///// Get computed height of element
@@ -206,7 +233,39 @@ exports.NJUtils = Object.create(Object.prototype, {
     ///// Return the last part of a path (e.g. filename)
     getFileNameFromPath : {
         value: function(path) {
+            path = path.replace(/[/\\]$/g,"");
+            path = path.replace(/\\/g,"/");
             return path.substr(path.lastIndexOf('/') + 1);
+        }
+    },
+    /***
+     * file name validation
+     */
+    isValidFileName:{
+        value: function(fileName){
+            var status = false;
+            if(fileName !== ""){
+                fileName = fileName.replace(/^\s+|\s+$/g,"");
+                status = !(/[/\\]/g.test(fileName));
+                if(status && navigator.userAgent.indexOf("Macintosh") != -1){//for Mac files beginning with . are hidden
+                    status = !(/^\./g.test(fileName));
+                }
+            }
+            return status;
+        }
+    },
+
+    /* ================= misc methods ================= */
+
+    // Generates an alpha-numeric random number
+    // len: number of chars
+    // default length is '8'
+    generateRandom: {
+        value: function(len) {
+            var length;
+            len ? length = len : length = 8;
+            
+            return Uuid.generate().substring(0,length);
         }
     }
     

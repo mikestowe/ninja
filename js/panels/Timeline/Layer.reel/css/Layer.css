@@ -1,0 +1,285 @@
+@charset "UTF-8";
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
+/* Layer.scss
+ * Main SCSS file for Layer component, compiled by SASS into the file css/Layer.css.
+ */
+/* line 16, ../scss/Layer.scss */
+.layerLabel {
+  width: 100%;
+  color: white;
+  height: 21px;
+  font-family: 'Droid Sans';
+  font-size: 12px;
+  text-shadow: 1px 1px 1px #3a3a3a;
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+}
+
+/* line 26, ../scss/Layer.scss */
+.layerLabel.layerSelected {
+  background-color: #b2b2b2;
+  color: #242424;
+}
+
+/* line 30, ../scss/Layer.scss */
+.layerLabel {
+  width: 100%;
+  height: 18px;
+  padding-left: 25px;
+  padding-top: 2px;
+  -webkit-box-flex: 1;
+}
+
+/* line 37, ../scss/Layer.scss */
+.layerDisclosure {
+  background-image: url("../images/panelDisclosureIcon.png");
+  background-repeat: no-repeat;
+  width: 16px;
+  height: 16px;
+  /*float: left;*/
+  -webkit-transition-property: rotate;
+  -webkit-transition-duration: 0.2s;
+  -webkit-transition-timing-function: linear;
+  padding-right: 2px;
+  -webkit-box-flex: 0;
+}
+
+/* line 50, ../scss/Layer.scss */
+.layerHide {
+  background-image: url("../images/eye.png");
+  background-repeat: no-repeat;
+  /*float: right;*/
+  width: 16px;
+  height: 16px;
+  padding-right: 4px;
+  -webkit-box-flex: 0;
+}
+
+/* line 59, ../scss/Layer.scss */
+.layerLock {
+  background-image: url("../images/lock_open.png");
+  background-repeat: no-repeat;
+  /*float: right;*/
+  width: 16px;
+  height: 16px;
+  padding-right: 4px;
+  -webkit-box-flex: 0;
+}
+
+/******************************************/
+/* line 71, ../scss/Layer.scss */
+.container-layer {
+  background-color: #474747;
+  color: white;
+  font-size: 12px;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+/* line 77, ../scss/Layer.scss */
+.selected .container-layer {
+  background-color: #474747;
+}
+
+/* line 80, ../scss/Layer.scss */
+.selected .container-layer .label-layer {
+  background-color: #b2b2b2;
+  color: #242424;
+}
+
+/* line 85, ../scss/Layer.scss */
+.userlayers .collapsible-label {
+  display: block;
+  width: 100px;
+  height: 21px;
+  line-height: 20px;
+  color: white;
+  margin-left: 30px;
+  margin-right: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* line 97, ../scss/Layer.scss */
+.layerSelected .label-layer {
+  background-color: #b2b2b2;
+  color: #242424;
+}
+
+/* line 101, ../scss/Layer.scss */
+.content-layer {
+  background-color: #474747;
+  color: white;
+}
+
+/* line 105, ../scss/Layer.scss */
+.content-layer .collapsible-label {
+  background-position: 14px 5px;
+  border-width: 0px;
+}
+
+/* line 113, ../scss/Layer.scss */
+.label-layer,
+.label-position,
+.label-transform,
+.label-style,
+.label-styles {
+  position: relative;
+  border-bottom: 1px solid #505050;
+  cursor: pointer;
+}
+
+/* line 120, ../scss/Layer.scss */
+.content-layer .collapsible-label,
+.content-layer .collapsible-content {
+  font-size: 11px;
+}
+
+/* line 124, ../scss/Layer.scss */
+.collapsible-clicker {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  top: 5px;
+  left: 5px;
+  margin: 0px;
+  padding: 0px;
+  background-image: url(../images/icon-open.png);
+  background-repeat: no-repeat;
+}
+
+/* line 135, ../scss/Layer.scss */
+.collapsible-clicker.collapsible-collapsed {
+  background-image: url(../images/icon-collapsed.png);
+}
+
+/* line 138, ../scss/Layer.scss */
+.collapsible-content .collapsible-clicker {
+  left: 12px;
+}
+
+/* line 141, ../scss/Layer.scss */
+.content-layer.collapsible-collapsed {
+  height: 0px;
+  overflow: hidden;
+}
+
+/* line 147, ../scss/Layer.scss */
+.label-layer .cssbutton,
+.label-style .cssbutton {
+  width: 14px;
+  height: 14px;
+  overflow: hidden;
+  position: absolute;
+  background-repeat: no-repeat;
+}
+
+/* line 154, ../scss/Layer.scss */
+.label-layer .button-lock {
+  background-image: url(../images/icon-lock.png);
+  top: 3px;
+  right: 27px;
+}
+
+/* line 159, ../scss/Layer.scss */
+.label-layer .button-visible {
+  background-image: url(../images/icon-eye.png);
+  top: 3px;
+  right: 7px;
+}
+
+/* line 164, ../scss/Layer.scss */
+.label-style .button-add {
+  background-image: url(../images/icon-plus.png);
+  width: 15px;
+  height: 15px;
+  top: 3px;
+  right: 11px;
+}
+
+/* line 171, ../scss/Layer.scss */
+.label-style .button-delete {
+  background-image: url(../images/icon-minus.png);
+  width: 15px;
+  height: 15px;
+  top: 3px;
+  right: 31px;
+}
+
+/* line 178, ../scss/Layer.scss */
+.collapsible-content .layout-table {
+  width: 99.9%;
+}
+
+/* line 181, ../scss/Layer.scss */
+.content-layer .collapsible-content {
+  padding-left: 30px;
+}
+
+/* line 184, ../scss/Layer.scss */
+.collapsible-content .collapsible-content .layout-table .layout-row .layout-cell {
+  width: 40%;
+  height: 20px;
+  border-bottom: 1px solid #505050;
+  line-height: 20px;
+  text-align: left;
+}
+
+/* line 191, ../scss/Layer.scss */
+.collapsible-content .layout-table:first-child {
+  border-top: 1px solid #505050;
+}
+
+/* line 194, ../scss/Layer.scss */
+.collapsible-transition {
+  -webkit-transition-property: height;
+  -webkit-transition-duration: 200ms;
+  -webkit-transition-timing-function: ease-in;
+}
+
+/* line 200, ../scss/Layer.scss */
+.editable2 {
+  height: 20px;
+  background-color: #242424 !important;
+  color: #b2b2b2 !important;
+  border-width: 0px;
+  font-size: 11px;
+  overflow: hidden;
+  -webkit-user-select: text;
+  text-overflow: clip;
+}
+
+<<<<<<< .mine=======/* line 210, ../scss/Layer.scss */
+.label-style .disabled {
+  cursor: default;
+}
+
+/* styles elements */
+>>>>>>> .theirs/* line 215, ../scss/Layer.scss */
+.label-style .disabled {
+  cursor: default;
+}
+
+/* styles elements */
+/* line 216, ../scss/Layer.scss */
+.content-style .item-template {
+  display: none;
+}
+
+<<<<<<< .mine/* line 219, ../scss/Layer.scss */
+=======/* line 218, ../scss/Layer.scss */
+>>>>>>> .theirs.content-style .layout-row.selected .layout-cell {
+  background-color: #b2b2b2;
+  color: #242424;
+}
+
+<<<<<<< .mine/* line 223, ../scss/Layer.scss */
+=======/* line 222, ../scss/Layer.scss */
+>>>>>>> .theirs.style-row {
+  height: 20px;
+}

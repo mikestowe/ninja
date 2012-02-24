@@ -359,9 +359,11 @@ _renderer = function(canvas) {
     *	@param wrap - optional "CLAMP or "REPEAT", default is clamp
     *	@param mips - optional true/false value to create mipmaps, the default is true
     */
+	this.unloadedTextureCount = 0;
     _texparams = function(wrap, mips) { this.wrap = wrap, this.mips = mips };
     this.createTexture = function(url, wrap, mips) {
         var texture = this.ctx.createTexture();
+		this.unloadedTextureCount++;
 
         if (wrap === undefined)
             wrap = "CLAMP";
@@ -369,7 +371,6 @@ _renderer = function(canvas) {
             mips = true;
 
         if (texture) {
-			//console.log( "createTexture: " + url );
             texture.image = new Image();
             texture.image.src = url;
             texture.image.context = g_Engine.getContext();
@@ -377,9 +378,20 @@ _renderer = function(canvas) {
             texture.image.onload = function() {
                 var stateMan = this.context.ctxStateManager;
                 stateMan.RDGEInitState.loadTexture(texture);
-				//console.log( "loaded texture: " + texture.lookUpName );
+				this.context.renderer.unloadedTextureCount--;
+				//console.log( "loaded texture: " + texture.lookUpName + ",to: " + this.context.renderer._world._worldCount + ", textures remaining to load: " + this.context.renderer.unloadedTextureCount );
 				if (texture.callback)  texture.callback( texture );
+				if (this.context.renderer.unloadedTextureCount < 0)
+					console.log( "more textures loaded then created..." );
             };
+			texture.image.onerror = function() {
+				this.context.renderer.unloadedTextureCount--;
+				if (texture.callback)  texture.callback( texture );
+				//console.log( "Error loading texture: " + texture.image.src );
+				if (this.context.renderer.unloadedTextureCount < 0)
+					console.log( "more textures loaded then created..." );
+			}
+				
         }
         return texture;
     }
@@ -552,8 +564,10 @@ _renderer = function(canvas) {
  */
 rdgeDefaultShaderDefintion = {
 		'shaders': {
-						'defaultVShader':"assets/shaders/test_vshader.glsl",
-						'defaultFShader':"assets/shaders/test_fshader.glsl"
+						//'defaultVShader':"assets/shaders/test_vshader.glsl",
+						//'defaultFShader':"assets/shaders/test_fshader.glsl"
+						'defaultVShader':"assets/shaders/Basic.vert.glsl",
+						'defaultFShader':"assets/shaders/Basic.frag.glsl"
 					 },
 		'techniques': { 
 			'defaultTechnique':[{

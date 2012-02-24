@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html lang="en">
+	<head>
+    	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    	<link rel="stylesheet" type="text/css" href="css/Track.css">
+   		<script type="text/montage-serialization">
+            {
+                "owner": {
+                    "module": "js/panels/Timeline/Track.reel",
+                    "name": "Track",
+                    "properties": {
+                        "element": {"#": "track"},
+                        "spanRepetition" : {"@" : "spanRepetition"},
+                        "track_lane": {"#": "track_lane"}
+                    }
+                },
+
+                "trackslot": {
+                    "module": "montage/ui/slot.reel",
+                    "name": "Slot",
+                    "properties": {
+                        "element": {"#": "track_lane"}
+                    },
+                    "bindings" : {
+                        "content" : {
+                            "boundObject" : {"@": "spanRepetition"},
+                            "boundObjectPropertyPath" : "objectAtCurrentIteration",
+                            "oneway" : false
+                        }
+                    }
+                },
+
+                "spanRepetition": {
+                	"module": "montage/ui/repetition.reel",
+                	"name": "Repetition",
+                	"properties": {
+                	    "element": {"#": "track_lanes"},
+                	        "isSelectionEnabled" : true
+                	},
+                	"bindings": {
+                	    "objects": {
+                	        "boundObject": {"@": "owner"},
+                	        "boundObjectPropertyPath": "spans",
+                	        "oneway": false
+                	    }
+                	}
+                }
+
+            }
+        </script>
+	</head>
+	<body>
+
+    	<div id="track">
+            <div id="track_lanes">
+                <div id="track_lane" class="tracklane"></div>
+            </div>
+    	</div>
+
+    </body>
+</html>

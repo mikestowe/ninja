@@ -192,3 +192,16 @@
     overflow-x: auto;
     overflow-y: auto;
 }
+
+.montage-editor-frame {
+    position:absolute;
+    z-index:7;
+    top: 0;
+    left:0;
+    display:none;
+    -webkit-user-select: initial;
+}
+.montage-editor {
+    padding:0px;
+    word-wrap: normal;
+}

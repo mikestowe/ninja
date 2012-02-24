@@ -11,8 +11,6 @@ var defaultEventManager = require("montage/core/event/event-manager").defaultEve
 
 exports.ToolButton = Montage.create(Component, {
 
-    button:     { value: null },
-
     data:       { value: null },
 
     _selected:  { value: null },
@@ -42,7 +40,7 @@ exports.ToolButton = Montage.create(Component, {
     },
 
     _currentSubSelected: { value: 0},
-    
+
     prepareForDraw: {
         enumerable: false,
         value: function() {
@@ -64,32 +62,25 @@ exports.ToolButton = Montage.create(Component, {
                     oneway: true
                 });
             }
+
+            this.element.classList.add(this.data.id)
         }
     },
 
     draw: {
         enumerable: false,
         value: function() {
-            var buttonid;
-
             if(this.data.container) {
-                buttonid = this.data.subtools[this._subselected].id;
                 this.element.title = this.data.subtools[this._subselected].toolTip;
-                this.button.classList.remove( this.data.subtools[this._currentSubSelected].id + "Unpressed" );
-                this.button.classList.remove( this.data.subtools[this._currentSubSelected].id + "Pressed" );
+                this.element.classList.remove(this.data.subtools[this._currentSubSelected].id);
+                this.element.classList.add(this.data.subtools[this._subselected].id);
                 this._currentSubSelected = this._subselected;
-            } else {
-                buttonid = this.data.id;
             }
 
             if(this._selected) {
-                this.element.classList.add( "buttonSelected" );
-                this.button.classList.remove( buttonid + "Unpressed" );
-                this.button.classList.add( buttonid + "Pressed" );
+                this.element.classList.add("active");
             } else {
-                this.element.classList.remove( "buttonSelected" );
-                this.button.classList.remove( buttonid + "Pressed" );
-                this.button.classList.add( buttonid + "Unpressed" );
+                this.element.classList.remove("active");
             }
         }
     },

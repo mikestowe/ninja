@@ -207,29 +207,32 @@ exports.ThreeD = Montage.create(Component, {
     templateDidLoad : {
         value: function() {
             Object.defineBinding(this, "axisMode", {
-                            boundObject: this.axisModeGroupControl,
-                            boundObjectPropertyPath: "selectedIndex",
-                            oneway: false
-                        });
+                boundObject: this.axisModeGroupControl,
+                boundObjectPropertyPath: "selectedIndex",
+                oneway: false
+            });
+
+            this.eventManager.addEventListener("openDocument", this, false);
+        }
+    },
+
+    handleOpenDocument: {
+        value: function() {
 
             Object.defineBinding(this, "item", {
-                    boundObject: this,
-                    boundObjectPropertyPath: "application.ninja.selectedElements",
-                    boundValueMutator: this._getSelectedItem,
-                    oneway: true
-                });
+                boundObject: this,
+                boundObjectPropertyPath: "application.ninja.selectedElements",
+                boundValueMutator: this._getSelectedItem,
+                oneway: true
+            });
         }
     },
 
     _getSelectedItem: {
-        value: function(els)
-        {
-            if(els.length)
-            {
+        value: function(els) {
+            if(els.length) {
                 return els[0]._element || els[0];
-            }
-            else
-            {
+            } else {
                 return this.boundObject.application.ninja.currentDocument.documentRoot;
             }
         }

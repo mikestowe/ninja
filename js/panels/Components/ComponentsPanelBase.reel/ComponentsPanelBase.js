@@ -4,142 +4,349 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var Montage = require("montage/core/core").Montage,
-    Component = require("montage/ui/component").Component,
-    NJUtils = require("js/lib/NJUtils").NJUtils;
+var Montage     = require("montage/core/core").Montage,
+    Component   = require("montage/ui/component").Component,
+    NJUtils     = require("js/lib/NJUtils").NJUtils;
 
-var treeControlModule = require("js/components/tree.reel");
+var treeControlModule   = require("js/components/tree.reel");
+var PIData              = require("js/data/pi/pi-data").PiData;
+
+String.prototype.capitalizeFirstChar = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+};
+
 
 var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component, {
-    _hasFocus: {
-    	enumerable: false,
-    	value: false
-    },
-    prepareForDraw: {
-    	enumerable: false,
-    	value: function() {
-            var treeHolderDiv = document.getElementById("comp_tree");
-            var componentsTree = treeControlModule.Tree.create();
-            componentsTree.element = treeHolderDiv;
-            componentsTree.dataProvider = this._loadXMLDoc("js/panels/Components/Components.xml");
-            componentsTree.needsDraw = true;
 
-            this.eventManager.addEventListener( "executeAddComponent", this, false);
-    	}
-    },
-    willDraw: {
-    	enumerable: false,
-    	value: function() {
-
-    	}
-    },
-    draw: {
-    	enumerable: false,
-    	value: function() {
-
-    	}
-    },
-
-    _loadXMLDoc: {
-        value:function(dname) {
-            if (window.XMLHttpRequest) {
-                xhttp = new XMLHttpRequest();
-            }
-            xhttp.open("GET", dname, false);
-            xhttp.send();
-            return xhttp.responseXML;
+    components: {
+        value: {
+            "text": "styles",
+            "children": [
+                {
+                    "text": "Montage Components",
+                    "children": [
+                        {
+                            "text": "Anchor",
+                            "dataFile" : "node_modules/components-data/anchor.json",
+                            "component": "anchor"
+                        },
+                        {
+                            "text": "Button",
+                            "dataFile" : "node_modules/components-data/button.json",
+                            "component": "button"
+                        },
+                        {
+                            "text": "Checkbox",
+                            "dataFile" : "node_modules/components-data/checkbox.json",
+                            "component": "checkbox"
+                        },
+                        {
+                            "text": "Image Component",
+                            "dataFile" : "node_modules/components-data/image.json",
+                            "component": "imageComponent"
+                        },
+                        {
+                            "text": "NumberInput",
+                            "dataFile" : "node_modules/components-data/number-input.json",
+                            "component": "numberInput"
+                        },
+                        {
+                            "text": "Select Input",
+                            "dataFile" : "node_modules/components-data/select.json",
+                            "component": "select"
+                        },
+                        {
+                            "text": "Radio Button",
+                            "dataFile" : "node_modules/components-data/radio-button.json",
+                            "component": "radioButton"
+                        },
+                        {
+                            "text": "Range Input",
+                            "dataFile" : "node_modules/components-data/range-input.json",
+                            "component": "rangeInput"
+                        },
+                        {
+                            "text": "TextArea",
+                            "dataFile" : "node_modules/components-data/textarea.json",
+                            "component": "textarea"
+                        },
+                        {
+                            "text": "Textfield",
+                            "dataFile" : "node_modules/components-data/textfield.json",
+                            "component": "textfield"
+                        },
+                        {
+                            "text": "Toogle Button",
+                            "dataFile" : "node_modules/components-data/toggle-button.json",
+                            "component": "toggleButton"
+                        }
+                    ]
+                }
+            ]
         }
     },
 
-    handleExecuteAddComponent: {
+    componentsData: {
+        value: {}
+    },
+
+    componentsToLoad: {
+        value: null
+    },
+
+    componentsLoaded: {
+        value: 0
+    },
+
+    dragComponent: {
+        value: null
+    },
+
+    dragPosition: {
+        value: null
+    },
+
+    centerStage: {
+        value: null
+    },
+
+
+    /*********************************************************************
+     * Components Tree and Model Creation
+     *********************************************************************/
+
+    didCreate: {
+        value: function() {
+            // Setup the drop delegate
+            this.application.ninja.dragDropMediator.dropDelegate = this;
+            // Loop through the component and load the JSON data for them
+            this._loadComponents();
+        }
+    },
+
+    // Load all the data files for each component
+    // TODO: Implement the error case
+    _loadComponents: {
+        value: function() {
+
+            this.componentsToLoad = this.components.children[0].children.length;
+
+            for(var i = 0, component; component = this.components.children[0].children[i]; i++) {
+                var req = new XMLHttpRequest();
+                //req.identifier = "searchRequest";
+                req.open("GET", component.dataFile);
+                req.addEventListener("load", this, false);
+                req.addEventListener("error", this, false);
+                req.send();
+            }
+        }
+    },
+
+    handleLoad: {
         value: function(evt) {
-            this.addComponentToStage(evt.detail.component, evt.detail.dropX, evt.detail.dropY)
+            var componentData, component, piID, piObj, section;
+
+            componentData = JSON.parse(evt.target.responseText);
+
+            component = componentData.name;
+
+            // Build the PI data and create a new object for Ninja PI
+            piID = component + "Pi";
+            piObj = [];
+            section = {};
+            section.label = component + " Properties";
+            section.Section = [];
+
+            for(var j = 0, props; props = componentData.properties[j]; j++) {
+                var row = {};
+                row.type = this.getControlType(props.type);
+                row.id = props.name;
+                row.prop = props.name;
+                row.defaultValue = props["default"];
+                row.label = props.name;
+                row.items = props.possibleValues;
+
+                section.Section.push([row]);
+            }
+
+            PIData[piID] = [];
+            PIData[piID].push(section);
+
+            // Setup the component hash object to store references to each component data
+            this.componentsData[componentData.component] = componentData;
+
+            this.componentsLoaded++;
+
+            if(this.componentsLoaded === this.componentsToLoad) {
+                // console.log("all loaded");
+                // Here we need to stop some sort of loading animation
+            }
+
         }
     },
 
-    addComponentToStage:{
-        value:function(componentType, dropX, dropY){
-            var compW = 100,
-                compH = 100,
-                elementType = "div",
-                componentContainer,
-                componentElement;
+    // PI conversion method. This will convert the property type into a Ninja component
+    getControlType: {
+        value: function(type) {
+            switch(type) {
+                case "string":
+                    return "textbox";
+                case "boolean":
+                    return "checkbox";
+                case "select":
+                    return "dropdown";
+                case "number":
+                    return "hottext";
+                default:
+                    alert("Conversion not implemented for ", type);
+            }
+        }
+    },
 
-            if(componentType == "Button"){
-                compW = 118;
-                compH = 52;
-            }else if(componentType == "Checkbox"){
-                compW = 53;
-                compH = 53;
-//                elementType = "input";
-            }else if(componentType == "DynamicText"){
-                compW = 100;
-                compH = 20;
-            }else if(componentType == "FlowController"){
-                compW = 800;
-                compH = 320;
-            }else if(componentType == "HotText"){
-                compW = 50;
-                compH = 18;
-//                elementType = "input";
-            }else if(componentType == "HotTextUnit"){
-                compW = 45;
-                compH = 18;
-            }else if(componentType == "ImageContainer"){
-                compW = 285;
-                compH = 232;
-            }else if(componentType == "Progress"){
-                compW = 300;
-                compH = 9;
-            }else if(componentType == "Scrollview"){
-                compW = 200;
-                compH = 200;
-            }else if(componentType == "Slider"){
-                compW = 200;
-                compH = 55;
-            }else if(componentType == "TextArea"){
-                compW = 312;
-                compH = 112;
-                elementType = "textarea";
-            }else if(componentType == "Textfield"){
-                compW = 312;
-                compH = 34;
-                elementType = "input";
-            }else if(componentType == "Toggle"){
-                compW = 60;
-                compH = 22;
-                elementType = "span";
-            }else if(componentType == "ToggleButton"){
-                compW = 118;
-                compH = 52;
-            }else{
-                compW = 100;
-                compH = 25;
+    /*********************************************************************
+     * Handle Tree / Drag-Drop events
+     *********************************************************************/
+
+    handleDblclick: {
+        value: function(obj) {
+            this.addComponentToStage(this.componentsData[obj.component]);
+        }
+    },
+
+    handleDragStart: {
+        value: function(obj, event) {
+            this.dragComponent = obj;
+            event.dataTransfer.effectAllowed = 'move';
+            event.dataTransfer.setData('text/plain', 'componentDrop');
+        }
+    },
+
+    handleComponentDrop: {
+        value: function(left, top) {
+            this.addComponentToStage(this.componentsData[this.dragComponent.component], [left, top]);
+        }
+    },
+
+
+    /**
+     * Send a request to add a component to the user document and waits for a callback to continue
+     */
+    addComponentToStage: {
+        value: function(component, position) {
+            var that, element;
+
+            // Check for position. If none then center on the stage
+            if(position) {
+                this.dragPosition = position;
+            } else {
+                this.dragPosition = this.getStageCenter();
+
+            }
+            that = this;
+            element = this.makeComponent(component.component);
+
+            this.application.ninja.currentDocument._window.addComponent(element, {name: component.name, path: component.module}, function(instance, element) {
+
+                //var pos = that.getStageCenter();
+
+                var styles = {
+                    'position': 'absolute',
+                    'left'      : that.dragPosition[0] + 'px',
+                    'top'       : that.dragPosition[1] + 'px',
+                    '-webkit-transform-style' : 'preserve-3d',
+                    '-webkit-transform' : 'perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
+                };
+
+                that.application.ninja.currentDocument.setComponentInstance(instance, element);
+
+                NJevent("elementAdding", {"el": element, "data":styles});
+            });
+
+        }
+    },
+
+    makeComponent: {
+        value: function(name) {
+            var el;
+
+            switch(name) {
+                case "anchor":
+                    el = NJUtils.makeNJElement("a", "Anchor", "component");
+                    el.elementModel.pi = "AnchorPi";
+                    el.setAttribute("href", "http://www.motorola.com");
+                    el.innerHTML = "link";
+                    break;
+                case "button":
+                    el = NJUtils.makeNJElement(name, "Button", "component");
+                    el.elementModel.pi = "ButtonPi";
+                    el.setAttribute("type", "button");
+                    el.innerHTML = "Button";
+                    break;
+                case "checkbox":
+                    el = NJUtils.makeNJElement("input", "Checkbox", "component");
+                    el.elementModel.pi = "CheckboxPi";
+                    el.setAttribute("type", "checkbox");
+                    break;
+                case "imageComponent":
+                    el = NJUtils.makeNJElement("image", "Image", "component");
+                    el.elementModel.pi = "ImagePi";
+                    el.setAttribute("width", 200);
+                    el.setAttribute("height", 200);
+                    break;
+                case "numberInput":
+                    el = NJUtils.makeNJElement("input", "Number Input", "component");
+                    el.elementModel.pi = "NumberInputPi";
+                    el.setAttribute("type", "number");
+                    break;
+                case "select":
+                    el = NJUtils.makeNJElement("select", "Select", "component");
+                    el.elementModel.pi = "SelectInputPi";
+                    break;
+                case "radioButton":
+                    el = NJUtils.makeNJElement("input", "Radio Button", "component");
+                    el.elementModel.pi = "RadioButtonPi";
+                    el.setAttribute("type", "radio");
+                    break;
+                case "rangeInput":
+                    el = NJUtils.makeNJElement("input", "Range Input", "component");
+                    el.elementModel.pi = "RangeInputPi";
+                    el.setAttribute("type", "range");
+                    break;
+                case "textfield":
+                    el = NJUtils.makeNJElement("input", "Textfield", "component");
+                    el.elementModel.pi = "TextfieldPi";
+                    el.setAttribute("type", "text");
+                    break;
+                case "textarea":
+                    el = NJUtils.makeNJElement("textarea", "TextArea", "component");
+                    el.elementModel.pi = "TextAreaPi";
+                    break;
+                case "toggleButton":
+                    el = NJUtils.makeNJElement("button", "Toggle Button", "component");
+                    el.elementModel.pi = "ToggleButtonPi";
+                    el.innerHTML = "Off";
+                    break;
             }
 
-            componentContainer = NJUtils.makeNJElement("div", componentType, "component");
-            componentContainer.elementModel.isComponent = true;
+            return el;
+        }
+    },
 
-            var styles = {
-                'position': 'absolute',
-                'top'       : dropY + 'px',
-                'left'      : dropX + 'px',
-                'width'     : compW + 'px',
-                'height'    : compH + 'px',
-                '-webkit-transform-style' : 'preserve-3d',
-                '-webkit-transform' : 'perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
-            };
+    /**
+     *
+     */
+    getStageCenter: {
+        value: function() {
+            //if(!this.centerStage) {
+                var top, left;
 
+                top = ~~((parseFloat(this.application.ninja.elementMediator.getProperty(this.application.ninja.currentDocument.documentRoot, "height"))) / 2);
+                left = ~~((parseFloat(this.application.ninja.elementMediator.getProperty(this.application.ninja.currentDocument.documentRoot, "width"))) / 2);
+                //this.centerStage = [top, left];
+                return [left, top];
+            //}
 
-            componentElement = NJUtils.makeNJElement(elementType, "ComponentDiv", "block");
-
-            componentContainer.appendChild(componentElement);
-
-            NJevent("elementAdding", {"el": componentContainer, "data":styles});
-
-            var componentRef = this.application.ninja.currentDocument._window.addComponent(componentElement, componentType);
-            this.application.ninja.currentDocument._userComponentSet[componentContainer.uuid] = componentRef;
-
+            //return this.centerStage;
         }
     }
 });

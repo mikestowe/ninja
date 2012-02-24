@@ -1,0 +1,21 @@
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
+.tween_keyframe{
+    position: absolute;
+    height: 16px;
+    width: 5px;
+    background-color: white;
+    z-index: 23;
+    border-radius: 3px;
+}
+
+.tween_keyframe.keyframeSelected{
+    background-color: #570e19;
+    border-style: solid;
+    border-width: thin;
+    border-color: #d6d1cf;
+}

@@ -95,6 +95,10 @@ function PulseMaterial()
 		// save the world
 		if (world)  this.setWorld( world );
 
+		// this variable declared above is inherited set to a smaller delta.
+		// the pulse material runs a little faster
+		this._dTime = 0.01;
+
 		// set up the shader
 		this._shader = new jshader();
 		this._shader.def = pulseMaterialDef;
@@ -125,9 +129,20 @@ function PulseMaterial()
 			{
 				var texMapName = this._propValues[this._propNames[0]];
 				var wrap = 'REPEAT',  mips = true;
-				//var tex = renderer.getTextureByName(texMapName, wrap, mips );
-				//this.registerTexture( tex );
 				var tex = this.loadTexture( texMapName, wrap, mips );
+				
+				/*
+				var glTex = new GLTexture( this.getWorld() );
+				var prevWorld = this.findPreviousWorld();
+				if (prevWorld)
+				{
+					var srcCanvas = prevWorld.getCanvas();
+					tex = glTex.loadFromCanvas( srcCanvas );
+				}
+				else
+					tex = glTex.loadFromFile( texMapName, wrap, mips );
+				*/
+
 				if (tex)
 					technique.u_tex0.set( tex );
 			}
@@ -146,6 +161,7 @@ function PulseMaterial()
 				if (this._shader && this._shader.default)
 					this._shader.default.u_time.set( [this._time] );
 				this._time += this._dTime;
+				if (this._time > 200.0)  this._time = 0.0;
 			}
 		}
 	}
@@ -184,7 +200,17 @@ function PulseMaterial()
 		this.setName(  pu.nextValue( "name: ") );
 
 		var rtnStr;
-		
+        try
+        {
+            var endKey = "endMaterial\n";
+            var index = importStr.indexOf( endKey );
+            index += endKey.length;
+            rtnStr = importStr.substr( index );
+        }
+        catch (e)
+        {
+            throw new Error( "could not import material: " + importStr );
+        }
 		return rtnStr;
 	}
 }

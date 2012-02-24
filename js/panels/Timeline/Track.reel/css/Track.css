@@ -1,0 +1,32 @@
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
+.tracklane{
+    height: 19px;
+    width: 100%;
+    color: white;
+    padding-top: 2px;
+    border-bottom: #444;
+    border-bottom-style: solid;
+    border-bottom-width: thin;
+    background-image: url("../images/gridline.jpg");
+    overflow: hidden;
+}
+
+.keyframe{
+    position: absolute;
+    height: 16px;
+    width: 4px;
+    background-color: white;
+
+}
+
+.defaultSpan{
+    position: absolute;
+    height: 16px;
+    opacity: 0.3;
+    background-color: white;
+}

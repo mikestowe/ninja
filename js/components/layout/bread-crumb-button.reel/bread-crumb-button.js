@@ -7,45 +7,38 @@
 var Montage = require("montage/core/core").Montage;
 var Component = require("montage/ui/component").Component;
 
-
 exports.BreadcrumbButton = Montage.create(Component, {
 
-    button:     { value: null },
+    button: {
+        value: null
+    },
 
-    data:       { value: null },
+    data: {
+        value: null
+    },
 
     prepareForDraw: {
-        enumerable: false,
         value: function() {
             this.element.addEventListener("mousedown", this, false);
         }
     },
 
     draw: {
-        enumerable: false,
         value: function() {
-
-        if(this.data.element.id==="UserContent"){
-
-           this.button.innerHTML = "Body";
-        }
-
-        else{
-           this.button.innerHTML=this.data.element.nodeName;
-        }
-
+            if(this.data.element.id === "UserContent") {
+                this.button.innerHTML = "Body";
+            } else {
+                this.button.innerHTML = this.data.element.nodeName;
+            }
         }
     },
 
     handleMousedown: {
         value: function(event) {
 
-            if(event.which===1){
-
-                 this.data.selected=true;
-                 NJevent('breadCrumbTrail',this.data);
-                 this.data.selected=false;
-            }
+             //this.data.selected=true;
+             NJevent('breadCrumbTrail',this.data);
+             //this.data.selected=false;
 
         }
     }

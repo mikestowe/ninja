@@ -33,8 +33,8 @@
                     "alignCenter": {"@": "alignCenter"},
                     "alignRight": {"@": "alignRight"},
                     "alignJustify": {"@": "alignJustify"},
-                    "indentRight": {"@": "indentRight"},
-                    "indentLeft": {"@": "indentLeft"},
+                    "indent": {"@": "indent"},
+                    "outdent": {"@": "outdent"},
                     "numberedList": {"@": "numberedList"},
                     "bulletedList": {"@": "bulletedList"}
                 }
@@ -57,8 +57,16 @@
                 "module": "js/components/combobox.reel",
                 "name": "Combobox",
                 "properties": {
-                    "element": {"#": "fontSelection"}
-                }
+                    "element": {"#": "fontSelection"},
+                    "identifier": "fontSelection"
+                },
+                "listeners": [
+                    {
+                        "type": "change",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+
             },
             "fontSettings": {
                 "module": "js/components/button.reel",
@@ -69,131 +77,236 @@
             },
 
             "fontSize": {
-                "module": "js/components/hottextunit.reel",
-                "name": "HotTextUnit",
-                "properties": {
-                    "element": {"#": "fontSize"}
-                }
-            },
-
-            "fontColor": {
-                "module": "js/components/button.reel",
-                "name": "Button",
-                "properties": {
-                    "element": {"#": "fontColor"}
-                }
-            },
-            "btnBold": {
-                "module": "js/components/button.reel",
-                "name": "Button",
-                "properties": {
-                    "element": {"#": "btnBold"},
-                    "_isToggleButton": true
-                }
-            },
-            "btnItalic": {
-                "module": "js/components/button.reel",
-                "name": "Button",
-                "properties": {
-                    "element": {"#": "btnItalic"},
-                    "_isToggleButton": true
-                }
-            },
-            "btnUnderline": {
-                "module": "js/components/button.reel",
-                "name": "Button",
-                "properties": {
-                    "element": {"#": "btnUnderline"},
-                    "_isToggleButton": true
-                }
-            },
-            "btnStrikethrough": {
-                "module": "js/components/button.reel",
-                "name": "Button",
-                "properties": {
-                    "element": {"#": "btnStrikethrough"},
-                    "_isToggleButton": true
-                }
-            },
-            "txtLink": {
-                "module": "js/components/textfield.reel",
-                "name": "TextField",
-                "properties": {
-                    "element": {"#": "txtLink"}
-                }
-            },
-            "linkTarget": {
                 "module": "js/components/combobox.reel",
                 "name": "Combobox",
                 "properties": {
-                    "element": {"#": "linkTarget"}
-                }
-            },
+                    "element": {"#": "fontSize"},
+                    "identifier": "fontSize"
+                },
+                "listeners": [
+                    {
+                        "type": "change",
+                        "listener": {"@": "owner"}
+                    }
+                ]
 
-            "alignLeft": {
-                "module": "js/components/button.reel",
-                "name": "Button",
+            },
+        
+            "btnBold": {
+                "module": "montage/ui/toggle-button.reel",
+                "name": "ToggleButton",
                 "properties": {
-                    "element": {"#": "alignLeft"}
-                }
+                    "element": {"#": "btnBold"},
+                    "pressedClass": "active",
+                    "preventFocus": true,
+                    "identifier": "btnBold",
+                    "pressedLabel": "B",
+                    "unpressedLabel": "B"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            },
+            "btnItalic": {
+                "module": "montage/ui/toggle-button.reel",
+                "name": "ToggleButton",
+                "properties": {
+                    "element": {"#": "btnItalic"},
+                    "pressedClass": "active",
+                    "preventFocus": true,
+                    "identifier": "btnItalic",
+                    "pressedLabel": "I",
+                    "unpressedLabel": "I"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            },
+            "btnUnderline": {
+                "module": "montage/ui/toggle-button.reel",
+                "name": "ToggleButton",
+                "properties": {
+                    "element": {"#": "btnUnderline"},
+                    "pressedClass": "active",
+                    "preventFocus": true,
+                    "identifier": "btnUnderline",
+                    "pressedLabel": "U",
+                    "unpressedLabel": "U"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            },
+            "btnStrikethrough": {
+                "module": "montage/ui/toggle-button.reel",
+                "name": "ToggleButton",
+                "properties": {
+                    "element": {"#": "btnStrikethrough"},
+                    "pressedClass": "active",
+                    "preventFocus": true,
+                    "identifier": "btnStrikethrough",
+                    "pressedLabel": "S",
+                    "unpressedLabel": "S"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            },
+            
+            "alignLeft": {
+                "module": "montage/ui/toggle-button.reel",
+                "name": "ToggleButton",
+                "properties": {
+                    "element": {"#": "alignLeft"},
+                    "pressedClass": "active",
+                    "preventFocus": true,
+                    "identifier": "alignLeft",
+                    "pressedLabel": "Left",
+                    "unpressedLabel": "Left"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
             "alignCenter": {
-                "module": "js/components/button.reel",
-                "name": "Button",
+                "module": "montage/ui/toggle-button.reel",
+                "name": "ToggleButton",
                 "properties": {
-                    "element": {"#": "alignCenter"}
-                }
+                    "element": {"#": "alignCenter"},
+                    "pressedClass": "active",
+                    "preventFocus": true,
+                    "identifier": "alignCenter",
+                    "pressedLabel": "Center",
+                    "unpressedLabel": "Center"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
             "alignRight": {
-                "module": "js/components/button.reel",
-                "name": "Button",
+                "module": "montage/ui/toggle-button.reel",
+                "name": "ToggleButton",
                 "properties": {
-                    "element": {"#": "alignRight"}
-                }
+                    "element": {"#": "alignRight"},
+                    "pressedClass": "active",
+                    "preventFocus": true,
+                    "identifier": "alignRight",
+                    "pressedLabel": "Right",
+                    "unpressedLabel": "Right"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
             "alignJustify": {
-                "module": "js/components/button.reel",
-                "name": "Button",
+                "module": "montage/ui/toggle-button.reel",
+                "name": "ToggleButton",
                 "properties": {
-                    "element": {"#": "alignJustify"}
-                }
+                    "element": {"#": "alignJustify"},
+                    "pressedClass": "active",
+                    "preventFocus": true,
+                    "identifier": "alignJustify",
+                    "pressedLabel": "Justify",
+                    "unpressedLabel": "Justify"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
-            "indentRight": {
-                "module": "js/components/button.reel",
+            "indent": {
+                "module": "montage/ui/button.reel",
                 "name": "Button",
                 "properties": {
-                    "element": {"#": "indentRight"}
-                }
+                    "element": {"#": "indent"},
+                    "pressedClass": "active",
+                    "preventFocus": true,
+                    "identifier": "indent",
+                    "label": ">>"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
-            "indentLeft": {
-                "module": "js/components/button.reel",
+            "outdent": {
+                "module": "montage/ui/button.reel",
                 "name": "Button",
                 "properties": {
-                    "element": {"#": "indentLeft"}
-                }
+                    "element": {"#": "outdent"},
+                    "pressedClass": "active",
+                    "preventFocus": true,
+                    "identifier": "outdent",
+                    "label": "<<"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
             "bulletedList": {
-                "module": "js/components/button.reel",
-                "name": "Button",
+                "module": "montage/ui/toggle-button.reel",
+                "name": "ToggleButton",
                 "properties": {
-                    "element": {"#": "bulletedList"}
-                }
+                    "element": {"#": "bulletedList"},
+                    "pressedClass": "active",
+                    "preventFocus": true,
+                    "identifier": "bulletedList",
+                    "pressedLabel": "• • •",
+                    "unpressedLabel": "• • •"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
             "numberedList": {
-                "module": "js/components/button.reel",
-                "name": "Button",
+                "module": "montage/ui/toggle-button.reel",
+                "name": "ToggleButton",
                 "properties": {
-                    "element": {"#": "numberedList"}
-                }
-            },
-            "fontColor": {
-               "module" : "js/components/ui/color-chip.reel",
-               "name" : "ColorChip",
-               "properties" : {
-                   "element" : {"#": "fontColor"},
-                   "mode": "chip"
-               }
-           }
+                    "element": {"#": "numberedList"},
+                    "pressedClass": "active",
+                    "preventFocus": true,
+                    "identifier": "numberedList",
+                    "pressedLabel": "1 2 3",
+                    "unpressedLabel": "1 2 3"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            }
 
     	}
 	    </script>
@@ -202,33 +315,36 @@
 
     <body>
         <div id="textProperties" class="subToolHolderPanel optionsTextTool">
-            <label class="label">Class:</label>
-            <input id="className" />
-            <label class="label">Tag:</label>
-            <select id="tagType"></select>
+            <label class="label" style="display: none">Class:</label>
+            <input id="className" style="display: none" />
+            <label class="label" style="display: none">Tag:</label>
+            <select id="tagType" style="display: none"></select>
             <label class="label">Font:</label>
-            <select id="fontSelection"></select>
-            <button id="fontSettings"></button>
+            <select id="fontSelection" class="nj-skinned fontSelection"></select>
+            <button id="fontSettings" style="display: none"></button>
             <label class="label">Size:</label>
-            <input id="fontSize"/>
-            <div id="fontColor" style="display:none"></div>
-            <button id="btnBold" class="btnBold"></button>
-            <button id="btnItalic" class="btnItalic"></button>
-            <button id="btnUnderline" class="btnItalic"></button>
-            <button id="btnStrikethrough" class="btnStriketrough"></button>
-            <label class="label">Link:</label>
-            <input id="txtLink" />
-            <select id="linkTarget"></select>
-            <div id="btnsAlign">
-                <button id="alignLeft"></button>
-                <button id="alignCenter"></button>
-                <button id="alignRight"></button>
+            <select id="fontSize" class="nj-skinned"></select>
+            <div class="fontColor"></div>
+            <div class="btnGroup">
+                <button id="btnBold" class="btnBold nj-skinned" style="font-weight:bold"></button>
+                <button id="btnItalic" class="btnItalic nj-skinned" style="font-style: italic;"></button>
+                <button id="btnUnderline" class="btnUnderline nj-skinned" style="text-decoration: underline;"></button>
+                <button id="btnStrikethrough" class="btnStriketrough nj-skinned" style="text-decoration: line-through;"></button>
             </div>
-            <button id="alignJustify"></button>
-            <button id="indentRight"></button>
-            <button id="indentLeft"></button>
-            <button id="bulletedList"></button>
-            <button id="numberedList"></button>
+            <div class="btnGroup">
+                <button id="alignLeft" class="nj-skinned"></button>
+                <button id="alignCenter" class="nj-skinned"></button>
+                <button id="alignRight" class="nj-skinned"></button>
+                <button id="alignJustify" class="nj-skinned"></button>
+            </div>
+            <div class="btnGroup">
+                <button id="indent" class="nj-skinned"></button>
+                <button id="outdent" class="nj-skinned"></button>
+            </div>
+            <div class="btnGroup">
+                <button id="bulletedList" class="nj-skinned"></button>
+                <button id="numberedList" class="nj-skinned"></button>
+            </div>
         </div>
     </body>
 

@@ -10,12 +10,12 @@ exports.MenuData = Montage.create( Montage, {
     topLevelMenu: {
         value: [
             {
-                "header": "FILE",
+                "header": "File",
                 "entries": [
                     {
                         "displayText" : "New Project",
                         "hasSubMenu" : false,
-                        "enabled": true,
+                        "enabled": false,
                         "action":   "executeNewProject"
                     },
                     {
@@ -25,7 +25,7 @@ exports.MenuData = Montage.create( Montage, {
                         "action":   "executeNewFile"
                     },
                     {
-                        "displayText" : "Open...",
+                        "displayText" : "Open File",
                         "hasSubMenu" : false,
                         "enabled": true,
                         "action": "executeFileOpen"
@@ -37,17 +37,20 @@ exports.MenuData = Montage.create( Montage, {
                     {
                         "displayText" : "Save",
                         "hasSubMenu" : false,
-                        "enabled": false
+                        "enabled": true,
+                        "action": "executeSave"
                     },
                     {
                         "displayText" : "Save As",
                         "hasSubMenu" : false,
-                        "enabled": false
+                        "enabled": true,
+                        "action":"saveAs"
                     },
                     {
                         "displayText" : "Save All",
                         "hasSubMenu" : false,
-                        "enabled": false
+                        "enabled": true,
+                        "action": "executeSaveAll"
                     },
                     {
                         "displayText" : "",
@@ -56,12 +59,12 @@ exports.MenuData = Montage.create( Montage, {
                     {
                         "displayText" : "Open Project",
                         "hasSubMenu" : false,
-                        "enabled": true
+                        "enabled": false
                     },
                     {
                         "displayText" : "Open Recent",
                         "hasSubMenu" : false,
-                        "enabled": true
+                        "enabled": false
                     },
                     {
                         "displayText" : "Close Project",
@@ -71,7 +74,7 @@ exports.MenuData = Montage.create( Montage, {
                 ]
             },
             {
-                "header": "EDIT",
+                "header": "Edit",
                 "entries": [
                     {
                         "displayText" : "Undo",
@@ -111,7 +114,7 @@ exports.MenuData = Montage.create( Montage, {
                 ]
             },
             {
-                "header": "VIEW",
+                "header": "View",
                 "entries": [
                     {
                         "displayText" : "Zoom In",
@@ -134,6 +137,15 @@ exports.MenuData = Montage.create( Montage, {
                         "checked": {
                             "value": false,
                             "boundProperty": "livePreview"
+                        }
+                    },
+                    {
+                        "displayText" : "Chrome Preview",
+                        "hasSubMenu" : false,
+                        "enabled": true,
+                        "checked": {
+                            "value": false,
+                            "boundProperty": "chromePreview"
                         }
                     },
                     {
@@ -282,7 +294,7 @@ exports.MenuData = Montage.create( Montage, {
                 ]
             },
             {
-                "header": "WINDOW",
+                "header": "Window",
                 "entries": [
                     {
                         "displayText" : "Tools",
@@ -349,6 +361,15 @@ exports.MenuData = Montage.create( Montage, {
                         }
                     },
                     {
+                        "displayText" : "Presets",
+                        "hasSubMenu" : false,
+                        "enabled": true,
+                        "checked": {
+                            "value": true,
+                            "boundProperty": "PresetsPanel"
+                        }
+                    },
+                    {
                         "displayText" : "Code",
                         "hasSubMenu" : false,
                         "enabled": true
@@ -356,41 +377,34 @@ exports.MenuData = Montage.create( Montage, {
                 ]
             },
             {
-                "header": "HELP",
+                "header": "Help",
                 "entries": [
                     {
-                        "displayText" : "About",
+                        "displayText" : "Ninja FAQ",
                         "hasSubMenu" : false,
-                        "enabled": true
+                        "enabled": true,
+                        "action":   "executeHelpFAQ"
                     },
                     {
-                        "displayText" : "FAQ",
+                        "displayText" : "Ninja Forums",
                         "hasSubMenu" : false,
-                        "enabled": true
+                        "enabled": true,
+                        "action":   "executeHelpForums"
                     },
                     {
-                        "displayText" : "Forums",
+                        "displayText" : "Help Topics",
                         "hasSubMenu" : false,
-                        "enabled": true
-                    }
-                ]
-            },
-            {
-                "header": "TEST",
-                "entries": [
-                    {
-                        "displayText" : "Open CSS View",
-                        "hasSubMenu" : false,
-                        "enabled": true
+                        "enabled": true,
+                        "action":   "executeHelpTopics"
                     },
                     {
-                        "displayText" : "Open JS View",
+                        "displayText" : "About Ninja...",
                         "hasSubMenu" : false,
-                        "enabled": true
+                        "enabled": true,
+                        "action":   "executeHelpAbout"
                     }
                 ]
             }
-
         ]
     }
 });

@@ -35,7 +35,7 @@ exports.SubToolButton = Montage.create(Component, {
               boundObjectPropertyPath: "selected",
               oneway: false
             });
-
+            this.element.classList.add(this.data.id);
         }
     },
 
@@ -43,13 +43,9 @@ exports.SubToolButton = Montage.create(Component, {
         enumerable: false,
         value: function() {
             if(this._selected) {
-                this.element.classList.add( "buttonSelected" );
-                this.button.classList.remove( this.data.id + "Unpressed" );
-                this.button.classList.add( this.data.id + "Pressed" );
+                this.element.classList.add("active");
             } else {
-                this.element.classList.remove( "buttonSelected" );
-                this.button.classList.remove( this.data.id + "Pressed" );
-                this.button.classList.add( this.data.id + "Unpressed" );
+                this.element.classList.remove("active");
             }
         }
     },

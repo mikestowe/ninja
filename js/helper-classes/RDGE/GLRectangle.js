@@ -180,7 +180,7 @@ function GLRectangle()
 		this._strokeStyle		= Number( this.getPropertyFromString( "strokeStyle: ",	importStr )  );
 		var strokeMaterialName	= this.getPropertyFromString( "strokeMat: ",	importStr );
 		var fillMaterialName	= this.getPropertyFromString( "fillMat: ",		importStr );
-		this._strokeStyle		=  Number( this.getPropertyFromString( "strokeColor: ",	importStr )  );
+		this._strokeStyle		=  this.getPropertyFromString( "strokeStyle: ",	importStr );
 		this._fillColor			=  eval( "[" + this.getPropertyFromString( "fillColor: ",	importStr ) + "]" );
 		this._strokeColor		=  eval( "[" + this.getPropertyFromString( "strokeColor: ",	importStr ) + "]" );
 		this._tlRadius			=  Number( this.getPropertyFromString( "tlRadius: ",	importStr )  );
@@ -210,8 +210,11 @@ function GLRectangle()
 		// get the world
 		var world = this.getWorld();
 		if (!world)  throw( "null world in buildBuffers" );
-
+		//console.log( "GLRectangle.buildBuffers " + world._worldCount );
 		if (!world._useWebGL)  return;
+		
+		// make sure RDGE has the correct context
+		g_Engine.setContext( world.getCanvas().uuid );
 
 		// create the gl buffer
 		var gl = world.getGLContext();
@@ -284,6 +287,7 @@ function GLRectangle()
 		xFill -= strokeSize;
 		yFill -= strokeSize;
 		var fillMaterial = this.makeFillMaterial();
+		//console.log( "fillMaterial: " + fillMaterial.getName() );
 		var fillPrim = this.createFill([x,y],  2*xFill,  2*yFill,  tlRadius, blRadius, brRadius, trRadius, fillMaterial);
         this._primArray.push( fillPrim );
 		this._materialNodeArray.push( fillMaterial.getMaterialNode() );
@@ -400,12 +404,18 @@ function GLRectangle()
 		ctx.beginPath();
 		ctx.fillStyle   = "#990000";
 		if (this._fillColor)
-			ctx.fillStyle = MathUtils.colorToHex( this._fillColor );
+		{
+			var c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";  
+			ctx.fillStyle = c;
+		}
 
 		// set the stroke
 		ctx.strokeStyle = "#0000ff";
 		if (this._strokeColor)
-			ctx.strokeStyle = MathUtils.colorToHex( this._strokeColor );
+		{
+			var c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";  
+			ctx.strokeStyle = c;
+		}
 
 		ctx.lineWidth	= lw;
 		var inset = Math.ceil( 0.5*lw ) + 0.5;
@@ -418,7 +428,7 @@ function GLRectangle()
 	this.createStroke = function(ctr,  width,  height,  strokeWidth,  tlRad, blRad, brRad, trRad, material)
 	{
 		// create the geometry
-		var prim = RectangleStroke.create( ctr,  width, height, strokeWidth,  tlRad, blRad,  brRad, trRad)
+		var prim = RectangleStroke.create( ctr,  width, height, strokeWidth,  tlRad, blRad,  brRad, trRad, material)
 		return prim;
 	}
 
@@ -428,9 +438,9 @@ function GLRectangle()
 		// special the (common) case of no rounded corners
 		var prim
 		if ((tlRad <= 0) && (blRad <= 0) && (brRad <= 0) && (trRad <= 0))
-			prim = RectangleGeometry.create( ctr, width, height );
+			prim = RectangleGeometry.create( ctr, width, height, material );
 		else
-			prim = RectangleFill.create( ctr,  width, height,  tlRad, blRad,  brRad, trRad);
+			prim = RectangleFill.create( ctr,  width, height,  tlRad, blRad,  brRad, trRad, material);
 
 		return prim;
 	}
@@ -679,7 +689,7 @@ function GLRectangle()
  }
 
 RectangleFill = {};
-RectangleFill.create = function( rectCtr,  width, height, tlRad, blRad,  brRad, trRad)
+RectangleFill.create = function( rectCtr,  width, height, tlRad, blRad,  brRad, trRad,  material)
 {
 	var x = rectCtr[0],  y = rectCtr[1],  z = 0.0;
 	var	hw = 0.5*width,  hh = 0.5*height;
@@ -766,6 +776,17 @@ RectangleFill.create = function( rectCtr,  width, height, tlRad, blRad,  brRad, 
 		j++;
 	}
 
+	//refine the mesh for vertex deformations
+	if (material)
+	{
+		if (material.hasVertexDeformation())
+		{
+			var paramRange = material.getVertexDeformationRange();
+			var tolerance = material.getVertexDeformationTolerance();
+			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
+		}
+	}
+
 	// create the RDGE primitive
 	var prim = ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.TRIANGLES, nVertices);
 	return prim;
@@ -838,7 +859,7 @@ RectangleFill.getRoundedCorner = function(ctr, startPt,  vertices)
 
 
 RectangleStroke = {};
-RectangleStroke.create = function( rectCtr,  width, height, strokeWidth,  tlRad, blRad,  brRad, trRad)
+RectangleStroke.create = function( rectCtr,  width, height, strokeWidth,  tlRad, blRad,  brRad, trRad, material)
 {
 	var x = rectCtr[0],  y = rectCtr[1],  z = 0.0;
 	var	hw = 0.5*width,  hh = 0.5*height,  sw = strokeWidth;
@@ -1029,6 +1050,17 @@ RectangleStroke.create = function( rectCtr,  width, height, strokeWidth,  tlRad,
 		k++;
 	}
 
+	//refine the mesh for vertex deformations
+	if (material)
+	{
+		if (material.hasVertexDeformation())
+		{
+			var paramRange = material.getVertexDeformationRange();
+			var tolerance = material.getVertexDeformationTolerance();
+			//nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
+		}
+	}
+
 	// create the RDGE primitive
 	var prim = ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.TRIANGLES, nVertices);
 	return prim;
@@ -1073,7 +1105,7 @@ RectangleStroke.getUV		= RectangleFill.getUV;
 
 // Helper function for generating Three.js geometry
 RectangleGeometry = {};
-RectangleGeometry.create = function( ctr,  width, height )
+RectangleGeometry.create = function( ctr,  width, height, material )
 {
 	var x = ctr[0],  y = ctr[1],  z = 0.0;
 	var	hw = 0.5*width,  hh = 0.5*height;
@@ -1111,8 +1143,20 @@ RectangleGeometry.create = function( ctr,  width, height )
 	RectangleGeometry.pushIndices( 2, 1, 0 );
 	RectangleGeometry.pushIndices( 0, 3, 2 );
 
+	//refine the mesh for vertex deformations
+	if (material)
+	{
+		if (material.hasVertexDeformation())
+		{
+			var paramRange = material.getVertexDeformationRange();
+			var tolerance = material.getVertexDeformationTolerance();
+			//nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
+		}
+	}
+
 	// create the RDGE primitive
 	var prim = ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.TRIANGLES, nVertices);
+	//var prim = ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.LINES, nVertices);
 	return prim;
 }
 
@@ -1182,3 +1226,8 @@ ShapePrimitive.create = function(coords,  normals,  uvs,  indices, primType, ver
 
 	return prim;
 }
+
+
+
+
+

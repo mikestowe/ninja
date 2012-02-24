@@ -60,10 +60,17 @@ exports.Ninja = Montage.create(Component, {
             this.eventManager.addEventListener( "onOpenDocument", this, false);
 
             this.addEventListener("change@appModel.livePreview", this.executeLivePreview, false);
+            this.addEventListener("change@appModel.chromePreview", this.executeChromePreview, false);
             this.addEventListener("change@appModel.debug", this.toggleDebug, false);
 
             NJevent("appLoading");
         }
+    },
+    
+    executeChromePreview: {
+    	value: function () {
+    		this.application.ninja.documentController.activeDocument.livePreview();
+    	}
     },
 
     handleResize: {
@@ -102,6 +109,9 @@ exports.Ninja = Montage.create(Component, {
     didDraw: {
         value: function() {
             if(!this._didDraw) {
+            	if (!this.application.ninja.coreIoApi.ioServiceDetected) {
+            		var check = this.application.ninja.coreIoApi.cloudAvailable();
+            	}
                 NJevent("appLoaded");
                 this._didDraw = true;
             }
@@ -158,16 +168,7 @@ exports.Ninja = Montage.create(Component, {
 
             this.appModel.show3dGrid = this.currentDocument.draw3DGrid;
 
-            this.currentDocument._document.body.addEventListener("userTemplateDidLoad",  this.userTemplateDidLoad.bind(this), false);
-
-
             NJevent("openDocument");
-        }
-    },
-
-    userTemplateDidLoad: {
-        value: function(){
-            this.currentSelectedContainer = this.currentDocument.documentRoot;
         }
     },
 
@@ -186,7 +187,7 @@ exports.Ninja = Montage.create(Component, {
                 transitionStopRule = "*"
             }
 
-            this.currentDocument.documentRoot.elementModel.controller.setProperty(this.currentDocument.documentRoot, "background", background);
+            this.currentDocument.documentRoot.elementModel.controller.setProperty(this.currentDocument.documentRoot, "body-background", background);
             this.currentDocument.documentRoot.elementModel.controller.setProperty(this.currentDocument.documentRoot, "overflow", overflow);
             this.currentDocument.documentRoot.elementModel.controller.changeSelector(this.currentDocument.documentRoot, "transitionStopRule", transitionStopRule);
 
