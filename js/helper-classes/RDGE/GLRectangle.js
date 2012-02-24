@@ -402,7 +402,6 @@ function GLRectangle()
 		
 		// set the fill
 		ctx.beginPath();
-		ctx.fillStyle   = "#990000";
 		if (this._fillColor)
 		{
 			var c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";  
@@ -410,7 +409,6 @@ function GLRectangle()
 		}
 
 		// set the stroke
-		ctx.strokeStyle = "#0000ff";
 		if (this._strokeColor)
 		{
 			var c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";  
@@ -420,8 +418,8 @@ function GLRectangle()
 		ctx.lineWidth	= lw;
 		var inset = Math.ceil( 0.5*lw ) + 0.5;
 		this.renderPath( inset, ctx );
-		ctx.fill();
-		ctx.stroke();
+		if (this._fillColor)	ctx.fill();
+		if (this._strokeColor)	ctx.stroke();
 		ctx.closePath();
     }
 
@@ -777,15 +775,15 @@ RectangleFill.create = function( rectCtr,  width, height, tlRad, blRad,  brRad, 
 	}
 
 	//refine the mesh for vertex deformations
-	if (material)
-	{
-		if (material.hasVertexDeformation())
-		{
-			var paramRange = material.getVertexDeformationRange();
-			var tolerance = material.getVertexDeformationTolerance();
-			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
-		}
-	}
+//	if (material)
+//	{
+//		if (material.hasVertexDeformation())
+//		{
+//			var paramRange = material.getVertexDeformationRange();
+//			var tolerance = material.getVertexDeformationTolerance();
+//			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
+//		}
+//	}
 
 	// create the RDGE primitive
 	var prim = ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.TRIANGLES, nVertices);
@@ -1051,15 +1049,15 @@ RectangleStroke.create = function( rectCtr,  width, height, strokeWidth,  tlRad,
 	}
 
 	//refine the mesh for vertex deformations
-	if (material)
-	{
-		if (material.hasVertexDeformation())
-		{
-			var paramRange = material.getVertexDeformationRange();
-			var tolerance = material.getVertexDeformationTolerance();
-			//nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
-		}
-	}
+//	if (material)
+//	{
+//		if (material.hasVertexDeformation())
+//		{
+//			var paramRange = material.getVertexDeformationRange();
+//			var tolerance = material.getVertexDeformationTolerance();
+//			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
+//		}
+//	}
 
 	// create the RDGE primitive
 	var prim = ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.TRIANGLES, nVertices);
@@ -1144,19 +1142,18 @@ RectangleGeometry.create = function( ctr,  width, height, material )
 	RectangleGeometry.pushIndices( 0, 3, 2 );
 
 	//refine the mesh for vertex deformations
-	if (material)
-	{
-		if (material.hasVertexDeformation())
-		{
-			var paramRange = material.getVertexDeformationRange();
-			var tolerance = material.getVertexDeformationTolerance();
-			//nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
-		}
-	}
+//	if (material)
+//	{
+//		if (material.hasVertexDeformation())
+//		{
+//			var paramRange = material.getVertexDeformationRange();
+//			var tolerance = material.getVertexDeformationTolerance();
+//			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
+//		}
+//	}
 
 	// create the RDGE primitive
 	var prim = ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.TRIANGLES, nVertices);
-	//var prim = ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.LINES, nVertices);
 	return prim;
 }
 
