@@ -168,13 +168,13 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     glData: {
         get: function()
 		{
-			var elt = this.iframe;
 			var elt = this.iframe.contentWindow.document.getElementById("UserContent");
 			this._glData = null;
 			if (elt)
 			{
-				this._glData = new Array();
-				this.collectGLData( elt,  this._glData );
+				var cdm = new CanvasDataManager();
+				this._glData = [];
+				cdm.collectGLData( elt,  this._glData );
 			}
 				
 			return this._glData
@@ -182,37 +182,12 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 
         set: function(value)
 		{
-			var nWorlds = value.length;
-			for (var i=0;  i<nWorlds;  i++)
+			var elt = this.iframe.contentWindow.document.getElementById("UserContent");
+			if (elt)
 			{
-				var importStr = value[i];
-				var startIndex = importStr.indexOf( "id: " );
-				if (startIndex >= 0)
-				{
-					var endIndex = importStr.indexOf( "\n", startIndex );
-					if (endIndex > 0)
-					{
-						var id = importStr.substring( startIndex+4, endIndex );
-						var canvas = this.iframe.contentWindow.document.getElementById( id );
-						if (canvas)
-						{
-							if (!canvas.elementModel)
-							{
-								NJUtils.makeElementModel(canvas, "Canvas", "shape", true);
-							}
-								
-							if (canvas.elementModel)
-							{
-								if (canvas.elementModel.shapeModel.GLWorld)
-                                    canvas.elementModel.shapeModel.GLWorld.clearTree();
-
-								var world = new GLWorld( canvas );
-								canvas.elementModel.shapeModel.GLWorld = world;
-								world.import( importStr );
-							}
-						}
-					}
-				}
+				console.log( "load canvas data: " + value );
+				var cdm = new CanvasDataManager();
+				cdm.loadGLData(elt,  value);
 			}
 		}
     },

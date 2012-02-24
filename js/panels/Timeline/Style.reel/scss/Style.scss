@@ -3,11 +3,11 @@
  */
  
 // Import theme settings
-@import "../../../../../_scss/imports/themes/default/colors";
-@import "../../../../../_scss/imports/themes/default/mixins";
+@import "../../../../../scss/imports/themes/default/colors";
+@import "../../../../../scss/imports/themes/default/mixins";
 
 // Import generic mixins and styles
-@import "../../../../../_scss/imports/scss/mixins";
+@import "../../../../../scss/imports/scss/mixins";
 
 .hidden {
 	display: none;

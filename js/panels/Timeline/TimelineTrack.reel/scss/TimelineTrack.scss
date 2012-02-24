@@ -5,13 +5,13 @@
  */
  
 // Import theme settings
-@import "../../../../../_scss/imports/themes/default/colors";
-// @import "../../../../../_scss/imports/themes/default/fonts";
-@import "../../../../../_scss/imports/themes/default/mixins";
+@import "../../../../../scss/imports/themes/default/colors";
+// @import "../../../../../scss/imports/themes/default/fonts";
+@import "../../../../../scss/imports/themes/default/mixins";
 
 // Import generic mixins and styles
-@import "../../../../../_scss/imports/scss/mixins";
-// @import "../../../../../_scss/imports/scss/Base";
+@import "../../../../../scss/imports/scss/mixins";
+// @import "../../../../../scss/imports/scss/Base";
 
 .tracklane{
     height: 19px;
@@ -60,6 +60,4 @@
 	color: $color-panel-text;
 
 }
- .tl_layertracks .collapsible-content .timeline-track {
- 	height: 21px;
- }
+

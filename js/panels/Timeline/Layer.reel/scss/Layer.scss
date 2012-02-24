@@ -5,13 +5,13 @@
  */
  
 // Import theme settings
-@import "../../../../../_scss/imports/themes/default/colors";
-// @import "../../../../../_scss/imports/themes/default/fonts";
-@import "../../../../../_scss/imports/themes/default/mixins";
+@import "../../../../../scss/imports/themes/default/colors";
+// @import "../../../../../scss/imports/themes/default/fonts";
+@import "../../../../../scss/imports/themes/default/mixins";
 
 // Import generic mixins and styles
-@import "../../../../../_scss/imports/scss/mixins";
-// @import "../../../../../_scss/imports/scss/Base";
+@import "../../../../../scss/imports/scss/mixins";
+// @import "../../../../../scss/imports/scss/Base";
 
 .layerLabel{
     width: 100%;
@@ -109,7 +109,8 @@
 .label-layer,
 .label-position,
 .label-transform,
-.label-style {
+.label-style,
+.label-styles {
 	position: relative;
 	border-bottom: 1px solid #505050;
 	cursor: pointer;
@@ -205,6 +206,10 @@
 	overflow: hidden;
     -webkit-user-select: text;
     text-overflow: clip;
+}
+
+.label-style .disabled {
+	cursor: default;
 }
 
 /* styles elements */
