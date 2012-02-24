@@ -153,7 +153,7 @@ exports.ToolsData = Montage.create(Montage, {
                 "action":       "FillTool",
                 "toolTip":      "Fill Tool",
                 "cursor":       "url('images/tools/bucket_down.png'), default",
-                "lastInGroup":  true,
+                "lastInGroup":  false,
                 "container":    false,
                 "selected":     false
             },
@@ -164,7 +164,7 @@ exports.ToolsData = Montage.create(Montage, {
                 "action":       "InkBottleTool",
                 "toolTip":      "Ink Bottle Tool",
                 "cursor":       "url('images/tools/inkbottle_down.png'), default",
-                "lastInGroup":  false,
+                "lastInGroup":  true,
                 "container":    false,
                 "selected":     false
             },
