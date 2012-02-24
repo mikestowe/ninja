@@ -149,6 +149,8 @@ exports.StageView = Montage.create(Component, {
     //                appDelegateModule.MyAppDelegate.onSetActiveDocument();
             }
 
+            NJevent("switchDocument");
+
         }
     },
 
