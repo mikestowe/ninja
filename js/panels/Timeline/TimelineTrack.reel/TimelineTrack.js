@@ -652,6 +652,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 	                this._styleCollapser.bypassAnimation = layerEvent.bypassAnimation;
 	                this._styleCollapser.handleCollapserLabelClick();
             	}
+            } else if (layerEvent.layerEventType === "deleteStyle") {
+            	this.arrStyleTracks.pop();
             }
         }
     }
