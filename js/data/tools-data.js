@@ -157,17 +157,17 @@ exports.ToolsData = Montage.create(Montage, {
                 "container":    false,
                 "selected":     false
             },
-//            {
-//                "id":           "InkBottleTool",
-//                "properties":   "inkbottleProperties",
-//                "spriteSheet":  true,
-//                "action":       "InkBottleTool",
-//                "toolTip":      "Ink Bottle Tool",
-//                "cursor":       "url('images/tools/inkbottle_down.png'), default",
-//                "lastInGroup":  false,
-//                "container":    false,
-//                "selected":     false
-//            },
+            {
+                "id":           "InkBottleTool",
+                "properties":   "inkbottleProperties",
+                "spriteSheet":  true,
+                "action":       "InkBottleTool",
+                "toolTip":      "Ink Bottle Tool",
+                "cursor":       "url('images/tools/inkbottle_down.png'), default",
+                "lastInGroup":  false,
+                "container":    false,
+                "selected":     false
+            },
             {
                 "id":           "EyedropperTool",
                 "properties":   "eyedropperProperties",
