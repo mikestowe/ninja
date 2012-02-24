@@ -126,8 +126,8 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
             this.setWorkingPlane( Vector.create( [0,0,1,0] ) );
 
             //Loop through all the top-level children of the current document and call drawUtils.addElement on them
-            if(this.application.ninja.currentDocument.documentRoot.hasChildNodes()){
-                documentRootChildren = this.application.ninja.currentDocument.documentRoot.childNodes;
+            if(this.application.ninja.currentDocument._liveNodeList.length > 0){
+                documentRootChildren = this.application.ninja.currentDocument._liveNodeList;
                 for(i=0;i<documentRootChildren.length;i++){
                     this.addElement(documentRootChildren[i]);
                 }

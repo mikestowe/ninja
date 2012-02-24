@@ -98,6 +98,11 @@ exports.Layout = Montage.create(Component, {
 
     handleSelectionChange: {
         value: function(event) {
+
+            if(this.application.ninja.documentController.activeDocument === null){
+                return;
+            }
+
             // Make an array copy of the line node list which is not an array like object
             this.domTree = Array.prototype.slice.call(this.application.ninja.documentController.activeDocument._liveNodeList, 0);
 

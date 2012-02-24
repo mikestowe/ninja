@@ -338,6 +338,10 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
                 this.application.ninja.stage.hideCanvas(true);
             }
+
+            NJevent("closeDocument", doc.uri);
+
+            doc=null;
         }
     },
 
