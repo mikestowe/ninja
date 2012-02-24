@@ -358,9 +358,11 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     didDraw:{
         value:function () {
-            if (this._openDocRedrawCheck) {
-                this.retrieveStoredTweens();
-                this._openDocRedrawCheck = false;
+            if(this.application.ninja.currentDocument.documentRoot.children[0]){
+                if (this._openDocRedrawCheck) {
+                    this.retrieveStoredTweens();
+                    this._openDocRedrawCheck = false;
+                }
             }
         }
     },
@@ -459,42 +461,48 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.animatedElement = this.application.ninja.timeline.arrLayers[this.trackID - 1].elementsList[0];
             this.animationName = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-name");
             this.animationDuration = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-duration");
-            this.trackDuration = this.animationDuration.split("s");
-            this.currentMilliSec = this.trackDuration[0] * 1000;
-            this.currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
-            this.clickPos = this.currentMilliSec / this.currentMillisecPerPixel;
-            this.nextKeyframe = 0;
+            if(this.animationDuration){
+                this.trackDuration = this.animationDuration.split("s");
+                this.currentMilliSec = this.trackDuration[0] * 1000;
+                this.currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
+                this.clickPos = this.currentMilliSec / this.currentMillisecPerPixel;
+                this.nextKeyframe = 0;
 
-            this.currentKeyframeRule = this.application.ninja.stylesController.getAnimationRuleWithName(this.animationName, this.application.ninja.currentDocument._document);
-            while (this.currentKeyframeRule[i]) {
-                var newTween = {};
-                if (this.currentKeyframeRule[i].keyText === "0%") {
-                    newTween.spanWidth = 0;
-                    newTween.keyFramePosition = 0;
-                    newTween.keyFrameMillisec = 0;
-                    newTween.tweenID = 0;
-                    newTween.spanPosition = 0;
-                    this.tweens.push(newTween);
+                this.currentKeyframeRule = this.application.ninja.stylesController.getAnimationRuleWithName(this.animationName, this.application.ninja.currentDocument._document);
+                while (this.currentKeyframeRule[i]) {
+                    var newTween = {};
 
+                    if (this.currentKeyframeRule[i].keyText === "0%") {
+                        newTween.spanWidth = 0;
+                        newTween.keyFramePosition = 0;
+                        newTween.keyFrameMillisec = 0;
+                        newTween.tweenID = 0;
+                        newTween.spanPosition = 0;
+                        this.tweens.push(newTween);
+
+                    }
+                    else {
+                        percentValue = this.currentKeyframeRule[i].keyText;
+                        splitValue = percentValue.split("%");
+                        fraction = splitValue[0] / 100;
+                        this.currentMilliSec = fraction * this.trackDuration[0] * 1000;
+                        this.currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
+                        this.clickPos = this.currentMilliSec / this.currentMillisecPerPixel;
+                        newTween.spanWidth = this.clickPos - this.tweens[this.tweens.length - 1].keyFramePosition;
+                        newTween.keyFramePosition = this.clickPos;
+                        newTween.keyFrameMillisec = this.currentMilliSec;
+                        newTween.tweenID = this.nextKeyframe;
+                        newTween.spanPosition = this.clickPos - newTween.spanWidth;
+                        this.tweens.push(newTween);
+
+
+                    }
+                    i++;
+                    this.nextKeyframe += 1;
                 }
-                else {
-                    percentValue = this.currentKeyframeRule[i].keyText;
-                    splitValue = percentValue.split("%");
-                    fraction = splitValue[0] / 100;
-                    this.currentMilliSec = fraction * this.trackDuration[0] * 1000;
-                    this.currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
-                    this.clickPos = this.currentMilliSec / this.currentMillisecPerPixel;
-                    newTween.spanWidth = this.clickPos - this.tweens[this.tweens.length - 1].keyFramePosition;
-                    newTween.keyFramePosition = this.clickPos;
-                    newTween.keyFrameMillisec = this.currentMilliSec;
-                    newTween.tweenID = this.nextKeyframe;
-                    newTween.spanPosition = this.clickPos - newTween.spanWidth;
-                    this.tweens.push(newTween);
-
-
-                }
-                i++;
-                this.nextKeyframe += 1;
+            }
+            else{
+                return;
             }
         }
     },
