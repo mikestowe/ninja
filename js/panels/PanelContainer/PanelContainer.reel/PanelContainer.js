@@ -63,16 +63,19 @@ exports.PanelContainer = Montage.create(Component, {
         value: function() {
             //Panels Loading
             this.lastOffset = this.element.offsetHeight;
-            /*
+
+            /* Old Settings
             if( this.application.ninja.settings.getSetting(this.element.id, "panelOrder") != null) {
                 this.initPanelOrder = this.application.ninja.settings.getSetting(this.element.id, "panelOrder")
             }
             */
+
             // if Panels already loaded no need to load again.
             for(var i = 0; i < this.initPanelOrder.length; i++) {
                 this.addPanel(eval(this.initPanelOrder[i]));
                 this.panelOrder.push(this.initPanelOrder[i]);
-//                this.application.ninja.settings.setSetting(this.element.id, "panelOrder", this.panelOrder);
+
+//              this.application.ninja.settings.setSetting(this.element.id, "panelOrder", this.panelOrder);
             }
 
             var hideSplitter = true;
@@ -331,6 +334,7 @@ exports.PanelContainer = Montage.create(Component, {
                 this._panels.splice(overed,0, panelRemoved[0]);
                 var panelOrderRemoved = this.panelOrder.splice(selected,1);
                 this.panelOrder.splice(overed,0, panelOrderRemoved[0]);
+
                 //this.application.ninja.settings.setSetting(this.element.id, "panelOrder", this.panelOrder);
             }
         }
