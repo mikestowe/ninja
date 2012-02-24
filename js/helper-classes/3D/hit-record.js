@@ -139,12 +139,10 @@ var HitRecord = exports.HitRecord = Object.create(Object.prototype,
 
 	isSomeGridTypeSnap : {
         value: function() {
-            return
-            (
-                (this._type == this.SNAP_TYPE_GRID_VERTEX) ||
+            return ((this._type == this.SNAP_TYPE_GRID_VERTEX) ||
                     (this._type == this.SNAP_TYPE_GRID_HORIZONTAL) ||
                     (this._type == this.SNAP_TYPE_GRID_VERTICAL)
-            )
+                   );
         }
     },
 
