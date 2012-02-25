@@ -242,6 +242,24 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             _firstLayerDraw = true;
         }
     },
+    
+    clearTimelinePanel : {
+    	value: function() {
+    		console.log('clearing timeline...')
+    		this.arrTracks = null;
+    		this.arrLayers = null;
+    		this.currentLayerNumber = 0;
+    		this.currentLayerSelected = null;
+    		this.currentTrackSelected = null;
+    		this.selectedKeyframes = [];
+    		this.selectedTweens = [];
+    		this._captureSelection = false;
+    		this._openDoc = false;
+    		this.end_hottext.value = 25;
+    		this.updateTrackContainerWidth();
+    		this.needsDraw = true;
+    	}
+    },
 
     updateTrackContainerWidth:{
         value: function(){
