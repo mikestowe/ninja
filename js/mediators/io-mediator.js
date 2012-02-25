@@ -298,18 +298,18 @@ exports.IoMediator = Montage.create(Component, {
     				template.document.content.document.head.appendChild(webgltag);
     			}
     			//
-    			json = '\n\t\t({\n\t\t\t"version": "X.X.X.X",\n\t\t\t"data": [';
+    			json = '\n({\n\t"version": "X.X.X.X",\n\t"data": [';
     			//
     			for (var j=0; template.webgl[j]; j++) {
-    				json += '\n\t\t\t\t"'+escape(template.webgl[j])+'"';
+    				json += '\n\t"'+escape(template.webgl[j])+'"';
     			}
     			//
-    			json += ']\n\t\t})\n\t';
+    			json += ']\n})\n';
     			//
     			webgltag.innerHTML = json;
     		}
     		//
-    		return template.document.content.document.documentElement.outerHTML.replace(url, '');
+    		return this.getPretyHtml(template.document.content.document.documentElement.outerHTML.replace(url, ''));
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -323,18 +323,49 @@ exports.IoMediator = Montage.create(Component, {
     		if (list && list.length > 0) {
     			//Adding each list item to string and also adding breaks
     			for (i = 0; list[i]; i++) {
-    				str = list[i].cssText+' ';
-    				str = str.replace( new RegExp( "{", "gi" ), "{\n\t" );
-    				str = str.replace( new RegExp( "}", "gi" ), "}\n" );
-    				str = str.replace( new RegExp( ";", "gi" ), ";\n\t" );
-    				css += '\n'+str;
+    				css += list[i].cssText;
     			}
     		}
     		//TODO: Add better logic for creating this string
     		url = new RegExp(window.location.protocol+'//'+window.location.host+'/js/document/templates/montage-html/', 'gi');
     		//Returning the CSS string
-    		return css.replace(url, '');
+    		return this.getPretyCss(css.replace(url, ''));
     	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //Using prettification code from http://jsbeautifier.org
+    /*
+    	Copyright (c) 2009 - 2011, Einar Lielmanis
+
+		Permission is hereby granted, free of charge, to any person
+		obtaining a copy of this software and associated documentation
+		files (the "Software"), to deal in the Software without
+		restriction, including without limitation the rights to use,
+		copy, modify, merge, publish, distribute, sublicense, and/or sell
+		copies of the Software, and to permit persons to whom the
+		Software is furnished to do so, subject to the following
+		conditions:
+
+		The above copyright notice and this permission notice shall be
+		included in all copies or substantial portions of the Software.
+
+		THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+		EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+		OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+		NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+		HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+		WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+		FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+		OTHER DEALINGS IN THE SOFTWARE.
+    */
+    getPretyHtml: {
+    	enumerable: false,
+    	value: function style_html(a,b){function h(){this.pos=0;this.token="";this.current_mode="CONTENT";this.tags={parent:"parent1",parentcount:1,parent1:""};this.tag_type="";this.token_text=this.last_token=this.last_text=this.token_type="";this.Utils={whitespace:"\n\r\t ".split(""),single_token:"br,input,link,meta,!doctype,basefont,base,area,hr,wbr,param,img,isindex,?xml,embed".split(","),extra_liners:"head,body,/html".split(","),in_array:function(a,b){for(var c=0;c<b.length;c++){if(a===b[c]){return true}}return false}};this.get_content=function(){var a="";var b=[];var c=false;while(this.input.charAt(this.pos)!=="<"){if(this.pos>=this.input.length){return b.length?b.join(""):["","TK_EOF"]}a=this.input.charAt(this.pos);this.pos++;this.line_char_count++;if(this.Utils.in_array(a,this.Utils.whitespace)){if(b.length){c=true}this.line_char_count--;continue}else if(c){if(this.line_char_count>=this.max_char){b.push("\n");for(var d=0;d<this.indent_level;d++){b.push(this.indent_string)}this.line_char_count=0}else{b.push(" ");this.line_char_count++}c=false}b.push(a)}return b.length?b.join(""):""};this.get_contents_to=function(a){if(this.pos==this.input.length){return["","TK_EOF"]}var b="";var c="";var d=new RegExp("</"+a+"\\s*>","igm");d.lastIndex=this.pos;var e=d.exec(this.input);var f=e?e.index:this.input.length;if(this.pos<f){c=this.input.substring(this.pos,f);this.pos=f}return c};this.record_tag=function(a){if(this.tags[a+"count"]){this.tags[a+"count"]++;this.tags[a+this.tags[a+"count"]]=this.indent_level}else{this.tags[a+"count"]=1;this.tags[a+this.tags[a+"count"]]=this.indent_level}this.tags[a+this.tags[a+"count"]+"parent"]=this.tags.parent;this.tags.parent=a+this.tags[a+"count"]};this.retrieve_tag=function(a){if(this.tags[a+"count"]){var b=this.tags.parent;while(b){if(a+this.tags[a+"count"]===b){break}b=this.tags[b+"parent"]}if(b){this.indent_level=this.tags[a+this.tags[a+"count"]];this.tags.parent=this.tags[b+"parent"]}delete this.tags[a+this.tags[a+"count"]+"parent"];delete this.tags[a+this.tags[a+"count"]];if(this.tags[a+"count"]==1){delete this.tags[a+"count"]}else{this.tags[a+"count"]--}}};this.get_tag=function(){var a="";var b=[];var c=false;do{if(this.pos>=this.input.length){return b.length?b.join(""):["","TK_EOF"]}a=this.input.charAt(this.pos);this.pos++;this.line_char_count++;if(this.Utils.in_array(a,this.Utils.whitespace)){c=true;this.line_char_count--;continue}if(a==="'"||a==='"'){if(!b[1]||b[1]!=="!"){a+=this.get_unformatted(a);c=true}}if(a==="="){c=false}if(b.length&&b[b.length-1]!=="="&&a!==">"&&c){if(this.line_char_count>=this.max_char){this.print_newline(false,b);this.line_char_count=0}else{b.push(" ");this.line_char_count++}c=false}b.push(a)}while(a!==">");var d=b.join("");var e;if(d.indexOf(" ")!=-1){e=d.indexOf(" ")}else{e=d.indexOf(">")}var f=d.substring(1,e).toLowerCase();if(d.charAt(d.length-2)==="/"||this.Utils.in_array(f,this.Utils.single_token)){this.tag_type="SINGLE"}else if(f==="script"){this.record_tag(f);this.tag_type="SCRIPT"}else if(f==="style"){this.record_tag(f);this.tag_type="STYLE"}else if(this.Utils.in_array(f,unformatted)){var g=this.get_unformatted("</"+f+">",d);b.push(g);this.tag_type="SINGLE"}else if(f.charAt(0)==="!"){if(f.indexOf("[if")!=-1){if(d.indexOf("!IE")!=-1){var g=this.get_unformatted("-->",d);b.push(g)}this.tag_type="START"}else if(f.indexOf("[endif")!=-1){this.tag_type="END";this.unindent()}else if(f.indexOf("[cdata[")!=-1){var g=this.get_unformatted("]]>",d);b.push(g);this.tag_type="SINGLE"}else{var g=this.get_unformatted("-->",d);b.push(g);this.tag_type="SINGLE"}}else{if(f.charAt(0)==="/"){this.retrieve_tag(f.substring(1));this.tag_type="END"}else{this.record_tag(f);this.tag_type="START"}if(this.Utils.in_array(f,this.Utils.extra_liners)){this.print_newline(true,this.output)}}return b.join("")};this.get_unformatted=function(a,b){if(b&&b.indexOf(a)!=-1){return""}var c="";var d="";var e=true;do{if(this.pos>=this.input.length){return d}c=this.input.charAt(this.pos);this.pos++;if(this.Utils.in_array(c,this.Utils.whitespace)){if(!e){this.line_char_count--;continue}if(c==="\n"||c==="\r"){d+="\n";this.line_char_count=0;continue}}d+=c;this.line_char_count++;e=true}while(d.indexOf(a)==-1);return d};this.get_token=function(){var a;if(this.last_token==="TK_TAG_SCRIPT"||this.last_token==="TK_TAG_STYLE"){var b=this.last_token.substr(7);a=this.get_contents_to(b);if(typeof a!=="string"){return a}return[a,"TK_"+b]}if(this.current_mode==="CONTENT"){a=this.get_content();if(typeof a!=="string"){return a}else{return[a,"TK_CONTENT"]}}if(this.current_mode==="TAG"){a=this.get_tag();if(typeof a!=="string"){return a}else{var c="TK_TAG_"+this.tag_type;return[a,c]}}};this.get_full_indent=function(a){a=this.indent_level+a||0;if(a<1)return"";return Array(a+1).join(this.indent_string)};this.printer=function(a,b,c,d,e){this.input=a||"";this.output=[];this.indent_character=b;this.indent_string="";this.indent_size=c;this.brace_style=e;this.indent_level=0;this.max_char=d;this.line_char_count=0;for(var f=0;f<this.indent_size;f++){this.indent_string+=this.indent_character}this.print_newline=function(a,b){this.line_char_count=0;if(!b||!b.length){return}if(!a){while(this.Utils.in_array(b[b.length-1],this.Utils.whitespace)){b.pop()}}b.push("\n");for(var c=0;c<this.indent_level;c++){b.push(this.indent_string)}};this.print_token=function(a){this.output.push(a)};this.indent=function(){this.indent_level++};this.unindent=function(){if(this.indent_level>0){this.indent_level--}}};return this}var c,d,e,f,g;b=b||{};d=b.indent_size||4;e=b.indent_char||" ";g=b.brace_style||"collapse";f=b.max_char||"70";unformatted=b.unformatted||["a"];c=new h;c.printer(a,e,d,f,g);while(true){var i=c.get_token();c.token_text=i[0];c.token_type=i[1];if(c.token_type==="TK_EOF"){break}switch(c.token_type){case"TK_TAG_START":c.print_newline(false,c.output);c.print_token(c.token_text);c.indent();c.current_mode="CONTENT";break;case"TK_TAG_STYLE":case"TK_TAG_SCRIPT":c.print_newline(false,c.output);c.print_token(c.token_text);c.current_mode="CONTENT";break;case"TK_TAG_END":if(c.last_token==="TK_CONTENT"&&c.last_text===""){var j=c.token_text.match(/\w+/)[0];var k=c.output[c.output.length-1].match(/<\s*(\w+)/);if(k===null||k[1]!==j)c.print_newline(true,c.output)}c.print_token(c.token_text);c.current_mode="CONTENT";break;case"TK_TAG_SINGLE":c.print_newline(false,c.output);c.print_token(c.token_text);c.current_mode="CONTENT";break;case"TK_CONTENT":if(c.token_text!==""){c.print_token(c.token_text)}c.current_mode="TAG";break;case"TK_STYLE":case"TK_SCRIPT":if(c.token_text!==""){c.output.push("\n");var l=c.token_text;if(c.token_type=="TK_SCRIPT"){var m=typeof js_beautify=="function"&&js_beautify}else if(c.token_type=="TK_STYLE"){var m=typeof css_beautify=="function"&&css_beautify}if(b.indent_scripts=="keep"){var n=0}else if(b.indent_scripts=="separate"){var n=-c.indent_level}else{var n=1}var o=c.get_full_indent(n);if(m){l=m(l.replace(/^\s*/,o),b)}else{var p=l.match(/^\s*/)[0];var q=p.match(/[^\n\r]*$/)[0].split(c.indent_string).length-1;var r=c.get_full_indent(n-q);l=l.replace(/^\s*/,o).replace(/\r\n|\r|\n/g,"\n"+r).replace(/\s*$/,"")}if(l){c.print_token(l);c.print_newline(true,c.output)}}c.current_mode="TAG";break}c.last_token=c.token_type;c.last_text=c.token_text}return c.output.join("")}
+    },
+    //
+    getPretyCss: {
+    	enumerable: false,
+    	value: function css_beautify(a,b){function t(){r--;p=p.slice(0,-c)}function s(){r++;p+=q}function o(a,b){return u.slice(-a.length+(b||0),b).join("").toLowerCase()==a}function n(){var b=g;i();while(i()){if(h=="*"&&j()=="/"){g++;break}}return a.substring(b,g+1)}function m(){var a=g;do{}while(e.test(i()));return g!=a+1}function l(){var a=g;while(e.test(j()))g++;return g!=a}function k(b){var c=g;while(i()){if(h=="\\"){i();i()}else if(h==b){break}else if(h=="\n"){break}}return a.substring(c,g+1)}function j(){return a.charAt(g+1)}function i(){return h=a.charAt(++g)}b=b||{};var c=b.indent_size||4;var d=b.indent_char||" ";if(typeof c=="string")c=parseInt(c);var e=/^\s+$/;var f=/[\w$\-_]/;var g=-1,h;var p=a.match(/^[\r\n]*[\t ]*/)[0];var q=Array(c+1).join(d);var r=0;print={};print["{"]=function(a){print.singleSpace();u.push(a);print.newLine()};print["}"]=function(a){print.newLine();u.push(a);print.newLine()};print.newLine=function(a){if(!a)while(e.test(u[u.length-1]))u.pop();if(u.length)u.push("\n");if(p)u.push(p)};print.singleSpace=function(){if(u.length&&!e.test(u[u.length-1]))u.push(" ")};var u=[];if(p)u.push(p);while(true){var v=m();if(!h)break;if(h=="{"){s();print["{"](h)}else if(h=="}"){t();print["}"](h)}else if(h=='"'||h=="'"){u.push(k(h))}else if(h==";"){u.push(h,"\n",p)}else if(h=="/"&&j()=="*"){print.newLine();u.push(n(),"\n",p)}else if(h=="("){u.push(h);l();if(o("url",-1)&&i()){if(h!=")"&&h!='"'&&h!="'")u.push(k(")"));else g--}}else if(h==")"){u.push(h)}else if(h==","){l();u.push(h);print.singleSpace()}else if(h=="]"){u.push(h)}else if(h=="["||h=="="){l();u.push(h)}else{if(v)print.singleSpace();u.push(h)}}var w=u.join("").replace(/[\n ]+$/,"");return w}
     }
     ////////////////////////////////////////////////////////////////////
 });
