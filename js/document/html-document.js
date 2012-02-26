@@ -466,14 +466,11 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 								}
 							} else {
 								//None local stylesheet, probably on a CDN (locked)
-								//this._document.styleSheets[i].href;
 								tag = this.iframe.contentWindow.document.createElement('style');
 								tag.setAttribute('type', 'text/css');
 								tag.setAttribute('data-ninja-external-url', this._document.styleSheets[i].href);
 								tag.setAttribute('data-ninja-file-read-only', "true");
 								tag.setAttribute('data-ninja-file-name', this._document.styleSheets[i].href.split('/')[this._document.styleSheets[i].href.split('/').length-1]);
-								
-								
 								
 								//TODO: Figure out cross-domain XHR issue, might need cloud to handle
 								/*
@@ -484,12 +481,12 @@ var xhr = new XMLHttpRequest();
                     			if (xhr.readyState === 4) {
                         			console.log(xhr);
                     			}
+                    			//tag.innerHTML = xhr.responseText //xhr.response;
 */
 								
-								//TODO: Add rules content
-								//tag.innerHTML = xhr.responseText //xhr.response;
+								//Currently no external styles will load if unable to load via XHR request
 								
-								
+								//Disabling external style sheets
 								query = this._templateDocument.html.querySelectorAll(['link']);
 								for (var j in query) {
 									if (query[j].href === this._document.styleSheets[i].href) {
@@ -499,8 +496,6 @@ var xhr = new XMLHttpRequest();
 										this._templateDocument.head.insertBefore(tag, query[j]);
 									}
 								}
-								
-								
 							}
                     	}
 					}
