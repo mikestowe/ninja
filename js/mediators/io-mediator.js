@@ -209,7 +209,7 @@ exports.IoMediator = Montage.create(Component, {
     		//Looping through link tags and removing file recreated elements
     		for (var j in styletags) {
     			if (styletags[j].getAttribute) {
-    				if(styletags[j].getAttribute('ninjauri') !== null) {//TODO: Use querySelectorAll
+    				if(styletags[j].getAttribute('data-ninja-uri') !== null) {//TODO: Use querySelectorAll
     					try {
     						//Checking head first
     						template.document.content.document.head.removeChild(styletags[j]);
@@ -241,7 +241,7 @@ exports.IoMediator = Montage.create(Component, {
     				if (template.styles[i].ownerNode) {
     					if (template.styles[i].ownerNode.getAttribute) {
     						//Checking for node not to be loaded from file
-    						if (template.styles[i].ownerNode.getAttribute('ninjauri') === null) {
+    						if (template.styles[i].ownerNode.getAttribute('data-ninja-uri') === null) {
     							//Inseting data from rules array into tag as string
     							docStyles[styleCounter].innerHTML = this.getCssFromRules(template.styles[i].cssRules);
     							//Syncing <style> tags count since it might be mixed with <link>
@@ -258,13 +258,13 @@ exports.IoMediator = Montage.create(Component, {
     			for(var i in template.css) {
     				if (template.css[i].ownerNode) {
     					if (template.css[i].ownerNode.getAttribute) {
-    						if (template.css[i].ownerNode.getAttribute('ninjauri') === null) {//TODO: Use querySelectorAll
+    						if (template.css[i].ownerNode.getAttribute('data-ninja-uri') === null) {//TODO: Use querySelectorAll
     							//Inseting data from rules array into <style> as string
     							docStyles[styleCounter].innerHTML = this.getCssFromRules(template.css[i].cssRules);
     							styleCounter++;
     						} else {
     							//Saving data from rules array converted to string into <link> file
-    							var save = this.fio.saveFile({uri: template.css[i].ownerNode.getAttribute('ninjauri'), contents: this.getCssFromRules(template.css[i].cssRules)});
+    							var save = this.fio.saveFile({uri: template.css[i].ownerNode.getAttribute('data-ninja-uri'), contents: this.getCssFromRules(template.css[i].cssRules)});
     						}
     					}
     				}
