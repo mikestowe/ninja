@@ -235,14 +235,19 @@
   border-top: 1px solid #505050;
 }
 
-/* line 194, ../scss/Layer.scss */
+/* line 195, ../scss/Layer.scss */
+.collapsible-content .hottextunit {
+  width: auto;
+}
+
+/* line 198, ../scss/Layer.scss */
 .collapsible-transition {
   -webkit-transition-property: height;
   -webkit-transition-duration: 200ms;
   -webkit-transition-timing-function: ease-in;
 }
 
-/* line 200, ../scss/Layer.scss */
+/* line 206, ../scss/Layer.scss */
 .editable2 {
   height: 20px;
   background-color: #242424 !important;
@@ -254,32 +259,24 @@
   text-overflow: clip;
 }
 
-<<<<<<< .mine=======/* line 210, ../scss/Layer.scss */
+/* line 217, ../scss/Layer.scss */
 .label-style .disabled {
   cursor: default;
 }
 
 /* styles elements */
->>>>>>> .theirs/* line 215, ../scss/Layer.scss */
-.label-style .disabled {
-  cursor: default;
-}
-
-/* styles elements */
-/* line 216, ../scss/Layer.scss */
+/* line 222, ../scss/Layer.scss */
 .content-style .item-template {
   display: none;
 }
 
-<<<<<<< .mine/* line 219, ../scss/Layer.scss */
-=======/* line 218, ../scss/Layer.scss */
->>>>>>> .theirs.content-style .layout-row.selected .layout-cell {
+/* line 225, ../scss/Layer.scss */
+.content-style .layout-row.selected .layout-cell {
   background-color: #b2b2b2;
   color: #242424;
 }
 
-<<<<<<< .mine/* line 223, ../scss/Layer.scss */
-=======/* line 222, ../scss/Layer.scss */
->>>>>>> .theirs.style-row {
+/* line 229, ../scss/Layer.scss */
+.style-row {
   height: 20px;
 }

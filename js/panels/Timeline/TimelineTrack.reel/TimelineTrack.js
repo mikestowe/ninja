@@ -556,7 +556,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         value:function () {
             var that = this;
             
-            this.arrPositionTracks = [0, 1, 2];
+            this.arrPositionTracks = [0, 1];
             this.arrTransformTracks = [0, 1, 2, 3, 4];
             
             this.label = this.element.querySelector(".label-main");
@@ -652,6 +652,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 	                this._styleCollapser.bypassAnimation = layerEvent.bypassAnimation;
 	                this._styleCollapser.handleCollapserLabelClick();
             	}
+            } else if (layerEvent.layerEventType === "deleteStyle") {
+            	this.arrStyleTracks.pop();
             }
         }
     }
