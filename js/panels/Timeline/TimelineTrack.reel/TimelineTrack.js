@@ -464,7 +464,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         value:function () {
             var percentValue, fraction, splitValue,offsetAttribute,topOffSetAttribute,leftOffsetAttribute, i = 0;
 
-            this.animatedElement = this.application.ninja.timeline.arrLayers[this.trackID - 1].elementsList[0];
+            var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
+            this.animatedElement = this.application.ninja.timeline.arrLayers[selectedIndex].elementsList[0];
             this.animationName = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-name");
             this.animationDuration = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-duration");
             if(this.animationDuration){
