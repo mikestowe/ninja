@@ -205,11 +205,11 @@ exports.IoMediator = Montage.create(Component, {
     		//Getting all CSS (style or link) tags
     		var styletags = template.document.content.document.getElementsByTagName('style'),
     			linktags = template.document.content.document.getElementsByTagName('link'),
-    			url = new RegExp(window.location.protocol+'//'+window.location.host+'/js/document/templates/montage-html/', 'gi');
+    			url = new RegExp(chrome.extension.getURL('js/document/templates/montage-html/'), 'gi');
     		//Looping through link tags and removing file recreated elements
     		for (var j in styletags) {
     			if (styletags[j].getAttribute) {
-    				if(styletags[j].getAttribute('data-ninja-uri') !== null) {//TODO: Use querySelectorAll
+    				if(styletags[j].getAttribute('data-ninja-uri') !== null && !styletags[j].getAttribute('data-ninja-template')) {//TODO: Use querySelectorAll
     					try {
     						//Checking head first
     						template.document.content.document.head.removeChild(styletags[j]);
@@ -241,7 +241,7 @@ exports.IoMediator = Montage.create(Component, {
     				if (template.styles[i].ownerNode) {
     					if (template.styles[i].ownerNode.getAttribute) {
     						//Checking for node not to be loaded from file
-    						if (template.styles[i].ownerNode.getAttribute('data-ninja-uri') === null) {
+    						if (template.styles[i].ownerNode.getAttribute('data-ninja-uri') === null && !template.styles[i].ownerNode.getAttribute('data-ninja-template')) {
     							//Inseting data from rules array into tag as string
     							docStyles[styleCounter].innerHTML = this.getCssFromRules(template.styles[i].cssRules);
     							//Syncing <style> tags count since it might be mixed with <link>
@@ -258,7 +258,7 @@ exports.IoMediator = Montage.create(Component, {
     			for(var i in template.css) {
     				if (template.css[i].ownerNode) {
     					if (template.css[i].ownerNode.getAttribute) {
-    						if (template.css[i].ownerNode.getAttribute('data-ninja-uri') === null) {//TODO: Use querySelectorAll
+    						if (template.css[i].ownerNode.getAttribute('data-ninja-uri') === null && !template.css[i].ownerNode.getAttribute('data-ninja-template')) {//TODO: Use querySelectorAll
     							//Inseting data from rules array into <style> as string
     							docStyles[styleCounter].innerHTML = this.getCssFromRules(template.css[i].cssRules);
     							styleCounter++;
@@ -327,7 +327,7 @@ exports.IoMediator = Montage.create(Component, {
     			}
     		}
     		//TODO: Add better logic for creating this string
-    		url = new RegExp(window.location.protocol+'//'+window.location.host+'/js/document/templates/montage-html/', 'gi');
+    		url = new RegExp(chrome.extension.getURL('js/document/templates/montage-html/'), 'gi');
     		//Returning the CSS string
     		return this.getPretyCss(css.replace(url, ''));
     	}
