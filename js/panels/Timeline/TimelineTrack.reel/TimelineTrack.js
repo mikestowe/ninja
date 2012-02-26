@@ -462,7 +462,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     retrieveStoredTweens:{
         value:function () {
-            var percentValue, fraction, splitValue, i = 0;
+            var percentValue, fraction, splitValue,offsetAttribute,topOffSetAttribute,leftOffsetAttribute, i = 0;
 
             this.animatedElement = this.application.ninja.timeline.arrLayers[this.trackID - 1].elementsList[0];
             this.animationName = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-name");
@@ -478,12 +478,22 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 while (this.currentKeyframeRule[i]) {
                     var newTween = {};
 
+                    offsetAttribute = this.currentKeyframeRule[i].cssText.split(" ");
+                    topOffSetAttribute = offsetAttribute[3].split("px");
+                    leftOffsetAttribute = offsetAttribute[5].split("px");
+
+                    parseInt(topOffSetAttribute[0]);
+                    parseInt(leftOffsetAttribute[0]);
+
                     if (this.currentKeyframeRule[i].keyText === "0%") {
                         newTween.spanWidth = 0;
                         newTween.keyFramePosition = 0;
                         newTween.keyFrameMillisec = 0;
                         newTween.tweenID = 0;
                         newTween.spanPosition = 0;
+                        newTween.tweenedProperties = [];
+                        newTween.tweenedProperties["top"] = topOffSetAttribute[0];
+                        newTween.tweenedProperties["left"] = leftOffsetAttribute[0];
                         this.tweens.push(newTween);
 
                     }
@@ -499,6 +509,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                         newTween.keyFrameMillisec = this.currentMilliSec;
                         newTween.tweenID = this.nextKeyframe;
                         newTween.spanPosition = this.clickPos - newTween.spanWidth;
+                        newTween.tweenedProperties=[];
+                        newTween.tweenedProperties["top"] = topOffSetAttribute[0];
+                        newTween.tweenedProperties["left"] = leftOffsetAttribute[0];
                         this.tweens.push(newTween);
 
 
