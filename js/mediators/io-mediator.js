@@ -297,15 +297,19 @@ exports.IoMediator = Montage.create(Component, {
     				webgltag.setAttribute('data-ninja-webgl', 'true');
     				template.document.content.document.head.appendChild(webgltag);
     			}
-    			//
+    			//TODO: Add version and other data for RDGE
     			json = '\n({\n\t"version": "X.X.X.X",\n\t"data": [';
-    			//
+    			//Looping through data to create escaped array
     			for (var j=0; template.webgl[j]; j++) {
-    				json += '\n\t"'+escape(template.webgl[j])+'"';
+    				if (j === 0) {
+    					json += '\n\t\t\t"'+escape(template.webgl[j])+'"';
+    				} else {
+    					json += ',\n\t\t\t"'+escape(template.webgl[j])+'"';
+    				}
     			}
-    			//
-    			json += ']\n})\n';
-    			//
+    			//Closing array (make-shift JSON string to validate data in <script> tag)
+    			json += '\n\t\t]\n})\n';
+    			//Setting string in tag
     			webgltag.innerHTML = json;
     		}
     		//
