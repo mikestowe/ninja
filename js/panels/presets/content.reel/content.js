@@ -16,7 +16,7 @@ exports.content = Montage.create(Component, {
     },
     templateDidLoad : {
         value: function() {
-            var storedTabIndex = window.localStorage.presetsTabIndex;
+            var storedTabIndex = this.application.localStorage.getItem("presetsTabIndex");
             if(storedTabIndex) {
                 this.activeTabIndex = storedTabIndex;
             }
@@ -50,7 +50,7 @@ exports.content = Montage.create(Component, {
         },
         set: function(tabObject) {
             this.contentPanel = tabObject.key;
-            window.localStorage.presetsTabIndex = this.tabs.indexOf(tabObject);
+            this.application.localStorage.setItem("presetsTabIndex", this.tabs.indexOf(tabObject));
             this._tabToDeactivate = this._activeTab;
             this._activeTab = tabObject;
 
