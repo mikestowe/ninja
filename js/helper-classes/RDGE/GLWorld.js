@@ -824,7 +824,7 @@ GLWorld.prototype.export = function()
 
 	// we need 2 export modes:  One for save/restore, one for publish.
 	// hardcoding for now
-	var exportForPublish = true;
+	var exportForPublish = false;
 	exportStr += "publish: " + exportForPublish + "\n";
 
 	if (exportForPublish)
