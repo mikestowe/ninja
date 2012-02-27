@@ -44,7 +44,7 @@ exports.MenuData = Montage.create( Montage, {
                         "displayText" : "Save As",
                         "hasSubMenu" : false,
                         "enabled": true,
-                        "action":"saveAs"
+                        "action":"executeSaveAs"
                     },
                     {
                         "displayText" : "Save All",
