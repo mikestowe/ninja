@@ -234,6 +234,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                         myIndex++;
                     }
                 }
+                else{
+                    NJevent('newLayer', this._hashKey);
+                    this.selectLayer(0);
+                }
             }else{
                 NJevent('newLayer', this._hashKey);
                 this.selectLayer(0);
