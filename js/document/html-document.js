@@ -177,15 +177,15 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 				cdm.collectGLData( elt,  this._glData );
 			}
 				
-			return this._glData
+			return this._glData;
 		},
 
         set: function(value)
 		{
-			var elt = this.iframe.contentWindow.document.getElementById("UserContent");
+			var elt = this.documentRoot;
 			if (elt)
 			{
-				console.log( "load canvas data: " + value );
+				console.log( "load canvas data: " , value );
 				var cdm = new CanvasDataManager();
 				cdm.loadGLData(elt,  value);
 			}
@@ -381,7 +381,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             //
             for (var k in this._document.styleSheets) {
             	if (this._document.styleSheets[k].ownerNode && this._document.styleSheets[k].ownerNode.setAttribute) {
-            		this._document.styleSheets[k].ownerNode.setAttribute('ninjatemplate', 'true');
+            		this._document.styleSheets[k].ownerNode.setAttribute('data-ninja-template', 'true');
             	}
             }
             //
@@ -389,6 +389,25 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             //Inserting user's document into template
             this._templateDocument.head.innerHTML = this._userDocument.content.head;
             this._templateDocument.body.innerHTML = this._userDocument.content.body;
+            //TODO: Use querySelectorAll
+            var scripttags = this._templateDocument.html.getElementsByTagName('script'), webgldata;
+            //
+            for (var w in scripttags) {
+            	if (scripttags[w].getAttribute) {
+            		if (scripttags[w].getAttribute('data-ninja-webgl') !== null) {
+            			//TODO: Add logic to handle more than one data tag
+            			webgldata = JSON.parse((scripttags[w].innerHTML.replace("(", "")).replace(")", ""));
+            		}
+            	}
+            }
+            //
+            if (webgldata) {
+            	for (var n=0; webgldata.data[n]; n++) {
+            		webgldata.data[n] = unescape(webgldata.data[n]);
+            	}
+            	this._templateDocument.webgl = webgldata.data;
+            }
+            
             
             //Adding a handler for the main user document reel to finish loading
             this._document.body.addEventListener("userTemplateDidLoad",  this.userTemplateDidLoad.bind(this), false);
@@ -430,9 +449,10 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 								//Creating tag with file content
 								tag = this.iframe.contentWindow.document.createElement('style');
 								tag.setAttribute('type', 'text/css');
-								tag.setAttribute('ninjauri', fileUri);
-								tag.setAttribute('ninjafileurl', cssUrl);
-								tag.setAttribute('ninjafilename', cssUrl.split('/')[cssUrl.split('/').length-1]);
+								tag.setAttribute('data-ninja-uri', fileUri);
+								tag.setAttribute('data-ninja-file-url', cssUrl);
+								tag.setAttribute('data-ninja-file-read-only', JSON.parse(this.application.ninja.coreIoApi.isFileWritable({uri: fileUri}).content).readOnly);
+								tag.setAttribute('data-ninja-file-name', cssUrl.split('/')[cssUrl.split('/').length-1]);
 								tag.innerHTML = cssData.content;
 								//Looping through DOM to insert style tag at location of link element
 								query = this._templateDocument.html.querySelectorAll(['link']);
@@ -444,6 +464,38 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 										this._templateDocument.head.insertBefore(tag, query[j]);
 									}
 								}
+							} else {
+								/*
+//None local stylesheet, probably on a CDN (locked)
+								tag = this.iframe.contentWindow.document.createElement('style');
+								tag.setAttribute('type', 'text/css');
+								tag.setAttribute('data-ninja-external-url', this._document.styleSheets[i].href);
+								tag.setAttribute('data-ninja-file-read-only', "true");
+								tag.setAttribute('data-ninja-file-name', this._document.styleSheets[i].href.split('/')[this._document.styleSheets[i].href.split('/').length-1]);
+								
+								//TODO: Figure out cross-domain XHR issue, might need cloud to handle
+								var xhr = new XMLHttpRequest();
+                    			xhr.open("GET", this._document.styleSheets[i].href, true);
+                    			xhr.send();
+                    			//
+                    			if (xhr.readyState === 4) {
+                        			console.log(xhr);
+                    			}
+                    			//tag.innerHTML = xhr.responseText //xhr.response;
+								
+								//Currently no external styles will load if unable to load via XHR request
+								
+								//Disabling external style sheets
+								query = this._templateDocument.html.querySelectorAll(['link']);
+								for (var j in query) {
+									if (query[j].href === this._document.styleSheets[i].href) {
+										//Disabling style sheet to reload via inserting in style tag
+										query[j].setAttribute('disabled', 'true');
+										//Inserting tag
+										this._templateDocument.head.insertBefore(tag, query[j]);
+									}
+								}
+*/
 							}
                     	}
 					}
@@ -502,6 +554,10 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 					
 					this.callback(this);
 					
+					//Setting webGL data
+					if (this._templateDocument.webgl) {
+						this.glData = this._templateDocument.webgl;
+					}
 				}
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
