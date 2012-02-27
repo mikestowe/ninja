@@ -1,3 +1,9 @@
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
 var Montage = require("montage/core/core").Montage;
 var Component = require("montage/ui/component").Component;
 var Collapser = require("js/panels/Timeline/Collapser").Collapser;
@@ -80,7 +86,6 @@ var Layer = exports.Layer = Montage.create(Component, {
 	        	this._layerName = newVal;
 	        	this._layerEditable.needsDraw = true;
 	        	this.needsDraw = true;
-	        	
         	}
         	
         }
@@ -323,6 +328,7 @@ var Layer = exports.Layer = Montage.create(Component, {
             this.styleCollapser.myContent = this.contentStyle;
             this.styleCollapser.element = this.element;
             this.styleCollapser.isCollapsed = this.isStyleCollapsed;
+            this.styleCollapser.contentHeight = 20;
             this.styleCollapser.isAnimated = true;
             this.styleCollapser.labelClickEvent = function(boolBypass) {
 				var newEvent = document.createEvent("CustomEvent");
@@ -483,8 +489,11 @@ var Layer = exports.Layer = Montage.create(Component, {
 					// Delete the style from the view
 					this.arrLayerStyles.splice(selectedIndex, 1);
 					
-				} else {
-					alert('TODO: what should happen when no rule is selected and the user clicks the delete button?')
+					// Was that the last style?
+					if (this.arrLayerStyles.length === 0) {
+						this.buttonDeleteStyle.classList.add("disabled");
+					}
+					
 				}
 			}
 		}
@@ -509,8 +518,12 @@ var Layer = exports.Layer = Montage.create(Component, {
     		// Next, update this.styleRepetition.selectedIndexes.
     		if (styleIndex !== false) {
     			this.styleRepetition.selectedIndexes = [styleIndex];
+    			this.buttonDeleteStyle.classList.remove("disabled");
     		} else {
     			this.styleRepetition.selectedIndexes = null;
+    			if (typeof(this.buttonDeleteStyle) !== "undefined") {
+    				this.buttonDeleteStyle.classList.add("disabled");
+    			}
     		}
 			
 		}
@@ -537,14 +550,11 @@ var Layer = exports.Layer = Montage.create(Component, {
 	/* Begin: Event handlers */
 	handleAddStyleClick: {
 		value: function(event) {
-			// Stop the event propagation
-			//event.stopPropagation();
 			this.addStyle();
 		}
 	},
 	handleDeleteStyleClick: {
 		value: function(event) {
-			//event.stopPropagation();
 			this.deleteStyle();
 		}
 	},
@@ -566,25 +576,16 @@ var Layer = exports.Layer = Montage.create(Component, {
 	handleMousedown: {
 		value: function(event) {
 			this.isActive = true;
-			// Check ALL THE CLICKS
-			// Are they in a particular style? If so, we need to select that style and
-			// deselect the others.
 			var ptrParent = nj.queryParentSelector(event.target, ".content-style");
 			if (ptrParent !== false) {
-				// Why yes, the click was within a layer.  But which one?
-				var myIndex = this.getActiveStyleIndex();
-				this.selectStyle(myIndex);
+				this.selectStyle(this.getActiveStyleIndex());
 			}
 		}
 	},
 	handleLayerClick : {
 		value: function(event) {
-			// Check ALL THE CLICKS
-			// Are they in a particular style? If so, we need to select that style and
-			// deselect the others.
 			var ptrParent = nj.queryParentSelector(event.target, ".content-style");
 			if (ptrParent !== false) {
-				// Why yes, the click was within a layer.  But which one?
 				var myIndex = this.getActiveStyleIndex();
 				this.selectStyle(myIndex);
 			}

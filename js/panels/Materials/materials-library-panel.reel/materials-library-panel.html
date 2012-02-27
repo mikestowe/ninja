@@ -10,14 +10,18 @@
     	<link rel="stylesheet" type="text/css" href="materials-library-panel.css">
          <script type="text/montage-serialization">
         {
+             "materialInfo": {
+                 "module": "js/panels/Materials/materials-popup.reel",
+                 "name": "MaterialsPopup"
+             },
             "owner": {
                 "module": "js/panels/Materials/materials-library-panel.reel",
                 "name": "MaterialsLibraryPanels",
                 "properties": {
-                    "element": {"#": "materials_library_panel"}
+                    "element": {"#": "materials_library_panel"},
+                    "_materialInfo": {"@": "materialInfo"}
                 }
             }
-
     	}
 		</script>
    		

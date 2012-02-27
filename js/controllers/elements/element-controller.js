@@ -118,6 +118,7 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
             }
             else
             {
+                // TODO - Need to update border style and width also
                 el.elementModel.stroke = colorObj;
             }
 
@@ -162,10 +163,22 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
                         case 'gradient':
                             this.setProperty(el, "border-image", color.color.css);
                             this.setProperty(el, "border-color", "none");
+                            if(color.borderInfo)
+                            {
+                                this.setProperty(el, "border-width", color.borderInfo.borderWidth +
+                                                                        color.borderInfo.borderUnits);
+                                this.setProperty(el, "border-style", color.borderInfo.borderStyle);
+                            }
                             break;
                         default:
                             this.setProperty(el, "border-image", "none");
                             this.setProperty(el, "border-color", color.color.css);
+                            if(color.borderInfo)
+                            {
+                                this.setProperty(el, "border-width", color.borderInfo.borderWidth +
+                                                                        color.borderInfo.borderUnits);
+                                this.setProperty(el, "border-style", color.borderInfo.borderStyle);
+                            }
                     }
                 }
                 el.elementModel.stroke = color;

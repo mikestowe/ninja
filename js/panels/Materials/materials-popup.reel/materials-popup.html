@@ -30,7 +30,7 @@
                 }
             },
             "eventDelegator": {
-                "module": "montage/event/action-event-listener",
+                "module": "montage/core/event/action-event-listener",
                 "name": "ActionEventListener",
                 "properties": {
                     "handler": {"@": "owner"},
@@ -38,7 +38,7 @@
                 }
             },
             "propControl1": {
-                "module": "js/components/ui/property-control",
+                "module": "js/components/ui/property-control.reel",
                 "name": "PropertyControl",
                 "properties": {
                     "element": {"#": "mp_property"}
@@ -64,7 +64,7 @@
                             ]
             },
             "materialsProperties": {
-                "module": "montage/ui/repetition",
+                "module": "montage/ui/repetition.reel",
                 "name": "Repetition",
                 "properties": {
                     "element": {"#": "mp_properties_list"}
@@ -95,7 +95,7 @@
 
 	<body>
 
-    	<div id="materials_popup">
+    	<div id="materials_popup" class="materials_popup">
             <div id="mp_title">Material Name</div>
 
             <hr />
@@ -104,15 +104,15 @@
 
             <hr />
 
-            <div id="mp_properties_list" style="-webkit-user-select: none;">
-                <div id="mp_property"></div>
+            <div id="mp_properties_list" class="mp_properties_list" style="-webkit-user-select: none;">
+                <div id="mp_property" class="mp_property"></div>
             </div>
 
             <hr />
             
-            <div id="mp_buttons">
-                <button id="mp_cancel_btn"></button>
-                <button id="mp_ok_btn"></button>
+            <div id="mp_buttons" class="mp_buttons">
+                <button id="mp_cancel_btn" class="mp_cancel_btn"></button>
+                <button id="mp_ok_btn" class="mp_ok_btn"></button>
             </div>
 
     	</div>
