@@ -228,15 +228,19 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
             this._hashKey = "123";
             _firstLayerDraw = false;
-            if(this.application.ninja.currentDocument.documentRoot.children[0]){
-                myIndex=0;
-                while(this.application.ninja.currentDocument.documentRoot.children[myIndex])
-                {
-                    this._openDoc=true;
-                    NJevent('newLayer',{key:this._hashKey,ele:this.application.ninja.currentDocument.documentRoot.children[myIndex]})
-//                    this.selectLayer(myIndex);
-//                    TimelineTrack.retrieveStoredTweens();
-                    myIndex++;
+            if(!this.application.ninja.documentController.creatingNewFile){
+                if(this.application.ninja.currentDocument.documentRoot.children[0]){
+                    myIndex=0;
+                    while(this.application.ninja.currentDocument.documentRoot.children[myIndex])
+                    {
+                        this._openDoc=true;
+                        NJevent('newLayer',{key:this._hashKey,ele:this.application.ninja.currentDocument.documentRoot.children[myIndex]})
+                        myIndex++;
+                    }
+                }
+                else{
+                    NJevent('newLayer', this._hashKey);
+                    this.selectLayer(0);
                 }
             }else{
                 NJevent('newLayer', this._hashKey);
@@ -488,6 +492,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 thingToPush.elementsList = [];
                 thingToPush.deleted = false;
                 thingToPush.isSelected = false;
+                thingToPush.created=false;
                 if (_firstLayerDraw) {
 
                     this.application.ninja.currentSelectedContainer.uuid=this._hashKey;
@@ -498,7 +503,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 if(this._openDoc){
                     event.detail.ele.uuid =nj.generateRandom();
                     thingToPush.elementsList.push(event.detail.ele);
-                    this._openDoc=false;
                 }
 
                 newTrack.trackID = this.currentLayerNumber;
@@ -543,6 +547,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     this.hashTrackInstance.setItem(this._hashKey, newTrack, newTrack.trackPosition);
                     this.selectLayer(0);
 
+                }
+
+                if(this._openDoc){
+                    this.hashElementMapToLayer.setItem(event.detail.ele.uuid, event.detail.ele,this.currentLayerSelected);
+                    this._openDoc=false;
                 }
                 this._LayerUndoObject = thingToPush;
                 this._LayerUndoIndex = thingToPush.layerID;
@@ -873,6 +882,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this.trackRepetition.selectedIndexes = [layerIndex];
                 this.currentLayerSelected = this.arrLayers[layerIndex];
                 this.currentTrackSelected = this.arrTracks[layerIndex];
+                if(this._captureSelection){
+                    this.application.ninja.selectionController.selectElements(this.currentLayerSelected.elementsList)
+                }
+                this._captureSelection = true;
             } else {
                 this.layerRepetition.selectedIndexes = null;
                 this.trackRepetition.selectedIndexes = null;

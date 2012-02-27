@@ -117,8 +117,8 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
                 try{
                     //validate file name and folder path
                     //check if file already exists
-                    if(!!this.callback && !!this.callbackScope){//inform document-controller if save successful
-                        this.callback.call(this.callbackScope, {"filename":filename, "destination": newFileDirectory});//document-controller api
+                    if(!!this.callback){//inform document-controller if save successful
+                        this.callback({"filename":filename, "destination": newFileDirectory});//document-controller api
                     }else{
                         //send save as event
                         var saveAsEvent = document.createEvent("Events");

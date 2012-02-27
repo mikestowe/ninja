@@ -225,6 +225,11 @@ exports.TreeItem = Montage.create(Component, {
                         openFolderEvent.initEvent("openFolder", false, false);
                         openFolderEvent.folderUri = this.treeItemData.uri;
                         this.element.dispatchEvent(openFolderEvent);
+                    }else{
+                        var openFolderEvent = document.createEvent("Events");
+                        openFolderEvent.initEvent("selectFile", false, false);
+                        openFolderEvent.fileUri = this.treeItemData.uri;
+                        this.element.dispatchEvent(openFolderEvent);
                     }
                     if(evt.bubbles){
                             evt.stopPropagation();

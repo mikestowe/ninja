@@ -207,7 +207,13 @@ exports.KeyboardMediator = Montage.create(Component, {
 
             // Check if cmd+s/ctrl+s for Save (Windows/Mac)
             if ((evt.keyCode == Keyboard.S) && (evt.ctrlKey || evt.metaKey) && !evt.shiftKey) {
-                NJevent("executeSave");
+                try{
+                    NJevent("executeSave");
+                }
+                catch(e){
+                    console.warn("Unable to save");
+                    console.log(e.stack);
+                }
                 evt.preventDefault();
                 return;
             }
