@@ -224,13 +224,15 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
             this._hashKey = "123";
             _firstLayerDraw = false;
-            if(this.application.ninja.currentDocument.documentRoot.children[0]){
-                myIndex=0;
-                while(this.application.ninja.currentDocument.documentRoot.children[myIndex])
-                {
-                    this._openDoc=true;
-                    NJevent('newLayer',{key:this._hashKey,ele:this.application.ninja.currentDocument.documentRoot.children[myIndex]})
-                    myIndex++;
+            if(!this.application.ninja.documentController.creatingNewFile){
+                if(this.application.ninja.currentDocument.documentRoot.children[0]){
+                    myIndex=0;
+                    while(this.application.ninja.currentDocument.documentRoot.children[myIndex])
+                    {
+                        this._openDoc=true;
+                        NJevent('newLayer',{key:this._hashKey,ele:this.application.ninja.currentDocument.documentRoot.children[myIndex]})
+                        myIndex++;
+                    }
                 }
             }else{
                 NJevent('newLayer', this._hashKey);
@@ -476,6 +478,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 thingToPush.elementsList = [];
                 thingToPush.deleted = false;
                 thingToPush.isSelected = false;
+                thingToPush.created=false;
                 if (_firstLayerDraw) {
 
                     this.application.ninja.currentSelectedContainer.uuid=this._hashKey;
@@ -735,7 +738,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                             }
                         }
                         hashLayerObject[key][index] = value;
-                        console.log(hashLayerObject)
                         this.counter = 0;
                     }
                 },
@@ -830,7 +832,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                           }
                           this.mappingArray[key]["ele"] = value;
                           this.mappingArray[key].layerID = layer.layerID;
-                              console.log(this.mappingArray)
 
                           }
                       },
