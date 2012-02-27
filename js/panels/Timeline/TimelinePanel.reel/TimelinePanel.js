@@ -171,11 +171,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     /* === BEGIN: Draw cycle === */
     prepareForDraw:{
             value:function () {
+            	this.initTimeline();
                 this.eventManager.addEventListener( "onOpenDocument", this, false);
-                var that = this;
-                this.getme.addEventListener("click", function() {
-                	that.clearTimelinePanel();
-                }, false)
+                this.eventManager.addEventListener("closeDocument", this, false);
             }
         },
 
@@ -198,6 +196,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
         }
     },
+    
+    handleCloseDocument: {
+    	value: function(event) {
+    		this.clearTimelinePanel();
+    	}
+    },
     willDraw:{
         value:function () {
             if (this._isLayer) {
@@ -209,10 +213,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     /* === END: Draw cycle === */
 
     /* === BEGIN: Controllers === */
-    initTimelineView:{
-        value:function () {
-            var myIndex;
-            this.layout_tracks = this.element.querySelector(".layout-tracks");
+	initTimeline : {
+		value: function() {
+			// Set up basic Timeline functions: event listeners, etc.  Things that only need to be run once.
+			this.layout_tracks = this.element.querySelector(".layout-tracks");
             this.layout_markers = this.element.querySelector(".layout_markers");
 
             this.newlayer_button.identifier = "addLayer";
@@ -223,6 +227,13 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.layout_tracks.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
             this.user_layers.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
             this.end_hottext.addEventListener("changing", this.updateTrackContainerWidth.bind(this), false);
+			
+		}
+	},
+    initTimelineView:{
+        value:function () {
+            var myIndex;
+
 
             this.drawTimeMarkers();
 
@@ -253,13 +264,27 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     
     clearTimelinePanel : {
     	value: function() {
-    		console.log('clearing timeline...')
-    		// update playhead position and time text
+    		// Remove events
+    		this.eventManager.removeEventListener("deleteLayerClick", this, false);
+            this.eventManager.removeEventListener("newLayer", this, false);
+            this.eventManager.removeEventListener("deleteLayer", this, false);
+            this.eventManager.removeEventListener("layerBinding", this, false);
+            this.eventManager.removeEventListener("elementAdded", this, false);
+            this.eventManager.removeEventListener("elementDeleted", this, false);
+            this.eventManager.removeEventListener("deleteSelection", this, false);
+            this.eventManager.removeEventListener("selectionChange", this, true);
+
+    		// Reset visual appearance
             this.application.ninja.timeline.playhead.style.left = "-2px";
             this.application.ninja.timeline.playheadmarker.style.left = "0px";
             this.application.ninja.timeline.updateTimeText(0.00);
             this.timebar.style.width = "0px";
             
+            // Clear variables--including repetitions.
+            this.hashInstance = null;
+            this.hashTrackInstance = null;
+            this.hashLayerNumber = null;
+            this.hashElementMapToLayer = null;
     		this.arrTracks = [];
     		this.arrLayers = [];
     		this.currentLayerNumber = 0;
@@ -271,6 +296,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		this._openDoc = false;
     		this.end_hottext.value = 25;
     		this.updateTrackContainerWidth();
+    		
+    		// Redraw all the things
+    		this.layerRepetition.needsDraw = true;
+    		this.trackRepetition.needsDraw = true;
     		this.needsDraw = true;
     	}
     },
@@ -502,6 +531,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
                 if(this._openDoc){
                     event.detail.ele.uuid =nj.generateRandom();
+                    console.log("in open doc")
+                    console.log(event.detail.ele)
                     thingToPush.elementsList.push(event.detail.ele);
                 }
 
@@ -657,7 +688,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     handleElementAdded:{
         value:function (event) {
-
+			console.log('called')
             event.detail.uuid=nj.generateRandom();
             this.hashElementMapToLayer.setItem(event.detail.uuid, event.detail,this.currentLayerSelected);
             this.currentLayerSelected.elementsList.push(event.detail);

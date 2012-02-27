@@ -140,6 +140,7 @@ var Tween = exports.Tween = Montage.create(Component, {
         value:function (event) {
             if (event.detail.source && event.detail.source !== "tween") {
                 // check for correct element selection
+                console.log(this.application.ninja.selectedElements[0]._element)
                 if (this.application.ninja.selectedElements[0]._element != this.parentComponent.parentComponent.animatedElement) {
                     alert("Wrong element selected for this keyframe track");
                 } else {
