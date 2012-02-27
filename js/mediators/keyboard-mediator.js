@@ -165,14 +165,14 @@ exports.KeyboardMediator = Montage.create(Component, {
                 // Hand tool
                 if(evt.keyCode === Keyboard.H ) {
                     evt.preventDefault();
-                    this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[13]});
+                    this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[14]});
                     return;
                 }
 
                 // Zoom tool
                 if(evt.keyCode === Keyboard.Z ) {
                     evt.preventDefault();
-                    this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[14]});
+                    this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[15]});
                     return;
                 }
 

@@ -42,9 +42,6 @@ var LinePlaneIntersectRec = exports.LinePlaneIntersectRec = Object.create(Object
 	setDeltaVis: { value: function(d)       {  this._deltaVis = d;          } },
 	getDeltaVis: { value: function()        {  return this._deltaVis;       } },
 
-	getElementPlanes: { value: function()		{  return this._deltaVis;		} },
-	setElementPlanes: { value: function(p)		{  this._elementPlanes = p;		} },
-
 	setNext: { value: function(n)		{  this._next = n;				} },
 	getNext: { value: function()		{  return this._next;			} },
 
