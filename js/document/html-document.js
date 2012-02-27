@@ -623,6 +623,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             if(typeof this.application.ninja.selectedElements !== 'undefined'){
                 this.selectionModel = this.application.ninja.selectedElements;
             }
+
+            this.draw3DGrid = this.application.ninja.appModel.show3dGrid;
         }
     },
 
@@ -644,6 +646,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
                 this.application.ninja.stage._scrollLeft = this.savedTopScroll;
             }
             this.application.ninja.stage.handleScroll();
+
+            this.application.ninja.appModel.show3dGrid = this.draw3DGrid;
         }
     }
 	////////////////////////////////////////////////////////////////////
