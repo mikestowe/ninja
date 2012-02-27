@@ -11,6 +11,10 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 ///////////////////////////////////////////////////////////////////////
 function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, strokeColor, strokeMaterial, strokeStyle, xAdj, yAdj)
 {
+	// initialize the inherited members
+	this.inheritedFrom = GLGeomObj;
+	this.inheritedFrom();
+
 	///////////////////////////////////////////////////////////////////////
 	// Instance variables
 	///////////////////////////////////////////////////////////////////////
@@ -43,7 +47,7 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
 
 		this._slope = slope;
 		this._strokeWidth = strokeSize;
-		if (strokeCOlor)this._strokeColor = strokeColor;
+		if (strokeColor)  this._strokeColor = strokeColor.slice();
 
 		this._strokeStyle = strokeStyle;
 		this._scaleX = (world.getViewportWidth())/(world.getViewportHeight());
@@ -56,10 +60,6 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
 	this._materialAmbient  = [0.2, 0.2, 0.2,  1.0];
 	this._materialDiffuse  = [0.4, 0.4, 0.4,  1.0];
 	this._materialSpecular = [0.4, 0.4, 0.4,  1.0];
-
-	// initialize the inherited members
-	this.inheritedFrom = GLGeomObj;
-	this.inheritedFrom();
 
 	if(strokeMaterial)
 	{
