@@ -172,6 +172,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     prepareForDraw:{
             value:function () {
                 this.eventManager.addEventListener( "onOpenDocument", this, false);
+                var that = this;
+                this.getme.addEventListener("click", function() {
+                	that.clearTimelinePanel();
+                }, false)
             }
         },
 
@@ -246,11 +250,17 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     clearTimelinePanel : {
     	value: function() {
     		console.log('clearing timeline...')
-    		this.arrTracks = null;
-    		this.arrLayers = null;
+    		// update playhead position and time text
+            this.application.ninja.timeline.playhead.style.left = "-2px";
+            this.application.ninja.timeline.playheadmarker.style.left = "0px";
+            this.application.ninja.timeline.updateTimeText(0.00);
+            this.timebar.style.width = "0px";
+            
+    		this.arrTracks = [];
+    		this.arrLayers = [];
     		this.currentLayerNumber = 0;
-    		this.currentLayerSelected = null;
-    		this.currentTrackSelected = null;
+    		this.currentLayerSelected = false;
+    		this.currentTrackSelected = false;
     		this.selectedKeyframes = [];
     		this.selectedTweens = [];
     		this._captureSelection = false;
