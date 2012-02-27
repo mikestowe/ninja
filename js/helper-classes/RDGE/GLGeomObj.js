@@ -38,8 +38,8 @@ function GLGeomObj()
     this.m_world = null;
 
     // stroke and fill colors
-    this._strokeColor;
-    this._fillColor;
+    this._strokeColor	= [0,0,0,0];
+    this._fillColor		= [0,0,0,0];
 
 	// stroke and fill materials
 	this._fillMaterial;

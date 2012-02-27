@@ -157,7 +157,7 @@ function GLWorld( canvas, use3D )
 
 		// change clear color
 		//this.renderer.setClearFlags(g_Engine.getContext().DEPTH_BUFFER_BIT);
-		this.renderer.setClearColor([1.0, 1.0, 1.0, 0.0]);
+		this.renderer.setClearColor([0.0, 0.0, 0.0, 0.0]);
 		//this.renderer.NinjaWorld = this;
         
 		// create an empty scene graph

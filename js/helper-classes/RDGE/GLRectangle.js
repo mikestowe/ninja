@@ -400,27 +400,33 @@ function GLRectangle()
 		var	w = world.getViewportWidth(),
 			h = world.getViewportHeight();
 		
-		// set the fill
+		// render the fill
 		ctx.beginPath();
 		if (this._fillColor)
 		{
 			var c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";  
 			ctx.fillStyle = c;
+
+			ctx.lineWidth	= lw;
+			var inset = Math.ceil( lw ) + 0.5;
+			this.renderPath( inset, ctx );
+			ctx.fill();
+			ctx.closePath();
 		}
 
-		// set the stroke
+		// render the stroke
+		ctx.beginPath();
 		if (this._strokeColor)
 		{
 			var c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";  
 			ctx.strokeStyle = c;
-		}
 
-		ctx.lineWidth	= lw;
-		var inset = Math.ceil( 0.5*lw ) + 0.5;
-		this.renderPath( inset, ctx );
-		if (this._fillColor)	ctx.fill();
-		if (this._strokeColor)	ctx.stroke();
-		ctx.closePath();
+			ctx.lineWidth	= lw;
+			var inset = Math.ceil( 0.5*lw ) + 0.5;
+			this.renderPath( inset, ctx );
+			ctx.stroke();
+			ctx.closePath();
+		}
     }
 
 	this.createStroke = function(ctr,  width,  height,  strokeWidth,  tlRad, blRad, brRad, trRad, material)

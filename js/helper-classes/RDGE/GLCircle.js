@@ -47,8 +47,8 @@ function GLCircle()
         
 			this._strokeWidth = strokeSize;
 			this._innerRadius = innerRadius;
-			this._strokeColor = strokeColor;
-			this._fillColor = fillColor;
+			if (strokeColor)  this._strokeColor = strokeColor;
+			if (fillColor)  this._fillColor = fillColor;
 
 			this._strokeStyle = strokeStyle;
 		}

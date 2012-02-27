@@ -43,7 +43,7 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
 
 		this._slope = slope;
 		this._strokeWidth = strokeSize;
-		this._strokeColor = strokeColor;
+		if (strokeCOlor)this._strokeColor = strokeColor;
 
 		this._strokeStyle = strokeStyle;
 		this._scaleX = (world.getViewportWidth())/(world.getViewportHeight());
