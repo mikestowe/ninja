@@ -11,46 +11,30 @@ var newFileWorkflowControllerModule = require("js/io/ui/new-file-dialog/new-file
 var NewFileLocation = exports.NewFileLocation = Montage.create(Component, {
 
     templateHeight:{
-        enumerable: true,
         value:"25 px"
     },
 
     templateWidth:{
-        enumerable: true,
         value:"25 px"
     },
 
-    willDraw: {
-       	enumerable: false,
-       	value: function() {}
-       },
-
-    draw: {
-       	enumerable: false,
-       	value: function() {}
-    },
-
     didDraw: {
-       	enumerable: false,
         value: function() {
-            var that=this;
-
             this.fileInputField.selectDirectory = true;
 
-            this.newFileName.addEventListener("keyup", function(evt){that.handleNewFileNameOnkeyup(evt);}, false);
-    }
-
+            this.newFileName.addEventListener("keyup", this, false);
+        }
     },
 
-    handleNewFileNameOnkeyup:{
-          value:function(evt){
-              if(this.newFileName.value !== ""){
-                  var newFileNameSetEvent = document.createEvent("Events");
-                  newFileNameSetEvent.initEvent("newFileNameSet", false, false);
-                  newFileNameSetEvent.newFileName = this.newFileName.value;
-                  this.eventManager.dispatchEvent(newFileNameSetEvent);
-              }
-          }
+    handleKeyup:{
+        value:function(evt){
+            if(this.newFileName.value !== "") {
+                var newFileNameSetEvent = document.createEvent("Events");
+                newFileNameSetEvent.initEvent("newFileNameSet", false, false);
+                newFileNameSetEvent.newFileName = this.newFileName.value;
+                this.eventManager.dispatchEvent(newFileNameSetEvent);
+            }
+        }
     }
 
 });
