@@ -162,6 +162,13 @@ exports.KeyboardMediator = Montage.create(Component, {
                     return;
                 }
 
+                // Rotate Stage Tool is M
+                if(evt.keyCode === Keyboard.M ) {
+                    evt.preventDefault();
+                    this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[13]});
+                    return;
+                }
+
                 // Hand tool
                 if(evt.keyCode === Keyboard.H ) {
                     evt.preventDefault();
