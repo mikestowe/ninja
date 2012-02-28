@@ -93,7 +93,7 @@
 }
 
 .panelContainer {
-    display:block;
+    display: -webkit-box;
     -webkit-box-orient: vertical;
     position:relative;
 }
