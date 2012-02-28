@@ -377,7 +377,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             // This needs to move to a keyboard shortcut that is TBD
 
             var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
-            //this.application.ninja.timeline.selectLayer(selectIndex);
 
             if (ev.shiftKey) {
                 if (this.application.ninja.timeline.arrLayers[selectedIndex].elementsList.length == 1) {
