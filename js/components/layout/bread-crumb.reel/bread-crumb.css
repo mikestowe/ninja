@@ -11,17 +11,8 @@
 
     -webkit-box-flex: 0;
 }
-.bread_crumb_button{
-    background-color: #575757;
+
+.breadcrumbTrail button {
     float: left;
-    width: 40px;
-    height: 20px;
-    margin-left: 5px;
-    margin-top: 3px;
-
-    font-family: 'Droid Sans', sans-serif;
-    font-size: 12px;
-    text-shadow: 1px 1px 1px black;
-
-    color: white;
-} 
+    width: 60px;
+}
