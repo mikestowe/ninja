@@ -55,6 +55,8 @@ exports.Content = Montage.create(Component, {
             }
 
             this.eventManager.addEventListener("openDocument", this, false);
+
+            this.eventManager.addEventListener("switchDocument", this, false);
         }
     },
 
@@ -71,6 +73,15 @@ exports.Content = Montage.create(Component, {
 
             this.elementId.element.addEventListener("blur", this, false);
             this.elementId.element.addEventListener("keyup", this, false);
+        }
+    },
+
+    handleSwitchDocument: {
+        value: function(){
+            // For now always assume that the stage is selected by default
+            if(this.application.ninja.selectedElements.length === 0) {
+                this.displayStageProperties();
+            }
         }
     },
 

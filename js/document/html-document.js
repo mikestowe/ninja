@@ -698,7 +698,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             this.gridVerticalSpacing = this.application.ninja.stage.drawUtils.gridVerticalSpacing;
 
             if(typeof this.application.ninja.selectedElements !== 'undefined'){
-                this.selectionModel = this.application.ninja.selectedElements;
+                this.selectionModel = this.application.ninja.selectedElements.slice(0);
             }
 
             this.draw3DGrid = this.application.ninja.appModel.show3dGrid;
@@ -717,8 +717,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             this.application.ninja.stage.drawUtils.gridHorizontalSpacing = this.gridHorizontalSpacing;
             this.application.ninja.stage.drawUtils.gridVerticalSpacing = this.gridVerticalSpacing;
 
-            if((typeof this.selectionModel !== 'undefined') && (this.selectionModel !== null) && (this.selectionModel.length > 0)){
-                this.application.ninja.selectionController.initWithDocument(this.selectionModel);
+            if((typeof this.selectionModel !== 'undefined') && (this.selectionModel !== null)){
+                this.application.ninja.selectedElements = this.selectionModel.slice(0);
             }
 
             if((this.savedLeftScroll!== null) && (this.savedTopScroll !== null)){
