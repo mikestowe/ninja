@@ -136,13 +136,6 @@ function GLWorld( canvas, use3D )
 	var camMat = Matrix.I(4);
 	camMat[14] = this.getViewDistance();
 	this.setCameraMat( camMat );
-
-	//////////////////////////////////////////
-	// test call to SVG importer
-//	console.log( "***** SVG TEST *****" );
-//	var svgImporter = new SVGParse( this );
-//	svgImporter.importSVG();
-	//////////////////////////////////////////
     
     // post-load processing of the scene
     this.init = function()
@@ -198,7 +191,9 @@ function GLWorld( canvas, use3D )
 		this.myScene.addNode(lightTr);
         
 		// Add the scene to the engine - necessary if you want the engine to draw for you
-		g_Engine.AddScene("myScene" + this._canvas.id, this.myScene);
+		//g_Engine.AddScene("myScene" + this._canvas.id, this.myScene);
+		var name = this._canvas.getAttribute( "data-RDGE-id" ); 
+		g_Engine.AddScene("myScene" + name, this.myScene);
 	}
     
 	// main code for handling user interaction and updating the scene   
@@ -227,11 +222,11 @@ function GLWorld( canvas, use3D )
     }
 
     // defining the draw function to control how the scene is rendered      
-    this.draw = function()
+	this.draw = function()
     {
 		if (this._useWebGL)
 		{
-			g_Engine.setContext( this._canvas.uuid );
+			g_Engine.setContext( this._canvas.rdgeid );
 			var ctx = g_Engine.getContext();
 			var renderer = ctx.renderer;
 			if (renderer.unloadedTextureCount <= 0)
@@ -391,12 +386,10 @@ function GLWorld( canvas, use3D )
 	if (this._useWebGL)
 	{
 		rdgeStarted = true;
-		this._canvas.rdgeid = this._canvas.uuid;
+		var id = this._canvas.getAttribute( "data-RDGE-id" ); 
+		this._canvas.rdgeid = id;
 		g_Engine.registerCanvas(this._canvas, this);
 		RDGEStart( this._canvas );
-
-		//this._canvas.fpsTracker = new fpsTracker( '0' );
-		//this._canvas.task = new RDGETask(this._canvas, false);
 		this._canvas.task.stop()
 	}
 }
@@ -765,7 +758,7 @@ GLWorld.prototype.render = function()
 	else
 	{
 //		console.log( "GLWorld.render, " + this._worldCount );
-		g_Engine.setContext( this._canvas.uuid );
+		g_Engine.setContext( this._canvas.rdgeId );
 		//this.draw();
 		this.restartRenderLoop();
 	}
@@ -821,7 +814,9 @@ GLWorld.prototype.getShapeFromPoint = function( offsetX, offsetY )
 GLWorld.prototype.export = function()
 {
 	var exportStr = "GLWorld 1.0\n";
-	exportStr += "id: " + this._canvas.rdgeid + "\n";
+	var id = this.getCanvas().getAttribute( "data-RDGE-id" );
+	exportStr += "id: " + id + "\n";
+	//exportStr += "id: " + this._canvas.rdgeid + "\n";
 	exportStr += "fov: " + this._fov + "\n";
 	exportStr += "zNear: " + this._zNear + "\n";
 	exportStr += "zFar: " + this._zFar + "\n";

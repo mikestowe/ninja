@@ -521,7 +521,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
 						if (!elt.elementModel)
 						{
-                            NJUtils.makeElementModel2(elt);
+                            NJUtils.makeModelFromElement(elt);
 						}
 						elt.elementModel.isIn2DSnapCache = true;
 					}
@@ -588,7 +588,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
 					if (!elt.elementModel)
 					{
-						NJUtils.makeElementModel2(elt);
+						NJUtils.makeModelFromElement(elt);
 					}
 					elt.elementModel.isIn2DSnapCache = true;
 				}

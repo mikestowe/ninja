@@ -9,6 +9,10 @@ var Component = require("montage/ui/component").Component;
 
 exports.Splitter = Montage.create(Component, {
 
+    version: {
+        value: "1.0"
+    },
+
     hasTemplate: {
         value: false
     },
@@ -49,19 +53,23 @@ exports.Splitter = Montage.create(Component, {
         get: function() {
             return this._collapsed;
         },
-        set: function(value)
-        {
+        set: function(value) {
             this._collapsed = value;
-            this.application.ninja.settings.setSetting(this.element.id, "collapsed", this.collapsed);
+
+            this.application.localStorage.setItem(this.element.getAttribute("data-montage-id"), {"version": this.version, "value": value});
         }
     },
 
     prepareForDraw: {
         value: function() {
-            //Get Setting from SettingManager
-            this.application.ninja.settings.getSetting(this.element.id, "collapsed");
-            lapsed = false;
-            if (lapsed != null) this._collapsed = lapsed;
+            //Get splitter initial value from SettingManager
+            var storedData = this.application.localStorage.getItem(this.element.getAttribute("data-montage-id"));
+            if(storedData && this.element.getAttribute("data-montage-id") !== null) {
+                this._collapsed = storedData.value;
+            } else {
+                this._collapsed = false;
+            }
+
             this.element.addEventListener("click", this, false);
         }
     },

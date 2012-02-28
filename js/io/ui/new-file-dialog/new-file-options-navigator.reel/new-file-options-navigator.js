@@ -47,14 +47,36 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
         enumerable:false,
         value:"0 px"
     },
-    willDraw: {
-    	enumerable: false,
-    	value: function() {}
+
+    // Populating the directory input field with the default save location or the last stored location.
+    prepareForDraw: {
+        value: function() {
+            var defaultSaveDirectory;
+
+            // Using session storage location
+            if(window.sessionStorage) {
+                var storedFolder = window.sessionStorage.getItem("lastOpenedFolderURI_folderSelection");
+                if(storedFolder)  defaultSaveDirectory = decodeURI(window.sessionStorage.getItem("lastOpenedFolderURI_folderSelection"));
+            }
+
+            // Use default if none found in session storage
+            if(!defaultSaveDirectory) {
+                var driveData = this.application.ninja.coreIoApi.getDirectoryContents({uri:"", recursive:false, returnType:"all"});
+                if(driveData.success){
+                    var topLevelDirectories = (JSON.parse(driveData.content)).children;
+                    defaultSaveDirectory = topLevelDirectories[0].uri;
+                } else {
+                    console.log("** Error ** Cannot get directory listing");
+                    defaultSaveDirectory = "";
+                }
+            }
+
+            // Set the input field to the correct directory
+            this.newFileLocation.fileInputField.newFileDirectory.value = defaultSaveDirectory;
+            this.newFileDirectory = defaultSaveDirectory;
+        }
     },
-    draw: {
-    	enumerable: false,
-    	value: function() {}
-    },
+
     didDraw: {
     	enumerable: false,
     	value: function() {
