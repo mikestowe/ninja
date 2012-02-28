@@ -59,6 +59,27 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     _gridVerticalSpacing: {value:0},
     //end - drawUtils state
 
+    _undoStack: { value: [] },
+    undoStack: {
+        get: function() {
+            return this._undoStack;
+        },
+        set:function(value){
+            this._undoStack = value;
+        }
+    },
+
+    _redoStack: { value: [], enumerable: false },
+
+    redoStack: {
+        get: function() {
+            return this._redoStack;
+        },
+        set:function(value){
+            this._redoStack = value;
+        }
+    },
+
 
     // GETTERS / SETTERS
 
@@ -681,6 +702,11 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             }
 
             this.draw3DGrid = this.application.ninja.appModel.show3dGrid;
+
+            //persist a clone of history per document
+            this.undoStack = this.application.ninja.undocontroller.undoQueue.slice(0);
+            this.redoStack = this.application.ninja.undocontroller.redoQueue.slice(0);
+            this.application.ninja.undocontroller.clearHistory();//clear history to give the next document a fresh start
         }
     },
 
@@ -704,6 +730,9 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             this.application.ninja.stage.handleScroll();
 
             this.application.ninja.appModel.show3dGrid = this.draw3DGrid;
+
+            this.application.ninja.undocontroller.undoQueue = this.undoStack.slice(0);
+            this.application.ninja.undocontroller.redoQueue = this.redoStack.slice(0);
         }
     }
 	////////////////////////////////////////////////////////////////////

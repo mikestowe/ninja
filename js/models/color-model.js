@@ -265,7 +265,7 @@ exports.ColorModel = Montage.create(Component, {
     			////////////////////////////////////////////////////////
     			case 'rgb':
     				//Checking for match of previous (RGB)
-    				if (color.r !== this.rgb.r && color.g !== this.rgb.g && color.b !== this.rgb.b) {
+    				if (color && color.r !== this.rgb.r && color.g !== this.rgb.g && color.b !== this.rgb.b) {
     					//Setting value and breaking out of function
     					this.rgb = color;
     					return;
@@ -279,7 +279,7 @@ exports.ColorModel = Montage.create(Component, {
     			////////////////////////////////////////////////////////
     			case 'hsv':
     				//Checking for match of previous (HSV)
-    				if (color.h !== this.hsv.h && color.s !== this.hsv.s && color.v !== this.hsv.v) {
+    				if (color && color.h !== this.hsv.h && color.s !== this.hsv.s && color.v !== this.hsv.v) {
     					//Setting value and breaking out of function
     					this.hsv = color;
     					return;
@@ -293,7 +293,7 @@ exports.ColorModel = Montage.create(Component, {
     			////////////////////////////////////////////////////////
     			case 'hsl':
     				//Checking for match of previous (HSV)
-    				if (color.h !== this.hsl.h && color.s !== this.hsl.s && color.l !== this.hsl.l) {
+    				if (color && color.h !== this.hsl.h && color.s !== this.hsl.s && color.l !== this.hsl.l) {
     					//Setting value and breaking out of function
     					this.hsl = color;
     					return;
