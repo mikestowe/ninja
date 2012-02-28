@@ -17,6 +17,11 @@ exports.BreadcrumbButton = Montage.create(Component, {
         value: null
     },
 
+    // Bound container for the button
+    container: {
+        value: null
+    },
+
     prepareForDraw: {
         value: function() {
             this.element.addEventListener("mousedown", this, false);
@@ -25,27 +30,30 @@ exports.BreadcrumbButton = Montage.create(Component, {
 
     draw: {
         value: function() {
+
+            // Temporary until we have the new template
+            /*
+            if(this.container.id === "UserContent") {
+                this.button.innerHTML = "Body";
+            } else {
+                this.button.innerHTML = this.container.nodeName.toLowerCase();
+            }
+            */
+            //
+
             if(this.data.element.id === "UserContent") {
                 this.button.innerHTML = "Body";
             } else {
                 this.button.innerHTML = this.data.element.nodeName;
             }
+
         }
     },
 
     handleMousedown: {
         value: function(event) {
-
-             //this.data.selected=true;
              NJevent('breadCrumbTrail',this.data);
-             //this.data.selected=false;
-
         }
     }
-
-
-
-
-
 
 }); 

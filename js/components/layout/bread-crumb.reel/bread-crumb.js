@@ -7,7 +7,7 @@
 var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
-var Breadcrumb = exports.Breadcrumb = Montage.create(Component, {
+exports.Breadcrumb = Montage.create(Component, {
 
     _container:{
         value:null
@@ -32,20 +32,7 @@ var Breadcrumb = exports.Breadcrumb = Montage.create(Component, {
 
     deserializedFromTemplate : {
         value: function() {
-            this.eventManager.addEventListener( "appLoaded", this, false);
             this.eventManager.addEventListener( "breadCrumbTrail", this, false);
-        }
-    },
-
-    handleAppLoaded : {
-        value: function() {
-
-            Object.defineBinding(this, "container", {
-                    boundObject: this.application.ninja,
-                    boundObjectPropertyPath: "currentSelectedContainer",
-                    oneway: false
-            });
-
         }
     },
 

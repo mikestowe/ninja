@@ -181,7 +181,13 @@
                 "name": "Breadcrumb",
                 "properties":{
                     "element":{"#" : "breadCrumbComponent"}
-
+                },
+                "bindings" : {
+                    "container": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "currentSelectedContainer",
+                        "oneway": false
+                    }
                 }
              },
 
@@ -369,10 +375,10 @@
                             </section>
                         </section>
 
+                        <section id="breadCrumbComponent"></section>
+
                         <section id="timelineResizer" class="timelineResizer resizeBar"></section>
-                            <section id="breadCrumbTrail">
-                                <div id="breadCrumbComponent"></div>
-                            </section>
+
                         <section id="bottomPanelContainer" class="panelContainer">
                             <section id="timelinePanel" class="panel">
                                 <div id="timelinePanelComponent"></div>
