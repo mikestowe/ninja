@@ -58,6 +58,8 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             this.eventManager.addEventListener("executeFileOpen", this, false);
             this.eventManager.addEventListener("executeNewFile", this, false);
             this.eventManager.addEventListener("executeSave", this, false);
+            this.eventManager.addEventListener("executeSaveAs", this, false);
+            this.eventManager.addEventListener("executeSaveAll", this, false);
 
             this.eventManager.addEventListener("recordStyleChanged", this, false);
             
@@ -87,11 +89,11 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             //Checking for app to be loaded through extension
             var check;
             if (chrome && chrome.app) {
-                check = chrome.app.getDetails();
+            	check = chrome.app.getDetails();
             }
             if (check !== null) {
-                //Adding an intercept to resources loaded to ensure user assets load from cloud simulator
-                chrome.webRequest.onBeforeRequest.addListener(this.handleWebRequest.bind(this), {urls: ["<all_urls>"]}, ["blocking"]);
+            	//Adding an intercept to resources loaded to ensure user assets load from cloud simulator
+            	chrome.webRequest.onBeforeRequest.addListener(this.handleWebRequest.bind(this), {urls: ["<all_urls>"]}, ["blocking"]);
             }
         }
     },
@@ -107,33 +109,57 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     handleExecuteFileOpen: {
         value: function(event) {
             var pickerSettings = event._event.settings || {};
-            pickerSettings.callback = this.openFileWithURI.bind(this);
-            pickerSettings.pickerMode = "read";
-            pickerSettings.inFileMode = true;
-            this.application.ninja.filePickerController.showFilePicker(pickerSettings);
+            if (this.application.ninja.coreIoApi.cloudAvailable()) {
+                pickerSettings.callback = this.openFileWithURI.bind(this);
+                pickerSettings.pickerMode = "read";
+                pickerSettings.inFileMode = true;
+                this.application.ninja.filePickerController.showFilePicker(pickerSettings);
+            }
         }
     },
 
     handleExecuteNewFile: {
             value: function(event) {
                 var newFileSettings = event._event.settings || {};
-                newFileSettings.callback = this.createNewFile.bind(this);
-                this.application.ninja.newFileController.showNewFileDialog(newFileSettings);
+                if (this.application.ninja.coreIoApi.cloudAvailable()) {
+                    newFileSettings.callback = this.createNewFile.bind(this);
+                    this.application.ninja.newFileController.showNewFileDialog(newFileSettings);
+                }
             }
     },
-	
-	
 	////////////////////////////////////////////////////////////////////
 	//TODO: Check for appropiate structures
     handleExecuteSave: {
     	value: function(event) {
-            if(!!this.activeDocument){
-    		//Text and HTML document classes should return the same save object for fileSave
-    		this.application.ninja.ioMediator.fileSave(this.activeDocument.save(), this.fileSaveResult.bind(this));
-		}
+            if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
+                //Text and HTML document classes should return the same save object for fileSave
+                this.application.ninja.ioMediator.fileSave(this.activeDocument.save(), this.fileSaveResult.bind(this));
+            }
 		}
     },
     ////////////////////////////////////////////////////////////////////
+	//TODO: Check for appropiate structures
+    handleExecuteSaveAll: {
+    	value: function(event) {
+            if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
+                //Text and HTML document classes should return the same save object for fileSave
+                this.application.ninja.ioMediator.fileSave(this.activeDocument.saveAll(), this.fileSaveResult.bind(this));
+            }
+		}
+    },
+    ////////////////////////////////////////////////////////////////////
+    handleExecuteSaveAs: {
+        value: function(event) {
+            var saveAsSettings = event._event.settings || {};
+            if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
+                saveAsSettings.fileName = this.activeDocument.name;
+                saveAsSettings.folderUri = this.activeDocument.uri.substring(0, this.activeDocument.uri.lastIndexOf("/"));
+                //add callback
+                this.application.ninja.newFileController.showSaveAsDialog(saveAsSettings);
+            }
+        }
+    },
+
     //
     fileSaveResult: {
     	value: function (result) {
@@ -169,6 +195,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value:function(doc){
             var response = doc || null;//default just for testing
             if(!!response && response.success && (response.status!== 500) && !!response.uri){
+                this.creatingNewFile = true;//flag for timeline to identify new file flow
                 this.application.ninja.ioMediator.fileOpen(response.uri, this.openFileCallback.bind(this));
             }else if(!!response && !response.success){
                 //Todo: restrict directory path to the sandbox, in the dialog itself
@@ -196,6 +223,11 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value:function(response){
             //TODO: Add UI to handle error codes, shouldn't be alert windows
             if(!!response && (response.status === 204)) {
+
+            	if((typeof this.creatingNewFile === 'undefined') || (this.creatingNewFile !== true)){//not from new file flow
+                    this.creatingNewFile = false;
+                }
+
             	//Sending full response object
             	this.openDocument(response);   
             } else if (!!response && (response.status === 404)){
@@ -292,7 +324,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             if(this.activeDocument.uuid === id && this._documents.length > 0) {//closing the active document tab
                 var nextDocumentIndex = -1 ;
                 if((this._documents.length > 0) && (closeDocumentIndex === 0)){
-                    nextDocumentIndex = 1;
+                    nextDocumentIndex = 0;
                 }else if((this._documents.length > 0) && (closeDocumentIndex > 0)){
                     nextDocumentIndex = closeDocumentIndex - 1;
                 }
@@ -306,6 +338,10 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
                 this.application.ninja.stage.hideCanvas(true);
             }
+
+            NJevent("closeDocument", doc.uri);
+
+            doc=null;
         }
     },
 
@@ -313,7 +349,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     // Event Detail: Contains the current ActiveDocument
     _onOpenDocument: {
         value: function(doc){
-            //var data = DocumentManager.activeDocument;
+            this.application.ninja.currentDocument = doc;
             this._hideCurrentDocument();
             this.application.ninja.stage.stageView.hideOtherDocuments(doc.uuid);
 
@@ -397,7 +433,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value: function() {
             if(this.activeDocument) {
                 if(this.activeDocument.currentView === "design"){
-                    this.application.ninja.stage.saveScroll();
+                    this.activeDocument.saveAppState();
                     this.activeDocument.container.parentNode.style["display"] = "none";
                     this.application.ninja.stage.hideCanvas(true);
                     this.application.ninja.stage.stageView.hideRulers();
@@ -414,7 +450,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                 this.activeDocument.container.style["display"] = "block";
                 if(this.activeDocument.currentView === "design"){
                     this.activeDocument.container.parentNode.style["display"] = "block";
-                    this.application.ninja.stage.restoreScroll();
+                    this.activeDocument.restoreAppState();
                     this.application.ninja.stage.hideCanvas(false);
                     this.application.ninja.stage.stageView.showRulers();
                 }else{

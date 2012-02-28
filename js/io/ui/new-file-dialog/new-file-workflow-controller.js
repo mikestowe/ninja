@@ -19,17 +19,10 @@ var NewFileWorkflowController =  exports.NewFileWorkflowController = Montage.cre
         writable:false,
         enumerable:true,
         value:function(){
-            var that = this;
-
-            this.eventManager.addEventListener("saveAs", function(evt){
-                var data = evt._event.data || {};//data will contain the current file name, directory location and callback
-                that.showSaveAsDialog(data);
-            }, false);
         }
     },
 
     model:{
-        writable: true,
         enumerable:true,
         value: null
     },
@@ -56,19 +49,8 @@ var NewFileWorkflowController =  exports.NewFileWorkflowController = Montage.cre
                 this.model.defaultProjectType = lastSelectedProjectType;
             }
 
-            //render modal dialog
-            var newFileNavContent = document.createElement("div");
-            newFileNavContent.id = "newFileDialog";
-
-            //elements needs to be on DOM to be drawn
-            document.getElementById('modalContainer').appendChild(newFileNavContent);
-
             var newFileOptionsNav = newFileOptionsNavigatorModule.NewFileOptionsNavigator.create();
             newFileOptionsNav.newFileModel = this.model;
-            newFileOptionsNav.element = newFileNavContent;
-
-            //remove after rendering and add in modal dialog
-            document.getElementById('modalContainer').removeChild(newFileNavContent);
 
             var popup = Popup.create();
             popup.content = newFileOptionsNav;
@@ -99,7 +81,6 @@ var NewFileWorkflowController =  exports.NewFileWorkflowController = Montage.cre
             saveAsDialog.fileName = fileName;
             saveAsDialog.folderUri = folderUri;
             saveAsDialog.callback = data.callback;
-            saveAsDialog.callbackScope = data.callbackScope;
             saveAsDialog.element = saveAsDialogContainer;
 
             //remove after rendering and add in modal dialog

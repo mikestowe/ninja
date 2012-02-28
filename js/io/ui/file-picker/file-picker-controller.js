@@ -19,23 +19,19 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
         writable:false,
         enumerable:true,
         value:function(){
-            var that = this;
-
-            this.eventManager.addEventListener("openFilePicker", function(evt){
-                var settings;
-                if(typeof evt._event.settings !== "undefined"){
-                    settings = evt._event.settings;
-                }
-                that.showFilePicker(settings);
-            }, false);
-
+            this.eventManager.addEventListener("openFilePicker", this, false);
         }
     },
 
     filePickerPopupType:{
-        writable: true,
         enumerable: false,
         value: "filePicker"
+    },
+
+    handleOpenFilePicker: {
+        value: function(evt) {
+            this.showFilePicker(evt.detail);
+        }
     },
 
     /**
@@ -129,14 +125,15 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
             }
 
             if(!!storedUri){
-                aModel.currentRoot = unescape(storedUri);
+                // This is depracated -- use decodeURI instead
+                //aModel.currentRoot = unescape(storedUri);
+                aModel.currentRoot = decodeURI(storedUri);
             }
 
             if(!!allFileFilters){aModel.fileFilters = allFileFilters;}
             if(!!callback){aModel.callback = callback;}
             if(!!callbackScope){aModel.callbackScope = callbackScope;}
             if(typeof pickerMode !== "undefined"){aModel.pickerMode = pickerMode;}
-
 
 
             //logic: get file content data onDemand from the REST api for the default or last opened root. Cache the data in page [in local cache ? dirty fs? ]. Filter on client side to reduce network calls.
@@ -152,15 +149,6 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
           writable:false,
         enumerable:true,
         value:function(callback, aModel){
-            //render modal dialog
-            var pickerNavContent = document.createElement("div");
-            pickerNavContent.id = "filePicker";
-
-            pickerNavContent.style.color = "#fff";
-
-            //hack (elements needs to be on DOM to be drawn)
-            document.getElementById('modalContainer').appendChild(pickerNavContent);
-
             var pickerNavChoices = Montage.create(pickerNavigatorReel);
             var initUri = aModel.currentRoot;
 
@@ -171,10 +159,6 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
 
             pickerNavChoices.mainContentData = this.prepareContentList(initUri, aModel);
             pickerNavChoices.pickerModel = aModel;
-            pickerNavChoices.element = pickerNavContent;
-
-            //hack - remove after rendering and add in modal dialog
-            document.getElementById('modalContainer').removeChild(pickerNavContent);
 
             var popup = Popup.create();
             popup.content = pickerNavChoices;
