@@ -177,7 +177,7 @@ exports.KeyboardMediator = Montage.create(Component, {
                 }
 
                 // Zoom tool
-                if(evt.keyCode === Keyboard.Z ) {
+                if((evt.keyCode === Keyboard.Z) && !(evt.ctrlKey || evt.metaKey) && !evt.shiftKey) {//ctrl or shift key not press with Z
                     evt.preventDefault();
                     this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[15]});
                     return;
