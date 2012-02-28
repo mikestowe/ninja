@@ -532,7 +532,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.tweens[0].tweenedProperties["top"] = this.animatedElement.offsetTop;
             this.tweens[0].tweenedProperties["left"] = this.animatedElement.offsetLeft;
             var animationDuration = Math.round(this.trackDuration / 1000) + "s";
-            this.animationName = "animation_" + this.animatedElement.className;
+            this.animationName = "animation_" + this.animatedElement.classList[0];
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-name", this.animationName);
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-duration", animationDuration);
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-iteration-count", "infinite");
