@@ -214,6 +214,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
 
             this.element.addEventListener("openFolder", function(evt){that.handlePickerNavOpenFolder(evt);}, false);//add icon double click event listener to reload iconList with new set of data
             this.element.addEventListener("selectedItem", function(evt){that.handlePickerNavSelectedItem(evt);}, false);//for single selection only
+            this.element.addEventListener("selectFile", function(evt){that.handlePickerNavSelectedFile(evt);}, false);//for file selection
             this.element.addEventListener("showMetadata", function(evt){that.handlePickerNavShowMetadata(evt);}, false);//show metadata on hover of icon
             this.element.addEventListener("updateMetadata", function(evt){that.handlePickerNavUpdateMetadata(evt);}, false);//show metadata on click of icon
             //this.addressGo.addEventListener("click", this, false);
@@ -669,14 +670,29 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
             }
     },
 
+    handlePickerNavSelectedFile:{
+        value: function(evt){
+            var uri = evt.fileUri;
+
+            //do selection if in file selection mode
+            if(this.pickerModel.inFileMode && (this.application.ninja.filePickerController._directoryContentCache[uri].type === "file")){
+                this.okButton.removeAttribute("disabled");
+                //put into selectedItems..currently single selection is supported
+                this.selectedItems = [uri];
+                this.currentURI = uri.substring(0, uri.lastIndexOf("/"));
+                this.handleOkButtonAction();
+            }
+        }
+    },
+
     handlePickerNavShowMetadata: {
         value: function(evt){
-                        //update matadata only if nothing is already selected
-                        if(this.currentSelectedNode == null){
-                            //console.log("handle showmetadata - true");
-                            this.metadataSection.innerHTML = evt.metadata;
-                        }
+                //update matadata only if nothing is already selected
+                if(this.currentSelectedNode == null){
+                    //console.log("handle showmetadata - true");
+                    this.metadataSection.innerHTML = evt.metadata;
                 }
+        }
     },
 
     handlePickerNavUpdateMetadata:{

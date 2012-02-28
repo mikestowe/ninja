@@ -92,7 +92,140 @@
 	            			"oneway" : false
 	            		}
 	            	}
-	            }
+	            },
+				"dtext_position_x" : {
+                    "module": "js/components/hottextunit.reel",
+            	    "name": "HotTextUnit",
+            	    "properties": {
+            	        "element": {"#": "position-x"},
+            	        "maxValue" : 100000,
+                        "minValue" : -100000,
+                        "acceptableUnits" : "px",
+                        "units" : "px",
+                        "value" : 0
+            	    },
+	                "bindings": {
+	                    "value": {
+	                        "boundObject": {"@": "owner"},
+	                        "boundObjectPropertyPath": "dtextPositionX",
+	                        "oneway": false
+	                    }
+	                }
+				},
+				"dtext_position_y" : {
+                    "module": "js/components/hottextunit.reel",
+            	    "name": "HotTextUnit",
+            	    "properties": {
+            	        "element": {"#": "position-y"},
+            	        "maxValue" : 100000,
+                        "minValue" : -100000,
+                        "acceptableUnits" : "px",
+                        "units" : "px",
+                        "value" : 0
+            	    },
+	                "bindings": {
+	                    "value": {
+	                        "boundObject": {"@": "owner"},
+	                        "boundObjectPropertyPath": "dtextPositionY",
+	                        "oneway": false
+	                    }
+	                }
+				},
+				"dtext_scale_x" : {
+                    "module": "js/components/hottextunit.reel",
+            	    "name": "HotTextUnit",
+            	    "properties": {
+            	        "element": {"#": "scale-x"},
+            	        "maxValue" : 100,
+                        "minValue" : 0,
+                        "acceptableUnits" : "%",
+                        "units" : "%",
+                        "value" : 0
+            	    },
+	                "bindings": {
+	                    "value": {
+	                        "boundObject": {"@": "owner"},
+	                        "boundObjectPropertyPath": "dtextScaleX",
+	                        "oneway": false
+	                    }
+	                }
+				},
+				"dtext_scale_y" : {
+                    "module": "js/components/hottextunit.reel",
+            	    "name": "HotTextUnit",
+            	    "properties": {
+            	        "element": {"#": "scale-y"},
+            	        "maxValue" : 100,
+                        "minValue" : 0,
+                        "acceptableUnits" : "%",
+                        "units" : "%",
+                        "value" : 0
+            	    },
+	                "bindings": {
+	                    "value": {
+	                        "boundObject": {"@": "owner"},
+	                        "boundObjectPropertyPath": "dtextScaleY",
+	                        "oneway": false
+	                    }
+	                }
+				},
+				"dtext_skew_x" : {
+                    "module": "js/components/hottextunit.reel",
+            	    "name": "HotTextUnit",
+            	    "properties": {
+            	        "element": {"#": "skew-x"},
+            	        "maxValue" : 100,
+                        "minValue" : 0,
+                        "acceptableUnits" : "%",
+                        "units" : "%",
+                        "value" : 0
+            	    },
+	                "bindings": {
+	                    "value": {
+	                        "boundObject": {"@": "owner"},
+	                        "boundObjectPropertyPath": "dtextSkewX",
+	                        "oneway": false
+	                    }
+	                }
+				},
+				"dtext_skew_y" : {
+                    "module": "js/components/hottextunit.reel",
+            	    "name": "HotTextUnit",
+            	    "properties": {
+            	        "element": {"#": "skew-y"},
+            	        "maxValue" : 100,
+                        "minValue" : 0,
+                        "acceptableUnits" : "%",
+                        "units" : "%",
+                        "value" : 0
+            	    },
+	                "bindings": {
+	                    "value": {
+	                        "boundObject": {"@": "owner"},
+	                        "boundObjectPropertyPath": "dtextSkewY",
+	                        "oneway": false
+	                    }
+	                }
+				},
+				"dtext_rotate" : {
+                    "module": "js/components/hottextunit.reel",
+            	    "name": "HotTextUnit",
+            	    "properties": {
+            	        "element": {"#": "rotation"},
+            	        "maxValue" : 360,
+                        "minValue" : -360,
+                        "acceptableUnits" : "degrees",
+                        "units" : "degrees",
+                        "value" : 0
+            	    },
+	                "bindings": {
+	                    "value": {
+	                        "boundObject": {"@": "owner"},
+	                        "boundObjectPropertyPath": "dtextRotate",
+	                        "oneway": false
+	                    }
+	                }
+				}
             }
         </script>
 	</head>
@@ -114,15 +247,11 @@
 					<div class="layout-table">
 						<div class="layout-row">
 							<div class="layout-cell">X</div>
-							<div class="layout-cell">100px</div>
+							<div class="layout-cell"><div id="position-x"></div></div>
 						</div>
 						<div class="layout-row">
 							<div class="layout-cell">Y</div>
-							<div class="layout-cell">100px</div>
-						</div>
-						<div class="layout-row">
-							<div class="layout-cell">Z</div>
-							<div class="layout-cell">100px</div>
+							<div class="layout-cell"><div id="position-y"></div></div>
 						</div>
 					</div>
 				</div>
@@ -134,23 +263,23 @@
 					<div class="layout-table">
 						<div class="layout-row">
 							<div class="layout-cell">Scale X</div>
-							<div class="layout-cell">100px</div>
+							<div class="layout-cell"><div id="scale-x"></div></div>
 						</div>
 						<div class="layout-row">
 							<div class="layout-cell">Scale Y</div>
-							<div class="layout-cell">100px</div>
+							<div class="layout-cell"><div id="scale-y"></div></div>
 						</div>
 						<div class="layout-row">
 							<div class="layout-cell">Skew X</div>
-							<div class="layout-cell">100px</div>
+							<div class="layout-cell"><div id="skew-x"></div></div>
 						</div>
 						<div class="layout-row">
 							<div class="layout-cell">Skew Y</div>
-							<div class="layout-cell">100px</div>
+							<div class="layout-cell"><div id="skew-y"></div></div>
 						</div>
 						<div class="layout-row">
 							<div class="layout-cell">Rotation</div>
-							<div class="layout-cell">100px</div>
+							<div class="layout-cell"><div id="rotation"></div></div>
 						</div>
 					</div>
 					

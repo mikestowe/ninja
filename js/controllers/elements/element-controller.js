@@ -27,7 +27,11 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
     
     getProperty: {
         value: function(el, prop, fallbackOnComputed, isStageElement) {
-            return this.application.ninja.stylesController.getElementStyle(el, prop, fallbackOnComputed, isStageElement);
+            if(el.nodeType !== 3){
+                return this.application.ninja.stylesController.getElementStyle(el, prop, fallbackOnComputed, isStageElement);
+            }else{
+                return null;
+            }
         }
     },
 

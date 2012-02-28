@@ -188,6 +188,8 @@ exports.Panel = Montage.create(Component, {
                 //Resized Event
                 if(typeof this.resizer.value == "number") this.panelBase.contentHeight = this.resizer.value;
                 this.resizer.element.addEventListener("mouseup",this.resized.bind(this),false);
+
+                this.panelContent.content = this.panelBase.content;
             }
         }
     },
@@ -226,7 +228,7 @@ exports.Panel = Montage.create(Component, {
             else pContentDiv.style.overflow = "hidden";
             this.element.getElementsByClassName("panelTitle")[0].innerHTML = this.panelBase.panelName;
             //pContentDiv.appendChild(this.panelBase.content);
-            this.panelContent.content = this.panelBase.content;
+            //this.panelContent.content = this.panelBase.content;
 
         }
     }

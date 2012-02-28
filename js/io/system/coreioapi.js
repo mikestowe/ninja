@@ -28,9 +28,9 @@ exports.CoreIoApi = Montage.create(Component, {
 		value: function () {
 			////////////////////////////////////////////////////////////
 			//Checking for local storage of URL for IO
-			if (window.localStorage['ioRootUrl']) {
+            if (this.application.localStorage.getItem("ioRootUrl")) {
 				//Getting URL from local storage
-				this.rootUrl = window.localStorage['ioRootUrl'];
+                this.rootUrl = this.application.localStorage.getItem("ioRootUrl");
 				//Checks for IO API to be active
 				this.ioServiceDetected = this.cloudAvailable();
 			} else {
@@ -156,7 +156,7 @@ exports.CoreIoApi = Montage.create(Component, {
             return this._rootUrl;
         },
         set: function(value) {
-        	this._rootUrl = window.localStorage["ioRootUrl"] = value;
+        	this._rootUrl = this.application.localStorage.setItem("ioRootUrl", value);
         }
     },
 	////////////////////////////////////////////////////////////////////
