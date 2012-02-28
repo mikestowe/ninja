@@ -136,6 +136,13 @@ exports.KeyboardMediator = Montage.create(Component, {
                     return;
                 }
 
+                // shortcut for Pen tool is P
+                if (evt.keyCode === Keyboard.P){
+                    evt.preventDefault();
+                    this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[5]});
+                    return;
+                }
+
                 // Shortcut for Rectangle Tool is R
                 // unless the user is pressing the command key.
                 // If the user is pressing the command key, they want to refresh the browser.
@@ -159,6 +166,13 @@ exports.KeyboardMediator = Montage.create(Component, {
                     evt.preventDefault();
                     this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[7]});
                     this.application.ninja.handleSelectSubTool({"detail": this.application.ninja.toolsData.defaultToolsData[7].subtools[2]});
+                    return;
+                }
+
+                // Rotate Stage Tool is M
+                if(evt.keyCode === Keyboard.M ) {
+                    evt.preventDefault();
+                    this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[13]});
                     return;
                 }
 
