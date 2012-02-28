@@ -479,6 +479,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                             dLayer[hashVariable].deleted = false;
                             this.arrTracks.splice(event.detail._layerPosition, 0, event.detail._track);
                             this.arrLayers.splice(event.detail._layerPosition, 0, event.detail._el);
+                            this.selectLayer(event.detail._layerPosition);
                             break;
 
                         }
@@ -498,7 +499,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                         hashVariable++;
                     }
                     this.application.ninja.currentSelectedContainer = parentNode;
-                    //NJevent('breadCrumbTrail', {"element":parentNode, "setFlag":this._setBreadCrumb});
                 } else {
                     dLayer = this.hashInstance.getItem(event.detail._el.parentElementUUID);
                     while (dLayer[hashVariable]) {
@@ -506,6 +506,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                             dLayer[hashVariable].deleted = false;
                             this.arrTracks.splice(event.detail._layerPosition, 0, event.detail._track);
                             this.arrLayers.splice(event.detail._layerPosition, 0, event.detail._el);
+                            this.selectLayer(event.detail._layerPosition);
                             break;
 
                         }
@@ -578,7 +579,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     this.arrTracks.splice(myIndex, 0, newTrack);
                     this.arrLayers.splice(myIndex, 0, thingToPush);
                     this._LayerUndoPosition = myIndex;
-                    this.selectLayer(myIndex);
+//                    this.selectLayer(myIndex);
                     this.hashLayerNumber.setItem(this._hashKey, thingToPush);
                     this.hashInstance.setItem(this._hashKey, thingToPush, myIndex);
                     this.hashTrackInstance.setItem(this._hashKey, newTrack, myIndex);
@@ -591,18 +592,20 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     this.hashLayerNumber.setItem(this._hashKey, thingToPush);
                     this.hashInstance.setItem(this._hashKey, thingToPush, thingToPush.layerPosition);
                     this.hashTrackInstance.setItem(this._hashKey, newTrack, newTrack.trackPosition);
-                    this.selectLayer(0);
+//                    this.selectLayer(0);
 
                 }
 
                 if(this._openDoc){
-                    this.hashElementMapToLayer.setItem(event.detail.ele.uuid, event.detail.ele,this.currentLayerSelected);
+                    var selectedIndex = this.getLayerIndexByID(thingToPush.layerID)
+                    this.hashElementMapToLayer.setItem(event.detail.ele.uuid, event.detail.ele,this.arrLayers[selectedIndex]);
                     this._openDoc=false;
                 }
                 this._LayerUndoObject = thingToPush;
                 this._LayerUndoIndex = thingToPush.layerID;
                 this._LayerUndoStatus = true;
                 this._TrackUndoObject = newTrack;
+
 
 
             }
@@ -627,6 +630,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 //                                        ElementMediator.deleteElements(dLayer[myIndex].element);
                                         this.arrLayers.splice(k, 1);
                                         this.arrTracks.splice(k, 1);
+                                        if(k>0){
+                                            this.selectLayer(k-1);
+                                        }else{
+                                            this.selectLayer(k)
+                                        }
                                         break;
                                     }
                                     k++;
@@ -647,7 +655,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                             hashVariable++;
                         }
                         this.application.ninja.currentSelectedContainer = parentNode;
-                      //  NJevent('breadCrumbTrail', {"element":parentNode, "setFlag":this._setBreadCrumb});
                     }
                     else {
                         dLayer = this.hashInstance.getItem(event.detail._el.parentElementUUID);
@@ -661,6 +668,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 //                                        ElementMediator.deleteElements(dLayer[myIndex].element);
                                         this.arrLayers.splice(k, 1);
                                         this.arrTracks.splice(k, 1);
+                                        if(k>0){
+                                            this.selectLayer(k-1);
+                                        }else{
+                                            this.selectLayer(k);
+                                        }
                                         break;
                                     }
                                     k++;
@@ -684,13 +696,20 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                         this.arrTracks.splice(myIndex, 1);
                         this._LayerUndoIndex = this._LayerUndoObject.layerID;
                         this._LayerUndoPosition = myIndex;
-                        ElementMediator.deleteElements(dLayer[myIndex].ele);
+
+                        if(myIndex===0){
+                            this.selectLayer(0);
+                        }
+                        else{
+                            this.selectLayer(myIndex-1);
+                        }
+                        ElementMediator.deleteElements(dLayer[myIndex].elementsList);
 
                     } else {
                         dLayer = this.hashInstance.getItem(this._hashKey);
                         dTrack = this.hashTrackInstance.getItem(this._hashKey);
                         dLayer[this.arrLayers.length - 1].deleted = true;
-                        ElementMediator.deleteElements(dLayer[this.arrLayers.length - 1].ele);
+                        ElementMediator.deleteElements(dLayer[this.arrLayers.length - 1].elementsList);
                         this._LayerUndoPosition = this.arrLayers.length - 1;
                         this._LayerUndoObject = this.arrLayers.pop();
                         this._LayerUndoIndex = this._LayerUndoObject.layerID;
@@ -913,7 +932,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             if(this.selectedKeyframes){
                 this.deselectTweens();
             }
-                        
+
             for (i = 0; i < arrLayersLength; i++) {
                 if (i === layerIndex) {
                     this.arrLayers[i].isSelected = true;
@@ -939,6 +958,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this.currentLayerSelected = null;
                 this.currentTrackSelected = null;
             }
+
         }
     },
 
@@ -1029,6 +1049,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     value:function () {
 
                         NJevent('newLayer', this)
+
 
                     }
                 },
