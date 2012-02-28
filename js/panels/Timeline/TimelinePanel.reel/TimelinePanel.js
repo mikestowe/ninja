@@ -256,6 +256,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     while(this.application.ninja.currentDocument.documentRoot.children[myIndex])
                     {
                         this._openDoc=true;
+                        this._captureSelection=true;
                         NJevent('newLayer',{key:this._hashKey,ele:this.application.ninja.currentDocument.documentRoot.children[myIndex]})
                         myIndex++;
                     }
@@ -579,7 +580,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     this.arrTracks.splice(myIndex, 0, newTrack);
                     this.arrLayers.splice(myIndex, 0, thingToPush);
                     this._LayerUndoPosition = myIndex;
-//                    this.selectLayer(myIndex);
+                    this.selectLayer(myIndex);
                     this.hashLayerNumber.setItem(this._hashKey, thingToPush);
                     this.hashInstance.setItem(this._hashKey, thingToPush, myIndex);
                     this.hashTrackInstance.setItem(this._hashKey, newTrack, myIndex);
@@ -592,7 +593,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     this.hashLayerNumber.setItem(this._hashKey, thingToPush);
                     this.hashInstance.setItem(this._hashKey, thingToPush, thingToPush.layerPosition);
                     this.hashTrackInstance.setItem(this._hashKey, newTrack, newTrack.trackPosition);
-//                    this.selectLayer(0);
+                    this.selectLayer(0);
 
                 }
 
@@ -722,9 +723,21 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     handleElementAdded:{
         value:function (event) {
+
             event.detail.uuid=nj.generateRandom();
-            this.hashElementMapToLayer.setItem(event.detail.uuid, event.detail,this.currentLayerSelected);
-            this.currentLayerSelected.elementsList.push(event.detail);
+            if(this.currentLayerSelected.elementsList[0]!==undefined){
+                if(this.currentTrackSelected.isTrackAnimated){
+                    this.application.ninja.stage.clearDrawingCanvas();
+                    alert("cannot add elements to a layer with animated element");/* check how to clear the canvas*/
+                    return;
+                }else{
+                    this.hashElementMapToLayer.setItem(event.detail.uuid, event.detail,this.currentLayerSelected);
+                    this.currentLayerSelected.elementsList.push(event.detail);
+                }
+            }else{
+                this.hashElementMapToLayer.setItem(event.detail.uuid, event.detail,this.currentLayerSelected);
+                this.currentLayerSelected.elementsList.push(event.detail);
+            }
 
         }
     },
@@ -948,7 +961,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this.currentTrackSelected = this.arrTracks[layerIndex];
                 if(!this._openDoc){
                     if(this._captureSelection){
-                        this.application.ninja.selectionController.selectElements(this.currentLayerSelected.elementsList)
+                        if(this.currentLayerSelected.elementsList.length >= 1){
+                            this.application.ninja.selectionController.selectElements(this.currentLayerSelected.elementsList);
+                        }else{
+                            this.application.ninja.selectionController.executeSelectElement();
+                        }
                     }
                     this._captureSelection = true;
                 }
