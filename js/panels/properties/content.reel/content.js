@@ -268,12 +268,12 @@ exports.Content = Montage.create(Component, {
                                 }
                                 else
                                 {
-                                    if (currentValue.color && (currentValue.color.a !== undefined))
+                                    if (currentValue.color.a !== undefined)
                                     {
                                         this.application.ninja.colorController.colorModel.alpha =
                                                         {value: currentValue.color.a, wasSetByCode: true, type: 'change'};
                                     }
-                                    if(currentValue.color && currentValue.color.mode)
+                                    if(currentValue.color.mode)
                                     {
                                         this.application.ninja.colorController.colorModel[currentValue.color.mode] = currentValue.color;
                                     }
