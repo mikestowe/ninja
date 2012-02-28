@@ -118,6 +118,21 @@ var Tween = exports.Tween = Montage.create(Component, {
             this.needsDraw = true;
         }
     },
+    
+    _isClearing : {
+    	serializable: true,
+    	value: false
+    },
+    isClearing : {
+    	get: function() {
+    		return this._isClearing;
+    	},
+    	set: function(newVal) {
+    		if (newVal === "clear it") {
+    			this.eventManager.removeEventListener("elementChange", this, false);
+    		}
+    	}
+    },
 
     prepareForDraw:{
         value:function () {
@@ -141,9 +156,6 @@ var Tween = exports.Tween = Montage.create(Component, {
         	
             if (event.detail.source && event.detail.source !== "tween") {
                 // check for correct element selection
-                console.log("handleElementChange! " + this.tweenID)
-                console.log(this.application.ninja.selectedElements[0]._element);
-                console.log(this.parentComponent.parentComponent.animatedElement);
                 if (this.application.ninja.selectedElements[0]._element != this.parentComponent.parentComponent.animatedElement) {
                     alert("Wrong element selected for this keyframe track");
                 } else {
@@ -165,7 +177,6 @@ var Tween = exports.Tween = Montage.create(Component, {
     selectTween:{
         value: function(){
             // turn on event listener for element change
-            console.log('adding elementChange event listener for tween ' + this.tweenID)
             this.eventManager.addEventListener("elementChange", this, false);
 
             // select the containing layer

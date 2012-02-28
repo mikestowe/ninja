@@ -277,8 +277,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             // Remove every event listener for every tween in TimelineTrack
             for (var i = 0; i < this.arrTracks.length; i++) {
             	for (var j = 0; j < this.arrTracks[i].tweens.length; j++) {
-            		//this.eventManager.removeEventListener("elementChange", this, false);
-            		this.arrTracks[i].tweens[j].eventManager.removeEventListener("elementChange", this.arrTracks[i].tweens[j], false);
+            		this.arrTracks[i].tweens[j].isClearing = "clear it";
             	}
             }
 
@@ -539,8 +538,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
                 if(this._openDoc){
                     event.detail.ele.uuid =nj.generateRandom();
-                    console.log("in open doc")
-                    console.log(event.detail.ele)
                     thingToPush.elementsList.push(event.detail.ele);
                 }
 
@@ -696,7 +693,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     handleElementAdded:{
         value:function (event) {
-			console.log('called')
             event.detail.uuid=nj.generateRandom();
             this.hashElementMapToLayer.setItem(event.detail.uuid, event.detail,this.currentLayerSelected);
             this.currentLayerSelected.elementsList.push(event.detail);
