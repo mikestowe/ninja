@@ -260,6 +260,17 @@ exports.IoMediator = Montage.create(Component, {
     			var styleCounter = 0,
     				docStyles = template.document.content.document.getElementsByTagName('style'),
     				docLinks = template.document.content.document.getElementsByTagName('link');
+    			//Removing Ninja Data Attributes
+    			for (var n in docLinks) {
+    				if (docLinks[n].attributes) {
+    					for (var m in docLinks[n].attributes) {
+							if (docLinks[n].attributes[m].name && docLinks[n].attributes[m].name.indexOf('data-ninja')!=-1) {
+								docLinks[n].removeAttribute(docLinks[n].attributes[m].name);
+							}
+						}
+    				}
+    			}
+    			//
     			for(var i in template.css) {
     				if (template.css[i].ownerNode) {
     					if (template.css[i].ownerNode.getAttribute) {
@@ -268,6 +279,22 @@ exports.IoMediator = Montage.create(Component, {
     							docStyles[styleCounter].innerHTML = this.getCssFromRules(template.css[i].cssRules);
     							styleCounter++;
     						} else {
+    							//Checking for attributes to be added to tag upon saving
+    							for (var k in docLinks) {
+    								if (docLinks[k].getAttribute) {
+    									if (docLinks[k].getAttribute('href') && ('/'+docLinks[k].getAttribute('href')) === template.css[i].ownerNode.getAttribute('data-ninja-file-url')) {
+    										for (var l in template.css[i].ownerNode.attributes) {
+    											if (template.css[i].ownerNode.attributes[l].value) {
+    												if (template.css[i].ownerNode.attributes[l].name.indexOf('data-ninja')!=-1) {
+    													//Ninja attribute...
+    												} else {
+    													docLinks[k].setAttribute(template.css[i].ownerNode.attributes[l].name, template.css[i].ownerNode.attributes[l].value);
+    												}
+    											}
+    										}
+    									}
+    								}
+    							}
     							//Saving data from rules array converted to string into <link> file
     							var save = this.fio.saveFile({uri: template.css[i].ownerNode.getAttribute('data-ninja-uri'), contents: this.getCssFromRules(template.css[i].cssRules)});
     						}
