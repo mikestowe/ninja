@@ -553,7 +553,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             var keyframeString = "@-webkit-keyframes " + this.animationName + " {";
 
             for (var i = 0; i < this.tweens.length; i++) {
-                var keyframePercent = Math.round((this.tweens[i].keyFrameMillisec / this.trackDuration) * 100) + "%";
+                var keyMill = parseInt(this.tweens[i].keyFrameMillisec);
+                var trackDur = parseFloat(this.trackDuration);
+                var keyframePercent = Math.round((keyMill / trackDur) * 100) + "%";
                 var keyframePropertyString = " " + keyframePercent + " {";
                 keyframePropertyString += "top: " + this.tweens[i].tweenedProperties["top"] + "px;";
                 keyframePropertyString += " left: " + this.tweens[i].tweenedProperties["left"] + "px;";
