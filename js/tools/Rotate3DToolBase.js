@@ -447,16 +447,13 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                 iMat;
             for(var i = 0; i < len; i++)
             {
-                // Reset to the identity matrix but retain the rotation values
+                // Reset to the identity matrix
                 item = this._targets[i];
-                elt = item.elt;
-
-                // Reset to the identity matrix but retain the translation values
                 iMat = Matrix.I(4);
                 mat = item.mat;
-                iMat[12] = mat[12];
-                iMat[13] = mat[13];
-                iMat[14] = mat[14];
+//                iMat[12] = mat[12];
+//                iMat[13] = mat[13];
+//                iMat[14] = mat[14];
 
                 dist = this._undoArray[i].dist;
 
