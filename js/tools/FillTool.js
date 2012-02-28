@@ -22,14 +22,14 @@ exports.FillTool = Montage.create(ModifierToolBase, {
         value : function (event)
 		{
             var obj = this.application.ninja.stage.GetElement(event);
-            var cursor = "url('images/cursors/fill.png') 17 12, default";
+            var cursor = "url('images/cursors/fill.png') 14 14, default";
             var canColor = true;
             if (obj)
             {
                 var name = obj.nodeName;
                 if ((name !== 'CANVAS') && (name !== 'DIV'))
                 {
-                    cursor = "url('images/cursors/nofill.png') 17 12, default";
+                    cursor = "url('images/cursors/nofill.png') 14 14, default";
                     canColor = false;
                 }
             }

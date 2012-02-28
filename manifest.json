@@ -1,7 +1,7 @@
 {
   "name": "Motorola Ninja Unpacked",
-  "description": "Motorola Ninja HTML5 Authoring Tool Pre-Alpha",
-  "version": "0.5.0.1",
+  "description": "Motorola Ninja HTML5 Authoring Tool - Alpha Release",
+  "version": "0.5.0.9",
   "app": {
     "launch": {
       "local_path": "index.html"
@@ -11,7 +11,6 @@
     "128": "ninja_icon_128.png"
   },
   "permissions": [
-  	"tabs",
     "unlimitedStorage",
     "notifications",
     "webRequest",

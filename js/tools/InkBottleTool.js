@@ -16,14 +16,14 @@ exports.InkBottleTool = Montage.create(ModifierToolBase, {
         value : function (event)
 		{
             var obj = this.application.ninja.stage.GetElement(event);
-            var cursor = "url('images/cursors/ink.png') 17 12, default";
+            var cursor = "url('images/cursors/ink.png') 6 11, default";
             var canColor = true;
             if (obj)
             {
                 var name = obj.nodeName;
                 if ((name !== 'CANVAS') && (name !== 'DIV'))
                 {
-                    cursor = "url('images/cursors/ink_no.png') 17 12, default";
+                    cursor = "url('images/cursors/ink_no.png') 6 11, default";
                     canColor = false;
                 }
             }

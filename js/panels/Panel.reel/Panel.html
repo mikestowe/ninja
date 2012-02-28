@@ -14,7 +14,15 @@
                 "properties": {
                     "element": {"#": "resizeBar"},
                     "panel": {"#": "panel"},
-                    "isVertical": true
+                    "isVertical": true,
+                    "willSave": false
+                },
+                "bindings": {
+                    "ownerId": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "panelBase.panelName",
+                        "oneway": true
+                    }
                 }
             },
 
@@ -55,7 +63,7 @@
             </div>
         </div>
     </div>
-    <div id="resizeBar" class="resizeBar"></div>
+    <div data-montage-id="resizeBar" class="resizeBar"></div>
 </article>
 
 </body>
