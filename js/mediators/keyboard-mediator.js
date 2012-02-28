@@ -162,15 +162,17 @@ exports.KeyboardMediator = Montage.create(Component, {
                     return;
                 }
 
+                // Hand tool
                 if(evt.keyCode === Keyboard.H ) {
                     evt.preventDefault();
-                    this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[15]});
+                    this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[14]});
                     return;
                 }
 
+                // Zoom tool
                 if(evt.keyCode === Keyboard.Z ) {
                     evt.preventDefault();
-                    this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[16]});
+                    this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[15]});
                     return;
                 }
 
@@ -205,7 +207,13 @@ exports.KeyboardMediator = Montage.create(Component, {
 
             // Check if cmd+s/ctrl+s for Save (Windows/Mac)
             if ((evt.keyCode == Keyboard.S) && (evt.ctrlKey || evt.metaKey) && !evt.shiftKey) {
-                NJevent("executeSave");
+                try{
+                    NJevent("executeSave");
+                }
+                catch(e){
+                    console.warn("Unable to save");
+                    console.log(e.stack);
+                }
                 evt.preventDefault();
                 return;
             }

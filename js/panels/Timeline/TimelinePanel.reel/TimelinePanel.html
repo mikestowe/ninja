@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
 <html lang="en">
 	<head>
     	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
@@ -24,7 +29,10 @@
                         "trackRepetition" : {"@" : "repetition2"},
                         "playhead": {"#": "playhead"},
                         "playheadmarker": {"#": "playhead_marker"},
-                        "timetext" : {"#": "time_text"}
+                        "timetext" : {"#": "time_text"},
+                        "timebar" : {"#": "time_bar"},
+                        "container_tracks" : {"#" : "container-tracks"},
+                        "end_hottext" : {"@" : "endHottext"}
                     }
                 },
 
@@ -107,6 +115,41 @@
 	            			"boundObject" : {"@" : "repetition1"},
 	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isStyleCollapsed",
 	            			"oneway" : false
+	            		},
+	            		"dtextPositionX" : {
+	            			"boundObject" : {"@" : "repetition1"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.dtextPositionX",
+	            			"oneway" : false
+	            		},
+	            		"dtextPositionY" : {
+	            			"boundObject" : {"@" : "repetition1"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.dtextPositionY",
+	            			"oneway" : false
+	            		},
+	            		"dtextSkewX" : {
+	            			"boundObject" : {"@" : "repetition1"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.dtextSkewX",
+	            			"oneway" : false
+	            		},
+	            		"dtextSkewY" : {
+	            			"boundObject" : {"@" : "repetition1"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.dtextSkewY",
+	            			"oneway" : false
+	            		},
+	            		"dtextScaleX" : {
+	            			"boundObject" : {"@" : "repetition1"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.dtextScaleX",
+	            			"oneway" : false
+	            		},
+	            		"dtextScaleY" : {
+	            			"boundObject" : {"@" : "repetition1"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.dtextScaleY",
+	            			"oneway" : false
+	            		},
+	            		"dtextRotate" : {
+	            			"boundObject" : {"@" : "repetition1"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.dtextRotate",
+	            			"oneway" : false
 	            		}
 	            	}
 	            },
@@ -143,6 +186,36 @@
 	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.tweens",
 	            			"oneway" : false
 	            		},
+                        "animatedElement" : {
+                            "boundObject" : {"@" : "repetition2"},
+            	            "boundObjectPropertyPath" : "objectAtCurrentIteration.animatedElement",
+            	            "oneway" : false
+                        },
+	            		"arrStyleTracks" : {
+	            			"boundObject" : {"@" : "repetition2"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.arrStyleTracks",
+	            			"oneway" : false
+	            		},
+                        "isTrackAnimated" : {
+                            "boundObject" : {"@" : "repetition2"},
+            	            "boundObjectPropertyPath" : "objectAtCurrentIteration.isTrackAnimated",
+            	            "oneway" : false
+                        },
+                        "trackDuration" : {
+                            "boundObject" : {"@" : "repetition2"},
+                        	"boundObjectPropertyPath" : "objectAtCurrentIteration.trackDuration",
+                        	"oneway" : false
+                        },
+                        "animationName" : {
+                            "boundObject" : {"@" : "repetition2"},
+                            "boundObjectPropertyPath" : "objectAtCurrentIteration.animationName",
+                            "oneway" : false
+                        },
+                        "currentKeyframeRule" : {
+                            "boundObject" : {"@" : "repetition2"},
+                        	"boundObjectPropertyPath" : "objectAtCurrentIteration.currentKeyframeRule",
+                        	"oneway" : false
+                        },
 	            		"isMainCollapsed" : {
 	            			"boundObject" : {"@" : "repetition2"},
 	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isMainCollapsed",
@@ -162,9 +235,26 @@
 	            			"boundObject" : {"@" : "repetition2"},
 	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isStyleCollapsed",
 	            			"oneway" : false
-	            		}
+	            		},
+                        "trackPosition" : {
+                            "boundObject" : {"@" : "repetition2"},
+            	            "boundObjectPropertyPath" : "objectAtCurrentIteration.trackPosition",
+            	            "oneway" : false
+                        }
 	            	}
-	            }
+	            },
+                "endHottext" : {
+                    "module": "js/components/hottextunit.reel",
+            	    "name": "HotTextUnit",
+            	    "properties": {
+            	        "element": {"#": "end_hottext"},
+            	        "maxValue" : 100000,
+                        "minValue" : 1,
+                        "acceptableUnits" : "sec",
+                        "units" : "sec",
+                        "value" : 25
+            	    }
+                }
             }
         </script>
 
@@ -193,7 +283,9 @@
 
                         
                         <div id="user_layers" class="userlayers">
-                            <div id="master_layer" class="masterlayer">Master Layer</div>
+                            <div id="master_layer" class="masterlayer">
+                                <div>Master Layer</div>
+                            </div>
                             <div id="container-layers">
                             	<div id="container-layer"></div>
                             </div>
@@ -202,25 +294,27 @@
                         <div id="timeline_gutter" class="timelinegutter">
                             <div id="newlayer_button" class="newlayerbutton"></div>
                             <div id="deletelayer_button" class="deletelayerbutton"></div>
+                            <input id="end_hottext" class="endhottext">
                         </div>
                     </div>
                 </div>
 
-                <div id="layer_resizer" class="layerresizer"></div>
+                <div data-montage-id="layer_resizer" class="layerresizer"></div>
 
                 <div id="timeline_rightpane" class="tl_rightpane">
                     <div id="right_inside" class="rightinside">
                     	<div class="layout_markers">
-	                        <div id="timeline_markers" class="timelinemarkers">
-	                            <div id="playhead" class="playhead"></div>
-	                        </div>
+                            <div id="playhead" class="playhead"></div>
+	                        <div id="timeline_markers" class="timelinemarkers"></div>
                     	</div>
 
 
                         <div id="layer_tracks" class="tl_layertracks">
                         	<div class="layout-tracks">
 	                            <div id="playhead_marker" class="playheadmarker"></div>
-	                            <div id="master_track" class="mastertrack"></div>
+	                            <div id="master_track" class="mastertrack">
+                                    <div id="time_bar" class="timebar"></div>
+	                            </div>
 	                            <div id="container-tracks" class="container-tracks">
 	                            	<div id="container-track"></div>
 	                            </div>

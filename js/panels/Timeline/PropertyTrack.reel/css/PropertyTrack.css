@@ -1,0 +1,19 @@
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+/* PropertyTrack.scss
+ * Main SCSS file for PropertyTrack component, compiled by SASS into the file css/PropertyTrack.css.
+ */
+/* line 19, ../scss/PropertyTrack.scss */
+.content-main .collapsible-content .timeline-track {
+  height: 20px;
+  border-bottom: 1px solid #505050;
+  background-image: url("../images/gridline.jpg");
+}
+
+/* line 26, ../scss/PropertyTrack.scss */
+.timeline-track .content-main {
+  background-color: #474747;
+}

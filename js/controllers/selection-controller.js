@@ -58,6 +58,7 @@ exports.SelectionController = Montage.create(Component, {
     handleOpenDocument: {
         value: function() {
             // Handle initializing the selection array here.
+            this.initWithDocument([]);
         }
     },
     
@@ -70,6 +71,14 @@ exports.SelectionController = Montage.create(Component, {
                 if(currentSelectionArray.length >= 1) {
                     this._selectedItems = currentSelectionArray;
                     this._isDocument = false;
+
+
+
+                    this.application.ninja.selectedElements = currentSelectionArray;
+                    NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument} );
+
+
+
                 }
             }
 

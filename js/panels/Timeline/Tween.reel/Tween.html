@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
 <html lang="en">
 	<head>
     	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
@@ -11,8 +16,7 @@
                             "properties": {
                                 "element": {"#": "tweenspace"},
                                 "keyframe": {"@": "keyframe"},
-                                "span": {"@": "span"},
-                                "tweencontainer": {"#": "tweencontainer"}
+                                "tweenspan": {"@": "span"}
                             }
                         },
                         
@@ -28,8 +32,7 @@
                             "module": "js/panels/Timeline/Keyframe.reel",
                             "name": "Keyframe",
                             "properties": {
-                                "element": {"#": "keyframe_container"},
-                                "containingSpan": {"@": "span"}
+                                "element": {"#": "keyframe_container"}
                             }
                         }
                     }
@@ -37,12 +40,10 @@
 	</head>
 	<body>
 
-    	<div id="tweenspace">
-            <div id="tweencontainer" class="tween_container">
-                <div id="span_container"></div>
-                <div id="keyframe_container"></div>
-            </div>
-    	</div>
+    <div id="tweenspace" class="tween_container">
+        <div id="span_container"></div>
+        <div id="keyframe_container"></div>
+    </div>
 
     </body>
 </html>

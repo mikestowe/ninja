@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
 <html lang="en">
 	<head>
     	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
@@ -11,7 +16,8 @@
                        "properties": {
                            "element": {"#": "track"},
                            "tweenRepetition" : {"@" : "tweenRepetition"},
-                           "track_lane": {"#": "track_lanes"}
+                           "styleTracksRepetition" : {"@" : "styleTracksRepetition"},
+                           "tween": {"@" : "tween"}
                        }
                    },
 
@@ -37,19 +43,24 @@
                                "boundObjectPropertyPath" : "objectAtCurrentIteration.spanPosition",
                                "oneway" : false
                            },
-                           "timelineTrack" : {
-                               "boundObject" : {"@": "tweenRepetition"},
-                               "boundObjectPropertyPath" : "objectAtCurrentIteration.timelineTrack",
-                               "oneway" : false
-                           },
                            "keyFrameMillisec" : {
                                "boundObject" : {"@": "tweenRepetition"},
                                "boundObjectPropertyPath" : "objectAtCurrentIteration.keyFrameMillisec",
                                "oneway" : false
                            },
-                           "keyframeID" : {
+                           "tweenID" : {
                                "boundObject" : {"@": "tweenRepetition"},
-                               "boundObjectPropertyPath" : "objectAtCurrentIteration.keyframeID",
+                               "boundObjectPropertyPath" : "objectAtCurrentIteration.tweenID",
+                               "oneway" : false
+                           },
+                           "tweenedProperties" : {
+                               "boundObject" : {"@": "tweenRepetition"},
+                               "boundObjectPropertyPath" : "objectAtCurrentIteration.tweenedProperties",
+                               "oneway" : false
+                           },
+                           "isTweenAnimated" : {
+                               "boundObject" : {"@": "tweenRepetition"},
+                               "boundObjectPropertyPath" : "objectAtCurrentIteration.isTweenAnimated",
                                "oneway" : false
                            }
                        }
@@ -69,7 +80,69 @@
                    	           "oneway": false
                    	       }
                    	   }
-                   }
+                   },
+
+                   "styleTrackRepetition": {
+                       "module": "montage/ui/repetition.reel",
+                   	   "name": "Repetition",
+                   	   "properties": {
+                   	       "element": {"#": "content-styles"},
+                   	       "isSelectionEnabled" : false
+                   	   },
+                   	   "bindings": {
+                   	       "objects": {
+                   	           "boundObject": {"@": "owner"},
+                   	           "boundObjectPropertyPath": "arrStyleTracks",
+                   	           "oneway": false
+                   	       }
+                   	   }
+                   },
+                   "positionTracksRepetition": {
+                       "module": "montage/ui/repetition.reel",
+                   	   "name": "Repetition",
+                   	   "properties": {
+                   	       "element": {"#": "content-position-tracks"},
+                   	       "isSelectionEnabled" : false
+                   	   },
+                   	   "bindings": {
+                   	       "objects": {
+                   	           "boundObject": {"@": "owner"},
+                   	           "boundObjectPropertyPath": "arrPositionTracks",
+                   	           "oneway": false
+                   	       }
+                   	   }
+                   },
+					"positionPropertyTrack" : {
+						"module" : "js/panels/Timeline/PropertyTrack.reel",
+						"name" : "PropertyTrack",
+						"properties" : {
+							"element":{"#": "position-track-base"}
+						}
+					},
+                   "transformTracksRepetition": {
+                       "module": "montage/ui/repetition.reel",
+                   	   "name": "Repetition",
+                   	   "properties": {
+                   	       "element": {"#": "content-transform-tracks"},
+                   	       "isSelectionEnabled" : false
+                   	   },
+                   	   "bindings": {
+                   	       "objects": {
+                   	           "boundObject": {"@": "owner"},
+                   	           "boundObjectPropertyPath": "arrTransformTracks",
+                   	           "oneway": false
+                   	       }
+                   	   }
+                   },
+					"transformPropertyTrack" : {
+						"module" : "js/panels/Timeline/PropertyTrack.reel",
+						"name" : "PropertyTrack",
+						"properties" : {
+							"element":{"#": "transform-track-base"}
+						}
+					}
+                   
+                   
                }
            </script>
 	</head>
@@ -84,26 +157,20 @@
             	<div class="label-position collapsible-label collapsible-collapsed">
             		
             	</div>
-            	<div class="content-position collapsible-content collapsible-collapsed">
-            		<div class="timeline-track"></div>
-            		<div class="timeline-track"></div>
-            		<div class="timeline-track"></div>
+            	<div class="content-position collapsible-content collapsible-collapsed" id="content-position-tracks">
+            		<div id="position-track-base"></div>
             	</div>
             	<div class="label-transform collapsible-label collapsible-collapsed">
             		
             	</div>
-            	<div class="content-transform collapsible-content collapsible-collapsed">
-            		<div class="timeline-track"></div>
-            		<div class="timeline-track"></div>
-            		<div class="timeline-track"></div>
-            		<div class="timeline-track"></div>
-            		<div class="timeline-track"></div>
+            	<div class="content-transform collapsible-content collapsible-collapsed" id="content-transform-tracks">
+            		<div id="transform-track-base"></div>
             	</div>
             	<div class="label-styles collapsible-label collapsible-collapsed">
             		
             	</div>
-            	<div class="content-styles collapsible-content collapsible-collapsed">
-            		
+            	<div id="content-styles" class="content-styles collapsible-content collapsible-collapsed">
+            		<div class="timeline-track"></div>
             	</div>
             </div>
     	</div>

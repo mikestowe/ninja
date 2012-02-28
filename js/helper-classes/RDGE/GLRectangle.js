@@ -214,7 +214,7 @@ function GLRectangle()
 		if (!world._useWebGL)  return;
 		
 		// make sure RDGE has the correct context
-		g_Engine.setContext( world.getCanvas().uuid );
+		g_Engine.setContext( world.getCanvas().rdgeid );
 
 		// create the gl buffer
 		var gl = world.getGLContext();
