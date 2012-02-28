@@ -305,6 +305,9 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                     newHeight.push(_h + "px");
 
                     viewUtils.setMatrixForElement(elt, previousMat);
+
+                    this._targets[i].mat = previousMat;
+                    this._targets[i].matInv = glmat4.inverse(previousMat, []);
                 }
             }
             if(addToUndoStack)
