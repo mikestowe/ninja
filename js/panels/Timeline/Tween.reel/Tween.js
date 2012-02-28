@@ -138,9 +138,12 @@ var Tween = exports.Tween = Montage.create(Component, {
 
     handleElementChange:{
         value:function (event) {
+        	
             if (event.detail.source && event.detail.source !== "tween") {
                 // check for correct element selection
-                console.log(this.application.ninja.selectedElements[0]._element)
+                console.log("handleElementChange! " + this.tweenID)
+                console.log(this.application.ninja.selectedElements[0]._element);
+                console.log(this.parentComponent.parentComponent.animatedElement);
                 if (this.application.ninja.selectedElements[0]._element != this.parentComponent.parentComponent.animatedElement) {
                     alert("Wrong element selected for this keyframe track");
                 } else {
@@ -162,6 +165,7 @@ var Tween = exports.Tween = Montage.create(Component, {
     selectTween:{
         value: function(){
             // turn on event listener for element change
+            console.log('adding elementChange event listener for tween ' + this.tweenID)
             this.eventManager.addEventListener("elementChange", this, false);
 
             // select the containing layer

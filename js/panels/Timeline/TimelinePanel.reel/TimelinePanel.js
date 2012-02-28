@@ -273,6 +273,14 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.eventManager.removeEventListener("elementDeleted", this, false);
             this.eventManager.removeEventListener("deleteSelection", this, false);
             this.eventManager.removeEventListener("selectionChange", this, true);
+            
+            // Remove every event listener for every tween in TimelineTrack
+            for (var i = 0; i < this.arrTracks.length; i++) {
+            	for (var j = 0; j < this.arrTracks[i].tweens.length; j++) {
+            		//this.eventManager.removeEventListener("elementChange", this, false);
+            		this.arrTracks[i].tweens[j].eventManager.removeEventListener("elementChange", this.arrTracks[i].tweens[j], false);
+            	}
+            }
 
     		// Reset visual appearance
             this.application.ninja.timeline.playhead.style.left = "-2px";
