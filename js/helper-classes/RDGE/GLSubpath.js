@@ -181,8 +181,8 @@ function GLSubpath() {
 
 
     this.setWidth = function (newW) {
-        //todo this doesn't work in cases where the newW is zero or if the previous width was 0/1 (i.e. the path had become degenerate in width)
-        //todo same as above for the setHeight function below
+        if (newW<1)
+            newW=1; //clamp minimum width to 1
         //scale the contents of this subpath to lie within this width
         //determine the scale factor by comparing with the old width
         var oldWidth = this._BBoxMax[0]-this._BBoxMin[0];
@@ -210,6 +210,8 @@ function GLSubpath() {
         this.makeDirty();
     }
     this.setHeight = function (newH) {
+        if (newH<1)
+            newH=1; //clamp minimum width to 1
         //scale the contents of this subpath to lie within this height
         //determine the scale factor by comparing with the old height
         var oldHeight = this._BBoxMax[1]-this._BBoxMin[1];
