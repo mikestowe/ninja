@@ -98,9 +98,6 @@ exports.Ninja = Montage.create(Component, {
             if(this._appLoaded && this._preload) {
                 // App is now deserialized and files are preloaded
                 this.appModel.materials = MaterialsLibrary.materials;
-
-                this.currentDocument = null;
-
             }
         }
     },

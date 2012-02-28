@@ -71,7 +71,7 @@ exports.UndoController = Montage.create( Component, {
     /**
      * Undo Queue
      */
-    _undoQueue: { value: [], writable:true },
+    _undoQueue: { value: []},
 
     undoQueue: {
         get: function() {
@@ -85,7 +85,7 @@ exports.UndoController = Montage.create( Component, {
     /**
      * Redo Queue
      */
-    _redoQueue: { value: [], enumerable: false, writable:true },
+    _redoQueue: { value: [], enumerable: false},
 
     redoQueue: {
         get: function() {
@@ -212,8 +212,8 @@ exports.UndoController = Montage.create( Component, {
 
     clearHistory:{
         value: function(){
-            this.undoQueue.splice(0, this.undoQueue.length);
-            this.redoQueue.splice(0, this.redoQueue.length);
+            this.undoQueue.length = 0;
+            this.redoQueue.length = 0;
         }
     }
 });
