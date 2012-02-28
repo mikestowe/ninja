@@ -927,10 +927,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this.trackRepetition.selectedIndexes = [layerIndex];
                 this.currentLayerSelected = this.arrLayers[layerIndex];
                 this.currentTrackSelected = this.arrTracks[layerIndex];
-                if(this._captureSelection){
-                    this.application.ninja.selectionController.selectElements(this.currentLayerSelected.elementsList)
+                if(!this._openDoc){
+                    if(this._captureSelection){
+                        this.application.ninja.selectionController.selectElements(this.currentLayerSelected.elementsList)
+                    }
+                    this._captureSelection = true;
                 }
-                this._captureSelection = true;
             } else {
                 this.layerRepetition.selectedIndexes = null;
                 this.trackRepetition.selectedIndexes = null;
