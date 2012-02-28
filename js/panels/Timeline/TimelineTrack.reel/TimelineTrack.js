@@ -554,7 +554,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
             for (var i = 0; i < this.tweens.length; i++) {
                 var keyMill = parseInt(this.tweens[i].keyFrameMillisec);
-                var trackDur = parseFloat(this.trackDuration);
+                // TODO - trackDur should be parseFloat rounded to significant digits
+                var trackDur = parseInt(this.trackDuration);
                 var keyframePercent = Math.round((keyMill / trackDur) * 100) + "%";
                 var keyframePropertyString = " " + keyframePercent + " {";
                 keyframePropertyString += "top: " + this.tweens[i].tweenedProperties["top"] + "px;";
