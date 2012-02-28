@@ -131,6 +131,11 @@ var Icon = exports.Icon = Montage.create(Component, {
                     openFolderEvent.initEvent("openFolder", false, false);
                     openFolderEvent.folderUri = this.icondata.uri;
                     this.element.dispatchEvent(openFolderEvent);
+                }else{
+                    var openFolderEvent = document.createEvent("Events");
+                    openFolderEvent.initEvent("selectFile", false, false);
+                    openFolderEvent.fileUri = this.icondata.uri;
+                    this.element.dispatchEvent(openFolderEvent);
                 }
                 if(evt.bubbles){
                         evt.stopPropagation();
