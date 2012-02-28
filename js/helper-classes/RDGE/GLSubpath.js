@@ -178,6 +178,67 @@ function GLSubpath() {
     } //render()
 
     this.geomType = function () { return this.GEOM_TYPE_CUBIC_BEZIER; }
+
+
+    this.setWidth = function (newW) {
+        if (newW<1)
+            newW=1; //clamp minimum width to 1
+        //scale the contents of this subpath to lie within this width
+        //determine the scale factor by comparing with the old width
+        var oldWidth = this._BBoxMax[0]-this._BBoxMin[0];
+        if (oldWidth<1){
+            oldWidth=1;
+        }
+        var scaleX = newW/oldWidth;
+        if (scaleX===1){
+            return; //no need to do anything
+        }
+
+        //scale the anchor point positions such that the width of the bbox is the newW
+        var origX = this._BBoxMin[0];
+        var numAnchors = this._Anchors.length;
+        for (var i=0;i<numAnchors;i++){
+            //compute the distance from the bboxMin
+            var oldW = this._Anchors[i].getPosX() - origX;
+            var prevW = this._Anchors[i].getPrevX() - origX;
+            var nextW = this._Anchors[i].getNextX() - origX;
+
+            this._Anchors[i].setPos(origX + oldW*scaleX,this._Anchors[i].getPosY(),this._Anchors[i].getPosZ());
+            this._Anchors[i].setPrevPos(origX + prevW*scaleX,this._Anchors[i].getPrevY(),this._Anchors[i].getPrevZ());
+            this._Anchors[i].setNextPos(origX + nextW*scaleX,this._Anchors[i].getNextY(),this._Anchors[i].getNextZ());
+        }
+        this.makeDirty();
+    }
+    this.setHeight = function (newH) {
+        if (newH<1)
+            newH=1; //clamp minimum width to 1
+        //scale the contents of this subpath to lie within this height
+        //determine the scale factor by comparing with the old height
+        var oldHeight = this._BBoxMax[1]-this._BBoxMin[1];
+        if (oldHeight<1){
+            oldHeight=1;
+        }
+        var scaleY = newH/oldHeight;
+        if (scaleY===1){
+            return; //no need to do anything
+        }
+
+        //scale the anchor point positions such that the height of the bbox is the newH
+        var origY = this._BBoxMin[1];
+        var numAnchors = this._Anchors.length;
+        for (var i=0;i<numAnchors;i++){
+            //compute the distance from the bboxMin
+            var oldW = this._Anchors[i].getPosY() - origY;
+            var prevW = this._Anchors[i].getPrevY() - origY;
+            var nextW = this._Anchors[i].getNextY() - origY;
+
+            this._Anchors[i].setPos(this._Anchors[i].getPosX(), origY + oldW*scaleY,this._Anchors[i].getPosZ());
+            this._Anchors[i].setPrevPos(this._Anchors[i].getPrevX(), origY + prevW*scaleY,this._Anchors[i].getPrevZ());
+            this._Anchors[i].setNextPos(this._Anchors[i].getNextX(), origY + nextW*scaleY,this._Anchors[i].getNextZ());
+        }
+        this.makeDirty();
+    }
+
 } //function GLSubpath ...class definition
 
 
@@ -572,11 +633,6 @@ GLSubpath.prototype.getFillMaterial = function() {return this._fillMaterial;}
 GLSubpath.prototype.setFillMaterial = function(m){ this._fillMaterial = m;}
 GLSubpath.prototype.getFillColor = function() {return this._fillColor;}
 GLSubpath.prototype.setFillColor = function(c){this._fillColor = c;}
-
-GLSubpath.prototype.setWidth = function () {//NO-OP for now
-}
-GLSubpath.prototype.setHeight = function () {//NO-OP for now
-}
 
 GLSubpath.prototype.copyFromSubpath = function (subpath) {
     this.clearAllAnchors();
