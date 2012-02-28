@@ -133,6 +133,13 @@ GLAnchorPoint.prototype.translateAll = function (x, y, z) {
 }
 
 
+GLAnchorPoint.prototype.scaleAll = function(sx,sy,sz){
+    this._x *= sx;this._prevX *= sx;this._nextX *= sx;
+    this._y *= sy;this._prevY *= sy;this._nextY *= sy;
+    this._z *= sz;this._prevZ *= sz;this._nextZ *= sz;
+}
+
+
 // ********* getters **********
 GLAnchorPoint.prototype.getPosX = function () { return this._x; }
 GLAnchorPoint.prototype.getPosY = function () { return this._y; }
