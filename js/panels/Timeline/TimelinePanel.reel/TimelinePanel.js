@@ -28,6 +28,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         },
         set:function (newVal) {
             this._arrLayers = newVal;
+            this.application.ninja.currentDocument.tlArrLayers = newVal;
         }
     },
 
@@ -99,6 +100,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         },
         set:function (newVal) {
             this._arrTracks = newVal;
+            this.application.ninja.currentDocument.tlArrTracks = newVal;
         }
     },
 
@@ -172,13 +174,15 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     prepareForDraw:{
             value:function () {
             	this.initTimeline();
-                this.eventManager.addEventListener( "onOpenDocument", this, false);
+                this.eventManager.addEventListener("onOpenDocument", this, false);
                 this.eventManager.addEventListener("closeDocument", this, false);
+                this.eventManager.addEventListener("switchDocument", this, false);
             }
         },
 
     handleOnOpenDocument:{
         value:function(){
+        	this.clearTimelinePanel();
             this.eventManager.addEventListener("deleteLayerClick", this, false);
             this.eventManager.addEventListener("newLayer", this, false);
             this.eventManager.addEventListener("deleteLayer", this, false);
@@ -202,6 +206,14 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		this.clearTimelinePanel();
     	}
     },
+    
+    handleSwitchDocument : {
+    	value: function(event) {
+    		// Handle document change.
+    		this.handleOnOpenDocument();
+    	}
+    },
+    
     willDraw:{
         value:function () {
             if (this._isLayer) {
@@ -233,9 +245,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     initTimelineView:{
         value:function () {
             var myIndex;
-
-
-            this.drawTimeMarkers();
+			
+			this.drawTimeMarkers();
 
             this._hashKey = "123";
             _firstLayerDraw = false;
@@ -275,11 +286,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.eventManager.removeEventListener("selectionChange", this, true);
             
             // Remove every event listener for every tween in TimelineTrack
-            for (var i = 0; i < this.arrTracks.length; i++) {
-            	for (var j = 0; j < this.arrTracks[i].tweens.length; j++) {
-            		this.arrTracks[i].tweens[j].isClearing = "clear it";
-            	}
-            }
+            this.deselectTweens();
 
     		// Reset visual appearance
             this.application.ninja.timeline.playhead.style.left = "-2px";
@@ -316,7 +323,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.container_tracks.style.width = (this.end_hottext.value * 80) + "px";
             this.master_track.style.width = (this.end_hottext.value * 80) + "px";
             this.time_markers.style.width = (this.end_hottext.value * 80) + "px";
-            this.time_markers.removeChild(this.timeMarkerHolder);
+            if (this.timeMarkerHolder) {
+            	this.time_markers.removeChild(this.timeMarkerHolder);
+            }
+            
             this.drawTimeMarkers();
         }
     },
