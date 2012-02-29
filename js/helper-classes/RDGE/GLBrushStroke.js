@@ -38,6 +38,9 @@ function GLBrushStroke() {
     //smaller value means more samples for the path
     this._WETNESS_FACTOR = 0.25;
 
+    //prevent extremely long paths that can take a long time to render
+    this._MAX_ALLOWED_SAMPLES = 500;
+
     //drawing context
     this._world = null;
 
@@ -159,6 +162,12 @@ function GLBrushStroke() {
                     prevPt=pt;
                     //update numPoints to match the new length
                     numPoints = this._Points.length;
+
+                    //end this function if the numPoints has gone above the max. size specified
+                    if (numPoints> this._MAX_ALLOWED_SAMPLES){
+                        console.log("leaving the resampling because numPoints is greater than limit:"+this._MAX_ALLOWED_SAMPLES);
+                        break;
+                    }
                 }
             }
 
