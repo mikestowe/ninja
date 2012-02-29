@@ -92,12 +92,14 @@ exports.SelectionController = Montage.create(Component, {
     handleSwitchDocument: {
         value: function() {
             this._selectedItems = this.application.ninja.selectedElements.slice(0);
-            if(this._selectedItems.length === 0){
+            if(this._selectedItems.length === 0 ){
                 this._isDocument = true;
             }else{
                 this._isDocument = false;
             }
             NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument} );
+
+            this._selectionContainer = this.application.ninja.currentSelectedContainer;
         }
     },
 

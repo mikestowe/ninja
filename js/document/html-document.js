@@ -717,9 +717,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             this.application.ninja.stage.drawUtils.gridHorizontalSpacing = this.gridHorizontalSpacing;
             this.application.ninja.stage.drawUtils.gridVerticalSpacing = this.gridVerticalSpacing;
 
-            if((typeof this.selectionModel !== 'undefined') && (this.selectionModel !== null)){
-                this.application.ninja.selectedElements = this.selectionModel.slice(0);
-            }
+
 
             if((this.savedLeftScroll!== null) && (this.savedTopScroll !== null)){
                 this.application.ninja.stage._iframeContainer.scrollLeft = this.savedLeftScroll;
@@ -727,12 +725,17 @@ exports.HTMLDocument = Montage.create(TextDocument, {
                 this.application.ninja.stage._iframeContainer.scrollTop = this.savedTopScroll;
                 this.application.ninja.stage._scrollLeft = this.savedTopScroll;
             }
-            this.application.ninja.stage.handleScroll();
+
+            if((typeof this.selectionModel !== 'undefined') && (this.selectionModel !== null)){
+                this.application.ninja.selectedElements = this.selectionModel.slice(0);
+            }
 
             this.application.ninja.appModel.show3dGrid = this.draw3DGrid;
 
             this.application.ninja.undocontroller.undoQueue = this.undoStack.slice(0);
             this.application.ninja.undocontroller.redoQueue = this.redoStack.slice(0);
+
+            this.application.ninja.currentSelectedContainer = this.documentRoot;
         }
     }
 	////////////////////////////////////////////////////////////////////
