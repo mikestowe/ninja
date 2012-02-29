@@ -29,9 +29,10 @@ function CanvasDataManager()
 					var canvas = this.findCanvasWithID( id, root );
 					if (canvas)
 					{
-						var loadForAuthoring = true;
+						//var loadForAuthoring = true;
 						var index = importStr.indexOf( "scenedata: " );
-						if (index >= 0)  loadForAuthoring = false;
+						//if (index >= 0)  loadForAuthoring = false;
+						var loadForAuthoring = false;
 
 						if (loadForAuthoring)
 						{
@@ -64,7 +65,7 @@ function CanvasDataManager()
 	{
 		if (elt.elementModel && elt.elementModel.shapeModel && elt.elementModel.shapeModel.GLWorld)
 		{
-			var data = elt.elementModel.shapeModel.GLWorld.export();
+			var data = elt.elementModel.shapeModel.GLWorld.export( true );
 			dataArray.push( data );
 		}
 
@@ -90,7 +91,8 @@ function CanvasDataManager()
 			for (var i=0;  i<nKids;  i++)
 			{
 				var child = elt.children[i];
-				this.findCanvasWithID( id, child );
+				var foundElt = this.findCanvasWithID( id, child );
+				if (foundElt)  return foundElt;
 			}
 		}
 	}

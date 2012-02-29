@@ -274,10 +274,10 @@ function GLRectangle()
 		brRadius = -z*(r-l)/(2.0*zn)*brRadiusNDC;
 
 		// stroke
-		var strokeMaterial = this.makeStrokeMaterial();
-		var strokePrim = this.createStroke([x,y],  2*xFill,  2*yFill,  strokeSize,  tlRadius, blRadius, brRadius, trRadius, strokeMaterial);
-        this._primArray.push( strokePrim );
-		this._materialNodeArray.push( strokeMaterial.getMaterialNode() );
+//		var strokeMaterial = this.makeStrokeMaterial();
+//		var strokePrim = this.createStroke([x,y],  2*xFill,  2*yFill,  strokeSize,  tlRadius, blRadius, brRadius, trRadius, strokeMaterial);
+//        this._primArray.push( strokePrim );
+//		this._materialNodeArray.push( strokeMaterial.getMaterialNode() );
 
 		// fill
 		tlRadius -= strokeSize;  if (tlRadius < 0)  tlRadius = 0.0;

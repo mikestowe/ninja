@@ -25,14 +25,24 @@ function GLRuntime( canvas, importStr )
 	this._rootNode		= null;
 
 	this._firstRender	= true;
+	this._initialized	= false;
+
+	// view parameters
+	this._fov = 45.0;
+	this._zNear = 0.1;
+	this._zFar = 100.0;
+	this._viewDist = 5.0;
+
+	this._aspect = canvas.width/canvas.height;
 
     ///////////////////////////////////////////////////////////////////////
-	// initialization code
+	// accessors
     ///////////////////////////////////////////////////////////////////////
-	var id = canvas.getAttribute( "data-RDGE-id" ); 
-	canvas.rdgeid = id;
-	g_Engine.registerCanvas(canvas, this);
-	RDGEStart( canvas );
+	this.getZNear			= function()		{  return this._zNear;			}
+	this.getZFar			= function()		{  return this._zFar;			}
+	this.getFOV				= function()		{  return this._fov;			}
+	this.getAspect			= function()		{  return this._aspect;			}
+	this.getViewDistance	= function()		{  return this._viewDist;		}
 
 	this.loadScene = function()
 	{
@@ -72,8 +82,7 @@ function GLRuntime( canvas, importStr )
         
 		// create an empty scene graph
 		this.myScene = new SceneGraph();
- 		this.loadScene();
-       
+		
 		/*
 		// create some lights
 		// light 1
@@ -104,54 +113,70 @@ function GLRuntime( canvas, importStr )
 		*/
 
 		// load the scene graph data
+		this.loadScene();
         
 		// Add the scene to the engine - necessary if you want the engine to draw for you
-		var name = "myScene" + this._canvas.getAttribute( "data-RDGE-id" ); 
-		g_Engine.AddScene(name, this.myScene);
+		//var name = "myScene" + this._canvas.getAttribute( "data-RDGE-id" ); 
+		//g_Engine.AddScene(name, this.myScene);
+
+		this._initialized = true;
 	}
     
 	// main code for handling user interaction and updating the scene   
 	this.update = function(dt)
     {
-		if (!dt)  dt = 0.2;
+		if (this._initialized)
+		{
+			if (!dt)  dt = 0.2;
         
-		dt = 0.01;	// use our own internal throttle
-		this.elapsed += dt;
+			dt = 0.01;	// use our own internal throttle
+			this.elapsed += dt;
         
-		// changed the global position uniform of light 0, another way to change behavior of a light
-		rdgeGlobalParameters.u_light0Pos.set( [5*Math.cos(this.elapsed), 5*Math.sin(this.elapsed), 20]);
+			// changed the global position uniform of light 0, another way to change behavior of a light
+			//rdgeGlobalParameters.u_light0Pos.set( [5*Math.cos(this.elapsed), 5*Math.sin(this.elapsed), 20]);
         
-		// orbit the light nodes around the boxes
-		this.light.setPosition([1.2*Math.cos(this.elapsed*2.0), 1.2*Math.sin(this.elapsed*2.0), 1.2*Math.cos(this.elapsed*2.0)]);
-		this.light2.setPosition([-1.2*Math.cos(this.elapsed*2.0), 1.2*Math.sin(this.elapsed*2.0), -1.2*Math.cos(this.elapsed)]);
+			// orbit the light nodes around the boxes
+			//this.light.setPosition([1.2*Math.cos(this.elapsed*2.0), 1.2*Math.sin(this.elapsed*2.0), 1.2*Math.cos(this.elapsed*2.0)]);
+			//this.light2.setPosition([-1.2*Math.cos(this.elapsed*2.0), 1.2*Math.sin(this.elapsed*2.0), -1.2*Math.cos(this.elapsed)]);
 
-		// now update all the nodes in the scene
-		this.myScene.update(dt);
+			// now update all the nodes in the scene
+			this.myScene.update(dt);
+		}
     }
 
     // defining the draw function to control how the scene is rendered      
 	this.draw = function()
     {
-		g_Engine.setContext( this._canvas.rdgeid );
-
-		var ctx = g_Engine.getContext();
-		var renderer = ctx.renderer;
-		if (renderer.unloadedTextureCount <= 0)
+		if (this._initialized)
 		{
-			renderer.disableCulling();
-			renderer._clear();
-			this.myScene.render();
+			g_Engine.setContext( this._canvas.rdgeid );
 
-			if (this._firstRender)
+			var ctx = g_Engine.getContext();
+			var renderer = ctx.renderer;
+			if (renderer.unloadedTextureCount <= 0)
 			{
-				if (this._canvas.task)
+				renderer.disableCulling();
+				renderer._clear();
+				this.myScene.render();
+
+				if (this._firstRender)
 				{
-					this._firstRender = false;
-					this._canvas.task.stop();
+					if (this._canvas.task)
+					{
+						this._firstRender = false;
+						//this._canvas.task.stop();
+					}
 				}
 			}
 		}
     }
+
+	// start RDGE
+	var id = canvas.getAttribute( "data-RDGE-id" ); 
+	canvas.rdgeid = id;
+	g_Engine.registerCanvas(canvas, this);
+	RDGEStart( canvas );
+
 }
 
 

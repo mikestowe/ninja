@@ -811,7 +811,7 @@ GLWorld.prototype.getShapeFromPoint = function( offsetX, offsetY )
 	}
 }
 
-GLWorld.prototype.export = function()
+GLWorld.prototype.export = function( exportForPublish )
 {
 	var exportStr = "GLWorld 1.0\n";
 	var id = this.getCanvas().getAttribute( "data-RDGE-id" );
@@ -824,7 +824,8 @@ GLWorld.prototype.export = function()
 
 	// we need 2 export modes:  One for save/restore, one for publish.
 	// hardcoding for now
-	var exportForPublish = false;
+	//var exportForPublish = false;
+	if (!exportForPublish)  exportForPublish = false;
 	exportStr += "publish: " + exportForPublish + "\n";
 
 	if (exportForPublish)

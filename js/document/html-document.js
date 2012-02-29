@@ -185,7 +185,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 			var elt = this.documentRoot;
 			if (elt)
 			{
-				console.log( "load canvas data: " , value );
+				//console.log( "load canvas data: " , value );
 				var cdm = new CanvasDataManager();
 				cdm.loadGLData(elt,  value);
 			}
