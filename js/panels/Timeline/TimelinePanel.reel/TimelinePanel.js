@@ -419,6 +419,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                         hashVariable++;
                     }
                     this.application.ninja.currentSelectedContainer = parentNode;
+                    //NJevent('breadCrumbTrail', {"element":parentNode, "setFlag":this._setBreadCrumb});
                 } else {
                     dLayer = this.hashInstance.getItem(event.detail._el.parentElementUUID);
                     while (dLayer[hashVariable]) {
@@ -564,6 +565,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                             hashVariable++;
                         }
                         this.application.ninja.currentSelectedContainer = parentNode;
+                      //  NJevent('breadCrumbTrail', {"element":parentNode, "setFlag":this._setBreadCrumb});
                     }
                     else {
                         dLayer = this.hashInstance.getItem(event.detail._el.parentElementUUID);
