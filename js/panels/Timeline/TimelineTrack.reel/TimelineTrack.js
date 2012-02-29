@@ -459,7 +459,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     retrieveStoredTweens:{
         value:function () {
-            var percentValue, fraction, splitValue,offsetAttribute,topOffSetAttribute,leftOffsetAttribute, i = 0;
+            var percentValue, fraction, splitValue,offsetAttribute,topOffSetAttribute,leftOffsetAttribute
+            var animationTiming,trackTiming,currentMilliSec,currentMilliSecPerPixel,clickPosition,i = 0;
 
             var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
             this.application.ninja.timeline.arrLayers[selectedIndex].created=true;
@@ -467,23 +468,24 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             if(this.animatedElement!==undefined){
                 this.animationName = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-name");
                 if(this.animationName){
-                    this.animationDuration = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-duration");
-                    this.trackDuration = this.animationDuration.split("s");
-                    this.currentMilliSec = this.trackDuration[0] * 1000;
-                    this.currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
-                    this.clickPos = this.currentMilliSec / this.currentMillisecPerPixel;
+                    animationTiming = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-duration");
+                    trackTiming = animationTiming.split("s");
+                    currentMilliSec = trackTiming[0] * 1000;
+                    currentMilliSecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
+                    clickPosition = currentMilliSec / currentMilliSecPerPixel;
                     this.nextKeyframe = 0;
 
                     this.currentKeyframeRule = this.application.ninja.stylesController.getAnimationRuleWithName(this.animationName, this.application.ninja.currentDocument._document);
-                    while (this.currentKeyframeRule[i]) {
+
+                    for (i =0; this.currentKeyframeRule[i] ;i++) {
                         var newTween = {};
 
                         offsetAttribute = this.currentKeyframeRule[i].cssText.split(" ");
                         topOffSetAttribute = offsetAttribute[3].split("px");
                         leftOffsetAttribute = offsetAttribute[5].split("px");
 
-                        parseInt(topOffSetAttribute[0]);
-                        parseInt(leftOffsetAttribute[0]);
+                        var tempTopOffset = parseInt(topOffSetAttribute[0]);
+                        var tempLeftOffset =parseInt(leftOffsetAttribute[0]);
 
                         if (this.currentKeyframeRule[i].keyText === "0%") {
                             newTween.spanWidth = 0;
@@ -492,8 +494,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                             newTween.tweenID = 0;
                             newTween.spanPosition = 0;
                             newTween.tweenedProperties = [];
-                            newTween.tweenedProperties["top"] = topOffSetAttribute[0];
-                            newTween.tweenedProperties["left"] = leftOffsetAttribute[0];
+                            newTween.tweenedProperties["top"] = tempTopOffset;
+                            newTween.tweenedProperties["left"] = tempLeftOffset;
                             this.tweens.push(newTween);
 
                         }
@@ -501,29 +503,25 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                             percentValue = this.currentKeyframeRule[i].keyText;
                             splitValue = percentValue.split("%");
                             fraction = splitValue[0] / 100;
-                            this.currentMilliSec = fraction * this.trackDuration[0] * 1000;
-                            this.currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
-                            this.clickPos = this.currentMilliSec / this.currentMillisecPerPixel;
-                            newTween.spanWidth = this.clickPos - this.tweens[this.tweens.length - 1].keyFramePosition;
-                            newTween.keyFramePosition = this.clickPos;
-                            newTween.keyFrameMillisec = this.currentMilliSec;
+                            currentMilliSec = fraction * trackTiming[0] * 1000;
+                            currentMilliSecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
+                            clickPosition = currentMilliSec / currentMilliSecPerPixel;
+                            newTween.spanWidth = clickPosition - this.tweens[this.tweens.length - 1].keyFramePosition;
+                            newTween.keyFramePosition = clickPosition;
+                            newTween.keyFrameMillisec = currentMilliSec;
                             newTween.tweenID = this.nextKeyframe;
-                            newTween.spanPosition = this.clickPos - newTween.spanWidth;
+                            newTween.spanPosition =clickPosition - newTween.spanWidth;
                             newTween.tweenedProperties=[];
-                            newTween.tweenedProperties["top"] = topOffSetAttribute[0];
-                            newTween.tweenedProperties["left"] = leftOffsetAttribute[0];
+                            newTween.tweenedProperties["top"] = tempTopOffset;
+                            newTween.tweenedProperties["left"] = tempLeftOffset;
                             this.tweens.push(newTween);
 
 
                         }
-                        i++;
                         this.nextKeyframe += 1;
                     }
                     this.isTrackAnimated = true;
                 }
-            }
-            else{
-                return;
             }
         }
     },
