@@ -64,6 +64,11 @@ exports.BrushTool = Montage.create(ShapeTool, {
                 //start a new brush stroke
                 if (this._selectedBrushStroke === null){
                     this._selectedBrushStroke = new GLBrushStroke();
+                    if (this.application.ninja.colorController.colorToolbar.stroke.webGlColor){
+                        this._selectedBrushStroke.setStrokeColor(this.application.ninja.colorController.colorToolbar.stroke.webGlColor);
+                    }
+                    //TODO get these values from the options
+                    this._selectedBrushStroke.setStrokeWidth(20);
                 }
                 NJevent("enableStageMove");//stageManagerModule.stageManager.enableMouseMove();
             } //value: function (event) {
@@ -132,10 +137,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
                 this._isDrawing = false;
                 this._hasDraw = false;
 
-                //TODO get these values from the options
-                if (this._selectedBrushStroke){
-                    this._selectedBrushStroke.setStrokeWidth(20);
-                }
+
                 //display the previously drawn stroke in a separate canvas
                 this.RenderCurrentBrushStroke();
 
@@ -150,7 +152,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
                 //clear the canvas before we draw anything else
                 this.application.ninja.stage.clearDrawingCanvas();
                 if (this._selectedBrushStroke && this._selectedBrushStroke.getNumPoints()>0){
-                    this._selectedBrushStroke.computeMetaGeometry();
+                    //this._selectedBrushStroke.computeMetaGeometry();
                     var ctx = this.application.ninja.stage.drawingContext;//stageManagerModule.stageManager.drawingContext;
                     if (ctx === null)
                         throw ("null drawing context in Brushtool::ShowCurrentBrushStrokeOnStage");
