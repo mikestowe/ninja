@@ -17,6 +17,14 @@ exports.ColorSelect = Montage.create(Component, {
         value: null
     },
 
+    strokeChip: {
+        value: null
+    },
+
+    fillChip: {
+        value: null
+    },
+
     handleChange: {
         value: function(e) {
 
@@ -56,6 +64,19 @@ exports.ColorSelect = Montage.create(Component, {
 //                this.options[i].name = this.element.getElementsByTagName("select")[0].add(tmpOption);
 //            }
 
+        }
+    },
+
+    destroy: {
+        value: function() {
+            if(this.strokeChip)
+            {
+                this.strokeChip.destroy();
+            }
+            if(this.fillChip)
+            {
+                this.fillChip.destroy();
+            }
         }
     }
 
