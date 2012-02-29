@@ -85,7 +85,6 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
             {
                 // Reset to the identity matrix but retain the rotation values
                 item = this._targets[i];
-                elt = item.elt;
                 mat = item.mat.slice(0);
                 mat[12] = 0;
                 mat[13] = 0;
