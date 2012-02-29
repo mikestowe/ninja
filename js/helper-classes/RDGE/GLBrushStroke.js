@@ -34,7 +34,7 @@ function GLBrushStroke() {
     this._strokeMaterial;
     this._strokeStyle = "Solid";
 
-    //the wetness of the brush (currently this is multiplied to the square of the stroke width, but todo should be changed
+    //the wetness of the brush (currently this is multiplied to the square of the stroke width, but todo should be changed to not depend on stroke width entirely
     this._WETNESS_FACTOR = 0.010625;//0.0625;
 
     //drawing context
