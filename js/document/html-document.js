@@ -649,7 +649,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     		//TODO: Add logic to handle save before preview
     		this.saveAll();
     		//Launching 'blank' tab for testing movie
-    		chrome.tabs.create({url: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]});		
+    		window.open(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);
+    		//chrome.tabs.create({url: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]});		
     	}
     },
 	////////////////////////////////////////////////////////////////////
