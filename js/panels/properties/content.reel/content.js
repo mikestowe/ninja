@@ -172,6 +172,17 @@ exports.Content = Montage.create(Component, {
             this.positionSize.widthSize = parseFloat(ElementsMediator.getProperty(stage, "width"));
 
             if(this.customPi !== stage.elementModel.pi) {
+                // We need to unregister color chips from the previous selection from the Color Model
+                var len = this.customSections.length;
+                for(var n = 0, controls; n < len; n++) {
+                    controls = this.customSections[n].content.controls;
+                    if(controls["colorSelect"]) {
+                        controls["colorSelect"].destroy();
+                    } else if(controls["stageBackground"]) {
+                        controls["stageBackground"].destroy();
+                    }
+                }
+
                 this.customPi = stage.elementModel.pi;
                 this.displayCustomProperties(stage, stage.elementModel.pi);
             }
@@ -237,6 +248,17 @@ exports.Content = Montage.create(Component, {
 
             // Custom Section
             if(this.customPi !== el.elementModel.pi) {
+                // We need to unregister color chips from the previous selection from the Color Model
+                var len = this.customSections.length;
+                for(var n = 0, controls; n < len; n++) {
+                    controls = this.customSections[n].content.controls;
+                    if(controls["colorSelect"]) {
+                        controls["colorSelect"].destroy();
+                    } else if(controls["stageBackground"]) {
+                        controls["stageBackground"].destroy();
+                    }
+                }
+
                 this.customPi = el.elementModel.pi;
                 this.displayCustomProperties(el, el.elementModel.pi);
             }
