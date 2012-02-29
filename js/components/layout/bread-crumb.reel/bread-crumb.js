@@ -7,7 +7,7 @@
 var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
-var Breadcrumb = exports.Breadcrumb = Montage.create(Component, {
+exports.Breadcrumb = Montage.create(Component, {
 
     _container:{
         value:null
@@ -29,23 +29,9 @@ var Breadcrumb = exports.Breadcrumb = Montage.create(Component, {
         value: []
     },
 
-
-    deserializedFromTemplate : {
+    prepareForDraw: {
         value: function() {
-            this.eventManager.addEventListener( "appLoaded", this, false);
-            this.eventManager.addEventListener( "breadCrumbTrail", this, false);
-        }
-    },
-
-    handleAppLoaded : {
-        value: function() {
-
-            Object.defineBinding(this, "container", {
-                    boundObject: this.application.ninja,
-                    boundObjectPropertyPath: "currentSelectedContainer",
-                    oneway: false
-            });
-
+            this.breadcrumbBt.addEventListener("action", this, false);
         }
     },
 
@@ -53,56 +39,38 @@ var Breadcrumb = exports.Breadcrumb = Montage.create(Component, {
         value: function() {
             var parentNode;
 
-            this.containerElements.length = 0
+            this.containerElements.length = 0;
 
-            if(this.container.id === "UserContent") {
-                this.containerElements.push({selected:false, element:this.container});
-            } else {
-                parentNode = this.container;
+            parentNode = this.container;
 
-                while(parentNode.id!=="UserContent") {
-                    this.containerElements.unshift({selected:false,element:parentNode});
-                    parentNode = parentNode.parentNode;
-                }
-
-                this.containerElements.unshift({selected:false,element:parentNode});
+            while(parentNode.id !== "UserContent") {
+                this.containerElements.unshift({"node": parentNode, "nodeUuid":parentNode.uuid, "label": parentNode.nodeName});
+                parentNode = parentNode.parentNode;
             }
 
-            NJevent('layerBinding',{selected:false ,element:this.container})
+            // This is always the top container which is now hardcoded to body
+            this.containerElements.unshift({"node": parentNode, "nodeUuid":parentNode.uuid, "label": "Body"});
+
+            // This is for the timeline -- Disable it since the timeline should not know about this object
+            // NJevent('layerBinding',{selected:false ,element:this.container})
+
         }
     },
 
-    handleBreadCrumbTrail: {
-        value: function(event) {
-            var newLength,revaluatedLength,tmpvalue;
-            var i=0;
+    handleAction: {
+        value: function(evt) {
 
-            if(event.detail.setFlag ){
-                this.application.ninja.currentSelectedContainer = event.detail.element;
+            if(evt.target.value === this.container.uuid) {
                 return;
             }
 
-            newLength = this.containerElements.length;
+            for(var i = this.containerElements.length - 1; i >= 0; i--) {
+                if(evt.target.value === this.containerElements[i].nodeUuid) break;
 
-            while(i < newLength ){
-                if(this.containerElements[i].selected){
-                    tmpvalue = i;
-                    break;
-                }
-                i++;
+                this.containerElements.pop();
             }
 
-            for(i = newLength -1 ; i >= 1 ; i--) {
-                if(tmpvalue !== i) {
-                    this.containerElements.pop();
-                } else {
-                    break;
-                }
-            }
-
-            revaluatedLength = this.containerElements.length;
-            this.application.ninja.currentSelectedContainer = this.containerElements[revaluatedLength-1].element;
-
+            this.application.ninja.currentSelectedContainer = this.containerElements[i].node;
         }
     }
 });

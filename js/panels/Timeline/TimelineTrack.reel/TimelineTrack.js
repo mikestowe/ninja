@@ -377,7 +377,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             // This needs to move to a keyboard shortcut that is TBD
 
             var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
-            //this.application.ninja.timeline.selectLayer(selectIndex);
 
             if (ev.shiftKey) {
                 if (this.application.ninja.timeline.arrLayers[selectedIndex].elementsList.length == 1) {
@@ -520,6 +519,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                         i++;
                         this.nextKeyframe += 1;
                     }
+                    this.isTrackAnimated = true;
                 }
             }
             else{
@@ -533,7 +533,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.tweens[0].tweenedProperties["top"] = this.animatedElement.offsetTop;
             this.tweens[0].tweenedProperties["left"] = this.animatedElement.offsetLeft;
             var animationDuration = Math.round(this.trackDuration / 1000) + "s";
-            this.animationName = "animation_" + this.animatedElement.className;
+            this.animationName = "animation_" + this.animatedElement.classList[0];
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-name", this.animationName);
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-duration", animationDuration);
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-iteration-count", "infinite");
@@ -553,7 +553,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             var keyframeString = "@-webkit-keyframes " + this.animationName + " {";
 
             for (var i = 0; i < this.tweens.length; i++) {
-                var keyframePercent = Math.round((this.tweens[i].keyFrameMillisec / this.trackDuration) * 100) + "%";
+                var keyMill = parseInt(this.tweens[i].keyFrameMillisec);
+                // TODO - trackDur should be parseFloat rounded to significant digits
+                var trackDur = parseInt(this.trackDuration);
+                var keyframePercent = Math.round((keyMill / trackDur) * 100) + "%";
                 var keyframePropertyString = " " + keyframePercent + " {";
                 keyframePropertyString += "top: " + this.tweens[i].tweenedProperties["top"] + "px;";
                 keyframePropertyString += " left: " + this.tweens[i].tweenedProperties["left"] + "px;";
