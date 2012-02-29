@@ -135,10 +135,13 @@ exports.Resizer = Montage.create(Component, {
 
     handleWebkitTransitionEnd: {
         value: function() {
+
             if(this.redrawStage) {
                 this.application.ninja.stage.resizeCanvases = true;
             }
-            this.panel.removeEventListener("webkitTransitionEnd");
+
+            this.panel.removeEventListener("webkitTransitionEnd", this, false);
+
         }
     },
  
