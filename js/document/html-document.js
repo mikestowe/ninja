@@ -719,15 +719,14 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 
 
 
-            if((this.savedLeftScroll!== null) && (this.savedTopScroll !== null)){
+            if((this.savedLeftScroll !== null) && (this.savedTopScroll !== null)){
                 this.application.ninja.stage._iframeContainer.scrollLeft = this.savedLeftScroll;
-                this.application.ninja.stage._scrollLeft = this.savedLeftScroll;
                 this.application.ninja.stage._iframeContainer.scrollTop = this.savedTopScroll;
-                this.application.ninja.stage._scrollLeft = this.savedTopScroll;
+                this.application.ninja.stage.handleScroll();
             }
 
             this.application.ninja.currentSelectedContainer = this.documentRoot;
-            if((typeof this.selectionModel !== 'undefined') && (this.selectionModel !== null)){
+            if(this.selectionModel){
                 this.application.ninja.selectedElements = this.selectionModel.slice(0);
             }
 
