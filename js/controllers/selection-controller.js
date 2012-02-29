@@ -99,7 +99,7 @@ exports.SelectionController = Montage.create(Component, {
             }
             NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument} );
 
-            this._selectionContainer = this.application.ninja.currentSelectedContainer;
+			this._selectionContainer = this.application.ninja.currentSelectedContainer;
         }
     },
 

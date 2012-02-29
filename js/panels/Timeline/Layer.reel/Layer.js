@@ -509,7 +509,6 @@ var Layer = exports.Layer = Montage.create(Component, {
             	this.styleCollapser.bypassAnimation = true;
             	this.styleCollapser.toggle();
             }
-            
             if (this.isSelected) {
             	this.element.classList.add("selected");
             } else {

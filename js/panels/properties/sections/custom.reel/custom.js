@@ -59,6 +59,8 @@ exports.CustomSection = Montage.create(Component, {
                         if(obj1.visible === false) tmpRow.colorVisible = obj1.visible;
                         if(obj2.visible === false) tmpRow.color2Visible = obj2.visible;
 
+                        // TODO - Hack for now to reference the color select object to unregister color chips
+                        this.controls["colorSelect"] = tmpRow;
                     }
                     else
                     {
@@ -343,6 +345,9 @@ exports.CustomSection = Montage.create(Component, {
             obj.changeDelegate = this.handleColorChange;
 
             this.controls[aField.id] = obj;
+
+            // TODO - Hack for now to reference the color select object to unregister color chips
+            this.controls["stageBackground"] = obj;
 
             return obj;
         }

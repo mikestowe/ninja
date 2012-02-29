@@ -39,6 +39,12 @@ exports.IoMediator = Montage.create(Component, {
     	enumerable: false,
     	value: ProjectIo
     },
+    ////////////////////////////////////////////////////////////////////
+    //
+    appTemplatesUrl: {
+    	enumerable: false,
+    	value: new RegExp(chrome.extension.getURL('js/document/templates/montage-html/'), 'gi')
+    },
 	////////////////////////////////////////////////////////////////////
     //
     fileNew: {
@@ -209,8 +215,7 @@ exports.IoMediator = Montage.create(Component, {
     		template.document.content.document.head.innerHTML = template.head;
     		//Getting all CSS (style or link) tags
     		var styletags = template.document.content.document.getElementsByTagName('style'),
-    			linktags = template.document.content.document.getElementsByTagName('link'),
-    			url = new RegExp(chrome.extension.getURL('js/document/templates/montage-html/'), 'gi'); //TODO: Make public into var
+    			linktags = template.document.content.document.getElementsByTagName('link');
     		//Looping through link tags and removing file recreated elements
     		for (var j in styletags) {
     			if (styletags[j].getAttribute) {
@@ -260,6 +265,17 @@ exports.IoMediator = Montage.create(Component, {
     			var styleCounter = 0,
     				docStyles = template.document.content.document.getElementsByTagName('style'),
     				docLinks = template.document.content.document.getElementsByTagName('link');
+    			//Removing Ninja Data Attributes
+    			for (var n in docLinks) {
+    				if (docLinks[n].attributes) {
+    					for (var m in docLinks[n].attributes) {
+							if (docLinks[n].attributes[m].name && docLinks[n].attributes[m].name.indexOf('data-ninja')!=-1) {
+								docLinks[n].removeAttribute(docLinks[n].attributes[m].name);
+							}
+						}
+    				}
+    			}
+    			//
     			for(var i in template.css) {
     				if (template.css[i].ownerNode) {
     					if (template.css[i].ownerNode.getAttribute) {
@@ -268,6 +284,22 @@ exports.IoMediator = Montage.create(Component, {
     							docStyles[styleCounter].innerHTML = this.getCssFromRules(template.css[i].cssRules);
     							styleCounter++;
     						} else {
+    							//Checking for attributes to be added to tag upon saving
+    							for (var k in docLinks) {
+    								if (docLinks[k].getAttribute) {
+    									if (docLinks[k].getAttribute('href') && ('/'+docLinks[k].getAttribute('href')) === template.css[i].ownerNode.getAttribute('data-ninja-file-url')) {
+    										for (var l in template.css[i].ownerNode.attributes) {
+    											if (template.css[i].ownerNode.attributes[l].value) {
+    												if (template.css[i].ownerNode.attributes[l].name.indexOf('data-ninja')!=-1) {
+    													//Ninja attribute...
+    												} else {
+    													docLinks[k].setAttribute(template.css[i].ownerNode.attributes[l].name, template.css[i].ownerNode.attributes[l].value);
+    												}
+    											}
+    										}
+    									}
+    								}
+    							}
     							//Saving data from rules array converted to string into <link> file
     							var save = this.fio.saveFile({uri: template.css[i].ownerNode.getAttribute('data-ninja-uri'), contents: this.getCssFromRules(template.css[i].cssRules)});
     						}
@@ -318,7 +350,7 @@ exports.IoMediator = Montage.create(Component, {
     			webgltag.innerHTML = json;
     		}
     		//
-    		return this.getPrettyHtml(template.document.content.document.documentElement.outerHTML.replace(url, ''));
+    		return this.getPrettyHtml(template.document.content.document.documentElement.outerHTML.replace(this.appTemplatesUrl, ''));
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -327,7 +359,7 @@ exports.IoMediator = Montage.create(Component, {
     	enumerable: false,
     	value: function (list) {
     		//Variable to store CSS definitions
-    		var i, str, url, css = '';
+    		var i, str, css = '';
     		//Looping through list
     		if (list && list.length > 0) {
     			//Adding each list item to string and also adding breaks
@@ -335,10 +367,8 @@ exports.IoMediator = Montage.create(Component, {
     				css += list[i].cssText;
     			}
     		}
-    		//TODO: Add better logic for creating this string
-    		url = new RegExp(chrome.extension.getURL('js/document/templates/montage-html/'), 'gi');
     		//Returning the CSS string
-    		return this.getPrettyCss(css.replace(url, ''));
+    		return this.getPrettyCss(css.replace(this.appTemplatesUrl, ''));
     	}
     },
     ////////////////////////////////////////////////////////////////////

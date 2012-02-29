@@ -430,6 +430,33 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             }
             
             
+            
+            
+            //Temporarily checking for disabled special case
+            var stags = this.iframe.contentWindow.document.getElementsByTagName('style'),
+            	ltags = this.iframe.contentWindow.document.getElementsByTagName('link');
+           	//
+            for (var m = 0; m < ltags.length; m++) {
+            	if (ltags[m].getAttribute('data-ninja-template') === null) {
+            		if (ltags[m].getAttribute('disabled')) {
+           				ltags[m].removeAttribute('disabled');
+           				ltags[m].setAttribute('data-ninja-disabled', 'true');
+           			}
+           		}
+           	}
+            //
+           	for (var n = 0; n < stags.length; n++) {
+           		if (stags[n].getAttribute('data-ninja-template') === null) {
+           			if (stags[n].getAttribute('disabled')) {
+           				stags[n].removeAttribute('disabled');
+           				stags[n].setAttribute('data-ninja-disabled', 'true');
+            		}
+            	}
+            }
+            
+            
+            
+            
             //Adding a handler for the main user document reel to finish loading
             this._document.body.addEventListener("userTemplateDidLoad",  this.userTemplateDidLoad.bind(this), false);
 
@@ -447,7 +474,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 
             //TODO: When re-written, the best way to initialize the document is to listen for the DOM tree being modified
             setTimeout(function () {
-            	
             	
             	
             	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -474,6 +500,12 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 								tag.setAttribute('data-ninja-file-url', cssUrl);
 								tag.setAttribute('data-ninja-file-read-only', JSON.parse(this.application.ninja.coreIoApi.isFileWritable({uri: fileUri}).content).readOnly);
 								tag.setAttribute('data-ninja-file-name', cssUrl.split('/')[cssUrl.split('/').length-1]);
+								//Copying attributes to maintain same properties as the <link>
+								for (var n in this._document.styleSheets[i].ownerNode.attributes) {
+									if (this._document.styleSheets[i].ownerNode.attributes[n].value && this._document.styleSheets[i].ownerNode.attributes[n].name !== 'disabled') {
+										tag.setAttribute(this._document.styleSheets[i].ownerNode.attributes[n].name, this._document.styleSheets[i].ownerNode.attributes[n].value);
+									}
+								}
 								tag.innerHTML = cssData.content;
 								//Looping through DOM to insert style tag at location of link element
 								query = this._templateDocument.html.querySelectorAll(['link']);
@@ -486,6 +518,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 									}
 								}
 							} else {
+								console.log('ERROR: Cross-Domain-Stylesheet detected, unable to load in Ninja');
 								/*
 //None local stylesheet, probably on a CDN (locked)
 								tag = this.iframe.contentWindow.document.createElement('style');
@@ -635,9 +668,10 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     	enumerable: false,
     	value: function () {
     		//TODO: Add logic to handle save before preview
-    		this.saveAll();
+    		this.application.ninja.documentController.handleExecuteSaveAll(null);
     		//Launching 'blank' tab for testing movie
-    		chrome.tabs.create({url: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]});		
+    		window.open(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);
+    		//chrome.tabs.create({url: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]});		
     	}
     },
 	////////////////////////////////////////////////////////////////////
@@ -716,9 +750,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
         value: function () {
             this.application.ninja.stage.drawUtils.gridHorizontalSpacing = this.gridHorizontalSpacing;
             this.application.ninja.stage.drawUtils.gridVerticalSpacing = this.gridVerticalSpacing;
-
-
-
+           
             if((this.savedLeftScroll !== null) && (this.savedTopScroll !== null)){
                 this.application.ninja.stage._iframeContainer.scrollLeft = this.savedLeftScroll;
                 this.application.ninja.stage._iframeContainer.scrollTop = this.savedTopScroll;

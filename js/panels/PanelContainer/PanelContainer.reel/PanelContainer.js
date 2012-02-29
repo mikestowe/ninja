@@ -45,7 +45,7 @@ exports.PanelContainer = Montage.create(Component, {
     },
 
     initPanelOrder: {
-        value: ['PropertiesPanel','ColorPanel','ComponentsPanel','ProjectPanel','CSSPanel','MaterialsPanel','PresetsPanel']
+        value: ['ColorPanel', 'PropertiesPanel','ComponentsPanel','ProjectPanel','CSSPanel','MaterialsPanel','PresetsPanel']
     },
 
     panelOrder: {
