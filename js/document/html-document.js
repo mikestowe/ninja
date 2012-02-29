@@ -726,6 +726,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
                 this.application.ninja.stage._scrollLeft = this.savedTopScroll;
             }
 
+            this.application.ninja.currentSelectedContainer = this.documentRoot;
             if((typeof this.selectionModel !== 'undefined') && (this.selectionModel !== null)){
                 this.application.ninja.selectedElements = this.selectionModel.slice(0);
             }
@@ -735,7 +736,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             this.application.ninja.undocontroller.undoQueue = this.undoStack.slice(0);
             this.application.ninja.undocontroller.redoQueue = this.redoStack.slice(0);
 
-            this.application.ninja.currentSelectedContainer = this.documentRoot;
+
         }
     }
 	////////////////////////////////////////////////////////////////////
