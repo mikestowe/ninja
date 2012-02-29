@@ -476,7 +476,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                     this.nextKeyframe = 0;
 
                     this.currentKeyframeRule = this.application.ninja.stylesController.getAnimationRuleWithName(this.animationName, this.application.ninja.currentDocument._document);
-                    for (i =0; this.currentKeyframeRule[i] ;i++) {
+                    var currentKeyFrameRuleLength = this.currentKeyframeRule.length;
+                    
+                    for (i =0; i<currentKeyFrameRuleLength ;i++) {
                         var newTween = {};
 
                         offsetAttribute = this.currentKeyframeRule[i].cssText.split(" ");
