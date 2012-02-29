@@ -39,6 +39,12 @@ exports.IoMediator = Montage.create(Component, {
     	enumerable: false,
     	value: ProjectIo
     },
+    ////////////////////////////////////////////////////////////////////
+    //
+    appTemplatesUrl: {
+    	enumerable: false,
+    	value: new RegExp(chrome.extension.getURL('js/document/templates/montage-html/'), 'gi')
+    },
 	////////////////////////////////////////////////////////////////////
     //
     fileNew: {
@@ -209,8 +215,7 @@ exports.IoMediator = Montage.create(Component, {
     		template.document.content.document.head.innerHTML = template.head;
     		//Getting all CSS (style or link) tags
     		var styletags = template.document.content.document.getElementsByTagName('style'),
-    			linktags = template.document.content.document.getElementsByTagName('link'),
-    			url = new RegExp(chrome.extension.getURL('js/document/templates/montage-html/'), 'gi'); //TODO: Make public into var
+    			linktags = template.document.content.document.getElementsByTagName('link');
     		//Looping through link tags and removing file recreated elements
     		for (var j in styletags) {
     			if (styletags[j].getAttribute) {
@@ -345,7 +350,7 @@ exports.IoMediator = Montage.create(Component, {
     			webgltag.innerHTML = json;
     		}
     		//
-    		return this.getPrettyHtml(template.document.content.document.documentElement.outerHTML.replace(url, ''));
+    		return this.getPrettyHtml(template.document.content.document.documentElement.outerHTML.replace(this.appTemplatesUrl, ''));
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -354,7 +359,7 @@ exports.IoMediator = Montage.create(Component, {
     	enumerable: false,
     	value: function (list) {
     		//Variable to store CSS definitions
-    		var i, str, url, css = '';
+    		var i, str, css = '';
     		//Looping through list
     		if (list && list.length > 0) {
     			//Adding each list item to string and also adding breaks
@@ -362,10 +367,8 @@ exports.IoMediator = Montage.create(Component, {
     				css += list[i].cssText;
     			}
     		}
-    		//TODO: Add better logic for creating this string
-    		url = new RegExp(chrome.extension.getURL('js/document/templates/montage-html/'), 'gi');
     		//Returning the CSS string
-    		return this.getPrettyCss(css.replace(url, ''));
+    		return this.getPrettyCss(css.replace(this.appTemplatesUrl, ''));
     	}
     },
     ////////////////////////////////////////////////////////////////////
