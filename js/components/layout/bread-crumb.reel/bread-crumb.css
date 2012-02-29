@@ -12,7 +12,9 @@
     -webkit-box-flex: 0;
 }
 
-.breadcrumbTrail button {
+.breadcrumbTrail button.nj-skinned {
     float: left;
     width: 60px;
+    margin: 2px;
 }
+
