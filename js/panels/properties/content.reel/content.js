@@ -81,6 +81,12 @@ exports.Content = Montage.create(Component, {
             // For now always assume that the stage is selected by default
             if(this.application.ninja.selectedElements.length === 0) {
                 this.displayStageProperties();
+            }else{
+                if(this.application.ninja.selectedElements.length === 1) {
+                    this.displayElementProperties(this.application.ninja.selectedElements[0]._element);
+                } else {
+                    this.displayGroupProperties(this.application.ninja.selectedElements);
+                }
             }
         }
     },
