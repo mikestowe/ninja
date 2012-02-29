@@ -141,7 +141,7 @@ exports.ToolsData = Montage.create(Montage, {
                 "spriteSheet":  true,
                 "action":       "BrushTool",
                 "toolTip":      "Brush Tool",
-                "cursor":       "url('images/tools/brush_down.png'), default",
+                "cursor":       "url('images/tools/brush_down.png') 9 17, default",
                 "lastInGroup":  false,
                 "container":    false,
                 "selected":     false

@@ -35,7 +35,8 @@ function GLBrushStroke() {
     this._strokeStyle = "Solid";
 
     //the wetness of the brush (currently this is multiplied to the square of the stroke width, but todo should be changed to not depend on stroke width entirely
-    this._WETNESS_FACTOR = 0.010625;//0.0625;
+    //smaller value means more samples for the path
+    this._WETNESS_FACTOR = 0.25;
 
     //drawing context
     this._world = null;
@@ -75,10 +76,10 @@ function GLBrushStroke() {
         //add the point only if it is some epsilon away from the previous point
         var numPoints = this._Points.length;
         if (numPoints>0) {
-            var threshold = this._WETNESS_FACTOR*this._strokeWidth*this._strokeWidth;
+            var threshold = this._WETNESS_FACTOR*this._strokeWidth;
             var prevPt = this._Points[numPoints-1];
             var diffPt = [prevPt[0]-pt[0], prevPt[1]-pt[1]];
-            var diffPtMag = diffPt[0]*diffPt[0] + diffPt[1]*diffPt[1];
+            var diffPtMag = Math.sqrt(diffPt[0]*diffPt[0] + diffPt[1]*diffPt[1]);
             if (diffPtMag>threshold){
                 this._Points.push(pt);
                 this._dirty=true;
@@ -136,7 +137,7 @@ function GLBrushStroke() {
 
             //**** add samples to the path if needed...linear interpolation for now
             if (numPoints>1) {
-                var threshold = this._WETNESS_FACTOR*this._strokeWidth*this._strokeWidth;
+                var threshold = this._WETNESS_FACTOR*this._strokeWidth;
                 var prevPt = this._Points[0];
                 var prevIndex = 0;
                 for (var i=1;i<numPoints;i++){
@@ -324,17 +325,14 @@ function GLBrushStroke() {
 
         var R2 = this._strokeWidth;
         var R = R2*0.5;
-        var hardness = 0.25; //for a pencil, this is always 1 //TODO get hardness parameter from user interface
+        var hardness = 0; //for a pencil, this is always 1 //TODO get hardness parameter from user interface
         var innerRadius = (hardness*R)-1;
         if (innerRadius<1)
             innerRadius=1;
 
         var r = ctx.createRadialGradient(0,0,innerRadius, 0,0,R);
-        //r.addColorStop(0, 'rgba(255,0,0,0.5)');
-        var midColor = "rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+",0.5)";
+        var midColor = "rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+",1)";
         r.addColorStop(0, midColor);
-        //r.addColorStop(0.5, 'rgba(255,0,0,0.5)'); // prevent aggregation of semi-opaque pixels
-        //r.addColorStop(1, 'rgba(255,0,0,0.0)');
         var endColor = "rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+",0.0)";
         r.addColorStop(1, endColor);
         ctx.fillStyle = r;

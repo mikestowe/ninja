@@ -67,6 +67,10 @@ exports.BrushTool = Montage.create(ShapeTool, {
                     if (this.application.ninja.colorController.colorToolbar.stroke.webGlColor){
                         this._selectedBrushStroke.setStrokeColor(this.application.ninja.colorController.colorToolbar.stroke.webGlColor);
                     }
+                    //add this point to the brush stroke in case the user does a mouse up before doing a mouse move
+                    var currMousePos = this._getUnsnappedPosition(event.pageX, event.pageY);
+                    this._selectedBrushStroke.addPoint(currMousePos);
+
                     //TODO get these values from the options
                     this._selectedBrushStroke.setStrokeWidth(20);
                 }
@@ -108,7 +112,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
 
                 if (this._isDrawing) {
                     var currMousePos = this._getUnsnappedPosition(event.pageX, event.pageY);
-                    if (this._selectedBrushStroke){
+                    if (this._selectedBrushStroke && this._selectedBrushStroke.getNumPoints()<100){
                        this._selectedBrushStroke.addPoint(currMousePos);
                     }
                     this.ShowCurrentBrushStrokeOnStage();
