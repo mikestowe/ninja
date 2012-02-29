@@ -19,23 +19,51 @@ exports.ShapesController = Montage.create(CanvasController, {
                     this.setShapeProperty(el, "strokeSize", value);
                     el.elementModel.shapeModel.GLGeomObj.setStrokeWidth(val);
                     el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                    el.elementModel.shapeModel.GLWorld.render();
                     break;
                 case "innerRadius":
                     this.setShapeProperty(el, "innerRadius", value);
                     el.elementModel.shapeModel.GLGeomObj.setInnerRadius(val/100);
                     el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                    el.elementModel.shapeModel.GLWorld.render();
+                    break;
+                case "tlRadius":
+                    this.setShapeProperty(el, "tlRadius", value);
+                    el.elementModel.shapeModel.GLGeomObj.setTLRadius(val);
+                    el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                    el.elementModel.shapeModel.GLWorld.render();
+                    break;
+                case "trRadius":
+                    this.setShapeProperty(el, "trRadius", value);
+                    el.elementModel.shapeModel.GLGeomObj.setTRRadius(val);
+                    el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                    el.elementModel.shapeModel.GLWorld.render();
+                    break;
+                case "blRadius":
+                    this.setShapeProperty(el, "blRadius", value);
+                    el.elementModel.shapeModel.GLGeomObj.setBLRadius(val);
+                    el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                    el.elementModel.shapeModel.GLWorld.render();
+                    break;
+                case "brRadius":
+                    this.setShapeProperty(el, "brRadius", value);
+                    el.elementModel.shapeModel.GLGeomObj.setBRRadius(val);
+                    el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                    el.elementModel.shapeModel.GLWorld.render();
                     break;
                 case "width":
                     el.elementModel.shapeModel.GLGeomObj.setWidth(val);
                     CanvasController.setProperty(el, p, value);
                     el.elementModel.shapeModel.GLWorld.setViewportFromCanvas(el);
                     el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                    el.elementModel.shapeModel.GLWorld.render();
                     break;
                 case "height":
                     el.elementModel.shapeModel.GLGeomObj.setHeight(val);
                     CanvasController.setProperty(el, p, value);
                     el.elementModel.shapeModel.GLWorld.setViewportFromCanvas(el);
                     el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                    el.elementModel.shapeModel.GLWorld.render();
                     break;
                 case "useWebGl":
                     var canvas = njModule.NJUtils.makeNJElement("canvas", "Canvas", "shape", el.className, true);
@@ -56,6 +84,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                         el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(sm);
                         el.elementModel.shapeModel.strokeMaterial = sm;
                         el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                        el.elementModel.shapeModel.GLWorld.render();
                     }
                     break;
                 case "fillMaterial":
@@ -65,12 +94,12 @@ exports.ShapesController = Montage.create(CanvasController, {
                         el.elementModel.shapeModel.GLGeomObj.setFillMaterial(fm);
                         el.elementModel.shapeModel.fillMaterial = fm;
                         el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                        el.elementModel.shapeModel.GLWorld.render();
                     }
                     break;
                 default:
                     CanvasController.setProperty(el, p, value);
             }
-            el.elementModel.shapeModel.GLWorld.render();
         }
     },
 
