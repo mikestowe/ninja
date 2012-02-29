@@ -726,7 +726,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             }
 
             this.application.ninja.currentSelectedContainer = this.documentRoot;
-            if(!this.selectionModel){
+            if(this.selectionModel){
                 this.application.ninja.selectedElements = this.selectionModel.slice(0);
             }
 
