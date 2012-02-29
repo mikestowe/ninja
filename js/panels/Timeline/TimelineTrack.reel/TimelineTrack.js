@@ -519,6 +519,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                         i++;
                         this.nextKeyframe += 1;
                     }
+                    this.isTrackAnimated = true;
                 }
             }
             else{
