@@ -18,6 +18,7 @@ exports.EyedropperTool = Montage.create(toolBase, {
     _elementUnderMouse: { value: null },
     _imageDataCanvas: { value: null },
     _imageDataContext: { value: null },
+    _canSnap: { value: false },
 
     Configure: {
         value: function ( doActivate )
@@ -70,7 +71,7 @@ exports.EyedropperTool = Montage.create(toolBase, {
                     this._escape = false;
                 }
 
-                this._updateColor(this._color);
+                this._updateColor(this._color, true);
 
                 this._color = null;
 
@@ -85,18 +86,7 @@ exports.EyedropperTool = Montage.create(toolBase, {
             if(this._color && this._color.value)
             {
                 var color = this.application.ninja.colorController.getColorObjFromCss(this._previousColor);
-
-                if (color && color.value) {
-                    color.value.wasSetByCode = true;
-                    color.value.type = 'change';
-                    if (color.value.a) {
-                        this.application.ninja.colorController.colorModel.alpha = {value: color.value.a,
-                                                                                    wasSetByCode: true,
-                                                                                    type: 'change'};
-                    }
-                    this.application.ninja.colorController.colorModel[color.mode] = color.value;
-                    this._color = null;
-                }
+                this._updateColor(color, true);
             }
             this._escape = true;
         }
@@ -143,24 +133,18 @@ exports.EyedropperTool = Montage.create(toolBase, {
                 {
                     this._deleteImageDataCanvas();
 
-                    c = ElementsMediator.getColor(obj, this._isOverBackground(obj, event));
-                    if(c)
+                    c = this._getColorFromElement(obj, event);
+                    if(typeof(c) === "string")
+                    {
+                        color = this.application.ninja.colorController.getColorObjFromCss(c);
+                    }
+                    else
                     {
                         color = this.application.ninja.colorController.getColorObjFromCss(c.color.css);
                     }
                 }
 
-                if (color && color.value) {
-                    color.value.wasSetByCode = true;
-                    color.value.type = 'changing';
-                    if (color.value.a) {
-                        this.application.ninja.colorController.colorModel.alpha = {value: color.value.a,
-                                                                                    wasSetByCode: true,
-                                                                                    type: 'changing'};
-                    }
-                    this.application.ninja.colorController.colorModel[color.mode] = color.value;
-                    this._color = color;
-                }
+                this._updateColor(color, false);
             }
             else
             {
@@ -172,81 +156,136 @@ exports.EyedropperTool = Montage.create(toolBase, {
     },
 
     _updateColor: {
-        value: function(color) {
-            if (color && color.value) {
-                var input = this.application.ninja.colorController.colorModel.input;
-
-                if(input === "fill")
+        value: function(color, updateColorToolBar) {
+            var eventType = "changing";
+            if(updateColorToolBar)
+            {
+                eventType = "change";
+                if (color && color.value)
                 {
-                    this.application.ninja.colorController.colorToolbar.fill_btn.color(color.mode, color.value);
+                    var input = this.application.ninja.colorController.colorModel.input;
+
+                    if(input === "fill")
+                    {
+                        this.application.ninja.colorController.colorToolbar.fill_btn.color(color.mode, color.value);
+                    }
+                    else
+                    {
+                        this.application.ninja.colorController.colorToolbar.stroke_btn.color(color.mode, color.value);
+                    }
+
+                    // Updating color chips will set the input type to "chip", so set it back here.
+                    this.application.ninja.colorController.colorModel.input = input;
+                }
+            }
+
+            if(color)
+            {
+                if(color.color)
+                {
+                    color.color.wasSetByCode = true;
+                    color.color.type = eventType;
+                }
+
+                if(color.mode === "gradient")
+                {
+                    this.application.ninja.colorController.colorModel["gradient"] =
+                                    {value: color.color, wasSetByCode: true, type: eventType};
                 }
                 else
                 {
-                    this.application.ninja.colorController.colorToolbar.stroke_btn.color(color.mode, color.value);
+                    if (color.color.a !== undefined)
+                    {
+                        this.application.ninja.colorController.colorModel.alpha =
+                                        {value: color.color.a, wasSetByCode: true, type: eventType};
+                    }
+                    if(color.color.mode)
+                    {
+                        this.application.ninja.colorController.colorModel[color.color.mode] = color.color;
+                    }
+                    else
+                    {
+                        this.application.ninja.colorController.colorModel["rgb"] = color.color;
+                    }
                 }
 
-                // Updating color chips will set the input type to "chip", so set it back here.
-                this.application.ninja.colorController.colorModel.input = input;
-
-                color.value.wasSetByCode = true;
-                color.value.type = 'change';
-                if (color.value.a) {
-                    this.application.ninja.colorController.colorModel.alpha = {value: color.value.a,
-                                                                                wasSetByCode: true,
-                                                                                type: 'change'};
+                if(updateColorToolBar)
+                {
+                    this._previousColor = color.color.css;
                 }
-                this.application.ninja.colorController.colorModel[color.mode] = color.value;
-                this._previousColor = color.value.css;
             }
+            else
+            {
+                this.application.ninja.colorController.colorModel.alpha = {value: 1, wasSetByCode: true, type: eventType};
+                this.application.ninja.colorController.colorModel.applyNoColor();
+                if(updateColorToolBar)
+                {
+                    this._previousColor = "none";
+                }
+            }
+
+            this._color = color;
         }
     },
 
     // TODO - We don't want to calculate this repeatedly
-    _isOverBackground: {
+    _getColorFromElement: {
         value: function(elt, event)
         {
-            var border = ElementsMediator.getProperty(elt, "border", parseFloat);
-
+            var border = ElementsMediator.getProperty(elt, "border"),
+                borderWidth,
+                bounds3D,
+                innerBounds,
+                pt,
+                bt,
+                br,
+                bb,
+                bl,
+                xAdj,
+                yAdj,
+                tmpPt,
+                x,
+                y;
             if(border)
             {
-                var bounds3D,
-                    innerBounds = [],
-                    pt = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(event.pageX, event.pageY)),
-                    bt = ElementsMediator.getProperty(elt, "border-top", parseFloat),
-                    br = ElementsMediator.getProperty(elt, "border-right", parseFloat),
-                    bb = ElementsMediator.getProperty(elt, "border-bottom", parseFloat),
-                    bl = ElementsMediator.getProperty(elt, "border-left", parseFloat);
-
-//                this.application.ninja.stage.viewUtils.setViewportObj( elt );
                 bounds3D = this.application.ninja.stage.viewUtils.getElementViewBounds3D( elt );
-//                console.log("bounds");
-//                console.dir(bounds3D);
+                innerBounds = [];
+                pt = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas,
+                                                                        new WebKitPoint(event.pageX, event.pageY));
+                borderWidth = parseFloat(border);
+                if(isNaN(borderWidth))
+                {
+                    bt = ElementsMediator.getProperty(elt, "border-top", parseFloat);
+                    br = ElementsMediator.getProperty(elt, "border-right", parseFloat);
+                    bb = ElementsMediator.getProperty(elt, "border-bottom", parseFloat);
+                    bl = ElementsMediator.getProperty(elt, "border-left", parseFloat);
+                    borderWidth = 0;
+                }
+                xAdj = bl || borderWidth;
+                yAdj = bt || borderWidth;
 
-                var xAdj = bl || border,
-                    yAdj = bt || border;
                 innerBounds.push([bounds3D[0][0] + xAdj, bounds3D[0][1] + yAdj, 0]);
 
-                yAdj += bb || border;
+                yAdj = bb || borderWidth;
                 innerBounds.push([bounds3D[1][0] + xAdj, bounds3D[1][1] - yAdj, 0]);
 
-                xAdj += br || border;
+                xAdj = br || borderWidth;
                 innerBounds.push([bounds3D[2][0] - xAdj, bounds3D[2][1] - yAdj, 0]);
 
-                yAdj = bt || border;
+                yAdj = bt || borderWidth;
                 innerBounds.push([bounds3D[3][0] - xAdj, bounds3D[3][1] + yAdj, 0]);
-//                console.log("innerBounds");
-//                console.dir(innerBounds);
 
-                var tmpPt = this.application.ninja.stage.viewUtils.globalToLocal([pt.x, pt.y], elt);
-                var x = tmpPt[0],
-                    y = tmpPt[1];
+                tmpPt = this.application.ninja.stage.viewUtils.globalToLocal([pt.x, pt.y], elt);
+                x = tmpPt[0];
+                y = tmpPt[1];
 
-                if(x < innerBounds[0][0]) return false;
-                if(x > innerBounds[2][0]) return false;
-                if(y < innerBounds[0][1]) return false;
-                if(y > innerBounds[1][1]) return false;
+                if(x < innerBounds[0][0]) return ElementsMediator.getProperty(elt, "border-left-color");
+                if(x > innerBounds[2][0]) return ElementsMediator.getProperty(elt, "border-right-color");
+                if(y < innerBounds[0][1]) return ElementsMediator.getProperty(elt, "border-top-color");
+                if(y > innerBounds[1][1]) return ElementsMediator.getProperty(elt, "border-bottom-color");
             }
-            return true;
+
+            return ElementsMediator.getColor(elt, true);
         }
     },
 
@@ -271,8 +310,6 @@ exports.EyedropperTool = Montage.create(toolBase, {
                 this._imageDataCanvas.width = w;
                 this._imageDataCanvas.height = h;
 
-//                this.application.ninja.currentDocument.documentRoot.appendChild(this._imageDataCanvas);
-
                 this._imageDataContext = this._imageDataCanvas.getContext("2d");
                 this._imageDataContext.drawImage(elt, 0, 0);
             }
@@ -289,7 +326,6 @@ exports.EyedropperTool = Montage.create(toolBase, {
     _getColorFromCanvas: {
         value: function(ctx, pt)
         {
-//            var imageData = ctx.getImageData(pt.x, pt.y, 1, 1).data;
             var imageData = ctx.getImageData(pt[0], pt[1], 1, 1).data;
             if(imageData)
             {
@@ -307,7 +343,6 @@ exports.EyedropperTool = Montage.create(toolBase, {
         {
             if(this._imageDataCanvas)
             {
-//                this.application.ninja.currentDocument.documentRoot.removeChild(this._imageDataCanvas);
                 this._imageDataCanvas = null;
                 this._imageDataContext = null;
             }

@@ -32,62 +32,72 @@ exports.PanelBase = Montage.create(Component, {
     contentHeight: {
          get: function() {
             if(this._contentHeight == null) {
+                // Old settings
+                /*
                 if(this.application.ninja.settings.getSetting(this.panelName, "contentHeight")) {
                     this._contentHeight = this.application.ninja.settings.getSetting(this.panelName, "contentHeight");
-                } else {
-                    this._contentHeight = this.defaultHeight;
-                }
+                } */
+
+                this._contentHeight = this.defaultHeight;
             }
              return this._contentHeight;
          },
          set: function(value) {
-            if (this.minHeight > value) value = this._minHeight;
-            if (this.maxHeight != null) if(this.maxHeight < value) value = this.maxHeight;
+             if (this.minHeight > value) value = this._minHeight;
+             if (this.maxHeight != null) if(this.maxHeight < value) value = this.maxHeight;
              this._contentHeight = value;
-            this.application.ninja.settings.setSetting(this.panelName, "contentHeight", value);
+
+             // this.application.ninja.settings.setSetting(this.panelName, "contentHeight", value);
          }
      },
     forcedCollapse: {
         get: function() {
             if(this._forcedCollapse == null) {
+                // Old settings
+                /*
                 if(this.application.Ninja.SettingsManager.getSetting(this.panelName, "isPanelForceCollapsed")) {
                     this._forcedCollapse = this.application.Ninja.SettingsManager.getSetting(this.panelName, "isPanelForceCollapsed");
-                } else {
-                    this._forcedCollapse = false;
-                }
+                } */
+                this._forcedCollapse = false;
             }
             return this._forcedCollapse;
         },
         set: function(value) {
             this._forcedCollapse = value;
-            this.application.Ninja.SettingsManager.setSetting(this.panelName, "isPanelForceCollapsed", value);
+
+            // this.application.Ninja.SettingsManager.setSetting(this.panelName, "isPanelForceCollapsed", value);
         }
     },
     collapsed: {
         get: function() {
             if(this._collapsed == null) {
+                // Old settings
+                /*
                 if(this.application.ninja.settings.getSetting(this.panelName, "isPanelCollapsed")) {
                     this._collapsed = this.application.ninja.settings.getSetting(this.panelName, "isPanelCollapsed");
-                } else {
-                    this._collapsed = false;
-                }
+                } */
+
+                this._collapsed = false;
             }
             return this._collapsed;
         },
         set: function(value) {
             this._collapsed = value;
-            this.application.ninja.settings.setSetting(this.panelName, "isPanelCollapsed", value);
+
+            // this.application.ninja.settings.setSetting(this.panelName, "isPanelCollapsed", value);
         }
     },
     visible: {
         get: function() {
 
             if(this._visible === null) {
+                /*
                 if(typeof(this.application.ninja.settings.getSetting(this.panelName, "visible")) !== "undefined") {
                     this._visible = this.application.ninja.settings.getSetting(this.panelName, "visible");
-                } else {
-                    this._visible = true;
-                }
+                } */
+
+                this._visible = true;
+
             }
 
             return this._visible;
@@ -95,11 +105,8 @@ exports.PanelBase = Montage.create(Component, {
         set: function(value) {
             this._visible = value;
 
-            this.application.ninja.settings.setSetting(this.panelName, "visible", value);
+            //this.application.ninja.settings.setSetting(this.panelName, "visible", value);
 
         }
     }
-
-    // Methods exist in panel.js
-
 });
