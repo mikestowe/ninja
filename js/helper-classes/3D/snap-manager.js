@@ -597,7 +597,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 			}
 
             // TODO - Don't traverse components' children
-            if(elt.elementModel && elt.elementModel.isComponent)
+//            if(elt.elementModel && elt.elementModel.isComponent)
+            if(elt.nodeName.toLowerCase() === "svg" || (elt.elementModel && (elt.elementModel.isComponent || (elt.elementModel.selection === "SVG"))))
             {
                 return;
             }
@@ -1007,7 +1008,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 			}
 
             // TODO - Don't traverse components' children
-            if(elt.elementModel && elt.elementModel.isComponent)
+//            if(elt.elementModel && elt.elementModel.isComponent)
+            if(elt.nodeName.toLowerCase() === "svg" || (elt.elementModel && (elt.elementModel.isComponent || (elt.elementModel.selection === "SVG"))))
             {
                 return;
             }
