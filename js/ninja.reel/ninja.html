@@ -22,9 +22,9 @@
                 "name": "Preloader"
             },
 
-            "settings1": {
-                "module": "js/data/settings",
-                "name": "Settings"
+            "localStorage": {
+                "module": "js/controllers/local-storage-controller",
+                "name": "LocalStorage"
             },
 
             "toolsData1": {
@@ -181,7 +181,13 @@
                 "name": "Breadcrumb",
                 "properties":{
                     "element":{"#" : "breadCrumbComponent"}
-
+                },
+                "bindings" : {
+                    "container": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "currentSelectedContainer",
+                        "oneway": false
+                    }
                 }
              },
 
@@ -324,12 +330,12 @@
             <nav id="mainMenuBar"></nav>
         </section>
 
-        <section id="leftSplitter" class="leftSplitter splitter"></section>
+        <section data-montage-id="leftSplitter" class="leftSplitter splitter"></section>
 
-        <section id="rightSplitter" class="rightSplitter splitter"></section>
+        <section data-montage-id="rightSplitter" class="rightSplitter splitter"></section>
 
         <section id="appContainer">
-            <section id="topSplitter" class="topSplitter splitter"></section>
+            <section data-montage-id="topSplitter" class="topSplitter splitter"></section>
 
             <section id="topPanelContainer" class="panelContainer">
                 <div id="topPanel" class="panel">
@@ -369,10 +375,10 @@
                             </section>
                         </section>
 
+                        <section id="breadCrumbComponent"></section>
+
                         <section id="timelineResizer" class="timelineResizer resizeBar"></section>
-                            <section id="breadCrumbTrail">
-                                <div id="breadCrumbComponent"></div>
-                            </section>
+
                         <section id="bottomPanelContainer" class="panelContainer">
                             <section id="timelinePanel" class="panel">
                                 <div id="timelinePanelComponent"></div>
@@ -381,7 +387,7 @@
                     </section>
                 </section>
 
-                <section id="rightPanelResizer" class="rightPanelResizer resizeBar"></section>
+                <section data-montage-id="rightPanelResizer" class="rightPanelResizer resizeBar"></section>
 
                 <section id="rightPanelContainer" class="panelContainer">
                     <section id="rightPanelContent">
@@ -389,7 +395,7 @@
                 </section>
             </section>
 
-            <section id="bottomSplitter" class="bottomSplitter splitter"></section>
+            <section data-montage-id="bottomSplitter" class="bottomSplitter splitter"></section>
         </section>
         
         <section id="popupWindows"></section>

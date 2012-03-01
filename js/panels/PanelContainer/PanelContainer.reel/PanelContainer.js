@@ -16,7 +16,6 @@ var ComponentsPanel = require("js/panels/Components/ComponentsPanel").Components
 var ProjectPanel    = require("js/panels/Project/ProjectPanel").ProjectPanel;
 var MaterialsPanel  = require("js/panels/Materials/MaterialsPanel").MaterialsPanel;
 var PresetsPanel    = require("js/panels/presets/presets-panel").PresetsPanel;
-var CSSPanelNew    = require("js/panels/css-panel/css-panel-container").CSSPanelContainer;
 
 exports.PanelContainer = Montage.create(Component, {
     lastOffset: {
@@ -46,7 +45,7 @@ exports.PanelContainer = Montage.create(Component, {
     },
 
     initPanelOrder: {
-        value: ['CSSPanelNew','PropertiesPanel','ColorPanel','ComponentsPanel','ProjectPanel','CSSPanel','MaterialsPanel','PresetsPanel']
+        value: ['ColorPanel', 'PropertiesPanel','ComponentsPanel','ProjectPanel','CSSPanel','MaterialsPanel','PresetsPanel']
     },
 
     panelOrder: {
@@ -64,14 +63,19 @@ exports.PanelContainer = Montage.create(Component, {
         value: function() {
             //Panels Loading
             this.lastOffset = this.element.offsetHeight;
+
+            /* Old Settings
             if( this.application.ninja.settings.getSetting(this.element.id, "panelOrder") != null) {
                 this.initPanelOrder = this.application.ninja.settings.getSetting(this.element.id, "panelOrder")
             }
+            */
+
             // if Panels already loaded no need to load again.
             for(var i = 0; i < this.initPanelOrder.length; i++) {
                 this.addPanel(eval(this.initPanelOrder[i]));
                 this.panelOrder.push(this.initPanelOrder[i]);
-                this.application.ninja.settings.setSetting(this.element.id, "panelOrder", this.panelOrder);
+
+//              this.application.ninja.settings.setSetting(this.element.id, "panelOrder", this.panelOrder);
             }
 
             var hideSplitter = true;
@@ -102,7 +106,6 @@ exports.PanelContainer = Montage.create(Component, {
             this.addEventListener("change@appModel.CSSPanel", this, false);
             this.addEventListener("change@appModel.MaterialsPanel", this, false);
             this.addEventListener("change@appModel.PresetsPanel", this, false);
-            this.addEventListener("change@appModel.CSSPanelNew", this, false);
         }
     },
 
@@ -223,7 +226,7 @@ exports.PanelContainer = Montage.create(Component, {
                 }
                 minHeights -= this._panels[lastPanel].minHeight - this._collapsedHeight;
                 this._panels[lastPanel].collapsed = true;
-                this.repeater.childComponents[lastPanel].needsDraw = true;
+                //this.repeater.childComponents[lastPanel].needsDraw = true;
 
 
             }
@@ -331,7 +334,8 @@ exports.PanelContainer = Montage.create(Component, {
                 this._panels.splice(overed,0, panelRemoved[0]);
                 var panelOrderRemoved = this.panelOrder.splice(selected,1);
                 this.panelOrder.splice(overed,0, panelOrderRemoved[0]);
-                this.application.ninja.settings.setSetting(this.element.id, "panelOrder", this.panelOrder);
+
+                //this.application.ninja.settings.setSetting(this.element.id, "panelOrder", this.panelOrder);
             }
         }
     },

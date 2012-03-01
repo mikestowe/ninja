@@ -521,7 +521,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
 						if (!elt.elementModel)
 						{
-                            NJUtils.makeElementModel2(elt);
+                            NJUtils.makeModelFromElement(elt);
 						}
 						elt.elementModel.isIn2DSnapCache = true;
 					}
@@ -588,7 +588,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
 					if (!elt.elementModel)
 					{
-						NJUtils.makeElementModel2(elt);
+						NJUtils.makeModelFromElement(elt);
 					}
 					elt.elementModel.isIn2DSnapCache = true;
 				}
@@ -597,7 +597,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 			}
 
             // TODO - Don't traverse components' children
-            if(elt.elementModel && elt.elementModel.isComponent)
+//            if(elt.elementModel && elt.elementModel.isComponent)
+            if(elt.nodeName.toLowerCase() === "svg" || (elt.elementModel && (elt.elementModel.isComponent || (elt.elementModel.selection === "SVG"))))
             {
                 return;
             }
@@ -1007,7 +1008,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 			}
 
             // TODO - Don't traverse components' children
-            if(elt.elementModel && elt.elementModel.isComponent)
+//            if(elt.elementModel && elt.elementModel.isComponent)
+            if(elt.nodeName.toLowerCase() === "svg" || (elt.elementModel && (elt.elementModel.isComponent || (elt.elementModel.selection === "SVG"))))
             {
                 return;
             }

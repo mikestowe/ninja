@@ -305,16 +305,33 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                     newHeight.push(_h + "px");
 
                     viewUtils.setMatrixForElement(elt, previousMat);
+
+                    this._targets[i].mat = previousMat;
+                    this._targets[i].matInv = glmat4.inverse(previousMat, []);
                 }
             }
             if(addToUndoStack)
             {
-                ElementsMediator.setProperties(this.application.ninja.selectedElements,
+                // if we have a delta, that means the transform handles were used and
+                // we should update the width and height too.  Otherwise, just update left and top.
+                if(this._delta)
+                {
+                    ElementsMediator.setProperties(this.application.ninja.selectedElements,
                                                 { "left": newLeft, "top": newTop, "width": newWidth, "height": newHeight },
                                                 "Change",
                                                 "selectionTool",
                                                 { "left" : previousLeft, "top" : previousTop, "width": previousWidth, "height": previousHeight}
                                               );
+                }
+                else
+                {
+                    ElementsMediator.setProperties(this.application.ninja.selectedElements,
+                                                { "left": newLeft, "top": newTop },
+                                                "Change",
+                                                "selectionTool",
+                                                { "left" : previousLeft, "top" : previousTop }
+                                              );
+                }
             }
             // Save previous value for undo/redo
             this._undoArray = [];

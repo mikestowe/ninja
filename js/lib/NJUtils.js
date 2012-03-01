@@ -115,8 +115,8 @@ exports.NJUtils = Object.create(Object.prototype, {
     },
 
     ///// Element Model creation for existing elements based on element type.
-    ///// TODO: find a different place for this function and return different element models based on type.
-    makeElementModel2: {
+    ///// TODO: Selection and model should be based on the element type
+    makeModelFromElement: {
         value: function(el) {
             this.makeElementModel(el, "Div", "block", false);
         }

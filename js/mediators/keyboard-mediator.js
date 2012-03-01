@@ -136,6 +136,13 @@ exports.KeyboardMediator = Montage.create(Component, {
                     return;
                 }
 
+                // shortcut for Pen tool is P
+                if (evt.keyCode === Keyboard.P){
+                    evt.preventDefault();
+                    this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[5]});
+                    return;
+                }
+
                 // Shortcut for Rectangle Tool is R
                 // unless the user is pressing the command key.
                 // If the user is pressing the command key, they want to refresh the browser.
@@ -162,6 +169,13 @@ exports.KeyboardMediator = Montage.create(Component, {
                     return;
                 }
 
+                // Rotate Stage Tool is M
+                if(evt.keyCode === Keyboard.M ) {
+                    evt.preventDefault();
+                    this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[13]});
+                    return;
+                }
+
                 // Hand tool
                 if(evt.keyCode === Keyboard.H ) {
                     evt.preventDefault();
@@ -170,7 +184,7 @@ exports.KeyboardMediator = Montage.create(Component, {
                 }
 
                 // Zoom tool
-                if(evt.keyCode === Keyboard.Z ) {
+                if((evt.keyCode === Keyboard.Z) && !(evt.ctrlKey || evt.metaKey) && !evt.shiftKey) {//ctrl or shift key not press with Z
                     evt.preventDefault();
                     this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[15]});
                     return;
@@ -207,7 +221,13 @@ exports.KeyboardMediator = Montage.create(Component, {
 
             // Check if cmd+s/ctrl+s for Save (Windows/Mac)
             if ((evt.keyCode == Keyboard.S) && (evt.ctrlKey || evt.metaKey) && !evt.shiftKey) {
-                NJevent("executeSave");
+                try{
+                    NJevent("executeSave");
+                }
+                catch(e){
+                    console.warn("Unable to save");
+                    console.log(e.stack);
+                }
                 evt.preventDefault();
                 return;
             }

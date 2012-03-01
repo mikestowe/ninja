@@ -47,8 +47,8 @@ function GLCircle()
         
 			this._strokeWidth = strokeSize;
 			this._innerRadius = innerRadius;
-			this._strokeColor = strokeColor;
-			this._fillColor = fillColor;
+			if (strokeColor)  this._strokeColor = strokeColor;
+			if (fillColor)  this._fillColor = fillColor;
 
 			this._strokeStyle = strokeStyle;
 		}
@@ -135,7 +135,7 @@ function GLCircle()
 		if (!world._useWebGL)  return;
 		
 		// make sure RDGE has the correct context
-		g_Engine.setContext( world.getCanvas().uuid );
+		g_Engine.setContext( world.getCanvas().rdgeid );
 
          // create the gl buffer
         var gl = world.getGLContext();
@@ -398,59 +398,58 @@ function GLCircle()
 			// set up the fill style
 			ctx.beginPath();
 			ctx.lineWidth = 0;
-			ctx.fillStyle   = "#990000";
 			if (this._fillColor)
 			{
 				var c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";  
 				ctx.fillStyle = c;
-			}
 
-			// draw the fill
-			ctx.beginPath();
-			var p = MathUtils.transformPoint( bezPts[0],   mat );
-			ctx.moveTo( p[0],  p[1] );
-			var index = 1;
-			while (index < n)
-			{
-				p0   = MathUtils.transformPoint( bezPts[index],  mat );
-				p1 = MathUtils.transformPoint( bezPts[index+1],  mat );
-
-				x0 = p0[0];  y0 = p0[1];
-				x1 = p1[0];  y1 = p1[1];
-				ctx.quadraticCurveTo( x0,  y0,  x1, y1 );
-				index += 2;
-			}
-
-			if ( MathUtils.fpSign(innerRad) > 0)
-			{
-				xScale = 0.5*innerRad*this._width;
-				yScale = 0.5*innerRad*this._height;
-				mat[0] = xScale;
-				mat[5] = yScale;
-
-				// get the bezier points
-				var bezPts = MathUtils.circularArcToBezier( Vector.create([0,0,0]), Vector.create([1,0,0]), -2.0*Math.PI );
-				if (bezPts)
+				// draw the fill
+				ctx.beginPath();
+				var p = MathUtils.transformPoint( bezPts[0],   mat );
+				ctx.moveTo( p[0],  p[1] );
+				var index = 1;
+				while (index < n)
 				{
-					var n = bezPts.length;
-					p = MathUtils.transformPoint( bezPts[0],   mat );
-					ctx.moveTo( p[0],  p[1] );
-					index = 1;
-					while (index < n)
-					{
-						p0 = MathUtils.transformPoint( bezPts[index],    mat );
-						p1 = MathUtils.transformPoint( bezPts[index+1],  mat );
+					p0   = MathUtils.transformPoint( bezPts[index],  mat );
+					p1 = MathUtils.transformPoint( bezPts[index+1],  mat );
 
-						var x0 = p0[0],  y0 = p0[1],
-							x1 = p1[0],  y1 = p1[1];
-						ctx.quadraticCurveTo( x0,  y0,  x1, y1 );
-						index += 2;
+					x0 = p0[0];  y0 = p0[1];
+					x1 = p1[0];  y1 = p1[1];
+					ctx.quadraticCurveTo( x0,  y0,  x1, y1 );
+					index += 2;
+				}
+
+				if ( MathUtils.fpSign(innerRad) > 0)
+				{
+					xScale = 0.5*innerRad*this._width;
+					yScale = 0.5*innerRad*this._height;
+					mat[0] = xScale;
+					mat[5] = yScale;
+
+					// get the bezier points
+					var bezPts = MathUtils.circularArcToBezier( Vector.create([0,0,0]), Vector.create([1,0,0]), -2.0*Math.PI );
+					if (bezPts)
+					{
+						var n = bezPts.length;
+						p = MathUtils.transformPoint( bezPts[0],   mat );
+						ctx.moveTo( p[0],  p[1] );
+						index = 1;
+						while (index < n)
+						{
+							p0 = MathUtils.transformPoint( bezPts[index],    mat );
+							p1 = MathUtils.transformPoint( bezPts[index+1],  mat );
+
+							var x0 = p0[0],  y0 = p0[1],
+								x1 = p1[0],  y1 = p1[1];
+							ctx.quadraticCurveTo( x0,  y0,  x1, y1 );
+							index += 2;
+						}
 					}
 				}
-			}
 
-			// fill the path
-			ctx.fill();
+				// fill the path
+				ctx.fill();
+			}
 
 			// calculate the stroke matrix
 			xScale = 0.5*this._width  - 0.5*lineWidth;
@@ -461,35 +460,10 @@ function GLCircle()
 			// set up the stroke style
 			ctx.beginPath();
 			ctx.lineWidth	= lineWidth;
-			ctx.strokeStyle = "#0000ff";
 			if (this._strokeColor)
 			{
 				var c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";  
 				ctx.strokeStyle = c;
-			}
-			
-			// draw the stroke
-			p = MathUtils.transformPoint( bezPts[0],   mat );
-			ctx.moveTo( p[0],  p[1] );
-			index = 1;
-			while (index < n)
-			{
-				var p0   = MathUtils.transformPoint( bezPts[index],  mat );
-				var p1 = MathUtils.transformPoint( bezPts[index+1],  mat );
-
-				var x0 = p0[0],  y0 = p0[1],
-					x1 = p1[0],  y1 = p1[1];
-				ctx.quadraticCurveTo( x0,  y0,  x1, y1 );
-				index += 2;
-			}
-
-			if (MathUtils.fpSign(innerRad) > 0)
-			{
-				// calculate the stroke matrix
-				xScale = 0.5*innerRad*this._width  - 0.5*lineWidth;
-				yScale = 0.5*innerRad*this._height - 0.5*lineWidth;
-				mat[0] = xScale;
-				mat[5] = yScale;
 			
 				// draw the stroke
 				p = MathUtils.transformPoint( bezPts[0],   mat );
@@ -505,10 +479,34 @@ function GLCircle()
 					ctx.quadraticCurveTo( x0,  y0,  x1, y1 );
 					index += 2;
 				}
-			}
 
-			// render the stroke
-			ctx.stroke();
+				if (MathUtils.fpSign(innerRad) > 0)
+				{
+					// calculate the stroke matrix
+					xScale = 0.5*innerRad*this._width  - 0.5*lineWidth;
+					yScale = 0.5*innerRad*this._height - 0.5*lineWidth;
+					mat[0] = xScale;
+					mat[5] = yScale;
+			
+					// draw the stroke
+					p = MathUtils.transformPoint( bezPts[0],   mat );
+					ctx.moveTo( p[0],  p[1] );
+					index = 1;
+					while (index < n)
+					{
+						var p0   = MathUtils.transformPoint( bezPts[index],  mat );
+						var p1 = MathUtils.transformPoint( bezPts[index+1],  mat );
+
+						var x0 = p0[0],  y0 = p0[1],
+							x1 = p1[0],  y1 = p1[1];
+						ctx.quadraticCurveTo( x0,  y0,  x1, y1 );
+						index += 2;
+					}
+				}
+
+				// render the stroke
+				ctx.stroke();
+			}
 		}
     }
 

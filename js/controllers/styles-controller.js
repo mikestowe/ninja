@@ -324,7 +324,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                     isInlineStyle : true,
                     style         : element.style
                 };
-                
+
                 ///// Now splice it into the matched rules
                 ///// By inserting the inline style at the beginning,
                 ///// we keep the correct order of specificity
@@ -579,37 +579,36 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 win = element.ownerDocument.defaultView,
                 self = this;
 
-            if(!win) {
-                return null;
-            }
-                
             if(!omitPseudos) {
                 pseudos.concat(['link', 'visited', 'active', 'hover', 'focus', 'first-letter', 
                                 'first-line', 'first-child', 'before', 'after', 'lang', 'target']);
             }
 
-            pseudos.forEach(function(pseudo) {
-                rules = rules.concat(nj.toArray(win.getMatchedCSSRules(element, pseudo)).filter(function(rule) {
-                    //// useStageStyleSheet flag indicates whether to only return rules from the stylesheet,
-                    //// or only use rules for other stylesheets
+            try {
+                pseudos.forEach(function(pseudo) {
+                    rules = rules.concat(nj.toArray(win.getMatchedCSSRules(element, pseudo)).filter(function(rule) {
+                        //// useStageStyleSheet flag indicates whether to only return rules from the stylesheet,
+                        //// or only use rules for other stylesheets
 
-                    var sheetId = (rule.parentStyleSheet) ? rule.parentStyleSheet.ownerNode.id : null,
-                        isStageStyleSheet = sheetId === this.CONST.STAGE_SHEET_ID;
+                        var sheetId = (rule.parentStyleSheet) ? rule.parentStyleSheet.ownerNode.id : null,
+                            isStageStyleSheet = sheetId === this.CONST.STAGE_SHEET_ID;
 
-                    ///// filter out (return false) depending on flag
-                    if(useStageStyleSheet && !isStageStyleSheet) { return false; }
-                    if(!useStageStyleSheet && isStageStyleSheet) { return false; }
+                        ///// filter out (return false) depending on flag
+                        if(useStageStyleSheet && !isStageStyleSheet) { return false; }
+                        if(!useStageStyleSheet && isStageStyleSheet) { return false; }
 
-                    ///// Non-filter code - just assigning specificity to the rule
-                    if(!rule[this.CONST.SPECIFICITY_KEY]) {
-                        rule[this.CONST.SPECIFICITY_KEY] = this.getSpecificity(rule.selectorText);
-                    }
+                        ///// Non-filter code - just assigning specificity to the rule
+                        if(!rule[this.CONST.SPECIFICITY_KEY]) {
+                            rule[this.CONST.SPECIFICITY_KEY] = this.getSpecificity(rule.selectorText);
+                        }
 
-                    return true;
+                        return true;
 
-                }, this));
-            }, this);
-
+                    }, this));
+                }, this);
+            } catch(ERROR) {
+                console.warn('StylesController::getMatchingRules - Un-attached element queried.');
+            }
             ///// Function for sorting by specificity values
             function sorter(ruleA, ruleB) {
                 var a, b, order, sheetAIndex, sheetBIndex, ruleAIndex, ruleBIndex;
@@ -988,6 +987,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 ///// Pass "true" to method to return an override object, which
                 ///// has the rule to override, and whether the !important flag is needed
                 dominantRule = this.getDominantRuleForElement(element, property, true, isStageElement);
+
             }
                
             ///// Did we find a dominant rule?

@@ -32,7 +32,8 @@
                         "timetext" : {"#": "time_text"},
                         "timebar" : {"#": "time_bar"},
                         "container_tracks" : {"#" : "container-tracks"},
-                        "end_hottext" : {"@" : "endHottext"}
+                        "end_hottext" : {"@" : "endHottext"},
+                        "getme" : {"#" : "getme"}
                     }
                 },
 
@@ -114,6 +115,41 @@
 	            		"isStyleCollapsed" : {
 	            			"boundObject" : {"@" : "repetition1"},
 	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isStyleCollapsed",
+	            			"oneway" : false
+	            		},
+	            		"dtextPositionX" : {
+	            			"boundObject" : {"@" : "repetition1"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.dtextPositionX",
+	            			"oneway" : false
+	            		},
+	            		"dtextPositionY" : {
+	            			"boundObject" : {"@" : "repetition1"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.dtextPositionY",
+	            			"oneway" : false
+	            		},
+	            		"dtextSkewX" : {
+	            			"boundObject" : {"@" : "repetition1"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.dtextSkewX",
+	            			"oneway" : false
+	            		},
+	            		"dtextSkewY" : {
+	            			"boundObject" : {"@" : "repetition1"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.dtextSkewY",
+	            			"oneway" : false
+	            		},
+	            		"dtextScaleX" : {
+	            			"boundObject" : {"@" : "repetition1"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.dtextScaleX",
+	            			"oneway" : false
+	            		},
+	            		"dtextScaleY" : {
+	            			"boundObject" : {"@" : "repetition1"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.dtextScaleY",
+	            			"oneway" : false
+	            		},
+	            		"dtextRotate" : {
+	            			"boundObject" : {"@" : "repetition1"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.dtextRotate",
 	            			"oneway" : false
 	            		}
 	            	}
@@ -249,7 +285,7 @@
                         
                         <div id="user_layers" class="userlayers">
                             <div id="master_layer" class="masterlayer">
-                                <div>Master Layer</div>
+                                <div id="getme">Master Layer</div>
                             </div>
                             <div id="container-layers">
                             	<div id="container-layer"></div>
@@ -264,7 +300,7 @@
                     </div>
                 </div>
 
-                <div id="layer_resizer" class="layerresizer"></div>
+                <div data-montage-id="layer_resizer" class="layerresizer"></div>
 
                 <div id="timeline_rightpane" class="tl_rightpane">
                     <div id="right_inside" class="rightinside">

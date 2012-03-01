@@ -107,6 +107,140 @@ var Layer = exports.Layer = Montage.create(Component, {
         }
     },
     
+    /* Position and Transform hottext values */
+    _dtextPositionX : {
+        value:null,
+    	serializable: true,
+    },
+
+    dtextPositionX:{
+    	serializable: true,
+        get:function(){
+            return this._dtextPositionX;
+        },
+        set:function(value){
+        	if (this._dtextPositionX !== value) {
+        		this._dtextPositionX = value;
+        		this.needsDraw = true;
+        	}
+            
+        }
+    },
+    
+    _dtextPositionY : {
+        value:null,
+    	serializable: true,
+    },
+
+    dtextPositionY:{
+    	serializable: true,
+        get:function(){
+            return this._dtextPositionY;
+        },
+        set:function(value){
+        	if (this._dtextPositionY !== value) {
+        		this._dtextPositionY = value;
+        		this.needsDraw = true;
+        	}
+            
+        }
+    },
+    
+    _dtextScaleX : {
+        value:null,
+    	serializable: true,
+    },
+
+    dtextScaleX:{
+    	serializable: true,
+        get:function(){
+            return this._dtextScaleX;
+        },
+        set:function(value){
+        	if (this._dtextScaleX !== value) {
+        		this._dtextScaleX = value;
+        		this.needsDraw = true;
+        	}
+            
+        }
+    },
+    
+    _dtextScaleY : {
+        value:null,
+    	serializable: true,
+    },
+
+    dtextScaleY:{
+    	serializable: true,
+        get:function(){
+            return this._dtextScaleY;
+        },
+        set:function(value){
+        	if (this._dtextScaleY !== value) {
+        		this._dtextScaleY = value;
+        		this.needsDraw = true;
+        	}
+            
+        }
+    },
+    
+    _dtextSkewX : {
+        value:null,
+    	serializable: true,
+    },
+
+    dtextSkewX:{
+    	serializable: true,
+        get:function(){
+            return this._dtextSkewX;
+        },
+        set:function(value){
+        	if (this._dtextSkewX !== value) {
+        		this._dtextSkewX = value;
+        		this.needsDraw = true;
+        	}
+            
+        }
+    },
+    
+    _dtextSkewY : {
+        value:null,
+    	serializable: true,
+    },
+
+    dtextSkewY:{
+    	serializable: true,
+        get:function(){
+            return this._dtextSkewY;
+        },
+        set:function(value){
+        	if (this._dtextSkewY !== value) {
+        		this._dtextSkewY = value;
+        		this.needsDraw = true;
+        	}
+            
+        }
+    },
+    
+    _dtextRotate : {
+        value:null,
+    	serializable: true,
+    },
+
+    dtextRotate:{
+    	serializable: true,
+        get:function(){
+            return this._dtextRotate;
+        },
+        set:function(value){
+        	if (this._dtextRotate !== value) {
+        		this._dtextRotate = value;
+        		this.needsDraw = true;
+        	}
+            
+        }
+    },
+    
     /* isSelected: whether or not the layer is currently selected. */
     _isSelected:{
         value: false,
@@ -375,7 +509,6 @@ var Layer = exports.Layer = Montage.create(Component, {
             	this.styleCollapser.bypassAnimation = true;
             	this.styleCollapser.toggle();
             }
-            
             if (this.isSelected) {
             	this.element.classList.add("selected");
             } else {

@@ -23,6 +23,10 @@ exports.StageDeps = Montage.create(Component, {
         value: snapManager
     },
 
+    drawUtils: {
+        value: drawUtils
+    },
+
     currentStage: {
         value: null
     },
@@ -129,19 +133,47 @@ exports.StageDeps = Montage.create(Component, {
             viewUtils.setRootElement(this.currentStage.parentNode);
             viewUtils.setStageElement(this.currentStage);
 
-            drawUtils.setDrawingSurfaceElement(this.stage.canvas);
-            drawUtils.setSourceSpaceElement( this.currentStage );
-            drawUtils.setWorkingPlane( workingPlane );
             drawUtils.viewUtils = viewUtils;
             drawUtils.snapManager = snapManager;
             drawUtils.ElementPlanes = ElementPlanes;
+
+            snapManager._isCacheInvalid=true;
 
             snapManager.setupDragPlaneFromPlane ( workingPlane );
 
             DrawingToolBase.stage = this.currentStage;
             DrawingToolBase.stageComponent = this.stage;
 
+            drawUtils.initializeFromDocument();
+        }
+    },
+
+    reinitializeForSwitchDocument: {
+        value: function() {
+
+            workingPlane = Vector.create( [0,0,1,0] );
+
+            snapManager.setCurrentStage(this.currentStage);
+
+            viewUtils.setCurrentDocument(this.currentDocument);
+            viewUtils.setRootElement(this.currentStage.parentNode);
+            viewUtils.setStageElement(this.currentStage);
+
+            drawUtils.viewUtils = viewUtils;
+            drawUtils.snapManager = snapManager;
+            drawUtils.ElementPlanes = ElementPlanes;
+
+            snapManager._isCacheInvalid=true;
+
+            snapManager.setupDragPlaneFromPlane ( workingPlane );
+
+            DrawingToolBase.stage = this.currentStage;
+            DrawingToolBase.stageComponent = this.stage;
+
+            drawUtils.initializeFromDocument();
         }
     }
+
+
 
 });

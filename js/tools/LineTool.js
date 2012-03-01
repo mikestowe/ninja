@@ -42,7 +42,10 @@ exports.LineTool = Montage.create(ShapeTool, {
             }
 
             this._strokeSize = ShapesController.GetValueInPixels(this.options.strokeSize.value, this.options.strokeSize.units, null);
-            this._strokeColor = this.application.ninja.colorController.colorToolbar.stroke.color.css;
+			if (this.application.ninja.colorController.colorToolbar.stroke.color)
+				this._strokeColor = this.application.ninja.colorController.colorToolbar.stroke.color.css;
+			else
+				this._strokeColor = [0,0,0,1];
             this.startDraw(event);
         }
     },

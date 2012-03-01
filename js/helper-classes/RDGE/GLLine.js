@@ -11,6 +11,10 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 ///////////////////////////////////////////////////////////////////////
 function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, strokeColor, strokeMaterial, strokeStyle, xAdj, yAdj)
 {
+	// initialize the inherited members
+	this.inheritedFrom = GLGeomObj;
+	this.inheritedFrom();
+
 	///////////////////////////////////////////////////////////////////////
 	// Instance variables
 	///////////////////////////////////////////////////////////////////////
@@ -43,7 +47,7 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
 
 		this._slope = slope;
 		this._strokeWidth = strokeSize;
-		this._strokeColor = strokeColor;
+		if (strokeColor)  this._strokeColor = strokeColor.slice();
 
 		this._strokeStyle = strokeStyle;
 		this._scaleX = (world.getViewportWidth())/(world.getViewportHeight());
@@ -56,10 +60,6 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
 	this._materialAmbient  = [0.2, 0.2, 0.2,  1.0];
 	this._materialDiffuse  = [0.4, 0.4, 0.4,  1.0];
 	this._materialSpecular = [0.4, 0.4, 0.4,  1.0];
-
-	// initialize the inherited members
-	this.inheritedFrom = GLGeomObj;
-	this.inheritedFrom();
 
 	if(strokeMaterial)
 	{
@@ -171,7 +171,7 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
 		if (!world._useWebGL)  return;
 		
 		// make sure RDGE has the correct context
-		g_Engine.setContext( world.getCanvas().uuid );
+		g_Engine.setContext( world.getCanvas().rdgeid );
 
 		 // create the gl buffer
 		var gl = world.getGLContext();
@@ -364,41 +364,40 @@ function GLLine( world, xOffset, yOffset, width, height, slope, strokeSize, stro
 		var lineWidth = this._strokeWidth;
 		ctx.beginPath();
 		ctx.lineWidth	= lineWidth;
-		ctx.strokeStyle = "#0000ff";
 		if (this._strokeColor)
 		{
 			var c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";  
 			ctx.strokeStyle = c;
-		}
 
-		// get the points
-		var p0,  p1;
-		var  w = this._width,  h = this._height;
-		if(this._slope === "vertical")
-		{
-			p0 = [0.5*w, 0];
-			p1 = [0.5*w, h];
-		}
-		else if(this._slope === "horizontal")
-		{
-			p0 = [0, 0.5*h];
-			p1 = [w, 0.5*h];
-		}
-		else if(this._slope > 0)
-		{
-			p0 = [this._xAdj, this._yAdj];
-			p1 = [w - this._xAdj,  h - this._yAdj];
-		}
-		else
-		{
-			p0 = [this._xAdj, h - this._yAdj];
-			p1 = [w - this._xAdj,  this._yAdj];
-		}
+			// get the points
+			var p0,  p1;
+			var  w = this._width,  h = this._height;
+			if(this._slope === "vertical")
+			{
+				p0 = [0.5*w, 0];
+				p1 = [0.5*w, h];
+			}
+			else if(this._slope === "horizontal")
+			{
+				p0 = [0, 0.5*h];
+				p1 = [w, 0.5*h];
+			}
+			else if(this._slope > 0)
+			{
+				p0 = [this._xAdj, this._yAdj];
+				p1 = [w - this._xAdj,  h - this._yAdj];
+			}
+			else
+			{
+				p0 = [this._xAdj, h - this._yAdj];
+				p1 = [w - this._xAdj,  this._yAdj];
+			}
 			
-		// draw the line
-		ctx.moveTo( p0[0],  p0[1] );
-		ctx.lineTo( p1[0],  p1[1] );
-		ctx.stroke();
+			// draw the line
+			ctx.moveTo( p0[0],  p0[1] );
+			ctx.lineTo( p1[0],  p1[1] );
+			ctx.stroke();
+		}
 	}
 
 
