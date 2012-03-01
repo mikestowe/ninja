@@ -58,6 +58,22 @@
                 }
             },
 
+            "elementNameAttribute": {
+                "module": "montage/ui/textfield.reel",
+                "name": "Textfield",
+                "properties": {
+                    "element": {"#": "elementNameAttribute"},
+                    "readOnly": false
+                },
+                "bindings": {
+                    "value": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "nameAttribute",
+                        "oneway": false
+                    }
+                }
+            },
+
 
             "PosSizeSection": {
                 "module": "js/panels/properties/section.reel",
@@ -128,6 +144,7 @@
                     "element":              {"#": "propertiesPanel"},
                     "elementNameInput":     {"@": "elementNameInput1"},
                     "elementId":            {"@": "elementID"},
+                    "elementNameAttribute": {"@": "elementNameAttribute"},
                     "positionSize":         {"@": "PosSize"},
                     "threeD":               {"@": "threeDProperties"}
                 }
@@ -149,6 +166,10 @@
             <section class="fieldCol">
                 <label id="lblClass">Class:</label>
                 <article class="fieldRow"><input type="text" id="elementClassName" class="nj-skinned" /></article>
+            </section>
+            <section class="fieldCol">
+                <label id="lblName">Name:</label>
+                <article class="fieldRow"><input type="text" id="elementNameAttribute" class="nj-skinned" /></article>
             </section>
         </section>
         <section id="PosSize"></section>
