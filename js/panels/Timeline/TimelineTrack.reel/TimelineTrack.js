@@ -229,6 +229,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         },
         set:function (val) {
             this._trackDuration = val;
+            if(this._trackDuration > this.application.ninja.timeline.masterDuration){
+                this.application.ninja.timeline.masterDuration = this._trackDuration;
+            }
         }
     },
 
@@ -413,9 +416,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             // need to check timeline master duration if greater than this track duration
             this.trackDuration = currentMillisec;
 
-            if(this.trackDuration > this.application.ninja.timeline.masterDuration){
-                this.application.ninja.timeline.masterDuration = this.trackDuration;
-            }
+
 
             var newTween = {};
 
