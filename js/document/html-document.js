@@ -486,11 +486,12 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 						if(this._document.styleSheets[i].rules === null) {
 							//TODO: Revisit URLs and URI creation logic, very hack right now
 							var fileUri, cssUrl, cssData, tag, query;
-							if (this._document.styleSheets[i].href.indexOf('js/document/templates/montage-html') !== -1) {
+							//TODO: Parse out relative URLs and map them to absolute
+							if (this._document.styleSheets[i].href.indexOf(chrome.extension.getURL('')) !== -1) {
 								//Getting the url of the CSS file
-								cssUrl = this._document.styleSheets[i].href.split('js/document/templates/montage-html')[1];
+								cssUrl = this._document.styleSheets[i].href.split('js/document/templates/montage-html')[1];//TODO: Parse out relative URLs and map them to absolute
 								//Creating the URI of the file (this is wrong should not be splitting cssUrl)
-								fileUri = this.application.ninja.coreIoApi.cloudData.root+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+cssUrl.split('/')[1];
+								fileUri = this.application.ninja.coreIoApi.cloudData.root+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+cssUrl;
 								//Loading the data from the file
 								cssData = this.application.ninja.coreIoApi.readFile({uri: fileUri});
 								//Creating tag with file content
@@ -506,6 +507,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 										tag.setAttribute(this._document.styleSheets[i].ownerNode.attributes[n].name, this._document.styleSheets[i].ownerNode.attributes[n].value);
 									}
 								}
+								//TODO: Parse out relative URLs and map them to absolute
+								//console.log(cssData.content);
 								tag.innerHTML = cssData.content;
 								//Looping through DOM to insert style tag at location of link element
 								query = this._templateDocument.html.querySelectorAll(['link']);
