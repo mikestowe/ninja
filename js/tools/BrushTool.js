@@ -72,7 +72,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
                     this._selectedBrushStroke.addPoint(currMousePos);
 
                     //TODO get these values from the options
-                    this._selectedBrushStroke.setStrokeWidth(20);
+                    this._selectedBrushStroke.setStrokeWidth(10);
                 }
                 NJevent("enableStageMove");//stageManagerModule.stageManager.enableMouseMove();
             } //value: function (event) {
@@ -112,7 +112,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
 
                 if (this._isDrawing) {
                     var currMousePos = this._getUnsnappedPosition(event.pageX, event.pageY);
-                    if (this._selectedBrushStroke && this._selectedBrushStroke.getNumPoints()<100){
+                    if (this._selectedBrushStroke && this._selectedBrushStroke.getNumPoints()<1000){
                        this._selectedBrushStroke.addPoint(currMousePos);
                     }
                     this.ShowCurrentBrushStrokeOnStage();

@@ -139,7 +139,8 @@ function GLBrushStroke() {
             var numPoints = this._Points.length;
 
             //**** add samples to the path if needed...linear interpolation for now
-            if (numPoints>1) {
+            //if (numPoints>1) {
+            if (0){
                 var threshold = this._WETNESS_FACTOR*this._strokeWidth;
                 var prevPt = this._Points[0];
                 var prevIndex = 0;
@@ -331,7 +332,7 @@ function GLBrushStroke() {
         }
         */
 
-
+        /*
         var R2 = this._strokeWidth;
         var R = R2*0.5;
         var hardness = 0; //for a pencil, this is always 1 //TODO get hardness parameter from user interface
@@ -359,6 +360,48 @@ function GLBrushStroke() {
             //ctx.globalCompositeOperation = 'source-in';
             //ctx.rect(x-R, y-R, R2, R2);
         }
+        */
+
+        //todo test how to render the path as a bunch of moveTo and lineTos (for calligraphic brush styles)
+        var numTraces = this._strokeWidth;
+        var halfNumTraces = numTraces/2;
+        var deltaDisplacement = [1,0];//[this._strokeWidth/numTraces, 0]; //a horizontal line brush
+        var startPos = [-this._strokeWidth/2,0];
+        for (var t=0;t<numTraces;t++){
+            var disp = [startPos[0]+t*deltaDisplacement[0], startPos[1]+t*deltaDisplacement[1]];
+            //ctx.globalCompositeOperation = 'source-over';
+            var distFromMiddle = Math.abs(halfNumTraces-t);
+            var alphaVal = 1.0 - (distFromMiddle/halfNumTraces);
+            ctx.save();
+            ctx.lineWidth=this._strokeWidth/10;//4;
+            if (ctx.lineWidth<2)
+                ctx.lineWidth=2;
+            ctx.lineJoin="bevel";
+            ctx.lineCap="butt";
+            if (t<numTraces/2)
+                ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
+            else
+                ctx.strokeStyle="rgba("+255+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
+            ctx.translate(disp[0],disp[1]);
+            ctx.beginPath();
+            ctx.moveTo(this._Points[0][0]-bboxMin[0], this._Points[0][1]-bboxMin[1]);
+            for (var i=0;i<numPoints;i++){
+                ctx.lineTo(this._Points[i][0]-bboxMin[0], this._Points[i][1]-bboxMin[1]);
+            }
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        /*
+        ctx.beginPath();
+        ctx.moveTo(this._Points[0][0]-bboxMin[0], this._Points[0][1]-bboxMin[1]);
+        for (var i=1;i<numPoints;i++){
+            ctx.lineTo(this._Points[i][0]-bboxMin[0], this._Points[i][1]-bboxMin[1]);
+        }
+        ctx.lineWidth=1.0;
+        ctx.strokeStyle = "black";
+        ctx.stroke();
+        */
 
         ctx.restore();
     } //render()
