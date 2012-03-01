@@ -122,6 +122,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             if(this._escape) {
                 this._escape = false;
                 this._isSelecting = false;
+                this._canSnap = true;
                 return;
             }
 
@@ -153,6 +154,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                 }
 
                 this.endDraw(event);
+                this._canSnap = true;
                 return;
             }
 
@@ -180,6 +182,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             }
 
             this.endDraw(event);
+            this._canSnap = true;
         }
     },
 
