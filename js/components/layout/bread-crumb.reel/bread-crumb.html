@@ -16,55 +16,62 @@
                     "module": "js/components/layout/bread-crumb.reel",
                     "name": "Breadcrumb",
                     "properties": {
-                        "element": {"#": "breadcrumb_trail"},
-                        "button" : {"@":"breadCrumbButton"},
-                        "stylerepetition" : {"@":"repetition1"}
-
+                        "element": {"#": "breadcrumbTrail"},
+                        "breadcrumbBt": {"@": "breadCrumbButton"}
                     }
                 },
 
                 "breadCrumbButton": {
-                   "module": "js/components/layout/bread-crumb-button.reel",
-                   "name": "BreadcrumbButton",
-                   "properties": {
-                       "element": {"#": "breadcrumb_button"}
-                   },
-                   "bindings": {
-                       "data": {
-                           "boundObject": {"@": "repetition1"},
-                           "boundObjectPropertyPath": "objectAtCurrentIteration",
-                           "oneway": true
-                       }
-                   }
-               },
+                    "module": "montage/ui/button.reel",
+                    "name": "Button",
+                    "properties": {
+                        "element": {"#": "breadcrumb_button"}
+                    },
+                    "listeners": [
+                        {
+                            "type": "action",
+                            "listener": {"@": "owner"}
+                        }
+                    ],
+                    "bindings": {
+                        "label": {
+                            "boundObject": {"@": "repetition1"},
+                            "boundObjectPropertyPath": "objectAtCurrentIteration.label",
+                            "oneway": true
+                        },
+                        "value": {
+                            "boundObject": {"@": "repetition1"},
+                            "boundObjectPropertyPath": "objectAtCurrentIteration.nodeUuid",
+                            "oneway": true
+                        }
+                    }
+                },
 
-               "repetition1": {
-                   "module": "montage/ui/repetition.reel",
-                   "name": "Repetition",
-                   "properties": {
-                       "element": {"#": "breadcrumb_container"}
-                   },
-                   "bindings": {
-                       "objects": {
-                           "boundObject": {"@": "owner"},
-                           "boundObjectPropertyPath": "containerElements",
-                           "oneway": true
-                       }
-                   }
-               }
-
-
+                "repetition1": {
+                    "module": "montage/ui/repetition.reel",
+                    "name": "Repetition",
+                    "properties": {
+                        "element": {"#": "breadcrumb_container"}
+                    },
+                    "bindings": {
+                        "objects": {
+                            "boundObject": {"@": "owner"},
+                            "boundObjectPropertyPath": "containerElements",
+                            "oneway": true
+                        }
+                    }
+                }
             }
         </script>
 
     </head>
     <body>
 
-        <div id="breadcrumb_trail" class="breadcrumbtrail">
-            <div id="breadcrumb_container" class="bread_crumb">
-                <div id="breadcrumb_button"></div>
+        <section id="breadcrumbTrail" class="breadcrumbTrail">
+            <div id="breadcrumb_container">
+                <button id="breadcrumb_button" class="nj-skinned"></button>
             </div>
-        </div>
+        </section>
 
     </body>
 </html> 

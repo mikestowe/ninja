@@ -795,7 +795,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             if(this.currentLayerSelected.elementsList[0]!==undefined){
                 if(this.currentTrackSelected.isTrackAnimated){
                     this.application.ninja.stage.clearDrawingCanvas();
-                    alert("cannot add elements to a layer with animated element");/* check how to clear the canvas*/
+                    console.log("cannot add elements to a layer with animated element");
                     return;
                 }else{
                     this.hashElementMapToLayer.setItem(event.detail.uuid, event.detail,this.currentLayerSelected);
@@ -805,12 +805,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this.hashElementMapToLayer.setItem(event.detail.uuid, event.detail,this.currentLayerSelected);
                 this.currentLayerSelected.elementsList.push(event.detail);
             }
-
         }
     },
 
     handleElementDeleted:{
         value:function (event) {
+
             var length;
             this.deleteElement = event.detail;
             length = this.currentLayerSelected.elementsList.length - 1;
