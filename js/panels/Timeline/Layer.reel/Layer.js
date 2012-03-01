@@ -418,7 +418,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 				defaultEventManager.dispatchEvent(newEvent);
 				that.isMainCollapsed = that.mainCollapser.isCollapsed;
             }
-    		this.mainCollapser.needsDraw = true;
+    		//this.mainCollapser.needsDraw = true;
 
             this.positionCollapser.clicker = this.clickerPosition;
             this.positionCollapser.myContent = this.contentPosition;
@@ -437,7 +437,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 				defaultEventManager.dispatchEvent(newEvent);
 				that.isPositionCollapsed = that.positionCollapser.isCollapsed;
             }
-            this.positionCollapser.needsDraw = true;
+            //this.positionCollapser.needsDraw = true;
             
             this.transformCollapser.clicker = this.clickerTransform;
             this.transformCollapser.myContent = this.contentTransform;
@@ -456,13 +456,13 @@ var Layer = exports.Layer = Montage.create(Component, {
 				defaultEventManager.dispatchEvent(newEvent);
 				that.isTransformCollapsed = that.transformCollapser.isCollapsed;
             }
-            this.transformCollapser.needsDraw = true;
+            //this.transformCollapser.needsDraw = true;
             
             this.styleCollapser.clicker = this.clickerStyle;
             this.styleCollapser.myContent = this.contentStyle;
             this.styleCollapser.element = this.element;
             this.styleCollapser.isCollapsed = this.isStyleCollapsed;
-            this.styleCollapser.contentHeight = 20;
+            this.styleCollapser.contentHeight = 0;
             this.styleCollapser.isAnimated = true;
             this.styleCollapser.labelClickEvent = function(boolBypass) {
 				var newEvent = document.createEvent("CustomEvent");
@@ -474,7 +474,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 				defaultEventManager.dispatchEvent(newEvent);
 				that.isStyleCollapsed = that.styleCollapser.isCollapsed;
             }
-            this.styleCollapser.needsDraw = true;
+            //this.styleCollapser.needsDraw = true;
 
             // Add event listeners to add and delete style buttons
             this.buttonAddStyle.identifier = "addStyle";
@@ -485,7 +485,7 @@ var Layer = exports.Layer = Montage.create(Component, {
             
             // Add mousedown listener to set isActive
             this.element.addEventListener("mousedown", this, false);
-            //this.element.addEventListener("click", this, false);
+            this.element.addEventListener("click", this, false);
 
         }
     },

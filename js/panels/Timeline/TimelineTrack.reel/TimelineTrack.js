@@ -626,7 +626,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this._styleCollapser = Collapser.create();
             this._styleCollapser.clicker = this.labelStyles;
             this._styleCollapser.myContent = this.contentStyles;
-            this._styleCollapser.contentHeight = 20;
+            this._styleCollapser.contentHeight = 0;
             this._styleCollapser.isLabelClickable = false;
             this._styleCollapser.element = this.element;
             this._styleCollapser.isCollapsed = this.isStyleCollapsed;

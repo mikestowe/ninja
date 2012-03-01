@@ -47,9 +47,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     _cacheArrays : {
     	value: function() {
     		// Cache this.arrLayers and this.arrTracks.
-    		console.log('cacheArrays ' + this._boolCacheArrays)
+    		this.log('cacheArrays ' + this._boolCacheArrays)
 	    	if (this._boolCacheArrays) {
-	    		console.log('caching arrays for ', this.application.ninja.currentDocument.name);
+	    		this.log('caching arrays for ', this.application.ninja.currentDocument.name);
 				this.application.ninja.currentDocument.tlArrLayers = this.arrLayers;
 				this.application.ninja.currentDocument.tlArrTracks = this.arrTracks;
 	    	}
@@ -264,7 +264,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 			// Check to see if we have saved timeline information in the currentDocument.
 			if (typeof(this.application.ninja.currentDocument.isTimelineInitialized) === "undefined") {
 				// No, we have no information stored.  Create it.
-				console.log('newfile ' + this.application.ninja.currentDocument.name)
+				this.log('newfile ' + this.application.ninja.currentDocument.name)
 				this.application.ninja.currentDocument.isTimelineInitialized = true;
 				this.application.ninja.currentDocument.tlArrLayers = [];
 				this.application.ninja.currentDocument.tlArrTracks = [];
@@ -281,7 +281,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 	                        this._openDoc=true;
 	                        NJevent('newLayer',{key:this._hashKey,ele:this.application.ninja.currentDocument.documentRoot.children[myIndex]})
 	                        myIndex++;
-	                  k  }
+						}
 	                }
 	                else{
 	                    NJevent('newLayer', this._hashKey);
@@ -300,7 +300,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 				
 			} else {
 				// we do have information stored.  Use it.
-				console.log('oldfile ' + this.application.ninja.currentDocument.name)
+				this.log('oldfile ' + this.application.ninja.currentDocument.name)
 				this._boolCacheArrays = false;
 				this.arrLayers = [];
 				this.arrTracks = [];
@@ -469,7 +469,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     handleDeleteLayerClick:{
         value:function (event) {
-        	console.log('handleDeleteLayerClick called')
+        	this.log('handleDeleteLayerClick called')
             if (this.arrLayers.length === 1) {
                 // do not delete last layer
                 return;
@@ -795,7 +795,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             if(this.currentLayerSelected.elementsList[0]!==undefined){
                 if(this.currentTrackSelected.isTrackAnimated){
                     this.application.ninja.stage.clearDrawingCanvas();
-                    console.log("cannot add elements to a layer with animated element");
+                    this.log("cannot add elements to a layer with animated element");
                     return;
                 }else{
                     this.hashElementMapToLayer.setItem(event.detail.uuid, event.detail,this.currentLayerSelected);
@@ -1167,7 +1167,38 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             });
             return command;
         }
-    }
+    },
     /* === END: Controllers === */
+   
+   	/* === BEGIN: Logging routines === */
+    _boolDebug: {
+    	enumerable: false,
+    	value: false // set to true to enable debugging to console; false for turning off all debugging.
+    },
+    boolDebug: {
+    	get: function() {
+    		return this._boolDebug;
+    	},
+    	set: function(boolDebugSwitch) {
+    		this._boolDebug = boolDebugSwitch;
+    	}
+    },
+    log: {
+    	value: function(strMessage) {
+    		if (this.boolDebug) {
+    			console.log(this.getLineNumber() + ": " + strMessage);
+    		}
+    	}
+    },
+    getLineNumber: {
+    	value: function() {
+			try {
+			   throw new Error('bazinga')
+			}catch(e){
+				return e.stack.split("at")[3].split(":")[2];
+			}
+    	}
+    }
+	/* === END: Logging routines === */
 });
 
