@@ -7,11 +7,11 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage         = require("montage/core/core").Montage,
     Component       = require("montage/ui/component").Component,
     PiData          = require("js/data/pi/pi-data").PiData,
-    CustomSection   = require("js/panels/properties/sections/custom.reel").CustomSection;
+    CustomSection   = require("js/panels/properties.reel/sections/custom.reel").CustomSection;
 
 var ElementsMediator = require("js/mediators/element-mediator").ElementMediator;
 
-exports.Content = Montage.create(Component, {
+exports.Properties = Montage.create(Component, {
 
     elementName: {
         value: null
