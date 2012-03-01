@@ -229,6 +229,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         },
         set:function (val) {
             this._trackDuration = val;
+            if(this._trackDuration > this.application.ninja.timeline.masterDuration){
+                this.application.ninja.timeline.masterDuration = this._trackDuration;
+            }
         }
     },
 
@@ -405,18 +408,12 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     insertTween:{
         value:function (clickPos) {
-
             // calculate new tween's keyframe milliseconds by clickPos
             var currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
             var currentMillisec = currentMillisecPerPixel * clickPos;
 
             // need to check timeline master duration if greater than this track duration
             this.trackDuration = currentMillisec;
-
-            if(this.trackDuration > this.application.ninja.timeline.masterDuration){
-                this.application.ninja.timeline.masterDuration = this.trackDuration;
-            }
-
             var newTween = {};
 
             if (clickPos == 0) {
@@ -444,9 +441,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 // update the animation duration
                 var animationDuration = Math.round(this.trackDuration / 1000) + "s";
                 this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-duration", animationDuration);
-
                 this.nextKeyframe += 1;
             }
+            this.application.ninja.documentController.activeDocument.needsSave = true;
         }
     },
 
@@ -460,7 +457,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     retrieveStoredTweens:{
         value:function () {
             var percentValue, fraction, splitValue,offsetAttribute,topOffSetAttribute,leftOffsetAttribute
-            var animationTiming,trackTiming,currentMilliSec,currentMilliSecPerPixel,clickPosition,i = 0;
+            var currentMilliSec,currentMilliSecPerPixel,clickPosition,tempTiming,tempTimingInt,trackTiming,i = 0;
 
             var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
             this.application.ninja.timeline.arrLayers[selectedIndex].created=true;
@@ -468,11 +465,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             if(this.animatedElement!==undefined){
                 this.animationName = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-name");
                 if(this.animationName){
-                    animationTiming = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-duration");
-                    trackTiming = animationTiming.split("s");
-                    currentMilliSec = trackTiming[0] * 1000;
-                    currentMilliSecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
-                    clickPosition = currentMilliSec / currentMilliSecPerPixel;
+                    trackTiming = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-duration");
                     this.nextKeyframe = 0;
 
                     this.currentKeyframeRule = this.application.ninja.stylesController.getAnimationRuleWithName(this.animationName, this.application.ninja.currentDocument._document);
@@ -500,10 +493,13 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
                         }
                         else {
+                            tempTiming = trackTiming.split("s");
+                            tempTimingInt = parseInt(tempTiming[0]);
+                            this.trackDuration = tempTimingInt *1000;
                             percentValue = this.currentKeyframeRule[i].keyText;
                             splitValue = percentValue.split("%");
                             fraction = splitValue[0] / 100;
-                            currentMilliSec = fraction * trackTiming[0] * 1000;
+                            currentMilliSec = fraction * this.trackDuration;
                             currentMilliSecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
                             clickPosition = currentMilliSec / currentMilliSecPerPixel;
                             newTween.spanWidth = clickPosition - this.tweens[this.tweens.length - 1].keyFramePosition;
@@ -564,6 +560,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             keyframeString += " }";
             // set the keyframe string as the new rule
             this.currentKeyframeRule = this.ninjaStylesContoller.addRule(keyframeString);
+            this.application.ninja.documentController.activeDocument.needsSave = true;
         }
     },
 
