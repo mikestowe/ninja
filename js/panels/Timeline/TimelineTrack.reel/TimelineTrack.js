@@ -408,16 +408,12 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     insertTween:{
         value:function (clickPos) {
-
             // calculate new tween's keyframe milliseconds by clickPos
             var currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
             var currentMillisec = currentMillisecPerPixel * clickPos;
 
             // need to check timeline master duration if greater than this track duration
             this.trackDuration = currentMillisec;
-
-
-
             var newTween = {};
 
             if (clickPos == 0) {
@@ -445,9 +441,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 // update the animation duration
                 var animationDuration = Math.round(this.trackDuration / 1000) + "s";
                 this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-duration", animationDuration);
-
                 this.nextKeyframe += 1;
             }
+            this.application.ninja.documentController.activeDocument.needsSave = true;
         }
     },
 
@@ -564,6 +560,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             keyframeString += " }";
             // set the keyframe string as the new rule
             this.currentKeyframeRule = this.ninjaStylesContoller.addRule(keyframeString);
+            this.application.ninja.documentController.activeDocument.needsSave = true;
         }
     },
 
