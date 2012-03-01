@@ -403,7 +403,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         	this.mainCollapser.myContent = this.myContent;
         	this.mainCollapser.contentHeight = 60;
         	this.myContent.style.height = "0px";
-            this.mainCollapser.element = this.element;
+            this.mainCollapser.element = this.myContent;
             //this.mainCollapser.isCollapsedAtStart = true;
             this.mainCollapser.isCollapsed = this.isMainCollapsed;
             this.mainCollapser.isAnimated = true;
@@ -422,8 +422,8 @@ var Layer = exports.Layer = Montage.create(Component, {
 
             this.positionCollapser.clicker = this.clickerPosition;
             this.positionCollapser.myContent = this.contentPosition;
-            this.positionCollapser.element = this.element;
-            this.positionCollapser.contentHeight = 60;
+            this.positionCollapser.element = this.contentPosition;
+            this.positionCollapser.contentHeight = 40;
             // this.positionCollapser.isCollapsedAtStart = true;
             this.positionCollapser.isCollapsed = this.isPositionCollapsed;
             this.positionCollapser.isAnimated = true;
@@ -441,7 +441,7 @@ var Layer = exports.Layer = Montage.create(Component, {
             
             this.transformCollapser.clicker = this.clickerTransform;
             this.transformCollapser.myContent = this.contentTransform;
-            this.transformCollapser.element = this.element;
+            this.transformCollapser.element = this.contentTransform;
             this.transformCollapser.contentHeight = 100;
             // this.transformCollapser.isCollapsedAtStart = true;
             this.transformCollapser.isCollapsed = this.isTransformCollapsed;
@@ -460,7 +460,7 @@ var Layer = exports.Layer = Montage.create(Component, {
             
             this.styleCollapser.clicker = this.clickerStyle;
             this.styleCollapser.myContent = this.contentStyle;
-            this.styleCollapser.element = this.element;
+            this.styleCollapser.element = this.contentStyle;
             this.styleCollapser.isCollapsed = this.isStyleCollapsed;
             this.styleCollapser.contentHeight = 0;
             this.styleCollapser.isAnimated = true;

@@ -589,55 +589,54 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this._mainCollapser.myContent = this.myContent;
             this._mainCollapser.contentHeight = 60;
             this._mainCollapser.isLabelClickable = false;
-            this._mainCollapser.element = this.element;
+            this._mainCollapser.element = this.myContent;
             this._mainCollapser.isCollapsed = this.isMainCollapsed;
             this._mainCollapser.isAnimated = true;
             this._mainCollapser.labelClickEvent = function () {
                 that.isMainCollapsed = that._mainCollapser.isCollapsed;
             };
-            this._mainCollapser.needsDraw = true;
+            //this._mainCollapser.needsDraw = true;
 
             this._positionCollapser = Collapser.create();
             this._positionCollapser.clicker = this.labelPosition;
             this._positionCollapser.myContent = this.contentPosition;
-            this._positionCollapser.contentHeight = 60;
+            this._positionCollapser.contentHeight = 40;
             this._positionCollapser.isLabelClickable = true;
-            this._positionCollapser.element = this.element;
+            this._positionCollapser.element = this.contentPosition;
             this._positionCollapser.isCollapsed = this.isPositionCollapsed;
             this._positionCollapser.isAnimated = true;
             this._positionCollapser.labelClickEvent = function () {
                 that.isPositionCollapsed = that._positionCollapser.isCollapsed;
             };
-            this._positionCollapser.needsDraw = true;
+            //this._positionCollapser.needsDraw = true;
 
             this._transformCollapser = Collapser.create();
             this._transformCollapser.clicker = this.labelTransform;
             this._transformCollapser.myContent = this.contentTransform;
             this._transformCollapser.contentHeight = 100;
             this._transformCollapser.isLabelClickable = false;
-            this._transformCollapser.element = this.element;
+            this._transformCollapser.element = this.contentTransform;
             this._transformCollapser.isCollapsed = this.isTransformCollapsed;
             this._transformCollapser.isAnimated = true;
             this._transformCollapser.labelClickEvent = function () {
                 that.isTransformCollapsed = that._transformCollapser.isCollapsed;
             };
-            this._transformCollapser.needsDraw = true;
+            //this._transformCollapser.needsDraw = true;
 
             this._styleCollapser = Collapser.create();
             this._styleCollapser.clicker = this.labelStyles;
             this._styleCollapser.myContent = this.contentStyles;
             this._styleCollapser.contentHeight = 0;
             this._styleCollapser.isLabelClickable = false;
-            this._styleCollapser.element = this.element;
+            this._styleCollapser.element = this.contentStyles;
             this._styleCollapser.isCollapsed = this.isStyleCollapsed;
             this._styleCollapser.isAnimated = true;
             this._styleCollapser.labelClickEvent = function () {
                 that.isStyleCollapsed = that._styleCollapser.isCollapsed;
             };
-            this._styleCollapser.needsDraw = true;
+            //this._styleCollapser.needsDraw = true;
 
             // Register event handler for layer events.
-            var that = this;
             defaultEventManager.addEventListener("layerEvent", this, false);
 
         }
