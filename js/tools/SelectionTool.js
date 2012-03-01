@@ -403,7 +403,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                     case 0:
                         // Resize North-West
                         delta = ~~(data.pt1[0] - data.pt0[0]);
-                        deltaW = this._undoArray.map(function(item) { return item._w + delta + "px"});
+                        deltaW = this._undoArray.map(function(item) { return item._w - delta + "px"});
                         deltaL = this._undoArray.map(function(item) { return item._x + delta + "px"});
                         delta = ~~(data.pt1[1] - data.pt0[1]);
                         deltaH = this._undoArray.map(function(item) { return item._h - delta + "px"});
