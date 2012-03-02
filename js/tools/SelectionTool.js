@@ -755,7 +755,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             this.application.ninja.stage.clearDrawingCanvas();
 
             var item = this._target;
-            if(!item)
+            if(!item || (item === this.application.ninja.currentDocument.documentRoot))
             {
                 return;
             }
