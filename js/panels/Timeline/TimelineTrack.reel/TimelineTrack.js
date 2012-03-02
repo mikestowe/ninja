@@ -562,8 +562,15 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 var trackDur = parseInt(this.trackDuration);
                 var keyframePercent = Math.round((keyMill / trackDur) * 100) + "%";
                 var keyframePropertyString = " " + keyframePercent + " {";
-                keyframePropertyString += "top: " + this.tweens[i].tweenedProperties["top"] + "px;";
-                keyframePropertyString += " left: " + this.tweens[i].tweenedProperties["left"] + "px;";
+
+                for(var prop in this.tweens[i].tweenedProperties){
+                    console.log(prop);
+                    keyframePropertyString += prop + ": " + this.tweens[i].tweenedProperties[prop] + "px;";
+                }
+
+                //keyframePropertyString += "top: " + this.tweens[i].tweenedProperties["top"] + "px;";
+                //keyframePropertyString += "left: " + this.tweens[i].tweenedProperties["left"] + "px;";
+
                 keyframePropertyString += "}";
                 keyframeString += keyframePropertyString;
             }
