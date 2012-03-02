@@ -405,7 +405,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
-    captureSelectionChange:{
+    handleSelectionChange:{
         value:function(){
             var key , switchSelectedLayer,layerIndex;
             if(this.application.ninja.selectedElements[0]){
@@ -416,7 +416,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     this._captureSelection=false;
                     this.selectLayer(layerIndex);
                     this._captureSelection=true;
-
                 }
             }
         }
