@@ -33,16 +33,16 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     // Are the various collapsers collapsed or not
     _isMainCollapsed:{
-        value:""
+        value: true
     },
     isMainCollapsed:{
         get:function () {
             return this._isMainCollapsed;
         },
         set:function (newVal) {
+    		this.log('TimelineTrack.js: isMainCollapsed: ', newVal);
             if (newVal !== this._isMainCollapsed) {
                 this._isMainCollapsed = newVal;
-                this.needsDraw = true;
             }
 
         }
@@ -88,6 +88,19 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 this.needsDraw = true;
             }
         }
+    },
+    _animateCollapser : {
+    	serializable: true,
+    	value: false
+    },
+    animateCollapser : {
+    	serializable: true,
+    	get: function() {
+    		return this._animateCollapser;
+    	},
+    	set: function(newVal) {
+    		this._animateCollapser = newVal;
+    	}
     },
     
     _arrStyleTracks : {
@@ -345,6 +358,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     draw:{
         value:function () {
             this.ninjaStylesContoller = this.application.ninja.stylesController;
+            return;
             if (this._mainCollapser.isCollapsed !== this.isMainCollapsed) {
                 this._mainCollapser.toggle(false);
             }
@@ -450,7 +464,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     splitTween:{
         value:function (ev) {
             alert("Splitting an existing span with a new keyframe is not yet supported.");
-            //console.log("splitting tween at span offsetX: " + ev.offsetX);
+            //this.log("splitting tween at span offsetX: " + ev.offsetX);
         }
     },
 
@@ -589,9 +603,25 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this._mainCollapser.element = this.myContent;
             this._mainCollapser.isCollapsed = this.isMainCollapsed;
             this._mainCollapser.isAnimated = true;
+            Object.defineBinding(this._mainCollapser, "isToggling", {
+   				boundObject: this,
+       		    boundObjectPropertyPath: "isMainCollapsed",
+       		    oneway: false
+   			});
+            Object.defineBinding(this._mainCollapser, "bypassAnimation", {
+   				boundObject: this,
+       		    boundObjectPropertyPath: "animateCollapser",
+       		    oneway: false,
+               	boundValueMutator: function(value) {
+                   	return !value;
+                }
+   			});
+            
+            /*
             this._mainCollapser.labelClickEvent = function () {
                 that.isMainCollapsed = that._mainCollapser.isCollapsed;
             };
+            */
             //this._mainCollapser.needsDraw = true;
 
             this._positionCollapser = Collapser.create();
@@ -602,9 +632,18 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this._positionCollapser.element = this.contentPosition;
             this._positionCollapser.isCollapsed = this.isPositionCollapsed;
             this._positionCollapser.isAnimated = true;
+            Object.defineBinding(this._positionCollapser, "isToggling", {
+   				boundObject: this,
+       		    boundObjectPropertyPath: "isPositionCollapsed",
+       		    oneway: false
+   			});
+            
+            
+            /*
             this._positionCollapser.labelClickEvent = function () {
                 that.isPositionCollapsed = that._positionCollapser.isCollapsed;
             };
+            */
             //this._positionCollapser.needsDraw = true;
 
             this._transformCollapser = Collapser.create();
@@ -615,9 +654,18 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this._transformCollapser.element = this.contentTransform;
             this._transformCollapser.isCollapsed = this.isTransformCollapsed;
             this._transformCollapser.isAnimated = true;
+            Object.defineBinding(this._transformCollapser, "isToggling", {
+   				boundObject: this,
+       		    boundObjectPropertyPath: "isTransformCollapsed",
+       		    oneway: false
+   			});
+   			
+   			
+            /*
             this._transformCollapser.labelClickEvent = function () {
                 that.isTransformCollapsed = that._transformCollapser.isCollapsed;
             };
+            */
             //this._transformCollapser.needsDraw = true;
 
             this._styleCollapser = Collapser.create();
@@ -628,13 +676,22 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this._styleCollapser.element = this.contentStyles;
             this._styleCollapser.isCollapsed = this.isStyleCollapsed;
             this._styleCollapser.isAnimated = true;
+            Object.defineBinding(this._styleCollapser, "isToggling", {
+   				boundObject: this,
+       		    boundObjectPropertyPath: "isStyleCollapsed",
+       		    oneway: false
+   			});
+   			
+   			
+            /*
             this._styleCollapser.labelClickEvent = function () {
                 that.isStyleCollapsed = that._styleCollapser.isCollapsed;
             };
+            */
             //this._styleCollapser.needsDraw = true;
 
             // Register event handler for layer events.
-            defaultEventManager.addEventListener("layerEvent", this, false);
+            //defaultEventManager.addEventListener("layerEvent", this, false);
 
         }
     },
@@ -668,5 +725,35 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             	this.arrStyleTracks.pop();
             }
         }
+    },
+	/* Begin: Logging routines */
+    _boolDebug: {
+    	enumerable: false,
+    	value: false // set to true to enable debugging to console; false for turning off all debugging.
+    },
+    boolDebug: {
+    	get: function() {
+    		return this._boolDebug;
+    	},
+    	set: function(boolDebugSwitch) {
+    		this._boolDebug = boolDebugSwitch;
+    	}
+    },
+    log: {
+    	value: function(strMessage) {
+    		if (this.boolDebug) {
+    			console.log(this.getLineNumber() + ": " + strMessage);
+    		}
+    	}
+    },
+    getLineNumber: {
+    	value: function() {
+			try {
+			   throw new Error('bazinga')
+			}catch(e){
+				return e.stack.split("at")[3].split(":")[2];
+			}
+    	}
     }
+	/* End: Logging routines */
 });
