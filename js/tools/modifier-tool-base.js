@@ -828,14 +828,14 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                 this.doDraw(event);
             } else {
                 this._showFeedbackOnMouseMove(event);
-//                if(this._canSnap)
-//                {
-//                    this.doSnap(event);
-//                }
+                if(this._canSnap)
+                {
+                    this.doSnap(event);
+                }
             }
 
             this.DrawHandles(this._delta);
-            if(this._canSnap && this._isDrawing)
+            if(this._canSnap)
             {
                 snapManager.drawLastHit();
             }
