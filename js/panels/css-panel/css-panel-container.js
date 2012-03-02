@@ -9,7 +9,7 @@ var PanelBase = require("js/panels/PanelBase").PanelBase;
 var Content = require("js/panels/css-panel/css-panel.reel").CSSPanelNew;
 
 exports.CSSPanelContainer = Montage.create(PanelBase, {
-    panelName : { value: "CSSPanelNew" },
+    panelName : { value: "CSS Panel" },
     minHeight : { value: 200 },
     content : { value: Content }
 });

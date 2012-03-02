@@ -190,6 +190,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             ///// attach specificity to rule object
             ///// if rule is css keyframes, return rule and don't attach specificity
             if (rule instanceof WebKitCSSKeyframesRule) {
+
                 return rule;
             }
             rule[this.CONST.SPECIFICITY_KEY] = this.getSpecificity(rule.selectorText);
@@ -1184,6 +1185,8 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
             this.styleSheetModified(sheet);
 
+            NJevent('newStyleSheet', sheet);
+
             return sheet;
         }
     },
@@ -1243,10 +1246,15 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
     clearDirtyStyleSheets : {
         value: function(doc) {
-            if(!doc) {
+            this.dirtyStyleSheets.length = 0;
+
+            if(doc) {
                 this.dirtyStyleSheets = null;
-                this.dirtyStyleSheets = [];
+                this.dirtyStyleSheets = this.dirtyStyleSheets.filter(function(sheet) {
+                    return sheet.document !== doc;
+                });
             }
+
 
         }
     },

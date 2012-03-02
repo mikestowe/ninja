@@ -11,6 +11,9 @@ exports.StyleSheetsView = Montage.create(Component, {
     noDocumentCondition : {
         value: true
     },
+    showToolbar : {
+        value: false
+    },
     styleSheets : {
         value: []
     },
@@ -24,16 +27,25 @@ exports.StyleSheetsView = Montage.create(Component, {
             this.stylesController = this.application.ninja.stylesController;
 
             this.eventManager.addEventListener("styleSheetsReady", this, false);
+            this.eventManager.addEventListener("newStyleSheet", this, false);
         }
+    },
+    _initView : {
+        value: false
     },
     handleStyleSheetsReady : {
         value: function(e) {
-            this.noDocumentCondition = false;
+            this._initView = this.needsDraw = true;
 
-            this.stylesController.userStyleSheets.forEach(function(sheet) {
-                this.styleSheets.push(sheet);
-            }, this);
+//            this.noDocumentCondition = false;
+//            this.showToolbar = true;
+//            this.styleSheets = this.stylesController.userStyleSheets;
 
+        }
+    },
+    handleNewStyleSheet : {
+        value: function(e) {
+            this.styleSheets.push(e._event.detail);
         }
     },
     prepareForDraw : {
@@ -44,6 +56,13 @@ exports.StyleSheetsView = Montage.create(Component, {
     draw : {
         value: function() {
             console.log("styles sheet view - draw");
+
+            if(this._initView) {
+                this.noDocumentCondition = false;
+                this.showToolbar = true;
+                this.styleSheets = this.stylesController.userStyleSheets;
+                this._initView = false;
+            }
         }
     }
 });

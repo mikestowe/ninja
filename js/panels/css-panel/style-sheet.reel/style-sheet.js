@@ -21,8 +21,15 @@ exports.StyleSheet = Montage.create(Component, {
     draw : {
         value: function() {
             console.log("styles sheet view - draw");
+
+            this.mediaInput.value = this._source.media.mediaText;
         }
     },
+
+    mediaInput: {
+        value: null
+    },
+
     _name: {
         value: null
     },
@@ -44,7 +51,7 @@ exports.StyleSheet = Montage.create(Component, {
         set: function(sheet) {
             console.log('sheet being set');
             if(sheet.href) {
-                this.name = sheet.href.substring(sheet.href.lastIndexOf('/'));
+                this.name = sheet.href.substring(sheet.href.lastIndexOf('/')+1);
             } else {
                 this.name = 'Style Tag';
             }

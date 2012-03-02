@@ -3,17 +3,12 @@
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
-.style-sheets-view-container ul {
-    margin: 0;
-    padding: 0;
-}
-.style-sheets-view-container li {
-    list-style-type: none;
-    margin: 0 8px;
-}
-.style-sheets-view-container li:first-child {
-    margin-top: 5px;
-}
-.style-sheets-view-container li:last-child {
-    margin-bottom: 5px;
+.toolbar-container {
+    background-color: #474747;
+    border-bottom: 1px solid #333;
+    border-top: 1px solid #505050;
+    box-shadow:  0 4px 8px 0px rgba(0,0,0,0.75);
+    height: 22px;
+    width: 100%;
+    -webkit-box-flex: 0;
 }

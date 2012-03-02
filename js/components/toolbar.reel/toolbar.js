@@ -7,20 +7,21 @@
 var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
-exports.CSSPanelNew = Montage.create(Component, {
-    templateDidLoad : {
+exports.Toolbar = Montage.create(Component, {
+
+    deserializedFromTemplate : {
         value: function() {
-            console.log("css panel : template did load");
+            console.log("toolbar - deserialized");
         }
     },
     prepareForDraw : {
         value: function() {
-            console.log("css panel : prepare for draw");
+            console.log("toolbar - prepare for draw");
         }
     },
     draw : {
         value: function() {
-            console.log("css panel : draw");
+            console.log("toolbar - draw");
         }
     }
 });

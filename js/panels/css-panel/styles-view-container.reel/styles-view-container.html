@@ -7,13 +7,15 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 <html lang="en">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link href="styles-view-container.css" rel="stylesheet" type="text/css">
     <script type="text/montage-serialization">
         {
             "owner": {
                 "module" : "js/panels/css-panel/styles-view-container.reel",
                 "name" : "StylesViewContainer",
                 "properties" : {
-                    "element" : {"#" : "container"}
+                    "element" : {"#" : "container"},
+                    "ruleList": {"@": "ruleList" }
                 }
             },
             "substitution": {
@@ -22,46 +24,53 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "properties": {
                     "element": {"#": "sub-panel-slot"},
                     "switchComponents": {
-                        "rules": {"@": "ruleListCollection"},
+                        "rules": {"@": "ruleList"},
                         "computed": {"@": "computedStyleView"}
-                }
-            },
-            "bindings": {
-                "switchValue": {
-                    "boundObject": {"@": "owner"},
-                    "boundObjectPropertyPath": "contentPanel",
-                    "oneway": true
-                }
-            }
-            },
-            "ruleListCollection": {
-                "module" : "montage/ui/list.reel",
-                "name": "List",
-                "properties": { },
+                    }
+                },
                 "bindings": {
-                    "list": {
-                        "boundObject": {"@": "owner" },
-                        "boundObjectPropertyPath": "displayedList"
+                    "switchValue": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "contentPanel",
+                        "oneway": true
                     }
                 }
+            },
+            "ruleList": {
+                "module" : "js/panels/css-panel/rule-list.reel",
+                "name": "RuleList",
+                "properties": {
+                    "supportedRules" : {
+                        "1"  : {"@": "css-style-rule"},
+                        "3"  : {"@": "css-import-rule"},
+                        "4"  : {"@": "css-media-rule"},
+                        "5"  : {"@": "css-font-face-rule"},
+                        "6"  : {"@": "css-page-rule"},
+                        "10" : {"@": "namespace-rule"}
+                    }
+                },
+                "bindings": {
+                    "contentController" : {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "contentController",
+                        "oneway": true
+                    }
+                }
+            },
+            "css-style-rule": {
+                "module": "js/panels/css-panel/rule-components/css-style-rule.reel",
+                "name": "CssStyleRule"
             },
             "computedStyleView": {
                 "module": "js/panels/CSSPanel/ComputedStyleSubPanel.reel",
                 "name": "ComputedStyleSubPanel",
                 "properties": { }
             },
-            "noDocumentCondition": {
-                "module": "montage/ui/condition.reel",
-                "name": "Condition",
+            "toolbar": {
+                "module": "js/components/toolbar.reel",
+                "name": "Toolbar",
                 "properties": {
-                    "element": {"#": "no-document-message" }
-                },
-                "bindings": {
-                    "condition": {
-                        "boundObject": {"@": "owner" },
-                        "boundObjectPropertyPath": "noDocumentCondition",
-                        "oneway": true
-                    }
+                    "element": {"#": "styles-view-toolbar"}
                 }
             }
         }
@@ -69,8 +78,10 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </head>
 <body>
 <div id="container" class="styles-view-container">
-    <div id="sub-panel-slot">
-        <h3 id="no-document-message">No document loaded. Please Open or Create a new document.</h3>
+    <h4 id="no-styles-message" class="panel-message">No styles to display.</h4>
+    <div id="sub-panel-slot" class="sub-panel-slot"></div>
+    <div class="styles-view-toolbar-container">
+        <div id="styles-view-toolbar"></div>
     </div>
 </div>
 </body>

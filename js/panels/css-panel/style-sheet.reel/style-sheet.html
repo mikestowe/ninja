@@ -7,16 +7,29 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 <html lang="en">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link href="style-sheet.css" rel="stylesheet" type="text/css">
     <script type="text/montage-serialization">
         {
             "owner": {
                 "module" : "js/panels/css-panel/style-sheet.reel",
                 "name" : "StyleSheet",
                 "properties" : {
-                    "element" : {"#" : "style-sheet-container"}
+                    "element" : {"#" : "style-sheet-container"},
+                    "disableCheckbox": {"@": "disableCheckbox1"},
+                    "nameText": {"@": "name1"},
+                    "mediaInput": {"@": "mediaInput1"},
+                    "deleteButton": {"@": "deleteButton1"}
                 }
             },
-            "name": {
+            "disableCheckbox1": {
+                "module": "js/components/checkbox.reel",
+                "name": "Checkbox",
+                "properties": {
+                    "element": { "#": "disable-checkbox" },
+                    "checked": true
+                }
+            },
+            "name1": {
                 "module": "montage/ui/dynamic-text.reel",
                 "name": "DynamicText",
                 "properties": {
@@ -30,6 +43,21 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                         "onewway": true
                     }
                 }
+            },
+            "mediaInput1": {
+                "module": "js/components/textfield.reel",
+                "name": "TextField",
+                "properties": {
+                    "element": {"#": "media-input"}
+                }
+            },
+            "deleteButton1": {
+                "module": "js/components/button.reel",
+                "name": "Button",
+                "properties": {
+                    "element": {"#": "delete-button"},
+                    "label": " "
+                }
 
             }
         }
@@ -37,7 +65,11 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </head>
 <body>
 <div id="style-sheet-container" class="style-sheet-container">
+    <div id="disable-checkbox"></div>
     <span id="sheet-name"></span>
+    <label>Media:</label>
+    <div id="media-input"></div>
+    <div id="delete-button"></div>
 </div>
 </body>
 </html>

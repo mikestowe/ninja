@@ -14,7 +14,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "module" : "js/panels/css-panel/css-panel.reel",
                 "name" : "CSSPanel",
                 "properties" : {
-                    "element" : {"#" : "container"}
+                    "element" : {"#" : "container"},
+                    "controller": {"@": "cssPanelController"}
                 }
             },
             "styleSheetView": {
@@ -36,9 +37,9 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </head>
 <body>
 <section id="container" class="css-panel">
-    <h2>Style Sheets</h2>
+    <h3>Style Sheets</h3>
     <div id="style-sheet-view"></div>
-    <h2>Styles</h2>
+    <h3>Styles</h3>
     <div id="styles-view-container"></div>
 </section>
 </body>

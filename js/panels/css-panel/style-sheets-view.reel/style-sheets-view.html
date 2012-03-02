@@ -7,13 +7,14 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 <html lang="en">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link href="style-sheets-view.css" rel="stylesheet" type="text/css">
     <script type="text/montage-serialization">
         {
             "owner": {
                 "module" : "js/panels/css-panel/style-sheets-view.reel",
                 "name" : "StyleSheetsView",
                 "properties" : {
-                    "element" : {"#" : "style-sheet-view-container"}
+                    "element" : {"#" : "style-sheets-view-container"}
                 }
             },
             "arrayController" : {
@@ -28,8 +29,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 }
             },
             "styleSheetList": {
-                "module" : "montage/ui/list.reel",
-                "name": "List",
+                "module" : "montage/ui/repetition.reel",
+                "name": "Repetition",
                 "properties": {
                     "element": {"#": "sheet-list" },
                     "contentController": {"@": "arrayController"}
@@ -58,20 +59,45 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "bindings": {
                     "condition": {
                         "boundObject": {"@": "owner" },
-                        "boundObjectPropertyPath": "noDocumentCondition",
+                        "boundObjectPropertyPath": "styleSheets.count()",
+                        "boundValueMutator": {"->": {"arguments": ["val"], "body": "return !val;"}},
                         "oneway": true
                     }
+                }
+            },
+            "showToolbarCondition": {
+                "module": "montage/ui/condition.reel",
+                "name": "Condition",
+                "properties": {
+                    "element": {"#": "style-sheets-toolbar-container" }
+                },
+                "bindings" : {
+                    "condition": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "styleSheets.count()",
+                        "oneway": true
+                    }
+                }
+            },
+            "toolbar": {
+                "module": "js/components/toolbar.reel",
+                "name": "Toolbar",
+                "properties": {
+                    "element": {"#": "style-sheets-toolbar"}
                 }
             }
         }
     </script>
 </head>
 <body>
-<div id="style-sheet-view-container" class="style-sheet-view-container">
-    <h3 id="no-document-message">No document loaded. Please Open or Create a new document.</h3>
+<div id="style-sheets-view-container" class="style-sheets-view-container">
+    <h4 id="no-document-message" class="panel-message">No style sheets to display.</h4>
     <ul id="sheet-list">
         <li><div id="sheet-item"></div></li>
     </ul>
+    <div id="style-sheets-toolbar-container">
+        <div id="style-sheets-toolbar"></div>
+    </div>
 </div>
 </body>
 </html>

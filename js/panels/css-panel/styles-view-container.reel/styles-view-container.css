@@ -1,11 +1,25 @@
-.styles-view-container h3 {
-    background-color: rgba(255,255,255, 0.1);
-    border: 1px dashed rgba(255,255,255, 0.2);
-    border-radius: 4px;
-    color: #CCC;
-    font-size: 11px;
-    font-weight: normal;
-    margin: 5px;
-    padding: 10px;
-    text-shadow: 1px 1px 0px #333;
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+.sub-panel-slot {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-box-flex: 1;
+}
+.no-styles .sub-panel-slot, .no-styles .styles-view-toolbar-container {
+    display: none;
+}
+.styles-view-container .panel-message {
+    display: none;
+}
+.styles-view-container.no-styles .panel-message {
+    display: block;
+}
+.styles-view-toolbar-container {
+    border-top: 1px solid #303030;
+}
+.styles-view-toolbar-container .toolbar-container {
+    border-top: 1px solid #5c5c5c;
 }

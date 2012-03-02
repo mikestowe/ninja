@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<!-- <copyright>
+This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+(c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+</copyright> -->
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link href="css-style-rule.css" rel="stylesheet" type="text/css">
+    <script type="text/montage-serialization">
+        {
+            "owner": {
+                "module" : "js/panels/css-panel/rule-components/css-style-rule.reel",
+                "name" : "CssStyleRule",
+                "properties" : {
+                    "element" : {"#" : "rule-item"}
+                }
+            },
+            "sheetName": {
+                "module": "montage/ui/dynamic-text.reel",
+                "name" : "DynamicText",
+                "properties": {
+                    "element": {"#": "style-sheet-name"}
+                },
+                "bindings": {
+                    "value" : {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "sheetName",
+                        "oneway": true
+                    }
+                }
+            },
+            "selector": {
+                "module": "montage/ui/dynamic-text.reel",
+                "name" : "DynamicText",
+                "properties": {
+                    "element": {"#": "rule-selector"}
+                },
+                "bindings": {
+                    "value" : {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "selector",
+                        "oneway": true
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<div id="rule-item" class="css-style-rule-item">
+    <a href="#" id="style-sheet-name"></a>
+    <span id="rule-selector" class="nj-css-selector"></span>
+</div>
+</body>
+</html>

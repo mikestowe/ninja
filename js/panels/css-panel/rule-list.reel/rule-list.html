@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<!-- <copyright>
+This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+(c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+</copyright> -->
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link href="rule-list.css" type="text/css" rel="stylesheet">
+    <script type="text/montage-serialization">
+        {
+            "owner": {
+                "module" : "js/panels/css-panel/rule-list.reel",
+                "name" : "RuleList",
+                "properties" : {
+                    "element" : {"#" : "container"},
+                    "listElement": {"#": "rules-list"}
+                }
+            }
+        }
+    </script>
+    <script type="text/json">
+        ,
+        "ruleListController": {
+        "module":"montage/ui/controller/array-controller",
+        "name": "ArrayController",
+        "bindings": {
+        "content" : {
+        "boundObject": {"@": "owner"},
+        "boundObjectPropertyPath": "contentController.ruleList",
+        "oneway": true
+        }
+        }
+        },
+        "ruleList": {
+        "module" : "montage/ui/repetition.reel",
+        "name": "Repetition",
+        "properties": {
+        "element": {"#": "rules-list"}
+        },
+        "bindings": {
+        "objects" : {
+        "boundObject": {"@": "owner"},
+        "boundObjectPropertyPath": "contentController.ruleList",
+        "oneway": true
+        }
+        }
+        },
+        "slot": {
+        "module" : "montage/ui/slot.reel",
+        "name" : "Slot",
+        "properties" : {
+        "element" : {"#" : "rule-item"}
+        },
+        "bindings": {
+        "rule" : {
+        "boundObject": {"@": "ruleList"},
+        "boundObjectPropertyPath": "objectAtCurrentIteration",
+        "oneway": true
+        }
+        }
+        },
+        "ruleContainer": {
+        "module": "js/panels/css-panel/rule-container.reel",
+        "name": "RuleContainer",
+        "properties": {
+        "element": {"#": "rule-item"}
+        },
+        "bindings": {
+        "rule" : {
+        "boundObject": {"@": "ruleList"},
+        "boundObjectPropertyPath": "objectAtCurrentIteration",
+        "oneway": true
+        }
+        }
+        }
+    </script>
+</head>
+<body>
+<div id="container" class="rule-list-container">
+    <ul id="rules-list" class="rule-list"></ul>
+</div>
+</body>
+</html>
