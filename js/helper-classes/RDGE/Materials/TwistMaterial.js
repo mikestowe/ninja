@@ -71,7 +71,7 @@ function TwistMaterial()
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = createMaterialNode("twistMaterial");
+		this._materialNode = createMaterialNode("twistMaterial_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;

@@ -35,6 +35,11 @@ function GLRuntime( canvas, importStr )
 
 	this._aspect = canvas.width/canvas.height;
 
+	this._geomRoot;
+
+	// all "live" materials
+	this._materials = [];
+
     ///////////////////////////////////////////////////////////////////////
 	// accessors
     ///////////////////////////////////////////////////////////////////////
@@ -58,6 +63,9 @@ function GLRuntime( canvas, importStr )
 			rdgeStr = rdgeStr.substr( 0, endIndex );
 
 			this.myScene.importJSON( rdgeStr );
+			this.importObjects( importStr );
+			this.linkMaterials( this._geomRoot );
+			this.initMaterials();
 		}
 	}
 
@@ -82,42 +90,13 @@ function GLRuntime( canvas, importStr )
         
 		// create an empty scene graph
 		this.myScene = new SceneGraph();
-		
-		/*
-		// create some lights
-		// light 1
-		this.light = createLightNode("myLight");
-		this.light.setPosition([0,0,1.2]);
-		this.light.setDiffuseColor([0.75,0.9,1.0,1.0]);
-        
-		// light 2
-		this.light2 = createLightNode("myLight2");
-		this.light2.setPosition([-0.5,0,1.2]);
-		this.light2.setDiffuseColor([1.0,0.9,0.75,1.0]);
-        
-		// create a light transform
-		var lightTr = createTransformNode("lightTr");
-        
-		// create and attach a material - materials hold the light data
-		lightTr.attachMaterial(createMaterialNode("lights"));
-        
-		// enable light channels 1, 2 - channel 0 is used by the default shader
-		lightTr.materialNode.enableLightChannel(1, this.light);
-		lightTr.materialNode.enableLightChannel(2, this.light2);
-     
-		// all added objects are parented to the light node
-		this._rootNode = lightTr;
-        
-		// add the light node to the scene
-		this.myScene.addNode(lightTr);
-		*/
 
 		// load the scene graph data
 		this.loadScene();
         
 		// Add the scene to the engine - necessary if you want the engine to draw for you
-		//var name = "myScene" + this._canvas.getAttribute( "data-RDGE-id" ); 
-		//g_Engine.AddScene(name, this.myScene);
+		var name = "myScene" + this._canvas.getAttribute( "data-RDGE-id" ); 
+		g_Engine.AddScene(name, this.myScene);
 
 		this._initialized = true;
 	}
@@ -139,10 +118,22 @@ function GLRuntime( canvas, importStr )
 			//this.light.setPosition([1.2*Math.cos(this.elapsed*2.0), 1.2*Math.sin(this.elapsed*2.0), 1.2*Math.cos(this.elapsed*2.0)]);
 			//this.light2.setPosition([-1.2*Math.cos(this.elapsed*2.0), 1.2*Math.sin(this.elapsed*2.0), -1.2*Math.cos(this.elapsed)]);
 
+			this.updateMaterials();
+
 			// now update all the nodes in the scene
 			this.myScene.update(dt);
 		}
     }
+
+	this.updateMaterials = function()
+	{
+		var nMats = this._materials.length;
+		for (var i=0;  i<nMats;  i++)
+		{
+			var mat = this._materials[i];
+			mat.update();
+		}
+	}
 
     // defining the draw function to control how the scene is rendered      
 	this.draw = function()
@@ -171,12 +162,139 @@ function GLRuntime( canvas, importStr )
 		}
     }
 
+	this.importObjects = function( importStr,  parent )
+	{
+		var index = importStr.indexOf( "OBJECT\n", 0 );
+		while (index >= 0)
+		{
+			// update the string to the current object
+			importStr = importStr.substr( index+7 );
+
+			// read the next object
+			var obj = this.importObject( importStr, parent );
+
+			// determine if we have children
+			var endIndex = importStr.indexOf( "ENDOBJECT\n" ),
+				childIndex = importStr.indexOf( "OBJECT\n" );
+			if (endIndex < 0)  throw new Error( "ill-formed object data" );
+			if ((childIndex >= 0) && (childIndex < endIndex))
+			{
+				importStr = importStr.substr( childIndex + 7 );
+				importStr = this.importObjects( importStr, obj );
+				endIndex = importStr.indexOf( "ENDOBJECT\n" )
+			}
+
+			// remove the string for the object(s) just created
+			importStr = importStr.substr( endIndex );
+
+			// get the location of the next object
+			index = importStr.indexOf( "OBJECT\n", endIndex );
+		}
+
+		return importStr;
+	}
+
+	this.importObject = function( objStr,  parent )
+	{
+		var type = Number( getPropertyFromString( "type: ", objStr ) );
+
+		var obj;
+		switch (type)
+		{
+			case 1:
+				obj = new RuntimeRectangle();
+				obj.import( objStr, parent );
+				break;
+
+			case 2:		// circle
+				obj = new RuntimeOval();
+				obj.import( objStr, parent );
+				break;
+
+			case 3:		// line
+				obj = new RuntimeLine();
+				obj.import( objStr, parent );
+				break;
+
+			default:
+				throw new Error( "Attempting to load unrecognized object type: " + type );
+				break;
+		}
+
+		if (obj)
+			this.addObject( obj );
+
+		return obj;
+	}
+
+	this.addObject = function( obj, parent )
+	{
+		if (!obj)  return;
+
+		if (parent == null)
+			this._geomRoot = obj;
+		else
+			parent.addChild( obj );
+	}
+
+	this.linkMaterials = function( obj )
+	{
+		if (!obj)  return;
+
+		// get the array of materials from the object
+		var matArray = obj._materials;
+		var nMats = matArray.length;
+		for (var i=0;  i<nMats;  i++)
+		{
+			var mat = matArray[i];
+			var nodeName = mat._materialNodeName;
+			var matNode = this.findMaterialNode( nodeName, this.myScene.scene );
+			if (matNode)
+			{
+				mat._materialNode = matNode;
+				mat._shader = matNode.shaderProgram;
+				this._materials.push( mat );
+			}
+		}
+	}
+
+	this.initMaterials = function()
+	{
+		var nMats = this._materials.length;
+		for (var i=0;  i<nMats;  i++)
+		{
+			var mat = this._materials[i];
+			mat.init();
+		}
+	}
+
+	this.findMaterialNode = function( nodeName,  node )
+	{
+		if (node.transformNode)
+			node = node.transformNode;
+
+		if (node.materialNode)
+		{
+			if (nodeName === node.materialNode.name)  return node.materialNode;
+		}
+
+		if (node.children)
+		{
+			var nKids = node.children.length;
+			for (var i=0;  i<nKids;  i++)
+			{
+				var child = node.children[i];
+				var rtnNode = this.findMaterialNode( nodeName, child );
+				if (rtnNode)  return rtnNode;
+			}
+		}
+	}
+
 	// start RDGE
 	var id = canvas.getAttribute( "data-RDGE-id" ); 
 	canvas.rdgeid = id;
 	g_Engine.registerCanvas(canvas, this);
 	RDGEStart( canvas );
-
 }
 
 

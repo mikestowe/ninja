@@ -424,7 +424,7 @@ function UberMaterial()
 		this._shader = this.buildUberShader( this._ubershaderCaps );
 
 		// set up the material node
-		this._materialNode = createMaterialNode("uberMaterial");
+		this._materialNode = createMaterialNode("uberMaterial_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 	};
 

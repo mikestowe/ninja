@@ -13,7 +13,6 @@ var fragmentShaderSource = "";
 
 var rdgeStarted = false;
 
-var nodeCounter = 0;
 var worldCounter = 0;
 
 
@@ -73,6 +72,10 @@ function GLWorld( canvas, use3D )
 
 	this._worldCount = worldCounter;
 	worldCounter++;
+
+	// keep a counter for generating node names
+	this._nodeCounter = 0;
+
 
     ///////////////////////////////////////////////////////////////////////
     // Property accessors
@@ -392,6 +395,13 @@ function GLWorld( canvas, use3D )
 		RDGEStart( this._canvas );
 		this._canvas.task.stop()
 	}
+
+	this.generateUniqueNodeID = function()
+	{
+		var str = String( this._nodeCounter );
+		this._nodeCounter++;
+		return str;
+	}
 }
 
 
@@ -418,7 +428,7 @@ GLWorld.prototype.updateObject = function (obj)
         ctrTrNode = obj.getTransformNode();
 		if (ctrTrNode == null)
 		{
-			ctrTrNode = createTransformNode("objRootNode_" + nodeCounter++);
+			ctrTrNode = createTransformNode("objRootNode_" + this._nodeCounter++);
 			this._rootNode.insertAsChild( ctrTrNode );
 			obj.setTransformNode( ctrTrNode );
 		}
@@ -428,7 +438,7 @@ GLWorld.prototype.updateObject = function (obj)
 		});
 		ctrTrNode.meshes = [];
 
-        ctrTrNode.attachMeshNode(this.renderer.id + "_prim_" + nodeCounter++, prims[0]);
+        ctrTrNode.attachMeshNode(this.renderer.id + "_prim_" + this._nodeCounter++, prims[0]);
         ctrTrNode.attachMaterial(materialNodes[0]);
     }
 	
@@ -451,12 +461,12 @@ GLWorld.prototype.updateObject = function (obj)
 		}
 		else
 		{
-			childTrNode = createTransformNode("objNode_" + nodeCounter++);
+			childTrNode = createTransformNode("objNode_" + this._nodeCounter++);
 			ctrTrNode.insertAsChild(childTrNode);
 		}
 
         // attach the instanced box goe
-        childTrNode.attachMeshNode(this.renderer.id + "_prim_" + nodeCounter++, prim);
+        childTrNode.attachMeshNode(this.renderer.id + "_prim_" + this._nodeCounter++, prim);
         childTrNode.attachMaterial(materialNodes[i]);
     }
 }
@@ -821,6 +831,8 @@ GLWorld.prototype.export = function( exportForPublish )
 	exportStr += "zNear: " + this._zNear + "\n";
 	exportStr += "zFar: " + this._zFar + "\n";
 	exportStr += "viewDist: " + this._viewDist + "\n";
+	if (this._useWebGL)
+		exportStr += "webGL: true\n";
 
 	// we need 2 export modes:  One for save/restore, one for publish.
 	// hardcoding for now
@@ -831,11 +843,16 @@ GLWorld.prototype.export = function( exportForPublish )
 	if (exportForPublish)
 	{
 		exportStr += "scenedata: " + this.myScene.exportJSON() + "endscene\n";
+
+		// write out all of the objects
+		exportStr += "tree\n";
+		exportStr += this.exportObjects( this._geomRoot );
+		exportStr += "endtree\n";
 	}
 	else
 	{
 		// output the material library
-		exportStr += MaterialsLibrary.export();
+		//exportStr += MaterialsLibrary.export();	// THIS NEEDS TO BE DONE AT THE DOC LEVEL
 
 		// write out all of the objects
 		exportStr += "tree\n";
@@ -903,11 +920,13 @@ GLWorld.prototype.import = function( importStr )
 		rdgeStr = rdgeStr.substr( 0, endIndex );
 
 		this.myScene.importJSON( rdgeStr );
+
+		this.importObjects( importStr, this._rootNode );
 	}
 	else
 	{
 		// load the material library
-		importStr = MaterialsLibrary.import( importStr );
+		//importStr = MaterialsLibrary.import( importStr );
 
 		// import the objects
 		this.importObjects( importStr, this._rootNode );

@@ -97,22 +97,27 @@ function BumpMetalMaterial()
 	this.init = function( world )
 	{
 		// save the world
-		if (world)  this.setWorld( world );
+		if (world)  
+		{
+			this.setWorld( world );
 
-		// set up the shader
-		this._shader = new jshader();
-		this._shader.def = bumpMetalMaterialDef;
-		this._shader.init();
-		this._shader.default.u_light0Diff.set( this.getLightDiff() );
+			// set up the shader
+			this._shader = new jshader();
+			this._shader.def = bumpMetalMaterialDef;
+			this._shader.init();
+			this._shader.default.u_light0Diff.set( this.getLightDiff() );
 
-		// set up the material node
-		this._materialNode = createMaterialNode( this.getShaderName() );
-		this._materialNode.setShader(this._shader);
+			// set up the material node
+			this._materialNode = createMaterialNode( this.getShaderName() + "_" + world.generateUniqueNodeID() );
+			this._materialNode.setShader(this._shader);
 
-		// set some image maps
-		this.updateTexture(1);
-        this.updateTexture(2);
-        this.updateTexture(3);
+			// set some image maps
+			this.updateTexture(1);
+			this.updateTexture(2);
+			this.updateTexture(3);
+		}
+		else
+			throw new Error( "GLWorld not supplied to material initialization" );
 	};
 
 	this.updateTexture = function( index )

@@ -71,7 +71,7 @@ function ZInvertMaterial()
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = createMaterialNode("zInvertMaterial");
+		this._materialNode = createMaterialNode("zInvertMaterial_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;
