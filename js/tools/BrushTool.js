@@ -5,6 +5,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var ShapeTool = require("js/tools/ShapeTool").ShapeTool;
+var ShapesController = 	require("js/controllers/elements/shapes-controller").ShapesController;
 var DrawingToolBase = require("js/tools/drawing-tool-base").DrawingToolBase;
 var defaultEventManager = require("montage/core/event/event-manager").defaultEventManager;
 var Montage = require("montage/core/core").Montage;
@@ -67,12 +68,24 @@ exports.BrushTool = Montage.create(ShapeTool, {
                     if (this.application.ninja.colorController.colorToolbar.stroke.webGlColor){
                         this._selectedBrushStroke.setStrokeColor(this.application.ninja.colorController.colorToolbar.stroke.webGlColor);
                     }
+                    if (this.application.ninja.colorController.colorToolbar.fill.webGlColor){
+                        this._selectedBrushStroke.setSecondStrokeColor(this.application.ninja.colorController.colorToolbar.fill.webGlColor);
+                    }
                     //add this point to the brush stroke in case the user does a mouse up before doing a mouse move
                     var currMousePos = this._getUnsnappedPosition(event.pageX, event.pageY);
                     this._selectedBrushStroke.addPoint(currMousePos);
 
-                    //TODO get these values from the options
-                    this._selectedBrushStroke.setStrokeWidth(10);
+                    var strokeSize = 1;
+                    if (this.options.strokeSize) {
+                        strokeSize = ShapesController.GetValueInPixels(this.options.strokeSize.value, this.options.strokeSize.units);
+                    }
+                    this._selectedBrushStroke.setStrokeWidth(strokeSize);
+
+                    var strokeHardness = 100;
+                    if (this.options.strokeHardness){
+                        strokeHardness = ShapesController.GetValueInPixels(this.options.strokeHardness.value, this.options.strokeHardness.units);
+                    }
+                    this._selectedBrushStroke.setStrokeHardness(strokeHardness);
                 }
                 NJevent("enableStageMove");//stageManagerModule.stageManager.enableMouseMove();
             } //value: function (event) {
