@@ -19,6 +19,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
     _canOperateOnStage: { value: true},
     _isSelecting: {value: false, writable:true},
     _shiftMove: { value: 10},
+    _use3DMode: { value: false },
 
     _showTransformHandles: { value: false, enumerable: true },
 
@@ -26,6 +27,27 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
         value: function (event) {
             this._showTransformHandles = event.detail.inTransformMode;
             this.DrawHandles();
+        }
+    },
+
+    _areElementsOnSamePlane : {
+        value: function () {
+            if(this._targets && this._targets.length)
+            {
+                // TODO - drawUtils's elementPlanes check in drawSelectionBounds doesn't seem to work,
+                // so temporary workaround to simply check if all elements have identity matrix
+                // TODO - Eventually, this should instead check if all the selected items are on the view plane
+                var len = this._targets.length;
+                for(var i = 0; i < len; i++)
+                {
+                    var mat = this._targets[i].mat;
+                    if(!MathUtils.isIdentityMatrix(mat))
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
     },
 
@@ -44,9 +66,13 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             this.isDrawing = true;
             this.application.ninja.stage.showSelectionBounds = false;
 
+            this._use3DMode = false;
+
             if(this._canSnap)
             {
                 this.initializeSnapping(event);
+                this._use3DMode = !this._areElementsOnSamePlane();
+//                console.log("use3DMode = " + this._use3DMode);
             }
             else
             {
@@ -123,6 +149,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                 this._escape = false;
                 this._isSelecting = false;
                 this._canSnap = true;
+                this._use3DMode = false;
                 return;
             }
 
@@ -155,6 +182,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
 
                 this.endDraw(event);
                 this._canSnap = true;
+                this._use3DMode = false;
                 return;
             }
 
@@ -183,6 +211,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
 
             this.endDraw(event);
             this._canSnap = true;
+            this._use3DMode = false;
         }
     },
 
@@ -214,7 +243,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                         case Keyboard.LEFT:
                             var newLeft = [];
                             var leftArr = this.application.ninja.selectedElements.map(function(item) {
-                                newLeft.push( (parseFloat(ElementsMediator.getProperty(item._element, "left")) - inc) + "px"  );
+                                newLeft.push( (parseInt(ElementsMediator.getProperty(item._element, "left")) - inc) + "px"  );
                                 return ElementsMediator.getProperty(item._element, "left");
                             });
 
@@ -223,7 +252,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                         case Keyboard.UP:
                             var newTop = [];
                             var topArr = this.application.ninja.selectedElements.map(function(item) {
-                                newTop.push( (parseFloat(ElementsMediator.getProperty(item._element, "top")) - inc) + "px"  );
+                                newTop.push( (parseInt(ElementsMediator.getProperty(item._element, "top")) - inc) + "px"  );
                                 return ElementsMediator.getProperty(item._element, "top");
                             });
 
@@ -232,7 +261,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                         case Keyboard.RIGHT:
                             var newLeft = [];
                             var leftArr = this.application.ninja.selectedElements.map(function(item) {
-                                newLeft.push( (parseFloat(ElementsMediator.getProperty(item._element, "left")) + inc) + "px"  );
+                                newLeft.push( (parseInt(ElementsMediator.getProperty(item._element, "left")) + inc) + "px"  );
                                 return ElementsMediator.getProperty(item._element, "left");
                             });
 
@@ -241,7 +270,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                         case Keyboard.DOWN:
                             var newTop = [];
                             var topArr = this.application.ninja.selectedElements.map(function(item) {
-                                newTop.push( (parseFloat(ElementsMediator.getProperty(item._element, "top")) + inc) + "px"  );
+                                newTop.push( (parseInt(ElementsMediator.getProperty(item._element, "top")) + inc) + "px"  );
                                 return ElementsMediator.getProperty(item._element, "top");
                             });
 
@@ -272,10 +301,12 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                 newTop = [],
                 newWidth = [],
                 newHeight = [],
+                newStyles = [],
                 previousLeft = [],
                 previousTop = [],
                 previousWidth = [],
-                previousHeight = [];
+                previousHeight = [],
+                previousStyles = [];
             var len = this.application.ninja.selectedElements.length;
             this._targets = [];
             for(var i = 0; i < len; i++)
@@ -288,52 +319,97 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                 this._targets.push({elt:elt, mat:curMat, matInv:curMatInv});
                 if(addToUndoStack)
                 {
-                    var previousMat = this._undoArray[i].mat.slice(0);
-                    var prevX = this._undoArray[i]._x;
-                    var prevY = this._undoArray[i]._y;
-                    var prevW = this._undoArray[i]._w;
-                    var prevH = this._undoArray[i]._h;
-                    var _x = parseFloat(ElementsMediator.getProperty(elt, "left")) + curMat[12] - previousMat[12];
-                    var _y = parseFloat(ElementsMediator.getProperty(elt, "top")) + curMat[13] - previousMat[13];
-                    var _w = parseFloat(ElementsMediator.getProperty(elt, "width"));
-                    var _h = parseFloat(ElementsMediator.getProperty(elt, "height"));
 
-                    previousLeft.push(prevX + "px");
-                    previousTop.push(prevY + "px");
-                    previousWidth.push(prevW + "px");
-                    previousHeight.push(prevH + "px");
-                    newLeft.push(_x + "px");
-                    newTop.push(_y + "px");
-                    newWidth.push(_w + "px");
-                    newHeight.push(_h + "px");
+                    if(!this._use3DMode)
+                    {
+                        var previousMat = this._undoArray[i].mat.slice(0);
+                        var prevX = this._undoArray[i]._x;
+                        var prevY = this._undoArray[i]._y;
+                        var prevW = this._undoArray[i]._w;
+                        var prevH = this._undoArray[i]._h;
+                        var _x = parseInt(ElementsMediator.getProperty(elt, "left")) + curMat[12] - previousMat[12];
+                        var _y = parseInt(ElementsMediator.getProperty(elt, "top")) + curMat[13] - previousMat[13];
+                        var _w = parseInt(ElementsMediator.getProperty(elt, "width"));
+                        var _h = parseInt(ElementsMediator.getProperty(elt, "height"));
 
-                    viewUtils.setMatrixForElement(elt, previousMat);
+                        previousLeft.push(prevX + "px");
+                        previousTop.push(prevY + "px");
+                        previousWidth.push(prevW + "px");
+                        previousHeight.push(prevH + "px");
+                        newLeft.push(_x + "px");
+                        newTop.push(_y + "px");
+                        newWidth.push(_w + "px");
+                        newHeight.push(_h + "px");
 
-                    this._targets[i].mat = previousMat;
-                    this._targets[i].matInv = glmat4.inverse(previousMat, []);
+                        viewUtils.setMatrixForElement(elt, previousMat);
+
+                        this._targets[i].mat = previousMat;
+                        this._targets[i].matInv = glmat4.inverse(previousMat, []);
+                    }
+                    else
+                    {
+                        var previousMat = this._undoArray[i].mat.slice(0);
+                        var prevW = this._undoArray[i]._w;
+                        var prevH = this._undoArray[i]._h;
+                        var _w = parseInt(ElementsMediator.getProperty(elt, "width"));
+                        var _h = parseInt(ElementsMediator.getProperty(elt, "height"));
+                        previousWidth.push(prevW + "px");
+                        previousHeight.push(prevH + "px");
+                        newWidth.push(_w + "px");
+                        newHeight.push(_h + "px");
+
+                        var previousStyleStr = {dist:this._undoArray[i].dist,
+                                                mat:MathUtils.scientificToDecimal(previousMat, 5)};
+                        var newStyleStr = {dist:viewUtils.getPerspectiveDistFromElement(elt),
+                                            mat:MathUtils.scientificToDecimal(curMat, 5)};
+                        previousStyles.push(previousStyleStr);
+                        newStyles.push(newStyleStr);
+
+                        this._targets[i].mat = curMat;
+                        this._targets[i].matInv = curMatInv;
+                    }
                 }
             }
             if(addToUndoStack)
             {
-                // if we have a delta, that means the transform handles were used and
-                // we should update the width and height too.  Otherwise, just update left and top.
-                if(this._delta)
+                if(!this._use3DMode)
                 {
-                    ElementsMediator.setProperties(this.application.ninja.selectedElements,
-                                                { "left": newLeft, "top": newTop, "width": newWidth, "height": newHeight },
-                                                "Change",
-                                                "selectionTool",
-                                                { "left" : previousLeft, "top" : previousTop, "width": previousWidth, "height": previousHeight}
-                                              );
+                    // if we have a delta, that means the transform handles were used and
+                    // we should update the width and height too.  Otherwise, just update left and top.
+                    if(this._delta)
+                    {
+                        ElementsMediator.setProperties(this.application.ninja.selectedElements,
+                                                    { "left": newLeft, "top": newTop, "width": newWidth, "height": newHeight },
+                                                    "Change",
+                                                    "selectionTool",
+                                                    { "left" : previousLeft, "top" : previousTop, "width": previousWidth, "height": previousHeight}
+                                                  );
+                    }
+                    else
+                    {
+                        ElementsMediator.setProperties(this.application.ninja.selectedElements,
+                                                    { "left": newLeft, "top": newTop },
+                                                    "Change",
+                                                    "selectionTool",
+                                                    { "left" : previousLeft, "top" : previousTop }
+                                                  );
+                    }
                 }
                 else
                 {
+                    // TODO - We don't support transform handles in 3d space for now
                     ElementsMediator.setProperties(this.application.ninja.selectedElements,
-                                                { "left": newLeft, "top": newTop },
+                                                { "width": newWidth, "height": newHeight },
                                                 "Change",
                                                 "selectionTool",
-                                                { "left" : previousLeft, "top" : previousTop }
+                                                { "width": previousWidth, "height": previousHeight}
                                               );
+                    ElementsMediator.set3DProperties(this.application.ninja.selectedElements,
+                                                    newStyles,
+                                                    "Change",
+                                                    "translateTool",
+                                                    previousStyles
+                                                  );
                 }
             }
             // Save previous value for undo/redo
@@ -341,12 +417,13 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             for(i = 0, len = this._targets.length; i < len; i++)
             {
                 var item = this._targets[i];
-                var _x = parseFloat(ElementsMediator.getProperty(item.elt, "left"));
-                var _y = parseFloat(ElementsMediator.getProperty(item.elt, "top"));
-                var _w = parseFloat(ElementsMediator.getProperty(item.elt, "width"));
-                var _h = parseFloat(ElementsMediator.getProperty(item.elt, "height"));
+                _x = parseInt(ElementsMediator.getProperty(item.elt, "left"));
+                _y = parseInt(ElementsMediator.getProperty(item.elt, "top"));
+                _w = parseInt(ElementsMediator.getProperty(item.elt, "width"));
+                _h = parseInt(ElementsMediator.getProperty(item.elt, "height"));
                 var _mat = viewUtils.getMatrixFromElement(item.elt);
-                this._undoArray.push({_x:_x, _y:_y, _w:_w, _h:_h, mat:_mat});
+                var _dist = viewUtils.getPerspectiveDistFromElement(item.elt);
+                this._undoArray.push({_x:_x, _y:_y, _w:_w, _h:_h, mat:_mat, dist:_dist});
             }
 
         }
@@ -358,7 +435,9 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
 				i,
 				item,
 				elt,
-				curMat;
+				curMat,
+                newLeft = [],
+                newTop = [];
 
 			var matInv = glmat4.inverse(this._startMat, []);
 			var nMat = glmat4.multiply(transMat, this._startMat, [] );
@@ -370,16 +449,35 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
 			{
 				item = this._targets[i];
 				elt = item.elt;
-				curMat = item.mat;
+                if(this._use3DMode)
+                {
+                    curMat = item.mat;
+                    glmat4.multiply(curMat, qMat, curMat);
+                    viewUtils.setMatrixForElement( elt, curMat, true);
+                    this._targets[i].mat = curMat;
+                }
+                else
+                {
+                    curMat = item.mat.slice(0);
+                    glmat4.multiply(curMat, qMat, curMat);
+                    var previousMat = this._undoArray[i].mat.slice(0);
+                    var _x = parseInt(ElementsMediator.getProperty(elt, "left")) + curMat[12] - previousMat[12];
+                    var _y = parseInt(ElementsMediator.getProperty(elt, "top")) + curMat[13] - previousMat[13];
 
-//                curMat = curMat.multiply(qMat);
-				glmat4.multiply(curMat, qMat, curMat);
-
-				viewUtils.setMatrixForElement( elt, curMat, true);
-
-                this._targets[i].mat = curMat;
+                    newLeft.push(_x + "px");
+                    newTop.push(_y + "px");
+                }
 			}
-            NJevent("elementChanging", {type : "Changing", redraw: false});
+
+            if(newLeft.length)
+            {
+                ElementsMediator.setProperties(this.application.ninja.selectedElements,
+                                                    { "left": newLeft, "top": newTop }, "Changing", "SelectionTool" );
+            }
+            else
+            {
+                NJevent("elementChanging", {type : "Changing", redraw: false});
+            }
 		}
 	},
 
@@ -657,8 +755,13 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             this.application.ninja.stage.clearDrawingCanvas();
 
             var item = this._target;
-            if(!item || !this._showTransformHandles)
+            if(!item)
             {
+                return;
+            }
+            if(!this._showTransformHandles)
+            {
+                this._drawTopLeft(item);
                 return;
             }
 
@@ -747,13 +850,14 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             var left = x;
             var top = y;
 
-            if(delta)
+//            if(delta)
+            if(!this._use3DMode && this.isDrawing)
             {
                 context.font = "10px sans-serif";
                 context.textAlign = "right";
 
-                context.fillText("( " + (left - this.application.ninja.stage.userContentLeft) + " , " +
-                                       (top - this.application.ninja.stage.userContentTop) + " )", x-10, y-4);
+                context.fillText("( " + ~~(left - this.application.ninja.stage.userContentLeft) + " , " +
+                                       ~~(top - this.application.ninja.stage.userContentTop) + " )", x-10, y-4);
             }
 
             // W
@@ -782,10 +886,11 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             context.moveTo( x, y );
             this._handles[4].draw(x, y);
 
-            if(delta)
+//            if(delta)
+            if(!this._use3DMode && this.isDrawing)
             {
-                context.fillText("H: " + (y - top), x+38, y - 4);
-                context.fillText("W: " + (x - left), x-5, y + 12);
+                context.fillText("H: " + ~~(y - top), x+38, y - 4);
+                context.fillText("W: " + ~~(x - left), x-5, y + 12);
             }
 
             // E
@@ -812,9 +917,59 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
         }
     },
 
+    _drawTopLeft: {
+        value: function(item)
+        {
+            if(!this.isDrawing || this._use3DMode)
+            {
+                return;
+            }
+            viewUtils.setViewportObj( item );
+            var bounds3D = viewUtils.getElementViewBounds3D( item );
+
+            var zoomFactor = 1;
+            var viewPort = this.application.ninja.stage._viewport;
+            if (viewPort.style && viewPort.style.zoom)
+            {
+                zoomFactor = Number(viewPort.style.zoom);
+            }
+            var tmpMat = viewUtils.getLocalToGlobalMatrix( item );
+            for (var j=0;  j<4;  j++)
+            {
+                var localPt = bounds3D[j];
+                var tmpPt = viewUtils.localToGlobal2(localPt, tmpMat);
+
+                if(zoomFactor !== 1)
+                {
+                    tmpPt = vecUtils.vecScale(3, tmpPt, zoomFactor);
+
+                    tmpPt[0] += this.application.ninja.stage._scrollLeft*(zoomFactor - 1);
+                    tmpPt[1] += this.application.ninja.stage._scrollTop*(zoomFactor - 1);
+                }
+                bounds3D[j] = tmpPt;
+            }
+
+            // Draw tool handles
+            var context = this.application.ninja.stage.drawingContext;
+            context.beginPath();
+
+            // NW
+            var x = bounds3D[0][0];
+            var y = bounds3D[0][1];
+            context.moveTo(x, y);
+
+            context.font = "10px sans-serif";
+            context.textAlign = "right";
+
+            context.fillText("( " + ~~(x - this.application.ninja.stage.userContentLeft) + " , " +
+                                   ~~(y - this.application.ninja.stage.userContentTop) + " )", x-10, y-4);
+
+            context.closePath();
+        }
+    },
+
     // TODO : Use the new element mediator to get element offsets
-    _complicatedCollisionDetection:
-	{
+    _complicatedCollisionDetection: {
         value: function(elt, box)
 		{
             var left, top, width, height;
