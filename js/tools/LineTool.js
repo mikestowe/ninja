@@ -206,10 +206,13 @@ exports.LineTool = Montage.create(ShapeTool, {
             // for default stroke and fill/no materials
             var strokeMaterial = null;
 
-            var strokeM = this.options.strokeMaterial;
-            if(strokeM)
+            if(this.options.use3D)
             {
-                strokeMaterial = Object.create(MaterialsLibrary.getMaterial(strokeM));
+                var strokeM = this.options.strokeMaterial;
+                if(strokeM)
+                {
+                    strokeMaterial = Object.create(MaterialsLibrary.getMaterial(strokeM));
+                }
             }
 
             var world = this.getGLWorld(canvas, this.options.use3D);

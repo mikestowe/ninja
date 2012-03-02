@@ -62,16 +62,19 @@ exports.RectTool = Montage.create(ShapeTool, {
             var strokeMaterial = null;
             var fillMaterial = null;
 
-            var strokeM = this.options.strokeMaterial;
-            if(strokeM)
+            if(this.options.use3D)
             {
-                strokeMaterial = Object.create(MaterialsLibrary.getMaterial(strokeM));
-            }
+                var strokeM = this.options.strokeMaterial;
+                if(strokeM)
+                {
+                    strokeMaterial = Object.create(MaterialsLibrary.getMaterial(strokeM));
+                }
 
-            var fillM = this.options.fillMaterial;
-            if(fillM)
-            {
-                fillMaterial = Object.create(MaterialsLibrary.getMaterial(fillM));
+                var fillM = this.options.fillMaterial;
+                if(fillM)
+                {
+                    fillMaterial = Object.create(MaterialsLibrary.getMaterial(fillM));
+                }
             }
 
             var world = this.getGLWorld(canvas, this.options.use3D);
