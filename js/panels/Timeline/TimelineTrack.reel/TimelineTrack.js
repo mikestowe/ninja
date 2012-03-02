@@ -404,7 +404,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                         this.handleNewTween(ev);
                     }
                 } else {
-                    alert("There must be exactly one element in an animated layer.")
+                    console.log("There must be exactly one element in an animated layer.");
                 }
             }
         }
@@ -463,14 +463,13 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     splitTween:{
         value:function (ev) {
-            alert("Splitting an existing span with a new keyframe is not yet supported.");
-            //this.log("splitting tween at span offsetX: " + ev.offsetX);
+            console.log("Splitting an existing span with a new keyframe is not yet supported.");
         }
     },
 
     retrieveStoredTweens:{
         value:function () {
-            var percentValue, fraction, splitValue,offsetAttribute,topOffSetAttribute,leftOffsetAttribute
+            var percentValue, fraction, splitValue,offsetAttribute,topOffSetAttribute,leftOffsetAttribute;
             var currentMilliSec,currentMilliSecPerPixel,clickPosition,tempTiming,tempTimingInt,trackTiming,i = 0;
 
             var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
@@ -504,7 +503,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                             newTween.tweenedProperties["top"] = tempTopOffset;
                             newTween.tweenedProperties["left"] = tempLeftOffset;
                             this.tweens.push(newTween);
-
                         }
                         else {
                             tempTiming = trackTiming.split("s");
@@ -525,8 +523,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                             newTween.tweenedProperties["top"] = tempTopOffset;
                             newTween.tweenedProperties["left"] = tempLeftOffset;
                             this.tweens.push(newTween);
-
-
                         }
                         this.nextKeyframe += 1;
                     }
