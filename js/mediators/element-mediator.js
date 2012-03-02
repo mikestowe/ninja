@@ -90,11 +90,10 @@ exports.ElementMediator = Montage.create(NJComponent, {
     _addElement: {
         value: function(el, rules, noEvent) {
             ElementController.addElement(el, rules);
-            // Commenting this out because we should not add 3D properties by default when creating new elements.
-//            var p3d = this.get3DProperties(el);
-//            if(p3d) {
-//                el.elementModel.controller["set3DProperties"](el, [p3d], 0, true);
-//            }
+            var p3d = this.get3DProperties(el);
+            if(p3d) {
+                el.elementModel.controller["set3DProperties"](el, [p3d], 0, true);
+            }
             if(!noEvent) {
                 this.application.ninja.documentController.activeDocument.needsSave = true;
                 NJevent("elementAdded", el);

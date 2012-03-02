@@ -233,8 +233,8 @@ exports.TagTool = Montage.create(DrawingTool, {
                 'position': 'absolute',
                 'top' : top + 'px',
                 'left' : left + 'px'
-//                '-webkit-transform-style' : 'preserve-3d',
-//                '-webkit-transform' : matStr
+                '-webkit-transform-style' : 'preserve-3d',
+                '-webkit-transform' : matStr
             };
 
             // TODO - for canvas, set both as style and attribute.
@@ -254,8 +254,8 @@ exports.TagTool = Montage.create(DrawingTool, {
     makeStaticElement: {
         value: function(tag) {
             var styles = {
-//                "-webkit-transform-style": "preserve-3d",
-//                "-webkit-transform": "perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)"
+                "-webkit-transform-style": "preserve-3d",
+                "-webkit-transform": "perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)"
             };
             tag.innerHTML = "content";
 
