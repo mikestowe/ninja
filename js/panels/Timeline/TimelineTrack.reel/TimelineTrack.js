@@ -563,7 +563,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 var keyframePercent = Math.round((keyMill / trackDur) * 100) + "%";
                 var keyframePropertyString = " " + keyframePercent + " {";
                 for(var prop in this.tweens[i].tweenedProperties){
-                    console.log(prop);
                     keyframePropertyString += prop + ": " + this.tweens[i].tweenedProperties[prop] + "px;";
                 }
                 keyframePropertyString += "}";
