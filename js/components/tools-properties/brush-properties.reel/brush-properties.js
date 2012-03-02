@@ -9,17 +9,10 @@ var Component = require("montage/ui/component").Component;
 var ToolProperties = require("js/components/tools-properties/tool-properties").ToolProperties;
 
 exports.BrushProperties = Montage.create(ToolProperties, {
-
-    
-    _subPrepare: {
-        value: function() {
-            //this.divElement.addEventListener("click", this, false);
-        }
+    strokeSize: {
+        get: function() { return this._strokeSize; }
     },
-
-    handleClick: {
-        value: function(event) {
-           // this.selectedElement = event._event.target.id;
-        }
+    strokeHardness: {
+        get: function() { return this._strokeHardness; }
     }
 });

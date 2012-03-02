@@ -92,6 +92,21 @@ var ColorChip = exports.ColorChip = Montage.create(Component, {
                 this.changeDelegate(evt);
             }
         }
+    },
+
+    destroy: {
+        value: function() {
+            this.application.ninja.colorController.removeButton(this.mode, this.chipBtn);
+            var mode = this.mode;
+            if(this.iconType) {
+                if(this.iconType === "fillIcon") {
+                    mode = "fill";
+                } else if(this.iconType === "strokeIcon") {
+                    mode = "stroke";
+                }
+            }
+            this.application.ninja.colorController.removeButton(mode, this.icon);
+        }
     }
 
 });

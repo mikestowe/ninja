@@ -9,12 +9,11 @@
     <script type="text/montage-serialization">
     {
         "owner": {
-            "module" : "js/panels/properties/sections/custom-rows/dual-row.reel",
-            "name" : "DualRow",
+            "module" : "js/panels/properties.reel/sections/custom-rows/single-row.reel",
+            "name" : "SingleRow",
             "properties" : {
                 "element" : {"#": "section"},
-                "slot" : {"@": "slot"},
-                "slot2" : {"@": "slot2"}
+                "slot" : {"@": "slot"}
             }
         },
         "slot": {
@@ -29,19 +28,6 @@
                     "boundObjectPropertyPath": "content"
                 }
             }
-        },
-        "slot2": {
-            "module": "montage/ui/slot.reel",
-            "name": "Slot",
-            "properties": {
-                "element": { "#": "slotElement2" }
-            },
-            "bindings": {
-                "content" : {
-                    "boundObject": {"@": "owner"},
-                    "boundObjectPropertyPath": "content2"
-                }
-            }
         }
     }
     </script>
@@ -49,16 +35,10 @@
 <body>
     <div id="section">
         <section class="fieldCol">
-            <label class="lbl"></label>
+            <label><span class="lbl"></span></label>
             <article class="fieldRow">
                 <div id="slotElement" class="inputField">
                     
-                </div>
-            </article>
-            <label class="lbl"></label>
-            <article class="fieldRow">
-                <div id="slotElement2" class="inputField">
-
                 </div>
             </article>
         </section>

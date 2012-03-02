@@ -81,6 +81,14 @@ exports.PanTool = Montage.create(toolBase,
 			{
                 this._altKeyDown = true;
             }
+			else if (event.shiftKey)
+			{
+				if (!this._shiftKeyDown)
+				{
+						this._shiftKeyDown = true;
+						this._shiftPt = this._lastGPt.slice();
+				}
+			}
         }
     },
 
@@ -90,6 +98,10 @@ exports.PanTool = Montage.create(toolBase,
 			{
                 this._altKeyDown = false;
             }
+			else if (event.keyCode === Keyboard.SHIFT)
+			{
+				this._shiftKeyDown = false;
+			}
         }
     },
 
@@ -221,6 +233,7 @@ exports.PanTool = Montage.create(toolBase,
 					var tmpLocal   = MathUtils.transformAndDivideHomogeneousPoint( this._globalPt, globalToLocalMat );
 
 					this._lastGPt = this._globalPt.slice();
+					this._shiftPt = this._lastGPt.slice();
 					this._lastY = this._lastGPt[1];
 
 					// set up the matrices we will be needing
@@ -284,6 +297,16 @@ exports.PanTool = Montage.create(toolBase,
 					var dy = 5*(point.y - this._lastY);
 					this._globalPt[2] += dy;
 					gPt = [this._lastGPt[0], this._lastGPt[1], this._globalPt[2]];
+				}
+				else if (this._shiftKeyDown)
+				{
+					var dx = Math.abs( this._shiftPt[0] - gPt[0] ),
+						dy = Math.abs( this._shiftPt[1] - gPt[1] );
+
+					if (dx >= dy)
+						gPt[1] = this._shiftPt[1];
+					else
+						gPt[0] = this._shiftPt[0];
 				}
 
 				// update the scrollbars
