@@ -41,9 +41,12 @@ exports.IoMediator = Montage.create(Component, {
     },
     ////////////////////////////////////////////////////////////////////
     //
-    appTemplatesUrl: {
+    getAppTemplatesUrlRegEx: {
     	enumerable: false,
-    	value: new RegExp(chrome.extension.getURL('js/document/templates/montage-html/'), 'gi')
+    	value: function () {
+    		var regex = new RegExp(chrome.extension.getURL('js/document/templates/montage-html').replace(/\//gi, '\\\/'), 'gi');
+    		return regex;
+    	}
     },
 	////////////////////////////////////////////////////////////////////
     //
@@ -211,36 +214,59 @@ exports.IoMediator = Montage.create(Component, {
     	enumerable: false,
     	value: function (template) {
     		//Injecting head and body into old document
-    		template.document.content.document.body.innerHTML = template.body;
     		template.document.content.document.head.innerHTML = template.head;
+    		template.document.content.document.body.innerHTML = template.body;
     		//Getting all CSS (style or link) tags
     		var styletags = template.document.content.document.getElementsByTagName('style'),
-    			linktags = template.document.content.document.getElementsByTagName('link');
-    		//Looping through link tags and removing file recreated elements
-    		for (var j in styletags) {
-    			if (styletags[j].getAttribute) {
-    				if(styletags[j].getAttribute('data-ninja-uri') !== null && !styletags[j].getAttribute('data-ninja-template')) {//TODO: Use querySelectorAll
-    					try {
-    						//Checking head first
-    						template.document.content.document.head.removeChild(styletags[j]);
-    					} catch (e) {
-    						try {
-    							//Checking body if not in head
-    							template.document.content.document.body.removeChild(styletags[j]);
-    						} catch (e) {
-    							//Error, not found!
-    						}
+    			linktags = template.document.content.document.getElementsByTagName('link'),
+    			toremovetags = [];
+    		//Getting styles tags to be removed from document
+    		if (styletags.length) {
+    			for (var j=0; j<styletags.length; j++) {
+    				if (styletags[j].getAttribute) {
+    					if(styletags[j].getAttribute('data-ninja-uri') !== null && !styletags[j].getAttribute('data-ninja-template')) {
+    						toremovetags.push(styletags[j]);
     					}
-    					
     				}
     			}
     		}
-    		//TODO: Add logic to only enble tags we disabled
-    		for (var l in linktags) {
-    			if (linktags[l].getAttribute && linktags[l].getAttribute('disabled')) {//TODO: Use querySelectorAll
-    				linktags[l].removeAttribute('disabled');
+    		//Removing styles tags from document
+    		for (var h=0; toremovetags[h]; h++) {
+    			try {
+    				//Checking head first
+    				template.document.content.document.head.removeChild(toremovetags[h]);
+    			} catch (e) {
+    				try {
+    					//Checking body if not in head
+    					template.document.content.document.body.removeChild(toremovetags[h]);
+    				} catch (e) {
+    					//Error, not found!
+    				}
     			}
     		}
+    		//Removing disabled tags from tags that were not originally disabled by user (Ninja enables all)
+    		for (var l in linktags) {
+    			if (linktags[l].getAttribute && linktags[l].getAttribute('disabled')) {//TODO: Use querySelectorAll
+    				for (var p=0; toremovetags[p]; p++) {
+    					if (toremovetags[p].getAttribute('data-ninja-file-url') === ('/'+linktags[l].getAttribute('href'))) {
+    						if (!toremovetags[p].getAttribute('data-ninja-disabled')) {
+    							linktags[l].removeAttribute('disabled');
+    						}
+    					}
+    				}
+    			}
+    		}
+    		
+    		
+    		/////////////////////////////////////////////////////////////////////////////////////////
+    		/////////////////////////////////////////////////////////////////////////////////////////
+    		
+    		//TODO: Add logic for parse CSS string correct URLs since referencing is lost
+    		
+    		/////////////////////////////////////////////////////////////////////////////////////////
+    		/////////////////////////////////////////////////////////////////////////////////////////
+    		
+    		
     		//Checking for type of save: styles = <style> only | css = <style> and <link> (all CSS)
     		if (template.styles) {
     			//Getting all style tags
@@ -252,10 +278,12 @@ exports.IoMediator = Montage.create(Component, {
     					if (template.styles[i].ownerNode.getAttribute) {
     						//Checking for node not to be loaded from file
     						if (template.styles[i].ownerNode.getAttribute('data-ninja-uri') === null && !template.styles[i].ownerNode.getAttribute('data-ninja-template')) {
-    							//Inseting data from rules array into tag as string
-    							docStyles[styleCounter].innerHTML = this.getCssFromRules(template.styles[i].cssRules);
-    							//Syncing <style> tags count since it might be mixed with <link>
-    							styleCounter++;
+    							if(docStyles[styleCounter]) {
+    								//Inseting data from rules array into tag as string
+    								docStyles[styleCounter].innerHTML = this.getCssFromRules(template.styles[i].cssRules);
+    								//Syncing <style> tags count since it might be mixed with <link>
+    								styleCounter++;
+    							}
     						}
     					}
     				}
@@ -281,8 +309,10 @@ exports.IoMediator = Montage.create(Component, {
     					if (template.css[i].ownerNode.getAttribute) {
     						if (template.css[i].ownerNode.getAttribute('data-ninja-uri') === null && !template.css[i].ownerNode.getAttribute('data-ninja-template')) {//TODO: Use querySelectorAll
     							//Inseting data from rules array into <style> as string
-    							docStyles[styleCounter].innerHTML = this.getCssFromRules(template.css[i].cssRules);
-    							styleCounter++;
+    							if (docStyles[styleCounter]) {
+    								docStyles[styleCounter].innerHTML = this.getCssFromRules(template.css[i].cssRules);
+    								styleCounter++;
+    							}
     						} else {
     							//Checking for attributes to be added to tag upon saving
     							for (var k in docLinks) {
@@ -300,8 +330,10 @@ exports.IoMediator = Montage.create(Component, {
     									}
     								}
     							}
+    							var adjCss = this.getCssFromRules(template.css[i].cssRules), cssUrl = template.css[i].ownerNode.getAttribute('data-ninja-uri');
+    							//console.log((template.css[i].ownerNode.getAttribute('data-ninja-uri')));//cssUrl.split(cssUrl.split('/')[cssUrl.split('/').length-1])[0]
     							//Saving data from rules array converted to string into <link> file
-    							var save = this.fio.saveFile({uri: template.css[i].ownerNode.getAttribute('data-ninja-uri'), contents: this.getCssFromRules(template.css[i].cssRules)});
+    							var save = this.fio.saveFile({uri: template.css[i].ownerNode.getAttribute('data-ninja-uri'), contents: adjCss});
     						}
     					}
     				}
@@ -350,7 +382,7 @@ exports.IoMediator = Montage.create(Component, {
     			webgltag.innerHTML = json;
     		}
     		//
-    		return this.getPrettyHtml(template.document.content.document.documentElement.outerHTML.replace(this.appTemplatesUrl, ''));
+    		return this.getPrettyHtml(template.document.content.document.documentElement.outerHTML.replace(this.getAppTemplatesUrlRegEx(), ''));
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -368,7 +400,7 @@ exports.IoMediator = Montage.create(Component, {
     			}
     		}
     		//Returning the CSS string
-    		return this.getPrettyCss(css.replace(this.appTemplatesUrl, ''));
+    		return this.getPrettyCss(css.replace(this.getAppTemplatesUrlRegEx(), ''));
     	}
     },
     ////////////////////////////////////////////////////////////////////
