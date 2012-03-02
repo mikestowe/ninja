@@ -76,7 +76,7 @@ exports.SelectionController = Montage.create(Component, {
 
 
                     this.application.ninja.selectedElements = currentSelectionArray;
-                    NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument} );
+                    NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument});
 
 
 
@@ -92,12 +92,12 @@ exports.SelectionController = Montage.create(Component, {
     handleSwitchDocument: {
         value: function() {
             this._selectedItems = this.application.ninja.selectedElements.slice(0);
-            if(this._selectedItems.length === 0 ){
+            if(this._selectedItems.length === 0) {
                 this._isDocument = true;
-            }else{
+            } else {
                 this._isDocument = false;
             }
-            NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument} );
+            NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument});
 
 			this._selectionContainer = this.application.ninja.currentSelectedContainer;
         }
@@ -139,7 +139,7 @@ exports.SelectionController = Montage.create(Component, {
         value: function(event) {
             this.application.ninja.selectedElements = [];
             this._isDocument = true;
-            NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument} );
+            NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument});
         }
     },
 
