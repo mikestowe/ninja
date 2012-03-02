@@ -338,7 +338,7 @@ exports.IoMediator = Montage.create(Component, {
     							//
     							regex = new RegExp(fileCouldDirUrl.replace(/\//gi, '\\\/'), 'gi');
     							//
-    							if (local.split('/').length > 1) {
+    							if (local.split('/').length > 2) {
     								adjCss = adjCss.replace(regex, '../');
     							} else {
     								adjCss = adjCss.replace(regex, '');

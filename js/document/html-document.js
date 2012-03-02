@@ -511,12 +511,14 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 								
 								fileCouldDirUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+cssUrl.split(cssUrl.split('/')[cssUrl.split('/').length-1])[0]).replace(/\/\//gi, '/'));
 								
+							
+								//TODO: Fix regEx to have logic for all possible URLs strings (currently prefixing all url())
+								prefixUrl = 'url('+fileCouldDirUrl;
+								tag.innerHTML = cssData.content.replace(/url\(/gi, prefixUrl);
 								
-								//TODO: Fix regEx to have logic for all possible URLs strings
-								prefixUrl = '('+fileCouldDirUrl+'../';
-								tag.innerHTML = cssData.content.replace(/\(\.\.\//gi, prefixUrl);
+								//console.log(("http://hello.com, https://google.com").replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, 'hello'))
 								
-								
+								//console.log(tag.innerHTML);
 								
 								//Looping through DOM to insert style tag at location of link element
 								query = this._templateDocument.html.querySelectorAll(['link']);
