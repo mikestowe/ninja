@@ -90,8 +90,13 @@ exports.Resizer = Montage.create(Component, {
             return this._panel;
         },
         set: function(val) {
-            this._panel = val
+            this._panel = val;
+            if(val._element) this._panel = val._element;
         }
+    },
+
+    height: {
+        value: null
     },
  
     handleClick: {
@@ -99,7 +104,8 @@ exports.Resizer = Montage.create(Component, {
  
         }
     },
- 
+
+
     handleMousedown: {
         value: function(e) {
             e.preventDefault();
