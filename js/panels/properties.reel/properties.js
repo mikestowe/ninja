@@ -25,6 +25,10 @@ exports.Properties = Montage.create(Component, {
         value: null
     },
 
+    nameAttribute: {
+        value: null
+    },
+
     customSections: {
         value: []
     },
@@ -72,6 +76,9 @@ exports.Properties = Montage.create(Component, {
 
             this.elementId.element.addEventListener("blur", this, false);
             this.elementId.element.addEventListener("keyup", this, false);
+
+            this.elementNameAttribute.element.addEventListener("blur", this, false);
+            this.elementNameAttribute.element.addEventListener("keyup", this, false);
         }
     },
 
@@ -95,10 +102,18 @@ exports.Properties = Montage.create(Component, {
      */
     handleBlur: {
         value: function(event) {
-            if(this.application.ninja.selectedElements.length) {
-                ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "id", this.elementId.value, "Change", "pi");
-            } else {
-                ElementsMediator.setAttribute(this.application.ninja.currentDocument.documentRoot, "id", this.elementId.value, "Change", "pi", this.application.ninja.currentDocument.documentRoot.elementModel.id);
+            console.log(event.target);
+            if(event.target.id === "elementID") {
+                if(this.application.ninja.selectedElements.length) {
+                    ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "id", this.elementId.value, "Change", "pi");
+                } else {
+                    ElementsMediator.setAttribute(this.application.ninja.currentDocument.documentRoot, "id", this.elementId.value, "Change", "pi", this.application.ninja.currentDocument.documentRoot.elementModel.id);
+                }
+            } else if(event.target.id === "elementNameAttribute") {
+                if(this.application.ninja.selectedElements.length) {
+                    //ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "name", this.elementNameAttribute.value, "Change", "pi");
+                    this.application.ninja.selectedElements[0]._element.setAttribute("name", this.elementNameAttribute.value);
+                }
             }
         }
     },
@@ -106,7 +121,11 @@ exports.Properties = Montage.create(Component, {
     handleKeyup: {
         value: function(event) {
             if(event.keyCode === 13) {
-                this.elementId.element.blur();
+                if(event.target === "elementID") {
+                    this.elementId.element.blur();
+                } else if(event.target === "elementNameAttribute") {
+                    this.elementNameAttribute.element.blur();
+                }
             }      
         }
     },
@@ -164,6 +183,7 @@ exports.Properties = Montage.create(Component, {
             this.elementName = "Stage";
             this.elementId.value = stage.elementModel.id;
             this.elementClassName = "";
+            this.nameAttribute = "";
 
             this.positionSize.disablePosition = true;
             this.threeD.disableTranslation = true;
@@ -226,6 +246,7 @@ exports.Properties = Montage.create(Component, {
             this.elementName = el.elementModel.selection;
             this.elementId.value = el.getAttribute("id") || "";
             this.elementClassName = el.getAttribute("class");
+            this.nameAttribute = el.getAttribute("name") || "";
 
             this.positionSize.disablePosition = false;
             this.threeD.disableTranslation = false;
