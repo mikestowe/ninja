@@ -491,7 +491,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     },
     draw: {
     	value: function() {
-    		
+
     		// Coordinate the collapsers
             if (this.mainCollapser.isCollapsed !== this.isMainCollapsed) {
             	this.mainCollapser.bypassAnimation = true;
