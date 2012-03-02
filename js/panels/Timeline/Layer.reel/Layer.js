@@ -491,7 +491,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     },
     draw: {
     	value: function() {
-    		
+
     		// Coordinate the collapsers
             if (this.mainCollapser.isCollapsed !== this.isMainCollapsed) {
             	this.mainCollapser.bypassAnimation = true;
@@ -509,7 +509,6 @@ var Layer = exports.Layer = Montage.create(Component, {
             	this.styleCollapser.bypassAnimation = true;
             	this.styleCollapser.toggle();
             }
-            
             if (this.isSelected) {
             	this.element.classList.add("selected");
             } else {

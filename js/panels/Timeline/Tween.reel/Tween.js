@@ -118,6 +118,21 @@ var Tween = exports.Tween = Montage.create(Component, {
             this.needsDraw = true;
         }
     },
+    
+    _isClearing : {
+    	serializable: true,
+    	value: false
+    },
+    isClearing : {
+    	get: function() {
+    		return this._isClearing;
+    	},
+    	set: function(newVal) {
+    		if (newVal === "clear it") {
+    			this.eventManager.removeEventListener("elementChange", this, false);
+    		}
+    	}
+    },
 
     prepareForDraw:{
         value:function () {
@@ -138,6 +153,7 @@ var Tween = exports.Tween = Montage.create(Component, {
 
     handleElementChange:{
         value:function (event) {
+        	
             if (event.detail.source && event.detail.source !== "tween") {
                 // check for correct element selection
                 if (this.application.ninja.selectedElements[0]._element != this.parentComponent.parentComponent.animatedElement) {

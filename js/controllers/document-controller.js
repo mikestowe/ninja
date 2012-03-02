@@ -195,7 +195,10 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value:function(doc){
             var response = doc || null;//default just for testing
             if(!!response && response.success && (response.status!== 500) && !!response.uri){
+
+                this.isNewFilePath = true;//path identifier flag
                 this.creatingNewFile = true;//flag for timeline to identify new file flow
+
                 this.application.ninja.ioMediator.fileOpen(response.uri, this.openFileCallback.bind(this));
             }else if(!!response && !response.success){
                 //Todo: restrict directory path to the sandbox, in the dialog itself
@@ -224,9 +227,10 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             //TODO: Add UI to handle error codes, shouldn't be alert windows
             if(!!response && (response.status === 204)) {
 
-            	if((typeof this.creatingNewFile === 'undefined') || (this.creatingNewFile !== true)){//not from new file flow
+                if((typeof this.isNewFilePath === 'undefined') || (this.isNewFilePath !== true)){//not from new file flow
                     this.creatingNewFile = false;
                 }
+                this.isNewFilePath = false;//reset path identifier flag
 
             	//Sending full response object
             	this.openDocument(response);   
