@@ -9,35 +9,103 @@
 
     <script type="text/montage-serialization">
         {
-            "panel": {
-                "module": "js/panels/Panel.reel",
-                "name": "Panel",
+            "panelData": {
+                "module": "js/data/panels-data",
+                "name": "PanelsData"
+            },
+
+            "PanelController": {
+                "module": "montage/ui/controller/array-controller",
+                "name"  : "ArrayController",
                 "properties": {
-                    "element": {"#": "panel"}
+                    "automaticallyOrganizeObjects": true
                 },
                 "bindings": {
-                    "panelBase": {
-                        "boundObject": {"@": "repetition1"},
-                        "boundObjectPropertyPath": "objectAtCurrentIteration",
+                    "content": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "panels",
                         "oneway": true
                     }
                 }
             },
 
-
             "repetition1": {
                 "module": "montage/ui/repetition.reel",
                 "name": "Repetition",
                 "properties": {
-                    "element": {"#": "panels"}
+                    "element": {"#": "panels"},
+                    "contentController": {"@" : "PanelController"}
+                }
+            },
+
+            "panel": {
+                "module": "js/panels/Panel.reel",
+                "name": "Panel",
+                "properties": {
+                    "element": {"#": "panel"},
+                    "identifier" : "panels"
                 },
                 "bindings": {
-                    "objects": {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "_panels",
+                    "name": {
+                        "boundObject": {"@": "repetition1"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration.name",
                         "oneway": true
+                    },
+                    "height": {
+                        "boundObject": {"@": "repetition1"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration.height",
+                        "oneway": false
+                    },
+                    "minHeight": {
+                        "boundObject": {"@": "repetition1"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration.minHeight",
+                        "oneway": true
+                    },
+                    "maxHeight": {
+                        "boundObject": {"@": "repetition1"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration.maxHeight",
+                        "oneway": true
+                    },
+                    "flexible": {
+                        "boundObject": {"@": "repetition1"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration.flexible",
+                        "oneway": true
+                    },
+                    "collapsed": {
+                        "boundObject": {"@": "repetition1"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration.collapsed",
+                        "oneway": false
+                    },
+                    "modulePath": {
+                        "boundObject": {"@": "repetition1"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration.modulePath",
+                        "oneway": true
+                    },
+                    "moduleName": {
+                        "boundObject": {"@": "repetition1"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration.moduleName",
+                        "oneway": true
+                    },
+                    "contentComponent": {
+                        "boundObject": {"@": "repetition1"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration.contentComponent",
+                        "oneway": false
                     }
-                }
+                },
+                "listeners": [
+                    {
+                        "type": "resizeStart",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "resizeMove",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "resizeEnd",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
 
             "owner": {
@@ -45,8 +113,24 @@
                 "name": "PanelContainer",
                 "properties": {
                     "element": {"#": "panelContainer"},
-                    "repeater": {"@": "repetition1"}
-                }
+                    "repeater": {"@": "repetition1"},
+                    "panelData": {"@": "panelData" },
+                    "panelController" : {"@" : "PanelController"}
+                },
+                "listeners": [
+                    {
+                        "type": "panelResizing",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "dropped",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             }
         }
     </script>
@@ -55,7 +139,7 @@
 <body>
     <section id="panelContainer">
 		<article id="panels" class="panels">
-            <article id="panel" class="panel"></article>
+            <article id="panel"></article>
 		</article>
     </section>
 </body>
