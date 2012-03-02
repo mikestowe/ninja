@@ -313,7 +313,7 @@ exports.IoMediator = Montage.create(Component, {
     								docStyles[styleCounter].innerHTML = this.getCssFromRules(template.css[i].cssRules);
     								styleCounter++;
     							}
-    						} else {
+    						} else if (!template.css[i].ownerNode.getAttribute('data-ninja-template')){
     							//Checking for attributes to be added to tag upon saving
     							for (var k in docLinks) {
     								if (docLinks[k].getAttribute) {
@@ -330,8 +330,27 @@ exports.IoMediator = Montage.create(Component, {
     									}
     								}
     							}
-    							var adjCss = this.getCssFromRules(template.css[i].cssRules), cssUrl = template.css[i].ownerNode.getAttribute('data-ninja-uri');
-    							//console.log((template.css[i].ownerNode.getAttribute('data-ninja-uri')));//cssUrl.split(cssUrl.split('/')[cssUrl.split('/').length-1])[0]
+    							var local, regex, fileCouldDirUrl, adjCss = this.getCssFromRules(template.css[i].cssRules), cssUrl = template.css[i].ownerNode.getAttribute('data-ninja-file-url');
+    							//TODO: Assure logic for local directory
+    							local = cssUrl.split(cssUrl.split('/')[cssUrl.split('/').length-2])[0] || cssUrl.split(cssUrl.split('/')[cssUrl.split('/').length-1])[0] || cssUrl.split(cssUrl.split('/')[0])[0];
+    							//
+    							fileCouldDirUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+local).replace(/\/\//gi, '/'));
+    							//
+    							regex = new RegExp(fileCouldDirUrl.replace(/\//gi, '\\\/'), 'gi');
+    							//
+    							if (local.split('/').length > 1) {
+    								adjCss = adjCss.replace(regex, '../');
+    							} else {
+    								adjCss = adjCss.replace(regex, '');
+    							}
+    							
+    							
+    							//console.log(adjCss);
+    							//console.log(fileCouldDirUrl);
+    							//return;
+    							
+    							
+    							
     							//Saving data from rules array converted to string into <link> file
     							var save = this.fio.saveFile({uri: template.css[i].ownerNode.getAttribute('data-ninja-uri'), contents: adjCss});
     						}

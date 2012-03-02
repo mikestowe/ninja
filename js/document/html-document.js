@@ -485,14 +485,13 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 						//If rules are null, assuming cross-origin issue
 						if(this._document.styleSheets[i].rules === null) {
 							//TODO: Revisit URLs and URI creation logic, very hack right now
-							var fileUri, cssUrl, cssData, query, prefixUrl;
+							var fileUri, cssUrl, cssData, query, prefixUrl, fileCouldDirUrl;
 							//TODO: Parse out relative URLs and map them to absolute
 							if (this._document.styleSheets[i].href.indexOf(chrome.extension.getURL('')) !== -1) {
 								//Getting the url of the CSS file
 								cssUrl = this._document.styleSheets[i].href.split('js/document/templates/montage-html')[1];//TODO: Parse out relative URLs and map them to absolute
 								//Creating the URI of the file (this is wrong should not be splitting cssUrl)
-								fileUri = this.application.ninja.coreIoApi.cloudData.root+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+cssUrl;
-								fileUri = fileUri.replace(/\/\//gi, '/');
+								fileUri = (this.application.ninja.coreIoApi.cloudData.root+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+cssUrl).replace(/\/\//gi, '/');
 								//Loading the data from the file
 								cssData = this.application.ninja.coreIoApi.readFile({uri: fileUri});
 								//Creating tag with file content
@@ -508,10 +507,17 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 										tag.setAttribute(this._document.styleSheets[i].ownerNode.attributes[n].name, this._document.styleSheets[i].ownerNode.attributes[n].value);
 									}
 								}
+								//
+								
+								fileCouldDirUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+cssUrl.split(cssUrl.split('/')[cssUrl.split('/').length-1])[0]).replace(/\/\//gi, '/'));
+								
+								
 								//TODO: Fix regEx to have logic for all possible URLs strings
-								prefixUrl = '('+cssUrl.split(cssUrl.split('/')[cssUrl.split('/').length-1])[0]+'../';
-								prefixUrl = prefixUrl.replace('(/', '(');
+								prefixUrl = '('+fileCouldDirUrl+'../';
 								tag.innerHTML = cssData.content.replace(/\(\.\.\//gi, prefixUrl);
+								
+								
+								
 								//Looping through DOM to insert style tag at location of link element
 								query = this._templateDocument.html.querySelectorAll(['link']);
 								for (var j in query) {
@@ -525,14 +531,14 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 							} else {
 								console.log('ERROR: Cross-Domain-Stylesheet detected, unable to load in Ninja');
 								//None local stylesheet, probably on a CDN (locked)
-								tag = this.iframe.contentWindow.document.createElement('style');
+								/*
+tag = this.iframe.contentWindow.document.createElement('style');
 								tag.setAttribute('type', 'text/css');
 								tag.setAttribute('data-ninja-external-url', this._document.styleSheets[i].href);
 								tag.setAttribute('data-ninja-file-read-only', "true");
 								tag.setAttribute('data-ninja-file-name', this._document.styleSheets[i].href.split('/')[this._document.styleSheets[i].href.split('/').length-1]);
 								
-								/*
-//TODO: Figure out cross-domain XHR issue, might need cloud to handle
+								//TODO: Figure out cross-domain XHR issue, might need cloud to handle
 								var xhr = new XMLHttpRequest();
                     			xhr.open("GET", this._document.styleSheets[i].href, true);
                     			xhr.send();
@@ -540,7 +546,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
                     			if (xhr.readyState === 4) {
                         			console.log(xhr);
                     			}
-*/
                     			//tag.innerHTML = xhr.responseText //xhr.response;
 								
 								//Currently no external styles will load if unable to load via XHR request
@@ -555,6 +560,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 										this._templateDocument.head.insertBefore(tag, query[j]);
 									}
 								}
+*/
 							}
                     	}
 					}
