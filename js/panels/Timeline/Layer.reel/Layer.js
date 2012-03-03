@@ -372,17 +372,18 @@ var Layer = exports.Layer = Montage.create(Component, {
     		}
     	}
     },
-    _animateCollapser : {
+    _bypassAnimation : {
     	serializable: true,
     	value: false
     },
-    animateCollapser : {
+    bypassAnimation : {
     	serializable: true,
     	get: function() {
-    		return this._animateCollapser;
+    		return this._bypassAnimation;
     	},
     	set: function(newVal) {
-    		this._animateCollapser = newVal;
+    		//console.log("layer.js _bypassAnimation setter " + newVal)
+    		this._bypassAnimation = newVal;
     	}
     },
     
@@ -398,9 +399,9 @@ var Layer = exports.Layer = Montage.create(Component, {
 			
         	var that = this;
         	
-			this.positionCollapser = Collapser.create();
-    		this.transformCollapser = Collapser.create();
-    		this.styleCollapser = Collapser.create();
+			//this.positionCollapser = Collapser.create();
+    		//this.transformCollapser = Collapser.create();
+    		//this.styleCollapser = Collapser.create();
     		
         	// Make it editable!
         	this._layerEditable = Hintable.create();
@@ -419,6 +420,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         	this._layerEditable.needsDraw = true;
         	
         	// Change the markup into collapsible sections using the nifty Collapser component!
+        	/*
         	this.mainCollapser = Collapser.create();
         	this.mainCollapser.clicker = this.clicker;
         	this.mainCollapser.myContent = this.myContent;
@@ -435,6 +437,7 @@ var Layer = exports.Layer = Montage.create(Component, {
        		    boundObjectPropertyPath: "isMainCollapsed",
        		    oneway: false
    			});
+   			*/
             this.mainCollapser.clicker.addEventListener("click", this.handleMainCollapserClick.bind(this), false);
             
             /*
@@ -450,7 +453,7 @@ var Layer = exports.Layer = Montage.create(Component, {
             }
             */
     		//this.mainCollapser.needsDraw = true;
-
+/*
             this.positionCollapser.clicker = this.clickerPosition;
             this.positionCollapser.myContent = this.contentPosition;
             this.positionCollapser.element = this.contentPosition;
@@ -464,6 +467,7 @@ var Layer = exports.Layer = Montage.create(Component, {
        		    boundObjectPropertyPath: "isPositionCollapsed",
        		    oneway: false
    			});
+   			*/
             this.positionCollapser.clicker.addEventListener("click", this.handlePositionCollapserClick.bind(this), false);
             
             /*
@@ -479,7 +483,7 @@ var Layer = exports.Layer = Montage.create(Component, {
             }
             */
             //this.positionCollapser.needsDraw = true;
-            
+    /*        
             this.transformCollapser.clicker = this.clickerTransform;
             this.transformCollapser.myContent = this.contentTransform;
             this.transformCollapser.element = this.contentTransform;
@@ -493,6 +497,7 @@ var Layer = exports.Layer = Montage.create(Component, {
        		    boundObjectPropertyPath: "isTransformCollapsed",
        		    oneway: false
    			});
+   			*/
             this.transformCollapser.clicker.addEventListener("click", this.handleTransformCollapserClick.bind(this), false);
             
             
@@ -509,7 +514,7 @@ var Layer = exports.Layer = Montage.create(Component, {
             }
             */
             //this.transformCollapser.needsDraw = true;
-            
+            /*
             this.styleCollapser.clicker = this.clickerStyle;
             this.styleCollapser.myContent = this.contentStyle;
             this.styleCollapser.element = this.contentStyle;
@@ -523,6 +528,7 @@ var Layer = exports.Layer = Montage.create(Component, {
        		    boundObjectPropertyPath: "isStyleCollapsed",
        		    oneway: false
    			});
+   			*/
             this.styleCollapser.clicker.addEventListener("click", this.handleStyleCollapserClick.bind(this), false);
             
             
@@ -555,7 +561,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     },
     draw: {
     	value: function() {
-
+/*
     		// Coordinate the collapsers
     		this.log('layer.js draw')
             if (this.mainCollapser.isCollapsed !== this.isMainCollapsed) {
@@ -575,6 +581,7 @@ var Layer = exports.Layer = Montage.create(Component, {
             	this.styleCollapser.bypassAnimation = this.animateCollapser;
             	this.styleCollapser.toggle();
             }
+            */
             if (this.isSelected) {
             	this.element.classList.add("selected");
             } else {
@@ -595,6 +602,10 @@ var Layer = exports.Layer = Montage.create(Component, {
 			// Get some selectors.
         	this.label = this.element.querySelector(".label-layer");
         	this.titleSelector = this.label.querySelector(".collapsible-label");
+        	this.buttonAddStyle = this.element.querySelector(".button-add");
+        	this.buttonDeleteStyle = this.element.querySelector(".button-delete");
+        	
+        	/*
         	this.clicker = this.element.querySelector(".collapsible-clicker");
         	this.myContent = this.element.querySelector(".content-layer");
         	this.clickerPosition = this.element.querySelector(".clicker-position");
@@ -603,8 +614,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         	this.contentTransform = this.element.querySelector(".content-transform");
         	this.clickerStyle = this.element.querySelector(".clicker-style");
         	this.contentStyle = this.element.querySelector(".content-style");
-        	this.buttonAddStyle = this.element.querySelector(".button-add");
-        	this.buttonDeleteStyle = this.element.querySelector(".button-delete");
+        	*/
 		}
 	},
     selectLayer:{
@@ -793,7 +803,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 	handleMainCollapserClick : {
 		value: function(event) {
 			this.mainCollapser.bypassAnimation = false;
-			this.animateCollapser = true;
+			this.bypassAnimation = false;
 			if (this.isMainCollapsed) {
 				this.isMainCollapsed = false;
 			} else {
@@ -804,7 +814,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 	handlePositionCollapserClick : {
 		value: function(event) {
 			this.positionCollapser.bypassAnimation = false;
-			//this.animateCollapser = true;
+			this.bypassAnimation = false;
 			if (this.isPositionCollapsed) {
 				this.isPositionCollapsed = false;
 			} else {
@@ -815,7 +825,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 	handleTransformCollapserClick : {
 		value: function(event) {
 			this.transformCollapser.bypassAnimation = false;
-			//this.animateCollapser = true;
+			this.bypassAnimation = false;
 			if (this.isTransformCollapsed) {
 				this.isTransformCollapsed = false;
 			} else {
@@ -826,7 +836,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 	handleStyleCollapserClick : {
 		value: function(event) {
 			this.styleCollapser.bypassAnimation = false;
-			//this.animateCollapser = true;
+			this.bypassAnimation = false;
 			if (this.isStyleCollapsed) {
 				this.isStyleCollapsed = false;
 			} else {

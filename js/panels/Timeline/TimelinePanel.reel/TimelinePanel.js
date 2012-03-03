@@ -97,22 +97,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
-    _arrTracks:{
-        serializable:true,
-        value:[]
-    },
-
-    arrTracks:{
-        serializable:true,
-        get:function () {
-            return this._arrTracks;
-        },
-        set:function (newVal) {
-            this._arrTracks = newVal;
-            this._cacheArrays();
-        }
-    },
-
     _trackRepetition:{
         serializable:true,
         value:null
@@ -284,23 +268,20 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 	            _firstLayerDraw = true;
 	            
 	            // After recreating the tracks and layers, store the result in the currentDocument.
-				this.application.ninja.currentDocument.tlArrTracks = this.arrTracks;
 				this.application.ninja.currentDocument.tlArrLayers = this.arrLayers;
 				
 			} else {
 				// we do have information stored.  Use it.
 				this._boolCacheArrays = false;
-				this.arrLayers = [];
-				this.arrTracks = [];
+				//this.arrLayers = [];
 				this.arrLayers = this.application.ninja.currentDocument.tlArrLayers;
-				this.arrTracks = this.application.ninja.currentDocument.tlArrTracks;
 				this._boolCacheArrays = true;
 			}
 			
     		// Redraw all the things
-    		this.layerRepetition.needsDraw = true;
-    		this.trackRepetition.needsDraw = true;
-    		this.needsDraw = true;
+    		//this.layerRepetition.needsDraw = true;
+    		//this.trackRepetition.needsDraw = true;
+    		//this.needsDraw = true;
         }
     },
     
@@ -323,7 +304,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.hashTrackInstance = null;
             this.hashLayerNumber = null;
             this.hashElementMapToLayer = null;
-			this.arrTracks = [];
 			this.arrLayers = [];
 
     		this.currentLayerNumber = 0;
@@ -471,7 +451,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this._firstTimeLoaded = false;
             } else {
                 this.arrLayers.length = 0;
-                this.arrTracks.length = 0;
 
                 if (event.detail.element.id === "UserContent") {
                     this._hashKey = "123";
@@ -578,6 +557,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 newLayerName = "Layer " + this.currentLayerNumber;
                 thingToPush.layerName = newLayerName;
                 thingToPush.layerID = this.currentLayerNumber;
+                thingToPush.bypassAnimation = false;
                 thingToPush.isMainCollapsed = true;
                 thingToPush.isPositionCollapsed = true;
                 thingToPush.isTransformCollapsed = true;

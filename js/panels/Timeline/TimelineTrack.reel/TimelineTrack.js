@@ -57,7 +57,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         set:function (newVal) {
             if (newVal !== this._isTransformCollapsed) {
                 this._isTransformCollapsed = newVal;
-                this.needsDraw = true;
             }
         }
     },
@@ -71,7 +70,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         set:function (newVal) {
             if (newVal !== this._isPositionCollapsed) {
                 this._isPositionCollapsed = newVal;
-                this.needsDraw = true;
             }
         }
     },
@@ -85,21 +83,21 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         set:function (newVal) {
             if (newVal !== this._isStyleCollapsed) {
                 this._isStyleCollapsed = newVal;
-                this.needsDraw = true;
             }
         }
     },
-    _animateCollapser : {
+    _bypassAnimation : {
     	serializable: true,
     	value: false
     },
-    animateCollapser : {
+    bypassAnimation : {
     	serializable: true,
     	get: function() {
-    		return this._animateCollapser;
+    		return this._bypassAnimation;
     	},
     	set: function(newVal) {
-    		this._animateCollapser = newVal;
+    		//console.log("timelinetrack bypassAnimation setter " + newVal)
+    		this._bypassAnimation = newVal;
     	}
     },
     
@@ -582,7 +580,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             
             this.arrPositionTracks = [0, 1];
             this.arrTransformTracks = [0, 1, 2, 3, 4];
-            
+ /*           
             this.label = this.element.querySelector(".label-main");
             this.myContent = this.element.querySelector(".content-main");
             this.labelPosition = this.element.querySelector(".label-position");
@@ -605,22 +603,25 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
        		    boundObjectPropertyPath: "isMainCollapsed",
        		    oneway: false
    			});
+
+
             Object.defineBinding(this._mainCollapser, "bypassAnimation", {
    				boundObject: this,
        		    boundObjectPropertyPath: "animateCollapser",
        		    oneway: false,
                	boundValueMutator: function(value) {
-                   	return !value;
+               		console.log('mutating')
+                   	return !value
                 }
    			});
-            
+ */
             /*
             this._mainCollapser.labelClickEvent = function () {
                 that.isMainCollapsed = that._mainCollapser.isCollapsed;
             };
             */
             //this._mainCollapser.needsDraw = true;
-
+/*
             this._positionCollapser = Collapser.create();
             this._positionCollapser.clicker = this.labelPosition;
             this._positionCollapser.myContent = this.contentPosition;
@@ -634,7 +635,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
        		    boundObjectPropertyPath: "isPositionCollapsed",
        		    oneway: false
    			});
-            
+            */
             
             /*
             this._positionCollapser.labelClickEvent = function () {
@@ -642,7 +643,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             };
             */
             //this._positionCollapser.needsDraw = true;
-
+/*
             this._transformCollapser = Collapser.create();
             this._transformCollapser.clicker = this.labelTransform;
             this._transformCollapser.myContent = this.contentTransform;
@@ -656,7 +657,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
        		    boundObjectPropertyPath: "isTransformCollapsed",
        		    oneway: false
    			});
-   			
+   			*/
    			
             /*
             this._transformCollapser.labelClickEvent = function () {
@@ -665,6 +666,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             */
             //this._transformCollapser.needsDraw = true;
 
+/*
             this._styleCollapser = Collapser.create();
             this._styleCollapser.clicker = this.labelStyles;
             this._styleCollapser.myContent = this.contentStyles;
@@ -679,7 +681,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
        		    oneway: false
    			});
    			
-   			
+   			*/
             /*
             this._styleCollapser.labelClickEvent = function () {
                 that.isStyleCollapsed = that._styleCollapser.isCollapsed;

@@ -22,7 +22,7 @@
  * 			the transition will not work. Subsequent collapses (and expansions) will transition as expected.
  * 		isLabelClickable: Boolean that indicates whether or not the clicker should have listener events. Defaults to true; set to 
  * 			false for collapsers that will only be operated remotely.
- * 		toggle(): Manually toggle the expand/collapse of the content.
+ * 		isToggling: Set this anually toggle the expand/collapse of the content.
  * 		
  */
 var Montage = require("montage/core/core").Montage,
@@ -76,8 +76,12 @@ var Montage = require("montage/core/core").Montage,
 		},
 		set: function(newVal) {
 			this._bypassAnimation= newVal;
+			//console.log('bypassAnimation setter ' + newVal)
 		}
 	},
+	 _oldAnimated : {
+	 	value: false
+	 },
 	
 	// transitionClass: The CSS class to apply to the content during collapse to provide CSS transition.
 	// Note that this CSS class must be defined in your style sheet with the desired transitions.
@@ -104,7 +108,7 @@ var Montage = require("montage/core/core").Montage,
 		set: function(newVal) {
 			if (newVal !== this._isCollapsed) {
 				this._isCollapsed = newVal;
-				this.needsDraw = true;
+				//this.needsDraw = true;
 			}
 			
 		}
@@ -144,31 +148,8 @@ var Montage = require("montage/core/core").Montage,
 			this._isLabelClickable = newVal;
 		}
 	},
-	
-	// labelClickEvent: an event to fire when the label is clicked.
-	_labelClickEvent: {
-		value: false
-	},
-	labelClickEvent: {
-		get: function() {
-			return this._labelClickEvent;
-		},
-		set: function(newVal) {
-			this._labelClickEvent = newVal;
-		}
-	},
-	
-	// toggle: manually toggle the collapser.
-	toggle: {
-		value: function() {
-			if (this.bypassAnimation) {
-				this.isAnimated = false;
-			}
-			this.myContent.classList.remove(this.transitionClass);
-			this.handleCollapserLabelClick();
-		}
-	},
-	
+
+	// isToggling: Bindable property. Set this (to anything) to trigger a toggle.
 	_isToggling: {
 		serializable: true,
 		value: true
@@ -182,7 +163,8 @@ var Montage = require("montage/core/core").Montage,
 			if (newVal !== this._isToggling) {
 				this._isToggling = newVal;
 				
-				if (this.bypassAnimation) {
+				if (this.bypassAnimation === true) {
+					this._oldAnimated = this.isAnimated;
 					this.isAnimated = false;
 				}
 				this.myContent.classList.remove(this.transitionClass);
@@ -198,13 +180,18 @@ var Montage = require("montage/core/core").Montage,
 	prepareForDraw: {
 		value: function() {
 			// Add a click listener to the label for expand/collapse
+			/*
 			if (this.isLabelClickable) {
 				this.clicker.identifier = "collapserLabel";
 				this.clicker.addEventListener("click", this, false);
 			}
-
+			*/
 			// Get the original value of the overflow property:
 			this._origOverflowValue = window.getComputedStyle(this.myContent, null).getPropertyValue("overflow");
+			console.log("collapser: this.isCollapsed " + this.isCollapsed)
+			if (this.isCollapsed === false) {
+				this.myContent.style.height = "auto";
+			}
 			
 			/*
 			 * Removed because of expense. This disables the feature of having the
@@ -307,11 +294,6 @@ var Montage = require("montage/core/core").Montage,
 			
 			// Set the component to run its draw cycle.
 			this.needsDraw = true;
-			
-			// Dispatch my labelClick event
-			if (this.labelClickEvent) {
-				this.labelClickEvent(this.bypassAnimation);
-			}
 
 		}
 	},
@@ -342,9 +324,10 @@ var Montage = require("montage/core/core").Montage,
 				
 			}
 			
-			if (this.bypassAnimation) {
+			if (this.bypassAnimation === true) {
+				this.isAnimated = this._oldAnimated;
+			} else {
 				this.bypassAnimation = true;
-				this.isAnimated = true;
 			}
 		}
 	}
