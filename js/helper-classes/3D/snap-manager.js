@@ -40,6 +40,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
 	// keep a reference to the most recent hitRecord.  Used for drawing feedback on the stage
 	_lastHit : { value: null, writable: true },
+	_hitRecords : { value: [], writable: true },
 
 	// keep a list of objects to avoid snapping to
 	_avoidList : { value: [], writable: true },
@@ -274,6 +275,11 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 			}	//if (hitRecArray.length == 0)
 
 			var rtnHit;
+
+            // Save reference to hit records to verify last hit record's element matches browser's elementFromPoint
+            this._hitRecords.length = 0;
+            this._hitRecords = hitRecArray;
+
 			if (hitRecArray.length > 0)
 			{
 				this.sortHitRecords( hitRecArray );
@@ -2246,6 +2252,30 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 				drawUtils.setDrawingSurfaceElement(saveContext);
 			}
 		}
-	}
+	},
+
+    findHitRecordForElement: {
+        value: function(elt) {
+            var rtnHit;
+
+            if (!this._hitRecords)  return;
+            var nHits = this._hitRecords.length;
+
+            for (var i=0;  i<nHits;  i++)
+            {
+                var hi = this._hitRecords[i];
+                if(hi.getElement() === elt)
+                {
+                    rtnHit = hi;
+                    break;
+                }
+            }
+            // catch-all to turn off drag plane snapping
+            this.deactivateDragPlane();
+
+            this.setLastHit( rtnHit );
+            return rtnHit;
+        }
+    }
 
 });
