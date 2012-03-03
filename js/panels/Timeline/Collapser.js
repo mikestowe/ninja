@@ -184,6 +184,10 @@ var Montage = require("montage/core/core").Montage,
 			// Get the original value of the overflow property:
 			this._origOverflowValue = window.getComputedStyle(this.myContent, null).getPropertyValue("overflow");
 			
+			/*
+			 * Removed because of expense. This disables the feature of having the
+			 * component dynamically expand/collapse the content on init based on properties;
+			 * Now default state of component must be set in CSS.
 			// If the content area is supposed to start out collapsed:
 			if (this.isCollapsed) {
 				this.myContent.style.height = "0px";
@@ -198,6 +202,7 @@ var Montage = require("montage/core/core").Montage,
 				this.myContent.classList.remove(this.collapsedClass);
 				this.clicker.classList.remove(this.collapsedClass);
 			}
+			*/
 		}
 	},
 	draw: {
