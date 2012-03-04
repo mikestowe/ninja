@@ -330,29 +330,65 @@ exports.IoMediator = Montage.create(Component, {
     									}
     								}
     							}
-    							var local, regex, fileCouldDirUrl, adjCss = this.getCssFromRules(template.css[i].cssRules), cssUrl = template.css[i].ownerNode.getAttribute('data-ninja-file-url');
-    							//TODO: Assure logic for local directory
-    							local = cssUrl.split(cssUrl.split('/')[cssUrl.split('/').length-2])[0] || cssUrl.split(cssUrl.split('/')[cssUrl.split('/').length-1])[0] || cssUrl.split(cssUrl.split('/')[0])[0];
-    							//
-    							fileCouldDirUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+local).replace(/\/\//gi, '/'));
-    							//
-    							regex = new RegExp(fileCouldDirUrl.replace(/\//gi, '\\\/'), 'gi');
-    							//
-    							if (local.split('/').length > 2) {
-    								adjCss = adjCss.replace(regex, '../');
-    							} else {
-    								adjCss = adjCss.replace(regex, '');
+    														
+    							///////////////////////////////////////////////////////////////////////////////////////////
+    							///////////////////////////////////////////////////////////////////////////////////////////
+    							
+    							
+    							var cleanedCss, fileCouldDirUrl, pathDepth, pathToDocRoot = '../';
+    								dirtyCss = this.getCssFromRules(template.css[i].cssRules),
+    								fileUrl = template.css[i].ownerNode.getAttribute('data-ninja-file-url'),
+    								fileRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+fileUrl.split(fileUrl.split('/')[fileUrl.split('/').length-1])[0]).replace(/\/\//gi, '/')),
+    								localPath = fileUrl.split(fileUrl.split('/')[fileUrl.split('/').length-2])[0] || fileUrl.split(fileUrl.split('/')[fileUrl.split('/').length-1])[0] || fileUrl.split(fileUrl.split('/')[0])[0],
+    								documentRootURL = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]));    								
+    							
+    							pathDepth = Math.floor(localPath.split('/').length/2);
+    							
+    							for (var p=0; p < pathDepth; p++) {
+    								pathToDocRoot += '../';
     							}
     							
+    							fileCouldDirUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+localPath).replace(/\/\//gi, '/'));
+								
+    							cleanedCss = dirtyCss.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaUrl.bind(this));
     							
-    							//console.log(adjCss);
-    							//console.log(fileCouldDirUrl);
+    							function parseNinjaUrl (url) {
+    								//
+    								if (url.indexOf(fileCouldDirUrl) !== -1 || url.indexOf(fileRootUrl) !== -1) {
+    									//
+    									if (pathDepth < 1 || url.indexOf(fileRootUrl) > -1) {
+    										//
+    										url = url.replace(new RegExp(fileRootUrl.replace(/\//gi, '\\\/'), 'gi'), '');
+		    							} else {
+		    								//
+    										url = url.replace(new RegExp(fileCouldDirUrl.replace(/\//gi, '\\\/'), 'gi'), '../');
+    									}
+    								} else {
+    									//
+    									if (url.indexOf(documentRootURL) !== 1) {
+    										url = url.replace(new RegExp(documentRootURL.replace(/\//gi, '\\\/'), 'gi'), pathToDocRoot);
+    									} else if (url.indexOf(this.application.ninja.coreIoApi.rootUrl) !== 1) {
+    										//TODO: Add logic for files above root document folder
+    									}
+    								}
+    								//console.log("Returning: " + url);
+    								//console.log("-----");
+    								return url;
+    							}
+    							
+    							//console.log(cleanedCss);
+    							
+    							///////////////////////////////////////////////////////////////////////////////////////////
+    							///////////////////////////////////////////////////////////////////////////////////////////
+    							
+    							
     							//return;
     							
     							
     							
     							//Saving data from rules array converted to string into <link> file
-    							var save = this.fio.saveFile({uri: template.css[i].ownerNode.getAttribute('data-ninja-uri'), contents: adjCss});
+    							var save = this.fio.saveFile({uri: template.css[i].ownerNode.getAttribute('data-ninja-uri'), contents: cleanedCss});
+    							//TODO: Add error handling for saving files
     						}
     					}
     				}
