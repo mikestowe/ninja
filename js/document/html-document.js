@@ -409,16 +409,57 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             if(!this.documentRoot.Ninja) this.documentRoot.Ninja = {};
             //Inserting user's document into template
             
-            //TODO: Add logic to parse URLs from head/body
+            
+            
+            
+            
+            
+            
+            
+            
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            
+            //TODO: Clean up and make public method to prepend properties with Ninja URL
             this._templateDocument.head.innerHTML = (this._userDocument.content.head.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, ninjaUrlRedirect.bind(this))).replace(/url\(([^"]*)(.+?)\1\)/g, ninjaUrlRedirect.bind(this));
             this._templateDocument.body.innerHTML = (this._userDocument.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, ninjaUrlRedirect.bind(this))).replace(/url\(([^"]*)(.+?)\1\)/g, ninjaUrlRedirect.bind(this));            
             //
+            //var docRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
+            //
             function ninjaUrlRedirect (prop) {
-            	console.log(prop);
+            	//Checking for property value to not contain a full direct URL
+            	if (!prop.match(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi)) {
+            		//Checking for attributes and type of source
+            		if (prop.indexOf('href') !== -1 || prop.indexOf('src') !== -1) { //From HTML attribute
+            			//
+            			prop = prop.replace(/"([^"]*)"/gi, ninjaUrlPrepend.bind(this));
+	            	} else if (prop.indexOf('url') !== -1) { //From CSS property
+    	        		//TODO: Add functionality
+    	        		console.log('CSS: '+prop);
+        	    	}
+        	    }
             	return prop;
             }
             //
-           
+            function ninjaUrlPrepend (url) {
+            	var docRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
+            	return '"'+docRootUrl+url.replace(/\"/gi, '')+'"';
+            }
+            
+           	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+           	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+           	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             var scripttags = this._templateDocument.html.getElementsByTagName('script'), webgldata;  //TODO: Use querySelectorAll
             //
             for (var w in scripttags) {
@@ -493,10 +534,55 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 						//If rules are null, assuming cross-origin issue
 						if(this._document.styleSheets[i].rules === null) {
 							//TODO: Revisit URLs and URI creation logic, very hack right now
-							var fileUri, cssUrl, cssData, query, prefixUrl, fileCouldDirUrl;
+							var fileUri, cssUrl, cssData, query, prefixUrl, fileCouldDirUrl, docRootUrl;
+							//
+            				docRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
 							//TODO: Parse out relative URLs and map them to absolute
-							if (this._document.styleSheets[i].href.indexOf(chrome.extension.getURL('')) !== -1) {
-								//Getting the url of the CSS file
+							if (this._document.styleSheets[i].href.indexOf(this.application.ninja.coreIoApi.rootUrl) !== -1) {
+								
+								cssUrl = this._document.styleSheets[i].href.split(this.application.ninja.coreIoApi.rootUrl)[1];
+								fileUri = this.application.ninja.coreIoApi.cloudData.root+cssUrl;
+								//TODO: Add error handling for reading file
+								cssData = this.application.ninja.coreIoApi.readFile({uri: fileUri});
+								
+								
+								var tag = this.iframe.contentWindow.document.createElement('style');
+								tag.setAttribute('type', 'text/css');
+								tag.setAttribute('data-ninja-uri', fileUri);
+								tag.setAttribute('data-ninja-file-url', cssUrl);
+								tag.setAttribute('data-ninja-file-read-only', JSON.parse(this.application.ninja.coreIoApi.isFileWritable({uri: fileUri}).content).readOnly);
+								tag.setAttribute('data-ninja-file-name', cssUrl.split('/')[cssUrl.split('/').length-1]);
+								//Copying attributes to maintain same properties as the <link>
+								for (var n in this._document.styleSheets[i].ownerNode.attributes) {
+									if (this._document.styleSheets[i].ownerNode.attributes[n].value && this._document.styleSheets[i].ownerNode.attributes[n].name !== 'disabled' && this._document.styleSheets[i].ownerNode.attributes[n].name !== 'disabled') {
+										if (this._document.styleSheets[i].ownerNode.attributes[n].value.indexOf(docRootUrl) !== -1) {
+											tag.setAttribute(this._document.styleSheets[i].ownerNode.attributes[n].name, this._document.styleSheets[i].ownerNode.attributes[n].value.split(docRootUrl)[1]);
+										} else {
+											tag.setAttribute(this._document.styleSheets[i].ownerNode.attributes[n].name, this._document.styleSheets[i].ownerNode.attributes[n].value);
+										}
+									}
+								}
+								
+								fileCouldDirUrl = this._document.styleSheets[i].href.split(this._document.styleSheets[i].href.split('/')[this._document.styleSheets[i].href.split('/').length-1])[0];
+								prefixUrl = 'url('+fileCouldDirUrl; //This should be re-written with better RegEx
+								tag.innerHTML = cssData.content.replace(/url\(/gi, prefixUrl);
+								
+								
+								
+								//Looping through DOM to insert style tag at location of link element
+								query = this._templateDocument.html.querySelectorAll(['link']);
+								for (var j in query) {
+									if (query[j].href === this._document.styleSheets[i].href) {
+										//Disabling style sheet to reload via inserting in style tag
+										query[j].setAttribute('disabled', 'true');
+										//Inserting tag
+										this._templateDocument.head.insertBefore(tag, query[j]);
+									}
+								}
+								
+								
+								/*
+//Getting the url of the CSS file
 								cssUrl = this._document.styleSheets[i].href.split('js/document/templates/montage-html')[1];//TODO: Parse out relative URLs and map them to absolute
 								//Creating the URI of the file (this is wrong should not be splitting cssUrl)
 								fileUri = (this.application.ninja.coreIoApi.cloudData.root+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+cssUrl).replace(/\/\//gi, '/');
@@ -517,8 +603,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 								}
 								//
 								
-								fileCouldDirUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+cssUrl.split(cssUrl.split('/')[cssUrl.split('/').length-1])[0]).replace(/\/\//gi, '/'));
-								
+								//fileCouldDirUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+cssUrl.split(cssUrl.split('/')[cssUrl.split('/').length-1])[0]).replace(/\/\//gi, '/'));
+								fileCouldDirUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
 							
 								//TODO: Fix regEx to have logic for all possible URLs strings (currently prefixing all url())
 								prefixUrl = 'url('+fileCouldDirUrl; //This should be re-written with better RegEx
@@ -534,6 +620,25 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 										this._templateDocument.head.insertBefore(tag, query[j]);
 									}
 								}
+*/
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
 							} else {
 								console.log('ERROR: Cross-Domain-Stylesheet detected, unable to load in Ninja');
 								//None local stylesheet, probably on a CDN (locked)

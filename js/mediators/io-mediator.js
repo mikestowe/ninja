@@ -213,9 +213,11 @@ exports.IoMediator = Montage.create(Component, {
     parseNinjaTemplateToHtml: {
     	enumerable: false,
     	value: function (template) {
+    		var regexRootUrl, rootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]));
+    		regexRootUrl = new RegExp(rootUrl.replace(/\//gi, '\\\/'), 'gi');
     		//Injecting head and body into old document
-    		template.document.content.document.head.innerHTML = template.head;
-    		template.document.content.document.body.innerHTML = template.body;
+    		template.document.content.document.head.innerHTML = template.head.replace(regexRootUrl, '');
+    		template.document.content.document.body.innerHTML = template.body.replace(regexRootUrl, '');
     		//Getting all CSS (style or link) tags
     		var styletags = template.document.content.document.getElementsByTagName('style'),
     			linktags = template.document.content.document.getElementsByTagName('link'),
@@ -248,7 +250,7 @@ exports.IoMediator = Montage.create(Component, {
     		for (var l in linktags) {
     			if (linktags[l].getAttribute && linktags[l].getAttribute('disabled')) {//TODO: Use querySelectorAll
     				for (var p=0; toremovetags[p]; p++) {
-    					if (toremovetags[p].getAttribute('data-ninja-file-url') === ('/'+linktags[l].getAttribute('href'))) {
+    					if (toremovetags[p].getAttribute('href') === linktags[l].getAttribute('href')) {
     						if (!toremovetags[p].getAttribute('data-ninja-disabled')) {
     							linktags[l].removeAttribute('disabled');
     						}
@@ -335,54 +337,49 @@ exports.IoMediator = Montage.create(Component, {
     							///////////////////////////////////////////////////////////////////////////////////////////
     							
     							
-    							var cleanedCss, fileCouldDirUrl, pathDepth, pathToDocRoot = '../';
+    							var cleanedCss,
     								dirtyCss = this.getCssFromRules(template.css[i].cssRules),
     								fileUrl = template.css[i].ownerNode.getAttribute('data-ninja-file-url'),
-    								fileRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+fileUrl.split(fileUrl.split('/')[fileUrl.split('/').length-1])[0]).replace(/\/\//gi, '/')),
-    								localPath = fileUrl.split(fileUrl.split('/')[fileUrl.split('/').length-2])[0] || fileUrl.split(fileUrl.split('/')[fileUrl.split('/').length-1])[0] || fileUrl.split(fileUrl.split('/')[0])[0],
-    								documentRootURL = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]));    								
-    							
-    							pathDepth = Math.floor(localPath.split('/').length/2);
-    							
-    							for (var p=0; p < pathDepth; p++) {
-    								pathToDocRoot += '../';
-    							}
-    							
-    							fileCouldDirUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+localPath).replace(/\/\//gi, '/'));
-								
-    							cleanedCss = dirtyCss.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaUrl.bind(this));
+    								fileRootUrl = this.application.ninja.coreIoApi.rootUrl+fileUrl.split(fileUrl.split('/')[fileUrl.split('/').length-1])[0],
+    								cleanedCss = dirtyCss.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaUrl.bind(this));
+    							    							
     							
     							function parseNinjaUrl (url) {
+    								//console.log("Getting: " + url);
     								//
-    								if (url.indexOf(fileCouldDirUrl) !== -1 || url.indexOf(fileRootUrl) !== -1) {
-    									//
-    									if (pathDepth < 1 || url.indexOf(fileRootUrl) > -1) {
-    										//
-    										url = url.replace(new RegExp(fileRootUrl.replace(/\//gi, '\\\/'), 'gi'), '');
-		    							} else {
-		    								//
-    										url = url.replace(new RegExp(fileCouldDirUrl.replace(/\//gi, '\\\/'), 'gi'), '../');
-    									}
+    								if (url.indexOf(fileRootUrl) !== -1) {
+    									url = url.replace(new RegExp(fileRootUrl.replace(/\//gi, '\\\/'), 'gi'), '');
     								} else {
+    									var assetsDirs = (url.replace(new RegExp((this.application.ninja.coreIoApi.rootUrl).replace(/\//gi, '\\\/'), 'gi'), '')).split('/');
+    									var fileDirs = (fileUrl.split(fileUrl.split('/')[fileUrl.split('/').length-1])[0]).split('/');
+    									var counter = 0;
+    									var path = '';
+    									var newURL = '';
     									//
-    									if (url.indexOf(documentRootURL) !== 1) {
-    										url = url.replace(new RegExp(documentRootURL.replace(/\//gi, '\\\/'), 'gi'), pathToDocRoot);
-    									} else if (url.indexOf(this.application.ninja.coreIoApi.rootUrl) !== 1) {
-    										//TODO: Add logic for files above root document folder
+    									for (var p=0; p < fileDirs.length-1; p++) {
+    										if (fileDirs[p] === assetsDirs[p]) {
+    											counter++;
+    										}
     									}
+    									//
+    									for (var p=0; p < (fileDirs.length-counter)-1; p++) {
+    										path += '../';
+    									}
+    									//
+    									for (var p=counter; p < assetsDirs.length; p++) {
+    										newURL += '/'+assetsDirs[p];
+    									}
+    									//
+    									url = (path+newURL).replace(/\/\//gi, '/');
     								}
     								//console.log("Returning: " + url);
     								//console.log("-----");
     								return url;
     							}
     							
-    							//console.log(cleanedCss);
-    							
     							///////////////////////////////////////////////////////////////////////////////////////////
     							///////////////////////////////////////////////////////////////////////////////////////////
     							
-    							
-    							//return;
     							
     							
     							
