@@ -90,6 +90,7 @@ function RuntimePulseMaterial()
 
 	this.import = function( importStr )
 	{
+		this._texMap = getPropertyFromString( "texture: ",	importStr );
 	}
 
 	this.init = function()
@@ -135,6 +136,79 @@ function RuntimePulseMaterial()
 			}
 		}
 	}
+}
+
+function RuntimeRadialGradientMaterial()
+{
+	// inherit the members of RuntimeMaterial
+	this.inheritedFrom = RuntimeMaterial;
+	this.inheritedFrom();
+
+	// setup default values
+	this._color1 = [0.25,0,0,1];  this._colorStop1 = 0.0;
+	this._color2 = [0,0.25,0,1];  this._colorStop2 = 0.3;
+	this._color3 = [0,0.25,0,1];  this._colorStop3 = 0.6;
+	this._color4 = [0,0.25,0,1];  this._colorStop4 = 1.0;
+
+	this.init = function()
+	{
+		var material = this._materialNode;
+		if (material)
+		{
+			var technique = material.shaderProgram.default;
+			var renderer = g_Engine.getContext().renderer;
+			if (renderer && technique)
+			{
+				if (this._shader && this._shader.default)
+				{
+					this._shader.default.u_color1.set( this._color1 );
+					this._shader.default.u_color2.set( this._color2 );
+					this._shader.default.u_color3.set( this._color3 );
+					this._shader.default.u_color4.set( this._color4 );
+
+					this._shader.default.u_colorStop1.set( [this._colorStop1] );
+					this._shader.default.u_colorStop2.set( [this._colorStop2] );
+					this._shader.default.u_colorStop3.set( [this._colorStop3] );
+					this._shader.default.u_colorStop4.set( [this._colorStop4] );
+
+					if (this._angle)
+						this._shader.default.u_cos_sin_angle.set([Math.cos(this._angle), Math.sin(this._angle)]);
+				}
+			}
+		}
+	}
+
+	this.import = function( importStr )
+	{
+		var colorStr;
+		colorStr = getPropertyFromString( "color1: ",	importStr );
+		this._color1  = eval( "[" + colorStr + "]" );
+		colorStr = getPropertyFromString( "color2: ",	importStr );
+		this._color2  = eval( "[" + colorStr + "]" );
+		colorStr = getPropertyFromString( "color3: ",	importStr );
+		this._color3  = eval( "[" + colorStr + "]" );
+		colorStr = getPropertyFromString( "color4: ",	importStr );
+		this._color4  = eval( "[" + colorStr + "]" );
+
+		this._colorStop1 = Number( getPropertyFromString( "colorStop1: ",	importStr ) );
+		this._colorStop1 = Number( getPropertyFromString( "colorStop2: ",	importStr ) );
+		this._colorStop1 = Number( getPropertyFromString( "colorStop3: ",	importStr ) );
+		this._colorStop1 = Number( getPropertyFromString( "colorStop4: ",	importStr ) );
+
+		if (this._angle)
+			this._angle = getPropertyFromString( "angle: ",	importStr );
+	}
+
+}
+
+function RuntimeLinearGradientMaterial()
+{
+	// inherit the members of RuntimeMaterial
+	this.inheritedFrom = RuntimeRadialGradientMaterial;
+	this.inheritedFrom();
+
+	// the only difference between linear & radial gradient is the existance of an angle for linear.
+	this._angle = 0.0;
 }
 
 

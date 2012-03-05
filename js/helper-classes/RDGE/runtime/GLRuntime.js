@@ -16,6 +16,7 @@ function GLRuntime( canvas, importStr )
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
 	this._canvas		= canvas;
+	this._context		= null;
 	this._importStr		= importStr;
 
 	this.renderer		= null;
@@ -26,6 +27,8 @@ function GLRuntime( canvas, importStr )
 
 	this._firstRender	= true;
 	this._initialized	= false;
+
+	this._useWebGL		= false;
 
 	// view parameters
 	this._fov = 45.0;
@@ -49,6 +52,14 @@ function GLRuntime( canvas, importStr )
 	this.getAspect			= function()		{  return this._aspect;			}
 	this.getViewDistance	= function()		{  return this._viewDist;		}
 
+	this.get2DContext		= function()		{  return this._context;		}
+
+	this.getViewportWidth	= function()		{  return this._canvas.width;	}
+	this.getViewportHeight	= function()		{  return this._canvas.height;	}
+
+    ///////////////////////////////////////////////////////////////////////
+	// accessors
+    ///////////////////////////////////////////////////////////////////////
 	this.loadScene = function()
 	{
 		// parse the data
@@ -56,6 +67,8 @@ function GLRuntime( canvas, importStr )
 		var index = importStr.indexOf( "scenedata: " );
 		if (index >= 0)
 		{
+			this._useWebGL = true;
+
 			var rdgeStr = importStr.substr( index+11 );
 			var endIndex = rdgeStr.indexOf( "endscene\n" );
 			if (endIndex < 0)  throw new Error( "ill-formed WebGL data" );
@@ -66,6 +79,12 @@ function GLRuntime( canvas, importStr )
 			this.importObjects( importStr );
 			this.linkMaterials( this._geomRoot );
 			this.initMaterials();
+		}
+		else
+		{
+			this._context = this._canvas.getContext( "2d" );
+			this.importObjects( importStr );
+			this.render();
 		}
 	}
 
@@ -230,6 +249,7 @@ function GLRuntime( canvas, importStr )
 	this.addObject = function( obj, parent )
 	{
 		if (!obj)  return;
+		obj.setWorld( this );
 
 		if (parent == null)
 			this._geomRoot = obj;
@@ -290,11 +310,35 @@ function GLRuntime( canvas, importStr )
 		}
 	}
 
-	// start RDGE
-	var id = canvas.getAttribute( "data-RDGE-id" ); 
-	canvas.rdgeid = id;
-	g_Engine.registerCanvas(canvas, this);
-	RDGEStart( canvas );
+	this.render = function( obj )
+	{
+		if (!obj)  obj = this._geomRoot;
+		obj.render();
+
+		if (obj.children)
+		{
+			var nKids = obj.children.length;
+			for (var i=0;  i<nKids;  i++)
+			{
+				var child = obj.children[i];
+				if (child)
+					this.render( child );
+			}
+		}
+	}
+
+	// start RDGE or load Canvas 2D objects
+	if (this._useWebGL)
+	{
+		var id = canvas.getAttribute( "data-RDGE-id" ); 
+		canvas.rdgeid = id;
+		g_Engine.registerCanvas(canvas, this);
+		RDGEStart( canvas );
+	}
+	else
+	{
+		this.loadScene();
+	}
 }
 
 

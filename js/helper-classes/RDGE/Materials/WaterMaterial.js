@@ -22,7 +22,7 @@ function WaterMaterial()
 	this._name = "WaterMaterial";
 	this._shaderName = "water";
 
-	this._texMap = 'assets/images/rocky-normal.jpg';
+	this._texMap = 'assets/images/rocky-normal.jpg\n';
 
 	this._time = 0.0;
 	this._dTime = 0.01;

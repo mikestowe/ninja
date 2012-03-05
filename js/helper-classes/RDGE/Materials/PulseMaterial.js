@@ -185,6 +185,9 @@ function PulseMaterial()
 		// every material needs the base type and instance name
 		var exportStr = "material: " + this.getShaderName() + "\n";
 		exportStr += "name: " + this.getName() + "\n";
+
+		var texMapName = this._propValues[this._propNames[0]];
+		exportStr += "texture: " + texMapName;
 		
 		// every material needs to terminate like this
 		exportStr += "endMaterial\n";

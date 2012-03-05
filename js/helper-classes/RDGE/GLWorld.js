@@ -840,7 +840,7 @@ GLWorld.prototype.export = function( exportForPublish )
 	if (!exportForPublish)  exportForPublish = false;
 	exportStr += "publish: " + exportForPublish + "\n";
 
-	if (exportForPublish)
+	if (exportForPublish && this._useWebGL)
 	{
 		exportStr += "scenedata: " + this.myScene.exportJSON() + "endscene\n";
 
@@ -930,6 +930,9 @@ GLWorld.prototype.import = function( importStr )
 
 		// import the objects
 		this.importObjects( importStr, this._rootNode );
+
+		// render using canvas 2D
+		this.render();
 	}
 }
 

@@ -37,7 +37,10 @@ function RuntimeGeomObj()
     // Property accessors
     ///////////////////////////////////////////////////////////////////////
 
-	this.geomType	= function()				 {  return this.GEOM_TYPE_UNDEFINED;	}
+	this.geomType	= function()		{  return this.GEOM_TYPE_UNDEFINED;	}
+
+	this.setWorld	= function(w)		{  this._world = w;					}
+	this.getWorld	= function()		{  return this._world;				}
 
     ///////////////////////////////////////////////////////////////////////
     // Methods
@@ -76,8 +79,22 @@ function RuntimeGeomObj()
 			var materialType = getPropertyFromString( "material: ",	importStr );
 			switch (materialType)
 			{
-				case "flat":	mat = new RuntimeFlatMaterial();		break;
-				case "pulse":	mat = new RuntimePulseMaterial();		break;
+				case "flat":			mat = new RuntimeFlatMaterial();				break;
+
+				case "radialGradient":
+				case "linearGradient":  mat = new RuntimeLinearGradientMaterial();		break;
+
+				case "water":
+				case "tunnel":
+				case "reliefTunnel":
+				case "squareTunnel":
+				case "twist":
+				case "fly":
+				case "julia":
+				case "mandel":
+				case "star":
+				case "zinvert":
+				case "pulse":			mat = new RuntimePulseMaterial();				break;
 
 				default:
 					console.log( "material type: " + materialType + " is not supported" );
@@ -146,8 +163,8 @@ function RuntimeRectangle()
 	{
 		// various declarations
 		var pt,  rad,  ctr,  startPt, bPts;
-		var width  = Math.round(this.getWidth()),
-			height = Math.round(this.getHeight());
+		var width  = Math.round(this._width),
+			height = Math.round(this._height);
 
 		pt = [inset, inset];	// top left corner
 
