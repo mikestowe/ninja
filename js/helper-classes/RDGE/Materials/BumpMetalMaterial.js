@@ -65,7 +65,7 @@ function BumpMetalMaterial()
     this.setProperty = function( prop, value )
 	{
 		// every material should do something with the "color" property
-		if (prop === "color")  prop = "lightDiff";
+		if (prop === "color")  return;	//prop = "lightDiff";
 
 		// make sure we have legitimate imput
 		var ok = this.validateProperty( prop, value );

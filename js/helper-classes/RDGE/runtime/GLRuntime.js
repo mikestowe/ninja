@@ -131,7 +131,7 @@ function GLRuntime( canvas, importStr )
 			this.elapsed += dt;
         
 			// changed the global position uniform of light 0, another way to change behavior of a light
-			//rdgeGlobalParameters.u_light0Pos.set( [5*Math.cos(this.elapsed), 5*Math.sin(this.elapsed), 20]);
+			rdgeGlobalParameters.u_light0Pos.set( [5*Math.cos(this.elapsed), 5*Math.sin(this.elapsed), 20]);
         
 			// orbit the light nodes around the boxes
 			//this.light.setPosition([1.2*Math.cos(this.elapsed*2.0), 1.2*Math.sin(this.elapsed*2.0), 1.2*Math.cos(this.elapsed*2.0)]);
@@ -328,6 +328,8 @@ function GLRuntime( canvas, importStr )
 	}
 
 	// start RDGE or load Canvas 2D objects
+	var index = importStr.indexOf( "scenedata: " );
+	this._useWebGL = (index >= 0);
 	if (this._useWebGL)
 	{
 		var id = canvas.getAttribute( "data-RDGE-id" ); 

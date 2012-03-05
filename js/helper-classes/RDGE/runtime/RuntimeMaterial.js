@@ -144,11 +144,14 @@ function RuntimeRadialGradientMaterial()
 	this.inheritedFrom = RuntimeMaterial;
 	this.inheritedFrom();
 
+	this._name = "RadialGradientMaterial";
+	this._shaderName = "radialGradient";
+
 	// setup default values
-	this._color1 = [0.25,0,0,1];  this._colorStop1 = 0.0;
-	this._color2 = [0,0.25,0,1];  this._colorStop2 = 0.3;
-	this._color3 = [0,0.25,0,1];  this._colorStop3 = 0.6;
-	this._color4 = [0,0.25,0,1];  this._colorStop4 = 1.0;
+	this._color1 = [1,0,0,1];  this._colorStop1 = 0.0;
+	this._color2 = [0,1,0,1];  this._colorStop2 = 0.3;
+	this._color3 = [0,1,0,1];  this._colorStop3 = 0.6;
+	this._color4 = [0,1,0,1];  this._colorStop4 = 1.0;
 
 	this.init = function()
 	{
@@ -171,7 +174,7 @@ function RuntimeRadialGradientMaterial()
 					this._shader.default.u_colorStop3.set( [this._colorStop3] );
 					this._shader.default.u_colorStop4.set( [this._colorStop4] );
 
-					if (this._angle)
+					if (this._angle !== undefined)
 						this._shader.default.u_cos_sin_angle.set([Math.cos(this._angle), Math.sin(this._angle)]);
 				}
 			}
@@ -191,11 +194,11 @@ function RuntimeRadialGradientMaterial()
 		this._color4  = eval( "[" + colorStr + "]" );
 
 		this._colorStop1 = Number( getPropertyFromString( "colorStop1: ",	importStr ) );
-		this._colorStop1 = Number( getPropertyFromString( "colorStop2: ",	importStr ) );
-		this._colorStop1 = Number( getPropertyFromString( "colorStop3: ",	importStr ) );
-		this._colorStop1 = Number( getPropertyFromString( "colorStop4: ",	importStr ) );
+		this._colorStop2 = Number( getPropertyFromString( "colorStop2: ",	importStr ) );
+		this._colorStop3 = Number( getPropertyFromString( "colorStop3: ",	importStr ) );
+		this._colorStop4 = Number( getPropertyFromString( "colorStop4: ",	importStr ) );
 
-		if (this._angle)
+		if (this._angle !== undefined)
 			this._angle = getPropertyFromString( "angle: ",	importStr );
 	}
 
@@ -207,8 +210,90 @@ function RuntimeLinearGradientMaterial()
 	this.inheritedFrom = RuntimeRadialGradientMaterial;
 	this.inheritedFrom();
 
+	this._name = "LinearGradientMaterial";
+	this._shaderName = "linearGradient";
+
 	// the only difference between linear & radial gradient is the existance of an angle for linear.
 	this._angle = 0.0;
 }
+
+function RuntimeBumpMetalMaterial()
+{
+	// inherit the members of RuntimeMaterial
+	this.inheritedFrom = RuntimeMaterial;
+	this.inheritedFrom();
+
+	this._name = "BumpMetalMaterial";
+	this._shaderName = "bumpMetal";
+
+	this._lightDiff = [0.3, 0.3, 0.3, 1.0];
+	this._diffuseTexture = "assets/images/metal.png";
+	this._specularTexture = "assets/images/silver.png";
+	this._normalTexture = "assets/images/normalMap.png";
+
+	this.import = function( importStr )
+	{
+		this._lightDiff  = eval( "[" + getPropertyFromString( "lightDiff: ",	importStr ) + "]" );
+		this._diffuseTexture = getPropertyFromString( "diffuseTexture: ",	importStr );
+		this._specularTexture = getPropertyFromString( "specularTexture: ",	importStr );
+		this._normalTexture = getPropertyFromString( "normalMap: ",	importStr );
+	}
+
+	this.init = function()
+	{
+		var material = this._materialNode;
+		if (material)
+		{
+			var technique = material.shaderProgram.default;
+			var renderer = g_Engine.getContext().renderer;
+			if (renderer && technique)
+			{
+				if (this._shader && this._shader.default)
+				{
+					technique.u_light0Diff.set( this._lightDiff );
+
+					var tex;
+					var wrap = 'REPEAT',  mips = true;
+					if (this._diffuseTexture)
+					{
+						tex = renderer.getTextureByName(this._diffuseTexture, wrap, mips );
+						if (tex)  technique.u_colMap.set( tex );
+
+					}
+					if (this._normalTexture)
+					{
+						tex = renderer.getTextureByName(this._normalTexture, wrap, mips );
+						if (tex)  technique.u_normalMap.set( tex );
+					}
+					if (this._specularTexture)
+					{
+						tex = renderer.getTextureByName(this._specularTexture, wrap, mips );
+						technique.u_glowMap.set( tex );
+					}
+				}
+			}
+		}
+	}
+
+	/*
+	this.update = function( time )
+	{
+		var material = this._materialNode;
+		if (material)
+		{
+			var technique = material.shaderProgram.default;
+			var renderer = g_Engine.getContext().renderer;
+			if (renderer && technique)
+			{
+				if (this._shader && this._shader.default)
+					this._shader.default.u_time.set( [this._time] );
+				this._time += this._dTime;
+				if (this._time > 200.0)  this._time = 0.0;
+			}
+		}
+	}
+	*/
+}
+
 
 
