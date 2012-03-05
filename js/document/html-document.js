@@ -408,10 +408,18 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             //
             if(!this.documentRoot.Ninja) this.documentRoot.Ninja = {};
             //Inserting user's document into template
-            this._templateDocument.head.innerHTML = this._userDocument.content.head;
-            this._templateDocument.body.innerHTML = this._userDocument.content.body;
-            //TODO: Use querySelectorAll
-            var scripttags = this._templateDocument.html.getElementsByTagName('script'), webgldata;
+            
+            //TODO: Add logic to parse URLs from head/body
+            this._templateDocument.head.innerHTML = (this._userDocument.content.head.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, ninjaUrlRedirect.bind(this))).replace(/url\(([^"]*)(.+?)\1\)/g, ninjaUrlRedirect.bind(this));
+            this._templateDocument.body.innerHTML = (this._userDocument.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, ninjaUrlRedirect.bind(this))).replace(/url\(([^"]*)(.+?)\1\)/g, ninjaUrlRedirect.bind(this));            
+            //
+            function ninjaUrlRedirect (prop) {
+            	console.log(prop);
+            	return prop;
+            }
+            //
+           
+            var scripttags = this._templateDocument.html.getElementsByTagName('script'), webgldata;  //TODO: Use querySelectorAll
             //
             for (var w in scripttags) {
             	if (scripttags[w].getAttribute) {
@@ -513,12 +521,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 								
 							
 								//TODO: Fix regEx to have logic for all possible URLs strings (currently prefixing all url())
-								prefixUrl = 'url('+fileCouldDirUrl;
+								prefixUrl = 'url('+fileCouldDirUrl; //This should be re-written with better RegEx
 								tag.innerHTML = cssData.content.replace(/url\(/gi, prefixUrl);
-								
-								//console.log(("http://hello.com, https://google.com").replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, 'hello'))
-								
-								//console.log(tag.innerHTML);
 								
 								//Looping through DOM to insert style tag at location of link element
 								query = this._templateDocument.html.querySelectorAll(['link']);
