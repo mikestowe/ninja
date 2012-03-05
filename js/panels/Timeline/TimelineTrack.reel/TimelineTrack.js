@@ -229,6 +229,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         },
         set:function (val) {
             this._trackDuration = val;
+            if(this._trackDuration > this.application.ninja.timeline.masterDuration){
+                this.application.ninja.timeline.masterDuration = this._trackDuration;
+            }
         }
     },
 
@@ -405,18 +408,12 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     insertTween:{
         value:function (clickPos) {
-
             // calculate new tween's keyframe milliseconds by clickPos
             var currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
             var currentMillisec = currentMillisecPerPixel * clickPos;
 
             // need to check timeline master duration if greater than this track duration
             this.trackDuration = currentMillisec;
-
-            if(this.trackDuration > this.application.ninja.timeline.masterDuration){
-                this.application.ninja.timeline.masterDuration = this.trackDuration;
-            }
-
             var newTween = {};
 
             if (clickPos == 0) {
@@ -444,9 +441,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 // update the animation duration
                 var animationDuration = Math.round(this.trackDuration / 1000) + "s";
                 this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-duration", animationDuration);
-
                 this.nextKeyframe += 1;
             }
+            this.application.ninja.documentController.activeDocument.needsSave = true;
         }
     },
 
@@ -459,7 +456,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     retrieveStoredTweens:{
         value:function () {
-            var percentValue, fraction, splitValue,offsetAttribute,topOffSetAttribute,leftOffsetAttribute, i = 0;
+            var percentValue, fraction, splitValue,offsetAttribute,topOffSetAttribute,leftOffsetAttribute
+            var currentMilliSec,currentMilliSecPerPixel,clickPosition,tempTiming,tempTimingInt,trackTiming,i = 0;
 
             var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
             this.application.ninja.timeline.arrLayers[selectedIndex].created=true;
@@ -467,23 +465,20 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             if(this.animatedElement!==undefined){
                 this.animationName = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-name");
                 if(this.animationName){
-                    this.animationDuration = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-duration");
-                    this.trackDuration = this.animationDuration.split("s");
-                    this.currentMilliSec = this.trackDuration[0] * 1000;
-                    this.currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
-                    this.clickPos = this.currentMilliSec / this.currentMillisecPerPixel;
+                    trackTiming = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-duration");
                     this.nextKeyframe = 0;
 
                     this.currentKeyframeRule = this.application.ninja.stylesController.getAnimationRuleWithName(this.animationName, this.application.ninja.currentDocument._document);
-                    while (this.currentKeyframeRule[i]) {
+
+                    for (i =0; this.currentKeyframeRule[i] ;i++) {
                         var newTween = {};
 
                         offsetAttribute = this.currentKeyframeRule[i].cssText.split(" ");
                         topOffSetAttribute = offsetAttribute[3].split("px");
                         leftOffsetAttribute = offsetAttribute[5].split("px");
 
-                        parseInt(topOffSetAttribute[0]);
-                        parseInt(leftOffsetAttribute[0]);
+                        var tempTopOffset = parseInt(topOffSetAttribute[0]);
+                        var tempLeftOffset =parseInt(leftOffsetAttribute[0]);
 
                         if (this.currentKeyframeRule[i].keyText === "0%") {
                             newTween.spanWidth = 0;
@@ -492,38 +487,37 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                             newTween.tweenID = 0;
                             newTween.spanPosition = 0;
                             newTween.tweenedProperties = [];
-                            newTween.tweenedProperties["top"] = topOffSetAttribute[0];
-                            newTween.tweenedProperties["left"] = leftOffsetAttribute[0];
+                            newTween.tweenedProperties["top"] = tempTopOffset;
+                            newTween.tweenedProperties["left"] = tempLeftOffset;
                             this.tweens.push(newTween);
 
                         }
                         else {
+                            tempTiming = trackTiming.split("s");
+                            tempTimingInt = parseInt(tempTiming[0]);
+                            this.trackDuration = tempTimingInt *1000;
                             percentValue = this.currentKeyframeRule[i].keyText;
                             splitValue = percentValue.split("%");
                             fraction = splitValue[0] / 100;
-                            this.currentMilliSec = fraction * this.trackDuration[0] * 1000;
-                            this.currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
-                            this.clickPos = this.currentMilliSec / this.currentMillisecPerPixel;
-                            newTween.spanWidth = this.clickPos - this.tweens[this.tweens.length - 1].keyFramePosition;
-                            newTween.keyFramePosition = this.clickPos;
-                            newTween.keyFrameMillisec = this.currentMilliSec;
+                            currentMilliSec = fraction * this.trackDuration;
+                            currentMilliSecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
+                            clickPosition = currentMilliSec / currentMilliSecPerPixel;
+                            newTween.spanWidth = clickPosition - this.tweens[this.tweens.length - 1].keyFramePosition;
+                            newTween.keyFramePosition = clickPosition;
+                            newTween.keyFrameMillisec = currentMilliSec;
                             newTween.tweenID = this.nextKeyframe;
-                            newTween.spanPosition = this.clickPos - newTween.spanWidth;
+                            newTween.spanPosition =clickPosition - newTween.spanWidth;
                             newTween.tweenedProperties=[];
-                            newTween.tweenedProperties["top"] = topOffSetAttribute[0];
-                            newTween.tweenedProperties["left"] = leftOffsetAttribute[0];
+                            newTween.tweenedProperties["top"] = tempTopOffset;
+                            newTween.tweenedProperties["left"] = tempLeftOffset;
                             this.tweens.push(newTween);
 
 
                         }
-                        i++;
                         this.nextKeyframe += 1;
                     }
                     this.isTrackAnimated = true;
                 }
-            }
-            else{
-                return;
             }
         }
     },
@@ -536,7 +530,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.animationName = "animation_" + this.animatedElement.classList[0];
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-name", this.animationName);
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-duration", animationDuration);
-            this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-iteration-count", "infinite");
+            this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-iteration-count", 1);
+            this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-fill-mode", "both");
+            this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-transition-timing-function", "linear");
             var initRule = "@-webkit-keyframes " + this.animationName + " { 0% {top: " + this.animatedElement.offsetTop + "px; left: " + this.animatedElement.offsetLeft + "px;} 100% {top: " + this.animatedElement.offsetTop + "px; left: " + this.animatedElement.offsetLeft + "px;} }";
             this.currentKeyframeRule = this.ninjaStylesContoller.addRule(initRule);
             this.insertTween(tweenEvent.offsetX);
@@ -566,6 +562,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             keyframeString += " }";
             // set the keyframe string as the new rule
             this.currentKeyframeRule = this.ninjaStylesContoller.addRule(keyframeString);
+            this.application.ninja.documentController.activeDocument.needsSave = true;
         }
     },
 
@@ -591,55 +588,54 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this._mainCollapser.myContent = this.myContent;
             this._mainCollapser.contentHeight = 60;
             this._mainCollapser.isLabelClickable = false;
-            this._mainCollapser.element = this.element;
+            this._mainCollapser.element = this.myContent;
             this._mainCollapser.isCollapsed = this.isMainCollapsed;
             this._mainCollapser.isAnimated = true;
             this._mainCollapser.labelClickEvent = function () {
                 that.isMainCollapsed = that._mainCollapser.isCollapsed;
             };
-            this._mainCollapser.needsDraw = true;
+            //this._mainCollapser.needsDraw = true;
 
             this._positionCollapser = Collapser.create();
             this._positionCollapser.clicker = this.labelPosition;
             this._positionCollapser.myContent = this.contentPosition;
-            this._positionCollapser.contentHeight = 60;
+            this._positionCollapser.contentHeight = 40;
             this._positionCollapser.isLabelClickable = true;
-            this._positionCollapser.element = this.element;
+            this._positionCollapser.element = this.contentPosition;
             this._positionCollapser.isCollapsed = this.isPositionCollapsed;
             this._positionCollapser.isAnimated = true;
             this._positionCollapser.labelClickEvent = function () {
                 that.isPositionCollapsed = that._positionCollapser.isCollapsed;
             };
-            this._positionCollapser.needsDraw = true;
+            //this._positionCollapser.needsDraw = true;
 
             this._transformCollapser = Collapser.create();
             this._transformCollapser.clicker = this.labelTransform;
             this._transformCollapser.myContent = this.contentTransform;
             this._transformCollapser.contentHeight = 100;
             this._transformCollapser.isLabelClickable = false;
-            this._transformCollapser.element = this.element;
+            this._transformCollapser.element = this.contentTransform;
             this._transformCollapser.isCollapsed = this.isTransformCollapsed;
             this._transformCollapser.isAnimated = true;
             this._transformCollapser.labelClickEvent = function () {
                 that.isTransformCollapsed = that._transformCollapser.isCollapsed;
             };
-            this._transformCollapser.needsDraw = true;
+            //this._transformCollapser.needsDraw = true;
 
             this._styleCollapser = Collapser.create();
             this._styleCollapser.clicker = this.labelStyles;
             this._styleCollapser.myContent = this.contentStyles;
-            this._styleCollapser.contentHeight = 20;
+            this._styleCollapser.contentHeight = 0;
             this._styleCollapser.isLabelClickable = false;
-            this._styleCollapser.element = this.element;
+            this._styleCollapser.element = this.contentStyles;
             this._styleCollapser.isCollapsed = this.isStyleCollapsed;
             this._styleCollapser.isAnimated = true;
             this._styleCollapser.labelClickEvent = function () {
                 that.isStyleCollapsed = that._styleCollapser.isCollapsed;
             };
-            this._styleCollapser.needsDraw = true;
+            //this._styleCollapser.needsDraw = true;
 
             // Register event handler for layer events.
-            var that = this;
             defaultEventManager.addEventListener("layerEvent", this, false);
 
         }
