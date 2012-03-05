@@ -538,6 +538,39 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
         }
     },
 
+    isIdentityMatrix: {
+        value: function( mat )
+        {
+            if(!mat)
+            {
+                return false;
+            }
+            else
+            {
+                if(mat[0] !== 1) return false;
+                if(mat[1] !== 0) return false;
+                if(mat[2] !== 0) return false;
+                if(mat[3] !== 0) return false;
+
+                if(mat[4] !== 0) return false;
+                if(mat[5] !== 1) return false;
+                if(mat[6] !== 0) return false;
+                if(mat[7] !== 0) return false;
+
+                if(mat[8] !== 0) return false;
+                if(mat[9] !== 0) return false;
+                if(mat[10] !== 1) return false;
+                if(mat[11] !== 0) return false;
+
+                if(mat[12] !== 0) return false;
+                if(mat[13] !== 0) return false;
+                if(mat[14] !== 0) return false;
+                if(mat[15] !== 1) return false;
+            }
+            return true;
+        }
+    },
+
 	rectsOverlap:
 	{
 		value: function( pt, width, height,  elt )

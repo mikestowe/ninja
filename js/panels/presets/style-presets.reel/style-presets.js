@@ -47,9 +47,11 @@ exports.StylesLibrary = Montage.create(Component, {
             selection.forEach(function(el) {
                 el._element.style.webkitTransition = "all 450ms linear";
 
-                el._element.addEventListener("webkitTransitionEnd", function(e) {
+                el._element.addEventListener("webkitTransitionEnd", function presetTransition(e) {
                     el._element.style.webkitTransition = '';
                     setStopRuleSelector("*");
+                    this.removeEventListener("webkitTransitionEnd", presetTransition, true);
+
                 }, true);
                 setStopRuleSelector("transitionStopRule");
                 el._element.classList.add(selectorBase);

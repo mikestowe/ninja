@@ -28,7 +28,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         },
         set:function (newVal) {
             this._arrLayers = newVal;
-            this.application.ninja.currentDocument.tlArrLayers = newVal;
+            this._cacheArrays();
         }
     },
 
@@ -43,6 +43,22 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         set:function (newVal) {
             this._layerRepetition = newVal;
         }
+    },
+    _cacheArrays : {
+    	value: function() {
+    		// Cache this.arrLayers and this.arrTracks.
+    		this.log('cacheArrays ' + this._boolCacheArrays)
+	    	if (this._boolCacheArrays) {
+	    		this.log('caching arrays for ', this.application.ninja.currentDocument.name);
+				this.application.ninja.currentDocument.tlArrLayers = this.arrLayers;
+				this.application.ninja.currentDocument.tlArrTracks = this.arrTracks;
+	    	}
+    	}
+    },
+    
+    // Set to false to skip array caching array sets in current document
+    _boolCacheArrays : {
+    	value: true
     },
 
     _currentLayerNumber:{
@@ -100,7 +116,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         },
         set:function (newVal) {
             this._arrTracks = newVal;
-            this.application.ninja.currentDocument.tlArrTracks = newVal;
+            this._cacheArrays();
         }
     },
 
@@ -180,39 +196,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             }
         },
 
-    handleOnOpenDocument:{
-        value:function(){
-        	this.clearTimelinePanel();
-            this.eventManager.addEventListener("deleteLayerClick", this, false);
-            this.eventManager.addEventListener("newLayer", this, false);
-            this.eventManager.addEventListener("deleteLayer", this, false);
-            this.eventManager.addEventListener("layerBinding", this, false);
-            this.eventManager.addEventListener("elementAdded", this, false);
-            this.eventManager.addEventListener("elementDeleted", this, false);
-            this.eventManager.addEventListener("deleteSelection", this, false);
-            this.eventManager.addEventListener("selectionChange", this, true);
-            this.hashInstance = this.createLayerHashTable();
-            this.hashTrackInstance = this.createTrackHashTable();
-            this.hashLayerNumber = this.createLayerNumberHash();
-            this.hashElementMapToLayer = this.createElementMapToLayer();
-            this.initTimelineView();
-
-
-        }
-    },
-    
-    handleCloseDocument: {
-    	value: function(event) {
-    		this.clearTimelinePanel();
-    	}
-    },
-    
-    handleSwitchDocument : {
-    	value: function(event) {
-    		// Handle document change.
-    		this.handleOnOpenDocument();
-    	}
-    },
     
     willDraw:{
         value:function () {
@@ -225,6 +208,33 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     /* === END: Draw cycle === */
 
     /* === BEGIN: Controllers === */
+	
+	// Bind all document-specific events (pass in true to unbind)
+	_bindDocumentEvents : {
+		value: function(boolUnbind) {
+			var arrEvents = ["deleteLayerClick", 
+							 "newLayer", 
+							 "deleteLayer", 
+							 "layerBinding",
+							 "elementAdded", 
+							 "elementDeleted", 
+							 "deleteSelection", 
+							 "selectionChange"],
+				i,
+				arrEventsLength = arrEvents.length;
+				
+			if (boolUnbind) {
+				for (i = 0; i < arrEventsLength; i++) {
+					this.eventManager.removeEventListener(arrEvents[i], this, false);
+				}
+			} else {
+				for (i = 0; i < arrEventsLength; i++) {
+					this.eventManager.addEventListener(arrEvents[i], this, false);
+				}
+			}
+		}
+	},
+	
 	initTimeline : {
 		value: function() {
 			// Set up basic Timeline functions: event listeners, etc.  Things that only need to be run once.
@@ -242,49 +252,76 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 			
 		}
 	},
-    initTimelineView:{
+	
+    initTimelineForDocument:{
         value:function () {
             var myIndex;
-			
 			this.drawTimeMarkers();
+			this._hashKey = "123";
+            
+            
+            // Document switching
+			// Check to see if we have saved timeline information in the currentDocument.
+			if (typeof(this.application.ninja.currentDocument.isTimelineInitialized) === "undefined") {
+				// No, we have no information stored.  Create it.
+				this.log('newfile ' + this.application.ninja.currentDocument.name)
+				this.application.ninja.currentDocument.isTimelineInitialized = true;
+				this.application.ninja.currentDocument.tlArrLayers = [];
+				this.application.ninja.currentDocument.tlArrTracks = [];
+				
+				
+				// Loop through the DOM of the document to find layers and animations.
+				// Fire off events as they are found.
+				_firstLayerDraw = false;
+	            if(!this.application.ninja.documentController.creatingNewFile){
+	                if(this.application.ninja.currentDocument.documentRoot.children[0]){
+	                    myIndex=0;
+	                    while(this.application.ninja.currentDocument.documentRoot.children[myIndex])
+	                    {
+	                        this._openDoc=true;
+	                        NJevent('newLayer',{key:this._hashKey,ele:this.application.ninja.currentDocument.documentRoot.children[myIndex]})
+	                        myIndex++;
+						}
+	                }
+	                else{
+	                    NJevent('newLayer', this._hashKey);
+	                    this.selectLayer(0);
+	                }
+	            }else{
+	                NJevent('newLayer', this._hashKey);
+	                this.selectLayer(0);
+	
+	            }
+	            _firstLayerDraw = true;
+	            
+	            // After recreating the tracks and layers, store the result in the currentDocument.
+				this.application.ninja.currentDocument.tlArrTracks = this.arrTracks;
+				this.application.ninja.currentDocument.tlArrLayers = this.arrLayers;
+				
+			} else {
+				// we do have information stored.  Use it.
+				this.log('oldfile ' + this.application.ninja.currentDocument.name)
+				this._boolCacheArrays = false;
+				this.arrLayers = [];
+				this.arrTracks = [];
+				this.arrLayers = this.application.ninja.currentDocument.tlArrLayers;
+				this.arrTracks = this.application.ninja.currentDocument.tlArrTracks;
+				this._boolCacheArrays = true;
+			}
+			
+    		// Redraw all the things
+    		this.layerRepetition.needsDraw = true;
+    		this.trackRepetition.needsDraw = true;
+    		this.needsDraw = true;
 
-            this._hashKey = "123";
-            _firstLayerDraw = false;
-            if(!this.application.ninja.documentController.creatingNewFile){
-                if(this.application.ninja.currentDocument.documentRoot.children[0]){
-                    myIndex=0;
-                    while(this.application.ninja.currentDocument.documentRoot.children[myIndex])
-                    {
-                        this._openDoc=true;
-                        this._captureSelection=true;
-                        NJevent('newLayer',{key:this._hashKey,ele:this.application.ninja.currentDocument.documentRoot.children[myIndex]})
-                        myIndex++;
-                    }
-                }
-                else{
-                    NJevent('newLayer', this._hashKey);
-                    this.selectLayer(0);
-                }
-            }else{
-                NJevent('newLayer', this._hashKey);
-                this.selectLayer(0);
 
-            }
-            _firstLayerDraw = true;
         }
     },
     
     clearTimelinePanel : {
     	value: function() {
     		// Remove events
-    		this.eventManager.removeEventListener("deleteLayerClick", this, false);
-            this.eventManager.removeEventListener("newLayer", this, false);
-            this.eventManager.removeEventListener("deleteLayer", this, false);
-            this.eventManager.removeEventListener("layerBinding", this, false);
-            this.eventManager.removeEventListener("elementAdded", this, false);
-            this.eventManager.removeEventListener("elementDeleted", this, false);
-            this.eventManager.removeEventListener("deleteSelection", this, false);
-            this.eventManager.removeEventListener("selectionChange", this, true);
+			this._bindDocumentEvents(true);
             
             // Remove every event listener for every tween in TimelineTrack
             this.deselectTweens();
@@ -300,8 +337,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.hashTrackInstance = null;
             this.hashLayerNumber = null;
             this.hashElementMapToLayer = null;
-    		this.arrTracks = [];
-    		this.arrLayers = [];
+			this.arrTracks = [];
+			this.arrLayers = [];
+
     		this.currentLayerNumber = 0;
     		this.currentLayerSelected = false;
     		this.currentTrackSelected = false;
@@ -312,10 +350,38 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		this.end_hottext.value = 25;
     		this.updateTrackContainerWidth();
     		
-    		// Redraw all the things
-    		this.layerRepetition.needsDraw = true;
-    		this.trackRepetition.needsDraw = true;
-    		this.needsDraw = true;
+    	}
+    },
+
+
+	handleOnOpenDocument:{
+		value:function(){
+        	
+			this._boolCacheArrays = false;
+        	this.clearTimelinePanel();
+        	this._boolCacheArrays = true;
+        	this._bindDocumentEvents();
+        	
+            this.hashInstance = this.createLayerHashTable();
+            this.hashTrackInstance = this.createTrackHashTable();
+            this.hashLayerNumber = this.createLayerNumberHash();
+            this.hashElementMapToLayer = this.createElementMapToLayer();
+            this.initTimelineForDocument();
+
+
+        }
+    },
+    
+    handleCloseDocument: {
+    	value: function(event) {
+    		this.clearTimelinePanel();
+    	}
+    },
+    
+    handleSwitchDocument : {
+    	value: function(event) {
+    		// Handle document change.
+    		this.handleOnOpenDocument();
     	}
     },
 
@@ -403,6 +469,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     handleDeleteLayerClick:{
         value:function (event) {
+        	this.log('handleDeleteLayerClick called')
             if (this.arrLayers.length === 1) {
                 // do not delete last layer
                 return;
@@ -728,7 +795,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             if(this.currentLayerSelected.elementsList[0]!==undefined){
                 if(this.currentTrackSelected.isTrackAnimated){
                     this.application.ninja.stage.clearDrawingCanvas();
-                    alert("cannot add elements to a layer with animated element");/* check how to clear the canvas*/
+                    this.log("cannot add elements to a layer with animated element");
                     return;
                 }else{
                     this.hashElementMapToLayer.setItem(event.detail.uuid, event.detail,this.currentLayerSelected);
@@ -738,12 +805,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this.hashElementMapToLayer.setItem(event.detail.uuid, event.detail,this.currentLayerSelected);
                 this.currentLayerSelected.elementsList.push(event.detail);
             }
-
         }
     },
 
     handleElementDeleted:{
         value:function (event) {
+
             var length;
             this.deleteElement = event.detail;
             length = this.currentLayerSelected.elementsList.length - 1;
@@ -1100,7 +1167,38 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             });
             return command;
         }
-    }
+    },
     /* === END: Controllers === */
+   
+   	/* === BEGIN: Logging routines === */
+    _boolDebug: {
+    	enumerable: false,
+    	value: false // set to true to enable debugging to console; false for turning off all debugging.
+    },
+    boolDebug: {
+    	get: function() {
+    		return this._boolDebug;
+    	},
+    	set: function(boolDebugSwitch) {
+    		this._boolDebug = boolDebugSwitch;
+    	}
+    },
+    log: {
+    	value: function(strMessage) {
+    		if (this.boolDebug) {
+    			console.log(this.getLineNumber() + ": " + strMessage);
+    		}
+    	}
+    },
+    getLineNumber: {
+    	value: function() {
+			try {
+			   throw new Error('bazinga')
+			}catch(e){
+				return e.stack.split("at")[3].split(":")[2];
+			}
+    	}
+    }
+	/* === END: Logging routines === */
 });
 
