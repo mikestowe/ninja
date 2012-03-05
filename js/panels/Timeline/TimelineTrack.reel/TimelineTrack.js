@@ -453,7 +453,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 this.tweens.push(newTween);
 
                 // update the animation duration
-                var animationDuration = Math.round(this.trackDuration / 1000) + "s";
+                var animationDuration = (this.trackDuration / 1000) + "s";
                 this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-duration", animationDuration);
                 this.nextKeyframe += 1;
             }
@@ -470,7 +470,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     retrieveStoredTweens:{
         value:function () {
             var percentValue, fraction, splitValue,offsetAttribute,topOffSetAttribute,leftOffsetAttribute;
-            var currentMilliSec,currentMilliSecPerPixel,clickPosition,tempTiming,tempTimingInt,trackTiming,i = 0;
+            var currentMilliSec,currentMilliSecPerPixel,clickPosition,tempTiming,tempTimingFloat,trackTiming,i = 0;
 
             var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
             this.application.ninja.timeline.arrLayers[selectedIndex].created=true;
@@ -506,8 +506,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                         }
                         else {
                             tempTiming = trackTiming.split("s");
-                            tempTimingInt = parseInt(tempTiming[0]);
-                            this.trackDuration = tempTimingInt *1000;
+                            tempTimingFloat = parseFloat(tempTiming[0]);
+                            this.trackDuration = tempTimingFloat *1000;
                             percentValue = this.currentKeyframeRule[i].keyText;
                             splitValue = percentValue.split("%");
                             fraction = splitValue[0] / 100;
@@ -540,7 +540,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.animationName = "animation_" + this.animatedElement.classList[0];
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-name", this.animationName);
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-duration", animationDuration);
-            this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-iteration-count", "infinite");
+            this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-iteration-count", 1);
+            this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-fill-mode", "both");
+            this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-transition-timing-function", "linear");
             var initRule = "@-webkit-keyframes " + this.animationName + " { 0% {top: " + this.animatedElement.offsetTop + "px; left: " + this.animatedElement.offsetLeft + "px;} 100% {top: " + this.animatedElement.offsetTop + "px; left: " + this.animatedElement.offsetLeft + "px;} }";
             this.currentKeyframeRule = this.ninjaStylesContoller.addRule(initRule);
             this.insertTween(tweenEvent.offsetX);
