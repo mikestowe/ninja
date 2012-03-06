@@ -58,7 +58,7 @@ exports.PanelContainer = Montage.create(Component, {
                 this.currentPanelState[p.name].collapsed = this['panel_'+i].collapsed;
 
                 // Check if current panel is open when feature is enabled
-                this.panels.push(p);
+                this.panels.push(this['panel_'+i]);
             }
 
             this.application.localStorage.setItem("panels", this.currentPanelState);
@@ -87,20 +87,24 @@ exports.PanelContainer = Montage.create(Component, {
  
     handleDropped: {
         value: function(e) {
-            var draggedIndex, droppedIndex = 0;
-            for(var i = 0; i< this.repeater.childComponents.length; i++ ) {
-                if (this.repeater.childComponents[i] === e._event.draggedComponent) {
-                    draggedIndex = i;
+            var draggedIndex, droppedIndex = 0, len = this.panels.length;
+
+//            console.log(e._event.draggedComponent);
+            for(var i = 0; i < len; i++) {
+                if(this.panels[i].name === e._event.draggedComponent.name) {
+                    draggedIndex = i; // Actual component being dragged
                 }
 
-                if (this.repeater.childComponents[i] === e._event.droppedComponent) {
+                if(this.panels[i].name === e._target.name) {
                     droppedIndex = i;
                 }
             }
 
-            var panelRemoved = this.panelController.content.splice(draggedIndex,1);
-            this.panelController.content.splice(droppedIndex,0, panelRemoved[0]);
-            //console.log(draggedIndex, droppedIndex);
+            if(draggedIndex !== droppedIndex) {
+                // switch panels
+                this.panels[droppedIndex].element.parentNode.insertBefore(this.panels[draggedIndex].element, this.panels[droppedIndex].element);
+            }
+
             this._setPanelsSizes(null);
         }
     },

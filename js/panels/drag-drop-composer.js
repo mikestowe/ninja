@@ -10,7 +10,7 @@ var Composer = require("montage/ui/composer/composer").Composer;
 exports.DragDropComposer = Montage.create(Composer, {
 
     draggable: {
-        value: false // TODO: Turning this off until color Panel bug fixes are in
+        value: true
     },
 
     droppable: {
