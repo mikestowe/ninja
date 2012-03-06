@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html lang="en">
+<head>
+
+    <script type="text/montage-serialization">
+        {
+            "panelData": {
+                "module": "js/data/panels-data",
+                "name": "PanelsData"
+            },
+
+            "panel_0": {
+                "module": "js/panels/Panel.reel",
+                "name": "Panel",
+                "properties": {
+                    "element": {"#": "panel_0"}
+                }
+            },
+
+            "panel_1": {
+                "module": "js/panels/Panel.reel",
+                "name": "Panel",
+                "properties": {
+                    "element": {"#": "panel_1"}
+                }
+            },
+
+            "panel_2": {
+                "module": "js/panels/Panel.reel",
+                "name": "Panel",
+                "properties": {
+                    "element": {"#": "panel_2"}
+                }
+            },
+
+            "panel_3": {
+                "module": "js/panels/Panel.reel",
+                "name": "Panel",
+                "properties": {
+                    "element": {"#": "panel_3"}
+                }
+            },
+
+            "panel_4": {
+                "module": "js/panels/Panel.reel",
+                "name": "Panel",
+                "properties": {
+                    "element": {"#": "panel_4"}
+                }
+            },
+
+            "panel_5": {
+                "module": "js/panels/Panel.reel",
+                "name": "Panel",
+                "properties": {
+                    "element": {"#": "panel_5"}
+                }
+            },
+
+            "owner": {
+                "module": "js/panels/PanelContainer.reel",
+                "name": "PanelContainer",
+                "properties": {
+                    "element": {"#": "panelContainer"},
+                    "panelData": {"@": "panelData" },
+                    "panelController" : {"@": "PanelController"},
+                    "panel_0":          {"@": "panel_0"},
+                    "panel_1":          {"@": "panel_1"},
+                    "panel_2":          {"@": "panel_2"},
+                    "panel_3":          {"@": "panel_3"},
+                    "panel_4":          {"@": "panel_4"},
+                    "panel_5":          {"@": "panel_5"}
+                },
+                "listeners": [
+                    {
+                        "type": "panelResizing",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "dropped",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            }
+        }
+    </script>
+
+	</head>
+<body>
+    <section id="panelContainer">
+		<article id="panels" class="panels">
+            <article data-montage-id="panel_0"></article>
+            <article data-montage-id="panel_1"></article>
+            <article data-montage-id="panel_2"></article>
+            <article data-montage-id="panel_3"></article>
+            <article data-montage-id="panel_4"></article>
+            <article data-montage-id="panel_5"></article>
+		</article>
+    </section>
+</body>
+</html>
