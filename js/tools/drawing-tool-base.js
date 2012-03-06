@@ -205,11 +205,11 @@ exports.DrawingToolBase = Montage.create(Montage, {
 						thePlane[3] = -vecUtils.vecDot(3, thePlane, s0);
 					} else {
 						var vec = vecUtils.vecSubtract(3,  s1, s0 );
-						var yAxis = Vector.create([0,1,0]);
+						var yAxis = [0,1,0];
 						var tmp = vecUtils.vecCross( 3,  vec, yAxis  );
 						var mag = vecUtils.vecMag(3, tmp);
 						if (MathUtils.fpSign(mag) === 0) {
-							thePlane = Vector.create( [0,0,1] );
+							thePlane = [0,0,1];
 							thePlane[3] = -vecUtils.vecDot(3, thePlane, s0);
 						} else {
 							var xAxis = vecUtils.vecCross( 3,  yAxis, tmp );
@@ -336,12 +336,12 @@ exports.DrawingToolBase = Montage.create(Montage, {
 					else
 					{
 						var vec = vecUtils.vecSubtract(3,  s1, s0 );
-						var yAxis = Vector.create([0,1,0]);
+						var yAxis = [0,1,0];
 						var tmp = vecUtils.vecCross( 3,  vec, yAxis  );
 						var mag = vecUtils.vecMag(3, tmp);
 						if (MathUtils.fpSign(mag) === 0)
 						{
-							thePlane = Vector.create( [0,0,1] );
+							thePlane = [0,0,1];
 							thePlane[3] = -vecUtils.vecDot(3, thePlane, s0);
 						}
 						else
@@ -379,7 +379,7 @@ exports.DrawingToolBase = Montage.create(Montage, {
 
 				}
 
-				var localPt = Vector.create([p0[0], p0[1], 0.0, 1.0]);
+				var localPt = [p0[0], p0[1], 0.0, 1.0];
 				s0 = viewUtils.postViewToStageWorld( MathUtils.transformPoint(localPt,planeMat),  elt );
 				s0 = vecUtils.vecAdd(3, viewUtils.viewToScreen( MathUtils.transformPoint(s0, stageMat) ), offset );
 
@@ -513,8 +513,8 @@ exports.DrawingToolBase = Montage.create(Montage, {
 			var z = p0[2];
 
 			// fill in the other 2 points on the plane to complete the 4 points
-			var p1 = Vector.create( [p0[0], p2[1], z] ),
-				p3 = Vector.create( [p2[0], p0[1], z] );
+			var p1 = [p0[0], p2[1], z],
+				p3 = [p2[0], p0[1], z];
 
 			// convert back to 3D space
 			s0 = MathUtils.transformPoint( p0, planeMat );
@@ -633,8 +633,8 @@ exports.DrawingToolBase = Montage.create(Montage, {
 			var pt0 = ptArr[0],  pt2 = ptArr[1];
 			z = pt0[2];
 			pt0[2] = z;  pt2[2] = z;
-			var pt1 = Vector.create( [pt0[0], pt2[1], z] ),
-				pt3 = Vector.create( [pt2[0], pt0[1], z] );
+			var pt1 = [pt0[0], pt2[1], z],
+				pt3 = [pt2[0], pt0[1], z];
 
 			//
 			ptArr = [pt0, pt1, pt2, pt3];
