@@ -220,9 +220,14 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 											if (canvas.elementModel.shapeModel.GLWorld)
 												canvas.elementModel.shapeModel.GLWorld.clearTree();
 
-											var world = new GLWorld( canvas );
-											canvas.elementModel.shapeModel.GLWorld = world;
+											var index = importStr.indexOf( "webGL: " );
+											var useWebGL = (index >= 0)
+											var world = new GLWorld( canvas, useWebGL );
 											world.import( importStr );
+											canvas.elementModel.shapeModel.GLWorld = world;
+
+											///////////////////////////
+											//something.buildShapeModel( world );	// to come from Nivesh
 										}
 									}
 								}

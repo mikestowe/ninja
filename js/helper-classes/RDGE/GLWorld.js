@@ -905,27 +905,24 @@ GLWorld.prototype.import = function( importStr )
 
 	// determine if the data was written for export (no Ninja objects)
 	// or for save/restore
-	var index = importStr.indexOf( "scenedata: " );
-	if (index >= 0)
+	//var index = importStr.indexOf( "scenedata: " );
+	var index = importStr.indexOf( "webGL: " );
+	this._useWebGL = (index >= 0)
+	if (this._useWebGL)
 	{
-		var rdgeStr = importStr.substr( index+11 );
-		var endIndex = rdgeStr.indexOf( "endscene\n" );
-		if (endIndex < 0)  throw new Error( "ill-formed WebGL data" );
-		var len = endIndex - index + 11;
-		rdgeStr = rdgeStr.substr( 0, endIndex );
-
-		this.myScene.importJSON( rdgeStr );
-
-		this.importObjects( importStr, this._rootNode );
+		// start RDGE
+		rdgeStarted = true;
+		var id = this._canvas.getAttribute( "data-RDGE-id" ); 
+		this._canvas.rdgeid = id;
+		g_Engine.registerCanvas(this._canvas, this);
+		RDGEStart( this._canvas );
+		this._canvas.task.stop()
 	}
-	else
+
+	this.importObjects( importStr, this._rootNode );
+
+	if (!this._useWebGL)
 	{
-		// load the material library
-		//importStr = MaterialsLibrary.import( importStr );
-
-		// import the objects
-		this.importObjects( importStr, this._rootNode );
-
 		// render using canvas 2D
 		this.render();
 	}
