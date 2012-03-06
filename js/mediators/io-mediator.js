@@ -213,9 +213,11 @@ exports.IoMediator = Montage.create(Component, {
     parseNinjaTemplateToHtml: {
     	enumerable: false,
     	value: function (template) {
+    		var regexRootUrl, rootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]));
+    		regexRootUrl = new RegExp(rootUrl.replace(/\//gi, '\\\/'), 'gi');
     		//Injecting head and body into old document
-    		template.document.content.document.head.innerHTML = template.head;
-    		template.document.content.document.body.innerHTML = template.body;
+    		template.document.content.document.head.innerHTML = template.head.replace(regexRootUrl, '');
+    		template.document.content.document.body.innerHTML = template.body.replace(regexRootUrl, '');
     		//Getting all CSS (style or link) tags
     		var styletags = template.document.content.document.getElementsByTagName('style'),
     			linktags = template.document.content.document.getElementsByTagName('link'),
@@ -248,7 +250,7 @@ exports.IoMediator = Montage.create(Component, {
     		for (var l in linktags) {
     			if (linktags[l].getAttribute && linktags[l].getAttribute('disabled')) {//TODO: Use querySelectorAll
     				for (var p=0; toremovetags[p]; p++) {
-    					if (toremovetags[p].getAttribute('data-ninja-file-url') === ('/'+linktags[l].getAttribute('href'))) {
+    					if (toremovetags[p].getAttribute('href') === linktags[l].getAttribute('href')) {
     						if (!toremovetags[p].getAttribute('data-ninja-disabled')) {
     							linktags[l].removeAttribute('disabled');
     						}
@@ -330,29 +332,60 @@ exports.IoMediator = Montage.create(Component, {
     									}
     								}
     							}
-    							var local, regex, fileCouldDirUrl, adjCss = this.getCssFromRules(template.css[i].cssRules), cssUrl = template.css[i].ownerNode.getAttribute('data-ninja-file-url');
-    							//TODO: Assure logic for local directory
-    							local = cssUrl.split(cssUrl.split('/')[cssUrl.split('/').length-2])[0] || cssUrl.split(cssUrl.split('/')[cssUrl.split('/').length-1])[0] || cssUrl.split(cssUrl.split('/')[0])[0];
-    							//
-    							fileCouldDirUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+local).replace(/\/\//gi, '/'));
-    							//
-    							regex = new RegExp(fileCouldDirUrl.replace(/\//gi, '\\\/'), 'gi');
-    							//
-    							if (local.split('/').length > 2) {
-    								adjCss = adjCss.replace(regex, '../');
-    							} else {
-    								adjCss = adjCss.replace(regex, '');
+    														
+    							///////////////////////////////////////////////////////////////////////////////////////////
+    							///////////////////////////////////////////////////////////////////////////////////////////
+    							
+    							
+    							var cleanedCss,
+    								dirtyCss = this.getCssFromRules(template.css[i].cssRules),
+    								fileUrl = template.css[i].ownerNode.getAttribute('data-ninja-file-url'),
+    								fileRootUrl = this.application.ninja.coreIoApi.rootUrl+fileUrl.split(fileUrl.split('/')[fileUrl.split('/').length-1])[0],
+    								cleanedCss = dirtyCss.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaUrl.bind(this));
+    							    							
+    							
+    							function parseNinjaUrl (url) {
+    								//console.log("Getting: " + url);
+    								//
+    								if (url.indexOf(fileRootUrl) !== -1) {
+    									url = url.replace(new RegExp(fileRootUrl.replace(/\//gi, '\\\/'), 'gi'), '');
+    								} else {
+    									var assetsDirs = (url.replace(new RegExp((this.application.ninja.coreIoApi.rootUrl).replace(/\//gi, '\\\/'), 'gi'), '')).split('/');
+    									var fileDirs = (fileUrl.split(fileUrl.split('/')[fileUrl.split('/').length-1])[0]).split('/');
+    									var counter = 0;
+    									var path = '';
+    									var newURL = '';
+    									//
+    									for (var p=0; p < fileDirs.length-1; p++) {
+    										if (fileDirs[p] === assetsDirs[p]) {
+    											counter++;
+    										}
+    									}
+    									//
+    									for (var p=0; p < (fileDirs.length-counter)-1; p++) {
+    										path += '../';
+    									}
+    									//
+    									for (var p=counter; p < assetsDirs.length; p++) {
+    										newURL += '/'+assetsDirs[p];
+    									}
+    									//
+    									url = (path+newURL).replace(/\/\//gi, '/');
+    								}
+    								//console.log("Returning: " + url);
+    								//console.log("-----");
+    								return url;
     							}
     							
+    							///////////////////////////////////////////////////////////////////////////////////////////
+    							///////////////////////////////////////////////////////////////////////////////////////////
     							
-    							//console.log(adjCss);
-    							//console.log(fileCouldDirUrl);
-    							//return;
     							
     							
     							
     							//Saving data from rules array converted to string into <link> file
-    							var save = this.fio.saveFile({uri: template.css[i].ownerNode.getAttribute('data-ninja-uri'), contents: adjCss});
+    							var save = this.fio.saveFile({uri: template.css[i].ownerNode.getAttribute('data-ninja-uri'), contents: cleanedCss});
+    							//TODO: Add error handling for saving files
     						}
     					}
     				}
