@@ -260,17 +260,6 @@ exports.IoMediator = Montage.create(Component, {
     				}
     			}
     		}
-    		
-    		
-    		/////////////////////////////////////////////////////////////////////////////////////////
-    		/////////////////////////////////////////////////////////////////////////////////////////
-    		
-    		//TODO: Add logic for parse CSS string correct URLs since referencing is lost
-    		
-    		/////////////////////////////////////////////////////////////////////////////////////////
-    		/////////////////////////////////////////////////////////////////////////////////////////
-    		
-    		
     		//Checking for type of save: styles = <style> only | css = <style> and <link> (all CSS)
     		if (template.styles) {
     			//Getting all style tags
@@ -313,7 +302,7 @@ exports.IoMediator = Montage.create(Component, {
     					if (template.css[i].ownerNode.getAttribute) {
     						if (template.css[i].ownerNode.getAttribute('data-ninja-uri') === null && !template.css[i].ownerNode.getAttribute('data-ninja-template')) {//TODO: Use querySelectorAll
     							//Inseting data from rules array into <style> as string
-    							if (docStyles[styleCounter]) {
+    							if (docStyles[styleCounter] && !template.css[i].ownerNode.getAttribute('data-ninja-external-url')) {
     								docStyles[styleCounter].innerHTML = this.getCssFromRules(template.css[i].cssRules);
     								styleCounter++;
     							}
@@ -348,41 +337,6 @@ exports.IoMediator = Montage.create(Component, {
     							function parseNinjaUrl (url) {
     								return this.getUrlfromNinjaUrl(url, fileRootUrl, fileUrl);
     							}
-    							
-    							/*
-function parseNinjaUrl (url) {
-    								//console.log("Getting: " + url);
-    								//
-    								if (url.indexOf(fileRootUrl) !== -1) {
-    									url = url.replace(new RegExp(fileRootUrl.replace(/\//gi, '\\\/'), 'gi'), '');
-    								} else {
-    									var assetsDirs = (url.replace(new RegExp((this.application.ninja.coreIoApi.rootUrl).replace(/\//gi, '\\\/'), 'gi'), '')).split('/');
-    									var fileDirs = (fileUrl.split(fileUrl.split('/')[fileUrl.split('/').length-1])[0]).split('/');
-    									var counter = 0;
-    									var path = '';
-    									var newURL = '';
-    									//
-    									for (var p=0; p < fileDirs.length-1; p++) {
-    										if (fileDirs[p] === assetsDirs[p]) {
-    											counter++;
-    										}
-    									}
-    									//
-    									for (var p=0; p < (fileDirs.length-counter)-1; p++) {
-    										path += '../';
-    									}
-    									//
-    									for (var p=counter; p < assetsDirs.length; p++) {
-    										newURL += '/'+assetsDirs[p];
-    									}
-    									//
-    									url = (path+newURL).replace(/\/\//gi, '/');
-    								}
-    								//console.log("Returning: " + url);
-    								//console.log("-----");
-    								return url;
-    							}
-*/
     							
     							///////////////////////////////////////////////////////////////////////////////////////////
     							///////////////////////////////////////////////////////////////////////////////////////////
