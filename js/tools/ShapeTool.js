@@ -14,6 +14,8 @@ var Montage = require("montage/core/core").Montage,
     ShapeModel    = require("js/models/shape-model").ShapeModel,
     TagTool = require("js/tools/TagTool").TagTool;
 
+var World = require("js/lib/drawing/world").World;
+
 exports.ShapeTool = Montage.create(DrawingTool, {
     drawingFeedback: { value: { mode: "Draw3D", type: "rectangle" } },
 
@@ -176,7 +178,7 @@ exports.ShapeTool = Montage.create(DrawingTool, {
             if(!world)
             {
                 // create all the GL stuff
-                var world = new GLWorld(canvas, use3D);
+                var world = new World(canvas, use3D);
                 ElementMediator.setShapeProperty(canvas, "GLWorld", world);
             }
 
