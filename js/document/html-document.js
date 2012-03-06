@@ -546,13 +546,12 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             				docRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
 							//TODO: Parse out relative URLs and map them to absolute
 							if (this._document.styleSheets[i].href.indexOf(this.application.ninja.coreIoApi.rootUrl) !== -1) {
-								
+								//
 								cssUrl = this._document.styleSheets[i].href.split(this.application.ninja.coreIoApi.rootUrl)[1];
 								fileUri = this.application.ninja.coreIoApi.cloudData.root+cssUrl;
 								//TODO: Add error handling for reading file
 								cssData = this.application.ninja.coreIoApi.readFile({uri: fileUri});
-								
-								
+								//
 								var tag = this.iframe.contentWindow.document.createElement('style');
 								tag.setAttribute('type', 'text/css');
 								tag.setAttribute('data-ninja-uri', fileUri);
@@ -569,13 +568,10 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 										}
 									}
 								}
-								
+								//
 								fileCouldDirUrl = this._document.styleSheets[i].href.split(this._document.styleSheets[i].href.split('/')[this._document.styleSheets[i].href.split('/').length-1])[0];
 								prefixUrl = 'url('+fileCouldDirUrl; //This should be re-written with better RegEx
 								tag.innerHTML = cssData.content.replace(/url\(/gi, prefixUrl);
-								
-								
-								
 								//Looping through DOM to insert style tag at location of link element
 								query = this._templateDocument.html.querySelectorAll(['link']);
 								for (var j in query) {
@@ -586,71 +582,10 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 										this._templateDocument.head.insertBefore(tag, query[j]);
 									}
 								}
-								
-								
-								/*
-//Getting the url of the CSS file
-								cssUrl = this._document.styleSheets[i].href.split('js/document/templates/montage-html')[1];//TODO: Parse out relative URLs and map them to absolute
-								//Creating the URI of the file (this is wrong should not be splitting cssUrl)
-								fileUri = (this.application.ninja.coreIoApi.cloudData.root+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+cssUrl).replace(/\/\//gi, '/');
-								//Loading the data from the file
-								cssData = this.application.ninja.coreIoApi.readFile({uri: fileUri});
-								//Creating tag with file content
-								var tag = this.iframe.contentWindow.document.createElement('style');
-								tag.setAttribute('type', 'text/css');
-								tag.setAttribute('data-ninja-uri', fileUri);
-								tag.setAttribute('data-ninja-file-url', cssUrl);
-								tag.setAttribute('data-ninja-file-read-only', JSON.parse(this.application.ninja.coreIoApi.isFileWritable({uri: fileUri}).content).readOnly);
-								tag.setAttribute('data-ninja-file-name', cssUrl.split('/')[cssUrl.split('/').length-1]);
-								//Copying attributes to maintain same properties as the <link>
-								for (var n in this._document.styleSheets[i].ownerNode.attributes) {
-									if (this._document.styleSheets[i].ownerNode.attributes[n].value && this._document.styleSheets[i].ownerNode.attributes[n].name !== 'disabled' && this._document.styleSheets[i].ownerNode.attributes[n].name !== 'disabled') {
-										tag.setAttribute(this._document.styleSheets[i].ownerNode.attributes[n].name, this._document.styleSheets[i].ownerNode.attributes[n].value);
-									}
-								}
-								//
-								
-								//fileCouldDirUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+cssUrl.split(cssUrl.split('/')[cssUrl.split('/').length-1])[0]).replace(/\/\//gi, '/'));
-								fileCouldDirUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
-							
-								//TODO: Fix regEx to have logic for all possible URLs strings (currently prefixing all url())
-								prefixUrl = 'url('+fileCouldDirUrl; //This should be re-written with better RegEx
-								tag.innerHTML = cssData.content.replace(/url\(/gi, prefixUrl);
-								
-								//Looping through DOM to insert style tag at location of link element
-								query = this._templateDocument.html.querySelectorAll(['link']);
-								for (var j in query) {
-									if (query[j].href === this._document.styleSheets[i].href) {
-										//Disabling style sheet to reload via inserting in style tag
-										query[j].setAttribute('disabled', 'true');
-										//Inserting tag
-										this._templateDocument.head.insertBefore(tag, query[j]);
-									}
-								}
-*/
-								
-								
-								
-								
-								
-								
-								
-								
-								
-								
-								
-								
-								
-								
-								
-								
-								
-								
 							} else {
 								console.log('ERROR: Cross-Domain-Stylesheet detected, unable to load in Ninja');
 								//None local stylesheet, probably on a CDN (locked)
-								/*
-var tag = this.iframe.contentWindow.document.createElement('style');
+								var tag = this.iframe.contentWindow.document.createElement('style');
 								tag.setAttribute('type', 'text/css');
 								tag.setAttribute('data-ninja-external-url', this._document.styleSheets[i].href);
 								tag.setAttribute('data-ninja-file-read-only', "true");
@@ -669,7 +604,8 @@ var tag = this.iframe.contentWindow.document.createElement('style');
 								
 								
 								
-								//TODO: Figure out cross-domain XHR issue, might need cloud to handle
+								/*
+//TODO: Figure out cross-domain XHR issue, might need cloud to handle
 								var xhr = new XMLHttpRequest();
                     			xhr.open("GET", this._document.styleSheets[i].href, true);
                     			xhr.send();
@@ -677,20 +613,21 @@ var tag = this.iframe.contentWindow.document.createElement('style');
                     			if (xhr.readyState === 4) {
                         			console.log(xhr);
                     			}
+*/
                     			//tag.innerHTML = xhr.responseText //xhr.response;
+                    			tag.innerHTML = 'noRULEjustHACK{background: #000}'
 								//Currently no external styles will load if unable to load via XHR request
 								
 								//Disabling external style sheets
 								query = this._templateDocument.html.querySelectorAll(['link']);
-								for (var j in query) {
-									if (query[j].href === this._document.styleSheets[i].href) {
+								for (var k in query) {
+									if (query[k].href === this._document.styleSheets[i].href) {
 										//Disabling style sheet to reload via inserting in style tag
-										query[j].setAttribute('disabled', 'true');
+										query[k].setAttribute('disabled', 'true');
 										//Inserting tag
-										this._templateDocument.head.insertBefore(tag, query[j]);
+										this._templateDocument.head.insertBefore(tag, query[k]);
 									}
 								}
-*/
 							}
                     	}
 					}
