@@ -704,6 +704,10 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
      */
     _showFeedbackOnMouseMove : {
         value: function (event) {
+            if(!this._showTransformHandles)
+            {
+                return;
+            }
             if(this._target && this._handles)
             {
                 var len = this._handles.length;
