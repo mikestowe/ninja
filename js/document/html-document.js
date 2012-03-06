@@ -770,7 +770,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             			}
             		}
             	}
-    			return {mode: 'html', document: this._userDocument, webgl: this.glData, styles: styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
+    			//return {mode: 'html', document: this._userDocument, webgl: this.glData, styles: styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
+    			return {mode: 'html', document: this._userDocument, styles: styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
     		} else if (this.currentView === "code"){
     			//TODO: Would this get call when we are in code of HTML?
     		} else {
@@ -793,7 +794,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             			}
             		}
             	}
-    			return {mode: 'html', document: this._userDocument, webgl: this.glData, css: css, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
+    			//return {mode: 'html', document: this._userDocument, webgl: this.glData, css: css, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
+    			return {mode: 'html', document: this._userDocument, css: css, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
     		} else if (this.currentView === "code"){
     			//TODO: Would this get call when we are in code of HTML?
     		} else {
