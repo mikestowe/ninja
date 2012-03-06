@@ -226,7 +226,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 											world.import( importStr );
 											canvas.elementModel.shapeModel.GLWorld = world;
 
-											this.buildShapeModel( canvas.elementModel.shapeModel, world );
+											this.buildShapeModel( canvas.elementModel, world );
 										}
 									}
 								}
@@ -240,8 +240,9 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 
 	buildShapeModel:
 	{
-		value: function( shapeModel, world )
+		value: function( elementModel, world )
 		{
+            var shapeModel = elementModel.shapeModel;
 			shapeModel.shapeCount	= 1;	// for now...
 			shapeModel.useWebGl		= world._useWebGL;
 			shapeModel.GLWorld		= world;
@@ -255,12 +256,14 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 				shapeModel.strokeStyle			= "solid";
 				//shapeModel.strokeStyleIndex
 				//shapeModel.border
-				shapeModel.fill					= root._fillColor.slice();
-				shapeModel.fillMaterial			= root._fillMaterial.dup();
 				//shapeModel.background
 				switch (root.geomType())
 				{
 					case root.GEOM_TYPE_RECTANGLE:
+                        elementModel.selection = "Rectangle";
+                        elementModel.pi = "RectanglePi";
+                        shapeModel.fill					= root._fillColor.slice();
+                        shapeModel.fillMaterial			= root._fillMaterial.dup();
 						shapeModel.tlRadius = root._tlRadius;
 						shapeModel.trRadius = root._trRadius;
 						shapeModel.blRadius = root._blRadius;
@@ -268,10 +271,16 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 						break;
 
 					case root.GEOM_TYPE_CIRCLE:
+                        elementModel.selection = "Oval";
+                        elementModel.pi = "OvalPi";
+                        shapeModel.fill					= root._fillColor.slice();
+                        shapeModel.fillMaterial			= root._fillMaterial.dup();
 						shapeModel.innerRadius = root._innerRadius;
 						break;
 
 					case root.GEOM_TYPE_LINE:
+                        elementModel.selection = "Line";
+                        elementModel.pi = "LinePi";
 						shapeModel.slope = root._slope;
 						break;
 
