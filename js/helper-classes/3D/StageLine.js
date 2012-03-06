@@ -149,8 +149,8 @@ var StageLine = exports.StageLine = Object.create(Object.prototype, {
                 var vec = vecUtils.vecSubtract(3, bPt1, bPt0);
                 if (plane.isBackFacing())
                     MathUtils.negate( vec );
-                planeEq = Vector.create( [-vec[1], vec[0], 0] );
-                var normal = Vector.create( [planeEq[0], planeEq[1], planeEq[2]] );
+                planeEq = [-vec[1], vec[0], 0];
+                var normal = [planeEq[0], planeEq[1], planeEq[2]];
 //			var d = -planeEq.dot(bPt0);
                 var d = -vecUtils.vecDot(3, planeEq, bPt0);
                 planeEq[3] = d;
@@ -414,8 +414,8 @@ var StageLine = exports.StageLine = Object.create(Object.prototype, {
             if (pt0[1] < pt1[1])  {  yMin = pt0[1];  yMax = pt1[1];  }  else  {  yMin = pt1[1];  yMax = pt0[1];  }
             if (pt0[2] < pt1[2])  {  zMin = pt0[2];  zMax = pt1[2];  }  else  {  zMin = pt1[2];  zMax = pt0[2];  }
 
-            this._minPt = Vector.create( [xMin, yMin, zMin] );
-            this._maxPt = Vector.create( [xMax, yMax, zMax] );
+            this._minPt = [xMin, yMin, zMin];
+            this._maxPt = [xMax, yMax, zMax];
         }
     }//,
 
