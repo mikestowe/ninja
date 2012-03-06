@@ -175,7 +175,7 @@ var Tween = exports.Tween = Montage.create(Component, {
 
             // select the containing layer
             var selectIndex = this.application.ninja.timeline.getLayerIndexByID(this.parentComponent.parentComponent.trackID);
-            this.application.ninja.timeline.selectLayer(selectIndex);
+            this.application.ninja.timeline.selectLayer(selectIndex, true);
 
             // tell timeline to deselect all other tweens and push this one as the currentSelectedTweens in timeline
             this.application.ninja.timeline.deselectTweens();
