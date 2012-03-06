@@ -9,9 +9,9 @@ var Montage = require("montage/core/core").Montage,
 
 exports.Properties3D = Montage.create(Component, {
 
-    //    m_upVector : {value : Vector.create( [0,1,0] ), enumerable: true},
-    //    m_targetPos : {value : Vector.create( [0,0,0] ), enumerable: true},
-    //    m_objStartPos : {value : Vector.create( [0,0,0] ), enumerable: true},
+    //    m_upVector : {value : [0,1,0], enumerable: true},
+    //    m_targetPos : {value : [0,0,0], enumerable: true},
+    //    m_objStartPos : {value : [0,0,0], enumerable: true},
 
     m_azimuth :         {value : 0.0, enumerable: true},
     m_altitude :        {value : 0.0, enumerable: true},
@@ -50,12 +50,12 @@ exports.Properties3D = Montage.create(Component, {
             this.m_transformCtr = null;
             this.perspectiveDist = 1400;
 
-//          this.m_upVector = Vector.create( [0,1,0] );
-//			this.m_viewDir  = Vector.create( [0,0,1] );
-//			this.m_endUpVector = Vector.create( [0,1,0] );
+//          this.m_upVector = [0,1,0];
+//			this.m_viewDir  = [0,0,1];
+//			this.m_endUpVector = [0,1,0];
 
-//          this.m_targetPos = Vector.create( [0,0,0] );
-//          this.m_objStartPos = Vector.create( [0,0,0] );
+//          this.m_targetPos = [0,0,0];
+//          this.m_objStartPos = [0,0,0];
 
 //            var mat = this.application.ninja.stage.stageDeps.viewUtils.getMatrixFromElement(elt).slice(0);
 //            var elt3DInfo = MathUtils.decomposeMatrix2(mat);
@@ -79,8 +79,8 @@ exports.Properties3D = Montage.create(Component, {
 
     ResetRotationValues : {
         value : function() {
-//          this.m_upVector = Vector.create( [0,1,0] );
-//          this.m_viewDir = Vector.create( [0,0,1] );
+//          this.m_upVector = [0,1,0];
+//          this.m_viewDir = [0,0,1];
 
             this.m_azimuth = 0.0;
             this.m_altitude = 0.0;
@@ -89,13 +89,13 @@ exports.Properties3D = Montage.create(Component, {
             this.m_endAltitude = 0.0;
 
             this.m_transformCtr = null;
-//          this.m_targetPos = Vector.create( [0,0,0] );
+//          this.m_targetPos = [0,0,0];
         }
     },
 
     ResetTranslationValues : {
         value : function() {
-//          this.m_objStartPos = Vector.create( [0,0,0] );
+//          this.m_objStartPos = [0,0,0];
             this.perspectiveDist = 1400;
         }
     }

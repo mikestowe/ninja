@@ -15,9 +15,12 @@ exports.Preloader = Montage.create(Component, {
     ninjaJsRequire: {
         value:
             [
-                {"type":"js", "url":"js/helper-classes/3D/GLMatrix/gl-matrix.js"},
+//                {"type":"js", "url":"js/helper-classes/3D/GLMatrix/gl-matrix.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/rdge-compiled.js"},
+//                {"type":"js", "url":"js/helper-classes/3D/ParseUtils.js"}
 
-                {"type":"js", "url":"js/helper-classes/RDGE/rdge-compiled.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/runtime/CanvasDataManager.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/runtime/GLRuntime.js"},
 
 			// source RDGE
 				/*
@@ -60,61 +63,60 @@ exports.Preloader = Montage.create(Component, {
 				{"type":"js", "url":"js/helper-classes/RDGE/src/core/script/util/dbgpanel.js"},
 				*/
 
-                {"type":"js", "url":"js/helper-classes/3D/ParseUtils.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/GLLine.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/GLMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/GLLight.js"},
 
-                {"type":"js", "url":"js/helper-classes/RDGE/runtime/CanvasDataManager.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/runtime/GLRuntime.js"},
 
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/FlatMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/TaperMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/TwistVertMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/UberMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/PlasmaMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/LinearGradientMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/RadialGradientMaterial.js"},
-				{"type":"js", "url":"js/helper-classes/RDGE/Materials/RadialBlurMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/PulseMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/TunnelMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/ReliefTunnelMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/SquareTunnelMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/FlyMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/WaterMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/ZInvertMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/DeformMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/StarMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/TwistMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/KeleidoscopeMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/JuliaMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/MandelMaterial.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/Materials/BumpMetalMaterial.js"},
 
-                {"type":"js", "url":"js/helper-classes/RDGE/GLWorld.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/GLGeomObj.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/GLCircle.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/GLRectangle.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/GLLine.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/GLPath.js"},
-                {"type":"js", "url": "js/helper-classes/RDGE/GLAnchorPoint.js" },
-                {"type":"js", "url": "js/helper-classes/RDGE/GLSubpath.js" },
-                {"type":"js", "url": "js/helper-classes/RDGE/GLBrushStroke.js" },
-                {"type":"js", "url":"js/helper-classes/RDGE/precompiled.js"},
-                {"type":"js", "url":"js/helper-classes/RDGE/MaterialsLibrary.js"},
-                {"type":"js", "url":"js/helper-classes/3D/glUtils.js"},                
-                {"type":"js", "url": codeMirrorPath + "/lib/codemirror.js"},
-                {"type":"js", "url": codeMirrorPath + "/mode/htmlmixed/htmlmixed.js"},
-                {"type":"js", "url": codeMirrorPath + "/mode/xml/xml.js"},
-                {"type":"js", "url": codeMirrorPath + "/mode/javascript/javascript.js"},
-                {"type":"js", "url": codeMirrorPath + "/mode/css/css.js"}
+
+//                {"type":"js", "url":"js/helper-classes/RDGE/GLMaterial.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/Materials/FlatMaterial.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/Materials/TaperMaterial.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/Materials/TwistVertMaterial.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/Materials/UberMaterial.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/Materials/PlasmaMaterial.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/Materials/LinearGradientMaterial.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/Materials/RadialGradientMaterial.js"},
+//				  {"type":"js", "url":"js/helper-classes/RDGE/Materials/RadialBlurMaterial.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/Materials/PulseMaterial.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/Materials/TunnelMaterial.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/Materials/ReliefTunnelMaterial.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/Materials/SquareTunnelMaterial.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/Materials/FlyMaterial.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/Materials/WaterMaterial.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/Materials/ZInvertMaterial.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/Materials/DeformMaterial.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/Materials/StarMaterial.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/Materials/TwistMaterial.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/Materials/KeleidoscopeMaterial.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/Materials/JuliaMaterial.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/Materials/MandelMaterial.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/Materials/BumpMetalMaterial.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/MaterialsLibrary.js"},
+//                {"type":"js", "url":"js/helper-classes/3D/glUtils.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/GLWorld.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/GLGeomObj.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/GLLine.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/GLCircle.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/GLRectangle.js"},
+//                {"type":"js", "url":"js/helper-classes/RDGE/GLPath.js"},      // Not USED
+//                {"type":"js", "url":"js/helper-classes/RDGE/GLLight.js"},     Not used anywhere.
+//                {"type":"js", "url": "js/helper-classes/RDGE/GLAnchorPoint.js" },
+//                {"type":"js", "url": "js/helper-classes/RDGE/GLSubpath.js" },
+//                {"type":"js", "url": "js/helper-classes/RDGE/GLBrushStroke.js" },
+
+//                {"type":"js", "url":"js/helper-classes/RDGE/precompiled.js"}, // Why are why adding an empty file?
+
+//                {"type":"js", "url": codeMirrorPath + "/lib/codemirror.js"},
+//                {"type":"js", "url": codeMirrorPath + "/mode/htmlmixed/htmlmixed.js"},
+//                {"type":"js", "url": codeMirrorPath + "/mode/xml/xml.js"},
+//                {"type":"js", "url": codeMirrorPath + "/mode/javascript/javascript.js"},
+//                {"type":"js", "url": codeMirrorPath + "/mode/css/css.js"}
             ]
     },
 
     ninjaCssRequire: {
         value:
             [
-                {"type":"css", "url": codeMirrorPath + "/lib/codemirror.css"}
+//                {"type":"css", "url": codeMirrorPath + "/lib/codemirror.css"}
             ]
     },
 

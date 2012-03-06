@@ -494,7 +494,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             var ptrParent = nj.queryParentSelector(event.target, ".container-layer");
             if (ptrParent !== false) {
                 var myIndex = this.getActiveLayerIndex();
-                this.selectLayer(myIndex);
+                this.selectLayer(myIndex, true);
             }
         }
     },
@@ -977,7 +977,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
 
     selectLayer:{
-        value:function (layerIndex) {
+        value:function (layerIndex, userSelection) {
             var i = 0;
             var arrLayersLength = this.arrLayers.length;
 
@@ -995,7 +995,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this.layerRepetition.selectedIndexes = [layerIndex];
                 this.trackRepetition.selectedIndexes = [layerIndex];
                 this.currentLayerSelected = this.arrLayers[layerIndex];
-                if(!this._openDoc){
+                if(userSelection){
                     if(this._captureSelection){
                         if(this.currentLayerSelected.elementsList.length >= 1){
                             this.application.ninja.selectionController.selectElements(this.currentLayerSelected.elementsList);

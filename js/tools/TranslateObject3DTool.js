@@ -65,6 +65,13 @@ exports.TranslateObject3DTool = Object.create(Translate3DToolBase, {
 				// a snap on the mouse down
 				var hitRec = snapManager.snap(point.x, point.y, do3DSnap);
 
+                // TODO - Check that hitRec's element matches element that browser says we clicked on
+                var elt = this.application.ninja.stage.GetElement(event);
+                if(elt !== hitRec.getElement())
+                {
+                    hitRec = snapManager.findHitRecordForElement(elt);
+                }
+
                 // we don't want to snap to selected objects during the drag
                 var len = this._targets.length;
                 for(var i=0; i<len; i++)
