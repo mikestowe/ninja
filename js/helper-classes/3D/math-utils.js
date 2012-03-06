@@ -709,7 +709,10 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
             // the area of the polygon is the length of the normal
             var area = VecUtils.vecMag(3, normal );
             if (this.fpSign(area) != 0)
-                vec3.scale(normal, 1.0/area);
+			{
+                //vec3.scale(normal, 1.0/area);
+				normal = VecUtils.vecNormalize(3, normal, 1.0);
+			}
 
             return normal;
         }

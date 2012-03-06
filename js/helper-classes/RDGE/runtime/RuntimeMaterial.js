@@ -44,7 +44,6 @@ function RuntimeMaterial( world )
 	}
 }
 
-
 function RuntimeFlatMaterial()
 {
 	// inherit the members of RuntimeMaterial

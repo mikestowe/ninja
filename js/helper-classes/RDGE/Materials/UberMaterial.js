@@ -30,6 +30,8 @@ function UberMaterial()
 	this._specularPower = 32.0;
 	this._environmentAmount = 0.2;		// 0 .. 1
 
+	this._MAX_LIGHTS = 4;
+
 	// set the default maps
 	this._diffuseMapOb = { 'texture' : 'assets/images/rocky-diffuse.jpg', 'wrap' : 'REPEAT' };
 	this._normalMapOb = { 'texture' : 'assets/images/rocky-normal.jpg', 'wrap' : 'REPEAT' };
@@ -427,6 +429,40 @@ function UberMaterial()
 		this._materialNode = createMaterialNode("uberMaterial_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 	};
+
+	this.export = function()
+	{
+		// every material needs the base type and instance name
+		var exportStr = "material: " + this.getShaderName() + "\n";
+		exportStr += "name: " + this.getName() + "\n";
+		
+		// export the material properties
+		if (typeof caps.material != 'undefined')
+		{
+			exportStr += "material: true\n";
+			exportStr += "ambientColor: " + caps.material.ambientColor + "\n";
+			exportStr += "diffuseColor: " + caps.material.diffuseColor + "\n";
+			exportStr += "specularColor: " + caps.material.specularColor + "\n";
+			exportStr += "specularPower: " + caps.material.specularPower + "\n";
+		}
+
+		if (typeof caps.lighting != 'undefined')
+		{
+			var light = caps.lighting['light' + i];
+			var t;
+			for (var i=0;  i<this._MAX_LIGHTS;  i++)
+			{
+				if (typeof light != 'undefined')
+				{
+				}
+			}
+		}
+		
+		// every material needs to terminate like this
+		exportStr += "endMaterial\n";
+
+		return exportStr;
+	}
 
 	this.buildUberShader = function(caps)
 	{

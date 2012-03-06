@@ -185,7 +185,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 			var elt = this.documentRoot;
 			if (elt)
 			{
-				var loadForRuntime = true;
+				var loadForRuntime = false;
 				if (loadForRuntime)
 				{
 					//console.log( "load canvas data: " , value );
