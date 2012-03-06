@@ -430,11 +430,22 @@ function UberMaterial()
 		this._materialNode.setShader(this._shader);
 	};
 
+	this.import = function( importStr )
+	{
+		// limit the key searches to this material
+        var endKey = "endMaterial\n";
+        var index = importStr.indexOf( endKey );
+        index += endKey.length;
+        importStr = importStr.substr( index );
+	}
+
 	this.export = function()
 	{
 		// every material needs the base type and instance name
 		var exportStr = "material: " + this.getShaderName() + "\n";
 		exportStr += "name: " + this.getName() + "\n";
+
+		var caps = this._ubershaderCaps;
 		
 		// export the material properties
 		if (typeof caps.material != 'undefined')
@@ -452,8 +463,32 @@ function UberMaterial()
 			var t;
 			for (var i=0;  i<this._MAX_LIGHTS;  i++)
 			{
-				if (typeof light != 'undefined')
+				var light = caps.lighting["light" + i];
+				if( typeof light != "undefined")
 				{
+					exportStr += "light" + i + ': ' + light.type + "\n";
+
+					if (light.type === 'directional')
+					{
+						exportStr += 'light' + i + 'Dir: ' + light['direction'] + '\n';
+					}
+					else if (light.type === 'spot')
+					{
+						exportStr += 'light' + i + 'Pos: ' + light['position'] + '\n';
+
+						var deg2Rad = Math.PI / 180;
+						exportStr += 'light' + i + 'Spot: ' + [ Math.cos( ( light['spotInnerCutoff'] || 45.0 )  * deg2Rad ), 
+																Math.cos( ( light['spotOuterCutoff'] || 90.0 ) * deg2Rad )] + '\n';
+					}
+					else		// light.type === 'point'
+					{
+						technique['u_light'+i+'Pos'].set(light['position'] || [ 0, 0, 0 ]);                        
+						technique['u_light'+i+'Atten'].set(light['attenuation'] || [ 1,0,0 ]);                
+					}
+					exportStr += 'light' + i + 'Color: ' + light['diffuseColor'] || [ 1,1,1,1 ] + '\n';
+					exportStr += 'light' + i + 'SpecularColor: ' + light['specularColor'] || [ 1, 1, 1, 1 ] + '\n'; 
+					
+					exportStr += "endlight\n";          
 				}
 			}
 		}
