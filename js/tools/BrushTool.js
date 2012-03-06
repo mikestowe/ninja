@@ -64,13 +64,40 @@ exports.BrushTool = Montage.create(ShapeTool, {
                 //start a new brush stroke
                 if (this._selectedBrushStroke === null){
                     this._selectedBrushStroke = new GLBrushStroke();
+                    if (this.application.ninja.colorController.colorToolbar.stroke.webGlColor){
+                        this._selectedBrushStroke.setStrokeColor(this.application.ninja.colorController.colorToolbar.stroke.webGlColor);
+                    }
+                    //add this point to the brush stroke in case the user does a mouse up before doing a mouse move
+                    var currMousePos = this._getUnsnappedPosition(event.pageX, event.pageY);
+                    this._selectedBrushStroke.addPoint(currMousePos);
+
+                    //TODO get these values from the options
+                    this._selectedBrushStroke.setStrokeWidth(20);
                 }
-                console.log("BrushTool Start");
                 NJevent("enableStageMove");//stageManagerModule.stageManager.enableMouseMove();
             } //value: function (event) {
         }, //HandleLeftButtonDown
 
+        _getUnsnappedPosition: {
+            value: function(x,y){
+                var elemSnap = snapManager.elementSnapEnabled();
+                var gridSnap = snapManager.gridSnapEnabled();
+                var alignSnap = snapManager.snapAlignEnabled();
 
+                snapManager.enableElementSnap(false);
+                snapManager.enableGridSnap(false);
+                snapManager.enableSnapAlign(false);
+
+                var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(x,y));
+                var unsnappedpos = DrawingToolBase.getHitRecPos(snapManager.snap(point.x, point.y, false));
+
+                snapManager.enableElementSnap(elemSnap);
+                snapManager.enableGridSnap(gridSnap);
+                snapManager.enableSnapAlign(alignSnap);
+
+                return unsnappedpos;
+            }
+        },
         //need to override this function because the ShapeTool's definition contains a clearDrawingCanvas call  - Pushkar
         //  might not need to override once we draw using OpenGL instead of SVG
         // Also took out all the snapping code for now...need to add that back
@@ -84,20 +111,10 @@ exports.BrushTool = Montage.create(ShapeTool, {
                 }
 
                 if (this._isDrawing) {
-                    snapManager.enableElementSnap(false);
-                    snapManager.enableGridSnap(false);
-                    snapManager.enableSnapAlign(false);
-                    //this.doDraw(event);
-                    //var currMousePos = this.getMouseUpPos();
-                    //instead of doDraw call own DrawingTool
-                    var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(event.pageX, event.pageY));
-                    var hitRecSnapPoint = DrawingToolBase.getUpdatedSnapPointNoAppLevelEnabling(point.x, point.y, true, this.mouseDownHitRec);
-                    var currMousePos = DrawingToolBase.getHitRecPos(hitRecSnapPoint);
-
-                    if (this._selectedBrushStroke){
+                    var currMousePos = this._getUnsnappedPosition(event.pageX, event.pageY);
+                    if (this._selectedBrushStroke && this._selectedBrushStroke.getNumPoints()<100){
                        this._selectedBrushStroke.addPoint(currMousePos);
                     }
-
                     this.ShowCurrentBrushStrokeOnStage();
                 } //if (this._isDrawing) {
 
@@ -123,12 +140,8 @@ exports.BrushTool = Montage.create(ShapeTool, {
 
                 this._isDrawing = false;
                 this._hasDraw = false;
-                console.log("BrushTool Stop");
 
-                //TODO get these values from the options
-                if (this._selectedBrushStroke){
-                    this._selectedBrushStroke.setStrokeWidth(20);
-                }
+
                 //display the previously drawn stroke in a separate canvas
                 this.RenderCurrentBrushStroke();
 
@@ -143,7 +156,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
                 //clear the canvas before we draw anything else
                 this.application.ninja.stage.clearDrawingCanvas();
                 if (this._selectedBrushStroke && this._selectedBrushStroke.getNumPoints()>0){
-                    this._selectedBrushStroke.computeMetaGeometry();
+                    //this._selectedBrushStroke.computeMetaGeometry();
                     var ctx = this.application.ninja.stage.drawingContext;//stageManagerModule.stageManager.drawingContext;
                     if (ctx === null)
                         throw ("null drawing context in Brushtool::ShowCurrentBrushStrokeOnStage");
@@ -192,92 +205,89 @@ exports.BrushTool = Montage.create(ShapeTool, {
 
 
         RenderShape: {
-        value: function (w, h, planeMat, midPt, canvas) {
-            if ((Math.floor(w) === 0) || (Math.floor(h) === 0)) {
-                return;
-            }
+            value: function (w, h, planeMat, midPt, canvas) {
+                if ((Math.floor(w) === 0) || (Math.floor(h) === 0)) {
+                    return;
+                }
 
-            var left = Math.round(midPt[0] - 0.5 * w);
-            var top = Math.round(midPt[1] - 0.5 * h);
+                var left = Math.round(midPt[0] - 0.5 * w);
+                var top = Math.round(midPt[1] - 0.5 * h);
 
-            if (!canvas) {
+                if (!canvas) {
                 var newCanvas = NJUtils.makeNJElement("canvas", "Brushstroke", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
-                var elementModel = TagTool.makeElement(w, h, planeMat, midPt, newCanvas);
-                ElementMediator.addElement(newCanvas, elementModel.data, true);
+                    var elementModel = TagTool.makeElement(w, h, planeMat, midPt, newCanvas);
+                    ElementMediator.addElement(newCanvas, elementModel.data, true);
 
-                // create all the GL stuff
-                var world = this.getGLWorld(newCanvas, this._useWebGL);
-                //store a reference to this newly created canvas
-                this._brushStrokeCanvas = newCanvas;
+                    // create all the GL stuff
+                    var world = this.getGLWorld(newCanvas, this._useWebGL);
+                    //store a reference to this newly created canvas
+                    this._brushStrokeCanvas = newCanvas;
 
-                var brushStroke = this._selectedBrushStroke;
-                if (brushStroke){
-                    brushStroke.setWorld(world);
+                    var brushStroke = this._selectedBrushStroke;
+                    if (brushStroke){
+                        brushStroke.setWorld(world);
 
-                    brushStroke.setPlaneMatrix(planeMat);
-                    var planeMatInv = glmat4.inverse( planeMat, [] );
-                    brushStroke.setPlaneMatrixInverse(planeMatInv);
-                    brushStroke.setPlaneCenter(midPt);
+                        brushStroke.setPlaneMatrix(planeMat);
+                        var planeMatInv = glmat4.inverse( planeMat, [] );
+                        brushStroke.setPlaneMatrixInverse(planeMatInv);
+                        brushStroke.setPlaneCenter(midPt);
 
-                    world.addObject(brushStroke);
-                    world.render();
-                    //TODO this will not work if there are multiple shapes in the same canvas
-                    newCanvas.elementModel.shapeModel.GLGeomObj = brushStroke;
-                }
-            } //if (!canvas) {
-            else {
-
-                var world = null;
-                if (canvas.elementModel.shapeModel && canvas.elementModel.shapeModel.GLWorld) {
-                    world = canvas.elementModel.shapeModel.GLWorld;
-                } else {
-                    world = this.getGLWorld(canvas, this._useWebGL);//this.options.use3D);//this.CreateGLWorld(planeMat, midPt, canvas, this._useWebGL);//fillMaterial, strokeMaterial);
-                }
-
-
-                if (this._entryEditMode !== this.ENTRY_SELECT_CANVAS){
-                    //update the left and top of the canvas element
-                    var canvasArray=[canvas];
-                    ElementMediator.setProperty(canvasArray, "left", [parseInt(left)+"px"],"Changing", "brushTool");
-                    ElementMediator.setProperty(canvasArray, "top", [parseInt(top) + "px"],"Changing", "brushTool");
-                    canvas.width = w;
-                    canvas.height = h;
-                    //update the viewport and projection to reflect the new canvas width and height
-                    world.setViewportFromCanvas(canvas);
-                    if (this._useWebGL){
-                        var cam = world.renderer.cameraManager().getActiveCamera();
-                        cam.setPerspective(world.getFOV(), world.getAspect(), world.getZNear(), world.getZFar());
+                        world.addObject(brushStroke);
+                        world.render();
+                        //TODO this will not work if there are multiple shapes in the same canvas
+                        newCanvas.elementModel.shapeModel.GLGeomObj = brushStroke;
                     }
-                }
+                } //if (!canvas) {
+                else {
 
-                var brushStroke = this._selectedBrushStroke;
+                    var world = null;
+                    if (canvas.elementModel.shapeModel && canvas.elementModel.shapeModel.GLWorld) {
+                        world = canvas.elementModel.shapeModel.GLWorld;
+                    } else {
+                        world = this.getGLWorld(canvas, this._useWebGL);
+                    }
 
-                if (brushStroke){
-                    brushStroke.setDrawingTool(this);
 
-                    brushStroke.setPlaneMatrix(planeMat);
-                    var planeMatInv = glmat4.inverse( planeMat, [] );
-                    brushStroke.setPlaneMatrixInverse(planeMatInv);
-                    brushStroke.setPlaneCenter(midPt);
+                    if (this._entryEditMode !== this.ENTRY_SELECT_CANVAS){
+                        //update the left and top of the canvas element
+                        var canvasArray=[canvas];
+                        ElementMediator.setProperty(canvasArray, "left", [parseInt(left)+"px"],"Changing", "brushTool");
+                        ElementMediator.setProperty(canvasArray, "top", [parseInt(top) + "px"],"Changing", "brushTool");
+                        canvas.width = w;
+                        canvas.height = h;
+                        //update the viewport and projection to reflect the new canvas width and height
+                        world.setViewportFromCanvas(canvas);
+                        if (this._useWebGL){
+                            var cam = world.renderer.cameraManager().getActiveCamera();
+                            cam.setPerspective(world.getFOV(), world.getAspect(), world.getZNear(), world.getZFar());
+                        }
+                    }
 
-                    brushStroke.setWorld(world);
-                    world.addIfNewObject(brushStroke);
-                    //world.addObject(subpath);
-                    world.render();
-                    //TODO this will not work if there are multiple shapes in the same canvas
-                    canvas.elementModel.shapeModel.GLGeomObj = brushStroke;
-                }
-            } //else of if (!canvas) {
-        } //value: function (w, h, planeMat, midPt, canvas) {
-    }, //RenderShape: {
+                    var brushStroke = this._selectedBrushStroke;
+
+                    if (brushStroke){
+                        brushStroke.setDrawingTool(this);
+
+                        brushStroke.setPlaneMatrix(planeMat);
+                        var planeMatInv = glmat4.inverse( planeMat, [] );
+                        brushStroke.setPlaneMatrixInverse(planeMatInv);
+                        brushStroke.setPlaneCenter(midPt);
+
+                        brushStroke.setWorld(world);
+                        world.addIfNewObject(brushStroke);
+                        //world.addObject(subpath);
+                        world.render();
+                        //TODO this will not work if there are multiple shapes in the same canvas
+                        canvas.elementModel.shapeModel.GLGeomObj = brushStroke;
+                    }
+                } //else of if (!canvas) {
+            } //value: function (w, h, planeMat, midPt, canvas) {
+        }, //RenderShape: {
+    
         Configure: {
             value: function (wasSelected) {
                 if (wasSelected) {
-                    console.log("Picked BrushTool");
-                    //todo these calls have no effect because the drawing-tool-base (in getInitialSnapPoint) overrides them with what's set at the application level
-                    snapManager.enableElementSnap(false);
-                    snapManager.enableGridSnap(false);
-                    snapManager.enableSnapAlign(false);
+                    console.log("Entered BrushTool");
                 }
                 else {
                     console.log("Left BrushTool");

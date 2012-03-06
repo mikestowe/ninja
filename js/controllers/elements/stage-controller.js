@@ -104,9 +104,11 @@ exports.StageController = Montage.create(ElementController, {
                     el.elementModel.viewPort.style.setProperty(p, value);
                     break;
                 case "width":
+                    this.application.ninja.currentDocument.iframe.width = parseInt(value) + 1400;
                     el.elementModel.stageDimension.style.setProperty(p, value);
                     break;
                 case "height":
+                    this.application.ninja.currentDocument.iframe.height = parseInt(value) + 400;
                     el.elementModel.stageDimension.style.setProperty(p, value);
                     break;
                 default:

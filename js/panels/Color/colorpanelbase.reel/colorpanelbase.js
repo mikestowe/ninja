@@ -117,10 +117,23 @@ exports.ColorPanelBase = Montage.create(Component, {
     	enumerable: false,
     	value: function() {
     		//TODO: Remove temporary hack, color history should be initilized
+            this.addEventListener('firstDraw', this, false);
+            this.application.ninja.colorController.colorView = this;
     		this.colorManager.colorHistory.fill = [{m: 'nocolor', c: {}, a: 1}];
     		this.colorManager.colorHistory.stroke = [{m: 'nocolor', c: {}, a: 1}];
     	}
     },
+
+    handleFirstDraw: {
+        enumerable: true,
+        value: function (e) {
+            //
+            this.application.ninja.colorController.createToolbar();
+            this.applyDefaultColors();
+            this.removeEventListener('firstDraw', this, false);
+        }
+    },
+
     ////////////////////////////////////////////////////////////////////
     //Assigning values and binding
     willDraw: {

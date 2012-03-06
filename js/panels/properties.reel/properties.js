@@ -7,11 +7,11 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage         = require("montage/core/core").Montage,
     Component       = require("montage/ui/component").Component,
     PiData          = require("js/data/pi/pi-data").PiData,
-    CustomSection   = require("js/panels/properties/sections/custom.reel").CustomSection;
+    CustomSection   = require("js/panels/properties.reel/sections/custom.reel").CustomSection;
 
 var ElementsMediator = require("js/mediators/element-mediator").ElementMediator;
 
-exports.Content = Montage.create(Component, {
+exports.Properties = Montage.create(Component, {
 
     elementName: {
         value: null
@@ -22,6 +22,10 @@ exports.Content = Montage.create(Component, {
     },
 
     elementClassName: {
+        value: null
+    },
+
+    nameAttribute: {
         value: null
     },
 
@@ -55,6 +59,7 @@ exports.Content = Montage.create(Component, {
             }
 
             this.eventManager.addEventListener("openDocument", this, false);
+            this.eventManager.addEventListener("switchDocument", this, false);
         }
     },
 
@@ -71,6 +76,24 @@ exports.Content = Montage.create(Component, {
 
             this.elementId.element.addEventListener("blur", this, false);
             this.elementId.element.addEventListener("keyup", this, false);
+
+            this.elementNameAttribute.element.addEventListener("blur", this, false);
+            this.elementNameAttribute.element.addEventListener("keyup", this, false);
+        }
+    },
+
+    handleSwitchDocument: {
+        value: function(){
+            // For now always assume that the stage is selected by default
+            if(this.application.ninja.selectedElements.length === 0) {
+                this.displayStageProperties();
+            }else {
+                if(this.application.ninja.selectedElements.length === 1) {
+                    this.displayElementProperties(this.application.ninja.selectedElements[0]._element);
+                } else {
+                    this.displayGroupProperties(this.application.ninja.selectedElements);
+                }
+            }
         }
     },
 
@@ -79,10 +102,18 @@ exports.Content = Montage.create(Component, {
      */
     handleBlur: {
         value: function(event) {
-            if(this.application.ninja.selectedElements.length) {
-                ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "id", this.elementId.value, "Change", "pi");
-            } else {
-                ElementsMediator.setAttribute(this.application.ninja.currentDocument.documentRoot, "id", this.elementId.value, "Change", "pi", this.application.ninja.currentDocument.documentRoot.elementModel.id);
+            console.log(event.target);
+            if(event.target.id === "elementID") {
+                if(this.application.ninja.selectedElements.length) {
+                    ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "id", this.elementId.value, "Change", "pi");
+                } else {
+                    ElementsMediator.setAttribute(this.application.ninja.currentDocument.documentRoot, "id", this.elementId.value, "Change", "pi", this.application.ninja.currentDocument.documentRoot.elementModel.id);
+                }
+            } else if(event.target.id === "elementNameAttribute") {
+                if(this.application.ninja.selectedElements.length) {
+                    //ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "name", this.elementNameAttribute.value, "Change", "pi");
+                    this.application.ninja.selectedElements[0]._element.setAttribute("name", this.elementNameAttribute.value);
+                }
             }
         }
     },
@@ -90,7 +121,11 @@ exports.Content = Montage.create(Component, {
     handleKeyup: {
         value: function(event) {
             if(event.keyCode === 13) {
-                this.elementId.element.blur();
+                if(event.target === "elementID") {
+                    this.elementId.element.blur();
+                } else if(event.target === "elementNameAttribute") {
+                    this.elementNameAttribute.element.blur();
+                }
             }      
         }
     },
@@ -148,6 +183,7 @@ exports.Content = Montage.create(Component, {
             this.elementName = "Stage";
             this.elementId.value = stage.elementModel.id;
             this.elementClassName = "";
+            this.nameAttribute = "";
 
             this.positionSize.disablePosition = true;
             this.threeD.disableTranslation = true;
@@ -156,6 +192,17 @@ exports.Content = Montage.create(Component, {
             this.positionSize.widthSize = parseFloat(ElementsMediator.getProperty(stage, "width"));
 
             if(this.customPi !== stage.elementModel.pi) {
+                // We need to unregister color chips from the previous selection from the Color Model
+                var len = this.customSections.length;
+                for(var n = 0, controls; n < len; n++) {
+                    controls = this.customSections[n].content.controls;
+                    if(controls["colorSelect"]) {
+                        controls["colorSelect"].destroy();
+                    } else if(controls["stageBackground"]) {
+                        controls["stageBackground"].destroy();
+                    }
+                }
+
                 this.customPi = stage.elementModel.pi;
                 this.displayCustomProperties(stage, stage.elementModel.pi);
             }
@@ -199,6 +246,7 @@ exports.Content = Montage.create(Component, {
             this.elementName = el.elementModel.selection;
             this.elementId.value = el.getAttribute("id") || "";
             this.elementClassName = el.getAttribute("class");
+            this.nameAttribute = el.getAttribute("name") || "";
 
             this.positionSize.disablePosition = false;
             this.threeD.disableTranslation = false;
@@ -221,6 +269,17 @@ exports.Content = Montage.create(Component, {
 
             // Custom Section
             if(this.customPi !== el.elementModel.pi) {
+                // We need to unregister color chips from the previous selection from the Color Model
+                var len = this.customSections.length;
+                for(var n = 0, controls; n < len; n++) {
+                    controls = this.customSections[n].content.controls;
+                    if(controls["colorSelect"]) {
+                        controls["colorSelect"].destroy();
+                    } else if(controls["stageBackground"]) {
+                        controls["stageBackground"].destroy();
+                    }
+                }
+
                 this.customPi = el.elementModel.pi;
                 this.displayCustomProperties(el, el.elementModel.pi);
             }

@@ -66,14 +66,14 @@ exports.PenTool = Montage.create(ShapeTool, {
     _penPlaneMat: { value: null, writable: true },
 
     //index of the anchor point that the user has hovered over
-    _hoveredAnchorIndex: {value: null, writable: true},
+    _hoveredAnchorIndex: {value: -1, writable: true},
 
     //constants used for picking points --- NOTE: these should be user-settable parameters
     _PICK_POINT_RADIUS: { value: 10, writable: false },
     _DISPLAY_ANCHOR_RADIUS: { value: 5, writable: false },
     _DISPLAY_SELECTED_ANCHOR_RADIUS: { value: 10, writable: false },
-    _DISPLAY_SELECTED_ANCHOR_PREV_RADIUS: { value: 5, writable: false },
-    _DISPLAY_SELECTED_ANCHOR_NEXT_RADIUS: { value: 5, writable: false },
+    _DISPLAY_SELECTED_ANCHOR_PREV_RADIUS: { value: 2, writable: false },
+    _DISPLAY_SELECTED_ANCHOR_NEXT_RADIUS: { value: 2, writable: false },
 
     //constants used for editing modes (can be OR-ed)
     EDIT_NONE: { value: 0, writable: false },
@@ -760,9 +760,7 @@ exports.PenTool = Montage.create(ShapeTool, {
             var verticalOffset = this.application.ninja.stage.userContentTop;
             //display the subpath as a sequence of cubic beziers
             ctx.lineWidth = 1;//TODO replace hardcoded stroke width with some programmatically set value (should not be same as stroke width)
-            if (ctx.lineWidth == subpath.getStrokeWidth())
-                ctx.lineWidth = 3;
-            ctx.strokeStyle = "black";
+            ctx.strokeStyle = "green";
             //if (subpath.getStrokeColor())
 			//    ctx.strokeStyle = MathUtils.colorToHex( subpath.getStrokeColor() );
             ctx.beginPath();
@@ -812,34 +810,53 @@ exports.PenTool = Montage.create(ShapeTool, {
             var verticalOffset = this.application.ninja.stage.userContentTop;//stageManagerModule.stageManager.userContentTop;
 
             //display circles and squares near all control points 
-            ctx.fillStyle = "#FF4444";
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = "black";
+            ctx.fillStyle = "#FFFFFF";
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = "green";
+            var anchorDelta = 2;
+            var selAnchorDelta = 4;
+
             for (var i = 0; i < numAnchors; i++) {
                 var px = subpath.getAnchor(i).getPosX();
                 var py = subpath.getAnchor(i).getPosY();
                 ctx.beginPath();
-                ctx.arc(px + horizontalOffset, py + verticalOffset, this._DISPLAY_ANCHOR_RADIUS, 0, 2 * Math.PI, false);
+                //ctx.arc(px + horizontalOffset, py + verticalOffset, this._DISPLAY_ANCHOR_RADIUS, 0, 2 * Math.PI, false);
+                ctx.moveTo(px-anchorDelta+horizontalOffset, py-anchorDelta+verticalOffset);
+                ctx.lineTo(px+anchorDelta+horizontalOffset, py-anchorDelta+verticalOffset);
+                ctx.lineTo(px+anchorDelta+horizontalOffset, py+anchorDelta+verticalOffset);
+                ctx.lineTo(px-anchorDelta+horizontalOffset, py+anchorDelta+verticalOffset);
+                ctx.closePath();
                 ctx.fill();
                 ctx.stroke();
             }
 
             //display the hovered over anchor point
             ctx.lineWidth = 2;
-            ctx.strokeStyle = "black";
-            if (this._hoveredAnchorIndex && this._hoveredAnchorIndex>=0 && this._hoveredAnchorIndex<numAnchors) {
+            if (this._hoveredAnchorIndex>=0 && this._hoveredAnchorIndex<numAnchors) {
                 var px = subpath.getAnchor(this._hoveredAnchorIndex).getPosX();
                 var py = subpath.getAnchor(this._hoveredAnchorIndex).getPosY();
                 ctx.beginPath();
-                ctx.arc(px + horizontalOffset, py + verticalOffset, this._DISPLAY_ANCHOR_RADIUS*1.5, 0, 2 * Math.PI, false);
+                //ctx.arc(px + horizontalOffset, py + verticalOffset, this._DISPLAY_ANCHOR_RADIUS*1.5, 0, 2 * Math.PI, false);
+                ctx.moveTo(px-selAnchorDelta+horizontalOffset, py-selAnchorDelta+verticalOffset);
+                ctx.lineTo(px+selAnchorDelta+horizontalOffset, py-selAnchorDelta+verticalOffset);
+                ctx.lineTo(px+selAnchorDelta+horizontalOffset, py+selAnchorDelta+verticalOffset);
+                ctx.lineTo(px-selAnchorDelta+horizontalOffset, py+selAnchorDelta+verticalOffset);
+                ctx.closePath();
                 ctx.stroke();
             }
 
+
             //display selected anchor and its prev. and next points
             if (this._selectedSubpath && subpath === this._selectedSubpath && this._selectedSubpath.getSelectedAnchorIndex()!== -1) {
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = "black";
+                ctx.lineWidth = 1;
+                var defFill = "#FFFFFF";
+                var defStroke = "green";
+                var selHandleFill = "#000000"
+
+                ctx.strokeStyle = defStroke;
+                ctx.fillStyle = defFill;
                 var selAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
+                var whichPoint = this._selectedSubpath.getSelectedMode(); //which of the selected handles to highlight
 
                 //line from prev to anchor
                 ctx.beginPath();
@@ -848,10 +865,16 @@ exports.PenTool = Montage.create(ShapeTool, {
                 ctx.stroke();
 
                 //selected anchor prev
-                ctx.fillStyle = "#AAAAAA";
                 ctx.beginPath();
                 ctx.arc(selAnchor.getPrevX() + horizontalOffset, selAnchor.getPrevY() + verticalOffset, this._DISPLAY_SELECTED_ANCHOR_PREV_RADIUS, 0, 2 * Math.PI, false);
-                ctx.fill();
+                ctx.closePath();
+                if (whichPoint & this._selectedSubpath.SEL_PREV){
+                    ctx.fillStyle = selHandleFill;
+                    ctx.fill();
+                    ctx.fillStyle = defFill;
+                }else {
+                    ctx.fill();
+                }
                 ctx.stroke();
 
                 //line from next to anchor
@@ -861,16 +884,27 @@ exports.PenTool = Montage.create(ShapeTool, {
                 ctx.stroke();
 
                 //selected anchor next
-                ctx.fillStyle = "#666666";
                 ctx.beginPath();
                 ctx.arc(selAnchor.getNextX() + horizontalOffset, selAnchor.getNextY() + verticalOffset, this._DISPLAY_SELECTED_ANCHOR_NEXT_RADIUS, 0, 2 * Math.PI, false);
-                ctx.fill();
+                if (whichPoint & this._selectedSubpath.SEL_NEXT){
+                    ctx.fillStyle = selHandleFill;
+                    ctx.fill();
+                    ctx.fillStyle = defFill;
+                }else {
+                    ctx.fill();
+                }
                 ctx.stroke();
 
                 //selected anchor point
-                ctx.fillStyle = "#8ED6FF";
+                var px = selAnchor.getPosX();
+                var py = selAnchor.getPosY();
                 ctx.beginPath();
-                ctx.arc(selAnchor.getPosX() + horizontalOffset, selAnchor.getPosY() + verticalOffset, this._DISPLAY_SELECTED_ANCHOR_RADIUS, 0, 2 * Math.PI, false);
+                //ctx.arc(selAnchor.getPosX() + horizontalOffset, selAnchor.getPosY() + verticalOffset, this._DISPLAY_SELECTED_ANCHOR_RADIUS, 0, 2 * Math.PI, false);
+                ctx.moveTo(px-selAnchorDelta+horizontalOffset, py-selAnchorDelta+verticalOffset);
+                ctx.lineTo(px+selAnchorDelta+horizontalOffset, py-selAnchorDelta+verticalOffset);
+                ctx.lineTo(px+selAnchorDelta+horizontalOffset, py+selAnchorDelta+verticalOffset);
+                ctx.lineTo(px-selAnchorDelta+horizontalOffset, py+selAnchorDelta+verticalOffset);
+                ctx.closePath();
                 ctx.fill();
                 ctx.stroke();
 
@@ -879,7 +913,12 @@ exports.PenTool = Montage.create(ShapeTool, {
                     ctx.lineWidth = 2;
                     ctx.strokeStyle = "red";
                     ctx.beginPath();
-                    ctx.arc(this._snapTarget.getPosX() + horizontalOffset, this._snapTarget.getPosY() + verticalOffset, this._DISPLAY_SELECTED_ANCHOR_RADIUS * 2, 0, 2 * Math.PI, false);
+                    //ctx.arc(this._snapTarget.getPosX() + horizontalOffset, this._snapTarget.getPosY() + verticalOffset, this._DISPLAY_SELECTED_ANCHOR_RADIUS * 2, 0, 2 * Math.PI, false);
+                    ctx.moveTo(px-selAnchorDelta+horizontalOffset, py-selAnchorDelta+verticalOffset);
+                    ctx.lineTo(px+selAnchorDelta+horizontalOffset, py-selAnchorDelta+verticalOffset);
+                    ctx.lineTo(px+selAnchorDelta+horizontalOffset, py+selAnchorDelta+verticalOffset);
+                    ctx.lineTo(px-selAnchorDelta+horizontalOffset, py+selAnchorDelta+verticalOffset);
+                    ctx.closePath();
                     ctx.stroke();
                 }
             } //if this._selectedSubpath && subpath === this._selectedSubpath && this._selectedSubpath.getSelectedAnchorIndex()!== -1
@@ -955,33 +994,64 @@ exports.PenTool = Montage.create(ShapeTool, {
 
     handleDelete:{
         value: function(event){
-             //clear the selected subpath...the only new additions to this function w.r.t. ToolBase
-            if (this._selectedSubpath){
-                if (this._selectedSubpath.getSelectedAnchorIndex()>=0){
-                    this._hoveredAnchorIndex=-1;
-                    this._selectedSubpath.removeAnchor(this._selectedSubpath.getSelectedAnchorIndex());
-                    this._selectedSubpath.createSamples();
-                    //clear the canvas
-                    this.application.ninja.stage.clearDrawingCanvas();//stageManagerModule.stageManager.clearDrawingCanvas();
-                    this.DrawSubpathAnchors(this._selectedSubpath);
-                    this.ShowSelectedSubpath();
-                }
-                else {
-                    this._selectedSubpath.clearAllAnchors(); //perhaps unnecessary
-                    this._selectedSubpath = null;
-                    //clear the canvas
-                    this.application.ninja.stage.clearDrawingCanvas();//stageManagerModule.stageManager.clearDrawingCanvas();
+             var len = this.application.ninja.selectedElements.length;
+             if (len===0) {
+                 //clear the selected subpath...the only new additions to this function w.r.t. ToolBase
+                 if (this._selectedSubpath){
+                     if (this._selectedSubpath.getSelectedAnchorIndex()>=0){
+                         this._hoveredAnchorIndex=-1;
+                         this._selectedSubpath.removeAnchor(this._selectedSubpath.getSelectedAnchorIndex());
+                         this._selectedSubpath.createSamples();
+                         //clear the canvas
+                         this.application.ninja.stage.clearDrawingCanvas();//stageManagerModule.stageManager.clearDrawingCanvas();
+                         this.DrawSubpathAnchors(this._selectedSubpath);
+                         this.ShowSelectedSubpath();
+                     }
+                     else {
+                        this._selectedSubpath.clearAllAnchors(); //perhaps unnecessary
+                        this._selectedSubpath = null;
+                        //clear the canvas
+                        this.application.ninja.stage.clearDrawingCanvas();//stageManagerModule.stageManager.clearDrawingCanvas();
 
-                    //undo/redo...go through ElementController and NJEvent
-                    var els = [];
-                    ElementController.removeElement(this._penCanvas);
-                    els.push(this._penCanvas);
-                    NJevent( "deleteSelection", els );
-                    this._penCanvas = null;
+                        //undo/redo...go through ElementController and NJEvent
+                        var els = [];
+                        ElementController.removeElement(this._penCanvas);
+                        els.push(this._penCanvas);
+                        NJevent( "deleteSelection", els );
+                        this._penCanvas = null;
+                   }
+                 }
+                 //do nothing if there was no selected subpath and if there was no selection
+             }
+             else {
+
+                //undo/redo...go through ElementMediator (see ElementMediator.handleDeleting() from where the much of this function is copied)
+                //clear the canvas
+                this.application.ninja.stage.clearDrawingCanvas();//stageManagerModule.stageManager.clearDrawingCanvas();
+                var els = [];
+                for(var i = 0; i<len; i++) {
+                    els.push(this.application.ninja.selectedElements[i]);
                 }
-            }
+                for(i=0; i<len; i++) {
+                    ElementController.removeElement(els[i]._element);
+                }
+                NJevent( "deleteSelection", els );
+
+                 //clear out the selected path if it exists
+                 if (this._selectedSubpath) {
+                     this._selectedSubpath.clearAllAnchors();
+                     this._selectedSubpath = null;
+                     if (this._entryEditMode === this.ENTRY_SELECT_PATH){
+                         this._entryEditMode = this.ENTRY_SELECT_NONE;
+                     }
+                     this._penCanvas = null;
+                 }
+             }
+            //redraw the stage to update it
+            this.application.ninja.stage.draw();
         }
     },
+
     handleResetPenTool: {
         value: function (event) {
             this.Reset();

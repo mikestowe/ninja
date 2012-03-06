@@ -4,25 +4,17 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
-.bread_crumb{
+.breadcrumbTrail{
     background-color: #282828;
     border-style: double;
     height: 26px;
-}
-.breadcrumbtrail{
+
     -webkit-box-flex: 0;
 }
-.bread_crumb_button{
-    background-color: #575757;
+
+.breadcrumbTrail button.nj-skinned {
     float: left;
-    width: 40px;
-    height: 20px;
-    margin-left: 5px;
-    margin-top: 3px;
+    width: 60px;
+    margin: 2px;
+}
 
-    font-family: 'Droid Sans', sans-serif;
-    font-size: 12px;
-    text-shadow: 1px 1px 1px black;
-
-    color: white;
-} 

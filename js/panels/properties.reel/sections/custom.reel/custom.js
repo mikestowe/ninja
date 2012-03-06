@@ -9,9 +9,9 @@ var Component = require("montage/ui/component").Component;
 var ElementsMediator = require("js/mediators/element-mediator").ElementMediator;
 
 //Custom Rows
-var SingleRow = require("js/panels/properties/sections/custom-rows/single-row.reel").SingleRow;
-var DualRow = require("js/panels/properties/sections/custom-rows/dual-row.reel").DualRow;
-var ColorSelect = require("js/panels/properties/sections/custom-rows/color-select.reel").ColorSelect;
+var SingleRow = require("js/panels/properties.reel/sections/custom-rows/single-row.reel").SingleRow;
+var DualRow = require("js/panels/properties.reel/sections/custom-rows/dual-row.reel").DualRow;
+var ColorSelect = require("js/panels/properties.reel/sections/custom-rows/color-select.reel").ColorSelect;
 
 // Components Needed to make this work
 var Hottext = require("js/components/hottextunit.reel").HotTextUnit;
@@ -59,6 +59,8 @@ exports.CustomSection = Montage.create(Component, {
                         if(obj1.visible === false) tmpRow.colorVisible = obj1.visible;
                         if(obj2.visible === false) tmpRow.color2Visible = obj2.visible;
 
+                        // TODO - Hack for now to reference the color select object to unregister color chips
+                        this.controls["colorSelect"] = tmpRow;
                     }
                     else
                     {
@@ -343,6 +345,9 @@ exports.CustomSection = Montage.create(Component, {
             obj.changeDelegate = this.handleColorChange;
 
             this.controls[aField.id] = obj;
+
+            // TODO - Hack for now to reference the color select object to unregister color chips
+            this.controls["stageBackground"] = obj;
 
             return obj;
         }

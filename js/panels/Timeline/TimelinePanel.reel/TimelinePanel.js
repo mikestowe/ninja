@@ -28,6 +28,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         },
         set:function (newVal) {
             this._arrLayers = newVal;
+            this._cacheArrays();
         }
     },
 
@@ -42,6 +43,19 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         set:function (newVal) {
             this._layerRepetition = newVal;
         }
+    },
+
+    _cacheArrays : {
+    	value: function() {
+	    	if (this._boolCacheArrays) {
+				this.application.ninja.currentDocument.tlArrLayers = this.arrLayers;
+	    	}
+    	}
+    },
+    
+    // Set to false to skip array caching array sets in current document
+    _boolCacheArrays : {
+    	value: true
     },
 
     _currentLayerNumber:{
@@ -60,10 +74,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
 
     currentLayerSelected:{
-        value: null
-    },
-
-    currentTrackSelected:{
         value: null
     },
 
@@ -99,6 +109,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         },
         set:function (newVal) {
             this._arrTracks = newVal;
+            this._cacheArrays();
         }
     },
 
@@ -163,37 +174,21 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:false,
         writable:true
     },
+
     timeMarkerHolder:{
         value: null
     },
     /* === END: Models === */
-
     /* === BEGIN: Draw cycle === */
     prepareForDraw:{
-            value:function () {
-                this.eventManager.addEventListener( "onOpenDocument", this, false);
-            }
-        },
-
-    handleOnOpenDocument:{
-        value:function(){
-            this.eventManager.addEventListener("deleteLayerClick", this, false);
-            this.eventManager.addEventListener("newLayer", this, false);
-            this.eventManager.addEventListener("deleteLayer", this, false);
-            this.eventManager.addEventListener("layerBinding", this, false);
-            this.eventManager.addEventListener("elementAdded", this, false);
-            this.eventManager.addEventListener("elementDeleted", this, false);
-            this.eventManager.addEventListener("deleteSelection", this, false);
-            this.eventManager.addEventListener("selectionChange", this, true);
-            this.hashInstance = this.createLayerHashTable();
-            this.hashTrackInstance = this.createTrackHashTable();
-            this.hashLayerNumber = this.createLayerNumberHash();
-            this.hashElementMapToLayer = this.createElementMapToLayer();
-            this.initTimelineView();
-
-
+        value:function () {
+            this.initTimeline();
+            this.eventManager.addEventListener("onOpenDocument", this, false);
+            this.eventManager.addEventListener("closeDocument", this, false);
+            this.eventManager.addEventListener("switchDocument", this, false);
         }
     },
+
     willDraw:{
         value:function () {
             if (this._isLayer) {
@@ -203,12 +198,37 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
     /* === END: Draw cycle === */
-
     /* === BEGIN: Controllers === */
-    initTimelineView:{
-        value:function () {
-            var myIndex;
-            this.layout_tracks = this.element.querySelector(".layout-tracks");
+	// Bind all document-specific events (pass in true to unbind)
+	_bindDocumentEvents : {
+		value: function(boolUnbind) {
+			var arrEvents = ["deleteLayerClick", 
+							 "newLayer", 
+							 "deleteLayer", 
+							 "layerBinding",
+							 "elementAdded", 
+							 "elementDeleted", 
+							 "deleteSelection", 
+							 "selectionChange"],
+				i,
+				arrEventsLength = arrEvents.length;
+				
+			if (boolUnbind) {
+				for (i = 0; i < arrEventsLength; i++) {
+					this.eventManager.removeEventListener(arrEvents[i], this, false);
+				}
+			} else {
+				for (i = 0; i < arrEventsLength; i++) {
+					this.eventManager.addEventListener(arrEvents[i], this, false);
+				}
+			}
+		}
+	},
+	
+	initTimeline : {
+		value: function() {
+			// Set up basic Timeline functions: event listeners, etc.  Things that only need to be run once.
+			this.layout_tracks = this.element.querySelector(".layout-tracks");
             this.layout_markers = this.element.querySelector(".layout_markers");
 
             this.newlayer_button.identifier = "addLayer";
@@ -219,49 +239,129 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.layout_tracks.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
             this.user_layers.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
             this.end_hottext.addEventListener("changing", this.updateTrackContainerWidth.bind(this), false);
-
-            this.drawTimeMarkers();
-
-            this._hashKey = "123";
-            _firstLayerDraw = false;
-            if(!this.application.ninja.documentController.creatingNewFile){
-                if(this.application.ninja.currentDocument.documentRoot.children[0]){
-                    myIndex=0;
-                    while(this.application.ninja.currentDocument.documentRoot.children[myIndex])
-                    {
-                        this._openDoc=true;
-                        NJevent('newLayer',{key:this._hashKey,ele:this.application.ninja.currentDocument.documentRoot.children[myIndex]})
-                        myIndex++;
-                    }
-                }
-                else{
-                    NJevent('newLayer', this._hashKey);
-                    this.selectLayer(0);
-                }
-            }else{
-                NJevent('newLayer', this._hashKey);
-                this.selectLayer(0);
-
-            }
-            _firstLayerDraw = true;
+			
+		}
+	},
+	
+    initTimelineForDocument:{
+        value:function () {
+            var myIndex;
+			this.drawTimeMarkers();
+			this._hashKey = "123";
+            
+            // Document switching
+			// Check to see if we have saved timeline information in the currentDocument.
+			if (typeof(this.application.ninja.currentDocument.isTimelineInitialized) === "undefined") {
+				// No, we have no information stored.  Create it.
+				this.log('newfile ' + this.application.ninja.currentDocument.name)
+				this.application.ninja.currentDocument.isTimelineInitialized = true;
+				this.application.ninja.currentDocument.tlArrLayers = [];
+				this.application.ninja.currentDocument.tlArrTracks = [];
+				
+				
+				// Loop through the DOM of the document to find layers and animations.
+				// Fire off events as they are found.
+				_firstLayerDraw = false;
+	            if(!this.application.ninja.documentController.creatingNewFile){
+	                if(this.application.ninja.currentDocument.documentRoot.children[0]){
+	                    myIndex=0;
+	                    while(this.application.ninja.currentDocument.documentRoot.children[myIndex])
+	                    {
+	                        this._openDoc=true;
+	                        NJevent('newLayer',{key:this._hashKey,ele:this.application.ninja.currentDocument.documentRoot.children[myIndex]})
+	                        myIndex++;
+						}
+	                }
+	                else{
+	                    NJevent('newLayer', this._hashKey);
+	                    this.selectLayer(0);
+	                }
+	            }else{
+	                NJevent('newLayer', this._hashKey);
+	                this.selectLayer(0);
+	
+	            }
+	            _firstLayerDraw = true;
+	            
+	            // After recreating the tracks and layers, store the result in the currentDocument.
+				this.application.ninja.currentDocument.tlArrTracks = this.arrTracks;
+				this.application.ninja.currentDocument.tlArrLayers = this.arrLayers;
+				
+			} else {
+				// we do have information stored.  Use it.
+				this._boolCacheArrays = false;
+				this.arrLayers = [];
+				this.arrTracks = [];
+				this.arrLayers = this.application.ninja.currentDocument.tlArrLayers;
+				this.arrTracks = this.application.ninja.currentDocument.tlArrTracks;
+				this._boolCacheArrays = true;
+			}
+			
+    		// Redraw all the things
+    		this.layerRepetition.needsDraw = true;
+    		this.trackRepetition.needsDraw = true;
+    		this.needsDraw = true;
         }
     },
     
     clearTimelinePanel : {
     	value: function() {
-    		console.log('clearing timeline...')
-    		this.arrTracks = null;
-    		this.arrLayers = null;
+    		// Remove events
+			this._bindDocumentEvents(true);
+            
+            // Remove every event listener for every selected tween in the timeline
+            this.deselectTweens();
+
+    		// Reset visual appearance
+            this.application.ninja.timeline.playhead.style.left = "-2px";
+            this.application.ninja.timeline.playheadmarker.style.left = "0px";
+            this.application.ninja.timeline.updateTimeText(0.00);
+            this.timebar.style.width = "0px";
+            
+            // Clear variables--including repetitions.
+            this.hashInstance = null;
+            this.hashTrackInstance = null;
+            this.hashLayerNumber = null;
+            this.hashElementMapToLayer = null;
+			this.arrTracks = [];
+			this.arrLayers = [];
+
     		this.currentLayerNumber = 0;
-    		this.currentLayerSelected = null;
-    		this.currentTrackSelected = null;
+    		this.currentLayerSelected = false;
     		this.selectedKeyframes = [];
     		this.selectedTweens = [];
     		this._captureSelection = false;
     		this._openDoc = false;
     		this.end_hottext.value = 25;
     		this.updateTrackContainerWidth();
-    		this.needsDraw = true;
+    	}
+    },
+
+	handleOnOpenDocument:{
+		value:function(){
+			this._boolCacheArrays = false;
+        	this.clearTimelinePanel();
+        	this._boolCacheArrays = true;
+        	this._bindDocumentEvents();
+        	
+            this.hashInstance = this.createLayerHashTable();
+            this.hashTrackInstance = this.createTrackHashTable();
+            this.hashLayerNumber = this.createLayerNumberHash();
+            this.hashElementMapToLayer = this.createElementMapToLayer();
+            this.initTimelineForDocument();
+        }
+    },
+    
+    handleCloseDocument: {
+    	value: function(event) {
+    		this.clearTimelinePanel();
+    	}
+    },
+    
+    handleSwitchDocument : {
+    	value: function(event) {
+    		// Handle document change.
+    		this.handleOnOpenDocument();
     	}
     },
 
@@ -270,7 +370,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.container_tracks.style.width = (this.end_hottext.value * 80) + "px";
             this.master_track.style.width = (this.end_hottext.value * 80) + "px";
             this.time_markers.style.width = (this.end_hottext.value * 80) + "px";
-            this.time_markers.removeChild(this.timeMarkerHolder);
+            if (this.timeMarkerHolder) {
+            	this.time_markers.removeChild(this.timeMarkerHolder);
+            }
             this.drawTimeMarkers();
         }
     },
@@ -282,9 +384,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
-    captureSelectionChange:{
+    handleSelectionChange:{
         value:function(){
             var key , switchSelectedLayer,layerIndex;
+            this.deselectTweens();
             if(this.application.ninja.selectedElements[0]){
                 key = this.application.ninja.selectedElements[0].uuid;
                 switchSelectedLayer = this.hashElementMapToLayer.getItem(key);
@@ -293,7 +396,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     this._captureSelection=false;
                     this.selectLayer(layerIndex);
                     this._captureSelection=true;
-
                 }
             }
         }
@@ -365,7 +467,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     handleLayerBinding:{
         value:function (event) {
             var i = 0;
-
             if (this._firstTimeLoaded) {
                 this._firstTimeLoaded = false;
             } else {
@@ -393,7 +494,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             var ptrParent = nj.queryParentSelector(event.target, ".container-layer");
             if (ptrParent !== false) {
                 var myIndex = this.getActiveLayerIndex();
-                this.selectLayer(myIndex);
+                this.selectLayer(myIndex, true);
             }
         }
     },
@@ -401,11 +502,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     handleNewLayer:{
         value:function (event) {
             var hashIndex = 0 , hashVariable = 0, layerResult, trackResult, layerObject, trackObject, dLayer, parentNode;
-
             if (this._hashFind) {
                 while (layerResult = this.returnedObject[hashIndex]) {
                     trackResult = this.returnedTrack[hashIndex];
                     if (layerResult.deleted !== true) {
+                    	
+                    	// TODO: Help from Kruti
                         this.arrTracks.push(trackResult);
                         this.arrLayers.push(layerResult);
 
@@ -421,17 +523,17 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     while (dLayer[hashVariable]) {
                         if (dLayer[hashVariable]._layerID === event.detail._el._layerID) {
                             dLayer[hashVariable].deleted = false;
+                            
+                            // TODO: Help from Kruti
                             this.arrTracks.splice(event.detail._layerPosition, 0, event.detail._track);
                             this.arrLayers.splice(event.detail._layerPosition, 0, event.detail._el);
+                            this.selectLayer(event.detail._layerPosition);
                             break;
 
                         }
                         hashVariable++;
                     }
-
-                }
-
-                else if (event.detail._el.parentElementUUID !== this.application.ninja.currentSelectedContainer.uuid) {
+                } else if (event.detail._el.parentElementUUID !== this.application.ninja.currentSelectedContainer.uuid) {
                     dLayer = this.hashInstance.getItem(event.detail._el.parentElementUUID);
                     while (dLayer[hashVariable]) {
                         if (dLayer[hashVariable]._layerID === event.detail._el._layerID) {
@@ -442,14 +544,16 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                         hashVariable++;
                     }
                     this.application.ninja.currentSelectedContainer = parentNode;
-                    //NJevent('breadCrumbTrail', {"element":parentNode, "setFlag":this._setBreadCrumb});
                 } else {
                     dLayer = this.hashInstance.getItem(event.detail._el.parentElementUUID);
                     while (dLayer[hashVariable]) {
                         if (dLayer[hashVariable]._layerID === event.detail._el._layerID) {
                             dLayer[hashVariable].deleted = false;
+                            
+                            // TODO: Help from Kruti
                             this.arrTracks.splice(event.detail._layerPosition, 0, event.detail._track);
                             this.arrLayers.splice(event.detail._layerPosition, 0, event.detail._el);
+                            this.selectLayer(event.detail._layerPosition);
                             break;
 
                         }
@@ -483,6 +587,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 thingToPush.deleted = false;
                 thingToPush.isSelected = false;
                 thingToPush.created=false;
+                thingToPush.isTrackAnimated = false;
+                thingToPush.currentKeyframeRule = null;
+                thingToPush.trackPosition = 0;
+                thingToPush.arrStyleTracks = [];
+                thingToPush.tweens = [];
+
                 if (_firstLayerDraw) {
 
                     this.application.ninja.currentSelectedContainer.uuid=this._hashKey;
@@ -494,17 +604,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     event.detail.ele.uuid =nj.generateRandom();
                     thingToPush.elementsList.push(event.detail.ele);
                 }
-
-                newTrack.trackID = this.currentLayerNumber;
-                newTrack.isMainCollapsed = true;
-                newTrack.isPositionCollapsed = true;
-                newTrack.isTransformCollapsed = true;
-                newTrack.isStyleCollapsed = true;
-                newTrack.isTrackAnimated = false;
-                newTrack.currentKeyframeRule = null;
-                newTrack.trackPosition = 0;
-                newTrack.arrStyleTracks = [];
-                newTrack.tweens = [];
 
                 if (_firstLayerDraw) {
                     if (this.application.ninja.currentSelectedContainer.id === "UserContent") {
@@ -518,18 +617,20 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     myIndex = this.layerRepetition.selectedIndexes[0];
                     thingToPush.layerPosition = myIndex;
                     thingToPush.isSelected = true;
-                    newTrack.trackPosition = myIndex;
-                    this.arrTracks.splice(myIndex, 0, newTrack);
+                    thingToPush.trackPosition = myIndex;
                     this.arrLayers.splice(myIndex, 0, thingToPush);
                     this._LayerUndoPosition = myIndex;
                     this.selectLayer(myIndex);
                     this.hashLayerNumber.setItem(this._hashKey, thingToPush);
                     this.hashInstance.setItem(this._hashKey, thingToPush, myIndex);
+                    
+                    // TODO: Help from Kruti
                     this.hashTrackInstance.setItem(this._hashKey, newTrack, myIndex);
                 } else {
-                    this.arrTracks.splice(0, 0, newTrack);
                     this.arrLayers.splice(0, 0, thingToPush);
                     thingToPush.layerPosition = this.arrLayers.length - 1;
+                    
+                    // TODO: Help from Kruti
                     newTrack.trackPosition = this.arrTracks.length - 1;
                     this._LayerUndoPosition = this.arrLayers.length - 1;
                     this.hashLayerNumber.setItem(this._hashKey, thingToPush);
@@ -540,15 +641,14 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 }
 
                 if(this._openDoc){
-                    this.hashElementMapToLayer.setItem(event.detail.ele.uuid, event.detail.ele,this.currentLayerSelected);
+                    var selectedIndex = this.getLayerIndexByID(thingToPush.layerID)
+                    this.hashElementMapToLayer.setItem(event.detail.ele.uuid, event.detail.ele,this.arrLayers[selectedIndex]);
                     this._openDoc=false;
                 }
                 this._LayerUndoObject = thingToPush;
                 this._LayerUndoIndex = thingToPush.layerID;
                 this._LayerUndoStatus = true;
                 this._TrackUndoObject = newTrack;
-
-
             }
         }
     },
@@ -556,7 +656,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     handleDeleteLayer:{
         value:function (event) {
             var dLayer, dTrack, parentNode, hashVariable = 0, k = 0, index = 0, j = 0;
-
             if (this.arrLayers.length > 0) {
                 if (event.detail._undoStatus) {
                     if (this.application.ninja.currentSelectedContainer.id === "UserContent" && event.detail._el.parentElementUUID === 123) {
@@ -570,7 +669,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                                         dLayer[hashVariable].deleted = true;
 //                                        ElementMediator.deleteElements(dLayer[myIndex].element);
                                         this.arrLayers.splice(k, 1);
-                                        this.arrTracks.splice(k, 1);
+                                        //this.arrTracks.splice(k, 1);
+                                        if(k>0){
+                                            this.selectLayer(k-1);
+                                        }else{
+                                            this.selectLayer(k)
+                                        }
                                         break;
                                     }
                                     k++;
@@ -591,7 +695,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                             hashVariable++;
                         }
                         this.application.ninja.currentSelectedContainer = parentNode;
-                      //  NJevent('breadCrumbTrail', {"element":parentNode, "setFlag":this._setBreadCrumb});
                     }
                     else {
                         dLayer = this.hashInstance.getItem(event.detail._el.parentElementUUID);
@@ -604,7 +707,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                                         dLayer[hashVariable].deleted = true;
 //                                        ElementMediator.deleteElements(dLayer[myIndex].element);
                                         this.arrLayers.splice(k, 1);
-                                        this.arrTracks.splice(k, 1);
+                                        //this.arrTracks.splice(k, 1);
+                                        if(k>0){
+                                            this.selectLayer(k-1);
+                                        }else{
+                                            this.selectLayer(k);
+                                        }
                                         break;
                                     }
                                     k++;
@@ -618,6 +726,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     if (!!this.layerRepetition.selectedIndexes) {
                         var myIndex = this.layerRepetition.selectedIndexes[0];
                         this._LayerUndoObject = this.arrLayers[myIndex];
+                        
+                        // TODO: Help from Kruti
                         this._TrackUndoObject = this.arrTracks[myIndex];
 
                         dLayer = this.hashInstance.getItem(this._hashKey);
@@ -625,19 +735,28 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                         dLayer[myIndex].deleted = true;
 
                         this.arrLayers.splice(myIndex, 1);
-                        this.arrTracks.splice(myIndex, 1);
+                        //this.arrTracks.splice(myIndex, 1);
                         this._LayerUndoIndex = this._LayerUndoObject.layerID;
                         this._LayerUndoPosition = myIndex;
-                        ElementMediator.deleteElements(dLayer[myIndex].ele);
+
+                        if(myIndex===0){
+                            this.selectLayer(0);
+                        }
+                        else{
+                            this.selectLayer(myIndex-1);
+                        }
+                        ElementMediator.deleteElements(dLayer[myIndex].elementsList);
 
                     } else {
                         dLayer = this.hashInstance.getItem(this._hashKey);
                         dTrack = this.hashTrackInstance.getItem(this._hashKey);
                         dLayer[this.arrLayers.length - 1].deleted = true;
-                        ElementMediator.deleteElements(dLayer[this.arrLayers.length - 1].ele);
+                        ElementMediator.deleteElements(dLayer[this.arrLayers.length - 1].elementsList);
                         this._LayerUndoPosition = this.arrLayers.length - 1;
                         this._LayerUndoObject = this.arrLayers.pop();
                         this._LayerUndoIndex = this._LayerUndoObject.layerID;
+                        
+                        // TODO: Help from Kruti
                         this._TrackUndoObject = this.arrTracks.pop();
                     }
                 }
@@ -647,11 +766,20 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     handleElementAdded:{
         value:function (event) {
-
             event.detail.uuid=nj.generateRandom();
-            this.hashElementMapToLayer.setItem(event.detail.uuid, event.detail,this.currentLayerSelected);
-            this.currentLayerSelected.elementsList.push(event.detail);
-
+            if(this.currentLayerSelected.elementsList[0]!==undefined){
+                if(this.currentLayerSelected.isTrackAnimated){
+                    // need to prevent element adding to dom, not just clear the drawing canvas
+                    //this.application.ninja.stage.clearDrawingCanvas();
+                    console.log("cannot add elements to a layer with animated element");
+                }else{
+                    this.hashElementMapToLayer.setItem(event.detail.uuid, event.detail,this.currentLayerSelected);
+                    this.currentLayerSelected.elementsList.push(event.detail);
+                }
+            }else{
+                this.hashElementMapToLayer.setItem(event.detail.uuid, event.detail,this.currentLayerSelected);
+                this.currentLayerSelected.elementsList.push(event.detail);
+            }
         }
     },
 
@@ -717,7 +845,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     createLayerHashTable:{
         value:function (key, value) {
             var hashLayerObject;
-
             hashLayerObject = Object.create(Object.prototype, {
                 counter:{
                     value:0,
@@ -851,14 +978,13 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
 
     selectLayer:{
-        value:function (layerIndex) {
-            var i = 0,
-                arrLayersLength = this.arrLayers.length;
+        value:function (layerIndex, userSelection) {
+            var i = 0;
+            var arrLayersLength = this.arrLayers.length;
 
             if(this.selectedKeyframes){
                 this.deselectTweens();
             }
-                        
             for (i = 0; i < arrLayersLength; i++) {
                 if (i === layerIndex) {
                     this.arrLayers[i].isSelected = true;
@@ -866,21 +992,24 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     this.arrLayers[i].isSelected = false;
                 }
             }
-
             if (layerIndex !== false) {
                 this.layerRepetition.selectedIndexes = [layerIndex];
                 this.trackRepetition.selectedIndexes = [layerIndex];
                 this.currentLayerSelected = this.arrLayers[layerIndex];
-                this.currentTrackSelected = this.arrTracks[layerIndex];
-                if(this._captureSelection){
-                    this.application.ninja.selectionController.selectElements(this.currentLayerSelected.elementsList)
+                if(userSelection){
+                    if(this._captureSelection){
+                        if(this.currentLayerSelected.elementsList.length >= 1){
+                            this.application.ninja.selectionController.selectElements(this.currentLayerSelected.elementsList);
+                        }else{
+                            this.application.ninja.selectionController.executeSelectElement();
+                        }
+                    }
+                    this._captureSelection = true;
                 }
-                this._captureSelection = true;
             } else {
                 this.layerRepetition.selectedIndexes = null;
                 this.trackRepetition.selectedIndexes = null;
                 this.currentLayerSelected = null;
-                this.currentTrackSelected = null;
             }
         }
     },
@@ -973,6 +1102,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
                         NJevent('newLayer', this)
 
+
                     }
                 },
                 unexecute:{
@@ -1005,7 +1135,38 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             });
             return command;
         }
-    }
+    },
     /* === END: Controllers === */
+   
+   	/* === BEGIN: Logging routines === */
+    _boolDebug: {
+    	enumerable: false,
+    	value: false // set to true to enable debugging to console; false for turning off all debugging.
+    },
+    boolDebug: {
+    	get: function() {
+    		return this._boolDebug;
+    	},
+    	set: function(boolDebugSwitch) {
+    		this._boolDebug = boolDebugSwitch;
+    	}
+    },
+    log: {
+    	value: function(strMessage) {
+    		if (this.boolDebug) {
+    			console.log(this.getLineNumber() + ": " + strMessage);
+    		}
+    	}
+    },
+    getLineNumber: {
+    	value: function() {
+			try {
+			   throw new Error('bazinga')
+			}catch(e){
+				return e.stack.split("at")[3].split(":")[2];
+			}
+    	}
+    }
+	/* === END: Logging routines === */
 });
 

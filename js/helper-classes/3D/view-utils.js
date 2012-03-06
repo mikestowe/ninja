@@ -580,7 +580,8 @@ exports.ViewUtils = Montage.create(Component, {
                 if (elt.style.height)   h  = MathUtils.styleToNumber(elt.style.height);
             }
 
-            if (elt instanceof SVGSVGElement) {
+//            if (elt instanceof SVGSVGElement) {
+            if(elt.nodeName.toLowerCase() === "svg") {
                         if(w instanceof SVGAnimatedLength)
                             w = w.animVal.value;
                         if(h instanceof SVGAnimatedLength)
