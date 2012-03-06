@@ -42,8 +42,8 @@ function GLGeomObj()
     this._fillColor		= [0,0,0,0];
 
 	// stroke and fill materials
-	this._fillMaterial;
-	this._strokeMaterial;
+	this._fillMaterial = null;
+	this._strokeMaterial = null;
 
 	// array of primitives - used in RDGE
 	this._primArray = [];

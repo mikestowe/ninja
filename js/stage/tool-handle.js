@@ -204,19 +204,19 @@ exports.RotateHandle = Montage.create(ToolHandle, {
             switch(this._axis)
             {
                 case "x":
-                    this._vec = Vector.create([1, 0, 0]);
-                    this._vec2 = Vector.create([0, 1, 0]);
-                    this._vec3 = Vector.create([0, 0, 1]);
+                    this._vec = [1, 0, 0];
+                    this._vec2 = [0, 1, 0];
+                    this._vec3 = [0, 0, 1];
                     break;
                 case "y":
-                    this._vec = Vector.create([0, 1, 0]);
-                    this._vec2 = Vector.create([1, 0, 0]);
-                    this._vec3 = Vector.create([0, 0, 1]);
+                    this._vec = [0, 1, 0];
+                    this._vec2 = [1, 0, 0];
+                    this._vec3 = [0, 0, 1];
                     break;
                 case "z":
-                    this._vec = Vector.create([0, 0, 1]);
-                    this._vec2 = Vector.create([1, 0, 0]);
-                    this._vec3 = Vector.create([0, 1, 0]);
+                    this._vec = [0, 0, 1];
+                    this._vec2 = [1, 0, 0];
+                    this._vec3 = [0, 1, 0];
                     break;
             }
 
@@ -254,7 +254,7 @@ exports.RotateHandle = Montage.create(ToolHandle, {
             this._planeEq2 = MathUtils.transformVector(this._vec2, transMat);
             this._planeEq3 = MathUtils.transformVector(this._vec3, transMat);
 
-            var viewVec = Vector.create([0, 0, 1]);
+            var viewVec = [0, 0, 1];
 
             var angle2 = MathUtils.getAngleBetweenVectors(this._planeEq2, viewVec);
             var angle3 = MathUtils.getAngleBetweenVectors(this._planeEq3, viewVec);
@@ -279,7 +279,7 @@ exports.RotateHandle = Montage.create(ToolHandle, {
             
             context.beginPath();
 
-            var pt = Vector.create( [this._radius, 0.0, 0.0] );
+            var pt = [this._radius, 0.0, 0.0];
             var pts;
 
             for (var i=0;  i<this._nTriangles;  i++)
@@ -297,7 +297,7 @@ exports.RotateHandle = Montage.create(ToolHandle, {
             // Draw the transform handle
             context.beginPath();
             
-            pt = Vector.create( [this._transformCenterRadius, 0.0, 0.0] );
+            pt = [this._transformCenterRadius, 0.0, 0.0];
 
             for (var i=0;  i<this._nTriangles;  i++)
             {
@@ -317,8 +317,8 @@ exports.RotateHandle = Montage.create(ToolHandle, {
 
     collidesWithPoint: {
         value:function (x, y) {
-            var globalPt = Vector.create( [x, y, 0] );
-            var vec = Vector.create( [0,0,1] );
+            var globalPt = [x, y, 0];
+            var vec = [0,0,1];
 
             // if angle between view direction and the handle's plane is within 5 degrees, use line test instead
             var angle = MathUtils.getAngleBetweenVectors(vec, this._planeEq);
@@ -339,7 +339,7 @@ exports.RotateHandle = Montage.create(ToolHandle, {
                 var t = MathUtils.parameterizePointOnLine2D( this._origin, this._dirVec, nearPt );
                 if(angle !== 0)
                 {
-                    var theta = MathUtils.getAngleBetweenVectors(this._dirVec, Vector.create([50, 0, 0]));
+                    var theta = MathUtils.getAngleBetweenVectors(this._dirVec, [50, 0, 0]);
                     t = t * Math.cos(theta);
                 }
 
@@ -364,7 +364,7 @@ exports.RotateHandle = Montage.create(ToolHandle, {
             var theta = Math.atan2(localPt[1], localPt[0]);
             var xC = this._transformCenterRadius*Math.cos(theta);
             var yC = this._transformCenterRadius*Math.sin(theta);
-            var ptOnCircle = Vector.create([xC, yC, 0]);
+            var ptOnCircle = [xC, yC, 0];
 
             var dist = vecUtils.vecDist( 2, localPt, ptOnCircle );
 
@@ -375,7 +375,7 @@ exports.RotateHandle = Montage.create(ToolHandle, {
             
             xC = this._radius*Math.cos(theta);
             yC = this._radius*Math.sin(theta);
-            ptOnCircle = Vector.create([xC, yC, 0]);
+            ptOnCircle = [xC, yC, 0];
 
             dist = vecUtils.vecDist( 2, localPt, ptOnCircle );
             
@@ -395,7 +395,7 @@ exports.RotateHandle = Montage.create(ToolHandle, {
             var theta = Math.atan2(localPt[1], localPt[0]);
             var xC = this._radius*Math.cos(theta);
             var yC = this._radius*Math.sin(theta);
-            var pt = Vector.create([xC, yC, 0]);
+            var pt = [xC, yC, 0];
 
             var context = this.application.ninja.stage.drawingContext;
             context.save();
@@ -548,19 +548,19 @@ exports.TranslateHandle = Montage.create(ToolHandle, {
             switch(this._axis)
             {
                 case "x":
-                    this._vec = Vector.create([1, 0, 0]);
-                    this._vec2 = Vector.create([0, 1, 0]);
-                    this._vec3 = Vector.create([0, 0, 1]);
+                    this._vec = [1, 0, 0];
+                    this._vec2 = [0, 1, 0];
+                    this._vec3 = [0, 0, 1];
                     break;
                 case "y":
-                    this._vec = Vector.create([0, -1, 0]);
-                    this._vec2 = Vector.create([1, 0, 0]);
-                    this._vec3 = Vector.create([0, 0, 1]);
+                    this._vec = [0, -1, 0];
+                    this._vec2 = [1, 0, 0];
+                    this._vec3 = [0, 0, 1];
                     break;
                 case "z":
-                    this._vec = Vector.create([0, 0, 1]);
-                    this._vec2 = Vector.create([1, 0, 0]);
-                    this._vec3 = Vector.create([0, 1, 0]);
+                    this._vec = [0, 0, 1];
+                    this._vec2 = [1, 0, 0];
+                    this._vec3 = [0, 1, 0];
                     break;
             }
         }
@@ -592,7 +592,7 @@ exports.TranslateHandle = Montage.create(ToolHandle, {
             this._planeEq2 = MathUtils.transformVector(this._vec2, transMat);
             this._planeEq3 = MathUtils.transformVector(this._vec3, transMat);
 
-            var viewVec = Vector.create([0, 0, 1]);
+            var viewVec = [0, 0, 1];
 
             var angle2 = MathUtils.getAngleBetweenVectors(this._planeEq2, viewVec);
             var angle3 = MathUtils.getAngleBetweenVectors(this._planeEq3, viewVec);
@@ -615,7 +615,7 @@ exports.TranslateHandle = Montage.create(ToolHandle, {
 
             context.beginPath();
 
-            var pt = Vector.create([0.0, 0.0, 0.0]);
+            var pt = [0.0, 0.0, 0.0];
             var pts = MathUtils.transformPoint(pt, this._matW);
 
             context.moveTo(pts[0], pts[1]);
@@ -697,7 +697,7 @@ exports.TranslateHandle = Montage.create(ToolHandle, {
 	{
         value:function (x, y) 
 		{
-            var globalPt = Vector.create( [x, y, this._origin[2]] );
+            var globalPt = [x, y, this._origin[2]];
 
 			// test for a hit on the origin
 			var dist = vecUtils.vecDist( 2, globalPt, this._origin );
