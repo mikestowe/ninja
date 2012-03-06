@@ -441,7 +441,7 @@ function parseNinjaUrl (url) {
     			webgltag.innerHTML = json;
     		}
     		var cleanHTML = template.document.content.document.documentElement.outerHTML.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaRootUrl.bind(this));
-    		console.log(this.getPrettyHtml(cleanHTML.replace(this.getAppTemplatesUrlRegEx(), '')));
+    		//console.log(this.getPrettyHtml(cleanHTML.replace(this.getAppTemplatesUrlRegEx(), '')));
     		function parseNinjaRootUrl (url) {
     			if (url.indexOf(this.application.ninja.coreIoApi.rootUrl) !== -1) {
     				return this.getUrlfromNinjaUrl(url, rootUrl, rootUrl.replace(new RegExp((this.application.ninja.coreIoApi.rootUrl).replace(/\//gi, '\\\/'), 'gi'), '')+'file.ext');//Wrong parameters
@@ -451,7 +451,7 @@ function parseNinjaUrl (url) {
     		}			
 			//console.log(rootUrl, this.application.ninja.coreIoApi.rootUrl, this.application.ninja.documentController.documentHackReference.root, this.application.ninja.coreIoApi.cloudData.root);
     		//console.log(this.getPrettyHtml(template.document.content.document.documentElement.outerHTML));
-    		return;
+    		//return;
     		//
     		return this.getPrettyHtml(cleanHTML.replace(this.getAppTemplatesUrlRegEx(), ''));
     	}
