@@ -226,8 +226,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 											world.import( importStr );
 											canvas.elementModel.shapeModel.GLWorld = world;
 
-											///////////////////////////
-											//something.buildShapeModel( world );	// to come from Nivesh
+											this.buildShapeModel( canvas.elementModel.shapeModel, world );
 										}
 									}
 								}
@@ -238,6 +237,51 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 			}
 		}
     },
+
+	buildShapeModel:
+	{
+		value: function( shapeModel, world )
+		{
+			shapeModel.shapeCount	= 1;	// for now...
+			shapeModel.useWebGl		= world._useWebGL;
+			shapeModel.GLWorld		= world;
+			var root = world.getGeomRoot();
+			if (root)
+			{
+				shapeModel.GLGeomObj			= root;
+				shapeModel.strokeSize			= root._strokeWidth;
+				shapeModel.stroke				= root._strokeColor.slice();
+				shapeModel.strokeMaterial		= root._strokeMaterial.dup();
+				shapeModel.strokeStyle			= "solid";
+				//shapeModel.strokeStyleIndex
+				//shapeModel.border
+				shapeModel.fill					= root._fillColor.slice();
+				shapeModel.fillMaterial			= root._fillMaterial.dup();
+				//shapeModel.background
+				switch (root.geomType())
+				{
+					case root.GEOM_TYPE_RECTANGLE:
+						shapeModel.tlRadius = root._tlRadius;
+						shapeModel.trRadius = root._trRadius;
+						shapeModel.blRadius = root._blRadius;
+						shapeModel.brRadius = root._brRadius;
+						break;
+
+					case root.GEOM_TYPE_CIRCLE:
+						shapeModel.innerRadius = root._innerRadius;
+						break;
+
+					case root.GEOM_TYPE_LINE:
+						shapeModel.slope = root._slope;
+						break;
+
+					default:
+						console.log( "geometry type not supported for file I/O, " + root.geomType());
+						break;
+				}
+			}
+		}
+	},
 
     zoomFactor: {
         get: function() { return this._zoomFactor; },
