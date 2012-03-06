@@ -8,10 +8,9 @@ var Montage = require("montage/core/core").Montage,
     Component   = require("montage/ui/component").Component,
     AppData     = require("js/data/appdata").AppData;
 
-exports.Ninja = Montage.create(Component, {
+var matrix = require("js/lib/math/matrix");
 
-    _appLoaded: { value: false },
-    _preload: { value: false },
+exports.Ninja = Montage.create(Component, {
 
     ninjaVersion: {
         value: null
@@ -54,7 +53,7 @@ exports.Ninja = Montage.create(Component, {
 
             window.addEventListener("resize", this, false);
 
-            this.eventManager.addEventListener( "appLoading", this, false);
+//            this.eventManager.addEventListener( "appLoading", this, false); // Don't need this anymore
             this.eventManager.addEventListener( "selectTool", this, false);
             this.eventManager.addEventListener( "selectSubTool", this, false);
             this.eventManager.addEventListener( "onOpenDocument", this, false);
@@ -76,29 +75,6 @@ exports.Ninja = Montage.create(Component, {
     handleResize: {
         value: function() {
             this.stage.resizeCanvases = true;
-        }
-    },
-
-    handlePreloadFinish: {
-            value: function(e) {
-                this._preload = true;
-                this.appLoaded();
-            }
-    },
-
-    handleAppLoading: {
-        value: function(e) {
-            this._appLoaded = true;
-            this.appLoaded();
-        }
-    },
-
-    appLoaded: {
-        value: function() {
-            if(this._appLoaded && this._preload) {
-                // App is now deserialized and files are preloaded
-                this.appModel.materials = MaterialsLibrary.materials;
-            }
         }
     },
 

@@ -214,7 +214,7 @@ exports.ViewUtils = Montage.create(Component, {
             {
                 var bounds = this.getViewportBounds();
                 cop = bounds.getCenter();
-                //cop = Vector.create( [bounds.getRight(), bounds.getBottom()] );
+                //cop = [bounds.getRight(), bounds.getBottom()];
             }
 
             return cop;
@@ -547,8 +547,8 @@ exports.ViewUtils = Montage.create(Component, {
             pt = this.screenToView( pt[0], pt[1], pt[2] );
 
             var eyePt = this.getEyePoint();
-            //var eyePt = Vector.create( [0, 0, 0] );
-            //var vec = Vector.create( [pt[0], pt[1], pt[2]] ).subtract( eyePt );
+            //var eyePt = [0, 0, 0];
+            //var vec = [pt[0], pt[1], pt[2]].subtract( eyePt );
             var vec = vecUtils.vecSubtract(3, [pt[0], pt[1], pt[2]], eyePt);
             vec = vecUtils.vecNormalize( 3, vec );
 
@@ -1251,9 +1251,9 @@ exports.ViewUtils = Montage.create(Component, {
                 // the input zoomFactor is the total zoom for the resulting matrix, so we need to
                 // get the current scale from the existing userContent matrix
                 // we assume a uniform scale.
-                var ucX = Vector.create([userContentMat[0], userContentMat[1+0], userContentMat[2+0]]);
-                var ucY = Vector.create([userContentMat[4], userContentMat[1+4], userContentMat[2+4]]);
-                var ucZ = Vector.create([userContentMat[8], userContentMat[1+8], userContentMat[2+8]]);
+                var ucX = [userContentMat[0], userContentMat[1+0], userContentMat[2+0]];
+                var ucY = [userContentMat[4], userContentMat[1+4], userContentMat[2+4]];
+                var ucZ = [userContentMat[8], userContentMat[1+8], userContentMat[2+8]];
                 var sx = vecUtils.vecMag(3, ucX),
                     sy = vecUtils.vecMag(3, ucY),
                     sz = vecUtils.vecMag(3, ucZ);

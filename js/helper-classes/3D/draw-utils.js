@@ -123,7 +123,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
             this._planesArray = [];
             this.setDrawingSurfaceElement(this.application.ninja.stage.canvas);
             this.setSourceSpaceElement( this.application.ninja.stage.stageDeps.currentStage );
-            this.setWorkingPlane( Vector.create( [0,0,1,0] ) );
+            this.setWorkingPlane( [0,0,1,0] );
 
             //Loop through all the top-level children of the current document and call drawUtils.addElement on them
             if(this.application.ninja.currentDocument._liveNodeList.length > 0){
