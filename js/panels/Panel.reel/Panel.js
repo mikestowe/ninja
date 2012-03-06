@@ -116,7 +116,6 @@ exports.Panel = Montage.create(Component, {
             }
 
             if(this.modulePath && this.moduleName) {
-                console.log("load content");
                 // Load the slot content
                 var that = this;
                 require.async(this.modulePath)
