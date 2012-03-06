@@ -187,7 +187,7 @@ function PulseMaterial()
 		exportStr += "name: " + this.getName() + "\n";
 
 		var texMapName = this._propValues[this._propNames[0]];
-		exportStr += "texture: " + texMapName;
+		exportStr += "texture: " + texMapName + "\n";
 		
 		// every material needs to terminate like this
 		exportStr += "endMaterial\n";

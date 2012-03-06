@@ -274,26 +274,10 @@ function RuntimeBumpMetalMaterial()
 			}
 		}
 	}
-
-	/*
-	this.update = function( time )
-	{
-		var material = this._materialNode;
-		if (material)
-		{
-			var technique = material.shaderProgram.default;
-			var renderer = g_Engine.getContext().renderer;
-			if (renderer && technique)
-			{
-				if (this._shader && this._shader.default)
-					this._shader.default.u_time.set( [this._time] );
-				this._time += this._dTime;
-				if (this._time > 200.0)  this._time = 0.0;
-			}
-		}
-	}
-	*/
 }
 
+function RuntimeUberMaterial()
+{
+}
 
 

@@ -12,7 +12,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 ///////////////////////////////////////////////////////////////////////
 function CanvasDataManager()
 {
-	this.loadGLData = function(root,  valueArray)
+	this.loadGLData = function(root,  valueArray,  NinjaUtils)
 	{
 		var value = valueArray;
 		var nWorlds = value.length;
@@ -29,32 +29,7 @@ function CanvasDataManager()
 					var canvas = this.findCanvasWithID( id, root );
 					if (canvas)
 					{
-						//var loadForAuthoring = true;
-						var index = importStr.indexOf( "scenedata: " );
-						//if (index >= 0)  loadForAuthoring = false;
-						var loadForAuthoring = false;
-
-						if (loadForAuthoring)
-						{
-							if (!canvas.elementModel)
-							{
-								NJUtils.makeElementModel(canvas, "Canvas", "shape", true);
-							}
-								
-							if (canvas.elementModel)
-							{
-								if (canvas.elementModel.shapeModel.GLWorld)
-									canvas.elementModel.shapeModel.GLWorld.clearTree();
-
-								var world = new GLWorld( canvas );
-								canvas.elementModel.shapeModel.GLWorld = world;
-								world.import( importStr );
-							}
-						}
-						else
-						{
-							var rt = new GLRuntime( canvas, importStr );
-						}
+						var rt = new GLRuntime( canvas, importStr );
 					}
 				}
 			}

@@ -83,7 +83,9 @@ function RuntimeGeomObj()
 				case "radialGradient":  mat = new RuntimeRadialGradientMaterial();		break;
 				case "linearGradient":  mat = new RuntimeLinearGradientMaterial();		break;
 				case "bumpMetal":		mat = new RuntimeBumpMetalMaterial();			break;
+				case "uber":			mat = new RuntimeUberMaterial();				break;
 
+				case "deform":
 				case "water":
 				case "tunnel":
 				case "reliefTunnel":
@@ -94,6 +96,7 @@ function RuntimeGeomObj()
 				case "mandel":
 				case "star":
 				case "zinvert":
+				case "keleidoscope":
 				case "pulse":			mat = new RuntimePulseMaterial();				break;
 
 				default:

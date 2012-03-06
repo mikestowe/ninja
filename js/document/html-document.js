@@ -185,9 +185,51 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 			var elt = this.documentRoot;
 			if (elt)
 			{
-				//console.log( "load canvas data: " , value );
-				var cdm = new CanvasDataManager();
-				cdm.loadGLData(elt,  value);
+				var loadForRuntime = true;
+				if (loadForRuntime)
+				{
+					//console.log( "load canvas data: " , value );
+					var cdm = new CanvasDataManager();
+					cdm.loadGLData(elt,  value,  NJUtils);
+				}
+				else
+				{
+					var nWorlds= value.length;
+					for (var i=0;  i<nWorlds;  i++)
+					{
+						var importStr = value[i];
+						var startIndex = importStr.indexOf( "id: " );
+						if (startIndex >= 0)
+						{
+							var endIndex = importStr.indexOf( "\n", startIndex );
+							if (endIndex > 0)
+							{
+								var id = importStr.substring( startIndex+4, endIndex );
+								if (id)
+								{
+									var canvas = this.findCanvasWithID( id, elt );
+									if (canvas)
+									{
+										if (!canvas.elementModel)
+										{
+											NJUtils.makeElementModel(canvas, "Canvas", "shape", true);
+										}
+								
+										if (canvas.elementModel)
+										{
+											if (canvas.elementModel.shapeModel.GLWorld)
+												canvas.elementModel.shapeModel.GLWorld.clearTree();
+
+											var world = new GLWorld( canvas );
+											canvas.elementModel.shapeModel.GLWorld = world;
+											world.import( importStr );
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 		}
     },
@@ -219,6 +261,27 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             }
         }
     },
+
+    /**
+     * search the DOM tree to find a canvas with the given id
+     */
+	findCanvasWithID:  {
+		value: function( id,  elt )  {
+			var cid = elt.getAttribute( "data-RDGE-id" );
+			if (cid == id)  return elt;
+
+			if (elt.children)
+			{
+				var nKids = elt.children.length;
+				for (var i=0;  i<nKids;  i++)
+				{
+					var child = elt.children[i];
+					var foundElt = this.findCanvasWithID( id, child );
+					if (foundElt)  return foundElt;
+				}
+			}
+		}
+	},
     
     
     
