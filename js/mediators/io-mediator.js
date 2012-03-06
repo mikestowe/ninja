@@ -228,6 +228,8 @@ exports.IoMediator = Montage.create(Component, {
     				if (styletags[j].getAttribute) {
     					if(styletags[j].getAttribute('data-ninja-uri') !== null && !styletags[j].getAttribute('data-ninja-template')) {
     						toremovetags.push(styletags[j]);
+    					} else if (styletags[j].getAttribute('data-ninja-external-url')) {
+    						toremovetags.push(styletags[j]);
     					}
     				}
     			}
@@ -342,9 +344,13 @@ exports.IoMediator = Montage.create(Component, {
     								fileUrl = template.css[i].ownerNode.getAttribute('data-ninja-file-url'),
     								fileRootUrl = this.application.ninja.coreIoApi.rootUrl+fileUrl.split(fileUrl.split('/')[fileUrl.split('/').length-1])[0],
     								cleanedCss = dirtyCss.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaUrl.bind(this));
-    							    							
-    							
+    							  	
     							function parseNinjaUrl (url) {
+    								return this.getUrlfromNinjaUrl(url, fileRootUrl, fileUrl);
+    							}
+    							
+    							/*
+function parseNinjaUrl (url) {
     								//console.log("Getting: " + url);
     								//
     								if (url.indexOf(fileRootUrl) !== -1) {
@@ -376,6 +382,7 @@ exports.IoMediator = Montage.create(Component, {
     								//console.log("-----");
     								return url;
     							}
+*/
     							
     							///////////////////////////////////////////////////////////////////////////////////////////
     							///////////////////////////////////////////////////////////////////////////////////////////
@@ -433,8 +440,60 @@ exports.IoMediator = Montage.create(Component, {
     			//Setting string in tag
     			webgltag.innerHTML = json;
     		}
+    		var cleanHTML = template.document.content.document.documentElement.outerHTML.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaRootUrl.bind(this));
+    		console.log(this.getPrettyHtml(cleanHTML.replace(this.getAppTemplatesUrlRegEx(), '')));
+    		function parseNinjaRootUrl (url) {
+    			if (url.indexOf(this.application.ninja.coreIoApi.rootUrl) !== -1) {
+    				return this.getUrlfromNinjaUrl(url, rootUrl, rootUrl.replace(new RegExp((this.application.ninja.coreIoApi.rootUrl).replace(/\//gi, '\\\/'), 'gi'), '')+'file.ext');//Wrong parameters
+    			} else {
+    				return url;
+    			}
+    		}			
+			//console.log(rootUrl, this.application.ninja.coreIoApi.rootUrl, this.application.ninja.documentController.documentHackReference.root, this.application.ninja.coreIoApi.cloudData.root);
+    		//console.log(this.getPrettyHtml(template.document.content.document.documentElement.outerHTML));
+    		return;
     		//
-    		return this.getPrettyHtml(template.document.content.document.documentElement.outerHTML.replace(this.getAppTemplatesUrlRegEx(), ''));
+    		return this.getPrettyHtml(cleanHTML.replace(this.getAppTemplatesUrlRegEx(), ''));
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    getUrlfromNinjaUrl: {
+    	enumerable: false,
+    	value: function (url, fileRootUrl, fileUrl) {
+    		//console.log("Params: ", url, fileRootUrl, fileUrl);
+    		//console.log("Getting: " + url);
+    		//
+    		if (url.indexOf(fileRootUrl) !== -1) {
+    			url = url.replace(new RegExp(fileRootUrl.replace(/\//gi, '\\\/'), 'gi'), '');
+    		} else {
+    			//TODO: Clean up vars
+    			var assetsDirs = (url.replace(new RegExp((this.application.ninja.coreIoApi.rootUrl).replace(/\//gi, '\\\/'), 'gi'), '')).split('/');
+    			var fileDirs = (fileUrl.split(fileUrl.split('/')[fileUrl.split('/').length-1])[0]).split('/');
+    			var counter = 0;
+    			var path = '';
+    			var newURL = '';
+    			//
+    			for (var p=0; p < fileDirs.length-1; p++) {
+    				if (fileDirs[p] === assetsDirs[p]) {
+    					counter++;
+    				}
+    			}
+    			//
+    			for (var p=0; p < (fileDirs.length-counter)-1; p++) {
+    				path += '../';
+    			}
+    			//
+    			for (var p=counter; p < assetsDirs.length; p++) {
+    				newURL += '/'+assetsDirs[p];
+    			}
+    			//
+   				url = (path+newURL).replace(/\/\//gi, '/');
+   			}
+    		//console.log("Returning: " + url);
+    		//console.log("-----");
+    		//
+    		return url;
     	}
     },
     ////////////////////////////////////////////////////////////////////
