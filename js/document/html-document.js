@@ -436,7 +436,14 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             			prop = prop.replace(/"([^"]*)"/gi, ninjaUrlPrepend.bind(this));
 	            	} else if (prop.indexOf('url') !== -1) { //From CSS property
     	        		//TODO: Add functionality
-    	        		console.log('CSS: '+prop);
+    	        		var docRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
+    	        		prop = prop.replace(/[^()\\""\\'']+/g, test);
+    	        		function test (s) {
+    	        			if (s !== 'url') {
+    	        				s = docRootUrl + s;
+    	        			}
+    	        			return s;
+    	        		}
         	    	}
         	    }
             	return prop;
@@ -643,11 +650,24 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 								console.log('ERROR: Cross-Domain-Stylesheet detected, unable to load in Ninja');
 								//None local stylesheet, probably on a CDN (locked)
 								/*
-tag = this.iframe.contentWindow.document.createElement('style');
+var tag = this.iframe.contentWindow.document.createElement('style');
 								tag.setAttribute('type', 'text/css');
 								tag.setAttribute('data-ninja-external-url', this._document.styleSheets[i].href);
 								tag.setAttribute('data-ninja-file-read-only', "true");
 								tag.setAttribute('data-ninja-file-name', this._document.styleSheets[i].href.split('/')[this._document.styleSheets[i].href.split('/').length-1]);
+								//Copying attributes to maintain same properties as the <link>
+								for (var n in this._document.styleSheets[i].ownerNode.attributes) {
+									if (this._document.styleSheets[i].ownerNode.attributes[n].value && this._document.styleSheets[i].ownerNode.attributes[n].name !== 'disabled' && this._document.styleSheets[i].ownerNode.attributes[n].name !== 'disabled') {
+										if (this._document.styleSheets[i].ownerNode.attributes[n].value.indexOf(docRootUrl) !== -1) {
+											tag.setAttribute(this._document.styleSheets[i].ownerNode.attributes[n].name, this._document.styleSheets[i].ownerNode.attributes[n].value.split(docRootUrl)[1]);
+										} else {
+											tag.setAttribute(this._document.styleSheets[i].ownerNode.attributes[n].name, this._document.styleSheets[i].ownerNode.attributes[n].value);
+										}
+									}
+								}
+								
+								
+								
 								
 								//TODO: Figure out cross-domain XHR issue, might need cloud to handle
 								var xhr = new XMLHttpRequest();
@@ -658,7 +678,6 @@ tag = this.iframe.contentWindow.document.createElement('style');
                         			console.log(xhr);
                     			}
                     			//tag.innerHTML = xhr.responseText //xhr.response;
-								
 								//Currently no external styles will load if unable to load via XHR request
 								
 								//Disabling external style sheets
