@@ -339,6 +339,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 				this.application.ninja.currentDocument.tlArrLayers = this.arrLayers;
                 this.application.ninja.currentDocument.tllayerNumber = this.currentLayerNumber;
                 this.application.ninja.currentDocument.tlLayerHashTable = this.hashInstance;
+                this.application.ninja.currentDocument.tlElementHashTable = this.hashElementMapToLayer;
                 this.application.ninja.currentDocument.hashKey=this.hashKey;
 
 
@@ -352,6 +353,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 				this.arrTracks = this.application.ninja.currentDocument.tlArrTracks;
                 this.currentLayerNumber = this.application.ninja.currentDocument.tllayerNumber;
                 this.hashInstance = this.application.ninja.currentDocument.tlLayerHashTable;
+                this.hashElementMapToLayer = this.application.ninja.currentDocument.tlElementHashTable;
                 this.hashKey = this.application.ninja.currentDocument.hashKey;
                 this.selectLayer(0);
 				this._boolCacheArrays = true;
