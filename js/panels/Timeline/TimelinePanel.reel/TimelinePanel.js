@@ -277,11 +277,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 				this.application.ninja.currentDocument.isTimelineInitialized = true;
 				this.application.ninja.currentDocument.tlArrLayers = [];
 				this.application.ninja.currentDocument.tlArrTracks = [];
+//                this.application.ninja.currentDocument.layerNumber = 0;
 				
 				
 				// Loop through the DOM of the document to find layers and animations.
 				// Fire off events as they are found.
-				_firstLayerDraw = false;
 	            if(!this.application.ninja.documentController.creatingNewFile){
 	                if(this.application.ninja.currentDocument.documentRoot.children[0]){
 	                    myIndex=0;
@@ -301,11 +301,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 	                this.selectLayer(0);
 	
 	            }
-	            _firstLayerDraw = true;
-	            
 	            // After recreating the tracks and layers, store the result in the currentDocument.
 				this.application.ninja.currentDocument.tlArrTracks = this.arrTracks;
 				this.application.ninja.currentDocument.tlArrLayers = this.arrLayers;
+//                this.application.ninja.currentDocument.layerNumber = this.layerNumber;
+//                console.log(this.application.ninja.currentDocument)
+//                console.log(this.application.ninja.currentDocument.tlArrLayers);
 				
 			} else {
 				// we do have information stored.  Use it.
@@ -314,6 +315,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 				this.arrTracks = [];
 				this.arrLayers = this.application.ninja.currentDocument.tlArrLayers;
 				this.arrTracks = this.application.ninja.currentDocument.tlArrTracks;
+//                this.layerNumber = this.application.ninja.currentDocument.layerNumber;
 				this._boolCacheArrays = true;
 			}
 			
@@ -340,7 +342,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             
             // Clear variables--including repetitions.
             this.hashInstance = null;
-            this.hashTrackInstance = null;
             this.hashLayerNumber = null;
             this.hashElementMapToLayer = null;
 			this.arrTracks = [];
@@ -481,22 +482,24 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
 
     LayerBinding:{
-            value:function (node) {
-            var i = 0;
+        value:function (node) {
+        var i = 0;
 
-            if (this._firstTimeLoaded) {
-                this._firstTimeLoaded = false;
-            } else {
-                this.arrLayers.length = 0;
-                this.arrTracks.length = 0;
-                this._hashKey = node.uuid;
+            if(typeof(this.application.ninja.currentDocument.isTimelineInitialized) === "undefined"){
+                if (this._firstTimeLoaded) {
+                    this._firstTimeLoaded = false;
+                } else {
+                    this.arrLayers.length = 0;
+                    this.arrTracks.length = 0;
+                    this._hashKey = node.uuid;
 
-                if (this.returnedObject = this.hashInstance.getItem(this._hashKey)) {
-                    this._hashFind = true;
+                    if (this.returnedObject = this.hashInstance.getItem(this._hashKey)) {
+                        this._hashFind = true;
+                    }
+                    this.currentLayerNumber = 0;
+                    this.createNewLayer(1);
+                    this.selectLayer(0);
                 }
-                this.currentLayerNumber = 0;
-                this.createNewLayer(1);
-                this.selectLayer(0);
             }
         }
     },
@@ -547,6 +550,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             var newLayerName = "",
                 thingToPush = {},
                 myIndex = 0;
+//             console.log(this.application.ninja.currentDocument.layerNumber);
 
             this.currentLayerNumber = this.hashLayerNumber.getItem(this._hashKey);
             if (this.currentLayerNumber === undefined) {
@@ -585,6 +589,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this.selectLayer(myIndex);
                 this.hashLayerNumber.setItem(this._hashKey, thingToPush);
                 this.hashInstance.setItem(this._hashKey, thingToPush, myIndex);
+                this.layerNumber = thingToPush.layerID;
 
             } else {
                 this.arrLayers.splice(0, 0, thingToPush);
@@ -592,6 +597,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this._LayerUndoPosition = this.arrLayers.length - 1;
                 this.hashLayerNumber.setItem(this._hashKey, thingToPush);
                 this.hashInstance.setItem(this._hashKey, thingToPush, thingToPush.layerPosition);
+                this.layerNumber = thingToPush.layerID;
                 this.selectLayer(0);
 
             }
@@ -665,6 +671,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     this.selectLayer(myIndex);
                     this.hashLayerNumber.setItem(this._hashKey, thingToPush);
                     this.hashInstance.setItem(this._hashKey, thingToPush, myIndex);
+                    this.layerNumber = thingToPush.layerID;
 
                 } else {
                     this.arrLayers.splice(0, 0, thingToPush);
@@ -672,6 +679,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     this._LayerUndoPosition = this.arrLayers.length - 1;
                     this.hashLayerNumber.setItem(this._hashKey, thingToPush);
                     this.hashInstance.setItem(this._hashKey, thingToPush, thingToPush.layerPosition);
+                    this.layerNumber = thingToPush.layerID;
                     this.selectLayer(0);
 
                 }
