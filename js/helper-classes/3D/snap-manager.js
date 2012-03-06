@@ -211,9 +211,9 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 				var stage = this.getStage();
 				var parentPt;
 				if (quadPt)
-					parentPt = Vector.create([quadPt[0], quadPt[1], 0.0]);
+					parentPt = [quadPt[0], quadPt[1], 0.0];
 				else
-					parentPt = Vector.create([xScreen, yScreen, 0.0]);
+					parentPt = [xScreen, yScreen, 0.0];
 				var vec = viewUtils.parentToChildVec(parentPt, stage);
 				if (vec)
 				{
@@ -321,7 +321,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
 			// get the point to the lower left of the plane point and
 			// see if it falls within the snap distance
-			var origin = Vector.create(  [-0.5*this.getStageWidth(), -0.5*this.getStageHeight()] );
+			var origin = [-0.5*this.getStageWidth(), -0.5*this.getStageHeight()];
 			var planePt = hitRec.getLocalPoint();
 			var dToOrigin = MathUtils.vecSubtract(planePt, origin);
 			var nx = Math.floor( dToOrigin[0]/dx),
@@ -338,11 +338,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 				return false;
 			}
 
-			var pt00 = Vector.create( [
-				origin[0] + nx*dx,
-				origin[1] + ny*dy,
-				0.0
-			] );
+			var pt00 = [ origin[0] + nx*dx, origin[1] + ny*dy, 0.0 ];
 			var planeMat = hitRec.getPlaneMatrix();
 			var scrPt2 = viewUtils.postViewToStageWorld( MathUtils.transformPoint(pt00,planeMat),  stage );
 			scrPt2 = MathUtils.makeDimension3( scrPt2 );
@@ -366,11 +362,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 				return true;
 
 			// check the far corner point and 2 edges out from it
-			var pt11 = Vector.create( [
-				origin[0] + (nx+1)*dx,
-				origin[1] + (ny+1)*dy,
-				0.0
-			] );
+			var pt11 = [ origin[0] + (nx+1)*dx, origin[1] + (ny+1)*dy, 0.0 ];
 			var scrPt4 = viewUtils.postViewToStageWorld( MathUtils.transformPoint(pt11,planeMat),  stage );
 			scrPt4 = MathUtils.makeDimension3( scrPt4 );
 			scrPt4 = vecUtils.vecAdd(3, viewUtils.viewToScreen( MathUtils.transformPoint(scrPt4, stageMat) ), offset );
@@ -420,11 +412,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 				horizontalLineCount = 2;
 			}
 
-			var edgePt = Vector.create( [
-				gridOrigin[0] + nx*dx,
-				gridOrigin[1] + ny*dy,
-				0.0
-			] );
+			var edgePt = [ gridOrigin[0] + nx*dx, gridOrigin[1] + ny*dy, 0.0 ];
 			var scrPt2 = viewUtils.postViewToStageWorld( MathUtils.transformPoint(edgePt,planeMat),  stage );
 			scrPt2 = MathUtils.makeDimension3( scrPt2 );
 			scrPt2 = vecUtils.vecAdd(3, viewUtils.viewToScreen( MathUtils.transformPoint(scrPt2, stageMat) ), offset );
@@ -849,7 +837,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 				MathUtils.makeDimension3( stageOffset );
 
 				var x = vPt[0],  y = hPt[1];
-				var localPt = Vector.create( [x,y,0,1] );
+				var localPt = [x,y,0,1];
 				var viewPt = MathUtils.transformPoint( localPt, planeToViewMat );
 				var scrPt = vecUtils.vecAdd(3, viewUtils.viewToScreen( viewPt ), stageOffset );
 
@@ -1191,7 +1179,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 					// Calculate the local point
 					var planeMat;
 					var mat = viewUtils.getMatrixFromElement( elt );
-					var wp = Vector.create([0,0,1,0]);
+					var wp = [0,0,1,0];
 					wp = MathUtils.transformPlane( wp, mat );
 					var wpMat = drawUtils.getPlaneToWorldMatrix(wp, MathUtils.getPointOnPlane(wp));
 					//var wpMatInv = wpMat.inverse();
@@ -1283,7 +1271,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 					 {
 						// convert to GL coordinates
 						var glPt = this.globalScreenToWebGL( targetScrPt,  elt );
-						var eyePt = Vector.create( [0, 0, world.getViewDistance()] );
+						var eyePt = [0, 0, world.getViewDistance()];
 						var dir = vecUtils.vecSubtract(3, glPt, eyePt);
 
 						// recursively go through the tree testing all objects
@@ -1534,7 +1522,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 					viewUtils.pushViewportObj( elt );
 					var cop = viewUtils.getCenterOfProjection();
 					viewUtils.popViewportObj();
-					var s2v = Matrix.Translation(Vector.create([-cop[0], -cop[1], 0]));
+					var s2v = Matrix.Translation([-cop[0], -cop[1], 0]);
 					var vToNDC = Matrix.I(4);
 					vToNDC[0] = 1.0/(0.5*world.getViewportWidth());
 					vToNDC[5] = 1.0/(0.5*world.getViewportHeight());
@@ -1572,11 +1560,11 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 					tmpPt2 = MathUtils.applyHomogeneousCoordinate( tmpPt2 );
 
 					// project the 2 object space points onto the original plane of the object
-					var tmpPt3 = MathUtils.vecIntersectPlane( tmpPt1, vecUtils.vecSubtract(3, tmpPt2, tmpPt1), Vector.create([0,0,1,0]) );
+					var tmpPt3 = MathUtils.vecIntersectPlane( tmpPt1, vecUtils.vecSubtract(3, tmpPt2, tmpPt1), [0,0,1,0]);
 					//console.log( "object space pt: " + tmpPt3 );
 
 					// get the z value in NDC space of the projection plane
-					var ndcPt = MathUtils.transformHomogeneousPoint( Vector.create( [0, 0, 0] ), glToNDC );
+					var ndcPt = MathUtils.transformHomogeneousPoint( [0, 0, 0], glToNDC );
 					ndcPt = MathUtils.applyHomogeneousCoordinate( ndcPt );
 					var zNDC = ndcPt[2];
 
@@ -1648,7 +1636,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 					var drawingGrid = drawUtils.isDrawingGrid();
 
 					// get the Z axis of the matrix
-					var dir = Vector.create([mat[8], mat[9], mat[10]]);
+					var dir = [mat[8], mat[9], mat[10]];
 					dir = vecUtils.vecNormalize(3, dir, 1.0);
 					var x = Math.abs(dir[0]),
 						y = Math.abs(dir[1]),
@@ -1659,7 +1647,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 					//x = 0;  y = 0;  z = 1;		// X/Y plane
 
 					var id;
-					var plane = Vector.create([0, 0, 0, 0]);
+					var plane = [0, 0, 0, 0];
 					var change = false;
 					if (x > y) {
 						if (x > z) {
@@ -1829,7 +1817,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 						MathUtils.makeDimension3( stageOffset );
 
 						var x = vPt[0],  y = hPt[1];
-						var localPt = Vector.create( [x,y,0,1] );
+						var localPt = [x,y,0,1];
 						var planeToViewMat = this.getPlaneToViewMat();
 						var viewPt = MathUtils.transformPoint( localPt, planeToViewMat );
 						var scrPt = vecUtils.vecAdd(3, viewUtils.viewToScreen( viewPt ), stageOffset );
@@ -1878,7 +1866,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 						MathUtils.makeDimension3( stageOffset );
 
 						var y = hPt[1],  x = vPt[0];
-						var localPt = Vector.create( [x,y,0,1] );
+						var localPt = [x,y,0,1];
 						var planeToViewMat = this.getPlaneToViewMat();
 						var viewPt = MathUtils.transformPoint( localPt, planeToViewMat );
 						var scrPt = vecUtils.vecAdd(3, viewUtils.viewToScreen( viewPt ), stageOffset );
@@ -1933,7 +1921,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 							MathUtils.makeDimension3( stageOffset );
 
 							var y = hPt[1],  x = vPt[0];
-							var localPt = Vector.create( [x,y,0,1] );
+							var localPt = [x,y,0,1];
 							var planeToViewMat = this.getPlaneToViewMat();
 							var viewPt = MathUtils.transformPoint( localPt, planeToViewMat );
 							var scrPt = vecUtils.vecAdd(3, viewUtils.viewToScreen( viewPt ), stageOffset );

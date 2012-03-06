@@ -35,7 +35,7 @@ var Rectangle = exports.Rectangle = Object.create(Object.prototype, {
     getTop: { value: function()        {  return this.m_top;                       } },
     setTop: { value: function(t)       {  this.m_top = t;                          } },
 
-    getCenter: { value: function()        {  return Vector.create( [this.m_left + 0.5*this.m_width,  this.m_top + 0.5*this.m_height] );       } },
+    getCenter: { value: function()        {  return [this.m_left + 0.5*this.m_width,  this.m_top + 0.5*this.m_height];       } },
 
     getWidth: { value: function()        {  return this.m_width;                     } },
     setWidth: { value: function(w)       {  this.m_width = w;                        } },

@@ -88,7 +88,7 @@ var ElementPlanes = exports.ElementPlanes = Object.create(Object.prototype, {
                 // create the plane equation
                 //var d = -( nrm.dot( this._boundaryPts[0]) );
                 var d = -vecUtils.vecDot(3, nrm, this._boundaryPts[0]);
-                var planeEq = Vector.create( [nrm[0], nrm[1], nrm[2], d] );
+                var planeEq = [nrm[0], nrm[1], nrm[2], d] ;
                 this.setPlaneEq( planeEq );
 
                 // get the 2D rectangle

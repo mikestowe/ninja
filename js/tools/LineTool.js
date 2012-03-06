@@ -13,6 +13,9 @@ var Montage = 	require("montage/core/core").Montage,
     ShapesController = 	require("js/controllers/elements/shapes-controller").ShapesController,
     ShapeModel = require("js/models/shape-model").ShapeModel;
 
+var Line = require("js/lib/geom/line").Line;
+var MaterialsModel = require("js/models/materials-model").MaterialsModel;
+
 exports.LineTool = Montage.create(ShapeTool, {
 	_toolID: { value: "lineTool" },
 	_imageID: { value: "lineToolImg" },
@@ -211,7 +214,7 @@ exports.LineTool = Montage.create(ShapeTool, {
                 var strokeM = this.options.strokeMaterial;
                 if(strokeM)
                 {
-                    strokeMaterial = Object.create(MaterialsLibrary.getMaterial(strokeM));
+                    strokeMaterial = Object.create(MaterialsModel.getMaterial(strokeM));
                 }
             }
 
@@ -220,7 +223,7 @@ exports.LineTool = Montage.create(ShapeTool, {
             var xOffset = ((left - canvas.offsetLeft + w/2) - canvas.width/2);
             var yOffset = (canvas.height/2 - (top - canvas.offsetTop + h/2));
 
-            var line = new GLLine(world, xOffset, yOffset, w, h, slope, strokeSize, strokeColor, strokeMaterial, strokeStyle, xAdj, yAdj);
+            var line = new Line(world, xOffset, yOffset, w, h, slope, strokeSize, strokeColor, strokeMaterial, strokeStyle, xAdj, yAdj);
 
             world.addObject(line);
             world.render();

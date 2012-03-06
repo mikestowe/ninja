@@ -403,7 +403,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         	this.mainCollapser.myContent = this.myContent;
         	this.mainCollapser.contentHeight = 60;
         	this.myContent.style.height = "0px";
-            this.mainCollapser.element = this.element;
+            this.mainCollapser.element = this.myContent;
             //this.mainCollapser.isCollapsedAtStart = true;
             this.mainCollapser.isCollapsed = this.isMainCollapsed;
             this.mainCollapser.isAnimated = true;
@@ -418,12 +418,12 @@ var Layer = exports.Layer = Montage.create(Component, {
 				defaultEventManager.dispatchEvent(newEvent);
 				that.isMainCollapsed = that.mainCollapser.isCollapsed;
             }
-    		this.mainCollapser.needsDraw = true;
+    		//this.mainCollapser.needsDraw = true;
 
             this.positionCollapser.clicker = this.clickerPosition;
             this.positionCollapser.myContent = this.contentPosition;
-            this.positionCollapser.element = this.element;
-            this.positionCollapser.contentHeight = 60;
+            this.positionCollapser.element = this.contentPosition;
+            this.positionCollapser.contentHeight = 40;
             // this.positionCollapser.isCollapsedAtStart = true;
             this.positionCollapser.isCollapsed = this.isPositionCollapsed;
             this.positionCollapser.isAnimated = true;
@@ -437,11 +437,11 @@ var Layer = exports.Layer = Montage.create(Component, {
 				defaultEventManager.dispatchEvent(newEvent);
 				that.isPositionCollapsed = that.positionCollapser.isCollapsed;
             }
-            this.positionCollapser.needsDraw = true;
+            //this.positionCollapser.needsDraw = true;
             
             this.transformCollapser.clicker = this.clickerTransform;
             this.transformCollapser.myContent = this.contentTransform;
-            this.transformCollapser.element = this.element;
+            this.transformCollapser.element = this.contentTransform;
             this.transformCollapser.contentHeight = 100;
             // this.transformCollapser.isCollapsedAtStart = true;
             this.transformCollapser.isCollapsed = this.isTransformCollapsed;
@@ -456,13 +456,13 @@ var Layer = exports.Layer = Montage.create(Component, {
 				defaultEventManager.dispatchEvent(newEvent);
 				that.isTransformCollapsed = that.transformCollapser.isCollapsed;
             }
-            this.transformCollapser.needsDraw = true;
+            //this.transformCollapser.needsDraw = true;
             
             this.styleCollapser.clicker = this.clickerStyle;
             this.styleCollapser.myContent = this.contentStyle;
-            this.styleCollapser.element = this.element;
+            this.styleCollapser.element = this.contentStyle;
             this.styleCollapser.isCollapsed = this.isStyleCollapsed;
-            this.styleCollapser.contentHeight = 20;
+            this.styleCollapser.contentHeight = 0;
             this.styleCollapser.isAnimated = true;
             this.styleCollapser.labelClickEvent = function(boolBypass) {
 				var newEvent = document.createEvent("CustomEvent");
@@ -474,7 +474,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 				defaultEventManager.dispatchEvent(newEvent);
 				that.isStyleCollapsed = that.styleCollapser.isCollapsed;
             }
-            this.styleCollapser.needsDraw = true;
+            //this.styleCollapser.needsDraw = true;
 
             // Add event listeners to add and delete style buttons
             this.buttonAddStyle.identifier = "addStyle";
@@ -485,7 +485,7 @@ var Layer = exports.Layer = Montage.create(Component, {
             
             // Add mousedown listener to set isActive
             this.element.addEventListener("mousedown", this, false);
-            //this.element.addEventListener("click", this, false);
+            this.element.addEventListener("click", this, false);
 
         }
     },
