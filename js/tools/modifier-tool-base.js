@@ -171,7 +171,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 //                        }
 //                        else
 //                        {
-                            this._dragPlane = snapManager.setupDragPlanes( hitRec );
+                            this._dragPlane = snapManager.setupDragPlanes( hitRec, true );
 //                        }
                     }
 

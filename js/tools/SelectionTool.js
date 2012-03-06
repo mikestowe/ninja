@@ -16,6 +16,7 @@ var Montage = require("montage/core/core").Montage,
 var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
     drawingFeedback: { value: { mode: "Draw2D", type: "" } },
 
+    _inLocalMode: { value: false},      // This tool should always use global mode for translations
     _canOperateOnStage: { value: true},
     _isSelecting: {value: false, writable:true},
     _shiftMove: { value: 10},
@@ -34,14 +35,12 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
         value: function () {
             if(this._targets && this._targets.length)
             {
-                // TODO - drawUtils's elementPlanes check in drawSelectionBounds doesn't seem to work,
-                // so temporary workaround to simply check if all elements have identity matrix
-                // TODO - Eventually, this should instead check if all the selected items are on the view plane
                 var len = this._targets.length;
+                var plane = this.application.ninja.stage.stageDeps.snapManager.getDragPlane();
                 for(var i = 0; i < len; i++)
                 {
-                    var mat = this._targets[i].mat;
-                    if(!MathUtils.isIdentityMatrix(mat))
+                    var elt = this._targets[i].elt;
+                    if(!this.application.ninja.stage.stageDeps.snapManager.elementIsOnPlane(elt, plane))
                     {
                         return false;
                     }
