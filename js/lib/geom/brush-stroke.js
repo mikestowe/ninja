@@ -36,6 +36,7 @@ var BrushStroke = function GLBrushStroke() {
     this._strokeHardness = 100;
     this._strokeMaterial = null;
     this._strokeStyle = "Solid";
+    this._strokeDoSmoothing = false;
 
     //the wetness of the brush (currently this is multiplied to the square of the stroke width, but todo should be changed to not depend on stroke width entirely
     //smaller value means more samples for the path
@@ -183,6 +184,10 @@ var BrushStroke = function GLBrushStroke() {
         this._strokeHardness=h;
     }
 
+    this.setDoSmoothing = function(s){
+        this._strokeDoSmoothing = s;
+    }
+
     this.getStrokeStyle = function () {
         return this._strokeStyle;
     };
@@ -262,7 +267,7 @@ var BrushStroke = function GLBrushStroke() {
                 }
             }
             //**** add samples to the long sections of the path --- Catmull-Rom spline interpolation
-            if (numPoints>1) {
+            if (this._strokeDoSmoothing && numPoints>1) {
                 var numInsertedPoints = 0;
                 var threshold = 5;//0.25*this._strokeWidth; //this determines whether a segment between two sample is too long
                 var prevPt = this._Points[0];
@@ -507,35 +512,6 @@ var BrushStroke = function GLBrushStroke() {
             brushStamp.push(brushPt);
         }
 
-
-        //make a circular brush stamp
-        brushStamp=[];
-        numTraces = this._strokeWidth*Math.PI; //figure out how to
-        var radius = this._strokeWidth/2;
-        for (t=0;t<numTraces;t++)
-        {
-            var angle = Math.PI*(360*t/numTraces)/180;
-            var brushPt = [radius*Math.cos(angle), radius*Math.sin(angle)];
-            brushStamp.push(brushPt);
-        }
-
-//        //make a square brush stamp
-//        STOPPED HERE
-//        brushStamp = [];
-//        numTraces = 4*strokeWidth;
-//        for (t=0;t<numTraces;t++){
-//            if (t<numTraces*0.25){
-//                var brushPt = [startPos[0]+t*deltaDisplacement[0], startPos[1]+t*deltaDisplacement[1]];
-//            } else if (t<numTraces*0.5){
-//
-//            } else if (t<numTraces*0.75){
-//
-//            } else {
-//
-//            }
-//            brushStamp.push(brushPt);
-//        }
-
         for (t=0;t<numTraces;t++){
             var disp = [brushStamp[t][0], brushStamp[t][1]];
             //ctx.globalCompositeOperation = 'source-over';
@@ -566,30 +542,26 @@ var BrushStroke = function GLBrushStroke() {
         }
         */
 
-        /*
-        //debugging path
-        ctx.beginPath();
-        ctx.moveTo(this._Points[0][0]-bboxMin[0], this._Points[0][1]-bboxMin[1]);
-        for (var i=1;i<numPoints;i++){
-            ctx.lineTo(this._Points[i][0]-bboxMin[0], this._Points[i][1]-bboxMin[1]);
-        }
-        ctx.lineWidth=1.0;
-        ctx.strokeStyle = "black";
-        ctx.stroke();
-        */
 
-        var numlayers = this._strokeWidth/2;
-        var alphaVal = 1.0/(numlayers-1);
+        var minStrokeWidth = (this._strokeHardness*this._strokeWidth)/100; //the hardness is the percentage of the stroke width that's fully opaque
+        var numlayers = 1 + (this._strokeWidth-minStrokeWidth)/2;
+        var alphaVal = 1.0/(numlayers);
+        ctx.lineCap = "round";
+        ctx.lineJoin="round";
+        ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
+        ctx.globalCompositeOperation = 'lighter'; //we wish to add up the colors
+        ctx.globalAlpha = this._strokeColor[3];
         for (var l=0;l<numlayers;l++){
             ctx.beginPath();
             ctx.moveTo(this._Points[0][0]-bboxMin[0], this._Points[0][1]-bboxMin[1]);
+            if (numPoints===1){
+               ctx.lineTo(this._Points[0][0]-bboxMin[0], this._Points[0][1]-bboxMin[1]+0.01);
+            }
             for (var i=1;i<numPoints;i++){
                 ctx.lineTo(this._Points[i][0]-bboxMin[0], this._Points[i][1]-bboxMin[1]);
             }
-            ctx.lineCap = "round";
-            ctx.lineJoin="round";
-            ctx.lineWidth=l+1;
-            ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
+
+            ctx.lineWidth=2*l+minStrokeWidth;
             ctx.stroke();
         }
 

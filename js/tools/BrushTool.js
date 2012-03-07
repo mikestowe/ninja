@@ -88,6 +88,12 @@ exports.BrushTool = Montage.create(ShapeTool, {
                         strokeHardness = ShapesController.GetValueInPixels(this.options.strokeHardness.value, this.options.strokeHardness.units);
                     }
                     this._selectedBrushStroke.setStrokeHardness(strokeHardness);
+
+                    var doSmoothing = false;
+                    if (this.options.doSmoothing){
+                        doSmoothing = this.options.doSmoothing.value;
+                    }
+                    this._selectedBrushStroke.setDoSmoothing(doSmoothing);
                 }
                 NJevent("enableStageMove");//stageManagerModule.stageManager.enableMouseMove();
             } //value: function (event) {

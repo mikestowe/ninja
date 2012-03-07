@@ -14,5 +14,8 @@ exports.BrushProperties = Montage.create(ToolProperties, {
     },
     strokeHardness: {
         get: function() { return this._strokeHardness; }
+    },
+    doSmoothing:{
+        get: function() {return this._doSmoothing; }
     }
 });
