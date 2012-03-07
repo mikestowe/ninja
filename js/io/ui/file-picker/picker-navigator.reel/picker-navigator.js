@@ -347,7 +347,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
             var temp = new String(uri);
             while(temp.indexOf("/") != -1){
 
-                if(temp === this.pickerModel.currentLogicalDrive){//stop at the logical drive
+                if(""+temp === this.pickerModel.currentLogicalDrive){//stop at the logical drive
                     break;
                 }
 
