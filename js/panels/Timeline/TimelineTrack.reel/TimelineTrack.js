@@ -345,6 +345,41 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     _styleCollapser:{
         value:null
     },
+
+    _trackData:{
+
+    },
+
+    trackData:{
+        serializable:true,
+        get:function(){
+            return this._trackData;
+        },
+        set:function(val){
+            this._trackData = val;
+            this.setData();
+        }
+    },
+
+    setData:{
+        value:function(){
+            this.trackID = this.trackData.layerID;
+            this.tweens = this.trackData.tweens;
+            this.animatedElement = this.trackData.animatedElement;
+            this.arrStyleTracks = this.trackData.arrStyleTracks;
+            this.isTrackAnimated = this.trackData.isTrackAnimated;
+            this.trackDuration = this.trackData.trackDuration;
+            this.animationName = this.trackData.animationName;
+            this.currentKeyframeRule = this.trackData.currentKeyframeRule;
+            this.isMainCollapsed = this.trackData.isMainCollapsed;
+            this.isPositionCollapsed = this.trackData.isPositionCollapsed;
+            this.isTransformCollapsed = this.trackData.isTransformCollapsed;
+            this.bypassAnimation = this.trackData.bypassAnimation;
+            this.isStyleCollapsed = this.trackData.isStyleCollapsed;
+            this.trackPosition = this.trackData.trackPosition;
+        }
+    },
+
     prepareForDraw:{
         value:function () {
             this.init();
@@ -378,7 +413,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             if(!this.application.ninja.documentController.creatingNewFile){
                 if(this.application.ninja.currentDocument.documentRoot.children[0]){
                     var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
-                     if(!this.application.ninja.timeline.arrLayers[selectedIndex].created){
+                     if(!this.application.ninja.timeline.arrLayers[selectedIndex].layerData.created){
                         this.retrieveStoredTweens();
                      }
                 }
@@ -394,7 +429,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
 
             if (ev.shiftKey) {
-                if (this.application.ninja.timeline.arrLayers[selectedIndex].elementsList.length == 1) {
+                if (this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList.length == 1) {
                     if (this.tweens.length < 1) {
                         this.insertTween(0);
                         this.addAnimationRuleToElement(ev);
@@ -430,7 +465,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             newTween.tweenData = {};
 
             if (clickPos == 0) {
-                this.animatedElement = this.application.ninja.timeline.currentLayerSelected.elementsList[0];
+                this.animatedElement = this.application.ninja.timeline.currentLayerSelected.layerData.elementsList[0];
                 newTween.tweenData.spanWidth = 0;
                 newTween.tweenData.keyFramePosition = 0;
                 newTween.tweenData.keyFrameMillisec = 0;
@@ -472,8 +507,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             var currentMilliSec,currentMilliSecPerPixel,clickPosition,tempTiming,tempTimingFloat,trackTiming,i = 0;
 
             var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
-            this.application.ninja.timeline.arrLayers[selectedIndex].created=true;
-            this.animatedElement = this.application.ninja.timeline.arrLayers[selectedIndex].elementsList[0];
+            this.application.ninja.timeline.arrLayers[selectedIndex].layerData.created=true;
+            this.animatedElement = this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList[0];
             if(this.animatedElement!==undefined){
                 this.animationName = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-name");
                 if(this.animationName){

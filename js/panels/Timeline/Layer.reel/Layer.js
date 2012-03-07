@@ -38,13 +38,11 @@ var Layer = exports.Layer = Montage.create(Component, {
     _arrLayerStyles : {
     	serializable: true,
 		enumerable: true,
-        serializable: true,
 	    value: []
     },
     arrLayerStyles : {
     	serializable: true,
         enumerable: true,
-        serializable: true,
     	get: function() {
     		return this._arrLayerStyles;
     	},
@@ -386,7 +384,44 @@ var Layer = exports.Layer = Montage.create(Component, {
     		this._bypassAnimation = newVal;
     	}
     },
-    
+
+    _layerData:{
+        serializable:true,
+        value:{}
+    },
+
+    layerData:{
+        serializable:true,
+        get:function(){
+            return this._layerData;
+        },
+        set:function(val){
+            this._layerData = val;
+            this.setData();
+        }
+    },
+
+    setData:{
+        value:function(){
+            this.layerName = this.layerData.layerName;
+            this.layerID = this.layerData.layerID;
+            this.arrLayerStyles = this.layerData.arrLayerStyles;
+            this.isMainCollapsed = this.layerData.isMainCollapsed;
+            this.isPositionCollapsed = this.layerData.isPositionCollapsed;
+            this.isTransformCollapsed = this.layerData.isTransformCollapsed;
+            this.isSelected = this.layerData.isSelected;
+            this.isActive = this.layerData.isActive;
+            this.isStyleCollapsed = this.layerData.isStyleCollapsed;
+            this.bypassAnimation = this.layerData.bypassAnimation;
+            this.dtextPositionX = this.layerData.dtextPositionX;
+            this.dtextPositionY = this.layerData.dtextPositionY;
+            this.dtextSkewX = this.layerData.dtextSkewX;
+            this.dtextSkewY = this.layerData.dtextSkewY;
+            this.dtextScaleX = this.layerData.dtextScaleX;
+            this.dtextScaleY = this.layerData.dtextScaleY;
+            this.dtextRotate = this.layerData.dtextRotate;
+        }
+    },
 
 	/* END: Models */
 
