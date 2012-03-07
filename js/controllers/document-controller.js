@@ -61,7 +61,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             this.eventManager.addEventListener("executeSaveAs", this, false);
             this.eventManager.addEventListener("executeSaveAll", this, false);
 
-            this.eventManager.addEventListener("recordStyleChanged", this, false);
+            this.eventManager.addEventListener("styleSheetDirty", this, false);
             
         }
     },
@@ -168,6 +168,10 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     	value: function (result) {
     		if(result.status === 204){
                 this.activeDocument.needsSave = false;
+                if(this.application.ninja.currentDocument !== null){
+                    //clear Dirty StyleSheets for the saved document
+                    this.application.ninja.stylesController.clearDirtyStyleSheets(this.application.ninja.currentDocument);
+                }
             }
     	}
     },
@@ -249,6 +253,15 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     },
 	////////////////////////////////////////////////////////////////////
 	//
+    saveAsCallback:{
+        value:function(){
+            //close current document
+
+            //create a new file
+        }
+    },
+
+    ////////////////////////////////////////////////////////////////////
 	openDocument: {
 		value: function(doc) {
 			
@@ -506,5 +519,11 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value: function() {
             return "userDocument_" + (this._iframeCounter++);
         }
+    },
+
+    handleStyleSheetDirty:{
+        value:function(){
+            this.activeDocument.needsSave = true;
         }
+    }
 });
