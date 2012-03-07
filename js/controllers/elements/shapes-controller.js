@@ -261,28 +261,37 @@ exports.ShapesController = Montage.create(CanvasController, {
 
     _setGradientMaterial: {
         value: function(el, gradientMode, isFill) {
-            var m = "LinearGradientMaterial";
+            var m = "LinearGradientMaterial",
+                fm;
             if(gradientMode === "radial")
             {
                 m = "RadialGradientMaterial";
             }
 
-            if(el.elementModel.shapeModel.fillMaterial.getName() !== m)
+            if(isFill)
             {
-                var fm = Object.create(MaterialsModel.getMaterial(m));
-                if(fm)
+                if(el.elementModel.shapeModel.fillMaterial.getName() !== m)
                 {
-                    if(isFill)
+                    fm = Object.create(MaterialsModel.getMaterial(m));
+                    if(fm)
                     {
                         el.elementModel.shapeModel.GLGeomObj.setFillMaterial(fm);
                         el.elementModel.shapeModel.fillMaterial = fm;
+                        el.elementModel.shapeModel.GLGeomObj.buildBuffers();
                     }
-                    else
+                }
+            }
+            else
+            {
+                if(el.elementModel.shapeModel.strokeMaterial.getName() !== m)
+                {
+                    fm = Object.create(MaterialsModel.getMaterial(m));
+                    if(fm)
                     {
                         el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(fm);
                         el.elementModel.shapeModel.strokeMaterial = fm;
+                        el.elementModel.shapeModel.GLGeomObj.buildBuffers();
                     }
-                    el.elementModel.shapeModel.GLGeomObj.buildBuffers();
                 }
             }
         }

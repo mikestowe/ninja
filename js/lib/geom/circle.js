@@ -442,16 +442,43 @@ var Circle = function GLCircle() {
 		var bezPts = MathUtils.circularArcToBezier( [0,0,0], [1,0,0], 2.0*Math.PI );
 		if (bezPts) {
 			var n = bezPts.length;
+            var gradient,
+                colors,
+                len,
+                j,
+                position,
+                cs,
+                c;
 
 			// set up the fill style
 			ctx.beginPath();
 			ctx.lineWidth = 0;
 			if (this._fillColor) {
-				var c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";  
-				ctx.fillStyle = c;
+                if(this._fillColor.gradientMode) {
+                    if(this._fillColor.gradientMode === "radial") {
+                        gradient = ctx.createRadialGradient(xCtr, yCtr, 0,
+                                                            xCtr, yCtr, yScale);
+                    } else {
+                        gradient = ctx.createLinearGradient(0, this._height/2, this._width, this._height/2);
+                    }
+                    colors = this._fillColor.color;
 
+                    len = colors.length;
+
+                    for(j=0; j<len; j++) {
+                        position = colors[j].position/100;
+                        cs = colors[j].value;
+                        gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+                    }
+
+                    ctx.fillStyle = gradient;
+
+                } else {
+                    c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";
+                    ctx.fillStyle = c;
+                }
 				// draw the fill
-				ctx.beginPath();
+//				ctx.beginPath();
 				var p = MathUtils.transformPoint( bezPts[0],   mat );
 				ctx.moveTo( p[0],  p[1] );
 				var index = 1;
@@ -504,9 +531,29 @@ var Circle = function GLCircle() {
 			ctx.beginPath();
 			ctx.lineWidth	= lineWidth;
 			if (this._strokeColor) {
-				var c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";  
-				ctx.strokeStyle = c;
-			
+                if(this._strokeColor.gradientMode) {
+                    if(this._strokeColor.gradientMode === "radial") {
+                        gradient = ctx.createRadialGradient(xCtr, yCtr, yScale,
+                                                            xCtr, yCtr, 0.5*this._height);
+                    } else {
+                        gradient = ctx.createLinearGradient(0, this._height/2, this._width, this._height/2);
+                    }
+                    colors = this._strokeColor.color;
+
+                    len = colors.length;
+
+                    for(j=0; j<len; j++) {
+                        position = colors[j].position/100;
+                        cs = colors[j].value;
+                        gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+                    }
+
+                    ctx.strokeStyle = gradient;
+
+                } else {
+                    c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";
+                    ctx.strokeStyle = c;
+                }
 				// draw the stroke
 				p = MathUtils.transformPoint( bezPts[0],   mat );
 				ctx.moveTo( p[0],  p[1] );
