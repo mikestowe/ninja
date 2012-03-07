@@ -363,14 +363,23 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                     nextDocumentIndex = closeDocumentIndex - 1;
                 }
                 this.application.ninja.stage.stageView.switchDocument(this._documents[nextDocumentIndex]);
+                doc.stopVideos();
                 this._removeDocumentView(doc.container);
             }else if(this._documents.length === 0){
+                if(typeof this.activeDocument.pauseVideos !== "undefined"){
+                    this.activeDocument.pauseVideos(true);
+                }
                 this.activeDocument = null;
                 this._removeDocumentView(doc.container);
                 this.application.ninja.stage.stageView.hideRulers();
                 document.getElementById("iframeContainer").style.display="block";
 
                 this.application.ninja.stage.hideCanvas(true);
+            }else{//closing inactive document tab - just clear DOM
+                if(typeof doc.pauseVideos !== "undefined"){
+                    doc.pauseVideos(true);
+                }
+                this._removeDocumentView(doc.container);
             }
 
             NJevent("closeDocument", doc.uri);
