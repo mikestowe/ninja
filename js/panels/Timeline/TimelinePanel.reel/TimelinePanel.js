@@ -217,9 +217,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     prepareForDraw:{
         value:function () {
             this.initTimeline();
-            this.eventManager.addEventListener("onOpenDocument", this, false);
-            this.eventManager.addEventListener("closeDocument", this, false);
-            this.eventManager.addEventListener("switchDocument", this, false);
+            // Bind the event handler for the document change events
+			this.eventManager.addEventListener("onOpenDocument", this.handleDocumentChange.bind(this), false);
+            this.eventManager.addEventListener("closeDocument", this.handleDocumentChange.bind(this), false);
+            this.eventManager.addEventListener("switchDocument", this.handleDocumentChange.bind(this), false);
         }
     },
 
@@ -382,7 +383,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     	}
     },
 
-	handleOnOpenDocument:{
+	handleDocumentChange:{
 		value:function(){
 			this._boolCacheArrays = false;
         	this.clearTimelinePanel();
@@ -394,19 +395,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.hashElementMapToLayer = this.createElementMapToLayer();
             this.initTimelineForDocument();
         }
-    },
-    
-    handleCloseDocument: {
-    	value: function(event) {
-    		this.clearTimelinePanel();
-    	}
-    },
-    
-    handleSwitchDocument : {
-    	value: function(event) {
-    		// Handle document change.
-    		this.handleOnOpenDocument();
-    	}
     },
 
     updateTrackContainerWidth:{
