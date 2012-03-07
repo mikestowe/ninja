@@ -410,7 +410,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     handleNewTween:{
         value:function (ev) {
-            if (ev.offsetX > this.tweens[this.tweens.length - 1].keyFramePosition) {
+            if (ev.offsetX > this.tweens[this.tweens.length - 1].tweenData.keyFramePosition) {
                 this.insertTween(ev.offsetX);
             } else {
                 this.splitTween(ev);
@@ -427,27 +427,28 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             // need to check timeline master duration if greater than this track duration
             this.trackDuration = currentMillisec;
             var newTween = {};
+            newTween.tweenData = {};
 
             if (clickPos == 0) {
                 this.animatedElement = this.application.ninja.timeline.currentLayerSelected.elementsList[0];
-                newTween.spanWidth = 0;
-                newTween.keyFramePosition = 0;
-                newTween.keyFrameMillisec = 0;
-                newTween.tweenID = 0;
-                newTween.spanPosition = 0;
-                newTween.tweenedProperties = [];
-                newTween.tweenedProperties["top"] = this.animatedElement.offsetTop;
-                newTween.tweenedProperties["left"] = this.animatedElement.offsetLeft;
+                newTween.tweenData.spanWidth = 0;
+                newTween.tweenData.keyFramePosition = 0;
+                newTween.tweenData.keyFrameMillisec = 0;
+                newTween.tweenData.tweenID = 0;
+                newTween.tweenData.spanPosition = 0;
+                newTween.tweenData.tweenedProperties = [];
+                newTween.tweenData.tweenedProperties["top"] = this.animatedElement.offsetTop;
+                newTween.tweenData.tweenedProperties["left"] = this.animatedElement.offsetLeft;
                 this.tweens.push(newTween);
             } else {
-                newTween.spanWidth = clickPos - this.tweens[this.tweens.length - 1].keyFramePosition;
-                newTween.keyFramePosition = clickPos;
-                newTween.keyFrameMillisec = currentMillisec;
-                newTween.tweenID = this.nextKeyframe;
-                newTween.spanPosition = clickPos - newTween.spanWidth;
-                newTween.tweenedProperties = [];
-                newTween.tweenedProperties["top"] = this.animatedElement.offsetTop;
-                newTween.tweenedProperties["left"] = this.animatedElement.offsetLeft;
+                newTween.tweenData.spanWidth = clickPos - this.tweens[this.tweens.length - 1].tweenData.keyFramePosition;
+                newTween.tweenData.keyFramePosition = clickPos;
+                newTween.tweenData.keyFrameMillisec = currentMillisec;
+                newTween.tweenData.tweenID = this.nextKeyframe;
+                newTween.tweenData.spanPosition = clickPos - newTween.tweenData.spanWidth;
+                newTween.tweenData.tweenedProperties = [];
+                newTween.tweenData.tweenedProperties["top"] = this.animatedElement.offsetTop;
+                newTween.tweenData.tweenedProperties["left"] = this.animatedElement.offsetLeft;
                 this.tweens.push(newTween);
 
                 // update the animation duration
@@ -483,6 +484,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
                     for (i =0; this.currentKeyframeRule[i] ;i++) {
                         var newTween = {};
+                        newTween.tweenData = {};
 
                         offsetAttribute = this.currentKeyframeRule[i].cssText.split(" ");
                         topOffSetAttribute = offsetAttribute[3].split("px");
@@ -492,14 +494,14 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                         var tempLeftOffset =parseInt(leftOffsetAttribute[0]);
 
                         if (this.currentKeyframeRule[i].keyText === "0%") {
-                            newTween.spanWidth = 0;
-                            newTween.keyFramePosition = 0;
-                            newTween.keyFrameMillisec = 0;
-                            newTween.tweenID = 0;
-                            newTween.spanPosition = 0;
-                            newTween.tweenedProperties = [];
-                            newTween.tweenedProperties["top"] = tempTopOffset;
-                            newTween.tweenedProperties["left"] = tempLeftOffset;
+                            newTween.tweenData.spanWidth = 0;
+                            newTween.tweenData.keyFramePosition = 0;
+                            newTween.tweenData.keyFrameMillisec = 0;
+                            newTween.tweenData.tweenID = 0;
+                            newTween.tweenData.spanPosition = 0;
+                            newTween.tweenData.tweenedProperties = [];
+                            newTween.tweenData.tweenedProperties["top"] = tempTopOffset;
+                            newTween.tweenData.tweenedProperties["left"] = tempLeftOffset;
                             this.tweens.push(newTween);
                         }
                         else {
@@ -512,14 +514,14 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                             currentMilliSec = fraction * this.trackDuration;
                             currentMilliSecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
                             clickPosition = currentMilliSec / currentMilliSecPerPixel;
-                            newTween.spanWidth = clickPosition - this.tweens[this.tweens.length - 1].keyFramePosition;
-                            newTween.keyFramePosition = clickPosition;
-                            newTween.keyFrameMillisec = currentMilliSec;
-                            newTween.tweenID = this.nextKeyframe;
-                            newTween.spanPosition =clickPosition - newTween.spanWidth;
-                            newTween.tweenedProperties=[];
-                            newTween.tweenedProperties["top"] = tempTopOffset;
-                            newTween.tweenedProperties["left"] = tempLeftOffset;
+                            newTween.tweenData.spanWidth = clickPosition - this.tweens[this.tweens.length - 1].tweenData.keyFramePosition;
+                            newTween.tweenData.keyFramePosition = clickPosition;
+                            newTween.tweenData.keyFrameMillisec = currentMilliSec;
+                            newTween.tweenData.tweenID = this.nextKeyframe;
+                            newTween.tweenData.spanPosition =clickPosition - newTween.tweenData.spanWidth;
+                            newTween.tweenData.tweenedProperties=[];
+                            newTween.tweenData.tweenedProperties["top"] = tempTopOffset;
+                            newTween.tweenData.tweenedProperties["left"] = tempLeftOffset;
                             this.tweens.push(newTween);
                         }
                         this.nextKeyframe += 1;
@@ -532,8 +534,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     addAnimationRuleToElement:{
         value:function (tweenEvent) {
-            this.tweens[0].tweenedProperties["top"] = this.animatedElement.offsetTop;
-            this.tweens[0].tweenedProperties["left"] = this.animatedElement.offsetLeft;
+            this.tweens[0].tweenData.tweenedProperties["top"] = this.animatedElement.offsetTop;
+            this.tweens[0].tweenData.tweenedProperties["left"] = this.animatedElement.offsetLeft;
             var animationDuration = Math.round(this.trackDuration / 1000) + "s";
             this.animationName = "animation_" + this.animatedElement.classList[0];
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-name", this.animationName);
@@ -557,13 +559,13 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             var keyframeString = "@-webkit-keyframes " + this.animationName + " {";
 
             for (var i = 0; i < this.tweens.length; i++) {
-                var keyMill = parseInt(this.tweens[i].keyFrameMillisec);
+                var keyMill = parseInt(this.tweens[i].tweenData.keyFrameMillisec);
                 // TODO - trackDur should be parseFloat rounded to significant digits
                 var trackDur = parseInt(this.trackDuration);
                 var keyframePercent = Math.round((keyMill / trackDur) * 100) + "%";
                 var keyframePropertyString = " " + keyframePercent + " {";
-                for(var prop in this.tweens[i].tweenedProperties){
-                    keyframePropertyString += prop + ": " + this.tweens[i].tweenedProperties[prop] + "px;";
+                for(var prop in this.tweens[i].tweenData.tweenedProperties){
+                    keyframePropertyString += prop + ": " + this.tweens[i].tweenData.tweenedProperties[prop] + "px;";
                 }
                 keyframePropertyString += "}";
                 keyframeString += keyframePropertyString;

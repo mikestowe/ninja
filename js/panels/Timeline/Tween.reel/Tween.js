@@ -14,6 +14,22 @@ var Tween = exports.Tween = Montage.create(Component, {
         value: true
     },
 
+    _tweenData:{
+        serializable: true,
+        value:{}
+    },
+
+    tweenData:{
+        serializable: true,
+        get:function(){
+            return this._tweenData;
+        },
+        set:function(val){
+            this._tweenData = val;
+            this.setData();
+        }
+    },
+
     _spanWidth: {
         serializable: true,
         value: 0
@@ -118,21 +134,6 @@ var Tween = exports.Tween = Montage.create(Component, {
             this.needsDraw = true;
         }
     },
-    
-    _isClearing : {
-    	serializable: true,
-    	value: false
-    },
-    isClearing : {
-    	get: function() {
-    		return this._isClearing;
-    	},
-    	set: function(newVal) {
-    		if (newVal === "clear it") {
-    			this.eventManager.removeEventListener("elementChange", this, false);
-    		}
-    	}
-    },
 
     draw:{
         value:function () {
@@ -142,6 +143,18 @@ var Tween = exports.Tween = Montage.create(Component, {
             if(this.isTweenAnimated){
                 this.tweenspan.highlightSpan();
             }
+        }
+    },
+
+    setData:{
+        value:function(){
+            this.spanWidth = this.tweenData.spanWidth;
+            this.keyFramePosition = this.tweenData.keyFramePosition;
+            this.spanPosition = this.tweenData.spanPosition;
+            this.keyFrameMillisec = this.tweenData.keyFrameMillisec;
+            this.tweenID = this.tweenData.tweenID;
+            this.tweenedProperties = this.tweenData.tweenedProperties;
+            this.isTweenAnimated = this.tweenData.isTweenAnimated;
         }
     },
 
