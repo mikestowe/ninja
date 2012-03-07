@@ -81,7 +81,7 @@ exports.PanelContainer = Montage.create(Component, {
      
     handleResize: {
          value: function(e) {
-            this._setPanelsSizes(null);
+            this._redrawPanels(null, true);
         }
     },
  
@@ -104,8 +104,6 @@ exports.PanelContainer = Montage.create(Component, {
                 // switch panels
                 this.panels[droppedIndex].element.parentNode.insertBefore(this.panels[draggedIndex].element, this.panels[droppedIndex].element);
             }
-
-            this._setPanelsSizes(null);
         }
     },
  
@@ -133,7 +131,10 @@ exports.PanelContainer = Montage.create(Component, {
                 setLocked = false;
             }
 
-            var childrensMinHeights = ((len - 1) * 26) + panelActivated.minHeight;
+            var childrensMinHeights = (len * 26);
+            if (panelActivated) {
+                childrensMinHeights+= panelActivated.minHeight -26;
+            }
 
             for(var i = 0; i < len; i++) {
                 var obj = this['panel_'+i];
@@ -169,25 +170,27 @@ exports.PanelContainer = Montage.create(Component, {
             var unlockPanels = true;
             var afterPanel = false;
             var panelName = e.target.parentComponent.name;
+
+            this.panels.forEach(function(obj) {
+                if(afterPanel) {
+                    if(obj.flexible && obj.collapsed === false) {
+                        unlockPanels = false;
+                    }
+                }
+                if (obj.name === panelName) {
+                    afterPanel = true;
+                }
+            });
+
             switch(e.target.identifier) {
                 case "btnCollapse":
                     this.currentPanelState[e.target.parentComponent.name].collapsed = e.target.parentComponent.collapsed;
                     this.application.localStorage.setItem("panels", this.currentPanelState);
-                    this._setPanelsSizes(e.target.parentComponent);
+                    //this._setPanelsSizes(e.target.parentComponent);
                     this._redrawPanels(e.target.parentComponent, unlockPanels);
                     break;
                 case "btnClose":
-                    this.panelController.content.forEach(function(obj) {
-                        if(afterPanel) {
-                            if(obj.flexible) {
-                                unlockPanels = false;
-                            }
-                        }
-                        if (obj.name === panelName) {
-                            afterPanel = true;
-                            this.panelController.removeObjects(obj);
-                        }
-                    });
+                    //this.panelController.removeObjects(obj);
                     this._redrawPanels(e.target.parentComponent, unlockPanels);
                     break;
             }
