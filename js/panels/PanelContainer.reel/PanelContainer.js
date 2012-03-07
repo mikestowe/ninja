@@ -133,7 +133,9 @@ exports.PanelContainer = Montage.create(Component, {
 
             var childrensMinHeights = (len * 26);
             if (panelActivated) {
-                childrensMinHeights+= panelActivated.minHeight -26;
+                if (!panelActivated.collapsed) {
+                    childrensMinHeights+= panelActivated.minHeight -26;
+                }
             }
 
             for(var i = 0; i < len; i++) {
