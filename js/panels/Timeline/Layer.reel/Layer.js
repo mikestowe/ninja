@@ -108,7 +108,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     /* Position and Transform hottext values */
     _dtextPositionX : {
         value:null,
-    	serializable: true,
+    	serializable: true
     },
 
     dtextPositionX:{
@@ -127,7 +127,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     
     _dtextPositionY : {
         value:null,
-    	serializable: true,
+    	serializable: true
     },
 
     dtextPositionY:{
@@ -146,7 +146,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     
     _dtextScaleX : {
         value:null,
-    	serializable: true,
+    	serializable: true
     },
 
     dtextScaleX:{
@@ -165,7 +165,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     
     _dtextScaleY : {
         value:null,
-    	serializable: true,
+    	serializable: true
     },
 
     dtextScaleY:{
@@ -184,7 +184,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     
     _dtextSkewX : {
         value:null,
-    	serializable: true,
+    	serializable: true
     },
 
     dtextSkewX:{
@@ -203,7 +203,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     
     _dtextSkewY : {
         value:null,
-    	serializable: true,
+    	serializable: true
     },
 
     dtextSkewY:{
@@ -222,7 +222,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     
     _dtextRotate : {
         value:null,
-    	serializable: true,
+    	serializable: true
     },
 
     dtextRotate:{
@@ -397,7 +397,9 @@ var Layer = exports.Layer = Montage.create(Component, {
         },
         set:function(val){
             this._layerData = val;
-            this.setData();
+            if(this._layerData){
+                this.setData();
+            }
         }
     },
 

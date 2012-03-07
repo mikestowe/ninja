@@ -499,7 +499,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     this._firstTimeLoaded = false;
                 } else {
                     this.arrLayers.length = 0;
-                    this.arrTracks.length = 0;
                     this.hashKey = node.uuid;
 
                     if (this.returnedObject = this.hashInstance.getItem(this.hashKey)) {
