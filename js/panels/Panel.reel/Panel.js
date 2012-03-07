@@ -9,31 +9,52 @@ var Component = require("montage/ui/component").Component;
 
 exports.Panel = Montage.create(Component, {
 
-    name: { value: "Panel" },
-    collapsedHeight: {value: 26},
-    _collapsed: {value: false},
-    _height: { value: 200 },
-    minHeight: {value: 200 },
-    maxHeight: { value: null},
-    flexible: {value: true},
-    _locked: { value: false},
-    isResizing: {value: false },
-    resizer: {value: null },
-    modulePath: {value: null},
-    moduleName: {value: null},
-    _contentComponent: {value: null},
+    name: {
+        value: "Panel"
+    },
 
-    contentComponent: {
-        get: function() {
-            return this._contentComponent;
-        },
-        set: function(val) {
-            if (val !== null && val !== this._contentComponent) {
-                this.panelContent.content = val;
-                this.panelContent.needsDraw = true;
-                this._contentComponent = val;
-            }
-        }
+    _collapsed: {
+        value: false
+    },
+
+    _height: {
+        value: 200
+    },
+
+    minHeight: {
+        value: 200
+    },
+
+    maxHeight: {
+        value: null
+    },
+
+    flexible: {
+        value: true
+    },
+
+    _locked: {
+        value: false
+    },
+
+    isResizing: {
+        value: false
+    },
+
+    _resizedHeight: {
+        value: 0
+    },
+
+    resizer: {
+        value: null
+    },
+
+    modulePath: {
+        value: null
+    },
+
+    moduleName: {
+        value: null
     },
 
     collapsed: {
@@ -63,10 +84,6 @@ exports.Panel = Montage.create(Component, {
         }
     },
 
-    _resizedHeight: {
-        value: 0
-    },
-
     locked: {
         get: function() {
             return this._locked;
@@ -94,17 +111,20 @@ exports.Panel = Montage.create(Component, {
 
     prepareForDraw: {
         value: function() {
-            //TODO: This line should not be here this line hits each time a panel is loaded. Will Need to move to instance call;
-            this.application.ninja.colorController.colorView = this.application.ninja.colorController.colorPanelBase.create();
-            var myContent;
-            var that = this;
+            if(this.name === "Color") {
+                this.application.ninja.colorController.colorView = this.application.ninja.colorController.colorPanelBase.create();
+            }
 
-            myContent = require.async(this.modulePath)
-                .then(function(panelContent) {
-                    var componentRequire = panelContent[that.moduleName];
-                    that.contentComponent = componentRequire.create();
-                })
-                .end();
+            if(this.modulePath && this.moduleName) {
+                // Load the slot content
+                var that = this;
+                require.async(this.modulePath)
+                    .then(function(panelContent) {
+                        var componentRequire = panelContent[that.moduleName];
+                        that.panelContent.content = componentRequire.create();
+                    })
+                    .end();
+            }
         }
     },
 

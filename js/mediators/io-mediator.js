@@ -153,7 +153,7 @@ exports.IoMediator = Montage.create(Component, {
     		switch (file.mode) {
     			case 'html':
     				//Copy webGL library if needed
-    				if (file.webgl.length > 0) {
+    				if (file.webgl && file.webgl.length > 0) {
     					for (var i in this.application.ninja.coreIoApi.ninjaLibrary.libs) {
 		    				//Checking for RDGE library to be available
 		    				if (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'RDGE') {
@@ -335,7 +335,11 @@ exports.IoMediator = Montage.create(Component, {
     								cleanedCss = dirtyCss.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaUrl.bind(this));
     							  	
     							function parseNinjaUrl (url) {
-    								return this.getUrlfromNinjaUrl(url, fileRootUrl, fileUrl);
+    								if (url.indexOf(this.application.ninja.coreIoApi.rootUrl) !== -1) {
+    									return this.getUrlfromNinjaUrl(url, fileRootUrl, fileUrl);
+    								} else {
+    									return url;
+    								}
     							}
     							
     							///////////////////////////////////////////////////////////////////////////////////////////
@@ -353,7 +357,7 @@ exports.IoMediator = Montage.create(Component, {
     			}
     		}
     		//Checking for webGL elements in document
-    		if (template.webgl.length) {
+    		if (template.webgl && template.webgl.length) {
     			//
     			var json, matchingtags = [], webgltag, scripts = template.document.content.document.getElementsByTagName('script');
     			//

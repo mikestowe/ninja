@@ -7,6 +7,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage,
     Component   = require("montage/ui/component").Component;
 var Button = 			require("js/components/button.reel").Button;
+var MaterialsModel = require("js/models/materials-model").MaterialsModel;
 
 ////////////////////////////////////////////////////////////////////////
 //Exporting as MaterialsPopup
@@ -223,7 +224,7 @@ exports.MaterialsPopup = Montage.create(Component, {
 					(materialID ===  "RadialGradientMaterial")
 				)
 			{
-				var material = MaterialsLibrary.getMaterial( materialID );
+				var material = MaterialsModel.getMaterial( materialID );
 				if (material)
 				{
 					this._material = material;

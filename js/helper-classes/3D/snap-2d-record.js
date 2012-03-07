@@ -78,7 +78,7 @@ var Snap2DRecord = exports.Snap2DRecord = Object.create(Object.prototype,
 
             // add the center point
             var xCtr = 0.5*(bounds[0][0] + bounds[3][0]),  yCtr = 0.5*(bounds[0][1] + bounds[1][1]);
-            var ctr = Vector.create( [xCtr, yCtr, 0] );
+            var ctr = [xCtr, yCtr, 0];
             this._screenPtArray[4] = viewUtils.localToGlobal( ctr,  elt );
             var worldPt = viewUtils.localToStageWorld( ctr, elt );
             this._alignPtArray[4] = MathUtils.transformPoint( worldPt, snapManager.SnapManager._worldToDragPlane );

@@ -437,8 +437,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 	            	} else if (prop.indexOf('url') !== -1) { //From CSS property
     	        		//TODO: Add functionality
     	        		var docRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
-    	        		prop = prop.replace(/[^()\\""\\'']+/g, test);
-    	        		function test (s) {
+    	        		prop = prop.replace(/[^()\\""\\'']+/g, cssUrlToNinjaUrl);
+    	        		function cssUrlToNinjaUrl (s) {
     	        			if (s !== 'url') {
     	        				s = docRootUrl + s;
     	        			}
@@ -570,8 +570,22 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 								}
 								//
 								fileCouldDirUrl = this._document.styleSheets[i].href.split(this._document.styleSheets[i].href.split('/')[this._document.styleSheets[i].href.split('/').length-1])[0];
-								prefixUrl = 'url('+fileCouldDirUrl; //This should be re-written with better RegEx
-								tag.innerHTML = cssData.content.replace(/url\(/gi, prefixUrl);
+								
+								tag.innerHTML = cssData.content.replace(/url\(()(.+?)\1\)/g, detectUrl);
+								
+								function detectUrl (prop) {
+									return prop.replace(/[^()\\""\\'']+/g, prefixUrl);;
+								}
+								
+								function prefixUrl (url) {
+									if (url !== 'url') {
+										if (!url.match(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi)) {
+											url = fileCouldDirUrl+url;
+										}
+									}
+									return url;
+								}
+								
 								//Looping through DOM to insert style tag at location of link element
 								query = this._templateDocument.html.querySelectorAll(['link']);
 								for (var j in query) {
@@ -770,7 +784,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             			}
             		}
             	}
-    			return {mode: 'html', document: this._userDocument, webgl: this.glData, styles: styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
+    			//return {mode: 'html', document: this._userDocument, webgl: this.glData, styles: styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
+    			return {mode: 'html', document: this._userDocument, styles: styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
     		} else if (this.currentView === "code"){
     			//TODO: Would this get call when we are in code of HTML?
     		} else {
@@ -793,7 +808,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             			}
             		}
             	}
-    			return {mode: 'html', document: this._userDocument, webgl: this.glData, css: css, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
+    			//return {mode: 'html', document: this._userDocument, webgl: this.glData, css: css, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
+    			return {mode: 'html', document: this._userDocument, css: css, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
     		} else if (this.currentView === "code"){
     			//TODO: Would this get call when we are in code of HTML?
     		} else {
