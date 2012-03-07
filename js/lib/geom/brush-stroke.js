@@ -32,6 +32,8 @@ var BrushStroke = function GLBrushStroke() {
     //stroke information
     this._strokeWidth = 0.0;
     this._strokeColor = [0.4, 0.4, 0.4, 1.0];
+    this._secondStrokeColor = this._strokeColor;
+    this._strokeHardness = 100;
     this._strokeMaterial = null;
     this._strokeStyle = "Solid";
 
@@ -114,7 +116,7 @@ var BrushStroke = function GLBrushStroke() {
         //add the point only if it is some epsilon away from the previous point
         var numPoints = this._Points.length;
         if (numPoints>0) {
-            var threshold = this._WETNESS_FACTOR*this._strokeWidth;
+            var threshold = 1;//this._WETNESS_FACTOR*this._strokeWidth;
             var prevPt = this._Points[numPoints-1];
             var diffPt = [prevPt[0]-pt[0], prevPt[1]-pt[1]];
             var diffPtMag = Math.sqrt(diffPt[0]*diffPt[0] + diffPt[1]*diffPt[1]);
@@ -173,6 +175,14 @@ var BrushStroke = function GLBrushStroke() {
         this._strokeColor = c;
     };
 
+    this.setSecondStrokeColor = function(c){
+        this._secondStrokeColor=c;
+    }
+
+    this.setStrokeHardness = function(h){
+        this._strokeHardness=h;
+    }
+
     this.getStrokeStyle = function () {
         return this._strokeStyle;
     };
@@ -219,7 +229,8 @@ var BrushStroke = function GLBrushStroke() {
             var numPoints = this._Points.length;
 
             //**** add samples to the path if needed...linear interpolation for now
-            if (numPoints>1) {
+            //if (numPoints>1) {
+            if (0){
                 var threshold = this._WETNESS_FACTOR*this._strokeWidth;
                 var prevPt = this._Points[0];
                 var prevIndex = 0;
@@ -249,6 +260,44 @@ var BrushStroke = function GLBrushStroke() {
                         break;
                     }
                 }
+            }
+            //**** add samples to the long sections of the path --- Catmull-Rom spline interpolation
+            if (numPoints>1) {
+                var numInsertedPoints = 0;
+                var threshold = 5;//0.25*this._strokeWidth; //this determines whether a segment between two sample is too long
+                var prevPt = this._Points[0];
+                for (var i=1;i<numPoints;i++){
+                    var pt = this._Points[i];
+                    var diff = [pt[0]-prevPt[0], pt[1]-prevPt[1]];
+                    var distance = Math.sqrt(diff[0]*diff[0]+diff[1]*diff[1]);
+                    if (distance>threshold){
+                        //build the control polygon for the Catmull-Rom spline (prev. 2 points and next 2 points)
+                        var prev = (i===1) ? i-1 : i-2;
+                        var next = (i===numPoints-1) ? i : i+1;
+                        var ctrlPts = [this._Points[prev], this._Points[i-1], this._Points[i], this._Points[next]];
+                        //insert points along the prev. to current point
+                        var numNewPoints = Math.floor(distance/threshold);
+                        for (var j=0;j<numNewPoints;j++){
+                            var param = (j+1)/(numNewPoints+1);
+                            var newpt = this._CatmullRomSplineInterpolate(ctrlPts, param);
+                            //insert new point before point i
+                            this._Points.splice(i, 0, newpt);
+                            i++;
+                            numInsertedPoints++;
+                        }
+                        this._dirty=true;
+                    }
+                    prevPt=pt;
+                    //update numPoints to match the new length
+                    numPoints = this._Points.length;
+
+                    //end this function if the numPoints has gone above the max. size specified
+                    if (numPoints> this._MAX_ALLOWED_SAMPLES){
+                        console.log("leaving the resampling because numPoints is greater than limit:"+this._MAX_ALLOWED_SAMPLES);
+                        break;
+                    }
+                }
+                console.log("Inserted "+numInsertedPoints+" additional CatmullRom points");
             }
 
             // *** compute the bounding box *********
@@ -412,7 +461,7 @@ var BrushStroke = function GLBrushStroke() {
         }
         */
 
-
+        /*
         var R2 = this._strokeWidth;
         var R = R2*0.5;
         var hardness = 0; //for a pencil, this is always 1 //TODO get hardness parameter from user interface
@@ -439,6 +488,109 @@ var BrushStroke = function GLBrushStroke() {
             ctx.restore();
             //ctx.globalCompositeOperation = 'source-in';
             //ctx.rect(x-R, y-R, R2, R2);
+        }
+        */
+
+        /*
+        //build the stamp for the brush stroke
+        //todo get this directly from the UI
+        var t=0;
+        var numTraces = this._strokeWidth;
+        var halfNumTraces = numTraces/2;
+        var startPos = [-this._strokeWidth/2,0];
+        var brushStamp = [];
+
+        //build an angled (calligraphic) brush stamp
+        var deltaDisplacement = [1,1];//[this._strokeWidth/numTraces, 0]; //a horizontal line brush
+        for (t=0;t<numTraces;t++){
+            var brushPt = [startPos[0]+t*deltaDisplacement[0], startPos[1]+t*deltaDisplacement[1]];
+            brushStamp.push(brushPt);
+        }
+
+
+        //make a circular brush stamp
+        brushStamp=[];
+        numTraces = this._strokeWidth*Math.PI; //figure out how to
+        var radius = this._strokeWidth/2;
+        for (t=0;t<numTraces;t++)
+        {
+            var angle = Math.PI*(360*t/numTraces)/180;
+            var brushPt = [radius*Math.cos(angle), radius*Math.sin(angle)];
+            brushStamp.push(brushPt);
+        }
+
+//        //make a square brush stamp
+//        STOPPED HERE
+//        brushStamp = [];
+//        numTraces = 4*strokeWidth;
+//        for (t=0;t<numTraces;t++){
+//            if (t<numTraces*0.25){
+//                var brushPt = [startPos[0]+t*deltaDisplacement[0], startPos[1]+t*deltaDisplacement[1]];
+//            } else if (t<numTraces*0.5){
+//
+//            } else if (t<numTraces*0.75){
+//
+//            } else {
+//
+//            }
+//            brushStamp.push(brushPt);
+//        }
+
+        for (t=0;t<numTraces;t++){
+            var disp = [brushStamp[t][0], brushStamp[t][1]];
+            //ctx.globalCompositeOperation = 'source-over';
+            var distFromMiddle = Math.abs(halfNumTraces-t);
+            var alphaVal = 1.0 - (100-this._strokeHardness)*(distFromMiddle/halfNumTraces)/100;
+            alphaVal = 0.2;
+            ctx.save();
+            ctx.lineWidth=this._strokeWidth/10;//todo figure out the correct formula for the line width
+            if (ctx.lineWidth<2)
+                ctx.lineWidth=2;
+            if (t===numTraces-1){
+                ctx.lineWidth = 1;
+            }
+            ctx.lineJoin="bevel";
+            ctx.lineCap="butt";
+            //if (t<numTraces/2)
+                ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
+            //else
+            //    ctx.strokeStyle="rgba("+parseInt(255*this._secondStrokeColor[0])+","+parseInt(255*this._secondStrokeColor[1])+","+parseInt(255*this._secondStrokeColor[2])+","+alphaVal+")";
+            ctx.translate(disp[0],disp[1]);
+            ctx.beginPath();
+            ctx.moveTo(this._Points[0][0]-bboxMin[0], this._Points[0][1]-bboxMin[1]);
+            for (var i=0;i<numPoints;i++){
+                ctx.lineTo(this._Points[i][0]-bboxMin[0], this._Points[i][1]-bboxMin[1]);
+            }
+            ctx.stroke();
+            ctx.restore();
+        }
+        */
+
+        /*
+        //debugging path
+        ctx.beginPath();
+        ctx.moveTo(this._Points[0][0]-bboxMin[0], this._Points[0][1]-bboxMin[1]);
+        for (var i=1;i<numPoints;i++){
+            ctx.lineTo(this._Points[i][0]-bboxMin[0], this._Points[i][1]-bboxMin[1]);
+        }
+        ctx.lineWidth=1.0;
+        ctx.strokeStyle = "black";
+        ctx.stroke();
+        */
+
+        var numlayers = this._strokeWidth/2;
+        var alphaVal = 1.0/(numlayers-1);
+        for (var l=0;l<numlayers;l++){
+            ctx.beginPath();
+            ctx.moveTo(this._Points[0][0]-bboxMin[0], this._Points[0][1]-bboxMin[1]);
+            for (var i=1;i<numPoints;i++){
+                ctx.lineTo(this._Points[i][0]-bboxMin[0], this._Points[i][1]-bboxMin[1]);
+            }
+            ctx.lineCap = "round";
+            ctx.lineJoin="round";
+            ctx.lineWidth=l+1;
+            ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
+            ctx.stroke();
         }
 
         ctx.restore();
@@ -473,10 +625,25 @@ var BrushStroke = function GLBrushStroke() {
         return true;
     };
 
-}; //function GLSubpath ...class definition
+}; //function BrushStroke ...class definition
 
 BrushStroke.prototype = new GeomObj();
 
+BrushStroke.prototype._CatmullRomSplineInterpolate = function(ctrlPts, t)
+{
+    //perform CatmullRom interpolation on the spline...assume t is in [0,1]
+    var t2 = t*t;
+    var t3 = t2*t;
+    var retPoint = [0,0,0];
+    for (var i=0;i<3;i++){
+        retPoint[i] = 0.5 *(
+            (2*ctrlPts[1][i]) +
+            (-ctrlPts[0][i] + ctrlPts[2][i]) * t +
+            (2*ctrlPts[0][i] - 5*ctrlPts[1][i] + 4*ctrlPts[2][i] - ctrlPts[3][i]) * t2 +
+            (-ctrlPts[0][i] + 3*ctrlPts[1][i]- 3*ctrlPts[2][i] + ctrlPts[3][i]) * t3);
+    }
+    return retPoint;
+}
 if (typeof exports === "object") {
     exports.BrushStroke = BrushStroke;
 }
