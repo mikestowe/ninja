@@ -8,6 +8,9 @@ var Montage = 	require("montage/core/core").Montage,
     ShapeTool = require("js/tools/ShapeTool").ShapeTool,
     ShapesController = 	require("js/controllers/elements/shapes-controller").ShapesController;
 
+var Circle = require("js/lib/geom/circle").Circle;
+var MaterialsModel = require("js/models/materials-model").MaterialsModel;
+
 exports.OvalTool = Montage.create(ShapeTool, {
 
 	_toolID: { value: "ovalTool" },
@@ -48,13 +51,13 @@ exports.OvalTool = Montage.create(ShapeTool, {
                 var strokeM = this.options.strokeMaterial;
                 if(strokeM)
                 {
-                    strokeMaterial = Object.create(MaterialsLibrary.getMaterial(strokeM));
+                    strokeMaterial = Object.create(MaterialsModel.getMaterial(strokeM));
                 }
 
                 var fillM = this.options.fillMaterial;
                 if(fillM)
                 {
-                    fillMaterial = Object.create(MaterialsLibrary.getMaterial(fillM));
+                    fillMaterial = Object.create(MaterialsModel.getMaterial(fillM));
                 }
             }
 
@@ -63,7 +66,7 @@ exports.OvalTool = Montage.create(ShapeTool, {
             var xOffset = ((left - canvas.offsetLeft + w/2) - canvas.width/2);
             var yOffset = (canvas.height/2 - (top - canvas.offsetTop + h/2));
 
-            var oval = new GLCircle();
+            var oval = new Circle(); //GLCircle();
             oval.init(world, xOffset, yOffset, w, h, strokeSize, strokeColor, fillColor, innerRadius, strokeMaterial, fillMaterial, strokeStyle);
 
             world.addObject(oval);

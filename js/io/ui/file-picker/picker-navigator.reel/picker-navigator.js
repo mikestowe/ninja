@@ -861,12 +861,12 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
                     var dataStore = window.sessionStorage;
                     try {
                         if(this.pickerModel.pickerMode === "write"){
-                            dataStore.setItem('lastSavedFolderURI',escape(""+this.currentURI));
+                            dataStore.setItem('lastSavedFolderURI', encodeURI(""+this.currentURI));
                         }
                         else if(this.pickerModel.inFileMode === true){
-                            dataStore.setItem('lastOpenedFolderURI_fileSelection',escape(""+this.currentURI));
+                            dataStore.setItem('lastOpenedFolderURI_fileSelection',encodeURI(""+this.currentURI));
                         }else if(this.pickerModel.inFileMode === false){
-                            dataStore.setItem('lastOpenedFolderURI_folderSelection',escape(""+this.currentURI));
+                            dataStore.setItem('lastOpenedFolderURI_folderSelection',encodeURI(""+this.currentURI));
                         }
                     }
                     catch(e){

@@ -14,6 +14,8 @@ var ElementMediator = require("js/mediators/element-mediator").ElementMediator;
 var TagTool = require("js/tools/TagTool").TagTool;
 var snapManager = require("js/helper-classes/3D/snap-manager").SnapManager;
 
+var BrushStroke = require("js/lib/geom/brush-stroke").BrushStroke;
+
 exports.BrushTool = Montage.create(ShapeTool, {
     hasReel: { value: false },
         _toolID: { value: "brushTool" },
@@ -64,7 +66,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
                 }
                 //start a new brush stroke
                 if (this._selectedBrushStroke === null){
-                    this._selectedBrushStroke = new GLBrushStroke();
+                    this._selectedBrushStroke = new BrushStroke();
                     if (this.application.ninja.colorController.colorToolbar.stroke.webGlColor){
                         this._selectedBrushStroke.setStrokeColor(this.application.ninja.colorController.colorToolbar.stroke.webGlColor);
                     }
@@ -205,7 +207,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
                     var bboxMax = this._selectedBrushStroke.getBBoxMax();
                     var bboxWidth = bboxMax[0] - bboxMin[0];
                     var bboxHeight = bboxMax[1] - bboxMin[1];
-                    var bboxMid = Vector.create([0.5 * (bboxMax[0] + bboxMin[0]), 0.5 * (bboxMax[1] + bboxMin[1]), 0.5 * (bboxMax[2] + bboxMin[2])]);
+                    var bboxMid = [0.5 * (bboxMax[0] + bboxMin[0]), 0.5 * (bboxMax[1] + bboxMin[1]), 0.5 * (bboxMax[2] + bboxMin[2])];
 
                     this._selectedBrushStroke.setCanvasX(bboxMid[0]);
                     this._selectedBrushStroke.setCanvasY(bboxMid[1]);

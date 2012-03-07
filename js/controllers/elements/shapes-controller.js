@@ -8,6 +8,9 @@ var Montage = 			require("montage/core/core").Montage,
     CanvasController = require("js/controllers/elements/canvas-controller").CanvasController,
     njModule = require("js/lib/NJUtils");
 
+var World = require("js/lib/drawing/world").World;
+var MaterialsModel = require("js/models/materials-model").MaterialsModel;
+
 exports.ShapesController = Montage.create(CanvasController, {
 
     setProperty: {
@@ -78,7 +81,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                     this.application.ninja.selectionController.selectElement(el);
                     return;
                 case "strokeMaterial":
-                    var sm = Object.create(MaterialsLibrary.getMaterial(value));
+                    var sm = Object.create(MaterialsModel.getMaterial(value));
                     if(sm)
                     {
                         el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(sm);
@@ -88,7 +91,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                     }
                     break;
                 case "fillMaterial":
-                    var fm = Object.create(MaterialsLibrary.getMaterial(value));
+                    var fm = Object.create(MaterialsModel.getMaterial(value));
                     if(fm)
                     {
                         el.elementModel.shapeModel.GLGeomObj.setFillMaterial(fm);
@@ -317,7 +320,7 @@ exports.ShapesController = Montage.create(CanvasController, {
             optionItem.innerText = "Default";
             cb.appendChild(optionItem);
 
-            var materials = MaterialsLibrary.materials;
+            var materials = this.application.ninja.appModel.materials;
             var len = materials.length;
 
             var i;
@@ -366,19 +369,19 @@ exports.ShapesController = Montage.create(CanvasController, {
                 worldData = el.elementModel.shapeModel.GLWorld.export();
             if(worldData)
             {
-                world = new GLWorld(el, true);
+                world = new World(el, true);
                 el.elementModel.shapeModel.GLWorld = world;
                 el.elementModel.shapeModel.useWebGl = true;
                 world.import(worldData);
                 el.elementModel.shapeModel.GLGeomObj = world.getGeomRoot();
 
-                sm = Object.create(MaterialsLibrary.getMaterial("FlatMaterial"));
+                sm = Object.create(MaterialsModel.getMaterial("FlatMaterial"));
                 if(sm)
                 {
                     el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(sm);
                     el.elementModel.shapeModel.strokeMaterial = sm;
                 }
-                fm = Object.create(MaterialsLibrary.getMaterial("FlatMaterial"));
+                fm = Object.create(MaterialsModel.getMaterial("FlatMaterial"));
                 // TODO - Use consts after GL code is converted to object literal notation
 //                if( fm && (el.elementModel.shapeModel.GLGeomObj.geomType() !== GLGeomObj.GEOM_TYPE_LINE) )
                 if( fm && (el.elementModel.shapeModel.GLGeomObj.geomType() !== 3) )
@@ -402,7 +405,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                 worldData = el.elementModel.shapeModel.GLWorld.export();
             if(worldData)
             {
-                world = new GLWorld(el, false);
+                world = new World(el, false);
                 el.elementModel.shapeModel.GLWorld = world;
                 el.elementModel.shapeModel.useWebGl = false;
                 world.import(worldData);

@@ -15,6 +15,9 @@ var TagTool = require("js/tools/TagTool").TagTool;
 var ElementController = require("js/controllers/elements/element-controller").ElementController;
 var snapManager = require("js/helper-classes/3D/snap-manager").SnapManager;
 
+var AnchorPoint = require("js/lib/geom/anchor-point").AnchorPoint;
+var SubPath = require("js/lib/geom/sub-path").SubPath;
+
 //todo remove this global var
 var g_DoPenToolMouseMove = true;
 
@@ -146,7 +149,7 @@ exports.PenTool = Montage.create(ShapeTool, {
             if (mouseDownPos) {
                 //if we had closed the selected subpath previously, or if we have not yet started anything, create a subpath
                 if (this._selectedSubpath === null) {
-                    this._selectedSubpath = new GLSubpath();
+                    this._selectedSubpath = new SubPath();
                     this._isNewPath = true;
                     if (this._entryEditMode === this.ENTRY_SELECT_PATH){
                         //this should not happen, as ENTRY_SELECT_PATH implies there was a selected subpath
@@ -212,13 +215,13 @@ exports.PenTool = Montage.create(ShapeTool, {
                             this._penCanvas = null;
                             this._penPlaneMat = null;
                             this._snapTarget = null;
-                            this._selectedSubpath = new GLSubpath();
+                            this._selectedSubpath = new SubPath();
                             this._isNewPath = true;
                         }
 
                         //add an anchor point to end of the subpath, and make it the selected anchor point
                         if (!this._selectedSubpath.getIsClosed() || this._makeMultipleSubpaths) {
-                            this._selectedSubpath.addAnchor(new GLAnchorPoint());
+                            this._selectedSubpath.addAnchor(new AnchorPoint());
                             var newAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
                             newAnchor.setPos(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2]);
                             newAnchor.setPrevPos(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2]);
@@ -231,7 +234,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                         if (this._isPickedEndPointInSelectPathMode){
                             //TODO clean up this code...very similar to the code block above
                             if (!this._selectedSubpath.getIsClosed()) {
-                                this._selectedSubpath.addAnchor(new GLAnchorPoint());
+                                this._selectedSubpath.addAnchor(new AnchorPoint());
                                 var newAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
                                 newAnchor.setPos(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2]);
                                 newAnchor.setPrevPos(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2]);
@@ -399,7 +402,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                 var bboxMax = this._selectedSubpath.getBBoxMax();
                 var bboxWidth = bboxMax[0] - bboxMin[0];
                 var bboxHeight = bboxMax[1] - bboxMin[1];
-                var bboxMid = Vector.create([0.5 * (bboxMax[0] + bboxMin[0]), 0.5 * (bboxMax[1] + bboxMin[1]), 0.5 * (bboxMax[2] + bboxMin[2])]);
+                var bboxMid = [0.5 * (bboxMax[0] + bboxMin[0]), 0.5 * (bboxMax[1] + bboxMin[1]), 0.5 * (bboxMax[2] + bboxMin[2])];
 
                 this._selectedSubpath.setCanvasX(bboxMid[0]);
                 this._selectedSubpath.setCanvasY(bboxMid[1]);
@@ -648,7 +651,7 @@ exports.PenTool = Montage.create(ShapeTool, {
             var baseline = VecUtils.vecNormalize(3, baselineOrig);
             var delta = VecUtils.vecSubtract(3, p2, p3);
             //component of the delta along baseline
-            var deltaB = Vector.create(baseline);
+            var deltaB = baseline;
             VecUtils.vecScale(3, deltaB, VecUtils.vecDot(3, baseline, delta));
             //component of the delta orthogonal to baseline
             var deltaO = VecUtils.vecSubtract(3, delta, deltaB);
@@ -665,7 +668,7 @@ exports.PenTool = Montage.create(ShapeTool, {
             //if there is a selected anchor point
             if (this._selectedSubpath && this._selectedSubpath.getSelectedAnchorIndex() !== -1) {
                 var selAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
-                var pos = Vector.create([selAnchor.getPosX(), selAnchor.getPosY(), selAnchor.getPosZ()]);
+                var pos = [selAnchor.getPosX(), selAnchor.getPosY(), selAnchor.getPosZ()];
                 var distToPrev = selAnchor.getPrevDistanceSq(pos[0], pos[1], pos[2]);
                 var distToNext = selAnchor.getNextDistanceSq(pos[0], pos[1], pos[2]);
                 var threshSq = 0; // 4 * this._PICK_POINT_RADIUS * this._PICK_POINT_RADIUS;
@@ -681,8 +684,8 @@ exports.PenTool = Montage.create(ShapeTool, {
                             nextAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex()+1);
                         else
                             nextAnchor = this._selectedSubpath.getAnchor(0);
-                        var nextAnchorPrev = Vector.create([nextAnchor.getPrevX(), nextAnchor.getPrevY(), nextAnchor.getPrevZ()]);
-                        var nextAnchorPos = Vector.create([nextAnchor.getPosX(), nextAnchor.getPosY(), nextAnchor.getPosZ()])
+                        var nextAnchorPrev = [nextAnchor.getPrevX(), nextAnchor.getPrevY(), nextAnchor.getPrevZ()];
+                        var nextAnchorPos = [nextAnchor.getPosX(), nextAnchor.getPosY(), nextAnchor.getPosZ()];
                         var newNext = this.BuildSecondCtrlPoint(pos, nextAnchorPrev, nextAnchorPos);
                         selAnchor.setNextPos(newNext[0], newNext[1], newNext[2]);
                         //check if the next is still not over the threshSq..if so, add a constant horizontal amount
@@ -698,8 +701,8 @@ exports.PenTool = Montage.create(ShapeTool, {
                             prevAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex()-1);
                         else
                             prevAnchor = this._selectedSubpath.getAnchor(numAnchors-1);
-                        var prevAnchorNext = Vector.create([prevAnchor.getNextX(), prevAnchor.getNextY(), prevAnchor.getNextZ()]);
-                        var prevAnchorPos = Vector.create([prevAnchor.getPosX(), prevAnchor.getPosY(), prevAnchor.getPosZ()])
+                        var prevAnchorNext = [prevAnchor.getNextX(), prevAnchor.getNextY(), prevAnchor.getNextZ()];
+                        var prevAnchorPos = [prevAnchor.getPosX(), prevAnchor.getPosY(), prevAnchor.getPosZ()];
                         var newPrev = this.BuildSecondCtrlPoint(pos, prevAnchorNext, prevAnchorPos);
                         selAnchor.setPrevPos(newPrev[0], newPrev[1], newPrev[2]);
                         //check if the prev is still not over the threshSq..if so, add a constant horizontal amount
