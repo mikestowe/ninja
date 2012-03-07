@@ -100,20 +100,6 @@ exports.SelectionController = Montage.create(Component, {
                     this._isDocument = false;
                 }
                 NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument} );
-
-                this._selectionContainer = this.application.ninja.currentSelectedContainer;
-            }
-        }
-    },
-
-    handleCloseDocument:{
-        value: function() {
-            //clear selections if all documents are closed
-            if(this.application.ninja.documentController._documents.length === 0){
-                this._selectedItems.length =0;
-                this.application.ninja.selectedElements.length =0;
-                this._isDocument = true;
-                NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument} );
             }
         }
     },

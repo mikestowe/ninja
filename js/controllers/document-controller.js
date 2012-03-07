@@ -166,7 +166,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     ////////////////////////////////////////////////////////////////////
     handleExecuteFileClose:{
         value: function(event) {
-            if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
+            if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
                 this.closeDocument(this.activeDocument.uuid);
             }
         }
@@ -372,11 +372,11 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                     nextDocumentIndex = closeDocumentIndex - 1;
                 }
                 this.application.ninja.stage.stageView.switchDocument(this._documents[nextDocumentIndex]);
-                doc.stopVideos();
+                if(typeof this.activeDocument.stopVideos !== "undefined"){doc.stopVideos();}
                 this._removeDocumentView(doc.container);
             }else if(this._documents.length === 0){
-                if(typeof this.activeDocument.pauseVideos !== "undefined"){
-                    this.activeDocument.pauseVideos(true);
+                if(typeof this.activeDocument.pauseAndStopVideos !== "undefined"){
+                    this.activeDocument.pauseAndStopVideos();
                 }
                 this.activeDocument = null;
                 this._removeDocumentView(doc.container);
@@ -385,8 +385,8 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
                 this.application.ninja.stage.hideCanvas(true);
             }else{//closing inactive document tab - just clear DOM
-                if(typeof doc.pauseVideos !== "undefined"){
-                    doc.pauseVideos(true);
+                if(typeof doc.pauseAndStopVideos !== "undefined"){
+                    doc.pauseAndStopVideos();
                 }
                 this._removeDocumentView(doc.container);
             }

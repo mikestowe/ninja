@@ -872,21 +872,14 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     },
 	////////////////////////////////////////////////////////////////////
     /**
-     *pause videos on switching or closing the document, so that the browser does not keep downloading the media data
-     *removeSrc : boolean to remove the src if the video... set only in the close document flow
+     *pause videos on switching or closing the document
     */
     pauseVideos:{
-        value:function(removeSrc){
-            //console.log("$$$ pauseVideos");
+        value:function(){
             var videosArr = this.documentRoot.getElementsByTagName("video"), i=0;
             for(i=0;i<videosArr.length;i++){
                 if(!videosArr[i].paused){
                     videosArr[i].pause();
-                }
-                //console.log("$$$ Paused ", videosArr[i]);
-                if((typeof removeSrc !== "undefined") && (removeSrc === true)){
-                    videosArr[i].src = "";
-                    //console.log("$$$ stopped ");
                 }
             }
         }
@@ -897,11 +890,21 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     */
     stopVideos:{
         value:function(){
-            //console.log("$$$ stopVideos");
             var videosArr = this.documentRoot.getElementsByTagName("video"), i=0;
             for(i=0;i<videosArr.length;i++){
                 videosArr[i].src = "";
-                //console.log("$$$ stopped ", videosArr[i]);
+            }
+        }
+    },
+
+    pauseAndStopVideos:{
+        value:function(){
+            var videosArr = this.documentRoot.getElementsByTagName("video"), i=0;
+            for(i=0;i<videosArr.length;i++){
+                if(!videosArr[i].paused){
+                    videosArr[i].pause();
+                }
+                videosArr[i].src = "";
             }
         }
     }

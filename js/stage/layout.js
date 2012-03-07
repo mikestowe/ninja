@@ -65,7 +65,7 @@ exports.Layout = Montage.create(Component, {
     handleOpenDocument: {
         value: function() {
             // Initial elements to draw is the entire node list
-            if(typeof this.application.ninja.documentController.activeDocument._liveNodeList !== "undefined"){//only for designer view
+            if(this.application.ninja.documentController.activeDocument.currentView === "design"){//only for designer view
                 this.elementsToDraw = this.application.ninja.documentController.activeDocument._liveNodeList;
             }
             // Draw the elements and the 3d info
@@ -105,7 +105,7 @@ exports.Layout = Montage.create(Component, {
             }
 
             // Make an array copy of the line node list which is not an array like object
-            if(typeof this.application.ninja.documentController.activeDocument._liveNodeList !== "undefined"){//only for designer view
+            if(this.application.ninja.documentController.activeDocument.currentView === "design"){//only for designer view
                 this.domTree = Array.prototype.slice.call(this.application.ninja.documentController.activeDocument._liveNodeList, 0);
             }
             // Clear the elements to draw
