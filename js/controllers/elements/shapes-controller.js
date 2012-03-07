@@ -259,24 +259,70 @@ exports.ShapesController = Montage.create(CanvasController, {
         }
     },
 
+    _setGradientMaterial: {
+        value: function(el, gradientMode, isFill) {
+            var m = "LinearGradientMaterial";
+            if(gradientMode === "radial")
+            {
+                m = "RadialGradientMaterial";
+            }
+
+            if(el.elementModel.shapeModel.fillMaterial.getName() !== m)
+            {
+                var fm = Object.create(MaterialsModel.getMaterial(m));
+                if(fm)
+                {
+                    if(isFill)
+                    {
+                        el.elementModel.shapeModel.GLGeomObj.setFillMaterial(fm);
+                        el.elementModel.shapeModel.fillMaterial = fm;
+                    }
+                    else
+                    {
+                        el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(fm);
+                        el.elementModel.shapeModel.strokeMaterial = fm;
+                    }
+                    el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                }
+            }
+        }
+    },
+
     setColor: {
         value: function(el, color, isFill) {
-            var webGl = color.webGlColor || color.color.webGlColor;
-            if(!webGl)
-            {
-                webGl = this.application.ninja.colorController.colorModel.colorToWebGl(color.color);
-            }
+            var mode = color.mode,
+                webGl;
             if(isFill)
             {
-                el.elementModel.shapeModel.GLGeomObj.setFillColor(webGl);
-                this.setShapeProperty(el, "fill", webGl);
-                this.setShapeProperty(el, "background", color);
+                if(mode)
+                {
+                    switch (mode) {
+                        case 'nocolor':
+                            el.elementModel.shapeModel.GLGeomObj.setFillColor(null);
+                            this.setShapeProperty(el, "fill", null);
+                            this.setShapeProperty(el, "background", color);
+//                            el.elementModel.fill = null;
+                            return;
+                        case 'gradient':
+                            this._setGradientMaterial(el, color.color.gradientMode, isFill);
+                            el.elementModel.shapeModel.GLGeomObj.setFillColor({gradientMode:color.color.gradientMode, color:color.color.stops});
+                            el.elementModel.shapeModel.GLWorld.render();
+                            this.setShapeProperty(el, "fill", color.color.css);
+                            this.setShapeProperty(el, "background", color);
+//                            el.elementModel.fill = color;
+                            break;
+                        default:
+                            webGl = this.application.ninja.colorController.colorModel.colorToWebGl(color.color);
+                            el.elementModel.shapeModel.GLGeomObj.setFillColor(webGl);
+                            this.setShapeProperty(el, "fill", webGl);
+                            this.setShapeProperty(el, "background", color);
+//                            el.elementModel.fill = color;
+                    }
+                }
             }
             else
             {
-                el.elementModel.shapeModel.GLGeomObj.setStrokeColor(webGl);
-                this.setShapeProperty(el, "stroke", webGl);
-                this.setShapeProperty(el, "border", color);
+                // Support for ink-bottle tool
                 if(color.strokeInfo)
                 {
                     var strokeWidth = this.GetValueInPixels(color.strokeInfo.strokeSize,
@@ -285,7 +331,64 @@ exports.ShapesController = Montage.create(CanvasController, {
                     this.setShapeProperty(el, "strokeSize", color.strokeInfo.strokeSize + " "
                                                                 + color.strokeInfo.strokeUnits);
                 }
+
+                if(mode)
+                {
+                    switch (mode) {
+                        case 'nocolor':
+                            el.elementModel.shapeModel.GLGeomObj.setStrokeColor(null);
+                            this.setShapeProperty(el, "stroke", null);
+                            this.setShapeProperty(el, "border", color);
+//                            el.elementModel.fill = null;
+                            return;
+                        case 'gradient':
+                            this._setGradientMaterial(el, color.color.gradientMode, isFill);
+                            el.elementModel.shapeModel.GLGeomObj.setStrokeColor({gradientMode:color.color.gradientMode, color:color.color.stops});
+                            el.elementModel.shapeModel.GLWorld.render();
+                            this.setShapeProperty(el, "stroke", color.color.css);
+                            this.setShapeProperty(el, "border", color);
+//                            el.elementModel.fill = color;
+                            break;
+                        default:
+                            webGl = this.application.ninja.colorController.colorModel.colorToWebGl(color.color);
+                            el.elementModel.shapeModel.GLGeomObj.setStrokeColor(webGl);
+                            this.setShapeProperty(el, "stroke", webGl);
+                            this.setShapeProperty(el, "border", color);
+//                            el.elementModel.fill = color;
+                    }
+                }
             }
+
+
+
+
+
+
+//            var webGl = color.webGlColor || color.color.webGlColor;
+//            if(!webGl)
+//            {
+//                webGl = this.application.ninja.colorController.colorModel.colorToWebGl(color.color);
+//            }
+//            if(isFill)
+//            {
+//                el.elementModel.shapeModel.GLGeomObj.setFillColor(webGl);
+//                this.setShapeProperty(el, "fill", webGl);
+//                this.setShapeProperty(el, "background", color);
+//            }
+//            else
+//            {
+//                el.elementModel.shapeModel.GLGeomObj.setStrokeColor(webGl);
+//                this.setShapeProperty(el, "stroke", webGl);
+//                this.setShapeProperty(el, "border", color);
+//                if(color.strokeInfo)
+//                {
+//                    var strokeWidth = this.GetValueInPixels(color.strokeInfo.strokeSize,
+//                                                            color.strokeInfo.strokeUnits);
+//                    el.elementModel.shapeModel.GLGeomObj.setStrokeWidth(strokeWidth);
+//                    this.setShapeProperty(el, "strokeSize", color.strokeInfo.strokeSize + " "
+//                                                                + color.strokeInfo.strokeUnits);
+//                }
+//            }
             el.elementModel.shapeModel.GLWorld.render();
         }
     },
