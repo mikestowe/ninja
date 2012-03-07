@@ -179,24 +179,14 @@ var Montage = require("montage/core/core").Montage,
 	
 	prepareForDraw: {
 		value: function() {
-			// Add a click listener to the label for expand/collapse
-			/*
-			if (this.isLabelClickable) {
-				this.clicker.identifier = "collapserLabel";
-				this.clicker.addEventListener("click", this, false);
-			}
-			*/
+
 			// Get the original value of the overflow property:
 			this._origOverflowValue = window.getComputedStyle(this.myContent, null).getPropertyValue("overflow");
-			console.log("collapser: this.isCollapsed " + this.isCollapsed)
 			if (this.isCollapsed === false) {
 				this.myContent.style.height = "auto";
 			}
 			
-			/*
-			 * Removed because of expense. This disables the feature of having the
-			 * component dynamically expand/collapse the content on init based on properties;
-			 * Now default state of component must be set in CSS.
+
 			// If the content area is supposed to start out collapsed:
 			if (this.isCollapsed) {
 				this.myContent.style.height = "0px";
@@ -211,7 +201,6 @@ var Montage = require("montage/core/core").Montage,
 				this.myContent.classList.remove(this.collapsedClass);
 				this.clicker.classList.remove(this.collapsedClass);
 			}
-			*/
 		}
 	},
 	draw: {
