@@ -60,6 +60,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             this.eventManager.addEventListener("executeSave", this, false);
             this.eventManager.addEventListener("executeSaveAs", this, false);
             this.eventManager.addEventListener("executeSaveAll", this, false);
+            this.eventManager.addEventListener("executeFileClose", this, false);
 
             this.eventManager.addEventListener("styleSheetDirty", this, false);
             
@@ -162,7 +163,15 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             }
         }
     },
-
+    ////////////////////////////////////////////////////////////////////
+    handleExecuteFileClose:{
+        value: function(event) {
+            if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
+                this.closeDocument(this.activeDocument.uuid);
+            }
+        }
+    },
+    ////////////////////////////////////////////////////////////////////
     //
     fileSaveResult: {
     	value: function (result) {

@@ -894,7 +894,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 
     /**
      * remove the video src on closing the document, so that the browser does not keep downloading the media data, if the tag does not get garbage collected
-     *removeSrc : boolean to remove the src if the video... set only in the close document flow
     */
     stopVideos:{
         value:function(){
