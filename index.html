@@ -18,8 +18,9 @@
 	    <meta http-equiv="Expires" content="0" />
 
     	<link rel="icon" href="images/favicon.png" sizes="16x16">
-    	
-    	<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700|Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+
+        <link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700|Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+        <link href="imports/codemirror/lib/codemirror.css" rel="stylesheet" type="text/css"/>
 	
     	<style type="text/css">
 			html, body
@@ -174,6 +175,15 @@
             };
 		</script>
 
+        <script type="text/javascript" src="js/helper-classes/3D/GLMatrix/gl-matrix.js"></script>
+        <script type="text/javascript" src="js/helper-classes/RDGE/rdge-compiled.js"></script>
+
+        <script type="text/javascript" src="imports/codemirror/lib/codemirror.js"></script>
+        <script type="text/javascript" src="imports/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+        <script type="text/javascript" src="imports/codemirror/mode/xml/xml.js"></script>
+        <script type="text/javascript" src="imports/codemirror/mode/javascript/javascript.js"></script>
+        <script type="text/javascript" src="imports/codemirror/mode/css/css.js"></script>
+
     	<script type="text/javascript" src="node_modules/montage/montage.js"></script>
 
 	    <script type="text/montage-serialization">
@@ -184,7 +194,7 @@
     	            "properties": {
         	            "mainModule": "js/ninja.reel",
             	        "mainName": "Ninja",
-                        "minimumBootstrappingDuration": 4000
+                        "minimumBootstrappingDuration": 3000
                     }
 	            }
         	}
