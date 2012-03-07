@@ -477,7 +477,7 @@ var Rectangle = function GLRectangle() {
                 if(this._fillColor.gradientMode === "radial") {
                     gradient = ctx.createRadialGradient(w/2, h/2, h/2-inset, w/2, h/2, h-2*inset);
                 } else {
-                    gradient = ctx.createLinearGradient(inset, inset, w-inset, h-inset);
+                    gradient = ctx.createLinearGradient(inset, h/2, w-2*inset, h/2);
                 }
                 colors = this._fillColor.color;
 
@@ -511,7 +511,7 @@ var Rectangle = function GLRectangle() {
                 if(this._strokeColor.gradientMode === "radial") {
                     gradient = ctx.createRadialGradient(w/2, h/2, h/2, w/2, h/2, h);
                 } else {
-                    gradient = ctx.createLinearGradient(0, 0, w, h);
+                    gradient = ctx.createLinearGradient(0, h/2, w, h/2);
                 }
                 colors = this._strokeColor.color;
 
