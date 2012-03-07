@@ -47,6 +47,7 @@ exports.PanelContainer = Montage.create(Component, {
                 this['panel_'+i].flexible = p.flexible;
                 this['panel_'+i].modulePath = p.modulePath;
                 this['panel_'+i].moduleName = p.moduleName;
+                this['panel_'+i].index = i;
 
                 this.currentPanelState[p.name] = {};
                 this.currentPanelState.version = "1.0";
@@ -102,8 +103,21 @@ exports.PanelContainer = Montage.create(Component, {
 
             if(draggedIndex !== droppedIndex) {
                 // switch panels
-                this.panels[droppedIndex].element.parentNode.insertBefore(this.panels[draggedIndex].element, this.panels[droppedIndex].element);
+                if (droppedIndex === draggedIndex +1) {
+                    if(this.panels[droppedIndex].element.nextSibling) {
+                        this.panels[droppedIndex].element.parentNode.insertBefore(this.panels[draggedIndex].element, this.panels[droppedIndex].element.nextSibling);
+                    } else {
+                        return this.appendChild(this.panels[draggedIndex].element);
+                    }
+                } else {
+
+                    this.panels[droppedIndex].element.parentNode.insertBefore(this.panels[draggedIndex].element, this.panels[droppedIndex].element);
+                }
+                var panelRemoved = this.panels.splice(draggedIndex, 1);
+                this.panels.splice(droppedIndex, 0, panelRemoved[0]);
+
             }
+
         }
     },
  
@@ -112,12 +126,12 @@ exports.PanelContainer = Montage.create(Component, {
             var len = this.panels.length, setLocked = true;
 
             for(var i = 0; i < len; i++) {
-                if(this['panel_'+i] === panelActivated || panelActivated === null) {
+                if(this.panels[i] === panelActivated || panelActivated === null) {
                     setLocked = false;
                 }
 
-                this['panel_'+i].locked = setLocked;
-                this['panel_'+i].needsDraw = true;
+                this.panels[i].locked = setLocked;
+                this.panels[i].needsDraw = true;
             }
         }
     },
