@@ -157,7 +157,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
                 saveAsSettings.fileName = this.activeDocument.name;
                 saveAsSettings.folderUri = this.activeDocument.uri.substring(0, this.activeDocument.uri.lastIndexOf("/"));
-                //add callback
+                saveAsSettings.callback = this.saveAsCallback.bind(this);
                 this.application.ninja.newFileController.showSaveAsDialog(saveAsSettings);
             }
         }
@@ -166,7 +166,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     //
     fileSaveResult: {
     	value: function (result) {
-    		if(result.status === 204){
+            if((result.status === 204) || (result.status === 404)){//204=>existing file || 404=>new file... saved
                 this.activeDocument.needsSave = false;
                 if(this.application.ninja.currentDocument !== null){
                     //clear Dirty StyleSheets for the saved document
@@ -254,10 +254,24 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 	////////////////////////////////////////////////////////////////////
 	//
     saveAsCallback:{
-        value:function(){
-            //close current document
+        value:function(saveAsDetails){
+            var fileUri = null, filename = saveAsDetails.filename, destination = saveAsDetails.destination;
+            //update document metadata
+            this.activeDocument.name = ""+filename;
+            //prepare new file uri
+            if(destination && (destination.charAt(destination.length -1) !== "/")){
+                destination = destination + "/";
+            }
+            fileUri = destination+filename;
 
-            //create a new file
+            this.activeDocument.uri = fileUri;
+            //save a new file
+            //use the ioMediator.fileSaveAll when implemented
+            this.activeDocument._userDocument.name=filename;
+            this.activeDocument._userDocument.root=destination;
+            this.activeDocument._userDocument.uri=fileUri;
+            this.application.ninja.ioMediator.fileSave(this.activeDocument.save(), this.fileSaveResult.bind(this));
+            //
         }
     },
 

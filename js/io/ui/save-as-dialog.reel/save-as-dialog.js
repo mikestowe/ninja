@@ -111,7 +111,7 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
     handleOkButtonAction:{
         value: function(evt){
             var filename = this.fileName,
-                newFileDirectory = this.newFileDirectory,
+                newFileDirectory = this.folderUri,
                 success = true;
             if(this.isValidFileName(this.fileName) && this.isValidUri(this.folderUri) && !this.checkFileExists(this.fileName, this.folderUri)){
                 try{
@@ -128,7 +128,7 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
                     }
                 }catch(e){
                         success = false;
-                        console.log("[ERROR] Failed to save:  "+ this.fileName + " at "+ this.newFileDirectory);
+                        console.log("[ERROR] Failed to save:  "+ this.fileName + " at "+ newFileDirectory);
                         console.log(e.stack);
                 }
 
