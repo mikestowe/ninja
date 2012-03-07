@@ -459,15 +459,44 @@ var Rectangle = function GLRectangle() {
 		var lw = this._strokeWidth;
 		var	w = world.getViewportWidth(),
 			h = world.getViewportHeight();
-		
+
+        var c,
+            inset,
+            gradient,
+            colors,
+            len,
+            n,
+            position,
+            cs;
 		// render the fill
 		ctx.beginPath();
 		if (this._fillColor) {
-			var c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";  
-			ctx.fillStyle = c;
+            inset = Math.ceil( lw ) + 0.5;
+
+            if(this._fillColor.gradientMode) {
+                if(this._fillColor.gradientMode === "radial") {
+                    gradient = ctx.createRadialGradient(w/2, h/2, h/2-inset, w/2, h/2, h-2*inset);
+                } else {
+                    gradient = ctx.createLinearGradient(inset, inset, w-inset, h-inset);
+                }
+                colors = this._fillColor.color;
+
+                len = colors.length;
+
+                for(n=0; n<len; n++) {
+                    position = colors[n].position/100;
+                    cs = colors[n].value;
+                    gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+                }
+
+                ctx.fillStyle = gradient;
+
+            } else {
+                c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";
+                ctx.fillStyle = c;
+            }
 
 			ctx.lineWidth	= lw;
-			var inset = Math.ceil( lw ) + 0.5;
 			this.renderPath( inset, ctx );
 			ctx.fill();
 			ctx.closePath();
@@ -476,11 +505,32 @@ var Rectangle = function GLRectangle() {
 		// render the stroke
 		ctx.beginPath();
 		if (this._strokeColor) {
-			var c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";  
-			ctx.strokeStyle = c;
+            inset = Math.ceil( 0.5*lw ) + 0.5;
+
+            if(this._strokeColor.gradientMode) {
+                if(this._strokeColor.gradientMode === "radial") {
+                    gradient = ctx.createRadialGradient(w/2, h/2, h/2, w/2, h/2, h);
+                } else {
+                    gradient = ctx.createLinearGradient(0, 0, w, h);
+                }
+                colors = this._strokeColor.color;
+
+                len = colors.length;
+
+                for(n=0; n<len; n++) {
+                    position = colors[n].position/100;
+                    cs = colors[n].value;
+                    gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+                }
+
+                ctx.strokeStyle = gradient;
+
+            } else {
+                c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";
+                ctx.strokeStyle = c;
+            }
 
 			ctx.lineWidth	= lw;
-			var inset = Math.ceil( 0.5*lw ) + 0.5;
 			this.renderPath( inset, ctx );
 			ctx.stroke();
 			ctx.closePath();

@@ -301,22 +301,25 @@ exports.ShapesController = Montage.create(CanvasController, {
                             el.elementModel.shapeModel.GLGeomObj.setFillColor(null);
                             this.setShapeProperty(el, "fill", null);
                             this.setShapeProperty(el, "background", color);
-//                            el.elementModel.fill = null;
+                            el.elementModel.fill = null;
                             return;
                         case 'gradient':
-                            this._setGradientMaterial(el, color.color.gradientMode, isFill);
+                            if(el.elementModel.shapeModel.useWebGl)
+                            {
+                                this._setGradientMaterial(el, color.color.gradientMode, isFill);
+                            }
                             el.elementModel.shapeModel.GLGeomObj.setFillColor({gradientMode:color.color.gradientMode, color:color.color.stops});
                             el.elementModel.shapeModel.GLWorld.render();
                             this.setShapeProperty(el, "fill", color.color.css);
                             this.setShapeProperty(el, "background", color);
-//                            el.elementModel.fill = color;
+                            el.elementModel.fill = color;
                             break;
                         default:
                             webGl = this.application.ninja.colorController.colorModel.colorToWebGl(color.color);
                             el.elementModel.shapeModel.GLGeomObj.setFillColor(webGl);
                             this.setShapeProperty(el, "fill", webGl);
                             this.setShapeProperty(el, "background", color);
-//                            el.elementModel.fill = color;
+                            el.elementModel.fill = color;
                     }
                 }
             }
@@ -339,22 +342,25 @@ exports.ShapesController = Montage.create(CanvasController, {
                             el.elementModel.shapeModel.GLGeomObj.setStrokeColor(null);
                             this.setShapeProperty(el, "stroke", null);
                             this.setShapeProperty(el, "border", color);
-//                            el.elementModel.fill = null;
+                            el.elementModel.fill = null;
                             return;
                         case 'gradient':
-                            this._setGradientMaterial(el, color.color.gradientMode, isFill);
+                            if(el.elementModel.shapeModel.useWebGl)
+                            {
+                                this._setGradientMaterial(el, color.color.gradientMode, isFill);
+                            }
                             el.elementModel.shapeModel.GLGeomObj.setStrokeColor({gradientMode:color.color.gradientMode, color:color.color.stops});
                             el.elementModel.shapeModel.GLWorld.render();
                             this.setShapeProperty(el, "stroke", color.color.css);
                             this.setShapeProperty(el, "border", color);
-//                            el.elementModel.fill = color;
+                            el.elementModel.fill = color;
                             break;
                         default:
                             webGl = this.application.ninja.colorController.colorModel.colorToWebGl(color.color);
                             el.elementModel.shapeModel.GLGeomObj.setStrokeColor(webGl);
                             this.setShapeProperty(el, "stroke", webGl);
                             this.setShapeProperty(el, "border", color);
-//                            el.elementModel.fill = color;
+                            el.elementModel.fill = color;
                     }
                 }
             }
