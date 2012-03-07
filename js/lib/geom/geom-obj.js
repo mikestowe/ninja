@@ -138,8 +138,10 @@ var GeomObj = function GLGeomObj() {
     // Methods
     ///////////////////////////////////////////////////////////////////////
 	this.setMaterialColor = function(c, type) {
+        var i = 0,
+            nMats = 0;
         if(c.gradientMode) {
-            var nMats = 0;
+            // Gradient support
             if (this._materialArray && this._materialTypeArray) {
                 nMats = this._materialArray.length;
             }
@@ -160,7 +162,7 @@ var GeomObj = function GLGeomObj() {
                 stops.push(stop);
 
                 if (nMats === this._materialTypeArray.length) {
-                    for (var i=0;  i<nMats;  i++) {
+                    for (i=0;  i<nMats;  i++) {
                         if (this._materialTypeArray[i] == type) {
                             this._materialArray[i].setProperty( "color"+(n+1), stop.slice(0) );
                             this._materialArray[i].setProperty( "colorStop"+(n+1), position );
@@ -168,22 +170,22 @@ var GeomObj = function GLGeomObj() {
                     }
                 }
             }
-//            if (type == "fill") {
-//                this._fillColor = c.slice(0);
-//            } else {
-//                this._strokeColor = c.slice(0);
-//            }
+            if (type === "fill") {
+                this._fillColor = c;
+            } else {
+                this._strokeColor = c;
+            }
         } else {
-            if (type == "fill") {
+            if (type === "fill") {
                 this._fillColor = c.slice(0);
             } else {
                 this._strokeColor = c.slice(0);
             }
 
             if (this._materialArray && this._materialTypeArray) {
-                var nMats = this._materialArray.length;
+                nMats = this._materialArray.length;
                 if (nMats === this._materialTypeArray.length) {
-                    for (var i=0;  i<nMats;  i++) {
+                    for (i=0;  i<nMats;  i++) {
                         if (this._materialTypeArray[i] == type) {
                             this._materialArray[i].setProperty( "color", c.slice(0) );
                         }
@@ -191,8 +193,6 @@ var GeomObj = function GLGeomObj() {
                 }
             }
         }
-
-
 
 		var world = this.getWorld();
 		if (world)  {
@@ -210,13 +210,14 @@ var GeomObj = function GLGeomObj() {
 
         if (strokeMaterial) {
             strokeMaterial.init( this.getWorld() );
-            if(this._strokeColor) {
-                strokeMaterial.setProperty("color", this._strokeColor);
-            }
         }
 
         this._materialArray.push( strokeMaterial );
         this._materialTypeArray.push( "stroke" );
+
+        if(this._strokeColor) {
+            this.setStrokeColor(this._strokeColor);
+        }
 
         return strokeMaterial;
     };
@@ -231,14 +232,14 @@ var GeomObj = function GLGeomObj() {
 
         if (fillMaterial) {
             fillMaterial.init( this.getWorld() );
-            //if(!this.getFillMaterial() && this._fillColor)
-            if (this._fillColor) {
-                fillMaterial.setProperty("color", this._fillColor);
-            }
         }
 
         this._materialArray.push( fillMaterial );
         this._materialTypeArray.push( "fill" );
+
+        if (this._fillColor) {
+            this.setFillColor(this._fillColor);
+        }
 
         return fillMaterial;
     };
