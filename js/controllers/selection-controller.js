@@ -77,7 +77,7 @@ exports.SelectionController = Montage.create(Component, {
 
 
                     this.application.ninja.selectedElements = currentSelectionArray;
-                    NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument} );
+                    NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument});
 
 
 
@@ -90,7 +90,7 @@ exports.SelectionController = Montage.create(Component, {
         }
     },
 
-    handleSwitchDocument: {
+     handleSwitchDocument: {
         value: function() {
             if(this.application.ninja.documentController.activeDocument.currentView === "design"){
                 this._selectedItems = this.application.ninja.selectedElements.slice(0);
@@ -154,7 +154,7 @@ exports.SelectionController = Montage.create(Component, {
         value: function(event) {
             this.application.ninja.selectedElements = [];
             this._isDocument = true;
-            NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument} );
+            NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument});
         }
     },
 

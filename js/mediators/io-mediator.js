@@ -335,7 +335,11 @@ exports.IoMediator = Montage.create(Component, {
     								cleanedCss = dirtyCss.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaUrl.bind(this));
     							  	
     							function parseNinjaUrl (url) {
-    								return this.getUrlfromNinjaUrl(url, fileRootUrl, fileUrl);
+    								if (url.indexOf(this.application.ninja.coreIoApi.rootUrl) !== -1) {
+    									return this.getUrlfromNinjaUrl(url, fileRootUrl, fileUrl);
+    								} else {
+    									return url;
+    								}
     							}
     							
     							///////////////////////////////////////////////////////////////////////////////////////////
