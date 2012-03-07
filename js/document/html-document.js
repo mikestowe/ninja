@@ -863,16 +863,16 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     */
     pauseVideos:{
         value:function(removeSrc){
-            console.log("$$$ pauseVideos");
+            //console.log("$$$ pauseVideos");
             var videosArr = this.documentRoot.getElementsByTagName("video"), i=0;
             for(i=0;i<videosArr.length;i++){
                 if(!videosArr[i].paused){
                     videosArr[i].pause();
                 }
-                console.log("$$$ Paused ", videosArr[i]);
+                //console.log("$$$ Paused ", videosArr[i]);
                 if((typeof removeSrc !== "undefined") && (removeSrc === true)){
                     videosArr[i].src = "";
-                    console.log("$$$ stopped ");
+                    //console.log("$$$ stopped ");
                 }
             }
         }
@@ -884,11 +884,11 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     */
     stopVideos:{
         value:function(){
-            console.log("$$$ stopVideos");
+            //console.log("$$$ stopVideos");
             var videosArr = this.documentRoot.getElementsByTagName("video"), i=0;
             for(i=0;i<videosArr.length;i++){
                 videosArr[i].src = "";
-                console.log("$$$ stopped ", videosArr[i]);
+                //console.log("$$$ stopped ", videosArr[i]);
             }
         }
     }
