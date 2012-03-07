@@ -19,7 +19,6 @@ exports.PanelsData = Montage.create(Montage, {
             scrollable: false,
             collapsed: false,
             open: true,
-            contentComponent: null,
             modulePath: "js/panels/Color/colorpanelbase.reel",
             moduleName: "ColorPanelBase"
         },
@@ -32,7 +31,6 @@ exports.PanelsData = Montage.create(Montage, {
             scrollable: true,
             collapsed: false,
             open: true,
-            contentComponent: null,
             modulePath: "js/panels/properties.reel",
             moduleName: "Properties"
         },
@@ -45,7 +43,6 @@ exports.PanelsData = Montage.create(Montage, {
             collapsed: true,
             scrollable: true,
             open: true,
-            contentComponent: null,
             modulePath: "js/panels/Materials/materials-library-panel.reel",
             moduleName: "MaterialsLibraryPanel"
         },
@@ -58,7 +55,6 @@ exports.PanelsData = Montage.create(Montage, {
             scrollable: true,
             collapsed: true,
             open: true,
-            contentComponent: null,
             modulePath: "js/panels/Components/ComponentsPanelBase.reel",
             moduleName: "ComponentsPanelBase"
         },
@@ -71,7 +67,6 @@ exports.PanelsData = Montage.create(Montage, {
 //            scrollable: true,
 //            collapsed: false,
 //            open: true,
-//            content: null,
 //            modulePath: "js/panels/Project/projectpanelbase.reel",
 //            moduleName: "ProjectPanelBase"
 //        },
@@ -84,7 +79,6 @@ exports.PanelsData = Montage.create(Montage, {
             scrollable: true,
             collapsed: true,
             open: true,
-            contentComponent: null,
             modulePath: "js/panels/CSSPanel/CSSPanelBase.reel",
             moduleName: "CSSPanelBase"
         },
@@ -97,7 +91,6 @@ exports.PanelsData = Montage.create(Montage, {
             collapsed: true,
             scrollable: true,
             open: true,
-            contentComponent: null,
             modulePath: "js/panels/presets/content.reel",
             moduleName: "content"
         }
@@ -116,24 +109,6 @@ exports.PanelsData = Montage.create(Montage, {
         },
         set: function(val) {
             this._panelOrder = val;
-        }
-    }
-
-
-    panels: {
-        get: function() {
-            var filtered = this._panels.filter(function(item) {
-                return item.open;
-            });
-
-            filtered.sort(function(a,b) {
-               a.name
-            });
-
-            return filtered;
-        },
-        set : function() {
-
         }
     }
     */
