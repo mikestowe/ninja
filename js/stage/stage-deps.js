@@ -125,7 +125,7 @@ exports.StageDeps = Montage.create(Component, {
     handleOpenDocument: {
         value: function() {
 
-            workingPlane = Vector.create( [0,0,1,0] );
+            workingPlane = [0,0,1,0];
 
             snapManager.setCurrentStage(this.currentStage);
 
@@ -151,7 +151,7 @@ exports.StageDeps = Montage.create(Component, {
     reinitializeForSwitchDocument: {
         value: function() {
 
-            workingPlane = Vector.create( [0,0,1,0] );
+            workingPlane = [0,0,1,0];
 
             snapManager.setCurrentStage(this.currentStage);
 
