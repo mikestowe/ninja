@@ -59,6 +59,27 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     _gridVerticalSpacing: {value:0},
     //end - drawUtils state
 
+    _undoStack: { value: [] },
+    undoStack: {
+        get: function() {
+            return this._undoStack;
+        },
+        set:function(value){
+            this._undoStack = value;
+        }
+    },
+
+    _redoStack: { value: [], enumerable: false },
+
+    redoStack: {
+        get: function() {
+            return this._redoStack;
+        },
+        set:function(value){
+            this._redoStack = value;
+        }
+    },
+
 
     // GETTERS / SETTERS
 
@@ -387,10 +408,66 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             //
             if(!this.documentRoot.Ninja) this.documentRoot.Ninja = {};
             //Inserting user's document into template
-            this._templateDocument.head.innerHTML = this._userDocument.content.head;
-            this._templateDocument.body.innerHTML = this._userDocument.content.body;
-            //TODO: Use querySelectorAll
-            var scripttags = this._templateDocument.html.getElementsByTagName('script'), webgldata;
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            
+            //TODO: Clean up and make public method to prepend properties with Ninja URL
+            this._templateDocument.head.innerHTML = (this._userDocument.content.head.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, ninjaUrlRedirect.bind(this))).replace(/url\(([^"]*)(.+?)\1\)/g, ninjaUrlRedirect.bind(this));
+            this._templateDocument.body.innerHTML = (this._userDocument.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, ninjaUrlRedirect.bind(this))).replace(/url\(([^"]*)(.+?)\1\)/g, ninjaUrlRedirect.bind(this));            
+            //
+            //var docRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
+            //
+            function ninjaUrlRedirect (prop) {
+            	//Checking for property value to not contain a full direct URL
+            	if (!prop.match(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi)) {
+            		//Checking for attributes and type of source
+            		if (prop.indexOf('href') !== -1 || prop.indexOf('src') !== -1) { //From HTML attribute
+            			//
+            			prop = prop.replace(/"([^"]*)"/gi, ninjaUrlPrepend.bind(this));
+	            	} else if (prop.indexOf('url') !== -1) { //From CSS property
+    	        		//TODO: Add functionality
+    	        		var docRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
+    	        		prop = prop.replace(/[^()\\""\\'']+/g, test);
+    	        		function test (s) {
+    	        			if (s !== 'url') {
+    	        				s = docRootUrl + s;
+    	        			}
+    	        			return s;
+    	        		}
+        	    	}
+        	    }
+            	return prop;
+            }
+            //
+            function ninjaUrlPrepend (url) {
+            	var docRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
+            	return '"'+docRootUrl+url.replace(/\"/gi, '')+'"';
+            }
+            
+           	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+           	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+           	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            var scripttags = this._templateDocument.html.getElementsByTagName('script'), webgldata;  //TODO: Use querySelectorAll
             //
             for (var w in scripttags) {
             	if (scripttags[w].getAttribute) {
@@ -464,16 +541,18 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 						//If rules are null, assuming cross-origin issue
 						if(this._document.styleSheets[i].rules === null) {
 							//TODO: Revisit URLs and URI creation logic, very hack right now
-							var fileUri, cssUrl, cssData, tag, query;
-							if (this._document.styleSheets[i].href.indexOf('js/document/templates/montage-html') !== -1) {
-								//Getting the url of the CSS file
-								cssUrl = this._document.styleSheets[i].href.split('js/document/templates/montage-html')[1];
-								//Creating the URI of the file (this is wrong should not be splitting cssUrl)
-								fileUri = this.application.ninja.coreIoApi.cloudData.root+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+cssUrl.split('/')[1];
-								//Loading the data from the file
+							var fileUri, cssUrl, cssData, query, prefixUrl, fileCouldDirUrl, docRootUrl;
+							//
+            				docRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
+							//TODO: Parse out relative URLs and map them to absolute
+							if (this._document.styleSheets[i].href.indexOf(this.application.ninja.coreIoApi.rootUrl) !== -1) {
+								//
+								cssUrl = this._document.styleSheets[i].href.split(this.application.ninja.coreIoApi.rootUrl)[1];
+								fileUri = this.application.ninja.coreIoApi.cloudData.root+cssUrl;
+								//TODO: Add error handling for reading file
 								cssData = this.application.ninja.coreIoApi.readFile({uri: fileUri});
-								//Creating tag with file content
-								tag = this.iframe.contentWindow.document.createElement('style');
+								//
+								var tag = this.iframe.contentWindow.document.createElement('style');
 								tag.setAttribute('type', 'text/css');
 								tag.setAttribute('data-ninja-uri', fileUri);
 								tag.setAttribute('data-ninja-file-url', cssUrl);
@@ -481,11 +560,18 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 								tag.setAttribute('data-ninja-file-name', cssUrl.split('/')[cssUrl.split('/').length-1]);
 								//Copying attributes to maintain same properties as the <link>
 								for (var n in this._document.styleSheets[i].ownerNode.attributes) {
-									if (this._document.styleSheets[i].ownerNode.attributes[n].value && this._document.styleSheets[i].ownerNode.attributes[n].name !== 'disabled') {
-										tag.setAttribute(this._document.styleSheets[i].ownerNode.attributes[n].name, this._document.styleSheets[i].ownerNode.attributes[n].value);
+									if (this._document.styleSheets[i].ownerNode.attributes[n].value && this._document.styleSheets[i].ownerNode.attributes[n].name !== 'disabled' && this._document.styleSheets[i].ownerNode.attributes[n].name !== 'disabled') {
+										if (this._document.styleSheets[i].ownerNode.attributes[n].value.indexOf(docRootUrl) !== -1) {
+											tag.setAttribute(this._document.styleSheets[i].ownerNode.attributes[n].name, this._document.styleSheets[i].ownerNode.attributes[n].value.split(docRootUrl)[1]);
+										} else {
+											tag.setAttribute(this._document.styleSheets[i].ownerNode.attributes[n].name, this._document.styleSheets[i].ownerNode.attributes[n].value);
+										}
 									}
 								}
-								tag.innerHTML = cssData.content;
+								//
+								fileCouldDirUrl = this._document.styleSheets[i].href.split(this._document.styleSheets[i].href.split('/')[this._document.styleSheets[i].href.split('/').length-1])[0];
+								prefixUrl = 'url('+fileCouldDirUrl; //This should be re-written with better RegEx
+								tag.innerHTML = cssData.content.replace(/url\(/gi, prefixUrl);
 								//Looping through DOM to insert style tag at location of link element
 								query = this._templateDocument.html.querySelectorAll(['link']);
 								for (var j in query) {
@@ -498,15 +584,28 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 								}
 							} else {
 								console.log('ERROR: Cross-Domain-Stylesheet detected, unable to load in Ninja');
-								/*
-//None local stylesheet, probably on a CDN (locked)
-								tag = this.iframe.contentWindow.document.createElement('style');
+								//None local stylesheet, probably on a CDN (locked)
+								var tag = this.iframe.contentWindow.document.createElement('style');
 								tag.setAttribute('type', 'text/css');
 								tag.setAttribute('data-ninja-external-url', this._document.styleSheets[i].href);
 								tag.setAttribute('data-ninja-file-read-only', "true");
 								tag.setAttribute('data-ninja-file-name', this._document.styleSheets[i].href.split('/')[this._document.styleSheets[i].href.split('/').length-1]);
+								//Copying attributes to maintain same properties as the <link>
+								for (var n in this._document.styleSheets[i].ownerNode.attributes) {
+									if (this._document.styleSheets[i].ownerNode.attributes[n].value && this._document.styleSheets[i].ownerNode.attributes[n].name !== 'disabled' && this._document.styleSheets[i].ownerNode.attributes[n].name !== 'disabled') {
+										if (this._document.styleSheets[i].ownerNode.attributes[n].value.indexOf(docRootUrl) !== -1) {
+											tag.setAttribute(this._document.styleSheets[i].ownerNode.attributes[n].name, this._document.styleSheets[i].ownerNode.attributes[n].value.split(docRootUrl)[1]);
+										} else {
+											tag.setAttribute(this._document.styleSheets[i].ownerNode.attributes[n].name, this._document.styleSheets[i].ownerNode.attributes[n].value);
+										}
+									}
+								}
 								
-								//TODO: Figure out cross-domain XHR issue, might need cloud to handle
+								
+								
+								
+								/*
+//TODO: Figure out cross-domain XHR issue, might need cloud to handle
 								var xhr = new XMLHttpRequest();
                     			xhr.open("GET", this._document.styleSheets[i].href, true);
                     			xhr.send();
@@ -514,21 +613,24 @@ exports.HTMLDocument = Montage.create(TextDocument, {
                     			if (xhr.readyState === 4) {
                         			console.log(xhr);
                     			}
+*/
                     			//tag.innerHTML = xhr.responseText //xhr.response;
-								
+                    			tag.innerHTML = 'noRULEjustHACK{background: #000}'
 								//Currently no external styles will load if unable to load via XHR request
 								
 								//Disabling external style sheets
 								query = this._templateDocument.html.querySelectorAll(['link']);
-								for (var j in query) {
-									if (query[j].href === this._document.styleSheets[i].href) {
+								for (var k in query) {
+									if (query[k].href === this._document.styleSheets[i].href) {
 										//Disabling style sheet to reload via inserting in style tag
-										query[j].setAttribute('disabled', 'true');
+										var tempCSS = query[k].cloneNode(true);
+										tempCSS.setAttribute('data-ninja-template', 'true');
+										query[k].setAttribute('disabled', 'true');
+										this.iframe.contentWindow.document.head.appendChild(tempCSS);
 										//Inserting tag
-										this._templateDocument.head.insertBefore(tag, query[j]);
+										this._templateDocument.head.insertBefore(tag, query[k]);
 									}
 								}
-*/
 							}
                     	}
 					}
@@ -717,6 +819,11 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             }
 
             this.draw3DGrid = this.application.ninja.appModel.show3dGrid;
+
+            //persist a clone of history per document
+            this.undoStack = this.application.ninja.undocontroller.undoQueue.slice(0);
+            this.redoStack = this.application.ninja.undocontroller.redoQueue.slice(0);
+            this.application.ninja.undocontroller.clearHistory();//clear history to give the next document a fresh start
         }
     },
 
@@ -726,20 +833,24 @@ exports.HTMLDocument = Montage.create(TextDocument, {
         value: function () {
             this.application.ninja.stage.drawUtils.gridHorizontalSpacing = this.gridHorizontalSpacing;
             this.application.ninja.stage.drawUtils.gridVerticalSpacing = this.gridVerticalSpacing;
+           
+            if((this.savedLeftScroll !== null) && (this.savedTopScroll !== null)){
+                this.application.ninja.stage._iframeContainer.scrollLeft = this.savedLeftScroll;
+                this.application.ninja.stage._iframeContainer.scrollTop = this.savedTopScroll;
+                this.application.ninja.stage.handleScroll();
+            }
 
-            if((typeof this.selectionModel !== 'undefined') && (this.selectionModel !== null)){
+            this.application.ninja.currentSelectedContainer = this.documentRoot;
+            if(this.selectionModel){
                 this.application.ninja.selectedElements = this.selectionModel.slice(0);
             }
 
-            if((this.savedLeftScroll!== null) && (this.savedTopScroll !== null)){
-                this.application.ninja.stage._iframeContainer.scrollLeft = this.savedLeftScroll;
-                this.application.ninja.stage._scrollLeft = this.savedLeftScroll;
-                this.application.ninja.stage._iframeContainer.scrollTop = this.savedTopScroll;
-                this.application.ninja.stage._scrollLeft = this.savedTopScroll;
-            }
-            this.application.ninja.stage.handleScroll();
-
             this.application.ninja.appModel.show3dGrid = this.draw3DGrid;
+
+            this.application.ninja.undocontroller.undoQueue = this.undoStack.slice(0);
+            this.application.ninja.undocontroller.redoQueue = this.redoStack.slice(0);
+
+
         }
     }
 	////////////////////////////////////////////////////////////////////
