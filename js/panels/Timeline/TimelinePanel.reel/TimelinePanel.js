@@ -289,7 +289,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 				// No, we have no information stored.  Create it.
 				this.application.ninja.currentDocument.isTimelineInitialized = true;
 				this.application.ninja.currentDocument.tlArrLayers = [];
-				this.application.ninja.currentDocument.tlArrTracks = [];
                 this.application.ninja.currentDocument.tllayerNumber = 0;
                 this.application.ninja.currentDocument.tlLayerHashTable=[];
                 this.hashKey = this.application.ninja.currentSelectedContainer.uuid;
@@ -570,6 +569,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             thingToPush.layerData.elementsList = [];
             thingToPush.layerData.deleted = false;
             thingToPush.layerData.isSelected = false;
+
+            thingToPush.layerData.isActive = false;
+
             thingToPush.layerData.created=false;
             thingToPush.layerData.isTrackAnimated = false;
             thingToPush.layerData.currentKeyframeRule = null;
@@ -642,6 +644,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 thingToPush.layerData.elementsList = [];
                 thingToPush.layerData.deleted = false;
                 thingToPush.layerData.isSelected = false;
+
+                thingToPush.layerData.isActive = false;
+                
                 thingToPush.layerData.created=false;
                 thingToPush.layerData.isTrackAnimated = false;
                 thingToPush.layerData.currentKeyframeRule = null;
@@ -1007,12 +1012,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             return returnVal;
         }
     },
+
     getActiveLayerIndex:{
         value:function () {
             var i = 0,
                 returnVal = false,
                 arrLayersLength = this.arrLayers.length;
-
             for (i = 0; i < arrLayersLength; i++) {
                 if (this.arrLayers[i].layerData.isActive === true) {
                     returnVal = i;

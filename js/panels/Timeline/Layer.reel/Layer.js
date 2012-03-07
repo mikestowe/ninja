@@ -665,7 +665,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 	},
 	handleMousedown: {
 		value: function(event) {
-			this.isActive = true;
+			this.layerData.isActive = true;
 			var ptrParent = nj.queryParentSelector(event.target, ".content-style");
 			if (ptrParent !== false) {
 				this.selectStyle(this.getActiveStyleIndex());
