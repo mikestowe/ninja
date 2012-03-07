@@ -357,7 +357,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         },
         set:function(val){
             this._trackData = val;
-            this.setData();
+            if(this._trackData){
+                this.setData();
+            }
         }
     },
 

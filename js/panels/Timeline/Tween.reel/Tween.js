@@ -26,7 +26,9 @@ var Tween = exports.Tween = Montage.create(Component, {
         },
         set:function(val){
             this._tweenData = val;
-            this.setData();
+            if(this._tweenData){
+                this.setData();
+            }
         }
     },
 

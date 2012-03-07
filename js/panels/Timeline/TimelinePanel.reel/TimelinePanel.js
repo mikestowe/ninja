@@ -276,7 +276,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.layout_tracks.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
             this.user_layers.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
             this.end_hottext.addEventListener("changing", this.updateTrackContainerWidth.bind(this), false);
-			
 		}
 	},
 	
@@ -352,7 +351,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             
             // Clear variables--including repetitions.
             this.hashInstance = null;
-            this.hashLayerNumber = null;
             this.hashElementMapToLayer = null;
 			this.arrLayers = [];
 
@@ -376,7 +374,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         	this._bindDocumentEvents();
         	
             this.hashInstance = this.createLayerHashTable();
-            //this.hashLayerNumber = this.createLayerNumberHash();
             this.hashElementMapToLayer = this.createElementMapToLayer();
             this.initTimelineForDocument();
         }
