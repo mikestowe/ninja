@@ -5,12 +5,17 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 
+var	GeomObj					= require("js/lib/geom/geom-obj").GeomObj,
+	RuntimeGeomObj			= require("js/lib/rdge/runtime/RuntimeGeomObj"),
+	RuntimeRectangle		= RuntimeGeomObj.RuntimeRectangle,
+	RuntimeOval				= RuntimeGeomObj.RuntimeOval,
+	getPropertyFromString	= require("js/lib/rdge/runtime/RuntimeGeomObj").getPropertyFromString;
 
 ///////////////////////////////////////////////////////////////////////
 // Class GLRuntime
 //      Manages runtime fora WebGL canvas
 ///////////////////////////////////////////////////////////////////////
-function GLRuntime( canvas, importStr )
+var GLRuntime = function GLRuntime( canvas, importStr )
 {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
@@ -343,6 +348,10 @@ function GLRuntime( canvas, importStr )
 	}
 }
 
+
+if (typeof exports === "object") {
+    exports.GLRuntime = GLRuntime;
+}
 
 
 

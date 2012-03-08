@@ -36,19 +36,27 @@ var FlatMaterial = function FlatMaterial() {
 	// duplcate method requirde
 	this.dup = function()	{  return new FlatMaterial();	} ;
 
-	this.init = function()
+	this.init = function( world )
 	{
-		// set up the shader
-		this._shader = new jshader();
-		this._shader.def = flatShaderDef;
-		this._shader.init();
+		// save the world
+		if (world)
+		{
+			this.setWorld( world );
 
-        // set the defaults
-		this._shader.colorMe.color.set( this.getColor() );
+			// set up the shader
+			this._shader = new jshader();
+			this._shader.def = flatShaderDef;
+			this._shader.init();
 
-		// set up the material node
-		this._materialNode = createMaterialNode("flatMaterial");
-		this._materialNode.setShader(this._shader);
+			// set the defaults
+			this._shader.colorMe.color.set( this.getColor() );
+
+			// set up the material node
+			this._materialNode = createMaterialNode("flatMaterial_" + world.generateUniqueNodeID() );
+			this._materialNode.setShader(this._shader);
+		}
+		else
+			throw new Error( "GLWorld not supplied to material initialization" );
 	};
 
 
@@ -73,15 +81,12 @@ var FlatMaterial = function FlatMaterial() {
 	};
     ///////////////////////////////////////////////////////////////////////
 
-	this.export = function() {
+	this.export = function()
+	{
 		// this function should be overridden by subclasses
 		var exportStr = "material: " + this.getShaderName() + "\n";
 		exportStr += "name: " + this.getName() + "\n";
-		
-		if (this._shader)
-			exportStr += "color: " + String(this._shader.colorMe.color) + "\n";
-		else
-			exportStr += "color: " + this.getColor() + "\n";
+		exportStr += "color: " + String(this._propValues["color"]) + "\n";
 		exportStr += "endMaterial\n";
 
 		return exportStr;

@@ -5,12 +5,16 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 
+var GeomObj			= require("js/lib/geom/geom-obj").GeomObj;
+var ShapePrimitive	= require("js/lib/geom/shape-primitive").ShapePrimitive;
+var MaterialsModel	= require("js/models/materials-model").MaterialsModel;
+var GLRuntime		= require("js/lib/rdge/runtime/GLRuntime").GLRuntime;
 
 ///////////////////////////////////////////////////////////////////////
 // Class ShapeRuntime
 //      Manages runtime shape display
 ///////////////////////////////////////////////////////////////////////
-function CanvasDataManager()
+var CanvasDataManager = function CanvasDataManager()
 {
 	this.loadGLData = function(root,  valueArray,  NinjaUtils)
 	{
@@ -73,3 +77,7 @@ function CanvasDataManager()
 	}
 }
 
+
+if (typeof exports === "object") {
+    exports.CanvasDataManager = CanvasDataManager;
+}

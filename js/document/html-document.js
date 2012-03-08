@@ -8,7 +8,9 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 //
 var Montage = 		require("montage/core/core").Montage,
     TextDocument =	require("js/document/text-document").TextDocument,
-    NJUtils = 		require("js/lib/NJUtils").NJUtils;
+    NJUtils = 		require("js/lib/NJUtils").NJUtils,
+	CanvasDataManager =	require("js/lib/rdge/runtime/CanvasDataManager").CanvasDataManager,
+	GLWorld =			require("js/lib/drawing/world").World;
 ////////////////////////////////////////////////////////////////////////
 //
 exports.HTMLDocument = Montage.create(TextDocument, {
@@ -185,7 +187,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 			var elt = this.documentRoot;
 			if (elt)
 			{
-				var loadForRuntime = false;
+				var loadForRuntime = true;
 				if (loadForRuntime)
 				{
 					//console.log( "load canvas data: " , value );
@@ -224,7 +226,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 											var useWebGL = (index >= 0)
 											var world = new GLWorld( canvas, useWebGL );
 											world.import( importStr );
-											canvas.elementModel.shapeModel.GLWorld = world;
 
 											this.buildShapeModel( canvas.elementModel, world );
 										}
@@ -789,8 +790,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             			}
             		}
             	}
-    			//return {mode: 'html', document: this._userDocument, webgl: this.glData, styles: styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
-    			return {mode: 'html', document: this._userDocument, styles: styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
+    			return {mode: 'html', document: this._userDocument, webgl: this.glData, styles: styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
     		} else if (this.currentView === "code"){
     			//TODO: Would this get call when we are in code of HTML?
     		} else {
@@ -813,8 +813,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             			}
             		}
             	}
-    			//return {mode: 'html', document: this._userDocument, webgl: this.glData, css: css, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
-    			return {mode: 'html', document: this._userDocument, css: css, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
+    			return {mode: 'html', document: this._userDocument, webgl: this.glData, css: css, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
     		} else if (this.currentView === "code"){
     			//TODO: Would this get call when we are in code of HTML?
     		} else {

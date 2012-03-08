@@ -4,11 +4,22 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
+//var RuntimeGeomObjDict = require("js/lib/rdge/runtime/RuntimeGeomObj");
+//var	getPropertyFromString = RuntimeGeomObjDict.getPropertyFromString;
+
+//var	GeomObj					= require("js/lib/geom/geom-obj").GeomObj,
+	//MaterialsModel			= require("js/models/materials-model").MaterialsModel,
+	//CanvasDataManager		= require("js/lib/rdge/runtime/CanvasDataManager"),
+	//RuntimeGeomObj			= require("js/lib/rdge/runtime/RuntimeGeomObj"),
+	//RuntimeRectangle		= RuntimeGeomObj.RuntimeRectangle,
+	//RuntimeOval				= RuntimeGeomObj.RuntimeOval,
+	//getPropertyFromString	= require("js/lib/rdge/runtime/RuntimeGeomObj").getPropertyFromString;
+
 ///////////////////////////////////////////////////////////////////////
 // Class RuntimeMaterial
 //      Runtime representation of a material.
 ///////////////////////////////////////////////////////////////////////
-function RuntimeMaterial( world )
+var RuntimeMaterial = function RuntimeMaterial( world )
 {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
@@ -42,6 +53,20 @@ function RuntimeMaterial( world )
 	this.update = function( time )
 	{
 	}
+
+	this.getPropertyFromString = function( prop, str )
+	{
+		var index = str.indexOf( prop );
+		if (index < 0)  throw new Error( "property " + prop + " not found in string: " + str);
+
+		var rtnStr = str.substr( index+prop.length );
+		index = rtnStr.indexOf( "\n" );
+		if (index >= 0)
+			rtnStr = rtnStr.substr(0, index);
+
+		return rtnStr;
+	}
+
 }
 
 function RuntimeFlatMaterial()
@@ -58,7 +83,7 @@ function RuntimeFlatMaterial()
 
     this.import = function( importStr )
     {
-		var colorStr = getPropertyFromString( "color: ",	importStr );
+		var colorStr = this.getPropertyFromString( "color: ",	importStr );
 		if (colorStr)
 			this._color  = eval( "[" + colorStr + "]" );
     };
@@ -89,7 +114,7 @@ function RuntimePulseMaterial()
 
 	this.import = function( importStr )
 	{
-		this._texMap = getPropertyFromString( "texture: ",	importStr );
+		this._texMap = this.getPropertyFromString( "texture: ",	importStr );
 	}
 
 	this.init = function()
@@ -183,22 +208,22 @@ function RuntimeRadialGradientMaterial()
 	this.import = function( importStr )
 	{
 		var colorStr;
-		colorStr = getPropertyFromString( "color1: ",	importStr );
+		colorStr = this.getPropertyFromString( "color1: ",	importStr );
 		this._color1  = eval( "[" + colorStr + "]" );
-		colorStr = getPropertyFromString( "color2: ",	importStr );
+		colorStr = this.getPropertyFromString( "color2: ",	importStr );
 		this._color2  = eval( "[" + colorStr + "]" );
-		colorStr = getPropertyFromString( "color3: ",	importStr );
+		colorStr = this.getPropertyFromString( "color3: ",	importStr );
 		this._color3  = eval( "[" + colorStr + "]" );
-		colorStr = getPropertyFromString( "color4: ",	importStr );
+		colorStr = this.getPropertyFromString( "color4: ",	importStr );
 		this._color4  = eval( "[" + colorStr + "]" );
 
-		this._colorStop1 = Number( getPropertyFromString( "colorStop1: ",	importStr ) );
-		this._colorStop2 = Number( getPropertyFromString( "colorStop2: ",	importStr ) );
-		this._colorStop3 = Number( getPropertyFromString( "colorStop3: ",	importStr ) );
-		this._colorStop4 = Number( getPropertyFromString( "colorStop4: ",	importStr ) );
+		this._colorStop1 = Number( this.getPropertyFromString( "colorStop1: ",	importStr ) );
+		this._colorStop2 = Number( this.getPropertyFromString( "colorStop2: ",	importStr ) );
+		this._colorStop3 = Number( this.getPropertyFromString( "colorStop3: ",	importStr ) );
+		this._colorStop4 = Number( this.getPropertyFromString( "colorStop4: ",	importStr ) );
 
 		if (this._angle !== undefined)
-			this._angle = getPropertyFromString( "angle: ",	importStr );
+			this._angle = this.getPropertyFromString( "angle: ",	importStr );
 	}
 
 }
@@ -232,10 +257,10 @@ function RuntimeBumpMetalMaterial()
 
 	this.import = function( importStr )
 	{
-		this._lightDiff  = eval( "[" + getPropertyFromString( "lightDiff: ",	importStr ) + "]" );
-		this._diffuseTexture = getPropertyFromString( "diffuseTexture: ",	importStr );
-		this._specularTexture = getPropertyFromString( "specularTexture: ",	importStr );
-		this._normalTexture = getPropertyFromString( "normalMap: ",	importStr );
+		this._lightDiff  = eval( "[" + this.getPropertyFromString( "lightDiff: ",	importStr ) + "]" );
+		this._diffuseTexture = this.getPropertyFromString( "diffuseTexture: ",	importStr );
+		this._specularTexture = this.getPropertyFromString( "specularTexture: ",	importStr );
+		this._normalTexture = this.getPropertyFromString( "normalMap: ",	importStr );
 	}
 
 	this.init = function()
@@ -280,3 +305,13 @@ function RuntimeUberMaterial()
 }
 
 
+if (typeof exports === "object")
+{
+	exports.RuntimeMaterial					= RuntimeMaterial;
+	exports.RuntimeFlatMaterial				= RuntimeFlatMaterial;
+	exports.RuntimePulseMaterial			= RuntimePulseMaterial;
+	exports.RuntimeRadialGradientMaterial	= RuntimeRadialGradientMaterial;
+	exports.RuntimeLinearGradientMaterial	= RuntimeLinearGradientMaterial;
+	exports.RuntimeBumpMetalMaterial		= RuntimeBumpMetalMaterial;
+	exports.RuntimeUberMaterial				= RuntimeUberMaterial;
+}

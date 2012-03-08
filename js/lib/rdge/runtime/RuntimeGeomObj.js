@@ -5,11 +5,21 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
+var RuntimeMaterial = require("js/lib/rdge/runtime/RuntimeMaterial");
+var RuntimeFlatMaterial				= RuntimeMaterial.RuntimeFlatMaterial,
+	RuntimeRadialGradientMaterial	= RuntimeMaterial.RuntimeRadialGradientMaterial,
+	RuntimeLinearGradientMaterial	= RuntimeMaterial.RuntimeLinearGradientMaterial,
+	RuntimeBumpMetalMaterial		= RuntimeMaterial.RuntimeBumpMetalMaterial,
+	RuntimeUberMaterial				= RuntimeMaterial.RuntimeUberMaterial,
+	RuntimePulseMaterial			= RuntimeMaterial.RuntimePulseMaterial;
+	
+
+
 ///////////////////////////////////////////////////////////////////////
 // Class RuntimeGeomObj
 //      Super class for all geometry classes
 ///////////////////////////////////////////////////////////////////////
-function RuntimeGeomObj()
+var RuntimeGeomObj = function RuntimeGeomObj()
 {
     ///////////////////////////////////////////////////////////////////////
     // Constants
@@ -213,7 +223,7 @@ function RuntimeGeomObj()
     }
 }
 
-function getPropertyFromString( prop, str )
+var getPropertyFromString = function getPropertyFromString( prop, str )
 {
 	var index = str.indexOf( prop );
 	if (index < 0)  throw new Error( "property " + prop + " not found in string: " + str);
@@ -229,7 +239,7 @@ function getPropertyFromString( prop, str )
 ///////////////////////////////////////////////////////////////////////
 // Class RuntimeRectangle
 ///////////////////////////////////////////////////////////////////////
-function RuntimeRectangle()
+var RuntimeRectangle = function RuntimeRectangle()
 {
 	// inherit the members of RuntimeGeomObj
 	this.inheritedFrom = RuntimeGeomObj;
@@ -380,7 +390,7 @@ function RuntimeRectangle()
 ///////////////////////////////////////////////////////////////////////
 // Class RuntimeOval
 ///////////////////////////////////////////////////////////////////////
-function RuntimeOval()
+var RuntimeOval = function RuntimeOval()
 {
 	// inherit the members of RuntimeGeomObj
 	this.inheritedFrom = RuntimeGeomObj;
@@ -607,5 +617,14 @@ function RuntimeOval()
         }
         return rtnPts;
 	}
+}
+
+
+if (typeof exports === "object")
+{
+	exports.getPropertyFromString	= getPropertyFromString;
+	exports.RuntimeGeomObj			= RuntimeGeomObj;
+	exports.RuntimeRectangle		= RuntimeRectangle;
+	exports.RuntimeOval				= RuntimeOval;
 }
 

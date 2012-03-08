@@ -46,8 +46,10 @@ function TwistVertMaterial()
 	// duplcate method requirde
 	this.dup = function()	{  return new TwistVertMaterial();	} 
 
-	this.init = function()
+	this.init = function( world )
 	{
+		this.setWorld( world );
+
 		// set up the shader
 		this._shader = new jshader();
 		this._shader.def = twistVertShaderDef;
@@ -57,7 +59,7 @@ function TwistVertMaterial()
 		this._shader.twistMe.color.set( this.getColor() );
 
 		// set up the material node
-		this._materialNode = createMaterialNode("twistVertMaterial");
+		this._materialNode = createMaterialNode("twistVertMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		// initialize the twist vert properties
