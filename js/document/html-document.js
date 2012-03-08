@@ -187,13 +187,15 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 			var elt = this.documentRoot;
 			if (elt)
 			{
-				var loadForRuntime = true;
-				if (loadForRuntime)
-				{
-					var cdm = new CanvasDataManager();
-					cdm.loadGLData(elt,  value,  NJUtils);
-				}
-				else
+// FOR JOSE:   The following commented out lines are what the runtime
+// version should execute.
+//				var loadForRuntime = true;
+//				if (loadForRuntime)
+//				{
+//					var cdm = new CanvasDataManager();
+//					cdm.loadGLData(elt,  value,  NJUtils);
+//				}
+//				else
 				{
 					var nWorlds= value.length;
 					for (var i=0;  i<nWorlds;  i++)
