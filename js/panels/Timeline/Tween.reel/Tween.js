@@ -134,12 +134,6 @@ var Tween = exports.Tween = Montage.create(Component, {
     	}
     },
 
-    prepareForDraw:{
-        value:function () {
-
-        }
-    },
-
     draw:{
         value:function () {
             this.element.style.left = this.spanPosition + "px";
@@ -157,7 +151,7 @@ var Tween = exports.Tween = Montage.create(Component, {
             if (event.detail.source && event.detail.source !== "tween") {
                 // check for correct element selection
                 if (this.application.ninja.selectedElements[0]._element != this.parentComponent.parentComponent.animatedElement) {
-                    alert("Wrong element selected for this keyframe track");
+                    console.log("Wrong element selected for this keyframe track");
                 } else {
                     // update tweenedProperties and tell containing track to update CSS rule
                     // temp read only top and left.  need to change to loop over event details for prop changes generically
@@ -181,7 +175,7 @@ var Tween = exports.Tween = Montage.create(Component, {
 
             // select the containing layer
             var selectIndex = this.application.ninja.timeline.getLayerIndexByID(this.parentComponent.parentComponent.trackID);
-            this.application.ninja.timeline.selectLayer(selectIndex);
+            this.application.ninja.timeline.selectLayer(selectIndex, true);
 
             // tell timeline to deselect all other tweens and push this one as the currentSelectedTweens in timeline
             this.application.ninja.timeline.deselectTweens();
