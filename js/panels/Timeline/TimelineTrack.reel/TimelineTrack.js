@@ -27,7 +27,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         },
         set:function (value) {
             this._trackID = value;
-            this.needsDraw = true;
+            //this.needsDraw = true;
         }
     },
 
@@ -114,7 +114,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._arrStyleTracks = newVal;
-    		this.needsDraw = true;
+    		//this.needsDraw = true;
     	}
     },
     _styleTracksRepetition: {
@@ -128,7 +128,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._styleTracksRepetition = newVal;
-    		this.needsDraw = true;
+    		//needsDraw = true;
     	}
     },
     
@@ -146,7 +146,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._arrPositionTracks = newVal;
-    		this.needsDraw = true;
+    		//this.needsDraw = true;
     	}
     },
     _positionTracksRepetition: {
@@ -160,7 +160,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._positionTracksRepetition = newVal;
-    		this.needsDraw = true;
+    		//this.needsDraw = true;
     	}
     },
     
@@ -179,7 +179,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._arrTransformTracks = newVal;
-    		this.needsDraw = true;
+    		//this.needsDraw = true;
     	}
     },
     _transformTracksRepetition: {
@@ -193,7 +193,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._transformTracksRepetition = newVal;
-    		this.needsDraw = true;
+    		//this.needsDraw = true;
     	}
     },
 
@@ -209,7 +209,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         },
         set:function (newVal) {
             this._tweens = newVal;
-            this.needsDraw=true;
+            //this.needsDraw=true;
         }
     },
 
@@ -379,6 +379,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.bypassAnimation = this.trackData.bypassAnimation;
             this.isStyleCollapsed = this.trackData.isStyleCollapsed;
             this.trackPosition = this.trackData.trackPosition;
+            this.needsDraw = true;
         }
     },
 
@@ -393,20 +394,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     draw:{
         value:function () {
             this.ninjaStylesContoller = this.application.ninja.stylesController;
-            return;
-            if (this._mainCollapser.isCollapsed !== this.isMainCollapsed) {
-                this._mainCollapser.toggle(false);
-            }
-            if (this._positionCollapser.isCollapsed !== this.isPositionCollapsed) {
-                this._positionCollapser.toggle(false);
-            }
-            if (this._transformCollapser.isCollapsed !== this.isTransformCollapsed) {
-                this._transformCollapser.toggle(false);
-            }
-            if (this._styleCollapser.isCollapsed !== this.isStyleCollapsed) {
-                this._styleCollapser.toggle(false);
-            }
-
         }
     },
 
@@ -457,11 +444,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     insertTween:{
         value:function (clickPos) {
-            // calculate new tween's keyframe milliseconds by clickPos
             var currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
             var currentMillisec = currentMillisecPerPixel * clickPos;
-
-            // need to check timeline master duration if greater than this track duration
             this.trackDuration = currentMillisec;
             var newTween = {};
             newTween.tweenData = {};
