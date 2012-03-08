@@ -842,6 +842,9 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             this.undoStack = this.application.ninja.undocontroller.undoQueue.slice(0);
             this.redoStack = this.application.ninja.undocontroller.redoQueue.slice(0);
             this.application.ninja.undocontroller.clearHistory();//clear history to give the next document a fresh start
+
+            //pause videos on switching or closing the document, so that the browser does not keep downloading the media data
+            this.pauseVideos();
         }
     },
 
@@ -870,6 +873,44 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 
 
         }
-    }
+    },
 	////////////////////////////////////////////////////////////////////
+    /**
+     *pause videos on switching or closing the document, so that the browser does not keep downloading the media data
+    */
+    pauseVideos:{
+        value:function(){
+            var videosArr = this.documentRoot.getElementsByTagName("video"), i=0;
+            for(i=0;i<videosArr.length;i++){
+                if(!videosArr[i].paused){
+                    videosArr[i].pause();
+                }
+            }
+        }
+    },
+
+    /**
+     * remove the video src on closing the document, so that the browser does not keep downloading the media data, if the tag does not get garbage collected
+     *removeSrc : boolean to remove the src if the video... set only in the close document flow
+    */
+    stopVideos:{
+        value:function(){
+            var videosArr = this.documentRoot.getElementsByTagName("video"), i=0;
+            for(i=0;i<videosArr.length;i++){
+                videosArr[i].src = "";
+            }
+        }
+    },
+    pauseAndStopVideos:{
+        value:function(){
+            var videosArr = this.documentRoot.getElementsByTagName("video"), i=0;
+            for(i=0;i<videosArr.length;i++){
+                if(!videosArr[i].paused){
+                    videosArr[i].pause();
+                }
+                videosArr[i].src = "";
+            }
+        }
+    }
+    ////////////////////////////////////////////////////////////////////
 });
