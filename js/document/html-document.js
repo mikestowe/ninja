@@ -193,7 +193,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 //				if (loadForRuntime)
 //				{
 //					var cdm = new CanvasDataManager();
-//					cdm.loadGLData(elt,  value,  NJUtils);
+//					cdm.loadGLData(elt,  value );
 //				}
 //				else
 				{

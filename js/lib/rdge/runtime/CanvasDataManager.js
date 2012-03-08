@@ -16,7 +16,7 @@ var GLRuntime		= require("js/lib/rdge/runtime/GLRuntime").GLRuntime;
 ///////////////////////////////////////////////////////////////////////
 var CanvasDataManager = function CanvasDataManager()
 {
-	this.loadGLData = function(root,  valueArray,  NinjaUtils)
+	this.loadGLData = function(root,  valueArray )
 	{
 		var value = valueArray;
 		var nWorlds = value.length;
