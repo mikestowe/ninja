@@ -109,6 +109,7 @@ var RuntimeGeomObj = function RuntimeGeomObj()
 				case "star":
 				case "zinvert":
 				case "keleidoscope":
+				case "radialBlur":
 				case "pulse":			mat = new RuntimePulseMaterial();				break;
 
 				default:
