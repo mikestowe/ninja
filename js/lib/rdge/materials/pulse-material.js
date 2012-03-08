@@ -101,7 +101,7 @@ var PulseMaterial = function PulseMaterial() {
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = createMaterialNode("pulseMaterial");
+		this._materialNode = createMaterialNode("pulseMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;
@@ -178,6 +178,9 @@ var PulseMaterial = function PulseMaterial() {
 		// every material needs the base type and instance name
 		var exportStr = "material: " + this.getShaderName() + "\n";
 		exportStr += "name: " + this.getName() + "\n";
+
+		var texMapName = this._propValues[this._propNames[0]];
+		exportStr += "texture: " + texMapName + "\n";
 		
 		// every material needs to terminate like this
 		exportStr += "endMaterial\n";
@@ -193,6 +196,8 @@ var PulseMaterial = function PulseMaterial() {
 
 		var rtnStr;
         try {
+			this._propValues[this._propNames[0]] = pu.nextValue( "texture: " );
+
             var endKey = "endMaterial\n";
             var index = importStr.indexOf( endKey );
             index += endKey.length;

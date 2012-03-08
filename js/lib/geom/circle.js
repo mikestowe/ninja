@@ -577,8 +577,9 @@ var Circle = function GLCircle() {
         } else {
 			rtnStr += "flatMaterial";
         }
-
 		rtnStr += "\n";
+
+		rtnStr += this.exportMaterials();
 
 		return rtnStr;
 	};

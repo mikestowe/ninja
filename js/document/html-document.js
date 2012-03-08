@@ -8,7 +8,9 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 //
 var Montage = 		require("montage/core/core").Montage,
     TextDocument =	require("js/document/text-document").TextDocument,
-    NJUtils = 		require("js/lib/NJUtils").NJUtils;
+    NJUtils = 		require("js/lib/NJUtils").NJUtils,
+	CanvasDataManager =	require("js/lib/rdge/runtime/CanvasDataManager").CanvasDataManager,
+	GLWorld =			require("js/lib/drawing/world").World;
 ////////////////////////////////////////////////////////////////////////
 //
 exports.HTMLDocument = Montage.create(TextDocument, {
@@ -206,12 +208,112 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 			var elt = this.documentRoot;
 			if (elt)
 			{
-				console.log( "load canvas data: " , value );
-				var cdm = new CanvasDataManager();
-				cdm.loadGLData(elt,  value);
+// FOR JOSE:   The following commented out lines are what the runtime
+// version should execute.
+//				var loadForRuntime = true;
+//				if (loadForRuntime)
+//				{
+//					var cdm = new CanvasDataManager();
+//					cdm.loadGLData(elt,  value );
+//				}
+//				else
+				{
+					var nWorlds= value.length;
+					for (var i=0;  i<nWorlds;  i++)
+					{
+						var importStr = value[i];
+						var startIndex = importStr.indexOf( "id: " );
+						if (startIndex >= 0)
+						{
+							var endIndex = importStr.indexOf( "\n", startIndex );
+							if (endIndex > 0)
+							{
+								var id = importStr.substring( startIndex+4, endIndex );
+								if (id)
+								{
+									var canvas = this.findCanvasWithID( id, elt );
+									if (canvas)
+									{
+										if (!canvas.elementModel)
+										{
+											NJUtils.makeElementModel(canvas, "Canvas", "shape", true);
+										}
+								
+										if (canvas.elementModel)
+										{
+											if (canvas.elementModel.shapeModel.GLWorld)
+												canvas.elementModel.shapeModel.GLWorld.clearTree();
+
+											var index = importStr.indexOf( "webGL: " );
+											var useWebGL = (index >= 0)
+											var world = new GLWorld( canvas, useWebGL );
+											world.import( importStr );
+
+											this.buildShapeModel( canvas.elementModel, world );
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 		}
     },
+
+	buildShapeModel:
+	{
+		value: function( elementModel, world )
+		{
+            var shapeModel = elementModel.shapeModel;
+			shapeModel.shapeCount	= 1;	// for now...
+			shapeModel.useWebGl		= world._useWebGL;
+			shapeModel.GLWorld		= world;
+			var root = world.getGeomRoot();
+			if (root)
+			{
+				shapeModel.GLGeomObj			= root;
+				shapeModel.strokeSize			= root._strokeWidth;
+				shapeModel.stroke				= root._strokeColor.slice();
+				shapeModel.strokeMaterial		= root._strokeMaterial.dup();
+				shapeModel.strokeStyle			= "solid";
+				//shapeModel.strokeStyleIndex
+				//shapeModel.border
+				//shapeModel.background
+				switch (root.geomType())
+				{
+					case root.GEOM_TYPE_RECTANGLE:
+                        elementModel.selection = "Rectangle";
+                        elementModel.pi = "RectanglePi";
+                        shapeModel.fill					= root._fillColor.slice();
+                        shapeModel.fillMaterial			= root._fillMaterial.dup();
+						shapeModel.tlRadius = root._tlRadius;
+						shapeModel.trRadius = root._trRadius;
+						shapeModel.blRadius = root._blRadius;
+						shapeModel.brRadius = root._brRadius;
+						break;
+
+					case root.GEOM_TYPE_CIRCLE:
+                        elementModel.selection = "Oval";
+                        elementModel.pi = "OvalPi";
+                        shapeModel.fill					= root._fillColor.slice();
+                        shapeModel.fillMaterial			= root._fillMaterial.dup();
+						shapeModel.innerRadius = root._innerRadius;
+						break;
+
+					case root.GEOM_TYPE_LINE:
+                        elementModel.selection = "Line";
+                        elementModel.pi = "LinePi";
+						shapeModel.slope = root._slope;
+						break;
+
+					default:
+						console.log( "geometry type not supported for file I/O, " + root.geomType());
+						break;
+				}
+			}
+		}
+	},
 
     zoomFactor: {
         get: function() { return this._zoomFactor; },
@@ -240,6 +342,27 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             }
         }
     },
+
+    /**
+     * search the DOM tree to find a canvas with the given id
+     */
+	findCanvasWithID:  {
+		value: function( id,  elt )  {
+			var cid = elt.getAttribute( "data-RDGE-id" );
+			if (cid == id)  return elt;
+
+			if (elt.children)
+			{
+				var nKids = elt.children.length;
+				for (var i=0;  i<nKids;  i++)
+				{
+					var child = elt.children[i];
+					var foundElt = this.findCanvasWithID( id, child );
+					if (foundElt)  return foundElt;
+				}
+			}
+		}
+	},
     
     
     
@@ -788,8 +911,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             			}
             		}
             	}
-    			//return {mode: 'html', document: this._userDocument, webgl: this.glData, styles: styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
-    			return {mode: 'html', document: this._userDocument, styles: styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
+    			return {mode: 'html', document: this._userDocument, webgl: this.glData, styles: styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
     		} else if (this.currentView === "code"){
     			//TODO: Would this get call when we are in code of HTML?
     		} else {
@@ -812,8 +934,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             			}
             		}
             	}
-    			//return {mode: 'html', document: this._userDocument, webgl: this.glData, css: css, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
-    			return {mode: 'html', document: this._userDocument, css: css, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
+    			return {mode: 'html', document: this._userDocument, webgl: this.glData, css: css, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
     		} else if (this.currentView === "code"){
     			//TODO: Would this get call when we are in code of HTML?
     		} else {

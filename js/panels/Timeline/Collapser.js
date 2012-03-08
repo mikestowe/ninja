@@ -68,7 +68,7 @@ var Montage = require("montage/core/core").Montage,
 	},
 	
 	_bypassAnimation : {
-		value: false
+		value: true
 	},
 	bypassAnimation: {
 		get: function() {
@@ -166,6 +166,28 @@ var Montage = require("montage/core/core").Montage,
 			}
 			this.myContent.classList.remove(this.transitionClass);
 			this.handleCollapserLabelClick();
+		}
+	},
+	
+	_isToggling: {
+		serializable: true,
+		value: true
+	},
+	isToggling: {
+		serializable: true,
+		get: function() {
+			return this._isToggling;
+		},
+		set: function(newVal) {
+			if (newVal !== this._isToggling) {
+				this._isToggling = newVal;
+				
+				if (this.bypassAnimation) {
+					this.isAnimated = false;
+				}
+				this.myContent.classList.remove(this.transitionClass);
+				this.handleCollapserLabelClick();
+			}
 		}
 	},
 	
@@ -321,7 +343,7 @@ var Montage = require("montage/core/core").Montage,
 			}
 			
 			if (this.bypassAnimation) {
-				this.bypassAnimation = false;
+				this.bypassAnimation = true;
 				this.isAnimated = true;
 			}
 		}

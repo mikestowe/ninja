@@ -116,7 +116,39 @@ exports.NJUtils = Object.create(Object.prototype, {
     ///// TODO: Selection and model should be based on the element type
     makeModelFromElement: {
         value: function(el) {
-            this.makeElementModel(el, "Div", "block", false);
+            var selection = "div",
+                controller = "block",
+                isShape = false;
+            switch(el.nodeName.toLowerCase())
+            {
+                case "div":
+                    break;
+                case "img":
+                    selection = "image";
+                    controller = "image";
+                    break;
+                case "video":
+                    selection = "video";
+                    controller = "video";
+                    break;
+                case "canvas":
+                    isShape = el.getAttribute("data-RDGE-id");
+                    if(isShape)
+                    {
+                        // TODO - Need more info about the shape
+                        selection = "canvas";
+                        controller = "shape";
+                    }
+                    else
+                    {
+                        selection = "canvas";
+                        controller = "canvas";
+                    }
+                    break;
+                case "shape":
+                    break;
+            }
+            this.makeElementModel(el, selection, controller, isShape);
         }
     },
 

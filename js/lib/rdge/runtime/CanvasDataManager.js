@@ -5,14 +5,18 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 
+var GeomObj			= require("js/lib/geom/geom-obj").GeomObj;
+var ShapePrimitive	= require("js/lib/geom/shape-primitive").ShapePrimitive;
+var MaterialsModel	= require("js/models/materials-model").MaterialsModel;
+var GLRuntime		= require("js/lib/rdge/runtime/GLRuntime").GLRuntime;
 
 ///////////////////////////////////////////////////////////////////////
 // Class ShapeRuntime
 //      Manages runtime shape display
 ///////////////////////////////////////////////////////////////////////
-function CanvasDataManager()
+var CanvasDataManager = function CanvasDataManager()
 {
-	this.loadGLData = function(root,  valueArray)
+	this.loadGLData = function(root,  valueArray )
 	{
 		var value = valueArray;
 		var nWorlds = value.length;
@@ -29,31 +33,7 @@ function CanvasDataManager()
 					var canvas = this.findCanvasWithID( id, root );
 					if (canvas)
 					{
-						var loadForAuthoring = true;
-						var index = importStr.indexOf( "scenedata: " );
-						if (index >= 0)  loadForAuthoring = false;
-
-						if (loadForAuthoring)
-						{
-							if (!canvas.elementModel)
-							{
-								NJUtils.makeElementModel(canvas, "Canvas", "shape", true);
-							}
-								
-							if (canvas.elementModel)
-							{
-								if (canvas.elementModel.shapeModel.GLWorld)
-									canvas.elementModel.shapeModel.GLWorld.clearTree();
-
-								var world = new GLWorld( canvas );
-								canvas.elementModel.shapeModel.GLWorld = world;
-								world.import( importStr );
-							}
-						}
-						else
-						{
-							var rt = new GLRuntime( canvas, importStr );
-						}
+						var rt = new GLRuntime( canvas, importStr );
 					}
 				}
 			}
@@ -64,7 +44,7 @@ function CanvasDataManager()
 	{
 		if (elt.elementModel && elt.elementModel.shapeModel && elt.elementModel.shapeModel.GLWorld)
 		{
-			var data = elt.elementModel.shapeModel.GLWorld.export();
+			var data = elt.elementModel.shapeModel.GLWorld.export( true );
 			dataArray.push( data );
 		}
 
@@ -90,9 +70,14 @@ function CanvasDataManager()
 			for (var i=0;  i<nKids;  i++)
 			{
 				var child = elt.children[i];
-				this.findCanvasWithID( id, child );
+				var foundElt = this.findCanvasWithID( id, child );
+				if (foundElt)  return foundElt;
 			}
 		}
 	}
 }
 
+
+if (typeof exports === "object") {
+    exports.CanvasDataManager = CanvasDataManager;
+}

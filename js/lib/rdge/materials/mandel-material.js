@@ -66,7 +66,7 @@ var MandelMaterial = function MandelMaterial() {
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = createMaterialNode("mandelMaterial");
+		this._materialNode = createMaterialNode("mandelMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;

@@ -218,7 +218,6 @@ var Rectangle = function GLRectangle() {
         } else {
 			rtnStr += "flatMaterial";
         }
-
 		rtnStr += "\n";
 
 		rtnStr += "fillMat: ";
@@ -227,8 +226,9 @@ var Rectangle = function GLRectangle() {
         } else {
 			rtnStr += "flatMaterial";
         }
-
 		rtnStr += "\n";
+
+		rtnStr += this.exportMaterials();
 
 		return rtnStr;
 	};

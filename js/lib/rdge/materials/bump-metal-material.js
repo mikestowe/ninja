@@ -75,7 +75,7 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
     this.setProperty = function( prop, value )
 	{
 		// every material should do something with the "color" property
-		if (prop === "color")  prop = "lightDiff";
+		if (prop === "color")  return;
 
 		// make sure we have legitimate imput
 		var ok = this.validateProperty( prop, value );
@@ -116,7 +116,7 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 		this._shader['default'].u_light0Diff.set( this.getLightDiff() );
 
 		// set up the material node
-		this._materialNode = createMaterialNode( this.getShaderName() );
+		this._materialNode = createMaterialNode( this.getShaderName() + "_" + world.generateUniqueNodeID() );
 		this._materialNode.setShader(this._shader);
 
 		// set some image maps
