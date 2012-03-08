@@ -276,6 +276,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.layout_tracks.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
             this.user_layers.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
             this.end_hottext.addEventListener("changing", this.updateTrackContainerWidth.bind(this), false);
+            this.playhead.addEventListener("mousedown", this.startPlayheadTracking.bind(this), false);
+            this.playhead.addEventListener("mouseup", this.stopPlayheadTracking.bind(this), false);
+            this.time_markers.addEventListener("click", this.updatePlayhead.bind(this), false);
 		}
 	},
 	
@@ -407,6 +410,29 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:function () {
             this.user_layers.scrollTop = this.layout_tracks.scrollTop;
             this.layout_markers.scrollLeft = this.layout_tracks.scrollLeft;
+        }
+    },
+
+    startPlayheadTracking:{
+        value:function(){
+            this.time_markers.onmousemove = this.updatePlayhead.bind(this);
+        }
+    },
+
+    stopPlayheadTracking:{
+        value:function () {
+            this.time_markers.onmousemove = null;
+        }
+    },
+
+    updatePlayhead:{
+        value:function (event) {
+            var clickedPosition = event.target.offsetLeft + event.offsetX;
+            this.playhead.style.left = (clickedPosition - 2) + "px";
+            this.playheadmarker.style.left = clickedPosition + "px";
+            var currentMillisecPerPixel = Math.floor(this.millisecondsOffset / 80);
+            var currentMillisec = currentMillisecPerPixel * clickedPosition;
+            this.updateTimeText(currentMillisec);
         }
     },
 

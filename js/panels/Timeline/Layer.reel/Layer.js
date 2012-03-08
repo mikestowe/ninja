@@ -82,8 +82,8 @@ var Layer = exports.Layer = Montage.create(Component, {
         	if (newVal !== this._layerName) {
         		this._layerEditable.value = newVal;
 	        	this._layerName = newVal;
-	        	this._layerEditable.needsDraw = true;
-	        	this.needsDraw = true;
+	        	//this._layerEditable.needsDraw = true;
+	        	//this.needsDraw = true;
         	}
         	
         }
@@ -119,7 +119,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextPositionX !== value) {
         		this._dtextPositionX = value;
-        		this.needsDraw = true;
+        		//this.needsDraw = true;
         	}
             
         }
@@ -138,7 +138,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextPositionY !== value) {
         		this._dtextPositionY = value;
-        		this.needsDraw = true;
+        		//this.needsDraw = true;
         	}
             
         }
@@ -157,7 +157,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextScaleX !== value) {
         		this._dtextScaleX = value;
-        		this.needsDraw = true;
+        		//this.needsDraw = true;
         	}
             
         }
@@ -176,7 +176,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextScaleY !== value) {
         		this._dtextScaleY = value;
-        		this.needsDraw = true;
+        		//this.needsDraw = true;
         	}
             
         }
@@ -195,7 +195,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextSkewX !== value) {
         		this._dtextSkewX = value;
-        		this.needsDraw = true;
+        		//this.needsDraw = true;
         	}
             
         }
@@ -214,7 +214,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextSkewY !== value) {
         		this._dtextSkewY = value;
-        		this.needsDraw = true;
+        		//this.needsDraw = true;
         	}
             
         }
@@ -233,7 +233,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextRotate !== value) {
         		this._dtextRotate = value;
-        		this.needsDraw = true;
+        		//this.needsDraw = true;
         	}
             
         }
@@ -259,7 +259,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         			this.selectStyle(false);
         		}
         		this._isSelected = value;
-        		this.needsDraw = true;
+        		//this.needsDraw = true;
         	}
             
         }
@@ -332,7 +332,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     	set: function(newVal) {
     		if (newVal !== this._isTransformCollapsed) {
     			this._isTransformCollapsed = newVal;
-    			this.needsDraw = true;
+    			//this.needsDraw = true;
     		}
     	}
     },
@@ -349,7 +349,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     	set: function(newVal) {
     		if (newVal !== this._isPositionCollapsed) {
     			this._isPositionCollapsed = newVal;
-    			this.needsDraw = true;
+    			//this.needsDraw = true;
     		}
     	}
     },
@@ -366,7 +366,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     	set: function(newVal) {
     		if (newVal !== this._isStyleCollapsed) {
     			this._isStyleCollapsed = newVal;
-    			this.needsDraw = true;
+    			//this.needsDraw = true;
     		}
     	}
     },
@@ -422,6 +422,7 @@ var Layer = exports.Layer = Montage.create(Component, {
             this.dtextScaleX = this.layerData.dtextScaleX;
             this.dtextScaleY = this.layerData.dtextScaleY;
             this.dtextRotate = this.layerData.dtextRotate;
+            this.needsDraw = true;
         }
     },
 
