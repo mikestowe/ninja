@@ -113,6 +113,21 @@
                 }
             },
 
+            "disabledCondition": {
+                "module": "montage/ui/condition.reel",
+                "name": "Condition",
+                "properties": {
+                    "element": {"#": "disabledCondition"}
+                },
+                "bindings": {
+                    "condition": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "disabled",
+                        "oneway": true
+                    }
+                }
+            },
+
             "owner": {
                 "module": "js/panels/Panel.reel",
                 "name": "Panel",
@@ -136,9 +151,8 @@
     </div>
     <div class="panelBody">
         <div class="panelBodyContent">
-            <div id="panelObject" class="panelObjects">
-
-            </div>
+            <div id="disabledCondition" class="panelDisabled"></div>
+            <div id="panelObject" class="panelObjects"></div>
         </div>
     </div>
     <div id="resizeBar" class="resizeBar"></div>
