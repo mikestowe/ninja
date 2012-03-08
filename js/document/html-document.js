@@ -637,10 +637,10 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 								for (var k in query) {
 									if (query[k].href === this._document.styleSheets[i].href) {
 										//Disabling style sheet to reload via inserting in style tag
-										var tempCSS = query[k].cloneNode(true);
-										tempCSS.setAttribute('data-ninja-template', 'true');
+										//var tempCSS = query[k].cloneNode(true);
+										//tempCSS.setAttribute('data-ninja-template', 'true');
 										query[k].setAttribute('disabled', 'true');
-										this.iframe.contentWindow.document.head.appendChild(tempCSS);
+										//this.iframe.contentWindow.document.head.appendChild(tempCSS);
 										//Inserting tag
 										this._templateDocument.head.insertBefore(tag, query[k]);
 									}
