@@ -614,12 +614,9 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 										}
 									}
 								}
-								
-								
-								
-								
 								/*
-//TODO: Figure out cross-domain XHR issue, might need cloud to handle
+								
+								//TODO: Figure out cross-domain XHR issue, might need cloud to handle
 								var xhr = new XMLHttpRequest();
                     			xhr.open("GET", this._document.styleSheets[i].href, true);
                     			xhr.send();
@@ -627,15 +624,19 @@ exports.HTMLDocument = Montage.create(TextDocument, {
                     			if (xhr.readyState === 4) {
                         			console.log(xhr);
                     			}
-*/
                     			//tag.innerHTML = xhr.responseText //xhr.response;
-                    			tag.innerHTML = 'noRULEjustHACK{background: #000}'
-								//Currently no external styles will load if unable to load via XHR request
-								
+								*/
+                    			//Temp rule so it's registered in the array
+                    			tag.innerHTML = 'noRULEjustHACK{background: #000}';
 								//Disabling external style sheets
 								query = this._templateDocument.html.querySelectorAll(['link']);
 								for (var k in query) {
 									if (query[k].href === this._document.styleSheets[i].href) {
+										
+										//TODO: Removed the temp insertion of the stylesheet
+										//because it wasn't the proper way to do it
+										//need to be handled via XHR with proxy in Cloud Sim
+										
 										//Disabling style sheet to reload via inserting in style tag
 										//var tempCSS = query[k].cloneNode(true);
 										//tempCSS.setAttribute('data-ninja-template', 'true');
