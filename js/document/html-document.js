@@ -451,9 +451,12 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             //
             function ninjaUrlPrepend (url) {
             	var docRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
-            	return '"'+docRootUrl+url.replace(/\"/gi, '')+'"';
+            	if (url.indexOf('data:image') !== -1) {
+            		return url;
+            	} else {
+            		return '"'+docRootUrl+url.replace(/\"/gi, '')+'"';
+            	}
             }
-            
            	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
            	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
            	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
