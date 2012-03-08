@@ -6,9 +6,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var Montage = require("montage/core/core").Montage,
     ElementsMediator = require("js/mediators/element-mediator").ElementMediator,
-    drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils,
-    vecUtils = require("js/helper-classes/3D/vec-utils").VecUtils,
-    toolBase = require("js/tools/ToolBase").toolBase;
+    toolBase = require("js/tools/ToolBase").toolBase,
+    ShapesController = require("js/controllers/elements/shapes-controller").ShapesController;
 
 exports.EyedropperTool = Montage.create(toolBase, {
 
@@ -133,7 +132,15 @@ exports.EyedropperTool = Montage.create(toolBase, {
                 {
                     this._deleteImageDataCanvas();
 
-                    c = this._getColorFromElement(obj, event);
+                    if(ShapesController.isElementAShape(obj))
+                    {
+                        c = this._getColorFromShape(obj, event);
+                    }
+                    else
+                    {
+                        c = this._getColorFromElement(obj, event);
+                    }
+
                     if(typeof(c) === "string")
                     {
                         color = this.application.ninja.colorController.getColorObjFromCss(c);
@@ -286,6 +293,50 @@ exports.EyedropperTool = Montage.create(toolBase, {
             }
 
             return ElementsMediator.getColor(elt, true);
+        }
+    },
+
+    // TODO - We don't want to calculate this repeatedly
+    _getColorFromShape: {
+        value: function(elt, event)
+        {
+            var strokeWidth = ShapesController.getShapeProperty(elt, "strokeSize"),
+                bounds3D,
+                innerBounds,
+                pt,
+                tmpPt,
+                x,
+                y;
+            if(strokeWidth)
+            {
+                strokeWidth = parseFloat(strokeWidth);
+                bounds3D = this.application.ninja.stage.viewUtils.getElementViewBounds3D( elt );
+                innerBounds = [];
+                pt = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas,
+                                                                        new WebKitPoint(event.pageX, event.pageY));
+
+                innerBounds.push([bounds3D[0][0] + strokeWidth, bounds3D[0][1] + strokeWidth, 0]);
+
+                innerBounds.push([bounds3D[1][0] + strokeWidth, bounds3D[1][1] - strokeWidth, 0]);
+
+                innerBounds.push([bounds3D[2][0] - strokeWidth, bounds3D[2][1] - strokeWidth, 0]);
+
+                innerBounds.push([bounds3D[3][0] - strokeWidth, bounds3D[3][1] + strokeWidth, 0]);
+
+                tmpPt = this.application.ninja.stage.viewUtils.globalToLocal([pt.x, pt.y], elt);
+                x = tmpPt[0];
+                y = tmpPt[1];
+
+                if( (x < innerBounds[0][0]) ||
+                    (x > innerBounds[2][0]) ||
+                    (y < innerBounds[0][1]) ||
+                    (y > innerBounds[1][1]) )
+                {
+                    return ShapesController.getColor(elt, false);
+                }
+            }
+
+            return ShapesController.getColor(elt, true);
         }
     },
 
