@@ -54,6 +54,10 @@ var RuntimeMaterial = function RuntimeMaterial( world )
 	{
 	}
 
+	this.import = function( importStr )
+	{
+	}
+
 	this.getPropertyFromString = function( prop, str )
 	{
 		var index = str.indexOf( prop );
@@ -304,6 +308,35 @@ function RuntimeUberMaterial()
 {
 }
 
+function RuntimePlasmaMaterial()
+{
+	// inherit the members of RuntimeMaterial
+	this.inheritedFrom = RuntimeMaterial;
+	this.inheritedFrom();
+
+	this.init = function(  )
+	{
+		this.update();
+	}
+
+	this.update = function( time )
+	{
+		var material = this._materialNode;
+		if (material)
+		{
+			var technique = material.shaderProgram.default;
+			var renderer = g_Engine.getContext().renderer;
+			if (renderer && technique)
+			{
+				if (this._shader && this._shader.default)
+					this._shader.default.u_time.set( [this._time] );
+				this._time += this._dTime;
+				if (this._time > 200.0)  this._time = 0.0;
+			}
+		}
+	}
+}
+
 
 if (typeof exports === "object")
 {
@@ -314,4 +347,5 @@ if (typeof exports === "object")
 	exports.RuntimeLinearGradientMaterial	= RuntimeLinearGradientMaterial;
 	exports.RuntimeBumpMetalMaterial		= RuntimeBumpMetalMaterial;
 	exports.RuntimeUberMaterial				= RuntimeUberMaterial;
+	exports.RuntimePlasmaMaterial			= RuntimePlasmaMaterial;
 }

@@ -17,8 +17,6 @@ var PlasmaMaterial = function PlasmaMaterial() {
 	this._dTime = 0.01;
 	this._speed = 1.0;
 
-	this._color = [1,0,0,1];
-
 
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
@@ -30,20 +28,12 @@ var PlasmaMaterial = function PlasmaMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
-	this._propNames			= ["color"];
-	this._propLabels		= ["Color"];
-	this._propTypes			= ["color"];
-	this._propValues		= [];
 
-	this._propValues[ this._propNames[0] ] = this._color;
-
-    this.setProperty = function( prop, value ) {
-		// make sure we have legitimate imput
-		if (this.validateProperty( prop, value )) {
-			this._color = value.slice(0);
-			this._shader['default'][prop].set(value);
-		}
+    this.setProperty = function( prop, value )
+	{
+		// plasma has no properties
 	};
+
     ///////////////////////////////////////////////////////////////////////
 
     ///////////////////////////////////////////////////////////////////////
@@ -65,8 +55,7 @@ var PlasmaMaterial = function PlasmaMaterial() {
 
 		// set the default value
 		this._time = 0;
-		this._shader['default'].u_time = this._time;
-		this.setProperty( "color", [this._time, 0, 0,  1] );
+		this._shader['default'].u_time.set( [this._time] );
 
 		// set up the material node
 		this._materialNode = createMaterialNode("plasmaMaterial" + "_" + world.generateUniqueNodeID());
@@ -74,11 +63,7 @@ var PlasmaMaterial = function PlasmaMaterial() {
 	};
 
 	this.update = function( time ) {
-		this._shader['default'].u_time = this._time;
-		var color = this.getProperty( "color" );
-		color[0] = this._time;
-		this.setProperty( "color", color );
-		//console.log( "update color to: " + color );
+		this._shader['default'].u_time.set( [this._time] );
 		this._time += this._dTime;
 	}
 
@@ -112,7 +97,6 @@ var plasmaShaderDef =
 				'params' : 
 				{
 					'u_time' : { 'type' : 'float' },
-					'color' : { 'type' : 'vec4' }
 				},
 
 				// render states

@@ -11,7 +11,8 @@ var RuntimeFlatMaterial				= RuntimeMaterial.RuntimeFlatMaterial,
 	RuntimeLinearGradientMaterial	= RuntimeMaterial.RuntimeLinearGradientMaterial,
 	RuntimeBumpMetalMaterial		= RuntimeMaterial.RuntimeBumpMetalMaterial,
 	RuntimeUberMaterial				= RuntimeMaterial.RuntimeUberMaterial,
-	RuntimePulseMaterial			= RuntimeMaterial.RuntimePulseMaterial;
+	RuntimePulseMaterial			= RuntimeMaterial.RuntimePulseMaterial,
+	RuntimePlasmaMaterial			= RuntimeMaterial.RuntimePlasmaMaterial;
 	
 
 
@@ -94,6 +95,7 @@ var RuntimeGeomObj = function RuntimeGeomObj()
 				case "linearGradient":  mat = new RuntimeLinearGradientMaterial();		break;
 				case "bumpMetal":		mat = new RuntimeBumpMetalMaterial();			break;
 				case "uber":			mat = new RuntimeUberMaterial();				break;
+				case "plasma":			mat = new RuntimePlasmaMaterial();				break;
 
 				case "deform":
 				case "water":
