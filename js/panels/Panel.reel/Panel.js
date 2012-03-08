@@ -57,6 +57,10 @@ exports.Panel = Montage.create(Component, {
         value: null
     },
 
+    disabled: {
+        value:false
+    },
+
     collapsed: {
         get: function() {
             return this._collapsed;

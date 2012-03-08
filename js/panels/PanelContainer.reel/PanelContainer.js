@@ -47,7 +47,7 @@ exports.PanelContainer = Montage.create(Component, {
                 this['panel_'+i].flexible = p.flexible;
                 this['panel_'+i].modulePath = p.modulePath;
                 this['panel_'+i].moduleName = p.moduleName;
-                this['panel_'+i].index = i;
+                this['panel_'+i].disabled = true;
 
                 this.currentPanelState[p.name] = {};
                 this.currentPanelState.version = "1.0";
@@ -65,6 +65,8 @@ exports.PanelContainer = Montage.create(Component, {
             this.application.localStorage.setItem("panels", this.currentPanelState);
 
 
+            this.eventManager.addEventListener( "onOpenDocument", this, false);
+            this.eventManager.addEventListener( "closeDocument", this, false);
         }
     },
  
@@ -83,6 +85,24 @@ exports.PanelContainer = Montage.create(Component, {
     handleResize: {
          value: function(e) {
             this._redrawPanels(null, true);
+        }
+    },
+
+    handleOnOpenDocument: {
+        value: function(){
+            this.panels.forEach(function(obj) {
+                obj.disabled = false;
+            });
+        }
+    },
+
+    handleCloseDocument: {
+        value: function(){
+            if(!this.application.ninja.documentController.activeDocument) {
+                this.panels.forEach(function(obj) {
+                    obj.disabled = true;
+                });
+            }
         }
     },
  
