@@ -397,9 +397,22 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
     
     handleCloseDocument: {
-    	value: function(event) {
-    		this.clearTimelinePanel();
-    	}
+        value: function(event) {
+            if(this.application.ninja.documentController._activeDocument){
+                this._boolCacheArrays = false;
+                this.clearTimelinePanel();
+                this._boolCacheArrays = true;
+                this._bindDocumentEvents();
+
+                this.hashInstance = this.createLayerHashTable();
+                this.hashLayerNumber = this.createLayerNumberHash();
+                this.hashElementMapToLayer = this.createElementMapToLayer();
+                this.initTimelineForDocument();
+        }else{
+                this.clearTimelinePanel();
+            }
+
+        }
     },
     
     handleSwitchDocument : {
