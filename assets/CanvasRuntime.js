@@ -11,8 +11,10 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 ///////////////////////////////////////////////////////////////////////
 function CanvasDataManager()
 {
-	this.loadGLData = function(root,  valueArray )
+	this.loadGLData = function(root,  valueArray,  assetPath )
 	{
+		this._assetPath = assetPath.slice();
+
 		var value = valueArray;
 		var nWorlds = value.length;
 		for (var i=0;  i<nWorlds;  i++)
@@ -28,7 +30,7 @@ function CanvasDataManager()
 					var canvas = this.findCanvasWithID( id, root );
 					if (canvas)
 					{
-						var rt = new GLRuntime( canvas, importStr );
+						var rt = new GLRuntime( canvas, importStr,  assetPath );
 					}
 				}
 			}
@@ -76,7 +78,7 @@ function CanvasDataManager()
 // Class GLRuntime
 //      Manages runtime fora WebGL canvas
 ///////////////////////////////////////////////////////////////////////
-function GLRuntime( canvas, importStr )
+function GLRuntime( canvas, importStr,  assetPath )
 {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
@@ -108,6 +110,11 @@ function GLRuntime( canvas, importStr )
 
 	// all "live" materials
 	this._materials = [];
+
+		// provide the mapping for the asset directory
+		this._assetPath = assetPath.slice();
+		if (this._assetPath[this._assetPath.length-1] != '/')
+			this._assetPath += '/';
 
     ///////////////////////////////////////////////////////////////////////
 	// accessors
@@ -350,8 +357,21 @@ function GLRuntime( canvas, importStr )
 		for (var i=0;  i<nMats;  i++)
 		{
 			var mat = this._materials[i];
-			mat.init();
+			mat.init( this );
 		}
+	}
+
+	this.remapAssetFolder = function( url )
+	{
+		var searchStr = "assets/";
+		var index = url.indexOf( searchStr );
+		var rtnPath = url;
+		if (index >= 0)
+		{
+			rtnPath = url.substr( index + searchStr.length );
+			rtnPath = this._assetPath + rtnPath;
+		}
+		return rtnPath;
 	}
 
 	this.findMaterialNode = function( nodeName,  node )
@@ -1121,7 +1141,7 @@ function RuntimePulseMaterial()
 		this._texMap = this.getPropertyFromString( "texture: ",	importStr );
 	}
 
-	this.init = function()
+	this.init = function( world )
 	{
 		var material = this._materialNode;
 		if (material)
@@ -1136,6 +1156,7 @@ function RuntimePulseMaterial()
 					technique.u_resolution.set( res );
 
 					var wrap = 'REPEAT',  mips = true;
+					this._texMap = world.remapAssetFolder( this._texMap );
 					var tex = renderer.getTextureByName(this._texMap, wrap, mips );
 					if (tex)
 						technique.u_tex0.set( tex );
@@ -1284,17 +1305,20 @@ function RuntimeBumpMetalMaterial()
 					var wrap = 'REPEAT',  mips = true;
 					if (this._diffuseTexture)
 					{
+						this._diffuseTexture = world.remapAssetFolder( this._diffuseTexture );
 						tex = renderer.getTextureByName(this._diffuseTexture, wrap, mips );
 						if (tex)  technique.u_colMap.set( tex );
 
 					}
 					if (this._normalTexture)
 					{
+						this._normalTexture = world.remapAssetFolder( this._normalTexture );
 						tex = renderer.getTextureByName(this._normalTexture, wrap, mips );
 						if (tex)  technique.u_normalMap.set( tex );
 					}
 					if (this._specularTexture)
 					{
+						this._specularTexture = world.remapAssetFolder( this._specularTexture );
 						tex = renderer.getTextureByName(this._specularTexture, wrap, mips );
 						technique.u_glowMap.set( tex );
 					}
