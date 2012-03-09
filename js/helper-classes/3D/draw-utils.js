@@ -112,6 +112,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
             this.eventManager.addEventListener("elementDeleted", this, false);
             this.eventManager.addEventListener("deleteSelection", this, false);
             this.eventManager.addEventListener("elementChange", this, false);
+            this.eventManager.addEventListener("closeDocument", this, false);
 		}
 	},
 
@@ -131,6 +132,15 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                 for(i=0;i<documentRootChildren.length;i++){
                     this.addElement(documentRootChildren[i]);
                 }
+            }
+        }
+    },
+
+    handleCloseDocument:{
+        value: function() {
+            if(this.application.ninja.documentController._documents.length === 0){
+                this._eltArray = [];
+                this._planesArray = [];
             }
         }
     },
