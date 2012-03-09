@@ -26,7 +26,7 @@ var MaterialsModel = require("js/models/materials-model").MaterialsModel;
 // Class GLWorld
 //      Manages display in a canvas
 ///////////////////////////////////////////////////////////////////////
-var World = function GLWorld( canvas, use3D ) {
+var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
@@ -39,7 +39,11 @@ var World = function GLWorld( canvas, use3D ) {
 
     this._canvas = canvas;
 	if (this._useWebGL) {
-		this._glContext = canvas.getContext("experimental-webgl");
+        if(preserveDrawingBuffer) {
+            this._glContext = canvas.getContext("experimental-webgl", {preserveDrawingBuffer: true});
+        } else {
+		    this._glContext = canvas.getContext("experimental-webgl");
+        }
     } else {
 		this._2DContext = canvas.getContext( "2d" );
     }
@@ -680,7 +684,7 @@ World.prototype.render = function() {
 		var root = this.getGeomRoot();
 		this.hRender( root );
 	} else {
-		g_Engine.setContext( this._canvas.rdgeId );
+		g_Engine.setContext( this._canvas.rdgeid );
 		//this.draw();
 		this.restartRenderLoop();
 	}

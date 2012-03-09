@@ -7,7 +7,9 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage,
     ElementsMediator = require("js/mediators/element-mediator").ElementMediator,
     toolBase = require("js/tools/ToolBase").toolBase,
-    ShapesController = require("js/controllers/elements/shapes-controller").ShapesController;
+    ShapesController = require("js/controllers/elements/shapes-controller").ShapesController,
+    World = require("js/lib/drawing/world").World,
+    njModule = require("js/lib/NJUtils");
 
 exports.EyedropperTool = Montage.create(toolBase, {
 
@@ -16,6 +18,8 @@ exports.EyedropperTool = Montage.create(toolBase, {
     _color: { value: null},
     _elementUnderMouse: { value: null },
     _imageDataCanvas: { value: null },
+    _webGlDataCanvas: { value: null },
+    _webGlWorld: { value: null },
     _imageDataContext: { value: null },
     _canSnap: { value: false },
 
@@ -29,6 +33,11 @@ exports.EyedropperTool = Montage.create(toolBase, {
 			else
 			{
                 NJevent("disableStageMove");
+                this._deleteImageDataCanvas();
+                this._isMouseDown = false;
+                this._elementUnderMouse = null;
+                this._previousColor = null;
+                this._color = null;
 			}
         }
     },
@@ -122,7 +131,7 @@ exports.EyedropperTool = Montage.create(toolBase, {
                                                                 new WebKitPoint(event.pageX, event.pageY)),
                         ctx = obj.getContext("2d");
 
-                    c = this._getColorFromCanvas(ctx, pt);
+                    c = this._getColorFromCanvas(ctx, [pt.x, pt.y]);
                     if(c)
                     {
                         color = this.application.ninja.colorController.getColorObjFromCss(c);
@@ -130,8 +139,6 @@ exports.EyedropperTool = Montage.create(toolBase, {
                 }
                 else
                 {
-                    this._deleteImageDataCanvas();
-
                     if(ShapesController.isElementAShape(obj))
                     {
                         c = this._getColorFromShape(obj, event);
@@ -239,6 +246,8 @@ exports.EyedropperTool = Montage.create(toolBase, {
     _getColorFromElement: {
         value: function(elt, event)
         {
+            this._deleteImageDataCanvas();
+
             var border = ElementsMediator.getProperty(elt, "border"),
                 borderWidth,
                 bounds3D,
@@ -300,49 +309,39 @@ exports.EyedropperTool = Montage.create(toolBase, {
     _getColorFromShape: {
         value: function(elt, event)
         {
-            var strokeWidth = ShapesController.getShapeProperty(elt, "strokeSize"),
-                bounds3D,
-                innerBounds,
-                pt,
+            var c,
+                ctx,
                 tmpPt,
-                x,
-                y;
-            if(strokeWidth)
-            {
-                strokeWidth = parseFloat(strokeWidth);
-                bounds3D = this.application.ninja.stage.viewUtils.getElementViewBounds3D( elt );
-                innerBounds = [];
                 pt = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas,
-                                                                        new WebKitPoint(event.pageX, event.pageY));
+                                                                    new WebKitPoint(event.pageX, event.pageY));
 
-                innerBounds.push([bounds3D[0][0] + strokeWidth, bounds3D[0][1] + strokeWidth, 0]);
+            tmpPt = this.application.ninja.stage.viewUtils.globalToLocal([pt.x, pt.y], elt);
 
-                innerBounds.push([bounds3D[1][0] + strokeWidth, bounds3D[1][1] - strokeWidth, 0]);
-
-                innerBounds.push([bounds3D[2][0] - strokeWidth, bounds3D[2][1] - strokeWidth, 0]);
-
-                innerBounds.push([bounds3D[3][0] - strokeWidth, bounds3D[3][1] + strokeWidth, 0]);
-
-                tmpPt = this.application.ninja.stage.viewUtils.globalToLocal([pt.x, pt.y], elt);
-                x = tmpPt[0];
-                y = tmpPt[1];
-
-                if( (x < innerBounds[0][0]) ||
-                    (x > innerBounds[2][0]) ||
-                    (y < innerBounds[0][1]) ||
-                    (y > innerBounds[1][1]) )
+            if(elt.elementModel.shapeModel.useWebGl)
+            {
+                c = this._getColorAtPoint(elt, event, true);
+            }
+            else
+            {
+                this._deleteImageDataCanvas();
+                ctx = elt.getContext("2d");
+                if(ctx)
                 {
-                    return ShapesController.getColor(elt, false);
+                    c = this._getColorFromCanvas(ctx, tmpPt);
                 }
             }
-
-            return ShapesController.getColor(elt, true);
+            return c;
         }
     },
 
     _getColorAtPoint: {
-        value: function(elt, event)
+        value: function(elt, event, isWebGl)
         {
+            var pt = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas,
+                                                        new WebKitPoint(event.pageX, event.pageY));
+
+            var tmpPt = this.application.ninja.stage.viewUtils.globalToLocal([pt.x, pt.y], elt);
+
             if(!this._imageDataCanvas)
             {
                 this._imageDataCanvas = document.createElement("canvas");
@@ -362,25 +361,52 @@ exports.EyedropperTool = Montage.create(toolBase, {
                 this._imageDataCanvas.height = h;
 
                 this._imageDataContext = this._imageDataCanvas.getContext("2d");
-                this._imageDataContext.drawImage(elt, 0, 0);
+                if(isWebGl)
+                {
+                    var worldData = elt.elementModel.shapeModel.GLWorld.export();
+                    if(worldData)
+                    {
+                        this._webGlDataCanvas = njModule.NJUtils.makeNJElement("canvas", "Canvas", "shape", {"data-RDGE-id": njModule.NJUtils.generateRandom()}, true);
+                        this._applyElementStyles(elt, this._webGlDataCanvas, ["display", "position", "width", "height",
+                                                                    "-webkit-transform", "-webkit-transform-style"]);
+                        this._webGlDataCanvas.style.left = eltCoords[0] + "px";
+                        this._webGlDataCanvas.style.top = eltCoords[1] + "px";
+                        this._webGlDataCanvas.width = w;
+                        this._webGlDataCanvas.height = h;
+                        this._webGlWorld = new World(this._webGlDataCanvas, true, true);
+                        this._webGlWorld.import(worldData);
+                        this._webGlWorld.render();
+                        setTimeout(function() {
+                            this._webGlWorld.draw();
+                            this._imageDataContext.drawImage(this._webGlDataCanvas, 0, 0);
+                            return this._getColorFromCanvas(this._imageDataContext, tmpPt, true);
+                        }.bind(this), 250);
+                    }
+                }
+                else
+                {
+                    this._imageDataContext.drawImage(elt, 0, 0);
+                }
             }
 
-            var pt = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas,
-                                                        new WebKitPoint(event.pageX, event.pageY));
-
-            var tmpPt = this.application.ninja.stage.viewUtils.globalToLocal([pt.x, pt.y], elt);
-
-            return this._getColorFromCanvas(this._imageDataContext, tmpPt);
+            return this._getColorFromCanvas(this._imageDataContext, tmpPt, isWebGl);
         }
     },
 
     _getColorFromCanvas: {
-        value: function(ctx, pt)
+        value: function(ctx, pt, isWebGl)
         {
-            var imageData = ctx.getImageData(pt[0], pt[1], 1, 1).data;
+            var imageData = ctx.getImageData(~~pt[0], ~~pt[1], 1, 1).data;
             if(imageData)
             {
-                return ("rgba(" + imageData[0] + "," + imageData[1] + "," + imageData[2] + "," + imageData[3] + ")");
+                if(isWebGl)
+                {
+                    return ("rgba(" + imageData[0] + "," + imageData[1] + "," + imageData[2] + "," + imageData[3]/255 + ")");
+                }
+                else
+                {
+                    return ("rgba(" + imageData[0] + "," + imageData[1] + "," + imageData[2] + "," + imageData[3] + ")");
+                }
             }
             else
             {
@@ -394,6 +420,11 @@ exports.EyedropperTool = Montage.create(toolBase, {
         {
             if(this._imageDataCanvas)
             {
+                if(this._webGlDataCanvas)
+                {
+                    this._webGlWorld = null;
+                    this._webGlDataCanvas = null;
+                }
                 this._imageDataCanvas = null;
                 this._imageDataContext = null;
             }
