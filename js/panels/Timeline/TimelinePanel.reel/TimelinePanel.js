@@ -419,18 +419,17 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             
             // Clear the repetitions
             if (this.arrLayers.length > 0) {
-            	console.log('Clearing repetitions!')
+            	//console.log('Clearing repetitions!');
             	this.arrLayers = [];
             }
             
             
         }
     },
-    
 
 	handleDocumentChange:{
 		value:function(event){
-			console.log(event);
+			//console.log(event);
 			this._boolCacheArrays = false;
         	this.clearTimelinePanel();
         	this._boolCacheArrays = true;
