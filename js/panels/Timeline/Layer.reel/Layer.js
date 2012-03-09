@@ -82,8 +82,8 @@ var Layer = exports.Layer = Montage.create(Component, {
         	if (newVal !== this._layerName) {
         		this._layerEditable.value = newVal;
 	        	this._layerName = newVal;
-	        	//this._layerEditable.needsDraw = true;
-	        	//this.needsDraw = true;
+	        	this.layerData.layerName = newVal;
+	        	this.log('layerName setter: ' + newVal)
         	}
         	
         }
@@ -259,6 +259,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         			this.selectStyle(false);
         		}
         		this._isSelected = value;
+        		this.layerData.isSelected = value;
         		//this.needsDraw = true;
         	}
             
@@ -405,6 +406,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 
     setData:{
         value:function(){
+        	this.log('layer: setData called')
             this.layerName = this.layerData.layerName;
             this.layerID = this.layerData.layerID;
             this.arrLayerStyles = this.layerData.arrLayerStyles;
