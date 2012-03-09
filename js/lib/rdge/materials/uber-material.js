@@ -457,16 +457,16 @@ var UberMaterial = function UberMaterial() {
 			throw new Error( "no world in material.export, " + this.getName() );
 
 		if(typeof caps.diffuseMap != 'undefined')
-			exportStr += "diffuseMap: " + world.cleansePath(caps.diffuseMap.texture) + "\n";
+			exportStr += "diffuseMap: " + caps.diffuseMap.texture + "\n";
 
 		if(typeof caps.normalMap != 'undefined')
-			exportStr += "normalMap: " + world.cleansePath(caps.normalMap.texture) + "\n";
+			exportStr += "normalMap: " + caps.normalMap.texture + "\n";
 
 		if(typeof caps.specularMap != 'undefined')
-			exportStr += "specularMap: " + world.cleansePath(caps.specularMap.texture) + "\n";
+			exportStr += "specularMap: " + caps.specularMap.texture + "\n";
 
 		if(typeof caps.environmentMap != 'undefined')
-			exportStr += "environmentMap: " + world.cleansePath(caps.environmentMap.texture) + "\n";
+			exportStr += "environmentMap: " + caps.environmentMap.texture + "\n";
 		
 		// every material needs to terminate like this
 		exportStr += "endMaterial\n";

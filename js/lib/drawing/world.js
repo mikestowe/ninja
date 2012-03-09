@@ -727,7 +727,7 @@ World.prototype.getShapeFromPoint = function( offsetX, offsetY ) {
 	}
 };
 
-World.prototype.export = function( imagePath )
+World.prototype.export = function()
 {
 	var exportStr = "GLWorld 1.0\n";
 	var id = this.getCanvas().getAttribute( "data-RDGE-id" );
@@ -746,13 +746,6 @@ World.prototype.export = function( imagePath )
 	//if (!exportForPublish)  exportForPublish = false;
 	var exportForPublish = true;
 	exportStr += "publish: " + exportForPublish + "\n";
-
-	// the relative path for local assets needs to be modified to
-	// the path specified by argument 'imagePath'.  Save that path
-	// so exporting functions can call newPath = world.cleansePath( oldPath );
-	this._imagePath = imagePath.slice();
-	var endchar = this._imagePath[this._imagePath.length-1]
-	if (endchar != '/')  this._imagePath += '/';
 
 	if (exportForPublish && this._useWebGL)
 	{
@@ -936,20 +929,6 @@ World.prototype.importSubObject = function( objStr,  parentNode ) {
 
 	return trNode;
 };
-
-World.prototype.cleansePath = function( url )
-{
-	//this._imagePath
-	var searchStr = "assets/";
-	var index = url.indexOf( searchStr );
-	var rtnPath = url;
-	if (index >= 0)
-	{
-		rtnPath = url.substr( index + searchStr.length );
-		rtnPath = this._imagePath + rtnPath;
-	}
-	return rtnPath;
-}
 
 if (typeof exports === "object") {
     exports.World = World;
