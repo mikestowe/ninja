@@ -166,7 +166,7 @@ var RadialBlurMaterial = function RadialBlurMaterial() {
 		if (!world)
 			throw new Error( "no world in material.export, " + this.getName() );
 
-		var texMapName =  world.cleansePath( this._propValues[this._propNames[0]] );
+		var texMapName =  this._propValues[this._propNames[0]];
 		exportStr += "texture: " + texMapName + "\n";
 		
 		// every material needs to terminate like this

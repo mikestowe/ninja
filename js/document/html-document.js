@@ -197,7 +197,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 				//if (path) {
 					//this.collectGLData(elt, this._glData, path);
 				//} else {
-					this.collectGLData(elt, this._glData, "assets/");
+					this.collectGLData(elt, this._glData );
 				//}
 			} else {
 				this._glData = null
@@ -368,11 +368,11 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 
 
 	collectGLData: {
-		value: function( elt,  dataArray,  imagePath )
+		value: function( elt,  dataArray )
 		{
 			if (elt.elementModel && elt.elementModel.shapeModel && elt.elementModel.shapeModel.GLWorld)
 			{
-				var data = elt.elementModel.shapeModel.GLWorld.export( imagePath );
+				var data = elt.elementModel.shapeModel.GLWorld.export();
 				dataArray.push( data );
 			}
 
