@@ -309,12 +309,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
     
+    // Initialize the timeline, runs only once when the component is first loaded.
+    // Sets up basic event listeners, gets some selectors, etc.
     initTimeline : {
         value: function() {
-            // Set up basic Timeline functions: event listeners, etc.  Things that only need to be run once.
             this.layout_tracks = this.element.querySelector(".layout-tracks");
             this.layout_markers = this.element.querySelector(".layout_markers");
-
             this.newlayer_button.identifier = "addLayer";
             this.newlayer_button.addEventListener("click", this, false);
             this.deletelayer_button.identifier = "deleteLayer";
@@ -329,6 +329,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
     
+    // Initialize the timeline for a document. Called when a document is opened (new or existing), or
+    // when documents are switched.
     initTimelineForDocument:{
         value:function () {
             var myIndex;
@@ -346,8 +348,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
                 // Are we creating a new doc, or opening an existing one?
                 if(!this.application.ninja.documentController.creatingNewFile) {
-                	// Opening an existing document.  Loop through the DOM and build the data model.
+                	// Opening an existing document.
+                	// Does it have any DOM elements?
                     if(this.application.ninja.currentDocument.documentRoot.children[0]) {
+                    	// Yes, it has DOM elements. Loop through them and create a new
+                    	// object for each.
                         myIndex=0;
                         while(this.application.ninja.currentDocument.documentRoot.children[myIndex]) {
                             this._openDoc=true;
@@ -355,23 +360,32 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                             myIndex++;
                         }
                     } else {
+                    	// No, it has no DOM elements. Build an empty layer object.
                         this.restoreLayer(1);
-                        //this.selectLayer(0);
                     }
+                    
+                    // Feed the new array of objects into the repetitions
+                    // and select the first layer.
+                    this.arrLayers=this.temparrLayers;
+                    
+                    // TODO: We need a better solution to this race condition than a timeout.
+                    this._captureSelection = true;
+                    var that = this;
+                    setTimeout(function() {
+                    	that.selectLayer(0, true);
+                    }, 1000)
                 } else {
-                	// New document. Create default layer and select it.
+                	// New document. Create default layer.
                     this.createNewLayer(1);
-                    //this.selectLayer(0);
-    
                 }
+                
                 // After recreating the tracks and layers, store the result in the currentDocument.
-                this.arrLayers=this.temparrLayers;
                 this.application.ninja.currentDocument.tlArrLayers = this.arrLayers;
                 this.application.ninja.currentDocument.tllayerNumber = this.currentLayerNumber;
                 this.application.ninja.currentDocument.tlLayerHashTable = this.hashInstance;
                 this.application.ninja.currentDocument.tlElementHashTable = this.hashElementMapToLayer;
                 this.application.ninja.currentDocument.hashKey=this.hashKey;
-                //this.selectLayer(0);
+
             } else {
                 // we do have information stored.  Use it.
                 this._boolCacheArrays = false;
@@ -381,14 +395,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this.hashElementMapToLayer = this.application.ninja.currentDocument.tlElementHashTable;
                 this.hashKey = this.application.ninja.currentDocument.hashKey;
                 this._boolCacheArrays = true;
-                //this.selectLayer(0);
             }
-            // Select the first layer.
-            //debugger;
-            //this.selectLayer(0);
         }
     },
     
+    // Clear the currently-displayed document (and its events) from the timeline.
     clearTimelinePanel : {
         value: function() {
             // Remove events
@@ -398,6 +409,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.deselectTweens();
 
             // Reset visual appearance
+            // Todo: Maybe this should be stored per document?
             this.application.ninja.timeline.playhead.style.left = "-2px";
             this.application.ninja.timeline.playheadmarker.style.left = "0px";
             this.application.ninja.timeline.updateTimeText(0.00);
@@ -406,7 +418,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             // Clear variables.
             this.hashInstance = null;
             this.hashElementMapToLayer = null;
-
             this.currentLayerNumber = 0;
             this.currentLayerSelected = false;
             this.selectedKeyframes = [];
@@ -419,18 +430,13 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             
             // Clear the repetitions
             if (this.arrLayers.length > 0) {
-            	console.log('Clearing repetitions!')
             	this.arrLayers = [];
             }
-            
-            
         }
     },
-    
 
 	handleDocumentChange:{
 		value:function(event){
-			console.log(event);
 			this._boolCacheArrays = false;
         	this.clearTimelinePanel();
         	this._boolCacheArrays = true;
@@ -438,41 +444,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         	
             this.hashInstance = this.createLayerHashTable();
             this.hashElementMapToLayer = this.createElementMapToLayer();
-            if (event.type="onOpenDocument") {
-            	this.initTimelineForDocument();
-            }
-            if ((event.type === "closeDocument") && (this.application.ninja.currentDocument.name != "")) {
-            	this.initTimelineForDocument();
-            }
-
             
+            // Reinitialize the timeline...but only if there are open documents.
+			if (this.application.ninja.documentController._documents.length > 0) {
+				this.initTimelineForDocument();
+			}
         }
-    },
-    
-    handleCloseDocument: {
-        value: function(event) {
-            if(this.application.ninja.documentController._activeDocument){
-                this._boolCacheArrays = false;
-                this.clearTimelinePanel();
-                this._boolCacheArrays = true;
-                this._bindDocumentEvents();
-
-                this.hashInstance = this.createLayerHashTable();
-                this.hashLayerNumber = this.createLayerNumberHash();
-                this.hashElementMapToLayer = this.createElementMapToLayer();
-                this.initTimelineForDocument();
-        }else{
-                this.clearTimelinePanel();
-            }
-
-        }
-    },
-    
-    handleSwitchDocument : {
-    	value: function(event) {
-    		// Handle document change.
-    		this.handleOnOpenDocument();
-    	}
     },
 
     updateTrackContainerWidth:{
@@ -658,44 +635,43 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 }
             } else {
 
-            var newLayerName = "",
-                thingToPush = this.createLayerTemplate(),
-                myIndex = 0;
-            
-            this.currentLayerNumber = this.currentLayerNumber + 1;
-            newLayerName = "Layer " + this.currentLayerNumber;
-            thingToPush.layerData.layerName = newLayerName;
-            thingToPush.layerData.layerID = this.currentLayerNumber;
-            thingToPush.parentElementUUID = this.hashKey;
-            thingToPush.parentElement = this.application.ninja.currentSelectedContainer;
-
-            if (!!this.layerRepetition.selectedIndexes) {
-            	// There is a selected layer, so we need to splice the new
-            	// layer on top of it.
-                myIndex = this.layerRepetition.selectedIndexes[0];
-                thingToPush.layerData.layerPosition = myIndex;
-                thingToPush.layerData.isSelected = true;
-                thingToPush.layerData.trackPosition = myIndex;
-                this.arrLayers.splice(myIndex, 0, thingToPush);
-                this._LayerUndoPosition = myIndex;
-                this.selectLayer(myIndex);
-                //this.hashLayerNumber.setItem(this.hashKey, thingToPush.layerData);
-                this.hashInstance.setItem(this.hashKey, thingToPush.layerData, myIndex);
-
-
-            } else {
-                //this.arrLayers.splice(0, 0, thingToPush);
-                thingToPush.layerData.layerPosition = this.arrLayers.length - 1;
-                this.arrLayers.push(thingToPush);
-                this._LayerUndoPosition = this.arrLayers.length - 1;
-                //this.hashLayerNumber.setItem(this.hashKey, thingToPush.layerData);
-                this.hashInstance.setItem(this.hashKey, thingToPush.layerData, thingToPush.layerData.layerPosition);
-                //this.selectLayer(0);
-            }
-
-            this._LayerUndoObject = thingToPush;
-            this._LayerUndoIndex = thingToPush.layerData.layerID;
-            this._LayerUndoStatus = true;
+	            var newLayerName = "",
+	                thingToPush = this.createLayerTemplate(),
+	                myIndex = 0,
+	                indexToSelect = 0;
+	            this.currentLayerNumber = this.currentLayerNumber + 1;
+	            newLayerName = "Layer " + this.currentLayerNumber;
+	            thingToPush.layerData.layerName = newLayerName;
+	            thingToPush.layerData.layerID = this.currentLayerNumber;
+	            thingToPush.parentElementUUID = this.hashKey;
+	            thingToPush.parentElement = this.application.ninja.currentSelectedContainer;
+	
+	            if (!!this.layerRepetition.selectedIndexes) {
+	            	// There is a selected layer, so we need to splice the new
+	            	// layer on top of it.
+	                myIndex = this.layerRepetition.selectedIndexes[0];
+	                thingToPush.layerData.layerPosition = myIndex;
+	                thingToPush.layerData.isSelected = true;
+	                thingToPush.layerData.trackPosition = myIndex;
+	                this.arrLayers.splice(myIndex, 0, thingToPush);
+	                this._LayerUndoPosition = myIndex;
+	                //this.hashLayerNumber.setItem(this.hashKey, thingToPush.layerData);
+	                this.hashInstance.setItem(this.hashKey, thingToPush.layerData, myIndex);
+					indexToSelect = myIndex;
+	
+	            } else {
+	                thingToPush.layerData.layerPosition = this.arrLayers.length - 1;
+	                this.arrLayers.push(thingToPush);
+	                this._LayerUndoPosition = this.arrLayers.length - 1;
+	                //this.hashLayerNumber.setItem(this.hashKey, thingToPush.layerData);
+	                this.hashInstance.setItem(this.hashKey, thingToPush.layerData, thingToPush.layerData.layerPosition);
+	            }
+	
+	            this._LayerUndoObject = thingToPush;
+	            this._LayerUndoIndex = thingToPush.layerData.layerID;
+	            this._LayerUndoStatus = true;
+	            
+	            this.selectLayer(indexToSelect, true);
             }
 
         }
@@ -1019,11 +995,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             
             //if (layerIndex !== false) {
                 this.layerRepetition.selectedIndexes = [layerIndex];
-                this.trackRepetition.selectedIndexes = [layerIndex];
                 this.currentLayerSelected = this.arrLayers[layerIndex];
                 if(userSelection){
                     if(this._captureSelection){
-                        if(this.currentLayerSelected.layerData.elementsList.length >= 1){
+                        if(this.currentLayerSelected.layerData.elementsList.length >= 1) {
                             this.application.ninja.selectionController.selectElements(this.currentLayerSelected.layerData.elementsList);
                         } else {
                             this.application.ninja.selectionController.executeSelectElement();
