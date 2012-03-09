@@ -1,10 +1,10 @@
 {
 	"copyright": "This file contains proprietary software owned by Motorola Mobility, Inc. No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder. (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.",
-	"version": "0.0.0.0",
+	"version": "0.5.1.0",
 	"root": "/assets/",
 	"directories": [{"name": "images"}, {"name": "shaders"}],
 	"files": [
-		"rdge-compiled.js",
+		"CanvasDataManager.js",
 		"images/black.png",
 		"images/blue.png",
 		"images/BoxB2_AO.png",

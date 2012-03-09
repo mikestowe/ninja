@@ -152,17 +152,7 @@ exports.IoMediator = Montage.create(Component, {
     		//
     		switch (file.mode) {
     			case 'html':
-    				//Copy webGL library if needed
-    				if (file.webgl && file.webgl.length > 0) {
-    					for (var i in this.application.ninja.coreIoApi.ninjaLibrary.libs) {
-		    				//Checking for RDGE library to be available
-		    				if (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'RDGE') {
-    							this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(file.document.root, (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name+this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version).toLowerCase());
-    						} else {
-    							//TODO: Error handle no available library to copy
-    						}
-    					}
-    				}
+    				
     				
     				//TODO: Add check for Monatage library to copy
     				
@@ -357,14 +347,32 @@ exports.IoMediator = Montage.create(Component, {
     			}
     		}
     		//Checking for webGL elements in document
-    		if (template.webgl && template.webgl.length) {
+    		if (template.webgl && template.webgl.length  > 0) {
+    			var rdgeDirName, rdgeVersion;
+    			//Copy webGL library if needed
+    			for (var i in this.application.ninja.coreIoApi.ninjaLibrary.libs) {
+		    		//Checking for RDGE library to be available
+		    		if (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'RDGE') {
+		    			rdgeDirName = (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name+this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version).toLowerCase();
+    					rdgeVersion = this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version;
+    					this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.document.root, rdgeDirName);
+    				} else {
+    					//TODO: Error handle no available library to copy
+    				}
+    			}
     			//
-    			var json, matchingtags = [], webgltag, scripts = template.document.content.document.getElementsByTagName('script');
+    			var json, matchingtags = [], webgltag, scripts = template.document.content.document.getElementsByTagName('script'), webgljstag, webgllibtag;
     			//
     			for (var i in scripts) {
     				if (scripts[i].getAttribute) {
     					if (scripts[i].getAttribute('data-ninja-webgl') !== null) {//TODO: Use querySelectorAll
     						matchingtags.push(scripts[i]);
+    					}
+    					if (scripts[i].getAttribute('data-ninja-webgl-js') !== null) {
+    						webgljstag = scripts[i]; // TODO: Add logic to delete unneccesary tags
+    					}
+    					if (scripts[i].getAttribute('data-ninja-webgl-lib') !== null) {
+    						webgllibtag = scripts[i]; // TODO: Add logic to delete unneccesary tags
     					}
     				}
     			}
@@ -378,13 +386,46 @@ exports.IoMediator = Montage.create(Component, {
     				}
     			}
     			//
+    			if (!webgllibtag) {
+    				webgllibtag = template.document.content.document.createElement('script');
+    				webgllibtag.setAttribute('type', 'text/javascript');
+    				webgllibtag.setAttribute('src', rdgeDirName+'/CanvasDataManager.js');
+    				webgllibtag.setAttribute('data-ninja-webgl-lib', 'true');
+    				template.document.content.document.head.appendChild(webgllibtag);
+    			}
+    			//
     			if (!webgltag) {
     				webgltag = template.document.content.document.createElement('script');
     				webgltag.setAttribute('data-ninja-webgl', 'true');
     				template.document.content.document.head.appendChild(webgltag);
     			}
+    			//
+    			if (!webgljstag) {
+    				webgljstag = template.document.content.document.createElement('script');
+    				webgljstag.setAttribute('type', 'text/javascript');
+    				webgljstag.setAttribute('data-ninja-webgl-js', 'true');
+    				template.document.content.document.head.appendChild(webgljstag);
+    			}
+    			//TODO: Decide if this should be over-writter or only written on creation
+    			webgljstag.innerHTML = "\
+//Loading webGL/canvas data on window load\n\
+window.addEventListener('load', initWebGl, false);\n\
+function initWebGl (e) {\n\
+	window.removeEventListener('load', initWebGl, false);\n\
+	var cvsDataMngr, ninjaWebGlData = JSON.parse((document.querySelectorAll(['script[data-ninja-webgl]'])[0].innerHTML.replace(\"(\", \"\")).replace(\")\", \"\"));\n\
+	if (ninjaWebGlData && ninjaWebGlData.data) {\n\
+		for (var n=0; ninjaWebGlData.data[n]; n++) {\n\
+			ninjaWebGlData.data[n] = unescape(ninjaWebGlData.data[n]);\n\
+		}\n\
+	}\n\
+	//Creating data manager\n\
+	cvsDataMngr = new CanvasDataManager();\n\
+	//Loading data to canvas(es)\n\
+	cvsDataMngr.loadGLData(document.body, ninjaWebGlData, '"+rdgeDirName+"');\n\
+}\
+    			";
     			//TODO: Add version and other data for RDGE
-    			json = '\n({\n\t"version": "X.X.X.X",\n\t"data": [';
+    			json = '\n({\n\t"version": "'+rdgeVersion+'",\n\t"data": [';
     			//Looping through data to create escaped array
     			for (var j=0; template.webgl[j]; j++) {
     				if (j === 0) {
@@ -398,18 +439,16 @@ exports.IoMediator = Montage.create(Component, {
     			//Setting string in tag
     			webgltag.innerHTML = json;
     		}
+    		//Cleaning URLs from HTML
     		var cleanHTML = template.document.content.document.documentElement.outerHTML.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaRootUrl.bind(this));
-    		//console.log(this.getPrettyHtml(cleanHTML.replace(this.getAppTemplatesUrlRegEx(), '')));
+    		//
     		function parseNinjaRootUrl (url) {
     			if (url.indexOf(this.application.ninja.coreIoApi.rootUrl) !== -1) {
-    				return this.getUrlfromNinjaUrl(url, rootUrl, rootUrl.replace(new RegExp((this.application.ninja.coreIoApi.rootUrl).replace(/\//gi, '\\\/'), 'gi'), '')+'file.ext');//Wrong parameters
+    				return this.getUrlfromNinjaUrl(url, rootUrl, rootUrl.replace(new RegExp((this.application.ninja.coreIoApi.rootUrl).replace(/\//gi, '\\\/'), 'gi'), '')+'file.ext');
     			} else {
     				return url;
     			}
-    		}			
-			//console.log(rootUrl, this.application.ninja.coreIoApi.rootUrl, this.application.ninja.documentController.documentHackReference.root, this.application.ninja.coreIoApi.cloudData.root);
-    		//console.log(this.getPrettyHtml(template.document.content.document.documentElement.outerHTML));
-    		//return;
+    		}
     		//
     		return this.getPrettyHtml(cleanHTML.replace(this.getAppTemplatesUrlRegEx(), ''));
     	}

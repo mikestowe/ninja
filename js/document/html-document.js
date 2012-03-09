@@ -208,49 +208,29 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 			var elt = this.documentRoot;
 			if (elt)
 			{
-// FOR JOSE:   The following commented out lines are what the runtime
-// version should execute.
-//				var loadForRuntime = true;
-//				if (loadForRuntime)
-//				{
-//					var cdm = new CanvasDataManager();
-//					cdm.loadGLData(elt,  value );
-//				}
-//				else
-				{
-					var nWorlds= value.length;
-					for (var i=0;  i<nWorlds;  i++)
-					{
-						var importStr = value[i];
-						var startIndex = importStr.indexOf( "id: " );
-						if (startIndex >= 0)
-						{
-							var endIndex = importStr.indexOf( "\n", startIndex );
-							if (endIndex > 0)
-							{
-								var id = importStr.substring( startIndex+4, endIndex );
-								if (id)
-								{
-									var canvas = this.findCanvasWithID( id, elt );
-									if (canvas)
-									{
-										if (!canvas.elementModel)
-										{
-											NJUtils.makeElementModel(canvas, "Canvas", "shape", true);
+				var nWorlds= value.length;
+				for (var i=0;  i<nWorlds;  i++) {
+					var importStr = value[i];
+					var startIndex = importStr.indexOf("id: ");
+					if (startIndex >= 0) {
+						var endIndex = importStr.indexOf("\n", startIndex);
+						if (endIndex > 0) {
+							var id = importStr.substring( startIndex+4, endIndex);
+							if (id) {
+								var canvas = this.findCanvasWithID(id, elt);
+								if (canvas) {
+									if (!canvas.elementModel) {
+										NJUtils.makeElementModel(canvas, "Canvas", "shape", true);
+									}
+									if (canvas.elementModel) {
+										if (canvas.elementModel.shapeModel.GLWorld) {
+											canvas.elementModel.shapeModel.GLWorld.clearTree();
 										}
-								
-										if (canvas.elementModel)
-										{
-											if (canvas.elementModel.shapeModel.GLWorld)
-												canvas.elementModel.shapeModel.GLWorld.clearTree();
-
-											var index = importStr.indexOf( "webGL: " );
-											var useWebGL = (index >= 0)
-											var world = new GLWorld( canvas, useWebGL );
-											world.import( importStr );
-
-											this.buildShapeModel( canvas.elementModel, world );
-										}
+										var index = importStr.indexOf( "webGL: " );
+										var useWebGL = (index >= 0)
+										var world = new GLWorld(canvas, useWebGL);
+										world.import( importStr );
+											this.buildShapeModel(canvas.elementModel, world);
 									}
 								}
 							}
