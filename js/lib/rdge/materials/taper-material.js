@@ -104,7 +104,7 @@ function TaperMaterial()
 		exportStr += "name: " + this.getName() + "\n";
 		
 		if (this._shader)
-			exportStr += "color: " + String(this._shader.colorMe.color) + "\n";
+			exportStr += "color: " + this._shader.colorMe.color + "\n";
 		else
 			exportStr += "color: " + this.getColor() + "\n";
 		exportStr += "endMaterial\n";

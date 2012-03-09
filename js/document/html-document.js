@@ -9,7 +9,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = 		require("montage/core/core").Montage,
     TextDocument =	require("js/document/text-document").TextDocument,
     NJUtils = 		require("js/lib/NJUtils").NJUtils,
-	CanvasDataManager =	require("js/lib/rdge/runtime/CanvasDataManager").CanvasDataManager,
 	GLWorld =			require("js/lib/drawing/world").World;
 ////////////////////////////////////////////////////////////////////////
 //
@@ -195,9 +194,9 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 			this._glData = null;
 			if (elt)
 			{
-				var cdm = new CanvasDataManager();
 				this._glData = [];
-				cdm.collectGLData( elt,  this._glData );
+				var path = "assets/";
+				this.collectGLData( elt,  this._glData, path  );
 			}
 				
 			return this._glData;
@@ -208,29 +207,47 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 			var elt = this.documentRoot;
 			if (elt)
 			{
-				var nWorlds= value.length;
-				for (var i=0;  i<nWorlds;  i++) {
-					var importStr = value[i];
-					var startIndex = importStr.indexOf("id: ");
-					if (startIndex >= 0) {
-						var endIndex = importStr.indexOf("\n", startIndex);
-						if (endIndex > 0) {
-							var id = importStr.substring( startIndex+4, endIndex);
-							if (id) {
-								var canvas = this.findCanvasWithID(id, elt);
-								if (canvas) {
-									if (!canvas.elementModel) {
-										NJUtils.makeElementModel(canvas, "Canvas", "shape", true);
-									}
-									if (canvas.elementModel) {
-										if (canvas.elementModel.shapeModel.GLWorld) {
-											canvas.elementModel.shapeModel.GLWorld.clearTree();
+//				var loadForRuntime = false;
+//				if (loadForRuntime)
+//				{
+//					var cdm = new CanvasDataManager();
+//					cdm.loadGLData(elt,  value );
+//				}
+//				else
+				{
+					var nWorlds= value.length;
+					for (var i=0;  i<nWorlds;  i++)
+					{
+						var importStr = value[i];
+						var startIndex = importStr.indexOf( "id: " );
+						if (startIndex >= 0)
+						{
+							var endIndex = importStr.indexOf( "\n", startIndex );
+							if (endIndex > 0)
+							{
+								var id = importStr.substring( startIndex+4, endIndex );
+								if (id)
+								{
+									var canvas = this.findCanvasWithID( id, elt );
+									if (canvas)
+									{
+										if (!canvas.elementModel)
+										{
+											NJUtils.makeElementModel(canvas, "Canvas", "shape", true);
 										}
-										var index = importStr.indexOf( "webGL: " );
-										var useWebGL = (index >= 0)
-										var world = new GLWorld(canvas, useWebGL);
-										world.import( importStr );
-											this.buildShapeModel(canvas.elementModel, world);
+								
+										if (canvas.elementModel)
+										{
+											if (canvas.elementModel.shapeModel.GLWorld)
+												canvas.elementModel.shapeModel.GLWorld.clearTree();
+
+											var index = importStr.indexOf( "webGL: " );
+											var useWebGL = (index >= 0)
+											var world = new GLWorld( canvas, useWebGL );
+											world.import( importStr );
+
+											this.buildShapeModel( canvas.elementModel, world );
+										}
 									}
 								}
 							}
@@ -368,11 +385,11 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 
 
 	collectGLData: {
-		value: function( elt,  dataArray )
+		value: function( elt,  dataArray,  imagePath )
 		{
 			if (elt.elementModel && elt.elementModel.shapeModel && elt.elementModel.shapeModel.GLWorld)
 			{
-				var data = elt.elementModel.shapeModel.GLWorld.export();
+				var data = elt.elementModel.shapeModel.GLWorld.export( imagePath );
 				dataArray.push( data );
 			}
 
@@ -382,7 +399,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 				for (var i=0;  i<nKids;  i++)
 				{
 					var child = elt.children[i];
-					this.collectGLData( child, dataArray );
+					this.collectGLData( child, dataArray, imagePath );
 				}
 			}
 		}

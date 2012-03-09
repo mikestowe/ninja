@@ -179,8 +179,12 @@ var PulseMaterial = function PulseMaterial() {
 		var exportStr = "material: " + this.getShaderName() + "\n";
 		exportStr += "name: " + this.getName() + "\n";
 
-		var texMapName = this._propValues[this._propNames[0]];
-		exportStr += "texture: " + texMapName + "\n";
+		var world = this.getWorld();
+		if (!world)
+			throw new Error( "no world in material.export, " + this.getName() );
+
+		var texMapName =  world.cleansePath( this._propValues[this._propNames[0]] );
+		exportStr += "texture: " +texMapName + "\n";
 		
 		// every material needs to terminate like this
 		exportStr += "endMaterial\n";
