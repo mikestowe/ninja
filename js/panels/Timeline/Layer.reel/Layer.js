@@ -372,17 +372,18 @@ var Layer = exports.Layer = Montage.create(Component, {
     		}
     	}
     },
-    _animateCollapser : {
+    _bypassAnimation : {
     	serializable: true,
     	value: false
     },
-    animateCollapser : {
+    bypassAnimation : {
     	serializable: true,
     	get: function() {
-    		return this._animateCollapser;
+    		return this._bypassAnimation;
     	},
     	set: function(newVal) {
-    		this._animateCollapser = newVal;
+    		//console.log("layer.js _bypassAnimation setter " + newVal)
+    		this._bypassAnimation = newVal;
     	}
     },
     
@@ -397,11 +398,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 			this.init();
 			
         	var that = this;
-        	
-			this.positionCollapser = Collapser.create();
-    		this.transformCollapser = Collapser.create();
-    		this.styleCollapser = Collapser.create();
-    		
+
         	// Make it editable!
         	this._layerEditable = Hintable.create();
         	this._layerEditable.element = this.titleSelector;
@@ -417,128 +414,12 @@ var Layer = exports.Layer = Montage.create(Component, {
         	this._layerEditable.editingClass = "editable2";
         	this._layerEditable.value = this.layerName;
         	this._layerEditable.needsDraw = true;
-        	
-        	// Change the markup into collapsible sections using the nifty Collapser component!
-        	this.mainCollapser = Collapser.create();
-        	this.mainCollapser.clicker = this.clicker;
-        	this.mainCollapser.myContent = this.myContent;
-        	this.mainCollapser.contentHeight = 60;
-        	this.myContent.style.height = "0px";
-            this.mainCollapser.element = this.myContent;
-            this.mainCollapser.isCollapsed = this.isMainCollapsed;
-            this.mainCollapser.isAnimated = true;
-            this.element.setAttribute("data-layerid", this.layerID);
-            // Bind the collapser's isToggling property to the isMainCollapsed property,
-            // so a change in one will affect the other.
-            Object.defineBinding(this.mainCollapser, "isToggling", {
-   				boundObject: this,
-       		    boundObjectPropertyPath: "isMainCollapsed",
-       		    oneway: false
-   			});
-            this.mainCollapser.clicker.addEventListener("click", this.handleMainCollapserClick.bind(this), false);
-            
-            /*
-            this.mainCollapser.labelClickEvent = function(boolBypass) {
-				var newEvent = document.createEvent("CustomEvent");
-				newEvent.initCustomEvent("layerEvent", false, true);
-				newEvent.layerEventLocale = "content-main";
-				newEvent.layerEventType = "labelClick";
-				newEvent.layerID = that.layerID;
-				newEvent.bypassAnimation = boolBypass;
-				defaultEventManager.dispatchEvent(newEvent);
-				that.isMainCollapsed = that.mainCollapser.isCollapsed;
-            }
-            */
-    		//this.mainCollapser.needsDraw = true;
 
-            this.positionCollapser.clicker = this.clickerPosition;
-            this.positionCollapser.myContent = this.contentPosition;
-            this.positionCollapser.element = this.contentPosition;
-            this.positionCollapser.contentHeight = 40;
-            this.positionCollapser.isCollapsed = this.isPositionCollapsed;
-            this.positionCollapser.isAnimated = false;
-            // Bind the collapser's isToggling property to the isPositionCollapsed property,
-            // so a change in one will affect the other.
-            Object.defineBinding(this.positionCollapser, "isToggling", {
-   				boundObject: this,
-       		    boundObjectPropertyPath: "isPositionCollapsed",
-       		    oneway: false
-   			});
+            this.mainCollapser.clicker.addEventListener("click", this.handleMainCollapserClick.bind(this), false);
             this.positionCollapser.clicker.addEventListener("click", this.handlePositionCollapserClick.bind(this), false);
-            
-            /*
-            this.positionCollapser.labelClickEvent = function(boolBypass) {
-				var newEvent = document.createEvent("CustomEvent");
-				newEvent.initCustomEvent("layerEvent", false, true);
-				newEvent.layerEventLocale = "content-position";
-				newEvent.layerEventType = "labelClick";
-				newEvent.layerID = that.layerID;
-				newEvent.bypassAnimation = boolBypass;
-				defaultEventManager.dispatchEvent(newEvent);
-				that.isPositionCollapsed = that.positionCollapser.isCollapsed;
-            }
-            */
-            //this.positionCollapser.needsDraw = true;
-            
-            this.transformCollapser.clicker = this.clickerTransform;
-            this.transformCollapser.myContent = this.contentTransform;
-            this.transformCollapser.element = this.contentTransform;
-            this.transformCollapser.contentHeight = 100;
-            this.transformCollapser.isCollapsed = this.isTransformCollapsed;
-            this.transformCollapser.isAnimated = false;
-            // Bind the collapser's isToggling property to the isTransformCollapsed property,
-            // so a change in one will affect the other.
-            Object.defineBinding(this.transformCollapser, "isToggling", {
-   				boundObject: this,
-       		    boundObjectPropertyPath: "isTransformCollapsed",
-       		    oneway: false
-   			});
             this.transformCollapser.clicker.addEventListener("click", this.handleTransformCollapserClick.bind(this), false);
-            
-            
-            /*
-            this.transformCollapser.labelClickEvent = function(boolBypass) {
-				var newEvent = document.createEvent("CustomEvent");
-				newEvent.initCustomEvent("layerEvent", false, true);
-				newEvent.layerEventLocale = "content-transform";
-				newEvent.layerEventType = "labelClick";
-				newEvent.layerID = that.layerID;
-				newEvent.bypassAnimation = boolBypass;
-				defaultEventManager.dispatchEvent(newEvent);
-				that.isTransformCollapsed = that.transformCollapser.isCollapsed;
-            }
-            */
-            //this.transformCollapser.needsDraw = true;
-            
-            this.styleCollapser.clicker = this.clickerStyle;
-            this.styleCollapser.myContent = this.contentStyle;
-            this.styleCollapser.element = this.contentStyle;
-            this.styleCollapser.isCollapsed = this.isStyleCollapsed;
-            this.styleCollapser.contentHeight = 0;
-            this.styleCollapser.isAnimated = false;
-            // Bind the collapser's isToggling property to the isStyleCollapsed property,
-            // so a change in one will affect the other.
-            Object.defineBinding(this.styleCollapser, "isToggling", {
-   				boundObject: this,
-       		    boundObjectPropertyPath: "isStyleCollapsed",
-       		    oneway: false
-   			});
             this.styleCollapser.clicker.addEventListener("click", this.handleStyleCollapserClick.bind(this), false);
-            
-            
-            /*
-            this.styleCollapser.labelClickEvent = function(boolBypass) {
-				var newEvent = document.createEvent("CustomEvent");
-				newEvent.initCustomEvent("layerEvent", false, true);
-				newEvent.layerEventLocale = "content-style";
-				newEvent.layerEventType = "labelClick";
-				newEvent.layerID = that.layerID;
-				newEvent.bypassAnimation = boolBypass;
-				defaultEventManager.dispatchEvent(newEvent);
-				that.isStyleCollapsed = that.styleCollapser.isCollapsed;
-            }
-            */
-            //this.styleCollapser.needsDraw = true;
+
 
             // Add event listeners to add and delete style buttons
             this.buttonAddStyle.identifier = "addStyle";
@@ -555,26 +436,6 @@ var Layer = exports.Layer = Montage.create(Component, {
     },
     draw: {
     	value: function() {
-
-    		// Coordinate the collapsers
-    		this.log('layer.js draw')
-            if (this.mainCollapser.isCollapsed !== this.isMainCollapsed) {
-            	this.log('layer.js draw: this.animateCollapser ' + this.animateCollapser)
-            	this.mainCollapser.bypassAnimation = this.animateCollapser;
-            	this.mainCollapser.toggle();
-            }
-            if (this.positionCollapser.isCollapsed !== this.isPositionCollapsed) {
-            	this.positionCollapser.bypassAnimation = this.animateCollapser;
-            	this.positionCollapser.toggle();
-            }
-            if (this.transformCollapser.isCollapsed !== this.isTransformCollapsed) {
-            	this.transformCollapser.bypassAnimation = this.animateCollapser;
-            	this.transformCollapser.toggle();
-            }
-            if (this.styleCollapser.isCollapsed !== this.isStyleCollapsed) {
-            	this.styleCollapser.bypassAnimation = this.animateCollapser;
-            	this.styleCollapser.toggle();
-            }
             if (this.isSelected) {
             	this.element.classList.add("selected");
             } else {
@@ -595,16 +456,9 @@ var Layer = exports.Layer = Montage.create(Component, {
 			// Get some selectors.
         	this.label = this.element.querySelector(".label-layer");
         	this.titleSelector = this.label.querySelector(".collapsible-label");
-        	this.clicker = this.element.querySelector(".collapsible-clicker");
-        	this.myContent = this.element.querySelector(".content-layer");
-        	this.clickerPosition = this.element.querySelector(".clicker-position");
-        	this.contentPosition = this.element.querySelector(".content-position");
-        	this.clickerTransform = this.element.querySelector(".clicker-transform");
-        	this.contentTransform = this.element.querySelector(".content-transform");
-        	this.clickerStyle = this.element.querySelector(".clicker-style");
-        	this.contentStyle = this.element.querySelector(".content-style");
         	this.buttonAddStyle = this.element.querySelector(".button-add");
         	this.buttonDeleteStyle = this.element.querySelector(".button-delete");
+
 		}
 	},
     selectLayer:{
@@ -793,7 +647,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 	handleMainCollapserClick : {
 		value: function(event) {
 			this.mainCollapser.bypassAnimation = false;
-			this.animateCollapser = true;
+			this.bypassAnimation = false;
 			if (this.isMainCollapsed) {
 				this.isMainCollapsed = false;
 			} else {
@@ -804,7 +658,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 	handlePositionCollapserClick : {
 		value: function(event) {
 			this.positionCollapser.bypassAnimation = false;
-			//this.animateCollapser = true;
+			this.bypassAnimation = false;
 			if (this.isPositionCollapsed) {
 				this.isPositionCollapsed = false;
 			} else {
@@ -815,7 +669,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 	handleTransformCollapserClick : {
 		value: function(event) {
 			this.transformCollapser.bypassAnimation = false;
-			//this.animateCollapser = true;
+			this.bypassAnimation = false;
 			if (this.isTransformCollapsed) {
 				this.isTransformCollapsed = false;
 			} else {
@@ -826,7 +680,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 	handleStyleCollapserClick : {
 		value: function(event) {
 			this.styleCollapser.bypassAnimation = false;
-			//this.animateCollapser = true;
+			this.bypassAnimation = false;
 			if (this.isStyleCollapsed) {
 				this.isStyleCollapsed = false;
 			} else {

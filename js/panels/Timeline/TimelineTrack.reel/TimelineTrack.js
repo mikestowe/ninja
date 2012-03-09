@@ -57,7 +57,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         set:function (newVal) {
             if (newVal !== this._isTransformCollapsed) {
                 this._isTransformCollapsed = newVal;
-                this.needsDraw = true;
             }
         }
     },
@@ -71,7 +70,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         set:function (newVal) {
             if (newVal !== this._isPositionCollapsed) {
                 this._isPositionCollapsed = newVal;
-                this.needsDraw = true;
             }
         }
     },
@@ -85,21 +83,21 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         set:function (newVal) {
             if (newVal !== this._isStyleCollapsed) {
                 this._isStyleCollapsed = newVal;
-                this.needsDraw = true;
             }
         }
     },
-    _animateCollapser : {
+    _bypassAnimation : {
     	serializable: true,
     	value: false
     },
-    animateCollapser : {
+    bypassAnimation : {
     	serializable: true,
     	get: function() {
-    		return this._animateCollapser;
+    		return this._bypassAnimation;
     	},
     	set: function(newVal) {
-    		this._animateCollapser = newVal;
+    		//console.log("timelinetrack bypassAnimation setter " + newVal)
+    		this._bypassAnimation = newVal;
     	}
     },
     
@@ -584,110 +582,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             
             this.arrPositionTracks = [0, 1];
             this.arrTransformTracks = [0, 1, 2, 3, 4];
-            
-            this.label = this.element.querySelector(".label-main");
-            this.myContent = this.element.querySelector(".content-main");
-            this.labelPosition = this.element.querySelector(".label-position");
-            this.contentPosition = this.element.querySelector(".content-position");
-            this.labelTransform = this.element.querySelector(".label-transform");
-            this.contentTransform = this.element.querySelector(".content-transform");
-            this.labelStyles = this.element.querySelector(".label-styles");
-            this.contentStyles = this.element.querySelector(".content-styles");
-
-            this._mainCollapser = Collapser.create();
-            this._mainCollapser.clicker = this.label;
-            this._mainCollapser.myContent = this.myContent;
-            this._mainCollapser.contentHeight = 60;
-            this._mainCollapser.isLabelClickable = false;
-            this._mainCollapser.element = this.myContent;
-            this._mainCollapser.isCollapsed = this.isMainCollapsed;
-            this._mainCollapser.isAnimated = true;
-            Object.defineBinding(this._mainCollapser, "isToggling", {
-   				boundObject: this,
-       		    boundObjectPropertyPath: "isMainCollapsed",
-       		    oneway: false
-   			});
-            Object.defineBinding(this._mainCollapser, "bypassAnimation", {
-   				boundObject: this,
-       		    boundObjectPropertyPath: "animateCollapser",
-       		    oneway: false,
-               	boundValueMutator: function(value) {
-                   	return !value;
-                }
-   			});
-            
-            /*
-            this._mainCollapser.labelClickEvent = function () {
-                that.isMainCollapsed = that._mainCollapser.isCollapsed;
-            };
-            */
-            //this._mainCollapser.needsDraw = true;
-
-            this._positionCollapser = Collapser.create();
-            this._positionCollapser.clicker = this.labelPosition;
-            this._positionCollapser.myContent = this.contentPosition;
-            this._positionCollapser.contentHeight = 40;
-            this._positionCollapser.isLabelClickable = true;
-            this._positionCollapser.element = this.contentPosition;
-            this._positionCollapser.isCollapsed = this.isPositionCollapsed;
-            this._positionCollapser.isAnimated = true;
-            Object.defineBinding(this._positionCollapser, "isToggling", {
-   				boundObject: this,
-       		    boundObjectPropertyPath: "isPositionCollapsed",
-       		    oneway: false
-   			});
-            
-            
-            /*
-            this._positionCollapser.labelClickEvent = function () {
-                that.isPositionCollapsed = that._positionCollapser.isCollapsed;
-            };
-            */
-            //this._positionCollapser.needsDraw = true;
-
-            this._transformCollapser = Collapser.create();
-            this._transformCollapser.clicker = this.labelTransform;
-            this._transformCollapser.myContent = this.contentTransform;
-            this._transformCollapser.contentHeight = 100;
-            this._transformCollapser.isLabelClickable = false;
-            this._transformCollapser.element = this.contentTransform;
-            this._transformCollapser.isCollapsed = this.isTransformCollapsed;
-            this._transformCollapser.isAnimated = true;
-            Object.defineBinding(this._transformCollapser, "isToggling", {
-   				boundObject: this,
-       		    boundObjectPropertyPath: "isTransformCollapsed",
-       		    oneway: false
-   			});
-   			
-   			
-            /*
-            this._transformCollapser.labelClickEvent = function () {
-                that.isTransformCollapsed = that._transformCollapser.isCollapsed;
-            };
-            */
-            //this._transformCollapser.needsDraw = true;
-
-            this._styleCollapser = Collapser.create();
-            this._styleCollapser.clicker = this.labelStyles;
-            this._styleCollapser.myContent = this.contentStyles;
-            this._styleCollapser.contentHeight = 0;
-            this._styleCollapser.isLabelClickable = false;
-            this._styleCollapser.element = this.contentStyles;
-            this._styleCollapser.isCollapsed = this.isStyleCollapsed;
-            this._styleCollapser.isAnimated = true;
-            Object.defineBinding(this._styleCollapser, "isToggling", {
-   				boundObject: this,
-       		    boundObjectPropertyPath: "isStyleCollapsed",
-       		    oneway: false
-   			});
-   			
-   			
-            /*
-            this._styleCollapser.labelClickEvent = function () {
-                that.isStyleCollapsed = that._styleCollapser.isCollapsed;
-            };
-            */
-            //this._styleCollapser.needsDraw = true;
 
             // Register event handler for layer events.
             //defaultEventManager.addEventListener("layerEvent", this, false);

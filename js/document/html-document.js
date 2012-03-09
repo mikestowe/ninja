@@ -977,7 +977,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     },
 	////////////////////////////////////////////////////////////////////
     /**
-     *pause videos on switching or closing the document
+     *pause videos on switching or closing the document, so that the browser does not keep downloading the media data
     */
     pauseVideos:{
         value:function(){
@@ -992,6 +992,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 
     /**
      * remove the video src on closing the document, so that the browser does not keep downloading the media data, if the tag does not get garbage collected
+     *removeSrc : boolean to remove the src if the video... set only in the close document flow
     */
     stopVideos:{
         value:function(){
@@ -1001,7 +1002,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             }
         }
     },
-
     pauseAndStopVideos:{
         value:function(){
             var videosArr = this.documentRoot.getElementsByTagName("video"), i=0;
