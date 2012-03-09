@@ -455,6 +455,8 @@ webgltag.innerHTML = json.replace(/assets\//gi, webGlDirSwap);
     			function webGlDirSwap (dir) {
     				return rdgeDirName+'/';
     			}
+    			//
+    			console.log(webgltag.innerHTML);
 */
     		}
     		//Cleaning URLs from HTML

@@ -382,7 +382,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 				for (var i=0;  i<nKids;  i++)
 				{
 					var child = elt.children[i];
-					this.collectGLData( child, dataArray, imagePath );
+					this.collectGLData( child, dataArray);
 				}
 			}
 		}
