@@ -60,8 +60,9 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             this.eventManager.addEventListener("executeSave", this, false);
             this.eventManager.addEventListener("executeSaveAs", this, false);
             this.eventManager.addEventListener("executeSaveAll", this, false);
+            this.eventManager.addEventListener("executeFileClose", this, false);
 
-            this.eventManager.addEventListener("recordStyleChanged", this, false);
+            this.eventManager.addEventListener("styleSheetDirty", this, false);
             
         }
     },
@@ -157,17 +158,29 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
                 saveAsSettings.fileName = this.activeDocument.name;
                 saveAsSettings.folderUri = this.activeDocument.uri.substring(0, this.activeDocument.uri.lastIndexOf("/"));
-                //add callback
+                saveAsSettings.callback = this.saveAsCallback.bind(this);
                 this.application.ninja.newFileController.showSaveAsDialog(saveAsSettings);
             }
         }
     },
-
+    ////////////////////////////////////////////////////////////////////
+    handleExecuteFileClose:{
+        value: function(event) {
+            if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
+                this.closeDocument(this.activeDocument.uuid);
+            }
+        }
+    },
+    ////////////////////////////////////////////////////////////////////
     //
     fileSaveResult: {
     	value: function (result) {
-    		if(result.status === 204){
+            if((result.status === 204) || (result.status === 404)){//204=>existing file || 404=>new file... saved
                 this.activeDocument.needsSave = false;
+                if(this.application.ninja.currentDocument !== null){
+                    //clear Dirty StyleSheets for the saved document
+                    this.application.ninja.stylesController.clearDirtyStyleSheets(this.application.ninja.currentDocument);
+                }
             }
     	}
     },
@@ -249,6 +262,29 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     },
 	////////////////////////////////////////////////////////////////////
 	//
+    saveAsCallback:{
+        value:function(saveAsDetails){
+            var fileUri = null, filename = saveAsDetails.filename, destination = saveAsDetails.destination;
+            //update document metadata
+            this.activeDocument.name = ""+filename;
+            //prepare new file uri
+            if(destination && (destination.charAt(destination.length -1) !== "/")){
+                destination = destination + "/";
+            }
+            fileUri = destination+filename;
+
+            this.activeDocument.uri = fileUri;
+            //save a new file
+            //use the ioMediator.fileSaveAll when implemented
+            this.activeDocument._userDocument.name=filename;
+            this.activeDocument._userDocument.root=destination;
+            this.activeDocument._userDocument.uri=fileUri;
+            this.application.ninja.ioMediator.fileSave(this.activeDocument.save(), this.fileSaveResult.bind(this));
+            //
+        }
+    },
+
+    ////////////////////////////////////////////////////////////////////
 	openDocument: {
 		value: function(doc) {
 			
@@ -336,14 +372,23 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                     nextDocumentIndex = closeDocumentIndex - 1;
                 }
                 this.application.ninja.stage.stageView.switchDocument(this._documents[nextDocumentIndex]);
+                if(typeof this.activeDocument.stopVideos !== "undefined"){doc.stopVideos();}
                 this._removeDocumentView(doc.container);
             }else if(this._documents.length === 0){
+                if(typeof this.activeDocument.pauseAndStopVideos !== "undefined"){
+                    this.activeDocument.pauseAndStopVideos();
+                }
                 this.activeDocument = null;
                 this._removeDocumentView(doc.container);
                 this.application.ninja.stage.stageView.hideRulers();
                 document.getElementById("iframeContainer").style.display="block";
 
                 this.application.ninja.stage.hideCanvas(true);
+            }else{//closing inactive document tab - just clear DOM
+                if(typeof doc.pauseAndStopVideos !== "undefined"){
+                    doc.pauseAndStopVideos();
+                }
+                this._removeDocumentView(doc.container);
             }
 
             NJevent("closeDocument", doc.uri);
@@ -506,5 +551,11 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value: function() {
             return "userDocument_" + (this._iframeCounter++);
         }
+    },
+
+    handleStyleSheetDirty:{
+        value:function(){
+            this.activeDocument.needsSave = true;
         }
+    }
 });
