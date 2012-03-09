@@ -116,7 +116,7 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
 			    	dir = folder.name;
 			    }
 			    //
-			    if (!this.coreApi.createDirectory({uri: dir})) {
+			    if (!this.coreApi.createDirectory({uri: dir.replace(/\/\//gi, '/')})) {
 			    	//Error occured while creating folders
 			    	return;
 			    }
@@ -132,7 +132,7 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
 							this.chromeApi.fileContent(contents[i].fullPath, function (result) {
 								//
 								//this.coreApi.createFile({uri: fileRoot+result.file.fullPath, contents: blob.getBlob(result.data.type), contentType: result.data.type});
-								this.coreApi.createFile({uri: fileRoot+result.file.fullPath, contents: result.content});
+								this.coreApi.createFile({uri: (fileRoot+result.file.fullPath).replace(/\/\//gi, '/'), contents: result.content});
 							}.bind(this));
 						}
 					}
