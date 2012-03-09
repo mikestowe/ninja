@@ -5,6 +5,7 @@
 	"directories": [{"name": "images"}, {"name": "shaders"}],
 	"files": [
 		"CanvasRuntime.js",
+		"rdge-compiled.js",
 		"images/black.png",
 		"images/blue.png",
 		"images/BoxB2_AO.png",

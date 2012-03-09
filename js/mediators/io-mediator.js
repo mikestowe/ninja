@@ -361,7 +361,7 @@ exports.IoMediator = Montage.create(Component, {
     				}
     			}
     			//
-    			var json, matchingtags = [], webgltag, scripts = template.document.content.document.getElementsByTagName('script'), webgljstag, webgllibtag;
+    			var json, matchingtags = [], webgltag, scripts = template.document.content.document.getElementsByTagName('script'), webgljstag, webgllibtag, webglrdgetag;
     			//
     			for (var i in scripts) {
     				if (scripts[i].getAttribute) {
@@ -374,6 +374,9 @@ exports.IoMediator = Montage.create(Component, {
     					if (scripts[i].getAttribute('data-ninja-webgl-lib') !== null) {
     						webgllibtag = scripts[i]; // TODO: Add logic to delete unneccesary tags
     					}
+    					if (scripts[i].getAttribute('data-ninja-webgl-rdge') !== null) {
+    						webglrdgetag = scripts[i]; // TODO: Add logic to delete unneccesary tags
+    					}
     				}
     			}
     			//
@@ -384,6 +387,14 @@ exports.IoMediator = Montage.create(Component, {
     					//TODO: Add logic to handle multiple tags, perhaps combine to one
     					webgltag = matchingtags[matchingtags.length-1]; //Saving all data to last one...
     				}
+    			}
+    			//
+    			if (!webglrdgetag) {
+    				webglrdgetag = template.document.content.document.createElement('script');
+    				webglrdgetag.setAttribute('type', 'text/javascript');
+    				webglrdgetag.setAttribute('src', rdgeDirName+'/rdge-compiled.js');
+    				webglrdgetag.setAttribute('data-ninja-webgl-rdge', 'true');
+    				template.document.content.document.head.appendChild(webglrdgetag);
     			}
     			//
     			if (!webgllibtag) {
@@ -421,7 +432,7 @@ function initWebGl (e) {\n\
 	//Creating data manager\n\
 	cvsDataMngr = new CanvasDataManager();\n\
 	//Loading data to canvas(es)\n\
-	cvsDataMngr.loadGLData(document.body, ninjaWebGlData.data);\n\
+	cvsDataMngr.loadGLData(document.body, ninjaWebGlData.data, '"+rdgeDirName+"/');\n\
 }\
     			";
     			//TODO: Add version and other data for RDGE
@@ -437,11 +448,16 @@ function initWebGl (e) {\n\
     			//Closing array (make-shift JSON string to validate data in <script> tag)
     			json += '\n\t\t]\n})\n';
     			//Setting string in tag
-    			webgltag.innerHTML = json.replace(/assets\//gi, webGlDirSwap);
+    			webgltag.innerHTML = json;
+    			/*
+webgltag.innerHTML = json.replace(/assets\//gi, webGlDirSwap);
     			//
     			function webGlDirSwap (dir) {
     				return rdgeDirName+'/';
     			}
+    			//
+    			console.log(webgltag.innerHTML);
+*/
     		}
     		//Cleaning URLs from HTML
     		var cleanHTML = template.document.content.document.documentElement.outerHTML.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaRootUrl.bind(this));
