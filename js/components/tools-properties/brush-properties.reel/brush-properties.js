@@ -16,6 +16,12 @@ exports.BrushProperties = Montage.create(ToolProperties, {
         get: function() { return this._strokeHardness; }
     },
     doSmoothing:{
-        get: function() {return this._doSmoothing; }
+        get: function() {return this._doSmoothing.checked; }
+    },
+    useCalligraphic: {
+        get: function() {return this._useCalligraphic.checked;}
+    },
+    strokeAngle: {
+        get: function() {return this._strokeAngle;}
     }
 });

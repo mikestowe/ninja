@@ -37,6 +37,19 @@
                 }
             },
 
+            "strokeAngleHT": {
+                "module": "js/components/hottextunit.reel",
+                "name": "HotTextUnit",
+                "properties": {
+                    "element": {"#": "strokeAngle"},
+                    "minValue": -90,
+                    "maxValue": 90,
+                    "value": 0,
+                    "decimalPlace": 10,
+                    "acceptableUnits" : ["px", "pt"]
+                }
+            },
+
             "owner": {
                 "module": "js/components/tools-properties/brush-properties.reel",
                 "name": "BrushProperties",
@@ -44,7 +57,9 @@
                     "element": {"#": "brushProperties"},
                     "_strokeSize": {"@": "strokeSizeHT"},
                     "_strokeHardness": {"@": "strokeHardnessHT"},
-                    "_doSmoothing": {"@": "doSmoothing"}
+                    "_doSmoothing": {"#": "doSmoothing"},
+                    "_useCalligraphic":{"#": "useCalligraphic"},
+                    "_strokeAngle": {"@": "strokeAngleHT"}
                 }
             }
     	}
@@ -59,7 +74,11 @@
                 <div id="strokeSize" class="label"></div>
                 <label class="label"> Hardness:</label>
                 <div id="strokeHardness" class="label"></div>
-                <label class="label subOption optionLabel"><input id="doSmoothing" type="checkbox" name="doSmoothingControl" class="checkBoxAlign"/>Smoothing</label>
+                <label class="label"><input id="doSmoothing" type="checkbox" name="doSmoothingControl" class="checkBoxAlign"/>Smoothing</label>
+                <label class="label"><input id="useCalligraphic" type="checkbox" name="useCalligraphicControl" class="checkBoxAlign"/>Calligraphic</label>
+                <label class="label"> Angle:</label>
+                <div id="strokeAngle" class="label"></div>
+
             </div>
         </div>
     </body>

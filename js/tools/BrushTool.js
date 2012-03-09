@@ -91,9 +91,25 @@ exports.BrushTool = Montage.create(ShapeTool, {
 
                     var doSmoothing = false;
                     if (this.options.doSmoothing){
-                        doSmoothing = this.options.doSmoothing.value;
+                        doSmoothing = this.options.doSmoothing;
                     }
                     this._selectedBrushStroke.setDoSmoothing(doSmoothing);
+
+                    var useCalligraphic = false;
+                    if (this.options.useCalligraphic){
+                        useCalligraphic = this.options.useCalligraphic;
+                    }
+                    if (useCalligraphic) {
+                        this._selectedBrushStroke.setStrokeUseCalligraphic(true);
+                        var strokeAngle = 0;
+                        if (this.options.strokeAngle){
+                            strokeAngle= ShapesController.GetValueInPixels(this.options.strokeAngle.value, this.options.strokeAngle.units);
+                        }
+                        this._selectedBrushStroke.setStrokeAngle(strokeAngle);
+                    } else {
+                        this._selectedBrushStroke.setStrokeUseCalligraphic(false);
+                    }
+                    
                 }
                 NJevent("enableStageMove");//stageManagerModule.stageManager.enableMouseMove();
             } //value: function (event) {

@@ -37,6 +37,8 @@ var BrushStroke = function GLBrushStroke() {
     this._strokeMaterial = null;
     this._strokeStyle = "Solid";
     this._strokeDoSmoothing = false;
+    this._strokeUseCalligraphic = false;
+    this._strokeAngle = 0;
 
     //the wetness of the brush (currently this is multiplied to the square of the stroke width, but todo should be changed to not depend on stroke width entirely
     //smaller value means more samples for the path
@@ -117,7 +119,7 @@ var BrushStroke = function GLBrushStroke() {
         //add the point only if it is some epsilon away from the previous point
         var numPoints = this._Points.length;
         if (numPoints>0) {
-            var threshold = 1;//this._WETNESS_FACTOR*this._strokeWidth;
+            var threshold = 2;//this._WETNESS_FACTOR*this._strokeWidth;
             var prevPt = this._Points[numPoints-1];
             var diffPt = [prevPt[0]-pt[0], prevPt[1]-pt[1]];
             var diffPtMag = Math.sqrt(diffPt[0]*diffPt[0] + diffPt[1]*diffPt[1]);
@@ -186,6 +188,14 @@ var BrushStroke = function GLBrushStroke() {
 
     this.setDoSmoothing = function(s){
         this._strokeDoSmoothing = s;
+    }
+
+    this.setStrokeUseCalligraphic = function(c){
+        this._strokeUseCalligraphic = c;
+    }
+
+    this.setStrokeAngle = function(a){
+        this._strokeAngle = a;
     }
 
     this.getStrokeStyle = function () {
@@ -266,6 +276,8 @@ var BrushStroke = function GLBrushStroke() {
                     }
                 }
             }
+            //todo 4-point subdivision iterations over continuous regions of 'long' segments
+            // look at http://www.gvu.gatech.edu/~jarek/Split&Tweak/ for formula
             //**** add samples to the long sections of the path --- Catmull-Rom spline interpolation
             if (this._strokeDoSmoothing && numPoints>1) {
                 var numInsertedPoints = 0;
@@ -496,75 +508,84 @@ var BrushStroke = function GLBrushStroke() {
         }
         */
 
-        /*
-        //build the stamp for the brush stroke
-        //todo get this directly from the UI
-        var t=0;
-        var numTraces = this._strokeWidth;
-        var halfNumTraces = numTraces/2;
-        var startPos = [-this._strokeWidth/2,0];
-        var brushStamp = [];
 
-        //build an angled (calligraphic) brush stamp
-        var deltaDisplacement = [1,1];//[this._strokeWidth/numTraces, 0]; //a horizontal line brush
-        for (t=0;t<numTraces;t++){
-            var brushPt = [startPos[0]+t*deltaDisplacement[0], startPos[1]+t*deltaDisplacement[1]];
-            brushStamp.push(brushPt);
+        if (this._strokeUseCalligraphic) {
+            //build the stamp for the brush stroke
+            var t=0;
+            var numTraces = this._strokeWidth;
+            var halfNumTraces = numTraces/2;
+            var opaqueRegionHalfWidth = 0.5*this._strokeHardness*numTraces*0.01;
+            var maxTransparentRegionHalfWidth = halfNumTraces-opaqueRegionHalfWidth;
+            var startPos = [-this._strokeWidth/2,0];
+            var brushStamp = [];
+
+            //build an angled (calligraphic) brush stamp
+            var deltaDisplacement = [Math.cos(this._strokeAngle),Math.sin(this._strokeAngle)];
+            deltaDisplacement = VecUtils.vecNormalize(2, deltaDisplacement, 1);
+
+            for (t=0;t<numTraces;t++){
+                var brushPt = [startPos[0]+t*deltaDisplacement[0], startPos[1]+t*deltaDisplacement[1]];
+                brushStamp.push(brushPt);
+            }
+
+            for (t=0;t<numTraces;t++){
+                var disp = [brushStamp[t][0], brushStamp[t][1]];
+                //ctx.globalCompositeOperation = 'source-over';
+                var alphaVal = 1.0;
+                var distFromOpaqueRegion = Math.abs(t-halfNumTraces) - opaqueRegionHalfWidth;
+                if (distFromOpaqueRegion>0) {
+                    alphaVal = 1.0 - distFromOpaqueRegion/maxTransparentRegionHalfWidth;
+                }
+
+                ctx.save();
+                ctx.lineWidth=this._strokeWidth/10;//todo figure out the correct formula for the line width
+                if (ctx.lineWidth<2)
+                    ctx.lineWidth=2;
+                if (t===numTraces-1){
+                    ctx.lineWidth = 1;
+                }
+                ctx.lineJoin="bevel";
+                ctx.lineCap="butt";
+                ctx.globalAlpha = this._strokeColor[3];
+                
+                //if (t<numTraces/2)
+                    ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
+                //else
+                //    ctx.strokeStyle="rgba("+parseInt(255*this._secondStrokeColor[0])+","+parseInt(255*this._secondStrokeColor[1])+","+parseInt(255*this._secondStrokeColor[2])+","+alphaVal+")";
+                ctx.translate(disp[0],disp[1]);
+                ctx.beginPath();
+                ctx.moveTo(this._Points[0][0]-bboxMin[0], this._Points[0][1]-bboxMin[1]);
+                for (var i=0;i<numPoints;i++){
+                    ctx.lineTo(this._Points[i][0]-bboxMin[0], this._Points[i][1]-bboxMin[1]);
+                }
+                ctx.stroke();
+                ctx.restore();
+            }
+        } else {
+
+            ctx.globalCompositeOperation = 'lighter'; //we wish to add up the colors
+            ctx.globalAlpha = this._strokeColor[3];
+            ctx.lineCap = "round";
+            ctx.lineJoin="round";
+            var minStrokeWidth = (this._strokeHardness*this._strokeWidth)/100; //the hardness is the percentage of the stroke width that's fully opaque
+            var numlayers = 1 + (this._strokeWidth-minStrokeWidth)/2;
+            var alphaVal = 1.0/(numlayers); //this way the alpha at the first path will be 1
+            ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
+            for (var l=0;l<numlayers;l++){
+                ctx.beginPath();
+                ctx.moveTo(this._Points[0][0]-bboxMin[0], this._Points[0][1]-bboxMin[1]);
+                if (numPoints===1){
+                    //display a tiny segment as a single point
+                   ctx.lineTo(this._Points[0][0]-bboxMin[0], this._Points[0][1]-bboxMin[1]+0.01);
+                }
+                for (var i=1;i<numPoints;i++){
+                    ctx.lineTo(this._Points[i][0]-bboxMin[0], this._Points[i][1]-bboxMin[1]);
+                }
+                ctx.lineWidth=2*l+minStrokeWidth;
+                ctx.stroke();
+            }
         }
-
-        for (t=0;t<numTraces;t++){
-            var disp = [brushStamp[t][0], brushStamp[t][1]];
-            //ctx.globalCompositeOperation = 'source-over';
-            var distFromMiddle = Math.abs(halfNumTraces-t);
-            var alphaVal = 1.0 - (100-this._strokeHardness)*(distFromMiddle/halfNumTraces)/100;
-            alphaVal = 0.2;
-            ctx.save();
-            ctx.lineWidth=this._strokeWidth/10;//todo figure out the correct formula for the line width
-            if (ctx.lineWidth<2)
-                ctx.lineWidth=2;
-            if (t===numTraces-1){
-                ctx.lineWidth = 1;
-            }
-            ctx.lineJoin="bevel";
-            ctx.lineCap="butt";
-            //if (t<numTraces/2)
-                ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
-            //else
-            //    ctx.strokeStyle="rgba("+parseInt(255*this._secondStrokeColor[0])+","+parseInt(255*this._secondStrokeColor[1])+","+parseInt(255*this._secondStrokeColor[2])+","+alphaVal+")";
-            ctx.translate(disp[0],disp[1]);
-            ctx.beginPath();
-            ctx.moveTo(this._Points[0][0]-bboxMin[0], this._Points[0][1]-bboxMin[1]);
-            for (var i=0;i<numPoints;i++){
-                ctx.lineTo(this._Points[i][0]-bboxMin[0], this._Points[i][1]-bboxMin[1]);
-            }
-            ctx.stroke();
-            ctx.restore();
-        }
-        */
-
-
-        var minStrokeWidth = (this._strokeHardness*this._strokeWidth)/100; //the hardness is the percentage of the stroke width that's fully opaque
-        var numlayers = 1 + (this._strokeWidth-minStrokeWidth)/2;
-        var alphaVal = 1.0/(numlayers);
-        ctx.lineCap = "round";
-        ctx.lineJoin="round";
-        ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
-        ctx.globalCompositeOperation = 'lighter'; //we wish to add up the colors
-        ctx.globalAlpha = this._strokeColor[3];
-        for (var l=0;l<numlayers;l++){
-            ctx.beginPath();
-            ctx.moveTo(this._Points[0][0]-bboxMin[0], this._Points[0][1]-bboxMin[1]);
-            if (numPoints===1){
-               ctx.lineTo(this._Points[0][0]-bboxMin[0], this._Points[0][1]-bboxMin[1]+0.01);
-            }
-            for (var i=1;i<numPoints;i++){
-                ctx.lineTo(this._Points[i][0]-bboxMin[0], this._Points[i][1]-bboxMin[1]);
-            }
-
-            ctx.lineWidth=2*l+minStrokeWidth;
-            ctx.stroke();
-        }
-
+        
         ctx.restore();
     }; //render()
 
