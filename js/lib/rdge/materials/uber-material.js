@@ -33,6 +33,8 @@ var UberMaterial = function UberMaterial() {
 	this._useEnvironmentMap	= true;
 	this._useLights			= [true, true, true, true];
 
+	this._MAX_LIGHTS		= 4;
+
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
@@ -374,6 +376,18 @@ var UberMaterial = function UberMaterial() {
         var index = importStr.indexOf( endKey );
         index += endKey.length;
         importStr = importStr.substr( index );
+		var pu = new MaterialParser( importStr );
+
+		var matProps = pu.nextValue( "materialProps: " );
+		if (matProps)
+		{
+			var ambientColor  = Number( pu.nextValue( "ambientColor: "  ));	 this.setProperty( "ambientColor", ambientColor );
+			var diffuseColor  = Number( pu.nextValue( "diffuseColor: "  ));	 this.setProperty( "diffuseColor", diffuseColor );
+			var specularColor = Number( pu.nextValue( "specularColor: " ));	 this.setProperty( "specularColor", specularColor );
+			var specularPower = Number( pu.nextValue( "specularPower: " ));  this.setProperty( "specularPower", specularPower );
+		}
+
+		var lightProps = pu.nextValue( "theLights" );
 	}
 
 	this.export = function()
@@ -387,7 +401,7 @@ var UberMaterial = function UberMaterial() {
 		// export the material properties
 		if (typeof caps.material != 'undefined')
 		{
-			exportStr += "material: true\n";
+			exportStr += "materialProps: true\n";
 			exportStr += "ambientColor: " + caps.material.ambientColor + "\n";
 			exportStr += "diffuseColor: " + caps.material.diffuseColor + "\n";
 			exportStr += "specularColor: " + caps.material.specularColor + "\n";
@@ -396,8 +410,9 @@ var UberMaterial = function UberMaterial() {
 
 		if (typeof caps.lighting != 'undefined')
 		{
+			exportStr += "lightProps: true\n";
+
 			var light = caps.lighting['light' + i];
-			var t;
 			for (var i=0;  i<this._MAX_LIGHTS;  i++)
 			{
 				var light = caps.lighting["light" + i];
@@ -405,6 +420,7 @@ var UberMaterial = function UberMaterial() {
 				{
 					exportStr += "light" + i + ': ' + light.type + "\n";
 
+					// output the light secific data
 					if (light.type === 'directional')
 					{
 						exportStr += 'light' + i + 'Dir: ' + light['direction'] + '\n';
@@ -419,9 +435,11 @@ var UberMaterial = function UberMaterial() {
 					}
 					else		// light.type === 'point'
 					{
-						technique['u_light'+i+'Pos'].set(light['position'] || [ 0, 0, 0 ]);                        
-						technique['u_light'+i+'Atten'].set(light['attenuation'] || [ 1,0,0 ]);                
+						exportStr += 'light' + i + 'Pos: ' + (light['position'] || [ 0, 0, 0 ]) ;
+						exportStr += 'light' + i + 'Attenuation: ' + (light['attenuation'] || [ 1, 0, 0 ]) ;
 					}
+
+					// common to all lights
 					exportStr += 'light' + i + 'Color: ' + light['diffuseColor'] || [ 1,1,1,1 ] + '\n';
 					exportStr += 'light' + i + 'SpecularColor: ' + light['specularColor'] || [ 1, 1, 1, 1 ] + '\n'; 
 					
@@ -429,6 +447,26 @@ var UberMaterial = function UberMaterial() {
 				}
 			}
 		}
+
+//	this._diffuseMapOb = { 'texture' : 'assets/images/rocky-diffuse.jpg', 'wrap' : 'REPEAT' };
+//	this._normalMapOb = { 'texture' : 'assets/images/rocky-normal.jpg', 'wrap' : 'REPEAT' };
+//	this._specularMapOb = { 'texture' : 'assets/images/rocky-spec.jpg', 'wrap' : 'REPEAT' };
+//	this._environmentMapOb = { 'texture' : 'assets/images/silver.png', 'wrap' : 'CLAMP', 'envReflection' : this._environmentAmount };
+		var world = this.getWorld();
+		if (!world)
+			throw new Error( "no world in material.export, " + this.getName() );
+
+		if(typeof caps.diffuseMap != 'undefined')
+			exportStr += "diffuseMap: " + world.cleansePath(caps.diffuseMap.texture) + "\n";
+
+		if(typeof caps.normalMap != 'undefined')
+			exportStr += "normalMap: " + world.cleansePath(caps.normalMap.texture) + "\n";
+
+		if(typeof caps.specularMap != 'undefined')
+			exportStr += "specularMap: " + world.cleansePath(caps.specularMap.texture) + "\n";
+
+		if(typeof caps.environmentMap != 'undefined')
+			exportStr += "environmentMap: " + world.cleansePath(caps.environmentMap.texture) + "\n";
 		
 		// every material needs to terminate like this
 		exportStr += "endMaterial\n";

@@ -61,6 +61,8 @@ var Circle = function GLCircle() {
         } else {
 			this._fillMaterial = MaterialsModel.exportFlatMaterial();
         }
+
+		this.exportMaterials();
 	};
 
     ///////////////////////////////////////////////////////////////////////
@@ -610,8 +612,9 @@ var Circle = function GLCircle() {
 			console.log( "object material not found in library: " + fillMaterialName );
 			fillMat = MaterialsModel.exportFlatMaterial();
 		}
-
 		this._fillMaterial = fillMat;
+
+		this.importMaterials( importStr );
 	};
 
     this.collidesWithPoint = function( x, y ) {

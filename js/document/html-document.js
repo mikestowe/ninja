@@ -9,7 +9,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = 		require("montage/core/core").Montage,
     TextDocument =	require("js/document/text-document").TextDocument,
     NJUtils = 		require("js/lib/NJUtils").NJUtils,
-	CanvasDataManager =	require("js/lib/rdge/runtime/CanvasDataManager").CanvasDataManager,
 	GLWorld =			require("js/lib/drawing/world").World;
 ////////////////////////////////////////////////////////////////////////
 //
@@ -174,9 +173,9 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 			this._glData = null;
 			if (elt)
 			{
-				var cdm = new CanvasDataManager();
 				this._glData = [];
-				cdm.collectGLData( elt,  this._glData );
+				var path = "assets/";
+				this.collectGLData( elt,  this._glData, path  );
 			}
 				
 			return this._glData;
@@ -187,9 +186,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 			var elt = this.documentRoot;
 			if (elt)
 			{
-// FOR JOSE:   The following commented out lines are what the runtime
-// version should execute.
-//				var loadForRuntime = true;
+//				var loadForRuntime = false;
 //				if (loadForRuntime)
 //				{
 //					var cdm = new CanvasDataManager();
@@ -367,11 +364,11 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 
 
 	collectGLData: {
-		value: function( elt,  dataArray )
+		value: function( elt,  dataArray,  imagePath )
 		{
 			if (elt.elementModel && elt.elementModel.shapeModel && elt.elementModel.shapeModel.GLWorld)
 			{
-				var data = elt.elementModel.shapeModel.GLWorld.export();
+				var data = elt.elementModel.shapeModel.GLWorld.export( imagePath );
 				dataArray.push( data );
 			}
 
@@ -381,7 +378,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 				for (var i=0;  i<nKids;  i++)
 				{
 					var child = elt.children[i];
-					this.collectGLData( child, dataArray );
+					this.collectGLData( child, dataArray, imagePath );
 				}
 			}
 		}

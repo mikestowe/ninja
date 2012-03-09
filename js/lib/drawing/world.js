@@ -349,7 +349,7 @@ var World = function GLWorld( canvas, use3D ) {
 
 	this.generateUniqueNodeID = function()
 	{
-		var str = String( this._nodeCounter );
+		var str = "" + this._nodeCounter;
 		this._nodeCounter++;
 		return str;
 	}
@@ -727,7 +727,8 @@ World.prototype.getShapeFromPoint = function( offsetX, offsetY ) {
 	}
 };
 
-World.prototype.export = function( exportForPublish ) {
+World.prototype.export = function( imagePath )
+{
 	var exportStr = "GLWorld 1.0\n";
 	var id = this.getCanvas().getAttribute( "data-RDGE-id" );
 	exportStr += "id: " + id + "\n";
@@ -742,8 +743,16 @@ World.prototype.export = function( exportForPublish ) {
 	// we need 2 export modes:  One for save/restore, one for publish.
 	// hardcoding for now
 	//var exportForPublish = false;
-	if (!exportForPublish)  exportForPublish = false;
+	//if (!exportForPublish)  exportForPublish = false;
+	var exportForPublish = true;
 	exportStr += "publish: " + exportForPublish + "\n";
+
+	// the relative path for local assets needs to be modified to
+	// the path specified by argument 'imagePath'.  Save that path
+	// so exporting functions can call newPath = world.cleansePath( oldPath );
+	this._imagePath = imagePath.slice();
+	var endchar = this._imagePath[this._imagePath.length-1]
+	if (endchar != '/')  this._imagePath += '/';
 
 	if (exportForPublish && this._useWebGL)
 	{
@@ -927,6 +936,20 @@ World.prototype.importSubObject = function( objStr,  parentNode ) {
 
 	return trNode;
 };
+
+World.prototype.cleansePath = function( url )
+{
+	//this._imagePath
+	var searchStr = "assets/";
+	var index = url.indexOf( searchStr );
+	var rtnPath = url;
+	if (index >= 0)
+	{
+		rtnPath = url.substr( index + searchStr.length );
+		rtnPath = this._imagePath + rtnPath;
+	}
+	return rtnPath;
+}
 
 if (typeof exports === "object") {
     exports.World = World;
