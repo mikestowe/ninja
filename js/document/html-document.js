@@ -188,66 +188,49 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 //    },
     
     glData: {
-        get: function()
-		{
+    	get: function() {
+			//
 			var elt = this.iframe.contentWindow.document.getElementById("UserContent");
-			this._glData = null;
-			if (elt)
-			{
+			//
+			if (elt) {
 				this._glData = [];
-				var path = "assets/";
-				this.collectGLData( elt,  this._glData, path  );
+				//if (path) {
+					//this.collectGLData(elt, this._glData, path);
+				//} else {
+					this.collectGLData(elt, this._glData, "assets/");
+				//}
+			} else {
+				this._glData = null
 			}
-				
+			//	
 			return this._glData;
 		},
-
-        set: function(value)
-		{
+        set: function(value) {
 			var elt = this.documentRoot;
-			if (elt)
-			{
-//				var loadForRuntime = false;
-//				if (loadForRuntime)
-//				{
-//					var cdm = new CanvasDataManager();
-//					cdm.loadGLData(elt,  value );
-//				}
-//				else
-				{
-					var nWorlds= value.length;
-					for (var i=0;  i<nWorlds;  i++)
-					{
-						var importStr = value[i];
-						var startIndex = importStr.indexOf( "id: " );
-						if (startIndex >= 0)
-						{
-							var endIndex = importStr.indexOf( "\n", startIndex );
-							if (endIndex > 0)
-							{
-								var id = importStr.substring( startIndex+4, endIndex );
-								if (id)
-								{
-									var canvas = this.findCanvasWithID( id, elt );
-									if (canvas)
-									{
-										if (!canvas.elementModel)
-										{
-											NJUtils.makeElementModel(canvas, "Canvas", "shape", true);
+			if (elt) {
+				var nWorlds= value.length;
+				for (var i=0;  i<nWorlds;  i++) {
+					var importStr = value[i];
+					var startIndex = importStr.indexOf( "id: " );
+					if (startIndex >= 0) {
+						var endIndex = importStr.indexOf( "\n", startIndex );
+						if (endIndex > 0) {
+							var id = importStr.substring( startIndex+4, endIndex );
+							if (id) {
+								var canvas = this.findCanvasWithID( id, elt );
+								if (canvas) {
+									if (!canvas.elementModel) {
+										NJUtils.makeElementModel(canvas, "Canvas", "shape", true);
+									}
+									if (canvas.elementModel) {
+										if (canvas.elementModel.shapeModel.GLWorld) {
+											canvas.elementModel.shapeModel.GLWorld.clearTree();
 										}
-								
-										if (canvas.elementModel)
-										{
-											if (canvas.elementModel.shapeModel.GLWorld)
-												canvas.elementModel.shapeModel.GLWorld.clearTree();
-
-											var index = importStr.indexOf( "webGL: " );
-											var useWebGL = (index >= 0)
-											var world = new GLWorld( canvas, useWebGL );
-											world.import( importStr );
-
-											this.buildShapeModel( canvas.elementModel, world );
-										}
+										var index = importStr.indexOf( "webGL: " );
+										var useWebGL = (index >= 0)
+										var world = new GLWorld( canvas, useWebGL );
+										world.import( importStr );
+										this.buildShapeModel( canvas.elementModel, world );
 									}
 								}
 							}

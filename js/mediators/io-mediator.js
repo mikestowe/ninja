@@ -389,7 +389,7 @@ exports.IoMediator = Montage.create(Component, {
     			if (!webgllibtag) {
     				webgllibtag = template.document.content.document.createElement('script');
     				webgllibtag.setAttribute('type', 'text/javascript');
-    				webgllibtag.setAttribute('src', rdgeDirName+'/CanvasDataManager.js');
+    				webgllibtag.setAttribute('src', rdgeDirName+'/CanvasRuntime.js');
     				webgllibtag.setAttribute('data-ninja-webgl-lib', 'true');
     				template.document.content.document.head.appendChild(webgllibtag);
     			}
@@ -421,11 +421,11 @@ function initWebGl (e) {\n\
 	//Creating data manager\n\
 	cvsDataMngr = new CanvasDataManager();\n\
 	//Loading data to canvas(es)\n\
-	cvsDataMngr.loadGLData(document.body, ninjaWebGlData, '"+rdgeDirName+"');\n\
+	cvsDataMngr.loadGLData(document.body, ninjaWebGlData.data);\n\
 }\
     			";
     			//TODO: Add version and other data for RDGE
-    			json = '\n({\n\t"version": "'+rdgeVersion+'",\n\t"data": [';
+    			json = '\n({\n\t"version": "'+rdgeVersion+'",\n\t"directory": "'+rdgeDirName+'/",\n\t"data": [';
     			//Looping through data to create escaped array
     			for (var j=0; template.webgl[j]; j++) {
     				if (j === 0) {
@@ -437,7 +437,11 @@ function initWebGl (e) {\n\
     			//Closing array (make-shift JSON string to validate data in <script> tag)
     			json += '\n\t\t]\n})\n';
     			//Setting string in tag
-    			webgltag.innerHTML = json;
+    			webgltag.innerHTML = json.replace(/assets\//gi, webGlDirSwap);
+    			//
+    			function webGlDirSwap (dir) {
+    				return rdgeDirName+'/';
+    			}
     		}
     		//Cleaning URLs from HTML
     		var cleanHTML = template.document.content.document.documentElement.outerHTML.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaRootUrl.bind(this));

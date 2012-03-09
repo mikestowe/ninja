@@ -4,7 +4,7 @@
 	"root": "/assets/",
 	"directories": [{"name": "images"}, {"name": "shaders"}],
 	"files": [
-		"CanvasDataManager.js",
+		"CanvasRuntime.js",
 		"images/black.png",
 		"images/blue.png",
 		"images/BoxB2_AO.png",
