@@ -32,7 +32,7 @@ function fxSSAO(enHRDepth)
   }
   
   // Load random normal texture
-  this.randTexture = createTexture(gl, "assets/images/random_normal.png");
+  this.randTexture = createTexture(gl, g_Engine._assetPath+"images/random_normal.png");
   gl.bindTexture(gl.TEXTURE_2D, this.randTexture);
   gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.REPEAT);
