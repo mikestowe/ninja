@@ -457,7 +457,7 @@ var Circle = function GLCircle() {
                 if(this._fillColor.gradientMode) {
                     if(this._fillColor.gradientMode === "radial") {
                         gradient = ctx.createRadialGradient(xCtr, yCtr, 0,
-                                                            xCtr, yCtr, yScale);
+                                                            xCtr, yCtr, Math.max(yScale, xScale));
                     } else {
                         gradient = ctx.createLinearGradient(0, this._height/2, this._width, this._height/2);
                     }
@@ -533,8 +533,8 @@ var Circle = function GLCircle() {
 			if (this._strokeColor) {
                 if(this._strokeColor.gradientMode) {
                     if(this._strokeColor.gradientMode === "radial") {
-                        gradient = ctx.createRadialGradient(xCtr, yCtr, yScale,
-                                                            xCtr, yCtr, 0.5*this._height);
+                        gradient = ctx.createRadialGradient(xCtr, yCtr, Math.min(xScale, yScale),
+                                                            xCtr, yCtr, 0.5*Math.max(this._height, this._width));
                     } else {
                         gradient = ctx.createLinearGradient(0, this._height/2, this._width, this._height/2);
                     }

@@ -365,7 +365,7 @@ var Line = function GLLine( world, xOffset, yOffset, width, height, slope, strok
 		if (this._strokeColor) {
             if(this._strokeColor.gradientMode) {
                 if(this._strokeColor.gradientMode === "radial") {
-                    gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, h/2);
+                    gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w/2, h/2));
                 } else {
                     gradient = ctx.createLinearGradient(0, h/2, w, h/2);
                 }
