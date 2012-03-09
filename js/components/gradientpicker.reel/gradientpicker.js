@@ -397,7 +397,7 @@ exports.GradientPicker = Montage.create(Component, {
             actionEvent.initEvent(type, true, true);
             actionEvent.type = type;
             actionEvent.wasSetByCode = userInitiated;
-            actionEvent.gradient = {stops: this.value, mode: this.mode, css: css};
+            actionEvent.gradient = {stops: this.value, mode: this.mode, gradientMode: this.mode, css: css};
             this.dispatchEvent(actionEvent);
         }
     }
