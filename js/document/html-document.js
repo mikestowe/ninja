@@ -437,8 +437,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 	            	} else if (prop.indexOf('url') !== -1) { //From CSS property
     	        		//TODO: Add functionality
     	        		var docRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
-    	        		prop = prop.replace(/[^()\\""\\'']+/g, test);
-    	        		function test (s) {
+    	        		prop = prop.replace(/[^()\\""\\'']+/g, cssUrlToNinjaUrl);
+    	        		function cssUrlToNinjaUrl (s) {
     	        			if (s !== 'url') {
     	        				s = docRootUrl + s;
     	        			}
@@ -451,9 +451,12 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             //
             function ninjaUrlPrepend (url) {
             	var docRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
-            	return '"'+docRootUrl+url.replace(/\"/gi, '')+'"';
+            	if (url.indexOf('data:image') !== -1) {
+            		return url;
+            	} else {
+            		return '"'+docRootUrl+url.replace(/\"/gi, '')+'"';
+            	}
             }
-            
            	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
            	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
            	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -570,8 +573,22 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 								}
 								//
 								fileCouldDirUrl = this._document.styleSheets[i].href.split(this._document.styleSheets[i].href.split('/')[this._document.styleSheets[i].href.split('/').length-1])[0];
-								prefixUrl = 'url('+fileCouldDirUrl; //This should be re-written with better RegEx
-								tag.innerHTML = cssData.content.replace(/url\(/gi, prefixUrl);
+								
+								tag.innerHTML = cssData.content.replace(/url\(()(.+?)\1\)/g, detectUrl);
+								
+								function detectUrl (prop) {
+									return prop.replace(/[^()\\""\\'']+/g, prefixUrl);;
+								}
+								
+								function prefixUrl (url) {
+									if (url !== 'url') {
+										if (!url.match(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi)) {
+											url = fileCouldDirUrl+url;
+										}
+									}
+									return url;
+								}
+								
 								//Looping through DOM to insert style tag at location of link element
 								query = this._templateDocument.html.querySelectorAll(['link']);
 								for (var j in query) {
@@ -600,12 +617,9 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 										}
 									}
 								}
-								
-								
-								
-								
 								/*
-//TODO: Figure out cross-domain XHR issue, might need cloud to handle
+								
+								//TODO: Figure out cross-domain XHR issue, might need cloud to handle
 								var xhr = new XMLHttpRequest();
                     			xhr.open("GET", this._document.styleSheets[i].href, true);
                     			xhr.send();
@@ -613,20 +627,24 @@ exports.HTMLDocument = Montage.create(TextDocument, {
                     			if (xhr.readyState === 4) {
                         			console.log(xhr);
                     			}
-*/
                     			//tag.innerHTML = xhr.responseText //xhr.response;
-                    			tag.innerHTML = 'noRULEjustHACK{background: #000}'
-								//Currently no external styles will load if unable to load via XHR request
-								
+								*/
+                    			//Temp rule so it's registered in the array
+                    			tag.innerHTML = 'noRULEjustHACK{background: #000}';
 								//Disabling external style sheets
 								query = this._templateDocument.html.querySelectorAll(['link']);
 								for (var k in query) {
 									if (query[k].href === this._document.styleSheets[i].href) {
+										
+										//TODO: Removed the temp insertion of the stylesheet
+										//because it wasn't the proper way to do it
+										//need to be handled via XHR with proxy in Cloud Sim
+										
 										//Disabling style sheet to reload via inserting in style tag
-										var tempCSS = query[k].cloneNode(true);
-										tempCSS.setAttribute('data-ninja-template', 'true');
+										//var tempCSS = query[k].cloneNode(true);
+										//tempCSS.setAttribute('data-ninja-template', 'true');
 										query[k].setAttribute('disabled', 'true');
-										this.iframe.contentWindow.document.head.appendChild(tempCSS);
+										//this.iframe.contentWindow.document.head.appendChild(tempCSS);
 										//Inserting tag
 										this._templateDocument.head.insertBefore(tag, query[k]);
 									}
@@ -824,6 +842,9 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             this.undoStack = this.application.ninja.undocontroller.undoQueue.slice(0);
             this.redoStack = this.application.ninja.undocontroller.redoQueue.slice(0);
             this.application.ninja.undocontroller.clearHistory();//clear history to give the next document a fresh start
+
+            //pause videos on switching or closing the document, so that the browser does not keep downloading the media data
+            this.pauseVideos();
         }
     },
 
@@ -852,6 +873,44 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 
 
         }
-    }
+    },
 	////////////////////////////////////////////////////////////////////
+    /**
+     *pause videos on switching or closing the document, so that the browser does not keep downloading the media data
+    */
+    pauseVideos:{
+        value:function(){
+            var videosArr = this.documentRoot.getElementsByTagName("video"), i=0;
+            for(i=0;i<videosArr.length;i++){
+                if(!videosArr[i].paused){
+                    videosArr[i].pause();
+                }
+            }
+        }
+    },
+
+    /**
+     * remove the video src on closing the document, so that the browser does not keep downloading the media data, if the tag does not get garbage collected
+     *removeSrc : boolean to remove the src if the video... set only in the close document flow
+    */
+    stopVideos:{
+        value:function(){
+            var videosArr = this.documentRoot.getElementsByTagName("video"), i=0;
+            for(i=0;i<videosArr.length;i++){
+                videosArr[i].src = "";
+            }
+        }
+    },
+    pauseAndStopVideos:{
+        value:function(){
+            var videosArr = this.documentRoot.getElementsByTagName("video"), i=0;
+            for(i=0;i<videosArr.length;i++){
+                if(!videosArr[i].paused){
+                    videosArr[i].pause();
+                }
+                videosArr[i].src = "";
+            }
+        }
+    }
+    ////////////////////////////////////////////////////////////////////
 });

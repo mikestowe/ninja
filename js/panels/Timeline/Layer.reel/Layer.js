@@ -38,13 +38,11 @@ var Layer = exports.Layer = Montage.create(Component, {
     _arrLayerStyles : {
     	serializable: true,
 		enumerable: true,
-        serializable: true,
 	    value: []
     },
     arrLayerStyles : {
     	serializable: true,
         enumerable: true,
-        serializable: true,
     	get: function() {
     		return this._arrLayerStyles;
     	},
@@ -84,8 +82,8 @@ var Layer = exports.Layer = Montage.create(Component, {
         	if (newVal !== this._layerName) {
         		this._layerEditable.value = newVal;
 	        	this._layerName = newVal;
-	        	this._layerEditable.needsDraw = true;
-	        	this.needsDraw = true;
+	        	//this._layerEditable.needsDraw = true;
+	        	//this.needsDraw = true;
         	}
         	
         }
@@ -110,7 +108,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     /* Position and Transform hottext values */
     _dtextPositionX : {
         value:null,
-    	serializable: true,
+    	serializable: true
     },
 
     dtextPositionX:{
@@ -121,7 +119,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextPositionX !== value) {
         		this._dtextPositionX = value;
-        		this.needsDraw = true;
+        		//this.needsDraw = true;
         	}
             
         }
@@ -129,7 +127,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     
     _dtextPositionY : {
         value:null,
-    	serializable: true,
+    	serializable: true
     },
 
     dtextPositionY:{
@@ -140,7 +138,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextPositionY !== value) {
         		this._dtextPositionY = value;
-        		this.needsDraw = true;
+        		//this.needsDraw = true;
         	}
             
         }
@@ -148,7 +146,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     
     _dtextScaleX : {
         value:null,
-    	serializable: true,
+    	serializable: true
     },
 
     dtextScaleX:{
@@ -159,7 +157,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextScaleX !== value) {
         		this._dtextScaleX = value;
-        		this.needsDraw = true;
+        		//this.needsDraw = true;
         	}
             
         }
@@ -167,7 +165,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     
     _dtextScaleY : {
         value:null,
-    	serializable: true,
+    	serializable: true
     },
 
     dtextScaleY:{
@@ -178,7 +176,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextScaleY !== value) {
         		this._dtextScaleY = value;
-        		this.needsDraw = true;
+        		//this.needsDraw = true;
         	}
             
         }
@@ -186,7 +184,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     
     _dtextSkewX : {
         value:null,
-    	serializable: true,
+    	serializable: true
     },
 
     dtextSkewX:{
@@ -197,7 +195,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextSkewX !== value) {
         		this._dtextSkewX = value;
-        		this.needsDraw = true;
+        		//this.needsDraw = true;
         	}
             
         }
@@ -205,7 +203,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     
     _dtextSkewY : {
         value:null,
-    	serializable: true,
+    	serializable: true
     },
 
     dtextSkewY:{
@@ -216,7 +214,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextSkewY !== value) {
         		this._dtextSkewY = value;
-        		this.needsDraw = true;
+        		//this.needsDraw = true;
         	}
             
         }
@@ -224,7 +222,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     
     _dtextRotate : {
         value:null,
-    	serializable: true,
+    	serializable: true
     },
 
     dtextRotate:{
@@ -235,7 +233,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextRotate !== value) {
         		this._dtextRotate = value;
-        		this.needsDraw = true;
+        		//this.needsDraw = true;
         	}
             
         }
@@ -261,7 +259,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         			this.selectStyle(false);
         		}
         		this._isSelected = value;
-        		this.needsDraw = true;
+        		//this.needsDraw = true;
         	}
             
         }
@@ -334,7 +332,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     	set: function(newVal) {
     		if (newVal !== this._isTransformCollapsed) {
     			this._isTransformCollapsed = newVal;
-    			this.needsDraw = true;
+    			//this.needsDraw = true;
     		}
     	}
     },
@@ -351,7 +349,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     	set: function(newVal) {
     		if (newVal !== this._isPositionCollapsed) {
     			this._isPositionCollapsed = newVal;
-    			this.needsDraw = true;
+    			//this.needsDraw = true;
     		}
     	}
     },
@@ -368,7 +366,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     	set: function(newVal) {
     		if (newVal !== this._isStyleCollapsed) {
     			this._isStyleCollapsed = newVal;
-    			this.needsDraw = true;
+    			//this.needsDraw = true;
     		}
     	}
     },
@@ -386,7 +384,47 @@ var Layer = exports.Layer = Montage.create(Component, {
     		this._bypassAnimation = newVal;
     	}
     },
-    
+
+    _layerData:{
+        serializable:true,
+        value:{}
+    },
+
+    layerData:{
+        serializable:true,
+        get:function(){
+            return this._layerData;
+        },
+        set:function(val){
+            this._layerData = val;
+            if(this._layerData){
+                this.setData();
+            }
+        }
+    },
+
+    setData:{
+        value:function(){
+            this.layerName = this.layerData.layerName;
+            this.layerID = this.layerData.layerID;
+            this.arrLayerStyles = this.layerData.arrLayerStyles;
+            this.isMainCollapsed = this.layerData.isMainCollapsed;
+            this.isPositionCollapsed = this.layerData.isPositionCollapsed;
+            this.isTransformCollapsed = this.layerData.isTransformCollapsed;
+            this.isSelected = this.layerData.isSelected;
+            this.isActive = this.layerData.isActive;
+            this.isStyleCollapsed = this.layerData.isStyleCollapsed;
+            this.bypassAnimation = this.layerData.bypassAnimation;
+            this.dtextPositionX = this.layerData.dtextPositionX;
+            this.dtextPositionY = this.layerData.dtextPositionY;
+            this.dtextSkewX = this.layerData.dtextSkewX;
+            this.dtextSkewY = this.layerData.dtextSkewY;
+            this.dtextScaleX = this.layerData.dtextScaleX;
+            this.dtextScaleY = this.layerData.dtextScaleY;
+            this.dtextRotate = this.layerData.dtextRotate;
+            this.needsDraw = true;
+        }
+    },
 
 	/* END: Models */
 
@@ -628,7 +666,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 	},
 	handleMousedown: {
 		value: function(event) {
-			this.isActive = true;
+			this.layerData.isActive = true;
 			var ptrParent = nj.queryParentSelector(event.target, ".content-style");
 			if (ptrParent !== false) {
 				this.selectStyle(this.getActiveStyleIndex());

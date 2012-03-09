@@ -32,7 +32,8 @@
                         "timetext" : {"#": "time_text"},
                         "timebar" : {"#": "time_bar"},
                         "container_tracks" : {"#" : "container-tracks"},
-                        "end_hottext" : {"@" : "endHottext"}
+                        "end_hottext" : {"@" : "endHottext"},
+                        "container_layers" : {"#" : "container-layers"}
                     }
                 },
 
@@ -71,91 +72,11 @@
 	            		"element": {"#": "container-layer"}
 	            	},
 	            	"bindings" : {
-	            		"layerName" : {
-	            			"boundObject" : {"@" : "repetition1"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.layerName",
-	            			"oneway" : false
-	            		},
-	            		"layerID" : {
-	            			"boundObject" : {"@" : "repetition1"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.layerID",
-	            			"oneway" : false
-	            		},
-	            		"arrLayerStyles" : {
-	            			"boundObject" : {"@" : "repetition1"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.arrLayerStyles",
-	            			"oneway" : false
-	            		},
-	            		"isMainCollapsed" : {
-	            			"boundObject" : {"@" : "repetition1"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isMainCollapsed",
-	            			"oneway" : false
-	            		},
-	            		"isPositionCollapsed" : {
-	            			"boundObject" : {"@" : "repetition1"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isPositionCollapsed",
-	            			"oneway" : false
-	            		},
-	            		"isTransformCollapsed" : {
-	            			"boundObject" : {"@" : "repetition1"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isTransformCollapsed",
-	            			"oneway" : false
-	            		},
-	            		"isSelected" : {
-	            			"boundObject" : {"@" : "repetition1"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isSelected",
-	            			"oneway" : false
-	            		},
-	            		"isActive" : {
-	            			"boundObject" : {"@" : "repetition1"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isActive",
-	            			"oneway" : false
-	            		},
-	            		"isStyleCollapsed" : {
-	            			"boundObject" : {"@" : "repetition1"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isStyleCollapsed",
-	            			"oneway" : false
-	            		},
-	            		"bypassAnimation" : {
-	            			"boundObject" : {"@" : "repetition1"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.bypassAnimation",
-	            			"oneway" : false
-	            		},
-	            		"dtextPositionX" : {
-	            			"boundObject" : {"@" : "repetition1"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.dtextPositionX",
-	            			"oneway" : false
-	            		},
-	            		"dtextPositionY" : {
-	            			"boundObject" : {"@" : "repetition1"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.dtextPositionY",
-	            			"oneway" : false
-	            		},
-	            		"dtextSkewX" : {
-	            			"boundObject" : {"@" : "repetition1"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.dtextSkewX",
-	            			"oneway" : false
-	            		},
-	            		"dtextSkewY" : {
-	            			"boundObject" : {"@" : "repetition1"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.dtextSkewY",
-	            			"oneway" : false
-	            		},
-	            		"dtextScaleX" : {
-	            			"boundObject" : {"@" : "repetition1"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.dtextScaleX",
-	            			"oneway" : false
-	            		},
-	            		"dtextScaleY" : {
-	            			"boundObject" : {"@" : "repetition1"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.dtextScaleY",
-	            			"oneway" : false
-	            		},
-	            		"dtextRotate" : {
-	            			"boundObject" : {"@" : "repetition1"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.dtextRotate",
-	            			"oneway" : false
-	            		}
+                        "layerData" : {
+                        	"boundObject" : {"@" : "repetition1"},
+                        	"boundObjectPropertyPath" : "objectAtCurrentIteration.layerData",
+                        	"oneway" : false
+                        }
 	            	}
 	            },
 	            
@@ -181,76 +102,11 @@
 	            		"element": {"#": "container-track"}
 	            	},
 	            	"bindings" : {
-	            		"trackID" : {
-	            			"boundObject" : {"@" : "repetition2"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.layerID",
-	            			"oneway" : false
-	            		},
-	            		"tweens" : {
-	            			"boundObject" : {"@" : "repetition2"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.tweens",
-	            			"oneway" : false
-	            		},
-                        "animatedElement" : {
-                            "boundObject" : {"@" : "repetition2"},
-            	            "boundObjectPropertyPath" : "objectAtCurrentIteration.animatedElement",
+                        "trackData" : {
+            	            "boundObject" : {"@" : "repetition2"},
+            	            "boundObjectPropertyPath" : "objectAtCurrentIteration.layerData",
             	            "oneway" : false
-                        },
-	            		"arrStyleTracks" : {
-	            			"boundObject" : {"@" : "repetition2"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.arrStyleTracks",
-	            			"oneway" : false
-	            		},
-                        "isTrackAnimated" : {
-                            "boundObject" : {"@" : "repetition2"},
-            	            "boundObjectPropertyPath" : "objectAtCurrentIteration.isTrackAnimated",
-            	            "oneway" : false
-                        },
-                        "trackDuration" : {
-                            "boundObject" : {"@" : "repetition2"},
-                        	"boundObjectPropertyPath" : "objectAtCurrentIteration.trackDuration",
-                        	"oneway" : false
-                        },
-                        "animationName" : {
-                            "boundObject" : {"@" : "repetition2"},
-                            "boundObjectPropertyPath" : "objectAtCurrentIteration.animationName",
-                            "oneway" : false
-                        },
-                        "currentKeyframeRule" : {
-                            "boundObject" : {"@" : "repetition2"},
-                        	"boundObjectPropertyPath" : "objectAtCurrentIteration.currentKeyframeRule",
-                        	"oneway" : false
-                        },
-	            		"isMainCollapsed" : {
-	            			"boundObject" : {"@" : "repetition2"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isMainCollapsed",
-	            			"oneway" : false
-	            		},
-	            		"isPositionCollapsed" : {
-	            			"boundObject" : {"@" : "repetition2"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isPositionCollapsed",
-	            			"oneway" : false
-	            		},
-	            		"isTransformCollapsed" : {
-	            			"boundObject" : {"@" : "repetition2"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isTransformCollapsed",
-	            			"oneway" : false
-	            		},
-	            		"bypassAnimation" : {
-	            			"boundObject" : {"@" : "repetition2"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.bypassAnimation",
-	            			"oneway" : false
-	            		},
-	            		"isStyleCollapsed" : {
-	            			"boundObject" : {"@" : "repetition2"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isStyleCollapsed",
-	            			"oneway" : false
-	            		},
-                        "trackPosition" : {
-                            "boundObject" : {"@" : "repetition2"},
-            	            "boundObjectPropertyPath" : "objectAtCurrentIteration.trackPosition",
-            	            "oneway" : false
-                        }
+            	        }
 	            	}
 	            },
                 "endHottext" : {
