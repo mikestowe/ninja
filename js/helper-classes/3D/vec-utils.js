@@ -38,13 +38,13 @@ var VecUtils = exports.VecUtils = Object.create(Object.prototype,
                 if (MathUtils.fpSign(sum) != 0)
                 {
                     var scale = len/sum;
-                    rtnVec = Vector.create( [0] );
+                    rtnVec = [0];
                     for (var i=0;  i<dimen;  i++)
                         rtnVec[i] = vec[i]*scale;
                 }
                 else
                 {
-                    rtnVec = Vector.create( [0] );
+                    rtnVec = [0];
                     for (var i=1;  i<dimen;  i++)
                         rtnVec[i] = 0;
                 }
@@ -67,7 +67,7 @@ var VecUtils = exports.VecUtils = Object.create(Object.prototype,
                 throw new Error( "dimension error in VecUtils.vecAdd" );
             }
 
-            rtnVec = Vector.create([0]);
+            rtnVec = [0];
             for (var i=0;  i<dimen;  i++)
                 rtnVec[i] = a[i] + b[i];
 
@@ -84,7 +84,7 @@ var VecUtils = exports.VecUtils = Object.create(Object.prototype,
                 throw new Error( "dimension error in VecUtils.vecSubtract" );
             }
 
-            rtnVec = Vector.create([0]);
+            rtnVec = [0];
             for (var i=0;  i<dimen;  i++)
                 rtnVec[i] = a[i] - b[i];
 
@@ -141,11 +141,7 @@ var VecUtils = exports.VecUtils = Object.create(Object.prototype,
                 rtnVal = v0[0]*v1[1] - v0[1]*v1[0];
             else if (dimen == 3)
             {
-                rtnVal = Vector.create( [
-                    v0[1]*v1[2] - v0[2]*v1[1],
-                    -v0[0]*v1[2] + v0[2]*v1[0],
-                    v0[0]*v1[1] - v0[1]*v1[0]
-                ] );
+                rtnVal = [ v0[1]*v1[2] - v0[2]*v1[1], -v0[0]*v1[2] + v0[2]*v1[0], v0[0]*v1[1] - v0[1]*v1[0] ];
             }
             else
                 throw new Error( "VecUtils.vecCross supports only 2 or 3 dimensional vectors:  " + dimen );
@@ -162,7 +158,7 @@ var VecUtils = exports.VecUtils = Object.create(Object.prototype,
                 throw new Error( "dimension error in VecUtils.vecSubtract" );
             }
 
-            var rtnVec = Vector.create([0]);
+            var rtnVec = [0];
             for (var i=0;  i<dimen;  i++)
                 rtnVec[i] = a[i] + t*(b[i] - a[i]);
 

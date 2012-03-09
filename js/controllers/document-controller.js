@@ -76,11 +76,14 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 	//
     handleWebRequest: {
     	value: function (request) {
-    		if (this._hackRootFlag && request.url.indexOf('js/document/templates/montage-html') !== -1) {
+    		//TODO: Check if frameId is proper
+    		if (this._hackRootFlag && request.parentFrameId !== -1) {
     			//TODO: Optimize creating string
-					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split('/')[request.url.split('/').length-1]};
-				}
+    			//console.log(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1], request.url);
+				//return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split('/')[request.url.split('/').length-1]};
+				return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/montage-html/'))[1]};
 			}
+		}
     },
     ////////////////////////////////////////////////////////////////////
 	//
@@ -333,14 +336,23 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                     nextDocumentIndex = closeDocumentIndex - 1;
                 }
                 this.application.ninja.stage.stageView.switchDocument(this._documents[nextDocumentIndex]);
+                if(typeof this.activeDocument.stopVideos !== "undefined"){doc.stopVideos();}
                 this._removeDocumentView(doc.container);
             }else if(this._documents.length === 0){
+                if(typeof this.activeDocument.pauseAndStopVideos !== "undefined"){
+                    this.activeDocument.pauseAndStopVideos();
+                }
                 this.activeDocument = null;
                 this._removeDocumentView(doc.container);
                 this.application.ninja.stage.stageView.hideRulers();
                 document.getElementById("iframeContainer").style.display="block";
 
                 this.application.ninja.stage.hideCanvas(true);
+            }else{//closing inactive document tab - just clear DOM
+                if(typeof doc.pauseAndStopVideos !== "undefined"){
+                    doc.pauseAndStopVideos();
+                }
+                this._removeDocumentView(doc.container);
             }
 
             NJevent("closeDocument", doc.uri);

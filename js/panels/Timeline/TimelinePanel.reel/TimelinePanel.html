@@ -32,8 +32,7 @@
                         "timetext" : {"#": "time_text"},
                         "timebar" : {"#": "time_bar"},
                         "container_tracks" : {"#" : "container-tracks"},
-                        "end_hottext" : {"@" : "endHottext"},
-                        "getme" : {"#" : "getme"}
+                        "end_hottext" : {"@" : "endHottext"}
                     }
                 },
 
@@ -117,6 +116,11 @@
 	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isStyleCollapsed",
 	            			"oneway" : false
 	            		},
+	            		"bypassAnimation" : {
+	            			"boundObject" : {"@" : "repetition1"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.bypassAnimation",
+	            			"oneway" : false
+	            		},
 	            		"dtextPositionX" : {
 	            			"boundObject" : {"@" : "repetition1"},
 	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.dtextPositionX",
@@ -165,7 +169,7 @@
 	                "bindings": {
 	                    "objects": {
 	                        "boundObject": {"@": "owner"},
-	                        "boundObjectPropertyPath": "arrTracks",
+	                        "boundObjectPropertyPath": "arrLayers",
 	                        "oneway": false
 	                    }
 	                }
@@ -179,7 +183,7 @@
 	            	"bindings" : {
 	            		"trackID" : {
 	            			"boundObject" : {"@" : "repetition2"},
-	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.trackID",
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.layerID",
 	            			"oneway" : false
 	            		},
 	            		"tweens" : {
@@ -230,6 +234,11 @@
 	            		"isTransformCollapsed" : {
 	            			"boundObject" : {"@" : "repetition2"},
 	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.isTransformCollapsed",
+	            			"oneway" : false
+	            		},
+	            		"bypassAnimation" : {
+	            			"boundObject" : {"@" : "repetition2"},
+	            			"boundObjectPropertyPath" : "objectAtCurrentIteration.bypassAnimation",
 	            			"oneway" : false
 	            		},
 	            		"isStyleCollapsed" : {
@@ -285,7 +294,7 @@
                         
                         <div id="user_layers" class="userlayers">
                             <div id="master_layer" class="masterlayer">
-                                <div id="getme">Master Layer</div>
+                                <div>Master Layer</div>
                             </div>
                             <div id="container-layers">
                             	<div id="container-layer"></div>

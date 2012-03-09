@@ -16,12 +16,6 @@
 
     <script type="text/montage-serialization">
         {
-
-            "preloader1": {
-                "module": "js/preloader/preloader",
-                "name": "Preloader"
-            },
-
             "localStorage": {
                 "module": "js/controllers/local-storage-controller",
                 "name": "LocalStorage"
@@ -35,6 +29,11 @@
             "appModel": {
                 "module": "js/models/app-model",
                 "name": "AppModel"
+            },
+
+            "materialsModel": {
+                "module": "js/models/materials-model",
+                "name": "MaterialsModel"
             },
 
             "menu": {
@@ -167,7 +166,7 @@
             },
 
             "panelContainer": {
-                "module": "js/panels/PanelContainer/PanelContainer.reel",
+                "module": "js/panels/PanelContainer.reel",
                 "name": "PanelContainer",
                 "properties": {
                     "element": {"#": "rightPanelContent"},
@@ -389,8 +388,8 @@
 
                 <section data-montage-id="rightPanelResizer" class="rightPanelResizer resizeBar"></section>
 
-                <section id="rightPanelContainer" class="panelContainer">
-                    <section id="rightPanelContent">
+                <section id="rightPanelContainer" class="rightPanelContainer panelContainer">
+                    <section id="rightPanelContent" class="rightPanelContent">
                     </section>
                 </section>
             </section>

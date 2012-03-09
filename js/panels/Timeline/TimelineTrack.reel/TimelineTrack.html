@@ -17,7 +17,11 @@
                            "element": {"#": "track"},
                            "tweenRepetition" : {"@" : "tweenRepetition"},
                            "styleTracksRepetition" : {"@" : "styleTracksRepetition"},
-                           "tween": {"@" : "tween"}
+                           "tween": {"@" : "tween"},
+                           "_mainCollapser" : {"@" : "mainCollapser"},
+                           "_positionCollapser" : {"@" : "positionCollapser"},
+                           "_transformCollapser" : {"@" : "transformCollapser"},
+                           "_styleCollapser" : {"@" : "styleCollapser"}
                        }
                    },
 
@@ -145,6 +149,110 @@
 						"properties" : {
 							"element":{"#": "transform-track-base"}
 						}
+					},
+					
+					"mainCollapser" : {
+						"module" : "js/panels/timeline/Collapser.js",
+						"name" : "Collapser",
+						"properties" : {
+							"element" : {"#" : "content-main"},
+							"myContent" : {"#":"content-main"},
+							"contentHeight" : 60,
+							"isLabelClickable" : false,
+							"clicker" : {"#" : "label-main"},
+							"isCollapsed" : true,
+							"isAnimated" : true	
+						},
+						"bindings" : {
+							"isToggling" : {
+								"boundObject" : {"@" : "owner" },
+								"boundObjectPropertyPath" : "isMainCollapsed",
+								"oneway" : false
+							},
+							"bypassAnimation" : {
+								"boundObject" : {"@": "owner"},
+								"boundObjectPropertyPath" : "bypassAnimation",
+								"oneway" : false
+							}
+						}
+					},
+					
+					"positionCollapser" : {
+						"module" : "js/panels/timeline/Collapser.js",
+						"name" : "Collapser",
+						"properties" : {
+							"element" : {"#" : "content-position-tracks"},
+							"myContent" : {"#":"content-position-tracks"},
+							"contentHeight" : 40,
+							"isLabelClickable" : false,
+							"clicker" : {"#" : "label-position"},
+							"isCollapsed" : true,
+							"isAnimated" : true	
+						},
+						"bindings" : {
+							"isToggling" : {
+								"boundObject" : {"@" : "owner" },
+								"boundObjectPropertyPath" : "isPositionCollapsed",
+								"oneway" : false
+							},
+							"bypassAnimation" : {
+								"boundObject" : {"@": "owner"},
+								"boundObjectPropertyPath" : "bypassAnimation",
+								"oneway" : false
+							}
+						}
+					},
+					
+					"transformCollapser" : {
+						"module" : "js/panels/timeline/Collapser.js",
+						"name" : "Collapser",
+						"properties" : {
+							"element" : {"#" : "content-transform-tracks"},
+							"myContent" : {"#":"content-transform-tracks"},
+							"contentHeight" : 40,
+							"isLabelClickable" : false,
+							"clicker" : {"#" : "label-transform"},
+							"isCollapsed" : true,
+							"isAnimated" : true	
+						},
+						"bindings" : {
+							"isToggling" : {
+								"boundObject" : {"@" : "owner" },
+								"boundObjectPropertyPath" : "isTransformCollapsed",
+								"oneway" : false
+							},
+							"bypassAnimation" : {
+								"boundObject" : {"@": "owner"},
+								"boundObjectPropertyPath" : "bypassAnimation",
+								"oneway" : false
+							}
+						}
+					},
+					
+					"styleCollapser" : {
+						"module" : "js/panels/timeline/Collapser.js",
+						"name" : "Collapser",
+						"properties" : {
+							"element" : {"#" : "content-styles"},
+							"myContent" : {"#":"content-styles"},
+							"contentHeight" : 40,
+							"isLabelClickable" : false,
+							"clicker" : {"#" : "label-styles"},
+							"isCollapsed" : true,
+							"isAnimated" : true	
+						},
+						"bindings" : {
+							"isToggling" : {
+								"boundObject" : {"@" : "owner" },
+								"boundObjectPropertyPath" : "isStyleCollapsed",
+								"oneway" : false
+							},
+							"bypassAnimation" : {
+								"boundObject" : {"@": "owner"},
+								"boundObjectPropertyPath" : "bypassAnimation",
+								"oneway" : false
+							}
+						}
 					}
                    
                    
@@ -153,28 +261,28 @@
 	</head>
 	<body>
 
-    	<div id="track" class="timeline-track">
-            <div id="track_lanes" class="tracklane">
-                <div id="track_lane"></div>
+    	<div data-montage-id="track" class="timeline-track">
+            <div data-montage-id="track_lanes" class="tracklane">
+                <div data-montage-id="track_lane"></div>
             </div>
-            <div class="label-main collapsible-label collapsible-collapsed"></div>
-            <div class="collapsible-content collapsible-collapsed content-main">
-            	<div class="label-position collapsible-label collapsible-collapsed">
+            <div class="label-main collapsible-label collapsible-collapsed" data-montage-id="label-main"></div>
+            <div class="collapsible-content collapsible-collapsed content-main" data-montage-id="content-main">
+            	<div class="label-position collapsible-label collapsible-collapsed" data-montage-id="label-position">
             		
             	</div>
-            	<div class="content-position collapsible-content collapsible-collapsed" id="content-position-tracks">
-            		<div id="position-track-base"></div>
+            	<div class="content-position collapsible-content collapsible-collapsed" data-montage-id="content-position-tracks">
+            		<div data-montage-id="position-track-base"></div>
             	</div>
-            	<div class="label-transform collapsible-label collapsible-collapsed">
+            	<div class="label-transform collapsible-label collapsible-collapsed" data-montage-id="label-transform">
             		
             	</div>
-            	<div class="content-transform collapsible-content collapsible-collapsed" id="content-transform-tracks">
-            		<div id="transform-track-base"></div>
+            	<div class="content-transform collapsible-content collapsible-collapsed" data-montage-id="content-transform-tracks">
+            		<div data-montage-id="transform-track-base"></div>
             	</div>
-            	<div class="label-styles collapsible-label collapsible-collapsed">
+            	<div class="label-styles collapsible-label collapsible-collapsed" data-montage-id="label-styles">
             		
             	</div>
-            	<div id="content-styles" class="content-styles collapsible-content collapsible-collapsed">
+            	<div data-montage-id="content-styles" class="content-styles collapsible-content collapsible-collapsed">
             		<div class="timeline-track"></div>
             	</div>
             </div>

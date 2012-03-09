@@ -8,22 +8,86 @@
 <head>
     <script type="text/montage-serialization">
         {
-            "resizer1": {
-                "module": "js/panels/Resizer",
-                "name": "Resizer",
+            "Resizer": {
+                "module": "js/panels/resize-composer",
+                "name": "ResizeComposer",
                 "properties": {
                     "element": {"#": "resizeBar"},
-                    "panel": {"#": "panel"},
-                    "isVertical": true,
-                    "willSave": false
+                    "component": {"@": "owner"}
                 },
-                "bindings": {
-                    "ownerId": {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "panelBase.panelName",
-                        "oneway": true
+                "listeners": [
+                    {
+                        "type": "resizeStart",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "resizeMove",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "resizeEnd",
+                        "listener": {"@": "owner"}
                     }
-                }
+                ]
+            },
+
+            "DragDrop": {
+                "module": "js/panels/drag-drop-composer",
+                "name": "DragDropComposer",
+                "properties": {
+                    "element": {"@": "panelTitle"},
+                    "component": {"@": "owner"}
+                },
+                "listeners": [
+                    {
+                        "type": "dragStart",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "dropHover",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "dropped",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "dropEnd",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            },
+
+            "btnCollapse": {
+                "module": "montage/ui/toggle-button.reel",
+                "name": "ToggleButton",
+                "properties": {
+                    "element": {"#": "btnCollapse"},
+                    "pressedClass": "hide",
+                    "identifier": "btnCollapse"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            },
+
+            "btnClose": {
+                "module": "montage/ui/button.reel",
+                "name": "Button",
+                "properties": {
+                    "element": {"#": "btnClose"},
+                    "pressedClass": "hide",
+                    "identifier": "btnClose"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
 
             "slot1": {
@@ -34,14 +98,43 @@
                 }
             },
 
+            "panelTitle": {
+                "module": "montage/ui/dynamic-text.reel",
+                "name": "DynamicText",
+                "properties": {
+                    "element": {"#": "panelTitle"}
+                },
+                "bindings": {
+                    "value": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "name",
+                        "oneway": true
+                    }
+                }
+            },
+
+            "disabledCondition": {
+                "module": "montage/ui/condition.reel",
+                "name": "Condition",
+                "properties": {
+                    "element": {"#": "disabledCondition"}
+                },
+                "bindings": {
+                    "condition": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "disabled",
+                        "oneway": true
+                    }
+                }
+            },
+
             "owner": {
                 "module": "js/panels/Panel.reel",
                 "name": "Panel",
                 "properties": {
                     "element": {"#": "panel"},
-                    "resizer": {"@": "resizer1"},
+                    "resizer": {"@": "Resizer"},
                     "panelContent": {"@": "slot1"}
-
                 }
             }
         }
@@ -50,20 +143,19 @@
 	</head>
 <body>
 
-<article id="panel">
+<article id="panel" class="panel" draggable="draggable">
     <div id="head" class="head">
-        <span class="arrowIcon"></span>
-        <span class="panelTitle">Panel</span>
-        <span class="closeBtn"></span>
+        <span id="btnCollapse" class="arrowIcon"></span>
+        <span id="panelTitle" class="panelTitle">Panel</span>
+        <span id="btnClose" class="closeBtn"></span>
     </div>
     <div class="panelBody">
         <div class="panelBodyContent">
-            <div id="panelObject" class="panelObjects">
-
-            </div>
+            <div id="disabledCondition" class="panelDisabled"></div>
+            <div id="panelObject" class="panelObjects"></div>
         </div>
     </div>
-    <div data-montage-id="resizeBar" class="resizeBar"></div>
+    <div id="resizeBar" class="resizeBar"></div>
 </article>
 
 </body>
