@@ -431,6 +431,7 @@ function initWebGl (e) {\n\
 	}\n\
 	//Creating data manager\n\
 	cvsDataMngr = new CanvasDataManager();\n\
+	g_Engine._assetPath = '"+rdgeDirName+"/';\n\
 	//Loading data to canvas(es)\n\
 	cvsDataMngr.loadGLData(document.body, ninjaWebGlData.data, '"+rdgeDirName+"/');\n\
 }\
