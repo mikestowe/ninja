@@ -126,8 +126,17 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
-    currentLayerSelected:{
+    _currentLayerSelected:{
         value: null
+    },
+    currentLayerSelected : {
+    	get: function() {
+    		return this._currentLayerSelected;
+    	},
+    	set: function(newVal) {
+    		this._currentLayerSelected = newVal;
+    		this.application.ninja.currentDocument.tlCurrentLayerSelected = newVal;
+    	}
     },
 
     millisecondsOffset:{
@@ -391,10 +400,29 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this._boolCacheArrays = false;
                 this.arrLayers = this.application.ninja.currentDocument.tlArrLayers;
                 this.currentLayerNumber = this.application.ninja.currentDocument.tllayerNumber;
+                this.currentLayerSelected = this.application.ninja.currentDocument.tlCurrentLayerSelected;
                 this.hashInstance = this.application.ninja.currentDocument.tlLayerHashTable;
                 this.hashElementMapToLayer = this.application.ninja.currentDocument.tlElementHashTable;
                 this.hashKey = this.application.ninja.currentDocument.hashKey;
                 this._boolCacheArrays = true;
+                
+                // Search through the arrLayers and select the layer that's already selected
+                var i = 0,
+                	selectMe = 0,
+                	arrLayersLength = this.arrLayers.length;
+                for (i = 0; i < arrLayersLength; i++) {
+                	if (this.arrLayers[i].isSelected === true) {
+                		selectMe = i;
+                	}
+                }
+                
+
+        		this._captureSelection = true;
+				// TODO: Better solution than a timer.
+                var that = this;
+                setTimeout(function() {
+                	that.selectLayer(selectMe, true);
+                }, 300)
             }
         }
     },
@@ -651,7 +679,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 	            	// layer on top of it.
 	                myIndex = this.layerRepetition.selectedIndexes[0];
 	                thingToPush.layerData.layerPosition = myIndex;
-	                thingToPush.layerData.isSelected = true;
 	                thingToPush.layerData.trackPosition = myIndex;
 	                this.arrLayers.splice(myIndex, 0, thingToPush);
 	                this._LayerUndoPosition = myIndex;
@@ -665,13 +692,21 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 	                this._LayerUndoPosition = this.arrLayers.length - 1;
 	                //this.hashLayerNumber.setItem(this.hashKey, thingToPush.layerData);
 	                this.hashInstance.setItem(this.hashKey, thingToPush.layerData, thingToPush.layerData.layerPosition);
+	                indexToSelect = this.arrLayers.length -1;
 	            }
 	
 	            this._LayerUndoObject = thingToPush;
 	            this._LayerUndoIndex = thingToPush.layerData.layerID;
 	            this._LayerUndoStatus = true;
-	            
-	            this.selectLayer(indexToSelect, true);
+
+	            this._captureSelection = true;
+
+				// TODO: Find a better solution than a timout here.
+	            var that = this;
+	            setTimeout(function() {
+	            	that.selectLayer(indexToSelect, true);
+	            }, 500);
+
             }
 
         }
@@ -768,36 +803,23 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                             hashVariable++;
                         }
                     }
-                }
-                else {
-                    if (!!this.layerRepetition.selectedIndexes) {
-
+                } else {
+                	// Only delete a selected layer.  If no layer is selected, do nothing.
+                    if (this.layerRepetition.selectedIndexes.length > 0) {
+						// Delete the selected item.
                         var myIndex = this.layerRepetition.selectedIndexes[0];
                         this._LayerUndoObject = this.arrLayers[myIndex];
 
-                        dLayer = this.hashInstance.getItem(this.hashKey);
-                        dLayer[myIndex].layerData.deleted = true;
+						// Deleting a layer should delete associated elements, 
+						// But the hash tables are messed up.
+						// TODO: Kruti can you fix this?
+                        //dLayer = this.hashInstance.getItem(this.hashKey);
+                        //dLayer[myIndex].layerData.deleted = true;
+                        // ElementMediator.deleteElements(dLayer[myIndex].layerData.elementsList);
 
                         this.arrLayers.splice(myIndex, 1);
                         this._LayerUndoIndex = this._LayerUndoObject.layerData.layerID;
                         this._LayerUndoPosition = myIndex;
-
-                        if(myIndex===0){
-                            this.selectLayer(0);
-                        }
-                        else{
-                            this.selectLayer(myIndex-1);
-                        }
-                        ElementMediator.deleteElements(dLayer[myIndex].layerData.elementsList);
-
-                    } else {
-                        dLayer = this.hashInstance.getItem(this.hashKey);
-                        dLayer[this.arrLayers.length - 1].layerData.deleted = true;
-                        ElementMediator.deleteElements(dLayer[this.arrLayers.length - 1].layerData.elementsList);
-                        this._LayerUndoPosition = this.arrLayers.length - 1;
-                        this._LayerUndoObject = this.arrLayers.pop();
-                        this._LayerUndoIndex = this._LayerUndoObject.layerData.layerID;
-
                     }
                 }
             }
@@ -981,38 +1003,31 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:function (layerIndex, userSelection) {
             var i = 0;
             var arrLayersLength = this.arrLayers.length;
-
+			
             if(this.selectedKeyframes){
                 this.deselectTweens();
             }
             for (i = 0; i < arrLayersLength; i++) {
                 if (i === layerIndex) {
-                    this.arrLayers[i].layerData.isSelected = true;
+                    this.arrLayers[i].isSelected = true;
                 } else {
-                    this.arrLayers[i].layerData.isSelected = false;
+                    this.arrLayers[i].isSelected = false;
                 }
             }
             
-            //if (layerIndex !== false) {
-                this.layerRepetition.selectedIndexes = [layerIndex];
-                this.currentLayerSelected = this.arrLayers[layerIndex];
-                if(userSelection){
-                    if(this._captureSelection){
-                        if(this.currentLayerSelected.layerData.elementsList.length >= 1) {
-                            this.application.ninja.selectionController.selectElements(this.currentLayerSelected.layerData.elementsList);
-                        } else {
-                            this.application.ninja.selectionController.executeSelectElement();
-                        }
+
+            this.layerRepetition.selectedIndexes = [layerIndex];
+            this.currentLayerSelected = this.arrLayers[layerIndex];
+            if(userSelection){
+                if(this._captureSelection){
+                    if(this.currentLayerSelected.layerData.elementsList.length >= 1) {
+                        this.application.ninja.selectionController.selectElements(this.currentLayerSelected.layerData.elementsList);
+                    } else {
+                        this.application.ninja.selectionController.executeSelectElement();
                     }
-                    this._captureSelection = true;
                 }
-                /*
-            } else {
-                this.layerRepetition.selectedIndexes = null;
-                this.trackRepetition.selectedIndexes = null;
-                this.currentLayerSelected = null;
+                this._captureSelection = true;
             }
-            */
         }
     },
 
