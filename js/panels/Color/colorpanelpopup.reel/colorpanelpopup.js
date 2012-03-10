@@ -379,11 +379,16 @@ exports.ColorPanelPopup = Montage.create(Component, {
     		gradient.element = container;
     		gradient.hack = this.hack; // TODO: Remove
     		//
-    		if (g && g.value && g.value.stops && g.value.mode) {
-    			gradient._mode = g.value.mode;
-    			gradient.value = g.value.stops;
+    		if (g && g.value && g.value.stops) {
+    			if (g.value.gradientMode) {
+    				gradient._mode = g.value.gradientMode;
+    				gradient.value = g.value.stops;
+    			} else {
+    				gradient._mode = 'linear';
+    				gradient.value = g.value.stops;
+    			}
     		} else {
-    			gradient._mode = this.defaultGradient.mode;
+    			gradient._mode = this.defaultGradient.gradientMode;
     			gradient.value = this.defaultGradient.stops;
     		}
     		//
