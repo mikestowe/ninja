@@ -349,7 +349,7 @@ var World = function GLWorld( canvas, use3D ) {
 
 	this.generateUniqueNodeID = function()
 	{
-		var str = String( this._nodeCounter );
+		var str = "" + this._nodeCounter;
 		this._nodeCounter++;
 		return str;
 	}
@@ -727,7 +727,8 @@ World.prototype.getShapeFromPoint = function( offsetX, offsetY ) {
 	}
 };
 
-World.prototype.export = function( exportForPublish ) {
+World.prototype.export = function()
+{
 	var exportStr = "GLWorld 1.0\n";
 	var id = this.getCanvas().getAttribute( "data-RDGE-id" );
 	exportStr += "id: " + id + "\n";
@@ -742,7 +743,8 @@ World.prototype.export = function( exportForPublish ) {
 	// we need 2 export modes:  One for save/restore, one for publish.
 	// hardcoding for now
 	//var exportForPublish = false;
-	if (!exportForPublish)  exportForPublish = false;
+	//if (!exportForPublish)  exportForPublish = false;
+	var exportForPublish = true;
 	exportStr += "publish: " + exportForPublish + "\n";
 
 	if (exportForPublish && this._useWebGL)

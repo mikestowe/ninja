@@ -9,7 +9,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = 		require("montage/core/core").Montage,
     TextDocument =	require("js/document/text-document").TextDocument,
     NJUtils = 		require("js/lib/NJUtils").NJUtils,
-	CanvasDataManager =	require("js/lib/rdge/runtime/CanvasDataManager").CanvasDataManager,
 	GLWorld =			require("js/lib/drawing/world").World;
 ////////////////////////////////////////////////////////////////////////
 //
@@ -189,35 +188,36 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 //    },
     
     glData: {
-        get: function()
-		{
+    	get: function() {
+			//
 			var elt = this.iframe.contentWindow.document.getElementById("UserContent");
-			this._glData = null;
-			if (elt)
-			{
-				var cdm = new CanvasDataManager();
+			//
+			if (elt) {
 				this._glData = [];
-				cdm.collectGLData( elt,  this._glData );
+				//if (path) {
+					//this.collectGLData(elt, this._glData, path);
+				//} else {
+					this.collectGLData(elt, this._glData );
+				//}
+			} else {
+				this._glData = null
 			}
-				
+			//	
 			return this._glData;
 		},
-
-        set: function(value)
-		{
+        set: function(value) {
 			var elt = this.documentRoot;
-			if (elt)
-			{
+			if (elt) {
 				var nWorlds= value.length;
 				for (var i=0;  i<nWorlds;  i++) {
 					var importStr = value[i];
-					var startIndex = importStr.indexOf("id: ");
+					var startIndex = importStr.indexOf( "id: " );
 					if (startIndex >= 0) {
-						var endIndex = importStr.indexOf("\n", startIndex);
+						var endIndex = importStr.indexOf( "\n", startIndex );
 						if (endIndex > 0) {
-							var id = importStr.substring( startIndex+4, endIndex);
+							var id = importStr.substring( startIndex+4, endIndex );
 							if (id) {
-								var canvas = this.findCanvasWithID(id, elt);
+								var canvas = this.findCanvasWithID( id, elt );
 								if (canvas) {
 									if (!canvas.elementModel) {
 										NJUtils.makeElementModel(canvas, "Canvas", "shape", true);
@@ -228,9 +228,9 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 										}
 										var index = importStr.indexOf( "webGL: " );
 										var useWebGL = (index >= 0)
-										var world = new GLWorld(canvas, useWebGL);
+										var world = new GLWorld( canvas, useWebGL );
 										world.import( importStr );
-											this.buildShapeModel(canvas.elementModel, world);
+										this.buildShapeModel( canvas.elementModel, world );
 									}
 								}
 							}
@@ -871,8 +871,12 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     	value: function () {
     		//TODO: Add logic to handle save before preview
     		this.application.ninja.documentController.handleExecuteSaveAll(null);
-    		//Launching 'blank' tab for testing movie
-    		window.open(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);
+    		//Temp check for webGL Hack
+    		if (this.application.ninja.documentController.activeDocument.glData.length && this.application.ninja.documentController.activeDocument.glData.length > 0) {
+    			setTimeout(function () {window.open(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);}.bind(this), 3500);
+    		} else {
+    			window.open(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);
+    		}
     		//chrome.tabs.create({url: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]});		
     	}
     },
