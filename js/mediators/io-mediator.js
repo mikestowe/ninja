@@ -355,13 +355,21 @@ exports.IoMediator = Montage.create(Component, {
 		    		if (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'RDGE') {
 		    			rdgeDirName = (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name+this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version).toLowerCase();
     					rdgeVersion = this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version;
-    					this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.document.root, rdgeDirName);
+    					this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.document.root, rdgeDirName, hackRename.bind(this));
+    					//TODO: Remove, this is copying the library into a static name
+    					function hackRename (status) {
+    						if (status) {
+    							setTimeout(function () {
+    								this.application.ninja.coreIoApi.copyDirectory({sourceUri: template.document.root+rdgeDirName, destUri: template.document.root+'assets'});
+    							}.bind(this), 3000);
+    						}
+    					}
     				} else {
     					//TODO: Error handle no available library to copy
     				}
     			}
     			//
-    			var json, matchingtags = [], webgltag, scripts = template.document.content.document.getElementsByTagName('script'), webgljstag, webgllibtag;
+    			var json, matchingtags = [], webgltag, scripts = template.document.content.document.getElementsByTagName('script'), webgljstag, webgllibtag, webglrdgetag;
     			//
     			for (var i in scripts) {
     				if (scripts[i].getAttribute) {
@@ -373,6 +381,9 @@ exports.IoMediator = Montage.create(Component, {
     					}
     					if (scripts[i].getAttribute('data-ninja-webgl-lib') !== null) {
     						webgllibtag = scripts[i]; // TODO: Add logic to delete unneccesary tags
+    					}
+    					if (scripts[i].getAttribute('data-ninja-webgl-rdge') !== null) {
+    						webglrdgetag = scripts[i]; // TODO: Add logic to delete unneccesary tags
     					}
     				}
     			}
@@ -386,10 +397,18 @@ exports.IoMediator = Montage.create(Component, {
     				}
     			}
     			//
+    			if (!webglrdgetag) {
+    				webglrdgetag = template.document.content.document.createElement('script');
+    				webglrdgetag.setAttribute('type', 'text/javascript');
+    				webglrdgetag.setAttribute('src', rdgeDirName+'/rdge-compiled.js');
+    				webglrdgetag.setAttribute('data-ninja-webgl-rdge', 'true');
+    				template.document.content.document.head.appendChild(webglrdgetag);
+    			}
+    			//
     			if (!webgllibtag) {
     				webgllibtag = template.document.content.document.createElement('script');
     				webgllibtag.setAttribute('type', 'text/javascript');
-    				webgllibtag.setAttribute('src', rdgeDirName+'/CanvasDataManager.js');
+    				webgllibtag.setAttribute('src', rdgeDirName+'/CanvasRuntime.js');
     				webgllibtag.setAttribute('data-ninja-webgl-lib', 'true');
     				template.document.content.document.head.appendChild(webgllibtag);
     			}
@@ -421,11 +440,11 @@ function initWebGl (e) {\n\
 	//Creating data manager\n\
 	cvsDataMngr = new CanvasDataManager();\n\
 	//Loading data to canvas(es)\n\
-	cvsDataMngr.loadGLData(document.body, ninjaWebGlData, '"+rdgeDirName+"');\n\
+	cvsDataMngr.loadGLData(document.body, ninjaWebGlData.data, '"+rdgeDirName+"/');\n\
 }\
     			";
     			//TODO: Add version and other data for RDGE
-    			json = '\n({\n\t"version": "'+rdgeVersion+'",\n\t"data": [';
+    			json = '\n({\n\t"version": "'+rdgeVersion+'",\n\t"directory": "'+rdgeDirName+'/",\n\t"data": [';
     			//Looping through data to create escaped array
     			for (var j=0; template.webgl[j]; j++) {
     				if (j === 0) {
@@ -438,6 +457,15 @@ function initWebGl (e) {\n\
     			json += '\n\t\t]\n})\n';
     			//Setting string in tag
     			webgltag.innerHTML = json;
+    			/*
+webgltag.innerHTML = json.replace(/assets\//gi, webGlDirSwap);
+    			//
+    			function webGlDirSwap (dir) {
+    				return rdgeDirName+'/';
+    			}
+    			//
+    			console.log(webgltag.innerHTML);
+*/
     		}
     		//Cleaning URLs from HTML
     		var cleanHTML = template.document.content.document.documentElement.outerHTML.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaRootUrl.bind(this));

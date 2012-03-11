@@ -158,10 +158,14 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 		var exportStr = "material: " + this.getShaderName() + "\n";
 		exportStr += "name: " + this.getName() + "\n";
 
+		var world = this.getWorld();
+		if (!world)
+			throw new Error( "no world in material.export, " + this.getName() );
+
 		exportStr += "lightDiff: "			+ this.getLightDiff()		+ "\n";
 		exportStr += "diffuseTexture: "		+ this.getDiffuseTexture()	+ "\n";
 		exportStr += "specularTexture: "	+ this.getSpecularTexture()	+ "\n";
-		exportStr += "normalMap: "		+ this.getNormalTexture()	+ "\n";
+		exportStr += "normalMap: "			+ this.getNormalTexture()	+ "\n";
 
 		// every material needs to terminate like this
 		exportStr += "endMaterial\n";
