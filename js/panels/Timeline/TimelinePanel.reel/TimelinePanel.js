@@ -335,6 +335,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.playhead.addEventListener("mousedown", this.startPlayheadTracking.bind(this), false);
             this.playhead.addEventListener("mouseup", this.stopPlayheadTracking.bind(this), false);
             this.time_markers.addEventListener("click", this.updatePlayhead.bind(this), false);
+            this.enablePanel(false);
         }
     },
     
@@ -437,7 +438,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.deselectTweens();
 
             // Reset visual appearance
-            // Todo: Maybe this should be stored per document?
+            // Todo: Maybe this should be stored per document, so we can persist between document switch?
             this.application.ninja.timeline.playhead.style.left = "-2px";
             this.application.ninja.timeline.playheadmarker.style.left = "0px";
             this.application.ninja.timeline.updateTimeText(0.00);
@@ -475,7 +476,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             
             // Reinitialize the timeline...but only if there are open documents.
 			if (this.application.ninja.documentController._documents.length > 0) {
+				this.enablePanel(true);
 				this.initTimelineForDocument();
+			} else {
+				this.enablePanel(false);
 			}
         }
     },
@@ -1158,6 +1162,15 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             });
             return command;
         }
+    },
+    enablePanel : {
+    	value: function(boolEnable) {
+    		if (boolEnable) {
+    			this.timeline_disabler.style.display = "none";
+    		} else {
+    			this.timeline_disabler.style.display = "block";
+    		}
+    	}
     },
     /* === END: Controllers === */
    
