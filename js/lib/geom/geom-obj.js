@@ -285,9 +285,11 @@ var GeomObj = function GLGeomObj() {
 			if (mat)
 				mat.import( importStr );
 
-			var endIndex = importStr.indexOf( "endMaterial\n" );
+			// pull off the end of the material 
+			var endMat = "endMaterial\n";
+			var endIndex = importStr.indexOf( endMat );
 			if (endIndex < 0)  break;
-			importStr = importStr.substr( endIndex );
+			importStr = importStr.substr( endIndex + endMat.length );
 		}
 	}
 
