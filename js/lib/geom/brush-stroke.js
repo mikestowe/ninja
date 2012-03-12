@@ -424,34 +424,21 @@ var BrushStroke = function GLBrushStroke() {
             var startPos = [-halfNumTraces*deltaDisplacement[0],-halfNumTraces*deltaDisplacement[1]];
 
             var brushStamp = [];
-            /*for (t=0;t<numTraces;t++){
+            for (t=0;t<numTraces;t++){
                 var brushPt = [startPos[0]+t*deltaDisplacement[0], startPos[1]+t*deltaDisplacement[1]];
                 brushStamp.push(brushPt);
-            }*/
-            //todo BEGIN TEMP
-            numTraces *=2;
-            halfNumTraces *= 2;
-            opaqueRegionHalfWidth *=2;
-            maxTransparentRegionHalfWidth *= 2;
-            for (t=0;t<numTraces;t++){
-                var brushPt = [startPos[0]+t*deltaDisplacement[0]*0.5, startPos[1]+t*deltaDisplacement[1]*0.5];
-                brushStamp.push(brushPt);
             }
-            //todo END TEMP
 
             ctx.lineJoin="bevel";
             ctx.lineCap="butt";
             ctx.globalCompositeOperation = 'source-over';
-            //if (maxTransparentRegionHalfWidth===0){
-                ctx.globalCompositeOperation ='lighter'; //todo...we wish to add up the colors, but 'lighter' seems to produce white pixels unlike the round brush
-            //}
             ctx.globalAlpha = this._strokeColor[3];
-            ctx.lineWidth=this._strokeWidth/10;//todo figure out the correct formula for the line width
+            //ctx.lineWidth=this._strokeWidth/10;//todo figure out the correct formula for the line width
             //if (ctx.lineWidth<2)
-                ctx.lineWidth=1;
-            //if (t===numTraces-1){
-            //    ctx.lineWidth = 1;
-            //}
+            ctx.lineWidth=2;
+            if (t===numTraces-1){
+                ctx.lineWidth = 1;
+            }
 
             for (t=0;t<numTraces;t++){
                 var disp = [brushStamp[t][0], brushStamp[t][1]];
@@ -467,7 +454,6 @@ var BrushStroke = function GLBrushStroke() {
                 ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
                 //linearly interpolate between the two stroke colors
                 var currStrokeColor = VecUtils.vecInterpolate(4, this._strokeColor, this._secondStrokeColor, t/numTraces);
-                //ctx.globalAlpha = currStrokeColor[3];
                 //ctx.strokeStyle="rgba("+parseInt(255*currStrokeColor[0])+","+parseInt(255*currStrokeColor[1])+","+parseInt(255*currStrokeColor[2])+","+alphaVal+")";
 
                 ctx.translate(disp[0],disp[1]);
