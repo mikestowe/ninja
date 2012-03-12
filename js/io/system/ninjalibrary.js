@@ -82,7 +82,7 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
     //
     copyLibToCloud: {
     	enumerable: false,
-        value: function (path, libName) {
+        value: function (path, libName, callback) {
         	//
         	if(this.coreApi.directoryExists({uri: path+libName}).status === 404) {
         		this.chromeApi.directoryContents(this.chromeApi.fileSystem.root, function (contents) {
@@ -91,7 +91,7 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
 	        				//Getting contents of library to be copied
         					this.chromeApi.directoryContents(contents[i], function (lib) {
         						//Creating directory structure from subfolders
-        						this.copyDirectoryToCloud(path, contents[i], path, function (status) {console.log(status)});
+        						this.copyDirectoryToCloud(path, contents[i], path, callback);
         					}.bind(this));
         					break;
         				}
@@ -138,6 +138,8 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
 					}
 				}.bind(this));
 			}
+			//TODO Add logic for proper callback status(es)
+			if (callback) callback(true);
     	}
     },
 	////////////////////////////////////////////////////////////////////

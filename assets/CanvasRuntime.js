@@ -852,12 +852,12 @@ function RuntimeOval()
 		// translate
 		var xCtr = 0.5*world.getViewportWidth() + this._xOffset,
 			yCtr = 0.5*world.getViewportHeight() + this._yOffset;
-		var mat = Matrix.create( [
+		var mat = [
 							[ xScale,     0.0,  0.0,  xCtr],
 							[    0.0,  yScale,  0.0,  yCtr],
 							[    0.0,     0.0,  1.0,   0.0],
 							[    0.0,     0.0,  0.0,   1.0]
-						] );
+						];
 
 		// get a bezier representation of the circle
 		var bezPts = this.circularArcToBezier( [0,0,0],  [1,0,0], 2.0*Math.PI );

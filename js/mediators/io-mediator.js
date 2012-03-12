@@ -355,7 +355,15 @@ exports.IoMediator = Montage.create(Component, {
 		    		if (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'RDGE') {
 		    			rdgeDirName = (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name+this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version).toLowerCase();
     					rdgeVersion = this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version;
-    					this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.document.root, rdgeDirName);
+    					this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.document.root, rdgeDirName, hackRename.bind(this));
+    					//TODO: Remove, this is copying the library into a static name
+    					function hackRename (status) {
+    						if (status) {
+    							setTimeout(function () {
+    								this.application.ninja.coreIoApi.copyDirectory({sourceUri: template.document.root+rdgeDirName, destUri: template.document.root+'assets'});
+    							}.bind(this), 3000);
+    						}
+    					}
     				} else {
     					//TODO: Error handle no available library to copy
     				}
