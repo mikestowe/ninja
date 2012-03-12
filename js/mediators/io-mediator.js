@@ -418,13 +418,16 @@ exports.IoMediator = Montage.create(Component, {
     				webgltag.setAttribute('data-ninja-webgl', 'true');
     				template.document.content.document.head.appendChild(webgltag);
     			}
-    			//
+    			//TODO: Remove this tag and place inside JS file
     			if (!webgljstag) {
     				webgljstag = template.document.content.document.createElement('script');
     				webgljstag.setAttribute('type', 'text/javascript');
     				webgljstag.setAttribute('data-ninja-webgl-js', 'true');
     				template.document.content.document.head.appendChild(webgljstag);
     			}
+    			
+    			/////////////////////////////////////////////////////////////////////////////
+    			/////////////////////////////////////////////////////////////////////////////
     			//TODO: Decide if this should be over-writter or only written on creation
     			webgljstag.innerHTML = "\
 //Loading webGL/canvas data on window load\n\
@@ -443,7 +446,11 @@ function initWebGl (e) {\n\
 	cvsDataMngr.loadGLData(document.body, ninjaWebGlData.data, '"+rdgeDirName+"/');\n\
 }\
     			";
-    			//TODO: Add version and other data for RDGE
+    			/////////////////////////////////////////////////////////////////////////////
+    			/////////////////////////////////////////////////////////////////////////////
+    			/////////////////////////////////////////////////////////////////////////////
+    			
+    			//TODO: This data should be saved to a JSON file eventually
     			json = '\n({\n\t"version": "'+rdgeVersion+'",\n\t"directory": "'+rdgeDirName+'/",\n\t"data": [';
     			//Looping through data to create escaped array
     			for (var j=0; template.webgl[j]; j++) {
@@ -457,15 +464,6 @@ function initWebGl (e) {\n\
     			json += '\n\t\t]\n})\n';
     			//Setting string in tag
     			webgltag.innerHTML = json;
-    			/*
-webgltag.innerHTML = json.replace(/assets\//gi, webGlDirSwap);
-    			//
-    			function webGlDirSwap (dir) {
-    				return rdgeDirName+'/';
-    			}
-    			//
-    			console.log(webgltag.innerHTML);
-*/
     		}
     		//Cleaning URLs from HTML
     		var cleanHTML = template.document.content.document.documentElement.outerHTML.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaRootUrl.bind(this));
