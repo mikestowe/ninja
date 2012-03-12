@@ -86,7 +86,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
             if (b.length < n)  n = b.length;
             if (n > 0)
             {
-                rtnVec = Vector.create([0]);
+                rtnVec = [0];
                 for (var i=0;  i<n;  i++)
                     rtnVec[i] = a[i] - b[i];
             }
@@ -103,7 +103,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
             if (b.length < n)  n = b.length;
             if (n > 0)
             {
-                rtnVec = Vector.create([0]);
+                rtnVec = [0];
                 for (var i=0;  i<n;  i++)
                     rtnVec[i] = a[i] + b[i];
             }
@@ -145,9 +145,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
             {
                 var     x0 = pt0[0],  y0 = pt0[1],  z0 = pt0[2];
                 var     dx = vec[0],  dy = vec[1],  dz = vec[2];
-                rtnPt = Vector.create( [x0 + t*dx,
-                    y0 + t*dy,
-                    z0 + t*dz] );
+                rtnPt = [x0 + t*dx, y0 + t*dy, z0 + t*dz] ;
             }
 
             return rtnPt;
@@ -267,11 +265,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
         {
             var x0 = pt0[0],  y0 = pt0[1],  z0 = pt0[2],
                     x1 = pt1[0],  y1 = pt1[1],  z1 = pt1[2];
-            var pt = Vector.create( [
-                x0 + t*(x1 - x0),
-                y0 + t*(y1 - y0),
-                z0 + t*(z1 - z0)
-            ] );
+            var pt = [ x0 + t*(x1 - x0), y0 + t*(y1 - y0), z0 + t*(z1 - z0) ];
 
             return pt;
         }
@@ -359,8 +353,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
                 return null; //no intersection unless the the intersection point lies on both segments
             }
 
-            var intPt = Vector.create([seg0Start[0] + paramSeg0 * (seg0End[0] - seg0Start[0]),
-                seg0Start[1] + paramSeg0 * (seg0End[1] - seg0Start[1])]);
+            var intPt = [seg0Start[0] + paramSeg0 * (seg0End[0] - seg0Start[0]), seg0Start[1] + paramSeg0 * (seg0End[1] - seg0Start[1])];
 
             return intPt;
         }
@@ -383,10 +376,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
                 return this.vecDist(rayOrig, pt);
             }//if( U < 0.0) {
 
-            var intersection = Vector.create([
-                rayOrig[0] + U * (rayDir[0]),
-                rayOrig[1] + U * (rayDir[1]),
-                rayOrig[2] + U * (rayDir[2])]);
+            var intersection = [ rayOrig[0] + U * (rayDir[0]), rayOrig[1] + U * (rayDir[1]), rayOrig[2] + U * (rayDir[2])];
 
             return this.vecDist(intersection, pt);
         }
@@ -424,10 +414,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
                 }
             }//if( U < 0.0 || U > 1.0 ) {
 
-            var intersection = Vector.create([
-                segP0[0] + U * (segP1[0] - segP0[0]),
-                segP0[1] + U * (segP1[1] - segP0[1]),
-                segP0[2] + U * (segP1[2] - segP0[2])]);
+            var intersection = [ segP0[0] + U * (segP1[0] - segP0[0]), segP0[1] + U * (segP1[1] - segP0[1]), segP0[2] + U * (segP1[2] - segP0[2])];
 
             return this.vecDist(intersection, pt);
         }
@@ -535,6 +522,39 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
 
             var n = Number( str );
             return n;
+        }
+    },
+
+    isIdentityMatrix: {
+        value: function( mat )
+        {
+            if(!mat)
+            {
+                return false;
+            }
+            else
+            {
+                if(mat[0] !== 1) return false;
+                if(mat[1] !== 0) return false;
+                if(mat[2] !== 0) return false;
+                if(mat[3] !== 0) return false;
+
+                if(mat[4] !== 0) return false;
+                if(mat[5] !== 1) return false;
+                if(mat[6] !== 0) return false;
+                if(mat[7] !== 0) return false;
+
+                if(mat[8] !== 0) return false;
+                if(mat[9] !== 0) return false;
+                if(mat[10] !== 1) return false;
+                if(mat[11] !== 0) return false;
+
+                if(mat[12] !== 0) return false;
+                if(mat[13] !== 0) return false;
+                if(mat[14] !== 0) return false;
+                if(mat[15] !== 1) return false;
+            }
+            return true;
         }
     },
 
@@ -704,7 +724,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
                 yNrm += (zPts[i] - zPts[j]) * (xPts[i] + xPts[j]);
                 zNrm += (xPts[i] - xPts[j]) * (yPts[i] + yPts[j]);
             }
-            var normal = Vector.create( [xNrm, yNrm, zNrm] );
+            var normal = [xNrm, yNrm, zNrm];
 
             // the area of the polygon is the length of the normal
             var area = VecUtils.vecMag(3, normal );
@@ -727,7 +747,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
                 yNrm += (b[i][2] - b[j][2]) * (b[i][0] + b[j][0]);
                 zNrm += (b[i][0] - b[j][0]) * (b[i][1] + b[j][1]);
             }
-            var normal = Vector.create( [xNrm, yNrm, zNrm] );
+            var normal = [xNrm, yNrm, zNrm];
 
             // the area of the polygon is the length of the normal
             var area = VecUtils.vecMag(3, normal );
@@ -867,7 +887,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
 //        var v0 = pt0.slice(0);
 //        var v1 = pt1.slice(0);
 //
-//        var origin = Vector.create([0, 0]);
+//        var origin = [0, 0];
 //
 //        if(origin)
 //        {
@@ -931,8 +951,7 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
             if(!localPt)
             {
                 return null;
-                return Vector.create( [1, 1]);
-                return [1, 1];
+//                return [1, 1];
             }
             localPt = this.transformPoint(localPt, matL);
 
@@ -1023,12 +1042,12 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
                     perspectiveMatrix,
                     inversePerspectiveMatrix,
                     transposedInversePerspectiveMatrix,
-                    perspective = Vector.create([0,0,0,0]),
-                    translate = Vector.create([0,0,0]),
-                    scale = Vector.create([0,0,0]),
-                    skew = Vector.create([0,0,0]),
-                    rotate = Vector.create([0,0,0]),
-                    rightHandSide = Vector.create([0,0,0,0]);
+                    perspective = [0,0,0,0],
+                    translate = [0,0,0],
+                    scale = [0,0,0],
+                    skew = [0,0,0],
+                    rotate = [0,0,0],
+                    rightHandSide = [0,0,0,0];
             // Normalize the matrix.
             if (matrix[15] === 0)
             {
@@ -1106,9 +1125,9 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
             }
 
             // Compute X scale factor and normalize first row.
-            var rowX = Vector.create([row[0], row[0+4], row[0+8]]);
-            var rowY = Vector.create([row[1], row[1+4], row[1+8]]);
-            var rowZ = Vector.create([row[2], row[2+4], row[2+8]]);
+            var rowX = [row[0], row[0+4], row[0+8]];
+            var rowY = [row[1], row[1+4], row[1+8]];
+            var rowZ = [row[2], row[2+4], row[2+8]];
             scale[0] = VecUtils.vecMag(3, rowX);
             rowX = VecUtils.vecNormalize(3, rowX);
             row[0] = rowX[0];

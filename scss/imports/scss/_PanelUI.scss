@@ -10,15 +10,7 @@
 // Note that colors and font definitions go in 
 // _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss
   
-//  layout for the container of all panels within a dock area  
-.panelContainer {
-    margin: 0px;
-    padding: 0px 0px;
-    position:relative;
-   // this is here to hopefully show vertical scroll bars when the panels exceed the height of the panel
-   //  unfortunately it doesn't seem to work properly. this is probably due to some of our box styling or positioning
-    overflow: auto;   
-}
+//  layout for the container of all panels within a dock area
 
 //  base layout style for all panels 
 .panelDisclosureIcon
@@ -1114,6 +1106,7 @@ button.panel-button {
     -webkit-box-align: stretch;
     height:100%;
     width:100%;
+    overflow: hidden;
 }
 .panel .resizeBar {
     height:4px;
@@ -1125,7 +1118,7 @@ button.panel-button {
     -webkit-box-flex:0;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    //taking out transitions due to glitching ui -webkit-transition: 0.2s all linear;
+    //-webkit-transition: all 100ms ease-out;
     background:#282828;
     height:200px;
     padding:0px 2px;
@@ -1138,7 +1131,6 @@ button.panel-button {
     -webkit-box-orient: vertical;
     -webkit-box-align: stretch;
     position:relative;
-    resize: vertical;
     overflow: auto;
     height:200px;
 
@@ -1191,6 +1183,7 @@ button.panel-button {
     width:25px;
     opacity: 0.4;
     cursor: pointer;
+    display:none;
 }
 
 .panel .head .closeBtn:hover {
@@ -1200,7 +1193,6 @@ button.panel-button {
 .panel .panelBody {
     border-right: 1px solid #3a3a3a;
     border-bottom: 1px solid #3a3a3a;
-    -webkit-transition: all 0.1s linear;
     overflow: hidden;
 }
 .panel .panelBodyContent {
@@ -1229,6 +1221,11 @@ button.panel-button {
     height:0px;
 }
 
+.rightPanelContainer {
+-webkit-box-orient: vertical;
+display: -webkit-box;
+}
+
 #rightPanelContainer .panel.collapsed {
     height:26px !important;
     min-height:26px !important;
@@ -1241,7 +1238,7 @@ button.panel-button {
     -webkit-transform:rotate(-90deg);
 }
 
-#rightPanelContent {
+.rightPanelContent {
     position:absolute;
     height:100%;
     width:100%;
@@ -1251,6 +1248,25 @@ button.panel-button {
 }
 
 
-.over {
-    border-top:1px solid #0000FF;
+/* Drag & Drop Code  TODO: Most likely need to be somewhere else */
+body section .dragging {
+    opacity: 0.4;
+}
+body .main .dragOver:not(.dragging) {
+    background-color: #917B56;
+}
+
+.panelDisabled {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 6000;
+  color: white;
+  text-align: center;
+  line-height: 100px;
+  box-shadow: inset 0 0 14px #111111;
+
+  background: rgba(30, 30, 30, 0.8);
 }

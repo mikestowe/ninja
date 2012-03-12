@@ -8,6 +8,9 @@ var Montage = 	require("montage/core/core").Montage,
     ShapeTool = require("js/tools/ShapeTool").ShapeTool,
     ShapesController = 	require("js/controllers/elements/shapes-controller").ShapesController;
 
+var Rectangle = require("js/lib/geom/rectangle").Rectangle;
+var MaterialsModel = require("js/models/materials-model").MaterialsModel;
+
 exports.RectTool = Montage.create(ShapeTool, {
 
     _toolID: { value: "rectTool" },
@@ -62,16 +65,19 @@ exports.RectTool = Montage.create(ShapeTool, {
             var strokeMaterial = null;
             var fillMaterial = null;
 
-            var strokeM = this.options.strokeMaterial;
-            if(strokeM)
+            if(this.options.use3D)
             {
-                strokeMaterial = Object.create(MaterialsLibrary.getMaterial(strokeM));
-            }
+                var strokeM = this.options.strokeMaterial;
+                if(strokeM)
+                {
+                    strokeMaterial = Object.create(MaterialsModel.getMaterial(strokeM));
+                }
 
-            var fillM = this.options.fillMaterial;
-            if(fillM)
-            {
-                fillMaterial = Object.create(MaterialsLibrary.getMaterial(fillM));
+                var fillM = this.options.fillMaterial;
+                if(fillM)
+                {
+                    fillMaterial = Object.create(MaterialsModel.getMaterial(fillM));
+                }
             }
 
             var world = this.getGLWorld(canvas, this.options.use3D);
@@ -79,7 +85,7 @@ exports.RectTool = Montage.create(ShapeTool, {
             var xOffset = ((left - canvas.offsetLeft + w/2) - canvas.width/2);
             var yOffset = (canvas.height/2 - (top - canvas.offsetTop + h/2));
 
-            var rect = new GLRectangle();
+            var rect = new Rectangle();
             rect.init(world, xOffset, yOffset, w, h, strokeSize, strokeColor, fillColor,
                                         tlRadius, trRadius, blRadius, brRadius, strokeMaterial, fillMaterial, strokeStyle);
 

@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<!-- <copyright>
+This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+(c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+</copyright> -->
+<html>
+<head>
+    <title></title>
+    <script type="text/montage-serialization">
+        {
+            "owner": {
+                "module" : "js/panels/properties.reel/sections/custom.reel",
+                "name" : "CustomSection",
+                "properties" : {
+                    "element" : {"#": "section"},
+                    "repeat" : {"@": "repeat"}
+                }
+            },
+
+            "repeat": {
+                "module": "montage/ui/repetition.reel",
+                "name": "Repetition",
+                "properties": {
+                    "element" : {"#": "repetitionContainer"}
+                },
+                "bindings": {
+                    "objects": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "rows",
+                        "oneway": true
+                    }
+                }
+            },
+
+            "slot": {
+                "module": "montage/ui/slot.reel",
+                "name": "Slot",
+                "properties": {
+                    "element": { "#": "repeitionContent" }
+                },
+                "bindings": {
+                    "content": {
+                        "boundObject": {"@": "repeat"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration",
+                        "oneway": true
+                    }
+                }
+            }
+
+        }
+    </script>
+</head>
+<body>
+    <div id="section" class="sectional">
+        <div id="repetitionContainer">
+            <div id="repeitionContent"></div>
+        </div>
+    </div>
+</body>
+</html>

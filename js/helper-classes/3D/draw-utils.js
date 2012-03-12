@@ -112,6 +112,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
             this.eventManager.addEventListener("elementDeleted", this, false);
             this.eventManager.addEventListener("deleteSelection", this, false);
             this.eventManager.addEventListener("elementChange", this, false);
+            this.eventManager.addEventListener("closeDocument", this, false);
 		}
 	},
 
@@ -123,7 +124,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
             this._planesArray = [];
             this.setDrawingSurfaceElement(this.application.ninja.stage.canvas);
             this.setSourceSpaceElement( this.application.ninja.stage.stageDeps.currentStage );
-            this.setWorkingPlane( Vector.create( [0,0,1,0] ) );
+            this.setWorkingPlane( [0,0,1,0] );
 
             //Loop through all the top-level children of the current document and call drawUtils.addElement on them
             if(this.application.ninja.currentDocument._liveNodeList.length > 0){
@@ -131,6 +132,15 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                 for(i=0;i<documentRootChildren.length;i++){
                     this.addElement(documentRootChildren[i]);
                 }
+            }
+        }
+    },
+
+    handleCloseDocument:{
+        value: function() {
+            if(this.application.ninja.documentController._documents.length === 0){
+                this._eltArray = [];
+                this._planesArray = [];
             }
         }
     },

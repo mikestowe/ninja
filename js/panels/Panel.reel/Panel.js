@@ -9,227 +9,198 @@ var Component = require("montage/ui/component").Component;
 
 exports.Panel = Montage.create(Component, {
 
-
-    reelDidLoad: {
-       value: function() {
-       }
+    name: {
+        value: "Panel"
     },
 
-    collapsedHeight: {
-        value:26
+    _collapsed: {
+        value: false
     },
 
-    _isFirstDraw: {
-        value:false
+    _height: {
+        value: 200
     },
 
-    _panelBase: {
-       value: null
+    minHeight: {
+        value: 200
     },
 
-    panelBase: {
-       get: function()
-        {
-            return this._panelBase;
-        },
-        set: function(value)
-        {
-            this._panelBase = value;
-            this.needsDraw = true;
-        }
-    },
-
-    _panelContent: {
+    maxHeight: {
         value: null
     },
 
-    panelContent: {
-        get: function()
-        {
-            return this._panelContent;
-        },
-        set: function(value)
-        {
-            if (this._panelContent === value) {
-                return;
-            }
-            this._panelContent = value;
-            this.needsDraw = true;
-        }
+    flexible: {
+        value: true
     },
 
-    collapseToggle: {
-        value: function() {
-            if (this.panelBase.forcedCollapse) {
-                this.panelBase.forcedCollapse = false;
-                this.panelBase.collapsed = false;
-                this.needsDraw = true;
-
-            } else {
-                this.panelBase.collapsed = !this.panelBase.collapsed;
-                this.needsDraw = true;
-            }
-            NJevent("panelCollapsed", this);
-        }
-},
-
-    closePanel: {
-        value: function() {
-            NJevent("panelClose", this);
-        }
+    _locked: {
+        value: false
     },
 
-    handleMouseover: {
-        value: function() {
-            this.element.draggable = true;
-        }
+    isResizing: {
+        value: false
     },
 
-    handleMouseout: {
-        value: function() {
-            this.element.draggable = false;
-        }
-    },
-
-    _resizer: {
-        value: null
+    _resizedHeight: {
+        value: 0
     },
 
     resizer: {
+        value: null
+    },
+
+    modulePath: {
+        value: null
+    },
+
+    moduleName: {
+        value: null
+    },
+
+    disabled: {
+        value:false
+    },
+
+    collapsed: {
         get: function() {
-            return this._resizer;
+            return this._collapsed;
         },
         set: function(val) {
-            this._resizer = val;
+            if (this._collapsed !== val) {
+                this._collapsed = val;
+                this.needsDraw = true;
+            }
         }
     },
 
+    height: {
+        get: function() {
+            if (this._height < this.minHeight) {
+                this._height = this.minHeight;
+            }
+            return this._height;
+        },
+        set: function(val) {
+            if(this._height !== val) {
+                this._height = val;
+                this.needsDraw = true;
+            }
+        }
+    },
 
-    resized: {
+    locked: {
+        get: function() {
+            return this._locked;
+        },
+        set: function(val) {
+            if (this.flexible) {
+                this._locked = val;
+                this.needsDraw = true;
+            }
+        }
+    },
+
+    handleBtnCollapseAction: {
         value: function() {
-            this.panelBase.contentHeight = parseInt(this.element.style.height);
+            this.collapsed = !this.collapsed;
             this.needsDraw = true;
         }
     },
 
-    //TODO: Find out why without This following function drop event wont fire ???
-    handleEvent: {
-        value:function(e) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-
-        }
-    },
-
-    captureDragover: {
-        value:function(e) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            this.element.style.backgroundColor = "#917B56";
-        }
-    },
-
-    captureDragleave: {
+    handleBtnCloseAction: {
         value: function() {
-            this.element.style.backgroundColor = "";
+            this.panelContent.content = null;
         }
     },
-
-    handleDrop: {
-        value:function(e) {
-            e.stopPropagation(); // Stops some browsers from redirecting.
-            e.preventDefault();
-            this.element.style.backgroundColor = "";
-            NJevent("panelOrderChanged", this);
-        }
-    },
-
-    handleDragstart: {
-        value:function(e) {
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/html', this.element.innerHTML);
-            NJevent("panelSelected", this);
-        }
-    },
-
-    handleDragEnter: {
-        value: function(e) {
-            this.element.classList.add("over");
-        }
-    },
-
-    handleDragend: {
-        value:function() {
-
-        }
-    },
-
 
     prepareForDraw: {
-        value:function() {
-            if (!this._isFirstDraw) {
-                this._isFirstDraw = true;
-
-                // Initialize Panel
-                // Drag Drop Functions
-                this.element.addEventListener("drop", this, false);
-                this.element.addEventListener("dragover", this, true);
-                this.element.addEventListener("dragleave", this, true);
-                this.element.addEventListener("dragenter", this, false);
-                this.element.addEventListener("dragstart", this, false);
-                
-                // Handle Functionality
-                this.element.getElementsByClassName("panelTitle")[0].addEventListener("mouseover", this, false);
-                this.element.getElementsByClassName("panelTitle")[0].addEventListener("mouseout", this, false);
-                // Arrow Collapse Button Initiate
-                this.element.getElementsByClassName("arrowIcon")[0].addEventListener("click", this.collapseToggle.bind(this), false);
-                // Close Button
-                this.element.getElementsByClassName("closeBtn")[0].addEventListener("click", this.closePanel.bind(this), false);
-                //Resized Event
-                if(typeof this.resizer.value == "number") this.panelBase.contentHeight = this.resizer.value;
-                this.resizer.element.addEventListener("mouseup",this.resized.bind(this),false);
-
-                this.panelContent.content = this.panelBase.content;
+        value: function() {
+            if(this.name === "Color") {
+                this.application.ninja.colorController.colorView = this.application.ninja.colorController.colorPanelBase.create();
             }
+
+            if(this.modulePath && this.moduleName) {
+                // Load the slot content
+                var that = this;
+                require.async(this.modulePath)
+                    .then(function(panelContent) {
+                        var componentRequire = panelContent[that.moduleName];
+                        that.panelContent.content = componentRequire.create();
+                    })
+                    .end();
+            }
+        }
+    },
+
+    handleResizeStart: {
+        value:function(e) {
+            this.isResizing = true;
+            this.needsDraw = true;
+        }
+    },
+
+    handleResizeMove: {
+        value:function(e) {
+            this._resizedHeight = e._event.dY;
+            this.needsDraw = true;
+        }
+    },
+
+    handleResizeEnd: {
+        value: function(e) {
+            this.height += this._resizedHeight;
+            this._resizedHeight = 0;
+            this.isResizing = false;
+            this.needsDraw = true;
         }
     },
 
     draw: {
         value: function() {
-            //If the panel is set not to be visible. We dont bother doing anything else to it. till the next draw cycle that its set visible true
-            // Actually thinking about it now. this might not work.
-            if (!this.panelBase.visible) this.element.style.display = "none";
-            else this.element.style.display = null;
-
-            //Draw if collapsed or not
-            if(this.panelBase.collapsed || this.panelBase.forcedCollapse) {
-                this.element.classList.add("collapsed");
-                this.element.style.height = this.panelBase.collapsedHeight + "px";
-            }
-            else {
-                this.element.classList.remove("collapsed");
-                this.element.style.height = this.panelBase.contentHeight + "px";
-            }
-
-            var pContentDiv = this.element.getElementsByClassName("panelObjects")[0];
-
-            //Figure out Heights (min, max, and current)
-            if (this.panelBase.isStatic || this.panelBase.isLocked) {
-                this.element.style.minHeight = this.panelBase.contentHeight + "px";
-                this.element.style.maxHeight = this.panelBase.contentHeight + "px";
-                this.resizer.element.style.cursor = "default";
+            if(this.isResizing) {
+                this.element.style.webkitBoxFlex = "0.1";
+            } else if (this.locked) {
+                this.element.style.webkitBoxFlex = "0";
             } else {
-                this.element.style.minHeight = this.panelBase.minHeight + "px";
-                this.element.style.maxHeight = "";
-                this.resizer.element.style.cursor = null;
+                this.element.style.webkitBoxFlex = null;
             }
 
-            if (this.panelBase.scrollable) pContentDiv.style.overflow = "auto";
-            else pContentDiv.style.overflow = "hidden";
-            this.element.getElementsByClassName("panelTitle")[0].innerHTML = this.panelBase.panelName;
-            //pContentDiv.appendChild(this.panelBase.content);
-            //this.panelContent.content = this.panelBase.content;
+            if (this.collapsed) {
+                this.element.classList.add("collapsed");
+            } else if (!this.flexible) {
+                this.resizer.enabled = false;
+                this.element.classList.remove("collapsed");
+                this.element.style.minHeight = this.height + "px";
+                this.element.style.maxHeight = this.height + "px";
+                this.element.style.height = this.height + "px";
+                this.panelContent.element.style.overflowY = "hidden";
+            } else {
+                this.panelContent.element.style.overflowY = "auto";
+                this.resizer.enabled = true;
+                this.element.classList.remove("collapsed");
+                this.element.style.minHeight = this.minHeight + "px";
+                this.element.style.height = (this.height + this._resizedHeight) + "px";
+                if (this.maxHeight !== null) {
+                    this.element.style.maxHeight = this.maxHeight  + "px";
+                } else {
+                    this.element.style.maxHeight = null;
+                }
+            }
+        }
+    },
 
+    didDraw: {
+        value: function() {
+            if(this.flexible && !this.isResizing) {
+                this.height = this.element.offsetHeight;
+            }
+
+            if (this.isResizing) {
+                var actionEvent = document.createEvent("CustomEvent");
+                actionEvent.initCustomEvent("panelResizing", true, true, null);
+                actionEvent.type = "panelResizing";
+                this.dispatchEvent(actionEvent);
+            }
         }
     }
 });
