@@ -17,7 +17,12 @@
                         "element": {"#": "layer"},
 						"styleRepetition" : {"@":"repetition1"},
 						"dynamicLayerName" : {"@":"dtext1"},
-						"slotStyle" : {"@":"slot1"}
+						"slotStyle" : {"@":"slot1"},
+						"mainCollapser" : {"@" : "mainCollapser"},
+						"positionCollapser" : {"@" : "positionCollapser"},
+						"transformCollapser" : {"@" : "transformCollapser"},
+						"styleCollapser" : {"@" : "styleCollapser"},
+						"clickerMain" : {"#" : "clicker-main"}
                     }
                 },
 	            "dtext1" : {
@@ -225,74 +230,160 @@
 	                        "oneway": false
 	                    }
 	                }
+				},
+					
+				"mainCollapser" : {
+					"module" : "js/panels/timeline/Collapser.js",
+					"name" : "Collapser",
+					"properties" : {
+						"element" : {"#" : "content-main"},
+						"myContent" : {"#" : "content-main"},
+						"contentHeight" : 60,
+						"isLabelClickable" : true,
+						"clicker" : {"#" : "clicker-main"},
+						"isCollapsed" : true,
+						"isAnimated" : true	
+					},
+					"bindings" : {
+						"isToggling" : {
+							"boundObject" : {"@" : "owner" },
+							"boundObjectPropertyPath" : "isMainCollapsed",
+							"oneway" : false
+						}
+					}
+				},
+					
+				"positionCollapser" : {
+					"module" : "js/panels/timeline/Collapser.js",
+					"name" : "Collapser",
+					"properties" : {
+						"element" : {"#" : "content-position"},
+						"myContent" : {"#":"content-position"},
+						"contentHeight" : 60,
+						"isLabelClickable" : true,
+						"clicker" : {"#" : "clicker-position"},
+						"isCollapsed" : true,
+						"isAnimated" : true	
+					},
+					"bindings" : {
+						"isToggling" : {
+							"boundObject" : {"@" : "owner" },
+							"boundObjectPropertyPath" : "isPositionCollapsed",
+							"oneway" : false
+						}
+					}
+				},
+					
+				"transformCollapser" : {
+					"module" : "js/panels/timeline/Collapser.js",
+					"name" : "Collapser",
+					"properties" : {
+						"element" : {"#" : "content-transform"},
+						"myContent" : {"#":"content-transform"},
+						"contentHeight" : 60,
+						"isLabelClickable" : true,
+						"clicker" : {"#" : "clicker-transform"},
+						"isCollapsed" : true,
+						"isAnimated" : true	
+					},
+					"bindings" : {
+						"isToggling" : {
+							"boundObject" : {"@" : "owner" },
+							"boundObjectPropertyPath" : "isTransformCollapsed",
+							"oneway" : false
+						}
+					}
+				},
+					
+				"styleCollapser" : {
+					"module" : "js/panels/timeline/Collapser.js",
+					"name" : "Collapser",
+					"properties" : {
+						"element" : {"#" : "content-style"},
+						"myContent" : {"#":"content-style"},
+						"contentHeight" : 60,
+						"isLabelClickable" : true,
+						"clicker" : {"#" : "clicker-style"},
+						"isCollapsed" : true,
+						"isAnimated" : true	
+					},
+					"bindings" : {
+						"isToggling" : {
+							"boundObject" : {"@" : "owner" },
+							"boundObjectPropertyPath" : "isStyleCollapsed",
+							"oneway" : false
+						}
+					}
 				}
+				
+				
             }
         </script>
 	</head>
 	<body>
     
-		<div id="layer" class="container-layer">
+		<div data-montage-id="layer" class="container-layer">
 			<div class="label-layer">
-				<span class="collapsible-label" id="layer-label-text" spellcheck="false">Label</span>
-				<span class="collapsible-clicker collapsible-collapsed"></span>
+				<span class="collapsible-label" data-montage-id="layer-label-text" spellcheck="false">Label</span>
+				<span class="collapsible-clicker collapsible-collapsed" data-montage-id="clicker-main"></span>
 				<div class="cssbutton button-lock"></div>
 				<div class="cssbutton button-visible"></div>
 			</div>
-			<div class="collapsible-content content-layer collapsible-collapsed">
+			<div class="collapsible-content content-layer collapsible-collapsed" data-montage-id="content-main">
 				<div class="label-position">
 					<span class="collapsible-label">Position</span>
-					<span class="collapsible-clicker clicker-position"></span>
+					<span class="collapsible-clicker clicker-position collapsible-collapsed" data-montage-id="clicker-position"></span>
 				</div>
-				<div class="content-position collapsible-content">
+				<div class="content-position collapsible-content collapsible-collapsed" data-montage-id="content-position">
 					<div class="layout-table">
 						<div class="layout-row">
 							<div class="layout-cell">X</div>
-							<div class="layout-cell"><div id="position-x"></div></div>
+							<div class="layout-cell"><div data-montage-id="position-x"></div></div>
 						</div>
 						<div class="layout-row">
 							<div class="layout-cell">Y</div>
-							<div class="layout-cell"><div id="position-y"></div></div>
+							<div class="layout-cell"><div data-montage-id="position-y"></div></div>
 						</div>
 					</div>
 				</div>
 				<div class="label-transform">
 					<span class="collapsible-label">Transform</span>
-					<span class="clicker-transform collapsible-clicker"></span>
+					<span class="clicker-transform collapsible-clicker collapsible-collapsed" data-montage-id="clicker-transform"></span>
 				</div>
-				<div class="content-transform collapsible-content">
+				<div class="content-transform collapsible-content collapsible-collapsed" data-montage-id="content-transform">
 					<div class="layout-table">
 						<div class="layout-row">
 							<div class="layout-cell">Scale X</div>
-							<div class="layout-cell"><div id="scale-x"></div></div>
+							<div class="layout-cell"><div data-montage-id="scale-x"></div></div>
 						</div>
 						<div class="layout-row">
 							<div class="layout-cell">Scale Y</div>
-							<div class="layout-cell"><div id="scale-y"></div></div>
+							<div class="layout-cell"><div data-montage-id="scale-y"></div></div>
 						</div>
 						<div class="layout-row">
 							<div class="layout-cell">Skew X</div>
-							<div class="layout-cell"><div id="skew-x"></div></div>
+							<div class="layout-cell"><div data-montage-id="skew-x"></div></div>
 						</div>
 						<div class="layout-row">
 							<div class="layout-cell">Skew Y</div>
-							<div class="layout-cell"><div id="skew-y"></div></div>
+							<div class="layout-cell"><div data-montage-id="skew-y"></div></div>
 						</div>
 						<div class="layout-row">
 							<div class="layout-cell">Rotation</div>
-							<div class="layout-cell"><div id="rotation"></div></div>
+							<div class="layout-cell"><div data-montage-id="rotation"></div></div>
 						</div>
 					</div>
 					
 				</div>
 				<div class="label-style">
 					<span class="collapsible-label">Style</span>
-					<span class="clicker-style collapsible-clicker"></span>
+					<span class="clicker-style collapsible-clicker collapsible-collapsed" data-montage-id="clicker-style"></span>
 					<div class="cssbutton button-delete disabled"></div>
 					<div class="cssbutton button-add"></div>
 				</div>
-				<div class="content-style collapsible-content">
-					<div class="" id="style-container">
-						<div class="style-row" id="layer-style">
+				<div class="content-style collapsible-content collapsible-collapsed" data-montage-id="content-style">
+					<div class="" data-montage-id="style-container">
+						<div class="style-row" data-montage-id="layer-style">
 						</div>
 					</div>
 				</div>

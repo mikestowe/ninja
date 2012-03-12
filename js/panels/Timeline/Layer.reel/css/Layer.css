@@ -4,11 +4,10 @@
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
-
 /* Layer.scss
  * Main SCSS file for Layer component, compiled by SASS into the file css/Layer.css.
  */
-/* line 16, ../scss/Layer.scss */
+/* line 22, ../scss/Layer.scss */
 .layerLabel {
   width: 100%;
   color: white;
@@ -20,13 +19,13 @@
   -webkit-box-orient: horizontal;
 }
 
-/* line 26, ../scss/Layer.scss */
+/* line 32, ../scss/Layer.scss */
 .layerLabel.layerSelected {
   background-color: #b2b2b2;
   color: #242424;
 }
 
-/* line 30, ../scss/Layer.scss */
+/* line 36, ../scss/Layer.scss */
 .layerLabel {
   width: 100%;
   height: 18px;
@@ -35,7 +34,7 @@
   -webkit-box-flex: 1;
 }
 
-/* line 37, ../scss/Layer.scss */
+/* line 43, ../scss/Layer.scss */
 .layerDisclosure {
   background-image: url("../images/panelDisclosureIcon.png");
   background-repeat: no-repeat;
@@ -49,7 +48,7 @@
   -webkit-box-flex: 0;
 }
 
-/* line 50, ../scss/Layer.scss */
+/* line 56, ../scss/Layer.scss */
 .layerHide {
   background-image: url("../images/eye.png");
   background-repeat: no-repeat;
@@ -60,7 +59,7 @@
   -webkit-box-flex: 0;
 }
 
-/* line 59, ../scss/Layer.scss */
+/* line 65, ../scss/Layer.scss */
 .layerLock {
   background-image: url("../images/lock_open.png");
   background-repeat: no-repeat;
@@ -72,7 +71,7 @@
 }
 
 /******************************************/
-/* line 71, ../scss/Layer.scss */
+/* line 77, ../scss/Layer.scss */
 .container-layer {
   background-color: #474747;
   color: white;
@@ -80,18 +79,18 @@
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
 }
 
-/* line 77, ../scss/Layer.scss */
+/* line 83, ../scss/Layer.scss */
 .selected .container-layer {
   background-color: #474747;
 }
 
-/* line 80, ../scss/Layer.scss */
+/* line 86, ../scss/Layer.scss */
 .selected .container-layer .label-layer {
   background-color: #b2b2b2;
   color: #242424;
 }
 
-/* line 85, ../scss/Layer.scss */
+/* line 91, ../scss/Layer.scss */
 .userlayers .collapsible-label {
   display: block;
   width: 100px;
@@ -105,25 +104,25 @@
   text-overflow: ellipsis;
 }
 
-/* line 97, ../scss/Layer.scss */
+/* line 103, ../scss/Layer.scss */
 .layerSelected .label-layer {
   background-color: #b2b2b2;
   color: #242424;
 }
 
-/* line 101, ../scss/Layer.scss */
+/* line 107, ../scss/Layer.scss */
 .content-layer {
   background-color: #474747;
   color: white;
 }
 
-/* line 105, ../scss/Layer.scss */
+/* line 111, ../scss/Layer.scss */
 .content-layer .collapsible-label {
   background-position: 14px 5px;
   border-width: 0px;
 }
 
-/* line 113, ../scss/Layer.scss */
+/* line 119, ../scss/Layer.scss */
 .label-layer,
 .label-position,
 .label-transform,
@@ -134,13 +133,13 @@
   cursor: pointer;
 }
 
-/* line 120, ../scss/Layer.scss */
+/* line 126, ../scss/Layer.scss */
 .content-layer .collapsible-label,
 .content-layer .collapsible-content {
   font-size: 11px;
 }
 
-/* line 124, ../scss/Layer.scss */
+/* line 130, ../scss/Layer.scss */
 .collapsible-clicker {
   position: absolute;
   width: 10px;
@@ -153,23 +152,23 @@
   background-repeat: no-repeat;
 }
 
-/* line 135, ../scss/Layer.scss */
+/* line 141, ../scss/Layer.scss */
 .collapsible-clicker.collapsible-collapsed {
   background-image: url(../images/icon-collapsed.png);
 }
 
-/* line 138, ../scss/Layer.scss */
+/* line 144, ../scss/Layer.scss */
 .collapsible-content .collapsible-clicker {
   left: 12px;
 }
 
-/* line 141, ../scss/Layer.scss */
-.content-layer.collapsible-collapsed {
+/* line 147, ../scss/Layer.scss */
+.container-layer .collapsible-content.collapsible-collapsed {
   height: 0px;
   overflow: hidden;
 }
 
-/* line 147, ../scss/Layer.scss */
+/* line 153, ../scss/Layer.scss */
 .label-layer .cssbutton,
 .label-style .cssbutton {
   width: 14px;
@@ -179,21 +178,21 @@
   background-repeat: no-repeat;
 }
 
-/* line 154, ../scss/Layer.scss */
+/* line 160, ../scss/Layer.scss */
 .label-layer .button-lock {
   background-image: url(../images/icon-lock.png);
   top: 3px;
   right: 27px;
 }
 
-/* line 159, ../scss/Layer.scss */
+/* line 165, ../scss/Layer.scss */
 .label-layer .button-visible {
   background-image: url(../images/icon-eye.png);
   top: 3px;
   right: 7px;
 }
 
-/* line 164, ../scss/Layer.scss */
+/* line 170, ../scss/Layer.scss */
 .label-style .button-add {
   background-image: url(../images/icon-plus.png);
   width: 15px;
@@ -202,7 +201,7 @@
   right: 11px;
 }
 
-/* line 171, ../scss/Layer.scss */
+/* line 177, ../scss/Layer.scss */
 .label-style .button-delete {
   background-image: url(../images/icon-minus.png);
   width: 15px;
@@ -211,17 +210,17 @@
   right: 31px;
 }
 
-/* line 178, ../scss/Layer.scss */
+/* line 184, ../scss/Layer.scss */
 .collapsible-content .layout-table {
   width: 99.9%;
 }
 
-/* line 181, ../scss/Layer.scss */
+/* line 187, ../scss/Layer.scss */
 .content-layer .collapsible-content {
   padding-left: 30px;
 }
 
-/* line 184, ../scss/Layer.scss */
+/* line 190, ../scss/Layer.scss */
 .collapsible-content .collapsible-content .layout-table .layout-row .layout-cell {
   width: 40%;
   height: 20px;
@@ -230,24 +229,24 @@
   text-align: left;
 }
 
-/* line 191, ../scss/Layer.scss */
+/* line 197, ../scss/Layer.scss */
 .collapsible-content .layout-table:first-child {
   border-top: 1px solid #505050;
 }
 
-/* line 195, ../scss/Layer.scss */
+/* line 201, ../scss/Layer.scss */
 .collapsible-content .hottextunit {
   width: auto;
 }
 
-/* line 198, ../scss/Layer.scss */
+/* line 204, ../scss/Layer.scss */
 .collapsible-transition {
   -webkit-transition-property: height;
   -webkit-transition-duration: 200ms;
   -webkit-transition-timing-function: ease-in;
 }
 
-/* line 206, ../scss/Layer.scss */
+/* line 212, ../scss/Layer.scss */
 .editable2 {
   height: 20px;
   background-color: #242424 !important;
@@ -259,24 +258,24 @@
   text-overflow: clip;
 }
 
-/* line 217, ../scss/Layer.scss */
+/* line 223, ../scss/Layer.scss */
 .label-style .disabled {
   cursor: default;
 }
 
 /* styles elements */
-/* line 222, ../scss/Layer.scss */
+/* line 228, ../scss/Layer.scss */
 .content-style .item-template {
   display: none;
 }
 
-/* line 225, ../scss/Layer.scss */
+/* line 231, ../scss/Layer.scss */
 .content-style .layout-row.selected .layout-cell {
   background-color: #b2b2b2;
   color: #242424;
 }
 
-/* line 229, ../scss/Layer.scss */
+/* line 235, ../scss/Layer.scss */
 .style-row {
   height: 20px;
 }
