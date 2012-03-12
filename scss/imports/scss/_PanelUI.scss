@@ -1256,3 +1256,17 @@ body .main .dragOver:not(.dragging) {
     background-color: #917B56;
 }
 
+.panelDisabled {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 6000;
+  color: white;
+  text-align: center;
+  line-height: 100px;
+  box-shadow: inset 0 0 14px #111111;
+
+  background: rgba(30, 30, 30, 0.8);
+}

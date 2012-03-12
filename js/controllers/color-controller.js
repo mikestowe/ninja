@@ -259,6 +259,7 @@ exports.ColorController = Montage.create(Component, {
         			//Radial gradient
         			gradient.stops = [];
         			gradient.mode = 'radial';
+        			gradient.gradientMode = 'radial';
         			gradient.css = css;
         			//
         			arr = css.split('%,');
@@ -284,6 +285,7 @@ exports.ColorController = Montage.create(Component, {
         			//Linear gradient
         			gradient.stops = [];
         			gradient.mode = 'linear';
+        			gradient.gradientMode = 'linear';
         			gradient.css = css;
         			//
         			arr = css.split('from(');
@@ -317,7 +319,7 @@ exports.ColorController = Montage.create(Component, {
         			}
         		}
         		//Creating gradient object
-        		color = {mode: 'gradient', value: {stops: gradient.stops, mode: gradient.mode, css: css}};
+        		color = {mode: 'gradient', value: {stops: gradient.stops, mode: gradient.mode, gradientMode: gradient.gradientMode, css: css}};
         	} else if (css){
         		//Simple solid color
         		color = this.parseCssToColor(css);
