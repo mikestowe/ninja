@@ -12,18 +12,6 @@ var matrix = require("js/lib/math/matrix");
 
 exports.Ninja = Montage.create(Component, {
 
-    disabled: {
-        value: true
-    },
-
-    handleCloseDocument: {
-        value: function(){
-            if(!this.application.ninja.documentController.activeDocument) {
-                this.disabled = true;
-            }
-        }
-    },
-
     ninjaVersion: {
         value: null
     },
@@ -69,7 +57,6 @@ exports.Ninja = Montage.create(Component, {
             this.eventManager.addEventListener( "selectTool", this, false);
             this.eventManager.addEventListener( "selectSubTool", this, false);
             this.eventManager.addEventListener( "onOpenDocument", this, false);
-            this.eventManager.addEventListener( "closeDocument", this, false);
 
             this.addEventListener("change@appModel.livePreview", this.executeLivePreview, false);
             this.addEventListener("change@appModel.chromePreview", this.executeChromePreview, false);
@@ -156,7 +143,6 @@ exports.Ninja = Montage.create(Component, {
             this.currentDocument = event.detail;
 
             this.appModel.show3dGrid = this.currentDocument.draw3DGrid;
-            this.disabled = false;
             NJevent("openDocument");
         }
     },

@@ -136,6 +136,21 @@
                     "element": {"#": "zoomProperties"}
                 }
             },
+
+            "disable": {
+                "module": "montage/ui/condition.reel",
+                "name": "Condition",
+                "properties": {
+                    "element": {"#": "disabledCondition"}
+                },
+                "bindings": {
+                    "condition": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "disabled",
+                        "oneway": true
+                    }
+                }
+            },
             
             "owner": {
                 "module": "js/components/layout/tools-properties.reel",
@@ -191,6 +206,7 @@
             <div id="rotateStageProperties"></div>
             <div id="panProperties"></div>
             <div id="zoomProperties"></div>
+            <div id="disabledCondition" class="panelDisabled"></div>
         </div>
     </body>
 </html>

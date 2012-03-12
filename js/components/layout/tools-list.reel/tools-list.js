@@ -31,7 +31,7 @@ exports.ToolsList = Montage.create(Component, {
     ZoomTool:               { value: null },
     disabled:               { value: true},
 
-    handleOnOpenDocument: {
+    handleOpenDocument: {
         value: function(){
             this.disabled = false;
         }
@@ -48,7 +48,7 @@ exports.ToolsList = Montage.create(Component, {
     prepareForDraw: {
         enumerable: false,
         value: function() {
-            this.eventManager.addEventListener( "onOpenDocument", this, false);
+            this.eventManager.addEventListener( "openDocument", this, false);
             this.eventManager.addEventListener( "closeDocument", this, false);
             this.PenTool.options = this.application.ninja.toolsProperties.shapeProperties.lineProperties;//this.application.Ninja.toolsProperties.penProperties;
 

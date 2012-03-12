@@ -13,7 +13,7 @@ exports.DocumentBar = Montage.create(Component, {
     codeView: { value: null, enumerable: false},
     zoomControl: { value: null, enumerable: false },
     _type: { enumerable: false, value: null },
-    disabled: {value: true},
+    disabled: { value: true },
 
 
 
@@ -87,7 +87,7 @@ exports.DocumentBar = Montage.create(Component, {
 
     prepareForDraw: {
         value: function() {
-            this.eventManager.addEventListener( "onOpenDocument", this, false);
+            this.eventManager.addEventListener( "openDocument", this, false);
             this.eventManager.addEventListener( "closeDocument", this, false);
             this.designView.addEventListener("click", this, false);
             this.codeView.addEventListener("click", this, false);
@@ -104,14 +104,14 @@ exports.DocumentBar = Montage.create(Component, {
         }
     },
 
-    handleOnOpenDocument: {
-        value: function(){
+    handleOpenDocument: {
+        value: function() {
             this.disabled = false;
         }
     },
 
     handleCloseDocument: {
-        value: function(){
+        value: function() {
             if(!this.application.ninja.documentController.activeDocument) {
                 this.disabled = true;
             }

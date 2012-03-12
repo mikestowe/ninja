@@ -32,19 +32,8 @@
                 }
             },
 
-            "owner": {
-                "module": "js/components/layout/document-bar.reel",
-                "name": "DocumentBar",
-                "properties": {
-                    "element": {"#": "documentBar"},
-                    "designView": {"#": "design"},
-                    "codeView": {"#": "code"},
-                    "zoomControl": {"@": "hottext1"}
-                }
-            },
-            "Disable": {
-                "module": "montage/ui/condition.reel",
-                "name": "Condition",
+            "disable": {
+                "prototype": "montage/ui/condition.reel",
                 "properties": {
                     "element": {"#": "disabledCondition"}
                 },
@@ -54,6 +43,17 @@
                         "boundObjectPropertyPath": "disabled",
                         "oneway": true
                     }
+                }
+            },
+
+            "owner": {
+                "module": "js/components/layout/document-bar.reel",
+                "name": "DocumentBar",
+                "properties": {
+                    "element": {"#": "documentBar"},
+                    "designView": {"#": "design"},
+                    "codeView": {"#": "code"},
+                    "zoomControl": {"@": "hottext1"}
                 }
             }
     	}

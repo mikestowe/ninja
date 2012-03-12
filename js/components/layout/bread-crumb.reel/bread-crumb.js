@@ -13,7 +13,7 @@ exports.Breadcrumb = Montage.create(Component, {
         value: true
     },
 
-    handleOnOpenDocument: {
+    handleOpenDocument: {
         value: function(){
             this.disabled = false;
         }
@@ -26,7 +26,6 @@ exports.Breadcrumb = Montage.create(Component, {
             }
         }
     },
-
 
     _container:{
         value:null
@@ -50,8 +49,8 @@ exports.Breadcrumb = Montage.create(Component, {
 
     prepareForDraw: {
         value: function() {
-            this.eventManager.addEventListener( "onOpenDocument", this, false);
-            this.eventManager.addEventListener( "closeDocument", this, false);
+            this.eventManager.addEventListener("openDocument", this, false);
+            this.eventManager.addEventListener("closeDocument", this, false);
             this.breadcrumbBt.addEventListener("action", this, false);
         }
     },

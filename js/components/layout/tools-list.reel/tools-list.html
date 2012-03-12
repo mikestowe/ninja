@@ -136,6 +136,21 @@
                 "name": "ZoomTool"
             },
 
+            "disable": {
+                "module": "montage/ui/condition.reel",
+                "name": "Condition",
+                "properties": {
+                    "element": {"#": "disabledCondition"}
+                },
+                "bindings": {
+                    "condition": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "disabled",
+                        "oneway": true
+                    }
+                }
+            },
+
             "owner": {
                 "module": "js/components/layout/tools-list.reel",
                 "name": "ToolsList",
@@ -165,25 +180,7 @@
                         {"@": "repetition1"}
                     ]
                 }
-            },
-
-            "disabledCondition": {
-                "module": "montage/ui/condition.reel",
-                "name": "Condition",
-                "properties": {
-                    "element": {"#": "disabledCondition"}
-                },
-                "bindings": {
-                    "condition": {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "disabled",
-                        "oneway": true
-                    }
-                }
             }
-
-
-
     	}
 	    </script>
 
