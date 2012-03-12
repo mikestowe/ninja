@@ -8,6 +8,9 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
 exports.CssStyleRule = Montage.create(Component, {
+    cssText: {
+        value: null
+    },
     hasTemplate: {
         value: true
     },
@@ -22,8 +25,32 @@ exports.CssStyleRule = Montage.create(Component, {
             this.cssText = rule.cssText;
             this.sheetName = rule.href || 'Style Tag';
             this.selector = rule.selectorText;
-console.log('Rule with selector "' +rule.selectorText+ '" is set on componenet.');
+
+            this.declaration = rule.style;
+
+            console.log('Rule with selector "' +rule.selectorText+ '" is set on componenet.');
+
             this._rule = rule;
+        }
+    },
+    declarationComponent: {
+        value: null
+    } ,
+//    declarationNodeName: {
+//        value: "dl"
+//    },
+//    declarationElement: {
+//        value: null
+//    },
+    _declaration: {
+        value: null
+    },
+    declaration: {
+        get: function() {
+            return this._declaration;
+        },
+        set: function(dec) {
+            this._declaration = dec;
         }
     },
     condition: {
@@ -32,17 +59,28 @@ console.log('Rule with selector "' +rule.selectorText+ '" is set on componenet.'
     templateDidLoad : {
         value: function() {
             console.log("css style rule : template did load");
-            //this.condition = true;
+            if(this._declaration) {
+                this.declarationComponent.declaration = this._declaration;
+            }
         }
     },
     prepareForDraw : {
         value: function() {
-            console.log("css panel : prepare for draw");
+            console.log("css style rule : prepare for draw");
+
+            if(!this.declarationElement) {
+                ///// Create element to contain declaration
+                this.declarationElement = document.createElement(this.declarationNodeName);
+            }
+
+            if(!this._declaration && this._rule) {
+
+            }
         }
     },
     draw : {
         value: function() {
-            console.log("css panel : draw");
+            console.log("css style rule : draw");
         }
     }
 });

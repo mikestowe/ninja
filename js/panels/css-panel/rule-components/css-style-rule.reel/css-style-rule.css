@@ -3,3 +3,14 @@
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
+.css-style-rule-item {
+    position: relative;
+}
+.style-rule-heading {
+    /*background-color: #333;*/
+}
+.style-sheet-name {
+    position: absolute;
+    right: 0;
+
+}

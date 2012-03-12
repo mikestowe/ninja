@@ -14,7 +14,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "module" : "js/panels/css-panel/rule-components/css-style-rule.reel",
                 "name" : "CssStyleRule",
                 "properties" : {
-                    "element" : {"#" : "rule-item"}
+                    "element" : {"#" : "rule-item"},
+                    "declarationComponent": {"@": "declaration"}
                 }
             },
             "sheetName": {
@@ -44,14 +45,31 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                         "oneway": true
                     }
                 }
+            },
+            "declaration": {
+                "module": "js/panels/css-panel/declaration.reel",
+                "name": "Declaration",
+                "properties": {
+                    "element": {"#": "declaration-list"}
+                }
+            },
+            "sheetLink": {
+                "module": "montage/ui/anchor.reel",
+                "name": "Anchor",
+                "properties": {
+                    "element": {"#": "style-sheet-name"}
+                }
             }
         }
     </script>
 </head>
 <body>
 <div id="rule-item" class="css-style-rule-item">
-    <a href="#" id="style-sheet-name"></a>
-    <span id="rule-selector" class="nj-css-selector"></span>
+    <div class="style-rule-heading">
+        <a href="#" id="style-sheet-name" class="style-sheet-name"></a>
+        <span id="rule-selector" class="nj-css-selector"></span>
+    </div>
+    <dl id="declaration-list"></dl>
 </div>
 </body>
 </html>
