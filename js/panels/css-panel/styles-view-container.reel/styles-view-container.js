@@ -8,9 +8,6 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
 exports.StylesViewContainer = Montage.create(Component, {
-    noStylesCondition : {
-        value: true
-    },
     contentController : {
         value: null
     },
@@ -47,41 +44,31 @@ exports.StylesViewContainer = Montage.create(Component, {
 
             if(elements.length === 0) {
                 return false;
-            } else if(elements.length >= 1) {
+            } else if(elements.length > 1) {
                 type = 'ELEMENTS';
-                selection = elements;
+                selection = elements.map(function(obj) {
+                    return obj._element;
+                });
             } else {
-                type = 'ELEMENTS';
-                selection = elements[0]
+                type = 'ELEMENT';
+                selection = elements[0]._element;
             }
 
-            ruleList = this._getRuleList({
+            ruleList = this.ruleListContainer._getRuleList({
                 selectionType : type,
                 selection : selection
             });
 
             if(ruleList) {
-                this.displayedList = ruleList;
+                this.ruleListContainer.displayedList = ruleList;
+            } else {
+                this.ruleListContainer.add(type, selection);
             }
+
+            this.hasStyles = true;
         }
     },
-    _lastDisplayedList : {
-        value: null
-    },
-    _displayedList : {
-        value: null
-    },
-    displayedList : {
-        get: function() {
-            return this._displayedList;
-        },
-        set: function(list) {
-            this._hasStyles = true;
-            this._lastDisplayedList = this._displayedList;
-            this._displayedList = list;
-            this.needsDraw = true;
-        }
-    },
+
     _ruleList : {
         value: []
     },
@@ -101,60 +88,16 @@ exports.StylesViewContainer = Montage.create(Component, {
     },
     prepareForDraw : {
         value: function() {
-            debugger;
             console.log("styles view container - prepare for draw");
         }
     },
     draw : {
         value: function() {
-            console.log("styles view container - draw");
-console.log("has style = " + this._hasStyles);
             if(this.hasStyles) {
                 this.element.classList.remove('no-styles');
             } else {
                 this.element.classList.add('no-styles');
             }
-
-            if(this._lastDisplayedList) {
-                //this._lastDisplayedList.style.display = 'none';
-            }
-
-            //this._displayedList.style.display = '';
         }
-    },
-    _getRuleList : {
-        value: function(s) {
-            var ruleListsOfType, i, list, matchesAll;
-            
-            ruleListsOfType = this.ruleLists.filter(function(list) {
-                return list.selectionType = s.selectionType;
-            });
-
-            for(i = 0; i<this.ruleLists.length; i++) {
-                list = this.ruleLists[i];
-                
-                if(s.selectionType === 'elements') {
-                    matchesAll = list.selection.every(function(element, index, array) {
-                        return array.indexOf(element) !== 0;
-                    });
-
-                    if(matchesAll) {
-                        break;
-                    }
-                } else {
-                    ///// Selection (single element or stylesheet) is the same,
-                    ///// Use the existing rule list
-                    if(list.selection === s.selection) {
-                        break;
-                    }
-                }
-            }
-
-            return list;
-
-        }
-    },
-    ruleLists : {
-        value: []
     }
 });

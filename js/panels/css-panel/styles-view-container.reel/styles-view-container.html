@@ -15,7 +15,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "name" : "StylesViewContainer",
                 "properties" : {
                     "element" : {"#" : "container"},
-                    "ruleList": {"@": "ruleList" }
+                    "ruleListContainer": {"@": "ruleListContainer" },
+                    "substitution": {"@": "substitution" }
                 }
             },
             "substitution": {
@@ -24,7 +25,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "properties": {
                     "element": {"#": "sub-panel-slot"},
                     "switchComponents": {
-                        "rules": {"@": "ruleList"},
+                        "rules": {"@": "ruleListContainer"},
                         "computed": {"@": "computedStyleView"}
                     }
                 },
@@ -36,35 +37,13 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                     }
                 }
             },
-            "ruleList": {
-                "module" : "js/panels/css-panel/rule-list.reel",
-                "name": "RuleList",
-                "properties": {
-                    "supportedRules" : {
-                        "1"  : {"@": "css-style-rule"},
-                        "3"  : {"@": "css-import-rule"},
-                        "4"  : {"@": "css-media-rule"},
-                        "5"  : {"@": "css-font-face-rule"},
-                        "6"  : {"@": "css-page-rule"},
-                        "10" : {"@": "namespace-rule"}
-                    }
-                },
-                "bindings": {
-                    "contentController" : {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "contentController",
-                        "oneway": true
-                    }
-                }
-            },
-            "css-style-rule": {
-                "module": "js/panels/css-panel/rule-components/css-style-rule.reel",
-                "name": "CssStyleRule"
+            "ruleListContainer": {
+                "module": "js/panels/css-panel/rule-list-container.reel",
+                "name": "RuleListContainer"
             },
             "computedStyleView": {
                 "module": "js/panels/CSSPanel/ComputedStyleSubPanel.reel",
-                "name": "ComputedStyleSubPanel",
-                "properties": { }
+                "name": "ComputedStyleSubPanel"
             },
             "toolbar": {
                 "module": "js/components/toolbar.reel",
