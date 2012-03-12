@@ -52,7 +52,6 @@ exports.CSS_SHORTHAND_MAP = {
     'font-style' : ['font'],
     'font-family' : ['font'],
     'font-size' : ['font'],
-    'font-style' : ['font'],
     'font-variant' : ['font'],
     'font-weight' : ['font'],
     
@@ -74,4 +73,21 @@ exports.CSS_SHORTHAND_MAP = {
     '-webkit-transition-duration' : ['-webkit-transition'],
     '-webkit-transition-timing-function' : ['-webkit-transition'],
     '-webkit-transition-delay' : ['-webkit-transition']
+};
+
+exports.CSS_SHORTHAND_TO_SUBPROP_MAP = {
+    'background' : ["background-image", "background-repeat-x", "background-repeat-y", "background-attachment",
+                    "background-position-x", "background-position-y", "background-origin", "background-clip",
+                    "background-color"],
+    'border' : ["border-top-width", "border-right-width", "border-bottom-width", "border-left-width",
+                "border-top-style", "border-right-style", "border-bottom-style", "border-left-style",
+                "border-top-color", "border-right-color", "border-bottom-color", "border-left-color", "border-image"],
+    'border-radius' : ["border-top-left-radius", "border-top-right-radius", "border-bottom-right-radius",
+                       "border-bottom-left-radius"],
+    'font' : ["font-family", "font-size", "font-style", "font-variant", "font-weight", "line-height"],
+    'list' : ["list-style-type", "list-style-image", "list-style-position"],
+    'margin' : ["margin-top", "margin-right", "margin-bottom", "margin-left"],
+    'padding' : ["padding-top", "padding-right", "padding-bottom", "padding-left"],
+    '-webkit-transition' : ["-webkit-transition-property", "-webkit-transition-duration",
+                            "-webkit-transition-timing-function", "-webkit-transition-delay"]
 };
