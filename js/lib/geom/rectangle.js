@@ -203,8 +203,20 @@ var Rectangle = function GLRectangle() {
 		rtnStr += "width: "			+ this._width		+ "\n";
 		rtnStr += "height: "		+ this._height		+ "\n";
 		rtnStr += "strokeWidth: "	+ this._strokeWidth	+ "\n";
-		rtnStr += "strokeColor: "	+ String(this._strokeColor)  + "\n";
-		rtnStr += "fillColor: "		+ String(this._fillColor)	 + "\n";
+
+        if(this._strokeColor.gradientMode) {
+            rtnStr += "strokeGradientMode: "	+ this._strokeColor.gradientMode	+ "\n";
+            rtnStr += "strokeColor: " + this.gradientToString(this._strokeColor.color) + "\n";
+        } else {
+            rtnStr += "strokeColor: "	+ String(this._strokeColor)  + "\n";
+        }
+
+        if(this._fillColor.gradientMode) {
+            rtnStr += "fillGradientMode: "	+ this._fillColor.gradientMode	+ "\n";
+            rtnStr += "fillColor: " + this.gradientToString(this._fillColor.color) + "\n";
+        } else {
+            rtnStr += "fillColor: "	+ String(this._fillColor)  + "\n";
+        }
 		rtnStr += "tlRadius: "		+ this._tlRadius	+ "\n";
 		rtnStr += "trRadius: "		+ this._trRadius	+ "\n";
 		rtnStr += "blRadius: "		+ this._blRadius	+ "\n";
@@ -244,9 +256,25 @@ var Rectangle = function GLRectangle() {
 		var strokeMaterialName	= this.getPropertyFromString( "strokeMat: ",	importStr );
 		var fillMaterialName	= this.getPropertyFromString( "fillMat: ",		importStr );
 		this._strokeStyle		=  this.getPropertyFromString( "strokeStyle: ",	importStr );
-		this._fillColor			=  eval( "[" + this.getPropertyFromString( "fillColor: ",	importStr ) + "]" );
-		this._strokeColor		=  eval( "[" + this.getPropertyFromString( "strokeColor: ",	importStr ) + "]" );
-		this._tlRadius			=  Number( this.getPropertyFromString( "tlRadius: ",	importStr )  );
+
+        if(importStr.indexOf("fillGradientMode: ") < 0) {
+            this._fillColor		=  eval( "[" + this.getPropertyFromString( "fillColor: ",	importStr ) + "]" );
+        } else {
+            this._fillColor = {};
+            this._fillColor.gradientMode = this.getPropertyFromString( "fillGradientMode: ",	importStr );
+            this._fillColor.color = this.stringToGradient(this.getPropertyFromString( "fillColor: ",	importStr ));
+        }
+
+        if(importStr.indexOf("strokeGradientMode: ") < 0)
+        {
+            this._strokeColor		=  eval( "[" + this.getPropertyFromString( "strokeColor: ",	importStr ) + "]" );
+        } else {
+            this._strokeColor = {};
+            this._strokeColor.gradientMode = this.getPropertyFromString( "strokeGradientMode: ",	importStr );
+            this._strokeColor.color = this.stringToGradient(this.getPropertyFromString( "strokeColor: ",	importStr ));
+        }
+
+        this._tlRadius			=  Number( this.getPropertyFromString( "tlRadius: ",	importStr )  );
 		this._trRadius			=  Number( this.getPropertyFromString( "trRadius: ",	importStr )  );
 		this._blRadius			=  Number( this.getPropertyFromString( "blRadius: ",	importStr )  );
 		this._brRadius			=  Number( this.getPropertyFromString( "brRadius: ",	importStr )  );

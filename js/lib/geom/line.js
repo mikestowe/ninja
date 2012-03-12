@@ -112,7 +112,14 @@ var Line = function GLLine( world, xOffset, yOffset, width, height, slope, strok
 		rtnStr += "xAdj: "		    + this._xAdj		+ "\n";
 		rtnStr += "yAdj: "		    + this._yAdj		+ "\n";
 		rtnStr += "strokeWidth: "	+ this._strokeWidth	+ "\n";
-		rtnStr += "strokeColor: "	+ String(this._strokeColor)  + "\n";
+
+        if(this._strokeColor.gradientMode) {
+            rtnStr += "strokeGradientMode: "	+ this._strokeColor.gradientMode	+ "\n";
+            rtnStr += "strokeColor: " + this.gradientToString(this._strokeColor.color) + "\n";
+        } else {
+            rtnStr += "strokeColor: "	+ String(this._strokeColor)  + "\n";
+        }
+
 		rtnStr += "strokeStyle: "	+ this._strokeStyle	+ "\n";
 		rtnStr += "slope: "	        + String(this._slope)	+ "\n";
 
@@ -145,7 +152,15 @@ var Line = function GLLine( world, xOffset, yOffset, width, height, slope, strok
 
 		var strokeMaterialName	= this.getPropertyFromString( "strokeMat: ",	importStr );
 		this._strokeStyle		= this.getPropertyFromString( "strokeStyle: ",	importStr );
-		this._strokeColor		= eval( "[" + this.getPropertyFromString( "strokeColor: ",	importStr ) + "]" );
+
+        if(importStr.indexOf("strokeGradientMode: ") < 0)
+        {
+            this._strokeColor		=  eval( "[" + this.getPropertyFromString( "strokeColor: ",	importStr ) + "]" );
+        } else {
+            this._strokeColor = {};
+            this._strokeColor.gradientMode = this.getPropertyFromString( "strokeGradientMode: ",	importStr );
+            this._strokeColor.color = this.stringToGradient(this.getPropertyFromString( "strokeColor: ",	importStr ));
+        }
 
 		var strokeMat = MaterialsModel.getMaterial( strokeMaterialName );
 		if (!strokeMat) {

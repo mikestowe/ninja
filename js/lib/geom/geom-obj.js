@@ -305,6 +305,49 @@ var GeomObj = function GLGeomObj() {
 		return rtnStr;
 	};
 
+    // Gradient stops for rgba(255,0,0,1) at 0%; rgba(0,255,0,1) at 33%; rgba(0,0,255,1) at 100% will return
+    // 255,0,0,1@0;0,255,0,1@33;0,0,255,1@100
+    this.gradientToString = function(colors) {
+        var rtnStr = "";
+        if(colors && colors.length) {
+                var c = colors[0],
+                len = colors.length;
+
+            rtnStr += String(c.value.r + "," + c.value.g + "," + c.value.b + "," + c.value.a + "@" + c.position);
+            for(var i=1; i<len; i++) {
+                c = colors[i];
+                rtnStr += ";" + String(c.value.r + "," + c.value.g + "," + c.value.b + "," + c.value.a + "@" + c.position);
+            }
+        }
+        return rtnStr;
+    };
+
+    // Given a gradientStr "255,0,0,1@0;0,255,0,1@33;0,0,255,1@100" will return:
+    // colors array [{position:0, value:{r:255, g:0, b:0, a:1}},
+    //               {position:33, value:{r:0, g:255, b:0, a:1}},
+    //               {position:100, value:{r:0, g:0, b:255, a:1}}
+    //             ]
+    this.stringToGradient = function(gradientStr) {
+        var rtnArr = [];
+
+        var i,
+            len,
+            stops,
+            stop,
+            c;
+
+        stops = gradientStr.split(";");
+        len = stops.length;
+        for(i=0; i<len; i++)
+        {
+            stop = stops[i].split("@");
+            c = stop[0].split(",");
+            rtnArr.push({ position: Number(stop[1]), value:{r:Number(c[0]), g:Number(c[1]), b:Number(c[2]), a:Number(c[3])} });
+        }
+
+        return rtnArr;
+    };
+
     /*
     this.export = function() {
 		var rtnStr;

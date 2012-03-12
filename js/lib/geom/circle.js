@@ -606,8 +606,20 @@ var Circle = function GLCircle() {
 		rtnStr += "strokeWidth: "	+ this._strokeWidth	+ "\n";
 		rtnStr += "innerRadius: "	+ this._innerRadius	+ "\n";
 		rtnStr += "strokeStyle: "	+ this._strokeStyle	+ "\n";
-		rtnStr += "strokeColor: "	+ String(this._strokeColor)  + "\n";
-		rtnStr += "fillColor: "		+ String(this._fillColor)	 + "\n";
+
+        if(this._strokeColor.gradientMode) {
+            rtnStr += "strokeGradientMode: "	+ this._strokeColor.gradientMode	+ "\n";
+            rtnStr += "strokeColor: " + this.gradientToString(this._strokeColor.color) + "\n";
+        } else {
+            rtnStr += "strokeColor: "	+ String(this._strokeColor)  + "\n";
+        }
+
+        if(this._fillColor.gradientMode) {
+            rtnStr += "fillGradientMode: "	+ this._fillColor.gradientMode	+ "\n";
+            rtnStr += "fillColor: " + this.gradientToString(this._fillColor.color) + "\n";
+        } else {
+            rtnStr += "fillColor: "	+ String(this._fillColor)  + "\n";
+        }
 
 		rtnStr += "strokeMat: ";
 		if (this._strokeMaterial) {
@@ -640,8 +652,22 @@ var Circle = function GLCircle() {
 		this._strokeStyle		= this.getPropertyFromString( "strokeStyle: ",	importStr );
 		var strokeMaterialName	= this.getPropertyFromString( "strokeMat: ",	importStr );
 		var fillMaterialName	= this.getPropertyFromString( "fillMat: ",		importStr );
-		this._fillColor			=  eval( "[" + this.getPropertyFromString( "fillColor: ",	importStr ) + "]" );
-		this._strokeColor		=  eval( "[" + this.getPropertyFromString( "strokeColor: ",	importStr ) + "]" );
+        if(importStr.indexOf("fillGradientMode: ") < 0) {
+            this._fillColor		=  eval( "[" + this.getPropertyFromString( "fillColor: ",	importStr ) + "]" );
+        } else {
+            this._fillColor = {};
+            this._fillColor.gradientMode = this.getPropertyFromString( "fillGradientMode: ",	importStr );
+            this._fillColor.color = this.stringToGradient(this.getPropertyFromString( "fillColor: ",	importStr ));
+        }
+
+        if(importStr.indexOf("strokeGradientMode: ") < 0)
+        {
+            this._strokeColor		=  eval( "[" + this.getPropertyFromString( "strokeColor: ",	importStr ) + "]" );
+        } else {
+            this._strokeColor = {};
+            this._strokeColor.gradientMode = this.getPropertyFromString( "strokeGradientMode: ",	importStr );
+            this._strokeColor.color = this.stringToGradient(this.getPropertyFromString( "strokeColor: ",	importStr ));
+        }
 
 		var strokeMat = MaterialsModel.getMaterial( strokeMaterialName );
 		if (!strokeMat) {
