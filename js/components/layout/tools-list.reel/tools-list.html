@@ -165,6 +165,21 @@
                         {"@": "repetition1"}
                     ]
                 }
+            },
+
+            "disabledCondition": {
+                "module": "montage/ui/condition.reel",
+                "name": "Condition",
+                "properties": {
+                    "element": {"#": "disabledCondition"}
+                },
+                "bindings": {
+                    "condition": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "disabled",
+                        "oneway": true
+                    }
+                }
             }
 
 
@@ -184,6 +199,7 @@
             </div>
             <!-- TODO: Remove and add as a component -->
             <div id="colortoolbar"></div>
+            <div id="disabledCondition" class="panelDisabled"></div>
         </div>
 
     </body>

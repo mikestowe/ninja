@@ -9,6 +9,25 @@ var Montage = require("montage/core/core").Montage,
 
 exports.Breadcrumb = Montage.create(Component, {
 
+    disabled: {
+        value: true
+    },
+
+    handleOnOpenDocument: {
+        value: function(){
+            this.disabled = false;
+        }
+    },
+
+    handleCloseDocument: {
+        value: function(){
+            if(!this.application.ninja.documentController.activeDocument) {
+                this.disabled = true;
+            }
+        }
+    },
+
+
     _container:{
         value:null
     },
@@ -31,6 +50,8 @@ exports.Breadcrumb = Montage.create(Component, {
 
     prepareForDraw: {
         value: function() {
+            this.eventManager.addEventListener( "onOpenDocument", this, false);
+            this.eventManager.addEventListener( "closeDocument", this, false);
             this.breadcrumbBt.addEventListener("action", this, false);
         }
     },

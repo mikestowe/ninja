@@ -316,6 +316,20 @@
                     "timeline":             {"@": "timeline"},
                     "mainMenuController":   {"@": "mainMenuController"}
                 }
+            },
+            "toolOptionsDisable": {
+                "module": "montage/ui/condition.reel",
+                "name": "Condition",
+                "properties": {
+                    "element": {"#": "disabledCondition"}
+                },
+                "bindings": {
+                    "condition": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "disabled",
+                        "oneway": true
+                    }
+                }
             }
         }
     </script>
@@ -340,6 +354,7 @@
                 <div id="topPanel" class="panel">
                     <div id="toolPropertiesPanel">
                         <div id="toolsProperties"></div>
+                        <div id="disabledCondition" class="panelDisabled"></div>
                     </div>
 
                     <div id="stageMode" class="unselectable marginposition">

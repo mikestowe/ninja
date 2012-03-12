@@ -41,6 +41,20 @@
                     "codeView": {"#": "code"},
                     "zoomControl": {"@": "hottext1"}
                 }
+            },
+            "Disable": {
+                "module": "montage/ui/condition.reel",
+                "name": "Condition",
+                "properties": {
+                    "element": {"#": "disabledCondition"}
+                },
+                "bindings": {
+                    "condition": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "disabled",
+                        "oneway": true
+                    }
+                }
             }
     	}
 	</script>
@@ -53,6 +67,7 @@
         <input class="zoomHotText label" id="zoomControlHT"/>
         <span class="design-view disable" id="design">Design View</span>
         <span class="code-view disable" id="code">Code View</span>
+        <div id="disabledCondition" class="panelDisabled"></div>
     </div>
 </body>
 </html>
