@@ -152,9 +152,13 @@ exports.EyedropperTool = Montage.create(toolBase, {
                     {
                         color = this.application.ninja.colorController.getColorObjFromCss(c);
                     }
-                    else
+                    else if(c.mode !== "gradient")
                     {
                         color = this.application.ninja.colorController.getColorObjFromCss(c.color.css);
+                    }
+                    else
+                    {
+                        color = c;
                     }
                 }
 
@@ -175,7 +179,8 @@ exports.EyedropperTool = Montage.create(toolBase, {
             if(updateColorToolBar)
             {
                 eventType = "change";
-                if (color && color.value)
+                // TODO - Color chips in toolbar doesn't support gradients yet
+                if (color && color.value && (color.mode !== "gradient"))
                 {
                     var input = this.application.ninja.colorController.colorModel.input;
 
@@ -295,10 +300,10 @@ exports.EyedropperTool = Montage.create(toolBase, {
                 x = tmpPt[0];
                 y = tmpPt[1];
 
-                if(x < innerBounds[0][0]) return ElementsMediator.getProperty(elt, "border-left-color");
-                if(x > innerBounds[2][0]) return ElementsMediator.getProperty(elt, "border-right-color");
-                if(y < innerBounds[0][1]) return ElementsMediator.getProperty(elt, "border-top-color");
-                if(y > innerBounds[1][1]) return ElementsMediator.getProperty(elt, "border-bottom-color");
+                if(x < innerBounds[0][0]) return ElementsMediator.getColor(elt, false, "left");
+                if(x > innerBounds[2][0]) return ElementsMediator.getColor(elt, false, "right");
+                if(y < innerBounds[0][1]) return ElementsMediator.getColor(elt, false, "top");
+                if(y > innerBounds[1][1]) return ElementsMediator.getColor(elt, false, "bottom");
             }
 
             return ElementsMediator.getColor(elt, true);
