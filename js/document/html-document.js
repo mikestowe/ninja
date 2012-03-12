@@ -871,8 +871,12 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     	value: function () {
     		//TODO: Add logic to handle save before preview
     		this.application.ninja.documentController.handleExecuteSaveAll(null);
-    		//Launching 'blank' tab for testing movie
-    		window.open(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);
+    		//Temp check for webGL Hack
+    		if (this.application.ninja.documentController.activeDocument.glData.length && this.application.ninja.documentController.activeDocument.glData.length > 0) {
+    			setTimeout(function () {window.open(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);}.bind(this), 3500);
+    		} else {
+    			window.open(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);
+    		}
     		//chrome.tabs.create({url: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]});		
     	}
     },
