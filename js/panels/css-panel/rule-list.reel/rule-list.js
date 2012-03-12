@@ -11,6 +11,9 @@ exports.RuleList = Montage.create(Component, {
     hasTemplate: {
         value: true
     },
+    listElement : {
+        value: null
+    },
     _rules: {
         value: null
     },
@@ -22,34 +25,19 @@ exports.RuleList = Montage.create(Component, {
             if(!list) {
                 return null;
             }
+            //debugger;
             console.log('list: ', list);
             this._rules = list;
-            this.needsDraw = this._needsAppend = true;
-        }
-    },
-    _contentController: {
-        value: null
-    },
-    contentController: {
-        get: function() {
-            return this._contentController;
-        },
-        set: function(controller) {
-
-            Object.defineBinding(this, 'rules', {
-                "boundObject": controller,
-                "boundObjectPropertyPath": "ruleList",
-                "oneway": true
-
-            });
-
-            this._contentController = controller;
+            this.needsDraw = true;
+            this._needsAppend = true;
         }
     },
     templateDidLoad : {
         value: function() {
             console.log("Rule List : template did load");
             //this.condition = true;
+            this.needsDraw = true;
+            //debugger;
         }
     },
     prepareForDraw : {
@@ -59,6 +47,7 @@ exports.RuleList = Montage.create(Component, {
     },
     draw : {
         value: function() {
+            console.log("Rule List - Draw");
             if(this._needsAppend) {
                 this._rules.forEach(function(rule) {
                     var componentBase = this.supportedRules[rule.type],
@@ -66,10 +55,10 @@ exports.RuleList = Montage.create(Component, {
 
                     if(componentBase) {
                         el = document.createElement(this.ruleNodeName);
-                        instance = componentBase.create();
+                        instance = Montage.create(componentBase);
                         instance.element = el;
                         instance.rule = rule;
-                        this.listElement.appendChild(el);
+                        this.element.appendChild(instance.element);
                         instance.needsDraw = true;
                     }
 
