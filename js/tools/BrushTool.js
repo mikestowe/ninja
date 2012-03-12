@@ -105,7 +105,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
                         if (this.options.strokeAngle){
                             strokeAngle= ShapesController.GetValueInPixels(this.options.strokeAngle.value, this.options.strokeAngle.units);
                         }
-                        this._selectedBrushStroke.setStrokeAngle(strokeAngle);
+                        this._selectedBrushStroke.setStrokeAngle(Math.PI * -strokeAngle/180);
                     } else {
                         this._selectedBrushStroke.setStrokeUseCalligraphic(false);
                     }
