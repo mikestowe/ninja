@@ -5,6 +5,9 @@
  </copyright> */
 
 .css-tree-branch {
+    /*padding-left: 10px;*/
+}
+.style-item {
     padding-left: 10px;
 }
 .css-tree-branch .css-tree-branch {
@@ -12,3 +15,28 @@
     margin-top: 0;
     margin-bottom: 0;
 }
+.style-shorthand-branch > div {
+    background-color: #fafafa;
+    border-bottom: 1px solid #ededed;
+    position: relative;
+}
+.style-shorthand-branch > div:hover {
+    background-color: #f1f1f1;
+    border-bottom: 1px solid #e1e1e1;
+    position: relative;
+}
+.style-shorthand-branch > div:hover:after {
+    opacity: 1;
+}
+.style-shorthand-branch > div:after {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAcAAAAJCAYAAAD%2BWDajAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw%2FeHBhY2tldCBiZWdpbj0i77u%2FIiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8%2BIDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoyODUxMDg2RjY1NkYxMUUxODMyRUQwQzAxMzUxMjUxRiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoyODUxMDg3MDY1NkYxMUUxODMyRUQwQzAxMzUxMjUxRiI%2BIDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjI4NTEwODZENjU2RjExRTE4MzJFRDBDMDEzNTEyNTFGIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjI4NTEwODZFNjU2RjExRTE4MzJFRDBDMDEzNTEyNTFGIi8%2BIDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY%2BIDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8%2BaoqKDgAAAGhJREFUeNpibG9vP8DAwGDPgAkuMAGJ6QzYwXSQ5Bogfoom8RGIFzNVVFT8xaJ7FlD8OxOUMxeIf0HZIMWzQAywJFDVC6jxILADyL8Dl4SCKWg0A8P%2F%2F%2F%2FhGOitFch8JjSHxCFzAAIMACCjLJNKELwVAAAAAElFTkSuQmCC);
+    background-repeat: no-repeat;
+    content: "\00a0";
+    height: 10px;
+    position: absolute;
+    right: 8px;
+    top: 4px;
+    width: 10px;
+    opacity: .3;
+}
+

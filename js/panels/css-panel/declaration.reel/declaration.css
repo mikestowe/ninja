@@ -4,3 +4,9 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
+.treeRoot > .style-shorthand-branch > div {
+    display: none;
+}
+.treeRoot > .style-shorthand-branch > dl {
+    margin-top: 4px;
+}

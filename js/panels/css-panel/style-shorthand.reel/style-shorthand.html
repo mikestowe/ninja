@@ -21,7 +21,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "arrayController": {"@": "arrayController" },
                 "repetition": {"@": "repetition"},
                 "leafComponent": {"@": "leaf"},
-                "branchComponent": {"@": "branch"}
+                "branchComponent": {"@": "branch"},
+                "branchCollapser": {"#": "collapser"}
 
             }
         },
@@ -154,10 +155,9 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </head>
 <body>
     <div id="branch" class="style-shorthand-branch">
-        <div>
+        <div class="style-item" id="collapser">
             <dt id="property" class="css-property"></dt>
             <dd id="value" class="css-value"></dd>
-            <a href="#" id="style-list-disclosure" class="list-disclorue">A</a>
         </div>
         <dl id="branchList" class="css-tree-branch">
             <div id="treeItem"></div>

@@ -20,13 +20,16 @@ var styleShorthand = exports.StyleShorthand= Montage.create(TreeNode, {
     },
     prepareForDraw : {
         value: function() {
-            this.styleListDisclosure.addEventListener('click', this, false);
+//            this.styleListDisclosure.addEventListener('click', this, false);
             this.treeView.contentController.addBranchController(this.arrayController);
         }
     },
     templateDidLoad: {
         value: function() {
             this.arrayController.delegate = this.treeView.contentController;
+
+            this.branchCollapser.removeAttribute('id');
+            this.branchCollapser.addEventListener('click', this, false);
         }
     },
     willDraw : {
