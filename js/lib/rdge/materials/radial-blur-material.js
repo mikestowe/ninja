@@ -94,7 +94,7 @@ var RadialBlurMaterial = function RadialBlurMaterial() {
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = createMaterialNode("radialBlurMaterial");
+		this._materialNode = createMaterialNode("radialBlurMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;
@@ -161,6 +161,13 @@ var RadialBlurMaterial = function RadialBlurMaterial() {
 		// every material needs the base type and instance name
 		var exportStr = "material: " + this.getShaderName() + "\n";
 		exportStr += "name: " + this.getName() + "\n";
+
+		var world = this.getWorld();
+		if (!world)
+			throw new Error( "no world in material.export, " + this.getName() );
+
+		var texMapName =  this._propValues[this._propNames[0]];
+		exportStr += "texture: " + texMapName + "\n";
 		
 		// every material needs to terminate like this
 		exportStr += "endMaterial\n";

@@ -82,7 +82,7 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
     //
     copyLibToCloud: {
     	enumerable: false,
-        value: function (path, libName) {
+        value: function (path, libName, callback) {
         	//
         	if(this.coreApi.directoryExists({uri: path+libName}).status === 404) {
         		this.chromeApi.directoryContents(this.chromeApi.fileSystem.root, function (contents) {
@@ -91,7 +91,7 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
 	        				//Getting contents of library to be copied
         					this.chromeApi.directoryContents(contents[i], function (lib) {
         						//Creating directory structure from subfolders
-        						this.copyDirectoryToCloud(path, contents[i], path, function (status) {console.log(status)});
+        						this.copyDirectoryToCloud(path, contents[i], path, callback);
         					}.bind(this));
         					break;
         				}
@@ -116,7 +116,7 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
 			    	dir = folder.name;
 			    }
 			    //
-			    if (!this.coreApi.createDirectory({uri: dir})) {
+			    if (!this.coreApi.createDirectory({uri: dir.replace(/\/\//gi, '/')})) {
 			    	//Error occured while creating folders
 			    	return;
 			    }
@@ -132,12 +132,14 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
 							this.chromeApi.fileContent(contents[i].fullPath, function (result) {
 								//
 								//this.coreApi.createFile({uri: fileRoot+result.file.fullPath, contents: blob.getBlob(result.data.type), contentType: result.data.type});
-								this.coreApi.createFile({uri: fileRoot+result.file.fullPath, contents: result.content});
+								this.coreApi.createFile({uri: (fileRoot+result.file.fullPath).replace(/\/\//gi, '/'), contents: result.content});
 							}.bind(this));
 						}
 					}
 				}.bind(this));
 			}
+			//TODO Add logic for proper callback status(es)
+			if (callback) callback(true);
     	}
     },
 	////////////////////////////////////////////////////////////////////

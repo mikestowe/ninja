@@ -71,7 +71,7 @@ function SquareTunnelMaterial()
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = createMaterialNode("squareTunnelMaterial");
+		this._materialNode = createMaterialNode("squareTunnelMaterial_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;

@@ -48,6 +48,7 @@ exports.SelectionController = Montage.create(Component, {
             this.eventManager.addEventListener("selectAll", this, false);
             this.eventManager.addEventListener("deleteSelection", this, false);
             this.eventManager.addEventListener("switchDocument", this, false);
+            this.eventManager.addEventListener("closeDocument", this, false);
 //            defaultEventManager.addEventListener( "undo", this, false);
 //            defaultEventManager.addEventListener( "redo", this, false);
         }
@@ -89,17 +90,17 @@ exports.SelectionController = Montage.create(Component, {
         }
     },
 
-    handleSwitchDocument: {
+     handleSwitchDocument: {
         value: function() {
-            this._selectedItems = this.application.ninja.selectedElements.slice(0);
-            if(this._selectedItems.length === 0) {
-                this._isDocument = true;
-            } else {
-                this._isDocument = false;
+            if(this.application.ninja.documentController.activeDocument.currentView === "design"){
+                this._selectedItems = this.application.ninja.selectedElements.slice(0);
+                if(this._selectedItems.length === 0 ){
+                    this._isDocument = true;
+                }else{
+                    this._isDocument = false;
+                }
+                NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument} );
             }
-            NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument});
-
-			this._selectionContainer = this.application.ninja.currentSelectedContainer;
         }
     },
 

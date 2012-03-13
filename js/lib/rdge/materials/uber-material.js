@@ -33,6 +33,8 @@ var UberMaterial = function UberMaterial() {
 	this._useEnvironmentMap	= true;
 	this._useLights			= [true, true, true, true];
 
+	this._MAX_LIGHTS		= 4;
+
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
@@ -363,9 +365,114 @@ var UberMaterial = function UberMaterial() {
 		this._shader = this.buildUberShader( this._ubershaderCaps );
 
 		// set up the material node
-		this._materialNode = createMaterialNode("uberMaterial");
+		this._materialNode = createMaterialNode("uberMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 	};
+
+	this.import = function( importStr )
+	{
+		// limit the key searches to this material
+        var endKey = "endMaterial\n";
+        var index = importStr.indexOf( endKey );
+        index += endKey.length;
+        importStr = importStr.substr( index );
+		var pu = new MaterialParser( importStr );
+
+		var matProps = pu.nextValue( "materialProps: " );
+		if (matProps)
+		{
+			var ambientColor  = Number( pu.nextValue( "ambientColor: "  ));	 this.setProperty( "ambientColor", ambientColor );
+			var diffuseColor  = Number( pu.nextValue( "diffuseColor: "  ));	 this.setProperty( "diffuseColor", diffuseColor );
+			var specularColor = Number( pu.nextValue( "specularColor: " ));	 this.setProperty( "specularColor", specularColor );
+			var specularPower = Number( pu.nextValue( "specularPower: " ));  this.setProperty( "specularPower", specularPower );
+		}
+
+		var lightProps = pu.nextValue( "theLights" );
+	}
+
+	this.export = function()
+	{
+		// every material needs the base type and instance name
+		var exportStr = "material: " + this.getShaderName() + "\n";
+		exportStr += "name: " + this.getName() + "\n";
+
+		var caps = this._ubershaderCaps;
+		
+		// export the material properties
+		if (typeof caps.material != 'undefined')
+		{
+			exportStr += "materialProps: true\n";
+			exportStr += "ambientColor: " + caps.material.ambientColor + "\n";
+			exportStr += "diffuseColor: " + caps.material.diffuseColor + "\n";
+			exportStr += "specularColor: " + caps.material.specularColor + "\n";
+			exportStr += "specularPower: " + caps.material.specularPower + "\n";
+		}
+
+		if (typeof caps.lighting != 'undefined')
+		{
+			exportStr += "lightProps: true\n";
+
+			var light = caps.lighting['light' + i];
+			for (var i=0;  i<this._MAX_LIGHTS;  i++)
+			{
+				var light = caps.lighting["light" + i];
+				if( typeof light != "undefined")
+				{
+					exportStr += "light" + i + ': ' + light.type + "\n";
+
+					// output the light secific data
+					if (light.type === 'directional')
+					{
+						exportStr += 'light' + i + 'Dir: ' + light['direction'] + '\n';
+					}
+					else if (light.type === 'spot')
+					{
+						exportStr += 'light' + i + 'Pos: ' + light['position'] + '\n';
+
+						var deg2Rad = Math.PI / 180;
+						exportStr += 'light' + i + 'Spot: ' + [ Math.cos( ( light['spotInnerCutoff'] || 45.0 )  * deg2Rad ), 
+																Math.cos( ( light['spotOuterCutoff'] || 90.0 ) * deg2Rad )] + '\n';
+					}
+					else		// light.type === 'point'
+					{
+						exportStr += 'light' + i + 'Pos: ' + (light['position'] || [ 0, 0, 0 ]) ;
+						exportStr += 'light' + i + 'Attenuation: ' + (light['attenuation'] || [ 1, 0, 0 ]) ;
+					}
+
+					// common to all lights
+					exportStr += 'light' + i + 'Color: ' + light['diffuseColor'] || [ 1,1,1,1 ] + '\n';
+					exportStr += 'light' + i + 'SpecularColor: ' + light['specularColor'] || [ 1, 1, 1, 1 ] + '\n'; 
+					
+					exportStr += "endlight\n";          
+				}
+			}
+		}
+
+//	this._diffuseMapOb = { 'texture' : 'assets/images/rocky-diffuse.jpg', 'wrap' : 'REPEAT' };
+//	this._normalMapOb = { 'texture' : 'assets/images/rocky-normal.jpg', 'wrap' : 'REPEAT' };
+//	this._specularMapOb = { 'texture' : 'assets/images/rocky-spec.jpg', 'wrap' : 'REPEAT' };
+//	this._environmentMapOb = { 'texture' : 'assets/images/silver.png', 'wrap' : 'CLAMP', 'envReflection' : this._environmentAmount };
+		var world = this.getWorld();
+		if (!world)
+			throw new Error( "no world in material.export, " + this.getName() );
+
+		if(typeof caps.diffuseMap != 'undefined')
+			exportStr += "diffuseMap: " + caps.diffuseMap.texture + "\n";
+
+		if(typeof caps.normalMap != 'undefined')
+			exportStr += "normalMap: " + caps.normalMap.texture + "\n";
+
+		if(typeof caps.specularMap != 'undefined')
+			exportStr += "specularMap: " + caps.specularMap.texture + "\n";
+
+		if(typeof caps.environmentMap != 'undefined')
+			exportStr += "environmentMap: " + caps.environmentMap.texture + "\n";
+		
+		// every material needs to terminate like this
+		exportStr += "endMaterial\n";
+
+		return exportStr;
+	}
 
 	this.buildUberShader = function(caps)
 	{

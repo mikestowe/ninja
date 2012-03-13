@@ -79,6 +79,8 @@ var Rectangle = function GLRectangle() {
         } else {
 			this._fillMaterial = MaterialsModel.exportFlatMaterial();
         }
+
+		this.exportMaterials();
 	};
 
 	///////////////////////////////////////////////////////////////////////
@@ -203,8 +205,20 @@ var Rectangle = function GLRectangle() {
 		rtnStr += "width: "			+ this._width		+ "\n";
 		rtnStr += "height: "		+ this._height		+ "\n";
 		rtnStr += "strokeWidth: "	+ this._strokeWidth	+ "\n";
-		rtnStr += "strokeColor: "	+ String(this._strokeColor)  + "\n";
-		rtnStr += "fillColor: "		+ String(this._fillColor)	 + "\n";
+
+        if(this._strokeColor.gradientMode) {
+            rtnStr += "strokeGradientMode: "	+ this._strokeColor.gradientMode	+ "\n";
+            rtnStr += "strokeColor: " + this.gradientToString(this._strokeColor.color) + "\n";
+        } else {
+            rtnStr += "strokeColor: "	+ String(this._strokeColor)  + "\n";
+        }
+
+        if(this._fillColor.gradientMode) {
+            rtnStr += "fillGradientMode: "	+ this._fillColor.gradientMode	+ "\n";
+            rtnStr += "fillColor: " + this.gradientToString(this._fillColor.color) + "\n";
+        } else {
+            rtnStr += "fillColor: "	+ String(this._fillColor)  + "\n";
+        }
 		rtnStr += "tlRadius: "		+ this._tlRadius	+ "\n";
 		rtnStr += "trRadius: "		+ this._trRadius	+ "\n";
 		rtnStr += "blRadius: "		+ this._blRadius	+ "\n";
@@ -218,7 +232,6 @@ var Rectangle = function GLRectangle() {
         } else {
 			rtnStr += "flatMaterial";
         }
-
 		rtnStr += "\n";
 
 		rtnStr += "fillMat: ";
@@ -227,8 +240,9 @@ var Rectangle = function GLRectangle() {
         } else {
 			rtnStr += "flatMaterial";
         }
-
 		rtnStr += "\n";
+
+		rtnStr += this.exportMaterials();
 
 		return rtnStr;
 	};
@@ -244,9 +258,25 @@ var Rectangle = function GLRectangle() {
 		var strokeMaterialName	= this.getPropertyFromString( "strokeMat: ",	importStr );
 		var fillMaterialName	= this.getPropertyFromString( "fillMat: ",		importStr );
 		this._strokeStyle		=  this.getPropertyFromString( "strokeStyle: ",	importStr );
-		this._fillColor			=  eval( "[" + this.getPropertyFromString( "fillColor: ",	importStr ) + "]" );
-		this._strokeColor		=  eval( "[" + this.getPropertyFromString( "strokeColor: ",	importStr ) + "]" );
-		this._tlRadius			=  Number( this.getPropertyFromString( "tlRadius: ",	importStr )  );
+
+        if(importStr.indexOf("fillGradientMode: ") < 0) {
+            this._fillColor		=  eval( "[" + this.getPropertyFromString( "fillColor: ",	importStr ) + "]" );
+        } else {
+            this._fillColor = {};
+            this._fillColor.gradientMode = this.getPropertyFromString( "fillGradientMode: ",	importStr );
+            this._fillColor.color = this.stringToGradient(this.getPropertyFromString( "fillColor: ",	importStr ));
+        }
+
+        if(importStr.indexOf("strokeGradientMode: ") < 0)
+        {
+            this._strokeColor		=  eval( "[" + this.getPropertyFromString( "strokeColor: ",	importStr ) + "]" );
+        } else {
+            this._strokeColor = {};
+            this._strokeColor.gradientMode = this.getPropertyFromString( "strokeGradientMode: ",	importStr );
+            this._strokeColor.color = this.stringToGradient(this.getPropertyFromString( "strokeColor: ",	importStr ));
+        }
+
+        this._tlRadius			=  Number( this.getPropertyFromString( "tlRadius: ",	importStr )  );
 		this._trRadius			=  Number( this.getPropertyFromString( "trRadius: ",	importStr )  );
 		this._blRadius			=  Number( this.getPropertyFromString( "blRadius: ",	importStr )  );
 		this._brRadius			=  Number( this.getPropertyFromString( "brRadius: ",	importStr )  );
@@ -264,8 +294,9 @@ var Rectangle = function GLRectangle() {
 			console.log( "object material not found in library: " + fillMaterialName );
 			fillMat = MaterialsModel.exportFlatMaterial();
 		}
-
 		this._fillMaterial = fillMat;
+
+		this.importMaterials( importStr );
 	};
 
 	this.buildBuffers = function() {
@@ -459,15 +490,44 @@ var Rectangle = function GLRectangle() {
 		var lw = this._strokeWidth;
 		var	w = world.getViewportWidth(),
 			h = world.getViewportHeight();
-		
+
+        var c,
+            inset,
+            gradient,
+            colors,
+            len,
+            n,
+            position,
+            cs;
 		// render the fill
 		ctx.beginPath();
 		if (this._fillColor) {
-			var c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";  
-			ctx.fillStyle = c;
+            inset = Math.ceil( lw ) + 0.5;
+
+            if(this._fillColor.gradientMode) {
+                if(this._fillColor.gradientMode === "radial") {
+                    gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w/2, h/2)-inset);
+                } else {
+                    gradient = ctx.createLinearGradient(inset, h/2, w-2*inset, h/2);
+                }
+                colors = this._fillColor.color;
+
+                len = colors.length;
+
+                for(n=0; n<len; n++) {
+                    position = colors[n].position/100;
+                    cs = colors[n].value;
+                    gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+                }
+
+                ctx.fillStyle = gradient;
+
+            } else {
+                c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";
+                ctx.fillStyle = c;
+            }
 
 			ctx.lineWidth	= lw;
-			var inset = Math.ceil( lw ) + 0.5;
 			this.renderPath( inset, ctx );
 			ctx.fill();
 			ctx.closePath();
@@ -476,11 +536,32 @@ var Rectangle = function GLRectangle() {
 		// render the stroke
 		ctx.beginPath();
 		if (this._strokeColor) {
-			var c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";  
-			ctx.strokeStyle = c;
+            inset = Math.ceil( 0.5*lw ) + 0.5;
+
+            if(this._strokeColor.gradientMode) {
+                if(this._strokeColor.gradientMode === "radial") {
+                    gradient = ctx.createRadialGradient(w/2, h/2, Math.min(h/2, w/2)-inset, w/2, h/2, Math.max(h/2, w/2));
+                } else {
+                    gradient = ctx.createLinearGradient(0, h/2, w, h/2);
+                }
+                colors = this._strokeColor.color;
+
+                len = colors.length;
+
+                for(n=0; n<len; n++) {
+                    position = colors[n].position/100;
+                    cs = colors[n].value;
+                    gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+                }
+
+                ctx.strokeStyle = gradient;
+
+            } else {
+                c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";
+                ctx.strokeStyle = c;
+            }
 
 			ctx.lineWidth	= lw;
-			var inset = Math.ceil( 0.5*lw ) + 0.5;
 			this.renderPath( inset, ctx );
 			ctx.stroke();
 			ctx.closePath();
