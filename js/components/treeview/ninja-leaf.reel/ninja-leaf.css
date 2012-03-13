@@ -22,9 +22,6 @@
     background-position: 33px center;
     padding-left: 53px;
 }
-.branch .branch .leaf-label:active {
-    background-color: #212121;
-}
 /* First level */
 .branch .leaf-label {
     padding-left: 25px;
