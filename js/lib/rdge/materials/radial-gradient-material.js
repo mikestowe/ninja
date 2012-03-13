@@ -193,14 +193,17 @@ var RadialGradientMaterial = function RadialGradientMaterial() {
         return new RadialGradientMaterial();
     };
 
-	this.init = function() {
+	this.init = function( world )
+	{
+		this.setWorld( world );
+
 		// set up the shader
 		this._shader = new jshader();
 		this._shader.def = radialGradientMaterialDef;
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = createMaterialNode("radialGradientMaterial");
+		this._materialNode = createMaterialNode("radialGradientMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		// set the shader values in the shader

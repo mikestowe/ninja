@@ -79,6 +79,8 @@ var Rectangle = function GLRectangle() {
         } else {
 			this._fillMaterial = MaterialsModel.exportFlatMaterial();
         }
+
+		this.exportMaterials();
 	};
 
 	///////////////////////////////////////////////////////////////////////
@@ -218,7 +220,6 @@ var Rectangle = function GLRectangle() {
         } else {
 			rtnStr += "flatMaterial";
         }
-
 		rtnStr += "\n";
 
 		rtnStr += "fillMat: ";
@@ -227,8 +228,9 @@ var Rectangle = function GLRectangle() {
         } else {
 			rtnStr += "flatMaterial";
         }
-
 		rtnStr += "\n";
+
+		rtnStr += this.exportMaterials();
 
 		return rtnStr;
 	};
@@ -264,8 +266,9 @@ var Rectangle = function GLRectangle() {
 			console.log( "object material not found in library: " + fillMaterialName );
 			fillMat = MaterialsModel.exportFlatMaterial();
 		}
-
 		this._fillMaterial = fillMat;
+
+		this.importMaterials( importStr );
 	};
 
 	this.buildBuffers = function() {

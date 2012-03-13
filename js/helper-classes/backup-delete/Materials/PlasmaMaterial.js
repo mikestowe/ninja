@@ -74,7 +74,7 @@ function PlasmaMaterial()
 		this.setProperty( "color", [this._time, 0, 0,  1] );
 
 		// set up the material node
-		this._materialNode = createMaterialNode("plasmaMaterial");
+		this._materialNode = createMaterialNode("plasmaMaterial_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 	}
 
