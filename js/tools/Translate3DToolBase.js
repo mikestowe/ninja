@@ -10,7 +10,6 @@ Subclass TranslateObject3DTool will translate the object that was clicked.
 var Montage = require("montage/core/core").Montage,
     ModifierToolBase = require("js/tools/modifier-tool-base").ModifierToolBase,
     toolHandleModule = require("js/stage/tool-handle"),
-    snapManager = require("js/helper-classes/3D/snap-manager").SnapManager,
     viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils,
     vecUtils = require("js/helper-classes/3D/vec-utils").VecUtils,
     drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils,

@@ -336,7 +336,7 @@ materialNodeTemplate = function(matNode)
 	matNode.setTexture = function(texType, texName)
 	{
 		var renderer = g_Engine.getContext().renderer;
-		this.textureList[texType].handle = renderer.getTextureByName("assets/images/" + texName);
+		this.textureList[texType].handle = renderer.getTextureByName(g_Engine._assetPath+"/images/" + texName);
 	    this.textureList[texType].unit = texType;
 		this.textureList[texType].type = UNIFORMTYPE.TEXTURE2D;
 		

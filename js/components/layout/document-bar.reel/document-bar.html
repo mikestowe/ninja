@@ -32,6 +32,20 @@
                 }
             },
 
+            "disable": {
+                "prototype": "montage/ui/condition.reel",
+                "properties": {
+                    "element": {"#": "disabledCondition"}
+                },
+                "bindings": {
+                    "condition": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "disabled",
+                        "oneway": true
+                    }
+                }
+            },
+
             "owner": {
                 "module": "js/components/layout/document-bar.reel",
                 "name": "DocumentBar",
@@ -53,6 +67,7 @@
         <input class="zoomHotText label" id="zoomControlHT"/>
         <span class="design-view disable" id="design">Design View</span>
         <span class="code-view disable" id="code">Code View</span>
+        <div id="disabledCondition" class="panelDisabled"></div>
     </div>
 </body>
 </html>

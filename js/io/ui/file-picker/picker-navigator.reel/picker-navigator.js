@@ -346,6 +346,11 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
             var arr = [];
             var temp = new String(uri);
             while(temp.indexOf("/") != -1){
+
+                if(""+temp === this.pickerModel.currentLogicalDrive){//stop at the logical drive
+                    break;
+                }
+
                 temp = temp.substring(0, temp.lastIndexOf("/"));
 
                 //populate dropdown irrespective of validity
@@ -560,7 +565,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
         enumerable: true,
         writable: false,
         value : function(evt, dirObj){
-                    this.currentURI = dirObj.uri;
+                    this.currentURI = this.pickerModel.currentLogicalDrive = dirObj.uri;
 
                     var status = this.pickerViews()[this.selectedPickerView].call(this, dirObj.uri);//dynamically calls the update function of the current picker view
 

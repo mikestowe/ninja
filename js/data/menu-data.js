@@ -31,6 +31,12 @@ exports.MenuData = Montage.create( Montage, {
                         "action": "executeFileOpen"
                     },
                     {
+                        "displayText" : "Close File",
+                        "hasSubMenu" : false,
+                        "enabled": true,
+                        "action": "executeFileClose"
+                    },
+                    {
                         "displayText" : "",
                         "separator":    true
                     },

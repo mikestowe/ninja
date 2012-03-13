@@ -22,11 +22,9 @@ void main(void)
 {
 	float x = v_uv.x ;
 	float y = v_uv.y ;
-	float time = color.x;
+	float time = u_time;
 	float wave =	(cos(time + y / 0.2  + cos(x / 0.3 + cos((y / 0.1)))));
 	float wave1 =	(sin(abs(wave + y/0.6)));
 	float wave2 =	(sin(abs(wave1 + y/0.8)));
-	float tmp = u_time * 0.1;
 	gl_FragColor = vec4( abs(vec3(wave2,wave1,wave)),1.0);
-	//gl_FragColor = color;
 }	

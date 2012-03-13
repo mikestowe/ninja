@@ -381,7 +381,6 @@ function GLCircle()
 		// translate
 		var xCtr = 0.5*world.getViewportWidth() + this._xOffset,
 			yCtr = 0.5*world.getViewportHeight() + this._yOffset;
-		//ctx.setTransform( xScale, 0.0,  0.0, yScale, xCtr, yCtr );
 		var mat = Matrix.create( [
 							[ xScale,     0.0,  0.0,  xCtr],
 							[    0.0,  yScale,  0.0,  yCtr],
@@ -537,6 +536,8 @@ function GLCircle()
 		else
 			rtnStr += "flatMaterial";
 		rtnStr += "\n";
+
+		rtnStr += this.exportMaterials();
 
 		return rtnStr;
 	}

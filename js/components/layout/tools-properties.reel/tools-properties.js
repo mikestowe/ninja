@@ -9,10 +9,29 @@ var Component = require("montage/ui/component").Component;
 
 exports.ToolsProperties = Montage.create(Component, {
 
+    disabled: {
+        value: true
+    },
+
+    handleCloseDocument: {
+        value: function(){
+            if(!this.application.ninja.documentController.activeDocument) {
+                this.disabled = true;
+            }
+        }
+    },
+
+    handleOpenDocument: {
+        value: function() {
+            this.disabled = false;
+        }
+    },
+
     prepareForDraw: {
         enumerable: false,
         value: function() {
-            //this.selectedTool = this.application.toolsData.selectedTool;
+            this.eventManager.addEventListener( "openDocument", this, false);
+            this.eventManager.addEventListener( "closeDocument", this, false);
         }
     },
 
