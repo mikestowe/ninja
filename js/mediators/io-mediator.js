@@ -408,7 +408,7 @@ exports.IoMediator = Montage.create(Component, {
     			if (!webgllibtag) {
     				webgllibtag = template.document.content.document.createElement('script');
     				webgllibtag.setAttribute('type', 'text/javascript');
-    				webgllibtag.setAttribute('src', rdgeDirName+'/CanvasRuntime.js');
+    				webgllibtag.setAttribute('src', rdgeDirName+'/canvas-runtime.js');
     				webgllibtag.setAttribute('data-ninja-webgl-lib', 'true');
     				template.document.content.document.head.appendChild(webgllibtag);
     			}
@@ -425,31 +425,17 @@ exports.IoMediator = Montage.create(Component, {
     				webgljstag.setAttribute('data-ninja-webgl-js', 'true');
     				template.document.content.document.head.appendChild(webgljstag);
     			}
-    			
-    			/////////////////////////////////////////////////////////////////////////////
-    			/////////////////////////////////////////////////////////////////////////////
     			//TODO: Decide if this should be over-writter or only written on creation
+    			var rootElement = 'document.body'; //TODO: Set actual root element
     			webgljstag.innerHTML = "\
 //Loading webGL/canvas data on window load\n\
-window.addEventListener('load', initWebGl, false);\n\
-function initWebGl (e) {\n\
-	window.removeEventListener('load', initWebGl, false);\n\
-	var cvsDataMngr, ninjaWebGlData = JSON.parse((document.querySelectorAll(['script[data-ninja-webgl]'])[0].innerHTML.replace(\"(\", \"\")).replace(\")\", \"\"));\n\
-	if (ninjaWebGlData && ninjaWebGlData.data) {\n\
-		for (var n=0; ninjaWebGlData.data[n]; n++) {\n\
-			ninjaWebGlData.data[n] = unescape(ninjaWebGlData.data[n]);\n\
-		}\n\
-	}\n\
-	//Creating data manager\n\
-	cvsDataMngr = new CanvasDataManager();\n\
-	//Loading data to canvas(es)\n\
-	cvsDataMngr.loadGLData(document.body, ninjaWebGlData.data, '"+rdgeDirName+"/');\n\
+window.addEventListener('load', loadWebGL, false);\n\
+function loadWebGL (e) {\n\
+	window.removeEventListener('load', loadWebGL, false);\n\
+	//Calling method to initialize all webGL/canvas(es)\n\
+	initWebGl("+rootElement+", '"+rdgeDirName+"/');\n\
 }\
     			";
-    			/////////////////////////////////////////////////////////////////////////////
-    			/////////////////////////////////////////////////////////////////////////////
-    			/////////////////////////////////////////////////////////////////////////////
-    			
     			//TODO: This data should be saved to a JSON file eventually
     			json = '\n({\n\t"version": "'+rdgeVersion+'",\n\t"directory": "'+rdgeDirName+'/",\n\t"data": [';
     			//Looping through data to create escaped array
