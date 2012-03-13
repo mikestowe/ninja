@@ -451,7 +451,10 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                 if(this._use3DMode)
                 {
                     curMat = item.mat;
-                    glmat4.multiply(curMat, qMat, curMat);
+
+                    curMat[12] += transMat[12];
+                    curMat[13] += transMat[13];
+                    curMat[14] += transMat[14];
                     viewUtils.setMatrixForElement( elt, curMat, true);
                     this._targets[i].mat = curMat;
                 }
