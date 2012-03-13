@@ -4,8 +4,6 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 .documentBar {
-    height: 25px;
-    width: 1000px;
     position: relative;
     overflow: hidden;
     color: white;

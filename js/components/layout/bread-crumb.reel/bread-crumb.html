@@ -60,6 +60,20 @@
                             "oneway": true
                         }
                     }
+                },
+
+                "disable": {
+                    "prototype": "montage/ui/condition.reel",
+                    "properties": {
+                        "element": {"#": "disabledCondition"}
+                    },
+                    "bindings": {
+                        "condition": {
+                            "boundObject": {"@": "owner"},
+                            "boundObjectPropertyPath": "disabled",
+                            "oneway": true
+                        }
+                    }
                 }
             }
         </script>
@@ -71,6 +85,7 @@
             <div id="breadcrumb_container">
                 <button id="breadcrumb_button" class="nj-skinned"></button>
             </div>
+            <div id="disabledCondition" class="panelDisabled"></div>
         </section>
 
     </body>
