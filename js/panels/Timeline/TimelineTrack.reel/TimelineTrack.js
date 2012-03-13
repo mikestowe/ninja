@@ -394,6 +394,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     draw:{
         value:function () {
             this.ninjaStylesContoller = this.application.ninja.stylesController;
+            var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
+            if(this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList[0]){
+                this.animatedElement = this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList[0];
+            }
         }
     },
 
