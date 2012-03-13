@@ -85,7 +85,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
 
                     var strokeHardness = 100;
                     if (this.options.strokeHardness){
-                        strokeHardness = ShapesController.GetValueInPixels(this.options.strokeHardness.value, this.options.strokeHardness.units);
+                        strokeHardness = this.options.strokeHardness.value;
                     }
                     this._selectedBrushStroke.setStrokeHardness(strokeHardness);
 
@@ -94,7 +94,10 @@ exports.BrushTool = Montage.create(ShapeTool, {
                         doSmoothing = this.options.doSmoothing;
                     }
                     this._selectedBrushStroke.setDoSmoothing(doSmoothing);
-
+                    if (doSmoothing){
+                        this._selectedBrushStroke.setSmoothingAmount(this.options.smoothingAmount.value);
+                    }
+                    
                     var useCalligraphic = false;
                     if (this.options.useCalligraphic){
                         useCalligraphic = this.options.useCalligraphic;
@@ -103,7 +106,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
                         this._selectedBrushStroke.setStrokeUseCalligraphic(true);
                         var strokeAngle = 0;
                         if (this.options.strokeAngle){
-                            strokeAngle= ShapesController.GetValueInPixels(this.options.strokeAngle.value, this.options.strokeAngle.units);
+                            strokeAngle= this.options.strokeAngle.value;
                         }
                         this._selectedBrushStroke.setStrokeAngle(Math.PI * -strokeAngle/180);
                     } else {

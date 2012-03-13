@@ -39,10 +39,7 @@ var BrushStroke = function GLBrushStroke() {
     this._strokeDoSmoothing = false;
     this._strokeUseCalligraphic = false;
     this._strokeAngle = 0;
-
-    //the wetness of the brush (currently this is multiplied to the square of the stroke width, but todo should be changed to not depend on stroke width entirely
-    //smaller value means more samples for the path
-    this._WETNESS_FACTOR = 0.25;
+    this._strokeAmountSmoothing = 0;
 
     //threshold that tells us whether two samples are too far apart
     this._MAX_SAMPLE_DISTANCE_THRESHOLD = 5;
@@ -125,7 +122,7 @@ var BrushStroke = function GLBrushStroke() {
         //add the point only if it is some epsilon away from the previous point
         var numPoints = this._Points.length;
         if (numPoints>0) {
-            var threshold = this._MIN_SAMPLE_DISTANCE_THRESHOLD;//this._WETNESS_FACTOR*this._strokeWidth;
+            var threshold = this._MIN_SAMPLE_DISTANCE_THRESHOLD;
             var prevPt = this._Points[numPoints-1];
             var diffPt = [prevPt[0]-pt[0], prevPt[1]-pt[1]];
             var diffPtMag = Math.sqrt(diffPt[0]*diffPt[0] + diffPt[1]*diffPt[1]);
@@ -196,6 +193,10 @@ var BrushStroke = function GLBrushStroke() {
         this._strokeDoSmoothing = s;
     }
 
+    this.setSmoothingAmount = function(a){
+        this._strokeAmountSmoothing = a;
+    }
+
     this.setStrokeUseCalligraphic = function(c){
         this._strokeUseCalligraphic = c;
     }
@@ -252,7 +253,7 @@ var BrushStroke = function GLBrushStroke() {
             //**** add samples to the path if needed...linear interpolation for now
             //if (numPoints>1) {
             if (0){
-                var threshold = this._WETNESS_FACTOR*this._strokeWidth;
+                var threshold = this._MAX_SAMPLE_DISTANCE_THRESHOLD;
                 var prevPt = this._Points[0];
                 var prevIndex = 0;
                 for (var i=1;i<numPoints;i++){
@@ -283,7 +284,7 @@ var BrushStroke = function GLBrushStroke() {
                 }
             }
 
-            //todo 4-point subdivision iterations over continuous regions of 'long' segments
+            //instead of the following, may use 4-point subdivision iterations over continuous regions of 'long' segments
             // look at http://www.gvu.gatech.edu/~jarek/Split&Tweak/ for formula
             //**** add samples to the long sections of the path --- Catmull-Rom spline interpolation
             if (this._strokeDoSmoothing && numPoints>1) {
@@ -330,7 +331,7 @@ var BrushStroke = function GLBrushStroke() {
                 console.log("Inserted "+numInsertedPoints+" additional CatmullRom points");
 
                 //now do 3-4 iterations of Laplacian smoothing (setting the points to the average of their neighbors)
-                var numLaplacianIterations = 3; //todo figure out the proper number of Laplacian iterations (perhaps as a function of stroke width)
+                var numLaplacianIterations = this._strokeAmountSmoothing; 
                 for (var n=0;n<numLaplacianIterations;n++){
                     newPoints = this._Points;
                     for (var i=1;i<numPoints-1;i++){
