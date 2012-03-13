@@ -207,9 +207,17 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 		},
         set: function(value) {
 			var elt = this.documentRoot;
-			if (elt) {
+			if (elt)
+			{
 				var nWorlds= value.length;
-				for (var i=0;  i<nWorlds;  i++) {
+				for (var i=0;  i<nWorlds;  i++)
+				{
+					/*
+					// Use this code to test the runtime version of WebGL
+					var cdm = new CanvasDataManager();
+					cdm.loadGLData(elt,  value,  null );
+					*/
+
 					var importStr = value[i];
 					var startIndex = importStr.indexOf( "id: " );
 					if (startIndex >= 0) {

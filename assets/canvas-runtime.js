@@ -4,6 +4,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
+
+
 ///////////////////////////////////////////////////////////////////////
 //Loading webGL/canvas data
 function initWebGl (rootElement, directory) {
@@ -27,7 +29,8 @@ function CanvasDataManager()
 {
 	this.loadGLData = function(root,  valueArray,  assetPath )
 	{
-		this._assetPath = assetPath.slice();
+		if (assetPath)
+			this._assetPath = assetPath.slice();
 
 		var value = valueArray;
 		var nWorlds = value.length;
@@ -118,17 +121,22 @@ function GLRuntime( canvas, importStr,  assetPath )
 	this._zFar = 100.0;
 	this._viewDist = 5.0;
 
+	this.elapsed = 0;
+
 	this._aspect = canvas.width/canvas.height;
 
-	this._geomRoot;
+	this._geomRoot = null;
 
 	// all "live" materials
 	this._materials = [];
 
 		// provide the mapping for the asset directory
-		this._assetPath = assetPath.slice();
-		if (this._assetPath[this._assetPath.length-1] != '/')
-			this._assetPath += '/';
+		if (assetPath)
+		{
+			this._assetPath = assetPath.slice();
+			if (this._assetPath[this._assetPath.length-1] != '/')
+				this._assetPath += '/';
+		}
 
     ///////////////////////////////////////////////////////////////////////
 	// accessors
@@ -166,6 +174,7 @@ function GLRuntime( canvas, importStr,  assetPath )
 			this.importObjects( importStr );
 			this.linkMaterials( this._geomRoot );
 			this.initMaterials();
+			this.linkLights();
 		}
 		else
 		{
@@ -221,8 +230,8 @@ function GLRuntime( canvas, importStr,  assetPath )
 			rdgeGlobalParameters.u_light0Pos.set( [5*Math.cos(this.elapsed), 5*Math.sin(this.elapsed), 20]);
         
 			// orbit the light nodes around the boxes
-			//this.light.setPosition([1.2*Math.cos(this.elapsed*2.0), 1.2*Math.sin(this.elapsed*2.0), 1.2*Math.cos(this.elapsed*2.0)]);
-			//this.light2.setPosition([-1.2*Math.cos(this.elapsed*2.0), 1.2*Math.sin(this.elapsed*2.0), -1.2*Math.cos(this.elapsed)]);
+			if (this.light )  this.light.setPosition([1.2*Math.cos(this.elapsed*2.0), 1.2*Math.sin(this.elapsed*2.0), 1.2*Math.cos(this.elapsed*2.0)]);
+			if (this.light2)  this.light2.setPosition([-1.2*Math.cos(this.elapsed*2.0), 1.2*Math.sin(this.elapsed*2.0), -1.2*Math.cos(this.elapsed)]);
 
 			this.updateMaterials();
 
@@ -344,6 +353,16 @@ function GLRuntime( canvas, importStr,  assetPath )
 			parent.addChild( obj );
 	}
 
+	this.linkLights = function()
+	{
+		var matNode = this.findMaterialNode( "lights", this.myScene.scene );
+		if (matNode)
+		{
+			this.light = matNode.lightChannel[1];
+			this.light2 = matNode.lightChannel[2];
+		}
+	}
+
 	this.linkMaterials = function( obj )
 	{
 		if (!obj)  return;
@@ -377,6 +396,7 @@ function GLRuntime( canvas, importStr,  assetPath )
 
 	this.remapAssetFolder = function( url )
 	{
+		/*
 		var searchStr = "assets/";
 		var index = url.indexOf( searchStr );
 		var rtnPath = url;
@@ -386,6 +406,8 @@ function GLRuntime( canvas, importStr,  assetPath )
 			rtnPath = this._assetPath + rtnPath;
 		}
 		return rtnPath;
+		*/
+		return url;
 	}
 
 	this.findMaterialNode = function( nodeName,  node )
@@ -1080,7 +1102,7 @@ function RuntimeMaterial( world )
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
-	this.init = function()
+	this.init = function( world )
 	{
 	}
 
@@ -1127,7 +1149,7 @@ function RuntimeFlatMaterial()
     };
 
 
-	this.init = function()
+	this.init = function( world )
 	{
 		if (this._shader)
 		{
@@ -1302,7 +1324,7 @@ function RuntimeBumpMetalMaterial()
 		this._normalTexture = this.getPropertyFromString( "normalMap: ",	importStr );
 	}
 
-	this.init = function()
+	this.init = function( world )
 	{
 		var material = this._materialNode;
 		if (material)
@@ -1322,7 +1344,6 @@ function RuntimeBumpMetalMaterial()
 						this._diffuseTexture = world.remapAssetFolder( this._diffuseTexture );
 						tex = renderer.getTextureByName(this._diffuseTexture, wrap, mips );
 						if (tex)  technique.u_colMap.set( tex );
-
 					}
 					if (this._normalTexture)
 					{
@@ -1344,6 +1365,21 @@ function RuntimeBumpMetalMaterial()
 
 function RuntimeUberMaterial()
 {
+	// inherit the members of RuntimeMaterial
+	this.inheritedFrom = RuntimeMaterial;
+	this.inheritedFrom();
+
+	this.init = function(  )
+	{
+	}
+
+	this.update = function( time )
+	{
+	}
+
+	this.import = function( importStr )
+	{
+	}
 }
 
 function RuntimePlasmaMaterial()
