@@ -71,7 +71,7 @@ function StarMaterial()
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = createMaterialNode("starMaterial");
+		this._materialNode = createMaterialNode("starMaterial_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;

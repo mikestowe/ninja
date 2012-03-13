@@ -143,7 +143,6 @@ exports.Ninja = Montage.create(Component, {
             this.currentDocument = event.detail;
 
             this.appModel.show3dGrid = this.currentDocument.draw3DGrid;
-
             NJevent("openDocument");
         }
     },

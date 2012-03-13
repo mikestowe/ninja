@@ -11,12 +11,55 @@
 
         <script type="text/montage-serialization">
         {
+            "strokeSizeHT": {
+                "module": "js/components/hottextunit.reel",
+                "name": "HotTextUnit",
+                "properties": {
+                    "element": {"#": "strokeSize"},
+                    "minValue": 1,
+                    "maxValue": 100,
+                    "value": 1,
+                    "decimalPlace": 10,
+                    "acceptableUnits" : ["px", "pt"]
+                }
+            },
+
+            "strokeHardnessHT": {
+                "module": "js/components/hottextunit.reel",
+                "name": "HotTextUnit",
+                "properties": {
+                    "element": {"#": "strokeHardness"},
+                    "minValue": 0,
+                    "maxValue": 100,
+                    "value": 100,
+                    "decimalPlace": 10,
+                    "acceptableUnits" : ["px", "pt"]
+                }
+            },
+
+            "strokeAngleHT": {
+                "module": "js/components/hottextunit.reel",
+                "name": "HotTextUnit",
+                "properties": {
+                    "element": {"#": "strokeAngle"},
+                    "minValue": -90,
+                    "maxValue": 90,
+                    "value": 0,
+                    "decimalPlace": 10,
+                    "acceptableUnits" : ["px", "pt"]
+                }
+            },
 
             "owner": {
                 "module": "js/components/tools-properties/brush-properties.reel",
                 "name": "BrushProperties",
                 "properties": {
-                    "element": {"#": "brushProperties"}
+                    "element": {"#": "brushProperties"},
+                    "_strokeSize": {"@": "strokeSizeHT"},
+                    "_strokeHardness": {"@": "strokeHardnessHT"},
+                    "_doSmoothing": {"#": "doSmoothing"},
+                    "_useCalligraphic":{"#": "useCalligraphic"},
+                    "_strokeAngle": {"@": "strokeAngleHT"}
                 }
             }
     	}
@@ -26,6 +69,17 @@
 
     <body>
         <div id="brushProperties" class="subToolHolderPanel">
+            <div id="strokesContainer" class="leftLabel" style="margin-left:25px; padding-top: 3px;">
+                <label class="label"> Width:</label>
+                <div id="strokeSize" class="label"></div>
+                <label class="label"> Hardness:</label>
+                <div id="strokeHardness" class="label"></div>
+                <label class="label"><input id="doSmoothing" type="checkbox" name="doSmoothingControl" class="checkBoxAlign"/>Smoothing</label>
+                <label class="label"><input id="useCalligraphic" type="checkbox" name="useCalligraphicControl" class="checkBoxAlign"/>Calligraphic</label>
+                <label class="label"> Angle:</label>
+                <div id="strokeAngle" class="label"></div>
+
+            </div>
         </div>
     </body>
 

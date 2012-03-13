@@ -22,7 +22,7 @@ function WaterMaterial()
 	this._name = "WaterMaterial";
 	this._shaderName = "water";
 
-	this._texMap = 'assets/images/rocky-normal.jpg';
+	this._texMap = 'assets/images/rocky-normal.jpg\n';
 
 	this._time = 0.0;
 	this._dTime = 0.01;
@@ -71,7 +71,7 @@ function WaterMaterial()
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = createMaterialNode("waterMaterial");
+		this._materialNode = createMaterialNode("waterMaterial_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;

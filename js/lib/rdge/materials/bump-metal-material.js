@@ -75,7 +75,7 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
     this.setProperty = function( prop, value )
 	{
 		// every material should do something with the "color" property
-		if (prop === "color")  prop = "lightDiff";
+		if (prop === "color")  return;
 
 		// make sure we have legitimate imput
 		var ok = this.validateProperty( prop, value );
@@ -116,7 +116,7 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 		this._shader['default'].u_light0Diff.set( this.getLightDiff() );
 
 		// set up the material node
-		this._materialNode = createMaterialNode( this.getShaderName() );
+		this._materialNode = createMaterialNode( this.getShaderName() + "_" + world.generateUniqueNodeID() );
 		this._materialNode.setShader(this._shader);
 
 		// set some image maps
@@ -158,10 +158,14 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 		var exportStr = "material: " + this.getShaderName() + "\n";
 		exportStr += "name: " + this.getName() + "\n";
 
+		var world = this.getWorld();
+		if (!world)
+			throw new Error( "no world in material.export, " + this.getName() );
+
 		exportStr += "lightDiff: "			+ this.getLightDiff()		+ "\n";
 		exportStr += "diffuseTexture: "		+ this.getDiffuseTexture()	+ "\n";
 		exportStr += "specularTexture: "	+ this.getSpecularTexture()	+ "\n";
-		exportStr += "normalMap: "		+ this.getNormalTexture()	+ "\n";
+		exportStr += "normalMap: "			+ this.getNormalTexture()	+ "\n";
 
 		// every material needs to terminate like this
 		exportStr += "endMaterial\n";

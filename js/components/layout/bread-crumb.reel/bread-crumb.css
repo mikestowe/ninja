@@ -8,7 +8,7 @@
     background-color: #282828;
     border-style: double;
     height: 26px;
-
+    position:relative;
     -webkit-box-flex: 0;
 }
 

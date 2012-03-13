@@ -125,6 +125,10 @@ exports.StageView = Montage.create(Component, {
 
             this.application.ninja.documentController.activeDocument = doc;
 
+            if(this.application.ninja.documentController.activeDocument.currentView === "design") {
+                this.application.ninja.currentDocument = this.application.ninja.documentController.activeDocument;
+            }
+
             this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
             this.application.ninja.documentController._showCurrentDocument();
 
@@ -135,7 +139,6 @@ exports.StageView = Montage.create(Component, {
 
             if(this.application.ninja.documentController.activeDocument.currentView === "design") {
                 this.application.ninja.stage._scrollFlag = true; // TODO HACK to prevent type error on Hide/Show Iframe
-                this.application.ninja.currentDocument = this.application.ninja.documentController.activeDocument;
 
                 //reinitialize draw-util, snapmanager and view-util
                 this.application.ninja.stage.stageDeps.reinitializeForSwitchDocument();
