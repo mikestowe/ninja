@@ -166,6 +166,8 @@ function GLRectangle()
 			rtnStr += "flatMaterial";
 		rtnStr += "\n";
 
+		rtnStr += this.exportMaterials();
+
 		return rtnStr;
 	}
 

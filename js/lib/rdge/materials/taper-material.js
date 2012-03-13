@@ -42,8 +42,10 @@ function TaperMaterial()
 	// duplcate method requirde
 	this.dup = function()	{  return new TaperMaterial();	} 
 
-	this.init = function()
+	this.init = function( world )
 	{
+		this.setWorld( world );
+
 		// set up the shader
 		this._shader = new jshader();
 		this._shader.def = taperShaderDef;
@@ -53,7 +55,7 @@ function TaperMaterial()
 		this._shader.colorMe.color.set( this.getColor() );
 
 		// set up the material node
-		this._materialNode = createMaterialNode("taperMaterial");
+		this._materialNode = createMaterialNode("taperMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		// initialize the taper properties
@@ -102,7 +104,7 @@ function TaperMaterial()
 		exportStr += "name: " + this.getName() + "\n";
 		
 		if (this._shader)
-			exportStr += "color: " + String(this._shader.colorMe.color) + "\n";
+			exportStr += "color: " + this._shader.colorMe.color + "\n";
 		else
 			exportStr += "color: " + this.getColor() + "\n";
 		exportStr += "endMaterial\n";

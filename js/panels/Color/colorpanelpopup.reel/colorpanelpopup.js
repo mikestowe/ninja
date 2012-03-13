@@ -405,7 +405,7 @@ exports.ColorPanelPopup = Montage.create(Component, {
     //
     defaultGradient: {
     	enumerable: true,
-    	value: {mode: 'linear', stops: [{mode: 'rgb', value: {r: 255, g: 255, b: 255, a: 1, css: 'rgb(255, 255, 255)'}, position: 0}, {mode: 'rgb', value: {r: 0, g: 0, b: 0, a: 1, css: 'rgb(0, 0, 0)'}, position: 100}]}
+    	value: {mode: 'linear', gradientMode: 'linear', stops: [{mode: 'rgb', value: {r: 255, g: 255, b: 255, a: 1, css: 'rgb(255, 255, 255)'}, position: 0}, {mode: 'rgb', value: {r: 0, g: 0, b: 0, a: 1, css: 'rgb(0, 0, 0)'}, position: 100}]}
     },
     ////////////////////////////////////////////////////////////////////
     //
