@@ -467,9 +467,9 @@ exports.PenTool = Montage.create(ShapeTool, {
                     if (this.application.ninja.colorController.colorToolbar.stroke.webGlColor){
                         this._selectedSubpath.setStrokeColor(this.application.ninja.colorController.colorToolbar.stroke.webGlColor);
                     }
-                    if (this.application.ninja.colorController.colorToolbar.fill.webGlColor){
-                        this._selectedSubpath.setFillColor(this.application.ninja.colorController.colorToolbar.fill.webGlColor);
-                    }
+                    //if (this.application.ninja.colorController.colorToolbar.fill.webGlColor){
+                    //    this._selectedSubpath.setFillColor(this.application.ninja.colorController.colorToolbar.fill.webGlColor);
+                    //}
                 } //if this is a new path being rendered
 
                 this._selectedSubpath.makeDirty();

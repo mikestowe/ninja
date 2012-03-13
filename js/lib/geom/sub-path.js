@@ -73,7 +73,7 @@ var GLSubpath = function GLSubpath() {
     this._materialAmbient = [0.2, 0.2, 0.2, 1.0];
     this._materialDiffuse = [0.4, 0.4, 0.4, 1.0];
     this._materialSpecular = [0.4, 0.4, 0.4, 1.0];
-    this._fillColor = [0.4, 0.4, 0.4, 1.0];
+    this._fillColor = [1.0, 1.0, 1.0, 0.0];
     this._fillMaterial = null;
     this._DISPLAY_ANCHOR_RADIUS = 5;
     //drawing context
