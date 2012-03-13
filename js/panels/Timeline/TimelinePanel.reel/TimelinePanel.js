@@ -363,11 +363,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     if(this.application.ninja.currentDocument.documentRoot.children[0]) {
                     	// Yes, it has DOM elements. Loop through them and create a new
                     	// object for each.
-                        myIndex=0;
-                        while(this.application.ninja.currentDocument.documentRoot.children[myIndex]) {
+                        for(myIndex=0;this.application.ninja.currentDocument.documentRoot.children[myIndex];myIndex++) {
                             this._openDoc=true;
                             this.restoreLayer(this.application.ninja.currentDocument.documentRoot.children[myIndex]);
-                            myIndex++;
                         }
                     } else {
                     	// No, it has no DOM elements. Build an empty layer object.
@@ -641,28 +639,26 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             if (object._undoStatus) {
                 if (object._el.parentElementUUID !== this.application.ninja.currentSelectedContainer.uuid) {
                     dLayer = this.hashInstance.getItem(object._el.parentElementUUID);
-                    while (dLayer[hashVariable]) {
-                        if (dLayer[hashVariable].layerData._layerID === object._el._layerID) {
-                            dLayer[hashVariable].layerData.deleted = false;
+                    for(hashVariable=0;dLayer[hashVariable];hashVariable++) {
+                        if (dLayer[hashVariable]._layerID === object._el._layerID) {
+                            dLayer[hashVariable].deleted = false;
                             parentNode = dLayer[hashVariable].parentElement;
                             break;
                         }
-                        hashVariable++;
                     }
                     this.application.ninja.currentSelectedContainer = parentNode;
                     this.LayerBinding(parentNode);
                 } else {
                     dLayer = this.hashInstance.getItem(object._el.parentElementUUID);
-                    while (dLayer[hashVariable].layerData) {
-                        if (dLayer[hashVariable].layerData._layerID === object._el._layerID) {
-                            dLayer[hashVariable].layerData.deleted = false;
+                    for(hashVariable=0;dLayer[hashVariable];hashVariable++) {
+                        if (dLayer[hashVariable]._layerID === object._el._layerID) {
+                            dLayer[hashVariable].deleted = false;
 
                             this.arrLayers.splice(object._layerPosition, 0, object._el);
                             this.selectLayer(object._layerPosition);
                             break;
 
                         }
-                        hashVariable++;
                     }
                 }
             } else {
@@ -720,12 +716,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:function (ele) {
             var hashIndex = 0 ,layerResult;
             if (this._hashFind) {
-                while (layerResult = this.returnedObject[hashIndex]) {
+                for (layerResult = this.returnedObject[hashIndex];layerResult;hashIndex++) {
                     if (layerResult.layerData.deleted !== true) {
                         this.arrLayers.push(layerResult);
 
                     }
-                    hashIndex++;
                 }
                 this._hashFind = false;
             }else {
@@ -746,10 +741,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     thingToPush.layerData.elementsList.push(ele);
                 }
 
-
+                    this.temparrLayers.push(thingToPush);
                     thingToPush.layerData.trackPosition = this.temparrLayers.length - 1;
                     thingToPush.layerData.layerPosition = this.temparrLayers.length - 1;
-                    this.temparrLayers.push(thingToPush);
                     this.hashInstance.setItem(this.hashKey, thingToPush.layerData, thingToPush.layerData.layerPosition);
 
                 if(this._openDoc) {
@@ -768,31 +762,30 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     deleteLayer:{
         value:function (object) {
-            var dLayer,parentNode, hashVariable = 0, k = 0, index = 0, j = 0;
+            var dLayer,parentNode, hashVariable = 0, k = 0, index = 0, j = 0,a=0;
             if (this.arrLayers.length > 0) {
                 if (object._undoStatus) {
                    if (object._el.parentElementUUID !== this.application.ninja.currentSelectedContainer.uuid) {
                         dLayer = this.hashInstance.getItem(object._el.parentElementUUID);
-                        while (dLayer[hashVariable].layerData) {
-                            if (dLayer[hashVariable].layerData._layerID === object._el._layerID) {
-                                dLayer[hashVariable].layerData.deleted = true;
+                         for(hashVariable=0;dLayer[hashVariable];hashVariable++) {
+                            if (dLayer[hashVariable]._layerID === object._el._layerID) {
+                                dLayer[hashVariable].deleted = true;
                                 parentNode = dLayer[hashVariable].parentElement;
                                 break;
                             }
-                            hashVariable++;
                         }
                         this.application.ninja.currentSelectedContainer = parentNode;
                         this.LayerBinding(parentNode);
                     }
                     else {
                         dLayer = this.hashInstance.getItem(object._el.parentElementUUID);
-                        while (dLayer[hashVariable].layerData) {
-                            if (dLayer[hashVariable].layerData.deleted === true) {
+                       for(hashVariable=0;dLayer[hashVariable];hashVariable++) {
+                            if (dLayer[hashVariable].deleted === true) {
 
-                            } else if (dLayer[hashVariable].layerData._layerID === object._el._layerID) {
+                            } else if (dLayer[hashVariable]._layerID === object._el._layerID) {
                                 while (this.arrLayers.length) {
-                                    if (dLayer[hashVariable].layerData._layerID === this.arrLayers[k].layerData._layerID) {
-                                        dLayer[hashVariable].layerData.deleted = true;
+                                    if (dLayer[hashVariable]._layerID === this.arrLayers[k].layerData._layerID) {
+                                        dLayer[hashVariable].deleted = true;
                                         this.arrLayers.splice(k, 1);
                                         if(k>0){
                                             this.selectLayer(k-1);
@@ -804,7 +797,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                                     k++;
                                 }
                             }
-                            hashVariable++;
                         }
                     }
                 } else {
@@ -814,16 +806,24 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                         var myIndex = this.layerRepetition.selectedIndexes[0];
                         this._LayerUndoObject = this.arrLayers[myIndex];
 
-						// Deleting a layer should delete associated elements, 
-						// But the hash tables are messed up.
-						// TODO: Kruti can you fix this?
-                        //dLayer = this.hashInstance.getItem(this.hashKey);
-                        //dLayer[myIndex].layerData.deleted = true;
-                        // ElementMediator.deleteElements(dLayer[myIndex].layerData.elementsList);
+                        dLayer = this.hashInstance.getItem(this.hashKey);
 
-                        this.arrLayers.splice(myIndex, 1);
-                        this._LayerUndoIndex = this._LayerUndoObject.layerData.layerID;
-                        this._LayerUndoPosition = myIndex;
+                        for(hashVariable=0;dLayer[hashVariable];hashVariable++){
+                            if(this.currentLayerSelected.layerData.layerID===dLayer[hashVariable].layerID){
+                                var arrLayerLength=this.arrLayers.length;
+                                for(var index=0;index<arrLayerLength;index++){
+                                      if(this.arrLayers[index].layerData.layerID===dLayer[hashVariable].layerID){
+                                          dLayer[hashVariable].deleted = true;
+                                          ElementMediator.deleteElements(dLayer[hashVariable].elementsList);
+                                          this.arrLayers.splice(index, 1);
+                                          break;
+                                      }
+                                }
+
+                        }
+                    }
+//                        this._LayerUndoIndex = this._LayerUndoObject.layerData.layerID;
+//                        this._LayerUndoPosition = myIndex;
                     }
                 }
             }
@@ -851,10 +851,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     handleElementDeleted:{
         value:function (event) {
-            var length;
+            var length,lengthVal;
             this.deleteElement = event.detail;
-            length = this.currentLayerSelected.layerData.elementsList.length - 1;
-            while (length >= 0) {
+            lengthVal = this.currentLayerSelected.layerData.elementsList.length - 1;
+            for (length = lengthVal ;length >= 0 ;length--) {
                 if (this.currentLayerSelected.layerData.elementsList[length] === this.deleteElement) {
                     this.currentLayerSelected.layerData.elementsList.splice(length, 1);
                     break;
@@ -924,14 +924,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                         }
                         if (hashLayerObject[key][index] !== undefined) {
 
-                            this.counter = index;
-                            while (hashLayerObject[key][this.counter]) {
-                                this.counter++;
+
+                            for(this.counter = index ;hashLayerObject[key][this.counter];this.counter++) {
                             }
 
-                            while (this.counter !== index) {
+                            for(;this.counter !== index;this.counter--) {
                                 hashLayerObject[key][this.counter] = hashLayerObject[key][this.counter - 1];
-                                this.counter = this.counter - 1;
                             }
                         }
                         hashLayerObject[key][index] = value;
@@ -989,7 +987,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                           }
                           this.mappingArray[key]["ele"] = value;
                           this.mappingArray[key].layerID = layer.layerData.layerID;
-
                           }
                       },
 
