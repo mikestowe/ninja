@@ -584,6 +584,90 @@ GLSubpath.prototype.pickAnchor = function (pickX, pickY, pickZ, radius) {
     return selAnchorIndex;
 };
 
+GLSubpath.prototype.isWithinBBox =function(x,y,z){
+    if (this._BBoxMin[0]>x || this._BBoxMin[1]>y || this._BBoxMin[2]>z){
+        return false;
+    }
+    if (this._BBoxMax[0]<x || this._BBoxMax[1]<y || this._BBoxMax[2]<z){
+        return false;
+    }
+    return true;
+}
+
+//pick the path point closest to the specified location, return null if some anchor point (or its handles) is within radius, else return the parameter distance
+GLSubpath.prototype.pathHitTest = function (pickX, pickY, pickZ, radius) {
+    var numAnchors = this._Anchors.length;
+    var selAnchorIndex = -1;
+    var retParam = null;
+    var radSq = radius * radius;
+    var minDistance = Infinity;
+
+    //check if the location is close to the currently selected anchor position
+    if (this._selectedAnchorIndex>=0 && this._selectedAnchorIndex<this._Anchors.length){
+        var distSq = this._Anchors[this._selectedAnchorIndex].getDistanceSq(pickX, pickY, pickZ);
+        //check the anchor point
+        if (distSq < minDistance && distSq < radSq) {
+            selAnchorIndex = this._selectedAnchorIndex;
+            minDistance = distSq;
+        }
+    }
+    //check the prev and next of the selected anchor if the above did not register a hit
+    if (this._selectedAnchorIndex>=0 && selAnchorIndex === -1) {
+        var distSq = this._Anchors[this._selectedAnchorIndex].getPrevDistanceSq(pickX, pickY, pickZ);
+        if (distSq < minDistance && distSq < radSq){
+            selAnchorIndex = this._selectedAnchorIndex;
+            minDistance = distSq;
+        } else {
+            //check the next for this anchor point
+            distSq = this._Anchors[this._selectedAnchorIndex].getNextDistanceSq(pickX, pickY, pickZ);
+            if (distSq<minDistance && distSq<radSq){
+                selAnchorIndex = this._selectedAnchorIndex;
+                minDistance = distSq;
+            }
+        }
+    }
+
+    //now check if the location is close to any anchor position
+    if (selAnchorIndex===-1) {
+        for (var i = 0; i < numAnchors; i++) {
+            var distSq = this._Anchors[i].getDistanceSq(pickX, pickY, pickZ);
+            //check the anchor point
+            if (distSq < minDistance && distSq < radSq) {
+                selAnchorIndex = i;
+                minDistance = distSq;
+            }
+        }//for every anchor i
+    }
+
+    //finally check if the location is close to the curve itself
+    if (selAnchorIndex===-1) {
+        //first check if the input location is within the bounding box
+        if (this.isWithinBBox(pickX,pickY,pickZ)){
+            var numSegments = this._isClosed ? numAnchors : numAnchors-1;
+            for (var i = 0; i < numSegments; i++) {
+                var nextIndex = (i+1)%numAnchors;
+                //check if the point is close to the bezier segment between anchor i and anchor nextIndex
+                var controlPoints = [[this._Anchors[i].getPosX(),this._Anchors[i].getPosY(),this._Anchors[i].getPosZ()],
+                    [this._Anchors[i].getNextX(),this._Anchors[i].getNextY(),this._Anchors[i].getNextZ()],
+                    [this._Anchors[nextIndex].getPrevX(),this._Anchors[nextIndex].getPrevY(),this._Anchors[nextIndex].getPrevZ()],
+                    [this._Anchors[nextIndex].getPosX(),this._Anchors[nextIndex].getPosY(),this._Anchors[nextIndex].getPosZ()]];
+                var point = [pickX, pickY, pickZ];
+                if (this._isWithinBoundingBox(point, controlPoints, radius)) {
+                    //var intersectParam = this._checkIntersection(controlPoints, 0.0, 1.0, point, radius);
+                    var intersectParam = this._checkIntersectionWithSamples(this._anchorSampleIndex[i], this._anchorSampleIndex[nextIndex], point, radius);
+                    console.log("intersectParam:"+intersectParam);
+                    if (intersectParam){
+                        selAnchorIndex=i;
+                        retParam = intersectParam-i; //make the retParam go from 0 to 1
+                        break;
+                    }
+                }
+            }//for every anchor i
+        }//if is within bbox
+    }
+    return [selAnchorIndex,retParam];
+}     //GLSubpath.pathHitTest function
+
 //pick the path point closest to the specified location, return null if some anchor point (or its handles) is within radius, else return the parameter distance
 GLSubpath.prototype.pickPath = function (pickX, pickY, pickZ, radius) {
     var numAnchors = this._Anchors.length;
