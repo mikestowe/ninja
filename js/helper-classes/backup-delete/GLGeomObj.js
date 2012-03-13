@@ -158,6 +158,52 @@ function GLGeomObj()
         return fillMaterial;
     }
 
+	this.exportMaterials = function()
+	{
+		var rtnStr = "";
+		if (this._materialArray && this._materialNodeArray)
+		{
+			var nMats = this._materialArray.length;
+			rtnStr += "nMaterials: " + nMats + "\n";
+			for (var i=0;  i<nMats;  i++)
+			{
+				var matNode  = this._materialNodeArray[i];
+				rtnStr += "materialNodeName: " + matNode.name + "\n";
+
+				var material = this._materialArray[i];
+				rtnStr += material.export();
+			}
+		}
+		else
+			rtnStr += "nMaterials: 0\n" ;
+
+		return rtnStr;
+	}
+
+	this.importMaterials = function(importStr)
+	{
+		var nMaterials = Number( this.getPropertyFromString( "nMaterials: ", importStr )  );
+		for (var i=0;  i<nMaterials;  i++)
+		{
+			var mat;
+			var materialType = this.getPropertyFromString( "material: ",	importStr );
+			switch (materialType)
+			{
+				case "flat":		mat = new FlatMaterial();		break;
+
+				default:
+					console.log( "material type: " + materialType + " is not supported" );
+					break;
+			}
+
+			if (mat)
+				mat.import( importStr );
+
+			var endIndex = importStr.indexOf( "endMaterial\n" );
+			if (endIndex < 0)  break;
+			importStr = importStr.substr( endIndex );
+		}
+	}
 
     this.translate   = function(v)
     {

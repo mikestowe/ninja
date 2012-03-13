@@ -64,6 +64,8 @@ exports.Preloader = Montage.create(Component, {
 				*/
 
 
+                {"type":"js", "url":"js/helper-classes/RDGE/runtime/RuntimeGeomObj.js"},
+                {"type":"js", "url":"js/helper-classes/RDGE/runtime/RuntimeMaterial.js"},
 
 
 

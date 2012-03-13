@@ -57,7 +57,7 @@ function TwistVertMaterial()
 		this._shader.twistMe.color.set( this.getColor() );
 
 		// set up the material node
-		this._materialNode = createMaterialNode("twistVertMaterial");
+		this._materialNode = createMaterialNode("twistVertMaterial_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		// initialize the twist vert properties

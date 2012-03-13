@@ -104,7 +104,7 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
             aModel.topLevelDirectories = topLevelDirectories;
 
             if(!!topLevelDirectories && !!topLevelDirectories[0]){
-                aModel.currentRoot = topLevelDirectories[0].uri;
+                aModel.currentRoot = aModel.currentLogicalDrive = topLevelDirectories[0].uri;
             }
 
             //populate the last opened folder first, if none then populate default root
