@@ -4,6 +4,20 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
+///////////////////////////////////////////////////////////////////////
+//Loading webGL/canvas data
+function initWebGl (rootElement, directory) {
+	var cvsDataMngr, ninjaWebGlData = JSON.parse((document.querySelectorAll(['script[data-ninja-webgl]'])[0].innerHTML.replace('(', '')).replace(')', ''));
+	if (ninjaWebGlData && ninjaWebGlData.data) {
+		for (var n=0; ninjaWebGlData.data[n]; n++) {
+			ninjaWebGlData.data[n] = unescape(ninjaWebGlData.data[n]);
+		}
+	}
+	//Creating data manager
+	cvsDataMngr = new CanvasDataManager();
+	//Loading data to canvas(es)
+	cvsDataMngr.loadGLData(rootElement, ninjaWebGlData.data, directory);
+}
 
 ///////////////////////////////////////////////////////////////////////
 // Class ShapeRuntime

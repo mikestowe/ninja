@@ -408,7 +408,7 @@ exports.IoMediator = Montage.create(Component, {
     			if (!webgllibtag) {
     				webgllibtag = template.document.content.document.createElement('script');
     				webgllibtag.setAttribute('type', 'text/javascript');
-    				webgllibtag.setAttribute('src', rdgeDirName+'/CanvasRuntime.js');
+    				webgllibtag.setAttribute('src', rdgeDirName+'/canvas-runtime.js');
     				webgllibtag.setAttribute('data-ninja-webgl-lib', 'true');
     				template.document.content.document.head.appendChild(webgllibtag);
     			}
@@ -418,7 +418,7 @@ exports.IoMediator = Montage.create(Component, {
     				webgltag.setAttribute('data-ninja-webgl', 'true');
     				template.document.content.document.head.appendChild(webgltag);
     			}
-    			//
+    			//TODO: Remove this tag and place inside JS file
     			if (!webgljstag) {
     				webgljstag = template.document.content.document.createElement('script');
     				webgljstag.setAttribute('type', 'text/javascript');
@@ -426,24 +426,17 @@ exports.IoMediator = Montage.create(Component, {
     				template.document.content.document.head.appendChild(webgljstag);
     			}
     			//TODO: Decide if this should be over-writter or only written on creation
+    			var rootElement = 'document.body'; //TODO: Set actual root element
     			webgljstag.innerHTML = "\
 //Loading webGL/canvas data on window load\n\
-window.addEventListener('load', initWebGl, false);\n\
-function initWebGl (e) {\n\
-	window.removeEventListener('load', initWebGl, false);\n\
-	var cvsDataMngr, ninjaWebGlData = JSON.parse((document.querySelectorAll(['script[data-ninja-webgl]'])[0].innerHTML.replace(\"(\", \"\")).replace(\")\", \"\"));\n\
-	if (ninjaWebGlData && ninjaWebGlData.data) {\n\
-		for (var n=0; ninjaWebGlData.data[n]; n++) {\n\
-			ninjaWebGlData.data[n] = unescape(ninjaWebGlData.data[n]);\n\
-		}\n\
-	}\n\
-	//Creating data manager\n\
-	cvsDataMngr = new CanvasDataManager();\n\
-	//Loading data to canvas(es)\n\
-	cvsDataMngr.loadGLData(document.body, ninjaWebGlData.data, '"+rdgeDirName+"/');\n\
+window.addEventListener('load', loadWebGL, false);\n\
+function loadWebGL (e) {\n\
+	window.removeEventListener('load', loadWebGL, false);\n\
+	//Calling method to initialize all webGL/canvas(es)\n\
+	initWebGl("+rootElement+", '"+rdgeDirName+"/');\n\
 }\
     			";
-    			//TODO: Add version and other data for RDGE
+    			//TODO: This data should be saved to a JSON file eventually
     			json = '\n({\n\t"version": "'+rdgeVersion+'",\n\t"directory": "'+rdgeDirName+'/",\n\t"data": [';
     			//Looping through data to create escaped array
     			for (var j=0; template.webgl[j]; j++) {
@@ -457,15 +450,6 @@ function initWebGl (e) {\n\
     			json += '\n\t\t]\n})\n';
     			//Setting string in tag
     			webgltag.innerHTML = json;
-    			/*
-webgltag.innerHTML = json.replace(/assets\//gi, webGlDirSwap);
-    			//
-    			function webGlDirSwap (dir) {
-    				return rdgeDirName+'/';
-    			}
-    			//
-    			console.log(webgltag.innerHTML);
-*/
     		}
     		//Cleaning URLs from HTML
     		var cleanHTML = template.document.content.document.documentElement.outerHTML.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaRootUrl.bind(this));
