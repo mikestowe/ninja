@@ -70,21 +70,10 @@ var NewFileWorkflowController =  exports.NewFileWorkflowController = Montage.cre
             var fileName = data.fileName || "filename.txt";
             var folderUri = data.folderUri || "/Documents";
 
-            //render modal dialog
-            var saveAsDialogContainer = document.createElement("div");
-            saveAsDialogContainer.id = "saveAsDialog";
-
-            //elements needs to be on DOM to be drawn
-            document.getElementById('modalContainer').appendChild(saveAsDialogContainer);
-
             var saveAsDialog = saveAsModule.SaveAsDialog.create();
             saveAsDialog.fileName = fileName;
             saveAsDialog.folderUri = folderUri;
             saveAsDialog.callback = data.callback;
-            saveAsDialog.element = saveAsDialogContainer;
-
-            //remove after rendering and add in modal dialog
-            document.getElementById('modalContainer').removeChild(saveAsDialogContainer);
 
             var popup = Popup.create();
             popup.content = saveAsDialog;
