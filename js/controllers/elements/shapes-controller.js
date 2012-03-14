@@ -100,6 +100,31 @@ exports.ShapesController = Montage.create(CanvasController, {
                         el.elementModel.shapeModel.GLWorld.render();
                     }
                     break;
+                case "strokeHardness":
+                    this.setShapeProperty(el, "strokeHardness", value);
+                    el.elementModel.shapeModel.GLGeomObj.setStrokeHardness(val);
+                    el.elementModel.shapeModel.GLWorld.render();
+                    break;
+                case "strokeSmoothing":
+                    this.setShapeProperty(el, "strokeSmoothing", value);
+                    el.elementModel.shapeModel.GLGeomObj.setSmoothingAmount(val);
+                    el.elementModel.shapeModel.GLWorld.render();
+                    break;
+                case "doSmoothing":
+                    this.setShapeProperty(el, "doSmoothing", value);
+                    el.elementModel.shapeModel.GLGeomObj.setDoSmoothing(value);
+                    el.elementModel.shapeModel.GLWorld.render();
+                    break;
+                case "isCalligraphic":
+                    this.setShapeProperty(el, "isCalligraphic", value);
+                    el.elementModel.shapeModel.GLGeomObj.setStrokeUseCalligraphic(value);
+                    el.elementModel.shapeModel.GLWorld.render();
+                    break;
+                case "strokeAngle":
+                    this.setShapeProperty(el, "strokeAngle", value);
+                    el.elementModel.shapeModel.GLGeomObj.setStrokeAngle(Math.PI * -val/180);
+                    el.elementModel.shapeModel.GLWorld.render();
+                    break;
                 default:
                     CanvasController.setProperty(el, p, value);
             }

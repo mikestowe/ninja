@@ -254,7 +254,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
                 var top = Math.round(midPt[1] - 0.5 * h);
 
                 if (!canvas) {
-                var newCanvas = NJUtils.makeNJElement("canvas", "Brushstroke", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
+                    var newCanvas = NJUtils.makeNJElement("canvas", "Brushstroke", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
                     var elementModel = TagTool.makeElement(w, h, planeMat, midPt, newCanvas);
                     ElementMediator.addElement(newCanvas, elementModel.data, true);
 
@@ -276,10 +276,37 @@ exports.BrushTool = Montage.create(ShapeTool, {
                         world.render();
                         //TODO this will not work if there are multiple shapes in the same canvas
                         newCanvas.elementModel.shapeModel.GLGeomObj = brushStroke;
+
+                        newCanvas.elementModel.shapeModel.shapeCount++;
+                        if(newCanvas.elementModel.shapeModel.shapeCount === 1)
+                        {
+                            newCanvas.elementModel.selection = "BrushStroke";
+                            newCanvas.elementModel.pi = "BrushStrokePi";
+                            newCanvas.elementModel.shapeModel.strokeSize = this.options.strokeSize.value + " " + this.options.strokeSize.units;
+                            var strokeColor = this._selectedBrushStroke.getStrokeColor();
+                            newCanvas.elementModel.shapeModel.stroke = strokeColor;
+                            if(strokeColor) {
+                                newCanvas.elementModel.shapeModel.border = this.application.ninja.colorController.colorToolbar.stroke;
+                            }
+                            newCanvas.elementModel.shapeModel.strokeMaterial = this._selectedBrushStroke.getStrokeMaterial();
+
+                            newCanvas.elementModel.shapeModel.GLGeomObj = brushStroke;
+                            newCanvas.elementModel.shapeModel.useWebGl = this.options.use3D;
+                        }
+                        else
+                        {
+                            // TODO - update the shape's info only.  shapeModel will likely need an array of shapes.
+                        }
+
+                        if(newCanvas.elementModel.isShape)
+                        {
+                            this.application.ninja.selectionController.selectElement(canvas);
+                        }
                     }
                 } //if (!canvas) {
                 else {
 
+                    /*
                     var world = null;
                     if (canvas.elementModel.shapeModel && canvas.elementModel.shapeModel.GLWorld) {
                         world = canvas.elementModel.shapeModel.GLWorld;
@@ -320,6 +347,8 @@ exports.BrushTool = Montage.create(ShapeTool, {
                         //TODO this will not work if there are multiple shapes in the same canvas
                         canvas.elementModel.shapeModel.GLGeomObj = brushStroke;
                     }
+                    */
+                    alert("BrushStroke cannot edit existing canvas");
                 } //else of if (!canvas) {
             } //value: function (w, h, planeMat, midPt, canvas) {
         }, //RenderShape: {

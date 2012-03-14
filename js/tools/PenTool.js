@@ -601,7 +601,33 @@ exports.PenTool = Montage.create(ShapeTool, {
 
                 world.addObject(subpath);
                 world.render();
+                //TODO this will not work if there are multiple shapes in the same canvas
                 newCanvas.elementModel.shapeModel.GLGeomObj = subpath;
+                newCanvas.elementModel.shapeModel.shapeCount++;
+                if(newCanvas.elementModel.shapeModel.shapeCount === 1)
+                {
+                    newCanvas.elementModel.selection = "Subpath";
+                    newCanvas.elementModel.pi = "SubpathPi";
+                    newCanvas.elementModel.shapeModel.strokeSize = this.options.strokeSize.value + " " + this.options.strokeSize.units;
+                    var strokeColor = subpath.getStrokeColor();
+                    newCanvas.elementModel.shapeModel.stroke = strokeColor;
+                    if(strokeColor) {
+                        newCanvas.elementModel.shapeModel.border = this.application.ninja.colorController.colorToolbar.stroke;
+                    }
+                    newCanvas.elementModel.shapeModel.strokeMaterial = this._selectedBrushStroke.getStrokeMaterial();
+
+                    newCanvas.elementModel.shapeModel.GLGeomObj = subpath;
+                    newCanvas.elementModel.shapeModel.useWebGl = this.options.use3D;
+                }
+                else
+                {
+                    // TODO - update the shape's info only.  shapeModel will likely need an array of shapes.
+                }
+
+                if(newCanvas.elementModel.isShape)
+                {
+                    this.application.ninja.selectionController.selectElement(newCanvas);
+                }
             } //if (!canvas) {
             else {
 

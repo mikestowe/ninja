@@ -18,9 +18,12 @@ var BrushStroke = function GLBrushStroke() {
     // Instance variables
     ///////////////////////////////////////////////////
     this._Points = [];
+    this._OrigPoints = [];
     this._BBoxMin = [0, 0, 0];
     this._BBoxMax = [0, 0, 0];
     this._dirty = true;
+    this._addedSamples = false;
+    this._storedOrigPoints = false;
 
     //whether or not to use the canvas drawing to stroke/fill
     this._useCanvasDrawing = true;
@@ -137,7 +140,8 @@ var BrushStroke = function GLBrushStroke() {
     };
     
     this.insertPoint = function(pt, index){
-        this._Points.splice(index, 0, pt); this._dirty=true;
+        this._Points.splice(index, 0, pt);
+        this._dirty=true;
     };
 
     this.isDirty = function(){
@@ -170,7 +174,7 @@ var BrushStroke = function GLBrushStroke() {
     };
 
     this.setStrokeMaterial = function (m) {
-        this._strokeMaterial = m;
+        this._strokeMaterial = m; this._dirty = true;
     };
 
     this.getStrokeColor = function () {
@@ -178,31 +182,47 @@ var BrushStroke = function GLBrushStroke() {
     };
 
     this.setStrokeColor = function (c) {
-        this._strokeColor = c;
+        this._strokeColor = c; this._dirty = true;
     };
 
     this.setSecondStrokeColor = function(c){
-        this._secondStrokeColor=c;
+        this._secondStrokeColor=c; this._dirty = true;
     }
 
     this.setStrokeHardness = function(h){
-        this._strokeHardness=h;
+        if (this._strokeHardness!==h){
+            this._strokeHardness=h;
+            this._dirty = true;
+        }
     }
 
     this.setDoSmoothing = function(s){
-        this._strokeDoSmoothing = s;
+        if (this._strokeDoSmoothing!==s) {
+            this._strokeDoSmoothing = s;
+            this._dirty = true;
+        }
     }
 
     this.setSmoothingAmount = function(a){
-        this._strokeAmountSmoothing = a;
+        if (this._strokeAmountSmoothing!==a) {
+            this._strokeAmountSmoothing = a;
+            this._dirty = true;
+        }
+
     }
 
     this.setStrokeUseCalligraphic = function(c){
-        this._strokeUseCalligraphic = c;
+        if (this._strokeUseCalligraphic!==c){
+            this._strokeUseCalligraphic = c;
+            this._dirty = true;
+        }
     }
 
     this.setStrokeAngle = function(a){
-        this._strokeAngle = a;
+        if (this._strokeAngle!==a){
+            this._strokeAngle = a;
+            this._dirty = true;
+        };
     }
 
     this.getStrokeStyle = function () {
@@ -221,133 +241,95 @@ var BrushStroke = function GLBrushStroke() {
 
     };//NO-OP for now
 
-
-    //remove and return anchor at specified index, return null on error
-    this.removePoint = function (index) {
-        var retAnchor = null;
-        if (index < this._Points.length) {
-            retPt = this._Points.splice(index, 1);
-            this._dirty=true;
-        }
-        return retPoint;
-    };
-
     //remove all the points
     this.clear = function () {
         this._Points = [];
+        this._OrigPoints = [];
         this._dirty=true;
     }
 
-    this.translate = function (tx, ty, tz) {
+    /*this.translate = function (tx, ty, tz) {
         for (var i=0;i<this._Points.length;i++){
             this._Points[i][0]+=tx;
             this._Points[i][1]+=ty;
             this._Points[i][2]+=tz;
         }
-    };
+        this._dirty = true;
+    };*/
 
     this.computeMetaGeometry = function() {
-        if (this._dirty) {
-            var numPoints = this._Points.length;
-
-            //**** add samples to the path if needed...linear interpolation for now
-            //if (numPoints>1) {
-            if (0){
-                var threshold = this._MAX_SAMPLE_DISTANCE_THRESHOLD;
-                var prevPt = this._Points[0];
-                var prevIndex = 0;
-                for (var i=1;i<numPoints;i++){
-                    var pt = this._Points[i];
-                    var diff = [pt[0]-prevPt[0], pt[1]-prevPt[1]];
-                    var distance = Math.sqrt(diff[0]*diff[0]+diff[1]*diff[1]);
-                    if (distance>threshold){
-                        //insert points along the prev. to current point
-                        var numNewPoints = Math.floor(distance/threshold);
-                        for (var j=0;j<numNewPoints;j++){
-                            var param = (j+1)/(numNewPoints+1);
-                            var newpt = [prevPt[0]+ diff[0]*param, prevPt[1]+ diff[1]*param];
-                            //insert new point before point i
-                            this._Points.splice(i, 0, [newpt[0], newpt[1], 0]);
-                            i++;
-                        }
-                        this._dirty=true;
-                    }
-                    prevPt=pt;
-                    //update numPoints to match the new length
-                    numPoints = this._Points.length;
-
-                    //end this function if the numPoints has gone above the max. size specified
-                    if (numPoints> this._MAX_ALLOWED_SAMPLES){
-                        console.log("leaving the resampling because numPoints is greater than limit:"+this._MAX_ALLOWED_SAMPLES);
-                        break;
-                    }
-                }
-            }
-
-            //instead of the following, may use 4-point subdivision iterations over continuous regions of 'long' segments
+        var numPoints = this._Points.length;
+        if (this._addedSamples === false){
+            //**** add samples to the long sections of the path --- Catmull-Rom spline interpolation *****
+            // instead of the following, may use 4-point subdivision iterations over continuous regions of 'long' segments
             // look at http://www.gvu.gatech.edu/~jarek/Split&Tweak/ for formula
-            //**** add samples to the long sections of the path --- Catmull-Rom spline interpolation
-            if (this._strokeDoSmoothing && numPoints>1) {
-                var numInsertedPoints = 0;
-                var newPoints = [];
-                var threshold = this._MAX_SAMPLE_DISTANCE_THRESHOLD;//this determines whether a segment between two sample is long enough to warrant checking for angle
-                var prevPt = this._Points[0];
-                newPoints.push(this._Points[0]);
-                for (var i=1;i<numPoints;i++){
-                    var pt = this._Points[i];
-                    var diff = [pt[0]-prevPt[0], pt[1]-prevPt[1]];
-                    var distance = Math.sqrt(diff[0]*diff[0]+diff[1]*diff[1]);
-                    if (distance>threshold){
-                        //build the control polygon for the Catmull-Rom spline (prev. 2 points and next 2 points)
-                        var prev = (i===1) ? i-1 : i-2;
-                        var next = (i===numPoints-1) ? i : i+1;
-                        var ctrlPts = [this._Points[prev], this._Points[i-1], this._Points[i], this._Points[next]];
-                        //insert points along the prev. to current point
-                        var numNewPoints = Math.floor(distance/threshold);
-                        for (var j=0;j<numNewPoints;j++){
-                            var param = (j+1)/(numNewPoints+1);
-                            var newpt = this._CatmullRomSplineInterpolate(ctrlPts, param);
-                            //insert new point before point i
-                            //this._Points.splice(i, 0, newpt);
-                            //i++;
-                            newPoints.push(newpt);
-                            numInsertedPoints++;
-                        }
-                        this._dirty=true;
-                    }
-                    newPoints.push(pt);
-                    prevPt=pt;
-                    //update numPoints to match the new length
-                    numPoints = this._Points.length;
 
-                    //end this function if the numPoints has gone above the max. size specified
-                    if (numPoints> this._MAX_ALLOWED_SAMPLES){
-                        console.log("leaving the resampling because numPoints is greater than limit:"+this._MAX_ALLOWED_SAMPLES);
-                        break;
+            var numInsertedPoints = 0;
+            var newSampledPoints = [];
+            var threshold = this._MAX_SAMPLE_DISTANCE_THRESHOLD;//this determines whether a segment between two sample is long enough to warrant checking for angle
+            var prevPt = this._Points[0];
+            newSampledPoints.push(this._Points[0]);
+            for (var i=1;i<numPoints;i++) {
+                var pt = this._Points[i];
+                var diff = [pt[0]-prevPt[0], pt[1]-prevPt[1]];
+                var distance = Math.sqrt(diff[0]*diff[0]+diff[1]*diff[1]);
+                if (distance>threshold){
+                    //build the control polygon for the Catmull-Rom spline (prev. 2 points and next 2 points)
+                    var prev = (i===1) ? i-1 : i-2;
+                    var next = (i===numPoints-1) ? i : i+1;
+                    var ctrlPts = [this._Points[prev], this._Points[i-1], this._Points[i], this._Points[next]];
+                    //insert points along the prev. to current point
+                    var numNewPoints = Math.floor(distance/threshold);
+                    for (var j=0;j<numNewPoints;j++){
+                        var param = (j+1)/(numNewPoints+1);
+                        var newpt = this._CatmullRomSplineInterpolate(ctrlPts, param);
+                        newSampledPoints.push(newpt);
+                        numInsertedPoints++;
                     }
                 }
-                this._Points = newPoints;
-                numPoints = this._Points.length;
-                console.log("Inserted "+numInsertedPoints+" additional CatmullRom points");
+                newSampledPoints.push(pt);
+                prevPt=pt;
 
-                //now do 3-4 iterations of Laplacian smoothing (setting the points to the average of their neighbors)
-                var numLaplacianIterations = this._strokeAmountSmoothing; 
+                //end this function if the numPoints has gone above the max. size specified
+                //if (numPoints> this._MAX_ALLOWED_SAMPLES){
+                //    console.log("leaving the resampling because numPoints is greater than limit:"+this._MAX_ALLOWED_SAMPLES);
+                //    break;
+                //}
+            }
+            this._Points = newSampledPoints.slice(0);
+            newSampledPoints = [];
+            console.log("Inserted "+numInsertedPoints+" additional CatmullRom points");
+            this._addedSamples = true;
+            this._dirty=true;
+        }
+        //build a copy of the original points...this should be done only once
+        if (this._storedOrigPoints === false) {
+            this._OrigPoints = this._Points.slice(0);
+            this._storedOrigPoints = true;
+        }
+
+        if (this._dirty) {
+            this._Points = this._OrigPoints.slice(0);
+            numPoints = this._Points.length;
+            if (this._strokeDoSmoothing && numPoints>1) {
+                //iterations of Laplacian smoothing (setting the points to the average of their neighbors)
+                var numLaplacianIterations = this._strokeAmountSmoothing;
                 for (var n=0;n<numLaplacianIterations;n++){
-                    newPoints = this._Points;
-                    for (var i=1;i<numPoints-1;i++){
+                    var newPoints = this._Points;//.slice(0);
+                    for (var i=1;i<numPoints-1;i++) {
                         var avgPos = [  0.5*(this._Points[i-1][0] + this._Points[i+1][0]),
                                         0.5*(this._Points[i-1][1] + this._Points[i+1][1]),
                                         0.5*(this._Points[i-1][2] + this._Points[i+1][2])] ;
                         newPoints[i] = avgPos;
                     }
-                    this._Points = newPoints;
+                    this._Points = newPoints;//.slice(0);
                 }
-            }
+            } //if we're doing smoothing
+            
 
             // *** compute the bounding box *********
             this._BBoxMin = [Infinity, Infinity, Infinity];
             this._BBoxMax = [-Infinity, -Infinity, -Infinity];
-            numPoints = this._Points.length;
             if (numPoints === 0) {
                 this._BBoxMin = [0, 0, 0];
                 this._BBoxMax = [0, 0, 0];
