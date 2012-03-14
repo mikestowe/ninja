@@ -17,13 +17,11 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "element" : {"#" : "branch"},
                 "label" : { "@" : "textComponent" },
                 "branchList": {"#" : "branchList"},
-                "styleListDisclosure": {"#": "style-list-disclosure"},
                 "arrayController": {"@": "arrayController" },
                 "repetition": {"@": "repetition"},
                 "leafComponent": {"@": "leaf"},
                 "branchComponent": {"@": "branch"},
-                "branchCollapser": {"#": "collapser"}
-
+                "branchCollapser": {"#": "collapser" }
             }
         },
 
@@ -148,6 +146,15 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                     "boundObjectPropertyPath": "objectAtCurrentIteration.treeNodeType",
                     "oneway": true
                 }
+            }
+        },
+
+        "collapser" : {
+            "module": "js/panels/collapse-composer",
+            "name": "CollapseComposer",
+            "properties" : {
+                "element": {"#":"collapser"},
+                "component": {"@": "repetition"}
             }
         }
     }

@@ -29,7 +29,6 @@ var styleShorthand = exports.StyleShorthand= Montage.create(TreeNode, {
             this.arrayController.delegate = this.treeView.contentController;
 
             this.branchCollapser.removeAttribute('id');
-            this.branchCollapser.addEventListener('click', this, false);
         }
     },
     willDraw : {
