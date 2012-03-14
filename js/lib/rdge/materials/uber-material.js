@@ -477,7 +477,7 @@ var UberMaterial = function UberMaterial() {
 		if(environmentMap)
 		{
 			this.setProperty( "environmentMap", environmentMap );
-			this.setProperty( "environmentAmount", Number( pu.nextValue( "envReflection" ) ) );
+			this.setProperty( "environmentAmount", Number( pu.nextValue( "environmentAmount" ) ) );
 		}
 
 		this.rebuildShader();
@@ -495,10 +495,10 @@ var UberMaterial = function UberMaterial() {
 		if (typeof caps.material != 'undefined')
 		{
 			exportStr += "materialProps: true\n";
-			exportStr += "ambientColor: " + caps.material.ambientColor + "\n";
-			exportStr += "diffuseColor: " + caps.material.diffuseColor + "\n";
-			exportStr += "specularColor: " + caps.material.specularColor + "\n";
-			exportStr += "specularPower: " + caps.material.specularPower + "\n";
+			exportStr += "ambientColor: " + this._ambientColor + "\n";
+			exportStr += "diffuseColor: " + this._diffuseColor + "\n";
+			exportStr += "specularColor: " + this._specularColor + "\n";
+			exportStr += "specularPower: " + this._specularPower + "\n";
 		}
 
 		if (typeof caps.lighting != 'undefined')
@@ -559,7 +559,7 @@ var UberMaterial = function UberMaterial() {
 		if(typeof caps.environmentMap != 'undefined')
 		{
 			exportStr += "environmentMap: " + caps.environmentMap.texture + "\n";
-			exportStr += "envReflection: " + caps.environmentMap.envReflection + "\n";
+			exportStr += "environmentAmount: " + caps.environmentMap.envReflection + "\n";
 		}
 		
 		// every material needs to terminate like this

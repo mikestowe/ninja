@@ -218,6 +218,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 					cdm.loadGLData(elt,  value,  null );
 					*/
 
+					// /*
 					var importStr = value[i];
 					var startIndex = importStr.indexOf( "id: " );
 					if (startIndex >= 0) {
@@ -244,6 +245,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 							}
 						}
 					}
+					// */
 				}
 			}
 		}
