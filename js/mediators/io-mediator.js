@@ -355,13 +355,21 @@ exports.IoMediator = Montage.create(Component, {
 		    		if (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'RDGE') {
 		    			rdgeDirName = (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name+this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version).toLowerCase();
     					rdgeVersion = this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version;
-    					this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.document.root, rdgeDirName);
+    					this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.document.root, rdgeDirName, hackRename.bind(this));
+    					//TODO: Remove, this is copying the library into a static name
+    					function hackRename (status) {
+    						if (status) {
+    							setTimeout(function () {
+    								this.application.ninja.coreIoApi.copyDirectory({sourceUri: template.document.root+rdgeDirName, destUri: template.document.root+'assets'});
+    							}.bind(this), 3000);
+    						}
+    					}
     				} else {
     					//TODO: Error handle no available library to copy
     				}
     			}
     			//
-    			var json, matchingtags = [], webgltag, scripts = template.document.content.document.getElementsByTagName('script'), webgljstag, webgllibtag;
+    			var json, matchingtags = [], webgltag, scripts = template.document.content.document.getElementsByTagName('script'), webgljstag, webgllibtag, webglrdgetag;
     			//
     			for (var i in scripts) {
     				if (scripts[i].getAttribute) {
@@ -373,6 +381,9 @@ exports.IoMediator = Montage.create(Component, {
     					}
     					if (scripts[i].getAttribute('data-ninja-webgl-lib') !== null) {
     						webgllibtag = scripts[i]; // TODO: Add logic to delete unneccesary tags
+    					}
+    					if (scripts[i].getAttribute('data-ninja-webgl-rdge') !== null) {
+    						webglrdgetag = scripts[i]; // TODO: Add logic to delete unneccesary tags
     					}
     				}
     			}
@@ -386,10 +397,18 @@ exports.IoMediator = Montage.create(Component, {
     				}
     			}
     			//
+    			if (!webglrdgetag) {
+    				webglrdgetag = template.document.content.document.createElement('script');
+    				webglrdgetag.setAttribute('type', 'text/javascript');
+    				webglrdgetag.setAttribute('src', rdgeDirName+'/rdge-compiled.js');
+    				webglrdgetag.setAttribute('data-ninja-webgl-rdge', 'true');
+    				template.document.content.document.head.appendChild(webglrdgetag);
+    			}
+    			//
     			if (!webgllibtag) {
     				webgllibtag = template.document.content.document.createElement('script');
     				webgllibtag.setAttribute('type', 'text/javascript');
-    				webgllibtag.setAttribute('src', rdgeDirName+'/CanvasDataManager.js');
+    				webgllibtag.setAttribute('src', rdgeDirName+'/canvas-runtime.js');
     				webgllibtag.setAttribute('data-ninja-webgl-lib', 'true');
     				template.document.content.document.head.appendChild(webgllibtag);
     			}
@@ -399,7 +418,7 @@ exports.IoMediator = Montage.create(Component, {
     				webgltag.setAttribute('data-ninja-webgl', 'true');
     				template.document.content.document.head.appendChild(webgltag);
     			}
-    			//
+    			//TODO: Remove this tag and place inside JS file
     			if (!webgljstag) {
     				webgljstag = template.document.content.document.createElement('script');
     				webgljstag.setAttribute('type', 'text/javascript');
@@ -407,25 +426,18 @@ exports.IoMediator = Montage.create(Component, {
     				template.document.content.document.head.appendChild(webgljstag);
     			}
     			//TODO: Decide if this should be over-writter or only written on creation
+    			var rootElement = 'document.body'; //TODO: Set actual root element
     			webgljstag.innerHTML = "\
 //Loading webGL/canvas data on window load\n\
-window.addEventListener('load', initWebGl, false);\n\
-function initWebGl (e) {\n\
-	window.removeEventListener('load', initWebGl, false);\n\
-	var cvsDataMngr, ninjaWebGlData = JSON.parse((document.querySelectorAll(['script[data-ninja-webgl]'])[0].innerHTML.replace(\"(\", \"\")).replace(\")\", \"\"));\n\
-	if (ninjaWebGlData && ninjaWebGlData.data) {\n\
-		for (var n=0; ninjaWebGlData.data[n]; n++) {\n\
-			ninjaWebGlData.data[n] = unescape(ninjaWebGlData.data[n]);\n\
-		}\n\
-	}\n\
-	//Creating data manager\n\
-	cvsDataMngr = new CanvasDataManager();\n\
-	//Loading data to canvas(es)\n\
-	cvsDataMngr.loadGLData(document.body, ninjaWebGlData, '"+rdgeDirName+"');\n\
+window.addEventListener('load', loadWebGL, false);\n\
+function loadWebGL (e) {\n\
+	window.removeEventListener('load', loadWebGL, false);\n\
+	//Calling method to initialize all webGL/canvas(es)\n\
+	initWebGl("+rootElement+", '"+rdgeDirName+"/');\n\
 }\
     			";
-    			//TODO: Add version and other data for RDGE
-    			json = '\n({\n\t"version": "'+rdgeVersion+'",\n\t"data": [';
+    			//TODO: This data should be saved to a JSON file eventually
+    			json = '\n({\n\t"version": "'+rdgeVersion+'",\n\t"directory": "'+rdgeDirName+'/",\n\t"data": [';
     			//Looping through data to create escaped array
     			for (var j=0; template.webgl[j]; j++) {
     				if (j === 0) {

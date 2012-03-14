@@ -89,6 +89,8 @@ stateManager = function()
 g_enableBenchmarks = true;
 function Engine()
 {
+	this._assetPath = "assets/";
+
     // map of scene graphs to names
     this.sceneMap = [];
     
@@ -227,6 +229,19 @@ function Engine()
 	    this.objects[i].ctxStateManager.tick(dt);
 	    contextManager.currentCtx = savedCtx;
 
+	}
+
+	this.remapAssetFolder = function( url )
+	{
+		var searchStr = "assets/";
+		var index = url.indexOf( searchStr );
+		var rtnPath = url;
+		if (index >= 0)
+		{
+			rtnPath = url.substr( index + searchStr.length );
+			rtnPath = this._assetPath + rtnPath;
+		}
+		return rtnPath;
 	}
     
 }

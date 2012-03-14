@@ -32,12 +32,23 @@ var BrushStroke = function GLBrushStroke() {
     //stroke information
     this._strokeWidth = 0.0;
     this._strokeColor = [0.4, 0.4, 0.4, 1.0];
+    this._secondStrokeColor = [1, 0.4, 0.4, 1.0];
+    this._strokeHardness = 100;
     this._strokeMaterial = null;
     this._strokeStyle = "Solid";
+    this._strokeDoSmoothing = false;
+    this._strokeUseCalligraphic = false;
+    this._strokeAngle = 0;
 
     //the wetness of the brush (currently this is multiplied to the square of the stroke width, but todo should be changed to not depend on stroke width entirely
     //smaller value means more samples for the path
     this._WETNESS_FACTOR = 0.25;
+
+    //threshold that tells us whether two samples are too far apart
+    this._MAX_SAMPLE_DISTANCE_THRESHOLD = 5;
+
+    //threshold that tells us whether two samples are too close
+    this._MIN_SAMPLE_DISTANCE_THRESHOLD = 2;
 
     //prevent extremely long paths that can take a long time to render
     this._MAX_ALLOWED_SAMPLES = 500;
@@ -114,7 +125,7 @@ var BrushStroke = function GLBrushStroke() {
         //add the point only if it is some epsilon away from the previous point
         var numPoints = this._Points.length;
         if (numPoints>0) {
-            var threshold = this._WETNESS_FACTOR*this._strokeWidth;
+            var threshold = this._MIN_SAMPLE_DISTANCE_THRESHOLD;//this._WETNESS_FACTOR*this._strokeWidth;
             var prevPt = this._Points[numPoints-1];
             var diffPt = [prevPt[0]-pt[0], prevPt[1]-pt[1]];
             var diffPtMag = Math.sqrt(diffPt[0]*diffPt[0] + diffPt[1]*diffPt[1]);
@@ -173,6 +184,26 @@ var BrushStroke = function GLBrushStroke() {
         this._strokeColor = c;
     };
 
+    this.setSecondStrokeColor = function(c){
+        this._secondStrokeColor=c;
+    }
+
+    this.setStrokeHardness = function(h){
+        this._strokeHardness=h;
+    }
+
+    this.setDoSmoothing = function(s){
+        this._strokeDoSmoothing = s;
+    }
+
+    this.setStrokeUseCalligraphic = function(c){
+        this._strokeUseCalligraphic = c;
+    }
+
+    this.setStrokeAngle = function(a){
+        this._strokeAngle = a;
+    }
+
     this.getStrokeStyle = function () {
         return this._strokeStyle;
     };
@@ -219,7 +250,8 @@ var BrushStroke = function GLBrushStroke() {
             var numPoints = this._Points.length;
 
             //**** add samples to the path if needed...linear interpolation for now
-            if (numPoints>1) {
+            //if (numPoints>1) {
+            if (0){
                 var threshold = this._WETNESS_FACTOR*this._strokeWidth;
                 var prevPt = this._Points[0];
                 var prevIndex = 0;
@@ -251,6 +283,66 @@ var BrushStroke = function GLBrushStroke() {
                 }
             }
 
+            //todo 4-point subdivision iterations over continuous regions of 'long' segments
+            // look at http://www.gvu.gatech.edu/~jarek/Split&Tweak/ for formula
+            //**** add samples to the long sections of the path --- Catmull-Rom spline interpolation
+            if (this._strokeDoSmoothing && numPoints>1) {
+                var numInsertedPoints = 0;
+                var newPoints = [];
+                var threshold = this._MAX_SAMPLE_DISTANCE_THRESHOLD;//this determines whether a segment between two sample is long enough to warrant checking for angle
+                var prevPt = this._Points[0];
+                newPoints.push(this._Points[0]);
+                for (var i=1;i<numPoints;i++){
+                    var pt = this._Points[i];
+                    var diff = [pt[0]-prevPt[0], pt[1]-prevPt[1]];
+                    var distance = Math.sqrt(diff[0]*diff[0]+diff[1]*diff[1]);
+                    if (distance>threshold){
+                        //build the control polygon for the Catmull-Rom spline (prev. 2 points and next 2 points)
+                        var prev = (i===1) ? i-1 : i-2;
+                        var next = (i===numPoints-1) ? i : i+1;
+                        var ctrlPts = [this._Points[prev], this._Points[i-1], this._Points[i], this._Points[next]];
+                        //insert points along the prev. to current point
+                        var numNewPoints = Math.floor(distance/threshold);
+                        for (var j=0;j<numNewPoints;j++){
+                            var param = (j+1)/(numNewPoints+1);
+                            var newpt = this._CatmullRomSplineInterpolate(ctrlPts, param);
+                            //insert new point before point i
+                            //this._Points.splice(i, 0, newpt);
+                            //i++;
+                            newPoints.push(newpt);
+                            numInsertedPoints++;
+                        }
+                        this._dirty=true;
+                    }
+                    newPoints.push(pt);
+                    prevPt=pt;
+                    //update numPoints to match the new length
+                    numPoints = this._Points.length;
+
+                    //end this function if the numPoints has gone above the max. size specified
+                    if (numPoints> this._MAX_ALLOWED_SAMPLES){
+                        console.log("leaving the resampling because numPoints is greater than limit:"+this._MAX_ALLOWED_SAMPLES);
+                        break;
+                    }
+                }
+                this._Points = newPoints;
+                numPoints = this._Points.length;
+                console.log("Inserted "+numInsertedPoints+" additional CatmullRom points");
+
+                //now do 3-4 iterations of Laplacian smoothing (setting the points to the average of their neighbors)
+                var numLaplacianIterations = 3; //todo figure out the proper number of Laplacian iterations (perhaps as a function of stroke width)
+                for (var n=0;n<numLaplacianIterations;n++){
+                    newPoints = this._Points;
+                    for (var i=1;i<numPoints-1;i++){
+                        var avgPos = [  0.5*(this._Points[i-1][0] + this._Points[i+1][0]),
+                                        0.5*(this._Points[i-1][1] + this._Points[i+1][1]),
+                                        0.5*(this._Points[i-1][2] + this._Points[i+1][2])] ;
+                        newPoints[i] = avgPos;
+                    }
+                    this._Points = newPoints;
+                }
+            }
+
             // *** compute the bounding box *********
             this._BBoxMin = [Infinity, Infinity, Infinity];
             this._BBoxMax = [-Infinity, -Infinity, -Infinity];
@@ -271,11 +363,20 @@ var BrushStroke = function GLBrushStroke() {
                     }//for every dimension d from 0 to 2
                 }
             }
-             //increase the bbox given the stroke width
-            for (var d = 0; d < 3; d++) {
-                this._BBoxMin[d]-= this._strokeWidth/2;
-                this._BBoxMax[d]+= this._strokeWidth/2;
-            }//for every dimension d from 0 to 2
+
+            //increase the bbox given the stroke width and the angle (in case of calligraphic brush)
+            var bboxPadding = this._strokeWidth/2;
+            if (this.__strokeUseCalligraphic) {
+                this._BBoxMin[0]-= bboxPadding*Math.cos(this._strokeAngle);
+                this._BBoxMin[1]-= bboxPadding*Math.sin(this._strokeAngle);
+                this._BBoxMax[0]+= bboxPadding*Math.cos(this._strokeAngle);
+                this._BBoxMax[1]+= bboxPadding*Math.sin(this._strokeAngle);
+            } else {
+                for (var d = 0; d < 3; d++) {
+                    this._BBoxMin[d]-= bboxPadding;
+                    this._BBoxMax[d]+= bboxPadding;
+                }//for every dimension d from 0 to 2
+            }
         }
         this._dirty = false;
     };
@@ -309,138 +410,85 @@ var BrushStroke = function GLBrushStroke() {
         var bboxHeight = bboxMax[1] - bboxMin[1];
         ctx.clearRect(0, 0, bboxWidth, bboxHeight);
 
-        /*
-        ctx.lineWidth = this._strokeWidth;
-        ctx.strokeStyle = "black";
-        if (this._strokeColor)
-            ctx.strokeStyle = MathUtils.colorToHex( this._strokeColor );
-        ctx.fillStyle = "blue";
-        if (this._fillColor)
-            ctx.fillStyle = MathUtils.colorToHex( this._fillColor );
-        var lineCap = ['butt','round','square'];
-        ctx.lineCap = lineCap[1];
-        ctx.beginPath();
-        var firstPoint = this._Points[0];
-        ctx.moveTo(firstPoint[0]-bboxMin[0], firstPoint[1]-bboxMin[1]);
-        for (var i = 1; i < numPoints; i++) {
-            var pt = this._Points[i];
-            ctx.lineTo(pt[0]-bboxMin[0], pt[1]-bboxMin[1]);
-        }
-        ctx.stroke();
-        */
+        if (this._strokeUseCalligraphic) {
+            //build the stamp for the brush stroke
+            var t=0;
+            var numTraces = this._strokeWidth;
+            var halfNumTraces = numTraces/2;
+            var opaqueRegionHalfWidth = 0.5*this._strokeHardness*numTraces*0.01; //the 0.01 is to convert the strokeHardness from [0,100] to [0,1]
+            var maxTransparentRegionHalfWidth = halfNumTraces-opaqueRegionHalfWidth;
 
-        /*
-        var isDebug = false;
-        var prevPt = this._Points[0];
-        var prevX = prevPt[0]-bboxMin[0];
-        var prevY = prevPt[1]-bboxMin[1];
-        prevPt = [prevX,prevY];
-        for (var i = 1; i < numPoints; i++) {
-            var pt = this._Points[i];
+            //build an angled (calligraphic) brush stamp
+            var deltaDisplacement = [Math.cos(this._strokeAngle),Math.sin(this._strokeAngle)];
+            deltaDisplacement = VecUtils.vecNormalize(2, deltaDisplacement, 1);
+            var startPos = [-halfNumTraces*deltaDisplacement[0],-halfNumTraces*deltaDisplacement[1]];
+
+            var brushStamp = [];
+            for (t=0;t<numTraces;t++){
+                var brushPt = [startPos[0]+t*deltaDisplacement[0], startPos[1]+t*deltaDisplacement[1]];
+                brushStamp.push(brushPt);
+            }
+
+            ctx.lineJoin="bevel";
+            ctx.lineCap="butt";
             ctx.globalCompositeOperation = 'source-over';
-            var x = pt[0]-bboxMin[0];
-            var y = pt[1]-bboxMin[1];
-            pt = [x,y];
-
-            //vector from prev to current pt
-            var seg = VecUtils.vecSubtract(2, pt, prevPt);
-            var segDir = VecUtils.vecNormalize(2, seg, 1.0);
-
-            var segMidPt = VecUtils.vecInterpolate(2, pt, prevPt, 0.5);
-            var w2 = this._strokeWidth*0.5;
-            var segDirOrtho = [w2*segDir[1], -w2*segDir[0]];
-            
-            //add half the strokewidth to the segMidPt
-            var lgStart = VecUtils.vecAdd(2, segMidPt, segDirOrtho);
-            var lgEnd = VecUtils.vecSubtract(2, segMidPt, segDirOrtho);
-
-            ctx.save();
-            ctx.beginPath();
-
-            if (isDebug) {
-                ctx.strokeStyle="black";
+            ctx.globalAlpha = this._strokeColor[3];
+            //ctx.lineWidth=this._strokeWidth/10;//todo figure out the correct formula for the line width
+            //if (ctx.lineWidth<2)
+            ctx.lineWidth=2;
+            if (t===numTraces-1){
                 ctx.lineWidth = 1;
+            }
 
-                ctx.moveTo(lgStart[0], lgStart[1]);
-                ctx.lineTo(lgEnd[0], lgEnd[1]);
+            for (t=0;t<numTraces;t++){
+                var disp = [brushStamp[t][0], brushStamp[t][1]];
+                var alphaVal = 1.0;
+                var distFromOpaqueRegion = Math.abs(t-halfNumTraces) - opaqueRegionHalfWidth;
+                if (distFromOpaqueRegion>0) {
+                    alphaVal = 1.0 - distFromOpaqueRegion/maxTransparentRegionHalfWidth;
+                    alphaVal *= 1.0/ctx.lineWidth; //factor that accounts for lineWidth !== 1
+                }
+
+                ctx.save();
+
+                ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
+                //linearly interpolate between the two stroke colors
+                var currStrokeColor = VecUtils.vecInterpolate(4, this._strokeColor, this._secondStrokeColor, t/numTraces);
+                //ctx.strokeStyle="rgba("+parseInt(255*currStrokeColor[0])+","+parseInt(255*currStrokeColor[1])+","+parseInt(255*currStrokeColor[2])+","+alphaVal+")";
+
+                ctx.translate(disp[0],disp[1]);
+                ctx.beginPath();
+                ctx.moveTo(this._Points[0][0]-bboxMin[0], this._Points[0][1]-bboxMin[1]);
+                for (var i=0;i<numPoints;i++){
+                    ctx.lineTo(this._Points[i][0]-bboxMin[0], this._Points[i][1]-bboxMin[1]);
+                }
+                ctx.stroke();
+                ctx.restore();
+            }
+        } else {
+            ctx.globalCompositeOperation = 'lighter'; //we wish to add up the colors
+            ctx.globalAlpha = this._strokeColor[3];
+            ctx.lineCap = "round";
+            ctx.lineJoin="round";
+            var minStrokeWidth = (this._strokeHardness*this._strokeWidth)/100; //the hardness is the percentage of the stroke width that's fully opaque
+            var numlayers = 1 + (this._strokeWidth-minStrokeWidth)/2;
+            var alphaVal = 1.0/(numlayers); //this way the alpha at the first path will be 1
+            ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
+            for (var l=0;l<numlayers;l++){
+                ctx.beginPath();
+                ctx.moveTo(this._Points[0][0]-bboxMin[0], this._Points[0][1]-bboxMin[1]);
+                if (numPoints===1){
+                    //display a tiny segment as a single point
+                   ctx.lineTo(this._Points[0][0]-bboxMin[0], this._Points[0][1]-bboxMin[1]+0.01);
+                }
+                for (var i=1;i<numPoints;i++){
+                    ctx.lineTo(this._Points[i][0]-bboxMin[0], this._Points[i][1]-bboxMin[1]);
+                }
+                ctx.lineWidth=2*l+minStrokeWidth;
                 ctx.stroke();
             }
-
-            var lg = ctx.createLinearGradient(lgStart[0], lgStart[1], lgEnd[0], lgEnd[1]);
-            lg.addColorStop(1, 'rgba(0,0,0,0.0)');
-            lg.addColorStop(0.5,'rgba(255,0,0,1.0)');
-            lg.addColorStop(0, 'rgba(0,0,0,0.0)');
-            ctx.fillStyle = lg;
-
-            if (isDebug){
-                ctx.strokeStyle="blue";
-                ctx.lineWidth=0.5;
-            }
-            ctx.moveTo(prevX-w2, prevY);
-            ctx.lineTo(prevX+w2, prevY);
-            ctx.lineTo(x+w2, y);
-            ctx.lineTo(x-w2, y);
-            ctx.lineTo(prevX-w2, prevY);
-            ctx.fill();
-            ctx.closePath();
-
-            ctx.restore();
-
-            prevPt = pt;
-            prevX = x;
-            prevY = y;
         }
         
-
-        if (isDebug)
-            ctx.stroke();
-
-        if (isDebug){
-            //draw the skeleton of this stroke
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = "black";
-            var pt = this._Points[0];
-            ctx.beginPath();
-            ctx.moveTo(pt[0]-bboxMin[0],pt[1]-bboxMin[1]);
-            for (var i = 1; i < numPoints; i++) {
-                pt = this._Points[i];
-                var x = pt[0]-bboxMin[0];
-                var y = pt[1]-bboxMin[1];
-                ctx.lineTo(x,y);
-            }
-            ctx.stroke();
-        }
-        */
-
-
-        var R2 = this._strokeWidth;
-        var R = R2*0.5;
-        var hardness = 0; //for a pencil, this is always 1 //TODO get hardness parameter from user interface
-        var innerRadius = (hardness*R)-1;
-        if (innerRadius<1)
-            innerRadius=1;
-
-        var r = ctx.createRadialGradient(0,0,innerRadius, 0,0,R);
-        var midColor = "rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+",1)";
-        r.addColorStop(0, midColor);
-        var endColor = "rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+",0.0)";
-        r.addColorStop(1, endColor);
-        ctx.fillStyle = r;
-
-        for (var i = 0; i < numPoints; i++) {
-            var pt = this._Points[i];
-            ctx.globalCompositeOperation = 'source-over';
-            var x = pt[0]-bboxMin[0];
-            var y = pt[1]-bboxMin[1];
-            ctx.save();
-            ctx.translate(x,y);
-            ctx.arc(0, 0, R, 0, 2 * Math.PI, false);
-            ctx.fill();
-            ctx.restore();
-            //ctx.globalCompositeOperation = 'source-in';
-            //ctx.rect(x-R, y-R, R2, R2);
-        }
-
         ctx.restore();
     }; //render()
 
@@ -473,10 +521,25 @@ var BrushStroke = function GLBrushStroke() {
         return true;
     };
 
-}; //function GLSubpath ...class definition
+}; //function BrushStroke ...class definition
 
 BrushStroke.prototype = new GeomObj();
 
+BrushStroke.prototype._CatmullRomSplineInterpolate = function(ctrlPts, t)
+{
+    //perform CatmullRom interpolation on the spline...assume t is in [0,1]
+    var t2 = t*t;
+    var t3 = t2*t;
+    var retPoint = [0,0,0];
+    for (var i=0;i<3;i++){
+        retPoint[i] = 0.5 *(
+            (2*ctrlPts[1][i]) +
+            (-ctrlPts[0][i] + ctrlPts[2][i]) * t +
+            (2*ctrlPts[0][i] - 5*ctrlPts[1][i] + 4*ctrlPts[2][i] - ctrlPts[3][i]) * t2 +
+            (-ctrlPts[0][i] + 3*ctrlPts[1][i]- 3*ctrlPts[2][i] + ctrlPts[3][i]) * t3);
+    }
+    return retPoint;
+}
 if (typeof exports === "object") {
     exports.BrushStroke = BrushStroke;
 }

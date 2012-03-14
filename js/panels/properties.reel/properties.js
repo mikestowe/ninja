@@ -283,7 +283,7 @@ exports.Properties = Montage.create(Component, {
                 this.customPi = el.elementModel.pi;
                 this.displayCustomProperties(el, el.elementModel.pi);
             }
-
+			var previousInput = this.application.ninja.colorController.colorModel.input;
             customPI = PiData[this.customPi];
             // Get all the custom section for the custom PI
             for(var i = 0, customSec; customSec = customPI[i]; i++) {
@@ -302,13 +302,15 @@ exports.Properties = Montage.create(Component, {
                         }
                         else
                         {
-                            currentValue = ElementsMediator.getColor2(el, control.prop, control.valueMutator);
                             if(control.prop === "border")
                             {
+                                // TODO - For now, always return the top border if multiple border sides
+                                currentValue = ElementsMediator.getColor(el, false, "top");
                                 this.application.ninja.colorController.colorModel.input = "stroke";
                             }
                             else if(control.prop === "background")
                             {
+                                currentValue = ElementsMediator.getColor(el, true);
                                 this.application.ninja.colorController.colorModel.input = "fill";
                             }
 
@@ -350,6 +352,33 @@ exports.Properties = Montage.create(Component, {
                         }
                     }
                 }
+                this.application.ninja.colorController.colorModel.input =  previousInput;
+                var color = this.application.ninja.colorController.colorModel.colorHistory[previousInput][this.application.ninja.colorController.colorModel.colorHistory[previousInput].length-1];
+    			color.c.wasSetByCode = true;
+    			color.c.type = 'change';
+    			switch (color.m) {
+    				case 'rgb':
+    					this.application.ninja.colorController.colorModel.alpha = {value: color.a, wasSetByCode: true, type: 'change'};
+    					this.application.ninja.colorController.colorModel.rgb = color.c;
+    					break;
+    				case 'hsl':
+    					this.application.ninja.colorController.colorModel.alpha = {value: color.a, wasSetByCode: true, type: 'change'};
+    					this.application.ninja.colorController.colorModel.hsl = color.c;
+    					break;
+    				case 'hex':
+    					//TODO: Check if anything needed here
+    					break;
+    				case 'gradient':
+    					this.application.ninja.colorController.colorModel.gradient = color.c;
+    					break;
+    				case 'hsv':
+    					this.application.ninja.colorController.colorModel.alpha = {value: color.a, wasSetByCode: true, type: 'change'};
+    					this.application.ninja.colorController.colorModel.hsv = color.c;
+    					break;
+    				default:
+    					this.application.ninja.colorController.colorModel.applyNoColor();
+    					break;
+    			}
             }
         }
     },

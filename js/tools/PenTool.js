@@ -278,6 +278,9 @@ exports.PenTool = Montage.create(ShapeTool, {
             this.application.ninja.stage.clearDrawingCanvas();
             this._hoveredAnchorIndex = -1;
 
+            //set the cursor to be the default cursor
+            this.application.ninja.stage.drawingCanvas.style.cursor = "auto";
+
             if (this._isDrawing) {
                 var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(event.pageX, event.pageY));
                 //go through the drawing toolbase to get the position of the mouse 
@@ -348,6 +351,14 @@ exports.PenTool = Montage.create(ShapeTool, {
                     var selAnchor = this._selectedSubpath.pickAnchor(currMousePos[0], currMousePos[1], currMousePos[2], this._PICK_POINT_RADIUS);
                     if (selAnchor >=0) {
                         this._hoveredAnchorIndex = selAnchor;
+                    } else {
+                        //detect if the current mouse position will hit the path
+                        var pathHitTestData = this._selectedSubpath.pathHitTest(currMousePos[0], currMousePos[1], currMousePos[2], this._PICK_POINT_RADIUS);
+                        if (pathHitTestData[0]!==-1){
+                            //change the cursor
+                            var cursor = "url('images/cursors/penAdd.png') 10 10,default";
+                            this.application.ninja.stage.drawingCanvas.style.cursor = cursor;
+                        }
                     }
                 }
             } //else of if (this._isDrawing) {
@@ -356,7 +367,6 @@ exports.PenTool = Montage.create(ShapeTool, {
             if (this._selectedSubpath){
                 this.DrawSubpathAnchors(this._selectedSubpath);
             }
-
         }//value: function(event)
     },//HandleMouseMove
 
@@ -457,9 +467,9 @@ exports.PenTool = Montage.create(ShapeTool, {
                     if (this.application.ninja.colorController.colorToolbar.stroke.webGlColor){
                         this._selectedSubpath.setStrokeColor(this.application.ninja.colorController.colorToolbar.stroke.webGlColor);
                     }
-                    if (this.application.ninja.colorController.colorToolbar.fill.webGlColor){
-                        this._selectedSubpath.setFillColor(this.application.ninja.colorController.colorToolbar.fill.webGlColor);
-                    }
+                    //if (this.application.ninja.colorController.colorToolbar.fill.webGlColor){
+                    //    this._selectedSubpath.setFillColor(this.application.ninja.colorController.colorToolbar.fill.webGlColor);
+                    //}
                 } //if this is a new path being rendered
 
                 this._selectedSubpath.makeDirty();
