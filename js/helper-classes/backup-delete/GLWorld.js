@@ -13,7 +13,6 @@ var fragmentShaderSource = "";
 
 var rdgeStarted = false;
 
-var nodeCounter = 0;
 var worldCounter = 0;
 
 
@@ -73,6 +72,10 @@ function GLWorld( canvas, use3D )
 
 	this._worldCount = worldCounter;
 	worldCounter++;
+
+	// keep a counter for generating node names
+	this._nodeCounter = 0;
+
 
     ///////////////////////////////////////////////////////////////////////
     // Property accessors
@@ -376,10 +379,12 @@ function GLWorld( canvas, use3D )
 		return false;
 	}
 
-
-	// END RDGE
-	////////////////////////////////////////////////////////////////////////////////////
-
+	this.generateUniqueNodeID = function()
+	{
+		var str = String( this._nodeCounter );
+		this._nodeCounter++;
+		return str;
+	}
     
     // start RDGE passing your runtime object, and false to indicate we don't need a an initialization state
     // in the case of a procedurally built scene an init state is not needed for loading data
@@ -418,7 +423,7 @@ GLWorld.prototype.updateObject = function (obj)
         ctrTrNode = obj.getTransformNode();
 		if (ctrTrNode == null)
 		{
-			ctrTrNode = createTransformNode("objRootNode_" + nodeCounter++);
+			ctrTrNode = createTransformNode("objRootNode_" + this._nodeCounter++);
 			this._rootNode.insertAsChild( ctrTrNode );
 			obj.setTransformNode( ctrTrNode );
 		}
@@ -428,7 +433,7 @@ GLWorld.prototype.updateObject = function (obj)
 		});
 		ctrTrNode.meshes = [];
 
-        ctrTrNode.attachMeshNode(this.renderer.id + "_prim_" + nodeCounter++, prims[0]);
+        ctrTrNode.attachMeshNode(this.renderer.id + "_prim_" + this._nodeCounter++, prims[0]);
         ctrTrNode.attachMaterial(materialNodes[0]);
     }
 	
@@ -451,12 +456,12 @@ GLWorld.prototype.updateObject = function (obj)
 		}
 		else
 		{
-			childTrNode = createTransformNode("objNode_" + nodeCounter++);
+			childTrNode = createTransformNode("objNode_" + this._nodeCounter++);
 			ctrTrNode.insertAsChild(childTrNode);
 		}
 
         // attach the instanced box goe
-        childTrNode.attachMeshNode(this.renderer.id + "_prim_" + nodeCounter++, prim);
+        childTrNode.attachMeshNode(this.renderer.id + "_prim_" + this._nodeCounter++, prim);
         childTrNode.attachMaterial(materialNodes[i]);
     }
 }
@@ -811,7 +816,7 @@ GLWorld.prototype.getShapeFromPoint = function( offsetX, offsetY )
 	}
 }
 
-GLWorld.prototype.export = function()
+GLWorld.prototype.export = function( exportForPublish )
 {
 	var exportStr = "GLWorld 1.0\n";
 	var id = this.getCanvas().getAttribute( "data-RDGE-id" );
@@ -821,20 +826,28 @@ GLWorld.prototype.export = function()
 	exportStr += "zNear: " + this._zNear + "\n";
 	exportStr += "zFar: " + this._zFar + "\n";
 	exportStr += "viewDist: " + this._viewDist + "\n";
+	if (this._useWebGL)
+		exportStr += "webGL: true\n";
 
 	// we need 2 export modes:  One for save/restore, one for publish.
 	// hardcoding for now
-	var exportForPublish = false;
+	//var exportForPublish = false;
+	if (!exportForPublish)  exportForPublish = false;
 	exportStr += "publish: " + exportForPublish + "\n";
 
-	if (exportForPublish)
+	if (exportForPublish && this._useWebGL)
 	{
 		exportStr += "scenedata: " + this.myScene.exportJSON() + "endscene\n";
+
+		// write out all of the objects
+		exportStr += "tree\n";
+		exportStr += this.exportObjects( this._geomRoot );
+		exportStr += "endtree\n";
 	}
 	else
 	{
 		// output the material library
-		exportStr += MaterialsLibrary.export();
+		//exportStr += MaterialsLibrary.export();	// THIS NEEDS TO BE DONE AT THE DOC LEVEL
 
 		// write out all of the objects
 		exportStr += "tree\n";
@@ -892,24 +905,26 @@ GLWorld.prototype.import = function( importStr )
 
 	// determine if the data was written for export (no Ninja objects)
 	// or for save/restore
-	var index = importStr.indexOf( "scenedata: " );
-	if (index >= 0)
+	//var index = importStr.indexOf( "scenedata: " );
+	var index = importStr.indexOf( "webGL: " );
+	this._useWebGL = (index >= 0)
+	if (this._useWebGL)
 	{
-		var rdgeStr = importStr.substr( index+11 );
-		var endIndex = rdgeStr.indexOf( "endscene\n" );
-		if (endIndex < 0)  throw new Error( "ill-formed WebGL data" );
-		var len = endIndex - index + 11;
-		rdgeStr = rdgeStr.substr( 0, endIndex );
-
-		this.myScene.importJSON( rdgeStr );
+		// start RDGE
+		rdgeStarted = true;
+		var id = this._canvas.getAttribute( "data-RDGE-id" ); 
+		this._canvas.rdgeid = id;
+		g_Engine.registerCanvas(this._canvas, this);
+		RDGEStart( this._canvas );
+		this._canvas.task.stop()
 	}
-	else
-	{
-		// load the material library
-		importStr = MaterialsLibrary.import( importStr );
 
-		// import the objects
-		this.importObjects( importStr, this._rootNode );
+	this.importObjects( importStr, this._rootNode );
+
+	if (!this._useWebGL)
+	{
+		// render using canvas 2D
+		this.render();
 	}
 }
 

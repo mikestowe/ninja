@@ -302,13 +302,15 @@ exports.Properties = Montage.create(Component, {
                         }
                         else
                         {
-                            currentValue = ElementsMediator.getColor2(el, control.prop, control.valueMutator);
                             if(control.prop === "border")
                             {
+                                // TODO - For now, always return the top border if multiple border sides
+                                currentValue = ElementsMediator.getColor(el, false, "top");
                                 this.application.ninja.colorController.colorModel.input = "stroke";
                             }
                             else if(control.prop === "background")
                             {
+                                currentValue = ElementsMediator.getColor(el, true);
                                 this.application.ninja.colorController.colorModel.input = "fill";
                             }
 

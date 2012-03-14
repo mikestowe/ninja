@@ -459,13 +459,12 @@ exports.ElementMediator = Montage.create(NJComponent, {
 
     //--------------------------------------------------------------------------------------------------------
     // Routines to get/set color
-    // for now just return the bg/fill color
     getColor: {
-        value: function(el, isFill) {
+        value: function(el, isFill, borderSide) {
             if(!el.elementModel) {
                 NJUtils.makeModelFromElement(el);
             }
-            return el.elementModel.controller["getColor"](el, isFill);
+            return el.elementModel.controller["getColor"](el, isFill, borderSide);
         }
     },
 
@@ -618,16 +617,6 @@ exports.ElementMediator = Montage.create(NJComponent, {
             }
 
             NJevent("element" + eventType, {type : "setStroke", source: source, data: {"els": els, "prop": "stroke", "value": value}, redraw: null});
-        }
-    },
-
-    getColor2: {
-        value: function(el, prop, mutator) {
-            if(!el.elementModel) {
-                NJUtils.makeModelFromElement(el);
-            }
-
-            return this.getColor(el, (prop === "background"));
         }
     },
 

@@ -338,6 +338,7 @@ _renderer = function(canvas) {
         if (tex === undefined)
 		{
             // load the texture
+			name = g_Engine.remapAssetFolder( name );
             tex = this.createTexture(name + ext, wrap, mips);
             this.textureMap[name] = tex;
             tex.lookUpName = name;
