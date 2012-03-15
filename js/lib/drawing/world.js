@@ -351,20 +351,18 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 		return false;
 	};
 
-	this.generateUniqueNodeID = function()
-	{
+	this.generateUniqueNodeID = function() {
 		var str = "" + this._nodeCounter;
 		this._nodeCounter++;
 		return str;
-	}
+	};
 
     
     // start RDGE passing your runtime object, and false to indicate we don't need a an initialization state
     // in the case of a procedurally built scene an init state is not needed for loading data
 	if (this._useWebGL) {
 		rdgeStarted = true;
-		var id = this._canvas.getAttribute( "data-RDGE-id" ); 
-		this._canvas.rdgeid = id;
+		this._canvas.rdgeid = this._canvas.getAttribute( "data-RDGE-id" );
 		g_Engine.registerCanvas(this._canvas, this);
 		RDGEStart( this._canvas );
 		this._canvas.task.stop()

@@ -71,8 +71,7 @@ exports.Breadcrumb = Montage.create(Component, {
             // This is always the top container which is now hardcoded to body
             this.containerElements.unshift({"node": parentNode, "nodeUuid":parentNode.uuid, "label": "Body"});
 
-            // This is for the timeline -- Disable it since the timeline should not know about this object
-            // NJevent('layerBinding',{selected:false ,element:this.container})
+
 
         }
     },
