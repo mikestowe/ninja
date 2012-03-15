@@ -91,12 +91,6 @@ exports.Splitter = Montage.create(Component, {
         }
     },
 
-    didDraw: {
-        value: function() {
-            this.application.ninja.stage.resizeCanvases = true;
-        }
-    },
-
     handleClick : {
         value: function() {
             if (!this.disabled) {
