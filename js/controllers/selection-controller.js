@@ -90,7 +90,7 @@ exports.SelectionController = Montage.create(Component, {
         }
     },
 
-     handleSwitchDocument: {
+    handleSwitchDocument: {
         value: function() {
             if(this.application.ninja.documentController.activeDocument.currentView === "design"){
                 this._selectedItems = this.application.ninja.selectedElements.slice(0);
