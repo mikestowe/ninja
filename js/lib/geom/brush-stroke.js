@@ -4,9 +4,11 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-// Todo: This entire class should be converted to a module
 var VecUtils = require("js/helper-classes/3D/vec-utils").VecUtils;
 var GeomObj = require("js/lib/geom/geom-obj").GeomObj;
+var CanvasController = require("js/controllers/elements/canvas-controller").CanvasController;
+
+// Todo: This entire class should be converted to a module
 
 ///////////////////////////////////////////////////////////////////////
 // Class GLBrushStroke
@@ -28,7 +30,10 @@ var BrushStroke = function GLBrushStroke() {
     //whether or not to use the canvas drawing to stroke/fill
     this._useCanvasDrawing = true;
 
-    //the X and Y location of this subpath's canvas in stage world space of Ninja
+    //the HTML5 canvas that holds this brush stroke
+    this._canvas = null;
+
+    //the X and Y location of this brush stroke canvas in stage world space of Ninja
     this._canvasX = 0;
     this._canvasY = 0;
 
@@ -65,6 +70,10 @@ var BrushStroke = function GLBrushStroke() {
     /////////////////////////////////////////////////////////
     // Property Accessors/Setters
     /////////////////////////////////////////////////////////
+    this.setCanvas = function(c) {
+        this._canvas = c;
+    }
+
     this.setWorld = function (world) {
         this._world = world;
     };
@@ -195,6 +204,9 @@ var BrushStroke = function GLBrushStroke() {
             this._dirty = true;
         }
     }
+    this.getStrokeHardness = function(){
+        return this._strokeHardness;
+    }
 
     this.setDoSmoothing = function(s){
         if (this._strokeDoSmoothing!==s) {
@@ -203,12 +215,19 @@ var BrushStroke = function GLBrushStroke() {
         }
     }
 
+    this.getDoSmoothing = function(){
+        return this._strokeDoSmoothing;
+    }
+
     this.setSmoothingAmount = function(a){
         if (this._strokeAmountSmoothing!==a) {
             this._strokeAmountSmoothing = a;
             this._dirty = true;
         }
+    }
 
+    this.getSmoothingAmount = function(){
+        return this._strokeAmountSmoothing;
     }
 
     this.setStrokeUseCalligraphic = function(c){
@@ -223,6 +242,14 @@ var BrushStroke = function GLBrushStroke() {
             this._strokeAngle = a;
             this._dirty = true;
         };
+    }
+
+    this.getStrokeUseCalligraphic = function(){
+        return this._strokeUseCalligraphic;
+    }
+
+    this.getStrokeAngle = function(){
+        this._strokeAngle = a;
     }
 
     this.getStrokeStyle = function () {
@@ -301,12 +328,13 @@ var BrushStroke = function GLBrushStroke() {
             console.log("Inserted "+numInsertedPoints+" additional CatmullRom points");
             this._addedSamples = true;
             this._dirty=true;
-        }
+        } //if we need to add samples to this curve (done only once)
+
         //build a copy of the original points...this should be done only once
         if (this._storedOrigPoints === false) {
             this._OrigPoints = this._Points.slice(0);
             this._storedOrigPoints = true;
-        }
+        } //if we need to store a copy of the original points (done only once)
 
         if (this._dirty) {
             this._Points = this._OrigPoints.slice(0);
@@ -377,7 +405,7 @@ var BrushStroke = function GLBrushStroke() {
 
          // get the context
         var ctx = world.get2DContext();
-        if (!ctx)  throw ("null context in brushstroke render")
+        if (!ctx)  throw ("null context in brushstroke render");
 
         var numPoints = this.getNumPoints();
         if (numPoints === 0) {
@@ -391,6 +419,14 @@ var BrushStroke = function GLBrushStroke() {
         var bboxMax = this.getBBoxMax();
         var bboxWidth = bboxMax[0] - bboxMin[0];
         var bboxHeight = bboxMax[1] - bboxMin[1];
+
+        //assign the new width and height as the canvas dimensions through the canvas controller
+        if (this._canvas) {
+            CanvasController.setProperty(this._canvas, "width", bboxWidth+"px");
+            CanvasController.setProperty(this._canvas, "height", bboxHeight+"px");
+            this._canvas.elementModel.shapeModel.GLWorld.setViewportFromCanvas(this._canvas);
+        }
+
         ctx.clearRect(0, 0, bboxWidth, bboxHeight);
 
         if (this._strokeUseCalligraphic) {

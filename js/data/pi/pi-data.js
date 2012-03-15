@@ -680,14 +680,14 @@ exports.PiData = Montage.create( Montage, {
                             id: "doSmoothing",
                             prop: "doSmoothing",
                             defaultValue: false,
-                            value: "Smoothing",
+                            value: "Y/N",
                             checked: false
                         },
                         {
                             type : "hottext",
                             id : "strokeSmoothing",
                             prop : "strokeSmoothing",
-                            label : "",
+                            label : "Amount",
                             valueMutator: parseFloat,
                             min :   0,
                             max :   100,
@@ -705,18 +705,20 @@ exports.PiData = Montage.create( Montage, {
                             id: "isCalligraphic",
                             prop: "isCalligraphic",
                             defaultValue: false,
-                            value: "Calligraphic",
-                            checked: false
+                            value: "Y/N",
+                            checked: false,
+                            divider : true
                         },
                         {
                             type : "hottext",
                             id : "strokeAngle",
                             prop : "strokeAngle",
-                            label : "",
+                            label : "Angle",
                             valueMutator: parseFloat,
                             min :   -90,
                             max :   90,
-                            value : 0
+                            value : 0,
+                            unit : "deg."
                         }
                     ]
                 ]

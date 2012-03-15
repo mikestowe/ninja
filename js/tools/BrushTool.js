@@ -266,6 +266,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
                     var brushStroke = this._selectedBrushStroke;
                     if (brushStroke){
                         brushStroke.setWorld(world);
+                        brushStroke.setCanvas(newCanvas);
 
                         brushStroke.setPlaneMatrix(planeMat);
                         var planeMatInv = glmat4.inverse( planeMat, [] );

@@ -467,9 +467,9 @@ exports.PenTool = Montage.create(ShapeTool, {
                     if (this.application.ninja.colorController.colorToolbar.stroke.webGlColor){
                         this._selectedSubpath.setStrokeColor(this.application.ninja.colorController.colorToolbar.stroke.webGlColor);
                     }
-                    //if (this.application.ninja.colorController.colorToolbar.fill.webGlColor){
-                    //    this._selectedSubpath.setFillColor(this.application.ninja.colorController.colorToolbar.fill.webGlColor);
-                    //}
+                    if (this.application.ninja.colorController.colorToolbar.fill.webGlColor){
+                        this._selectedSubpath.setFillColor(this.application.ninja.colorController.colorToolbar.fill.webGlColor);
+                    }
                 } //if this is a new path being rendered
 
                 this._selectedSubpath.makeDirty();
@@ -594,6 +594,7 @@ exports.PenTool = Montage.create(ShapeTool, {
 
                 var subpath = this._selectedSubpath; //new GLSubpath();
                 subpath.setWorld(world);
+                subpath.setCanvas(newCanvas);
                 subpath.setPlaneMatrix(planeMat);
                 var planeMatInv = glmat4.inverse( planeMat, [] );
                 subpath.setPlaneMatrixInverse(planeMatInv);
@@ -614,7 +615,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                     if(strokeColor) {
                         newCanvas.elementModel.shapeModel.border = this.application.ninja.colorController.colorToolbar.stroke;
                     }
-                    newCanvas.elementModel.shapeModel.strokeMaterial = this._selectedBrushStroke.getStrokeMaterial();
+                    newCanvas.elementModel.shapeModel.strokeMaterial = subpath.getStrokeMaterial();
 
                     newCanvas.elementModel.shapeModel.GLGeomObj = subpath;
                     newCanvas.elementModel.shapeModel.useWebGl = this.options.use3D;

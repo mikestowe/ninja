@@ -144,6 +144,43 @@ exports.ShapesController = Montage.create(CanvasController, {
                 case "background":
                 case "useWebGl":
                     return this.getShapeProperty(el, p);
+                case "strokeHardness":
+                    if (el.elementModel && el.elementModel.shapeModel){
+                        return el.elementModel.shapeModel.GLGeomObj.getStrokeHardness();;
+                    } else {
+                        return null;
+                    }
+                    break;
+                case "doSmoothing":
+                    if (el.elementModel && el.elementModel.shapeModel){
+                        return el.elementModel.shapeModel.GLGeomObj.getDoSmoothing();;
+                    } else {
+                        return null;
+                    }
+                    break;
+                case "strokeSmoothing":
+                    if (el.elementModel && el.elementModel.shapeModel){
+                        return el.elementModel.shapeModel.GLGeomObj.getSmoothingAmount();;
+                    } else {
+                        return null;
+                    }
+                    break;
+                case "isCalligraphic":
+                    if (el.elementModel && el.elementModel.shapeModel){
+                        return el.elementModel.shapeModel.GLGeomObj.getStrokeUseCalligraphic();;
+                    } else {
+                        return null;
+                    }
+                    break;
+                case "strokeAngle":
+                    if (el.elementModel && el.elementModel.shapeModel){
+                        return el.elementModel.shapeModel.GLGeomObj.getStrokeAngle();;
+                    } else {
+                        return null;
+                    }
+                    break;
+                
+
                 case "strokeMaterial":
                 case "fillMaterial":
                     var m = this.getShapeProperty(el, p);
