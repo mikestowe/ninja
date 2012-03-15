@@ -319,6 +319,10 @@ exports.Stage = Montage.create(Component, {
 
     handleMousedown: {
         value: function(event) {
+            // Call the focus manager to set focus to blur any focus'd elements
+            this.focusManager.setFocus();
+
+
             var point;
 //            event.preventDefault();   // commenting because HTML elements in the IDE are retaining focus
             // If right click set the context menu to true to prevent a mouse up.
