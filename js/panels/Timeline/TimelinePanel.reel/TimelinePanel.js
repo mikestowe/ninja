@@ -859,7 +859,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     this.currentLayerSelected.layerData.elementsList.splice(length, 1);
                     break;
                 }
-                length--;
+                //length--;
             }
         }
     },
