@@ -718,15 +718,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 	            this._LayerUndoObject = thingToPush;
 	            this._LayerUndoIndex = thingToPush.layerData.layerID;
 	            this._LayerUndoStatus = true;
-/*
-	            this._captureSelection = true;
 
-				// TODO: Find a better solution than a timout here.
-	            var that = this;
-	            setTimeout(function() {
-	            	that.selectLayer(indexToSelect, true);
-	            }, 500);
-*/
             }
 
         }
