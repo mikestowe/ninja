@@ -416,7 +416,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             } else {
                 // we do have information stored.  Use it.
                 this._boolCacheArrays = false;
-        		this._captureSelection = true;
         		//var myIndex = 0;
         		for (var i = 0; i < this.application.ninja.currentDocument.tlArrLayers.length; i++) {
         			if ( this.application.ninja.currentDocument.tlArrLayers[i].layerData.isSelected === true ) {
@@ -431,7 +430,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this.hashInstance = this.application.ninja.currentDocument.tlLayerHashTable;
                 this.hashElementMapToLayer = this.application.ninja.currentDocument.tlElementHashTable;
                 this.hashKey = this.application.ninja.currentDocument.hashKey;
-                this._boolCacheArrays = true;
+
             }
         }
     },
@@ -687,6 +686,13 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 	            thingToPush.layerData.layerID = this.currentLayerNumber;
 	            thingToPush.parentElementUUID = this.hashKey;
 	            thingToPush.parentElement = this.application.ninja.currentSelectedContainer;
+	            thingToPush.layerData.isSelected = true;
+	        	thingToPush.layerData._isFirstDraw = true;
+	        	
+	        	for (var i = 0; i < this.arrLayers.length; i++) {
+	        		this.arrLayers[i].layerData.isSelected = false;
+	        		this.arrLayers[i].layerData._isFirstDraw = false;
+	        	}
 	
 	            if (!!this.layerRepetition.selectedIndexes) {
 	            	// There is a selected layer, so we need to splice the new
@@ -712,14 +718,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 	            this._LayerUndoObject = thingToPush;
 	            this._LayerUndoIndex = thingToPush.layerData.layerID;
 	            this._LayerUndoStatus = true;
-
-	            this._captureSelection = true;
-
-				// TODO: Find a better solution than a timout here.
-	            var that = this;
-	            setTimeout(function() {
-	            	that.selectLayer(indexToSelect, true);
-	            }, 500);
 
             }
 
@@ -1031,7 +1029,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 }
             }
             
-
             this.layerRepetition.selectedIndexes = [layerIndex];
             this.currentLayerSelected = this.arrLayers[layerIndex];
             if(userSelection){
