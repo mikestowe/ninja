@@ -260,6 +260,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         		}
         		this._isSelected = value;
         		this.layerData.isSelected = value;
+        		this.needsDraw = true;
         	}
             
         }
