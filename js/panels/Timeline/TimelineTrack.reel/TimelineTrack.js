@@ -299,11 +299,11 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         }
     },
 
+    // should be unneeded with one element per layer restriction
     _animatedElement:{
         serializable:true,
         value:null
     },
-
     animatedElement:{
         serializable:true,
         get:function () {
@@ -367,7 +367,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         value:function(){
             this.trackID = this.trackData.layerID;
             this.tweens = this.trackData.tweens;
-            this.animatedElement = this.trackData.animatedElement;
+            this.animatedElement = this.trackData.animatedElement; // unneeded with one element per layer restriction
             this.arrStyleTracks = this.trackData.arrStyleTracks;
             this.isTrackAnimated = this.trackData.isTrackAnimated;
             this.trackDuration = this.trackData.trackDuration;
@@ -394,6 +394,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     draw:{
         value:function () {
             this.ninjaStylesContoller = this.application.ninja.stylesController;
+
+            // animatedElement going away - unneeded below
             var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
             if(this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList[0]){
                 this.animatedElement = this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList[0];
@@ -406,6 +408,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             if(!this.application.ninja.documentController.creatingNewFile){
                 if(this.application.ninja.currentDocument.documentRoot.children[0]){
                     var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
+                    console.log(this.application.ninja.timeline.arrLayers[selectedIndex].layerData.created);
                      if(!this.application.ninja.timeline.arrLayers[selectedIndex].layerData.created){
                         this.retrieveStoredTweens();
                      }
