@@ -538,33 +538,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
-    updateTimeText:{
-        value:function (millisec) {
-            var timeText;
-            var sec = (Math.floor((millisec / 1000))) % 60;
-            var min = (Math.floor((millisec / 1000) / 60)) % 60;
-            var milliSec = String(Math.round(millisec / 10));
-            var returnMillisec = milliSec.slice(milliSec.length - 2, milliSec.length);
-            var returnSec;
-            var returnMin;
-            if (sec < 10) {
-                returnSec = "0" + sec;
-            } else {
-                returnSec = sec;
-            }
-            if (min < 10) {
-                returnMin = "0" + min;
-            } else {
-                returnMin = min;
-            }
-            if (millisec == 0) {
-                returnMillisec = "00";
-            }
-            timeText = returnMin + ":" + returnSec + ":" + returnMillisec;
-            this.timetext.innerHTML = timeText;
-        }
-    },
-
     deselectTweens:{
         value:function () {
             for (var i = 0; i < this.selectedTweens.length; i++) {
@@ -771,12 +744,24 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     calculateTimeMarkerValue:{
         value:function (currentMarker) {
-            var timeToReturn;
             var currentMilliseconds = currentMarker * this.millisecondsOffset;
-            var sec = (Math.floor((currentMilliseconds / 1000))) % 60;
-            var min = (Math.floor((currentMilliseconds / 1000) / 60)) % 60;
-            var milliSec = String(Math.round(currentMilliseconds / 10));
-            var returnMillisec = milliSec.slice(milliSec.length - 2, milliSec.length);
+            return this.convertMillisecondsToTime(currentMilliseconds);
+        }
+    },
+
+    updateTimeText:{
+        value:function (millisec) {
+            this.timetext.innerHTML = this.convertMillisecondsToTime(millisec);
+        }
+    },
+
+    convertMillisecondsToTime:{
+        value:function(millisec){
+            var timeToReturn;
+            var sec = (Math.floor((millisec / 1000))) % 60;
+            var min = (Math.floor((millisec / 1000) / 60)) % 60;
+            var milliSeconds = String(Math.round(millisec / 10));
+            var returnMillisec = milliSeconds.slice(milliSeconds.length - 2, milliSeconds.length);
             var returnSec;
             var returnMin;
             if (sec < 10) {
@@ -789,8 +774,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             } else {
                 returnMin = min;
             }
-            if (currentMarker == 0) {
-                returnMillisec = "00";
+            if (returnMillisec == "0") {
+                returnMillisec = "0" + returnMillisec;
             }
             timeToReturn = returnMin + ":" + returnSec + ":" + returnMillisec;
             return timeToReturn;
