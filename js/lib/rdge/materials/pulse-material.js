@@ -174,6 +174,38 @@ var PulseMaterial = function PulseMaterial() {
 		}
 	};
 
+	// JSON export
+	this.exportJSON = function()
+	{
+		var world = this.getWorld();
+		if (!world)
+			throw new Error( "no world in material.export, " + this.getName() );
+
+		var jObj =
+		{
+			'material'		: this.getShaderName(),
+			'name'			: this.getName(),
+			'texture'		: this._propValues[this._propNames[0]]
+		};
+
+		return jObj;
+	};
+
+	this.importJSON = function( jObj )
+	{
+        if (this.getShaderName() != jObj.material)  throw new Error( "ill-formed material" );
+        this.setName(  jObj.name );
+
+        try {
+			this._propValues[this._propNames[0]] = jObj.texture;
+        }
+        catch (e)
+        {
+            throw new Error( "could not import material: " + jObj );
+        }
+	}
+
+
 	this.export = function() {
 		// every material needs the base type and instance name
 		var exportStr = "material: " + this.getShaderName() + "\n";

@@ -727,6 +727,57 @@ World.prototype.getShapeFromPoint = function( offsetX, offsetY ) {
 	}
 };
 
+World.prototype.exportJSON = function()
+{
+	// world properties
+	var worldObj = 
+	{
+		'version'	: 1.1,
+		'id'		: this.getCanvas().getAttribute( "data-RDGE-id" ),
+		'fov'		: this._fov,
+		'zNear'		: this._zNear,
+		'zFar'		: this._zFar,
+		'viewDist'	: this._viewDist,
+		'webGL'		: this._useWebGL
+	};
+
+	// RDGE scenegraph
+	if (this._useWebGL)
+		worldObj.scenedata = this.myScene.exportJSON();
+
+	// object data
+	var strArray = [];
+	this.exportObjectsJSON( this._geomRoot, worldObj );
+
+	// convert the object to a string
+	var jStr = JSON.stringify( worldObj );
+
+	// the RDGE export function corrupts the data.
+	// rebuild the tree
+	var root = this._rootNode;
+	root.children = new Array();
+	if (worldObj.children && (worldObj.children.length === 1))
+		this.importObjectsJSON( worldObj.children[0] );
+	
+	return jStr;
+}
+
+World.prototype.exportObjectsJSON = function( obj,  parentObj )
+{
+	if (!obj)  return;
+
+	var jObj = obj.exportJSON();
+	if (!parentObj.children)  parentObj.children = [];
+	parentObj.children.push( jObj );
+
+	if (obj.getChild()) {
+		 this.exportObjects( obj.getChild (), jObj  );
+    }
+
+	if (obj.getNext())
+		this.exportObjects( obj.getNext(), parentObj );
+}
+
 World.prototype.export = function()
 {
 	var exportStr = "GLWorld 1.0\n";
@@ -806,6 +857,83 @@ World.prototype.findTransformNodeByMaterial = function( materialNode,  trNode ) 
 	}
 
 	return rtnNode;
+};
+
+World.prototype.importJSON = function( jObj )
+{
+	if (jObj.webGL)
+	{
+		// start RDGE
+		rdgeStarted = true;
+		var id = this._canvas.getAttribute( "data-RDGE-id" ); 
+		this._canvas.rdgeid = id;
+		g_Engine.registerCanvas(this._canvas, this);
+		RDGEStart( this._canvas );
+		this._canvas.task.stop()
+	}
+
+	// import the objects
+	// there should be exactly one child of the parent object
+	if (jObj.children && (jObj.children.length === 1))
+		this.importObjectsJSON( jObj.children[0] );
+	else
+		throw new Error ("unrecoverable canvas import error - inconsistent root object: " + jObj.children );
+
+	if (!this._useWebGL)
+	{
+		// render using canvas 2D
+		this.render();
+	}
+}
+
+World.prototype.importObjectsJSON = function( jObj,  parentGeomObj )
+{
+	// read the next object
+	var gObj = this.importObjectJSON( jObj,  parentGeomObj );
+
+	// determine if we have children
+	if (jObj.children)
+	{
+		var nKids = ojObjbj.chilodren.length;
+		for (var i=0;  i<nKids;  i++)
+		{
+			var child = jObj.children[i];
+			this.importObjectsJSON( child, gObj );
+		}
+	}
+}
+
+World.prototype.importObjectJSON = function( jObj, parentGeomObj )
+{
+	var type = jObj.type;
+
+	var obj;
+	switch (type)
+	{
+		case 1:
+			obj = new Rectangle();
+			obj.importJSON( jObj );
+			break;
+
+		case 2:		// circle
+			obj = new Circle();
+			obj.importJSON( jObj );
+			break;
+
+		case 3:		// line
+            obj = new Line();
+            obj.importJSON( jObj );
+            break;
+
+		default:
+			throw new Error( "Unrecognized object type: " + type );
+			break;
+	}
+
+	if (obj)
+		this.addObject( obj,  parentGeomObj );
+
+	return obj;
 };
 
 World.prototype.import = function( importStr ) {

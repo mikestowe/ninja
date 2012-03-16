@@ -37,18 +37,15 @@ function CanvasDataManager()
 		for (var i=0;  i<nWorlds;  i++)
 		{
 			var importStr = value[i];
-			var startIndex = importStr.indexOf( "id: " );
-			if (startIndex >= 0)
+			var jObj = JSON.parse( importStr );
+
+			var id = jObj.id;
+			if (id)
 			{
-				var endIndex = importStr.indexOf( "\n", startIndex );
-				if (endIndex > 0)
+				var canvas = this.findCanvasWithID( id, root );
+				if (canvas)
 				{
-					var id = importStr.substring( startIndex+4, endIndex );
-					var canvas = this.findCanvasWithID( id, root );
-					if (canvas)
-					{
-						var rt = new GLRuntime( canvas, importStr,  assetPath );
-					}
+					new GLRuntime( canvas, jObj,  assetPath );
 				}
 			}
 		}
@@ -95,14 +92,15 @@ function CanvasDataManager()
 // Class GLRuntime
 //      Manages runtime fora WebGL canvas
 ///////////////////////////////////////////////////////////////////////
-function GLRuntime( canvas, importStr,  assetPath )
+function GLRuntime( canvas, jObj,  assetPath )
 {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
 	this._canvas		= canvas;
 	this._context		= null;
-	this._importStr		= importStr;
+	//this._importStr		= importStr;
+	this._jObj			= jObj;
 
 	this.renderer		= null;
 	this.myScene		= null;
@@ -157,21 +155,19 @@ function GLRuntime( canvas, importStr,  assetPath )
     ///////////////////////////////////////////////////////////////////////
 	this.loadScene = function()
 	{
+		var jObj = this._jObj;
+		if (!jObj.children || (jObj.children.length != 1))
+			throw new Error( "ill-formed JSON for runtime load: " + jObj );
+		var root = jObj.children[0];
+
 		// parse the data
-		// the GL runtime must start with a "sceneData: "
-		var index = importStr.indexOf( "scenedata: " );
-		if (index >= 0)
+		if (jObj.scenedata)
 		{
 			this._useWebGL = true;
 
-			var rdgeStr = importStr.substr( index+11 );
-			var endIndex = rdgeStr.indexOf( "endscene\n" );
-			if (endIndex < 0)  throw new Error( "ill-formed WebGL data" );
-			var len = endIndex - index + 11;
-			rdgeStr = rdgeStr.substr( 0, endIndex );
-
+			var rdgeStr = jObj.scenedata;
 			this.myScene.importJSON( rdgeStr );
-			this.importObjects( importStr );
+			this.importObjects( root );
 			this.linkMaterials( this._geomRoot );
 			this.initMaterials();
 			this.linkLights();
@@ -179,7 +175,7 @@ function GLRuntime( canvas, importStr,  assetPath )
 		else
 		{
 			this._context = this._canvas.getContext( "2d" );
-			this.importObjects( importStr );
+			this.importObjects( root );
 			this.render();
 		}
 	}
@@ -277,58 +273,42 @@ function GLRuntime( canvas, importStr,  assetPath )
 		}
     }
 
-	this.importObjects = function( importStr,  parent )
+	this.importObjects = function( jObj,  parent )
 	{
-		var index = importStr.indexOf( "OBJECT\n", 0 );
-		while (index >= 0)
+		// read the next object
+		var gObj = this.importObject( jObj, parent );
+
+		// load the children
+		if (jObj.children)
 		{
-			// update the string to the current object
-			importStr = importStr.substr( index+7 );
-
-			// read the next object
-			var obj = this.importObject( importStr, parent );
-
-			// determine if we have children
-			var endIndex = importStr.indexOf( "ENDOBJECT\n" ),
-				childIndex = importStr.indexOf( "OBJECT\n" );
-			if (endIndex < 0)  throw new Error( "ill-formed object data" );
-			if ((childIndex >= 0) && (childIndex < endIndex))
+			var nKids = jObj.children.length;
+			for (var i=0;  i<nKids;  i++)
 			{
-				importStr = importStr.substr( childIndex + 7 );
-				importStr = this.importObjects( importStr, obj );
-				endIndex = importStr.indexOf( "ENDOBJECT\n" )
+				var child = jObj.children[i];
+				this.importObjects( child, gObj );
 			}
-
-			// remove the string for the object(s) just created
-			importStr = importStr.substr( endIndex );
-
-			// get the location of the next object
-			index = importStr.indexOf( "OBJECT\n", endIndex );
 		}
-
-		return importStr;
 	}
 
-	this.importObject = function( objStr,  parent )
+	this.importObject = function( jObj,  parent )
 	{
-		var type = Number( getPropertyFromString( "type: ", objStr ) );
-
+		var type = jObj.type
 		var obj;
 		switch (type)
 		{
 			case 1:
 				obj = new RuntimeRectangle();
-				obj.import( objStr, parent );
+				obj.import( jObj, parent );
 				break;
 
 			case 2:		// circle
 				obj = new RuntimeOval();
-				obj.import( objStr, parent );
+				obj.import( jObj, parent );
 				break;
 
 			case 3:		// line
 				obj = new RuntimeLine();
-				obj.import( objStr, parent );
+				obj.import( jObj, parent );
 				break;
 
 			default:
@@ -337,7 +317,7 @@ function GLRuntime( canvas, importStr,  assetPath )
 		}
 
 		if (obj)
-			this.addObject( obj );
+			this.addObject( obj, parent );
 
 		return obj;
 	}
@@ -396,17 +376,16 @@ function GLRuntime( canvas, importStr,  assetPath )
 
 	this.remapAssetFolder = function( url )
 	{
-		/*
-		var searchStr = "assets/";
-		var index = url.indexOf( searchStr );
-		var rtnPath = url;
-		if (index >= 0)
-		{
-			rtnPath = url.substr( index + searchStr.length );
-			rtnPath = this._assetPath + rtnPath;
-		}
-		return rtnPath;
-		*/
+//		var searchStr = "assets/";
+//		var index = url.indexOf( searchStr );
+//		var rtnPath = url;
+//		if (index >= 0)
+//		{
+//			rtnPath = url.substr( index + searchStr.length );
+//			rtnPath = this._assetPath + rtnPath;
+//		}
+//		return rtnPath;
+		
 		return url;
 	}
 
@@ -450,8 +429,7 @@ function GLRuntime( canvas, importStr,  assetPath )
 	}
 
 	// start RDGE or load Canvas 2D objects
-	var index = importStr.indexOf( "scenedata: " );
-	this._useWebGL = (index >= 0);
+	if (jObj.scenedata)  this._useWebGL = true;
 	if (this._useWebGL)
 	{
 		var id = canvas.getAttribute( "data-RDGE-id" ); 
@@ -515,16 +493,17 @@ function RuntimeGeomObj()
     {
 	}
 
-	this.importMaterials = function(importStr)
+	this.importMaterials = function(jObj)
 	{
-		var nMaterials = Number( getPropertyFromString( "nMaterials: ", importStr )  );
+		var nMaterials = jObj.nMaterials;
+		var matArray = jObj.materials;
 		for (var i=0;  i<nMaterials;  i++)
 		{
-			var matNodeName = getPropertyFromString( "materialNodeName: ",	importStr );
-
 			var mat;
-			var materialType = getPropertyFromString( "material: ",	importStr );
-			switch (materialType)
+			var matObj = matArray[i].material;
+			var matNodeName = matArray[i].materialNodeName;
+			var shaderName = matObj.material;
+			switch (shaderName)
 			{
 				case "flat":			mat = new RuntimeFlatMaterial();				break;
 				case "radialGradient":  mat = new RuntimeRadialGradientMaterial();		break;
@@ -555,15 +534,10 @@ function RuntimeGeomObj()
 
 			if (mat)
 			{
-				mat.import( importStr );
+				mat.import( matObj );
 				mat._materialNodeName = matNodeName;
 				this._materials.push( mat );
 			}
-
-			var endKey = "endMaterial\n";
-			var endIndex = importStr.indexOf( endKey );
-			if (endIndex < 0)  break;
-			importStr = importStr.substr( endIndex + endKey.length );
 		}
 	}
 
@@ -663,19 +637,6 @@ function RuntimeGeomObj()
     }
 }
 
-function getPropertyFromString( prop, str )
-{
-	var index = str.indexOf( prop );
-	if (index < 0)  throw new Error( "property " + prop + " not found in string: " + str);
-
-	var rtnStr = str.substr( index+prop.length );
-	index = rtnStr.indexOf( "\n" );
-	if (index >= 0)
-		rtnStr = rtnStr.substr(0, index);
-
-	return rtnStr;
-}
-
 ///////////////////////////////////////////////////////////////////////
 // Class RuntimeRectangle
 ///////////////////////////////////////////////////////////////////////
@@ -685,26 +646,24 @@ function RuntimeRectangle()
 	this.inheritedFrom = RuntimeGeomObj;
 	this.inheritedFrom();
 
-	this.import = function( importStr )
+	this.import = function( jObj )
 	{
-		this._xOffset			= Number( getPropertyFromString( "xoff: ",			importStr )  );
-		this._yOffset			= Number( getPropertyFromString( "yoff: ",			importStr )  );
-		this._width				= Number( getPropertyFromString( "width: ",		importStr )  );
-		this._height			= Number( getPropertyFromString( "height: ",		importStr )  );
-		this._strokeWidth		= Number( getPropertyFromString( "strokeWidth: ",	importStr )  );
-		this._innerRadius		= Number( getPropertyFromString( "innerRadius: ",	importStr )  );
-		this._strokeStyle		= Number( getPropertyFromString( "strokeStyle: ",	importStr )  );
-		var strokeMaterialName	= getPropertyFromString( "strokeMat: ",	importStr );
-		var fillMaterialName	= getPropertyFromString( "fillMat: ",		importStr );
-		this._strokeStyle		=  getPropertyFromString( "strokeStyle: ",	importStr );
-		this._fillColor			=  eval( "[" + getPropertyFromString( "fillColor: ",	importStr ) + "]" );
-		this._strokeColor		=  eval( "[" + getPropertyFromString( "strokeColor: ",	importStr ) + "]" );
-		this._tlRadius			=  Number( getPropertyFromString( "tlRadius: ",	importStr )  );
-		this._trRadius			=  Number( getPropertyFromString( "trRadius: ",	importStr )  );
-		this._blRadius			=  Number( getPropertyFromString( "blRadius: ",	importStr )  );
-		this._brRadius			=  Number( getPropertyFromString( "brRadius: ",	importStr )  );
-
-		this.importMaterials( importStr );
+		this._xOffset			= jObj.xoff;
+		this._yOffset			= jObj.yoff;
+		this._width				= jObj.width;
+		this._height			= jObj.height;
+		this._strokeWidth		= jObj.strokeWidth;
+		this._strokeColor		= jObj.strokeColor;
+		this._fillColor			= jObj.fillColor;
+		this._tlRadius			= jObj.tlRadius;
+		this._trRadius			= jObj.trRadius;
+		this._blRadius			= jObj.blRadius;
+		this._brRadius			= jObj.brRadius;
+		this._innerRadius		= jObj.innerRadius;
+		this._strokeStyle		= jObj.strokeStyle;
+		var strokeMaterialName	= jObj.strokeMat;
+		var fillMaterialName	= jObj.fillMat;
+		this.importMaterials( jObj.materials );
 	}
 
 	this.renderPath = function( inset, ctx )
@@ -836,21 +795,20 @@ function RuntimeOval()
 	this.inheritedFrom = RuntimeGeomObj;
 	this.inheritedFrom();
 
-	this.import = function( importStr )
+	this.import = function( jObj )
 	{
-		this._xOffset			= Number( getPropertyFromString( "xoff: ",			importStr ) );
-		this._yOffset			= Number( getPropertyFromString( "yoff: ",			importStr ) );
-		this._width				= Number( getPropertyFromString( "width: ",		importStr ) );
-		this._height			= Number( getPropertyFromString( "height: ",		importStr ) );
-		this._strokeWidth		= Number( getPropertyFromString( "strokeWidth: ",	importStr ) );
-		this._innerRadius		= Number( getPropertyFromString( "innerRadius: ",	importStr ) );
-		this._strokeStyle		= getPropertyFromString( "strokeStyle: ",	importStr );
-		var strokeMaterialName	= getPropertyFromString( "strokeMat: ",	importStr );
-		var fillMaterialName	= getPropertyFromString( "fillMat: ",		importStr );
-		this._fillColor			=  eval( "[" + getPropertyFromString( "fillColor: ",	importStr ) + "]" );
-		this._strokeColor		=  eval( "[" + getPropertyFromString( "strokeColor: ",	importStr ) + "]" );
-		
-		this.importMaterials( importStr );
+		this._xOffset			= jObj.xoff;
+		this._yOffset			= jObj.yoff;
+		this._width				= jObj.width;
+		this._height			= jObj.height;
+		this._strokeWidth		= jObj.strokeWidth;
+		this._strokeColor		= jObj.strokeColor;
+		this._fillColor			= jObj.fillColor;
+		this._innerRadius		= jObj.innerRadius;
+		this._strokeStyle		= jObj.strokeStyle;
+		var strokeMaterialName	= jObj.strokeMat;
+		var fillMaterialName	= jObj.fillMat;
+		this.importMaterials( jObj.materials );
 	}
 
 	this.render = function()
@@ -1098,23 +1056,9 @@ function RuntimeMaterial( world )
 	{
 	}
 
-	this.import = function( importStr )
+	this.import = function( jObj )
 	{
 	}
-
-	this.getPropertyFromString = function( prop, str )
-	{
-		var index = str.indexOf( prop );
-		if (index < 0)  throw new Error( "property " + prop + " not found in string: " + str);
-
-		var rtnStr = str.substr( index+prop.length );
-		index = rtnStr.indexOf( "\n" );
-		if (index >= 0)
-			rtnStr = rtnStr.substr(0, index);
-
-		return rtnStr;
-	}
-
 }
 
 function RuntimeFlatMaterial()
@@ -1129,13 +1073,10 @@ function RuntimeFlatMaterial()
 	// assign a default color
 	this._color = [1,0,0,1];
 
-    this.import = function( importStr )
+    this.import = function( jObj )
     {
-		var colorStr = this.getPropertyFromString( "color: ",	importStr );
-		if (colorStr)
-			this._color  = eval( "[" + colorStr + "]" );
+		this._color = jObj.color;
     };
-
 
 	this.init = function( world )
 	{
@@ -1160,9 +1101,9 @@ function RuntimePulseMaterial()
 	this.isAnimated			= function()	{  return true;	}
 
 
-	this.import = function( importStr )
+	this.import = function( jObj )
 	{
-		this._texMap = this.getPropertyFromString( "texture: ",	importStr );
+		this._texMap = jObj.texture;
 	}
 
 	this.init = function( world )
@@ -1254,25 +1195,19 @@ function RuntimeRadialGradientMaterial()
 		}
 	}
 
-	this.import = function( importStr )
+	this.import = function( jObj )
 	{
-		var colorStr;
-		colorStr = this.getPropertyFromString( "color1: ",	importStr );
-		this._color1  = eval( "[" + colorStr + "]" );
-		colorStr = this.getPropertyFromString( "color2: ",	importStr );
-		this._color2  = eval( "[" + colorStr + "]" );
-		colorStr = this.getPropertyFromString( "color3: ",	importStr );
-		this._color3  = eval( "[" + colorStr + "]" );
-		colorStr = this.getPropertyFromString( "color4: ",	importStr );
-		this._color4  = eval( "[" + colorStr + "]" );
-
-		this._colorStop1 = Number( this.getPropertyFromString( "colorStop1: ",	importStr ) );
-		this._colorStop2 = Number( this.getPropertyFromString( "colorStop2: ",	importStr ) );
-		this._colorStop3 = Number( this.getPropertyFromString( "colorStop3: ",	importStr ) );
-		this._colorStop4 = Number( this.getPropertyFromString( "colorStop4: ",	importStr ) );
+		var color1	= jObj.color1,
+			color2	= jObj.color2,
+			color3	= jObj.color3,
+			color4	= jObj.color4,
+			colorStop1	= jObj.colorStop1,
+			colorStop2	= jObj.colorStop2,
+			colorStop3	= jObj.colorStop3,
+			colorStop4	= jObj.colorStop4;
 
 		if (this._angle !== undefined)
-			this._angle = this.getPropertyFromString( "angle: ",	importStr );
+			this._angle = jObj.angle;
 	}
 
 }
@@ -1304,12 +1239,12 @@ function RuntimeBumpMetalMaterial()
 	this._specularTexture = "assets/images/silver.png";
 	this._normalTexture = "assets/images/normalMap.png";
 
-	this.import = function( importStr )
+	this.import = function( jObj )
 	{
-		this._lightDiff  = eval( "[" + this.getPropertyFromString( "lightDiff: ",	importStr ) + "]" );
-		this._diffuseTexture = this.getPropertyFromString( "diffuseTexture: ",	importStr );
-		this._specularTexture = this.getPropertyFromString( "specularTexture: ",	importStr );
-		this._normalTexture = this.getPropertyFromString( "normalMap: ",	importStr );
+		this._lightDiff			= jObj.lightDiff;
+		this._diffuseTexture	= jObj.diffuseTexture;
+		this._specularTexture	= jObj.specularTexture;
+		this._normalTexture		= jObj.normalMap;
 	}
 
 	this.init = function( world )
@@ -1445,91 +1380,70 @@ function RuntimeUberMaterial()
 	{
 	}
 
-	this.import = function( importStr )
+	this.import = function( jObj )
 	{
-		// limit the key searches to this material
-        var endKey = "endMaterial\n";
-        var index = importStr.indexOf( endKey );
-        index += endKey.length;
-        importStr = importStr.slice( 0, index );
-
-		var matProps = getPropertyFromString( "materialProps: ", importStr );
-		if (matProps)
+		if (jObj.materialProps)
 		{
-			this._ambientColor  = eval( "[" + getPropertyFromString("ambientColor: ", importStr)   + ']' );
-			this._diffuseColor  = eval( "[" + getPropertyFromString( "diffuseColor: ", importStr)  + ']' );
-			this._specularColor = eval( "[" + getPropertyFromString( "specularColor: ", importStr) + ']' );
-			this._specularPower = Number(  getPropertyFromString( "specularPower: ", importStr) );
+			var ambientColor  = jObj.materialProps.ambientColor;	 this.setProperty( "ambientColor", ambientColor );
+			var diffuseColor  = jObj.materialProps.diffuseColor;	 this.setProperty( "diffuseColor", diffuseColor );
+			var specularColor = jObj.materialProps.specularColor;	 this.setProperty( "specularColor", specularColor );
+			var specularPower = jObj.materialProps.specularPower;    this.setProperty( "specularPower", specularPower );
 		}
 
-		var lightProps = getPropertyFromString( "lightProps: ", importStr );
-		if (lightProps)
+		var lightArray = jObj.lights;
+		if (lightArray)
 		{
 			this._lights = [];
-			var lightStr;
 			for (var i=0;  i<this._MAX_LIGHTS;  i++)
 			{
-				var type = getPropertyFromString( "light" + i + ": ", importStr );
-				if (type)
+				var lightObj = lightArray[i];
+				if (lightObj)
 				{
-					var light = new Object;
-					light.type = type;
-					switch (type)
+					var type = lightObj['light'+i];
+					if (type)
 					{
-						case "directional":
-							lightStr = getPropertyFromString( 'light' + i + 'Dir: ', importStr);
-							light.direction = eval( "[" + lightStr + "]" );
-							break;
+						var light = new Object;
+						switch (type)
+						{
+							case "directional":
+								light.direction = lightObj['light' + i + 'Dir'];
+								break;
 
-						case "spot":
-							lightStr = getPropertyFromString( 'light' + i + 'Pos: ', importStr );
-							light.position =  eval( "[" + lightStr + "]" );
+							case "spot":
+								light.position = lightObj['light' + i + 'Pos'];
+								light['spotInnerCutoff'] = lightObj['light' + i + 'OuterSpotCutoff'];
+								light['spotOuterCutoff'] = lightObj['light' + i + 'InnerSpotCutoff'];
+								break;
 
-							lightStr = getPropertyFromString( 'light' + i + 'OuterSpotCutoff: ', importStr );
-							light['spotInnerCutoff'] = Number( lightStr );
+							case "point":
+								light.position = lightObj['light' + i + 'Pos'];
+								light.attenuation = lightObj['light' + i + 'Attenuation'];
+								break;
 
-							lightStr = getPropertyFromString( 'light' + i + 'InnerSpotCutoff: ', importStr );
-							light['spotOuterCutoff'] = Number( lightStr );
-							break;
+							default:
+								throw new Error( "unrecognized light type on import: " + type );
+								break;
+						}
 
-						case "point":
-							lightStr = getPropertyFromString( 'light' + i + 'Pos: ', importStr );
-							light.position =  eval( "[" + lightStr + "]" );
+						// common to all lights
+						light.diffuseColor  = lightObj['light' + i + 'Color'];
+						light.specularColor = lightObj['light' + i + 'SpecularColor'];
 
-							lightStr = getPropertyFromString( 'light' + i + 'Attenuation: ', importStr );
-							light.attenuation =  eval( "[" + lightStr + "]" );
-							break;
-
-						default:
-							throw new Error( "unrecognized light type on import: " + type );
-							break;
+						// push the light
+						this._lights.push( light );
 					}
-
-					// common to all lights
-					light.diffuseColor = eval( "[" + getPropertyFromString( 'light' + i + 'Color: ', importStr) + "]" );
-					light.specularColor = eval( "[" + getPropertyFromString( 'light' + i + 'SpecularColor: ', importStr) + "]" );
-
-					// push the light
-					this._lights.push( light );
+					else
+						this._lights[i] = 'undefined';
 				}
-				else
-					this._lights[i] = 'undefined';
-
-				// advance to the next light
-				var endLightKey = "endMaterial\n";
-				index = importStr.indexOf( endLightKey );
-				if (index < 0)  throw new Error( "ill-formed light encountered in import" );
-				index += endLightKey.length;
-				importStr = importStr.slice( 0, index );
 			}
 		}
 
-		this._diffuseMap = getPropertyFromString( "diffuseMap: ", importStr  )
-		this._normalMap = getPropertyFromString( "normalMap: ", importStr  );
-		this._specularMap = getPropertyFromString( "specularMap: ", importStr  );
-		this._environmentMap = getPropertyFromString( "environmentMap: ", importStr  );
+		this._diffuseMap		= jObj['diffuseMap'];
+		this._normalMap			= jObj['normalMap'];
+		this._specularMap		= jObj['specularMap'];
+		this._environmentMap	= jObj['environmentMap'];
 		if (this._environmentMap)
-			this._environmentAmount = Number( getPropertyFromString( "environmentAmount", importStr ) );
+			this._environmentAmount = jObj['environmentAmount'];
 	}
 }
 
@@ -1561,3 +1475,5 @@ function RuntimePlasmaMaterial()
 		}
 	}
 }
+
+

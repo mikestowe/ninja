@@ -157,6 +157,42 @@ var RadialBlurMaterial = function RadialBlurMaterial() {
 		}
 	};
 
+	this.exportJSON = function()
+	{
+		var world = this.getWorld();
+		if (!world)
+			throw new Error( "no world in material.export, " + this.getName() );
+
+		var jObj =
+		{
+			'material'		: this.getShaderName(),
+			'name'			: this.getName(),
+			'color'			: this._propValues["color"],
+			'texture'		: this._propValues[this._propNames[0]]
+		};
+
+		return jObj;
+	};
+
+	this.importJSON = function( importStr )
+	{
+        if (this.getShaderName() != jObj.material)  throw new Error( "ill-formed material" );
+        this.setName( jObj.name );
+
+		var rtnStr;
+        try
+        {
+            this._propValues[this._propNames[0]] = jObj.texture;
+			this.updateTexture();
+        }
+        catch (e)
+        {
+            throw new Error( "could not import material: " + importStr );
+        }
+		
+		return rtnStr;
+	}
+
 	this.export = function() {
 		// every material needs the base type and instance name
 		var exportStr = "material: " + this.getShaderName() + "\n";

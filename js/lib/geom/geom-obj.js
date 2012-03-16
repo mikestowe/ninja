@@ -5,6 +5,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var MaterialsModel = require("js/models/materials-model").MaterialsModel;
+/*
 var FlatMaterial = require("js/lib/rdge/materials/flat-material").FlatMaterial;
 var LinearGradientMaterial = require("js/lib/rdge/materials/linear-gradient-material").LinearGradientMaterial;
 var RadialGradientMaterial = require("js/lib/rdge/materials/radial-gradient-material").RadialGradientMaterial;
@@ -25,6 +26,7 @@ var TwistMaterial = require("js/lib/rdge/materials/twist-material").TwistMateria
 var JuliaMaterial = require("js/lib/rdge/materials/julia-material").JuliaMaterial;
 var KeleidoscopeMaterial = require("js/lib/rdge/materials/keleidoscope-material").KeleidoscopeMaterial;
 var MandelMaterial = require("js/lib/rdge/materials/mandel-material").MandelMaterial;
+*/
 
 ///////////////////////////////////////////////////////////////////////
 // Class GLGeomObj
@@ -224,6 +226,83 @@ var GeomObj = function GLGeomObj() {
 
         return fillMaterial;
     };
+
+	this.exportMaterialsJSON = function()
+	{
+		var jObj;
+		if (this._materialArray && this._materialNodeArray)
+		{
+			var nMats = this._materialArray.length;
+			if (nMats > 0)
+			{
+				var arr = [];
+
+				for (var i=0;  i<nMats;  i++)
+				{
+					var matObj = 
+					{
+						'materialNodeName'	: this._materialNodeArray[i].name,
+						'material'			: this._materialArray[i].exportJSON(),
+						'type'				: this._materialTypeArray[i]
+					}
+					arr.push( matObj );
+				}
+
+				jObj =
+				{
+					'nMaterials'	: nMats,
+					'materials'		: arr
+				};
+			}
+		}
+
+		return jObj;
+	}
+
+	this.importMaterialsJSON = function( jObj )
+	{
+		var nMaterials = jObj.nMaterials;
+		var matArray = jObj.materials;
+		for (var i=0;  i<nMaterials;  i++)
+		{
+			var mat;
+			var matObj = matArray[i].material;
+			var shaderName = matObj.material;
+			switch (shaderName)
+			{
+				case "flat":
+				case "radialGradient":
+				case "linearGradient":
+				case "bumpMetal":
+				case "uber":
+				case "plasma":
+				case "deform":
+				case "water":
+				case "tunnel":
+				case "reliefTunnel":
+				case "squareTunnel":
+				case "twist":
+				case "fly":
+				case "julia":
+				case "mandel":
+				case "star":
+				case "zinvert":
+				case "keleidoscope":
+				case "radialBlur":
+				case "pulse":
+					mat = MaterialsModel.getMaterialByShader( shaderName );
+					if (mat)  mat = mat.dup();
+					break;
+
+				default:
+					console.log( "material type: " + materialType + " is not supported" );
+					break;
+			}
+
+			if (mat)
+				mat.importJSON( matObj );
+		}
+	}
 
 	this.exportMaterials = function()
 	{

@@ -194,11 +194,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 			//
 			if (elt) {
 				this._glData = [];
-				//if (path) {
-					//this.collectGLData(elt, this._glData, path);
-				//} else {
-					this.collectGLData(elt, this._glData );
-				//}
+				this.collectGLData(elt, this._glData );
 			} else {
 				this._glData = null
 			}
@@ -220,25 +216,26 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 
 					// /*
 					var importStr = value[i];
-					var startIndex = importStr.indexOf( "id: " );
-					if (startIndex >= 0) {
-						var endIndex = importStr.indexOf( "\n", startIndex );
-						if (endIndex > 0) {
-							var id = importStr.substring( startIndex+4, endIndex );
-							if (id) {
-								var canvas = this.findCanvasWithID( id, elt );
-								if (canvas) {
-									if (!canvas.elementModel) {
-										NJUtils.makeElementModel(canvas, "Canvas", "shape", true);
+					var jObj = JSON.parse( importStr );
+					if (jObj)
+					{
+						var id = jObj.id;
+						if (id)
+						{
+							var canvas = this.findCanvasWithID( id, elt );
+							if (canvas) {
+								if (!canvas.elementModel) {
+									NJUtils.makeElementModel(canvas, "Canvas", "shape", true);
+								}
+								if (canvas.elementModel) {
+									if (canvas.elementModel.shapeModel.GLWorld) {
+										canvas.elementModel.shapeModel.GLWorld.clearTree();
 									}
-									if (canvas.elementModel) {
-										if (canvas.elementModel.shapeModel.GLWorld) {
-											canvas.elementModel.shapeModel.GLWorld.clearTree();
-										}
-										var index = importStr.indexOf( "webGL: " );
-										var useWebGL = (index >= 0)
+									if (jObj)
+									{
+										var useWebGL = jObj.webGL;
 										var world = new GLWorld( canvas, useWebGL );
-										world.import( importStr );
+										world.importJSON( jObj );
 										this.buildShapeModel( canvas.elementModel, world );
 									}
 								}
@@ -382,7 +379,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 		{
 			if (elt.elementModel && elt.elementModel.shapeModel && elt.elementModel.shapeModel.GLWorld)
 			{
-				var data = elt.elementModel.shapeModel.GLWorld.export();
+				var data = elt.elementModel.shapeModel.GLWorld.exportJSON();
 				dataArray.push( data );
 			}
 

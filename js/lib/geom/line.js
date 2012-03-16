@@ -99,9 +99,56 @@ var Line = function GLLine( world, xOffset, yOffset, width, height, slope, strok
 
 	this.geomType	= function()				{  return this.GEOM_TYPE_LINE;	}
 
-		///////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////
 	// Methods
 	///////////////////////////////////////////////////////////////////////
+	this.exportJSON = function()
+	{
+		var jObj = 
+		{
+			'type'			: this.geomType(),
+			'xoff'			: this._xOffset,
+			'yoff'			: this._yOffset,
+			'width'			: this._width,
+			'height'		: this._height,
+			'xAdj'		    : this._xAdj,
+			'yAdj'		    : this._yAdj,
+			'slope'	        : this._slope,
+			'strokeWidth'	: this._strokeWidth,
+			'strokeColor'	: this._strokeColor,
+			'strokeStyle'	: this._strokeStyle,
+			'strokeMat'		: this._strokeMaterial ? this._strokeMaterial.getName() : MaterialsModel.getDefaultMaterialName(),
+			'materials'		: this.exportMaterialsJSON()
+		};
+
+		return jObj;
+	};
+
+	this.importJSON = function( jObj )
+	{
+		this._xOffset			= jObj.xoff;
+		this._yOffset			= jObj.yoff;
+		this._width				= jObj.width;
+		this._height			= jObj.height;
+		this._xAdj			    = jObj.xAdj;
+		this._yAdj			    = jObj.yAdj;
+		this._strokeWidth		= jObj.strokeWidth;
+		this._slope 		    = jObj.slope;
+		this._strokeStyle		= jObj.strokeStyle;
+		this._strokeColor		= jObj.strokeColor;
+		var strokeMaterialName	= jObj.strokeMat;
+
+		var strokeMat = MaterialsModel.getMaterial( strokeMaterialName );
+		if (!strokeMat) {
+			console.log( "object material not found in library: " + strokeMaterialName );
+			strokeMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() );
+		}
+		else
+			strokeMat = strokeMat.dup();
+		this._strokeMaterial = strokeMat;
+
+	};
+
 	this.export = function() {
 		var rtnStr = "type: " + this.geomType() + "\n";
 
@@ -120,7 +167,7 @@ var Line = function GLLine( world, xOffset, yOffset, width, height, slope, strok
 		if (this._strokeMaterial) {
 			rtnStr += this._strokeMaterial.getName();
         } else {
-			rtnStr += "flatMaterial";
+			rtnStr +=  MaterialsModel.getDefaultMaterialName();
         }
 
 		rtnStr += "\n";
@@ -150,7 +197,7 @@ var Line = function GLLine( world, xOffset, yOffset, width, height, slope, strok
 		var strokeMat = MaterialsModel.getMaterial( strokeMaterialName );
 		if (!strokeMat) {
 			console.log( "object material not found in library: " + strokeMaterialName );
-			strokeMat = MaterialsModel.exportFlatMaterial();
+			strokeMat = MaterialsModel.getMaterial( MaterialsModel.getDefaultMaterialName() );
 		}
 
 		this._strokeMaterial = strokeMat;

@@ -115,7 +115,31 @@ exports.MaterialsModel = Montage.create(Component, {
                 return this._materials[index];
             }
         }
-    },			
+    },
+	
+	getMaterialByShader: 
+	{
+		value: function( shaderName )
+		{
+			var index = this.getIndexOfMaterialByShader( shaderName );
+			if (index >= 0)
+				return this._materials[index];
+		}
+	},		
+
+    getIndexOfMaterialByShader: {
+        value: function (shaderName) {
+            var len = this._materials.length;
+            for(var i=0; i<len; i++) {
+                var material = this._materials[i];
+                if(material.getShaderName() === shaderName) {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+    },
 
     getIndexOfMaterial: {
         value: function (materialName) {
@@ -142,6 +166,12 @@ exports.MaterialsModel = Montage.create(Component, {
             return new FlatMaterial();
         }
     },
+
+	getDefaultMaterialName: {
+		value: function() {
+			return "FlatMaterial";
+		}
+	},
 
 	exportMaterials: {
 		value: function() {
