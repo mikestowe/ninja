@@ -17,7 +17,7 @@ var worldCounter = 0;
 // Class GLWorld
 //      Manages display in a canvas
 ///////////////////////////////////////////////////////////////////////
-var World = function GLWorld( canvas, use3D ) {
+var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,11 @@ var World = function GLWorld( canvas, use3D ) {
 
     this._canvas = canvas;
 	if (this._useWebGL) {
-		this._glContext = canvas.getContext("experimental-webgl");
+        if(preserveDrawingBuffer) {
+            this._glContext = canvas.getContext("experimental-webgl", {preserveDrawingBuffer: true});
+        } else {
+		    this._glContext = canvas.getContext("experimental-webgl");
+        }
     } else {
 		this._2DContext = canvas.getContext( "2d" );
     }
@@ -347,20 +351,18 @@ var World = function GLWorld( canvas, use3D ) {
 		return false;
 	};
 
-	this.generateUniqueNodeID = function()
-	{
+	this.generateUniqueNodeID = function() {
 		var str = "" + this._nodeCounter;
 		this._nodeCounter++;
 		return str;
-	}
+	};
 
     
     // start RDGE passing your runtime object, and false to indicate we don't need a an initialization state
     // in the case of a procedurally built scene an init state is not needed for loading data
 	if (this._useWebGL) {
 		rdgeStarted = true;
-		var id = this._canvas.getAttribute( "data-RDGE-id" ); 
-		this._canvas.rdgeid = id;
+		this._canvas.rdgeid = this._canvas.getAttribute( "data-RDGE-id" );
 		g_Engine.registerCanvas(this._canvas, this);
 		RDGEStart( this._canvas );
 		this._canvas.task.stop()
@@ -680,7 +682,7 @@ World.prototype.render = function() {
 		var root = this.getGeomRoot();
 		this.hRender( root );
 	} else {
-		g_Engine.setContext( this._canvas.rdgeId );
+		g_Engine.setContext( this._canvas.rdgeid );
 		//this.draw();
 		this.restartRenderLoop();
 	}

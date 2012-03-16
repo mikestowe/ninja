@@ -159,7 +159,14 @@ var Line = function GLLine( world, xOffset, yOffset, width, height, slope, strok
 		rtnStr += "xAdj: "		    + this._xAdj		+ "\n";
 		rtnStr += "yAdj: "		    + this._yAdj		+ "\n";
 		rtnStr += "strokeWidth: "	+ this._strokeWidth	+ "\n";
-		rtnStr += "strokeColor: "	+ String(this._strokeColor)  + "\n";
+
+        if(this._strokeColor.gradientMode) {
+            rtnStr += "strokeGradientMode: "	+ this._strokeColor.gradientMode	+ "\n";
+            rtnStr += "strokeColor: " + this.gradientToString(this._strokeColor.color) + "\n";
+        } else {
+            rtnStr += "strokeColor: "	+ String(this._strokeColor)  + "\n";
+        }
+
 		rtnStr += "strokeStyle: "	+ this._strokeStyle	+ "\n";
 		rtnStr += "slope: "	        + String(this._slope)	+ "\n";
 
@@ -192,7 +199,15 @@ var Line = function GLLine( world, xOffset, yOffset, width, height, slope, strok
 
 		var strokeMaterialName	= this.getPropertyFromString( "strokeMat: ",	importStr );
 		this._strokeStyle		= this.getPropertyFromString( "strokeStyle: ",	importStr );
-		this._strokeColor		= eval( "[" + this.getPropertyFromString( "strokeColor: ",	importStr ) + "]" );
+
+        if(importStr.indexOf("strokeGradientMode: ") < 0)
+        {
+            this._strokeColor		=  eval( "[" + this.getPropertyFromString( "strokeColor: ",	importStr ) + "]" );
+        } else {
+            this._strokeColor = {};
+            this._strokeColor.gradientMode = this.getPropertyFromString( "strokeGradientMode: ",	importStr );
+            this._strokeColor.color = this.stringToGradient(this.getPropertyFromString( "strokeColor: ",	importStr ));
+        }
 
 		var strokeMat = MaterialsModel.getMaterial( strokeMaterialName );
 		if (!strokeMat) {
@@ -395,16 +410,46 @@ var Line = function GLLine( world, xOffset, yOffset, width, height, slope, strok
 		if (!ctx)  return;
 	
 		// set up the stroke style
-		var lineWidth = this._strokeWidth;
+		var lineWidth = this._strokeWidth,
+            w = this._width,
+            h = this._height;
+
+        var c,
+            gradient,
+            colors,
+            len,
+            n,
+            position,
+            cs;
+
 		ctx.beginPath();
 		ctx.lineWidth	= lineWidth;
 		if (this._strokeColor) {
-			var c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";  
-			ctx.strokeStyle = c;
+            if(this._strokeColor.gradientMode) {
+                if(this._strokeColor.gradientMode === "radial") {
+                    gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w/2, h/2));
+                } else {
+                    gradient = ctx.createLinearGradient(0, h/2, w, h/2);
+                }
+                colors = this._strokeColor.color;
+
+                len = colors.length;
+
+                for(n=0; n<len; n++) {
+                    position = colors[n].position/100;
+                    cs = colors[n].value;
+                    gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+                }
+
+                ctx.strokeStyle = gradient;
+
+            } else {
+                c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";
+                ctx.strokeStyle = c;
+            }
 
 			// get the points
 			var p0,  p1;
-			var  w = this._width,  h = this._height;
 			if(this._slope === "vertical") {
 				p0 = [0.5*w, 0];
 				p1 = [0.5*w, h];

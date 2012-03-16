@@ -51,31 +51,15 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
 
     setAttribute: {
         value: function(el, att, value) {
-            if(att === "id") {
-                if(value === "") {
-                    el.setAttribute(att, value);
-                    return;
-                }
-
-                // Then check if this is a valid id by the following spec: http://www.w3.org/TR/REC-html40/types.html#h-6.2
-                var regexID = /^([a-zA-Z])+([a-zA-Z0-9_\.\:\-])+/;
-                if(!regexID.test(value)) {
-                    alert("Invalid ID");
-                    return;
-                } else if (this.application.ninja.currentDocument._document.getElementById(value) !== null) {
-                    alert("The following ID: " + value + " is already in Use");
-                }
-
-            }
-
             el.setAttribute(att, value);
         }
     },
 
     //--------------------------------------------------------------------------------------------------------
     // Routines to get/set color properties
+    // borderSide : "top", "right", "bottom", or "left"
     getColor: {
-        value: function(el, isFill) {
+        value: function(el, isFill, borderSide) {
             var colorObj,
                 color,
                 image;
@@ -87,22 +71,29 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
                 {
                     return el.elementModel.fill;
                 }
-//                return this.application.ninja.stylesController.getElementStyle(el, "background-color");
                 //TODO: Once logic for color and gradient is established, this needs to be revised
                 color = this.getProperty(el, "background-color");
                 image = this.getProperty(el, "background-image");
             }
             else
             {
-                // TODO - Need to figure out which border side user wants
-                if(el.elementModel.stroke)
+                // Try getting border color from specific side first
+                if(borderSide)
                 {
-                    return el.elementModel.stroke;
+                    color = this.getProperty(el, "border-" + borderSide + "-color");
+                    image = this.getProperty(el, "border-" + borderSide + "-image");
                 }
-                // TODO - Need to figure out which border side user wants
-//                return this.application.ninja.stylesController.getElementStyle(el, "border-color");
-                color = this.getProperty(el, "border-color");
-                image = this.getProperty(el, "border-image");
+
+                // If no color was found, look up the shared border color
+                if(!color && !image)
+                {
+                    if(el.elementModel.stroke)
+                    {
+                        return el.elementModel.stroke;
+                    }
+                    color = this.getProperty(el, "border-color");
+                    image = this.getProperty(el, "border-image");
+                }
             }
 
             if(color || image) {
@@ -120,10 +111,14 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
             {
                 el.elementModel.fill = colorObj;
             }
-            else
+            else if(!borderSide)
             {
                 // TODO - Need to update border style and width also
                 el.elementModel.stroke = colorObj;
+            }
+            else
+            {
+                // TODO - Should update specific border sides too
             }
 
             return colorObj;

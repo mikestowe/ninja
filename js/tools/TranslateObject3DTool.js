@@ -103,7 +103,7 @@ exports.TranslateObject3DTool = Object.create(Translate3DToolBase, {
                         }
                         else
                         {
-                            this._dragPlane = snapManager.setupDragPlanes( hitRec );
+                            this._dragPlane = snapManager.setupDragPlanes( hitRec, true );
                         }
 
                     }

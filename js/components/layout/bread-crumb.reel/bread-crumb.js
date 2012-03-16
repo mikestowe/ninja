@@ -9,6 +9,24 @@ var Montage = require("montage/core/core").Montage,
 
 exports.Breadcrumb = Montage.create(Component, {
 
+    disabled: {
+        value: true
+    },
+
+    handleOpenDocument: {
+        value: function(){
+            this.disabled = false;
+        }
+    },
+
+    handleCloseDocument: {
+        value: function(){
+            if(!this.application.ninja.documentController.activeDocument) {
+                this.disabled = true;
+            }
+        }
+    },
+
     _container:{
         value:null
     },
@@ -31,6 +49,8 @@ exports.Breadcrumb = Montage.create(Component, {
 
     prepareForDraw: {
         value: function() {
+            this.eventManager.addEventListener("openDocument", this, false);
+            this.eventManager.addEventListener("closeDocument", this, false);
             this.breadcrumbBt.addEventListener("action", this, false);
         }
     },
@@ -51,8 +71,7 @@ exports.Breadcrumb = Montage.create(Component, {
             // This is always the top container which is now hardcoded to body
             this.containerElements.unshift({"node": parentNode, "nodeUuid":parentNode.uuid, "label": "Body"});
 
-            // This is for the timeline -- Disable it since the timeline should not know about this object
-            // NJevent('layerBinding',{selected:false ,element:this.container})
+
 
         }
     },
