@@ -19,62 +19,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
             }
         }
     </script>
-    <script type="text/json">
-        ,
-        "ruleListController": {
-        "module":"montage/ui/controller/array-controller",
-        "name": "ArrayController",
-        "bindings": {
-        "content" : {
-        "boundObject": {"@": "owner"},
-        "boundObjectPropertyPath": "contentController.ruleList",
-        "oneway": true
-        }
-        }
-        },
-        "ruleList": {
-        "module" : "montage/ui/repetition.reel",
-        "name": "Repetition",
-        "properties": {
-        "element": {"#": "rules-list"}
-        },
-        "bindings": {
-        "objects" : {
-        "boundObject": {"@": "owner"},
-        "boundObjectPropertyPath": "contentController.ruleList",
-        "oneway": true
-        }
-        }
-        },
-        "slot": {
-        "module" : "montage/ui/slot.reel",
-        "name" : "Slot",
-        "properties" : {
-        "element" : {"#" : "rule-item"}
-        },
-        "bindings": {
-        "rule" : {
-        "boundObject": {"@": "ruleList"},
-        "boundObjectPropertyPath": "objectAtCurrentIteration",
-        "oneway": true
-        }
-        }
-        },
-        "ruleContainer": {
-        "module": "js/panels/css-panel/rule-container.reel",
-        "name": "RuleContainer",
-        "properties": {
-        "element": {"#": "rule-item"}
-        },
-        "bindings": {
-        "rule" : {
-        "boundObject": {"@": "ruleList"},
-        "boundObjectPropertyPath": "objectAtCurrentIteration",
-        "oneway": true
-        }
-        }
-        }
-    </script>
 </head>
 <body>
 <ul id="rule-list" class="rule-list"></ul>

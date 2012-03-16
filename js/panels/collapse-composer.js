@@ -87,17 +87,14 @@ exports.CollapseComposer = Montage.create(Composer, {
         value: function() {
             if(this._doCollapse) {
                 if (this._step === 0) {
-                    console.log("step 0");
                     this.component.element.style.height = this._expandedHeight;
                     this._step = 1;
                     this.needsFrame = true;
                 } else if (this._step === 1) {
-                    console.log("step 1");
                     this.component.element.style.webkitTransition = 'height 0.14s cubic-bezier(.44,.19,0,.99)';
                     this._step = 2;
                     this.needsFrame = true;
                 } else {
-                    console.log("step 2");
                     this.component.element.style.height = '0px';
                     this.collapsed = true;
                     this._doCollapse = false;

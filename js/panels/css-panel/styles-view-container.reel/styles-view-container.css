@@ -23,17 +23,3 @@
 .styles-view-toolbar-container .toolbar-container {
     border-top: 1px solid #5c5c5c;
 }
-
-
-.styles-view-container .rule-list li {
-    border-top: 1px solid #CCC;
-    padding: 6px;
-}
-.styles-view-container .rule-list li:first-child {
-    padding-top: 0;
-    border-style: none;
-}
-
-.styles-view-container .rule-list li:after {
-    content: "}";
-}

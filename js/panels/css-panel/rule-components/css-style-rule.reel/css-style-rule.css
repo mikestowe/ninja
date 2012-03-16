@@ -6,6 +6,12 @@
 .css-style-rule-item {
     position: relative;
 }
+.css-style-rule-item:after {
+    content: "}";
+    padding: 0 0 0 4px;
+    position: relative;
+    top: -10px;
+}
 .style-rule-heading {
     background-color: #f3f3f3;
     border: 1px #e7e7e7;

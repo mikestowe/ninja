@@ -17,6 +17,13 @@
     outline: none;
     padding: 0 2px;
 }
+.css-property:after {
+    color: #333;
+    content: ":";
+}
+.css-value:after {
+    content: ";";
+}
 .css-property {
     display: inline-block;
     color: rgb(200,0,0);
