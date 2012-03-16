@@ -287,6 +287,13 @@
                 "name": "MainMenuController"
             },
 
+            "focusManager": {
+                "object": "js/components/focus-manager.reel",
+                "properties": {
+                    "element": {"#": "focus-container" }
+                }
+            },
+
             "owner": {
                 "module": "js/ninja.reel",
                 "name": "Ninja",
@@ -396,10 +403,10 @@
 
             <section data-montage-id="bottomSplitter" class="bottomSplitter splitter"></section>
         </section>
-        
-        <section id="popupWindows"></section>
 
-        <div id="modalContainer"></div>
+        <div data-montage-id="focus-container" class="hidden"></div>
+
+        <section id="popupWindows"></section>
 
     </div>
 
