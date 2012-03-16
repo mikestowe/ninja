@@ -718,6 +718,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 	            this._LayerUndoObject = thingToPush;
 	            this._LayerUndoIndex = thingToPush.layerData.layerID;
 	            this._LayerUndoStatus = true;
+
             }
 
         }
