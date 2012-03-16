@@ -372,7 +372,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                     nextDocumentIndex = closeDocumentIndex - 1;
                 }
                 this.application.ninja.stage.stageView.switchDocument(this._documents[nextDocumentIndex]);
-                if(typeof this.activeDocument.stopVideos !== "undefined"){doc.stopVideos();}
+                if(typeof doc.stopVideos !== "undefined"){doc.stopVideos();}
                 this._removeDocumentView(doc.container);
             }else if(this._documents.length === 0){
                 if(typeof this.activeDocument.pauseAndStopVideos !== "undefined"){
