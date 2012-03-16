@@ -26,8 +26,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             return this._trackID;
         },
         set:function (value) {
-            this._trackID = value;
-            //this.needsDraw = true;
+        	if (value !== this._trackID) {
+        		this._trackID = value;
+        	}
         }
     },
 
@@ -40,11 +41,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             return this._isMainCollapsed;
         },
         set:function (newVal) {
-    		this.log('TimelineTrack.js: isMainCollapsed: ', newVal);
             if (newVal !== this._isMainCollapsed) {
                 this._isMainCollapsed = newVal;
             }
-
         }
     },
     _isTransformCollapsed:{
@@ -96,8 +95,12 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     		return this._bypassAnimation;
     	},
     	set: function(newVal) {
-    		//console.log("timelinetrack bypassAnimation setter " + newVal)
-    		this._bypassAnimation = newVal;
+    		if (newVal !== this._bypassAnimation) {
+    			this._bypassAnimation = newVal;
+    		}
+			if (this.trackData.bypassAnimation !== newVal) {
+				this.trackData.bypassAnimation = newVal;
+			}
     	}
     },
     
@@ -347,7 +350,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     },
 
     _trackData:{
-
+    	serializable: true,
+		value: false
     },
 
     trackData:{
@@ -358,13 +362,18 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         set:function(val){
             this._trackData = val;
             if(this._trackData){
-                this.setData();
+                 this.setData();
             }
         }
+    },
+    
+    _setDataTimestamp : {
+    	value: false
     },
 
     setData:{
         value:function(){
+            this.bypassAnimation = this.trackData.bypassAnimation;
             this.trackID = this.trackData.layerID;
             this.tweens = this.trackData.tweens;
             this.animatedElement = this.trackData.animatedElement; // unneeded with one element per layer restriction
@@ -376,11 +385,38 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.isMainCollapsed = this.trackData.isMainCollapsed;
             this.isPositionCollapsed = this.trackData.isPositionCollapsed;
             this.isTransformCollapsed = this.trackData.isTransformCollapsed;
-            this.bypassAnimation = this.trackData.bypassAnimation;
             this.isStyleCollapsed = this.trackData.isStyleCollapsed;
             this.trackPosition = this.trackData.trackPosition;
             this.needsDraw = true;
         }
+    },
+    
+    // Data binding observation point and trigger method
+	_bindingPoint : {
+    	serializable: true,
+    	value : {}
+    },
+    bindingPoint: {
+    	serializable: true,
+    	get: function() {
+    		return this._bindingPoint;
+    	},
+    	set: function(newVal) {
+    		if (newVal !== this._bindingPoint) {
+	    		this._bindingPoint = newVal;
+	    		this.setData();
+    		}
+    	}
+    },
+    
+    triggerOutgoingBinding : {
+    	value: function() {
+    		if (this.trackData.triggerBinding === true) {
+    			this.trackData.triggerBinding = false;
+    		} else {
+    			this.trackData.triggerBinding = true;
+    		}
+    	}
     },
 
     prepareForDraw:{
