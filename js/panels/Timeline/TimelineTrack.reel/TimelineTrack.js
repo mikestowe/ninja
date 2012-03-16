@@ -394,8 +394,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     draw:{
         value:function () {
             this.ninjaStylesContoller = this.application.ninja.stylesController;
-
-            // animatedElement going away - unneeded below
             var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
             if(this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList[0]){
                 this.animatedElement = this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList[0];
@@ -420,9 +418,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         value:function (ev) {
             // TEMP - if the SHIFT key is down, add a new keyframe or split an existing span
             // This needs to move to a keyboard shortcut that is TBD
-
             var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
-
             if (ev.shiftKey) {
                 if (this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList.length == 1) {
                     if (this.tweens.length < 1) {
