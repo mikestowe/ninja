@@ -125,18 +125,6 @@ var PulseMaterial = function PulseMaterial() {
 				var texMapName = this._propValues[this._propNames[0]];
 				var wrap = 'REPEAT',  mips = true;
 				var tex = this.loadTexture( texMapName, wrap, mips );
-				
-				/*
-				var glTex = new GLTexture( this.getWorld() );
-				var prevWorld = this.findPreviousWorld();
-				if (prevWorld)
-				{
-					var srcCanvas = prevWorld.getCanvas();
-					tex = glTex.loadFromCanvas( srcCanvas );
-				}
-				else
-					tex = glTex.loadFromFile( texMapName, wrap, mips );
-				*/
 
 				if (tex) {
 					technique.u_tex0.set( tex );
