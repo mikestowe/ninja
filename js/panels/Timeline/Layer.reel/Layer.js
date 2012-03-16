@@ -314,9 +314,10 @@ var Layer = exports.Layer = Montage.create(Component, {
     		return this._isMainCollapsed;
     	},
     	set: function(newVal) {
-    		this.log('layer.js: isMainCollapsed: ' + newVal);
     		if (newVal !== this._isMainCollapsed) {
+    			this.log('layer.js: isMainCollapsed: ' + newVal);
     			this._isMainCollapsed = newVal;
+    			this.layerData.isMainCollapsed = newVal;
     		}
     	}
     },
@@ -333,7 +334,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     	set: function(newVal) {
     		if (newVal !== this._isTransformCollapsed) {
     			this._isTransformCollapsed = newVal;
-    			//this.needsDraw = true;
+    			this.layerData.isTransformCollapsed = newVal;
     		}
     	}
     },
@@ -350,7 +351,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     	set: function(newVal) {
     		if (newVal !== this._isPositionCollapsed) {
     			this._isPositionCollapsed = newVal;
-    			//this.needsDraw = true;
+    			this.layerData.isPositionCollapsed = newVal;
     		}
     	}
     },
@@ -367,7 +368,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     	set: function(newVal) {
     		if (newVal !== this._isStyleCollapsed) {
     			this._isStyleCollapsed = newVal;
-    			//this.needsDraw = true;
+    			this.layerData.isStyleCollapsed = newVal;
     		}
     	}
     },
@@ -381,7 +382,11 @@ var Layer = exports.Layer = Montage.create(Component, {
     		return this._bypassAnimation;
     	},
     	set: function(newVal) {
-    		this._bypassAnimation = newVal;
+    		if (newVal !== this._bypassAnimation) {
+	    		this._bypassAnimation = newVal;
+	    		this.layerData.bypassAnimation = newVal;
+	    		//this.triggerOutgoingBinding();	
+    		}
     	}
     },
 
@@ -426,6 +431,36 @@ var Layer = exports.Layer = Montage.create(Component, {
             this.needsDraw = true;
         }
     },
+    
+    /* Data binding point and outgoing binding trigger method */
+    _bindingPoint : {
+    	serializable: true,
+    	value : {}
+    },
+    bindingPoint: {
+    	serializable: true,
+    	get: function() {
+    		return this._bindingPoint;
+    	},
+    	set: function(newVal) {
+    		if (newVal !== this._bindingPoint) {
+	    		this._bindingPoint = newVal;
+	    		this.setData();
+    		}
+    	}
+    },
+    
+    triggerOutgoingBinding : {
+    	value: function() {
+    		if (this.layerData.triggerBinding === true) {
+    			this.layerData.triggerBinding = false;
+    		} else {
+    			this.layerData.triggerBinding = true;
+    		}
+    	}
+    },
+    
+    // Is this the first draw?
     _isFirstDraw : {
     	value: true
     },
@@ -700,44 +735,52 @@ var Layer = exports.Layer = Montage.create(Component, {
 		value: function(event) {
 			this.mainCollapser.bypassAnimation = false;
 			this.bypassAnimation = false;
+			this.layerData.bypassAnimation = false;
 			if (this.isMainCollapsed) {
 				this.isMainCollapsed = false;
 			} else {
 				this.isMainCollapsed = true;
 			}
+			this.triggerOutgoingBinding();
 		}
 	},
 	handlePositionCollapserClick : {
 		value: function(event) {
 			this.positionCollapser.bypassAnimation = false;
 			this.bypassAnimation = false;
+			this.layerData.bypassAnimation = false;
 			if (this.isPositionCollapsed) {
 				this.isPositionCollapsed = false;
 			} else {
 				this.isPositionCollapsed = true;
 			}
+			this.triggerOutgoingBinding();
 		}
 	},
 	handleTransformCollapserClick : {
 		value: function(event) {
 			this.transformCollapser.bypassAnimation = false;
 			this.bypassAnimation = false;
+			this.layerData.bypassAnimation = false;
 			if (this.isTransformCollapsed) {
 				this.isTransformCollapsed = false;
 			} else {
 				this.isTransformCollapsed = true;
 			}
+			this.triggerOutgoingBinding();
 		}
 	},
 	handleStyleCollapserClick : {
 		value: function(event) {
 			this.styleCollapser.bypassAnimation = false;
 			this.bypassAnimation = false;
+			this.layerData.bypassAnimation = false;
 			if (this.isStyleCollapsed) {
 				this.isStyleCollapsed = false;
 			} else {
 				this.isStyleCollapsed = true;
 			}
+			this.triggerOutgoingBinding();
 		}
 	},
 	/* End: Event handlers */
