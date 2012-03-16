@@ -105,6 +105,10 @@ exports.DragDropMediator = Montage.create(Component, {
         						element = NJUtils.makeNJElement('embed', 'SVG', 'block');//TODO: Verify this is proper
                     			element.src = url+'/'+fileName;
                     			element.type = 'image/svg+xml';
+                    			//TODO: Remove temp fix for SVG redraw on drop
+	        					element.onload = function () {
+        							NJevent("elementAdding", {el: element, data: rules});
+        						}
         					} else {
         						element = NJUtils.makeNJElement('image', 'image', 'image');
                     			element.src = url+'/'+fileName;
@@ -114,9 +118,9 @@ exports.DragDropMediator = Montage.create(Component, {
                     					'position': 'absolute',
                     					'top' : (parseInt(e.currentTarget.filePosition.y) - parseInt(this.application.ninja.stage.userContentTop)) + 'px',
                     					'left' : (parseInt(e.currentTarget.filePosition.x) - parseInt(this.application.ninja.stage.userContentLeft)) + 'px'
-                					};
-                			//
-        					NJevent("elementAdding", {el: element, data: rules});
+                			};
+        					//
+                    		NJevent("elementAdding", {el: element, data: rules});
         				} else {
         					//TODO: HANDLE ERROR ON SAVING FILE TO BE ADDED AS ELEMENT
         				}
