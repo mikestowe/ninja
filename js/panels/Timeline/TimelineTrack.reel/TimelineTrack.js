@@ -408,7 +408,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             if(!this.application.ninja.documentController.creatingNewFile){
                 if(this.application.ninja.currentDocument.documentRoot.children[0]){
                     var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
-                    console.log(this.application.ninja.timeline.arrLayers[selectedIndex].layerData.created);
                      if(!this.application.ninja.timeline.arrLayers[selectedIndex].layerData.created){
                         this.retrieveStoredTweens();
                      }
