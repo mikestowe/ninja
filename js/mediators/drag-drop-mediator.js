@@ -13,17 +13,7 @@ exports.DragDropMediator = Montage.create(Component, {
         value: null,
         writable: true
     },
-
-    baseX: {
-        value: null,
-        writable: true
-    },
-
-    baseY: {
-        value: null,
-        writable: true
-    },
-
+    
     dropDelegate: {
         value: null
     },
@@ -65,110 +55,84 @@ exports.DragDropMediator = Montage.create(Component, {
     },
 
     handleDropEvent: {
-        value: function(evt){
-            var xferString, component, file, files, idx, len;
-
-            this.baseX = evt.offsetX - this.application.ninja.stage.userContentLeft;
-            this.baseY = evt.offsetY - this.application.ninja.stage.userContentTop;
-
-            xferString = evt.dataTransfer.getData("text/plain");
-            if(xferString) {
-                // If the drop is a component, call the delegate with the top,left coordinates
-                if(xferString.indexOf("componentDrop") > -1) {
-                    if(this.dropDelegate && typeof this.dropDelegate === 'object') {
-                        this.dropDelegate.handleComponentDrop(this.baseX, this.baseY);
-                        return;
-                    }
-                }
-
-            }
-
-            // Verify that browser supports FileReader API.
-            if (typeof(window.FileReader) === "undefined") {
-                alert("File API and FileReader APIs are not supported.");
-                // Exit function since there isn't anything else we can do.
-                return;
-            }
-
-            files = evt.dataTransfer.files;
-            len = files.length;
-
-            // Loop over all dragged files...
-            for (idx = 0; idx < len; idx++) {
-                file = files[idx];
-                // Only do anything if the current file is an image (or has an image mime-type.
-                if (file.type.match("^image/")) {
-                    var reader = new FileReader();
-                    // Create a LoadHandler to access each outer file var
-                    reader.onload = this.createLoadHandler(file, this.baseX, this.baseY);
-
-                    if(file.type.match("^image/svg\\+xml")) {// this is SVG
-                        reader.readAsText(file);
-                    } else{
-                        reader.readAsDataURL(file);
-                    }
-                    
-                }
-            }
-
-            return false;
-        }
-    },
-
-    createLoadHandler: {
-        value: function(file, baseX, baseY) {
-            return function(evt2) {
-                var domElem = null;
-
-                if(file.type.match("^image/svg\\+xml")){ // this is an SVG file
-                    var tempElem = document.createElement("div");
-                    tempElem.innerHTML = evt2.currentTarget.result;
-                    domElem = tempElem.children[0];
-
-                    NJUtils.makeElementModel(domElem, "SVG", "block");
-                } else { // treat as a regular image
-                    domElem = NJUtils.makeNJElement("image", "image", "image");
-                    domElem.src = evt2.currentTarget.result;
-                }
-
-
-                // Not sure we need an ID for the image
-                                /*
-                // Use the Image filename if valid for the id
-                var filename = file.fileName.substr(0, file.fileName.lastIndexOf('.')) || file.fileName;
-                filename = filename.replace(/ /g,"_");
-
-
-                if(this.isValidFilename(filename)) {
-                    //domElem.id = filename;
-                } else {
-                    //domElem.id = DocumentControllerModule.DocumentController.CreateElementID(img.tagName);
-                }
-                */
-
-                var rules = {
-                    'position': 'absolute',
-                    'top' : baseY + 'px',
-                    'left' : baseX + 'px',
-                    '-webkit-transform-style' : 'preserve-3d',
-                    '-webkit-transform' : 'perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
-                };
-
-                NJevent("elementAdding", {el: domElem, data:rules});
-            };
-        }
-    },
-
-    isValidFilename: {
-        value: function(id){
-            if(id && id !== "") {
-                var regexID = /^([a-zA-Z])+([a-zA-Z0-9_\.\:\-])+/;
-                return(regexID.test(id))
-            } else {
-                return false;
-            }
+        value: function(e){
+        	//
+        	var i, files = e.dataTransfer.files, position = {x: e.offsetX, y: e.offsetY},
+        		rootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1])),
+        		rootUri = this.application.ninja.documentController.documentHackReference.root;
+        	//
+        	for (i=0; files[i]; i++) {
+        		if (files[i].type.indexOf('image') !== -1) {
+        			var reader = new FileReader(), file = reader.readAsArrayBuffer(files[i]);
+        			reader.fileName = files[i].name, reader.fileType = files[i].type, reader.rootUrl = rootUrl, reader.rootUri = rootUri, reader.filePosition = position;
+        			reader.onload = function (e) {
+        				//
+        				var url, uri, dir, save, counter, tempName, element, rules, fileName;
+        				if (this.application.ninja.coreIoApi.directoryExists({uri: e.currentTarget.rootUri+'images'}).status === 204) {
+        					uri = e.currentTarget.rootUri+'images';
+        					url = e.currentTarget.rootUrl+'images';
+        				} else if (this.application.ninja.coreIoApi.directoryExists({uri: e.currentTarget.rootUri+'img'}).status === 204) {
+        					uri = e.currentTarget.rootUri+'img';
+        					url = e.currentTarget.rootUrl+'img';
+        				} else {
+        					dir = this.application.ninja.coreIoApi.createDirectory({uri: e.currentTarget.rootUri+'images'});
+        					if (dir.success && dir.status === 201) {
+        						uri = e.currentTarget.rootUri+'images';
+        						url = e.currentTarget.rootUrl+'images';
+        					} else {
+        						//TODO: HANDLE ERROR ON CREATING FOLDER
+        					}
+        				}
+        				//
+        				if (this.application.ninja.coreIoApi.fileExists({uri: uri+'/'+e.currentTarget.fileName}).status === 404) {
+        					save = this.application.ninja.coreIoApi.createFile({uri: uri+'/'+e.currentTarget.fileName, contents: e.currentTarget.result, contentType: e.currentTarget.fileType});
+        					fileName = e.currentTarget.fileName;
+        				} else {
+        					counter = 1;
+        					tempName = e.currentTarget.fileName.split('.'+(e.currentTarget.fileName.split('.')[e.currentTarget.fileName.split('.').length-1]))[0];
+        					tempName += '_'+counter+'.'+(e.currentTarget.fileName.split('.')[e.currentTarget.fileName.split('.').length-1]);
+        					while (this.application.ninja.coreIoApi.fileExists({uri: uri+'/'+tempName}).status !== 404) {
+        						counter++;
+        						tempName = e.currentTarget.fileName.split('.'+(e.currentTarget.fileName.split('.')[e.currentTarget.fileName.split('.').length-1]))[0];
+        						tempName += '_'+counter+'.'+(e.currentTarget.fileName.split('.')[e.currentTarget.fileName.split('.').length-1]);
+        					}
+        					save = this.application.ninja.coreIoApi.createFile({uri: uri+'/'+tempName, contents: e.currentTarget.result, contentType: e.currentTarget.fileType});
+        					fileName = tempName;
+        				}
+        				if (save && save.success && save.status === 201) {
+        					//
+        					if (e.currentTarget.fileType.indexOf('svg') !== -1) {
+        						element = NJUtils.makeNJElement('embed', 'SVG', 'block');//TODO: Verify this is proper
+                    			element.src = url+'/'+fileName;
+                    			element.type = 'image/svg+xml';
+        					} else {
+        						element = NJUtils.makeNJElement('image', 'image', 'image');
+                    			element.src = url+'/'+fileName;
+        					}
+        					//TODO: Remove temp fix for elements to redraw on drop
+	        				element.onload = function () {
+        						NJevent("elementAdding", {el: element, data: rules});
+        					}
+        					//
+        					rules = {
+                    					'position': 'absolute',
+                    					'top' : (parseInt(e.currentTarget.filePosition.y) - parseInt(this.application.ninja.stage.userContentTop)) + 'px',
+                    					'left' : (parseInt(e.currentTarget.filePosition.x) - parseInt(this.application.ninja.stage.userContentLeft)) + 'px',
+                                        '-webkit-transform-style' : 'preserve-3d',
+                                        '-webkit-transform' : 'perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
+                			};
+        					//
+                    		NJevent("elementAdding", {el: element, data: rules});
+        				} else {
+        					//TODO: HANDLE ERROR ON SAVING FILE TO BE ADDED AS ELEMENT
+        				}
+        			}.bind(this);
+        		} else {
+        			//TODO: NOT AN IMAGE, HANDLE SPECIAL CASE
+        		}
+        	}
+        	//Not sure why return value should be, seemed as false to work
+        	return false;
         }
     }
-
-
 });
