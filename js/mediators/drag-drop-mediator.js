@@ -117,7 +117,9 @@ exports.DragDropMediator = Montage.create(Component, {
         					rules = {
                     					'position': 'absolute',
                     					'top' : (parseInt(e.currentTarget.filePosition.y) - parseInt(this.application.ninja.stage.userContentTop)) + 'px',
-                    					'left' : (parseInt(e.currentTarget.filePosition.x) - parseInt(this.application.ninja.stage.userContentLeft)) + 'px'
+                    					'left' : (parseInt(e.currentTarget.filePosition.x) - parseInt(this.application.ninja.stage.userContentLeft)) + 'px',
+                                        '-webkit-transform-style' : 'preserve-3d',
+                                        '-webkit-transform' : 'perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
                 			};
         					//
                     		NJevent("elementAdding", {el: element, data: rules});
