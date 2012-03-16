@@ -381,9 +381,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                             this._openDoc = true;
                             this.restoreLayer(this.application.ninja.currentDocument.documentRoot.children[myIndex]);
                         }
-                        // select the first layer
-                        this.temparrLayers[0].layerData.isSelected = true;
-                        this.temparrLayers[0].layerData._isFirstDraw = true;
                     }
                     // Feed the new array of objects into the repetitions.
                     this.arrLayers = this.temparrLayers;
@@ -666,7 +663,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             if (this._hashFind) {
                 for (layerResult = this.returnedObject[hashIndex]; layerResult; hashIndex++) {
                     if (layerResult.layerData.deleted !== true) {
-                        this.arrLayers.push(layerResult);
+                        this.arrLayers.splice(0, 0, layerResult);
 
                     }
                 }
@@ -686,7 +683,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     thingToPush.layerData.elementsList.push(ele);
                 }
 
-                this.temparrLayers.push(thingToPush);
+                this.temparrLayers.splice(0, 0, thingToPush);
                 thingToPush.layerData.trackPosition = this.temparrLayers.length - 1;
                 thingToPush.layerData.layerPosition = this.temparrLayers.length - 1;
 
