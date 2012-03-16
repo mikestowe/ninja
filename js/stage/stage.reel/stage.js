@@ -170,8 +170,7 @@ exports.Stage = Montage.create(Component, {
 
                 // Hack for now until a full component
                 this.layout.draw();
-            }
-            else if(this.updatedStage) {
+            } else if(this.updatedStage) {
                 this.layout.draw();
                 this.layout.draw3DInfo(true);
             }
@@ -234,6 +233,10 @@ exports.Stage = Montage.create(Component, {
             }
 
             this.hideCanvas(false);
+
+            // Recalculate the canvas sizes because of splitter resizing
+            this._canvas.width = this._layoutCanvas.width = this._drawingCanvas.width = this.element.offsetWidth - 11 ;
+            this._canvas.height = this._layoutCanvas.height = this._drawingCanvas.height = this.element.offsetHeight - 11;
 
             this._documentRoot = this.application.ninja.currentDocument.documentRoot;
             this._viewport = this.application.ninja.currentDocument.documentRoot.parentNode;
@@ -319,6 +322,10 @@ exports.Stage = Montage.create(Component, {
 
     handleMousedown: {
         value: function(event) {
+            // Call the focus manager to set focus to blur any focus'd elements
+            this.focusManager.setFocus();
+
+
             var point;
 //            event.preventDefault();   // commenting because HTML elements in the IDE are retaining focus
             // If right click set the context menu to true to prevent a mouse up.

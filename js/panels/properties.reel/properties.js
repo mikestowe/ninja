@@ -17,15 +17,11 @@ exports.Properties = Montage.create(Component, {
         value: null
     },
 
-    elementID: {
+    elementId: {
         value: null
     },
 
-    elementClassName: {
-        value: null
-    },
-
-    nameAttribute: {
+    elementClass: {
         value: null
     },
 
@@ -60,6 +56,14 @@ exports.Properties = Montage.create(Component, {
 
             this.eventManager.addEventListener("openDocument", this, false);
             this.eventManager.addEventListener("switchDocument", this, false);
+
+            this.elementId.element.addEventListener("blur", this, false);
+            this.elementId.element.addEventListener("focus", this, false);
+            this.elementId.element.addEventListener("keyup", this, false);
+
+            this.elementClass.element.addEventListener("blur", this, false);
+            this.elementClass.element.addEventListener("focus", this, false);
+            this.elementClass.element.addEventListener("keyup", this, false);
         }
     },
 
@@ -73,12 +77,6 @@ exports.Properties = Montage.create(Component, {
             if(this.application.ninja.selectedElements.length === 0) {
                 this.displayStageProperties();
             }
-
-            this.elementId.element.addEventListener("blur", this, false);
-            this.elementId.element.addEventListener("keyup", this, false);
-
-            this.elementNameAttribute.element.addEventListener("blur", this, false);
-            this.elementNameAttribute.element.addEventListener("keyup", this, false);
         }
     },
 
@@ -87,7 +85,7 @@ exports.Properties = Montage.create(Component, {
             // For now always assume that the stage is selected by default
             if(this.application.ninja.selectedElements.length === 0) {
                 this.displayStageProperties();
-            }else {
+            } else {
                 if(this.application.ninja.selectedElements.length === 1) {
                     this.displayElementProperties(this.application.ninja.selectedElements[0]._element);
                 } else {
@@ -102,17 +100,29 @@ exports.Properties = Montage.create(Component, {
      */
     handleBlur: {
         value: function(event) {
-            console.log(event.target);
-            if(event.target.id === "elementID") {
+
+            if(event.target.id === "elementId") {
+
+                // Remove all white spaces from the id
+                this.elementId.value = this.elementId.value.replace(/\s/g, '');
+
+                // Check if that id is in use
+                if(this.application.ninja.currentDocument._document.getElementById(this.elementId.value) !== null) {
+                    // TODO: Replace with Ninja Alert
+                    alert("The following ID: " + this.elementId.value + " is already in use");
+                }
+
                 if(this.application.ninja.selectedElements.length) {
                     ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "id", this.elementId.value, "Change", "pi");
                 } else {
                     ElementsMediator.setAttribute(this.application.ninja.currentDocument.documentRoot, "id", this.elementId.value, "Change", "pi", this.application.ninja.currentDocument.documentRoot.elementModel.id);
                 }
-            } else if(event.target.id === "elementNameAttribute") {
+            } else if(event.target.id === "elementClass") {
                 if(this.application.ninja.selectedElements.length) {
-                    //ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "name", this.elementNameAttribute.value, "Change", "pi");
-                    this.application.ninja.selectedElements[0]._element.setAttribute("name", this.elementNameAttribute.value);
+                    ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "class", this.elementClass.value, "Change", "pi");
+                    console.log(this.application.ninja.selectedElements[0]._element.className);
+                } else {
+                    ElementsMediator.setAttribute(this.application.ninja.currentDocument.documentRoot, "class", this.elementClass.value, "Change", "pi", this.application.ninja.currentDocument.documentRoot.elementModel.elementClass);
                 }
             }
         }
@@ -121,11 +131,7 @@ exports.Properties = Montage.create(Component, {
     handleKeyup: {
         value: function(event) {
             if(event.keyCode === 13) {
-                if(event.target === "elementID") {
-                    this.elementId.element.blur();
-                } else if(event.target === "elementNameAttribute") {
-                    this.elementNameAttribute.element.blur();
-                }
+                event.target.blur();
             }      
         }
     },
@@ -180,10 +186,9 @@ exports.Properties = Montage.create(Component, {
         value: function() {
             var stage = this.application.ninja.currentDocument.documentRoot;
             //this is test code please remove
-            this.elementName = "Stage";
+            this.elementName.value = "Stage";
             this.elementId.value = stage.elementModel.id;
-            this.elementClassName = "";
-            this.nameAttribute = "";
+            this.elementClass.value = "";
 
             this.positionSize.disablePosition = true;
             this.threeD.disableTranslation = true;
@@ -243,10 +248,9 @@ exports.Properties = Montage.create(Component, {
             var customPI,
                 currentValue;
 
-            this.elementName = el.elementModel.selection;
+            this.elementName.value = el.elementModel.selection;
             this.elementId.value = el.getAttribute("id") || "";
-            this.elementClassName = el.getAttribute("class");
-            this.nameAttribute = el.getAttribute("name") || "";
+            this.elementClass.value = el.getAttribute("class");
 
             this.positionSize.disablePosition = false;
             this.threeD.disableTranslation = false;
@@ -385,7 +389,7 @@ exports.Properties = Montage.create(Component, {
 
     displayGroupProperties: {
         value: function (els) {
-            this.elementName = "Multiple Elements";
+            this.elementName.value = "Multiple Elements";
         }
     },
 

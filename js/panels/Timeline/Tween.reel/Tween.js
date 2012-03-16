@@ -44,7 +44,6 @@ var Tween = exports.Tween = Montage.create(Component, {
         },
         set: function(value){
             this._spanWidth = value;
-            this.needsDraw = true;
         }
     },
 
@@ -59,7 +58,6 @@ var Tween = exports.Tween = Montage.create(Component, {
         },
         set:function (value) {
             this._spanPosition = value;
-            this.needsDraw = true;
         }
     },
 
@@ -74,7 +72,6 @@ var Tween = exports.Tween = Montage.create(Component, {
         },
         set:function (value) {
             this._keyFramePosition = value;
-            this.needsDraw = true;
         }
     },
 
@@ -133,7 +130,6 @@ var Tween = exports.Tween = Montage.create(Component, {
         },
         set:function (value) {
             this._isTweenAnimated = value;
-            this.needsDraw = true;
         }
     },
 
@@ -157,6 +153,7 @@ var Tween = exports.Tween = Montage.create(Component, {
             this.tweenID = this.tweenData.tweenID;
             this.tweenedProperties = this.tweenData.tweenedProperties;
             this.isTweenAnimated = this.tweenData.isTweenAnimated;
+            this.needsDraw = true;
         }
     },
 
