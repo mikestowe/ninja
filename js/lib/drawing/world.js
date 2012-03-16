@@ -754,7 +754,14 @@ World.prototype.exportJSON = function()
 	// convert the object to a string
 	var jStr = JSON.stringify( worldObj );
 
-	// the RDGE export function corrupts the data.
+	// prepend some version information to the string.
+	// this string is also used to differentiate between JSON
+	// and pre-JSON versions of fileIO.
+	// the ending ';' in the version string is necessary
+	jStr = "v1.0;" + jStr;
+
+	// You would think that the RDGE export function
+	// would not change the data.  You would be wrong...
 	// rebuild the tree
 	var root = this._rootNode;
 	root.children = new Array();

@@ -37,15 +37,25 @@ function CanvasDataManager()
 		for (var i=0;  i<nWorlds;  i++)
 		{
 			var importStr = value[i];
-			var jObj = JSON.parse( importStr );
 
-			var id = jObj.id;
-			if (id)
+			// there should be some version information in
+			// the form of 'v0.0;'  Pull that off.  (the trailing ';' should
+			// be in the first 24 characters).
+			var index = importStr.indexOf( ';' );
+			if ((importStr[0] === 'v') && (index < 24))
 			{
-				var canvas = this.findCanvasWithID( id, root );
-				if (canvas)
+				// JSON format.  pull off the version info
+				importStr = importStr.substr( index+1 );
+
+				var jObj = JSON.parse( importStr );
+				var id = jObj.id;
+				if (id)
 				{
-					new GLRuntime( canvas, jObj,  assetPath );
+					var canvas = this.findCanvasWithID( id, root );
+					if (canvas)
+					{
+						new GLRuntime( canvas, jObj,  assetPath );
+					}
 				}
 			}
 		}

@@ -215,30 +215,59 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 					*/
 
 					// /*
+					// get the data for the next canvas
 					var importStr = value[i];
-					var jObj = JSON.parse( importStr );
-					if (jObj)
+
+					// determine if it is the new (JSON) or old style format
+					var id = null;
+					var jObj = null;
+					var index = importStr.indexOf( ';' );
+					if ((importStr[0] === 'v') && (index < 24))
 					{
-						var id = jObj.id;
-						if (id)
+						// JSON format.  pull off the
+						importStr = importStr.substr( index+1 );
+						jObj = jObj = JSON.parse( importStr );
+						id = jObj.id;
+					}
+					else
+					{
+						var startIndex = importStr.indexOf( "id: " );
+						if (startIndex >= 0) {
+							var endIndex = importStr.indexOf( "\n", startIndex );
+							if (endIndex > 0)
+								id = importStr.substring( startIndex+4, endIndex );
+						}
+					}
+
+					if (id != null)
+					{
+						var canvas = this.findCanvasWithID( id, elt );
+						if (canvas)
 						{
-							var canvas = this.findCanvasWithID( id, elt );
-							if (canvas) {
-								if (!canvas.elementModel) {
-									NJUtils.makeElementModel(canvas, "Canvas", "shape", true);
+							if (!canvas.elementModel)
+							{
+								NJUtils.makeElementModel(canvas, "Canvas", "shape", true);
+							}
+							if (canvas.elementModel)
+							{
+								if (canvas.elementModel.shapeModel.GLWorld)
+									canvas.elementModel.shapeModel.GLWorld.clearTree();
+
+								if (jObj)
+								{
+									var useWebGL = jObj.webGL;
+									var world = new GLWorld( canvas, useWebGL );
+									world.importJSON( jObj );
 								}
-								if (canvas.elementModel) {
-									if (canvas.elementModel.shapeModel.GLWorld) {
-										canvas.elementModel.shapeModel.GLWorld.clearTree();
-									}
-									if (jObj)
-									{
-										var useWebGL = jObj.webGL;
-										var world = new GLWorld( canvas, useWebGL );
-										world.importJSON( jObj );
-										this.buildShapeModel( canvas.elementModel, world );
-									}
+								else
+								{
+									var index = importStr.indexOf( "webGL: " );
+									var useWebGL = (index >= 0);
+									var world = new GLWorld( canvas, useWebGL );
+									world.import( importStr );
 								}
+
+								this.buildShapeModel( canvas.elementModel, world );
 							}
 						}
 					}
@@ -380,6 +409,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 			if (elt.elementModel && elt.elementModel.shapeModel && elt.elementModel.shapeModel.GLWorld)
 			{
 				var data = elt.elementModel.shapeModel.GLWorld.exportJSON();
+				//var data = elt.elementModel.shapeModel.GLWorld.export();
 				dataArray.push( data );
 			}
 
