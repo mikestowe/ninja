@@ -557,16 +557,25 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
             if(this.application.ninja.selectedElements[0]){
 
-                // TODO - element uuid should be stored directly in layer array (possibly as the layerID)
-                key = this.application.ninja.selectedElements[0].uuid;
-
-                switchSelectedLayer = this.hashElementMapToLayer.getItem(key);
-                if(switchSelectedLayer!==undefined){
-                    layerIndex = this.getLayerIndexByID(switchSelectedLayer.layerID);
-                    this._captureSelection=false;
-                    this.selectLayer(layerIndex);
-                    this._captureSelection=true;
+                for (var i = 0; i < this.arrLayers.length; i++) {
+                    if (this.application.ninja.selectedElements[0].uuid === this.arrLayers[i].layerData.elementsList[0].uuid) {
+                        layerIndex = this.getLayerIndexByID(this.arrLayers[i].layerData.layerID);
+                        this._captureSelection = false;
+                        this.selectLayer(layerIndex);
+                        this._captureSelection = true;
+                    }
                 }
+
+//                // TODO - element uuid should be stored directly in layer array (possibly as the layerID)
+//                key = this.application.ninja.selectedElements[0].uuid;
+//
+//                switchSelectedLayer = this.hashElementMapToLayer.getItem(key);
+//                if(switchSelectedLayer!==undefined){
+//                    layerIndex = this.getLayerIndexByID(switchSelectedLayer.layerID);
+//                    this._captureSelection=false;
+//                    this.selectLayer(layerIndex);
+//                    this._captureSelection=true;
+//                }
             }
         }
     },
@@ -870,7 +879,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     handleElementAdded:{
         value:function (event) {
             this.insertLayer();
-            console.log("inserting layer");
+            //console.log("inserting layer");
 
             this.addElementToLayer(this.application.ninja.selectedElements[0]);
         }
@@ -880,9 +889,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:function (element) {
 
 
-            console.log("setting element to layer");
-            console.log(element);
-            console.log(this.currentLayerSelected.layerData);
+            //console.log("setting element to layer");
+            //console.log(element);
+            //console.log(this.currentLayerSelected.layerData);
 
             //element.uuid = nj.generateRandom();
 
