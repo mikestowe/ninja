@@ -45,11 +45,5 @@ exports.Main = Montage.create(Component, {
             document.body.dispatchEvent( newEvent );
 
         }
-    },
-
-    location: {
-        value:null,
-        enumerable:false
     }
-
 });
