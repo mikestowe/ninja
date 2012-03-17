@@ -290,10 +290,10 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
         value: function(el, props, index, update3DModel) {
             var dist = props[index]["dist"],
                 mat = props[index]["mat"];
-            this.application.ninja.stylesController.setElementStyle(el,
-                                                                    "-webkit-transform",
-                                                                    "perspective(" + dist + ") " +
-                                                                    "matrix3d(" + MathUtils.scientificToDecimal(mat, 5) + ")");
+//            this.application.ninja.stylesController.setElementStyle(el,
+//                                                                    "-webkit-transform",
+//                                                                    "perspective(" + dist + ") " +
+//                                                                    "matrix3d(" + MathUtils.scientificToDecimal(mat, 5) + ")");
 
             el.elementModel.props3D.matrix3d = mat;
             el.elementModel.props3D.perspectiveDist = dist;
