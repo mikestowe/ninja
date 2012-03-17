@@ -159,7 +159,7 @@ function createShader(ctx, strVertShaderName, strFragShaderName, attribs)
   } else 
   {
 	var vshaderRequest = new XMLHttpRequest();
-	vshaderRequest.open("GET", 'assets/shaders/' + strVertShaderName + '.glsl', false);
+	vshaderRequest.open("GET", g_Engine._assetPath+'shaders/' + strVertShaderName + '.glsl', false);
 	vshaderRequest.send(null);
 	vShader = vshaderRequest.responseText;
   }
@@ -169,7 +169,7 @@ function createShader(ctx, strVertShaderName, strFragShaderName, attribs)
   } else 
   {
 	var fshaderRequest = new XMLHttpRequest();
-    fshaderRequest.open("GET", 'assets/shaders/' + strFragShaderName + '.glsl', false);
+    fshaderRequest.open("GET", g_Engine._assetPath+'shaders/' + strFragShaderName + '.glsl', false);
     fshaderRequest.send(null);
 	fShader = fshaderRequest.responseText;
   }

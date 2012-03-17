@@ -64,27 +64,14 @@ exports.Layout = Montage.create(Component, {
 
     handleOpenDocument: {
         value: function() {
-            // Initial elements to draw is the entire node list
-            this.elementsToDraw = this.application.ninja.documentController.activeDocument._liveNodeList;
+            // Initial elements to draw are the childrens of the root element
+            if(this.application.ninja.documentController.activeDocument.currentView === "design") {
+                this.elementsToDraw = this.application.ninja.documentController.activeDocument.documentRoot.childNodes;
+            }
 
             // Draw the elements and the 3d info
             this.draw();
             this.draw3DInfo(false);
-        }
-    },
-
-    // No need to keep track of the added elements. We now have a live node list of the dom
-    handleElementAdded: {
-        value: function(event) {
-            // this.domTree.push(event.detail);
-            // this.draw();
-            // this.draw3DInfo(false);
-        }
-    },
-
-    handleElementDeleted: {
-        value: function(event) {
-            //this.domTree.splice(this.domTree.indexOf(event.detail), 1);
         }
     },
 
@@ -98,14 +85,26 @@ exports.Layout = Montage.create(Component, {
 
     handleSelectionChange: {
         value: function(event) {
+            var containerIndex;
 
             if(this.application.ninja.documentController.activeDocument === null){
                 return;
             }
 
-            // Make an array copy of the line node list which is not an array like object
-            this.domTree = Array.prototype.slice.call(this.application.ninja.documentController.activeDocument._liveNodeList, 0);
+            if(this.application.ninja.documentController.activeDocument.currentView === "design"){
+                // Make an array copy of the line node list which is not an array like object
+                this.domTree = Array.prototype.slice.call(this.application.ninja.documentController.activeDocument._liveNodeList, 0);
+                // Index of the current container
+                containerIndex = this.domTree.indexOf(this.application.ninja.currentSelectedContainer);
 
+                if(containerIndex < 0) {
+                    // Stage is the container.
+                    this.domTree = Array.prototype.slice.call(this.application.ninja.currentSelectedContainer.childNodes, 0);
+                } else {
+                    // Child nodes of the container
+                    this.domTree = Array.prototype.slice.call(this.domTree[containerIndex].childNodes, 0);
+                }
+            }
             // Clear the elements to draw
             this.elementsToDraw.length = 0;
 
@@ -117,10 +116,10 @@ exports.Layout = Montage.create(Component, {
                     return (tmp.indexOf(value) === -1);
                 });
             } else {
-                this.elementsToDraw = this.domTree;
+                this.elementsToDraw = Array.prototype.slice.call(this.domTree, 0);
             }
 
-            this.draw(); // Not a reel yet :)
+            this.draw(); // Not a reel yet
             this.draw3DInfo(false);
 
             // Clear the domTree copy

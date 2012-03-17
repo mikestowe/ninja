@@ -1236,10 +1236,16 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
     clearDirtyStyleSheets : {
         value: function(doc) {
-            if(!doc) {
+            this.dirtyStyleSheets.length = 0;
+
+            if(doc) {
+                var stillDirty = this.dirtyStyleSheets.filter(function(sheet) {
+                    return sheet.document !== doc;
+                });
                 this.dirtyStyleSheets = null;
-                this.dirtyStyleSheets = [];
+                this.dirtyStyleSheets = stillDirty;
             }
+
 
         }
     },

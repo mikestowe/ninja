@@ -213,21 +213,13 @@ exports.GradientPicker = Montage.create(Component, {
     removeStop: {
     	enumerable: false,
     	value: function(stop) {
-    		//Removing stops
-    		this.element._components.stopsContainer.removeChild(stop);
-    		//Stopping events related to this current stop
-    		this.removeStopMoving();
-    		//Resetting stops if less than 2
     		var i, buttons = this.element._components.stopsContainer.getElementsByTagName('button');
-    		if (buttons.length < 2) {
-    			//Removing remaining stops prior to resetting
-    			for (i=0; buttons[i]; i++) {
-    				this.element._components.stopsContainer.removeChild(buttons[i].stop);
-    			}
-    			//Nulling then adding defaults
-    			this.value = null;
-    			this.addDefaultStops();
-    			this._dispatchEvent('change', false);
+    		//
+    		if (buttons.length > 2) {
+    			//Removing stops
+    			this.element._components.stopsContainer.removeChild(stop);
+    			//Stopping events related to this current stop
+    			this.removeStopMoving();
     		}
     	}
     },
@@ -327,7 +319,7 @@ exports.GradientPicker = Montage.create(Component, {
     		//
     		this.application.ninja.colorController.colorPopupManager.hideColorChipPopup();
     		//
-    		if ((e._event.y+this.hack.y) > this.element._trackY+50 || (e._event.y+this.hack.y) < this.element._trackY) {
+    		if ((e._event.y+this.hack.y) > this.element._trackY+70 || (e._event.y+this.hack.y) < this.element._trackY) {
     			this.removeStop(this.currentStop);
     		}
     		//

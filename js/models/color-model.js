@@ -574,6 +574,9 @@ exports.ColorModel = Montage.create(Component, {
                     temp = this.hslToRgb(color.h/360, color.s/100, color.l/100);
                 } else if (color.r !== undefined) {
                     temp = color;
+                } else if (color.gradientMode) {
+                    // TODO - Need to handle gradients at some point
+                    return null;
                 }
                 temp.a = color.a;
             }

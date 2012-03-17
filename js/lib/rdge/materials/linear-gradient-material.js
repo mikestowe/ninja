@@ -212,7 +212,7 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = createMaterialNode( this.getShaderName() );
+		this._materialNode = createMaterialNode( this.getShaderName() + "_" + world.generateUniqueNodeID() );
 		this._materialNode.setShader(this._shader);
 
 		// send the current values to the shader
