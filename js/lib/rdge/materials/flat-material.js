@@ -102,13 +102,7 @@ var FlatMaterial = function FlatMaterial() {
         try
         {
             var color  = eval( "[" + pu.nextValue( "color: " ) + "]" );
-
             this.setProperty( "color",  color);
-
-            var endKey = "endMaterial\n";
-            var index = importStr.indexOf( endKey );
-            index += endKey.length;
-            rtnStr = importStr.substr( index );
         }
         catch (e)
         {

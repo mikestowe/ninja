@@ -134,7 +134,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 				var hitRec = snapManager.snap(point.x, point.y, do3DSnap);
 
                 // TODO - Check that hitRec's element matches element that browser says we clicked on
-                var elt = this.application.ninja.stage.GetElement(event);
+                var elt = this.application.ninja.stage.GetSelectableElement(event);
                 if(elt !== hitRec.getElement())
                 {
                     hitRec = snapManager.findHitRecordForElement(elt);
@@ -552,6 +552,9 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 
                     // update the target
                     this._mouseUpHitRec = hitRec;
+                    var pt = hitRec.getScreenPoint();
+                    this.upPoint.x = pt[0];
+                    this.upPoint.y = pt[1];
 				}
 			}
         }
@@ -579,12 +582,15 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 
             this.downPoint.x = null;
             this.downPoint.y = null;
+            this.upPoint.x = null;
+            this.upPoint.y = null;
 //            this.isDrawing = false;
 
             if(this._canSnap)
             {
                 this.cleanupSnap();
             }
+            this._mode = 0;
         }
     },
     
@@ -764,6 +770,8 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 	captureSelectionDrawn: {
 		value: function(event){
 			this._targets = [];
+            this._origin = null;
+            this._delta = null;
 
 			var len = this.application.ninja.selectedElements.length;
 			if(len)
@@ -866,7 +874,6 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                     this._updateTargets(true);
                 }
 
-                this.endDraw(event);
                 this._hasDraw = false;
             }
             if(this._handleMode !== null)
@@ -874,6 +881,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                 this._handleMode = null;
                 this._delta = null;
             }
+            this.endDraw(event);
             this.DrawHandles();
         }
     },
@@ -997,19 +1005,6 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
             }
         }
     },
-
-	_updateDelta: {
-		value: function(delta, handleMode){
-			if(this._clickedObject !== this.application.ninja.currentDocument.documentRoot)
-			{
-				this._delta += ~~(delta[handleMode]);
-			}
-			else
-			{
-				this._delta = ~~(delta[handleMode]);
-			}
-		}
-	},
 
     modifyElements: {
         value: function(data, event) {

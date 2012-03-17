@@ -191,5 +191,74 @@ var VecUtils = exports.VecUtils = Object.create(Object.prototype,
 
             return vec;
         }
-    }
+    },
+
+	matI :
+	{
+		value: function(dimen)
+		{
+			var mat = [];
+			for (var i=0;  i<dimen*dimen;  i++)  mat.push(0);
+
+			var index = 0;
+			for (var i=0;  i<dimen;  i++)
+			{
+				mat[index] = 1.0;
+				index += dimen + 1;
+			}
+	
+			return mat;	
+		}
+	},
+
+	matTranslation:
+	{
+		value: function (vec)
+		{
+			var mat = Matrix.I(4);
+			glmat4.translate(mat, vec);
+			return mat;
+		}
+	},
+
+	matRotationX:
+	{
+		value: function( angle )
+		{
+			var mat = Matrix.I(4);
+			glmat4.rotateX(mat, angle);
+			return mat;
+		}
+	},
+
+	matRotationY:
+	{
+		value: function( angle )
+		{
+			var mat = Matrix.I(4);
+			glmat4.rotateY(mat, angle);
+			return mat;
+		}
+	},
+
+	matRotationZ:
+	{
+		value: function( angle )
+		{
+			var mat = Matrix.I(4);
+			glmat4.rotateZ(mat, angle);
+			return mat;
+		}
+	},
+
+	matRotation:
+	{
+		value: function(angle, axis)
+		{
+			var mat = Matrix.I(4);
+			glmat4.rotate(mat, angle, axis);
+			return mat;
+		}
+	},
+
 });
