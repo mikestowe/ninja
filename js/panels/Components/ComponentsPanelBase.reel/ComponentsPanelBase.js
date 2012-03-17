@@ -333,6 +333,7 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                     el.setAttribute("type", "range");
                     break;
                 case "textfield":
+                case "searchfield":
                     el = NJUtils.makeNJElement("input", "Textfield", "component");
                     el.elementModel.pi = "TextfieldPi";
                     el.setAttribute("type", "text");
@@ -346,6 +347,16 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                     el.elementModel.pi = "ToggleButtonPi";
                     el.innerHTML = "Off";
                     break;
+                case "map":
+                    el = NJUtils.makeNJElement("div", "Map", "component");
+                    el.elementModel.pi = "MapPi";
+                    el.elementModel.isComponent = true;
+                    break;
+                case "feedreader":
+                    el = NJUtils.makeNJElement("div", "Feed Reader", "component");
+                    el.elementModel.pi = "FeedReaderPi";
+                    el.elementModel.isComponent = true;
+
             }
 
             return el;
