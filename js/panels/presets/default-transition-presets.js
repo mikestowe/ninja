@@ -88,6 +88,22 @@ exports.transitionPresets = {
                         "-webkit-transform": "rotate(180deg)"
                     }
                 }]
+            },{
+                "text": "Remove 3D",
+                "selectorBase" : "remove-3d",
+                "rules" : [{
+                    "selectorSuffix": "",
+                    "styles" : {
+                        "-webkit-transition": "all 0.4s ease-in"
+                    }
+                },
+                    {
+                    "selectorSuffix" : ":hover",
+                    "styles" : {
+                        "-webkit-transform": "rotateX(0deg)",
+                        "opacity": "1"
+                    }
+                }]
             }]
     }]
 };
