@@ -23,6 +23,26 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
             "text": "styles",
             "children": [
                 {
+                    "text": "Widgets",
+                    "children": [
+                        {
+                            "text": "Map",
+                            "dataFile" : "node_modules/components-data/map.json",
+                            "component": "map"
+                        },
+                        {
+                            "text": "Feed Reader",
+                            "dataFile" : "node_modules/components-data/feed-reader.json",
+                            "component": "feedreader"
+                        },
+                        {
+                            "text": "Search Bar",
+                            "dataFile" : "node_modules/components-data/searchfield.json",
+                            "component": "searchfield"
+                        }
+                    ]
+                },
+                {
                     "text": "Montage Components",
                     "children": [
                         {
@@ -50,7 +70,7 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                             "dataFile" : "node_modules/components-data/number-input.json",
                             "component": "numberInput"
                         },
-                        {
+                       {
                             "text": "Select Input",
                             "dataFile" : "node_modules/components-data/select.json",
                             "component": "select"
