@@ -26,19 +26,29 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                     "text": "Widgets",
                     "children": [
                         {
-                            "text": "Map",
-                            "dataFile" : "node_modules/components-data/map.json",
-                            "component": "map"
-                        },
-                        {
                             "text": "Feed Reader",
                             "dataFile" : "node_modules/components-data/feed-reader.json",
                             "component": "feedreader"
                         },
                         {
+                            "text": "Map",
+                            "dataFile" : "node_modules/components-data/map.json",
+                            "component": "map"
+                        },
+                        {
+                            "text": "Picasa Carousel",
+                            "dataFile" : "node_modules/components-data/picasa-carousel.json",
+                            "component": "picasa-carousel"
+                        },
+                        {
                             "text": "Search Bar",
                             "dataFile" : "node_modules/components-data/searchfield.json",
                             "component": "searchfield"
+                        },
+                        {
+                            "text": "Youtube Channel",
+                            "dataFile" : "node_modules/components-data/youtube-channel.json",
+                            "component": "youtube-channel"
                         }
                     ]
                 },
