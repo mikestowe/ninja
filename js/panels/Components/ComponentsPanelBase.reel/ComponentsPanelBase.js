@@ -366,6 +366,16 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                     el = NJUtils.makeNJElement("div", "Feed Reader", "component");
                     el.elementModel.pi = "FeedReaderPi";
                     el.elementModel.isComponent = true;
+                case "picasa-carousel":
+                    el = NJUtils.makeNJElement("div", "Picasa Carousel", "component");
+                    el.elementModel.pi = "PicasaCarouselPi";
+                    el.elementModel.isComponent = true;
+                    break;
+                case "youtube-channel":
+                    el = NJUtils.makeNJElement("div", "Youtube Channel", "component");
+                    el.elementModel.pi = "YoutubeChannelPi";
+                    el.elementModel.isComponent = true;
+                    break;
 
             }
 
