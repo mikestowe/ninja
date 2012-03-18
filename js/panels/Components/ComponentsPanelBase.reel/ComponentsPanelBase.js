@@ -23,6 +23,36 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
             "text": "styles",
             "children": [
                 {
+                    "text": "Widgets",
+                    "children": [
+                        {
+                            "text": "Feed Reader",
+                            "dataFile" : "node_modules/components-data/feed-reader.json",
+                            "component": "feedreader"
+                        },
+                        {
+                            "text": "Map",
+                            "dataFile" : "node_modules/components-data/map.json",
+                            "component": "map"
+                        },
+                        {
+                            "text": "Picasa Carousel",
+                            "dataFile" : "node_modules/components-data/picasa-carousel.json",
+                            "component": "picasa-carousel"
+                        },
+                        {
+                            "text": "Search Bar",
+                            "dataFile" : "node_modules/components-data/searchfield.json",
+                            "component": "searchfield"
+                        },
+                        {
+                            "text": "Youtube Channel",
+                            "dataFile" : "node_modules/components-data/youtube-channel.json",
+                            "component": "youtube-channel"
+                        }
+                    ]
+                },
+                {
                     "text": "Montage Components",
                     "children": [
                         {
@@ -50,7 +80,7 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                             "dataFile" : "node_modules/components-data/number-input.json",
                             "component": "numberInput"
                         },
-                        {
+                       {
                             "text": "Select Input",
                             "dataFile" : "node_modules/components-data/select.json",
                             "component": "select"
@@ -129,15 +159,19 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
     _loadComponents: {
         value: function() {
 
-            this.componentsToLoad = this.components.children[0].children.length;
+            for(var cat in this.components.children) {
 
-            for(var i = 0, component; component = this.components.children[0].children[i]; i++) {
-                var req = new XMLHttpRequest();
-                //req.identifier = "searchRequest";
-                req.open("GET", component.dataFile);
-                req.addEventListener("load", this, false);
-                req.addEventListener("error", this, false);
-                req.send();
+                this.componentsToLoad += this.components.children[cat].children.length;
+
+                for(var i = 0, component; component = this.components.children[cat].children[i]; i++) {
+                    var req = new XMLHttpRequest();
+                    //req.identifier = "searchRequest";
+                    req.open("GET", component.dataFile);
+                    req.addEventListener("load", this, false);
+                    req.addEventListener("error", this, false);
+                    req.send();
+                }
+
             }
         }
     },
@@ -313,6 +347,7 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                     el.setAttribute("type", "range");
                     break;
                 case "textfield":
+                case "searchfield":
                     el = NJUtils.makeNJElement("input", "Textfield", "component");
                     el.elementModel.pi = "TextfieldPi";
                     el.setAttribute("type", "text");
@@ -326,6 +361,27 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                     el.elementModel.pi = "ToggleButtonPi";
                     el.innerHTML = "Off";
                     break;
+                case "map":
+                    el = NJUtils.makeNJElement("div", "Map", "component");
+                    el.elementModel.pi = "MapPi";
+                    el.elementModel.isComponent = true;
+                    break;
+                case "feedreader":
+                    el = NJUtils.makeNJElement("div", "Feed Reader", "component");
+                    el.elementModel.pi = "FeedReaderPi";
+                    el.elementModel.isComponent = true;
+                    break;
+                case "picasa-carousel":
+                    el = NJUtils.makeNJElement("div", "Picasa Carousel", "component");
+                    el.elementModel.pi = "PicasaCarouselPi";
+                    el.elementModel.isComponent = true;
+                    break;
+                case "youtube-channel":
+                    el = NJUtils.makeNJElement("div", "Youtube Channel", "component");
+                    el.elementModel.pi = "YoutubeChannelPi";
+                    el.elementModel.isComponent = true;
+                    break;
+
             }
 
             return el;
