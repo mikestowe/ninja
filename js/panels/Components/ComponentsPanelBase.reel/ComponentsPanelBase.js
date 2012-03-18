@@ -159,15 +159,19 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
     _loadComponents: {
         value: function() {
 
-            this.componentsToLoad = this.components.children[0].children.length;
+            for(var cat in this.components.children) {
 
-            for(var i = 0, component; component = this.components.children[0].children[i]; i++) {
-                var req = new XMLHttpRequest();
-                //req.identifier = "searchRequest";
-                req.open("GET", component.dataFile);
-                req.addEventListener("load", this, false);
-                req.addEventListener("error", this, false);
-                req.send();
+                this.componentsToLoad += this.components.children[cat].children.length;
+
+                for(var i = 0, component; component = this.components.children[cat].children[i]; i++) {
+                    var req = new XMLHttpRequest();
+                    //req.identifier = "searchRequest";
+                    req.open("GET", component.dataFile);
+                    req.addEventListener("load", this, false);
+                    req.addEventListener("error", this, false);
+                    req.send();
+                }
+
             }
         }
     },
