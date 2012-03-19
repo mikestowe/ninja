@@ -159,15 +159,19 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
     _loadComponents: {
         value: function() {
 
-            this.componentsToLoad = this.components.children[0].children.length;
+            for(var cat in this.components.children) {
 
-            for(var i = 0, component; component = this.components.children[0].children[i]; i++) {
-                var req = new XMLHttpRequest();
-                //req.identifier = "searchRequest";
-                req.open("GET", component.dataFile);
-                req.addEventListener("load", this, false);
-                req.addEventListener("error", this, false);
-                req.send();
+                this.componentsToLoad += this.components.children[cat].children.length;
+
+                for(var i = 0, component; component = this.components.children[cat].children[i]; i++) {
+                    var req = new XMLHttpRequest();
+                    //req.identifier = "searchRequest";
+                    req.open("GET", component.dataFile);
+                    req.addEventListener("load", this, false);
+                    req.addEventListener("error", this, false);
+                    req.send();
+                }
+
             }
         }
     },
@@ -286,6 +290,13 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                     '-webkit-transform-style' : 'preserve-3d',
                     '-webkit-transform' : 'perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
                 };
+
+                var defaultStyles = component.defaultStyles;
+                if(defaultStyles) {
+                    for(var n in defaultStyles) {
+                        styles[n] = defaultStyles[n];
+                    }
+                }
 
                 that.application.ninja.currentDocument.setComponentInstance(instance, element);
 

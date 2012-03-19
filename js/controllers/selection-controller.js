@@ -6,7 +6,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 
 var Montage = require("montage/core/core").Montage,
-    Component = require("montage/ui/component").Component;
+    Component = require("montage/ui/component").Component,
+    NJUtils     = require("js/lib/NJUtils").NJUtils;
 
 exports.SelectionController = Montage.create(Component, {
 
@@ -152,6 +153,28 @@ exports.SelectionController = Montage.create(Component, {
                 this._isDocument = false;
             } else {
                 this._isDocument = true;
+            }
+
+            if(item && item.controller && !item.elementModel.isComponent) {
+                var componentInfo = Montage.getInfoForObject(item.controller);
+                var componentName = componentInfo.objectName.toLowerCase();
+                switch(componentName) {
+                    case "feedreader":
+                        NJUtils.makeElementModel(item, "Feed Reader", "component", false);
+                        item.elementModel.pi = "FeedReaderPi";
+                        item.elementModel.isComponent = true;
+                        break;
+                    case "map":
+                        NJUtils.makeElementModel(item, "Map", "component", false);
+                        item.elementModel.pi = "MapPi";
+                        item.elementModel.isComponent = true;
+                        break;
+                    case "youtubechannel":
+                        NJUtils.makeElementModel(item, "Youtube Channel", "component", false);
+                        item.elementModel.pi = "YoutubeChannelPi";
+                        item.elementModel.isComponent = true;
+                        break;
+                }
             }
 
             NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument} );
