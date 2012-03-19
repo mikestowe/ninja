@@ -88,6 +88,36 @@ exports.transitionPresets = {
                         "-webkit-transform": "rotate(180deg)"
                     }
                 }]
+            },
+            {
+                "text": "Scale Up",
+                "selectorBase" : "scale-up",
+                "rules" : [{
+                    "selectorSuffix" : "",
+                    "styles" : {
+                        "-webkit-transition": "-webkit-transform 0.4s ease-in"
+                    }
+                }, {
+                    "selectorSuffix" : ":hover",
+                    "styles" : {
+                        "-webkit-transform": "scale(1.4)"
+                    }
+                }]
+            },
+            {
+                "text": "Scale Down",
+                "selectorBase" : "scale-down",
+                "rules" : [{
+                    "selectorSuffix" : "",
+                    "styles" : {
+                        "-webkit-transition": "-webkit-transform 0.4s ease-in"
+                    }
+                }, {
+                    "selectorSuffix" : ":hover",
+                    "styles" : {
+                        "-webkit-transform": "scale(.5)"
+                    }
+                }]
             }]
     }]
 };

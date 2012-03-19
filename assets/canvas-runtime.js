@@ -4,6 +4,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
+
+
 ///////////////////////////////////////////////////////////////////////
 //Loading webGL/canvas data
 function initWebGl (rootElement, directory) {
@@ -27,7 +29,8 @@ function CanvasDataManager()
 {
 	this.loadGLData = function(root,  valueArray,  assetPath )
 	{
-		this._assetPath = assetPath.slice();
+		if (assetPath)
+			this._assetPath = assetPath.slice();
 
 		var value = valueArray;
 		var nWorlds = value.length;
@@ -118,17 +121,22 @@ function GLRuntime( canvas, importStr,  assetPath )
 	this._zFar = 100.0;
 	this._viewDist = 5.0;
 
+	this.elapsed = 0;
+
 	this._aspect = canvas.width/canvas.height;
 
-	this._geomRoot;
+	this._geomRoot = null;
 
 	// all "live" materials
 	this._materials = [];
 
 		// provide the mapping for the asset directory
-		this._assetPath = assetPath.slice();
-		if (this._assetPath[this._assetPath.length-1] != '/')
-			this._assetPath += '/';
+		if (assetPath)
+		{
+			this._assetPath = assetPath.slice();
+			if (this._assetPath[this._assetPath.length-1] != '/')
+				this._assetPath += '/';
+		}
 
     ///////////////////////////////////////////////////////////////////////
 	// accessors
@@ -166,6 +174,7 @@ function GLRuntime( canvas, importStr,  assetPath )
 			this.importObjects( importStr );
 			this.linkMaterials( this._geomRoot );
 			this.initMaterials();
+			this.linkLights();
 		}
 		else
 		{
@@ -221,8 +230,8 @@ function GLRuntime( canvas, importStr,  assetPath )
 			rdgeGlobalParameters.u_light0Pos.set( [5*Math.cos(this.elapsed), 5*Math.sin(this.elapsed), 20]);
         
 			// orbit the light nodes around the boxes
-			//this.light.setPosition([1.2*Math.cos(this.elapsed*2.0), 1.2*Math.sin(this.elapsed*2.0), 1.2*Math.cos(this.elapsed*2.0)]);
-			//this.light2.setPosition([-1.2*Math.cos(this.elapsed*2.0), 1.2*Math.sin(this.elapsed*2.0), -1.2*Math.cos(this.elapsed)]);
+			if (this.light )  this.light.setPosition([1.2*Math.cos(this.elapsed*2.0), 1.2*Math.sin(this.elapsed*2.0), 1.2*Math.cos(this.elapsed*2.0)]);
+			if (this.light2)  this.light2.setPosition([-1.2*Math.cos(this.elapsed*2.0), 1.2*Math.sin(this.elapsed*2.0), -1.2*Math.cos(this.elapsed)]);
 
 			this.updateMaterials();
 
@@ -344,6 +353,16 @@ function GLRuntime( canvas, importStr,  assetPath )
 			parent.addChild( obj );
 	}
 
+	this.linkLights = function()
+	{
+		var matNode = this.findMaterialNode( "lights", this.myScene.scene );
+		if (matNode)
+		{
+			this.light = matNode.lightChannel[1];
+			this.light2 = matNode.lightChannel[2];
+		}
+	}
+
 	this.linkMaterials = function( obj )
 	{
 		if (!obj)  return;
@@ -377,6 +396,7 @@ function GLRuntime( canvas, importStr,  assetPath )
 
 	this.remapAssetFolder = function( url )
 	{
+		/*
 		var searchStr = "assets/";
 		var index = url.indexOf( searchStr );
 		var rtnPath = url;
@@ -386,6 +406,8 @@ function GLRuntime( canvas, importStr,  assetPath )
 			rtnPath = this._assetPath + rtnPath;
 		}
 		return rtnPath;
+		*/
+		return url;
 	}
 
 	this.findMaterialNode = function( nodeName,  node )
@@ -482,20 +504,7 @@ function RuntimeGeomObj()
 
     ///////////////////////////////////////////////////////////////////////
     // Methods
-    ///////////////////////////////////////////////////////////////////////
-    this.makeStrokeMaterial = function()
-    {
-    }
-
-    this.makeFillMaterial = function()
-    {
-    }
-
-
-    this.render = function()
-    {
-    }
-    
+    ///////////////////////////////////////////////////////////////////////    
 	this.addChild = function( child )
 	{
 		if (!this._children)  this._children = [];
@@ -551,9 +560,10 @@ function RuntimeGeomObj()
 				this._materials.push( mat );
 			}
 
-			var endIndex = importStr.indexOf( "endMaterial\n" );
+			var endKey = "endMaterial\n";
+			var endIndex = importStr.indexOf( endKey );
 			if (endIndex < 0)  break;
-			importStr = importStr.substr( endIndex );
+			importStr = importStr.substr( endIndex + endKey.length );
 		}
 	}
 
@@ -1080,7 +1090,7 @@ function RuntimeMaterial( world )
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
-	this.init = function()
+	this.init = function( world )
 	{
 	}
 
@@ -1127,7 +1137,7 @@ function RuntimeFlatMaterial()
     };
 
 
-	this.init = function()
+	this.init = function( world )
 	{
 		if (this._shader)
 		{
@@ -1302,7 +1312,7 @@ function RuntimeBumpMetalMaterial()
 		this._normalTexture = this.getPropertyFromString( "normalMap: ",	importStr );
 	}
 
-	this.init = function()
+	this.init = function( world )
 	{
 		var material = this._materialNode;
 		if (material)
@@ -1322,7 +1332,6 @@ function RuntimeBumpMetalMaterial()
 						this._diffuseTexture = world.remapAssetFolder( this._diffuseTexture );
 						tex = renderer.getTextureByName(this._diffuseTexture, wrap, mips );
 						if (tex)  technique.u_colMap.set( tex );
-
 					}
 					if (this._normalTexture)
 					{
@@ -1344,6 +1353,184 @@ function RuntimeBumpMetalMaterial()
 
 function RuntimeUberMaterial()
 {
+	// inherit the members of RuntimeMaterial
+	this.inheritedFrom = RuntimeMaterial;
+	this.inheritedFrom();
+
+	this._MAX_LIGHTS = 4;
+
+	this.init = function(  )
+	{
+		var material = this._materialNode;
+		if (material)
+		{
+			var technique = material.shaderProgram.defaultTechnique;
+			var renderer = g_Engine.getContext().renderer;
+			if (renderer && technique)
+			{
+				if (this._shader && this._shader.defaultTechnique)
+				{
+					if (this._ambientColor  && technique.u_ambientColor)   technique.u_ambientColor.set(this._ambientColor );
+					if (this._diffuseColor  && technique.u_diffuseColor )   technique.u_diffuseColor.set(this._diffuseColor  );
+					if (this._specularColor && technique.u_specularColor)   technique.u_specularColor.set(this._specularColor);
+					if (this._specularPower && technique.u_specularPower)   technique.u_specularPower.set([this._specularPower]);
+
+					if (this._lights)
+					{
+						for(var i = 0; i < 4; ++i)
+						{
+							var light = this._lights[i];
+							if (light)
+							{
+								if(light.type == 'directional')
+								{
+									technique['u_light'+i+'Dir'].set( light.direction || [ 0, 0, 1 ]);
+								}
+								else if(light.type == 'spot')
+								{
+									technique['u_light'+i+'Atten'].set(light.attenuation || [ 1,0,0 ]); 
+									technique['u_light'+i+'Pos'].set(light.position || [ 0, 0, 0 ]);
+									technique['u_light'+i+'Spot'].set([ Math.cos( ( light.spotInnerCutoff || 45.0 )  * deg2Rad ), 
+																		Math.cos( ( light.spotOuterCutoff || 90.0 ) * deg2Rad )]);
+								}
+								else
+								{
+									technique['u_light'+i+'Pos'].set(light.position || [ 0, 0, 0 ]);                        
+									technique['u_light'+i+'Atten'].set(light.attenuation || [ 1,0,0 ]);                
+								}
+
+								// set the common light properties
+								technique['u_light'+i+'Color'].set(light.diffuseColor || [ 1,1,1,1 ]);
+								technique['u_light'+i+'Specular'].set(light.specularColor || [ 1, 1, 1, 1 ]);           
+							}
+						}
+					}
+
+					// currently not exported
+					var uvTransform = [ 2.0, 0, 0, 0, 0, 2.0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1];
+					technique.u_uvMatrix.set(uvTransform);
+	
+					var renderer = g_Engine.getContext().renderer;
+					if (this._diffuseMap)
+					{
+						var tex = renderer.getTextureByName(this._diffuseMap, 'REPEAT');
+						technique.s_diffuseMap.set( tex );
+					}
+
+					if (this._normalMap)
+					{
+						var tex = renderer.getTextureByName(this._normalMap, 'REPEAT');
+						technique.s_normalMap.set( tex );
+					}
+
+					if (this._specularMap)
+					{
+						var tex = renderer.getTextureByName(this._specularMap, 'REPEAT');
+						technique.s_specMap.set( tex );
+					}
+
+					if(this._environmentMap)
+					{
+						var tex = renderer.getTextureByName(this._environmentMap, 'CLAMP');
+						technique.s_envMap.set( tex );
+						if (this._environmentAmount)
+							technique.u_envReflection.set([ this._environmentAmount ] );
+					}
+				}
+			}
+		}
+	}
+
+	this.update = function( time )
+	{
+	}
+
+	this.import = function( importStr )
+	{
+		// limit the key searches to this material
+        var endKey = "endMaterial\n";
+        var index = importStr.indexOf( endKey );
+        index += endKey.length;
+        importStr = importStr.slice( 0, index );
+
+		var matProps = getPropertyFromString( "materialProps: ", importStr );
+		if (matProps)
+		{
+			this._ambientColor  = eval( "[" + getPropertyFromString("ambientColor: ", importStr)   + ']' );
+			this._diffuseColor  = eval( "[" + getPropertyFromString( "diffuseColor: ", importStr)  + ']' );
+			this._specularColor = eval( "[" + getPropertyFromString( "specularColor: ", importStr) + ']' );
+			this._specularPower = Number(  getPropertyFromString( "specularPower: ", importStr) );
+		}
+
+		var lightProps = getPropertyFromString( "lightProps: ", importStr );
+		if (lightProps)
+		{
+			this._lights = [];
+			var lightStr;
+			for (var i=0;  i<this._MAX_LIGHTS;  i++)
+			{
+				var type = getPropertyFromString( "light" + i + ": ", importStr );
+				if (type)
+				{
+					var light = new Object;
+					light.type = type;
+					switch (type)
+					{
+						case "directional":
+							lightStr = getPropertyFromString( 'light' + i + 'Dir: ', importStr);
+							light.direction = eval( "[" + lightStr + "]" );
+							break;
+
+						case "spot":
+							lightStr = getPropertyFromString( 'light' + i + 'Pos: ', importStr );
+							light.position =  eval( "[" + lightStr + "]" );
+
+							lightStr = getPropertyFromString( 'light' + i + 'OuterSpotCutoff: ', importStr );
+							light['spotInnerCutoff'] = Number( lightStr );
+
+							lightStr = getPropertyFromString( 'light' + i + 'InnerSpotCutoff: ', importStr );
+							light['spotOuterCutoff'] = Number( lightStr );
+							break;
+
+						case "point":
+							lightStr = getPropertyFromString( 'light' + i + 'Pos: ', importStr );
+							light.position =  eval( "[" + lightStr + "]" );
+
+							lightStr = getPropertyFromString( 'light' + i + 'Attenuation: ', importStr );
+							light.attenuation =  eval( "[" + lightStr + "]" );
+							break;
+
+						default:
+							throw new Error( "unrecognized light type on import: " + type );
+							break;
+					}
+
+					// common to all lights
+					light.diffuseColor = eval( "[" + getPropertyFromString( 'light' + i + 'Color: ', importStr) + "]" );
+					light.specularColor = eval( "[" + getPropertyFromString( 'light' + i + 'SpecularColor: ', importStr) + "]" );
+
+					// push the light
+					this._lights.push( light );
+				}
+				else
+					this._lights[i] = 'undefined';
+
+				// advance to the next light
+				var endLightKey = "endMaterial\n";
+				index = importStr.indexOf( endLightKey );
+				if (index < 0)  throw new Error( "ill-formed light encountered in import" );
+				index += endLightKey.length;
+				importStr = importStr.slice( 0, index );
+			}
+		}
+
+		this._diffuseMap = getPropertyFromString( "diffuseMap: ", importStr  )
+		this._normalMap = getPropertyFromString( "normalMap: ", importStr  );
+		this._specularMap = getPropertyFromString( "specularMap: ", importStr  );
+		this._environmentMap = getPropertyFromString( "environmentMap: ", importStr  );
+		if (this._environmentMap)
+			this._environmentAmount = Number( getPropertyFromString( "environmentAmount", importStr ) );
+	}
 }
 
 function RuntimePlasmaMaterial()

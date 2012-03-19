@@ -51,23 +51,6 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
 
     setAttribute: {
         value: function(el, att, value) {
-            if(att === "id") {
-                if(value === "") {
-                    el.setAttribute(att, value);
-                    return;
-                }
-
-                // Then check if this is a valid id by the following spec: http://www.w3.org/TR/REC-html40/types.html#h-6.2
-                var regexID = /^([a-zA-Z])+([a-zA-Z0-9_\.\:\-])+/;
-                if(!regexID.test(value)) {
-                    alert("Invalid ID");
-                    return;
-                } else if (this.application.ninja.currentDocument._document.getElementById(value) !== null) {
-                    alert("The following ID: " + value + " is already in Use");
-                }
-
-            }
-
             el.setAttribute(att, value);
         }
     },

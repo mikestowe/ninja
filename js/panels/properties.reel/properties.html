@@ -10,35 +10,19 @@
         <link rel="stylesheet" href="properties.css" type="text/css">
         <script type="text/montage-serialization">
         {
-            "elementNameInput1": {
-                "module": "montage/ui/textfield.reel",
-                "name": "Textfield",
+            "elementName": {
+                "prototype": "montage/ui/textfield.reel",
                 "properties": {
                     "element": {"#": "elementName"},
                     "readOnly": true
-                },
-                "bindings": {
-                    "value": {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "elementName",
-                        "oneway": true
-                    }
                 }
             },
 
-            "elementID": {
-                "module": "montage/ui/textfield.reel",
-                "name": "Textfield",
+            "elementId": {
+                "prototype": "montage/ui/textfield.reel",
                 "properties": {
-                    "element": {"#": "elementID"},
+                    "element": {"#": "elementId"},
                     "readOnly": false
-                },
-                "bindings": {
-                    "value": {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "elementID",
-                        "oneway": true
-                    }
                 }
             },
 
@@ -46,34 +30,10 @@
                 "module": "montage/ui/textfield.reel",
                 "name": "Textfield",
                 "properties": {
-                    "element": {"#": "elementClassName"},
+                    "element": {"#": "elementClass"},
                     "readOnly": false
-                },
-                "bindings": {
-                    "value": {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "elementClassName",
-                        "oneway": true
-                    }
                 }
             },
-
-            "elementNameAttribute": {
-                "module": "montage/ui/textfield.reel",
-                "name": "Textfield",
-                "properties": {
-                    "element": {"#": "elementNameAttribute"},
-                    "readOnly": false
-                },
-                "bindings": {
-                    "value": {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "nameAttribute",
-                        "oneway": false
-                    }
-                }
-            },
-
 
             "PosSizeSection": {
                 "module": "js/panels/properties.reel/section.reel",
@@ -142,9 +102,9 @@
                 "name": "Properties",
                 "properties": {
                     "element":              {"#": "propertiesPanel"},
-                    "elementNameInput":     {"@": "elementNameInput1"},
-                    "elementId":            {"@": "elementID"},
-                    "elementNameAttribute": {"@": "elementNameAttribute"},
+                    "elementName":          {"@": "elementName"},
+                    "elementClass":         {"@": "elementClass"},
+                    "elementId":            {"@": "elementId"},
                     "positionSize":         {"@": "PosSize"},
                     "threeD":               {"@": "threeDProperties"}
                 }
@@ -156,20 +116,16 @@
     <section id="propertiesPanel" class="propertiesPanel">
         <section class="sectional">
             <section class="fieldCol">
-                <label id="lblElement">Element:</label>
+                <label>Element:</label>
                 <article class="fieldRow"><input type="text" id="elementName" class="nj-skinned" readonly="readonly"></article>
             </section>
             <section class="fieldCol">
-                <label id="lblID">ID:</label>
-                <article class="fieldRow"><input type="text" id="elementID" class="nj-skinned" /></article>
+                <label>ID:</label>
+                <article class="fieldRow"><input type="text" id="elementId" class="nj-skinned" /></article>
             </section>
             <section class="fieldCol">
-                <label id="lblClass">Class:</label>
-                <article class="fieldRow"><input type="text" id="elementClassName" class="nj-skinned" /></article>
-            </section>
-            <section class="fieldCol">
-                <label id="lblName">Name:</label>
-                <article class="fieldRow"><input type="text" id="elementNameAttribute" class="nj-skinned" /></article>
+                <label>Class:</label>
+                <article class="fieldRow"><input type="text" id="elementClass" class="nj-skinned" /></article>
             </section>
         </section>
         <section id="PosSize"></section>
