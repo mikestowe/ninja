@@ -10,6 +10,42 @@
     	<link rel="stylesheet" type="text/css" href="materials-library-panel.css">
          <script type="text/montage-serialization">
         {
+            "addButton": {
+                "prototype": "montage/ui/button.reel",
+                "properties": {
+                    "element": {"#": "ml_add_btn"}
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+             },
+            "copyButton": {
+                "prototype": "montage/ui/button.reel",
+                "properties": {
+                    "element": {"#": "ml_copy_btn"}
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+             },
+            "deleteButton": {
+                "prototype": "montage/ui/button.reel",
+                "properties": {
+                    "element": {"#": "ml_delete_btn"}
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+             },
              "materialInfo": {
                  "module": "js/panels/Materials/materials-popup.reel",
                  "name": "MaterialsPopup"
@@ -34,9 +70,9 @@
             </div>
             <hr />
             <div id="ml_buttons">
-                <button id="ml_add_btn">Add</button>
-                <button id="ml_copy_btn">Copy</button>
-                <button id="ml_delete_btn">Delete</button>
+                <button id="ml_add_btn" class="nj-skinned">Add</button>
+                <button id="ml_copy_btn" class="nj-skinned">Copy</button>
+                <button id="ml_delete_btn" class="nj-skinned">Delete</button>
             </div>
     	</div>
 
