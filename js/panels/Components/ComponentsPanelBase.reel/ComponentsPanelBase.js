@@ -291,6 +291,13 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                     '-webkit-transform' : 'perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
                 };
 
+                var defaultStyles = component.defaultStyles;
+                if(defaultStyles) {
+                    for(var n in defaultStyles) {
+                        styles[n] = defaultStyles[n];
+                    }
+                }
+
                 that.application.ninja.currentDocument.setComponentInstance(instance, element);
 
                 NJevent("elementAdding", {"el": element, "data":styles});
