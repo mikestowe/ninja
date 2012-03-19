@@ -5,7 +5,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var Tree = require("js/components/tree.reel").Tree,
-    Button = require("js/components/button.reel").Button,
     MaterialsPopup = require("js/panels/Materials/materials-popup.reel").MaterialsPopup,
     PopupMananger =		require("js/components/popup-manager.reel").PopupMananger,
     Popup = require("montage/ui/popup/popup.reel").Popup;
@@ -27,24 +26,6 @@ exports.MaterialsLibraryPanel = (require("montage/core/core").Montage).create(re
             materialsTree.needsDraw = true;
 
             materialsTree.addEventListener("change", this, true);
-
-            var addButton = Button.create();
-            addButton.element = document.getElementById("ml_add_btn");
-            addButton.label = "Add";
-            addButton.needsDraw = true;
-            addButton.addEventListener("action", this, true);
-
-            var copyButton = Button.create();
-            copyButton.element = document.getElementById("ml_copy_btn");
-            copyButton.label = "Copy";
-            copyButton.needsDraw = true;
-            copyButton.addEventListener("action", this, true);
-
-            var deleteButton = Button.create();
-            deleteButton.element = document.getElementById("ml_delete_btn");
-            deleteButton.label = "Delete";
-            deleteButton.needsDraw = true;
-            deleteButton.addEventListener("action", this, true);
     	}
     },
 
@@ -73,7 +54,7 @@ exports.MaterialsLibraryPanel = (require("montage/core/core").Montage).create(re
         }
     },
 
-    captureAction: {
+    handleAction: {
         value:function(event) {
             switch(event._currentTarget.label)
             {
