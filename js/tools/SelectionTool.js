@@ -205,12 +205,12 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             {
                 this._handleMode = null;
                 this._delta = null;
-                this.DrawHandles();
             }
 
             this.endDraw(event);
             this._canSnap = true;
             this._use3DMode = false;
+            this.DrawHandles();
         }
     },
 
@@ -577,6 +577,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             {
                 // form the translation vector and post translate the matrix by it.
                 delta = vecUtils.vecSubtract( 3, data.pt1, data.pt0 );
+                delta[2] = 0;
                 var transMat = Matrix.Translation( delta );
                 this._moveElements(transMat);
             }
@@ -710,7 +711,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             {
                 return;
             }
-            if(this._target && this._handles)
+            if(this._target && this._handles && (this._targets.length === 1))
             {
                 var len = this._handles.length;
                 var i = 0,
