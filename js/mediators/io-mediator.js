@@ -462,17 +462,17 @@ function loadWebGL (e) {\n\
     		
     		
     		
+    		
+    		
+    		
     		//
     		var mjsCounter = 0, mjsComponents = [], temp = TemplateCreator.create();
+    		//
     		for (var m in template.mjs) {
     			mjsComponents.push(template.mjs[m]);
     			mjsCounter++;
     		}
-    		
-//    		console.log(mjsComponents);
-    		
-    		//console.log(TemplateCreator.)
-    		
+    		//
     		if (template.mjs && mjsCounter > 0) {
     			var mjsDirName, mjsVersion,
     				mjscode = temp.initWithHeadAndBodyElements(template.document.content.document.documentElement.head, template.document.content.document.documentElement.body, mjsComponents)._ownerSerialization;
@@ -483,7 +483,7 @@ function loadWebGL (e) {\n\
 		    			mjsDirName = (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name+this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version).toLowerCase();
     					mjsVersion = this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version;
     					this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.document.root, mjsDirName);
-    					//TODO: Fix to allow no overwrite
+    					//TODO: Fix to allow no overwrite and nested locations
     					var packjson = this.application.ninja.coreIoApi.createFile({uri: template.document.root+'package.json', contents: '{"mappings": {"montage": "'+mjsDirName+'/"}}'});
     				} else {
     					//TODO: Error handle no available library to copy
@@ -506,6 +506,8 @@ function loadWebGL (e) {\n\
     			//
     			mjstag.innerHTML = mjscode;
     		}
+    		
+    		
     		
     		
     		
