@@ -9,7 +9,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = 			require("montage/core/core").Montage,
 	Component = 		require("montage/ui/component").Component,
 	Slider = 			require("js/components/slider.reel").Slider,
-	Button = 			require("js/components/button.reel").Button,
 	HotText = 			require("js/components/hottext.reel").HotText,
 	ColorWheel = 		require("js/components/colorwheel.reel").ColorWheel,
 	GradientPicker = 	require("js/components/gradientpicker.reel").GradientPicker;

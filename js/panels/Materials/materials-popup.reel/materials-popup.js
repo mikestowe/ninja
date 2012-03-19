@@ -5,9 +5,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var Montage = require("montage/core/core").Montage,
-    Component   = require("montage/ui/component").Component;
-var Button = 			require("js/components/button.reel").Button;
-var MaterialsModel = require("js/models/materials-model").MaterialsModel;
+    Component   = require("montage/ui/component").Component,
+    MaterialsModel = require("js/models/materials-model").MaterialsModel;
 
 ////////////////////////////////////////////////////////////////////////
 //Exporting as MaterialsPopup
