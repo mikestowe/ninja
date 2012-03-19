@@ -388,7 +388,8 @@ var BrushStroke = function GLBrushStroke() {
                     this._BBoxMax[d]+= bboxPadding;
                 }//for every dimension d from 0 to 2
             }
-        }
+            
+        } //if this was dirty
         this._dirty = false;
     };
 
@@ -512,12 +513,55 @@ var BrushStroke = function GLBrushStroke() {
     }; //render()
 
 
+    this.exportJSON = function(){
+        var retObject= new Object();
+        retObject.geomType = this.geomType();
+        retObject.points = this._Points;
+        retObject.planeCenter = this._planeCenter;
+        retObject.planeMat = this._planeMat;
+        retObject.planeMatInv = this._planeMatInv;
+        retObject.strokeWidth = this._strokeWidth;
+        retObject.strokeColor = this._strokeColor;
+        retObject.secondStrokeColor = this._secondStrokeColor;
+        retObject.strokeHardness = this._strokeHardness;
+        retObject.strokeDoSmoothing = this._strokeDoSmoothing;
+        retObject.strokeUseCalligraphic = this._strokeUseCalligraphic;
+        retObject.strokeAngle = this._strokeAngle;
+        retObject.strokeAmountSmoothing = this._strokeAmountSmoothing;
+        return retObject;
+    };
+
+    this.importJSON = function(jo){
+        if (this.geomType()!== jo.geomType){
+            return;
+        } 
+        this._Points = jo.points.splice(0); //todo is this splice necessary?
+        this._planeCenter = jo.planeCenter;
+        this._planeMat = jo.planeMat;
+        this._planeMatInv = jo.planeMatInv ;
+        this._strokeWidth = jo.strokeWidth;
+        this._strokeColor =  jo.strokeColor;
+        this._secondStrokeColor = jo.secondStrokeColor;
+        this._strokeHardness = jo.strokeHardness;
+        this._strokeDoSmoothing = jo.strokeDoSmoothing;
+        this._strokeUseCalligraphic = jo.strokeUseCalligraphic;
+        this._strokeAngle = jo.strokeAngle;
+        this._strokeAmountSmoothing = jo.strokeAmountSmoothing;
+
+        //force a re-computation of meta-geometry before rendering
+        this._isDirty = true;
+    };
+
+    
     this.export = function() {
-        return "type: " + this.geomType() + "\n";
+        var jsonObject = this.exportJSON();
+        var stringified = JSON.stringify(jsonObject);
+        return "type: " + this.geomType() + "\n" + stringified;
     };
 
     this.import = function( importStr ) {
-
+        var jsonObject = JSON.parse(importStr);
+        this.importJSON(jsonObject);
     }
 
     this.collidesWithPoint = function (x, y, z) {
