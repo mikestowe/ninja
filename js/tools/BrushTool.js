@@ -204,20 +204,10 @@ exports.BrushTool = Montage.create(ShapeTool, {
 
                     var horizontalOffset = this.application.ninja.stage.userContentLeft;
                     var verticalOffset = this.application.ninja.stage.userContentTop;
+                    var origX = -horizontalOffset;
+                    var origY = -verticalOffset;
+                    this._selectedBrushStroke.drawToContext(ctx, origX, origY);
 
-                    var numPoints = this._selectedBrushStroke.getNumPoints();
-                    ctx.lineWidth = 1;
-                    ctx.strokeStyle = "black";
-                    ctx.beginPath();
-                    var pt = this._selectedBrushStroke.getPoint(0);
-                    ctx.moveTo(pt[0]+ horizontalOffset,pt[1]+ verticalOffset);
-                    for (var i = 1; i < numPoints; i++) {
-                        pt = this._selectedBrushStroke.getPoint(i);
-                        var x = pt[0]+ horizontalOffset;
-                        var y = pt[1]+ verticalOffset;
-                        ctx.lineTo(x,y);
-                    }
-                    ctx.stroke();
                     ctx.restore();
 
                 }

@@ -249,7 +249,7 @@ var BrushStroke = function GLBrushStroke() {
     }
 
     this.getStrokeAngle = function(){
-        this._strokeAngle = a;
+        return this._strokeAngle;
     }
 
     this.getStrokeStyle = function () {
@@ -429,7 +429,12 @@ var BrushStroke = function GLBrushStroke() {
         }
 
         ctx.clearRect(0, 0, bboxWidth, bboxHeight);
+        this.drawToContext(ctx, bboxMin[0], bboxMin[1]);
+        ctx.restore();
+    } //this.render()
 
+    this.drawToContext = function(ctx, origX, origY){
+        var numPoints = this.getNumPoints();
         if (this._strokeUseCalligraphic) {
             //build the stamp for the brush stroke
             var t=0;
@@ -453,13 +458,11 @@ var BrushStroke = function GLBrushStroke() {
             ctx.lineCap="butt";
             ctx.globalCompositeOperation = 'source-over';
             ctx.globalAlpha = this._strokeColor[3];
-            //ctx.lineWidth=this._strokeWidth/10;//todo figure out the correct formula for the line width
-            //if (ctx.lineWidth<2)
+            //todo figure out the correct formula for the line width
             ctx.lineWidth=2;
             if (t===numTraces-1){
                 ctx.lineWidth = 1;
             }
-
             for (t=0;t<numTraces;t++){
                 var disp = [brushStamp[t][0], brushStamp[t][1]];
                 var alphaVal = 1.0;
@@ -470,17 +473,17 @@ var BrushStroke = function GLBrushStroke() {
                 }
 
                 ctx.save();
-
                 ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
+
                 //linearly interpolate between the two stroke colors
                 var currStrokeColor = VecUtils.vecInterpolate(4, this._strokeColor, this._secondStrokeColor, t/numTraces);
                 //ctx.strokeStyle="rgba("+parseInt(255*currStrokeColor[0])+","+parseInt(255*currStrokeColor[1])+","+parseInt(255*currStrokeColor[2])+","+alphaVal+")";
 
                 ctx.translate(disp[0],disp[1]);
                 ctx.beginPath();
-                ctx.moveTo(this._Points[0][0]-bboxMin[0], this._Points[0][1]-bboxMin[1]);
+                ctx.moveTo(this._Points[0][0]-origX, this._Points[0][1]-origY);
                 for (var i=0;i<numPoints;i++){
-                    ctx.lineTo(this._Points[i][0]-bboxMin[0], this._Points[i][1]-bboxMin[1]);
+                    ctx.lineTo(this._Points[i][0]-origX, this._Points[i][1]-origY);
                 }
                 ctx.stroke();
                 ctx.restore();
@@ -496,21 +499,19 @@ var BrushStroke = function GLBrushStroke() {
             ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
             for (var l=0;l<numlayers;l++){
                 ctx.beginPath();
-                ctx.moveTo(this._Points[0][0]-bboxMin[0], this._Points[0][1]-bboxMin[1]);
+                ctx.moveTo(this._Points[0][0]-origX, this._Points[0][1]-origY);
                 if (numPoints===1){
                     //display a tiny segment as a single point
-                   ctx.lineTo(this._Points[0][0]-bboxMin[0], this._Points[0][1]-bboxMin[1]+0.01);
+                   ctx.lineTo(this._Points[0][0]-origX, this._Points[0][1]-origY+0.01);
                 }
                 for (var i=1;i<numPoints;i++){
-                    ctx.lineTo(this._Points[i][0]-bboxMin[0], this._Points[i][1]-bboxMin[1]);
+                    ctx.lineTo(this._Points[i][0]-origX, this._Points[i][1]-origY);
                 }
                 ctx.lineWidth=2*l+minStrokeWidth;
                 ctx.stroke();
-            }
-        }
-        
-        ctx.restore();
-    }; //render()
+            }//for every layer l
+        } //if there is no calligraphic stroke
+    }; //this.drawToCanvas()
 
 
     this.exportJSON = function(){
