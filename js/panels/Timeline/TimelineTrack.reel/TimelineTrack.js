@@ -645,7 +645,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.arrTransformTracks = [0, 1, 2, 3, 4];
 
             // Register event handler for layer events.
-            //defaultEventManager.addEventListener("layerEvent", this, false);
+            defaultEventManager.addEventListener("layerEvent", this, false);
 
         }
     },

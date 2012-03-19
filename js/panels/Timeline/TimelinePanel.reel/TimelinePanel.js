@@ -289,6 +289,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     createLayerTemplate:{
         value:function () {
             var returnObj = {};
+            
             returnObj.layerData = {};
             returnObj.layerData.layerName = null;
             returnObj.layerData.layerID = null;
@@ -296,6 +297,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             returnObj.layerData.isPositionCollapsed = true;
             returnObj.layerData.isTransformCollapsed = true;
             returnObj.layerData.isStyleCollapsed = true;
+            returnObj.layerData.arrLayerStyles = [];
             returnObj.layerData.arrLayerStyles = [];
             returnObj.layerData.elementsList = [];
             returnObj.layerData.deleted = false;
@@ -311,6 +313,51 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             returnObj.parentElement = null;
             return returnObj;
         }
+    },
+    
+    // Create an array of style objects for an element, for use
+    // in creating a new layer
+    createLayerStyles : {
+    	value: function(ptrElement) {
+    		// TODO: Create logic to loop through 
+    		// CSS properties on element and build 
+    		// array of layer styles for return.
+    		// Right now this method just returns an array of one bogus style.
+    		
+    		var returnArray = [],
+    			newStyle = {}, 
+    			styleID = "1@0"; // format: layerID + "@" + style counter
+    			
+            newStyle.styleID = styleID;
+			newStyle.whichView = "propval";
+			newStyle.editorProperty = "top";
+			newStyle.editorValue = 0;
+			newStyle.ruleTweener = false;
+			newStyle.isSelected = false;
+			
+			returnArray.push(newStyle);
+			
+			return returnArray;
+    		
+    	}
+    },
+    
+    // Create an array of style track objects for an element, for use
+    // in creating a new layer
+    createStyleTracks : {
+    	value: function(ptrElement) {
+    		// TODO: Create logic to loop through 
+    		// CSS properties on element and build 
+    		// array of layer styles for return.
+    		// Right now this method just returns an array of one bogus style.
+    		
+    		var returnArray = [];
+			
+			returnArray.push("1");
+			
+			return returnArray;
+    		
+    	}
     },
 
     // Bind all document-specific events (pass in true to unbind)
@@ -677,6 +724,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 thingToPush.layerData.layerID = this.currentLayerNumber;
                 thingToPush.parentElementUUID = this.hashKey;
                 thingToPush.parentElement = this.application.ninja.currentSelectedContainer;
+                
+                // Are there styles to add?
+                thingToPush.layerData.arrLayerStyles = this.createLayerStyles();
+                thingToPush.layerData.arrStyleTracks = this.createStyleTracks();
 
                 if (this._openDoc) {
                     ele.uuid = nj.generateRandom();
