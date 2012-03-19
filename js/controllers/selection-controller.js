@@ -174,6 +174,11 @@ exports.SelectionController = Montage.create(Component, {
                         item.elementModel.pi = "YoutubeChannelPi";
                         item.elementModel.isComponent = true;
                         break;
+                    case "picasacarousel":
+                        NJUtils.makeElementModel(item, "Picasa Carousel", "component", false);
+                        item.elementModel.pi = "PicasaCarouselPi";
+                        item.elementModel.isComponent = true;
+                        break;
                 }
             }
 
