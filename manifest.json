@@ -14,7 +14,8 @@
     "unlimitedStorage",
     "notifications",
     "webRequest",
-    "webRequestBlocking"
+    "webRequestBlocking",
+    "http://www.youtube.com/*"
   ],
   "requirements": {
     "3D": {
