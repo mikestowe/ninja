@@ -24,6 +24,7 @@ var BrushStroke = function GLBrushStroke() {
     this._BBoxMin = [0, 0, 0];
     this._BBoxMax = [0, 0, 0];
     this._dirty = true;
+    this._isInit = false;
     this._addedSamples = false;
     this._storedOrigPoints = false;
 
@@ -286,7 +287,7 @@ var BrushStroke = function GLBrushStroke() {
 
     this.computeMetaGeometry = function() {
         var numPoints = this._Points.length;
-        if (this._addedSamples === false){
+        if (this._isInit === false){
             //**** add samples to the long sections of the path --- Catmull-Rom spline interpolation *****
             // instead of the following, may use 4-point subdivision iterations over continuous regions of 'long' segments
             // look at http://www.gvu.gatech.edu/~jarek/Split&Tweak/ for formula
@@ -325,16 +326,12 @@ var BrushStroke = function GLBrushStroke() {
             }
             this._Points = newSampledPoints.slice(0);
             newSampledPoints = [];
-            console.log("Inserted "+numInsertedPoints+" additional CatmullRom points");
-            this._addedSamples = true;
             this._dirty=true;
-        } //if we need to add samples to this curve (done only once)
 
-        //build a copy of the original points...this should be done only once
-        if (this._storedOrigPoints === false) {
+            //store the original points
             this._OrigPoints = this._Points.slice(0);
-            this._storedOrigPoints = true;
-        } //if we need to store a copy of the original points (done only once)
+            this._isInit = true;
+        } //if have not initialized this brush stroke  yet
 
         if (this._dirty) {
             this._Points = this._OrigPoints.slice(0);
@@ -377,7 +374,9 @@ var BrushStroke = function GLBrushStroke() {
 
             //increase the bbox given the stroke width and the angle (in case of calligraphic brush)
             var bboxPadding = this._strokeWidth/2;
-            if (this.__strokeUseCalligraphic) {
+            //if (this._strokeUseCalligraphic) {
+            //todo re-enable this if check once we are able to change the left and top of the brush canvas
+            if (false){
                 this._BBoxMin[0]-= bboxPadding*Math.cos(this._strokeAngle);
                 this._BBoxMin[1]-= bboxPadding*Math.sin(this._strokeAngle);
                 this._BBoxMax[0]+= bboxPadding*Math.cos(this._strokeAngle);
@@ -388,9 +387,9 @@ var BrushStroke = function GLBrushStroke() {
                     this._BBoxMax[d]+= bboxPadding;
                 }//for every dimension d from 0 to 2
             }
-            
         } //if this was dirty
         this._dirty = false;
+
     };
 
     this.buildBuffers = function () {
@@ -402,18 +401,14 @@ var BrushStroke = function GLBrushStroke() {
     this.render = function () {
         // get the world
         var world = this.getWorld();
-        if (!world)  throw( "null world in brushstroke render" );
-
-         // get the context
-        var ctx = world.get2DContext();
-        if (!ctx)  throw ("null context in brushstroke render");
+        if (!world){
+            throw( "null world in brushstroke render" );
+        }
 
         var numPoints = this.getNumPoints();
         if (numPoints === 0) {
             return; //nothing to do for empty paths
         }
-
-        ctx.save();
 
         this.computeMetaGeometry();
         var bboxMin = this.getBBoxMin();
@@ -421,13 +416,32 @@ var BrushStroke = function GLBrushStroke() {
         var bboxWidth = bboxMax[0] - bboxMin[0];
         var bboxHeight = bboxMax[1] - bboxMin[1];
 
-        //assign the new width and height as the canvas dimensions through the canvas controller
+
         if (this._canvas) {
+            // this seems to produce drift as the stroke size is changed smoothly...bug due to floating point round off
+            //get the old left, top, width, and height
+//            var oldLeft = parseInt(CanvasController.getProperty(this._canvas, "left"));
+//            var oldTop  = parseInt(CanvasController.getProperty(this._canvas, "top"));
+//            var oldWidth  = parseInt(CanvasController.getProperty(this._canvas, "width"));
+//            var oldHeight = parseInt(CanvasController.getProperty(this._canvas, "height"));
+//            var newLeft = oldLeft - parseInt((bboxWidth-oldWidth)*0.5);
+//            var newTop = oldTop - parseInt((bboxHeight-oldHeight)*0.5);
+//
+//            //assign the new width and height as the canvas dimensions through the canvas controller
+//            CanvasController.setProperty(this._canvas, "left", newLeft+"px");
+//            CanvasController.setProperty(this._canvas, "top", newTop+"px");*/
             CanvasController.setProperty(this._canvas, "width", bboxWidth+"px");
             CanvasController.setProperty(this._canvas, "height", bboxHeight+"px");
             this._canvas.elementModel.shapeModel.GLWorld.setViewportFromCanvas(this._canvas);
+
         }
 
+        //get the context
+        var ctx = world.get2DContext();
+        if (!ctx) {
+            throw ("null context in brushstroke render");
+        }
+        ctx.save();
         ctx.clearRect(0, 0, bboxWidth, bboxHeight);
         this.drawToContext(ctx, bboxMin[0], bboxMin[1]);
         ctx.restore();
@@ -529,6 +543,7 @@ var BrushStroke = function GLBrushStroke() {
         retObject.strokeUseCalligraphic = this._strokeUseCalligraphic;
         retObject.strokeAngle = this._strokeAngle;
         retObject.strokeAmountSmoothing = this._strokeAmountSmoothing;
+        retObject.addedSamples = this._addedSamples;
         return retObject;
     };
 
@@ -548,6 +563,7 @@ var BrushStroke = function GLBrushStroke() {
         this._strokeUseCalligraphic = jo.strokeUseCalligraphic;
         this._strokeAngle = jo.strokeAngle;
         this._strokeAmountSmoothing = jo.strokeAmountSmoothing;
+        this._addedSamples = jo.addedSamples;
 
         //force a re-computation of meta-geometry before rendering
         this._isDirty = true;

@@ -122,7 +122,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                     break;
                 case "strokeAngle":
                     this.setShapeProperty(el, "strokeAngle", value);
-                    el.elementModel.shapeModel.GLGeomObj.setStrokeAngle(Math.PI * -val/180);
+                    el.elementModel.shapeModel.GLGeomObj.setStrokeAngle(Math.PI * val/180);
                     el.elementModel.shapeModel.GLWorld.render();
                     break;
                 default:
@@ -146,35 +146,35 @@ exports.ShapesController = Montage.create(CanvasController, {
                     return this.getShapeProperty(el, p);
                 case "strokeHardness":
                     if (el.elementModel && el.elementModel.shapeModel){
-                        return el.elementModel.shapeModel.GLGeomObj.getStrokeHardness();;
+                        return el.elementModel.shapeModel.GLGeomObj.getStrokeHardness();
                     } else {
                         return null;
                     }
                     break;
                 case "doSmoothing":
                     if (el.elementModel && el.elementModel.shapeModel){
-                        return el.elementModel.shapeModel.GLGeomObj.getDoSmoothing();;
+                        return el.elementModel.shapeModel.GLGeomObj.getDoSmoothing();
                     } else {
                         return null;
                     }
                     break;
                 case "strokeSmoothing":
                     if (el.elementModel && el.elementModel.shapeModel){
-                        return el.elementModel.shapeModel.GLGeomObj.getSmoothingAmount();;
+                        return el.elementModel.shapeModel.GLGeomObj.getSmoothingAmount();
                     } else {
                         return null;
                     }
                     break;
                 case "isCalligraphic":
                     if (el.elementModel && el.elementModel.shapeModel){
-                        return el.elementModel.shapeModel.GLGeomObj.getStrokeUseCalligraphic();;
+                        return el.elementModel.shapeModel.GLGeomObj.getStrokeUseCalligraphic();
                     } else {
                         return null;
                     }
                     break;
                 case "strokeAngle":
                     if (el.elementModel && el.elementModel.shapeModel){
-                        return el.elementModel.shapeModel.GLGeomObj.getStrokeAngle();;
+                        return 180*el.elementModel.shapeModel.GLGeomObj.getStrokeAngle()/Math.PI;
                     } else {
                         return null;
                     }
