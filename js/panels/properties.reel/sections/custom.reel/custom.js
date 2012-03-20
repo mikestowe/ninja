@@ -382,7 +382,7 @@ exports.CustomSection = Montage.create(Component, {
                     Object.defineBinding(obj, "enabled", {
                                     boundObject: this.controls,
                                     boundObjectPropertyPath: aField.enabled.boundProperty,
-                                    oneway: false
+                                    oneway: true
                                 });
                 } else {
                     obj.enabled = aField.enabled;
