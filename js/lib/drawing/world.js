@@ -810,14 +810,17 @@ World.prototype.findTransformNodeByMaterial = function( materialNode,  trNode ) 
 	return rtnNode;
 };
 
-World.prototype.import = function( importStr ) {
+World.prototype.import = function( importStr, fromToggle ) {
 	// import the worldattributes - not currently used
 
 	// determine if the data was written for export (no Ninja objects)
 	// or for save/restore
 	//var index = importStr.indexOf( "scenedata: " );
-	var index = importStr.indexOf( "webGL: " );
-	this._useWebGL = (index >= 0)
+    // Skip if we are toggling between canvas2d and WebGL since importStr doesn't have the correct webGL value yet
+    if(!fromToggle) {
+        var index = importStr.indexOf( "webGL: " );
+        this._useWebGL = (index >= 0)
+    }
 	if (this._useWebGL)
 	{
 		// start RDGE

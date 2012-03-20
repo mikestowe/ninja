@@ -495,7 +495,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                 world = new World(el, true);
                 el.elementModel.shapeModel.GLWorld = world;
                 el.elementModel.shapeModel.useWebGl = true;
-                world.import(worldData);
+                world.import(worldData, true);
                 el.elementModel.shapeModel.GLGeomObj = world.getGeomRoot();
 
                 sm = Object.create(MaterialsModel.getMaterial("FlatMaterial"));
@@ -531,7 +531,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                 world = new World(el, false);
                 el.elementModel.shapeModel.GLWorld = world;
                 el.elementModel.shapeModel.useWebGl = false;
-                world.import(worldData);
+                world.import(worldData, true);
                 el.elementModel.shapeModel.GLGeomObj = world.getGeomRoot();
                 el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(null);
                 el.elementModel.shapeModel.strokeMaterial = null;
