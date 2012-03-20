@@ -67,6 +67,25 @@ var PlasmaMaterial = function PlasmaMaterial() {
 		this._time += this._dTime;
 	}
 
+	this.exportJSON = function()
+	{
+
+		var jObj =
+		{
+			'material'		: this.getShaderName(),
+			'name'			: this.getName(),
+			'speed'			: this._speed,
+			'dTime'			: this._dTime
+		}
+
+		return jObj;
+	}
+
+	this.importJSON = function( jObj )
+	{
+		this._speed = jObj.speed;
+		this._dTime = jObj.dTime;
+	}
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////

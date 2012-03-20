@@ -751,6 +751,21 @@ World.prototype.exportJSON = function()
 	var strArray = [];
 	this.exportObjectsJSON( this._geomRoot, worldObj );
 
+	// You would think that the RDGE export function
+	// would not be destructive of the data.  You would be wrong...
+	// We need to rebuild everything
+	if (this._useWebGL)
+	{
+		var root = this._rootNode;
+		root.children = new Array();
+		if (worldObj.children && (worldObj.children.length === 1))
+		{
+			this.init();
+			this._geomRoot = undefined;
+			this.importObjectsJSON( worldObj.children[0] );
+		}
+	}
+
 	// convert the object to a string
 	var jStr = JSON.stringify( worldObj );
 
@@ -759,14 +774,6 @@ World.prototype.exportJSON = function()
 	// and pre-JSON versions of fileIO.
 	// the ending ';' in the version string is necessary
 	jStr = "v1.0;" + jStr;
-
-	// You would think that the RDGE export function
-	// would not change the data.  You would be wrong...
-	// rebuild the tree
-	var root = this._rootNode;
-	root.children = new Array();
-	if (worldObj.children && (worldObj.children.length === 1))
-		this.importObjectsJSON( worldObj.children[0] );
 	
 	return jStr;
 }
@@ -780,13 +787,14 @@ World.prototype.exportObjectsJSON = function( obj,  parentObj )
 	parentObj.children.push( jObj );
 
 	if (obj.getChild()) {
-		 this.exportObjects( obj.getChild (), jObj  );
+		 this.exportObjectsJSON( obj.getChild (), jObj  );
     }
 
 	if (obj.getNext())
-		this.exportObjects( obj.getNext(), parentObj );
+		this.exportObjectsJSON( obj.getNext(), parentObj );
 }
 
+/*
 World.prototype.export = function()
 {
 	var exportStr = "GLWorld 1.0\n";
@@ -849,6 +857,7 @@ World.prototype.exportObjects = function( obj ) {
 	
 	return rtnStr;
 };
+*/
 
 World.prototype.findTransformNodeByMaterial = function( materialNode,  trNode ) {
 	//if (trNode == null)  trNode = this._ctrNode;
@@ -893,6 +902,8 @@ World.prototype.importJSON = function( jObj )
 		// render using canvas 2D
 		this.render();
 	}
+	else
+		this.restartRenderLoop();
 }
 
 World.prototype.importObjectsJSON = function( jObj,  parentGeomObj )

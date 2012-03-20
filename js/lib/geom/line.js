@@ -137,16 +137,7 @@ var Line = function GLLine( world, xOffset, yOffset, width, height, slope, strok
 		this._strokeStyle		= jObj.strokeStyle;
 		this._strokeColor		= jObj.strokeColor;
 		var strokeMaterialName	= jObj.strokeMat;
-
-		var strokeMat = MaterialsModel.getMaterial( strokeMaterialName );
-		if (!strokeMat) {
-			console.log( "object material not found in library: " + strokeMaterialName );
-			strokeMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() );
-		}
-		else
-			strokeMat = strokeMat.dup();
-		this._strokeMaterial = strokeMat;
-
+		this.importMaterialsJSON( jObj.materials );
 	};
 
 	this.export = function() {

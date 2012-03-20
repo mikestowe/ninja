@@ -78,8 +78,6 @@ var Rectangle = function GLRectangle() {
         } else {
 			this._fillMaterial = MaterialsModel.getMaterial( MaterialsModel.getDefaultMaterialName() );
         }
-
-		this.exportMaterials();
 	};
 
 	///////////////////////////////////////////////////////////////////////
@@ -291,24 +289,6 @@ var Rectangle = function GLRectangle() {
 		var strokeMaterialName	= jObj.strokeMat;
 		var fillMaterialName	= jObj.fillMat;
 		this.importMaterialsJSON( jObj.materials );
-
-		var strokeMat = MaterialsModel.getMaterial( strokeMaterialName );
-		if (!strokeMat) {
-			console.log( "object material not found in library: " + strokeMaterialName );
-			strokeMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() );
-		}
-		else
-			strokeMat = strokeMat.dup();
-		this._strokeMaterial = strokeMat;
-
-		var fillMat = MaterialsModel.getMaterial( fillMaterialName );
-		if (!fillMat) {
-			console.log( "object material not found in library: " + fillMaterialName );
-			fillMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() );
-		}
-		else
-			fillMat = fillMat.dup();
-		this._fillMaterial = fillMat;
 	};
 
 	this.import = function( importStr ) {
@@ -430,10 +410,10 @@ var Rectangle = function GLRectangle() {
 		brRadius = -z*(r-l)/(2.0*zn)*brRadiusNDC;
 
 		// stroke
-//		var strokeMaterial = this.makeStrokeMaterial();
-//		var strokePrim = this.createStroke([x,y],  2*xFill,  2*yFill,  strokeSize,  tlRadius, blRadius, brRadius, trRadius, strokeMaterial);
-//        this._primArray.push( strokePrim );
-//		this._materialNodeArray.push( strokeMaterial.getMaterialNode() );
+		var strokeMaterial = this.makeStrokeMaterial();
+		var strokePrim = this.createStroke([x,y],  2*xFill,  2*yFill,  strokeSize,  tlRadius, blRadius, brRadius, trRadius, strokeMaterial);
+        this._primArray.push( strokePrim );
+		this._materialNodeArray.push( strokeMaterial.getMaterialNode() );
 
 		// fill
 		tlRadius -= strokeSize;  if (tlRadius < 0)  tlRadius = 0.0;

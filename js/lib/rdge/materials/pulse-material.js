@@ -186,6 +186,7 @@ var PulseMaterial = function PulseMaterial() {
 
         try {
 			this._propValues[this._propNames[0]] = jObj.texture;
+			this._texMap = jObj.texture;
         }
         catch (e)
         {

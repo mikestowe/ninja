@@ -174,7 +174,7 @@ var RadialBlurMaterial = function RadialBlurMaterial() {
 		return jObj;
 	};
 
-	this.importJSON = function( importStr )
+	this.importJSON = function( jObj )
 	{
         if (this.getShaderName() != jObj.material)  throw new Error( "ill-formed material" );
         this.setName( jObj.name );
@@ -278,10 +278,33 @@ var radialBlurMaterialDef =
 	}
 };
 
+
+/*
+var RaidersMaterial = function RaidersMaterial()
+{
+	// initialize the inherited members
+	this.inheritedFrom = RadialBlurMaterial;
+	this.inheritedFrom();
+
+	this._name = "RaidersMaterial";
+	this._shaderName = "radialBlur";
+
+	this._texMap = 'assets/images/raiders.png';
+	this._propValues[ this._propNames[0] ] = this._texMap.slice(0);
+}
+
+RaidersMaterial.prototype = new Material();
+
+if (typeof exports === "object")
+{
+	exports.RaidersMaterial = RaidersMaterial;
+}
+*/
+
+
 RadialBlurMaterial.prototype = new Material();
 
-if (typeof exports === "object") {
+if (typeof exports === "object")
     exports.RadialBlurMaterial = RadialBlurMaterial;
-}
 
 

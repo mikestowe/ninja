@@ -18,6 +18,7 @@ var WaterMaterial = function WaterMaterial() {
 	this._shaderName = "water";
 
 	this._texMap = 'assets/images/rocky-normal.jpg';
+	//this._texMap = 'assets/images/powderblue.png';
 
 	this._time = 0.0;
 	this._dTime = 0.01;
@@ -27,6 +28,7 @@ var WaterMaterial = function WaterMaterial() {
     ///////////////////////////////////////////////////////////////////////
 	// all defined in parent PulseMaterial.js
 	// load the local default value
+	this._propValues = [];
 	this._propValues[ this._propNames[0] ] = this._texMap.slice(0);
 
     ///////////////////////////////////////////////////////////////////////
@@ -114,6 +116,29 @@ var waterMaterialDef =
 		]
 	}
 };
+
+/*
+var ParisMaterial = function ParisMaterial()
+{
+	// initialize the inherited members
+	this.inheritedFrom = WaterMaterial;
+	this.inheritedFrom();
+
+	this._name = "ParisMaterial";
+	this._shaderName = "water";
+
+	this._texMap = 'assets/images/paris.png';
+	this._propValues[ this._propNames[0] ] = this._texMap.slice(0);
+
+	this._diffuseColor = [0.5, 0.5, 0.5, 0.5];
+	this._propValues[ this._propNames[1] ] = this._diffuseColor.slice();
+}
+ParisMaterial.prototype = new PulseMaterial();
+if (typeof exports === "object") {
+	exports.ParisMaterial = ParisMaterial;
+}
+*/
+
 
 WaterMaterial.prototype = new PulseMaterial();
 

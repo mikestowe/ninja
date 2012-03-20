@@ -279,6 +279,11 @@ var GeomObj = function GLGeomObj() {
 
 	this.importMaterialsJSON = function( jObj )
 	{
+		this._materialArray = [];
+		this._materialTypeArray = [];
+
+		if (!jObj)  return;
+
 		var nMaterials = jObj.nMaterials;
 		var matArray = jObj.materials;
 		for (var i=0;  i<nMaterials;  i++)
@@ -318,7 +323,14 @@ var GeomObj = function GLGeomObj() {
 			}
 
 			if (mat)
+			{
 				mat.importJSON( matObj );
+				this._materialArray.push( mat );
+				this._materialTypeArray.push( matObj.type );
+				var type = matArray[i].type;
+				if (type == "fill")  this._fillMaterial = mat;
+				else  this._strokeMaterial = mat;
+			}
 		}
 	}
 

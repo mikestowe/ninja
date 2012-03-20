@@ -291,7 +291,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 				shapeModel.GLGeomObj			= root;
 				shapeModel.strokeSize			= root._strokeWidth;
 				shapeModel.stroke				= root._strokeColor.slice();
-				shapeModel.strokeMaterial		= root._strokeMaterial.dup();
+				shapeModel.strokeMaterial		= root._strikeMaterial ? root._strokeMaterial.dup() : null;
 				shapeModel.strokeStyle			= "solid";
 				//shapeModel.strokeStyleIndex
 				//shapeModel.border
@@ -302,7 +302,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
                         elementModel.selection = "Rectangle";
                         elementModel.pi = "RectanglePi";
                         shapeModel.fill					= root._fillColor.slice();
-                        shapeModel.fillMaterial			= root._fillMaterial.dup();
+                        shapeModel.fillMaterial			= root._fillMaterial ? root._fillMaterial.dup() : null;
 						shapeModel.tlRadius = root._tlRadius;
 						shapeModel.trRadius = root._trRadius;
 						shapeModel.blRadius = root._blRadius;
@@ -313,7 +313,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
                         elementModel.selection = "Oval";
                         elementModel.pi = "OvalPi";
                         shapeModel.fill					= root._fillColor.slice();
-                        shapeModel.fillMaterial			= root._fillMaterial.dup();
+                        shapeModel.fillMaterial			= root._fillMaterial ? root._fillMaterial.dup() : null;
 						shapeModel.innerRadius = root._innerRadius;
 						break;
 

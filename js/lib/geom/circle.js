@@ -634,24 +634,6 @@ var Circle = function GLCircle() {
 		var strokeMaterialName	= jObj.strokeMat;
 		var fillMaterialName	= jObj.fillMat;
 		this.importMaterialsJSON( jObj.materials );
-
-		var strokeMat = MaterialsModel.getMaterial( strokeMaterialName );
-		if (!strokeMat) {
-			console.log( "object material not found in library: " + strokeMaterialName );
-			strokeMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() );
-		}
-		else
-			strokeMat = strokeMat.dup();
-		this._strokeMaterial = strokeMat;
-
-		var fillMat = MaterialsModel.getMaterial( fillMaterialName );
-		if (!fillMat) {
-			console.log( "object material not found in library: " + fillMaterialName );
-			fillMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() );
-		}
-		else
-			fillMat = fillMat.dup();
-		this._fillMaterial = fillMat;
 	};
 
 
