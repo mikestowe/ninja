@@ -1,0 +1,43 @@
+{
+    "label": "materials",
+    "children": [
+        {
+            "label": "Ninja Materials",
+            "children": [
+                {
+                    "label": "Uber",
+                    "id" : "UberMaterial"
+                },
+                {
+                    "label": "Bump Metal",
+                    "id" : "BumpMetalMaterial"
+                },
+                {
+                    "label": "Linear Gradient",
+                    "id" : "LinearGradientMaterial"
+                },
+                {
+                    "label": "Radial Gradient",
+                    "id" : "RadialGradientMaterial"
+                },
+                {
+                    "label": "Flat",
+                    "id" : "FlatMaterial"
+                }
+            ]
+        },
+        {
+            "label": "Custom Materials",
+            "children": [
+                {
+                    "label": "Checker Board",
+                    "id" : "CheckerBoard"
+                },
+                {
+                    "label": "Shiny Metal",
+                    "id" : "ShinyMetal"
+                }
+            ]
+        }
+    ]
+}
