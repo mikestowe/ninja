@@ -505,6 +505,8 @@ function RuntimeGeomObj()
 
 	this.importMaterials = function(jObj)
 	{
+		if (!jObj || !jObj.materials)  return;
+
 		var nMaterials = jObj.nMaterials;
 		var matArray = jObj.materials;
 		for (var i=0;  i<nMaterials;  i++)
@@ -645,6 +647,37 @@ function RuntimeGeomObj()
 
         return [x, y, z];
     }
+	
+	this.MatrixIdentity = function(dimen)
+	{
+		var mat = [];
+
+		for (var i = 0; i<dimen*dimen; i++)  {
+			mat.push(0);
+		}
+
+		var index = 0;
+		for (var j = 0; j<dimen; j++) {
+			mat[index] = 1.0;
+			index += dimen + 1;
+		}
+	
+		return mat;	
+	};
+
+	
+	this.MatrixRotationZ = function( angle )
+	{
+		var mat = this.MatrixIdentity(4);
+		//glmat4.rotateZ(mat, angle);
+		var sn = Math.sin(angle),
+			cs = Math.cos(angle);
+		mat[0] = cs;	mat[4] = -sn;
+		mat[1] = sn;	mat[5] =  cs;
+
+		return mat;
+	};
+
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -844,12 +877,17 @@ function RuntimeOval()
 		// translate
 		var xCtr = 0.5*world.getViewportWidth() + this._xOffset,
 			yCtr = 0.5*world.getViewportHeight() + this._yOffset;
+		var mat = this.MatrixIdentity( 4 );
+		mat[0] = xScale;					mat[12] = xCtr;
+						mat[5] = yScale;	mat[13] = yCtr;
+		/*
 		var mat = [
 							[ xScale,     0.0,  0.0,  xCtr],
 							[    0.0,  yScale,  0.0,  yCtr],
 							[    0.0,     0.0,  1.0,   0.0],
 							[    0.0,     0.0,  0.0,   1.0]
 						];
+		*/
 
 		// get a bezier representation of the circle
 		var bezPts = this.circularArcToBezier( [0,0,0],  [1,0,0], 2.0*Math.PI );
@@ -1005,7 +1043,7 @@ function RuntimeOval()
         var  d = rad*cs + h;
 
         var rtnPts = [ this.vecAdd(dimen, pt, ctr) ];
-        var rotMat = Matrix.RotationZ( dAngle );
+        var rotMat = this.MatrixRotationZ( dAngle );
         for ( var i=0;  i<nSegs;  i++)
         {
             // get the next end point
@@ -1207,14 +1245,14 @@ function RuntimeRadialGradientMaterial()
 
 	this.import = function( jObj )
 	{
-		var color1	= jObj.color1,
-			color2	= jObj.color2,
-			color3	= jObj.color3,
-			color4	= jObj.color4,
-			colorStop1	= jObj.colorStop1,
-			colorStop2	= jObj.colorStop2,
-			colorStop3	= jObj.colorStop3,
-			colorStop4	= jObj.colorStop4;
+		this._color1	= jObj.color1,
+		this._color2	= jObj.color2,
+		this._color3	= jObj.color3,
+		this._color4	= jObj.color4,
+		this._colorStop1	= jObj.colorStop1,
+		this._colorStop2	= jObj.colorStop2,
+		this._colorStop3	= jObj.colorStop3,
+		this._colorStop4	= jObj.colorStop4;
 
 		if (this._angle !== undefined)
 			this._angle = jObj.angle;
@@ -1394,10 +1432,10 @@ function RuntimeUberMaterial()
 	{
 		if (jObj.materialProps)
 		{
-			var ambientColor  = jObj.materialProps.ambientColor;	 this.setProperty( "ambientColor", ambientColor );
-			var diffuseColor  = jObj.materialProps.diffuseColor;	 this.setProperty( "diffuseColor", diffuseColor );
-			var specularColor = jObj.materialProps.specularColor;	 this.setProperty( "specularColor", specularColor );
-			var specularPower = jObj.materialProps.specularPower;    this.setProperty( "specularPower", specularPower );
+			this._ambientColor  = jObj.materialProps.ambientColor;
+			this._diffuseColor  = jObj.materialProps.diffuseColor;
+			this._specularColor = jObj.materialProps.specularColor;
+			this._specularPower = jObj.materialProps.specularPower;
 		}
 
 		var lightArray = jObj.lights;
