@@ -139,8 +139,8 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
     handleCloseDocument:{
         value: function() {
             if(this.application.ninja.documentController._documents.length === 0){
-                this._eltArray = null;
-                this._planesArray = null;
+                this._eltArray.length = 0;
+                this._planesArray.length = 0;
             }
         }
     },
