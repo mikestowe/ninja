@@ -46,10 +46,39 @@
                     }
                 ]
              },
-             "materialInfo": {
-                 "module": "js/panels/Materials/materials-popup.reel",
-                 "name": "MaterialsPopup"
-             },
+            "materialInfo": {
+                "module": "js/panels/Materials/materials-popup.reel",
+                "name": "MaterialsPopup"
+            },
+            "materialsController" : {
+                "module": "js/controllers/tree-controller",
+                "name": "TreeController",
+                "properties" : {
+                    "branchKey" : "children",
+                    "labelKey" : "label",
+                    "delegate": {"@": "owner" }
+                },
+                "bindings": {
+                    "content": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "materialsData"
+                    }
+                }
+            },
+            "materialsContainer" : {
+                "module" : "js/components/treeview/treeview.reel",
+                "name" : "Treeview",
+                "properties" : {
+                    "element" : {"#": "materials_library_tree"},
+                    "branchComponent" : {"@": "branch" },
+                    "contentController": {"@": "materialsController"},
+                    "showRoot": false
+                }
+            },
+            "branch" : {
+                "module" : "js/components/treeview/ninja-branch.reel",
+                "name" : "Branch"
+            },
             "owner": {
                 "module": "js/panels/Materials/materials-library-panel.reel",
                 "name": "MaterialsLibraryPanels",
@@ -65,9 +94,9 @@
 	<body>
 
     	<div id="materials_library_panel" class="materials_library_panel">
-            <div id="ml_tree_holder">
-                <ul id="materials_library_tree"></ul>
-            </div>
+            <section id="ml_tree_holder" class="animationsLibrary">
+                <div id="materials_library_tree"></div>
+            </section>
             <hr />
             <div id="ml_buttons">
                 <button id="ml_add_btn" class="nj-skinned">Add</button>

@@ -4,29 +4,26 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var Tree = require("js/components/tree.reel").Tree,
-    MaterialsPopup = require("js/panels/Materials/materials-popup.reel").MaterialsPopup,
-    PopupMananger =		require("js/components/popup-manager.reel").PopupMananger,
+var Montage = require("montage/core/core").Montage,
+    Component = require("montage/ui/component").Component,
+    MaterialsData = require("js/panels/Materials/materials-data.json"),
     Popup = require("montage/ui/popup/popup.reel").Popup;
 
-exports.MaterialsLibraryPanel = (require("montage/core/core").Montage).create(require("montage/ui/component").Component, {
+exports.MaterialsLibraryPanel = Montage.create(Component, {
+
+    materialsData: {
+        value: null
+    },
 
     _hasFocus: {
     	enumerable: false,
     	value: false
     },
-    
-    prepareForDraw: {
-    	enumerable: false,
-    	value: function() {
-            var treeHolderDiv = document.getElementById("materials_library_tree");
-            var materialsTree = Tree.create();
-            materialsTree.element = treeHolderDiv;
-            materialsTree.dataProvider = this._loadXMLDoc("js/panels/Materials/Materials.xml");
-            materialsTree.needsDraw = true;
 
-            materialsTree.addEventListener("change", this, true);
-    	}
+    didCreate: {
+        value: function() {
+            this.materialsData = MaterialsData;
+        }
     },
 
     willDraw: {
@@ -71,10 +68,9 @@ exports.MaterialsLibraryPanel = (require("montage/core/core").Montage).create(re
         }
     },
 
-    captureChange: {
-        value:function(e) {
-            var tNode = e._event.treeNode;
-            this._showMaterialPopup(tNode.id);
+    handleNodeActivation: {
+        value:function(obj) {
+            this._showMaterialPopup(obj.id);
         }
     },
 
