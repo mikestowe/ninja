@@ -26,28 +26,9 @@ exports.MaterialsLibraryPanel = Montage.create(Component, {
         }
     },
 
-    willDraw: {
-    	enumerable: false,
-    	value: function() {
-
-    	}
-    },
-    
-    draw: {
-    	enumerable: false,
-    	value: function() {
-
-    	}
-    },
-
-    _loadXMLDoc: {
-        value:function(dname) {
-            if (window.XMLHttpRequest) {
-                xhttp = new XMLHttpRequest();
-            }
-            xhttp.open("GET", dname, false);
-            xhttp.send();
-            return xhttp.responseXML;
+    prepareForDraw: {
+        value : function() {
+            this.eventManager.addEventListener("showMaterialPopup", this, false);
         }
     },
 
@@ -71,6 +52,13 @@ exports.MaterialsLibraryPanel = Montage.create(Component, {
     handleNodeActivation: {
         value:function(obj) {
             this._showMaterialPopup(obj.id);
+        }
+    },
+
+    handleShowMaterialPopup: {
+        enumerable: false,
+        value: function (event) {
+            this._showMaterialPopup(event.detail.materialId);
         }
     },
 

@@ -6,10 +6,9 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var Montage = 			require("montage/core/core").Montage,
     CanvasController = require("js/controllers/elements/canvas-controller").CanvasController,
-    njModule = require("js/lib/NJUtils");
-
-var World = require("js/lib/drawing/world").World;
-var MaterialsModel = require("js/models/materials-model").MaterialsModel;
+    njModule = require("js/lib/NJUtils"),
+    World = require("js/lib/drawing/world").World,
+    MaterialsModel = require("js/models/materials-model").MaterialsModel;
 
 exports.ShapesController = Montage.create(CanvasController, {
 
@@ -99,6 +98,12 @@ exports.ShapesController = Montage.create(CanvasController, {
                         el.elementModel.shapeModel.GLGeomObj.buildBuffers();
                         el.elementModel.shapeModel.GLWorld.render();
                     }
+                    break;
+                case "editStrokeMaterial":
+                    NJevent("showMaterialPopup",{materialId : el.elementModel.shapeModel.strokeMaterial.getName()});
+                    break;
+                case "editFillMaterial":
+                    NJevent("showMaterialPopup",{materialId : el.elementModel.shapeModel.fillMaterial.getName()});
                     break;
                 default:
                     CanvasController.setProperty(el, p, value);
