@@ -505,6 +505,9 @@ var Layer = exports.Layer = Montage.create(Component, {
             // Add mousedown listener to set isActive
             this.element.addEventListener("mousedown", this, false);
             this.element.addEventListener("click", this, false);
+            
+			// Drag and drop event hanlders
+			this.element.addEventListener("dropped", this, false);
 
         }
     },
@@ -781,6 +784,11 @@ var Layer = exports.Layer = Montage.create(Component, {
 				this.isStyleCollapsed = true;
 			}
 			this.triggerOutgoingBinding();
+		}
+	},
+	handleDropped : {
+		value: function(event) {
+			console.log('wheeee!  WWEWWEWWWWEEEEEEEEE')
 		}
 	},
 	/* End: Event handlers */

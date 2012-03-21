@@ -655,27 +655,11 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             if (layerEvent.layerID !== this.trackID) {
                 return;
             }
-            if (layerEvent.layerEventType === "labelClick") {
-                if (layerEvent.layerEventLocale === "content-main") {
-                    this._mainCollapser.bypassAnimation = layerEvent.bypassAnimation;
-                    this._mainCollapser.toggle();
-                } else if (layerEvent.layerEventLocale === "content-position") {
-                    this._positionCollapser.bypassAnimation = layerEvent.bypassAnimation;
-                    this._positionCollapser.handleCollapserLabelClick();
-                } else if (layerEvent.layerEventLocale === "content-transform") {
-                    this._transformCollapser.bypassAnimation = layerEvent.bypassAnimation;
-                    this._transformCollapser.handleCollapserLabelClick();
-                } else if (layerEvent.layerEventLocale === "content-style") {
-                    this._styleCollapser.bypassAnimation = layerEvent.bypassAnimation;
-                    this._styleCollapser.handleCollapserLabelClick();
-                }
-            } else if (layerEvent.layerEventType === "newStyle") {
+            if (layerEvent.layerEventType === "newStyle") {
+            	// TODO: Add a real track of tweens.  Probably need a method for that.
             	this.arrStyleTracks.push("1");
-            	if (this._styleCollapser.isCollapsed === true) {
-	                //this._styleCollapser.bypassAnimation = layerEvent.bypassAnimation;
-	                //this._styleCollapser.handleCollapserLabelClick();
-            	}
             } else if (layerEvent.layerEventType === "deleteStyle") {
+            	// TODO: Delete the right track.  Index can be passed in event object, use that for splice().
             	this.arrStyleTracks.pop();
             }
         }

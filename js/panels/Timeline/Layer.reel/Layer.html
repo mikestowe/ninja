@@ -22,7 +22,8 @@
 						"positionCollapser" : {"@" : "positionCollapser"},
 						"transformCollapser" : {"@" : "transformCollapser"},
 						"styleCollapser" : {"@" : "styleCollapser"},
-						"clickerMain" : {"#" : "clicker-main"}
+						"clickerMain" : {"#" : "clicker-main"},
+						"myLabel" : {"#" : "myLabel"}
                     }
                 },
 	            "dtext1" : {
@@ -314,7 +315,34 @@
 							"oneway" : false
 						}
 					}
-				}
+				},
+
+	            "DragDrop": {
+	                "module": "js/panels/Timeline/DragDrop.js",
+	                "name": "DragDropComposer",
+	                "properties": {
+	                    "element": {"#": "myLabel"},
+	                    "component": {"@": "owner"}
+	                },
+	                "listeners": [
+	                    {
+	                        "type": "dragStart",
+	                        "listener": {"@": "owner"}
+	                    },
+	                    {
+	                        "type": "dropHover",
+	                        "listener": {"@": "owner"}
+	                    },
+	                    {
+	                        "type": "dropped",
+	                        "listener": {"@": "owner"}
+	                    },
+	                    {
+	                        "type": "dropEnd",
+	                        "listener": {"@": "owner"}
+	                    }
+	                ]
+	            }
 				
 				
             }
@@ -323,7 +351,7 @@
 	<body>
     
 		<div data-montage-id="layer" class="container-layer">
-			<div class="label-layer">
+			<div class="label-layer" data-montage-id="myLabel">
 				<span class="collapsible-label" data-montage-id="layer-label-text" spellcheck="false">Label</span>
 				<span class="collapsible-clicker collapsible-collapsed" data-montage-id="clicker-main"></span>
 				<div class="cssbutton button-lock"></div>
