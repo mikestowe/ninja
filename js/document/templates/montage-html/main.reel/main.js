@@ -27,16 +27,17 @@ exports.Main = Montage.create(Component, {
                         var componentInstance = componentRequire.create();
 
                         componentInstance.element = element;
-                        //componentInstance.deserializedFromTemplate();
+
                         componentInstance.needsDraw = true;
                         componentInstance.ownerComponent = self;
+
+                        componentInstance.addEventListener("firstDraw", self, false);
 
                         callback(componentInstance, element);
                     })
                     .end();
 
             };
-//            window.addBinding = this.addBindingToUserDocument;
 
             // Dispatch event when this template has loaded.
             var newEvent = document.createEvent( "CustomEvent" );
@@ -44,6 +45,15 @@ exports.Main = Montage.create(Component, {
 
             document.body.dispatchEvent( newEvent );
 
+        }
+    },
+
+    handleFirstDraw: {
+        value: function() {
+            var newEvent = document.createEvent( "CustomEvent" );
+            newEvent.initCustomEvent( "addComponentFirstDraw", false, true );
+
+            document.body.dispatchEvent( newEvent );
         }
     }
 });
