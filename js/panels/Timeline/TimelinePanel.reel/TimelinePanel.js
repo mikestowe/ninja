@@ -389,7 +389,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:function () {
             this.layout_tracks = this.element.querySelector(".layout-tracks");
             this.layout_markers = this.element.querySelector(".layout_markers");
-            this.timeline_leftpane.addEventListener("click", this.timelineLeftPaneClick.bind(this), false);
+            this.timeline_leftpane.addEventListener("mousedown", this.timelineLeftPaneMousedown.bind(this), false);
             this.layout_tracks.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
             this.user_layers.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
             this.end_hottext.addEventListener("changing", this.updateTrackContainerWidth.bind(this), false);
@@ -495,6 +495,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             // Clear the repetitions
             if (this.arrLayers.length > 0) {
                 this.arrLayers = [];
+                this.arrLayers.length = 0;
             }
         }
     },
@@ -616,7 +617,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
-    timelineLeftPaneClick:{
+    timelineLeftPaneMousedown:{
         value:function (event) {
             var ptrParent = nj.queryParentSelector(event.target, ".container-layer");
             if (ptrParent !== false) {
