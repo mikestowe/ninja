@@ -363,6 +363,7 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 	if (this._useWebGL) {
 		rdgeStarted = true;
 		this._canvas.rdgeid = this._canvas.getAttribute( "data-RDGE-id" );
+		g_Engine.unregisterCanvas( this._canvas )
 		g_Engine.registerCanvas(this._canvas, this);
 		RDGEStart( this._canvas );
 		this._canvas.task.stop()
