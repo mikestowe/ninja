@@ -1249,6 +1249,7 @@ function RuntimePulseMaterial()
 	this.import = function( jObj )
 	{
 		this._texMap = jObj.texture;
+        if (jObj.dTime)  this._dTime = jObj.dTime;
 	}
 
 	this.init = function( world )
@@ -1601,6 +1602,12 @@ function RuntimePlasmaMaterial()
 	this.init = function(  )
 	{
 		this.update();
+	}
+
+	this.importJSON = function( jObj )
+	{
+		this._speed = jObj.speed;
+		this._dTime = jObj.dTime;
 	}
 
 	this.update = function( time )

@@ -169,7 +169,8 @@ var PulseMaterial = function PulseMaterial() {
 		{
 			'material'		: this.getShaderName(),
 			'name'			: this.getName(),
-			'texture'		: this._propValues[this._propNames[0]]
+			'texture'		: this._propValues[this._propNames[0]],
+            'dTime'         : this._dTime
 		};
 
 		return jObj;
@@ -183,6 +184,8 @@ var PulseMaterial = function PulseMaterial() {
         try {
 			this._propValues[this._propNames[0]] = jObj.texture;
 			this._texMap = jObj.texture;
+            if (jObj.dTime)
+                this._dTime = jObj.dTime;
         }
         catch (e)
         {
