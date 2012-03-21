@@ -32,6 +32,7 @@ exports.TranslateObject3DTool = Object.create(Translate3DToolBase, {
 			this._snapToGrid = snapManager.gridSnapEnabledAppLevel();
 
             this._dragPlane = null;
+            this._clickedOnStage = false;
             var do3DSnap = true;
             
             if(this._handleMode === null)
@@ -43,9 +44,9 @@ exports.TranslateObject3DTool = Object.create(Translate3DToolBase, {
             }
             else
             {
-                this._delta = 0;
+                this._delta = null;
                 // special case for z-translation
-                if( this._handleMode && (this._handleMode === 2) )
+                if(this._handleMode === 2)
                 {
                     this._dragPlane = viewUtils.getNormalToUnprojectedElementPlane(this._target);
                     snapManager.setupDragPlaneFromPlane(this._dragPlane);
@@ -65,11 +66,25 @@ exports.TranslateObject3DTool = Object.create(Translate3DToolBase, {
 				// a snap on the mouse down
 				var hitRec = snapManager.snap(point.x, point.y, do3DSnap);
 
-                // TODO - Check that hitRec's element matches element that browser says we clicked on
-                var elt = this.application.ninja.stage.GetElement(event);
-                if(elt !== hitRec.getElement())
+                if(this._handleMode === 2)
                 {
-                    hitRec = snapManager.findHitRecordForElement(elt);
+                    // translate z doesn't snap to element so hitRec's element will always be different
+                    // from what the browser says we clicked on. So, skip this check.
+                }
+                else
+                {
+                    // Check that hitRec's element matches element that browser says we clicked on
+                    // TODO - This is still not working when using a handle that is on top of an
+                    // element that is not currently selected
+                    var elt = this.application.ninja.stage.GetSelectableElement(event);
+                    if(elt && (elt !== hitRec.getElement()))
+                    {
+                        hitRec = snapManager.findHitRecordForElement(elt);
+                    }
+                    if(elt === this.application.ninja.currentSelectedContainer)
+                    {
+                        this._clickedOnStage = true;
+                    }
                 }
 
                 // we don't want to snap to selected objects during the drag
@@ -91,8 +106,17 @@ exports.TranslateObject3DTool = Object.create(Translate3DToolBase, {
 						snapManager.enableSnapAlign( snapManager.snapAlignEnabledAppLevel() );
 					}
 
-					// parameterize the snap point on the target
-					this._snapParam = this.parameterizeSnap( hitRec );
+                    if(this._handleMode === 2)
+                    {
+                        // TODO - not sure how to parameterize point in z-translate mode
+                        this.clickedObject = this._target;
+                        this._snapParam = [0, 0, 0];
+                    }
+                    else
+                    {
+                        // parameterize the snap point on the target
+                        this._snapParam = this.parameterizeSnap( hitRec );
+                    }
 
                     if(!this._dragPlane)
                     {

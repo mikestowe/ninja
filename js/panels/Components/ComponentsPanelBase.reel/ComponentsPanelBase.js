@@ -118,7 +118,7 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
     didCreate: {
         value: function() {
             // Setup the drop delegate
-//            this.application.ninja.dragDropMediator.dropDelegate = this;
+            this.application.ninja.dragDropMediator.dropDelegate = this;
             // Loop through the component and load the JSON data for them
             this._loadComponents();
         }

@@ -519,6 +519,36 @@ exports.Stage = Montage.create(Component, {
     },
 
     /**
+     * GetSelectableElement: Returns a selectable object (direct child of current container) at clicked point
+     *
+     * @param: X,Y
+     * @return: Returns the current container if the the X,Y hits an element in the exclusion list
+     */
+    GetSelectableElement: {
+        value: function(pos) {
+            var item = this.GetElement(pos);
+            if(this.application.ninja.currentDocument.inExclusion(item) !== -1) {
+                return this.application.ninja.currentSelectedContainer;
+            }
+            var activeContainerId = this.application.ninja.currentSelectedContainer.uuid;
+            if(item.parentNode.uuid === activeContainerId) {
+                return item;
+            } else {
+                var outerElement = item.parentNode;
+
+                while(outerElement.parentNode && outerElement.parentNode.uuid !== activeContainerId) {
+                    // If element is higher up than current container then return
+                    if(outerElement.id === "UserContent") return;
+                    // else keep going up the chain
+                    outerElement = outerElement.parentNode;
+                }
+
+                return outerElement;
+            }
+        }
+    },
+
+    /**
      * GetElement: Returns the object under the X,Y coordinates passed as an obj with x,y
      *
      * @param: X,Y
