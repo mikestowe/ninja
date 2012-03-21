@@ -67,6 +67,24 @@ exports.stylePresets = {
                         "text-shadow": "1px 1px 3px #333"
                     }
                 }]
+            },
+            {
+                "text": "White Sans-Serif",
+                "selectorBase" : "white-sans-serif",
+                "rules" : [{
+                    "selectorSuffix" : "",
+                    "styles" : {
+                        "color": "#FFFFFF",
+                        "font-family": "helvetica,arial,sans-serif"
+                    }
+                },
+                {
+                    "selectorSuffix" : " h2",
+                    "styles" : {
+                        "color": "#C1C1C1",
+                        "font-family": "helvetica,arial,sans-serif"
+                    }
+                }]
             }]
     }]
 };
