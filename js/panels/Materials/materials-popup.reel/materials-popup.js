@@ -214,7 +214,11 @@ exports.MaterialsPopup = Montage.create(Component, {
 		enumerable: true,
 		value: function(materialID)
 		{
-           this._materialName = materialID;
+            // Note that setting Array.length = 0 will empty arrays,
+            // which is fine if you use getMaterialData to get a new array, but not for the
+            // dummyData arrays.
+            this._materialsData.length = 0;
+            this._materialName = materialID;
             if(
 					(materialID ===  "UberMaterial")				||
 					(materialID ===  "FlatMaterial")				||

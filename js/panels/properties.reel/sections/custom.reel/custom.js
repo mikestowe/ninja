@@ -20,6 +20,7 @@ var TextField = require("js/components/textfield.reel").TextField;
 var FileInput = require("js/components/ui/file-input.reel").FileInput;
 var Checkbox = require("js/components/checkbox.reel").Checkbox;
 var ColorChip = require("js/components/ui/color-chip.reel").ColorChip;
+var Button = require("montage/ui/button.reel").Button;
 
 exports.CustomSection = Montage.create(Component, {
 
@@ -128,6 +129,15 @@ exports.CustomSection = Montage.create(Component, {
         }
     },
 
+    handleAction: {
+        value:function(event) {
+            if(event._event.wasSetByCode) return;
+
+            var obj = event.currentTarget;
+            this._dispatchPropEvent({"type": "change", "id": obj.id, "prop": obj.prop, "value": obj.value, "control": obj});
+        }
+    },
+
     _dispatchPropEvent: {
         value: function(event) {
 //            console.log(event);
@@ -163,6 +173,7 @@ exports.CustomSection = Montage.create(Component, {
                 case "file"     : return this.createFileInput(fields);
                 case "checkbox" : return this.createCheckbox(fields);
                 case "chip"     : return this.createColorChip(fields);
+                case "button"     : return this.createButton(fields);
             }
         }
     },
@@ -348,6 +359,39 @@ exports.CustomSection = Montage.create(Component, {
 
             // TODO - Hack for now to reference the color select object to unregister color chips
             this.controls["stageBackground"] = obj;
+
+            return obj;
+        }
+    },
+
+    createButton: {
+        value: function(aField) {
+            var obj = Button.create();
+
+            // Set Values for Button
+            if (aField.id)                  obj.id = aField.id;
+            if (aField.label)               obj.label = aField.label;
+            if (aField.prop)                obj.prop = aField.prop;
+
+            // Special casing button so slot uses "button" tag instead of "div"
+            obj.type = "button";
+
+            if (aField.enabled) {
+                if(aField.enabled.boundObject) {
+                    // TODO - For now, always bind to this.controls[someProperty]
+                    Object.defineBinding(obj, "enabled", {
+                                    boundObject: this.controls,
+                                    boundObjectPropertyPath: aField.enabled.boundProperty,
+                                    oneway: true
+                                });
+                } else {
+                    obj.enabled = aField.enabled;
+                }
+            }
+
+            obj.addEventListener("action", this, false);
+
+            this.controls[aField.id] = obj;
 
             return obj;
         }
