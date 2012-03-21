@@ -143,11 +143,10 @@ exports.StageController = Montage.create(ElementController, {
 
                 if (el)
                 {
-                    var xformStr = this.application.ninja.elementMediator.getProperty(el, "-webkit-transform");
-                    if (xformStr)
-                        mat = this.transformStringToMat( xformStr );
-                    if (!mat)
+                    mat = this.application.ninja.stylesController.getMatrixFromElement(el, true);
+                    if (!mat) {
                         mat = Matrix.I(4);
+                    }
 
                     var zoom = this.application.ninja.elementMediator.getProperty(el, "zoom");
                     if (zoom)

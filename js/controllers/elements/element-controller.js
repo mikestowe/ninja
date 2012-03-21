@@ -223,11 +223,10 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
 
                 if (el)
                 {
-                    var xformStr = this.application.ninja.elementMediator.getProperty(el, "-webkit-transform");
-                    if (xformStr)
-                        mat = this.transformStringToMat( xformStr );
-                    if (!mat)
+                    mat = this.application.ninja.stylesController.getMatrixFromElement(el, false);
+                    if (!mat) {
                         mat = Matrix.I(4);
+                    }
                 }
 
                 el.elementModel.props3D.matrix3d = mat;
@@ -244,23 +243,9 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
             }
             else
             {
-                var dist = 1400;
-
-                var str = this.getProperty(el, "-webkit-transform");
-                if (str)
-                {
-                    var index1 = str.indexOf( "perspective(");
-                    if (index1 >= 0)
-                    {
-                        index1 += 12;    // do not include 'perspective('
-                        var index2 = str.indexOf( ")", index1 );
-                        if (index2 >= 0)
-                        {
-                            var substr = str.substr( index1, (index2-index1));
-                            if (substr && (substr.length > 0))
-                                dist = MathUtils.styleToNumber( substr );
-                        }
-                    }
+                var dist = this.application.ninja.stylesController.getPerspectiveDistFromElement(el, false);
+                if(dist === null) {
+                    dist = 1400;
                 }
 
                 el.elementModel.props3D.perspectiveDist = dist;
@@ -303,36 +288,6 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
                 elt.elementModel.props3D.z3D = ~~(elt3DInfo.translation[2]);
             }
         }
-    },
-
-    transformStringToMat: {
-        value: function( str )    {
-            var rtnMat;
-
-            var index1 = str.indexOf( "matrix3d(");
-            if (index1 >= 0)
-            {
-                index1 += 9;    // do not include 'matrix3d('
-                var index2 = str.indexOf( ")", index1 );
-                if (index2 >= 0)
-                {
-                    var substr = str.substr( index1, (index2-index1));
-                    if (substr && (substr.length > 0))
-                    {
-                        var numArray = substr.split(',');
-                        var nNums = numArray.length;
-                        if (nNums == 16)
-                        {
-                            // gl-matrix wants row order
-                            rtnMat = numArray;
-                            for (var i=0;  i<16;  i++)
-                                rtnMat[i] = Number( rtnMat[i] );
-                        }
-                    }
-                }
-            }
-
-            return rtnMat;
-        }
     }
+
 });

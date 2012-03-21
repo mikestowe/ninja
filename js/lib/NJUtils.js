@@ -94,7 +94,7 @@ exports.NJUtils = Object.create(Object.prototype, {
     ///// TODO: find a different place for this function
     makeElementModel: {
         value: function(el, selection, controller, isShape) {
-            var p3d = Montage.create(Properties3D).init(el);
+            var p3d = Montage.create(Properties3D).init(el, (selection === "Stage"));
             var shapeProps = null;
             if(isShape) {
                 shapeProps = Montage.create(ShapeModel);

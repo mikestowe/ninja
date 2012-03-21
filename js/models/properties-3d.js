@@ -5,7 +5,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var Montage = require("montage/core/core").Montage,
-    Component = require("montage/ui/component").Component;
+    Component = require("montage/ui/component").Component,
+    NJUtils = require("js/lib/NJUtils").NJUtils;
 
 exports.Properties3D = Montage.create(Component, {
 
@@ -39,16 +40,7 @@ exports.Properties3D = Montage.create(Component, {
     elementPlane :   { value : null, enumerable: true},
 
     init : {
-        value : function(elt) {
-
-            this.m_azimuth = 0.0;
-            this.m_altitude = 0.0;
-
-            this.m_endAzimuth = 0.0;
-            this.m_endAltitude = 0.0;
-
-            this.m_transformCtr = null;
-            this.perspectiveDist = 1400;
+        value : function(elt, isStage) {
 
 //          this.m_upVector = [0,1,0];
 //			this.m_viewDir  = [0,0,1];
@@ -57,23 +49,29 @@ exports.Properties3D = Montage.create(Component, {
 //          this.m_targetPos = [0,0,0];
 //          this.m_objStartPos = [0,0,0];
 
-//            var mat = this.application.ninja.stage.stageDeps.viewUtils.getMatrixFromElement(elt).slice(0);
-//            var elt3DInfo = MathUtils.decomposeMatrix2(mat);
-//            if(elt3DInfo)
-//            {
-//                this.xAngle = ~~(elt3DInfo.rotation[0] * MathUtils.RAD_TO_DEG);
-//                this.yAngle = ~~(elt3DInfo.rotation[1] * MathUtils.RAD_TO_DEG);
-//                this.zAngle = ~~(elt3DInfo.rotation[2] * MathUtils.RAD_TO_DEG);
-//
-//                this.x3D = ~~(elt3DInfo.translation[0]);
-//                this.y3D = ~~(elt3DInfo.translation[1]);
-//                this.z3D = ~~(elt3DInfo.translation[2]);
-//
-//                this.matrix3d = mat;
-//            }
+            this.matrix3d = this.application.ninja.stylesController.getMatrixFromElement(elt, isStage);
+            this.perspectiveDist = this.application.ninja.stylesController.getPerspectiveDistFromElement(elt, isStage);
+
+            if(this.matrix3d) {
+                var elt3DInfo = MathUtils.decomposeMatrix2(this.matrix3d);
+                if(elt3DInfo) {
+                    this.xAngle = ~~(elt3DInfo.rotation[0] * MathUtils.RAD_TO_DEG);
+                    this.yAngle = ~~(elt3DInfo.rotation[1] * MathUtils.RAD_TO_DEG);
+                    this.zAngle = ~~(elt3DInfo.rotation[2] * MathUtils.RAD_TO_DEG);
+
+                    this.x3D = ~~(elt3DInfo.translation[0]);
+                    this.y3D = ~~(elt3DInfo.translation[1]);
+                    this.z3D = ~~(elt3DInfo.translation[2]);
+                }
+            } else {
+                this.matrix3d = Matrix.I(4);
+            }
+
+            if(this.perspectiveDist === null) {
+                this.perspectiveDist = 1400;
+            }
 
             return this;
-
         }
     },
 
