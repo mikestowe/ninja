@@ -174,36 +174,47 @@ exports.MaterialsModel = Montage.create(Component, {
 	},
 
 	exportMaterials: {
-		value: function() {
-
-			var exportStr = "MaterialLibrary: \n";
-
+		value: function()
+        {
+            var matArray = [];
 			var nMats = this._materials.length;
-
 			for (var i=0;  i<nMats;  i++) {
 				var material = this._materials[i];
-				exportStr += material.export();
+				var matObj = material.exportJSON();
+                matArray.push( matObj );
 			}
 
-			exportStr += "endMatLib\n";
-			return exportStr;
+	        var jObj = 
+	        {
+                'materialLibrary':  1.0,
+                'materials':        matArray
+            };
+
+            // prepend an identifiable string to aid parsing when the 
+            // material model is loaded.
+            var jStr = "materialLibrary;" + JSON.stringify( jObj );
+
+			return jStr;
 		}
 	},
 
 	importMaterials: {
-		value: function( importStr ) {
+		value: function( jObj )
+        {
+            // make sure we have some materials to import before doing anything
+            var matArray = jObj.materials;
+            if (!matArray)  return;
+			
 			// we replace allmaterials, so remove anything
 			// that is currently there.
 			this.clearAllMaterials();
 
-			var pu = new MaterialParser( importStr );
-			
-			var type = pu.nextValue( "material: ", "\n", false );
-
-			while (type) {
-
-                var mat = null;
-
+			var nMats = matArray.length;
+            for (var i=0;  i<nMats;  i++)
+            {
+              var mat = null;
+              var jMatObj = matArray[i];
+                var type = jMatObj.material;
                 switch (type)
                 {
 					case "flat":				mat = new FlatMaterial();				break;
@@ -233,20 +244,16 @@ exports.MaterialsModel = Montage.create(Component, {
 
 					default:
 						throw new Error( "Unrecognized material type: " + type );
-						pu.advancePastToken( "endMaterial\n" );
 						break;
 				}
 
 				if (mat) {
-					importStr = mat.import( importStr );
-					pu._strBuffer = importStr;
+					importStr = mat.importJSON( jMatObj );
 					this.addMaterial( mat );
 				}
-
-				type = pu.nextValue( "material: ", "\n", false );
 			}
 
-			return pu._strBuffer;
+			return;
 		}
 	}
 

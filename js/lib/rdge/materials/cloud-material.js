@@ -6,16 +6,19 @@
 
 var MaterialParser = require("js/lib/rdge/materials/material-parser").MaterialParser;
 var Material = require("js/lib/rdge/materials/material").Material;
-
-var RadialBlurMaterial = function RadialBlurMaterial() {
+///////////////////////////////////////////////////////////////////////
+// Class GLMaterial
+//      RDGE representation of a material.
+///////////////////////////////////////////////////////////////////////
+var CloudMaterial = function CloudMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-	this._name = "RadialBlurMaterial";
-	this._shaderName = "radialBlur";
+	this._name = "CloudMaterial";
+	this._shaderName = "cloud";
 
-	this._texMap = 'assets/images/cubelight.png';
-	this._color = [1,0,0,1];
+	this._texMap = 'assets/images/cloud2.jpg';
+	this._diffuseColor = [0.5, 0.5, 0.5, 0.5];
 
 	this._time = 0.0;
 	this._dTime = 0.01;
@@ -26,23 +29,29 @@ var RadialBlurMaterial = function RadialBlurMaterial() {
 	this.getName		= function()	{ return this._name;			};
 	this.getShaderName	= function()	{  return this._shaderName;		};
 
-	this.getTextureMap			= function()		{  return this._texMap.slice(0);	};
-	this.setTextureMap			= function(m)		{  this._propValues[this._propNames[0]] = m.slice(0);  this.updateTexture();  	};
+	this.getTextureMap			= function()		{  return this._propValues[this._propNames[0]] ? this._propValues[this._propNames[0]].slice() : null	};
+	this.setTextureMap			= function(m)		{  this._propValues[this._propNames[0]] = m ? m.slice(0) : null;  this.updateTexture();  	};
 
-	this.isAnimated				= function()		{  return true;		};
+	this.setDiffuseColor		= function(c)		{  this._propValues[this._propNames[1]] = c.slice(0);  this.updateColor();  	};
+	this.getDiffuseColor		= function()		{  return this._propValues[this._propNames[1]] ? this._propValues[this._propNames[1]].slice() : null; 	};
+
+	this.isAnimated			= function()			{  return true;					};
 
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
-	this._propNames			= ["texmap",			"color"];
-	this._propLabels		= ["Texture map",		"Color"];
-	this._propTypes			= ["file",				"color"];
+	this._propNames			= ["texmap",		"diffusecolor"];
+	this._propLabels		= ["Texture map",	"Diffuse Color"];
+	this._propTypes			= ["file",			"color"];
 	this._propValues		= [];
 
 	this._propValues[ this._propNames[0] ] = this._texMap.slice(0);
-	this._propValues[ this._propNames[1] ] = this._color.slice(0);
+	this._propValues[ this._propNames[1] ] = this._diffuseColor.slice();
 
-    this.setProperty = function( prop, value ) {
+    this.setProperty = function( prop, value )
+	{
+		if (prop === 'color')  prop = 'diffusecolor';
+
 		// make sure we have legitimate imput
 		var ok = this.validateProperty( prop, value );
 		if (!ok) {
@@ -55,11 +64,11 @@ var RadialBlurMaterial = function RadialBlurMaterial() {
 				this.setTextureMap(value);
 				break;
 
+			case "diffusecolor":
+				this.setDiffuseColor( value );
+				break;
+
 			case "color":
-				this._propValues[prop] = value.slice(0);
-				if (this._shader && this._shader['default']) {
-					this._shader['default'][prop].set(value);
-                }
 				break;
 		}
 	};
@@ -70,43 +79,67 @@ var RadialBlurMaterial = function RadialBlurMaterial() {
     // Methods
     ///////////////////////////////////////////////////////////////////////
 	// duplcate method requirde
-	this.dup = function( ) {
+	this.dup = function( world )
+	{
+		// save the world
+		if (world)  this.setWorld( world );
+
 		// allocate a new uber material
-		var newMat = new RadialBlurMaterial();
+		var newMat = new CloudMaterial();
 
 		// copy over the current values;
 		var propNames = [],  propValues = [],  propTypes = [],  propLabels = [];
 		this.getAllProperties( propNames,  propValues,  propTypes,  propLabels);
 		var n = propNames.length;
-		for (var i=0;  i<n;  i++)
+		for (var i=0;  i<n;  i++) {
 			newMat.setProperty( propNames[i], propValues[i] );
+        }
 
 		return newMat;
 	};
 
-	this.init = function( world ) {
+	this.init = function( world )
+	{
 		// save the world
 		if (world)  this.setWorld( world );
 
+		// this variable declared above is inherited set to a smaller delta.
+		// the cloud material runs a little faster
+		this._dTime = 0.01;
+
 		// set up the shader
 		this._shader = new jshader();
-		this._shader.def = radialBlurMaterialDef;
+		this._shader.def = cloudMaterialDef;
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = createMaterialNode("radialBlurMaterial" + "_" + world.generateUniqueNodeID());
+		this._materialNode = createMaterialNode("cloudMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;
-		if (this._shader && this._shader['default'])
+		if (this._shader && this._shader['default']) {
 			this._shader['default'].u_time.set( [this._time] );
-		this.setProperty( "color", [this._time, 0, 0,  1] );
+			this._shader['default'].u_DiffuseColor.set( this._diffuseColor );
+        }
 
 		// set the shader values in the shader
 		this.updateTexture();
-		this.setResolution( [world.getViewportWidth(),world.getViewportHeight()] );
 		this.update( 0 );
 	};
+
+	this.updateColor = function()
+	{
+		var material = this._materialNode;
+		if (material)
+		{
+			var technique = material.shaderProgram['default'];
+			var renderer = g_Engine.getContext().renderer;
+			if (renderer && technique) {
+				var color = this._propValues[this._propNames[1]];
+				technique.u_DiffuseColor.set( this._diffuseColor );
+			}
+		}
+	}
 
 	this.updateTexture = function() {
 		var material = this._materialNode;
@@ -115,55 +148,41 @@ var RadialBlurMaterial = function RadialBlurMaterial() {
 			var renderer = g_Engine.getContext().renderer;
 			if (renderer && technique) {
 				var texMapName = this._propValues[this._propNames[0]];
-				var tex = renderer.getTextureByName(texMapName, 'REPEAT');
-//				if (tex)
-//				{
-//					var res = [tex.image.naturalWidth, tex.image.naturalHeight];
-//					this.setResoloution( res );
-//				}
-				technique.u_tex0.set( tex );
-			}
-		}
-	};
+				var wrap = 'REPEAT',  mips = true;
+				var tex = this.loadTexture( texMapName, wrap, mips );
 
-	this.update = function( ) {
-		var material = this._materialNode;
-		if (material) {
-			var technique = material.shaderProgram['default'];
-			var renderer = g_Engine.getContext().renderer;
-			if (renderer && technique) {
-				if (this._shader && this._shader['default']) {
-					this._shader['default'].u_time.set( [this._time] );
+				if (tex) {
+					technique.u_tex0.set( tex );
                 }
-
-				var color = this.getProperty( "color" );
-				color[0] = this._time;
-				this.setProperty( "color", color );
-				//console.log( "update color to: " + color );
-				this._time += this._dTime;
 			}
 		}
 	};
 
-	this.setResolution = function( res ) {
+	this.update = function( time )
+	{
 		var material = this._materialNode;
 		if (material)
 		{
 			var technique = material.shaderProgram['default'];
 			var renderer = g_Engine.getContext().renderer;
 			if (renderer && technique) {
-				technique.u_resolution.set( res );
+				if (this._shader && this._shader['default']) {
+					this._shader['default'].u_time.set( [this._time] );
+                }
+				this._time += this._dTime;
+
+                if (this._time > 200.0)  this._time = 0.0;
 			}
 		}
 	};
 
+	// JSON export
 	this.exportJSON = function()
 	{
 		var jObj =
 		{
 			'material'		: this.getShaderName(),
 			'name'			: this.getName(),
-			'color'			: this._propValues["color"],
 			'texture'		: this._propValues[this._propNames[0]]
 		};
 
@@ -173,21 +192,17 @@ var RadialBlurMaterial = function RadialBlurMaterial() {
 	this.importJSON = function( jObj )
 	{
         if (this.getShaderName() != jObj.material)  throw new Error( "ill-formed material" );
-        this.setName( jObj.name );
+        this.setName(  jObj.name );
 
-		var rtnStr;
-        try
-        {
-            this._propValues[this._propNames[0]] = jObj.texture;
-			this.updateTexture();
+        try {
+			this._propValues[this._propNames[0]] = jObj.texture;
         }
         catch (e)
         {
-            throw new Error( "could not import material: " + importStr );
+            throw new Error( "could not import material: " + jObj );
         }
-		
-		return rtnStr;
 	}
+
 
 	this.export = function() {
 		// every material needs the base type and instance name
@@ -199,7 +214,7 @@ var RadialBlurMaterial = function RadialBlurMaterial() {
 			throw new Error( "no world in material.export, " + this.getName() );
 
 		var texMapName =  this._propValues[this._propNames[0]];
-		exportStr += "texture: " + texMapName + "\n";
+		exportStr += "texture: " +texMapName + "\n";
 		
 		// every material needs to terminate like this
 		exportStr += "endMaterial\n";
@@ -214,8 +229,9 @@ var RadialBlurMaterial = function RadialBlurMaterial() {
 		this.setName(  pu.nextValue( "name: ") );
 
 		var rtnStr;
-        try
-        {
+        try {
+			this._propValues[this._propNames[0]] = pu.nextValue( "texture: " );
+
             var endKey = "endMaterial\n";
             var index = importStr.indexOf( endKey );
             index += endKey.length;
@@ -225,7 +241,7 @@ var RadialBlurMaterial = function RadialBlurMaterial() {
         {
             throw new Error( "could not import material: " + importStr );
         }
-		
+
 		return rtnStr;
 	}
 };
@@ -234,11 +250,11 @@ var RadialBlurMaterial = function RadialBlurMaterial() {
 // RDGE shader
  
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
-var radialBlurMaterialDef =
+var cloudMaterialDef =
 {'shaders': 
 	{
-		'defaultVShader':"assets/shaders/Basic.vert.glsl",
-		'defaultFShader':"assets/shaders/radialBlur.frag.glsl"
+		'defaultVShader':"assets/shaders/Cloud.vert.glsl",
+		'defaultFShader':"assets/shaders/Cloud.frag.glsl"
 	},
 	'techniques':
 	{ 
@@ -259,8 +275,7 @@ var radialBlurMaterialDef =
 				{
 					'u_tex0': { 'type' : 'tex2d' },
 					'u_time' : { 'type' : 'float' },
-					'u_resolution'  :   { 'type' : 'vec2' },
-					'color' :   { 'type' : 'vec4' }
+					'u_DiffuseColor' : { 'type' : 'vec4' }
 				},
 
 				// render states
@@ -275,32 +290,11 @@ var radialBlurMaterialDef =
 };
 
 
-/*
-var RaidersMaterial = function RaidersMaterial()
-{
-	// initialize the inherited members
-	this.inheritedFrom = RadialBlurMaterial;
-	this.inheritedFrom();
 
-	this._name = "RaidersMaterial";
-	this._shaderName = "radialBlur";
 
-	this._texMap = 'assets/images/raiders.png';
-	this._propValues[ this._propNames[0] ] = this._texMap.slice(0);
+CloudMaterial.prototype = new Material();
+
+if (typeof exports === "object") {
+    exports.CloudMaterial = CloudMaterial;
 }
-
-RaidersMaterial.prototype = new Material();
-
-if (typeof exports === "object")
-{
-	exports.RaidersMaterial = RaidersMaterial;
-}
-*/
-
-
-RadialBlurMaterial.prototype = new Material();
-
-if (typeof exports === "object")
-    exports.RadialBlurMaterial = RadialBlurMaterial;
-
 

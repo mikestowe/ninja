@@ -579,11 +579,6 @@ var UberMaterial = function UberMaterial() {
 
 	this.exportJSON = function()
 	{
-		// we will be needing the world.  Make sure it is there
-		var world = this.getWorld();
-		if (!world)
-			throw new Error( "no world in material.export, " + this.getName() );
-
 		// every material needs the base type and instance name
 		var caps = this._ubershaderCaps;
 		var jObj =

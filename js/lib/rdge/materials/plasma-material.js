@@ -69,7 +69,6 @@ var PlasmaMaterial = function PlasmaMaterial() {
 
 	this.exportJSON = function()
 	{
-
 		var jObj =
 		{
 			'material'		: this.getShaderName(),

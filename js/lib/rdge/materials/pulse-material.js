@@ -165,10 +165,6 @@ var PulseMaterial = function PulseMaterial() {
 	// JSON export
 	this.exportJSON = function()
 	{
-		var world = this.getWorld();
-		if (!world)
-			throw new Error( "no world in material.export, " + this.getName() );
-
 		var jObj =
 		{
 			'material'		: this.getShaderName(),

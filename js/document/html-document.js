@@ -9,7 +9,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = 		require("montage/core/core").Montage,
     TextDocument =	require("js/document/text-document").TextDocument,
     NJUtils = 		require("js/lib/NJUtils").NJUtils,
-	GLWorld =			require("js/lib/drawing/world").World;
+	GLWorld =			require("js/lib/drawing/world").World,
+    MaterialsModel = require("js/models/materials-model").MaterialsModel;
 ////////////////////////////////////////////////////////////////////////
 //
 exports.HTMLDocument = Montage.create(TextDocument, {
@@ -193,7 +194,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 			var elt = this.iframe.contentWindow.document.getElementById("UserContent");
 			//
 			if (elt) {
-				this._glData = [];
+                var matLib = MaterialsModel.exportMaterials();
+				this._glData = [matLib];
 				this.collectGLData(elt, this._glData );
 			} else {
 				this._glData = null
@@ -231,12 +233,27 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 					}
 					else
 					{
-						var startIndex = importStr.indexOf( "id: " );
-						if (startIndex >= 0) {
-							var endIndex = importStr.indexOf( "\n", startIndex );
-							if (endIndex > 0)
-								id = importStr.substring( startIndex+4, endIndex );
-						}
+                        // at this point the data could be either the materials library or
+                        // an old style world.  We can determine which by converting the string
+                        // to an object via JSON.parse.  That operation will fail if the string
+                        // is an old style world.
+                        var matLibStr = 'materialLibrary;';
+                        index = importStr.indexOf( matLibStr );
+                        if (index == 0)
+                        {
+                            importStr = importStr.substr( matLibStr.length );
+                            var matLibObj = JSON.parse( importStr );
+                            MaterialsModel.importMaterials( matLibObj );
+                        }
+                        else
+                        {
+						    var startIndex = importStr.indexOf( "id: " );
+						    if (startIndex >= 0) {
+							    var endIndex = importStr.indexOf( "\n", startIndex );
+							    if (endIndex > 0)
+								    id = importStr.substring( startIndex+4, endIndex );
+						    }
+                        }
 					}
 
 					if (id != null)
