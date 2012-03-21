@@ -830,6 +830,103 @@ function RuntimeRectangle()
 }
 
 ///////////////////////////////////////////////////////////////////////
+// Class RuntimeLine
+///////////////////////////////////////////////////////////////////////
+function RuntimeLine()
+{
+	this.inheritedFrom = RuntimeGeomObj;
+	this.inheritedFrom();
+
+	this.import = function( jObj )
+	{
+		this._xOffset			= jObj.xoff;
+		this._yOffset			= jObj.yoff;
+		this._width				= jObj.width;
+		this._height			= jObj.height;
+		this._xAdj			    = jObj.xAdj;
+		this._yAdj			    = jObj.yAdj;
+		this._strokeWidth		= jObj.strokeWidth;
+		this._slope 		    = jObj.slope;
+		this._strokeStyle		= jObj.strokeStyle;
+		this._strokeColor		= jObj.strokeColor;
+		var strokeMaterialName	= jObj.strokeMat;
+        this.importMaterials( jObj.materials );
+    }
+
+	this.render = function()
+	{
+		// get the world
+		var world = this.getWorld();
+		if (!world)  throw( "null world in buildBuffers" );
+
+		 // get the context
+		var ctx = world.get2DContext();
+		if (!ctx)  return;
+ 	
+		// set up the stroke style
+		var lineWidth = this._strokeWidth,
+            w = this._width,
+            h = this._height;
+
+        var c,
+            gradient,
+            colors,
+            len,
+            n,
+            position,
+            cs;
+
+		ctx.beginPath();
+		ctx.lineWidth	= lineWidth;
+		if (this._strokeColor) {
+            if(this._strokeColor.gradientMode) {
+                if(this._strokeColor.gradientMode === "radial") {
+                    gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w/2, h/2));
+                } else {
+                    gradient = ctx.createLinearGradient(0, h/2, w, h/2);
+                }
+                colors = this._strokeColor.color;
+
+                len = colors.length;
+
+                for(n=0; n<len; n++) {
+                    position = colors[n].position/100;
+                    cs = colors[n].value;
+                    gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+                }
+
+                ctx.strokeStyle = gradient;
+
+            } else {
+                c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";
+                ctx.strokeStyle = c;
+            }
+
+			// get the points
+			var p0,  p1;
+			if(this._slope === "vertical") {
+				p0 = [0.5*w, 0];
+				p1 = [0.5*w, h];
+			} else if(this._slope === "horizontal") {
+				p0 = [0, 0.5*h];
+				p1 = [w, 0.5*h];
+			} else if(this._slope > 0) {
+				p0 = [this._xAdj, this._yAdj];
+				p1 = [w - this._xAdj,  h - this._yAdj];
+			} else {
+				p0 = [this._xAdj, h - this._yAdj];
+				p1 = [w - this._xAdj,  this._yAdj];
+			}
+			
+			// draw the line
+			ctx.moveTo( p0[0],  p0[1] );
+			ctx.lineTo( p1[0],  p1[1] );
+			ctx.stroke();
+		}
+    }
+}
+
+///////////////////////////////////////////////////////////////////////
 // Class RuntimeOval
 ///////////////////////////////////////////////////////////////////////
 function RuntimeOval()
