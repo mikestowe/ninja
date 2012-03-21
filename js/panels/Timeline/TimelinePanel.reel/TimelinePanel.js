@@ -915,11 +915,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     this.arrLayers[i].layerData.isSelected = false;
                 }
                 
-	    		if (this.arrLayers[i].layerData.triggerBinding === true) {
-	    			this.arrLayers[i].layerData.triggerBinding = false;
-	    		} else {
-	    			this.arrLayers[i].layerData.triggerBinding = true;
-	    		}
+                this.triggerLayerBinding(i);
             }
 
             this.layerRepetition.selectedIndexes = [layerIndex];
@@ -1076,6 +1072,16 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this.timeline_disabler.style.display = "block";
             }
         }
+    },
+    // Trigger the layer/track data binding
+    triggerLayerBinding : {
+    	value: function(intIndex) {
+    		if (this.arrLayers[intIndex].layerData.triggerBinding === true) {
+    			this.arrLayers[intIndex].layerData.triggerBinding = false;
+    		} else {
+    			this.arrLayers[intIndex].layerData.triggerBinding = true;
+    		}
+    	}
     },
     /* === END: Controllers === */
 

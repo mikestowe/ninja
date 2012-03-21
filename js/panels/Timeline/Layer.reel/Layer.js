@@ -571,6 +571,8 @@ var Layer = exports.Layer = Montage.create(Component, {
 				newEvent = document.createEvent("CustomEvent");
 			
 			this.isStyleCollapsed = false;
+			this.layerData.isStyleCollapsed = false;
+			this.triggerOutgoingBinding();
 			
 			newEvent.initCustomEvent("layerEvent", false, true);
 			newEvent.layerEventLocale = "styles";
@@ -602,6 +604,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 
 			newEvent.styleSelection = mySelection;
 			defaultEventManager.dispatchEvent(newEvent);
+
 
 		}
 	},
