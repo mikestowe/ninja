@@ -129,5 +129,46 @@ exports.StageController = Montage.create(ElementController, {
         value: function(el, rule, selector) {
             el.elementModel.transitionStopRule.selectorText = selector;
         }
+    },
+
+    getMatrix: {
+        value: function(el) {
+            if(el.elementModel && el.elementModel.props3D && el.elementModel.props3D.matrix3d)
+            {
+                return el.elementModel.props3D.matrix3d.slice(0);
+            }
+            else
+            {
+                var mat;
+
+                if (el)
+                {
+                    var xformStr = this.application.ninja.elementMediator.getProperty(el, "-webkit-transform");
+                    if (xformStr)
+                        mat = this.transformStringToMat( xformStr );
+                    if (!mat)
+                        mat = Matrix.I(4);
+
+                    var zoom = this.application.ninja.elementMediator.getProperty(el, "zoom");
+                    if (zoom)
+                    {
+                        zoom = Number(zoom);
+                        if (zoom != 1)
+                        {
+                            var zoomMat = Matrix.create(  [
+                                [ zoom,    0,    0, 0],
+                                [    0, zoom,    0, 0],
+                                [    0,    0, zoom, 0],
+                                [    0,    0,    0, 1]
+                            ] );
+                            glmat4.multiply( zoomMat, mat, mat );
+                        }
+                    }
+                }
+
+                el.elementModel.props3D.matrix3d = mat;
+                return mat;
+            }
+        }
     }
 });

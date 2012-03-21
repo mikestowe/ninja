@@ -43,7 +43,13 @@ exports.DualRow = Montage.create(Component, {
                 this.element.getElementsByClassName("lbl")[0].innerHTML = this.label + ":";
             }
             if(this.label2 !== null) {
-                this.element.getElementsByClassName("lbl")[1].innerHTML = this.label2 + ":";
+                if(this.content2.type === "button") {
+                    this.content2.element = document.createElement("button");
+                    this.content2.element.classList.add("nj-skinned");
+                    this.element.getElementsByClassName("lbl")[1].style.display = "none";
+                } else {
+                    this.element.getElementsByClassName("lbl")[1].innerHTML = this.label2 + ":";
+                }
             } else {
                 this.element.getElementsByClassName("lbl")[1].style.display = "none";
             }
