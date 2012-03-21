@@ -913,6 +913,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 } else {
                     this.arrLayers[i].layerData.isSelected = false;
                 }
+                
+	    		if (this.arrLayers[i].layerData.triggerBinding === true) {
+	    			this.arrLayers[i].layerData.triggerBinding = false;
+	    		} else {
+	    			this.arrLayers[i].layerData.triggerBinding = true;
+	    		}
             }
 
             this.layerRepetition.selectedIndexes = [layerIndex];
