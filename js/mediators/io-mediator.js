@@ -470,8 +470,6 @@ function loadWebGL (e) {\n\
     getUrlfromNinjaUrl: {
     	enumerable: false,
     	value: function (url, fileRootUrl, fileUrl) {
-    		//console.log("Params: ", url, fileRootUrl, fileUrl);
-    		//console.log("Getting: " + url);
     		//
     		if (url.indexOf(fileRootUrl) !== -1) {
     			url = url.replace(new RegExp(fileRootUrl.replace(/\//gi, '\\\/'), 'gi'), '');
@@ -499,10 +497,60 @@ function loadWebGL (e) {\n\
     			//
    				url = (path+newURL).replace(/\/\//gi, '/');
    			}
-    		//console.log("Returning: " + url);
-    		//console.log("-----");
     		//
     		return url;
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    getDocRootUrl: {
+    	value: function () {
+    		return this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    getNinjaPropUrlRedirect: {
+    	enumerable: false,
+    	value: function (prop/* , root */) {
+    		//Checking for property value to not contain a full direct URL
+            if (!prop.match(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi)) {
+           		//Checking for attributes and type of source
+            	if (prop.indexOf('href') !== -1 || prop.indexOf('src') !== -1) {
+            		//From HTML attribute
+            		//if (root) {
+            			//prop = (root+prop).replace(/"([^"]*)"/gi, this.getNinjaUrlPrepend.bind(this));
+            		//} else {
+            			prop = prop.replace(/"([^"]*)"/gi, this.getNinjaUrlPrepend.bind(this));
+            		//}
+	            } else if (prop.indexOf('url') !== -1) {
+	            	//From CSS property
+	            	//if (root) {
+	            		//prop = (root+prop).replace(/[^()\\""\\'']+/g, cssUrlToNinjaUrl.bind(this));
+	            	//} else {
+    	        		prop = prop.replace(/[^()\\""\\'']+/g, cssUrlToNinjaUrl.bind(this));
+    	        	//}
+    	        	function cssUrlToNinjaUrl (s) {
+    	       			if (s !== 'url') {
+    	       				s = this.getDocRootUrl() + s;
+    	       			}
+    	       			return s;
+    	       		}
+        	    }
+       		}
+            return prop;
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    getNinjaUrlPrepend: {
+    	enumerable: false,
+    	value: function (url) {
+    		if (url.indexOf('data:') !== -1) {
+            	return url;
+            } else {
+            	return '"'+this.getDocRootUrl()+url.replace(/\"/gi, '')+'"';
+            }
     	}
     },
     ////////////////////////////////////////////////////////////////////
