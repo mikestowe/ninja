@@ -33,9 +33,9 @@ exports.RectProperties = Montage.create(ToolProperties, {
             this.TRRadiusControl.enabled = this.BLRadiusControl.enabled = this.BRRadiusControl.enabled = this.lockButton.pressed;
 
             if(this.lockButton.pressed) {
-                this._setBindings([this.TRRadiusControl, this.BLRadiusControl, this.BRRadiusControl]);
-            } else {
                 this._removeBindings([this.TRRadiusControl, this.BLRadiusControl, this.BRRadiusControl]);
+            } else {
+                this._setBindings([this.TRRadiusControl, this.BLRadiusControl, this.BRRadiusControl]);
             }
 
         }
