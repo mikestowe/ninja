@@ -313,6 +313,8 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
         value:function(evt){
             if((evt.keyCode === 13) && !this.okButton.hasAttribute("disabled")){
                 this.handleOkButtonAction(evt);
+            }else if(evt.keyCode === 27){
+                this.handleCancelButtonAction(evt);
             }
             else if(!!evt._event.newFileDirectory){
                 this.newFileDirectory = evt._event.newFileDirectory;
@@ -327,6 +329,8 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
         value:function(evt){
             if((evt.keyCode === 13) && !this.okButton.hasAttribute("disabled")){
                 this.handleOkButtonAction(evt);
+            }else if(evt.keyCode === 27){
+                this.handleCancelButtonAction(evt);
             }
             else if(!!evt._event.newFileName){
                 this.newFileName = evt._event.newFileName;

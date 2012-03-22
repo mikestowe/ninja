@@ -71,6 +71,8 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
          value:function(evt){
              if((evt.keyCode === 13) && !this.okButton.hasAttribute("disabled")){
                  this.handleOkButtonAction(evt);
+             }else if(evt.keyCode === 27){
+                 this.handleCancelButtonAction(evt);
              }
              else if(!!evt._event.newFileDirectory){
                  this.folderUri = evt._event.newFileDirectory;
@@ -93,6 +95,8 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
                   if(!this.okButton.hasAttribute("disabled")){
                       this.handleOkButtonAction(evt);
                   }
+              }else if(evt.keyCode === 27){
+                  this.handleCancelButtonAction(evt);
               }
           }
     },
