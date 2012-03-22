@@ -246,6 +246,35 @@ exports.KeyboardMediator = Montage.create(Component, {
                 return;
             }
 
+            // check for ENTER key
+            if((evt.keyCode == Keyboard.ENTER) && !(evt.ctrlKey || evt.metaKey)) {
+                //new file
+                if((this.application.ninja.newFileController.newFileOptionsNav !== null)
+                    && !this.application.ninja.newFileController.newFileOptionsNav.okButton.hasAttribute("disabled")){
+
+                    this.application.ninja.newFileController.newFileOptionsNav.handleOkButtonAction();
+                }
+                //save as
+                if((this.application.ninja.newFileController.saveAsDialog !== null)
+                    && !this.application.ninja.newFileController.saveAsDialog.okButton.hasAttribute("disabled")){
+
+                    this.application.ninja.newFileController.saveAsDialog.handleOkButtonAction();
+                }
+                return;
+            }
+            //ESC key
+            if(evt.keyCode === Keyboard.ESCAPE){
+                if(this.application.ninja.filePickerController.pickerNavChoices !== null){
+                    this.application.ninja.filePickerController.pickerNavChoices.handleCancelButtonAction();
+                }
+                if(this.application.ninja.newFileController.newFileOptionsNav !== null){
+                    this.application.ninja.newFileController.newFileOptionsNav.handleCancelButtonAction();
+                }
+                if(this.application.ninja.newFileController.saveAsDialog !== null){
+                    this.application.ninja.newFileController.saveAsDialog.handleCancelButtonAction();
+                }
+                return;
+            }
 
         }
     },

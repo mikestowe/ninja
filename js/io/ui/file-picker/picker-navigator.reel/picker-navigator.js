@@ -258,7 +258,6 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
             this.element.addEventListener("refreshTreeSegment", function(evt){that.handlePickerNavRefreshTreeSegment(evt);}, false);
             this.resultsArea.addEventListener("click", function(evt){that.handleResultsAreaClick(evt);}, false);
             this.element.addEventListener("click", function(evt){that.handlePickerNavClick(evt);}, false);
-
             this.okButton.addEventListener("click", function(evt){that.handleOkButtonAction(evt);}, false);
             this.cancelButton.addEventListener("click", function(evt){that.handleCancelButtonAction(evt);}, false);
 
@@ -1071,6 +1070,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
                 //clear memory - TODO:check for more memory leaks
                 this.pickerModel = null;
                 this.application.ninja.filePickerController._directoryContentCache = {};
+                this.application.ninja.filePickerController.pickerNavChoices = null;
                 //remove listeners
                 this.element.removeEventListener("openFolder", this, false);//add icon double click event listener to reload iconList with new set of data
                 this.element.removeEventListener("selectedItem", this, false);//for single selection only

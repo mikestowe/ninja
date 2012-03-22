@@ -83,6 +83,11 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
                       this.enableOk();
                   }
               }
+              if(evt.keyCode === 13){
+                  if(!this.okButton.hasAttribute("disabled")){
+                      this.handleOkButtonAction(evt);
+                  }
+              }
           }
     },
 
@@ -99,7 +104,7 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
     handleCancelButtonAction :{
         value:function(evt){
             //clean up memory
-            //this.cleanup();
+            this.cleanup();
 
             if(this.popup){
                 this.popup.hide();
@@ -134,7 +139,7 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
 
                 if(success){
                     //clean up memory
-                    //this.cleanup();
+                    this.cleanup();
 
                     if(this.popup){
                         this.popup.hide();
@@ -227,6 +232,20 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
                 }
                 return status;
             }
+        },
+
+    cleanup:{
+        value:function(){
+            var self = this;
+
+            //remove event listener
+            this.newFileName.removeEventListener("keyup", function(evt){self.handleNewFileNameOnkeyup(evt);}, false);
+            this.eventManager.removeEventListener("newFileDirectorySet", function(evt){self.handleNewFileDirectorySet(evt);}, false);
+            this.okButton.removeEventListener("click", function(evt){self.handleOkButtonAction(evt);}, false);
+            this.cancelButton.removeEventListener("click", function(evt){self.handleCancelButtonAction(evt);}, false);
+
+            this.application.ninja.newFileController.saveAsDialog = null;
         }
+    }
 
 });

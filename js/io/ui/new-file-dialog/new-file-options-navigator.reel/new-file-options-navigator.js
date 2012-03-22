@@ -106,6 +106,12 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
             this.okButton.addEventListener("click", function(evt){that.handleOkButtonAction(evt);}, false);
             this.cancelButton.addEventListener("click", function(evt){that.handleCancelButtonAction(evt);}, false);
 
+            this.element.addEventListener("enterPressed", function(evt){
+                if(!that.okButton.hasAttribute("disabled")){
+                    that.handleOkButtonAction(evt);
+                }
+            }, false);
+
             if(!!this.newFileModel.defaultProjectType){
                 var templates = this.newFileModel.prepareContents(this.newFileModel.defaultProjectType);
                 this.templateList = iconsListModule.IconsList.create();
@@ -382,6 +388,8 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
             this.element.removeEventListener("selectedItem", function(evt){that.handleNewFileNavSelectedItem(evt);}, false);//for single selection only
             this.eventManager.removeEventListener("newFileDirectorySet", function(evt){that.handleNewFileDirectorySet(evt);}, false);
             this.eventManager.removeEventListener("newFileNameSet", function(evt){that.handleNewFileNameSet(evt);}, false);
+
+            this.application.ninja.newFileController.newFileOptionsNav = null;
         }
     },
 
