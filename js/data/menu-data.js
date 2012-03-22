@@ -174,12 +174,30 @@ exports.MenuData = Montage.create( Montage, {
                         {
                             "displayText" : "Zoom In",
                             "hasSubMenu" : false,
-                            "enabled": true
+                            "enabled": {
+                                "value": false,
+                                "boundObj": "documentController",
+                                "boundProperty": "activeDocument",
+                                "oneway": true,
+                                "boundValueMutator": function(activeDocument){
+                                    if((activeDocument !== null) && (activeDocument.currentView === "design")){return true;}
+                                    else{return false;}
+                                }
+                            }
                         },
                         {
                             "displayText" : "Zoom Out",
                             "hasSubMenu" : false,
-                            "enabled": true
+                            "enabled": {
+                                "value": false,
+                                "boundObj": "documentController",
+                                "boundProperty": "activeDocument",
+                                "oneway": true,
+                                "boundValueMutator": function(activeDocument){
+                                    if((activeDocument !== null) && (activeDocument.currentView === "design")){return true;}
+                                    else{return false;}
+                                }
+                            }
                         },
                         {
                             "displayText" : "",
@@ -188,7 +206,16 @@ exports.MenuData = Montage.create( Montage, {
                         {
                             "displayText" : "Live Preview",
                             "hasSubMenu" : false,
-                            "enabled": true,
+                            "enabled": {
+                                "value": false,
+                                "boundObj": "documentController",
+                                "boundProperty": "activeDocument",
+                                "oneway": true,
+                                "boundValueMutator": function(activeDocument){
+                                    if((activeDocument !== null) && (activeDocument.currentView === "design")){return true;}
+                                    else{return false;}
+                                }
+                            },
                             "checked": {
                                 "value": false,
                                 "boundProperty": "livePreview"
@@ -197,7 +224,16 @@ exports.MenuData = Montage.create( Montage, {
                         {
                             "displayText" : "Chrome Preview",
                             "hasSubMenu" : false,
-                            "enabled": true,
+                            "enabled": {
+                                "value": false,
+                                "boundObj": "documentController",
+                                "boundProperty": "activeDocument",
+                                "oneway": true,
+                                "boundValueMutator": function(activeDocument){
+                                    if((activeDocument !== null) && (activeDocument.currentView === "design")){return true;}
+                                    else{return false;}
+                                }
+                            },
                             "checked": {
                                 "value": false,
                                 "boundProperty": "chromePreview"
@@ -206,7 +242,16 @@ exports.MenuData = Montage.create( Montage, {
                         {
                             "displayText" : "Layout View",
                             "hasSubMenu" : false,
-                            "enabled": true,
+                            "enabled": {
+                                "value": false,
+                                "boundObj": "documentController",
+                                "boundProperty": "activeDocument",
+                                "oneway": true,
+                                "boundValueMutator": function(activeDocument){
+                                    if((activeDocument !== null) && (activeDocument.currentView === "design")){return true;}
+                                    else{return false;}
+                                }
+                            },
                             "submenu": true,
                             "entries": [
                                 {
@@ -244,7 +289,16 @@ exports.MenuData = Montage.create( Montage, {
                         {
                             "displayText" : "Snap",
                             "hasSubMenu" : false,
-                            "enabled": true,
+                            "enabled": {
+                                "value": false,
+                                "boundObj": "documentController",
+                                "boundProperty": "activeDocument",
+                                "oneway": true,
+                                "boundValueMutator": function(activeDocument){
+                                    if((activeDocument !== null) && (activeDocument.currentView === "design")){return true;}
+                                    else{return false;}
+                                }
+                            },
                             "checked": {
                                 "value": true,
                                 "boundProperty": "snap"
@@ -294,7 +348,16 @@ exports.MenuData = Montage.create( Montage, {
                         {
                             "displayText" : "Show 3D Grid",
                             "hasSubMenu" : false,
-                            "enabled": true,
+                            "enabled": {
+                                "value": false,
+                                "boundObj": "documentController",
+                                "boundProperty": "activeDocument",
+                                "oneway": true,
+                                "boundValueMutator": function(activeDocument){
+                                    if((activeDocument !== null) && (activeDocument.currentView === "design")){return true;}
+                                    else{return false;}
+                                }
+                            },
                             "checked": {
                                 "value": false,
                                 "boundProperty": "show3dGrid"
@@ -307,7 +370,16 @@ exports.MenuData = Montage.create( Montage, {
                         {
                             "displayText" : "Front View",
                             "hasSubMenu" : false,
-                            "enabled": true,
+                            "enabled": {
+                                "value": false,
+                                "boundObj": "documentController",
+                                "boundProperty": "activeDocument",
+                                "oneway": true,
+                                "boundValueMutator": function(activeDocument){
+                                    if((activeDocument !== null) && (activeDocument.currentView === "design")){return true;}
+                                    else{return false;}
+                                }
+                            },
                             "radio": true,
                             "checked": {
                                 "value": true,
@@ -317,7 +389,16 @@ exports.MenuData = Montage.create( Montage, {
                         {
                             "displayText" : "Top View",
                             "hasSubMenu" : false,
-                            "enabled": true,
+                            "enabled": {
+                                "value": false,
+                                "boundObj": "documentController",
+                                "boundProperty": "activeDocument",
+                                "oneway": true,
+                                "boundValueMutator": function(activeDocument){
+                                    if((activeDocument !== null) && (activeDocument.currentView === "design")){return true;}
+                                    else{return false;}
+                                }
+                            },
                             "radio": true,
                             "checked": {
                                 "value": true,
@@ -327,7 +408,16 @@ exports.MenuData = Montage.create( Montage, {
                         {
                             "displayText" : "Side View",
                             "hasSubMenu" : false,
-                            "enabled": true,
+                            "enabled": {
+                                "value": false,
+                                "boundObj": "documentController",
+                                "boundProperty": "activeDocument",
+                                "oneway": true,
+                                "boundValueMutator": function(activeDocument){
+                                    if((activeDocument !== null) && (activeDocument.currentView === "design")){return true;}
+                                    else{return false;}
+                                }
+                            },
                             "radio": true,
                             "checked": {
                                 "value": true,
