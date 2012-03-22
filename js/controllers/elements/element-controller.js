@@ -244,7 +244,7 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
             else
             {
                 var dist = this.application.ninja.stylesController.getPerspectiveDistFromElement(el, false);
-                if(dist === null) {
+                if(dist == null) {
                     dist = 1400;
                 }
 

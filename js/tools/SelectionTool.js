@@ -318,18 +318,28 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                 this._targets.push({elt:elt, mat:curMat, matInv:curMatInv});
                 if(addToUndoStack)
                 {
+                    var prevX,
+                        prevY,
+                        prevW,
+                        prevH,
+                        _x,
+                        _y,
+                        _w,
+                        _h,
+                        previousMat,
+                        previousStyleStr,
+                        newStyleStr;
 
                     if(!this._use3DMode)
                     {
-                        var previousMat = this._undoArray[i].mat.slice(0);
-                        var prevX = this._undoArray[i]._x;
-                        var prevY = this._undoArray[i]._y;
-                        var prevW = this._undoArray[i]._w;
-                        var prevH = this._undoArray[i]._h;
-                        var _x = parseInt(ElementsMediator.getProperty(elt, "left")) + curMat[12] - previousMat[12];
-                        var _y = parseInt(ElementsMediator.getProperty(elt, "top")) + curMat[13] - previousMat[13];
-                        var _w = parseInt(ElementsMediator.getProperty(elt, "width"));
-                        var _h = parseInt(ElementsMediator.getProperty(elt, "height"));
+                        prevX = this._undoArray[i]._x;
+                        prevY = this._undoArray[i]._y;
+                        prevW = this._undoArray[i]._w;
+                        prevH = this._undoArray[i]._h;
+                        _x = parseInt(ElementsMediator.getProperty(elt, "left"));
+                        _y = parseInt(ElementsMediator.getProperty(elt, "top"));
+                        _w = parseInt(ElementsMediator.getProperty(elt, "width"));
+                        _h = parseInt(ElementsMediator.getProperty(elt, "height"));
 
                         previousLeft.push(prevX + "px");
                         previousTop.push(prevY + "px");
@@ -339,27 +349,22 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                         newTop.push(_y + "px");
                         newWidth.push(_w + "px");
                         newHeight.push(_h + "px");
-
-                        viewUtils.setMatrixForElement(elt, previousMat);
-
-                        this._targets[i].mat = previousMat;
-                        this._targets[i].matInv = glmat4.inverse(previousMat, []);
                     }
                     else
                     {
-                        var previousMat = this._undoArray[i].mat.slice(0);
-                        var prevW = this._undoArray[i]._w;
-                        var prevH = this._undoArray[i]._h;
-                        var _w = parseInt(ElementsMediator.getProperty(elt, "width"));
-                        var _h = parseInt(ElementsMediator.getProperty(elt, "height"));
+                        previousMat = this._undoArray[i].mat.slice(0);
+                        prevW = this._undoArray[i]._w;
+                        prevH = this._undoArray[i]._h;
+                        _w = parseInt(ElementsMediator.getProperty(elt, "width"));
+                        _h = parseInt(ElementsMediator.getProperty(elt, "height"));
                         previousWidth.push(prevW + "px");
                         previousHeight.push(prevH + "px");
                         newWidth.push(_w + "px");
                         newHeight.push(_h + "px");
 
-                        var previousStyleStr = {dist:this._undoArray[i].dist,
+                        previousStyleStr = {dist:this._undoArray[i].dist,
                                                 mat:MathUtils.scientificToDecimal(previousMat, 5)};
-                        var newStyleStr = {dist:viewUtils.getPerspectiveDistFromElement(elt),
+                        newStyleStr = {dist:viewUtils.getPerspectiveDistFromElement(elt),
                                             mat:MathUtils.scientificToDecimal(curMat, 5)};
                         previousStyles.push(previousStyleStr);
                         newStyles.push(newStyleStr);
