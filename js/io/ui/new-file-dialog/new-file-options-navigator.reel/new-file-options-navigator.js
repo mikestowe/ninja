@@ -130,6 +130,21 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
 
             this.okButton.addEventListener("click", function(evt){that.handleOkButtonAction(evt);}, false);
             this.cancelButton.addEventListener("click", function(evt){that.handleCancelButtonAction(evt);}, false);
+
+            this.element.addEventListener("keyup", function(evt){
+                if(evt.keyCode == 27) {//ESC key
+                    if(that.application.ninja.newFileController.newFileOptionsNav !== null){
+                        that.handleCancelButtonAction();
+                    }
+                }else if((evt.keyCode == 13) && !(evt.ctrlKey || evt.metaKey)){//ENTER key
+                    if((that.application.ninja.newFileController.newFileOptionsNav !== null)
+                        && !that.okButton.hasAttribute("disabled")){
+
+                        that.handleOkButtonAction();
+                    }
+                }
+            }, true);
+
         }
 
     },

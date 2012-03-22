@@ -64,6 +64,21 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
             this.newFileName.select();
 
             this.enableOk();
+
+            this.element.addEventListener("keyup", function(evt){
+                if(evt.keyCode == 27) {//ESC key
+                    if(self.application.ninja.newFileController.saveAsDialog !== null){
+                        self.handleCancelButtonAction();
+                    }
+                }else if((evt.keyCode == 13) && !(evt.ctrlKey || evt.metaKey)){//ENTER key
+                    if((self.application.ninja.newFileController.saveAsDialog !== null)
+                        && !self.okButton.hasAttribute("disabled")){
+
+                        self.handleOkButtonAction();
+                    }
+                }
+            }, true);
+
         }
     },
 

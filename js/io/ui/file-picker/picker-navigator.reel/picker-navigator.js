@@ -261,8 +261,17 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
             this.okButton.addEventListener("click", function(evt){that.handleOkButtonAction(evt);}, false);
             this.cancelButton.addEventListener("click", function(evt){that.handleCancelButtonAction(evt);}, false);
 
+            this.element.addEventListener("keyup", function(evt){
+                if(evt.keyCode == 27) {
+                    if(that.application.ninja.filePickerController.pickerNavChoices !== null){
+                        that.handleCancelButtonAction();
+                    }
+                }
+            }, true);
+
             //ready to show picker now
             this.element.style.visibility = "visible";
+            this.element.focus();
     	}
     },
 
