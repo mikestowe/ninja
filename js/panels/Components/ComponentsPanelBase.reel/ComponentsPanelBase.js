@@ -297,6 +297,8 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                         styles[n] = defaultStyles[n];
                     }
                 }
+                
+                instance.addEventListener('firstDraw', that, false);
 
                 that.application.ninja.currentDocument.setComponentInstance(instance, element);
 
@@ -304,6 +306,12 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
             });
 
         }
+    },
+    
+    handleFirstDraw: {
+    	value: function (e) {
+    		NJevent("addComponentFirstDraw");
+    	}
     },
 
     makeComponent: {

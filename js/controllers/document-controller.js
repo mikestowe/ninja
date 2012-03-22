@@ -64,10 +64,16 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
             this.eventManager.addEventListener("styleSheetDirty", this, false);
             
+            this.eventManager.addEventListener("addComponentFirstDraw", this, false);
         }
     },
     
-   
+    handleAddComponentFirstDraw: {
+    	value: function (e) {
+    		//TODO: Add logic to reparse the document for dynamically added styles
+    		console.log(e);
+    	}
+    },
     
     			
     			
