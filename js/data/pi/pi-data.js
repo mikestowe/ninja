@@ -393,6 +393,16 @@ exports.PiData = Montage.create( Montage, {
                     ],
                     [
                         {
+                            type: "checkbox",
+                            id: "animate",
+                            prop: "animate",
+                            defaultValue: true,
+                            value: "Animate",
+                            checked: true
+                        }
+                    ],
+                    [
+                        {
                             type: "dropdown",
                             id:   "strokeMaterial",
                             prop:   "strokeMaterial",
@@ -482,6 +492,16 @@ exports.PiData = Montage.create( Montage, {
                             defaultValue: false,
                             value: "Use WebGL",
                             checked: false
+                        }
+                    ],
+                    [
+                        {
+                            type: "checkbox",
+                            id: "animate",
+                            prop: "animate",
+                            defaultValue: true,
+                            value: "Animate",
+                            checked: true
                         }
                     ],
                     [
@@ -576,6 +596,16 @@ exports.PiData = Montage.create( Montage, {
                             defaultValue: false,
                             value: "Use WebGL",
                             checked: false
+                        }
+                    ],
+                    [
+                        {
+                            type: "checkbox",
+                            id: "animate",
+                            prop: "animate",
+                            defaultValue: true,
+                            value: "Animate",
+                            checked: true
                         }
                     ],
                     [
