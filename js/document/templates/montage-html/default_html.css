@@ -73,3 +73,8 @@ body
 .elem-red-outline {
   outline: red solid thin;
 }
+
+.nj-preset-transition {
+    -webkit-transition: all 450ms linear !important;
+    background-color: red;
+}
