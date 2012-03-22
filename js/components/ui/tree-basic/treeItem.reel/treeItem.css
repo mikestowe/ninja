@@ -29,7 +29,7 @@
 }
 
 .atreeItem .name{
-    white-space: nowrap;
+    white-space: pre;
     text-overflow:ellipsis;
     line-height:15px;
     overflow: hidden;

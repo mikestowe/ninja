@@ -11,7 +11,7 @@
 .documentEntry span
 {
     display: inline-block;
-    white-space: nowrap;
+    white-space: pre;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width:100px;
