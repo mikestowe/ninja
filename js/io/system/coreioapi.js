@@ -217,7 +217,7 @@ exports.CoreIoApi = Montage.create(Component, {
         value: function(serviceURL, path) {
             var urlOut = path.replace(/\\/g,"/");
             urlOut = urlOut.replace(/:/g,"");
-            urlOut = encodeURI(urlOut);
+            urlOut = encodeURIComponent(urlOut);
             //add leading / if not already there
             if((urlOut.length > 0) && (urlOut.charAt(0) !== "/")){
                 urlOut = "/" + urlOut;
