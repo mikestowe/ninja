@@ -163,7 +163,13 @@ var TextDocument = exports.TextDocument = Montage.create(Component, {
 
     needsSave: {
         get: function() { return this._needsSave; },
-        set: function(value) { this._needsSave = value }
+        set: function(value) {
+            var i=0, canSaveAll=false;
+            this._needsSave = value;
+
+            this.application.ninja.documentController.canSave = value;//for save menu state update
+            this.application.ninja.documentController.canSaveAll = value;//for save menu state update..currently save all is tried to the current document only
+        }
     },
 
     callback: {

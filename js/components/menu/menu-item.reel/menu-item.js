@@ -61,6 +61,8 @@ exports.MenuItem = Montage.create(Component, {
 
     prepareForDraw: {
         value: function() {
+            var boundObject = this.application.ninja, strArr = null, i=0;
+
             if(!this.data) return;
 
             if(this.data.separator) {
@@ -82,9 +84,16 @@ exports.MenuItem = Montage.create(Component, {
             }
 
             if(this.data.enabled.boundProperty) {
+                strArr = this.data.enabled.boundObj.split(".");
+                for(i=0;i<strArr.length;i++){
+                    boundObject = boundObject[strArr[i]];
+                }
+
                 Object.defineBinding(this, "enabled", {
-                  boundObject: this.application.ninja[this.data.enabled.boundObj],
-                  boundObjectPropertyPath: this.data.enabled.boundProperty
+                  boundObject: boundObject,
+                  boundObjectPropertyPath: this.data.enabled.boundProperty,
+                  boundValueMutator: this.data.enabled.boundValueMutator,
+                  oneway : this.data.enabled.oneway
                 });
 
             } else {
