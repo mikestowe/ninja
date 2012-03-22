@@ -66,7 +66,10 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
 
     handleNewFileDirectorySet:{
          value:function(evt){
-             if(!!evt._event.newFileDirectory){
+             if((evt.keyCode === 13) && !this.okButton.hasAttribute("disabled")){
+                 this.handleOkButtonAction(evt);
+             }
+             else if(!!evt._event.newFileDirectory){
                  this.folderUri = evt._event.newFileDirectory;
                  if(this.isValidUri(this.folderUri)){
                      this.enableOk();

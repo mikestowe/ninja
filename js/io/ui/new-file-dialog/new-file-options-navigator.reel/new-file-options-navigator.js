@@ -98,20 +98,6 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
 
             this.addIdentifiers();
 
-            this.element.addEventListener("drawTree", function(evt){that.handleNewFileNavDrawTree(evt);}, false);
-            this.element.addEventListener("selectedItem", function(evt){that.handleNewFileNavSelectedItem(evt);}, false);//for single selection only
-            this.eventManager.addEventListener("newFileDirectorySet", function(evt){that.handleNewFileDirectorySet(evt);}, false);
-            this.eventManager.addEventListener("newFileNameSet", function(evt){that.handleNewFileNameSet(evt);}, false);
-
-            this.okButton.addEventListener("click", function(evt){that.handleOkButtonAction(evt);}, false);
-            this.cancelButton.addEventListener("click", function(evt){that.handleCancelButtonAction(evt);}, false);
-
-            this.element.addEventListener("enterPressed", function(evt){
-                if(!that.okButton.hasAttribute("disabled")){
-                    that.handleOkButtonAction(evt);
-                }
-            }, false);
-
             if(!!this.newFileModel.defaultProjectType){
                 var templates = this.newFileModel.prepareContents(this.newFileModel.defaultProjectType);
                 this.templateList = iconsListModule.IconsList.create();
@@ -121,7 +107,6 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
                 }
                 this.templateList.element = this.templateIcons;
                 this.templateList.needsDraw = true;
-
 
                 this.selectedProjectType = {"uri":this.newFileModel.defaultProjectType, "element":null};
             }
@@ -133,6 +118,18 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
                     fileExtensionEl.innerHTML = ""+this.newFileModel.projectTypeData[this.newFileModel.defaultProjectType].fileExtension;
                 }
             }
+
+            this.element.addEventListener("drawTree", function(evt){that.handleNewFileNavDrawTree(evt);}, false);
+            this.element.addEventListener("selectedItem", function(evt){that.handleNewFileNavSelectedItem(evt);}, false);//for single selection only
+            this.eventManager.addEventListener("newFileDirectorySet", function(evt){
+                that.handleNewFileDirectorySet(evt);
+            }, false);
+            this.eventManager.addEventListener("newFileNameSet", function(evt){
+                that.handleNewFileNameSet(evt);
+            }, false);
+
+            this.okButton.addEventListener("click", function(evt){that.handleOkButtonAction(evt);}, false);
+            this.cancelButton.addEventListener("click", function(evt){that.handleCancelButtonAction(evt);}, false);
         }
 
     },
@@ -314,7 +311,10 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
 
     handleNewFileDirectorySet:{
         value:function(evt){
-            if(!!evt._event.newFileDirectory){
+            if((evt.keyCode === 13) && !this.okButton.hasAttribute("disabled")){
+                this.handleOkButtonAction(evt);
+            }
+            else if(!!evt._event.newFileDirectory){
                 this.newFileDirectory = evt._event.newFileDirectory;
                 if(this.isValidUri(this.newFileDirectory)){
                     this.enableOk();
@@ -325,7 +325,10 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
 
     handleNewFileNameSet:{
         value:function(evt){
-            if(!!evt._event.newFileName){
+            if((evt.keyCode === 13) && !this.okButton.hasAttribute("disabled")){
+                this.handleOkButtonAction(evt);
+            }
+            else if(!!evt._event.newFileName){
                 this.newFileName = evt._event.newFileName;
                 if(this.isValidFileName(this.newFileName)){
                     this.enableOk();
@@ -386,8 +389,6 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
 
             this.newFileName = "";
             this.newFileDirectory = "";
-            this.selectedProjectType = null;
-            this.selectedTemplate = null;
 
             //remove event listeners
             this.element.removeEventListener("drawTree", function(evt){that.handleNewFileNavDrawTree(evt);}, false);

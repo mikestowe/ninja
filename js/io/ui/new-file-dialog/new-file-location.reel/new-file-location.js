@@ -32,13 +32,8 @@ var NewFileLocation = exports.NewFileLocation = Montage.create(Component, {
                 var newFileNameSetEvent = document.createEvent("Events");
                 newFileNameSetEvent.initEvent("newFileNameSet", false, false);
                 newFileNameSetEvent.newFileName = this.newFileName.value;
+                newFileNameSetEvent.keyCode = evt.keyCode;
                 this.eventManager.dispatchEvent(newFileNameSetEvent);
-            }
-            if(evt.keyCode === 13){
-                var enterPressedEvent = document.createEvent("Events");
-                enterPressedEvent.initEvent("enterPressed", false, false);
-                enterPressedEvent.newFileName = this.newFileName.value;
-                this.eventManager.dispatchEvent(enterPressedEvent);
             }
         }
     }
