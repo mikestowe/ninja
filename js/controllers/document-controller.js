@@ -78,8 +78,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     			
     			
     			
-					
-    /*
+
 ////////////////////////////////////////////////////////////////////
 	//
     handleWebRequest: {
@@ -87,7 +86,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     		//TODO: Check if frameId is proper
     		if (this._hackRootFlag && request.parentFrameId !== -1) {
     			//TODO: Optimize creating string
-    			console.log(request);
+    			//console.log(request);
     			//console.log(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1], request.url);
 				//return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split('/')[request.url.split('/').length-1]};
 				return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/montage-html/'))[1]};
@@ -110,7 +109,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         }
     },
 	////////////////////////////////////////////////////////////////////
-*/
+
 
 	
 	
