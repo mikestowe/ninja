@@ -301,6 +301,7 @@ var GeomObj = function GLGeomObj() {
 				case "plasma":
 				case "deform":
 				case "water":
+				case "paris":
 				case "tunnel":
 				case "reliefTunnel":
 				case "squareTunnel":
@@ -373,6 +374,7 @@ var GeomObj = function GLGeomObj() {
 				case "plasma":
 				case "deform":
 				case "water":
+				case "paris":
 				case "tunnel":
 				case "reliefTunnel":
 				case "squareTunnel":

@@ -526,6 +526,7 @@ function RuntimeGeomObj()
 
 				case "deform":
 				case "water":
+				case "paris":
 				case "tunnel":
 				case "reliefTunnel":
 				case "squareTunnel":

@@ -275,7 +275,6 @@ var radialBlurMaterialDef =
 };
 
 
-/*
 var RaidersMaterial = function RaidersMaterial()
 {
 	// initialize the inherited members
@@ -295,7 +294,6 @@ if (typeof exports === "object")
 {
 	exports.RaidersMaterial = RaidersMaterial;
 }
-*/
 
 
 RadialBlurMaterial.prototype = new Material();
