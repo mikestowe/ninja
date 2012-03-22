@@ -9,6 +9,14 @@ var Composer = require("montage/ui/composer/composer").Composer;
 
 exports.ResizeComposer = Montage.create(Composer, {
 
+    xAxis: {
+        value: true
+    },
+
+    yAxis: {
+        value: true
+    },
+
     enabled : {
         enumerable: false,
         value: true
@@ -104,8 +112,19 @@ exports.ResizeComposer = Montage.create(Composer, {
 
     captureMousemove: {
         value: function(e) {
-            this._deltaX = e.clientX - this._startX;
-            this._deltaY = e.clientY - this._startY;
+
+            if (this.xAxis) {
+                this._deltaX = e.clientX - this._startX;
+            }
+            else {
+                this._deltaX = 0;
+            }
+            if (this.yAxis) {
+                this._deltaY = e.clientY - this._startY;
+            }
+            else {
+                this._deltaY = 0;
+            }
             this._executeEvent("resizeMove");
         }
     },
