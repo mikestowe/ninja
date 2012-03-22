@@ -500,7 +500,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
                     metadata = "Name: "+data.name;
                 }
                 metadata = metadata + "<br />" + "Type: "+data.type;
-                if(data.size){metadata = metadata + "<br />" + "Size: "+data.size;}
+                if(data.size){metadata = metadata + "<br />" + "Size: "+data.size+" bytes";}
                 if(data.creationDate){metadata = metadata + "<br />" + "Creation date: "+ this.formatTimestamp(data.creationDate);}
                 if(data.modifiedDate){metadata = metadata + "<br />" + "Modified date: "+ this.formatTimestamp(data.modifiedDate);}
             }

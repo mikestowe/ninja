@@ -297,10 +297,16 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
             }else{
                 if(this.error.innerHTML === ""){
                     this.showError("! Project Template, Name and Directory should be valid.");
-                }
-                //disable ok
-                if(!this.okButton.hasAttribute("disabled")){
-                    this.okButton.setAttribute("disabled", "true");
+                    //disable ok
+                    if(!this.okButton.hasAttribute("disabled")){
+                        this.okButton.setAttribute("disabled", "true");
+                    }
+                }else if(!this.selectedProjectType || !this.selectedTemplate){
+                    this.showError("! Project Template should be selected.");
+                    //disable ok
+                    if(!this.okButton.hasAttribute("disabled")){
+                        this.okButton.setAttribute("disabled", "true");
+                    }
                 }
             }
         }
@@ -399,6 +405,10 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
             if(uri !== ""){
                 if(!status){
                     this.showError("! Invalid directory.");
+                    //disable ok
+                    if(!this.okButton.hasAttribute("disabled")){
+                        this.okButton.setAttribute("disabled", "true");
+                    }
                 }
             }
             return status;
@@ -410,6 +420,10 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
             if(fileName !== ""){
                 if(!status){
                     this.showError("! Invalid file name.");
+                    //disable ok
+                    if(!this.okButton.hasAttribute("disabled")){
+                        this.okButton.setAttribute("disabled", "true");
+                    }
                 }
             }
             return status;
@@ -445,10 +459,6 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
         value:function(errorString){
             this.error.innerHTML = "";
             this.error.innerHTML=errorString;
-            //disable ok
-            if(!this.okButton.hasAttribute("disabled")){
-                this.okButton.setAttribute("disabled", "true");
-            }
         }
     },
 
