@@ -9,7 +9,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = 		require("montage/core/core").Montage,
     TextDocument =	require("js/document/text-document").TextDocument,
     NJUtils = 		require("js/lib/NJUtils").NJUtils,
-	GLWorld =			require("js/lib/drawing/world").World;
+	GLWorld =			require("js/lib/drawing/world").World,
+    MaterialsModel = require("js/models/materials-model").MaterialsModel;
 ////////////////////////////////////////////////////////////////////////
 //
 exports.HTMLDocument = Montage.create(TextDocument, {
@@ -193,12 +194,9 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 			var elt = this.iframe.contentWindow.document.getElementById("UserContent");
 			//
 			if (elt) {
-				this._glData = [];
-				//if (path) {
-					//this.collectGLData(elt, this._glData, path);
-				//} else {
-					this.collectGLData(elt, this._glData );
-				//}
+                var matLib = MaterialsModel.exportMaterials();
+				this._glData = [matLib];
+				this.collectGLData(elt, this._glData );
 			} else {
 				this._glData = null
 			}
@@ -219,29 +217,74 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 					*/
 
 					// /*
+					// get the data for the next canvas
 					var importStr = value[i];
-					var startIndex = importStr.indexOf( "id: " );
-					if (startIndex >= 0) {
-						var endIndex = importStr.indexOf( "\n", startIndex );
-						if (endIndex > 0) {
-							var id = importStr.substring( startIndex+4, endIndex );
-							if (id) {
-								var canvas = this.findCanvasWithID( id, elt );
-								if (canvas) {
-									if (!canvas.elementModel) {
-										NJUtils.makeElementModel(canvas, "Canvas", "shape", true);
-									}
-									if (canvas.elementModel) {
-										if (canvas.elementModel.shapeModel.GLWorld) {
-											canvas.elementModel.shapeModel.GLWorld.clearTree();
-										}
-										var index = importStr.indexOf( "webGL: " );
-										var useWebGL = (index >= 0)
-										var world = new GLWorld( canvas, useWebGL );
-										world.import( importStr );
-										this.buildShapeModel( canvas.elementModel, world );
-									}
+
+					// determine if it is the new (JSON) or old style format
+					var id = null;
+					var jObj = null;
+					var index = importStr.indexOf( ';' );
+					if ((importStr[0] === 'v') && (index < 24))
+					{
+						// JSON format.  pull off the
+						importStr = importStr.substr( index+1 );
+						jObj = jObj = JSON.parse( importStr );
+						id = jObj.id;
+					}
+					else
+					{
+                        // at this point the data could be either the materials library or
+                        // an old style world.  We can determine which by converting the string
+                        // to an object via JSON.parse.  That operation will fail if the string
+                        // is an old style world.
+                        var matLibStr = 'materialLibrary;';
+                        index = importStr.indexOf( matLibStr );
+                        if (index == 0)
+                        {
+                            importStr = importStr.substr( matLibStr.length );
+                            var matLibObj = JSON.parse( importStr );
+                            MaterialsModel.importMaterials( matLibObj );
+                        }
+                        else
+                        {
+						    var startIndex = importStr.indexOf( "id: " );
+						    if (startIndex >= 0) {
+							    var endIndex = importStr.indexOf( "\n", startIndex );
+							    if (endIndex > 0)
+								    id = importStr.substring( startIndex+4, endIndex );
+						    }
+                        }
+					}
+
+					if (id != null)
+					{
+						var canvas = this.findCanvasWithID( id, elt );
+						if (canvas)
+						{
+							if (!canvas.elementModel)
+							{
+								NJUtils.makeElementModel(canvas, "Canvas", "shape", true);
+							}
+							if (canvas.elementModel)
+							{
+								if (canvas.elementModel.shapeModel.GLWorld)
+									canvas.elementModel.shapeModel.GLWorld.clearTree();
+
+								if (jObj)
+								{
+									var useWebGL = jObj.webGL;
+									var world = new GLWorld( canvas, useWebGL );
+									world.importJSON( jObj );
 								}
+								else
+								{
+									var index = importStr.indexOf( "webGL: " );
+									var useWebGL = (index >= 0);
+									var world = new GLWorld( canvas, useWebGL );
+									world.import( importStr );
+								}
+
+								this.buildShapeModel( canvas.elementModel, world );
 							}
 						}
 					}
@@ -265,7 +308,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 				shapeModel.GLGeomObj			= root;
 				shapeModel.strokeSize			= root._strokeWidth;
 				shapeModel.stroke				= root._strokeColor.slice();
-				shapeModel.strokeMaterial		= root._strokeMaterial.dup();
+				shapeModel.strokeMaterial		= root._strikeMaterial ? root._strokeMaterial.dup() : null;
 				shapeModel.strokeStyle			= "solid";
 				//shapeModel.strokeStyleIndex
 				//shapeModel.border
@@ -276,7 +319,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
                         elementModel.selection = "Rectangle";
                         elementModel.pi = "RectanglePi";
                         shapeModel.fill					= root._fillColor.slice();
-                        shapeModel.fillMaterial			= root._fillMaterial.dup();
+                        shapeModel.fillMaterial			= root._fillMaterial ? root._fillMaterial.dup() : null;
 						shapeModel.tlRadius = root._tlRadius;
 						shapeModel.trRadius = root._trRadius;
 						shapeModel.blRadius = root._blRadius;
@@ -287,7 +330,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
                         elementModel.selection = "Oval";
                         elementModel.pi = "OvalPi";
                         shapeModel.fill					= root._fillColor.slice();
-                        shapeModel.fillMaterial			= root._fillMaterial.dup();
+                        shapeModel.fillMaterial			= root._fillMaterial ? root._fillMaterial.dup() : null;
 						shapeModel.innerRadius = root._innerRadius;
 						break;
 
@@ -382,7 +425,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 		{
 			if (elt.elementModel && elt.elementModel.shapeModel && elt.elementModel.shapeModel.GLWorld)
 			{
-				var data = elt.elementModel.shapeModel.GLWorld.export();
+				var data = elt.elementModel.shapeModel.GLWorld.exportJSON();
+				//var data = elt.elementModel.shapeModel.GLWorld.export();
 				dataArray.push( data );
 			}
 

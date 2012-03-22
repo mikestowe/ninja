@@ -10,14 +10,15 @@ var Material = require("js/lib/rdge/materials/material").Material;
 // Class GLMaterial
 //      RDGE representation of a material.
 ///////////////////////////////////////////////////////////////////////
-var PulseMaterial = function PulseMaterial() {
+var CloudMaterial = function CloudMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-	this._name = "PulseMaterial";
-	this._shaderName = "pulse";
+	this._name = "CloudMaterial";
+	this._shaderName = "cloud";
 
-	this._texMap = 'assets/images/cubelight.png';
+	this._texMap = 'assets/images/cloud2.jpg';
+	this._diffuseColor = [0.5, 0.5, 0.5, 0.5];
 
 	this._time = 0.0;
 	this._dTime = 0.01;
@@ -31,19 +32,26 @@ var PulseMaterial = function PulseMaterial() {
 	this.getTextureMap			= function()		{  return this._propValues[this._propNames[0]] ? this._propValues[this._propNames[0]].slice() : null	};
 	this.setTextureMap			= function(m)		{  this._propValues[this._propNames[0]] = m ? m.slice(0) : null;  this.updateTexture();  	};
 
+	this.setDiffuseColor		= function(c)		{  this._propValues[this._propNames[1]] = c.slice(0);  this.updateColor();  	};
+	this.getDiffuseColor		= function()		{  return this._propValues[this._propNames[1]] ? this._propValues[this._propNames[1]].slice() : null; 	};
+
 	this.isAnimated			= function()			{  return true;					};
 
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
-	this._propNames			= ["texmap"];
-	this._propLabels		= ["Texture map"];
-	this._propTypes			= ["file"];
+	this._propNames			= ["texmap",		"diffusecolor"];
+	this._propLabels		= ["Texture map",	"Diffuse Color"];
+	this._propTypes			= ["file",			"color"];
 	this._propValues		= [];
 
 	this._propValues[ this._propNames[0] ] = this._texMap.slice(0);
+	this._propValues[ this._propNames[1] ] = this._diffuseColor.slice();
 
-    this.setProperty = function( prop, value ) {
+    this.setProperty = function( prop, value )
+	{
+		if (prop === 'color')  prop = 'diffusecolor';
+
 		// make sure we have legitimate imput
 		var ok = this.validateProperty( prop, value );
 		if (!ok) {
@@ -54,6 +62,10 @@ var PulseMaterial = function PulseMaterial() {
 		{
 			case "texmap":
 				this.setTextureMap(value);
+				break;
+
+			case "diffusecolor":
+				this.setDiffuseColor( value );
 				break;
 
 			case "color":
@@ -73,7 +85,7 @@ var PulseMaterial = function PulseMaterial() {
 		if (world)  this.setWorld( world );
 
 		// allocate a new uber material
-		var newMat = new PulseMaterial();
+		var newMat = new CloudMaterial();
 
 		// copy over the current values;
 		var propNames = [],  propValues = [],  propTypes = [],  propLabels = [];
@@ -92,29 +104,42 @@ var PulseMaterial = function PulseMaterial() {
 		if (world)  this.setWorld( world );
 
 		// this variable declared above is inherited set to a smaller delta.
-		// the pulse material runs a little faster
+		// the cloud material runs a little faster
 		this._dTime = 0.01;
 
 		// set up the shader
 		this._shader = new jshader();
-		this._shader.def = pulseMaterialDef;
+		this._shader.def = cloudMaterialDef;
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = createMaterialNode("pulseMaterial" + "_" + world.generateUniqueNodeID());
+		this._materialNode = createMaterialNode("cloudMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;
 		if (this._shader && this._shader['default']) {
 			this._shader['default'].u_time.set( [this._time] );
+			this._shader['default'].u_DiffuseColor.set( this._diffuseColor );
         }
-
 
 		// set the shader values in the shader
 		this.updateTexture();
-		this.setResolution( [world.getViewportWidth(),world.getViewportHeight()] );
 		this.update( 0 );
 	};
+
+	this.updateColor = function()
+	{
+		var material = this._materialNode;
+		if (material)
+		{
+			var technique = material.shaderProgram['default'];
+			var renderer = g_Engine.getContext().renderer;
+			if (renderer && technique) {
+				var color = this._propValues[this._propNames[1]];
+				technique.u_DiffuseColor.set( this._diffuseColor );
+			}
+		}
+	}
 
 	this.updateTexture = function() {
 		var material = this._materialNode;
@@ -151,17 +176,6 @@ var PulseMaterial = function PulseMaterial() {
 		}
 	};
 
-	this.setResolution = function( res ) {
-		var material = this._materialNode;
-		if (material) {
-			var technique = material.shaderProgram['default'];
-			var renderer = g_Engine.getContext().renderer;
-			if (renderer && technique) {
-				technique.u_resolution.set( res );
-			}
-		}
-	};
-
 	// JSON export
 	this.exportJSON = function()
 	{
@@ -169,8 +183,7 @@ var PulseMaterial = function PulseMaterial() {
 		{
 			'material'		: this.getShaderName(),
 			'name'			: this.getName(),
-			'texture'		: this._propValues[this._propNames[0]],
-            'dTime'         : this._dTime
+			'texture'		: this._propValues[this._propNames[0]]
 		};
 
 		return jObj;
@@ -183,9 +196,6 @@ var PulseMaterial = function PulseMaterial() {
 
         try {
 			this._propValues[this._propNames[0]] = jObj.texture;
-			this._texMap = jObj.texture;
-            if (jObj.dTime)
-                this._dTime = jObj.dTime;
         }
         catch (e)
         {
@@ -240,11 +250,11 @@ var PulseMaterial = function PulseMaterial() {
 // RDGE shader
  
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
-var pulseMaterialDef =
+var cloudMaterialDef =
 {'shaders': 
 	{
-		'defaultVShader':"assets/shaders/Basic.vert.glsl",
-		'defaultFShader':"assets/shaders/Pulse.frag.glsl"
+		'defaultVShader':"assets/shaders/Cloud.vert.glsl",
+		'defaultFShader':"assets/shaders/Cloud.frag.glsl"
 	},
 	'techniques':
 	{ 
@@ -265,7 +275,7 @@ var pulseMaterialDef =
 				{
 					'u_tex0': { 'type' : 'tex2d' },
 					'u_time' : { 'type' : 'float' },
-					'u_resolution'  :   { 'type' : 'vec2' },
+					'u_DiffuseColor' : { 'type' : 'vec4' }
 				},
 
 				// render states
@@ -279,9 +289,12 @@ var pulseMaterialDef =
 	}
 };
 
-PulseMaterial.prototype = new Material();
+
+
+
+CloudMaterial.prototype = new Material();
 
 if (typeof exports === "object") {
-    exports.PulseMaterial = PulseMaterial;
+    exports.CloudMaterial = CloudMaterial;
 }
 

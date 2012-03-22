@@ -19,7 +19,8 @@ exports.RectProperties = Montage.create(ToolProperties, {
 
     _subPrepare: {
         value: function() {
-            this.lockButton.addEventListener("click", this, false);
+            this.lockButton.identifier = "lockButton";
+            this.lockButton.addEventListener("action", this, false);
 
             this._setBindings([this.TRRadiusControl, this.BLRadiusControl, this.BRRadiusControl]);
             this._setCap([this.TLRadiusControl,this.TRRadiusControl, this.BLRadiusControl, this.BRRadiusControl]);
@@ -27,21 +28,16 @@ exports.RectProperties = Montage.create(ToolProperties, {
         }
     },
 
-    handleClick: {
+    handleLockButtonAction: {
         value: function(event) {
-            this._unlocked = !this._unlocked;
+            this.TRRadiusControl.enabled = this.BLRadiusControl.enabled = this.BRRadiusControl.enabled = !this.lockButton.pressed;
 
-            this.TRRadiusControl.enabled = this.BLRadiusControl.enabled = this.BRRadiusControl.enabled = this._unlocked;
-
-            if(this._unlocked) {
-                this.lockButton.classList.remove("LockToolUp");
-                this.lockButton.classList.add("UnLockToolUp");
+            if(this.lockButton.pressed) {
                 this._removeBindings([this.TRRadiusControl, this.BLRadiusControl, this.BRRadiusControl]);
             } else {
-                this.lockButton.classList.remove("UnLockToolUp");
-                this.lockButton.classList.add("LockToolUp");
                 this._setBindings([this.TRRadiusControl, this.BLRadiusControl, this.BRRadiusControl]);
             }
+
         }
     },
 

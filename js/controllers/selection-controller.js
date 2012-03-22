@@ -112,6 +112,15 @@ exports.SelectionController = Montage.create(Component, {
             if(!this._isDocument) {
                 if(this.findSelectedElement(event.detail) !== -1) {
                     this.executeSelectElement();
+                    var element = event.detail;
+                     if (element) {
+                        if (element.elementModel) {
+                            if (element.elementModel.shapeModel) {
+                                if (element.elementModel.shapeModel.GLWorld)
+                                    element.elementModel.shapeModel.GLWorld.clearTree();
+                            }
+                        }
+                    }
                 }
             }
         }
