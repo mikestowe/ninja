@@ -6,8 +6,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var Montage = require("montage/core/core").Montage,
     DrawingTool = require("js/tools/drawing-tool").DrawingTool,
-    viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils,
-    drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils,
     NJUtils = require("js/lib/NJUtils").NJUtils,
     ElementMediator = require("js/mediators/element-mediator").ElementMediator,
     ShapesController = require("js/controllers/elements/shapes-controller").ShapesController,
@@ -70,7 +68,7 @@ exports.ShapeTool = Montage.create(DrawingTool, {
                 {
                     canvas = NJUtils.makeNJElement("canvas", "Canvas", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
                     var elementModel = TagTool.makeElement(~~drawData.width, ~~drawData.height,
-                                                                        drawData.planeMat, drawData.midPt, canvas);
+                                                                        drawData.planeMat, drawData.midPt, canvas, this.options.use3D);
 
                     ElementMediator.addElement(canvas, elementModel.data, true);
                     canvas.elementModel.isShape = true;

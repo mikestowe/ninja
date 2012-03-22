@@ -252,7 +252,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
 
                 if (!canvas) {
                 var newCanvas = NJUtils.makeNJElement("canvas", "Brushstroke", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
-                    var elementModel = TagTool.makeElement(w, h, planeMat, midPt, newCanvas);
+                    var elementModel = TagTool.makeElement(w, h, planeMat, midPt, newCanvas, this._useWebGL);
                     ElementMediator.addElement(newCanvas, elementModel.data, true);
 
                     // create all the GL stuff
