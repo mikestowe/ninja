@@ -126,8 +126,11 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 			this.isDrawing = false;
             this.endDraw(event);
 
-//			this.UpdateSelection(true);
-			this.Configure(true);
+
+            // Need to force stage to draw immediately so the new selection center is calculated
+            this.application.ninja.stage.draw();
+            // And captureSelectionDrawn to draw the transform handles
+            this.captureSelectionDrawn(null);
 		}
 	},
 
