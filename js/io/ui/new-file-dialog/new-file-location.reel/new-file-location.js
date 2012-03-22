@@ -23,6 +23,8 @@ var NewFileLocation = exports.NewFileLocation = Montage.create(Component, {
             this.fileInputField.selectDirectory = true;
 
             this.newFileName.addEventListener("keyup", this, false);
+            this.newFileName.focus();
+            this.newFileName.select();
         }
     },
 

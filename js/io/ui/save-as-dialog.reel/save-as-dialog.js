@@ -60,6 +60,9 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
             this.okButton.addEventListener("click", function(evt){self.handleOkButtonAction(evt);}, false);
             this.cancelButton.addEventListener("click", function(evt){self.handleCancelButtonAction(evt);}, false);
 
+            this.newFileName.focus();
+            this.newFileName.select();
+
             this.enableOk();
         }
     },

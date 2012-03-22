@@ -130,8 +130,6 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
             }
 
             if(!!storedUri){
-                // This is depracated -- use decodeURI instead
-                //aModel.currentRoot = unescape(storedUri);
                 aModel.currentRoot = decodeURI(storedUri);
             }
 
