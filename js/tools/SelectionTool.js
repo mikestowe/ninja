@@ -465,11 +465,14 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                 }
                 else
                 {
-                    curMat = item.mat.slice(0);
-                    glmat4.multiply(curMat, qMat, curMat);
-                    var previousMat = this._undoArray[i].mat.slice(0);
-                    var _x = parseInt(ElementsMediator.getProperty(elt, "left")) + curMat[12] - previousMat[12];
-                    var _y = parseInt(ElementsMediator.getProperty(elt, "top")) + curMat[13] - previousMat[13];
+//                    curMat = item.mat.slice(0);
+//                    glmat4.multiply(curMat, qMat, curMat);
+//                    var previousMat = this._undoArray[i].mat.slice(0);
+//                    var _x = parseInt(ElementsMediator.getProperty(elt, "left")) + curMat[12] - previousMat[12];
+//                    var _y = parseInt(ElementsMediator.getProperty(elt, "top")) + curMat[13] - previousMat[13];
+
+                    var _x = parseInt(ElementsMediator.getProperty(elt, "left")) + transMat[12];
+                    var _y = parseInt(ElementsMediator.getProperty(elt, "top")) + transMat[13];
 
                     newLeft.push(_x + "px");
                     newTop.push(_y + "px");
@@ -582,6 +585,8 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             {
                 // form the translation vector and post translate the matrix by it.
                 delta = vecUtils.vecSubtract( 3, data.pt1, data.pt0 );
+                delta[0] = ~~delta[0];
+                delta[1] = ~~delta[1];
                 delta[2] = 0;
                 var transMat = Matrix.Translation( delta );
                 this._moveElements(transMat);
