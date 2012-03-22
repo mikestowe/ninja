@@ -147,8 +147,12 @@ exports.Properties = Montage.create(Component, {
         value: function(event) {
 //            console.log("Element Change PI ", event.detail.source); // If the event comes from the pi don't need to update
             if(event.detail.source && event.detail.source !== "pi") {
+                var el = this.application.ninja.currentDocument.documentRoot;
+                if(this.application.ninja.selectedElements.length) {
+                    el = this.application.ninja.selectedElements[0]._element || this.application.ninja.selectedElements[0];
+                }
+
                 // TODO - This should only update the properties that were changed.
-                var el = this.application.ninja.selectedElements[0]._element || this.application.ninja.selectedElements[0];
                 this.positionSize.leftPosition = parseFloat(ElementsMediator.getProperty(el, "left"));
                 this.positionSize.topPosition = parseFloat(ElementsMediator.getProperty(el, "top"));
                 this.positionSize.heightSize = parseFloat(ElementsMediator.getProperty(el, "height"));
@@ -162,8 +166,8 @@ exports.Properties = Montage.create(Component, {
                     this.threeD.xAngle = ElementsMediator.get3DProperty(el, "xAngle");
                     this.threeD.yAngle = ElementsMediator.get3DProperty(el, "yAngle");
                     this.threeD.zAngle = ElementsMediator.get3DProperty(el, "zAngle");
+                }
             }
-        }
         }
     },
 
@@ -195,6 +199,13 @@ exports.Properties = Montage.create(Component, {
 
             this.positionSize.heightSize = parseFloat(ElementsMediator.getProperty(stage, "height"));
             this.positionSize.widthSize = parseFloat(ElementsMediator.getProperty(stage, "width"));
+
+            if(this.threeD.inGlobalMode)
+            {
+                this.threeD.xAngle = ElementsMediator.get3DProperty(stage, "xAngle");
+                this.threeD.yAngle = ElementsMediator.get3DProperty(stage, "yAngle");
+                this.threeD.zAngle = ElementsMediator.get3DProperty(stage, "zAngle");
+            }
 
             if(this.customPi !== stage.elementModel.pi) {
                 // We need to unregister color chips from the previous selection from the Color Model

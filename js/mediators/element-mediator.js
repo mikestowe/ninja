@@ -673,17 +673,17 @@ exports.ElementMediator = Montage.create(NJComponent, {
     },
 
     setMatrix: {
-        value: function(el, mat, isChanging) {
+        value: function(el, mat, isChanging, source) {
             var dist = el.elementModel.controller["getPerspectiveDist"](el);
             el.elementModel.controller["set3DProperties"](el, [{mat:mat, dist:dist}], 0, !isChanging);
 
             if(isChanging)
             {
-                NJevent("elementChanging", {type : "setMatrix", source: null, data: {"els": [el], "prop": "matrix", "value": mat}, redraw: null});
+                NJevent("elementChanging", {type : "setMatrix", source: source, data: {"els": [el], "prop": "matrix", "value": mat}, redraw: null});
             }
             else
             {
-                NJevent("elementChange", {type : "setMatrix", source: null, data: {"els": [el], "prop": "matrix", "value": mat}, redraw: null});
+                NJevent("elementChange", {type : "setMatrix", source: source, data: {"els": [el], "prop": "matrix", "value": mat}, redraw: null});
             }
         }
     },
