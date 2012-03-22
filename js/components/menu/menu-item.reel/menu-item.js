@@ -84,10 +84,8 @@ exports.MenuItem = Montage.create(Component, {
             }
 
             if(this.data.enabled.boundProperty) {
-                strArr = this.data.enabled.boundObj.split(".");
-                for(i=0;i<strArr.length;i++){
-                    boundObject = boundObject[strArr[i]];
-                }
+
+                boundObject = this.application.ninja[this.data.enabled.boundObj];
 
                 Object.defineBinding(this, "enabled", {
                   boundObject: boundObject,
@@ -143,7 +141,7 @@ exports.MenuItem = Montage.create(Component, {
 
             if(this.data.radio && this.checked) return;
 
-            if(this.enabled || !this.submenu) {
+            if(((this.data.enabled === true) || (this.data.enabled.boundProperty && (this.data.enabled.value === true))) && (this.submenu === false) ) {
                 if(this.data.action) {
                     NJevent ( this.data.action );
                 } else  if(this.checked !== null) {
