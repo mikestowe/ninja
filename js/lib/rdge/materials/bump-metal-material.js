@@ -6,6 +6,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var MaterialParser = require("js/lib/rdge/materials/material-parser").MaterialParser;
 var Material = require("js/lib/rdge/materials/material").Material;
+var Texture = require("js/lib/rdge/texture").Texture;
+
 ///////////////////////////////////////////////////////////////////////
 // Class GLMaterial
 //      RDGE representation of a material.
@@ -18,7 +20,9 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 	this._shaderName = "bumpMetal";
 
 	this._lightDiff = [0.3, 0.3, 0.3, 1.0];
-	this._diffuseTexture = "assets/images/metal.png";
+	//this._diffuseTexture = "assets/images/metal.png";
+	this._diffuseTexture = "texture";
+    this._diffuseWorld = null;      // the world that the texture is derived from (if there is one).
 	this._specularTexture = "assets/images/silver.png";
 	this._normalTexture = "assets/images/normalMap.png";
 
@@ -119,11 +123,45 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 		this._materialNode = createMaterialNode( this.getShaderName() + "_" + world.generateUniqueNodeID() );
 		this._materialNode.setShader(this._shader);
 
+        // DEBUG CODE
+        this.initWorldTextures();
+
 		// set some image maps
 		this.updateTexture(1);
         this.updateTexture(2);
         this.updateTexture(3);
 	};
+
+    this.initWorldTextures = function()
+    {
+        // find the world with the given id
+        var viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
+        var root = viewUtils.application.ninja.currentDocument.documentRoot;
+        this._diffuseWorld = this.findWorld( this._diffuseTexture,  root );
+    }
+
+    this.findWorld = function( id,  elt )
+    {
+        if (elt.id && elt.id === id)
+        {
+            if (elt.eltModel && elt.elementModel.shapeModel && elt.elementModel.shapeModel.GLWorld)
+            {
+                var world = elt.elementModel.shapeModel.GLWorld;
+                return world;
+            }
+        }
+ 
+		if (elt.children)
+		{
+			var nKids = elt.children.length;
+			for (var i=0;  i<nKids;  i++)
+			{
+				var child = elt.children[i];
+				var world = this.findWorld( id, child );
+                if (world)  return world;
+			}
+		}
+   }
 
 	this.updateTexture = function( index )
 	{
