@@ -504,13 +504,14 @@ exports.ShapesController = Montage.create(CanvasController, {
             var sm,
                 fm,
                 world,
-                worldData = el.elementModel.shapeModel.GLWorld.export();
+                worldData = el.elementModel.shapeModel.GLWorld.exportJSON();
             if(worldData)
             {
+                worldData = this.flip3DSense (worldData );
                 world = new World(el, true);
                 el.elementModel.shapeModel.GLWorld = world;
                 el.elementModel.shapeModel.useWebGl = true;
-                world.import(worldData);
+                world.importJSON(worldData);
                 el.elementModel.shapeModel.GLGeomObj = world.getGeomRoot();
 
                 sm = Object.create(MaterialsModel.getMaterial("FlatMaterial"));
@@ -540,13 +541,14 @@ exports.ShapesController = Montage.create(CanvasController, {
                 return;
             }
             var world,
-                worldData = el.elementModel.shapeModel.GLWorld.export();
+                worldData = el.elementModel.shapeModel.GLWorld.exportJSON();
             if(worldData)
             {
+                worldData = this.flip3DSense (worldData );
                 world = new World(el, false);
                 el.elementModel.shapeModel.GLWorld = world;
                 el.elementModel.shapeModel.useWebGl = false;
-                world.import(worldData);
+                world.importJSON(worldData);
                 el.elementModel.shapeModel.GLGeomObj = world.getGeomRoot();
                 el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(null);
                 el.elementModel.shapeModel.strokeMaterial = null;
@@ -557,6 +559,24 @@ exports.ShapesController = Montage.create(CanvasController, {
                     el.elementModel.shapeModel.fillMaterial = null;
                 }
             }
+        }
+    },
+
+    flip3DSense: {
+        value: function( importStr )
+        {
+            var jObj;
+            var index = importStr.indexOf( ';' );
+            if ((importStr[0] === 'v') && (index < 24))
+            {
+                // JSON format.  separate the version info from the JSON info
+                //var vStr = importStr.substr( 0, index+1 );
+                var jStr = importStr.substr( index+1 );
+                jObj = JSON.parse( jStr );
+                jObj.webGL = !jObj.webGL;
+            }
+
+            return jObj;
         }
     }
 
