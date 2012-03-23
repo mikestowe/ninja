@@ -66,18 +66,27 @@ function Texture( dstWorld )
 		return tex;
 	}
 
+    var __texCounter = 0;
+
+    /*
 	this.loadFromCanvas = function( srcCanvas,  wrap, mips )
 	{
-		this._texMapName = "GLTexture_" + this.texCounter;
-		this.texCounter++;
+		this._texMapName = "GLTexture_" + __texCounter;
+		__texCounter++;
 
 		//if (elt.elementModel && elt.elementModel.shapeModel && elt.elementModel.shapeModel.GLWorld)
 		var world = this.getDstWorld();
 		var renderer = world.getRenderer();
 
+		// set default values for wrap and mips
+        if (wrap === undefined)
+            wrap = "REPEAT";
+        if (mips === undefined)
+            mips = true;
+
 		var imageData;
 		var width = srcCanvas.width,  height = srcCanvas.height;
-		width = 128;  height = 64;	// some even power of 2 for now...
+		width = 64;  height = 64;	// some even power of 2 for now...
 
 		// create a canvas to be used as the image for the texture map
 		var doc = srcCanvas.ownerDocument;
@@ -116,6 +125,13 @@ function Texture( dstWorld )
 //					imageData.data[i] = data[i];
 //		        dstCtx.putImageData( imageData, 0, 0 );
 
+				var data = new Uint8Array(width * height * 4);
+				srcCtx.readPixels(0, 0, width, height, srcCtx.RGBA, srcCtx.UNSIGNED_BYTE, data);
+                for (var i=1;  i<10;  i++)
+                {
+				    console.log( "row " + i + ": " + data[i*4*width] + ", " + data[i*4*width+1] + ", " + data[i*4*width+2] + ", " + data[i*4*width+3] );
+                }
+
                 dstCtx.drawImage(srcCanvas, 0, 0);
 			}
 		}
@@ -127,19 +143,134 @@ function Texture( dstWorld )
 		this._texture = tex;
 		return tex;
 	}
+    */
 
-	this.findPreviousWorld = function()
+    this.loadFromCanvas = function( srcCanvas,  wrap, mips )
 	{
-		var prevWorld;
-		for ( var w in _worldStack )
-		{
-			world = _worldStack[w];
-			if (world == this.getWorld())  return prevWorld;
-			prevWorld = world;
-		}
+		this._srcCanvas = srcCanvas;
+
+		this._texMapName = "GLTexture_" + __texCounter;
+		__texCounter++;
+
+		// set default values for wrap and mips
+        if (wrap === undefined)
+            wrap = "REPEAT";
+        if (mips === undefined)
+            mips = true;
+
+		// we animate only if the source is an animated GLWorld
+		if (srcCanvas.elementModel && srcCanvas.elementModel.shapeModel  && srcCanvas.elementModel.shapeModel.GLWorld)
+			this._isAnimated = srcCanvas.elementModel.shapeModel.GLWorld._hasAnimatedMaterials;
+
+		// create the texture
+		var world = this.getDstWorld();
+		tex = world.getGLContext().createTexture();
+		this._texture = tex;
+		tex.texparams = new _texparams(wrap, mips);	// defined in renderer.js
+		tex.image = new Image;
+
+		// create the canvas and context to render into
+		var doc = srcCanvas.ownerDocument;
+		this._renderCanvas = doc.createElement("canvas");
+
+		// cache whether this is a 2D canvas or 3D canvas
+		var srcCtx = srcCanvas.getContext("2d");
+		this._is3D = false;
+		if (!srcCtx)  this.is3D = true;
+
+		this.rerender();
+
+		return tex;
 	}
 
-	var texCounter = 0;
+	this.rerender = function()
+	{
+		if (!this._srcCanvas)
+		{
+			console.log( " no source canvas in GLTexture.rerender" );
+			return;
+		}
+		var srcCanvas = this._srcCanvas;
+
+		var world = this.getDstWorld();
+		if (!world)
+		{
+			console.log( "no world in GLTexture.rerender" );
+			return;
+		}
+		var renderer = world.getRenderer();
+
+		var imageData;
+		var width = srcCanvas.width,  height = srcCanvas.height;
+		if (!this.isPowerOfTwo(width) || !this.isPowerOfTwo(height))
+		{
+			width = this.nextHighestPowerOfTwo( width );
+			height = this.nextHighestPowerOfTwo( height );
+		}
+
+		// create a canvas to be used as the image for the texture map
+		var doc = srcCanvas.ownerDocument;
+		var renderCanvas = this._renderCanvas;
+		if (!renderCanvas)
+		{
+			console.log( "no render canvas in GLTexture.rerender" );
+			return;
+		}
+		renderCanvas.width = width;
+		renderCanvas.height = height;
+		var renderCtx = renderCanvas.getContext("2d");
+
+		// create the texture
+		var tex = this._texture;
+		if (!tex)
+		{
+			console.log( "no texture in GLTexture.rerender" );
+			return;
+		}
+
+		var srcCtx;
+		if (!this.is3D)
+		{
+			srcCtx = srcCanvas.getContext("2d");
+			imageData = srcCtx.getImageData( 0, 0, width, height );
+		}
+		else
+		{
+			srcCtx = srcCanvas.getContext("experimental-webgl");
+			if (srcCtx)
+			{
+				var data = new Uint8Array(width * height * 4);
+				srcCtx.readPixels(0, 0, width, height, srcCtx.RGBA, srcCtx.UNSIGNED_BYTE, data);
+						
+				imageData = renderCtx.createImageData(width, height);
+				var nBytes = width*height*4;
+				for (var i=0;  i<nBytes;  i++)
+					imageData.data[i] = data[i];
+			}
+		}
+		renderCtx.putImageData( imageData, 0, 0 );
+
+		/////////////////
+		tex.image = renderCanvas;
+		renderer.commitTexture( tex );
+
+		return tex;
+    }
+
+ 
+	this.isPowerOfTwo = function(x)
+	{
+		return (x & (x - 1)) == 0;
+	}
+ 
+	this.nextHighestPowerOfTwo = function(x)
+	{
+		--x;
+		for (var i = 1; i < 32; i <<= 1) {
+			x = x | x >> i;
+		}
+		return x + 1;
+	}
 }
 
 if (typeof exports === "object") {

@@ -30,6 +30,7 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 
     this._canvas = canvas;
 	if (this._useWebGL) {
+        preserveDrawingBuffer = true;
         if(preserveDrawingBuffer) {
             this._glContext = canvas.getContext("experimental-webgl", {preserveDrawingBuffer: true});
         } else {

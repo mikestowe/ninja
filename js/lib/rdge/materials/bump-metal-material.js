@@ -20,10 +20,13 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 	this._shaderName = "bumpMetal";
 
 	this._lightDiff = [0.3, 0.3, 0.3, 1.0];
-	//this._diffuseTexture = "assets/images/metal.png";
+	
+    //this._diffuseTexture = "assets/images/metal.png";
 	this._diffuseTexture = "texture";
     this._diffuseWorld = null;      // the world that the texture is derived from (if there is one).
-	this._specularTexture = "assets/images/silver.png";
+    this._diffuseTextureObj = null;
+	
+    this._specularTexture = "assets/images/silver.png";
 	this._normalTexture = "assets/images/normalMap.png";
 
     ///////////////////////////////////////////////////////////////////////
@@ -138,13 +141,20 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
         var viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
         var root = viewUtils.application.ninja.currentDocument.documentRoot;
         this._diffuseWorld = this.findWorld( this._diffuseTexture,  root );
+        if (this._diffuseWorld)
+        {
+            var world = this.getWorld();
+            var tex = new Texture( world );
+            this._diffuseTextureObj = tex;
+            tex.loadFromCanvas( world.getCanvas() );
+        }
     }
 
     this.findWorld = function( id,  elt )
     {
         if (elt.id && elt.id === id)
         {
-            if (elt.eltModel && elt.elementModel.shapeModel && elt.elementModel.shapeModel.GLWorld)
+            if (elt.elementModel && elt.elementModel.shapeModel && elt.elementModel.shapeModel.GLWorld)
             {
                 var world = elt.elementModel.shapeModel.GLWorld;
                 return world;
@@ -174,7 +184,11 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 			{
 				var texMapName = this._propValues[this._propNames[index]];
 				var wrap = 'REPEAT',  mips = true;
-				var tex = this.loadTexture( texMapName, wrap, mips );
+				var tex;
+                if ((index === 1) && this._diffuseTextureObj)
+                    tex = this._diffuseTextureObj.getTexture();
+                else
+                    tex = this.loadTexture( texMapName, wrap, mips );
 
 				if (tex)
 				{
