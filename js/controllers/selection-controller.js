@@ -6,7 +6,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 
 var Montage = require("montage/core/core").Montage,
-    Component = require("montage/ui/component").Component;
+    Component = require("montage/ui/component").Component,
+    NJUtils     = require("js/lib/NJUtils").NJUtils;
 
 exports.SelectionController = Montage.create(Component, {
 

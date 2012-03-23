@@ -58,6 +58,26 @@ exports.Checkbox = Montage.create(Component, {
         }
     },
 
+    _enabled: {
+        enumerable: false,
+        value: true
+    },
+
+    enabled: {
+        enumerable: true,
+        serializable: true,
+        get: function() {
+            return this._enabled;
+        },
+        set: function(value) {
+            if(value !== this._enabled)
+            {
+                this._enabled = value;
+                this.needsDraw = true;
+            }
+        }
+    },
+
     handleChange:
     {
         value:function(event)
@@ -76,6 +96,7 @@ exports.Checkbox = Montage.create(Component, {
     
     draw: {
         value: function() {
+            this.element.disabled = !this._enabled;
             if(!this._valueSyncedWithInputField)
             {
                 this.element.checked = this._checked;
