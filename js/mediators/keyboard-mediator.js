@@ -203,8 +203,6 @@ exports.KeyboardMediator = Montage.create(Component, {
                 }
 
 
-
-
                 if((evt.keyCode == Keyboard.ENTER) && (evt.ctrlKey || evt.metaKey)) {
                     this.application.ninja.executeChromePreview();
                     return;
