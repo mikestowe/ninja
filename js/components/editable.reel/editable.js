@@ -120,7 +120,7 @@ exports.Editable = Montage.create(Component, {
                 }
                 
                 if(this.stopOnBlur) {
-                    console.log('adding mousedown event listener');
+                    //console.log('adding mousedown event listener');
                     ///// Simulate blur on editable node by listening to the doc
                     document.addEventListener('mouseup', this, false);
                 }
@@ -189,7 +189,7 @@ exports.Editable = Montage.create(Component, {
     handleKeydown : {
         value : function(e) {
             var k = e.keyCode;
-            console.log('keyCode:  ' + k);
+            //console.log('keyCode:  ' + k);
         }
     },
     ///// Text input has changed values
@@ -204,7 +204,7 @@ exports.Editable = Montage.create(Component, {
     },
     handleMouseup : {
         value : function(e) {
-            console.log('handle mouse down');
+            //console.log('handle mouse down');
             ///// Listen for simulated blur event
             if(this.stopOnBlur && e._event.target !== this._element) {
                 this.blur();
@@ -213,7 +213,7 @@ exports.Editable = Montage.create(Component, {
     },
     handleEvent : {
         value : function(e) {
-            console.log("event type : " + e._event.type);
+            //console.log("event type : " + e._event.type);
             ///// If configured, start on specified event
             if(e._event.type === this.startOnEvent) {
                 this.start();

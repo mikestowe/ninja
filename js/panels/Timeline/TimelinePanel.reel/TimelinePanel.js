@@ -289,6 +289,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     createLayerTemplate:{
         value:function () {
             var returnObj = {};
+            
             returnObj.layerData = {};
             returnObj.layerData.layerName = null;
             returnObj.layerData.layerID = null;
@@ -296,6 +297,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             returnObj.layerData.isPositionCollapsed = true;
             returnObj.layerData.isTransformCollapsed = true;
             returnObj.layerData.isStyleCollapsed = true;
+            returnObj.layerData.arrLayerStyles = [];
             returnObj.layerData.arrLayerStyles = [];
             returnObj.layerData.elementsList = [];
             returnObj.layerData.deleted = false;
@@ -311,6 +313,51 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             returnObj.parentElement = null;
             return returnObj;
         }
+    },
+    
+    // Create an array of style objects for an element, for use
+    // in creating a new layer
+    createLayerStyles : {
+    	value: function(ptrElement) {
+    		// TODO: Create logic to loop through 
+    		// CSS properties on element and build 
+    		// array of layer styles for return.
+    		// Right now this method just returns an array of one bogus style.
+    		
+    		var returnArray = [],
+    			newStyle = {}, 
+    			styleID = "1@0"; // format: layerID + "@" + style counter
+    			
+            newStyle.styleID = styleID;
+			newStyle.whichView = "propval";
+			newStyle.editorProperty = "top";
+			newStyle.editorValue = 0;
+			newStyle.ruleTweener = false;
+			newStyle.isSelected = false;
+			
+			returnArray.push(newStyle);
+			
+			return returnArray;
+    		
+    	}
+    },
+    
+    // Create an array of style track objects for an element, for use
+    // in creating a new layer
+    createStyleTracks : {
+    	value: function(ptrElement) {
+    		// TODO: Create logic to loop through 
+    		// CSS properties on element and build 
+    		// array of layer styles for return.
+    		// Right now this method just returns an array of one bogus style.
+    		
+    		var returnArray = [];
+			
+			returnArray.push("1");
+			
+			return returnArray;
+    		
+    	}
     },
 
     // Bind all document-specific events (pass in true to unbind)
@@ -342,7 +389,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:function () {
             this.layout_tracks = this.element.querySelector(".layout-tracks");
             this.layout_markers = this.element.querySelector(".layout_markers");
-            this.timeline_leftpane.addEventListener("click", this.timelineLeftPaneClick.bind(this), false);
+            this.timeline_leftpane.addEventListener("mousedown", this.timelineLeftPaneMousedown.bind(this), false);
             this.layout_tracks.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
             this.user_layers.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
             this.end_hottext.addEventListener("changing", this.updateTrackContainerWidth.bind(this), false);
@@ -448,6 +495,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             // Clear the repetitions
             if (this.arrLayers.length > 0) {
                 this.arrLayers = [];
+                this.arrLayers.length = 0;
             }
         }
     },
@@ -569,7 +617,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
-    timelineLeftPaneClick:{
+    timelineLeftPaneMousedown:{
         value:function (event) {
             var ptrParent = nj.queryParentSelector(event.target, ".container-layer");
             if (ptrParent !== false) {
@@ -677,6 +725,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 thingToPush.layerData.layerID = this.currentLayerNumber;
                 thingToPush.parentElementUUID = this.hashKey;
                 thingToPush.parentElement = this.application.ninja.currentSelectedContainer;
+                
+                // Are there styles to add?
+                thingToPush.layerData.arrLayerStyles = this.createLayerStyles();
+                thingToPush.layerData.arrStyleTracks = this.createStyleTracks();
 
                 if (this._openDoc) {
                     ele.uuid = nj.generateRandom();
@@ -862,6 +914,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 } else {
                     this.arrLayers[i].layerData.isSelected = false;
                 }
+                
+                this.triggerLayerBinding(i);
             }
 
             this.layerRepetition.selectedIndexes = [layerIndex];
@@ -1018,6 +1072,16 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this.timeline_disabler.style.display = "block";
             }
         }
+    },
+    // Trigger the layer/track data binding
+    triggerLayerBinding : {
+    	value: function(intIndex) {
+    		if (this.arrLayers[intIndex].layerData.triggerBinding === true) {
+    			this.arrLayers[intIndex].layerData.triggerBinding = false;
+    		} else {
+    			this.arrLayers[intIndex].layerData.triggerBinding = true;
+    		}
+    	}
     },
     /* === END: Controllers === */
 

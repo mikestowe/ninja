@@ -499,15 +499,15 @@ var Layer = exports.Layer = Montage.create(Component, {
 
 
             // Add event listeners to add and delete style buttons
-            this.buttonAddStyle.identifier = "addStyle";
-            this.buttonAddStyle.addEventListener("click", this, false);
-            
-            this.buttonDeleteStyle.identifier = "deleteStyle";
-            this.buttonDeleteStyle.addEventListener("click", this, false);
+            this.buttonAddStyle.addEventListener("click", this.handleAddStyleClick.bind(this), false);
+            this.buttonDeleteStyle.addEventListener("click", this.handleDeleteStyleClick.bind(this), false);
             
             // Add mousedown listener to set isActive
             this.element.addEventListener("mousedown", this, false);
             this.element.addEventListener("click", this, false);
+            
+			// Drag and drop event hanlders
+			this.element.addEventListener("dropped", this, false);
 
         }
     },
@@ -574,6 +574,8 @@ var Layer = exports.Layer = Montage.create(Component, {
 				newEvent = document.createEvent("CustomEvent");
 			
 			this.isStyleCollapsed = false;
+			this.layerData.isStyleCollapsed = false;
+			this.triggerOutgoingBinding();
 			
 			newEvent.initCustomEvent("layerEvent", false, true);
 			newEvent.layerEventLocale = "styles";
@@ -604,7 +606,8 @@ var Layer = exports.Layer = Montage.create(Component, {
 			// Set up the event info and dispatch the event
 
 			newEvent.styleSelection = mySelection;
-			//defaultEventManager.dispatchEvent(newEvent);
+			defaultEventManager.dispatchEvent(newEvent);
+
 
 		}
 	},
@@ -624,7 +627,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 					newEvent.layerID = this.layerID;
 					newEvent.styleID = this.arrLayerStyles[selectedIndex].styleID;
 					newEvent.styleSelection = selectedIndex;
-					//defaultEventManager.dispatchEvent(newEvent);
+					defaultEventManager.dispatchEvent(newEvent);
 					
 					// Delete the style from the view
 					this.arrLayerStyles.splice(selectedIndex, 1);
@@ -781,6 +784,11 @@ var Layer = exports.Layer = Montage.create(Component, {
 				this.isStyleCollapsed = true;
 			}
 			this.triggerOutgoingBinding();
+		}
+	},
+	handleDropped : {
+		value: function(event) {
+			console.log('wheeee!  WWEWWEWWWWEEEEEEEEE')
 		}
 	},
 	/* End: Event handlers */
