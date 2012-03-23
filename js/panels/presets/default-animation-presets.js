@@ -37,7 +37,7 @@ exports.animationPresets = {
                     }]
             }]
     }, {
-        "text": "3D Animations",
+        "text": "2D Animations",
     "children": [
         {
             "text": "Slide Out with Fade",
