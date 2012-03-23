@@ -109,11 +109,13 @@ exports.ShapesController = Montage.create(CanvasController, {
                     if(value)
                     {
                         el.elementModel.shapeModel.animate = true;
+                        el.elementModel.shapeModel.GLWorld._previewAnimation = true;
                         el.elementModel.shapeModel.GLWorld.restartRenderLoop();
                     }
                     else
                     {
                         el.elementModel.shapeModel.animate = false;
+                        el.elementModel.shapeModel.GLWorld._previewAnimation = false;
                         el.elementModel.shapeModel.GLWorld._canvas.task.stop();
                     }
                     break;

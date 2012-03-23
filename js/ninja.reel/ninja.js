@@ -179,8 +179,10 @@ exports.Ninja = Montage.create(Component, {
                 for(var i = 0, len = glCanvases.length; i<len; i++) {
                     glShapeModel = glCanvases[i].elementModel.shapeModel;
                     if(inLivePreview) {
+                        glShapeModel.GLWorld._previewAnimation = true;
                         glShapeModel.GLWorld.restartRenderLoop();
                     } else if (!glShapeModel.animate ) {
+                        glShapeModel.GLWorld._previewAnimation = false;
                         glShapeModel.GLWorld._canvas.task.stop();
                     }
                 }
