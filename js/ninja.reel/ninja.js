@@ -97,6 +97,19 @@ exports.Ninja = Montage.create(Component, {
         }
     },
 
+    handleResizeReset: {
+        value: function(e) {
+            this.width = 253;
+            this.height = 140;
+            this._resizedHeight = 0;
+            this._resizedWidth = 0;
+            this.needsDraw = true;
+            this.timelineSplitter.collapsed = false;
+            this.panelSplitter.collapsed = false;
+        }
+    },
+
+
     selectedElements: {
         value: []
     },

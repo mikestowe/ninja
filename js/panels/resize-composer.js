@@ -77,6 +77,7 @@ exports.ResizeComposer = Montage.create(Composer, {
     load: {
         value: function() {
             this.element.addEventListener("mousedown", this, true);
+            this.element.addEventListener("dblclick", this, true);
         }
     },
 
@@ -112,7 +113,6 @@ exports.ResizeComposer = Montage.create(Composer, {
 
     captureMousemove: {
         value: function(e) {
-
             if (this.xAxis) {
                 this._deltaX = e.clientX - this._startX;
             }
@@ -129,12 +129,13 @@ exports.ResizeComposer = Montage.create(Composer, {
         }
     },
 
-    deserializedFromTemplate: {
-        value: function() {
-            if (this.component) {
-                this.component.addComposer(this);
-            }
+    captureDblclick: {
+        value:function(e) {
+            this._reset();
+            this._executeEvent("resizeReset");
         }
     }
+
+
 
 });
