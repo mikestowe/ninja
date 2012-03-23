@@ -564,67 +564,13 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             }
             //
             if(!this.documentRoot.Ninja) this.documentRoot.Ninja = {};
-            //Inserting user's document into template
             
             
             
-            
-            
-            
-            
-            
-            
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            
-            //TODO: Clean up and make public method to prepend properties with Ninja URL
-            this._templateDocument.head.innerHTML = (this._userDocument.content.head.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, ninjaUrlRedirect.bind(this))).replace(/url\(([^"]*)(.+?)\1\)/g, ninjaUrlRedirect.bind(this));
-            this._templateDocument.body.innerHTML = (this._userDocument.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, ninjaUrlRedirect.bind(this))).replace(/url\(([^"]*)(.+?)\1\)/g, ninjaUrlRedirect.bind(this));            
-            //
-            //var docRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
-            //
-            function ninjaUrlRedirect (prop) {
-            	//Checking for property value to not contain a full direct URL
-            	if (!prop.match(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi)) {
-            		//Checking for attributes and type of source
-            		if (prop.indexOf('href') !== -1 || prop.indexOf('src') !== -1) { //From HTML attribute
-            			//
-            			prop = prop.replace(/"([^"]*)"/gi, ninjaUrlPrepend.bind(this));
-	            	} else if (prop.indexOf('url') !== -1) { //From CSS property
-    	        		//TODO: Add functionality
-    	        		var docRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
-    	        		prop = prop.replace(/[^()\\""\\'']+/g, cssUrlToNinjaUrl);
-    	        		function cssUrlToNinjaUrl (s) {
-    	        			if (s !== 'url') {
-    	        				s = docRootUrl + s;
-    	        			}
-    	        			return s;
-    	        		}
-        	    	}
-        	    }
-            	return prop;
-            }
-            //
-            function ninjaUrlPrepend (url) {
-            	var docRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
-            	if (url.indexOf('data:image') !== -1) {
-            		return url;
-            	} else {
-            		return '"'+docRootUrl+url.replace(/\"/gi, '')+'"';
-            	}
-            }
-           	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-           	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-           	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            
-            
-            
-            
-            
-            
-            
-            
+            //TODO: Clean up, using for prototyping
+            this._templateDocument.head.innerHTML = (this._userDocument.content.head.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator));
+            this._templateDocument.body.innerHTML = (this._userDocument.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator));            
+           	
             
             
             var scripttags = this._templateDocument.html.getElementsByTagName('script'), webgldata;  //TODO: Use querySelectorAll
@@ -644,7 +590,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             	}
             	this._templateDocument.webgl = webgldata.data;
             }
-            
             
             
             
@@ -669,7 +614,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             		}
             	}
             }
-            
             
             
             
@@ -731,6 +675,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 								//
 								fileCouldDirUrl = this._document.styleSheets[i].href.split(this._document.styleSheets[i].href.split('/')[this._document.styleSheets[i].href.split('/').length-1])[0];
 								
+								//TODO: Make public version of this.application.ninja.ioMediator.getNinjaPropUrlRedirect with dynamic ROOT
 								tag.innerHTML = cssData.content.replace(/url\(()(.+?)\1\)/g, detectUrl);
 								
 								function detectUrl (prop) {
@@ -926,7 +871,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     		//TODO: Add logic to handle save before preview
     		this.application.ninja.documentController.handleExecuteSaveAll(null);
     		//Temp check for webGL Hack
-    		if (this.application.ninja.documentController.activeDocument.glData.length && this.application.ninja.documentController.activeDocument.glData.length > 0) {
+    		if (this.application.ninja.documentController.activeDocument.glData.length && this.application.ninja.documentController.activeDocument.glData.length > 1) {//TODO: Should be 0, temp hack fix
     			setTimeout(function () {window.open(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);}.bind(this), 3500);
     		} else {
     			window.open(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);
@@ -949,7 +894,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             			}
             		}
             	}
-    			return {mode: 'html', document: this._userDocument, mjs: this._userComponents, webgl: this.glData, styles: styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
+    			//return {mode: 'html', document: this._userDocument, mjs: this._userComponents, webgl: this.glData, styles: styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
+    			return {mode: 'html', document: this._userDocument, webgl: this.glData, styles: styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
     		} else if (this.currentView === "code"){
     			//TODO: Would this get call when we are in code of HTML?
     		} else {
@@ -972,7 +918,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             			}
             		}
             	}
-    			return {mode: 'html', document: this._userDocument, mjs: this._userComponents, webgl: this.glData, css: css, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
+    			//return {mode: 'html', document: this._userDocument, mjs: this._userComponents, webgl: this.glData, css: css, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
+    			return {mode: 'html', document: this._userDocument, webgl: this.glData, css: css, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
     		} else if (this.currentView === "code"){
     			//TODO: Would this get call when we are in code of HTML?
     		} else {
