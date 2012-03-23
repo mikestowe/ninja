@@ -178,7 +178,7 @@ exports.Ninja = Montage.create(Component, {
 
     draw: {
         value: function() {
-            if (this.height - this._resizedHeight < 30) {
+            if (this.height - this._resizedHeight < 46) {
                 this.timelineSplitter.collapsed = true;
             } else {
                 this.timelineSplitter.collapsed = false;
