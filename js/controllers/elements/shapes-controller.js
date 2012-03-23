@@ -105,6 +105,18 @@ exports.ShapesController = Montage.create(CanvasController, {
                 case "editFillMaterial":
                     NJevent("showMaterialPopup",{materialId : el.elementModel.shapeModel.fillMaterial.getName()});
                     break;
+                case "animate":
+                    if(value)
+                    {
+                        el.elementModel.shapeModel.animate = true;
+                        el.elementModel.shapeModel.GLWorld.restartRenderLoop();
+                    }
+                    else
+                    {
+                        el.elementModel.shapeModel.animate = false;
+                        el.elementModel.shapeModel.GLWorld._canvas.task.stop();
+                    }
+                    break;
                 default:
                     CanvasController.setProperty(el, p, value);
             }
@@ -123,6 +135,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                 case "border":
                 case "background":
                 case "useWebGl":
+                case "animate":
                     return this.getShapeProperty(el, p);
                 case "strokeMaterial":
                 case "fillMaterial":
