@@ -18,6 +18,7 @@ var Montage = require("montage/core/core").Montage,
 exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 {
 	_inLocalMode: { value: true, enumerable: true },
+	_clickedOnStage: { value: false },
 
 	HandleDoubleClick : {
 	   value : function()
@@ -47,17 +48,33 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
                         delta[1] = 0;
                         break;
                 }
+                if( (this.application.ninja.selectedElements.length > 1) && this._clickedOnStage )
+                {
+                    this._delta = ~~(delta[this._handleMode]);
+                }
+                else
+                {
+                    this._delta += ~~(delta[this._handleMode]);
+                }
 
-                this._updateDelta(delta, this._handleMode);
             }
-            else if(this._mode === 1)
+            else
             {
-                delta[2] = delta[1];
-                delta[0] = 0;
-                delta[1] = 0;
+                if(this._mode === 1)
+                {
+                    delta[2] = delta[1];
+                    delta[0] = 0;
+                    delta[1] = 0;
+                }
+                else
+                {
+                    delta[2] = 0;
+                }
+                this._delta = delta.slice(0);
             }
 
             var transMat = Matrix.Translation( delta );
+
             if(this._inLocalMode && (this._targets.length === 1) )
             {
                 this._translateLocally(transMat);
@@ -139,7 +156,7 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 
 			var shouldUpdateStartMat = true;
 
-			if(this._clickedObject === this.application.ninja.currentDocument.documentRoot)
+			if(this._clickedOnStage)
 			{
 				shouldUpdateStartMat = false;
 			}
@@ -152,11 +169,15 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 			{
 				item = this._targets[i];
 				elt = item.elt;
-				curMat = item.mat;
+				curMat = item.mat.slice(0);
 
-				glmat4.multiply(curMat, qMat, curMat);
-
-				viewUtils.setMatrixForElement( elt, curMat, true);
+//				glmat4.multiply(curMat, qMat, curMat);
+//
+//				viewUtils.setMatrixForElement( elt, curMat, true);
+                curMat[12] += transMat[12];
+                curMat[13] += transMat[13];
+                curMat[14] += transMat[14];
+                viewUtils.setMatrixForElement( elt, curMat, true);
 
 				if(shouldUpdateStartMat)
 				{
@@ -198,6 +219,19 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
                                                 "translateTool",
                                                 previousStyles
                                               );
+                if(this._origin && this._delta)
+                {
+                    if(this._handleMode !== null)
+                    {
+                        this._origin[this._handleMode] += this._delta;
+                    }
+                    else
+                    {
+                        this._origin[0] += this._delta[0];
+                        this._origin[1] += this._delta[1];
+                    }
+                }
+                this._delta = null;
             }
             // Save previous value for undo/redo
             this._undoArray = [];
@@ -232,7 +266,7 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 		}
 	},
 
-	_getHandlesOrigin: {
+	_updateHandlesOrigin: {
 		value: function () {
 			var ctr;
 
@@ -243,30 +277,43 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 				{
 					var item = this._target;
 					viewUtils.pushViewportObj( item );
-					var ctr = viewUtils.getCenterOfProjection();
+					ctr = viewUtils.getCenterOfProjection();
 					viewUtils.popViewportObj();
 					ctr[2] = 0;
 
-					var ctrOffset = item.elementModel.props3D.m_transformCtr;
-					if(ctrOffset)
-					{
-						ctr = vecUtils.vecAdd(3, ctr, ctrOffset);
-					}
+//					var ctrOffset = item.elementModel.props3D.m_transformCtr;
+//					if(ctrOffset)
+//					{
+//						ctr = vecUtils.vecAdd(3, ctr, ctrOffset);
+//					}
 
-					ctr = viewUtils.localToGlobal(ctr, item);
+					this._origin = viewUtils.localToGlobal(ctr, item);
 				}
 				else
 				{
-					ctr = drawUtils._selectionCtr.slice(0);
-					ctr[0] += this.application.ninja.stage.userContentLeft;
-					ctr[1] += this.application.ninja.stage.userContentTop;
-
-//                    ctr[0] += this.m_deltaPoint[0];
-//                    ctr[1] += this.m_deltaPoint[1];
+                    if(this._origin)
+                    {
+                        if(this._delta)
+                        {
+                            if(this._handleMode !== null)
+                            {
+//                                this._origin[this._handleMode] = this._delta;
+                            }
+                            else
+                            {
+                                this._origin[0] += this._delta[0];
+                                this._origin[1] += this._delta[1];
+                            }
+                        }
+                    }
+                    else
+                    {
+                        this._origin = drawUtils._selectionCtr.slice(0);
+                        this._origin[0] += this.application.ninja.stage.userContentLeft;
+                        this._origin[1] += this.application.ninja.stage.userContentTop;
+                    }
 				}
 			}
-
-			return ctr;
 		}
 	},
 
@@ -304,7 +351,9 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 
 			// Draw tool handles
 
-			var base = this._getHandlesOrigin();
+            this._updateHandlesOrigin();
+			var base = this._origin.slice(0);
+
 			var len = this.application.ninja.selectedElements.length;
 			var lMode = this._inLocalMode;
 			if(len === 1)
@@ -334,14 +383,18 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 						this._handles[1]._strokeStyle = 'rgba(0, 255, 0, 0.2)';
 						break;
 				}
+                if( delta && (len > 1) )
+                {
+                    base[this._handleMode] += ~~delta;
+                }
 			}
 			this._handles[0].draw(base, item, lMode);
 			this._handles[1].draw(base, item, lMode);
 			this._handles[2].draw(base, item, lMode);
 
-			if(delta)
+			if(delta && (this._handleMode !== null))
 			{
-				this._handles[this._handleMode].drawDelta(delta);
+				this._handles[this._handleMode].drawDelta(~~delta);
 			}
 
 			this._handles[0]._strokeStyle = 'rgba(255, 0, 0, 1)';

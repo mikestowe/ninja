@@ -4,6 +4,7 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
+var MaterialParser = require("js/lib/rdge/materials/material-parser").MaterialParser;
 var Material = require("js/lib/rdge/materials/material").Material;
 
 var UberMaterial = function UberMaterial() {
@@ -375,19 +376,111 @@ var UberMaterial = function UberMaterial() {
         var endKey = "endMaterial\n";
         var index = importStr.indexOf( endKey );
         index += endKey.length;
-        importStr = importStr.substr( index );
+        importStr = importStr.slice( 0, index );
 		var pu = new MaterialParser( importStr );
 
 		var matProps = pu.nextValue( "materialProps: " );
 		if (matProps)
 		{
-			var ambientColor  = Number( pu.nextValue( "ambientColor: "  ));	 this.setProperty( "ambientColor", ambientColor );
-			var diffuseColor  = Number( pu.nextValue( "diffuseColor: "  ));	 this.setProperty( "diffuseColor", diffuseColor );
-			var specularColor = Number( pu.nextValue( "specularColor: " ));	 this.setProperty( "specularColor", specularColor );
-			var specularPower = Number( pu.nextValue( "specularPower: " ));  this.setProperty( "specularPower", specularPower );
+			var ambientColor  = eval( "[" + pu.nextValue("ambientColor: ")   + ']' );	 this.setProperty( "ambientColor", ambientColor );
+			var diffuseColor  = eval( "[" + pu.nextValue( "diffuseColor: ")  + ']' );	 this.setProperty( "diffuseColor", diffuseColor );
+			var specularColor = eval( "[" + pu.nextValue( "specularColor: ") + ']' );	 this.setProperty( "specularColor", specularColor );
+			var specularPower = eval( "[" + pu.nextValue( "specularPower: ") + ']' );    this.setProperty( "specularPower", specularPower );
 		}
 
-		var lightProps = pu.nextValue( "theLights" );
+		var lightProps = pu.nextValue( "lightProps: " );
+		if (lightProps)
+		{
+			this._lights = [];
+			var lightStr;
+			for (var i=0;  i<this._MAX_LIGHTS;  i++)
+			{
+				var type = pu.nextValue( "light" + i + ": " );
+				if (type)
+				{
+						var light = new Object;
+						switch (type)
+						{
+							case "directional":
+								lightStr = pu.nextValue( 'light' + i + 'Dir: ');
+								light.direction = eval( "[" + lightStr + "]" );
+								break;
+
+							case "spot":
+								lightStr = pu.nextValue( 'light' + i + 'Pos: ' );
+								light.position =  eval( "[" + lightStr + "]" );
+
+								lightStr = pu.nextValue( 'light' + i + 'OuterSpotCutoff: ' );
+								light['spotInnerCutoff'] = Number( lightStr );
+
+								lightStr = pu.nextValue( 'light' + i + 'InnerSpotCutoff: ' );
+								light['spotOuterCutoff'] = Number( lightStr );
+								break;
+
+							case "point":
+								lightStr = pu.nextValue( 'light' + i + 'Pos: ' );
+								light.position =  eval( "[" + lightStr + "]" );
+
+								lightStr = pu.nextValue( 'light' + i + 'Attenuation: ' );
+								light.attenuation =  eval( "[" + lightStr + "]" );
+								break;
+
+							default:
+								throw new Error( "unrecognized light type on import: " + type );
+								break;
+						}
+
+						// common to all lights
+						light.diffuseColor = eval( "[" + pu.nextValue( 'light' + i + 'Color: ') + "]" );
+						light.specularColor = eval( "[" + pu.nextValue( 'light' + i + 'SpecularColor: ') + "]" );
+
+						// push the light
+						this._lights.push( light );
+				}
+				else
+					this._lights[i] = 'undefined';
+
+				// advance to the next light
+				var endLightKey = "endMaterial\n";
+				index = importStr.indexOf( endLightKey );
+				if (index < 0)  throw new Error( "ill-formed light encountered in import" );
+				index += endLightKey.length;
+				importStr = importStr.slice( 0, index );
+
+			}
+
+			if (this._lights.length > 0)
+			{
+				this._ubershaderCaps.lighting =
+				{
+					'light0' : this._lights[0],
+					'light1' : this._lights[1],
+					'light2' : this._lights[2],        
+					'light3' : this._lights[3]                                     
+				}
+			}
+		}
+
+		var diffuseMap = pu.nextValue( "diffuseMap: "  )
+		if(diffuseMap)
+			this.setProperty( "diffuseMap", diffuseMap );
+
+		var normalMap = pu.nextValue( "normalMap: "  );
+		if(normalMap)
+			this.setProperty( "normalMap", normalMap );
+
+		var specularMap = pu.nextValue( "specularMap: "  );
+		if(specularMap)
+			this.setProperty( "specularMap", specularMap );
+
+		var environmentMap = pu.nextValue( "environmentMap: "  );
+		if(environmentMap)
+		{
+			this.setProperty( "environmentMap", environmentMap );
+			this.setProperty( "environmentAmount", Number( pu.nextValue( "environmentAmount" ) ) );
+		}
+
+		this.rebuildShader();
 	}
 
 	this.export = function()
@@ -402,10 +495,10 @@ var UberMaterial = function UberMaterial() {
 		if (typeof caps.material != 'undefined')
 		{
 			exportStr += "materialProps: true\n";
-			exportStr += "ambientColor: " + caps.material.ambientColor + "\n";
-			exportStr += "diffuseColor: " + caps.material.diffuseColor + "\n";
-			exportStr += "specularColor: " + caps.material.specularColor + "\n";
-			exportStr += "specularPower: " + caps.material.specularPower + "\n";
+			exportStr += "ambientColor: " + this._ambientColor + "\n";
+			exportStr += "diffuseColor: " + this._diffuseColor + "\n";
+			exportStr += "specularColor: " + this._specularColor + "\n";
+			exportStr += "specularPower: " + this._specularPower + "\n";
 		}
 
 		if (typeof caps.lighting != 'undefined')
@@ -428,20 +521,18 @@ var UberMaterial = function UberMaterial() {
 					else if (light.type === 'spot')
 					{
 						exportStr += 'light' + i + 'Pos: ' + light['position'] + '\n';
-
-						var deg2Rad = Math.PI / 180;
-						exportStr += 'light' + i + 'Spot: ' + [ Math.cos( ( light['spotInnerCutoff'] || 45.0 )  * deg2Rad ), 
-																Math.cos( ( light['spotOuterCutoff'] || 90.0 ) * deg2Rad )] + '\n';
+						exportStr += 'light' + i + 'SpotInnerCutoff: ' + light['spotInnerCutoff'] + '\n';
+						exportStr += 'light' + i + 'SpotOuterCutoff: ' + light['spotOuterCutoff'] + '\n';
 					}
 					else		// light.type === 'point'
 					{
-						exportStr += 'light' + i + 'Pos: ' + (light['position'] || [ 0, 0, 0 ]) ;
-						exportStr += 'light' + i + 'Attenuation: ' + (light['attenuation'] || [ 1, 0, 0 ]) ;
+						exportStr += 'light' + i + 'Pos: ' + (light['position'] || [ 0, 0, 0 ]) + '\n';
+						exportStr += 'light' + i + 'Attenuation: ' + (light['attenuation'] || [ 1, 0, 0 ]) + '\n';
 					}
 
 					// common to all lights
-					exportStr += 'light' + i + 'Color: ' + light['diffuseColor'] || [ 1,1,1,1 ] + '\n';
-					exportStr += 'light' + i + 'SpecularColor: ' + light['specularColor'] || [ 1, 1, 1, 1 ] + '\n'; 
+					exportStr += 'light' + i + 'Color: ' + (light['diffuseColor'] || [ 1,1,1,1 ]) + '\n';
+					exportStr += 'light' + i + 'SpecularColor: ' + (light['specularColor'] || [ 1, 1, 1, 1 ]) + '\n'; 
 					
 					exportStr += "endlight\n";          
 				}
@@ -466,7 +557,10 @@ var UberMaterial = function UberMaterial() {
 			exportStr += "specularMap: " + caps.specularMap.texture + "\n";
 
 		if(typeof caps.environmentMap != 'undefined')
+		{
 			exportStr += "environmentMap: " + caps.environmentMap.texture + "\n";
+			exportStr += "environmentAmount: " + caps.environmentMap.envReflection + "\n";
+		}
 		
 		// every material needs to terminate like this
 		exportStr += "endMaterial\n";

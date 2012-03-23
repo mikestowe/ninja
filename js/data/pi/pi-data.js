@@ -402,6 +402,13 @@ exports.PiData = Montage.create( Montage, {
                             items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" },
                             enabled: { boundObject: "this.controls", boundProperty: "useWebGl" },
                             divider : true
+                        },
+                        {
+                            type: "button",
+                            id: "editStrokeMaterial",
+                            prop: "editStrokeMaterial",
+                            label: "Edit",
+                            enabled: { boundObject: "this.controls", boundProperty: "useWebGl" }
                         }
                     ],
                     [
@@ -413,6 +420,13 @@ exports.PiData = Montage.create( Montage, {
                             labelField: "_name",
                             dataField: "_name",
                             items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" },
+                            enabled: { boundObject: "this.controls", boundProperty: "useWebGl" }
+                        },
+                        {
+                            type: "button",
+                            id: "editFillMaterial",
+                            prop: "editFillMaterial",
+                            label: "Edit",
                             enabled: { boundObject: "this.controls", boundProperty: "useWebGl" }
                         }
                     ]
@@ -481,6 +495,13 @@ exports.PiData = Montage.create( Montage, {
                             items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" },
                             enabled: { boundObject: "this.controls", boundProperty: "useWebGl" },
                             divider : true
+                        },
+                        {
+                            type: "button",
+                            id: "editStrokeMaterial",
+                            prop: "editStrokeMaterial",
+                            label: "Edit",
+                            enabled: { boundObject: "this.controls", boundProperty: "useWebGl" }
                         }
                     ]
                 ]
@@ -568,6 +589,13 @@ exports.PiData = Montage.create( Montage, {
                             items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" },
                             enabled: { boundObject: "this.controls", boundProperty: "useWebGl" },
                             divider : true
+                        },
+                        {
+                            type: "button",
+                            id: "editStrokeMaterial",
+                            prop: "editStrokeMaterial",
+                            label: "Edit",
+                            enabled: { boundObject: "this.controls", boundProperty: "useWebGl" }
                         }
                     ],
                     [
@@ -579,6 +607,13 @@ exports.PiData = Montage.create( Montage, {
                             labelField: "_name",
                             dataField: "_name",
                             items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" },
+                            enabled: { boundObject: "this.controls", boundProperty: "useWebGl" }
+                        },
+                        {
+                            type: "button",
+                            id: "editFillMaterial",
+                            prop: "editFillMaterial",
+                            label: "Edit",
                             enabled: { boundObject: "this.controls", boundProperty: "useWebGl" }
                         }
                     ]

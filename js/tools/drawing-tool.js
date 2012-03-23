@@ -157,6 +157,8 @@ exports.DrawingTool = Montage.create(ToolBase, {
             this.mouseUpHitRec = null;
             this.downPoint.x = null;
             this.downPoint.y = null;
+            this.upPoint.x = null;
+            this.upPoint.y = null;
             this._isDrawing = false;
 
             if (this.drawingFeedback.mode === "Draw3D") {

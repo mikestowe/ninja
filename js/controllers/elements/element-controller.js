@@ -51,23 +51,6 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
 
     setAttribute: {
         value: function(el, att, value) {
-            if(att === "id") {
-                if(value === "") {
-                    el.setAttribute(att, value);
-                    return;
-                }
-
-                // Then check if this is a valid id by the following spec: http://www.w3.org/TR/REC-html40/types.html#h-6.2
-                var regexID = /^([a-zA-Z])+([a-zA-Z0-9_\.\:\-])+/;
-                if(!regexID.test(value)) {
-                    alert("Invalid ID");
-                    return;
-                } else if (this.application.ninja.currentDocument._document.getElementById(value) !== null) {
-                    alert("The following ID: " + value + " is already in Use");
-                }
-
-            }
-
             el.setAttribute(att, value);
         }
     },
@@ -245,22 +228,6 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
                         mat = this.transformStringToMat( xformStr );
                     if (!mat)
                         mat = Matrix.I(4);
-
-                    var zoom = this.application.ninja.elementMediator.getProperty(el, "zoom");
-                    if (zoom)
-                    {
-                        zoom = Number(zoom);
-                        if (zoom != 1)
-                        {
-                            var zoomMat = Matrix.create(  [
-                                [ zoom,    0,    0, 0],
-                                [    0, zoom,    0, 0],
-                                [    0,    0, zoom, 0],
-                                [    0,    0,    0, 1]
-                            ] );
-                            glmat4.multiply( zoomMat, mat, mat );
-                        }
-                    }
                 }
 
                 el.elementModel.props3D.matrix3d = mat;
