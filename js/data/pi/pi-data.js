@@ -398,7 +398,8 @@ exports.PiData = Montage.create( Montage, {
                             prop: "animate",
                             defaultValue: true,
                             value: "Animate",
-                            checked: true
+                            checked: true,
+                            enabled: { boundObject: "this.controls", boundProperty: "useWebGl" }
                         }
                     ],
                     [
@@ -501,7 +502,8 @@ exports.PiData = Montage.create( Montage, {
                             prop: "animate",
                             defaultValue: true,
                             value: "Animate",
-                            checked: true
+                            checked: true,
+                            enabled: { boundObject: "this.controls", boundProperty: "useWebGl" }
                         }
                     ],
                     [
@@ -605,7 +607,8 @@ exports.PiData = Montage.create( Montage, {
                             prop: "animate",
                             defaultValue: true,
                             value: "Animate",
-                            checked: true
+                            checked: true,
+                            enabled: { boundObject: "this.controls", boundProperty: "useWebGl" }
                         }
                     ],
                     [
