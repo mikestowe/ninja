@@ -1203,7 +1203,7 @@ GLSubpath.prototype.getNearVertex = function( eyePt, dir ){
     bboxDim[1] = 0.5 * (this._BBoxMax[1] - this._BBoxMin[1]);
     bboxMid[1] = 0.5 * (this._BBoxMax[1] + this._BBoxMin[1]);
     bboxDim[2] = 0.5 * (this._BBoxMax[2] - this._BBoxMin[2]);
-    bboxMid[3] = 0.5 * (this._BBoxMax[2] + this._BBoxMin[2]);
+    bboxMid[2] = 0.5 * (this._BBoxMax[2] + this._BBoxMin[2]);
 
     // convert the stroke vertices into normalized device coordinates
     var world = this.getWorld();

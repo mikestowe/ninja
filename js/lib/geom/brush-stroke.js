@@ -7,6 +7,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var VecUtils = require("js/helper-classes/3D/vec-utils").VecUtils;
 var GeomObj = require("js/lib/geom/geom-obj").GeomObj;
 var CanvasController = require("js/controllers/elements/canvas-controller").CanvasController;
+var ViewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
 
 // Todo: This entire class should be converted to a module
 
@@ -19,14 +20,15 @@ var BrushStroke = function GLBrushStroke() {
     ///////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////
-    this._Points = [];
-    this._OrigPoints = [];
+    this._Points = [];          //current state of points in stage-world space (may be different from input)
+    this._OrigPoints = [];      //copy of input points without any smoothing
+    this._LocalPoints = [];     //_Points in local coordinates...do this before rendering the points in the canvas
+    this._stageWorldCenter  = [0,0,0];   //coordinate for the canvas midPoint: a 3D vector in stage world space
     this._BBoxMin = [0, 0, 0];
     this._BBoxMax = [0, 0, 0];
-    this._dirty = true;
+    this._isDirty = true;
     this._isInit = false;
-    this._addedSamples = false;
-    this._storedOrigPoints = false;
+
 
     //whether or not to use the canvas drawing to stroke/fill
     this._useCanvasDrawing = true;
@@ -57,7 +59,7 @@ var BrushStroke = function GLBrushStroke() {
     this._MIN_SAMPLE_DISTANCE_THRESHOLD = 2;
 
     //prevent extremely long paths that can take a long time to render
-    this._MAX_ALLOWED_SAMPLES = 500;
+    this._MAX_ALLOWED_SAMPLES = 5000;
 
     //drawing context
     this._world = null;
@@ -67,6 +69,7 @@ var BrushStroke = function GLBrushStroke() {
     this._planeMat = null;
     this._planeMatInv = null;
     this._planeCenter = null;
+    this._dragPlane = null;
 
     /////////////////////////////////////////////////////////
     // Property Accessors/Setters
@@ -107,6 +110,10 @@ var BrushStroke = function GLBrushStroke() {
         this._planeCenter = pc;
     };
 
+    this.setDragPlane = function(p){
+        this._dragPlane = p;
+    };
+
     this.getCanvasX = function(){
         return this._canvasX;
     };
@@ -141,25 +148,32 @@ var BrushStroke = function GLBrushStroke() {
             var diffPtMag = Math.sqrt(diffPt[0]*diffPt[0] + diffPt[1]*diffPt[1]);
             if (diffPtMag>threshold){
                 this._Points.push(pt);
-                this._dirty=true;
+                this._isDirty=true;
+                this._isInit = false;
             }
         } else {
             this._Points.push(pt);
-            this._dirty=true;
+            this._isDirty=true;
+            this._isInit = false;
         }
     };
     
     this.insertPoint = function(pt, index){
         this._Points.splice(index, 0, pt);
-        this._dirty=true;
+        this._isDirty=true;
+        this._isInit = false;
     };
 
     this.isDirty = function(){
-        return this._dirty;
+        return this._isDirty;
     };
 
     this.makeDirty = function(){
-        this._dirty=true;
+        this._isDirty=true;
+    };
+
+    this.getStageWorldCenter = function() {
+        return this._stageWorldCenter;
     };
 
     this.getBBoxMin = function () {
@@ -176,7 +190,7 @@ var BrushStroke = function GLBrushStroke() {
 
     this.setStrokeWidth = function (w) {
         this._strokeWidth = w;
-        this._dirty=true;
+        this._isDirty=true;
     };
 
     this.getStrokeMaterial = function () {
@@ -184,7 +198,7 @@ var BrushStroke = function GLBrushStroke() {
     };
 
     this.setStrokeMaterial = function (m) {
-        this._strokeMaterial = m; this._dirty = true;
+        this._strokeMaterial = m; this._isDirty = true;
     };
 
     this.getStrokeColor = function () {
@@ -192,17 +206,17 @@ var BrushStroke = function GLBrushStroke() {
     };
 
     this.setStrokeColor = function (c) {
-        this._strokeColor = c; this._dirty = true;
+        this._strokeColor = c; this._isDirty = true;
     };
 
     this.setSecondStrokeColor = function(c){
-        this._secondStrokeColor=c; this._dirty = true;
+        this._secondStrokeColor=c; this._isDirty = true;
     }
 
     this.setStrokeHardness = function(h){
         if (this._strokeHardness!==h){
             this._strokeHardness=h;
-            this._dirty = true;
+            this._isDirty = true;
         }
     }
     this.getStrokeHardness = function(){
@@ -212,7 +226,7 @@ var BrushStroke = function GLBrushStroke() {
     this.setDoSmoothing = function(s){
         if (this._strokeDoSmoothing!==s) {
             this._strokeDoSmoothing = s;
-            this._dirty = true;
+            this._isDirty = true;
         }
     }
 
@@ -223,7 +237,7 @@ var BrushStroke = function GLBrushStroke() {
     this.setSmoothingAmount = function(a){
         if (this._strokeAmountSmoothing!==a) {
             this._strokeAmountSmoothing = a;
-            this._dirty = true;
+            this._isDirty = true;
         }
     }
 
@@ -234,14 +248,14 @@ var BrushStroke = function GLBrushStroke() {
     this.setStrokeUseCalligraphic = function(c){
         if (this._strokeUseCalligraphic!==c){
             this._strokeUseCalligraphic = c;
-            this._dirty = true;
+            this._isDirty = true;
         }
     }
 
     this.setStrokeAngle = function(a){
         if (this._strokeAngle!==a){
             this._strokeAngle = a;
-            this._dirty = true;
+            this._isDirty = true;
         };
     }
 
@@ -269,127 +283,276 @@ var BrushStroke = function GLBrushStroke() {
 
     };//NO-OP for now
 
+    this.getWidth = function() {
+        if (this._isDirty){
+            this.update();
+        }
+        return this._BBoxMax[0]-this._BBoxMin[0];
+    };
+
+    this.getHeight = function() {
+        if (this._isDirty){
+            this.update();
+        }
+        return this._BBoxMax[1]-this._BBoxMin[1];
+    };
+
     //remove all the points
     this.clear = function () {
         this._Points = [];
         this._OrigPoints = [];
-        this._dirty=true;
-    }
+        this._isDirty=true;
+        this._isInit = false;
+    };
 
+    this._addSamples = function() {
+        //**** add samples to the long sections of the path --- Catmull-Rom spline interpolation *****
+        // instead of the following, may use 4-point subdivision iterations over continuous regions of 'long' segments
+        // look at http://www.gvu.gatech.edu/~jarek/Split&Tweak/ for formula
+
+        var numPoints = this._Points.length;
+        var numInsertedPoints = 0;
+        var newSampledPoints = [];
+        var threshold = this._MAX_SAMPLE_DISTANCE_THRESHOLD;//this determines whether a segment between two sample too long
+        var prevPt = this._Points[0];
+        newSampledPoints.push(this._Points[0]);
+        for (var i=1;i<numPoints;i++) {
+            var pt = this._Points[i];
+            var diff = [pt[0]-prevPt[0], pt[1]-prevPt[1]];
+            var distance = Math.sqrt(diff[0]*diff[0]+diff[1]*diff[1]);
+            if (distance>threshold){
+                //build the control polygon for the Catmull-Rom spline (prev. 2 points and next 2 points)
+                var prev = (i===1) ? i-1 : i-2;
+                var next = (i===numPoints-1) ? i : i+1;
+                var ctrlPts = [this._Points[prev], this._Points[i-1], this._Points[i], this._Points[next]];
+                //insert points along the prev. to current point
+                var numNewPoints = Math.floor(distance/threshold);
+                for (var j=0;j<numNewPoints;j++){
+                    var param = (j+1)/(numNewPoints+1);
+                    var newpt = this._CatmullRomSplineInterpolate(ctrlPts, param);
+                    newSampledPoints.push(newpt);
+                    numInsertedPoints++;
+                }
+            }
+            newSampledPoints.push(pt);
+            prevPt=pt;
+
+            //end this function if the numPoints has gone above the max. size specified
+            if (numPoints> this._MAX_ALLOWED_SAMPLES){
+                console.log("leaving the resampling because numPoints is greater than limit:"+this._MAX_ALLOWED_SAMPLES);
+                break;
+            }
+        }
+        this._Points = newSampledPoints.slice(0);
+        newSampledPoints = [];
+    };
+
+    this.init = function(){
+        if (!this._isInit){
+            // **** add samples to the _Points in stageworld space ****
+            this._addSamples();
+
+            // **** compute the 2D (canvas space) coord. of the _Points  ****
+            this._buildLocalCoordFromStageWorldCoord();
+
+            // **** turn off the init. flag ****
+            this._isInit = true;
+            this._isDirty= true;
+        }
+
+        // **** update the current brush stroke ****
+        // smoothing, re-compute bounding box, etc.
+        this.update();
+    };
+
+    this._unprojectPt = function(pt, pespectiveDist){
+        var retPt = pt.slice(0);
+        if (MathUtils.fpCmp(pespectiveDist,-pt[2]) !== 0){
+            z = pt[2]*pespectiveDist/(pespectiveDist + pt[2]);
+            var x = pt[0]*(pespectiveDist - z)/pespectiveDist,
+                y = pt[1]*(pespectiveDist - z)/pespectiveDist;
+            retPt[0] = x;  retPt[1] = y;  retPt[2] = z;
+        }
+        return retPt;
+    };
+
+    this._buildLocalCoordFromStageWorldCoord = function() {
+        var stage = ViewUtils.getStage();
+        var stageOffset = ViewUtils.getElementOffset(stage);
+        ViewUtils.setViewportObj(stage);
+
+        var numPoints = this._Points.length;
+        var i;
+
+        // ***** compute center of bbox based on stage world coords *****
+        var bboxMin = [Infinity, Infinity, Infinity];
+        var bboxMax = [-Infinity, -Infinity, -Infinity];
+        for (i=0;i<numPoints;i++){
+            var pt = this._Points[i];
+            for (var d = 0; d < 3; d++) {
+                if (bboxMin[d] > pt[d]) {
+                    bboxMin[d] = pt[d];
+                }
+                if (bboxMax[d] < pt[d]) {
+                    bboxMax[d] = pt[d];
+                }
+            }
+        }
+        //save the center of the bbox for later use (while constructing the canvas)
+        this._stageWorldCenter = VecUtils.vecInterpolate(3, bboxMin, bboxMax, 0.5);
+
+        // ***** center the input stageworld data about the center of the bbox *****
+        this._LocalPoints = this._Points.slice(0);
+        for (i=0;i<numPoints;i++){
+            this._LocalPoints[i][0]-= this._stageWorldCenter[0];
+            this._LocalPoints[i][1]-= this._stageWorldCenter[1];
+        }
+
+        // ***** unproject all the centered points and convert them to 2D (plane space)*****
+        // (undo the projection step performed by the browser)
+        for (i=0;i<numPoints;i++) {
+            this._LocalPoints[i] = this._unprojectPt(this._LocalPoints[i], 1400); //todo get the perspective distance from the canvas
+            this._LocalPoints[i] = MathUtils.transformPoint(this._LocalPoints[i], this._planeMatInv);
+        }
+
+        // ***** compute width, height, and midpoint position (in stage world position) of the canvas
+        this._updateBoundingBox(); //compute the bbox to obtain the width and height used below
+        var halfwidth = 0.5*(this._BBoxMax[0]-this._BBoxMin[0]);
+        var halfheight = 0.5*(this._BBoxMax[1]-this._BBoxMin[1]);
+        for (i=0;i<numPoints;i++) {
+            this._LocalPoints[i][0]+= halfwidth;
+            this._LocalPoints[i][1]+= halfheight;
+        }
+        //store the original points
+        this._OrigPoints = this._LocalPoints.slice(0);
+
+        //var midPt = stageWorldBBoxCenter; //todo should I compute the instead as the midpoint of the plane-space bbox, transformed by this._planeMat
+        // The following offset seems to not match what was being done successfully for the brush tool, so I'm commenting this out
+        // the mid point is now relative to the center of the 3D space.  To
+        // calculate the left and top offsets, this must be offset by the stage dimensions
+        //var wh = ViewUtils.getStageDimension();
+        //midPt[0] += wh[0]/ 2.0;
+        //midPt[1] += wh[1]/ 2.0;
+    };
     /*this.translate = function (tx, ty, tz) {
         for (var i=0;i<this._Points.length;i++){
             this._Points[i][0]+=tx;
             this._Points[i][1]+=ty;
             this._Points[i][2]+=tz;
         }
-        this._dirty = true;
+        this._isDirty = true;
     };*/
 
-    this.computeMetaGeometry = function() {
-        var numPoints = this._Points.length;
-        if (this._isInit === false){
-            //**** add samples to the long sections of the path --- Catmull-Rom spline interpolation *****
-            // instead of the following, may use 4-point subdivision iterations over continuous regions of 'long' segments
-            // look at http://www.gvu.gatech.edu/~jarek/Split&Tweak/ for formula
+    //build coordinates for the brush stroke in local space of the canvas...will assume that the canvas width, height, left and top will not be changed now
+    this.buildLocalCoord = function(){
+        /*
+        if (this._isLocalDirty) {
+            //DEBUGGING
+            //confirm that localToStageWorld produces the same coordinates as those I used for rendering currently
+            var numPoints = this._Points.length;
+            var objToStageWorldMat = ViewUtils.getObjToStageWorldMatrix(this._canvas, true);
+            var stageworldToObjMat = glmat4.inverse(objToStageWorldMat, []);
+            var wh = ViewUtils.getStageDimension();
+            for (var i=0;i<numPoints;i++) {
+                var origStageWorldPt = this._Points[i];
+                //var localPt = [origStageWorldPt[0]-bboxMin[0], origStageWorldPt[1]-bboxMin[1],0]; //this is how the brush tool currently renders points in stage world
 
-            var numInsertedPoints = 0;
-            var newSampledPoints = [];
-            var threshold = this._MAX_SAMPLE_DISTANCE_THRESHOLD;//this determines whether a segment between two sample is long enough to warrant checking for angle
-            var prevPt = this._Points[0];
-            newSampledPoints.push(this._Points[0]);
-            for (var i=1;i<numPoints;i++) {
-                var pt = this._Points[i];
-                var diff = [pt[0]-prevPt[0], pt[1]-prevPt[1]];
-                var distance = Math.sqrt(diff[0]*diff[0]+diff[1]*diff[1]);
-                if (distance>threshold){
-                    //build the control polygon for the Catmull-Rom spline (prev. 2 points and next 2 points)
-                    var prev = (i===1) ? i-1 : i-2;
-                    var next = (i===numPoints-1) ? i : i+1;
-                    var ctrlPts = [this._Points[prev], this._Points[i-1], this._Points[i], this._Points[next]];
-                    //insert points along the prev. to current point
-                    var numNewPoints = Math.floor(distance/threshold);
-                    for (var j=0;j<numNewPoints;j++){
-                        var param = (j+1)/(numNewPoints+1);
-                        var newpt = this._CatmullRomSplineInterpolate(ctrlPts, param);
-                        newSampledPoints.push(newpt);
-                        numInsertedPoints++;
-                    }
-                }
-                newSampledPoints.push(pt);
-                prevPt=pt;
+                //check using ObjToStageWorldMatrix --- works
+                //var tmp = MathUtils.transformHomogeneousPoint(localPt,objToStageWorldMat);
+                //var newStageWorldPt = MathUtils.applyHomogeneousCoordinate(tmp);
+                //newStageWorldPt = VecUtils.vecAdd(3, newStageWorldPt, [wh[0]/2, wh[1]/2, 0]);
+                //var diffPt = VecUtils.vecDist(3,origStageWorldPt,newStageWorldPt);
 
-                //end this function if the numPoints has gone above the max. size specified
-                //if (numPoints> this._MAX_ALLOWED_SAMPLES){
-                //    console.log("leaving the resampling because numPoints is greater than limit:"+this._MAX_ALLOWED_SAMPLES);
-                //    break;
-                //}
-            }
-            this._Points = newSampledPoints.slice(0);
-            newSampledPoints = [];
-            this._dirty=true;
-
-            //store the original points
-            this._OrigPoints = this._Points.slice(0);
-            this._isInit = true;
-        } //if have not initialized this brush stroke  yet
-
-        if (this._dirty) {
-            this._Points = this._OrigPoints.slice(0);
-            numPoints = this._Points.length;
-            if (this._strokeDoSmoothing && numPoints>1) {
-                //iterations of Laplacian smoothing (setting the points to the average of their neighbors)
-                var numLaplacianIterations = this._strokeAmountSmoothing;
-                for (var n=0;n<numLaplacianIterations;n++){
-                    var newPoints = this._Points;//.slice(0);
-                    for (var i=1;i<numPoints-1;i++) {
-                        var avgPos = [  0.5*(this._Points[i-1][0] + this._Points[i+1][0]),
-                                        0.5*(this._Points[i-1][1] + this._Points[i+1][1]),
-                                        0.5*(this._Points[i-1][2] + this._Points[i+1][2])] ;
-                        newPoints[i] = avgPos;
-                    }
-                    this._Points = newPoints;//.slice(0);
-                }
-            } //if we're doing smoothing
-            
-
-            // *** compute the bounding box *********
-            this._BBoxMin = [Infinity, Infinity, Infinity];
-            this._BBoxMax = [-Infinity, -Infinity, -Infinity];
-            if (numPoints === 0) {
-                this._BBoxMin = [0, 0, 0];
-                this._BBoxMax = [0, 0, 0];
-            } else {
-                for (var i=0;i<numPoints;i++){
-                    var pt = this._Points[i];
-                    for (var d = 0; d < 3; d++) {
-                        if (this._BBoxMin[d] > pt[d]) {
-                            this._BBoxMin[d] = pt[d];
-                        }
-                        if (this._BBoxMax[d] < pt[d]) {
-                            this._BBoxMax[d] = pt[d];
-                        }
-                    }//for every dimension d from 0 to 2
-                }
+                //now go the other way, to recover localPt
+                var offsetedStageWorldPt = VecUtils.vecSubtract(3, origStageWorldPt, [wh[0]/2, wh[1]/2, 0]);
+                var tmp = MathUtils.transformHomogeneousPoint(offsetedStageWorldPt,stageworldToObjMat);
+                var newLocalPt = MathUtils.applyHomogeneousCoordinate(tmp);
+                //var diffPt2 = VecUtils.vecDist(3,localPt,newLocalPt);
+                this._LocalPoints[i] = newLocalPt;
             }
 
-            //increase the bbox given the stroke width and the angle (in case of calligraphic brush)
-            var bboxPadding = this._strokeWidth/2;
-            //if (this._strokeUseCalligraphic) {
-            //todo re-enable this if check once we are able to change the left and top of the brush canvas
-            if (false){
-                this._BBoxMin[0]-= bboxPadding*Math.cos(this._strokeAngle);
-                this._BBoxMin[1]-= bboxPadding*Math.sin(this._strokeAngle);
-                this._BBoxMax[0]+= bboxPadding*Math.cos(this._strokeAngle);
-                this._BBoxMax[1]+= bboxPadding*Math.sin(this._strokeAngle);
-            } else {
+
+            //end DEBUGGING
+            this._isLocalDirty=false;
+        } //if this._isLocalDirty
+        */
+    };
+
+
+    
+    this.update = function() {
+        if (this._isDirty){
+            // **** do smoothing if necessary ****
+            this._doSmoothing();
+
+            // **** recompute the bounding box ****
+            this._updateBoundingBox();
+
+            // **** turn off the dirty flag ****
+            this._isDirty = false;
+        }
+    };
+    
+    this._doSmoothing = function() {
+        var numPoints = this._LocalPoints.length;
+        if (this._strokeDoSmoothing && numPoints>1) {
+            this._LocalPoints = this._OrigPoints.slice(0);
+            //iterations of Laplacian smoothing (setting the points to the average of their neighbors)
+            var numLaplacianIterations = this._strokeAmountSmoothing;
+            for (var n=0;n<numLaplacianIterations;n++){
+                var newPoints = this._LocalPoints;//.slice(0);
+                for (var i=1;i<numPoints-1;i++) {
+                    var avgPos = [  0.5*(this._LocalPoints[i-1][0] + this._LocalPoints[i+1][0]),
+                                    0.5*(this._LocalPoints[i-1][1] + this._LocalPoints[i+1][1]),
+                                    0.5*(this._LocalPoints[i-1][2] + this._LocalPoints[i+1][2])] ;
+                    newPoints[i] = avgPos;
+                }
+                this._LocalPoints = newPoints;//.slice(0);
+            }
+        }
+    };
+
+    this._updateBoundingBox = function() {
+        // *** compute the bounding box *********
+        var points = this._LocalPoints;
+        var numPoints = points.length;
+        this._BBoxMin = [Infinity, Infinity, Infinity];
+        this._BBoxMax = [-Infinity, -Infinity, -Infinity];
+        if (numPoints === 0) {
+            this._BBoxMin = [0, 0, 0];
+            this._BBoxMax = [0, 0, 0];
+        } else {
+            for (var i=0;i<numPoints;i++){
+                var pt = points[i];
                 for (var d = 0; d < 3; d++) {
-                    this._BBoxMin[d]-= bboxPadding;
-                    this._BBoxMax[d]+= bboxPadding;
+                    if (this._BBoxMin[d] > pt[d]) {
+                        this._BBoxMin[d] = pt[d];
+                    }
+                    if (this._BBoxMax[d] < pt[d]) {
+                        this._BBoxMax[d] = pt[d];
+                    }
                 }//for every dimension d from 0 to 2
             }
-        } //if this was dirty
-        this._dirty = false;
+        }
 
+        //increase the bbox given the stroke width and the angle (in case of calligraphic brush)
+        var bboxPadding = this._strokeWidth/2;
+        //todo TEMP!
+        //bboxPadding = 0; //for now, ignore the effect of stroke width on bounding box
+        //end todo TEMP
+        //if (this._strokeUseCalligraphic) {
+        //todo re-enable this if check once we are able to change the left and top of the brush canvas
+        if (false){
+            this._BBoxMin[0]-= bboxPadding*Math.cos(this._strokeAngle);
+            this._BBoxMin[1]-= bboxPadding*Math.sin(this._strokeAngle);
+            this._BBoxMax[0]+= bboxPadding*Math.cos(this._strokeAngle);
+            this._BBoxMax[1]+= bboxPadding*Math.sin(this._strokeAngle);
+        } else {
+            for (var d = 0; d < 3; d++) {
+                this._BBoxMin[d]-= bboxPadding;
+                this._BBoxMax[d]+= bboxPadding;
+            }//for every dimension d from 0 to 2
+        }
     };
 
     this.buildBuffers = function () {
@@ -410,31 +573,33 @@ var BrushStroke = function GLBrushStroke() {
             return; //nothing to do for empty paths
         }
 
-        this.computeMetaGeometry();
+        if (this._isDirty){
+            this.update();
+        }
         var bboxMin = this.getBBoxMin();
         var bboxMax = this.getBBoxMax();
         var bboxWidth = bboxMax[0] - bboxMin[0];
         var bboxHeight = bboxMax[1] - bboxMin[1];
 
-
         if (this._canvas) {
-            // this seems to produce drift as the stroke size is changed smoothly...bug due to floating point round off
+            // this seems to produce drift as the stroke size is changed smoothly...bug due to floating point round off?
             //get the old left, top, width, and height
-//            var oldLeft = parseInt(CanvasController.getProperty(this._canvas, "left"));
-//            var oldTop  = parseInt(CanvasController.getProperty(this._canvas, "top"));
-//            var oldWidth  = parseInt(CanvasController.getProperty(this._canvas, "width"));
-//            var oldHeight = parseInt(CanvasController.getProperty(this._canvas, "height"));
-//            var newLeft = oldLeft - parseInt((bboxWidth-oldWidth)*0.5);
-//            var newTop = oldTop - parseInt((bboxHeight-oldHeight)*0.5);
-//
-//            //assign the new width and height as the canvas dimensions through the canvas controller
-//            CanvasController.setProperty(this._canvas, "left", newLeft+"px");
-//            CanvasController.setProperty(this._canvas, "top", newTop+"px");*/
-            CanvasController.setProperty(this._canvas, "width", bboxWidth+"px");
-            CanvasController.setProperty(this._canvas, "height", bboxHeight+"px");
-            this._canvas.elementModel.shapeModel.GLWorld.setViewportFromCanvas(this._canvas);
+            var oldLeft = parseInt(CanvasController.getProperty(this._canvas, "left"));
+            var oldTop  = parseInt(CanvasController.getProperty(this._canvas, "top"));
+            var oldWidth  = parseInt(CanvasController.getProperty(this._canvas, "width"));
+            var oldHeight = parseInt(CanvasController.getProperty(this._canvas, "height"));
+            var newLeft = oldLeft - ((bboxWidth-oldWidth)*0.5);
+            var newTop = oldTop - ((bboxHeight-oldHeight)*0.5);
 
+            //assign the new width and height as the canvas dimensions through the canvas controller
+            //CanvasController.setProperty(this._canvas, "left", newLeft+"px");
+            //CanvasController.setProperty(this._canvas, "top", newTop+"px");
+
+            //CanvasController.setProperty(this._canvas, "width", bboxWidth+"px");
+            //CanvasController.setProperty(this._canvas, "height", bboxHeight+"px");
+            this._canvas.elementModel.shapeModel.GLWorld.setViewportFromCanvas(this._canvas);
         }
+
 
         //get the context
         var ctx = world.get2DContext();
@@ -443,12 +608,17 @@ var BrushStroke = function GLBrushStroke() {
         }
         ctx.save();
         ctx.clearRect(0, 0, bboxWidth, bboxHeight);
-        this.drawToContext(ctx, bboxMin[0], bboxMin[1]);
+        this.drawToContext(ctx, 0, 0, false);
         ctx.restore();
     } //this.render()
 
-    this.drawToContext = function(ctx, origX, origY){
-        var numPoints = this.getNumPoints();
+    this.drawToContext = function(ctx, origX, origY, drawStageWorldPts){
+        var points = this._LocalPoints;
+        if (drawStageWorldPts){
+            points = this._Points;
+        }
+        var numPoints = points.length;
+
         if (this._strokeUseCalligraphic) {
             //build the stamp for the brush stroke
             var t=0;
@@ -457,6 +627,7 @@ var BrushStroke = function GLBrushStroke() {
             var opaqueRegionHalfWidth = 0.5*this._strokeHardness*numTraces*0.01; //the 0.01 is to convert the strokeHardness from [0,100] to [0,1]
             var maxTransparentRegionHalfWidth = halfNumTraces-opaqueRegionHalfWidth;
 
+            //todo this brush stamp should be created outside of this function
             //build an angled (calligraphic) brush stamp
             var deltaDisplacement = [Math.cos(this._strokeAngle),Math.sin(this._strokeAngle)];
             deltaDisplacement = VecUtils.vecNormalize(2, deltaDisplacement, 1);
@@ -485,19 +656,16 @@ var BrushStroke = function GLBrushStroke() {
                     alphaVal = 1.0 - distFromOpaqueRegion/maxTransparentRegionHalfWidth;
                     alphaVal *= 1.0/ctx.lineWidth; //factor that accounts for lineWidth !== 1
                 }
-
                 ctx.save();
                 ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
-
                 //linearly interpolate between the two stroke colors
                 var currStrokeColor = VecUtils.vecInterpolate(4, this._strokeColor, this._secondStrokeColor, t/numTraces);
                 //ctx.strokeStyle="rgba("+parseInt(255*currStrokeColor[0])+","+parseInt(255*currStrokeColor[1])+","+parseInt(255*currStrokeColor[2])+","+alphaVal+")";
-
                 ctx.translate(disp[0],disp[1]);
                 ctx.beginPath();
-                ctx.moveTo(this._Points[0][0]-origX, this._Points[0][1]-origY);
+                ctx.moveTo(points[0][0]-origX, points[0][1]-origY);
                 for (var i=0;i<numPoints;i++){
-                    ctx.lineTo(this._Points[i][0]-origX, this._Points[i][1]-origY);
+                    ctx.lineTo(points[i][0]-origX, points[i][1]-origY);
                 }
                 ctx.stroke();
                 ctx.restore();
@@ -513,13 +681,13 @@ var BrushStroke = function GLBrushStroke() {
             ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
             for (var l=0;l<numlayers;l++){
                 ctx.beginPath();
-                ctx.moveTo(this._Points[0][0]-origX, this._Points[0][1]-origY);
+                ctx.moveTo(points[0][0]-origX, points[0][1]-origY);
                 if (numPoints===1){
                     //display a tiny segment as a single point
-                   ctx.lineTo(this._Points[0][0]-origX, this._Points[0][1]-origY+0.01);
+                   ctx.lineTo(points[0][0]-origX, points[0][1]-origY+0.01);
                 }
                 for (var i=1;i<numPoints;i++){
-                    ctx.lineTo(this._Points[i][0]-origX, this._Points[i][1]-origY);
+                    ctx.lineTo(points[i][0]-origX, points[i][1]-origY);
                 }
                 ctx.lineWidth=2*l+minStrokeWidth;
                 ctx.stroke();
