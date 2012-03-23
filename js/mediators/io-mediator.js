@@ -348,7 +348,7 @@ exports.IoMediator = Montage.create(Component, {
     			}
     		}
     		//Checking for webGL elements in document
-    		if (template.webgl && template.webgl.length  > 0) {
+    		if (template.webgl && template.webgl.length  > 1) {//TODO: Should be length 0, hack for a temp fix
     			var rdgeDirName, rdgeVersion;
     			//Copy webGL library if needed
     			for (var i in this.application.ninja.coreIoApi.ninjaLibrary.libs) {
