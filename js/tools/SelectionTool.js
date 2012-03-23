@@ -223,8 +223,10 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
     HandleDoubleClick: {
         value: function(event) {
             if(this.application.ninja.selectedElements.length > 0) {
+                this.application.ninja.breadCrumbClick = true;
                 this.application.ninja.currentSelectedContainer = this.application.ninja.selectedElements[0]._element;
             } else {
+                this.application.ninja.breadCrumbClick = true;
                 this.application.ninja.currentSelectedContainer = this.application.ninja.currentDocument.documentRoot;
             }
         }
