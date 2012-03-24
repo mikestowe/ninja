@@ -486,13 +486,23 @@ var BrushStroke = function GLBrushStroke() {
             this._doSmoothing();
 
             // **** recompute the bounding box ****
-            this._updateBoundingBox();
+            var deltaWH = this._updateBoundingBox();
+
+            // **** offset the local coords to account for the change in bbox ****
+            this._offsetLocalCoord(deltaWH[0]*0.5, deltaWH[1]*0.5);
 
             // **** turn off the dirty flag ****
             this._isDirty = false;
         }
     };
-    
+
+    this._offsetLocalCoord = function(deltaW, deltaH){
+        var numPoints = this._LocalPoints.length;
+        for (var i=0;i<numPoints;i++) {
+            this._LocalPoints[i][0]+= deltaW;
+            this._LocalPoints[i][1]+= deltaH;
+        }
+    };
     this._doSmoothing = function() {
         var numPoints = this._LocalPoints.length;
         if (this._strokeDoSmoothing && numPoints>1) {
@@ -516,6 +526,9 @@ var BrushStroke = function GLBrushStroke() {
         // *** compute the bounding box *********
         var points = this._LocalPoints;
         var numPoints = points.length;
+        var oldWidth = this._BBoxMax[0]-this._BBoxMin[0];
+        var oldHeight = this._BBoxMax[1]-this._BBoxMin[1];
+
         this._BBoxMin = [Infinity, Infinity, Infinity];
         this._BBoxMax = [-Infinity, -Infinity, -Infinity];
         if (numPoints === 0) {
@@ -553,6 +566,11 @@ var BrushStroke = function GLBrushStroke() {
                 this._BBoxMax[d]+= bboxPadding;
             }//for every dimension d from 0 to 2
         }
+
+        //return the difference between the current and old bbox width and height
+        var newWidth = this._BBoxMax[0]-this._BBoxMin[0];
+        var newHeight = this._BBoxMax[1]-this._BBoxMin[1];
+        return [(newWidth-oldWidth), (newHeight-oldHeight)];
     };
 
     this.buildBuffers = function () {
@@ -584,19 +602,27 @@ var BrushStroke = function GLBrushStroke() {
         if (this._canvas) {
             // this seems to produce drift as the stroke size is changed smoothly...bug due to floating point round off?
             //get the old left, top, width, and height
-            var oldLeft = parseInt(CanvasController.getProperty(this._canvas, "left"));
+            /*var oldLeft = parseInt(CanvasController.getProperty(this._canvas, "left"));
             var oldTop  = parseInt(CanvasController.getProperty(this._canvas, "top"));
             var oldWidth  = parseInt(CanvasController.getProperty(this._canvas, "width"));
             var oldHeight = parseInt(CanvasController.getProperty(this._canvas, "height"));
             var newLeft = oldLeft - ((bboxWidth-oldWidth)*0.5);
-            var newTop = oldTop - ((bboxHeight-oldHeight)*0.5);
+            var newTop = oldTop - ((bboxHeight-oldHeight)*0.5);*/
 
+            //update the stageWorldCenter as a function of the new bounding box in plane space
+            var bboxMid =  [0.5 * (bboxMax[0] + bboxMin[0]), 0.5 * (bboxMax[1] + bboxMin[1]), 0.5 * (bboxMax[2] + bboxMin[2])];
+            var newStageWorldCenter = MathUtils.transformPoint(bboxMid, this._planeMat);
+            var wh = ViewUtils.getStageDimension();
+            newStageWorldCenter[0]+= wh[0]*0.5; newStageWorldCenter[1]+= wh[1]*0.5;
+            
+            var newLeft = Math.round(this._stageWorldCenter[0] - 0.5 * bboxWidth);
+            var newTop = Math.round(this._stageWorldCenter[1] - 0.5 * bboxHeight);
             //assign the new width and height as the canvas dimensions through the canvas controller
-            //CanvasController.setProperty(this._canvas, "left", newLeft+"px");
-            //CanvasController.setProperty(this._canvas, "top", newTop+"px");
+            CanvasController.setProperty(this._canvas, "left", newLeft+"px");
+            CanvasController.setProperty(this._canvas, "top", newTop+"px");
 
-            //CanvasController.setProperty(this._canvas, "width", bboxWidth+"px");
-            //CanvasController.setProperty(this._canvas, "height", bboxHeight+"px");
+            CanvasController.setProperty(this._canvas, "width", bboxWidth+"px");
+            CanvasController.setProperty(this._canvas, "height", bboxHeight+"px");
             this._canvas.elementModel.shapeModel.GLWorld.setViewportFromCanvas(this._canvas);
         }
 

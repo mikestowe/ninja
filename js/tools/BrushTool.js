@@ -349,9 +349,10 @@ exports.BrushTool = Montage.create(ShapeTool, {
                             // TODO - update the shape's info only.  shapeModel will likely need an array of shapes.
                         }
 
-                        if(newCanvas.elementModel.isShape)
+                        //if(newCanvas.elementModel.isShape)
+                        if (true)
                         {
-                            this.application.ninja.selectionController.selectElement(canvas);
+                            this.application.ninja.selectionController.selectElement(newCanvas);
                         }
                     }
                 } //if (!canvas) {
