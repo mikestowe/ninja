@@ -166,8 +166,8 @@ exports.Properties = Montage.create(Component, {
                     this.threeD.xAngle = ElementsMediator.get3DProperty(el, "xAngle");
                     this.threeD.yAngle = ElementsMediator.get3DProperty(el, "yAngle");
                     this.threeD.zAngle = ElementsMediator.get3DProperty(el, "zAngle");
-                }
             }
+        }
         }
     },
 
@@ -205,6 +205,12 @@ exports.Properties = Montage.create(Component, {
                 this.threeD.xAngle = ElementsMediator.get3DProperty(stage, "xAngle");
                 this.threeD.yAngle = ElementsMediator.get3DProperty(stage, "yAngle");
                 this.threeD.zAngle = ElementsMediator.get3DProperty(stage, "zAngle");
+            }
+
+            if(ElementsMediator.getProperty(stage, "-webkit-transform-style") === "preserve-3d") {
+                this.threeD.flatten = false;
+            } else {
+                this.threeD.flatten = true;
             }
 
             if(this.customPi !== stage.elementModel.pi) {
@@ -271,6 +277,11 @@ exports.Properties = Montage.create(Component, {
             this.positionSize.heightSize = parseFloat(ElementsMediator.getProperty(el, "height"));
             this.positionSize.widthSize = parseFloat(ElementsMediator.getProperty(el, "width"));
 
+            if(ElementsMediator.getProperty(el, "-webkit-transform-style") === "preserve-3d") {
+                this.threeD.flatten = false;
+            } else {
+                this.threeD.flatten = true;
+            }
 
             if(this.threeD.inGlobalMode)
             {
