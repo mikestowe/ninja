@@ -37,6 +37,54 @@ exports.animationPresets = {
                     }]
             }]
     }, {
+        "text": "2D Animations",
+    "children": [
+        {
+            "text": "Slide Out with Fade",
+            "selectorBase": "slide-fade-out",
+            "rules" : [{
+                "selectorSuffix" : "",
+                "styles" : {
+                    "-webkit-animation-name": "slide-fade-out",
+                    "-webkit-animation-duration": "5s",
+                    "-webkit-animation-iteration-count": "infinite",
+                    "-webkit-animation-direction": "normal",
+                    "-webkit-animation-timing-function": "ease",
+                    "-webkit-transform-style": "preserve-3d",
+                    "-webkit-transform": "perspective(1000)",
+                    "-webkit-animation-delay": "0s"
+                }
+            },{
+                "isKeyFrameRule": true,
+                "keys" : [{
+                    "keyText": "0%",
+                    "styles": {
+                        "opacity": "0",
+                        "-webkit-transform": "translate3d(0, 0, 0)"
+                    }
+                }, {
+                    "keyText": "10%",
+                    "styles": {
+                        "opacity": "1",
+                        "-webkit-transform": "translate3d(0, 0, 0)"
+                    }
+                }, {
+                    "keyText": "86%",
+                    "styles": {
+                        "opacity": "1",
+                        "-webkit-transform": "translate3d(0, 0, 0)"
+
+                    }
+                }, {
+                    "keyText": "100%",
+                    "styles": {
+                        "opacity": "0",
+                        "-webkit-transform": "translate3d(540px, 0, 0)"
+                    }
+                }]
+            }]
+        }]
+    }, {
         "text": "3D Animations",
         "children": [
             {

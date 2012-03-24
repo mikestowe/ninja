@@ -31,8 +31,6 @@ exports.Main = Montage.create(Component, {
                         componentInstance.needsDraw = true;
                         componentInstance.ownerComponent = self;
 
-                        componentInstance.addEventListener("firstDraw", self, false);
-
                         callback(componentInstance, element);
                     })
                     .end();
@@ -45,15 +43,6 @@ exports.Main = Montage.create(Component, {
 
             document.body.dispatchEvent( newEvent );
 
-        }
-    },
-
-    handleFirstDraw: {
-        value: function() {
-            var newEvent = document.createEvent( "CustomEvent" );
-            newEvent.initCustomEvent( "addComponentFirstDraw", false, true );
-
-            document.body.dispatchEvent( newEvent );
         }
     }
 });

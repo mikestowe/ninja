@@ -248,7 +248,7 @@ var GeomObj = function GLGeomObj() {
 	this.exportMaterialsJSON = function()
 	{
 		var jObj;
-		if (this._materialArray && this._materialNodeArray)
+		if (this._materialArray && this._materialNodeArray && this.getWorld().isWebGL())
 		{
 			var nMats = this._materialArray.length;
 			if (nMats > 0)
