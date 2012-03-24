@@ -187,7 +187,8 @@ var Rectangle = function GLRectangle() {
 	///////////////////////////////////////////////////////////////////////
 	// Methods
 	///////////////////////////////////////////////////////////////////////
-	this.export = function() {
+	/*
+    this.export = function() {
 		var rtnStr = "type: " + this.geomType() + "\n";
 
 		/////////////////////////////////////////////////////////////////////////
@@ -243,6 +244,7 @@ var Rectangle = function GLRectangle() {
 
 		return rtnStr;
 	};
+    */
 
 	// JSON export
 	this.exportJSON = function()

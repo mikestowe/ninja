@@ -118,6 +118,8 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 
 	this.getRenderer			= function()		{  return this.renderer;			};
 
+    // Flag to play/pause animation at authortime
+    this._previewAnimation = true;
   ////////////////////////////////////////////////////////////////////////////////////
   // RDGE
   // local variables
@@ -476,6 +478,10 @@ World.prototype.restartRenderLoop = function() {
 		if (this._allMapsLoaded) {
 			//console.log( "starting task" );
 			this._canvas.task.start();
+            if(!this._previewAnimation) {
+                //render only once if authortime animation is turned off
+                this._canvas.task.stop();
+            }
 		} else {
 			//console.log( "stopping task" );
 			this._canvas.task.stop();
@@ -730,6 +736,8 @@ World.prototype.getShapeFromPoint = function( offsetX, offsetY ) {
 		}
 	}
 };
+
+
 
 World.prototype.exportJSON = function()
 {
