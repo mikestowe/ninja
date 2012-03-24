@@ -238,7 +238,7 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 					if (this._canvas.task) {
 						this._firstRender = false;
 
-						if (!this.hasAnimatedMaterials() ||  !this._previewAnimation) {
+						if (!this.hasAnimatedMaterials() || !this._previewAnimation) {
 							this._canvas.task.stop();
 							//this._renderCount = 10;
 						}
