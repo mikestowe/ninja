@@ -207,6 +207,7 @@ function Texture( dstWorld )
 			width = this.nextHighestPowerOfTwo( width );
 			height = this.nextHighestPowerOfTwo( height );
 		}
+        width = 64;  height = 64;
 
 		// create a canvas to be used as the image for the texture map
 		var doc = srcCanvas.ownerDocument;
@@ -246,6 +247,10 @@ function Texture( dstWorld )
 				var nBytes = width*height*4;
 				for (var i=0;  i<nBytes;  i++)
 					imageData.data[i] = data[i];
+                var nPrint = nBytes;
+                if (nPrint > 1000)  nPrint = 1000;
+                for (var i=0; i<nPrint;  i++)
+                    console.log( " " + data[i] );
 			}
 		}
 		renderCtx.putImageData( imageData, 0, 0 );
