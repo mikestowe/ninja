@@ -119,6 +119,24 @@
             	        
 	            	}
 	            },
+
+                "timelineZoomSlider":{
+                    "module":"js/components/slider.reel",
+                    "name":"Slider",
+                    "properties":{
+                        "element":{"#":"tl_slider"},
+                        "maxValue" : 10000,
+                        "minValue" : 1000
+                    },
+                    "bindings": {
+                        "value": {
+                            "boundObject": {"@": "owner"},
+                            "boundObjectPropertyPath": "millisecondsOffset",
+                            "oneway": false
+                        }
+                    }
+                },
+
                 "endHottext" : {
                     "module": "js/components/hottextunit.reel",
             	    "name": "HotTextUnit",
@@ -168,6 +186,7 @@
                         </div>
 
                         <div id="timeline_gutter" class="timelinegutter">
+                            <div id="tl_slider" class="tl_slider"></div>
                             <input id="end_hottext" class="endhottext">
                         </div>
                     </div>

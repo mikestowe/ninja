@@ -284,3 +284,9 @@
 	display: none;
 	box-shadow: rgb(17, 17, 17) 0px 0px 14px inset;
 }
+.tl_slider{
+    width: 65px;
+    height: 5px;
+    background: none;
+    margin-left: 25%;
+}

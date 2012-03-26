@@ -137,8 +137,31 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
-    millisecondsOffset:{
+    _millisecondsOffset:{
         value:1000
+    },
+
+    millisecondsOffset:{
+        get:function () {
+            return this._millisecondsOffset;
+    },
+        set:function (newVal) {
+            if (newVal !== this._millisecondsOffset) {
+                this._millisecondsOffset= newVal;
+                this.drawTimeMarkers();
+                NJevent('tlZoomSlider',this);
+            }
+        }
+    },
+
+    tweenarray:{
+            value:[],
+            writable:true
+    },
+
+    tempArray:{
+        value:[],
+        writable:true
     },
 
     _masterDuration:{
@@ -686,6 +709,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     drawTimeMarkers:{
         value:function () {
             this.timeMarkerHolder = document.createElement("div");
+
+            if(this.time_markers.children[0]){
+               this.time_markers.removeChild(this.time_markers.children[0]);
+            }
+
             this.time_markers.appendChild(this.timeMarkerHolder);
             var i;
             var totalMarkers = Math.floor(this.time_markers.offsetWidth / 80);
