@@ -50,12 +50,23 @@
                 }
             },
 
+            "lockButton": {
+                "prototype": "montage/ui/toggle-button.reel",
+                "properties": {
+                    "element": {"#": "lockButton"},
+                    "pressed": true,
+                    "pressedClass": "lockUp",
+                    "preventFocus": true,
+                    "identifier": "ratio"
+                }
+            },
+
             "owner": {
                 "module": "js/components/tools-properties/rect-properties.reel",
                 "name": "RectProperties",
                 "properties": {
                     "element": {"#": "rectProperties"},
-                    "lockButton": {"#": "lockButton"},
+                    "lockButton": {"@": "lockButton"},
                     "TLRadiusControl": {"@": "hottext1"},
                     "TRRadiusControl": {"@": "hottext2"},
                     "BLRadiusControl": {"@": "hottext3"},
@@ -69,7 +80,8 @@
 
     <body>
         <div id="rectProperties" class="rectProperties">
-            <button id="lockButton" class="unselectable subToolButton button LockToolUp" style=" margin-left:20px"></button>
+            <!--<button id="lockButton" class="unselectable subToolButton button LockToolUp" style=" margin-left:20px"></button>-->
+            <button id="lockButton" class="unlock" style="margin-left:20px"></button>
             <div id="TLRadiusLabel" class="unselectable subToolButton cornerRadius topLeft"></div>
             <div id="TLRadiusControl" class="label"></div>
             <div id="TRRadiusLabel" class="unselectable subToolButton cornerRadius topRight"></div>

@@ -12,7 +12,10 @@
   },
   "permissions": [
     "unlimitedStorage",
-    "notifications"
+    "notifications",
+    "webRequest",
+    "webRequestBlocking",
+    "http://www.google.com/*"
   ],
   "requirements": {
     "3D": {

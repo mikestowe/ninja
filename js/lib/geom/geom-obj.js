@@ -5,26 +5,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var MaterialsModel = require("js/models/materials-model").MaterialsModel;
-var FlatMaterial = require("js/lib/rdge/materials/flat-material").FlatMaterial;
-var LinearGradientMaterial = require("js/lib/rdge/materials/linear-gradient-material").LinearGradientMaterial;
-var RadialGradientMaterial = require("js/lib/rdge/materials/radial-gradient-material").RadialGradientMaterial;
-var BumpMetalMaterial = require("js/lib/rdge/materials/bump-metal-material").BumpMetalMaterial;
-var UberMaterial = require("js/lib/rdge/materials/uber-material").UberMaterial;
-var RadialBlurMaterial = require("js/lib/rdge/materials/radial-blur-material").RadialBlurMaterial;
-var PlasmaMaterial = require("js/lib/rdge/materials/plasma-material").PlasmaMaterial;
-var PulseMaterial = require("js/lib/rdge/materials/pulse-material").PulseMaterial;
-var TunnelMaterial = require("js/lib/rdge/materials/tunnel-material").TunnelMaterial;
-var ReliefTunnelMaterial = require("js/lib/rdge/materials/relief-tunnel-material").ReliefTunnelMaterial;
-var SquareTunnelMaterial = require("js/lib/rdge/materials/square-tunnel-material").SquareTunnelMaterial;
-var FlyMaterial = require("js/lib/rdge/materials/fly-material").FlyMaterial;
-var WaterMaterial = require("js/lib/rdge/materials/water-material").WaterMaterial;
-var ZInvertMaterial = require("js/lib/rdge/materials/z-invert-material").ZInvertMaterial;
-var DeformMaterial = require("js/lib/rdge/materials/deform-material").DeformMaterial;
-var StarMaterial = require("js/lib/rdge/materials/star-material").StarMaterial;
-var TwistMaterial = require("js/lib/rdge/materials/twist-material").TwistMaterial;
-var JuliaMaterial = require("js/lib/rdge/materials/julia-material").JuliaMaterial;
-var KeleidoscopeMaterial = require("js/lib/rdge/materials/keleidoscope-material").KeleidoscopeMaterial;
-var MandelMaterial = require("js/lib/rdge/materials/mandel-material").MandelMaterial;
 
 ///////////////////////////////////////////////////////////////////////
 // Class GLGeomObj
@@ -265,6 +245,96 @@ var GeomObj = function GLGeomObj() {
         return fillMaterial;
     };
 
+	this.exportMaterialsJSON = function()
+	{
+		var jObj;
+		if (this._materialArray && this._materialNodeArray && this.getWorld().isWebGL())
+		{
+			var nMats = this._materialArray.length;
+			if (nMats > 0)
+			{
+				var arr = [];
+
+				for (var i=0;  i<nMats;  i++)
+				{
+					var matObj = 
+					{
+						'materialNodeName'	: this._materialNodeArray[i].name,
+						'material'			: this._materialArray[i].exportJSON(),
+						'type'				: this._materialTypeArray[i]
+					}
+					arr.push( matObj );
+				}
+
+				jObj =
+				{
+					'nMaterials'	: nMats,
+					'materials'		: arr
+				};
+			}
+		}
+
+		return jObj;
+	}
+
+	this.importMaterialsJSON = function( jObj )
+	{
+		this._materialArray = [];
+		this._materialTypeArray = [];
+
+		if (!jObj)  return;
+
+		var nMaterials = jObj.nMaterials;
+		var matArray = jObj.materials;
+		for (var i=0;  i<nMaterials;  i++)
+		{
+			var mat;
+			var matObj = matArray[i].material;
+			var shaderName = matObj.material;
+			switch (shaderName)
+			{
+				case "flat":
+				case "radialGradient":
+				case "linearGradient":
+				case "bumpMetal":
+				case "uber":
+				case "plasma":
+				case "deform":
+				case "water":
+				case "paris":
+				case "tunnel":
+				case "reliefTunnel":
+				case "squareTunnel":
+				case "twist":
+				case "fly":
+				case "julia":
+				case "mandel":
+				case "star":
+				case "zinvert":
+				case "keleidoscope":
+				case "radialBlur":
+				case "pulse":
+					mat = MaterialsModel.getMaterialByShader( shaderName );
+					if (mat)  mat = mat.dup();
+					break;
+
+				default:
+					console.log( "material type: " + shaderName + " is not supported" );
+					break;
+			}
+
+			if (mat)
+			{
+				mat.importJSON( matObj );
+				this._materialArray.push( mat );
+				this._materialTypeArray.push( matObj.type );
+				var type = matArray[i].type;
+				if (type == "fill")  this._fillMaterial = mat;
+				else  this._strokeMaterial = mat;
+			}
+		}
+	}
+
 	this.exportMaterials = function()
 	{
 		var rtnStr = "";
@@ -296,26 +366,30 @@ var GeomObj = function GLGeomObj() {
 			var materialType = this.getPropertyFromString( "material: ",	importStr );
 			switch (materialType)
 			{
-				case "flat":			mat = new FlatMaterial();				break;
-				case "radialGradient":  mat = new RadialGradientMaterial();		break;
-				case "linearGradient":  mat = new LinearGradientMaterial();		break;
-				case "bumpMetal":		mat = new BumpMetalMaterial();			break;
-				case "uber":			mat = new UberMaterial();				break;
-				case "plasma":			mat = new PlasmaMaterial();				break;
-				case "deform":			mat = new DeformMaterial();				break;
-				case "water":			mat = new WaterMaterial();				break;
-				case "tunnel":			mat = new TunnelMaterial();				break;
-				case "reliefTunnel":	mat = new ReliefTunnelMaterial();		break;
-				case "squareTunnel":	mat = new SquareTunnelMaterial();		break;
-				case "twist":			mat = new TwiseMaterial();				break;
-				case "fly":				mat = new FlyMaterial();				break;
-				case "julia":			mat = new JuliaMaterial();				break;
-				case "mandel":			mat = new MandelMaterial();				break;
-				case "star":			mat = new StarMaterial();				break;
-				case "zinvert":			mat = new ZInvertMaterial();			break;
-				case "keleidoscope":	mat = new KeleidoscopeMaterial();		break;
-				case "radialBlur":		mat = new RadialBlurMaterial();			break;
-				case "pulse":			mat = new PulseMaterial();				break;
+				case "flat":
+				case "radialGradient":
+				case "linearGradient":
+				case "bumpMetal":
+				case "uber":
+				case "plasma":
+				case "deform":
+				case "water":
+				case "paris":
+				case "tunnel":
+				case "reliefTunnel":
+				case "squareTunnel":
+				case "twist":
+				case "fly":
+				case "julia":
+				case "mandel":
+				case "star":
+				case "zinvert":
+				case "keleidoscope":
+				case "radialBlur":
+				case "pulse":
+					mat = MaterialsModel.getMaterialByShader( materialType );
+					if (mat)  mat = mat.dup();
+					break;
 
 				default:
 					console.log( "material type: " + materialType + " is not supported" );

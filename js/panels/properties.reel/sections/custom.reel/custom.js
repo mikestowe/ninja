@@ -328,6 +328,19 @@ exports.CustomSection = Montage.create(Component, {
             if (aField.value)       obj.label = aField.value;
             if (aField.prop)        obj.prop = aField.prop;
 
+            if (aField.enabled) {
+                if(aField.enabled.boundObject) {
+                    // TODO - For now, always bind to this.controls[someProperty]
+                    Object.defineBinding(obj, "enabled", {
+                                    boundObject: this.controls,
+                                    boundObjectPropertyPath: aField.enabled.boundProperty,
+                                    oneway: false
+                                });
+                } else {
+                    obj.enabled = aField.enabled;
+                }
+            }
+
             //Initiate onChange Events
             obj.addEventListener("change", this, false);
 
