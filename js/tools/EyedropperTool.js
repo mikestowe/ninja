@@ -368,7 +368,7 @@ exports.EyedropperTool = Montage.create(toolBase, {
                 this._imageDataContext = this._imageDataCanvas.getContext("2d");
                 if(isWebGl)
                 {
-                    var worldData = elt.elementModel.shapeModel.GLWorld.export();
+                    var worldData = elt.elementModel.shapeModel.GLWorld.exportJSON();
                     if(worldData)
                     {
                         this._webGlDataCanvas = njModule.NJUtils.makeNJElement("canvas", "Canvas", "shape", {"data-RDGE-id": njModule.NJUtils.generateRandom()}, true);
@@ -379,7 +379,16 @@ exports.EyedropperTool = Montage.create(toolBase, {
                         this._webGlDataCanvas.width = w;
                         this._webGlDataCanvas.height = h;
                         this._webGlWorld = new World(this._webGlDataCanvas, true, true);
-                        this._webGlWorld.import(worldData);
+
+                        var index = worldData.indexOf( ';' );
+                        if ((worldData[0] === 'v') && (index < 24))
+                        {
+                            // JSON format.  separate the version info from the JSON info
+                            var jStr = worldData.substr( index+1 );
+                            worldData = JSON.parse( jStr );
+                        }
+
+                        this._webGlWorld.importJSON(worldData);
                         this._webGlWorld.render();
                         setTimeout(function() {
                             this._webGlWorld.draw();
