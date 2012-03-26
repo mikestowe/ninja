@@ -68,7 +68,7 @@ exports.ColorPopupManager = Montage.create(Component, {
                 this.application.ninja.colorController.colorPopupManager.hideColorPopup();
             }.bind(this));
             //
-            document.addEventListener('click', function (e) {
+            document.addEventListener('mousedown', function (e) {
                 //
                 if (e._event.srcElement.id === 'stageCanvas' || e._event.srcElement.id === 'mainContainer' || e._event.srcElement.id === 'drawingCanvas') {
                 	this.application.ninja.colorController.colorPopupManager.hideColorPopup();
