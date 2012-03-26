@@ -152,6 +152,46 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 		}
 	};
 
+	this.exportJSON = function()
+	{
+		var jObj =
+		{
+			'material'			: this.getShaderName(),
+			'name'				: this.getName(),
+			'lightDiff'			: this.getLightDiff(),
+			'diffuseTexture'	: this.getDiffuseTexture(),
+			'specularTexture'	: this.getSpecularTexture(),
+			'normalMap'			: this.getNormalTexture()
+		};
+
+		return jObj;
+	};
+
+	this.importJSON = function( jObj )
+	{
+		if (this.getShaderName() != jObj.material)  throw new Error( "ill-formed material" );
+		this.setName( jObj.name );
+
+		try
+		{
+			var lightDiff  = jObj.lightDiff,
+				dt = jObj.diffuseTexture,
+				st = jObj.specularTexture,
+				nt = jObj.normalMap;
+		
+			this.setProperty( "lightDiff",  lightDiff);
+			this.setProperty( "diffuseTexture", dt );
+			this.setProperty( "specularTexture", st );
+			this.setProperty( "normalMap", nt );
+		}
+		catch (e)
+		{
+			throw new Error( "could not import BumpMetal material: " + jObj );
+		}
+		
+		return;
+	};
+
 	this.export = function()
 	{
 		// every material needs the base type and instance name

@@ -166,6 +166,27 @@ exports.Ninja = Montage.create(Component, {
             this.currentDocument.documentRoot.elementModel.controller.setProperty(this.currentDocument.documentRoot, "overflow", overflow);
             this.currentDocument.documentRoot.elementModel.controller.changeSelector(this.currentDocument.documentRoot, "transitionStopRule", transitionStopRule);
 
+            this._toggleWebGlAnimation(this.appModel.livePreview);
+        }
+    },
+
+    // Turn on WebGL animation during preview
+    _toggleWebGlAnimation: {
+        value: function(inLivePreview) {
+            var glCanvases = this.currentDocument.iframe.contentWindow.document.querySelectorAll('[data-RDGE-id]'),
+                glShapeModel;
+            if(glCanvases) {
+                for(var i = 0, len = glCanvases.length; i<len; i++) {
+                    glShapeModel = glCanvases[i].elementModel.shapeModel;
+                    if(inLivePreview) {
+                        glShapeModel.GLWorld._previewAnimation = true;
+                        glShapeModel.GLWorld.restartRenderLoop();
+                    } else if (!glShapeModel.animate ) {
+                        glShapeModel.GLWorld._previewAnimation = false;
+                        glShapeModel.GLWorld._canvas.task.stop();
+                    }
+                }
+            }
         }
     },
 

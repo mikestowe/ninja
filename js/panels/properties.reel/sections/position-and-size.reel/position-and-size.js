@@ -100,7 +100,7 @@ exports.PosSize = Montage.create(Component, {
      */
     handleRatioAction: {
         value: function() {
-            if(this.bindButton.value) {
+            if(this.bindButton.pressed) {
                 this.aspectRatioWidth = this.heightControl.value / this.widthControl.value;
                 if(isNaN(this.aspectRatioWidth) || !isFinite(this.aspectRatioWidth) || this.aspectRatioWidth === 0) this.aspectRatioWidth = 1;
 
@@ -148,7 +148,7 @@ exports.PosSize = Montage.create(Component, {
 
                 this.application.ninja.selectedElements.length ? items = this.application.ninja.selectedElements : items = [this.application.ninja.currentDocument.documentRoot];
 
-                if(this.bindButton.value) {
+                if(this.bindButton.pressed) {
 
                     var newWidth = Math.round(this.aspectRatioHeight * this.heightControl.value);
 
@@ -173,7 +173,7 @@ exports.PosSize = Montage.create(Component, {
 
                 this.application.ninja.selectedElements.length ? items = this.application.ninja.selectedElements : items = [this.application.ninja.currentDocument.documentRoot];
 
-                if(this.bindButton.value) {
+                if(this.bindButton.pressed) {
 
                     var newHeight = Math.round(this.aspectRatioWidth * this.widthControl.value);
 
@@ -221,7 +221,7 @@ exports.PosSize = Montage.create(Component, {
 
                 this.application.ninja.selectedElements.length ? items = this.application.ninja.selectedElements : items = [this.application.ninja.currentDocument.documentRoot];
 
-                if(this.bindButton.value) {
+                if(this.bindButton.pressed) {
 
                     var newWidth = Math.round(this.aspectRatioHeight * this.heightControl.value);
 
@@ -246,7 +246,7 @@ exports.PosSize = Montage.create(Component, {
 
                 this.application.ninja.selectedElements.length ? items = this.application.ninja.selectedElements : items = [this.application.ninja.currentDocument.documentRoot];
 
-                if(this.bindButton.value) {
+                if(this.bindButton.pressed) {
                     var newHeight = Math.round(this.aspectRatioWidth * this.widthControl.value);
 
                     if(!isFinite(newHeight)) newHeight = this.widthControl.value;
