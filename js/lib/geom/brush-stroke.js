@@ -28,20 +28,12 @@ var BrushStroke = function GLBrushStroke() {
     this._BBoxMax = [0, 0, 0];
     this._isDirty = true;
     this._isInit = false;
-
-
-    //whether or not to use the canvas drawing to stroke/fill
-    this._useCanvasDrawing = true;
-
+    
     //the HTML5 canvas that holds this brush stroke
     this._canvas = null;
 
-    //the X and Y location of this brush stroke canvas in stage world space of Ninja
-    this._canvasX = 0;
-    this._canvasY = 0;
-
     //stroke information
-    this._strokeWidth = 0.0;
+    this._strokeWidth = 1.0;
     this._strokeColor = [0.4, 0.4, 0.4, 1.0];
     this._secondStrokeColor = [1, 0.4, 0.4, 1.0];
     this._strokeHardness = 100;
@@ -114,22 +106,6 @@ var BrushStroke = function GLBrushStroke() {
         this._dragPlane = p;
     };
 
-    this.getCanvasX = function(){
-        return this._canvasX;
-    };
-
-    this.getCanvasY = function(){
-        return this._canvasY;
-    };
-
-    this.setCanvasX = function(cx){
-        this._canvasX=cx;
-    };
-
-    this.setCanvasY = function(cy){
-        this._canvasY=cy;
-    };
-
     this.getNumPoints = function () {
         return this._Points.length;
     };
@@ -190,6 +166,9 @@ var BrushStroke = function GLBrushStroke() {
 
     this.setStrokeWidth = function (w) {
         this._strokeWidth = w;
+        if (this._strokeWidth<1) {
+            this._strokeWidth = 1;
+        }
         this._isDirty=true;
     };
 
@@ -402,83 +381,37 @@ var BrushStroke = function GLBrushStroke() {
         this._stageWorldCenter = VecUtils.vecInterpolate(3, bboxMin, bboxMax, 0.5);
 
         // ***** center the input stageworld data about the center of the bbox *****
-        this._LocalPoints = this._Points.slice(0);
+        this._LocalPoints = [];
         for (i=0;i<numPoints;i++){
-            this._LocalPoints[i][0]-= this._stageWorldCenter[0];
-            this._LocalPoints[i][1]-= this._stageWorldCenter[1];
-        }
+            var localPoint = [this._Points[i][0],this._Points[i][1],this._Points[i][2]];
+            localPoint[0]-= this._stageWorldCenter[0];
+            localPoint[1]-= this._stageWorldCenter[1];
 
-        // ***** unproject all the centered points and convert them to 2D (plane space)*****
-        // (undo the projection step performed by the browser)
-        for (i=0;i<numPoints;i++) {
-            this._LocalPoints[i] = this._unprojectPt(this._LocalPoints[i], 1400); //todo get the perspective distance from the canvas
-            this._LocalPoints[i] = MathUtils.transformPoint(this._LocalPoints[i], this._planeMatInv);
+            // ***** unproject all the centered points and convert them to 2D (plane space)*****
+            // (undo the projection step performed by the browser)
+            localPoint = this._unprojectPt(localPoint, 1400); //todo get the perspective distance from the canvas
+            localPoint = MathUtils.transformPoint(localPoint, this._planeMatInv);
+
+            //add to the list of local points
+            this._LocalPoints.push(localPoint);
         }
 
         // ***** compute width, height, and midpoint position (in stage world position) of the canvas
         this._updateBoundingBox(); //compute the bbox to obtain the width and height used below
         var halfwidth = 0.5*(this._BBoxMax[0]-this._BBoxMin[0]);
         var halfheight = 0.5*(this._BBoxMax[1]-this._BBoxMin[1]);
+        this._OrigPoints = [];
         for (i=0;i<numPoints;i++) {
             this._LocalPoints[i][0]+= halfwidth;
             this._LocalPoints[i][1]+= halfheight;
+
+            //store the original points
+            this._OrigPoints.push([this._LocalPoints[i][0],this._LocalPoints[i][1],this._LocalPoints[i][2]]);
         }
-        //store the original points
-        this._OrigPoints = this._LocalPoints.slice(0);
-
-        //var midPt = stageWorldBBoxCenter; //todo should I compute the instead as the midpoint of the plane-space bbox, transformed by this._planeMat
-        // The following offset seems to not match what was being done successfully for the brush tool, so I'm commenting this out
-        // the mid point is now relative to the center of the 3D space.  To
-        // calculate the left and top offsets, this must be offset by the stage dimensions
-        //var wh = ViewUtils.getStageDimension();
-        //midPt[0] += wh[0]/ 2.0;
-        //midPt[1] += wh[1]/ 2.0;
+        //update the bbox with the same adjustment as was made for the local points above
+        this._BBoxMax[0]+= halfwidth;this._BBoxMin[0]+= halfwidth;
+        this._BBoxMax[1]+= halfheight;this._BBoxMin[1]+= halfheight;
     };
-    /*this.translate = function (tx, ty, tz) {
-        for (var i=0;i<this._Points.length;i++){
-            this._Points[i][0]+=tx;
-            this._Points[i][1]+=ty;
-            this._Points[i][2]+=tz;
-        }
-        this._isDirty = true;
-    };*/
-
-    //build coordinates for the brush stroke in local space of the canvas...will assume that the canvas width, height, left and top will not be changed now
-    this.buildLocalCoord = function(){
-        /*
-        if (this._isLocalDirty) {
-            //DEBUGGING
-            //confirm that localToStageWorld produces the same coordinates as those I used for rendering currently
-            var numPoints = this._Points.length;
-            var objToStageWorldMat = ViewUtils.getObjToStageWorldMatrix(this._canvas, true);
-            var stageworldToObjMat = glmat4.inverse(objToStageWorldMat, []);
-            var wh = ViewUtils.getStageDimension();
-            for (var i=0;i<numPoints;i++) {
-                var origStageWorldPt = this._Points[i];
-                //var localPt = [origStageWorldPt[0]-bboxMin[0], origStageWorldPt[1]-bboxMin[1],0]; //this is how the brush tool currently renders points in stage world
-
-                //check using ObjToStageWorldMatrix --- works
-                //var tmp = MathUtils.transformHomogeneousPoint(localPt,objToStageWorldMat);
-                //var newStageWorldPt = MathUtils.applyHomogeneousCoordinate(tmp);
-                //newStageWorldPt = VecUtils.vecAdd(3, newStageWorldPt, [wh[0]/2, wh[1]/2, 0]);
-                //var diffPt = VecUtils.vecDist(3,origStageWorldPt,newStageWorldPt);
-
-                //now go the other way, to recover localPt
-                var offsetedStageWorldPt = VecUtils.vecSubtract(3, origStageWorldPt, [wh[0]/2, wh[1]/2, 0]);
-                var tmp = MathUtils.transformHomogeneousPoint(offsetedStageWorldPt,stageworldToObjMat);
-                var newLocalPt = MathUtils.applyHomogeneousCoordinate(tmp);
-                //var diffPt2 = VecUtils.vecDist(3,localPt,newLocalPt);
-                this._LocalPoints[i] = newLocalPt;
-            }
-
-
-            //end DEBUGGING
-            this._isLocalDirty=false;
-        } //if this._isLocalDirty
-        */
-    };
-
-
     
     this.update = function() {
         if (this._isDirty){
@@ -486,10 +419,10 @@ var BrushStroke = function GLBrushStroke() {
             this._doSmoothing();
 
             // **** recompute the bounding box ****
-            var deltaWH = this._updateBoundingBox();
+            this._updateBoundingBox();
 
             // **** offset the local coords to account for the change in bbox ****
-            this._offsetLocalCoord(deltaWH[0]*0.5, deltaWH[1]*0.5);
+            this._offsetLocalCoord(-this._BBoxMin[0], -this._BBoxMin[1]);
 
             // **** turn off the dirty flag ****
             this._isDirty = false;
@@ -503,21 +436,30 @@ var BrushStroke = function GLBrushStroke() {
             this._LocalPoints[i][1]+= deltaH;
         }
     };
+
+    //I had to write this function to do a deep copy because I think slice(0) creates a copy by reference
+    this._copyCoordinates3D = function(srcCoord, destCoord){
+        var i=0;
+        var numPoints = srcCoord.length;
+        for (i=0;i<numPoints;i++){
+            destCoord[i] = [srcCoord[i][0],srcCoord[i][1],srcCoord[i][2]];
+        }
+    };
     this._doSmoothing = function() {
         var numPoints = this._LocalPoints.length;
         if (this._strokeDoSmoothing && numPoints>1) {
-            this._LocalPoints = this._OrigPoints.slice(0);
+            this._copyCoordinates3D(this._OrigPoints, this._LocalPoints);
             //iterations of Laplacian smoothing (setting the points to the average of their neighbors)
             var numLaplacianIterations = this._strokeAmountSmoothing;
             for (var n=0;n<numLaplacianIterations;n++){
-                var newPoints = this._LocalPoints;//.slice(0);
+                var newPoints = this._LocalPoints.slice(0); //I think this performs a copy by reference, which would make the following a SOR step
                 for (var i=1;i<numPoints-1;i++) {
                     var avgPos = [  0.5*(this._LocalPoints[i-1][0] + this._LocalPoints[i+1][0]),
                                     0.5*(this._LocalPoints[i-1][1] + this._LocalPoints[i+1][1]),
                                     0.5*(this._LocalPoints[i-1][2] + this._LocalPoints[i+1][2])] ;
                     newPoints[i] = avgPos;
                 }
-                this._LocalPoints = newPoints;//.slice(0);
+                this._LocalPoints = newPoints.slice(0);
             }
         }
     };
@@ -526,8 +468,6 @@ var BrushStroke = function GLBrushStroke() {
         // *** compute the bounding box *********
         var points = this._LocalPoints;
         var numPoints = points.length;
-        var oldWidth = this._BBoxMax[0]-this._BBoxMin[0];
-        var oldHeight = this._BBoxMax[1]-this._BBoxMin[1];
 
         this._BBoxMin = [Infinity, Infinity, Infinity];
         this._BBoxMax = [-Infinity, -Infinity, -Infinity];
@@ -566,11 +506,6 @@ var BrushStroke = function GLBrushStroke() {
                 this._BBoxMax[d]+= bboxPadding;
             }//for every dimension d from 0 to 2
         }
-
-        //return the difference between the current and old bbox width and height
-        var newWidth = this._BBoxMax[0]-this._BBoxMin[0];
-        var newHeight = this._BBoxMax[1]-this._BBoxMin[1];
-        return [(newWidth-oldWidth), (newHeight-oldHeight)];
     };
 
     this.buildBuffers = function () {
@@ -600,24 +535,9 @@ var BrushStroke = function GLBrushStroke() {
         var bboxHeight = bboxMax[1] - bboxMin[1];
 
         if (this._canvas) {
-            // this seems to produce drift as the stroke size is changed smoothly...bug due to floating point round off?
-            //get the old left, top, width, and height
-            /*var oldLeft = parseInt(CanvasController.getProperty(this._canvas, "left"));
-            var oldTop  = parseInt(CanvasController.getProperty(this._canvas, "top"));
-            var oldWidth  = parseInt(CanvasController.getProperty(this._canvas, "width"));
-            var oldHeight = parseInt(CanvasController.getProperty(this._canvas, "height"));
-            var newLeft = oldLeft - ((bboxWidth-oldWidth)*0.5);
-            var newTop = oldTop - ((bboxHeight-oldHeight)*0.5);*/
-
-            //update the stageWorldCenter as a function of the new bounding box in plane space
-            var bboxMid =  [0.5 * (bboxMax[0] + bboxMin[0]), 0.5 * (bboxMax[1] + bboxMin[1]), 0.5 * (bboxMax[2] + bboxMin[2])];
-            var newStageWorldCenter = MathUtils.transformPoint(bboxMid, this._planeMat);
-            var wh = ViewUtils.getStageDimension();
-            newStageWorldCenter[0]+= wh[0]*0.5; newStageWorldCenter[1]+= wh[1]*0.5;
-            
             var newLeft = Math.round(this._stageWorldCenter[0] - 0.5 * bboxWidth);
             var newTop = Math.round(this._stageWorldCenter[1] - 0.5 * bboxHeight);
-            //assign the new width and height as the canvas dimensions through the canvas controller
+            //assign the new position, width, and height as the canvas dimensions through the canvas controller
             CanvasController.setProperty(this._canvas, "left", newLeft+"px");
             CanvasController.setProperty(this._canvas, "top", newTop+"px");
 
