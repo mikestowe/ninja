@@ -433,6 +433,14 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     }
                     // Feed the new array of objects into the repetitions.
                     this.arrLayers = this.temparrLayers;
+                }else if(this.application.ninja.breadCrumbClick){
+                    var parentNode = this.application.ninja.currentSelectedContainer;
+                    for (myIndex = 0; parentNode.children[myIndex]; myIndex++) {
+                        this._openDoc = true;
+                        this.restoreLayer(parentNode.children[myIndex]);
+                    }
+                    this.arrLayers = this.temparrLayers;
+
                 }
 
                 // After recreating the tracks and layers, store the result in the currentDocument.
