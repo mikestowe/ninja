@@ -148,7 +148,11 @@ exports.EyedropperTool = Montage.create(toolBase, {
                         c = this._getColorFromElement(obj, event);
                     }
 
-                    if(typeof(c) === "string")
+                    if(!c)
+                    {
+                        color = null;
+                    }
+                    else if(typeof(c) === "string")
                     {
                         color = this.application.ninja.colorController.getColorObjFromCss(c);
                     }
