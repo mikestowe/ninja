@@ -252,6 +252,29 @@ var Material = function GLMaterial( world ) {
 		return tex;
 	};
 
+    this.findWorld = function( id,  elt )
+    {
+        if (elt.id && elt.id === id)
+        {
+            if (elt.elementModel && elt.elementModel.shapeModel && elt.elementModel.shapeModel.GLWorld)
+            {
+                var world = elt.elementModel.shapeModel.GLWorld;
+                return world;
+            }
+        }
+ 
+		if (elt.children)
+		{
+			var nKids = elt.children.length;
+			for (var i=0;  i<nKids;  i++)
+			{
+				var child = elt.children[i];
+				var world = this.findWorld( id, child );
+                if (world)  return world;
+			}
+		}
+   }
+
 	this.export = function() {
 		// this function should be overridden by subclasses
 		var exportStr = "material: " + this.getShaderName() + "\n" + "endMaterial\n";

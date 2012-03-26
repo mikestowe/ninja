@@ -327,6 +327,7 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 		var rtnVal = false;
 		if (root) {
 			rtnVal = this.hHasAnimatedMaterials( root );
+            this._hasAnimatedMaterials = rtnVal;
         }
 
 		return rtnVal;

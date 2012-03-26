@@ -5,19 +5,28 @@
  </copyright> */
 
 var MaterialParser = require("js/lib/rdge/materials/material-parser").MaterialParser;
+var Texture = require("js/lib/rdge/texture").Texture;
 var Material = require("js/lib/rdge/materials/material").Material;
 ///////////////////////////////////////////////////////////////////////
 // Class GLMaterial
 //      RDGE representation of a material.
 ///////////////////////////////////////////////////////////////////////
-var PulseMaterial = function PulseMaterial() {
+var PulseMaterial = function PulseMaterial()
+{
+    var MaterialLibrary = require("js/models/materials-model").MaterialsModel;
+
+   // initialize the inherited members
+    this.inheritedFrom = Material;
+    this.inheritedFrom();
+   
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
 	this._name = "PulseMaterial";
 	this._shaderName = "pulse";
 
-	this._texMap = 'assets/images/cubelight.png';
+	//this._texMap = 'assets/images/cubelight.png';
+	this._texMap = 'texture';
 
 	this._time = 0.0;
 	this._dTime = 0.01;
@@ -109,6 +118,16 @@ var PulseMaterial = function PulseMaterial() {
 			this._shader['default'].u_time.set( [this._time] );
         }
 
+        // check if the texture uses a canvas as the source
+        var viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
+        var root = viewUtils.application.ninja.currentDocument.documentRoot;
+        var texMapName = this._propValues[this._propNames[0]];
+        var texWorld = this.findWorld( texMapName, root );
+        if (texWorld)
+        {
+            this._glTex = new Texture( this.getWorld() );
+            this._glTex.loadFromCanvas( texWorld.getCanvas() );
+        }
 
 		// set the shader values in the shader
 		this.updateTexture();
@@ -122,9 +141,18 @@ var PulseMaterial = function PulseMaterial() {
 			var technique = material.shaderProgram['default'];
 			var renderer = g_Engine.getContext().renderer;
 			if (renderer && technique) {
-				var texMapName = this._propValues[this._propNames[0]];
 				var wrap = 'REPEAT',  mips = true;
-				var tex = this.loadTexture( texMapName, wrap, mips );
+                var tex;
+                if (this._glTex)
+                {
+                    this._glTex.rerender();
+                    tex = this._glTex.getTexture();
+                }
+                else
+                {
+                    var texMapName = this._propValues[this._propNames[0]];
+				    tex = this.loadTexture( texMapName, wrap, mips );
+                }
 
 				if (tex) {
 					technique.u_tex0.set( tex );
@@ -138,6 +166,9 @@ var PulseMaterial = function PulseMaterial() {
 		var material = this._materialNode;
 		if (material)
 		{
+            if (this._glTex && this._glTex.isAnimated())
+                this.updateTexture();
+
 			var technique = material.shaderProgram['default'];
 			var renderer = g_Engine.getContext().renderer;
 			if (renderer && technique) {
@@ -279,7 +310,8 @@ var pulseMaterialDef =
 	}
 };
 
-PulseMaterial.prototype = new Material();
+// doing the inheritance here introtudes bugs.  Local instance variables are overwritten in the base class
+//PulseMaterial.prototype = new Material();
 
 if (typeof exports === "object") {
     exports.PulseMaterial = PulseMaterial;

@@ -146,32 +146,9 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
             var world = this.getWorld();
             var tex = new Texture( world );
             this._diffuseTextureObj = tex;
-            tex.loadFromCanvas( world.getCanvas() );
+            tex.loadFromCanvas( this._diffuseWorld.getCanvas() );
         }
     }
-
-    this.findWorld = function( id,  elt )
-    {
-        if (elt.id && elt.id === id)
-        {
-            if (elt.elementModel && elt.elementModel.shapeModel && elt.elementModel.shapeModel.GLWorld)
-            {
-                var world = elt.elementModel.shapeModel.GLWorld;
-                return world;
-            }
-        }
- 
-		if (elt.children)
-		{
-			var nKids = elt.children.length;
-			for (var i=0;  i<nKids;  i++)
-			{
-				var child = elt.children[i];
-				var world = this.findWorld( id, child );
-                if (world)  return world;
-			}
-		}
-   }
 
 	this.updateTexture = function( index )
 	{
