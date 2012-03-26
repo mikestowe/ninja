@@ -28,6 +28,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         set:function (value) {
         	if (value !== this._trackID) {
         		this._trackID = value;
+                this.trackData.layerID = value;
         	}
         }
     },
@@ -43,6 +44,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         set:function (newVal) {
             if (newVal !== this._isMainCollapsed) {
                 this._isMainCollapsed = newVal;
+                this.trackData.isMainCollapsed = newVal;
             }
         }
     },
@@ -56,6 +58,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         set:function (newVal) {
             if (newVal !== this._isTransformCollapsed) {
                 this._isTransformCollapsed = newVal;
+                this.trackData.isTransformCollapsed = newVal;
             }
         }
     },
@@ -69,6 +72,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         set:function (newVal) {
             if (newVal !== this._isPositionCollapsed) {
                 this._isPositionCollapsed = newVal;
+                this.trackData.isPositionCollapsed = newVal;
             }
         }
     },
@@ -82,6 +86,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         set:function (newVal) {
             if (newVal !== this._isStyleCollapsed) {
                 this._isStyleCollapsed = newVal;
+                this.trackData.isStyleCollapsed = newVal;
             }
         }
     },
@@ -97,10 +102,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	set: function(newVal) {
     		if (newVal !== this._bypassAnimation) {
     			this._bypassAnimation = newVal;
+                this.trackData.bypassAnimation = newVal;
     		}
-			if (this.trackData.bypassAnimation !== newVal) {
-				this.trackData.bypassAnimation = newVal;
-			}
     	}
     },
     
@@ -117,7 +120,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._arrStyleTracks = newVal;
-    		//this.needsDraw = true;
+            this.trackData.arrStyleTracks = newVal;
     	}
     },
     _styleTracksRepetition: {
@@ -131,7 +134,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._styleTracksRepetition = newVal;
-    		//needsDraw = true;
     	}
     },
     
@@ -149,7 +151,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._arrPositionTracks = newVal;
-    		//this.needsDraw = true;
+            this.trackData.arrPositionTracks = newVal;
     	}
     },
     _positionTracksRepetition: {
@@ -163,7 +165,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._positionTracksRepetition = newVal;
-    		//this.needsDraw = true;
     	}
     },
     
@@ -182,7 +183,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._arrTransformTracks = newVal;
-    		//this.needsDraw = true;
+            this.trackData.arrTransformTracks = newVal;
     	}
     },
     _transformTracksRepetition: {
@@ -196,7 +197,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._transformTracksRepetition = newVal;
-    		//this.needsDraw = true;
     	}
     },
 
@@ -212,7 +212,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         },
         set:function (newVal) {
             this._tweens = newVal;
-            //this.needsDraw=true;
+            this.trackData.tweens = newVal;
         }
     },
 
@@ -246,6 +246,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             if(this._trackDuration > this.application.ninja.timeline.masterDuration){
                 this.application.ninja.timeline.masterDuration = this._trackDuration;
             }
+            this.trackData.trackDuration = val;
         }
     },
 
@@ -261,6 +262,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         },
         set:function (val) {
             this._trackPosition = val;
+            this.trackData.trackPosition = val;
         }
     },
 
@@ -276,6 +278,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         },
         set:function(val){
             this._currentKeyframeRule = val;
+            this.trackData.currentKeyframeRule = val;
         }
     },
 
@@ -299,21 +302,25 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         },
         set:function(val){
             this._isTrackAnimated = val;
+            this.trackData.isTrackAnimated = val;
         }
     },
 
     // should be unneeded with one element per layer restriction
     _animatedElement:{
+        enumerable: true,
         serializable:true,
         value:null
     },
     animatedElement:{
+        enumerable: true,
         serializable:true,
         get:function () {
             return this._animatedElement;
         },
         set:function (val) {
             this._animatedElement = val;
+            this.trackData.animatedElement = val;
         }
     },
 
@@ -329,6 +336,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         },
         set:function (val) {
             this._animationName = val;
+            this.trackData.animationName = val;
         }
     },
 
@@ -373,6 +381,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     setData:{
         value:function(){
+            console.log("setting track data");
+
             this.bypassAnimation = this.trackData.bypassAnimation;
             this.trackID = this.trackData.layerID;
             this.tweens = this.trackData.tweens;
@@ -439,12 +449,12 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     didDraw:{
         value:function () {
-            if(!this.application.ninja.documentController.creatingNewFile){
-                if(this.application.ninja.currentDocument.documentRoot.children[0]){
+            if (!this.application.ninja.documentController.creatingNewFile) {
+                if (this.application.ninja.currentDocument.documentRoot.children[0]) {
                     var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
-                     if(!this.application.ninja.timeline.arrLayers[selectedIndex].layerData.created){
+                    if (!this.application.ninja.timeline.arrLayers[selectedIndex].layerData.created) {
                         this.retrieveStoredTweens();
-                     }
+                    }
                 }
             }
         }
@@ -603,7 +613,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-fill-mode", "both");
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-transition-timing-function", "linear");
             var initRule = "@-webkit-keyframes " + this.animationName + " { 0% {top: " + this.animatedElement.offsetTop + "px; left: " + this.animatedElement.offsetLeft + "px;} 100% {top: " + this.animatedElement.offsetTop + "px; left: " + this.animatedElement.offsetLeft + "px;} }";
+
             this.currentKeyframeRule = this.ninjaStylesContoller.addRule(initRule);
+
             this.insertTween(tweenEvent.offsetX);
             this.isTrackAnimated = true;
         }
@@ -612,6 +624,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     updateKeyframeRule:{
         value:function () {
             // delete the current rule
+            console.log(this.currentKeyframeRule);
             this.ninjaStylesContoller.deleteRule(this.currentKeyframeRule);
 
             // build the new keyframe string
@@ -630,6 +643,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 keyframeString += keyframePropertyString;
             }
             keyframeString += " }";
+            console.log(keyframeString);
             // set the keyframe string as the new rule
             this.currentKeyframeRule = this.ninjaStylesContoller.addRule(keyframeString);
             this.application.ninja.documentController.activeDocument.needsSave = true;
@@ -639,7 +653,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     // Init and event handler for layer expand/collapse
     init:{
         value:function () {
-            var that = this;
             
             this.arrPositionTracks = [0, 1];
             this.arrTransformTracks = [0, 1, 2, 3, 4];

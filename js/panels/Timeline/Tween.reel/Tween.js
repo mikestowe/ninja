@@ -203,6 +203,7 @@ var Tween = exports.Tween = Montage.create(Component, {
             // move animated element to correct position on stage
             var currentTop = this.tweenedProperties["top"] + "px";
             var currentLeft = this.tweenedProperties["left"] + "px";
+
             ElementsMediator.setProperty([this.parentComponent.parentComponent.animatedElement], "top", [currentTop], "Change", "tween");
             ElementsMediator.setProperty([this.parentComponent.parentComponent.animatedElement], "left", [currentLeft], "Change", "tween");
 
