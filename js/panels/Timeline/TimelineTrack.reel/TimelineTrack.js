@@ -381,8 +381,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     setData:{
         value:function(){
-            console.log("setting track data");
-
             this.bypassAnimation = this.trackData.bypassAnimation;
             this.trackID = this.trackData.layerID;
             this.tweens = this.trackData.tweens;
@@ -624,7 +622,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     updateKeyframeRule:{
         value:function () {
             // delete the current rule
-            console.log(this.currentKeyframeRule);
             this.ninjaStylesContoller.deleteRule(this.currentKeyframeRule);
 
             // build the new keyframe string
@@ -643,7 +640,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 keyframeString += keyframePropertyString;
             }
             keyframeString += " }";
-            console.log(keyframeString);
             // set the keyframe string as the new rule
             this.currentKeyframeRule = this.ninjaStylesContoller.addRule(keyframeString);
             this.application.ninja.documentController.activeDocument.needsSave = true;
