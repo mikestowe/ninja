@@ -16,7 +16,7 @@ String.prototype.capitalizeFirstChar = function() {
 };
 
 
-var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component, {
+exports.ComponentsPanel = Montage.create(Component, {
 
     components: {
         value: {
