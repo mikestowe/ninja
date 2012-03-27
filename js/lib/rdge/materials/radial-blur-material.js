@@ -282,10 +282,26 @@ var RaidersMaterial = function RaidersMaterial()
 	this.inheritedFrom();
 
 	this._name = "RaidersMaterial";
-	this._shaderName = "radialBlur";
+	this._shaderName = "raiders";
 
 	this._texMap = 'assets/images/raiders.png';
 	this._propValues[ this._propNames[0] ] = this._texMap.slice(0);
+
+
+    // duplcate method requirde
+    this.dup = function( world ) {
+        // allocate a new uber material
+        var newMat = new RaidersMaterial();
+
+        // copy over the current values;
+        var propNames = [],  propValues = [],  propTypes = [],  propLabels = [];
+        this.getAllProperties( propNames,  propValues,  propTypes,  propLabels);
+        var n = propNames.length;
+        for (var i=0;  i<n;  i++)
+            newMat.setProperty( propNames[i], propValues[i] );
+
+        return newMat;
+    };
 }
 
 RaidersMaterial.prototype = new Material();
