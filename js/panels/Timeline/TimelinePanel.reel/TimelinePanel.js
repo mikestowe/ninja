@@ -981,7 +981,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             var dragIcon = document.createElement("img");
             event.dataTransfer.effectAllowed = 'move';
             event.dataTransfer.setData('Text', this.identifier);
-            dragIcon.src = "/images/transparent.png";
+            // dragIcon.src = "/images/transparent.png";
+            dragIcon.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjEwMPRyoQAAAA1JREFUGFdj+P//PwMACPwC/ohfBuAAAAAASUVORK5CYII="
             dragIcon.width = 1;
             event.dataTransfer.setDragImage(dragIcon, 0, 0);
             
