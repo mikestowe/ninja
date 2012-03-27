@@ -796,6 +796,8 @@ exports.Stage = Montage.create(Component, {
     drawLine: {
         value:function(x0, y0, x1, y1, strokeSize, strokeColor) {
             this.clearDrawingCanvas();
+            var origStrokeStyle = this._drawingContext.strokeStyle;
+            var origLineWidth = this._drawingContext.lineWidth;
             this._drawingContext.strokeStyle = strokeColor;
             this._drawingContext.lineWidth = strokeSize;
 
@@ -826,6 +828,9 @@ exports.Stage = Montage.create(Component, {
             var w = Math.round(Math.abs(x1-x0));
             this._drawingContext.fillText("H: " + h, txtX + 38, txtY - 4);
             this._drawingContext.fillText("W: " + w, txtX - 5, txtY + 12);
+
+            this._drawingContext.strokeStyle = origStrokeStyle;
+            this._drawingContext.lineWidth = origLineWidth;
         }
     },
 
