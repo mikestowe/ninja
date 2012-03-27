@@ -272,6 +272,7 @@
     font-size: 12px;
     text-shadow: 1px 1px 1px black;
     color: white;
+    margin-top: 0%;
 }
 .timeline-disabled {
 	position: absolute;
@@ -286,4 +287,11 @@
 }
 .timeline-dnd-helper {
 	-webkit-transform: scale(.9, .9);
+}
+.tl_slider{
+    width: 65px;
+    height: 5px;
+    background: none;
+    float:left;
+    margin-left: 5%;
 }
