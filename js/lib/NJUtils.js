@@ -96,15 +96,45 @@ exports.NJUtils = Object.create(Object.prototype, {
         value: function(el, selection, controller, isShape) {
             var p3d = Montage.create(Properties3D).init(el);
             var shapeProps = null;
+            var pi = controller + "Pi";
+
             if(isShape) {
                 shapeProps = Montage.create(ShapeModel);
+            }
+
+            if(el.controller) {
+
+                var componentInfo = Montage.getInfoForObject(el.controller);
+                var componentName = componentInfo.objectName.toLowerCase();
+
+                controller  = "component";
+                isShape = false;
+
+                switch(componentName) {
+                    case "feedreader":
+                        selection = "Feed Reader";
+                        pi = "FeedReaderPi";
+                        break;
+                    case "map":
+                        selection = "Map";
+                        pi = "MapPi";
+                        break;
+                    case "youtubechannel":
+                        selection = "Youtube Channel";
+                        pi = "YoutubeChannelPi";
+                        break;
+                    case "picasacarousel":
+                        selection = "Picasa Carousel";
+                        pi = "PicasaCarouselPi";
+                        break;
+                }
             }
 
             el.elementModel = Montage.create(ElementModel, {
                     type:       { value: el.nodeName},
                     selection:  { value: selection},
                     controller: { value: ControllerFactory.getController(controller)},
-                    pi:         { value: controller + "Pi"},
+                    pi:         { value: pi},
                     props3D:    { value: p3d},
                     shapeModel: { value: shapeProps}
             });

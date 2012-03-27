@@ -6,10 +6,11 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 ////////////////////////////////////////////////////////////////////////
 //
-var Montage = 	require("montage/core/core").Montage,
-	Component = require("montage/ui/component").Component,
-	FileIo = 	require("js/io/system/fileio").FileIo,
-	ProjectIo = require("js/io/system/projectio").ProjectIo;
+var Montage = 			require("montage/core/core").Montage,
+	Component = 		require("montage/ui/component").Component,
+	FileIo = 			require("js/io/system/fileio").FileIo,
+	ProjectIo = 		require("js/io/system/projectio").ProjectIo,
+	TemplateCreator = 	require("node_modules/tools/template-creator").TemplateCreator;
 ////////////////////////////////////////////////////////////////////////
 //
 exports.IoMediator = Montage.create(Component, {
@@ -347,7 +348,7 @@ exports.IoMediator = Montage.create(Component, {
     			}
     		}
     		//Checking for webGL elements in document
-    		if (template.webgl && template.webgl.length  > 0) {
+    		if (template.webgl && template.webgl.length  > 1) {//TODO: Should be length 0, hack for a temp fix
     			var rdgeDirName, rdgeVersion;
     			//Copy webGL library if needed
     			for (var i in this.application.ninja.coreIoApi.ninjaLibrary.libs) {
@@ -369,7 +370,7 @@ exports.IoMediator = Montage.create(Component, {
     				}
     			}
     			//
-    			var json, matchingtags = [], webgltag, scripts = template.document.content.document.getElementsByTagName('script'), webgljstag, webgllibtag, webglrdgetag;
+    			var json, matchingtags = [], webgltag, scripts = template.document.content.document.getElementsByTagName('script'), webgljstag, webgllibtag, webglrdgetag, mjstag, mjslibtag;
     			//
     			for (var i in scripts) {
     				if (scripts[i].getAttribute) {
@@ -384,6 +385,12 @@ exports.IoMediator = Montage.create(Component, {
     					}
     					if (scripts[i].getAttribute('data-ninja-webgl-rdge') !== null) {
     						webglrdgetag = scripts[i]; // TODO: Add logic to delete unneccesary tags
+    					}
+    					if (scripts[i].getAttribute('type') !== 'text/montage-serialization') {
+    						mjstag = scripts[i]; // TODO: Add logic to delete unneccesary tags
+    					}
+    					if (scripts[i].getAttribute('data-mjs-lib') !== null) {
+    						mjslibtag = scripts[i]; // TODO: Add logic to delete unneccesary tags
     					}
     				}
     			}
@@ -451,6 +458,61 @@ function loadWebGL (e) {\n\
     			//Setting string in tag
     			webgltag.innerHTML = json;
     		}
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		//
+    		var mjsCounter = 0, mjsComponents = [], temp = TemplateCreator.create();
+    		//
+    		for (var m in template.mjs) {
+    			mjsComponents.push(template.mjs[m]);
+    			mjsCounter++;
+    		}
+    		//
+    		if (template.mjs && mjsCounter > 0) {
+    			var mjsDirName, mjsVersion,
+    				mjscode = temp.initWithHeadAndBodyElements(template.document.content.document.documentElement.head, template.document.content.document.documentElement.body, mjsComponents)._ownerSerialization;
+    			//Copy Montage library if needed
+    			for (var i in this.application.ninja.coreIoApi.ninjaLibrary.libs) {
+		    		//Checking for Montage library to be available
+		    		if (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'Montage') {
+		    			mjsDirName = (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name+this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version).toLowerCase();
+    					mjsVersion = this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version;
+    					this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.document.root, mjsDirName);
+    					//TODO: Fix to allow no overwrite and nested locations
+    					var packjson = this.application.ninja.coreIoApi.createFile({uri: template.document.root+'package.json', contents: '{"mappings": {"montage": "'+mjsDirName+'/"}}'});
+    				} else {
+    					//TODO: Error handle no available library to copy
+    				}
+    			}
+    			//
+    			if (!mjslibtag) {
+    				mjslibtag = template.document.content.document.createElement('script');
+    				mjslibtag.setAttribute('type', 'text/javascript');
+    				mjslibtag.setAttribute('src', mjsDirName+'/montage.js');
+    				mjslibtag.setAttribute('data-mjs-lib', 'true');
+    				template.document.content.document.head.appendChild(mjslibtag);
+    			}
+    			//
+    			if (!mjstag) {
+    				mjstag = template.document.content.document.createElement('script');
+    				mjstag.setAttribute('type', 'text/montage-serialization');
+    				template.document.content.document.head.appendChild(mjstag);
+    			}
+    			//
+    			mjstag.innerHTML = mjscode;
+    		}
+    		
+    		
+    		
+    		
+    		
+    		
+    		
     		//Cleaning URLs from HTML
     		var cleanHTML = template.document.content.document.documentElement.outerHTML.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaRootUrl.bind(this));
     		//
@@ -470,8 +532,6 @@ function loadWebGL (e) {\n\
     getUrlfromNinjaUrl: {
     	enumerable: false,
     	value: function (url, fileRootUrl, fileUrl) {
-    		//console.log("Params: ", url, fileRootUrl, fileUrl);
-    		//console.log("Getting: " + url);
     		//
     		if (url.indexOf(fileRootUrl) !== -1) {
     			url = url.replace(new RegExp(fileRootUrl.replace(/\//gi, '\\\/'), 'gi'), '');
@@ -499,10 +559,60 @@ function loadWebGL (e) {\n\
     			//
    				url = (path+newURL).replace(/\/\//gi, '/');
    			}
-    		//console.log("Returning: " + url);
-    		//console.log("-----");
     		//
     		return url;
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    getDocRootUrl: {
+    	value: function () {
+    		return this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    getNinjaPropUrlRedirect: {
+    	enumerable: false,
+    	value: function (prop/* , root */) {
+    		//Checking for property value to not contain a full direct URL
+            if (!prop.match(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi)) {
+           		//Checking for attributes and type of source
+            	if (prop.indexOf('href') !== -1 || prop.indexOf('src') !== -1) {
+            		//From HTML attribute
+            		//if (root) {
+            			//prop = (root+prop).replace(/"([^"]*)"/gi, this.getNinjaUrlPrepend.bind(this));
+            		//} else {
+            			prop = prop.replace(/"([^"]*)"/gi, this.getNinjaUrlPrepend.bind(this));
+            		//}
+	            } else if (prop.indexOf('url') !== -1) {
+	            	//From CSS property
+	            	//if (root) {
+	            		//prop = (root+prop).replace(/[^()\\""\\'']+/g, cssUrlToNinjaUrl.bind(this));
+	            	//} else {
+    	        		prop = prop.replace(/[^()\\""\\'']+/g, cssUrlToNinjaUrl.bind(this));
+    	        	//}
+    	        	function cssUrlToNinjaUrl (s) {
+    	       			if (s !== 'url') {
+    	       				s = this.getDocRootUrl() + s;
+    	       			}
+    	       			return s;
+    	       		}
+        	    }
+       		}
+            return prop;
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    getNinjaUrlPrepend: {
+    	enumerable: false,
+    	value: function (url) {
+    		if (url.indexOf('data:') !== -1) {
+            	return url;
+            } else {
+            	return '"'+this.getDocRootUrl()+url.replace(/\"/gi, '')+'"';
+            }
     	}
     },
     ////////////////////////////////////////////////////////////////////
