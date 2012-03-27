@@ -182,6 +182,9 @@ exports.NJUtils = Object.create(Object.prototype, {
                     break;
             }
             this.makeElementModel(el, selection, controller, isShape);
+            if(el.elementModel && el.elementModel.props3D) {
+                el.elementModel.props3D.init(el, (selection === "Stage"));
+            }
         }
     },
 
