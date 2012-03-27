@@ -6,8 +6,10 @@
 
 
 var PulseMaterial = require("js/lib/rdge/materials/pulse-material").PulseMaterial;
+var Texture = require("js/lib/rdge/texture").Texture;
 
-var ReliefTunnelMaterial = function ReliefTunnelMaterial() {
+var ReliefTunnelMaterial = function ReliefTunnelMaterial()
+{
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
@@ -61,6 +63,9 @@ var ReliefTunnelMaterial = function ReliefTunnelMaterial() {
 		if (this._shader && this._shader['default']) {
 			this._shader['default'].u_time.set( [this._time] );
         }
+
+        var texMapName = this._propValues[this._propNames[0]];
+        this._glTex = new Texture( world, texMapName );
 
 		// set the shader values in the shader
 		this.updateTexture();

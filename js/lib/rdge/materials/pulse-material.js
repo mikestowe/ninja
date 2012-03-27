@@ -4,7 +4,6 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
-var MaterialParser = require("js/lib/rdge/materials/material-parser").MaterialParser;
 var Texture = require("js/lib/rdge/texture").Texture;
 var Material = require("js/lib/rdge/materials/material").Material;
 ///////////////////////////////////////////////////////////////////////
@@ -220,7 +219,7 @@ var PulseMaterial = function PulseMaterial()
         }
 	}
 
-
+    /*
 	this.export = function() {
 		// every material needs the base type and instance name
 		var exportStr = "material: " + this.getShaderName() + "\n";
@@ -261,6 +260,7 @@ var PulseMaterial = function PulseMaterial()
 
 		return rtnStr;
 	}
+    */
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
