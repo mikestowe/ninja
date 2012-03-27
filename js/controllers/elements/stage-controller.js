@@ -84,7 +84,11 @@ exports.StageController = Montage.create(ElementController, {
                 case "width":
                     return el.elementModel.stageDimension.style.getProperty(p);
                 case "-webkit-transform-style":
-                    return el.elementModel.stageView.style.getProperty(p);
+                    if(el.id === "Viewport") {
+                        return this.application.ninja.stylesController.getElementStyle(el, p, false, true);
+                    } else {
+                        return el.elementModel.stageView.style.getProperty(p);
+                    }
                 default:
                     return ElementController.getProperty(el, p, false, true);
                     //console.log("Undefined Stage property ", p);
