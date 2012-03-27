@@ -23,7 +23,8 @@
 						"transformCollapser" : {"@" : "transformCollapser"},
 						"styleCollapser" : {"@" : "styleCollapser"},
 						"clickerMain" : {"#" : "clicker-main"},
-						"myLabel" : {"#" : "myLabel"}
+						"myLabel" : {"#" : "myLabel"},
+						"dragDrop" : {"@" : "DragDrop"}
                     }
                 },
 	            "dtext1" : {
@@ -315,34 +316,7 @@
 							"oneway" : false
 						}
 					}
-				},
-
-	            "DragDrop": {
-	                "module": "js/panels/Timeline/DragDrop.js",
-	                "name": "DragDropComposer",
-	                "properties": {
-	                    "element": {"#": "myLabel"},
-	                    "component": {"@": "owner"}
-	                },
-	                "listeners": [
-	                    {
-	                        "type": "dragStart",
-	                        "listener": {"@": "owner"}
-	                    },
-	                    {
-	                        "type": "dropHover",
-	                        "listener": {"@": "owner"}
-	                    },
-	                    {
-	                        "type": "dropped",
-	                        "listener": {"@": "owner"}
-	                    },
-	                    {
-	                        "type": "dropEnd",
-	                        "listener": {"@": "owner"}
-	                    }
-	                ]
-	            }
+				}
 				
 				
             }

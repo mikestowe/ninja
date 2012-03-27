@@ -102,6 +102,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         },
         set:function(value){
             this._layerID = value;
+            this.layerData.layerID = value;
         }
     },
     
@@ -119,7 +120,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextPositionX !== value) {
         		this._dtextPositionX = value;
-        		//this.needsDraw = true;
+        		this.layerData.dtextPositionX = value;
         	}
             
         }
@@ -138,7 +139,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextPositionY !== value) {
         		this._dtextPositionY = value;
-        		//this.needsDraw = true;
+        		this.layerData.dtextPositionY = value;
         	}
             
         }
@@ -157,7 +158,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextScaleX !== value) {
         		this._dtextScaleX = value;
-        		//this.needsDraw = true;
+        		this.layerData.dtextScaleX = value;
         	}
             
         }
@@ -176,7 +177,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextScaleY !== value) {
         		this._dtextScaleY = value;
-        		//this.needsDraw = true;
+        		this.layerData.dtextScaleY = value;
         	}
             
         }
@@ -195,7 +196,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextSkewX !== value) {
         		this._dtextSkewX = value;
-        		//this.needsDraw = true;
+        		this.layerData.dtextSkewX = value;
         	}
             
         }
@@ -214,7 +215,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextSkewY !== value) {
         		this._dtextSkewY = value;
-        		//this.needsDraw = true;
+        		this.layerData.dtextSkewY = value;
         	}
             
         }
@@ -233,7 +234,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextRotate !== value) {
         		this._dtextRotate = value;
-        		//this.needsDraw = true;
+        		this.layerData.dtextRotate = value;
         	}
             
         }
@@ -278,6 +279,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._isActive = newVal;
+    		this.layerData.isActive = newVal;
     	}
     },
     
@@ -294,6 +296,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         },
         set:function(value){
             this._isAnimated = value;
+            this.layerData.isAnimated = newVal;
         }
     },
     _justAdded: {
@@ -384,10 +387,14 @@ var Layer = exports.Layer = Montage.create(Component, {
     	set: function(newVal) {
     		if (newVal !== this._bypassAnimation) {
 	    		this._bypassAnimation = newVal;
-	    		this.layerData.bypassAnimation = newVal;
-	    		//this.triggerOutgoingBinding();	
+	    		this.layerData.bypassAnimation = newVal;	
     		}
     	}
+    },
+    
+    // Is this the first draw?
+    _isFirstDraw : {
+    	value: true
     },
 
     _layerData:{
@@ -459,12 +466,6 @@ var Layer = exports.Layer = Montage.create(Component, {
     		}
     	}
     },
-    
-    // Is this the first draw?
-    _isFirstDraw : {
-    	value: true
-    },
-
 	/* END: Models */
 
 	/* Begin: Draw cycle */
@@ -507,7 +508,12 @@ var Layer = exports.Layer = Montage.create(Component, {
             this.element.addEventListener("click", this, false);
             
 			// Drag and drop event hanlders
-			this.element.addEventListener("dropped", this, false);
+			this.element.addEventListener("mouseover", this.handleMouseover.bind(this), false);
+			this.element.addEventListener("mouseout", this.handleMouseout.bind(this), false);
+			this.element.addEventListener("dragover", this.handleDragover.bind(this), false);
+			this.element.addEventListener("dragleave", this.handleDragleave.bind(this), false);
+			this.element.addEventListener("dragstart", this.handleDragstart.bind(this), false);
+			this.element.addEventListener("drop", this.handleDrop.bind(this), false);
 
         }
     },
@@ -545,6 +551,8 @@ var Layer = exports.Layer = Montage.create(Component, {
         	this.titleSelector = this.label.querySelector(".collapsible-label");
         	this.buttonAddStyle = this.element.querySelector(".button-add");
         	this.buttonDeleteStyle = this.element.querySelector(".button-delete");
+        	
+        	
 
 		}
 	},
@@ -786,9 +794,48 @@ var Layer = exports.Layer = Montage.create(Component, {
 			this.triggerOutgoingBinding();
 		}
 	},
-	handleDropped : {
+	handleMouseover: {
 		value: function(event) {
-			console.log('wheeee!  WWEWWEWWWWEEEEEEEEE')
+			this.element.draggable = true;
+		}
+	},
+	handleMouseout: {
+		value: function(event) {
+			this.element.draggable = false;
+		}
+	},
+	handleDragenter: {
+		value: function(event) {
+		}
+	},
+	handleDragleave: {
+		value: function(event) {
+			this.element.classList.remove("dragOver");
+		}
+	},
+	handleDragstart: {
+		value: function(event) {
+			this.parentComponent.parentComponent.dragLayerID = this.layerID;
+            event.dataTransfer.setData('Text', 'Layer');
+		}
+	},
+	handleDragover: {
+		value: function(event) {
+			event.preventDefault();
+			this.element.classList.add("dragOver");
+			event.dataTransfer.dropEffect = "move";
+			return false;
+		}
+	},
+	
+	handleDrop : {
+		value: function(event) {
+			event.stopPropagation();
+			this.element.classList.remove("dragOver");
+			if (this.parentComponent.parentComponent.dragLayerID !== this.layerID) {
+				this.parentComponent.parentComponent.dropLayerID = this.layerID;
+			}
+			return false;
 		}
 	},
 	/* End: Event handlers */

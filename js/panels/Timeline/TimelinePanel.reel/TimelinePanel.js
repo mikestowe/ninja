@@ -238,6 +238,57 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     timeMarkerHolder:{
         value:null
     },
+    _dragAndDropHelper : {
+    	value: false
+    },
+    _dragAndDropHelperCoords: {
+    	value: false
+    },
+    _dragAndDropHelperOffset : {
+    	value: false
+    },
+    _dragLayerID : {
+    	value: null
+    },
+    dragLayerID : {
+    	get: function() {
+    		return this._dragLayerID;
+    	},
+    	set: function(newVal) {
+    		if (newVal !== this._dragLayerID) {
+    			this._dragLayerID = newVal;
+    		}
+    	}
+    },
+    _dropLayerID : {
+    	value: null
+    },
+    dropLayerID : {
+    	get: function() {
+    		return this._dropLayerID;
+    	},
+    	set: function(newVal) {
+    		if (newVal !== this._dropLayerID) {
+    			this._dropLayerID = newVal;
+    			
+    			// Create a snapshot of arrLayers so we can manipulate it safely
+    			var arrLayers = this.arrLayers,
+    				dragLayerIndex = this.getLayerIndexByID(this.dragLayerID),
+    				dropLayerIndex = this.getLayerIndexByID(this.dropLayerID),
+    				dragLayer = arrLayers[dragLayerIndex];
+    			
+    			arrLayers.splice(dragLayerIndex, 1);
+    			arrLayers.splice(dropLayerIndex, 0, dragLayer);
+    			
+    			// Update the repetition!
+    			this.arrLayers = arrLayers;
+    			
+    			// Clear for future DnD
+    			this._dropLayerID = null;
+    			this._dragLayerID = null;
+    		}
+    	}
+    },
     /* === END: Models === */
     /* === BEGIN: Draw cycle === */
     prepareForDraw:{
@@ -247,6 +298,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.eventManager.addEventListener("onOpenDocument", this.handleDocumentChange.bind(this), false);
             this.eventManager.addEventListener("closeDocument", this.handleDocumentChange.bind(this), false);
             this.eventManager.addEventListener("switchDocument", this.handleDocumentChange.bind(this), false);
+            
+            // Bind drag and drop event handlers
+            this.container_layers.addEventListener("dragstart", this.handleLayerDragStart.bind(this), false);
+            this.container_layers.addEventListener("dragend", this.handleLayerDragEnd.bind(this), false);
+            this.container_layers.addEventListener("dragover", this.handleLayerDragover.bind(this), false);
+            this.container_layers.addEventListener("drop", this.handleLayerDrop.bind(this), false);
         }
     },
 
@@ -257,6 +314,25 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this._isLayer = false;
             }
         }
+    },
+    
+    draw: {
+    	value: function() {
+    		
+    		// Drag and Drop:
+    		// Do we have a helper to append?
+            if (this._appendHelper === true) {
+            	this.container_layers.appendChild(this._dragAndDropHelper);
+            	this._appendHelper = false;
+            }
+            // Do we need to move the helper?
+    		if (this._dragAndDropHelperCoords !== false) {
+    			if (this._dragAndDropHelper !== null) {
+    				this._dragAndDropHelper.style.top = this._dragAndDropHelperCoords;
+    			}
+    			this._dragAndDropHelperCoords = false;
+    		}
+    	}
     },
     /* === END: Draw cycle === */
     /* === BEGIN: Controllers === */
@@ -365,6 +441,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.layout_tracks = this.element.querySelector(".layout-tracks");
             this.layout_markers = this.element.querySelector(".layout_markers");
             this.timeline_leftpane.addEventListener("mousedown", this.timelineLeftPaneMousedown.bind(this), false);
+            this.timeline_leftpane.addEventListener("mouseup", this.timelineLeftPaneMouseup.bind(this), false);
             this.layout_tracks.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
             this.user_layers.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
             this.end_hottext.addEventListener("changing", this.updateTrackContainerWidth.bind(this), false);
@@ -586,6 +663,13 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 var myIndex = this.getActiveLayerIndex();
                 this.selectLayer(myIndex, true);
             }
+            this._isMousedown = true;
+        }
+    },
+
+    timelineLeftPaneMouseup:{
+        value:function (event) {
+			this._isMousedown = false;
         }
     },
 
@@ -888,6 +972,74 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     			this.arrLayers[intIndex].layerData.triggerBinding = false;
     		} else {
     			this.arrLayers[intIndex].layerData.triggerBinding = true;
+    		}
+    	}
+    },
+    
+    handleLayerDragStart : {
+    	value: function(event) {
+            var dragIcon = document.createElement("img");
+            event.dataTransfer.effectAllowed = 'move';
+            event.dataTransfer.setData('Text', this.identifier);
+            dragIcon.src = "/images/transparent.png";
+            dragIcon.width = 1;
+            event.dataTransfer.setDragImage(dragIcon, 0, 0);
+            
+            // Clone the element we're dragging
+            this._dragAndDropHelper = event.target.cloneNode(true);
+            this._dragAndDropHelper.style.opacity = 0.8;
+            this._dragAndDropHelper.style.position = "absolute";
+            this._dragAndDropHelper.style.top = "0px";
+            this._dragAndDropHelper.style.left = "0px";
+            this._dragAndDropHelper.style.zIndex = 700;
+            
+            this._dragAndDropHelper.style.width = window.getComputedStyle(this.container_layers, null).getPropertyValue("width");
+            this._dragAndDropHelper.classList.add("timeline-dnd-helper");
+            
+            // Get the offset 
+    		var findYOffset = function(obj) {
+				var curleft = curtop = 0;
+				if (obj.offsetParent) {
+					do {
+							curleft += obj.offsetLeft;
+							curtop += obj.offsetTop;
+				
+						} while (obj = obj.offsetParent);
+				}
+				return curtop;
+    		}
+    		this._dragAndDropHelperOffset = findYOffset(this.container_layers);
+    		this._appendHelper = true;
+            // this.container_layers.appendChild(this._dragAndDropHelper);
+    	}
+    },
+    handleLayerDragover: {
+    	value: function(event) {
+    		var currPos = 0;
+    		currPos = event.y - this._dragAndDropHelperOffset -28;
+    		this._dragAndDropHelperCoords = currPos + "px";
+    		this.needsDraw = true;
+    	}
+    },
+    handleLayerDragEnd : {
+    	value: function(event) {
+            // Delete the helper and clean up
+            if (this._dragAndDropHelper !== null) {
+            	this.container_layers.removeChild(this._dragAndDropHelper);
+				this._dragAndDropHelper = null;
+            }
+    	}
+    },
+    handleLayerDrop : {
+    	value: function(event) {
+            event.stopPropagation();
+            event.preventDefault();
+    		// Usually drop fires after dragend, but sometimes
+    		// dragend doesn't fire. So if we're here in drop 
+    		// and there's still a helper, we need to manually fire dragend.
+    		if (this._dragAndDropHelper !== null) {
+            	this.container_layers.removeChild(this._dragAndDropHelper);
+				this._dragAndDropHelper = null;
     		}
     	}
     },

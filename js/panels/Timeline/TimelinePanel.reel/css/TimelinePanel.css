@@ -284,3 +284,6 @@
 	display: none;
 	box-shadow: rgb(17, 17, 17) 0px 0px 14px inset;
 }
+.timeline-dnd-helper {
+	-webkit-transform: scale(.9, .9);
+}
