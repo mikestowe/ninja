@@ -21,13 +21,13 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 
 	this._lightDiff = [0.3, 0.3, 0.3, 1.0];
 	
-    //this._diffuseTexture = "assets/images/metal.png";
-	this._diffuseTexture = "texture";
-    this._diffuseWorld = null;      // the world that the texture is derived from (if there is one).
-    this._diffuseTextureObj = null;
-	
+    this._diffuseTexture = "assets/images/metal.png";
+    //this._diffuseTexture = "texture";
     this._specularTexture = "assets/images/silver.png";
 	this._normalTexture = "assets/images/normalMap.png";
+
+    // keep the array of initialized textures
+    this._textures = [];
 
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
@@ -55,13 +55,13 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
     };
 
 	this.getDiffuseTexture	= function()		{  return this._propValues[this._propNames[1]] ? this._propValues[this._propNames[1]].slice() : null	};
-	this.setDiffuseTexture	= function(m)		{  this._propValues[this._propNames[1]] = m ? m.slice(0) : null;  this.updateTexture(1);  	};
+	this.setDiffuseTexture	= function(m)		{  this._propValues[this._propNames[1]] = m ? m.slice(0) : null;  this.initTexture(1);  	};
 
 	this.getNormalTexture	= function()		{  return this._propValues[this._propNames[2]] ? this._propValues[this._propNames[2]].slice() : null	};
-	this.setNormalTexture	= function(m)		{  this._propValues[this._propNames[2]] = m ? m.slice(0) : null;  this.updateTexture(2);  	};
+	this.setNormalTexture	= function(m)		{  this._propValues[this._propNames[2]] = m ? m.slice(0) : null;  this.initTexture(2);  	};
 
 	this.getSpecularTexture	= function()		{  return this._propValues[this._propNames[3]] ? this._propValues[this._propNames[3]].slice() : null	};
-	this.setSpecularTexture	= function(m)		{  this._propValues[this._propNames[3]] = m ? m.slice(0) : null;  this.updateTexture(3);  	};
+	this.setSpecularTexture	= function(m)		{  this._propValues[this._propNames[3]] = m ? m.slice(0) : null;  this.initTexture(3);  	};
 
 	this.isAnimated			= function()		{  return true;					};
 
@@ -127,28 +127,33 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 		this._materialNode.setShader(this._shader);
 
         // DEBUG CODE
-        this.initWorldTextures();
-
-		// set some image maps
-		this.updateTexture(1);
-        this.updateTexture(2);
-        this.updateTexture(3);
+        this.initTextures();
 	};
 
-    this.initWorldTextures = function()
+    this.initTexture = function( index )
     {
-        // find the world with the given id
-        var viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
-        var root = viewUtils.application.ninja.currentDocument.documentRoot;
-        this._diffuseWorld = this.findWorld( this._diffuseTexture,  root );
-        if (this._diffuseWorld)
+        var dstWorld = this.getWorld();
+        if (dstWorld)
         {
-            var world = this.getWorld();
-            var tex = new Texture( world );
-            this._diffuseTextureObj = tex;
-            tex.loadFromCanvas( this._diffuseWorld.getCanvas() );
+            var texMapName = this._propValues[this._propNames[index]];
+            var texture = new Texture( dstWorld, texMapName );
+            this._textures[index] = texture;
+            this.updateTexture( index );
         }
     }
+
+    this.initTextures = function()
+    {
+         var dstWorld = this.getWorld();
+        if (dstWorld)
+        {
+            // find the world with the given id
+            for (var i=1;  i<=3;  i++)
+            {
+                this.initTexture( i );
+            }
+        }
+   }
 
 	this.updateTexture = function( index )
 	{
@@ -159,24 +164,24 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 			var renderer = g_Engine.getContext().renderer;
 			if (renderer && technique)
 			{
-				var texMapName = this._propValues[this._propNames[index]];
-				var wrap = 'REPEAT',  mips = true;
-				var tex;
-                if ((index === 1) && this._diffuseTextureObj)
-                    tex = this._diffuseTextureObj.getTexture();
-                else
-                    tex = this.loadTexture( texMapName, wrap, mips );
+                var glTex = this._textures[ index ];
+                if (glTex)
+                {
+                    if (glTex.isAnimated())
+                        glTex.rerender();
 
-				if (tex)
-				{
-					switch (index)
-					{
-						case 1:		technique.u_colMap.set( tex );		break;
-						case 2:		technique.u_normalMap.set( tex );	break;
-						case 3:		technique.u_glowMap.set( tex );		break;
-						default:	console.log( "invalid map index in BumpMetalMaterial, " + index );
-					}
-				}
+                    var tex = glTex.getTexture();
+ 				    if (tex)
+				    {
+					    switch (index)
+					    {
+						    case 1:		technique.u_colMap.set( tex );		break;
+						    case 2:		technique.u_normalMap.set( tex );	break;
+						    case 3:		technique.u_glowMap.set( tex );		break;
+						    default:	console.log( "invalid map index in BumpMetalMaterial, " + index );
+					    }
+				    }
+                }
 			}
 		}
 	};

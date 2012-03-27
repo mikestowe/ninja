@@ -252,29 +252,6 @@ var Material = function GLMaterial( world ) {
 		return tex;
 	};
 
-    this.findWorld = function( id,  elt )
-    {
-        if (elt.id && elt.id === id)
-        {
-            if (elt.elementModel && elt.elementModel.shapeModel && elt.elementModel.shapeModel.GLWorld)
-            {
-                var world = elt.elementModel.shapeModel.GLWorld;
-                return world;
-            }
-        }
- 
-		if (elt.children)
-		{
-			var nKids = elt.children.length;
-			for (var i=0;  i<nKids;  i++)
-			{
-				var child = elt.children[i];
-				var world = this.findWorld( id, child );
-                if (world)  return world;
-			}
-		}
-   }
-
 	this.export = function() {
 		// this function should be overridden by subclasses
 		var exportStr = "material: " + this.getShaderName() + "\n" + "endMaterial\n";
@@ -290,78 +267,6 @@ var Material = function GLMaterial( world ) {
 		return rtnStr;
 	};
 
-	/*
-	this.setRenderProperties = function( glContext, shaderProgram )
-	{
-		glContext.uniform1f( shaderProgram.materialShininessUniform, this._shininess );
-
-		if (this._texture)
-			this.prepareTextureForRender( 0 );
-		else
-			glContext.uniform1i( shaderProgram.useTextureUniform,	false  );
-
-		var amb = this._ambient,  diff = this._diffuse,  spec = this._specular;
-		glContext.uniform4f( shaderProgram.materialAmbientUniform,		 amb[0],  amb[1],  amb[2],  amb[3]);
-		glContext.uniform4f( shaderProgram.materialDiffuseUniform,		diff[0], diff[1], diff[2], diff[3]);
-		glContext.uniform4f( shaderProgram.materialSpecularUniform,		spec[0], spec[1], spec[2], spec[3]);
-	}
- 
- 
- 
-    this.prepareTextureForRender = function ( index )
-	{
-		// we will need to be able to handle multiple textures.
-		// currently only dealing with 1.
-		index = 0;
-		var texture = this._texture;
-
-		var gl = this.getWorld().getGLContext();
-		var shaderProgram = this.getWorld().getShaderProgram();
-
-		gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-		gl.uniform1i(shaderProgram.samplerUniform, 0);
-		gl.uniform1i( shaderProgram.useTextureUniform,	true  );
-    }
- 
-    this.textureLoadHandler = function (event)
-	{
-		var texture = this._texture;
-
-		var gl = this._world.getGLContext();
-		var shaderProgram = this._world.getShaderProgram();
-
-		gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-
-//		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-//		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
-        gl.bindTexture(gl.TEXTURE_2D, null);
-
-		this._material._texture = this._texture;
-		this._world.render();
-	}
- 
- 
-    this.loadTexture = function( path )
-	{
-        var gl = this.getWorld().getGLContext();
-		var tex = gl.createTexture();
-        tex.image = new Image();
-		tex.image._world = this._world;
-		tex.image._material = this;
-		tex.image._texture = tex;
-        tex.image.onload = this.textureLoadHandler;
-        tex.image.src = path;
-    }
-	*/
 };
 
 if (typeof exports === "object") {

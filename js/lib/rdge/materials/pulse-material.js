@@ -25,8 +25,8 @@ var PulseMaterial = function PulseMaterial()
 	this._name = "PulseMaterial";
 	this._shaderName = "pulse";
 
-	//this._texMap = 'assets/images/cubelight.png';
-	this._texMap = 'texture';
+	this._texMap = 'assets/images/cubelight.png';
+	//this._texMap = 'texture';
 
 	this._time = 0.0;
 	this._dTime = 0.01;
@@ -118,16 +118,8 @@ var PulseMaterial = function PulseMaterial()
 			this._shader['default'].u_time.set( [this._time] );
         }
 
-        // check if the texture uses a canvas as the source
-        var viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
-        var root = viewUtils.application.ninja.currentDocument.documentRoot;
         var texMapName = this._propValues[this._propNames[0]];
-        var texWorld = this.findWorld( texMapName, root );
-        if (texWorld)
-        {
-            this._glTex = new Texture( this.getWorld() );
-            this._glTex.loadFromCanvas( texWorld.getCanvas() );
-        }
+        this._glTex = new Texture( world, texMapName );
 
 		// set the shader values in the shader
 		this.updateTexture();
@@ -145,13 +137,9 @@ var PulseMaterial = function PulseMaterial()
                 var tex;
                 if (this._glTex)
                 {
-                    this._glTex.rerender();
+                    if (this._glTex.isAnimated())
+                        this._glTex.rerender();
                     tex = this._glTex.getTexture();
-                }
-                else
-                {
-                    var texMapName = this._propValues[this._propNames[0]];
-				    tex = this.loadTexture( texMapName, wrap, mips );
                 }
 
 				if (tex) {
@@ -166,12 +154,20 @@ var PulseMaterial = function PulseMaterial()
 		var material = this._materialNode;
 		if (material)
 		{
-            if (this._glTex && this._glTex.isAnimated())
-                this.updateTexture();
-
 			var technique = material.shaderProgram['default'];
 			var renderer = g_Engine.getContext().renderer;
-			if (renderer && technique) {
+			if (renderer && technique)
+            {
+                if (this._glTex)
+                {
+                    //this.updateTexture();
+                    if (this._glTex.isAnimated())
+                        this._glTex.rerender();
+                    tex = this._glTex.getTexture();
+				    if (tex)
+					    technique.u_tex0.set( tex );
+                }
+
 				if (this._shader && this._shader['default']) {
 					this._shader['default'].u_time.set( [this._time] );
                 }

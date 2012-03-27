@@ -10,7 +10,7 @@ var Material = require("js/lib/rdge/materials/material").Material;
 // Class GLTexture
 //      GL representation of a texture.
 ///////////////////////////////////////////////////////////////////////
-function Texture( dstWorld )
+function Texture( dstWorld, texMapName,  wrap, mips )
 {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
@@ -18,12 +18,24 @@ function Texture( dstWorld )
     this._texture;
 
     // texture attributes
-    this._texMapName;
-    this._wrap;
-    this._mips;
+    this._texMapName = texMapName.slice();
 
-    this._srcCanvas;	// the canvas generating the texture map.
-    this._dstWorld;		// the world that will use the texture map
+    // set default values for wrap and mips
+    if (wrap === undefined)
+        wrap = "REPEAT";
+    if (mips === undefined)
+        mips = true;
+    this._wrap = wrap;
+    this._mips = mips;
+
+   // the canvas generating the texture map (if there is one)
+    this._srcCanvas;	
+    this._srcWorld;
+
+    // cache whether or not the source is animated
+    this._isAnimated = false;
+    
+    // the destination world that will use the texture map
     this._dstWorld = dstWorld;
 
     ///////////////////////////////////////////////////////////////////////
@@ -43,7 +55,35 @@ function Texture( dstWorld )
     // Methods
     ///////////////////////////////////////////////////////////////////////
 
-    this.loadFromFile = function( texMapName,  wrap,  mips )
+    this.init = function()
+    {
+        // determine if the source is a canvas or an image file
+        var viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
+        var root = viewUtils.application.ninja.currentDocument.documentRoot;
+        var srcCanvas = this.findCanvas( this._texMapName, root );
+        if (srcCanvas)
+        {
+            this._srcCanvas = srcCanvas;
+            if (srcCanvas.elementModel && srcCanvas.elementModel.shapeModel && srcCanvas.elementModel.shapeModel.GLWorld)
+            {
+                this._srcWorld = srcCanvas.elementModel.shapeModel.GLWorld;
+
+                // check if the source is animated
+                if (srcCanvas.elementModel && srcCanvas.elementModel.shapeModel  && srcCanvas.elementModel.shapeModel.GLWorld)
+                    this._isAnimated = this._srcWorld._hasAnimatedMaterials;
+            }
+
+            this.loadFromCanvas();
+        }
+        else
+        {
+            this.loadFromFile();  
+        }
+
+
+    }
+
+    this.loadFromFile = function()
     {
         var tex = this._texture;
         this._srcCanvas = null;
@@ -51,9 +91,9 @@ function Texture( dstWorld )
         // only load if something has changed
         if (this._texMapName !== texMapName)	// does RDGE allow us to change wrap or mips?
         {
-            this._texMapName = texMapName.slice();
-            this._wrap = wrap;
-            this._mips = mips;
+            var texMapName = this._texMapName;
+            var wrap = this._wrap;
+            var mips = this._mips;
 
             var dstWorld = this.getDstWorld();
             if (dstWorld)
@@ -69,22 +109,14 @@ function Texture( dstWorld )
     }
 
     var __texCounter = 0;
-    this.loadFromCanvas = function( srcCanvas,  wrap, mips )
+    this.loadFromCanvas = function()
     {
-        this._srcCanvas = srcCanvas;
+        var srcCanvas = this._srcCanvas;
+        var wrap = this._wrap;
+        var mips = this._mips;
 
         this._texMapName = "GLTexture_" + __texCounter;
         __texCounter++;
-
-        // set default values for wrap and mips
-        if (wrap === undefined)
-            wrap = "REPEAT";
-        if (mips === undefined)
-            mips = true;
-
-        // we animate only if the source is an animated GLWorld
-        if (srcCanvas.elementModel && srcCanvas.elementModel.shapeModel  && srcCanvas.elementModel.shapeModel.GLWorld)
-            this._isAnimated = srcCanvas.elementModel.shapeModel.GLWorld._hasAnimatedMaterials;
 
         // create the texture
         var world = this.getDstWorld();
@@ -128,13 +160,11 @@ function Texture( dstWorld )
         var width = srcCanvas.width,  height = srcCanvas.height;
         if (!this.isPowerOfTwo(width) || !this.isPowerOfTwo(height))
         {
-            width = this.nextHighestPowerOfTwo( width );
-            height = this.nextHighestPowerOfTwo( height );
-            //width = 64;  height = 64;
+            width = this.nextLowerPowerOfTwo( width );
+            height = this.nextLowerPowerOfTwo( height );
         }
 
         // create a canvas to be used as the image for the texture map
-        var doc = srcCanvas.ownerDocument;
         var renderCanvas = this._renderCanvas;
         if (!renderCanvas)
         {
@@ -197,6 +227,56 @@ function Texture( dstWorld )
         }
         return x + 1;
     }
+ 
+    this.nextLowerPowerOfTwo = function(x)
+    {
+        return this.nextHighestPowerOfTwo(x) >> 1;
+    }
+
+    this.findCanvas = function( id,  elt )
+    {
+        if (elt.id && elt.id === id)
+            return elt;
+ 
+		if (elt.children)
+		{
+			var nKids = elt.children.length;
+			for (var i=0;  i<nKids;  i++)
+			{
+				var child = elt.children[i];
+				var canvas = this.findCanvas( id, child );
+                if (canvas)  return canvas;
+			}
+		}
+   }
+
+    /*
+    this.findWorld = function( id,  elt )
+    {
+        if (elt.id && elt.id === id)
+        {
+            if (elt.elementModel && elt.elementModel.shapeModel && elt.elementModel.shapeModel.GLWorld)
+            {
+                var world = elt.elementModel.shapeModel.GLWorld;
+                return world;
+            }
+        }
+ 
+		if (elt.children)
+		{
+			var nKids = elt.children.length;
+			for (var i=0;  i<nKids;  i++)
+			{
+				var child = elt.children[i];
+				var world = this.findWorld( id, child );
+                if (world)  return world;
+			}
+		}
+   }
+   */
+
+   // initialize the object
+   this.init();
 }
 
 if (typeof exports === "object") {
