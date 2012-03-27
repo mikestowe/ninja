@@ -239,7 +239,7 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 					if (this._canvas.task) {
 						this._firstRender = false;
 
-						if (!this.hasAnimatedMaterials()) {
+						if (!this.hasAnimatedMaterials() || !this._previewAnimation) {
 							this._canvas.task.stop();
 							//this._renderCount = 10;
 						}
@@ -479,10 +479,6 @@ World.prototype.restartRenderLoop = function() {
 		if (this._allMapsLoaded) {
 			//console.log( "starting task" );
 			this._canvas.task.start();
-            if(!this._previewAnimation) {
-                //render only once if authortime animation is turned off
-                this._canvas.task.stop();
-            }
 		} else {
 			//console.log( "stopping task" );
 			this._canvas.task.stop();
