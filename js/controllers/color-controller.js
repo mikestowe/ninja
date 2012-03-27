@@ -227,14 +227,14 @@ exports.ColorController = Montage.create(Component, {
             	//
             	this.fill = color;
                 //
-                if(e._event.wasSetByCode && mode !== 'nocolor') return;
+                if(e._event.wasSetByCode) return;
             	//
                 this.setColor(mode, color, true);
             } else if (input === 'stroke') {
             	//
             	this.stroke = color;
                 //
-                if(e._event.wasSetByCode && mode !== 'nocolor') return;
+                if(e._event.wasSetByCode) return;
 
                 this.setColor(mode, color, false);
             }
