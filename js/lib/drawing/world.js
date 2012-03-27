@@ -761,13 +761,10 @@ World.prototype.exportJSON = function()
 	// We need to rebuild everything
 	if (this._useWebGL)
 	{
-		var root = this._rootNode;
-		root.children = new Array();
 		if (worldObj.children && (worldObj.children.length === 1))
 		{
-			this.init();
-			this._geomRoot = undefined;
-			this.importObjectsJSON( worldObj.children[0] );
+            this.rebuildTree(this._geomRoot);
+            this.restartRenderLoop();
 		}
 	}
 
@@ -781,6 +778,20 @@ World.prototype.exportJSON = function()
 	jStr = "v1.0;" + jStr;
 	
 	return jStr;
+}
+
+World.prototype.rebuildTree = function( obj )
+{
+	if (!obj)  return;
+
+	obj.buildBuffers();
+
+	if (obj.getChild()) {
+		 this.rebuildTree( obj.getChild () );
+    }
+
+	if (obj.getNext())
+		this.rebuildTree( obj.getNext() );
 }
 
 World.prototype.exportObjectsJSON = function( obj,  parentObj )

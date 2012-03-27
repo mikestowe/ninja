@@ -336,6 +336,10 @@ exports.ShapesController = Montage.create(CanvasController, {
                 color = this.getShapeProperty(el, "stroke");
             }
 
+            if(!css) {
+                return null;
+            }
+
             css = this.application.ninja.colorController.colorModel.webGlToCss(color);
             return this.application.ninja.colorController.getColorObjFromCss(css);
         }
