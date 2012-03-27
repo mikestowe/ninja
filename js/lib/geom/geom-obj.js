@@ -19,6 +19,7 @@ var GeomObj = function GLGeomObj() {
 	this.GEOM_TYPE_LINE             =  3;
 	this.GEOM_TYPE_PATH			    =  4;
 	this.GEOM_TYPE_CUBIC_BEZIER     =  5;
+    this.GEOM_TYPE_BRUSH_STROKE     =  6;
 	this.GEOM_TYPE_UNDEFINED		= -1;
 
     // Needed for calculating dashed/dotted strokes

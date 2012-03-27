@@ -20,10 +20,10 @@ var BrushStroke = function GLBrushStroke() {
     ///////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////
-    this._Points = [];          //current state of points in stage-world space (may be different from input)
-    this._OrigPoints = [];      //copy of input points without any smoothing
-    this._LocalPoints = [];     //_Points in local coordinates...do this before rendering the points in the canvas
-    this._stageWorldCenter  = [0,0,0];   //coordinate for the canvas midPoint: a 3D vector in stage world space
+    this._Points = [];                      //current state of points in stage-world space (may be different from input)
+    this._LocalPoints = [];                 //_Points in local coordinates...do this before rendering the points in the canvas
+    this._OrigLocalPoints = [];             //copy of input points without any smoothing
+    this._stageWorldCenter  = [0,0,0];      //coordinate for the canvas midPoint: a 3D vector in stage world space
     this._BBoxMin = [0, 0, 0];
     this._BBoxMax = [0, 0, 0];
     this._isDirty = true;
@@ -79,7 +79,7 @@ var BrushStroke = function GLBrushStroke() {
     };
 
     this.geomType = function () {
-        return this.GEOM_TYPE_CUBIC_BEZIER;
+        return this.GEOM_TYPE_BRUSH_STROKE;
     };
 
     this.setDrawingTool = function (tool) {
@@ -107,7 +107,10 @@ var BrushStroke = function GLBrushStroke() {
     };
 
     this.getNumPoints = function () {
-        return this._Points.length;
+        if (this._LocalPoints.length)
+            return this._LocalPoints.length;
+        else
+            return this._Points.length;
     };
 
     this.getPoint = function (index) {
@@ -283,7 +286,7 @@ var BrushStroke = function GLBrushStroke() {
     //remove all the points
     this.clear = function () {
         this._Points = [];
-        this._OrigPoints = [];
+        this._OrigLocalPoints    = [];
         this._isDirty=true;
         this._isInit = false;
     };
@@ -404,13 +407,13 @@ var BrushStroke = function GLBrushStroke() {
         this._updateBoundingBox(); //compute the bbox to obtain the width and height used below
         var halfwidth = 0.5*(this._BBoxMax[0]-this._BBoxMin[0]);
         var halfheight = 0.5*(this._BBoxMax[1]-this._BBoxMin[1]);
-        this._OrigPoints = [];
+        this._OrigLocalPoints    = [];
         for (i=0;i<numPoints;i++) {
             this._LocalPoints[i][0]+= halfwidth;
             this._LocalPoints[i][1]+= halfheight;
 
             //store the original points
-            this._OrigPoints.push([this._LocalPoints[i][0],this._LocalPoints[i][1],this._LocalPoints[i][2]]);
+            this._OrigLocalPoints   .push([this._LocalPoints[i][0],this._LocalPoints[i][1],this._LocalPoints[i][2]]);
         }
         //update the bbox with the same adjustment as was made for the local points above
         this._BBoxMax[0]+= halfwidth;this._BBoxMin[0]+= halfwidth;
@@ -452,7 +455,7 @@ var BrushStroke = function GLBrushStroke() {
     this._doSmoothing = function() {
         var numPoints = this._LocalPoints.length;
         if (this._strokeDoSmoothing && numPoints>1) {
-            this._copyCoordinates3D(this._OrigPoints, this._LocalPoints);
+            this._copyCoordinates3D(this._OrigLocalPoints   , this._LocalPoints);
             //iterations of Laplacian smoothing (setting the points to the average of their neighbors)
             var numLaplacianIterations = this._strokeAmountSmoothing;
             for (var n=0;n<numLaplacianIterations;n++){
@@ -648,20 +651,32 @@ var BrushStroke = function GLBrushStroke() {
 
     this.exportJSON = function(){
         var retObject= new Object();
-        retObject.geomType = this.geomType();
-        retObject.points = this._Points;
-        retObject.planeCenter = this._planeCenter;
-        retObject.planeMat = this._planeMat;
-        retObject.planeMatInv = this._planeMatInv;
+        //the type of this object
+        retObject.type = this.geomType();
+        retObject.geomType = retObject.type;
+
+        //the geometry for this object
+        retObject.localPoints = this._LocalPoints.slice(0);
+        this._copyCoordinates3D(this._LocalPoints, retObject.localPoints); //todo is this necessary in addition to the slice(0) above?
+        retObject.origLocalPoints = this._OrigLocalPoints.slice(0);
+        this._copyCoordinates3D(this._OrigLocalPoints, retObject.origLocalPoints); //todo <ditto>
+
+        retObject.stageWorldCenter = [this._stageWorldCenter[0],this._stageWorldCenter[1],this._stageWorldCenter[2]];
+        retObject.planeMat = [this._planeMat[0],this._planeMat[1],this._planeMat[2],this._planeMat[3]];
+        retObject.planeMatInv = [this._planeMatInv[0],this._planeMatInv[1],this._planeMatInv[2],this._planeMatInv[3]];
+        retObject.dragPlane = [this._dragPlane[0],this._dragPlane[1],this._dragPlane[2],this._dragPlane[3]];
+
+        //stroke appearance properties
         retObject.strokeWidth = this._strokeWidth;
         retObject.strokeColor = this._strokeColor;
-        retObject.secondStrokeColor = this._secondStrokeColor;
         retObject.strokeHardness = this._strokeHardness;
-        retObject.strokeDoSmoothing = this._strokeDoSmoothing;
         retObject.strokeUseCalligraphic = this._strokeUseCalligraphic;
         retObject.strokeAngle = this._strokeAngle;
+
+        //stroke smoothing properties
+        retObject.strokeDoSmoothing = this._strokeDoSmoothing;
         retObject.strokeAmountSmoothing = this._strokeAmountSmoothing;
-        retObject.addedSamples = this._addedSamples;
+
         return retObject;
     };
 
@@ -669,22 +684,31 @@ var BrushStroke = function GLBrushStroke() {
         if (this.geomType()!== jo.geomType){
             return;
         } 
-        this._Points = jo.points.splice(0); //todo is this splice necessary?
-        this._planeCenter = jo.planeCenter;
-        this._planeMat = jo.planeMat;
-        this._planeMatInv = jo.planeMatInv ;
+        //the geometry for this object
+        this._LocalPoints = jo.localPoints.slice(0);
+        this._copyCoordinates3D(jo.localPoints, this._LocalPoints); //todo is this necessary in addition to the slice(0) above?
+        this._OrigLocalPoints = jo.origLocalPoints.slice(0);
+        this._copyCoordinates3D(jo.origLocalPoints, this._OrigLocalPoints); //todo <ditto>
+
+        this._stageWorldCenter = [jo.stageWorldCenter[0],jo.stageWorldCenter[1],jo.stageWorldCenter[2]];
+        this._planeMat = [jo.planeMat[0], jo.planeMat[1],jo.planeMat[2],jo.planeMat[3]];
+        this._planeMatInv = [jo.planeMatInv[0],jo.planeMatInv[1],jo.planeMatInv[2],jo.planeMatInv[3]];
+        this._dragPlane = [jo.dragPlane[0],jo.dragPlane[1],jo.dragPlane[2],jo.dragPlane[3]];
+
+        //stroke appearance properties
         this._strokeWidth = jo.strokeWidth;
-        this._strokeColor =  jo.strokeColor;
-        this._secondStrokeColor = jo.secondStrokeColor;
+        this._strokeColor = jo.strokeColor;
         this._strokeHardness = jo.strokeHardness;
-        this._strokeDoSmoothing = jo.strokeDoSmoothing;
         this._strokeUseCalligraphic = jo.strokeUseCalligraphic;
         this._strokeAngle = jo.strokeAngle;
-        this._strokeAmountSmoothing = jo.strokeAmountSmoothing;
-        this._addedSamples = jo.addedSamples;
 
-        //force a re-computation of meta-geometry before rendering
-        this._isDirty = true;
+        //stroke smoothing properties
+        this._strokeDoSmoothing = jo.strokeDoSmoothing;
+        this._strokeAmountSmoothing = jo.strokeAmountSmoothing;
+
+        this._isInit = true; //do not re-initialize this brush stroke
+        this._isDirty = true;  //force a re-computation of meta-geometry before rendering
+        this.update();      //after this, the stroke is ready to be rendered
     };
 
     
