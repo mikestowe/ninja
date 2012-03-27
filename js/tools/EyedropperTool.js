@@ -395,9 +395,12 @@ exports.EyedropperTool = Montage.create(toolBase, {
                         this._webGlWorld.importJSON(worldData);
                         this._webGlWorld.render();
                         setTimeout(function() {
-                            this._webGlWorld.draw();
-                            this._imageDataContext.drawImage(this._webGlDataCanvas, 0, 0);
-                            return this._getColorFromCanvas(this._imageDataContext, tmpPt, true);
+                            if(this._webGlWorld)
+                            {
+                                this._webGlWorld.draw();
+                                this._imageDataContext.drawImage(this._webGlDataCanvas, 0, 0);
+                                return this._getColorFromCanvas(this._imageDataContext, tmpPt, true);
+                            }
                         }.bind(this), 250);
                     }
                 }
