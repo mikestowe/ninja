@@ -567,37 +567,50 @@ GLSubpath.prototype._isWithinBoundingBox = function(point, ctrlPts, radius) {
     return true;
 };
 
+GLSubpath.prototype._checkAnchorIntersection = function(pickX, pickY, pickZ, radSq, anchorIndex, minDistance) {
+    var distSq = this._Anchors[anchorIndex].getDistanceSq(pickX, pickY, pickZ);
+    //check the anchor point
+    if (distSq < radSq && distSq<minDistance) {
+        return this.SEL_ANCHOR;
+    }
+    //check the prev. and next of the selected anchor point
+    distSq = this._Anchors[anchorIndex].getPrevDistanceSq(pickX, pickY, pickZ);
+    if (distSq<radSq && distSq<minDistance){
+        return this.SEL_PREV;
+    }
+    distSq = this._Anchors[anchorIndex].getNextDistanceSq(pickX, pickY, pickZ);
+    if (distSq<radSq && distSq<minDistance){
+        return this.SEL_NEXT;
+    }
+    return this.SEL_NONE;
+};
+
 GLSubpath.prototype.pickAnchor = function (pickX, pickY, pickZ, radius) {
     var numAnchors = this._Anchors.length;
     var selAnchorIndex = -1;
     var retCode = this.SEL_NONE;
-    var radSq = radius * radius;
     var minDistance = Infinity;
+    var radSq = radius * radius;
     //check if the clicked location is close to the currently selected anchor position
     if (this._selectedAnchorIndex>=0 && this._selectedAnchorIndex<this._Anchors.length){
-        var distSq = this._Anchors[this._selectedAnchorIndex].getDistanceSq(pickX, pickY, pickZ);
-        //check the anchor point
-        if (distSq < minDistance && distSq < radSq) {
-            selAnchorIndex = this._selectedAnchorIndex;
-            minDistance = distSq;
-            retCode = retCode | this.SEL_ANCHOR;
+        retCode = this._checkAnchorIntersection(pickX, pickY, pickZ, radSq, this._selectedAnchorIndex, minDistance);
+        if (retCode!==this.SEL_NONE){
+            return [this._selectedAnchorIndex, retCode];
         }
     }
     //now check if the click location is close to any anchor position
-    if (selAnchorIndex===-1) {
-        for (var i = 0; i < numAnchors; i++) {
-            var distSq = this._Anchors[i].getDistanceSq(pickX, pickY, pickZ);
-            //check the anchor point
-            if (distSq < minDistance && distSq < radSq) {
-                selAnchorIndex = i;
-                minDistance = distSq;
-            }
-        }//for every anchor i
-    }
-    return selAnchorIndex;
+    for (var i = 0; i < numAnchors; i++) {
+        retCode = this._checkAnchorIntersection(pickX, pickY, pickZ, radSq, i, minDistance);
+        if (retCode!==this.SEL_NONE){
+            selAnchorIndex=i;
+            break;
+        }
+    }//for every anchor i
+
+    return [selAnchorIndex, retCode];
 };
 
-GLSubpath.prototype.isWithinBBox =function(x,y,z){
+GLSubpath.prototype.isWithinBBox = function(x,y,z) {
     if (this._BBoxMin[0]>x || this._BBoxMin[1]>y || this._BBoxMin[2]>z){
         return false;
     }

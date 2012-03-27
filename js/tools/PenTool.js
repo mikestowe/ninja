@@ -348,16 +348,17 @@ exports.PenTool = Montage.create(ShapeTool, {
 
                 var currMousePos = this._getUnsnappedPosition(event.pageX, event.pageY);
                 if (currMousePos && this._selectedSubpath ){
-                    var selAnchor = this._selectedSubpath.pickAnchor(currMousePos[0], currMousePos[1], currMousePos[2], this._PICK_POINT_RADIUS);
-                    if (selAnchor >=0) {
-                        this._hoveredAnchorIndex = selAnchor;
+                    var selAnchorRetCode = this._selectedSubpath.pickAnchor(currMousePos[0], currMousePos[1], currMousePos[2], this._PICK_POINT_RADIUS);
+                    if (selAnchorRetCode[0] >=0) {
+                        this._hoveredAnchorIndex = selAnchorRetCode[0];
+                        var cursor = "url('images/cursors/penCursors/Pen_anchorSelect.png') 0 0, default";
+                        this.application.ninja.stage.drawingCanvas.style.cursor = cursor;
                     } else {
                         //detect if the current mouse position will hit the path
                         var pathHitTestData = this._selectedSubpath.pathHitTest(currMousePos[0], currMousePos[1], currMousePos[2], this._PICK_POINT_RADIUS);
                         if (pathHitTestData[0]!==-1){
                             //change the cursor
-                            var cursor = "url('images/cursors/penAdd.png') 10 10,default";
-                            this.application.ninja.stage.drawingCanvas.style.cursor = cursor;
+
                         }
                     }
                 }
