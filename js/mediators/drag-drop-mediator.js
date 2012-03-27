@@ -60,6 +60,17 @@ exports.DragDropMediator = Montage.create(Component, {
         	var i, files = e.dataTransfer.files, position = {x: e.offsetX, y: e.offsetY},
         		rootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1])),
         		rootUri = this.application.ninja.documentController.documentHackReference.root;
+
+            var xferString = e.dataTransfer.getData("text/plain");
+            if(xferString) {
+                // If the drop is a component, call the delegate with the top,left coordinates
+                if(xferString.indexOf("componentDrop") > -1) {
+                    if(this.dropDelegate && typeof this.dropDelegate === 'object') {
+                        this.dropDelegate.handleComponentDrop(e.offsetX - this.application.ninja.stage.userContentLeft, e.offsetY - this.application.ninja.stage.userContentTop);
+                        return;
+                    }
+                }
+            }
         	//
         	for (i=0; files[i]; i++) {
         		if (files[i].type.indexOf('image') !== -1) {

@@ -23,7 +23,7 @@
     width: 97%;
 }
 
-#ml_buttons button {
+#ml_buttons .nj-skinned{
   height: 22px;
   overflow: hidden;
   display: block;
@@ -31,17 +31,17 @@
   margin: 0px 1px;
 }
 
-#materialsLibraryPanel-ml_add_btn {
+#ml_add_btn {
     float: left;
     width: 60px;
 }
 
-#materialsLibraryPanel-ml_copy_btn {
+#ml_copy_btn {
     float: left;
     width: 60px;
 }
 
-#materialsLibraryPanel-ml_delete_btn {
+#ml_delete_btn {
     float: right;
     width: 60px;
 }

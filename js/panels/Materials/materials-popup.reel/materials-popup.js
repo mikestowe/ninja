@@ -5,9 +5,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var Montage = require("montage/core/core").Montage,
-    Component   = require("montage/ui/component").Component;
-var Button = 			require("js/components/button.reel").Button;
-var MaterialsModel = require("js/models/materials-model").MaterialsModel;
+    Component   = require("montage/ui/component").Component,
+    MaterialsModel = require("js/models/materials-model").MaterialsModel;
 
 ////////////////////////////////////////////////////////////////////////
 //Exporting as MaterialsPopup
@@ -215,7 +214,11 @@ exports.MaterialsPopup = Montage.create(Component, {
 		enumerable: true,
 		value: function(materialID)
 		{
-           this._materialName = materialID;
+            // Note that setting Array.length = 0 will empty arrays,
+            // which is fine if you use getMaterialData to get a new array, but not for the
+            // dummyData arrays.
+            this._materialsData.length = 0;
+            this._materialName = materialID;
             if(
 					(materialID ===  "UberMaterial")				||
 					(materialID ===  "FlatMaterial")				||

@@ -6,10 +6,9 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var Montage = 			require("montage/core/core").Montage,
     CanvasController = require("js/controllers/elements/canvas-controller").CanvasController,
-    njModule = require("js/lib/NJUtils");
-
-var World = require("js/lib/drawing/world").World;
-var MaterialsModel = require("js/models/materials-model").MaterialsModel;
+    njModule = require("js/lib/NJUtils"),
+    World = require("js/lib/drawing/world").World,
+    MaterialsModel = require("js/models/materials-model").MaterialsModel;
 
 exports.ShapesController = Montage.create(CanvasController, {
 
@@ -100,6 +99,26 @@ exports.ShapesController = Montage.create(CanvasController, {
                         el.elementModel.shapeModel.GLWorld.render();
                     }
                     break;
+                case "editStrokeMaterial":
+                    NJevent("showMaterialPopup",{materialId : el.elementModel.shapeModel.strokeMaterial.getName()});
+                    break;
+                case "editFillMaterial":
+                    NJevent("showMaterialPopup",{materialId : el.elementModel.shapeModel.fillMaterial.getName()});
+                    break;
+                case "animate":
+                    if(value)
+                    {
+                        el.elementModel.shapeModel.animate = true;
+                        el.elementModel.shapeModel.GLWorld._previewAnimation = true;
+                        el.elementModel.shapeModel.GLWorld.restartRenderLoop();
+                    }
+                    else
+                    {
+                        el.elementModel.shapeModel.animate = false;
+                        el.elementModel.shapeModel.GLWorld._previewAnimation = false;
+                        el.elementModel.shapeModel.GLWorld._canvas.task.stop();
+                    }
+                    break;
                 case "strokeHardness":
                     this.setShapeProperty(el, "strokeHardness", value);
                     el.elementModel.shapeModel.GLGeomObj.setStrokeHardness(val);
@@ -143,6 +162,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                 case "border":
                 case "background":
                 case "useWebGl":
+                case "animate":
                     return this.getShapeProperty(el, p);
                 case "strokeHardness":
                     if (el.elementModel && el.elementModel.shapeModel){
@@ -546,13 +566,14 @@ exports.ShapesController = Montage.create(CanvasController, {
             var sm,
                 fm,
                 world,
-                worldData = el.elementModel.shapeModel.GLWorld.export();
+                worldData = el.elementModel.shapeModel.GLWorld.exportJSON();
             if(worldData)
             {
+                worldData = this.flip3DSense (worldData );
                 world = new World(el, true);
                 el.elementModel.shapeModel.GLWorld = world;
                 el.elementModel.shapeModel.useWebGl = true;
-                world.import(worldData);
+                world.importJSON(worldData);
                 el.elementModel.shapeModel.GLGeomObj = world.getGeomRoot();
 
                 sm = Object.create(MaterialsModel.getMaterial("FlatMaterial"));
@@ -582,13 +603,14 @@ exports.ShapesController = Montage.create(CanvasController, {
                 return;
             }
             var world,
-                worldData = el.elementModel.shapeModel.GLWorld.export();
+                worldData = el.elementModel.shapeModel.GLWorld.exportJSON();
             if(worldData)
             {
+                worldData = this.flip3DSense (worldData );
                 world = new World(el, false);
                 el.elementModel.shapeModel.GLWorld = world;
                 el.elementModel.shapeModel.useWebGl = false;
-                world.import(worldData);
+                world.importJSON(worldData);
                 el.elementModel.shapeModel.GLGeomObj = world.getGeomRoot();
                 el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(null);
                 el.elementModel.shapeModel.strokeMaterial = null;
@@ -599,6 +621,24 @@ exports.ShapesController = Montage.create(CanvasController, {
                     el.elementModel.shapeModel.fillMaterial = null;
                 }
             }
+        }
+    },
+
+    flip3DSense: {
+        value: function( importStr )
+        {
+            var jObj;
+            var index = importStr.indexOf( ';' );
+            if ((importStr[0] === 'v') && (index < 24))
+            {
+                // JSON format.  separate the version info from the JSON info
+                //var vStr = importStr.substr( 0, index+1 );
+                var jStr = importStr.substr( index+1 );
+                jObj = JSON.parse( jStr );
+                jObj.webGL = !jObj.webGL;
+            }
+
+            return jObj;
         }
     }
 

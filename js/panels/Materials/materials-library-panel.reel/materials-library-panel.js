@@ -4,76 +4,35 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var Tree = require("js/components/tree.reel").Tree,
-    Button = require("js/components/button.reel").Button,
-    MaterialsPopup = require("js/panels/Materials/materials-popup.reel").MaterialsPopup,
-    PopupMananger =		require("js/components/popup-manager.reel").PopupMananger,
+var Montage = require("montage/core/core").Montage,
+    Component = require("montage/ui/component").Component,
+    MaterialsData = require("js/panels/Materials/materials-data.json"),
     Popup = require("montage/ui/popup/popup.reel").Popup;
 
-exports.MaterialsLibraryPanel = (require("montage/core/core").Montage).create(require("montage/ui/component").Component, {
+exports.MaterialsLibraryPanel = Montage.create(Component, {
+
+    materialsData: {
+        value: null
+    },
 
     _hasFocus: {
     	enumerable: false,
     	value: false
     },
-    
-    prepareForDraw: {
-    	enumerable: false,
-    	value: function() {
-            var treeHolderDiv = document.getElementById("materials_library_tree");
-            var materialsTree = Tree.create();
-            materialsTree.element = treeHolderDiv;
-            materialsTree.dataProvider = this._loadXMLDoc("js/panels/Materials/Materials.xml");
-            materialsTree.needsDraw = true;
 
-            materialsTree.addEventListener("change", this, true);
-
-            var addButton = Button.create();
-            addButton.element = document.getElementById("ml_add_btn");
-            addButton.label = "Add";
-            addButton.needsDraw = true;
-            addButton.addEventListener("action", this, true);
-
-            var copyButton = Button.create();
-            copyButton.element = document.getElementById("ml_copy_btn");
-            copyButton.label = "Copy";
-            copyButton.needsDraw = true;
-            copyButton.addEventListener("action", this, true);
-
-            var deleteButton = Button.create();
-            deleteButton.element = document.getElementById("ml_delete_btn");
-            deleteButton.label = "Delete";
-            deleteButton.needsDraw = true;
-            deleteButton.addEventListener("action", this, true);
-    	}
-    },
-
-    willDraw: {
-    	enumerable: false,
-    	value: function() {
-
-    	}
-    },
-    
-    draw: {
-    	enumerable: false,
-    	value: function() {
-
-    	}
-    },
-
-    _loadXMLDoc: {
-        value:function(dname) {
-            if (window.XMLHttpRequest) {
-                xhttp = new XMLHttpRequest();
-            }
-            xhttp.open("GET", dname, false);
-            xhttp.send();
-            return xhttp.responseXML;
+    didCreate: {
+        value: function() {
+            this.materialsData = MaterialsData;
         }
     },
 
-    captureAction: {
+    prepareForDraw: {
+        value : function() {
+            this.eventManager.addEventListener("showMaterialPopup", this, false);
+        }
+    },
+
+    handleAction: {
         value:function(event) {
             switch(event._currentTarget.label)
             {
@@ -90,10 +49,16 @@ exports.MaterialsLibraryPanel = (require("montage/core/core").Montage).create(re
         }
     },
 
-    captureChange: {
-        value:function(e) {
-            var tNode = e._event.treeNode;
-            this._showMaterialPopup(tNode.id);
+    handleNodeActivation: {
+        value:function(obj) {
+            this._showMaterialPopup(obj.id);
+        }
+    },
+
+    handleShowMaterialPopup: {
+        enumerable: false,
+        value: function (event) {
+            this._showMaterialPopup(event.detail.materialId);
         }
     },
 

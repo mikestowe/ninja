@@ -8,7 +8,33 @@
     display: none;
 }
 
-.fieldCol .disabled
-{
+.fieldCol .disabled {
     color:#999999;
 }
+
+
+#posBound {
+    position: absolute;
+    left: 105px;
+    border: none;
+    background-color: transparent;
+    top: 2px;
+    opacity: 0.7;
+    width: 17px;
+    height: 18px;
+    margin-right: 10px;
+}
+
+#posBound:hover {
+    opacity: 1;
+}
+
+.unlock{
+    background: url("../../../../../images/optionsbar/unlinked.png") no-repeat;
+
+}
+
+.lockUp {
+    background: url("../../../../../images/optionsbar/link.png") no-repeat;
+}
+
