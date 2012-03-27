@@ -188,6 +188,10 @@ var BrushStroke = function GLBrushStroke() {
         this._strokeColor = c; this._isDirty = true;
     };
 
+    this.setFillColor = function(c){
+        return;
+    }; //NO-OP for now as we have no fill region
+
     this.setSecondStrokeColor = function(c){
         this._secondStrokeColor=c; this._isDirty = true;
     }
