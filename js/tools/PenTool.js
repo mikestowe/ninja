@@ -72,7 +72,7 @@ exports.PenTool = Montage.create(ShapeTool, {
     _hoveredAnchorIndex: {value: -1, writable: true},
 
     //constants used for picking points --- NOTE: these should be user-settable parameters
-    _PICK_POINT_RADIUS: { value: 10, writable: false },
+    _PICK_POINT_RADIUS: { value: 4, writable: false },
     _DISPLAY_ANCHOR_RADIUS: { value: 5, writable: false },
     _DISPLAY_SELECTED_ANCHOR_RADIUS: { value: 10, writable: false },
     _DISPLAY_SELECTED_ANCHOR_PREV_RADIUS: { value: 2, writable: false },
@@ -279,7 +279,8 @@ exports.PenTool = Montage.create(ShapeTool, {
             this._hoveredAnchorIndex = -1;
 
             //set the cursor to be the default cursor
-            this.application.ninja.stage.drawingCanvas.style.cursor = "auto";
+            this.application.ninja.stage.drawingCanvas.style.cursor = //"auto";
+                    "url('images/cursors/penCursors/Pen_newPath.png') 0 0, default";
 
             if (this._isDrawing) {
                 var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(event.pageX, event.pageY));
@@ -351,14 +352,25 @@ exports.PenTool = Montage.create(ShapeTool, {
                     var selAnchorRetCode = this._selectedSubpath.pickAnchor(currMousePos[0], currMousePos[1], currMousePos[2], this._PICK_POINT_RADIUS);
                     if (selAnchorRetCode[0] >=0) {
                         this._hoveredAnchorIndex = selAnchorRetCode[0];
+                        var lastAnchorIndex = this._selectedSubpath.getNumAnchors()-1;
                         var cursor = "url('images/cursors/penCursors/Pen_anchorSelect.png') 0 0, default";
+                        if (this._selectedSubpath.getIsClosed()===false){
+                            if (this._entryEditMode === this.ENTRY_SELECT_PATH && !this._isPickedEndPointInSelectPathMode && (this._hoveredAnchorIndex===0 || this._hoveredAnchorIndex===lastAnchorIndex)){
+                                //if we're in SELECT_PATH mode, have not yet clicked on the end anchors,  AND we hovered over one of the end anchors
+                                cursor = "url('images/cursors/penCursors/Pen_append.png') 0 0, default";
+                            } else if ( this._selectedSubpath.getSelectedAnchorIndex()===lastAnchorIndex && this._hoveredAnchorIndex===0)  {
+                                //if we've selected the last anchor and hover over the first anchor
+                                cursor = "url('images/cursors/penCursors/Pen_closePath.png') 0 0, default";
+                            }
+                        } //if path is not closed
                         this.application.ninja.stage.drawingCanvas.style.cursor = cursor;
                     } else {
-                        //detect if the current mouse position will hit the path
-                        var pathHitTestData = this._selectedSubpath.pathHitTest(currMousePos[0], currMousePos[1], currMousePos[2], this._PICK_POINT_RADIUS);
+                        //detect if the current mouse position will hit the path (such that clicking here will insert a new anchor)
+                        var pathHitTestData = this._selectedSubpath.pathHitTest(currMousePos[0], currMousePos[1], currMousePos[2], this._PICK_POINT_RADIUS*0.5);
                         if (pathHitTestData[0]!==-1){
                             //change the cursor
-
+                            var cursor = "url('images/cursors/penCursors/Pen_plus.png') 0 0, default";
+                            this.application.ninja.stage.drawingCanvas.style.cursor = cursor;
                         }
                     }
                 }
