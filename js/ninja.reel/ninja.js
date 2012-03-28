@@ -23,6 +23,93 @@ exports.Ninja = Montage.create(Component, {
         value: null
     },
 
+    _isResizing: {
+        value: false
+    },
+    _resizedHeight : {
+        value: 0
+    },
+    _height: {
+        value: null
+    },
+
+    height: {
+        get: function() {
+            return this._height;
+        },
+        set: function(val) {
+            if(this._height != val) {
+                this._height = val;
+                this.needsDraw = true;
+            }
+
+        }
+    },
+
+    _resizedWidth : {
+        value: 0
+    },
+    _width: {
+        value: null
+    },
+
+    width: {
+        get: function() {
+            return this._width;
+        },
+        set: function(val) {
+            if(this._width != val) {
+                this._width = val;
+                this.needsDraw = true;
+            }
+
+        }
+    },
+
+    handleResizeStart: {
+        value:function(e) {
+            this.isResizing = true;
+            this.height = parseInt(this.timeline.element.offsetHeight);
+            this.width = parseInt(this.rightPanelContainer.offsetWidth);
+            this.needsDraw = true;
+        }
+    },
+
+    handleResizeMove: {
+        value:function(e) {
+            this._resizedHeight = e._event.dY;
+            this._resizedWidth = e._event.dX;
+            console.log("resizing");
+            this.stage.resizeCanvases = true;
+            this.needsDraw = true;
+        }
+    },
+
+    handleResizeEnd: {
+        value: function(e) {
+            this.height -= this._resizedHeight;
+            this.width -= this._resizedWidth;
+            this.stage.resizeCanvases = true;
+            this._resizedHeight = 0;
+            this._resizedWidth = 0;
+            this.isResizing = false;
+            this.needsDraw = true;
+        }
+    },
+
+    handleResizeReset: {
+        value: function(e) {
+            this.width = 253;
+            this.height = 140;
+            this._resizedHeight = 0;
+            this._resizedWidth = 0;
+            this.needsDraw = true;
+            this.timelineSplitter.collapsed = false;
+            this.panelSplitter.collapsed = false;
+        }
+    },
+
+
     selectedElements: {
         value: []
     },
@@ -78,12 +165,45 @@ exports.Ninja = Montage.create(Component, {
         }
     },
 
+    willDraw: {
+        value: function() {
+            if (this.height === null) {
+                this.height = parseInt(this.timeline.element.offsetHeight);
+            }
+            if (this.width === null) {
+                this.width = parseInt(this.rightPanelContainer.offsetWidth);
+            }
+        }
+    },
+
+    draw: {
+        value: function() {
+            if (this.height - this._resizedHeight < 46) {
+                this.timelineSplitter.collapsed = true;
+            } else {
+                this.timelineSplitter.collapsed = false;
+            }
+            if (this.width - this._resizedWidth < 30) {
+                this.panelSplitter.collapsed = true;
+            } else {
+                this.panelSplitter.collapsed = false;
+            }
+
+            this.timeline.element.style.height = (this.height - this._resizedHeight) + "px";
+            this.rightPanelContainer.style.width = (this.width - this._resizedWidth) + "px";
+        }
+    },
+
     _didDraw: {
         value: false
     },
     
     didDraw: {
         value: function() {
+            if (!this.isResizing) {
+                this.height = this.timeline.element.offsetHeight;
+                this.width = this.rightPanelContainer.offsetWidth;
+            }
             if(!this._didDraw) {
             	if (!this.application.ninja.coreIoApi.ioServiceDetected) {
             		var check = this.application.ninja.coreIoApi.cloudAvailable();

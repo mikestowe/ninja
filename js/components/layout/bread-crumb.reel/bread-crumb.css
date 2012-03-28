@@ -4,14 +4,20 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
-.breadcrumbTrail{
+.breadcrumbTrail {
+
     background-color: #282828;
-    border-style: double;
     height: 26px;
     position:relative;
     -webkit-box-flex: 0;
 }
 
+.mainContentContainer > section.breadcrumbTrail {
+    border:0;
+    margin:0;
+    border-bottom:1px solid #000;
+    margin-bottom:1px;
+}
 .breadcrumbTrail button.nj-skinned {
     float: left;
     width: 60px;
