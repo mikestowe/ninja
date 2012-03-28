@@ -93,23 +93,27 @@ exports.StageView = Montage.create(Component, {
 
             var documentController = this.application.ninja.documentController;
             doc.editor = CodeMirror.fromTextArea(doc.textArea, {
-                lineNumbers: true,
-                       mode: type,
-                       onChange: function(){
-                           var historySize = doc.editor.historySize();
-                           if(historySize.undo>0){
-                                doc.needsSave = true;
-                           }else if(historySize.undo===0 && historySize.redo>0){
-                               doc.needsSave = false;
-                           }
-                       },
-                       onCursorActivity: function() {
-                           //documentController._codeEditor.editor.setLineClass(documentController._codeEditor.hline, null);
-                           //documentController._codeEditor.hline = documentController._codeEditor.editor.setLineClass(documentController._codeEditor.editor.getCursor().line, "activeline");
+                   lineNumbers: true,
+                   lineWrapping: true,
+                   matchBrackets:true,
+                   mode: type,
+                   onChange: function(){
+                       var historySize = doc.editor.historySize();
+                       if(historySize.undo>0){
+                            doc.needsSave = true;
+                       }else if(historySize.undo===0 && historySize.redo>0){
+                           doc.needsSave = false;
                        }
+                   },
+                   onCursorActivity: function() {
+                       doc.editor.matchHighlight("CodeMirror-matchhighlight");
+                       doc.editor.setLineClass(doc.editor.hline, null);
+                       doc.editor.hline = doc.editor.setLineClass(doc.editor.getCursor().line, "activeline");
+                   }
            });
 
-           //this.application.ninja.documentController._codeEditor.hline = this.application.ninja.documentController._codeEditor.editor.setLineClass(0, "activeline");
+            doc.editor.hline = doc.editor.setLineClass(0, "activeline");
+
             this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
             this.application.ninja.documentController.activeDocument = doc;
             this.application.ninja.stage.hideCanvas(true);
