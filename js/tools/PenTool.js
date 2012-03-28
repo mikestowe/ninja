@@ -278,9 +278,15 @@ exports.PenTool = Montage.create(ShapeTool, {
             this.application.ninja.stage.clearDrawingCanvas();
             this._hoveredAnchorIndex = -1;
 
-            //set the cursor to be the default cursor
-            this.application.ninja.stage.drawingCanvas.style.cursor = //"auto";
-                    "url('images/cursors/penCursors/Pen_newPath.png') 0 0, default";
+            //set the cursor to be the default cursor (depending on whether the selected subpath has any points yet)
+            if (this._selectedSubpath && this._selectedSubpath.getNumAnchors()>0){
+                this.application.ninja.stage.drawingCanvas.style.cursor = //"auto";
+                    "url('images/cursors/penCursors/Pen_.png') 5 1, default";
+            }
+            else {
+                this.application.ninja.stage.drawingCanvas.style.cursor = //"auto";
+                    "url('images/cursors/penCursors/Pen_newPath.png') 5 1, default";
+            }
 
             if (this._isDrawing) {
                 var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(event.pageX, event.pageY));
@@ -353,14 +359,14 @@ exports.PenTool = Montage.create(ShapeTool, {
                     if (selAnchorRetCode[0] >=0) {
                         this._hoveredAnchorIndex = selAnchorRetCode[0];
                         var lastAnchorIndex = this._selectedSubpath.getNumAnchors()-1;
-                        var cursor = "url('images/cursors/penCursors/Pen_anchorSelect.png') 0 0, default";
+                        var cursor = "url('images/cursors/penCursors/Pen_anchorSelect.png') 5 1, default";
                         if (this._selectedSubpath.getIsClosed()===false){
                             if (this._entryEditMode === this.ENTRY_SELECT_PATH && !this._isPickedEndPointInSelectPathMode && (this._hoveredAnchorIndex===0 || this._hoveredAnchorIndex===lastAnchorIndex)){
                                 //if we're in SELECT_PATH mode, have not yet clicked on the end anchors,  AND we hovered over one of the end anchors
-                                cursor = "url('images/cursors/penCursors/Pen_append.png') 0 0, default";
+                                cursor = "url('images/cursors/penCursors/Pen_append.png') 5 1, default";
                             } else if ( this._selectedSubpath.getSelectedAnchorIndex()===lastAnchorIndex && this._hoveredAnchorIndex===0)  {
                                 //if we've selected the last anchor and hover over the first anchor
-                                cursor = "url('images/cursors/penCursors/Pen_closePath.png') 0 0, default";
+                                cursor = "url('images/cursors/penCursors/Pen_closePath.png') 5 1, default";
                             }
                         } //if path is not closed
                         this.application.ninja.stage.drawingCanvas.style.cursor = cursor;
@@ -369,7 +375,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                         var pathHitTestData = this._selectedSubpath.pathHitTest(currMousePos[0], currMousePos[1], currMousePos[2], this._PICK_POINT_RADIUS*0.5);
                         if (pathHitTestData[0]!==-1){
                             //change the cursor
-                            var cursor = "url('images/cursors/penCursors/Pen_plus.png') 0 0, default";
+                            var cursor = "url('images/cursors/penCursors/Pen_plus.png') 5 1, default";
                             this.application.ninja.stage.drawingCanvas.style.cursor = cursor;
                         }
                     }
@@ -638,7 +644,8 @@ exports.PenTool = Montage.create(ShapeTool, {
                     // TODO - update the shape's info only.  shapeModel will likely need an array of shapes.
                 }
 
-                if(newCanvas.elementModel.isShape)
+                //if(newCanvas.elementModel.isShape)
+                if (true)
                 {
                     this.application.ninja.selectionController.selectElement(newCanvas);
                 }
@@ -681,6 +688,12 @@ exports.PenTool = Montage.create(ShapeTool, {
 
                 //TODO this will not work if there are multiple shapes in the same canvas
                 canvas.elementModel.shapeModel.GLGeomObj = subpath;
+
+                //if(newCanvas.elementModel.isShape)
+                if (true)
+                {
+                    this.application.ninja.selectionController.selectElement(canvas);
+                }
             } //else of if (!canvas) {
         } //value: function (w, h, planeMat, midPt, canvas) {
     }, //RenderShape: {
@@ -1047,37 +1060,32 @@ exports.PenTool = Montage.create(ShapeTool, {
 
     handleDelete:{
         value: function(event){
-             var len = this.application.ninja.selectedElements.length;
-             if (len===0) {
-                 //clear the selected subpath...the only new additions to this function w.r.t. ToolBase
-                 if (this._selectedSubpath){
-                     if (this._selectedSubpath.getSelectedAnchorIndex()>=0){
-                         this._hoveredAnchorIndex=-1;
-                         this._selectedSubpath.removeAnchor(this._selectedSubpath.getSelectedAnchorIndex());
-                         this._selectedSubpath.createSamples();
-                         //clear the canvas
-                         this.application.ninja.stage.clearDrawingCanvas();//stageManagerModule.stageManager.clearDrawingCanvas();
-                         this.DrawSubpathAnchors(this._selectedSubpath);
-                         this.ShowSelectedSubpath();
-                     }
-                     else {
-                        this._selectedSubpath.clearAllAnchors(); //perhaps unnecessary
-                        this._selectedSubpath = null;
-                        //clear the canvas
-                        this.application.ninja.stage.clearDrawingCanvas();//stageManagerModule.stageManager.clearDrawingCanvas();
-
-                        //undo/redo...go through ElementController and NJEvent
-                        var els = [];
-                        ElementController.removeElement(this._penCanvas);
-                        els.push(this._penCanvas);
-                        NJevent( "deleteSelection", els );
-                        this._penCanvas = null;
-                   }
+             //clear the selected subpath...the only new additions to this function w.r.t. ToolBase
+             if (this._selectedSubpath){
+                 if (this._selectedSubpath.getSelectedAnchorIndex()>=0){
+                     this._hoveredAnchorIndex=-1;
+                     this._selectedSubpath.removeAnchor(this._selectedSubpath.getSelectedAnchorIndex());
+                     this._selectedSubpath.createSamples();
+                     //clear the canvas
+                     this.application.ninja.stage.clearDrawingCanvas();//stageManagerModule.stageManager.clearDrawingCanvas();
+                     this.DrawSubpathAnchors(this._selectedSubpath);
+                     this.ShowSelectedSubpath();
                  }
-                 //do nothing if there was no selected subpath and if there was no selection
+                 else {
+                    this._selectedSubpath.clearAllAnchors(); //perhaps unnecessary
+                    this._selectedSubpath = null;
+                    //clear the canvas
+                    this.application.ninja.stage.clearDrawingCanvas();//stageManagerModule.stageManager.clearDrawingCanvas();
+
+                    //undo/redo...go through ElementController and NJEvent
+                    var els = [];
+                    ElementController.removeElement(this._penCanvas);
+                    els.push(this._penCanvas);
+                    NJevent( "deleteSelection", els );
+                    this._penCanvas = null;
+               }
              }
              else {
-
                 //undo/redo...go through ElementMediator (see ElementMediator.handleDeleting() from where the much of this function is copied)
                 //clear the canvas
                 this.application.ninja.stage.clearDrawingCanvas();//stageManagerModule.stageManager.clearDrawingCanvas();
@@ -1090,15 +1098,15 @@ exports.PenTool = Montage.create(ShapeTool, {
                 }
                 NJevent( "deleteSelection", els );
 
-                 //clear out the selected path if it exists
-                 if (this._selectedSubpath) {
-                     this._selectedSubpath.clearAllAnchors();
-                     this._selectedSubpath = null;
-                     if (this._entryEditMode === this.ENTRY_SELECT_PATH){
-                         this._entryEditMode = this.ENTRY_SELECT_NONE;
-                     }
-                     this._penCanvas = null;
-                 }
+                //clear out the selected path if it exists
+                if (this._selectedSubpath) {
+                    this._selectedSubpath.clearAllAnchors();
+                    this._selectedSubpath = null;
+                    if (this._entryEditMode === this.ENTRY_SELECT_PATH){
+                        this._entryEditMode = this.ENTRY_SELECT_NONE;
+                    }
+                    this._penCanvas = null;
+                }
              }
             //redraw the stage to update it
             this.application.ninja.stage.draw();
