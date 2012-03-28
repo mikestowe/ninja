@@ -35,7 +35,7 @@
 
 .icon .iconLabel{
     margin-top:8px;
-    white-space: nowrap;
+    white-space: pre;
     text-overflow: ellipsis;
     line-height:15px;
     overflow: hidden;

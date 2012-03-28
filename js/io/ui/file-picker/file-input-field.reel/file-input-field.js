@@ -69,6 +69,7 @@ var FileInputField = exports.FileInputField = Montage.create(Component, {
                   var newFileDirectorySetEvent = document.createEvent("Events");
                   newFileDirectorySetEvent.initEvent("newFileDirectorySet", false, false);
                   newFileDirectorySetEvent.newFileDirectory = this.newFileDirectory.value;
+                  newFileDirectorySetEvent.keyCode = evt.keyCode;
                   this.eventManager.dispatchEvent(newFileDirectorySetEvent);
               }
           }
