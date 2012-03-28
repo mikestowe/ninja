@@ -13,7 +13,6 @@ exports.transitionPresets = {
                 "text": "Fade In",
                 "selectorBase" : "fade-in",
                 "rules" : [{
-                    "selectorSuffix": "",
                     "styles" : {
                         "opacity": "0.25",
                         "-webkit-transition": "all 0.4s ease-in"
@@ -29,7 +28,6 @@ exports.transitionPresets = {
                 "text": "Fade Out",
                 "selectorBase" : "fade-out",
                 "rules" : [{
-                    "selectorSuffix": "",
                     "styles" : {
                         "opacity": "1",
                         "-webkit-transition": "all 0.4s ease-in"
@@ -48,7 +46,6 @@ exports.transitionPresets = {
                 "text": "Slide Right",
                 "selectorBase" : "slide-right",
                 "rules" : [{
-                    "selectorSuffix": "",
                     "styles" : {
                         "-webkit-transition": "all 0.4s ease-in"
                     }
@@ -63,7 +60,6 @@ exports.transitionPresets = {
                 "text": "Slide Left",
                 "selectorBase" : "slide-left",
                 "rules" : [{
-                    "selectorSuffix": "",
                     "styles" : {
                         "-webkit-transition": "all 0.4s ease-in"
                     }
@@ -78,7 +74,6 @@ exports.transitionPresets = {
                 "text": "Rotate",
                 "selectorBase" : "rotate",
                 "rules" : [{
-                    "selectorSuffix" : "",
                     "styles" : {
                         "-webkit-transition": "all 0.4s ease-in"
                     }
@@ -92,7 +87,6 @@ exports.transitionPresets = {
                 "text": "Scale Up",
                 "selectorBase" : "scale-up",
                 "rules" : [{
-                    "selectorSuffix" : "",
                     "styles" : {
                         "-webkit-transition": "-webkit-transform 0.4s ease-in"
                     }
@@ -107,7 +101,6 @@ exports.transitionPresets = {
                 "text": "Scale Down",
                 "selectorBase" : "scale-down",
                 "rules" : [{
-                    "selectorSuffix" : "",
                     "styles" : {
                         "-webkit-transition": "-webkit-transform 0.4s ease-in"
                     }
@@ -122,7 +115,6 @@ exports.transitionPresets = {
                 "text": "Remove 3D",
                 "selectorBase" : "remove-3d",
                 "rules" : [{
-                    "selectorSuffix": "",
                     "styles" : {
                         "-webkit-transition": "all 0.4s ease-in"
                     }
