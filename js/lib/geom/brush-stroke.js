@@ -545,8 +545,8 @@ var BrushStroke = function GLBrushStroke() {
             var newLeft = Math.round(this._stageWorldCenter[0] - 0.5 * bboxWidth);
             var newTop = Math.round(this._stageWorldCenter[1] - 0.5 * bboxHeight);
             //assign the new position, width, and height as the canvas dimensions through the canvas controller
-            CanvasController.setProperty(this._canvas, "left", newLeft+"px");
-            CanvasController.setProperty(this._canvas, "top", newTop+"px");
+            //CanvasController.setProperty(this._canvas, "left", newLeft+"px");
+            //CanvasController.setProperty(this._canvas, "top", newTop+"px");
 
             CanvasController.setProperty(this._canvas, "width", bboxWidth+"px");
             CanvasController.setProperty(this._canvas, "height", bboxHeight+"px");
