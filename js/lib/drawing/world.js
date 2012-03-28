@@ -78,6 +78,9 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 	// keep a counter for generating node names
 	this._nodeCounter = 0;
 
+    // for sending notifications to listeners
+    this._notifier = new Notifier();
+
     ///////////////////////////////////////////////////////////////////////
     // Property accessors
     ///////////////////////////////////////////////////////////////////////
@@ -435,6 +438,9 @@ World.prototype.updateObject = function (obj) {
         childTrNode.attachMeshNode(this.renderer.id + "_prim_" + this._nodeCounter++, prim);
         childTrNode.attachMaterial(materialNodes[i]);
     }
+
+    // send a notification that the tree has changed
+    this._notifier.sendNotification( this._notifier.OBJECT_CHANGE );
 };
 
 World.prototype.addObject = function( obj ) {
@@ -463,6 +469,9 @@ World.prototype.addObject = function( obj ) {
 			obj.buildBuffers();
 			this.restartRenderLoop();
 		}
+
+        // send a notification that the tree has changed
+        this._notifier.sendNotification( this._notifier.OBJECT_CHANGE );
     }
 
     catch(e) {
@@ -520,13 +529,21 @@ World.prototype.addIfNewObject = function (obj) {
 			obj.buildBuffers();
 			this.restartRenderLoop();
 		}
+
+        // send a notification that the tree has changed
+        this._notifier.sendNotification( this._notifier.OBJECT_CHANGE );
+
     } catch (e) {
         alert("Exception in GLWorld.addIfNewObject " + e);
     }
 };
 
-World.prototype.clearTree = function() {
-	if (this._useWebGL) {
+World.prototype.clearTree = function()
+{
+    this._notifier.sendNotification( this._notifier.OBJECT_DELETE );
+
+	if (this._useWebGL)
+    {
 		var root = this._rootNode;
 		root.children = new Array();
 		g_Engine.unregisterCanvas( this._canvas.rdgeid )
@@ -1085,6 +1102,56 @@ World.prototype.importSubObject = function( objStr,  parentNode ) {
 	return trNode;
 };
 
+function Notifier()
+{
+    // notification types supported
+    this.OBJECT_DELETE      = 1;
+    this.OBJECT_REANIMATE   = 2;    // the object has come back after a deletion - as in undo
+    this.OBJECT_CHANGE      = 3;
+
+
+    // the array of listener objects
+    this._listenerArray = [];
+
+    this.sendNotification = function( type, callerData )
+    {
+        var n = this._listenerArray.length;
+        for (var i=0;  i<n;  i++)
+        {
+            var obj = this._listenerArray[i];
+            obj.callbackFunc( type, obj.callbackObj,  obj.calleeData,  callerData );
+        }
+    }
+
+    this.addListener = function( obj,  callbackFunc,  calleeData )
+    {
+        var obj = { 'callbackObj': obj,  'callbackFunc': callbackFunc,  'calleeData':  calleeData };
+        this._listenerArray.push( obj );
+    }
+
+    this.removeListener = function( obj )
+    {
+        var arr = this._listenerArray;
+        var n = arr.length;
+        for (var i=0;  i<n;  i++)
+        {
+            var localObj = arr[i];
+            if (obj === localObj)
+            {
+                var tmp = arr[n-1];
+                arr[n-1] = arr[i];
+                arr.pop();
+                return;
+            }
+        }
+
+        console.log( "*** listener object not found in removeListener, " + obj );
+    }
+        
+}
+
+
 if (typeof exports === "object") {
     exports.World = World;
+    exports.Notifier = Notifier;
 }
