@@ -55,6 +55,7 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
             this.fileInputField.newFileDirectory.value = this.folderUri;
 
             this.newFileName.addEventListener("keyup", function(evt){self.handleNewFileNameOnkeyup(evt);}, false);
+            this.newFileName.addEventListener("paste", this, false);
             this.eventManager.addEventListener("newFileDirectorySet", function(evt){self.handleNewFileDirectorySet(evt);}, false);
 
             this.okButton.addEventListener("click", function(evt){self.handleOkButtonAction(evt);}, false);
@@ -97,6 +98,15 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
              }
          }
      },
+
+    handlePaste:{
+        value:function(evt){
+            var self=this;
+            setTimeout(function(){
+                self.handleNewFileNameOnkeyup(evt);
+            }, 1);
+        }
+    },
 
     handleNewFileNameOnkeyup:{
           value:function(evt){
