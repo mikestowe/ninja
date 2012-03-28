@@ -381,6 +381,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     setData:{
         value:function(){
+        	if (typeof(this.trackData) === "undefined") {
+        		return;
+        	}
             this.bypassAnimation = this.trackData.bypassAnimation;
             this.trackID = this.trackData.layerID;
             this.tweens = this.trackData.tweens;
@@ -439,9 +442,12 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         value:function () {
             this.ninjaStylesContoller = this.application.ninja.stylesController;
             var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
-            if(this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList[0]){
-                this.animatedElement = this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList[0];
+            if (selectedIndex !== false) {
+	            if(this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList[0]){
+	                this.animatedElement = this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList[0];
+	            }
             }
+
         }
     },
 
@@ -450,9 +456,12 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             if (!this.application.ninja.documentController.creatingNewFile) {
                 if (this.application.ninja.currentDocument.documentRoot.children[0]) {
                     var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
-                    if (!this.application.ninja.timeline.arrLayers[selectedIndex].layerData.created) {
-                        this.retrieveStoredTweens();
+                    if (selectedIndex !== false) {
+	                    if (!this.application.ninja.timeline.arrLayers[selectedIndex].layerData.created) {
+	                        this.retrieveStoredTweens();
+	                    }
                     }
+
                 }
             }
         }

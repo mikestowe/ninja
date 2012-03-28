@@ -294,17 +294,13 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		if (newVal !== this._dropLayerID) {
     			this._dropLayerID = newVal;
     			
-    			// Create a snapshot of arrLayers so we can manipulate it safely
-    			var arrLayers = this.arrLayers,
-    				dragLayerIndex = this.getLayerIndexByID(this.dragLayerID),
+    			var dragLayerIndex = this.getLayerIndexByID(this.dragLayerID),
     				dropLayerIndex = this.getLayerIndexByID(this.dropLayerID),
-    				dragLayer = arrLayers[dragLayerIndex];
-    			
-    			arrLayers.splice(dragLayerIndex, 1);
-    			arrLayers.splice(dropLayerIndex, 0, dragLayer);
-    			
-    			// Update the repetition!
-    			this.arrLayers = arrLayers;
+    				dragLayer = this.arrLayers[dragLayerIndex];
+
+    			this.arrLayers.splice(dragLayerIndex, 1);
+    			this.arrLayers.splice(dropLayerIndex, 0, dragLayer);
+    			this.application.ninja.currentDocument.tlArrLayers = this.arrLayers;
     			
     			// Clear for future DnD
     			this._dropLayerID = null;
