@@ -12,7 +12,6 @@
 }
 
 .openDocuments {
-    float: left;
     height: 25px;
     width: 100%;
     font-size: 12px;
@@ -21,16 +20,20 @@
     padding: 0;
     position: relative;
     text-decoration: none;
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+    -webkit-box-pack:start;
+    -webkit-box-align:start;
 }
 
 .openDocuments li {
     border-right: 1px solid black;
     cursor: pointer;
-    display: inline;
-    float: left;
     padding: 0.5em 1em;
-    text-shadow: 1px 1px 1px #000000;
     vertical-align: middle;
+    text-shadow: 1px 1px 1px #000000;
+    -webkit-box-flex: 1;
+    max-width: 115px;
 }
 
 .openDocuments li:hover,

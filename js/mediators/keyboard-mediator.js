@@ -245,8 +245,6 @@ exports.KeyboardMediator = Montage.create(Component, {
                 //menuViewManagerModule.MenuViewManager.closeMenu("mainMenuBar");
                 return;
             }
-
-
         }
     },
 

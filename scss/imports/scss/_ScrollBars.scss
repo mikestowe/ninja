@@ -110,8 +110,9 @@
      
     background-color: $color-sb-border;
 }
+
 ::-webkit-scrollbar-corner:window-inactive {
-    background-color: $color-sb-border;
+  background-color: $color-sb-border;
 }
 
 ::-webkit-resizer {
@@ -150,8 +151,28 @@
     display: none;
 }
 
-::-webkit-resizer:disabled {
-    display: none;
+#iframeContainer::-webkit-resizer:disabled {
+    display: block;
+}
+
+#iframeContainer::-webkit-scrollbar-track:vertical:disabled {
+  display: block;
+}
+
+#iframeContainer::-webkit-scrollbar-track:horizontal:disabled {
+  display: block;
+}
+
+#iframeContainer::-webkit-scrollbar-track-piece:disabled {
+  display: block;
+}
+
+#iframeContainer::-webkit-scrollbar-corner:disabled {
+  display: block;
+}
+
+#iframeContainer::-webkit-resizer:disabled {
+  display: block;
 }
  
 //  End: Scroll Bar Skinning  
