@@ -35,11 +35,19 @@ exports.Ninja = Montage.create(Component, {
 
     height: {
         get: function() {
+            if(this._height === null) {
+                var storedData = this.application.localStorage.getItem("timelinePanel");
+                if(storedData && storedData.value) {
+                    this._height = storedData.value;
+                }
+            }
             return this._height;
         },
         set: function(val) {
             if(this._height != val) {
                 this._height = val;
+                this.application.localStorage.setItem("timelinePanel", {"version": this.version, "value": val});
+                this.needsDraw = true;
             }
 
         }
@@ -54,11 +62,19 @@ exports.Ninja = Montage.create(Component, {
 
     width: {
         get: function() {
+            if(this._width === null) {
+                var storedData = this.application.localStorage.getItem("rightPanelsContainer");
+                if(storedData && storedData.value) {
+                    this._width = storedData.value;
+                }
+            }
             return this._width;
         },
         set: function(val) {
             if(this._width != val) {
                 this._width = val;
+                this.application.localStorage.setItem("rightPanelsContainer", {"version": this.version, "value": val});
+                this.needsDraw = true;
             }
 
         }
@@ -106,10 +122,10 @@ exports.Ninja = Montage.create(Component, {
             this.height = 140;
             this._resizedHeight = 0;
             this._resizedWidth = 0;
-            this.needsDraw = true;
             this.timelineSplitter.collapsed = false;
             this.panelSplitter.collapsed = false;
             this.stage.resizeCanvases = true;
+            this.needsDraw = true;
         }
     },
 
@@ -183,16 +199,16 @@ exports.Ninja = Montage.create(Component, {
                 } else {
                     this.timelineSplitter.collapsed = false;
                 }
-                this.timeline.element.style.height = (this.height - this._resizedHeight) + "px";
 
                 if (this.width - this._resizedWidth < 30) {
                     this.panelSplitter.collapsed = true;
                 } else {
                     this.panelSplitter.collapsed = false;
                 }
-                this.rightPanelContainer.style.width = (this.width - this._resizedWidth) + "px";
-            }
 
+            }
+                this.rightPanelContainer.style.width = (this.width - this._resizedWidth) + "px";
+                this.timeline.element.style.height = (this.height - this._resizedHeight) + "px";
         }
     },
 
