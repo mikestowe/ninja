@@ -141,54 +141,56 @@ var GeomObj = function GLGeomObj() {
 	this.setMaterialColor = function(c, type) {
         var i = 0,
             nMats = 0;
-        if(c.gradientMode) {
-            // Gradient support
-            if (this._materialArray && this._materialTypeArray) {
-                nMats = this._materialArray.length;
-            }
+        if(c) {
+            if(c.gradientMode) {
+                // Gradient support
+                if (this._materialArray && this._materialTypeArray) {
+                    nMats = this._materialArray.length;
+                }
 
-            var stops = [],
-                colors = c.color;
+                var stops = [],
+                    colors = c.color;
 
-            var len = colors.length;
-            // TODO - Current shaders only support 4 color stops
-            if(len > 4) {
-                len = 4;
-            }
+                var len = colors.length;
+                // TODO - Current shaders only support 4 color stops
+                if(len > 4) {
+                    len = 4;
+                }
 
-            for(var n=0; n<len; n++) {
-                var position = colors[n].position/100;
-                var cs = colors[n].value;
-                var stop = [cs.r/255, cs.g/255, cs.b/255, cs.a];
-                stops.push(stop);
+                for(var n=0; n<len; n++) {
+                    var position = colors[n].position/100;
+                    var cs = colors[n].value;
+                    var stop = [cs.r/255, cs.g/255, cs.b/255, cs.a];
+                    stops.push(stop);
 
-                if (nMats === this._materialTypeArray.length) {
-                    for (i=0;  i<nMats;  i++) {
-                        if (this._materialTypeArray[i] == type) {
-                            this._materialArray[i].setProperty( "color"+(n+1), stop.slice(0) );
-                            this._materialArray[i].setProperty( "colorStop"+(n+1), position );
+                    if (nMats === this._materialTypeArray.length) {
+                        for (i=0;  i<nMats;  i++) {
+                            if (this._materialTypeArray[i] == type) {
+                                this._materialArray[i].setProperty( "color"+(n+1), stop.slice(0) );
+                                this._materialArray[i].setProperty( "colorStop"+(n+1), position );
+                            }
                         }
                     }
                 }
-            }
-            if (type === "fill") {
-                this._fillColor = c;
+                if (type === "fill") {
+                    this._fillColor = c;
+                } else {
+                    this._strokeColor = c;
+                }
             } else {
-                this._strokeColor = c;
-            }
-        } else {
-            if (type === "fill") {
-                this._fillColor = c.slice(0);
-            } else {
-                this._strokeColor = c.slice(0);
-            }
+                if (type === "fill") {
+                    this._fillColor = c.slice(0);
+                } else {
+                    this._strokeColor = c.slice(0);
+                }
 
-            if (this._materialArray && this._materialTypeArray) {
-                nMats = this._materialArray.length;
-                if (nMats === this._materialTypeArray.length) {
-                    for (i=0;  i<nMats;  i++) {
-                        if (this._materialTypeArray[i] == type) {
-                            this._materialArray[i].setProperty( "color", c.slice(0) );
+                if (this._materialArray && this._materialTypeArray) {
+                    nMats = this._materialArray.length;
+                    if (nMats === this._materialTypeArray.length) {
+                        for (i=0;  i<nMats;  i++) {
+                            if (this._materialTypeArray[i] == type) {
+                                this._materialArray[i].setProperty( "color", c.slice(0) );
+                            }
                         }
                     }
                 }

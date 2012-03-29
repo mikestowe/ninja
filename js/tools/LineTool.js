@@ -234,13 +234,6 @@ exports.LineTool = Montage.create(ShapeTool, {
                 canvas.elementModel.selection = "Line";
                 canvas.elementModel.pi = "LinePi";
                 canvas.elementModel.shapeModel.strokeSize = this.options.strokeSize.value + " " + this.options.strokeSize.units;
-                canvas.elementModel.shapeModel.stroke = strokeColor;
-                if(strokeColor)
-                {
-                    canvas.elementModel.shapeModel.border = this.application.ninja.colorController.colorToolbar.stroke;
-                }
-
-                canvas.elementModel.shapeModel.strokeMaterial = strokeMaterial;
 
                 canvas.elementModel.shapeModel.strokeStyleIndex = strokeStyleIndex;
                 canvas.elementModel.shapeModel.strokeStyle = strokeStyle;

@@ -84,7 +84,6 @@ exports.ShapesController = Montage.create(CanvasController, {
                     if(sm)
                     {
                         el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(sm);
-                        el.elementModel.shapeModel.strokeMaterial = sm;
                         el.elementModel.shapeModel.GLGeomObj.buildBuffers();
                         el.elementModel.shapeModel.GLWorld.render();
                     }
@@ -94,16 +93,15 @@ exports.ShapesController = Montage.create(CanvasController, {
                     if(fm)
                     {
                         el.elementModel.shapeModel.GLGeomObj.setFillMaterial(fm);
-                        el.elementModel.shapeModel.fillMaterial = fm;
                         el.elementModel.shapeModel.GLGeomObj.buildBuffers();
                         el.elementModel.shapeModel.GLWorld.render();
                     }
                     break;
                 case "editStrokeMaterial":
-                    NJevent("showMaterialPopup",{materialId : el.elementModel.shapeModel.strokeMaterial.getName()});
+                    NJevent("showMaterialPopup",{materialId : this.getProperty(el, "strokeMaterial")});
                     break;
                 case "editFillMaterial":
-                    NJevent("showMaterialPopup",{materialId : el.elementModel.shapeModel.fillMaterial.getName()});
+                    NJevent("showMaterialPopup",{materialId : this.getProperty(el, "fillMaterial")});
                     break;
                 case "animate":
                     if(value)
@@ -134,17 +132,28 @@ exports.ShapesController = Montage.create(CanvasController, {
                 case "trRadius":
                 case "blRadius":
                 case "brRadius":
-                case "border":
-                case "background":
                 case "useWebGl":
                 case "animate":
                     return this.getShapeProperty(el, p);
+                case "border":
+                    return this.getColor(el, false);
+                case "background":
+                    return this.getColor(el, true);
                 case "strokeMaterial":
-                case "fillMaterial":
-                    var m = this.getShapeProperty(el, p);
-                    if(m)
+                    var sm = el.elementModel.shapeModel.GLGeomObj.getStrokeMaterial();
+                    if(sm)
                     {
-                        return this.getShapeProperty(el, p).getName();
+                        return sm.getName();
+                    }
+                    else
+                    {
+                        return "FlatMaterial";
+                    }
+                case "fillMaterial":
+                    var fm = el.elementModel.shapeModel.GLGeomObj.getFillMaterial();
+                    if(fm)
+                    {
+                        return fm.getName();
                     }
                     else
                     {
@@ -255,67 +264,94 @@ exports.ShapesController = Montage.create(CanvasController, {
     // Routines to get/set color properties
     getColor: {
         value: function(el, isFill) {
-            var color,
-                css;
             if(isFill)
             {
-                if(el.elementModel.shapeModel.background)
+                if(el.elementModel.shapeModel.GLGeomObj.getFillColor)
                 {
-                    return el.elementModel.shapeModel.background;
+                    return this.application.ninja.colorController.colorModel.webGlToColor(el.elementModel.shapeModel.GLGeomObj.getFillColor());
                 }
-                color = this.getShapeProperty(el, "fill");
+                else
+                {
+                    return null;
+                }
             }
             else
             {
-                if(el.elementModel.shapeModel.border)
-                {
-                    return el.elementModel.shapeModel.border;
-                }
-                color = this.getShapeProperty(el, "stroke");
+                return this.application.ninja.colorController.colorModel.webGlToColor(el.elementModel.shapeModel.GLGeomObj.getStrokeColor());
             }
-
-            if(!css) {
-                return null;
-            }
-
-            css = this.application.ninja.colorController.colorModel.webGlToCss(color);
-            return this.application.ninja.colorController.getColorObjFromCss(css);
         }
     },
 
     _setGradientMaterial: {
         value: function(el, gradientMode, isFill) {
-            var m = "LinearGradientMaterial",
-                fm;
-            if(gradientMode === "radial")
-            {
-                m = "RadialGradientMaterial";
-            }
-
+            var m,
+                gradientM;
             if(isFill)
             {
-                if(el.elementModel.shapeModel.fillMaterial.getName() !== m)
+                m = el.elementModel.shapeModel.GLGeomObj.getFillMaterial();
+            }
+            else
+            {
+                m = el.elementModel.shapeModel.GLGeomObj.getStrokeMaterial();
+            }
+
+            if(gradientMode === "radial")
+            {
+                if( !m || (m.getName() !== "RadialGradientMaterial") )
                 {
-                    fm = Object.create(MaterialsModel.getMaterial(m));
-                    if(fm)
-                    {
-                        el.elementModel.shapeModel.GLGeomObj.setFillMaterial(fm);
-                        el.elementModel.shapeModel.fillMaterial = fm;
-                        el.elementModel.shapeModel.GLGeomObj.buildBuffers();
-                    }
+                    gradientM = Object.create(MaterialsModel.getMaterial("RadialGradientMaterial"));
                 }
             }
             else
             {
-                if(el.elementModel.shapeModel.strokeMaterial.getName() !== m)
+                if( !m || (m.getName() !== "LinearGradientMaterial") )
                 {
-                    fm = Object.create(MaterialsModel.getMaterial(m));
-                    if(fm)
+                    gradientM = Object.create(MaterialsModel.getMaterial("LinearGradientMaterial"));
+                }
+            }
+
+            if(gradientM)
+            {
+                if(isFill)
+                {
+                    el.elementModel.shapeModel.GLGeomObj.setFillMaterial(gradientM);
+                }
+                else
+                {
+                    el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(gradientM);
+                }
+                el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+            }
+        }
+    },
+
+    _setFlatMaterial: {
+        value: function(el, isFill) {
+            var m,
+                flatM;
+            if(isFill)
+            {
+                m = el.elementModel.shapeModel.GLGeomObj.getFillMaterial();
+            }
+            else
+            {
+                m = el.elementModel.shapeModel.GLGeomObj.getStrokeMaterial();
+            }
+
+            if(!m || ((m.getName() === "LinearGradientMaterial") || m.getName() === "RadialGradientMaterial") )
+            {
+                flatM = Object.create(MaterialsModel.getMaterial("FlatMaterial"));
+                if(flatM)
+                {
+                    if(isFill)
                     {
-                        el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(fm);
-                        el.elementModel.shapeModel.strokeMaterial = fm;
-                        el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                        el.elementModel.shapeModel.GLGeomObj.setFillMaterial(flatM);
                     }
+                    else
+                    {
+                        el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(flatM);
+                    }
+                    el.elementModel.shapeModel.GLGeomObj.buildBuffers();
                 }
             }
         }
@@ -324,7 +360,8 @@ exports.ShapesController = Montage.create(CanvasController, {
     setColor: {
         value: function(el, color, isFill) {
             var mode = color.mode,
-                webGl;
+                webGl,
+                m;
             if(isFill)
             {
                 if(mode)
@@ -332,9 +369,6 @@ exports.ShapesController = Montage.create(CanvasController, {
                     switch (mode) {
                         case 'nocolor':
                             el.elementModel.shapeModel.GLGeomObj.setFillColor(null);
-                            this.setShapeProperty(el, "fill", null);
-                            this.setShapeProperty(el, "background", color);
-                            el.elementModel.fill = null;
                             return;
                         case 'gradient':
                             if(el.elementModel.shapeModel.useWebGl)
@@ -343,16 +377,15 @@ exports.ShapesController = Montage.create(CanvasController, {
                             }
                             el.elementModel.shapeModel.GLGeomObj.setFillColor({gradientMode:color.color.gradientMode, color:color.color.stops});
                             el.elementModel.shapeModel.GLWorld.render();
-                            this.setShapeProperty(el, "fill", color.color.css);
-                            this.setShapeProperty(el, "background", color);
-                            el.elementModel.fill = color;
                             break;
                         default:
+                            if(el.elementModel.shapeModel.useWebGl)
+                            {
+                                this._setFlatMaterial(el, isFill);
+                            }
                             webGl = this.application.ninja.colorController.colorModel.colorToWebGl(color.color);
                             el.elementModel.shapeModel.GLGeomObj.setFillColor(webGl);
-                            this.setShapeProperty(el, "fill", webGl);
-                            this.setShapeProperty(el, "background", color);
-                            el.elementModel.fill = color;
+                            el.elementModel.shapeModel.GLWorld.render();
                     }
                 }
             }
@@ -373,9 +406,6 @@ exports.ShapesController = Montage.create(CanvasController, {
                     switch (mode) {
                         case 'nocolor':
                             el.elementModel.shapeModel.GLGeomObj.setStrokeColor(null);
-                            this.setShapeProperty(el, "stroke", null);
-                            this.setShapeProperty(el, "border", color);
-                            el.elementModel.fill = null;
                             return;
                         case 'gradient':
                             if(el.elementModel.shapeModel.useWebGl)
@@ -384,50 +414,18 @@ exports.ShapesController = Montage.create(CanvasController, {
                             }
                             el.elementModel.shapeModel.GLGeomObj.setStrokeColor({gradientMode:color.color.gradientMode, color:color.color.stops});
                             el.elementModel.shapeModel.GLWorld.render();
-                            this.setShapeProperty(el, "stroke", color.color.css);
-                            this.setShapeProperty(el, "border", color);
-                            el.elementModel.fill = color;
                             break;
                         default:
+                            if(el.elementModel.shapeModel.useWebGl)
+                            {
+                                this._setFlatMaterial(el, isFill);
+                            }
                             webGl = this.application.ninja.colorController.colorModel.colorToWebGl(color.color);
                             el.elementModel.shapeModel.GLGeomObj.setStrokeColor(webGl);
-                            this.setShapeProperty(el, "stroke", webGl);
-                            this.setShapeProperty(el, "border", color);
-                            el.elementModel.fill = color;
+                            el.elementModel.shapeModel.GLWorld.render();
                     }
                 }
             }
-
-
-
-
-
-
-//            var webGl = color.webGlColor || color.color.webGlColor;
-//            if(!webGl)
-//            {
-//                webGl = this.application.ninja.colorController.colorModel.colorToWebGl(color.color);
-//            }
-//            if(isFill)
-//            {
-//                el.elementModel.shapeModel.GLGeomObj.setFillColor(webGl);
-//                this.setShapeProperty(el, "fill", webGl);
-//                this.setShapeProperty(el, "background", color);
-//            }
-//            else
-//            {
-//                el.elementModel.shapeModel.GLGeomObj.setStrokeColor(webGl);
-//                this.setShapeProperty(el, "stroke", webGl);
-//                this.setShapeProperty(el, "border", color);
-//                if(color.strokeInfo)
-//                {
-//                    var strokeWidth = this.GetValueInPixels(color.strokeInfo.strokeSize,
-//                                                            color.strokeInfo.strokeUnits);
-//                    el.elementModel.shapeModel.GLGeomObj.setStrokeWidth(strokeWidth);
-//                    this.setShapeProperty(el, "strokeSize", color.strokeInfo.strokeSize + " "
-//                                                                + color.strokeInfo.strokeUnits);
-//                }
-//            }
             el.elementModel.shapeModel.GLWorld.render();
         }
     },
@@ -505,9 +503,7 @@ exports.ShapesController = Montage.create(CanvasController, {
             {
                 return;
             }
-            var sm,
-                fm,
-                world,
+            var world,
                 worldData = el.elementModel.shapeModel.GLWorld.exportJSON();
             if(worldData)
             {
@@ -517,21 +513,6 @@ exports.ShapesController = Montage.create(CanvasController, {
                 el.elementModel.shapeModel.useWebGl = true;
                 world.importJSON(worldData);
                 el.elementModel.shapeModel.GLGeomObj = world.getGeomRoot();
-
-                sm = Object.create(MaterialsModel.getMaterial("FlatMaterial"));
-                if(sm)
-                {
-                    el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(sm);
-                    el.elementModel.shapeModel.strokeMaterial = sm;
-                }
-                fm = Object.create(MaterialsModel.getMaterial("FlatMaterial"));
-                // TODO - Use consts after GL code is converted to object literal notation
-//                if( fm && (el.elementModel.shapeModel.GLGeomObj.geomType() !== GLGeomObj.GEOM_TYPE_LINE) )
-                if( fm && (el.elementModel.shapeModel.GLGeomObj.geomType() !== 3) )
-                {
-                    el.elementModel.shapeModel.GLGeomObj.setFillMaterial(fm);
-                    el.elementModel.shapeModel.fillMaterial = fm;
-                }
             }
 
         }
@@ -554,14 +535,6 @@ exports.ShapesController = Montage.create(CanvasController, {
                 el.elementModel.shapeModel.useWebGl = false;
                 world.importJSON(worldData);
                 el.elementModel.shapeModel.GLGeomObj = world.getGeomRoot();
-                el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(null);
-                el.elementModel.shapeModel.strokeMaterial = null;
-                // TODO - Use consts after GL code is converted to object literal notation
-                if(el.elementModel.shapeModel.GLGeomObj.geomType() !== 3)
-                {
-                    el.elementModel.shapeModel.GLGeomObj.setFillMaterial(null);
-                    el.elementModel.shapeModel.fillMaterial = null;
-                }
             }
         }
     },
@@ -578,6 +551,70 @@ exports.ShapesController = Montage.create(CanvasController, {
                 var jStr = importStr.substr( index+1 );
                 jObj = JSON.parse( jStr );
                 jObj.webGL = !jObj.webGL;
+
+                if(jObj.children)
+                {
+                    var nKids = jObj.children.length;
+                    for (var i=0;  i<nKids;  i++)
+                    {
+                        var child = jObj.children[i];
+
+                        if(jObj.webGL)
+                        {
+                            // Set Linear/Radial Gradient Material for children geometry if color in canvas 2d has gradient
+                            if(child.strokeColor && child.strokeColor.gradientMode)
+                            {
+                                if(child.strokeColor.gradientMode === "radial")
+                                {
+                                    child.strokeMat = "RadialGradientMaterial";
+                                }
+                                else
+                                {
+                                    child.strokeMat = "LinearGradientMaterial";
+                                }
+                            }
+
+                            if(child.fillColor && child.fillColor.gradientMode)
+                            {
+                                if(child.fillColor.gradientMode === "radial")
+                                {
+                                    child.fillMat = "RadialGradientMaterial";
+                                }
+                                else
+                                {
+                                    child.fillMat = "LinearGradientMaterial";
+                                }
+                            }
+                        }
+//                        else
+//                        {
+//                            // Set flat color for children geometry if color in WebGL has been changed to solid
+//                            if(child.strokeColor && !child.strokeColor.gradientMode)
+//                            {
+//                                if(child.strokeColor.gradientMode === "radial")
+//                                {
+//                                    child.strokeMat = "RadialGradientMaterial";
+//                                }
+//                                else
+//                                {
+//                                    child.strokeMat = "LinearGradientMaterial";
+//                                }
+//                            }
+//
+//                            if(child.fillColor && child.fillColor.gradientMode)
+//                            {
+//                                if(child.fillColor.gradientMode === "radial")
+//                                {
+//                                    child.fillMat = "RadialGradientMaterial";
+//                                }
+//                                else
+//                                {
+//                                    child.fillMat = "LinearGradientMaterial";
+//                                }
+//                            }
+//                        }
+                    }
+                }
             }
 
             return jObj;
