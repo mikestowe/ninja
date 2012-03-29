@@ -68,6 +68,9 @@ function Texture( dstWorld, texMapName,  wrap, mips )
             {
                 this._srcWorld = srcCanvas.elementModel.shapeModel.GLWorld;
 
+                // add a notifier to the world
+                this._srcWorld.addListener( this,  this.worldCallback,  { myObj: 'anything' } );
+
                 // check if the source is animated
                 if (srcCanvas.elementModel && srcCanvas.elementModel.shapeModel  && srcCanvas.elementModel.shapeModel.GLWorld)
                     this._isAnimated = this._srcWorld._hasAnimatedMaterials;
@@ -79,8 +82,11 @@ function Texture( dstWorld, texMapName,  wrap, mips )
         {
             this.loadFromFile();  
         }
+    }
 
-
+    this.worldCallback = function( type, callbackObj,  calleeData,  callerData )
+    {
+        console.log( "texture callback, type: " + type );
     }
 
     this.loadFromFile = function()

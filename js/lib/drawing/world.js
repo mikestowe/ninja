@@ -364,6 +364,15 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 		return str;
 	};
 
+    this.addListener = function( obj,  callbackFunc,  calleeData )
+    {
+        this._notifier.addListener( obj, callbackFunc, calleeData );
+    }
+
+    this.removeListener = function( obj )
+    {
+        this._notifier.removeListener( obj );
+    }
     
     // start RDGE passing your runtime object, and false to indicate we don't need a an initialization state
     // in the case of a procedurally built scene an init state is not needed for loading data
@@ -818,70 +827,7 @@ World.prototype.exportObjectsJSON = function( obj,  parentObj )
 		this.exportObjectsJSON( obj.getNext(), parentObj );
 }
 
-/*
-World.prototype.export = function()
-{
-	var exportStr = "GLWorld 1.0\n";
-	var id = this.getCanvas().getAttribute( "data-RDGE-id" );
-	exportStr += "id: " + id + "\n";
-	//exportStr += "id: " + this._canvas.rdgeid + "\n";
-	exportStr += "fov: " + this._fov + "\n";
-	exportStr += "zNear: " + this._zNear + "\n";
-	exportStr += "zFar: " + this._zFar + "\n";
-	exportStr += "viewDist: " + this._viewDist + "\n";
-	if (this._useWebGL)
-		exportStr += "webGL: true\n";
 
-	// we need 2 export modes:  One for save/restore, one for publish.
-	// hardcoding for now
-	//var exportForPublish = false;
-	//if (!exportForPublish)  exportForPublish = false;
-	var exportForPublish = true;
-	exportStr += "publish: " + exportForPublish + "\n";
-
-	if (exportForPublish && this._useWebGL)
-	{
-		exportStr += "scenedata: " + this.myScene.exportJSON() + "endscene\n";
-
-		// write out all of the objects
-		exportStr += "tree\n";
-		exportStr += this.exportObjects( this._geomRoot );
-		exportStr += "endtree\n";
-	}
-	else
-	{
-		// output the material library
-		//exportStr += MaterialsLibrary.export();	// THIS NEEDS TO BE DONE AT THE DOC LEVEL
-
-		// write out all of the objects
-		exportStr += "tree\n";
-		exportStr += this.exportObjects( this._geomRoot );
-		exportStr += "endtree\n";
-	}
-
-	return exportStr;
-};
-
-World.prototype.exportObjects = function( obj ) {
-	if (!obj)  return;
-
-	var rtnStr = "OBJECT\n";
-	rtnStr += obj.export();
-
-	if (obj.getChild()) {
-		rtnStr += this.exportObjects( obj.getChild ()  );
-    }
-
-	// the end object goes outside the children
-	rtnStr += "ENDOBJECT\n";
-
-	if (obj.getNext()) {
-		rtnStr += this.exportObjects( obj.getNext() );
-    }
-	
-	return rtnStr;
-};
-*/
 
 World.prototype.findTransformNodeByMaterial = function( materialNode,  trNode ) {
 	//if (trNode == null)  trNode = this._ctrNode;
