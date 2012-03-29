@@ -66,10 +66,6 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
                     delta[0] = 0;
                     delta[1] = 0;
                 }
-                else
-                {
-                    delta[2] = 0;
-                }
                 this._delta = delta.slice(0);
             }
 
