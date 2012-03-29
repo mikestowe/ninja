@@ -23,6 +23,11 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
         }
     },
 
+    pickerNavChoices:{
+        enumerable: true,
+        value: null
+    },
+
     filePickerPopupType:{
         enumerable: false,
         value: "filePicker"
@@ -125,8 +130,6 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
             }
 
             if(!!storedUri){
-                // This is depracated -- use decodeURI instead
-                //aModel.currentRoot = unescape(storedUri);
                 aModel.currentRoot = decodeURI(storedUri);
             }
 
@@ -149,7 +152,7 @@ var FilePickerController = exports.FilePickerController = Montage.create(require
           writable:false,
         enumerable:true,
         value:function(callback, aModel){
-            var pickerNavChoices = Montage.create(pickerNavigatorReel);
+            var pickerNavChoices = this.pickerNavChoices = Montage.create(pickerNavigatorReel);
             var initUri = aModel.currentRoot;
 
             //remove extra / at the end

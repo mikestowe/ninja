@@ -761,13 +761,10 @@ World.prototype.exportJSON = function()
 	// We need to rebuild everything
 	if (this._useWebGL)
 	{
-		var root = this._rootNode;
-		root.children = new Array();
 		if (worldObj.children && (worldObj.children.length === 1))
 		{
-			this.init();
-			this._geomRoot = undefined;
-			this.importObjectsJSON( worldObj.children[0] );
+            this.rebuildTree(this._geomRoot);
+            this.restartRenderLoop();
 		}
 	}
 
@@ -781,6 +778,20 @@ World.prototype.exportJSON = function()
 	jStr = "v1.0;" + jStr;
 	
 	return jStr;
+}
+
+World.prototype.rebuildTree = function( obj )
+{
+	if (!obj)  return;
+
+	obj.buildBuffers();
+
+	if (obj.getChild()) {
+		 this.rebuildTree( obj.getChild () );
+    }
+
+	if (obj.getNext())
+		this.rebuildTree( obj.getNext() );
 }
 
 World.prototype.exportObjectsJSON = function( obj,  parentObj )
@@ -931,6 +942,7 @@ World.prototype.importObjectsJSON = function( jObj,  parentGeomObj )
 World.prototype.importObjectJSON = function( jObj, parentGeomObj )
 {
 	var type = jObj.type;
+    var BrushStroke = require("js/lib/geom/brush-stroke").BrushStroke;
 
 	var obj;
 	switch (type)
@@ -948,6 +960,11 @@ World.prototype.importObjectJSON = function( jObj, parentGeomObj )
 		case 3:		// line
             obj = new Line();
             obj.importJSON( jObj );
+            break;
+
+        case 6:     //brush stroke
+            obj = new BrushStroke();
+            obj.importJSON(jObj);
             break;
 
 		default:

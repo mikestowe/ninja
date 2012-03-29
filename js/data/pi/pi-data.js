@@ -653,7 +653,146 @@ exports.PiData = Montage.create( Montage, {
                 ]
             }
         ]
-    }
+    },
+    SubpathPi: {
+        value: [
+            {
+                label: "Stroke",
+
+                Section: [
+                    [
+                        {
+                            type : "color",
+                            prop: "border",
+                            id : "stroke"
+                        },
+                        {
+                            type : "color",
+                            id : "fill",
+                            prop: "background",
+                            divider : true
+                        }
+                    ],
+                    [
+                        {
+                            type : "hottext",
+                            id : "strokeSize",
+                            prop : "strokeSize",
+                            label : "Stroke",
+                            valueMutator: parseFloat,
+                            min :   1,
+                            max :   100,
+                            value : 1,
+                            unit : "px",
+                            acceptableUnits: ["pt", "px"]
+                        }
+                    ]
+                ]
+            }
+        ]
+    },
+    BrushStrokePi: {
+        value: [
+            {
+                label: "Stroke",
+
+                Section: [
+                    [
+                        {
+                            type : "color",
+                            prop: "border",
+                            id : "stroke"
+                        },
+                        {
+                            type : "color",
+                            id : "fill",
+                            prop: "background",
+                            visible : false,
+                            divider : true
+                        }
+                    ],
+                    [
+                        {
+                            type : "hottext",
+                            id : "strokeSize",
+                            prop : "strokeSize",
+                            label : "Stroke",
+                            valueMutator: parseInt,
+                            min :   1,
+                            max :   100,
+                            value : 1,
+                            unit : "px",
+                            acceptableUnits: ["pt", "px"]
+                        },
+                        {
+                            type : "hottext",
+                            id : "strokeHardness",
+                            prop : "strokeHardness",
+                            label : "Hardness",
+                            valueMutator: parseInt,
+                            min :   0,
+                            max :   100,
+                            value : 100,
+                            unit : "%",
+                            acceptableUnits: ["%"]
+                        }
+                    ]
+                ]
+            },
+            {
+                label: "Smoothing",
+                Section: [
+                    [
+                        {
+                            type: "checkbox",
+                            id: "doSmoothing",
+                            prop: "doSmoothing",
+                            defaultValue: false,
+                            value: "Y/N",
+                            checked: false
+                        },
+                        {
+                            type : "hottext",
+                            id : "strokeSmoothing",
+                            prop : "strokeSmoothing",
+                            label : "Amount",
+                            valueMutator: parseFloat,
+                            min :   0,
+                            max :   100,
+                            value : 0
+                        }
+                    ]
+                ]
+            },
+            {
+                label: "Calligraphic",
+                Section: [
+                    [
+                        {
+                            type: "checkbox",
+                            id: "isCalligraphic",
+                            prop: "isCalligraphic",
+                            defaultValue: false,
+                            value: "Y/N",
+                            checked: false,
+                            divider : true
+                        },
+                        {
+                            type : "hottext",
+                            id : "strokeAngle",
+                            prop : "strokeAngle",
+                            label : "Angle",
+                            valueMutator: parseFloat,
+                            min :   -90,
+                            max :   90,
+                            value : 0,
+                            unit : "deg."
+                        }
+                    ]
+                ]
+            }
+        ] //value: [
+    } //BrushStrokePi: {
 });
 
 
