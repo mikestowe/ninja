@@ -417,6 +417,9 @@ var Layer = exports.Layer = Montage.create(Component, {
 
     setData:{
         value:function(){
+        	if (typeof(this.layerData) === "undefined") {
+        		return;
+        	}
             this.layerName = this.layerData.layerName;
             this.layerID = this.layerData.layerID;
             this.arrLayerStyles = this.layerData.arrLayerStyles;
