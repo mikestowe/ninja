@@ -258,12 +258,20 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
             this.element.addEventListener("refreshTreeSegment", function(evt){that.handlePickerNavRefreshTreeSegment(evt);}, false);
             this.resultsArea.addEventListener("click", function(evt){that.handleResultsAreaClick(evt);}, false);
             this.element.addEventListener("click", function(evt){that.handlePickerNavClick(evt);}, false);
-
             this.okButton.addEventListener("click", function(evt){that.handleOkButtonAction(evt);}, false);
             this.cancelButton.addEventListener("click", function(evt){that.handleCancelButtonAction(evt);}, false);
 
+            this.element.addEventListener("keyup", function(evt){
+                if(evt.keyCode == 27) {
+                    if(that.application.ninja.filePickerController.pickerNavChoices !== null){
+                        that.handleCancelButtonAction();
+                    }
+                }
+            }, true);
+
             //ready to show picker now
             this.element.style.visibility = "visible";
+            this.element.focus();
     	}
     },
 
@@ -501,7 +509,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
                     metadata = "Name: "+data.name;
                 }
                 metadata = metadata + "<br />" + "Type: "+data.type;
-                if(data.size){metadata = metadata + "<br />" + "Size: "+data.size;}
+                if(data.size){metadata = metadata + "<br />" + "Size: "+data.size+" bytes";}
                 if(data.creationDate){metadata = metadata + "<br />" + "Creation date: "+ this.formatTimestamp(data.creationDate);}
                 if(data.modifiedDate){metadata = metadata + "<br />" + "Modified date: "+ this.formatTimestamp(data.modifiedDate);}
             }
@@ -1071,6 +1079,7 @@ var PickerNavigator = exports.PickerNavigator = Montage.create(Component, {
                 //clear memory - TODO:check for more memory leaks
                 this.pickerModel = null;
                 this.application.ninja.filePickerController._directoryContentCache = {};
+                this.application.ninja.filePickerController.pickerNavChoices = null;
                 //remove listeners
                 this.element.removeEventListener("openFolder", this, false);//add icon double click event listener to reload iconList with new set of data
                 this.element.removeEventListener("selectedItem", this, false);//for single selection only

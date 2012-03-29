@@ -118,7 +118,7 @@ exports.TreeItem = Montage.create(Component, {
                 this.metadata = "Name: "+this.treeItemData.name;
             }
             this.metadata = this.metadata + "<br />" + "Type: "+this.treeItemData.type;
-            if(this.treeItemData.size){this.metadata = this.metadata + "<br />" + "Size: "+this.treeItemData.size;}
+            if(this.treeItemData.size){this.metadata = this.metadata + "<br />" + "Size: "+this.treeItemData.size+ " bytes";}
             if(this.treeItemData.creationDate){this.metadata = this.metadata + "<br />" + "Creation date: "+ this.formatTimestamp(this.treeItemData.creationDate);}
             if(this.treeItemData.modifiedDate){this.metadata = this.metadata + "<br />" + "Modified date: "+ this.formatTimestamp(this.treeItemData.modifiedDate);}
 

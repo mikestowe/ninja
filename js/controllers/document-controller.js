@@ -32,22 +32,30 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     _iframeHolder: { value: null, enumerable: false },
     _textHolder: { value: null, enumerable: false },
     _codeMirrorCounter: {value: 1, enumerable: false},
+
+    canSave:{value: false},//for Save menu state update
+    canSaveAll:{value: false},//for Save All menu state update
     
     activeDocument: {
         get: function() {
             return this._activeDocument;
         },
         set: function(doc) {
-            if(!!this._activeDocument) this._activeDocument.isActive = false;
-
+            if(!!this._activeDocument){ this._activeDocument.isActive = false;}
             this._activeDocument = doc;
             if(!!this._activeDocument){
-
                 if(this._documents.indexOf(doc) === -1) this._documents.push(doc);
                 this._activeDocument.isActive = true;
+
                 if(!!this._activeDocument.editor){
                     this._activeDocument.editor.focus();
                 }
+
+                this.canSave = doc.needsSave;
+                this.canSaveAll = doc.needsSave;
+            }else{
+                this.canSave = false;
+                this.canSaveAll = false;
             }
         }
     },
@@ -61,6 +69,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             this.eventManager.addEventListener("executeSaveAs", this, false);
             this.eventManager.addEventListener("executeSaveAll", this, false);
             this.eventManager.addEventListener("executeFileClose", this, false);
+            this.eventManager.addEventListener("executeFileCloseAll", this, false);
 
             this.eventManager.addEventListener("styleSheetDirty", this, false);
             
@@ -180,6 +189,17 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         }
     },
     ////////////////////////////////////////////////////////////////////
+    handleExecuteFileCloseAll:{
+            value: function(event) {
+                var i=0;
+                if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
+                    while(this._documents.length > 0){
+                        this.closeDocument(this._documents[this._documents.length -1].uuid);
+                    }
+                }
+            }
+        },
+        ////////////////////////////////////////////////////////////////////
     //
     fileSaveResult: {
     	value: function (result) {
