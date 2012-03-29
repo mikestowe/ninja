@@ -24,7 +24,7 @@ exports.Ninja = Montage.create(Component, {
     },
 
     _isResizing: {
-        value: false
+        value: null
     },
     _resizedHeight : {
         value: 0
@@ -40,7 +40,6 @@ exports.Ninja = Montage.create(Component, {
         set: function(val) {
             if(this._height != val) {
                 this._height = val;
-                this.needsDraw = true;
             }
 
         }
@@ -60,7 +59,6 @@ exports.Ninja = Montage.create(Component, {
         set: function(val) {
             if(this._width != val) {
                 this._width = val;
-                this.needsDraw = true;
             }
 
         }
@@ -71,6 +69,8 @@ exports.Ninja = Montage.create(Component, {
             this.isResizing = true;
             this.height = parseInt(this.timeline.element.offsetHeight);
             this.width = parseInt(this.rightPanelContainer.offsetWidth);
+            this.rightPanelContainer.classList.add("disableTransition");
+            this.timeline.element.classList.add("disableTransition");
             this.needsDraw = true;
         }
     },
@@ -79,7 +79,6 @@ exports.Ninja = Montage.create(Component, {
         value:function(e) {
             this._resizedHeight = e._event.dY;
             this._resizedWidth = e._event.dX;
-            console.log("resizing");
             this.stage.resizeCanvases = true;
             this.needsDraw = true;
         }
@@ -87,13 +86,17 @@ exports.Ninja = Montage.create(Component, {
 
     handleResizeEnd: {
         value: function(e) {
-            this.height -= this._resizedHeight;
-            this.width -= this._resizedWidth;
+//            this.height -= this._resizedHeight;
+//            this.width -= this._resizedWidth;
             this.stage.resizeCanvases = true;
             this._resizedHeight = 0;
             this._resizedWidth = 0;
             this.isResizing = false;
             this.needsDraw = true;
+            this.rightPanelContainer.classList.remove("disableTransition");
+            this.timeline.element.classList.remove("disableTransition");
+            this.height = this.timeline.element.offsetHeight;
+            this.width = this.rightPanelContainer.offsetWidth;
         }
     },
 
@@ -106,6 +109,7 @@ exports.Ninja = Montage.create(Component, {
             this.needsDraw = true;
             this.timelineSplitter.collapsed = false;
             this.panelSplitter.collapsed = false;
+            this.stage.resizeCanvases = true;
         }
     },
 
@@ -167,30 +171,28 @@ exports.Ninja = Montage.create(Component, {
 
     willDraw: {
         value: function() {
-            if (this.height === null) {
-                this.height = parseInt(this.timeline.element.offsetHeight);
-            }
-            if (this.width === null) {
-                this.width = parseInt(this.rightPanelContainer.offsetWidth);
-            }
+
         }
     },
 
     draw: {
         value: function() {
-            if (this.height - this._resizedHeight < 46) {
-                this.timelineSplitter.collapsed = true;
-            } else {
-                this.timelineSplitter.collapsed = false;
-            }
-            if (this.width - this._resizedWidth < 30) {
-                this.panelSplitter.collapsed = true;
-            } else {
-                this.panelSplitter.collapsed = false;
+            if(this.isResizing) {
+                if (this.height - this._resizedHeight < 46) {
+                    this.timelineSplitter.collapsed = true;
+                } else {
+                    this.timelineSplitter.collapsed = false;
+                }
+                this.timeline.element.style.height = (this.height - this._resizedHeight) + "px";
+
+                if (this.width - this._resizedWidth < 30) {
+                    this.panelSplitter.collapsed = true;
+                } else {
+                    this.panelSplitter.collapsed = false;
+                }
+                this.rightPanelContainer.style.width = (this.width - this._resizedWidth) + "px";
             }
 
-            this.timeline.element.style.height = (this.height - this._resizedHeight) + "px";
-            this.rightPanelContainer.style.width = (this.width - this._resizedWidth) + "px";
         }
     },
 
@@ -200,10 +202,7 @@ exports.Ninja = Montage.create(Component, {
     
     didDraw: {
         value: function() {
-            if (!this.isResizing) {
-                this.height = this.timeline.element.offsetHeight;
-                this.width = this.rightPanelContainer.offsetWidth;
-            }
+
             if(!this._didDraw) {
             	if (!this.application.ninja.coreIoApi.ioServiceDetected) {
             		var check = this.application.ninja.coreIoApi.cloudAvailable();
