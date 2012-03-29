@@ -20,14 +20,39 @@ exports.PresetsController = Montage.create(Component, {
 
     addTransition: {
         value: function(element) {
+            var transitionDuration;
+
             element.classList.add(this.transitionClass);
             element.addEventListener("webkitTransitionEnd", this, true);
+
+
+            //// TODO: replace this hack when webkit supports transitionStart event
+            transitionDuration = this.application.ninja.stylesController.getElementStyle(element, '-webkit-transition-duration', true);
+            element.njTimeout = window.setTimeout(function() {
+                this.captureWebkitTransitionEnd({
+                    'target': element
+                });
+            }.bind(this), this._getMilliseconds(transitionDuration) + 100);
+        }
+    },
+
+    _getMilliseconds : {
+        value: function(duration) {
+            if(duration.indexOf('ms') !== -1) {
+                return parseInt(duration);
+            } else {
+                return parseFloat(duration)*1000;
+            }
         }
     },
 
     captureWebkitTransitionEnd : {
         value : function(e) {
             var el = e.target;
+
+            //// TODO: replace this hack when webkit supports transitionStart event (see above)
+            window.clearTimeout(el.njTimeout);
+
             el.classList.remove(this.transitionClass);
             el.removeEventListener("webkitTransitionEnd", this, true);
         }
@@ -41,9 +66,31 @@ exports.PresetsController = Montage.create(Component, {
 
             var stylesController = this.application.ninja.stylesController,
                 selectorBase = presetData.selectorBase,
-                rules = [];
+                rules = [],
+                animationNames = [];
 
             selectorBase = stylesController.generateClassName(selectorBase);
+
+            selection.forEach(function(element) {
+                var el = element._element,
+                    animationName;
+
+                if(useTransition) {
+                    this.addTransition(el);
+                }
+
+                ///// TODO: remove when we find out what to do with competing animations
+                animationName = stylesController.getElementStyle(el, '-webkit-animation-name');
+                if(animationName) {
+                    animationNames.push(animationName);
+                }
+
+                el.classList.add(selectorBase);
+
+                //// Keep track of elements with presets and don't add duplicates
+                this.setCachedPreset(el, presetData.id, rules);
+
+            }, this);
 
             presetData.rules.forEach(function(rule, i) {
                 ///// Treat keyframed rules differently
@@ -54,38 +101,17 @@ exports.PresetsController = Montage.create(Component, {
                     );
                 } else {
                     var suffix = rule.selectorSuffix || '';
+
+                    ///// TODO: remove when we find out what to do with competing animations
+                    if(rule.styles['-webkit-animation-name']) {
+                        rule.styles['-webkit-animation-name'] += ',' + animationNames.join(',');
+                    }
+
                     rules.push(stylesController.addRule('.'+selectorBase + suffix, rule.styles));
                 }
             }, this);
 
-            selection.forEach(function(element) {
-                var el = element._element;
-
-                if(useTransition) {
-                    this.addTransition(el);
-                }
-
-                el.classList.add(selectorBase);
-
-                //// Keep track of elements with presets and don't add duplicates
-                this.setCachedPreset(el, presetData.id, rules);
-
-            }, this);
-
         }
-    },
-
-    setCachedPreset : {
-        value: function(el, presetId, rules) {
-
-        }
-    },
-
-    getPresets : {
-        value: function(element) {
-
-        }
-
     },
 
     stringifyKeys : {
