@@ -27,6 +27,16 @@ var NewFileWorkflowController =  exports.NewFileWorkflowController = Montage.cre
         value: null
     },
 
+    newFileOptionsNav:{
+        enumerable:true,
+        value: null
+    },
+
+    saveAsDialog:{
+        enumerable:true,
+        value: null
+    },
+
     showNewFileDialog:{
         writable:false,
         enumerable:true,
@@ -49,7 +59,7 @@ var NewFileWorkflowController =  exports.NewFileWorkflowController = Montage.cre
                 this.model.defaultProjectType = lastSelectedProjectType;
             }
 
-            var newFileOptionsNav = newFileOptionsNavigatorModule.NewFileOptionsNavigator.create();
+            var newFileOptionsNav = this.newFileOptionsNav = newFileOptionsNavigatorModule.NewFileOptionsNavigator.create();
             newFileOptionsNav.newFileModel = this.model;
 
             var popup = Popup.create();
@@ -70,7 +80,7 @@ var NewFileWorkflowController =  exports.NewFileWorkflowController = Montage.cre
             var fileName = data.fileName || "filename.txt";
             var folderUri = data.folderUri || "/Documents";
 
-            var saveAsDialog = saveAsModule.SaveAsDialog.create();
+            var saveAsDialog = this.saveAsDialog = saveAsModule.SaveAsDialog.create();
             saveAsDialog.fileName = fileName;
             saveAsDialog.folderUri = folderUri;
             saveAsDialog.callback = data.callback;

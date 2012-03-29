@@ -214,6 +214,11 @@ function Engine()
 			return contextManager.contextMap[optCanvasID];
 		}
     }
+
+	this.clearContext = function( canvasID )
+	{
+		contextManager.contextMap[canvasID] = undefined;
+	}
     
     /*
      *	give the contextID (canvas id) of the context to set
@@ -488,7 +493,7 @@ Engine.prototype.registerCanvas = function(canvas, runState) {
 Engine.prototype.unregisterCanvas = function(canvas) {
     stat.closePage(canvas.rdgeid + "_fps");
     contextManager.removeObject(canvas.rdgeCtxHandle);
-
+	this.clearContext( canvas.rdgeid );
 }
 
 Engine.prototype.getCanvas = function( id )

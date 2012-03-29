@@ -217,7 +217,7 @@ exports.CoreIoApi = Montage.create(Component, {
         value: function(serviceURL, path) {
             var urlOut = path.replace(/\\/g,"/");
             urlOut = urlOut.replace(/:/g,"");
-            urlOut = encodeURI(urlOut);
+            urlOut = encodeURIComponent(urlOut);
             //add leading / if not already there
             if((urlOut.length > 0) && (urlOut.charAt(0) !== "/")){
                 urlOut = "/" + urlOut;
@@ -393,12 +393,12 @@ exports.CoreIoApi = Montage.create(Component, {
                     	xhr = new XMLHttpRequest();
                     //
                     xhr.open("POST", serviceURL, false);
-                    xhr.responseType = "arraybuffer"; 
+                    //xhr.responseType = "arraybuffer"; 
                     if(file.contentType && file.contentType.length)
                         xhr.setRequestHeader("Content-Type", file.contentType);
                     else
                         xhr.setRequestHeader("Content-Type", "text/plain");
-
+                    
                     if (file.contents)
                         xhr.send(file.contents);
                     else

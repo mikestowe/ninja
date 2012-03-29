@@ -10,7 +10,8 @@ var Montage = require("montage/core/core").Montage,
 exports.ShapeModel = Montage.create(Component, {
 
     shapeCount:             { value: 0 },
-    useWebGl:           { value: false },
+    useWebGl:               { value: false },
+    animate:                { value: true },
 
     GLWorld:                { value: null },
     GLGeomObj:              { value: null },
