@@ -100,7 +100,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     		return this._bypassAnimation;
     	},
     	set: function(newVal) {
-    		if (newVal !== this._bypassAnimation) {
+    		if ((newVal !== this._bypassAnimation) && (typeof(this.trackData) !== "undefined")) {
     			this._bypassAnimation = newVal;
                 this.trackData.bypassAnimation = newVal;
     		}

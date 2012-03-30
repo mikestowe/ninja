@@ -385,7 +385,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     		return this._bypassAnimation;
     	},
     	set: function(newVal) {
-    		if (newVal !== this._bypassAnimation) {
+    		if ((newVal !== this._bypassAnimation) && (typeof(this.layerData) !== "undefined")) {
 	    		this._bypassAnimation = newVal;
 	    		this.layerData.bypassAnimation = newVal;	
     		}
