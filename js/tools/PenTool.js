@@ -467,9 +467,9 @@ exports.PenTool = Montage.create(ShapeTool, {
                     if (this.application.ninja.colorController.colorToolbar.stroke.webGlColor){
                         this._selectedSubpath.setStrokeColor(this.application.ninja.colorController.colorToolbar.stroke.webGlColor);
                     }
-                    //if (this.application.ninja.colorController.colorToolbar.fill.webGlColor){
-                    //    this._selectedSubpath.setFillColor(this.application.ninja.colorController.colorToolbar.fill.webGlColor);
-                    //}
+                    if (this.application.ninja.colorController.colorToolbar.fill.webGlColor){
+                        this._selectedSubpath.setFillColor(this.application.ninja.colorController.colorToolbar.fill.webGlColor);
+                    }
                 } //if this is a new path being rendered
 
                 this._selectedSubpath.makeDirty();
@@ -594,6 +594,7 @@ exports.PenTool = Montage.create(ShapeTool, {
 
                 var subpath = this._selectedSubpath; //new GLSubpath();
                 subpath.setWorld(world);
+                subpath.setCanvas(newCanvas);
                 subpath.setPlaneMatrix(planeMat);
                 var planeMatInv = glmat4.inverse( planeMat, [] );
                 subpath.setPlaneMatrixInverse(planeMatInv);
@@ -601,7 +602,33 @@ exports.PenTool = Montage.create(ShapeTool, {
 
                 world.addObject(subpath);
                 world.render();
+                //TODO this will not work if there are multiple shapes in the same canvas
                 newCanvas.elementModel.shapeModel.GLGeomObj = subpath;
+                newCanvas.elementModel.shapeModel.shapeCount++;
+                if(newCanvas.elementModel.shapeModel.shapeCount === 1)
+                {
+                    newCanvas.elementModel.selection = "Subpath";
+                    newCanvas.elementModel.pi = "SubpathPi";
+                    newCanvas.elementModel.shapeModel.strokeSize = this.options.strokeSize.value + " " + this.options.strokeSize.units;
+                    var strokeColor = subpath.getStrokeColor();
+                    newCanvas.elementModel.shapeModel.stroke = strokeColor;
+                    if(strokeColor) {
+                        newCanvas.elementModel.shapeModel.border = this.application.ninja.colorController.colorToolbar.stroke;
+                    }
+                    newCanvas.elementModel.shapeModel.strokeMaterial = subpath.getStrokeMaterial();
+
+                    newCanvas.elementModel.shapeModel.GLGeomObj = subpath;
+                    newCanvas.elementModel.shapeModel.useWebGl = this.options.use3D;
+                }
+                else
+                {
+                    // TODO - update the shape's info only.  shapeModel will likely need an array of shapes.
+                }
+
+                if(newCanvas.elementModel.isShape)
+                {
+                    this.application.ninja.selectionController.selectElement(newCanvas);
+                }
             } //if (!canvas) {
             else {
 

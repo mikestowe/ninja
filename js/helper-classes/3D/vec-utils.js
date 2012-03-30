@@ -259,6 +259,6 @@ var VecUtils = exports.VecUtils = Object.create(Object.prototype,
 			glmat4.rotate(mat, angle, axis);
 			return mat;
 		}
-	},
+	}
 
 });
