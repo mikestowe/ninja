@@ -604,7 +604,7 @@ button.panel-button { -webkit-appearance: none; font-size: 9px; color: white; ba
 
 .pp_strokelabel { border: none; margin: -1px 8px 0px 27px; }
 
-.pp_filllabel { border-width: none; margin: -1px 8px 0px 34px; }
+.pp_filllabel { border: none; margin: -1px 8px 0px 34px; }
 
 .panels { display: -webkit-box; position: absolute; -webkit-box-orient: vertical; -webkit-box-align: stretch; height: 100%; width: 100%; overflow: hidden; }
 
