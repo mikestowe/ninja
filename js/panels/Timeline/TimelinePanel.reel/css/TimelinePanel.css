@@ -10,12 +10,12 @@
     height: 100%;
 }
 .maintimeline{
+    border-style: double;
     -webkit-box-flex: 1;
     display: -webkit-box;
-    -webkit-box-orient: horizontal;
+    -webkit-box-orient: horizontal
     height : 100%;
     position: relative;
-    margin-top:1px;
 }
 .leftinside{
     height: 100%;

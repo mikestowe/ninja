@@ -11,9 +11,9 @@ exports.stylePresets = {
         "children": [
             {
                 "text": "Border-Radius",
-                "id": "njBorderRadius",
                 "selectorBase" : "border-radius-preset",
                 "rules" : [{
+                    "selectorSuffix" : "",
                     "styles" : {
                         "border-radius": "100px",
                         "border" : "1px solid #333"
@@ -22,9 +22,9 @@ exports.stylePresets = {
             },
             {
                 "text": "Drop Shadow",
-                "id": "njDropShadow",
                 "selectorBase" : "drop-shadow",
                 "rules" : [{
+                    "selectorSuffix" : "",
                     "styles" : {
                         "box-shadow": "2px 2px 50px rgba(0,0,0,0.5)",
                         "border" : "1px solid #CCC"
@@ -33,10 +33,9 @@ exports.stylePresets = {
             },
             {
                 "text": "Fancy Box",
-                "id": "njFancyBox",
                 "selectorBase" : "fancy-box",
                 "rules" : [{
-                    "selectorSuffix": "",
+                    "selectorSuffix" : "",
                     "styles" : {
                         "box-shadow": "inset 0 0 0 1px #666, inset 0 0 0 2px rgba(225, 225, 225, 0.4), 0 0 20px -10px #333",
                         "border" : "1px solid #FFF",
@@ -51,9 +50,9 @@ exports.stylePresets = {
         "children": [
             {
                 "text": "Italic",
-                "id": "njItalic",
                 "selectorBase" : "italicize",
                 "rules" : [{
+                    "selectorSuffix" : "",
                     "styles" : {
                         "font-style": "italic"
                     }
@@ -61,9 +60,9 @@ exports.stylePresets = {
             },
             {
                 "text": "Text Shadow",
-                "id": "njTextShadow",
                 "selectorBase" : "italicize",
                 "rules" : [{
+                    "selectorSuffix" : "",
                     "styles" : {
                         "text-shadow": "1px 1px 3px #333"
                     }
