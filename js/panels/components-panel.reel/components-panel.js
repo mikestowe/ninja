@@ -80,11 +80,6 @@ exports.ComponentsPanel = Montage.create(Component, {
                             "dataFile" : "node_modules/components-data/number-input.json",
                             "component": "numberInput"
                         },
-                       {
-                            "text": "Select Input",
-                            "dataFile" : "node_modules/components-data/select.json",
-                            "component": "select"
-                        },
                         {
                             "text": "Radio Button",
                             "dataFile" : "node_modules/components-data/radio-button.json",
@@ -94,6 +89,11 @@ exports.ComponentsPanel = Montage.create(Component, {
                             "text": "Range Input",
                             "dataFile" : "node_modules/components-data/range-input.json",
                             "component": "rangeInput"
+                        },
+                        {
+                            "text": "Select Input",
+                            "dataFile" : "node_modules/components-data/select.json",
+                            "component": "select"
                         },
                         {
                             "text": "TextArea",
