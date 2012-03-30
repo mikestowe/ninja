@@ -5,6 +5,7 @@
  </copyright> */
 
 var PulseMaterial = require("js/lib/rdge/materials/pulse-material").PulseMaterial;
+var Texture = require("js/lib/rdge/texture").Texture;
 
 var JuliaMaterial = function JuliaMaterial() {
     ///////////////////////////////////////////////////////////////////////
@@ -58,6 +59,10 @@ var JuliaMaterial = function JuliaMaterial() {
 		if (this._shader && this._shader['default']) {
 			this._shader['default'].u_time.set( [this._time] );
         }
+
+        // set up the texture
+        var texMapName = this._propValues[this._propNames[0]];
+        this._glTex = new Texture( world, texMapName );
 
 		// set the shader values in the shader
 		this.setResolution( [world.getViewportWidth(),world.getViewportHeight()] );
