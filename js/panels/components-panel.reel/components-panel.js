@@ -106,7 +106,7 @@ exports.ComponentsPanel = Montage.create(Component, {
                             "component": "textfield"
                         },
                         {
-                            "text": "Toogle Button",
+                            "text": "Toggle Button",
                             "dataFile" : "node_modules/components-data/toggle-button.json",
                             "component": "toggleButton"
                         }
