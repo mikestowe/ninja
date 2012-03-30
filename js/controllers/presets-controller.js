@@ -87,9 +87,6 @@ exports.PresetsController = Montage.create(Component, {
 
                 el.classList.add(selectorBase);
 
-                //// Keep track of elements with presets and don't add duplicates
-                this.setCachedPreset(el, presetData.id, rules);
-
             }, this);
 
             presetData.rules.forEach(function(rule, i) {
