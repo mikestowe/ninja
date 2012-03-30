@@ -1071,8 +1071,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		// dragend doesn't fire. So if we're here in drop 
     		// and there's still a helper, we need to manually fire dragend.
     		if (this._dragAndDropHelper !== null) {
-            	this.container_layers.removeChild(this._dragAndDropHelper);
-				this._dragAndDropHelper = null;
+    			this.handleLayerDragEnd(event);
     		}
     	}
     },
