@@ -216,6 +216,7 @@ exports.LineTool = Montage.create(ShapeTool, {
                 {
                     strokeMaterial = Object.create(MaterialsModel.getMaterial(strokeM));
                 }
+                strokeColor = this._getMaterialColor(strokeM) || strokeColor;
             }
 
             var world = this.getGLWorld(canvas, this.options.use3D);
