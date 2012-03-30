@@ -326,8 +326,8 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
 
     handleNewFileDirectorySet:{
         value:function(evt){
-            if((evt.keyCode === 13) && !this.okButton.hasAttribute("disabled")){
-                this.handleOkButtonAction(evt);
+            if(evt.keyCode === 13){
+                if(!this.okButton.hasAttribute("disabled")) this.handleOkButtonAction(evt);
             }else if(evt.keyCode === 27){
                 this.handleCancelButtonAction(evt);
             }

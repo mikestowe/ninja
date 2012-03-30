@@ -85,8 +85,8 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
 
     handleNewFileDirectorySet:{
          value:function(evt){
-             if((evt.keyCode === 13) && !this.okButton.hasAttribute("disabled")){
-                 this.handleOkButtonAction(evt);
+             if(evt.keyCode === 13){
+                 if(!this.okButton.hasAttribute("disabled")) this.handleOkButtonAction(evt);
              }else if(evt.keyCode === 27){
                  this.handleCancelButtonAction(evt);
              }
@@ -101,10 +101,9 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
 
     handlePaste:{
         value:function(evt){
-            var self=this;
-            setTimeout(function(){
-                self.handleNewFileNameOnkeyup(evt);
-            }, 1);
+            evt.preventDefault();
+            evt.target.value = evt.clipboardData.getData("Text");
+            this.handleNewFileNameOnkeyup(evt);
         }
     },
 

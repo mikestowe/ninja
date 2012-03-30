@@ -66,10 +66,9 @@ var FileInputField = exports.FileInputField = Montage.create(Component, {
 
     handlePaste:{
         value:function(evt){
-            var self=this;
-            setTimeout(function(){
-                self.handleNewFileDirectoryOnkeyup(evt);
-            }, 1);
+            evt.preventDefault();
+            evt.target.value = evt.clipboardData.getData("Text");
+            this.handleNewFileDirectoryOnkeyup(evt);
         }
     },
 

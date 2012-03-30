@@ -31,10 +31,9 @@ var NewFileLocation = exports.NewFileLocation = Montage.create(Component, {
 
     handlePaste:{
         value:function(evt){
-            var self=this;
-            setTimeout(function(){
-                self.handleKeyup(evt);
-            }, 1);
+            evt.preventDefault();
+            evt.target.value = evt.clipboardData.getData("Text");
+            this.handleKeyup(evt);
         }
     },
 
