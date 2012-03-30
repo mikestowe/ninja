@@ -942,6 +942,7 @@ World.prototype.importObjectsJSON = function( jObj,  parentGeomObj )
 World.prototype.importObjectJSON = function( jObj, parentGeomObj )
 {
 	var type = jObj.type;
+    var BrushStroke = require("js/lib/geom/brush-stroke").BrushStroke;
 
 	var obj;
 	switch (type)
@@ -959,6 +960,11 @@ World.prototype.importObjectJSON = function( jObj, parentGeomObj )
 		case 3:		// line
             obj = new Line();
             obj.importJSON( jObj );
+            break;
+
+        case 6:     //brush stroke
+            obj = new BrushStroke();
+            obj.importJSON(jObj);
             break;
 
 		default:

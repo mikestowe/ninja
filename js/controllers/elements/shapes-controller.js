@@ -117,6 +117,31 @@ exports.ShapesController = Montage.create(CanvasController, {
                         el.elementModel.shapeModel.GLWorld._canvas.task.stop();
                     }
                     break;
+                case "strokeHardness":
+                    this.setShapeProperty(el, "strokeHardness", value);
+                    el.elementModel.shapeModel.GLGeomObj.setStrokeHardness(val);
+                    el.elementModel.shapeModel.GLWorld.render();
+                    break;
+                case "strokeSmoothing":
+                    this.setShapeProperty(el, "strokeSmoothing", value);
+                    el.elementModel.shapeModel.GLGeomObj.setSmoothingAmount(val);
+                    el.elementModel.shapeModel.GLWorld.render();
+                    break;
+                case "doSmoothing":
+                    this.setShapeProperty(el, "doSmoothing", value);
+                    el.elementModel.shapeModel.GLGeomObj.setDoSmoothing(value);
+                    el.elementModel.shapeModel.GLWorld.render();
+                    break;
+                case "isCalligraphic":
+                    this.setShapeProperty(el, "isCalligraphic", value);
+                    el.elementModel.shapeModel.GLGeomObj.setStrokeUseCalligraphic(value);
+                    el.elementModel.shapeModel.GLWorld.render();
+                    break;
+                case "strokeAngle":
+                    this.setShapeProperty(el, "strokeAngle", value);
+                    el.elementModel.shapeModel.GLGeomObj.setStrokeAngle(Math.PI * val/180);
+                    el.elementModel.shapeModel.GLWorld.render();
+                    break;
                 default:
                     CanvasController.setProperty(el, p, value);
             }
@@ -139,6 +164,43 @@ exports.ShapesController = Montage.create(CanvasController, {
                     return this.getColor(el, false);
                 case "background":
                     return this.getColor(el, true);
+                case "strokeHardness":
+                    if (el.elementModel && el.elementModel.shapeModel){
+                        return el.elementModel.shapeModel.GLGeomObj.getStrokeHardness();
+                    } else {
+                        return null;
+                    }
+                    break;
+                case "doSmoothing":
+                    if (el.elementModel && el.elementModel.shapeModel){
+                        return el.elementModel.shapeModel.GLGeomObj.getDoSmoothing();
+                    } else {
+                        return null;
+                    }
+                    break;
+                case "strokeSmoothing":
+                    if (el.elementModel && el.elementModel.shapeModel){
+                        return el.elementModel.shapeModel.GLGeomObj.getSmoothingAmount();
+                    } else {
+                        return null;
+                    }
+                    break;
+                case "isCalligraphic":
+                    if (el.elementModel && el.elementModel.shapeModel){
+                        return el.elementModel.shapeModel.GLGeomObj.getStrokeUseCalligraphic();
+                    } else {
+                        return null;
+                    }
+                    break;
+                case "strokeAngle":
+                    if (el.elementModel && el.elementModel.shapeModel){
+                        return 180*el.elementModel.shapeModel.GLGeomObj.getStrokeAngle()/Math.PI;
+                    } else {
+                        return null;
+                    }
+                    break;
+                
+
                 case "strokeMaterial":
                     var sm = el.elementModel.shapeModel.GLGeomObj.getStrokeMaterial();
                     if(sm)
@@ -270,8 +332,8 @@ exports.ShapesController = Montage.create(CanvasController, {
                 {
                     return this.application.ninja.colorController.colorModel.webGlToColor(el.elementModel.shapeModel.GLGeomObj.getFillColor());
                 }
-                else
-                {
+            else
+            {
                     return null;
                 }
             }
@@ -300,7 +362,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                 if( !m || (m.getName() !== "RadialGradientMaterial") )
                 {
                     gradientM = Object.create(MaterialsModel.getMaterial("RadialGradientMaterial"));
-                }
+            }
             }
             else
             {
@@ -312,17 +374,17 @@ exports.ShapesController = Montage.create(CanvasController, {
 
             if(gradientM)
             {
-                if(isFill)
-                {
+            if(isFill)
+            {
                     el.elementModel.shapeModel.GLGeomObj.setFillMaterial(gradientM);
                 }
                 else
                 {
                     el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(gradientM);
                 }
-                el.elementModel.shapeModel.GLGeomObj.buildBuffers();
-            }
-        }
+                        el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                    }
+                }
     },
 
     _setFlatMaterial: {
@@ -339,10 +401,10 @@ exports.ShapesController = Montage.create(CanvasController, {
             }
 
             if(!m || ((m.getName() === "LinearGradientMaterial") || m.getName() === "RadialGradientMaterial") )
-            {
+                {
                 flatM = Object.create(MaterialsModel.getMaterial("FlatMaterial"));
                 if(flatM)
-                {
+                    {
                     if(isFill)
                     {
                         el.elementModel.shapeModel.GLGeomObj.setFillMaterial(flatM);
@@ -351,10 +413,10 @@ exports.ShapesController = Montage.create(CanvasController, {
                     {
                         el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(flatM);
                     }
-                    el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                        el.elementModel.shapeModel.GLGeomObj.buildBuffers();
+                    }
                 }
             }
-        }
     },
 
     setColor: {
@@ -513,7 +575,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                 el.elementModel.shapeModel.useWebGl = true;
                 world.importJSON(worldData);
                 el.elementModel.shapeModel.GLGeomObj = world.getGeomRoot();
-            }
+                }
 
         }
     },
@@ -535,8 +597,8 @@ exports.ShapesController = Montage.create(CanvasController, {
                 el.elementModel.shapeModel.useWebGl = false;
                 world.importJSON(worldData);
                 el.elementModel.shapeModel.GLGeomObj = world.getGeomRoot();
+                }
             }
-        }
     },
 
     flip3DSense: {
@@ -567,7 +629,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                                 if(child.strokeColor.gradientMode === "radial")
                                 {
                                     child.strokeMat = "RadialGradientMaterial";
-                                }
+            }
                                 else
                                 {
                                     child.strokeMat = "LinearGradientMaterial";
