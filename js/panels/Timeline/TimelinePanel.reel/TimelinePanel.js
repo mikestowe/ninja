@@ -305,8 +305,19 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     			// Clear for future DnD
     			this._dropLayerID = null;
     			this._dragLayerID = null;
+    			
+    			// Sometimes, just to be fun, the drop and dragend events don't fire.
+    			// So just in case, set the draw routine to delete the helper.
+    			this._deleteHelper = true;
+    			this.needsDraw = true;
     		}
     	}
+    },
+    _appendHelper: {
+    	value: false
+    },
+    _deleteHelper: {
+    	value: false
     },
     /* === END: Models === */
     /* === BEGIN: Draw cycle === */
@@ -329,7 +340,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     willDraw:{
         value:function () {
             if (this._isLayer) {
-              //  this.createNewLayer();
                 this._isLayer = false;
             }
         }
@@ -350,6 +360,26 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     				this._dragAndDropHelper.style.top = this._dragAndDropHelperCoords;
     			}
     			this._dragAndDropHelperCoords = false;
+    		}
+    		// Do we have a helper to delete?
+    		if (this._deleteHelper === true) {
+    			if (this._dragAndDropHelper === null) {
+    				// Problem....maybe a helper didn't get appended, or maybe it didn't get stored.
+    				// Try and recover the helper so we can delete it.
+    				var myHelper = this.container_layers.querySelector(".timeline-dnd-helper");
+    				if (myHelper != null) {
+    					this._dragAndDropHelper = myHelper;
+    				}
+    			}
+	            if (this._dragAndDropHelper !== null) {
+	            	// We need to delete the helper.  Can we delete it from container_layers?
+	            	if (this._dragAndDropHelper && this._dragAndDropHelper.parentNode === this.container_layers) {
+	            		this.container_layers.removeChild(this._dragAndDropHelper);
+	            		this._dragAndDropHelper = null;
+	            		this._deleteHelper = false;
+	            	}
+	            } 
+	            
     		}
     	}
     },
@@ -1043,7 +1073,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		}
     		this._dragAndDropHelperOffset = findYOffset(this.container_layers);
     		this._appendHelper = true;
-            // this.container_layers.appendChild(this._dragAndDropHelper);
+    		this._deleteHelper = false;
     	}
     },
     handleLayerDragover: {
@@ -1056,23 +1086,17 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
     handleLayerDragEnd : {
     	value: function(event) {
-            // Delete the helper and clean up
-            if (this._dragAndDropHelper !== null) {
-            	this.container_layers.removeChild(this._dragAndDropHelper);
-				this._dragAndDropHelper = null;
-            }
+    		this._deleteHelper = true;
+    		this.needsDraw = true;
+           
     	}
     },
     handleLayerDrop : {
     	value: function(event) {
             event.stopPropagation();
             event.preventDefault();
-    		// Usually drop fires after dragend, but sometimes
-    		// dragend doesn't fire. So if we're here in drop 
-    		// and there's still a helper, we need to manually fire dragend.
-    		if (this._dragAndDropHelper !== null) {
-    			this.handleLayerDragEnd(event);
-    		}
+            this._deleteHelper = true; 
+            this.needsDraw = true;
     	}
     },
     /* === END: Controllers === */
