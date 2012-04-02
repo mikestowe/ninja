@@ -212,7 +212,7 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = RDGE.createMaterialNode(this.getShaderName());
+		this._materialNode = RDGE.createMaterialNode(this.getShaderName() + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		// send the current values to the shader
@@ -246,6 +246,59 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
 			this._shader['default'].u_colorStop4.set( [s] );
 
 			this.setAngle( this.getAngle() );
+		}
+	};
+
+	this.exportJSON = function()
+	{
+		var jObj =
+		{
+			'material'		: this.getShaderName(),
+			'name'			: this.getName(),
+			'color1'		: this.getColor1(),
+			'color2'		: this.getColor2(),
+			'color3'		: this.getColor3(),
+			'color4'		: this.getColor4(),
+			'colorStop1'	: this.getColorStop1(),
+			'colorStop2'	: this.getColorStop2(),
+			'colorStop3'	: this.getColorStop3(),
+			'colorStop4'	: this.getColorStop4(),
+			'angle'			: this.getAngle()
+		};
+
+		return jObj;
+	};
+
+	this.importJSON = function( jObj )
+	{
+        if (this.getShaderName() != jObj.material)  throw new Error( "ill-formed material" );
+        this.setName(  jObj.name );
+
+		try
+		{
+			var color1	= jObj.color1,
+				color2	= jObj.color2,
+				color3	= jObj.color3,
+				color4	= jObj.color4,
+				colorStop1	= jObj.colorStop1,
+				colorStop2	= jObj.colorStop2,
+				colorStop3	= jObj.colorStop3,
+				colorStop4	= jObj.colorStop4,
+				angle = jObj.angle;
+
+			this.setProperty( "color1", color1 );
+			this.setProperty( "color2", color2 );
+			this.setProperty( "color3", color3 );
+			this.setProperty( "color4", color4 );
+			this.setProperty( "colorStop1", colorStop1 );
+			this.setProperty( "colorStop2", colorStop2 );
+			this.setProperty( "colorStop3", colorStop3 );
+			this.setProperty( "colorStop4", colorStop4 );
+			this.setProperty( "angle", angle );
+		}
+		catch (e)
+		{
+			throw new Error( "could not import material: " + importStr );
 		}
 	};
 

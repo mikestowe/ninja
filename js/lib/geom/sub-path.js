@@ -6,7 +6,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 
 var VecUtils =      require("js/helper-classes/3D/vec-utils").VecUtils;
-
+var CanvasController = require("js/controllers/elements/canvas-controller").CanvasController;
 var GeomObj =       require("js/lib/geom/geom-obj").GeomObj;
 var AnchorPoint =   require("js/lib/geom/anchor-point").AnchorPoint;
 var MaterialsModel = require("js/models/materials-model").MaterialsModel;
@@ -61,6 +61,9 @@ var GLSubpath = function GLSubpath() {
     //whether or not to use the canvas drawing to stroke/fill
     this._useCanvasDrawing = true;
 
+    //the canvas that will draw this subpath
+    this._canvas = null;
+    
     //the X and Y location of this subpath's canvas in stage world space of Ninja
     this._canvasX = 0;
     this._canvasY = 0;
@@ -73,7 +76,7 @@ var GLSubpath = function GLSubpath() {
     this._materialAmbient = [0.2, 0.2, 0.2, 1.0];
     this._materialDiffuse = [0.4, 0.4, 0.4, 1.0];
     this._materialSpecular = [0.4, 0.4, 0.4, 1.0];
-    this._fillColor = [0.4, 0.4, 0.4, 1.0];
+    this._fillColor = [1.0, 1.0, 1.0, 0.0];
     this._fillMaterial = null;
     this._DISPLAY_ANCHOR_RADIUS = 5;
     //drawing context
@@ -131,6 +134,11 @@ var GLSubpath = function GLSubpath() {
         var bboxHeight = bboxMax[1] - bboxMin[1];
         var bboxMid = [0.5 * (bboxMax[0] + bboxMin[0]), 0.5 * (bboxMax[1] + bboxMin[1]), 0.5 * (bboxMax[2] + bboxMin[2])];
 
+        if (this._canvas) {
+            CanvasController.setProperty(this._canvas, "width", bboxWidth+"px");
+            CanvasController.setProperty(this._canvas, "height", bboxHeight+"px");
+            this._canvas.elementModel.shapeModel.GLWorld.setViewportFromCanvas(this._canvas);
+        }
         ctx.clearRect(0, 0, bboxWidth, bboxHeight);
 
         ctx.lineWidth = this._strokeWidth;
@@ -144,6 +152,7 @@ var GLSubpath = function GLSubpath() {
             //ctx.fillStyle = MathUtils.colorToHex( this._fillColor );
             var fillColorStr = "rgba("+parseInt(255*this._fillColor[0])+","+parseInt(255*this._fillColor[1])+","+parseInt(255*this._fillColor[2])+","+this._fillColor[3]+")";
             ctx.fillStyle = fillColorStr;
+            console.log("Fill color:" + fillColorStr);
         }
         var lineCap = ['butt','round','square'];
         ctx.lineCap = lineCap[1];
@@ -256,6 +265,10 @@ GLSubpath.prototype = new GeomObj();
 /////////////////////////////////////////////////////////
 // Property Accessors/Setters
 /////////////////////////////////////////////////////////
+GLSubpath.prototype.setCanvas = function (c) {
+    this._canvas = c;
+};
+
 GLSubpath.prototype.setWorld = function (world) {
     this._world = world;
 };
@@ -584,6 +597,90 @@ GLSubpath.prototype.pickAnchor = function (pickX, pickY, pickZ, radius) {
     return selAnchorIndex;
 };
 
+GLSubpath.prototype.isWithinBBox =function(x,y,z){
+    if (this._BBoxMin[0]>x || this._BBoxMin[1]>y || this._BBoxMin[2]>z){
+        return false;
+    }
+    if (this._BBoxMax[0]<x || this._BBoxMax[1]<y || this._BBoxMax[2]<z){
+        return false;
+    }
+    return true;
+}
+
+//pick the path point closest to the specified location, return null if some anchor point (or its handles) is within radius, else return the parameter distance
+GLSubpath.prototype.pathHitTest = function (pickX, pickY, pickZ, radius) {
+    var numAnchors = this._Anchors.length;
+    var selAnchorIndex = -1;
+    var retParam = null;
+    var radSq = radius * radius;
+    var minDistance = Infinity;
+
+    //check if the location is close to the currently selected anchor position
+    if (this._selectedAnchorIndex>=0 && this._selectedAnchorIndex<this._Anchors.length){
+        var distSq = this._Anchors[this._selectedAnchorIndex].getDistanceSq(pickX, pickY, pickZ);
+        //check the anchor point
+        if (distSq < minDistance && distSq < radSq) {
+            selAnchorIndex = this._selectedAnchorIndex;
+            minDistance = distSq;
+        }
+    }
+    //check the prev and next of the selected anchor if the above did not register a hit
+    if (this._selectedAnchorIndex>=0 && selAnchorIndex === -1) {
+        var distSq = this._Anchors[this._selectedAnchorIndex].getPrevDistanceSq(pickX, pickY, pickZ);
+        if (distSq < minDistance && distSq < radSq){
+            selAnchorIndex = this._selectedAnchorIndex;
+            minDistance = distSq;
+        } else {
+            //check the next for this anchor point
+            distSq = this._Anchors[this._selectedAnchorIndex].getNextDistanceSq(pickX, pickY, pickZ);
+            if (distSq<minDistance && distSq<radSq){
+                selAnchorIndex = this._selectedAnchorIndex;
+                minDistance = distSq;
+            }
+        }
+    }
+
+    //now check if the location is close to any anchor position
+    if (selAnchorIndex===-1) {
+        for (var i = 0; i < numAnchors; i++) {
+            var distSq = this._Anchors[i].getDistanceSq(pickX, pickY, pickZ);
+            //check the anchor point
+            if (distSq < minDistance && distSq < radSq) {
+                selAnchorIndex = i;
+                minDistance = distSq;
+            }
+        }//for every anchor i
+    }
+
+    //finally check if the location is close to the curve itself
+    if (selAnchorIndex===-1) {
+        //first check if the input location is within the bounding box
+        if (this.isWithinBBox(pickX,pickY,pickZ)){
+            var numSegments = this._isClosed ? numAnchors : numAnchors-1;
+            for (var i = 0; i < numSegments; i++) {
+                var nextIndex = (i+1)%numAnchors;
+                //check if the point is close to the bezier segment between anchor i and anchor nextIndex
+                var controlPoints = [[this._Anchors[i].getPosX(),this._Anchors[i].getPosY(),this._Anchors[i].getPosZ()],
+                    [this._Anchors[i].getNextX(),this._Anchors[i].getNextY(),this._Anchors[i].getNextZ()],
+                    [this._Anchors[nextIndex].getPrevX(),this._Anchors[nextIndex].getPrevY(),this._Anchors[nextIndex].getPrevZ()],
+                    [this._Anchors[nextIndex].getPosX(),this._Anchors[nextIndex].getPosY(),this._Anchors[nextIndex].getPosZ()]];
+                var point = [pickX, pickY, pickZ];
+                if (this._isWithinBoundingBox(point, controlPoints, radius)) {
+                    //var intersectParam = this._checkIntersection(controlPoints, 0.0, 1.0, point, radius);
+                    var intersectParam = this._checkIntersectionWithSamples(this._anchorSampleIndex[i], this._anchorSampleIndex[nextIndex], point, radius);
+                    console.log("intersectParam:"+intersectParam);
+                    if (intersectParam){
+                        selAnchorIndex=i;
+                        retParam = intersectParam-i; //make the retParam go from 0 to 1
+                        break;
+                    }
+                }
+            }//for every anchor i
+        }//if is within bbox
+    }
+    return [selAnchorIndex,retParam];
+}     //GLSubpath.pathHitTest function
+
 //pick the path point closest to the specified location, return null if some anchor point (or its handles) is within radius, else return the parameter distance
 GLSubpath.prototype.pickPath = function (pickX, pickY, pickZ, radius) {
     var numAnchors = this._Anchors.length;
@@ -689,6 +786,7 @@ GLSubpath.prototype.getStrokeWidth = function () {
 
 GLSubpath.prototype.setStrokeWidth = function (w) {
     this._strokeWidth = w;
+    this._dirty=true;
 };
 
 GLSubpath.prototype.getStrokeMaterial = function () {
@@ -1105,7 +1203,7 @@ GLSubpath.prototype.getNearVertex = function( eyePt, dir ){
     bboxDim[1] = 0.5 * (this._BBoxMax[1] - this._BBoxMin[1]);
     bboxMid[1] = 0.5 * (this._BBoxMax[1] + this._BBoxMin[1]);
     bboxDim[2] = 0.5 * (this._BBoxMax[2] - this._BBoxMin[2]);
-    bboxMid[3] = 0.5 * (this._BBoxMax[2] + this._BBoxMin[2]);
+    bboxMid[2] = 0.5 * (this._BBoxMax[2] + this._BBoxMin[2]);
 
     // convert the stroke vertices into normalized device coordinates
     var world = this.getWorld();

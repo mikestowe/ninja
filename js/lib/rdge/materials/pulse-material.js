@@ -101,7 +101,7 @@ var PulseMaterial = function PulseMaterial() {
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = RDGE.createMaterialNode("pulseMaterial");
+		this._materialNode = RDGE.createMaterialNode("pulseMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;
@@ -126,18 +126,6 @@ var PulseMaterial = function PulseMaterial() {
 				var wrap = 'REPEAT',  mips = true;
 				var tex = this.loadTexture( texMapName, wrap, mips );
 				
-				/*
-				var glTex = new GLTexture( this.getWorld() );
-				var prevWorld = this.findPreviousWorld();
-				if (prevWorld)
-				{
-					var srcCanvas = prevWorld.getCanvas();
-					tex = glTex.loadFromCanvas( srcCanvas );
-				}
-				else
-					tex = glTex.loadFromFile( texMapName, wrap, mips );
-				*/
-
 				if (tex) {
 					technique.u_tex0.set( tex );
                 }
@@ -174,10 +162,49 @@ var PulseMaterial = function PulseMaterial() {
 		}
 	};
 
+	// JSON export
+	this.exportJSON = function()
+	{
+		var jObj =
+		{
+			'material'		: this.getShaderName(),
+			'name'			: this.getName(),
+			'texture'		: this._propValues[this._propNames[0]],
+            'dTime'         : this._dTime
+		};
+
+		return jObj;
+	};
+
+	this.importJSON = function( jObj ) {
+        if (this.getShaderName() != jObj.material)  throw new Error( "ill-formed material" );
+        this.setName(  jObj.name );
+
+        try {
+			this._propValues[this._propNames[0]] = jObj.texture;
+			this._texMap = jObj.texture;
+            if (jObj.dTime) {
+                this._dTime = jObj.dTime;
+            }
+        }
+        catch (e)
+        {
+            throw new Error( "could not import material: " + jObj );
+        }
+	};
+
+
 	this.export = function() {
 		// every material needs the base type and instance name
 		var exportStr = "material: " + this.getShaderName() + "\n";
 		exportStr += "name: " + this.getName() + "\n";
+		
+		var world = this.getWorld();
+		if (!world)
+			throw new Error( "no world in material.export, " + this.getName() );
+
+		var texMapName =  this._propValues[this._propNames[0]];
+		exportStr += "texture: " +texMapName + "\n";
 		
 		// every material needs to terminate like this
 		exportStr += "endMaterial\n";
@@ -193,6 +220,8 @@ var PulseMaterial = function PulseMaterial() {
 
 		var rtnStr;
         try {
+			this._propValues[this._propNames[0]] = pu.nextValue( "texture: " );
+
             var endKey = "endMaterial\n";
             var index = importStr.indexOf( endKey );
             index += endKey.length;

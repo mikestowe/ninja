@@ -50,6 +50,10 @@
                     "element" : {"#": "textToolObject"}
                 }
             },
+
+            "focusManager": {
+                "object": "js/components/focus-manager.reel"
+            },
             
             "owner": {
                 "module": "js/stage/stage.reel",
@@ -63,7 +67,8 @@
                     "stageDeps": {"@": "StageDeps1"},
                     "layout":   {"@": "layout1"},
 					"stageView": {"@": "stageView"},
-                    "textTool": {"@": "textTool"}
+                    "textTool": {"@": "textTool"},
+                    "focusManager": {"@": "focusManager"}
                 },
                 "bindings": {
                     "currentDocumentStageView": {

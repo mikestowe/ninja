@@ -53,7 +53,7 @@ var FlyMaterial = function FlyMaterial() {
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = RDGE.createMaterialNode("flyMaterial");
+		this._materialNode = RDGE.createMaterialNode("flyMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;

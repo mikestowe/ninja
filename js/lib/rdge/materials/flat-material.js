@@ -36,8 +36,13 @@ var FlatMaterial = function FlatMaterial() {
 	// duplcate method requirde
 	this.dup = function()	{  return new FlatMaterial();	} ;
 
-	this.init = function()
+	this.init = function( world )
 	{
+		// save the world
+		if (world)
+		{
+			this.setWorld( world );
+
 		// set up the shader
 	    this._shader = new RDGE.jshader();
 		this._shader.def = flatShaderDef;
@@ -47,8 +52,11 @@ var FlatMaterial = function FlatMaterial() {
 		this._shader.colorMe.color.set( this.getColor() );
 
 		// set up the material node
-		this._materialNode = RDGE.createMaterialNode("flatMaterial");
+		this._materialNode = RDGE.createMaterialNode("flatMaterial_" + world.generateUniqueNodeID() );
 		this._materialNode.setShader(this._shader);
+		}
+		else
+			throw new Error( "GLWorld not supplied to material initialization" );
 	};
 
 
@@ -73,15 +81,12 @@ var FlatMaterial = function FlatMaterial() {
 	};
     ///////////////////////////////////////////////////////////////////////
 
-	this.export = function() {
+	this.export = function()
+	{
 		// this function should be overridden by subclasses
 		var exportStr = "material: " + this.getShaderName() + "\n";
 		exportStr += "name: " + this.getName() + "\n";
-		
-		if (this._shader)
-			exportStr += "color: " + String(this._shader.colorMe.color) + "\n";
-		else
-			exportStr += "color: " + this.getColor() + "\n";
+		exportStr += "color: " + String(this._propValues["color"]) + "\n";
 		exportStr += "endMaterial\n";
 
 		return exportStr;
@@ -97,13 +102,7 @@ var FlatMaterial = function FlatMaterial() {
         try
         {
             var color  = eval( "[" + pu.nextValue( "color: " ) + "]" );
-
             this.setProperty( "color",  color);
-
-            var endKey = "endMaterial\n";
-            var index = importStr.indexOf( endKey );
-            index += endKey.length;
-            rtnStr = importStr.substr( index );
         }
         catch (e)
         {
@@ -112,6 +111,27 @@ var FlatMaterial = function FlatMaterial() {
 
         return rtnStr;
     };
+
+	this.exportJSON = function()
+	{
+		var jObj =
+		{
+			'material'		: this.getShaderName(),
+			'name'			: this.getName(),
+			'color'			: this._propValues["color"]
+		};
+
+		return jObj;
+	}
+
+	this.importJSON = function( jObj )
+	{
+        if (this.getShaderName() != jObj.material)  throw new Error( "ill-formed material" );
+        this.setName(  jObj.name );
+        
+		var color  = jObj.color;
+		this.setProperty( "color",  color);
+	}
 
 	this.update = function( time )
 	{

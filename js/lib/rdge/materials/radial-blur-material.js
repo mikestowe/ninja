@@ -94,7 +94,7 @@ var RadialBlurMaterial = function RadialBlurMaterial() {
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = RDGE.createMaterialNode("radialBlurMaterial");
+		this._materialNode = RDGE.createMaterialNode("radialBlurMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;
@@ -157,10 +157,49 @@ var RadialBlurMaterial = function RadialBlurMaterial() {
 		}
 	};
 
+	this.exportJSON = function()
+	{
+		var jObj =
+		{
+			'material'		: this.getShaderName(),
+			'name'			: this.getName(),
+			'color'			: this._propValues["color"],
+			'texture'		: this._propValues[this._propNames[0]]
+		};
+
+		return jObj;
+	};
+
+	this.importJSON = function( jObj )
+	{
+        if (this.getShaderName() != jObj.material)  throw new Error( "ill-formed material" );
+        this.setName( jObj.name );
+
+		var rtnStr;
+        try
+        {
+            this._propValues[this._propNames[0]] = jObj.texture;
+			this.updateTexture();
+        }
+        catch (e)
+        {
+            throw new Error( "could not import material: " + importStr );
+        }
+		
+		return rtnStr;
+	};
+
 	this.export = function() {
 		// every material needs the base type and instance name
 		var exportStr = "material: " + this.getShaderName() + "\n";
 		exportStr += "name: " + this.getName() + "\n";
+		
+		var world = this.getWorld();
+		if (!world)
+			throw new Error( "no world in material.export, " + this.getName() );
+
+		var texMapName =  this._propValues[this._propNames[0]];
+		exportStr += "texture: " + texMapName + "\n";
 		
 		// every material needs to terminate like this
 		exportStr += "endMaterial\n";
@@ -235,10 +274,47 @@ var radialBlurMaterialDef =
 	}
 };
 
+
+var RaidersMaterial = function RaidersMaterial()
+{
+	// initialize the inherited members
+	this.inheritedFrom = RadialBlurMaterial;
+	this.inheritedFrom();
+
+	this._name = "RaidersMaterial";
+	this._shaderName = "raiders";
+
+	this._texMap = 'assets/images/raiders.png';
+	this._propValues[ this._propNames[0] ] = this._texMap.slice(0);
+
+
+    // duplcate method requirde
+    this.dup = function( world ) {
+        // allocate a new uber material
+        var newMat = new RaidersMaterial();
+
+        // copy over the current values;
+        var propNames = [],  propValues = [],  propTypes = [],  propLabels = [];
+        this.getAllProperties( propNames,  propValues,  propTypes,  propLabels);
+        var n = propNames.length;
+        for (var i=0;  i<n;  i++)
+            newMat.setProperty( propNames[i], propValues[i] );
+
+        return newMat;
+    };
+}
+
+RaidersMaterial.prototype = new Material();
+
+if (typeof exports === "object")
+{
+	exports.RaidersMaterial = RaidersMaterial;
+}
+
+
 RadialBlurMaterial.prototype = new Material();
 
-if (typeof exports === "object") {
+if (typeof exports === "object")
     exports.RadialBlurMaterial = RadialBlurMaterial;
-}
 
 

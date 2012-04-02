@@ -85,13 +85,12 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
             }
         },
         "bindButton": {
-            "module": "js/components/button.reel",
-            "name":  "Button",
+            "prototype": "montage/ui/toggle-button.reel",
             "properties": {
-                "element": {"#" :"posBound"},
-                "isToggleButton": true,
-                "onState": "LockToolUp",
-                "offState": "UnLockToolUp"
+                "element": {"#": "posBound"},
+                "pressedClass": "lockUp",
+                "preventFocus": true,
+                "identifier": "ratio"
             }
         }
     }
@@ -119,7 +118,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
        </section>
         <hr />
         <section class="fieldCol">
-            <button id="posBound"></button>
+            <button id="posBound" class="unlock"></button>
             <label>Width:</label>
             <article class="fieldRow twoCol">
                 <div>

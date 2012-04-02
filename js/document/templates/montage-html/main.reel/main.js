@@ -17,8 +17,25 @@ exports.Main = Montage.create(Component, {
      */
     templateDidLoad: {
         value: function(){
-            window.addComponent = this.addComponentToUserDocument;
-//            window.addBinding = this.addBindingToUserDocument;
+            var self = this;
+            window.addComponent = function(element, data, callback) {
+                var component;
+
+                component = require.async(data.path)
+                    .then(function(component) {
+                        var componentRequire = component[data.name];
+                        var componentInstance = componentRequire.create();
+
+                        componentInstance.element = element;
+
+                        componentInstance.needsDraw = true;
+                        componentInstance.ownerComponent = self;
+
+                        callback(componentInstance, element);
+                    })
+                    .end();
+
+            };
 
             // Dispatch event when this template has loaded.
             var newEvent = document.createEvent( "CustomEvent" );
@@ -27,28 +44,5 @@ exports.Main = Montage.create(Component, {
             document.body.dispatchEvent( newEvent );
 
         }
-    },
-
-    // Adding components to the user document by using a async require.
-    addComponentToUserDocument:{
-        value:function(element, data, callback){
-
-            var component;
-
-            component = require.async(data.path)
-                .then(function(component) {
-                    var componentRequire = component[data.name];
-                    var componentInstance = componentRequire.create();
-
-                    componentInstance.element = element;
-                    //componentInstance.deserializedFromTemplate();
-                    componentInstance.needsDraw = true;
-
-                    callback(componentInstance, element);
-                })
-                .end();
-
-        }
     }
-
 });

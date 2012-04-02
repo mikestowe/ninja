@@ -55,18 +55,42 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
             this.fileInputField.newFileDirectory.value = this.folderUri;
 
             this.newFileName.addEventListener("keyup", function(evt){self.handleNewFileNameOnkeyup(evt);}, false);
+            this.newFileName.addEventListener("paste", this, false);
             this.eventManager.addEventListener("newFileDirectorySet", function(evt){self.handleNewFileDirectorySet(evt);}, false);
 
             this.okButton.addEventListener("click", function(evt){self.handleOkButtonAction(evt);}, false);
             this.cancelButton.addEventListener("click", function(evt){self.handleCancelButtonAction(evt);}, false);
 
+            this.newFileName.focus();
+            this.newFileName.select();
+
             this.enableOk();
+
+            this.element.addEventListener("keyup", function(evt){
+                if(evt.keyCode == 27) {//ESC key
+                    if(self.application.ninja.newFileController.saveAsDialog !== null){
+                        self.handleCancelButtonAction();
+                    }
+                }else if((evt.keyCode == 13) && !(evt.ctrlKey || evt.metaKey)){//ENTER key
+                    if((self.application.ninja.newFileController.saveAsDialog !== null)
+                        && !self.okButton.hasAttribute("disabled")){
+
+                        self.handleOkButtonAction();
+                    }
+                }
+            }, true);
+
         }
     },
 
     handleNewFileDirectorySet:{
          value:function(evt){
-             if(!!evt._event.newFileDirectory){
+             if(evt.keyCode === 13){
+                 if(!this.okButton.hasAttribute("disabled")) this.handleOkButtonAction(evt);
+             }else if(evt.keyCode === 27){
+                 this.handleCancelButtonAction(evt);
+             }
+             else if(!!evt._event.newFileDirectory){
                  this.folderUri = evt._event.newFileDirectory;
                  if(this.isValidUri(this.folderUri)){
                      this.enableOk();
@@ -75,6 +99,14 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
          }
      },
 
+    handlePaste:{
+        value:function(evt){
+            evt.preventDefault();
+            evt.target.value = evt.clipboardData.getData("Text");
+            this.handleNewFileNameOnkeyup(evt);
+        }
+    },
+
     handleNewFileNameOnkeyup:{
           value:function(evt){
               this.fileName = this.newFileName.value;
@@ -82,6 +114,13 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
                   if(this.isValidFileName(this.fileName)){
                       this.enableOk();
                   }
+              }
+              if(evt.keyCode === 13){
+                  if(!this.okButton.hasAttribute("disabled")){
+                      this.handleOkButtonAction(evt);
+                  }
+              }else if(evt.keyCode === 27){
+                  this.handleCancelButtonAction(evt);
               }
           }
     },
@@ -99,7 +138,7 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
     handleCancelButtonAction :{
         value:function(evt){
             //clean up memory
-            //this.cleanup();
+            this.cleanup();
 
             if(this.popup){
                 this.popup.hide();
@@ -111,7 +150,7 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
     handleOkButtonAction:{
         value: function(evt){
             var filename = this.fileName,
-                newFileDirectory = this.newFileDirectory,
+                newFileDirectory = this.folderUri,
                 success = true;
             if(this.isValidFileName(this.fileName) && this.isValidUri(this.folderUri) && !this.checkFileExists(this.fileName, this.folderUri)){
                 try{
@@ -128,13 +167,13 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
                     }
                 }catch(e){
                         success = false;
-                        console.log("[ERROR] Failed to save:  "+ this.fileName + " at "+ this.newFileDirectory);
+                        console.log("[ERROR] Failed to save:  "+ this.fileName + " at "+ newFileDirectory);
                         console.log(e.stack);
                 }
 
                 if(success){
                     //clean up memory
-                    //this.cleanup();
+                    this.cleanup();
 
                     if(this.popup){
                         this.popup.hide();
@@ -227,6 +266,20 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
                 }
                 return status;
             }
+        },
+
+    cleanup:{
+        value:function(){
+            var self = this;
+
+            //remove event listener
+            this.newFileName.removeEventListener("keyup", function(evt){self.handleNewFileNameOnkeyup(evt);}, false);
+            this.eventManager.removeEventListener("newFileDirectorySet", function(evt){self.handleNewFileDirectorySet(evt);}, false);
+            this.okButton.removeEventListener("click", function(evt){self.handleOkButtonAction(evt);}, false);
+            this.cancelButton.removeEventListener("click", function(evt){self.handleCancelButtonAction(evt);}, false);
+
+            this.application.ninja.newFileController.saveAsDialog = null;
         }
+    }
 
 });

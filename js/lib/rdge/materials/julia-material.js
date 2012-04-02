@@ -21,11 +21,7 @@ var JuliaMaterial = function JuliaMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Properties
     ///////////////////////////////////////////////////////////////////////
-	// no properties
-	this._propNames			= [];
-	this._propLabels		= [];
-	this._propTypes			= [];
-	this._propValues		= [];
+	// properties inherited from PulseMaterial
 
     ///////////////////////////////////////////////////////////////////////
     // Methods
@@ -55,7 +51,7 @@ var JuliaMaterial = function JuliaMaterial() {
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = RDGE.createMaterialNode("juliaMaterial");
+		this._materialNode = RDGE.createMaterialNode("juliaMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;

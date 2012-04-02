@@ -42,8 +42,10 @@ function TaperMaterial()
 	// duplcate method requirde
 	this.dup = function()	{  return new TaperMaterial();	} 
 
-	this.init = function()
+	this.init = function( world )
 	{
+		this.setWorld( world );
+
 		// set up the shader
 	    this._shader = new RDGE.jshader();
 		this._shader.def = taperShaderDef;
@@ -53,7 +55,7 @@ function TaperMaterial()
 		this._shader.colorMe.color.set( this.getColor() );
 
 		// set up the material node
-		this._materialNode = RDGE.createMaterialNode("taperMaterial");
+		this._materialNode = RDGE.createMaterialNode("taperMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		// initialize the taper properties
@@ -94,6 +96,33 @@ function TaperMaterial()
 		}
 	}
 	///////////////////////////////////////////////////////////////////////
+	this.exportJSON = function()
+	{
+		var jObj =
+		{
+			'material'		: this.getShaderName(),
+			'name'			: this.getName(),
+			'color'			: this._propValues["color"]
+		};
+
+		return jObj;
+	}
+
+	this.importJSON = function( jObj )
+	{
+        if (this.getShaderName() != jObj.material)  throw new Error( "ill-formed material" );
+        this.setName( jObj.name );
+
+		try
+		{
+			var color  = jObj.color;
+			this.setProperty( "color",  color);
+		}
+		catch (e)
+		{
+			throw new Error( "could not import material: " + jObj );
+		}
+	}
 
 	this.export = function()
 	{
@@ -102,7 +131,7 @@ function TaperMaterial()
 		exportStr += "name: " + this.getName() + "\n";
 		
 		if (this._shader)
-			exportStr += "color: " + String(this._shader.colorMe.color) + "\n";
+			exportStr += "color: " + this._shader.colorMe.color + "\n";
 		else
 			exportStr += "color: " + this.getColor() + "\n";
 		exportStr += "endMaterial\n";

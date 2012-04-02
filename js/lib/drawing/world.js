@@ -4,17 +4,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-// Useless Global variables.
-// TODO: Remove this as soon as QE test pass
-/*
-var shaderProgramArray = new Array;
-var glContextArray = new Array;
-var vertexShaderSource = "";
-var fragmentShaderSource = "";
-var rdgeStarted = false;
-*/
-
-var nodeCounter = 0;
 
 var GeomObj = require("js/lib/geom/geom-obj").GeomObj;
 var Line = require("js/lib/geom/line").Line;
@@ -22,11 +11,13 @@ var Rectangle = require("js/lib/geom/rectangle").Rectangle;
 var Circle = require("js/lib/geom/circle").Circle;
 var MaterialsModel = require("js/models/materials-model").MaterialsModel;
 
+var worldCounter = 0;
+
 ///////////////////////////////////////////////////////////////////////
 // Class GLWorld
 //      Manages display in a canvas
 ///////////////////////////////////////////////////////////////////////
-var World = function GLWorld( canvas, use3D ) {
+var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
@@ -39,7 +30,11 @@ var World = function GLWorld( canvas, use3D ) {
 
     this._canvas = canvas;
 	if (this._useWebGL) {
+        if(preserveDrawingBuffer) {
+            this._glContext = canvas.getContext("experimental-webgl", {preserveDrawingBuffer: true});
+        } else {
 		this._glContext = canvas.getContext("experimental-webgl");
+        }
     } else {
 		this._2DContext = canvas.getContext( "2d" );
     }
@@ -75,6 +70,12 @@ var World = function GLWorld( canvas, use3D ) {
 	// this allows us to turn off automatic updating if there are
 	// no animated materials
 	this._firstRender = true;
+
+	this._worldCount = worldCounter;
+	worldCounter++;
+
+	// keep a counter for generating node names
+	this._nodeCounter = 0;
 
     ///////////////////////////////////////////////////////////////////////
     // Property accessors
@@ -116,6 +117,8 @@ var World = function GLWorld( canvas, use3D ) {
 
 	this.getRenderer			= function()		{  return this.renderer;			};
 
+    // Flag to play/pause animation at authortime
+    this._previewAnimation = true;
   ////////////////////////////////////////////////////////////////////////////////////
   // RDGE
   // local variables
@@ -235,7 +238,7 @@ var World = function GLWorld( canvas, use3D ) {
 					if (this._canvas.task) {
 						this._firstRender = false;
 
-						if (!this.hasAnimatedMaterials()) {
+						if (!this.hasAnimatedMaterials() || !this._previewAnimation) {
 							this._canvas.task.stop();
 							//this._renderCount = 10;
 						}
@@ -350,17 +353,19 @@ var World = function GLWorld( canvas, use3D ) {
 		return false;
 	};
 
-
-	// END RDGE
-	////////////////////////////////////////////////////////////////////////////////////
+	this.generateUniqueNodeID = function() {
+		var str = "" + this._nodeCounter;
+		this._nodeCounter++;
+		return str;
+	};
 
     
     // start RDGE passing your runtime object, and false to indicate we don't need a an initialization state
     // in the case of a procedurally built scene an init state is not needed for loading data
 	if (this._useWebGL) {
 		rdgeStarted = true;
-		var id = this._canvas.getAttribute( "data-RDGE-id" ); 
-		this._canvas.rdgeid = id;
+                this._canvas.rdgeid = this._canvas.getAttribute( "data-RDGE-id" );
+		RDGE.globals.engine.unregisterCanvas( this._canvas );
 		RDGE.globals.engine.registerCanvas(this._canvas, this);
 		RDGE.RDGEStart( this._canvas );
 		this._canvas.task.stop()
@@ -391,7 +396,7 @@ World.prototype.updateObject = function (obj) {
     if (nPrims > 0) {
         ctrTrNode = obj.getTransformNode();
 		if (ctrTrNode == null) {
-		    ctrTrNode = RDGE.createTransformNode("objRootNode_" + nodeCounter++);
+			ctrTrNode = RDGE.createTransformNode("objRootNode_" + this._nodeCounter++);
 			this._rootNode.insertAsChild( ctrTrNode );
 			obj.setTransformNode( ctrTrNode );
 		}
@@ -401,7 +406,7 @@ World.prototype.updateObject = function (obj) {
 		});
 		ctrTrNode.meshes = [];
 
-        ctrTrNode.attachMeshNode(this.renderer.id + "_prim_" + nodeCounter++, prims[0]);
+        ctrTrNode.attachMeshNode(this.renderer.id + "_prim_" + this._nodeCounter++, prims[0]);
         ctrTrNode.attachMaterial(materialNodes[0]);
     }
 	
@@ -420,12 +425,12 @@ World.prototype.updateObject = function (obj) {
 			});
 			childTrNode.meshes = [];
 		} else {
-            childTrNode = RDGE.createTransformNode("objNode_" + nodeCounter++);
+			childTrNode = RDGE.createTransformNode("objNode_" + this._nodeCounter++);
 			ctrTrNode.insertAsChild(childTrNode);
 		}
 
         // attach the instanced box goe
-        childTrNode.attachMeshNode(this.renderer.id + "_prim_" + nodeCounter++, prim);
+        childTrNode.attachMeshNode(this.renderer.id + "_prim_" + this._nodeCounter++, prim);
         childTrNode.attachMaterial(materialNodes[i]);
     }
 };
@@ -680,7 +685,7 @@ World.prototype.render = function() {
 		var root = this.getGeomRoot();
 		this.hRender( root );
 	} else {
-		RDGE.globals.engine.setContext( this._canvas.rdgeId );
+		RDGE.globals.engine.setContext( this._canvas.rdgeid );
 		//this.draw();
 		this.restartRenderLoop();
 	}
@@ -727,7 +732,87 @@ World.prototype.getShapeFromPoint = function( offsetX, offsetY ) {
 	}
 };
 
-World.prototype.export = function() {
+
+
+World.prototype.exportJSON = function()
+{
+	// world properties
+	var worldObj = 
+	{
+		'version'	: 1.1,
+		'id'		: this.getCanvas().getAttribute( "data-RDGE-id" ),
+		'fov'		: this._fov,
+		'zNear'		: this._zNear,
+		'zFar'		: this._zFar,
+		'viewDist'	: this._viewDist,
+		'webGL'		: this._useWebGL
+	};
+
+	// RDGE scenegraph
+	if (this._useWebGL)
+		worldObj.scenedata = this.myScene.exportJSON();
+
+	// object data
+	var strArray = [];
+	this.exportObjectsJSON( this._geomRoot, worldObj );
+
+	// You would think that the RDGE export function
+	// would not be destructive of the data.  You would be wrong...
+	// We need to rebuild everything
+	if (this._useWebGL)
+	{
+		if (worldObj.children && (worldObj.children.length === 1))
+		{
+            this.rebuildTree(this._geomRoot);
+            this.restartRenderLoop();
+		}
+	}
+
+	// convert the object to a string
+	var jStr = JSON.stringify( worldObj );
+
+	// prepend some version information to the string.
+	// this string is also used to differentiate between JSON
+	// and pre-JSON versions of fileIO.
+	// the ending ';' in the version string is necessary
+	jStr = "v1.0;" + jStr;
+	
+	return jStr;
+}
+
+World.prototype.rebuildTree = function( obj )
+{
+	if (!obj)  return;
+
+	obj.buildBuffers();
+
+	if (obj.getChild()) {
+		 this.rebuildTree( obj.getChild () );
+    }
+
+	if (obj.getNext())
+		this.rebuildTree( obj.getNext() );
+}
+
+World.prototype.exportObjectsJSON = function( obj,  parentObj )
+{
+	if (!obj)  return;
+
+	var jObj = obj.exportJSON();
+	if (!parentObj.children)  parentObj.children = [];
+	parentObj.children.push( jObj );
+
+	if (obj.getChild()) {
+		 this.exportObjectsJSON( obj.getChild (), jObj  );
+    }
+
+	if (obj.getNext())
+		this.exportObjectsJSON( obj.getNext(), parentObj );
+}
+
+/*
+World.prototype.export = function()
+{
 	var exportStr = "GLWorld 1.0\n";
 	var id = this.getCanvas().getAttribute( "data-RDGE-id" );
 	exportStr += "id: " + id + "\n";
@@ -736,17 +821,29 @@ World.prototype.export = function() {
 	exportStr += "zNear: " + this._zNear + "\n";
 	exportStr += "zFar: " + this._zFar + "\n";
 	exportStr += "viewDist: " + this._viewDist + "\n";
+	if (this._useWebGL)
+		exportStr += "webGL: true\n";
 
 	// we need 2 export modes:  One for save/restore, one for publish.
 	// hardcoding for now
-	var exportForPublish = false;
+	//var exportForPublish = false;
+	//if (!exportForPublish)  exportForPublish = false;
+	var exportForPublish = true;
 	exportStr += "publish: " + exportForPublish + "\n";
 
-	if (exportForPublish) {
+	if (exportForPublish && this._useWebGL)
+	{
 		exportStr += "scenedata: " + this.myScene.exportJSON() + "endscene\n";
-	} else {
+
+		// write out all of the objects
+		exportStr += "tree\n";
+		exportStr += this.exportObjects( this._geomRoot );
+		exportStr += "endtree\n";
+	}
+	else
+	{
 		// output the material library
-		exportStr += MaterialsModel.exportMaterials();
+		//exportStr += MaterialsLibrary.export();	// THIS NEEDS TO BE DONE AT THE DOC LEVEL
 
 		// write out all of the objects
 		exportStr += "tree\n";
@@ -776,6 +873,7 @@ World.prototype.exportObjects = function( obj ) {
 	
 	return rtnStr;
 };
+*/
 
 World.prototype.findTransformNodeByMaterial = function( materialNode,  trNode ) {
 	//if (trNode == null)  trNode = this._ctrNode;
@@ -795,26 +893,116 @@ World.prototype.findTransformNodeByMaterial = function( materialNode,  trNode ) 
 	return rtnNode;
 };
 
+World.prototype.importJSON = function( jObj )
+{
+	if (jObj.webGL)
+	{
+		// start RDGE
+		rdgeStarted = true;
+		var id = this._canvas.getAttribute( "data-RDGE-id" ); 
+		this._canvas.rdgeid = id;
+		g_Engine.registerCanvas(this._canvas, this);
+		RDGEStart( this._canvas );
+		this._canvas.task.stop()
+	}
+
+	// import the objects
+	// there should be exactly one child of the parent object
+	if (jObj.children && (jObj.children.length === 1))
+		this.importObjectsJSON( jObj.children[0] );
+	else
+		throw new Error ("unrecoverable canvas import error - inconsistent root object: " + jObj.children );
+
+	if (!this._useWebGL)
+	{
+		// render using canvas 2D
+		this.render();
+	}
+	else
+		this.restartRenderLoop();
+}
+
+World.prototype.importObjectsJSON = function( jObj,  parentGeomObj )
+{
+	// read the next object
+	var gObj = this.importObjectJSON( jObj,  parentGeomObj );
+
+	// determine if we have children
+	if (jObj.children)
+	{
+		var nKids = ojObjbj.chilodren.length;
+		for (var i=0;  i<nKids;  i++)
+		{
+			var child = jObj.children[i];
+			this.importObjectsJSON( child, gObj );
+		}
+	}
+}
+
+World.prototype.importObjectJSON = function( jObj, parentGeomObj )
+{
+	var type = jObj.type;
+    var BrushStroke = require("js/lib/geom/brush-stroke").BrushStroke;
+
+	var obj;
+	switch (type)
+	{
+		case 1:
+			obj = new Rectangle();
+			obj.importJSON( jObj );
+			break;
+
+		case 2:		// circle
+			obj = new Circle();
+			obj.importJSON( jObj );
+			break;
+
+		case 3:		// line
+            obj = new Line();
+            obj.importJSON( jObj );
+            break;
+
+        case 6:     //brush stroke
+            obj = new BrushStroke();
+            obj.importJSON(jObj);
+            break;
+
+		default:
+			throw new Error( "Unrecognized object type: " + type );
+			break;
+	}
+
+	if (obj)
+		this.addObject( obj,  parentGeomObj );
+
+	return obj;
+};
+
 World.prototype.import = function( importStr ) {
 	// import the worldattributes - not currently used
 
 	// determine if the data was written for export (no Ninja objects)
 	// or for save/restore
-	var index = importStr.indexOf( "scenedata: " );
-	if (index >= 0) {
-		var rdgeStr = importStr.substr( index+11 );
-		var endIndex = rdgeStr.indexOf( "endscene\n" );
-		if (endIndex < 0)  throw new Error( "ill-formed WebGL data" );
-		var len = endIndex - index + 11;
-		rdgeStr = rdgeStr.substr( 0, endIndex );
+	//var index = importStr.indexOf( "scenedata: " );
+	var index = importStr.indexOf( "webGL: " );
+	this._useWebGL = (index >= 0)
+	if (this._useWebGL)
+	{
+		// start RDGE
+		rdgeStarted = true;
+		var id = this._canvas.getAttribute( "data-RDGE-id" ); 
+		this._canvas.rdgeid = id;
+		g_Engine.registerCanvas(this._canvas, this);
+		RDGEStart( this._canvas );
+		this._canvas.task.stop()
+	}
 
-		this.myScene.importJSON( rdgeStr );
-	} else {
-		// load the material library
-		importStr = MaterialsModel.importMaterials( importStr );
+	this.importObjects( importStr, this._rootNode );
 
-		// import the objects
-		this.importObjects( importStr, this._rootNode );
+	if (!this._useWebGL)
+	{
+		// render using canvas 2D
+		this.render();
 	}
 };
 

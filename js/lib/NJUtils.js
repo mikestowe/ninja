@@ -96,15 +96,45 @@ exports.NJUtils = Object.create(Object.prototype, {
         value: function(el, selection, controller, isShape) {
             var p3d = Montage.create(Properties3D).init(el);
             var shapeProps = null;
+            var pi = controller + "Pi";
+
             if(isShape) {
                 shapeProps = Montage.create(ShapeModel);
+            }
+
+            if(el.controller) {
+
+                var componentInfo = Montage.getInfoForObject(el.controller);
+                var componentName = componentInfo.objectName.toLowerCase();
+
+                controller  = "component";
+                isShape = false;
+
+                switch(componentName) {
+                    case "feedreader":
+                        selection = "Feed Reader";
+                        pi = "FeedReaderPi";
+                        break;
+                    case "map":
+                        selection = "Map";
+                        pi = "MapPi";
+                        break;
+                    case "youtubechannel":
+                        selection = "Youtube Channel";
+                        pi = "YoutubeChannelPi";
+                        break;
+                    case "picasacarousel":
+                        selection = "Picasa Carousel";
+                        pi = "PicasaCarouselPi";
+                        break;
+                }
             }
 
             el.elementModel = Montage.create(ElementModel, {
                     type:       { value: el.nodeName},
                     selection:  { value: selection},
                     controller: { value: ControllerFactory.getController(controller)},
-                    pi:         { value: controller + "Pi"},
+                    pi:         { value: pi},
                     props3D:    { value: p3d},
                     shapeModel: { value: shapeProps}
             });
@@ -116,7 +146,39 @@ exports.NJUtils = Object.create(Object.prototype, {
     ///// TODO: Selection and model should be based on the element type
     makeModelFromElement: {
         value: function(el) {
-            this.makeElementModel(el, "Div", "block", false);
+            var selection = "div",
+                controller = "block",
+                isShape = false;
+            switch(el.nodeName.toLowerCase())
+            {
+                case "div":
+                    break;
+                case "img":
+                    selection = "image";
+                    controller = "image";
+                    break;
+                case "video":
+                    selection = "video";
+                    controller = "video";
+                    break;
+                case "canvas":
+                    isShape = el.getAttribute("data-RDGE-id");
+                    if(isShape)
+                    {
+                        // TODO - Need more info about the shape
+                        selection = "canvas";
+                        controller = "shape";
+                    }
+                    else
+                    {
+                        selection = "canvas";
+                        controller = "canvas";
+                    }
+                    break;
+                case "shape":
+                    break;
+            }
+            this.makeElementModel(el, selection, controller, isShape);
         }
     },
 

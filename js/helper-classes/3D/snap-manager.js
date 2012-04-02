@@ -471,7 +471,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 		value: function( plane ) {
 			this._elementCache = new Array;
 
-			var stage = this.getStage();
+//			var stage = this.getStage();
+			var stage = this.application.ninja.currentSelectedContainer || this.getStage();
 			this.hLoadElementCache( stage,  plane, 0 );
             this._isCacheInvalid = false;
 
@@ -570,6 +571,11 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
 	hLoadElementCache : {
 		value: function( elt, plane, depth ) {
+            if(depth > 1)
+            {
+                return;
+            }
+
 			if (depth > 0)
 			{
 				// check if the element is on the specified plane
@@ -590,8 +596,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
                     elt.elementModel.isIn2DSnapCache = false;
 			}
 
-            // TODO - Don't traverse components' children
-//            if(elt.elementModel && elt.elementModel.isComponent)
+            // TODO - Don't traverse svg and components' children
             if(elt.nodeName.toLowerCase() === "svg" || (elt.elementModel && (elt.elementModel.isComponent || (elt.elementModel.selection === "SVG"))))
             {
                 return;
@@ -964,7 +969,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 	snapToElements : {
 		value: function( screenPt,  hitRecs ) {
 			// start at the stage.
-			var stage = this.getStage();
+//			var stage = this.getStage();
+            var stage = this.application.ninja.currentSelectedContainer || this.getStage();
 
 			// the root should be the 'view' canvas, so the first matrix is the camera
 			viewUtils.setViewportObj( stage );
@@ -980,6 +986,10 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 	{
 		value: function( elt, hitRecs, depth, globalScrPt )
 		{
+            if(depth > 1)
+            {
+                return;
+            }
 			// hit test the current object
 			var hit;
 			if (depth > 0)	// don't snap to the root
@@ -1001,8 +1011,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 				}
 			}
 
-            // TODO - Don't traverse components' children
-//            if(elt.elementModel && elt.elementModel.isComponent)
+            // TODO - Don't traverse svg and components' children
             if(elt.nodeName.toLowerCase() === "svg" || (elt.elementModel && (elt.elementModel.isComponent || (elt.elementModel.selection === "SVG"))))
             {
                 return;
@@ -1402,6 +1411,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
                 case glObj.GEOM_TYPE_PATH:
                     // Snapping not implemented for these type, but don't throw an error...
 					break;
+                case glObj.GEOM_TYPE_BRUSH_STROKE:
+                    break; //don't throw error because snapping not yet implemented
                 case glObj.GEOM_TYPE_CUBIC_BEZIER:
                     {
                         var nearVrt = glObj.getNearVertex( eyePt, dir );
@@ -1978,12 +1989,20 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 	},
 
 	setupDragPlanes : {
-		value: function( hitRec ) {
+		value: function( hitRec, inGlobalMode ) {
 			// get the location of the point in stage world space
 			var elt = hitRec.getElt();
 			var localPt = hitRec.getLocalPoint();
 			var planeMat = hitRec.getPlaneMatrix();
-			var stageWorldPt = viewUtils.postViewToStageWorld( MathUtils.transformPoint(localPt,planeMat),  elt );
+            var stageWorldPt;
+            if(inGlobalMode)
+            {
+                stageWorldPt = MathUtils.transformPoint(localPt,planeMat);
+            }
+            else
+            {
+                stageWorldPt = viewUtils.postViewToStageWorld( MathUtils.transformPoint(localPt,planeMat),  elt );
+            }
 
 			/*
 			 // get a working plane parallel to the current working plane through the stage world point

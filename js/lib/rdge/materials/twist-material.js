@@ -56,7 +56,7 @@ var TwistMaterial = function TwistMaterial() {
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = RDGE.createMaterialNode("twistMaterial");
+		this._materialNode = RDGE.createMaterialNode("twistMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;

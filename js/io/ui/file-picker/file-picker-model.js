@@ -73,6 +73,12 @@ exports.FilePickerModel = (require("montage/core/core").Montage).create(require(
             value:""
         },
 
+        currentLogicalDrive:{
+            writable:true,
+            enumerable:true,
+            value:""
+        },
+
         callback:{
             writable:true,
             enumerable:true,

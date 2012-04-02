@@ -21,11 +21,7 @@ var MandelMaterial = function MandelMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Properties
     ///////////////////////////////////////////////////////////////////////
-	// no properties
-	this._propNames			= [];
-	this._propLabels		= [];
-	this._propTypes			= [];
-	this._propValues		= [];
+	// properties inherited from PulseMaterial
 
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
@@ -66,7 +62,7 @@ var MandelMaterial = function MandelMaterial() {
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = RDGE.createMaterialNode("mandelMaterial");
+		this._materialNode = RDGE.createMaterialNode("mandelMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;

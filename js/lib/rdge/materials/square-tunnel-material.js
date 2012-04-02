@@ -55,7 +55,7 @@ var SquareTunnelMaterial = function SquareTunnelMaterial() {
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = RDGE.createMaterialNode("squareTunnelMaterial");
+		this._materialNode = RDGE.createMaterialNode("squareTunnelMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;

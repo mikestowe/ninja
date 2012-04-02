@@ -125,6 +125,10 @@ exports.StageView = Montage.create(Component, {
 
             this.application.ninja.documentController.activeDocument = doc;
 
+            if(this.application.ninja.documentController.activeDocument.currentView === "design") {
+                this.application.ninja.currentDocument = this.application.ninja.documentController.activeDocument;
+            }
+
             this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
             this.application.ninja.documentController._showCurrentDocument();
 
@@ -135,7 +139,6 @@ exports.StageView = Montage.create(Component, {
 
             if(this.application.ninja.documentController.activeDocument.currentView === "design") {
                 this.application.ninja.stage._scrollFlag = true; // TODO HACK to prevent type error on Hide/Show Iframe
-                this.application.ninja.currentDocument = this.application.ninja.documentController.activeDocument;
 
                 //reinitialize draw-util, snapmanager and view-util
                 this.application.ninja.stage.stageDeps.reinitializeForSwitchDocument();
@@ -197,14 +200,18 @@ exports.StageView = Montage.create(Component, {
     },
     showRulers:{
         value:function(){
-            this.application.ninja.rulerTop.style.background = "url('../images/temp/ruler-top.png')";
-            this.application.ninja.rulerLeft.style.background = "url('../images/temp/ruler-left.png')";
+            this.application.ninja.rulerTop.style.display = "block";
+            this.application.ninja.rulerLeft.style.display = "block";
+//            this.application.ninja.rulerTop.style.background = "url('../images/temp/ruler-top.png')";
+//            this.application.ninja.rulerLeft.style.background = "url('../images/temp/ruler-left.png')";
         }
     },
     hideRulers:{
         value:function(){
-            this.application.ninja.rulerTop.style.background = "rgb(128,128,128)";
-            this.application.ninja.rulerLeft.style.background = "rgb(128,128,128)";
+            this.application.ninja.rulerTop.style.display = "none";
+            this.application.ninja.rulerLeft.style.display = "none";
+//            this.application.ninja.rulerTop.style.background = "rgb(128,128,128)";
+//            this.application.ninja.rulerLeft.style.background = "rgb(128,128,128)";
         }
     },
 

@@ -86,7 +86,7 @@ var Icon = exports.Icon = Montage.create(Component, {
                 this.metadata = "Name: "+this.icondata.name;
             }
             this.metadata = this.metadata + "<br />" + "Type: "+this.icondata.type;
-            if(this.icondata.size){this.metadata = this.metadata + "<br />" + "Size: "+this.icondata.size;}
+            if(this.icondata.size){this.metadata = this.metadata + "<br />" + "Size: "+this.icondata.size+ " bytes";}
             if(this.icondata.creationDate){this.metadata = this.metadata + "<br />" + "Creation date: "+ this.formatTimestamp(this.icondata.creationDate);}
             if(this.icondata.modifiedDate){this.metadata = this.metadata + "<br />" + "Modified date: "+ this.formatTimestamp(this.icondata.modifiedDate);}
 
@@ -174,21 +174,17 @@ var Icon = exports.Icon = Montage.create(Component, {
         enumerable: true,
         value:{
             "img_root":"images/picker/",
-            ".png":"png_file.png",
-            ".jpg":"jpeg_file.png",
             ".js":"js_file.png",
+            ".json":"json_file.png",
             ".css":"css_file.png",
             ".html":"html_file.png",
             ".xml":"xml_file.png",
             ".php":"php_file.png",
+            ".pl":"pl_file.png",
+            ".py":"py_file.png",
+            ".rb":"rb_file.png",
             ".doc":"doc_file.png",
-            ".docx":"doc_file.png",
-            ".rtf":"rtf_file.png",
-            ".pdf":"pdf_file.png",
-            ".zip":"zip_file.png",
-            ".rar":"zip_file.png",
-            ".app":"executable.png",
-            ".exe":"executable.png",
+            ".txt":"txt_file.png",
             "file_default":"file.png",
             "directory":"folder.png"
         }

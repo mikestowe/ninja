@@ -10,11 +10,12 @@
     height: 100%;
 }
 .maintimeline{
-    border-style: double;
     -webkit-box-flex: 1;
     display: -webkit-box;
-    -webkit-box-orient: horizontal
+    -webkit-box-orient: horizontal;
     height : 100%;
+    position: relative;
+    margin-top:1px;
 }
 .leftinside{
     height: 100%;
@@ -271,4 +272,15 @@
     font-size: 12px;
     text-shadow: 1px 1px 1px black;
     color: white;
+}
+.timeline-disabled {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(30,30,30, 0.796);
+	z-index: 100;
+	display: none;
+	box-shadow: rgb(17, 17, 17) 0px 0px 14px inset;
 }

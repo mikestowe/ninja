@@ -16,6 +16,7 @@ var Montage = require("montage/core/core").Montage,
 var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
     drawingFeedback: { value: { mode: "Draw2D", type: "" } },
 
+    _inLocalMode: { value: false},      // This tool should always use global mode for translations
     _canOperateOnStage: { value: true},
     _isSelecting: {value: false, writable:true},
     _shiftMove: { value: 10},
@@ -34,14 +35,12 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
         value: function () {
             if(this._targets && this._targets.length)
             {
-                // TODO - drawUtils's elementPlanes check in drawSelectionBounds doesn't seem to work,
-                // so temporary workaround to simply check if all elements have identity matrix
-                // TODO - Eventually, this should instead check if all the selected items are on the view plane
                 var len = this._targets.length;
+                var plane = this.application.ninja.stage.stageDeps.snapManager.getDragPlane();
                 for(var i = 0; i < len; i++)
                 {
-                    var mat = this._targets[i].mat;
-                    if(!MathUtils.isIdentityMatrix(mat))
+                    var elt = this._targets[i].elt;
+                    if(!this.application.ninja.stage.stageDeps.snapManager.elementIsOnPlane(elt, plane))
                     {
                         return false;
                     }
@@ -123,14 +122,14 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                     this.doDraw(event);
                 } else {
                     this._showFeedbackOnMouseMove(event);
-    //                if(this._canSnap)
-    //                {
-    //                    this.doSnap(event);
-    //                }
+                    if(this._canSnap)
+                    {
+                        this.doSnap(event);
+                    }
                 }
 
                 this.DrawHandles(this._delta);
-                if(this._canSnap && this._isDrawing)
+                if(this._canSnap)
                 {
                     this.application.ninja.stage.stageDeps.snapManager.drawLastHit();
                 }
@@ -206,12 +205,12 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             {
                 this._handleMode = null;
                 this._delta = null;
-                this.DrawHandles();
             }
 
             this.endDraw(event);
             this._canSnap = true;
             this._use3DMode = false;
+            this.DrawHandles();
         }
     },
 
@@ -452,7 +451,10 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                 if(this._use3DMode)
                 {
                     curMat = item.mat;
-                    glmat4.multiply(curMat, qMat, curMat);
+
+                    curMat[12] += transMat[12];
+                    curMat[13] += transMat[13];
+                    curMat[14] += transMat[14];
                     viewUtils.setMatrixForElement( elt, curMat, true);
                     this._targets[i].mat = curMat;
                 }
@@ -575,6 +577,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             {
                 // form the translation vector and post translate the matrix by it.
                 delta = vecUtils.vecSubtract( 3, data.pt1, data.pt0 );
+                delta[2] = 0;
                 var transMat = Matrix.Translation( delta );
                 this._moveElements(transMat);
             }
@@ -704,7 +707,11 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
      */
     _showFeedbackOnMouseMove : {
         value: function (event) {
-            if(this._target && this._handles)
+            if(!this._showTransformHandles)
+            {
+                return;
+            }
+            if(this._target && this._handles && (this._targets.length === 1))
             {
                 var len = this._handles.length;
                 var i = 0,

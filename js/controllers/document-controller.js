@@ -32,22 +32,30 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     _iframeHolder: { value: null, enumerable: false },
     _textHolder: { value: null, enumerable: false },
     _codeMirrorCounter: {value: 1, enumerable: false},
+
+    canSave:{value: false},//for Save menu state update
+    canSaveAll:{value: false},//for Save All menu state update
     
     activeDocument: {
         get: function() {
             return this._activeDocument;
         },
         set: function(doc) {
-            if(!!this._activeDocument) this._activeDocument.isActive = false;
-
+            if(!!this._activeDocument){ this._activeDocument.isActive = false;}
             this._activeDocument = doc;
             if(!!this._activeDocument){
-
                 if(this._documents.indexOf(doc) === -1) this._documents.push(doc);
                 this._activeDocument.isActive = true;
+
                 if(!!this._activeDocument.editor){
                     this._activeDocument.editor.focus();
                 }
+
+                this.canSave = doc.needsSave;
+                this.canSaveAll = doc.needsSave;
+            }else{
+                this.canSave = false;
+                this.canSaveAll = false;
             }
         }
     },
@@ -60,25 +68,34 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             this.eventManager.addEventListener("executeSave", this, false);
             this.eventManager.addEventListener("executeSaveAs", this, false);
             this.eventManager.addEventListener("executeSaveAll", this, false);
+            this.eventManager.addEventListener("executeFileClose", this, false);
+            this.eventManager.addEventListener("executeFileCloseAll", this, false);
 
-            this.eventManager.addEventListener("recordStyleChanged", this, false);
+            this.eventManager.addEventListener("styleSheetDirty", this, false);
             
+            this.eventManager.addEventListener("addComponentFirstDraw", this, false);
         }
     },
     
-   
+    handleAddComponentFirstDraw: {
+    	value: function (e) {
+    		//TODO: Add logic to reparse the document for dynamically added styles
+    		console.log(e);
+    	}
+    },
     
     			
     			
     			
-					
-    ////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////
 	//
     handleWebRequest: {
     	value: function (request) {
     		//TODO: Check if frameId is proper
     		if (this._hackRootFlag && request.parentFrameId !== -1) {
     			//TODO: Optimize creating string
+    			//console.log(request);
     			//console.log(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1], request.url);
 				//return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split('/')[request.url.split('/').length-1]};
 				return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/montage-html/'))[1]};
@@ -101,6 +118,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         }
     },
 	////////////////////////////////////////////////////////////////////
+
 
 	
 	
@@ -157,17 +175,40 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
                 saveAsSettings.fileName = this.activeDocument.name;
                 saveAsSettings.folderUri = this.activeDocument.uri.substring(0, this.activeDocument.uri.lastIndexOf("/"));
-                //add callback
+                saveAsSettings.callback = this.saveAsCallback.bind(this);
                 this.application.ninja.newFileController.showSaveAsDialog(saveAsSettings);
             }
         }
     },
-
+    ////////////////////////////////////////////////////////////////////
+    handleExecuteFileClose:{
+        value: function(event) {
+            if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
+                this.closeDocument(this.activeDocument.uuid);
+            }
+        }
+    },
+    ////////////////////////////////////////////////////////////////////
+    handleExecuteFileCloseAll:{
+            value: function(event) {
+                var i=0;
+                if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
+                    while(this._documents.length > 0){
+                        this.closeDocument(this._documents[this._documents.length -1].uuid);
+                    }
+                }
+            }
+        },
+        ////////////////////////////////////////////////////////////////////
     //
     fileSaveResult: {
     	value: function (result) {
-    		if(result.status === 204){
+            if((result.status === 204) || (result.status === 404)){//204=>existing file || 404=>new file... saved
                 this.activeDocument.needsSave = false;
+                if(this.application.ninja.currentDocument !== null){
+                    //clear Dirty StyleSheets for the saved document
+                    this.application.ninja.stylesController.clearDirtyStyleSheets(this.application.ninja.currentDocument);
+                }
             }
     	}
     },
@@ -249,6 +290,29 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     },
 	////////////////////////////////////////////////////////////////////
 	//
+    saveAsCallback:{
+        value:function(saveAsDetails){
+            var fileUri = null, filename = saveAsDetails.filename, destination = saveAsDetails.destination;
+            //update document metadata
+            this.activeDocument.name = ""+filename;
+            //prepare new file uri
+            if(destination && (destination.charAt(destination.length -1) !== "/")){
+                destination = destination + "/";
+            }
+            fileUri = destination+filename;
+
+            this.activeDocument.uri = fileUri;
+            //save a new file
+            //use the ioMediator.fileSaveAll when implemented
+            this.activeDocument._userDocument.name=filename;
+            this.activeDocument._userDocument.root=destination;
+            this.activeDocument._userDocument.uri=fileUri;
+            this.application.ninja.ioMediator.fileSave(this.activeDocument.save(), this.fileSaveResult.bind(this));
+            //
+        }
+    },
+
+    ////////////////////////////////////////////////////////////////////
 	openDocument: {
 		value: function(doc) {
 			
@@ -336,7 +400,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                     nextDocumentIndex = closeDocumentIndex - 1;
                 }
                 this.application.ninja.stage.stageView.switchDocument(this._documents[nextDocumentIndex]);
-                if(typeof this.activeDocument.stopVideos !== "undefined"){doc.stopVideos();}
+                if(typeof doc.stopVideos !== "undefined"){doc.stopVideos();}
                 this._removeDocumentView(doc.container);
             }else if(this._documents.length === 0){
                 if(typeof this.activeDocument.pauseAndStopVideos !== "undefined"){
@@ -515,5 +579,11 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value: function() {
             return "userDocument_" + (this._iframeCounter++);
         }
+    },
+
+    handleStyleSheetDirty:{
+        value:function(){
+            this.activeDocument.needsSave = true;
         }
+    }
 });

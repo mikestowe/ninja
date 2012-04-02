@@ -17,8 +17,6 @@ var PlasmaMaterial = function PlasmaMaterial() {
 	this._dTime = 0.01;
 	this._speed = 1.0;
 
-	this._color = [1,0,0,1];
-
 
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
@@ -30,20 +28,12 @@ var PlasmaMaterial = function PlasmaMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
-	this._propNames			= ["color"];
-	this._propLabels		= ["Color"];
-	this._propTypes			= ["color"];
-	this._propValues		= [];
 
-	this._propValues[ this._propNames[0] ] = this._color;
-
-    this.setProperty = function( prop, value ) {
-		// make sure we have legitimate imput
-		if (this.validateProperty( prop, value )) {
-			this._color = value.slice(0);
-			this._shader['default'][prop].set(value);
-		}
+    this.setProperty = function( prop, value )
+	{
+		// plasma has no properties
 	};
+
     ///////////////////////////////////////////////////////////////////////
 
     ///////////////////////////////////////////////////////////////////////
@@ -54,7 +44,10 @@ var PlasmaMaterial = function PlasmaMaterial() {
         return new PlasmaMaterial();
     };
 
-	this.init = function() {
+	this.init = function( world)
+	{
+		this.setWorld( world );
+
 		// set up the shader
 	    this._shader = new RDGE.jshader();
 		this._shader.def = plasmaShaderDef;
@@ -62,23 +55,36 @@ var PlasmaMaterial = function PlasmaMaterial() {
 
 		// set the default value
 		this._time = 0;
-		this._shader['default'].u_time = this._time;
-		this.setProperty( "color", [this._time, 0, 0,  1] );
+		this._shader['default'].u_time.set( [this._time] );
 
 		// set up the material node
-		this._materialNode = RDGE.createMaterialNode("plasmaMaterial");
+		this._materialNode = RDGE.createMaterialNode("plasmaMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 	};
 
 	this.update = function( time ) {
-		this._shader['default'].u_time = this._time;
-		var color = this.getProperty( "color" );
-		color[0] = this._time;
-		this.setProperty( "color", color );
-		//console.log( "update color to: " + color );
+		this._shader['default'].u_time.set( [this._time] );
 		this._time += this._dTime;
-	}
+	};
 
+	this.exportJSON = function()
+	{
+		var jObj =
+		{
+			'material'		: this.getShaderName(),
+			'name'			: this.getName(),
+			'speed'			: this._speed,
+			'dTime'			: this._dTime
+		};
+
+		return jObj;
+	};
+
+	this.importJSON = function( jObj )
+	{
+		this._speed = jObj.speed;
+		this._dTime = jObj.dTime;
+	};
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -109,7 +115,6 @@ var plasmaShaderDef =
 				'params' : 
 				{
 					'u_time' : { 'type' : 'float' },
-					'color' : { 'type' : 'vec4' }
 				},
 
 				// render states

@@ -55,7 +55,7 @@ exports.Splitter = Montage.create(Component, {
         },
         set: function(value) {
             this._collapsed = value;
-
+            this.needsDraw = true;
             this.application.localStorage.setItem(this.element.getAttribute("data-montage-id"), {"version": this.version, "value": value});
         }
     },
@@ -66,6 +66,7 @@ exports.Splitter = Montage.create(Component, {
             var storedData = this.application.localStorage.getItem(this.element.getAttribute("data-montage-id"));
             if(storedData && this.element.getAttribute("data-montage-id") !== null) {
                 this._collapsed = storedData.value;
+
             } else {
                 this._collapsed = false;
             }
@@ -77,13 +78,11 @@ exports.Splitter = Montage.create(Component, {
     draw: {
         value: function() {
             if(this.collapsed) {
-                
                 if(this.panel.element) this.panel.element.classList.add("collapsed");
                 else this.panel.classList.add("collapsed");
                 this.element.classList.add("collapsed");
                 if(this._resizeBar != null) this.resizeBar.classList.add("collapsed");
-            }
-            else {
+            } else {
                 if(this.panel.element) this.panel.element.classList.remove("collapsed");
                 else this.panel.classList.remove("collapsed");
                 this.element.classList.remove("collapsed");

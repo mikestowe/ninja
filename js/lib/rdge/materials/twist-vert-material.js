@@ -46,8 +46,10 @@ function TwistVertMaterial()
 	// duplcate method requirde
 	this.dup = function()	{  return new TwistVertMaterial();	} 
 
-	this.init = function()
+	this.init = function( world )
 	{
+		this.setWorld( world );
+
 		// set up the shader
 	    this._shader = new RDGE.jshader();
 		this._shader.def = twistVertShaderDef;
@@ -57,7 +59,7 @@ function TwistVertMaterial()
 		this._shader.twistMe.color.set( this.getColor() );
 
 		// set up the material node
-		this._materialNode = RDGE.createMaterialNode("twistVertMaterial");
+		this._materialNode = RDGE.createMaterialNode("twistVertMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		// initialize the twist vert properties
@@ -99,6 +101,34 @@ function TwistVertMaterial()
 		}
 	}
 	///////////////////////////////////////////////////////////////////////
+
+	this.exportJSON = function()
+	{
+		var jObj =
+		{
+			'material'		: this.getShaderName(),
+			'name'			: this.getName(),
+			'color'			: this._propValues["color"]
+		};
+
+		return jObj;
+	}
+
+	this.importJSON = function( jObj )
+	{
+        if (this.getShaderName() != jObj.material)  throw new Error( "ill-formed material" );
+        this.setName(  jObj.name );
+        
+		try
+		{
+			var color  = jObj.color;
+			this.setProperty( "color",  color);
+		}
+		catch (e)
+		{
+			throw new Error( "could not import material: " + importStr );
+		}
+	}
 
 	this.export = function()
 	{

@@ -6,7 +6,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 
 var Montage = require("montage/core/core").Montage,
-    Component = require("montage/ui/component").Component;
+    Component = require("montage/ui/component").Component,
+    NJUtils     = require("js/lib/NJUtils").NJUtils;
 
 exports.SelectionController = Montage.create(Component, {
 
@@ -48,6 +49,7 @@ exports.SelectionController = Montage.create(Component, {
             this.eventManager.addEventListener("selectAll", this, false);
             this.eventManager.addEventListener("deleteSelection", this, false);
             this.eventManager.addEventListener("switchDocument", this, false);
+            this.eventManager.addEventListener("closeDocument", this, false);
 //            defaultEventManager.addEventListener( "undo", this, false);
 //            defaultEventManager.addEventListener( "redo", this, false);
         }
@@ -91,15 +93,11 @@ exports.SelectionController = Montage.create(Component, {
 
     handleSwitchDocument: {
         value: function() {
-            this._selectedItems = this.application.ninja.selectedElements.slice(0);
-            if(this._selectedItems.length === 0) {
-                this._isDocument = true;
-            } else {
-                this._isDocument = false;
+            if(this.application.ninja.documentController.activeDocument.currentView === "design"){
+                this._selectedItems = this.application.ninja.selectedElements.slice(0);
+                this._isDocument = this._selectedItems.length === 0;
+                NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument} );
             }
-            NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument});
-
-			this._selectionContainer = this.application.ninja.currentSelectedContainer;
         }
     },
 
@@ -114,6 +112,15 @@ exports.SelectionController = Montage.create(Component, {
             if(!this._isDocument) {
                 if(this.findSelectedElement(event.detail) !== -1) {
                     this.executeSelectElement();
+                    var element = event.detail;
+                     if (element) {
+                        if (element.elementModel) {
+                            if (element.elementModel.shapeModel) {
+                                if (element.elementModel.shapeModel.GLWorld)
+                                    element.elementModel.shapeModel.GLWorld.clearTree();
+                            }
+                        }
+                    }
                 }
             }
         }

@@ -10,73 +10,75 @@ var RDGE = RDGE || {};
  *	Manage state instances
  */
 RDGE.stateManager = function () {
-    // a stack of states
-    this.stateStack = [];
-
-    // number of states on the stack
-    this.stateTop = undefined;
-
+	// a stack of states
+	this.stateStack = [];
+	
+	// number of states on the stack
+    this.stateTop       = undefined;
+    
     // the states of the context
-    this.RDGEInitState = null;
-    this.RDGERunState = null;
-
+    this.RDGEInitState	= null;
+    this.RDGERunState	= null;
+    
     this.currentState = function () {
-        if (this.stateTop != undefined)
-            return this.stateStack[this.stateTop];
-
-        return null;
+		if(this.stateTop != undefined)
+			return this.stateStack[this.stateTop];
+			
+		return null;
     };
-
-    /*
-    *  Push new IRuntime state - engine executes the new state
-    */
+	
+	/*
+	 *  Push new IRuntime state - engine executes the new state
+	 */
     this.PushState = function (state, flags) {
         if (state != null && typeof state.Init == 'function') {
-            if (this.stateTop != undefined)
-                this.stateStack[this.stateTop].LeaveState();
-
-            if (flags == undefined || flags != "noInit")
-                state.Init();
-
-            this.stateTop = this.stateStack.push(state) - 1;
-        }
+			if(this.stateTop != undefined)
+				this.stateStack[this.stateTop].LeaveState();
+			
+			if(flags == undefined || flags != "noInit")
+				state.Init();
+				
+			this.stateTop = this.stateStack.push(state) - 1;
+		}
     };
 
-    /*
-    *  Remove IRuntime state from stack, engine executes previous state
-    */
+	/*
+	 *  Remove IRuntime state from stack, engine executes previous state
+	 */
     this.PopState = function () {
-        state = this.stateStack.pop();
+		state = this.stateStack.pop();
         if (state != null) {
-            state.Shutdown();
-        }
-
-        this.stateTop = this.stateTop > 0 ? this.stateTop - 1 : 0;
-
+			state.Shutdown();
+		}
+		
+		this.stateTop = this.stateTop > 0 ? this.stateTop - 1 : 0;
+	    
         if (this.stateStack[this.stateTop]) {
-            this.stateStack[this.stateTop].ReInit();
-        }
+			this.stateStack[this.stateTop].ReInit();
+		}
     };
 
-    /*
-    *  Remove all states from the stack
-    */
+	/*
+	 *  Remove all states from the stack
+	 */
     this.PopAll = function () {
         while (this.stateStack[this.stateTop] != null) {
-            this.PopState();
-        }
+			this.PopState();
+		}
     };
-
+	
     this.tick = function (dt) {
         if (this.stateStack[this.stateTop] != null) {
-            this.stateStack[this.stateTop].Update(dt);
-            this.stateStack[this.stateTop].Resize();
-            this.stateStack[this.stateTop].Draw();
-        }
+			this.stateStack[this.stateTop].Update(dt);
+			this.stateStack[this.stateTop].Resize();
+			this.stateStack[this.stateTop].Draw();
+		}
     };
 };
 
 RDGE.Engine = function() {
+     this._assetPath = "assets/";
+
     // map of scene graphs to names
     this.sceneMap = [];
     
@@ -116,34 +118,34 @@ RDGE.Engine = function() {
      *	regex object to verify runtime object is not some sort of exploit
      */
     invalidObj = new RegExp("([()]|function)");
-
+    
     isValidObj = function (name) {
-        // do a quick test make sure user isn't trying to execute a function
+		// do a quick test make sure user isn't trying to execute a function
         if (invalidObj.test(name)) {
-            window.console.error("invalid object name passed to RDGE, " + name + " - looks like a function");
-            return false;
-        }
-
-        return true;
+			window.console.error("invalid object name passed to RDGE, " + name + " - looks like a function");
+			return false;
+		}
+		
+		return true;
     };
     
     /*
      *	The context definition - every context shares these parameters
      */
     contextDef = function () {
-        this.id = null;
+        this.id = null;	
         this.renderer = null;
         this.ctxStateManager = null;
         this.startUpState = null;
         this.sceneGraphMap = [];
         this.currentScene = null;
         this.getScene = function () {
-            return this.sceneGraphMap[this.currentScene];
+			return this.sceneGraphMap[this.currentScene];
         }
-        this.debug =
+        this.debug = 
         {
-            'frameCounter': 0,
-            'mat4CallCount': 0
+			'frameCounter' : 0,
+			'mat4CallCount': 0
         }
     };
     
@@ -156,36 +158,41 @@ RDGE.Engine = function() {
        
     contextManager._addObject = contextManager.addObject;
     contextManager.contextMap = {};
-
+    
     contextManager.addObject = function (context) {
-        this.contextMap[context.id] = context;
-        return this._addObject(context);
+		this.contextMap[context.id] = context;
+		return this._addObject(context);
     };
-
+    
     contextManager.start = function () {
-        var len = this.objects.length;
+		var len = this.objects.length;
         for (var i = 0; i < len; ++i) {
-            // set the current context
-            contextManager.currentCtx = this.objects[i];
-            this.objects[i].ctxStateManager.PushState(this.objects[i].startUpState);
-        }
+		    // set the current context
+		    contextManager.currentCtx = this.objects[i];
+		    this.objects[i].ctxStateManager.PushState(this.objects[i].startUpState);
+		}
     };
-
+    
     contextManager.forEach = function (cb) {
-        var len = this.objects.length;
+		var len = this.objects.length;
         for (var i = 0; i < len; ++i) {
-            cb(this.objects[i]);
-        }
+			cb(this.objects[i]);
+		}
     };
-
+    
     this.getContext = function (optCanvasID) {
         if (!optCanvasID) {
-            return contextManager.currentCtx;
-        }
+			return contextManager.currentCtx;
+		}
         else {
-            return contextManager.contextMap[optCanvasID];
-        }
+			return contextManager.contextMap[optCanvasID];
+		}
     };
+    
+	this.clearContext = function( canvasID )
+	{
+		contextManager.contextMap[canvasID] = undefined;
+	}
     
     /*
      *	give the contextID (canvas id) of the context to set
@@ -193,14 +200,27 @@ RDGE.Engine = function() {
     this.setContext = function (contextID) {
         contextManager.currentCtx = contextManager.contextMap[contextID];
     };
+	
+	this.tickContext = function(contextID) {
+	    var savedCtx = contextManager.currentCtx;
+	    contextManager.currentCtx = contextManager.contextMap[contextID];
+	    this.objects[i].ctxStateManager.tick(dt);
+	    contextManager.currentCtx = savedCtx;
 
-    this.tickContext = function (contextID) {
-        var savedCtx = contextManager.currentCtx;
-        contextManager.currentCtx = contextManager.contextMap[contextID];
-        this.objects[i].ctxStateManager.tick(dt);
-        contextManager.currentCtx = savedCtx;
+	}
 
-    };
+    	this.remapAssetFolder = function( url )
+	{
+		var searchStr = "assets/";
+		var index = url.indexOf( searchStr );
+		var rtnPath = url;
+		if (index >= 0)
+		{
+			rtnPath = url.substr( index + searchStr.length );
+			rtnPath = this._assetPath + rtnPath;
+		}
+		return rtnPath;
+	};
 };
 
 /*
@@ -210,40 +230,40 @@ RDGE.Engine.prototype.init = function (userInitState, userRunState, canvasObject
     this.GlInit(canvasObject);
 
     globalParamFuncSet = function (param) {
-        this.data = param.data;
-        this.type = param.type;
-
+		this.data = param.data;
+		this.type =param.type;
+		
         this.set = function (v) {
-            var len = this.data ? this.data.length : 0;
-            for (var i = 0; i < len; ++i)
-                this.data[i] = v[i];
-        }
+			var len = this.data ? this.data.length : 0;
+			for(var i=0;i<len;++i)
+				this.data[i]=v[i];
+    	}
         this.get = function () {
             if (this.data.length == undefined) {
-                return this.data;
-            }
+    			return this.data;
+    		}
             else {
-                return this.data.slice();
-            }
-        }
+    			return this.data.slice();
+    		}
+    	}
     };
-
+    
     // light manager init before global parameters structure is reconfigured
     this.lightManager = new RDGE.LightManager(RDGE.rdgeGlobalParameters.rdge_lights);
-
+    	
     // added getter and setter to global uniforms
     for (var p in RDGE.rdgeGlobalParameters) {
         if (p != "rdge_lights") {
             RDGE.rdgeGlobalParameters[p] = new globalParamFuncSet(RDGE.rdgeGlobalParameters[p]);
-        }
+		}
         else {
             var lights = RDGE.rdgeGlobalParameters[p];
             for (var l in lights) {
                 RDGE.rdgeGlobalParameters[l] = new globalParamFuncSet(lights[l]);
-            }
-        }
+			}
+		}
     }
-
+    
     // initial window
     this.lastWindowWidth = window.innerWidth;
     this.lastWindowHeight = window.innerHeight;
@@ -252,16 +272,16 @@ RDGE.Engine.prototype.init = function (userInitState, userRunState, canvasObject
     this.defaultContext = new RDGE.RenderContext();
 
     this.defaultContext.uniforms = [
-        { 'name': "u_matAmbient", 'value': [0.02, 0.02, 0.02, 1.0] },
+        { 'name': "u_matAmbient", 'value': [0.02,0.02,0.02, 1.0] },
         { 'name': "u_matDiffuse", 'value': [1.0, 1.0, 1.0, 1.0] },
         { 'name': "u_matSpecular", 'value': [1.0, 1.0, 1.0, 1.0] },
         { 'name': "u_matShininess", 'value': [128.0] },
         { 'name': "u_matEmission", 'value': [0.0, 0.0, 0.0, 1.0] }
     ];
-
-    // startup the contexts
+    
+	// startup the contexts
     contextManager.start();
-
+		
     this.initializeComplete = true;
 };
 
@@ -274,50 +294,50 @@ RDGE.Engine.prototype.Shutdown = function () {
 RDGE.Engine.prototype.GlInit = function (canvasObject) {
     // Initialize
     var canvases = document.getElementsByTagName("canvas");
-
+    
     // transverse the canvases and create the contexts
     var numCv = canvases.length;
     for (var cvIdx = 0; cvIdx < numCv; ++cvIdx) {
-        var canvas;
-
-        // if this canvas has a rdge attribute initialize the render context
-        var rdgeAttr = canvases[cvIdx].getAttribute("rdge");
+	    var canvas;
+		
+		// if this canvas has a rdge attribute initialize the render context
+		var rdgeAttr = canvases[cvIdx].getAttribute("rdge");
         if (rdgeAttr == "true") {
-            // hack ~ while implementing multi-context
-            canvas = canvases[cvIdx];
-            this.registerCanvas(canvas);
-        }
+			// hack ~ while implementing multi-context
+			canvas = canvases[cvIdx];
+			this.registerCanvas(canvas);
+		}
 
     }
-    /*
+/*
     canvas.addEventListener("webglcontextlost", contextLostHandler, false);
     canvas.addEventListener("webglcontextrestored", contextRestoredHandler, false);
-    */
+*/
 };
-
+   
 RDGE.Engine.prototype.loadScene = function (name) {
-    var url = "assets_web/mesh/" + name + ".json"
-
-    // if we are not in the load state than push it on again
+	var url = "assets_web/mesh/" + name + ".json"
+	
+	// if we are not in the load state than push it on again
     if (contextManager.currentCtx.stateMan.currentState().name == "RunState") {
-        contextManager.currentCtx.stateMan.PushState(contextManager.currentCtx.stateMan.RDGEInitState);
-        contextManager.currentCtx.loadScene(url, name);
-    }
+		contextManager.currentCtx.stateMan.PushState(contextManager.currentCtx.stateMan.RDGEInitState);
+		contextManager.currentCtx.loadScene(url, name);
+	}
 };
-
+	
 RDGE.Engine.prototype.getScene = function (name) {
-    return contextManager.currentCtx.sceneGraphMap[name];
+	return contextManager.currentCtx.sceneGraphMap[name];
 };
 
 RDGE.Engine.prototype.AddScene = function (name, sceneGraph) {
-    contextManager.currentCtx.sceneGraphMap[name] = sceneGraph;
-    contextManager.currentCtx.currentScene = name;
+	contextManager.currentCtx.sceneGraphMap[name] = sceneGraph;
+	contextManager.currentCtx.currentScene = name;
 };
 
 RDGE.Engine.prototype.registerCanvas = function (canvas, runState) {
     if (canvas && this.getContext(canvas.rdgeid))
-        return;
-
+	    return;
+ 
     canvas.renderer = new RDGE._renderer(canvas); 	// create the renderer for the context
     this.canvasToRendererMap[canvas.rdgeid] = canvas; // store the canvas in the context map
     canvas.renderer.id = canvas.rdgeid;
@@ -406,9 +426,13 @@ RDGE.Engine.prototype.registerCanvas = function (canvas, runState) {
 };
 
 RDGE.Engine.prototype.unregisterCanvas = function (canvas) {
-    contextManager.removeObject(canvas.rdgeCtxHandle);
+     stat.closePage(canvas.rdgeid + "_fps");
+     contextManager.removeObject(canvas.rdgeCtxHandle);
+     this.clearContext( canvas.rdgeid );
 };
 
-RDGE.Engine.prototype.getCanvas = function (id) {
-    return this.canvasToRendererMap[id];
+
+Engine.prototype.getCanvas = function( id )
+{
+	return this.canvasToRendererMap[id];
 };

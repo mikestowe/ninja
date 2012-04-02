@@ -278,6 +278,9 @@ exports.PenTool = Montage.create(ShapeTool, {
             this.application.ninja.stage.clearDrawingCanvas();
             this._hoveredAnchorIndex = -1;
 
+            //set the cursor to be the default cursor
+            this.application.ninja.stage.drawingCanvas.style.cursor = "auto";
+
             if (this._isDrawing) {
                 var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(event.pageX, event.pageY));
                 //go through the drawing toolbase to get the position of the mouse 
@@ -348,6 +351,14 @@ exports.PenTool = Montage.create(ShapeTool, {
                     var selAnchor = this._selectedSubpath.pickAnchor(currMousePos[0], currMousePos[1], currMousePos[2], this._PICK_POINT_RADIUS);
                     if (selAnchor >=0) {
                         this._hoveredAnchorIndex = selAnchor;
+                    } else {
+                        //detect if the current mouse position will hit the path
+                        var pathHitTestData = this._selectedSubpath.pathHitTest(currMousePos[0], currMousePos[1], currMousePos[2], this._PICK_POINT_RADIUS);
+                        if (pathHitTestData[0]!==-1){
+                            //change the cursor
+                            var cursor = "url('images/cursors/penAdd.png') 10 10,default";
+                            this.application.ninja.stage.drawingCanvas.style.cursor = cursor;
+                        }
                     }
                 }
             } //else of if (this._isDrawing) {
@@ -356,7 +367,6 @@ exports.PenTool = Montage.create(ShapeTool, {
             if (this._selectedSubpath){
                 this.DrawSubpathAnchors(this._selectedSubpath);
             }
-
         }//value: function(event)
     },//HandleMouseMove
 
@@ -584,6 +594,7 @@ exports.PenTool = Montage.create(ShapeTool, {
 
                 var subpath = this._selectedSubpath; //new GLSubpath();
                 subpath.setWorld(world);
+                subpath.setCanvas(newCanvas);
                 subpath.setPlaneMatrix(planeMat);
                 var planeMatInv = glmat4.inverse( planeMat, [] );
                 subpath.setPlaneMatrixInverse(planeMatInv);
@@ -591,7 +602,33 @@ exports.PenTool = Montage.create(ShapeTool, {
 
                 world.addObject(subpath);
                 world.render();
+                //TODO this will not work if there are multiple shapes in the same canvas
                 newCanvas.elementModel.shapeModel.GLGeomObj = subpath;
+                newCanvas.elementModel.shapeModel.shapeCount++;
+                if(newCanvas.elementModel.shapeModel.shapeCount === 1)
+                {
+                    newCanvas.elementModel.selection = "Subpath";
+                    newCanvas.elementModel.pi = "SubpathPi";
+                    newCanvas.elementModel.shapeModel.strokeSize = this.options.strokeSize.value + " " + this.options.strokeSize.units;
+                    var strokeColor = subpath.getStrokeColor();
+                    newCanvas.elementModel.shapeModel.stroke = strokeColor;
+                    if(strokeColor) {
+                        newCanvas.elementModel.shapeModel.border = this.application.ninja.colorController.colorToolbar.stroke;
+                    }
+                    newCanvas.elementModel.shapeModel.strokeMaterial = subpath.getStrokeMaterial();
+
+                    newCanvas.elementModel.shapeModel.GLGeomObj = subpath;
+                    newCanvas.elementModel.shapeModel.useWebGl = this.options.use3D;
+                }
+                else
+                {
+                    // TODO - update the shape's info only.  shapeModel will likely need an array of shapes.
+                }
+
+                if(newCanvas.elementModel.isShape)
+                {
+                    this.application.ninja.selectionController.selectElement(newCanvas);
+                }
             } //if (!canvas) {
             else {
 

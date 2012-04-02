@@ -75,7 +75,7 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
     this.setProperty = function( prop, value )
 	{
 		// every material should do something with the "color" property
-		if (prop === "color")  prop = "lightDiff";
+		if (prop === "color")  return;
 
 		// make sure we have legitimate imput
 		var ok = this.validateProperty( prop, value );
@@ -107,7 +107,9 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 	this.init = function( world )
 	{
 		// save the world
-		if (world)  this.setWorld( world );
+		if (world) {
+                     this.setWorld( world );
+                }
 
 		// set up the shader
 		this._shader = new RDGE.jshader();
@@ -116,7 +118,7 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 		this._shader['default'].u_light0Diff.set( this.getLightDiff() );
 
 		// set up the material node
-		this._materialNode = RDGE.createMaterialNode(this.getShaderName());
+		this._materialNode = RDGE.createMaterialNode( this.getShaderName() + "_" + world.generateUniqueNodeID() );
 		this._materialNode.setShader(this._shader);
 
 		// set some image maps
@@ -152,11 +154,55 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 		}
 	};
 
+	this.exportJSON = function()
+	{
+		var jObj =
+		{
+			'material'			: this.getShaderName(),
+			'name'				: this.getName(),
+			'lightDiff'			: this.getLightDiff(),
+			'diffuseTexture'	: this.getDiffuseTexture(),
+			'specularTexture'	: this.getSpecularTexture(),
+			'normalMap'			: this.getNormalTexture()
+		};
+
+		return jObj;
+	};
+
+	this.importJSON = function( jObj )
+	{
+		if (this.getShaderName() != jObj.material)  throw new Error( "ill-formed material" );
+		this.setName( jObj.name );
+
+		try
+		{
+			var lightDiff  = jObj.lightDiff,
+				dt = jObj.diffuseTexture,
+				st = jObj.specularTexture,
+				nt = jObj.normalMap;
+		
+			this.setProperty( "lightDiff",  lightDiff);
+			this.setProperty( "diffuseTexture", dt );
+			this.setProperty( "specularTexture", st );
+			this.setProperty( "normalMap", nt );
+		}
+		catch (e)
+		{
+			throw new Error( "could not import BumpMetal material: " + jObj );
+		}
+		
+		return;
+	};
+
 	this.export = function()
 	{
 		// every material needs the base type and instance name
 		var exportStr = "material: " + this.getShaderName() + "\n";
 		exportStr += "name: " + this.getName() + "\n";
+
+		var world = this.getWorld();
+		if (!world)
+			throw new Error( "no world in material.export, " + this.getName() );
 
 		exportStr += "lightDiff: "			+ this.getLightDiff()		+ "\n";
 		exportStr += "diffuseTexture: "		+ this.getDiffuseTexture()	+ "\n";

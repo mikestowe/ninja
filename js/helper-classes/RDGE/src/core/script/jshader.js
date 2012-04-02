@@ -193,8 +193,8 @@ RDGE.jshader = function (addr) {
                 case "mat2": this.data = [0, 0, 0, 0]; break;
                 case "float": this.data = [0]; break;
                 case "int": this.data = [0]; break;
-                case "tex2d": this.data = [ctx.canvas.renderer.getTextureByName("assets/images/white.png")]; break;
-                case "texCube": this.data = [ctx.canvas.renderer.getTextureByName("assets/images/white.png")]; break;
+                case "tex2d": this.data = [ctx.canvas.renderer.getTextureByName(g_Engine._assetPath+"images/white.png")]; break;
+                case "texCube": this.data = [ctx.canvas.renderer.getTextureByName(g_Engine._assetPath+"images/white.png")]; break;
             }
         }
         else {
@@ -245,8 +245,8 @@ RDGE.jshader = function (addr) {
                 case "mat2": this.data = [0, 0, 0, 0]; break;
                 case "float": this.data = [0]; break;
                 case "int": this.data = [0]; break;
-                case "tex2d": this.data = [ctx.canvas.renderer.getTextureByName("assets/images/white.png")]; break;
-                case "texCube": this.data = [ctx.canvas.renderer.getTextureByName("assets/images/white.png")]; break;
+                case "tex2d": this.data = [ctx.canvas.renderer.getTextureByName(g_Engine._assetPath+"images/white.png")]; break;
+                case "texCube": this.data = [ctx.canvas.renderer.getTextureByName(g_Engine._assetPath+"images/white.png")]; break;
             }
         }
         else {
