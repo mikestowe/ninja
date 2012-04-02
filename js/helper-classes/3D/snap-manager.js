@@ -1411,6 +1411,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
                 case glObj.GEOM_TYPE_PATH:
                     // Snapping not implemented for these type, but don't throw an error...
 					break;
+                case glObj.GEOM_TYPE_BRUSH_STROKE:
+                    break; //don't throw error because snapping not yet implemented
                 case glObj.GEOM_TYPE_CUBIC_BEZIER:
                     {
                         var nearVrt = glObj.getNearVertex( eyePt, dir );

@@ -154,55 +154,23 @@ exports.MenuData = Montage.create( Montage, {
                         {
                             "displayText" : "Cut",
                             "hasSubMenu" : false,
-                            "enabled": true
+                            "enabled": false
                         },
                         {
                             "displayText" : "Copy",
                             "hasSubMenu" : false,
-                            "enabled": true
+                            "enabled": false
                         },
                         {
                             "displayText" : "Paste",
                             "hasSubMenu" : false,
-                            "enabled": true
+                            "enabled": false
                         }
                     ]
                 },
                 {
                     "header": "View",
                     "entries": [
-                        {
-                            "displayText" : "Zoom In",
-                            "hasSubMenu" : false,
-                            "enabled": {
-                                "value": false,
-                                "boundObj": "documentController",
-                                "boundProperty": "activeDocument",
-                                "oneway": true,
-                                "boundValueMutator": function(activeDocument){
-                                    if((activeDocument !== null) && (activeDocument.currentView === "design")){return true;}
-                                    else{return false;}
-                                }
-                            }
-                        },
-                        {
-                            "displayText" : "Zoom Out",
-                            "hasSubMenu" : false,
-                            "enabled": {
-                                "value": false,
-                                "boundObj": "documentController",
-                                "boundProperty": "activeDocument",
-                                "oneway": true,
-                                "boundValueMutator": function(activeDocument){
-                                    if((activeDocument !== null) && (activeDocument.currentView === "design")){return true;}
-                                    else{return false;}
-                                }
-                            }
-                        },
-                        {
-                            "displayText" : "",
-                            "separator":    true
-                        },
                         {
                             "displayText" : "Live Preview",
                             "hasSubMenu" : false,
@@ -431,7 +399,7 @@ exports.MenuData = Montage.create( Montage, {
                         {
                             "displayText" : "Debug",
                             "hasSubMenu" : false,
-                            "enabled": true,
+                            "enabled": false,
                             "checked": {
                                 "value": true,
                                 "boundProperty": "debug"

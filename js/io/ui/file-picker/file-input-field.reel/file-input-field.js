@@ -20,6 +20,7 @@ var FileInputField = exports.FileInputField = Montage.create(Component, {
             this.eventManager.addEventListener("pickerSelectionsDone", function(evt){that.handleFileInputPickerSelectionsDone(evt);}, false);
 
             this.newFileDirectory.addEventListener("keyup", function(evt){that.handleNewFileDirectoryOnkeyup(evt);}, false);
+            this.newFileDirectory.addEventListener("paste", this, false);
         }
     },
 
@@ -60,6 +61,14 @@ var FileInputField = exports.FileInputField = Montage.create(Component, {
             settings.callback = this.filePickerCallback.bind(this);
 
             NJevent("openFilePicker", settings);
+        }
+    },
+
+    handlePaste:{
+        value:function(evt){
+            evt.preventDefault();
+            evt.target.value = evt.clipboardData.getData("Text");
+            this.handleNewFileDirectoryOnkeyup(evt);
         }
     },
 
