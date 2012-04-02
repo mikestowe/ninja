@@ -100,7 +100,7 @@ exports.PresetsController = Montage.create(Component, {
                     var suffix = rule.selectorSuffix || '';
 
                     ///// TODO: remove when we find out what to do with competing animations
-                    if(rule.styles['-webkit-animation-name']) {
+                    if(rule.styles['-webkit-animation-name'] && animationNames.length) {
                         rule.styles['-webkit-animation-name'] += ',' + animationNames.join(',');
                     }
 
