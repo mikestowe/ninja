@@ -331,7 +331,6 @@ RDGE.Engine.prototype.registerCanvas = function (canvas, runState) {
     context.id = canvas.rdgeid;
     context.renderer = canvas.renderer;
     context.ctxStateManager = stateMan;
-    context.startUpState;
 
     context.renderer.mvMatrix = RDGE.mat4.identity();
     context.renderer.invMvMatrix = RDGE.mat4.identity();

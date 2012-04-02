@@ -237,8 +237,6 @@ RDGE.sceneRequestDef = function (addr, sceneName) {
     this.requestComplete = false;
     this.sceneProcessor = new RDGE.SetupScene();
     this.doSceneRequest = false;
-    this.rawData;
-    this.scene;
 
     /*
     *	@return - returns true when all meshes for the request are done

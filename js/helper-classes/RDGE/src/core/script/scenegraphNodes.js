@@ -364,7 +364,7 @@ RDGE.materialNodeTemplate = function (matNode) {
             var len = channelNumber.length;
 
             for (var i = 0; i < len; ++i) {
-                if (channelNumber[i], MATERIAL_MAX_LIGHTS)
+                if (channelNumber[i] < MATERIAL_MAX_LIGHTS)
                     matNode.lightChannel[channelNumber[i]] = null;
             }
         }

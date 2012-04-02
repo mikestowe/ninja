@@ -64,7 +64,7 @@ RDGE.RenderObject.prototype.addUniform = function (name, value, type) {
 RDGE.RenderObject.prototype.addUniformArray = function (name, value, type, size) {
     var uniform = RDGE.globals.gl.getUniformLocation(this.shader, name);
     if (uniform) {
-        for (var index = 0; index < size; index) {
+        for (var index = 0; index < size; index++) {
             uniform.debugName = name + index;
             this.bindings.uniforms.push(new RDGE.UniformPair(uniform, value[index], type));
             uniform += value[index].length;

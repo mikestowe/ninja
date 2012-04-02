@@ -14,11 +14,6 @@ RDGE.rdgeConstants = (function () {
         depthBuffer: 0x00000100,
         stencilBuffer: 0x00000400,
 
-        // buffer types
-        BUFFER_STATIC: 0,
-        BUFFER_DYNAMIC: 1,
-        BUFFER_STREAM: 2,
-
         // primitive types
         POINTS: 0,
         LINES: 1,
@@ -82,14 +77,18 @@ RDGE._renderer = function (canvas) {
     /*
     *	Initialize the context associated with this canvas
     */
-    this.ctx;
-
     try {
         this.ctx = canvas.getContext("experimental-webgl", { preserveDrawingBuffer: true }); // true, true, false, true, true);
 
-        if (!this.ctx) this.ctx = canvas.getContext("webgl", { preserveDrawingBuffer: true });
-        if (!this.ctx) this.ctx = canvas.getContext("webkit-3d", { preserveDrawingBuffer: true });
-        if (!this.ctx) this.ctx = canvas.getContext("moz-webgl", { preserveDrawingBuffer: true });
+        if (!this.ctx) {
+            this.ctx = canvas.getContext("webgl", { preserveDrawingBuffer: true });
+        }
+        if (!this.ctx) {
+            this.ctx = canvas.getContext("webkit-3d", { preserveDrawingBuffer: true });
+        }
+        if (!this.ctx) {
+            this.ctx = canvas.getContext("moz-webgl", { preserveDrawingBuffer: true });
+        }
     }
     catch (err) { }
     if (!this.ctx) {

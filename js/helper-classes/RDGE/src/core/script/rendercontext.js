@@ -91,9 +91,6 @@ RDGE.RenderContext = function () {
     enableNormalMapping = true;
     this.lights = [null, null, null, null];
 
-    // the camera
-    this.cam;
-
     // state settings - set functions in the array that set states or 'other' so long as it makes since
     this.stateSettings = [];
 };
