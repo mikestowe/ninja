@@ -777,6 +777,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 // Delete the selected layer.
                 var myIndex = this.layerRepetition.selectedIndexes[0];
                 this.arrLayers.splice(myIndex, 1);
+                var selectIndex = this.arrLayers.length;
+                this.selectLayer(selectIndex-1);
             }
         }
     },
