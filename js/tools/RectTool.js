@@ -72,14 +72,14 @@ exports.RectTool = Montage.create(ShapeTool, {
                 {
                     strokeMaterial = Object.create(MaterialsModel.getMaterial(strokeM));
                 }
-                strokeColor = this._getMaterialColor(strokeM) || strokeColor;
+                strokeColor = ShapesController.getMaterialColor(strokeM) || strokeColor;
 
                 var fillM = this.options.fillMaterial;
                 if(fillM)
                 {
                     fillMaterial = Object.create(MaterialsModel.getMaterial(fillM));
                 }
-                fillColor = this._getMaterialColor(fillM) || fillColor;
+                fillColor = ShapesController.getMaterialColor(fillM) || fillColor;
             }
 
             var world = this.getGLWorld(canvas, this.options.use3D);

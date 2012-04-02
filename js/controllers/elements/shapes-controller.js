@@ -14,7 +14,10 @@ exports.ShapesController = Montage.create(CanvasController, {
 
     setProperty: {
         value: function(el, p, value) {
-            var val = parseInt(value);
+            var val = parseInt(value),
+                canvas,
+                m,
+                color;
             switch(p) {
                 case "strokeSize":
                     // TODO - For now, just handling px units.
@@ -68,32 +71,39 @@ exports.ShapesController = Montage.create(CanvasController, {
                     el.elementModel.shapeModel.GLWorld.render();
                     break;
                 case "useWebGl":
-                    var canvas = njModule.NJUtils.makeNJElement("canvas", "Canvas", "shape", el.className, true);
+                    canvas = njModule.NJUtils.makeNJElement("canvas", "Canvas", "shape", el.className, true);
                     canvas.setAttribute("data-RDGE-id", njModule.NJUtils.generateRandom());
                     canvas.width = el.width;
                     canvas.height = el.height;
                     this.application.ninja.elementMediator.replaceElement(el, canvas);
                     NJevent("elementDeleted", el);
-                    el = canvas;
-                    this.toggleWebGlMode(el, value);
-                    el.elementModel.shapeModel.GLWorld.render();
-                    this.application.ninja.selectionController.selectElement(el);
-                    this.application.ninja.documentController.activeDocument.needsSave = true;
-                    return;
+                    this.toggleWebGlMode(canvas, value);
+                    NJevent("elementAdded", canvas);
+                    break;
                 case "strokeMaterial":
-                    var sm = Object.create(MaterialsModel.getMaterial(value));
-                    if(sm)
+                    m = Object.create(MaterialsModel.getMaterial(value));
+                    if(m)
                     {
-                        el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(sm);
+                        el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(m);
+                        color = this.getMaterialColor(value);
+                        if(color)
+                        {
+                            el.elementModel.shapeModel.GLGeomObj.setStrokeColor(color);
+                        }
                         el.elementModel.shapeModel.GLGeomObj.buildBuffers();
                         el.elementModel.shapeModel.GLWorld.render();
                     }
                     break;
                 case "fillMaterial":
-                    var fm = Object.create(MaterialsModel.getMaterial(value));
-                    if(fm)
+                    m = Object.create(MaterialsModel.getMaterial(value));
+                    if(m)
                     {
-                        el.elementModel.shapeModel.GLGeomObj.setFillMaterial(fm);
+                        el.elementModel.shapeModel.GLGeomObj.setFillMaterial(m);
+                        color = this.getMaterialColor(value);
+                        if(color)
+                        {
+                            el.elementModel.shapeModel.GLGeomObj.setFillColor(color);
+                        }
                         el.elementModel.shapeModel.GLGeomObj.buildBuffers();
                         el.elementModel.shapeModel.GLWorld.render();
                     }
@@ -621,63 +631,82 @@ exports.ShapesController = Montage.create(CanvasController, {
 
                         if(jObj.webGL)
                         {
-                            // Set Linear/Radial Gradient Material for children geometry if color in canvas 2d has gradient
-                            if(child.strokeColor && child.strokeColor.gradientMode)
+                            if(child.strokeColor)
                             {
-                                if(child.strokeColor.gradientMode === "radial")
+                                if(child.strokeColor.gradientMode)
                                 {
-                                    child.strokeMat = "RadialGradientMaterial";
-            }
-                                else
+                                    // Set Linear/Radial Gradient Material for children geometry if color in canvas 2d has gradient
+                                    if(child.strokeColor.gradientMode === "radial")
+                                    {
+                                        child.strokeMat = "RadialGradientMaterial";
+                                    }
+                                    else
+                                    {
+                                        child.strokeMat = "LinearGradientMaterial";
+                                    }
+                                }
+                                else if( (child.strokeMat === "RadialGradientMaterial") ||
+                                         (child.strokeMat === "LinearGradientMaterial") )
                                 {
-                                    child.strokeMat = "LinearGradientMaterial";
+                                    // Set Flat Material for children geometry if color has been changed to solid
+                                    child.strokeMat = "FlatMaterial";
                                 }
                             }
 
-                            if(child.fillColor && child.fillColor.gradientMode)
+                            if(child.fillColor)
                             {
-                                if(child.fillColor.gradientMode === "radial")
+                                if(child.fillColor.gradientMode)
                                 {
-                                    child.fillMat = "RadialGradientMaterial";
+                                    // Set Linear/Radial Gradient Material for children geometry if color in canvas 2d has gradient
+                                    if(child.fillColor.gradientMode === "radial")
+                                    {
+                                        child.fillMat = "RadialGradientMaterial";
+                                    }
+                                    else
+                                    {
+                                        child.fillMat = "LinearGradientMaterial";
+                                    }
                                 }
-                                else
+                                else if( (child.fillMat === "RadialGradientMaterial") ||
+                                         (child.fillMat === "LinearGradientMaterial") )
                                 {
-                                    child.fillMat = "LinearGradientMaterial";
+                                    // Set Flat Material for children geometry if color has been changed to solid
+                                    child.fillMat = "FlatMaterial";
                                 }
                             }
                         }
-//                        else
-//                        {
-//                            // Set flat color for children geometry if color in WebGL has been changed to solid
-//                            if(child.strokeColor && !child.strokeColor.gradientMode)
-//                            {
-//                                if(child.strokeColor.gradientMode === "radial")
-//                                {
-//                                    child.strokeMat = "RadialGradientMaterial";
-//                                }
-//                                else
-//                                {
-//                                    child.strokeMat = "LinearGradientMaterial";
-//                                }
-//                            }
-//
-//                            if(child.fillColor && child.fillColor.gradientMode)
-//                            {
-//                                if(child.fillColor.gradientMode === "radial")
-//                                {
-//                                    child.fillMat = "RadialGradientMaterial";
-//                                }
-//                                else
-//                                {
-//                                    child.fillMat = "LinearGradientMaterial";
-//                                }
-//                            }
-//                        }
                     }
                 }
             }
 
             return jObj;
+        }
+    },
+
+    getMaterialColor: {
+        value: function(m)
+        {
+            var css,
+                colorObj;
+            if(m === "LinearGradientMaterial")
+            {
+                css = "-webkit-gradient(linear, left top, right top, from(rgb(255, 0, 0)), color-stop(0.3, rgb(0, 255, 0)), color-stop(0.6, rgb(0, 0, 255)), to(rgb(0, 255, 255)))";
+            }
+            else if(m === "RadialGradientMaterial")
+            {
+                css = "-webkit-radial-gradient(50% 50%, ellipse cover, rgb(255, 0, 0) 0%, rgb(0, 255, 0) 30%, rgb(0, 0, 255) 60%, rgb(0, 255, 255) 100%)";
+            }
+
+            if(css)
+            {
+                colorObj = this.application.ninja.colorController.getColorObjFromCss(css);
+                if(colorObj)
+                {
+                    return {gradientMode:colorObj.color.gradientMode, color:colorObj.color.stops};
+                }
+            }
+
+            return null;
         }
     }
 

@@ -206,33 +206,6 @@ exports.ShapeTool = Montage.create(DrawingTool, {
         }
     },
 
-    _getMaterialColor: {
-        value: function(m)
-        {
-            var css,
-                colorObj;
-            if(m === "LinearGradientMaterial")
-            {
-                css = "-webkit-gradient(linear, left top, right top, from(rgb(255, 0, 0)), color-stop(0.3, rgb(0, 255, 0)), color-stop(0.6, rgb(0, 0, 255)), to(rgb(0, 255, 255)))";
-            }
-            else if(m === "RadialGradientMaterial")
-            {
-                css = "-webkit-radial-gradient(50% 50%, ellipse cover, rgb(255, 0, 0) 0%, rgb(0, 255, 0) 30%, rgb(0, 0, 255) 60%, rgb(0, 255, 255) 100%)";
-            }
-
-            if(css)
-            {
-                colorObj = this.application.ninja.colorController.getColorObjFromCss(css);
-                if(colorObj)
-                {
-                    return {gradientMode:colorObj.color.gradientMode, color:colorObj.color.stops};
-                }
-            }
-
-            return null;
-        }
-    },
-
 	// We can draw on an existing canvas unless it has only a single shape object
 	_useExistingCanvas: {
 		value: function()
