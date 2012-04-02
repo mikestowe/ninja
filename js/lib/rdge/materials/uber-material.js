@@ -483,6 +483,182 @@ var UberMaterial = function UberMaterial() {
 		this.rebuildShader();
 	}
 
+	this.importJSON = function( jObj )
+	{
+        if (this.getShaderName() != jObj.material)  throw new Error( "ill-formed material" );
+        this.setName(  jObj.name );
+
+		if (jObj.materialProps)
+		{
+			var ambientColor  = jObj.materialProps.ambientColor;	 this.setProperty( "ambientColor", ambientColor );
+			var diffuseColor  = jObj.materialProps.diffuseColor;	 this.setProperty( "diffuseColor", diffuseColor );
+			var specularColor = jObj.materialProps.specularColor;	 this.setProperty( "specularColor", specularColor );
+			var specularPower = jObj.materialProps.specularPower;    this.setProperty( "specularPower", specularPower );
+		}
+
+		var lightArray = jObj.lights;
+		if (lightArray)
+		{
+			this._lights = [];
+			for (var i=0;  i<this._MAX_LIGHTS;  i++)
+			{
+				var lightObj = lightArray[i];
+				if (lightObj)
+				{
+					var type = lightObj['light'+i];
+					if (type)
+					{
+						var light = new Object;
+						switch (type)
+						{
+							case "directional":
+								light.direction = lightObj['light' + i + 'Dir'];
+								break;
+
+							case "spot":
+								light.position = lightObj['light' + i + 'Pos'];
+								light['spotInnerCutoff'] = lightObj['light' + i + 'OuterSpotCutoff'];
+								light['spotOuterCutoff'] = lightObj['light' + i + 'InnerSpotCutoff'];
+								break;
+
+							case "point":
+								light.position = lightObj['light' + i + 'Pos'];
+								light.attenuation = lightObj['light' + i + 'Attenuation'];
+								break;
+
+							default:
+								throw new Error( "unrecognized light type on import: " + type );
+								break;
+						}
+
+						// common to all lights
+						light.diffuseColor  = lightObj['light' + i + 'Color'];
+						light.specularColor = lightObj['light' + i + 'SpecularColor'];
+
+						// push the light
+						this._lights.push( light );
+					}
+					else
+						this._lights[i] = 'undefined';
+				}
+			}
+
+			if (this._lights.length > 0)
+			{
+				this._ubershaderCaps.lighting =
+				{
+					'light0' : this._lights[0],
+					'light1' : this._lights[1],
+					'light2' : this._lights[2],        
+					'light3' : this._lights[3]                                     
+				}
+			}
+		}
+
+		var diffuseMap = jObj['diffuseMap'];
+		if(diffuseMap)
+			this.setProperty( "diffuseMap", diffuseMap );
+
+		var normalMap = jObj['normalMap'];
+		if(normalMap)
+			this.setProperty( "normalMap", normalMap );
+
+		var specularMap = jObj['specularMap'];
+		if(specularMap)
+			this.setProperty( "specularMap", specularMap );
+
+		var environmentMap = jObj['environmentMap'];
+		if(environmentMap)
+		{
+			this.setProperty( "environmentMap", environmentMap );
+			this.setProperty( "environmentAmount", jObj['environmentAmount'] );
+		}
+
+		this.rebuildShader();
+	}
+
+	this.exportJSON = function()
+	{
+		// every material needs the base type and instance name
+		var caps = this._ubershaderCaps;
+		var jObj =
+		{
+			'material'		: this.getShaderName(),
+			'name'			: this.getName()
+		};
+
+		// export the material properties
+		if (typeof caps.material != 'undefined')
+		{
+			jObj.materialProps =
+			{
+					'ambientColor'	: this._ambientColor,
+					'diffuseColor'	: this._diffuseColor,
+					'specularColor'	: this._specularColor,
+					'specularPower'	: this._specularPower
+			};
+						
+		}
+
+		if (typeof caps.lighting != 'undefined')
+		{
+			var lightArray = [];
+			for (var i=0;  i<this._MAX_LIGHTS;  i++)
+			{
+				var light = caps.lighting["light" + i];
+				if( typeof light != "undefined")
+				{
+					var lightObj = {}
+					lightObj['light'+i] = light.type;
+
+					// output the light secific data
+					if (light.type === 'directional')
+					{
+						lightObj['light' + i + 'Dir']	= light['direction'];
+					}
+					else if (light.type === 'spot')
+					{
+						lightObj['light' + i + 'Pos'] = light['position'];
+						lightObj['light' + i + 'SpotInnerCutoff'] = light['spotInnerCutoff'];
+						lightObj['light' + i + 'SpotOuterCutoff'] = light['spotOuterCutoff'];
+					}
+					else		// light.type === 'point'
+					{
+						lightObj['light' + i + 'Pos'] = (light['position'] || [ 0, 0, 0 ]);
+						lightObj['light' + i + 'Attenuation'] = (light['attenuation'] || [ 1, 0, 0 ]);
+					}
+
+					// common to all lights
+					lightObj['light' + i + 'Color'] = (light['diffuseColor'] || [ 1,1,1,1 ]);
+					lightObj['light' + i + 'SpecularColor'] = (light['specularColor'] || [ 1, 1, 1, 1 ]); 
+					
+					lightArray.push( lightObj );         
+				}
+			}
+
+			if (lightArray.length > 0)
+				jObj.lights = lightArray;
+		}
+
+		if(typeof caps.diffuseMap != 'undefined')
+			jObj['diffuseMap'] = caps.diffuseMap.texture;
+
+		if(typeof caps.normalMap != 'undefined')
+			jObj['normalMap'] = caps.normalMap.texture;
+
+		if(typeof caps.specularMap != 'undefined')
+			jObj['specularMap'] = caps.specularMap.texture;
+
+		if(typeof caps.environmentMap != 'undefined')
+		{
+			jObj['environmentMap'] = caps.environmentMap.texture;
+			jObj['environmentAmount'] = caps.environmentMap.envReflection;
+		}
+
+		return jObj;
+	}
+
+
 	this.export = function()
 	{
 		// every material needs the base type and instance name
@@ -539,10 +715,6 @@ var UberMaterial = function UberMaterial() {
 			}
 		}
 
-//	this._diffuseMapOb = { 'texture' : 'assets/images/rocky-diffuse.jpg', 'wrap' : 'REPEAT' };
-//	this._normalMapOb = { 'texture' : 'assets/images/rocky-normal.jpg', 'wrap' : 'REPEAT' };
-//	this._specularMapOb = { 'texture' : 'assets/images/rocky-spec.jpg', 'wrap' : 'REPEAT' };
-//	this._environmentMapOb = { 'texture' : 'assets/images/silver.png', 'wrap' : 'CLAMP', 'envReflection' : this._environmentAmount };
 		var world = this.getWorld();
 		if (!world)
 			throw new Error( "no world in material.export, " + this.getName() );

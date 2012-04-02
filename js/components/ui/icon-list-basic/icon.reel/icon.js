@@ -86,7 +86,7 @@ var Icon = exports.Icon = Montage.create(Component, {
                 this.metadata = "Name: "+this.icondata.name;
             }
             this.metadata = this.metadata + "<br />" + "Type: "+this.icondata.type;
-            if(this.icondata.size){this.metadata = this.metadata + "<br />" + "Size: "+this.icondata.size;}
+            if(this.icondata.size){this.metadata = this.metadata + "<br />" + "Size: "+this.icondata.size+ " bytes";}
             if(this.icondata.creationDate){this.metadata = this.metadata + "<br />" + "Creation date: "+ this.formatTimestamp(this.icondata.creationDate);}
             if(this.icondata.modifiedDate){this.metadata = this.metadata + "<br />" + "Modified date: "+ this.formatTimestamp(this.icondata.modifiedDate);}
 

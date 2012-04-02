@@ -102,6 +102,34 @@ function TwistVertMaterial()
 	}
 	///////////////////////////////////////////////////////////////////////
 
+	this.exportJSON = function()
+	{
+		var jObj =
+		{
+			'material'		: this.getShaderName(),
+			'name'			: this.getName(),
+			'color'			: this._propValues["color"]
+		};
+
+		return jObj;
+	}
+
+	this.importJSON = function( jObj )
+	{
+        if (this.getShaderName() != jObj.material)  throw new Error( "ill-formed material" );
+        this.setName(  jObj.name );
+        
+		try
+		{
+			var color  = jObj.color;
+			this.setProperty( "color",  color);
+		}
+		catch (e)
+		{
+			throw new Error( "could not import material: " + importStr );
+		}
+	}
+
 	this.export = function()
 	{
 		// this function should be overridden by subclasses

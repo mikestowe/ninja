@@ -117,6 +117,8 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 
 	this.getRenderer			= function()		{  return this.renderer;			};
 
+    // Flag to play/pause animation at authortime
+    this._previewAnimation = true;
   ////////////////////////////////////////////////////////////////////////////////////
   // RDGE
   // local variables
@@ -236,7 +238,7 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 					if (this._canvas.task) {
 						this._firstRender = false;
 
-						if (!this.hasAnimatedMaterials()) {
+						if (!this.hasAnimatedMaterials() || !this._previewAnimation) {
 							this._canvas.task.stop();
 							//this._renderCount = 10;
 						}
@@ -363,6 +365,7 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 	if (this._useWebGL) {
 		rdgeStarted = true;
 		this._canvas.rdgeid = this._canvas.getAttribute( "data-RDGE-id" );
+		g_Engine.unregisterCanvas( this._canvas )
 		g_Engine.registerCanvas(this._canvas, this);
 		RDGEStart( this._canvas );
 		this._canvas.task.stop()
@@ -729,6 +732,85 @@ World.prototype.getShapeFromPoint = function( offsetX, offsetY ) {
 	}
 };
 
+
+
+World.prototype.exportJSON = function()
+{
+	// world properties
+	var worldObj = 
+	{
+		'version'	: 1.1,
+		'id'		: this.getCanvas().getAttribute( "data-RDGE-id" ),
+		'fov'		: this._fov,
+		'zNear'		: this._zNear,
+		'zFar'		: this._zFar,
+		'viewDist'	: this._viewDist,
+		'webGL'		: this._useWebGL
+	};
+
+	// RDGE scenegraph
+	if (this._useWebGL)
+		worldObj.scenedata = this.myScene.exportJSON();
+
+	// object data
+	var strArray = [];
+	this.exportObjectsJSON( this._geomRoot, worldObj );
+
+	// You would think that the RDGE export function
+	// would not be destructive of the data.  You would be wrong...
+	// We need to rebuild everything
+	if (this._useWebGL)
+	{
+		if (worldObj.children && (worldObj.children.length === 1))
+		{
+            this.rebuildTree(this._geomRoot);
+            this.restartRenderLoop();
+		}
+	}
+
+	// convert the object to a string
+	var jStr = JSON.stringify( worldObj );
+
+	// prepend some version information to the string.
+	// this string is also used to differentiate between JSON
+	// and pre-JSON versions of fileIO.
+	// the ending ';' in the version string is necessary
+	jStr = "v1.0;" + jStr;
+	
+	return jStr;
+}
+
+World.prototype.rebuildTree = function( obj )
+{
+	if (!obj)  return;
+
+	obj.buildBuffers();
+
+	if (obj.getChild()) {
+		 this.rebuildTree( obj.getChild () );
+    }
+
+	if (obj.getNext())
+		this.rebuildTree( obj.getNext() );
+}
+
+World.prototype.exportObjectsJSON = function( obj,  parentObj )
+{
+	if (!obj)  return;
+
+	var jObj = obj.exportJSON();
+	if (!parentObj.children)  parentObj.children = [];
+	parentObj.children.push( jObj );
+
+	if (obj.getChild()) {
+		 this.exportObjectsJSON( obj.getChild (), jObj  );
+    }
+
+	if (obj.getNext())
+		this.exportObjectsJSON( obj.getNext(), parentObj );
+}
+
+/*
 World.prototype.export = function()
 {
 	var exportStr = "GLWorld 1.0\n";
@@ -791,6 +873,7 @@ World.prototype.exportObjects = function( obj ) {
 	
 	return rtnStr;
 };
+*/
 
 World.prototype.findTransformNodeByMaterial = function( materialNode,  trNode ) {
 	//if (trNode == null)  trNode = this._ctrNode;
@@ -808,6 +891,91 @@ World.prototype.findTransformNodeByMaterial = function( materialNode,  trNode ) 
 	}
 
 	return rtnNode;
+};
+
+World.prototype.importJSON = function( jObj )
+{
+	if (jObj.webGL)
+	{
+		// start RDGE
+		rdgeStarted = true;
+		var id = this._canvas.getAttribute( "data-RDGE-id" ); 
+		this._canvas.rdgeid = id;
+		g_Engine.registerCanvas(this._canvas, this);
+		RDGEStart( this._canvas );
+		this._canvas.task.stop()
+	}
+
+	// import the objects
+	// there should be exactly one child of the parent object
+	if (jObj.children && (jObj.children.length === 1))
+		this.importObjectsJSON( jObj.children[0] );
+	else
+		throw new Error ("unrecoverable canvas import error - inconsistent root object: " + jObj.children );
+
+	if (!this._useWebGL)
+	{
+		// render using canvas 2D
+		this.render();
+	}
+	else
+		this.restartRenderLoop();
+}
+
+World.prototype.importObjectsJSON = function( jObj,  parentGeomObj )
+{
+	// read the next object
+	var gObj = this.importObjectJSON( jObj,  parentGeomObj );
+
+	// determine if we have children
+	if (jObj.children)
+	{
+		var nKids = ojObjbj.chilodren.length;
+		for (var i=0;  i<nKids;  i++)
+		{
+			var child = jObj.children[i];
+			this.importObjectsJSON( child, gObj );
+		}
+	}
+}
+
+World.prototype.importObjectJSON = function( jObj, parentGeomObj )
+{
+	var type = jObj.type;
+    var BrushStroke = require("js/lib/geom/brush-stroke").BrushStroke;
+
+	var obj;
+	switch (type)
+	{
+		case 1:
+			obj = new Rectangle();
+			obj.importJSON( jObj );
+			break;
+
+		case 2:		// circle
+			obj = new Circle();
+			obj.importJSON( jObj );
+			break;
+
+		case 3:		// line
+            obj = new Line();
+            obj.importJSON( jObj );
+            break;
+
+        case 6:     //brush stroke
+            obj = new BrushStroke();
+            obj.importJSON(jObj);
+            break;
+
+		default:
+			throw new Error( "Unrecognized object type: " + type );
+			break;
+	}
+
+	if (obj)
+		this.addObject( obj,  parentGeomObj );
+
+	return obj;
 };
 
 World.prototype.import = function( importStr ) {

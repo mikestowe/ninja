@@ -77,34 +77,83 @@
                 "name": "Splitter",
                 "properties": {
                     "element": {"#": "bottomSplitter"},
-                    "panel": {"#": "bottomPanelContainer"},
-                    "resizeBar": {"#": "timelineResizer"}
+                    "panel": {"@": "timeline"}
                 }
             },
 
             "resizer1": {
-                "module": "js/panels/Resizer",
-                "name": "Resizer",
+                "module": "js/panels/resize-composer",
+                "name": "ResizeComposer",
                 "properties": {
                     "element": {"#": "rightPanelResizer"},
-                    "id": "rightPanelResizer",
-                    "panel": {"#": "rightPanelContainer"},
-                    "isVertical": false,
-                    "redrawStage": true
-                }
+                    "component": {"@": "owner"},
+                    "yAxis": false
+                },
+                "listeners": [
+                    {
+                        "type": "resizeStart",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "resizeMove",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "resizeEnd",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
 
             "resizer2": {
-                "module": "js/panels/Resizer",
-                "name": "Resizer",
+                "module": "js/panels/resize-composer",
+                "name": "ResizeComposer",
                 "properties": {
                     "element": {"#": "timelineResizer"},
-                    "id": "timelineResizer",
-                    "panel": {"#": "bottomPanelContainer"},
-                    "isVertical": true,
-                    "isInversed": true,
-                    "redrawStage": true
-                }
+                    "component": {"@": "owner"},
+                    "xAxis": false
+                },
+                "listeners": [
+                    {
+                        "type": "resizeStart",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "resizeMove",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "resizeEnd",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            },
+
+            "Resizer": {
+                "module": "js/panels/resize-composer",
+                "name": "ResizeComposer",
+                "properties": {
+                    "element": {"#": "pasteboardResizer"},
+                    "component": {"@": "owner"}
+                },
+                "listeners": [
+                    {
+                        "type": "resizeStart",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "resizeMove",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "resizeEnd",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "resizeReset",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
 
             "stageMode": {
@@ -267,6 +316,11 @@
                 "name": "StylesController"
             },
 
+            "presetsController": {
+                "module": "js/controllers/presets-controller",
+                "name": "PresetsController"
+            },
+
             "filePickerController": {
                 "module": "js/io/ui/file-picker/file-picker-controller",
                 "name": "FilePickerController"
@@ -315,13 +369,17 @@
                     "popupManager":         {"@": "popupManager1"},
 					"colorController":      {"@": "colorController1"},
                     "stylesController":     {"@": "stylesController"},
+                    "presetsController":     {"@": "presetsController"},
                     "filePickerController": {"@": "filePickerController"},
                     "newFileController":    {"@": "newFileController"},
                     "coreIoApi":    		{"@": "coreIoApi1"},
                     "documentBar":          {"@": "documentBar"},
                     "ioMediator":           {"@": "ioMediator"},
                     "timeline":             {"@": "timeline"},
-                    "mainMenuController":   {"@": "mainMenuController"}
+                    "mainMenuController":   {"@": "mainMenuController"},
+                    "rightPanelContainer":  {"#": "rightPanelContainer" },
+                    "panelSplitter":     {"@": "splitter3"},
+                    "timelineSplitter":     {"@": "splitter4"}
                 }
             }
         }
@@ -374,7 +432,9 @@
                         <section id="mainContent">
                             <section id="rulerLeft"></section>
                             <section id="stageAndScenesContainer"></section>
+                            <section id="pasteboardResizer" class="pasteboardResizer resizeBar"></section>
                         </section>
+                        <section id="timelineResizer" class="timelineResizer resizeBar"></section>
                         <section id="stateBar">
                             <section id="documentBarContainer">
                                 <div id="documentBar" class="documentBar"><a href="#">HTML</a></div>
@@ -382,20 +442,13 @@
                         </section>
 
                         <section id="breadCrumbComponent"></section>
-
-                        <section id="timelineResizer" class="timelineResizer resizeBar"></section>
-
-                        <section id="bottomPanelContainer" class="panelContainer">
-                            <section id="timelinePanel" class="panel">
-                                <div id="timelinePanelComponent"></div>
-                            </section>
-                        </section>
+                        <div id="timelinePanelComponent" data-montage-id="timelinePanel" class="timelinePanel"></div>
                     </section>
                 </section>
 
                 <section data-montage-id="rightPanelResizer" class="rightPanelResizer resizeBar"></section>
 
-                <section id="rightPanelContainer" class="rightPanelContainer panelContainer">
+                <section id="rightPanelContainer" data-montage-id="rightPanelContainer" class="rightPanelContainer panelContainer">
                     <section id="rightPanelContent" class="rightPanelContent">
                     </section>
                 </section>
