@@ -6,6 +6,7 @@
 
 var MaterialParser = require("js/lib/rdge/materials/material-parser").MaterialParser;
 var Material = require("js/lib/rdge/materials/material").Material;
+var Texture = require("js/lib/rdge/texture").Texture;
 
 var UberMaterial = function UberMaterial() {
     ///////////////////////////////////////////////////////////////////////
@@ -23,7 +24,8 @@ var UberMaterial = function UberMaterial() {
 	this._environmentAmount = 0.2;		// 0 .. 1
 
 	// set the default maps
-	this._diffuseMapOb = { 'texture' : 'assets/images/rocky-diffuse.jpg', 'wrap' : 'REPEAT' };
+	//this._diffuseMapOb = { 'texture' : 'assets/images/rocky-diffuse.jpg', 'wrap' : 'REPEAT' };
+	this._diffuseMapOb = { 'texture' : 'texture', 'wrap' : 'REPEAT' };
 	this._normalMapOb = { 'texture' : 'assets/images/rocky-normal.jpg', 'wrap' : 'REPEAT' };
 	this._specularMapOb = { 'texture' : 'assets/images/rocky-spec.jpg', 'wrap' : 'REPEAT' };
 	this._environmentMapOb = { 'texture' : 'assets/images/silver.png', 'wrap' : 'CLAMP', 'envReflection' : this._environmentAmount };
@@ -33,6 +35,9 @@ var UberMaterial = function UberMaterial() {
 	this._useSpecularMap	= true;
 	this._useEnvironmentMap	= true;
 	this._useLights			= [true, true, true, true];
+
+    // these are the abstracted texture objects - defined where they are set
+    this._diffuseTexture;
 
 	this._MAX_LIGHTS		= 4;
 
@@ -189,6 +194,7 @@ var UberMaterial = function UberMaterial() {
 		if (material) {
 			var technique = material.shaderProgram.defaultTechnique;    
 			technique.u_diffuseColor.set(this._diffuseColor);
+            this.getWorld().restartRenderLoop();
 		}
 	};
 
@@ -258,6 +264,7 @@ var UberMaterial = function UberMaterial() {
 		if ((value == null) || (value.length == 0)) {
 			if (this._useDiffuseMap) {
 				this._useDiffuseMap = false;
+                this._diffuseTexture = undefined;
 				this.rebuildShader();
 			}
 		} else {
@@ -270,8 +277,8 @@ var UberMaterial = function UberMaterial() {
 					var technique = material.shaderProgram.defaultTechnique;
 					var renderer = g_Engine.getContext().renderer;
 					if (renderer && technique) {
-						var tex = renderer.getTextureByName(value, caps.diffuseMap.wrap);
-						this.registerTexture( tex );
+                        this._diffuseTexture = new Texture( this.getWorld(), value,  caps.diffuseMap.wrap );
+                        var tex = this._diffuseTexture.getTexture();
 						technique.s_diffuseMap.set( tex );
 					}
 				}
@@ -370,118 +377,29 @@ var UberMaterial = function UberMaterial() {
 		this._materialNode.setShader(this._shader);
 	};
 
-	this.import = function( importStr )
-	{
-		// limit the key searches to this material
-        var endKey = "endMaterial\n";
-        var index = importStr.indexOf( endKey );
-        index += endKey.length;
-        importStr = importStr.slice( 0, index );
-		var pu = new MaterialParser( importStr );
+    this.update = function()
+    {
+		var material = this._materialNode;
+		if (material)
+        {
+		    var technique = material.shaderProgram.defaultTechnique;
+		    var renderer = g_Engine.getContext().renderer;
+		    if (renderer && technique)
+            {
+                if (this._diffuseTexture && this._diffuseTexture.isAnimated())
+                {
+                    this._diffuseTexture.rerender();
+				    technique.s_diffuseMap.set( this._diffuseTexture.getTexture() );
+                }
+            }
+        }
+    }
 
-		var matProps = pu.nextValue( "materialProps: " );
-		if (matProps)
-		{
-			var ambientColor  = eval( "[" + pu.nextValue("ambientColor: ")   + ']' );	 this.setProperty( "ambientColor", ambientColor );
-			var diffuseColor  = eval( "[" + pu.nextValue( "diffuseColor: ")  + ']' );	 this.setProperty( "diffuseColor", diffuseColor );
-			var specularColor = eval( "[" + pu.nextValue( "specularColor: ") + ']' );	 this.setProperty( "specularColor", specularColor );
-			var specularPower = eval( "[" + pu.nextValue( "specularPower: ") + ']' );    this.setProperty( "specularPower", specularPower );
-		}
-
-		var lightProps = pu.nextValue( "lightProps: " );
-		if (lightProps)
-		{
-			this._lights = [];
-			var lightStr;
-			for (var i=0;  i<this._MAX_LIGHTS;  i++)
-			{
-				var type = pu.nextValue( "light" + i + ": " );
-				if (type)
-				{
-						var light = new Object;
-						switch (type)
-						{
-							case "directional":
-								lightStr = pu.nextValue( 'light' + i + 'Dir: ');
-								light.direction = eval( "[" + lightStr + "]" );
-								break;
-
-							case "spot":
-								lightStr = pu.nextValue( 'light' + i + 'Pos: ' );
-								light.position =  eval( "[" + lightStr + "]" );
-
-								lightStr = pu.nextValue( 'light' + i + 'OuterSpotCutoff: ' );
-								light['spotInnerCutoff'] = Number( lightStr );
-
-								lightStr = pu.nextValue( 'light' + i + 'InnerSpotCutoff: ' );
-								light['spotOuterCutoff'] = Number( lightStr );
-								break;
-
-							case "point":
-								lightStr = pu.nextValue( 'light' + i + 'Pos: ' );
-								light.position =  eval( "[" + lightStr + "]" );
-
-								lightStr = pu.nextValue( 'light' + i + 'Attenuation: ' );
-								light.attenuation =  eval( "[" + lightStr + "]" );
-								break;
-
-							default:
-								throw new Error( "unrecognized light type on import: " + type );
-								break;
-						}
-
-						// common to all lights
-						light.diffuseColor = eval( "[" + pu.nextValue( 'light' + i + 'Color: ') + "]" );
-						light.specularColor = eval( "[" + pu.nextValue( 'light' + i + 'SpecularColor: ') + "]" );
-
-						// push the light
-						this._lights.push( light );
-				}
-				else
-					this._lights[i] = 'undefined';
-
-				// advance to the next light
-				var endLightKey = "endMaterial\n";
-				index = importStr.indexOf( endLightKey );
-				if (index < 0)  throw new Error( "ill-formed light encountered in import" );
-				index += endLightKey.length;
-				importStr = importStr.slice( 0, index );
-
-			}
-
-			if (this._lights.length > 0)
-			{
-				this._ubershaderCaps.lighting =
-				{
-					'light0' : this._lights[0],
-					'light1' : this._lights[1],
-					'light2' : this._lights[2],        
-					'light3' : this._lights[3]                                     
-				}
-			}
-		}
-
-		var diffuseMap = pu.nextValue( "diffuseMap: "  )
-		if(diffuseMap)
-			this.setProperty( "diffuseMap", diffuseMap );
-
-		var normalMap = pu.nextValue( "normalMap: "  );
-		if(normalMap)
-			this.setProperty( "normalMap", normalMap );
-
-		var specularMap = pu.nextValue( "specularMap: "  );
-		if(specularMap)
-			this.setProperty( "specularMap", specularMap );
-
-		var environmentMap = pu.nextValue( "environmentMap: "  );
-		if(environmentMap)
-		{
-			this.setProperty( "environmentMap", environmentMap );
-			this.setProperty( "environmentAmount", Number( pu.nextValue( "environmentAmount" ) ) );
-		}
-
-		this.rebuildShader();
-	}
+    this.isAnimated	= function()
+    {
+        var anim = (this._diffuseTexture && this._diffuseTexture.isAnimated());
+        return anim;
+    }
 
 	this.importJSON = function( jObj )
 	{
@@ -658,88 +576,6 @@ var UberMaterial = function UberMaterial() {
 		return jObj;
 	}
 
-
-	this.export = function()
-	{
-		// every material needs the base type and instance name
-		var exportStr = "material: " + this.getShaderName() + "\n";
-		exportStr += "name: " + this.getName() + "\n";
-
-		var caps = this._ubershaderCaps;
-		
-		// export the material properties
-		if (typeof caps.material != 'undefined')
-		{
-			exportStr += "materialProps: true\n";
-			exportStr += "ambientColor: " + this._ambientColor + "\n";
-			exportStr += "diffuseColor: " + this._diffuseColor + "\n";
-			exportStr += "specularColor: " + this._specularColor + "\n";
-			exportStr += "specularPower: " + this._specularPower + "\n";
-		}
-
-		if (typeof caps.lighting != 'undefined')
-		{
-			exportStr += "lightProps: true\n";
-
-			var light = caps.lighting['light' + i];
-			for (var i=0;  i<this._MAX_LIGHTS;  i++)
-			{
-				var light = caps.lighting["light" + i];
-				if( typeof light != "undefined")
-				{
-					exportStr += "light" + i + ': ' + light.type + "\n";
-
-					// output the light secific data
-					if (light.type === 'directional')
-					{
-						exportStr += 'light' + i + 'Dir: ' + light['direction'] + '\n';
-					}
-					else if (light.type === 'spot')
-					{
-						exportStr += 'light' + i + 'Pos: ' + light['position'] + '\n';
-						exportStr += 'light' + i + 'SpotInnerCutoff: ' + light['spotInnerCutoff'] + '\n';
-						exportStr += 'light' + i + 'SpotOuterCutoff: ' + light['spotOuterCutoff'] + '\n';
-					}
-					else		// light.type === 'point'
-					{
-						exportStr += 'light' + i + 'Pos: ' + (light['position'] || [ 0, 0, 0 ]) + '\n';
-						exportStr += 'light' + i + 'Attenuation: ' + (light['attenuation'] || [ 1, 0, 0 ]) + '\n';
-					}
-
-					// common to all lights
-					exportStr += 'light' + i + 'Color: ' + (light['diffuseColor'] || [ 1,1,1,1 ]) + '\n';
-					exportStr += 'light' + i + 'SpecularColor: ' + (light['specularColor'] || [ 1, 1, 1, 1 ]) + '\n'; 
-					
-					exportStr += "endlight\n";          
-				}
-			}
-		}
-
-		var world = this.getWorld();
-		if (!world)
-			throw new Error( "no world in material.export, " + this.getName() );
-
-		if(typeof caps.diffuseMap != 'undefined')
-			exportStr += "diffuseMap: " + caps.diffuseMap.texture + "\n";
-
-		if(typeof caps.normalMap != 'undefined')
-			exportStr += "normalMap: " + caps.normalMap.texture + "\n";
-
-		if(typeof caps.specularMap != 'undefined')
-			exportStr += "specularMap: " + caps.specularMap.texture + "\n";
-
-		if(typeof caps.environmentMap != 'undefined')
-		{
-			exportStr += "environmentMap: " + caps.environmentMap.texture + "\n";
-			exportStr += "environmentAmount: " + caps.environmentMap.envReflection + "\n";
-		}
-		
-		// every material needs to terminate like this
-		exportStr += "endMaterial\n";
-
-		return exportStr;
-	}
-
 	this.buildUberShader = function(caps)
 	{
 		var preproc = "";
@@ -894,8 +730,8 @@ var UberMaterial = function UberMaterial() {
 	
 		var renderer = g_Engine.getContext().renderer;
 		if(this._useDiffuseMap) {
-			var tex = renderer.getTextureByName(caps.diffuseMap.texture, caps.diffuseMap.wrap, caps.diffuseMap.mips);
-			this.registerTexture( tex );
+            this._diffuseTexture = new Texture( this.getWorld(), caps.diffuseMap.texture,  caps.diffuseMap.wrap, caps.diffuseMap.mips );
+            var tex = this._diffuseTexture.getTexture();
 			technique.s_diffuseMap.set( tex );
 		}
 
