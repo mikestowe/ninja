@@ -196,6 +196,24 @@ var GeomObj = function GLGeomObj() {
                     }
                 }
             }
+        } else {
+            if (type === "fill") {
+                this._fillColor = null;
+            } else {
+                this._strokeColor = null;
+            }
+
+            if (this._materialArray && this._materialTypeArray) {
+                nMats = this._materialArray.length;
+                if (nMats === this._materialTypeArray.length) {
+                    for (i=0;  i<nMats;  i++) {
+                        if (this._materialTypeArray[i] == type) {
+                            // TODO - Not sure how to set color to null values in shaders
+                            this._materialArray[i].setProperty( "color", [0,0,0,0] );
+                        }
+                    }
+                }
+            }
         }
 
 		var world = this.getWorld();

@@ -78,6 +78,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                     this.toggleWebGlMode(el, value);
                     el.elementModel.shapeModel.GLWorld.render();
                     this.application.ninja.selectionController.selectElement(el);
+                    this.application.ninja.documentController.activeDocument.needsSave = true;
                     return;
                 case "strokeMaterial":
                     var sm = Object.create(MaterialsModel.getMaterial(value));
@@ -145,6 +146,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                 default:
                     CanvasController.setProperty(el, p, value);
             }
+            this.application.ninja.documentController.activeDocument.needsSave = true;
         }
     },
 
@@ -422,8 +424,7 @@ exports.ShapesController = Montage.create(CanvasController, {
     setColor: {
         value: function(el, color, isFill) {
             var mode = color.mode,
-                webGl,
-                m;
+                webGl;
             if(isFill)
             {
                 if(mode)
@@ -431,14 +432,13 @@ exports.ShapesController = Montage.create(CanvasController, {
                     switch (mode) {
                         case 'nocolor':
                             el.elementModel.shapeModel.GLGeomObj.setFillColor(null);
-                            return;
+                            break;
                         case 'gradient':
                             if(el.elementModel.shapeModel.useWebGl)
                             {
                                 this._setGradientMaterial(el, color.color.gradientMode, isFill);
                             }
                             el.elementModel.shapeModel.GLGeomObj.setFillColor({gradientMode:color.color.gradientMode, color:color.color.stops});
-                            el.elementModel.shapeModel.GLWorld.render();
                             break;
                         default:
                             if(el.elementModel.shapeModel.useWebGl)
@@ -447,7 +447,6 @@ exports.ShapesController = Montage.create(CanvasController, {
                             }
                             webGl = this.application.ninja.colorController.colorModel.colorToWebGl(color.color);
                             el.elementModel.shapeModel.GLGeomObj.setFillColor(webGl);
-                            el.elementModel.shapeModel.GLWorld.render();
                     }
                 }
             }
@@ -468,14 +467,13 @@ exports.ShapesController = Montage.create(CanvasController, {
                     switch (mode) {
                         case 'nocolor':
                             el.elementModel.shapeModel.GLGeomObj.setStrokeColor(null);
-                            return;
+                            break;
                         case 'gradient':
                             if(el.elementModel.shapeModel.useWebGl)
                             {
                                 this._setGradientMaterial(el, color.color.gradientMode, isFill);
                             }
                             el.elementModel.shapeModel.GLGeomObj.setStrokeColor({gradientMode:color.color.gradientMode, color:color.color.stops});
-                            el.elementModel.shapeModel.GLWorld.render();
                             break;
                         default:
                             if(el.elementModel.shapeModel.useWebGl)
@@ -484,11 +482,11 @@ exports.ShapesController = Montage.create(CanvasController, {
                             }
                             webGl = this.application.ninja.colorController.colorModel.colorToWebGl(color.color);
                             el.elementModel.shapeModel.GLGeomObj.setStrokeColor(webGl);
-                            el.elementModel.shapeModel.GLWorld.render();
                     }
                 }
             }
             el.elementModel.shapeModel.GLWorld.render();
+            this.application.ninja.documentController.activeDocument.needsSave = true;
         }
     },
 
