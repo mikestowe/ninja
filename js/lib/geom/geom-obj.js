@@ -220,6 +220,8 @@ var GeomObj = function GLGeomObj() {
             this.setStrokeColor(this._strokeColor);
         }
 
+        this._strokeMaterial = strokeMaterial;
+
         return strokeMaterial;
     };
 
@@ -241,6 +243,8 @@ var GeomObj = function GLGeomObj() {
         if (this._fillColor) {
             this.setFillColor(this._fillColor);
         }
+
+        this._fillMaterial = fillMaterial;
 
         return fillMaterial;
     };

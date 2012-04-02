@@ -1051,9 +1051,9 @@ World.prototype.importSubObject = function( objStr,  parentNode ) {
 function Notifier()
 {
     // notification types supported
-    this.OBJECT_DELETE      = 1;
-    this.OBJECT_REANIMATE   = 2;    // the object has come back after a deletion - as in undo
-    this.OBJECT_CHANGE      = 3;
+    this.OBJECT_DELETE          = 1;
+    this.OBJECT_REINSTANTIATE   = 2;    // the object has come back after a deletion - as in undo
+    this.OBJECT_CHANGE          = 3;
 
 
     // the array of listener objects

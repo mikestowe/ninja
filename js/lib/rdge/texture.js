@@ -69,7 +69,7 @@ function Texture( dstWorld, texMapName,  wrap, mips )
                 this._srcWorld = srcCanvas.elementModel.shapeModel.GLWorld;
 
                 // add a notifier to the world
-                this._srcWorld.addListener( this,  this.worldCallback,  { myObj: 'anything' } );
+                this._srcWorld.addListener( this,  this.worldCallback,  { srcWorld: this._srcWorld } );
 
                 // check if the source is animated
                 if (srcCanvas.elementModel && srcCanvas.elementModel.shapeModel  && srcCanvas.elementModel.shapeModel.GLWorld)
@@ -87,6 +87,33 @@ function Texture( dstWorld, texMapName,  wrap, mips )
     this.worldCallback = function( type, callbackObj,  calleeData,  callerData )
     {
         console.log( "texture callback, type: " + type );
+        if (calleeData.srcWorld)
+        {
+            var srcWorld = calleeData.srcWorld;
+            var notifier = srcWorld._notifier;
+            var texture = this.callbackObj;
+            if (texture)
+            {
+                switch (type)
+                {
+                    case notifier.OBJECT_DELETE:
+                        break;
+
+                    case notifier.OBJECT_REINSTANTIATE:
+                        break;
+
+                    case notifier.OBJECT_CHANGE:
+                        if (!texture.isAnimated())
+                            texture.rerender();
+                            texture.getDstWorld().restartRenderLoop();
+                        break;
+
+                    default:
+                        throw new Exception( "unrecognized texture callback type: " + type );
+                        break;
+                }
+           }
+        }
     }
 
     this.loadFromFile = function()
