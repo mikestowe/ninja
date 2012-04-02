@@ -242,7 +242,6 @@ exports.ViewUtils = Montage.create(Component, {
             var worldPt = MathUtils.transformPoint( viewPt, mat );
             var stageWorldPt = this.postViewToStageWorld( worldPt, elt );
             this.popViewportObj();
-
             return stageWorldPt;
         }
     },

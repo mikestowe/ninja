@@ -413,7 +413,7 @@ var BrushStroke = function GLBrushStroke() {
             this._LocalPoints[i][1]+= halfheight;
 
             //store the original points
-            this._OrigLocalPoints   .push([this._LocalPoints[i][0],this._LocalPoints[i][1],this._LocalPoints[i][2]]);
+            this._OrigLocalPoints.push([this._LocalPoints[i][0],this._LocalPoints[i][1],this._LocalPoints[i][2]]);
         }
         //update the bbox with the same adjustment as was made for the local points above
         this._BBoxMax[0]+= halfwidth;this._BBoxMin[0]+= halfwidth;

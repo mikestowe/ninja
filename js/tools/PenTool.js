@@ -416,18 +416,30 @@ exports.PenTool = Montage.create(ShapeTool, {
     ShowSelectedSubpath:{
         value: function() {
             if (this._selectedSubpath){
+                this._selectedSubpath.setPlaneMatrix(this._penPlaneMat);
+                var planeMatInv = glmat4.inverse( this._penPlaneMat, [] );
+                this._selectedSubpath.setPlaneMatrixInverse(planeMatInv);
+
                 this._selectedSubpath.createSamples(); //dirty bit is checked here
-                var bboxMin = this._selectedSubpath.getBBoxMin();
-                var bboxMax = this._selectedSubpath.getBBoxMax();
+                this._selectedSubpath.buildLocalCoord(); //local dirty bit is checked here
+
+                //build the width and height of this canvas by looking at local coordinates (X and Y needed only)
+                var bboxMin = this._selectedSubpath.getLocalBBoxMin();
+                var bboxMax = this._selectedSubpath.getLocalBBoxMax();
                 var bboxWidth = bboxMax[0] - bboxMin[0];
                 var bboxHeight = bboxMax[1] - bboxMin[1];
+
+                //build the 3D position of the plane center of this canvas by looking at midpoint of the bounding box in stage world coords
+                bboxMin = this._selectedSubpath.getBBoxMin();
+                bboxMax = this._selectedSubpath.getBBoxMax();
                 var bboxMid = [0.5 * (bboxMax[0] + bboxMin[0]), 0.5 * (bboxMax[1] + bboxMin[1]), 0.5 * (bboxMax[2] + bboxMin[2])];
 
+                this._selectedSubpath.setPlaneCenter(bboxMid);
                 this._selectedSubpath.setCanvasX(bboxMid[0]);
                 this._selectedSubpath.setCanvasY(bboxMid[1]);
 
                 //call render shape with the bbox width and height
-                this.RenderShape(bboxWidth, bboxHeight, this._penPlaneMat, bboxMid, this._penCanvas);
+                this.RenderShape(bboxWidth, bboxHeight, bboxMid, this._penPlaneMat, this._penCanvas);
             }
         }
     },
@@ -592,7 +604,7 @@ exports.PenTool = Montage.create(ShapeTool, {
     },
 
     RenderShape: {
-        value: function (w, h, planeMat, midPt, canvas) {
+        value: function (w, h, midPt, planeMat, canvas) {
             if ((Math.floor(w) === 0) || (Math.floor(h) === 0)) {
                 return;
             }
@@ -614,10 +626,6 @@ exports.PenTool = Montage.create(ShapeTool, {
                 var subpath = this._selectedSubpath; //new GLSubpath();
                 subpath.setWorld(world);
                 subpath.setCanvas(newCanvas);
-                subpath.setPlaneMatrix(planeMat);
-                var planeMatInv = glmat4.inverse( planeMat, [] );
-                subpath.setPlaneMatrixInverse(planeMatInv);
-                subpath.setPlaneCenter(midPt);
 
                 world.addObject(subpath);
                 world.render();
@@ -662,11 +670,19 @@ exports.PenTool = Montage.create(ShapeTool, {
                 if (this._entryEditMode !== this.ENTRY_SELECT_CANVAS){
                     //update the left and top of the canvas element
                     var canvasArray=[canvas];
-                    ElementMediator.setProperty(canvasArray, "left", [parseInt(left)+"px"],"Changing", "penTool");//DocumentControllerModule.DocumentController.SetElementStyle(canvas, "left", parseInt(left) + "px");
-                    ElementMediator.setProperty(canvasArray, "top", [parseInt(top) + "px"],"Changing", "penTool");//DocumentControllerModule.DocumentController.SetElementStyle(canvas, "top", parseInt(top) + "px");
+                    w= Math.round(w);
+                    h = Math.round(h);
                     ElementMediator.setProperty(canvasArray, "width", [w+"px"], "Changing", "penTool");//canvas.width = w;
                     ElementMediator.setProperty(canvasArray, "height", [h+"px"], "Changing", "penTool");//canvas.height = h;
-                    //update the viewport and projection to reflect the new canvas width and height
+
+                    //var bboxMid = this._selectedSubpath.getLocalBBoxMidInStageWorld();
+                    //left = Math.round(bboxMid[0] - 0.5 * w);
+                    //top = Math.round(bboxMid[1] - 0.5 * h);
+
+                    ElementMediator.setProperty(canvasArray, "left", [left+"px"],"Changing", "penTool");//DocumentControllerModule.DocumentController.SetElementStyle(canvas, "left", parseInt(left) + "px");
+                    ElementMediator.setProperty(canvasArray, "top", [top + "px"],"Changing", "penTool");//DocumentControllerModule.DocumentController.SetElementStyle(canvas, "top", parseInt(top) + "px");
+                                        
+                    //update the viewport and projection to reflect the new canvas width and height (todo might be unnecessary since we don't use RDGE for now)
                     world.setViewportFromCanvas(canvas);
                     if (this._useWebGL){
                         var cam = world.renderer.cameraManager().getActiveCamera();
@@ -677,10 +693,6 @@ exports.PenTool = Montage.create(ShapeTool, {
                 var subpath = this._selectedSubpath;
 
                 subpath.setDrawingTool(this);
-                subpath.setPlaneMatrix(planeMat);
-                var planeMatInv = glmat4.inverse( planeMat, [] );
-                subpath.setPlaneMatrixInverse(planeMatInv);
-                subpath.setPlaneCenter(midPt);
                 subpath.setWorld(world);
 
                 world.addIfNewObject(subpath);
@@ -829,6 +841,7 @@ exports.PenTool = Montage.create(ShapeTool, {
             ctx.strokeStyle = "green";
             //if (subpath.getStrokeColor())
 			//    ctx.strokeStyle = MathUtils.colorToHex( subpath.getStrokeColor() );
+
             ctx.beginPath();
             var p0x = subpath.getAnchor(0).getPosX()+ horizontalOffset;
             var p0y = subpath.getAnchor(0).getPosY()+ verticalOffset;
@@ -881,7 +894,6 @@ exports.PenTool = Montage.create(ShapeTool, {
             ctx.strokeStyle = "green";
             var anchorDelta = 2;
             var selAnchorDelta = 4;
-
             for (var i = 0; i < numAnchors; i++) {
                 var px = subpath.getAnchor(i).getPosX();
                 var py = subpath.getAnchor(i).getPosY();

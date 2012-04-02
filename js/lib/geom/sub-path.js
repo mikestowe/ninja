@@ -12,6 +12,7 @@ var AnchorPoint =   require("js/lib/geom/anchor-point").AnchorPoint;
 var MaterialsModel = require("js/models/materials-model").MaterialsModel;
 
 // TODO Those function do not seems to be used. We should remove them
+/*
 function SubpathOffsetPoint(pos, mapPos) {
     this.Pos = [pos[0],pos[1],pos[2]];
     this.CurveMapPos = [mapPos[0], mapPos[1], mapPos[2]];
@@ -33,7 +34,7 @@ function sortNumberDescending(a,b){
 function SegmentIntersections(){
     this.paramArray = [];
 }
-
+*/
 ///////////////////////////////////////////////////////////////////////
 // Class GLSubpath
 //      representation a sequence of cubic bezier curves.
@@ -49,14 +50,21 @@ var GLSubpath = function GLSubpath() {
     this._BBoxMax = [0, 0, 0];
     this._isClosed = false;
 
-    this._samples = [];                 //polyline representation of this curve
-    this._sampleParam = [];            //parametric distance of samples, within [0, N], where N is # of Bezier curves (=# of anchor points if closed, =#anchor pts -1 if open)
+    this._samples = [];                 //polyline representation of this curve in stage world space
+    this._sampleParam = [];             //parametric distance of samples, within [0, N], where N is # of Bezier curves (=# of anchor points if closed, =#anchor pts -1 if open)
     this._anchorSampleIndex = [];       //index within _samples corresponding to anchor points
-    
+
+    this._LocalPoints = [];             //polyline representation of this curve in canvas space
+    this._LocalBBoxMin = [0,0,0];       //bbox min point of _LocalPoints
+    this._LocalBBoxMax = [0,0,0];       //bbox max point of _LocalPoints
+
     this._UnprojectedAnchors = [];
 
     //initially set the _dirty bit so we will construct samples
     this._dirty = true;
+
+    //initially set the local dirty bit so we will construct local coordinates
+    this._isLocalDirty = true;
 
     //whether or not to use the canvas drawing to stroke/fill
     this._useCanvasDrawing = true;
@@ -69,7 +77,7 @@ var GLSubpath = function GLSubpath() {
     this._canvasY = 0;
 
     //stroke information
-    this._strokeWidth = 0.0;
+    this._strokeWidth = 1.0;
     this._strokeColor = [0.4, 0.4, 0.4, 1.0];
     this._strokeMaterial = null
     this._strokeStyle = "Solid";
@@ -109,6 +117,13 @@ var GLSubpath = function GLSubpath() {
         // return; //no need to do anything for now
     };
 
+    this._offsetLocalCoord = function(deltaW, deltaH){
+        var numPoints = this._LocalPoints.length;
+        for (var i=0;i<numPoints;i++) {
+            this._LocalPoints[i][0]+= deltaW;
+            this._LocalPoints[i][1]+= deltaH;
+        }
+    };
     //render
     //  specify how to render the subpath in Canvas2D
     this.render = function () {
@@ -116,35 +131,65 @@ var GLSubpath = function GLSubpath() {
         var world = this.getWorld();
         if (!world)  throw( "null world in subpath render" );
 
-         // get the context
+        // get the context
         var ctx = world.get2DContext();
-        if (!ctx)  throw ("null context in subpath render")
+        if (!ctx)  throw ("null context in subpath render");
 
         var numAnchors = this.getNumAnchors();
         if (numAnchors === 0) {
             return; //nothing to do for empty paths
         }
-
-        ctx.save();
-
+        var useLocalCoord = true;
         this.createSamples(); //dirty bit checked in this function...will generate a polyline representation
-        var bboxMin = this.getBBoxMin();
-        var bboxMax = this.getBBoxMax();
-        var bboxWidth = bboxMax[0] - bboxMin[0];
-        var bboxHeight = bboxMax[1] - bboxMin[1];
-        var bboxMid = [0.5 * (bboxMax[0] + bboxMin[0]), 0.5 * (bboxMax[1] + bboxMin[1]), 0.5 * (bboxMax[2] + bboxMin[2])];
+
+        //build the coordinates of the samples in 2D (canvas) space (localDirty bit checked in buildLocalCoord
+        this.buildLocalCoord();
+
+        //
+        var bboxWidth=0, bboxHeight=0;
+        //var bboxMid=[0,0,0];
+        if (useLocalCoord){
+            bboxWidth = this._LocalBBoxMax[0] - this._LocalBBoxMin[0];
+            bboxHeight = this._LocalBBoxMax[1] - this._LocalBBoxMin[1];
+            //bboxMid = [0.5 * (this._LocalBBoxMax[0] + this._LocalBBoxMin[0]), 0.5 * (this._LocalBBoxMax[1] + this._LocalBBoxMin[1]), 0.5 * (this._LocalBBoxMax[2] + this._LocalBBoxMin[2])];
+        }
+        else {
+            var bboxMin = this.getBBoxMin();
+            var bboxMax = this.getBBoxMax();
+            bboxWidth = bboxMax[0] - bboxMin[0];
+            bboxHeight = bboxMax[1] - bboxMin[1];
+            //bboxMid = [0.5 * (bboxMax[0] + bboxMin[0]), 0.5 * (bboxMax[1] + bboxMin[1]), 0.5 * (bboxMax[2] + bboxMin[2])];
+        }
 
         if (this._canvas) {
+            /*
+            var ViewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
+            //compute the plane center as the midpoint of the local bbox converted to stage world space
+            var planeCenter =  ViewUtils.localToStageWorld(bboxMid, this._canvas);
+            planeCenter[0]+=400; planeCenter[1]+=300; //todo replace these lines with the correct call for the offset
+            console.log("PEN: local bboxMid: "+ bboxMid +", stage-world bboxMid: "+ planeCenter);
+            var newLeft = planeCenter[0] - 0.5*bboxWidth;
+            console.log("PEN: newLeft: "+ newLeft +", bboxWidth: "+bboxWidth);
+            newLeft = Math.round(newLeft);//Math.round(this._planeCenter[0] - 0.5 * bboxWidth);
+            console.log("PEN: newLeft rounded: "+ newLeft);
+            var newTop = Math.round(planeCenter[1] - 0.5 * bboxHeight);//Math.round(this._planeCenter[1] - 0.5 * bboxHeight);
+            //assign the new position, width, and height as the canvas dimensions through the canvas controller
+            CanvasController.setProperty(this._canvas, "left", newLeft+"px");
+            CanvasController.setProperty(this._canvas, "top", newTop+"px");
             CanvasController.setProperty(this._canvas, "width", bboxWidth+"px");
             CanvasController.setProperty(this._canvas, "height", bboxHeight+"px");
             this._canvas.elementModel.shapeModel.GLWorld.setViewportFromCanvas(this._canvas);
+            */
         }
+        ctx.save();
         ctx.clearRect(0, 0, bboxWidth, bboxHeight);
 
         ctx.lineWidth = this._strokeWidth;
         ctx.strokeStyle = "black";
         if (this._strokeColor) {
-            ctx.strokeStyle = MathUtils.colorToHex( this._strokeColor );
+            //ctx.strokeStyle = MathUtils.colorToHex( this._strokeColor );
+            var strokeColorStr = "rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+this._strokeColor[3]+")";
+            ctx.strokeStyle = strokeColorStr;
         }
 
         ctx.fillStyle = "white";
@@ -152,14 +197,13 @@ var GLSubpath = function GLSubpath() {
             //ctx.fillStyle = MathUtils.colorToHex( this._fillColor );
             var fillColorStr = "rgba("+parseInt(255*this._fillColor[0])+","+parseInt(255*this._fillColor[1])+","+parseInt(255*this._fillColor[2])+","+this._fillColor[3]+")";
             ctx.fillStyle = fillColorStr;
-            console.log("Fill color:" + fillColorStr);
         }
         var lineCap = ['butt','round','square'];
         ctx.lineCap = lineCap[1];
-        ctx.beginPath();
 
         /*
         commenting this out for now because of Chrome bug where coincident endpoints of bezier curve cause the curve to not be rendered
+        ctx.beginPath();
         var prevAnchor = this.getAnchor(0);
         ctx.moveTo(prevAnchor.getPosX()-bboxMin[0],prevAnchor.getPosY()-bboxMin[1]);
         for (var i = 1; i < numAnchors; i++) {
@@ -176,16 +220,33 @@ var GLSubpath = function GLSubpath() {
         */
 
 
-        var numPoints = this._samples.length/3;
-        ctx.moveTo(this._samples[0]-bboxMin[0],this._samples[1]-bboxMin[1]);
-        for (var i=0;i<numPoints;i++){
-            ctx.lineTo(this._samples[3*i]-bboxMin[0],this._samples[3*i + 1]-bboxMin[1]);
+        var numPoints=0, i=0;
+        ctx.beginPath();
+        if (!useLocalCoord){
+            numPoints = this._samples.length/3;
+            ctx.moveTo(this._samples[0]-bboxMin[0],this._samples[1]-bboxMin[1]);
+            for (i=0;i<numPoints;i++){
+                ctx.lineTo(this._samples[3*i]-bboxMin[0],this._samples[3*i + 1]-bboxMin[1]);
+            }
+            if (this._isClosed === true) {
+                ctx.lineTo(this._samples[0]-bboxMin[0],this._samples[1]-bboxMin[1]);
+            }
+            ctx.fill();
+            ctx.stroke();
         }
-        if (this._isClosed === true) {
-            ctx.lineTo(this._samples[0]-bboxMin[0],this._samples[1]-bboxMin[1]);
+        else {
+            //render using the local coords
+            numPoints = this._LocalPoints.length;
+            ctx.moveTo(this._LocalPoints[0][0],this._LocalPoints[0][1]);
+            for (i=0;i<numPoints;i++){
+                ctx.lineTo(this._LocalPoints[i][0],this._LocalPoints[i][1]);
+            }
+            if (this._isClosed === true) {
+                ctx.lineTo(this._LocalPoints[0][0],this._LocalPoints[0][1]);
+            }
+            ctx.fill();
+            ctx.stroke();
         }
-        ctx.fill();
-        ctx.stroke();
         ctx.restore();
     }; //render()
 
@@ -793,13 +854,49 @@ GLSubpath.prototype.getBBoxMax = function () {
     return this._BBoxMax;
 };
 
+GLSubpath.prototype.getLocalBBoxMin = function () {
+    return this._LocalBBoxMin;
+};
+
+GLSubpath.prototype.getLocalBBoxMax = function () {
+    return this._LocalBBoxMax;
+};
+
 GLSubpath.prototype.getStrokeWidth = function () {
     return this._strokeWidth;
 };
 
 GLSubpath.prototype.setStrokeWidth = function (w) {
+    var diffStrokeWidth = w-Math.floor(this._strokeWidth);//if positive, then stroke width grew, else shrunk
+    if (diffStrokeWidth === 0)
+        return;//nothing to do
+
     this._strokeWidth = w;
     this._dirty=true;
+
+    // **** adjust the left, top, width, and height to adjust for the change in stroke width ****
+    this.createSamples(); //dirty bit is checked here
+    this.buildLocalCoord(); //local dirty bit is checked here
+
+    //build the width and height of this canvas by looking at local coordinates (X and Y needed only)
+    var bboxMin = this.getLocalBBoxMin();
+    var bboxMax = this.getLocalBBoxMax();
+    var bboxWidth = bboxMax[0] - bboxMin[0];
+    var bboxHeight = bboxMax[1] - bboxMin[1];
+
+    //build the 3D position of the plane center of this canvas by looking at midpoint of the bounding box in stage world coords
+    bboxMin = this.getBBoxMin();
+    bboxMax = this.getBBoxMax();
+    var bboxMid = [0.5 * (bboxMax[0] + bboxMin[0]), 0.5 * (bboxMax[1] + bboxMin[1]), 0.5 * (bboxMax[2] + bboxMin[2])];
+    var left = Math.round(bboxMid[0] - 0.5 * bboxWidth);
+    var top = Math.round(bboxMid[1] - 0.5 * bboxHeight);
+
+    var canvasArray=[this._canvas];
+    var ElementMediator = require("js/mediators/element-mediator").ElementMediator;
+    ElementMediator.setProperty(canvasArray, "width", [bboxWidth+"px"], "Changing", "penTool");//canvas.width = w;
+    ElementMediator.setProperty(canvasArray, "height", [bboxHeight+"px"], "Changing", "penTool");//canvas.height = h;
+    ElementMediator.setProperty(canvasArray, "left", [left+"px"],"Changing", "penTool");//DocumentControllerModule.DocumentController.SetElementStyle(canvas, "left", parseInt(left) + "px");
+    ElementMediator.setProperty(canvasArray, "top", [top + "px"],"Changing", "penTool");//DocumentControllerModule.DocumentController.SetElementStyle(canvas, "top", parseInt(top) + "px");
 };
 
 GLSubpath.prototype.getStrokeMaterial = function () {
@@ -974,6 +1071,77 @@ GLSubpath.prototype._sampleCubicBezier = function (C0X, C0Y, C0Z, C1X, C1Y, C1Z,
 ///////////////////////////////////////////////////////////
 // Methods
 ///////////////////////////////////////////////////////////
+
+GLSubpath.prototype._unprojectPt = function(pt, pespectiveDist) {
+    var retPt = pt.slice(0);
+    if (MathUtils.fpCmp(pespectiveDist,-pt[2]) !== 0){
+        z = pt[2]*pespectiveDist/(pespectiveDist + pt[2]);
+        var x = pt[0]*(pespectiveDist - z)/pespectiveDist,
+            y = pt[1]*(pespectiveDist - z)/pespectiveDist;
+        retPt[0] = x;  retPt[1] = y;  retPt[2] = z;
+    }
+    return retPt;
+};
+
+//buildLocalCoord
+GLSubpath.prototype.buildLocalCoord = function () {
+    if (!this._isLocalDirty) {
+        return;//nothing to do
+    }
+    //var stage = ViewUtils.getStage();
+    //var stageOffset = ViewUtils.getElementOffset(stage);
+    //ViewUtils.setViewportObj(stage);
+
+    var numPoints = this._samples.length/3;
+    var i;
+
+    //compute the bbox in stage-world space, but without the padding for the stroke width
+    var bboxMin = [Infinity, Infinity, Infinity];
+    var bboxMax = [-Infinity, -Infinity, -Infinity];
+    for (i=0;i<numPoints;i++){
+        var pt = [this._samples[3*i], this._samples[3*i+1], this._samples[3*i+2]];
+        for (var d = 0; d < 3; d++) {
+            if (bboxMin[d] > pt[d]) {
+                bboxMin[d] = pt[d];
+            }
+            if (bboxMax[d] < pt[d]) {
+                bboxMax[d] = pt[d];
+            }
+        }
+    }
+    //save the center of the bbox for later use (while constructing the canvas)
+    var stageWorldCenter = VecUtils.vecInterpolate(3, bboxMin, bboxMax, 0.5);
+
+    // ***** center the input stageworld data about the center of the bbox *****
+    this._LocalPoints = [];
+    for (i=0;i<numPoints;i++){
+        var localPoint = [this._samples[3*i],this._samples[3*i+1],this._samples[3*i+2]];
+        localPoint[0]-= stageWorldCenter[0];
+        localPoint[1]-= stageWorldCenter[1];
+
+        // ***** unproject all the centered points and convert them to 2D (plane space)*****
+        // (undo the projection step performed by the browser)
+        localPoint = this._unprojectPt(localPoint, 1400); //todo get the perspective distance from the canvas
+        localPoint = MathUtils.transformPoint(localPoint, this._planeMatInv);
+
+        //add to the list of local points
+        this._LocalPoints.push(localPoint);
+    }
+
+    this._computeLocalBoundingBox(); //compute the bbox to obtain the width and height used below
+    var halfwidth = 0.5*(this._LocalBBoxMax[0]-this._LocalBBoxMin[0]);
+    var halfheight = 0.5*(this._LocalBBoxMax[1]-this._LocalBBoxMin[1]);
+    for (i=0;i<numPoints;i++) {
+        this._LocalPoints[i][0]+= halfwidth;
+        this._LocalPoints[i][1]+= halfheight;
+    }
+    //update the bbox with the same adjustment as was made for the local points above
+    this._LocalBBoxMax[0]+= halfwidth; this._LocalBBoxMin[0]+= halfwidth;
+    this._LocalBBoxMax[1]+= halfheight; this._LocalBBoxMin[1]+= halfheight;
+
+    this._isLocalDirty = false;
+}
+
 //  createSamples
 //  stores samples of the subpath in _samples
 GLSubpath.prototype.createSamples = function () {
@@ -1042,11 +1210,55 @@ GLSubpath.prototype.createSamples = function () {
             }
         } //if (numAnchors >== 2) {
 
+        //compute the 
         //re-compute the bounding box (this also accounts for stroke width, so assume the stroke width is set)
         this.computeBoundingBox(true);
 
+        //set the local dirty bit so we will re-create the local coords before rendering
+        this._isLocalDirty = true;
     } //if (this._dirty)
     this._dirty = false;
+};
+
+GLSubpath.prototype.getLocalBBoxMidInStageWorld = function() {
+    var ViewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
+    //compute the plane center as the midpoint of the local bbox converted to stage world space
+    var bboxWidth=0, bboxHeight=0;
+    var bboxMid=[0,0,0];
+    bboxWidth = this._LocalBBoxMax[0] - this._LocalBBoxMin[0];
+    bboxHeight = this._LocalBBoxMax[1] - this._LocalBBoxMin[1];
+    bboxMid = [0.5 * (this._LocalBBoxMax[0] + this._LocalBBoxMin[0]), 0.5 * (this._LocalBBoxMax[1] + this._LocalBBoxMin[1]), 0.5 * (this._LocalBBoxMax[2] + this._LocalBBoxMin[2])];
+    var planeCenter =  ViewUtils.localToStageWorld(bboxMid, this._canvas);
+    planeCenter[0]+=400; planeCenter[1]+=300; //todo replace these lines with the correct call for the offset
+    console.log("PEN: local midPt: "+ bboxMid +", stageWorld midPt: "+planeCenter);
+    return planeCenter;
+}
+
+GLSubpath.prototype._computeLocalBoundingBox = function() {
+    this._LocalBBoxMin = [Infinity, Infinity, Infinity];
+    this._LocalBBoxMax = [-Infinity, -Infinity, -Infinity];
+    var numPoints = this._LocalPoints.length;
+    if (numPoints === 0) {
+        this._LocalBBoxMin = [0, 0, 0];
+        this._LocalBBoxMax = [0, 0, 0];
+    } else {
+        for (var i=0;i<numPoints;i++){
+            var pt = [this._LocalPoints[i][0], this._LocalPoints[i][1] ,this._LocalPoints[i][2]];
+            for (var d = 0; d < 3; d++) {
+                if (this._LocalBBoxMin[d] > pt[d]) {
+                    this._LocalBBoxMin[d] = pt[d];
+                }
+                if (this._LocalBBoxMax[d] < pt[d]) {
+                    this._LocalBBoxMax[d] = pt[d];
+                }
+            }//for every dimension d from 0 to 2
+        }
+    }
+
+    //increase the bbox given the stroke width
+    var halfSW = this._strokeWidth*0.5;
+    this._LocalBBoxMin[0]-= halfSW;this._LocalBBoxMin[1]-= halfSW;
+    this._LocalBBoxMax[0]+= halfSW;this._LocalBBoxMax[1]+= halfSW;
 };
 
 GLSubpath.prototype.computeBoundingBox = function(useSamples){
@@ -1102,7 +1314,7 @@ GLSubpath.prototype.computeBoundingBox = function(useSamples){
     for (var d = 0; d < 3; d++) {
         this._BBoxMin[d]-= this._strokeWidth/2;
         this._BBoxMax[d]+= this._strokeWidth/2;
-    }//for every dimension d from 0 to 2
+    }//for every dimension d from 0 to 3
 };
 
 //returns v such that it is in [min,max]
