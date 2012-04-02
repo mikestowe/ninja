@@ -1691,7 +1691,7 @@ NJCSSStyle.prototype.styleChange = function() {
 NJCSSStyle.prototype.getUnits = function(val) {
     if(val.split(/\s/).length > 1) {
         return false;
-    } else if(/px|em|pt|in|cm|mm|ex|pc|%/.test(val)) {
+    } else if(/(px|em|pt|in|cm|mm|ex|pc|%)$/.test(val)) {
         return val.replace(/^.*(px|em|pt|in|cm|mm|ex|pc|%).*/, '$1');
     }
     return null;
@@ -1771,7 +1771,7 @@ NJCSSStyle.prototype.updateValue = function(newValue, bypassUndo) {
         this.styleChange();
         return true;
     }
-    
+
     var IMPORTANT_FLAG = ' !important',
         dec = this.njRule.declaration,        
         acceptAsValid = false,

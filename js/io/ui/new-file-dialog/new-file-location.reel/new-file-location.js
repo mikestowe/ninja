@@ -23,8 +23,17 @@ var NewFileLocation = exports.NewFileLocation = Montage.create(Component, {
             this.fileInputField.selectDirectory = true;
 
             this.newFileName.addEventListener("keyup", this, false);
-            this.newFileName.focus();
+            this.newFileName.addEventListener("paste", this, false);
+			this.newFileName.focus();
             this.newFileName.select();
+        }
+    },
+
+    handlePaste:{
+        value:function(evt){
+            evt.preventDefault();
+            evt.target.value = evt.clipboardData.getData("Text");
+            this.handleKeyup(evt);
         }
     },
 
