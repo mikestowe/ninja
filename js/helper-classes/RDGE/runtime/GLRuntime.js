@@ -31,8 +31,8 @@ function GLRuntime( canvas, importStr )
     ///////////////////////////////////////////////////////////////////////
 	var id = canvas.getAttribute( "data-RDGE-id" ); 
 	canvas.rdgeid = id;
-	g_Engine.registerCanvas(canvas, this);
-	RDGEStart( canvas );
+	RDGE.globals.engine.registerCanvas(canvas, this);
+	RDGE.RDGEStart( canvas );
 
 	this.loadScene = function()
 	{
@@ -53,16 +53,16 @@ function GLRuntime( canvas, importStr )
 
 	this.init = function()
     { 
-		var ctx1 = g_Engine.ctxMan.handleToObject(this._canvas.rdgeCtxHandle),
-			ctx2 = g_Engine.getContext();
+		var ctx1 = RDGE.globals.engine.ctxMan.handleToObject(this._canvas.rdgeCtxHandle),
+			ctx2 = RDGE.globals.engine.getContext();
 		if (ctx1 != ctx2)  console.log( "***** different contexts *****" );
 		this.renderer = ctx1.renderer;
       
 		// create a camera, set its perspective, and then point it at the origin
-		var cam = new camera();
+		var cam = new RDGE.camera();
 		this._camera = cam;
 		cam.setPerspective(this.getFOV(), this.getAspect(), this.getZNear(), this.getZFar());
-		cam.setLookAt([0, 0, this.getViewDistance()], [0, 0, 0], vec3.up());
+		cam.setLookAt([0, 0, this.getViewDistance()], [0, 0, 0], RDGE.vec3.up());
         
 		// make this camera the active camera
 		this.renderer.cameraManager().setActiveCamera(cam);
@@ -77,17 +77,17 @@ function GLRuntime( canvas, importStr )
 		/*
 		// create some lights
 		// light 1
-		this.light = createLightNode("myLight");
+		this.light = RDGE.createLightNode("myLight");
 		this.light.setPosition([0,0,1.2]);
 		this.light.setDiffuseColor([0.75,0.9,1.0,1.0]);
         
 		// light 2
-		this.light2 = createLightNode("myLight2");
+		this.light2 = RDGE.createLightNode("myLight2");
 		this.light2.setPosition([-0.5,0,1.2]);
 		this.light2.setDiffuseColor([1.0,0.9,0.75,1.0]);
         
 		// create a light transform
-		var lightTr = createTransformNode("lightTr");
+		var lightTr = RDGE.createTransformNode("lightTr");
         
 		// create and attach a material - materials hold the light data
 		lightTr.attachMaterial(createMaterialNode("lights"));
@@ -107,7 +107,7 @@ function GLRuntime( canvas, importStr )
         
 		// Add the scene to the engine - necessary if you want the engine to draw for you
 		var name = "myScene" + this._canvas.getAttribute( "data-RDGE-id" ); 
-		g_Engine.AddScene(name, this.myScene);
+		RDGE.globals.engine.AddScene(name, this.myScene);
 	}
     
 	// main code for handling user interaction and updating the scene   
@@ -119,7 +119,7 @@ function GLRuntime( canvas, importStr )
 		this.elapsed += dt;
         
 		// changed the global position uniform of light 0, another way to change behavior of a light
-		rdgeGlobalParameters.u_light0Pos.set( [5*Math.cos(this.elapsed), 5*Math.sin(this.elapsed), 20]);
+		RDGE.rdgeGlobalParameters.u_light0Pos.set([5 * Math.cos(this.elapsed), 5 * Math.sin(this.elapsed), 20]);
         
 		// orbit the light nodes around the boxes
 		this.light.setPosition([1.2*Math.cos(this.elapsed*2.0), 1.2*Math.sin(this.elapsed*2.0), 1.2*Math.cos(this.elapsed*2.0)]);
@@ -132,9 +132,9 @@ function GLRuntime( canvas, importStr )
     // defining the draw function to control how the scene is rendered      
 	this.draw = function()
     {
-		g_Engine.setContext( this._canvas.rdgeid );
+		RDGE.globals.engine.setContext( this._canvas.rdgeid );
 
-		var ctx = g_Engine.getContext();
+		var ctx = RDGE.globals.engine.getContext();
 		var renderer = ctx.renderer;
 		if (renderer.unloadedTextureCount <= 0)
 		{

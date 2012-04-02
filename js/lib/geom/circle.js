@@ -176,7 +176,7 @@ var Circle = function GLCircle() {
 		if (!world._useWebGL)  return;
 		
 		// make sure RDGE has the correct context
-		g_Engine.setContext( world.getCanvas().rdgeid );
+		RDGE.globals.engine.setContext( world.getCanvas().rdgeid );
 
          // create the gl buffer
         var gl = world.getGLContext();
@@ -348,7 +348,7 @@ var Circle = function GLCircle() {
 
 		this.recalcTexMapCoords( vrts, uvs );
 
-		return ShapePrimitive.create(vrts, nrms, uvs, indices, g_Engine.getContext().renderer.TRIANGLES, index);
+		return ShapePrimitive.create(vrts, nrms, uvs, indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, index);
     };
 
     this.generateOvalRing = function(xOff, yOff, rotationMat, innerScaleMat, outerScaleMat, nTriangles) {
@@ -405,7 +405,7 @@ var Circle = function GLCircle() {
 
 		this.recalcTexMapCoords( vrts, uvs );
 
-		return ShapePrimitive.create(vrts, nrms, uvs, indices, g_Engine.getContext().renderer.TRIANGLE_STRIP, indices.length);
+		return ShapePrimitive.create(vrts, nrms, uvs, indices, RDGE.globals.engine.getContext().renderer.TRIANGLE_STRIP, indices.length);
     };
 
     this.render = function() {

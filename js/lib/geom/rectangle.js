@@ -276,7 +276,7 @@ var Rectangle = function GLRectangle() {
 		if (!world._useWebGL)  return;
 		
 		// make sure RDGE has the correct context
-		g_Engine.setContext( world.getCanvas().rdgeid );
+		RDGE.globals.engine.setContext( world.getCanvas().rdgeid );
 
 		// create the gl buffer
 		var gl = world.getGLContext();
@@ -826,7 +826,7 @@ RectangleFill.create = function( rectCtr,  width, height, tlRad, blRad,  brRad, 
 //	}
 
 	// create the RDGE primitive
-	return ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.TRIANGLES, nVertices);
+	return ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, nVertices);
 };
 
 RectangleFill.pushVertex = function( x, y, z ) {
@@ -1058,7 +1058,7 @@ RectangleStroke.create = function( rectCtr,  width, height, strokeWidth,  tlRad,
 //	}
 
 	// create the RDGE primitive
-	return ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.TRIANGLES, nVertices);
+	return ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, nVertices);
 };
 
 RectangleStroke.getRoundedCorner = function( ctr, insidePt, outsidePt ) {
@@ -1144,7 +1144,7 @@ RectangleGeometry.create = function( ctr,  width, height, material ) {
 //	}
 
 	// create the RDGE primitive
-	return ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.TRIANGLES, nVertices);
+	return ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, nVertices);
 };
 
 RectangleGeometry.pushVertex	= RectangleFill.pushVertex;

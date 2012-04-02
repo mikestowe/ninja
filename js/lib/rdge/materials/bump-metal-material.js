@@ -110,13 +110,13 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 		if (world)  this.setWorld( world );
 
 		// set up the shader
-		this._shader = new jshader();
+		this._shader = new RDGE.jshader();
 		this._shader.def = bumpMetalMaterialDef;
 		this._shader.init();
 		this._shader['default'].u_light0Diff.set( this.getLightDiff() );
 
 		// set up the material node
-		this._materialNode = createMaterialNode( this.getShaderName() );
+		this._materialNode = RDGE.createMaterialNode(this.getShaderName());
 		this._materialNode.setShader(this._shader);
 
 		// set some image maps
@@ -131,7 +131,7 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 		if (material)
 		{
 			var technique = material.shaderProgram['default'];
-			var renderer = g_Engine.getContext().renderer;
+			var renderer = RDGE.globals.engine.getContext().renderer;
 			if (renderer && technique)
 			{
 				var texMapName = this._propValues[this._propNames[index]];

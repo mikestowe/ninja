@@ -45,7 +45,7 @@ function TaperMaterial()
 	this.init = function()
 	{
 		// set up the shader
-		this._shader = new jshader();
+	    this._shader = new RDGE.jshader();
 		this._shader.def = taperShaderDef;
 		this._shader.init();
 
@@ -53,7 +53,7 @@ function TaperMaterial()
 		this._shader.colorMe.color.set( this.getColor() );
 
 		// set up the material node
-		this._materialNode = createMaterialNode("taperMaterial");
+		this._materialNode = RDGE.createMaterialNode("taperMaterial");
 		this._materialNode.setShader(this._shader);
 
 		// initialize the taper properties

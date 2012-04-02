@@ -141,45 +141,45 @@ var World = function GLWorld( canvas, use3D ) {
     
     // post-load processing of the scene
     this.init = function() {
-		var ctx1 = g_Engine.ctxMan.handleToObject(this._canvas.rdgeCtxHandle),
-			ctx2 = g_Engine.getContext();
+		var ctx1 = RDGE.globals.engine.ctxMan.handleToObject(this._canvas.rdgeCtxHandle),
+			ctx2 = RDGE.globals.engine.getContext();
 		if (ctx1 != ctx2)  console.log( "***** different contexts *****" );
 		this.renderer = ctx1.renderer;
 		this.renderer._world = this;
       
 		// create a camera, set its perspective, and then point it at the origin
-		var cam = new camera();
+		var cam = new RDGE.camera();
 		this._camera = cam;
 		cam.setPerspective(this.getFOV(), this.getAspect(), this.getZNear(), this.getZFar());
-		cam.setLookAt([0, 0, this.getViewDistance()], [0, 0, 0], vec3.up());
+		cam.setLookAt([0, 0, this.getViewDistance()], [0, 0, 0], RDGE.vec3.up());
         
 		// make this camera the active camera
 		this.renderer.cameraManager().setActiveCamera(cam);
 
 		// change clear color
-		//this.renderer.setClearFlags(g_Engine.getContext().DEPTH_BUFFER_BIT);
+		//this.renderer.setClearFlags(RDGE.globals.engine.getContext().DEPTH_BUFFER_BIT);
 		this.renderer.setClearColor([0.0, 0.0, 0.0, 0.0]);
 		//this.renderer.NinjaWorld = this;
         
 		// create an empty scene graph
-		this.myScene = new SceneGraph();
+		this.myScene = new RDGE.SceneGraph();
         
 		// create some lights
 		// light 1
-		this.light = createLightNode("myLight");
+		this.light = RDGE.createLightNode("myLight");
 		this.light.setPosition([0,0,1.2]);
 		this.light.setDiffuseColor([0.75,0.9,1.0,1.0]);
         
 		// light 2
-		this.light2 = createLightNode("myLight2");
+		this.light2 = RDGE.createLightNode("myLight2");
 		this.light2.setPosition([-0.5,0,1.2]);
 		this.light2.setDiffuseColor([1.0,0.9,0.75,1.0]);
         
 		// create a light transform
-		var lightTr = createTransformNode("lightTr");
+		var lightTr = RDGE.createTransformNode("lightTr");
         
 		// create and attach a material - materials hold the light data
-		lightTr.attachMaterial(createMaterialNode("lights"));
+		lightTr.attachMaterial(RDGE.createMaterialNode("lights"));
         
 		// enable light channels 1, 2 - channel 0 is used by the default shader
 		lightTr.materialNode.enableLightChannel(1, this.light);
@@ -192,9 +192,9 @@ var World = function GLWorld( canvas, use3D ) {
 		this.myScene.addNode(lightTr);
         
 		// Add the scene to the engine - necessary if you want the engine to draw for you
-		//g_Engine.AddScene("myScene" + this._canvas.id, this.myScene);
+		//RDGE.globals.engine.AddScene("myScene" + this._canvas.id, this.myScene);
 		var name = this._canvas.getAttribute( "data-RDGE-id" ); 
-		g_Engine.AddScene("myScene" + name, this.myScene);
+		RDGE.globals.engine.AddScene("myScene" + name, this.myScene);
 	};
     
 	// main code for handling user interaction and updating the scene   
@@ -206,7 +206,7 @@ var World = function GLWorld( canvas, use3D ) {
         
 		if (this._useWebGL) {
 			// changed the global position uniform of light 0, another way to change behavior of a light
-			rdgeGlobalParameters.u_light0Pos.set( [5*Math.cos(this.elapsed), 5*Math.sin(this.elapsed), 20]);
+		    RDGE.rdgeGlobalParameters.u_light0Pos.set([5 * Math.cos(this.elapsed), 5 * Math.sin(this.elapsed), 20]);
         
 			// orbit the light nodes around the boxes
 			this.light.setPosition([1.2*Math.cos(this.elapsed*2.0), 1.2*Math.sin(this.elapsed*2.0), 1.2*Math.cos(this.elapsed*2.0)]);
@@ -223,8 +223,8 @@ var World = function GLWorld( canvas, use3D ) {
     // defining the draw function to control how the scene is rendered      
 	this.draw = function() {
 		if (this._useWebGL) {
-			g_Engine.setContext( this._canvas.rdgeid );
-			var ctx = g_Engine.getContext();
+			RDGE.globals.engine.setContext( this._canvas.rdgeid );
+			var ctx = RDGE.globals.engine.getContext();
 			var renderer = ctx.renderer;
 			if (renderer.unloadedTextureCount <= 0) {
 				renderer.disableCulling();
@@ -361,8 +361,8 @@ var World = function GLWorld( canvas, use3D ) {
 		rdgeStarted = true;
 		var id = this._canvas.getAttribute( "data-RDGE-id" ); 
 		this._canvas.rdgeid = id;
-		g_Engine.registerCanvas(this._canvas, this);
-		RDGEStart( this._canvas );
+		RDGE.globals.engine.registerCanvas(this._canvas, this);
+		RDGE.RDGEStart( this._canvas );
 		this._canvas.task.stop()
 	}
 };
@@ -391,13 +391,13 @@ World.prototype.updateObject = function (obj) {
     if (nPrims > 0) {
         ctrTrNode = obj.getTransformNode();
 		if (ctrTrNode == null) {
-			ctrTrNode = createTransformNode("objRootNode_" + nodeCounter++);
+		    ctrTrNode = RDGE.createTransformNode("objRootNode_" + nodeCounter++);
 			this._rootNode.insertAsChild( ctrTrNode );
 			obj.setTransformNode( ctrTrNode );
 		}
 
 		ctrTrNode.meshes.forEach(function(thisMesh) {
-			g_meshMan.deleteMesh(thisMesh.mesh.name);
+		    RDGE.globals.meshMan.deleteMesh(thisMesh.mesh.name);
 		});
 		ctrTrNode.meshes = [];
 
@@ -416,11 +416,11 @@ World.prototype.updateObject = function (obj) {
 			childTrNode = children[i-1].transformNode;
 
 			childTrNode.meshes.forEach(function(thisMesh) {
-				g_meshMan.deleteMesh(thisMesh.mesh.name);
+			    RDGE.globals.meshMan.deleteMesh(thisMesh.mesh.name);
 			});
 			childTrNode.meshes = [];
 		} else {
-			childTrNode = createTransformNode("objNode_" + nodeCounter++);
+            childTrNode = RDGE.createTransformNode("objNode_" + nodeCounter++);
 			ctrTrNode.insertAsChild(childTrNode);
 		}
 
@@ -522,7 +522,7 @@ World.prototype.clearTree = function() {
 	if (this._useWebGL) {
 		var root = this._rootNode;
 		root.children = new Array();
-		g_Engine.unregisterCanvas( this._canvas.rdgeid )
+		RDGE.globals.engine.unregisterCanvas( this._canvas.rdgeid )
 
 		this.update( 0 );
 		this.draw();
@@ -657,9 +657,9 @@ World.prototype.setMVMatrix = function() {
         gl.uniformMatrix4fv(this._shaderProgram.mvMatrixUniform, false, new Float32Array(mvMatrix));
 
         var normalMatrix = mat3.create();
-        // mat4.toInverseMat3(mvMatrix, normalMatrix);
-        // mat4.toInverseMat3(new Float32Array(mvMatrix.flatten()), normalMatrix);
-        mat4.toInverseMat3(new Float32Array(mvMatrix), normalMatrix);
+        // RDGE.mat4.toInverseMat3(mvMatrix, normalMatrix);
+        // RDGE.mat4.toInverseMat3(new Float32Array(mvMatrix.flatten()), normalMatrix);
+        RDGE.mat4.toInverseMat3(new Float32Array(mvMatrix), normalMatrix);
         mat3.transpose(normalMatrix);
         gl.uniformMatrix3fv(this._shaderProgram.nMatrixUniform, false, normalMatrix);
     }
@@ -680,7 +680,7 @@ World.prototype.render = function() {
 		var root = this.getGeomRoot();
 		this.hRender( root );
 	} else {
-		g_Engine.setContext( this._canvas.rdgeId );
+		RDGE.globals.engine.setContext( this._canvas.rdgeId );
 		//this.draw();
 		this.restartRenderLoop();
 	}
@@ -895,16 +895,16 @@ World.prototype.importSubObject = function( objStr,  parentNode ) {
 	i0 += 10;
 	var matText = objStr.substr( i0, i1 - i0 );
 	var shaderDef = JSON.parse( matText );
-	var shader = new jshader();
+	var shader = new RDGE.jshader();
 	shader.def = shaderDef;
 	shader.init();
              
     // set the shader for this material
-	var matNode = createMaterialNode("objMat")
+	var matNode = RDGE.createMaterialNode("objMat")
     matNode.setShader(shader);
 
 	// create the transformation node
-	var trNode = createTransformNode("subObjNode_" );
+    var trNode = RDGE.createTransformNode("subObjNode_");
     trNode.attachMeshNode(this.renderer.id + "_prim_", meshObj);
     trNode.attachMaterial(matNode);
 	parentNode.insertAsChild(trNode);

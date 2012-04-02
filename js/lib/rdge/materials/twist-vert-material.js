@@ -49,7 +49,7 @@ function TwistVertMaterial()
 	this.init = function()
 	{
 		// set up the shader
-		this._shader = new jshader();
+	    this._shader = new RDGE.jshader();
 		this._shader.def = twistVertShaderDef;
 		this._shader.init();
 
@@ -57,7 +57,7 @@ function TwistVertMaterial()
 		this._shader.twistMe.color.set( this.getColor() );
 
 		// set up the material node
-		this._materialNode = createMaterialNode("twistVertMaterial");
+		this._materialNode = RDGE.createMaterialNode("twistVertMaterial");
 		this._materialNode.setShader(this._shader);
 
 		// initialize the twist vert properties
@@ -189,7 +189,7 @@ function TwistVertMaterial()
 		if (material)
 		{
 			var technique = material.shaderProgram['default'];
-			var renderer = g_Engine.getContext().renderer;
+			var renderer = RDGE.globals.engine.getContext().renderer;
 			if (renderer && technique)
 			{
 				var texMapName = this._propValues[this._propNames[5]];

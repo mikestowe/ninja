@@ -4,103 +4,77 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
+// RDGE namespaces
+var RDGE = RDGE || {};
+RDGE.core = RDGE.core || {};
+RDGE.utilities = RDGE.utilities || {};
+
 // runtime globals
-g_Engine = new Engine();
-g_width = 0;
-g_height = 0;
-g_cam = null;
-g_camMoveSpeed = 25.0;
-gl = null; //webGL handle
-g_worldObjects = [];
-g_shaderMan = null
-g_defaultTex = null;
-g_alphaTex = null;
-g_hiQu = true;
-g_meshMan = null;
+RDGE.globals = (function () {
+    return {
+        engine: new RDGE.Engine(),
+        width: 0,
+        height: 0,
+        cam: null,
+        shaderMan: null,
+        meshMan: null,
+        poolList: [],
+        gl: null
+    };
+})();
+
+// new code is above
+/***************************************************************************************************************/
 
 /*
  *	RDGEState a RDGEstate is an interface that is defined by the user and called by the engine
  */
-function RDGEState()
-{
-	this.init = function()
-	{
-	
-	}
-	
-	this.update = function(dt)
-	{
-	
-	}
-	
-	this.draw = function()
-	{
-	
-	}
-	
-	this.resize = function()
-	{	
-	
-	}
-	
-	this.shutdown = function()
-	{
-	
-	}
-	
-	this.onComplete = function()
-	{
-	
-	}
-}
+RDGE.core.RDGEState = function RDGEState() { };
+RDGE.core.RDGEState.prototype.init = function () { };
+RDGE.core.RDGEState.prototype.update = function () { };
+RDGE.core.RDGEState.prototype.draw = function () { };
+RDGE.core.RDGEState.prototype.resize = function () { };
+RDGE.core.RDGEState.prototype.shutdown = function () { };
+RDGE.core.RDGEState.prototype.onComplete = function () { };
 
 /*
  *	Calling this makes sure the passed in run state has all the functions
  *  that are required, adding dummy functions where needed
  */
-function validateUserState( userState )
-{
-	if(!userState.init)
-	{
-		userState.init = function(){};
-	}
-	if(!userState.update)
-	{
-		userState.update = function(dt) 
-		{
-			var currentScene = g_Engine.getContext().currentScene;
-			currentScene = g_Engine.getScene(currentScene);
-			
-			if(currentScene != null)
-				currentScene.update(dt);
-		}
-	}
-	if(!userState.draw)
-	{
-		userState.draw = function()
-		{
-			var currentScene = g_Engine.getContext().currentScene;
-			currentScene = g_Engine.getScene(currentScene);
-			
-			if(currentScene==null)
-				return;
+RDGE.utilities.validateUserState = function (userState) {
+    if (!userState.init) {
+        userState.init = function () { };
+    }
+    if (!userState.update) {
+        userState.update = function (dt) {
+            var currentScene = RDGE.globals.engine.getContext().currentScene;
+            currentScene = RDGE.globals.engine.getScene(currentScene);
 
-			currentScene.render();
-		}
-	}
-	if(!userState.resize)
-	{
-		userState.resize = function(){};
-	}
-	if(!userState.shutdown)
-	{
-		userState.shutdown = function(){};
-	}
-	if(!userState.onComplete)
-	{
-		userState.onComplete = function(){};
-	}
-}
+            if (currentScene != null)
+                currentScene.update(dt);
+        }
+    }
+    if (!userState.draw) {
+        userState.draw = function () {
+            var currentScene = RDGE.globals.engine.getContext().currentScene;
+            currentScene = RDGE.globals.engine.getScene(currentScene);
+
+            if (currentScene == null)
+                return;
+
+            currentScene.render();
+        }
+    }
+    if (!userState.resize) {
+        userState.resize = function () { };
+    }
+    if (!userState.shutdown) {
+        userState.shutdown = function () { };
+    }
+    if (!userState.onComplete) {
+        userState.onComplete = function () { };
+    }
+};
 
 /*
  *	Used to start the RDGE engine, pass the initState and runState, both of which are RDGEState objects
@@ -109,76 +83,59 @@ function validateUserState( userState )
  *	@param initState	- the initialization state, false if you don't want to use one
  *	@param runState		- the run state
  */
-function RDGEStart(canvasOrID)
-{
-	var canvas = canvasOrID;
+RDGE.RDGEStart = function (canvasOrID) {
+    var canvas = canvasOrID;
 
-	if (typeof(canvasOrID) === "string")
-		canvas = document.getElementById(canvasOrID);
-	
-	if (!canvas)
-		return;
+    if (typeof (canvasOrID) === "string")
+        canvas = document.getElementById(canvasOrID);
 
-	g_Engine.registerCanvas(canvas);
+    if (!canvas)
+        return;
 
-	canvas.task = new RDGETask(canvas, true);
+    RDGE.globals.engine.registerCanvas(canvas);
 
-	if (!g_shaderMan)
-		g_shaderMan = new ShaderManager();
+    canvas.task = new RDGE.RDGETask(canvas, true);
 
-	if (!g_meshMan)
-		g_meshMan = new MeshManager();
-	
-	// start rdge
-	if (!g_Engine.initializeComplete)
-		g_Engine.init();
-}
+    if (!RDGE.globals.shaderMan)
+        RDGE.globals.shaderMan = new RDGE.ShaderManager();
 
-function RDGEStop()
-{
-	if(RDGEShutdown != undefined)
-	{
-		RDGEShutdown();
-	}
-}
+    if (!RDGE.globals.meshMan)
+        RDGE.globals.meshMan = new RDGE.MeshManager();
 
-// the runtime interface
-function IRuntime()
-{
-    this.init       = null; // called when state is pushed on the  stack
-    this.ReInit     = null; // called when state above is popped from stack
-    this.Resize     = null; // called every tick to setup the viewport/projection
-    this.Update     = null; // called every tick to update scene
-    this.Draw       = null; // called every tick to draw scene
-    this.Shutdown   = null; // called when state is popped from stack
-}
+    // start RDGE
+    if (!RDGE.globals.engine.initializeComplete)
+        RDGE.globals.engine.init();
+};
 
-// add the connection Pool's to this list for auto polling
-g_poolList = [];
-function ConnPoll()
-{
-	var len = g_poolList.length;
-	for(var i = 0; i < len; ++i)
-	{
-		g_poolList[i].Poll();
-	}
-}
+RDGE.RDGEStop = function () { };
 
-/* RDGE Task */
-RDGERequestAnimationFrame = (function() {
-    return  window.requestAnimationFrame ||
+RDGE.RequestAnimationFrame = (function () {
+    return window.requestAnimationFrame ||
             window.webkitRequestAnimationFrame ||
             window.mozRequestAnimationFrame ||
             window.oRequestAnimationFrame ||
             window.msRequestAnimationFrame ||
-            function(/* function FrameRequestCallback */callback, /* DOMElement Element */element) {
+            function (/* function FrameRequestCallback */callback, /* DOMElement Element */element) {
                 window.setTimeout(callback, 1000 / 60);
             };
 })();
 
-RDGETask = (function() {
+RDGERequestAnimationFrame = (function () {
+    return window.requestAnimationFrame ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame ||
+            window.oRequestAnimationFrame ||
+            window.msRequestAnimationFrame ||
+            function (/* function FrameRequestCallback */callback, /* DOMElement Element */element) {
+                window.setTimeout(callback, 1000 / 60);
+            };
+})();
+
+/* RDGE Task */
+RDGE.RDGETask = (function () {
     var tasks = {};
-    return function(canvas, startNow) {
+
+    return function (canvas, startNow) {
         this.id = canvas.rdgeid;
         this.currTime = 0.0;
         this.lastTime = 0.0;
@@ -188,10 +145,10 @@ RDGETask = (function() {
         if (!canvas) {
             return;
         }
-        
-        this.context = g_Engine.ctxMan.handleToObject(canvas.rdgeCtxHandle);
 
-        tasks[this.id] = function() {
+        this.context = RDGE.globals.engine.ctxMan.handleToObject(canvas.rdgeCtxHandle);
+
+        tasks[this.id] = function () {
             if (!self.running) {
                 return;
             }
@@ -206,29 +163,26 @@ RDGETask = (function() {
             self.lastTime = self.currTime;
         }
 
-        this.start = function()
-		{
-			if (!this.running)
-			{
-				this.running = true;
-				this.currTime = new Date().getTime();
-				this.lastTime = this.currTime;
-				tasks[this.id]();
-			}
+        this.start = function () {
+            if (!this.running) {
+                this.running = true;
+                this.currTime = new Date().getTime();
+                this.lastTime = this.currTime;
+                tasks[this.id]();
+            }
         }
 
-        this.stop = function() {
+        this.stop = function () {
             this.running = false;
         }
 
-        this.kill = function() {
+        this.kill = function () {
             this.running = false;
             tasks[this.id] = null;
         }
 
-        this.step = function(dt) {
+        this.step = function (dt) {
             contextManager.currentCtx = this.context;
-            this.context.fpsTracker.sample();
             this.context.ctxStateManager.tick(dt);
         }
 

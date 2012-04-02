@@ -56,7 +56,7 @@ var PlasmaMaterial = function PlasmaMaterial() {
 
 	this.init = function() {
 		// set up the shader
-		this._shader = new jshader();
+	    this._shader = new RDGE.jshader();
 		this._shader.def = plasmaShaderDef;
 		this._shader.init();
 
@@ -66,7 +66,7 @@ var PlasmaMaterial = function PlasmaMaterial() {
 		this.setProperty( "color", [this._time, 0, 0,  1] );
 
 		// set up the material node
-		this._materialNode = createMaterialNode("plasmaMaterial");
+		this._materialNode = RDGE.createMaterialNode("plasmaMaterial");
 		this._materialNode.setShader(this._shader);
 	};
 

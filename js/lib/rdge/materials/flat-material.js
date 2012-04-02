@@ -39,7 +39,7 @@ var FlatMaterial = function FlatMaterial() {
 	this.init = function()
 	{
 		// set up the shader
-		this._shader = new jshader();
+	    this._shader = new RDGE.jshader();
 		this._shader.def = flatShaderDef;
 		this._shader.init();
 
@@ -47,7 +47,7 @@ var FlatMaterial = function FlatMaterial() {
 		this._shader.colorMe.color.set( this.getColor() );
 
 		// set up the material node
-		this._materialNode = createMaterialNode("flatMaterial");
+		this._materialNode = RDGE.createMaterialNode("flatMaterial");
 		this._materialNode.setShader(this._shader);
 	};
 

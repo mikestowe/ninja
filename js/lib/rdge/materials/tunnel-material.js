@@ -51,12 +51,12 @@ var TunnelMaterial = function TunnelMaterial() {
 		if (world)  this.setWorld( world );
 
 		// set up the shader
-		this._shader = new jshader();
+		this._shader = new RDGE.jshader();
 		this._shader.def = tunnelMaterialDef;
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = createMaterialNode("tunnelMaterial");
+		this._materialNode = RDGE.createMaterialNode("tunnelMaterial");
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;

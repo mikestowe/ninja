@@ -167,7 +167,7 @@ var Line = function GLLine( world, xOffset, yOffset, width, height, slope, strok
 		if (!world._useWebGL)  return;
 		
 		// make sure RDGE has the correct context
-		g_Engine.setContext( world.getCanvas().rdgeid );
+		RDGE.globals.engine.setContext( world.getCanvas().rdgeid );
 
 		 // create the gl buffer
 		var gl = world.getGLContext();
@@ -328,7 +328,7 @@ var Line = function GLLine( world, xOffset, yOffset, width, height, slope, strok
 			indices.push( index );  index++;
 		}
 
-		var prim = ShapePrimitive.create(strokeVertices, strokeNormals, strokeTextures, indices, g_Engine.getContext().renderer.TRIANGLES, indices.length);
+		var prim = ShapePrimitive.create(strokeVertices, strokeNormals, strokeTextures, indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, indices.length);
 
 		var strokeMaterial = this.makeStrokeMaterial();
 

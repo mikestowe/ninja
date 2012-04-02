@@ -50,12 +50,12 @@ var StarMaterial = function StarMaterial() {
 		if (world)  this.setWorld( world );
 
 		// set up the shader
-		this._shader = new jshader();
+		this._shader = new RDGE.jshader();
 		this._shader.def = starMaterialDef;
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = createMaterialNode("starMaterial");
+		this._materialNode = RDGE.createMaterialNode("starMaterial");
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;

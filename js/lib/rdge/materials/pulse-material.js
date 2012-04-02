@@ -96,12 +96,12 @@ var PulseMaterial = function PulseMaterial() {
 		this._dTime = 0.01;
 
 		// set up the shader
-		this._shader = new jshader();
+		this._shader = new RDGE.jshader();
 		this._shader.def = pulseMaterialDef;
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = createMaterialNode("pulseMaterial");
+		this._materialNode = RDGE.createMaterialNode("pulseMaterial");
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;
@@ -120,7 +120,7 @@ var PulseMaterial = function PulseMaterial() {
 		var material = this._materialNode;
 		if (material) {
 			var technique = material.shaderProgram['default'];
-			var renderer = g_Engine.getContext().renderer;
+			var renderer = RDGE.globals.engine.getContext().renderer;
 			if (renderer && technique) {
 				var texMapName = this._propValues[this._propNames[0]];
 				var wrap = 'REPEAT',  mips = true;
@@ -151,7 +151,7 @@ var PulseMaterial = function PulseMaterial() {
 		if (material)
 		{
 			var technique = material.shaderProgram['default'];
-			var renderer = g_Engine.getContext().renderer;
+			var renderer = RDGE.globals.engine.getContext().renderer;
 			if (renderer && technique) {
 				if (this._shader && this._shader['default']) {
 					this._shader['default'].u_time.set( [this._time] );
@@ -167,7 +167,7 @@ var PulseMaterial = function PulseMaterial() {
 		var material = this._materialNode;
 		if (material) {
 			var technique = material.shaderProgram['default'];
-			var renderer = g_Engine.getContext().renderer;
+			var renderer = RDGE.globals.engine.getContext().renderer;
 			if (renderer && technique) {
 				technique.u_resolution.set( res );
 			}

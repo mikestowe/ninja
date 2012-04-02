@@ -237,7 +237,7 @@ var UberMaterial = function UberMaterial() {
 				var material = this._materialNode;
 				if (material) {
 					var technique = material.shaderProgram.defaultTechnique;
-					var renderer = g_Engine.getContext().renderer;
+					var renderer = RDGE.globals.engine.getContext().renderer;
 					if (renderer && technique) {
 						var tex = renderer.getTextureByName(value, caps.environmentMap.wrap);
 						this.registerTexture( tex );
@@ -265,7 +265,7 @@ var UberMaterial = function UberMaterial() {
 				var material = this._materialNode;
 				if (material) {
 					var technique = material.shaderProgram.defaultTechnique;
-					var renderer = g_Engine.getContext().renderer;
+					var renderer = RDGE.globals.engine.getContext().renderer;
 					if (renderer && technique) {
 						var tex = renderer.getTextureByName(value, caps.diffuseMap.wrap);
 						this.registerTexture( tex );
@@ -293,7 +293,7 @@ var UberMaterial = function UberMaterial() {
 				var material = this._materialNode;
 				if (material) {
 					var technique = material.shaderProgram.defaultTechnique;
-					var renderer = g_Engine.getContext().renderer;
+					var renderer = RDGE.globals.engine.getContext().renderer;
 					if (renderer && technique) {
 						var tex = renderer.getTextureByName(value, caps.specularMap.wrap);
 						this.registerTexture( tex );
@@ -321,7 +321,7 @@ var UberMaterial = function UberMaterial() {
 				var material = this._materialNode;
 				if (material) {
 					var technique = material.shaderProgram.defaultTechnique;
-					var renderer = g_Engine.getContext().renderer;
+					var renderer = RDGE.globals.engine.getContext().renderer;
 					if (renderer && technique) {
 						var tex = renderer.getTextureByName(value, caps.normalMap.wrap);
 						this.registerTexture( tex );
@@ -363,7 +363,7 @@ var UberMaterial = function UberMaterial() {
 		this._shader = this.buildUberShader( this._ubershaderCaps );
 
 		// set up the material node
-		this._materialNode = createMaterialNode("uberMaterial");
+		this._materialNode = RDGE.createMaterialNode("uberMaterial");
 		this._materialNode.setShader(this._shader);
 	};
 
@@ -450,7 +450,7 @@ var UberMaterial = function UberMaterial() {
 		var fshader = preproc + uberFShader;
 
 		// build output jshader  
-		var uberJShader = new jshader();
+		var uberJShader = new RDGE.jshader();
 		uberJShader.def = {
 			'shaders': {
 				'defaultVShader': vshader,				
@@ -517,9 +517,9 @@ var UberMaterial = function UberMaterial() {
 				}
 			}
 		}
-		technique.u_uvMatrix.set(caps.uvTransform || mat4.identity());
+		technique.u_uvMatrix.set(caps.uvTransform || RDGE.mat4.identity());
 	
-		var renderer = g_Engine.getContext().renderer;
+		var renderer = RDGE.globals.engine.getContext().renderer;
 		if(this._useDiffuseMap) {
 			var tex = renderer.getTextureByName(caps.diffuseMap.texture, caps.diffuseMap.wrap, caps.diffuseMap.mips);
 			this.registerTexture( tex );

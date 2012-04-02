@@ -29,7 +29,7 @@ var ZInvertMaterial = function ZInvertMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
-	// duplcate method requirde
+	// duplicate method required
 	this.dup = function( world ) {
 		// allocate a new uber material
 		var newMat = new ZInvertMaterial();
@@ -50,12 +50,12 @@ var ZInvertMaterial = function ZInvertMaterial() {
 		if (world)  this.setWorld( world );
 
 		// set up the shader
-		this._shader = new jshader();
+		this._shader = new RDGE.jshader();
 		this._shader.def = zInvertMaterialDef;
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = createMaterialNode("zInvertMaterial");
+		this._materialNode = RDGE.createMaterialNode("zInvertMaterial");
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;

@@ -207,12 +207,12 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
 		this.setWorld( world );
 
 		// set up the shader
-		this._shader = new jshader();
+		this._shader = new RDGE.jshader();
 		this._shader.def = linearGradientMaterialDef;
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = createMaterialNode( this.getShaderName() );
+		this._materialNode = RDGE.createMaterialNode(this.getShaderName());
 		this._materialNode.setShader(this._shader);
 
 		// send the current values to the shader
