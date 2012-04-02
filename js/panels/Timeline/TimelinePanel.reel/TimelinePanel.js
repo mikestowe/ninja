@@ -319,6 +319,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     _deleteHelper: {
     	value: false
     },
+    _scrollTracks: {
+    	value: false
+    },
     /* === END: Models === */
     /* === BEGIN: Draw cycle === */
     prepareForDraw:{
@@ -360,6 +363,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     				this._dragAndDropHelper.style.top = this._dragAndDropHelperCoords;
     			}
     			this._dragAndDropHelperCoords = false;
+    		}
+    		// Do we need to scroll the tracks?
+    		if (this._scrollTracks !== false) {
+    			this.layout_tracks.scrollTop = this._scrollTracks;
+    			this._scrollTracks = false;
     		}
     		// Do we have a helper to delete?
     		if (this._deleteHelper === true) {
@@ -732,41 +740,42 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     createNewLayer:{
         value:function (object) {
-            var hashVariable = 0;
+            var hashVariable = 0,
+            	newLayerName = "",
+                thingToPush = this.createLayerTemplate(),
+                myIndex = 0,
+                i = 0,
+                arrLayersLength = this.arrLayers.length;
 
-                var newLayerName = "",
-                    thingToPush = this.createLayerTemplate(),
-                    myIndex = 0;
+            this.currentLayerNumber = this.currentLayerNumber + 1;
+            newLayerName = "Layer " + this.currentLayerNumber;
+            thingToPush.layerData.layerName = newLayerName;
+            thingToPush.layerData.layerID = this.currentLayerNumber;
+            thingToPush.parentElement = this.application.ninja.currentSelectedContainer;
+            thingToPush.layerData.isSelected = true;
+            thingToPush.layerData._isFirstDraw = true;
+            thingToPush.layerData.created = true;
 
-                this.currentLayerNumber = this.currentLayerNumber + 1;
-                newLayerName = "Layer " + this.currentLayerNumber;
-                thingToPush.layerData.layerName = newLayerName;
-                thingToPush.layerData.layerID = this.currentLayerNumber;
-                thingToPush.parentElement = this.application.ninja.currentSelectedContainer;
-                thingToPush.layerData.isSelected = true;
-                thingToPush.layerData._isFirstDraw = true;
-                thingToPush.layerData.created = true;
+            for (i = 0; i < this.arrLayersLength; i++) {
+                this.arrLayers[i].layerData.isSelected = false;
+                this.arrLayers[i].layerData._isFirstDraw = false;
+            }
 
-                for (var i = 0; i < this.arrLayers.length; i++) {
-                    this.arrLayers[i].layerData.isSelected = false;
-                    this.arrLayers[i].layerData._isFirstDraw = false;
-                }
+            if (this.layerRepetition.selectedIndexes) {
+                // There is a selected layer, so we need to splice the new layer on top of it.
+                myIndex = this.layerRepetition.selectedIndexes[0];
+                thingToPush.layerData.layerPosition = myIndex;
+                thingToPush.layerData.trackPosition = myIndex;
+                this.arrLayers.splice(myIndex, 0, thingToPush);
 
-                if (this.layerRepetition.selectedIndexes) {
-                    // There is a selected layer, so we need to splice the new layer on top of it.
-                    myIndex = this.layerRepetition.selectedIndexes[0];
-                    thingToPush.layerData.layerPosition = myIndex;
-                    thingToPush.layerData.trackPosition = myIndex;
-                    this.arrLayers.splice(myIndex, 0, thingToPush);
+            } else {
+                thingToPush.layerData.layerPosition = myIndex;
+                this.arrLayers.splice(myIndex, 0, thingToPush);
 
-                } else {
-                    thingToPush.layerData.layerPosition = myIndex;
-                    this.arrLayers.splice(myIndex, 0, thingToPush);
+            }
 
-                }
+            this.selectLayer(myIndex);
 
-                this.selectLayer(myIndex);
-//            }
         }
     },
 
@@ -1062,6 +1071,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             // Get the offset 
     		var findYOffset = function(obj) {
 				var curleft = curtop = 0;
+				
 				if (obj.offsetParent) {
 					do {
 							curleft += obj.offsetLeft;
@@ -1078,8 +1088,22 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
     handleLayerDragover: {
     	value: function(event) {
-    		var currPos = 0;
-    		currPos = event.y - this._dragAndDropHelperOffset -28;
+    		var currPos = 0,
+    			myScrollTest = ((event.y - (this._dragAndDropHelperOffset - this.user_layers.scrollTop)) + 28) - this.user_layers.scrollTop;
+    		if ((myScrollTest < 60) && (this.user_layers.scrollTop >0)) {
+    			this._scrollTracks = (this.user_layers.scrollTop - 10)
+    		}
+    		if ((myScrollTest < 50) && (this.user_layers.scrollTop >0)) {
+    			this._scrollTracks = (this.user_layers.scrollTop - 20)
+    		}
+    		if ((myScrollTest > (this.user_layers.clientHeight + 10))) {
+    			this._scrollTracks = (this.user_layers.scrollTop + 10)
+    		}
+    		if ((myScrollTest > (this.user_layers.clientHeight + 20))) {
+    			this._scrollTracks = (this.user_layers.scrollTop + 20)
+    			
+    		}
+    		currPos = event.y - (this._dragAndDropHelperOffset - this.user_layers.scrollTop)- 28;
     		this._dragAndDropHelperCoords = currPos + "px";
     		this.needsDraw = true;
     	}
