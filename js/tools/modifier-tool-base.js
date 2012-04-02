@@ -448,6 +448,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
             {
                 this.isDrawing = true;
                 this.application.ninja.stage.showSelectionBounds = false;
+                this._updateTargets();
 
                 if(this._canSnap)
                 {
@@ -785,7 +786,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 				{
 					this.target = this.application.ninja.currentDocument.documentRoot;
 				}
-				this._updateTargets();
+//				this._updateTargets();
 			}
 			else
 			{
