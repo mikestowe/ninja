@@ -147,8 +147,8 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 
 	_translateGlobally: {
 		value: function (transMat) {
-            //console.log( "_translateGlobally, startMat: " + this._startMat + ", transMat: " + transMat );
             //console.log( "_translateGlobally, transMat: " + transMat );
+            //console.log( "_translateGlobally, startMat: " + this._startMat + ", transMat: " + transMat );
 			var len = this._targets.length,
 				i = 0,
 				item,
@@ -160,6 +160,7 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
            
             if (this._mode === 1)
             { 
+                if (len > 1)  curMat = this._targets[0].mat.slice();
                 var curInv = glmat4.inverse( curMat, [] );
                 transMat = glmat4.multiply( nMat, curInv, [] );
             }
