@@ -601,7 +601,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 //            this._firstTimeLoaded = true;
             this.end_hottext.value = 25;
             this.updateTrackContainerWidth();
-
+            this.masterDuration = 0;
             // Clear the repetitions
             if (this.arrLayers.length > 0) {
                 this.arrLayers = [];
