@@ -901,8 +901,8 @@ World.prototype.importJSON = function( jObj )
 		rdgeStarted = true;
 		var id = this._canvas.getAttribute( "data-RDGE-id" ); 
 		this._canvas.rdgeid = id;
-		g_Engine.registerCanvas(this._canvas, this);
-		RDGEStart( this._canvas );
+		RDGE.globals.engine.registerCanvas(this._canvas, this);
+		RDGE.RDGEStart( this._canvas );
 		this._canvas.task.stop()
 	}
 
@@ -992,8 +992,8 @@ World.prototype.import = function( importStr ) {
 		rdgeStarted = true;
 		var id = this._canvas.getAttribute( "data-RDGE-id" ); 
 		this._canvas.rdgeid = id;
-		g_Engine.registerCanvas(this._canvas, this);
-		RDGEStart( this._canvas );
+		RDGE.globals.engine.registerCanvas(this._canvas, this);
+		RDGE.RDGEStart( this._canvas );
 		this._canvas.task.stop()
 	}
 

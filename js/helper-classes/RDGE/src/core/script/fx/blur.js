@@ -56,7 +56,7 @@ RDGE.fx.fxBlur = function (mipSizes, enAuxTexture) {
 
         quad.renderObj.addBuffers(quad.vertBuffer, gl.ARRAY_BUFFER, 3, 0, gl.FLOAT);
         quad.renderObj.addBuffers(quad.uvBuffer, gl.ARRAY_BUFFER, 2, 2, gl.FLOAT);
-    }
+    };
 
     function renderInitCombine(quad) {
         quad.shader = RDGE.createShader(gl, 'separableBlur_vshader', separableBlurCombine_fshader, ["vert", "texcoord"]);
@@ -73,7 +73,7 @@ RDGE.fx.fxBlur = function (mipSizes, enAuxTexture) {
 
         quad.renderObj.addBuffers(quad.vertBuffer, gl.ARRAY_BUFFER, 3, 0, gl.FLOAT);
         quad.renderObj.addBuffers(quad.uvBuffer, gl.ARRAY_BUFFER, 2, 2, gl.FLOAT);
-    }
+    };
 
     // Screen aligned quad geometry
     var quadBuf = getScreenAlignedQuad();
@@ -87,7 +87,7 @@ RDGE.fx.fxBlur = function (mipSizes, enAuxTexture) {
     for (var i in mipSizes) {
         this.fboSet1.push(createRenderTargetTexture(mipSizes[i], mipSizes[i]));
         this.fboSet2.push(createRenderTargetTexture(mipSizes[i], mipSizes[i]));
-    }
+    };
 
     // Blitter for downsampling
     this.blitQuad = new RDGE.ScreenQuad(null);

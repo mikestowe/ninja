@@ -408,15 +408,15 @@ RDGE.mat4.mul4x3 = function (a, b) {
 /**
 * RDGE.mat4._det2x2
 */
-RDGE.mat4._det2x2 = function(a, b, c, d) {
-	return a * d - b * c;
+RDGE.mat4._det2x2 = function (a, b, c, d) {
+    return a * d - b * c;
 };
 
 /**
 * RDGE.mat4._det3x3
 */
-RDGE.mat4._det3x3 = function(a1, a2, a3, b1, b2, b3, c1, c2, c3) {
-	return a1 * RDGE.mat4._det2x2(b2, b3, c2, c3)
+RDGE.mat4._det3x3 = function (a1, a2, a3, b1, b2, b3, c1, c2, c3) {
+    return a1 * RDGE.mat4._det2x2(b2, b3, c2, c3)
 			- b1 * RDGE.mat4._det2x2(a2, a3, c2, c3)
 			+ c1 * RDGE.mat4._det2x2(a2, a3, b2, b3);
 };
@@ -424,28 +424,28 @@ RDGE.mat4._det3x3 = function(a1, a2, a3, b1, b2, b3, c1, c2, c3) {
 /**
 * RDGE.mat4._det4x4
 */
-RDGE.mat4._det4x4 = function(m) {
-	var a1 = m[0];
-	var b1 = m[1];
-	var c1 = m[2];
-	var d1 = m[3];
+RDGE.mat4._det4x4 = function (m) {
+    var a1 = m[0];
+    var b1 = m[1];
+    var c1 = m[2];
+    var d1 = m[3];
 
-	var a2 = m[4];
-	var b2 = m[5];
-	var c2 = m[6];
-	var d2 = m[7];
+    var a2 = m[4];
+    var b2 = m[5];
+    var c2 = m[6];
+    var d2 = m[7];
 
-	var a3 = m[8];
-	var b3 = m[9];
-	var c3 = m[10];
-	var d3 = m[11];
+    var a3 = m[8];
+    var b3 = m[9];
+    var c3 = m[10];
+    var d3 = m[11];
 
-	var a4 = m[12];
-	var b4 = m[13];
-	var c4 = m[14];
-	var d4 = m[15];
+    var a4 = m[12];
+    var b4 = m[13];
+    var c4 = m[14];
+    var d4 = m[15];
 
-	return a1 * RDGE.mat4._det3x3(b2, b3, b4, c2, c3, c4, d2, d3, d4)
+    return a1 * RDGE.mat4._det3x3(b2, b3, b4, c2, c3, c4, d2, d3, d4)
 		   - b1 * RDGE.mat4._det3x3(a2, a3, a4, c2, c3, c4, d2, d3, d4)
 		   + c1 * RDGE.mat4._det3x3(a2, a3, a4, b2, b3, b4, d2, d3, d4)
 		   - d1 * RDGE.mat4._det3x3(a2, a3, a4, b2, b3, b4, c2, c3, c4);

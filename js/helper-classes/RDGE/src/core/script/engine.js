@@ -426,13 +426,12 @@ RDGE.Engine.prototype.registerCanvas = function (canvas, runState) {
 };
 
 RDGE.Engine.prototype.unregisterCanvas = function (canvas) {
-     stat.closePage(canvas.rdgeid + "_fps");
      contextManager.removeObject(canvas.rdgeCtxHandle);
      this.clearContext( canvas.rdgeid );
 };
 
 
-Engine.prototype.getCanvas = function( id )
+RDGE.Engine.prototype.getCanvas = function (id)
 {
 	return this.canvasToRendererMap[id];
 };
