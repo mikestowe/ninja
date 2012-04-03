@@ -866,6 +866,27 @@ GLSubpath.prototype.getStrokeWidth = function () {
     return this._strokeWidth;
 };
 
+GLSubpath.prototype.translateSubpathPerCanvas = function(elemMediator){
+    //check if the canvas was translated
+    var penCanvasLeft = parseInt(elemMediator.getProperty(this._canvas, "left"));//parseFloat(DocumentControllerModule.DocumentController.GetElementStyle(this._penCanvas, "left"));
+    var penCanvasTop = parseInt(elemMediator.getProperty(this._canvas, "top"));//parseFloat(DocumentControllerModule.DocumentController.GetElementStyle(this._penCanvas, "top"));
+    var penCanvasWidth = parseInt(elemMediator.getProperty(this._canvas, "width"));//this._penCanvas.width;
+    var penCanvasHeight = parseInt(elemMediator.getProperty(this._canvas, "height"));//this._penCanvas.height;
+    var penCanvasOldX = penCanvasLeft + 0.5 * penCanvasWidth;
+    var penCanvasOldY = penCanvasTop + 0.5 * penCanvasHeight;
+
+    var translateCanvasX = penCanvasOldX - this._canvasX;
+    var translateCanvasY = penCanvasOldY - this._canvasY;
+
+    //update the canvasX and canvasY parameters for this subpath and also translate the subpath points (since they're stored in stage world space)
+    if (Math.abs(translateCanvasX)>=1 || Math.abs(translateCanvasY)>=1){
+        this.setCanvasX(translateCanvasX + this._canvasX);
+        this.setCanvasY(translateCanvasY + this._canvasY);
+        this.translateAnchors(translateCanvasX, translateCanvasY, 0);
+    }
+    this._dirty=true;
+};
+
 GLSubpath.prototype.setStrokeWidth = function (w) {
     var diffStrokeWidth = w-Math.floor(this._strokeWidth);//if positive, then stroke width grew, else shrunk
     if (diffStrokeWidth === 0)
@@ -874,11 +895,14 @@ GLSubpath.prototype.setStrokeWidth = function (w) {
     this._strokeWidth = w;
     this._dirty=true;
 
+    var ElementMediator = require("js/mediators/element-mediator").ElementMediator;
+    this.translateSubpathPerCanvas(ElementMediator);
+
     // **** adjust the left, top, width, and height to adjust for the change in stroke width ****
     this.createSamples(); //dirty bit is checked here
     this.buildLocalCoord(); //local dirty bit is checked here
 
-    //build the width and height of this canvas by looking at local coordinates (X and Y needed only)
+    //build the width and height of this canvas by looking at local coordinates
     var bboxMin = this.getLocalBBoxMin();
     var bboxMax = this.getLocalBBoxMax();
     var bboxWidth = bboxMax[0] - bboxMin[0];
@@ -892,7 +916,6 @@ GLSubpath.prototype.setStrokeWidth = function (w) {
     var top = Math.round(bboxMid[1] - 0.5 * bboxHeight);
 
     var canvasArray=[this._canvas];
-    var ElementMediator = require("js/mediators/element-mediator").ElementMediator;
     ElementMediator.setProperty(canvasArray, "width", [bboxWidth+"px"], "Changing", "penTool");//canvas.width = w;
     ElementMediator.setProperty(canvasArray, "height", [bboxHeight+"px"], "Changing", "penTool");//canvas.height = h;
     ElementMediator.setProperty(canvasArray, "left", [left+"px"],"Changing", "penTool");//DocumentControllerModule.DocumentController.SetElementStyle(canvas, "left", parseInt(left) + "px");

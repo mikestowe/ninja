@@ -393,22 +393,7 @@ exports.PenTool = Montage.create(ShapeTool, {
     TranslateSelectedSubpathPerPenCanvas:{
         value: function() {
             if (this._penCanvas!==null) {
-                //obtain the 2D translation of the canvas due to the Selection tool...assuming this is called in Configure
-                var penCanvasLeft = parseInt(ElementMediator.getProperty(this._penCanvas, "left"));//parseFloat(DocumentControllerModule.DocumentController.GetElementStyle(this._penCanvas, "left"));
-                var penCanvasTop = parseInt(ElementMediator.getProperty(this._penCanvas, "top"));//parseFloat(DocumentControllerModule.DocumentController.GetElementStyle(this._penCanvas, "top"));
-                var penCanvasWidth = parseInt(ElementMediator.getProperty(this._penCanvas, "width"));//this._penCanvas.width;
-                var penCanvasHeight = parseInt(ElementMediator.getProperty(this._penCanvas, "height"));//this._penCanvas.height;
-                var penCanvasOldX = penCanvasLeft + 0.5 * penCanvasWidth;
-                var penCanvasOldY = penCanvasTop + 0.5 * penCanvasHeight;
-
-                var translateCanvasX = penCanvasOldX - this._selectedSubpath.getCanvasX();
-                var translateCanvasY = penCanvasOldY - this._selectedSubpath.getCanvasY();
-
-                //update the canvasX and canvasY parameters for this subpath and also translate the subpath points (since they're stored in stage world space)
-                this._selectedSubpath.setCanvasX(translateCanvasX + this._selectedSubpath.getCanvasX());
-                this._selectedSubpath.setCanvasY(translateCanvasY + this._selectedSubpath.getCanvasY());
-                this._selectedSubpath.translateAnchors(translateCanvasX, translateCanvasY, 0);
-                this._selectedSubpath.createSamples(); //updates the bounding box
+                this._selectedSubpath.translateSubpathPerCanvas(ElementMediator);
             }
         }
     },
@@ -443,6 +428,113 @@ exports.PenTool = Montage.create(ShapeTool, {
             }
         }
     },
+
+    RenderShape: {
+        value: function (w, h, midPt, planeMat, canvas) {
+            if ((Math.floor(w) === 0) || (Math.floor(h) === 0)) {
+                return;
+            }
+
+            var left = Math.round(midPt[0] - 0.5 * w);
+            var top = Math.round(midPt[1] - 0.5 * h);
+
+            if (!canvas) {
+                var newCanvas = null;
+                newCanvas = NJUtils.makeNJElement("canvas", "Subpath", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
+                var elementModel = TagTool.makeElement(parseInt(w), parseInt(h), planeMat, midPt, newCanvas);
+                ElementMediator.addElement(newCanvas, elementModel.data, true);
+
+                // create all the GL stuff
+                var world = this.getGLWorld(newCanvas, this._useWebGL);//this.options.use3D);//this.CreateGLWorld(planeMat, midPt, newCanvas, this._useWebGL);//fillMaterial, strokeMaterial);
+                //store a reference to this newly created canvas
+                this._penCanvas = newCanvas;
+
+                var subpath = this._selectedSubpath; //new GLSubpath();
+                subpath.setWorld(world);
+                subpath.setCanvas(newCanvas);
+
+                world.addObject(subpath);
+                world.render();
+                //TODO this will not work if there are multiple shapes in the same canvas
+                newCanvas.elementModel.shapeModel.GLGeomObj = subpath;
+                newCanvas.elementModel.shapeModel.shapeCount++;
+                if(newCanvas.elementModel.shapeModel.shapeCount === 1)
+                {
+                    newCanvas.elementModel.selection = "Subpath";
+                    newCanvas.elementModel.pi = "SubpathPi";
+                    newCanvas.elementModel.shapeModel.strokeSize = this.options.strokeSize.value + " " + this.options.strokeSize.units;
+                    var strokeColor = subpath.getStrokeColor();
+                    newCanvas.elementModel.shapeModel.stroke = strokeColor;
+                    if(strokeColor) {
+                        newCanvas.elementModel.shapeModel.border = this.application.ninja.colorController.colorToolbar.stroke;
+                    }
+                    newCanvas.elementModel.shapeModel.strokeMaterial = subpath.getStrokeMaterial();
+
+                    newCanvas.elementModel.shapeModel.GLGeomObj = subpath;
+                    newCanvas.elementModel.shapeModel.useWebGl = this.options.use3D;
+                }
+                else
+                {
+                    // TODO - update the shape's info only.  shapeModel will likely need an array of shapes.
+                }
+
+                //if(newCanvas.elementModel.isShape)
+                if (true)
+                {
+                    this.application.ninja.selectionController.selectElement(newCanvas);
+                }
+            } //if (!canvas) {
+            else {
+
+                var world = null;
+                if (canvas.elementModel.shapeModel && canvas.elementModel.shapeModel.GLWorld) {
+                    world = canvas.elementModel.shapeModel.GLWorld;
+                } else {
+                    world = this.getGLWorld(canvas, this._useWebGL);//this.options.use3D);//this.CreateGLWorld(planeMat, midPt, canvas, this._useWebGL);//fillMaterial, strokeMaterial);
+                }
+
+                if (this._entryEditMode !== this.ENTRY_SELECT_CANVAS){
+                    //update the left and top of the canvas element
+                    var canvasArray=[canvas];
+                    w= Math.round(w);
+                    h = Math.round(h);
+                    ElementMediator.setProperty(canvasArray, "width", [w+"px"], "Changing", "penTool");//canvas.width = w;
+                    ElementMediator.setProperty(canvasArray, "height", [h+"px"], "Changing", "penTool");//canvas.height = h;
+
+                    //var bboxMid = this._selectedSubpath.getLocalBBoxMidInStageWorld();
+                    //left = Math.round(bboxMid[0] - 0.5 * w);
+                    //top = Math.round(bboxMid[1] - 0.5 * h);
+
+                    ElementMediator.setProperty(canvasArray, "left", [left+"px"],"Changing", "penTool");//DocumentControllerModule.DocumentController.SetElementStyle(canvas, "left", parseInt(left) + "px");
+                    ElementMediator.setProperty(canvasArray, "top", [top + "px"],"Changing", "penTool");//DocumentControllerModule.DocumentController.SetElementStyle(canvas, "top", parseInt(top) + "px");
+
+                    //update the viewport and projection to reflect the new canvas width and height (todo might be unnecessary since we don't use RDGE for now)
+                    world.setViewportFromCanvas(canvas);
+                    if (this._useWebGL){
+                        var cam = world.renderer.cameraManager().getActiveCamera();
+                        cam.setPerspective(world.getFOV(), world.getAspect(), world.getZNear(), world.getZFar());
+                    }
+                }
+
+                var subpath = this._selectedSubpath;
+
+                subpath.setDrawingTool(this);
+                subpath.setWorld(world);
+
+                world.addIfNewObject(subpath);
+                world.render();
+
+                //TODO this will not work if there are multiple shapes in the same canvas
+                canvas.elementModel.shapeModel.GLGeomObj = subpath;
+
+                //if(newCanvas.elementModel.isShape)
+                if (true)
+                {
+                    this.application.ninja.selectionController.selectElement(canvas);
+                }
+            } //else of if (!canvas) {
+        } //value: function (w, h, planeMat, midPt, canvas) {
+    }, //RenderShape: {
 
     HandleLeftButtonUp: {
         value: function (event) {
@@ -602,113 +694,6 @@ exports.PenTool = Montage.create(ShapeTool, {
             this.DrawSubpathAnchors(this._selectedSubpath); 
         }
     },
-
-    RenderShape: {
-        value: function (w, h, midPt, planeMat, canvas) {
-            if ((Math.floor(w) === 0) || (Math.floor(h) === 0)) {
-                return;
-            }
-
-            var left = Math.round(midPt[0] - 0.5 * w);
-            var top = Math.round(midPt[1] - 0.5 * h);
-
-            if (!canvas) {
-                var newCanvas = null;
-                newCanvas = NJUtils.makeNJElement("canvas", "Subpath", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
-                var elementModel = TagTool.makeElement(parseInt(w), parseInt(h), planeMat, midPt, newCanvas);
-                ElementMediator.addElement(newCanvas, elementModel.data, true);
-
-                // create all the GL stuff
-                var world = this.getGLWorld(newCanvas, this._useWebGL);//this.options.use3D);//this.CreateGLWorld(planeMat, midPt, newCanvas, this._useWebGL);//fillMaterial, strokeMaterial);
-                //store a reference to this newly created canvas
-                this._penCanvas = newCanvas;
-
-                var subpath = this._selectedSubpath; //new GLSubpath();
-                subpath.setWorld(world);
-                subpath.setCanvas(newCanvas);
-
-                world.addObject(subpath);
-                world.render();
-                //TODO this will not work if there are multiple shapes in the same canvas
-                newCanvas.elementModel.shapeModel.GLGeomObj = subpath;
-                newCanvas.elementModel.shapeModel.shapeCount++;
-                if(newCanvas.elementModel.shapeModel.shapeCount === 1)
-                {
-                    newCanvas.elementModel.selection = "Subpath";
-                    newCanvas.elementModel.pi = "SubpathPi";
-                    newCanvas.elementModel.shapeModel.strokeSize = this.options.strokeSize.value + " " + this.options.strokeSize.units;
-                    var strokeColor = subpath.getStrokeColor();
-                    newCanvas.elementModel.shapeModel.stroke = strokeColor;
-                    if(strokeColor) {
-                        newCanvas.elementModel.shapeModel.border = this.application.ninja.colorController.colorToolbar.stroke;
-                    }
-                    newCanvas.elementModel.shapeModel.strokeMaterial = subpath.getStrokeMaterial();
-
-                    newCanvas.elementModel.shapeModel.GLGeomObj = subpath;
-                    newCanvas.elementModel.shapeModel.useWebGl = this.options.use3D;
-                }
-                else
-                {
-                    // TODO - update the shape's info only.  shapeModel will likely need an array of shapes.
-                }
-
-                //if(newCanvas.elementModel.isShape)
-                if (true)
-                {
-                    this.application.ninja.selectionController.selectElement(newCanvas);
-                }
-            } //if (!canvas) {
-            else {
-
-                var world = null;
-                if (canvas.elementModel.shapeModel && canvas.elementModel.shapeModel.GLWorld) {
-                    world = canvas.elementModel.shapeModel.GLWorld;
-                } else {
-                    world = this.getGLWorld(canvas, this._useWebGL);//this.options.use3D);//this.CreateGLWorld(planeMat, midPt, canvas, this._useWebGL);//fillMaterial, strokeMaterial);
-                }
-
-                if (this._entryEditMode !== this.ENTRY_SELECT_CANVAS){
-                    //update the left and top of the canvas element
-                    var canvasArray=[canvas];
-                    w= Math.round(w);
-                    h = Math.round(h);
-                    ElementMediator.setProperty(canvasArray, "width", [w+"px"], "Changing", "penTool");//canvas.width = w;
-                    ElementMediator.setProperty(canvasArray, "height", [h+"px"], "Changing", "penTool");//canvas.height = h;
-
-                    //var bboxMid = this._selectedSubpath.getLocalBBoxMidInStageWorld();
-                    //left = Math.round(bboxMid[0] - 0.5 * w);
-                    //top = Math.round(bboxMid[1] - 0.5 * h);
-
-                    ElementMediator.setProperty(canvasArray, "left", [left+"px"],"Changing", "penTool");//DocumentControllerModule.DocumentController.SetElementStyle(canvas, "left", parseInt(left) + "px");
-                    ElementMediator.setProperty(canvasArray, "top", [top + "px"],"Changing", "penTool");//DocumentControllerModule.DocumentController.SetElementStyle(canvas, "top", parseInt(top) + "px");
-                                        
-                    //update the viewport and projection to reflect the new canvas width and height (todo might be unnecessary since we don't use RDGE for now)
-                    world.setViewportFromCanvas(canvas);
-                    if (this._useWebGL){
-                        var cam = world.renderer.cameraManager().getActiveCamera();
-                        cam.setPerspective(world.getFOV(), world.getAspect(), world.getZNear(), world.getZFar());
-                    }
-                }
-
-                var subpath = this._selectedSubpath;
-
-                subpath.setDrawingTool(this);
-                subpath.setWorld(world);
-
-                world.addIfNewObject(subpath);
-                world.render();
-
-                //TODO this will not work if there are multiple shapes in the same canvas
-                canvas.elementModel.shapeModel.GLGeomObj = subpath;
-
-                //if(newCanvas.elementModel.isShape)
-                if (true)
-                {
-                    this.application.ninja.selectionController.selectElement(canvas);
-                }
-            } //else of if (!canvas) {
-        } //value: function (w, h, planeMat, midPt, canvas) {
-    }, //RenderShape: {
 
     BuildSecondCtrlPoint:{
         value: function(p0, p2, p3) {
