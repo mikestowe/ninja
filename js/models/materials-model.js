@@ -22,6 +22,7 @@ var PlasmaMaterial = require("js/lib/rdge/materials/plasma-material").PlasmaMate
 var PulseMaterial = require("js/lib/rdge/materials/pulse-material").PulseMaterial;
 var TunnelMaterial = require("js/lib/rdge/materials/tunnel-material").TunnelMaterial;
 var ReliefTunnelMaterial = require("js/lib/rdge/materials/relief-tunnel-material").ReliefTunnelMaterial;
+var FlagMaterial = require("js/lib/rdge/materials/flag-material").FlagMaterial;
 var SquareTunnelMaterial = require("js/lib/rdge/materials/square-tunnel-material").SquareTunnelMaterial;
 var FlyMaterial = require("js/lib/rdge/materials/fly-material").FlyMaterial;
 var WaterMaterial = require("js/lib/rdge/materials/water-material").WaterMaterial;
@@ -55,6 +56,7 @@ exports.MaterialsModel = Montage.create(Component, {
             this.addMaterial(new PulseMaterial());
             this.addMaterial(new TunnelMaterial());
             this.addMaterial(new ReliefTunnelMaterial());
+            this.addMaterial(new FlagMaterial());
             this.addMaterial(new SquareTunnelMaterial());
             this.addMaterial(new FlyMaterial());
             this.addMaterial(new WaterMaterial());
@@ -235,6 +237,7 @@ exports.MaterialsModel = Montage.create(Component, {
 					case "tunnel":				mat = new TunnelMaterial();				break;
 					case "reliefTunnel":		mat = new ReliefTunnelMaterial();		break;
 					case "squareTunnel":		mat = new SquareTunnelMaterial();		break;
+					case "flag":		        mat = new FlagMaterial();		        break;
 					case "fly":					mat = new FlyMaterial();				break;
 					case "water":				mat = new WaterMaterial();				break;
 					case "paris":				mat = new ParisMaterial();				break;

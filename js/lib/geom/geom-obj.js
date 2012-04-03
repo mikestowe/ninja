@@ -309,6 +309,7 @@ var GeomObj = function GLGeomObj() {
 				case "tunnel":
 				case "reliefTunnel":
 				case "squareTunnel":
+                case "flag":
 				case "twist":
 				case "fly":
 				case "julia":
@@ -382,6 +383,7 @@ var GeomObj = function GLGeomObj() {
 				case "tunnel":
 				case "reliefTunnel":
 				case "squareTunnel":
+                case "flag":
 				case "twist":
 				case "fly":
 				case "julia":
