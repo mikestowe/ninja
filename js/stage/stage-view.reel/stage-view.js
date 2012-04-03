@@ -109,7 +109,11 @@ exports.StageView = Montage.create(Component, {
                        doc.editor.matchHighlight("CodeMirror-matchhighlight");
                        doc.editor.setLineClass(doc.editor.hline, null);
                        doc.editor.hline = doc.editor.setLineClass(doc.editor.getCursor().line, "activeline");
-                   }
+                   },
+                   extraKeys: {"Ctrl-Space": function(cm) {
+                                        CodeMirror.simpleHint(cm, CodeMirror.javascriptHint);
+                                    }
+                              }
            });
 
             doc.editor.hline = doc.editor.setLineClass(0, "activeline");
