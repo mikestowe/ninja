@@ -95,6 +95,7 @@ var GLSubpath = function GLSubpath() {
     this._planeMat = null;
     this._planeMatInv = null;
     this._planeCenter = null;
+    this._dragPlane = null;
 
     //used to query what the user selected, OR-able for future extensions
     this.SEL_NONE = 0;          //nothing was selected
@@ -130,7 +131,10 @@ var GLSubpath = function GLSubpath() {
         // get the world
         var world = this.getWorld();
         if (!world)  throw( "null world in subpath render" );
-
+        if (!this._canvas){
+            //set the canvas by querying the world
+            this._canvas = this.getWorld().getCanvas();
+        }
         // get the context
         var ctx = world.get2DContext();
         if (!ctx)  throw ("null context in subpath render");
@@ -145,42 +149,19 @@ var GLSubpath = function GLSubpath() {
         //build the coordinates of the samples in 2D (canvas) space (localDirty bit checked in buildLocalCoord
         this.buildLocalCoord();
 
-        //
+        //figure the size of the area we will draw into
         var bboxWidth=0, bboxHeight=0;
-        //var bboxMid=[0,0,0];
         if (useLocalCoord){
             bboxWidth = this._LocalBBoxMax[0] - this._LocalBBoxMin[0];
             bboxHeight = this._LocalBBoxMax[1] - this._LocalBBoxMin[1];
-            //bboxMid = [0.5 * (this._LocalBBoxMax[0] + this._LocalBBoxMin[0]), 0.5 * (this._LocalBBoxMax[1] + this._LocalBBoxMin[1]), 0.5 * (this._LocalBBoxMax[2] + this._LocalBBoxMin[2])];
         }
         else {
             var bboxMin = this.getBBoxMin();
             var bboxMax = this.getBBoxMax();
             bboxWidth = bboxMax[0] - bboxMin[0];
             bboxHeight = bboxMax[1] - bboxMin[1];
-            //bboxMid = [0.5 * (bboxMax[0] + bboxMin[0]), 0.5 * (bboxMax[1] + bboxMin[1]), 0.5 * (bboxMax[2] + bboxMin[2])];
         }
 
-        if (this._canvas) {
-            /*
-            var ViewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
-            //compute the plane center as the midpoint of the local bbox converted to stage world space
-            var planeCenter =  ViewUtils.localToStageWorld(bboxMid, this._canvas);
-            planeCenter[0]+=400; planeCenter[1]+=300; //todo replace these lines with the correct call for the offset
-            console.log("PEN: local bboxMid: "+ bboxMid +", stage-world bboxMid: "+ planeCenter);
-            var newLeft = planeCenter[0] - 0.5*bboxWidth;
-            console.log("PEN: newLeft: "+ newLeft +", bboxWidth: "+bboxWidth);
-            newLeft = Math.round(newLeft);//Math.round(this._planeCenter[0] - 0.5 * bboxWidth);
-            console.log("PEN: newLeft rounded: "+ newLeft);
-            var newTop = Math.round(planeCenter[1] - 0.5 * bboxHeight);//Math.round(this._planeCenter[1] - 0.5 * bboxHeight);
-            //assign the new position, width, and height as the canvas dimensions through the canvas controller
-            CanvasController.setProperty(this._canvas, "left", newLeft+"px");
-            CanvasController.setProperty(this._canvas, "top", newTop+"px");
-            CanvasController.setProperty(this._canvas, "width", bboxWidth+"px");
-            CanvasController.setProperty(this._canvas, "height", bboxHeight+"px");
-            this._canvas.elementModel.shapeModel.GLWorld.setViewportFromCanvas(this._canvas);
-            */
-        }
         ctx.save();
         ctx.clearRect(0, 0, bboxWidth, bboxHeight);
 
@@ -352,6 +333,10 @@ GLSubpath.prototype.getDrawingTool = function () {
 
 GLSubpath.prototype.setPlaneMatrix = function(planeMat){
     this._planeMat = planeMat;
+};
+
+GLSubpath.prototype.setDragPlane = function(p){
+    this._dragPlane = p;
 };
 
 GLSubpath.prototype.setPlaneMatrixInverse = function(planeMatInv){
@@ -867,6 +852,12 @@ GLSubpath.prototype.getStrokeWidth = function () {
 };
 
 GLSubpath.prototype.translateSubpathPerCanvas = function(elemMediator){
+    if (!this._canvas){
+        if (!this.getWorld())
+            return; //cannot do anything if there is no world
+        //set the canvas by querying the world
+        this._canvas = this.getWorld().getCanvas();
+    }
     //check if the canvas was translated
     var penCanvasCurrentLeft = parseInt(elemMediator.getProperty(this._canvas, "left"));//parseFloat(DocumentControllerModule.DocumentController.GetElementStyle(this._penCanvas, "left"));
     var penCanvasCurrentTop = parseInt(elemMediator.getProperty(this._canvas, "top"));//parseFloat(DocumentControllerModule.DocumentController.GetElementStyle(this._penCanvas, "top"));
@@ -1516,95 +1507,75 @@ GLSubpath.prototype.isPointInQuad2D = function(r0,r1,r2,r3,p){
     return false;
 };
 
+GLSubpath.prototype.exportJSON = function() {
+    var retObject= new Object();
+    //the type of this object
+    retObject.type = this.geomType();
+    retObject.geomType = retObject.type;
+
+    //the geometry for this object (anchor points in stage world space)
+    retObject.anchors = this._Anchors.slice(0);
+    retObject.isClosed = this._isClosed;
+
+    //location of the canvas of this object
+    retObject.canvasLeft = this._canvasLeft;
+    retObject.canvasTop = this._canvasTop;
+
+    retObject.planeCenter = [this._planeCenter[0],this._planeCenter[1],this._planeCenter[2]];
+    retObject.planeMat = this._planeMat;
+    retObject.planeMatInv = this._planeMatInv;
+    retObject.dragPlane = [this._dragPlane[0],this._dragPlane[1],this._dragPlane[2],this._dragPlane[3]];
+
+    //stroke appearance properties
+    retObject.strokeWidth = this._strokeWidth;
+    retObject.strokeColor = this._strokeColor;
+    retObject.fillColor = this._fillColor;
+    return retObject;
+};
+
 GLSubpath.prototype.export = function() {
-    var rtnStr = "type: " + this.geomType() + "\n";
+    var jsonObject = this.exportJSON();
+    var stringified = JSON.stringify(jsonObject);
+    return "type: " + this.geomType() + "\n" + stringified;
+};
 
-    rtnStr += "strokeWidth: "	+ this._strokeWidth	+ "\n";
-    rtnStr += "strokeStyle: "	+ this._strokeStyle	+ "\n";
-
-    rtnStr += "strokeMat: ";
-    if (this._strokeMaterial)
-        rtnStr += this._strokeMaterial.getName();
-    else
-        rtnStr += "flatMaterial";
-    rtnStr += "\n";
-
-    rtnStr += "fillMat: ";
-    if (this._fillMaterial)
-        rtnStr += this._fillMaterial.getName();
-    else
-        rtnStr += "flatMaterial";
-    rtnStr += "\n";
-
-    var isClosedStr = "false";
-    if (this._isClosed)
-        isClosedStr = "true";
-    rtnStr += "isClosed: "      + isClosedStr + "\n";
-
-    //add the anchor points
-    var numAnchors = this._Anchors.length;
-    rtnStr += "numAnchors: "    + numAnchors        + "\n";
-    for (var i=0;i<numAnchors;i++){
-        rtnStr += "anchor"+i+"x: " + this._Anchors[i].getPosX() + "\n";
-        rtnStr += "anchor"+i+"y: " + this._Anchors[i].getPosY() + "\n";
-        rtnStr += "anchor"+i+"z: " + this._Anchors[i].getPosZ() + "\n";
-
-        rtnStr += "anchor"+i+"prevx: " + this._Anchors[i].getPrevX() + "\n";
-        rtnStr += "anchor"+i+"prevy: " + this._Anchors[i].getPrevY() + "\n";
-        rtnStr += "anchor"+i+"prevz: " + this._Anchors[i].getPrevZ() + "\n";
-
-        rtnStr += "anchor"+i+"nextx: " + this._Anchors[i].getNextX() + "\n";
-        rtnStr += "anchor"+i+"nexty: " + this._Anchors[i].getNextY() + "\n";
-        rtnStr += "anchor"+i+"nextz: " + this._Anchors[i].getNextZ() + "\n";
+GLSubpath.prototype.importJSON = function(jo) {
+    if (this.geomType()!== jo.geomType){
+        return;
     }
-    return rtnStr;
+    //the geometry for this object
+    this._Anchors = [];
+    var i=0;
+    for (i=0;i<jo.anchors.length;i++){
+        this.addAnchor(new AnchorPoint());
+        var newAnchor = this.getAnchor(this.getSelectedAnchorIndex());
+        var ipAnchor = jo.anchors[i];
+        newAnchor.setPos(ipAnchor._x, ipAnchor._y, ipAnchor._z);
+        newAnchor.setPrevPos(ipAnchor._prevX, ipAnchor._prevY, ipAnchor._prevZ);
+        newAnchor.setNextPos(ipAnchor._nextX, ipAnchor._nextY, ipAnchor._nextZ);
+    }
+    this._isClosed = jo.isClosed;
+
+    //location of the canvas for this object
+    this._canvasLeft = jo.canvasLeft;
+    this._canvasTop = jo.canvasTop;
+    
+    this._planeCenter = [jo.planeCenter[0],jo.planeCenter[1],jo.planeCenter[2]];
+    this._planeMat = jo.planeMat;
+    this._planeMatInv = jo.planeMatInv;
+    this._dragPlane = [jo.dragPlane[0],jo.dragPlane[1],jo.dragPlane[2],jo.dragPlane[3]];
+
+    //stroke appearance properties
+    this._strokeWidth = jo.strokeWidth;
+    this._strokeColor = jo.strokeColor;
+    this._fillColor = jo.fillColor;
+
+    this._isDirty = true;
 };
 
 GLSubpath.prototype.import = function( importStr ) {
-    this._strokeWidth		= this.getPropertyFromString( "strokeWidth: ",	importStr );
-    this._strokeStyle		= this.getPropertyFromString( "strokeStyle: ",	importStr );
-    var strokeMaterialName	= this.getPropertyFromString( "strokeMat: ",	importStr );
-    var fillMaterialName	= this.getPropertyFromString( "fillMat: ",		importStr );
-
-    var strokeMat = MaterialsModel.getMaterial( strokeMaterialName );
-    if (!strokeMat) {
-        console.log( "object material not found in library: " + strokeMaterialName );
-        strokeMat = new FlatMaterial();
-    }
-
-    this._strokeMaterial = strokeMat;
-
-    var fillMat = MaterialsModel.getMaterial( fillMaterialName );
-    if (!fillMat) {
-        console.log( "object material not found in library: " + fillMaterialName );
-        fillMat = new FlatMaterial();
-    }
-
-    this._fillMaterial = fillMat;
-
-    var isClosedStr = this.getPropertyFromString( "isClosed: ", importStr);
-    this._isClosed = isClosedStr === "true";
-
-    var numAnchors = this.getPropertyFromString("numAnchors: ", importStr);
-    for (var i=0;i<numAnchors;i++) {
-        var posX = this.getPropertyFromString("anchor"+i+"x", importStr);
-        var posY = this.getPropertyFromString("anchor"+i+"y", importStr);
-        var posZ = this.getPropertyFromString("anchor"+i+"z", importStr);
-
-        var prevX = this.getPropertyFromString("anchor"+i+"prevx", importStr);
-        var prevY = this.getPropertyFromString("anchor"+i+"prevy", importStr);
-        var prevZ = this.getPropertyFromString("anchor"+i+"prevz", importStr);
-
-        var nextX = this.getPropertyFromString("anchor"+i+"nextx", importStr);
-        var nextY = this.getPropertyFromString("anchor"+i+"nexty", importStr);
-        var nextZ = this.getPropertyFromString("anchor"+i+"nextz", importStr);
-
-        var newAnchor = new AnchorPoint();
-        newAnchor.setPos(posX, posY, posZ);
-        newAnchor.setPrevPos(prevX, prevY, prevZ);
-        newAnchor.setNextPos(nextX, nextY, nextZ);
-        this._selectedSubpath.addAnchor(newAnchor);
-    }
+    var jsonObject = JSON.parse(importStr);
+    this.importJSON(jsonObject);
 };
 
 GLSubpath.prototype.collidesWithPoint = function (x, y, z) {

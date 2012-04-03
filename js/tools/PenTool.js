@@ -68,6 +68,9 @@ exports.PenTool = Montage.create(ShapeTool, {
     //the plane matrix for the first click...so the entire path is on the same plane
     _penPlaneMat: { value: null, writable: true },
 
+    //the plane equation (in stage world space) for the current path being drawn
+    _dragPlane: {value: null, writable: true},
+
     //index of the anchor point that the user has hovered over
     _hoveredAnchorIndex: {value: -1, writable: true},
 
@@ -105,7 +108,9 @@ exports.PenTool = Montage.create(ShapeTool, {
             snapManager.enableSnapAlign(false);
 
             var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(x,y));
+            //todo fix this function to allow us to get the correct location (in 3D) for the mouse position
             var unsnappedpos = DrawingToolBase.getHitRecPos(snapManager.snap(point.x, point.y, false));
+            this._dragPlane = snapManager.getDragPlane();
 
             snapManager.enableElementSnap(elemSnap);
             snapManager.enableGridSnap(gridSnap);
@@ -214,6 +219,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                         if (this._selectedSubpath.getIsClosed() && this._makeMultipleSubpaths) {
                             this._penCanvas = null;
                             this._penPlaneMat = null;
+                            this._dragPlane = null;
                             this._snapTarget = null;
                             this._selectedSubpath = new SubPath();
                             this._isNewPath = true;
@@ -404,7 +410,8 @@ exports.PenTool = Montage.create(ShapeTool, {
                 this._selectedSubpath.setPlaneMatrix(this._penPlaneMat);
                 var planeMatInv = glmat4.inverse( this._penPlaneMat, [] );
                 this._selectedSubpath.setPlaneMatrixInverse(planeMatInv);
-
+                this._selectedSubpath.setDragPlane(this._dragPlane);
+                
                 this._selectedSubpath.createSamples(); //dirty bit is checked here
                 this._selectedSubpath.buildLocalCoord(); //local dirty bit is checked here
 
