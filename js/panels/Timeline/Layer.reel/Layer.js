@@ -76,18 +76,13 @@ var Layer = exports.Layer = Montage.create(Component, {
             return this._layerName;
         },
         set:function(newVal){
-        	console.log('Layer.layerName.set ', newVal);
 
-        		this._layerEditable.value = newVal;
-	        	this._layerName = newVal;
-	        	this.layerData.layerName = newVal;
-	        	if (typeof(this.dynamicLayerName) !== "undefined") {
-	        		this.dynamicLayerName.value = newVal;
-	        	}
-	        	
-	        	console.log('layerName setter: ' + newVal)
-
-        	
+			this._layerEditable.value = newVal;
+	    	this._layerName = newVal;
+	    	this.layerData.layerName = newVal;
+	    	if (typeof(this.dynamicLayerName) !== "undefined") {
+	    		this.dynamicLayerName.value = newVal;
+	    	}
         }
     },
     _layerID:{
