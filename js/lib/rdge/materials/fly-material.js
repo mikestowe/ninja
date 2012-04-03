@@ -65,7 +65,7 @@ var FlyMaterial = function FlyMaterial() {
 		this.updateTexture();
 		this.setResolution( [world.getViewportWidth(),world.getViewportHeight()] );
 		this.update( 0 );
-	}
+	};
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -73,7 +73,8 @@ var FlyMaterial = function FlyMaterial() {
  
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
 var flyMaterialDef =
-{'shaders': 
+{
+    'shaders': 
 	{
 		'defaultVShader':"assets/shaders/Basic.vert.glsl",
 		'defaultFShader':"assets/shaders/Fly.frag.glsl"

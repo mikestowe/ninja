@@ -66,9 +66,8 @@ var PulseMaterial = function PulseMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
-	// duplcate method requirde
-	this.dup = function( world )
-	{
+	// duplicate method required
+	this.dup = function( world ) {
 		// save the world
 		if (world)  this.setWorld( world );
 
@@ -86,8 +85,7 @@ var PulseMaterial = function PulseMaterial() {
 		return newMat;
 	};
 
-	this.init = function( world )
-	{
+	this.init = function( world ) {
 		// save the world
 		if (world)  this.setWorld( world );
 
@@ -233,7 +231,7 @@ var PulseMaterial = function PulseMaterial() {
         }
 
 		return rtnStr;
-	}
+	};
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////

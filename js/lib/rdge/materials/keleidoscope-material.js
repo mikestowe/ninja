@@ -90,7 +90,7 @@ var KeleidoscopeMaterial = function KeleidoscopeMaterial() {
 				this._time = time;
 			}
 		}
-	}
+	};
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
