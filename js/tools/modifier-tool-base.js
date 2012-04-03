@@ -758,6 +758,11 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                 snapManager.enableGridSnap( snapManager.gridSnapEnabledAppLevel() );
                 this.eventManager.removeEventListener( "toolOptionsChange", this, false);
                 this.eventManager.removeEventListener( "toolDoubleClick", this, false);
+
+                if (this._targetedElement) {
+                    this._targetedElement.classList.remove("active-element-outline");
+                    this._targetedElement = null;
+                }
             }
         }
     },
