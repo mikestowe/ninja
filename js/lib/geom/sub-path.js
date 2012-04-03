@@ -72,9 +72,9 @@ var GLSubpath = function GLSubpath() {
     //the canvas that will draw this subpath
     this._canvas = null;
     
-    //the X and Y location of this subpath's canvas in stage world space of Ninja
-    this._canvasX = 0;
-    this._canvasY = 0;
+    //the top left location of this subpath's canvas in screen space
+    this._canvasLeft = 0;
+    this._canvasTop = 0;
 
     //stroke information
     this._strokeWidth = 1.0;
@@ -362,20 +362,20 @@ GLSubpath.prototype.setPlaneCenter = function(pc){
     this._planeCenter = pc;
 };
 
-GLSubpath.prototype.getCanvasX = function(){
-    return this._canvasX;
+GLSubpath.prototype.getCanvasLeft = function(){
+    return this._canvasLeft;
 };
 
-GLSubpath.prototype.getCanvasY = function(){
-    return this._canvasY;
+GLSubpath.prototype.getCanvasTop = function(){
+    return this._canvasTop;
 };
 
-GLSubpath.prototype.setCanvasX = function(cx){
-    this._canvasX=cx;
+GLSubpath.prototype.setCanvasLeft = function(cx){
+    this._canvasLeft=cx;
 };
 
-GLSubpath.prototype.setCanvasY = function(cy){
-    this._canvasY=cy;
+GLSubpath.prototype.setCanvasTop = function(cy){
+    this._canvasTop=cy;
 };
 
 GLSubpath.prototype.getIsClosed = function () {
@@ -868,20 +868,17 @@ GLSubpath.prototype.getStrokeWidth = function () {
 
 GLSubpath.prototype.translateSubpathPerCanvas = function(elemMediator){
     //check if the canvas was translated
-    var penCanvasLeft = parseInt(elemMediator.getProperty(this._canvas, "left"));//parseFloat(DocumentControllerModule.DocumentController.GetElementStyle(this._penCanvas, "left"));
-    var penCanvasTop = parseInt(elemMediator.getProperty(this._canvas, "top"));//parseFloat(DocumentControllerModule.DocumentController.GetElementStyle(this._penCanvas, "top"));
-    var penCanvasWidth = parseInt(elemMediator.getProperty(this._canvas, "width"));//this._penCanvas.width;
-    var penCanvasHeight = parseInt(elemMediator.getProperty(this._canvas, "height"));//this._penCanvas.height;
-    var penCanvasOldX = penCanvasLeft + 0.5 * penCanvasWidth;
-    var penCanvasOldY = penCanvasTop + 0.5 * penCanvasHeight;
+    var penCanvasCurrentLeft = parseInt(elemMediator.getProperty(this._canvas, "left"));//parseFloat(DocumentControllerModule.DocumentController.GetElementStyle(this._penCanvas, "left"));
+    var penCanvasCurrentTop = parseInt(elemMediator.getProperty(this._canvas, "top"));//parseFloat(DocumentControllerModule.DocumentController.GetElementStyle(this._penCanvas, "top"));
 
-    var translateCanvasX = penCanvasOldX - this._canvasX;
-    var translateCanvasY = penCanvasOldY - this._canvasY;
+    var translateCanvasX = Math.round(penCanvasCurrentLeft - this._canvasLeft);
+    var translateCanvasY = Math.round(penCanvasCurrentTop - this._canvasTop);
 
-    //update the canvasX and canvasY parameters for this subpath and also translate the subpath points (since they're stored in stage world space)
+    //update the left and top parameters for this subpath and also translate the subpath points (since they're stored in stage world space)
     if (Math.abs(translateCanvasX)>=1 || Math.abs(translateCanvasY)>=1){
-        this.setCanvasX(translateCanvasX + this._canvasX);
-        this.setCanvasY(translateCanvasY + this._canvasY);
+        this.setCanvasLeft(penCanvasCurrentLeft);
+        this.setCanvasTop(penCanvasCurrentTop);
+        //todo does the canvas translation correspond to the translation in stage world space? 
         this.translateAnchors(translateCanvasX, translateCanvasY, 0);
     }
     this._dirty=true;
@@ -896,6 +893,8 @@ GLSubpath.prototype.setStrokeWidth = function (w) {
     this._dirty=true;
 
     var ElementMediator = require("js/mediators/element-mediator").ElementMediator;
+
+    //translate the subpath in case the actual canvas location does not match where subpath thinks the canvas should be
     this.translateSubpathPerCanvas(ElementMediator);
 
     // **** adjust the left, top, width, and height to adjust for the change in stroke width ****
@@ -920,6 +919,8 @@ GLSubpath.prototype.setStrokeWidth = function (w) {
     ElementMediator.setProperty(canvasArray, "height", [bboxHeight+"px"], "Changing", "penTool");//canvas.height = h;
     ElementMediator.setProperty(canvasArray, "left", [left+"px"],"Changing", "penTool");//DocumentControllerModule.DocumentController.SetElementStyle(canvas, "left", parseInt(left) + "px");
     ElementMediator.setProperty(canvasArray, "top", [top + "px"],"Changing", "penTool");//DocumentControllerModule.DocumentController.SetElementStyle(canvas, "top", parseInt(top) + "px");
+    this.setCanvasLeft(left);
+    this.setCanvasTop(top);
 };
 
 GLSubpath.prototype.getStrokeMaterial = function () {

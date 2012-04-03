@@ -419,10 +419,6 @@ exports.PenTool = Montage.create(ShapeTool, {
                 bboxMax = this._selectedSubpath.getBBoxMax();
                 var bboxMid = [0.5 * (bboxMax[0] + bboxMin[0]), 0.5 * (bboxMax[1] + bboxMin[1]), 0.5 * (bboxMax[2] + bboxMin[2])];
 
-                this._selectedSubpath.setPlaneCenter(bboxMid);
-                this._selectedSubpath.setCanvasX(bboxMid[0]);
-                this._selectedSubpath.setCanvasY(bboxMid[1]);
-
                 //call render shape with the bbox width and height
                 this.RenderShape(bboxWidth, bboxHeight, bboxMid, this._penPlaneMat, this._penCanvas);
             }
@@ -437,6 +433,9 @@ exports.PenTool = Montage.create(ShapeTool, {
 
             var left = Math.round(midPt[0] - 0.5 * w);
             var top = Math.round(midPt[1] - 0.5 * h);
+            this._selectedSubpath.setPlaneCenter(midPt);
+            this._selectedSubpath.setCanvasLeft(left);
+            this._selectedSubpath.setCanvasTop(top);
 
             if (!canvas) {
                 var newCanvas = null;
