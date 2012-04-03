@@ -127,6 +127,12 @@
 	font-size: 11px;
 }
 
+
+
+.label-layer .collapsible-label br {
+	display: none;
+}
+
 .collapsible-clicker {
 	position: absolute;
 	width: 10px;
@@ -218,6 +224,9 @@
 	overflow: hidden;
     -webkit-user-select: text;
     text-overflow: clip;
+}
+.editable2 br {
+	display: inline;
 }
 
 .label-style .disabled {
