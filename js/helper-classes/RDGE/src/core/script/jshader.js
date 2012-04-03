@@ -482,8 +482,8 @@ RDGE.jshader = function (addr) {
 
     this.buildProgram = function (t) {
         window.console.log("building shader pair: <" + t.vshader + ", " + t.fshader + ">");
-        var vShaderDef = this.def.shaders[t.vshader];
-        var fShaderDef = this.def.shaders[t.fshader];
+        var vShaderDef = RDGE.globals.engine.remapAssetFolder(this.def.shaders[t.vshader]);
+        var fShaderDef = RDGE.globals.engine.remapAssetFolder(this.def.shaders[t.fshader]);
 
         this.ctx.useProgram(null);
 
@@ -494,7 +494,7 @@ RDGE.jshader = function (addr) {
             source = vShaderDef;
         } else {
             var vshaderRequest = new XMLHttpRequest();
-            var urlVertShader = vShaderDef;
+            var urlVertShader = vShaderDef;            
             vshaderRequest.open("GET", urlVertShader, false);
             vshaderRequest.send(null);
             source = vshaderRequest.responseText;

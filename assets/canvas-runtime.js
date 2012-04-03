@@ -104,6 +104,7 @@ NinjaCvsRt.GLRuntime = function ( canvas, jObj,  assetPath )
 	this._initialized	= false;
 
 	this._useWebGL		= false;
+	this._assetPath     = undefined;
 
 	// view parameters
 	this._fov = 45.0;
@@ -120,13 +121,17 @@ NinjaCvsRt.GLRuntime = function ( canvas, jObj,  assetPath )
 	// all "live" materials
 	this._materials = [];
 
-		// provide the mapping for the asset directory
-		if (assetPath)
-		{
-			this._assetPath = assetPath.slice();
-			if (this._assetPath[this._assetPath.length-1] != '/')
-				this._assetPath += '/';
-		}
+	// provide the mapping for the asset directory
+	if (assetPath)
+	{
+		this._assetPath = assetPath.slice();
+		if (this._assetPath[this._assetPath.length-1] != '/')
+			this._assetPath += '/';
+	}
+
+	if(this._assetPath !== undefined) {
+		RDGE.globals.engine.setAssetPath(this._assetPath);
+	}
 
     ///////////////////////////////////////////////////////////////////////
 	// accessors
@@ -364,21 +369,6 @@ NinjaCvsRt.GLRuntime = function ( canvas, jObj,  assetPath )
 			var mat = this._materials[i];
 			mat.init( this );
 		}
-	};
-
-	this.remapAssetFolder = function( url )
-	{
-//		var searchStr = "assets/";
-//		var index = url.indexOf( searchStr );
-//		var rtnPath = url;
-//		if (index >= 0)
-//		{
-//			rtnPath = url.substr( index + searchStr.length );
-//			rtnPath = this._assetPath + rtnPath;
-//		}
-//		return rtnPath;
-		
-		return url;
 	};
 
 	this.findMaterialNode = function( nodeName,  node )
@@ -1257,7 +1247,6 @@ NinjaCvsRt.RuntimePulseMaterial = function ()
 					technique.u_resolution.set( res );
 
 					var wrap = 'REPEAT',  mips = true;
-					this._texMap = world.remapAssetFolder( this._texMap );
 					var tex = renderer.getTextureByName(this._texMap, wrap, mips );
 					if (tex)
 						technique.u_tex0.set( tex );
@@ -1399,19 +1388,16 @@ NinjaCvsRt.RuntimeBumpMetalMaterial = function ()
 					var wrap = 'REPEAT',  mips = true;
 					if (this._diffuseTexture)
 					{
-						this._diffuseTexture = world.remapAssetFolder( this._diffuseTexture );
 						tex = renderer.getTextureByName(this._diffuseTexture, wrap, mips );
 						if (tex)  technique.u_colMap.set( tex );
 					}
 					if (this._normalTexture)
 					{
-						this._normalTexture = world.remapAssetFolder( this._normalTexture );
 						tex = renderer.getTextureByName(this._normalTexture, wrap, mips );
 						if (tex)  technique.u_normalMap.set( tex );
 					}
 					if (this._specularTexture)
 					{
-						this._specularTexture = world.remapAssetFolder( this._specularTexture );
 						tex = renderer.getTextureByName(this._specularTexture, wrap, mips );
 						technique.u_glowMap.set( tex );
 					}

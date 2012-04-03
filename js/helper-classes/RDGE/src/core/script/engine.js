@@ -76,151 +76,151 @@ RDGE.stateManager = function () {
     };
 };
 
-RDGE.Engine = function() {
-     this._assetPath = "assets/";
+RDGE.Engine = function () {
+    this._assetPath = "assets/";
 
     // map of scene graphs to names
     this.sceneMap = [];
-    
+
     // number of states on the stack
-    this.stateTop       = undefined;
-    
+    this.stateTop = undefined;
+
     // size of the browser window
-    this.lastWindowWidth	= window.innerWidth;
-    this.lastWindowHeight	= window.innerHeight;
-       
+    this.lastWindowWidth = window.innerWidth;
+    this.lastWindowHeight = window.innerHeight;
+
     this.defaultContext = null;
-    
+
     this.lightManager = null;
-    
+
     clearColor = [0.0, 0.0, 0.0, 0.0];
-    
+
     this.initializeComplete = false;
-    
+
     this.RDGECanvas = null;
-    
+
     /*
-     *	a map of canvas names to renderer
-     */
+    *	a map of canvas names to renderer
+    */
     this.canvasToRendererMap = {};
-    
+
     /*
-     *	states to canvas map - maps a state stack to the canvas context it belongs to
-     */
+    *	states to canvas map - maps a state stack to the canvas context it belongs to
+    */
     this.canvasNameToStateStack = {};
-    
+
     /*
-     *	the list of context's that are active
-     */
+    *	the list of context's that are active
+    */
     this.canvasCtxList = [];
-    
+
     /*
-     *	regex object to verify runtime object is not some sort of exploit
-     */
+    *	regex object to verify runtime object is not some sort of exploit
+    */
     invalidObj = new RegExp("([()]|function)");
-    
+
     isValidObj = function (name) {
-		// do a quick test make sure user isn't trying to execute a function
+        // do a quick test make sure user isn't trying to execute a function
         if (invalidObj.test(name)) {
-			window.console.error("invalid object name passed to RDGE, " + name + " - looks like a function");
-			return false;
-		}
-		
-		return true;
+            window.console.error("invalid object name passed to RDGE, " + name + " - looks like a function");
+            return false;
+        }
+
+        return true;
     };
-    
+
     /*
-     *	The context definition - every context shares these parameters
-     */
+    *	The context definition - every context shares these parameters
+    */
     contextDef = function () {
-        this.id = null;	
+        this.id = null;
         this.renderer = null;
         this.ctxStateManager = null;
         this.startUpState = null;
         this.sceneGraphMap = [];
         this.currentScene = null;
         this.getScene = function () {
-			return this.sceneGraphMap[this.currentScene];
+            return this.sceneGraphMap[this.currentScene];
         }
-        this.debug = 
+        this.debug =
         {
-			'frameCounter' : 0,
-			'mat4CallCount': 0
+            'frameCounter': 0,
+            'mat4CallCount': 0
         }
     };
-    
+
     // maintains the contexts
     contextManager = new RDGE.objectManager();
     this.ctxMan = contextManager;
-    
+
     // the context currently being updated
     contextManager.currentCtx = null;
-       
+
     contextManager._addObject = contextManager.addObject;
     contextManager.contextMap = {};
-    
+
     contextManager.addObject = function (context) {
-		this.contextMap[context.id] = context;
-		return this._addObject(context);
+        this.contextMap[context.id] = context;
+        return this._addObject(context);
     };
-    
+
     contextManager.start = function () {
-		var len = this.objects.length;
+        var len = this.objects.length;
         for (var i = 0; i < len; ++i) {
-		    // set the current context
-		    contextManager.currentCtx = this.objects[i];
-		    this.objects[i].ctxStateManager.PushState(this.objects[i].startUpState);
-		}
+            // set the current context
+            contextManager.currentCtx = this.objects[i];
+            this.objects[i].ctxStateManager.PushState(this.objects[i].startUpState);
+        }
     };
-    
+
     contextManager.forEach = function (cb) {
-		var len = this.objects.length;
+        var len = this.objects.length;
         for (var i = 0; i < len; ++i) {
-			cb(this.objects[i]);
-		}
+            cb(this.objects[i]);
+        }
     };
-    
+
     this.getContext = function (optCanvasID) {
         if (!optCanvasID) {
-			return contextManager.currentCtx;
-		}
+            return contextManager.currentCtx;
+        }
         else {
-			return contextManager.contextMap[optCanvasID];
-		}
+            return contextManager.contextMap[optCanvasID];
+        }
     };
-    
-	this.clearContext = function( canvasID )
-	{
-		contextManager.contextMap[canvasID] = undefined;
-	}
-    
+
+    this.clearContext = function (canvasID) {
+        contextManager.contextMap[canvasID] = undefined;
+    };
+
     /*
-     *	give the contextID (canvas id) of the context to set
-     */
+    *	give the contextID (canvas id) of the context to set
+    */
     this.setContext = function (contextID) {
         contextManager.currentCtx = contextManager.contextMap[contextID];
     };
-	
-	this.tickContext = function(contextID) {
-	    var savedCtx = contextManager.currentCtx;
-	    contextManager.currentCtx = contextManager.contextMap[contextID];
-	    this.objects[i].ctxStateManager.tick(dt);
-	    contextManager.currentCtx = savedCtx;
 
-	}
+    this.tickContext = function (contextID) {
+        var savedCtx = contextManager.currentCtx;
+        contextManager.currentCtx = contextManager.contextMap[contextID];
+        this.objects[i].ctxStateManager.tick(dt);
+        contextManager.currentCtx = savedCtx;
+    };
 
-    	this.remapAssetFolder = function( url )
-	{
-		var searchStr = "assets/";
-		var index = url.indexOf( searchStr );
-		var rtnPath = url;
-		if (index >= 0)
-		{
-			rtnPath = url.substr( index + searchStr.length );
-			rtnPath = this._assetPath + rtnPath;
-		}
-		return rtnPath;
-	};
+    this.setAssetPath = function (path) {
+        this._assetPath = path.slice();
+    };
+
+    this.remapAssetFolder = function (url) {
+        var searchStr = "assets/";
+        var index = url.indexOf(searchStr);
+        var rtnPath = url;
+        if (index >= 0) {
+            rtnPath = url.substr(index + searchStr.length);
+            rtnPath = this._assetPath + rtnPath;
+        }
+        return rtnPath;
+    };
 };
 
 /*
