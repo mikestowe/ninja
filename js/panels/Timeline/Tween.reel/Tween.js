@@ -44,6 +44,7 @@ var Tween = exports.Tween = Montage.create(Component, {
         },
         set: function(value){
             this._spanWidth = value;
+            this.tweenData.spanWidth = value;
             this.needsDraw=true;
         }
     },
@@ -59,6 +60,7 @@ var Tween = exports.Tween = Montage.create(Component, {
         },
         set:function (value) {
             this._spanPosition = value;
+            this.tweenData.spanPosition = value;
             this.needsDraw=true;
         }
     },
@@ -74,6 +76,7 @@ var Tween = exports.Tween = Montage.create(Component, {
         },
         set:function (value) {
             this._keyFramePosition = value;
+            this.tweenData.keyFramePosition = value;
             this.needsDraw=true;
         }
     },
@@ -136,11 +139,6 @@ var Tween = exports.Tween = Montage.create(Component, {
         }
     },
 
-    prepareForDraw:{
-        value:function(){
-            this.eventManager.addEventListener("tlZoomSlider", this, false);
-        }
-    },
 
     draw:{
         value:function () {
@@ -227,77 +225,6 @@ var Tween = exports.Tween = Montage.create(Component, {
             // deselect the keyframe for this tween
             this.keyframe.deselectKeyframe();
         }
-    },
+    }
 
-    handleTlZoomSlider:{
-            value:function(event){
-                var currentMilliSecPerPixel , currentMilliSec , clickPos,thingToPush;
-
-                length = this.application.ninja.timeline.tempArray.length;
-                if(length > 0 && this.application.ninja.timeline.tempArray[length-1]!== this.parentComponent.parentComponent.trackID){
-                    this.application.ninja.timeline.tempArray.push(this.parentComponent.parentComponent.trackID);
-                    var i = this.application.ninja.timeline.tweenarray.length-1;
-                    for(var index=0;this.currentTween = this.parentComponent.parentComponent.tweens[index];i--,index++){
-                        if(this.parentComponent.parentComponent.tweens[index].tweenData.tweenID===0){
-                            this.currentTween.tweenData.spanWidth=0;
-                            this.currentTween.tweenData.spanPosition=0;
-                            this.currentTween.tweenData.keyFramePosition=0;
-                            this.currentTween.tweenData.keyFrameMillisec=0;
-                            this.setData();
-                        }else{
-                            currentMilliSecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
-                            currentMilliSec = this.currentTween.tweenData.keyFrameMillisec;
-                            clickPos = currentMilliSec / currentMilliSecPerPixel;
-                            this.currentTween.tweenData.spanWidth = clickPos-this.application.ninja.timeline.tweenarray[i+1].keyFramePosition;
-                            this.currentTween.tweenData.keyFramePosition = clickPos;
-                            this.currentTween.tweenData.spanPosition=clickPos-this.currentTween.tweenData.spanWidth;
-                            this.setData();
-                        }
-
-                    }
-                    this.application.ninja.timeline.tweenarray=[];
-                    thingToPush = {};
-                    thingToPush.tweenID = this.tweenID;
-                    thingToPush.keyFramePosition = this.keyFramePosition;
-                    this.application.ninja.timeline.tweenarray.push(thingToPush);
-                }else if(length===0){
-                    this.application.ninja.timeline.tempArray.push(this.parentComponent.parentComponent.trackID);
-                    thingToPush = {};
-                    thingToPush.tweenID = this.tweenID;
-                    thingToPush.keyFramePosition = this.keyFramePosition;
-                    this.application.ninja.timeline.tweenarray.push(thingToPush);
-                }else{
-                    thingToPush = {};
-                    thingToPush.tweenID = this.tweenID;
-                    thingToPush.keyFramePosition = this.keyFramePosition;
-                    this.application.ninja.timeline.tweenarray.push(thingToPush);
-                }
-
-                var levelNumber = this.application.ninja.timeline.getLayerIndexByID(this.parentComponent.parentComponent.trackID);
-                var k = this.application.ninja.timeline.tweenarray.length-1;
-                if(this.parentComponent.parentComponent.tweens.length === this.application.ninja.timeline.tweenarray.length && levelNumber===0){
-                    for(var indexValue=0;this.currentTween = this.parentComponent.parentComponent.tweens[indexValue];k--,indexValue++){
-                        if(this.parentComponent.parentComponent.tweens[indexValue].tweenData.tweenID===0){
-                            this.currentTween.tweenData.spanWidth=0;
-                            this.currentTween.tweenData.spanPosition=0;
-                            this.currentTween.tweenData.keyFramePosition=0;
-                            this.currentTween.tweenData.keyFrameMillisec=0;
-                            this.setData();
-                        }else{
-                            currentMilliSecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
-                            currentMilliSec = this.currentTween.tweenData.keyFrameMillisec;
-                            clickPos = currentMilliSec / currentMilliSecPerPixel;
-                            this.currentTween.tweenData.spanWidth = clickPos-this.application.ninja.timeline.tweenarray[k+1].keyFramePosition;
-                            this.currentTween.tweenData.keyFramePosition = clickPos;
-                            this.currentTween.tweenData.spanPosition=clickPos-this.currentTween.tweenData.spanWidth;
-                            this.setData();
-                        }
-
-                    }
-                    this.application.ninja.timeline.tempArray=[];
-                    this.application.ninja.timeline.tweenarray=[];
-                }
-            }
-        }
-
-    });
+});
