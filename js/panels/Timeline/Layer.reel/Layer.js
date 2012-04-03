@@ -67,10 +67,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 
 	/* Layer models: the name, ID, and selected and animation booleans for the layer */
     _layerName:{
-    	serializable: true,
-        value:null,
-        writable:true,
-        enumerable:true
+    	value: "Default Layer Name"
     },
     
     layerName:{
@@ -79,20 +76,22 @@ var Layer = exports.Layer = Montage.create(Component, {
             return this._layerName;
         },
         set:function(newVal){
-        	if (newVal !== this._layerName) {
+        	console.log('Layer.layerName.set ', newVal);
+
         		this._layerEditable.value = newVal;
 	        	this._layerName = newVal;
 	        	this.layerData.layerName = newVal;
-	        	this.log('layerName setter: ' + newVal)
-        	}
+	        	if (typeof(this.dynamicLayerName) !== "undefined") {
+	        		this.dynamicLayerName.value = newVal;
+	        	}
+	        	
+	        	console.log('layerName setter: ' + newVal)
+
         	
         }
     },
     _layerID:{
-        value:null,
-        writable:true,
-    	serializable: true,
-        enumerable:true
+    	value: "Default Layer ID"
     },
 
     layerID:{
@@ -385,7 +384,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     		return this._bypassAnimation;
     	},
     	set: function(newVal) {
-    		if (newVal !== this._bypassAnimation) {
+    		if ((newVal !== this._bypassAnimation) && (typeof(this.layerData) !== "undefined")) {
 	    		this._bypassAnimation = newVal;
 	    		this.layerData.bypassAnimation = newVal;	
     		}
@@ -410,16 +409,25 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(val){
             this._layerData = val;
             if(this._layerData){
-                this.setData();
+                this.setData(true);
             }
         }
     },
 
     setData:{
-        value:function(){
-        	if (typeof(this.layerData) === "undefined") {
+        value:function(boolNeedsDraw){
+        	if (typeof(this._layerData) === "undefined")  {
+        		return;
+        	} 
+        	
+        	if (typeof(this._layerData.layerName) === "undefined") {
         		return;
         	}
+        	
+        	if (typeof(boolNeedsDraw) === "undefined") {
+        		boolNeedsDraw = false;
+        	}
+        	
             this.layerName = this.layerData.layerName;
             this.layerID = this.layerData.layerID;
             this.arrLayerStyles = this.layerData.arrLayerStyles;
@@ -438,7 +446,7 @@ var Layer = exports.Layer = Montage.create(Component, {
             this.dtextScaleY = this.layerData.dtextScaleY;
             this.dtextRotate = this.layerData.dtextRotate;
             this._isFirstDraw = this.layerData._isFirstDraw;
-            this.needsDraw = true;
+            this.needsDraw = boolNeedsDraw;
         }
     },
     
@@ -455,7 +463,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     	set: function(newVal) {
     		if (newVal !== this._bindingPoint) {
 	    		this._bindingPoint = newVal;
-	    		this.setData();
+	    		this.setData(true);
     		}
     	}
     },
@@ -478,23 +486,15 @@ var Layer = exports.Layer = Montage.create(Component, {
         	// Initialize myself
 			this.init();
 			
-        	var that = this;
-
         	// Make it editable!
         	this._layerEditable = Hintable.create();
         	this._layerEditable.element = this.titleSelector;
-        	this.titleSelector.identifier = "selectorEditable";
-        	this.titleSelector.addEventListener("click", this, false);
-        	this._layerEditable.addEventListener("blur", function(event) {
-        		that.handleSelectorEditableBlur(event);
-        	}, false);
-        	this._layerEditable.addEventListener("change", function(event) {
-				that.dynamicLayerName.value = that._layerEditable.value;
-				that.needsDraw = true;
-        	}, false);
+        	this._layerEditable.addEventListener("blur", this.handleSelectorEditableBlur.bind(this), false);
+        	this._layerEditable.addEventListener("change", this.handleSelectorEditableChange.bind(this), false);
+        	
         	this._layerEditable.editingClass = "editable2";
         	this._layerEditable.value = this.layerName;
-        	this._layerEditable.needsDraw = true;
+        	//this._layerEditable.needsDraw = true;
 
             this.mainCollapser.clicker.addEventListener("click", this.handleMainCollapserClick.bind(this), false);
             this.positionCollapser.clicker.addEventListener("click", this.handlePositionCollapserClick.bind(this), false);
@@ -510,7 +510,7 @@ var Layer = exports.Layer = Montage.create(Component, {
             this.element.addEventListener("mousedown", this, false);
             this.element.addEventListener("click", this, false);
             
-			// Drag and drop event hanlders
+			// Drag and drop event handlers
 			this.element.addEventListener("mouseover", this.handleMouseover.bind(this), false);
 			this.element.addEventListener("mouseout", this.handleMouseout.bind(this), false);
 			this.element.addEventListener("dragover", this.handleDragover.bind(this), false);
@@ -712,10 +712,6 @@ var Layer = exports.Layer = Montage.create(Component, {
 			this.deleteStyle();
 		}
 	},
-	handleSelectorEditableClick: {
-		value: function(event) {
-		}
-	},
 	handleSelectorEditableBlur : {
 		value: function(event) {
         	this.titleSelector.scrollLeft = 0;
@@ -723,7 +719,12 @@ var Layer = exports.Layer = Montage.create(Component, {
 	},
 	handleSelectorEditableChange: {
 		value: function(event) {
-			this.layerName = this.dynamicLayerName.value;
+			var newVal = "ONTD";
+			if (this._layerEditable.value !== "") {
+				newVal = this._layerEditable.value;
+			}
+			this.dynamicLayerName.value = newVal;
+			this.layerName = newVal;
 			this.needsDraw = true;
 		}
 	},
