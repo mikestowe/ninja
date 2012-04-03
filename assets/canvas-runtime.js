@@ -1026,7 +1026,7 @@ function RuntimeOval()
 					mat[5] = yScale;
 
 					// get the bezier points
-					var bezPts = this.circularArcToBezier( Vector.create([0,0,0]), Vector.create([1,0,0]), -2.0*Math.PI );
+					var bezPts = this.circularArcToBezier( [0,0,0], [1,0,0], -2.0*Math.PI );
 					if (bezPts)
 					{
 						var n = bezPts.length;
