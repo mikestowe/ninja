@@ -115,44 +115,6 @@ function TaperMaterial() {
         }
     };
 
-    this.export = function () {
-        // this function should be overridden by subclasses
-        var exportStr = "material: " + this.getShaderName() + "\n";
-        exportStr += "name: " + this.getName() + "\n";
-
-        if (this._shader)
-            exportStr += "color: " + this._shader.colorMe.color + "\n";
-        else
-            exportStr += "color: " + this.getColor() + "\n";
-        exportStr += "endMaterial\n";
-
-        return exportStr;
-    };
-
-    this.import = function (importStr) {
-        var pu = new MaterialParser(importStr);
-        var material = pu.nextValue("material: ");
-        if (material != this.getShaderName()) throw new Error("ill-formed material");
-        this.setName(pu.nextValue("name: "));
-
-        var rtnStr;
-        try {
-            var color = eval("[" + pu.nextValue("color: ") + "]");
-
-            this.setProperty("color", color);
-
-            var endKey = "endMaterial\n";
-            var index = importStr.indexOf(endKey);
-            index += endKey.length;
-            rtnStr = importStr.substr(index);
-        }
-        catch (e) {
-            throw new Error("could not import material: " + importStr);
-        }
-
-        return rtnStr;
-    };
-
     this.update = function (time) {
         //var speed = 0.01;
         //time *= speed;

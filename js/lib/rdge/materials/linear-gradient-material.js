@@ -296,69 +296,6 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
             throw new Error("could not import material: " + importStr);
         }
     };
-
-    this.export = function () {
-        // every material needs the base type and instance name
-        var exportStr = "material: " + this.getShaderName() + "\n";
-        exportStr += "name: " + this.getName() + "\n";
-
-        exportStr += "color1: " + this.getColor1() + "\n";
-        exportStr += "color2: " + this.getColor2() + "\n";
-        exportStr += "color3: " + this.getColor3() + "\n";
-        exportStr += "color4: " + this.getColor4() + "\n";
-
-        exportStr += "colorStop1: " + this.getColorStop1() + "\n";
-        exportStr += "colorStop2: " + this.getColorStop2() + "\n";
-        exportStr += "colorStop3: " + this.getColorStop3() + "\n";
-        exportStr += "colorStop4: " + this.getColorStop4() + "\n";
-
-        exportStr += "angle: " + this.getAngle() + "\n";
-
-        // every material needs to terminate like this
-        exportStr += "endMaterial\n";
-
-        return exportStr;
-    };
-
-    this.import = function (importStr) {
-        var pu = new MaterialParser(importStr);
-        var material = pu.nextValue("material: ");
-        if (material != this.getShaderName()) throw new Error("ill-formed material");
-        this.setName(pu.nextValue("name: "));
-
-        var rtnStr;
-        try {
-            var color1 = eval("[" + pu.nextValue("color1: ") + "]"),
-				color2 = eval("[" + pu.nextValue("color2: ") + "]"),
-				color3 = eval("[" + pu.nextValue("color3: ") + "]"),
-				color4 = eval("[" + pu.nextValue("color4: ") + "]"),
-				colorStop1 = Number(pu.nextValue("colorStop1: ")),
-				colorStop2 = Number(pu.nextValue("colorStop2: ")),
-				colorStop3 = Number(pu.nextValue("colorStop3: ")),
-				colorStop4 = Number(pu.nextValue("colorStop4: ")),
-				angle = Number(pu.nextValue("angle: "));
-
-            var endKey = "endMaterial\n";
-            var index = importStr.indexOf(endKey);
-            index += endKey.length;
-            rtnStr = importStr.substr(index);
-
-            this.setProperty("color1", color1);
-            this.setProperty("color2", color2);
-            this.setProperty("color3", color3);
-            this.setProperty("color4", color4);
-            this.setProperty("colorStop1", colorStop1);
-            this.setProperty("colorStop2", colorStop2);
-            this.setProperty("colorStop3", colorStop3);
-            this.setProperty("colorStop4", colorStop4);
-            this.setProperty("angle", angle);
-        }
-        catch (e) {
-            throw new Error("could not import material: " + importStr);
-        }
-
-        return rtnStr;
-    };
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////

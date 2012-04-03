@@ -290,17 +290,17 @@ NinjaCvsRt.GLRuntime = function ( canvas, jObj,  assetPath )
 		{
 			case 1:
 				obj = new NinjaCvsRt.RuntimeRectangle();
-				obj.import( jObj, parent );
+				obj.importJSON( jObj, parent );
 				break;
 
 			case 2:		// circle
 				obj = new NinjaCvsRt.RuntimeOval();
-				obj.import( jObj, parent );
+				obj.importJSON( jObj, parent );
 				break;
 
 			case 3:		// line
 				obj = new NinjaCvsRt.RuntimeLine();
-				obj.import( jObj, parent );
+				obj.importJSON( jObj, parent );
 				break;
 
 			default:
@@ -481,7 +481,7 @@ NinjaCvsRt.RuntimeGeomObj = function ()
 		this._children.push( child );
 	};
 
-    this.import = function()
+    this.importJSON = function()
     {
 	};
 
@@ -530,7 +530,7 @@ NinjaCvsRt.RuntimeGeomObj = function ()
 
 			if (mat)
 			{
-				mat.import( matObj );
+				mat.importJSON( matObj );
 				mat._materialNodeName = matNodeName;
 				this._materials.push( mat );
 			}
@@ -671,7 +671,7 @@ NinjaCvsRt.RuntimeRectangle = function ()
 	this.inheritedFrom = NinjaCvsRt.RuntimeGeomObj;
 	this.inheritedFrom();
 
-	this.import = function( jObj )
+	this.importJSON = function( jObj )
 	{
 		this._xOffset			= jObj.xoff;
 		this._yOffset			= jObj.yoff;
@@ -820,7 +820,7 @@ NinjaCvsRt.RuntimeLine = function ()
 	this.inheritedFrom = NinjaCvsRt.RuntimeGeomObj;
 	this.inheritedFrom();
 
-	this.import = function( jObj )
+	this.importJSON = function( jObj )
 	{
 		this._xOffset			= jObj.xoff;
 		this._yOffset			= jObj.yoff;
@@ -918,7 +918,7 @@ NinjaCvsRt.RuntimeOval = function ()
 	this.inheritedFrom = NinjaCvsRt.RuntimeGeomObj;
 	this.inheritedFrom();
 
-	this.import = function( jObj )
+	this.importJSON = function( jObj )
 	{
 		this._xOffset			= jObj.xoff;
 		this._yOffset			= jObj.yoff;
@@ -1191,7 +1191,7 @@ NinjaCvsRt.RuntimeMaterial = function ( world )
 	{
 	};
 
-	this.import = function( jObj )
+	this.importJSON = function( jObj )
 	{
 	};
 };
@@ -1208,7 +1208,7 @@ NinjaCvsRt.RuntimeFlatMaterial = function ()
 	// assign a default color
 	this._color = [1,0,0,1];
 
-    this.import = function( jObj )
+    this.importJSON = function( jObj )
     {
 		this._color = jObj.color;
     };
@@ -1236,7 +1236,7 @@ NinjaCvsRt.RuntimePulseMaterial = function ()
 	this.isAnimated			= function()	{  return true;	};
 
 
-	this.import = function( jObj )
+	this.importJSON = function( jObj )
 	{
 		this._texMap = jObj.texture;
         if (jObj.dTime)  this._dTime = jObj.dTime;
@@ -1331,7 +1331,7 @@ NinjaCvsRt.RuntimeRadialGradientMaterial = function ()
 		}
 	};
 
-	this.import = function( jObj )
+	this.importJSON = function( jObj )
 	{
 		this._color1	= jObj.color1,
 		this._color2	= jObj.color2,
@@ -1374,7 +1374,7 @@ NinjaCvsRt.RuntimeBumpMetalMaterial = function ()
 	this._specularTexture = "assets/images/silver.png";
 	this._normalTexture = "assets/images/normalMap.png";
 
-	this.import = function( jObj )
+	this.importJSON = function( jObj )
 	{
 		this._lightDiff			= jObj.lightDiff;
 		this._diffuseTexture	= jObj.diffuseTexture;
@@ -1515,7 +1515,7 @@ NinjaCvsRt.RuntimeUberMaterial = function ()
 	{
 	};
 
-	this.import = function( jObj )
+	this.importJSON = function( jObj )
 	{
 		if (jObj.materialProps)
 		{

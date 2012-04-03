@@ -79,34 +79,6 @@ var FlatMaterial = function FlatMaterial() {
     };
     ///////////////////////////////////////////////////////////////////////
 
-    this.export = function () {
-        // this function should be overridden by subclasses
-        var exportStr = "material: " + this.getShaderName() + "\n";
-        exportStr += "name: " + this.getName() + "\n";
-        exportStr += "color: " + String(this._propValues["color"]) + "\n";
-        exportStr += "endMaterial\n";
-
-        return exportStr;
-    };
-
-    this.import = function (importStr) {
-        var pu = new MaterialParser(importStr);
-        var material = pu.nextValue("material: ");
-        if (material != this.getShaderName()) throw new Error("ill-formed material");
-        this.setName(pu.nextValue("name: "));
-
-        var rtnStr;
-        try {
-            var color = eval("[" + pu.nextValue("color: ") + "]");
-            this.setProperty("color", color);
-        }
-        catch (e) {
-            throw new Error("could not import material: " + importStr);
-        }
-
-        return rtnStr;
-    };
-
     this.exportJSON = function () {
         var jObj =
 		{

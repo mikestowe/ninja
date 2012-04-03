@@ -182,44 +182,6 @@ var RadialBlurMaterial = function RadialBlurMaterial() {
 
         return rtnStr;
     };
-
-    this.export = function () {
-        // every material needs the base type and instance name
-        var exportStr = "material: " + this.getShaderName() + "\n";
-        exportStr += "name: " + this.getName() + "\n";
-
-        var world = this.getWorld();
-        if (!world)
-            throw new Error("no world in material.export, " + this.getName());
-
-        var texMapName = this._propValues[this._propNames[0]];
-        exportStr += "texture: " + texMapName + "\n";
-
-        // every material needs to terminate like this
-        exportStr += "endMaterial\n";
-
-        return exportStr;
-    };
-
-    this.import = function (importStr) {
-        var pu = new MaterialParser(importStr);
-        var material = pu.nextValue("material: ");
-        if (material != this.getShaderName()) throw new Error("ill-formed material");
-        this.setName(pu.nextValue("name: "));
-
-        var rtnStr;
-        try {
-            var endKey = "endMaterial\n";
-            var index = importStr.indexOf(endKey);
-            index += endKey.length;
-            rtnStr = importStr.substr(index);
-        }
-        catch (e) {
-            throw new Error("could not import material: " + importStr);
-        }
-
-        return rtnStr;
-    };
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////

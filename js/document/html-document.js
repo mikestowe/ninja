@@ -276,13 +276,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 									var world = new GLWorld( canvas, useWebGL );
 									world.importJSON( jObj );
 								}
-								else
-								{
-									var index = importStr.indexOf( "webGL: " );
-									var useWebGL = (index >= 0);
-									var world = new GLWorld( canvas, useWebGL );
-									world.import( importStr );
-								}
 
 								this.buildShapeModel( canvas.elementModel, world );
 							}
@@ -432,7 +425,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 			if (elt.elementModel && elt.elementModel.shapeModel && elt.elementModel.shapeModel.GLWorld)
 			{
 				var data = elt.elementModel.shapeModel.GLWorld.exportJSON();
-				//var data = elt.elementModel.shapeModel.GLWorld.export();
 				dataArray.push( data );
 			}
 

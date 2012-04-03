@@ -193,60 +193,6 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 		
 		return;
 	};
-
-	this.export = function()
-	{
-		// every material needs the base type and instance name
-		var exportStr = "material: " + this.getShaderName() + "\n";
-		exportStr += "name: " + this.getName() + "\n";
-
-		var world = this.getWorld();
-		if (!world)
-			throw new Error( "no world in material.export, " + this.getName() );
-
-		exportStr += "lightDiff: "			+ this.getLightDiff()		+ "\n";
-		exportStr += "diffuseTexture: "		+ this.getDiffuseTexture()	+ "\n";
-		exportStr += "specularTexture: "	+ this.getSpecularTexture()	+ "\n";
-		exportStr += "normalMap: "		+ this.getNormalTexture()	+ "\n";
-
-		// every material needs to terminate like this
-		exportStr += "endMaterial\n";
-
-		return exportStr;
-	};
-
-	this.import = function( importStr )
-	{
-		var pu = new MaterialParser( importStr );
-		var material = pu.nextValue( "material: " );
-		if (material != this.getShaderName())  throw new Error( "ill-formed material" );
-		this.setName(  pu.nextValue( "name: ") );
-
-		var rtnStr;
-		try
-		{
-			var lightDiff  = eval( "[" + pu.nextValue( "lightDiff: " ) + "]" ),
-				dt = pu.nextValue( "diffuseTexture: " ),
-				st = pu.nextValue( "specularTexture: " ),
-				nt = pu.nextValue( "normalMap: " );
-		
-			this.setProperty( "lightDiff",  lightDiff);
-			this.setProperty( "diffuseTexture", dt );
-			this.setProperty( "specularTexture", st );
-			this.setProperty( "normalMap", nt );
-
-			var endKey = "endMaterial\n";
-			var index = importStr.indexOf( endKey );
-			index += endKey.length;
-			rtnStr = importStr.substr( index );
-		}
-		catch (e)
-		{
-			throw new Error( "could not import material: " + importStr );
-		}
-		
-		return rtnStr;
-	};
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
