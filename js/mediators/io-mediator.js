@@ -440,7 +440,7 @@ window.addEventListener('load', loadWebGL, false);\n\
 function loadWebGL (e) {\n\
 	window.removeEventListener('load', loadWebGL, false);\n\
 	//Calling method to initialize all webGL/canvas(es)\n\
-	initWebGl("+rootElement+", '"+rdgeDirName+"/');\n\
+	NinjaCvsRt.initWebGl(" + rootElement + ", '" + rdgeDirName + "/');\n\
 }\
     			";
     			//TODO: This data should be saved to a JSON file eventually

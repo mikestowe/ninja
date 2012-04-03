@@ -4,11 +4,12 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-
+// namespace for the Ninja Canvas Runtime
+var NinjaCvsRt =  NinjaCvsRt || {};
 
 ///////////////////////////////////////////////////////////////////////
 //Loading webGL/canvas data
-function initWebGl (rootElement, directory) {
+NinjaCvsRt.initWebGl = function (rootElement, directory) {
 	var cvsDataMngr, ninjaWebGlData = JSON.parse((document.querySelectorAll(['script[data-ninja-webgl]'])[0].innerHTML.replace('(', '')).replace(')', ''));
 	if (ninjaWebGlData && ninjaWebGlData.data) {
 		for (var n=0; ninjaWebGlData.data[n]; n++) {
@@ -16,7 +17,7 @@ function initWebGl (rootElement, directory) {
 		}
 	}
 	//Creating data manager
-	cvsDataMngr = new CanvasDataManager();
+	cvsDataMngr = new NinjaCvsRt.CanvasDataManager();
 	//Loading data to canvas(es)
 	cvsDataMngr.loadGLData(rootElement, ninjaWebGlData.data, directory);
 };
@@ -25,7 +26,7 @@ function initWebGl (rootElement, directory) {
 // Class ShapeRuntime
 //      Manages runtime shape display
 ///////////////////////////////////////////////////////////////////////
-function CanvasDataManager()
+NinjaCvsRt.CanvasDataManager = function () 
 {
 	this.loadGLData = function(root,  valueArray,  assetPath )
 	{
@@ -54,28 +55,9 @@ function CanvasDataManager()
 					var canvas = this.findCanvasWithID( id, root );
 					if (canvas)
 					{
-						new GLRuntime( canvas, jObj,  assetPath );
+						new NinjaCvsRt.GLRuntime( canvas, jObj,  assetPath );
 					}
 				}
-			}
-		}
-	};
-
-	this.collectGLData = function( elt,  dataArray )
-	{
-		if (elt.elementModel && elt.elementModel.shapeModel && elt.elementModel.shapeModel.GLWorld)
-		{
-			var data = elt.elementModel.shapeModel.GLWorld.export( true );
-			dataArray.push( data );
-		}
-
-		if (elt.children)
-		{
-			var nKids = elt.children.length;
-			for (var i=0;  i<nKids;  i++)
-			{
-				var child = elt.children[i];
-				this.collectGLData( child, dataArray );
 			}
 		}
 	};
@@ -102,7 +84,7 @@ function CanvasDataManager()
 // Class GLRuntime
 //      Manages runtime fora WebGL canvas
 ///////////////////////////////////////////////////////////////////////
-function GLRuntime( canvas, jObj,  assetPath )
+NinjaCvsRt.GLRuntime = function ( canvas, jObj,  assetPath )
 {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
@@ -307,17 +289,17 @@ function GLRuntime( canvas, jObj,  assetPath )
 		switch (type)
 		{
 			case 1:
-				obj = new RuntimeRectangle();
+				obj = new NinjaCvsRt.RuntimeRectangle();
 				obj.import( jObj, parent );
 				break;
 
 			case 2:		// circle
-				obj = new RuntimeOval();
+				obj = new NinjaCvsRt.RuntimeOval();
 				obj.import( jObj, parent );
 				break;
 
 			case 3:		// line
-				obj = new RuntimeLine();
+				obj = new NinjaCvsRt.RuntimeLine();
 				obj.import( jObj, parent );
 				break;
 
@@ -457,7 +439,7 @@ function GLRuntime( canvas, jObj,  assetPath )
 // Class RuntimeGeomObj
 //      Super class for all geometry classes
 ///////////////////////////////////////////////////////////////////////
-function RuntimeGeomObj()
+NinjaCvsRt.RuntimeGeomObj = function ()
 {
     ///////////////////////////////////////////////////////////////////////
     // Constants
@@ -517,12 +499,12 @@ function RuntimeGeomObj()
 			var shaderName = matObj.material;
 			switch (shaderName)
 			{
-				case "flat":			mat = new RuntimeFlatMaterial();				break;
-				case "radialGradient":  mat = new RuntimeRadialGradientMaterial();		break;
-				case "linearGradient":  mat = new RuntimeLinearGradientMaterial();		break;
-				case "bumpMetal":		mat = new RuntimeBumpMetalMaterial();			break;
-				case "uber":			mat = new RuntimeUberMaterial();				break;
-				case "plasma":			mat = new RuntimePlasmaMaterial();				break;
+				case "flat":			mat = new NinjaCvsRt.RuntimeFlatMaterial();				break;
+				case "radialGradient":  mat = new NinjaCvsRt.RuntimeRadialGradientMaterial();		break;
+				case "linearGradient":  mat = new NinjaCvsRt.RuntimeLinearGradientMaterial();		break;
+				case "bumpMetal":		mat = new NinjaCvsRt.RuntimeBumpMetalMaterial();			break;
+				case "uber":			mat = new NinjaCvsRt.RuntimeUberMaterial();				break;
+				case "plasma":			mat = new NinjaCvsRt.RuntimePlasmaMaterial();				break;
 
 				case "deform":
 				case "water":
@@ -539,7 +521,7 @@ function RuntimeGeomObj()
 				case "zinvert":
 				case "keleidoscope":
 				case "radialBlur":
-				case "pulse":			mat = new RuntimePulseMaterial();				break;
+				case "pulse":			mat = new NinjaCvsRt.RuntimePulseMaterial();				break;
 
 				default:
 					console.log( "material type: " + materialType + " is not supported" );
@@ -624,8 +606,8 @@ function RuntimeGeomObj()
         var rtnVec;
 		if (!len)  len = 1.0;
 
-        var sum = 0.0;
-        for (var i=0;  i<dimen;  i++)
+        var sum = 0.0, i = 0;
+        for (i = 0;  i<dimen;  i++)
             sum += vec[i]*vec[i];
         sum = Math.sqrt( sum );
 
@@ -633,7 +615,7 @@ function RuntimeGeomObj()
         {
             var scale = len/sum;
             rtnVec = [];
-            for (var i=0;  i<dimen;  i++)
+            for (i = 0;  i<dimen;  i++)
                 rtnVec[i] = vec[i]*scale;
         }
 
@@ -683,10 +665,10 @@ function RuntimeGeomObj()
 ///////////////////////////////////////////////////////////////////////
 // Class RuntimeRectangle
 ///////////////////////////////////////////////////////////////////////
-function RuntimeRectangle()
+NinjaCvsRt.RuntimeRectangle = function ()
 {
-	// inherit the members of RuntimeGeomObj
-	this.inheritedFrom = RuntimeGeomObj;
+	// inherit the members of NinjaCvsRt.RuntimeGeomObj
+	this.inheritedFrom = NinjaCvsRt.RuntimeGeomObj;
 	this.inheritedFrom();
 
 	this.import = function( jObj )
@@ -801,13 +783,14 @@ function RuntimeRectangle()
 		
 		// render the fill
 		ctx.beginPath();
+        var c = null, inset = 0;
 		if (this._fillColor)
 		{
-			var c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";  
+			c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";  
 			ctx.fillStyle = c;
 
 			ctx.lineWidth	= lw;
-			var inset = Math.ceil( lw ) + 0.5;
+			inset = Math.ceil( lw ) + 0.5;
 			this.renderPath( inset, ctx );
 			ctx.fill();
 			ctx.closePath();
@@ -817,11 +800,11 @@ function RuntimeRectangle()
 		ctx.beginPath();
 		if (this._strokeColor)
 		{
-			var c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";  
+			c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";  
 			ctx.strokeStyle = c;
 
 			ctx.lineWidth	= lw;
-			var inset = Math.ceil( 0.5*lw ) + 0.5;
+			inset = Math.ceil( 0.5*lw ) + 0.5;
 			this.renderPath( inset, ctx );
 			ctx.stroke();
 			ctx.closePath();
@@ -832,9 +815,9 @@ function RuntimeRectangle()
 ///////////////////////////////////////////////////////////////////////
 // Class RuntimeLine
 ///////////////////////////////////////////////////////////////////////
-function RuntimeLine()
+NinjaCvsRt.RuntimeLine = function ()
 {
-	this.inheritedFrom = RuntimeGeomObj;
+	this.inheritedFrom = NinjaCvsRt.RuntimeGeomObj;
 	this.inheritedFrom();
 
 	this.import = function( jObj )
@@ -929,10 +912,10 @@ function RuntimeLine()
 ///////////////////////////////////////////////////////////////////////
 // Class RuntimeOval
 ///////////////////////////////////////////////////////////////////////
-function RuntimeOval()
+NinjaCvsRt.RuntimeOval = function ()
 {
-	// inherit the members of RuntimeGeomObj
-	this.inheritedFrom = RuntimeGeomObj;
+	// inherit the members of NinjaCvsRt.RuntimeGeomObj
+	this.inheritedFrom = NinjaCvsRt.RuntimeGeomObj;
 	this.inheritedFrom();
 
 	this.import = function( jObj )
@@ -963,7 +946,7 @@ function RuntimeOval()
 
 		// declare some variables
 		var p0, p1;
-		var x0, y1,   x1, y1;
+		var x0, y0, x1, y1;
 
 		// create the matrix
 		var lineWidth = this._strokeWidth;
@@ -995,9 +978,10 @@ function RuntimeOval()
 			// set up the fill style
 			ctx.beginPath();
 			ctx.lineWidth = 0;
+            var c;
 			if (this._fillColor)
 			{
-				var c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";  
+				c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";  
 				ctx.fillStyle = c;
 
 				// draw the fill
@@ -1024,20 +1008,22 @@ function RuntimeOval()
 					mat[5] = yScale;
 
 					// get the bezier points
-					var bezPts = this.circularArcToBezier( Vector.create([0,0,0]), Vector.create([1,0,0]), -2.0*Math.PI );
-					if (bezPts)
+					var bezPtsInside = this.circularArcToBezier( Vector.create([0,0,0]), Vector.create([1,0,0]), -2.0*Math.PI );
+					if (bezPtsInside)
 					{
-						var n = bezPts.length;
-						p = this.transformPoint( bezPts[0],   mat );
+						n = bezPtsInside.length;
+						p = this.transformPoint( bezPtsInside[0],   mat );
 						ctx.moveTo( p[0],  p[1] );
 						index = 1;
 						while (index < n)
 						{
-							p0 = this.transformPoint( bezPts[index],    mat );
-							p1 = this.transformPoint( bezPts[index+1],  mat );
+							p0 = this.transformPoint( bezPtsInside[index],    mat );
+							p1 = this.transformPoint( bezPtsInside[index+1],  mat );
 
-							var x0 = p0[0],  y0 = p0[1],
-								x1 = p1[0],  y1 = p1[1];
+							x0 = p0[0];
+                            y0 = p0[1];
+							x1 = p1[0];
+                            y1 = p1[1];
 							ctx.quadraticCurveTo( x0,  y0,  x1, y1 );
 							index += 2;
 						}
@@ -1059,7 +1045,7 @@ function RuntimeOval()
 			ctx.lineWidth	= lineWidth;
 			if (this._strokeColor)
 			{
-				var c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";  
+				c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";  
 				ctx.strokeStyle = c;
 			
 				// draw the stroke
@@ -1068,11 +1054,13 @@ function RuntimeOval()
 				index = 1;
 				while (index < n)
 				{
-					var p0 = this.transformPoint( bezPts[index],  mat );
-					var p1 = this.transformPoint( bezPts[index+1],  mat );
+					p0 = this.transformPoint( bezPts[index],  mat );
+					p1 = this.transformPoint( bezPts[index+1],  mat );
 
-					var x0 = p0[0],  y0 = p0[1],
-						x1 = p1[0],  y1 = p1[1];
+					x0 = p0[0];
+                    y0 = p0[1];
+					x1 = p1[0];
+                    y1 = p1[1];
 					ctx.quadraticCurveTo( x0,  y0,  x1, y1 );
 					index += 2;
 				}
@@ -1091,11 +1079,13 @@ function RuntimeOval()
 					index = 1;
 					while (index < n)
 					{
-						var p0 = this.transformPoint( bezPts[index],  mat );
-						var p1 = this.transformPoint( bezPts[index+1],  mat );
+						p0 = this.transformPoint( bezPts[index],  mat );
+						p1 = this.transformPoint( bezPts[index+1],  mat );
 
-						var x0 = p0[0],  y0 = p0[1],
-							x1 = p1[0],  y1 = p1[1];
+						x0 = p0[0];
+                        y0 = p0[1];
+						x1 = p1[0];
+                        y1 = p1[1];
 						ctx.quadraticCurveTo( x0,  y0,  x1, y1 );
 						index += 2;
 					}
@@ -1166,7 +1156,7 @@ function RuntimeOval()
 // Class RuntimeMaterial
 //      Runtime representation of a material.
 ///////////////////////////////////////////////////////////////////////
-function RuntimeMaterial( world )
+NinjaCvsRt.RuntimeMaterial = function ( world )
 {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
@@ -1206,10 +1196,10 @@ function RuntimeMaterial( world )
 	};
 };
 
-function RuntimeFlatMaterial()
+NinjaCvsRt.RuntimeFlatMaterial = function ()
 {
-	// inherit the members of RuntimeMaterial
-	this.inheritedFrom = RuntimeMaterial;
+	// inherit the members of NinjaCvsRt.RuntimeMaterial
+	this.inheritedFrom = NinjaCvsRt.RuntimeMaterial;
 	this.inheritedFrom();
 
 	this._name = "FlatMaterial";
@@ -1232,10 +1222,10 @@ function RuntimeFlatMaterial()
 	};
 };
 
-function RuntimePulseMaterial()
+NinjaCvsRt.RuntimePulseMaterial = function ()
 {
-	// inherit the members of RuntimeMaterial
-	this.inheritedFrom = RuntimeMaterial;
+	// inherit the members of NinjaCvsRt.RuntimeMaterial
+	this.inheritedFrom = NinjaCvsRt.RuntimeMaterial;
 	this.inheritedFrom();
 
 	this._name = "PulseMaterial";
@@ -1298,10 +1288,10 @@ function RuntimePulseMaterial()
 	};
 };
 
-function RuntimeRadialGradientMaterial()
+NinjaCvsRt.RuntimeRadialGradientMaterial = function ()
 {
-	// inherit the members of RuntimeMaterial
-	this.inheritedFrom = RuntimeMaterial;
+	// inherit the members of NinjaCvsRt.RuntimeMaterial
+	this.inheritedFrom = NinjaCvsRt.RuntimeMaterial;
 	this.inheritedFrom();
 
 	this._name = "RadialGradientMaterial";
@@ -1357,10 +1347,10 @@ function RuntimeRadialGradientMaterial()
 	};
 };
 
-function RuntimeLinearGradientMaterial()
+NinjaCvsRt.RuntimeLinearGradientMaterial = function ()
 {
-	// inherit the members of RuntimeMaterial
-	this.inheritedFrom = RuntimeRadialGradientMaterial;
+	// inherit the members of NinjaCvsRt.RuntimeMaterial
+	this.inheritedFrom = NinjaCvsRt.RuntimeRadialGradientMaterial;
 	this.inheritedFrom();
 
 	this._name = "LinearGradientMaterial";
@@ -1370,10 +1360,10 @@ function RuntimeLinearGradientMaterial()
 	this._angle = 0.0;
 };
 
-function RuntimeBumpMetalMaterial()
+NinjaCvsRt.RuntimeBumpMetalMaterial = function ()
 {
-	// inherit the members of RuntimeMaterial
-	this.inheritedFrom = RuntimeMaterial;
+	// inherit the members of NinjaCvsRt.RuntimeMaterial
+	this.inheritedFrom = NinjaCvsRt.RuntimeMaterial;
 	this.inheritedFrom();
 
 	this._name = "BumpMetalMaterial";
@@ -1431,10 +1421,10 @@ function RuntimeBumpMetalMaterial()
 	};
 };
 
-function RuntimeUberMaterial()
+NinjaCvsRt.RuntimeUberMaterial = function ()
 {
-	// inherit the members of RuntimeMaterial
-	this.inheritedFrom = RuntimeMaterial;
+	// inherit the members of NinjaCvsRt.RuntimeMaterial
+	this.inheritedFrom = NinjaCvsRt.RuntimeMaterial;
 	this.inheritedFrom();
 
 	this._MAX_LIGHTS = 4;
@@ -1489,29 +1479,29 @@ function RuntimeUberMaterial()
 					// currently not exported
 					var uvTransform = [ 2.0, 0, 0, 0, 0, 2.0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1];
 					technique.u_uvMatrix.set(uvTransform);
-	
-					var renderer = RDGE.globals.engine.getContext().renderer;
+						
+                    var tex = null;
 					if (this._diffuseMap)
 					{
-						var tex = renderer.getTextureByName(this._diffuseMap, 'REPEAT');
+						tex = renderer.getTextureByName(this._diffuseMap, 'REPEAT');
 						technique.s_diffuseMap.set( tex );
 					}
 
 					if (this._normalMap)
 					{
-						var tex = renderer.getTextureByName(this._normalMap, 'REPEAT');
+						tex = renderer.getTextureByName(this._normalMap, 'REPEAT');
 						technique.s_normalMap.set( tex );
 					}
 
 					if (this._specularMap)
 					{
-						var tex = renderer.getTextureByName(this._specularMap, 'REPEAT');
+						tex = renderer.getTextureByName(this._specularMap, 'REPEAT');
 						technique.s_specMap.set( tex );
 					}
 
 					if(this._environmentMap)
 					{
-						var tex = renderer.getTextureByName(this._environmentMap, 'CLAMP');
+						tex = renderer.getTextureByName(this._environmentMap, 'CLAMP');
 						technique.s_envMap.set( tex );
 						if (this._environmentAmount)
 							technique.u_envReflection.set([ this._environmentAmount ] );
@@ -1592,10 +1582,10 @@ function RuntimeUberMaterial()
 	};
 };
 
-function RuntimePlasmaMaterial()
+NinjaCvsRt.RuntimePlasmaMaterial = function ()
 {
-	// inherit the members of RuntimeMaterial
-	this.inheritedFrom = RuntimeMaterial;
+	// inherit the members of NinjaCvsRt.RuntimeMaterial
+	this.inheritedFrom = NinjaCvsRt.RuntimeMaterial;
 	this.inheritedFrom();
 
 	this.init = function(  )

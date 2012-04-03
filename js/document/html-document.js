@@ -212,7 +212,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 				{
 					/*
 					// Use this code to test the runtime version of WebGL
-					var cdm = new CanvasDataManager();
+					var cdm = new NinjaCvsRt.CanvasDataManager();
 					cdm.loadGLData(elt,  value,  null );
 					*/
 
