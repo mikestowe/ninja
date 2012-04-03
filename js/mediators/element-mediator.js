@@ -132,6 +132,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
         value: function(el, el2) {
             el2.elementModel = el.elementModel;
             this.application.ninja.currentDocument.documentRoot.replaceChild(el2, el);
+            el2.elementModel.isIn2DSnapCache = false;
         }
     },
 
