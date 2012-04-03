@@ -15,13 +15,14 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "name" : "StyleSheet",
                 "properties" : {
                     "element" : {"#" : "style-sheet-container"},
-                    "disableCheckbox": {"@": "disableCheckbox1"},
-                    "nameText": {"@": "name1"},
-                    "mediaInput": {"@": "mediaInput1"},
-                    "deleteButton": {"@": "deleteButton1"}
+                    "disableCheckbox": {"@": "disableCheckbox"},
+                    "nameText": {"@": "name"},
+                    "mediaInput": {"@": "mediaInput"},
+                    "editButton": {"@": "editButton"},
+                    "editView": {"#": "style-sheet-edit"}
                 }
             },
-            "disableCheckbox1": {
+            "disableCheckbox": {
                 "module": "js/components/checkbox.reel",
                 "name": "Checkbox",
                 "properties": {
@@ -29,7 +30,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                     "checked": true
                 }
             },
-            "name1": {
+            "name": {
                 "module": "montage/ui/dynamic-text.reel",
                 "name": "DynamicText",
                 "properties": {
@@ -44,20 +45,25 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                     }
                 }
             },
-            "mediaInput1": {
+            "mediaInput": {
                 "module": "js/components/textfield.reel",
                 "name": "TextField",
                 "properties": {
                     "element": {"#": "media-input"}
                 }
             },
-            "deleteButton1": {
-                "module": "js/components/button.reel",
+            "editButton": {
+                "module": "montage/ui/button.reel",
                 "name": "Button",
                 "properties": {
-                    "element": {"#": "delete-button"},
+                    "element": {"#": "editbutton"},
+                    "identifier": "editButton",
                     "label": " "
-                }
+                },
+                "listeners": [{
+                    "type": "action",
+                    "listener": {"@": "owner"}
+                }]
 
             }
         }
@@ -69,7 +75,10 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
     <span id="sheet-name"></span>
     <label>Media:</label>
     <div id="media-input"></div>
-    <div id="delete-button"></div>
+    <button data-montage-id="editbutton"></button>
+    <div data-montage-id="style-sheet-edit" class="style-sheet-edit">
+
+    </div>
 </div>
 </body>
 </html>

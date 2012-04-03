@@ -9,6 +9,7 @@
     -webkit-box-orient: horizontal;
     padding: 4px 0 3px;
     white-space: nowrap;
+    position: relative;
 }
 .style-sheet-container > * {
     -webkit-box-flex: 1;
@@ -33,17 +34,42 @@
 }
 .style-sheet-container input[type="text"] {
     min-width: 30px;
+    -webkit-box-flex: 1;
 }
 .style-sheet-container button {
-    background: none;
-    color: #FFF;
+    -webkit-box-flex: 0;
+    /* TODO: Use sass to minimize image redundancies */
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1%2BjfqAAAACXBIWXMAAAsTAAALEwEAmpwYAAADGGlDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjaY2BgnuDo4uTKJMDAUFBUUuQe5BgZERmlwH6egY2BmYGBgYGBITG5uMAxIMCHgYGBIS8%2FL5UBFTAyMHy7xsDIwMDAcFnX0cXJlYE0wJpcUFTCwMBwgIGBwSgltTiZgYHhCwMDQ3p5SUEJAwNjDAMDg0hSdkEJAwNjAQMDg0h2SJAzAwNjCwMDE09JakUJAwMDg3N%2BQWVRZnpGiYKhpaWlgmNKflKqQnBlcUlqbrGCZ15yflFBflFiSWoKAwMD1A4GBgYGXpf8EgX3xMw8BSMDVQYqg4jIKAUICxE%2BCDEESC4tKoMHJQODAIMCgwGDA0MAQyJDPcMChqMMbxjFGV0YSxlXMN5jEmMKYprAdIFZmDmSeSHzGxZLlg6WW6x6rK2s99gs2aaxfWMPZ9%2FNocTRxfGFM5HzApcj1xZuTe4FPFI8U3mFeCfxCfNN45fhXyygI7BD0FXwilCq0A%2FhXhEVkb2i4aJfxCaJG4lfkaiQlJM8JpUvLS19QqZMVl32llyfvIv8H4WtioVKekpvldeqFKiaqP5UO6jepRGqqaT5QeuA9iSdVF0rPUG9V%2FpHDBYY1hrFGNuayJsym740u2C%2B02KJ5QSrOutcmzjbQDtXe2sHY0cdJzVnJRcFV3k3BXdlD3VPXS8Tbxsfd99gvwT%2F%2FID6wIlBS4N3hVwMfRnOFCEXaRUVEV0RMzN2T9yDBLZE3aSw5IaUNak30zkyLDIzs%2BZmX8xlz7PPryjYVPiuWLskq3RV2ZsK%2FcqSql01jLVedVPrHzbqNdU0n22VaytsP9op3VXUfbpXta%2Bx%2F%2B5Em0mzJ%2F%2BdGj%2Ft8AyNmf2zvs9JmHt6vvmCpYtEFrcu%2BbYsc%2Fm9lSGrTq9xWbtvveWGbZtMNm%2FZarJt%2Bw6rnft3u%2B45uy9s%2F4ODOYd%2BHmk%2FJn58xUnrU%2BfOJJ%2F9dX7SRe1LR68kXv13fc5Nm1t379TfU75%2F4mHeY7En%2B59lvhB5efB1%2Flv5dxc%2BNH0y%2Ffzq64Lv4T8Ffp360%2FrP8f9%2FAA0ADzT6lvFdAAAAIGNIUk0AAHolAACAgwAA%2Bf8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAHXSURBVHjaVJBPaJJhAIef1zmX37YiIw0KixpYYnqQ2cFB0A4hFBSUENTmoMugYB5ajeo2oT8XaaedgrHDlosYlTEWHYICBYPZGJptOMVKbEYqifp9vh087Xd84IGHHzVUELOWSkRLF6YwYChMtdOVyKwFoVJDD3XoUoaMzjbmQGQDzAENo1MZYrmuCkQNSX8P7vpzds04RqLaEOhippIXEbRqaBRaC7mFXKHVpk3Qiih5YyaRf7nP0XEeb4fiFAHLfc%2Fdox32d13f61ABmNkIvb68M3EGwrHQluHibbtA0uvoOnb2lAWKjatz1wrPpi2ug3af98ermZ8jg0Y9vEjqxpfGEhqlKpnRYZ3iX%2FWv6pTRYTK%2Fq20CifElHXFzSkVqtLLdKkpRKWpku2lJTcWcIi4%2BPbRel9Sb%2Fonaoeg9xQD1pu9R369IeI8BcvMim%2B70rn%2B4MHfYe9NdbS4mC5%2FfjDjOCSQgVj4OWEAiyKxMLif7kM7ak0sD5wUA34viyK3TnncVj2neDZI%2FKdh%2FUiC5kYiXfXu%2FxgU2DgAnNh7svto%2BzSawo2eTLGLS1gYkwTUIu0ByR%2F%2F0CxJNn1H%2Fqa6et%2FnBss0U2XofhcX%2BK8e%2FlaN55FpD4f8AhDjCIVQtJ0gAAAAASUVORK5CYII%3D);
+    background-repeat: no-repeat;
+    background-position: 0 1px;
+    border: none;
     cursor: pointer;
+    padding: 0;
+    width: 21px;
+    height: 21px;
+    margin-left: 2px;
+    -webkit-transform: scale(.75);
+    opacity: .7;
 }
-.style-sheet-container button:after {
-    content: "\2716";
-    opacity: 0.7;
+.style-sheet-container button:hover {
+    opacity: 1;
+}
+.style-sheet-container button:focus {
+    outline: 0 none;
+    box-shadow: none;
 }
 
-.style-sheet-container button:hover:after {
-    opacity: 1;
+/* style sheet edit view */
+.style-sheet-edit {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-right: -100%;
+    background-color: red;
+    height: 100%;
+    width: 80%;
+    -webkit-transition: -webkit-transform .6s cubic-bezier(.44,.19,0,.99);
+}
+.style-sheet-edit.expanded {
+    -webkit-transform: translate3d(-200px, 0, 0);
 }

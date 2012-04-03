@@ -13,9 +13,15 @@ exports.StyleSheet = Montage.create(Component, {
             console.log("style sheet view - deserialized");
         }
     },
-    prepareForDraw : {
+    willDraw : {
         value: function() {
-            console.log("style sheet view - prepare for draw");
+            console.log("style sheet view - will draw");
+
+            if(this.editing) {
+                document.body.addEventListener('click', this, false);
+            } else {
+                document.body.removeEventListener('click', this, false);
+            }
         }
     },
     draw : {
@@ -23,6 +29,40 @@ exports.StyleSheet = Montage.create(Component, {
             console.log("styles sheet view - draw");
 
             this.mediaInput.value = this._source.media.mediaText;
+
+            if(this.editing) {
+                this.editView.classList.add('expanded');
+            } else {
+                this.editView.classList.remove('expanded');
+            }
+        }
+    },
+
+    handleEditButtonAction: {
+        value: function(e) {
+            console.log('handle edit button action');
+            this.editing = true;
+        }
+    },
+    _editing : {
+        value: null
+    },
+    editing : {
+        get: function() {
+            return this._editing;
+        },
+        set: function(enterEditingMode) {
+            this._editing = enterEditingMode;
+            this.needsDraw = true;
+        }
+    },
+
+    handleClick : {
+        value: function(e) {
+            console.log("handle click");
+            if(e.target !== this.editView) {
+                this.editing = false;
+            }
         }
     },
 
