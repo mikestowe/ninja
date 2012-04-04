@@ -22,7 +22,25 @@ exports.TransitionsLibrary = Montage.create(Component, {
     },
     handleNodeActivation: {
         value: function(presetData) {
-            this.application.ninja.presetsController.applyPreset(presetData);
+            var selection = this.application.ninja.selectedElements,
+                stylesController = this.application.ninja.stylesController,
+                selectorBase = presetData.selectorBase,
+                self = this;
+
+            if(!selection || !selection.length || selection.length === 0) {
+                return false;
+            }
+
+            selectorBase = stylesController.generateClassName(selectorBase);
+
+            presetData.rules.forEach(function(rule) {
+                this.application.ninja.stylesController.addRule('.' + selectorBase + rule.selectorSuffix, rule.styles);
+            }, this);
+
+            selection.forEach(function(el) {
+                el._element.classList.add(selectorBase);
+            }, this);
+
         }
     }
 });
