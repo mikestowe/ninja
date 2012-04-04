@@ -484,9 +484,16 @@ var Layer = exports.Layer = Montage.create(Component, {
         	// Make it editable!
         	this._layerEditable = Hintable.create();
         	this._layerEditable.element = this.titleSelector;
-        	this._layerEditable.addEventListener("blur", this.handleSelectorEditableBlur.bind(this), false);
-        	this._layerEditable.addEventListener("change", this.handleSelectorEditableChange.bind(this), false);
-        	
+        	this.titleSelector.identifier = "selectorEditable";
+        	this.titleSelector.addEventListener("click", this, false);
+        	this._layerEditable.addEventListener("blur", function(event) {
+        		that.handleSelectorEditableBlur(event);
+        	}, false);
+        	this._layerEditable.addEventListener("change", function(event) {
+				that.dynamicLayerName.value = that._layerEditable.value;
+                this.application.ninja.timeline.currentLayerSelected.layerData.elementsList[0].dataset.storedLayerName = that.dynamicLayerName.value
+				that.needsDraw = true;
+        	}, false);
         	this._layerEditable.editingClass = "editable2";
         	this._layerEditable.value = this.layerName;
         	//this._layerEditable.needsDraw = true;

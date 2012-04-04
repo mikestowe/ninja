@@ -786,6 +786,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
                 this.currentLayerNumber = this.currentLayerNumber + 1;
                 newLayerName = "Layer " + this.currentLayerNumber;
+
+                if(ele.dataset.storedLayerName){
+                    newLayerName = ele.dataset.storedLayerName;
+                }
                 thingToPush.layerData.layerName = newLayerName;
                 thingToPush.layerData.layerID = this.currentLayerNumber;
                 thingToPush.parentElementUUID = this.hashKey;
@@ -816,6 +820,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 // Delete the selected layer.
                 var myIndex = this.layerRepetition.selectedIndexes[0];
                 this.arrLayers.splice(myIndex, 1);
+                var selectIndex = this.arrLayers.length;
+                this.selectLayer(selectIndex-1);
             }
         }
     },
@@ -824,6 +830,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:function() {
             this.createNewLayer();
             this.currentLayerSelected.layerData.elementsList.push(this.application.ninja.selectedElements[0]._element);
+            this.currentLayerSelected.layerData.elementsList[0].dataset.storedLayerName = this.currentLayerSelected.layerData.layerName;
         }
     },
 

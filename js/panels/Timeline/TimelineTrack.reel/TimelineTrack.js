@@ -435,6 +435,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.init();
             this.ninjaStylesContoller = this.application.ninja.stylesController;
             this.element.addEventListener("click", this, false);
+            this.eventManager.addEventListener("tlZoomSlider", this, false);
         }
     },
 
@@ -467,6 +468,46 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         }
     },
 
+	handleTlZoomSlider: {
+		value: function(event) {
+			
+	        var currentMilliSecPerPixel , currentMilliSec , clickPos,thingToPush;
+	        var i = 0,
+	        	tweensLength = this.tweens.length;
+
+	        for (i = 0; i < tweensLength; i++) {
+	        	
+	        	if (i === 0) {
+					// Exception: 0th item does not depend on anything
+					// TODO: If 0th tween is draggable, this will need to be fixed.
+			        this.tweens[i].tweenData.spanWidth=0;
+		            this.tweens[i].tweenData.spanPosition=0;
+		            this.tweens[i].tweenData.keyFramePosition=0;
+		            this.tweens[i].tweenData.keyFrameMillisec=0;
+	
+	        	} else {
+					var prevKeyFramePosition = this.tweens[i - 1].tweenData.keyFramePosition,
+						myObj = {},
+						thing = {};
+
+			        currentMilliSecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
+		            currentMilliSec = this.tweens[i].tweenData.keyFrameMillisec;
+		            clickPos = currentMilliSec / currentMilliSecPerPixel;
+
+		            for (thing in this.tweens[i].tweenData) {
+		            	myObj[thing] = this.tweens[i].tweenData[thing];
+		            }
+					myObj.spanWidth = clickPos - prevKeyFramePosition;
+		            myObj.keyFramePosition = clickPos;
+		            myObj.spanPosition = clickPos - (clickPos - prevKeyFramePosition);
+
+		            this.tweens[i].tweenData = myObj;
+	        	}
+	        	
+
+	        }
+		}
+	},
     handleClick:{
         value:function (ev) {
             // TEMP - if the SHIFT key is down, add a new keyframe or split an existing span
@@ -681,6 +722,18 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             	this.arrStyleTracks.pop();
             }
         }
+    },
+    getTweenIndexById: {
+    	value: function(intID) {
+    		var i = 0,
+    			arrTweensLength = this.tweens.length;
+			for (i = 0; i < arrTweensLength; i++) {
+			    if (this.tweens[i].tweenData.tweenID === intID) {
+			        returnVal = i;
+			    }
+			}
+			return returnVal;
+    	}
     },
 	/* Begin: Logging routines */
     _boolDebug: {
