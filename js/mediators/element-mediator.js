@@ -84,6 +84,23 @@ exports.ElementMediator = Montage.create(Component, {
         }
     },
 
+    replaceElement: {
+        value: function(newChild, oldChild, notify) {
+
+            this.application.ninja.currentDocument.documentRoot.replaceChild(newChild, oldChild);
+
+            var undoLabel = "replace element";
+
+            document.application.undoManager.add(undoLabel, this.replaceElement, this, oldChild, newChild);
+
+            this.application.ninja.documentController.activeDocument.needsSave = true;
+
+            if(notify || notify === undefined) {
+                NJevent("elementReplaced", {type : "replaceElement", data: {"newChild": newChild, "oldChild": oldChild}});
+            }
+        }
+    },
+
     getProperty: {
         value: function(el, prop, valueMutator) {
             if(!el.elementModel) {

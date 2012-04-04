@@ -73,12 +73,8 @@ exports.ShapesController = Montage.create(CanvasController, {
                     canvas.width = el.width;
                     canvas.height = el.height;
                     canvas.elementModel = el.elementModel;
-                    this.application.ninja.currentDocument.documentRoot.replaceChild(canvas, el);
-                    NJevent("elementsRemoved", el);
-                    el = canvas;
-                    this.toggleWebGlMode(el, value);
-                    el.elementModel.shapeModel.GLWorld.render();
-                    this.application.ninja.selectionController.selectElement(el);
+                    this.toggleWebGlMode(canvas, value);
+                    this.application.ninja.elementMediator.replaceElement(canvas, el);
                     return;
                 case "strokeMaterial":
                     var sm = Object.create(MaterialsModel.getMaterial(value));
