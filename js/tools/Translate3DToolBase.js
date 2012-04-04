@@ -195,7 +195,7 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 			this._targets = [];
 			for(var i = 0; i < len; i++)
 			{
-				var elt = this.application.ninja.selectedElements[i]._element;
+				var elt = this.application.ninja.selectedElements[i];
 
 				var curMat = viewUtils.getMatrixFromElement(elt);
 				var curMatInv = glmat4.inverse(curMat, []);

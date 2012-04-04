@@ -23,12 +23,12 @@ exports.StylesLibrary = Montage.create(Component, {
     handleNodeActivation: {
         value: function(presetData) {
             this.application.ninja.presetsController.applyPreset(presetData, true);
-        }
+            }
     },
     handleDragEnd : {
         value: function(sourceObject) {
             console.log(sourceObject);
         }
-    }
+  	}
 
 });
