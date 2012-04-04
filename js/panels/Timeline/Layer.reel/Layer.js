@@ -490,6 +490,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         	}, false);
         	this._layerEditable.addEventListener("change", function(event) {
 				that.dynamicLayerName.value = that._layerEditable.value;
+                this.application.ninja.timeline.currentLayerSelected.layerData.elementsList[0].dataset.storedLayerName = that.dynamicLayerName.value
 				that.needsDraw = true;
         	}, false);
         	this._layerEditable.editingClass = "editable2";

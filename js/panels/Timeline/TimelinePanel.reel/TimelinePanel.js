@@ -747,6 +747,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
                 this.currentLayerNumber = this.currentLayerNumber + 1;
                 newLayerName = "Layer " + this.currentLayerNumber;
+
+                if(ele.dataset.storedLayerName){
+                    newLayerName = ele.dataset.storedLayerName;
+                }
                 thingToPush.layerData.layerName = newLayerName;
                 thingToPush.layerData.layerID = this.currentLayerNumber;
                 thingToPush.parentElementUUID = this.hashKey;
@@ -787,6 +791,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:function() {
             this.createNewLayer();
             this.currentLayerSelected.layerData.elementsList.push(this.application.ninja.selectedElements[0]._element);
+            this.currentLayerSelected.layerData.elementsList[0].dataset.storedLayerName = this.currentLayerSelected.layerData.layerName;
         }
     },
 
