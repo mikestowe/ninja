@@ -61,15 +61,16 @@
 
 /* style sheet edit view */
 .style-sheet-edit {
+    border-left: 1px solid #505050;
     position: absolute;
     top: 0;
     right: 0;
     margin-right: -100%;
-    background-color: red;
+    background-color: #363636;
     height: 100%;
-    width: 80%;
+    width: 100%;
     -webkit-transition: -webkit-transform .6s cubic-bezier(.44,.19,0,.99);
 }
 .style-sheet-edit.expanded {
-    -webkit-transform: translate3d(-200px, 0, 0);
+    -webkit-transform: translate3d(-250px, 0, 0);
 }
