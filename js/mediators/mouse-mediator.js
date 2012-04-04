@@ -5,9 +5,9 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var Montage = require("montage/core/core").Montage,
-    NJComponent = require("js/lib/nj-base").NJComponent;
+    Component = require("montage/ui/component").Component;
 
-exports.MouseMediator = Montage.create( NJComponent, {
+exports.MouseMediator = Montage.create(Component, {
     hasTemplate: {
         value: false
     },
