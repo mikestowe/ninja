@@ -59,16 +59,14 @@ exports.PresetsController = Montage.create(Component, {
             }, this);
 
             selection.forEach(function(element) {
-                var el = element._element;
-
                 if(useTransition) {
-                    this.addTransition(el);
+                    this.addTransition(element);
                 }
 
-                el.classList.add(selectorBase);
+                element.classList.add(selectorBase);
 
                 //// Keep track of elements with presets and don't add duplicates
-                this.setCachedPreset(el, presetData.id, rules);
+                this.setCachedPreset(element, presetData.id, rules);
 
             }, this);
 

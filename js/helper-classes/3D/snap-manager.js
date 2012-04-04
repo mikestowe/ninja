@@ -123,7 +123,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 	///////////////////////////////////////////////////////////////////////
     initialize: {
         value: function() {
-            this.eventManager.addEventListener("elementDeleted", this, false);
+            this.eventManager.addEventListener("elementsRemoved", this, false);
         }
     },
 
@@ -163,9 +163,19 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
     },
 
 
-    handleElementDeleted: {
+    handleElementsRemoved: {
         value: function(event) {
-            this.removeElementFrom2DCache(event.detail);
+            var self = this, elements = event.detail;
+
+            if(Array.isArray(elements)) {
+                elements = Array.prototype.slice.call(elements, 0);
+                elements.forEach(function(element) {
+                    element = element._element || element;
+                    self.removeElementFrom2DCache(element);
+                });
+            } else {
+                this.removeElementFrom2DCache(elements._element || elements);
+            }
         }
     },
 
