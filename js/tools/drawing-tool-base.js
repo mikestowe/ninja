@@ -158,6 +158,8 @@ exports.DrawingToolBase = Montage.create(Montage, {
             // get the center of the circle in stage world space
             var swPos = viewUtils.postViewToStageWorld(MathUtils.transformPoint(psPos, hitRec.getPlaneMatrix()), hitRec.getElt());
 
+            //var swPos = hitRec.calculateStageWorldPoint(); todo figure out why we cannot just use this function instead of the above
+
             // the stage world space point is now relative to the center of the 3D space.  To
             // calculate the left and top offsets, this must be offset by the stage dimensions
             swPos[0] += snapManager.getStageWidth() / 2.0;

@@ -14,7 +14,7 @@ var ElementMediator = require("js/mediators/element-mediator").ElementMediator;
 var TagTool = require("js/tools/TagTool").TagTool;
 var ElementController = require("js/controllers/elements/element-controller").ElementController;
 var snapManager = require("js/helper-classes/3D/snap-manager").SnapManager;
-
+var ViewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
 var AnchorPoint = require("js/lib/geom/anchor-point").AnchorPoint;
 var SubPath = require("js/lib/geom/sub-path").SubPath;
 
@@ -108,7 +108,6 @@ exports.PenTool = Montage.create(ShapeTool, {
             snapManager.enableSnapAlign(false);
 
             var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(x,y));
-            //todo fix this function to allow us to get the correct location (in 3D) for the mouse position
             var unsnappedpos = DrawingToolBase.getHitRecPos(snapManager.snap(point.x, point.y, false));
             this._dragPlane = snapManager.getDragPlane();
 
@@ -830,14 +829,12 @@ exports.PenTool = Montage.create(ShapeTool, {
             //display the subpath as a sequence of cubic beziers
             ctx.lineWidth = 1;//TODO replace hardcoded stroke width with some programmatically set value (should not be same as stroke width)
             ctx.strokeStyle = "green";
-            //if (subpath.getStrokeColor())
-			//    ctx.strokeStyle = MathUtils.colorToHex( subpath.getStrokeColor() );
-
+            var i=0;
             ctx.beginPath();
             var p0x = subpath.getAnchor(0).getPosX()+ horizontalOffset;
             var p0y = subpath.getAnchor(0).getPosY()+ verticalOffset;
             ctx.moveTo(p0x, p0y);
-            for (var i = 1; i < numAnchors; i++) {
+            for (i = 1; i < numAnchors; i++) {
                 var p1x = subpath.getAnchor(i - 1).getNextX()+ horizontalOffset;
                 var p1y = subpath.getAnchor(i - 1).getNextY()+ verticalOffset;
                 var p2x = subpath.getAnchor(i).getPrevX()+ horizontalOffset;
@@ -855,6 +852,34 @@ exports.PenTool = Montage.create(ShapeTool, {
                 var p3x = subpath.getAnchor(0).getPosX()+ horizontalOffset;
                 var p3y = subpath.getAnchor(0).getPosY()+ verticalOffset;
                 ctx.bezierCurveTo(p1x, p1y, p2x, p2y, p3x, p3y);
+            }
+            ctx.stroke();
+
+
+            //draw the stage world points by projecting them to screen space
+            //get the screen coords of this anchor from its stage world coord
+            ctx.beginPath();
+            ctx.strokeStyle = "red";
+            var localToGlobalMat = ViewUtils.getLocalToGlobalMatrix(subpath.getCanvas());
+            var currentLTWH = subpath.computeLeftTopWidthHeight();
+            var deltaX = currentLTWH[0] - parseInt(ElementMediator.getProperty(subpath.getCanvas(), "left"));
+            var deltaY = currentLTWH[1] - parseInt(ElementMediator.getProperty(subpath.getCanvas(), "top"));
+
+            var localCoord = subpath.getAnchorLocalCoord(0);
+            var sp = MathUtils.transformAndDivideHomogeneousPoint(localCoord,localToGlobalMat);
+            //add the difference between the current left and top and the canvas left and top
+            sp[0]+=deltaX; sp[1]+=deltaY;
+
+            ctx.moveTo(sp[0],sp[1]);
+            for (i = 1; i < numAnchors; i++) {
+                localCoord = subpath.getAnchorLocalCoord(i);
+                sp = MathUtils.transformAndDivideHomogeneousPoint(localCoord,localToGlobalMat);
+                //add the difference between the current left and top and the canvas left and top
+                sp[0]+=deltaX; sp[1]+=deltaY;
+                ctx.lineTo(sp[0],sp[1]);
+            }
+            if (subpath.getIsClosed()){
+                ctx.closePath();
             }
             ctx.stroke();
 
@@ -879,37 +904,56 @@ exports.PenTool = Montage.create(ShapeTool, {
             var horizontalOffset = this.application.ninja.stage.userContentLeft;//stageManagerModule.stageManager.userContentLeft;
             var verticalOffset = this.application.ninja.stage.userContentTop;//stageManagerModule.stageManager.userContentTop;
 
-            //display circles and squares near all control points 
+            var localToGlobalMat = ViewUtils.getLocalToGlobalMatrix(subpath.getCanvas());
+
+            var currentLTWH = subpath.computeLeftTopWidthHeight();
+            var deltaX = currentLTWH[0] - parseInt(ElementMediator.getProperty(subpath.getCanvas(), "left"));
+            var deltaY = currentLTWH[1] - parseInt(ElementMediator.getProperty(subpath.getCanvas(), "top"));
+
+            //display circles and squares near all control points
             ctx.fillStyle = "#FFFFFF";
             ctx.lineWidth = 1;
             ctx.strokeStyle = "green";
             var anchorDelta = 2;
             var selAnchorDelta = 4;
             for (var i = 0; i < numAnchors; i++) {
-                var px = subpath.getAnchor(i).getPosX();
-                var py = subpath.getAnchor(i).getPosY();
+                var px = subpath.getAnchor(i).getPosX()+horizontalOffset;
+                var py = subpath.getAnchor(i).getPosY()+verticalOffset;
+                var localCoord = subpath.getAnchorLocalCoord(i);
+                if (localCoord) {
+                    var sp = MathUtils.transformAndDivideHomogeneousPoint(localCoord,localToGlobalMat);
+                    px = sp[0]; py=sp[1];
+                    sp[0]+=deltaX; sp[1]+=deltaY;
+                }
                 ctx.beginPath();
                 //ctx.arc(px + horizontalOffset, py + verticalOffset, this._DISPLAY_ANCHOR_RADIUS, 0, 2 * Math.PI, false);
-                ctx.moveTo(px-anchorDelta+horizontalOffset, py-anchorDelta+verticalOffset);
-                ctx.lineTo(px+anchorDelta+horizontalOffset, py-anchorDelta+verticalOffset);
-                ctx.lineTo(px+anchorDelta+horizontalOffset, py+anchorDelta+verticalOffset);
-                ctx.lineTo(px-anchorDelta+horizontalOffset, py+anchorDelta+verticalOffset);
+                ctx.moveTo(px-anchorDelta, py-anchorDelta);
+                ctx.lineTo(px+anchorDelta, py-anchorDelta);
+                ctx.lineTo(px+anchorDelta, py+anchorDelta);
+                ctx.lineTo(px-anchorDelta, py+anchorDelta);
                 ctx.closePath();
                 ctx.fill();
                 ctx.stroke();
+
             }
 
             //display the hovered over anchor point
             ctx.lineWidth = 2;
             if (this._hoveredAnchorIndex>=0 && this._hoveredAnchorIndex<numAnchors) {
-                var px = subpath.getAnchor(this._hoveredAnchorIndex).getPosX();
-                var py = subpath.getAnchor(this._hoveredAnchorIndex).getPosY();
+                var px = subpath.getAnchor(this._hoveredAnchorIndex).getPosX() +horizontalOffset;
+                var py = subpath.getAnchor(this._hoveredAnchorIndex).getPosY() +verticalOffset;
+                var localCoord = subpath.getAnchorLocalCoord(this._hoveredAnchorIndex);
+                if (localCoord) {
+                    var sp = MathUtils.transformAndDivideHomogeneousPoint(localCoord,localToGlobalMat);
+                    px = sp[0]; py=sp[1];
+                    sp[0]+=deltaX; sp[1]+=deltaY;
+                }
                 ctx.beginPath();
                 //ctx.arc(px + horizontalOffset, py + verticalOffset, this._DISPLAY_ANCHOR_RADIUS*1.5, 0, 2 * Math.PI, false);
-                ctx.moveTo(px-selAnchorDelta+horizontalOffset, py-selAnchorDelta+verticalOffset);
-                ctx.lineTo(px+selAnchorDelta+horizontalOffset, py-selAnchorDelta+verticalOffset);
-                ctx.lineTo(px+selAnchorDelta+horizontalOffset, py+selAnchorDelta+verticalOffset);
-                ctx.lineTo(px-selAnchorDelta+horizontalOffset, py+selAnchorDelta+verticalOffset);
+                ctx.moveTo(px-selAnchorDelta, py-selAnchorDelta);
+                ctx.lineTo(px+selAnchorDelta, py-selAnchorDelta);
+                ctx.lineTo(px+selAnchorDelta, py+selAnchorDelta);
+                ctx.lineTo(px-selAnchorDelta, py+selAnchorDelta);
                 ctx.closePath();
                 ctx.stroke();
             }

@@ -310,6 +310,9 @@ GLSubpath.prototype = new GeomObj();
 GLSubpath.prototype.setCanvas = function (c) {
     this._canvas = c;
 };
+GLSubpath.prototype.getCanvas = function() {
+    return this._canvas;
+};
 
 GLSubpath.prototype.setWorld = function (world) {
     this._world = world;
@@ -875,6 +878,22 @@ GLSubpath.prototype.translateSubpathPerCanvas = function(elemMediator){
     this._dirty=true;
 };
 
+GLSubpath.prototype.computeLeftTopWidthHeight = function() {
+    //build the width and height of this canvas by looking at local coordinates
+    var bboxMin = this.getLocalBBoxMin();
+    var bboxMax = this.getLocalBBoxMax();
+    var bboxWidth = bboxMax[0] - bboxMin[0];
+    var bboxHeight = bboxMax[1] - bboxMin[1];
+
+    //build the 3D position of the plane center of this canvas by looking at midpoint of the bounding box in stage world coords
+    bboxMin = this.getBBoxMin();
+    bboxMax = this.getBBoxMax();
+    var bboxMid = [0.5 * (bboxMax[0] + bboxMin[0]), 0.5 * (bboxMax[1] + bboxMin[1]), 0.5 * (bboxMax[2] + bboxMin[2])];
+    var left = Math.round(bboxMid[0] - 0.5 * bboxWidth);
+    var top = Math.round(bboxMid[1] - 0.5 * bboxHeight);
+    return [left, top, bboxWidth, bboxHeight];
+};
+
 GLSubpath.prototype.setStrokeWidth = function (w) {
     var diffStrokeWidth = w-Math.floor(this._strokeWidth);//if positive, then stroke width grew, else shrunk
     if (diffStrokeWidth === 0)
@@ -891,7 +910,7 @@ GLSubpath.prototype.setStrokeWidth = function (w) {
     // **** adjust the left, top, width, and height to adjust for the change in stroke width ****
     this.createSamples(); //dirty bit is checked here
     this.buildLocalCoord(); //local dirty bit is checked here
-
+/*
     //build the width and height of this canvas by looking at local coordinates
     var bboxMin = this.getLocalBBoxMin();
     var bboxMax = this.getLocalBBoxMax();
@@ -904,14 +923,15 @@ GLSubpath.prototype.setStrokeWidth = function (w) {
     var bboxMid = [0.5 * (bboxMax[0] + bboxMin[0]), 0.5 * (bboxMax[1] + bboxMin[1]), 0.5 * (bboxMax[2] + bboxMin[2])];
     var left = Math.round(bboxMid[0] - 0.5 * bboxWidth);
     var top = Math.round(bboxMid[1] - 0.5 * bboxHeight);
-
+*/
+    var ltwh = this.computeLeftTopWidthHeight();
     var canvasArray=[this._canvas];
-    ElementMediator.setProperty(canvasArray, "width", [bboxWidth+"px"], "Changing", "penTool");//canvas.width = w;
-    ElementMediator.setProperty(canvasArray, "height", [bboxHeight+"px"], "Changing", "penTool");//canvas.height = h;
-    ElementMediator.setProperty(canvasArray, "left", [left+"px"],"Changing", "penTool");//DocumentControllerModule.DocumentController.SetElementStyle(canvas, "left", parseInt(left) + "px");
-    ElementMediator.setProperty(canvasArray, "top", [top + "px"],"Changing", "penTool");//DocumentControllerModule.DocumentController.SetElementStyle(canvas, "top", parseInt(top) + "px");
-    this.setCanvasLeft(left);
-    this.setCanvasTop(top);
+    ElementMediator.setProperty(canvasArray, "width", [ltwh[2]+"px"], "Changing", "penTool");//canvas.width = w;
+    ElementMediator.setProperty(canvasArray, "height", [ltwh[3]+"px"], "Changing", "penTool");//canvas.height = h;
+    ElementMediator.setProperty(canvasArray, "left", [ltwh[0]+"px"],"Changing", "penTool");//DocumentControllerModule.DocumentController.SetElementStyle(canvas, "left", parseInt(left) + "px");
+    ElementMediator.setProperty(canvasArray, "top", [ltwh[1]+ "px"],"Changing", "penTool");//DocumentControllerModule.DocumentController.SetElementStyle(canvas, "top", parseInt(top) + "px");
+    this.setCanvasLeft(ltwh[0]);
+    this.setCanvasTop(ltwh[1]);
 };
 
 GLSubpath.prototype.getStrokeMaterial = function () {
@@ -1096,6 +1116,25 @@ GLSubpath.prototype._unprojectPt = function(pt, pespectiveDist) {
         retPt[0] = x;  retPt[1] = y;  retPt[2] = z;
     }
     return retPt;
+};
+
+//return the local coord. of the anchor at the specified index, null if the anchor does not have a local coord yet
+GLSubpath.prototype.getAnchorLocalCoord = function(index){
+    if (this._isDirty){
+        this.createSamples();
+    }
+    if (this._isLocalDirty){
+        this.buildLocalCoord();
+    }
+    if (index<0 || index>= this._Anchors.length || index>=this._anchorSampleIndex.length){
+        return null;
+    }
+    var anchorSampleIndex = this._anchorSampleIndex[index];
+    if (anchorSampleIndex>=this._LocalPoints.length){
+        return null;
+    }
+    var localCoord = this._LocalPoints[anchorSampleIndex].slice(0);
+    return localCoord;
 };
 
 //buildLocalCoord
@@ -1435,6 +1474,8 @@ GLSubpath.prototype.makeFillMaterial = function() {
 };
 
 GLSubpath.prototype.getNearVertex = function( eyePt, dir ){
+    //todo BUILD A BBOX USING LOCAL COORD. (NO z NEEDED)
+
     //get the parameters used for computing perspective transformation
     var bboxDim = [];
     var bboxMid = [];

@@ -134,7 +134,6 @@ exports.BrushTool = Montage.create(ShapeTool, {
                 snapManager.enableSnapAlign(false);
 
                 var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(x,y));
-                //todo fix this function to allow us to get the correct location (in 3D) for the mouse position
                 var unsnappedpos = DrawingToolBase.getHitRecPos(snapManager.snap(point.x, point.y, false));
                 this._draggingPlane = snapManager.getDragPlane();
 
