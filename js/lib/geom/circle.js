@@ -61,8 +61,6 @@ var Circle = function GLCircle() {
         } else {
 			this._fillMaterial = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() );
         }
-
-		this.exportMaterials();
 	};
 
     ///////////////////////////////////////////////////////////////////////
