@@ -7,10 +7,10 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 ////////////////////////////////////////////////////////////////////////
 //
 var Montage = 	require("montage/core/core").Montage,
-	Component = require("montage/ui/component").Component;
+	BaseDocumentModel = require("js/document/models/text").BaseDocumentModel;
 ////////////////////////////////////////////////////////////////////////
 //	
-exports.TextDocumentModel = Montage.create(Component, {
+exports.TextDocumentModel = Montage.create(BaseDocumentModel, {
 	////////////////////////////////////////////////////////////////////
 	//
 	hasTemplate: {
