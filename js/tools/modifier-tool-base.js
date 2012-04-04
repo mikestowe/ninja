@@ -852,8 +852,10 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                 }
             }
 
-            this.DrawHandles(this._delta);
-            if(this._canSnap)
+			if (!this._isDrawing || (this.application.ninja.selectedElements.length == 1))
+				this.DrawHandles(this._delta);
+            
+			if(this._canSnap)
             {
                 snapManager.drawLastHit();
             }
@@ -892,6 +894,13 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                 this._delta = null;
             }
             this.endDraw(event);
+
+			this.application.ninja.stage.draw();
+			if (this._targets && (this._targets.length > 1))
+			{
+				this._origin = null;
+				this._updateHandlesOrigin();
+			}
             this.DrawHandles();
         }
     },
