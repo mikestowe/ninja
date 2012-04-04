@@ -578,7 +578,7 @@ exports.PiData = Montage.create( Montage, {
                             valueMutator: parseFloat,
                             value : 0,
                             min :   0,
-                            max :   100,
+                            max :   99,
                             unit : "%",
                             acceptableUnits: ["%"]
 

@@ -13,6 +13,7 @@ exports.animationPresets = {
                 "text": "Border Morph",
                 "selectorBase" : "border-morph",
                 "rules" : [{
+                    "selectorSuffix" : "",
                     "styles" : {
                         "-webkit-animation-name": "border-morph",
                         "-webkit-animation-duration": "2s",
@@ -92,6 +93,7 @@ exports.animationPresets = {
                 "text": "Rotater",
                 "selectorBase" : "rotate-with-alpha-keyframes",
                 "rules" : [{
+                    "selectorSuffix" : "",
                     "styles" : {
                         "-webkit-animation-name": "rotate-with-alpha-keyframes",
                         "-webkit-animation-duration": "5s",

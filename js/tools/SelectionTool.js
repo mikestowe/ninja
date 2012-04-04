@@ -60,6 +60,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             else
             {
                 this._canSnap = true;
+                this._updateTargets();
             }
 
             this.isDrawing = true;

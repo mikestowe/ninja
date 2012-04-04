@@ -225,6 +225,7 @@ exports.LineTool = Montage.create(ShapeTool, {
                 {
                     strokeMaterial = Object.create(MaterialsModel.getMaterial(strokeM));
                 }
+                strokeColor = ShapesController.getMaterialColor(strokeM) || strokeColor;
             }
 
             var world = this.getGLWorld(canvas, this.options.use3D);
@@ -243,19 +244,13 @@ exports.LineTool = Montage.create(ShapeTool, {
                 canvas.elementModel.selection = "Line";
                 canvas.elementModel.pi = "LinePi";
                 canvas.elementModel.shapeModel.strokeSize = this.options.strokeSize.value + " " + this.options.strokeSize.units;
-                canvas.elementModel.shapeModel.stroke = strokeColor;
-                if(strokeColor)
-                {
-                    canvas.elementModel.shapeModel.border = this.application.ninja.colorController.colorToolbar.stroke;
-                }
-
-                canvas.elementModel.shapeModel.strokeMaterial = strokeMaterial;
 
                 canvas.elementModel.shapeModel.strokeStyleIndex = strokeStyleIndex;
                 canvas.elementModel.shapeModel.strokeStyle = strokeStyle;
 
                 canvas.elementModel.shapeModel.GLGeomObj = line;
                 canvas.elementModel.shapeModel.useWebGl = this.options.use3D;
+                canvas.elementModel.shapeModel.slope = slope;
             }
             else
             {

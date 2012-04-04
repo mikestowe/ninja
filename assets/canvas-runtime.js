@@ -121,13 +121,13 @@ NinjaCvsRt.GLRuntime = function ( canvas, jObj,  assetPath )
 	// all "live" materials
 	this._materials = [];
 
-	// provide the mapping for the asset directory
-	if (assetPath)
-	{
-		this._assetPath = assetPath.slice();
-		if (this._assetPath[this._assetPath.length-1] != '/')
-			this._assetPath += '/';
-	}
+		// provide the mapping for the asset directory
+		if (assetPath)
+		{
+			this._assetPath = assetPath.slice();
+			if (this._assetPath[this._assetPath.length-1] != '/')
+				this._assetPath += '/';
+		}
 
 	if(this._assetPath !== undefined) {
 		RDGE.globals.engine.setAssetPath(this._assetPath);
@@ -638,7 +638,7 @@ NinjaCvsRt.RuntimeGeomObj = function ()
 	
 		return mat;	
 	};
-	
+
 	this.MatrixRotationZ = function( angle )
 	{
 		var mat = this.MatrixIdentity(4);
@@ -998,7 +998,7 @@ NinjaCvsRt.RuntimeOval = function ()
 					mat[5] = yScale;
 
 					// get the bezier points
-					var bezPtsInside = this.circularArcToBezier( Vector.create([0,0,0]), Vector.create([1,0,0]), -2.0*Math.PI );
+					var bezPtsInside = this.circularArcToBezier( [0,0,0], [1,0,0], -2.0*Math.PI );
 					if (bezPtsInside)
 					{
 						n = bezPtsInside.length;
@@ -1465,7 +1465,7 @@ NinjaCvsRt.RuntimeUberMaterial = function ()
 					// currently not exported
 					var uvTransform = [ 2.0, 0, 0, 0, 0, 2.0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1];
 					technique.u_uvMatrix.set(uvTransform);
-						
+	
                     var tex = null;
 					if (this._diffuseMap)
 					{

@@ -38,12 +38,12 @@ exports.ElementMediator = Montage.create(Component, {
                 var prop3d = this.get3DProperties(elements);
                 if(prop3d) {
                     elements.elementModel.controller["set3DProperties"](elements, [prop3d], 0, true);
-                }
-            }
+                    }
+                    }
 
             if(this.addDelegate && typeof (this.addDelegate['onAddElements']) === "function") {
                 this.addDelegate['onAddElements'].call(this.addDelegate, elements);
-            }
+                }
 
             var undoLabel = "add element";
 
@@ -53,9 +53,9 @@ exports.ElementMediator = Montage.create(Component, {
 
             if(notify || notify === undefined) {
                 NJevent("elementAdded", elements);
-            }
+                    }
         }
-    },
+                },
 
     removeElements: {
         value: function(elements, notify /* Used for the add undo */) {
@@ -63,7 +63,7 @@ exports.ElementMediator = Montage.create(Component, {
             if(this.deleteDelegate && (typeof this.deleteDelegate.handleDelete === 'function')) {
                 return this.deleteDelegate.handleDelete();
                 // this.handleDelete.call(deleteDelegate);
-            }
+        }
 
             if(Array.isArray(elements)) {
                 elements = Array.prototype.slice.call(elements, 0);
@@ -78,10 +78,10 @@ exports.ElementMediator = Montage.create(Component, {
 
             document.application.undoManager.add(undoLabel, this.addElements, this, elements, null, notify);
 
-            this.application.ninja.documentController.activeDocument.needsSave = true;
+                this.application.ninja.documentController.activeDocument.needsSave = true;
 
             NJevent("elementsRemoved", elements);
-        }
+            }
     },
 
     replaceElement: {
@@ -97,8 +97,8 @@ exports.ElementMediator = Montage.create(Component, {
 
             if(notify || notify === undefined) {
                 NJevent("elementReplaced", {type : "replaceElement", data: {"newChild": newChild, "oldChild": oldChild}});
-            }
         }
+                }
     },
 
     getProperty: {
@@ -265,7 +265,7 @@ exports.ElementMediator = Montage.create(Component, {
             var el;
 
             for(var i=0, item; item = els[i]; i++) {
-                item.elementModel.controller["setProperty"](item, p, value[i]);
+                item.elementModel.controller["setProperty"](item, p, value[i], eventType, source);
             }
 
             NJevent("element" + eventType, {type : "setProperty", source: source, data: {"els": els, "prop": p, "value": value}, redraw: null});
@@ -621,8 +621,8 @@ exports.ElementMediator = Montage.create(Component, {
         value: function(el) {
             var str = this.getProperty(el, "-webkit-transform");
             return str && str.length;
-        }
-    }
+            }
+            }
 
 
 
