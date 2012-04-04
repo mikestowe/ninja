@@ -212,7 +212,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 				{
 					/*
 					// Use this code to test the runtime version of WebGL
-					var cdm = new CanvasDataManager();
+					var cdm = new NinjaCvsRt.CanvasDataManager();
 					cdm.loadGLData(elt,  value,  null );
 					*/
 
@@ -275,13 +275,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 									var useWebGL = jObj.webGL;
 									var world = new GLWorld( canvas, useWebGL );
 									world.importJSON( jObj );
-								}
-								else
-								{
-									var index = importStr.indexOf( "webGL: " );
-									var useWebGL = (index >= 0);
-									var world = new GLWorld( canvas, useWebGL );
-									world.import( importStr );
 								}
 
 								this.buildShapeModel( canvas.elementModel, world );
@@ -432,7 +425,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 			if (elt.elementModel && elt.elementModel.shapeModel && elt.elementModel.shapeModel.GLWorld)
 			{
 				var data = elt.elementModel.shapeModel.GLWorld.exportJSON();
-				//var data = elt.elementModel.shapeModel.GLWorld.export();
 				dataArray.push( data );
 			}
 
@@ -877,11 +869,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     		//TODO: Add logic to handle save before preview
     		this.application.ninja.documentController.handleExecuteSaveAll(null);
     		//Temp check for webGL Hack
-    		if (this.application.ninja.documentController.activeDocument.glData.length && this.application.ninja.documentController.activeDocument.glData.length > 1) {//TODO: Should be 0, temp hack fix
-    			setTimeout(function () {window.open(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);}.bind(this), 3500);
-    		} else {
-    			window.open(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);
-    		}
+    		window.open(this.application.ninja.coreIoApi.rootUrl + this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);
     		//chrome.tabs.create({url: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]});		
     	}
     },

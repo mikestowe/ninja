@@ -4,28 +4,26 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
+// RDGE namespaces
+var RDGE = RDGE || {};
 
-function ScreenQuad(texture)
-{
-  this.vertBuffer = null;
-  this.uvBuffer = null;
-  this.texture  = texture;
-  this.shader   = null;
-  this.renderObj  = null;
-}
-
-ScreenQuad.prototype.initialize = function(initProc, shaderOpt)
-{
-  initProc(this, shaderOpt);
+RDGE.ScreenQuad = function (texture) {
+    this.vertBuffer = null;
+    this.uvBuffer = null;
+    this.texture = texture;
+    this.shader = null;
+    this.renderObj = null;
 };
 
-ScreenQuad.prototype.setTexture = function(texture)
-{
-  this.texture = texture;
+RDGE.ScreenQuad.prototype.initialize = function (initProc, shaderOpt) {
+    initProc(this, shaderOpt);
+};
+
+RDGE.ScreenQuad.prototype.setTexture = function (texture) {
+    this.texture = texture;
 };
 
 
-ScreenQuad.prototype.render = function(renderProc)
-{
-  renderProc(this);
+RDGE.ScreenQuad.prototype.render = function (renderProc) {
+    renderProc(this);
 };
