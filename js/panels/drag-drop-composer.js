@@ -91,7 +91,9 @@ exports.DragDropComposer = Montage.create(Composer, {
             e.stopImmediatePropagation();
             if (!this._dragover) {
                 this._dragover = true;
-                this.component.element.classList.add("dragOver");
+                if (this.component.application.ninja.componentBeingDragged) {
+                    this.component.element.classList.add("dragOver");
+                }
             }
         }
     },

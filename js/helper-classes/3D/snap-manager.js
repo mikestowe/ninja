@@ -499,6 +499,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 				var n = this._elementCache.length;
 				this._elementCache[index] = this._elementCache[n-1];
 				this._elementCache.pop();
+                target.elementModel.isIn2DSnapCache = false;
 				found = true;
 			}
 
