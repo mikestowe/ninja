@@ -41,6 +41,6 @@ exports.TransitionsLibrary = Montage.create(Component, {
                 el._element.classList.add(selectorBase);
             }, this);
 
-        }
-    }
+    	}
+ 	}
 });

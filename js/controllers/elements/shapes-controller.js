@@ -72,8 +72,9 @@ exports.ShapesController = Montage.create(CanvasController, {
                     canvas.setAttribute("data-RDGE-id", njModule.NJUtils.generateRandom());
                     canvas.width = el.width;
                     canvas.height = el.height;
-                    this.application.ninja.elementMediator.replaceElement(el, canvas);
-                    NJevent("elementDeleted", el);
+                    canvas.elementModel = el.elementModel;
+                    this.application.ninja.currentDocument.documentRoot.replaceChild(canvas, el);
+                    NJevent("elementsRemoved", el);
                     el = canvas;
                     this.toggleWebGlMode(el, value);
                     el.elementModel.shapeModel.GLWorld.render();

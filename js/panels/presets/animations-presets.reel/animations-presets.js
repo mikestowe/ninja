@@ -68,6 +68,6 @@ exports.AnimationsLibrary = Montage.create(Component, {
             });
 
             return keysString;
-        }
-    }
+      	}
+ 	}
 });

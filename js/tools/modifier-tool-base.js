@@ -786,7 +786,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 			{
 				if(len === 1)
 				{
-					this.target = this.application.ninja.selectedElements[0]._element;
+					this.target = this.application.ninja.selectedElements[0];
 					drawUtils.addElement(this.target);
 				}
 				else

@@ -61,7 +61,7 @@ exports.StylesLibrary = Montage.create(Component, {
             }, this);
 
 
-        }
+            }
     },
     handleDragEnd : {
         value: function(sourceObject) {
@@ -75,7 +75,7 @@ exports.StylesLibrary = Montage.create(Component, {
             console.log('1Handle should change selection');
             return false;
         }
-    }
+  	}
 
 
 });

@@ -318,7 +318,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                              "newLayer",
                              "deleteLayer",
                              "elementAdded",
-                             "elementDeleted",
+                             "elementsRemoved",
                              "selectionChange"],
                 i,
                 arrEventsLength = arrEvents.length;
@@ -826,7 +826,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                                 for(var index=0;index<arrLayerLength;index++){
                                       if(this.arrLayers[index].layerData.layerID===dLayer[hashVariable].layerID){
                                           dLayer[hashVariable].deleted = true;
-                                          ElementMediator.deleteElements(dLayer[hashVariable].elementsList);
+                                          ElementMediator.removeElements(dLayer[hashVariable].elementsList);
                                           this.arrLayers.splice(index, 1);
                                           break;
                                       }
@@ -861,18 +861,37 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
-    handleElementDeleted:{
+    handleElementsRemoved:{
         value:function (event) {
             var length,lengthVal;
             this.deleteElement = event.detail;
-            lengthVal = this.currentLayerSelected.layerData.elementsList.length - 1;
-            for (length = lengthVal ;length >= 0 ;length--) {
-                if (this.currentLayerSelected.layerData.elementsList[length] === this.deleteElement) {
-                    this.currentLayerSelected.layerData.elementsList.splice(length, 1);
-                    break;
+
+            // Handling deletion of multiple elements.
+            // TODO: Optimize this double array loop
+            if(Array.isArray(this.deleteElement)) {
+                this.deleteElement = Array.prototype.slice.call(this.deleteElement, 0);
+                lengthVal = this.currentLayerSelected.layerData.elementsList.length - 1;
+                this.deleteElement.forEach(function(element) {
+                    for (length = lengthVal ;length >= 0 ;length--) {
+                        if (this.currentLayerSelected.layerData.elementsList[length] === element) {
+                            this.currentLayerSelected.layerData.elementsList.splice(length, 1);
+                            break;
+                        }
+                        //length--;
+                    }
+                }, this);
+            } else {
+                lengthVal = this.currentLayerSelected.layerData.elementsList.length - 1;
+                for (length = lengthVal ;length >= 0 ;length--) {
+                    if (this.currentLayerSelected.layerData.elementsList[length] === this.deleteElement) {
+                        this.currentLayerSelected.layerData.elementsList.splice(length, 1);
+                        break;
+                    }
+                    //length--;
                 }
-                //length--;
             }
+
+
         }
     },
 

@@ -94,7 +94,11 @@ exports.Splitter = Montage.create(Component, {
     handleClick : {
         value: function() {
             if (!this.disabled) {
-                this.panel.addEventListener("webkitTransitionEnd", this, false);
+                if(this.panel.element) {
+                    this.panel.element.addEventListener("webkitTransitionEnd", this, false);
+                } else {
+                    this.panel.addEventListener("webkitTransitionEnd", this, false);
+                }
                 this.collapsed = !this.collapsed;
                 this.needsDraw = true;
             }
@@ -103,7 +107,12 @@ exports.Splitter = Montage.create(Component, {
 
     handleWebkitTransitionEnd: {
         value: function() {
-            this.panel.removeEventListener("webkitTransitionEnd", this, false);
+            if(this.panel.element) {
+                this.panel.element.removeEventListener("webkitTransitionEnd", this, false);
+            } else {
+                this.panel.removeEventListener("webkitTransitionEnd", this, false);
+            }
+
             this.application.ninja.stage.resizeCanvases = true;
         }
     },
