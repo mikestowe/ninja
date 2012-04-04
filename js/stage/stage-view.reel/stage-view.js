@@ -107,8 +107,8 @@ exports.StageView = Montage.create(Component, {
                    },
                    onCursorActivity: function() {
                        doc.editor.matchHighlight("CodeMirror-matchhighlight");
-                       doc.editor.setLineClass(doc.editor.hline, null);
-                       doc.editor.hline = doc.editor.setLineClass(doc.editor.getCursor().line, "activeline");
+                       doc.editor.setLineClass(doc.editor.hline, null, null);
+                       doc.editor.hline = doc.editor.setLineClass(doc.editor.getCursor().line, null, "activeline");
                    },
                    //extraKeys: {"Ctrl-Space": function(cm) {CodeMirror.simpleHint(cm, CodeMirror.javascriptHint);}}
                    onKeyEvent: function(cm, keyEvent) {
@@ -117,7 +117,14 @@ exports.StageView = Montage.create(Component, {
                                 || (keyEvent.keyCode > 64 && keyEvent.keyCode <91)//letters
                                 || (keyEvent.keyCode === 190)//period
                                 || (keyEvent.keyCode === 189)//underscore, dash
-                            )
+                               )
+                            && !( (keyEvent.keyCode === 219)//open bracket [
+                                    || (keyEvent.keyCode === 221)//close bracket ]
+                                    || (keyEvent.shiftKey && keyEvent.keyCode === 219)//open bracket {
+                                    || (keyEvent.shiftKey && keyEvent.keyCode === 221)//close bracket }
+                                    || (keyEvent.shiftKey && keyEvent.keyCode === 57)//open bracket (
+                                    || (keyEvent.shiftKey && keyEvent.keyCode === 48)//close bracket )
+                               )
                         ){
 
                             CodeMirror.simpleHint(cm, CodeMirror.javascriptHint);
