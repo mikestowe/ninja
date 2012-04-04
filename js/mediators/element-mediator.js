@@ -319,7 +319,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
 
             for(var i=0, item; item = els[i]; i++) {
                 el = item._element || item;
-                el.elementModel.controller["setProperty"](el, p, value[i]);
+                el.elementModel.controller["setProperty"](el, p, value[i], eventType, source);
             }
 
             NJevent("element" + eventType, {type : "setProperty", source: source, data: {"els": els, "prop": p, "value": value}, redraw: null});

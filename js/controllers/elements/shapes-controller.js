@@ -13,7 +13,7 @@ var Montage = 			require("montage/core/core").Montage,
 exports.ShapesController = Montage.create(CanvasController, {
 
     setProperty: {
-        value: function(el, p, value) {
+        value: function(el, p, value, eventType, source) {
             var val = parseInt(value),
                 canvas,
                 m,
@@ -22,6 +22,53 @@ exports.ShapesController = Montage.create(CanvasController, {
                 case "strokeSize":
                     // TODO - For now, just handling px units.
                     this.setShapeProperty(el, "strokeSize", value);
+                    // Changing stroke size should grow/shrink the shape from the center.
+                    var delta = ~~(val - el.elementModel.shapeModel.GLGeomObj.getStrokeWidth()),
+                        l = this.application.ninja.elementMediator.getProperty(el, "left", parseInt),
+                        t = this.application.ninja.elementMediator.getProperty(el, "top", parseInt),
+                        w = this.application.ninja.elementMediator.getProperty(el, "width", parseInt),
+                        h = this.application.ninja.elementMediator.getProperty(el, "height", parseInt);
+
+                    if(el.elementModel.selection === "Line")
+                    {
+                        var slope = el.elementModel.shapeModel.slope;
+                        // set the dimensions
+                        if(slope === "horizontal")
+                        {
+                            h = Math.max(val, 1);
+                        }
+                        else if(slope === "vertical")
+                        {
+                            w = Math.max(val, 1);
+                        }
+                        else
+                        {
+                            var oldXAdj = el.elementModel.shapeModel.GLGeomObj.getXAdj();
+                            var oldYAdj = el.elementModel.shapeModel.GLGeomObj.getYAdj();
+                            var theta = Math.atan(el.elementModel.shapeModel.slope);
+                            var xAdj = Math.abs((val/2)*Math.sin(theta));
+                            var yAdj = Math.abs((val/2)*Math.cos(theta));
+                            var dX = ~~(xAdj*2 - oldXAdj*2);
+                            var dY = ~~(yAdj*2 - oldYAdj*2);
+
+                            if(delta > 0)
+                            {
+                                l -= dX*2;
+                                t -= dY*2;
+                                w += dX*2;
+                                h += dY*2;
+                            }
+
+                            el.elementModel.shapeModel.GLGeomObj.setXAdj(xAdj);
+                            el.elementModel.shapeModel.GLGeomObj.setYAdj(yAdj);
+
+                        }
+                    }
+                    this.application.ninja.elementMediator.setProperties([el],
+                                                    { "left": [l + "px"],
+                                                      "top": [t + "px"],
+                                                      "width": [w + "px"],
+                                                      "height": [h + "px"] }, eventType, source );
                     el.elementModel.shapeModel.GLGeomObj.setStrokeWidth(val);
                     el.elementModel.shapeModel.GLGeomObj.buildBuffers();
                     el.elementModel.shapeModel.GLWorld.render();

@@ -241,6 +241,7 @@ exports.LineTool = Montage.create(ShapeTool, {
 
                 canvas.elementModel.shapeModel.GLGeomObj = line;
                 canvas.elementModel.shapeModel.useWebGl = this.options.use3D;
+                canvas.elementModel.shapeModel.slope = slope;
             }
             else
             {
