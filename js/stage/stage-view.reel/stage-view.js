@@ -110,10 +110,19 @@ exports.StageView = Montage.create(Component, {
                        doc.editor.setLineClass(doc.editor.hline, null);
                        doc.editor.hline = doc.editor.setLineClass(doc.editor.getCursor().line, "activeline");
                    },
-                   extraKeys: {"Ctrl-Space": function(cm) {
-                                        CodeMirror.simpleHint(cm, CodeMirror.javascriptHint);
-                                    }
-                              }
+                   //extraKeys: {"Ctrl-Space": function(cm) {CodeMirror.simpleHint(cm, CodeMirror.javascriptHint);}}
+                   onKeyEvent: function(cm, keyEvent) {
+                        if((keyEvent.type === "keyup")//need seperate keycode set per mode
+                            && ((keyEvent.keyCode > 47 && keyEvent.keyCode < 57)//numbers
+                                || (keyEvent.keyCode > 64 && keyEvent.keyCode <91)//letters
+                                || (keyEvent.keyCode === 190)//period
+                                || (keyEvent.keyCode === 189)//underscore, dash
+                            )
+                        ){
+
+                            CodeMirror.simpleHint(cm, CodeMirror.javascriptHint);
+                        }
+                   }
            });
 
             doc.editor.hline = doc.editor.setLineClass(0, "activeline");
