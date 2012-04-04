@@ -9,8 +9,8 @@ var Montage = require("montage/core/core").Montage,
     snapManager = require("js/helper-classes/3D/snap-manager").SnapManager,
     viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils,
     vecUtils = require("js/helper-classes/3D/vec-utils").VecUtils,
-    drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils,
-    Properties3D = ("js/models/properties-3d").Properties3D;
+    drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils;
+//    Properties3D = ("js/models/properties-3d").Properties3D;
 
 exports.ModifierToolBase = Montage.create(DrawingTool, {
 
@@ -177,7 +177,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                     }
 
                     // only do quadrant snapping if the 4 corners of the element are in the drag plane
-                    var sign = MathUtils.fpSign( VecUtils.vecDot(3,this._dragPlane,[0,0,1]) + this._dragPlane[3] - 1.0);
+                    var sign = MathUtils.fpSign( vecUtils.vecDot(3,this._dragPlane,[0,0,1]) + this._dragPlane[3] - 1.0);
                     this._shouldUseQuadPt = (sign == 0)
 
 					var wpHitRec = hitRec.convertToWorkingPlane( this._dragPlane );
