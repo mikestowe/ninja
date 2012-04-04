@@ -36,6 +36,7 @@ function TwistVertMaterial()
 	this.getShaderName			= function()	{  return this._shaderName;				}
 
 	this.isAnimated				= function()	{  return true;							}
+	
 	this.hasVertexDeformation	= function()	{  return this._hasVertexDeformation;	}
 	this._hasVertexDeformation	= true;
 	this._vertexDeformationTolerance = 0.02;	// should be a property

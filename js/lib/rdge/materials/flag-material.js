@@ -23,6 +23,8 @@ var FlagMaterial = function FlagMaterial() {
     this._defaultWaveWidth = 1.0;
     this._defaultWaveHeight = 1.0;
 
+	this._hasVertexDeformation = true;
+
     ///////////////////////////////////////////////////////////////////////
     // Properties
     ///////////////////////////////////////////////////////////////////////
@@ -36,6 +38,10 @@ var FlagMaterial = function FlagMaterial() {
 	this._propValues[ this._propNames[0] ] = this._texMap.slice(0);
     this._propValues[ this._propNames[1] ] = this._defaultWaveWidth;
     this._propValues[ this._propNames[2] ] = this._defaultWaveHeight;
+
+	// a material can be animated or not. default is not.  
+	// Any material needing continuous rendering should override this method
+	this.isAnimated	= function() {  return true;  };
 
     ///////////////////////////////////////////////////////////////////////
     // Methods

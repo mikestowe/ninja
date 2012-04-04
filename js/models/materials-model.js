@@ -118,7 +118,7 @@ exports.MaterialsModel = Montage.create(Component, {
         value: function (materialName) {
             var index = this.getIndexOfMaterial(materialName);
             if(index !== -1) {
-                return this._materials[index].dup();
+                return this._materials[index];
             }
         }
     },
@@ -129,7 +129,7 @@ exports.MaterialsModel = Montage.create(Component, {
 		{
 			var index = this.getIndexOfMaterialByShader( shaderName );
 			if (index >= 0)
-				return this._materials[index].dup();
+				return this._materials[index];
 		}
 	},		
 

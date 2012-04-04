@@ -943,13 +943,13 @@ RectangleFill.create = function( rectCtr,  width, height, tlRad, blRad,  brRad, 
 	}
 
 	//refine the mesh for vertex deformations
-//	if (material) {
-//		if (material.hasVertexDeformation()) {
-//			var paramRange = material.getVertexDeformationRange();
-//			var tolerance = material.getVertexDeformationTolerance();
-//			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
-//		}
-//	}
+	if (material) {
+		if (material.hasVertexDeformation()) {
+			var paramRange = material.getVertexDeformationRange();
+			var tolerance = material.getVertexDeformationTolerance();
+			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
+		}
+	}
 
 	// create the RDGE primitive
 	return ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.TRIANGLES, nVertices);
@@ -1175,13 +1175,13 @@ RectangleStroke.create = function( rectCtr,  width, height, strokeWidth,  tlRad,
 	}
 
 	//refine the mesh for vertex deformations
-//	if (material) {
-//		if (material.hasVertexDeformation()) {
-//			var paramRange = material.getVertexDeformationRange();
-//			var tolerance = material.getVertexDeformationTolerance();
-//			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
-//		}
-//	}
+	if (material) {
+		if (material.hasVertexDeformation()) {
+			var paramRange = material.getVertexDeformationRange();
+			var tolerance = material.getVertexDeformationTolerance();
+			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
+		}
+	}
 
 	// create the RDGE primitive
 	return ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.TRIANGLES, nVertices);
@@ -1259,15 +1259,15 @@ RectangleGeometry.create = function( ctr,  width, height, material ) {
 	RectangleGeometry.pushIndices( 0, 3, 2 );
 
 	//refine the mesh for vertex deformations
-//	if (material)
-//	{
-//		if (material.hasVertexDeformation())
-//		{
-//			var paramRange = material.getVertexDeformationRange();
-//			var tolerance = material.getVertexDeformationTolerance();
-//			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
-//		}
-//	}
+	if (material)
+	{
+		if (material.hasVertexDeformation())
+		{
+			var paramRange = material.getVertexDeformationRange();
+			var tolerance = material.getVertexDeformationTolerance();
+			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );
+		}
+	}
 
 	// create the RDGE primitive
 	return ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.TRIANGLES, nVertices);

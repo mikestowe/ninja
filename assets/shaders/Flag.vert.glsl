@@ -27,22 +27,21 @@ uniform mat4 u_worldMatrix;
 // varying variables
 varying vec2 v_uv;
 
+
 void main()
 {
-    float pi = 3.14159;
-	float angle = mod(u_time, pi)*2.0;
+	float pi = 3.14159;
+	float angle = u_time;
 
-    vec3 v = a_pos;
     v_uv = texcoord;
 
-    vec2 pos = texcoord;
-    float tmp = pos.x;  pos.x = pos.y;  pos.y = tmp;
-    pos.x = pos.x * 1.0*pi * u_waveWidth;
-    pos.y = pos.y * 1.0*pi * u_waveWidth;
+	float x = 2.0*pi*texcoord.x/u_waveWidth;
+	float y = 2.0*pi*texcoord.y;
 
-	v.z  = sin( pos.x + angle);
-	v.z += sin( pos.y/2.0 + angle);
-	v.z *= v.y * 0.09 * u_waveHeight;
+    vec3 v = a_pos;
+	v.z  = sin( x + angle ) - 2.0*u_waveHeight;
+	v.z += sin( 0.2*y + angle);
+	v.z *= x * 0.09 * u_waveHeight;
 	
     gl_Position = u_projMatrix * u_mvMatrix * vec4(v,1.0) ;
 }
