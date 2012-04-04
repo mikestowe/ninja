@@ -4,99 +4,94 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-MAX_VAL = 1e+38;
+// RDGE namespaces
+var RDGE = RDGE || {};
 
-function box()
-{
-  this.min = [MAX_VAL, MAX_VAL, MAX_VAL];
-  this.max = [-MAX_VAL, -MAX_VAL, -MAX_VAL];
-}
+RDGE.box = function () {
+    this.MAX_VAL = 1e+38;
+    this.min = [this.MAX_VAL, this.MAX_VAL, this.MAX_VAL];
+    this.max = [-this.MAX_VAL, -this.MAX_VAL, -this.MAX_VAL];
+};
 
-box.prototype.addBox = function(a)
-{
-  this.min = vec3.min( this.min, a.min );
-  this.max = vec3.max( this.max, a.max );
-//  this.min = vec3.min( this.min, a.min );
-//  this.max = vec3.max( this.max, a.max );
-}
+RDGE.box.prototype.addBox = function (a) {
+    this.min = RDGE.vec3.min(this.min, a.min);
+    this.max = RDGE.vec3.max(this.max, a.max);
+    //  this.min = RDGE.vec3.min( this.min, a.min );
+    //  this.max = RDGE.vec3.max( this.max, a.max );
+};
 
-box.prototype.addVec3 = function(a)
-{
-  this.min = vec3.min( this.min, a );
-  this.max = vec3.max( this.max, a );
-}
+RDGE.box.prototype.addVec3 = function (a) {
+    this.min = RDGE.vec3.min(this.min, a);
+    this.max = RDGE.vec3.max(this.max, a);
+};
 
-box.prototype.set = function(min, max)
-{
-  this.min[0] = min[0];
-  this.min[1] = min[1];
-  this.min[2] = min[2];
-  this.max[0] = max[0];
-  this.max[1] = max[1];
-  this.max[2] = max[2];
-}
+RDGE.box.prototype.set = function (min, max) {
+    this.min[0] = min[0];
+    this.min[1] = min[1];
+    this.min[2] = min[2];
+    this.max[0] = max[0];
+    this.max[1] = max[1];
+    this.max[2] = max[2];
+};
 
-box.prototype.reset = function()
-{
-  this.min[0] = MAX_VAL;
-  this.min[1] = MAX_VAL;
-  this.min[2] = MAX_VAL;
-  this.max[0] = -MAX_VAL;
-  this.max[1] = -MAX_VAL;
-  this.max[2] = -MAX_VAL;
-}
+RDGE.box.prototype.reset = function () {
+    this.min[0] = this.MAX_VAL;
+    this.min[1] = this.MAX_VAL;
+    this.min[2] = this.MAX_VAL;
+    this.max[0] = -this.MAX_VAL;
+    this.max[1] = -this.MAX_VAL;
+    this.max[2] = -this.MAX_VAL;
+};
 
-box.prototype.getCenter = function()
-{
-  return [0.5*(this.min[0]+this.max[0]), 0.5*(this.min[1]+this.max[1]), 0.5*(this.min[2]+this.max[2])];
-}
+RDGE.box.prototype.getCenter = function () {
+    return [0.5 * (this.min[0] + this.max[0]), 0.5 * (this.min[1] + this.max[1]), 0.5 * (this.min[2] + this.max[2])];
+};
 
-box.prototype.isVisible = function(frustum)
-{
-	var center = this.getCenter();
-	var radius = vec3.distance( this.max, center );
-	//  var diag = vec3.sub( this.max, center );
-	
-	var i = 0;
-	while(i < frustum.length) {
-	    var plane = frustum[i];
-		var dist = vec3.dot( plane, center ) + plane[3];
-		if( dist < -radius ) {
-			return false;
-		}
-		i++;
-	}
+RDGE.box.prototype.isVisible = function (frustum) {
+    var center = this.getCenter();
+    var radius = RDGE.vec3.distance(this.max, center);
+    //  var diag = RDGE.vec3.sub( this.max, center );
 
-	return true;
-}
+    var i = 0;
+    while (i < frustum.length) {
+        var plane = frustum[i];
+        var dist = RDGE.vec3.dot(plane, center) + plane[3];
+        if (dist < -radius) {
+            return false;
+        }
+        i++;
+    }
 
-box.prototype.isValid = function()
-{
-  return !(this.min[0] > this.max[0] || this.min[1] > this.max[1] || this.min[2] > this.max[2]);
-}
+    return true;
+};
 
-box.prototype.transform = function(mat) {
-	var out = new box();
-	var pts = [];
-	pts.push( [ this.min[0], this.min[1], this.min[2] ] );
-	pts.push( [ this.min[0], this.max[1], this.min[2] ] );
-	pts.push( [ this.max[0], this.max[1], this.min[2] ] );
-	pts.push( [ this.max[0], this.min[1], this.min[2] ] );
-	pts.push( [ this.min[0], this.min[1], this.max[2] ] );
-	pts.push( [ this.min[0], this.max[1], this.max[2] ] );
-	pts.push( [ this.max[0], this.max[1], this.max[2] ] );
-	pts.push( [ this.max[0], this.min[1], this.max[2] ] );
-	
-	var i = pts.length - 1;
-	do {
-		out.addVec3( mat4.transformPoint( mat, pts[i] ) );
-	} while(i--);
-	
-	return out;
-}
+RDGE.box.prototype.isValid = function () {
+    return !(this.min[0] > this.max[0] || this.min[1] > this.max[1] || this.min[2] > this.max[2]);
+};
+
+RDGE.box.prototype.transform = function (mat) {
+    var out = new RDGE.box();
+    var pts = [];
+    pts.push([this.min[0], this.min[1], this.min[2]]);
+    pts.push([this.min[0], this.max[1], this.min[2]]);
+    pts.push([this.max[0], this.max[1], this.min[2]]);
+    pts.push([this.max[0], this.min[1], this.min[2]]);
+    pts.push([this.min[0], this.min[1], this.max[2]]);
+    pts.push([this.min[0], this.max[1], this.max[2]]);
+    pts.push([this.max[0], this.max[1], this.max[2]]);
+    pts.push([this.max[0], this.min[1], this.max[2]]);
+
+    var i = pts.length - 1;
+    do {
+        out.addVec3(RDGE.mat4.transformPoint(mat, pts[i]));
+    } while (i--);
+
+    return out;
+};
+
 /*
-box.prototype.transform = function(mat) {
-	var newBox = new box();
+RDGE.box.prototype.transform = function(mat) {
+	var newBox = new RDGE.box();
 	var e, f;
 
 	newBox.b[0] = mat[12]; newBox.b[1] = mat[13]; newBox.b[2] = mat[14];
@@ -139,5 +134,5 @@ box.prototype.transform = function(mat) {
 	newBox.t[2] += (e < f) ? f : e;
 
 	return newBox;
-}
+};
 */

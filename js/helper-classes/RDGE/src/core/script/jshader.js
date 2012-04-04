@@ -4,42 +4,44 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
+// RDGE namespaces
+var RDGE = RDGE || {};
+
 /*	
-this API should be familiar to anyone who has worked with 
-HLSL effect files.
+this API should be familiar to anyone who has worked with HLSL effect files.
 */
 
 /*
  *	A map of types to uniform 'binding' functions
  */
-bindMap={};
-bindMap['int']		= function(ctx, a,b) { ctx.uniform1iv(a,b); };
-bindMap['float']	= function(ctx, a,b) { ctx.uniform1fv(a,b); };
-bindMap['vec2']		= function(ctx, a,b) { ctx.uniform2fv(a,b); };
-bindMap['vec3']		= function(ctx, a,b) { ctx.uniform3fv(a,b); };
-bindMap['vec4']		= function(ctx, a,b) { ctx.uniform4fv(a,b); };
-bindMap['mat3']		= function(ctx, a,b) { ctx.uniformMatrix3fv(a,false,b); };
-bindMap['mat4']		= function(ctx, a,b) 
+RDGE.bindMap={};
+RDGE.bindMap['int']		= function(ctx, a,b) { ctx.uniform1iv(a,b); };
+RDGE.bindMap['float']	= function(ctx, a,b) { ctx.uniform1fv(a,b); };
+RDGE.bindMap['vec2']		= function(ctx, a,b) { ctx.uniform2fv(a,b); };
+RDGE.bindMap['vec3']		= function(ctx, a,b) { ctx.uniform3fv(a,b); };
+RDGE.bindMap['vec4']		= function(ctx, a,b) { ctx.uniform4fv(a,b); };
+RDGE.bindMap['mat3']		= function(ctx, a,b) { ctx.uniformMatrix3fv(a,false,b); };
+RDGE.bindMap['mat4']		= function(ctx, a,b) 
 { 
 	ctx.uniformMatrix4fv(a,false,b); 
-	g_Engine.getContext().debug.mat4CallCount++;
+	RDGE.globals.engine.getContext().debug.mat4CallCount++;
 };
 
-bindMap['tex2d']	= function(ctx, a,b) 
+RDGE.bindMap['tex2d']	= function(ctx, a,b) 
 {
 	ctx.activeTexture(ctx.TEXTURE0+b[0]);
 	ctx.bindTexture(ctx.TEXTURE_2D, b[1]);
 	ctx.uniform1iv(a,[b[0]]);
 };
 
-bindMap['texCube']=function(ctx, a,b) 
+RDGE.bindMap['texCube']=function(ctx, a,b) 
 {
 	ctx.activeTexture(ctx.TEXTURE0+b[0]);
 	ctx.bindTexture(ctx.TEXTURE_CUBE_MAP, b[1]);
 	ctx.uniform1iv(a,[b[0]]);
 };
 
-lightDataMap = 
+RDGE.lightDataMap = 
 [
 	function(ctx, loc, lightNode) { ctx.uniform3fv(loc, lightNode.position); },
 	function(ctx, loc, lightNode) { ctx.uniform4fv(loc, lightNode.lightDiffuse); },
@@ -47,9 +49,9 @@ lightDataMap =
 	function(ctx, loc, lightNode) { ctx.uniform4fv(loc, lightNode.lightSpecular); }
 ];
 
-paramTypeNameMapping = null;
+RDGE.paramTypeNameMapping = null;
 
-jshader = function(addr) {
+RDGE.jshader = function (addr) {
     this.name = addr;
     this.def = null;
     this.technique = {};
@@ -59,7 +61,7 @@ jshader = function(addr) {
     this.currentPass = 0;
     this.type_jshader = {};
     this.global = {};
-    this.renderer = g_Engine.getContext().renderer;
+    this.renderer = RDGE.globals.engine.getContext().renderer;
     this.ctx = this.renderer.ctx;
 
     // load jshader definition at addr (if provided)
@@ -71,32 +73,32 @@ jshader = function(addr) {
         this.def = JSON.parse(request.responseText);
     }
 
-    if (!paramTypeNameMapping) {
+    if (!RDGE.paramTypeNameMapping) {
         var gl = this.ctx;
-        paramTypeNameMapping = {};
-        paramTypeNameMapping[gl.BOOL] = "bool";
-        paramTypeNameMapping[gl.INT] = "int";
-        paramTypeNameMapping[gl.FLOAT] = "float";
-        paramTypeNameMapping[gl.FLOAT_VEC2] = "vec2";
-        paramTypeNameMapping[gl.FLOAT_VEC3] = "vec3";
-        paramTypeNameMapping[gl.FLOAT_VEC4] = "vec4";
-        paramTypeNameMapping[gl.INT_VEC2] = "vec2";
-        paramTypeNameMapping[gl.INT_VEC3] = "vec3";
-        paramTypeNameMapping[gl.INT_VEC4] = "vec4";
-        paramTypeNameMapping[gl.BOOL_VEC2] = "vec2";
-        paramTypeNameMapping[gl.BOOL_VEC3] = "vec3";
-        paramTypeNameMapping[gl.BOOL_VEC4] = "vec4";
-        paramTypeNameMapping[gl.FLOAT_MAT2] = "mat2";
-        paramTypeNameMapping[gl.FLOAT_MAT3] = "mat3";
-        paramTypeNameMapping[gl.FLOAT_MAT4] = "mat4";
-        paramTypeNameMapping[gl.SAMPLER_2D] = "tex2d";
-        paramTypeNameMapping[gl.SAMPLER_CUBE] = "texCube";
+        RDGE.paramTypeNameMapping = {};
+        RDGE.paramTypeNameMapping[gl.BOOL] = "bool";
+        RDGE.paramTypeNameMapping[gl.INT] = "int";
+        RDGE.paramTypeNameMapping[gl.FLOAT] = "float";
+        RDGE.paramTypeNameMapping[gl.FLOAT_VEC2] = "vec2";
+        RDGE.paramTypeNameMapping[gl.FLOAT_VEC3] = "vec3";
+        RDGE.paramTypeNameMapping[gl.FLOAT_VEC4] = "vec4";
+        RDGE.paramTypeNameMapping[gl.INT_VEC2] = "vec2";
+        RDGE.paramTypeNameMapping[gl.INT_VEC3] = "vec3";
+        RDGE.paramTypeNameMapping[gl.INT_VEC4] = "vec4";
+        RDGE.paramTypeNameMapping[gl.BOOL_VEC2] = "vec2";
+        RDGE.paramTypeNameMapping[gl.BOOL_VEC3] = "vec3";
+        RDGE.paramTypeNameMapping[gl.BOOL_VEC4] = "vec4";
+        RDGE.paramTypeNameMapping[gl.FLOAT_MAT2] = "mat2";
+        RDGE.paramTypeNameMapping[gl.FLOAT_MAT3] = "mat3";
+        RDGE.paramTypeNameMapping[gl.FLOAT_MAT4] = "mat4";
+        RDGE.paramTypeNameMapping[gl.SAMPLER_2D] = "tex2d";
+        RDGE.paramTypeNameMapping[gl.SAMPLER_CUBE] = "texCube";
     }
 
     /*
     *	private helper functions
     */
-    this.bindParameters = function(pass) {
+    this.bindParameters = function (pass) {
         var params = pass.defParamsList; // global parameters to start with
         var lightParams = pass.lightParams;
         var lightContext = pass.lightContext;
@@ -110,15 +112,15 @@ jshader = function(addr) {
             if (params[idx].type == 'tex2d' || params[idx].type == 'texCube') {
                 texArg[0] = texUnit++;
                 texArg[1] = params[idx].data[0];
-                bindMap[params[idx].type](this.ctx, params[idx].loc, texArg);
+                RDGE.bindMap[params[idx].type](this.ctx, params[idx].loc, texArg);
             }
             else {
-                bindMap[params[idx].type](this.ctx, params[idx].loc, rdgeGlobalParameters[params[idx].name].data);
+                RDGE.bindMap[params[idx].type](this.ctx, params[idx].loc, RDGE.rdgeGlobalParameters[params[idx].name].data);
             }
         }
 
         // light settings defined by the material
-        var len = rdgeConstants.MAX_MATERIAL_LIGHTS;
+        var len = RDGE.rdgeConstants.MAX_MATERIAL_LIGHTS;
         for (var i = 0; i < len; ++i) {
             // if there is a context for a light check to see if we have a binding to the light
             if (lightContext[i] != null) {
@@ -128,7 +130,7 @@ jshader = function(addr) {
                     var numParams = lightParams[i].length;
                     for (var lp = 0; lp < numParams; ++lp) {
                         // bind the parameters using the lightDataMap function lookup, dataIndex is the key
-                        lightDataMap[lightParams[i][lp].dataIndex](this.ctx, lightParams[i][lp].loc, lightContext[i]);
+                        RDGE.lightDataMap[lightParams[i][lp].dataIndex](this.ctx, lightParams[i][lp].loc, lightContext[i]);
                     }
                 }
             }
@@ -142,10 +144,10 @@ jshader = function(addr) {
             if (params[idx].type == 'tex2d' || params[idx].type == 'texCube') {
                 texArg[0] = texUnit++;
                 texArg[1] = params[idx].data[0];
-                bindMap[params[idx].type](this.ctx, params[idx].loc, texArg);
+                RDGE.bindMap[params[idx].type](this.ctx, params[idx].loc, texArg);
             }
             else {
-                bindMap[params[idx].type](this.ctx, params[idx].loc, params[idx].data);
+                RDGE.bindMap[params[idx].type](this.ctx, params[idx].loc, params[idx].data);
             }
         }
     };
@@ -153,7 +155,7 @@ jshader = function(addr) {
     /*
     *	helper function for setting up a texture
     */
-    createJShaderTexture = function(ctx, param) {
+    createJShaderTexture = function (ctx, param) {
         var texHandle = null;
         if (typeof param.data == "string") {
             texHandle = ctx.canvas.renderer.getTextureByName(param.data, param.wrap, param.repeat, param.mips);
@@ -163,9 +165,9 @@ jshader = function(addr) {
         }
 
         return [texHandle];
-    }
+    };
 
-    paramType = function(ctx, name, def, program, technique) {
+    paramType = function (ctx, name, def, program, technique) {
         var texUnit = 0;
 
         // Get the uniform location and store it
@@ -183,16 +185,16 @@ jshader = function(addr) {
         // if data was not provided then create default data
         if (param.data == undefined) {
             switch (param.type) {
-                case "vec4": this.data = vec4.zero(); break;
-                case "vec3": this.data = vec3.zero(); break;
-                case "vec2": this.data = vec2.zero(); break;
-                case "mat4": this.data = mat4.zero(); break;
+                case "vec4": this.data = RDGE.vec4.zero(); break;
+                case "vec3": this.data = RDGE.vec3.zero(); break;
+                case "vec2": this.data = RDGE.vec2.zero(); break;
+                case "mat4": this.data = RDGE.mat4.zero(); break;
                 case "mat3": this.data = new Array(9); break;
                 case "mat2": this.data = [0, 0, 0, 0]; break;
                 case "float": this.data = [0]; break;
                 case "int": this.data = [0]; break;
-                case "tex2d": this.data = [ctx.canvas.renderer.getTextureByName(g_Engine._assetPath+"images/white.png")]; break;
-                case "texCube": this.data = [ctx.canvas.renderer.getTextureByName(g_Engine._assetPath+"images/white.png")]; break;
+                case "tex2d": this.data = [ctx.canvas.renderer.getTextureByName(RDGE.globals.engine._assetPath+"images/white.png")]; break;
+                case "texCube": this.data = [ctx.canvas.renderer.getTextureByName(RDGE.globals.engine._assetPath+"images/white.png")]; break;
             }
         }
         else {
@@ -204,11 +206,11 @@ jshader = function(addr) {
             }
         }
 
-        this.get = function() {
+        this.get = function () {
             return this.data.slice();
-        }
+        };
 
-        this.set = function(v) {
+        this.set = function (v) {
             if (this.type == 'tex2d' || this.type == 'texCube') {
                 if (typeof v == "string") {
                     v = ctx.canvas.renderer.getTextureByName(v);
@@ -221,10 +223,10 @@ jshader = function(addr) {
                 for (var i = 0; i < len; ++i)
                     this.data[i] = v[i];
             }
-        }
-    }
+        };
+    };
 
-    globalParam = function(ctx, name, param, program) {
+    globalParam = function (ctx, name, param, program) {
         this.type = param.type;
 
         this.data = param.data;
@@ -235,16 +237,16 @@ jshader = function(addr) {
         // if data was not provided then create default data
         if (!this.data) {
             switch (param.type) {
-                case "vec4": this.data = vec4.zero(); break;
-                case "vec3": this.data = vec3.zero(); break;
-                case "vec2": this.data = vec2.zero(); break;
-                case "mat4": this.data = mat4.zero(); break;
+                case "vec4": this.data = RDGE.vec4.zero(); break;
+                case "vec3": this.data = RDGE.vec3.zero(); break;
+                case "vec2": this.data = RDGE.vec2.zero(); break;
+                case "mat4": this.data = RDGE.mat4.zero(); break;
                 case "mat3": this.data = new Array(9); break;
                 case "mat2": this.data = [0, 0, 0, 0]; break;
                 case "float": this.data = [0]; break;
                 case "int": this.data = [0]; break;
-                case "tex2d": this.data = [ctx.canvas.renderer.getTextureByName(g_Engine._assetPath+"images/white.png")]; break;
-                case "texCube": this.data = [ctx.canvas.renderer.getTextureByName(g_Engine._assetPath+"images/white.png")]; break;
+                case "tex2d": this.data = [ctx.canvas.renderer.getTextureByName(RDGE.globals.engine._assetPath+"images/white.png")]; break;
+                case "texCube": this.data = [ctx.canvas.renderer.getTextureByName(RDGE.globals.engine._assetPath+"images/white.png")]; break;
             }
         }
         else {
@@ -256,10 +258,11 @@ jshader = function(addr) {
             }
         }
 
-        this.get = function() {
+        this.get = function () {
             return this.data.slice();
-        }
-        this.set = function(v) {
+        };
+
+        this.set = function (v) {
             if (this.type == 'tex2d' || this.type == 'texCube') {
                 if (typeof v == "string") {
                     v = ctx.canvas.renderer.getTextureByName(v);
@@ -272,12 +275,11 @@ jshader = function(addr) {
                 for (var i = 0; i < len; ++i)
                     this.data[i] = v[i];
             }
+        };
+    };
 
-        }
-    }
 
-
-    this.init = function() {
+    this.init = function () {
         var techniques = this.def.techniques;
         var defaultTech = null;
         for (t in techniques) {
@@ -297,14 +299,14 @@ jshader = function(addr) {
                 var numAttribs = this.ctx.getProgramParameter(program, this.ctx.ACTIVE_ATTRIBUTES);
                 for (j = 0; j < numAttribs; ++j) {
                     var attribInfo = this.ctx.getActiveAttrib(program, j);
-                    curTechnique[i].attributes[attribInfo.name] = { 'type': paramTypeNameMapping[attribInfo.type] };
+                    curTechnique[i].attributes[attribInfo.name] = { 'type': RDGE.paramTypeNameMapping[attribInfo.type] };
                 }
                 // automatically create a parameter def for every active uniform in the shader.
                 var numUniforms = this.ctx.getProgramParameter(program, this.ctx.ACTIVE_UNIFORMS);
                 for (j = 0; j < numUniforms; ++j) {
                     var uniformInfo = this.ctx.getActiveUniform(program, j);
-                    if (!rdgeGlobalParameters[uniformInfo.name]) {
-                        curTechnique[i].params[uniformInfo.name] = { 'type': paramTypeNameMapping[uniformInfo.type] };
+                    if (!RDGE.rdgeGlobalParameters[uniformInfo.name]) {
+                        curTechnique[i].params[uniformInfo.name] = { 'type': RDGE.paramTypeNameMapping[uniformInfo.type] };
                     }
                 }
 
@@ -318,8 +320,8 @@ jshader = function(addr) {
                 }
 
                 // init default parameters
-                for (var p in rdgeGlobalParameters) {
-                    var gp = new globalParam(this.ctx, p, rdgeGlobalParameters[p], program);
+                for (var p in RDGE.rdgeGlobalParameters) {
+                    var gp = new globalParam(this.ctx, p, RDGE.rdgeGlobalParameters[p], program);
 
                     if (gp.loc != null) {
                         gp.loc.ctxID = this.ctx.canvas.rdgeid;
@@ -337,7 +339,7 @@ jshader = function(addr) {
                     this[t].passes[i].paramsList = [];
 
                 // locate individual light parameters to bind with local context
-                var totalLights = rdgeConstants.MAX_MATERIAL_LIGHTS;
+                var totalLights = RDGE.rdgeConstants.MAX_MATERIAL_LIGHTS;
                 for (var lightIdx = 0; lightIdx < totalLights; ++lightIdx) {
 
                     // clear parameter
@@ -349,7 +351,7 @@ jshader = function(addr) {
                     // the parameter index key - lets us know which piece of data we are getting/setting
                     var lightDataIndex = 0;
 
-                    for (var lp in g_Engine.lightManager.lightUniforms[lightIdx]) {
+                    for (var lp in RDGE.globals.engine.lightManager.lightUniforms[lightIdx]) {
                         loc = this.ctx.getUniformLocation(program, lp);
 
                         // if item found enable this light param and set parameters to bind and lookup data
@@ -416,14 +418,14 @@ jshader = function(addr) {
         }
 
         this.setTechnique(defaultTech);
-    }
+    };
 
     /*
     *	Init a local parameter at any time during the life of the jshader.
     *  This will add the parameter to the list of parameters to be bound  
     *  before rendering
     */
-    this.initLocalParameter = function(name, param) {
+    this.initLocalParameter = function (name, param) {
         var techniques = this.def.techniques;
         for (t in techniques) {
             var curTechnique = techniques[t];
@@ -444,9 +446,9 @@ jshader = function(addr) {
                 i++;
             }
         }
-    }
+    };
 
-    this.buildShader = function(shaderType, shaderStr) {
+    this.buildShader = function (shaderType, shaderStr) {
         // pre-pend preprocessor settings
         var preProcessor = "#define PC\n"
         preProcessor += shaderStr;
@@ -476,55 +478,43 @@ jshader = function(addr) {
         }
 
         return shader;
-    }
+    };
 
-    this.buildProgram = function(t) {
+    this.buildProgram = function (t) {
         window.console.log("building shader pair: <" + t.vshader + ", " + t.fshader + ">");
-        var vShaderDef = this.def.shaders[t.vshader];
-        var fShaderDef = this.def.shaders[t.fshader];
+        var vShaderDef = RDGE.globals.engine.remapAssetFolder(this.def.shaders[t.vshader]);
+        var fShaderDef = RDGE.globals.engine.remapAssetFolder(this.def.shaders[t.fshader]);
 
         this.ctx.useProgram(null);
 
         var vertexShader = null;
-        //		if (this.compiledShaders[t.vshader] != undefined) {
-        //			vertexShader = this.compiledShaders[t.vshader];
-        //		} else 
-        {
-            var source = null;
+        var source = null;
 
-            if (vShaderDef.indexOf('{') != -1) {
-                source = vShaderDef;
-            } else {
-                var vshaderRequest = new XMLHttpRequest();
-                var urlVertShader = vShaderDef;
-                vshaderRequest.open("GET", urlVertShader, false);
-                vshaderRequest.send(null);
-                source = vshaderRequest.responseText;
-            }
-
-            vertexShader = this.buildShader(this.ctx.VERTEX_SHADER, source);
-
+        if (vShaderDef.indexOf('{') != -1) {
+            source = vShaderDef;
+        } else {
+            var vshaderRequest = new XMLHttpRequest();
+            var urlVertShader = vShaderDef;            
+            vshaderRequest.open("GET", urlVertShader, false);
+            vshaderRequest.send(null);
+            source = vshaderRequest.responseText;
         }
+
+        vertexShader = this.buildShader(this.ctx.VERTEX_SHADER, source);
 
         var fragmentShader = null;
-        //		if (this.compiledShaders[t.fshader] != undefined) 
-        //		{
-        //			fragmentShader = this.compiledShaders[t.vshader];
-        //		} else 
-        {
-            var source = null;
-            if (vShaderDef.indexOf('{') != -1) {
-                source = fShaderDef;
-            } else {
-                var vshaderRequest = new XMLHttpRequest();
-                var urlFragShader = fShaderDef;
-                vshaderRequest.open("GET", urlFragShader, false);
-                vshaderRequest.send(null);
-                source = vshaderRequest.responseText;
-            }
-
-            fragmentShader = this.buildShader(this.ctx.FRAGMENT_SHADER, source);
+        var source = null;
+        if (vShaderDef.indexOf('{') != -1) {
+            source = fShaderDef;
+        } else {
+            var vshaderRequest = new XMLHttpRequest();
+            var urlFragShader = fShaderDef;
+            vshaderRequest.open("GET", urlFragShader, false);
+            vshaderRequest.send(null);
+            source = vshaderRequest.responseText;
         }
+
+        fragmentShader = this.buildShader(this.ctx.FRAGMENT_SHADER, source);
 
         if (!vertexShader || !fragmentShader) {
             return null;
@@ -570,26 +560,26 @@ jshader = function(addr) {
         }
 
         return program;
-    }
+    };
 
     /*
     *	Set the light nodes used by this jshader
     * array item 0 corresponds to light 0, item 1 tp light 1 and so on
     * place null for lights that are not there
     */
-    this.setLightContext = function(lightRefArray) {
+    this.setLightContext = function (lightRefArray) {
         for (t in this.technique) {
             var len = this.technique.passes.length;
             for (var i = 0; i < len; ++i) {
                 this.technique.passes[i].lightContext = lightRefArray.slice();
             }
         }
-    }
+    };
 
     /*
     *	Called by the system to add material textures settings to the jshader
     */
-    this.setTextureContext = function(textureList) {
+    this.setTextureContext = function (textureList) {
         var passCount = this.technique.passes.length;
         var param = null;
 
@@ -606,9 +596,9 @@ jshader = function(addr) {
                     this.technique.passes[i].params[param.name].set(param.data[0]);
             }
         }
-    }
+    };
 
-    this.setTechnique = function(name) {
+    this.setTechnique = function (name) {
         if (this[name] != undefined) {
             this.technique = this[name];
             return true;
@@ -616,9 +606,9 @@ jshader = function(addr) {
 
         this.ctx.console.log("Failed to set technique:" + name);
         return false;
-    }
+    };
 
-    this.beginRenderState = function(i) {
+    this.beginRenderState = function (i) {
         var states = this.technique.passes[i].states;
         if (states == undefined) {
             return;
@@ -686,9 +676,9 @@ jshader = function(addr) {
         }
 
         this.resetRS = this.technique.passes[i].states.reset == undefined || this.technique.passes[i].states.reset == true;
-    }
+    };
 
-    this.endRenderState = function() {
+    this.endRenderState = function () {
         // restore render states to some default state.
         var ctx = this.ctx;
         if (this.resetRS) {
@@ -701,33 +691,33 @@ jshader = function(addr) {
             //ctx.enable(ctx.CULL_FACE);
             //ctx.cullFace(ctx.BACK);
         }
-    }
+    };
 
-    this.begin = function() {
+    this.begin = function () {
         this.currentPass = null;
         if (this.def == null || this.technique == null) {
             return 0;
         }
         return this.technique.passes.length;
-    }
+    };
 
-    this.beginPass = function(i) {
+    this.beginPass = function (i) {
         this.currentPass = this.technique.passes[i];
         this.ctx.useProgram(this.currentPass.program);
         this.bindParameters(this.currentPass);
         this.beginRenderState(i);
         return this.currentPass;
-    }
+    };
 
-    this.endPass = function() {
+    this.endPass = function () {
         this.endRenderState();
         this.ctx.useProgram(null);
-    }
+    };
 
-    this.end = function() {
-    }
+    this.end = function () {
+    };
 
-    this.exportShader = function() {
+    this.exportShader = function () {
 
         for (t in this.def.techniques) {
             var numPasses = this[t].passes.length;
@@ -747,4 +737,4 @@ jshader = function(addr) {
         return JSON.stringify(this.def);
 
     }
-}
+};
