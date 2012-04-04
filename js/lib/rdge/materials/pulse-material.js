@@ -66,9 +66,8 @@ var PulseMaterial = function PulseMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
-	// duplcate method requirde
-	this.dup = function( world )
-	{
+	// duplicate method required
+	this.dup = function( world ) {
 		// save the world
 		if (world)  this.setWorld( world );
 
@@ -86,8 +85,7 @@ var PulseMaterial = function PulseMaterial() {
 		return newMat;
 	};
 
-	this.init = function( world )
-	{
+	this.init = function( world ) {
 		// save the world
 		if (world)  this.setWorld( world );
 
@@ -96,12 +94,12 @@ var PulseMaterial = function PulseMaterial() {
 		this._dTime = 0.01;
 
 		// set up the shader
-		this._shader = new jshader();
+		this._shader = new RDGE.jshader();
 		this._shader.def = pulseMaterialDef;
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = createMaterialNode("pulseMaterial" + "_" + world.generateUniqueNodeID());
+		this._materialNode = RDGE.createMaterialNode("pulseMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;
@@ -120,12 +118,12 @@ var PulseMaterial = function PulseMaterial() {
 		var material = this._materialNode;
 		if (material) {
 			var technique = material.shaderProgram['default'];
-			var renderer = g_Engine.getContext().renderer;
+			var renderer = RDGE.globals.engine.getContext().renderer;
 			if (renderer && technique) {
 				var texMapName = this._propValues[this._propNames[0]];
 				var wrap = 'REPEAT',  mips = true;
 				var tex = this.loadTexture( texMapName, wrap, mips );
-
+				
 				if (tex) {
 					technique.u_tex0.set( tex );
                 }
@@ -139,7 +137,7 @@ var PulseMaterial = function PulseMaterial() {
 		if (material)
 		{
 			var technique = material.shaderProgram['default'];
-			var renderer = g_Engine.getContext().renderer;
+			var renderer = RDGE.globals.engine.getContext().renderer;
 			if (renderer && technique) {
 				if (this._shader && this._shader['default']) {
 					this._shader['default'].u_time.set( [this._time] );
@@ -155,7 +153,7 @@ var PulseMaterial = function PulseMaterial() {
 		var material = this._materialNode;
 		if (material) {
 			var technique = material.shaderProgram['default'];
-			var renderer = g_Engine.getContext().renderer;
+			var renderer = RDGE.globals.engine.getContext().renderer;
 			if (renderer && technique) {
 				technique.u_resolution.set( res );
 			}
@@ -176,64 +174,22 @@ var PulseMaterial = function PulseMaterial() {
 		return jObj;
 	};
 
-	this.importJSON = function( jObj )
-	{
+	this.importJSON = function( jObj ) {
         if (this.getShaderName() != jObj.material)  throw new Error( "ill-formed material" );
         this.setName(  jObj.name );
 
         try {
 			this._propValues[this._propNames[0]] = jObj.texture;
 			this._texMap = jObj.texture;
-            if (jObj.dTime)
+            if (jObj.dTime) {
                 this._dTime = jObj.dTime;
+            }
         }
         catch (e)
         {
             throw new Error( "could not import material: " + jObj );
         }
-	}
-
-
-	this.export = function() {
-		// every material needs the base type and instance name
-		var exportStr = "material: " + this.getShaderName() + "\n";
-		exportStr += "name: " + this.getName() + "\n";
-
-		var world = this.getWorld();
-		if (!world)
-			throw new Error( "no world in material.export, " + this.getName() );
-
-		var texMapName =  this._propValues[this._propNames[0]];
-		exportStr += "texture: " +texMapName + "\n";
-		
-		// every material needs to terminate like this
-		exportStr += "endMaterial\n";
-
-		return exportStr;
 	};
-
-	this.import = function( importStr ) {
-		var pu = new MaterialParser( importStr );
-		var material = pu.nextValue( "material: " );
-		if (material != this.getShaderName())  throw new Error( "ill-formed material" );
-		this.setName(  pu.nextValue( "name: ") );
-
-		var rtnStr;
-        try {
-			this._propValues[this._propNames[0]] = pu.nextValue( "texture: " );
-
-            var endKey = "endMaterial\n";
-            var index = importStr.indexOf( endKey );
-            index += endKey.length;
-            rtnStr = importStr.substr( index );
-        }
-        catch (e)
-        {
-            throw new Error( "could not import material: " + importStr );
-        }
-
-		return rtnStr;
-	}
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
