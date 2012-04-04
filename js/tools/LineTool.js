@@ -7,7 +7,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = 	require("montage/core/core").Montage,
     ShapeTool = require("js/tools/ShapeTool").ShapeTool,
     DrawingToolBase = require("js/tools/drawing-tool-base").DrawingToolBase,
-    ElementMediator = require("js/mediators/element-mediator").ElementMediator,
     NJUtils = require("js/lib/NJUtils").NJUtils,
     TagTool = require("js/tools/TagTool").TagTool,
     ShapesController = 	require("js/controllers/elements/shapes-controller").ShapesController,
@@ -53,59 +52,43 @@ exports.LineTool = Montage.create(ShapeTool, {
         }
     },
 
-    HandleLeftButtonUp:
-    {
-        value: function (event)
-        {
-            var slope = this._getSlope(),
-                drawData = this.getDrawingData();
+    HandleLeftButtonUp: {
+        value: function (event) {
+            var slope = this._getSlope(), drawData = this.getDrawingData();
 
             if(drawData) {
-                var canvas,
-                    xAdj = 0,
-                    yAdj = 0,
-                    w = ~~drawData.width,
-                    h = ~~drawData.height;
-                if(!this._useExistingCanvas())
-                {
-                    // set the dimensions
-                    if(slope === "horizontal")
-                    {
-                        h = Math.max(this._strokeSize, 1);
-                    }
-                    else if(slope === "vertical")
-                    {
-                        w = Math.max(this._strokeSize, 1);
-                    }
-                    else
-                    {
-                        // else make the line's stroke fit inside the canvas by growing the canvas
-                        var theta = Math.atan(slope);
-                        xAdj = Math.abs((this._strokeSize/2)*Math.sin(theta));
-                        yAdj = Math.abs((this._strokeSize/2)*Math.cos(theta));
+                var canvas, xAdj = 0, yAdj = 0, w, h;
+                if(!this._useExistingCanvas()) {
+                    if(drawData = this.getDrawingData()) {
+                        // set the dimensions
+                        w = ~~drawData.width;
+                        h = ~~drawData.height;
+                        if(slope === "horizontal") {
+                            h = Math.max(this._strokeSize, 1);
+                        } else if(slope === "vertical") {
+                            w = Math.max(this._strokeSize, 1);
+                        } else {
+                            // else make the line's stroke fit inside the canvas by growing the canvas
+                            var theta = Math.atan(slope);
+                            xAdj = Math.abs((this._strokeSize/2)*Math.sin(theta));
+                            yAdj = Math.abs((this._strokeSize/2)*Math.cos(theta));
 
-                        w += ~~(xAdj*2);
-                        h += ~~(yAdj*2);
-                    }
+                            w += ~~(xAdj*2);
+                            h += ~~(yAdj*2);
+                        }
 
-                    canvas = NJUtils.makeNJElement("canvas", "Canvas", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
-                    var elementModel = TagTool.makeElement(w, h, drawData.planeMat, drawData.midPt, canvas);
-
-                    ElementMediator.addElement(canvas, elementModel.data, true);
-                    canvas.elementModel.isShape = true;
-                }
-                else
-                {
-                    canvas = this._targetedElement;
-                    canvas.elementModel.controller = ShapesController;
-                    if(!canvas.elementModel.shapeModel)
-                    {
-                        canvas.elementModel.shapeModel = Montage.create(ShapeModel);
+                        canvas = NJUtils.makeNJElement("canvas", "Canvas", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
+                        var elementModel = TagTool.makeElement(w, h, drawData.planeMat, drawData.midPt, canvas);
+                        canvas.elementModel.isShape = true;
+                        this.application.ninja.elementMediator.addElements(canvas, elementModel.data);
+                    } else {
+                        canvas = this._targetedElement;
+                        canvas.elementModel.controller = ShapesController;
+                        if(!canvas.elementModel.shapeModel) {
+                            canvas.elementModel.shapeModel = Montage.create(ShapeModel);
+                        }
                     }
                 }
-                this.RenderShape(w, h, drawData.planeMat, drawData.midPt,
-                                    canvas, slope, xAdj, yAdj);
-                NJevent("elementAdded", canvas);
             }
 
             this.endDraw(event);
@@ -113,8 +96,34 @@ exports.LineTool = Montage.create(ShapeTool, {
             this._isDrawing = false;
             this._hasDraw=false;
 
-
             this.DrawHandles();
+        }
+    },
+
+    onAddElements: {
+        value: function(el) {
+            var drawData, xAdj = 0, yAdj = 0, w, h, slope = this._getSlope();
+
+            if(drawData = this.getDrawingData()) {
+                // set the dimensions
+                w = ~~drawData.width;
+                h = ~~drawData.height;
+                if(slope === "horizontal") {
+                    h = Math.max(this._strokeSize, 1);
+                } else if(slope === "vertical") {
+                    w = Math.max(this._strokeSize, 1);
+                } else {
+                    // else make the line's stroke fit inside the canvas by growing the canvas
+                    var theta = Math.atan(slope);
+                    xAdj = Math.abs((this._strokeSize/2)*Math.sin(theta));
+                    yAdj = Math.abs((this._strokeSize/2)*Math.cos(theta));
+
+                    w += ~~(xAdj*2);
+                    h += ~~(yAdj*2);
+                }
+
+                this.RenderShape(w, h, drawData.planeMat, drawData.midPt, el, slope, xAdj, yAdj);
+            }
         }
     },
 

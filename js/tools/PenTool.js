@@ -447,7 +447,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                 var newCanvas = null;
                 newCanvas = NJUtils.makeNJElement("canvas", "Subpath", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
                 var elementModel = TagTool.makeElement(parseInt(w), parseInt(h), planeMat, midPt, newCanvas);
-                ElementMediator.addElement(newCanvas, elementModel.data, true);
+                ElementMediator.addElements(newCanvas, elementModel.data, false);
 
                 // create all the GL stuff
                 var world = this.getGLWorld(newCanvas, this._useWebGL);//this.options.use3D);//this.CreateGLWorld(planeMat, midPt, newCanvas, this._useWebGL);//fillMaterial, strokeMaterial);
@@ -700,6 +700,7 @@ exports.PenTool = Montage.create(ShapeTool, {
         }
     },
 
+               
     BuildSecondCtrlPoint:{
         value: function(p0, p2, p3) {
             var baselineOrig = VecUtils.vecSubtract(3, p3, p0);
@@ -1051,11 +1052,11 @@ exports.PenTool = Montage.create(ShapeTool, {
                 }
                 else{
                     for (var i=0;i<this.application.ninja.selectedElements.length;i++){
-                        var element = this.application.ninja.selectedElements[i]._element;
+                        var element = this.application.ninja.selectedElements[i]
                         console.log("Entered pen tool, had selected: " + element.elementModel.selection);
                         if (element.elementModel.selection === 'Subpath'){ //TODO what to do if the canvas is drawn by tag tool?
                             //set the pen canvas to be the selected canvas
-                            this._penCanvas = this.application.ninja.selectedElements[i]._element;
+                            this._penCanvas = this.application.ninja.selectedElements[i];
 
                             // get the subpath for this world
                             this._selectedSubpath = null;
@@ -1128,7 +1129,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                     var els = [];
                     ElementController.removeElement(this._penCanvas);
                     els.push(this._penCanvas);
-                    NJevent( "deleteSelection", els );
+                    NJevent( "elementsRemoved", els );
                     this._penCanvas = null;
                }
              }
@@ -1141,9 +1142,9 @@ exports.PenTool = Montage.create(ShapeTool, {
                     els.push(this.application.ninja.selectedElements[i]);
                 }
                 for(i=0; i<len; i++) {
-                    ElementController.removeElement(els[i]._element);
+                    ElementController.removeElement(els[i]);
                 }
-                NJevent( "deleteSelection", els );
+                NJevent( "elementsRemoved", els );
 
                 //clear out the selected path if it exists
                 if (this._selectedSubpath) {
