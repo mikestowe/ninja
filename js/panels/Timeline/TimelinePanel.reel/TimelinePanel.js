@@ -834,12 +834,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     handleElementAdded:{
         value:function() {
             this.createNewLayer();
-            this.currentLayerSelected.layerData.elementsList.push(this.application.ninja.selectedElements[0]._element);
+            this.currentLayerSelected.layerData.elementsList.push(this.application.ninja.selectedElements[0]);
             this.currentLayerSelected.layerData.elementsList[0].dataset.storedLayerName = this.currentLayerSelected.layerData.layerName;
         }
     },
 
-    handleElementDeleted:{
+    handleElementsRemoved:{
         value:function () {
             this.deleteLayer();
         }
