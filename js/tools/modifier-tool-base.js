@@ -177,7 +177,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                     }
 
                     // only do quadrant snapping if the 4 corners of the element are in the drag plane
-                    var sign = MathUtils.fpSign( VecUtils.vecDot(3,this._dragPlane,[0,0,1]) + this._dragPlane[3] - 1.0);
+                    var sign = MathUtils.fpSign( vecUtils.vecDot(3,this._dragPlane,[0,0,1]) + this._dragPlane[3] - 1.0);
                     this._shouldUseQuadPt = (sign == 0)
 
 					var wpHitRec = hitRec.convertToWorkingPlane( this._dragPlane );

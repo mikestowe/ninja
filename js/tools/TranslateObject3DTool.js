@@ -7,6 +7,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Translate3DToolBase = require("js/tools/Translate3DToolBase").Translate3DToolBase,
     drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils,
     viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils,
+    vecUtils = require("js/helper-classes/3D/vec-utils").VecUtils,
     snapManager = require("js/helper-classes/3D/snap-manager").SnapManager;
 
 exports.TranslateObject3DTool = Object.create(Translate3DToolBase, {
@@ -128,7 +129,7 @@ exports.TranslateObject3DTool = Object.create(Translate3DToolBase, {
 
                     // only do quadrant snapping if the 4 corners of the element are in the drag plane
                     
-                    var sign = MathUtils.fpSign( VecUtils.vecDot(3,this._dragPlane,[0,0,1]) + this._dragPlane[3] - 1.0);
+                    var sign = MathUtils.fpSign( vecUtils.vecDot(3,this._dragPlane,[0,0,1]) + this._dragPlane[3] - 1.0);
                      this._shouldUseQuadPt = (sign == 0);
 
 					var wpHitRec = hitRec.convertToWorkingPlane( this._dragPlane );
