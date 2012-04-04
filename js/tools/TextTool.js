@@ -95,7 +95,7 @@ exports.TextTool = Montage.create(DrawingTool, {
             } else {
                 this.doSelection(event);
                 if (this.application.ninja.selectedElements.length !== 0 ) {
-                    this.selectedElement = this.application.ninja.selectedElements[0]._element;
+                    this.selectedElement = this.application.ninja.selectedElements[0];
                 }
                 this._isDrawing = false;
             }
@@ -144,7 +144,7 @@ exports.TextTool = Montage.create(DrawingTool, {
 
     HandleDoubleClick: {
         value: function(e) {
-            //this.application.ninja.selectedElements[0]._element.setAttribute("contenteditable", true);
+            //this.application.ninja.selectedElements[0].setAttribute("contenteditable", true);
 
             //if (!this.application.ninja.textTool) {
 

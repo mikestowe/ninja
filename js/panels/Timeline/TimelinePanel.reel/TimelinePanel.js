@@ -469,9 +469,14 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
 
     // Bind all document-specific events (pass in true to unbind)
-    _bindDocumentEvents:{
-        value:function (boolUnbind) {
-            var arrEvents = ["elementAdded", "elementDeleted", "selectionChange"],
+    _bindDocumentEvents : {
+        value: function(boolUnbind) {
+            var arrEvents = ["deleteLayerClick",
+                             "newLayer",
+                             "deleteLayer",
+                             "elementAdded",
+                             "elementsRemoved",
+                             "selectionChange"],
                 i,
                 arrEventsLength = arrEvents.length;
 

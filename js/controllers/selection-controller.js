@@ -6,8 +6,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 
 var Montage = require("montage/core/core").Montage,
-    Component = require("montage/ui/component").Component,
-    NJUtils     = require("js/lib/NJUtils").NJUtils;
+    Component = require("montage/ui/component").Component;
 
 exports.SelectionController = Montage.create(Component, {
 
@@ -45,13 +44,10 @@ exports.SelectionController = Montage.create(Component, {
         value: function() {
             this.eventManager.addEventListener("openDocument", this, false);
             this.eventManager.addEventListener("elementAdded", this, false);
-            this.eventManager.addEventListener("elementDeleted", this, false);
+            this.eventManager.addEventListener("elementsRemoved", this, false);
             this.eventManager.addEventListener("selectAll", this, false);
-            this.eventManager.addEventListener("deleteSelection", this, false);
             this.eventManager.addEventListener("switchDocument", this, false);
             this.eventManager.addEventListener("closeDocument", this, false);
-//            defaultEventManager.addEventListener( "undo", this, false);
-//            defaultEventManager.addEventListener( "redo", this, false);
         }
     },
 
@@ -67,35 +63,25 @@ exports.SelectionController = Montage.create(Component, {
     
     initWithDocument: {
         value: function(currentSelectionArray) {
-            this._selectedItems = [];
             this._isDocument = true;
 
             if(currentSelectionArray) {
                 if(currentSelectionArray.length >= 1) {
-                    this._selectedItems = currentSelectionArray;
                     this._isDocument = false;
-
-
 
                     this.application.ninja.selectedElements = currentSelectionArray;
                     NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument});
-
-
-
                 }
             }
 
-            //
             this._selectionContainer = this.application.ninja.currentSelectedContainer;
-
         }
     },
 
     handleSwitchDocument: {
         value: function() {
             if(this.application.ninja.documentController.activeDocument.currentView === "design"){
-                this._selectedItems = this.application.ninja.selectedElements.slice(0);
-                this._isDocument = this._selectedItems.length === 0;
+                this._isDocument = this.application.ninja.selectedElements.length === 0;
                 NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument} );
             }
         }
@@ -107,21 +93,12 @@ exports.SelectionController = Montage.create(Component, {
         }
     },
 
-    handleElementDeleted: {
+    handleElementsRemoved: {
         value: function(event) {
             if(!this._isDocument) {
-                if(this.findSelectedElement(event.detail) !== -1) {
-                    this.executeSelectElement();
-                    var element = event.detail;
-                     if (element) {
-                        if (element.elementModel) {
-                            if (element.elementModel.shapeModel) {
-                                if (element.elementModel.shapeModel.GLWorld)
-                                    element.elementModel.shapeModel.GLWorld.clearTree();
-                            }
-                        }
-                    }
-                }
+                this.application.ninja.selectedElements = [];
+                this._isDocument = true;
+                NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument});
             }
         }
     },
@@ -142,23 +119,19 @@ exports.SelectionController = Montage.create(Component, {
         }
     },
 
-    handleDeleteSelection: {
-        value: function(event) {
-            this.application.ninja.selectedElements = [];
-            this._isDocument = true;
-            NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument});
-        }
-    },
-
     /**
      * Select Element. This function will not check that element, it will simply add it to the selection array.
      */
     executeSelectElement: {
-        value: function(item) {
+        value: function(element) {
             this.application.ninja.selectedElements = [];
 
-            if(item) {
-                this.application.ninja.selectedElements.push({_element: item, uuid: item.uuid});
+            if(element) {
+                if(Array.isArray(element)) {
+                    this.application.ninja.selectedElements = Array.prototype.slice.call(element, 0);
+                } else {
+                    this.application.ninja.selectedElements.push(element);
+                }
                 this._isDocument = false;
             } else {
                 this._isDocument = true;
@@ -171,23 +144,20 @@ exports.SelectionController = Montage.create(Component, {
     },
 
     selectElement: {
-        value: function(item) {
+        value: function(element) {
 
-            if(this.findSelectedElement(item) === -1) {
+            if(this.findSelectedElement(element) === -1) {
 
-                if(this.application.ninja.currentDocument.inExclusion(item) !== -1){
+                if(this.application.ninja.currentDocument.inExclusion(element) !== -1){
                     if(this.isDocument) return;     // If the stage is already selected do nothing.
-                    this.executeSelectElement();    // Else execute selection with no item
+                    this.executeSelectElement();    // Else execute selection with no element
                 } else {
-
-//                    if(item.parentNode.id === "UserContent") {
-                    if(item.parentNode.uuid === this.selectionContainer.uuid) {
-                        this.executeSelectElement(item);
+                    if(element.parentNode.uuid === this.selectionContainer.uuid) {
+                        this.executeSelectElement(element);
                     } else {
-                        var outerElement = item.parentNode;
+                        var outerElement = element.parentNode;
 
                         while(outerElement.parentNode && outerElement.parentNode.uuid !== this.selectionContainer.uuid) {
-                        //while(outerElement.parentNode && outerElement.parentNode.id !== "UserContent") {
                             // If element is higher up than current container then return
                             if(outerElement.id === "UserContent") return;
                             // else keep going up the chain
@@ -202,13 +172,13 @@ exports.SelectionController = Montage.create(Component, {
     },
 
     selectElements: {
-        value: function(items) {
-            if(items && items.length > 0) {
+        value: function(elements) {
+            if(elements && elements.length > 0) {
                 var that = this;
                 this.application.ninja.selectedElements = [];
 
-                items.forEach(function(item) {
-                    that.application.ninja.selectedElements.push({_element: item, uuid: item.uuid});
+                elements.forEach(function(element) {
+                    that.application.ninja.selectedElements.push(element);
                     that._isDocument = false;
                 });
 
@@ -218,22 +188,22 @@ exports.SelectionController = Montage.create(Component, {
     },
 
     shiftSelectElement: {
-        value: function(item) {
-            if(this.application.ninja.currentDocument.inExclusion(item) !== -1) return;
+        value: function(element) {
+            if(this.application.ninja.currentDocument.inExclusion(element) !== -1) return;
 
-            (this.findSelectedElement(item) !== -1 ) ? this.removeElement(item) : this.insertElement(item);
+            (this.findSelectedElement(element) !== -1 ) ? this.removeElement(element) : this.insertElement(element);
         }
     },
 
     insertElement: {
-        value: function(item) {
-            if(item) {
+        value: function(element) {
+            if(element) {
                 if(this._isDocument) {
                     this.application.ninja.selectedElements = [];
                     this._isDocument = false;
                 }
 
-                this.application.ninja.selectedElements.push({_element: item, uuid: item.uuid});
+                this.application.ninja.selectedElements.push(element);
 
                 NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument} );
             }
@@ -264,53 +234,8 @@ exports.SelectionController = Montage.create(Component, {
         }
     },
 
-
-
-
-
-    handleUndo: {
-        value: function(event) {
-            this._applySelectionAfterUndoRedo(event.detail);
-        }
-    },
-
-    handleRedo: {
-        value: function(event) {
-            this._applySelectionAfterUndoRedo(event.detail);
-        }
-    },
-
-    _applySelectionAfterUndoRedo: {
-        value: function(items) {
-            if(items) {
-                if(items instanceof Array) {
-                    if(items.length > 1)
-                    {
-                        this.clearSelection();
-                        this.setMultipleObjects(items);
-                        documentControllerModule.DocumentController.DispatchElementChangedEvent(items);
-                    }
-                    else if(this._selectedItems.length === 0 || this.findSelectedElement(items) === -1) {
-                        this.setSingleSelection(items[0]);
-                        documentControllerModule.DocumentController.DispatchElementChangedEvent(items[0]);
-                    }
-                } else {
-                    if(this._selectedItems.length === 0 || this.findSelectedElement(items) === -1) {
-                        this.setSingleSelection(items);
-                        //documentControllerModule.DocumentController.DispatchElementChangedEvent([items]);
-                    }
-                }
-
-            } else {
-                this.clearSelection();
-            }
-        }
-    },
-
-	isObjectSelected:
-	{
-		value: function( elt )
-		{
+	isObjectSelected: {
+		value: function( elt ) {
 			return this.findSelectedElement(elt) > -1;
 		}
 	},
@@ -323,6 +248,9 @@ exports.SelectionController = Montage.create(Component, {
      */
     findSelectedElement: {
         value: function(item) {
+            // TODO do the loop check in the select element and only use the index here
+            // return this.application.ninja.selectedElements.indexOf(item);
+
             var itemUUID;
 
             for(var i=0, uuid; this.application.ninja.selectedElements[i];i++) {
@@ -345,9 +273,6 @@ exports.SelectionController = Montage.create(Component, {
             }
 
             return -1;
-
-            // TODO: Not a true object because of the _element.
-            //return this.application.ninja.selectedElements.indexOf(item);
         }
     }
 
