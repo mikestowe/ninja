@@ -268,7 +268,6 @@ var SliderBase = exports.SliderBase = Montage.create(Component, {
 
     _dispatchActionEvent: {
         value: function() {
-//            console.log("dispatching event", this._element.id, this._eventType, this._wasSetByCode);
             var actionEvent = document.createEvent("CustomEvent");
             actionEvent.initEvent(this._eventType, true, true);
             actionEvent.type = this._eventType;

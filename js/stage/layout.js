@@ -53,12 +53,8 @@ exports.Layout = Montage.create(Component, {
             this.ctx.lineWidth = this.ctxLineWidth;
             this.ctx.fillStyle = this.drawFillColor;
 
-//            this.eventManager.addEventListener("elementAdded", this, false);
-            this.eventManager.addEventListener("elementDeleted", this, false);
-
             this.eventManager.addEventListener("selectionChange", this, false);
-
-            this.eventManager.addEventListener("deleteSelection", this, false);
+            this.eventManager.addEventListener("elementsRemoved", this, false);
         }
     },
 
@@ -76,7 +72,7 @@ exports.Layout = Montage.create(Component, {
     },
 
     // Redraw stage only once after all deletion is completed
-    handleDeleteSelection: {
+    handleElementsRemoved: {
         value: function(event) {
             this.draw();
             this.draw3DInfo(false);
@@ -110,10 +106,8 @@ exports.Layout = Montage.create(Component, {
 
             // Draw the non selected elements
             if(!event.detail.isDocument) {
-                var tmp = event.detail.elements.map(function(element){ return element._element});
-
                 this.elementsToDraw = this.domTree.filter(function(value) {
-                    return (tmp.indexOf(value) === -1);
+                    return (event.detail.elements.indexOf(value) === -1);
                 });
             } else {
                 this.elementsToDraw = Array.prototype.slice.call(this.domTree, 0);
@@ -345,7 +339,11 @@ exports.Layout = Montage.create(Component, {
 
     _elementName: {
         value: function(item) {
-            return this.application.ninja.elementMediator.getNJProperty(item, "selection");
+            if(item.elementModel && item.elementModel.hasOwnProperty("selection")) {
+                return item.elementModel['selection'];
+            } else {
+                return "";
+            }
         }
     }
 

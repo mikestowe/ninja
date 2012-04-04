@@ -9,7 +9,6 @@ var Montage = require("montage/core/core").Montage,
     viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils,
     drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils,
     NJUtils = require("js/lib/NJUtils").NJUtils,
-    ElementMediator = require("js/mediators/element-mediator").ElementMediator,
     ShapesController = require("js/controllers/elements/shapes-controller").ShapesController,
     ShapeModel    = require("js/models/shape-model").ShapeModel,
     TagTool = require("js/tools/TagTool").TagTool;
@@ -62,30 +61,23 @@ exports.ShapeTool = Montage.create(DrawingTool, {
 		{
             var drawData;
 
-            drawData =  this.getDrawingData();
+            drawData = this.getDrawingData();
 
             if(drawData) {
                 var canvas;
-                if(!this._useExistingCanvas())
-                {
+                if(!this._useExistingCanvas()) {
                     canvas = NJUtils.makeNJElement("canvas", "Canvas", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
-                    var elementModel = TagTool.makeElement(~~drawData.width, ~~drawData.height,
-                                                                        drawData.planeMat, drawData.midPt, canvas);
+                    var elementModel = TagTool.makeElement(~~drawData.width, ~~drawData.height, drawData.planeMat, drawData.midPt, canvas);
 
-                    ElementMediator.addElement(canvas, elementModel.data, true);
                     canvas.elementModel.isShape = true;
-                }
-                else
-                {
+                    this.application.ninja.elementMediator.addElements(canvas, elementModel.data);
+                } else {
                     canvas = this._targetedElement;
                     canvas.elementModel.controller = ShapesController;
-                    if(!canvas.elementModel.shapeModel)
-                    {
+                    if(!canvas.elementModel.shapeModel) {
                         canvas.elementModel.shapeModel = Montage.create(ShapeModel);
                     }
                 }
-                this.RenderShape(drawData.width, drawData.height, drawData.planeMat, drawData.midPt, canvas);
-                NJevent("elementAdded", canvas);
             }
 
 			this.endDraw(event);
@@ -93,17 +85,28 @@ exports.ShapeTool = Montage.create(DrawingTool, {
 			this._isDrawing = false;
 			this._hasDraw=false;
 
-
 			this.DrawHandles();
 		}
 	},
+
+    onAddElements: {
+        value: function(el) {
+            var drawData;
+
+            if(drawData = this.getDrawingData()) {
+                this.RenderShape(drawData.width, drawData.height, drawData.planeMat, drawData.midPt, el);
+            }
+        }
+    },
 
     Configure: {
         value: function(wasSelected) {
             if(wasSelected) {
                 this.AddCustomFeedback();
+                this.application.ninja.elementMediator.addDelegate = this;
             } else {
                 this.RemoveCustomFeedback();
+                this.application.ninja.elementMediator.addDelegate = null;
             }
         }
     },
@@ -174,12 +177,12 @@ exports.ShapeTool = Montage.create(DrawingTool, {
     getGLWorld: {
         value: function (canvas, use3D)
         {
-            var world = ElementMediator.getShapeProperty(canvas, "GLWorld");
+            var world = this.application.ninja.elementMediator.getShapeProperty(canvas, "GLWorld");
             if(!world)
             {
                 // create all the GL stuff
                 var world = new World(canvas, use3D);
-                ElementMediator.setShapeProperty(canvas, "GLWorld", world);
+                this.application.ninja.elementMediator.setShapeProperty(canvas, "GLWorld", world);
             }
 
             return world;
