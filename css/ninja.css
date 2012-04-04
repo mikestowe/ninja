@@ -80,7 +80,7 @@ body { position: absolute; margin: 0px; width: 100%; height: 100%; background-co
 
 #topPanelContainer { overflow: hidden; margin-bottom: 2px; height: 32px; }
 
-.timelinePanel { background: transparent; height: 150px; min-height: 46px; max-height: 50%; overflow: auto; }
+.timelinePanel { background: transparent; height: 150px; min-height: 46px; max-height: 50%; overflow: auto; -webkit-transition: all 0.15s linear; }
 
 .panelContainer { display: -webkit-box; -webkit-box-orient: vertical; position: relative; }
 
@@ -604,7 +604,7 @@ button.panel-button { -webkit-appearance: none; font-size: 9px; color: white; ba
 
 .pp_strokelabel { border: none; margin: -1px 8px 0px 27px; }
 
-.pp_filllabel { border-width: none; margin: -1px 8px 0px 34px; }
+.pp_filllabel { border: none; margin: -1px 8px 0px 34px; }
 
 .panels { display: -webkit-box; position: absolute; -webkit-box-orient: vertical; -webkit-box-align: stretch; height: 100%; width: 100%; overflow: hidden; }
 

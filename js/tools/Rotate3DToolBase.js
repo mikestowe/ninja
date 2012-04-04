@@ -262,7 +262,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
             {
                 if(len === 1)
                 {
-                    this.target = this.application.ninja.selectedElements[0]._element;
+                    this.target = this.application.ninja.selectedElements[0];
                     drawUtils.addElement(this.target);
 
                     viewUtils.pushViewportObj( this.target );
@@ -311,7 +311,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
             this._targets = [];
             for(var i = 0; i < len; i++)
             {
-                var elt = this.application.ninja.selectedElements[i]._element;
+                var elt = this.application.ninja.selectedElements[i];
 //                this._initProps3D(elt);
 
 

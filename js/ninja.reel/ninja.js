@@ -6,6 +6,7 @@
 
 var Montage = require("montage/core/core").Montage,
     Component   = require("montage/ui/component").Component,
+    UndoManager = require("montage/core/undo-manager").UndoManager,
     AppData     = require("js/data/appdata").AppData;
 
 var matrix = require("js/lib/math/matrix");
@@ -24,7 +25,7 @@ exports.Ninja = Montage.create(Component, {
     },
 
     _isResizing: {
-        value: false
+        value: null
     },
     _resizedHeight : {
         value: 0
@@ -35,11 +36,18 @@ exports.Ninja = Montage.create(Component, {
 
     height: {
         get: function() {
+            if(this._height === null) {
+                var storedData = this.application.localStorage.getItem("timelinePanel");
+                if(storedData && storedData.value) {
+                    this._height = storedData.value;
+                }
+            }
             return this._height;
         },
         set: function(val) {
             if(this._height != val) {
                 this._height = val;
+                this.application.localStorage.setItem("timelinePanel", {"version": this.version, "value": val});
                 this.needsDraw = true;
             }
 
@@ -55,11 +63,18 @@ exports.Ninja = Montage.create(Component, {
 
     width: {
         get: function() {
+            if(this._width === null) {
+                var storedData = this.application.localStorage.getItem("rightPanelsContainer");
+                if(storedData && storedData.value) {
+                    this._width = storedData.value;
+                }
+            }
             return this._width;
         },
         set: function(val) {
             if(this._width != val) {
                 this._width = val;
+                this.application.localStorage.setItem("rightPanelsContainer", {"version": this.version, "value": val});
                 this.needsDraw = true;
             }
 
@@ -71,6 +86,8 @@ exports.Ninja = Montage.create(Component, {
             this.isResizing = true;
             this.height = parseInt(this.timeline.element.offsetHeight);
             this.width = parseInt(this.rightPanelContainer.offsetWidth);
+            this.rightPanelContainer.classList.add("disableTransition");
+            this.timeline.element.classList.add("disableTransition");
             this.needsDraw = true;
         }
     },
@@ -79,7 +96,6 @@ exports.Ninja = Montage.create(Component, {
         value:function(e) {
             this._resizedHeight = e._event.dY;
             this._resizedWidth = e._event.dX;
-            console.log("resizing");
             this.stage.resizeCanvases = true;
             this.needsDraw = true;
         }
@@ -87,13 +103,17 @@ exports.Ninja = Montage.create(Component, {
 
     handleResizeEnd: {
         value: function(e) {
-            this.height -= this._resizedHeight;
-            this.width -= this._resizedWidth;
+//            this.height -= this._resizedHeight;
+//            this.width -= this._resizedWidth;
             this.stage.resizeCanvases = true;
             this._resizedHeight = 0;
             this._resizedWidth = 0;
             this.isResizing = false;
             this.needsDraw = true;
+            this.rightPanelContainer.classList.remove("disableTransition");
+            this.timeline.element.classList.remove("disableTransition");
+            this.height = this.timeline.element.offsetHeight;
+            this.width = this.rightPanelContainer.offsetWidth;
         }
     },
 
@@ -103,9 +123,10 @@ exports.Ninja = Montage.create(Component, {
             this.height = 140;
             this._resizedHeight = 0;
             this._resizedWidth = 0;
-            this.needsDraw = true;
             this.timelineSplitter.collapsed = false;
             this.panelSplitter.collapsed = false;
+            this.stage.resizeCanvases = true;
+            this.needsDraw = true;
         }
     },
 
@@ -121,7 +142,7 @@ exports.Ninja = Montage.create(Component, {
     templateDidLoad: {
         value: function() {
             this.ninjaVersion = window.ninjaVersion.ninja.version;
-            this.eventManager.addEventListener( "preloadFinish", this, false);
+            this.undoManager = document.application.undoManager = UndoManager.create();
         }
     },
 
@@ -140,7 +161,6 @@ exports.Ninja = Montage.create(Component, {
 
             window.addEventListener("resize", this, false);
 
-//            this.eventManager.addEventListener( "appLoading", this, false); // Don't need this anymore
             this.eventManager.addEventListener( "selectTool", this, false);
             this.eventManager.addEventListener( "selectSubTool", this, false);
             this.eventManager.addEventListener( "onOpenDocument", this, false);
@@ -167,30 +187,28 @@ exports.Ninja = Montage.create(Component, {
 
     willDraw: {
         value: function() {
-            if (this.height === null) {
-                this.height = parseInt(this.timeline.element.offsetHeight);
-            }
-            if (this.width === null) {
-                this.width = parseInt(this.rightPanelContainer.offsetWidth);
-            }
+
         }
     },
 
     draw: {
         value: function() {
-            if (this.height - this._resizedHeight < 46) {
-                this.timelineSplitter.collapsed = true;
-            } else {
-                this.timelineSplitter.collapsed = false;
-            }
-            if (this.width - this._resizedWidth < 30) {
-                this.panelSplitter.collapsed = true;
-            } else {
-                this.panelSplitter.collapsed = false;
-            }
+            if(this.isResizing) {
+                if (this.height - this._resizedHeight < 46) {
+                    this.timelineSplitter.collapsed = true;
+                } else {
+                    this.timelineSplitter.collapsed = false;
+                }
 
-            this.timeline.element.style.height = (this.height - this._resizedHeight) + "px";
-            this.rightPanelContainer.style.width = (this.width - this._resizedWidth) + "px";
+                if (this.width - this._resizedWidth < 30) {
+                    this.panelSplitter.collapsed = true;
+                } else {
+                    this.panelSplitter.collapsed = false;
+                }
+
+            }
+                this.rightPanelContainer.style.width = (this.width - this._resizedWidth) + "px";
+                this.timeline.element.style.height = (this.height - this._resizedHeight) + "px";
         }
     },
 
@@ -200,10 +218,7 @@ exports.Ninja = Montage.create(Component, {
     
     didDraw: {
         value: function() {
-            if (!this.isResizing) {
-                this.height = this.timeline.element.offsetHeight;
-                this.width = this.rightPanelContainer.offsetWidth;
-            }
+
             if(!this._didDraw) {
             	if (!this.application.ninja.coreIoApi.ioServiceDetected) {
             		var check = this.application.ninja.coreIoApi.cloudAvailable();

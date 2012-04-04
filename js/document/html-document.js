@@ -340,6 +340,12 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 						shapeModel.slope = root._slope;
 						break;
 
+                    case root.GEOM_TYPE_BRUSH_STROKE:
+                        elementModel.selection = "BrushStroke";
+                        elementModel.pi = "BrushStrokePi";
+						break;
+
+
 					default:
 						console.log( "geometry type not supported for file I/O, " + root.geomType());
 						break;
