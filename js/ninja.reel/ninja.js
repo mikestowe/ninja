@@ -6,6 +6,7 @@
 
 var Montage = require("montage/core/core").Montage,
     Component   = require("montage/ui/component").Component,
+    UndoManager = require("montage/core/undo-manager").UndoManager,
     AppData     = require("js/data/appdata").AppData;
 
 var matrix = require("js/lib/math/matrix");
@@ -141,7 +142,7 @@ exports.Ninja = Montage.create(Component, {
     templateDidLoad: {
         value: function() {
             this.ninjaVersion = window.ninjaVersion.ninja.version;
-            this.eventManager.addEventListener( "preloadFinish", this, false);
+            this.undoManager = document.application.undoManager = UndoManager.create();
         }
     },
 
@@ -160,7 +161,6 @@ exports.Ninja = Montage.create(Component, {
 
             window.addEventListener("resize", this, false);
 
-//            this.eventManager.addEventListener( "appLoading", this, false); // Don't need this anymore
             this.eventManager.addEventListener( "selectTool", this, false);
             this.eventManager.addEventListener( "selectSubTool", this, false);
             this.eventManager.addEventListener( "onOpenDocument", this, false);

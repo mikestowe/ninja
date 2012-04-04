@@ -109,8 +109,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			this._gridOrigin = [0,0];	// 2D plane space point
 
             this.eventManager.addEventListener("elementAdded", this, false);
-            this.eventManager.addEventListener("elementDeleted", this, false);
-            this.eventManager.addEventListener("deleteSelection", this, false);
+            this.eventManager.addEventListener("elementsRemoved", this, false);
             this.eventManager.addEventListener("elementChange", this, false);
             this.eventManager.addEventListener("closeDocument", this, false);
 		}
@@ -147,38 +146,47 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 
     handleElementAdded: {
         value: function(event) {
-            this.addElement(event.detail);
+            var elements = event.detail;
+
+            if(Array.isArray(elements)) {
+                elements.forEach(function(element) {
+                    this.addElement(element);
+                }, this);
+            } else {
+                this.addElement(elements);
+            }
+
             this.drawWorkingPlane();
         }
     },
 
-    handleElementDeleted: {
+    handleElementsRemoved: {
         value: function(event) {
-            this.removeElement(event.detail);
-        }
-    },
+            var elements = event.detail;
 
-    handleDeleteSelection: {
-        value: function(event) {
+            if(Array.isArray(elements)) {
+                elements = Array.prototype.slice.call(elements, 0);
+                elements.forEach(function(element) {
+                    this.removeElement(element);
+                }, this);
+            } else {
+                this.removeElement(elements._element || elements);
+            }
+
             this.drawWorkingPlane();
         }
     },
 
     _shouldUpdatePlanes: {
         value: function(props) {
-            if(!props)
-            {
+            if(!props) {
                 return false;
-            }
-            else if (typeof props === "string")
-            {
+            } else if (typeof props === "string") {
                 return (this._updatePlaneProps.indexOf(props) !== -1);
             }
 
-            for (var p in props)
-            {
-                if(this._updatePlaneProps.indexOf(p) !== -1)
-                {
+            for (var p in props) {
+                if(this._updatePlaneProps.indexOf(p) !== -1) {
                     return true;
                 }
             }
@@ -199,15 +207,12 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
             {
                 var len = els.length,
                     i = 0,
-                    item,
-                    el;
+                    item;
 
                 for(i=0; i < len; i++) {
-                    item = els[i];
-                    el = item._element || item;
-                    if(el.elementModel.props3D.elementPlane)
+                    if(els[i].elementModel.props3D.elementPlane)
                     {
-                        el.elementModel.props3D.elementPlane.init();
+                        els[i].elementModel.props3D.elementPlane.init();
                     }
                 }
 
@@ -222,17 +227,12 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 	// Methods
 	///////////////////////////////////////////////////////////////////////
 
-	addElement:
-	{
-		value: function( elt )
-		{
+	addElement: {
+		value: function( elt ) {
 			// check if we already know about this object
 			var n = this._eltArray.length;
-			for (var i=0;  i<n;  i++)
-			{
-				if (elt == this._eltArray[i])
-				{
-//					console.log( "element already added to stage display: " + elt.id );
+			for (var i=0;  i<n;  i++) {
+				if (elt == this._eltArray[i]) {
 					return;
 				}
 			}
@@ -248,17 +248,14 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 		}
 	},
 
-	removeElement : {
-		value: function( elt ) {
+    removeElement: {
+        value: function(element) {
 			// check if object exists
-			var n = this._eltArray.length;
-			for (var i=0;  i<n;  i++)
-			{
-				if (elt == this._eltArray[i])
-				{
+			var _elements = this._eltArray.length;
+			for (var i=0;  i < _elements;  i++) {
+				if (element === this._eltArray[i]) {
 					// First remove the planes for this element
 					this._planesArray.splice(i, 1);
-
 					// Then remove the element
 					this._eltArray.splice(i, 1);
 

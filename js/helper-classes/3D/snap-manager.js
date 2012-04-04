@@ -123,7 +123,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 	///////////////////////////////////////////////////////////////////////
     initialize: {
         value: function() {
-            this.eventManager.addEventListener("elementDeleted", this, false);
+            this.eventManager.addEventListener("elementsRemoved", this, false);
         }
     },
 
@@ -163,9 +163,19 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
     },
 
 
-    handleElementDeleted: {
+    handleElementsRemoved: {
         value: function(event) {
-            this.removeElementFrom2DCache(event.detail);
+            var self = this, elements = event.detail;
+
+            if(Array.isArray(elements)) {
+                elements = Array.prototype.slice.call(elements, 0);
+                elements.forEach(function(element) {
+                    element = element._element || element;
+                    self.removeElementFrom2DCache(element);
+                });
+            } else {
+                this.removeElementFrom2DCache(elements._element || elements);
+            }
         }
     },
 
@@ -1411,6 +1421,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
                 case glObj.GEOM_TYPE_PATH:
                     // Snapping not implemented for these type, but don't throw an error...
 					break;
+                case glObj.GEOM_TYPE_BRUSH_STROKE:
+                    break; //don't throw error because snapping not yet implemented
                 case glObj.GEOM_TYPE_CUBIC_BEZIER:
                     {
                         var nearVrt = glObj.getNearVertex( eyePt, dir );

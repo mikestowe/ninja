@@ -72,8 +72,9 @@ exports.ShapesController = Montage.create(CanvasController, {
                     canvas.setAttribute("data-RDGE-id", njModule.NJUtils.generateRandom());
                     canvas.width = el.width;
                     canvas.height = el.height;
-                    this.application.ninja.elementMediator.replaceElement(el, canvas);
-                    NJevent("elementDeleted", el);
+                    canvas.elementModel = el.elementModel;
+                    this.application.ninja.currentDocument.documentRoot.replaceChild(canvas, el);
+                    NJevent("elementsRemoved", el);
                     el = canvas;
                     this.toggleWebGlMode(el, value);
                     el.elementModel.shapeModel.GLWorld.render();
@@ -119,6 +120,31 @@ exports.ShapesController = Montage.create(CanvasController, {
                         el.elementModel.shapeModel.GLWorld._canvas.task.stop();
                     }
                     break;
+                case "strokeHardness":
+                    this.setShapeProperty(el, "strokeHardness", value);
+                    el.elementModel.shapeModel.GLGeomObj.setStrokeHardness(val);
+                    el.elementModel.shapeModel.GLWorld.render();
+                    break;
+                case "strokeSmoothing":
+                    this.setShapeProperty(el, "strokeSmoothing", value);
+                    el.elementModel.shapeModel.GLGeomObj.setSmoothingAmount(val);
+                    el.elementModel.shapeModel.GLWorld.render();
+                    break;
+                case "doSmoothing":
+                    this.setShapeProperty(el, "doSmoothing", value);
+                    el.elementModel.shapeModel.GLGeomObj.setDoSmoothing(value);
+                    el.elementModel.shapeModel.GLWorld.render();
+                    break;
+                case "isCalligraphic":
+                    this.setShapeProperty(el, "isCalligraphic", value);
+                    el.elementModel.shapeModel.GLGeomObj.setStrokeUseCalligraphic(value);
+                    el.elementModel.shapeModel.GLWorld.render();
+                    break;
+                case "strokeAngle":
+                    this.setShapeProperty(el, "strokeAngle", value);
+                    el.elementModel.shapeModel.GLGeomObj.setStrokeAngle(Math.PI * val/180);
+                    el.elementModel.shapeModel.GLWorld.render();
+                    break;
                 default:
                     CanvasController.setProperty(el, p, value);
             }
@@ -139,6 +165,43 @@ exports.ShapesController = Montage.create(CanvasController, {
                 case "useWebGl":
                 case "animate":
                     return this.getShapeProperty(el, p);
+                case "strokeHardness":
+                    if (el.elementModel && el.elementModel.shapeModel){
+                        return el.elementModel.shapeModel.GLGeomObj.getStrokeHardness();
+                    } else {
+                        return null;
+                    }
+                    break;
+                case "doSmoothing":
+                    if (el.elementModel && el.elementModel.shapeModel){
+                        return el.elementModel.shapeModel.GLGeomObj.getDoSmoothing();
+                    } else {
+                        return null;
+                    }
+                    break;
+                case "strokeSmoothing":
+                    if (el.elementModel && el.elementModel.shapeModel){
+                        return el.elementModel.shapeModel.GLGeomObj.getSmoothingAmount();
+                    } else {
+                        return null;
+                    }
+                    break;
+                case "isCalligraphic":
+                    if (el.elementModel && el.elementModel.shapeModel){
+                        return el.elementModel.shapeModel.GLGeomObj.getStrokeUseCalligraphic();
+                    } else {
+                        return null;
+                    }
+                    break;
+                case "strokeAngle":
+                    if (el.elementModel && el.elementModel.shapeModel){
+                        return 180*el.elementModel.shapeModel.GLGeomObj.getStrokeAngle()/Math.PI;
+                    } else {
+                        return null;
+                    }
+                    break;
+                
+
                 case "strokeMaterial":
                 case "fillMaterial":
                     var m = this.getShapeProperty(el, p);

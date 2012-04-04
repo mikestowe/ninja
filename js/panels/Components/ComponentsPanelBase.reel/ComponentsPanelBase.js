@@ -302,7 +302,7 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
 
                 that.application.ninja.currentDocument.setComponentInstance(instance, element);
 
-                NJevent("elementAdding", {"el": element, "data":styles});
+                that.application.ninja.elementMediator.addElements(element, styles);
             });
 
         }

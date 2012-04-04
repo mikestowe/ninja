@@ -223,7 +223,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
     HandleDoubleClick: {
         value: function(event) {
             if(this.application.ninja.selectedElements.length > 0) {
-                this.application.ninja.currentSelectedContainer = this.application.ninja.selectedElements[0]._element;
+                this.application.ninja.currentSelectedContainer = this.application.ninja.selectedElements[0];
             } else {
                 this.application.ninja.currentSelectedContainer = this.application.ninja.currentDocument.documentRoot;
             }
@@ -242,8 +242,8 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                         case Keyboard.LEFT:
                             var newLeft = [];
                             var leftArr = this.application.ninja.selectedElements.map(function(item) {
-                                newLeft.push( (parseInt(ElementsMediator.getProperty(item._element, "left")) - inc) + "px"  );
-                                return ElementsMediator.getProperty(item._element, "left");
+                                newLeft.push( (parseInt(ElementsMediator.getProperty(item, "left")) - inc) + "px"  );
+                                return ElementsMediator.getProperty(item, "left");
                             });
 
                             ElementsMediator.setProperty(this.application.ninja.selectedElements, "left", newLeft , "Change", "selectionTool", leftArr);
@@ -251,8 +251,8 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                         case Keyboard.UP:
                             var newTop = [];
                             var topArr = this.application.ninja.selectedElements.map(function(item) {
-                                newTop.push( (parseInt(ElementsMediator.getProperty(item._element, "top")) - inc) + "px"  );
-                                return ElementsMediator.getProperty(item._element, "top");
+                                newTop.push( (parseInt(ElementsMediator.getProperty(item, "top")) - inc) + "px"  );
+                                return ElementsMediator.getProperty(item, "top");
                             });
 
                             ElementsMediator.setProperty(this.application.ninja.selectedElements, "top", newTop , "Change", "selectionTool", topArr);
@@ -260,8 +260,8 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                         case Keyboard.RIGHT:
                             var newLeft = [];
                             var leftArr = this.application.ninja.selectedElements.map(function(item) {
-                                newLeft.push( (parseInt(ElementsMediator.getProperty(item._element, "left")) + inc) + "px"  );
-                                return ElementsMediator.getProperty(item._element, "left");
+                                newLeft.push( (parseInt(ElementsMediator.getProperty(item, "left")) + inc) + "px"  );
+                                return ElementsMediator.getProperty(item, "left");
                             });
 
                             ElementsMediator.setProperty(this.application.ninja.selectedElements, "left", newLeft , "Change", "selectionTool", leftArr);
@@ -269,8 +269,8 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                         case Keyboard.DOWN:
                             var newTop = [];
                             var topArr = this.application.ninja.selectedElements.map(function(item) {
-                                newTop.push( (parseInt(ElementsMediator.getProperty(item._element, "top")) + inc) + "px"  );
-                                return ElementsMediator.getProperty(item._element, "top");
+                                newTop.push( (parseInt(ElementsMediator.getProperty(item, "top")) + inc) + "px"  );
+                                return ElementsMediator.getProperty(item, "top");
                             });
 
                             ElementsMediator.setProperty(this.application.ninja.selectedElements, "top", newTop , "Change", "selectionTool", topArr);
@@ -308,19 +308,15 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                 previousStyles = [];
             var len = this.application.ninja.selectedElements.length;
             this._targets = [];
-            for(var i = 0; i < len; i++)
-            {
-                var elt = this.application.ninja.selectedElements[i]._element;
+            for(var i = 0; i < len; i++) {
+                var elt = this.application.ninja.selectedElements[i];
 
                 var curMat = viewUtils.getMatrixFromElement(elt);
                 var curMatInv = glmat4.inverse(curMat, []);
 
                 this._targets.push({elt:elt, mat:curMat, matInv:curMatInv});
-                if(addToUndoStack)
-                {
-
-                    if(!this._use3DMode)
-                    {
+                if(addToUndoStack) {
+                    if(!this._use3DMode) {
                         var previousMat = this._undoArray[i].mat.slice(0);
                         var prevX = this._undoArray[i]._x;
                         var prevY = this._undoArray[i]._y;
@@ -344,9 +340,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
 
                         this._targets[i].mat = previousMat;
                         this._targets[i].matInv = glmat4.inverse(previousMat, []);
-                    }
-                    else
-                    {
+                    } else {
                         var previousMat = this._undoArray[i].mat.slice(0);
                         var prevW = this._undoArray[i]._w;
                         var prevH = this._undoArray[i]._h;
