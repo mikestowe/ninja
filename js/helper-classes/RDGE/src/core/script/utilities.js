@@ -4,23 +4,26 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-function getRandColor()
-{
+// RDGE namespaces
+var RDGE = RDGE || {};
+
+
+/* 
+// Methods not currently used in Ninja
+RDGE.getRandColor = function () {
   var r = Math.random();
   var g = Math.random();
   var b =Math.random();
   
   return [r, g, b, 1.0];
-}
+};
 
-
-function unProject( winx, winy, winz, modelMatrix, projMatrix, viewport)
-{    
+RDGE.unProject = function (winx, winy, winz, modelMatrix, projMatrix, viewport) {
     var inVal   = [0,0,0,0];
 
-    var finalMatrix = mat4.mul( modelMatrix, projMatrix );
+    var finalMatrix = RDGE.mat4.mul(modelMatrix, projMatrix);
     
-    finalMatrix = mat4.inverse(finalMatrix);
+    finalMatrix = RDGE.mat4.inverse(finalMatrix);
     if(!finalMatrix)
       return  null;
 
@@ -29,16 +32,16 @@ function unProject( winx, winy, winz, modelMatrix, projMatrix, viewport)
     inVal[2]=winz;
     inVal[3]=1.0;
 
-    /* Map x and y from window coordinates */
+    // Map x and y from window coordinates 
     inVal[0] = (inVal[0] - viewport[0]) / viewport[2];
     inVal[1] = (inVal[1] - viewport[1]) / viewport[3];
 
-    /* Map to range -1 to 1 */
+    // Map to range -1 to 1 
     inVal[0] = inVal[0] * 2 - 1;
     inVal[1] = inVal[1] * 2 - 1;
     inVal[2] = inVal[2] * 2 - 1;
 
-    var v4Out = mat4.transformPoint( finalMatrix, inVal );
+    var v4Out = RDGE.mat4.transformPoint(finalMatrix, inVal);
     
     if (v4Out[3] <= 0.0001) 
 		return null;
@@ -48,16 +51,15 @@ function unProject( winx, winy, winz, modelMatrix, projMatrix, viewport)
     v4Out[2] /= v4Out[3];
     
     return [ v4Out[0], v4Out[1], v4Out[2] ];
-}
+};
 
-function AABB2LineSegment(box, startPoint, endPoint )
-{
-  c = vec3.scale( vec3.add(box.min, box.max), 0.5 );
-  e = vec3.sub(box.max, box.min);
-  d = vec3.sub(endPoint, startPoint);
-  m = vec3.sub(startPoint, endPoint); 
-  m = vec3.sub(m, box.min),
-  m = vec3.sub(m, box.max);
+RDGE.AABB2LineSegment = function (box, startPoint, endPoint) {
+    c = RDGE.vec3.scale(RDGE.vec3.add(box.min, box.max), 0.5);
+    e = RDGE.vec3.sub(box.max, box.min);
+    d = RDGE.vec3.sub(endPoint, startPoint);
+    m = RDGE.vec3.sub(startPoint, endPoint);
+    m = RDGE.vec3.sub(m, box.min),
+  m = RDGE.vec3.sub(m, box.max);
 
   var adx = Math.abs(d[0]);
   if( Math.abs(m[0]) > e[0] + adx ) return false;
@@ -77,43 +79,42 @@ function AABB2LineSegment(box, startPoint, endPoint )
   if( Math.abs(m[0] * d[1] - m[1] * d[0]) > e[0] * ady + e[1] * adx ) return false;
 
   return true;
-}
+};
 
-function hitTest(mesh, near, far)
-{
-  // holds distance to the nearst BV
+RDGE.hitTest = function (mesh, near, far) {
+    // holds distance to the nearest BV
   var dist = null;
   var BV = null;
   
-  for(var index = 0; index < mesh.BVL.length; index++)
-  {
-    if(AABB2LineSegment(mesh.BVL[index], near, far))
-    {
-      var center = vec3.scale( vec3.add(mesh.BVL[index].min, mesh.BVL[index].max), 0.5 );
-      var newDist = vec3.dot( mat4.row( g_cam.world, 2 ), center);
-      if(newDist < dist || dist == null)
-      {
+    for (var index = 0; index < mesh.BVL.length; index++) {
+        if (AABB2LineSegment(mesh.BVL[index], near, far)) {
+            var center = RDGE.vec3.scale(RDGE.vec3.add(mesh.BVL[index].min, mesh.BVL[index].max), 0.5);
+            var newDist = RDGE.vec3.dot(RDGE.mat4.row(RDGE.globals.cam.world, 2), center);
+            if (newDist < dist || dist == null) {
         dist = newDist;
         BV = mesh.BVL[index];
       }
     }
   }
   return BV;
-}
+};
 
 
 
-//
+*/
+
+
+
+
+
+
+
+
 // loadShader
-//
 // 'shaderId' is the id of a <script> element containing the shader source string.
 // Load this shader and return the WebGLShader object corresponding to it.
-//
-function loadShader(ctx, shaderType, shaderStr)
-{
-
+RDGE.loadShader = function (ctx, shaderType, shaderStr) {
   // pre-pend preprocessor settings
-  
   var preProcessor = "#define PC\n"
   preProcessor += shaderStr;
   shaderStr = preProcessor;
@@ -146,30 +147,27 @@ function loadShader(ctx, shaderType, shaderStr)
     }
 
     return shader;
-}
+};
 
 // creates id for shader
-g_shaderCounter = 0;
-function createShader(ctx, strVertShaderName, strFragShaderName, attribs)
-{
+RDGE.g_shaderCounter = 0;
+RDGE.createShader = function (ctx, strVertShaderName, strFragShaderName, attribs) {
   var vShader = '', fShader = '';
 
   if (strVertShaderName.indexOf('{') != -1) {
     vShader = strVertShaderName;
-  } else 
-  {
+    } else {
 	var vshaderRequest = new XMLHttpRequest();
-	vshaderRequest.open("GET", g_Engine._assetPath+'shaders/' + strVertShaderName + '.glsl', false);
+	vshaderRequest.open("GET", RDGE.globals.engine._assetPath+'shaders/' + strVertShaderName + '.glsl', false);
 	vshaderRequest.send(null);
 	vShader = vshaderRequest.responseText;
   }
 
   if (strFragShaderName.indexOf('{') != -1) {
     fShader = strFragShaderName;
-  } else 
-  {
+    } else {
 	var fshaderRequest = new XMLHttpRequest();
-    fshaderRequest.open("GET", g_Engine._assetPath+'shaders/' + strFragShaderName + '.glsl', false);
+    fshaderRequest.open("GET", RDGE.globals.engine._assetPath+'shaders/' + strFragShaderName + '.glsl', false);
     fshaderRequest.send(null);
 	fShader = fshaderRequest.responseText;
   }
@@ -215,17 +213,16 @@ function createShader(ctx, strVertShaderName, strFragShaderName, attribs)
         return null;
     }
     
-    program.shaderID = "Shader" + g_shaderCounter++;
+    program.shaderID = "Shader" + RDGE.g_shaderCounter++;
     program.vname = strVertShaderName;
-    program.RDGEUniform = new RDGEUniformInit();
+    program.RDGEUniform = new RDGE.RDGEUniformInit();
 
   return program;
-}
+};
 
-function getBaseURL() {
+RDGE.getBaseURL = function () {
     var url = location.href;  // entire url including querystring - also: window.location.href;
     var baseURL = url.substring(0, url.indexOf('/', 14));
-
 
     if (baseURL.indexOf('http://localhost') != -1) {
         // Base Url for localhost
@@ -241,5 +238,4 @@ function getBaseURL() {
         // Root Url for domain name
         return baseURL + "/";
     }
-
-}
+};
