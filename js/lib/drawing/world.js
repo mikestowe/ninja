@@ -527,7 +527,7 @@ World.prototype.clearTree = function() {
 	if (this._useWebGL) {
 		var root = this._rootNode;
 		root.children = new Array();
-		g_Engine.unregisterCanvas( this._canvas.rdgeid )
+		g_Engine.unregisterCanvas( this._canvas.rdgeid );
 
 		this.update( 0 );
 		this.draw();
@@ -540,8 +540,9 @@ World.prototype.updateMaterials = function( obj, time ) {
 	var matArray = obj.getMaterialArray();
 	if (matArray) {
 		var n = matArray.length;
-		for (var i=0;  i<n;  i++)
+		for (var i=0;  i<n;  i++) {
 			matArray[i].update( time );
+        }
 	}
 
 	this.updateMaterials( obj.getNext(),  time );
@@ -553,9 +554,8 @@ World.prototype.getNDCOrigin = function() {
   var pt = MathUtils.transformPoint( [0,0,0], this.getCameraMatInverse() );
   var projMat = Matrix.makePerspective( this.getFOV(), this.getAspect(), this.getZNear(), this.getZFar());
   var ndcPt = MathUtils.transformHomogeneousPoint( pt, projMat );
-  var ndcOrigin = MathUtils.applyHomogeneousCoordinate( ndcPt );
 
-  return ndcOrigin;
+  return  MathUtils.applyHomogeneousCoordinate( ndcPt );
 };
 
 World.prototype.worldToScreen = function(v) {
@@ -570,9 +570,8 @@ World.prototype.worldToScreen = function(v) {
 	var x = v2[0],  y = v2[1],  z = v2[2];
 
 	var h = this.getGLContext().viewportHeight/2.0, w = this.getGLContext().viewportWidth/2.0;
-	var x2 = w*(1 + x),  y2 = h*( 1 - y ),  z2 = z;
-
-	return [x2, y2, z2, 1];
+    var x2 = w * (1 + x), y2 = h * ( 1 - y );
+    return [x2, y2, z, 1];
 };
 
 World.prototype.screenToView = function( x, y ) {
