@@ -15,6 +15,7 @@ var ColorSelect = require("js/panels/properties.reel/sections/custom-rows/color-
 
 // Components Needed to make this work
 var Hottext = require("js/components/hottextunit.reel").HotTextUnit;
+var HT = require("js/components/hottext.reel").HotText;
 var Dropdown = require("js/components/combobox.reel").Combobox;
 var TextField = require("js/components/textfield.reel").TextField;
 var FileInput = require("js/components/ui/file-input.reel").FileInput;
@@ -168,6 +169,7 @@ exports.CustomSection = Montage.create(Component, {
         value: function(fields) {
             switch(fields.type) {
                 case "hottext"  : return this.createHottext(fields);
+                case "ht"  : return this.createHT(fields);
                 case "dropdown" : return this.createDropdown(fields);
                 case "textbox"  : return this.createTextField(fields);
                 case "file"     : return this.createFileInput(fields);
@@ -175,6 +177,33 @@ exports.CustomSection = Montage.create(Component, {
                 case "chip"     : return this.createColorChip(fields);
                 case "button"     : return this.createButton(fields);
             }
+        }
+    },
+
+    createHT: {
+        value: function(aField) {
+
+            // Generate Hottext
+            var obj = HT.create();
+
+            // Set Values for HottextRow
+            if (aField.id)          obj.id = aField.id;
+            if (aField.value)       obj.value = aField.value;
+            if (aField.min)         obj._minValue = aField.min;
+            if (aField.max)         obj._maxValue = aField.max;
+            if (aField.prop)        obj.prop = aField.prop;
+
+            //Initiate onChange Events
+            obj.addEventListener("change", this, false);
+            obj.addEventListener("changing", this, false);
+
+            //Bind object value to controls list so it can be manipulated
+            Object.defineBinding(this.controls, aField.id, {
+              boundObject: obj,
+              boundObjectPropertyPath: "value"
+            });
+
+            return obj;
         }
     },
 

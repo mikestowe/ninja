@@ -230,9 +230,9 @@ exports.ComponentsPanel = Montage.create(Component, {
                 case "select":
                     return "dropdown";
                 case "number":
-                    return "hottext";
+                    return "ht";
                 default:
-                    alert("Conversion not implemented for ", type);
+                    alert("Conversion not implemented for " + type);
             }
         }
     },
