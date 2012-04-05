@@ -386,7 +386,16 @@ exports.ShapesController = Montage.create(CanvasController, {
         value: function(el, isFill) {
             if(isFill)
             {
-                return this.application.ninja.colorController.colorModel.webGlToColor(el.elementModel.shapeModel.GLGeomObj.getFillColor());
+                // Properties Panel asks for fill color even for shapes that only have strokes
+                // Check that shape object has a getFillColor method before getting fills
+                if(el.elementModel.shapeModel.GLGeomObj.getFillColor)
+                {
+                    return this.application.ninja.colorController.colorModel.webGlToColor(el.elementModel.shapeModel.GLGeomObj.getFillColor());
+                }
+                else
+                {
+                    return null;
+                }
             }
             else
             {
