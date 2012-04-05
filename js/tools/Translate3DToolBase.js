@@ -90,22 +90,21 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 		value : function()
 		{
             var item,
-                elt,
                 mat,
                 dist,
                 newStyles = [],
                 previousStyles = [],
-                len = this._targets.length;
+                len = this.application.ninja.selectedElements.length;
             for(var i = 0; i < len; i++)
             {
                 // Reset to the identity matrix but retain the rotation values
-                item = this._targets[i];
-                mat = item.mat.slice(0);
+                item = this.application.ninja.selectedElements[i];
+                mat = ElementsMediator.getMatrix(item);
                 mat[12] = 0;
                 mat[13] = 0;
                 mat[14] = 0;
 
-                dist = this._undoArray[i].dist;
+                dist = ElementsMediator.getPerspectiveDist(item);
 
                 var previousStyleStr = {dist:dist, mat:item.mat};
 
