@@ -90,7 +90,7 @@ exports.TagTool = Montage.create(DrawingTool, {
             if(selectionManagerModule.selectionManager.isDocument) {
                 this.editSymbol = documentManagerModule.DocumentManager.activeDocument.documentRoot;
             } else {
-                this.editSymbol = selectionManagerModule.selectionManager._selectedItems[0]._element;
+                this.editSymbol = selectionManagerModule.selectionManager._selectedItems[0];
             }
             */
         }
@@ -104,7 +104,7 @@ exports.TagTool = Montage.create(DrawingTool, {
                 if(selectionManagerModule.selectionManager.isDocument) {
                     this.editSymbol = documentManagerModule.DocumentManager.activeDocument.documentRoot;
                 } else {
-                    this.editSymbol = selectionManagerModule.selectionManager._selectedItems[0]._element;
+                    this.editSymbol = selectionManagerModule.selectionManager._selectedItems[0];
                 }
 
             }
@@ -142,7 +142,7 @@ exports.TagTool = Montage.create(DrawingTool, {
                 element = this.makeElement(~~data.width, ~~data.height, data.planeMat, data.midPt, this.makeTag());
 
                 // Insert Element
-                NJevent("elementAdding", element);
+                this.application.ninja.elementMediator.addElements(element.el, element.data);
             } else {
                 element = this.makeStaticElement(this.makeTag());
                 this._insertStatic(this.editSymbol, element.el, element.style);

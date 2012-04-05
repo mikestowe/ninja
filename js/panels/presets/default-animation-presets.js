@@ -15,7 +15,9 @@ exports.animationPresets = {
                 "rules" : [{
                     "selectorSuffix" : "",
                     "styles" : {
-                        "-webkit-animation": "border-morph 2s infinite"
+                        "-webkit-animation-name": "border-morph",
+                        "-webkit-animation-duration": "2s",
+                        "-webkit-animation-iteration-count": "infinite"
                     }
                 },
                     {

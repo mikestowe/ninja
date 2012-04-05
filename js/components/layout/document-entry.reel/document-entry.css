@@ -4,19 +4,26 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
+.documentEntry{
+    white-space: nowrap;
+}
+
 .documentEntry span
 {
-    /*display: inline-block;*/
-    white-space: nowrap;
+    display: inline-block;
+    white-space: pre;
     overflow: hidden;
-    text-overflow: ellipsis; /* Causes ... to appear ?? */
+    text-overflow: ellipsis;
     max-width:100px;
+    width:85%;
+    min-width:0px;
 }
 
 .documentEntry img {
     opacity: 0.5; /* 50% */
-    padding-left: 5px;
     width: 12px;
+    max-width:12px;
+    min-width:5px;
     height: 12px;
     -webkit-transition: opacity 0.2s ease;
     transition: opacity 0.2s ease;

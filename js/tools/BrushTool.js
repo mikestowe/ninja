@@ -16,6 +16,9 @@ var snapManager = require("js/helper-classes/3D/snap-manager").SnapManager;
 
 var BrushStroke = require("js/lib/geom/brush-stroke").BrushStroke;
 
+//whether or not we want the mouse move to be handled all the time (not just while drawing) inside the brush tool
+var g_DoBrushToolMouseMove = true;
+
 exports.BrushTool = Montage.create(ShapeTool, {
     hasReel: { value: false },
         _toolID: { value: "brushTool" },
@@ -36,6 +39,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
         //view options
         _brushStrokeCanvas: {value: null, writable: true},
         _brushStrokePlaneMat: {value: null, writable: true},
+        _draggingPlane: {value: null, writable: true},
 
         //the current brush stroke
         _selectedBrushStroke: {value: null, writable: true},
@@ -61,9 +65,8 @@ exports.BrushTool = Montage.create(ShapeTool, {
                 }
 
                 this.startDraw(event);
-                if (this._brushStrokePlaneMat === null) {
-                    this._brushStrokePlaneMat = this.mouseDownHitRec.getPlaneMatrix();
-                }
+                this._brushStrokePlaneMat = this.mouseDownHitRec.getPlaneMatrix();
+
                 //start a new brush stroke
                 if (this._selectedBrushStroke === null){
                     this._selectedBrushStroke = new BrushStroke();
@@ -73,6 +76,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
                     if (this.application.ninja.colorController.colorToolbar.fill.webGlColor){
                         this._selectedBrushStroke.setSecondStrokeColor(this.application.ninja.colorController.colorToolbar.fill.webGlColor);
                     }
+                    
                     //add this point to the brush stroke in case the user does a mouse up before doing a mouse move
                     var currMousePos = this._getUnsnappedPosition(event.pageX, event.pageY);
                     this._selectedBrushStroke.addPoint(currMousePos);
@@ -85,7 +89,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
 
                     var strokeHardness = 100;
                     if (this.options.strokeHardness){
-                        strokeHardness = ShapesController.GetValueInPixels(this.options.strokeHardness.value, this.options.strokeHardness.units);
+                        strokeHardness = this.options.strokeHardness.value;
                     }
                     this._selectedBrushStroke.setStrokeHardness(strokeHardness);
 
@@ -94,7 +98,10 @@ exports.BrushTool = Montage.create(ShapeTool, {
                         doSmoothing = this.options.doSmoothing;
                     }
                     this._selectedBrushStroke.setDoSmoothing(doSmoothing);
-
+                    if (doSmoothing){
+                        this._selectedBrushStroke.setSmoothingAmount(this.options.smoothingAmount.value);
+                    }
+                    
                     var useCalligraphic = false;
                     if (this.options.useCalligraphic){
                         useCalligraphic = this.options.useCalligraphic;
@@ -103,15 +110,16 @@ exports.BrushTool = Montage.create(ShapeTool, {
                         this._selectedBrushStroke.setStrokeUseCalligraphic(true);
                         var strokeAngle = 0;
                         if (this.options.strokeAngle){
-                            strokeAngle= ShapesController.GetValueInPixels(this.options.strokeAngle.value, this.options.strokeAngle.units);
+                            strokeAngle= this.options.strokeAngle.value;
                         }
-                        this._selectedBrushStroke.setStrokeAngle(Math.PI * -strokeAngle/180);
+                        this._selectedBrushStroke.setStrokeAngle(Math.PI * strokeAngle/180);
                     } else {
                         this._selectedBrushStroke.setStrokeUseCalligraphic(false);
                     }
                     
                 }
-                NJevent("enableStageMove");//stageManagerModule.stageManager.enableMouseMove();
+                if (!g_DoBrushToolMouseMove)
+                    NJevent("enableStageMove");//stageManagerModule.stageManager.enableMouseMove();
             } //value: function (event) {
         }, //HandleLeftButtonDown
 
@@ -126,7 +134,9 @@ exports.BrushTool = Montage.create(ShapeTool, {
                 snapManager.enableSnapAlign(false);
 
                 var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(x,y));
+                //todo fix this function to allow us to get the correct location (in 3D) for the mouse position
                 var unsnappedpos = DrawingToolBase.getHitRecPos(snapManager.snap(point.x, point.y, false));
+                this._draggingPlane = snapManager.getDragPlane();
 
                 snapManager.enableElementSnap(elemSnap);
                 snapManager.enableGridSnap(gridSnap);
@@ -147,13 +157,15 @@ exports.BrushTool = Montage.create(ShapeTool, {
                    return;
                 }
 
+                var currMousePos = this._getUnsnappedPosition(event.pageX, event.pageY);
                 if (this._isDrawing) {
-                    var currMousePos = this._getUnsnappedPosition(event.pageX, event.pageY);
                     if (this._selectedBrushStroke && this._selectedBrushStroke.getNumPoints()<1000){
                        this._selectedBrushStroke.addPoint(currMousePos);
                     }
                     this.ShowCurrentBrushStrokeOnStage();
-                } //if (this._isDrawing) {
+                } else {
+                    this.ShowCurrentBrushIconOnStage(currMousePos);
+                }
 
                 //this.drawLastSnap();        //TODO.. is this line necessary if we're not snapping? // Required cleanup for both Draw/Feedbacks
 
@@ -164,27 +176,69 @@ exports.BrushTool = Montage.create(ShapeTool, {
 
         HandleLeftButtonUp: {
             value: function (event) {
-                /*var drawData = this.getDrawingData();
-                if (drawData) {
-                    if (this._brushStrokePlaneMat === null) {
-                        this._brushStrokePlaneMat = drawData.planeMat;
-                    }
-                }
-                if (this._isDrawing) {
-                   this.doDraw(event);
-                }*/
                 this.endDraw(event);
 
                 this._isDrawing = false;
                 this._hasDraw = false;
 
-
+                //finish giving enough info. to the brush stroke
+                this._selectedBrushStroke.setPlaneMatrix(this._brushStrokePlaneMat);
+                this._selectedBrushStroke.setPlaneMatrixInverse(glmat4.inverse(this._brushStrokePlaneMat,[]));
+                this._selectedBrushStroke.setDragPlane(this._draggingPlane);
+                
                 //display the previously drawn stroke in a separate canvas
                 this.RenderCurrentBrushStroke();
 
                 this._selectedBrushStroke = null;
                 this._brushStrokeCanvas = null;
-                NJevent("disableStageMove");
+                if (!g_DoBrushToolMouseMove)
+                    NJevent("disableStageMove");
+            }
+        },
+
+        ShowCurrentBrushIconOnStage:{
+            value: function(currMousePos) {
+                //clear the canvas before we draw anything else
+                this.application.ninja.stage.clearDrawingCanvas();
+                //display the brush icon of proper size (query the options bar)
+                var strokeSize = 1;
+                if (this.options.strokeSize) {
+                    strokeSize = ShapesController.GetValueInPixels(this.options.strokeSize.value, this.options.strokeSize.units);
+                }
+                var useCalligraphic = false;
+                if (this.options.useCalligraphic){
+                    useCalligraphic = this.options.useCalligraphic;
+                }
+                var ctx = this.application.ninja.stage.drawingContext;//stageManagerModule.stageManager.drawingContext;
+                if (ctx === null)
+                    throw ("null drawing context in Brushtool::ShowCurrentBrushStrokeOnStage");
+                ctx.save();
+
+                var horizontalOffset = this.application.ninja.stage.userContentLeft;
+                var verticalOffset = this.application.ninja.stage.userContentTop;
+                var halfStrokeWidth = 0.5*strokeSize;
+                ctx.beginPath();
+                if (!useCalligraphic) {
+                    //for round brushes, draw a circle at the current mouse position
+                    ctx.arc(currMousePos[0] + horizontalOffset, currMousePos[1]+ verticalOffset, halfStrokeWidth, 0, 2 * Math.PI, false);
+                } else {
+                    //draw an angled stroke to represent the brush tip
+                    var strokeAngle = 0;
+                    if (this.options.strokeAngle){
+                        strokeAngle= this.options.strokeAngle.value;
+                    }
+                    strokeAngle = Math.PI * strokeAngle/180;
+                    var deltaDisplacement = [Math.cos(strokeAngle),Math.sin(strokeAngle)];
+                    deltaDisplacement = VecUtils.vecNormalize(2, deltaDisplacement, 1);
+                    var startPos = VecUtils.vecSubtract(2, currMousePos, [-horizontalOffset+halfStrokeWidth*deltaDisplacement[0],-verticalOffset+halfStrokeWidth*deltaDisplacement[1]]);
+                    ctx.moveTo(startPos[0], startPos[1]);
+                    var endPos = VecUtils.vecAdd(2, startPos, [strokeSize*deltaDisplacement[0], strokeSize*deltaDisplacement[1]]);
+                    ctx.lineTo(endPos[0], endPos[1]);
+                    ctx.lineWidth = 2;
+                }
+                ctx.strokeStyle = "black";
+                ctx.stroke();
+                ctx.restore();
             }
         },
 
@@ -193,30 +247,16 @@ exports.BrushTool = Montage.create(ShapeTool, {
                 //clear the canvas before we draw anything else
                 this.application.ninja.stage.clearDrawingCanvas();
                 if (this._selectedBrushStroke && this._selectedBrushStroke.getNumPoints()>0){
-                    //this._selectedBrushStroke.computeMetaGeometry();
                     var ctx = this.application.ninja.stage.drawingContext;//stageManagerModule.stageManager.drawingContext;
                     if (ctx === null)
                         throw ("null drawing context in Brushtool::ShowCurrentBrushStrokeOnStage");
                     ctx.save();
-
                     var horizontalOffset = this.application.ninja.stage.userContentLeft;
                     var verticalOffset = this.application.ninja.stage.userContentTop;
-
-                    var numPoints = this._selectedBrushStroke.getNumPoints();
-                    ctx.lineWidth = 1;
-                    ctx.strokeStyle = "black";
-                    ctx.beginPath();
-                    var pt = this._selectedBrushStroke.getPoint(0);
-                    ctx.moveTo(pt[0]+ horizontalOffset,pt[1]+ verticalOffset);
-                    for (var i = 1; i < numPoints; i++) {
-                        pt = this._selectedBrushStroke.getPoint(i);
-                        var x = pt[0]+ horizontalOffset;
-                        var y = pt[1]+ verticalOffset;
-                        ctx.lineTo(x,y);
-                    }
-                    ctx.stroke();
+                    var origX = -horizontalOffset;
+                    var origY = -verticalOffset;
+                    this._selectedBrushStroke.drawToContext(ctx, origX, origY, true);
                     ctx.restore();
-
                 }
             }
         },
@@ -224,7 +264,20 @@ exports.BrushTool = Montage.create(ShapeTool, {
         RenderCurrentBrushStroke:{
             value: function() {
                 if (this._selectedBrushStroke){
-                    this._selectedBrushStroke.computeMetaGeometry();
+                    //DEBUGGING
+                    /*var localData = this._selectedBrushStroke.buildLocalDataFromStageWorldCoord();
+                    var bboxWidth = localData[1];
+                    var bboxHeight = localData[2];
+                    var bboxMid = localData[0];*/
+                    this._selectedBrushStroke.init();
+                    var bboxWidth = this._selectedBrushStroke.getWidth();
+                    var bboxHeight = this._selectedBrushStroke.getHeight();
+                    var bboxMid = this._selectedBrushStroke.getStageWorldCenter();
+                    //end DEBUGGING
+                    //call render shape with the bbox width and height
+                    this.RenderShape(bboxWidth, bboxHeight, this._brushStrokePlaneMat, bboxMid, this._brushStrokeCanvas);
+
+                    /*this._selectedBrushStroke.computeMetaGeometry();
                     var bboxMin = this._selectedBrushStroke.getBBoxMin();
                     var bboxMax = this._selectedBrushStroke.getBBoxMax();
                     var bboxWidth = bboxMax[0] - bboxMin[0];
@@ -233,9 +286,9 @@ exports.BrushTool = Montage.create(ShapeTool, {
 
                     this._selectedBrushStroke.setCanvasX(bboxMid[0]);
                     this._selectedBrushStroke.setCanvasY(bboxMid[1]);
-
                     //call render shape with the bbox width and height
                     this.RenderShape(bboxWidth, bboxHeight, this._brushStrokePlaneMat, bboxMid, this._brushStrokeCanvas);
+                    */
                 }
             }
         },
@@ -251,9 +304,9 @@ exports.BrushTool = Montage.create(ShapeTool, {
                 var top = Math.round(midPt[1] - 0.5 * h);
 
                 if (!canvas) {
-                var newCanvas = NJUtils.makeNJElement("canvas", "Brushstroke", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
+                    var newCanvas = NJUtils.makeNJElement("canvas", "Brushstroke", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
                     var elementModel = TagTool.makeElement(w, h, planeMat, midPt, newCanvas, this._useWebGL);
-                    ElementMediator.addElement(newCanvas, elementModel.data, true);
+                    ElementMediator.addElements(newCanvas, elementModel.data, false);
 
                     // create all the GL stuff
                     var world = this.getGLWorld(newCanvas, this._useWebGL);
@@ -263,6 +316,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
                     var brushStroke = this._selectedBrushStroke;
                     if (brushStroke){
                         brushStroke.setWorld(world);
+                        brushStroke.setCanvas(newCanvas);
 
                         brushStroke.setPlaneMatrix(planeMat);
                         var planeMatInv = glmat4.inverse( planeMat, [] );
@@ -273,10 +327,38 @@ exports.BrushTool = Montage.create(ShapeTool, {
                         world.render();
                         //TODO this will not work if there are multiple shapes in the same canvas
                         newCanvas.elementModel.shapeModel.GLGeomObj = brushStroke;
+
+                        newCanvas.elementModel.shapeModel.shapeCount++;
+                        if(newCanvas.elementModel.shapeModel.shapeCount === 1)
+                        {
+                            newCanvas.elementModel.selection = "BrushStroke";
+                            newCanvas.elementModel.pi = "BrushStrokePi";
+                            newCanvas.elementModel.shapeModel.strokeSize = this.options.strokeSize.value + " " + this.options.strokeSize.units;
+                            var strokeColor = this._selectedBrushStroke.getStrokeColor();
+                            newCanvas.elementModel.shapeModel.stroke = strokeColor;
+                            if(strokeColor) {
+                                newCanvas.elementModel.shapeModel.border = this.application.ninja.colorController.colorToolbar.stroke;
+                            }
+                            newCanvas.elementModel.shapeModel.strokeMaterial = this._selectedBrushStroke.getStrokeMaterial();
+
+                            newCanvas.elementModel.shapeModel.GLGeomObj = brushStroke;
+                            newCanvas.elementModel.shapeModel.useWebGl = this.options.use3D;
+                        }
+                        else
+                        {
+                            // TODO - update the shape's info only.  shapeModel will likely need an array of shapes.
+                        }
+
+                        //if(newCanvas.elementModel.isShape)
+                        if (true)
+                        {
+                            this.application.ninja.selectionController.selectElement(newCanvas);
+                        }
                     }
                 } //if (!canvas) {
                 else {
 
+                    /*
                     var world = null;
                     if (canvas.elementModel.shapeModel && canvas.elementModel.shapeModel.GLWorld) {
                         world = canvas.elementModel.shapeModel.GLWorld;
@@ -317,6 +399,8 @@ exports.BrushTool = Montage.create(ShapeTool, {
                         //TODO this will not work if there are multiple shapes in the same canvas
                         canvas.elementModel.shapeModel.GLGeomObj = brushStroke;
                     }
+                    */
+                    alert("BrushStroke cannot edit existing canvas");
                 } //else of if (!canvas) {
             } //value: function (w, h, planeMat, midPt, canvas) {
         }, //RenderShape: {
@@ -324,10 +408,14 @@ exports.BrushTool = Montage.create(ShapeTool, {
         Configure: {
             value: function (wasSelected) {
                 if (wasSelected) {
-                    console.log("Entered BrushTool");
+                    if (g_DoBrushToolMouseMove){
+                        NJevent("enableStageMove");
+                    }
                 }
                 else {
-                    console.log("Left BrushTool");
+                    if (g_DoBrushToolMouseMove){
+                        NJevent("disbleStageMove");
+                    }
                 }
             }
         }

@@ -4,29 +4,27 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
+var RDGE = RDGE || {};
 
-function RunState(userRunState, context)
-{
+RDGE.RunState = function (userRunState, context) {
 	this.name = "RunState";
-	this.userRunState = userRunState != undefined ? userRunState : new RDGEState;
+    this.userRunState = userRunState != undefined ? userRunState : new RDGE.core.RDGEState;
 	this.hasUserState = userRunState != undefined ? true : false;
 	this.renderer = context.renderer;
 	this.initialized = false;
-}
+};
 
-RunState.prototype.Init = function() 
-{
+RDGE.RunState.prototype.Init = function () {
 	this.initialized = true;
 	var width = this.renderer.vpWidth;
 	var height = this.renderer.vpHeight;
-	var cam = new camera();
+    var cam = new RDGE.camera();
 	cam.setPerspective(45.0, width / height, 1.0, 100.0);
-	cam.setLookAt([0, 0, 20], [0, 0, 0], vec3.up());
+    cam.setLookAt([0, 0, 20], [0, 0, 0], RDGE.vec3.up());
 
 	this.renderer.cameraManager().setActiveCamera( cam );
 
-	if(this.hasUserState && this.userRunState.init != undefined)
-	{
+    if (this.hasUserState && this.userRunState.init != undefined) {
 		this.userRunState.init();
 	}
 
@@ -39,8 +37,8 @@ RunState.prototype.Init = function()
 //	if(theScene=="Robots_rt") {
 //		g_enableShadowMapping=false;
 //		g_showSSAO=false;
-//		g_Engine.defaultContext.uniforms[1]={ 'name': "u_lightAmb",'value': [0.5,0.5,0.5,1.0] };
-//		g_Engine.defaultContext.uniforms[7]={ 'name': "u_matAmbient",'value': [0.8,0.8,0.8,1] };
+    //		RDGE.globals.engine.defaultContext.uniforms[1]={ 'name': "u_lightAmb",'value': [0.5,0.5,0.5,1.0] };
+    //		RDGE.globals.engine.defaultContext.uniforms[7]={ 'name': "u_matAmbient",'value': [0.8,0.8,0.8,1] };
 //	}
 
 
@@ -48,30 +46,30 @@ RunState.prototype.Init = function()
 //	g_depthMapGenShader=createShader(this.renderer.ctx,'norm_depth_vshader','norm_depth_fshader',["vert","normal"]);
 
 //	// shadow light
-//	g_mainLight=new camera();        // camera to represent our light's point of view
+    //	g_mainLight=new RDGE.camera();        // camera to represent our light's point of view
 //	g_mainLight.setPerspective(45.0,width/height,1.0,200.0);
-//	g_mainLight.setLookAt([-60,17,-15],[-5,-5,15],vec3.up());       // lights position and point of view
-//	g_mainLight.mvMatrix=mat4.copy(g_mainLight.view);   // hold model view transform
-//	g_mainLight.invViewMatrix=mat4.inverse(g_mainLight.view);
-//	g_mainLight.mvpMatrix=mat4.identity();
-//	g_mainLight.shadowMatrix=mat4.identity();           // shadow matrix creates shadow bias
-//	g_mainLight.shadowMatrix=mat4.scale(g_mainLight.shadowMatrix,[0.5,0.5,0.5]);
-//	g_mainLight.shadowMatrix=mat4.translate(g_mainLight.shadowMatrix,[0.5,0.5,0.5]);
+    //	g_mainLight.setLookAt([-60,17,-15],[-5,-5,15],RDGE.vec3.up());       // lights position and point of view
+    //	g_mainLight.mvMatrix=RDGE.mat4.copy(g_mainLight.view);   // hold model view transform
+    //	g_mainLight.invViewMatrix=RDGE.mat4.inverse(g_mainLight.view);
+    //	g_mainLight.mvpMatrix=RDGE.mat4.identity();
+    //	g_mainLight.shadowMatrix=RDGE.mat4.identity();           // shadow matrix creates shadow bias
+    //	g_mainLight.shadowMatrix=RDGE.mat4.scale(g_mainLight.shadowMatrix,[0.5,0.5,0.5]);
+    //	g_mainLight.shadowMatrix=RDGE.mat4.translate(g_mainLight.shadowMatrix,[0.5,0.5,0.5]);
 //	//g_cameraManager.setActiveCamera( g_mainLight );
 //	
-//	uniformEnableGlow = this.renderer.ctx.getUniformLocation(g_Engine.defaultContext.shaderProg, "u_renderGlow");
+    //	uniformEnableGlow = this.renderer.ctx.getUniformLocation(RDGE.globals.engine.defaultContext.shaderProg, "u_renderGlow");
 //	
 //	depthRTT=createRenderTargetTexture(1024,1024);
 //	glowRTT=createRenderTargetTexture(512,512);
-//	blurFX=new fxBlur([256,128,64],true);
+    //	blurFX=new RDGE.fx.fxBlur([256,128,64],true);
 //	mainRTT=createRenderTargetTexture(1024,1024);
-//	ssaoFX=new fxSSAO(true);
+    //	ssaoFX=new RDGE.fx.fxSSAO(true);
 //	ssaoRTT=createRenderTargetTexture(1024,1024);
 //	depthRTT=createRenderTargetTexture(1024,1024);
 //	hrDepthRTT=createRenderTargetTexture(1024,1024);
 //	hrDepthRTTSSAO=createRenderTargetTexture(1024,1024);
-//	mainSceneQuad=new ScreenQuad(mainRTT);
-//	mainSceneQuad.initialize(renderInitScreenQuad);
+    //	mainSceneQuad=new RDGE.ScreenQuad(mainRTT);
+    //	mainSceneQuad.initialize(RDGE.renderInitScreenQuad);
 
 //	cubelight_Glow	= this.renderer.createTexture("assets/images/cubelight_Glow.png");
 //	lightRack_Glow	= this.renderer.createTexture("assets/images/lightRack_Glow.png");
@@ -82,46 +80,39 @@ RunState.prototype.Init = function()
 //	// depth map and normal proc
 //	renderProcDepth=new GenerateDepthMap();
 //	renderProcGlow=new GenerateGlowMap();
-//	renderProc=new SceneRender();
+    //	renderProc=new RDGE.SceneRender();
 //	renderProcCreateShadowMap=new SceneCreateShadowMap();
 //	renderProcHighResDepth=new GenerateHighResDepthMap();
 
-//	g_Engine.defaultContext.textureList.push({ 'handle': hrDepthRTT,'unit': 7,'type': UNIFORMTYPE.TEXTURE2D });
-//	g_Engine.defaultContext.uniforms.push({ 'name': "depthMap",'value': [hrDepthRTT] });
+    //	RDGE.globals.engine.defaultContext.textureList.push({ 'handle': hrDepthRTT,'unit': 7,'type': RDGE.UNIFORMTYPE.TEXTURE2D });
+    //	RDGE.globals.engine.defaultContext.uniforms.push({ 'name': "depthMap",'value': [hrDepthRTT] });
 		
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-}
+};
 
-RunState.prototype.ReInit = function() 
-{
-	if(!this.initialized)
-	{
+RDGE.RunState.prototype.ReInit = function () {
+    if (!this.initialized) {
 		this.Init();
 	}
-	else
-	{
+    else {
 		if (this.hasUserState && this.userRunState && this.userRunState.onRunState)
 			this.userRunState.onRunState();
 	}
-}
+};
 
-RunState.prototype.Update = function(dt) 
-{
+RDGE.RunState.prototype.Update = function (dt) {
     this.userRunState.update(dt);
-}
+};
 
-RunState.prototype.Resize = function() 
-{
-	if(g_Engine.lastWindowWidth == window.innerWidth && g_Engine.lastWindowHeight == window.innerHeight)
-	{
+RDGE.RunState.prototype.Resize = function () {
+    if (RDGE.globals.engine.lastWindowWidth == window.innerWidth && RDGE.globals.engine.lastWindowHeight == window.innerHeight) {
 		this.userRunState.resize();
-		g_Engine.lastWindowWidth = window.innerWidth;
-		g_Engine.lastWindowHeight = window.innerHeight;
-	}
+        RDGE.globals.engine.lastWindowWidth = window.innerWidth;
+        RDGE.globals.engine.lastWindowHeight = window.innerHeight;
 }
+};
 
-RunState.prototype.Draw = function () 
-{	
+RDGE.RunState.prototype.Draw = function () {
 	var width = this.renderer.vpWidth;
 	var height = this.renderer.vpHeight;
 	
@@ -194,117 +185,38 @@ RunState.prototype.Draw = function ()
 //			this.renderer.clear( this.renderer.colorBuffer | this.renderer.depthBuffer );
 
 //			mainSceneQuad.texture=g_showSSAO?ssaoRTT:mainRTT;
-//			renderProcScreenQuad(mainSceneQuad);
+    //			RDGE.renderProcScreenQuad(mainSceneQuad);
 //		}
 //		else 
 //		{
 //			this.renderer.clear( this.renderer.colorBuffer | this.renderer.depthBuffer );
 //		}
+};
 	
-	
-}
-
-RunState.prototype.Shutdown = function()
-{
-	if(this.userRunState.shutdown != undefined)
-	{
+RDGE.RunState.prototype.Shutdown = function () {
+    if (this.userRunState.shutdown != undefined) {
 		this.userRunState.shutdown();
 	}
-}
+};
 
-RunState.prototype.LeaveState = function() 
-{
-	if(this.userRunState.onComplete != undefined)
-	{
+RDGE.RunState.prototype.LeaveState = function () {
+    if (this.userRunState.onComplete != undefined) {
 		this.userRunState.onComplete();	
 	}
-}
-
-
-debugCamHandler=function() 
-{
-	this.pos=vec2.zero();
-	this.lastPos=vec2.zero();
-	this.vel=vec2.zero();
-	this.mouseDown=false;
-
-	this.onMouseDown=function(ev) 
-	{
-		if(!g_enableFlyCam) 
-		{
-			return false;
-		}
-		this.mouseDown=true;
-		this.pos=[ev.pageX,g_height-ev.pageY];
-		this.lastPos=this.pos;
-		return true;
-	}
-
-	this.onMouseUp=function(ev) 
-	{
-		if(!g_enableFlyCam) 
-		{
-			return false;
-		}
-		this.mouseDown=false;
-		this.lastPos=this.pos;
-		return true;
-	}
-
-	this.onMouseMove=function(ev) 
-	{
-		if(!g_enableFlyCam) 
-		{
-			return false;
-		}
-
-		this.pos=[ev.pageX,g_height-ev.pageY];
-		return true;
-	}
-
-	this.update=function() 
-	{
-		if(this.mouseDown) 
-		{
-			var camera=this.renderer.cameraManager().getActiveCamera();
-			var d=vec2.sub(this.pos,this.lastPos);
+};
 			
-			d[0]/=g_width;
-			d[1]/=g_height;
-			
-			var sensitivity=5.0;
-			
-			var pitch=mat4.rotateX(mat4.identity(),d[1]*sensitivity);
-			var yaw=mat4.rotateY(mat4.identity(),-d[0]*sensitivity);
-//			var yp = mat4.mul(yaw, pitch);
-									
-			var newworld=mat4.mul(yaw, camera.world);	
-//			newworld=mat4.mul(yaw, newworld);
 /*
-			mat4.setRow(newworld, 1, [0,1,0]);  		
-			mat4.setRow(newworld, 0, vec3.normalize( vec3.cross( vec3.basisY(newworld), vec3.basisZ(newworld) ) ) );
-			mat4.setRow(newworld, 1, vec3.normalize( vec3.cross( vec3.basisZ(newworld), vec3.basisX(newworld) ) ) );
-*/
-			camera.setWorld(newworld);
-		}
-	}
-	var self=this;
-	var fr=function() { self.update(); };
-	setInterval(fr,16);
-}
-
+// These are currently unused for Ninja
 ///////////////////////////////////////////////////////////////////////////////
 // render scene nodes
-function SceneRender() 
-{
-	this.shaderProgram=g_Engine.defaultContext.shaderProg;
-}
+RDGE.SceneRender = function () {
+    this.shaderProgram = RDGE.globals.engine.defaultContext.shaderProg;
+};
 
 String.prototype.contains=function(it) { return this.indexOf(it)!= -1; };
 
-SceneRender.prototype.process=function(context, trNode, parent) 
-{
-	var renderer = g_Engine.getContext().renderer;
+RDGE.SceneRender.prototype.process = function (context, trNode, parent) {
+    var renderer = RDGE.globals.engine.getContext().renderer;
 
 	// apply the context
 	context.Apply(this.shaderProgram);
@@ -314,16 +226,15 @@ SceneRender.prototype.process=function(context, trNode, parent)
 	this.shaderProgram.RDGEUniform.SetUni("u_vShadowLight",g_mainLight.view);
 
 
-	if(((trNode.materialNode||{}).meshNode||{})!==undefined&&trNode.materialNode!==undefined) 
-	{
+    if (((trNode.materialNode || {}).meshNode || {}) !== undefined && trNode.materialNode !== undefined) {
 		// run through master list and bind the uniforms
 		_bindUniforms(this.shaderProgram);
 
 		var mesh;
 		if(trNode.materialNode.meshNode.mesh.name!==undefined)
-			mesh=g_meshMan.getModelByName(trNode.materialNode.meshNode.mesh.name);
+            mesh = RDGE.globals.meshMan.getModelByName(trNode.materialNode.meshNode.mesh.name);
 		else
-			mesh=g_meshMan.getModelByName(trNode.materialNode.meshNode.mesh.attrib.name);
+            mesh = RDGE.globals.meshMan.getModelByName(trNode.materialNode.meshNode.mesh.attrib.name);
 
 		if(mesh==null)
 			return;
@@ -339,17 +250,15 @@ SceneRender.prototype.process=function(context, trNode, parent)
 			renderer.drawIndexedPrimitiveWireFrame(mesh.primitive, this.shaderProgram, {"vert":"vec3", "normal":"vec3", "texcoord":"vec2"} );
 
 	}
-}
+};
 
 // render scene nodes
-function GenerateGlowMap() 
-{
-	this.shaderProgram=g_Engine.defaultContext.shaderProg;
-}
+RDGE.GenerateGlowMap = function () {
+    this.shaderProgram = RDGE.globals.engine.defaultContext.shaderProg;
+};
 
-GenerateGlowMap.prototype.process=function(context,trNode,parent) 
-{
-	var renderer = g_Engine.getContext().renderer;
+RDGE.GenerateGlowMap.prototype.process = function (context, trNode, parent) {
+    var renderer = RDGE.globals.engine.getContext().renderer;
 	
 	// apply the context
 	context.Apply(this.shaderProgram);
@@ -361,9 +270,9 @@ GenerateGlowMap.prototype.process=function(context,trNode,parent)
 
 		var mesh;
 		if(trNode.materialNode.meshNode.mesh.name!==undefined)
-			mesh=g_meshMan.getModelByName(trNode.materialNode.meshNode.mesh.name);
+            mesh = RDGE.globals.meshMan.getModelByName(trNode.materialNode.meshNode.mesh.name);
 		else
-			mesh=g_meshMan.getModelByName(trNode.materialNode.meshNode.mesh.attrib.name);
+            mesh = RDGE.globals.meshMan.getModelByName(trNode.materialNode.meshNode.mesh.attrib.name);
 
 		if(mesh==null)
 			return;
@@ -373,16 +282,15 @@ GenerateGlowMap.prototype.process=function(context,trNode,parent)
 		renderer.drawIndexedPrimitive(mesh.primitive, this.shaderProgram, {"vert":"vec3", "normal":"vec3", "texcoord":"vec2"} );
 
 	}
-}
+};
 
 
-function GenerateDepthMap() {
+RDGE.GenerateDepthMap = function () {
 	this.shaderProgram=g_depthMapGenShader;
-}
+};
 
-GenerateDepthMap.prototype.process=function(context,trNode,parent) 
-{
-	var renderer = g_Engine.getContext().renderer;
+RDGE.GenerateDepthMap.prototype.process = function (context, trNode, parent) {
+    var renderer = RDGE.globals.engine.getContext().renderer;
 
 	// apply the context
 	context.Apply(false);
@@ -396,9 +304,9 @@ GenerateDepthMap.prototype.process=function(context,trNode,parent)
 		_bindUniforms(this.shaderProgram);
 
 		if(trNode.materialNode.meshNode.mesh.name!==undefined)
-			mesh=g_meshMan.getModelByName(trNode.materialNode.meshNode.mesh.name);
+            mesh = RDGE.globals.meshMan.getModelByName(trNode.materialNode.meshNode.mesh.name);
 		else
-			mesh=g_meshMan.getModelByName(trNode.materialNode.meshNode.mesh.attrib.name);
+            mesh = RDGE.globals.meshMan.getModelByName(trNode.materialNode.meshNode.mesh.attrib.name);
 
 		if(mesh==null)
 			return;
@@ -409,16 +317,15 @@ GenerateDepthMap.prototype.process=function(context,trNode,parent)
 
 		renderer.disablePolyOffsetFill();
 	}
-}
+};
 
-function GenerateHighResDepthMap() {
+RDGE.GenerateHighResDepthMap = function () {
 	this.shaderProgram=g_hrDepthMapGenShader;
 	this.cullFront=true;
-}
+};
 
-GenerateHighResDepthMap.prototype.process=function(context,trNode,parent) 
-{
-	var renderer = g_Engine.getContext().renderer;
+RDGE.GenerateHighResDepthMap.prototype.process = function (context, trNode, parent) {
+    var renderer = RDGE.globals.engine.getContext().renderer;
 
 	// apply the context
 	context.Apply(false);
@@ -432,9 +339,9 @@ GenerateHighResDepthMap.prototype.process=function(context,trNode,parent)
 		_bindUniforms(this.shaderProgram);
 
 		if(trNode.materialNode.meshNode.mesh.name!==undefined)
-			mesh=g_meshMan.getModelByName(trNode.materialNode.meshNode.mesh.name);
+            mesh = RDGE.globals.meshMan.getModelByName(trNode.materialNode.meshNode.mesh.name);
 		else
-			mesh=g_meshMan.getModelByName(trNode.materialNode.meshNode.mesh.attrib.name);
+            mesh = RDGE.globals.meshMan.getModelByName(trNode.materialNode.meshNode.mesh.attrib.name);
 
 		if(mesh==null)
 			return;
@@ -450,15 +357,13 @@ GenerateHighResDepthMap.prototype.process=function(context,trNode,parent)
 		renderer.cullBackFace();
 		renderer.disablePolyOffsetFill();
 	}
-}
+};
 
-function SceneCreateShadowMap() {
+RDGE.SceneCreateShadowMap = function () {
 	//this.shaderProgram = g_depthShadowMap;
-}
+};
 
-SceneCreateShadowMap.prototype.process=function(context,trNode,parent) {
-
-
-}
+RDGE.SceneCreateShadowMap.prototype.process = function (context, trNode, parent) {
+};
 //////////////////////////////////////////////////////////////////
-
+*/

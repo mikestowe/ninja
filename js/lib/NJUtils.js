@@ -139,7 +139,8 @@ exports.NJUtils = Object.create(Object.prototype, {
                     controller: { value: ControllerFactory.getController(controller)},
                     pi:         { value: pi},
                     props3D:    { value: p3d},
-                    shapeModel: { value: shapeProps}
+                    shapeModel: { value: shapeProps},
+                    isShape:    { value: isShape}
             });
 
         }
@@ -171,6 +172,7 @@ exports.NJUtils = Object.create(Object.prototype, {
                         // TODO - Need more info about the shape
                         selection = "canvas";
                         controller = "shape";
+                        isShape = true;
                     }
                     else
                     {

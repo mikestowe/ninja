@@ -65,6 +65,10 @@ body
 	display: none;
 }
 
-.elem-red-outline {
-  outline: red solid thin;
+.active-element-outline {
+  outline: #adff2f solid 2px;
+}
+
+.nj-preset-transition {
+    -webkit-transition: all 450ms linear !important;
 }

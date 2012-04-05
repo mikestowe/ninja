@@ -19,6 +19,7 @@ var GeomObj = function GLGeomObj() {
 	this.GEOM_TYPE_LINE             =  3;
 	this.GEOM_TYPE_PATH			    =  4;
 	this.GEOM_TYPE_CUBIC_BEZIER     =  5;
+    this.GEOM_TYPE_BRUSH_STROKE     =  6;
 	this.GEOM_TYPE_UNDEFINED		= -1;
 
     // Needed for calculating dashed/dotted strokes
@@ -110,14 +111,16 @@ var GeomObj = function GLGeomObj() {
         return this.GEOM_TYPE_UNDEFINED;
     };
 
-	this.getPrimitiveArray = function() {  return this._primArray;
+    this.getPrimitiveArray = function () {
+        return this._primArray;
     };
 
 	this.getMaterialNodeArray = function() {
         return this._materialNodeArray;
     };
 
-	this.getMaterialArray = function() {  return this._materialArray;
+    this.getMaterialArray = function () {
+        return this._materialArray;
     };
 
 	this.getTransformNode = function() {
@@ -141,46 +144,65 @@ var GeomObj = function GLGeomObj() {
 	this.setMaterialColor = function(c, type) {
         var i = 0,
             nMats = 0;
-        if(c.gradientMode) {
-            // Gradient support
-            if (this._materialArray && this._materialTypeArray) {
-                nMats = this._materialArray.length;
-            }
+        if(c) {
+            if(c.gradientMode) {
+                // Gradient support
+                if (this._materialArray && this._materialTypeArray) {
+                    nMats = this._materialArray.length;
+                }
 
-            var stops = [],
-                colors = c.color;
+                var stops = [],
+                    colors = c.color;
 
-            var len = colors.length;
-            // TODO - Current shaders only support 4 color stops
-            if(len > 4) {
-                len = 4;
-            }
+                var len = colors.length;
+                // TODO - Current shaders only support 4 color stops
+                if(len > 4) {
+                    len = 4;
+                }
 
-            for(var n=0; n<len; n++) {
-                var position = colors[n].position/100;
-                var cs = colors[n].value;
-                var stop = [cs.r/255, cs.g/255, cs.b/255, cs.a];
-                stops.push(stop);
+                for(var n=0; n<len; n++) {
+                    var position = colors[n].position/100;
+                    var cs = colors[n].value;
+                    var stop = [cs.r/255, cs.g/255, cs.b/255, cs.a];
+                    stops.push(stop);
 
-                if (nMats === this._materialTypeArray.length) {
-                    for (i=0;  i<nMats;  i++) {
-                        if (this._materialTypeArray[i] == type) {
-                            this._materialArray[i].setProperty( "color"+(n+1), stop.slice(0) );
-                            this._materialArray[i].setProperty( "colorStop"+(n+1), position );
+                    if (nMats === this._materialTypeArray.length) {
+                        for (i=0;  i<nMats;  i++) {
+                            if (this._materialTypeArray[i] == type) {
+                                this._materialArray[i].setProperty( "color"+(n+1), stop.slice(0) );
+                                this._materialArray[i].setProperty( "colorStop"+(n+1), position );
+                            }
+                        }
+                    }
+                }
+                if (type === "fill") {
+                    this._fillColor = c;
+                } else {
+                    this._strokeColor = c;
+                }
+            } else {
+                if (type === "fill") {
+                    this._fillColor = c.slice(0);
+                } else {
+                    this._strokeColor = c.slice(0);
+                }
+
+                if (this._materialArray && this._materialTypeArray) {
+                    nMats = this._materialArray.length;
+                    if (nMats === this._materialTypeArray.length) {
+                        for (i=0;  i<nMats;  i++) {
+                            if (this._materialTypeArray[i] == type) {
+                                this._materialArray[i].setProperty( "color", c.slice(0) );
+                            }
                         }
                     }
                 }
             }
-            if (type === "fill") {
-                this._fillColor = c;
-            } else {
-                this._strokeColor = c;
-            }
         } else {
             if (type === "fill") {
-                this._fillColor = c.slice(0);
+                this._fillColor = null;
             } else {
-                this._strokeColor = c.slice(0);
+                this._strokeColor = null;
             }
 
             if (this._materialArray && this._materialTypeArray) {
@@ -188,7 +210,8 @@ var GeomObj = function GLGeomObj() {
                 if (nMats === this._materialTypeArray.length) {
                     for (i=0;  i<nMats;  i++) {
                         if (this._materialTypeArray[i] == type) {
-                            this._materialArray[i].setProperty( "color", c.slice(0) );
+                            // TODO - Not sure how to set color to null values in shaders
+                            this._materialArray[i].setProperty( "color", [0,0,0,0] );
                         }
                     }
                 }
@@ -245,18 +268,14 @@ var GeomObj = function GLGeomObj() {
         return fillMaterial;
     };
 
-	this.exportMaterialsJSON = function()
-	{
+    this.exportMaterialsJSON = function () {
 		var jObj;
-		if (this._materialArray && this._materialNodeArray && this.getWorld().isWebGL())
-		{
+        if (this._materialArray && this._materialNodeArray && this.getWorld().isWebGL()) {
 			var nMats = this._materialArray.length;
-			if (nMats > 0)
-			{
+            if (nMats > 0) {
 				var arr = [];
 
-				for (var i=0;  i<nMats;  i++)
-				{
+                for (var i = 0; i < nMats; i++) {
 					var matObj = 
 					{
 						'materialNodeName'	: this._materialNodeArray[i].name,
@@ -277,8 +296,7 @@ var GeomObj = function GLGeomObj() {
 		return jObj;
 	}
 
-	this.importMaterialsJSON = function( jObj )
-	{
+    this.importMaterialsJSON = function (jObj) {
 		this._materialArray = [];
 		this._materialTypeArray = [];
 
@@ -286,13 +304,11 @@ var GeomObj = function GLGeomObj() {
 
 		var nMaterials = jObj.nMaterials;
 		var matArray = jObj.materials;
-		for (var i=0;  i<nMaterials;  i++)
-		{
+        for (var i = 0; i < nMaterials; i++) {
 			var mat;
 			var matObj = matArray[i].material;
 			var shaderName = matObj.material;
-			switch (shaderName)
-			{
+            switch (shaderName) {
 				case "flat":
 				case "radialGradient":
 				case "linearGradient":
@@ -324,8 +340,7 @@ var GeomObj = function GLGeomObj() {
 					break;
 			}
 
-			if (mat)
-			{
+            if (mat) {
 				mat.importJSON( matObj );
 				this._materialArray.push( mat );
 				this._materialTypeArray.push( matObj.type );
@@ -334,80 +349,7 @@ var GeomObj = function GLGeomObj() {
 				else  this._strokeMaterial = mat;
 			}
 		}
-	}
-
-	this.exportMaterials = function()
-	{
-		var rtnStr = "";
-		if (this._materialArray && this._materialNodeArray)
-		{
-			var nMats = this._materialArray.length;
-			rtnStr += "nMaterials: " + nMats + "\n";
-			for (var i=0;  i<nMats;  i++)
-			{
-				var matNode  = this._materialNodeArray[i];
-				rtnStr += "materialNodeName: " + matNode.name + "\n";
-
-				var material = this._materialArray[i];
-				rtnStr += material.export();
-			}
-		}
-		else
-			rtnStr += "nMaterials: 0\n" ;
-
-		return rtnStr;
-	}
-
-	this.importMaterials = function(importStr)
-	{
-		var nMaterials = Number( this.getPropertyFromString( "nMaterials: ", importStr )  );
-		for (var i=0;  i<nMaterials;  i++)
-		{
-			var mat;
-			var materialType = this.getPropertyFromString( "material: ",	importStr );
-			switch (materialType)
-			{
-				case "flat":
-				case "radialGradient":
-				case "linearGradient":
-				case "bumpMetal":
-				case "uber":
-				case "plasma":
-				case "deform":
-				case "water":
-				case "paris":
-				case "raiders":
-				case "tunnel":
-				case "reliefTunnel":
-				case "squareTunnel":
-				case "twist":
-				case "fly":
-				case "julia":
-				case "mandel":
-				case "star":
-				case "zinvert":
-				case "keleidoscope":
-				case "radialBlur":
-				case "pulse":
-					mat = MaterialsModel.getMaterialByShader( materialType );
-					if (mat)  mat = mat.dup();
-					break;
-
-				default:
-					console.log( "material type: " + materialType + " is not supported" );
-					break;
-			}
-
-			if (mat)
-				mat.import( importStr );
-
-			// pull off the end of the material 
-			var endMat = "endMaterial\n";
-			var endIndex = importStr.indexOf( endMat );
-			if (endIndex < 0)  break;
-			importStr = importStr.substr( endIndex + endMat.length );
-		}
-	}
+    };
 
     this.translate   = function(v) {
         var mat = Matrix.Translation( v );
@@ -503,8 +445,7 @@ var GeomObj = function GLGeomObj() {
 
         stops = gradientStr.split(";");
         len = stops.length;
-        for(i=0; i<len; i++)
-        {
+        for (i = 0; i < len; i++) {
             stop = stops[i].split("@");
             c = stop[0].split(",");
             rtnArr.push({ position: Number(stop[1]), value:{r:Number(c[0]), g:Number(c[1]), b:Number(c[2]), a:Number(c[3])} });

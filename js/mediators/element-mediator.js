@@ -5,151 +5,100 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var Montage = require("montage/core/core").Montage,
-    NJComponent = require("js/lib/nj-base").NJComponent;
+    Component = require("montage/ui/component").Component;
 
 var ElementController = require("js/controllers/elements/element-controller").ElementController,
     Command     =   require("js/controllers/undo-controller").Command,
-    GroupCommand = require("js/controllers/undo-controller").GroupCommand,
     NJUtils = require("js/lib/NJUtils").NJUtils;
 
-exports.ElementMediator = Montage.create(NJComponent, {
+exports.ElementMediator = Montage.create(Component, {
 
-    deleteDelegate: {
+
+    addDelegate: {
+        enumerable: false,
         value: null
     },
 
-    deserializedFromTemplate: {
-        value: function () {
-            this.eventManager.addEventListener("elementAdding", this, false);
-            this.eventManager.addEventListener("deleting", this, false);
-        }
+    deleteDelegate: {
+        enumerable: false,
+        value: null
     },
 
-    // TODO use the specific controller to be able to subclass the functionality
-    handleElementAdding: {
-        value: function(event) {
-            this.addElement(event.detail.el, event.detail.data);
-        }
-    },
-
-    handleDeleting: {
-        value: function(event) {
-            if(this.deleteDelegate && (typeof this.deleteDelegate.handleDelete === 'function')) {
-                this.deleteDelegate.handleDelete();
+    addElements: {
+        value: function(elements, rules, notify) {
+            if(Array.isArray(elements)) {
+                elements.forEach(function(element) {
+                    element = element;
+                    ElementController.addElement(element, rules);
+                });
             } else {
-                // Add the Undo/Redo
-                var els = [],
-                    len = this.application.ninja.selectedElements.length;
+                ElementController.addElement(elements, rules);
 
-                if(len) {
-                    for(var i = 0; i<len; i++) {
-                        els.push(this.application.ninja.selectedElements[i]);
+                // TODO - Check with webgl branch - Props seem to be already there.
+                var prop3d = this.get3DProperties(elements);
+                if(prop3d) {
+                    elements.elementModel.controller["set3DProperties"](elements, [prop3d], 0, true);
                     }
-                    
-                    for(i=0; i<len; i++) {
-                        this._removeElement(els[i]._element);
                     }
 
-                    NJevent( "deleteSelection", els );
+            if(this.addDelegate && typeof (this.addDelegate['onAddElements']) === "function") {
+                this.addDelegate['onAddElements'].call(this.addDelegate, elements);
                 }
-            }
-        }
-    },
 
-    addElement: {
-        value: function(el, rules, noEvent) {
-            var command = Montage.create(Command, {
-                _el:            { value: el },
-                _rules:         { value: rules },
-                _noEvent:       { value: noEvent },
+            var undoLabel = "add element";
 
-                description: { value: "Adding Element"},
+            document.application.undoManager.add(undoLabel, this.removeElements, this, elements, notify);
 
-                receiver: { value: this},
+            this.application.ninja.documentController.activeDocument.needsSave = true;
 
-                execute: {
-                    value: function() {
-                        this.receiver._addElement(this._el, this._rules, this._noEvent);
-                        return this._el;
+            if(notify || notify === undefined) {
+                NJevent("elementAdded", elements);
                     }
+        }
                 },
 
-                unexecute: {
-                    value: function() {
-                        this.receiver._removeElement(this._el, this._rules, this._noEvent);
-                        return this._el;
-                    }
-                }
-            });
+    removeElements: {
+        value: function(elements, notify /* Used for the add undo */) {
 
-            NJevent("sendToUndo", command);
-            command.execute();
+            if(this.deleteDelegate && (typeof this.deleteDelegate.handleDelete === 'function')) {
+                return this.deleteDelegate.handleDelete();
+                // this.handleDelete.call(deleteDelegate);
         }
-    },
 
-    _addElement: {
-        value: function(el, rules, noEvent) {
-            ElementController.addElement(el, rules);
-//            var p3d = this.get3DProperties(el);
-//            if(p3d) {
-//                el.elementModel.controller["set3DProperties"](el, [p3d], 0, true);
-//            }
-            if(el.elementModel && el.elementModel.props3D) {
-                el.elementModel.props3D.init(el, false);
+            if(Array.isArray(elements)) {
+                elements = Array.prototype.slice.call(elements, 0);
+                elements.forEach(function(element) {
+                    ElementController.removeElement(element);
+                });
+            } else {
+                ElementController.removeElement(elements);
             }
-            if(!noEvent) {
+
+            var undoLabel = "add element";
+
+            document.application.undoManager.add(undoLabel, this.addElements, this, elements, null, notify);
+
                 this.application.ninja.documentController.activeDocument.needsSave = true;
-                NJevent("elementAdded", el);
+
+            NJevent("elementsRemoved", elements);
             }
-        }
-    },
-
-    deleteElements: {
-         value: function(items) {
-            // Add the Undo/Redo
-            var len, el;
-
-            len = items.length;
-
-            if(len) {
-
-                for(var i = len - 1; i >= 0; i--) {
-                    el = items[i]._element || items[i];
-                    this._removeElement(el);
-                }
-
-                NJevent( "deleteSelection", items );
-            }
-         }
-    },
-
-    _removeElement: {
-        value: function(el, rules) {
-            ElementController.removeElement(el, rules);
-            this.application.ninja.documentController.activeDocument.needsSave = true;
-            NJevent("elementDeleted", el);
-        }
     },
 
     replaceElement: {
-        value: function(el, el2) {
-            el2.elementModel = el.elementModel;
-            this.application.ninja.currentDocument.documentRoot.replaceChild(el2, el);
-        }
-    },
+        value: function(newChild, oldChild, notify) {
 
-    getNJProperty: {
-        value: function(el, p) {
-            if(el.elementModel) {
-                if(el.elementModel.hasOwnProperty(p)) {
-                    return el.elementModel[p];
-                } else {
-                    console.log("Element Model does not have ", p);
-                }
-            } else {
-                console.log("Element has no Model -- Create one");
-            }
+            this.application.ninja.currentDocument.documentRoot.replaceChild(newChild, oldChild);
+
+            var undoLabel = "replace element";
+
+            document.application.undoManager.add(undoLabel, this.replaceElement, this, oldChild, newChild);
+
+            this.application.ninja.documentController.activeDocument.needsSave = true;
+
+            if(notify || notify === undefined) {
+                NJevent("elementReplaced", {type : "replaceElement", data: {"newChild": newChild, "oldChild": oldChild}});
         }
+                }
     },
 
     getProperty: {
@@ -207,9 +156,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
             } else {
                 // Calculate currentValue if not found for each element
                 if(currentValue === null) {
-                    console.log("Here");
-                    var item = el._element || el;
-                    currentValue = item.getAttribute(att);
+                    currentValue = el.getAttribute(att);
                 }
 
                 var command = Montage.create(Command, {
@@ -248,9 +195,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
 
     _setAttribute: {
         value: function(el, att, value, eventType, source) {
-            var item = el._element || el;
-
-            item.elementModel.controller["setAttribute"](item, att, value);
+            el.elementModel.controller["setAttribute"](el, att, value);
 
             NJevent("attribute" + eventType, {type : "setAttribute", source: source, data: {"els": el, "prop": att, "value": value}, redraw: null});
         }
@@ -277,7 +222,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
                 if(!currentValue) {
                     var that = this;
                     currentValue = els.map(function(item) {
-                        return that.getProperty((item._element || item), p);
+                        return that.getProperty((item), p);
                     });
                 }
 
@@ -320,8 +265,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
             var el;
 
             for(var i=0, item; item = els[i]; i++) {
-                el = item._element || item;
-                el.elementModel.controller["setProperty"](el, p, value[i]);
+                item.elementModel.controller["setProperty"](item, p, value[i], eventType, source);
             }
 
             NJevent("element" + eventType, {type : "setProperty", source: source, data: {"els": els, "prop": p, "value": value}, redraw: null});
@@ -376,11 +320,10 @@ exports.ElementMediator = Montage.create(NJComponent, {
 
     _setProperties: {
         value: function(els, props, eventType, source) {
-            var el, propsArray;
+            var propsArray;
 
             for(var i=0, item; item = els[i]; i++) {
-                el = item._element || item;
-                el.elementModel.controller["setProperties"](el, props, i);
+                item.elementModel.controller["setProperties"](item, props, i);
             }
 
             NJevent("element" + eventType, {type : "setProperties", source: source, data: {"els": els, "prop": props, "value": props}, redraw: null});
@@ -443,16 +386,14 @@ exports.ElementMediator = Montage.create(NJComponent, {
 
     _set3DProperties: {
         value: function(els, props, eventType, source) {
-            var el,
-                update3DModel = false;
+            var update3DModel = false;
 
-            if(eventType === "Change")
-            {
+            if(eventType === "Change") {
                 update3DModel = true;
             }
+
             for(var i=0, item; item = els[i]; i++) {
-                el = item._element || item;
-                el.elementModel.controller["set3DProperties"](el, props, i, update3DModel);
+                item.elementModel.controller["set3DProperties"](item, props, i, update3DModel);
             }
 
             NJevent("element" + eventType, {type : "set3DProperties", source: source, data: {"els": els, "prop": "matrix", "value": props}, redraw: null});
@@ -491,7 +432,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
                 if(!currentValue) {
                     var that = this;
                     currentValue = els.map(function(item) {
-                        return that.getColor(item._element, isFill);
+                        return that.getColor(item, isFill);
                     });
                 }
 
@@ -531,18 +472,13 @@ exports.ElementMediator = Montage.create(NJComponent, {
 
     _setColor: {
         value: function(els, value, isFill, eventType, source) {
-            var el;
-
             for(var i=0, item; item = els[i]; i++) {
-                el = item._element || item;
-                el.elementModel.controller["setColor"](el, value, isFill);
+                item.elementModel.controller["setColor"](item, value, isFill);
             }
 
             NJevent("element" + eventType, {type : "setColor", source: source, data: {"els": els, "prop": "color", "value": value, "isFill": isFill}, redraw: null});
         }
     },
-
-
 
     getStroke: {
         value: function(el) {
@@ -573,7 +509,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
                 if(!currentValue) {
                     var that = this;
                     currentValue = els.map(function(item) {
-                        return that.getStroke(item._element);
+                        return that.getStroke(item);
                     });
                 }
 
@@ -612,11 +548,8 @@ exports.ElementMediator = Montage.create(NJComponent, {
 
     _setStroke: {
         value: function(els, value, eventType, source) {
-            var el;
-
             for(var i=0, item; item = els[i]; i++) {
-                el = item._element || item;
-                el.elementModel.controller["setStroke"](el, value);
+                item.elementModel.controller["setStroke"](item, value);
             }
 
             NJevent("element" + eventType, {type : "setStroke", source: source, data: {"els": els, "prop": "stroke", "value": value}, redraw: null});
@@ -666,8 +599,7 @@ exports.ElementMediator = Montage.create(NJComponent, {
     },
 
     getPerspectiveMode: {
-        value: function(el)
-        {
+        value: function(el) {
             return this.getProperty(el, "-webkit-transform-style");
         }
     },
@@ -677,12 +609,9 @@ exports.ElementMediator = Montage.create(NJComponent, {
             var dist = el.elementModel.controller["getPerspectiveDist"](el);
             el.elementModel.controller["set3DProperties"](el, [{mat:mat, dist:dist}], 0, !isChanging);
 
-            if(isChanging)
-            {
+            if(isChanging) {
                 NJevent("elementChanging", {type : "setMatrix", source: source, data: {"els": [el], "prop": "matrix", "value": mat}, redraw: null});
-            }
-            else
-            {
+            } else {
                 NJevent("elementChange", {type : "setMatrix", source: source, data: {"els": [el], "prop": "matrix", "value": mat}, redraw: null});
             }
         }
@@ -691,16 +620,9 @@ exports.ElementMediator = Montage.create(NJComponent, {
     has3D: {
         value: function(el) {
             var str = this.getProperty(el, "-webkit-transform");
-            if (str && str.length)
-            {
-                return true;
+            return str && str.length;
             }
-            else
-            {
-                return false;
             }
-        }
-    }
 
 
 

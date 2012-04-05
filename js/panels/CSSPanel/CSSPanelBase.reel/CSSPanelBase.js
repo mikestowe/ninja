@@ -520,9 +520,7 @@ var CSSPanel = exports.CSSPanelBase = (require("montage/core/core").Montage).cre
                 this.inComputedStyleMode = false; // No computed styles mode for multiple items
                 
                 ///// if multiple items are selected, then show common rules
-                var elements = items.map(function(item) {
-                    return item._element;
-                });
+                var elements = Array.prototype.slice.call(this.application.ninja.selectedElements, 0);
                 
                 ///// show toolbar, but hide computed style button
                 this.sections.styles.toolbar.style.display = '';
@@ -538,7 +536,7 @@ var CSSPanel = exports.CSSPanelBase = (require("montage/core/core").Montage).cre
                 this.sections.styles.statusMsg.classList.add('nj-css-panel-hide');
                 this.sections.styles.showComputedEl.classList.remove('nj-css-panel-hide');// .style.display = '';
                 this.sections.styles.toolbar.style.display = '';
-                this.showStylesForElement(items[0]._element, null);
+                this.showStylesForElement(items[0], null);
             } else {
                 this.sections.styles.statusMsg.classList.add('nj-css-panel-hide');
                 this._inMultiSelectMode = false;
@@ -1691,7 +1689,7 @@ NJCSSStyle.prototype.styleChange = function() {
 NJCSSStyle.prototype.getUnits = function(val) {
     if(val.split(/\s/).length > 1) {
         return false;
-    } else if(/px|em|pt|in|cm|mm|ex|pc|%/.test(val)) {
+    } else if(/(px|em|pt|in|cm|mm|ex|pc|%)$/.test(val)) {
         return val.replace(/^.*(px|em|pt|in|cm|mm|ex|pc|%).*/, '$1');
     }
     return null;
@@ -1771,7 +1769,7 @@ NJCSSStyle.prototype.updateValue = function(newValue, bypassUndo) {
         this.styleChange();
         return true;
     }
-    
+
     var IMPORTANT_FLAG = ' !important',
         dec = this.njRule.declaration,        
         acceptAsValid = false,

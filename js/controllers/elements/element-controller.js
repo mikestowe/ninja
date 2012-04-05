@@ -5,22 +5,27 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var Montage = require("montage/core/core").Montage,
-    NJComponent =   require("js/lib/nj-base").NJComponent;
+    Component = require("montage/ui/component").Component;
 
-var ElementController = exports.ElementController = Montage.create(NJComponent, {
+exports.ElementController = Montage.create(Component, {
 
     addElement: {
         value: function(el, styles) {
             this.application.ninja.currentDocument.documentRoot.appendChild(el);
-            // Nested elements -
-            // TODO make sure the CSS is correct before nesting elements
+            // Nested elements - TODO make sure the CSS is correct before nesting elements
             // this.application.ninja.currentSelectedContainer.appendChild(el);
-            this.application.ninja.stylesController.setElementStyles(el, styles);
+            if(styles) {
+                this.application.ninja.stylesController.setElementStyles(el, styles);
+            }
         }
     },
 
+    // Remove the element from the DOM and clear the GLWord.
     removeElement: {
         value: function(el) {
+            if(el.elementModel && el.elementModel.shapeModel && el.elementModel.shapeModel.GLWorld) {
+                el.elementModel.shapeModel.GLWorld.clearTree();
+            }
             el.parentNode.removeChild(el);
         }
     },

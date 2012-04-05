@@ -29,6 +29,8 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
     modifyElements : {
 		value : function(data, event)
         {
+            //console.log( "modifyElements, data: " + data.pt0 + " => " + data.pt1 );
+
             // form the translation vector and post translate the matrix by it.
             var delta = vecUtils.vecSubtract( 3, data.pt1, data.pt0 );
             if(this._handleMode !== null)
@@ -66,15 +68,12 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
                     delta[0] = 0;
                     delta[1] = 0;
                 }
-                else
-                {
-                    delta[2] = 0;
-                }
                 this._delta = delta.slice(0);
             }
 
             var transMat = Matrix.Translation( delta );
 
+            //console.log( "Translate: " + delta );
             if(this._inLocalMode && (this._targets.length === 1) )
             {
                 this._translateLocally(transMat);
@@ -137,6 +136,9 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 	// We will only translate single elements locally
 	_translateLocally: {
 		value: function (transMat) {
+            //console.log( "_translateLocally, startMat: " + this._startMat );
+            //console.log( "_translateLocally, transMat: " + transMat );
+            //console.log( "_translateLocally, startMat: " + this._startMat + ", transMat: " + transMat );
 			var mat = glmat4.multiply(this._startMat, transMat, []);
 			viewUtils.setMatrixForElement( this._target, mat, true );
 			if(this._mode !== 1)
@@ -148,14 +150,22 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 
 	_translateGlobally: {
 		value: function (transMat) {
+            //console.log( "_translateGlobally, startMat: " + this._startMat + ", transMat: " + transMat );
+            //console.log( "_translateGlobally, transMat: " + transMat );
 			var len = this._targets.length,
 				i = 0,
 				item,
 				elt,
-				curMat,
+				curMat = viewUtils.getMatrixFromElement( this._target ),
                 matInv = glmat4.inverse(this._startMat, []),
                 nMat = glmat4.multiply(transMat, this._startMat, [] ),
 			    qMat = glmat4.multiply(matInv, nMat, []);
+           
+            if (this._mode === 1)
+            { 
+                var curInv = glmat4.inverse( curMat, [] );
+                transMat = glmat4.multiply( nMat, curInv, [] );
+            }
 
 			var shouldUpdateStartMat = true;
 
@@ -184,6 +194,7 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 
 				if(shouldUpdateStartMat)
 				{
+                    //console.log(  "\t\tshouldUpdateStartMat" );
 					this._targets[i].mat = curMat;
 				}
 			}
@@ -191,14 +202,16 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 	},
 
     _updateTargets: {
-		value: function(addToUndoStack) {
+		value: function(addToUndoStack)
+        {
+            console.log( "_updateTargets" );
             var newStyles = [],
                 previousStyles = [],
 			    len = this.application.ninja.selectedElements.length;
 			this._targets = [];
 			for(var i = 0; i < len; i++)
 			{
-				var elt = this.application.ninja.selectedElements[i]._element;
+				var elt = this.application.ninja.selectedElements[i];
 
 				var curMat = viewUtils.getMatrixFromElement(elt);
 				var curMatInv = glmat4.inverse(curMat, []);

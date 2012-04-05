@@ -6,7 +6,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 
 var VecUtils =      require("js/helper-classes/3D/vec-utils").VecUtils;
-
+var CanvasController = require("js/controllers/elements/canvas-controller").CanvasController;
 var GeomObj =       require("js/lib/geom/geom-obj").GeomObj;
 var AnchorPoint =   require("js/lib/geom/anchor-point").AnchorPoint;
 var MaterialsModel = require("js/models/materials-model").MaterialsModel;
@@ -61,6 +61,9 @@ var GLSubpath = function GLSubpath() {
     //whether or not to use the canvas drawing to stroke/fill
     this._useCanvasDrawing = true;
 
+    //the canvas that will draw this subpath
+    this._canvas = null;
+    
     //the X and Y location of this subpath's canvas in stage world space of Ninja
     this._canvasX = 0;
     this._canvasY = 0;
@@ -131,6 +134,11 @@ var GLSubpath = function GLSubpath() {
         var bboxHeight = bboxMax[1] - bboxMin[1];
         var bboxMid = [0.5 * (bboxMax[0] + bboxMin[0]), 0.5 * (bboxMax[1] + bboxMin[1]), 0.5 * (bboxMax[2] + bboxMin[2])];
 
+        if (this._canvas) {
+            CanvasController.setProperty(this._canvas, "width", bboxWidth+"px");
+            CanvasController.setProperty(this._canvas, "height", bboxHeight+"px");
+            this._canvas.elementModel.shapeModel.GLWorld.setViewportFromCanvas(this._canvas);
+        }
         ctx.clearRect(0, 0, bboxWidth, bboxHeight);
 
         ctx.lineWidth = this._strokeWidth;
@@ -144,6 +152,7 @@ var GLSubpath = function GLSubpath() {
             //ctx.fillStyle = MathUtils.colorToHex( this._fillColor );
             var fillColorStr = "rgba("+parseInt(255*this._fillColor[0])+","+parseInt(255*this._fillColor[1])+","+parseInt(255*this._fillColor[2])+","+this._fillColor[3]+")";
             ctx.fillStyle = fillColorStr;
+            console.log("Fill color:" + fillColorStr);
         }
         var lineCap = ['butt','round','square'];
         ctx.lineCap = lineCap[1];
@@ -256,6 +265,10 @@ GLSubpath.prototype = new GeomObj();
 /////////////////////////////////////////////////////////
 // Property Accessors/Setters
 /////////////////////////////////////////////////////////
+GLSubpath.prototype.setCanvas = function (c) {
+    this._canvas = c;
+};
+
 GLSubpath.prototype.setWorld = function (world) {
     this._world = world;
 };
@@ -773,6 +786,7 @@ GLSubpath.prototype.getStrokeWidth = function () {
 
 GLSubpath.prototype.setStrokeWidth = function (w) {
     this._strokeWidth = w;
+    this._dirty=true;
 };
 
 GLSubpath.prototype.getStrokeMaterial = function () {
@@ -1189,7 +1203,7 @@ GLSubpath.prototype.getNearVertex = function( eyePt, dir ){
     bboxDim[1] = 0.5 * (this._BBoxMax[1] - this._BBoxMin[1]);
     bboxMid[1] = 0.5 * (this._BBoxMax[1] + this._BBoxMin[1]);
     bboxDim[2] = 0.5 * (this._BBoxMax[2] - this._BBoxMin[2]);
-    bboxMid[3] = 0.5 * (this._BBoxMax[2] + this._BBoxMin[2]);
+    bboxMid[2] = 0.5 * (this._BBoxMax[2] + this._BBoxMin[2]);
 
     // convert the stroke vertices into normalized device coordinates
     var world = this.getWorld();

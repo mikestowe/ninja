@@ -99,12 +99,11 @@ exports.KeyboardMediator = Montage.create(Component, {
                     evt.preventDefault();
                 }
 
-                // Check DELETE OR BACKSPACE
+                // DELETE or BACKSPACE event handler - Removes the current selected elements from the DOM
                 if((evt.keyCode == Keyboard.BACKSPACE) || (evt.keyCode == Keyboard.DELETE)) {
                     evt.stopImmediatePropagation();
                     evt.preventDefault();
-                    NJevent("deleting");
-                    return;
+                    return this.application.ninja.elementMediator.removeElements(document.application.ninja.selectedElements);
                 }
 
 
@@ -197,9 +196,7 @@ exports.KeyboardMediator = Montage.create(Component, {
                 }
 
                 if(evt.keyCode === Keyboard.ESCAPE){//ESC key
-                    //console.log("ESC key pressed");
                     if(this.application.ninja.toolsData) this.application.ninja.toolsData.selectedToolInstance.HandleEscape(evt);
-                    //menuViewManagerModule.MenuViewManager.closeMenu("mainMenuBar");
                 }
 
 
@@ -214,39 +211,27 @@ exports.KeyboardMediator = Montage.create(Component, {
 
             // Check if cmd+z/ctrl+z for Undo (Windows/Mac)
             if ((evt.keyCode == Keyboard.Z) && (evt.ctrlKey || evt.metaKey) && !evt.shiftKey) {
-                NJevent("executeUndo");
-                //menuViewManagerModule.MenuViewManager.closeMenu("mainMenuBar");
-                return;
-            }
-
-            // Check if cmd+s/ctrl+s for Save (Windows/Mac)
-            if ((evt.keyCode == Keyboard.S) && (evt.ctrlKey || evt.metaKey) && !evt.shiftKey) {
-                try{
-                    NJevent("executeSave");
-                }
-                catch(e){
-                    console.warn("Unable to save");
-                    console.log(e.stack);
-                }
-                evt.preventDefault();
+                document.application.undoManager.undo();
                 return;
             }
 
             // Check if cmd+shift+z for Redo (Mac)
             if ((evt.keyCode == Keyboard.Z) && evt.metaKey && evt.shiftKey) {
-                NJevent("executeRedo");
-                //menuViewManagerModule.MenuViewManager.closeMenu("mainMenuBar");
+                document.application.undoManager.redo();
                 return;
             }
 
-            // Check if ctrl+y for Redo (Windows)
+             // Check if ctrl+y for Redo (Windows)
             if ((evt.keyCode == Keyboard.Y) && evt.ctrlKey) {
-                NJevent("executeRedo");
-                //menuViewManagerModule.MenuViewManager.closeMenu("mainMenuBar");
+                document.application.undoManager.redo();
                 return;
             }
 
-
+            // Check if cmd+s/ctrl+s for Save (Windows/Mac)
+            if ((evt.keyCode == Keyboard.S) && (evt.ctrlKey || evt.metaKey) && !evt.shiftKey) {
+                NJevent("executeSave");
+                evt.preventDefault();
+            }
         }
     },
 

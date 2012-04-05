@@ -245,7 +245,7 @@ exports.ThreeD = Montage.create(Component, {
     _getSelectedItem: {
         value: function(els) {
             if(els.length) {
-                return els[0]._element || els[0];
+                return els[0];
             } else {
                 return this.boundObject.application.ninja.currentDocument.documentRoot;
             }

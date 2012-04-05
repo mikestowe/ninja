@@ -560,8 +560,7 @@ exports.Stage = Montage.create(Component, {
                 elt = this.application.ninja.currentDocument.GetElementFromPoint(point.x + this.scrollLeft,point.y + this.scrollTop);
 
             // workaround Chrome 3d bug
-            if(this.application.ninja.toolsData.selectedToolInstance._canSnap && this.application.ninja.currentDocument.inExclusion(elt) !== -1)
-            {
+            if(this.application.ninja.toolsData.selectedToolInstance._canSnap && this.application.ninja.currentDocument.inExclusion(elt) !== -1) {
                 return this._getElementUsingSnapping(point);
             } else {
                 return elt;
@@ -605,7 +604,7 @@ exports.Stage = Montage.create(Component, {
                 var selArray = new Array();
 
                 for(var i = 0; this.application.ninja.selectedElements[i];i++) {
-                    var curElement = this.application.ninja.selectedElements[i]._element;
+                    var curElement = this.application.ninja.selectedElements[i];
 
                     // Add element to array that is used to calculate 3d-bounding box of all elements
                     selArray.push( curElement );

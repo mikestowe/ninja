@@ -17,11 +17,12 @@ var Montage = require("montage/core/core").Montage,
 exports.FillTool = Montage.create(ModifierToolBase, {
 	_canSnap: { value: false },
 	_canColor: { value: true },
+	_targetedElement: { value: null },
 
     HandleMouseMove: {
         value : function (event)
 		{
-            var obj = this.application.ninja.stage.GetElement(event);
+            var obj = this.application.ninja.stage.GetSelectableElement(event);
             var cursor = "url('images/cursors/fill.png') 14 14, default";
             var canColor = true;
             if (obj)
@@ -31,6 +32,23 @@ exports.FillTool = Montage.create(ModifierToolBase, {
                 {
                     cursor = "url('images/cursors/nofill.png') 14 14, default";
                     canColor = false;
+                    if(this._targetedElement)
+                    {
+                        this._targetedElement.classList.remove("active-element-outline");
+                        this._targetedElement = null;
+                    }
+                }
+                else
+                {
+                    if (obj !== this._targetedElement)
+                    {
+                        if(this._targetedElement)
+                        {
+                            this._targetedElement.classList.remove("active-element-outline");
+                        }
+                    }
+                    this._targetedElement = obj;
+                    this._targetedElement.classList.add("active-element-outline");
                 }
             }
             this.application.ninja.stage.drawingCanvas.style.cursor = cursor;
