@@ -121,6 +121,13 @@ NinjaCvsRt.GLRuntime = function ( canvas, jObj,  assetPath )
 	// all "live" materials
 	this._materials = [];
 
+    // provide the mapping for the asset directory
+    if (assetPath) {
+        this._assetPath = assetPath.slice();
+        if (this._assetPath[this._assetPath.length - 1] != '/')
+            this._assetPath += '/';
+    }
+
 	if(this._assetPath !== undefined) {
 		RDGE.globals.engine.setAssetPath(this._assetPath);
 	}
@@ -1229,11 +1236,11 @@ NinjaCvsRt.RuntimePulseMaterial = function ()
 		var material = this._materialNode;
 		if (material)
 		{
-			var technique = material.shaderProgram.default;
+			var technique = material.shaderProgram["default"];
 			var renderer = RDGE.globals.engine.getContext().renderer;
 			if (renderer && technique)
 			{
-				if (this._shader && this._shader.default)
+				if (this._shader && this._shader["default"])
 				{
 					var res = [ renderer.vpWidth,  renderer.vpHeight ];
 					technique.u_resolution.set( res );
@@ -1243,7 +1250,7 @@ NinjaCvsRt.RuntimePulseMaterial = function ()
 					if (tex)
 						technique.u_tex0.set( tex );
 
-					this._shader.default.u_time.set( [this._time] );
+					this._shader["default"].u_time.set( [this._time] );
 				}
 			}
 		}
@@ -1256,12 +1263,12 @@ NinjaCvsRt.RuntimePulseMaterial = function ()
 		var material = this._materialNode;
 		if (material)
 		{
-			var technique = material.shaderProgram.default;
+			var technique = material.shaderProgram["default"];
 			var renderer = RDGE.globals.engine.getContext().renderer;
 			if (renderer && technique)
 			{
-				if (this._shader && this._shader.default)
-					this._shader.default.u_time.set( [this._time] );
+				if (this._shader && this._shader["default"])
+					this._shader["default"].u_time.set( [this._time] );
 				this._time += this._dTime;
 				if (this._time > 200.0)  this._time = 0.0;
 			}
@@ -1289,24 +1296,24 @@ NinjaCvsRt.RuntimeRadialGradientMaterial = function ()
 		var material = this._materialNode;
 		if (material)
 		{
-			var technique = material.shaderProgram.default;
+			var technique = material.shaderProgram["default"];
 			var renderer = RDGE.globals.engine.getContext().renderer;
 			if (renderer && technique)
 			{
-				if (this._shader && this._shader.default)
+				if (this._shader && this._shader["default"])
 				{
-					this._shader.default.u_color1.set( this._color1 );
-					this._shader.default.u_color2.set( this._color2 );
-					this._shader.default.u_color3.set( this._color3 );
-					this._shader.default.u_color4.set( this._color4 );
+					this._shader["default"].u_color1.set( this._color1 );
+					this._shader["default"].u_color2.set( this._color2 );
+					this._shader["default"].u_color3.set( this._color3 );
+					this._shader["default"].u_color4.set( this._color4 );
 
-					this._shader.default.u_colorStop1.set( [this._colorStop1] );
-					this._shader.default.u_colorStop2.set( [this._colorStop2] );
-					this._shader.default.u_colorStop3.set( [this._colorStop3] );
-					this._shader.default.u_colorStop4.set( [this._colorStop4] );
+					this._shader["default"].u_colorStop1.set( [this._colorStop1] );
+					this._shader["default"].u_colorStop2.set( [this._colorStop2] );
+					this._shader["default"].u_colorStop3.set( [this._colorStop3] );
+					this._shader["default"].u_colorStop4.set( [this._colorStop4] );
 
 					if (this._angle !== undefined)
-						this._shader.default.u_cos_sin_angle.set([Math.cos(this._angle), Math.sin(this._angle)]);
+						this._shader["default"].u_cos_sin_angle.set([Math.cos(this._angle), Math.sin(this._angle)]);
 				}
 			}
 		}
@@ -1368,11 +1375,11 @@ NinjaCvsRt.RuntimeBumpMetalMaterial = function ()
 		var material = this._materialNode;
 		if (material)
 		{
-			var technique = material.shaderProgram.default;
+			var technique = material.shaderProgram["default"];
 			var renderer = RDGE.globals.engine.getContext().renderer;
 			if (renderer && technique)
 			{
-				if (this._shader && this._shader.default)
+				if (this._shader && this._shader["default"])
 				{
 					technique.u_light0Diff.set( this._lightDiff );
 
@@ -1582,12 +1589,12 @@ NinjaCvsRt.RuntimePlasmaMaterial = function ()
 		var material = this._materialNode;
 		if (material)
 		{
-			var technique = material.shaderProgram.default;
+			var technique = material.shaderProgram["default"];
 			var renderer = RDGE.globals.engine.getContext().renderer;
 			if (renderer && technique)
 			{
-				if (this._shader && this._shader.default)
-					this._shader.default.u_time.set( [this._time] );
+				if (this._shader && this._shader["default"])
+					this._shader["default"].u_time.set( [this._time] );
 				this._time += this._dTime;
 				if (this._time > 200.0)  this._time = 0.0;
 			}
