@@ -311,11 +311,9 @@ var Layer = exports.Layer = Montage.create(Component, {
     		return this._isMainCollapsed;
     	},
     	set: function(newVal) {
-    		if (newVal !== this._isMainCollapsed) {
-    			this.log('layer.js: isMainCollapsed: ' + newVal);
-    			this._isMainCollapsed = newVal;
-    			this.layerData.isMainCollapsed = newVal;
-    		}
+			this._isMainCollapsed = newVal;
+			this.layerData.isMainCollapsed = newVal;
+
     	}
     },
     
@@ -329,10 +327,8 @@ var Layer = exports.Layer = Montage.create(Component, {
     		return this._isTransformCollapsed;
     	},
     	set: function(newVal) {
-    		if (newVal !== this._isTransformCollapsed) {
-    			this._isTransformCollapsed = newVal;
-    			this.layerData.isTransformCollapsed = newVal;
-    		}
+			this._isTransformCollapsed = newVal;
+			this.layerData.isTransformCollapsed = newVal;
     	}
     },
     
@@ -346,10 +342,8 @@ var Layer = exports.Layer = Montage.create(Component, {
     		return this._isPositionCollapsed;
     	},
     	set: function(newVal) {
-    		if (newVal !== this._isPositionCollapsed) {
-    			this._isPositionCollapsed = newVal;
-    			this.layerData.isPositionCollapsed = newVal;
-    		}
+			this._isPositionCollapsed = newVal;
+			this.layerData.isPositionCollapsed = newVal;
     	}
     },
     
@@ -363,10 +357,8 @@ var Layer = exports.Layer = Montage.create(Component, {
     		return this._isStyleCollapsed;
     	},
     	set: function(newVal) {
-    		if (newVal !== this._isStyleCollapsed) {
-    			this._isStyleCollapsed = newVal;
-    			this.layerData.isStyleCollapsed = newVal;
-    		}
+			this._isStyleCollapsed = newVal;
+			this.layerData.isStyleCollapsed = newVal;
     	}
     },
     _bypassAnimation : {
@@ -379,7 +371,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     		return this._bypassAnimation;
     	},
     	set: function(newVal) {
-    		if ((newVal !== this._bypassAnimation) && (typeof(this.layerData) !== "undefined")) {
+    		if (typeof(this.layerData) !== "undefined") {
 	    		this._bypassAnimation = newVal;
 	    		this.layerData.bypassAnimation = newVal;	
     		}

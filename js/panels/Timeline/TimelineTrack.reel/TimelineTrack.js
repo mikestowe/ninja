@@ -42,10 +42,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             return this._isMainCollapsed;
         },
         set:function (newVal) {
-            if (newVal !== this._isMainCollapsed) {
-                this._isMainCollapsed = newVal;
-                this.trackData.isMainCollapsed = newVal;
-            }
+            this._isMainCollapsed = newVal;
+            this.trackData.isMainCollapsed = newVal;
         }
     },
     _isTransformCollapsed:{
@@ -56,10 +54,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             return this._isTransformCollapsed;
         },
         set:function (newVal) {
-            if (newVal !== this._isTransformCollapsed) {
-                this._isTransformCollapsed = newVal;
-                this.trackData.isTransformCollapsed = newVal;
-            }
+            this._isTransformCollapsed = newVal;
+            this.trackData.isTransformCollapsed = newVal;
         }
     },
     _isPositionCollapsed:{
@@ -70,10 +66,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             return this._isPositionCollapsed;
         },
         set:function (newVal) {
-            if (newVal !== this._isPositionCollapsed) {
-                this._isPositionCollapsed = newVal;
-                this.trackData.isPositionCollapsed = newVal;
-            }
+            this._isPositionCollapsed = newVal;
+            this.trackData.isPositionCollapsed = newVal;
         }
     },
     _isStyleCollapsed:{
@@ -84,10 +78,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             return this._isStyleCollapsed;
         },
         set:function (newVal) {
-            if (newVal !== this._isStyleCollapsed) {
-                this._isStyleCollapsed = newVal;
-                this.trackData.isStyleCollapsed = newVal;
-            }
+            this._isStyleCollapsed = newVal;
+            this.trackData.isStyleCollapsed = newVal;
         }
     },
     _bypassAnimation : {
@@ -100,7 +92,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     		return this._bypassAnimation;
     	},
     	set: function(newVal) {
-    		if ((newVal !== this._bypassAnimation) && (typeof(this.trackData) !== "undefined")) {
+    		if (typeof(this.trackData) !== "undefined") {
     			this._bypassAnimation = newVal;
                 this.trackData.bypassAnimation = newVal;
     		}
