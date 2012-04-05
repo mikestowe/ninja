@@ -629,7 +629,6 @@ exports.ShapesController = Montage.create(CanvasController, {
                 world = new World(el, true);
                 el.elementModel.shapeModel.GLWorld = world;
                 el.elementModel.shapeModel.useWebGl = true;
-				el.elementModel.controller.setProperty(el, "-webkit-transform-style", "preserve-3d");
                 world.importJSON(worldData);
                 el.elementModel.shapeModel.GLGeomObj = world.getGeomRoot();
                 }

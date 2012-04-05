@@ -221,7 +221,7 @@ exports.TagTool = Montage.create(DrawingTool, {
     },
 
     makeElement: {
-        value: function(w, h, planeMat, midPt,tag, isWebGl) {
+        value: function(w, h, planeMat, midPt, tag, isShape) {
             var left = Math.round(midPt[0] - 0.5 * w);
             var top = Math.round(midPt[1] - 0.5 * h);
 
@@ -234,7 +234,7 @@ exports.TagTool = Montage.create(DrawingTool, {
             if(!MathUtils.isIdentityMatrix(planeMat)) {
                 styles['-webkit-transform-style'] = 'preserve-3d';
                 styles['-webkit-transform'] = DrawingToolBase.getElementMatrix(planeMat, midPt);
-            } else if(isWebGl) {
+            } else if(isShape) {
                 styles['-webkit-transform-style'] = 'preserve-3d';
             }
 

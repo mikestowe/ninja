@@ -66,7 +66,7 @@ exports.ShapeTool = Montage.create(DrawingTool, {
                 if(!this._useExistingCanvas()) {
                     canvas = NJUtils.makeNJElement("canvas", "Canvas", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
                     var elementModel = TagTool.makeElement(~~drawData.width, ~~drawData.height,
-                                                                        drawData.planeMat, drawData.midPt, canvas, this.options.use3D);
+                                                                        drawData.planeMat, drawData.midPt, canvas, true);
 
                     canvas.elementModel.isShape = true;
                     this.application.ninja.elementMediator.addElements(canvas, elementModel.data);
