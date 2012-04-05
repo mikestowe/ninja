@@ -480,30 +480,22 @@ var Layer = exports.Layer = Montage.create(Component, {
         	
         	// Initialize myself
 			this.init();
-			var that = this;
+			
         	// Make it editable!
         	this._layerEditable = Hintable.create();
         	this._layerEditable.element = this.titleSelector;
         	this.titleSelector.identifier = "selectorEditable";
         	this.titleSelector.addEventListener("click", this, false);
-        	this._layerEditable.addEventListener("blur", function(event) {
-        		that.handleSelectorEditableBlur(event);
-        	}, false);
-        	this._layerEditable.addEventListener("change", function(event) {
-				that.dynamicLayerName.value = that._layerEditable.value;
-                this.application.ninja.timeline.currentLayerSelected.layerData.elementsList[0].dataset.storedLayerName = that.dynamicLayerName.value;
-				that.needsDraw = true;
-                this.application.ninja.documentController.activeDocument.needsSave = true;
-        	}, false);
+        	this._layerEditable.addEventListener("blur", this.handleSelectorEditableBlur.bind(this), false);
+        	this._layerEditable.addEventListener("change", this.handleLayerNameChange.bind(this), false);
         	this._layerEditable.editingClass = "editable2";
         	this._layerEditable.value = this.layerName;
-        	//this._layerEditable.needsDraw = true;
-
+        	
+        	// Collapser event handlers.
             this.mainCollapser.clicker.addEventListener("click", this.handleMainCollapserClick.bind(this), false);
             this.positionCollapser.clicker.addEventListener("click", this.handlePositionCollapserClick.bind(this), false);
             this.transformCollapser.clicker.addEventListener("click", this.handleTransformCollapserClick.bind(this), false);
             this.styleCollapser.clicker.addEventListener("click", this.handleStyleCollapserClick.bind(this), false);
-
 
             // Add event listeners to add and delete style buttons
             this.buttonAddStyle.addEventListener("click", this.handleAddStyleClick.bind(this), false);
@@ -705,6 +697,14 @@ var Layer = exports.Layer = Montage.create(Component, {
 	/* End: Controllers */
     
 	/* Begin: Event handlers */
+	handleLayerNameChange: {
+		value: function(event) {		
+			this.dynamicLayerName.value = this._layerEditable.value;
+			this.application.ninja.timeline.currentLayerSelected.layerData.elementsList[0].dataset.storedLayerName = this.dynamicLayerName.value;
+			this.needsDraw = true;
+			this.application.ninja.documentController.activeDocument.needsSave = true;
+		}
+	},
 	handleAddStyleClick: {
 		value: function(event) {
 			this.addStyle();
