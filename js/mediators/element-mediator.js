@@ -28,7 +28,6 @@ exports.ElementMediator = Montage.create(Component, {
         value: function(elements, rules, notify) {
             if(Array.isArray(elements)) {
                 elements.forEach(function(element) {
-                    element = element;
                     ElementController.addElement(element, rules);
                 });
             } else {
