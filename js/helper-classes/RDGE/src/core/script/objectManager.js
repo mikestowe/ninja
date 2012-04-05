@@ -4,9 +4,11 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-/* generic handle-based object manager
-*/
-objectManager = function() {
+// RDGE namespaces
+var RDGE = RDGE || {};
+
+/* generic handle-based object manager */
+RDGE.objectManager = function() {
 	this.guidCounter = 0;
 	this.objects = [];
 	this.numObjects = 0;
