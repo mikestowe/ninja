@@ -121,14 +121,6 @@ NinjaCvsRt.GLRuntime = function ( canvas, jObj,  assetPath )
 	// all "live" materials
 	this._materials = [];
 
-		// provide the mapping for the asset directory
-		if (assetPath)
-		{
-			this._assetPath = assetPath.slice();
-			if (this._assetPath[this._assetPath.length-1] != '/')
-				this._assetPath += '/';
-		}
-
 	if(this._assetPath !== undefined) {
 		RDGE.globals.engine.setAssetPath(this._assetPath);
 	}
