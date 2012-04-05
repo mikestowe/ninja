@@ -334,12 +334,6 @@ exports.BrushTool = Montage.create(ShapeTool, {
                             newCanvas.elementModel.selection = "BrushStroke";
                             newCanvas.elementModel.pi = "BrushStrokePi";
                             newCanvas.elementModel.shapeModel.strokeSize = this.options.strokeSize.value + " " + this.options.strokeSize.units;
-                            var strokeColor = this._selectedBrushStroke.getStrokeColor();
-                            newCanvas.elementModel.shapeModel.stroke = strokeColor;
-                            if(strokeColor) {
-                                newCanvas.elementModel.shapeModel.border = this.application.ninja.colorController.colorToolbar.stroke;
-                            }
-                            newCanvas.elementModel.shapeModel.strokeMaterial = this._selectedBrushStroke.getStrokeMaterial();
 
                             newCanvas.elementModel.shapeModel.GLGeomObj = brushStroke;
                             newCanvas.elementModel.shapeModel.useWebGl = this.options.use3D;

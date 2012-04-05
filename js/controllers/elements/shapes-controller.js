@@ -386,14 +386,7 @@ exports.ShapesController = Montage.create(CanvasController, {
         value: function(el, isFill) {
             if(isFill)
             {
-                if(el.elementModel.shapeModel.GLGeomObj.getFillColor)
-                {
-                    return this.application.ninja.colorController.colorModel.webGlToColor(el.elementModel.shapeModel.GLGeomObj.getFillColor());
-                }
-            else
-            {
-                    return null;
-                }
+                return this.application.ninja.colorController.colorModel.webGlToColor(el.elementModel.shapeModel.GLGeomObj.getFillColor());
             }
             else
             {

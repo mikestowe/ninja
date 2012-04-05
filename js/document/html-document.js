@@ -300,7 +300,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 			{
 				shapeModel.GLGeomObj			= root;
 				shapeModel.strokeSize			= root._strokeWidth;
-				shapeModel.stroke				= root._strokeColor;
 				shapeModel.strokeStyle			= "solid";
 				//shapeModel.strokeStyleIndex
 				switch (root.geomType())
@@ -308,7 +307,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 					case root.GEOM_TYPE_RECTANGLE:
                         elementModel.selection = "Rectangle";
                         elementModel.pi = "RectanglePi";
-                        shapeModel.fill					= root._fillColor;
 						shapeModel.tlRadius = root._tlRadius;
 						shapeModel.trRadius = root._trRadius;
 						shapeModel.blRadius = root._blRadius;
@@ -318,7 +316,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 					case root.GEOM_TYPE_CIRCLE:
                         elementModel.selection = "Oval";
                         elementModel.pi = "OvalPi";
-                        shapeModel.fill					= root._fillColor;
 						shapeModel.innerRadius = root._innerRadius;
 						break;
 
