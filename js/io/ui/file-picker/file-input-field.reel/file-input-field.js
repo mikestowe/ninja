@@ -21,6 +21,7 @@ var FileInputField = exports.FileInputField = Montage.create(Component, {
 
             this.newFileDirectory.addEventListener("keyup", function(evt){that.handleNewFileDirectoryOnkeyup(evt);}, false);
             this.newFileDirectory.addEventListener("paste", this, false);
+            this.newFileDirectory.addEventListener("search", this, false);
         }
     },
 
@@ -74,14 +75,18 @@ var FileInputField = exports.FileInputField = Montage.create(Component, {
 
     handleNewFileDirectoryOnkeyup:{
           value:function(evt){
-              if(this.newFileDirectory.value !== ""){
-                  var newFileDirectorySetEvent = document.createEvent("Events");
-                  newFileDirectorySetEvent.initEvent("newFileDirectorySet", false, false);
-                  newFileDirectorySetEvent.newFileDirectory = this.newFileDirectory.value;
-                  newFileDirectorySetEvent.keyCode = evt.keyCode;
-                  this.eventManager.dispatchEvent(newFileDirectorySetEvent);
-              }
+              var newFileDirectorySetEvent = document.createEvent("Events");
+              newFileDirectorySetEvent.initEvent("newFileDirectorySet", false, false);
+              newFileDirectorySetEvent.newFileDirectory = this.newFileDirectory.value;
+              newFileDirectorySetEvent.keyCode = evt.keyCode;
+              this.eventManager.dispatchEvent(newFileDirectorySetEvent);
           }
+    },
+
+    handleSearch:{
+        value:function(evt){
+            this.handleNewFileDirectoryOnkeyup(evt);
+        }
     },
 
     handleFileInputPickerSelectionsDone:{
@@ -105,7 +110,7 @@ var FileInputField = exports.FileInputField = Montage.create(Component, {
             if(!!obj && obj.uri && obj.uri.length > 0){
                 selectedUri = obj.uri[0];
                 this.newFileDirectory.value = selectedUri;
-
+                this.newFileDirectory.focus();
                 var newFileDirectorySetEvent = document.createEvent("Events");
                   newFileDirectorySetEvent.initEvent("newFileDirectorySet", false, false);
                   newFileDirectorySetEvent.newFileDirectory = this.newFileDirectory.value;
