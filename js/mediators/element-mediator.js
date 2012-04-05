@@ -29,14 +29,14 @@ exports.ElementMediator = Montage.create(Component, {
             if(Array.isArray(elements)) {
                 elements.forEach(function(element) {
                     ElementController.addElement(element, rules);
+                    if(element.elementModel && element.elementModel.props3D) {
+                        element.elementModel.props3D.init(element, false);
+                    }
                 });
             } else {
                 ElementController.addElement(elements, rules);
-
-                // TODO - Check with webgl branch - Props seem to be already there.
-                var prop3d = this.get3DProperties(elements);
-                if(prop3d) {
-                    elements.elementModel.controller["set3DProperties"](elements, [prop3d], 0, true);
+                if(elements.elementModel && elements.elementModel.props3D) {
+                    elements.elementModel.props3D.init(elements, false);
                 }
             }
 
