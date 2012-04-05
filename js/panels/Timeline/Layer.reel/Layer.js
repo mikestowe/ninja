@@ -514,8 +514,8 @@ var Layer = exports.Layer = Montage.create(Component, {
             this.element.addEventListener("click", this, false);
             
 			// Drag and drop event handlers
-			this.element.addEventListener("mouseover", this.handleMouseover.bind(this), false);
-			this.element.addEventListener("mouseout", this.handleMouseout.bind(this), false);
+			this.myLabel.addEventListener("mouseover", this.handleMouseover.bind(this), false);
+			this.myLabel.addEventListener("mouseout", this.handleMouseout.bind(this), false);
 			this.element.addEventListener("dragover", this.handleDragover.bind(this), false);
 			this.element.addEventListener("dragleave", this.handleDragleave.bind(this), false);
 			this.element.addEventListener("dragstart", this.handleDragstart.bind(this), false);

@@ -227,32 +227,57 @@
 }
 
 /* line 197, ../scss/Layer.scss */
+.collapsible-content .collapsible-content .layout-table .layout-row {
+  height: 20px;
+  overflow: hidden;
+}
+
+/* line 201, ../scss/Layer.scss */
 .collapsible-content .collapsible-content .layout-table .layout-row .layout-cell {
   width: 40%;
   height: 20px;
   border-bottom: 1px solid #505050;
   line-height: 20px;
   text-align: left;
+  overflow: hidden;
 }
 
-/* line 204, ../scss/Layer.scss */
+/* line 210, ../scss/Layer.scss */
+.collapsible-content .collapsible-content .container-row {
+  border-bottom: 1px solid #505050;
+  height: 20px;
+}
+
+/* line 216, ../scss/Layer.scss */
+.collapsible-content .collapsible-content .cell-property,
+.collapsible-content .collapsible-content .cell-value {
+  width: 45%;
+  float: left;
+  height: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 18px;
+}
+
+/* line 228, ../scss/Layer.scss */
 .collapsible-content .layout-table:first-child {
   border-top: 1px solid #505050;
 }
 
-/* line 208, ../scss/Layer.scss */
+/* line 232, ../scss/Layer.scss */
 .collapsible-content .hottextunit {
   width: auto;
 }
 
-/* line 211, ../scss/Layer.scss */
+/* line 235, ../scss/Layer.scss */
 .collapsible-transition {
   -webkit-transition-property: height;
   -webkit-transition-duration: 200ms;
   -webkit-transition-timing-function: ease-in;
 }
 
-/* line 219, ../scss/Layer.scss */
+/* line 243, ../scss/Layer.scss */
 .editable2 {
   height: 20px;
   background-color: #242424 !important;
@@ -264,29 +289,29 @@
   text-overflow: clip;
 }
 
-/* line 229, ../scss/Layer.scss */
+/* line 253, ../scss/Layer.scss */
 .editable2 br {
   display: inline;
 }
 
-/* line 233, ../scss/Layer.scss */
+/* line 257, ../scss/Layer.scss */
 .label-style .disabled {
   cursor: default;
 }
 
 /* styles elements */
-/* line 238, ../scss/Layer.scss */
+/* line 262, ../scss/Layer.scss */
 .content-style .item-template {
   display: none;
 }
 
-/* line 241, ../scss/Layer.scss */
+/* line 265, ../scss/Layer.scss */
 .content-style .layout-row.selected .layout-cell {
   background-color: #b2b2b2;
   color: #242424;
 }
 
-/* line 245, ../scss/Layer.scss */
+/* line 269, ../scss/Layer.scss */
 .style-row {
   height: 20px;
 }

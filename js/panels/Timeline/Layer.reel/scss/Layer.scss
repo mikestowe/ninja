@@ -194,13 +194,37 @@
 .content-layer .collapsible-content {
 	padding-left: 30px;
 }
+.collapsible-content .collapsible-content .layout-table .layout-row {
+	height: 20px;
+	overflow: hidden;
+}
 .collapsible-content .collapsible-content .layout-table .layout-row .layout-cell {
 	width: 40%;
 	height: 20px;
 	border-bottom: 1px solid $color-menu-divider;
 	line-height: 20px;
 	text-align: left;
+	overflow: hidden;
 }
+
+.collapsible-content .collapsible-content .container-row {
+	border-bottom: 1px solid $color-menu-divider;
+	height: 20px;
+}
+
+.collapsible-content .collapsible-content .cell-property,
+.collapsible-content .collapsible-content .cell-value {
+	width: 45%;
+	float: left;
+	height: 20px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	line-height: 18px;
+}
+
+
+
 .collapsible-content .layout-table:first-child {
 	border-top: 1px solid $color-menu-divider;
 }
