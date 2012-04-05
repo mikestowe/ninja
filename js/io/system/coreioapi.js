@@ -1085,7 +1085,7 @@ exports.CoreIoApi = Montage.create(Component, {
     isValidUri:{
         value: function(uri){
             var isWindowsUri=false, isUnixUri=false,status=false;
-            if(uri !== ""){
+            if((uri !== null) && (uri !== "")){
                 uri = uri.replace(/^\s+|\s+$/g,"");  // strip any leading or trailing spaces
 
                 //for local machine folder uri
