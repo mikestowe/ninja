@@ -308,7 +308,6 @@ var pulseMaterialDef =
 	}
 };
 
-// doing the inheritance here introtudes bugs.  Local instance variables are overwritten in the base class
 //PulseMaterial.prototype = new Material();
 
 if (typeof exports === "object") {

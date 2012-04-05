@@ -4,15 +4,17 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
-var MaterialParser = require("js/lib/rdge/materials/material-parser").MaterialParser;
+var Material = require("js/lib/rdge/materials/material").Material;
+var Texture = require("js/lib/rdge/texture").Texture;
+
 ///////////////////////////////////////////////////////////////////////
 // Class GLMaterial
 //      RDGE representation of a material.
 ///////////////////////////////////////////////////////////////////////
-function TwistVertMaterial()
+var TwistVertMaterial = function TwistVertMaterial()
 {
 	// initialize the inherited members
-	this.inheritedFrom = GLMaterial;
+	this.inheritedFrom = Material;
 	this.inheritedFrom();
    
 	///////////////////////////////////////////////////////////////////////
@@ -131,47 +133,6 @@ function TwistVertMaterial()
 		}
 	}
 
-	this.export = function()
-	{
-		// this function should be overridden by subclasses
-		var exportStr = "material: " + this.getShaderName() + "\n";
-		exportStr += "name: " + this.getName() + "\n";
-		
-		if (this._shader)
-			exportStr += "color: " + String(this._shader.twistMe.color) + "\n";
-		else
-			exportStr += "color: " + this.getColor() + "\n";
-		exportStr += "endMaterial\n";
-
-		return exportStr;
-	}
-
-	this.import = function( importStr )
-	{
-		var pu = new MaterialParser( importStr );
-		var material = pu.nextValue( "material: " );
-		if (material != this.getShaderName())  throw new Error( "ill-formed material" );
-		this.setName(  pu.nextValue( "name: ") );
-
-		var rtnStr;
-		try
-		{
-			var color  = eval( "[" + pu.nextValue( "color: " ) + "]" );
-
-			this.setProperty( "color",  color);
-
-			var endKey = "endMaterial\n";
-			var index = importStr.indexOf( endKey );
-			index += endKey.length;
-			rtnStr = importStr.substr( index );
-		}
-		catch (e)
-		{
-			throw new Error( "could not import material: " + importStr );
-		}
-
-		return rtnStr;
-	}
 
 	this.update = function( time )
 	{
@@ -276,4 +237,8 @@ twistVertShaderDef  =
 		]
 	 }
 };
+
+if (typeof exports === "object") {
+    exports.TwistVertMaterial = TwistVertMaterial;
+}
 

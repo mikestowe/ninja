@@ -216,23 +216,7 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 			return;
 		}
 
-		/*
-		var srcCtx;
-		if (!this._is3D)
-		{
-			srcCtx = srcCanvas.getContext("2d");
-			imageData = srcCtx.getImageData( 0, 0, width, height );
-			renderCtx.putImageData( imageData, 0, 0 );
-		}
-		else
-		{
-			srcCtx = srcCanvas.getContext("experimental-webgl");
-			if (srcCtx)
-			{
-				renderCtx.drawImage(srcCanvas, 0, 0);
-			}
-		}
-		*/
+		// copy the source canvas to the context to be used in the texture
 		renderCtx.drawImage(srcCanvas, 0, 0);
 
 		/////////////////
@@ -240,7 +224,7 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 		renderer.commitTexture( tex );
 
 		return tex;
-}
+	}
  
 	this.isPowerOfTwo = function(x)
 	{
@@ -277,31 +261,6 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 			}
 		}
    }
-
-	/*
-	this.findWorld = function( id,  elt )
-	{
-		if (elt.id && elt.id === id)
-		{
-			if (elt.elementModel && elt.elementModel.shapeModel && elt.elementModel.shapeModel.GLWorld)
-			{
-				var world = elt.elementModel.shapeModel.GLWorld;
-				return world;
-			}
-		}
- 
-		if (elt.children)
-		{
-			var nKids = elt.children.length;
-			for (var i=0;  i<nKids;  i++)
-			{
-				var child = elt.children[i];
-				var world = this.findWorld( id, child );
-				if (world)  return world;
-			}
-		}
-   }
-   */
 
    // initialize the object
    this.init();

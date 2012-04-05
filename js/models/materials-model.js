@@ -31,6 +31,8 @@ var ZInvertMaterial = require("js/lib/rdge/materials/z-invert-material").ZInvert
 var DeformMaterial = require("js/lib/rdge/materials/deform-material").DeformMaterial;
 var StarMaterial = require("js/lib/rdge/materials/star-material").StarMaterial;
 var TwistMaterial = require("js/lib/rdge/materials/twist-material").TwistMaterial;
+var TwistVertMaterial = require("js/lib/rdge/materials/twist-vert-material").TwistVertMaterial;
+var TaperMaterial = require("js/lib/rdge/materials/taper-material").TaperMaterial;
 var JuliaMaterial = require("js/lib/rdge/materials/julia-material").JuliaMaterial;
 var KeleidoscopeMaterial = require("js/lib/rdge/materials/keleidoscope-material").KeleidoscopeMaterial;
 var MandelMaterial = require("js/lib/rdge/materials/mandel-material").MandelMaterial;
@@ -65,6 +67,8 @@ exports.MaterialsModel = Montage.create(Component, {
             this.addMaterial(new DeformMaterial());
             this.addMaterial(new StarMaterial());
             this.addMaterial(new TwistMaterial());
+            this.addMaterial(new TwistVertMaterial());
+            this.addMaterial(new TaperMaterial());
             this.addMaterial(new JuliaMaterial());
             this.addMaterial(new KeleidoscopeMaterial());
             this.addMaterial(new MandelMaterial());

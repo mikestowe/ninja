@@ -4,15 +4,17 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
-var MaterialParser = require("js/lib/rdge/materials/material-parser").MaterialParser;
+var Material = require("js/lib/rdge/materials/material").Material;
+var Texture = require("js/lib/rdge/texture").Texture;
+
 ///////////////////////////////////////////////////////////////////////
 // Class GLMaterial
 //      RDGE representation of a material.
 ///////////////////////////////////////////////////////////////////////
-function TaperMaterial()
+var TaperMaterial = function TaperMaterial()
 {
 	// initialize the inherited members
-	this.inheritedFrom = GLMaterial;
+	this.inheritedFrom = Material;
 	this.inheritedFrom();
    
 	///////////////////////////////////////////////////////////////////////
@@ -250,3 +252,7 @@ taperShaderDef  =
 	 }
 };
 
+
+if (typeof exports === "object") {
+    exports.TaperMaterial = TaperMaterial;
+}
