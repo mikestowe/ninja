@@ -46,12 +46,10 @@ exports.StylesViewContainer = Montage.create(Component, {
                 return false;
             } else if(elements.length > 1) {
                 type = 'ELEMENTS';
-                selection = elements.map(function(obj) {
-                    return obj._element;
-                });
+                selection = elements;
             } else {
                 type = 'ELEMENT';
-                selection = elements[0]._element;
+                selection = elements[0];
             }
 
             ruleList = this.ruleListContainer._getRuleList({

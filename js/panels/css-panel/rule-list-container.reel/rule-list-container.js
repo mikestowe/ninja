@@ -59,7 +59,7 @@ exports.RuleListContainer = Montage.create(Component, {
                 listInstance = Montage.create(this.ruleListComponent),
                 container = document.createElement('div'),
                 rules;
-//debugger;
+
             if(type === 'ELEMENT') {
                 rules = stylesController.getMatchingRules(selection);
             }
