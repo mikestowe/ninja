@@ -588,8 +588,7 @@ exports.PenTool = Montage.create(ShapeTool, {
 
             var drawData = this.getDrawingData();
             if (drawData) {
-                //todo handle the case when the user does not click a point on the path canvas
-                // (we don't want to set the plane mat. to be set to some plane not on the canvas of the path)
+                //note that this plane matrix is set for the new subpath only if it doesn't already have one
                 if (!this._penPlaneMat) {
                     this._penPlaneMat = drawData.planeMat;
                 }
