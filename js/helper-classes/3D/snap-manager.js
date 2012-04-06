@@ -300,6 +300,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 			this.deactivateDragPlane();
 
 			this.setLastHit( rtnHit );
+			//rtnHit.test();		// DEBUG CODE.  REMOVE THIS
 			return rtnHit;
 		}
 	},

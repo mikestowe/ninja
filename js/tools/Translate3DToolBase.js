@@ -71,6 +71,7 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
                 this._delta = delta.slice(0);
             }
 
+			//console.log( "modifyElements delta: " + delta );
             var transMat = Matrix.Translation( delta );
 
             if(this._inLocalMode && (this._targets.length === 1) )
@@ -79,7 +80,6 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
             }
             else
             {
-				console.log( "modifyElements delta: " + delta );
                 this._translateGlobally(transMat);
             }
         }
@@ -148,7 +148,7 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 	_translateGlobally: {
 		value: function (transMat) {
 			//console.log( "_translateGlobally, transMat: " + transMat );
-			//console.log( "_translateGlobally, startMat: " + this._startMat + ", transMat: " + transMat );
+			//console.log( "_translateGlobally, startMat: " + this._startMat + ", transMat: " + transMat[12] + ", " + transMat[13] + ", " + transMat[14] );
 			var len = this._targets.length,
 				i = 0,
 				item,
@@ -167,7 +167,8 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 
 			var shouldUpdateStartMat = true;
 
-			if(this._clickedOnStage)
+			//if (this._clickedOnStage)
+			if(this._clickedOnStage || ((this._handleMode === 2) && (this._targets.length > 1)))
 			{
 				shouldUpdateStartMat = false;
 			}

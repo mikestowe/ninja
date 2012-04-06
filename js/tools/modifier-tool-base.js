@@ -405,6 +405,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                 var index = this._snapIndex;
                 var pt0;
                 var useViewPoint = (this._inLocalMode && (this._targets.length === 1));
+				//console.log( "useViewPoint: " + useViewPoint );
                 if (this._useQuadPt)
                 {
                     pt0 = this.GetQuadrantPoint(useViewPoint);
@@ -427,6 +428,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                     pt1 = MathUtils.transformPoint( pt1, this._startMat );
                 }
 
+				//console.log( "getMousePoints, useViewPoint: " + useViewPoint + ",  " + pt0 + " => " + pt1 );
                 return {pt0:pt0, pt1:pt1};
             }
             else
