@@ -50,7 +50,7 @@
     width: 24px;
     height: 100%;
     opacity: 1;
-    position: relative;
+    position: absolute;
     left: -24px;
     -webkit-transition: background-color .55s cubic-bezier(.44,.19,0,.99);
     border-width: 0 0 0 1px;
@@ -88,13 +88,17 @@
 .style-sheet-edit button.nj-skinned {
     height: 20px;
     padding: 2px 10px;
-    margin-left: 5px;
-    position: relative;
-    left: -15px;
+    margin-left: 9px;
+    margin-right: -4px;
     top: 2px;
+    position: relative;
     text-transform: capitalize;
     font-size: 10px;
 }
 .style-sheet-edit .ss-delete-button {
-    background: -webkit-linear-gradient(top, rgba(73,45,45,1) 0%,rgba(53,35,35,1) 100%);
+    background: -webkit-linear-gradient(top, rgba(91,57,56,1) 0%,rgba(53,35,35,1) 100%);
+}
+.style-sheet-edit button.ss-disable-button {
+    position: absolute;
+    right: 25px;
 }
