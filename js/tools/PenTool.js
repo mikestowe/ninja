@@ -410,10 +410,12 @@ exports.PenTool = Montage.create(ShapeTool, {
     ShowSelectedSubpath:{
         value: function() {
             if (this._selectedSubpath){
-                this._selectedSubpath.setPlaneMatrix(this._penPlaneMat);
-                var planeMatInv = glmat4.inverse( this._penPlaneMat, [] );
-                this._selectedSubpath.setPlaneMatrixInverse(planeMatInv);
-                this._selectedSubpath.setDragPlane(this._dragPlane);
+                if (!this._selectedSubpath.getPlaneMatrix()) {
+                    this._selectedSubpath.setPlaneMatrix(this._penPlaneMat);
+                    var planeMatInv = glmat4.inverse( this._penPlaneMat, [] );
+                    this._selectedSubpath.setPlaneMatrixInverse(planeMatInv);
+                    this._selectedSubpath.setDragPlane(this._dragPlane);
+                }
                 
                 this._selectedSubpath.createSamples(); //dirty bit is checked here
                 this._selectedSubpath.buildLocalCoord(); //local dirty bit is checked here

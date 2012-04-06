@@ -338,6 +338,10 @@ GLSubpath.prototype.setPlaneMatrix = function(planeMat){
     this._planeMat = planeMat;
 };
 
+GLSubpath.prototype.getPlaneMatrix = function(){
+    return this._planeMat;
+};
+
 GLSubpath.prototype.setDragPlane = function(p){
     this._dragPlane = p;
 };
