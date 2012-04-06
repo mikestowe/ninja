@@ -25,6 +25,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 	_snapParam: { value: null },
 	_snapIndex: { value: -1 },
 	_useQuadPt: { value: false },
+    _shouldUseQuadPt: { value: false },
 
 	// we set snapping capabilities depending on the tool.
 	// The following variables are set in a tool's initializeSnapping method called on mouse down.
@@ -175,6 +176,10 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 //                        }
                     }
 
+                    // only do quadrant snapping if the 4 corners of the element are in the drag plane
+                    var sign = MathUtils.fpSign( vecUtils.vecDot(3,this._dragPlane,[0,0,1]) + this._dragPlane[3] - 1.0);
+                    this._shouldUseQuadPt = (sign == 0)
+
 					var wpHitRec = hitRec.convertToWorkingPlane( this._dragPlane );
 					this._mouseDownHitRec = wpHitRec;
 					this._mouseUpHitRec = null;
@@ -236,6 +241,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 				}
 			}
 
+            //console.log( "ParameterizeSnap: " + paramPt );
 			return paramPt;
 		}
 	},
@@ -284,14 +290,16 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 					y = x0 + ty*dy,
 					z = 0.0;
 				var localPt = [x,y,z];
+
 				globalPt = viewUtils.localToGlobal( localPt,  elt );
  
 				// add in the delta
 				var hitPt = this.GetObjectHitPoint();
 				var scrPt = viewUtils.localToGlobal( hitPt, this._clickedObject );
-				var delta = [xEvent-scrPt[0], yEvent-scrPt[1]];
+				var delta = [xEvent-scrPt[0], yEvent-scrPt[1], 0-scrPt[2]];
 				globalPt[0] += delta[0];
 				globalPt[1] += delta[1];
+                globalPt[2] += delta[2];
 			}
 
 			return globalPt;
@@ -397,6 +405,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                 var index = this._snapIndex;
                 var pt0;
                 var useViewPoint = (this._inLocalMode && (this._targets.length === 1));
+				//console.log( "useViewPoint: " + useViewPoint );
                 if (this._useQuadPt)
                 {
                     pt0 = this.GetQuadrantPoint(useViewPoint);
@@ -419,6 +428,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                     pt1 = MathUtils.transformPoint( pt1, this._startMat );
                 }
 
+				//console.log( "getMousePoints, useViewPoint: " + useViewPoint + ",  " + pt0 + " => " + pt1 );
                 return {pt0:pt0, pt1:pt1};
             }
             else
@@ -517,7 +527,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 
 			// do the snap
 			var quadPt;
-			if (mouseIsDown)
+			if (mouseIsDown && !do3DSnap && this._shouldUseQuadPt && (this._handleMode === null) && (this._mode === 0))
 				quadPt = this.GetQuadrantSnapPoint(x,y);
 			var hitRec = snapManager.snap(x, y, do3DSnap, quadPt );
 
@@ -806,6 +816,8 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
     HandleLeftButtonDown: {
         value: function(event) {
 
+            console.log( "modifier-tool-base.HandleLeftButtonDown" );
+
             var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(event.pageX, event.pageY));
             this.downPoint.x = point.x;
             this.downPoint.y = point.y;
@@ -842,8 +854,10 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                 }
             }
 
-            this.DrawHandles(this._delta);
-            if(this._canSnap)
+			if (!this._isDrawing || (this.application.ninja.selectedElements.length == 1))
+				this.DrawHandles(this._delta);
+            
+			if(this._canSnap)
             {
                 snapManager.drawLastHit();
             }
@@ -882,6 +896,13 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                 this._delta = null;
             }
             this.endDraw(event);
+
+			this.application.ninja.stage.draw();
+			if (this._targets && (this._targets.length > 1))
+			{
+				this._origin = null;
+				this._updateHandlesOrigin();
+			}
             this.DrawHandles();
         }
     },

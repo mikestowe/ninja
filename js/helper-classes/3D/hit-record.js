@@ -284,6 +284,50 @@ var HitRecord = exports.HitRecord = Object.create(Object.prototype,
 
             return str;
         }
-    }
+    },
+
+	test:
+	{
+		value: function()
+		{
+			var elt = this.getElement();
+			var stage = viewUtils.getStage();
+			if (elt === stage)  return;
+
+			var localPt = this.calculateElementPreTransformScreenPoint();
+			var stageWorldPt = this.calculateStageWorldPoint();
+			var globalPt = this.getScreenPoint();
+			var err = false;
+
+			var test1 = viewUtils.localToGlobal( localPt, elt );
+			var dist = vecUtils.vecDist(3, test1, globalPt);
+			if (MathUtils.fpSign(dist) != 0)
+			{
+				err = true;
+				console.log( "**** transform error 1 ***** " + dist + ", localPt: " + localPt );
+			}
+
+			var stageWorldToGlobal = viewUtils.getStageWorldToGlobalMatrix();
+			var test2 = MathUtils.transformAndDivideHomogeneousPoint( stageWorldPt, stageWorldToGlobal );
+			dist = vecUtils.vecDist(3, test2, globalPt);
+			if (MathUtils.fpSign(dist) != 0)
+			{
+				err = true;
+				console.log( "**** transform error 2 ***** " + dist + ", localPt: " + localPt );
+			}
+
+			var localToGlobal = viewUtils.getLocalToGlobalMatrix( elt );
+			var globalToLocal = glmat4.inverse( localToGlobal, [] );
+			var test3 = MathUtils.transformAndDivideHomogeneousPoint( globalPt, globalToLocal );
+			dist = vecUtils.vecDist(3, test3, localPt);
+			if (MathUtils.fpSign( vecUtils.vecDist(3, test3, localPt)) != 0)
+			{
+				err = true;
+				console.log( "**** transform error 3 ***** " + dist + ", localPt: " + localPt );
+			}
+
+			if (!err)  console.log( "no hitRecord error" );
+		}
+	}
 });
 
