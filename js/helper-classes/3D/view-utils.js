@@ -787,6 +787,7 @@ exports.ViewUtils = Montage.create(Component, {
         }
     },
 
+    /*
     getStageWorldToGlobalMatrix: {
         value: function() {
             var stage = this.application.ninja.currentDocument.documentRoot;
@@ -817,6 +818,26 @@ exports.ViewUtils = Montage.create(Component, {
             //var mat = mat2.multiply( mat );
             glmat4.multiply( mat2, mat, mat );
 
+            return mat;
+        }
+    },
+    */
+    getStageWorldToGlobalMatrix:
+    {
+        value: function()
+        {
+            var stage = this.application.ninja.currentDocument.documentRoot;
+
+            this.pushViewportObj( stage );
+            // put the point into screen space of the stage - requires
+            // a translation to the top/left only
+            var cop = this.getCenterOfProjection();
+            var v2s = Matrix.Translation([cop[0], cop[1], 0]);
+            this.popViewportObj();
+
+            // append the localToGlobal matrix of the stage.
+            var mat = this.getLocalToGlobalMatrix( stage );
+            glmat4.multiply( mat, v2s );
             return mat;
         }
     },
@@ -946,6 +967,56 @@ exports.ViewUtils = Montage.create(Component, {
                 if (elt === this._stageElement)  break;
                 //mat = objMat.multiply( mat );
                 glmat4.multiply( objMat, mat, mat );
+                if(shouldProject)
+                {
+                    //mat = projMat.multiply( mat );
+                    glmat4.multiply( projMat, mat, mat );
+                }
+                //mat = v2s.multiply( mat );
+                glmat4.multiply( v2s, mat, mat );
+
+                // offset to the parent
+                var offset = this.getElementOffset( elt );
+                var offMat = Matrix.Translation([offset[0], offset[1], 0]);
+                //mat = offMat.multiply( mat );
+                glmat4.multiply( offMat, mat, mat );
+
+                elt = elt.parentElement;
+            }
+
+            return mat;
+        }
+    },
+
+    getLocalToStageWorldMatrix: {
+        value: function( elt, shouldProject, shouldLocalTransform ) {
+            var mat = Matrix.I(4);
+            while (elt)
+            {
+                this.pushViewportObj( elt );
+                    var cop = this.getCenterOfProjection();
+                    var s2v = Matrix.Translation([-cop[0], -cop[1], 0]);
+                    var objMat = this.getMatrixFromElement( elt );
+                    var projMat;
+                    if(shouldProject)
+                    {
+                        //projMat = Matrix.I(4).multiply( this.getPerspectiveDistFromElement(elt) );
+                        var pDist = this.getPerspectiveDistFromElement(elt);
+                        var projMat = glmat4.scale(Matrix.I(4), [pDist,pDist,pDist], []);
+                        projMat[11] = -1;
+                        projMat[15] = 1400;
+                    }
+                    var v2s = Matrix.Translation([cop[0], cop[1], 0]);
+                this.popViewportObj();
+
+                // multiply all the matrices together
+                //mat = s2v.multiply( mat );
+                glmat4.multiply( s2v, mat, mat );
+                if (elt === this._stageElement)  break;
+                //mat = objMat.multiply( mat );
+                if (shouldLocalTransform) {
+                    glmat4.multiply( objMat, mat, mat );
+                }
                 if(shouldProject)
                 {
                     //mat = projMat.multiply( mat );

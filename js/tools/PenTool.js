@@ -351,6 +351,10 @@ exports.PenTool = Montage.create(ShapeTool, {
 
                     //make the subpath dirty so it will get re-drawn
                     this._selectedSubpath.makeDirty();
+                    //this.DrawSubpathSVG(this._selectedSubpath);
+                }
+                //todo temp code only...remove this and uncomment the DrawSubpathSVG above
+                if (this._selectedSubpath){
                     this.DrawSubpathSVG(this._selectedSubpath);
                 }
 
@@ -825,6 +829,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                 throw ("null drawing context in Pentool::DrawSubpathSVG");
             ctx.save();
 
+            /*
             var horizontalOffset = this.application.ninja.stage.userContentLeft;
             var verticalOffset = this.application.ninja.stage.userContentTop;
             //display the subpath as a sequence of cubic beziers
@@ -854,34 +859,84 @@ exports.PenTool = Montage.create(ShapeTool, {
                 var p3y = subpath.getAnchor(0).getPosY()+ verticalOffset;
                 ctx.bezierCurveTo(p1x, p1y, p2x, p2y, p3x, p3y);
             }
-            ctx.stroke();
+            ctx.stroke();*/
 
 
             //draw the stage world points by projecting them to screen space
             //get the screen coords of this anchor from its stage world coord
-            ctx.beginPath();
-            ctx.strokeStyle = "red";
+            ctx.lineWidth = 1;//TODO replace hardcoded stroke width with some programmatically set value (should not be same as stroke width)
+            ctx.strokeStyle = "green";
             var localToGlobalMat = ViewUtils.getLocalToGlobalMatrix(subpath.getCanvas());
-            var currentLTWH = subpath.computeLeftTopWidthHeight();
+
+            /*var currentLTWH = subpath.computeLeftTopWidthHeight();
             var deltaX = currentLTWH[0] - parseInt(ElementMediator.getProperty(subpath.getCanvas(), "left"));
-            var deltaY = currentLTWH[1] - parseInt(ElementMediator.getProperty(subpath.getCanvas(), "top"));
+            var deltaY = currentLTWH[1] - parseInt(ElementMediator.getProperty(subpath.getCanvas(), "top"));*/
 
-            var localCoord = subpath.getAnchorLocalCoord(0);
-            var sp = MathUtils.transformAndDivideHomogeneousPoint(localCoord,localToGlobalMat);
+            //var localCoord = subpath.getAnchorLocalCoord(0);
+            //var sp = MathUtils.transformAndDivideHomogeneousPoint(localCoord,localToGlobalMat);
             //add the difference between the current left and top and the canvas left and top
-            sp[0]+=deltaX; sp[1]+=deltaY;
+            //sp[0]+=deltaX; sp[1]+=deltaY;
+            //ctx.moveTo(sp[0], sp[1]);
 
-            ctx.moveTo(sp[0],sp[1]);
-            for (i = 1; i < numAnchors; i++) {
-                localCoord = subpath.getAnchorLocalCoord(i);
+            var widthAdjustment = -snapManager.getStageWidth()*0.5;
+            var heightAdjustment = -snapManager.getStageHeight()*0.5;
+            /*var stageWorldToGlobalMatrix = ViewUtils.getStageWorldToGlobalMatrix();
+            var localToStageWorldMatrix = ViewUtils.getMatrixFromElement(subpath.getCanvas());
+            glmat4.multiply(localToStageWorldMatrix, stageWorldToGlobalMatrix, stageWorldToGlobalMatrix);*/
+            var localToStageWorldMat = ViewUtils.getLocalToStageWorldMatrix(subpath.getCanvas(), true, false);
+            var stageWorldToLocalMat = glmat4.inverse(localToStageWorldMat, []);
+
+            var c0=[0,0,0], c1=[0,0,0],c2=[0,0,0], c3=[0,0,0]; //screen coord of the bezier control points
+            c0 = MathUtils.transformAndDivideHomogeneousPoint(
+                [subpath.getAnchor(0).getPosX()+widthAdjustment,
+                subpath.getAnchor(0).getPosY()+heightAdjustment,
+                subpath.getAnchor(0).getPosZ()],
+                stageWorldToLocalMat);
+            c0 = MathUtils.transformAndDivideHomogeneousPoint(c0,localToGlobalMat); //convert from local coord to global (screen) coord
+            ctx.beginPath();
+            ctx.moveTo(c0[0],c0[1]);
+            var prevAnchor = subpath.getAnchor(0);
+            var currAnchor = null;
+            var numBezierCurves = numAnchors;
+            if (subpath.getIsClosed()){
+                numBezierCurves+=1;
+            }
+
+            for (i = 1; i < numBezierCurves; i++) {
+                currAnchor = subpath.getAnchor(i%numAnchors);
+                /*localCoord = subpath.getAnchorLocalCoord(i);
                 sp = MathUtils.transformAndDivideHomogeneousPoint(localCoord,localToGlobalMat);
                 //add the difference between the current left and top and the canvas left and top
-                sp[0]+=deltaX; sp[1]+=deltaY;
-                ctx.lineTo(sp[0],sp[1]);
+                sp[0]+=deltaX; sp[1]+=deltaY;*/
+
+                //ctx.lineTo(sp[0], sp[1]);
+
+                c1 = MathUtils.transformAndDivideHomogeneousPoint(
+                                    [prevAnchor.getNextX()+widthAdjustment,
+                                    prevAnchor.getNextY()+heightAdjustment,
+                                    prevAnchor.getNextZ()],
+                                    stageWorldToLocalMat);
+                c1 = MathUtils.transformAndDivideHomogeneousPoint(c1,localToGlobalMat); //convert from local coord to global (screen) coord
+
+                c2 = MathUtils.transformAndDivideHomogeneousPoint(
+                                    [currAnchor.getPrevX()+widthAdjustment,
+                                    currAnchor.getPrevY()+heightAdjustment,
+                                    currAnchor.getPrevZ()],
+                                    stageWorldToLocalMat);
+                c2 = MathUtils.transformAndDivideHomogeneousPoint(c2,localToGlobalMat); //convert from local coord to global (screen) coord
+
+                c3 = MathUtils.transformAndDivideHomogeneousPoint(
+                                    [currAnchor.getPosX()+widthAdjustment,
+                                    currAnchor.getPosY()+heightAdjustment,
+                                    currAnchor.getPosZ()],
+                                    stageWorldToLocalMat);
+                c3 = MathUtils.transformAndDivideHomogeneousPoint(c3,localToGlobalMat); //convert from local coord to global (screen) coord
+
+                ctx.bezierCurveTo(c1[0], c1[1], c2[0], c2[1], c3[0], c3[1]);
+                prevAnchor = currAnchor;
             }
-            if (subpath.getIsClosed()){
-                ctx.closePath();
-            }
+
+
             ctx.stroke();
 
             ctx.restore();
@@ -905,27 +960,43 @@ exports.PenTool = Montage.create(ShapeTool, {
             var horizontalOffset = this.application.ninja.stage.userContentLeft;//stageManagerModule.stageManager.userContentLeft;
             var verticalOffset = this.application.ninja.stage.userContentTop;//stageManagerModule.stageManager.userContentTop;
 
+            var widthAdjustment = -snapManager.getStageWidth()*0.5;
+            var heightAdjustment = -snapManager.getStageHeight()*0.5;
+
             var localToGlobalMat = ViewUtils.getLocalToGlobalMatrix(subpath.getCanvas());
 
-            var currentLTWH = subpath.computeLeftTopWidthHeight();
+            /*var currentLTWH = subpath.computeLeftTopWidthHeight();
             var deltaX = currentLTWH[0] - parseInt(ElementMediator.getProperty(subpath.getCanvas(), "left"));
             var deltaY = currentLTWH[1] - parseInt(ElementMediator.getProperty(subpath.getCanvas(), "top"));
+            */
 
+            var localToStageWorldMat = ViewUtils.getLocalToStageWorldMatrix(subpath.getCanvas(), true, false);
+            var stageWorldToLocalMat = glmat4.inverse(localToStageWorldMat, []);
+
+            
             //display circles and squares near all control points
             ctx.fillStyle = "#FFFFFF";
             ctx.lineWidth = 1;
             ctx.strokeStyle = "green";
             var anchorDelta = 2;
             var selAnchorDelta = 4;
+            var px=0,py=0;
+            var localCoord = null;
+            var sp=[0,0,0];
+            var currAnchor = null;
             for (var i = 0; i < numAnchors; i++) {
-                var px = subpath.getAnchor(i).getPosX()+horizontalOffset;
-                var py = subpath.getAnchor(i).getPosY()+verticalOffset;
-                var localCoord = subpath.getAnchorLocalCoord(i);
-                if (localCoord) {
-                    var sp = MathUtils.transformAndDivideHomogeneousPoint(localCoord,localToGlobalMat);
-                    px = sp[0]; py=sp[1];
-                    sp[0]+=deltaX; sp[1]+=deltaY;
-                }
+                currAnchor = subpath.getAnchor(i);
+                //px = currAnchor.getPosX()+horizontalOffset;
+                //py = currAnchor.getPosY()+verticalOffset;
+                //var localCoordOld = subpath.getAnchorLocalCoord(i);
+                localCoord = MathUtils.transformAndDivideHomogeneousPoint([currAnchor.getPosX()+widthAdjustment, currAnchor.getPosY()+heightAdjustment, currAnchor.getPosZ()], stageWorldToLocalMat); //convert from stage world to local coord
+                //localCoord[0]-=snapManager.getStageWidth()*0.5;
+                //localCoord[1]-=snapManager.getStageHeight()*0.5;
+                //sp = MathUtils.transformAndDivideHomogeneousPoint(localCoordOld,localToGlobalMat); //convert from local coord to global (screen) coord
+                sp = MathUtils.transformAndDivideHomogeneousPoint(localCoord,localToGlobalMat); //convert from local coord to global (screen) coord
+                //sp[0]+=deltaX; sp[1]+=deltaY;
+                px = sp[0]; py=sp[1];
+
                 ctx.beginPath();
                 //ctx.arc(px + horizontalOffset, py + verticalOffset, this._DISPLAY_ANCHOR_RADIUS, 0, 2 * Math.PI, false);
                 ctx.moveTo(px-anchorDelta, py-anchorDelta);
@@ -935,20 +1006,22 @@ exports.PenTool = Montage.create(ShapeTool, {
                 ctx.closePath();
                 ctx.fill();
                 ctx.stroke();
-
             }
 
             //display the hovered over anchor point
             ctx.lineWidth = 2;
             if (this._hoveredAnchorIndex>=0 && this._hoveredAnchorIndex<numAnchors) {
-                var px = subpath.getAnchor(this._hoveredAnchorIndex).getPosX() +horizontalOffset;
-                var py = subpath.getAnchor(this._hoveredAnchorIndex).getPosY() +verticalOffset;
-                var localCoord = subpath.getAnchorLocalCoord(this._hoveredAnchorIndex);
-                if (localCoord) {
-                    var sp = MathUtils.transformAndDivideHomogeneousPoint(localCoord,localToGlobalMat);
-                    px = sp[0]; py=sp[1];
-                    sp[0]+=deltaX; sp[1]+=deltaY;
-                }
+                currAnchor = subpath.getAnchor(this._hoveredAnchorIndex);
+                px = currAnchor.getPosX() +horizontalOffset;
+                py = currAnchor.getPosY() +verticalOffset;
+                //localCoord = subpath.getAnchorLocalCoord(this._hoveredAnchorIndex);
+                localCoord = MathUtils.transformAndDivideHomogeneousPoint([currAnchor.getPosX()+widthAdjustment, currAnchor.getPosY()+heightAdjustment, currAnchor.getPosZ()], stageWorldToLocalMat); //convert from stage world to local coord
+                //localCoord[0]-=snapManager.getStageWidth()*0.5;
+                //localCoord[1]-=snapManager.getStageHeight()*0.5;
+                sp = MathUtils.transformAndDivideHomogeneousPoint(localCoord,localToGlobalMat);
+                //sp[0]+=deltaX; sp[1]+=deltaY;
+                px = sp[0]; py=sp[1];
+
                 ctx.beginPath();
                 //ctx.arc(px + horizontalOffset, py + verticalOffset, this._DISPLAY_ANCHOR_RADIUS*1.5, 0, 2 * Math.PI, false);
                 ctx.moveTo(px-selAnchorDelta, py-selAnchorDelta);
@@ -972,15 +1045,45 @@ exports.PenTool = Montage.create(ShapeTool, {
                 var selAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
                 var whichPoint = this._selectedSubpath.getSelectedMode(); //which of the selected handles to highlight
 
+                //compute the screen (global) coord. of the selected anchor
+                var posX=selAnchor.getPosX()+horizontalOffset, posY=selAnchor.getPosY()+verticalOffset;
+                //localCoord = subpath.getAnchorLocalCoord(subpath.getSelectedAnchorIndex());
+                localCoord = MathUtils.transformAndDivideHomogeneousPoint([selAnchor.getPosX()+widthAdjustment, selAnchor.getPosY()+heightAdjustment, selAnchor.getPosZ()], stageWorldToLocalMat); //convert from stage world to local coord
+                //localCoord[0]-=snapManager.getStageWidth()*0.5;
+                //localCoord[1]-=snapManager.getStageHeight()*0.5;
+                sp = MathUtils.transformAndDivideHomogeneousPoint(localCoord,localToGlobalMat);
+                //sp[0]+=deltaX; sp[1]+=deltaY;
+                posX = sp[0]; posY=sp[1];
+
+                //compute the screen (global) coord. of the selected anchor prev and next points
+                var prevX=selAnchor.getPrevX() + horizontalOffset, prevY = selAnchor.getPrevY() + verticalOffset,
+                    nextX=selAnchor.getNextX() + horizontalOffset, nextY=selAnchor.getNextY() + verticalOffset;
+                var prevLocalCoord = MathUtils.transformAndDivideHomogeneousPoint([selAnchor.getPrevX()+widthAdjustment, selAnchor.getPrevY()+heightAdjustment, selAnchor.getPrevZ()], stageWorldToLocalMat);
+                //prevLocalCoord[0]-=snapManager.getStageWidth()*0.5;
+                //prevLocalCoord[1]-=snapManager.getStageHeight()*0.5;
+                sp = MathUtils.transformAndDivideHomogeneousPoint(prevLocalCoord, localToGlobalMat);
+                if (sp){
+                    //sp[0]+=deltaX; sp[1]+=deltaY;
+                    prevX = sp[0], prevY=sp[1];
+                }
+                var nextLocalCoord = MathUtils.transformAndDivideHomogeneousPoint([selAnchor.getNextX()+widthAdjustment, selAnchor.getNextY()+heightAdjustment, selAnchor.getNextZ()], stageWorldToLocalMat);
+                //nextLocalCoord[0]-=snapManager.getStageWidth()*0.5;
+                //nextLocalCoord[1]-=snapManager.getStageHeight()*0.5;
+                sp = MathUtils.transformAndDivideHomogeneousPoint(nextLocalCoord, localToGlobalMat);
+                if (sp){
+                    //sp[0]+=deltaX; sp[1]+=deltaY;
+                    nextX = sp[0], nextY=sp[1];
+                }
+
                 //line from prev to anchor
                 ctx.beginPath();
-                ctx.moveTo(selAnchor.getPrevX() + horizontalOffset, selAnchor.getPrevY() + verticalOffset);
-                ctx.lineTo(selAnchor.getPosX() + horizontalOffset, selAnchor.getPosY() + verticalOffset);
+                ctx.moveTo(prevX,prevY);
+                ctx.lineTo(posX, posY);
                 ctx.stroke();
 
                 //selected anchor prev
                 ctx.beginPath();
-                ctx.arc(selAnchor.getPrevX() + horizontalOffset, selAnchor.getPrevY() + verticalOffset, this._DISPLAY_SELECTED_ANCHOR_PREV_RADIUS, 0, 2 * Math.PI, false);
+                ctx.arc(prevX, prevY, this._DISPLAY_SELECTED_ANCHOR_PREV_RADIUS, 0, 2 * Math.PI, false);
                 ctx.closePath();
                 if (whichPoint & this._selectedSubpath.SEL_PREV){
                     ctx.fillStyle = selHandleFill;
@@ -991,15 +1094,17 @@ exports.PenTool = Montage.create(ShapeTool, {
                 }
                 ctx.stroke();
 
+
+
                 //line from next to anchor
                 ctx.beginPath();
-                ctx.moveTo(selAnchor.getNextX() + horizontalOffset, selAnchor.getNextY() + verticalOffset);
-                ctx.lineTo(selAnchor.getPosX() + horizontalOffset, selAnchor.getPosY() + verticalOffset);
+                ctx.moveTo(nextX, nextY);
+                ctx.lineTo(posX, posY);
                 ctx.stroke();
 
                 //selected anchor next
                 ctx.beginPath();
-                ctx.arc(selAnchor.getNextX() + horizontalOffset, selAnchor.getNextY() + verticalOffset, this._DISPLAY_SELECTED_ANCHOR_NEXT_RADIUS, 0, 2 * Math.PI, false);
+                ctx.arc(nextX, nextY, this._DISPLAY_SELECTED_ANCHOR_NEXT_RADIUS, 0, 2 * Math.PI, false);
                 if (whichPoint & this._selectedSubpath.SEL_NEXT){
                     ctx.fillStyle = selHandleFill;
                     ctx.fill();
@@ -1010,28 +1115,39 @@ exports.PenTool = Montage.create(ShapeTool, {
                 ctx.stroke();
 
                 //selected anchor point
-                var px = selAnchor.getPosX();
-                var py = selAnchor.getPosY();
+                var px = posX;
+                var py = posY;
                 ctx.beginPath();
                 //ctx.arc(selAnchor.getPosX() + horizontalOffset, selAnchor.getPosY() + verticalOffset, this._DISPLAY_SELECTED_ANCHOR_RADIUS, 0, 2 * Math.PI, false);
-                ctx.moveTo(px-selAnchorDelta+horizontalOffset, py-selAnchorDelta+verticalOffset);
-                ctx.lineTo(px+selAnchorDelta+horizontalOffset, py-selAnchorDelta+verticalOffset);
-                ctx.lineTo(px+selAnchorDelta+horizontalOffset, py+selAnchorDelta+verticalOffset);
-                ctx.lineTo(px-selAnchorDelta+horizontalOffset, py+selAnchorDelta+verticalOffset);
+                ctx.moveTo(px-selAnchorDelta, py-selAnchorDelta);
+                ctx.lineTo(px+selAnchorDelta, py-selAnchorDelta);
+                ctx.lineTo(px+selAnchorDelta, py+selAnchorDelta);
+                ctx.lineTo(px-selAnchorDelta, py+selAnchorDelta);
                 ctx.closePath();
                 ctx.fill();
                 ctx.stroke();
+                
+
 
                 //display the snap target if it isn't null
                 if (this._snapTarget) {
+                    px =this._snapTarget.getPosX()+horizontalOffset, py=this._snapTarget.getPosY()+verticalOffset;
+                    //localCoord = subpath.getAnchorLocalCoord(this._snapTargetIndex);
+                    localCoord = MathUtils.transformAndDivideHomogeneousPoint([this._snapTarget.getPosX()+widthAdjustment, this._snapTarget.getPosY()+heightAdjustment, this._snapTarget.getPosZ()], stageWorldToLocalMat); //convert from stage world to local coord
+                    //localCoord[0]-=snapManager.getStageWidth()*0.5;
+                    //localCoord[1]-=snapManager.getStageHeight()*0.5;
+                    sp = MathUtils.transformAndDivideHomogeneousPoint(localCoord,localToGlobalMat);
+                    //sp[0]+=deltaX; sp[1]+=deltaY;
+                    px = sp[0]; py =sp[1];
+
                     ctx.lineWidth = 2;
                     ctx.strokeStyle = "red";
                     ctx.beginPath();
                     //ctx.arc(this._snapTarget.getPosX() + horizontalOffset, this._snapTarget.getPosY() + verticalOffset, this._DISPLAY_SELECTED_ANCHOR_RADIUS * 2, 0, 2 * Math.PI, false);
-                    ctx.moveTo(px-selAnchorDelta+horizontalOffset, py-selAnchorDelta+verticalOffset);
-                    ctx.lineTo(px+selAnchorDelta+horizontalOffset, py-selAnchorDelta+verticalOffset);
-                    ctx.lineTo(px+selAnchorDelta+horizontalOffset, py+selAnchorDelta+verticalOffset);
-                    ctx.lineTo(px-selAnchorDelta+horizontalOffset, py+selAnchorDelta+verticalOffset);
+                    ctx.moveTo(px-selAnchorDelta, py-selAnchorDelta);
+                    ctx.lineTo(px+selAnchorDelta, py-selAnchorDelta);
+                    ctx.lineTo(px+selAnchorDelta, py+selAnchorDelta);
+                    ctx.lineTo(px-selAnchorDelta, py+selAnchorDelta);
                     ctx.closePath();
                     ctx.stroke();
                 }
