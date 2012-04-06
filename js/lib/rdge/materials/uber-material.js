@@ -286,6 +286,30 @@ var UberMaterial = function UberMaterial() {
 		}
 	};
 
+		
+	this.updateTextures = function()
+	{
+		var material = this._materialNode;
+		if (material)
+		{
+			var technique = material.shaderProgram.defaultTechnique;
+			var renderer = g_Engine.getContext().renderer;
+			if (renderer && technique)
+			{
+				if (this._diffuseTexture)
+				{
+					if (!this._diffuseTexture.isAnimated())
+					{
+						this._diffuseTexture.rerender();
+                        var tex = this._diffuseTexture.getTexture();
+						technique.s_diffuseMap.set( tex );
+					}
+				}
+			}
+		}
+	}
+
+
 	this.updateSpecularMap = function() {
 		var value = this._propValues[ "specularMap" ];
 		this._specularMapOb.texture = value;

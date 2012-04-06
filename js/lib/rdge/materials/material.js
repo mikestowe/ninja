@@ -257,6 +257,13 @@ var Material = function GLMaterial( world ) {
 		return tex;
 	};
 
+	this.updateTextures = function()
+	{
+		// this function is called whenever a world that generates textuers for
+		// the current world changes in some way.  Sub-classes with textures
+		// should override this function.
+	}
+
 	this.export = function() {
 		// this function should be overridden by subclasses
 		var exportStr = "material: " + this.getShaderName() + "\n" + "endMaterial\n";

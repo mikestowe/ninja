@@ -239,6 +239,7 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 				this.myScene.render();
 
 				if (this._firstRender) {
+					this._notifier.sendNotification( this._notifier.FIRST_RENDER );
 					if (this._canvas.task) {
 						this._firstRender = false;
 
@@ -828,7 +829,6 @@ World.prototype.exportObjectsJSON = function( obj,  parentObj )
 }
 
 
-
 World.prototype.findTransformNodeByMaterial = function( materialNode,  trNode ) {
 	//if (trNode == null)  trNode = this._ctrNode;
 	if (trNode == null)  trNode = this._rootNode;
@@ -924,6 +924,29 @@ World.prototype.importObjectJSON = function( jObj, parentGeomObj )
 		this.addObject( obj,  parentGeomObj );
 
 	return obj;
+};
+
+World.prototype.refreshTextures = function( obj )
+{
+	if (obj == null)  obj = this._geomRoot;
+	if (!obj)  return;
+	if (obj._materialArray)
+	{
+		var nMats = obj._materialArray.length;
+		for (var i=0;  i<nMats;  i++)
+		{
+			var mat = obj._materialArray[i];
+			if (mat)
+				mat.updateTextures();
+		}
+	}
+
+	if (obj.getChild()) {
+		 this.refreshTextures( obj.getChild ()  );
+    }
+
+	if (obj.getNext())
+		this.refreshTextures( obj.getNext() );
 };
 
 World.prototype.import = function( importStr ) {
@@ -1054,6 +1077,7 @@ function Notifier()
     this.OBJECT_DELETE          = 1;
     this.OBJECT_REINSTANTIATE   = 2;    // the object has come back after a deletion - as in undo
     this.OBJECT_CHANGE          = 3;
+	this.FIRST_RENDER			= 4;
 
 
     // the array of listener objects

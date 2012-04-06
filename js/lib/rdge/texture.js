@@ -6,6 +6,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var Material = require("js/lib/rdge/materials/material").Material;
 
+var __textureCounter = 0;
+
 ///////////////////////////////////////////////////////////////////////
 // Class GLTexture
 //      GL representation of a texture.
@@ -37,6 +39,9 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 	
 	// the destination world that will use the texture map
 	this._dstWorld = dstWorld;
+
+	this._texCount = __textureCounter;
+	__textureCounter++;
 
 	///////////////////////////////////////////////////////////////////////
 	// Property Accessors
@@ -89,7 +94,8 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 		console.log( "texture callback, type: " + type );
 		if (calleeData.srcWorld)
 		{
-			var srcWorld = calleeData.srcWorld;
+			var srcWorld = callbackObj.getSrcWorld();
+			var dstWorld = callbackObj.getDstWorld();
 			var notifier = srcWorld._notifier;
 			var texture = this.callbackObj;
 			if (texture)
@@ -103,9 +109,20 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 						break;
 
 					case notifier.OBJECT_CHANGE:
-						if (!texture.isAnimated())
-							texture.rerender();
-							texture.getDstWorld().restartRenderLoop();
+//						this._isAnimated = srcWorld._hasAnimatedMaterials;
+//						if (!srcWorld.hasAnimatedMaterials())
+//							srcWorld.restartRenderLoop();
+//						else if (!dstWorld.hasAnimatedMaterials())
+//						{
+//							dstWorld.refreshTextures();
+//							dstWorld.restartRenderLoop();
+//						}
+						break;
+
+					case notifier.FIRST_RENDER:
+						texture._isAnimated = srcWorld.hasAnimatedMaterials();
+						dstWorld.refreshTextures();
+						dstWorld.restartRenderLoop();
 						break;
 
 					default:

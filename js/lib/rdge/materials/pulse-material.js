@@ -150,6 +150,20 @@ var PulseMaterial = function PulseMaterial()
 		}
 	};
 
+	
+	this.updateTextures = function()
+	{
+		if (this._glTex)
+		{
+			if (!this._glTex.isAnimated())
+			{
+				this._glTex.rerender();
+				this.updateTexture();
+			}
+		}
+	}
+
+
 	this.update = function( time )
 	{
 		var material = this._materialNode;
