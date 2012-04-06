@@ -30,12 +30,12 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
     newFileName:{
         writable:true,
         enumerable:false,
-        value:""
+        value:null
     },
     newFileDirectory:{
         writable:true,
         enumerable:false,
-        value:""
+        value:null
     },
     templateWidth:{
         writable:true,
@@ -331,7 +331,7 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
             }else if(evt.keyCode === 27){
                 this.handleCancelButtonAction(evt);
             }
-            else if(!!evt._event.newFileDirectory){
+            else{
                 this.newFileDirectory = evt._event.newFileDirectory;
                 if(this.isValidUri(this.newFileDirectory)){
                     this.enableOk();
@@ -347,7 +347,7 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
             }else if(evt.keyCode === 27){
                 this.handleCancelButtonAction(evt);
             }
-            else if(!!evt._event.newFileName){
+            else{
                 this.newFileName = evt._event.newFileName;
                 if(this.isValidFileName(this.newFileName)){
                     this.enableOk();
@@ -422,14 +422,12 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
     isValidUri:{
         value: function(uri){
             var status= this.application.ninja.coreIoApi.isValidUri(uri);
-            if(uri !== ""){
-                if(!status){
+            if((uri !== null) && !status){
                     this.showError("! Invalid directory.");
                     //disable ok
                     if(!this.okButton.hasAttribute("disabled")){
                         this.okButton.setAttribute("disabled", "true");
                     }
-                }
             }
             return status;
         }
@@ -437,14 +435,12 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
     isValidFileName:{
         value: function(fileName){
             var status = this.validateFileName(fileName);
-            if(fileName !== ""){
-                if(!status){
+            if((fileName !== null ) && !status){
                     this.showError("! Invalid file name.");
                     //disable ok
                     if(!this.okButton.hasAttribute("disabled")){
                         this.okButton.setAttribute("disabled", "true");
                     }
-                }
             }
             return status;
         }
@@ -488,7 +484,7 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
         validateFileName:{
             value: function(fileName){
                 var status = false;
-                if(fileName !== ""){
+                if((fileName !== null) && (fileName !== "")){
                     fileName = fileName.replace(/^\s+|\s+$/g,"");
                     status = !(/[/\\]/g.test(fileName));
                     if(status && navigator.userAgent.indexOf("Macintosh") != -1){//for Mac files beginning with . are hidden
