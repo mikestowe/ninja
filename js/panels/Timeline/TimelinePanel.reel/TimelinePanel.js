@@ -831,12 +831,43 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
 
     deleteLayer:{
-        value:function (object) {
+        value:function (elements) {
             // Only delete a selected layer.  If no layer is selected, do nothing.
-            if (this.layerRepetition.selectedIndexes.length > 0) {
-                // Delete the selected layer.
-                var myIndex = this.layerRepetition.selectedIndexes[0];
-                this.arrLayers.splice(myIndex, 1);
+            var length = elements.length;
+
+            while(length>0){
+                if (this.layerRepetition.selectedIndexes.length > 0) {
+                    // Delete the selected layer.
+                    var myIndex = this.layerRepetition.selectedIndexes[0];
+                    this.arrLayers.splice(myIndex, 1);
+                    var selectIndex = this.arrLayers.length;
+                    this.searchHighestTrackDuration();
+                    if(selectIndex>0){
+                        this.selectLayer(selectIndex-1);
+                    }
+                    length--;
+                }
+            }
+        }
+    },
+
+    searchHighestTrackDuration:{
+        value:function(){
+
+            var trackDuration;
+            var length = this.arrLayers.length;
+            if(length > 0){
+                trackDuration = this.arrLayers[length-1].layerData.trackDuration;
+                length--;
+                while(length >=0){
+                    if(this.arrLayers[length].layerData.trackDuration > trackDuration){
+                        trackDuration = this.arrLayers[length].layerData.trackDuration;
+                    }
+                    length--;
+                }
+                this.masterDuration = trackDuration;
+            }else{
+                this.masterDuration = 0 ;
             }
         }
     },
@@ -850,8 +881,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
 
     handleElementsRemoved:{
-        value:function () {
-            this.deleteLayer();
+        value:function (event) {
+            var deleteElements = event.detail;
+            this.deleteLayer(deleteElements);
         }
     },
 
