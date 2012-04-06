@@ -72,20 +72,19 @@ exports.PresetsController = Montage.create(Component, {
             selectorBase = stylesController.generateClassName(selectorBase);
 
             selection.forEach(function(element) {
-                var el = element._element,
-                    animationName;
+                var animationName;
 
                 if(useTransition) {
-                    this.addTransition(el);
+                    this.addTransition(element);
                 }
 
                 ///// TODO: remove when we find out what to do with competing animations
-                animationName = stylesController.getElementStyle(el, '-webkit-animation-name');
+                animationName = stylesController.getElementStyle(element, '-webkit-animation-name');
                 if(animationName) {
                     animationNames.push(animationName);
                 }
 
-                el.classList.add(selectorBase);
+                element.classList.add(selectorBase);
 
             }, this);
 

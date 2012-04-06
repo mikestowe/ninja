@@ -71,7 +71,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     handleAddComponentFirstDraw: {
     	value: function (e) {
     		//TODO: Add logic to reparse the document for dynamically added styles
-    		console.log(e);
+    		//console.log(e);
     	}
     },
     
