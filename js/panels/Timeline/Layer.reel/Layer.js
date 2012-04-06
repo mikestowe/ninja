@@ -311,11 +311,9 @@ var Layer = exports.Layer = Montage.create(Component, {
     		return this._isMainCollapsed;
     	},
     	set: function(newVal) {
-    		if (newVal !== this._isMainCollapsed) {
-    			this.log('layer.js: isMainCollapsed: ' + newVal);
-    			this._isMainCollapsed = newVal;
-    			this.layerData.isMainCollapsed = newVal;
-    		}
+			this._isMainCollapsed = newVal;
+			this.layerData.isMainCollapsed = newVal;
+
     	}
     },
     
@@ -329,10 +327,8 @@ var Layer = exports.Layer = Montage.create(Component, {
     		return this._isTransformCollapsed;
     	},
     	set: function(newVal) {
-    		if (newVal !== this._isTransformCollapsed) {
-    			this._isTransformCollapsed = newVal;
-    			this.layerData.isTransformCollapsed = newVal;
-    		}
+			this._isTransformCollapsed = newVal;
+			this.layerData.isTransformCollapsed = newVal;
     	}
     },
     
@@ -346,10 +342,8 @@ var Layer = exports.Layer = Montage.create(Component, {
     		return this._isPositionCollapsed;
     	},
     	set: function(newVal) {
-    		if (newVal !== this._isPositionCollapsed) {
-    			this._isPositionCollapsed = newVal;
-    			this.layerData.isPositionCollapsed = newVal;
-    		}
+			this._isPositionCollapsed = newVal;
+			this.layerData.isPositionCollapsed = newVal;
     	}
     },
     
@@ -363,10 +357,8 @@ var Layer = exports.Layer = Montage.create(Component, {
     		return this._isStyleCollapsed;
     	},
     	set: function(newVal) {
-    		if (newVal !== this._isStyleCollapsed) {
-    			this._isStyleCollapsed = newVal;
-    			this.layerData.isStyleCollapsed = newVal;
-    		}
+			this._isStyleCollapsed = newVal;
+			this.layerData.isStyleCollapsed = newVal;
     	}
     },
     _bypassAnimation : {
@@ -379,7 +371,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     		return this._bypassAnimation;
     	},
     	set: function(newVal) {
-    		if ((newVal !== this._bypassAnimation) && (typeof(this.layerData) !== "undefined")) {
+    		if (typeof(this.layerData) !== "undefined") {
 	    		this._bypassAnimation = newVal;
 	    		this.layerData.bypassAnimation = newVal;	
     		}
@@ -480,30 +472,22 @@ var Layer = exports.Layer = Montage.create(Component, {
         	
         	// Initialize myself
 			this.init();
-			var that = this;
+			
         	// Make it editable!
         	this._layerEditable = Hintable.create();
         	this._layerEditable.element = this.titleSelector;
         	this.titleSelector.identifier = "selectorEditable";
         	this.titleSelector.addEventListener("click", this, false);
-        	this._layerEditable.addEventListener("blur", function(event) {
-        		that.handleSelectorEditableBlur(event);
-        	}, false);
-        	this._layerEditable.addEventListener("change", function(event) {
-				that.dynamicLayerName.value = that._layerEditable.value;
-                this.application.ninja.timeline.currentLayerSelected.layerData.elementsList[0].dataset.storedLayerName = that.dynamicLayerName.value;
-				that.needsDraw = true;
-                this.application.ninja.documentController.activeDocument.needsSave = true;
-        	}, false);
+        	this._layerEditable.addEventListener("blur", this.handleSelectorEditableBlur.bind(this), false);
+        	this._layerEditable.addEventListener("change", this.handleLayerNameChange.bind(this), false);
         	this._layerEditable.editingClass = "editable2";
         	this._layerEditable.value = this.layerName;
-        	//this._layerEditable.needsDraw = true;
-
+        	
+        	// Collapser event handlers.
             this.mainCollapser.clicker.addEventListener("click", this.handleMainCollapserClick.bind(this), false);
             this.positionCollapser.clicker.addEventListener("click", this.handlePositionCollapserClick.bind(this), false);
             this.transformCollapser.clicker.addEventListener("click", this.handleTransformCollapserClick.bind(this), false);
             this.styleCollapser.clicker.addEventListener("click", this.handleStyleCollapserClick.bind(this), false);
-
 
             // Add event listeners to add and delete style buttons
             this.buttonAddStyle.addEventListener("click", this.handleAddStyleClick.bind(this), false);
@@ -514,8 +498,8 @@ var Layer = exports.Layer = Montage.create(Component, {
             this.element.addEventListener("click", this, false);
             
 			// Drag and drop event handlers
-			this.element.addEventListener("mouseover", this.handleMouseover.bind(this), false);
-			this.element.addEventListener("mouseout", this.handleMouseout.bind(this), false);
+			this.myLabel.addEventListener("mouseover", this.handleMouseover.bind(this), false);
+			this.myLabel.addEventListener("mouseout", this.handleMouseout.bind(this), false);
 			this.element.addEventListener("dragover", this.handleDragover.bind(this), false);
 			this.element.addEventListener("dragleave", this.handleDragleave.bind(this), false);
 			this.element.addEventListener("dragstart", this.handleDragstart.bind(this), false);
@@ -705,6 +689,14 @@ var Layer = exports.Layer = Montage.create(Component, {
 	/* End: Controllers */
     
 	/* Begin: Event handlers */
+	handleLayerNameChange: {
+		value: function(event) {		
+			this.dynamicLayerName.value = this._layerEditable.value;
+			this.application.ninja.timeline.currentLayerSelected.layerData.elementsList[0].dataset.storedLayerName = this.dynamicLayerName.value;
+			this.needsDraw = true;
+			this.application.ninja.documentController.activeDocument.needsSave = true;
+		}
+	},
 	handleAddStyleClick: {
 		value: function(event) {
 			this.addStyle();

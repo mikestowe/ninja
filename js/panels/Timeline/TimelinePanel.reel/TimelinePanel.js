@@ -294,12 +294,24 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		if (newVal !== this._dropLayerID) {
     			this._dropLayerID = newVal;
     			
-    			var dragLayerIndex = this.getLayerIndexByID(this.dragLayerID),
+    			var myNewArray = [],
+    				dragLayerIndex = this.getLayerIndexByID(this.dragLayerID),
     				dropLayerIndex = this.getLayerIndexByID(this.dropLayerID),
-    				dragLayer = this.arrLayers[dragLayerIndex];
+    				dragLayer = myNewArray[dragLayerIndex],
+    				thing;
+    			
+    			// Copy arrLayers into new array; we want to avoid referencing.
+    			for (thing in this.arrLayers) {
+    				myNewArray[thing] = this.arrLayers[thing];
+    			}
 
-    			this.arrLayers.splice(dragLayerIndex, 1);
-    			this.arrLayers.splice(dropLayerIndex, 0, dragLayer);
+				// Operate on new array
+    			myNewArray.splice(dragLayerIndex, 1);
+    			myNewArray.splice(dropLayerIndex, 0, dragLayer);
+    			
+    			// Feed new array into repetition
+    			this.arrLayers = myNewArray;
+    			// Store reference in currentDocument.
     			this.application.ninja.currentDocument.tlArrLayers = this.arrLayers;
     			
     			// Clear for future DnD
@@ -307,7 +319,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     			this._dragLayerID = null;
     			
     			// Sometimes, just to be fun, the drop and dragend events don't fire.
-    			// So just in case, set the draw routine to delete the helper.
+    			// To avoid this, set the draw routine to delete the helper here.
     			this._deleteHelper = true;
     			this.needsDraw = true;
     		}
