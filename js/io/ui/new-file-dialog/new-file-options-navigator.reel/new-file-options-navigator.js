@@ -493,6 +493,7 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
                 var status = false;
                 if((fileName !== null) && (fileName !== "")){
                     fileName = fileName.replace(/^\s+|\s+$/g,"");
+                    if(fileName === ""){return false;}
                     status = !(/[/\\]/g.test(fileName));
                     if(status && navigator.userAgent.indexOf("Macintosh") != -1){//for Mac files beginning with . are hidden
                         status = !(/^\./g.test(fileName));
