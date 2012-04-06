@@ -715,18 +715,6 @@ var BrushStroke = function GLBrushStroke() {
         this.update();      //after this, the stroke is ready to be rendered
     };
 
-    
-    this.export = function() {
-        var jsonObject = this.exportJSON();
-        var stringified = JSON.stringify(jsonObject);
-        return "type: " + this.geomType() + "\n" + stringified;
-    };
-
-    this.import = function( importStr ) {
-        var jsonObject = JSON.parse(importStr);
-        this.importJSON(jsonObject);
-    }
-
     this.collidesWithPoint = function (x, y, z) {
         if (x < this._BBoxMin[0]) return false;
         if (x > this._BBoxMax[0]) return false;

@@ -24,6 +24,7 @@ var NewFileLocation = exports.NewFileLocation = Montage.create(Component, {
 
             this.newFileName.addEventListener("keyup", this, false);
             this.newFileName.addEventListener("paste", this, false);
+            this.newFileName.addEventListener("search", this, false);
 			this.newFileName.focus();
             this.newFileName.select();
         }
@@ -39,14 +40,16 @@ var NewFileLocation = exports.NewFileLocation = Montage.create(Component, {
 
     handleKeyup:{
         value:function(evt){
-            if(this.newFileName.value !== "") {
-                var newFileNameSetEvent = document.createEvent("Events");
-                newFileNameSetEvent.initEvent("newFileNameSet", false, false);
-                newFileNameSetEvent.newFileName = this.newFileName.value;
-                newFileNameSetEvent.keyCode = evt.keyCode;
-                this.eventManager.dispatchEvent(newFileNameSetEvent);
-            }
+            var newFileNameSetEvent = document.createEvent("Events");
+            newFileNameSetEvent.initEvent("newFileNameSet", false, false);
+            newFileNameSetEvent.newFileName = this.newFileName.value;
+            newFileNameSetEvent.keyCode = evt.keyCode;
+            this.eventManager.dispatchEvent(newFileNameSetEvent);
+        }
+    },
+    handleSearch:{
+       value:function(evt){
+            this.handleKeyup(evt);
         }
     }
-
 });
