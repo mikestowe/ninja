@@ -176,6 +176,27 @@ var CloudMaterial = function CloudMaterial() {
 		}
 	};
 
+	this.generateQuads = function()
+	{
+		var quads = [];
+		for ( i = 0; i < 8000; i++ )
+		{
+			var quad = 
+			{
+			}
+				x: Math.random() * 1000 - 500,
+				y = - Math.random() * Math.random() * 200 - 15,
+				z = i,
+				rotation.z = Math.random() * Math.PI,
+				scale = Math.random() * Math.random() * 1.5 + 0.5,
+			}
+
+			quads.push( quad );
+		}
+
+		this._quads = quads;
+	};
+
 	// JSON export
 	this.exportJSON = function()
 	{

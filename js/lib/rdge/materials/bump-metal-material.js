@@ -168,7 +168,7 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
                 if (glTex)
                 {
                     if (glTex.isAnimated())
-                        glTex.rerender();
+                        glTex.render();
 
                     var tex = glTex.getTexture();
  				    if (tex)

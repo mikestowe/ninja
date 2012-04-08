@@ -300,7 +300,7 @@ var UberMaterial = function UberMaterial() {
 				{
 					if (!this._diffuseTexture.isAnimated())
 					{
-						this._diffuseTexture.rerender();
+						this._diffuseTexture.render();
                         var tex = this._diffuseTexture.getTexture();
 						technique.s_diffuseMap.set( tex );
 					}
@@ -412,7 +412,7 @@ var UberMaterial = function UberMaterial() {
             {
                 if (this._diffuseTexture && this._diffuseTexture.isAnimated())
                 {
-                    this._diffuseTexture.rerender();
+                    this._diffuseTexture.render();
 				    technique.s_diffuseMap.set( this._diffuseTexture.getTexture() );
                 }
             }

@@ -139,7 +139,7 @@ var PulseMaterial = function PulseMaterial()
                 if (this._glTex)
                 {
                     if (this._glTex.isAnimated())
-                        this._glTex.rerender();
+                        this._glTex.render();
                     tex = this._glTex.getTexture();
                 }
 
@@ -157,7 +157,7 @@ var PulseMaterial = function PulseMaterial()
 		{
 			if (!this._glTex.isAnimated())
 			{
-				this._glTex.rerender();
+				this._glTex.render();
 				this.updateTexture();
 			}
 		}
@@ -177,7 +177,7 @@ var PulseMaterial = function PulseMaterial()
                 {
                     //this.updateTexture();
                     if (this._glTex.isAnimated())
-                        this._glTex.rerender();
+                        this._glTex.render();
                     tex = this._glTex.getTexture();
 				    if (tex)
 					    technique.u_tex0.set( tex );

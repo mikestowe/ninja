@@ -109,14 +109,6 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 						break;
 
 					case notifier.OBJECT_CHANGE:
-//						this._isAnimated = srcWorld._hasAnimatedMaterials;
-//						if (!srcWorld.hasAnimatedMaterials())
-//							srcWorld.restartRenderLoop();
-//						else if (!dstWorld.hasAnimatedMaterials())
-//						{
-//							dstWorld.refreshTextures();
-//							dstWorld.restartRenderLoop();
-//						}
 						break;
 
 					case notifier.FIRST_RENDER:
@@ -179,21 +171,16 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 		var doc = srcCanvas.ownerDocument;
 		this._renderCanvas = doc.createElement("canvas");
 
-		// cache whether this is a 2D canvas or 3D canvas
-//		var srcCtx = srcCanvas.getContext("2d");
-//		this._is3D = false;
-//		if (!srcCtx)  this._is3D = true;
-
-		this.rerender();
+		this.render();
 
 		return tex;
 	}
 
-	this.rerender = function()
+	this.render = function()
 	{
 		if (!this._srcCanvas)
 		{
-			console.log( " no source canvas in GLTexture.rerender" );
+			console.log( " no source canvas in GLTexture.render" );
 			return;
 		}
 		var srcCanvas = this._srcCanvas;
@@ -201,7 +188,7 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 		var world = this.getDstWorld();
 		if (!world)
 		{
-			console.log( "no world in GLTexture.rerender" );
+			console.log( "no world in GLTexture.render" );
 			return;
 		}
 		var renderer = world.getRenderer();
@@ -218,7 +205,7 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 		var renderCanvas = this._renderCanvas;
 		if (!renderCanvas)
 		{
-			console.log( "no render canvas in GLTexture.rerender" );
+			console.log( "no render canvas in GLTexture.render" );
 			return;
 		}
 		renderCanvas.width = width;
@@ -229,7 +216,7 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 		var tex = this._texture;
 		if (!tex)
 		{
-			console.log( "no texture in GLTexture.rerender" );
+			console.log( "no texture in GLTexture.render" );
 			return;
 		}
 
