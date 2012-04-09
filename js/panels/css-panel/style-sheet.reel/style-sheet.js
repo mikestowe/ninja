@@ -14,8 +14,6 @@ exports.StyleSheet = Montage.create(Component, {
 
     willDraw : {
         value: function() {
-            console.log("style sheet view - will draw");
-
             if(this.editing) {
                 document.body.addEventListener('mousedown', this, false);
                 this._translateDistance = this._element.offsetWidth - this.editButton._element.offsetWidth;
@@ -28,7 +26,6 @@ exports.StyleSheet = Montage.create(Component, {
     draw : {
         value: function() {
             var transStr = '-webkit-transform';
-            console.log("styles sheet view - draw");
 
             this.mediaInput.value = this._source.media.mediaText;
 
@@ -39,17 +36,64 @@ exports.StyleSheet = Montage.create(Component, {
                 this.editView.classList.remove('expanded');
                 this.editView.style.removeProperty(transStr);
             }
+
+            if(this._readOnly) {
+                this._element.classList.add('ss-locked');
+                this.importButton.element.classList.remove('ss-invisible');
+            } else {
+                this._element.classList.remove('ss-locked');
+                this.importButton.element.classList.add('ss-invisible');
+            }
+
         }
     },
 
+    /* ------ Events------ */
 
+    handleMousedown : {
+        value: function(e) {
+            var nonBlurringElements = [
+                this.editView,
+                this.deleteButton.element,
+                this.disableButton.element,
+                this.importButton.element];
+
+            console.log("handle mousedown");
+
+            if(nonBlurringElements.indexOf(e.target) === -1) {
+                this.editing = false;
+            }
+        }
+    },
 
     handleEditButtonAction: {
         value: function(e) {
-            console.log('handle edit button action');
             this.editing = true;
         }
     },
+
+    handleImportButtonAction: {
+        value: function(e) {
+            e.stopPropagation();
+        }
+    },
+
+    handleDisableButtonAction: {
+        value: function(e) {
+            e.stopPropagation();
+            this.disabled = !this.disabled;
+        }
+    },
+
+    handleDeleteButtonAction : {
+        value: function(e) {
+            e.stopPropagation();
+            debugger;
+        }
+    },
+
+    /* ------ State properties ------ */
+
     _editing : {
         value: null
     },
@@ -63,21 +107,9 @@ exports.StyleSheet = Montage.create(Component, {
         }
     },
 
-    handleMousedown : {
-        value: function(e) {
-            console.log("handle mousedown");
-            if(e.target !== this.editView && e.target !== this.editButton) {
-                this.editing = false;
-            }
-        }
-    },
-
-    mediaInput: {
-        value: null
-    },
-
     _name: {
-        value: null
+        value: "Style Tag",
+        distinct: true
     },
     name : {
         get: function() {
@@ -87,6 +119,37 @@ exports.StyleSheet = Montage.create(Component, {
             this._name = text;
         }
     },
+    _readOnly : { value: null },
+    readOnly : {
+        get: function() {
+            return this._readOnly;
+        },
+        set: function(isReadOnly) {
+            this._readOnly = isReadOnly;
+            this.needsDraw = true;
+        }
+    },
+
+    _disabled : {
+        value: null
+    },
+    disabled: {
+        get: function() {
+            return this._disabled;
+        },
+        set: function(disable) {
+            var label = (disable) ? "Enable" : "Disable";
+            this._source.ownerNode.disabled = disable;
+            this.disableButton.label = label;
+
+            this._disabled = disable;
+        }
+    },
+
+    external : {
+        value: null
+    },
+
     _source : {
         value: null
     },
@@ -95,13 +158,64 @@ exports.StyleSheet = Montage.create(Component, {
             return this._source;
         },
         set: function(sheet) {
-            console.log('sheet being set: ', sheet.ownerNode);
-            if(sheet.href) {
-                this.name = sheet.href.substring(sheet.href.lastIndexOf('/')+1);
-            } else {
-                this.name = 'Style Tag';
-            }
+            console.log('sheet being set: ', this);
+
+            this._extractData(sheet.ownerNode);
             this._source = sheet;
+        }
+    },
+
+    _extractData : {
+        value: function(sheetNode) {
+            var data = sheetNode.dataset, key;
+
+            for(key in data) {
+                this[key] = data[key];
+            }
+        }
+    },
+
+    /* ------ Data Attribute Properties ------ */
+
+    _ninjaExternalUrl: { value: null },
+    ninjaExternalUrl : {
+        get: function() { return this._ninjaExternalUrl; },
+        set: function(url) {
+            this.external = true;
+            this._ninjaExternalUrl = url;
+        }
+    },
+
+    _ninjaFileName: { value: null },
+    ninjaFileName : {
+        get: function() { return this._ninjaFileName; },
+        set: function(fileName) {
+            this.name = fileName;
+            this._ninjaFileName = fileName;
+        }
+    },
+
+    _ninjaFileUrl: { value: null },
+    ninjaFileUrl : {
+        get: function() { return this._ninjaFileUrl; },
+        set: function(fileUrl) {
+            this._ninjaFileUrl = fileUrl;
+        }
+    },
+
+    _ninjaFileReadOnly: { value: null },
+    ninjaFileReadOnly : {
+        get: function() { return this._ninjaFileReadOnly; },
+        set: function(isReadOnly) {
+            this._ninjaFileReadOnly = this.readOnly = isReadOnly === "true";
+        }
+    },
+
+    _ninjaUri: { value: null },
+    ninjaUri : {
+        get: function() { return this._ninjaUri; },
+        set: function(uri) {
+            this._ninjaUri = uri;
         }
     }
 });

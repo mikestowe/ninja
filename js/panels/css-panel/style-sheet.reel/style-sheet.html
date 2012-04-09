@@ -15,11 +15,13 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "name" : "StyleSheet",
                 "properties" : {
                     "element" : {"#" : "style-sheet-container"},
-                    "disableCheckbox": {"@": "disableCheckbox"},
                     "nameText": {"@": "name"},
                     "mediaInput": {"@": "mediaInput"},
                     "editButton": {"@": "editButton"},
-                    "editView": {"#": "style-sheet-edit"}
+                    "editView": {"#": "style-sheet-edit"},
+                    "disableButton": {"@": "disableButton"},
+                    "importButton": {"@": "importButton"},
+                    "deleteButton": {"@": "deleteButton"}
                 }
             },
             "disableCheckbox": {
@@ -65,13 +67,56 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                     "listener": {"@": "owner"}
                 }]
 
+            },
+            "disableButton": {
+                "module": "montage/ui/button.reel",
+                "name": "Button",
+                "properties": {
+                    "element": {"#": "disable-button"},
+                    "identifier": "disableButton",
+                    "label": "Disable"
+                },
+                "listeners": [{
+                    "type": "action",
+                    "listener": {"@": "owner"}
+                }]
+
+            },
+            "importButton": {
+                "module": "montage/ui/button.reel",
+                "name": "Button",
+                "properties": {
+                    "element": {"#": "import-button"},
+                    "identifier": "importButton",
+                    "label": "Import"
+                },
+                "listeners": [{
+                    "type": "action",
+                    "listener": {"@": "owner"}
+                }]
+
+            },
+            "deleteButton": {
+                "module": "montage/ui/button.reel",
+                "name": "Button",
+                "properties": {
+                    "element": {"#": "delete-button"},
+                    "identifier": "deleteButton",
+                    "label": "Delete"
+                },
+                "listeners": [{
+                    "type": "action",
+                    "listener": {"@": "owner"}
+                }]
+
             }
         }
     </script>
 </head>
 <body>
 <div id="style-sheet-container" class="style-sheet-container">
-    <div id="disable-checkbox"></div>
+    <div class="ss-icon"></div>
+    <!--<div id="disable-checkbox"></div>-->
     <span id="sheet-name"></span>
     <label>Media:</label>
     <div id="media-input"></div>
@@ -79,9 +124,9 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
     <div data-montage-id="style-sheet-edit" class="style-sheet-edit">
 
         <button data-montage-id="edit-button" class="ss-edit-button"></button>
-        <button data-montage-id="delete-button" class="ss-delete-button nj-skinned">Delete</button>
-        <button data-montage-id="import-button" class="nj-skinned">Import</button>
-        <button data-montage-id="disable-button" class="ss-disable-button nj-skinned">Disable</button>
+        <button data-montage-id="delete-button" class="ss-delete-button nj-skinned"></button>
+        <button data-montage-id="import-button" class="ss-import-button nj-skinned"></button>
+        <button data-montage-id="disable-button" class="ss-disable-button nj-skinned"></button>
 
     </div>
 </div>
