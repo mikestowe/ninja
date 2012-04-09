@@ -100,7 +100,7 @@ exports.DocumentBar = Montage.create(Component, {
             if(event._event.target.id === this.currentView) return;
 
             this.currentView = event._event.target.id;
-            this.application.ninja.documentController.stage.stageView.switchViews(event._event.target.id);//switch between design view
+            this.application.ninja.documentController.stage.stageView.switchDesignDocViews(event._event.target.id);//switch between design view
         }
     },
 
