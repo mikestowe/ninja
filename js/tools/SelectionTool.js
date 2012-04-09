@@ -372,46 +372,21 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                     }
                 }
             }
-            if(addToUndoStack)
-            {
-                if(!this._use3DMode)
-                {
+
+            if(addToUndoStack) {
+                if(!this._use3DMode) {
                     // if we have a delta, that means the transform handles were used and
                     // we should update the width and height too.  Otherwise, just update left and top.
-                    if(this._delta)
-                    {
-                        ElementsMediator.setProperties(this.application.ninja.selectedElements,
-                                                    { "left": newLeft, "top": newTop, "width": newWidth, "height": newHeight },
-                                                    "Change",
-                                                    "selectionTool",
-                                                    { "left" : previousLeft, "top" : previousTop, "width": previousWidth, "height": previousHeight}
-                                                  );
+                    if(this._delta) {
+                        ElementsMediator.setProperties(this.application.ninja.selectedElements, {"left": newLeft, "top": newTop, "width": newWidth, "height": newHeight },
+                                                    { "left" : previousLeft, "top" : previousTop, "width": previousWidth, "height": previousHeight}, "Change", "selectionTool");
+                    } else {
+                        ElementsMediator.setProperties(this.application.ninja.selectedElements, {"left": newLeft, "top": newTop }, {"left": previousLeft, "top": previousTop}, "Change", "selectionTool");
                     }
-                    else
-                    {
-                        ElementsMediator.setProperties(this.application.ninja.selectedElements,
-                                                    { "left": newLeft, "top": newTop },
-                                                    "Change",
-                                                    "selectionTool",
-                                                    { "left" : previousLeft, "top" : previousTop }
-                                                  );
-                    }
-                }
-                else
-                {
+                } else {
                     // TODO - We don't support transform handles in 3d space for now
-                    ElementsMediator.setProperties(this.application.ninja.selectedElements,
-                                                { "width": newWidth, "height": newHeight },
-                                                "Change",
-                                                "selectionTool",
-                                                { "width": previousWidth, "height": previousHeight}
-                                              );
-                    ElementsMediator.set3DProperties(this.application.ninja.selectedElements,
-                                                    newStyles,
-                                                    "Change",
-                                                    "translateTool",
-                                                    previousStyles
-                                                  );
+                    ElementsMediator.setProperties(this.application.ninja.selectedElements, {"width": newWidth, "height": newHeight }, {"width": previousWidth, "height": previousHeight}, "Change", "selectionTool");
+                    ElementsMediator.set3DProperties(this.application.ninja.selectedElements, newStyles, "Change", "translateTool", previousStyles);
                 }
             }
             // Save previous value for undo/redo
@@ -471,13 +446,9 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                 }
 			}
 
-            if(newLeft.length)
-            {
-                ElementsMediator.setProperties(this.application.ninja.selectedElements,
-                                                    { "left": newLeft, "top": newTop }, "Changing", "SelectionTool" );
-            }
-            else
-            {
+            if(newLeft.length) {
+                ElementsMediator.setProperties(this.application.ninja.selectedElements, {"left": newLeft, "top": newTop }, null, "Changing", "SelectionTool" );
+            } else {
                 NJevent("elementChanging", {type : "Changing", redraw: false});
             }
 		}

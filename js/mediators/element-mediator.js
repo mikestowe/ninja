@@ -272,60 +272,28 @@ exports.ElementMediator = Montage.create(Component, {
     },
 
     /**
-     Set a property change command for an element or array of elements
+     Sets a property object for an element or array of elements. The same properties object gets applied to all the elements
      @param els: Array of elements. Can contain 1 or more elements
-     @param props: Property/ies object containing both the value and property
+     @param properties: Properties object containing both the value and property
+     @param currentProperties: current properties object for undo/redo. Must be an valid object or null
      @param eventType: Change/Changing. Will be passed to the dispatched event
      @param source: String for the source object making the call
-     @param currentProps *OPTIONAL*: current properties objects array. If not found it will be calculated
-     @param stageRedraw: *OPTIONAL*: True. If set to false the stage will not redraw the selection/outline
      */
     setProperties: {
-        value: function(els, props, eventType, source, currentProps, stageRedraw) {
-            if(eventType === "Changing") {
-                this._setProperties(els, props, eventType, source);
-            } else {
-                var command = Montage.create(Command, {
-                    _els:               { value: els },
-                    _props:             { value: props },
-                    _previous:          { value: currentProps },
-                    _eventType:         { value: eventType},
-                    _source:            { value: "undo-redo"},
-                    description:        { value: "Set Properties"},
-                    receiver:           { value: this},
+        value: function(elements, properties, currentProperties, eventType, source) {
+            // Assume elements is an array of elements always
+            elements.forEach(function(element) {
+                element.elementModel.controller["setProperties"](element, properties);
+            });
 
-                    execute: {
-                        value: function(senderObject) {
-                            if(senderObject) this._source = senderObject;
-                            this.receiver._setProperties(this._els, this._props, this._eventType, this._source);
-                            this._source = "undo-redo";
-                            return "";
-                        }
-                    },
-
-                    unexecute: {
-                        value: function() {
-                            this.receiver._setProperties(this._els, this._previous, this._eventType, this._source);
-                            return "";
-                        }
-                    }
-                });
-
-                NJevent("sendToUndo", command);
-                command.execute(source);
-            }
-        }
-    },
-
-    _setProperties: {
-        value: function(els, props, eventType, source) {
-            var propsArray;
-
-            for(var i=0, item; item = els[i]; i++) {
-                item.elementModel.controller["setProperties"](item, props, i);
+            // Add to undo only when a change is requested
+            if(eventType !== "Changing") {
+                var undoLabel = "Properties change";
+                document.application.undoManager.add(undoLabel, this.setProperties, this, elements, currentProperties, properties, eventType, source);
             }
 
-            NJevent("element" + eventType, {type : "setProperties", source: source, data: {"els": els, "prop": props, "value": props}, redraw: null});
+            // Dispatch the element change/changing event.
+            NJevent("element" + eventType, {type : "setProperties", source: source, data: {"els": elements, "prop": properties, "value": properties}, redraw: null});
         }
     },
 

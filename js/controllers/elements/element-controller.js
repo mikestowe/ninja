@@ -47,9 +47,19 @@ exports.ElementController = Montage.create(Component, {
     },
 
     setProperties: {
-        value: function(el, props, index) {
-            for(var p in props) {
-                this.application.ninja.stylesController.setElementStyle(el, p, props[p][index]);
+        value: function(element, properties) {
+            /* Array of properties is not supported yet
+            if(Array.isArray(properties)) {
+
+                elements.forEach(function(property) {
+                    this.application.ninja.stylesController.setElementStyle(element, p, props[p][index]);
+                });
+            } else {
+            }
+            */
+
+            for(var property in properties) {
+                this.application.ninja.stylesController.setElementStyle(element, property, properties[property]);
             }
         }
     },
