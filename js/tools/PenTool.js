@@ -119,6 +119,27 @@ exports.PenTool = Montage.create(ShapeTool, {
         }
     },
 
+    _getUnsnappedScreenPosition: {
+        value: function(x,y){
+            var elemSnap = snapManager.elementSnapEnabled();
+            var gridSnap = snapManager.gridSnapEnabled();
+            var alignSnap = snapManager.snapAlignEnabled();
+
+            snapManager.enableElementSnap(false);
+            snapManager.enableGridSnap(false);
+            snapManager.enableSnapAlign(false);
+
+            var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(x,y));
+            var unsnappedpos = (snapManager.snap(point.x, point.y, false)).getScreenPoint();
+            this._dragPlane = snapManager.getDragPlane();
+
+            snapManager.enableElementSnap(elemSnap);
+            snapManager.enableGridSnap(gridSnap);
+            snapManager.enableSnapAlign(alignSnap);
+
+            return unsnappedpos;
+        }
+    },
     ShowToolProperties: {
         value: function () {
             this._penView = PenView.create();
@@ -351,20 +372,31 @@ exports.PenTool = Montage.create(ShapeTool, {
 
                     //make the subpath dirty so it will get re-drawn
                     this._selectedSubpath.makeDirty();
-                    //this.DrawSubpathSVG(this._selectedSubpath);
-                }
-                //todo temp code only...remove this and uncomment the DrawSubpathSVG above
-                if (this._selectedSubpath){
                     this.DrawSubpathSVG(this._selectedSubpath);
                 }
-
             } else { //if mouse is not down:
                 //this.doSnap(event);
                 //this.DrawHandles();
 
                 var currMousePos = this._getUnsnappedPosition(event.pageX, event.pageY);
                 if (currMousePos && this._selectedSubpath ){
-                    var selAnchorRetCode = this._selectedSubpath.pickAnchor(currMousePos[0], currMousePos[1], currMousePos[2], this._PICK_POINT_RADIUS);
+                    /*
+                    //convert the mouse pos. to local space of the canvas
+                    var widthAdjustment = -snapManager.getStageWidth()*0.5;
+                    var heightAdjustment = -snapManager.getStageHeight()*0.5; */
+
+
+                    var drawingCanvas = this._selectedSubpath.getCanvas();
+                    if (!drawingCanvas){
+                        drawingCanvas = ViewUtils.getStageElement();
+                    }
+                    /*var stageWorldToGlobalMatrix = ViewUtils.getStageWorldToGlobalMatrix();
+                    var globalMousePos = MathUtils.transformAndDivideHomogeneousPoint([currMousePos[0]+widthAdjustment, currMousePos[1]+heightAdjustment, currMousePos[2]], stageWorldToGlobalMatrix);*/
+                    var globalMousePos = this._getUnsnappedScreenPosition(event.pageX, event.pageY);
+                    var localMousePos = ViewUtils.globalToLocal(globalMousePos, drawingCanvas);
+
+                    //var selAnchorRetCode = this._selectedSubpath.pickAnchor(currMousePos[0], currMousePos[1], currMousePos[2], this._PICK_POINT_RADIUS, false);
+                    var selAnchorRetCode = this._selectedSubpath.pickAnchor(localMousePos[0], localMousePos[1], localMousePos[2], this._PICK_POINT_RADIUS, true);
                     if (selAnchorRetCode[0] >=0) {
                         this._hoveredAnchorIndex = selAnchorRetCode[0];
                         var lastAnchorIndex = this._selectedSubpath.getNumAnchors()-1;
@@ -599,12 +631,23 @@ exports.PenTool = Montage.create(ShapeTool, {
                         strokeSize = ShapesController.GetValueInPixels(this.options.strokeSize.value, this.options.strokeSize.units);
                     }
                     this._selectedSubpath.setStrokeWidth(strokeSize);
-                    if (this.application.ninja.colorController.colorToolbar.stroke.webGlColor){
-                        this._selectedSubpath.setStrokeColor(this.application.ninja.colorController.colorToolbar.stroke.webGlColor);
+
+                    var colorArray=[];
+                    var color = this.application.ninja.colorController.colorToolbar.stroke.color;
+                    if (color){
+                        colorArray = [color.r/255, color.g/255, color.b/255, color.a];
+                    }else {
+                        colorArray = [1,1,1,0];
                     }
-                    if (this.application.ninja.colorController.colorToolbar.fill.webGlColor){
-                        this._selectedSubpath.setFillColor(this.application.ninja.colorController.colorToolbar.fill.webGlColor);
+                    this._selectedSubpath.setStrokeColor(colorArray);
+
+                    color = this.application.ninja.colorController.colorToolbar.fill.color;
+                    if (color){
+                        colorArray = [color.r/255, color.g/255, color.b/255, color.a];
+                    } else {
+                        colorArray = [1,1,1,0];
                     }
+                    this._selectedSubpath.setFillColor(colorArray);
                 } //if this is a new path being rendered
 
                 this._selectedSubpath.makeDirty();

@@ -620,7 +620,28 @@ GLSubpath.prototype._isWithinBoundingBox = function(point, ctrlPts, radius) {
     return true;
 };
 
-GLSubpath.prototype._checkAnchorIntersection = function(pickX, pickY, pickZ, radSq, anchorIndex, minDistance) {
+GLSubpath.prototype._checkAnchorIntersection = function(pickX, pickY, pickZ, radSq, anchorIndex, minDistance, useLocal) {
+    //if we are asked to use the local coordinate and the local coordinate for this anchor exists
+    if (useLocal && this._anchorSampleIndex.length>anchorIndex && this._LocalPoints.length > this._anchorSampleIndex[anchorIndex]) {
+        var localCoord = this._LocalPoints[this._anchorSampleIndex[anchorIndex]]
+        var distSq = VecUtils.vecDistSq(3, [pickX, pickY, pickZ], localCoord);
+        //check the anchor point
+        if (distSq < radSq && distSq<minDistance) {
+            return this.SEL_ANCHOR;
+        }
+        /*
+        //check the prev. and next of the selected anchor point
+        distSq = this._Anchors[anchorIndex].getPrevDistanceSq(pickX, pickY, pickZ);
+        if (distSq<radSq && distSq<minDistance){
+            return this.SEL_PREV;
+        }
+        distSq = this._Anchors[anchorIndex].getNextDistanceSq(pickX, pickY, pickZ);
+        if (distSq<radSq && distSq<minDistance){
+            return this.SEL_NEXT;
+        }*/
+        return this.SEL_NONE;
+    }
+
     var distSq = this._Anchors[anchorIndex].getDistanceSq(pickX, pickY, pickZ);
     //check the anchor point
     if (distSq < radSq && distSq<minDistance) {
@@ -638,7 +659,7 @@ GLSubpath.prototype._checkAnchorIntersection = function(pickX, pickY, pickZ, rad
     return this.SEL_NONE;
 };
 
-GLSubpath.prototype.pickAnchor = function (pickX, pickY, pickZ, radius) {
+GLSubpath.prototype.pickAnchor = function (pickX, pickY, pickZ, radius, useLocal) {
     var numAnchors = this._Anchors.length;
     var selAnchorIndex = -1;
     var retCode = this.SEL_NONE;
@@ -646,14 +667,14 @@ GLSubpath.prototype.pickAnchor = function (pickX, pickY, pickZ, radius) {
     var radSq = radius * radius;
     //check if the clicked location is close to the currently selected anchor position
     if (this._selectedAnchorIndex>=0 && this._selectedAnchorIndex<this._Anchors.length){
-        retCode = this._checkAnchorIntersection(pickX, pickY, pickZ, radSq, this._selectedAnchorIndex, minDistance);
+        retCode = this._checkAnchorIntersection(pickX, pickY, pickZ, radSq, this._selectedAnchorIndex, minDistance, useLocal);
         if (retCode!==this.SEL_NONE){
             return [this._selectedAnchorIndex, retCode];
         }
     }
     //now check if the click location is close to any anchor position
     for (var i = 0; i < numAnchors; i++) {
-        retCode = this._checkAnchorIntersection(pickX, pickY, pickZ, radSq, i, minDistance);
+        retCode = this._checkAnchorIntersection(pickX, pickY, pickZ, radSq, i, minDistance, useLocal);
         if (retCode!==this.SEL_NONE){
             selAnchorIndex=i;
             break;
