@@ -16,7 +16,7 @@ String.prototype.capitalizeFirstChar = function() {
 };
 
 
-var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component, {
+exports.ComponentsPanel = Montage.create(Component, {
 
     components: {
         value: {
@@ -80,11 +80,6 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                             "dataFile" : "node_modules/components-data/number-input.json",
                             "component": "numberInput"
                         },
-                       {
-                            "text": "Select Input",
-                            "dataFile" : "node_modules/components-data/select.json",
-                            "component": "select"
-                        },
                         {
                             "text": "Radio Button",
                             "dataFile" : "node_modules/components-data/radio-button.json",
@@ -94,6 +89,11 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                             "text": "Range Input",
                             "dataFile" : "node_modules/components-data/range-input.json",
                             "component": "rangeInput"
+                        },
+                        {
+                            "text": "Select Input",
+                            "dataFile" : "node_modules/components-data/select.json",
+                            "component": "select"
                         },
                         {
                             "text": "TextArea",
@@ -106,7 +106,7 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                             "component": "textfield"
                         },
                         {
-                            "text": "Toogle Button",
+                            "text": "Toggle Button",
                             "dataFile" : "node_modules/components-data/toggle-button.json",
                             "component": "toggleButton"
                         }
@@ -230,9 +230,9 @@ var ComponentsPanelBase = exports.ComponentsPanelBase = Montage.create(Component
                 case "select":
                     return "dropdown";
                 case "number":
-                    return "hottext";
+                    return "ht";
                 default:
-                    alert("Conversion not implemented for ", type);
+                    alert("Conversion not implemented for " + type);
             }
         }
     },
