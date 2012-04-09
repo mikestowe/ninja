@@ -1,8 +1,8 @@
 /* <copyright>
-This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
-No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
-(c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
-</copyright> */
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
 
 var MaterialsModel = require("js/models/materials-model").MaterialsModel;
 
@@ -144,46 +144,65 @@ var GeomObj = function GLGeomObj() {
     this.setMaterialColor = function (c, type) {
         var i = 0,
             nMats = 0;
-        if (c.gradientMode) {
-            // Gradient support
-            if (this._materialArray && this._materialTypeArray) {
-                nMats = this._materialArray.length;
-            }
+        if (c) {
+            if (c.gradientMode) {
+                // Gradient support
+                if (this._materialArray && this._materialTypeArray) {
+                    nMats = this._materialArray.length;
+                }
 
-            var stops = [],
-                colors = c.color;
+                var stops = [],
+                    colors = c.color;
 
-            var len = colors.length;
-            // TODO - Current shaders only support 4 color stops
-            if (len > 4) {
-                len = 4;
-            }
+                var len = colors.length;
+                // TODO - Current shaders only support 4 color stops
+                if (len > 4) {
+                    len = 4;
+                }
 
-            for (var n = 0; n < len; n++) {
-                var position = colors[n].position / 100;
-                var cs = colors[n].value;
-                var stop = [cs.r / 255, cs.g / 255, cs.b / 255, cs.a];
-                stops.push(stop);
+                for (var n = 0; n < len; n++) {
+                    var position = colors[n].position / 100;
+                    var cs = colors[n].value;
+                    var stop = [cs.r / 255, cs.g / 255, cs.b / 255, cs.a];
+                    stops.push(stop);
 
-                if (nMats === this._materialTypeArray.length) {
-                    for (i = 0; i < nMats; i++) {
-                        if (this._materialTypeArray[i] == type) {
-                            this._materialArray[i].setProperty("color" + (n + 1), stop.slice(0));
-                            this._materialArray[i].setProperty("colorStop" + (n + 1), position);
+                    if (nMats === this._materialTypeArray.length) {
+                        for (i = 0; i < nMats; i++) {
+                            if (this._materialTypeArray[i] == type) {
+                                this._materialArray[i].setProperty("color" + (n + 1), stop.slice(0));
+                                this._materialArray[i].setProperty("colorStop" + (n + 1), position);
+                            }
+                        }
+                    }
+                }
+                if (type === "fill") {
+                    this._fillColor = c;
+                } else {
+                    this._strokeColor = c;
+                }
+            } else {
+                if (type === "fill") {
+                    this._fillColor = c.slice(0);
+                } else {
+                    this._strokeColor = c.slice(0);
+                }
+
+                if (this._materialArray && this._materialTypeArray) {
+                    nMats = this._materialArray.length;
+                    if (nMats === this._materialTypeArray.length) {
+                        for (i = 0; i < nMats; i++) {
+                            if (this._materialTypeArray[i] == type) {
+                                this._materialArray[i].setProperty("color", c.slice(0));
+                            }
                         }
                     }
                 }
             }
-            if (type === "fill") {
-                this._fillColor = c;
-            } else {
-                this._strokeColor = c;
-            }
         } else {
             if (type === "fill") {
-                this._fillColor = c.slice(0);
+                this._fillColor = null;
             } else {
-                this._strokeColor = c.slice(0);
+                this._strokeColor = null;
             }
 
             if (this._materialArray && this._materialTypeArray) {
@@ -191,7 +210,8 @@ var GeomObj = function GLGeomObj() {
                 if (nMats === this._materialTypeArray.length) {
                     for (i = 0; i < nMats; i++) {
                         if (this._materialTypeArray[i] == type) {
-                            this._materialArray[i].setProperty("color", c.slice(0));
+                            // TODO - Not sure how to set color to null values in shaders
+                            this._materialArray[i].setProperty("color", [0, 0, 0, 0]);
                         }
                     }
                 }
@@ -257,19 +277,19 @@ var GeomObj = function GLGeomObj() {
 
                 for (var i = 0; i < nMats; i++) {
                     var matObj =
-					{
-					    'materialNodeName': this._materialNodeArray[i].name,
-					    'material': this._materialArray[i].exportJSON(),
-					    'type': this._materialTypeArray[i]
-					}
+                    {
+                        'materialNodeName':this._materialNodeArray[i].name,
+                        'material':this._materialArray[i].exportJSON(),
+                        'type':this._materialTypeArray[i]
+                    }
                     arr.push(matObj);
                 }
 
                 jObj =
-				{
-				    'nMaterials': nMats,
-				    'materials': arr
-				};
+                {
+                    'nMaterials':nMats,
+                    'materials':arr
+                };
             }
         }
 
@@ -280,7 +300,7 @@ var GeomObj = function GLGeomObj() {
         this._materialArray = [];
         this._materialTypeArray = [];
 
-        if (!jObj) return;
+        if (!jObj)  return;
 
         var nMaterials = jObj.nMaterials;
         var matArray = jObj.materials;
@@ -312,7 +332,7 @@ var GeomObj = function GLGeomObj() {
                 case "radialBlur":
                 case "pulse":
                     mat = MaterialsModel.getMaterialByShader(shaderName);
-                    if (mat) mat = mat.dup();
+                    if (mat)  mat = mat.dup();
                     break;
 
                 default:
@@ -325,8 +345,8 @@ var GeomObj = function GLGeomObj() {
                 this._materialArray.push(mat);
                 this._materialTypeArray.push(matObj.type);
                 var type = matArray[i].type;
-                if (type == "fill") this._fillMaterial = mat;
-                else this._strokeMaterial = mat;
+                if (type == "fill")  this._fillMaterial = mat;
+                else  this._strokeMaterial = mat;
             }
         }
     };
@@ -381,7 +401,7 @@ var GeomObj = function GLGeomObj() {
 
     this.getPropertyFromString = function (prop, str) {
         var index = str.indexOf(prop);
-        if (index < 0) throw new Error("property " + prop + " not found in string: " + str);
+        if (index < 0)  throw new Error("property " + prop + " not found in string: " + str);
 
         var rtnStr = str.substr(index + prop.length);
         index = rtnStr.indexOf("\n");
@@ -428,18 +448,18 @@ var GeomObj = function GLGeomObj() {
         for (i = 0; i < len; i++) {
             stop = stops[i].split("@");
             c = stop[0].split(",");
-            rtnArr.push({ position: Number(stop[1]), value: { r: Number(c[0]), g: Number(c[1]), b: Number(c[2]), a: Number(c[3])} });
+            rtnArr.push({ position:Number(stop[1]), value:{r:Number(c[0]), g:Number(c[1]), b:Number(c[2]), a:Number(c[3])} });
         }
 
         return rtnArr;
     };
 
     /*
-    this.export = function() {
-    var rtnStr;
-    return rtnStr;
-    }
-    */
+     this.export = function() {
+     var rtnStr;
+     return rtnStr;
+     }
+     */
 };
 
 if (typeof exports === "object") {

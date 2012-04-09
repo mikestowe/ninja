@@ -1099,54 +1099,6 @@ exports.ViewUtils = Montage.create(Component, {
         }
     },
 
-    transformStringToMat: {
-        value: function( str )    {
-            var rtnMat;
-
-            var index1 = str.indexOf( "matrix3d(");
-            if (index1 >= 0)
-            {
-                index1 += 9;    // do not include 'matrix3d('
-                var index2 = str.indexOf( ")", index1 );
-                if (index2 >= 0)
-                {
-                    var substr = str.substr( index1, (index2-index1));
-                    if (substr && (substr.length > 0))
-                    {
-                        var numArray = substr.split(',');
-                        var nNums = numArray.length;
-                        if (nNums == 16)
-                        {
-                            // gl-matrix wants row order
-                            rtnMat = numArray;
-                            for (var i=0;  i<16;  i++)
-                                rtnMat[i] = Number( rtnMat[i] );
-
-                            // the matrix as input is column major order.  The Matrix
-                            // class expects the numbers in row major order.
-                            /*
-                            var rowArray = new Array;
-                            for (var i=0;  i<4;  i++)
-                            {
-                                rtnMat.push( numArray[i] );
-                                var row = new Array;
-                                row.push( Number(numArray[i   ]) );
-                                row.push( Number(numArray[i+ 4]) );
-                                row.push( Number(numArray[i+ 8]) );
-                                row.push( Number(numArray[i+12]) );
-                                rowArray.push( row );
-                            }
-                            rtnMat = Matrix.create( rowArray );
-                            */
-                        }
-                    }
-                }
-            }
-
-            return rtnMat;
-        }
-    },
-
     pushViewportObj: {
         value: function( obj )    {
             this._viewportObjStack.push( this.m_viewportObj );

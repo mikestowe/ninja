@@ -83,6 +83,12 @@ exports.StageController = Montage.create(ElementController, {
                     return el.elementModel.stageDimension.style.getProperty(p);
                 case "width":
                     return el.elementModel.stageDimension.style.getProperty(p);
+                case "-webkit-transform-style":
+                    if(el.id === "Viewport") {
+                        return this.application.ninja.stylesController.getElementStyle(el, p, false, true);
+                    } else {
+                        return el.elementModel.stageView.style.getProperty(p);
+                    }
                 default:
                     return ElementController.getProperty(el, p, false, true);
                     //console.log("Undefined Stage property ", p);
@@ -110,6 +116,9 @@ exports.StageController = Montage.create(ElementController, {
                 case "height":
                     this.application.ninja.currentDocument.iframe.height = parseInt(value) + 400;
                     el.elementModel.stageDimension.style.setProperty(p, value);
+                    break;
+                case "-webkit-transform-style":
+                    el.elementModel.stageView.style.setProperty(p, value);
                     break;
                 default:
                     console.log("Undefined property ", p, "for the Stage Controller");
@@ -143,11 +152,10 @@ exports.StageController = Montage.create(ElementController, {
 
                 if (el)
                 {
-                    var xformStr = this.application.ninja.elementMediator.getProperty(el, "-webkit-transform");
-                    if (xformStr)
-                        mat = this.transformStringToMat( xformStr );
-                    if (!mat)
+                    mat = this.application.ninja.stylesController.getMatrixFromElement(el, true);
+                    if (!mat) {
                         mat = Matrix.I(4);
+                    }
 
                     var zoom = this.application.ninja.elementMediator.getProperty(el, "zoom");
                     if (zoom)
