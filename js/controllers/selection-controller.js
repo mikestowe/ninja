@@ -45,6 +45,7 @@ exports.SelectionController = Montage.create(Component, {
             this.eventManager.addEventListener("openDocument", this, false);
             this.eventManager.addEventListener("elementAdded", this, false);
             this.eventManager.addEventListener("elementsRemoved", this, false);
+            this.eventManager.addEventListener("elementReplaced", this, false);
             this.eventManager.addEventListener("selectAll", this, false);
             this.eventManager.addEventListener("switchDocument", this, false);
             this.eventManager.addEventListener("closeDocument", this, false);
@@ -100,6 +101,12 @@ exports.SelectionController = Montage.create(Component, {
                 this._isDocument = true;
                 NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument});
             }
+        }
+    },
+
+    handleElementReplaced: {
+        value: function(event) {
+            this.application.ninja.selectedElements[this.application.ninja.selectedElements.indexOf(event.detail.data.oldChild)] = event.detail.data.newChild;
         }
     },
 

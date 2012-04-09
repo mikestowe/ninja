@@ -28,16 +28,15 @@ exports.ElementMediator = Montage.create(Component, {
         value: function(elements, rules, notify) {
             if(Array.isArray(elements)) {
                 elements.forEach(function(element) {
-                    element = element;
                     ElementController.addElement(element, rules);
+                    if(element.elementModel && element.elementModel.props3D) {
+                        element.elementModel.props3D.init(element, false);
+                    }
                 });
             } else {
                 ElementController.addElement(elements, rules);
-
-                // TODO - Check with webgl branch - Props seem to be already there.
-                var prop3d = this.get3DProperties(elements);
-                if(prop3d) {
-                    elements.elementModel.controller["set3DProperties"](elements, [prop3d], 0, true);
+                if(elements.elementModel && elements.elementModel.props3D) {
+                    elements.elementModel.props3D.init(elements, false);
                 }
             }
 
@@ -81,6 +80,23 @@ exports.ElementMediator = Montage.create(Component, {
             this.application.ninja.documentController.activeDocument.needsSave = true;
 
             NJevent("elementsRemoved", elements);
+        }
+    },
+
+    replaceElement: {
+        value: function(newChild, oldChild, notify) {
+
+            this.application.ninja.currentDocument.documentRoot.replaceChild(newChild, oldChild);
+
+            var undoLabel = "replace element";
+
+            document.application.undoManager.add(undoLabel, this.replaceElement, this, oldChild, newChild);
+
+            this.application.ninja.documentController.activeDocument.needsSave = true;
+
+            if(notify || notify === undefined) {
+                NJevent("elementReplaced", {type : "replaceElement", data: {"newChild": newChild, "oldChild": oldChild}});
+            }
         }
     },
 
@@ -248,7 +264,7 @@ exports.ElementMediator = Montage.create(Component, {
             var el;
 
             for(var i=0, item; item = els[i]; i++) {
-                item.elementModel.controller["setProperty"](item, p, value[i]);
+                item.elementModel.controller["setProperty"](item, p, value[i], eventType, source);
             }
 
             NJevent("element" + eventType, {type : "setProperty", source: source, data: {"els": els, "prop": p, "value": value}, redraw: null});
@@ -588,14 +604,14 @@ exports.ElementMediator = Montage.create(Component, {
     },
 
     setMatrix: {
-        value: function(el, mat, isChanging) {
+        value: function(el, mat, isChanging, source) {
             var dist = el.elementModel.controller["getPerspectiveDist"](el);
             el.elementModel.controller["set3DProperties"](el, [{mat:mat, dist:dist}], 0, !isChanging);
 
             if(isChanging) {
-                NJevent("elementChanging", {type : "setMatrix", source: null, data: {"els": [el], "prop": "matrix", "value": mat}, redraw: null});
+                NJevent("elementChanging", {type : "setMatrix", source: source, data: {"els": [el], "prop": "matrix", "value": mat}, redraw: null});
             } else {
-                NJevent("elementChange", {type : "setMatrix", source: null, data: {"els": [el], "prop": "matrix", "value": mat}, redraw: null});
+                NJevent("elementChange", {type : "setMatrix", source: source, data: {"els": [el], "prop": "matrix", "value": mat}, redraw: null});
             }
         }
     },

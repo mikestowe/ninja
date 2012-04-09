@@ -156,7 +156,7 @@ exports.Layout = Montage.create(Component, {
     drawTagOutline: {
         value: function (item) {
 
-            if(!item) return;
+            if(!item || (item.nodeType !== 1)) return;
 
             // TODO Bind the layoutview mode to the current document
             // var mode  = this.application.ninja.currentDocument.layoutMode;

@@ -124,6 +124,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
     initialize: {
         value: function() {
             this.eventManager.addEventListener("elementsRemoved", this, false);
+            this.eventManager.addEventListener("elementReplaced", this, false);
         }
     },
 
@@ -170,15 +171,19 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
             if(Array.isArray(elements)) {
                 elements = Array.prototype.slice.call(elements, 0);
                 elements.forEach(function(element) {
-                    element = element._element || element;
                     self.removeElementFrom2DCache(element);
                 });
             } else {
-                this.removeElementFrom2DCache(elements._element || elements);
+                this.removeElementFrom2DCache(elements);
             }
         }
     },
 
+    handleElementReplaced: {
+        value: function(event) {
+            this._isCacheInvalid = true;
+        }
+    },
 
     setCurrentStage: {
         value: function(stage) {

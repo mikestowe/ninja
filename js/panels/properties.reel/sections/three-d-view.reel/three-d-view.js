@@ -79,6 +79,10 @@ exports.ThreeD = Montage.create(Component, {
         value: 0
     },
 
+    flatten: {
+        value: false
+    },
+
     _disableTranslation: {
         value: true
     },
@@ -105,6 +109,16 @@ exports.ThreeD = Montage.create(Component, {
 
     _curProp: {
         value: null
+    },
+
+    handleAction: {
+        value: function(event) {
+            if(event.currentTarget.identifier === "flatten") {
+                this.application.ninja.elementMediator.setProperty([this.item],
+                                                                    "-webkit-transform-style",
+                                                                    event.currentTarget.checked ? ["flat"] : ["preserve-3d"]);
+            }
+        }
     },
 
     handleChange: {

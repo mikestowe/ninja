@@ -56,6 +56,7 @@ exports.ToolsList = Montage.create(Component, {
             this.SubselectionTool.options = this.application.ninja.toolsProperties.subSelectionProperties;
 
             this.Rotate3DTool.options = this.application.ninja.toolsProperties.rotate3DProperties;
+            this.Translate3DTool.options = this.application.ninja.toolsProperties.rotate3DProperties;
             this.TagTool.options = this.application.ninja.toolsProperties.tagProperties;
             this.PenTool.options = this.application.ninja.toolsProperties.penProperties;
             this.TextTool.options = this.application.ninja.toolsProperties.textProperties;

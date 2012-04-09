@@ -22,7 +22,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "xAngleControl": {"@": "threeDRotX"},
                 "yAngleControl": {"@": "threeDRotY"},
                 "zAngleControl": {"@": "threeDRotZ"},
-                "axisModeGroupControl": {"@": "axisModeGroup"}
+                "axisModeGroupControl": {"@": "axisModeGroup"},
+                "flattenControl": {"@": "flattenCheckbox"}
             }
         },
 
@@ -242,6 +243,29 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "value": "Global",
                 "group": {"@": "axisModeGroup"}
             }
+        },
+        "flattenCheckbox": {
+            "module": "montage/ui/checkbox.reel",
+            "name": "Checkbox",
+            "properties": {
+                "element": {"#": "flattenCh"},
+                "identifier": "flatten",
+                "checked": false
+            },
+            "bindings": {
+                "checked": {
+                    "boundObject": {"@": "owner"},
+                    "boundObjectPropertyPath": "flatten",
+                    "oneway": false
+                }
+            },
+            "listeners": [
+                {
+                    "type": "action",
+                    "listener": {"@": "owner"},
+                    "capture": false
+                }
+            ]
         }
     }
     </script>
@@ -335,7 +359,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
         <article class="fieldRow oneCol checkbox">
             <div>
                 <div class="inputField">
-                    <input class="nj-skinned" type="checkbox" />
+                    <input id="flattenCh" class="nj-skinned" type="checkbox" />
                 </div>
                 <div>
                     <label> Flatten</label>

@@ -844,7 +844,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     ///// For a given CSSKeyframesRule, we may add styles to the keyframe at
     ///// given index.
 
-    setKeyframeStyle : {
+    setKeyframeStyles : {
         value : function(rule, keyframeIndex, property, value, useImportant) {
             return this.setStyles(rule.cssRules[keyframeIndex], property, value, useImportant);
         }
@@ -1129,6 +1129,70 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             }
 
             return this.getAnimationRuleWithName(animationName);
+        }
+    },
+
+    ///// Get Matrix From Element
+    ///// Returns the matrix from an element's -webkit-transform
+    //// TODO - This routine should eventually check for other transform styles, i.e., rotateX, translateZ, etc.
+
+    getMatrixFromElement : {
+        value: function(element, isStage) {
+            var xformStr = this.getElementStyle(element, "-webkit-transform", false, isStage),
+                mat;
+
+            if (xformStr) {
+                var index1 = xformStr.indexOf( "matrix3d(");
+                if (index1 >= 0) {
+                    index1 += 9;    // do not include 'matrix3d('
+                    var index2 = xformStr.indexOf( ")", index1 );
+                    if (index2 >= 0) {
+                        var substr = xformStr.substr( index1, (index2-index1));
+                        if (substr && (substr.length > 0)) {
+                            var numArray = substr.split(',');
+                            var nNums = numArray.length;
+                            if (nNums == 16) {
+                                // gl-matrix wants row order
+                                mat = numArray;
+                                for (var i=0;  i<16;  i++) {
+                                    mat[i] = Number( mat[i] );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return mat;
+        }
+    },
+
+    ///// Get Perspective Distance From Element
+    ///// Returns the perspective from an element's -webkit-transform
+
+    getPerspectiveDistFromElement : {
+        value: function(element, isStage) {
+            var xformStr = this.getElementStyle(element, "-webkit-transform", false, isStage),
+                dist;
+
+            if (xformStr) {
+                var index1 = xformStr.indexOf( "perspective(");
+                if (index1 >= 0) {
+                    index1 += 12;    // do not include 'perspective('
+                    var index2 = xformStr.indexOf( ")", index1 );
+                    if (index2 >= 0) {
+                        var substr = xformStr.substr( index1, (index2-index1));
+                        if (substr && (substr.length > 0)) {
+                            dist = parseInt( substr );
+                        }
+                    }
+                }
+            } else {
+                xformStr = this.getElementStyle(element, "-webkit-perspective", false, isStage);
+                if(xformStr) {
+                    dist = parseInt(xformStr);
+                }
+            }
+            return dist;
         }
     },
 
