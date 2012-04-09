@@ -1092,7 +1092,7 @@ exports.CoreIoApi = Montage.create(Component, {
                 isWindowsUri = /^([a-zA-Z]:)([\\/][^<>:"/\\|?*]+)*[\\/]?$/gi.test(uri);
                 isUnixUri = /^(\/)?(\/(?![.])[^/]*)*\/?$/gi.test(uri);//folders beginning with . are hidden on Mac / Unix
                 status = isWindowsUri || isUnixUri;
-                if(isWindowsUri && isUnixUri){status = false;}
+                if((uri === "") || (isWindowsUri && isUnixUri)){status = false;}
             }
             return status;
         }
