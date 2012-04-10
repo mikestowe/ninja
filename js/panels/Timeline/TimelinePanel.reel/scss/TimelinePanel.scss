@@ -1,0 +1,370 @@
+@charset "UTF-8";
+
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
+/* TimelinePanel.scss
+ * Main SCSS file for TimelinePanel component, compiled by SASS into the file css/TimelinePanel.css.
+ */
+ 
+// Import theme settings
+@import "../../../../../scss/imports/themes/default/colors";
+// @import "../../../../../scss/imports/themes/default/fonts";
+@import "../../../../../scss/imports/themes/default/mixins";
+
+// Import generic mixins and styles
+@import "../../../../../scss/imports/scss/mixins";
+// @import "../../../../../scss/imports/scss/Base";
+
+.tl_container{
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    height: 100%;
+}
+.maintimeline{
+    -webkit-box-flex: 1;
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+    height : 100%;
+    position: relative;
+    margin-top:1px;
+}
+.leftinside{
+    height: 100%;
+    width: 100%;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    position:absolute;
+    overflow: hidden;
+}
+.rightinside{
+    height: 100%;
+    width: 100%;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    position:absolute;
+}
+.tl_leftpane{
+    min-width: 200px;
+    max-width: 500px;
+    position: relative;
+    overflow: hidden;
+    -webkit-box-flex: 0;
+}
+.tl_rightpane{
+    width: 100%;
+    position: relative;
+    -webkit-box-flex: 1;
+}
+
+#bottomPanelContainer {
+	overflow: hidden !IMPORTANT;
+}
+
+.layout-tracks {
+	width: 100%;
+	height: 100%;
+	padding-bottom: 6px;
+	box-sizing: border-box;
+	overflow: auto;
+	position: relative;
+}
+.tl_layertracks{
+    background-color: $color-tool-bg;
+    height: 100%;
+    width: 100%;
+    -webkit-box-flex: 1;
+    padding-top: 21px;
+	box-sizing: border-box;
+}
+.layerresizer{
+    height: auto;
+    width:6px;
+    border-right-style: solid;
+    border-right-color: $color-divider-third;
+    border-right-width: thin;
+    border-left-style: solid;
+    border-left-color: $color-divider-second;
+    border-left-width: thin;
+    background-color: $color-divider-first;
+    cursor: col-resize;
+    -webkit-box-flex: 0;
+}
+.timelinecontroller{
+    height:20px;
+    background-color: $color-panel-bg;
+    -webkit-box-flex: 0;
+    border-bottom-style: solid;
+    border-bottom-width: thin;
+    border-bottom-color: $color-divider-second;
+}
+.timelinecontrols{
+    width: 100%;
+    padding-left: 6px;
+    padding-top: 2px;
+    height: 18px;
+    background-color: $color-panel-bg;
+    float: left;
+}
+.timetext{
+    float: right;
+    padding-right: 10px;
+    color: white;
+}
+.rewindbutton{
+    background-image: url('../images/play_prev.png');
+    background-repeat: no-repeat;
+    height: 18px;
+    width: 18px;
+    float: left;
+    padding-right: 5px;
+}
+.playbutton{
+    background-image: url('../images/play.png');
+    background-repeat: no-repeat;
+    height: 18px;
+    width: 18px;
+    float: left;
+    padding-right: 5px;
+}
+.pausebutton{
+    background-image: url('../images/pause.png');
+    background-repeat: no-repeat;
+    height: 18px;
+    width: 18px;
+    float: left;
+    padding-right: 5px;
+}
+.forwardbutton{
+    background-image: url('../images/play_next.png');
+    background-repeat: no-repeat;
+    height: 18px;
+    width: 18px;
+    float: left;
+    padding-right: 5px;
+}
+.timelinemarkers{
+    height: 20px;
+    width: 100%;
+    background-color: $color-panel-bg;
+    border-bottom-style:  solid;
+    border-bottom-width: thin;
+    border-bottom-color: $color-divider-second;
+    -webkit-box-flex: 0;
+    position: absolute;
+    background-image: url("../images/timetick.jpg");
+    overflow: visible;
+}
+.layout_markers {
+	position: absolute;
+	overflow: hidden;
+	top: 0px;
+	left: 0px;
+	height: 20px;
+	width: 100%;
+    border-bottom-style: solid;
+}
+
+.masterlayer{
+    font-family: 'Droid Sans';
+    font-size: 12px;
+    text-shadow: 1px 1px 1px black;
+    height: 18px;
+    background-color: $color-panel-bg;
+    border-bottom-style: solid;
+    border-bottom-width: thin;
+    border-bottom-color: $color-divider-third;
+    color: $color-panel-text;
+    padding-left: 15px;
+    padding-top: 2px;
+}
+.mastertrack{
+    -webkit-box-flex: 0;
+    color: white;
+    height: 20px;
+    width: 100%;
+    border-bottom-style: solid;
+    border-bottom-width: thin;
+    border-bottom-color: $color-divider-third;
+    background-color: $color-divider-first;
+    background-image: url("../../Track.reel/images/gridline.jpg");
+}
+
+.container-tracks,
+.timelinemarkers,
+.mastertrack {
+	width: 2000px;
+}
+.userlayers{
+    width: 100%;
+    background-color: $color-tool-bg;
+    -webkit-box-flex: 1;
+    overflow: hidden;
+    border-bottom-style: solid;
+    border-bottom-width: thin;
+    border-bottom-color: $color-divider-second;
+}
+.timelinegutter{
+    height: 16px;
+    padding-top: 1px;
+    padding-left: 6px;
+    -webkit-box-flex: 0;
+    background-color: $color-menu-bg;
+    border-top-style: solid;
+    border-top-width: thin;
+    border-top-color: $color-divider-third;
+}
+.newlayerbutton{
+    background-image: url('../images/plus.png');
+    background-repeat: no-repeat;
+    height: 16px;
+    width: 16px;
+    float: left;
+    padding-right: 5px;
+}
+.deletelayerbutton{
+    background-image: url('../images/trash.png');
+    background-repeat: no-repeat;
+    height: 16px;
+    width: 16px;
+    float: left;
+    padding-right: 5px;
+}
+.tracktick{
+    height: 100%;
+    width: 15px;
+    border-right-color: $color-divider-third;
+    border-right-style: solid;
+    border-right-width: thin;
+    float: left;
+}
+.timemark{
+    font-family: 'Droid Sans';
+    font-size: 12px;
+    text-shadow: 1px 1px 1px $color-panel-shadow;
+    width: 76px;
+    color: $color-stage;
+    float: left;
+    padding-top: 6px;
+    padding-left: 4px;
+    text-align: left;
+}
+.playhead{
+    height: 14px;
+    width: 6px;
+    position: absolute;
+    top: 6px;
+    left: -3px;
+    z-index: 92;
+    background-color: #b50003;
+    opacity: 0.5;
+}
+.playheadmarker{
+    height: 100%;
+    width: 1px;
+    background-color: $color-panel-text;
+    top: 0;
+    left: 0;
+    position: absolute;
+    z-index: 91;
+    opacity: 0.7;
+}
+.timebar{
+    height: 3px;
+    width:0;
+    background-color: #ff0003;
+    opacity: 0.3;
+    top:10px;
+    position: absolute;
+    border-top: #c7a19f thin solid;
+    border-right: #ffffff thin solid;
+}
+.endhottext{
+    float: right;
+    font-family: 'Droid Sans';
+    font-size: 12px;
+    text-shadow: 1px 1px 1px $color-panel-shadow;
+    color: $color-panel-text;
+    margin-top: 0%;
+}
+.timeline-disabled {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(30,30,30, 0.796);
+	z-index: 100;
+	display: none;
+	box-shadow: rgb(17, 17, 17) 0px 0px 14px inset;
+}
+.timeline-dnd-helper {
+	-webkit-transform: scale(.9, .9);
+}
+.tl_slider{
+    width: 65px;
+    height: 5px;
+    background: none;
+    float:left;
+    margin-left: 5%;
+}
+
+/* Configuration menu */
+.tl-configbutton {
+	position: absolute;
+	top: 23px;
+	right: 2px;
+	width: 20px;
+	height: 20px;
+	background-image: url(../images/icon-gear.png);
+	background-repeat: no-repeat;
+	cursor: pointer;
+	z-index: 100;
+	background-position: 100% 0px;
+}
+.tl-configbutton:hover {
+	width: 180px;
+}
+
+.tl-configbutton .tl-dropdown {
+	position: absolute;
+	border: 1px solid $color-panel-border;
+	top: 16px;
+	right: 2px;
+	width: 180px;
+	padding-bottom: 7px;
+	background-color: $color-menu-bg;
+	box-shadow: 2px 2px 2px $color-app-shadow;
+	display: none;
+}
+.tl-configbutton:hover .tl-dropdown {
+	display: block;
+}
+
+.tl-configbutton .checkable {
+	padding-left: 20px;
+	height: 20px;
+	line-height: 20px;
+	margin-top: 3px;
+}
+.tl-configbutton .checkable:hover {
+	background-color: $color-panel-hilite-bg;
+	color: $color-panel-hilite-text;
+	text-shadow: none;
+}
+.tl-configbutton .checkable.checked {
+	background-image: url(../images/icon-checkmark.png);
+	background-repeat: no-repeat;
+	background-position: 6px 4px;
+}
+
+.tl-configbutton .nj-divider {
+	margin-top: 7px;
+}
+
+.layer-hidden {
+	display: none;
+}
