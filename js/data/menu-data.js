@@ -70,8 +70,12 @@ exports.MenuData = Montage.create( Montage, {
                             "enabled": {
                                 "value": false,
                                 "boundObj": "documentController",
-                                "boundProperty": "canSave",
-                                "oneway": true
+                                "boundProperty": "activeDocument",
+                                "oneway": true,
+                                "boundValueMutator": function(activeDocument){
+                                    if(activeDocument !== null){return true;}
+                                    else{return false;}
+                                }
                             },
                             "action": "executeSave"
                         },
@@ -96,10 +100,10 @@ exports.MenuData = Montage.create( Montage, {
                             "enabled": {
                                 "value": false,
                                 "boundObj": "documentController",
-                                "boundProperty": "canSaveAll",
+                                "boundProperty": "activeDocument",
                                 "oneway": true,
-                                "boundValueMutator": function(canSaveAll){
-                                    if(canSaveAll === true){return true;}
+                                "boundValueMutator": function(activeDocument){
+                                    if(activeDocument !== null){return true;}
                                     else{return false;}
                                 }
                             },

@@ -237,7 +237,7 @@ exports.MaterialsPopup = Montage.create(Component, {
             }
             else
             {
-                this.materialsData = this._dummyData1;
+                this.materialsData = this._dummyData1.slice(0);
             }
             
            this.needsDraw = true;

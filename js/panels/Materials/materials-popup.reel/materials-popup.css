@@ -37,21 +37,53 @@
 .mp_property
 {
     height:40px;
+    position: relative;
 }
 
 .mp_property > .prop-label
 {
-  float: left;
-  /*width:86px;*/
-  margin: 0px 8px 2px 5px;
+    position:relative;
+    top:12px;
+    float: left;
+    width: 100px;
 }
 
 .mp_property > .prop-controller
 {
-  float: right;
-  clear: left;
-  width: auto;
-  margin: 0px 0px 3px 0px;
+    position:relative;
+    top:12px;
+    left: 10px;
+    float: left;
+}
+
+.mp_property .hottext,
+.mp_property .hottextInput
+{
+    width: 30px;
+}
+
+.mp_property .button
+{
+    width: 30px;
+    height: 20px;
+}
+
+.mp_property .inputRow
+{
+    top: 8px;
+    position: relative;
+}
+
+.mp_properties_list
+{
+   padding-bottom: 8px;
+}
+
+.mp_properties_list > .mp_property > .colortoolbar
+{
+	width: 27px !important;
+	height: 27px !important;
+    overflow:hidden !important;
 }
 
 .mp_buttons {
