@@ -16,6 +16,7 @@ var LinearGradientMaterial = require("js/lib/rdge/materials/linear-gradient-mate
 var RadialGradientMaterial = require("js/lib/rdge/materials/radial-gradient-material").RadialGradientMaterial;
 var BumpMetalMaterial = require("js/lib/rdge/materials/bump-metal-material").BumpMetalMaterial;
 var UberMaterial = require("js/lib/rdge/materials/uber-material").UberMaterial;
+var CloudMaterial = require("js/lib/rdge/materials/cloud-material").CloudMaterial;
 var RadialBlurMaterial = require("js/lib/rdge/materials/radial-blur-material").RadialBlurMaterial;
 var RaidersMaterial = require("js/lib/rdge/materials/radial-blur-material").RaidersMaterial;
 var PlasmaMaterial = require("js/lib/rdge/materials/plasma-material").PlasmaMaterial;
@@ -52,6 +53,7 @@ exports.MaterialsModel = Montage.create(Component, {
             this.addMaterial(new RadialGradientMaterial());
             this.addMaterial(new BumpMetalMaterial());
             this.addMaterial(new UberMaterial());
+            this.addMaterial(new CloudMaterial());
             this.addMaterial(new RadialBlurMaterial());
             this.addMaterial(new RaidersMaterial());
             this.addMaterial(new PlasmaMaterial());
@@ -232,6 +234,7 @@ exports.MaterialsModel = Montage.create(Component, {
 					case "radialGradient":		mat = new RadialGradientMaterial();		break;
 					case "bumpMetal":			mat = new BumpMetalMaterial();			break;
 					case "uber":				mat = new UberMaterial();				break;
+					case "cloud":				mat = new CloudMaterial();				break;
 
 					case "taper":				mat = new TaperMaterial();				break;
 					case "twistVert":			mat = new TwistVertMaterial();			break;

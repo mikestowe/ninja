@@ -4,8 +4,11 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
-var MaterialParser = require("js/lib/rdge/materials/material-parser").MaterialParser;
-var Material = require("js/lib/rdge/materials/material").Material;
+var MaterialParser		= require("js/lib/rdge/materials/material-parser").MaterialParser;
+var Material			= require("js/lib/rdge/materials/material").Material;
+var GLWorld				= require("js/lib/drawing/world").World;
+var Texture				= require("js/lib/rdge/texture").Texture;
+
 ///////////////////////////////////////////////////////////////////////
 // Class GLMaterial
 //      RDGE representation of a material.
@@ -20,8 +23,18 @@ var CloudMaterial = function CloudMaterial() {
 	this._texMap = 'assets/images/cloud2.jpg';
 	this._diffuseColor = [0.5, 0.5, 0.5, 0.5];
 
+	// base size of cloud polygons.  Random adjustments made to each quad
+	this._cloudSize = 40;
+
 	this._time = 0.0;
 	this._dTime = 0.01;
+
+	// parameter initial values
+	this._time			= 0.0;
+	this._surfaceAlpha	= 0.5;
+	this._zmin			= 0.1;
+	this._zmax			= 10.0;
+
 
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
@@ -31,9 +44,6 @@ var CloudMaterial = function CloudMaterial() {
 
 	this.getTextureMap			= function()		{  return this._propValues[this._propNames[0]] ? this._propValues[this._propNames[0]].slice() : null	};
 	this.setTextureMap			= function(m)		{  this._propValues[this._propNames[0]] = m ? m.slice(0) : null;  this.updateTexture();  	};
-
-	this.setDiffuseColor		= function(c)		{  this._propValues[this._propNames[1]] = c.slice(0);  this.updateColor();  	};
-	this.getDiffuseColor		= function()		{  return this._propValues[this._propNames[1]] ? this._propValues[this._propNames[1]].slice() : null; 	};
 
 	this.isAnimated			= function()			{  return true;					};
 
@@ -62,10 +72,6 @@ var CloudMaterial = function CloudMaterial() {
 		{
 			case "texmap":
 				this.setTextureMap(value);
-				break;
-
-			case "diffusecolor":
-				this.setDiffuseColor( value );
 				break;
 
 			case "color":
@@ -100,12 +106,26 @@ var CloudMaterial = function CloudMaterial() {
 
 	this.init = function( world )
 	{
+		var GLWorld = require("js/lib/drawing/world").World;
+
 		// save the world
 		if (world)  this.setWorld( world );
 
 		// this variable declared above is inherited set to a smaller delta.
 		// the cloud material runs a little faster
 		this._dTime = 0.01;
+
+		// create a canvas to render into
+		var doc = world.getCanvas().ownerDocument;
+		var canvasID = "__canvas__";
+		this._srcCanvas = doc.createElement(canvasID);
+
+		// build a world to do the rendering
+		this._srcWorld = new GLWorld( this._srcCanvas, true );
+		var srcWorld = this._srcWorld;
+
+		// build the geometry
+		var prim = this.buildGeometry();
 
 		// set up the shader
 		this._shader = new jshader();
@@ -116,30 +136,33 @@ var CloudMaterial = function CloudMaterial() {
 		this._materialNode = createMaterialNode("cloudMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
+		// initialize the shader uniforms
 		this._time = 0;
 		if (this._shader && this._shader['default']) {
-			this._shader['default'].u_time.set( [this._time] );
-			this._shader['default'].u_DiffuseColor.set( this._diffuseColor );
+			var t = this._shader['default'];
+			if (t)
+			{
+				t.u_time.set( [this._time] );
+				t.u_surfaceAlpha.set( [this._surfaceAlpha] );
+				t.u_zmin.set( [this._zmin] );
+				t.u_zmax.set( [this._zmax] );
+			}
         }
+
+		// add the nodes to the tree
+		var trNode = createTransformNode("objRootNode_" + this._srcWorld._nodeCounter++);
+		srcWorld._rootNode.insertAsChild( trNode );
+		trNode.attachMeshNode(srcWorld.renderer.id + "_prim_" + srcWorld._nodeCounter++, prim);
+        trNode.attachMaterial( this._materialNode );
+
+		// create the texture
+		var wrap = 'REPEAT',  mips = true;
+		this._glTex = new Texture( dstWorld, canvasID,  wrap, mips );
 
 		// set the shader values in the shader
 		this.updateTexture();
 		this.update( 0 );
 	};
-
-	this.updateColor = function()
-	{
-		var material = this._materialNode;
-		if (material)
-		{
-			var technique = material.shaderProgram['default'];
-			var renderer = g_Engine.getContext().renderer;
-			if (renderer && technique) {
-				var color = this._propValues[this._propNames[1]];
-				technique.u_DiffuseColor.set( this._diffuseColor );
-			}
-		}
-	}
 
 	this.updateTexture = function() {
 		var material = this._materialNode;
@@ -171,30 +194,45 @@ var CloudMaterial = function CloudMaterial() {
                 }
 				this._time += this._dTime;
 
+				if (this._glTex)
+				{
+					this._glTex.render();
+					var tex = this._glTex.getTexture();
+					technique.u_tex0.set( tex );
+				}
+
                 if (this._time > 200.0)  this._time = 0.0;
 			}
 		}
 	};
 
-	this.generateQuads = function()
+	this.buildGeometry = function()
 	{
-		var quads = [];
-		for ( i = 0; i < 8000; i++ )
+		var RectangleGeometry	= require("js/lib/geom/rectangle").RectangleGeometry;
+
+		RectangleGeometry.init();
+
+		var verts	= [],
+			norms	= [ [0,0,1], [0,0,1], [0,0,1], [0,0,1] ],
+			uvs		= [ [0,0], [1,0], [1,1], [0,1] ];
+
+		for ( i = 0; i < 2; i++ )
 		{
-			var quad = 
-			{
-			}
-				x: Math.random() * 1000 - 500,
+			var x = Math.random() * 1000 - 500,
 				y = - Math.random() * Math.random() * 200 - 15,
 				z = i,
-				rotation.z = Math.random() * Math.PI,
-				scale = Math.random() * Math.random() * 1.5 + 0.5,
-			}
+				zRot = Math.random() * Math.PI,
+				size = this._cloudSize * Math.random() * Math.random() * 1.5 + 0.5;
+			var sz = 0.5*size;
 
-			quads.push( quad );
+			verts[0] = [x-sz, y-sz, z];
+			verts[1] = [x-sz, y+sz, z];
+			verts[2] = [x+sz, y+sz, z];
+			verts[3] = [x+sz, y-sz, z];
+			RectangleGeometry.addQuad( verts,  normals, uvs )
 		}
 
-		this._quads = quads;
+		return RectangleGeometry.buildPrimitive();
 	};
 
 	// JSON export
@@ -294,9 +332,11 @@ var cloudMaterialDef =
 				// parameters
 				'params' : 
 				{
-					'u_tex0': { 'type' : 'tex2d' },
-					'u_time' : { 'type' : 'float' },
-					'u_DiffuseColor' : { 'type' : 'vec4' }
+					'u_tex0'			: { 'type' : 'tex2d' },
+					'u_time'			: { 'type' : 'float' },
+					'u_surfaceAlpha'	: { 'type' : 'float' },
+					'u_zmin'			: { 'type' : 'float' },
+					'u_zmax'			: { 'type' : 'float' }
 				},
 
 				// render states

@@ -1280,11 +1280,41 @@ RectangleGeometry.pushIndices	= RectangleFill.pushIndices;
 RectangleGeometry.getVertex		= RectangleFill.getVertex;
 RectangleGeometry.getUV			= RectangleFill.getUV;
 
+RectangleGeometry.init = function()
+{
+	this.vertices	= [];
+	this.normals	= [];
+	this.uvs		= [];
+	this.indices	= [];
+}
+
+RectangleGeometry.addQuad = function( verts,  normals, uvs )
+{
+	for (var i=0;  i<4;  i++)
+	{
+		RectangleGeometry.pushVertex( verts[i][0], verts[i][1], verts[i][2]);
+		RectangleGeometry.pushNormal( normals[i] );
+		RectangleGeometry.pushUV( uvs[i] );
+	}
+
+	RectangleGeometry.pushIndices( 0, 1, 2 );
+	RectangleGeometry.pushIndices( 2, 3, 0 );
+}
+
+RectangleGeometry.buildPrimitive = function()
+{
+	var nVertices = this.vertices.length;
+	return ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.TRIANGLES, nVertices);
+}
+
+
+
 
 Rectangle.prototype = new GeomObj();
 
 if (typeof exports === "object") {
     exports.Rectangle = Rectangle;
+	exports.RectangleGeometry = RectangleGeometry;
 }
 
 
