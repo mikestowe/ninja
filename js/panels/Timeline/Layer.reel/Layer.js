@@ -710,13 +710,14 @@ var Layer = exports.Layer = Montage.create(Component, {
 	handleSelectorEditableBlur : {
 		value: function(event) {
         	this.titleSelector.scrollLeft = 0;
+        	this.handleSelectorEditableChange(event);
 		}
 	},
 	handleSelectorEditableChange: {
 		value: function(event) {
-			var newVal = "ONTD";
-			if (this._layerEditable.value !== "") {
-				newVal = this._layerEditable.value;
+			var newVal = this._layerEditable.enteredValue;
+			if (this._layerEditable.enteredValue.length === 0) {
+				newVal = this._layerEditable._preEditValue;
 			}
 			this.dynamicLayerName.value = newVal;
 			this.layerName = newVal;

@@ -363,6 +363,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     draw: {
     	value: function() {
     		
+
+    		
     		// Drag and Drop:
     		// Do we have a helper to append?
             if (this._appendHelper === true) {
@@ -664,6 +666,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:function () {
             this.user_layers.scrollTop = this.layout_tracks.scrollTop;
             this.layout_markers.scrollLeft = this.layout_tracks.scrollLeft;
+         	this.playheadmarker.style.top = this.layout_tracks.scrollTop + "px";
         }
     },
 
@@ -684,6 +687,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             var clickedPosition = event.target.offsetLeft + event.offsetX;
             this.playhead.style.left = (clickedPosition - 2) + "px";
             this.playheadmarker.style.left = clickedPosition + "px";
+            
+
+          	
             var currentMillisecPerPixel = Math.floor(this.millisecondsOffset / 80);
             var currentMillisec = currentMillisecPerPixel * clickedPosition;
             this.updateTimeText(currentMillisec);

@@ -115,6 +115,9 @@ exports.Editable = Montage.create(Component, {
                 ///// Save the preEditValue
                 this._preEditValue = this.value;
                 
+                // Initialize enteredValue with current value
+                this.enteredValue = this.value;
+                
                 if(this.selectOnStart) {
                     this.selectAll();
                 }
@@ -189,6 +192,10 @@ exports.Editable = Montage.create(Component, {
     handleKeydown : {
         value : function(e) {
             var k = e.keyCode;
+            
+            // Record change
+            this.enteredValue = this._element.firstChild.data;
+            
             //console.log('keyCode:  ' + k);
         }
     },
