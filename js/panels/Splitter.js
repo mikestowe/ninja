@@ -55,7 +55,7 @@ exports.Splitter = Montage.create(Component, {
         },
         set: function(value) {
             this._collapsed = value;
-            this.needsDraw = true;
+
             this.application.localStorage.setItem(this.element.getAttribute("data-montage-id"), {"version": this.version, "value": value});
         }
     },

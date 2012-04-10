@@ -53,12 +53,14 @@ exports.OvalTool = Montage.create(ShapeTool, {
                 {
                     strokeMaterial = Object.create(MaterialsModel.getMaterial(strokeM));
                 }
+                strokeColor = ShapesController.getMaterialColor(strokeM) || strokeColor;
 
                 var fillM = this.options.fillMaterial;
                 if(fillM)
                 {
                     fillMaterial = Object.create(MaterialsModel.getMaterial(fillM));
                 }
+                fillColor = ShapesController.getMaterialColor(fillM) || fillColor;
             }
 
             var world = this.getGLWorld(canvas, this.options.use3D);
@@ -78,21 +80,8 @@ exports.OvalTool = Montage.create(ShapeTool, {
                 canvas.elementModel.selection = "Oval";
                 canvas.elementModel.pi = "OvalPi";
                 canvas.elementModel.shapeModel.strokeSize = this.options.strokeSize.value + " " + this.options.strokeSize.units;
-                canvas.elementModel.shapeModel.stroke = strokeColor;
-                canvas.elementModel.shapeModel.fill = fillColor;
-                if(strokeColor)
-                {
-                    canvas.elementModel.shapeModel.border = this.application.ninja.colorController.colorToolbar.stroke;
-                }
-                if(fillColor)
-                {
-                    canvas.elementModel.shapeModel.background = this.application.ninja.colorController.colorToolbar.fill;
-                }
 
                 canvas.elementModel.shapeModel.innerRadius = this.options.innerRadius.value  + " " + this.options.innerRadius.units;
-
-                canvas.elementModel.shapeModel.strokeMaterial = strokeMaterial;
-                canvas.elementModel.shapeModel.fillMaterial = fillMaterial;
 
                 canvas.elementModel.shapeModel.strokeStyleIndex = strokeStyleIndex;
                 canvas.elementModel.shapeModel.strokeStyle = strokeStyle;

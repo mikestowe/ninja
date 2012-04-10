@@ -65,13 +65,8 @@ body
 	display: none;
 }
 
-.global3DSettings {
-  -webkit-transform-style: preserve-3d;
-  -webkit-transform: perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-}
-
-.elem-red-outline {
-  outline: red solid thin;
+.active-element-outline {
+  outline: #adff2f solid 2px;
 }
 
 .nj-preset-transition {

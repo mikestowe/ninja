@@ -442,7 +442,7 @@ exports.DrawingToolBase = Montage.create(Montage, {
             flatMat = divMat;
             flatMatSafe = MathUtils.scientificToDecimal(flatMat, 10);
 
-            return "perspective(" + 1400 + ") matrix3d( " + flatMatSafe + ")";
+            return "perspective(" + 1400 + ") matrix3d(" + flatMatSafe + ")";
         }
     },
 

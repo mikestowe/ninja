@@ -76,7 +76,7 @@ exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
 
             this._targets.push({elt:elt, mat:curMat, matInv:curMatInv, ctr:eltCtr});
 
-            viewUtils.setMatrixForElement( elt, curMat, false );
+            ElementsMediator.setMatrix(elt, curMat, false, "rotateStage3DTool");
         }
     },
 
@@ -130,7 +130,8 @@ exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
            // Reset stage to identity matrix
            var iMat = Matrix.I(4);
 
-           ElementsMediator.setMatrix(this.application.ninja.currentDocument.documentRoot, iMat, false);
+           ElementsMediator.setMatrix(this.application.ninja.currentDocument.documentRoot,
+                                        iMat, false, "rotateStage3DTool");
            this.application.ninja.currentDocument.documentRoot.elementModel.props3D.m_transformCtr = null;
 
 			// let the document and stage manager know about the zoom change

@@ -231,6 +231,21 @@ var Rectangle = function GLRectangle() {
 		this._strokeStyle		= jObj.strokeStyle;
 		var strokeMaterialName	= jObj.strokeMat;
 		var fillMaterialName	= jObj.fillMat;
+
+        var strokeMat = MaterialsModel.getMaterial( strokeMaterialName );
+        if (!strokeMat) {
+            console.log( "object material not found in library: " + strokeMaterialName );
+            strokeMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() );
+        }
+        this._strokeMaterial = strokeMat;
+
+        var fillMat = MaterialsModel.getMaterial( fillMaterialName );
+        if (!fillMat) {
+            console.log( "object material not found in library: " + fillMaterialName );
+            fillMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() );
+        }
+        this._fillMaterial = fillMat;
+
 		this.importMaterialsJSON( jObj.materials );
 	};
 

@@ -44,7 +44,7 @@ var Line = function GLLine( world, xOffset, yOffset, width, height, slope, strok
 
 		this._slope = slope;
 		this._strokeWidth = strokeSize;
-		if (strokeColor)  this._strokeColor = strokeColor.slice();
+		this._strokeColor = strokeColor;
 
 		this._strokeStyle = strokeStyle;
 		this._scaleX = (world.getViewportWidth())/(world.getViewportHeight());
@@ -137,6 +137,14 @@ var Line = function GLLine( world, xOffset, yOffset, width, height, slope, strok
 		this._strokeStyle		= jObj.strokeStyle;
 		this._strokeColor		= jObj.strokeColor;
 		var strokeMaterialName	= jObj.strokeMat;
+
+        var strokeMat = MaterialsModel.getMaterial( strokeMaterialName );
+        if (!strokeMat) {
+            console.log( "object material not found in library: " + strokeMaterialName );
+            strokeMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() );
+        }
+        this._strokeMaterial = strokeMat;
+
 		this.importMaterialsJSON( jObj.materials );
 	};
 
