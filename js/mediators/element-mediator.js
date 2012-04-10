@@ -138,69 +138,24 @@ exports.ElementMediator = Montage.create(Component, {
     },
 
     /**
-     Set a property change command for an element or array of elements
-     @param els: Array of elements. Can contain 1 or more elements
-     @param p: Property to set
-     @param value: Value to be set. This is an array of values corresponding to the array of elements
-     @param eventType: Change/Changing. Will be passed to the dispatched event
-     @param source: String for the source object making the call
-     @param currentValue *OPTIONAL*: current value array. If not found the current value is calculated
-     @param stageRedraw: *OPTIONAL*: True. If set to false the stage will not redraw the selection/outline
-     */
+    Set a property change command for an element or array of elements
+    @param element: Element
+    @param attribute: Attribute to set
+    @param value: Value to be set.
+    @param currentValue: current value
+    @param source: String for the source object making the call
+    */
     setAttribute: {
-        value: function(el, att, value, eventType, source, currentValue) {
+        value: function(element, attribute, value, currentValue, source) {
+            element.elementModel.controller["setAttribute"](element, attribute, value);
 
-            if(eventType === "Changing") {
-                this._setAttribute(el, att, value, eventType, source);
-            } else {
-                // Calculate currentValue if not found for each element
-                if(currentValue === null) {
-                    currentValue = el.getAttribute(att);
-                }
+            // Add to the undo
+            var undoLabel = "Attribute change";
+            document.application.undoManager.add(undoLabel, this.setAttribute, this, element, attribute, currentValue, value, source);
 
-                var command = Montage.create(Command, {
-                    _el:                { value: el },
-                    _att:               { value: att },
-                    _value:             { value: value },
-                    _previous:          { value: currentValue },
-                    _eventType:         { value: eventType},
-                    _source:            { value: "undo-redo"},
-                    description:        { value: "Set Attribute"},
-                    receiver:           { value: this},
-
-                    execute: {
-                        value: function(senderObject) {
-                            if(senderObject) this._source = senderObject;
-                            this.receiver._setAttribute(this._el, this._att, this._value, this._eventType, this._source);
-                            this._source = "undo-redo";
-                            return "";
-                        }
-                    },
-
-                    unexecute: {
-                        value: function() {
-                            this.receiver._setAttribute(this._el, this._att, this._previous, this._eventType, this._source);
-                            return "";
-                        }
-                    }
-                });
-
-                NJevent("sendToUndo", command);
-                command.execute(source);
-            }
-
+            NJevent("attributeChange");
         }
     },
-
-    _setAttribute: {
-        value: function(el, att, value, eventType, source) {
-            el.elementModel.controller["setAttribute"](el, att, value);
-
-            NJevent("attribute" + eventType, {type : "setAttribute", source: source, data: {"els": el, "prop": att, "value": value}, redraw: null});
-        }
-    },
-
-
 
     /**
      Set a property change command for an element or array of elements
