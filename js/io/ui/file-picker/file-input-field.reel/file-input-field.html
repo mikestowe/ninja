@@ -10,13 +10,21 @@
     <link rel="stylesheet" type="text/css" href="file-input-field.css">
     <script type="text/montage-serialization">
     {
+
+        "newFileDirectory": {
+            "prototype": "montage/ui/textfield.reel",
+            "properties": {
+                "element": {"#": "newFileDirectory"}
+            }
+        },
+
         "owner":{
             "module": "js/io/ui/file-picker/file-input-field.reel",
             "name": "FileInputField",
             "properties": {
                 "element": {"#": "fileInputField"},
                 "findDirectory": {"#": "findDirectory"},
-                "newFileDirectory": {"#": "newFileDirectory"}
+                "newFileDirectory": {"@": "newFileDirectory"}
             }
         }
     }

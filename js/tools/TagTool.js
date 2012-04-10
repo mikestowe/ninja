@@ -221,21 +221,22 @@ exports.TagTool = Montage.create(DrawingTool, {
     },
 
     makeElement: {
-        value: function(w, h, planeMat, midPt,tag) {
-            var styles;
-            
+        value: function(w, h, planeMat, midPt, tag, isShape) {
             var left = Math.round(midPt[0] - 0.5 * w);
             var top = Math.round(midPt[1] - 0.5 * h);
 
-            var matStr = DrawingToolBase.getElementMatrix(planeMat, midPt);
-
-            styles = {
+            var styles = {
                 'position': 'absolute',
                 'top' : top + 'px',
-                'left' : left + 'px',
-                '-webkit-transform-style' : 'preserve-3d',
-                '-webkit-transform' : matStr
+                'left' : left + 'px'
             };
+
+            if(!MathUtils.isIdentityMatrix(planeMat)) {
+                styles['-webkit-transform-style'] = 'preserve-3d';
+                styles['-webkit-transform'] = DrawingToolBase.getElementMatrix(planeMat, midPt);
+            } else if(isShape) {
+                styles['-webkit-transform-style'] = 'preserve-3d';
+            }
 
             // TODO - for canvas, set both as style and attribute.
             // Otherwise, we need to create a separate controller for canvas elements
