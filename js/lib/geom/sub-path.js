@@ -57,7 +57,7 @@ var GLSubpath = function GLSubpath() {
     this._LocalPoints = [];             //polyline representation of this curve in canvas space
     this._LocalBBoxMin = [0,0,0];       //bbox min point of _LocalPoints
     this._LocalBBoxMax = [0,0,0];       //bbox max point of _LocalPoints
-
+    this._AnchorLocalCoords = [];       //local coords for all the anchor points , stored as a triplet of 3D vectors (prev, curr, next, in order)
     this._UnprojectedAnchors = [];
 
     //initially set the _dirty bit so we will construct samples
@@ -66,6 +66,9 @@ var GLSubpath = function GLSubpath() {
     //initially set the local dirty bit so we will construct local coordinates
     this._isLocalDirty = true;
 
+    //initially set the local dirty bit for the anchors so we will construct local coordinates
+    this._isAnchorLocalDirty = true;
+    
     //whether or not to use the canvas drawing to stroke/fill
     this._useCanvasDrawing = true;
 
@@ -92,8 +95,8 @@ var GLSubpath = function GLSubpath() {
 
     //tool that owns this subpath
     this._drawingTool = null;
-    this._planeMat = null;
-    this._planeMatInv = null;
+    this._planeMat =  Matrix.I(4);
+    this._planeMatInv = Matrix.I(4);
     this._planeCenter = null;
     this._dragPlane = null;
 
@@ -498,6 +501,27 @@ GLSubpath.prototype.insertAnchorAtParameter = function(index, param) {
     this._dirty = true;
 };
 
+GLSubpath.prototype._checkIntersectionWithSampleLocalCoord = function(startIndex, endIndex, point, radius){
+    //check whether the point is within the radius distance from the curve represented as a polyline in _samples
+    //return the parametric distance along the curve if there is an intersection, else return null
+    //will assume that the BBox test is performed outside this function
+    if (endIndex<startIndex){
+        //go from startIndex to the end of the samples
+        endIndex = this._LocalPoints.length;
+    }
+    for (var i=startIndex; i<endIndex-1; i++){
+        var seg0 = this._LocalPoints[i].slice(0);
+        var j=i+1;
+        var seg1 = this._LocalPoints[j].slice(0);
+        var distToSegment = MathUtils.distPointToSegment(point, seg0, seg1);
+        if (distToSegment<=radius){
+            var paramDistance = MathUtils.paramPointProjectionOnSegment(point, seg0, seg1); //TODO Optimize! this function was called in distPointToSegment above
+            return this._sampleParam[i] + (this._sampleParam[j] - this._sampleParam[i])*paramDistance;
+        }
+    }
+    return null;
+};
+
 GLSubpath.prototype._checkIntersectionWithSamples = function(startIndex, endIndex, point, radius){
     //check whether the point is within the radius distance from the curve represented as a polyline in _samples
     //return the parametric distance along the curve if there is an intersection, else return null
@@ -622,23 +646,24 @@ GLSubpath.prototype._isWithinBoundingBox = function(point, ctrlPts, radius) {
 
 GLSubpath.prototype._checkAnchorIntersection = function(pickX, pickY, pickZ, radSq, anchorIndex, minDistance, useLocal) {
     //if we are asked to use the local coordinate and the local coordinate for this anchor exists
-    if (useLocal && this._anchorSampleIndex.length>anchorIndex && this._LocalPoints.length > this._anchorSampleIndex[anchorIndex]) {
-        var localCoord = this._LocalPoints[this._anchorSampleIndex[anchorIndex]]
-        var distSq = VecUtils.vecDistSq(3, [pickX, pickY, pickZ], localCoord);
+    if (useLocal && this._AnchorLocalCoords.length > anchorIndex) {//this._anchorSampleIndex.length>anchorIndex && this._LocalPoints.length > this._anchorSampleIndex[anchorIndex]) {
+        //var localCoord = this._LocalPoints[this._anchorSampleIndex[anchorIndex]];
+        var anchorLocalCoord = this._AnchorLocalCoords[anchorIndex];
+        var distSq = VecUtils.vecDistSq(3, [pickX, pickY, pickZ], anchorLocalCoord[1]);
         //check the anchor point
         if (distSq < radSq && distSq<minDistance) {
             return this.SEL_ANCHOR;
         }
-        /*
+
         //check the prev. and next of the selected anchor point
-        distSq = this._Anchors[anchorIndex].getPrevDistanceSq(pickX, pickY, pickZ);
+        distSq = VecUtils.vecDistSq(3, [pickX, pickY, pickZ], anchorLocalCoord[0]);
         if (distSq<radSq && distSq<minDistance){
             return this.SEL_PREV;
         }
-        distSq = this._Anchors[anchorIndex].getNextDistanceSq(pickX, pickY, pickZ);
+        distSq = VecUtils.vecDistSq(3, [pickX, pickY, pickZ], anchorLocalCoord[2]);
         if (distSq<radSq && distSq<minDistance){
             return this.SEL_NEXT;
-        }*/
+        }
         return this.SEL_NONE;
     }
 
@@ -693,6 +718,42 @@ GLSubpath.prototype.isWithinBBox = function(x,y,z) {
     }
     return true;
 }
+
+//pick the path location closest to the input pick point (in local coord)
+GLSubpath.prototype.pathSamplesLocalHitTest = function(pickX, pickY, pickZ, radius){
+    var numAnchors = this._AnchorLocalCoords.length;
+    var selAnchorIndex = -1;
+    var retParam = null;
+    var radSq = radius * radius;
+    var minDistance = Infinity;
+
+    //first check if the input location is within the bounding box
+    var numSegments = this._isClosed ? numAnchors : numAnchors-1;
+    var currAnchor = this._AnchorLocalCoords[0];
+    var nextAnchor=null;
+    for (var i = 0; i < numSegments; i++) {
+        var nextIndex = (i+1)%numAnchors;
+        nextAnchor = this._AnchorLocalCoords[nextIndex];
+        //check if the point is close to the bezier segment between anchor i and anchor nextIndex
+        var controlPoints = [currAnchor[1].slice(0),
+            currAnchor[2].slice(0),
+            nextAnchor[0].slice(0),
+            nextAnchor[1].slice(0)];
+        var point = [pickX, pickY, pickZ];
+        if (this._isWithinBoundingBox(point, controlPoints, radius)) {
+            //var intersectParam = this._checkIntersection(controlPoints, 0.0, 1.0, point, radius);
+            var intersectParam = this._checkIntersectionWithSampleLocalCoord(this._anchorSampleIndex[i], this._anchorSampleIndex[nextIndex], point, radius);
+            if (intersectParam){
+                selAnchorIndex=i;
+                retParam = intersectParam-i; //make the retParam go from 0 to 1
+                break;
+            }
+        }
+        currAnchor = nextAnchor;
+    }//for every anchor i
+    return [selAnchorIndex,retParam];
+
+};
 
 //pick the path point closest to the specified location, return null if some anchor point (or its handles) is within radius, else return the parameter distance
 GLSubpath.prototype.pathHitTest = function (pickX, pickY, pickZ, radius) {
@@ -755,7 +816,6 @@ GLSubpath.prototype.pathHitTest = function (pickX, pickY, pickZ, radius) {
                 if (this._isWithinBoundingBox(point, controlPoints, radius)) {
                     //var intersectParam = this._checkIntersection(controlPoints, 0.0, 1.0, point, radius);
                     var intersectParam = this._checkIntersectionWithSamples(this._anchorSampleIndex[i], this._anchorSampleIndex[nextIndex], point, radius);
-                    console.log("intersectParam:"+intersectParam);
                     if (intersectParam){
                         selAnchorIndex=i;
                         retParam = intersectParam-i; //make the retParam go from 0 to 1
@@ -1145,13 +1205,24 @@ GLSubpath.prototype._unprojectPt = function(pt, pespectiveDist) {
 
 //return the local coord. of the anchor at the specified index, null if the anchor does not have a local coord yet
 GLSubpath.prototype.getAnchorLocalCoord = function(index){
-    if (this._isDirty){
+    if (this._dirty){
         this.createSamples();
     }
     if (this._isLocalDirty){
         this.buildLocalCoord();
     }
-    if (index<0 || index>= this._Anchors.length || index>=this._anchorSampleIndex.length){
+    if (index<0 || index>= this._Anchors.length){
+        return null;
+    }
+
+    if (index>= this._AnchorLocalCoords.length || this._isAnchorLocalDirty){
+        this._isAnchorLocalDirty = true;
+        this.buildAnchorLocalCoord();
+    }
+
+    return this._AnchorLocalCoords[index];
+    /*
+    if (index>=this._anchorSampleIndex.length){
         return null;
     }
     var anchorSampleIndex = this._anchorSampleIndex[index];
@@ -1160,6 +1231,55 @@ GLSubpath.prototype.getAnchorLocalCoord = function(index){
     }
     var localCoord = this._LocalPoints[anchorSampleIndex].slice(0);
     return localCoord;
+    */
+};
+
+GLSubpath.prototype.buildAnchorLocalCoord = function()
+{
+    if (!this._isAnchorLocalDirty){
+        return; //nothing to do
+    }
+    var ViewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
+    var SnapManager = require("js/helper-classes/3D/snap-manager").SnapManager;
+
+    var widthAdjustment = -SnapManager.getStageWidth()*0.5;
+    var heightAdjustment = -SnapManager.getStageHeight()*0.5;
+
+    var drawingCanvas = this.getCanvas();
+    if (!drawingCanvas){
+        drawingCanvas = ViewUtils.getStageElement();
+    }
+    var localToStageWorldMat = ViewUtils.getLocalToStageWorldMatrix(drawingCanvas, true, false);
+    var stageWorldToLocalMat = glmat4.inverse(localToStageWorldMat, []);
+    var numAnchors = this._Anchors.length;
+    this._AnchorLocalCoords = [];
+    var i=0, currAnchor, prevLocalCoord, currLocalCoord, nextLocalCoord;
+    for (i=0;i<numAnchors;i++){
+        //get the local coordinate of this anchor point
+        currAnchor = this._Anchors[i];
+        //convert all three positions assoc. with this anchor from stage world to local coord
+        prevLocalCoord = MathUtils.transformAndDivideHomogeneousPoint([
+            currAnchor.getPrevX()+widthAdjustment,
+            currAnchor.getPrevY()+heightAdjustment,
+            currAnchor.getPrevZ()],
+            stageWorldToLocalMat);
+
+        currLocalCoord = MathUtils.transformAndDivideHomogeneousPoint([
+            currAnchor.getPosX()+widthAdjustment,
+            currAnchor.getPosY()+heightAdjustment,
+            currAnchor.getPosZ()],
+            stageWorldToLocalMat);
+
+        nextLocalCoord = MathUtils.transformAndDivideHomogeneousPoint([
+            currAnchor.getNextX()+widthAdjustment,
+            currAnchor.getNextY()+heightAdjustment,
+            currAnchor.getNextZ()],
+            stageWorldToLocalMat);
+
+        this._AnchorLocalCoords.push([prevLocalCoord, currLocalCoord, nextLocalCoord]);
+    } //for every anchor index i
+
+    this._isAnchorLocalDirty=false;
 };
 
 //buildLocalCoord
@@ -1217,6 +1337,9 @@ GLSubpath.prototype.buildLocalCoord = function () {
     //update the bbox with the same adjustment as was made for the local points above
     this._LocalBBoxMax[0]+= halfwidth; this._LocalBBoxMin[0]+= halfwidth;
     this._LocalBBoxMax[1]+= halfheight; this._LocalBBoxMin[1]+= halfheight;
+
+    //set the dirty bit for the local coords of the anchors, so those local coords will be re-calculated
+    this._isAnchorLocalDirty = true;
 
     this._isLocalDirty = false;
 }
@@ -1299,19 +1422,6 @@ GLSubpath.prototype.createSamples = function () {
     this._dirty = false;
 };
 
-GLSubpath.prototype.getLocalBBoxMidInStageWorld = function() {
-    var ViewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
-    //compute the plane center as the midpoint of the local bbox converted to stage world space
-    var bboxWidth=0, bboxHeight=0;
-    var bboxMid=[0,0,0];
-    bboxWidth = this._LocalBBoxMax[0] - this._LocalBBoxMin[0];
-    bboxHeight = this._LocalBBoxMax[1] - this._LocalBBoxMin[1];
-    bboxMid = [0.5 * (this._LocalBBoxMax[0] + this._LocalBBoxMin[0]), 0.5 * (this._LocalBBoxMax[1] + this._LocalBBoxMin[1]), 0.5 * (this._LocalBBoxMax[2] + this._LocalBBoxMin[2])];
-    var planeCenter =  ViewUtils.localToStageWorld(bboxMid, this._canvas);
-    planeCenter[0]+=400; planeCenter[1]+=300; //todo replace these lines with the correct call for the offset
-    console.log("PEN: local midPt: "+ bboxMid +", stageWorld midPt: "+planeCenter);
-    return planeCenter;
-}
 
 GLSubpath.prototype._computeLocalBoundingBox = function() {
     this._LocalBBoxMin = [Infinity, Infinity, Infinity];
@@ -1636,7 +1746,8 @@ GLSubpath.prototype.importJSON = function(jo) {
     this._strokeColor = jo.strokeColor;
     this._fillColor = jo.fillColor;
 
-    this._isDirty = true;
+    this._dirty = true;
+    this._isAnchorLocalDirty = true;
 };
 
 GLSubpath.prototype.import = function( importStr ) {
