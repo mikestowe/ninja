@@ -187,6 +187,25 @@ var Tween = exports.Tween = Montage.create(Component, {
         }
     },
 
+    setAbsoluteTweenProperties:{
+        value:function () {
+            if (this.parentComponent.parentComponent.animatedElement.offsetTop != this.tweenedProperties["top"] && this.parentComponent.parentComponent.animatedElement.offsetLeft != this.tweenedProperties["left"]) {
+                this.tweenedProperties["top"] = this.parentComponent.parentComponent.animatedElement.offsetTop;
+                this.tweenedProperties["left"] = this.parentComponent.parentComponent.animatedElement.offsetLeft;
+                this.parentComponent.parentComponent.updateKeyframeRule();
+            }
+            // highlight the tween's span
+            this.tweenspan.highlightSpan();
+            this.isTweenAnimated = true;
+        }
+    },
+
+    setRelativeTweenProperties:{
+        value:function(){
+
+        }
+    },
+
     selectTween:{
         value: function(){
             // turn on event listener for element change

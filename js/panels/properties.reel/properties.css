@@ -47,6 +47,11 @@ padding-right:6px;
 
 }
 
+.propertiesPanel button.nj-skinned {
+    margin-left: -12px;
+    margin-top: -3px;
+}
+
 .propertiesPanel hr {
     border: 0;
     border-top: 1px solid #3c3c3c;

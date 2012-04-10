@@ -589,18 +589,54 @@ exports.ColorModel = Montage.create(Component, {
         }
     },
     ////////////////////////////////////////////////////////////////////
-    //Returns CSS string given a WebGL color array in [r, g, b, a] format where the values are [0,1]
-    webGlToCss: {
+    //Returns a color object given a WebGL color array/object with gradient stops
+    webGlToColor: {
         enumerable: true,
-        value: function (color) {
-            if(color && (color.length === 4))
-            {
-                return 'rgba(' + color[0]*255 + ', ' + color[1]*255 + ', ' + color[2]*255 + ', ' + color[3] +')';
+        value: function (c) {
+            if(c) {
+                if(c.gradientMode) {
+                    // Gradient
+                    var i = 0,
+                        len,
+                        css,
+                        stops = c.color,
+                        gradient;
+
+                    // Create the CSS string
+                    if (c.gradientMode === 'radial') {
+                        css = '-webkit-radial-gradient(center, ellipse cover';
+                    } else {
+                        css = '-webkit-gradient(linear, left top, right top';
+                    }
+
+                    //Sorting array (must be sorted for radial gradients, at least in Chrome
+                    stops.sort(function(a,b){return a.position - b.position});
+                    //Looping through stops in gradient to create CSS
+
+                    len = stops.length;
+                    for (i=0; i < len; i++) {
+                        //Adding to CSS String
+                        if (c.gradientMode === 'radial' && stops[i].value) {
+                            css += ', '+stops[i].value.css+' '+stops[i].position+'% ';
+                        } else if (stops[i].value){
+                            css += ', color-stop('+stops[i].position+'%,'+stops[i].value.css+')';
+                        }
+                    }
+                    //Closing the CSS strings
+                    css += ')';
+
+                    gradient = {stops: c.color, mode: c.gradientMode, gradientMode: c.gradientMode, css: css};
+                    return {mode: 'gradient', value: gradient, color: gradient};
+                } else if(c.length === 4) {
+                    // CSS
+                    return this.application.ninja.colorController.getColorObjFromCss('rgba(' + c[0]*255 + ', '
+                                                                                             + c[1]*255 + ', '
+                                                                                             + c[2]*255 + ', '
+                                                                                             + c[3] +')');
+                }
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
     }
 	////////////////////////////////////////////////////////////////////
