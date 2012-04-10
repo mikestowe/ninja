@@ -99,6 +99,20 @@ var Layer = exports.Layer = Montage.create(Component, {
             this.layerData.layerID = value;
         }
     },
+    _layerTag:{
+    	value: "tag"
+    },
+    
+    layerTag:{
+    	serializable: true,
+        get:function(){
+            return this._layerTag;
+        },
+        set:function(newVal){
+	    	this._layerTag = newVal;
+	    	this.layerData.layerTag = newVal;
+        }
+    },
     
     /* Position and Transform hottext values */
     _dtextPositionX : {
@@ -290,9 +304,30 @@ var Layer = exports.Layer = Montage.create(Component, {
         },
         set:function(value){
             this._isAnimated = value;
-            this.layerData.isAnimated = newVal;
+            this.layerData.isAnimated = value;
         }
     },
+    _isVisible:{
+        value: true
+    },
+
+    isVisible:{
+        get:function(){
+            return this._isVisible;
+        },
+        set:function(value){
+        	if (this._isVisible !== value) {
+        		this._isVisible = value;
+        		if (value === true) {
+        			this.element.classList.remove("layer-hidden");
+        		} else {
+        			this.element.classList.add("layer-hidden");
+        		}
+        	}
+        	this.layerData.isVisible = value;
+        }
+    },
+    
     _justAdded: {
     	value: false
     },
@@ -433,6 +468,9 @@ var Layer = exports.Layer = Montage.create(Component, {
             this.dtextScaleY = this.layerData.dtextScaleY;
             this.dtextRotate = this.layerData.dtextRotate;
             this._isFirstDraw = this.layerData._isFirstDraw;
+            this.layerTag = this.layerData.layerTag;
+            this.isVisible = this.layerData.isVisible;
+            this.isAnimated = this.layerData.isAnimated;
             this.needsDraw = boolNeedsDraw;
         }
     },
@@ -504,6 +542,8 @@ var Layer = exports.Layer = Montage.create(Component, {
 			this.element.addEventListener("dragleave", this.handleDragleave.bind(this), false);
 			this.element.addEventListener("dragstart", this.handleDragstart.bind(this), false);
 			this.element.addEventListener("drop", this.handleDrop.bind(this), false);
+			
+			// Bind this.layerTag to the tag 
 
         }
     },

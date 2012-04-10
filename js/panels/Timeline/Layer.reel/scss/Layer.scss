@@ -90,16 +90,23 @@
 
 .userlayers .collapsible-label {
 	display: block;
-	width: 100px;
     height: 21px;
     line-height: 20px;
 	color: $color-panel-text;
-	margin-left: 30px;
-	margin-right: 20px;
+	margin-left: 80px;
+	margin-right: 40px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.userlayers .layer-tag {
+	position: absolute;
+	top: 3px;
+	left: 20px;
+}
+
+
 .layerSelected .label-layer {
 	background-color: $color-panel-hilite-bg;
 	color: $color-panel-hilite-text;
@@ -123,7 +130,8 @@
 }
 
 .content-layer .collapsible-label,
-.content-layer .collapsible-content {
+.content-layer .collapsible-content,
+.content-layer .layer-tag {
 	font-size: 11px;
 }
 

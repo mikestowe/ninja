@@ -17,6 +17,7 @@
                         "element": {"#": "layer"},
 						"styleRepetition" : {"@":"repetition1"},
 						"dynamicLayerName" : {"@":"dtext1"},
+						"dynamicLayerTag" : {"@": "dtext2"},
 						"slotStyle" : {"@":"slot1"},
 						"mainCollapser" : {"@" : "mainCollapser"},
 						"positionCollapser" : {"@" : "positionCollapser"},
@@ -37,6 +38,20 @@
 	            		"value" : {
 	            			"boundObject" : {"@": "owner"},
 	            			"boundObjectPropertyPath" : "layerName",
+	            			"oneway" : false
+	            		}
+	            	}
+	            },
+	            "dtext2" : {
+	            	"module" : "montage/ui/dynamic-text.reel",
+	            	"name" : "DynamicText",
+	            	"properties" : {
+	            		"element" : {"#" : "layer-tag"}
+	            	},
+	            	"bindings" : {
+	            		"value" : {
+	            			"boundObject" : {"@": "owner"},
+	            			"boundObjectPropertyPath" : "layerTag",
 	            			"oneway" : false
 	            		}
 	            	}
@@ -326,6 +341,7 @@
     
 		<div data-montage-id="layer" class="container-layer">
 			<div class="label-layer" data-montage-id="myLabel">
+				<span data-montage-id="layer-tag" class="layer-tag"></span>
 				<span class="collapsible-label" data-montage-id="layer-label-text" spellcheck="false">Label</span>
 				<span class="collapsible-clicker collapsible-collapsed" data-montage-id="clicker-main"></span>
 				<div class="cssbutton button-lock"></div>

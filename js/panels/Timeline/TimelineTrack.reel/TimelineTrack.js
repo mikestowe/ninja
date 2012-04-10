@@ -32,6 +32,28 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         	}
         }
     },
+    _isVisible:{
+        value: true
+    },
+
+    isVisible:{
+        get:function(){
+            return this._isVisible;
+        },
+        set:function(value){
+        	if (this._isVisible !== value) {
+        		this._isVisible = value;
+        		if (this.element !== null) {
+	        		if (value === true) {
+	        			this.element.classList.remove("layer-hidden");
+	        		} else {
+	        			this.element.classList.add("layer-hidden");
+	        		}
+        		}
+        	}
+        	this.trackData.isVisible = value;
+        }
+    },
 
     // Are the various collapsers collapsed or not
     _isMainCollapsed:{
@@ -390,6 +412,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.isTransformCollapsed = this.trackData.isTransformCollapsed;
             this.isStyleCollapsed = this.trackData.isStyleCollapsed;
             this.trackPosition = this.trackData.trackPosition;
+            this.isVisible = this.trackData.isVisible;
             this.needsDraw = true;
         }
     },
@@ -454,7 +477,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 	                        this.retrieveStoredTweens();
 	                    }
                     }
-
                 }
             }
         }

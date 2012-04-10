@@ -349,6 +349,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.container_layers.addEventListener("dragend", this.handleLayerDragEnd.bind(this), false);
             this.container_layers.addEventListener("dragover", this.handleLayerDragover.bind(this), false);
             this.container_layers.addEventListener("drop", this.handleLayerDrop.bind(this), false);
+            
+            // Bind the handlers for the config menu
+            this.checkable_animated.addEventListener("click", this.handleAnimatedClick.bind(this), false);
+            this.checkable_relative.addEventListener("click", this.handleRelativeClick.bind(this), false);
+            this.checkable_absolute.addEventListener("click", this.handleAbsoluteClick.bind(this), false);
         }
     },
 
@@ -431,8 +436,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             returnObj.layerData.trackPosition = 0;
             returnObj.layerData.arrStyleTracks = [];
             returnObj.layerData.tweens = [];
+            returnObj.layerData.layerTag = "";
+            returnObj.layerData.isVisible = true;
+            returnObj.layerData.isTrackAnimated = false;
             returnObj.parentElementUUID = null;
             returnObj.parentElement = null;
+            
             return returnObj;
         }
     },
@@ -590,7 +599,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this.currentLayerNumber = this.application.ninja.currentDocument.tllayerNumber;
                 this.currentLayerSelected = this.application.ninja.currentDocument.tlCurrentLayerSelected;
                 this.application.ninja.currentSelectedContainer=this.application.ninja.currentDocument.tlCurrentSelectedContainer;
-
+				if (this.application.ninja.currentDocument.boolShowOnlyAnimated) {
+					// Fake a click.
+					var evt = document.createEvent("MouseEvents");
+					evt.initMouseEvent("click");
+					this.checkable_animated.dispatchEvent(evt);
+				}
             }
         }
     },
@@ -610,7 +624,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.application.ninja.timeline.playheadmarker.style.left = "0px";
             this.application.ninja.timeline.updateTimeText(0.00);
             this.timebar.style.width = "0px";
-
+			this.checkable_animated.classList.remove("checked");
             this.currentLayerNumber = 0;
             this.currentLayerSelected = false;
             this.selectedKeyframes = [];
@@ -773,6 +787,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.currentLayerNumber = this.currentLayerNumber + 1;
             newLayerName = "Layer " + this.currentLayerNumber;
             thingToPush.layerData.layerName = newLayerName;
+            thingToPush.layerData.layerTag = "<" + object.nodeName.toLowerCase() + ">";
             thingToPush.layerData.layerID = this.currentLayerNumber;
             thingToPush.parentElement = this.application.ninja.currentSelectedContainer;
             thingToPush.layerData.isSelected = true;
@@ -815,6 +830,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 }
                 thingToPush.layerData.layerName = newLayerName;
                 thingToPush.layerData.layerID = this.currentLayerNumber;
+                thingToPush.layerData.layerTag = "<" + ele.nodeName.toLowerCase() + ">";
                 thingToPush.parentElementUUID = this.hashKey;
                 thingToPush.parentElement = this.application.ninja.currentSelectedContainer;
                 
@@ -880,7 +896,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     handleElementAdded:{
         value:function() {
-            this.createNewLayer();
+            this.createNewLayer(this.application.ninja.selectedElements[0]);
             this.currentLayerSelected.layerData.elementsList.push(this.application.ninja.selectedElements[0]);
             this.currentLayerSelected.layerData.elementsList[0].dataset.storedLayerName = this.currentLayerSelected.layerData.layerName;
         }
@@ -1095,6 +1111,56 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this.timeline_disabler.style.display = "block";
             }
         }
+    },
+    handleAnimatedClick: {
+    	value: function(event) {
+    		this.handleCheckableClick(event);
+    		this.application.ninja.currentDocument.boolShowOnlyAnimated = event.currentTarget.classList.contains("checked");
+    		var boolHide = false,
+    			i = 0,
+    			arrLayersLength = this.arrLayers.length;
+    		if (event.currentTarget.classList.contains("checked")) {
+    			// Hide layers with isAnimated = false;
+    			boolHide = true;
+    		}
+    		
+    		for (i = 0; i < arrLayersLength; i++) {
+    			if (boolHide) {
+    				// Hide layers with isAnimated = false
+    				if (this.arrLayers[i].layerData.isTrackAnimated === false) {
+    					this.arrLayers[i].layerData.isVisible = false;
+    					this.triggerLayerBinding(i);
+    				}
+    			} else {
+    				this.arrLayers[i].layerData.isVisible = true;
+    				this.triggerLayerBinding(i);
+    			}
+    		}
+    		
+    	}
+    },
+    handleRelativeClick: {
+    	value: function(event) {
+    		this.handleCheckableClick(event);
+    		this.checkable_absolute.classList.remove("checked");
+    		// TODO: Use relative positioning
+    	}
+    },
+    handleAbsoluteClick: {
+    	value: function(event) {
+    		this.handleCheckableClick(event);
+    		this.checkable_relative.classList.remove("checked");
+    		// TODO: Use absolute positioning.
+    	}
+    },
+    handleCheckableClick: {
+    	value: function(event) {
+    		if (event.currentTarget.classList.contains("checked")) {
+    			event.currentTarget.classList.remove("checked");
+    		} else {
+    			event.currentTarget.classList.add("checked");
+    		}
+    	}
     },
     // Trigger the layer/track data binding
     triggerLayerBinding : {
