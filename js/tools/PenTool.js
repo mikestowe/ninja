@@ -327,6 +327,71 @@ exports.PenTool = Montage.create(ShapeTool, {
                 //go through the drawing toolbase to get the position of the mouse 
                 var currMousePos = DrawingToolBase.getHitRecPos(DrawingToolBase.getUpdatedSnapPoint(point.x, point.y, false, this.mouseDownHitRec));
                 if (currMousePos && this._selectedSubpath && (this._selectedSubpath.getSelectedAnchorIndex() >= 0 && this._selectedSubpath.getSelectedAnchorIndex() < this._selectedSubpath.getNumAnchors())) {
+
+                    // BEGIN NEW LOCAL COORD BLOCK
+                    //build the mouse position in local coordinates
+                    var drawingCanvas = this._selectedSubpath.getCanvas();
+                    if (!drawingCanvas){
+                        drawingCanvas = ViewUtils.getStageElement();
+                    }
+                    var globalMousePos = this._getUnsnappedScreenPosition(event.pageX, event.pageY);
+                    var localMousePos = ViewUtils.globalToLocal(globalMousePos, drawingCanvas);
+
+                    //compute the translation from the selected anchor
+                    var selAnchorLocalPos = this._selectedSubpath.getAnchorLocalCoord(this._selectedSubpath.getSelectedAnchorIndex());
+                    var localTranslation = VecUtils.vecSubtract(3, localMousePos, selAnchorLocalPos[1]);
+                    var selAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
+                    
+                    if (this._editMode & this.EDIT_ANCHOR) {
+                        selAnchor.translateAll(localTranslation[0], localTranslation[1], localTranslation[2]);
+                    }
+                    else if (this._editMode & this.EDIT_PREV) {
+                        localTranslation = VecUtils.vecSubtract(3, localMousePos, selAnchorLocalPos[0]);
+                        selAnchor.translatePrev(localTranslation[0], localTranslation[1], localTranslation[2]);
+
+                        //move the next point if Alt key is down to ensure relative angle between prev and next
+                        if (this._isAltDown) {
+                            selAnchor.translateNextFromPrev(localTranslation[0], localTranslation[1], localTranslation[2]);
+                        }
+                    }
+                    else if (this._editMode & this.EDIT_NEXT) {
+                        localTranslation = VecUtils.vecSubtract(3, localMousePos, selAnchorLocalPos[2]);
+                        selAnchor.translateNext(localTranslation[0], localTranslation[1], localTranslation[2]);
+
+                        //move the prev point if Alt key is down to ensure relative angle between prev and next
+                        if (this._isAltDown) {
+                            selAnchor.translatePrevFromNext(localTranslation[0], localTranslation[1], localTranslation[2]);
+                        }
+                    }
+                    else if (this._editMode & this.EDIT_PREV_NEXT) {
+                        localTranslation = VecUtils.vecSubtract(3, localMousePos, selAnchorLocalPos[2]);
+                        selAnchor.translateNext(localTranslation[0], localTranslation[1], localTranslation[2]);
+                        selAnchor.setPrevFromNext();
+                    }
+
+
+                    //snapping...check if the new location of the anchor point is close to another anchor point
+                    var selX = selAnchor.getPosX();
+                    var selY = selAnchor.getPosY();
+                    var selZ = selAnchor.getPosZ();
+                    this._snapTargetIndex = -1;
+                    var numAnchors = this._selectedSubpath.getNumAnchors();
+                    for (var i = 0; i < numAnchors; i++) {
+                        //check if the selected anchor is close to any other anchors
+                        if (i === this._selectedSubpath.getSelectedAnchorIndex())
+                            continue;
+                        var currAnchor = this._selectedSubpath.getAnchor(i);
+                        var distSq = currAnchor.getDistanceSq(selX, selY, selZ);
+                        if (distSq < this._PICK_POINT_RADIUS * this._PICK_POINT_RADIUS) {
+                            //set the snap target to the location of the first close-enough anchor
+                            this._snapTargetIndex = i;
+                            break;
+                        }
+                    }
+
+                    // END NEW LOCAL COORD BLOCK
+
+                    /* BEGIN OLD GLOBAL COORD COMMENT BLOCK
                     //var scoord = this._getScreenCoord(this._mouseUpHitRec);
                     var selAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
                     var selX = selAnchor.getPosX();
@@ -362,6 +427,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                         selAnchor.setPrevFromNext();
                     }
 
+
                     //snapping...check if the new location of the anchor point is close to another anchor point
                     this._snapTargetIndex = -1;
                     var numAnchors = this._selectedSubpath.getNumAnchors();
@@ -377,6 +443,8 @@ exports.PenTool = Montage.create(ShapeTool, {
                             break;
                         }
                     }
+
+                    END OLD GLOBAL COORD COMMENT BLOCK */
 
                     //make the subpath dirty so it will get re-drawn
                     this._selectedSubpath.makeDirty();
