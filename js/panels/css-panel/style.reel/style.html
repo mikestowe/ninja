@@ -17,10 +17,26 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                     "element" : {"#" : "container"}
                 }
             },
-            "property": {
-                "module": "montage/ui/dynamic-text.reel",
-                "name": "DynamicText",
+            "checkbox": {
+                "module": "montage/ui/checkbox.reel",
+                "name": "Checkbox",
                 "properties": {
+                    "element": {"#": "disable-checkbox"},
+                    "checked": true
+                },
+                "bindings": {
+                    "checked" : {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "enabled",
+                        "oneway": false
+                    }
+                }
+            },
+            "property": {
+                "module": "js/components/hintable.reel",
+                "name": "Hintable",
+                "properties": {
+                    "startOnEvent": "click",
                     "element": {"#": "property"}
                 },
                 "bindings": {
@@ -32,9 +48,10 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 }
             },
             "value": {
-                "module": "montage/ui/dynamic-text.reel",
-                "name": "DynamicText",
+                "module": "js/components/hintable.reel",
+                "name": "Hintable",
                 "properties": {
+                    "startOnEvent": "click",
                     "element": {"#": "value"}
                 },
                 "bindings": {
@@ -49,9 +66,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
     </script>
 </head>
 <body>
-<div id="container" class="style-item">
-    <dt id="property" class="css-property"></dt>
-    <dd id="value" class="css-value"></dd>
+<div id="container" class="style-item"  spellcheck="false">
+    <input type="checkbox" data-montage-id="disable-checkbox"><dt data-montage-id="property" class="css-property"></dt><dd data-montage-id="value" class="css-value"></dd>
 </div>
 </body>
 </html>

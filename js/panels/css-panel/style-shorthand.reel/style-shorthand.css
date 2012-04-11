@@ -7,9 +7,7 @@
 .css-tree-branch {
     /*padding-left: 10px;*/
 }
-.style-item {
-    padding-left: 20px;
-}
+
 .css-tree-branch .css-tree-branch {
     padding-left: 20px;
     margin-top: 0;

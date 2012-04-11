@@ -8,12 +8,27 @@ var Montage = require("montage/core/core").Montage,
     TreeNode = require("js/components/treeview/tree-node").TreeNode;
 
 exports.Style = Montage.create(TreeNode, {
+    disabledClass : {
+        value: 'style-item-disabled'
+    },
     propertyText : {
         value: "property"
     },
     valueText : {
         value: "value"
     },
+
+    _enabled : { value: true, distinct: true },
+    enabled : {
+        get: function() {
+            return this._enabled;
+        },
+        set: function(value) {
+            this._enabled = value;
+            this.needsDraw = true;
+        }
+    },
+
     handleSourceObjectSet: {
         value: function() {
             //debugger;
@@ -26,6 +41,7 @@ exports.Style = Montage.create(TreeNode, {
             console.log("style - template did load");
         }
     },
+
     draw : {
         value : function() {
             //debugger;
@@ -33,6 +49,12 @@ exports.Style = Montage.create(TreeNode, {
                 this._labelText = this.sourceObject[this.labelKey];
             } else {
                 console.log("Label key unknown");
+            }
+
+            if(this._enabled) {
+                this.element.classList.remove(this.disabledClass);
+            } else {
+                this.element.classList.add(this.disabledClass);
             }
 
         }

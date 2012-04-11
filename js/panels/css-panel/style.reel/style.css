@@ -5,17 +5,32 @@
  </copyright> */
 
 .style-item {
+    display: block;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
-
+.style-item input {
+    height: 10px;
+    width: 10px;
+    margin: 0 6px;
+    visibility: hidden;
+}
+.style-item:hover input, .style-item-disabled input {
+    visibility: visible;
+}
+.style-item-disabled {
+    opacity: .5;
+}
 .css-property, .css-value {
     border: 1px solid rgba(0,0,0,0);
     border-radius: 2px;
     margin: 0;
     outline: none;
     padding: 0 2px;
+}
+.css-property:hover, .css-value:hover {
+    background-color: #FFDECC;
 }
 .css-property:after {
     color: #333;
@@ -33,4 +48,19 @@
 }
 .css-value {
     display: inline;
+}
+.style-item .editable {
+    border: 1px solid #999;
+    box-shadow: 1px 1px 1px #CCC;
+    color: #333;
+    display: inline-block;
+    margin-right: 7px;
+    max-width: none;
+    overflow: visible;
+    -webkit-user-select: text;
+}
+.style-item .editable:after {
+    position: relative;
+    margin-right: -7px;
+    right: -1px;
 }
