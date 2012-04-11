@@ -179,7 +179,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                     if (this._entryEditMode === this.ENTRY_SELECT_PATH){
                         //this should not happen, as ENTRY_SELECT_PATH implies there was a selected subpath
                         this._entryEditMode = this.ENTRY_SELECT_NONE;
-                        console.log("Warning...PenTool handleMouseDown: changing from SELECT_PATH to SELECT_NONE");
+                        throw("Warning...PenTool handleMouseDown: changing from SELECT_PATH to SELECT_NONE");
                     }
                 }
 
@@ -190,8 +190,9 @@ exports.PenTool = Montage.create(ShapeTool, {
                 }
                 var globalMousePos = this._getUnsnappedScreenPosition(event.pageX, event.pageY);
                 var localMousePos = ViewUtils.globalToLocal(globalMousePos, drawingCanvas);
-
-
+                var localToStageWorldNoTransform = ViewUtils.getLocalToStageWorldMatrix(drawingCanvas, true, false);
+                var swMousePos = MathUtils.transformAndDivideHomogeneousPoint(localMousePos,localToStageWorldNoTransform);
+                swMousePos[0]+= snapManager.getStageWidth()*0.5; swMousePos[1]+= snapManager.getStageHeight()*0.5;
                 var prevSelectedAnchorIndex = this._selectedSubpath.getSelectedAnchorIndex();
                 // ************* Add/Select Anchor Point *************
                 //check if the clicked location is close to an anchor point...if so, make that anchor the selected point and do nothing else
@@ -273,9 +274,12 @@ exports.PenTool = Montage.create(ShapeTool, {
                             if (!this._selectedSubpath.getIsClosed()) {
                                 this._selectedSubpath.addAnchor(new AnchorPoint());
                                 var newAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
-                                newAnchor.setPos(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2]);
+                                /*newAnchor.setPos(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2]);
                                 newAnchor.setPrevPos(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2]);
-                                newAnchor.setNextPos(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2]);
+                                newAnchor.setNextPos(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2]);*/
+                                newAnchor.setPos(swMousePos[0], swMousePos[1], swMousePos[2]);
+                                newAnchor.setPrevPos(swMousePos[0], swMousePos[1], swMousePos[2]);
+                                newAnchor.setNextPos(swMousePos[0], swMousePos[1], swMousePos[2]);
 
                                 //set the mode so that dragging will update the next and previous locations
                                 this._editMode = this.EDIT_PREV_NEXT;
