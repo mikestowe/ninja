@@ -197,7 +197,7 @@ exports.ShapeTool = Montage.create(DrawingTool, {
                             'top' : top + 'px',
                             'left' : left + 'px',
                             '-webkit-transform-style' : 'preserve-3d',
-                            '-webkit-transform' : 'perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
+                            '-webkit-transform' : 'matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
                         };
 
             tmpDiv.width = w;

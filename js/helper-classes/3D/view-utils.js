@@ -37,10 +37,8 @@ exports.ViewUtils = Montage.create(Component, {
     setViewportObj: {
         value: function( vp ) {
             this.m_viewportObj = vp;
-            this._perspectiveDist = 1400;
 
-            var dist = this.getPerspectiveDistFromElement( vp );
-            var mode = this.getPerspectiveModeFromElement( vp );
+            this._perspectiveDist = this.getPerspectiveDistFromElement( vp );
         }
     },
     getViewportObj: { value: function()                 {  return this.m_viewportObj;   } },
@@ -360,11 +358,21 @@ exports.ViewUtils = Montage.create(Component, {
 
                 if (this.elementHas3D( child ))
                 {
+                    // TODO - Commenting out flatten support until new perspective workflow is fully working
                     // if (flatten)  pt[2] = 0;
+//                    var flatten = (parent !== this._rootElement) && (ElementsMediator.getProperty(parent, "-webkit-transform-style") !== "preserve-3d");
+//                    if(flatten)
+//                    {
+//                        pt[2] = 0;
+//                    }
                     pt = this.screenToView( pt[0], pt[1], pt[2] );
                     pt[3] = 1;
                     //var wPt = childMat.multiply( pt );
                     var wPt = glmat4.multiplyVec3( childMat, pt, [] );
+//                    if(flatten)
+//                    {
+//                        wPt[2] = 0;
+//                    }
                     var scrPt = this.viewToScreen( wPt );
                     pt = scrPt;
                 }
@@ -480,7 +488,15 @@ exports.ViewUtils = Montage.create(Component, {
             var plane = MathUtils.transformPlane( [0,0,1,0],  mat );
 
             // project the view point onto the plane
-            var eyePt = this.getEyePoint();
+            var eyePt;
+            if(this.getPerspectiveDistFromElement(child))
+            {
+                eyePt = this.getEyePoint();
+            }
+            else
+            {
+                eyePt = [viewPt[0], viewPt[1], 1400];
+            }
             var projPt = MathUtils.vecIntersectPlane( eyePt, MathUtils.vecSubtract(viewPt,eyePt), plane );
 
             var childPt;
@@ -522,7 +538,15 @@ exports.ViewUtils = Montage.create(Component, {
             var plane = MathUtils.transformPlane( [0,0,1,0],  mat );
 
             // project the view point onto the plane
-            var eyePt = this.getEyePoint();
+            var eyePt;
+            if(this.getPerspectiveDistFromElement(child))
+            {
+                eyePt = this.getEyePoint();
+            }
+            else
+            {
+                eyePt = [viewPt[0], viewPt[1], 1400];
+            }
             var projPt = MathUtils.vecIntersectPlane( eyePt, MathUtils.vecSubtract(viewPt,eyePt), plane );
 
             this.popViewportObj();
@@ -533,7 +557,7 @@ exports.ViewUtils = Montage.create(Component, {
 
 
     parentToChildVec: {
-        value: function( parentPt, child ) {
+        value: function( parentPt, child, rtnEyePt ) {
             var pt = parentPt.slice(0);
             if (pt.length == 2)  pt[2] = 0.0;
 
@@ -546,12 +570,24 @@ exports.ViewUtils = Montage.create(Component, {
             this.setViewportObj( child );
             pt = this.screenToView( pt[0], pt[1], pt[2] );
 
-            var eyePt = this.getEyePoint();
-            //var eyePt = [0, 0, 0];
-            //var vec = [pt[0], pt[1], pt[2]].subtract( eyePt );
+            var eyePt;
+            if(this.getPerspectiveDistFromElement(child))
+            {
+                eyePt = this.getEyePoint();
+            }
+            else
+            {
+                eyePt = [pt[0], pt[1], 1400];
+            }
             var vec = vecUtils.vecSubtract(3, [pt[0], pt[1], pt[2]], eyePt);
             vec = vecUtils.vecNormalize( 3, vec );
 
+            if(rtnEyePt)
+            {
+                rtnEyePt[0] = eyePt[0];
+                rtnEyePt[1] = eyePt[1];
+                rtnEyePt[2] = eyePt[2];
+            }
             return vec;
         }
     },
@@ -707,6 +743,10 @@ exports.ViewUtils = Montage.create(Component, {
 
     projectToViewPlane: {
         value: function( viewPos ) {
+            if(!this._perspectiveDist)
+            {
+                return viewPos.slice(0);
+            }
             var viewPt;
             var viewport = this.m_viewportObj;
             if (viewport)
@@ -734,6 +774,10 @@ exports.ViewUtils = Montage.create(Component, {
     
     unproject: {
         value: function( pt ) {
+            if(!this._perspectiveDist)
+            {
+                return pt.slice(0);
+            }
             var viewPt;
             var viewport = this.m_viewportObj;
             if (viewport)
@@ -790,26 +834,33 @@ exports.ViewUtils = Montage.create(Component, {
 
     getStageWorldToGlobalMatrix: {
         value: function() {
-            var stage = this.application.ninja.currentDocument.documentRoot;
+            var stage = this.application.ninja.currentDocument.documentRoot,
+                projMat;
             this.pushViewportObj( stage );
 
-                // get the matrix to the parent
-                var mat = Matrix.I(4);
-                //var projMat = Matrix.I(4).multiply( this.getPerspectiveDistFromElement(stage) );
-                var p = this.getPerspectiveDistFromElement(stage);
-                var projMat = glmat4.scale( Matrix.I(4), [p,p,p], [] );
+            // get the matrix to the parent
+            var mat = Matrix.I(4);
+
+            var cop = this.getCenterOfProjection();
+            var v2s = Matrix.Translation([cop[0], cop[1], 0]);
+
+            var p = this.getPerspectiveDistFromElement(stage);
+            if(p)
+            {
+                projMat = glmat4.scale( Matrix.I(4), [p,p,p], [] );
                 projMat[11] = -1;
-                var cop = this.getCenterOfProjection();
-                var v2s = Matrix.Translation([cop[0], cop[1], 0]);
-
-                //mat = v2s.multiply( projMat );
                 mat = glmat4.multiply( v2s, projMat, [] );
+            }
+            else
+            {
+                mat = v2s;
+            }
 
-                // offset to the parent
-                var offset = this.getElementOffset( stage );
-                var offMat = Matrix.Translation([offset[0], offset[1], 0]);
-                //mat = offMat.multiply( mat );
-                glmat4.multiply( offMat, mat, mat );
+            // offset to the parent
+            var offset = this.getElementOffset( stage );
+            var offMat = Matrix.Translation([offset[0], offset[1], 0]);
+            //mat = offMat.multiply( mat );
+            glmat4.multiply( offMat, mat, mat );
 
             this.popViewportObj();
 
@@ -837,7 +888,7 @@ exports.ViewUtils = Montage.create(Component, {
     globalScreenToLocalWorld: {
         value: function( globalPt,  elt ) {
             var objPt = this.globalToLocal( globalPt, elt );
-            var viewPt = this.localScreenToLocalWorld( objPt,  elt )
+            var viewPt = this.localScreenToLocalWorld( objPt,  elt );
 
             /*
             MathUtils.makeDimension3( objPt );
@@ -882,7 +933,15 @@ exports.ViewUtils = Montage.create(Component, {
 
     getLocalToGlobalMatrix: {
         value: function( elt ) {
-            var mat = Matrix.I(4);
+            var mat = Matrix.I(4),
+                projMat,
+                pDist;
+            // TODO - Commenting out flatten support until new perspective workflow is fully working
+            var zMat = Matrix.I(4);
+//            zMat[9] = 0;
+//            zMat[10] = 0;
+//            zMat[11] = 0;
+//            zMat[12] = 0;
             while (elt)
             {
                 this.pushViewportObj( elt );
@@ -891,16 +950,32 @@ exports.ViewUtils = Montage.create(Component, {
                     var objMat = this.getMatrixFromElement( elt );
 
                     //var projMat = Matrix.I(4).multiply( this.getPerspectiveDistFromElement(elt) );
-                    var pDist = this.getPerspectiveDistFromElement(elt);
-                    var projMat = glmat4.scale(Matrix.I(4), [pDist,pDist,pDist], []);
-                    projMat[11] = -1;
-                    projMat[15] = 1400;
+                    pDist = this.getPerspectiveDistFromElement(elt);
+                    if(pDist)
+                    {
+                        projMat = glmat4.scale(Matrix.I(4), [pDist,pDist,pDist], []);
+                        projMat[11] = -1;
+                        projMat[15] = 1400;
+                    }
                     var v2s = Matrix.Translation([cop[0], cop[1], 0]);
 
                     glmat4.multiply( s2v, mat, mat );
                     glmat4.multiply( objMat, mat, mat );
-                    glmat4.multiply( projMat, mat, mat );
+//                    glmat4.multiply( projMat, mat, mat );
+                    if(pDist)
+                    {
+                        //mat = projMat.multiply( mat );
+                        glmat4.multiply( projMat, mat, mat );
+                        pDist = null;
+                    }
                     glmat4.multiply( v2s, mat, mat );
+
+                // TODO - Commenting out flatten support until new perspective workflow is fully working
+//                    var flatten = (elt !== this._rootElement) && (elt.parentElement !== this._rootElement) && (ElementsMediator.getProperty(elt.parentElement, "-webkit-transform-style") !== "preserve-3d");
+//                    if(flatten)
+//                    {
+//                        glmat4.multiply( zMat, mat, mat );
+//                    }
 
                     // offset to the parent
                     var offset = this.getElementOffset( elt );
@@ -922,21 +997,24 @@ exports.ViewUtils = Montage.create(Component, {
 
     getObjToStageWorldMatrix: {
         value: function( elt, shouldProject ) {
-            var mat = Matrix.I(4);
+            var mat = Matrix.I(4),
+                projMat,
+                pDist;
             while (elt)
             {
                 this.pushViewportObj( elt );
                     var cop = this.getCenterOfProjection();
                     var s2v = Matrix.Translation([-cop[0], -cop[1], 0]);
                     var objMat = this.getMatrixFromElement( elt );
-                    var projMat;
                     if(shouldProject)
                     {
-                        //projMat = Matrix.I(4).multiply( this.getPerspectiveDistFromElement(elt) );
-                        var pDist = this.getPerspectiveDistFromElement(elt);
-                        var projMat = glmat4.scale(Matrix.I(4), [pDist,pDist,pDist], []);
-                        projMat[11] = -1;
-                        projMat[15] = 1400;
+                        pDist = this.getPerspectiveDistFromElement(elt);
+                        if(pDist)
+                        {
+                            projMat = glmat4.scale(Matrix.I(4), [pDist,pDist,pDist], []);
+                            projMat[11] = -1;
+                            projMat[15] = 1400;
+                        }
                     }
                     var v2s = Matrix.Translation([cop[0], cop[1], 0]);
                 this.popViewportObj();
@@ -947,10 +1025,11 @@ exports.ViewUtils = Montage.create(Component, {
                 if (elt === this._stageElement)  break;
                 //mat = objMat.multiply( mat );
                 glmat4.multiply( objMat, mat, mat );
-                if(shouldProject)
+                if(shouldProject && pDist)
                 {
                     //mat = projMat.multiply( mat );
                     glmat4.multiply( projMat, mat, mat );
+                    pDist = null;
                 }
                 //mat = v2s.multiply( mat );
                 glmat4.multiply( v2s, mat, mat );
@@ -1101,8 +1180,8 @@ exports.ViewUtils = Montage.create(Component, {
 
     pushViewportObj: {
         value: function( obj )    {
-            this._viewportObjStack.push( this.m_viewportObj );
-            this.m_viewportObj = obj;
+            this.setViewportObj(obj);
+            this._viewportObjStack.push( obj );
         }
     },
 
@@ -1115,7 +1194,7 @@ exports.ViewUtils = Montage.create(Component, {
             }
 
             var rtn = this.m_viewportObj;
-            this.m_viewportObj = this._viewportObjStack.pop();
+            this.setViewportObj(this._viewportObjStack.pop());
             return rtn;
         }
     },

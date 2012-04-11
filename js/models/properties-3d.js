@@ -67,10 +67,6 @@ exports.Properties3D = Montage.create(Component, {
                 this.matrix3d = Matrix.I(4);
             }
 
-            if(this.perspectiveDist == null) {
-                this.perspectiveDist = 1400;
-            }
-
             return this;
         }
     },
@@ -94,7 +90,7 @@ exports.Properties3D = Montage.create(Component, {
     ResetTranslationValues : {
         value : function() {
 //          this.m_objStartPos = [0,0,0];
-            this.perspectiveDist = 1400;
+//            this.perspectiveDist = 1400;
         }
     }
 });
