@@ -182,12 +182,23 @@ exports.PenTool = Montage.create(ShapeTool, {
                         console.log("Warning...PenTool handleMouseDown: changing from SELECT_PATH to SELECT_NONE");
                     }
                 }
-                
+
+                //build the mouse down position in local coordinates
+                var drawingCanvas = this._selectedSubpath.getCanvas();
+                if (!drawingCanvas){
+                    drawingCanvas = ViewUtils.getStageElement();
+                }
+                var globalMousePos = this._getUnsnappedScreenPosition(event.pageX, event.pageY);
+                var localMousePos = ViewUtils.globalToLocal(globalMousePos, drawingCanvas);
+
+
                 var prevSelectedAnchorIndex = this._selectedSubpath.getSelectedAnchorIndex();
                 // ************* Add/Select Anchor Point *************
                 //check if the clicked location is close to an anchor point...if so, make that anchor the selected point and do nothing else
                 // BUT if the anchor point selected is the first anchor point, check if the previous selected anchor was the last anchor point...in that case, close the path
-                var selParam = this._selectedSubpath.pickPath(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2], this._PICK_POINT_RADIUS);
+
+                //var selParam = this._selectedSubpath.pickPath(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2], this._PICK_POINT_RADIUS);
+                var selParam = this._selectedSubpath.pickPath(localMousePos[0], localMousePos[1], localMousePos[2], this._PICK_POINT_RADIUS, true);
                 var whichPoint = this._selectedSubpath.getSelectedMode();
                 if (whichPoint & this._selectedSubpath.SEL_ANCHOR) {
                     //if we're in ENTRY_SELECT_PATH mode AND we have not yet clicked on the endpoint AND if we have now clicked on the endpoint
@@ -288,9 +299,6 @@ exports.PenTool = Montage.create(ShapeTool, {
     }, //HandleLeftButtonDown
 
 
-    //need to override this function because the ShapeTool's definition contains a clearDrawingCanvas call  - Pushkar
-    //  might not need to override once we draw using OpenGL instead of SVG
-    // Also took out all the snapping code for now...need to add that back
     HandleMouseMove:
     {
         value: function (event) {
@@ -647,7 +655,6 @@ exports.PenTool = Montage.create(ShapeTool, {
                 } //if this is a new path being rendered
 
                 this._selectedSubpath.makeDirty();
-
                 this._selectedSubpath.createSamples();
                 //if we have some samples to render...
                 if (this._selectedSubpath.getNumAnchors() > 1) {
@@ -1010,7 +1017,6 @@ exports.PenTool = Montage.create(ShapeTool, {
                 ctx.closePath();
                 ctx.stroke();
             }
-
 
             //display selected anchor and its prev. and next points
             if (this._selectedSubpath && subpath === this._selectedSubpath && this._selectedSubpath.getSelectedAnchorIndex()!== -1) {

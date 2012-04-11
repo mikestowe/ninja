@@ -752,8 +752,8 @@ GLSubpath.prototype.pathSamplesLocalHitTest = function(pickX, pickY, pickZ, radi
         currAnchor = nextAnchor;
     }//for every anchor i
     return [selAnchorIndex,retParam];
-
 };
+
 
 //pick the path point closest to the specified location, return null if some anchor point (or its handles) is within radius, else return the parameter distance
 GLSubpath.prototype.pathHitTest = function (pickX, pickY, pickZ, radius) {
@@ -828,16 +828,27 @@ GLSubpath.prototype.pathHitTest = function (pickX, pickY, pickZ, radius) {
     return [selAnchorIndex,retParam];
 }     //GLSubpath.pathHitTest function
 
+
 //pick the path point closest to the specified location, return null if some anchor point (or its handles) is within radius, else return the parameter distance
-GLSubpath.prototype.pickPath = function (pickX, pickY, pickZ, radius) {
+GLSubpath.prototype.pickPath = function (pickX, pickY, pickZ, radius, useLocal) {
     var numAnchors = this._Anchors.length;
     var selAnchorIndex = -1;
     var retCode = this.SEL_NONE;
     var radSq = radius * radius;
     var minDistance = Infinity;
+
+    //ignore the useLocal flag if the anchor points are not in-sync. with the local coordinates
+    if (numAnchors != this._AnchorLocalCoords.length){
+        useLocal = false;
+    }
+
     //check if the clicked location is close to the currently selected anchor position
     if (this._selectedAnchorIndex>=0 && this._selectedAnchorIndex<this._Anchors.length){
-        var distSq = this._Anchors[this._selectedAnchorIndex].getDistanceSq(pickX, pickY, pickZ);
+        var distSq;
+        if (!useLocal)
+            distSq = this._Anchors[this._selectedAnchorIndex].getDistanceSq(pickX, pickY, pickZ);
+        else
+            distSq = VecUtils.vecDistSq(3, this._AnchorLocalCoords[this._selectedAnchorIndex][1], [pickX, pickY, pickZ]);
         //check the anchor point
         if (distSq < minDistance && distSq < radSq) {
             selAnchorIndex = this._selectedAnchorIndex;
@@ -845,10 +856,16 @@ GLSubpath.prototype.pickPath = function (pickX, pickY, pickZ, radius) {
             retCode = retCode | this.SEL_ANCHOR;
         }
     }
+
     //now check if the click location is close to any anchor position
     if (selAnchorIndex===-1) {
         for (var i = 0; i < numAnchors; i++) {
-            var distSq = this._Anchors[i].getDistanceSq(pickX, pickY, pickZ);
+            var distSq;
+            if (!useLocal)
+                distSq = this._Anchors[i].getDistanceSq(pickX, pickY, pickZ);
+            else
+                distSq = VecUtils.vecDistSq(3, this._AnchorLocalCoords[i][1], [pickX, pickY, pickZ]);
+            
             //check the anchor point
             if (distSq < minDistance && distSq < radSq) {
                 selAnchorIndex = i;
@@ -860,14 +877,23 @@ GLSubpath.prototype.pickPath = function (pickX, pickY, pickZ, radius) {
 
     //check the prev and next of the selected anchor if the above did not register a hit
     if (this._selectedAnchorIndex>=0 && selAnchorIndex === -1) {
-        var distSq = this._Anchors[this._selectedAnchorIndex].getPrevDistanceSq(pickX, pickY, pickZ);
+        var distSq;
+        if (!useLocal)
+            distSq = this._Anchors[this._selectedAnchorIndex].getPrevDistanceSq(pickX, pickY, pickZ);
+        else
+            distSq = VecUtils.vecDistSq(3, this._AnchorLocalCoords[this._selectedAnchorIndex][0], [pickX, pickY, pickZ]);
+
         if (distSq < minDistance && distSq < radSq){
             selAnchorIndex = this._selectedAnchorIndex;
             minDistance = distSq;
             retCode = retCode | this.SEL_PREV;
         } else {
             //check the next for this anchor point
-            distSq = this._Anchors[this._selectedAnchorIndex].getNextDistanceSq(pickX, pickY, pickZ);
+            if (!useLocal)
+                distSq = this._Anchors[this._selectedAnchorIndex].getNextDistanceSq(pickX, pickY, pickZ);
+            else
+                distSq = VecUtils.vecDistSq(3, this._AnchorLocalCoords[this._selectedAnchorIndex][2], [pickX, pickY, pickZ]);
+
             if (distSq<minDistance && distSq<radSq){
                 selAnchorIndex = this._selectedAnchorIndex;
                 minDistance = distSq;
@@ -881,27 +907,38 @@ GLSubpath.prototype.pickPath = function (pickX, pickY, pickZ, radius) {
         this._selectedAnchorIndex = selAnchorIndex;
     } else {
         this._selectedAnchorIndex = -1;
-        var numSegments = this._isClosed ? numAnchors : numAnchors-1;
-        for (var i = 0; i < numSegments; i++) {
-            var nextIndex = (i+1)%numAnchors;
-            //check if the point is close to the bezier segment between anchor i and anchor nextIndex
-            var controlPoints = [[this._Anchors[i].getPosX(),this._Anchors[i].getPosY(),this._Anchors[i].getPosZ()],
-                [this._Anchors[i].getNextX(),this._Anchors[i].getNextY(),this._Anchors[i].getNextZ()],
-                [this._Anchors[nextIndex].getPrevX(),this._Anchors[nextIndex].getPrevY(),this._Anchors[nextIndex].getPrevZ()],
-                [this._Anchors[nextIndex].getPosX(),this._Anchors[nextIndex].getPosY(),this._Anchors[nextIndex].getPosZ()]];
-            var point = [pickX, pickY, pickZ];
-            if (this._isWithinBoundingBox(point, controlPoints, radius)) {
-                //var intersectParam = this._checkIntersection(controlPoints, 0.0, 1.0, point, radius);
-                var intersectParam = this._checkIntersectionWithSamples(this._anchorSampleIndex[i], this._anchorSampleIndex[nextIndex], point, radius);
-                console.log("intersectParam:"+intersectParam);
-                if (intersectParam){
-                    retCode = retCode | this.SEL_PATH;
-                    retParam = intersectParam-i; //make the retParam go from 0 to 1
-                    this._selectedAnchorIndex = i;
-                    break;
+        if (!useLocal){
+            var numSegments = this._isClosed ? numAnchors : numAnchors-1;
+            var currAnchor = this._AnchorLocalCoords[0];
+            var nextAnchor = null;
+            for (var i = 0; i < numSegments; i++) {
+                var nextIndex = (i+1)%numAnchors;
+                //check if the point is close to the bezier segment between anchor i and anchor nextIndex
+                var controlPoints = [[this._Anchors[i].getPosX(),this._Anchors[i].getPosY(),this._Anchors[i].getPosZ()],
+                    [this._Anchors[i].getNextX(),this._Anchors[i].getNextY(),this._Anchors[i].getNextZ()],
+                    [this._Anchors[nextIndex].getPrevX(),this._Anchors[nextIndex].getPrevY(),this._Anchors[nextIndex].getPrevZ()],
+                    [this._Anchors[nextIndex].getPosX(),this._Anchors[nextIndex].getPosY(),this._Anchors[nextIndex].getPosZ()]];
+                var point = [pickX, pickY, pickZ];
+                if (this._isWithinBoundingBox(point, controlPoints, radius)) {
+                    //var intersectParam = this._checkIntersection(controlPoints, 0.0, 1.0, point, radius);
+                    var intersectParam = this._checkIntersectionWithSamples(this._anchorSampleIndex[i], this._anchorSampleIndex[nextIndex], point, radius);
+                    console.log("intersectParam:"+intersectParam);
+                    if (intersectParam){
+                        retCode = retCode | this.SEL_PATH;
+                        retParam = intersectParam-i; //make the retParam go from 0 to 1
+                        this._selectedAnchorIndex = i;
+                        break;
+                    }
                 }
+            }//for every anchor i
+        } else {
+            var selAnchorParam = this.pathSamplesLocalHitTest(pickX, pickY, pickZ, radius);
+            if (selAnchorParam[0]!== -1){
+                this._selectedAnchorIndex = selAnchorParam[0];
+                retParam = selAnchorParam[1];
+                retCode = retCode | this.SEL_PATH;
             }
-        }//for every anchor i
+        }
     }
     this._selectMode = retCode;
     return retParam;
