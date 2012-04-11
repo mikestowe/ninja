@@ -166,29 +166,27 @@ var Tween = exports.Tween = Montage.create(Component, {
 
     handleElementChange:{
         value:function (event) {
-        	
+            // temp - testing var
+        	var useAbsolute = true;
+
             if (event.detail.source && event.detail.source !== "tween") {
                 // check for correct element selection
-                if (this.application.ninja.selectedElements[0]!= this.parentComponent.parentComponent.animatedElement) {
+                if (this.application.ninja.selectedElements[0] != this.parentComponent.parentComponent.animatedElement) {
                     console.log("Wrong element selected for this keyframe track");
                 } else {
-                    // update tweenedProperties and tell containing track to update CSS rule
-                    // temp read only top and left.  need to change to loop over event details for prop changes generically
-                    if (this.parentComponent.parentComponent.animatedElement.offsetTop != this.tweenedProperties["top"] && this.parentComponent.parentComponent.animatedElement.offsetLeft != this.tweenedProperties["left"]) {
-                        this.tweenedProperties["top"] = this.parentComponent.parentComponent.animatedElement.offsetTop;
-                        this.tweenedProperties["left"] = this.parentComponent.parentComponent.animatedElement.offsetLeft;
-                        this.parentComponent.parentComponent.updateKeyframeRule();
+                    if(useAbsolute){
+                        this.setAbsoluteTweenProperties(event.detail);
+                    } else {
+                        this.setRelativeTweenProperties(event.detail);
                     }
-                    // highlight the tween's span
-                    this.tweenspan.highlightSpan();
-                    this.isTweenAnimated = true;
                 }
             }
         }
     },
 
     setAbsoluteTweenProperties:{
-        value:function () {
+        value:function (eventDetail) {
+            console.log(eventDetail);
             if (this.parentComponent.parentComponent.animatedElement.offsetTop != this.tweenedProperties["top"] && this.parentComponent.parentComponent.animatedElement.offsetLeft != this.tweenedProperties["left"]) {
                 this.tweenedProperties["top"] = this.parentComponent.parentComponent.animatedElement.offsetTop;
                 this.tweenedProperties["left"] = this.parentComponent.parentComponent.animatedElement.offsetLeft;
@@ -201,7 +199,7 @@ var Tween = exports.Tween = Montage.create(Component, {
     },
 
     setRelativeTweenProperties:{
-        value:function(){
+        value:function(eventDetail){
 
         }
     },
