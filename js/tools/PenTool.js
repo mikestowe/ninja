@@ -108,7 +108,8 @@ exports.PenTool = Montage.create(ShapeTool, {
             snapManager.enableSnapAlign(false);
 
             var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(x,y));
-            var unsnappedpos = DrawingToolBase.getHitRecPos(snapManager.snap(point.x, point.y, false));
+            var unsnappedpos = //snapManager.snap(point.x, point.y, false).calculateStageWorldPoint();
+                        DrawingToolBase.getHitRecPos(snapManager.snap(point.x, point.y, false));
             this._dragPlane = snapManager.getDragPlane();
 
             snapManager.enableElementSnap(elemSnap);
@@ -261,9 +262,9 @@ exports.PenTool = Montage.create(ShapeTool, {
                         if (!this._selectedSubpath.getIsClosed() || this._makeMultipleSubpaths) {
                             this._selectedSubpath.addAnchor(new AnchorPoint());
                             var newAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
-                            newAnchor.setPos(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2]);
-                            newAnchor.setPrevPos(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2]);
-                            newAnchor.setNextPos(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2]);
+                            newAnchor.setPos(swMousePos[0], swMousePos[1], swMousePos[2]);
+                            newAnchor.setPrevPos(swMousePos[0], swMousePos[1], swMousePos[2]);
+                            newAnchor.setNextPos(swMousePos[0], swMousePos[1], swMousePos[2]);
 
                             //set the mode so that dragging will update the next and previous locations
                             this._editMode = this.EDIT_PREV_NEXT;
@@ -274,9 +275,6 @@ exports.PenTool = Montage.create(ShapeTool, {
                             if (!this._selectedSubpath.getIsClosed()) {
                                 this._selectedSubpath.addAnchor(new AnchorPoint());
                                 var newAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
-                                /*newAnchor.setPos(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2]);
-                                newAnchor.setPrevPos(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2]);
-                                newAnchor.setNextPos(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2]);*/
                                 newAnchor.setPos(swMousePos[0], swMousePos[1], swMousePos[2]);
                                 newAnchor.setPrevPos(swMousePos[0], swMousePos[1], swMousePos[2]);
                                 newAnchor.setNextPos(swMousePos[0], swMousePos[1], swMousePos[2]);
