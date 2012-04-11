@@ -320,13 +320,22 @@ var HitRecord = exports.HitRecord = Object.create(Object.prototype,
 			var globalToLocal = glmat4.inverse( localToGlobal, [] );
 			var test3 = MathUtils.transformAndDivideHomogeneousPoint( globalPt, globalToLocal );
 			dist = vecUtils.vecDist(3, test3, localPt);
-			if (MathUtils.fpSign( vecUtils.vecDist(3, test3, localPt)) != 0)
+			if (MathUtils.fpSign(dist) != 0)
 			{
 				err = true;
 				console.log( "**** transform error 3 ***** " + dist + ", localPt: " + localPt );
 			}
 
-			if (!err)  console.log( "no hitRecord error" );
+			var objToStageWorld = viewUtils.getObjToStageWorldMatrix( elt, true );
+			var test4 = MathUtils.transformAndDivideHomogeneousPoint( localPt, objToStageWorld );
+			dist = vecUtils.vecDist(3, test4, stageWorldPt);
+			if (MathUtils.fpSign(dist) != 0)
+			{
+				err = true;
+				console.log( "**** transform error 4 ***** " + dist + ", localPt: " + localPt );
+			}
+
+			//if (!err)  console.log( "no hitRecord error" );
 		}
 	}
 });

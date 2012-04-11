@@ -565,6 +565,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                     var pt = hitRec.getScreenPoint();
                     this.upPoint.x = pt[0];
                     this.upPoint.y = pt[1];
+                    this.upPoint.z = pt[2];
 				}
 			}
         }

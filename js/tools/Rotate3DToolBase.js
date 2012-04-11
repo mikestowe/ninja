@@ -56,17 +56,23 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                     // move the transform origin handle
                     var dx = pt1.x - pt0.x;
                     var dy = pt1.y - pt0.y;
+					var dz = pt1.z - pt0.z;
+
                     this._origin[0] += dx;
                     this._origin[1] += dy;
+                    this._origin[2] += dz;
 
                     var len = this._targets.length;
                     if(len === 1)
                     {
                         this._startOriginArray[0][0] += dx;
                         this._startOriginArray[0][1] += dy;
+                        this._startOriginArray[0][2] += dz;
+						console.log( "Rotate3DToolBase.modifyElements, _startOriginArray[0]: " + this._startOriginArray[0] );
                     }
                     this.downPoint.x = pt1.x;
                     this.downPoint.y = pt1.y;
+                    this.downPoint.z = pt1.z;
                     this.DrawHandles();
                     return;
                 }
@@ -159,7 +165,22 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                 // pre-translate by the transformation center
                 var tMat = Matrix.I(4);
 
+				// _startOriginArray is the location of the center of rotation
+				// in view space of the element.  It is currently calculated during the drag
+				// using delta's in global screen space, hence wrong.
+				// We can put the transformCenter back in element view space here, however
+				// it would be (much) more efficient to cache the localToGlobal and
+				// globalToLocal matrices.
                 var transformCtr = this._startOriginArray[i];
+
+				var localToGlobalMat = viewUtils.getLocalToGlobalMatrix( elt );
+				var globalToLocalMat = glmat4.inverse( localToGlobalMat, [] );
+				var newTransformCtr = MathUtils.transformAndDivideHomogeneousPoint( this._origin, globalToLocalMat );
+				viewUtils.pushViewportObj( elt );
+				newTransformCtr = viewUtils.screenToView( newTransformCtr[0],  newTransformCtr[1], newTransformCtr[2] );
+				viewUtils.popViewportObj( elt );
+				//console.log( "transformCtr: " + newTransformCtr );
+				transformCtr = newTransformCtr;
 
                 tMat[12] = transformCtr[0];
                 tMat[13] = transformCtr[1];
@@ -267,6 +288,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
 
                     viewUtils.pushViewportObj( this.target );
                     var eltCtr = viewUtils.getCenterOfProjection();
+					eltCtr[2] = 0;
                     viewUtils.popViewportObj();
 
                     var ctrOffset = this.target.elementModel.props3D.m_transformCtr;
@@ -277,6 +299,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                     }
                     
                     this._origin = viewUtils.localToGlobal(eltCtr, this.target);
+					console.log( "Rotate3DToolBase.captureSelectionDrawn _origin: " + this._origin );
                     this._updateTargets();
                     this._setTransformOrigin(false);
                 }
@@ -533,6 +556,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
      */
     _showFeedbackOnMouseMove : {
         value: function (event) {
+			this._canSnap = false;
             if(this._target && this._handles)
             {
                 var len = this._handles.length;
@@ -550,7 +574,8 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                         this.application.ninja.stage.drawingCanvas.style.cursor = "move";
                         this._handleMode = i;
                         this._activateOriginHandle = true;
-                        return;
+                        this._canSnap = true;
+						return;
                     }
                     else if(c === 2)
                     {
@@ -566,6 +591,16 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
             this._activateOriginHandle = false;
    //            this.application.ninja.stage.drawingCanvas.style.cursor = this._cursor;
             this.application.ninja.stage.drawingCanvas.style.cursor = "auto";
+        }
+    },
+
+    getMousePoints: {
+        value: function()
+        {
+            var pt0 = { x:this.downPoint.x, y:this.downPoint.y, z:this.downPoint.z };
+            var pt1 = { x:this.upPoint.x, y:this.upPoint.y, z:this.upPoint.z };
+
+            return {pt0:pt0, pt1:pt1};
         }
     },
 
@@ -594,6 +629,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                 viewUtils.pushViewportObj( this.application.ninja.currentDocument.documentRoot );
             }
             var base = this._origin;
+			//console.log( "Rotate3DToolBase.DrawHandles, base: " + base );
 
             if( (this._handleMode !== null) && !this._activateOriginHandle )
             {
