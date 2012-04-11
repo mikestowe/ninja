@@ -19,8 +19,16 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 	///////////////////////////////////////////////////////////////////////
 	this._texture;
 
+   // the canvas generating the texture map (if there is one)
+	this._srcCanvas;	
+	this._srcWorld;
+
 	// texture attributes
-	this._texMapName = texMapName.slice();
+	if (typeof texMapName === "string")
+		this._texMapName = texMapName.slice();
+	else
+		this._srcCanvas = texMapName;
+		
 
 	// set default values for wrap and mips
 	if (wrap === undefined)
@@ -29,10 +37,6 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 		mips = true;
 	this._wrap = wrap;
 	this._mips = mips;
-
-   // the canvas generating the texture map (if there is one)
-	this._srcCanvas;	
-	this._srcWorld;
 
 	// cache whether or not the source is animated
 	this._isAnimated = false;
@@ -65,7 +69,9 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 		// determine if the source is a canvas or an image file
 		var viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
 		var root = viewUtils.application.ninja.currentDocument.documentRoot;
-		var srcCanvas = this.findCanvas( this._texMapName, root );
+		var srcCanvas = this._srcCanvas;
+		if (!srcCanvas)
+			srcCanvas = this.findCanvas( this._texMapName, root );
 		if (srcCanvas)
 		{
 			this._srcCanvas = srcCanvas;
@@ -169,7 +175,7 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 
 		// create the canvas and context to render into
 		var doc = srcCanvas.ownerDocument;
-		this._renderCanvas = doc.createElement("canvas");
+		this._renderCanvas = doc.createElement("texture_canvas");
 
 		this.render();
 

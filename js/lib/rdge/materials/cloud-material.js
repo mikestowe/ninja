@@ -20,7 +20,7 @@ var CloudMaterial = function CloudMaterial() {
 	this._name = "CloudMaterial";
 	this._shaderName = "cloud";
 
-	this._texMap = 'assets/images/cloud2.jpg';
+	this._texMap = 'assets/images/cloud10.png';
 	this._diffuseColor = [0.5, 0.5, 0.5, 0.5];
 
 	// base size of cloud polygons.  Random adjustments made to each quad
@@ -106,7 +106,8 @@ var CloudMaterial = function CloudMaterial() {
 
 	this.init = function( world )
 	{
-		var GLWorld = require("js/lib/drawing/world").World;
+		var GLWorld = require("js/lib/drawing/world").World,
+		    NJUtils = require("js/lib/NJUtils").NJUtils;
 
 		// save the world
 		if (world)  this.setWorld( world );
@@ -118,7 +119,8 @@ var CloudMaterial = function CloudMaterial() {
 		// create a canvas to render into
 		var doc = world.getCanvas().ownerDocument;
 		var canvasID = "__canvas__";
-		this._srcCanvas = doc.createElement(canvasID);
+		//this._srcCanvas = doc.createElement(canvasID);
+		this._srcCanvas = NJUtils.makeNJElement("canvas", canvasID, "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
 
 		// build a world to do the rendering
 		this._srcWorld = new GLWorld( this._srcCanvas, true );
@@ -157,7 +159,7 @@ var CloudMaterial = function CloudMaterial() {
 
 		// create the texture
 		var wrap = 'REPEAT',  mips = true;
-		this._glTex = new Texture( dstWorld, canvasID,  wrap, mips );
+		this._glTex = new Texture( world, this._srcCanvas,  wrap, mips );
 
 		// set the shader values in the shader
 		this.updateTexture();
@@ -213,7 +215,7 @@ var CloudMaterial = function CloudMaterial() {
 		RectangleGeometry.init();
 
 		var verts	= [],
-			norms	= [ [0,0,1], [0,0,1], [0,0,1], [0,0,1] ],
+			normals	= [ [0,0,1], [0,0,1], [0,0,1], [0,0,1] ],
 			uvs		= [ [0,0], [1,0], [1,1], [0,1] ];
 
 		for ( i = 0; i < 2; i++ )
