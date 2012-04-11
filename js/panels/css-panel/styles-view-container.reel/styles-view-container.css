@@ -4,6 +4,7 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 .sub-panel-slot {
+    background-color: #FFF;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-box-flex: 1;

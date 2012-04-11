@@ -28,7 +28,6 @@ exports.StylesViewContainer = Montage.create(Component, {
     },
     templateDidLoad : {
         value: function() {
-            console.log("styles view container - deserialized");
             this.eventManager.addEventListener('styleSheetsReady', this, false);
         }
     },
@@ -39,56 +38,15 @@ exports.StylesViewContainer = Montage.create(Component, {
     },
     handleSelectionChange: {
         value: function() {
-            var elements = this.application.ninja.selectedElements,
-                type, selection, ruleList;
+            var elements = this.application.ninja.selectedElements;
 
-            if(elements.length === 0) {
-                return false;
-            } else if(elements.length > 1) {
-                type = 'ELEMENTS';
-                selection = elements;
-            } else {
-                type = 'ELEMENT';
-                selection = elements[0];
-            }
+            if(elements.length === 0) { return false; }
 
-            ruleList = this.ruleListContainer._getRuleList({
-                selectionType : type,
-                selection : selection
-            });
-
-            if(ruleList) {
-                this.ruleListContainer.displayedList = ruleList;
-            } else {
-                this.ruleListContainer.add(type, selection);
-            }
-
+            this.ruleListContainer.displayListForSelection(elements);
             this.hasStyles = true;
         }
     },
 
-    _ruleList : {
-        value: []
-    },
-    ruleList : {
-        get: function() {
-            return this._ruleList;
-        },
-        set: function(list) {
-            if(!list) {
-                this._ruleList.length = 0;
-                return;
-            }
-
-            this._ruleList = list;
-            this.needsDraw = true;
-        }
-    },
-    prepareForDraw : {
-        value: function() {
-            console.log("styles view container - prepare for draw");
-        }
-    },
     draw : {
         value: function() {
             if(this.hasStyles) {

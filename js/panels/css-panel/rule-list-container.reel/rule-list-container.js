@@ -8,90 +8,11 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
 exports.RuleListContainer = Montage.create(Component, {
-    ruleListComponent : {
-        value: null
-    },
-    templateDidLoad: {
-        value: function() {
-            console.log('rule list container - tempalte did load');
-        }
-    },
-    _getRuleList : {
-        value: function(s) {
-            var ruleListsOfType, i, list, matchesAll;
+    _instanceToAdd     : { value: null },
+    _appendElement     : { value: null },
+    _lastDisplayedList : { value: null },
+    _displayedList     : { value: null },
 
-            ruleListsOfType = this.ruleLists.filter(function(list) {
-                return list.selectionType = s.selectionType;
-            });
-
-            for(i = 0; i<ruleListsOfType.length; i++) {
-                list = ruleListsOfType[i];
-
-                if(s.selectionType === 'elements') {
-                    matchesAll = list.selection.every(function(element, index, array) {
-                        return array.indexOf(element) !== 0;
-                    });
-
-                    if(matchesAll) {
-                        break;
-                    }
-                } else {
-                    ///// Selection (single element or stylesheet) is the same,
-                    ///// Use the existing rule list
-                    if(list.selection === s.selection) {
-                        break;
-                    }
-                }
-            }
-
-            return list;
-
-        }
-    },
-    ruleLists : {
-        value: []
-    },
-    add : {
-        value: function(type, selection) {
-            console.log("Rule List Container : add()");
-
-            var stylesController = this.application.ninja.stylesController,
-                listInstance = Montage.create(this.ruleListComponent),
-                container = document.createElement('div'),
-                rules;
-
-            if(type === 'ELEMENT') {
-                rules = stylesController.getMatchingRules(selection);
-            }
-
-            //listInstance.element = container;
-            this._instanceToAdd = listInstance;
-            listInstance.rules = rules;
-
-            this.appendElement = container;
-        }
-    },
-    _instanceToAdd : {
-        value: null
-    },
-    _appendElement : {
-        value: null
-    },
-    appendElement : {
-        get: function() {
-            return this._appendElement;
-        },
-        set: function(el) {
-            this._appendElement = el;
-            this.needsDraw = true;
-        }
-    },
-    _lastDisplayedList : {
-        value: null
-    },
-    _displayedList : {
-        value: null
-    },
     displayedList : {
         get: function() {
             return this._displayedList;
@@ -102,22 +23,106 @@ exports.RuleListContainer = Montage.create(Component, {
             this.needsDraw = true;
         }
     },
-    draw : {
-        value: function() {
-            if(this._lastDisplayedList) {
-                this._lastDisplayedList.style.display = 'none';
 
-                if(this._displayedList.element) {
-                    this._displayedList.style.display = null;
-                }
+    displayListForSelection : {
+        value: function(selection) {
+            var list = this._getListForSelection(selection);
+
+            if(!list) {
+                list = this.add(selection);
+            } else {
+                console.log("rule list found!");
             }
 
+            this.displayedList = list;
+        }
+    },
+
+    //// Get the element containing list based on selection
+    _getListForSelection : {
+        value: function(selection) {
+            var i, list, matchesAll;
+
+            for(i = 0; i<this.ruleLists.length; i++) {
+                list = this.ruleLists[i];
+
+                if(selection.length > 1) {
+                    matchesAll = list.selection.every(function(element, index, array) {
+                        return array.indexOf(element) !== 0;
+                    });
+
+                    if(matchesAll) {
+                        break;
+                    }
+                } else {
+                    ///// Selection (single element or stylesheet) is the same,
+                    ///// Use the existing rule list
+                    if(list.selection[0] === selection[0]) {
+                        break;
+                    }
+                }
+
+                list = null;
+            }
+
+            return list;
+
+        }
+    },
+
+    //// Creates a new rule list to be added to the container
+    add : {
+        value: function(selection) {
+            var stylesController = this.application.ninja.stylesController,
+                listInstance = Montage.create(this.ruleListComponent),
+                container = document.createElement('div'),
+                rules, ruleListLog;
+
+            if(selection.length === 1) {
+                rules = stylesController.getMatchingRules(selection[0]);
+            } //// TODO: support more selection types
+
+            this._instanceToAdd = listInstance;
+            listInstance.rules = rules;
+
+            ruleListLog = {
+                selection: selection,
+                component : listInstance
+            };
+
+            this.ruleLists.push(ruleListLog);
+
+            this._appendElement = container;
+            this.needsDraw = true;
+
+            return ruleListLog;
+        }
+    },
+
+    //// Array of lists that have been added to the container
+    //// Lists include selection type (element/stylesheet), and
+    //// the selection itself
+    ruleLists : {
+        value: [],
+        distinct: true
+    },
+
+    draw : {
+        value: function() {
             if(this._appendElement) {
                 this.element.appendChild(this._appendElement);
                 this._instanceToAdd.element = this._appendElement;
                 this._appendElement = null;
+                this.needsDraw = true;
+                return;
             }
 
+            if(this._lastDisplayedList) {
+                this._lastDisplayedList.component.element.style.display = 'none';
+                if(this._displayedList.component.element) {
+                    this._displayedList.component.element.style.display = null;
+                }
+            }
         }
     }
 });
