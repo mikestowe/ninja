@@ -1138,7 +1138,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
     getMatrixFromElement : {
         value: function(element, isStage) {
-            var xformStr = this.getElementStyle(element, "-webkit-transform", false, isStage),
+            var xformStr = this.getElementStyle(element, "-webkit-transform", true, isStage),
                 mat;
 
             if (xformStr) {
@@ -1171,26 +1171,29 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
     getPerspectiveDistFromElement : {
         value: function(element, isStage) {
-            var xformStr = this.getElementStyle(element, "-webkit-transform", false, isStage),
+            var xformStr = this.getElementStyle(element, "-webkit-perspective", false, isStage),
                 dist;
 
-            if (xformStr) {
-                var index1 = xformStr.indexOf( "perspective(");
-                if (index1 >= 0) {
-                    index1 += 12;    // do not include 'perspective('
-                    var index2 = xformStr.indexOf( ")", index1 );
-                    if (index2 >= 0) {
-                        var substr = xformStr.substr( index1, (index2-index1));
-                        if (substr && (substr.length > 0)) {
-                            dist = parseInt( substr );
+            if(xformStr) {
+                dist = parseInt(xformStr);
+            } else {
+                xformStr = this.getElementStyle(element, "-webkit-transform", true, isStage);
+                if (xformStr) {
+                    var index1 = xformStr.indexOf( "perspective(");
+                    if (index1 >= 0) {
+                        index1 += 12;    // do not include 'perspective('
+                        var index2 = xformStr.indexOf( ")", index1 );
+                        if (index2 >= 0) {
+                            var substr = xformStr.substr( index1, (index2-index1));
+                            if (substr && (substr.length > 0)) {
+                                dist = parseInt( substr );
+                            }
                         }
                     }
                 }
-            } else {
-                xformStr = this.getElementStyle(element, "-webkit-perspective", false, isStage);
-                if(xformStr) {
-                    dist = parseInt(xformStr);
-                }
+            }
+            if(isNaN(dist)) {
+                dist = null;
             }
             return dist;
         }
