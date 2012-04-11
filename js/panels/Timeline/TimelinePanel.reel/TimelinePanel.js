@@ -357,9 +357,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     
     draw: {
     	value: function() {
-    		
-
-    		
     		// Drag and Drop:
     		// Do we have a helper to append?
             if (this._appendHelper === true) {
@@ -395,8 +392,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 	            		this._dragAndDropHelper = null;
 	            		this._deleteHelper = false;
 	            	}
-	            } 
-	            
+	            }
     		}
     	}
     },
@@ -621,7 +617,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.selectedTweens = [];
             this._captureSelection = false;
             this._openDoc = false;
-//            this._firstTimeLoaded = true;
             this.end_hottext.value = 25;
             this.updateTrackContainerWidth();
             this.masterDuration = 0;
@@ -647,7 +642,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             if (this.application.ninja.documentController._documents.length > 0) {
                 this.enablePanel(true);
                 this.initTimelineForDocument();
-
             } else {
                 this.enablePanel(false);
             }
@@ -691,9 +685,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             var clickedPosition = event.target.offsetLeft + event.offsetX;
             this.playhead.style.left = (clickedPosition - 2) + "px";
             this.playheadmarker.style.left = clickedPosition + "px";
-            
-
-          	
             var currentMillisecPerPixel = Math.floor(this.millisecondsOffset / 80);
             var currentMillisec = currentMillisecPerPixel * clickedPosition;
             this.updateTimeText(currentMillisec);
@@ -799,15 +790,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 thingToPush.layerData.layerPosition = myIndex;
                 thingToPush.layerData.trackPosition = myIndex;
                 this.arrLayers.splice(myIndex, 0, thingToPush);
-
             } else {
                 thingToPush.layerData.layerPosition = myIndex;
                 this.arrLayers.splice(myIndex, 0, thingToPush);
 
             }
-
             this.selectLayer(myIndex);
-
         }
     },
 
@@ -870,22 +858,22 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
 
     searchHighestTrackDuration:{
-        value:function(){
+        value:function () {
 
             var trackDuration;
             var length = this.arrLayers.length;
-            if(length > 0){
-                trackDuration = this.arrLayers[length-1].layerData.trackDuration;
+            if (length > 0) {
+                trackDuration = this.arrLayers[length - 1].layerData.trackDuration;
                 length--;
-                while(length >=0){
-                    if(this.arrLayers[length].layerData.trackDuration > trackDuration){
+                while (length >= 0) {
+                    if (this.arrLayers[length].layerData.trackDuration > trackDuration) {
                         trackDuration = this.arrLayers[length].layerData.trackDuration;
                     }
                     length--;
                 }
                 this.masterDuration = trackDuration;
-            }else{
-                this.masterDuration = 0 ;
+            } else {
+                this.masterDuration = 0;
             }
         }
     },
