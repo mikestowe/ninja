@@ -227,7 +227,7 @@ exports.DrawingToolBase = Montage.create(Montage, {
 				//var planeMatInv = planeMat.inverse();
 				var planeMatInv = glmat4.inverse( planeMat, [] );
 				//var midPt = this.unprojectPoints( s0, s1, planeMat, planeMatInv, s1Proj );
-				var midPt = this.unprojectPoints( s0, s1, planeMat, planeMatInv, true );
+//				var midPt = this.unprojectPoints( s0, s1, planeMat, planeMatInv, true );
 
 				// get the 4 points of the bounding box in 2D space
 				p0 = MathUtils.transformPoint( s0, planeMatInv );
@@ -237,7 +237,7 @@ exports.DrawingToolBase = Montage.create(Montage, {
 				//midPt = s0.add(s1);
 				//midPt = midPt.multiply(0.5);
 				//midPt = MathUtils.makeDimension3(midPt);
-				midPt = vec3.add(s0, s1, []);
+				var midPt = vec3.add(s0, s1, []);
 				midPt = vecUtils.vecScale( 3, midPt, 0.5 );
 
 				// the mid point is now relative to the center of the 3D space.  To
@@ -371,6 +371,9 @@ exports.DrawingToolBase = Montage.create(Montage, {
 				// determine if the geometry is going to be projected.  If so a second projected rectangle is drawn
 				var isProjected = ((MathUtils.fpCmp(thePlane[2],1.0) !== 0) || (MathUtils.fpSign(thePlane[3]) !== 0));
 
+                // TODO - We no longer need to project drawing after perspective fix. Need to clean up this code.
+                // For now, just setting isProjected to false so rest of the drawing still works.
+                isProjected = false;
 				// get and draw the unprojected object points
 				var projPtArr = [];
 				if (isProjected)
@@ -442,7 +445,7 @@ exports.DrawingToolBase = Montage.create(Montage, {
             flatMat = divMat;
             flatMatSafe = MathUtils.scientificToDecimal(flatMat, 10);
 
-            return "perspective(" + 1400 + ") matrix3d(" + flatMatSafe + ")";
+            return "matrix3d(" + flatMatSafe + ")";
         }
     },
 
