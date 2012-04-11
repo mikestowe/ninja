@@ -342,6 +342,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.checkable_animated.addEventListener("click", this.handleAnimatedClick.bind(this), false);
             this.checkable_relative.addEventListener("click", this.handleRelativeClick.bind(this), false);
             this.checkable_absolute.addEventListener("click", this.handleAbsoluteClick.bind(this), false);
+            this.tl_configbutton.addEventListener("click", this.handleConfigButtonClick.bind(this), false);
+            document.addEventListener("click", this.handleDocumentClick.bind(this), false);
         }
     },
 
@@ -781,6 +783,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             thingToPush.layerData.isSelected = true;
             thingToPush.layerData._isFirstDraw = true;
             thingToPush.layerData.created = true;
+            
+            if (this.checkable_animated.classList.contains("checked")) {
+            	thingToPush.layerData.isVisible = false;
+            }
 
             for (i = 0; i < this.arrLayersLength; i++) {
                 this.arrLayers[i].layerData.isSelected = false;
@@ -808,35 +814,37 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     restoreLayer:{
         value:function (ele) {
 
-                var newLayerName, thingToPush = this.createLayerTemplate();
+            var newLayerName, thingToPush = this.createLayerTemplate();
 
-                this.currentLayerNumber = this.currentLayerNumber + 1;
-                newLayerName = "Layer " + this.currentLayerNumber;
+            this.currentLayerNumber = this.currentLayerNumber + 1;
+            newLayerName = "Layer " + this.currentLayerNumber;
 
-                if(ele.dataset.storedLayerName){
-                    newLayerName = ele.dataset.storedLayerName;
-                }
-                thingToPush.layerData.layerName = newLayerName;
-                thingToPush.layerData.layerID = this.currentLayerNumber;
-                thingToPush.layerData.layerTag = "<" + ele.nodeName.toLowerCase() + ">";
-                thingToPush.parentElementUUID = this.hashKey;
-                thingToPush.parentElement = this.application.ninja.currentSelectedContainer;
-                
-                // Are there styles to add?
-                thingToPush.layerData.arrLayerStyles = this.createLayerStyles();
-                thingToPush.layerData.arrStyleTracks = this.createStyleTracks();
+            if(ele.dataset.storedLayerName){
+                newLayerName = ele.dataset.storedLayerName;
+            }
+            thingToPush.layerData.layerName = newLayerName;
+            thingToPush.layerData.layerID = this.currentLayerNumber;
+            thingToPush.layerData.layerTag = "<" + ele.nodeName.toLowerCase() + ">";
+            thingToPush.parentElementUUID = this.hashKey;
+            thingToPush.parentElement = this.application.ninja.currentSelectedContainer;
+            if (this.checkable_animated.classList.contains("checked")) {
+            	thingToPush.layerData.isVisible = false;
+            }
+            // Are there styles to add?
+            thingToPush.layerData.arrLayerStyles = this.createLayerStyles();
+            thingToPush.layerData.arrStyleTracks = this.createStyleTracks();
 
-                if (this._openDoc) {
-                    thingToPush.layerData.elementsList.push(ele);
-                }
+            if (this._openDoc) {
+                thingToPush.layerData.elementsList.push(ele);
+            }
 
-                this.temparrLayers.splice(0, 0, thingToPush);
-                thingToPush.layerData.trackPosition = this.temparrLayers.length - 1;
-                thingToPush.layerData.layerPosition = this.temparrLayers.length - 1;
+            this.temparrLayers.splice(0, 0, thingToPush);
+            thingToPush.layerData.trackPosition = this.temparrLayers.length - 1;
+            thingToPush.layerData.layerPosition = this.temparrLayers.length - 1;
 
-                this._openDoc = false;
+            this._openDoc = false;
 
-//            }
+
         }
     },
 
@@ -1100,8 +1108,29 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             }
         }
     },
+    handleConfigButtonClick: {
+    	value: function(event) {
+    		event.stopPropagation();
+    		this.handleCheckableClick(event);
+    		
+    	}
+    },
+    handleDocumentClick: {
+    	value: function(event) {
+    		if (this.tl_configbutton.classList.contains("checked")) {
+    			this.tl_configbutton.classList.remove("checked");
+    		}
+    	}
+    },
+    
     handleAnimatedClick: {
     	value: function(event) {
+    		if (typeof(this.application.ninja.currentDocument) === "undefined") {
+    			return;
+    		}
+    		if (this.application.ninja.currentDocument == null) {
+    			return;
+    		}
     		this.handleCheckableClick(event);
     		this.application.ninja.currentDocument.boolShowOnlyAnimated = event.currentTarget.classList.contains("checked");
     		var boolHide = false,
@@ -1129,14 +1158,18 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
     handleRelativeClick: {
     	value: function(event) {
-    		this.handleCheckableClick(event);
+    		if (!event.currentTarget.classList.contains("checked")) {
+    			this.handleCheckableClick(event);
+    		}
     		this.checkable_absolute.classList.remove("checked");
     		// TODO: Use relative positioning
     	}
     },
     handleAbsoluteClick: {
     	value: function(event) {
-    		this.handleCheckableClick(event);
+    		if (!event.currentTarget.classList.contains("checked")) {
+    			this.handleCheckableClick(event);
+    		}
     		this.checkable_relative.classList.remove("checked");
     		// TODO: Use absolute positioning.
     	}
