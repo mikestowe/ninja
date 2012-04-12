@@ -5,10 +5,17 @@
  </copyright> */
 
 .style-item {
+
+    cursor: url(/js/../images/tools/hand_down.png), default;
     display: block;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+.style-item:hover {
+    background-color: #fafafa;
+    border-right: 3px double #999;
+    margin-right: 1px;
 }
 .style-item input {
     height: 10px;
@@ -25,6 +32,7 @@
 .css-property, .css-value {
     border: 1px solid rgba(0,0,0,0);
     border-radius: 2px;
+    cursor: pointer;
     margin: 0;
     outline: none;
     padding: 0 2px;
@@ -50,9 +58,11 @@
     display: inline;
 }
 .style-item .editable {
+    background-color: transparent;
     border: 1px solid #999;
     box-shadow: 1px 1px 1px #CCC;
     color: #333;
+    cursor: text;
     display: inline-block;
     margin-right: 7px;
     max-width: none;
