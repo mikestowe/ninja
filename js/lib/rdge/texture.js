@@ -159,6 +159,8 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 	var __texCounter = 0;
 	this.loadFromCanvas = function()
 	{
+		var NJUtils = require("js/lib/NJUtils").NJUtils;
+		
 		var srcCanvas = this._srcCanvas;
 		var wrap = this._wrap;
 		var mips = this._mips;
@@ -175,7 +177,8 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 
 		// create the canvas and context to render into
 		var doc = srcCanvas.ownerDocument;
-		this._renderCanvas = doc.createElement("texture_canvas");
+		//this._renderCanvas = doc.createElement("texture_canvas");
+		this._renderCanvas = NJUtils.makeNJElement("canvas", "texture_canvas", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
 
 		this.render();
 

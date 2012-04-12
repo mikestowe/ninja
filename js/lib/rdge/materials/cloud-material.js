@@ -188,6 +188,8 @@ var CloudMaterial = function CloudMaterial() {
 		var material = this._materialNode;
 		if (material)
 		{
+			if (this._srcWorld)  this._srcWorld.draw();
+
 			var technique = material.shaderProgram['default'];
 			var renderer = g_Engine.getContext().renderer;
 			if (renderer && technique) {
