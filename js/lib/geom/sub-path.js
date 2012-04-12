@@ -1354,6 +1354,7 @@ GLSubpath.prototype.buildLocalCoord = function () {
         var localPoint = [this._samples[3*i],this._samples[3*i+1],this._samples[3*i+2]];
         localPoint[0]-= stageWorldCenter[0];
         localPoint[1]-= stageWorldCenter[1];
+        localPoint[2]-= stageWorldCenter[2];
 
         // ***** unproject all the centered points and convert them to 2D (plane space)*****
         // (undo the projection step performed by the browser)
