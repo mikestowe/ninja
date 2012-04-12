@@ -898,7 +898,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:function(event){
             this.currentLayerSelected.layerData.elementsList.pop();
             this.currentLayerSelected.layerData.elementsList.push(event.detail.data.newChild);
-            TimelineTrack.animatedElement = event.detail.data.newChild;
+            this.currentLayerSelected.layerData.animatedElement = event.detail.data.newChild;
         }
     },
 
