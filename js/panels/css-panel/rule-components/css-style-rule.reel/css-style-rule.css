@@ -26,3 +26,24 @@
     text-decoration: none;
     font-family: "Droid Sans", sans-serif;
 }
+.css-style-rule-item .nj-css-selector {
+    position: relative;
+    border: 1px solid rgba(0,0,0,0);
+}
+.css-style-rule-item .nj-css-selector.editable {
+    border: 1px solid #999;
+    border-radius: 3px;
+    box-shadow: 1px 1px 1px #CCC;
+    color: #333;
+    display: inline-block;
+    margin-right: 7px;
+    max-width: none;
+    overflow: visible;
+    -webkit-user-select: text;
+}
+.css-style-rule-item .nj-css-selector:after {
+    position: absolute;
+
+    right: -10px;
+
+}

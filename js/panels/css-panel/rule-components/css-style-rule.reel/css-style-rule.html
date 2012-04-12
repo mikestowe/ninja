@@ -33,9 +33,10 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 }
             },
             "selector": {
-                "module": "montage/ui/dynamic-text.reel",
-                "name" : "DynamicText",
+                "module": "js/components/hintable.reel",
+                "name" : "Hintable",
                 "properties": {
+                    "startOnEvent": "click",
                     "element": {"#": "rule-selector"}
                 },
                 "bindings": {
@@ -64,7 +65,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
     </script>
 </head>
 <body>
-<li id="rule-item" class="css-style-rule-item">
+<li data-montage-id="rule-item" class="css-style-rule-item">
     <div class="style-rule-heading">
         <a href="#" id="style-sheet-name" class="style-sheet-name"></a>
         <span id="rule-selector" class="nj-css-selector"></span>
