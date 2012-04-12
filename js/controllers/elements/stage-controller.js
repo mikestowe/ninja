@@ -90,7 +90,7 @@ exports.StageController = Montage.create(ElementController, {
                         return el.elementModel.stageView.style.getProperty(p);
                     }
                 default:
-                    return ElementController.getProperty(el, p, false, true);
+                    return ElementController.getProperty(el, p, true, true);
                     //console.log("Undefined Stage property ", p);
             }
         }
@@ -119,6 +119,7 @@ exports.StageController = Montage.create(ElementController, {
                     break;
                 case "-webkit-transform-style":
                     el.elementModel.stageView.style.setProperty(p, value);
+                    this.application.ninja.stage.updatedStage = true;
                     break;
                 default:
                     console.log("Undefined property ", p, "for the Stage Controller");
@@ -178,5 +179,20 @@ exports.StageController = Montage.create(ElementController, {
                 return mat;
             }
         }
-    }
+    },
+
+    getPerspectiveDist: {
+        value: function(el) {
+            if(el.elementModel && el.elementModel.props3D && el.elementModel.props3D.perspectiveDist)
+            {
+                return el.elementModel.props3D.perspectiveDist;
+            }
+            else
+            {
+                var dist = this.application.ninja.stylesController.getPerspectiveDistFromElement(el, true);
+                el.elementModel.props3D.perspectiveDist = dist;
+                return dist;
+            }
+        }
+    },
 });

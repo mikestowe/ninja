@@ -249,10 +249,6 @@ exports.ElementController = Montage.create(Component, {
             else
             {
                 var dist = this.application.ninja.stylesController.getPerspectiveDistFromElement(el, false);
-                if(dist == null) {
-                    dist = 1400;
-                }
-
                 el.elementModel.props3D.perspectiveDist = dist;
                 return dist;
             }
@@ -266,8 +262,12 @@ exports.ElementController = Montage.create(Component, {
                 mat = props[index]["mat"];
             this.application.ninja.stylesController.setElementStyle(el,
                                                                     "-webkit-transform",
-                                                                    "perspective(" + dist + ") " +
                                                                     "matrix3d(" + MathUtils.scientificToDecimal(mat, 5) + ")");
+
+            // TODO - We don't support perspective on individual elements yet
+//            this.application.ninja.stylesController.setElementStyle(el,
+//                                                                    "-webkit-perspective",
+//                                                                    dist);
 
             el.elementModel.props3D.matrix3d = mat;
             el.elementModel.props3D.perspectiveDist = dist;
