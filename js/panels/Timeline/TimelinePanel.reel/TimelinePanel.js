@@ -485,6 +485,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                              "deleteLayer",
                              "elementAdded",
                              "elementsRemoved",
+                             "elementReplaced",
                              "selectionChange"],
                 i,
                 arrEventsLength = arrEvents.length;
@@ -890,6 +891,14 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:function (event) {
             var deleteElements = event.detail;
             this.deleteLayer(deleteElements);
+        }
+    },
+
+    handleElementReplaced:{
+        value:function(event){
+            this.currentLayerSelected.layerData.elementsList.pop();
+            this.currentLayerSelected.layerData.elementsList.push(event.detail.data.newChild);
+            TimelineTrack.animatedElement = event.detail.data.newChild;
         }
     },
 
