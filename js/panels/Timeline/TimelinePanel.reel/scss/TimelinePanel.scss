@@ -313,9 +313,12 @@
 }
 
 /* Configuration menu */
+.layer-master {
+	position: relative;
+}
 .tl-configbutton {
 	position: absolute;
-	top: 23px;
+	top: 0px;
 	right: 2px;
 	width: 20px;
 	height: 20px;
@@ -340,7 +343,7 @@
 	box-shadow: 2px 2px 2px $color-app-shadow;
 	display: none;
 }
-.tl-configbutton:hover .tl-dropdown {
+.tl-configbutton.checked .tl-dropdown {
 	display: block;
 }
 
