@@ -809,7 +809,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 }
                 thingToPush.layerData.layerName = newLayerName;
                 thingToPush.layerData.layerID = this.currentLayerNumber;
-                thingToPush.parentElementUUID = this.hashKey;
                 thingToPush.parentElement = this.application.ninja.currentSelectedContainer;
                 
                 // Are there styles to add?
@@ -841,7 +840,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     var myIndex = this.layerRepetition.selectedIndexes[0];
                     this.arrLayers.splice(myIndex, 1);
                     var selectIndex = this.arrLayers.length;
-                    this.searchHighestTrackDuration();
+                    this.resetMasterDuration();
                     if(selectIndex>0){
                         this.selectLayer(selectIndex-1);
                     }
@@ -851,7 +850,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
-    searchHighestTrackDuration:{
+    resetMasterDuration:{
         value:function(){
 
             var trackDuration;
