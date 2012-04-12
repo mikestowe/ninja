@@ -26,7 +26,7 @@ var FlatMaterial = function FlatMaterial() {
 	this.getShaderName			= function()	{  return this._shaderName;	};
 
 	this.isAnimated				= function()	{  return false;			};
-	this.hasVertexDeformation	= function()	{  return true;				};
+	this.hasVertexDeformation	= function()	{  return false;			};
 	this._hasVertexDeformation = true;
 	this._vertexDeformationTolerance = 0.2;
 

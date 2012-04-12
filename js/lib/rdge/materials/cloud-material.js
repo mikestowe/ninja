@@ -31,7 +31,7 @@ var CloudMaterial = function CloudMaterial() {
 
 	// parameter initial values
 	this._time			= 0.0;
-	this._surfaceAlpha	= 0.5;
+	this._surfaceAlpha	= 1.0;
 	this._zmin			= 0.1;
 	this._zmax			= 10.0;
 
@@ -125,6 +125,7 @@ var CloudMaterial = function CloudMaterial() {
 		// build a world to do the rendering
 		this._srcWorld = new GLWorld( this._srcCanvas, true );
 		var srcWorld = this._srcWorld;
+		this._srcCanvas.__GLWorld = srcWorld;
 
 		// build the geometry
 		var prim = this.buildGeometry();
@@ -174,11 +175,15 @@ var CloudMaterial = function CloudMaterial() {
 			if (renderer && technique) {
 				var texMapName = this._propValues[this._propNames[0]];
 				var wrap = 'REPEAT',  mips = true;
-				var tex = this.loadTexture( texMapName, wrap, mips );
-
-				if (tex) {
-					technique.u_tex0.set( tex );
+				//var tex = this.loadTexture( texMapName, wrap, mips );
+                if (this._glTex)
+                {
+                    this._glTex.render();
+                    var tex = this._glTex.getTexture();
+					if (tex)
+						technique.u_tex0.set( tex );
                 }
+
 			}
 		}
 	};

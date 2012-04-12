@@ -75,16 +75,19 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 		if (srcCanvas)
 		{
 			this._srcCanvas = srcCanvas;
-			if (srcCanvas.elementModel && srcCanvas.elementModel.shapeModel && srcCanvas.elementModel.shapeModel.GLWorld)
+			var srcWorld
+			if (srcCanvas.elementModel && srcCanvas.elementModel.shapeModel  && srcCanvas.elementModel.shapeModel.GLWorld)
+			 srcWorld = srcCanvas.elementModel.shapeModel.GLWorld;
+			if (!srcWorld)  srcWorld = srcCanvas.__GLWorld;
+			if (srcWorld)
 			{
-				this._srcWorld = srcCanvas.elementModel.shapeModel.GLWorld;
+				this._srcWorld = srcWorld;
 
 				// add a notifier to the world
-				this._srcWorld.addListener( this,  this.worldCallback,  { srcWorld: this._srcWorld } );
+				srcWorld.addListener( this,  this.worldCallback,  { srcWorld: this._srcWorld } );
 
 				// check if the source is animated
-				if (srcCanvas.elementModel && srcCanvas.elementModel.shapeModel  && srcCanvas.elementModel.shapeModel.GLWorld)
-					this._isAnimated = this._srcWorld._hasAnimatedMaterials;
+				this._isAnimated = srcWorld._hasAnimatedMaterials;
 			}
 
 			this.loadFromCanvas();
