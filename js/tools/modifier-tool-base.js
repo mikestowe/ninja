@@ -901,12 +901,16 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 			this.application.ninja.stage.draw();
 			if (this._targets && (this._targets.length > 1))
 			{
-				this._origin = null;
+				//this._origin = null;
 				this._updateHandlesOrigin();
 			}
             this.DrawHandles();
         }
     },
+
+	_updateHandlesOrigin: {
+		value: function () { }
+	},
 
     handleToolDoubleClick: {
         value: function(event) {

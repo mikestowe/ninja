@@ -112,13 +112,6 @@ exports.ViewUtils = Montage.create(Component, {
             var mat = this.getMatrixFromElement(elt);
             var plane = [mat[8],  mat[9],  mat[10],  mat[11]];
 
-            var stage = this.application.ninja.currentDocument.documentRoot;
-			if (elt === stage)
-			{
-				xVec = [1,0,0];
-				yVec = [0,1,0];
-			}
-
             // The translation value is a point on the plane
             this.pushViewportObj( elt );
             var ptOnPlane = this.getCenterOfProjection();

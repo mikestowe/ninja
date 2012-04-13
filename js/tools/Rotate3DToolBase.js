@@ -14,7 +14,8 @@ var Montage = require("montage/core/core").Montage,
     viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils,
     vecUtils = require("js/helper-classes/3D/vec-utils").VecUtils,
     drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils,
-    ElementsMediator = require("js/mediators/element-mediator").ElementMediator;
+    ElementsMediator = require("js/mediators/element-mediator").ElementMediator,
+	Rectangle = require("js/helper-classes/3D/rectangle").Rectangle;
 
 exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
 	_canSnap: { value: false },
@@ -61,14 +62,22 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                     this._origin[0] += dx;
                     this._origin[1] += dy;
                     this._origin[2] += dz;
+					console.log( "modifyElements, _origin: " + this._origin );
 
                     var len = this._targets.length;
                     if(len === 1)
                     {
-                        this._startOriginArray[0][0] += dx;
-                        this._startOriginArray[0][1] += dy;
-                        this._startOriginArray[0][2] += dz;
-						console.log( "Rotate3DToolBase.modifyElements, _startOriginArray[0]: " + this._startOriginArray[0] );
+//                        this._startOriginArray[0][0] += dx;
+//                        this._startOriginArray[0][1] += dy;
+//                        this._startOriginArray[0][2] += dz;
+						var g2lMat = this._targets[0].g2l;
+						var localOrigin = MathUtils.transformAndDivideHomogeneousPoint( this._origin, g2lMat );
+						var elt = this._targets[0].elt;
+						viewUtils.pushViewportObj( elt );
+						var viewOrigin = viewUtils.screenToView( localOrigin[0], localOrigin[1], localOrigin[2] );
+						viewUtils.popViewportObj();
+						this._startOriginArray[0] = viewOrigin;
+						//console.log( "Rotate3DToolBase.modifyElements, _startOriginArray[0]: " + this._startOriginArray[0] );
                     }
                     this.downPoint.x = pt1.x;
                     this.downPoint.y = pt1.y;
@@ -139,8 +148,10 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                 }
             }
 
+
             if(this._inLocalMode && (this._targets.length === 1) )
             {
+				console.log( "modifyElements: rotateLocally " );
                 this._rotateLocally(mat);
             }
             else
@@ -166,21 +177,8 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                 var tMat = Matrix.I(4);
 
 				// _startOriginArray is the location of the center of rotation
-				// in view space of the element.  It is currently calculated during the drag
-				// using delta's in global screen space, hence wrong.
-				// We can put the transformCenter back in element view space here, however
-				// it would be (much) more efficient to cache the localToGlobal and
-				// globalToLocal matrices.
+				// in view space of the element.  
                 var transformCtr = this._startOriginArray[i];
-
-				var localToGlobalMat = viewUtils.getLocalToGlobalMatrix( elt );
-				var globalToLocalMat = glmat4.inverse( localToGlobalMat, [] );
-				var newTransformCtr = MathUtils.transformAndDivideHomogeneousPoint( this._origin, globalToLocalMat );
-				viewUtils.pushViewportObj( elt );
-				newTransformCtr = viewUtils.screenToView( newTransformCtr[0],  newTransformCtr[1], newTransformCtr[2] );
-				viewUtils.popViewportObj( elt );
-				//console.log( "transformCtr: " + newTransformCtr );
-				transformCtr = newTransformCtr;
 
                 tMat[12] = transformCtr[0];
                 tMat[13] = transformCtr[1];
@@ -218,6 +216,8 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
 
                 var transformCtr = this._startOriginArray[i].slice(0);
                 transformCtr = MathUtils.transformPoint(transformCtr, curMat);
+
+				console.log( "modifyElements: rotateGlobally, ctr: " + transformCtr );
 
                 tMat[12] = transformCtr[0];
                 tMat[13] = transformCtr[1];
@@ -306,11 +306,12 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                 else
                 {
                     this.target = this.application.ninja.currentDocument.documentRoot;
-                    this._origin = drawUtils._selectionCtr.slice(0);
-                    this._origin[0] += this.application.ninja.stage.userContentLeft;
-                    this._origin[1] += this.application.ninja.stage.userContentTop;
+                    //this._origin = drawUtils._selectionCtr.slice(0);
+                    //this._origin[0] += this.application.ninja.stage.userContentLeft;
+                    //this._origin[1] += this.application.ninja.stage.userContentTop;
                     this._updateTargets();
-                    this._setTransformOrigin(true);
+ 					this._origin = this.calculateMultiSelOrigin();
+					this._setTransformOrigin(true);
                 }
             }
             else
@@ -326,8 +327,15 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
         }
     },
 
+	/*
+	_updateHandlesOrigin: {
+		value: function () { }
+	},
+	*/
+
     _updateTargets: {
         value: function(addToUndoStack) {
+			console.log( "Rotate3DToolBase._updateTargets" );
             var newStyles = [],
                 previousStyles = [],
                 len = this.application.ninja.selectedElements.length;
@@ -345,10 +353,14 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                 var eltCtr = viewUtils.getCenterOfProjection();
                 viewUtils.popViewportObj();
 
-                eltCtr = viewUtils.localToGlobal(eltCtr, elt);
+				// cache the local to global and global to local matrices
+				var l2gMat = viewUtils.getLocalToGlobalMatrix( elt );
+				var g2lMat = glmat4.inverse( l2gMat, [] );
+				eltCtr = MathUtils.transformAndDivideHomogeneousPoint( eltCtr, l2gMat );
 
-                this._targets.push({elt:elt, mat:curMat, matInv:curMatInv, ctr:eltCtr});
-                if(addToUndoStack)
+                this._targets.push({elt:elt, mat:curMat, matInv:curMatInv, ctr:eltCtr,  l2g:l2gMat,  g2l:g2lMat});
+                
+				if(addToUndoStack)
                 {
                     var previousStyleStr = {dist:this._undoArray[i].dist, mat:MathUtils.scientificToDecimal(this._undoArray[i].mat.slice(0), 5)};
 
@@ -379,12 +391,54 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
         }
     },
 
+	calculateMultiSelOrigin: 
+	{
+		value: function()
+		{
+			var minPt,  maxPt, i,j;
+			this._startOriginArray = [];
+			var len = this.application.ninja.selectedElements.length;
+			for (i = 0; i < len; i++)
+			{
+				// get the next element and localToGlobal matrix
+				elt = this._targets[i].elt;
+				var l2g = this._targets[i].l2g;
+
+				// get the element bounds in 'plane' space
+				bounds = viewUtils.getElementViewBounds3D( elt );
+				for (j=0;  j<4;  j++)
+				{
+					var localPt = bounds[j];
+					//var pt = MathUtils.transformAndDivideHomogeneousPoint( localPt, l2g );
+					var pt = viewUtils.localToStageWorld( localPt, elt );
+					if (!minPt)
+					{
+						minPt = pt.slice();
+						maxPt = pt.slice();
+					}
+					else
+					{
+						minPt[0] = Math.min(minPt[0],pt[0]);  minPt[1] = Math.min(minPt[1],pt[1]);  minPt[2] = Math.min(minPt[2],pt[2]);
+						maxPt[0] = Math.max(maxPt[0],pt[0]);  maxPt[1] = Math.max(maxPt[1],pt[1]);  maxPt[2] = Math.max(maxPt[2],pt[2]);
+					}
+				}
+			}
+			var stageWorldCtr = [ 0.5*(minPt[0] + maxPt[0]),  0.5*(minPt[1] + maxPt[1]), 0.5*(minPt[2] + maxPt[2]) ];
+			var globalCtr = MathUtils.transformAndDivideHomogeneousPoint( stageWorldCtr, viewUtils.getStageWorldToGlobalMatrix() );
+			console.log( "resetting _origin to: " + this._origin );
+
+			return globalCtr;
+		}
+	},
+
     _setTransformOrigin: {
         value: function(shouldUpdateCenter) {
             if(!this._origin)
             {
                 return;
             }
+			console.log( "_setTransformOrigin, _activateOriginHandle: " +  this._activateOriginHandle );
+
             var len = this._targets.length;
             var elt,
                 eltCtr,
@@ -396,13 +450,14 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
 
                 if(shouldUpdateCenter)
                 {
-                    eltCtr = this._targets[0].ctr;
-                    ctrOffset = vecUtils.vecSubtract(3, this._origin, eltCtr);
+//                    eltCtr = this._targets[0].ctr;
+//                    ctrOffset = vecUtils.vecSubtract(3, this._origin, eltCtr);
 
-                    matInv = this._targets[0].matInv;
-                    ctrOffset = MathUtils.transformVector(ctrOffset, matInv);
+//                    matInv = this._targets[0].matInv;
+//                    ctrOffset = MathUtils.transformVector(ctrOffset, matInv);
 
-                    elt.elementModel.props3D.m_transformCtr = ctrOffset;
+//                    elt.elementModel.props3D.m_transformCtr = ctrOffset;
+					elt.elementModel.props3D.m_transformCtr = this._startOriginArray[0].slice();
                 }
                 else
                 {
@@ -412,21 +467,41 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                     {
                         ctrOffset = [0,0,0];
                     }
+					this._startOriginArray[0] = ctrOffset;
                 }
-                this._startOriginArray[0] = ctrOffset;
             }
             else
             {
-                // Update transform ctr for all elements if transform origin was modified
-                this._startOriginArray = [];
-                for (var i = 0; i < len; i++) {
-                    elt = this._targets[i].elt;
-                    eltCtr = this._targets[i].ctr;
-                    ctrOffset = vecUtils.vecSubtract(3, this._origin, eltCtr);
-                    matInv = this._targets[i].matInv;
-                    ctrOffset = MathUtils.transformVector(ctrOffset, matInv);
-
+				/*
+               this._startOriginArray = [];
+               for (var i = 0; i < len; i++) {
+                   elt = this._targets[i].elt;
+                   eltCtr = this._targets[i].ctr;
+                   ctrOffset = vecUtils.vecSubtract(3, this._origin, eltCtr);
+                   matInv = this._targets[i].matInv;
+                   ctrOffset = MathUtils.transformVector(ctrOffset, matInv);
                     this._startOriginArray[i] = ctrOffset;
+				}
+				*/
+				
+				// Update transform ctr for all elements if transform origin was modified
+				if (!this._origin)  this._origin = this.calculateMultiSelOrigin();
+				var globalCtr = this._origin;
+				for (i=0;  i<len;  i++)
+				{
+					// get the next element and localToGlobal matrix
+                    elt = this._targets[i].elt;
+					var l2g = viewUtils.getLocalToGlobalMatrix( elt );
+					var g2l = glmat4.inverse( l2g, [] );
+					this._targets[i].g2l = g2l;
+					this._targets[i].l2g = l2g;
+
+					var localCtr = MathUtils.transformAndDivideHomogeneousPoint(globalCtr,  g2l);
+					viewUtils.pushViewportObj( elt );
+					localCtr = viewUtils.screenToView( localCtr[0],  localCtr[1],  localCtr[2] );
+					viewUtils.popViewportObj();
+
+                    this._startOriginArray[i] = localCtr;
                 }
             }
         }
