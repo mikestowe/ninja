@@ -33,19 +33,16 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
 
     _areElementsOnSamePlane : {
         value: function () {
-            if(this._targets && this._targets.length)
-            {
-                var len = this._targets.length;
+            if(this.application.ninja.selectedElements.length) {
+                var len = this.application.ninja.selectedElements.length;
                 var plane = this.application.ninja.stage.stageDeps.snapManager.getDragPlane();
-                for(var i = 0; i < len; i++)
-                {
-                    var elt = this._targets[i].elt;
-                    if(!this.application.ninja.stage.stageDeps.snapManager.elementIsOnPlane(elt, plane))
-                    {
+                for(var i = 0; i < len; i++) {
+                    if(!this.application.ninja.stage.stageDeps.snapManager.elementIsOnPlane(this.application.ninja.selectedElements[i], plane)) {
                         return false;
                     }
                 }
             }
+
             return true;
         }
     },
@@ -296,160 +293,126 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
     },
 
     _updateTargets: {
-        value: function(addToUndoStack) {
-            var newLeft = [],
-                newTop = [],
-                newWidth = [],
-                newHeight = [],
-                newStyles = [],
-                previousLeft = [],
-                previousTop = [],
-                previousWidth = [],
-                previousHeight = [],
-                previousStyles = [];
-            var len = this.application.ninja.selectedElements.length;
-            this._targets = [];
-            for(var i = 0; i < len; i++) {
-                var elt = this.application.ninja.selectedElements[i];
+        value: function(addToUndo) {
+            var modObject = [], mod3dObject = [], self = this;
 
-                var curMat = viewUtils.getMatrixFromElement(elt);
-                var curMatInv = glmat4.inverse(curMat, []);
+            this.application.ninja.selectedElements.forEach(function(element) {
 
-                this._targets.push({elt:elt, mat:curMat, matInv:curMatInv});
-                if(addToUndoStack) {
-                    var prevX,
-                        prevY,
-                        prevW,
-                        prevH,
-                        _x,
-                        _y,
-                        _w,
-                        _h,
-                        previousMat,
-                        previousStyleStr,
-                        newStyleStr;
+                if(addToUndo) {
+                    if(!self._use3DMode) {
+                        var prevX = element.elementModel.getProperty("x");
+                        var prevY = element.elementModel.getProperty("y");
+                        var prevW = element.elementModel.getProperty("w");
+                        var prevH = element.elementModel.getProperty("h");
+                        var x = ElementsMediator.getProperty(element, "left");
+                        var y = ElementsMediator.getProperty(element, "top");
+                        var w = ElementsMediator.getProperty(element, "width");
+                        var h = ElementsMediator.getProperty(element, "height");
 
-                    if(!this._use3DMode) {
-                        prevX = this._undoArray[i]._x;
-                        prevY = this._undoArray[i]._y;
-                        prevW = this._undoArray[i]._w;
-                        prevH = this._undoArray[i]._h;
-                        _x = parseInt(ElementsMediator.getProperty(elt, "left"));
-                        _y = parseInt(ElementsMediator.getProperty(elt, "top"));
-                        _w = parseInt(ElementsMediator.getProperty(elt, "width"));
-                        _h = parseInt(ElementsMediator.getProperty(elt, "height"));
+                        // if we have a delta, that means the transform handles were used and
+                        // we should update the width and height too.  Otherwise, just update left and top.
+                        if(this.delta) {
+                            modObject.push({element:element, properties:{left: x, top:y, width: w, height: h}, previousProperties: {left: prevX, top:prevY, width: prevW, height: prevH}});
+                        } else {
+                            modObject.push({element:element, properties:{left: x, top:y}, previousProperties: {left: prevX, top:prevY}});
+                        }
 
-                        previousLeft.push(prevX + "px");
-                        previousTop.push(prevY + "px");
-                        previousWidth.push(prevW + "px");
-                        previousHeight.push(prevH + "px");
-                        newLeft.push(_x + "px");
-                        newTop.push(_y + "px");
-                        newWidth.push(_w + "px");
-                        newHeight.push(_h + "px");
-                    }
-                    else
-                    {
-                        previousMat = this._undoArray[i].mat.slice(0);
-                        prevW = this._undoArray[i]._w;
-                        prevH = this._undoArray[i]._h;
-                        _w = parseInt(ElementsMediator.getProperty(elt, "width"));
-                        _h = parseInt(ElementsMediator.getProperty(elt, "height"));
-                        previousWidth.push(prevW + "px");
-                        previousHeight.push(prevH + "px");
-                        newWidth.push(_w + "px");
-                        newHeight.push(_h + "px");
+                    } else {
+                        // Not using the 3d mode
+                        var previousMat = element.elementModel.getProperty("mat").slice(0);
+                        var prevW = element.elementModel.getProperty("w");
+                        var prevH = element.elementModel.getProperty("h");
+                        var w = ElementsMediator.getProperty(element, "width");
+                        var h = ElementsMediator.getProperty(element, "height");
 
-                        previousStyleStr = {dist:this._undoArray[i].dist,
-                                                mat:MathUtils.scientificToDecimal(previousMat, 5)};
-                        newStyleStr = {dist:viewUtils.getPerspectiveDistFromElement(elt),
-                                            mat:MathUtils.scientificToDecimal(curMat, 5)};
-                        previousStyles.push(previousStyleStr);
-                        newStyles.push(newStyleStr);
+                        var previousStyleStr = {dist:element.elementModel.getProperty("dist"), mat:MathUtils.scientificToDecimal(previousMat, 5)};
+                        var newStyleStr = {dist:viewUtils.getPerspectiveDistFromElement(element), mat:MathUtils.scientificToDecimal(viewUtils.getMatrixFromElement(element), 5)};
 
-                        this._targets[i].mat = curMat;
-                        this._targets[i].matInv = curMatInv;
+                        modObject.push({element:element, properties:{width: w, height:h}, previousProperties: {width: prevW, height:prevH}});
+                        mod3dObject.push({element:element, properties:newStyleStr, previousProperties: previousStyleStr});
                     }
                 }
-            }
+            });
 
-            if(addToUndoStack) {
+            // Move them
+            if(addToUndo) {
                 if(!this._use3DMode) {
-                    // if we have a delta, that means the transform handles were used and
-                    // we should update the width and height too.  Otherwise, just update left and top.
-                    if(this._delta) {
-                        ElementsMediator.setProperties(this.application.ninja.selectedElements, {"left": newLeft, "top": newTop, "width": newWidth, "height": newHeight },
-                                                    { "left" : previousLeft, "top" : previousTop, "width": previousWidth, "height": previousHeight}, "Change", "selectionTool");
-                    } else {
-                        ElementsMediator.setProperties(this.application.ninja.selectedElements, {"left": newLeft, "top": newTop }, {"left": previousLeft, "top": previousTop}, "Change", "selectionTool");
-                    }
+                        ElementsMediator.setProperties(modObject, "Change", "SelectionTool" );
                 } else {
                     // TODO - We don't support transform handles in 3d space for now
-                    ElementsMediator.setProperties(this.application.ninja.selectedElements, {"width": newWidth, "height": newHeight }, {"width": previousWidth, "height": previousHeight}, "Change", "selectionTool");
-                    ElementsMediator.set3DProperties(this.application.ninja.selectedElements, newStyles, "Change", "translateTool", previousStyles);
+                    ElementsMediator.setProperties(modObject, "Change", "SelectionTool" );
+                    ElementsMediator.set3DProperties(mod3dObject, "Change", "translateTool");
+
                 }
             }
-            // Save previous value for undo/redo
-            this._undoArray = [];
-            for(i = 0, len = this._targets.length; i < len; i++)
-            {
-                var item = this._targets[i];
-                _x = parseInt(ElementsMediator.getProperty(item.elt, "left"));
-                _y = parseInt(ElementsMediator.getProperty(item.elt, "top"));
-                _w = parseInt(ElementsMediator.getProperty(item.elt, "width"));
-                _h = parseInt(ElementsMediator.getProperty(item.elt, "height"));
-                var _mat = viewUtils.getMatrixFromElement(item.elt);
-                var _dist = viewUtils.getPerspectiveDistFromElement(item.elt);
-                this._undoArray.push({_x:_x, _y:_y, _w:_w, _h:_h, mat:_mat, dist:_dist});
-            }
+
+            this.application.ninja.selectedElements.forEach(function(element) {
+                element.elementModel.setProperty("x", ElementsMediator.getProperty(element, "left"));
+                element.elementModel.setProperty("y", ElementsMediator.getProperty(element, "top"));
+                element.elementModel.setProperty("w", ElementsMediator.getProperty(element, "width"));
+                element.elementModel.setProperty("h", ElementsMediator.getProperty(element, "height"));
+                element.elementModel.setProperty("mat", viewUtils.getMatrixFromElement(element));
+                element.elementModel.setProperty("matInv", glmat4.inverse(element.elementModel.getProperty("mat"), []));
+                element.elementModel.setProperty("dist", viewUtils.getPerspectiveDistFromElement(element));
+            });
 
         }
     },
 
     _moveElements: {
 		value: function (transMat) {
-			var len = this._targets.length,
-				i,
-				item,
-				elt,
-				curMat,
-                newLeft = [],
-                newTop = [];
+            var elt, curMat, targets = [];
 
-			var matInv = glmat4.inverse(this._startMat, []);
-			var nMat = glmat4.multiply(transMat, this._startMat, [] );
-			var qMat = glmat4.multiply(matInv, nMat, []);
+//			var matInv = glmat4.inverse(this._startMat, []);
+//			var qMat = glmat4.multiply(matInv, nMat, []);
+            this._startMat = glmat4.multiply(transMat, this._startMat, [] );
 
-            this._startMat = nMat;
+            var self = this;
 
-			for(i = 0; i < len; i++)
-			{
-				item = this._targets[i];
-				elt = item.elt;
-                if(this._use3DMode)
-                {
+            this.application.ninja.selectedElements.forEach(function(element) {
+                if(self._use3DMode) {
+                    curMat = element.elementModel.getProperty("mat");
+
+                    curMat[12] += transMat[12];
+                    curMat[13] += transMat[13];
+                    curMat[14] += transMat[14];
+                    viewUtils.setMatrixForElement( element, curMat, true);
+                    element.elementModel.setProperty("mat", curMat);
+                } else {
+                    var x = (parseInt(ElementsMediator.getProperty(element, "left")) + transMat[12]) + "px";
+                    var y = (parseInt(ElementsMediator.getProperty(element, "top")) + transMat[13]) + "px";
+
+                    targets.push({element:element, properties:{left:x , top:y}});
+                }
+            });
+
+            /*
+            this._targets.forEach(function(item) {
+                elt = item.elt;
+
+                if(self._use3DMode) {
                     curMat = item.mat;
 
                     curMat[12] += transMat[12];
                     curMat[13] += transMat[13];
                     curMat[14] += transMat[14];
                     viewUtils.setMatrixForElement( elt, curMat, true);
-                    this._targets[i].mat = curMat;
-                }
-                else
-                {
-                    var _x = parseInt(ElementsMediator.getProperty(elt, "left")) + transMat[12];
-                    var _y = parseInt(ElementsMediator.getProperty(elt, "top")) + transMat[13];
+                    item.mat = curMat;
 
-                    newLeft.push(_x + "px");
-                    newTop.push(_y + "px");
-                }
-			}
+                    return NJevent("elementChanging", {type : "Changing", redraw: false});
+                } else {
+                    var x = (parseInt(ElementsMediator.getProperty(elt, "left")) + transMat[12]) + "px";
+                    var y = (parseInt(ElementsMediator.getProperty(elt, "top")) + transMat[13]) + "px";
 
-            if(newLeft.length) {
-                ElementsMediator.setProperties(this.application.ninja.selectedElements, {"left": newLeft, "top": newTop }, null, "Changing", "SelectionTool" );
+                    targets.push({element:elt, properties:{left:x , top:y}});
+                }
+            });
+            */
+
+            if(this._use3DMode) {
+                return NJevent("elementChanging", {type : "Changing", redraw: false});
             } else {
-                NJevent("elementChanging", {type : "Changing", redraw: false});
+                ElementsMediator.setProperties(targets, "Changing", "SelectionTool" );
             }
 		}
 	},
@@ -457,15 +420,10 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
     //-------------------------------------------------------------------------
     //Routines to modify the selected objects
     modifyElements : {
-        value : function(data, event)
-        {
-            var delta,
-                deltaH,
-                deltaW,
-                deltaL,
-                deltaT;
-            if(this._handleMode !== null)
-            {
+        value : function(data, event) {
+            var delta, deltaH, deltaW, deltaL, deltaT, modObject = [];
+
+            if(this._handleMode !== null) {
                 // 0  7  6
                 // 1     5
                 // 2  3  4
@@ -512,6 +470,12 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                         deltaW = this._undoArray.map(function(item) { return item._w + delta + "px"});
                         delta = ~~(data.pt1[1] - data.pt0[1]);
                         deltaH = this._undoArray.map(function(item) { return item._h + delta + "px"});
+                        /*
+                        this.application.ninja.selectedElements.forEach(function(element) {
+                            var width = parseInt(element.elementModel.getProperty("w")) + delta + "px";
+                            modObject.push({element:element, properties:{width: width}});
+                        });
+                        */
                         ElementsMediator.setProperties(this.application.ninja.selectedElements, { "width": deltaW, "height": deltaH }, "Changing", "SelectionTool" );
                         break;
                     case 5:
@@ -684,7 +648,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             {
                 return;
             }
-            if(this._target && this._handles && (this._targets.length === 1))
+            if((this.application.ninja.selectedElements.length === 1) && this._handles)
             {
                 var len = this._handles.length;
                 var i = 0,

@@ -48,16 +48,6 @@ exports.ElementController = Montage.create(Component, {
 
     setProperties: {
         value: function(element, properties) {
-            /* Array of properties is not supported yet
-            if(Array.isArray(properties)) {
-
-                elements.forEach(function(property) {
-                    this.application.ninja.stylesController.setElementStyle(element, p, props[p][index]);
-                });
-            } else {
-            }
-            */
-
             for(var property in properties) {
                 this.application.ninja.stylesController.setElementStyle(element, property, properties[property]);
         }
@@ -239,15 +229,16 @@ exports.ElementController = Montage.create(Component, {
 
     // TODO - perspective distance needs to be passed in as "dist" and matrix3d needs to be passed in as "mat"
     set3DProperties: {
-        value: function(el, props, index, update3DModel) {
-            var dist = props[index]["dist"],
-                mat = props[index]["mat"];
+        value: function(el, props, update3DModel) {
+            var dist = props["dist"],
+                mat = props["mat"];
+
             this.application.ninja.stylesController.setElementStyle(el, "-webkit-transform", "matrix3d(" + MathUtils.scientificToDecimal(mat, 5) + ")");
 
             this.application.ninja.stylesController.setElementStyle(el, "-webkit-transform-style", "preserve-3d");
 
             // TODO - We don't support perspective on individual elements yet
-//            this.application.ninja.stylesController.setElementStyle(el, "-webkit-perspective", dist);
+            // this.application.ninja.stylesController.setElementStyle(el, "-webkit-perspective", dist);
 
             el.elementModel.props3D.matrix3d = mat;
             el.elementModel.props3D.perspectiveDist = dist;

@@ -234,8 +234,25 @@ exports.ElementMediator = Montage.create(Component, {
      @param eventType: Change/Changing. Will be passed to the dispatched event
      @param source: String for the source object making the call
      */
+        /*value: function(elements, properties, currentProperties, eventType, source) {*/
     setProperties: {
-        value: function(elements, properties, currentProperties, eventType, source) {
+        value: function(elements, eventType, source) {
+
+            elements.forEach(function(elementObject) {
+                elementObject.element.elementModel.controller["setProperties"](elementObject.element, elementObject.properties);
+            });
+
+            if(eventType !== "Changing") {
+                var undoLabel = "Properties change";
+                elements.forEach(function(elementObject) {
+                    var swap = elementObject.properties;
+                    elementObject.properties = elementObject.previousProperties;
+                    elementObject.previousProperties = swap;
+                });
+                document.application.undoManager.add(undoLabel, this.setProperties, this, elements, eventType, source);
+            }
+
+            /*
             // Assume elements is an array of elements always
             elements.forEach(function(element) {
                 element.elementModel.controller["setProperties"](element, properties);
@@ -246,79 +263,34 @@ exports.ElementMediator = Montage.create(Component, {
                 var undoLabel = "Properties change";
                 document.application.undoManager.add(undoLabel, this.setProperties, this, elements, currentProperties, properties, eventType, source);
             }
+            */
+            // Map the elements for the event data
+            var els = elements.map(function(element) {
+                return element.element;
+            });
 
             // Dispatch the element change/changing event.
-            NJevent("element" + eventType, {type : "setProperties", source: source, data: {"els": elements, "prop": properties, "value": properties}, redraw: null});
+            NJevent("element" + eventType, {type : "setProperties", source: source, data: {"els": els, "prop": elements[0].properties, "value": elements}, redraw: null});
         }
     },
 
-    /**
-     Set a property change command for an element or array of elements
-     @param els: Array of elements. Can contain 1 or more elements
-     @param props: Property/ies object containing both the value and property
-     @param eventType: Change/Changing. Will be passed to the dispatched event
-     @param source: String for the source object making the call
-     @param currentProps *OPTIONAL*: current properties objects array. If not found it will be calculated
-     @param stageRedraw: *OPTIONAL*: True. If set to false the stage will not redraw the selection/outline
-     */
     set3DProperties: {
-        value: function(els, props, eventType, source, currentProps, stageRedraw) {
-            if(eventType === "Changing") {
-                this._set3DProperties(els, props, eventType, source);
-            } else {
-                // Calculate currentProps if not found for each element
-                if(!currentProps) {
-                    var that = this;
-                    currentProps = els.map(function(item) {
-                        return that.get3DProperties(item);
-                    });
-                }
-
-                var command = Montage.create(Command, {
-                    _els:               { value: els },
-                    _props:             { value: props },
-                    _previous:          { value: currentProps },
-                    _eventType:         { value: eventType},
-                    _source:            { value: "undo-redo"},
-                    description:        { value: "Set 3D Properties"},
-                    receiver:           { value: this},
-
-                    execute: {
-                        value: function(senderObject) {
-                            if(senderObject) this._source = senderObject;
-                            this.receiver._set3DProperties(this._els, this._props, this._eventType, this._source);
-                            this._source = "undo-redo";
-                            return "";
-                        }
-                    },
-
-                    unexecute: {
-                        value: function() {
-                            this.receiver._set3DProperties(this._els, this._previous, this._eventType, this._source);
-                            return "";
-                        }
-                    }
-                });
-
-                NJevent("sendToUndo", command);
-                command.execute(source);
-            }
-        }
-    },
-
-    _set3DProperties: {
-        value: function(els, props, eventType, source) {
+        value: function(elements, eventType, source) {
             var update3DModel = false;
 
             if(eventType === "Change") {
                 update3DModel = true;
             }
 
-            for(var i=0, item; item = els[i]; i++) {
-                item.elementModel.controller["set3DProperties"](item, props, i, update3DModel);
+            for(var i=0, item; item = elements[i]; i++) {
+                item.element.elementModel.controller["set3DProperties"](item.element, item.properties, update3DModel);
             }
 
-            NJevent("element" + eventType, {type : "set3DProperties", source: source, data: {"els": els, "prop": "matrix", "value": props}, redraw: null});
+            var els = elements.map(function(element) {
+                return element.element;
+            });
+
+            NJevent("element" + eventType, {type : "set3DProperties", source: source, data: {"els": els, "prop": "matrix", "value": elements}, redraw: null});
         }
     },
 
@@ -529,7 +501,7 @@ exports.ElementMediator = Montage.create(Component, {
     setMatrix: {
         value: function(el, mat, isChanging, source) {
             var dist = el.elementModel.controller["getPerspectiveDist"](el);
-            el.elementModel.controller["set3DProperties"](el, [{mat:mat, dist:dist}], 0, !isChanging);
+            el.elementModel.controller["set3DProperties"](el, {mat:mat, dist:dist}, !isChanging);
 
             if(isChanging) {
                 NJevent("elementChanging", {type : "setMatrix", source: source, data: {"els": [el], "prop": "matrix", "value": mat}, redraw: null});

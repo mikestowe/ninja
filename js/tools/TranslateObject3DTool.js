@@ -65,10 +65,8 @@ exports.TranslateObject3DTool = Montage.create(Translate3DToolBase, {
                 }
             }
 
-            if(this._targets)
-            {
-                var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas,
-                                                                new WebKitPoint(event.pageX, event.pageY));
+            if(this.application.ninja.selectedElements.length) {
+                var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(event.pageX, event.pageY));
 
 				// do the snap before setting up the avoid list to allow
 				// a snap on the mouse down
@@ -96,11 +94,10 @@ exports.TranslateObject3DTool = Montage.create(Translate3DToolBase, {
                 }
 
                 // we don't want to snap to selected objects during the drag
-                var len = this._targets.length;
-                for(var i=0; i<len; i++)
-                {
-                    snapManager.addToAvoidList( this._targets[i].elt );
-                }
+                this.application.ninja.selectedElements.forEach(function(element) {
+                    snapManager.addToAvoidList(element);
+                });
+
 				if (hitRec)
 				{
 					// disable snap attributes
@@ -122,7 +119,7 @@ exports.TranslateObject3DTool = Montage.create(Translate3DToolBase, {
 
                     if(!this._dragPlane)
                     {
-                        if( this._inLocalMode && (this._targets.length === 1) )
+                        if( this._inLocalMode && (this.application.ninja.selectedElements.length === 1) )
                         {
                             this._dragPlane = viewUtils.getUnprojectedElementPlane(this._clickedObject);
                             snapManager.setupDragPlaneFromPlane(this._dragPlane);
