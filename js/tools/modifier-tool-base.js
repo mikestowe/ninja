@@ -9,8 +9,8 @@ var Montage = require("montage/core/core").Montage,
     snapManager = require("js/helper-classes/3D/snap-manager").SnapManager,
     viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils,
     vecUtils = require("js/helper-classes/3D/vec-utils").VecUtils,
-    drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils,
-    Properties3D = ("js/models/properties-3d").Properties3D;
+    drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils;
+//    Properties3D = ("js/models/properties-3d").Properties3D;
 
 exports.ModifierToolBase = Montage.create(DrawingTool, {
 
@@ -458,6 +458,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
             {
                 this.isDrawing = true;
                 this.application.ninja.stage.showSelectionBounds = false;
+                this._updateTargets();
 
                 if(this._canSnap)
                 {
@@ -768,6 +769,11 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                 snapManager.enableGridSnap( snapManager.gridSnapEnabledAppLevel() );
                 this.eventManager.removeEventListener( "toolOptionsChange", this, false);
                 this.eventManager.removeEventListener( "toolDoubleClick", this, false);
+
+                if (this._targetedElement) {
+                    this._targetedElement.classList.remove("active-element-outline");
+                    this._targetedElement = null;
+                }
             }
         }
     },
@@ -796,7 +802,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 				{
 					this.target = this.application.ninja.currentDocument.documentRoot;
 				}
-				this._updateTargets();
+//				this._updateTargets();
 			}
 			else
 			{
@@ -817,7 +823,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
     HandleLeftButtonDown: {
         value: function(event) {
 
-            console.log( "modifier-tool-base.HandleLeftButtonDown" );
+//            console.log( "modifier-tool-base.HandleLeftButtonDown" );
 
             var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(event.pageX, event.pageY));
             this.downPoint.x = point.x;

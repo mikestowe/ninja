@@ -4,20 +4,28 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var Translate3DToolBase = require("js/tools/Translate3DToolBase").Translate3DToolBase,
+var Montage = require("montage/core/core").Montage,
+    Translate3DToolBase = require("js/tools/Translate3DToolBase").Translate3DToolBase,
     drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils,
+    vecUtils = require("js/helper-classes/3D/vec-utils").VecUtils,
     viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils,
     vecUtils = require("js/helper-classes/3D/vec-utils").VecUtils,
     snapManager = require("js/helper-classes/3D/snap-manager").SnapManager;
 
-exports.TranslateObject3DTool = Object.create(Translate3DToolBase, {
+exports.TranslateObject3DTool = Montage.create(Translate3DToolBase, {
     _toolID: { value: "translateObject3DTool" },
     _canOperateOnStage: { value: true },
+
+    _initializeToolHandles: {
+        value: function() {
+            this._inLocalMode = (this.options.selectedMode === "rotateLocally");
+        }
+    },
 
     initializeSnapping : {
         value : function(event)
         {
-            console.log( "initializeSnapping" );
+//            console.log( "initializeSnapping" );
 
 			this._mouseDownHitRec = null;
 			this._mouseUpHitRec   = null;

@@ -232,7 +232,15 @@ var HitRecord = exports.HitRecord = Object.create(Object.prototype,
             var elt = this.getElt();
             viewUtils.pushViewportObj( elt );
             var viewPt = viewUtils.screenToView( scrPt[0], scrPt[1], scrPt[2] );
-            var eyePt = viewUtils.getEyePoint();
+            var eyePt;
+            if(viewUtils.getPerspectiveDistFromElement(elt))
+            {
+                eyePt = viewUtils.getEyePoint();
+            }
+            else
+            {
+                eyePt = [viewPt[0], viewPt[1], 1400];
+            }
             var projPt = MathUtils.vecIntersectPlane( eyePt, MathUtils.vecSubtract(viewPt,eyePt), plane );
 
             return projPt;

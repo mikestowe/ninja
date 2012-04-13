@@ -18,13 +18,20 @@
             }
         },
 
+        "newFileName": {
+            "prototype": "montage/ui/textfield.reel",
+            "properties": {
+                "element": {"#": "newFileName"}
+            }
+        },
+
         "owner":{
             "module": "js/io/ui/new-file-dialog/new-file-location.reel",
             "name": "SaveAsDialog",
             "properties": {
                 "element": {"#": "saveAsDialog"},
                 "fileInputField": {"@": "fileInputField"},
-                "newFileName": {"#": "newFileName"},
+                "newFileName": {"@": "newFileName"},
                 "error":{"#": "error"},
                 "okButton":{"#": "okButton"},
                 "cancelButton":{"#": "cancelButton"}

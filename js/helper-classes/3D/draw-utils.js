@@ -112,6 +112,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
             this.eventManager.addEventListener("elementsRemoved", this, false);
             this.eventManager.addEventListener("elementChange", this, false);
             this.eventManager.addEventListener("closeDocument", this, false);
+            this.eventManager.addEventListener("elementReplaced", this, false);
 		}
 	},
 
@@ -170,10 +171,38 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                     this.removeElement(element);
                 }, this);
             } else {
-                this.removeElement(elements._element || elements);
+                this.removeElement(elements);
             }
 
             this.drawWorkingPlane();
+        }
+    },
+
+    handleElementReplaced: {
+        value: function(event) {
+            var oldElement = event.detail.data.oldChild;
+            var newElement = event.detail.data.newChild;
+
+            // check if we already know about this object
+            var n = this._eltArray.length,
+                plane;
+            for (var i=0;  i<n;  i++) {
+                if (oldElement === this._eltArray[i]) {
+                    this._eltArray[i] = newElement;
+                    plane = this._planesArray[i];
+                    break;
+                }
+            }
+
+            if(!plane) {
+                this._eltArray.push( newElement );
+                plane = Object.create(this.ElementPlanes, {});
+                this._planesArray.push( plane );
+            }
+
+            plane.setElement( newElement );
+            plane.init();
+            newElement.elementModel.props3D.elementPlane = plane;
         }
     },
 
