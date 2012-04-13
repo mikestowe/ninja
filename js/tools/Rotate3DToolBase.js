@@ -339,7 +339,6 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                 elt = this._target;
 
                 if(shouldUpdateCenter) {
-                    console.log("get crt");
                     eltCtr = this.application.ninja.selectedElements[0].elementModel.getProperty("ctr");
                     ctrOffset = vecUtils.vecSubtract(3, this._origin, eltCtr);
 
