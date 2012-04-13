@@ -31,7 +31,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         set:function (newVal) {
             this._arrLayers = newVal;
             this.needsDraw = true;
-            this._cacheArrays();
+            this.cacheTimeline();
         }
     },
 
@@ -64,15 +64,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
-    _cacheArrays:{
-        value:function () {
-            if (this._boolCacheArrays) {
-                this.application.ninja.currentDocument.tlArrLayers = this.arrLayers;
-                this.application.ninja.currentDocument.tlCurrentSelectedContainer=this.application.ninja.currentSelectedContainer;
-            }
-        }
-    },
-
     // Set to false to skip array caching array sets in current document
     _boolCacheArrays:{
         value:true
@@ -89,15 +80,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         set:function (newVal) {
             if (newVal !== this._currentLayerNumber) {
                 this._currentLayerNumber = newVal;
-                this._setCurrentLayerNumber();
-            }
-        }
-    },
-
-    _setCurrentLayerNumber:{
-        value:function () {
-            if (this._boolCacheArrays) {
-                this.application.ninja.currentDocument.tllayerNumber = this.currentLayerNumber;
+                this.cacheTimeline();
             }
         }
     },
@@ -111,7 +94,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         },
         set:function (newVal) {
             this._currentLayerSelected = newVal;
-            this.application.ninja.currentDocument.tlCurrentLayerSelected = newVal;
+            this.cacheTimeline();
         }
     },
 
@@ -300,7 +283,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     			this.arrLayers.splice(dragLayerIndex, 1);
     			this.arrLayers.splice(dropLayerIndex, 0, dragLayer);
-    			this.application.ninja.currentDocument.tlArrLayers = this.arrLayers;
+    			this.cacheTimeline();
     			
     			// Clear for future DnD
     			this._dropLayerID = null;
@@ -432,6 +415,31 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
     
+    // cache Timeline data in currentDocument.
+    cacheTimeline: {
+    	value: function() {
+			// Store the timeline data in currentDocument...
+			if (this._boolCacheArrays) {
+				// ... but only if we're supposed to.
+	    		this.application.ninja.currentDocument.tlArrLayers = this.arrLayers;
+	    		this.application.ninja.currentDocument.tlCurrentSelectedContainer = this.currentSelectedContainer;
+	    		this.application.ninja.currentDocument.tllayerNumber = this.currentLayerNumber;
+	    		this.application.ninja.currentDocument.tlCurrentLayerSelected = this.currentLayerSelected;	
+			}
+    	}
+    },
+    // Initialize Timeline cache in currentDocument.
+    initTimelineCache: {
+    	value: function() {
+			// Initialize the currentDocument for a new set of timeline data.
+			this.application.ninja.currentDocument.isTimelineInitialized = true;
+			this.application.ninja.currentDocument.tlArrLayers = [];
+    		this.application.ninja.currentDocument.tlCurrentSelectedContainer = this.application.ninja.currentSelectedContainer;
+    		this.application.ninja.currentDocument.tllayerNumber = this.currentLayerNumber;
+    		this.application.ninja.currentDocument.tlCurrentLayerSelected = null;
+    	}
+    },
+    
     // Create an array of style objects for an element, for use
     // in creating a new layer
     createLayerStyles : {
@@ -532,12 +540,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.drawTimeMarkers();
             // Document switching
             // Check to see if we have saved timeline information in the currentDocument.
+            
+            
             if (typeof(this.application.ninja.currentDocument.isTimelineInitialized) === "undefined" || this.application.ninja.breadCrumbClick) {
                 // No, we have no information stored.  Create it.
-                this.application.ninja.currentDocument.isTimelineInitialized = true;
-                this.application.ninja.currentDocument.tlArrLayers = [];
-                this.application.ninja.currentDocument.tllayerNumber = 0;
-                this.application.ninja.currentDocument.tlCurrentSelectedContainer = null;
+				this.initTimelineCache();
                 this.temparrLayers = [];
 
                 // Are we opening an existing doc?
@@ -549,7 +556,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                             this._openDoc = true;
                             this.restoreLayer(parentNode.children[myIndex]);
                         }
-
                     }else if (this.application.ninja.currentDocument.documentRoot.children[0]) {
                         // Yes, it has DOM elements. Loop through them and create a new object for each.
                         for (myIndex = 0; this.application.ninja.currentDocument.documentRoot.children[myIndex]; myIndex++) {
@@ -557,41 +563,60 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                             this.restoreLayer(this.application.ninja.currentDocument.documentRoot.children[myIndex]);
                         }
                     }
-                    // Feed the new array of objects into the repetitions.
-                    this.arrLayers = this.temparrLayers;
-                }else if(this.application.ninja.breadCrumbClick){
+                // }else if(this.application.ninja.breadCrumbClick){
+                } else {
+                	
                     var parentNode = this.application.ninja.currentSelectedContainer;
                     for (myIndex = 0; parentNode.children[myIndex]; myIndex++) {
                         this._openDoc = true;
                         this.restoreLayer(parentNode.children[myIndex]);
                     }
-                    this.arrLayers = this.temparrLayers;
-
                 }
 
                 // After recreating the tracks and layers, store the result in the currentDocument.
+                /*
                 this.application.ninja.currentDocument.tlArrLayers = this.arrLayers;
                 this.application.ninja.currentDocument.tllayerNumber = this.currentLayerNumber;
                 this.application.ninja.currentDocument.tlCurrentSelectedContainer=this.application.ninja.currentSelectedContainer;
+                */
+				this.arrLayers = this.temparrLayers;
+				this.cacheTimeline();
 
             } else {
                 // we do have information stored.  Use it.
-                this._boolCacheArrays = false;
-                for (var i = 0; i < this.application.ninja.currentDocument.tlArrLayers.length; i++) {
+                var i = 0, 
+                	tlArrLayersLength = this.application.ninja.currentDocument.tlArrLayers.length;
+                
+                // We're reading from the cache, not writing to it.
+            	this._boolCacheArrays = false;
+
+                for (i = 0; i < tlArrLayersLength; i++) {
                     if (this.application.ninja.currentDocument.tlArrLayers[i].layerData.isSelected === true) {
                         this.application.ninja.currentDocument.tlArrLayers[i].layerData._isFirstDraw = true;
+                    } else {
+                    	this.application.ninja.currentDocument.tlArrLayers[i].layerData._isFirstDraw = false;
                     }
                 }
+                
                 this.arrLayers = this.application.ninja.currentDocument.tlArrLayers;
                 this.currentLayerNumber = this.application.ninja.currentDocument.tllayerNumber;
                 this.currentLayerSelected = this.application.ninja.currentDocument.tlCurrentLayerSelected;
-                this.application.ninja.currentSelectedContainer=this.application.ninja.currentDocument.tlCurrentSelectedContainer;
+
+                if (typeof(this.application.ninja.currentDocument.tlCurrentSelectedContainer) !== "undefined") {
+                	this.application.ninja.currentSelectedContainer=this.application.ninja.currentDocument.tlCurrentSelectedContainer;
+                }
+                
+                // Are we only showing animated layers?
 				if (this.application.ninja.currentDocument.boolShowOnlyAnimated) {
 					// Fake a click.
 					var evt = document.createEvent("MouseEvents");
 					evt.initMouseEvent("click");
 					this.checkable_animated.dispatchEvent(evt);
 				}
+				
+				// Ok, done reading from the cache.
+				this._boolCacheArrays = true;
+				this.resetMasterDuration();
             }
         }
     },
@@ -860,6 +885,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     resetMasterDuration:{
         value:function(){
+        	console.log('TimelinePanel.resetMasterDuration()')
 
             var trackDuration;
             var length = this.arrLayers.length;
