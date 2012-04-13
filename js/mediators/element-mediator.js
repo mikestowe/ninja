@@ -168,7 +168,7 @@ exports.ElementMediator = Montage.create(Component, {
      @param stageRedraw: *OPTIONAL*: True. If set to false the stage will not redraw the selection/outline
      */
     setProperty: {
-        value: function(els, p, value, eventType, source, currentValue, stageRedraw) {
+        value: function(els, p, value, eventType, source, currentValue) {
             if(eventType === "Changing") {
                 this._setProperty(els, p, value, eventType, source);
             } else {
@@ -228,13 +228,10 @@ exports.ElementMediator = Montage.create(Component, {
 
     /**
      Sets a property object for an element or array of elements. The same properties object gets applied to all the elements
-     @param els: Array of elements. Can contain 1 or more elements
-     @param properties: Properties object containing both the value and property
-     @param currentProperties: current properties object for undo/redo. Must be an valid object or null
+     @param elements: Array of elements objects: element, properties and previousProperties
      @param eventType: Change/Changing. Will be passed to the dispatched event
      @param source: String for the source object making the call
      */
-        /*value: function(elements, properties, currentProperties, eventType, source) {*/
     setProperties: {
         value: function(elements, eventType, source) {
 
@@ -252,19 +249,8 @@ exports.ElementMediator = Montage.create(Component, {
                 document.application.undoManager.add(undoLabel, this.setProperties, this, elements, eventType, source);
             }
 
-            /*
-            // Assume elements is an array of elements always
-            elements.forEach(function(element) {
-                element.elementModel.controller["setProperties"](element, properties);
-            });
-
-            // Add to undo only when a change is requested
-            if(eventType !== "Changing") {
-                var undoLabel = "Properties change";
-                document.application.undoManager.add(undoLabel, this.setProperties, this, elements, currentProperties, properties, eventType, source);
-            }
-            */
             // Map the elements for the event data
+            // TODO: Clean this up
             var els = elements.map(function(element) {
                 return element.element;
             });
@@ -317,7 +303,7 @@ exports.ElementMediator = Montage.create(Component, {
      @param stageRedraw: *OPTIONAL*: True. If set to false the stage will not redraw the selection/outline
      */
     setColor: {
-        value: function(els, value, isFill, eventType, source, currentValue, stageRedraw) {
+        value: function(els, value, isFill, eventType, source, currentValue) {
 
             if(eventType === "Changing") {
                 this._setColor(els, value, isFill, eventType, source);
@@ -394,7 +380,7 @@ exports.ElementMediator = Montage.create(Component, {
      @param stageRedraw: *OPTIONAL*: True. If set to false the stage will not redraw the selection/outline
      */
     setStroke: {
-        value: function(els, value, eventType, source, currentValue, stageRedraw) {
+        value: function(els, value, eventType, source, currentValue) {
 
             if(eventType === "Changing") {
                 this._setStroke(els, value, isFill, eventType, source);
