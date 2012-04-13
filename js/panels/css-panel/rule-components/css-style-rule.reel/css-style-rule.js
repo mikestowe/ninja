@@ -23,9 +23,14 @@ exports.CssStyleRule = Montage.create(Component, {
         },
         set: function(rule) {
             this.cssText = rule.cssText;
-            this.sheetName = rule.href || 'Style Tag';
-            this.selector = rule.selectorText;
 
+            if(rule.type === 'inline') {
+                this.sheetName = 'Inline Style';
+            } else {
+                this.sheetName = rule.href || 'Style Tag';
+            }
+
+            this.selector = rule.selectorText;
             this.declaration = rule.style;
 
             console.log('Rule with selector "' +rule.selectorText+ '" is set on componenet.');
