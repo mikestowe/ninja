@@ -38,6 +38,7 @@ exports.Editable = Montage.create(Component, {
         set : function(el) {
             this._element = el;
             this._element.addEventListener('keydown', this, false);
+            this._element.addEventListener('keyup', this, false);
             this._element.addEventListener('input', this, false);
             
             if(this.startOnEvent) {
@@ -192,11 +193,13 @@ exports.Editable = Montage.create(Component, {
     handleKeydown : {
         value : function(e) {
             var k = e.keyCode;
-            
-            // Record change
+        }
+    },
+    
+    handleKeyup : {
+        value : function(e) {
+            // Record change in value
             this.enteredValue = this._element.firstChild.data;
-            
-            //console.log('keyCode:  ' + k);
         }
     },
     ///// Text input has changed values
