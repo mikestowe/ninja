@@ -28,7 +28,36 @@ exports.Style = Montage.create(TreeNode, {
             this.needsDraw = true;
         }
     },
+    handleEvent : {
+        value: function(e) {
+            console.log(e);
+        }
+    },
 
+    handleDragstart : {
+        value: function(e) {
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('Text', 'my styles, baby!');
+            this.element.classList.add("dragged");
+        }
+    },
+
+    handleDragend : {
+        value: function(e) {
+            this.element.classList.remove("dragging");
+            this.element.classList.remove("dragged");
+        }
+    },
+    handleDrag : {
+        value: function(e) {
+            this.element.classList.add("dragging");
+        }
+    },
+    handleDrop : {
+        value: function(e) {
+            this.element.classList.remove("drag-enter");
+        }
+    },
     handleSourceObjectSet: {
         value: function() {
             //debugger;
@@ -41,7 +70,17 @@ exports.Style = Montage.create(TreeNode, {
             console.log("style - template did load");
         }
     },
-
+    prepareForDraw : {
+        value: function() {
+            console.log("style's prepare for draw");
+            this.element.addEventListener('dragstart', this, false);
+            this.element.addEventListener('drag', this, false);
+//            this.element.addEventListener('dragenter', this, false);
+//            this.element.addEventListener('dragleave', this, false);
+            this.element.addEventListener('dragend', this, false);
+            this.element.addEventListener('drop', this, false);
+        }
+    },
     draw : {
         value : function() {
             //debugger;

@@ -4,8 +4,11 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
+/* ------------------------
+  Style item container styles
+------------------------  */
 .style-item {
-
+    border-bottom: 1px solid rgba(0,0,0,0);
     cursor: url(/js/../images/tools/hand_down.png), default;
     display: block;
     overflow: hidden;
@@ -13,10 +16,14 @@
     text-overflow: ellipsis;
 }
 .style-item:hover {
-    background-color: #fafafa;
     border-right: 3px double #999;
-    margin-right: 1px;
+    margin-right: 3px;
 }
+
+/* ------------------------
+  Checkbox
+------------------------   */
+
 .style-item input {
     height: 10px;
     width: 10px;
@@ -29,6 +36,11 @@
 .style-item-disabled {
     opacity: .5;
 }
+
+/* ------------------------
+  Property/value styles
+------------------------   */
+
 .css-property, .css-value {
     border: 1px solid rgba(0,0,0,0);
     border-radius: 2px;
@@ -57,6 +69,11 @@
 .css-value {
     display: inline;
 }
+
+/* ------------------------
+  Editable Styles
+------------------------   */
+
 .style-item .editable {
     background-color: transparent;
     border: 1px solid #999;
@@ -73,4 +90,21 @@
     position: relative;
     margin-right: -7px;
     right: -1px;
+}
+
+/* ------------------------
+  Drag/Drop Styles
+------------------------   */
+
+.style-item.dragged {
+    background: none;
+    border-right-style: none;
+    opacity: .85;
+}
+.style-item.dragging {
+    background-color: #f2f2f2;
+    opacity: .55;
+}
+.style-item.drag-enter {
+    border-bottom: 1px solid #CCC;
 }

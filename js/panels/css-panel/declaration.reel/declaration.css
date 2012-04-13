@@ -10,3 +10,6 @@
 .treeRoot > .style-shorthand-branch > dl {
     margin-top: 4px;
 }
+.drag-over {
+    /*background-color: red;*/
+}

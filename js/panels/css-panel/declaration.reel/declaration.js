@@ -14,6 +14,14 @@ exports.Declaration = Montage.create(Component, {
             console.log("declaration - template did load");
         }
     },
+    prepareForDraw : {
+        value: function(e) {
+            console.log("Declaration :: prepare for draw");
+            this._element.addEventListener('drop', this, false);
+            this.element.addEventListener('dragenter', this, false);
+            this.element.addEventListener('dragleave', this, false);
+        }
+    },
     _declaration: {
         value: null
     },
@@ -95,11 +103,58 @@ exports.Declaration = Montage.create(Component, {
         },
         distinct: true
     },
+
+    /* drag/drop events */
+    handleDrop : {
+        value: function(e) {
+            console.log('dropped');
+        }
+    },
+    handleDragenter : {
+        value: function(e) {
+            console.log("dec - drag enter");
+            this.element.classList.add("drag-over");
+        }
+    },
+    handleDragleave : {
+        value: function(e) {
+            if(this.element === e._event.toElement || this._containsElement(e._event.toElement)) {
+                //// Dragged-over element is inside of component element
+                //// I.e. it's not really a "drag leave"
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
+            }
+
+            console.log("DECLARATION - ELEMENT NOT IN DEC", e._event.toElement);
+
+            //console.log("dec - drag leave");
+            this.element.classList.remove("drag-over");
+        }
+    },
+
     draw: {
         value: function() {
             if(this._declaration) {
 
             }
+        }
+    },
+
+    _containsElement : {
+        value: function(innerElement) {
+            var isInComponent = false,
+                parent = innerElement.parentNode;
+
+            while (parent !== document) {
+                if(parent === this.element) {
+                    isInComponent = true;
+                    break;
+                }
+                parent = parent.parentNode;
+            }
+
+            return isInComponent;
         }
     }
 });
