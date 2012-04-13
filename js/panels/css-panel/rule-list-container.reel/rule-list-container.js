@@ -80,6 +80,15 @@ exports.RuleListContainer = Montage.create(Component, {
 
             if(selection.length === 1) {
                 rules = stylesController.getMatchingRules(selection[0]);
+
+                ///// Add inline style to rule list
+                rules.splice(0, 0, {
+                    type             : 'inline',
+                    selectorText     : 'element.style',
+                    parentStyleSheet : 'Inline Style',
+                    style            : selection[0].style
+                });
+
             } //// TODO: support more selection types
 
             this._instanceToAdd = listInstance;
