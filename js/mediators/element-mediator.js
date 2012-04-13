@@ -272,6 +272,18 @@ exports.ElementMediator = Montage.create(Component, {
                 item.element.elementModel.controller["set3DProperties"](item.element, item.properties, update3DModel);
             }
 
+            /*
+            if(eventType === "Change") {
+                var undoLabel = "3D Properties change";
+                elements.forEach(function(elementObject) {
+                    var swap = elementObject.properties;
+                    elementObject.properties = elementObject.previousProperties;
+                    elementObject.previousProperties = swap;
+                });
+                document.application.undoManager.add(undoLabel, this.set3DProperties, this, elements, eventType, source);
+            }
+            */
+
             var els = elements.map(function(element) {
                 return element.element;
             });
