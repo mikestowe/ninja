@@ -204,11 +204,6 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 
 	_updateTargets: {
 		value: function(addToUndoStack) {
-        {
-		{
-//            console.log( "_updateTargets" );
-            console.log( "_updateTargets" );
-			//console.log( "_updateTargets" );
 			var newStyles = [],
 				previousStyles = [],
 				len = this.application.ninja.selectedElements.length;

@@ -54,22 +54,19 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
             {
                 if(this._activateOriginHandle)
                 {
-                    // move the transform origin handle
-                    var dx = pt1.x - pt0.x;
-                    var dy = pt1.y - pt0.y;
-					var dz = pt1.z - pt0.z;
+                    // move the transform origin handle directly to the snap point (pt1)
+                    this._origin[0] = pt1.x;
+                    this._origin[1] = pt1.y;
+                    this._origin[2] = pt1.z;
 
-                    this._origin[0] += dx;
-                    this._origin[1] += dy;
-                    this._origin[2] += dz;
-					console.log( "modifyElements, _origin: " + this._origin );
+					var sw2gMat = viewUtils.getStageWorldToGlobalMatrix();
+					var g2swMat = glmat4.inverse( sw2gMat, [] );
+					var swOrigin = MathUtils.transformAndDivideHomogeneousPoint( this._origin, g2swMat );
+					//console.log( "modifyElements, _origin: " + this._origin + ", in stageWorld: " + swOrigin );
 
                     var len = this._targets.length;
                     if(len === 1)
                     {
-//                        this._startOriginArray[0][0] += dx;
-//                        this._startOriginArray[0][1] += dy;
-//                        this._startOriginArray[0][2] += dz;
 						var g2lMat = this._targets[0].g2l;
 						var localOrigin = MathUtils.transformAndDivideHomogeneousPoint( this._origin, g2lMat );
 						var elt = this._targets[0].elt;
