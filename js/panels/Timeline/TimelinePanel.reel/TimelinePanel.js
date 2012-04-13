@@ -479,9 +479,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		// Right now this method just returns an array of one bogus style.
     		
     		var returnArray = [];
-			
-			returnArray.push("1");
-			
+						
 			return returnArray;
     		
     	}
