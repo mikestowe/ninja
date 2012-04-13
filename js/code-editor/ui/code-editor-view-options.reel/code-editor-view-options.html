@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="code-editor-view-options.css">
+    <script type="text/montage-serialization">
+    {
+        "codeCompleteCheck":{
+            "prototype": "montage/ui/checkbox.reel",
+            "properties": {
+                "element": {"#": "codeComplete"}
+            }
+        },
+
+        "zoomHottext": {
+            "module": "js/components/hottextunit.reel",
+            "name": "HotTextUnit",
+            "properties": {
+                "element": {"#": "zoomFont"},
+                "minValue":100,
+                "maxValue" :200,
+                "stepSize" :10,
+                "acceptableUnits" : ["%"],
+                "units" : "%"
+            }
+        },
+
+        "owner":{
+            "module": "js/code-editor/ui/code-editor-view-options.reel",
+            "name": "CodeEditorViewOptions",
+            "properties": {
+                "element": {"#": "viewOptions"},
+                "codeCompleteCheck":{"@": "codeCompleteCheck"},
+                "zoomHottext":{"@":"zoomHottext"}
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+<div id="viewOptions" class="viewOptions">
+    <div>
+        <input class="zoomFont" id="zoomFont"/>
+        <div class="autoCodeComplete" >
+            <span>Automatic Code completion</span>
+            <input type="checkbox" id="codeComplete" />
+        </div>
+    </div>
+</div>
+</body>
+</html>

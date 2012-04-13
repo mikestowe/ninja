@@ -94,6 +94,10 @@ exports.StageView = Montage.create(Component, {
             doc.editor = this.application.ninja.codeEditorController.createEditor(doc, type);
             doc.editor.hline = doc.editor.setLineClass(0, "activeline");
 
+            this.showCodeViewBar(true);
+
+            this.application.ninja.codeEditorController.handleCodeCompletionSupport(type);
+
             this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
             this.application.ninja.documentController.activeDocument = doc;
             this.application.ninja.stage.hideCanvas(true);
@@ -112,6 +116,11 @@ exports.StageView = Montage.create(Component, {
 
             if(this.application.ninja.documentController.activeDocument.currentView === "design") {
                 this.application.ninja.currentDocument = this.application.ninja.documentController.activeDocument;
+
+                this.showCodeViewBar(false);
+            }else{
+                this.showCodeViewBar(true);
+                this.application.ninja.codeEditorController.handleCodeCompletionSupport(this.application.ninja.documentController.activeDocument.editor.getOption("mode"));
             }
 
             this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
@@ -161,6 +170,17 @@ exports.StageView = Montage.create(Component, {
         value:function(){
             this.application.ninja.rulerTop.style.display = "none";
             this.application.ninja.rulerLeft.style.display = "none";
+        }
+    },
+    showCodeViewBar:{
+        value:function(isCodeView){
+            if(isCodeView === true) {
+                this.application.ninja.editorViewOptions.element.style.display = "block";
+                this.application.ninja.documentBar.element.style.display = "none";
+            }else{
+                this.application.ninja.documentBar.element.style.display = "block";
+                this.application.ninja.editorViewOptions.element.style.display = "none";
+            }
         }
     }
 });

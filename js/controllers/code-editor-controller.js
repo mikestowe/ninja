@@ -23,17 +23,37 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
         set: function(value){this._codeEditor = value;}
     },
 
-    codeCompletionSupport : {"javascript": true},
+    codeCompletionSupport : {
+        value: {"javascript": true}
+    },
 
     _automaticCodeComplete: {
         value:true
     },
 
     automaticCodeComplete:{
-            get: function(){return this._automaticCodeComplete;},
-            set: function(value){this._automaticCodeComplete = value;}
-        },
+        get: function(){return this._automaticCodeComplete;},
+        set: function(value){
+            //console.log("$$$ automaticCodeComplete setter : "+value);
+            this._automaticCodeComplete = value;}
+    },
 
+    originalEditorFont:{
+        value:"13"//px
+    },
+
+    _editorFont:{
+        value:null
+    },
+
+    editorFont:{
+        get: function(){return this._editorFont;},
+        set: function(value){//gets a zoom %
+            this._editorFont = (value/100) * CodeEditorController.originalEditorFont;
+            //set the font size
+            document.getElementsByClassName("codeViewContainer")[0].style.fontSize = ""+this._editorFont+"px";
+        }
+    },
 
     deserializedFromTemplate: {
         value: function() {
@@ -70,11 +90,14 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
                            };
 
             //configure auto code completion if it is supported for that document type
-            if(true){
+            if(this.codeCompletionSupport[type] === true){
                 editorOptions.onKeyEvent = function(cm, keyEvent){self._codeCompletionKeyEventHandler.call(self, cm, keyEvent, type)};
             }
 
             var editor = self.codeEditor.fromTextArea(doc.textArea, editorOptions);
+
+            //editor.setOption("theme", "night");
+
             return editor;
         }
     },
@@ -128,6 +151,16 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
                     return false;
             }
         }
-    }
+    },
 
+    handleCodeCompletionSupport:{
+        value:function(fileType){
+            var autoCodeCompleteElem = document.getElementsByClassName("autoCodeComplete")[0];
+            if(autoCodeCompleteElem && (this.codeCompletionSupport[fileType] === true)){
+                autoCodeCompleteElem.style.visibility = "visible";
+            }else if(autoCodeCompleteElem && !this.codeCompletionSupport[fileType]){
+                autoCodeCompleteElem.style.visibility = "hidden";
+            }
+        }
+    }
 });

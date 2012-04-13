@@ -442,6 +442,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             NJevent("onOpenDocument", doc);
 //            appDelegateModule.MyAppDelegate.onSetActiveDocument();
 
+            this.application.ninja.stage.stageView.showCodeViewBar(false);
         }
     },
 
