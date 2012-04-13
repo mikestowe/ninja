@@ -469,12 +469,13 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     didDraw:{
         value:function () {
-            if (!this.application.ninja.documentController.creatingNewFile) {
+            if ((!this.application.ninja.documentController.creatingNewFile) || (this.application.ninja.breadCrumbClick)) {
                 if (this.application.ninja.currentDocument.documentRoot.children[0]) {
                     var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
                     if (selectedIndex !== false) {
 	                    if (!this.application.ninja.timeline.arrLayers[selectedIndex].layerData.created) {
 	                        this.retrieveStoredTweens();
+	                        this.application.ninja.breadCrumbClick = false;
 	                    }
                     }
                 }

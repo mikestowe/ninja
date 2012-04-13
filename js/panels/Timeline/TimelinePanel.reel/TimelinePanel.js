@@ -528,6 +528,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.playhead.addEventListener("mousedown", this.startPlayheadTracking.bind(this), false);
             this.playhead.addEventListener("mouseup", this.stopPlayheadTracking.bind(this), false);
             this.time_markers.addEventListener("click", this.updatePlayhead.bind(this), false);
+            
+            // Initialize BreadCrumb 
+            this.application.ninja.breadCrumbClick = false;
             this.enablePanel(false);
         }
     },
@@ -540,7 +543,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.drawTimeMarkers();
             // Document switching
             // Check to see if we have saved timeline information in the currentDocument.
-            if (typeof(this.application.ninja.currentDocument.isTimelineInitialized) === "undefined") {
+            if ((typeof(this.application.ninja.currentDocument.isTimelineInitialized) === "undefined") &&
+            	(!this.application.ninja.breadCrumbClick)) {
                 // No, we have no information stored.
                 // This could mean we are creating a new file, OR are opening an existing file.
                 
@@ -581,6 +585,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this.arrLayers = this.temparrLayers;
                 this.currentLayerNumber = storedCurrentLayerNumber;
                 this.currentLayerSelected = this.application.ninja.currentSelectedContainer;
+                // this.application.ninja.breadCrumbClick = false;
 				
             } else {
                 // we do have information stored.  Use it.
@@ -747,20 +752,13 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:function (node) {
             var i = 0;
 
-            if (typeof(this.application.ninja.currentDocument.isTimelineInitialized) === "undefined" || (this.application.ninja.breadCrumbClick)) {
-                if (this._firstTimeLoaded) {
-                    this._firstTimeLoaded = false;
-                } else {
-                   this._boolCacheArrays = false;
-                   this.clearTimelinePanel();
-                   this._boolCacheArrays = true;
-                   this._bindDocumentEvents();
-                   this.initTimelineForDocument();
-                   this.application.ninja.breadCrumbClick=false;
-                }
-            }else{
-                this._firstTimeLoaded=false;
-            }
+			if (this._firstTimeLoaded === true) {
+				this._firstTimeLoaded = false;
+				return;
+			}
+
+			this.handleDocumentChange();
+			// this.application.ninja.breadCrumbClick=false;
         }
     },
 
