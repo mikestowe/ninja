@@ -60,7 +60,7 @@ exports.ElementController = Montage.create(Component, {
 
             for(var property in properties) {
                 this.application.ninja.stylesController.setElementStyle(element, property, properties[property]);
-            }
+        }
         }
     },
 
@@ -231,10 +231,6 @@ exports.ElementController = Montage.create(Component, {
                 return el.elementModel.props3D.perspectiveDist;
             } else {
                 var dist = this.application.ninja.stylesController.getPerspectiveDistFromElement(el, false);
-                if(dist == null) {
-                    dist = 1400;
-                }
-
                 el.elementModel.props3D.perspectiveDist = dist;
                 return dist;
             }
@@ -246,7 +242,12 @@ exports.ElementController = Montage.create(Component, {
         value: function(el, props, index, update3DModel) {
             var dist = props[index]["dist"],
                 mat = props[index]["mat"];
-            this.application.ninja.stylesController.setElementStyle(el, "-webkit-transform", "perspective(" + dist + ") " + "matrix3d(" + MathUtils.scientificToDecimal(mat, 5) + ")");
+            this.application.ninja.stylesController.setElementStyle(el, "-webkit-transform", "matrix3d(" + MathUtils.scientificToDecimal(mat, 5) + ")");
+
+            this.application.ninja.stylesController.setElementStyle(el, "-webkit-transform-style", "preserve-3d");
+
+            // TODO - We don't support perspective on individual elements yet
+//            this.application.ninja.stylesController.setElementStyle(el, "-webkit-perspective", dist);
 
             el.elementModel.props3D.matrix3d = mat;
             el.elementModel.props3D.perspectiveDist = dist;
