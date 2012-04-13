@@ -158,6 +158,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             return this._masterDuration;
         },
         set:function (val) {
+        	console.log('timelinepanel.masterDuration.set('+val+')');
+        	//debugger;
             this._masterDuration = val;
             this.timebar.style.width = (this._masterDuration / 12) + "px";
         }
@@ -540,8 +542,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.drawTimeMarkers();
             // Document switching
             // Check to see if we have saved timeline information in the currentDocument.
-            
-            
             if (typeof(this.application.ninja.currentDocument.isTimelineInitialized) === "undefined" || this.application.ninja.breadCrumbClick) {
                 // No, we have no information stored.  Create it.
 				this.initTimelineCache();
@@ -556,6 +556,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                             this._openDoc = true;
                             this.restoreLayer(parentNode.children[myIndex]);
                         }
+						this.resetMasterDuration();
                     }else if (this.application.ninja.currentDocument.documentRoot.children[0]) {
                         // Yes, it has DOM elements. Loop through them and create a new object for each.
                         for (myIndex = 0; this.application.ninja.currentDocument.documentRoot.children[myIndex]; myIndex++) {
@@ -564,21 +565,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                         }
                     }
                 // }else if(this.application.ninja.breadCrumbClick){
-                } else {
-                	
-                    var parentNode = this.application.ninja.currentSelectedContainer;
-                    for (myIndex = 0; parentNode.children[myIndex]; myIndex++) {
-                        this._openDoc = true;
-                        this.restoreLayer(parentNode.children[myIndex]);
-                    }
                 }
 
                 // After recreating the tracks and layers, store the result in the currentDocument.
-                /*
-                this.application.ninja.currentDocument.tlArrLayers = this.arrLayers;
-                this.application.ninja.currentDocument.tllayerNumber = this.currentLayerNumber;
-                this.application.ninja.currentDocument.tlCurrentSelectedContainer=this.application.ninja.currentSelectedContainer;
-                */
 				this.arrLayers = this.temparrLayers;
 				this.cacheTimeline();
 
@@ -770,7 +759,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             var ptrParent = nj.queryParentSelector(event.target, ".container-layer");
             if (ptrParent !== false) {
                 var myIndex = this.getActiveLayerIndex();
-                this.selectLayer(myIndex, true);
+                console.log('timelinePanel.timelineLeftPaneMousedown, myIndex = ' + myIndex)
+                if (myIndex !== false) {
+                	this.selectLayer(myIndex, true);
+                }
+                
             }
             this._isMousedown = true;
         }
@@ -1063,6 +1056,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 }
                 this._captureSelection = true;
             }
+            this.resetMasterDuration();
         }
     },
 
