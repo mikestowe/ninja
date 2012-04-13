@@ -264,6 +264,10 @@ exports.ElementController = Montage.create(Component, {
                                                                     "-webkit-transform",
                                                                     "matrix3d(" + MathUtils.scientificToDecimal(mat, 5) + ")");
 
+            this.application.ninja.stylesController.setElementStyle(el,
+                                                                    "-webkit-transform-style",
+                                                                    "preserve-3d");
+
             // TODO - We don't support perspective on individual elements yet
 //            this.application.ninja.stylesController.setElementStyle(el,
 //                                                                    "-webkit-perspective",
