@@ -259,7 +259,7 @@ exports.ViewUtils = Montage.create(Component, {
 
             // transform the point up the tree
             var child = elt;
-            var parent = elt.parentElement;
+            var parent = elt.offsetParent;
             while ( parent )
             {
                 // go to screen space of the current child
@@ -287,7 +287,7 @@ exports.ViewUtils = Montage.create(Component, {
                 }
 
                 child = parent;
-                parent = parent.parentElement;
+                parent = parent.offsetParent;
             }
 
             return pt;
@@ -303,7 +303,7 @@ exports.ViewUtils = Montage.create(Component, {
 
             // transform the bounds up the tree
             var child = elt;
-            var parent = elt.parentElement;
+            var parent = elt.offsetParent;
             while ( parent )
             {
                 pt = this.childToParent( pt, child );
@@ -311,7 +311,7 @@ exports.ViewUtils = Montage.create(Component, {
                 if (parent === this._rootElement)  break;
 
                 child = parent;
-                parent = parent.parentElement;
+                parent = parent.offsetParent;
             }
 
             /////////////////////////////////////////////////////////
@@ -346,7 +346,7 @@ exports.ViewUtils = Montage.create(Component, {
             if (pt.length == 2)  pt[2] = 0;
 
             // transform the bounds up the tree
-            var parent = child.parentElement;
+            var parent = child.offsetParent;
             if ( parent )
             {
                 this.setViewportObj( child );
@@ -394,7 +394,7 @@ exports.ViewUtils = Montage.create(Component, {
             pt[3] = 1;
 
             // transform the bounds up the tree
-            var parent = child.parentElement;
+            var parent = child.offsetParent;
             if ( parent )
             {
                 this.setViewportObj( child );
@@ -429,7 +429,7 @@ exports.ViewUtils = Montage.create(Component, {
 
             /*
              this.pushViewportObj( elt );
-             var parent = elt.parentElement;
+             var parent = elt.offsetParent;
              var offset = this.getElementOffset( elt );
              offset[2] = 0;
              var localEyePt = this.getCenterOfProjection();
@@ -603,19 +603,6 @@ exports.ViewUtils = Montage.create(Component, {
                 w       = elt.offsetWidth,
                 h       = elt.offsetHeight;
 
-            if(elt.width)
-                w = elt.width;
-            if(elt.height)
-                h = elt.height;
-
-            if (elt.style)
-            {
-                if (elt.style.left)     left    = MathUtils.styleToNumber(elt.style.left);
-                if (elt.style.top)      top     = MathUtils.styleToNumber(elt.style.top);
-                if (elt.style.width)    w   = MathUtils.styleToNumber(elt.style.width);
-                if (elt.style.height)   h  = MathUtils.styleToNumber(elt.style.height);
-            }
-
 //            if (elt instanceof SVGSVGElement) {
             if(elt.nodeName.toLowerCase() === "svg") {
                         if(w instanceof SVGAnimatedLength)
@@ -658,6 +645,21 @@ exports.ViewUtils = Montage.create(Component, {
         //        if (elt.__ninjaXOff)  xOff = elt.__ninjaXOff;
         //        if (elt.__ninjaYOff)  yOff = elt.__ninjaYOff;
             var offset = [xOff, yOff];
+            if(elt.offsetParent && (elt.offsetParent !== this._stageElement))
+            {
+                var pS = elt.ownerDocument.defaultView.getComputedStyle(elt.offsetParent);
+
+                var border = parseInt(pS.getPropertyValue("border"));
+
+                if(border)
+                {
+                    var bl = parseInt(pS.getPropertyValue("border-left-width")),
+                        bt = parseInt(pS.getPropertyValue("border-top-width"));
+
+                    offset[0] += bl;
+                    offset[1] += bt;
+                }
+            }
 
             if(elt === this._stageElement)
             {
@@ -987,7 +989,7 @@ exports.ViewUtils = Montage.create(Component, {
 
                 if (elt === this._stageElement)  break;
                 if (elt === this._rootElement)  break;
-                elt = elt.parentElement;
+                elt = elt.offsetParent;
                 if (elt === this._rootElement)  break;
             }
 
@@ -1040,7 +1042,7 @@ exports.ViewUtils = Montage.create(Component, {
                 //mat = offMat.multiply( mat );
                 glmat4.multiply( offMat, mat, mat );
 
-                elt = elt.parentElement;
+                elt = elt.offsetParent;
             }
 
             return mat;
