@@ -158,8 +158,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             return this._masterDuration;
         },
         set:function (val) {
-        	console.log('timelinepanel.masterDuration.set('+val+')');
-        	//debugger;
             this._masterDuration = val;
             this.timebar.style.width = (this._masterDuration / 12) + "px";
         }
@@ -455,14 +453,16 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     			newStyle = {}, 
     			styleID = "1@0"; // format: layerID + "@" + style counter
     			
+    		/* Example new style 	
             newStyle.styleID = styleID;
-			newStyle.whichView = "propval";
-			newStyle.editorProperty = "top";
-			newStyle.editorValue = 0;
-			newStyle.ruleTweener = false;
+			newStyle.whichView = "propval";		// Which view do we want to show, usually property/value view (see Style)
+			newStyle.editorProperty = "top";	// the style property
+			newStyle.editorValue = 0;			// The current value
+			newStyle.ruleTweener = false; 
 			newStyle.isSelected = false;
 			
 			returnArray.push(newStyle);
+			*/
 			
 			return returnArray;
     		
@@ -542,35 +542,48 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.drawTimeMarkers();
             // Document switching
             // Check to see if we have saved timeline information in the currentDocument.
-            if (typeof(this.application.ninja.currentDocument.isTimelineInitialized) === "undefined" || this.application.ninja.breadCrumbClick) {
-                // No, we have no information stored.  Create it.
+            if (typeof(this.application.ninja.currentDocument.isTimelineInitialized) === "undefined") {
+                // No, we have no information stored.
+                // This could mean we are creating a new file, OR are opening an existing file.
+                
+                // First, initialize the caches.
 				this.initTimelineCache();
                 this.temparrLayers = [];
 
-                // Are we opening an existing doc?
+				// That's all we need to do for a brand new file. 
+                // But what if we're opening an existing document?
                 if (!this.application.ninja.documentController.creatingNewFile) {
-                    // Opening an existing document. Does it have any DOM elements?
-                    if(this.application.ninja.breadCrumbClick){
-                        var parentNode = this.application.ninja.currentSelectedContainer;
-                        for (myIndex = 0; parentNode.children[myIndex]; myIndex++) {
-                            this._openDoc = true;
-                            this.restoreLayer(parentNode.children[myIndex]);
-                        }
-						this.resetMasterDuration();
-                    }else if (this.application.ninja.currentDocument.documentRoot.children[0]) {
+                    // Opening an existing document. If it has DOM elements we need to restore their timeline info
+                    if (this.application.ninja.currentDocument.documentRoot.children[0]) {
                         // Yes, it has DOM elements. Loop through them and create a new object for each.
                         for (myIndex = 0; this.application.ninja.currentDocument.documentRoot.children[myIndex]; myIndex++) {
                             this._openDoc = true;
                             this.restoreLayer(this.application.ninja.currentDocument.documentRoot.children[myIndex]);
                         }
                     }
-                // }else if(this.application.ninja.breadCrumbClick){
                 }
-
-                // After recreating the tracks and layers, store the result in the currentDocument.
-				this.arrLayers = this.temparrLayers;
-				this.cacheTimeline();
-
+                
+                // Draw the repetition.
+                this.arrLayers = this.temparrLayers;
+                this.currentLayerNumber = this.arrLayers.length;
+                
+			} else if (this.application.ninja.breadCrumbClick) {
+				// Information stored, but we're moving up or down in the breadcrumb.
+				// Get the current selection and restore timeline info for its children.
+                var parentNode = this.application.ninja.currentSelectedContainer,
+                	storedCurrentLayerNumber = this.application.ninja.currentDocument.tllayerNumber;
+                this.temparrLayers = [];
+                
+                for (myIndex = 0; parentNode.children[myIndex]; myIndex++) {
+                    this._openDoc = true;
+                    this.restoreLayer(parentNode.children[myIndex]);
+                }
+                
+                // Draw the repetition.
+                this.arrLayers = this.temparrLayers;
+                this.currentLayerNumber = storedCurrentLayerNumber;
+                this.currentLayerSelected = this.application.ninja.currentSelectedContainer;
+				
             } else {
                 // we do have information stored.  Use it.
                 var i = 0, 
@@ -605,7 +618,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 				
 				// Ok, done reading from the cache.
 				this._boolCacheArrays = true;
-				this.resetMasterDuration();
             }
         }
     },
@@ -759,7 +771,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             var ptrParent = nj.queryParentSelector(event.target, ".container-layer");
             if (ptrParent !== false) {
                 var myIndex = this.getActiveLayerIndex();
-                console.log('timelinePanel.timelineLeftPaneMousedown, myIndex = ' + myIndex)
                 if (myIndex !== false) {
                 	this.selectLayer(myIndex, true);
                 }
@@ -878,8 +889,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     resetMasterDuration:{
         value:function(){
-        	console.log('TimelinePanel.resetMasterDuration()')
-
             var trackDuration;
             var length = this.arrLayers.length;
             if (length > 0) {
