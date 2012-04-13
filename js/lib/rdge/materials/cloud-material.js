@@ -121,14 +121,21 @@ var CloudMaterial = function CloudMaterial() {
 		var canvasID = "__canvas__";
 		//this._srcCanvas = doc.createElement(canvasID);
 		this._srcCanvas = NJUtils.makeNJElement("canvas", canvasID, "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
+		var dstCanvas = this.getWorld().getCanvas(),
+			srcCanvas = this._srcCanvas;
+		srcCanvas.width  = dstCanvas.width;
+		srcCanvas.height = dstCanvas.height;
+
+		// save the current RDGE context
+		var saveContext = g_Engine.getContext();	
 
 		// build a world to do the rendering
-		this._srcWorld = new GLWorld( this._srcCanvas, true );
+		this._srcWorld = new GLWorld( this._srcCanvas, true, true );
 		var srcWorld = this._srcWorld;
 		this._srcCanvas.__GLWorld = srcWorld;
 
 		// build the geometry
-		var prim = this.buildGeometry();
+		var prim = this.buildGeometry( srcWorld,  srcCanvas.width, srcCanvas.height );
 
 		// set up the shader
 		this._shader = new jshader();
@@ -149,6 +156,12 @@ var CloudMaterial = function CloudMaterial() {
 				t.u_surfaceAlpha.set( [this._surfaceAlpha] );
 				t.u_zmin.set( [this._zmin] );
 				t.u_zmax.set( [this._zmax] );
+
+				var wrap = 'REPEAT',  mips = true;
+				var texMapName = this._propValues[this._propNames[0]];
+				var tex = srcWorld.renderer.getTextureByName(texMapName, wrap, mips );
+				if (tex)
+					srcWorld.textureToLoad( tex );
 			}
         }
 
@@ -160,16 +173,25 @@ var CloudMaterial = function CloudMaterial() {
 
 		// create the texture
 		var wrap = 'REPEAT',  mips = true;
+		this._srcWorld._hasAnimatedMaterials = true;	// hack to make the texture think this world is animated
 		this._glTex = new Texture( world, this._srcCanvas,  wrap, mips );
 
 		// set the shader values in the shader
 		this.updateTexture();
 		this.update( 0 );
+
+		// restore the previous RDGE context
+		g_Engine.setContext( saveContext.id );
 	};
 
 	this.updateTexture = function() {
 		var material = this._materialNode;
-		if (material) {
+		if (material) 
+		{
+			// save the current context
+			var saveContext = g_Engine.getContext();
+			g_Engine.setContext( this._srcCanvas.rdgeid );
+
 			var technique = material.shaderProgram['default'];
 			var renderer = g_Engine.getContext().renderer;
 			if (renderer && technique) {
@@ -185,8 +207,22 @@ var CloudMaterial = function CloudMaterial() {
                 }
 
 			}
+
+			g_Engine.setContext( saveContext.id );
 		}
 	};
+		
+	this.updateTextures = function()
+	{
+		if (this._glTex)
+		{
+			if (!this._glTex.isAnimated())
+			{
+				this._glTex.render();
+				this.updateTexture();
+			}
+		}
+	}
 
 	this.update = function( time )
 	{
@@ -215,12 +251,43 @@ var CloudMaterial = function CloudMaterial() {
 		}
 	};
 
-	this.buildGeometry = function()
+	this.buildGeometry = function(world,  canvasWidth,  canvasHeight)
 	{
 		var RectangleGeometry	= require("js/lib/geom/rectangle").RectangleGeometry;
 
 		RectangleGeometry.init();
 
+		// get the normalized device coordinates (NDC) for
+		// all position and dimensions.
+		var vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
+		var xNDC = 0.0/vpw,  yNDC = 0.0/vph,
+			xFillNDC = canvasWidth/vpw,  yFillNDC = canvasHeight/vph;
+
+		var aspect = world.getAspect();
+		var zn = world.getZNear(),  zf = world.getZFar();
+		var t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
+			b = -t,
+			r = aspect*t,
+			l = -r;
+
+		// calculate the object coordinates from their NDC coordinates
+		var z = -world.getViewDistance();
+
+		// get the position of the origin
+		var x = -z*(r-l)/(2.0*zn)*xNDC,
+			y = -z*(t-b)/(2.0*zn)*yNDC;
+
+		// get the x and y fill
+		var xFill = -z*(r-l)/(2.0*zn)*xFillNDC,
+			yFill = -z*(t-b)/(2.0*zn)*yFillNDC;
+
+		
+		//this.createFill([x,y],  2*xFill,  2*yFill,  tlRadius, blRadius, brRadius, trRadius, fillMaterial);
+		var ctr = [x,y],  width = 2*xFill,  height = 2*yFill;
+		var prim = RectangleGeometry.create( ctr,  width, height );
+		return prim;
+
+		/*
 		var verts	= [],
 			normals	= [ [0,0,1], [0,0,1], [0,0,1], [0,0,1] ],
 			uvs		= [ [0,0], [1,0], [1,1], [0,1] ];
@@ -242,6 +309,7 @@ var CloudMaterial = function CloudMaterial() {
 		}
 
 		return RectangleGeometry.buildPrimitive();
+		*/
 	};
 
 	// JSON export
@@ -269,48 +337,6 @@ var CloudMaterial = function CloudMaterial() {
         {
             throw new Error( "could not import material: " + jObj );
         }
-	}
-
-
-	this.export = function() {
-		// every material needs the base type and instance name
-		var exportStr = "material: " + this.getShaderName() + "\n";
-		exportStr += "name: " + this.getName() + "\n";
-
-		var world = this.getWorld();
-		if (!world)
-			throw new Error( "no world in material.export, " + this.getName() );
-
-		var texMapName =  this._propValues[this._propNames[0]];
-		exportStr += "texture: " +texMapName + "\n";
-		
-		// every material needs to terminate like this
-		exportStr += "endMaterial\n";
-
-		return exportStr;
-	};
-
-	this.import = function( importStr ) {
-		var pu = new MaterialParser( importStr );
-		var material = pu.nextValue( "material: " );
-		if (material != this.getShaderName())  throw new Error( "ill-formed material" );
-		this.setName(  pu.nextValue( "name: ") );
-
-		var rtnStr;
-        try {
-			this._propValues[this._propNames[0]] = pu.nextValue( "texture: " );
-
-            var endKey = "endMaterial\n";
-            var index = importStr.indexOf( endKey );
-            index += endKey.length;
-            rtnStr = importStr.substr( index );
-        }
-        catch (e)
-        {
-            throw new Error( "could not import material: " + importStr );
-        }
-
-		return rtnStr;
 	}
 };
 

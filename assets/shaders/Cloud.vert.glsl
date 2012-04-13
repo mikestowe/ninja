@@ -35,7 +35,7 @@ void main()
 {
     // Transform position
 	vec4 pos = vec4(a_pos,1);
-	pos.z += u_time*zSpeed;
+	//pos.z += u_time*zSpeed;
 	gl_Position = u_projMatrix * u_mvMatrix * pos;
 	    
     v_texCoord0 = texcoord;

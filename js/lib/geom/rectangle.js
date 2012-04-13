@@ -12,7 +12,11 @@ var MaterialsModel = require("js/models/materials-model").MaterialsModel;
 //      GL representation of a rectangle.
 //      Derived from class GeomObj
 ///////////////////////////////////////////////////////////////////////
-var Rectangle = function GLRectangle() {
+var Rectangle = function GLRectangle()
+{
+	if (!MaterialsModel)
+		MaterialsModel = require("js/models/materials-model").MaterialsModel;
+
 	// CONSTANTS
 	this.N_TRIANGLES = 15;
 

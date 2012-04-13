@@ -333,6 +333,15 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 			rtnVal = this.hHasAnimatedMaterials( root );
             this._hasAnimatedMaterials = rtnVal;
         }
+		else
+		{
+			// currently...
+			// we set this case to true - cloud materials create a
+			// world with no objects but cloud materials animate.
+			// TODO - find a better way to do this
+			rtnVal = true;
+			this._hasAnimatedMaterials = true;
+		}
 
 		return rtnVal;
 	};
