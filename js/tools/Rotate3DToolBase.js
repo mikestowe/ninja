@@ -21,6 +21,10 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
 
     _inLocalMode: { value: true, enumerable: true },
 
+    rotateStage: {
+        value: false
+    },
+
     drawWithoutSnapping:
     {
         value: function(event)
@@ -54,8 +58,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                     this._origin[0] += dx;
                     this._origin[1] += dy;
 
-
-                    if(this.application.ninja.selectedElements.length === 1) {
+                    if( this.rotateStage || (this.application.ninja.selectedElements.length === 1)) {
                         this._startOriginArray[0][0] += dx;
                         this._startOriginArray[0][1] += dy;
                     }
@@ -128,7 +131,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                 }
             }
 
-            if(this._inLocalMode && (this.application.ninja.selectedElements.length === 1) )
+            if(this._inLocalMode && (this.application.ninja.selectedElements.length === 1 || this.rotateStage) )
             {
                 this._rotateLocally(mat);
             }
@@ -144,10 +147,15 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
 
     _rotateLocally: {
         value: function (rotMat) {
-            var len = this.application.ninja.selectedElements.length;
+            var selectedElements = this.application.ninja.selectedElements;
+
+            if(this.rotateStage) {
+                selectedElements = [this.application.ninja.currentDocument.documentRoot];
+            }
+            var len = selectedElements.length;
             for(var i = 0; i < len; i++) {
-                var elt = this.application.ninja.selectedElements[i].elementModel.getProperty("elt");
-                var curMat = this.application.ninja.selectedElements[i].elementModel.getProperty("mat");
+                var elt = selectedElements[i].elementModel.getProperty("elt");
+                var curMat = selectedElements[i].elementModel.getProperty("mat");
 
                 // pre-translate by the transformation center
                 var tMat = Matrix.I(4);
@@ -171,7 +179,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                 glmat4.multiply(mat, tMat, mat);
 
                 // while moving, set inline style to improve performance
-                viewUtils.setMatrixForElement(this.application.ninja.selectedElements[i], mat, true );
+                viewUtils.setMatrixForElement(selectedElements[i], mat, true );
             }
         }
     },
@@ -333,16 +341,21 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                 return;
             }
 
-            var elt, eltCtr, ctrOffset, matInv;
+            var elt, element, eltCtr, ctrOffset, matInv;
 
-            if(this.application.ninja.selectedElements.length === 1) {
+            if(this.rotateStage || (this.application.ninja.selectedElements.length === 1)) {
                 elt = this._target;
 
                 if(shouldUpdateCenter) {
-                    eltCtr = this.application.ninja.selectedElements[0].elementModel.getProperty("ctr");
+                    if(this.rotateStage) {
+                        element = this.application.ninja.currentDocument.documentRoot;
+                    } else {
+                        element = this.application.ninja.selectedElements[0];
+                    }
+                    eltCtr = element.elementModel.getProperty("ctr");
                     ctrOffset = vecUtils.vecSubtract(3, this._origin, eltCtr);
 
-                    matInv = this.application.ninja.selectedElements[0].elementModel.getProperty("matInv");
+                    matInv = element.elementModel.getProperty("matInv");
                     ctrOffset = MathUtils.transformVector(ctrOffset, matInv);
 
                     elt.elementModel.props3D.m_transformCtr = ctrOffset;

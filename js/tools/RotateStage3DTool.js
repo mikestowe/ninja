@@ -7,10 +7,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage,
     Rotate3DToolBase = require("js/tools/Rotate3DToolBase").Rotate3DToolBase,
     toolHandleModule = require("js/stage/tool-handle"),
-    snapManager = require("js/helper-classes/3D/snap-manager").SnapManager,
     viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils,
     vecUtils = require("js/helper-classes/3D/vec-utils").VecUtils,
-    drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils,
     ElementsMediator = require("js/mediators/element-mediator").ElementMediator;
 
 exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
@@ -23,6 +21,7 @@ exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
 
     _initializeToolHandles: {
         value: function() {
+            this.rotateStage = true;
             if(!this._handles)
             {
                 this._handles = [];
@@ -149,6 +148,6 @@ exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
 //			this.UpdateSelection(true);
            this.Configure(true);
        }
-   }
+    }
 
 });

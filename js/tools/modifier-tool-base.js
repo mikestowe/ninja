@@ -809,7 +809,10 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                 if(!this._activateOriginHandle)
                 {
                     this.application.ninja.stage.drawNow = true;
+                    var canSnap = this._canSnap;
+                    this._canSnap = true;
                     this.doSelection(event);
+                    this._canSnap = canSnap;
                 }
             }
 
