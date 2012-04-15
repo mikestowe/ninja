@@ -1294,6 +1294,7 @@ RectangleGeometry.init = function()
 
 RectangleGeometry.addQuad = function( verts,  normals, uvs )
 {
+	var offset = this.vertices.length/3;
 	for (var i=0;  i<4;  i++)
 	{
 		RectangleGeometry.pushVertex( verts[i][0], verts[i][1], verts[i][2]);
@@ -1301,13 +1302,13 @@ RectangleGeometry.addQuad = function( verts,  normals, uvs )
 		RectangleGeometry.pushUV( uvs[i] );
 	}
 
-	RectangleGeometry.pushIndices( 0, 1, 2 );
-	RectangleGeometry.pushIndices( 2, 3, 0 );
+	RectangleGeometry.pushIndices( 0+offset, 1+offset, 2+offset );
+	RectangleGeometry.pushIndices( 2+offset, 3+offset, 0+offset );
 }
 
 RectangleGeometry.buildPrimitive = function()
 {
-	var nVertices = this.vertices.length;
+	var nVertices = this.vertices.length/3;
 	return ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.TRIANGLES, nVertices);
 }
 

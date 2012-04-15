@@ -233,7 +233,7 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 		}
 
 		// copy the source canvas to the context to be used in the texture
-		renderCtx.drawImage(srcCanvas, 0, 0);
+		renderCtx.drawImage(srcCanvas, 0, 0, width, height);
 
 		/////////////////
 		tex.image = renderCanvas;

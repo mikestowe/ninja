@@ -73,6 +73,7 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 	this._firstRender = true;
 
 	this._worldCount = worldCounter;
+	console.log( "creating world " + this._worldCount );
 	worldCounter++;
 
 	// keep a counter for generating node names
@@ -513,6 +514,18 @@ World.prototype.restartRenderLoop = function() {
 		}
 	}
 };
+
+World.prototype.stop = function()
+{
+	if (this._canvas && this._canvas.task)
+		this._canvas.task.stop();
+}
+
+World.prototype.start = function()
+{
+	if (this._canvas && this._canvas.task)
+		this._canvas.task.start();
+}
 
 //append to the list of objects if obj doesn't already exist
 //if obj exists, then don't add to list of objects

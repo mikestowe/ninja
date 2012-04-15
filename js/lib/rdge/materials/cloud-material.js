@@ -8,6 +8,8 @@ var MaterialParser		= require("js/lib/rdge/materials/material-parser").MaterialP
 var Material			= require("js/lib/rdge/materials/material").Material;
 var GLWorld				= require("js/lib/drawing/world").World;
 var Texture				= require("js/lib/rdge/texture").Texture;
+var ElementMediator		= require("js/mediators/element-mediator").ElementMediator;
+var TagTool				= require("js/tools/TagTool").TagTool;
 
 ///////////////////////////////////////////////////////////////////////
 // Class GLMaterial
@@ -20,7 +22,9 @@ var CloudMaterial = function CloudMaterial() {
 	this._name = "CloudMaterial";
 	this._shaderName = "cloud";
 
-	this._texMap = 'assets/images/cloud10.png';
+	//this._texMap = 'assets/images/cloud10.png';
+	this._texMap = 'assets/images/us_flag.png';
+	//this._texMap = 'assets/images/cubelight.png';
 	this._diffuseColor = [0.5, 0.5, 0.5, 0.5];
 
 	// base size of cloud polygons.  Random adjustments made to each quad
@@ -31,7 +35,7 @@ var CloudMaterial = function CloudMaterial() {
 
 	// parameter initial values
 	this._time			= 0.0;
-	this._surfaceAlpha	= 1.0;
+	this._surfaceAlpha	= 0.6;
 	this._zmin			= 0.1;
 	this._zmax			= 10.0;
 
@@ -111,80 +115,54 @@ var CloudMaterial = function CloudMaterial() {
 
 		// save the world
 		if (world)  this.setWorld( world );
-
-		// this variable declared above is inherited set to a smaller delta.
-		// the cloud material runs a little faster
-		this._dTime = 0.01;
+		var dstWorld = world;
 
 		// create a canvas to render into
-		var doc = world.getCanvas().ownerDocument;
+		var dstCanvas = this.getWorld().getCanvas();
+		var doc = this.getWorld().getCanvas().ownerDocument;
 		var canvasID = "__canvas__";
 		//this._srcCanvas = doc.createElement(canvasID);
 		this._srcCanvas = NJUtils.makeNJElement("canvas", canvasID, "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
-		var dstCanvas = this.getWorld().getCanvas(),
-			srcCanvas = this._srcCanvas;
+		srcCanvas = this._srcCanvas;
 		srcCanvas.width  = dstCanvas.width;
 		srcCanvas.height = dstCanvas.height;
 
-		// save the current RDGE context
-		var saveContext = g_Engine.getContext();	
+		//////////////////////////////////////////////////////////////////////////////////
+		// IS THIS NECESSARY??
+        //var elementModel = TagTool.makeElement(~~srcCanvas.width, ~~srcCanvas.height,
+        //                                                                Matrix.I(4), [0,0,0], srcCanvas);
+        //ElementMediator.addElement(srcCanvas, elementModel.data, true);
+		//////////////////////////////////////////////////////////////////////////////////
 
-		// build a world to do the rendering
-		this._srcWorld = new GLWorld( this._srcCanvas, true, true );
-		var srcWorld = this._srcWorld;
-		this._srcCanvas.__GLWorld = srcWorld;
-
-		// build the geometry
-		var prim = this.buildGeometry( srcWorld,  srcCanvas.width, srcCanvas.height );
+		// build the source.
+		// the source being the world/canvas/geometry of the clouds.
+		// the source is used to create a texture map that is then used by
+		// the destimation.
+		this.buildSource();
 
 		// set up the shader
 		this._shader = new jshader();
-		this._shader.def = cloudMaterialDef;
+		this._shader.def = cloudMapMaterialDef;
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = createMaterialNode("cloudMaterial" + "_" + world.generateUniqueNodeID());
+		this._materialNode = createMaterialNode("cloudMapMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
-		// initialize the shader uniforms
+		// initialize the time
 		this._time = 0;
-		if (this._shader && this._shader['default']) {
-			var t = this._shader['default'];
-			if (t)
-			{
-				t.u_time.set( [this._time] );
-				t.u_surfaceAlpha.set( [this._surfaceAlpha] );
-				t.u_zmin.set( [this._zmin] );
-				t.u_zmax.set( [this._zmax] );
 
-				var wrap = 'REPEAT',  mips = true;
-				var texMapName = this._propValues[this._propNames[0]];
-				var tex = srcWorld.renderer.getTextureByName(texMapName, wrap, mips );
-				if (tex)
-					srcWorld.textureToLoad( tex );
-			}
-        }
-
-		// add the nodes to the tree
-		var trNode = createTransformNode("objRootNode_" + this._srcWorld._nodeCounter++);
-		srcWorld._rootNode.insertAsChild( trNode );
-		trNode.attachMeshNode(srcWorld.renderer.id + "_prim_" + srcWorld._nodeCounter++, prim);
-        trNode.attachMaterial( this._materialNode );
-
-		// create the texture
+		// create the texture to map the source cloud generation world/canvas to the destination
 		var wrap = 'REPEAT',  mips = true;
-		this._srcWorld._hasAnimatedMaterials = true;	// hack to make the texture think this world is animated
 		this._glTex = new Texture( world, this._srcCanvas,  wrap, mips );
 
 		// set the shader values in the shader
 		this.updateTexture();
 		this.update( 0 );
-
-		// restore the previous RDGE context
-		g_Engine.setContext( saveContext.id );
 	};
 
-	this.updateTexture = function() {
+	this.updateTexture = function()
+	{
 		var material = this._materialNode;
 		if (material) 
 		{
@@ -195,9 +173,7 @@ var CloudMaterial = function CloudMaterial() {
 			var technique = material.shaderProgram['default'];
 			var renderer = g_Engine.getContext().renderer;
 			if (renderer && technique) {
-				var texMapName = this._propValues[this._propNames[0]];
 				var wrap = 'REPEAT',  mips = true;
-				//var tex = this.loadTexture( texMapName, wrap, mips );
                 if (this._glTex)
                 {
                     this._glTex.render();
@@ -205,9 +181,9 @@ var CloudMaterial = function CloudMaterial() {
 					if (tex)
 						technique.u_tex0.set( tex );
                 }
-
 			}
 
+			// restore the context
 			g_Engine.setContext( saveContext.id );
 		}
 	};
@@ -226,29 +202,100 @@ var CloudMaterial = function CloudMaterial() {
 
 	this.update = function( time )
 	{
+		var technique, renderer, tex;
+		
+		// update the cloud map material
 		var material = this._materialNode;
 		if (material)
 		{
-			if (this._srcWorld)  this._srcWorld.draw();
+			technique = material.shaderProgram['default'];
+			renderer = g_Engine.getContext().renderer;
+			if (renderer && technique)
+			{
+					if (this._glTex)
+					{
+						this._glTex.render();
+						tex = this._glTex.getTexture();
+						technique.u_tex0.set( tex );
+					}
+                }
+			}
+		}
 
-			var technique = material.shaderProgram['default'];
-			var renderer = g_Engine.getContext().renderer;
-			if (renderer && technique) {
+		// update the source material
+		material = this._srcMaterialNode;
+		if (material)
+		{
+			technique = material.shaderProgram['default'];
+			renderer = g_Engine.getContext().renderer;
+			if (renderer && technique)
+			{
 				if (this._shader && this._shader['default']) {
 					this._shader['default'].u_time.set( [this._time] );
                 }
-				this._time += this._dTime;
 
-				if (this._glTex)
+ 				this._time += this._dTime;
+               if (this._time > 200.0)  this._time = 0.0;
+			}
+	};
+
+	this.buildSource = function()
+	{
+		// save the current RDGE context so we can reset it later
+		var saveContext = g_Engine.getContext();
+		this.getWorld().stop();	
+
+		// build a world to do the rendering
+		this._srcWorld = new GLWorld( this._srcCanvas, true, true );
+		var srcWorld = this._srcWorld;
+		if (!this._srcCanvas)  throw new Error( "No source canvas in Cloud material" );
+		this._srcCanvas.__GLWorld = srcWorld;
+
+		// build the geometry
+		var prim = this.buildGeometry( srcWorld,  srcCanvas.width, srcCanvas.height );
+
+		// set up the shader
+		var shader = new jshader();
+		shader.def = cloudMaterialDef;
+		shader.init();
+		this._srcShader = shader;
+
+		// set up the material node
+		var materialNode = createMaterialNode("cloudMaterial" + "_" + srcWorld.generateUniqueNodeID());
+		materialNode.setShader(shader);
+		this._srcMaterialNode = materialNode;
+
+		// add the nodes to the tree
+		var trNode = createTransformNode("objRootNode_" + srcWorld._nodeCounter++);
+		srcWorld._rootNode.insertAsChild( trNode );
+		trNode.attachMeshNode(srcWorld.renderer.id + "_prim_" + srcWorld._nodeCounter++, prim);
+        trNode.attachMaterial( materialNode );
+
+		// initialize the shader uniforms
+		this._time = 0;
+		if (shader['default']) {
+			var t = shader['default'];
+			if (t)
+			{
+				t.u_time.set( [this._time] );
+				t.u_surfaceAlpha.set( [this._surfaceAlpha] );
+				t.u_zmin.set( [this._zmin] );
+				t.u_zmax.set( [this._zmax] );
+
+				var wrap = 'REPEAT',  mips = true;
+				var texMapName = this._propValues[this._propNames[0]];
+				var tex = srcWorld.renderer.getTextureByName(texMapName, wrap, mips );
+				if (tex)
 				{
-					this._glTex.render();
-					var tex = this._glTex.getTexture();
-					technique.u_tex0.set( tex );
+					srcWorld.textureToLoad( tex );
+					t.u_tex0.set( tex );
 				}
-
-                if (this._time > 200.0)  this._time = 0.0;
 			}
 		}
+
+		// restore the original context
+		g_Engine.setContext( saveContext.id );
+		this.getWorld().start();
 	};
 
 	this.buildGeometry = function(world,  canvasWidth,  canvasHeight)
@@ -278,38 +325,52 @@ var CloudMaterial = function CloudMaterial() {
 			y = -z*(t-b)/(2.0*zn)*yNDC;
 
 		// get the x and y fill
-		var xFill = -z*(r-l)/(2.0*zn)*xFillNDC,
-			yFill = -z*(t-b)/(2.0*zn)*yFillNDC;
+		var hWidth = -z*(r-l)/(2.0*zn)*xFillNDC,
+			hHeight = -z*(t-b)/(2.0*zn)*yFillNDC;
 
 		
 		//this.createFill([x,y],  2*xFill,  2*yFill,  tlRadius, blRadius, brRadius, trRadius, fillMaterial);
-		var ctr = [x,y],  width = 2*xFill,  height = 2*yFill;
-		var prim = RectangleGeometry.create( ctr,  width, height );
-		return prim;
+		var ctr = [x,y],  width = 2*hWidth,  height = 2*hHeight;
+		var cloudSize = width > height ? 0.25*width : 0.25*height;
+		//var prim = RectangleGeometry.create( ctr,  width, height );
+		//return prim;
 
-		/*
 		var verts	= [],
 			normals	= [ [0,0,1], [0,0,1], [0,0,1], [0,0,1] ],
 			uvs		= [ [0,0], [1,0], [1,1], [0,1] ];
-
-		for ( i = 0; i < 2; i++ )
+	
+		for ( i = 0; i < 12; i++ )
 		{
-			var x = Math.random() * 1000 - 500,
-				y = - Math.random() * Math.random() * 200 - 15,
-				z = i,
-				zRot = Math.random() * Math.PI,
-				size = this._cloudSize * Math.random() * Math.random() * 1.5 + 0.5;
-			var sz = 0.5*size;
+			var x = hWidth*2*(Math.random() - 0.5),
+				//y = hHeight*2.0*(Math.random() * Math.random() - 0.5),
+				y = hHeight*2.0*(Math.random() - 0.5),
+				z = 0,	//i,
+				zRot = (Math.random() - 0.5) * Math.PI,
+				sz = cloudSize * Math.random();
 
-			verts[0] = [x-sz, y-sz, z];
-			verts[1] = [x-sz, y+sz, z];
-			verts[2] = [x+sz, y+sz, z];
-			verts[3] = [x+sz, y-sz, z];
-			RectangleGeometry.addQuad( verts,  normals, uvs )
+			//x = 0.0;  y = 0.0;  z = 0.0;
+			//zRot = 0.0;
+
+			verts[0] = [-sz, -sz, 0];
+			verts[1] = [-sz,  sz, 0];
+			verts[2] = [ sz,  sz, 0];
+			verts[3] = [ sz, -sz, 0];
+
+			var rotMat = Matrix.RotationZ( zRot );
+			//var scaleMat = Matrix.Scale( [sz,sz,sz] );
+			var transMat = Matrix.Translation( [x,y,z] );
+
+			var mat = glmat4.multiply( transMat, rotMat, [] );
+
+			glmat4.multiplyVec3( mat, verts[0] );
+			glmat4.multiplyVec3( mat, verts[1] );
+			glmat4.multiplyVec3( mat, verts[2] );
+			glmat4.multiplyVec3( mat, verts[3] );
+
+			RectangleGeometry.addQuad( verts,  normals, uvs );
 		}
 
 		return RectangleGeometry.buildPrimitive();
-		*/
 	};
 
 	// JSON export
@@ -343,7 +404,8 @@ var CloudMaterial = function CloudMaterial() {
 ///////////////////////////////////////////////////////////////////////////////////////
 // RDGE shader
  
-// shader spec (can also be loaded from a .JSON file, or constructed at runtime)
+// the cloud material def is used for cloud generation on the
+// local world created by the cloud material.
 var cloudMaterialDef =
 {'shaders': 
 	{
@@ -384,7 +446,45 @@ var cloudMaterialDef =
 		]
 	}
 };
+ 
+// the cloud map material def is used to map the cloud image onto
+// the destination geometry
+var cloudMapMaterialDef =
+{'shaders': 
+	{
+		'defaultVShader':"assets/shaders/Basic.vert.glsl",
+		'defaultFShader':"assets/shaders/BasicTex.frag.glsl"
+	},
+	'techniques':
+	{ 
+		'default':
+		[
+			{
+				'vshader' : 'defaultVShader',
+				'fshader' : 'defaultFShader',
+				// attributes
+				'attributes' :
+				{
+					'vert'  :   { 'type' : 'vec3' },
+					'normal' :  { 'type' : 'vec3' },
+					'texcoord'  :   { 'type' : 'vec2' }
+				},
+				// parameters
+				'params' : 
+				{
+					'u_tex0'			: { 'type' : 'tex2d' },
+				},
 
+				// render states
+				'states' : 
+				{
+					'depthEnable' : true,
+					'offset':[1.0, 0.1]
+				}
+			}
+		]
+	}
+};
 
 
 
