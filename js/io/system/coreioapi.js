@@ -217,7 +217,7 @@ exports.CoreIoApi = Montage.create(Component, {
         value: function(serviceURL, path) {
             var urlOut = path.replace(/\\/g,"/");
             urlOut = urlOut.replace(/:/g,"");
-            urlOut = encodeURI(urlOut);
+            urlOut = encodeURIComponent(urlOut);
             //add leading / if not already there
             if((urlOut.length > 0) && (urlOut.charAt(0) !== "/")){
                 urlOut = "/" + urlOut;
@@ -393,12 +393,12 @@ exports.CoreIoApi = Montage.create(Component, {
                     	xhr = new XMLHttpRequest();
                     //
                     xhr.open("POST", serviceURL, false);
-                    xhr.responseType = "arraybuffer"; 
+                    //xhr.responseType = "arraybuffer"; 
                     if(file.contentType && file.contentType.length)
                         xhr.setRequestHeader("Content-Type", file.contentType);
                     else
                         xhr.setRequestHeader("Content-Type", "text/plain");
-
+                    
                     if (file.contents)
                         xhr.send(file.contents);
                     else
@@ -1085,14 +1085,14 @@ exports.CoreIoApi = Montage.create(Component, {
     isValidUri:{
         value: function(uri){
             var isWindowsUri=false, isUnixUri=false,status=false;
-            if(uri !== ""){
+            if((uri !== null) && (uri !== "")){
                 uri = uri.replace(/^\s+|\s+$/g,"");  // strip any leading or trailing spaces
 
                 //for local machine folder uri
                 isWindowsUri = /^([a-zA-Z]:)([\\/][^<>:"/\\|?*]+)*[\\/]?$/gi.test(uri);
                 isUnixUri = /^(\/)?(\/(?![.])[^/]*)*\/?$/gi.test(uri);//folders beginning with . are hidden on Mac / Unix
                 status = isWindowsUri || isUnixUri;
-                if(isWindowsUri && isUnixUri){status = false;}
+                if((uri === "") || (isWindowsUri && isUnixUri)){status = false;}
             }
             return status;
         }

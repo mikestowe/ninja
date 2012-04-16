@@ -15,11 +15,13 @@ var ColorSelect = require("js/panels/properties.reel/sections/custom-rows/color-
 
 // Components Needed to make this work
 var Hottext = require("js/components/hottextunit.reel").HotTextUnit;
+var HT = require("js/components/hottext.reel").HotText;
 var Dropdown = require("js/components/combobox.reel").Combobox;
 var TextField = require("js/components/textfield.reel").TextField;
 var FileInput = require("js/components/ui/file-input.reel").FileInput;
 var Checkbox = require("js/components/checkbox.reel").Checkbox;
 var ColorChip = require("js/components/ui/color-chip.reel").ColorChip;
+var Button = require("montage/ui/button.reel").Button;
 
 exports.CustomSection = Montage.create(Component, {
 
@@ -128,6 +130,15 @@ exports.CustomSection = Montage.create(Component, {
         }
     },
 
+    handleAction: {
+        value:function(event) {
+            if(event._event.wasSetByCode) return;
+
+            var obj = event.currentTarget;
+            this._dispatchPropEvent({"type": "change", "id": obj.id, "prop": obj.prop, "value": obj.value, "control": obj});
+        }
+    },
+
     _dispatchPropEvent: {
         value: function(event) {
 //            console.log(event);
@@ -158,12 +169,41 @@ exports.CustomSection = Montage.create(Component, {
         value: function(fields) {
             switch(fields.type) {
                 case "hottext"  : return this.createHottext(fields);
+                case "ht"  : return this.createHT(fields);
                 case "dropdown" : return this.createDropdown(fields);
                 case "textbox"  : return this.createTextField(fields);
                 case "file"     : return this.createFileInput(fields);
                 case "checkbox" : return this.createCheckbox(fields);
                 case "chip"     : return this.createColorChip(fields);
+                case "button"     : return this.createButton(fields);
             }
+        }
+    },
+
+    createHT: {
+        value: function(aField) {
+
+            // Generate Hottext
+            var obj = HT.create();
+
+            // Set Values for HottextRow
+            if (aField.id)          obj.id = aField.id;
+            if (aField.value)       obj.value = aField.value;
+            if (aField.min)         obj._minValue = aField.min;
+            if (aField.max)         obj._maxValue = aField.max;
+            if (aField.prop)        obj.prop = aField.prop;
+
+            //Initiate onChange Events
+            obj.addEventListener("change", this, false);
+            obj.addEventListener("changing", this, false);
+
+            //Bind object value to controls list so it can be manipulated
+            Object.defineBinding(this.controls, aField.id, {
+              boundObject: obj,
+              boundObjectPropertyPath: "value"
+            });
+
+            return obj;
         }
     },
 
@@ -317,6 +357,19 @@ exports.CustomSection = Montage.create(Component, {
             if (aField.value)       obj.label = aField.value;
             if (aField.prop)        obj.prop = aField.prop;
 
+            if (aField.enabled) {
+                if(aField.enabled.boundObject) {
+                    // TODO - For now, always bind to this.controls[someProperty]
+                    Object.defineBinding(obj, "enabled", {
+                                    boundObject: this.controls,
+                                    boundObjectPropertyPath: aField.enabled.boundProperty,
+                                    oneway: false
+                                });
+                } else {
+                    obj.enabled = aField.enabled;
+                }
+            }
+
             //Initiate onChange Events
             obj.addEventListener("change", this, false);
 
@@ -348,6 +401,39 @@ exports.CustomSection = Montage.create(Component, {
 
             // TODO - Hack for now to reference the color select object to unregister color chips
             this.controls["stageBackground"] = obj;
+
+            return obj;
+        }
+    },
+
+    createButton: {
+        value: function(aField) {
+            var obj = Button.create();
+
+            // Set Values for Button
+            if (aField.id)                  obj.id = aField.id;
+            if (aField.label)               obj.label = aField.label;
+            if (aField.prop)                obj.prop = aField.prop;
+
+            // Special casing button so slot uses "button" tag instead of "div"
+            obj.type = "button";
+
+            if (aField.enabled) {
+                if(aField.enabled.boundObject) {
+                    // TODO - For now, always bind to this.controls[someProperty]
+                    Object.defineBinding(obj, "enabled", {
+                                    boundObject: this.controls,
+                                    boundObjectPropertyPath: aField.enabled.boundProperty,
+                                    oneway: true
+                                });
+                } else {
+                    obj.enabled = aField.enabled;
+                }
+            }
+
+            obj.addEventListener("action", this, false);
+
+            this.controls[aField.id] = obj;
 
             return obj;
         }

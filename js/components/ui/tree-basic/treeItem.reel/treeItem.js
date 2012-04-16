@@ -107,8 +107,8 @@ exports.TreeItem = Montage.create(Component, {
             //icon or text click sends selection event
             var contentEls = this.element.querySelectorAll(".atreeItemContent");
             for(var i=0;i<contentEls.length;i++){
-                contentEls[i].addEventListener("click", function(evt){that.handleTreeItemContentClick(evt);}, false);
-                contentEls[i].addEventListener("dblclick", function(evt){that.handleTreeItemContentDblclick(evt);}, false);
+                contentEls[i].addEventListener("click", function(evt){that.handleTreeItemContentClick(evt);}, true);
+                contentEls[i].addEventListener("dblclick", function(evt){that.handleTreeItemContentDblclick(evt);}, true);
             }
 
             this.element.addEventListener("mouseover", function(evt){that.handleTreeItemMouseover(evt);}, false);
@@ -118,12 +118,12 @@ exports.TreeItem = Montage.create(Component, {
                 this.metadata = "Name: "+this.treeItemData.name;
             }
             this.metadata = this.metadata + "<br />" + "Type: "+this.treeItemData.type;
-            if(this.treeItemData.size){this.metadata = this.metadata + "<br />" + "Size: "+this.treeItemData.size;}
+            if(this.treeItemData.size){this.metadata = this.metadata + "<br />" + "Size: "+this.treeItemData.size+ " bytes";}
             if(this.treeItemData.creationDate){this.metadata = this.metadata + "<br />" + "Creation date: "+ this.formatTimestamp(this.treeItemData.creationDate);}
             if(this.treeItemData.modifiedDate){this.metadata = this.metadata + "<br />" + "Modified date: "+ this.formatTimestamp(this.treeItemData.modifiedDate);}
 
             if((this.treeItemData.type === "directory") && (this.expandAfterDraw === true)){
-                this.toggleContent(this.treeArrow);
+                this.expand(this.treeArrow);
             }
             if(this.treeItemData.uri === this.highlightedUri){
                 this.itemName.classList.add("selected");
@@ -170,6 +170,35 @@ exports.TreeItem = Montage.create(Component, {
             }
         }
     },
+
+    expand:{
+        writable:false,
+        enumerable:true,
+        value:function(el){
+            //if children already drawn then just hide/show
+            if(this.element.getElementsByTagName("ul").length > 0){
+                var theParent = this.element.getElementsByTagName("ul")[0].parentNode;
+                if(theParent.classList.contains("hideTree")){//collapsed
+                    theParent.classList.remove("hideTree");//expand
+                    el.innerHTML = "&#9660;";
+                }
+            }
+            //else send event to draw the children
+            else{
+                var treeClickEvent = document.createEvent("Events");
+                treeClickEvent.initEvent("drawTree", false, false);
+                treeClickEvent.uri = this.treeItemData.uri;
+                treeClickEvent.uriType = this.treeItemData.type;
+                var divEl = document.createElement("div");
+                this.element.appendChild(divEl);
+                treeClickEvent.subTreeContainer = divEl;
+                this.element.dispatchEvent(treeClickEvent);
+
+                el.innerHTML = "&#9660;";
+            }
+        }
+    },
+
 
     /**
      * Event Listeners

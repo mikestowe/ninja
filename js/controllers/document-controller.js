@@ -38,13 +38,12 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             return this._activeDocument;
         },
         set: function(doc) {
-            if(!!this._activeDocument) this._activeDocument.isActive = false;
-
+            if(!!this._activeDocument){ this._activeDocument.isActive = false;}
             this._activeDocument = doc;
             if(!!this._activeDocument){
-
                 if(this._documents.indexOf(doc) === -1) this._documents.push(doc);
                 this._activeDocument.isActive = true;
+
                 if(!!this._activeDocument.editor){
                     this._activeDocument.editor.focus();
                 }
@@ -61,25 +60,33 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             this.eventManager.addEventListener("executeSaveAs", this, false);
             this.eventManager.addEventListener("executeSaveAll", this, false);
             this.eventManager.addEventListener("executeFileClose", this, false);
+            this.eventManager.addEventListener("executeFileCloseAll", this, false);
 
             this.eventManager.addEventListener("styleSheetDirty", this, false);
             
+            this.eventManager.addEventListener("addComponentFirstDraw", this, false);
         }
     },
     
-   
+    handleAddComponentFirstDraw: {
+    	value: function (e) {
+    		//TODO: Add logic to reparse the document for dynamically added styles
+    		//console.log(e);
+    	}
+    },
     
     			
     			
     			
-					
-    ////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////
 	//
     handleWebRequest: {
     	value: function (request) {
     		//TODO: Check if frameId is proper
     		if (this._hackRootFlag && request.parentFrameId !== -1) {
     			//TODO: Optimize creating string
+    			//console.log(request);
     			//console.log(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1], request.url);
 				//return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split('/')[request.url.split('/').length-1]};
 				return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/montage-html/'))[1]};
@@ -102,6 +109,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         }
     },
 	////////////////////////////////////////////////////////////////////
+
 
 	
 	
@@ -172,6 +180,17 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         }
     },
     ////////////////////////////////////////////////////////////////////
+    handleExecuteFileCloseAll:{
+            value: function(event) {
+                var i=0;
+                if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
+                    while(this._documents.length > 0){
+                        this.closeDocument(this._documents[this._documents.length -1].uuid);
+                    }
+                }
+            }
+        },
+        ////////////////////////////////////////////////////////////////////
     //
     fileSaveResult: {
     	value: function (result) {
@@ -372,7 +391,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                     nextDocumentIndex = closeDocumentIndex - 1;
                 }
                 this.application.ninja.stage.stageView.switchDocument(this._documents[nextDocumentIndex]);
-                if(typeof this.activeDocument.stopVideos !== "undefined"){doc.stopVideos();}
+                if(typeof doc.stopVideos !== "undefined"){doc.stopVideos();}
                 this._removeDocumentView(doc.container);
             }else if(this._documents.length === 0){
                 if(typeof this.activeDocument.pauseAndStopVideos !== "undefined"){

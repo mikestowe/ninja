@@ -10,9 +10,7 @@
     -webkit-box-orient: vertical;
     -webkit-box-flex: 1;
 }
-.presetsPanel .treeRoot {
-    margin: 0 8px;
-}
+
 .tab-bar {
     -webkit-box-flex: 0;
     background-color: #282828;

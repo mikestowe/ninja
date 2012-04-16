@@ -10,21 +10,15 @@ var Montage = require("montage/core/core").Montage,
 exports.ShapeModel = Montage.create(Component, {
 
     shapeCount:             { value: 0 },
-    useWebGl:           { value: false },
+    useWebGl:               { value: false },
+    animate:                { value: true },
 
     GLWorld:                { value: null },
     GLGeomObj:              { value: null },
 
     strokeSize:             { value: null },
-    stroke:                 { value: null },
-    strokeMaterial:         { value: null },
     strokeStyle:            { value: null },
     strokeStyleIndex:       { value: null },
-    border:                 { value: null },    // Store css value for ColorController
-
-    fill:                   { value: null },
-    fillMaterial:           { value: null },
-    background:             { value: null },    // Store css value for ColorController
 
     // Line-specific
     slope:                  { value: null },

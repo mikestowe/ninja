@@ -22,19 +22,34 @@ var NewFileLocation = exports.NewFileLocation = Montage.create(Component, {
         value: function() {
             this.fileInputField.selectDirectory = true;
 
-            this.newFileName.addEventListener("keyup", this, false);
+            this.addEventListener("change@newFileName.value", this.newFileNameChange, false);
+            this.newFileName.element.addEventListener("keyup", this, false);
+			this.newFileName.element.focus();
+            this.newFileName.element.select();
         }
     },
 
     handleKeyup:{
-        value:function(evt){
-            if(this.newFileName.value !== "") {
-                var newFileNameSetEvent = document.createEvent("Events");
-                newFileNameSetEvent.initEvent("newFileNameSet", false, false);
-                newFileNameSetEvent.newFileName = this.newFileName.value;
-                this.eventManager.dispatchEvent(newFileNameSetEvent);
+        value: function(evt){
+            if(evt.keyCode === 13){
+                var enterKeyupEvent = document.createEvent("Events");
+                enterKeyupEvent.initEvent("enterKey", false, false);
+                this.eventManager.dispatchEvent(enterKeyupEvent);
+            }else if(evt.keyCode === 27){
+                var escKeyupEvent = document.createEvent("Events");
+                escKeyupEvent.initEvent("escKey", false, false);
+                this.eventManager.dispatchEvent(escKeyupEvent);
             }
         }
-    }
+    },
 
+    newFileNameChange:{
+        value:function(evt){
+            var newFileNameSetEvent = document.createEvent("Events");
+            newFileNameSetEvent.initEvent("newFileNameSet", false, false);
+            newFileNameSetEvent.newFileName = this.newFileName.value;
+            newFileNameSetEvent.keyCode = evt.keyCode;
+            this.eventManager.dispatchEvent(newFileNameSetEvent);
+        }
+    }
 });

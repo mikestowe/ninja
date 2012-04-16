@@ -66,6 +66,7 @@ exports.Splitter = Montage.create(Component, {
             var storedData = this.application.localStorage.getItem(this.element.getAttribute("data-montage-id"));
             if(storedData && this.element.getAttribute("data-montage-id") !== null) {
                 this._collapsed = storedData.value;
+
             } else {
                 this._collapsed = false;
             }
@@ -77,13 +78,11 @@ exports.Splitter = Montage.create(Component, {
     draw: {
         value: function() {
             if(this.collapsed) {
-                
                 if(this.panel.element) this.panel.element.classList.add("collapsed");
                 else this.panel.classList.add("collapsed");
                 this.element.classList.add("collapsed");
                 if(this._resizeBar != null) this.resizeBar.classList.add("collapsed");
-            }
-            else {
+            } else {
                 if(this.panel.element) this.panel.element.classList.remove("collapsed");
                 else this.panel.classList.remove("collapsed");
                 this.element.classList.remove("collapsed");
@@ -95,7 +94,11 @@ exports.Splitter = Montage.create(Component, {
     handleClick : {
         value: function() {
             if (!this.disabled) {
-                this.panel.addEventListener("webkitTransitionEnd", this, false);
+                if(this.panel.element) {
+                    this.panel.element.addEventListener("webkitTransitionEnd", this, false);
+                } else {
+                    this.panel.addEventListener("webkitTransitionEnd", this, false);
+                }
                 this.collapsed = !this.collapsed;
                 this.needsDraw = true;
             }
@@ -104,7 +107,12 @@ exports.Splitter = Montage.create(Component, {
 
     handleWebkitTransitionEnd: {
         value: function() {
-            this.panel.removeEventListener("webkitTransitionEnd", this, false);
+            if(this.panel.element) {
+                this.panel.element.removeEventListener("webkitTransitionEnd", this, false);
+            } else {
+                this.panel.removeEventListener("webkitTransitionEnd", this, false);
+            }
+
             this.application.ninja.stage.resizeCanvases = true;
         }
     },

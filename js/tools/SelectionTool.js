@@ -60,6 +60,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             else
             {
                 this._canSnap = true;
+                this._updateTargets();
             }
 
             this.isDrawing = true;
@@ -205,12 +206,12 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             {
                 this._handleMode = null;
                 this._delta = null;
-                this.DrawHandles();
             }
 
             this.endDraw(event);
             this._canSnap = true;
             this._use3DMode = false;
+            this.DrawHandles();
         }
     },
 
@@ -223,7 +224,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
     HandleDoubleClick: {
         value: function(event) {
             if(this.application.ninja.selectedElements.length > 0) {
-                this.application.ninja.currentSelectedContainer = this.application.ninja.selectedElements[0]._element;
+                this.application.ninja.currentSelectedContainer = this.application.ninja.selectedElements[0];
             } else {
                 this.application.ninja.currentSelectedContainer = this.application.ninja.currentDocument.documentRoot;
             }
@@ -242,8 +243,8 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                         case Keyboard.LEFT:
                             var newLeft = [];
                             var leftArr = this.application.ninja.selectedElements.map(function(item) {
-                                newLeft.push( (parseInt(ElementsMediator.getProperty(item._element, "left")) - inc) + "px"  );
-                                return ElementsMediator.getProperty(item._element, "left");
+                                newLeft.push( (parseInt(ElementsMediator.getProperty(item, "left")) - inc) + "px"  );
+                                return ElementsMediator.getProperty(item, "left");
                             });
 
                             ElementsMediator.setProperty(this.application.ninja.selectedElements, "left", newLeft , "Change", "selectionTool", leftArr);
@@ -251,8 +252,8 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                         case Keyboard.UP:
                             var newTop = [];
                             var topArr = this.application.ninja.selectedElements.map(function(item) {
-                                newTop.push( (parseInt(ElementsMediator.getProperty(item._element, "top")) - inc) + "px"  );
-                                return ElementsMediator.getProperty(item._element, "top");
+                                newTop.push( (parseInt(ElementsMediator.getProperty(item, "top")) - inc) + "px"  );
+                                return ElementsMediator.getProperty(item, "top");
                             });
 
                             ElementsMediator.setProperty(this.application.ninja.selectedElements, "top", newTop , "Change", "selectionTool", topArr);
@@ -260,8 +261,8 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                         case Keyboard.RIGHT:
                             var newLeft = [];
                             var leftArr = this.application.ninja.selectedElements.map(function(item) {
-                                newLeft.push( (parseInt(ElementsMediator.getProperty(item._element, "left")) + inc) + "px"  );
-                                return ElementsMediator.getProperty(item._element, "left");
+                                newLeft.push( (parseInt(ElementsMediator.getProperty(item, "left")) + inc) + "px"  );
+                                return ElementsMediator.getProperty(item, "left");
                             });
 
                             ElementsMediator.setProperty(this.application.ninja.selectedElements, "left", newLeft , "Change", "selectionTool", leftArr);
@@ -269,8 +270,8 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                         case Keyboard.DOWN:
                             var newTop = [];
                             var topArr = this.application.ninja.selectedElements.map(function(item) {
-                                newTop.push( (parseInt(ElementsMediator.getProperty(item._element, "top")) + inc) + "px"  );
-                                return ElementsMediator.getProperty(item._element, "top");
+                                newTop.push( (parseInt(ElementsMediator.getProperty(item, "top")) + inc) + "px"  );
+                                return ElementsMediator.getProperty(item, "top");
                             });
 
                             ElementsMediator.setProperty(this.application.ninja.selectedElements, "top", newTop , "Change", "selectionTool", topArr);
@@ -308,28 +309,35 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                 previousStyles = [];
             var len = this.application.ninja.selectedElements.length;
             this._targets = [];
-            for(var i = 0; i < len; i++)
-            {
-                var elt = this.application.ninja.selectedElements[i]._element;
+            for(var i = 0; i < len; i++) {
+                var elt = this.application.ninja.selectedElements[i];
 
                 var curMat = viewUtils.getMatrixFromElement(elt);
                 var curMatInv = glmat4.inverse(curMat, []);
 
                 this._targets.push({elt:elt, mat:curMat, matInv:curMatInv});
-                if(addToUndoStack)
-                {
+                if(addToUndoStack) {
+                    var prevX,
+                        prevY,
+                        prevW,
+                        prevH,
+                        _x,
+                        _y,
+                        _w,
+                        _h,
+                        previousMat,
+                        previousStyleStr,
+                        newStyleStr;
 
-                    if(!this._use3DMode)
-                    {
-                        var previousMat = this._undoArray[i].mat.slice(0);
-                        var prevX = this._undoArray[i]._x;
-                        var prevY = this._undoArray[i]._y;
-                        var prevW = this._undoArray[i]._w;
-                        var prevH = this._undoArray[i]._h;
-                        var _x = parseInt(ElementsMediator.getProperty(elt, "left")) + curMat[12] - previousMat[12];
-                        var _y = parseInt(ElementsMediator.getProperty(elt, "top")) + curMat[13] - previousMat[13];
-                        var _w = parseInt(ElementsMediator.getProperty(elt, "width"));
-                        var _h = parseInt(ElementsMediator.getProperty(elt, "height"));
+                    if(!this._use3DMode) {
+                        prevX = this._undoArray[i]._x;
+                        prevY = this._undoArray[i]._y;
+                        prevW = this._undoArray[i]._w;
+                        prevH = this._undoArray[i]._h;
+                        _x = parseInt(ElementsMediator.getProperty(elt, "left"));
+                        _y = parseInt(ElementsMediator.getProperty(elt, "top"));
+                        _w = parseInt(ElementsMediator.getProperty(elt, "width"));
+                        _h = parseInt(ElementsMediator.getProperty(elt, "height"));
 
                         previousLeft.push(prevX + "px");
                         previousTop.push(prevY + "px");
@@ -339,27 +347,22 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                         newTop.push(_y + "px");
                         newWidth.push(_w + "px");
                         newHeight.push(_h + "px");
-
-                        viewUtils.setMatrixForElement(elt, previousMat);
-
-                        this._targets[i].mat = previousMat;
-                        this._targets[i].matInv = glmat4.inverse(previousMat, []);
                     }
                     else
                     {
-                        var previousMat = this._undoArray[i].mat.slice(0);
-                        var prevW = this._undoArray[i]._w;
-                        var prevH = this._undoArray[i]._h;
-                        var _w = parseInt(ElementsMediator.getProperty(elt, "width"));
-                        var _h = parseInt(ElementsMediator.getProperty(elt, "height"));
+                        previousMat = this._undoArray[i].mat.slice(0);
+                        prevW = this._undoArray[i]._w;
+                        prevH = this._undoArray[i]._h;
+                        _w = parseInt(ElementsMediator.getProperty(elt, "width"));
+                        _h = parseInt(ElementsMediator.getProperty(elt, "height"));
                         previousWidth.push(prevW + "px");
                         previousHeight.push(prevH + "px");
                         newWidth.push(_w + "px");
                         newHeight.push(_h + "px");
 
-                        var previousStyleStr = {dist:this._undoArray[i].dist,
+                        previousStyleStr = {dist:this._undoArray[i].dist,
                                                 mat:MathUtils.scientificToDecimal(previousMat, 5)};
-                        var newStyleStr = {dist:viewUtils.getPerspectiveDistFromElement(elt),
+                        newStyleStr = {dist:viewUtils.getPerspectiveDistFromElement(elt),
                                             mat:MathUtils.scientificToDecimal(curMat, 5)};
                         previousStyles.push(previousStyleStr);
                         newStyles.push(newStyleStr);
@@ -460,11 +463,8 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                 }
                 else
                 {
-                    curMat = item.mat.slice(0);
-                    glmat4.multiply(curMat, qMat, curMat);
-                    var previousMat = this._undoArray[i].mat.slice(0);
-                    var _x = parseInt(ElementsMediator.getProperty(elt, "left")) + curMat[12] - previousMat[12];
-                    var _y = parseInt(ElementsMediator.getProperty(elt, "top")) + curMat[13] - previousMat[13];
+                    var _x = parseInt(ElementsMediator.getProperty(elt, "left")) + transMat[12];
+                    var _y = parseInt(ElementsMediator.getProperty(elt, "top")) + transMat[13];
 
                     newLeft.push(_x + "px");
                     newTop.push(_y + "px");
@@ -577,6 +577,9 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             {
                 // form the translation vector and post translate the matrix by it.
                 delta = vecUtils.vecSubtract( 3, data.pt1, data.pt0 );
+                delta[0] = ~~delta[0];
+                delta[1] = ~~delta[1];
+                delta[2] = 0;
                 var transMat = Matrix.Translation( delta );
                 this._moveElements(transMat);
             }
@@ -710,7 +713,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             {
                 return;
             }
-            if(this._target && this._handles)
+            if(this._target && this._handles && (this._targets.length === 1))
             {
                 var len = this._handles.length;
                 var i = 0,

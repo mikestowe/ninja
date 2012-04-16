@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html lang="en">
+	<head>
+    	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    	<link rel="stylesheet" type="text/css" href="components-panel.css">
+
+        <script type="text/montage-serialization">
+        {
+            "owner": {
+                "module": "js/panels/components-panel.reel",
+                "name": "ComponentsPanel",
+                "properties": {
+                    "element": {"#": "components_panel"},
+                    "controller": {"@": "componentsTree"}
+                }
+            },
+
+            "componentsController" : {
+                "module": "js/components/controllers/tree-controller",
+                "name": "TreeController",
+                "properties" : {
+                    "branchKey" : "children",
+                    "labelKey" : "text",
+                    "delegate": {"@": "owner" }
+                },
+                "bindings": {
+                    "content": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "components"
+                    }
+                }
+            },
+
+            "componentsTree" : {
+                "module" : "js/components/treeview/treeview.reel",
+                "name" : "Treeview",
+                "properties" : {
+                    "element" : {"#": "componentsContainer"},
+                    "branchComponent" : {"@": "branch" },
+                    "contentController": {"@": "componentsController"},
+                    "showRoot" : false
+                }
+            },
+
+            "branch" : {
+                "module" : "js/components/treeview/ninja-branch.reel",
+                "name" : "Branch"
+            }
+        }
+        </script>
+   		
+	</head>
+	<body>
+    
+    	<div id="components_panel" class="components_panel">
+           <div id="componentsContainer"></div>
+    	</div>
+
+    </body>
+</html>

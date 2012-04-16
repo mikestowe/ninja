@@ -94,19 +94,53 @@ exports.NJUtils = Object.create(Object.prototype, {
     ///// TODO: find a different place for this function
     makeElementModel: {
         value: function(el, selection, controller, isShape) {
-            var p3d = Montage.create(Properties3D).init(el);
+            var p3d = Montage.create(Properties3D);
+            if(selection === "Stage") {
+                p3d.init(el, true);
+            }
             var shapeProps = null;
+            var pi = controller + "Pi";
+
             if(isShape) {
                 shapeProps = Montage.create(ShapeModel);
+            }
+
+            if(el.controller) {
+
+                var componentInfo = Montage.getInfoForObject(el.controller);
+                var componentName = componentInfo.objectName.toLowerCase();
+
+                controller  = "component";
+                isShape = false;
+
+                switch(componentName) {
+                    case "feedreader":
+                        selection = "Feed Reader";
+                        pi = "FeedReaderPi";
+                        break;
+                    case "map":
+                        selection = "Map";
+                        pi = "MapPi";
+                        break;
+                    case "youtubechannel":
+                        selection = "Youtube Channel";
+                        pi = "YoutubeChannelPi";
+                        break;
+                    case "picasacarousel":
+                        selection = "Picasa Carousel";
+                        pi = "PicasaCarouselPi";
+                        break;
+                }
             }
 
             el.elementModel = Montage.create(ElementModel, {
                     type:       { value: el.nodeName},
                     selection:  { value: selection},
                     controller: { value: ControllerFactory.getController(controller)},
-                    pi:         { value: controller + "Pi"},
+                    pi:         { value: pi},
                     props3D:    { value: p3d},
-                    shapeModel: { value: shapeProps}
+                    shapeModel: { value: shapeProps},
+                    isShape:    { value: isShape}
             });
 
         }
@@ -138,6 +172,7 @@ exports.NJUtils = Object.create(Object.prototype, {
                         // TODO - Need more info about the shape
                         selection = "canvas";
                         controller = "shape";
+                        isShape = true;
                     }
                     else
                     {
@@ -149,6 +184,9 @@ exports.NJUtils = Object.create(Object.prototype, {
                     break;
             }
             this.makeElementModel(el, selection, controller, isShape);
+            if(el.elementModel && el.elementModel.props3D) {
+                el.elementModel.props3D.init(el, (selection === "Stage"));
+            }
         }
     },
 

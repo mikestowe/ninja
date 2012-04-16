@@ -262,7 +262,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
             {
                 if(len === 1)
                 {
-                    this.target = this.application.ninja.selectedElements[0]._element;
+                    this.target = this.application.ninja.selectedElements[0];
                     drawUtils.addElement(this.target);
 
                     viewUtils.pushViewportObj( this.target );
@@ -311,7 +311,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
             this._targets = [];
             for(var i = 0; i < len; i++)
             {
-                var elt = this.application.ninja.selectedElements[i]._element;
+                var elt = this.application.ninja.selectedElements[i];
 //                this._initProps3D(elt);
 
 
@@ -438,24 +438,23 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
         value : function()
         {
             var item,
-                elt,
                 mat,
                 dist,
                 newStyles = [],
                 previousStyles = [],
-                len = this._targets.length,
+                len = this.application.ninja.selectedElements.length,
                 iMat;
             for(var i = 0; i < len; i++)
             {
                 // Reset to the identity matrix
-                item = this._targets[i];
+                item = this.application.ninja.selectedElements[i];
                 iMat = Matrix.I(4);
-                mat = item.mat;
+                mat = ElementsMediator.getMatrix(item);
 //                iMat[12] = mat[12];
 //                iMat[13] = mat[13];
 //                iMat[14] = mat[14];
 
-                dist = this._undoArray[i].dist;
+                dist = ElementsMediator.getPerspectiveDist(item);
 
                 var previousStyleStr = {dist:dist, mat:mat};
 
@@ -476,8 +475,10 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
             this.isDrawing = false;
             this.endDraw(event);
 
-//			this.UpdateSelection(true);
-            this.Configure(true);
+            // Need to force stage to draw immediately so the new selection center is calculated
+            this.application.ninja.stage.draw();
+            // And captureSelectionDrawn to draw the transform handles
+            this.captureSelectionDrawn(null);
         }
     },
 

@@ -53,44 +53,26 @@ exports.Layout = Montage.create(Component, {
             this.ctx.lineWidth = this.ctxLineWidth;
             this.ctx.fillStyle = this.drawFillColor;
 
-//            this.eventManager.addEventListener("elementAdded", this, false);
-            this.eventManager.addEventListener("elementDeleted", this, false);
-
             this.eventManager.addEventListener("selectionChange", this, false);
-
-            this.eventManager.addEventListener("deleteSelection", this, false);
+            this.eventManager.addEventListener("elementsRemoved", this, false);
         }
     },
 
     handleOpenDocument: {
         value: function() {
-            // Initial elements to draw is the entire node list
-            if(this.application.ninja.documentController.activeDocument.currentView === "design"){//only for designer view
-                this.elementsToDraw = this.application.ninja.documentController.activeDocument._liveNodeList;
+            // Initial elements to draw are the childrens of the root element
+            if(this.application.ninja.documentController.activeDocument.currentView === "design") {
+                this.elementsToDraw = this.application.ninja.documentController.activeDocument.documentRoot.childNodes;
             }
+
             // Draw the elements and the 3d info
             this.draw();
             this.draw3DInfo(false);
         }
     },
 
-    // No need to keep track of the added elements. We now have a live node list of the dom
-    handleElementAdded: {
-        value: function(event) {
-            // this.domTree.push(event.detail);
-            // this.draw();
-            // this.draw3DInfo(false);
-        }
-    },
-
-    handleElementDeleted: {
-        value: function(event) {
-            //this.domTree.splice(this.domTree.indexOf(event.detail), 1);
-        }
-    },
-
     // Redraw stage only once after all deletion is completed
-    handleDeleteSelection: {
+    handleElementsRemoved: {
         value: function(event) {
             this.draw();
             this.draw3DInfo(false);
@@ -99,30 +81,39 @@ exports.Layout = Montage.create(Component, {
 
     handleSelectionChange: {
         value: function(event) {
+            var containerIndex;
 
             if(this.application.ninja.documentController.activeDocument === null){
                 return;
             }
 
-            // Make an array copy of the line node list which is not an array like object
-            if(this.application.ninja.documentController.activeDocument.currentView === "design"){//only for designer view
+            if(this.application.ninja.documentController.activeDocument.currentView === "design"){
+                // Make an array copy of the line node list which is not an array like object
                 this.domTree = Array.prototype.slice.call(this.application.ninja.documentController.activeDocument._liveNodeList, 0);
+                // Index of the current container
+                containerIndex = this.domTree.indexOf(this.application.ninja.currentSelectedContainer);
+
+                if(containerIndex < 0) {
+                    // Stage is the container.
+                    this.domTree = Array.prototype.slice.call(this.application.ninja.currentSelectedContainer.childNodes, 0);
+                } else {
+                    // Child nodes of the container
+                    this.domTree = Array.prototype.slice.call(this.domTree[containerIndex].childNodes, 0);
+                }
             }
             // Clear the elements to draw
             this.elementsToDraw.length = 0;
 
             // Draw the non selected elements
             if(!event.detail.isDocument) {
-                var tmp = event.detail.elements.map(function(element){ return element._element});
-
                 this.elementsToDraw = this.domTree.filter(function(value) {
-                    return (tmp.indexOf(value) === -1);
+                    return (event.detail.elements.indexOf(value) === -1);
                 });
             } else {
-                this.elementsToDraw = this.domTree;
+                this.elementsToDraw = Array.prototype.slice.call(this.domTree, 0);
             }
 
-            this.draw(); // Not a reel yet :)
+            this.draw(); // Not a reel yet
             this.draw3DInfo(false);
 
             // Clear the domTree copy
@@ -165,7 +156,7 @@ exports.Layout = Montage.create(Component, {
     drawTagOutline: {
         value: function (item) {
 
-            if(!item) return;
+            if(!item || (item.nodeType !== 1)) return;
 
             // TODO Bind the layoutview mode to the current document
             // var mode  = this.application.ninja.currentDocument.layoutMode;
@@ -348,7 +339,11 @@ exports.Layout = Montage.create(Component, {
 
     _elementName: {
         value: function(item) {
-            return this.application.ninja.elementMediator.getNJProperty(item, "selection");
+            if(item.elementModel && item.elementModel.hasOwnProperty("selection")) {
+                return item.elementModel['selection'];
+            } else {
+                return "";
+            }
         }
     }
 

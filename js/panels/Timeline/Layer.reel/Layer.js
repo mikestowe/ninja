@@ -255,12 +255,12 @@ var Layer = exports.Layer = Montage.create(Component, {
         	if (value !== this._isSelected) {
         		// Only concerned about different values
         		if (value === false) {
-        			// If changing from false to true, we need to deselect any associated styles
+        			// If changing from true to false, we need to deselect any associated styles
         			this.selectStyle(false);
         		}
         		this._isSelected = value;
         		this.layerData.isSelected = value;
-        		//this.needsDraw = true;
+        		this.needsDraw = true;
         	}
             
         }
@@ -381,7 +381,6 @@ var Layer = exports.Layer = Montage.create(Component, {
     		return this._bypassAnimation;
     	},
     	set: function(newVal) {
-    		//console.log("layer.js _bypassAnimation setter " + newVal)
     		this._bypassAnimation = newVal;
     	}
     },
@@ -406,7 +405,6 @@ var Layer = exports.Layer = Montage.create(Component, {
 
     setData:{
         value:function(){
-        	this.log('layer: setData called')
             this.layerName = this.layerData.layerName;
             this.layerID = this.layerData.layerID;
             this.arrLayerStyles = this.layerData.arrLayerStyles;
@@ -424,8 +422,12 @@ var Layer = exports.Layer = Montage.create(Component, {
             this.dtextScaleX = this.layerData.dtextScaleX;
             this.dtextScaleY = this.layerData.dtextScaleY;
             this.dtextRotate = this.layerData.dtextRotate;
+            this._isFirstDraw = this.layerData._isFirstDraw;
             this.needsDraw = true;
         }
+    },
+    _isFirstDraw : {
+    	value: true
     },
 
 	/* END: Models */
@@ -481,6 +483,16 @@ var Layer = exports.Layer = Montage.create(Component, {
             } else {
             	this.element.classList.remove("selected");
             }
+    	}
+    },
+    didDraw: {
+    	value: function() {
+    		if ((this.isSelected === true) && (this._isFirstDraw === true)) {
+    			// Once we're done drawing the first time we need to tell the TimelinePanel if
+    			// this layer is supposed to be selected.
+    			this.parentComponent.parentComponent.selectedLayerID = this.layerID;
+    			this._isFirstDraw = false;
+    		}
     	}
     },
 	/* End: Draw cycle */

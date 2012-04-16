@@ -83,8 +83,14 @@ exports.StageController = Montage.create(ElementController, {
                     return el.elementModel.stageDimension.style.getProperty(p);
                 case "width":
                     return el.elementModel.stageDimension.style.getProperty(p);
+                case "-webkit-transform-style":
+                    if(el.id === "Viewport") {
+                        return this.application.ninja.stylesController.getElementStyle(el, p, false, true);
+                    } else {
+                        return el.elementModel.stageView.style.getProperty(p);
+                    }
                 default:
-                    return ElementController.getProperty(el, p, false, true);
+                    return ElementController.getProperty(el, p, true, true);
                     //console.log("Undefined Stage property ", p);
             }
         }
@@ -111,6 +117,10 @@ exports.StageController = Montage.create(ElementController, {
                     this.application.ninja.currentDocument.iframe.height = parseInt(value) + 400;
                     el.elementModel.stageDimension.style.setProperty(p, value);
                     break;
+                case "-webkit-transform-style":
+                    el.elementModel.stageView.style.setProperty(p, value);
+                    this.application.ninja.stage.updatedStage = true;
+                    break;
                 default:
                     console.log("Undefined property ", p, "for the Stage Controller");
             }
@@ -129,5 +139,60 @@ exports.StageController = Montage.create(ElementController, {
         value: function(el, rule, selector) {
             el.elementModel.transitionStopRule.selectorText = selector;
         }
-    }
+    },
+
+    getMatrix: {
+        value: function(el) {
+            if(el.elementModel && el.elementModel.props3D && el.elementModel.props3D.matrix3d)
+            {
+                return el.elementModel.props3D.matrix3d.slice(0);
+            }
+            else
+            {
+                var mat;
+
+                if (el)
+                {
+                    mat = this.application.ninja.stylesController.getMatrixFromElement(el, true);
+                    if (!mat) {
+                        mat = Matrix.I(4);
+                    }
+
+                    var zoom = this.application.ninja.elementMediator.getProperty(el, "zoom");
+                    if (zoom)
+                    {
+                        zoom = Number(zoom);
+                        if (zoom != 1)
+                        {
+                            var zoomMat = Matrix.create(  [
+                                [ zoom,    0,    0, 0],
+                                [    0, zoom,    0, 0],
+                                [    0,    0, zoom, 0],
+                                [    0,    0,    0, 1]
+                            ] );
+                            glmat4.multiply( zoomMat, mat, mat );
+                        }
+                    }
+                }
+
+                el.elementModel.props3D.matrix3d = mat;
+                return mat;
+            }
+        }
+    },
+
+    getPerspectiveDist: {
+        value: function(el) {
+            if(el.elementModel && el.elementModel.props3D && el.elementModel.props3D.perspectiveDist)
+            {
+                return el.elementModel.props3D.perspectiveDist;
+            }
+            else
+            {
+                var dist = this.application.ninja.stylesController.getPerspectiveDistFromElement(el, true);
+                el.elementModel.props3D.perspectiveDist = dist;
+                return dist;
+            }
+        }
+    },
 });

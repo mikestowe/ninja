@@ -6,6 +6,7 @@
 
 var Montage = require("montage/core/core").Montage,
     Component   = require("montage/ui/component").Component,
+    UndoManager = require("montage/core/undo-manager").UndoManager,
     AppData     = require("js/data/appdata").AppData;
 
 var matrix = require("js/lib/math/matrix");
@@ -23,6 +24,113 @@ exports.Ninja = Montage.create(Component, {
         value: null
     },
 
+    _isResizing: {
+        value: null
+    },
+    _resizedHeight : {
+        value: 0
+    },
+    _height: {
+        value: null
+    },
+
+    height: {
+        get: function() {
+            if(this._height === null) {
+                var storedData = this.application.localStorage.getItem("timelinePanel");
+                if(storedData && storedData.value) {
+                    this._height = storedData.value;
+                }
+            }
+            return this._height;
+        },
+        set: function(val) {
+            if(this._height != val) {
+                this._height = val;
+                this.application.localStorage.setItem("timelinePanel", {"version": this.version, "value": val});
+                this.needsDraw = true;
+            }
+
+        }
+    },
+
+    _resizedWidth : {
+        value: 0
+    },
+    _width: {
+        value: null
+    },
+
+    width: {
+        get: function() {
+            if(this._width === null) {
+                var storedData = this.application.localStorage.getItem("rightPanelsContainer");
+                if(storedData && storedData.value) {
+                    this._width = storedData.value;
+                }
+            }
+            return this._width;
+        },
+        set: function(val) {
+            if(this._width != val) {
+                this._width = val;
+                this.application.localStorage.setItem("rightPanelsContainer", {"version": this.version, "value": val});
+                this.needsDraw = true;
+            }
+
+        }
+    },
+
+    handleResizeStart: {
+        value:function(e) {
+            this.isResizing = true;
+            this.height = parseInt(this.timeline.element.offsetHeight);
+            this.width = parseInt(this.rightPanelContainer.offsetWidth);
+            this.rightPanelContainer.classList.add("disableTransition");
+            this.timeline.element.classList.add("disableTransition");
+            this.needsDraw = true;
+        }
+    },
+
+    handleResizeMove: {
+        value:function(e) {
+            this._resizedHeight = e._event.dY;
+            this._resizedWidth = e._event.dX;
+            this.stage.resizeCanvases = true;
+            this.needsDraw = true;
+        }
+    },
+
+    handleResizeEnd: {
+        value: function(e) {
+//            this.height -= this._resizedHeight;
+//            this.width -= this._resizedWidth;
+            this.stage.resizeCanvases = true;
+            this._resizedHeight = 0;
+            this._resizedWidth = 0;
+            this.isResizing = false;
+            this.needsDraw = true;
+            this.rightPanelContainer.classList.remove("disableTransition");
+            this.timeline.element.classList.remove("disableTransition");
+            this.height = this.timeline.element.offsetHeight;
+            this.width = this.rightPanelContainer.offsetWidth;
+        }
+    },
+
+    handleResizeReset: {
+        value: function(e) {
+            this.width = 253;
+            this.height = 140;
+            this._resizedHeight = 0;
+            this._resizedWidth = 0;
+            this.timelineSplitter.collapsed = false;
+            this.panelSplitter.collapsed = false;
+            this.stage.resizeCanvases = true;
+            this.needsDraw = true;
+        }
+    },
+
+
     selectedElements: {
         value: []
     },
@@ -34,7 +142,7 @@ exports.Ninja = Montage.create(Component, {
     templateDidLoad: {
         value: function() {
             this.ninjaVersion = window.ninjaVersion.ninja.version;
-            this.eventManager.addEventListener( "preloadFinish", this, false);
+            this.undoManager = document.application.undoManager = UndoManager.create();
         }
     },
 
@@ -53,7 +161,6 @@ exports.Ninja = Montage.create(Component, {
 
             window.addEventListener("resize", this, false);
 
-//            this.eventManager.addEventListener( "appLoading", this, false); // Don't need this anymore
             this.eventManager.addEventListener( "selectTool", this, false);
             this.eventManager.addEventListener( "selectSubTool", this, false);
             this.eventManager.addEventListener( "onOpenDocument", this, false);
@@ -78,12 +185,40 @@ exports.Ninja = Montage.create(Component, {
         }
     },
 
+    willDraw: {
+        value: function() {
+
+        }
+    },
+
+    draw: {
+        value: function() {
+            if(this.isResizing) {
+                if (this.height - this._resizedHeight < 46) {
+                    this.timelineSplitter.collapsed = true;
+                } else {
+                    this.timelineSplitter.collapsed = false;
+                }
+
+                if (this.width - this._resizedWidth < 30) {
+                    this.panelSplitter.collapsed = true;
+                } else {
+                    this.panelSplitter.collapsed = false;
+                }
+
+            }
+                this.rightPanelContainer.style.width = (this.width - this._resizedWidth) + "px";
+                this.timeline.element.style.height = (this.height - this._resizedHeight) + "px";
+        }
+    },
+
     _didDraw: {
         value: false
     },
     
     didDraw: {
         value: function() {
+
             if(!this._didDraw) {
             	if (!this.application.ninja.coreIoApi.ioServiceDetected) {
             		var check = this.application.ninja.coreIoApi.cloudAvailable();
@@ -166,6 +301,27 @@ exports.Ninja = Montage.create(Component, {
             this.currentDocument.documentRoot.elementModel.controller.setProperty(this.currentDocument.documentRoot, "overflow", overflow);
             this.currentDocument.documentRoot.elementModel.controller.changeSelector(this.currentDocument.documentRoot, "transitionStopRule", transitionStopRule);
 
+            this._toggleWebGlAnimation(this.appModel.livePreview);
+        }
+    },
+
+    // Turn on WebGL animation during preview
+    _toggleWebGlAnimation: {
+        value: function(inLivePreview) {
+            var glCanvases = this.currentDocument.iframe.contentWindow.document.querySelectorAll('[data-RDGE-id]'),
+                glShapeModel;
+            if(glCanvases) {
+                for(var i = 0, len = glCanvases.length; i<len; i++) {
+                    glShapeModel = glCanvases[i].elementModel.shapeModel;
+                    if(inLivePreview) {
+                        glShapeModel.GLWorld._previewAnimation = true;
+                        glShapeModel.GLWorld.restartRenderLoop();
+                    } else if (!glShapeModel.animate ) {
+                        glShapeModel.GLWorld._previewAnimation = false;
+                        glShapeModel.GLWorld._canvas.task.stop();
+                    }
+                }
+            }
         }
     },
 

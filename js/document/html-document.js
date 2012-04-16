@@ -9,7 +9,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = 		require("montage/core/core").Montage,
     TextDocument =	require("js/document/text-document").TextDocument,
     NJUtils = 		require("js/lib/NJUtils").NJUtils,
-	GLWorld =			require("js/lib/drawing/world").World;
+	GLWorld =			require("js/lib/drawing/world").World,
+    MaterialsModel = require("js/models/materials-model").MaterialsModel;
 ////////////////////////////////////////////////////////////////////////
 //
 exports.HTMLDocument = Montage.create(TextDocument, {
@@ -193,12 +194,9 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 			var elt = this.iframe.contentWindow.document.getElementById("UserContent");
 			//
 			if (elt) {
-				this._glData = [];
-				//if (path) {
-					//this.collectGLData(elt, this._glData, path);
-				//} else {
-					this.collectGLData(elt, this._glData );
-				//}
+                var matLib = MaterialsModel.exportMaterials();
+				this._glData = [matLib];
+				this.collectGLData(elt, this._glData );
 			} else {
 				this._glData = null
 			}
@@ -207,35 +205,83 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 		},
         set: function(value) {
 			var elt = this.documentRoot;
-			if (elt) {
+			if (elt)
+			{
 				var nWorlds= value.length;
-				for (var i=0;  i<nWorlds;  i++) {
+				for (var i=0;  i<nWorlds;  i++)
+				{
+					/*
+					// Use this code to test the runtime version of WebGL
+					var cdm = new NinjaCvsRt.CanvasDataManager();
+					cdm.loadGLData(elt,  value,  null );
+					*/
+
+					// /*
+					// get the data for the next canvas
 					var importStr = value[i];
-					var startIndex = importStr.indexOf( "id: " );
-					if (startIndex >= 0) {
-						var endIndex = importStr.indexOf( "\n", startIndex );
-						if (endIndex > 0) {
-							var id = importStr.substring( startIndex+4, endIndex );
-							if (id) {
-								var canvas = this.findCanvasWithID( id, elt );
-								if (canvas) {
-									if (!canvas.elementModel) {
-										NJUtils.makeElementModel(canvas, "Canvas", "shape", true);
-									}
-									if (canvas.elementModel) {
-										if (canvas.elementModel.shapeModel.GLWorld) {
-											canvas.elementModel.shapeModel.GLWorld.clearTree();
-										}
-										var index = importStr.indexOf( "webGL: " );
-										var useWebGL = (index >= 0)
-										var world = new GLWorld( canvas, useWebGL );
-										world.import( importStr );
-										this.buildShapeModel( canvas.elementModel, world );
-									}
+
+					// determine if it is the new (JSON) or old style format
+					var id = null;
+					var jObj = null;
+					var index = importStr.indexOf( ';' );
+					if ((importStr[0] === 'v') && (index < 24))
+					{
+						// JSON format.  pull off the
+						importStr = importStr.substr( index+1 );
+						jObj = jObj = JSON.parse( importStr );
+						id = jObj.id;
+					}
+					else
+					{
+                        // at this point the data could be either the materials library or
+                        // an old style world.  We can determine which by converting the string
+                        // to an object via JSON.parse.  That operation will fail if the string
+                        // is an old style world.
+                        var matLibStr = 'materialLibrary;';
+                        index = importStr.indexOf( matLibStr );
+                        if (index == 0)
+                        {
+                            importStr = importStr.substr( matLibStr.length );
+                            var matLibObj = JSON.parse( importStr );
+                            MaterialsModel.importMaterials( matLibObj );
+                        }
+                        else
+                        {
+						    var startIndex = importStr.indexOf( "id: " );
+						    if (startIndex >= 0) {
+							    var endIndex = importStr.indexOf( "\n", startIndex );
+							    if (endIndex > 0)
+								    id = importStr.substring( startIndex+4, endIndex );
+						    }
+                        }
+					}
+
+					if (id != null)
+					{
+						var canvas = this.findCanvasWithID( id, elt );
+						if (canvas)
+						{
+							if (!canvas.elementModel)
+							{
+								NJUtils.makeElementModel(canvas, "Canvas", "shape", true);
+							}
+							if (canvas.elementModel)
+							{
+								if (canvas.elementModel.shapeModel.GLWorld)
+									canvas.elementModel.shapeModel.GLWorld.clearTree();
+
+								if (jObj)
+								{
+									var useWebGL = jObj.webGL;
+									var world = new GLWorld( canvas, useWebGL );
+									world.importJSON( jObj );
 								}
+
+								this.buildShapeModel( canvas.elementModel, world );
 							}
 						}
 					}
+					// */
 				}
 			}
 		}
@@ -254,19 +300,13 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 			{
 				shapeModel.GLGeomObj			= root;
 				shapeModel.strokeSize			= root._strokeWidth;
-				shapeModel.stroke				= root._strokeColor.slice();
-				shapeModel.strokeMaterial		= root._strokeMaterial.dup();
 				shapeModel.strokeStyle			= "solid";
 				//shapeModel.strokeStyleIndex
-				//shapeModel.border
-				//shapeModel.background
 				switch (root.geomType())
 				{
 					case root.GEOM_TYPE_RECTANGLE:
                         elementModel.selection = "Rectangle";
                         elementModel.pi = "RectanglePi";
-                        shapeModel.fill					= root._fillColor.slice();
-                        shapeModel.fillMaterial			= root._fillMaterial.dup();
 						shapeModel.tlRadius = root._tlRadius;
 						shapeModel.trRadius = root._trRadius;
 						shapeModel.blRadius = root._blRadius;
@@ -276,8 +316,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 					case root.GEOM_TYPE_CIRCLE:
                         elementModel.selection = "Oval";
                         elementModel.pi = "OvalPi";
-                        shapeModel.fill					= root._fillColor.slice();
-                        shapeModel.fillMaterial			= root._fillMaterial.dup();
 						shapeModel.innerRadius = root._innerRadius;
 						break;
 
@@ -286,6 +324,12 @@ exports.HTMLDocument = Montage.create(TextDocument, {
                         elementModel.pi = "LinePi";
 						shapeModel.slope = root._slope;
 						break;
+
+                    case root.GEOM_TYPE_BRUSH_STROKE:
+                        elementModel.selection = "BrushStroke";
+                        elementModel.pi = "BrushStrokePi";
+						break;
+
 
 					default:
 						console.log( "geometry type not supported for file I/O, " + root.geomType());
@@ -372,7 +416,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 		{
 			if (elt.elementModel && elt.elementModel.shapeModel && elt.elementModel.shapeModel.GLWorld)
 			{
-				var data = elt.elementModel.shapeModel.GLWorld.export();
+				var data = elt.elementModel.shapeModel.GLWorld.exportJSON();
 				dataArray.push( data );
 			}
 
@@ -510,67 +554,13 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             }
             //
             if(!this.documentRoot.Ninja) this.documentRoot.Ninja = {};
-            //Inserting user's document into template
             
             
             
-            
-            
-            
-            
-            
-            
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            
-            //TODO: Clean up and make public method to prepend properties with Ninja URL
-            this._templateDocument.head.innerHTML = (this._userDocument.content.head.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, ninjaUrlRedirect.bind(this))).replace(/url\(([^"]*)(.+?)\1\)/g, ninjaUrlRedirect.bind(this));
-            this._templateDocument.body.innerHTML = (this._userDocument.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, ninjaUrlRedirect.bind(this))).replace(/url\(([^"]*)(.+?)\1\)/g, ninjaUrlRedirect.bind(this));            
-            //
-            //var docRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
-            //
-            function ninjaUrlRedirect (prop) {
-            	//Checking for property value to not contain a full direct URL
-            	if (!prop.match(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi)) {
-            		//Checking for attributes and type of source
-            		if (prop.indexOf('href') !== -1 || prop.indexOf('src') !== -1) { //From HTML attribute
-            			//
-            			prop = prop.replace(/"([^"]*)"/gi, ninjaUrlPrepend.bind(this));
-	            	} else if (prop.indexOf('url') !== -1) { //From CSS property
-    	        		//TODO: Add functionality
-    	        		var docRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
-    	        		prop = prop.replace(/[^()\\""\\'']+/g, cssUrlToNinjaUrl);
-    	        		function cssUrlToNinjaUrl (s) {
-    	        			if (s !== 'url') {
-    	        				s = docRootUrl + s;
-    	        			}
-    	        			return s;
-    	        		}
-        	    	}
-        	    }
-            	return prop;
-            }
-            //
-            function ninjaUrlPrepend (url) {
-            	var docRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
-            	if (url.indexOf('data:image') !== -1) {
-            		return url;
-            	} else {
-            		return '"'+docRootUrl+url.replace(/\"/gi, '')+'"';
-            	}
-            }
-           	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-           	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-           	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            
-            
-            
-            
-            
-            
-            
-            
+            //TODO: Clean up, using for prototyping
+            this._templateDocument.head.innerHTML = (this._userDocument.content.head.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator));
+            this._templateDocument.body.innerHTML = (this._userDocument.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator));            
+           	
             
             
             var scripttags = this._templateDocument.html.getElementsByTagName('script'), webgldata;  //TODO: Use querySelectorAll
@@ -590,7 +580,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             	}
             	this._templateDocument.webgl = webgldata.data;
             }
-            
             
             
             
@@ -615,7 +604,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             		}
             	}
             }
-            
             
             
             
@@ -677,6 +665,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 								//
 								fileCouldDirUrl = this._document.styleSheets[i].href.split(this._document.styleSheets[i].href.split('/')[this._document.styleSheets[i].href.split('/').length-1])[0];
 								
+								//TODO: Make public version of this.application.ninja.ioMediator.getNinjaPropUrlRedirect with dynamic ROOT
 								tag.innerHTML = cssData.content.replace(/url\(()(.+?)\1\)/g, detectUrl);
 								
 								function detectUrl (prop) {
@@ -872,11 +861,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     		//TODO: Add logic to handle save before preview
     		this.application.ninja.documentController.handleExecuteSaveAll(null);
     		//Temp check for webGL Hack
-    		if (this.application.ninja.documentController.activeDocument.glData.length && this.application.ninja.documentController.activeDocument.glData.length > 0) {
-    			setTimeout(function () {window.open(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);}.bind(this), 3500);
-    		} else {
-    			window.open(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);
-    		}
+    		window.open(this.application.ninja.coreIoApi.rootUrl + this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);
     		//chrome.tabs.create({url: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]});		
     	}
     },
@@ -895,6 +880,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             			}
             		}
             	}
+    			//return {mode: 'html', document: this._userDocument, mjs: this._userComponents, webgl: this.glData, styles: styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
     			return {mode: 'html', document: this._userDocument, webgl: this.glData, styles: styles, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
     		} else if (this.currentView === "code"){
     			//TODO: Would this get call when we are in code of HTML?
@@ -918,6 +904,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             			}
             		}
             	}
+    			//return {mode: 'html', document: this._userDocument, mjs: this._userComponents, webgl: this.glData, css: css, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
     			return {mode: 'html', document: this._userDocument, webgl: this.glData, css: css, head: this._templateDocument.head.innerHTML, body: this._templateDocument.body.innerHTML};
     		} else if (this.currentView === "code"){
     			//TODO: Would this get call when we are in code of HTML?

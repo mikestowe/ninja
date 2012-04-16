@@ -123,7 +123,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 	///////////////////////////////////////////////////////////////////////
     initialize: {
         value: function() {
-            this.eventManager.addEventListener("elementDeleted", this, false);
+            this.eventManager.addEventListener("elementsRemoved", this, false);
+            this.eventManager.addEventListener("elementReplaced", this, false);
         }
     },
 
@@ -163,12 +164,26 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
     },
 
 
-    handleElementDeleted: {
+    handleElementsRemoved: {
         value: function(event) {
-            this.removeElementFrom2DCache(event.detail);
+            var self = this, elements = event.detail;
+
+            if(Array.isArray(elements)) {
+                elements = Array.prototype.slice.call(elements, 0);
+                elements.forEach(function(element) {
+                    self.removeElementFrom2DCache(element);
+                });
+            } else {
+                this.removeElementFrom2DCache(elements);
+            }
         }
     },
 
+    handleElementReplaced: {
+        value: function(event) {
+            this._isCacheInvalid = true;
+        }
+    },
 
     setCurrentStage: {
         value: function(stage) {
@@ -214,7 +229,9 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 					parentPt = [quadPt[0], quadPt[1], 0.0];
 				else
 					parentPt = [xScreen, yScreen, 0.0];
-				var vec = viewUtils.parentToChildVec(parentPt, stage);
+
+                var eyePt = [];
+				var vec = viewUtils.parentToChildVec(parentPt, stage, eyePt);
 				if (vec)
 				{
 					// activate the drag working plane
@@ -226,7 +243,6 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 					var wp = currentWorkingPlane.slice(0);
 					var mat = viewUtils.getMatrixFromElement(stage);
 					wp = MathUtils.transformPlane(wp, mat);
-					var eyePt = viewUtils.getEyePoint();
 					var projPt = MathUtils.vecIntersectPlane(eyePt, vec, wp);
 					if (projPt)
 					{
@@ -471,7 +487,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 		value: function( plane ) {
 			this._elementCache = new Array;
 
-			var stage = this.getStage();
+//			var stage = this.getStage();
+			var stage = this.application.ninja.currentSelectedContainer || this.getStage();
 			this.hLoadElementCache( stage,  plane, 0 );
             this._isCacheInvalid = false;
 
@@ -488,6 +505,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 				var n = this._elementCache.length;
 				this._elementCache[index] = this._elementCache[n-1];
 				this._elementCache.pop();
+                target.elementModel.isIn2DSnapCache = false;
 				found = true;
 			}
 
@@ -570,6 +588,11 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
 	hLoadElementCache : {
 		value: function( elt, plane, depth ) {
+            if(depth > 1)
+            {
+                return;
+            }
+
 			if (depth > 0)
 			{
 				// check if the element is on the specified plane
@@ -590,8 +613,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
                     elt.elementModel.isIn2DSnapCache = false;
 			}
 
-            // TODO - Don't traverse components' children
-//            if(elt.elementModel && elt.elementModel.isComponent)
+            // TODO - Don't traverse svg and components' children
             if(elt.nodeName.toLowerCase() === "svg" || (elt.elementModel && (elt.elementModel.isComponent || (elt.elementModel.selection === "SVG"))))
             {
                 return;
@@ -688,8 +710,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 				var wp = currentWorkingPlane.slice(0);
 				var mat = viewUtils.getMatrixFromElement(stage);
 				wp = MathUtils.transformPlane(wp, mat);
-				var eyePt = viewUtils.getEyePoint();
-				var vec = viewUtils.parentToChildVec(gPt, stage);
+                var eyePt = [];
+				var vec = viewUtils.parentToChildVec(gPt, stage, eyePt);
 				var projPt = MathUtils.vecIntersectPlane(eyePt, vec, wp);
 				var wpMat = drawUtils.getPlaneToWorldMatrix(currentWorkingPlane, MathUtils.getPointOnPlane(currentWorkingPlane));
 				projPt[3] = 1.0;
@@ -964,7 +986,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 	snapToElements : {
 		value: function( screenPt,  hitRecs ) {
 			// start at the stage.
-			var stage = this.getStage();
+//			var stage = this.getStage();
+            var stage = this.application.ninja.currentSelectedContainer || this.getStage();
 
 			// the root should be the 'view' canvas, so the first matrix is the camera
 			viewUtils.setViewportObj( stage );
@@ -980,6 +1003,10 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 	{
 		value: function( elt, hitRecs, depth, globalScrPt )
 		{
+            if(depth > 1)
+            {
+                return;
+            }
 			// hit test the current object
 			var hit;
 			if (depth > 0)	// don't snap to the root
@@ -1001,8 +1028,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 				}
 			}
 
-            // TODO - Don't traverse components' children
-//            if(elt.elementModel && elt.elementModel.isComponent)
+            // TODO - Don't traverse svg and components' children
             if(elt.nodeName.toLowerCase() === "svg" || (elt.elementModel && (elt.elementModel.isComponent || (elt.elementModel.selection === "SVG"))))
             {
                 return;
@@ -1042,8 +1068,9 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 			// Snapping is done in screen space, so convert the bounds from
 			// local element space to global screen space
 			var bounds3D = new Array();
+            var eltMat = viewUtils.getLocalToGlobalMatrix( elt );
 			for (var i=0;  i<4;  i++)
-				bounds3D[i] = viewUtils.localToGlobal( bounds[i],  elt );
+				bounds3D[i] = viewUtils.localToGlobal2(bounds[i], eltMat);
 			
 			var hitRec = this.snapToScreenBounds( elt, globalScrPt, bounds, bounds3D );
 
@@ -1327,7 +1354,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 							var offset = viewUtils.getElementOffset( elt );
 							MathUtils.makeDimension3( offset );
 							var parentPt = vecUtils.vecAdd(3, scrPt, offset );
-							var globalPt = viewUtils.localToGlobal( parentPt, elt.parentElement );
+							var globalPt = viewUtils.localToGlobal( parentPt, elt.offsetParent );
 
 							var dist = vecUtils.vecDist(2, globalPt, targetScrPt );
 							if (dist < this.ELEMENT_VERTEX_HIT_RAD)
@@ -1365,7 +1392,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 								var offset = viewUtils.getElementOffset( elt );
 								MathUtils.makeDimension3( offset );
 								var parentPt = vecUtils.vecAdd(3, scrPt, offset );
-								var globalPt = viewUtils.localToGlobal( parentPt, elt.parentElement );
+								var globalPt = viewUtils.localToGlobal( parentPt, elt.offsetParent );
 
 								var dist = vecUtils.vecDist(2, globalPt, targetScrPt );
 								if (dist < this.ELEMENT_EDGE_HIT_RAD)
@@ -1402,6 +1429,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
                 case glObj.GEOM_TYPE_PATH:
                     // Snapping not implemented for these type, but don't throw an error...
 					break;
+                case glObj.GEOM_TYPE_BRUSH_STROKE:
+                    break; //don't throw error because snapping not yet implemented
                 case glObj.GEOM_TYPE_CUBIC_BEZIER:
                     {
                         var nearVrt = glObj.getNearVertex( eyePt, dir );
@@ -1416,7 +1445,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 							var offset = viewUtils.getElementOffset( elt );
 							MathUtils.makeDimension3( offset );
 							var parentPt = vecUtils.vecAdd(3, scrPt, offset );
-							var globalPt = viewUtils.localToGlobal( parentPt, elt.parentElement );
+							var globalPt = viewUtils.localToGlobal( parentPt, elt.offsetParent );
 
 							var dist = vecUtils.vecDist(2, globalPt, targetScrPt );
 							if (dist < this.ELEMENT_VERTEX_HIT_RAD)
@@ -1454,7 +1483,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 								var offset = viewUtils.getElementOffset( elt );
 								MathUtils.makeDimension3( offset );
 								var parentPt = vecUtils.vecAdd(3, scrPt, offset );
-								var globalPt = viewUtils.localToGlobal( parentPt, elt.parentElement );
+								var globalPt = viewUtils.localToGlobal( parentPt, elt.offsetParent );
 
 								var dist = vecUtils.vecDist(2, globalPt, targetScrPt );
 								if (dist < this.ELEMENT_EDGE_HIT_RAD)

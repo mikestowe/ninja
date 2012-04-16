@@ -44,7 +44,6 @@ var Tween = exports.Tween = Montage.create(Component, {
         },
         set: function(value){
             this._spanWidth = value;
-            this.needsDraw = true;
         }
     },
 
@@ -59,7 +58,6 @@ var Tween = exports.Tween = Montage.create(Component, {
         },
         set:function (value) {
             this._spanPosition = value;
-            this.needsDraw = true;
         }
     },
 
@@ -74,7 +72,6 @@ var Tween = exports.Tween = Montage.create(Component, {
         },
         set:function (value) {
             this._keyFramePosition = value;
-            this.needsDraw = true;
         }
     },
 
@@ -133,7 +130,6 @@ var Tween = exports.Tween = Montage.create(Component, {
         },
         set:function (value) {
             this._isTweenAnimated = value;
-            this.needsDraw = true;
         }
     },
 
@@ -157,6 +153,7 @@ var Tween = exports.Tween = Montage.create(Component, {
             this.tweenID = this.tweenData.tweenID;
             this.tweenedProperties = this.tweenData.tweenedProperties;
             this.isTweenAnimated = this.tweenData.isTweenAnimated;
+            this.needsDraw = true;
         }
     },
 
@@ -165,7 +162,7 @@ var Tween = exports.Tween = Montage.create(Component, {
         	
             if (event.detail.source && event.detail.source !== "tween") {
                 // check for correct element selection
-                if (this.application.ninja.selectedElements[0]._element != this.parentComponent.parentComponent.animatedElement) {
+                if (this.application.ninja.selectedElements[0]!= this.parentComponent.parentComponent.animatedElement) {
                     console.log("Wrong element selected for this keyframe track");
                 } else {
                     // update tweenedProperties and tell containing track to update CSS rule

@@ -5,22 +5,27 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var Montage = require("montage/core/core").Montage,
-    NJComponent =   require("js/lib/nj-base").NJComponent;
+    Component = require("montage/ui/component").Component;
 
-var ElementController = exports.ElementController = Montage.create(NJComponent, {
+exports.ElementController = Montage.create(Component, {
 
     addElement: {
         value: function(el, styles) {
             this.application.ninja.currentDocument.documentRoot.appendChild(el);
-            // Nested elements -
-            // TODO make sure the CSS is correct before nesting elements
+            // Nested elements - TODO make sure the CSS is correct before nesting elements
             // this.application.ninja.currentSelectedContainer.appendChild(el);
-            this.application.ninja.stylesController.setElementStyles(el, styles);
+            if(styles) {
+                this.application.ninja.stylesController.setElementStyles(el, styles);
+            }
         }
     },
 
+    // Remove the element from the DOM and clear the GLWord.
     removeElement: {
         value: function(el) {
+            if(el.elementModel && el.elementModel.shapeModel && el.elementModel.shapeModel.GLWorld) {
+                el.elementModel.shapeModel.GLWorld.clearTree();
+            }
             el.parentNode.removeChild(el);
         }
     },
@@ -51,23 +56,6 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
 
     setAttribute: {
         value: function(el, att, value) {
-            if(att === "id") {
-                if(value === "") {
-                    el.setAttribute(att, value);
-                    return;
-                }
-
-                // Then check if this is a valid id by the following spec: http://www.w3.org/TR/REC-html40/types.html#h-6.2
-                var regexID = /^([a-zA-Z])+([a-zA-Z0-9_\.\:\-])+/;
-                if(!regexID.test(value)) {
-                    alert("Invalid ID");
-                    return;
-                } else if (this.application.ninja.currentDocument._document.getElementById(value) !== null) {
-                    alert("The following ID: " + value + " is already in Use");
-                }
-
-            }
-
             el.setAttribute(att, value);
         }
     },
@@ -240,26 +228,9 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
 
                 if (el)
                 {
-                    var xformStr = this.application.ninja.elementMediator.getProperty(el, "-webkit-transform");
-                    if (xformStr)
-                        mat = this.transformStringToMat( xformStr );
-                    if (!mat)
+                    mat = this.application.ninja.stylesController.getMatrixFromElement(el, false);
+                    if (!mat) {
                         mat = Matrix.I(4);
-
-                    var zoom = this.application.ninja.elementMediator.getProperty(el, "zoom");
-                    if (zoom)
-                    {
-                        zoom = Number(zoom);
-                        if (zoom != 1)
-                        {
-                            var zoomMat = Matrix.create(  [
-                                [ zoom,    0,    0, 0],
-                                [    0, zoom,    0, 0],
-                                [    0,    0, zoom, 0],
-                                [    0,    0,    0, 1]
-                            ] );
-                            glmat4.multiply( zoomMat, mat, mat );
-                        }
                     }
                 }
 
@@ -277,25 +248,7 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
             }
             else
             {
-                var dist = 1400;
-
-                var str = this.getProperty(el, "-webkit-transform");
-                if (str)
-                {
-                    var index1 = str.indexOf( "perspective(");
-                    if (index1 >= 0)
-                    {
-                        index1 += 12;    // do not include 'perspective('
-                        var index2 = str.indexOf( ")", index1 );
-                        if (index2 >= 0)
-                        {
-                            var substr = str.substr( index1, (index2-index1));
-                            if (substr && (substr.length > 0))
-                                dist = MathUtils.styleToNumber( substr );
-                        }
-                    }
-                }
-
+                var dist = this.application.ninja.stylesController.getPerspectiveDistFromElement(el, false);
                 el.elementModel.props3D.perspectiveDist = dist;
                 return dist;
             }
@@ -309,8 +262,16 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
                 mat = props[index]["mat"];
             this.application.ninja.stylesController.setElementStyle(el,
                                                                     "-webkit-transform",
-                                                                    "perspective(" + dist + ") " +
                                                                     "matrix3d(" + MathUtils.scientificToDecimal(mat, 5) + ")");
+
+            this.application.ninja.stylesController.setElementStyle(el,
+                                                                    "-webkit-transform-style",
+                                                                    "preserve-3d");
+
+            // TODO - We don't support perspective on individual elements yet
+//            this.application.ninja.stylesController.setElementStyle(el,
+//                                                                    "-webkit-perspective",
+//                                                                    dist);
 
             el.elementModel.props3D.matrix3d = mat;
             el.elementModel.props3D.perspectiveDist = dist;
@@ -336,36 +297,6 @@ var ElementController = exports.ElementController = Montage.create(NJComponent, 
                 elt.elementModel.props3D.z3D = ~~(elt3DInfo.translation[2]);
             }
         }
-    },
-
-    transformStringToMat: {
-        value: function( str )    {
-            var rtnMat;
-
-            var index1 = str.indexOf( "matrix3d(");
-            if (index1 >= 0)
-            {
-                index1 += 9;    // do not include 'matrix3d('
-                var index2 = str.indexOf( ")", index1 );
-                if (index2 >= 0)
-                {
-                    var substr = str.substr( index1, (index2-index1));
-                    if (substr && (substr.length > 0))
-                    {
-                        var numArray = substr.split(',');
-                        var nNums = numArray.length;
-                        if (nNums == 16)
-                        {
-                            // gl-matrix wants row order
-                            rtnMat = numArray;
-                            for (var i=0;  i<16;  i++)
-                                rtnMat[i] = Number( rtnMat[i] );
-                        }
-                    }
-                }
-            }
-
-            return rtnMat;
-        }
     }
+
 });

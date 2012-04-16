@@ -467,9 +467,9 @@ exports.PenTool = Montage.create(ShapeTool, {
                     if (this.application.ninja.colorController.colorToolbar.stroke.webGlColor){
                         this._selectedSubpath.setStrokeColor(this.application.ninja.colorController.colorToolbar.stroke.webGlColor);
                     }
-                    //if (this.application.ninja.colorController.colorToolbar.fill.webGlColor){
-                    //    this._selectedSubpath.setFillColor(this.application.ninja.colorController.colorToolbar.fill.webGlColor);
-                    //}
+                    if (this.application.ninja.colorController.colorToolbar.fill.webGlColor){
+                        this._selectedSubpath.setFillColor(this.application.ninja.colorController.colorToolbar.fill.webGlColor);
+                    }
                 } //if this is a new path being rendered
 
                 this._selectedSubpath.makeDirty();
@@ -584,8 +584,8 @@ exports.PenTool = Montage.create(ShapeTool, {
             if (!canvas) {
                 var newCanvas = null;
                 newCanvas = NJUtils.makeNJElement("canvas", "Subpath", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
-                var elementModel = TagTool.makeElement(parseInt(w), parseInt(h), planeMat, midPt, newCanvas);
-                ElementMediator.addElement(newCanvas, elementModel.data, true);
+                var elementModel = TagTool.makeElement(parseInt(w), parseInt(h), planeMat, midPt, newCanvas, true);
+                ElementMediator.addElements(newCanvas, elementModel.data, false);
 
                 // create all the GL stuff
                 var world = this.getGLWorld(newCanvas, this._useWebGL);//this.options.use3D);//this.CreateGLWorld(planeMat, midPt, newCanvas, this._useWebGL);//fillMaterial, strokeMaterial);
@@ -594,6 +594,7 @@ exports.PenTool = Montage.create(ShapeTool, {
 
                 var subpath = this._selectedSubpath; //new GLSubpath();
                 subpath.setWorld(world);
+                subpath.setCanvas(newCanvas);
                 subpath.setPlaneMatrix(planeMat);
                 var planeMatInv = glmat4.inverse( planeMat, [] );
                 subpath.setPlaneMatrixInverse(planeMatInv);
@@ -601,7 +602,27 @@ exports.PenTool = Montage.create(ShapeTool, {
 
                 world.addObject(subpath);
                 world.render();
+                //TODO this will not work if there are multiple shapes in the same canvas
                 newCanvas.elementModel.shapeModel.GLGeomObj = subpath;
+                newCanvas.elementModel.shapeModel.shapeCount++;
+                if(newCanvas.elementModel.shapeModel.shapeCount === 1)
+                {
+                    newCanvas.elementModel.selection = "Subpath";
+                    newCanvas.elementModel.pi = "SubpathPi";
+                    newCanvas.elementModel.shapeModel.strokeSize = this.options.strokeSize.value + " " + this.options.strokeSize.units;
+
+                    newCanvas.elementModel.shapeModel.GLGeomObj = subpath;
+                    newCanvas.elementModel.shapeModel.useWebGl = this.options.use3D;
+                }
+                else
+                {
+                    // TODO - update the shape's info only.  shapeModel will likely need an array of shapes.
+                }
+
+                if(newCanvas.elementModel.isShape)
+                {
+                    this.application.ninja.selectionController.selectElement(newCanvas);
+                }
             } //if (!canvas) {
             else {
 
@@ -951,11 +972,11 @@ exports.PenTool = Montage.create(ShapeTool, {
                 }
                 else{
                     for (var i=0;i<this.application.ninja.selectedElements.length;i++){
-                        var element = this.application.ninja.selectedElements[i]._element;
+                        var element = this.application.ninja.selectedElements[i]
                         console.log("Entered pen tool, had selected: " + element.elementModel.selection);
                         if (element.elementModel.selection === 'Subpath'){ //TODO what to do if the canvas is drawn by tag tool?
                             //set the pen canvas to be the selected canvas
-                            this._penCanvas = this.application.ninja.selectedElements[i]._element;
+                            this._penCanvas = this.application.ninja.selectedElements[i];
 
                             // get the subpath for this world
                             this._selectedSubpath = null;
@@ -1030,7 +1051,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                         var els = [];
                         ElementController.removeElement(this._penCanvas);
                         els.push(this._penCanvas);
-                        NJevent( "deleteSelection", els );
+                        NJevent( "elementsRemoved", els );
                         this._penCanvas = null;
                    }
                  }
@@ -1046,9 +1067,9 @@ exports.PenTool = Montage.create(ShapeTool, {
                     els.push(this.application.ninja.selectedElements[i]);
                 }
                 for(i=0; i<len; i++) {
-                    ElementController.removeElement(els[i]._element);
+                    ElementController.removeElement(els[i]);
                 }
-                NJevent( "deleteSelection", els );
+                NJevent( "elementsRemoved", els );
 
                  //clear out the selected path if it exists
                  if (this._selectedSubpath) {

@@ -200,14 +200,18 @@ exports.StageView = Montage.create(Component, {
     },
     showRulers:{
         value:function(){
-            this.application.ninja.rulerTop.style.background = "url('../images/temp/ruler-top.png')";
-            this.application.ninja.rulerLeft.style.background = "url('../images/temp/ruler-left.png')";
+            this.application.ninja.rulerTop.style.display = "block";
+            this.application.ninja.rulerLeft.style.display = "block";
+//            this.application.ninja.rulerTop.style.background = "url('../images/temp/ruler-top.png')";
+//            this.application.ninja.rulerLeft.style.background = "url('../images/temp/ruler-left.png')";
         }
     },
     hideRulers:{
         value:function(){
-            this.application.ninja.rulerTop.style.background = "rgb(128,128,128)";
-            this.application.ninja.rulerLeft.style.background = "rgb(128,128,128)";
+            this.application.ninja.rulerTop.style.display = "none";
+            this.application.ninja.rulerLeft.style.display = "none";
+//            this.application.ninja.rulerTop.style.background = "rgb(128,128,128)";
+//            this.application.ninja.rulerLeft.style.background = "rgb(128,128,128)";
         }
     },
 

@@ -11,43 +11,48 @@ exports.ComponentController = Montage.create(ElementController, {
 
     getProperty: {
         value: function(el, prop) {
+            var component = el.controller || this.application.ninja.currentDocument.getComponentFromElement(el);
+
             switch(prop) {
                 case "id":
                 case "class":
+                case "-webkit-transform-style":
                 case "left":
                 case "top":
                 case "width":
                 case "height":
                     if(el.nodeName === "IMG" && (prop === "width" || prop === "height")) {
-                        return this.application.ninja.currentDocument.getComponentFromElement(el)[prop];
+                        return component[prop];
                     } else {
                         return ElementController.getProperty(el, prop, true);
                     }
                 default:
-                    return this.application.ninja.currentDocument.getComponentFromElement(el)[prop];
+                    return component[prop];
             }
         }
     },
 
     setProperty: {
         value: function(el, p, value) {
+            var component = el.controller || this.application.ninja.currentDocument.getComponentFromElement(el);
+
             switch(p) {
                 case "id":
                 case "class":
+                case "-webkit-transform-style":
                 case "left":
                 case "top":
                 case "width":
                 case "height":
                     if(el.nodeName === "IMG" && (p === "width" || p === "height")) {
-                        this.application.ninja.currentDocument.getComponentFromElement(el)[p] = value;
+                        component[p] = value;
                     } else {
                         ElementController.setProperty(el, p, value);
                     }
                     break;
                 default:
                     if(p === "min" || p === "max") value = parseFloat(value);
-
-                    this.application.ninja.currentDocument.getComponentFromElement(el)[p] = value;
+                    component[p] = value;
                     break;
 
             }

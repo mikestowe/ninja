@@ -4,16 +4,15 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
-.rectProperties .button {
-    border:none;
-    cursor:default;
-    text-align:center;
-    -webkit-user-select:none;
-    opacity:0.8;
-    display:table-cell;
-    vertical-align:middle;
-    background-color:#333333;
-    color:white;
+#lockButton {
+    float:left;
+    border: none;
+    background-color: transparent;
+    top: 2px;
+    opacity: 0.7;
+    width: 17px;
+    height: 18px;
+    margin-right: 10px;
 }
 
 .rectProperties .subToolButton {

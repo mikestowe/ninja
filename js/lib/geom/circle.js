@@ -42,8 +42,8 @@ var Circle = function GLCircle() {
         
 			this._strokeWidth = strokeSize;
 			this._innerRadius = innerRadius;
-			if (strokeColor)  this._strokeColor = strokeColor;
-			if (fillColor)  this._fillColor = fillColor;
+			this._strokeColor = strokeColor;
+			this._fillColor = fillColor;
 
 			this._strokeStyle = strokeStyle;
 		}
@@ -53,16 +53,14 @@ var Circle = function GLCircle() {
 		if(strokeMaterial){
 			this._strokeMaterial = strokeMaterial;
         } else {
-			this._strokeMaterial = MaterialsModel.exportFlatMaterial();
+			this._strokeMaterial = MaterialsModel.getMaterial( MaterialsModel.getDefaultMaterialName() );
         }
 
 		if(fillMaterial) {
 			this._fillMaterial = fillMaterial;
         } else {
-			this._fillMaterial = MaterialsModel.exportFlatMaterial();
+			this._fillMaterial = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() );
         }
-
-		this.exportMaterials();
 	};
 
     ///////////////////////////////////////////////////////////////////////
@@ -178,7 +176,7 @@ var Circle = function GLCircle() {
 		if (!world._useWebGL)  return;
 		
 		// make sure RDGE has the correct context
-		g_Engine.setContext( world.getCanvas().rdgeid );
+		RDGE.globals.engine.setContext( world.getCanvas().rdgeid );
 
          // create the gl buffer
         var gl = world.getGLContext();
@@ -350,7 +348,7 @@ var Circle = function GLCircle() {
 
 		this.recalcTexMapCoords( vrts, uvs );
 
-		return ShapePrimitive.create(vrts, nrms, uvs, indices, g_Engine.getContext().renderer.TRIANGLES, index);
+		return ShapePrimitive.create(vrts, nrms, uvs, indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, index);
     };
 
     this.generateOvalRing = function(xOff, yOff, rotationMat, innerScaleMat, outerScaleMat, nTriangles) {
@@ -407,7 +405,7 @@ var Circle = function GLCircle() {
 
 		this.recalcTexMapCoords( vrts, uvs );
 
-		return ShapePrimitive.create(vrts, nrms, uvs, indices, g_Engine.getContext().renderer.TRIANGLE_STRIP, indices.length);
+		return ShapePrimitive.create(vrts, nrms, uvs, indices, RDGE.globals.engine.getContext().renderer.TRIANGLE_STRIP, indices.length);
     };
 
     this.render = function() {
@@ -598,96 +596,57 @@ var Circle = function GLCircle() {
 		}
     };
 
-	this.export = function() {
-		var rtnStr = "type: " + this.geomType() + "\n";
+	this.exportJSON = function()
+	{
+		var jObj = 
+		{
+			'type'			: this.geomType(),
+			'xoff'			: this._xOffset,
+			'yoff'			: this._yOffset,
+			'width'			: this._width,
+			'height'		: this._height,
+			'strokeWidth'	: this._strokeWidth,
+			'strokeColor'	: this._strokeColor,
+			'fillColor'		: this._fillColor,
+			'innerRadius'	: this._innerRadius,
+			'strokeStyle'	: this._strokeStyle,
+			'strokeMat'		: this._strokeMaterial ? this._strokeMaterial.getName() :  MaterialsModel.getDefaultMaterialName(),
+			'fillMat'		: this._fillMaterial ?  this._fillMaterial.getName() :  MaterialsModel.getDefaultMaterialName(),
+			'materials'		: this.exportMaterialsJSON()
+		};
 
-		rtnStr += "xoff: "			+ this._xOffset		+ "\n";
-		rtnStr += "yoff: "			+ this._yOffset		+ "\n";
-		rtnStr += "width: "			+ this._width		+ "\n";
-		rtnStr += "height: "		+ this._height		+ "\n";
-		rtnStr += "strokeWidth: "	+ this._strokeWidth	+ "\n";
-		rtnStr += "innerRadius: "	+ this._innerRadius	+ "\n";
-		rtnStr += "strokeStyle: "	+ this._strokeStyle	+ "\n";
-
-        if(this._strokeColor.gradientMode) {
-            rtnStr += "strokeGradientMode: "	+ this._strokeColor.gradientMode	+ "\n";
-            rtnStr += "strokeColor: " + this.gradientToString(this._strokeColor.color) + "\n";
-        } else {
-            rtnStr += "strokeColor: "	+ String(this._strokeColor)  + "\n";
-        }
-
-        if(this._fillColor.gradientMode) {
-            rtnStr += "fillGradientMode: "	+ this._fillColor.gradientMode	+ "\n";
-            rtnStr += "fillColor: " + this.gradientToString(this._fillColor.color) + "\n";
-        } else {
-            rtnStr += "fillColor: "	+ String(this._fillColor)  + "\n";
-        }
-
-		rtnStr += "strokeMat: ";
-		if (this._strokeMaterial) {
-			rtnStr += this._strokeMaterial.getName();
-        } else {
-			rtnStr += "flatMaterial";
-        }
-
-		rtnStr += "\n";
-
-		rtnStr += "fillMat: ";
-		if (this._fillMaterial) {
-			rtnStr += this._fillMaterial.getName();
-        } else {
-			rtnStr += "flatMaterial";
-        }
-		rtnStr += "\n";
-
-		rtnStr += this.exportMaterials();
-
-		return rtnStr;
+		return jObj;
 	};
 
-	this.import = function( importStr ) {
-		this._xOffset			= Number( this.getPropertyFromString( "xoff: ",			importStr ) );
-		this._yOffset			= Number( this.getPropertyFromString( "yoff: ",			importStr ) );
-		this._width				= Number( this.getPropertyFromString( "width: ",		importStr ) );
-		this._height			= Number( this.getPropertyFromString( "height: ",		importStr ) );
-		this._strokeWidth		= Number( this.getPropertyFromString( "strokeWidth: ",	importStr ) );
-		this._innerRadius		= Number( this.getPropertyFromString( "innerRadius: ",	importStr ) );
-		this._strokeStyle		= this.getPropertyFromString( "strokeStyle: ",	importStr );
-		var strokeMaterialName	= this.getPropertyFromString( "strokeMat: ",	importStr );
-		var fillMaterialName	= this.getPropertyFromString( "fillMat: ",		importStr );
-        if(importStr.indexOf("fillGradientMode: ") < 0) {
-            this._fillColor		=  eval( "[" + this.getPropertyFromString( "fillColor: ",	importStr ) + "]" );
-        } else {
-            this._fillColor = {};
-            this._fillColor.gradientMode = this.getPropertyFromString( "fillGradientMode: ",	importStr );
-            this._fillColor.color = this.stringToGradient(this.getPropertyFromString( "fillColor: ",	importStr ));
+	this.importJSON = function( jObj )
+	{
+		this._xOffset			= jObj.xoff;
+		this._yOffset			= jObj.yoff;
+		this._width				= jObj.width;
+		this._height			= jObj.height;
+		this._strokeWidth		= jObj.strokeWidth;
+		this._strokeColor		= jObj.strokeColor;
+		this._fillColor			= jObj.fillColor;
+		this._innerRadius		= jObj.innerRadius;
+		this._strokeStyle		= jObj.strokeStyle;
+		var strokeMaterialName	= jObj.strokeMat;
+		var fillMaterialName	= jObj.fillMat;
+
+        var strokeMat = MaterialsModel.getMaterial( strokeMaterialName );
+        if (!strokeMat) {
+            console.log( "object material not found in library: " + strokeMaterialName );
+            strokeMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() );
         }
+        this._strokeMaterial = strokeMat;
 
-        if(importStr.indexOf("strokeGradientMode: ") < 0)
-        {
-            this._strokeColor		=  eval( "[" + this.getPropertyFromString( "strokeColor: ",	importStr ) + "]" );
-        } else {
-            this._strokeColor = {};
-            this._strokeColor.gradientMode = this.getPropertyFromString( "strokeGradientMode: ",	importStr );
-            this._strokeColor.color = this.stringToGradient(this.getPropertyFromString( "strokeColor: ",	importStr ));
+        var fillMat = MaterialsModel.getMaterial( fillMaterialName );
+        if (!fillMat) {
+            console.log( "object material not found in library: " + fillMaterialName );
+            fillMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() );
         }
+        this._fillMaterial = fillMat;
 
-		var strokeMat = MaterialsModel.getMaterial( strokeMaterialName );
-		if (!strokeMat) {
-			console.log( "object material not found in library: " + strokeMaterialName );
-			strokeMat = MaterialsModel.exportFlatMaterial();
-		}
-
-		this._strokeMaterial = strokeMat;
-
-		var fillMat = MaterialsModel.getMaterial( fillMaterialName );
-		if (!fillMat) {
-			console.log( "object material not found in library: " + fillMaterialName );
-			fillMat = MaterialsModel.exportFlatMaterial();
-		}
-		this._fillMaterial = fillMat;
-
-		this.importMaterials( importStr );
+		this.importMaterialsJSON( jObj.materials );
 	};
 
     this.collidesWithPoint = function( x, y ) {

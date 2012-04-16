@@ -44,7 +44,7 @@ var Line = function GLLine( world, xOffset, yOffset, width, height, slope, strok
 
 		this._slope = slope;
 		this._strokeWidth = strokeSize;
-		if (strokeColor)  this._strokeColor = strokeColor.slice();
+		this._strokeColor = strokeColor;
 
 		this._strokeStyle = strokeStyle;
 		this._scaleX = (world.getViewportWidth())/(world.getViewportHeight());
@@ -99,77 +99,53 @@ var Line = function GLLine( world, xOffset, yOffset, width, height, slope, strok
 
 	this.geomType	= function()				{  return this.GEOM_TYPE_LINE;	}
 
-		///////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////
 	// Methods
 	///////////////////////////////////////////////////////////////////////
-	this.export = function() {
-		var rtnStr = "type: " + this.geomType() + "\n";
+	this.exportJSON = function()
+	{
+		var jObj = 
+		{
+			'type'			: this.geomType(),
+			'xoff'			: this._xOffset,
+			'yoff'			: this._yOffset,
+			'width'			: this._width,
+			'height'		: this._height,
+			'xAdj'		    : this._xAdj,
+			'yAdj'		    : this._yAdj,
+			'slope'	        : this._slope,
+			'strokeWidth'	: this._strokeWidth,
+			'strokeColor'	: this._strokeColor,
+			'strokeStyle'	: this._strokeStyle,
+			'strokeMat'		: this._strokeMaterial ? this._strokeMaterial.getName() : MaterialsModel.getDefaultMaterialName(),
+			'materials'		: this.exportMaterialsJSON()
+		};
 
-		rtnStr += "xoff: "			+ this._xOffset		+ "\n";
-		rtnStr += "yoff: "			+ this._yOffset		+ "\n";
-		rtnStr += "width: "			+ this._width		+ "\n";
-		rtnStr += "height: "		+ this._height		+ "\n";
-		rtnStr += "xAdj: "		    + this._xAdj		+ "\n";
-		rtnStr += "yAdj: "		    + this._yAdj		+ "\n";
-		rtnStr += "strokeWidth: "	+ this._strokeWidth	+ "\n";
-
-        if(this._strokeColor.gradientMode) {
-            rtnStr += "strokeGradientMode: "	+ this._strokeColor.gradientMode	+ "\n";
-            rtnStr += "strokeColor: " + this.gradientToString(this._strokeColor.color) + "\n";
-        } else {
-            rtnStr += "strokeColor: "	+ String(this._strokeColor)  + "\n";
-        }
-
-		rtnStr += "strokeStyle: "	+ this._strokeStyle	+ "\n";
-		rtnStr += "slope: "	        + String(this._slope)	+ "\n";
-
-		rtnStr += "strokeMat: ";
-		if (this._strokeMaterial) {
-			rtnStr += this._strokeMaterial.getName();
-        } else {
-			rtnStr += "flatMaterial";
-        }
-
-		rtnStr += "\n";
-		return rtnStr;
+		return jObj;
 	};
 
-	this.import = function( importStr ) {
-		this._xOffset			= Number( this.getPropertyFromString( "xoff: ",			importStr )  );
-		this._yOffset			= Number( this.getPropertyFromString( "yoff: ",			importStr )  );
-		this._width				= Number( this.getPropertyFromString( "width: ",		importStr )  );
-		this._height			= Number( this.getPropertyFromString( "height: ",		importStr )  );
-		this._xAdj			    = Number( this.getPropertyFromString( "xAdj: ",			importStr )  );
-		this._yAdj			    = Number( this.getPropertyFromString( "yAdj: ",			importStr )  );
-		this._strokeWidth		= Number( this.getPropertyFromString( "strokeWidth: ",	importStr )  );
-		var slope 		        = this.getPropertyFromString( "slope: ",	importStr );
+	this.importJSON = function( jObj )
+	{
+		this._xOffset			= jObj.xoff;
+		this._yOffset			= jObj.yoff;
+		this._width				= jObj.width;
+		this._height			= jObj.height;
+		this._xAdj			    = jObj.xAdj;
+		this._yAdj			    = jObj.yAdj;
+		this._strokeWidth		= jObj.strokeWidth;
+		this._slope 		    = jObj.slope;
+		this._strokeStyle		= jObj.strokeStyle;
+		this._strokeColor		= jObj.strokeColor;
+		var strokeMaterialName	= jObj.strokeMat;
 
-		if(isNaN(Number(slope))) {
-			this._slope		    = slope;
-        } else {
-			this._slope         = Number(slope);
+        var strokeMat = MaterialsModel.getMaterial( strokeMaterialName );
+        if (!strokeMat) {
+            console.log( "object material not found in library: " + strokeMaterialName );
+            strokeMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() );
         }
+        this._strokeMaterial = strokeMat;
 
-		var strokeMaterialName	= this.getPropertyFromString( "strokeMat: ",	importStr );
-		this._strokeStyle		= this.getPropertyFromString( "strokeStyle: ",	importStr );
-
-        if(importStr.indexOf("strokeGradientMode: ") < 0)
-        {
-            this._strokeColor		=  eval( "[" + this.getPropertyFromString( "strokeColor: ",	importStr ) + "]" );
-        } else {
-            this._strokeColor = {};
-            this._strokeColor.gradientMode = this.getPropertyFromString( "strokeGradientMode: ",	importStr );
-            this._strokeColor.color = this.stringToGradient(this.getPropertyFromString( "strokeColor: ",	importStr ));
-        }
-
-		var strokeMat = MaterialsModel.getMaterial( strokeMaterialName );
-		if (!strokeMat) {
-			console.log( "object material not found in library: " + strokeMaterialName );
-			strokeMat = MaterialsModel.exportFlatMaterial();
-		}
-
-		this._strokeMaterial = strokeMat;
-
+		this.importMaterialsJSON( jObj.materials );
 	};
 
 	///////////////////////////////////////////////////////////////////////
@@ -182,7 +158,7 @@ var Line = function GLLine( world, xOffset, yOffset, width, height, slope, strok
 		if (!world._useWebGL)  return;
 		
 		// make sure RDGE has the correct context
-		g_Engine.setContext( world.getCanvas().rdgeid );
+		RDGE.globals.engine.setContext( world.getCanvas().rdgeid );
 
 		 // create the gl buffer
 		var gl = world.getGLContext();
@@ -343,7 +319,7 @@ var Line = function GLLine( world, xOffset, yOffset, width, height, slope, strok
 			indices.push( index );  index++;
 		}
 
-		var prim = ShapePrimitive.create(strokeVertices, strokeNormals, strokeTextures, indices, g_Engine.getContext().renderer.TRIANGLES, indices.length);
+		var prim = ShapePrimitive.create(strokeVertices, strokeNormals, strokeTextures, indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, indices.length);
 
 		var strokeMaterial = this.makeStrokeMaterial();
 

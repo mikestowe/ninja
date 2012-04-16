@@ -17,6 +17,7 @@ var RadialGradientMaterial = require("js/lib/rdge/materials/radial-gradient-mate
 var BumpMetalMaterial = require("js/lib/rdge/materials/bump-metal-material").BumpMetalMaterial;
 var UberMaterial = require("js/lib/rdge/materials/uber-material").UberMaterial;
 var RadialBlurMaterial = require("js/lib/rdge/materials/radial-blur-material").RadialBlurMaterial;
+var RaidersMaterial = require("js/lib/rdge/materials/radial-blur-material").RaidersMaterial;
 var PlasmaMaterial = require("js/lib/rdge/materials/plasma-material").PlasmaMaterial;
 var PulseMaterial = require("js/lib/rdge/materials/pulse-material").PulseMaterial;
 var TunnelMaterial = require("js/lib/rdge/materials/tunnel-material").TunnelMaterial;
@@ -24,6 +25,7 @@ var ReliefTunnelMaterial = require("js/lib/rdge/materials/relief-tunnel-material
 var SquareTunnelMaterial = require("js/lib/rdge/materials/square-tunnel-material").SquareTunnelMaterial;
 var FlyMaterial = require("js/lib/rdge/materials/fly-material").FlyMaterial;
 var WaterMaterial = require("js/lib/rdge/materials/water-material").WaterMaterial;
+var ParisMaterial = require("js/lib/rdge/materials/water-material").ParisMaterial;
 var ZInvertMaterial = require("js/lib/rdge/materials/z-invert-material").ZInvertMaterial;
 var DeformMaterial = require("js/lib/rdge/materials/deform-material").DeformMaterial;
 var StarMaterial = require("js/lib/rdge/materials/star-material").StarMaterial;
@@ -48,6 +50,7 @@ exports.MaterialsModel = Montage.create(Component, {
             this.addMaterial(new BumpMetalMaterial());
             this.addMaterial(new UberMaterial());
             this.addMaterial(new RadialBlurMaterial());
+            this.addMaterial(new RaidersMaterial());
             this.addMaterial(new PlasmaMaterial());
             this.addMaterial(new PulseMaterial());
             this.addMaterial(new TunnelMaterial());
@@ -55,6 +58,7 @@ exports.MaterialsModel = Montage.create(Component, {
             this.addMaterial(new SquareTunnelMaterial());
             this.addMaterial(new FlyMaterial());
             this.addMaterial(new WaterMaterial());
+            this.addMaterial(new ParisMaterial());
             this.addMaterial(new ZInvertMaterial());
             this.addMaterial(new DeformMaterial());
             this.addMaterial(new StarMaterial());
@@ -112,10 +116,34 @@ exports.MaterialsModel = Montage.create(Component, {
         value: function (materialName) {
             var index = this.getIndexOfMaterial(materialName);
             if(index !== -1) {
-                return this._materials[index];
+                return this._materials[index].dup();
             }
         }
-    },			
+    },
+	
+	getMaterialByShader: 
+	{
+		value: function( shaderName )
+		{
+			var index = this.getIndexOfMaterialByShader( shaderName );
+			if (index >= 0)
+				return this._materials[index].dup();
+		}
+	},		
+
+    getIndexOfMaterialByShader: {
+        value: function (shaderName) {
+            var len = this._materials.length;
+            for(var i=0; i<len; i++) {
+                var material = this._materials[i];
+                if(material.getShaderName() === shaderName) {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+    },
 
     getIndexOfMaterial: {
         value: function (materialName) {
@@ -143,37 +171,54 @@ exports.MaterialsModel = Montage.create(Component, {
         }
     },
 
-	exportMaterials: {
+	getDefaultMaterialName: {
 		value: function() {
+			return "FlatMaterial";
+		}
+	},
 
-			var exportStr = "MaterialLibrary: \n";
-
+	exportMaterials: {
+		value: function()
+        {
+            var matArray = [];
 			var nMats = this._materials.length;
-
 			for (var i=0;  i<nMats;  i++) {
 				var material = this._materials[i];
-				exportStr += material.export();
+				var matObj = material.exportJSON();
+                matArray.push( matObj );
 			}
 
-			exportStr += "endMatLib\n";
-			return exportStr;
+	        var jObj = 
+	        {
+                'materialLibrary':  1.0,
+                'materials':        matArray
+            };
+
+            // prepend an identifiable string to aid parsing when the 
+            // material model is loaded.
+            var jStr = "materialLibrary;" + JSON.stringify( jObj );
+
+			return jStr;
 		}
 	},
 
 	importMaterials: {
-		value: function( importStr ) {
+		value: function( jObj )
+        {
+            // make sure we have some materials to import before doing anything
+            var matArray = jObj.materials;
+            if (!matArray)  return;
+			
 			// we replace allmaterials, so remove anything
 			// that is currently there.
 			this.clearAllMaterials();
 
-			var pu = new MaterialParser( importStr );
-			
-			var type = pu.nextValue( "material: ", "\n", false );
-
-			while (type) {
-
-                var mat = null;
-
+			var nMats = matArray.length;
+            for (var i=0;  i<nMats;  i++)
+            {
+              var mat = null;
+              var jMatObj = matArray[i];
+                var type = jMatObj.material;
                 switch (type)
                 {
 					case "flat":				mat = new FlatMaterial();				break;
@@ -192,6 +237,8 @@ exports.MaterialsModel = Montage.create(Component, {
 					case "squareTunnel":		mat = new SquareTunnelMaterial();		break;
 					case "fly":					mat = new FlyMaterial();				break;
 					case "water":				mat = new WaterMaterial();				break;
+					case "paris":				mat = new ParisMaterial();				break;
+					case "raiders":		        mat = new RaidersMaterial();		    break;
 					case "zinvert":				mat = new ZInvertMaterial();			break;
 					case "deform":				mat = new DeformMaterial();				break;
 					case "star":				mat = new StarMaterial();				break;
@@ -203,20 +250,16 @@ exports.MaterialsModel = Montage.create(Component, {
 
 					default:
 						throw new Error( "Unrecognized material type: " + type );
-						pu.advancePastToken( "endMaterial\n" );
 						break;
 				}
 
 				if (mat) {
-					importStr = mat.import( importStr );
-					pu._strBuffer = importStr;
+					importStr = mat.importJSON( jMatObj );
 					this.addMaterial( mat );
 				}
-
-				type = pu.nextValue( "material: ", "\n", false );
 			}
 
-			return pu._strBuffer;
+			return;
 		}
 	}
 

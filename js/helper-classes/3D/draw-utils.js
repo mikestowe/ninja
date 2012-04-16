@@ -109,10 +109,10 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			this._gridOrigin = [0,0];	// 2D plane space point
 
             this.eventManager.addEventListener("elementAdded", this, false);
-            this.eventManager.addEventListener("elementDeleted", this, false);
-            this.eventManager.addEventListener("deleteSelection", this, false);
+            this.eventManager.addEventListener("elementsRemoved", this, false);
             this.eventManager.addEventListener("elementChange", this, false);
             this.eventManager.addEventListener("closeDocument", this, false);
+            this.eventManager.addEventListener("elementReplaced", this, false);
 		}
 	},
 
@@ -139,46 +139,83 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
     handleCloseDocument:{
         value: function() {
             if(this.application.ninja.documentController._documents.length === 0){
-                this._eltArray = null;
-                this._planesArray = null;
+                this._eltArray.length = 0;
+                this._planesArray.length = 0;
             }
         }
     },
 
     handleElementAdded: {
         value: function(event) {
-            this.addElement(event.detail);
+            var elements = event.detail;
+
+            if(Array.isArray(elements)) {
+                elements.forEach(function(element) {
+                    this.addElement(element);
+                }, this);
+            } else {
+                this.addElement(elements);
+            }
+
             this.drawWorkingPlane();
         }
     },
 
-    handleElementDeleted: {
+    handleElementsRemoved: {
         value: function(event) {
-            this.removeElement(event.detail);
+            var elements = event.detail;
+
+            if(Array.isArray(elements)) {
+                elements = Array.prototype.slice.call(elements, 0);
+                elements.forEach(function(element) {
+                    this.removeElement(element);
+                }, this);
+            } else {
+                this.removeElement(elements);
+            }
+
+            this.drawWorkingPlane();
         }
     },
 
-    handleDeleteSelection: {
+    handleElementReplaced: {
         value: function(event) {
-            this.drawWorkingPlane();
+            var oldElement = event.detail.data.oldChild;
+            var newElement = event.detail.data.newChild;
+
+            // check if we already know about this object
+            var n = this._eltArray.length,
+                plane;
+            for (var i=0;  i<n;  i++) {
+                if (oldElement === this._eltArray[i]) {
+                    this._eltArray[i] = newElement;
+                    plane = this._planesArray[i];
+                    break;
+                }
+            }
+
+            if(!plane) {
+                this._eltArray.push( newElement );
+                plane = Object.create(this.ElementPlanes, {});
+                this._planesArray.push( plane );
+            }
+
+            plane.setElement( newElement );
+            plane.init();
+            newElement.elementModel.props3D.elementPlane = plane;
         }
     },
 
     _shouldUpdatePlanes: {
         value: function(props) {
-            if(!props)
-            {
+            if(!props) {
                 return false;
-            }
-            else if (typeof props === "string")
-            {
+            } else if (typeof props === "string") {
                 return (this._updatePlaneProps.indexOf(props) !== -1);
             }
 
-            for (var p in props)
-            {
-                if(this._updatePlaneProps.indexOf(p) !== -1)
-                {
+            for (var p in props) {
+                if(this._updatePlaneProps.indexOf(p) !== -1) {
                     return true;
                 }
             }
@@ -199,15 +236,12 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
             {
                 var len = els.length,
                     i = 0,
-                    item,
-                    el;
+                    item;
 
                 for(i=0; i < len; i++) {
-                    item = els[i];
-                    el = item._element || item;
-                    if(el.elementModel.props3D.elementPlane)
+                    if(els[i].elementModel.props3D.elementPlane)
                     {
-                        el.elementModel.props3D.elementPlane.init();
+                        els[i].elementModel.props3D.elementPlane.init();
                     }
                 }
 
@@ -222,17 +256,12 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 	// Methods
 	///////////////////////////////////////////////////////////////////////
 
-	addElement:
-	{
-		value: function( elt )
-		{
+	addElement: {
+		value: function( elt ) {
 			// check if we already know about this object
 			var n = this._eltArray.length;
-			for (var i=0;  i<n;  i++)
-			{
-				if (elt == this._eltArray[i])
-				{
-//					console.log( "element already added to stage display: " + elt.id );
+			for (var i=0;  i<n;  i++) {
+				if (elt == this._eltArray[i]) {
 					return;
 				}
 			}
@@ -248,17 +277,14 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 		}
 	},
 
-	removeElement : {
-		value: function( elt ) {
+    removeElement: {
+        value: function(element) {
 			// check if object exists
-			var n = this._eltArray.length;
-			for (var i=0;  i<n;  i++)
-			{
-				if (elt == this._eltArray[i])
-				{
+			var _elements = this._eltArray.length;
+			for (var i=0;  i < _elements;  i++) {
+				if (element === this._eltArray[i]) {
 					// First remove the planes for this element
 					this._planesArray.splice(i, 1);
-
 					// Then remove the element
 					this._eltArray.splice(i, 1);
 
@@ -721,8 +747,17 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 	drawSelectionBounds : {
 		value: function( eltArray ) {
 			this._selectionCtr = null;
+            var len = eltArray.length,
+                i,
+                j,
+                bounds,
+                bounds3D,
+                pt,
+                tmpPt,
+                ssMat,
+                elt;
 			
-			if (eltArray.length == 0)  return;
+			if (len === 0)  return;
 			var context = this._drawingContext;
 			if (!context)  return;
 
@@ -731,18 +766,19 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			context.lineWidth = 2;
 
 			// handle the single element case
-			if (eltArray.length == 1)
+            // TODO - Currently, the stage draws its own selection bounds for single selection case
+			if (len === 1)
 			{
 				// single selection case
 				//console.log( "single selection" );
 
-				var elt = eltArray[0];
+				elt = eltArray[0];
 
 				this.viewUtils.pushViewportObj( elt );
 
 				// get the element bounds in world space
-				var bounds3D = this.viewUtils.getElementViewBounds3D( elt );
-				for (var j=0;  j<4;  j++) {
+				bounds3D = this.viewUtils.getElementViewBounds3D( elt );
+				for (j=0;  j<4;  j++) {
 					bounds3D[j] = this.viewUtils.localToGlobal( bounds3D[j],  elt );
 				}
 
@@ -766,19 +802,12 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			}
 			else
 			{
-				// the multiple selection case.
-				//console.log( "multiple selection" );
-
-				// we set the root to "the world".
-				var saveRoot = this.viewUtils.getRootElement();
-				this.viewUtils.setRootElement( this.viewUtils.getStageElement() );
-
 				// get the plane from the first element to compare against the other elements
 				var flat = true;
 				var plane = this.viewUtils.getElementPlane( eltArray[0] );
-				for (var i=1;  i<eltArray.length;  i++)
+				for (i=1;  i<len;  i++)
 				{
-					var elt = eltArray[i];
+					elt = eltArray[i];
 					var plane2 = this.viewUtils.getElementPlane( elt );
 					var dot = MathUtils.dot3(plane,plane2);
 					if (MathUtils.fpCmp(dot, 1) != 0)
@@ -796,34 +825,23 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 					}
 				}
 
-				// construct a matrix from world space to 'plane' space
-				var ptOnPlane = this.viewUtils.localToGlobal( [0,0,0], eltArray[0]);
-				var planeToWorld = this.getPlaneToWorldMatrix( plane, ptOnPlane );
-				//var worldToPlane = planeToWorld.inverse();
-				var worldToPlane = glmat4.inverse(planeToWorld, []);
-
-                var ssMat = this.viewUtils.getLocalToGlobalMatrix( this._sourceSpaceElt );
 				// if all the elements share the same plane, draw the 2D rectangle
 				if (flat)
 				{
 					// make a 2D rectangle on the plane
 					var rect;
-					for (var i=0;  i<eltArray.length;  i++)
+					for (i=0;  i<len;  i++)
 					{
-						var elt = eltArray[i];
+						elt = eltArray[i];
 
 						// get the element bounds in 'plane' space
-						var bounds = this.viewUtils.getElementViewBounds3D( elt );
-						for (var j=0;  j<4;  j++)
+						bounds = this.viewUtils.getElementViewBounds3D( elt );
+                        ssMat = this.viewUtils.getLocalToGlobalMatrix( elt );
+						for (j=0;  j<4;  j++)
 						{
-//							var gPt = MathUtils.makeDimension4( this.viewUtils.localToGlobal( bounds[j],  elt ) );
-//							//var pt = worldToPlane.multiply( gPt );
-//							var pt    = glmat4.multiplyVec3( worldToPlane, gPt, [] );
-//							var tmpPt = glmat4.multiplyVec3( planeToWorld,  pt, [] );
-
                             var localPt = bounds[j];
-                            var tmpPt = this.viewUtils.localToGlobal2(localPt, ssMat);
-                            var pt = glmat4.multiplyVec3( worldToPlane, tmpPt, [] );
+                            tmpPt = this.viewUtils.localToGlobal2(localPt, ssMat);
+                            pt = tmpPt;
 
 							if (!rect)
 							{
@@ -837,30 +855,18 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 						}
 					}
 
-					// restore the rootct
-					this.viewUtils.setRootElement (saveRoot );
-
-					// draw the reectangle
+					// draw the rectangle
 					context.beginPath();
 
-					var pt4 = MathUtils.makeDimension4(rect.getPoint(3));
-					var viewPt = glmat4.multiplyVec3( planeToWorld, pt4, [] );
-					MathUtils.makeDimension3( viewPt );
-//					var pt = this.viewUtils.localToGlobal( viewPt, this._sourceSpaceElt );
-					var pt = this.viewUtils.localToGlobal2(viewPt, ssMat);
+                    pt = MathUtils.makeDimension3(rect.getPoint(3));
 
-					var bounds3D = [[0,0], [0,0], [0,0], [0,0]];
+					bounds3D = [[0,0], [0,0], [0,0], [0,0]];
 					this._selectionCtr = pt.slice(0);
 
 					context.moveTo( pt[0],  pt[1] );
-					for (var i=0;  i<4;  i++)
+					for (i=0;  i<4;  i++)
 					{
-						pt4 = MathUtils.makeDimension4(rect.getPoint(i));
-						//viewPt = planeToWorld.multiply( pt4 );
-						viewPt = glmat4.multiplyVec3( planeToWorld, pt4, [] );
-						MathUtils.makeDimension3( viewPt );
-//						pt = this.viewUtils.localToGlobal( viewPt, this._sourceSpaceElt );
-						pt = this.viewUtils.localToGlobal2( viewPt, ssMat );
+                        pt = rect.getPoint(i);
 						context.lineTo( pt[0],  pt[1] );
 						bounds3D[i] = pt.slice(0);
 					}
@@ -870,8 +876,6 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 					var dir = vecUtils.vecSubtract(2, bounds3D[1], bounds3D[3]);
 					var ctr = vecUtils.vecNormalize(2, dir, vecUtils.vecDist(2, bounds3D[1], bounds3D[3])/2);
 
-//					this._selectionCtr[0] += ctr[0] - window.stageManager.userContentLeft;
-//					this._selectionCtr[1] += ctr[1] - window.stageManager.userContentTop;
 					this._selectionCtr[0] += ctr[0] - this.application.ninja.stage.userContentLeft;
 					this._selectionCtr[1] += ctr[1] - this.application.ninja.stage.userContentTop;
 				}
@@ -879,16 +883,19 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 				{
 					var minPt,  maxPt;
 
-					for (var i=0;  i<eltArray.length;  i++)
+                    // we set the root to "the world".
+                    var saveRoot = this.viewUtils.getRootElement();
+                    this.viewUtils.setRootElement( this.viewUtils.getStageElement() );
+                    ssMat = this.viewUtils.getLocalToGlobalMatrix( this._sourceSpaceElt );
+
+					for (i=0;  i<len;  i++)
 					{
-						var elt = eltArray[i];
-						var bounds = this.viewUtils.getElementViewBounds3D( elt );
+						elt = eltArray[i];
+						bounds = this.viewUtils.getElementViewBounds3D( elt );
                         var eltMat = this.viewUtils.getLocalToGlobalMatrix( elt );
-						for (var j=0;  j<4;  j++)
+						for (j=0;  j<4;  j++)
 						{
-							//var pt = worldToPlane.multiply( MathUtils.makeDimension4( this.viewUtils.localToGlobal( bounds[j],  elt )) );
-//							var pt = this.viewUtils.localToGlobal( bounds[j],  elt );
-							var pt = this.viewUtils.localToGlobal2( bounds[j],  eltMat );
+							pt = this.viewUtils.localToGlobal2( bounds[j],  eltMat );
 							if (!minPt)
 							{
 								minPt = pt.slice(0);
@@ -925,15 +932,6 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 
 					// get the 8 corners of the parallelpiped in world space
 					var wc = new Array();   // wc == world cube
-//					wc.push(  this.viewUtils.localToGlobal( [x0,y0,z1], this._sourceSpaceElt ) );
-//					wc.push(  this.viewUtils.localToGlobal( [x0,y1,z1], this._sourceSpaceElt ) );
-//					wc.push(  this.viewUtils.localToGlobal( [x1,y1,z1], this._sourceSpaceElt ) );
-//					wc.push(  this.viewUtils.localToGlobal( [x1,y0,z1], this._sourceSpaceElt ) );
-//					wc.push(  this.viewUtils.localToGlobal( [x0,y0,z0], this._sourceSpaceElt ) );
-//					wc.push(  this.viewUtils.localToGlobal( [x0,y1,z0], this._sourceSpaceElt ) );
-//					wc.push(  this.viewUtils.localToGlobal( [x1,y1,z0], this._sourceSpaceElt ) );
-//					wc.push(  this.viewUtils.localToGlobal( [x1,y0,z0], this._sourceSpaceElt ) );
-
                     wc.push(  this.viewUtils.localToGlobal2( [x0,y0,z1], ssMat ) );
 					wc.push(  this.viewUtils.localToGlobal2( [x0,y1,z1], ssMat ) );
 					wc.push(  this.viewUtils.localToGlobal2( [x1,y1,z1], ssMat ) );
@@ -944,17 +942,11 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 					wc.push(  this.viewUtils.localToGlobal2( [x1,y0,z0], ssMat ) );
 
 					// determine the signs of the normals of the faces relative to the view direction.
-					//var front   = -MathUtils.fpSign(  MathUtils.cross(wc[2].subtract(wc[1]), wc[0].subtract(wc[1]))[2] ),
 					var front	= -MathUtils.fpSign( vecUtils.vecCross(3, vecUtils.vecSubtract(3,wc[2],wc[1]), vecUtils.vecSubtract(3,wc[0],wc[1]))[2] ),
-						//right   = -MathUtils.fpSign(  MathUtils.cross(wc[6].subtract(wc[2]), wc[3].subtract(wc[2]))[2] ),
 						right   = -MathUtils.fpSign( vecUtils.vecCross(3, vecUtils.vecSubtract(3,wc[6],wc[2]), vecUtils.vecSubtract(3,wc[3],wc[2]))[2] ),
-						//back    = -MathUtils.fpSign(  MathUtils.cross(wc[5].subtract(wc[6]), wc[7].subtract(wc[6]))[2] ),
 						back    = -MathUtils.fpSign( vecUtils.vecCross(3, vecUtils.vecSubtract(3,wc[5],wc[6]), vecUtils.vecSubtract(3,wc[7],wc[6]))[2] ),
-						//left    = -MathUtils.fpSign( MathUtils.cross(wc[1].subtract(wc[5]), wc[4].subtract(wc[5]))[2] ),
 						left    = -MathUtils.fpSign( vecUtils.vecCross(3, vecUtils.vecSubtract(3,wc[1],wc[5]), vecUtils.vecSubtract(3,wc[4],wc[5]))[2] ),
-						//top     = -MathUtils.fpSign( MathUtils.cross(wc[3].subtract(wc[0]), wc[4].subtract(wc[0]))[2] ),
 						top     = -MathUtils.fpSign( vecUtils.vecCross(3, vecUtils.vecSubtract(3,wc[3],wc[0]), vecUtils.vecSubtract(3,wc[4],wc[0]))[2] ),
-						//bottom  = -MathUtils.fpSign( MathUtils.cross(wc[5].subtract(wc[1]), wc[2].subtract(wc[1]))[2] );
 						bottom  = -MathUtils.fpSign( vecUtils.vecCross(3, vecUtils.vecSubtract(3,wc[5],wc[1]), vecUtils.vecSubtract(3,wc[2],wc[1]))[2] );
 
 					// draw the side faces
@@ -963,8 +955,6 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 					//context.strokeStyle = ((front > 0) || (right > 0)) ? dark : light;  context.beginPath();
 					if ((front > 0) || (right > 0)) {
 						context.beginPath();
-//						p = this.viewUtils.localToGlobal( [x1, y0, z1], this._sourceSpaceElt );  context.moveTo( p[0], p[1] );
-//						p = this.viewUtils.localToGlobal( [x1, y1, z1], this._sourceSpaceElt );  context.lineTo( p[0], p[1] );
 						p = this.viewUtils.localToGlobal2( [x1, y0, z1], ssMat );  context.moveTo( p[0], p[1] );
 						p = this.viewUtils.localToGlobal2( [x1, y1, z1], ssMat );  context.lineTo( p[0], p[1] );
 						context.closePath();  context.stroke();
@@ -973,8 +963,6 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 					//context.strokeStyle = ((right > 0) || (back > 0)) ? dark : light;  context.beginPath();
 					if ((right > 0) || (back > 0)) {
 						context.beginPath();
-//						p = this.viewUtils.localToGlobal( [x1, y0, z0], this._sourceSpaceElt );  context.moveTo( p[0], p[1] );
-//						p = this.viewUtils.localToGlobal( [x1, y1, z0], this._sourceSpaceElt );  context.lineTo( p[0], p[1] );
                         p = this.viewUtils.localToGlobal2( [x1, y0, z0], ssMat );  context.moveTo( p[0], p[1] );
 						p = this.viewUtils.localToGlobal2( [x1, y1, z0], ssMat );  context.lineTo( p[0], p[1] );
 						context.closePath();  context.stroke();
@@ -983,8 +971,6 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 					//context.strokeStyle = ((back > 0) || (left > 0)) ? dark : light;  context.beginPath();
 					if ((back > 0) || (left > 0)) {
 						context.beginPath();
-//						p = this.viewUtils.localToGlobal( [x0, y0, z0], this._sourceSpaceElt );  context.moveTo( p[0], p[1] );
-//						p = this.viewUtils.localToGlobal( [x0, y1, z0], this._sourceSpaceElt );  context.lineTo( p[0], p[1] );
 						p = this.viewUtils.localToGlobal2( [x0, y0, z0], ssMat );  context.moveTo( p[0], p[1] );
 						p = this.viewUtils.localToGlobal2( [x0, y1, z0], ssMat );  context.lineTo( p[0], p[1] );
 						context.closePath();  context.stroke();
@@ -993,8 +979,6 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 					//context.strokeStyle = ((left > 0) || (front > 0)) ? dark : light;  context.beginPath();
 					if ((left > 0) || (front > 0)) {
 						context.beginPath();
-//						p = this.viewUtils.localToGlobal( [x0, y0, z1], this._sourceSpaceElt );  context.moveTo( p[0], p[1] );
-//						p = this.viewUtils.localToGlobal( [x0, y1, z1], this._sourceSpaceElt );  context.lineTo( p[0], p[1] );
 						p = this.viewUtils.localToGlobal2( [x0, y0, z1], ssMat );  context.moveTo( p[0], p[1] );
 						p = this.viewUtils.localToGlobal2( [x0, y1, z1], ssMat );  context.lineTo( p[0], p[1] );
 						context.closePath();  context.stroke();
@@ -1004,8 +988,6 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 					//context.strokeStyle = ((front > 0) || (top > 0)) ? dark : light;  context.beginPath();
 					if ((front > 0) || (top > 0)) {
 						context.beginPath();
-//						p = this.viewUtils.localToGlobal( [x0, y0, z1], this._sourceSpaceElt );  context.moveTo( p[0], p[1] );
-//						p = this.viewUtils.localToGlobal( [x1, y0, z1], this._sourceSpaceElt );  context.lineTo( p[0], p[1] );
 						p = this.viewUtils.localToGlobal2( [x0, y0, z1], ssMat );  context.moveTo( p[0], p[1] );
 						p = this.viewUtils.localToGlobal2( [x1, y0, z1], ssMat );  context.lineTo( p[0], p[1] );
 						context.closePath();  context.stroke();
@@ -1014,8 +996,6 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 					//context.strokeStyle = ((top > 0) || (back > 0)) ? dark : light;  context.beginPath();
 					if ((top > 0) || (back > 0)) {
 						context.beginPath();
-//						p = this.viewUtils.localToGlobal( [x0, y0, z0], this._sourceSpaceElt );  context.moveTo( p[0], p[1] );
-//						p = this.viewUtils.localToGlobal( [x1, y0, z0], this._sourceSpaceElt );  context.lineTo( p[0], p[1] );
 						p = this.viewUtils.localToGlobal2( [x0, y0, z0], ssMat );  context.moveTo( p[0], p[1] );
 						p = this.viewUtils.localToGlobal2( [x1, y0, z0], ssMat );  context.lineTo( p[0], p[1] );
 						context.closePath();  context.stroke();
@@ -1024,8 +1004,6 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 					//context.strokeStyle = ((back > 0) || (bottom > 0)) ? dark : light;  context.beginPath();
 					if ((back > 0) || (bottom > 0)) {
 						context.beginPath();
-//						p = this.viewUtils.localToGlobal( [x0, y1, z0], this._sourceSpaceElt );  context.moveTo( p[0], p[1] );
-//						p = this.viewUtils.localToGlobal( [x1, y1, z0], this._sourceSpaceElt );  context.lineTo( p[0], p[1] );
 						p = this.viewUtils.localToGlobal2( [x0, y1, z0], ssMat );  context.moveTo( p[0], p[1] );
 						p = this.viewUtils.localToGlobal2( [x1, y1, z0], ssMat );  context.lineTo( p[0], p[1] );
 						context.closePath();  context.stroke();
@@ -1034,8 +1012,6 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 					//context.strokeStyle = ((bottom > 0) || (front > 0)) ? dark : light;  context.beginPath();
 					if ((bottom > 0) || (front > 0)) {
 						context.beginPath();
-//						p = this.viewUtils.localToGlobal( [x0, y1, z1], this._sourceSpaceElt );  context.moveTo( p[0], p[1] );
-//						p = this.viewUtils.localToGlobal( [x1, y1, z1], this._sourceSpaceElt );  context.lineTo( p[0], p[1] );
 						p = this.viewUtils.localToGlobal2( [x0, y1, z1], ssMat );  context.moveTo( p[0], p[1] );
 						p = this.viewUtils.localToGlobal2( [x1, y1, z1], ssMat );  context.lineTo( p[0], p[1] );
 						context.closePath();  context.stroke();
@@ -1044,8 +1020,6 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 					// and the remaining lines - varying Z
 					if ((top > 0) || (right > 0)) {
 						context.beginPath();
-//						p = this.viewUtils.localToGlobal( [x1, y0, z0], this._sourceSpaceElt );  context.moveTo( p[0], p[1] );
-//						p = this.viewUtils.localToGlobal( [x1, y0, z1], this._sourceSpaceElt );  context.lineTo( p[0], p[1] );
 						p = this.viewUtils.localToGlobal2( [x1, y0, z0], ssMat );  context.moveTo( p[0], p[1] );
 						p = this.viewUtils.localToGlobal2( [x1, y0, z1], ssMat );  context.lineTo( p[0], p[1] );
 						context.closePath();  context.stroke();
@@ -1054,8 +1028,6 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 					//context.strokeStyle = ((right > 0) || (bottom > 0)) ? dark : light;  context.beginPath();
 					if ((right > 0) || (bottom > 0)) {
 						context.beginPath();
-//						p = this.viewUtils.localToGlobal( [x1, y1, z0], this._sourceSpaceElt );  context.moveTo( p[0], p[1] );
-//						p = this.viewUtils.localToGlobal( [x1, y1, z1], this._sourceSpaceElt );  context.lineTo( p[0], p[1] );
 						p = this.viewUtils.localToGlobal2( [x1, y1, z0], ssMat );  context.moveTo( p[0], p[1] );
 						p = this.viewUtils.localToGlobal2( [x1, y1, z1], ssMat );  context.lineTo( p[0], p[1] );
 						context.closePath();  context.stroke();
@@ -1064,8 +1036,6 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 					//context.strokeStyle = ((bottom > 0) || (left > 0)) ? dark : light;  context.beginPath();
 					if ((bottom > 0) || (left > 0)) {
 						context.beginPath();
-//						p = this.viewUtils.localToGlobal( [x0, y1, z0], this._sourceSpaceElt );  context.moveTo( p[0], p[1] );
-//						p = this.viewUtils.localToGlobal( [x0, y1, z1], this._sourceSpaceElt );  context.lineTo( p[0], p[1] );
 						p = this.viewUtils.localToGlobal2( [x0, y1, z0], ssMat );  context.moveTo( p[0], p[1] );
 						p = this.viewUtils.localToGlobal2( [x0, y1, z1], ssMat );  context.lineTo( p[0], p[1] );
 						context.closePath();  context.stroke();
@@ -1074,8 +1044,6 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 					//context.strokeStyle = ((left > 0) || (top > 0)) ? dark : light;  context.beginPath();
 					if ((left > 0) || (top > 0)) {
 						context.beginPath();
-//						p = this.viewUtils.localToGlobal( [x0, y0, z0], this._sourceSpaceElt );  context.moveTo( p[0], p[1] );
-//						p = this.viewUtils.localToGlobal( [x0, y0, z1], this._sourceSpaceElt );  context.lineTo( p[0], p[1] );
 						p = this.viewUtils.localToGlobal2( [x0, y0, z0], ssMat );  context.moveTo( p[0], p[1] );
 						p = this.viewUtils.localToGlobal2( [x0, y0, z1], ssMat );  context.lineTo( p[0], p[1] );
 						context.closePath();  context.stroke();

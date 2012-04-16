@@ -4,18 +4,28 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var Translate3DToolBase = require("js/tools/Translate3DToolBase").Translate3DToolBase,
+var Montage = require("montage/core/core").Montage,
+    Translate3DToolBase = require("js/tools/Translate3DToolBase").Translate3DToolBase,
     drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils,
+    vecUtils = require("js/helper-classes/3D/vec-utils").VecUtils,
     viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils,
     snapManager = require("js/helper-classes/3D/snap-manager").SnapManager;
 
-exports.TranslateObject3DTool = Object.create(Translate3DToolBase, {
+exports.TranslateObject3DTool = Montage.create(Translate3DToolBase, {
     _toolID: { value: "translateObject3DTool" },
     _canOperateOnStage: { value: true },
+
+    _initializeToolHandles: {
+        value: function() {
+            this._inLocalMode = (this.options.selectedMode === "rotateLocally");
+        }
+    },
 
     initializeSnapping : {
         value : function(event)
         {
+//            console.log( "initializeSnapping" );
+
 			this._mouseDownHitRec = null;
 			this._mouseUpHitRec   = null;
 
@@ -32,20 +42,19 @@ exports.TranslateObject3DTool = Object.create(Translate3DToolBase, {
 			this._snapToGrid = snapManager.gridSnapEnabledAppLevel();
 
             this._dragPlane = null;
+            this._clickedOnStage = false;
             var do3DSnap = true;
             
             if(this._handleMode === null)
             {
-//                this.doSelection(event);
-
                 snapManager.enableElementSnap	( true	);
 				snapManager.enableGridSnap		( true	);
             }
             else
             {
-                this._delta = 0;
+                this._delta = null;
                 // special case for z-translation
-                if( this._handleMode && (this._handleMode === 2) )
+                if(this._handleMode === 2)
                 {
                     this._dragPlane = viewUtils.getNormalToUnprojectedElementPlane(this._target);
                     snapManager.setupDragPlaneFromPlane(this._dragPlane);
@@ -65,11 +74,25 @@ exports.TranslateObject3DTool = Object.create(Translate3DToolBase, {
 				// a snap on the mouse down
 				var hitRec = snapManager.snap(point.x, point.y, do3DSnap);
 
-                // TODO - Check that hitRec's element matches element that browser says we clicked on
-                var elt = this.application.ninja.stage.GetElement(event);
-                if(elt !== hitRec.getElement())
+                if(this._handleMode === 2)
                 {
-                    hitRec = snapManager.findHitRecordForElement(elt);
+                    // translate z doesn't snap to element so hitRec's element will always be different
+                    // from what the browser says we clicked on. So, skip this check.
+                }
+                else
+                {
+                    // Check that hitRec's element matches element that browser says we clicked on
+                    // TODO - This is still not working when using a handle that is on top of an
+                    // element that is not currently selected
+                    var elt = this.application.ninja.stage.GetSelectableElement(event);
+                    if(elt && (elt !== hitRec.getElement()))
+                    {
+                        hitRec = snapManager.findHitRecordForElement(elt);
+                    }
+                    if(elt === this.application.ninja.currentSelectedContainer)
+                    {
+                        this._clickedOnStage = true;
+                    }
                 }
 
                 // we don't want to snap to selected objects during the drag
@@ -91,8 +114,11 @@ exports.TranslateObject3DTool = Object.create(Translate3DToolBase, {
 						snapManager.enableSnapAlign( snapManager.snapAlignEnabledAppLevel() );
 					}
 
-					// parameterize the snap point on the target
-					this._snapParam = this.parameterizeSnap( hitRec );
+                    if(this._handleMode === 2)
+                        this.clickedObject = this._target;
+
+                    // parameterize the snap point on the target
+                    this._snapParam = this.parameterizeSnap( hitRec );
 
                     if(!this._dragPlane)
                     {
@@ -107,6 +133,11 @@ exports.TranslateObject3DTool = Object.create(Translate3DToolBase, {
                         }
 
                     }
+
+                    // only do quadrant snapping if the 4 corners of the element are in the drag plane
+                    
+                    var sign = MathUtils.fpSign( vecUtils.vecDot(3,this._dragPlane,[0,0,1]) + this._dragPlane[3] - 1.0);
+                     this._shouldUseQuadPt = (sign == 0);
 
 					var wpHitRec = hitRec.convertToWorkingPlane( this._dragPlane );
 					this._mouseDownHitRec = wpHitRec;

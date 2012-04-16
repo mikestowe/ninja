@@ -47,6 +47,11 @@ padding-right:6px;
 
 }
 
+.propertiesPanel button.nj-skinned {
+    margin-left: -12px;
+    margin-top: -3px;
+}
+
 .propertiesPanel hr {
     border: 0;
     border-top: 1px solid #3c3c3c;
@@ -230,21 +235,8 @@ padding-right:6px;
     clear:none;
 }
 
-.propertiesPanel .LockToolUp, .propertiesPanel .UnLockToolUp {
-    position: absolute;
-    left: 105px;
-    border: none;
-    background-color: transparent;
-    top: 2px;
-    opacity: 0.7;
-}
-
 .propertiesPanel .button:active {
     outline: none;
-}
-
-.propertiesPanel .LockToolUp:hover, .propertiesPanel .UnLockToolUp:hover {
-    opacity: 1;
 }
 
 .propertiesPanel input[type="checkbox"].nj-skinned, .propertiesPanel input[type="radio"].nj-skinned {

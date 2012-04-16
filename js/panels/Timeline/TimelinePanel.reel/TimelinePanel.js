@@ -139,6 +139,28 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     	}
     },
 
+    _selectedLayerID:{
+        value: false
+    },
+    selectedLayerID : {
+    	get: function() {
+    		return this._selectedLayerID;
+    	},
+    	set: function(newVal) {
+    		if (newVal === false) {
+    			// We are clearing the timeline, so just set the value and return.
+    			this._selectedLayerID = newVal;
+    			return;
+    		}
+    		if (newVal !== this._selectedLayerID) {
+    			var selectIndex = this.getLayerIndexByID(newVal);
+    			this._selectedLayerID = newVal;
+				this._captureSelection = true;
+				this.selectLayer(selectIndex, true);
+    		}
+    	}
+    },
+
     millisecondsOffset:{
         value:1000
     },
@@ -296,7 +318,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                              "newLayer",
                              "deleteLayer",
                              "elementAdded",
-                             "elementDeleted",
+                             "elementsRemoved",
                              "selectionChange"],
                 i,
                 arrEventsLength = arrEvents.length;
@@ -374,14 +396,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     
                     // Feed the new array of objects into the repetitions
                     // and select the first layer.
+                    this.temparrLayers[0].layerData.isSelected = true;
+					this.temparrLayers[0].layerData._isFirstDraw = true;
+					
                     this.arrLayers=this.temparrLayers;
-                    
-                    // TODO: We need a better solution to this race condition than a timeout.
-                    this._captureSelection = true;
-                    var that = this;
-                    setTimeout(function() {
-                    	that.selectLayer(0, true);
-                    }, 1000)
+
                 } else {
                 	// New document. Create default layer.
                     this.createNewLayer(1);
@@ -397,31 +416,21 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             } else {
                 // we do have information stored.  Use it.
                 this._boolCacheArrays = false;
+        		//var myIndex = 0;
+        		for (var i = 0; i < this.application.ninja.currentDocument.tlArrLayers.length; i++) {
+        			if ( this.application.ninja.currentDocument.tlArrLayers[i].layerData.isSelected === true ) {
+        				this.application.ninja.currentDocument.tlArrLayers[i].layerData._isFirstDraw = true;
+        			}
+        		}
+
+        		
                 this.arrLayers = this.application.ninja.currentDocument.tlArrLayers;
                 this.currentLayerNumber = this.application.ninja.currentDocument.tllayerNumber;
                 this.currentLayerSelected = this.application.ninja.currentDocument.tlCurrentLayerSelected;
                 this.hashInstance = this.application.ninja.currentDocument.tlLayerHashTable;
                 this.hashElementMapToLayer = this.application.ninja.currentDocument.tlElementHashTable;
                 this.hashKey = this.application.ninja.currentDocument.hashKey;
-                this._boolCacheArrays = true;
-                
-                // Search through the arrLayers and select the layer that's already selected
-                var i = 0,
-                	selectMe = 0,
-                	arrLayersLength = this.arrLayers.length;
-                for (i = 0; i < arrLayersLength; i++) {
-                	if (this.arrLayers[i].isSelected === true) {
-                		selectMe = i;
-                	}
-                }
-                
 
-        		this._captureSelection = true;
-				// TODO: Better solution than a timer.
-                var that = this;
-                setTimeout(function() {
-                	that.selectLayer(selectMe, true);
-                }, 300)
             }
         }
     },
@@ -454,6 +463,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this._firstTimeLoaded=true;
             this.end_hottext.value = 25;
             this.updateTrackContainerWidth();
+            this.selectedLayerID = false;
             
             // Clear the repetitions
             if (this.arrLayers.length > 0) {
@@ -464,9 +474,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
 	handleDocumentChange:{
 		value:function(event){
+			// Clear the timeline but not the cache
 			this._boolCacheArrays = false;
         	this.clearTimelinePanel();
         	this._boolCacheArrays = true;
+        	
+        	// Rebind the document events for the new document context
         	this._bindDocumentEvents();
         	
             this.hashInstance = this.createLayerHashTable();
@@ -673,6 +686,13 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 	            thingToPush.layerData.layerID = this.currentLayerNumber;
 	            thingToPush.parentElementUUID = this.hashKey;
 	            thingToPush.parentElement = this.application.ninja.currentSelectedContainer;
+	            thingToPush.layerData.isSelected = true;
+	        	thingToPush.layerData._isFirstDraw = true;
+	        	
+	        	for (var i = 0; i < this.arrLayers.length; i++) {
+	        		this.arrLayers[i].layerData.isSelected = false;
+	        		this.arrLayers[i].layerData._isFirstDraw = false;
+	        	}
 	
 	            if (!!this.layerRepetition.selectedIndexes) {
 	            	// There is a selected layer, so we need to splice the new
@@ -698,14 +718,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 	            this._LayerUndoObject = thingToPush;
 	            this._LayerUndoIndex = thingToPush.layerData.layerID;
 	            this._LayerUndoStatus = true;
-
-	            this._captureSelection = true;
-
-				// TODO: Find a better solution than a timout here.
-	            var that = this;
-	            setTimeout(function() {
-	            	that.selectLayer(indexToSelect, true);
-	            }, 500);
 
             }
 
@@ -814,7 +826,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                                 for(var index=0;index<arrLayerLength;index++){
                                       if(this.arrLayers[index].layerData.layerID===dLayer[hashVariable].layerID){
                                           dLayer[hashVariable].deleted = true;
-                                          ElementMediator.deleteElements(dLayer[hashVariable].elementsList);
+                                          ElementMediator.removeElements(dLayer[hashVariable].elementsList);
                                           this.arrLayers.splice(index, 1);
                                           break;
                                       }
@@ -849,18 +861,37 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
-    handleElementDeleted:{
+    handleElementsRemoved:{
         value:function (event) {
             var length,lengthVal;
             this.deleteElement = event.detail;
-            lengthVal = this.currentLayerSelected.layerData.elementsList.length - 1;
-            for (length = lengthVal ;length >= 0 ;length--) {
-                if (this.currentLayerSelected.layerData.elementsList[length] === this.deleteElement) {
-                    this.currentLayerSelected.layerData.elementsList.splice(length, 1);
-                    break;
+
+            // Handling deletion of multiple elements.
+            // TODO: Optimize this double array loop
+            if(Array.isArray(this.deleteElement)) {
+                this.deleteElement = Array.prototype.slice.call(this.deleteElement, 0);
+                lengthVal = this.currentLayerSelected.layerData.elementsList.length - 1;
+                this.deleteElement.forEach(function(element) {
+                    for (length = lengthVal ;length >= 0 ;length--) {
+                        if (this.currentLayerSelected.layerData.elementsList[length] === element) {
+                            this.currentLayerSelected.layerData.elementsList.splice(length, 1);
+                            break;
+                        }
+                        //length--;
+                    }
+                }, this);
+            } else {
+                lengthVal = this.currentLayerSelected.layerData.elementsList.length - 1;
+                for (length = lengthVal ;length >= 0 ;length--) {
+                    if (this.currentLayerSelected.layerData.elementsList[length] === this.deleteElement) {
+                        this.currentLayerSelected.layerData.elementsList.splice(length, 1);
+                        break;
+                    }
+                    //length--;
                 }
-                length--;
             }
+
+
         }
     },
 
@@ -1008,15 +1039,15 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             if(this.selectedKeyframes){
                 this.deselectTweens();
             }
+            
             for (i = 0; i < arrLayersLength; i++) {
                 if (i === layerIndex) {
-                    this.arrLayers[i].isSelected = true;
+                    this.arrLayers[i].layerData.isSelected = true;
                 } else {
-                    this.arrLayers[i].isSelected = false;
+                    this.arrLayers[i].layerData.isSelected = false;
                 }
             }
             
-
             this.layerRepetition.selectedIndexes = [layerIndex];
             this.currentLayerSelected = this.arrLayers[layerIndex];
             if(userSelection){

@@ -170,8 +170,7 @@ exports.Stage = Montage.create(Component, {
 
                 // Hack for now until a full component
                 this.layout.draw();
-            }
-            else if(this.updatedStage) {
+            } else if(this.updatedStage) {
                 this.layout.draw();
                 this.layout.draw3DInfo(true);
             }
@@ -234,6 +233,10 @@ exports.Stage = Montage.create(Component, {
             }
 
             this.hideCanvas(false);
+
+            // Recalculate the canvas sizes because of splitter resizing
+            this._canvas.width = this._layoutCanvas.width = this._drawingCanvas.width = this.element.offsetWidth - 11 ;
+            this._canvas.height = this._layoutCanvas.height = this._drawingCanvas.height = this.element.offsetHeight - 11;
 
             this._documentRoot = this.application.ninja.currentDocument.documentRoot;
             this._viewport = this.application.ninja.currentDocument.documentRoot.parentNode;
@@ -319,6 +322,10 @@ exports.Stage = Montage.create(Component, {
 
     handleMousedown: {
         value: function(event) {
+            // Call the focus manager to set focus to blur any focus'd elements
+            this.focusManager.setFocus();
+
+
             var point;
 //            event.preventDefault();   // commenting because HTML elements in the IDE are retaining focus
             // If right click set the context menu to true to prevent a mouse up.
@@ -512,6 +519,36 @@ exports.Stage = Montage.create(Component, {
     },
 
     /**
+     * GetSelectableElement: Returns a selectable object (direct child of current container) at clicked point
+     *
+     * @param: X,Y
+     * @return: Returns the current container if the the X,Y hits an element in the exclusion list
+     */
+    GetSelectableElement: {
+        value: function(pos) {
+            var item = this.GetElement(pos);
+            if(this.application.ninja.currentDocument.inExclusion(item) !== -1) {
+                return this.application.ninja.currentSelectedContainer;
+            }
+            var activeContainerId = this.application.ninja.currentSelectedContainer.uuid;
+            if(item.parentNode.uuid === activeContainerId) {
+                return item;
+            } else {
+                var outerElement = item.parentNode;
+
+                while(outerElement.parentNode && outerElement.parentNode.uuid !== activeContainerId) {
+                    // If element is higher up than current container then return
+                    if(outerElement.id === "UserContent") return;
+                    // else keep going up the chain
+                    outerElement = outerElement.parentNode;
+                }
+
+                return outerElement;
+            }
+        }
+    },
+
+    /**
      * GetElement: Returns the object under the X,Y coordinates passed as an obj with x,y
      *
      * @param: X,Y
@@ -523,8 +560,7 @@ exports.Stage = Montage.create(Component, {
                 elt = this.application.ninja.currentDocument.GetElementFromPoint(point.x + this.scrollLeft,point.y + this.scrollTop);
 
             // workaround Chrome 3d bug
-            if(this.application.ninja.toolsData.selectedToolInstance._canSnap && this.application.ninja.currentDocument.inExclusion(elt) !== -1)
-            {
+            if(this.application.ninja.toolsData.selectedToolInstance._canSnap && this.application.ninja.currentDocument.inExclusion(elt) !== -1) {
                 return this._getElementUsingSnapping(point);
             } else {
                 return elt;
@@ -568,7 +604,7 @@ exports.Stage = Montage.create(Component, {
                 var selArray = new Array();
 
                 for(var i = 0; this.application.ninja.selectedElements[i];i++) {
-                    var curElement = this.application.ninja.selectedElements[i]._element;
+                    var curElement = this.application.ninja.selectedElements[i];
 
                     // Add element to array that is used to calculate 3d-bounding box of all elements
                     selArray.push( curElement );
@@ -759,6 +795,8 @@ exports.Stage = Montage.create(Component, {
     drawLine: {
         value:function(x0, y0, x1, y1, strokeSize, strokeColor) {
             this.clearDrawingCanvas();
+            var origStrokeStyle = this._drawingContext.strokeStyle;
+            var origLineWidth = this._drawingContext.lineWidth;
             this._drawingContext.strokeStyle = strokeColor;
             this._drawingContext.lineWidth = strokeSize;
 
@@ -789,6 +827,9 @@ exports.Stage = Montage.create(Component, {
             var w = Math.round(Math.abs(x1-x0));
             this._drawingContext.fillText("H: " + h, txtX + 38, txtY - 4);
             this._drawingContext.fillText("W: " + w, txtX - 5, txtY + 12);
+
+            this._drawingContext.strokeStyle = origStrokeStyle;
+            this._drawingContext.lineWidth = origLineWidth;
         }
     },
 

@@ -131,6 +131,8 @@ exports.PiData = Montage.create( Montage, {
                             type : "hottext",
                             id : "borderWidth",
                             prop : "border-width",
+                            defaultValue: 0,
+                            valueMutator: parseFloat,
                             label : "Border",
                             min :   0,
                             max :   100,
@@ -393,6 +395,17 @@ exports.PiData = Montage.create( Montage, {
                     ],
                     [
                         {
+                            type: "checkbox",
+                            id: "animate",
+                            prop: "animate",
+                            defaultValue: true,
+                            value: "Animate",
+                            checked: true,
+                            enabled: { boundObject: "this.controls", boundProperty: "useWebGl" }
+                        }
+                    ],
+                    [
+                        {
                             type: "dropdown",
                             id:   "strokeMaterial",
                             prop:   "strokeMaterial",
@@ -402,6 +415,13 @@ exports.PiData = Montage.create( Montage, {
                             items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" },
                             enabled: { boundObject: "this.controls", boundProperty: "useWebGl" },
                             divider : true
+                        },
+                        {
+                            type: "button",
+                            id: "editStrokeMaterial",
+                            prop: "editStrokeMaterial",
+                            label: "Edit",
+                            enabled: { boundObject: "this.controls", boundProperty: "useWebGl" }
                         }
                     ],
                     [
@@ -413,6 +433,13 @@ exports.PiData = Montage.create( Montage, {
                             labelField: "_name",
                             dataField: "_name",
                             items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" },
+                            enabled: { boundObject: "this.controls", boundProperty: "useWebGl" }
+                        },
+                        {
+                            type: "button",
+                            id: "editFillMaterial",
+                            prop: "editFillMaterial",
+                            label: "Edit",
                             enabled: { boundObject: "this.controls", boundProperty: "useWebGl" }
                         }
                     ]
@@ -472,6 +499,17 @@ exports.PiData = Montage.create( Montage, {
                     ],
                     [
                         {
+                            type: "checkbox",
+                            id: "animate",
+                            prop: "animate",
+                            defaultValue: true,
+                            value: "Animate",
+                            checked: true,
+                            enabled: { boundObject: "this.controls", boundProperty: "useWebGl" }
+                        }
+                    ],
+                    [
+                        {
                             type: "dropdown",
                             id:   "strokeMaterial",
                             prop:   "strokeMaterial",
@@ -481,6 +519,13 @@ exports.PiData = Montage.create( Montage, {
                             items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" },
                             enabled: { boundObject: "this.controls", boundProperty: "useWebGl" },
                             divider : true
+                        },
+                        {
+                            type: "button",
+                            id: "editStrokeMaterial",
+                            prop: "editStrokeMaterial",
+                            label: "Edit",
+                            enabled: { boundObject: "this.controls", boundProperty: "useWebGl" }
                         }
                     ]
                 ]
@@ -535,7 +580,7 @@ exports.PiData = Montage.create( Montage, {
                             valueMutator: parseFloat,
                             value : 0,
                             min :   0,
-                            max :   100,
+                            max :   99,
                             unit : "%",
                             acceptableUnits: ["%"]
 
@@ -559,6 +604,17 @@ exports.PiData = Montage.create( Montage, {
                     ],
                     [
                         {
+                            type: "checkbox",
+                            id: "animate",
+                            prop: "animate",
+                            defaultValue: true,
+                            value: "Animate",
+                            checked: true,
+                            enabled: { boundObject: "this.controls", boundProperty: "useWebGl" }
+                        }
+                    ],
+                    [
+                        {
                             type: "dropdown",
                             id:   "strokeMaterial",
                             prop:   "strokeMaterial",
@@ -568,6 +624,13 @@ exports.PiData = Montage.create( Montage, {
                             items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" },
                             enabled: { boundObject: "this.controls", boundProperty: "useWebGl" },
                             divider : true
+                        },
+                        {
+                            type: "button",
+                            id: "editStrokeMaterial",
+                            prop: "editStrokeMaterial",
+                            label: "Edit",
+                            enabled: { boundObject: "this.controls", boundProperty: "useWebGl" }
                         }
                     ],
                     [
@@ -580,12 +643,158 @@ exports.PiData = Montage.create( Montage, {
                             dataField: "_name",
                             items : { boundObject: "this.application.ninja.appModel", boundProperty: "materials" },
                             enabled: { boundObject: "this.controls", boundProperty: "useWebGl" }
+                        },
+                        {
+                            type: "button",
+                            id: "editFillMaterial",
+                            prop: "editFillMaterial",
+                            label: "Edit",
+                            enabled: { boundObject: "this.controls", boundProperty: "useWebGl" }
                         }
                     ]
                 ]
             }
         ]
-    }
+    },
+    SubpathPi: {
+        value: [
+            {
+                label: "Stroke",
+
+                Section: [
+                    [
+                        {
+                            type : "color",
+                            prop: "border",
+                            id : "stroke"
+                        },
+                        {
+                            type : "color",
+                            id : "fill",
+                            prop: "background",
+                            divider : true
+                        }
+                    ],
+                    [
+                        {
+                            type : "hottext",
+                            id : "strokeSize",
+                            prop : "strokeSize",
+                            label : "Stroke",
+                            valueMutator: parseFloat,
+                            min :   1,
+                            max :   100,
+                            value : 1,
+                            unit : "px",
+                            acceptableUnits: ["pt", "px"]
+                        }
+                    ]
+                ]
+            }
+        ]
+    },
+    BrushStrokePi: {
+        value: [
+            {
+                label: "Stroke",
+
+                Section: [
+                    [
+                        {
+                            type : "color",
+                            prop: "border",
+                            id : "stroke"
+                        },
+                        {
+                            type : "color",
+                            id : "fill",
+                            prop: "background",
+                            visible : false,
+                            divider : true
+                        }
+                    ],
+                    [
+                        {
+                            type : "hottext",
+                            id : "strokeSize",
+                            prop : "strokeSize",
+                            label : "Stroke",
+                            valueMutator: parseInt,
+                            min :   1,
+                            max :   100,
+                            value : 1,
+                            unit : "px",
+                            acceptableUnits: ["pt", "px"]
+                        },
+                        {
+                            type : "hottext",
+                            id : "strokeHardness",
+                            prop : "strokeHardness",
+                            label : "Hardness",
+                            valueMutator: parseInt,
+                            min :   0,
+                            max :   100,
+                            value : 100,
+                            unit : "%",
+                            acceptableUnits: ["%"]
+                        }
+                    ]
+                ]
+            },
+            {
+                label: "Smoothing",
+                Section: [
+                    [
+                        {
+                            type: "checkbox",
+                            id: "doSmoothing",
+                            prop: "doSmoothing",
+                            defaultValue: false,
+                            value: "Y/N",
+                            checked: false
+                        },
+                        {
+                            type : "hottext",
+                            id : "strokeSmoothing",
+                            prop : "strokeSmoothing",
+                            label : "Amount",
+                            valueMutator: parseFloat,
+                            min :   0,
+                            max :   100,
+                            value : 0
+                        }
+                    ]
+                ]
+            },
+            {
+                label: "Calligraphic",
+                Section: [
+                    [
+                        {
+                            type: "checkbox",
+                            id: "isCalligraphic",
+                            prop: "isCalligraphic",
+                            defaultValue: false,
+                            value: "Y/N",
+                            checked: false,
+                            divider : true
+                        },
+                        {
+                            type : "hottext",
+                            id : "strokeAngle",
+                            prop : "strokeAngle",
+                            label : "Angle",
+                            valueMutator: parseFloat,
+                            min :   -90,
+                            max :   90,
+                            value : 0,
+                            unit : "deg."
+                        }
+                    ]
+                ]
+            }
+        ] //value: [
+    } //BrushStrokePi: {
 });
 
 
