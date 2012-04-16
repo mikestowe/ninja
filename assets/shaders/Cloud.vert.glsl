@@ -28,14 +28,22 @@ uniform mat4 u_worldMatrix;
 varying vec2	v_texCoord0;
 
 // constants
-const float zSpeed = 1.0;
+const float zSpeed = 2.0;
 
 
 void main()
 {
     // Transform position
 	vec4 pos = vec4(a_pos,1);
-	//pos.z += u_time*zSpeed;
+	float dz = u_time*zSpeed;
+	float n = floor( dz/(u_zmax-u_zmin) );
+	dz -= n*(u_zmax - u_zmin);
+	float z = pos.z + dz;
+	if (z > u_zmax)
+	{
+		z = u_zmin + (z - u_zmax);
+	}
+	pos.z = z;
 	gl_Position = u_projMatrix * u_mvMatrix * pos;
 	    
     v_texCoord0 = texcoord;

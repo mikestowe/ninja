@@ -31,13 +31,13 @@ var CloudMaterial = function CloudMaterial() {
 	this._cloudSize = 40;
 
 	this._time = 0.0;
-	this._dTime = 0.01;
+	this._dTime = 0.001;
 
 	// parameter initial values
 	this._time			= 0.0;
-	this._surfaceAlpha	= 0.6;
-	this._zmin			= 0.1;
-	this._zmax			= 10.0;
+	this._surfaceAlpha	= 0.5;
+	this._zmin			= 6.0;
+	this._zmax			= 10;
 
 
     ///////////////////////////////////////////////////////////////////////
@@ -129,9 +129,9 @@ var CloudMaterial = function CloudMaterial() {
 
 		//////////////////////////////////////////////////////////////////////////////////
 		// IS THIS NECESSARY??
-        //var elementModel = TagTool.makeElement(~~srcCanvas.width, ~~srcCanvas.height,
-        //                                                                Matrix.I(4), [0,0,0], srcCanvas);
-        //ElementMediator.addElement(srcCanvas, elementModel.data, true);
+        var elementModel = TagTool.makeElement(~~srcCanvas.width, ~~srcCanvas.height,
+                                                                        Matrix.I(4), [0,0,0], srcCanvas);
+        ElementMediator.addElement(srcCanvas, elementModel.data, true);
 		//////////////////////////////////////////////////////////////////////////////////
 
 		// build the source.
@@ -212,13 +212,12 @@ var CloudMaterial = function CloudMaterial() {
 			renderer = g_Engine.getContext().renderer;
 			if (renderer && technique)
 			{
-					if (this._glTex)
-					{
-						this._glTex.render();
-						tex = this._glTex.getTexture();
-						technique.u_tex0.set( tex );
-					}
-                }
+				if (this._glTex)
+				{
+					this._glTex.render();
+					tex = this._glTex.getTexture();
+					technique.u_tex0.set( tex );
+				}
 			}
 		}
 
@@ -230,13 +229,10 @@ var CloudMaterial = function CloudMaterial() {
 			renderer = g_Engine.getContext().renderer;
 			if (renderer && technique)
 			{
-				if (this._shader && this._shader['default']) {
-					this._shader['default'].u_time.set( [this._time] );
-                }
-
+				technique.u_time.set( [this._time] );
  				this._time += this._dTime;
-               if (this._time > 200.0)  this._time = 0.0;
 			}
+		}
 	};
 
 	this.buildSource = function()
@@ -293,6 +289,9 @@ var CloudMaterial = function CloudMaterial() {
 			}
 		}
 
+		// start the render loop on the source canvas
+		srcWorld.restartRenderLoop();
+
 		// restore the original context
 		g_Engine.setContext( saveContext.id );
 		this.getWorld().start();
@@ -332,19 +331,25 @@ var CloudMaterial = function CloudMaterial() {
 		//this.createFill([x,y],  2*xFill,  2*yFill,  tlRadius, blRadius, brRadius, trRadius, fillMaterial);
 		var ctr = [x,y],  width = 2*hWidth,  height = 2*hHeight;
 		var cloudSize = width > height ? 0.25*width : 0.25*height;
-		//var prim = RectangleGeometry.create( ctr,  width, height );
-		//return prim;
+
+		// calculate the range of z's in GL space from
+		// the user specified range
+		var zNear = world.getZNear(),  zFar = world.getZFar();
+		var zMin = (-(this._zmin - world.getViewDistance())*(zFar - zNear) + 2.0*zFar*zNear)/(zFar + zNear),
+			zMax = (-(this._zmax - world.getViewDistance())*(zFar - zNear) + 2.0*zFar*zNear)/(zFar + zNear);
+		if (zMin > zMax) {  var t = zMin;  zMin = zMax;  zMax = t;  }
+		var dz = zMax - zMin;
 
 		var verts	= [],
 			normals	= [ [0,0,1], [0,0,1], [0,0,1], [0,0,1] ],
 			uvs		= [ [0,0], [1,0], [1,1], [0,1] ];
 	
-		for ( i = 0; i < 12; i++ )
+		for ( i = 0; i < 20; i++ )
 		{
 			var x = hWidth*2*(Math.random() - 0.5),
 				//y = hHeight*2.0*(Math.random() * Math.random() - 0.5),
 				y = hHeight*2.0*(Math.random() - 0.5),
-				z = 0,	//i,
+				z = zMin + Math.random()*dz;
 				zRot = (Math.random() - 0.5) * Math.PI,
 				sz = cloudSize * Math.random();
 
@@ -357,9 +362,7 @@ var CloudMaterial = function CloudMaterial() {
 			verts[3] = [ sz, -sz, 0];
 
 			var rotMat = Matrix.RotationZ( zRot );
-			//var scaleMat = Matrix.Scale( [sz,sz,sz] );
 			var transMat = Matrix.Translation( [x,y,z] );
-
 			var mat = glmat4.multiply( transMat, rotMat, [] );
 
 			glmat4.multiplyVec3( mat, verts[0] );
