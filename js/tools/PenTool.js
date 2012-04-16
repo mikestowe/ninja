@@ -94,7 +94,9 @@ exports.PenTool = Montage.create(ShapeTool, {
     ENTRY_SELECT_CANVAS: { value: 1, writable: false},
     ENTRY_SELECT_PATH: { value: 2, writable: false},
     _entryEditMode: {value: this.ENTRY_SELECT_NONE, writable: true},
-    
+
+    //constants used for limiting size of the subpath canvas
+    _MAX_CANVAS_DIMENSION: {value: 3000, writable: false},
 
     // get the stage world position corresponding to the (x,y) mouse event position by querying the snap manager
     //  but temporarily turning off all snapping
@@ -742,6 +744,24 @@ exports.PenTool = Montage.create(ShapeTool, {
             this._selectedSubpath.createSamples(true); //we need to compute samples to get the bounding box center in stage world space
             var bboxMin = this._selectedSubpath.getBBoxMin();
             var bboxMax = this._selectedSubpath.getBBoxMax();
+
+            //check if the last point added made this canvas is now bigger than the max canvas size
+            var needToRemoveLastPoint = false;
+            for (d=0;d<3;d++){
+                if (bboxMax[d]-bboxMin[d]>this._MAX_CANVAS_DIMENSION){
+                   needToRemoveLastPoint = true;
+                }
+            }
+            if (needToRemoveLastPoint){
+                console.log("PEN: Warning! Ignoring last added point because canvas size too large")
+                this._selectedSubpath.removeAnchor(numAnchors-1);
+                numAnchors--;
+                //recompute the bbox of this subpath
+                this._selectedSubpath.createSamples(true);
+                bboxMin = this._selectedSubpath.getBBoxMin();
+                bboxMax = this._selectedSubpath.getBBoxMax();
+            }
+
             this._selectedSubpathCanvasCenter = VecUtils.vecInterpolate(3, bboxMin, bboxMax, 0.5);
             if (this._selectedSubpathCanvas) {
                 //if the canvas does not yet exist, the stage world point already have this stage dimension offset below
