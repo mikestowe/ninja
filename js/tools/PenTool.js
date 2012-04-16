@@ -549,8 +549,6 @@ exports.PenTool = Montage.create(ShapeTool, {
             h = Math.round(h);
             var left = Math.round(midPt[0] - 0.5 * w);
             var top = Math.round(midPt[1] - 0.5 * h);
-            this._selectedSubpath.setCanvasLeft(left);
-            this._selectedSubpath.setCanvasTop(top);
 
             if (!canvas) {
                 var newCanvas = null;
@@ -686,7 +684,6 @@ exports.PenTool = Montage.create(ShapeTool, {
                 }
             }
             this._snapTargetIndex = -1;
-            this._selectedSubpath.createSamples();
 
             //if we have some samples to render...
             if (this._selectedSubpath.getNumAnchors() > 1) {
@@ -712,7 +709,7 @@ exports.PenTool = Montage.create(ShapeTool, {
     },
 
     //prepare the selected subpath
-    //  convert the anchor points to stage world space (assume that's already the case if there already is a subpath canvas)
+    //  convert the anchor points to stage world space (assume that's already the case if there is no subpath canvas)
     //  compute the center of the future canvas of this subpath in stage world space
     //  convert the anchor points from stage world to local space of the canvas
     PrepareSelectedSubpathForRendering: {
@@ -738,13 +735,19 @@ exports.PenTool = Montage.create(ShapeTool, {
                     currAnchor.setPos(localPos[1][0],localPos[1][1],localPos[1][2]);
                     currAnchor.setNextPos(localPos[2][0],localPos[2][1],localPos[2][2]);
                 }
+                this._selectedSubpath.makeDirty();
             }
 
             //compute the bbox in stage-world space
-            this._selectedSubpath.createSamples(); //we need to compute samples to get the bounding box center in stage world space
+            this._selectedSubpath.createSamples(true); //we need to compute samples to get the bounding box center in stage world space
             var bboxMin = this._selectedSubpath.getBBoxMin();
             var bboxMax = this._selectedSubpath.getBBoxMax();
             this._selectedSubpathCanvasCenter = VecUtils.vecInterpolate(3, bboxMin, bboxMax, 0.5);
+            if (this._selectedSubpathCanvas) {
+                //if the canvas does not yet exist, the stage world point already have this stage dimension offset below
+                this._selectedSubpathCanvasCenter[0]+= snapManager.getStageWidth()*0.5;
+                this._selectedSubpathCanvasCenter[1]+= snapManager.getStageHeight()*0.5;
+            }
 
             var planeMatInv = glmat4.inverse(this._selectedSubpathPlaneMat, []);
             
@@ -774,7 +777,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                 currAnchor.setNextPos(localPos[2][0],localPos[2][1],localPos[2][2]);
             }
             this._selectedSubpath.makeDirty();
-            this._selectedSubpath.createSamples();
+            this._selectedSubpath.createSamples(false);
             this._selectedSubpath.offsetPerBBoxMin();
         }
     },
@@ -969,7 +972,7 @@ exports.PenTool = Montage.create(ShapeTool, {
             if (subpath === null)
                 return;
 
-            subpath.createSamples(); //dirty bit will be checked inside this function
+            subpath.createSamples(false); //dirty bit will be checked inside this function
             var numAnchors = subpath.getNumAnchors();
             if (numAnchors < 2)
                 return;
@@ -1278,7 +1281,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                  if (this._selectedSubpath.getSelectedAnchorIndex()>=0){
                      this._hoveredAnchorIndex=-1;
                      this._selectedSubpath.removeAnchor(this._selectedSubpath.getSelectedAnchorIndex());
-                     this._selectedSubpath.createSamples();
+                     this._selectedSubpath.createSamples(false);
                      //clear the canvas
                      this.application.ninja.stage.clearDrawingCanvas();//stageManagerModule.stageManager.clearDrawingCanvas();
                      this.DrawSubpathAnchors(this._selectedSubpath);
