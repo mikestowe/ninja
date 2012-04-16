@@ -43,6 +43,33 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
         }
     },
 
+    HandleMouseMove: {
+        value: function(event) {
+            if(this._escape) {
+                this._escape = false;
+                this.isDrawing = true;
+            }
+
+            if(this.isDrawing) {
+                this._hasDraw = true;   // Flag for position of element
+                this.doDraw(event);
+            } else {
+                this._showFeedbackOnMouseMove(event);
+                if(this._canSnap)
+                {
+                    this.doSnap(event);
+                }
+            }
+
+			this.DrawHandles(this._delta);
+            
+			if(this._canSnap)
+            {
+                snapManager.drawLastHit();
+            }
+        }
+    },
+
     modifyElements: {
         value: function(data, event) {
             var mat,
