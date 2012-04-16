@@ -1354,7 +1354,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 							var offset = viewUtils.getElementOffset( elt );
 							MathUtils.makeDimension3( offset );
 							var parentPt = vecUtils.vecAdd(3, scrPt, offset );
-							var globalPt = viewUtils.localToGlobal( parentPt, elt.parentElement );
+							var globalPt = viewUtils.localToGlobal( parentPt, elt.offsetParent );
 
 							var dist = vecUtils.vecDist(2, globalPt, targetScrPt );
 							if (dist < this.ELEMENT_VERTEX_HIT_RAD)
@@ -1392,7 +1392,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 								var offset = viewUtils.getElementOffset( elt );
 								MathUtils.makeDimension3( offset );
 								var parentPt = vecUtils.vecAdd(3, scrPt, offset );
-								var globalPt = viewUtils.localToGlobal( parentPt, elt.parentElement );
+								var globalPt = viewUtils.localToGlobal( parentPt, elt.offsetParent );
 
 								var dist = vecUtils.vecDist(2, globalPt, targetScrPt );
 								if (dist < this.ELEMENT_EDGE_HIT_RAD)
@@ -1445,7 +1445,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 							var offset = viewUtils.getElementOffset( elt );
 							MathUtils.makeDimension3( offset );
 							var parentPt = vecUtils.vecAdd(3, scrPt, offset );
-							var globalPt = viewUtils.localToGlobal( parentPt, elt.parentElement );
+							var globalPt = viewUtils.localToGlobal( parentPt, elt.offsetParent );
 
 							var dist = vecUtils.vecDist(2, globalPt, targetScrPt );
 							if (dist < this.ELEMENT_VERTEX_HIT_RAD)
@@ -1483,7 +1483,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 								var offset = viewUtils.getElementOffset( elt );
 								MathUtils.makeDimension3( offset );
 								var parentPt = vecUtils.vecAdd(3, scrPt, offset );
-								var globalPt = viewUtils.localToGlobal( parentPt, elt.parentElement );
+								var globalPt = viewUtils.localToGlobal( parentPt, elt.offsetParent );
 
 								var dist = vecUtils.vecDist(2, globalPt, targetScrPt );
 								if (dist < this.ELEMENT_EDGE_HIT_RAD)
