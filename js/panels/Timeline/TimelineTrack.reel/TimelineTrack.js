@@ -533,8 +533,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                     if (this.tweens.length < 1) {
                         this.insertTween(0);
                         this.addAnimationRuleToElement(ev);
+                        this.updateKeyframeRule();
                     } else {
                         this.handleNewTween(ev);
+                        this.updateKeyframeRule();
                     }
                 } else {
                     console.log("There must be exactly one element in an animated layer.");
@@ -588,6 +590,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-duration", animationDuration);
                 this.nextKeyframe += 1;
             }
+
             this.application.ninja.documentController.activeDocument.needsSave = true;
         }
     },
