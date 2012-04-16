@@ -614,13 +614,14 @@ GLSubpath.prototype.pickPath = function (pickX, pickY, pickZ, radius, testOnly) 
         }//if is within bbox
     }
 
+    if (retCode!== this.SEL_NONE)
+        retCode = retCode | this.SEL_PATH; //ensure that path is also selected if anything else is selected
+    
     if (!testOnly){
-        if (retCode!== this.SEL_NONE)
-            retCode = retCode | this.SEL_PATH; //ensure that path is also selected if anything else is selected
         this._selectMode = retCode;
         this._selectedAnchorIndex = selAnchorIndex;
     }
-    return [selAnchorIndex,retParam];
+    return [selAnchorIndex,retParam, retCode];
 }; //GLSubpath.pickPath function
 
 GLSubpath.prototype.getSelectedAnchorIndex = function () {
@@ -693,54 +694,6 @@ GLSubpath.prototype.setStrokeWidth = function (w) {
     ElementMediator.setProperty(canvasArray, "height", [penCanvasNewHeight+"px"], "Changing", "penTool");
     ElementMediator.setProperty(canvasArray, "left", [penCanvasNewLeft+"px"],"Changing", "penTool");
     ElementMediator.setProperty(canvasArray, "top", [penCanvasNewTop+ "px"],"Changing", "penTool");
-
-    /*
-    //compute the current location of the canvas for this subpath
-    this.createSamples(); //this will also update the bounding box
-    var bboxMin = this.getBBoxMin();
-    var bboxMax = this.getBBoxMax();
-    var bboxMid = [0.5 * (bboxMax[0] + bboxMin[0]), 0.5 * (bboxMax[1] + bboxMin[1]), 0]; //ignore the Z coord. for local coordinates
-
-    //go from local coordinates to stage world
-    var ViewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
-    var SnapManager = require("js/helper-classes/3D/snap-manager").SnapManager;
-    var localToStageWorldMat = ViewUtils.getLocalToStageWorldMatrix(this._canvas, true, true);
-    var bboxMidSW = MathUtils.transformAndDivideHomogeneousPoint(bboxMid, localToStageWorldMat);
-    bboxMidSW[0]+=SnapManager.getStageWidth()*0.5;
-    bboxMidSW[1]+=SnapManager.getStageHeight()*0.5;
-
-    this._strokeWidth = Math.round(w);
-    this._dirty=true;
-
-    // **** adjust the local coordinates to account for the change in stroke width ****
-    this.computeBoundingBox(); //this will take the new strokewidth into account
-    this.offsetPerBBoxMin(); //this will shift the local coordinates such that the bbox min point is at (0,0)
-
-    // **** adjust the canvas position to account for the change in stroke width
-    var ElementMediator = require("js/mediators/element-mediator").ElementMediator;
-    //build the width and height of this canvas by looking at local coordinates
-    bboxMin = this.getBBoxMin();
-    bboxMax = this.getBBoxMax();
-    var width = Math.round(bboxMax[0] - bboxMin[0]);
-    var height = Math.round(bboxMax[1] - bboxMin[1]);
-    var left = Math.round(bboxMidSW[0] - 0.5 * width);
-    var top = Math.round(bboxMidSW[1] - 0.5 * height);
-
-    var canvasArray=[this._canvas];
-    ElementMediator.setProperty(canvasArray, "width", [width+"px"], "Changing", "penTool");
-    ElementMediator.setProperty(canvasArray, "height", [height+"px"], "Changing", "penTool");
-
-    //check if the canvas was translated
-    var penCanvasCurrentLeft = parseInt(ElementMediator.getProperty(this._canvas, "left"));
-    var penCanvasCurrentTop = parseInt(ElementMediator.getProperty(this._canvas, "top"));
-    left =  Math.round(penCanvasCurrentLeft - diffStrokeWidth*0.5);
-    top =  Math.round(penCanvasCurrentTop - diffStrokeWidth*0.5);
-
-    //left = Math.round(bboxMidSW[0] - 0.5 * width);
-    //top = Math.round(bboxMidSW[1] - 0.5 * height);
-    ElementMediator.setProperty(canvasArray, "left", [left+"px"],"Changing", "penTool");
-    ElementMediator.setProperty(canvasArray, "top", [top+ "px"],"Changing", "penTool");
-    */
 };
 
 GLSubpath.prototype.getStrokeColor = function () {
