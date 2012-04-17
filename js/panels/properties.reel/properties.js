@@ -113,13 +113,14 @@ exports.Properties = Montage.create(Component, {
                 }
 
                 if(this.application.ninja.selectedElements.length) {
-                    ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "id", this.elementId.value, "Change", "pi");
+//                    ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "id", this.elementId.value, "Change", "pi");
+                    ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "id", this.elementId.value, this.application.ninja.selectedElements[0].id, "pi");
                 } else {
                     ElementsMediator.setAttribute(this.application.ninja.currentDocument.documentRoot, "id", this.elementId.value, "Change", "pi", this.application.ninja.currentDocument.documentRoot.elementModel.id);
                 }
             } else if(event.target.id === "elementClass") {
                 if(this.application.ninja.selectedElements.length) {
-                    ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "class", this.elementClass.value, "Change", "pi");
+                    ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "class", this.elementClass.value, this.application.ninja.selectedElements[0].className, "pi");
                 } else {
                     ElementsMediator.setAttribute(this.application.ninja.currentDocument.documentRoot, "class", this.elementClass.value, "Change", "pi", this.application.ninja.currentDocument.documentRoot.elementModel.elementClass);
                 }
