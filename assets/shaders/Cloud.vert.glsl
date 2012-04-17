@@ -22,19 +22,19 @@ uniform float u_surfaceAlpha;
 // matrix uniforms
 uniform mat4 u_mvMatrix;
 uniform mat4 u_projMatrix;
-uniform mat4 u_worldMatrix;
 
 // varying
 varying vec2	v_texCoord0;
 
 // constants
-const float zSpeed = 2.0;
+const float zSpeed = 10.0;
 
 
 void main()
 {
     // Transform position
 	vec4 pos = vec4(a_pos,1);
+
 	float dz = u_time*zSpeed;
 	float n = floor( dz/(u_zmax-u_zmin) );
 	dz -= n*(u_zmax - u_zmin);
@@ -44,6 +44,7 @@ void main()
 		z = u_zmin + (z - u_zmax);
 	}
 	pos.z = z;
+
 	gl_Position = u_projMatrix * u_mvMatrix * pos;
 	    
     v_texCoord0 = texcoord;

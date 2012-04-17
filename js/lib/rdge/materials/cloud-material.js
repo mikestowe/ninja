@@ -22,8 +22,8 @@ var CloudMaterial = function CloudMaterial() {
 	this._name = "CloudMaterial";
 	this._shaderName = "cloud";
 
-	//this._texMap = 'assets/images/cloud10.png';
-	this._texMap = 'assets/images/us_flag.png';
+	this._texMap = 'assets/images/cloud10.png';
+	//this._texMap = 'assets/images/us_flag.png';
 	//this._texMap = 'assets/images/cubelight.png';
 	this._diffuseColor = [0.5, 0.5, 0.5, 0.5];
 
@@ -36,8 +36,15 @@ var CloudMaterial = function CloudMaterial() {
 	// parameter initial values
 	this._time			= 0.0;
 	this._surfaceAlpha	= 0.5;
-	this._zmin			= 6.0;
-	this._zmax			= 10;
+	this._zmin			= 2.0;
+	this._zmax			= 5.0;
+
+	// the adjusted zMin and zMax values are
+	// what get sent to the shader.  They are initialized
+	// in buildGeometry
+	this._adjustedZMin = this._zmin;
+	this._adjustedZMax = this._zmax;
+
 
 
     ///////////////////////////////////////////////////////////////////////
@@ -129,9 +136,9 @@ var CloudMaterial = function CloudMaterial() {
 
 		//////////////////////////////////////////////////////////////////////////////////
 		// IS THIS NECESSARY??
-        var elementModel = TagTool.makeElement(~~srcCanvas.width, ~~srcCanvas.height,
-                                                                        Matrix.I(4), [0,0,0], srcCanvas);
-        ElementMediator.addElement(srcCanvas, elementModel.data, true);
+//        var elementModel = TagTool.makeElement(~~srcCanvas.width, ~~srcCanvas.height,
+//                                                                        Matrix.I(4), [0,0,0], srcCanvas);
+//        ElementMediator.addElement(srcCanvas, elementModel.data, true);
 		//////////////////////////////////////////////////////////////////////////////////
 
 		// build the source.
@@ -202,6 +209,13 @@ var CloudMaterial = function CloudMaterial() {
 
 	this.update = function( time )
 	{
+		if (this._srcWorld)
+		{
+			this._srcWorld.update();
+			this._srcWorld.draw();
+			g_Engine.setContext( this.getWorld()._canvas.rdgeid );
+		}
+
 		var technique, renderer, tex;
 		
 		// update the cloud map material
@@ -275,8 +289,8 @@ var CloudMaterial = function CloudMaterial() {
 			{
 				t.u_time.set( [this._time] );
 				t.u_surfaceAlpha.set( [this._surfaceAlpha] );
-				t.u_zmin.set( [this._zmin] );
-				t.u_zmax.set( [this._zmax] );
+				t.u_zmin.set( [this._adjustedZMin] );
+				t.u_zmax.set( [this._adjustedZMax] );
 
 				var wrap = 'REPEAT',  mips = true;
 				var texMapName = this._propValues[this._propNames[0]];
@@ -331,30 +345,49 @@ var CloudMaterial = function CloudMaterial() {
 		//this.createFill([x,y],  2*xFill,  2*yFill,  tlRadius, blRadius, brRadius, trRadius, fillMaterial);
 		var ctr = [x,y],  width = 2*hWidth,  height = 2*hHeight;
 		var cloudSize = width > height ? 0.25*width : 0.25*height;
+		var left = x - hHeight,
+			top  = y - hHeight;
 
-		// calculate the range of z's in GL space from
-		// the user specified range
+		// get the GL projection matrix so wecan calculate the z values from the user input z values
 		var zNear = world.getZNear(),  zFar = world.getZFar();
-		var zMin = (-(this._zmin - world.getViewDistance())*(zFar - zNear) + 2.0*zFar*zNear)/(zFar + zNear),
-			zMax = (-(this._zmax - world.getViewDistance())*(zFar - zNear) + 2.0*zFar*zNear)/(zFar + zNear);
-		if (zMin > zMax) {  var t = zMin;  zMin = zMax;  zMax = t;  }
-		var dz = zMax - zMin;
+		var viewDist = world.getViewDistance();
+		var projMat = Matrix.makePerspective( world.getFOV(), world.getAspect(), world.getZNear(), world.getZFar());
+		var camMat = world.getCameraMat();
+		var camMatInv = glmat4.inverse( camMat, [] );
+		var glCompleteMat = glmat4.multiply( projMat, camMatInv, [] );
+		var zw1_c = MathUtils.transformAndDivideHomogeneousPoint( [0,0, -zNear + viewDist], glCompleteMat )[2],
+			zw2_c = MathUtils.transformAndDivideHomogeneousPoint( [0,0,  -zFar + viewDist], glCompleteMat )[2];
+		var glCompleteMatInv = glmat4.inverse( glCompleteMat, [] );
+		var zMin = MathUtils.transformAndDivideHomogeneousPoint( [0,0, -this._zmin + viewDist], glCompleteMat )[2],
+			zMax = MathUtils.transformAndDivideHomogeneousPoint( [0,0, -this._zmax + viewDist], glCompleteMat )[2];
 
+		zMax = -this._zmin + viewDist;
+		zMin = -this._zmax + viewDist;
+		dz = zMax - zMin;
+
+		// the adjusted values are what get sent to the shader
+		this._adjustedZMin = zMin;
+		this._adjustedZMax = zMax;
+
+		
+		// build the polygons
 		var verts	= [],
 			normals	= [ [0,0,1], [0,0,1], [0,0,1], [0,0,1] ],
 			uvs		= [ [0,0], [1,0], [1,1], [0,1] ];
 	
 		for ( i = 0; i < 20; i++ )
 		{
-			var x = hWidth*2*(Math.random() - 0.5),
-				//y = hHeight*2.0*(Math.random() * Math.random() - 0.5),
-				y = hHeight*2.0*(Math.random() - 0.5),
+//			var x = hWidth*2*(Math.random() - 0.5),
+//				y = hHeight*2.0*(Math.random() - 0.5),
+			var x = left + Math.random()*width,
+				y =  top + Math.random()*height,
 				z = zMin + Math.random()*dz;
 				zRot = (Math.random() - 0.5) * Math.PI,
 				sz = cloudSize * Math.random();
 
 			//x = 0.0;  y = 0.0;  z = 0.0;
 			//zRot = 0.0;
+			//z = 0;
 
 			verts[0] = [-sz, -sz, 0];
 			verts[1] = [-sz,  sz, 0];
@@ -369,6 +402,11 @@ var CloudMaterial = function CloudMaterial() {
 			glmat4.multiplyVec3( mat, verts[1] );
 			glmat4.multiplyVec3( mat, verts[2] );
 			glmat4.multiplyVec3( mat, verts[3] );
+
+			var tmp0 = MathUtils.transformAndDivideHomogeneousPoint( verts[0], glCompleteMat ),
+				tmp1 = MathUtils.transformAndDivideHomogeneousPoint( verts[1], glCompleteMat ),
+				tmp2 = MathUtils.transformAndDivideHomogeneousPoint( verts[2], glCompleteMat ),
+				tmp3 = MathUtils.transformAndDivideHomogeneousPoint( verts[3], glCompleteMat );
 
 			RectangleGeometry.addQuad( verts,  normals, uvs );
 		}
