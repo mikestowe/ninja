@@ -396,8 +396,8 @@ exports.ShapesController = Montage.create(CanvasController, {
             if(isFill)
             {
                 // Properties Panel asks for fill color even for shapes that only have strokes
-                // Check that shape object has a getFillColor method before getting fills
-                if(el.elementModel.shapeModel.GLGeomObj.getFillColor)
+                // Check that shape object supports fills
+                if(el.elementModel.shapeModel.GLGeomObj.canFill)
                 {
                     return this.application.ninja.colorController.colorModel.webGlToColor(el.elementModel.shapeModel.GLGeomObj.getFillColor());
                 }
@@ -494,27 +494,35 @@ exports.ShapesController = Montage.create(CanvasController, {
                 webGl;
             if(isFill)
             {
-                if(mode)
+                // skip shape types that don't have fill color
+                if(el.elementModel.shapeModel.GLGeomObj.canFill)
                 {
-                    switch (mode) {
-                        case 'nocolor':
-                            el.elementModel.shapeModel.GLGeomObj.setFillColor(null);
-                            break;
-                        case 'gradient':
-                            if(el.elementModel.shapeModel.useWebGl)
-                            {
-                                this._setGradientMaterial(el, color.color.gradientMode, isFill);
-                            }
-                            el.elementModel.shapeModel.GLGeomObj.setFillColor({gradientMode:color.color.gradientMode, color:color.color.stops});
-                            break;
-                        default:
-                            if(el.elementModel.shapeModel.useWebGl)
-                            {
-                                this._setFlatMaterial(el, isFill);
-                            }
-                            webGl = this.application.ninja.colorController.colorModel.colorToWebGl(color.color);
-                            el.elementModel.shapeModel.GLGeomObj.setFillColor(webGl);
+                    if(mode)
+                    {
+                        switch (mode) {
+                            case 'nocolor':
+                                el.elementModel.shapeModel.GLGeomObj.setFillColor(null);
+                                break;
+                            case 'gradient':
+                                if(el.elementModel.shapeModel.useWebGl)
+                                {
+                                    this._setGradientMaterial(el, color.color.gradientMode, isFill);
+                                }
+                                el.elementModel.shapeModel.GLGeomObj.setFillColor({gradientMode:color.color.gradientMode, color:color.color.stops});
+                                break;
+                            default:
+                                if(el.elementModel.shapeModel.useWebGl)
+                                {
+                                    this._setFlatMaterial(el, isFill);
+                                }
+                                webGl = this.application.ninja.colorController.colorModel.colorToWebGl(color.color);
+                                el.elementModel.shapeModel.GLGeomObj.setFillColor(webGl);
+                        }
                     }
+                }
+                else
+                {
+                    return;
                 }
             }
             else
