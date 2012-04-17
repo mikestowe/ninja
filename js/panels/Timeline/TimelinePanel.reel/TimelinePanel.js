@@ -312,7 +312,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.initTimeline();
             // Bind the event handler for the document change events
             this.eventManager.addEventListener("onOpenDocument", this.handleDocumentChange.bind(this), false);
-            this.eventManager.addEventListener("closeDocument", this.handleDocumentChange.bind(this), false);
+            //this.eventManager.addEventListener("closeDocument", this.handleDocumentChange.bind(this), false);
             this.eventManager.addEventListener("switchDocument", this.handleDocumentChange.bind(this), false);
             
             // Bind drag and drop event handlers
@@ -502,6 +502,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 for (i = 0; i < arrEventsLength; i++) {
                     this.eventManager.removeEventListener(arrEvents[i], this, false);
                 }
+                if (this._bindingDescriptors !== null) {
+                	//console.log('Unbinding breadcrumbcontainer')
+                	Object.deleteBinding(this, "breadCrumbContainer");
+                }
             } else {
                 for (i = 0; i < arrEventsLength; i++) {
                     this.eventManager.addEventListener(arrEvents[i], this, false);
@@ -532,6 +536,14 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             // Initialize BreadCrumb 
             this.application.ninja.breadCrumbClick = false;
             this.enablePanel(false);
+            
+            /*
+            Object.defineBinding(this, "breadCrumbContainer", {
+                boundObject:this.application.ninja,
+                boundObjectPropertyPath:"currentSelectedContainer",
+                oneway:true
+            });
+            */
         }
     },
 
@@ -539,12 +551,14 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     // Called when a document is opened (new or existing), or when documents are switched.
     initTimelineForDocument:{
         value:function () {
-            var myIndex;
+            var myIndex,
+            	boolAlreadyInitialized = false;
             this.drawTimeMarkers();
             // Document switching
             // Check to see if we have saved timeline information in the currentDocument.
             if ((typeof(this.application.ninja.currentDocument.isTimelineInitialized) === "undefined") &&
             	(!this.application.ninja.breadCrumbClick)) {
+            	//console.log('TimelinePanel.initTimelineForDocument: new Document');
                 // No, we have no information stored.
                 // This could mean we are creating a new file, OR are opening an existing file.
                 
@@ -568,8 +582,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 // Draw the repetition.
                 this.arrLayers = this.temparrLayers;
                 this.currentLayerNumber = this.arrLayers.length;
+                boolAlreadyInitialized = true;
                 
 			} else if (this.application.ninja.breadCrumbClick) {
+            	//console.log('TimelinePanel.initTimelineForDocument: breadCrumbClick');
 				// Information stored, but we're moving up or down in the breadcrumb.
 				// Get the current selection and restore timeline info for its children.
                 var parentNode = this.application.ninja.currentSelectedContainer,
@@ -586,8 +602,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this.currentLayerNumber = storedCurrentLayerNumber;
                 this.currentLayerSelected = this.application.ninja.currentSelectedContainer;
                 // this.application.ninja.breadCrumbClick = false;
+                boolAlreadyInitialized = true;
 				
             } else {
+            	//console.log('TimelinePanel.initTimelineForDocument: else fallback');
                 // we do have information stored.  Use it.
                 var i = 0, 
                 	tlArrLayersLength = this.application.ninja.currentDocument.tlArrLayers.length;
@@ -621,6 +639,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 				
 				// Ok, done reading from the cache.
 				this._boolCacheArrays = true;
+				
+				// Reset master duration
+				this.resetMasterDuration();
             }
         }
     },
@@ -661,6 +682,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     handleDocumentChange:{
         value:function (event) {
             // Clear the timeline but not the cache
+            //console.log('TimelinePanel.handleDocumentChange')
             this._boolCacheArrays = false;
             this.clearTimelinePanel();
             this._boolCacheArrays = true;
@@ -672,6 +694,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             if (this.application.ninja.documentController._documents.length > 0) {
                 this.enablePanel(true);
                 this.initTimelineForDocument();
+                
             } else {
                 this.enablePanel(false);
             }
@@ -750,15 +773,17 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     LayerBinding:{
         value:function (node) {
-            var i = 0;
-
+            // var i = 0;
+			/*
 			if (this._firstTimeLoaded === true) {
 				this._firstTimeLoaded = false;
 				return;
 			}
-
-			this.handleDocumentChange();
-			// this.application.ninja.breadCrumbClick=false;
+			*/
+			if (this.application.ninja.breadCrumbClick === true) {
+				//console.log('TimelinePanel.LayerBinding: firing this.handleDocumentChange')
+				this.handleDocumentChange();
+			}
         }
     },
 
