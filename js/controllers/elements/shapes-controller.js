@@ -74,12 +74,9 @@ exports.ShapesController = Montage.create(CanvasController, {
                             w += delta;
                             h += delta;
                         }
-                        this.application.ninja.elementMediator.setProperties([el],
-                                                                            { "left": [l + "px"],
-                                                                              "top": [t + "px"],
-                                                                              "width": [w + "px"],
-                                                                              "height": [h + "px"] },
-                                                                            eventType, source );
+
+                        this.application.ninja.elementMediator.setProperties([{element:el, properties:{left: l + "px", top: t + "px", width: w + "px", height:h + "px"}}], eventType, source);
+
                     }
                     el.elementModel.shapeModel.GLGeomObj.setStrokeWidth(val);
                     el.elementModel.shapeModel.GLGeomObj.buildBuffers();

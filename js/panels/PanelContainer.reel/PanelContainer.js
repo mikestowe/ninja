@@ -45,6 +45,7 @@ exports.PanelContainer = Montage.create(Component, {
                 this['panel_'+i].minHeight= p.minHeight;
                 this['panel_'+i].maxHeight = p.maxHeight;
                 this['panel_'+i].flexible = p.flexible;
+                this['panel_'+i].collapsed = p.collapsed;
                 this['panel_'+i].modulePath = p.modulePath;
                 this['panel_'+i].moduleName = p.moduleName;
                 this['panel_'+i].disabled = true;
