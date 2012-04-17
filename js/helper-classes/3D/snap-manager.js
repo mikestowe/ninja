@@ -1088,15 +1088,6 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 				localPt = MathUtils.transformPoint( localPt, inv );
 				var hitContained = false;
 				hitContained = this.snapToContainedElements( hitRec, localPt,  globalScrPt );
-
-				// disable snapping to element bounds when the object isnot selected
-				if (!hitContained && !this.application.ninja.selectionController.isObjectSelected(elt))
-				{
-					if ((hitRec.getType() == hitRec.SNAP_TYPE_ELEMENT_EDGE) ||
-						(hitRec.getType() == hitRec.SNAP_TYPE_ELEMENT_VERTEX) ||
-						(hitRec.getType() == hitRec.SNAP_TYPE_ELEMENT))
-						hitRec = null;
-				}
 			}
 
 			return hitRec;
