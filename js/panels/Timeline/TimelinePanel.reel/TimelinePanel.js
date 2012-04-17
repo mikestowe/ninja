@@ -312,7 +312,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.initTimeline();
             // Bind the event handler for the document change events
             this.eventManager.addEventListener("onOpenDocument", this.handleDocumentChange.bind(this), false);
-            //this.eventManager.addEventListener("closeDocument", this.handleDocumentChange.bind(this), false);
+            this.eventManager.addEventListener("closeDocument", this.handleDocumentChange.bind(this), false);
             this.eventManager.addEventListener("switchDocument", this.handleDocumentChange.bind(this), false);
             
             // Bind drag and drop event handlers
@@ -682,7 +682,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     handleDocumentChange:{
         value:function (event) {
             // Clear the timeline but not the cache
-            //console.log('TimelinePanel.handleDocumentChange')
+            //console.log('TimelinePanel.handleDocumentChange');
+            if ((event.type === "closeDocument") && (this.application.ninja.documentController._documents.length > 0)) {
+            	return;
+            }
             this._boolCacheArrays = false;
             this.clearTimelinePanel();
             this._boolCacheArrays = true;
