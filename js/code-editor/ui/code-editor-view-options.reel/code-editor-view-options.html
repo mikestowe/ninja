@@ -36,7 +36,10 @@
             "properties": {
                 "element": {"#": "viewOptions"},
                 "codeCompleteCheck":{"@": "codeCompleteCheck"},
-                "zoomHottext":{"@":"zoomHottext"}
+                "zoomHottext":{"@":"zoomHottext"},
+                "format":{"#": "format"},
+                "comment":{"#":"comment"},
+                "uncomment":{"#":"uncomment"}
             }
         }
     }
@@ -47,8 +50,13 @@
     <div>
         <input class="zoomFont" id="zoomFont"/>
         <div class="autoCodeComplete" >
-            <span>Automatic Code completion</span>
             <input type="checkbox" id="codeComplete" />
+            <span>Automatic Completion</span>
+        </div>
+        <div class="floatButtons">
+            <!--<button id="format" value="format" class="nj-skinned format">Format</button>-->
+            <button id="comment" value="comment" class="nj-skinned format">comment</button>
+            <button id="uncomment" value="uncomment" class="nj-skinned format">uncomment</button>
         </div>
     </div>
 </div>

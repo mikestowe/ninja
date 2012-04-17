@@ -1,3 +1,14 @@
 .viewOptions{
     color:#F7F7F7;
+    font-size:12px;
 }
+
+.viewOptions div{
+    display:inline;
+}
+
+.viewOptions .format{
+    float:right;
+    font-size:9px;
+}
+

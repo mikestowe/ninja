@@ -42,7 +42,27 @@ var CodeEditorViewOptions = exports.CodeEditorViewOptions = Montage.create(Compo
         didDraw: {
             enumerable: false,
             value: function() {
+                this.format.addEventListener("click", this.handleFormat.bind(this), false);
+                this.comment.addEventListener("click", this.handleComment.bind(this), false);
+                this.uncomment.addEventListener("click", this.handleUncomment.bind(this), false);
+            }
+        },
 
+        handleFormat:{
+            value: function(){
+                this.application.ninja.codeEditorController.autoFormatSelection();
+            }
+        },
+        handleComment:{
+            value: function(){
+                this.application.ninja.codeEditorController.commentSelection(true);
+            }
+        },
+
+        handleUncomment:{
+            value: function(){
+                this.application.ninja.codeEditorController.commentSelection(false);
             }
         }
+
 });

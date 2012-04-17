@@ -162,5 +162,26 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
                 autoCodeCompleteElem.style.visibility = "hidden";
             }
         }
+    },
+
+    getSelectedRange:{
+        value:function(editor){
+            return { from: editor.getCursor(true), to: editor.getCursor(false) };
+        }
+    },
+
+    autoFormatSelection:{
+        value: function(){
+            var range = this.getSelectedRange(this.application.ninja.documentController.activeDocument.editor);
+            this.application.ninja.documentController.activeDocument.editor.autoFormatRange(range.from, range.to);
+        }
+    },
+
+    commentSelection:{
+        value: function(isComment){
+            var range = this.getSelectedRange(this.application.ninja.documentController.activeDocument.editor);
+            this.application.ninja.documentController.activeDocument.editor.commentRange(isComment, range.from, range.to);
+        }
     }
+
 });
