@@ -743,7 +743,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                 //this transformation will take the path points from local space to stage world space
                 // *without* taking into account the transformation applied to this canvas
                 // (this is because we use the center of the bbox to find a place for the canvas)
-                var localToStageWorldMat = ViewUtils.getLocalToStageWorldMatrix(this._selectedSubpathCanvas, true, false);
+                var localToStageWorldMat = ViewUtils.getObjToStageWorldMatrix(this._selectedSubpathCanvas, false);//ViewUtils.getLocalToStageWorldMatrix(this._selectedSubpathCanvas, true, false);
                 for (i=0;i<numAnchors;i++){
                     //convert this anchor from local to stage world
                     var currAnchor = this._selectedSubpath.getAnchor(i);
@@ -904,8 +904,6 @@ exports.PenTool = Montage.create(ShapeTool, {
             this.DrawSubpathAnchors(this._selectedSubpath); 
         }
     },
-
-                var elementModel = TagTool.makeElement(parseInt(w), parseInt(h), planeMat, midPt, newCanvas, true);
                
     BuildSecondCtrlPoint:{
         value: function(p0, p2, p3) {
