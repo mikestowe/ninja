@@ -413,19 +413,21 @@ GLSubpath.prototype._checkIntersectionWithSamples = function(startIndex, endInde
     //will assume that the BBox test is performed outside this function
     if (endIndex<startIndex){
         //go from startIndex to the end of the samples
-        endIndex = this._Samples.length;
+        endIndex = this._Samples.length-1;
     }
-    for (var i=startIndex; i<endIndex-1; i++){
+    var retParam = null;
+    for (var i=startIndex; i<endIndex; i++){
         var seg0 = this._Samples[i].slice(0);
         var j=i+1;
         var seg1 = this._Samples[j].slice(0);
         var distToSegment = MathUtils.distPointToSegment(point, seg0, seg1);
         if (distToSegment<=radius){
             var paramDistance = MathUtils.paramPointProjectionOnSegment(point, seg0, seg1); //TODO Optimize! this function was called in distPointToSegment above
-            return this._sampleParam[i] + (this._sampleParam[j] - this._sampleParam[i])*paramDistance;
+            retParam = this._sampleParam[i] + (this._sampleParam[j] - this._sampleParam[i])*paramDistance;
+            break;
         }
     }
-    return null;
+    return retParam;
 };
 
 GLSubpath.prototype._checkIntersection = function(controlPts, beginParam, endParam, point, radius) {
@@ -589,6 +591,10 @@ GLSubpath.prototype.pickPath = function (pickX, pickY, pickZ, radius, testOnly) 
     selAnchorIndex = anchorAndRetCode[0];
     retCode = anchorAndRetCode[1];
 
+    if (retCode!== this.SEL_NONE){
+        retCode = retCode | this.SEL_PATH; //ensure that path is also selected if anything else is selected
+    }
+
     //if the location is not close any of the anchors, check if it is close to the curve itself
     if (selAnchorIndex===-1) {
         //first check if the input location is within the bounding box
@@ -603,9 +609,11 @@ GLSubpath.prototype.pickPath = function (pickX, pickY, pickZ, radius, testOnly) 
                     [this._Anchors[nextIndex].getPosX(),this._Anchors[nextIndex].getPosY(),this._Anchors[nextIndex].getPosZ()]];
                 var point = [pickX, pickY, pickZ];
                 if (this._isWithinGivenBoundingBox(point, controlPoints, radius)) {
+                    //var intersectParam = this._checkIntersection(controlPoints, 0.0, 1.0, point, radius);
                     var intersectParam = this._checkIntersectionWithSamples(this._anchorSampleIndex[i], this._anchorSampleIndex[nextIndex], point, radius);
-                    if (intersectParam){
+                    if (intersectParam!==null){
                         selAnchorIndex=i;
+                        retCode = retCode | this.SEL_PATH;
                         retParam = intersectParam-i; //make the retParam go from 0 to 1
                         break;
                     }
@@ -614,9 +622,6 @@ GLSubpath.prototype.pickPath = function (pickX, pickY, pickZ, radius, testOnly) 
         }//if is within bbox
     }
 
-    if (retCode!== this.SEL_NONE)
-        retCode = retCode | this.SEL_PATH; //ensure that path is also selected if anything else is selected
-    
     if (!testOnly){
         this._selectMode = retCode;
         this._selectedAnchorIndex = selAnchorIndex;
