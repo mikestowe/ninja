@@ -286,9 +286,7 @@ exports.ComponentsPanel = Montage.create(Component, {
                 var styles = {
                     'position': 'absolute',
                     'left'      : that.dragPosition[0] + 'px',
-                    'top'       : that.dragPosition[1] + 'px',
-                    '-webkit-transform-style' : 'preserve-3d',
-                    '-webkit-transform' : 'perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
+                    'top'       : that.dragPosition[1] + 'px'
                 };
 
                 var defaultStyles = component.defaultStyles;
