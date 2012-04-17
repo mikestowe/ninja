@@ -854,7 +854,7 @@ World.prototype.importObjectsJSON = function (jObj, parentGeomObj) {
 
 	// determine if we have children
     if (jObj.children) {
-		var nKids = ojObjbj.chilodren.length;
+		var nKids = jObj.children.length;
         for (var i = 0; i < nKids; i++) {
 			var child = jObj.children[i];
 			this.importObjectsJSON( child, gObj );

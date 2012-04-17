@@ -121,13 +121,12 @@ NinjaCvsRt.GLRuntime = function ( canvas, jObj,  assetPath )
 	// all "live" materials
 	this._materials = [];
 
-	// provide the mapping for the asset directory
-	if (assetPath)
-	{
-		this._assetPath = assetPath.slice();
-		if (this._assetPath[this._assetPath.length-1] != '/')
-			this._assetPath += '/';
-	}
+    // provide the mapping for the asset directory
+    if (assetPath) {
+        this._assetPath = assetPath.slice();
+        if (this._assetPath[this._assetPath.length - 1] != '/')
+            this._assetPath += '/';
+    }
 
 	if(this._assetPath !== undefined) {
 		RDGE.globals.engine.setAssetPath(this._assetPath);
@@ -289,23 +288,23 @@ NinjaCvsRt.GLRuntime = function ( canvas, jObj,  assetPath )
 
 	this.importObject = function( jObj,  parent )
 	{
-		var type = jObj.type
+		var type = jObj.type;
 		var obj;
 		switch (type)
 		{
 			case 1:
 				obj = new NinjaCvsRt.RuntimeRectangle();
-				obj.importJSON( jObj, parent );
+				obj.importJSON( jObj );
 				break;
 
 			case 2:		// circle
 				obj = new NinjaCvsRt.RuntimeOval();
-				obj.importJSON( jObj, parent );
+				obj.importJSON( jObj );
 				break;
 
 			case 3:		// line
 				obj = new NinjaCvsRt.RuntimeLine();
-				obj.importJSON( jObj, parent );
+				obj.importJSON( jObj );
 				break;
 
 			default:
@@ -514,7 +513,7 @@ NinjaCvsRt.RuntimeGeomObj = function ()
 				case "pulse":			mat = new NinjaCvsRt.RuntimePulseMaterial();				break;
 
 				default:
-					console.log( "material type: " + materialType + " is not supported" );
+					console.log( "material type: " + shaderName + " is not supported" );
 					break;
 			}
 
@@ -638,7 +637,7 @@ NinjaCvsRt.RuntimeGeomObj = function ()
 	
 		return mat;	
 	};
-	
+
 	this.MatrixRotationZ = function( angle )
 	{
 		var mat = this.MatrixIdentity(4);
@@ -742,7 +741,7 @@ NinjaCvsRt.RuntimeRectangle = function ()
 				ctx.quadraticCurveTo( width-inset, inset,  width-inset-rad, inset );
 
 			// do the top of the rectangle
-			pt = [inset, inset]
+			pt = [inset, inset];
 			rad = tlRad - inset;
 			if (rad < 0)  rad = 0;
 			pt[0] += rad;
@@ -771,34 +770,81 @@ NinjaCvsRt.RuntimeRectangle = function ()
 		var	w = world.getViewportWidth(),
 			h = world.getViewportHeight();
 		
-		// render the fill
-		ctx.beginPath();
-        var c = null, inset = 0;
-		if (this._fillColor)
-		{
-			c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";  
-			ctx.fillStyle = c;
+        var c,
+            inset,
+            gradient,
+            colors,
+            len,
+            n,
+            position,
+            cs;
+        // render the fill
+        ctx.beginPath();
+        if (this._fillColor) {
+            inset = Math.ceil( lw ) + 0.5;
 
-			ctx.lineWidth	= lw;
-			inset = Math.ceil( lw ) + 0.5;
-			this.renderPath( inset, ctx );
-			ctx.fill();
-			ctx.closePath();
-		}
+            if(this._fillColor.gradientMode) {
+                if(this._fillColor.gradientMode === "radial") {
+                    gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w/2, h/2)-inset);
+                } else {
+                    gradient = ctx.createLinearGradient(inset, h/2, w-2*inset, h/2);
+                }
+                colors = this._fillColor.color;
 
-		// render the stroke
-		ctx.beginPath();
-		if (this._strokeColor)
-		{
-			c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";  
-			ctx.strokeStyle = c;
+                len = colors.length;
 
-			ctx.lineWidth	= lw;
-			inset = Math.ceil( 0.5*lw ) + 0.5;
-			this.renderPath( inset, ctx );
-			ctx.stroke();
-			ctx.closePath();
-		}
+                for(n=0; n<len; n++) {
+                    position = colors[n].position/100;
+                    cs = colors[n].value;
+                    gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+                }
+
+                ctx.fillStyle = gradient;
+
+            } else {
+                c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";
+                ctx.fillStyle = c;
+            }
+
+            ctx.lineWidth	= lw;
+            this.renderPath( inset, ctx );
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        // render the stroke
+        ctx.beginPath();
+        if (this._strokeColor) {
+            inset = Math.ceil( 0.5*lw ) + 0.5;
+
+            if(this._strokeColor.gradientMode) {
+                if(this._strokeColor.gradientMode === "radial") {
+                    gradient = ctx.createRadialGradient(w/2, h/2, Math.min(h/2, w/2)-inset, w/2, h/2, Math.max(h/2, w/2));
+                } else {
+                    gradient = ctx.createLinearGradient(0, h/2, w, h/2);
+                }
+                colors = this._strokeColor.color;
+
+                len = colors.length;
+
+                for(n=0; n<len; n++) {
+                    position = colors[n].position/100;
+                    cs = colors[n].value;
+                    gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+                }
+
+                ctx.strokeStyle = gradient;
+
+            } else {
+                c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";
+                ctx.strokeStyle = c;
+            }
+
+            ctx.lineWidth	= lw;
+            this.renderPath( inset, ctx );
+            ctx.stroke();
+            ctx.closePath();
+        }
     };
 };
 
@@ -964,126 +1010,163 @@ NinjaCvsRt.RuntimeOval = function ()
 		if (bezPts)
 		{
 			var n = bezPts.length;
+            var gradient,
+                colors,
+                len,
+                j,
+                position,
+                cs,
+                c;
 
-			// set up the fill style
-			ctx.beginPath();
-			ctx.lineWidth = 0;
-            var c;
-			if (this._fillColor)
-			{
-				c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";  
-				ctx.fillStyle = c;
+            // set up the fill style
+            ctx.beginPath();
+            ctx.lineWidth = 0;
+            if (this._fillColor) {
+                if(this._fillColor.gradientMode) {
+                    if(this._fillColor.gradientMode === "radial") {
+                        gradient = ctx.createRadialGradient(xCtr, yCtr, 0,
+                                                            xCtr, yCtr, Math.max(yScale, xScale));
+                    } else {
+                        gradient = ctx.createLinearGradient(0, this._height/2, this._width, this._height/2);
+                    }
+                    colors = this._fillColor.color;
 
-				// draw the fill
-				ctx.beginPath();
-				var p = this.transformPoint( bezPts[0],   mat );
-				ctx.moveTo( p[0],  p[1] );
-				var index = 1;
-				while (index < n)
-				{
-					p0 = this.transformPoint( bezPts[index],  mat );
-					p1 = this.transformPoint( bezPts[index+1],  mat );
+                    len = colors.length;
 
-					x0 = p0[0];  y0 = p0[1];
-					x1 = p1[0];  y1 = p1[1];
-					ctx.quadraticCurveTo( x0,  y0,  x1, y1 );
-					index += 2;
-				}
+                    for(j=0; j<len; j++) {
+                        position = colors[j].position/100;
+                        cs = colors[j].value;
+                        gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+                    }
 
-				if ( innerRad > 0.001)
-				{
-					xScale = 0.5*innerRad*this._width;
-					yScale = 0.5*innerRad*this._height;
-					mat[0] = xScale;
-					mat[5] = yScale;
+                    ctx.fillStyle = gradient;
 
-					// get the bezier points
-					var bezPtsInside = this.circularArcToBezier( Vector.create([0,0,0]), Vector.create([1,0,0]), -2.0*Math.PI );
-					if (bezPtsInside)
-					{
-						n = bezPtsInside.length;
-						p = this.transformPoint( bezPtsInside[0],   mat );
-						ctx.moveTo( p[0],  p[1] );
-						index = 1;
-						while (index < n)
-						{
-							p0 = this.transformPoint( bezPtsInside[index],    mat );
-							p1 = this.transformPoint( bezPtsInside[index+1],  mat );
+                } else {
+                    c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";
+                    ctx.fillStyle = c;
+                }
+                // draw the fill
+//				ctx.beginPath();
+                var p = this.transformPoint( bezPts[0],   mat );
+                ctx.moveTo( p[0],  p[1] );
+                var index = 1;
+                while (index < n) {
+                    p0   = this.transformPoint( bezPts[index],  mat );
+                    p1 = this.transformPoint( bezPts[index+1],  mat );
 
-							x0 = p0[0];
+                    x0 = p0[0];  y0 = p0[1];
+                    x1 = p1[0];  y1 = p1[1];
+                    ctx.quadraticCurveTo( x0,  y0,  x1, y1 );
+                    index += 2;
+                }
+
+                if (innerRad > 0.001) {
+                    xScale = 0.5*innerRad*this._width;
+                    yScale = 0.5*innerRad*this._height;
+                    mat[0] = xScale;
+                    mat[5] = yScale;
+
+                    // get the bezier points
+                    var bezPtsInside = this.circularArcToBezier( [0,0,0], [1,0,0], -2.0*Math.PI );
+                    if (bezPtsInside) {
+                        n = bezPtsInside.length;
+                        p = this.transformPoint( bezPtsInside[0],   mat );
+                        ctx.moveTo( p[0],  p[1] );
+                        index = 1;
+                        while (index < n) {
+                            p0 = this.transformPoint( bezPtsInside[index],    mat );
+                            p1 = this.transformPoint( bezPtsInside[index+1],  mat );
+
+                            x0 = p0[0];
                             y0 = p0[1];
-							x1 = p1[0];
+                            x1 = p1[0];
                             y1 = p1[1];
-							ctx.quadraticCurveTo( x0,  y0,  x1, y1 );
-							index += 2;
-						}
-					}
-				}
+                            ctx.quadraticCurveTo( x0,  y0,  x1, y1 );
+                            index += 2;
+                        }
+                    }
+                }
 
-				// fill the path
-				ctx.fill();
-			}
+                // fill the path
+                ctx.fill();
+            }
 
-			// calculate the stroke matrix
-			xScale = 0.5*this._width  - 0.5*lineWidth;
-			yScale = 0.5*this._height - 0.5*lineWidth;
-			mat[0] = xScale;
-			mat[5] = yScale;
+            // calculate the stroke matrix
+            xScale = 0.5*this._width  - 0.5*lineWidth;
+            yScale = 0.5*this._height - 0.5*lineWidth;
+            mat[0] = xScale;
+            mat[5] = yScale;
 
-			// set up the stroke style
-			ctx.beginPath();
-			ctx.lineWidth	= lineWidth;
-			if (this._strokeColor)
-			{
-				c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";  
-				ctx.strokeStyle = c;
-			
-				// draw the stroke
-				p = this.transformPoint( bezPts[0],   mat );
-				ctx.moveTo( p[0],  p[1] );
-				index = 1;
-				while (index < n)
-				{
-					p0 = this.transformPoint( bezPts[index],  mat );
-					p1 = this.transformPoint( bezPts[index+1],  mat );
+            // set up the stroke style
+            ctx.beginPath();
+            ctx.lineWidth	= lineWidth;
+            if (this._strokeColor) {
+                if(this._strokeColor.gradientMode) {
+                    if(this._strokeColor.gradientMode === "radial") {
+                        gradient = ctx.createRadialGradient(xCtr, yCtr, Math.min(xScale, yScale),
+                                                            xCtr, yCtr, 0.5*Math.max(this._height, this._width));
+                    } else {
+                        gradient = ctx.createLinearGradient(0, this._height/2, this._width, this._height/2);
+                    }
+                    colors = this._strokeColor.color;
 
-					x0 = p0[0];
+                    len = colors.length;
+
+                    for(j=0; j<len; j++) {
+                        position = colors[j].position/100;
+                        cs = colors[j].value;
+                        gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+                    }
+
+                    ctx.strokeStyle = gradient;
+
+                } else {
+                    c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";
+                    ctx.strokeStyle = c;
+                }
+                // draw the stroke
+                p = this.transformPoint( bezPts[0],   mat );
+                ctx.moveTo( p[0],  p[1] );
+                index = 1;
+                while (index < n) {
+                    p0   = this.transformPoint( bezPts[index],  mat );
+                    p1 = this.transformPoint( bezPts[index+1],  mat );
+
+                    x0 = p0[0];
                     y0 = p0[1];
-					x1 = p1[0];
+                    x1 = p1[0];
                     y1 = p1[1];
-					ctx.quadraticCurveTo( x0,  y0,  x1, y1 );
-					index += 2;
-				}
+                    ctx.quadraticCurveTo( x0,  y0,  x1, y1 );
+                    index += 2;
+                }
 
-				if (innerRad > 0.01)
-				{
-					// calculate the stroke matrix
-					xScale = 0.5*innerRad*this._width  - 0.5*lineWidth;
-					yScale = 0.5*innerRad*this._height - 0.5*lineWidth;
-					mat[0] = xScale;
-					mat[5] = yScale;
-			
-					// draw the stroke
-					p = this.transformPoint( bezPts[0],   mat );
-					ctx.moveTo( p[0],  p[1] );
-					index = 1;
-					while (index < n)
-					{
-						p0 = this.transformPoint( bezPts[index],  mat );
-						p1 = this.transformPoint( bezPts[index+1],  mat );
+                if (innerRad > 0.001) {
+                    // calculate the stroke matrix
+                    xScale = 0.5*innerRad*this._width  - 0.5*lineWidth;
+                    yScale = 0.5*innerRad*this._height - 0.5*lineWidth;
+                    mat[0] = xScale;
+                    mat[5] = yScale;
 
-						x0 = p0[0];
+                    // draw the stroke
+                    p = this.transformPoint( bezPts[0],   mat );
+                    ctx.moveTo( p[0],  p[1] );
+                    index = 1;
+                    while (index < n) {
+                        p0   = this.transformPoint( bezPts[index],  mat );
+                        p1 = this.transformPoint( bezPts[index+1],  mat );
+
+                        x0 = p0[0];
                         y0 = p0[1];
-						x1 = p1[0];
+                        x1 = p1[0];
                         y1 = p1[1];
-						ctx.quadraticCurveTo( x0,  y0,  x1, y1 );
-						index += 2;
-					}
-				}
+                        ctx.quadraticCurveTo( x0,  y0,  x1, y1 );
+                        index += 2;
+                    }
+                }
 
-				// render the stroke
-				ctx.stroke();
-			}
+                // render the stroke
+                ctx.stroke();
+            }
 		}
     };
 
@@ -1237,11 +1320,11 @@ NinjaCvsRt.RuntimePulseMaterial = function ()
 		var material = this._materialNode;
 		if (material)
 		{
-			var technique = material.shaderProgram.default;
+			var technique = material.shaderProgram["default"];
 			var renderer = RDGE.globals.engine.getContext().renderer;
 			if (renderer && technique)
 			{
-				if (this._shader && this._shader.default)
+				if (this._shader && this._shader["default"])
 				{
 					var res = [ renderer.vpWidth,  renderer.vpHeight ];
 					technique.u_resolution.set( res );
@@ -1251,7 +1334,7 @@ NinjaCvsRt.RuntimePulseMaterial = function ()
 					if (tex)
 						technique.u_tex0.set( tex );
 
-					this._shader.default.u_time.set( [this._time] );
+					this._shader["default"].u_time.set( [this._time] );
 				}
 			}
 		}
@@ -1264,12 +1347,12 @@ NinjaCvsRt.RuntimePulseMaterial = function ()
 		var material = this._materialNode;
 		if (material)
 		{
-			var technique = material.shaderProgram.default;
+			var technique = material.shaderProgram["default"];
 			var renderer = RDGE.globals.engine.getContext().renderer;
 			if (renderer && technique)
 			{
-				if (this._shader && this._shader.default)
-					this._shader.default.u_time.set( [this._time] );
+				if (this._shader && this._shader["default"])
+					this._shader["default"].u_time.set( [this._time] );
 				this._time += this._dTime;
 				if (this._time > 200.0)  this._time = 0.0;
 			}
@@ -1297,24 +1380,24 @@ NinjaCvsRt.RuntimeRadialGradientMaterial = function ()
 		var material = this._materialNode;
 		if (material)
 		{
-			var technique = material.shaderProgram.default;
+			var technique = material.shaderProgram["default"];
 			var renderer = RDGE.globals.engine.getContext().renderer;
 			if (renderer && technique)
 			{
-				if (this._shader && this._shader.default)
+				if (this._shader && this._shader["default"])
 				{
-					this._shader.default.u_color1.set( this._color1 );
-					this._shader.default.u_color2.set( this._color2 );
-					this._shader.default.u_color3.set( this._color3 );
-					this._shader.default.u_color4.set( this._color4 );
+					this._shader["default"].u_color1.set( this._color1 );
+					this._shader["default"].u_color2.set( this._color2 );
+					this._shader["default"].u_color3.set( this._color3 );
+					this._shader["default"].u_color4.set( this._color4 );
 
-					this._shader.default.u_colorStop1.set( [this._colorStop1] );
-					this._shader.default.u_colorStop2.set( [this._colorStop2] );
-					this._shader.default.u_colorStop3.set( [this._colorStop3] );
-					this._shader.default.u_colorStop4.set( [this._colorStop4] );
+					this._shader["default"].u_colorStop1.set( [this._colorStop1] );
+					this._shader["default"].u_colorStop2.set( [this._colorStop2] );
+					this._shader["default"].u_colorStop3.set( [this._colorStop3] );
+					this._shader["default"].u_colorStop4.set( [this._colorStop4] );
 
 					if (this._angle !== undefined)
-						this._shader.default.u_cos_sin_angle.set([Math.cos(this._angle), Math.sin(this._angle)]);
+						this._shader["default"].u_cos_sin_angle.set([Math.cos(this._angle), Math.sin(this._angle)]);
 				}
 			}
 		}
@@ -1322,13 +1405,13 @@ NinjaCvsRt.RuntimeRadialGradientMaterial = function ()
 
 	this.importJSON = function( jObj )
 	{
-		this._color1	= jObj.color1,
-		this._color2	= jObj.color2,
-		this._color3	= jObj.color3,
-		this._color4	= jObj.color4,
-		this._colorStop1	= jObj.colorStop1,
-		this._colorStop2	= jObj.colorStop2,
-		this._colorStop3	= jObj.colorStop3,
+		this._color1	= jObj.color1;
+		this._color2	= jObj.color2;
+		this._color3	= jObj.color3;
+		this._color4	= jObj.color4;
+		this._colorStop1	= jObj.colorStop1;
+		this._colorStop2	= jObj.colorStop2;
+		this._colorStop3	= jObj.colorStop3;
 		this._colorStop4	= jObj.colorStop4;
 
 		if (this._angle !== undefined)
@@ -1376,11 +1459,11 @@ NinjaCvsRt.RuntimeBumpMetalMaterial = function ()
 		var material = this._materialNode;
 		if (material)
 		{
-			var technique = material.shaderProgram.default;
+			var technique = material.shaderProgram["default"];
 			var renderer = RDGE.globals.engine.getContext().renderer;
 			if (renderer && technique)
 			{
-				if (this._shader && this._shader.default)
+				if (this._shader && this._shader["default"])
 				{
 					technique.u_light0Diff.set( this._lightDiff );
 
@@ -1444,6 +1527,7 @@ NinjaCvsRt.RuntimeUberMaterial = function ()
 								}
 								else if(light.type == 'spot')
 								{
+                                    var deg2Rad = Math.PI / 180;
 									technique['u_light'+i+'Atten'].set(light.attenuation || [ 1,0,0 ]); 
 									technique['u_light'+i+'Pos'].set(light.position || [ 0, 0, 0 ]);
 									technique['u_light'+i+'Spot'].set([ Math.cos( ( light.spotInnerCutoff || 45.0 )  * deg2Rad ), 
@@ -1465,7 +1549,7 @@ NinjaCvsRt.RuntimeUberMaterial = function ()
 					// currently not exported
 					var uvTransform = [ 2.0, 0, 0, 0, 0, 2.0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1];
 					technique.u_uvMatrix.set(uvTransform);
-						
+	
                     var tex = null;
 					if (this._diffuseMap)
 					{
@@ -1590,12 +1674,12 @@ NinjaCvsRt.RuntimePlasmaMaterial = function ()
 		var material = this._materialNode;
 		if (material)
 		{
-			var technique = material.shaderProgram.default;
+			var technique = material.shaderProgram["default"];
 			var renderer = RDGE.globals.engine.getContext().renderer;
 			if (renderer && technique)
 			{
-				if (this._shader && this._shader.default)
-					this._shader.default.u_time.set( [this._time] );
+				if (this._shader && this._shader["default"])
+					this._shader["default"].u_time.set( [this._time] );
 				this._time += this._dTime;
 				if (this._time > 200.0)  this._time = 0.0;
 			}

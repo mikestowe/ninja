@@ -16,6 +16,7 @@ exports.ComponentController = Montage.create(ElementController, {
             switch(prop) {
                 case "id":
                 case "class":
+                case "-webkit-transform-style":
                 case "left":
                 case "top":
                 case "width":
@@ -38,6 +39,7 @@ exports.ComponentController = Montage.create(ElementController, {
             switch(p) {
                 case "id":
                 case "class":
+                case "-webkit-transform-style":
                 case "left":
                 case "top":
                 case "width":

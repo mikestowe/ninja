@@ -570,7 +570,7 @@ exports.PenTool = Montage.create(ShapeTool, {
             if (!canvas) {
                 var newCanvas = null;
                 newCanvas = NJUtils.makeNJElement("canvas", "Subpath", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
-                var elementModel = TagTool.makeElement(parseInt(w), parseInt(h), planeMat, midPt, newCanvas);
+                var elementModel = TagTool.makeElement(parseInt(w), parseInt(h), planeMat, midPt, newCanvas, true);
                 ElementMediator.addElements(newCanvas, elementModel.data, false);
 
                 // create all the GL stuff
@@ -905,6 +905,7 @@ exports.PenTool = Montage.create(ShapeTool, {
         }
     },
 
+                var elementModel = TagTool.makeElement(parseInt(w), parseInt(h), planeMat, midPt, newCanvas, true);
                
     BuildSecondCtrlPoint:{
         value: function(p0, p2, p3) {
