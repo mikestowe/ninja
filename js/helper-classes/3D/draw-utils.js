@@ -111,6 +111,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
             this.eventManager.addEventListener("elementAdded", this, false);
             this.eventManager.addEventListener("elementsRemoved", this, false);
             this.eventManager.addEventListener("elementChange", this, false);
+            this.eventManager.addEventListener("elementChanging", this, false);
             this.eventManager.addEventListener("closeDocument", this, false);
             this.eventManager.addEventListener("elementReplaced", this, false);
 		}
@@ -227,20 +228,26 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
     // TODO - Check why handleElementChange is being fired before handleAddElement
     handleElementChange: {
         value: function(event) {
-            if(!event.detail || !event.detail.data)
-            {
+            this._elementChangeHelper(event);
+        }
+    },
+
+    handleElementChanging: {
+        value: function(event) {
+            this._elementChangeHelper(event);
+        }
+    },
+
+    _elementChangeHelper: {
+        value: function(event) {
+            if(!event.detail || !event.detail.data) {
                 return;
             }
             var els = event.detail.data.els;
-            if(els && this._shouldUpdatePlanes(event.detail.data.prop))
-            {
-                var len = els.length,
-                    i = 0,
-                    item;
-
-                for(i=0; i < len; i++) {
-                    if(els[i].elementModel.props3D.elementPlane)
-                    {
+            if(els && this._shouldUpdatePlanes(event.detail.data.prop)) {
+                var len = els.length;
+                for(var i=0; i < len; i++) {
+                    if(els[i].elementModel.props3D.elementPlane) {
                         els[i].elementModel.props3D.elementPlane.init();
                     }
                 }
