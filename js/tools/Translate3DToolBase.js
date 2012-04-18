@@ -71,9 +71,9 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
                 this._delta = delta.slice(0);
             }
 
+			//console.log( "modifyElements delta: " + delta );
             var transMat = Matrix.Translation( delta );
 
-            //console.log( "Translate: " + delta );
             if(this._inLocalMode && (this._targets.length === 1) )
             {
                 this._translateLocally(transMat);
@@ -149,26 +149,28 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 
 	_translateGlobally: {
 		value: function (transMat) {
-            //console.log( "_translateGlobally, startMat: " + this._startMat + ", transMat: " + transMat );
-            //console.log( "_translateGlobally, transMat: " + transMat );
+			//console.log( "_translateGlobally, transMat: " + transMat );
+			//console.log( "_translateGlobally, startMat: " + this._startMat + ", transMat: " + transMat[12] + ", " + transMat[13] + ", " + transMat[14] );
 			var len = this._targets.length,
 				i = 0,
 				item,
 				elt,
 				curMat = viewUtils.getMatrixFromElement( this._target ),
-                matInv = glmat4.inverse(this._startMat, []),
-                nMat = glmat4.multiply(transMat, this._startMat, [] ),
-			    qMat = glmat4.multiply(matInv, nMat, []);
-           
-            if (this._mode === 1)
-            { 
-                var curInv = glmat4.inverse( curMat, [] );
-                transMat = glmat4.multiply( nMat, curInv, [] );
-            }
+				matInv = glmat4.inverse(this._startMat, []),
+				nMat = glmat4.multiply(transMat, this._startMat, [] ),
+				qMat = glmat4.multiply(matInv, nMat, []);
+		   
+			if (this._mode === 1)
+			{ 
+				if (len > 1)  curMat = this._targets[0].mat.slice();
+				var curInv = glmat4.inverse( curMat, [] );
+				transMat = glmat4.multiply( nMat, curInv, [] );
+			}
 
 			var shouldUpdateStartMat = true;
 
-			if(this._clickedOnStage)
+			//if (this._clickedOnStage)
+			if(this._clickedOnStage || ((this._handleMode === 2) && (this._targets.length > 1)))
 			{
 				shouldUpdateStartMat = false;
 			}
@@ -186,26 +188,25 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 //				glmat4.multiply(curMat, qMat, curMat);
 //
 //				viewUtils.setMatrixForElement( elt, curMat, true);
-                curMat[12] += transMat[12];
-                curMat[13] += transMat[13];
-                curMat[14] += transMat[14];
-                viewUtils.setMatrixForElement( elt, curMat, true);
+				curMat[12] += transMat[12];
+				curMat[13] += transMat[13];
+				curMat[14] += transMat[14];
+				viewUtils.setMatrixForElement( elt, curMat, true);
 
 				if(shouldUpdateStartMat)
 				{
-                    //console.log(  "\t\tshouldUpdateStartMat" );
+					//console.log(  "\t\tshouldUpdateStartMat" );
 					this._targets[i].mat = curMat;
 				}
 			}
 		}
 	},
 
-    _updateTargets: {
+	_updateTargets: {
 		value: function(addToUndoStack) {
-//            console.log( "_updateTargets" );
-            var newStyles = [],
-                previousStyles = [],
-			    len = this.application.ninja.selectedElements.length;
+			var newStyles = [],
+				previousStyles = [],
+				len = this.application.ninja.selectedElements.length;
 			this._targets = [];
 			for(var i = 0; i < len; i++)
 			{
@@ -215,47 +216,47 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 				var curMatInv = glmat4.inverse(curMat, []);
 
 				this._targets.push({elt:elt, mat:curMat, matInv:curMatInv});
-                if(addToUndoStack)
-                {
-                    var previousStyleStr = {dist:this._undoArray[i].dist, mat:MathUtils.scientificToDecimal(this._undoArray[i].mat.slice(0), 5)};
+				if(addToUndoStack)
+				{
+					var previousStyleStr = {dist:this._undoArray[i].dist, mat:MathUtils.scientificToDecimal(this._undoArray[i].mat.slice(0), 5)};
 
-                    var newStyleStr = {dist:viewUtils.getPerspectiveDistFromElement(elt), mat:MathUtils.scientificToDecimal(curMat, 5)};
+					var newStyleStr = {dist:viewUtils.getPerspectiveDistFromElement(elt), mat:MathUtils.scientificToDecimal(curMat, 5)};
 
-                    previousStyles.push(previousStyleStr);
-                    newStyles.push(newStyleStr);
-                }
+					previousStyles.push(previousStyleStr);
+					newStyles.push(newStyleStr);
+				}
 			}
 			if(addToUndoStack)
 			{
-                ElementsMediator.set3DProperties(this.application.ninja.selectedElements,
-                                                newStyles,
-                                                "Change",
-                                                "translateTool",
-                                                previousStyles
-                                              );
-                if(this._origin && this._delta)
-                {
-                    if(this._handleMode !== null)
-                    {
-                        this._origin[this._handleMode] += this._delta;
-                    }
-                    else
-                    {
-                        this._origin[0] += this._delta[0];
-                        this._origin[1] += this._delta[1];
-                    }
-                }
-                this._delta = null;
-            }
-            // Save previous value for undo/redo
-            this._undoArray = [];
-            for(i = 0, len = this._targets.length; i < len; i++)
-            {
-                var elt = this._targets[i].elt;
-                var _mat = viewUtils.getMatrixFromElement(elt);
-                var _dist = viewUtils.getPerspectiveDistFromElement(elt);
-                this._undoArray.push({mat:_mat, dist:_dist});
-            }
+				ElementsMediator.set3DProperties(this.application.ninja.selectedElements,
+												newStyles,
+												"Change",
+												"translateTool",
+												previousStyles
+											  );
+				if(this._origin && this._delta)
+				{
+					if(this._handleMode !== null)
+					{
+						this._origin[this._handleMode] += this._delta;
+					}
+					else
+					{
+						this._origin[0] += this._delta[0];
+						this._origin[1] += this._delta[1];
+					}
+				}
+				this._delta = null;
+			}
+			// Save previous value for undo/redo
+			this._undoArray = [];
+			for(i = 0, len = this._targets.length; i < len; i++)
+			{
+				var elt = this._targets[i].elt;
+				var _mat = viewUtils.getMatrixFromElement(elt);
+				var _dist = viewUtils.getPerspectiveDistFromElement(elt);
+				this._undoArray.push({mat:_mat, dist:_dist});
+			}
 
 		}
 	},
@@ -295,41 +296,112 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 					viewUtils.popViewportObj();
 					ctr[2] = 0;
 
-//					var ctrOffset = item.elementModel.props3D.m_transformCtr;
-//					if(ctrOffset)
-//					{
-//						ctr = vecUtils.vecAdd(3, ctr, ctrOffset);
-//					}
-
 					this._origin = viewUtils.localToGlobal(ctr, item);
 				}
 				else
 				{
-                    if(this._origin)
-                    {
-                        if(this._delta)
-                        {
-                            if(this._handleMode !== null)
-                            {
-//                                this._origin[this._handleMode] = this._delta;
-                            }
-                            else
-                            {
-                                this._origin[0] += this._delta[0];
-                                this._origin[1] += this._delta[1];
-                            }
-                        }
-                    }
-                    else
-                    {
-                        this._origin = drawUtils._selectionCtr.slice(0);
-                        this._origin[0] += this.application.ninja.stage.userContentLeft;
-                        this._origin[1] += this.application.ninja.stage.userContentTop;
-                    }
+					this._origin = undefined;
+					this._origin = this.calculateMultiSelOrigin();
 				}
 			}
 		}
 	},
+
+    captureSelectionDrawn: {
+        value: function(event){
+            this._origin = null;
+            this._targets = [];
+            this._startOriginArray = null;
+
+            var len = this.application.ninja.selectedElements.length;
+            if(len)
+            {
+                if(len === 1)
+                {
+                    this.target = this.application.ninja.selectedElements[0];
+                    drawUtils.addElement(this.target);
+
+                    viewUtils.pushViewportObj( this.target );
+                    var eltCtr = viewUtils.getCenterOfProjection();
+					eltCtr[2] = 0;
+                    viewUtils.popViewportObj();
+
+                    var ctrOffset = this.target.elementModel.props3D.m_transformCtr;
+                    if(ctrOffset)
+                    {
+                        eltCtr[2] = 0;
+                        eltCtr = vecUtils.vecAdd(3, eltCtr, ctrOffset);
+                    }
+                    
+                    this._origin = viewUtils.localToGlobal(eltCtr, this.target);
+					console.log( "Rotate3DToolBase.captureSelectionDrawn _origin: " + this._origin );
+                    this._updateTargets();
+                    //this._setTransformOrigin(false);
+                }
+                else
+                {
+                    this.target = this.application.ninja.currentDocument.documentRoot;
+                    //this._origin = drawUtils._selectionCtr.slice(0);
+                    //this._origin[0] += this.application.ninja.stage.userContentLeft;
+                    //this._origin[1] += this.application.ninja.stage.userContentTop;
+                    this._updateTargets();
+ 					this._origin = this.calculateMultiSelOrigin();
+					//this._setTransformOrigin(true);
+                }
+            }
+            else
+            {
+                this.target = null;
+            }
+            this.DrawHandles();
+
+            if(event)
+            {
+                this.eventManager.removeEventListener("selectionDrawn", this, true);
+            }
+        }
+    },
+	
+	calculateMultiSelOrigin: 
+	{
+		value: function()
+		{
+			var minPt,  maxPt, i,j;
+			this._startOriginArray = [];
+			var len = this.application.ninja.selectedElements.length;
+			for (i = 0; i < len; i++)
+			{
+				// get the next element and localToGlobal matrix
+				elt = this._targets[i].elt;
+				var l2g = this._targets[i].l2g;
+
+				// get the element bounds in 'plane' space
+				bounds = viewUtils.getElementViewBounds3D( elt );
+				for (j=0;  j<4;  j++)
+				{
+					var localPt = bounds[j];
+					//var pt = MathUtils.transformAndDivideHomogeneousPoint( localPt, l2g );
+					var pt = viewUtils.localToStageWorld( localPt, elt );
+					if (!minPt)
+					{
+						minPt = pt.slice();
+						maxPt = pt.slice();
+					}
+					else
+					{
+						minPt[0] = Math.min(minPt[0],pt[0]);  minPt[1] = Math.min(minPt[1],pt[1]);  minPt[2] = Math.min(minPt[2],pt[2]);
+						maxPt[0] = Math.max(maxPt[0],pt[0]);  maxPt[1] = Math.max(maxPt[1],pt[1]);  maxPt[2] = Math.max(maxPt[2],pt[2]);
+					}
+				}
+			}
+			var stageWorldCtr = [ 0.5*(minPt[0] + maxPt[0]),  0.5*(minPt[1] + maxPt[1]), 0.5*(minPt[2] + maxPt[2]) ];
+			var globalCtr = MathUtils.transformAndDivideHomogeneousPoint( stageWorldCtr, viewUtils.getStageWorldToGlobalMatrix() );
+			console.log( "resetting _origin to: " + this._origin );
+
+			return globalCtr;
+		}
+	},
+
 
 	DrawHandles: {
 		value: function (delta) {
@@ -364,9 +436,12 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 			}
 
 			// Draw tool handles
-
-            this._updateHandlesOrigin();
+			
+			this._updateHandlesOrigin();
 			var base = this._origin.slice(0);
+
+//			if (this.isDrawing)
+//				console.log( "handle origin: " + base );
 
 			var len = this.application.ninja.selectedElements.length;
 			var lMode = this._inLocalMode;
@@ -397,10 +472,10 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 						this._handles[1]._strokeStyle = 'rgba(0, 255, 0, 0.2)';
 						break;
 				}
-                if( delta && (len > 1) )
-                {
-                    base[this._handleMode] += ~~delta;
-                }
+				if( delta && (len > 1) )
+				{
+					base[this._handleMode] += ~~delta;
+				}
 			}
 			this._handles[0].draw(base, item, lMode);
 			this._handles[1].draw(base, item, lMode);

@@ -72,9 +72,11 @@ exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
             var eltCtr = viewUtils.getCenterOfProjection();
             viewUtils.popViewportObj();
 
-            eltCtr = viewUtils.localToGlobal(eltCtr, elt);
-
-            this._targets.push({elt:elt, mat:curMat, matInv:curMatInv, ctr:eltCtr});
+			// cache the local to global and global to local matrices
+			var l2gMat = viewUtils.getLocalToGlobalMatrix( elt );
+			var g2lMat = glmat4.inverse( l2gMat, [] );
+			eltCtr = MathUtils.transformAndDivideHomogeneousPoint( eltCtr, l2gMat );
+            this._targets.push({elt:elt, mat:curMat, matInv:curMatInv, ctr:eltCtr,  l2g:l2gMat,  g2l:g2lMat});
 
             ElementsMediator.setMatrix(elt, curMat, false, "rotateStage3DTool");
         }

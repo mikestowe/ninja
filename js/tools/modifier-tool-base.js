@@ -405,6 +405,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                 var index = this._snapIndex;
                 var pt0;
                 var useViewPoint = (this._inLocalMode && (this._targets.length === 1));
+				//console.log( "useViewPoint: " + useViewPoint );
                 if (this._useQuadPt)
                 {
                     pt0 = this.GetQuadrantPoint(useViewPoint);
@@ -427,6 +428,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                     pt1 = MathUtils.transformPoint( pt1, this._startMat );
                 }
 
+				//console.log( "getMousePoints, useViewPoint: " + useViewPoint + ",  " + pt0 + " => " + pt1 );
                 return {pt0:pt0, pt1:pt1};
             }
             else
@@ -564,6 +566,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                     var pt = hitRec.getScreenPoint();
                     this.upPoint.x = pt[0];
                     this.upPoint.y = pt[1];
+                    this.upPoint.z = pt[2];
 				}
 			}
         }
@@ -858,8 +861,10 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                 }
             }
 
-            this.DrawHandles(this._delta);
-            if(this._canSnap)
+			if (!this._isDrawing || (this.application.ninja.selectedElements.length == 1))
+				this.DrawHandles(this._delta);
+            
+			if(this._canSnap)
             {
                 snapManager.drawLastHit();
             }
@@ -898,9 +903,20 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                 this._delta = null;
             }
             this.endDraw(event);
+
+			this.application.ninja.stage.draw();
+			if (this._targets && (this._targets.length > 1))
+			{
+				//this._origin = null;
+				this._updateHandlesOrigin();
+			}
             this.DrawHandles();
         }
     },
+
+	_updateHandlesOrigin: {
+		value: function () { }
+	},
 
     handleToolDoubleClick: {
         value: function(event) {

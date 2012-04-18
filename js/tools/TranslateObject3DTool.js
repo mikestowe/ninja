@@ -9,6 +9,7 @@ var Montage = require("montage/core/core").Montage,
     drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils,
     vecUtils = require("js/helper-classes/3D/vec-utils").VecUtils,
     viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils,
+    vecUtils = require("js/helper-classes/3D/vec-utils").VecUtils,
     snapManager = require("js/helper-classes/3D/snap-manager").SnapManager;
 
 exports.TranslateObject3DTool = Montage.create(Translate3DToolBase, {
