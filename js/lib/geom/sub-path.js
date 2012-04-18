@@ -95,6 +95,11 @@ var GLSubpath = function GLSubpath() {
         }
         this.createSamples(false); //dirty bit checked in this function...will generate a polyline representation
 
+        var numPoints = this._Samples.length;
+        if (numPoints === 0){
+            return; //nothing to do for empty paths
+        }
+        
         //figure the size of the area we will draw into
         var bboxWidth=0, bboxHeight=0;
         bboxWidth = this._BBoxMax[0] - this._BBoxMin[0];
@@ -142,7 +147,6 @@ var GLSubpath = function GLSubpath() {
 
 
         ctx.beginPath();
-        var numPoints = this._Samples.length;
         ctx.moveTo(this._Samples[0][0],this._Samples[0][1]);
         for (var i=0;i<numPoints;i++){
             ctx.lineTo(this._Samples[i][0],this._Samples[i][1]);

@@ -726,17 +726,23 @@ exports.PenTool = Montage.create(ShapeTool, {
     },
 
     //prepare the selected subpath
-    //  convert the anchor points to stage world space (assume that's already the case if there is no subpath canvas)
     //  compute the center of the future canvas of this subpath in stage world space
-    //  convert the anchor points from stage world to local space of the canvas
+    //  compute local coordinates for the subpath (in case it does not have a canvas)
     PrepareSelectedSubpathForRendering: {
         value: function(){
             var i=0,d=0;
             var currAnchor = null;
             var xAdjustment = snapManager.getStageWidth()*0.5;
             var yAdjustment = snapManager.getStageHeight()*0.5;
+            var swPos=null, swPrev=null, swNext=null;
+            var localPos=null, localPrev=null, localNext=null;
 
             var numAnchors = this._selectedSubpath.getNumAnchors();
+            if (numAnchors<2){
+                return;//nothing to do
+            }
+            this._selectedSubpath.makeDirty();
+            
             var bboxMin=null, bboxMax=null;
             if (this._selectedSubpathCanvas) {
                 //if there already is a subpath canvas, it means the anchor points are in local space
@@ -779,10 +785,24 @@ exports.PenTool = Montage.create(ShapeTool, {
                 bboxMax = this._selectedSubpath.getBBoxMax();
                 this._selectedSubpathCanvasCenter = VecUtils.vecInterpolate(3, bboxMin, bboxMax, 0.5);
 
-                //todo convert the path points into local coordinates
-
+                //convert the path points into local coordinates by multiplying by the inverse of the plane mat
+                for (i=0;i<numAnchors;i++){
+                    currAnchor = this._selectedSubpath.getAnchor(i);
+                    swPos = [currAnchor.getPosX()-xAdjustment,currAnchor.getPosY()-yAdjustment,currAnchor.getPosZ()];
+                    swPrev = [currAnchor.getPrevX()-xAdjustment,currAnchor.getPrevY()-yAdjustment,currAnchor.getPrevZ()];
+                    swNext = [currAnchor.getNextX()-xAdjustment,currAnchor.getNextY()-yAdjustment,currAnchor.getNextZ()];
+                    var planeMatInv = glmat4.inverse(this._selectedSubpathPlaneMat, []);
+                    localPos = MathUtils.transformAndDivideHomogeneousPoint(swPos, planeMatInv);
+                    localPrev = MathUtils.transformAndDivideHomogeneousPoint(swPrev, planeMatInv);
+                    localNext = MathUtils.transformAndDivideHomogeneousPoint(swNext, planeMatInv);
+                    currAnchor.setPos(localPos[0],localPos[1],localPos[2]);
+                    currAnchor.setPrevPos(localPrev[0],localPrev[1],localPrev[2]);
+                    currAnchor.setNextPos(localNext[0],localNext[1],localNext[2]);
+                }
             }
 
+            //todo MISSING: sandwich the planeMat between with the translation to the previous center of the canvas in local space and its inverse
+            
             this._selectedSubpath.makeDirty();
             this._selectedSubpath.createSamples(false);
             this._selectedSubpath.offsetPerBBoxMin();
