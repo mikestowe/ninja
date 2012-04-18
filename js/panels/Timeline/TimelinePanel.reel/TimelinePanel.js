@@ -305,6 +305,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     _scrollTracks: {
     	value: false
     },
+    useAbsolutePosition:{
+        value:true
+    },
     /* === END: Models === */
     /* === BEGIN: Draw cycle === */
     prepareForDraw:{
@@ -1213,6 +1216,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		}
     		this.checkable_absolute.classList.remove("checked");
     		// TODO: Use relative positioning
+            this.useAbsolutePosition = false;
     	}
     },
     handleAbsoluteClick: {
@@ -1222,6 +1226,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		}
     		this.checkable_relative.classList.remove("checked");
     		// TODO: Use absolute positioning.
+            this.useAbsolutePosition = true;
     	}
     },
     handleCheckableClick: {
