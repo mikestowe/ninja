@@ -71,6 +71,10 @@ exports.PenTool = Montage.create(ShapeTool, {
     //  todo this might be unnecessary as we can get this from element mediator (but that may be slow)
     _selectedSubpathPlaneMat: { value: null, writable: true },
 
+    //bbox of the selected subpath in local coordinates
+    // (used for id-ing when the local center has shifted, i.e. the bbox of the subpath has grown)
+    _selectedSubpathLocalCenter: {value: null, writable: true},
+
     //the center of the subpath center in stageworld space
     _selectedSubpathCanvasCenter: {value: null, writable: true},
     
@@ -208,6 +212,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                 this._selectedSubpath = new SubPath();
                 this._selectedSubpathCanvas = null;
                 this._selectedSubpathPlaneMat = null;
+                this._selectedSubpathLocalCenter = null;
                 this._isNewPath = true;
 
                 if (this._entryEditMode === this.ENTRY_SELECT_PATH){
@@ -758,6 +763,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                 for (d=0;d<3;d++){
                     if (bboxMax[d]-bboxMin[d]>this._MAX_CANVAS_DIMENSION){
                         canvasTooLarge = true;
+                        break;
                     }
                 }
                 if (canvasTooLarge){
@@ -773,11 +779,26 @@ exports.PenTool = Montage.create(ShapeTool, {
 
                 //convert the midpoint of this bbox to stage world space
                 var bboxMid = VecUtils.vecInterpolate(3, bboxMin, bboxMax, 0.5);
+
+                //sandwich the planeMat between with the translation to the previous center of the canvas in local space and its inverse
+                var centerDisp = VecUtils.vecSubtract(3, bboxMid, this._selectedSubpathLocalCenter);
+                var tMat = Matrix.Translation([centerDisp[0], centerDisp[1],centerDisp[2]]);
+                var tInvMat = Matrix.Translation([-centerDisp[0], -centerDisp[1], -centerDisp[2]]);
+                var newMat = Matrix.I(4);
+			    glmat4.multiply( tInvMat, this._selectedSubpathPlaneMat, newMat);
+                glmat4.multiply( newMat, tMat, newMat);
+                this._selectedSubpathPlaneMat = newMat;
+                ViewUtils.setMatrixForElement(this._selectedSubpathCanvas, newMat, true);
+
+
                 //this._selectedSubpathCanvasCenter = ViewUtils.localToStageWorld(bboxMid, this._selectedSubpathCanvas);
                 var localToStageWorldMat = ViewUtils.getLocalToStageWorldMatrix(this._selectedSubpathCanvas, false, false);
                 this._selectedSubpathCanvasCenter = MathUtils.transformAndDivideHomogeneousPoint(bboxMid, localToStageWorldMat);
                 this._selectedSubpathCanvasCenter[0]+= xAdjustment;
                 this._selectedSubpathCanvasCenter[1]+= yAdjustment;
+
+
+
             } else {
                 //compute the bbox in stage-world space (the points are already in stage world space)
                 this._selectedSubpath.createSamples(true);
@@ -786,7 +807,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                 this._selectedSubpathCanvasCenter = VecUtils.vecInterpolate(3, bboxMin, bboxMax, 0.5);
 
                 //convert the path points into local coordinates by multiplying by the inverse of the plane mat
-                for (i=0;i<numAnchors;i++){
+                for (i=0;i<numAnchors;i++) {
                     currAnchor = this._selectedSubpath.getAnchor(i);
                     swPos = [currAnchor.getPosX()-xAdjustment,currAnchor.getPosY()-yAdjustment,currAnchor.getPosZ()];
                     swPrev = [currAnchor.getPrevX()-xAdjustment,currAnchor.getPrevY()-yAdjustment,currAnchor.getPrevZ()];
@@ -801,11 +822,16 @@ exports.PenTool = Montage.create(ShapeTool, {
                 }
             }
 
-            //todo MISSING: sandwich the planeMat between with the translation to the previous center of the canvas in local space and its inverse
+
             
             this._selectedSubpath.makeDirty();
             this._selectedSubpath.createSamples(false);
             this._selectedSubpath.offsetPerBBoxMin();
+            bboxMin = this._selectedSubpath.getBBoxMin();
+            bboxMax = this._selectedSubpath.getBBoxMax();
+
+            //compute and store the center of the bbox in local space
+            this._selectedSubpathLocalCenter = VecUtils.vecInterpolate(3, bboxMin, bboxMax, 0.5);
         }
     },
 
