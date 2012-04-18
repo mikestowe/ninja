@@ -23,6 +23,8 @@ var CloudMaterial = function CloudMaterial() {
 	this._shaderName = "cloud";
 
 	this._texMap = 'assets/images/cloud10.png';
+	//this._texMap = 'assets/images/CL13.png';
+	//this._texMap = 'assets/images/material_paint.png';
 	//this._texMap = 'assets/images/us_flag.png';
 	//this._texMap = 'assets/images/cubelight.png';
 	this._diffuseColor = [0.5, 0.5, 0.5, 0.5];
@@ -36,8 +38,10 @@ var CloudMaterial = function CloudMaterial() {
 	// parameter initial values
 	this._time			= 0.0;
 	this._surfaceAlpha	= 0.5;
-	this._zmin			= 2.0;
-	this._zmax			= 5.0;
+//	this._zmin			= 2.0;
+//	this._zmax			= 5.0;
+	this._zmin			= 5.0;
+	this._zmax			= 10.0;
 
 	// the adjusted zMin and zMax values are
 	// what get sent to the shader.  They are initialized
@@ -211,7 +215,7 @@ var CloudMaterial = function CloudMaterial() {
 	{
 		if (this._srcWorld)
 		{
-			this._srcWorld.update();
+			//this._srcWorld.update();
 			this._srcWorld.draw();
 			g_Engine.setContext( this.getWorld()._canvas.rdgeid );
 		}

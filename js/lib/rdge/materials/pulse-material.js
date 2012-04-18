@@ -25,8 +25,9 @@ var PulseMaterial = function PulseMaterial()
 	this._name = "PulseMaterial";
 	this._shaderName = "pulse";
 
-	//this._texMap = 'assets/images/cubelight.png';
-	this._texMap = 'texture';
+	this._texMap = 'assets/images/cubelight.png';
+	//this._texMap = 'assets/images/cloud10.png';
+	//this._texMap = 'texture';
 
 	this._time = 0.0;
 	this._dTime = 0.01;

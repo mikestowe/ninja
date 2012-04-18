@@ -205,7 +205,6 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 		}
 		var renderer = world.getRenderer();
 
-		var imageData;
 		var width = srcCanvas.width,  height = srcCanvas.height;
 		if (!this.isPowerOfTwo(width) || !this.isPowerOfTwo(height))
 		{
