@@ -735,87 +735,54 @@ exports.PenTool = Montage.create(ShapeTool, {
             var currAnchor = null;
             var xAdjustment = snapManager.getStageWidth()*0.5;
             var yAdjustment = snapManager.getStageHeight()*0.5;
-            var localPos = [[0,0,0,0],[0,0,0,0],[0,0,0,0]];
-            //if there already is a subpath canvas, it means the anchor points are in local space
-            //  so convert them to stage world space
+
             var numAnchors = this._selectedSubpath.getNumAnchors();
+            var bboxMin=null, bboxMax=null;
             if (this._selectedSubpathCanvas) {
-                //this transformation will take the path points from local space to stage world space
-                // *without* taking into account the transformation applied to this canvas
-                // (this is because we use the center of the bbox to find a place for the canvas)
-                var localToStageWorldMat = ViewUtils.getObjToStageWorldMatrix(this._selectedSubpathCanvas, false);//ViewUtils.getLocalToStageWorldMatrix(this._selectedSubpathCanvas, true, false);
-                for (i=0;i<numAnchors;i++){
-                    //convert this anchor from local to stage world
-                    var currAnchor = this._selectedSubpath.getAnchor(i);
-                    localPos[0] = [currAnchor.getPrevX(), currAnchor.getPrevY(), currAnchor.getPrevZ(),1];
-                    localPos[1] = [currAnchor.getPosX(), currAnchor.getPosY(), currAnchor.getPosZ(),1];
-                    localPos[2] = [currAnchor.getNextX(), currAnchor.getNextY(), currAnchor.getNextZ(),1];
-                    for (d=0;d<3;d++) {
-                        localPos[d] = MathUtils.transformAndDivideHomogeneousPoint(localPos[d], localToStageWorldMat);
-                        //add half the stage width and height to the X and Y coord.
-                        localPos[d][0]+= xAdjustment;
-                        localPos[d][1]+= yAdjustment;
+                //if there already is a subpath canvas, it means the anchor points are in local space
+                //  so convert them to stage world space
+                //compute the bbox in local space
+                this._selectedSubpath.createSamples(false);
+                bboxMin = this._selectedSubpath.getBBoxMin();
+                bboxMax = this._selectedSubpath.getBBoxMax();
+
+                // *********** Test for Too Large Canvas *************
+                //check if the last point added made this canvas is now bigger than the max canvas size
+                var canvasTooLarge = false;
+                for (d=0;d<3;d++){
+                    if (bboxMax[d]-bboxMin[d]>this._MAX_CANVAS_DIMENSION){
+                        canvasTooLarge = true;
                     }
-                    currAnchor.setPrevPos(localPos[0][0],localPos[0][1],localPos[0][2]);
-                    currAnchor.setPos(localPos[1][0],localPos[1][1],localPos[1][2]);
-                    currAnchor.setNextPos(localPos[2][0],localPos[2][1],localPos[2][2]);
                 }
-                this._selectedSubpath.makeDirty();
-            }
-
-            //compute the bbox in stage-world space
-            this._selectedSubpath.createSamples(true); //we need to compute samples to get the bounding box center in stage world space
-            var bboxMin = this._selectedSubpath.getBBoxMin();
-            var bboxMax = this._selectedSubpath.getBBoxMax();
-
-            //check if the last point added made this canvas is now bigger than the max canvas size
-            for (d=0;d<3;d++){
-                if (bboxMax[d]-bboxMin[d]>this._MAX_CANVAS_DIMENSION){
+                if (canvasTooLarge){
                     console.log("PEN: Warning! Ignoring last added point because canvas size too large");
                     this._selectedSubpath.removeAnchor(numAnchors-1);
                     numAnchors--;
+
                     //recompute the bbox of this subpath
-                    this._selectedSubpath.createSamples(true);
+                    this._selectedSubpath.createSamples(false);
                     bboxMin = this._selectedSubpath.getBBoxMin();
                     bboxMax = this._selectedSubpath.getBBoxMax();
-                    break;
-                }
-            }
-
-
-            this._selectedSubpathCanvasCenter = VecUtils.vecInterpolate(3, bboxMin, bboxMax, 0.5);
-
-            //update the plane matrix of this subpath by querying the element mediator
-            if (this._selectedSubpathCanvas) {
-                this._selectedSubpathPlaneMat = ElementMediator.getMatrix(this._selectedSubpathCanvas);
-            }
-            var planeMatInv = glmat4.inverse(this._selectedSubpathPlaneMat, []);
-            
-            // ***** compute local coordinates of the anchor points *****
-            for (i=0;i<numAnchors;i++){
-                var currAnchor = this._selectedSubpath.getAnchor(i);
-
-                localPos[0] = [currAnchor.getPrevX(), currAnchor.getPrevY(), currAnchor.getPrevZ(),1];
-                localPos[1] = [currAnchor.getPosX(), currAnchor.getPosY(), currAnchor.getPosZ(),1];
-                localPos[2] = [currAnchor.getNextX(), currAnchor.getNextY(), currAnchor.getNextZ(),1];
-                for (d=0;d<3;d++) {
-                    localPos[d][0]-= this._selectedSubpathCanvasCenter[0];
-                    localPos[d][1]-= this._selectedSubpathCanvasCenter[1];
-                    localPos[d][2]-= this._selectedSubpathCanvasCenter[2];
-
-                    // ***** unproject all the centered points and convert them to 2D (plane space)*****
-                    // (undo the projection step performed by the browser)
-                    localPos[d] = this._unprojectPt(localPos[d], 1400); //todo get the perspective distance from the canvas
-                    localPos[d] = MathUtils.transformPoint(localPos[d], planeMatInv);
-
-                    //explicitly remove the third (Z) component since it should always be zero
-                    localPos[d][2]=0;
                 }
 
-                currAnchor.setPrevPos(localPos[0][0],localPos[0][1],localPos[0][2]);
-                currAnchor.setPos(localPos[1][0],localPos[1][1],localPos[1][2]);
-                currAnchor.setNextPos(localPos[2][0],localPos[2][1],localPos[2][2]);
+                //convert the midpoint of this bbox to stage world space
+                var bboxMid = VecUtils.vecInterpolate(3, bboxMin, bboxMax, 0.5);
+                //this._selectedSubpathCanvasCenter = ViewUtils.localToStageWorld(bboxMid, this._selectedSubpathCanvas);
+                var localToStageWorldMat = ViewUtils.getLocalToStageWorldMatrix(this._selectedSubpathCanvas, false, false);
+                this._selectedSubpathCanvasCenter = MathUtils.transformAndDivideHomogeneousPoint(bboxMid, localToStageWorldMat);
+                this._selectedSubpathCanvasCenter[0]+= xAdjustment;
+                this._selectedSubpathCanvasCenter[1]+= yAdjustment;
+            } else {
+                //compute the bbox in stage-world space (the points are already in stage world space)
+                this._selectedSubpath.createSamples(true);
+                bboxMin = this._selectedSubpath.getBBoxMin();
+                bboxMax = this._selectedSubpath.getBBoxMax();
+                this._selectedSubpathCanvasCenter = VecUtils.vecInterpolate(3, bboxMin, bboxMax, 0.5);
+
+                //todo convert the path points into local coordinates
+
             }
+
             this._selectedSubpath.makeDirty();
             this._selectedSubpath.createSamples(false);
             this._selectedSubpath.offsetPerBBoxMin();
