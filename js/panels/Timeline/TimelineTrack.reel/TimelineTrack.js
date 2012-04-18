@@ -548,6 +548,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     handleNewTween:{
         value:function (ev) {
             if (ev.offsetX > this.tweens[this.tweens.length - 1].tweenData.keyFramePosition) {
+                var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
+                this.application.ninja.timeline.selectLayer(selectedIndex, false);
                 this.insertTween(ev.offsetX);
             } else {
                 this.splitTween(ev);
@@ -557,6 +559,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     insertTween:{
         value:function (clickPos) {
+            var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
+                        this.application.ninja.timeline.selectLayer(selectedIndex, true);
+
             var currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
             var currentMillisec = currentMillisecPerPixel * clickPos;
             this.trackDuration = currentMillisec;
