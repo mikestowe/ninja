@@ -326,6 +326,7 @@ exports.PenTool = Montage.create(ShapeTool, {
 
                             //set the snap target in case the mouse move handler doesn't get called
                             this._snapTargetIndex = 0;
+                            this._editMode = this.EDIT_PREV_NEXT;
                         }
                     }
 
