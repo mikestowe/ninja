@@ -56,6 +56,8 @@ var ColorChip = exports.ColorChip = Montage.create(Component, {
             if(this.hasIcon) {
                 var icon = this.iconType || this.mode + "Icon";
                 this.application.ninja.colorController.addButton(icon, this.icon);
+            } else {
+                this.icon.style.display = "none";
             }
 
             this.chipBtn.props = {side: 'right', align: 'top', wheel: true, palette: true, gradient: true, image: true, offset: this.offset};

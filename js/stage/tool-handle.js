@@ -235,6 +235,8 @@ exports.RotateHandle = Montage.create(ToolHandle, {
             context.strokeStyle = this._strokeStyle;
             context.fillStyle = this._fillStyle;
             context.lineWidth = this._lineWidth;
+            context.shadowBlur = 2;
+            context.shadowColor = "rgba(0, 0, 0, 0.8)";
 
             var pointOnElt = base.slice(0);
 //            this._origin = viewUtils.localToGlobal(pointOnElt, item);
@@ -400,7 +402,8 @@ exports.RotateHandle = Montage.create(ToolHandle, {
             var context = this.application.ninja.stage.drawingContext;
             context.save();
 
-            context.strokeStyle = this._strokeStyle;
+            context.strokeStyle = "rgba(0,0,0,1)";
+            context.lineWidth = 2;
             context.fillStyle = this._fillStyle;
             context.globalAlpha = 0.2;
 
@@ -574,6 +577,8 @@ exports.TranslateHandle = Montage.create(ToolHandle, {
             context.strokeStyle = this._strokeStyle;
             context.fillStyle = this._fillStyle;
             context.lineWidth = this._lineWidth;
+            context.shadowBlur = 2;
+            context.shadowColor = "rgba(0, 0, 0, 0.8)";
 
             var pointOnElt = base.slice(0);
 //            this._origin = viewUtils.localToGlobal(pointOnElt, item);

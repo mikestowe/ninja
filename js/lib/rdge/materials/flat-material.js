@@ -14,129 +14,92 @@ var FlatMaterial = function FlatMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-	this._name = "FlatMaterial";
-	this._shaderName = "flat";
+    this._name = "FlatMaterial";
+    this._shaderName = "flat";
 
-	this._color = [1,0,0,1];
+    this._color = [1, 0, 0, 1];
 
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
     ///////////////////////////////////////////////////////////////////////
-	this.getColor				= function()	{  return this._color;		};
-	this.getShaderName			= function()	{  return this._shaderName;	};
+    this.getColor = function () { return this._color; };
+    this.getShaderName = function () { return this._shaderName; };
 
-	this.isAnimated				= function()	{  return false;			};
-	this.hasVertexDeformation	= function()	{  return true;				};
-	this._hasVertexDeformation = true;
-	this._vertexDeformationTolerance = 0.2;
+    this.isAnimated = function () { return false; };
+    this.hasVertexDeformation = function () { return true; };
+    this._hasVertexDeformation = true;
+    this._vertexDeformationTolerance = 0.2;
 
     //////////////////////////////////s/////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
-	// duplcate method requirde
-	this.dup = function()	{  return new FlatMaterial();	} ;
+    // duplcate method requirde
+    this.dup = function () { return new FlatMaterial(); };
 
-	this.init = function( world )
-	{
-		// save the world
-		if (world)
-		{
-			this.setWorld( world );
+    this.init = function (world) {
+        // save the world
+        if (world) {
+            this.setWorld(world);
 
-			// set up the shader
-			this._shader = new jshader();
-			this._shader.def = flatShaderDef;
-			this._shader.init();
+            // set up the shader
+            this._shader = new RDGE.jshader();
+            this._shader.def = flatShaderDef;
+            this._shader.init();
 
-			// set the defaults
-			this._shader.colorMe.color.set( this.getColor() );
+            // set the defaults
+            this._shader.colorMe.color.set(this.getColor());
 
-			// set up the material node
-			this._materialNode = createMaterialNode("flatMaterial_" + world.generateUniqueNodeID() );
-			this._materialNode.setShader(this._shader);
-		}
-		else
-			throw new Error( "GLWorld not supplied to material initialization" );
-	};
+            // set up the material node
+            this._materialNode = RDGE.createMaterialNode("flatMaterial_" + world.generateUniqueNodeID());
+            this._materialNode.setShader(this._shader);
+        }
+        else
+            throw new Error("GLWorld not supplied to material initialization");
+    };
 
 
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
-	this._propNames			= ["color"];
-	this._propLabels		= ["Color"];
-	this._propTypes			= ["color"];
-	this._propValues		= [];
+    this._propNames = ["color"];
+    this._propLabels = ["Color"];
+    this._propTypes = ["color"];
+    this._propValues = [];
 
-	this._propValues[ this._propNames[0] ] = this._color;
+    this._propValues[this._propNames[0]] = this._color;
 
-    this.setProperty = function( prop, value ) {
-		// make sure we have legitimate input
-		if (this.validateProperty( prop, value )) {
+    this.setProperty = function (prop, value) {
+        // make sure we have legitimate input
+        if (this.validateProperty(prop, value)) {
             this._propValues[prop] = value;
             if (this._shader && this._shader.colorMe) {
                 this._shader.colorMe[prop].set(value);
             }
-		}
-	};
+        }
+    };
     ///////////////////////////////////////////////////////////////////////
 
-	this.export = function()
-	{
-		// this function should be overridden by subclasses
-		var exportStr = "material: " + this.getShaderName() + "\n";
-		exportStr += "name: " + this.getName() + "\n";
-		exportStr += "color: " + String(this._propValues["color"]) + "\n";
-		exportStr += "endMaterial\n";
-
-		return exportStr;
-	};
-
-    this.import = function( importStr ) {
-        var pu = new MaterialParser( importStr );
-        var material = pu.nextValue( "material: " );
-        if (material != this.getShaderName())  throw new Error( "ill-formed material" );
-        this.setName(  pu.nextValue( "name: ") );
-
-        var rtnStr;
-        try
-        {
-            var color  = eval( "[" + pu.nextValue( "color: " ) + "]" );
-            this.setProperty( "color",  color);
-        }
-        catch (e)
-        {
-            throw new Error( "could not import material: " + importStr );
-        }
-
-        return rtnStr;
-    };
-
-	this.exportJSON = function()
-	{
-		var jObj =
+    this.exportJSON = function () {
+        var jObj =
 		{
-			'material'		: this.getShaderName(),
-			'name'			: this.getName(),
-			'color'			: this._propValues["color"]
+		    'material': this.getShaderName(),
+		    'name': this.getName(),
+		    'color': this._propValues["color"]
 		};
 
-		return jObj;
-	}
+        return jObj;
+    };
 
-	this.importJSON = function( jObj )
-	{
-        if (this.getShaderName() != jObj.material)  throw new Error( "ill-formed material" );
-        this.setName(  jObj.name );
-        
-		var color  = jObj.color;
-		this.setProperty( "color",  color);
-	}
+    this.importJSON = function (jObj) {
+        if (this.getShaderName() != jObj.material) throw new Error("ill-formed material");
+        this.setName(jObj.name);
 
-	this.update = function( time )
-	{
-	};
+        var color = jObj.color;
+        this.setProperty("color", color);
+    };
 
+    this.update = function (time) {
+    };
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////

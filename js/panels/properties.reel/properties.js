@@ -113,13 +113,14 @@ exports.Properties = Montage.create(Component, {
                 }
 
                 if(this.application.ninja.selectedElements.length) {
-                    ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "id", this.elementId.value, "Change", "pi");
+//                    ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "id", this.elementId.value, "Change", "pi");
+                    ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "id", this.elementId.value, this.application.ninja.selectedElements[0].id, "pi");
                 } else {
                     ElementsMediator.setAttribute(this.application.ninja.currentDocument.documentRoot, "id", this.elementId.value, "Change", "pi", this.application.ninja.currentDocument.documentRoot.elementModel.id);
                 }
             } else if(event.target.id === "elementClass") {
                 if(this.application.ninja.selectedElements.length) {
-                    ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "class", this.elementClass.value, "Change", "pi");
+                    ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "class", this.elementClass.value, this.application.ninja.selectedElements[0].className, "pi");
                 } else {
                     ElementsMediator.setAttribute(this.application.ninja.currentDocument.documentRoot, "class", this.elementClass.value, "Change", "pi", this.application.ninja.currentDocument.documentRoot.elementModel.elementClass);
                 }
@@ -146,8 +147,12 @@ exports.Properties = Montage.create(Component, {
         value: function(event) {
 //            console.log("Element Change PI ", event.detail.source); // If the event comes from the pi don't need to update
             if(event.detail.source && event.detail.source !== "pi") {
+                var el = this.application.ninja.currentDocument.documentRoot;
+                if(this.application.ninja.selectedElements.length) {
+                    el = this.application.ninja.selectedElements[0];
+                }
+
                 // TODO - This should only update the properties that were changed.
-                var el = this.application.ninja.selectedElements[0];
                 this.positionSize.leftPosition = parseFloat(ElementsMediator.getProperty(el, "left"));
                 this.positionSize.topPosition = parseFloat(ElementsMediator.getProperty(el, "top"));
                 this.positionSize.heightSize = parseFloat(ElementsMediator.getProperty(el, "height"));
@@ -193,6 +198,19 @@ exports.Properties = Montage.create(Component, {
 
             this.positionSize.heightSize = parseFloat(ElementsMediator.getProperty(stage, "height"));
             this.positionSize.widthSize = parseFloat(ElementsMediator.getProperty(stage, "width"));
+
+            if(this.threeD.inGlobalMode)
+            {
+                this.threeD.xAngle = ElementsMediator.get3DProperty(stage, "xAngle");
+                this.threeD.yAngle = ElementsMediator.get3DProperty(stage, "yAngle");
+                this.threeD.zAngle = ElementsMediator.get3DProperty(stage, "zAngle");
+            }
+
+            if(ElementsMediator.getProperty(stage, "-webkit-transform-style") === "preserve-3d") {
+                this.threeD.flatten = false;
+            } else {
+                this.threeD.flatten = true;
+            }
 
             if(this.customPi !== stage.elementModel.pi) {
                 // We need to unregister color chips from the previous selection from the Color Model
@@ -258,6 +276,11 @@ exports.Properties = Montage.create(Component, {
             this.positionSize.heightSize = parseFloat(ElementsMediator.getProperty(el, "height"));
             this.positionSize.widthSize = parseFloat(ElementsMediator.getProperty(el, "width"));
 
+            if(ElementsMediator.getProperty(el, "-webkit-transform-style") === "preserve-3d") {
+                this.threeD.flatten = false;
+            } else {
+                this.threeD.flatten = true;
+            }
 
             if(this.threeD.inGlobalMode)
             {

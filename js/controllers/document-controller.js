@@ -32,9 +32,6 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     _iframeHolder: { value: null, enumerable: false },
     _textHolder: { value: null, enumerable: false },
     _codeMirrorCounter: {value: 1, enumerable: false},
-
-    canSave:{value: false},//for Save menu state update
-    canSaveAll:{value: false},//for Save All menu state update
     
     activeDocument: {
         get: function() {
@@ -50,12 +47,6 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                 if(!!this._activeDocument.editor){
                     this._activeDocument.editor.focus();
                 }
-
-                this.canSave = doc.needsSave;
-                this.canSaveAll = doc.needsSave;
-            }else{
-                this.canSave = false;
-                this.canSaveAll = false;
             }
         }
     },
@@ -80,7 +71,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     handleAddComponentFirstDraw: {
     	value: function (e) {
     		//TODO: Add logic to reparse the document for dynamically added styles
-    		console.log(e);
+    		//console.log(e);
     	}
     },
     

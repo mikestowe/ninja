@@ -49,7 +49,7 @@ var PlasmaMaterial = function PlasmaMaterial() {
 		this.setWorld( world );
 
 		// set up the shader
-		this._shader = new jshader();
+	    this._shader = new RDGE.jshader();
 		this._shader.def = plasmaShaderDef;
 		this._shader.init();
 
@@ -58,14 +58,14 @@ var PlasmaMaterial = function PlasmaMaterial() {
 		this._shader['default'].u_time.set( [this._time] );
 
 		// set up the material node
-		this._materialNode = createMaterialNode("plasmaMaterial" + "_" + world.generateUniqueNodeID());
+		this._materialNode = RDGE.createMaterialNode("plasmaMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 	};
 
 	this.update = function( time ) {
 		this._shader['default'].u_time.set( [this._time] );
 		this._time += this._dTime;
-	}
+	};
 
 	this.exportJSON = function()
 	{
@@ -75,16 +75,16 @@ var PlasmaMaterial = function PlasmaMaterial() {
 			'name'			: this.getName(),
 			'speed'			: this._speed,
 			'dTime'			: this._dTime
-		}
+		};
 
 		return jObj;
-	}
+	};
 
 	this.importJSON = function( jObj )
 	{
 		this._speed = jObj.speed;
 		this._dTime = jObj.dTime;
-	}
+	};
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////

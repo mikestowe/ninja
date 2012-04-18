@@ -44,6 +44,9 @@ var BrushStroke = function GLBrushStroke() {
     this._strokeAngle = 0;
     this._strokeAmountSmoothing = 0;
 
+    // currently, brush does not support a fill region
+    this.canFill = false;
+
     //threshold that tells us whether two samples are too far apart
     this._MAX_SAMPLE_DISTANCE_THRESHOLD = 5;
 
@@ -710,18 +713,6 @@ var BrushStroke = function GLBrushStroke() {
         this._isDirty = true;  //force a re-computation of meta-geometry before rendering
         this.update();      //after this, the stroke is ready to be rendered
     };
-
-    
-    this.export = function() {
-        var jsonObject = this.exportJSON();
-        var stringified = JSON.stringify(jsonObject);
-        return "type: " + this.geomType() + "\n" + stringified;
-    };
-
-    this.import = function( importStr ) {
-        var jsonObject = JSON.parse(importStr);
-        this.importJSON(jsonObject);
-    }
 
     this.collidesWithPoint = function (x, y, z) {
         if (x < this._BBoxMin[0]) return false;

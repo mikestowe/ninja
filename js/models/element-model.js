@@ -7,6 +7,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage;
 
 exports.ElementModel = Montage.create(Montage, {
+    key:            { value: "_model_"},
 
     type:           { value: null },                // Tag type that was created
     selection:      { value: null },                // Selection string
@@ -43,6 +44,39 @@ exports.ElementModel = Montage.create(Montage, {
      * Color info
      */
     fill:           { value: null },
-    stroke:         { value: null }
+    stroke:         { value: null },
+
+    getProperty: {
+        value: function(property) {
+            var key = this.key + property;
+
+            if(!this.hasOwnProperty(key)) {
+                this.defineModelProperty(key, null);
+            }
+
+            return this[key];
+        }
+    },
+
+    setProperty: {
+        value: function(property, value) {
+            var key = this.key + property;
+
+            if(!this.hasOwnProperty(key)) {
+                this.defineModelProperty(key, value);
+            } else {
+                this[key] = value;
+            }
+        }
+    },
+
+    defineModelProperty: {
+        value: function(property, value) {
+            Montage.defineProperty(this, property, {
+                enumarable: true,
+                value:value
+            });
+        }
+    }
 
 });

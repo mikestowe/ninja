@@ -131,6 +131,8 @@ exports.PiData = Montage.create( Montage, {
                             type : "hottext",
                             id : "borderWidth",
                             prop : "border-width",
+                            defaultValue: 0,
+                            valueMutator: parseFloat,
                             label : "Border",
                             min :   0,
                             max :   100,
@@ -578,7 +580,7 @@ exports.PiData = Montage.create( Montage, {
                             valueMutator: parseFloat,
                             value : 0,
                             min :   0,
-                            max :   100,
+                            max :   99,
                             unit : "%",
                             acceptableUnits: ["%"]
 
