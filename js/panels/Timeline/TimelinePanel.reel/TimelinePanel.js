@@ -1215,7 +1215,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     			this.handleCheckableClick(event);
     		}
     		this.checkable_absolute.classList.remove("checked");
-    		// TODO: Use relative positioning
             this.useAbsolutePosition = false;
     	}
     },
@@ -1225,7 +1224,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     			this.handleCheckableClick(event);
     		}
     		this.checkable_relative.classList.remove("checked");
-    		// TODO: Use absolute positioning.
             this.useAbsolutePosition = true;
     	}
     },
