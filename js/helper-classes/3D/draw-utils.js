@@ -796,7 +796,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 				context.stroke();
 
 				this._selectionCtr = MathUtils.getCenterFromBounds(3, bounds3D);
-				console.log("selection center, single elt case - ", this._selectionCtr);
+//				console.log("selection center, single elt case - ", this._selectionCtr);
 				
 				this.viewUtils.popViewportObj();
 			}
@@ -837,7 +837,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 					if (MathUtils.fpCmp(dot, 1) != 0)
 						flat = false;
 				}
-				console.log( "drawSelectionBounds, flat: " + flat );
+//				console.log( "drawSelectionBounds, flat: " + flat );
 
 				// if all the elements share the same plane, draw the 2D rectangle
 				if (flat)

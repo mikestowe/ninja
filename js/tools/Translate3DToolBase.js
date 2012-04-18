@@ -138,11 +138,9 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 		value: function (transMat) {
             //console.log( "_translateGlobally, transMat: " + transMat );
 			var selectedElements = this.application.ninja.selectedElements;
-            if(this.rotateStage) {
-                selectedElements = [this.application.ninja.currentDocument.documentRoot];
-            }
 
-            var self = this,
+            var len = selectedElements.length,
+                self = this,
 				target = selectedElements[0],
 				curMat = viewUtils.getMatrixFromElement( target ),
                 matInv = glmat4.inverse(this._startMat, []),
@@ -157,7 +155,7 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 
 			var shouldUpdateStartMat = true;
 
-			if(this._clickedOnStage || ((this._handleMode === 2) && (this._targets.length > 1)))
+			if(this._clickedOnStage || ((this._handleMode === 2) && (len > 1)))
 			{
 				shouldUpdateStartMat = false;
 			}
@@ -166,7 +164,7 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 				this._startMat = nMat;
 			}
 
-            this.application.ninja.selectedElements.forEach(function(element) {
+            selectedElements.forEach(function(element) {
                 curMat = element.elementModel.getProperty("mat").slice(0);
 
 //                glmat4.multiply(curMat, qMat, curMat);
@@ -273,7 +271,6 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
     captureSelectionDrawn: {
         value: function(event){
             this._origin = null;
-            this._targets = [];
             this._startOriginArray = null;
 
             var len = this.application.ninja.selectedElements.length;
@@ -294,7 +291,7 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
                     }
                     
                     this._origin = viewUtils.localToGlobal(eltCtr, this.target);
-					console.log( "Rotate3DToolBase.captureSelectionDrawn _origin: " + this._origin );
+//					console.log( "Rotate3DToolBase.captureSelectionDrawn _origin: " + this._origin );
                     this._updateTargets();
                     //this._setTransformOrigin(false);
                 }
@@ -330,11 +327,11 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 			for (i = 0; i < len; i++)
 			{
 				// get the next element and localToGlobal matrix
-				elt = this._targets[i].elt;
-				var l2g = this._targets[i].l2g;
+				var elt = this.application.ninja.selectedElements[i];
+				var l2g = elt.elementModel.getProperty("l2g");
 
 				// get the element bounds in 'plane' space
-				bounds = viewUtils.getElementViewBounds3D( elt );
+				var bounds = viewUtils.getElementViewBounds3D( elt );
 				for (j=0;  j<4;  j++)
 				{
 					var localPt = bounds[j];
@@ -354,7 +351,7 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 			}
 			var stageWorldCtr = [ 0.5*(minPt[0] + maxPt[0]),  0.5*(minPt[1] + maxPt[1]), 0.5*(minPt[2] + maxPt[2]) ];
 			var globalCtr = MathUtils.transformAndDivideHomogeneousPoint( stageWorldCtr, viewUtils.getStageWorldToGlobalMatrix() );
-			console.log( "resetting _origin to: " + this._origin );
+//			console.log( "resetting _origin to: " + this._origin );
 
 			return globalCtr;
 		}

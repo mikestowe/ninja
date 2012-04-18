@@ -80,6 +80,11 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                 pt0 = data.pt0,
                 pt1 = data.pt1;
 
+            var selectedElements = this.application.ninja.selectedElements;
+            if(this.rotateStage) {
+                selectedElements = [this.application.ninja.currentDocument.documentRoot];
+            }
+
             if(this._handleMode !== null)
             {
                 if(this._activateOriginHandle)
@@ -94,12 +99,13 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
 					var swOrigin = MathUtils.transformAndDivideHomogeneousPoint( this._origin, g2swMat );
 					//console.log( "modifyElements, _origin: " + this._origin + ", in stageWorld: " + swOrigin );
 
-                    var len = this._targets.length;
+                    var len = selectedElements.length;
                     if(len === 1)
                     {
-						var g2lMat = this._targets[0].g2l;
+                        var elt = selectedElements[0];
+						var g2lMat = elt.elementModel.getProperty("g2l");
 						var localOrigin = MathUtils.transformAndDivideHomogeneousPoint( this._origin, g2lMat );
-						var elt = this._targets[0].elt;
+
 						viewUtils.pushViewportObj( elt );
 						var viewOrigin = viewUtils.screenToView( localOrigin[0], localOrigin[1], localOrigin[2] );
 						viewUtils.popViewportObj();
@@ -178,7 +184,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
 
             if(this._inLocalMode && (this.application.ninja.selectedElements.length === 1 || this.rotateStage) )
             {
-				console.log( "modifyElements: rotateLocally " );
+//				console.log( "modifyElements: rotateLocally " );
                 this._rotateLocally(mat);
             }
             else
@@ -245,7 +251,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                 var transformCtr = this._startOriginArray[i].slice(0);
                 transformCtr = MathUtils.transformPoint(transformCtr, curMat);
 
-				console.log( "modifyElements: rotateGlobally, ctr: " + transformCtr );
+//				console.log( "modifyElements: rotateGlobally, ctr: " + transformCtr );
 
                 tMat[12] = transformCtr[0];
                 tMat[13] = transformCtr[1];
@@ -366,15 +372,15 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
 				self = this;
 
             this.application.ninja.selectedElements.forEach(function(element) {
-                var curMat = viewUtils.getMatrixFromElement(elt);
+                var curMat = viewUtils.getMatrixFromElement(element);
                 var curMatInv = glmat4.inverse(curMat, []);
 
-                viewUtils.pushViewportObj( elt );
+                viewUtils.pushViewportObj( element );
                 var eltCtr = viewUtils.getCenterOfProjection();
                 viewUtils.popViewportObj();
 
 				// cache the local to global and global to local matrices
-				var l2gMat = viewUtils.getLocalToGlobalMatrix( elt );
+				var l2gMat = viewUtils.getLocalToGlobalMatrix( element );
 				var g2lMat = glmat4.inverse( l2gMat, [] );
 				eltCtr = MathUtils.transformAndDivideHomogeneousPoint( eltCtr, l2gMat );
 
@@ -416,11 +422,11 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
 			for (i = 0; i < len; i++)
 			{
 				// get the next element and localToGlobal matrix
-				elt = this.application.ninja.selectedElements[i];
+				var elt = this.application.ninja.selectedElements[i];
 				var l2g = elt.elementModel.getProperty("l2g");
 
 				// get the element bounds in 'plane' space
-				bounds = viewUtils.getElementViewBounds3D( elt );
+				var bounds = viewUtils.getElementViewBounds3D( elt );
 				for (j=0;  j<4;  j++)
 				{
 					var localPt = bounds[j];
@@ -440,7 +446,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
 			}
 			var stageWorldCtr = [ 0.5*(minPt[0] + maxPt[0]),  0.5*(minPt[1] + maxPt[1]), 0.5*(minPt[2] + maxPt[2]) ];
 			var globalCtr = MathUtils.transformAndDivideHomogeneousPoint( stageWorldCtr, viewUtils.getStageWorldToGlobalMatrix() );
-			console.log( "resetting _origin to: " + this._origin );
+//			console.log( "resetting _origin to: " + this._origin );
 
 			return globalCtr;
 		}
@@ -498,7 +504,8 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
 				// Update transform ctr for all elements if transform origin was modified
 				if (!this._origin)  this._origin = this.calculateMultiSelOrigin();
 				var globalCtr = this._origin;
-				for (i=0;  i<len;  i++)
+                var len = this.application.ninja.selectedElements.length;
+				for (var i=0;  i<len;  i++)
 				{
 					// get the next element and localToGlobal matrix
                     elt = this.application.ninja.selectedElements[i];

@@ -61,7 +61,12 @@ exports.RotateObject3DTool = Montage.create(Rotate3DToolBase, {
     initializeSnapping : {
         value : function(event)
         {
-            console.log( "initializeSnapping" );
+//            console.log( "initializeSnapping" );
+
+            var selectedElements = this.application.ninja.selectedElements;
+            if(this.rotateStage) {
+                selectedElements = [this.application.ninja.currentDocument.documentRoot];
+            }
 
 			this._mouseDownHitRec = null;
 			this._mouseUpHitRec   = null;
@@ -102,7 +107,7 @@ exports.RotateObject3DTool = Montage.create(Rotate3DToolBase, {
 //                }
 //            }
 
-            if (this._targets)
+            if (selectedElements.length)
             {
                 var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas,
                                                                 new WebKitPoint(event.pageX, event.pageY));
@@ -159,7 +164,7 @@ exports.RotateObject3DTool = Montage.create(Rotate3DToolBase, {
 
                     if(!this._dragPlane)
                     {
-                        if (this._targets.length === 1)
+                        if (selectedElements.length === 1)
                         {
                             this._dragPlane = viewUtils.getUnprojectedElementPlane(this._clickedObject);
                             snapManager.setupDragPlaneFromPlane(this._dragPlane);
