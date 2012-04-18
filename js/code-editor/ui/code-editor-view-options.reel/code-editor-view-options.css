@@ -20,10 +20,12 @@
 .viewOptions .format{
     float:left;
     margin-left:5px;
+    height: 20px;
 }
 
 .viewOptions .themeOptions{
     float: right;
+    margin-right:5px;
 }
 
 .viewOptions .themeOptions select{

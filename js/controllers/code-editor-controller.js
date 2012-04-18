@@ -33,9 +33,16 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
 
     automaticCodeComplete:{
         get: function(){return this._automaticCodeComplete;},
-        set: function(value){
-            //console.log("$$$ automaticCodeComplete setter : "+value);
-            this._automaticCodeComplete = value;}
+        set: function(value){this._automaticCodeComplete = value;}
+    },
+
+    _editorTheme: {
+        value:"default"
+    },
+
+    editorTheme:{
+        get: function(){return this._editorTheme;},
+        set: function(value){this._editorTheme = value;}
     },
 
     originalEditorFont:{
@@ -189,9 +196,8 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
     },
 
     handleThemeSelection:{
-        value: function(theme){
-            this.application.ninja.documentController.activeDocument.editor.setOption("theme", theme);
+        value: function(){
+            this.application.ninja.documentController.activeDocument.editor.setOption("theme", this.editorTheme);
         }
     }
-
 });

@@ -102,6 +102,7 @@ exports.StageView = Montage.create(Component, {
             this.application.ninja.documentController.activeDocument = doc;
             this.application.ninja.stage.hideCanvas(true);
             document.getElementById("iframeContainer").style.display="none";//hide the iframe when switching to code view
+            this.collapseAllPanels();
         }
     },
 
@@ -128,11 +129,14 @@ exports.StageView = Montage.create(Component, {
             //focus editor
             if(!!this.application.ninja.documentController.activeDocument && !!this.application.ninja.documentController.activeDocument.editor){
                 this.application.ninja.documentController.activeDocument.editor.focus();
+                this.application.ninja.codeEditorController.handleThemeSelection();
+                this.collapseAllPanels();
             }
 
             if(this.application.ninja.documentController.activeDocument.currentView === "design") {
                 this.application.ninja.stage._scrollFlag = true; // TODO HACK to prevent type error on Hide/Show Iframe
                 this.application.ninja.stage.stageDeps.reinitializeForSwitchDocument();//reinitialize draw-util, snapmanager and view-util
+                this.restoreAllPanels();
             }
 
             NJevent("switchDocument");
@@ -181,6 +185,23 @@ exports.StageView = Montage.create(Component, {
                 this.application.ninja.documentBar.element.style.display = "block";
                 this.application.ninja.editorViewOptions.element.style.display = "none";
             }
+        }
+    },
+
+    collapseAllPanels:{
+        value:function(){
+            this.application.ninja.panelSplitter.collapse();
+            this.application.ninja.timelineSplitter.collapse();
+            this.application.ninja.toolsSplitter.collapse();
+            this.application.ninja.optionsSplitter.collapse();
+        }
+    },
+    restoreAllPanels:{
+        value:function(){
+            this.application.ninja.panelSplitter.restore();
+            this.application.ninja.timelineSplitter.restore();
+            this.application.ninja.toolsSplitter.restore();
+            this.application.ninja.optionsSplitter.restore();
         }
     }
 });

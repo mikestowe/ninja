@@ -434,6 +434,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 //            appDelegateModule.MyAppDelegate.onSetActiveDocument();
 
             this.application.ninja.stage.stageView.showCodeViewBar(false);
+            this.application.ninja.stage.stageView.restoreAllPanels();
         }
     },
 

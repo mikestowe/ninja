@@ -68,8 +68,8 @@ var CodeEditorViewOptions = exports.CodeEditorViewOptions = Montage.create(Compo
 
         handleThemeSelection:{
             value: function(evt){
-                var theme = this.themeSelect.options[this.themeSelect.selectedIndex].value;
-                this.application.ninja.codeEditorController.handleThemeSelection(theme);
+                this.application.ninja.codeEditorController.editorTheme = this.themeSelect.options[this.themeSelect.selectedIndex].value;
+                this.application.ninja.codeEditorController.handleThemeSelection();
             }
         }
 
