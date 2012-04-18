@@ -7,8 +7,36 @@
     display:inline;
 }
 
-.viewOptions .format{
-    float:right;
+.viewOptions .autoCodeComplete{
+    float:left;
+}
+
+.viewOptions .floatButtons{
+    float:left;
     font-size:9px;
+    padding-left: 20px;
+}
+
+.viewOptions .format{
+    float:left;
+    margin-left:5px;
+}
+
+.viewOptions .themeOptions{
+    float: right;
+}
+
+.viewOptions .themeOptions select{
+    background-color: #616161;
+    color: white;
+    font-size:9px;
+    margin-top:2px;
+    border-color: #616161;
+}
+
+.viewOptions .themeOptions select option{
+    background-color: #616161;
+    color: white;
+    border-color: #616161;
 }
 

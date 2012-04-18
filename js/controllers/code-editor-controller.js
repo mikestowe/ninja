@@ -49,9 +49,13 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
     editorFont:{
         get: function(){return this._editorFont;},
         set: function(value){//gets a zoom %
+            var codeLineElems = null, i=0;
             this._editorFont = (value/100) * CodeEditorController.originalEditorFont;
             //set the font size
-            document.getElementsByClassName("codeViewContainer")[0].style.fontSize = ""+this._editorFont+"px";
+            codeLineElems = document.getElementsByClassName("CodeMirror-lines");
+            for(i=0;i<codeLineElems.length;i++){
+                codeLineElems[i].style.fontSize = ""+this._editorFont+"px";
+            }
         }
     },
 
@@ -181,6 +185,12 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
         value: function(isComment){
             var range = this.getSelectedRange(this.application.ninja.documentController.activeDocument.editor);
             this.application.ninja.documentController.activeDocument.editor.commentRange(isComment, range.from, range.to);
+        }
+    },
+
+    handleThemeSelection:{
+        value: function(theme){
+            this.application.ninja.documentController.activeDocument.editor.setOption("theme", theme);
         }
     }
 

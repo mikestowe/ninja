@@ -39,7 +39,8 @@
                 "zoomHottext":{"@":"zoomHottext"},
                 "format":{"#": "format"},
                 "comment":{"#":"comment"},
-                "uncomment":{"#":"uncomment"}
+                "uncomment":{"#":"uncomment"},
+                "themeSelect":{"#":"themeSelect"}
             }
         }
     }
@@ -54,9 +55,24 @@
             <span>Automatic Completion</span>
         </div>
         <div class="floatButtons">
-            <!--<button id="format" value="format" class="nj-skinned format">Format</button>-->
+            <button id="format" value="format" class="nj-skinned format">Format</button>
             <button id="comment" value="comment" class="nj-skinned format">comment</button>
             <button id="uncomment" value="uncomment" class="nj-skinned format">uncomment</button>
+        </div>
+        <div class="themeOptions">
+            <span>Theme</span>
+            <select id="themeSelect">
+                <option value="default" selected="">DEFAULT</option>
+                <option value="night">NIGHT</option>
+                <option value="monokai" >MONOKAI</option>
+                <option value="neat" >NEAT</option>
+                <option value="elegant" >ELEGANT</option>
+                <option value="cobalt" >COBALT</option>
+                <option value="eclipse" >ECLIPSE</option>
+                <option value="rubyblue" >RUBYBLUE</option>
+                <option value="lesser-dark" >LESSER-DARK</option>
+                <option value="xq-dark" >XQ-DARK</option>
+            </select>
         </div>
     </div>
 </div>

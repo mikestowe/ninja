@@ -45,23 +45,31 @@ var CodeEditorViewOptions = exports.CodeEditorViewOptions = Montage.create(Compo
                 this.format.addEventListener("click", this.handleFormat.bind(this), false);
                 this.comment.addEventListener("click", this.handleComment.bind(this), false);
                 this.uncomment.addEventListener("click", this.handleUncomment.bind(this), false);
+                this.themeSelect.addEventListener("change", this.handleThemeSelection.bind(this), false);
             }
         },
 
         handleFormat:{
-            value: function(){
+            value: function(evt){
                 this.application.ninja.codeEditorController.autoFormatSelection();
             }
         },
         handleComment:{
-            value: function(){
+            value: function(evt){
                 this.application.ninja.codeEditorController.commentSelection(true);
             }
         },
 
         handleUncomment:{
-            value: function(){
+            value: function(evt){
                 this.application.ninja.codeEditorController.commentSelection(false);
+            }
+        },
+
+        handleThemeSelection:{
+            value: function(evt){
+                var theme = this.themeSelect.options[this.themeSelect.selectedIndex].value;
+                this.application.ninja.codeEditorController.handleThemeSelection(theme);
             }
         }
 
