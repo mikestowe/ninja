@@ -125,8 +125,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 //                }
 //            }
 
-
-            if(this._targets)
+            if(this.application.ninja.selectedElements.length)
             {
                 var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas,
                                                                 new WebKitPoint(event.pageX, event.pageY));
@@ -142,11 +141,10 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                 }
 
                 // we don't want to snap to selected objects during the drag
-                var len = this._targets.length;
-                for(var i=0; i<len; i++)
-                {
-                    snapManager.addToAvoidList( this._targets[i].elt );
-                }
+                this.application.ninja.selectedElements.forEach(function(element) {
+                    snapManager.addToAvoidList(element);
+                });
+
 				if (hitRec)
 				{
 					// disable snap attributes
@@ -404,8 +402,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
             {
                 var index = this._snapIndex;
                 var pt0;
-                var useViewPoint = (this._inLocalMode && (this._targets.length === 1));
-				//console.log( "useViewPoint: " + useViewPoint );
+                var useViewPoint = this.rotateStage || (this._inLocalMode && (this.application.ninja.selectedElements.length === 1));
                 if (this._useQuadPt)
                 {
                     pt0 = this.GetQuadrantPoint(useViewPoint);
@@ -694,25 +691,6 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
     },
 
     _startMat: { value: Matrix.I(4) },
-    
-    _targets: { value: null },
-    targets:
-    {
-    	get: function () {
-    		return this._targets;
-    	},
-    	set: function (value) {
-    		this._targets = value;
-    		if (value !== null && value.length)
-            {
-    			this.target = value[0];
-    		}
-            else
-            {
-                this.target = null;
-            }
-    	}
-    },
 
     _undoArray: { value: [] },
 
@@ -755,7 +733,6 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
             } else {
                 this.eventManager.removeEventListener("selectionChange", this, true);
                 this.application.ninja.stage._iframeContainer.removeEventListener("scroll", this, false);
-                this._targets = [];
 
                 // Clean up
                 NJevent("disableStageMove");
@@ -786,7 +763,6 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 
 	captureSelectionDrawn: {
 		value: function(event){
-			this._targets = [];
             this._origin = null;
             this._delta = null;
 
@@ -835,7 +811,10 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                 if(!this._activateOriginHandle)
                 {
                     this.application.ninja.stage.drawNow = true;
+                    var canSnap = this._canSnap;
+                    this._canSnap = true;
                     this.doSelection(event);
+                    this._canSnap = canSnap;
                 }
             }
 
@@ -862,9 +841,9 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
             }
 
 			if (!this._isDrawing || (this.application.ninja.selectedElements.length == 1))
-				this.DrawHandles(this._delta);
+            this.DrawHandles(this._delta);
             
-			if(this._canSnap)
+            if(this._canSnap)
             {
                 snapManager.drawLastHit();
             }
@@ -905,7 +884,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
             this.endDraw(event);
 
 			this.application.ninja.stage.draw();
-			if (this._targets && (this._targets.length > 1))
+			if (this.application.ninja.selectedElements.length > 1)
 			{
 				//this._origin = null;
 				this._updateHandlesOrigin();
