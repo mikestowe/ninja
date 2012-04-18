@@ -47,6 +47,9 @@ var GeomObj = function GLGeomObj() {
     this._fillMaterial = null;
     this._strokeMaterial = null;
 
+    // Shapes (such as lines) that don't support fill should set this to false
+    this.canFill = true;
+
     // array of primitives - used in RDGE
     this._primArray = [];
     this._materialNodeArray = [];
