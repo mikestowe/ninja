@@ -34,6 +34,8 @@ var GLSubpath = function GLSubpath() {
     this._Anchors = [];
     this._BBoxMin = [0, 0, 0];
     this._BBoxMax = [0, 0, 0];
+    this._canvasCenterLocalCoord = [0,0,0];
+
     this._isClosed = false;
 
     this._Samples = [];                 //polyline representation of this curve in canvas space
@@ -272,6 +274,14 @@ GLSubpath.prototype.setIsClosed = function (isClosed) {
         this._isClosed = isClosed;
         this.makeDirty();
     }
+};
+
+GLSubpath.prototype.setCanvasCenterLocalCoord = function(center){
+    this._canvasCenterLocalCoord = center;
+};
+
+GLSubpath.prototype.getCanvasCenterLocalCoord = function(){
+    return this._canvasCenterLocalCoord;
 };
 
 GLSubpath.prototype.getNumAnchors = function () {
@@ -681,12 +691,15 @@ GLSubpath.prototype.setStrokeWidth = function (w) {
     if (this._dirty){
         this.createSamples(false); //this will also update the bounding box
     } else{
-        this.computeBoundingBox(false);
+        this.computeBoundingBox(true,false);
     }
     this.offsetPerBBoxMin(); //this will shift the local coordinates such that the bbox min point is at (0,0)
 
     //figure out the adjustment to the canvas position and size
     var delta = Math.round(diffStrokeWidth*0.5);
+
+    //update the canvas center (it's simply the center of the new bbox in this case)
+    this._canvasCenterLocalCoord = [0.5*(this._BBoxMax[0]+this._BBoxMin[0]),0.5*(this._BBoxMax[1]+this._BBoxMin[1]),0.5*(this._BBoxMax[2]+this._BBoxMin[2])];
 
     //update the width, height, left and top
     var ElementMediator = require("js/mediators/element-mediator").ElementMediator;

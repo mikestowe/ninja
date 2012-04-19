@@ -71,10 +71,6 @@ exports.PenTool = Montage.create(ShapeTool, {
     //  todo this might be unnecessary as we can get this from element mediator (but that may be slow)
     _selectedSubpathPlaneMat: { value: null, writable: true },
 
-    //bbox of the selected subpath in local coordinates
-    // (used for id-ing when the local center has shifted, i.e. the bbox of the subpath has grown)
-    _selectedSubpathLocalCenter: {value: null, writable: true},
-
     //the center of the subpath center in stageworld space
     _selectedSubpathCanvasCenter: {value: null, writable: true},
     
@@ -228,7 +224,6 @@ exports.PenTool = Montage.create(ShapeTool, {
                 this._selectedSubpath = new SubPath();
                 this._selectedSubpathCanvas = null;
                 this._selectedSubpathPlaneMat = null;
-                this._selectedSubpathLocalCenter = null;
                 this._isNewPath = true;
 
                 if (this._entryEditMode === this.ENTRY_SELECT_PATH){
@@ -411,6 +406,9 @@ exports.PenTool = Montage.create(ShapeTool, {
                 return;
             }
 
+            if (!this._selectedSubpath ){
+                return; //nothing to do in case no subpath is selected
+            }
             //clear the canvas before we draw anything else
             this.application.ninja.stage.clearDrawingCanvas();
             this._hoveredAnchorIndex = -1;
@@ -426,16 +424,12 @@ exports.PenTool = Montage.create(ShapeTool, {
             }
 
             var hitRec = this.getHitRecord(event.pageX, event.pageY, false);
-
-            var drawingCanvas=null, globalMousePos=null, localMousePos=null;
-            if (this._selectedSubpath ){
-                drawingCanvas = this._selectedSubpath.getCanvas();
-                if (!drawingCanvas){
-                    drawingCanvas = ViewUtils.getStageElement();
-                }
-                globalMousePos = hitRec.getScreenPoint();
-                localMousePos = ViewUtils.globalToLocal(globalMousePos, drawingCanvas);
+            var drawingCanvas = this._selectedSubpath.getCanvas();
+            if (!drawingCanvas){
+                drawingCanvas = ViewUtils.getStageElement();
             }
+            var globalMousePos = hitRec.getScreenPoint();
+            var localMousePos = ViewUtils.globalToLocal(globalMousePos, drawingCanvas);
 
             if (this._isDrawing) {
                 //if there is a selected subpath with a selected anchor point
@@ -768,16 +762,14 @@ exports.PenTool = Montage.create(ShapeTool, {
                 var bboxMid = VecUtils.vecInterpolate(3, bboxMin, bboxMax, 0.5);
 
                 //sandwich the planeMat between with the translation to the previous center of the canvas in local space and its inverse
-                if (this._selectedSubpathLocalCenter) {
-                    var centerDisp = VecUtils.vecSubtract(3, bboxMid, this._selectedSubpathLocalCenter);
-                    var tMat = Matrix.Translation([centerDisp[0], centerDisp[1],centerDisp[2]]);
-                    var tInvMat = Matrix.Translation([-centerDisp[0], -centerDisp[1], -centerDisp[2]]);
-                    var newMat = Matrix.I(4);
-                    glmat4.multiply( tInvMat, this._selectedSubpathPlaneMat, newMat);
-                    glmat4.multiply( newMat, tMat, newMat);
-                    this._selectedSubpathPlaneMat = newMat;
-                    ViewUtils.setMatrixForElement(this._selectedSubpathCanvas, newMat, true);
-                }
+                var centerDisp = VecUtils.vecSubtract(3, bboxMid, this._selectedSubpath.getCanvasCenterLocalCoord());
+                var tMat = Matrix.Translation([centerDisp[0], centerDisp[1],centerDisp[2]]);
+                var tInvMat = Matrix.Translation([-centerDisp[0], -centerDisp[1], -centerDisp[2]]);
+                var newMat = Matrix.I(4);
+                glmat4.multiply( tInvMat, this._selectedSubpathPlaneMat, newMat);
+                glmat4.multiply( newMat, tMat, newMat);
+                this._selectedSubpathPlaneMat = newMat;
+                ViewUtils.setMatrixForElement(this._selectedSubpathCanvas, newMat, true);
 
                 var localToStageWorldMat = ViewUtils.getLocalToStageWorldMatrix(this._selectedSubpathCanvas, false, false);
                 this._selectedSubpathCanvasCenter = MathUtils.transformAndDivideHomogeneousPoint(bboxMid, localToStageWorldMat);
@@ -810,11 +802,11 @@ exports.PenTool = Montage.create(ShapeTool, {
             this._selectedSubpath.makeDirty();
             this._selectedSubpath.createSamples(false);
             this._selectedSubpath.offsetPerBBoxMin();
-            bboxMin = this._selectedSubpath.getBBoxMin();
-            bboxMax = this._selectedSubpath.getBBoxMax();
 
             //compute and store the center of the bbox in local space
-            this._selectedSubpathLocalCenter = VecUtils.vecInterpolate(3, bboxMin, bboxMax, 0.5);
+            bboxMin = this._selectedSubpath.getBBoxMin();
+            bboxMax = this._selectedSubpath.getBBoxMax();
+            this._selectedSubpath.setCanvasCenterLocalCoord(VecUtils.vecInterpolate(3, bboxMin, bboxMax, 0.5));
         }
     },
 
@@ -852,6 +844,9 @@ exports.PenTool = Montage.create(ShapeTool, {
             this._selectedSubpathPlaneMat = null;
             this._snapTargetIndex = -1;
             this._selectedSubpath = null;
+            if (this._entryEditMode === this.ENTRY_SELECT_PATH){
+                this._entryEditMode = this.ENTRY_SELECT_NONE;
+            }
             this.application.ninja.stage.clearDrawingCanvas();
         }
     },
