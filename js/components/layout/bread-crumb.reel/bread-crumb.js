@@ -71,7 +71,7 @@ exports.Breadcrumb = Montage.create(Component, {
 
             // This is always the top container which is now hardcoded to body
             this.containerElements.unshift({"node": parentNode, "nodeUuid":parentNode.uuid, "label": "Body"});
-
+            NJevent("breadCrumbBinding",this)
 
 
         }
@@ -80,7 +80,7 @@ exports.Breadcrumb = Montage.create(Component, {
     handleAction: {
         value: function(evt) {
 
-           this.application.ninja.breadCrumbClick=true;
+           this.application.ninja.currentDocument.breadCrumbClick=true;
             if(evt.target.value === this.container.uuid) {
                 return;
             }
