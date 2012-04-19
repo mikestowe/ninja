@@ -30,12 +30,12 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
     newFileName:{
         writable:true,
         enumerable:false,
-        value:""
+        value:null
     },
     newFileDirectory:{
         writable:true,
         enumerable:false,
-        value:""
+        value:null
     },
     templateWidth:{
         writable:true,
@@ -98,14 +98,6 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
 
             this.addIdentifiers();
 
-            this.element.addEventListener("drawTree", function(evt){that.handleNewFileNavDrawTree(evt);}, false);
-            this.element.addEventListener("selectedItem", function(evt){that.handleNewFileNavSelectedItem(evt);}, false);//for single selection only
-            this.eventManager.addEventListener("newFileDirectorySet", function(evt){that.handleNewFileDirectorySet(evt);}, false);
-            this.eventManager.addEventListener("newFileNameSet", function(evt){that.handleNewFileNameSet(evt);}, false);
-
-            this.okButton.addEventListener("click", function(evt){that.handleOkButtonAction(evt);}, false);
-            this.cancelButton.addEventListener("click", function(evt){that.handleCancelButtonAction(evt);}, false);
-
             if(!!this.newFileModel.defaultProjectType){
                 var templates = this.newFileModel.prepareContents(this.newFileModel.defaultProjectType);
                 this.templateList = iconsListModule.IconsList.create();
@@ -115,7 +107,6 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
                 }
                 this.templateList.element = this.templateIcons;
                 this.templateList.needsDraw = true;
-
 
                 this.selectedProjectType = {"uri":this.newFileModel.defaultProjectType, "element":null};
             }
@@ -127,6 +118,36 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
                     fileExtensionEl.innerHTML = ""+this.newFileModel.projectTypeData[this.newFileModel.defaultProjectType].fileExtension;
                 }
             }
+
+            this.element.addEventListener("drawTree", function(evt){that.handleNewFileNavDrawTree(evt);}, false);
+            this.element.addEventListener("selectedItem", function(evt){that.handleNewFileNavSelectedItem(evt);}, false);//for single selection only
+            this.eventManager.addEventListener("newFileDirectorySet", function(evt){
+                that.handleNewFileDirectorySet(evt);
+            }, false);
+            this.eventManager.addEventListener("newFileNameSet", function(evt){
+                that.handleNewFileNameSet(evt);
+            }, false);
+
+            this.okButton.addEventListener("click", function(evt){that.handleOkButtonAction(evt);}, false);
+            this.cancelButton.addEventListener("click", function(evt){that.handleCancelButtonAction(evt);}, false);
+
+            this.element.addEventListener("keyup", function(evt){
+                if(evt.keyCode == 27) {//ESC key
+                    if(that.application.ninja.newFileController.newFileOptionsNav !== null){
+                        that.handleCancelButtonAction();
+                    }
+                }else if((evt.keyCode == 13) && !(evt.ctrlKey || evt.metaKey)){//ENTER key
+                    if((that.application.ninja.newFileController.newFileOptionsNav !== null)
+                        && !that.okButton.hasAttribute("disabled")){
+
+                        that.handleOkButtonAction();
+                    }
+                }
+            }, true);
+
+            this.eventManager.addEventListener("enterKey", this, false);
+            this.eventManager.addEventListener("escKey", this, false);
+
         }
 
     },
@@ -291,10 +312,16 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
             }else{
                 if(this.error.innerHTML === ""){
                     this.showError("! Project Template, Name and Directory should be valid.");
-                }
-                //disable ok
-                if(!this.okButton.hasAttribute("disabled")){
-                    this.okButton.setAttribute("disabled", "true");
+                    //disable ok
+                    if(!this.okButton.hasAttribute("disabled")){
+                        this.okButton.setAttribute("disabled", "true");
+                    }
+                }else if(!this.selectedProjectType || !this.selectedTemplate){
+                    this.showError("! Project Template should be selected.");
+                    //disable ok
+                    if(!this.okButton.hasAttribute("disabled")){
+                        this.okButton.setAttribute("disabled", "true");
+                    }
                 }
             }
         }
@@ -302,22 +329,36 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
 
     handleNewFileDirectorySet:{
         value:function(evt){
-            if(!!evt._event.newFileDirectory){
-                this.newFileDirectory = evt._event.newFileDirectory;
-                if(this.isValidUri(this.newFileDirectory)){
-                    this.enableOk();
-                }
+            this.newFileDirectory = evt._event.newFileDirectory;
+            if(this.isValidUri(this.newFileDirectory)){
+                this.enableOk();
             }
         }
     },
 
     handleNewFileNameSet:{
         value:function(evt){
-            if(!!evt._event.newFileName){
-                this.newFileName = evt._event.newFileName;
-                if(this.isValidFileName(this.newFileName)){
-                    this.enableOk();
-                }
+            this.newFileName = evt._event.newFileName;
+            if(this.isValidFileName(this.newFileName)){
+                this.enableOk();
+            }
+        }
+    },
+
+    handleEnterKey:{
+        value: function(evt){
+            if((this.application.ninja.newFileController.newFileOptionsNav !== null)
+                  && !this.okButton.hasAttribute("disabled")){
+
+                    this.handleOkButtonAction(evt);
+              }
+        }
+    },
+
+    handleEscKey:{
+        value: function(evt){
+            if(this.application.ninja.newFileController.newFileOptionsNav !== null){
+                this.handleCancelButtonAction(evt);
             }
         }
     },
@@ -374,24 +415,26 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
 
             this.newFileName = "";
             this.newFileDirectory = "";
-            this.selectedProjectType = null;
-            this.selectedTemplate = null;
 
             //remove event listeners
             this.element.removeEventListener("drawTree", function(evt){that.handleNewFileNavDrawTree(evt);}, false);
             this.element.removeEventListener("selectedItem", function(evt){that.handleNewFileNavSelectedItem(evt);}, false);//for single selection only
             this.eventManager.removeEventListener("newFileDirectorySet", function(evt){that.handleNewFileDirectorySet(evt);}, false);
             this.eventManager.removeEventListener("newFileNameSet", function(evt){that.handleNewFileNameSet(evt);}, false);
+
+            this.application.ninja.newFileController.newFileOptionsNav = null;
         }
     },
 
     isValidUri:{
         value: function(uri){
             var status= this.application.ninja.coreIoApi.isValidUri(uri);
-            if(uri !== ""){
-                if(!status){
+            if((uri !== null) && !status){
                     this.showError("! Invalid directory.");
-                }
+                    //disable ok
+                    if(!this.okButton.hasAttribute("disabled")){
+                        this.okButton.setAttribute("disabled", "true");
+                    }
             }
             return status;
         }
@@ -399,10 +442,12 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
     isValidFileName:{
         value: function(fileName){
             var status = this.validateFileName(fileName);
-            if(fileName !== ""){
-                if(!status){
+            if((fileName !== null ) && !status){
                     this.showError("! Invalid file name.");
-                }
+                    //disable ok
+                    if(!this.okButton.hasAttribute("disabled")){
+                        this.okButton.setAttribute("disabled", "true");
+                    }
             }
             return status;
         }
@@ -437,10 +482,6 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
         value:function(errorString){
             this.error.innerHTML = "";
             this.error.innerHTML=errorString;
-            //disable ok
-            if(!this.okButton.hasAttribute("disabled")){
-                this.okButton.setAttribute("disabled", "true");
-            }
         }
     },
 
@@ -450,8 +491,9 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
         validateFileName:{
             value: function(fileName){
                 var status = false;
-                if(fileName !== ""){
+                if((fileName !== null) && (fileName !== "")){
                     fileName = fileName.replace(/^\s+|\s+$/g,"");
+                    if(fileName === ""){return false;}
                     status = !(/[/\\]/g.test(fileName));
                     if(status && navigator.userAgent.indexOf("Macintosh") != -1){//for Mac files beginning with . are hidden
                         status = !(/^\./g.test(fileName));

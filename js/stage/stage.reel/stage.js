@@ -560,8 +560,7 @@ exports.Stage = Montage.create(Component, {
                 elt = this.application.ninja.currentDocument.GetElementFromPoint(point.x + this.scrollLeft,point.y + this.scrollTop);
 
             // workaround Chrome 3d bug
-            if(this.application.ninja.toolsData.selectedToolInstance._canSnap && this.application.ninja.currentDocument.inExclusion(elt) !== -1)
-            {
+            if(this.application.ninja.toolsData.selectedToolInstance._canSnap && this.application.ninja.currentDocument.inExclusion(elt) !== -1) {
                 return this._getElementUsingSnapping(point);
             } else {
                 return elt;
@@ -605,7 +604,7 @@ exports.Stage = Montage.create(Component, {
                 var selArray = new Array();
 
                 for(var i = 0; this.application.ninja.selectedElements[i];i++) {
-                    var curElement = this.application.ninja.selectedElements[i]._element;
+                    var curElement = this.application.ninja.selectedElements[i];
 
                     // Add element to array that is used to calculate 3d-bounding box of all elements
                     selArray.push( curElement );
@@ -796,6 +795,8 @@ exports.Stage = Montage.create(Component, {
     drawLine: {
         value:function(x0, y0, x1, y1, strokeSize, strokeColor) {
             this.clearDrawingCanvas();
+            var origStrokeStyle = this._drawingContext.strokeStyle;
+            var origLineWidth = this._drawingContext.lineWidth;
             this._drawingContext.strokeStyle = strokeColor;
             this._drawingContext.lineWidth = strokeSize;
 
@@ -826,6 +827,9 @@ exports.Stage = Montage.create(Component, {
             var w = Math.round(Math.abs(x1-x0));
             this._drawingContext.fillText("H: " + h, txtX + 38, txtY - 4);
             this._drawingContext.fillText("W: " + w, txtX - 5, txtY + 12);
+
+            this._drawingContext.strokeStyle = origStrokeStyle;
+            this._drawingContext.lineWidth = origLineWidth;
         }
     },
 

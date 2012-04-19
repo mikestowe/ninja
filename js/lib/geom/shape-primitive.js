@@ -8,11 +8,11 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var ShapePrimitive = {};
 
 ShapePrimitive.create = function(coords,  normals,  uvs,  indices, primType, vertexCount) {
-	var renderer = g_Engine.getContext().renderer;
+	var renderer = RDGE.globals.engine.getContext().renderer;
 
 	// to setup a primitive you must define it
 	// create a new primitive definition here to then fill out
-	var prim = new rdgePrimitiveDefinition();
+	var prim = new RDGE.rdgePrimitiveDefinition();
 
 	// the vertex definition declares how the data will be delivered to the shader
 	// the position of an element in array determines which attribute in a shader the

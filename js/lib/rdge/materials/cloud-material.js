@@ -1,8 +1,8 @@
 /* <copyright>
- This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
- No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
- (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
- </copyright> */
+This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+(c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+</copyright> */
 
 var MaterialParser		= require("js/lib/rdge/materials/material-parser").MaterialParser;
 var Material			= require("js/lib/rdge/materials/material").Material;
@@ -15,25 +15,27 @@ var TagTool				= require("js/tools/TagTool").TagTool;
 // Class GLMaterial
 //      RDGE representation of a material.
 ///////////////////////////////////////////////////////////////////////
-var CloudMaterial = function CloudMaterial() {
+var CloudMaterial = function CloudMaterial()
+{
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-	this._name = "CloudMaterial";
-	this._shaderName = "cloud";
+    this._name = "CloudMaterial";
+    this._shaderName = "cloud";
 
 	this._texMap = 'assets/images/cloud10.png';
+    this._texMap = 'assets/images/cloud2.jpg';
 	//this._texMap = 'assets/images/CL13.png';
 	//this._texMap = 'assets/images/material_paint.png';
 	//this._texMap = 'assets/images/us_flag.png';
 	//this._texMap = 'assets/images/cubelight.png';
-	this._diffuseColor = [0.5, 0.5, 0.5, 0.5];
+    this._diffuseColor = [0.5, 0.5, 0.5, 0.5];
 
 	// base size of cloud polygons.  Random adjustments made to each quad
 	this._cloudSize = 40;
 
-	this._time = 0.0;
-	this._dTime = 0.001;
+    this._time = 0.0;
+    this._dTime = 0.01;
 
 	// parameter initial values
 	this._time			= 0.0;
@@ -54,73 +56,75 @@ var CloudMaterial = function CloudMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
     ///////////////////////////////////////////////////////////////////////
-	this.getName		= function()	{ return this._name;			};
-	this.getShaderName	= function()	{  return this._shaderName;		};
+    this.getName = function () { return this._name; };
+    this.getShaderName = function () { return this._shaderName; };
 
-	this.getTextureMap			= function()		{  return this._propValues[this._propNames[0]] ? this._propValues[this._propNames[0]].slice() : null	};
-	this.setTextureMap			= function(m)		{  this._propValues[this._propNames[0]] = m ? m.slice(0) : null;  this.updateTexture();  	};
+    this.getTextureMap = function () { return this._propValues[this._propNames[0]] ? this._propValues[this._propNames[0]].slice() : null };
+    this.setTextureMap = function (m) { this._propValues[this._propNames[0]] = m ? m.slice(0) : null; this.updateTexture(); };
 
-	this.isAnimated			= function()			{  return true;					};
+    this.setDiffuseColor = function (c) { this._propValues[this._propNames[1]] = c.slice(0); this.updateColor(); };
+    this.getDiffuseColor = function () { return this._propValues[this._propNames[1]] ? this._propValues[this._propNames[1]].slice() : null; };
+    this.isAnimated = function () { return true; };
 
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
-	this._propNames			= ["texmap",		"diffusecolor"];
-	this._propLabels		= ["Texture map",	"Diffuse Color"];
-	this._propTypes			= ["file",			"color"];
-	this._propValues		= [];
+    this._propNames = ["texmap", "diffusecolor"];
+    this._propLabels = ["Texture map", "Diffuse Color"];
+    this._propTypes = ["file", "color"];
+    this._propValues = [];
 
-	this._propValues[ this._propNames[0] ] = this._texMap.slice(0);
-	this._propValues[ this._propNames[1] ] = this._diffuseColor.slice();
+    this._propValues[this._propNames[0]] = this._texMap.slice(0);
+    this._propValues[this._propNames[1]] = this._diffuseColor.slice();
 
-    this.setProperty = function( prop, value )
-	{
-		if (prop === 'color')  prop = 'diffusecolor';
+    this.setProperty = function (prop, value) {
+        if (prop === 'color') prop = 'diffusecolor';
 
-		// make sure we have legitimate imput
-		var ok = this.validateProperty( prop, value );
-		if (!ok) {
-			console.log( "invalid property in Radial Gradient Material:" + prop + " : " + value );
+        // make sure we have legitimate imput
+        var ok = this.validateProperty(prop, value);
+        if (!ok) {
+            console.log("invalid property in Radial Gradient Material:" + prop + " : " + value);
         }
 
-		switch (prop)
-		{
-			case "texmap":
-				this.setTextureMap(value);
-				break;
+        switch (prop) {
+            case "texmap":
+                this.setTextureMap(value);
+                break;
 
-			case "color":
-				break;
-		}
-	};
+            case "diffusecolor":
+                this.setDiffuseColor(value);
+                break;
+            case "color":
+                break;
+        }
+    };
     ///////////////////////////////////////////////////////////////////////
 
 
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
-	// duplcate method requirde
-	this.dup = function( world )
-	{
-		// save the world
-		if (world)  this.setWorld( world );
+    // duplicate method required
+    /**************************************************************/
+	this.dup = function (world) {
+        // save the world
+        if (world) this.setWorld(world);
 
-		// allocate a new uber material
-		var newMat = new CloudMaterial();
+        // allocate a new uber material
+        var newMat = new CloudMaterial();
 
-		// copy over the current values;
-		var propNames = [],  propValues = [],  propTypes = [],  propLabels = [];
-		this.getAllProperties( propNames,  propValues,  propTypes,  propLabels);
-		var n = propNames.length;
-		for (var i=0;  i<n;  i++) {
-			newMat.setProperty( propNames[i], propValues[i] );
+        // copy over the current values;
+        var propNames = [], propValues = [], propTypes = [], propLabels = [];
+        this.getAllProperties(propNames, propValues, propTypes, propLabels);
+        var n = propNames.length;
+        for (var i = 0; i < n; i++) {
+            newMat.setProperty(propNames[i], propValues[i]);
         }
 
-		return newMat;
-	};
+        return newMat;
+    };
 
-	this.init = function( world )
-	{
+    this.init = function (world) {
 		var GLWorld = require("js/lib/drawing/world").World,
 		    NJUtils = require("js/lib/NJUtils").NJUtils;
 
@@ -152,12 +156,12 @@ var CloudMaterial = function CloudMaterial() {
 		this.buildSource();
 
 		// set up the shader
-		this._shader = new jshader();
+		this._shader = new RDGE.jshader();
 		this._shader.def = cloudMapMaterialDef;
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = createMaterialNode("cloudMapMaterial" + "_" + world.generateUniqueNodeID());
+		this._materialNode = RDGE.createMaterialNode("cloudMapMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		// initialize the time
@@ -170,34 +174,34 @@ var CloudMaterial = function CloudMaterial() {
 		// set the shader values in the shader
 		this.updateTexture();
 		this.update( 0 );
-	};
+    };
+	/**************************************************************/
 
-	this.updateTexture = function()
+    this.updateTexture = function ()
 	{
-		var material = this._materialNode;
-		if (material) 
+        var material = this._materialNode;
+        if (material)
 		{
-			// save the current context
-			var saveContext = g_Engine.getContext();
-			g_Engine.setContext( this._srcCanvas.rdgeid );
-
-			var technique = material.shaderProgram['default'];
-			var renderer = g_Engine.getContext().renderer;
-			if (renderer && technique) {
-				var wrap = 'REPEAT',  mips = true;
+            var technique = material.shaderProgram['default'];
+            var renderer = RDGE.globals.engine.getContext().renderer;
+            if (renderer && technique)
+			{
+                var texMapName = this._propValues[this._propNames[0]];
+                var wrap = 'REPEAT', mips = true;
                 if (this._glTex)
                 {
                     this._glTex.render();
+
                     var tex = this._glTex.getTexture();
 					if (tex)
 						technique.u_tex0.set( tex );
                 }
-			}
+            }
 
 			// restore the context
-			g_Engine.setContext( saveContext.id );
-		}
-	};
+			RDGE.globals.engine.setContext( saveContext.id );
+        }
+    };
 		
 	this.updateTextures = function()
 	{
@@ -217,7 +221,7 @@ var CloudMaterial = function CloudMaterial() {
 		{
 			//this._srcWorld.update();
 			this._srcWorld.draw();
-			g_Engine.setContext( this.getWorld()._canvas.rdgeid );
+			RDGE.globals.engine.setContext( this.getWorld()._canvas.rdgeid );
 		}
 
 		var technique, renderer, tex;
@@ -227,7 +231,7 @@ var CloudMaterial = function CloudMaterial() {
 		if (material)
 		{
 			technique = material.shaderProgram['default'];
-			renderer = g_Engine.getContext().renderer;
+			renderer = RDGE.globals.engine.getContext().renderer;
 			if (renderer && technique)
 			{
 				if (this._glTex)
@@ -244,7 +248,7 @@ var CloudMaterial = function CloudMaterial() {
 		if (material)
 		{
 			technique = material.shaderProgram['default'];
-			renderer = g_Engine.getContext().renderer;
+			renderer = RDGE.globals.engine.getContext().renderer;
 			if (renderer && technique)
 			{
 				technique.u_time.set( [this._time] );
@@ -256,7 +260,7 @@ var CloudMaterial = function CloudMaterial() {
 	this.buildSource = function()
 	{
 		// save the current RDGE context so we can reset it later
-		var saveContext = g_Engine.getContext();
+		var saveContext = RDGE.globals.engine.getContext();
 		this.getWorld().stop();	
 
 		// build a world to do the rendering
@@ -280,7 +284,7 @@ var CloudMaterial = function CloudMaterial() {
 		this._srcMaterialNode = materialNode;
 
 		// add the nodes to the tree
-		var trNode = createTransformNode("objRootNode_" + srcWorld._nodeCounter++);
+		var trNode = RDGE.createTransformNode("objRootNode_" + srcWorld._nodeCounter++);
 		srcWorld._rootNode.insertAsChild( trNode );
 		trNode.attachMeshNode(srcWorld.renderer.id + "_prim_" + srcWorld._nodeCounter++, prim);
         trNode.attachMaterial( materialNode );
@@ -304,14 +308,14 @@ var CloudMaterial = function CloudMaterial() {
 					srcWorld.textureToLoad( tex );
 					t.u_tex0.set( tex );
 				}
-			}
-		}
+            }
+        }
 
 		// start the render loop on the source canvas
 		srcWorld.restartRenderLoop();
 
 		// restore the original context
-		g_Engine.setContext( saveContext.id );
+		RDGE.globals.engine.setContext( saveContext.id );
 		this.getWorld().start();
 	};
 
@@ -416,63 +420,64 @@ var CloudMaterial = function CloudMaterial() {
 		}
 
 		return RectangleGeometry.buildPrimitive();
-	};
+    };
 
-	// JSON export
-	this.exportJSON = function()
-	{
-		var jObj =
+
+    // JSON export
+    this.exportJSON = function () {
+        var jObj =
 		{
-			'material'		: this.getShaderName(),
-			'name'			: this.getName(),
-			'texture'		: this._propValues[this._propNames[0]]
+		    'material': this.getShaderName(),
+		    'name': this.getName(),
+		    'texture': this._propValues[this._propNames[0]]
 		};
 
-		return jObj;
-	};
+        return jObj;
+    };
 
-	this.importJSON = function( jObj )
-	{
-        if (this.getShaderName() != jObj.material)  throw new Error( "ill-formed material" );
-        this.setName(  jObj.name );
+    this.importJSON = function (jObj) {
+        if (this.getShaderName() != jObj.material) throw new Error("ill-formed material");
+        this.setName(jObj.name);
 
         try {
-			this._propValues[this._propNames[0]] = jObj.texture;
+            this._propValues[this._propNames[0]] = jObj.texture;
         }
-        catch (e)
-        {
-            throw new Error( "could not import material: " + jObj );
+        catch (e) {
+            throw new Error("could not import material: " + jObj);
         }
-	}
+    };
+
+
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // RDGE shader
- 
+
 // the cloud material def is used for cloud generation on the
 // local world created by the cloud material.
 var cloudMaterialDef =
-{'shaders': 
+{ 'shaders':
 	{
-		'defaultVShader':"assets/shaders/Cloud.vert.glsl",
-		'defaultFShader':"assets/shaders/Cloud.frag.glsl"
+	    'defaultVShader': "assets/shaders/Cloud.vert.glsl",
+	    'defaultFShader': "assets/shaders/Cloud.frag.glsl"
 	},
-	'techniques':
-	{ 
-		'default':
+    'techniques':
+	{
+	    'default':
 		[
 			{
-				'vshader' : 'defaultVShader',
-				'fshader' : 'defaultFShader',
-				// attributes
-				'attributes' :
+			    'vshader': 'defaultVShader',
+			    'fshader': 'defaultFShader',
+			    // attributes
+			    'attributes':
 				{
-					'vert'  :   { 'type' : 'vec3' },
-					'normal' :  { 'type' : 'vec3' },
-					'texcoord'  :   { 'type' : 'vec2' }
+				    'vert': { 'type': 'vec3' },
+				    'normal': { 'type': 'vec3' },
+				    'texcoord': { 'type': 'vec2' }
 				},
-				// parameters
-				'params' : 
+			    // parameters
+			    'params':
 				{
 					'u_tex0'			: { 'type' : 'tex2d' },
 					'u_time'			: { 'type' : 'float' },
@@ -481,11 +486,11 @@ var cloudMaterialDef =
 					'u_zmax'			: { 'type' : 'float' }
 				},
 
-				// render states
-				'states' : 
+			    // render states
+			    'states':
 				{
-					'depthEnable' : true,
-					'offset':[1.0, 0.1]
+				    'depthEnable': true,
+				    'offset': [1.0, 0.1]
 				}
 			}
 		]

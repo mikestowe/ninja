@@ -16,13 +16,13 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
     fileName : {
         enumerable: true,
         writable: true,
-        value: ""
+        value: null
     },
 
     folderUri:{
         enumerable: true,
         writable: true,
-        value: ""
+        value: null
     },
 
     callback : {
@@ -36,7 +36,12 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
         writable: true,
         value: null
     },
-
+    prepareForDraw: {
+            value: function() {
+                this.newFileName.value = this.fileName;
+                this.fileInputField.newFileDirectory.value = this.folderUri;
+            }
+    },
     willDraw: {
         enumerable: false,
         value: function() {}
@@ -51,41 +56,86 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
             var self = this;
             this.fileInputField.selectDirectory = true;
             this.fileInputField.pickerName = "saveAsDirectoryPicker";
-            this.newFileName.value = this.fileName;
-            this.fileInputField.newFileDirectory.value = this.folderUri;
 
-            this.newFileName.addEventListener("keyup", function(evt){self.handleNewFileNameOnkeyup(evt);}, false);
+            this.addEventListener("change@newFileName.value", this.handleNewFileNameChange, false);
+            this.newFileName.element.addEventListener("keyup", this, false);
             this.eventManager.addEventListener("newFileDirectorySet", function(evt){self.handleNewFileDirectorySet(evt);}, false);
-
             this.okButton.addEventListener("click", function(evt){self.handleOkButtonAction(evt);}, false);
             this.cancelButton.addEventListener("click", function(evt){self.handleCancelButtonAction(evt);}, false);
 
+            this.eventManager.addEventListener("enterKey", this, false);
+            this.eventManager.addEventListener("escKey", this, false);
+
+
             this.enableOk();
+
+            this.element.addEventListener("keyup", function(evt){
+                if(evt.keyCode == 27) {//ESC key
+                    if(self.application.ninja.newFileController.saveAsDialog !== null){
+                        self.handleCancelButtonAction();
+                    }
+                }else if((evt.keyCode == 13) && !(evt.ctrlKey || evt.metaKey)){//ENTER key
+                    if((self.application.ninja.newFileController.saveAsDialog !== null)
+                        && !self.okButton.hasAttribute("disabled")){
+
+                        self.handleOkButtonAction();
+                    }
+                }
+            }, true);
+
+            this.newFileName.element.focus();
+            this.newFileName.element.select();
+
         }
     },
 
     handleNewFileDirectorySet:{
          value:function(evt){
-             if(!!evt._event.newFileDirectory){
-                 this.folderUri = evt._event.newFileDirectory;
-                 if(this.isValidUri(this.folderUri)){
-                     this.enableOk();
-                 }
+             this.folderUri = evt._event.newFileDirectory;
+             if(this.isValidUri(this.folderUri)){
+                 this.enableOk();
              }
          }
      },
 
-    handleNewFileNameOnkeyup:{
+    handleNewFileNameChange:{
           value:function(evt){
               this.fileName = this.newFileName.value;
-              if(this.fileName !== ""){
-                  if(this.isValidFileName(this.fileName)){
+              if(this.isValidFileName(this.fileName)){
                       this.enableOk();
-                  }
               }
           }
     },
 
+    handleKeyup:{
+        value: function(evt){
+            if(evt.keyCode === 13){
+                if(!this.okButton.hasAttribute("disabled")){
+                      this.handleOkButtonAction(evt);
+                  }
+            }else if(evt.keyCode === 27){
+                this.handleCancelButtonAction(evt);
+            }
+        }
+    },
+
+    handleEnterKey:{
+        value: function(evt){
+            if((this.application.ninja.newFileController.saveAsDialog !== null)
+                  && !this.okButton.hasAttribute("disabled")){
+
+                    this.handleOkButtonAction(evt);
+              }
+        }
+    },
+
+    handleEscKey:{
+        value: function(evt){
+            if(this.application.ninja.newFileController.saveAsDialog !== null){
+                this.handleCancelButtonAction(evt);
+            }
+        }
+    },
 
     enableOk:{
         value: function(){
@@ -99,7 +149,7 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
     handleCancelButtonAction :{
         value:function(evt){
             //clean up memory
-            //this.cleanup();
+            this.cleanup();
 
             if(this.popup){
                 this.popup.hide();
@@ -134,7 +184,7 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
 
                 if(success){
                     //clean up memory
-                    //this.cleanup();
+                    this.cleanup();
 
                     if(this.popup){
                         this.popup.hide();
@@ -155,10 +205,8 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
     isValidUri:{
         value: function(uri){
             var status= this.application.ninja.coreIoApi.isValidUri(uri);
-            if(uri !== ""){
-                if(!status){
+            if((uri !== null) && !status){
                     this.showError("! Invalid directory.");
-                }
             }
             return status;
         }
@@ -166,10 +214,8 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
     isValidFileName:{
         value: function(fileName){
             var status = this.validateFileName(fileName);
-            if(fileName !== ""){
-                if(!status){
+            if((fileName !== null) && !status){
                     this.showError("! Invalid file name.");
-                }
             }
             return status;
         }
@@ -218,8 +264,9 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
        validateFileName:{
             value: function(fileName){
                 var status = false;
-                if(fileName !== ""){
+                if((fileName !== null) && (fileName !== "")){
                     fileName = fileName.replace(/^\s+|\s+$/g,"");
+                    if(fileName === ""){return false;}
                     status = !(/[/\\]/g.test(fileName));
                     if(status && navigator.userAgent.indexOf("Macintosh") != -1){//for Mac files beginning with . are hidden
                         status = !(/^\./g.test(fileName));
@@ -227,6 +274,20 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
                 }
                 return status;
             }
+        },
+
+    cleanup:{
+        value:function(){
+            var self = this;
+
+            //remove event listener
+            this.newFileName.removeEventListener("keyup", function(evt){self.handleNewFileNameOnkeyup(evt);}, false);
+            this.eventManager.removeEventListener("newFileDirectorySet", function(evt){self.handleNewFileDirectorySet(evt);}, false);
+            this.okButton.removeEventListener("click", function(evt){self.handleOkButtonAction(evt);}, false);
+            this.cancelButton.removeEventListener("click", function(evt){self.handleCancelButtonAction(evt);}, false);
+
+            this.application.ninja.newFileController.saveAsDialog = null;
         }
+    }
 
 });

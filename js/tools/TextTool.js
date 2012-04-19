@@ -6,7 +6,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var Montage = require("montage/core/core").Montage,
     DrawingTool = require("js/tools/drawing-tool").DrawingTool;
-    RichTextEditor = require("node_modules/labs/rich-text-editor.reel").RichTextEditor;
+    RichTextEditor = require("node_modules/labs/rich-text-editor.reel").RichTextEditor,
+    ElementsMediator = require("js/mediators/element-mediator").ElementMediator;
 
 exports.TextTool = Montage.create(DrawingTool, {
 
@@ -21,7 +22,7 @@ exports.TextTool = Montage.create(DrawingTool, {
                 this.selectedElement.innerHTML = this.application.ninja.stage.textTool.value;
                 this.application.ninja.stage.textTool.value = "";
                 this.application.ninja.stage.textTool.element.style.display = "none";
-                this.applyElementStyles(this.application.ninja.stage.textTool.element.firstChild, this.selectedElement, ["color"]);
+                ElementsMediator.setProperty(this.application.ninja.selectedElements, "color", [window.getComputedStyle(this.application.ninja.stage.textTool.element.firstChild)["color"]], "Change", "textTool");
             }
             //Set Selected Element
             this._selectedElement = val;
@@ -94,7 +95,7 @@ exports.TextTool = Montage.create(DrawingTool, {
             } else {
                 this.doSelection(event);
                 if (this.application.ninja.selectedElements.length !== 0 ) {
-                    this.selectedElement = this.application.ninja.selectedElements[0]._element;
+                    this.selectedElement = this.application.ninja.selectedElements[0];
                 }
                 this._isDrawing = false;
             }
@@ -143,7 +144,7 @@ exports.TextTool = Montage.create(DrawingTool, {
 
     HandleDoubleClick: {
         value: function(e) {
-            //this.application.ninja.selectedElements[0]._element.setAttribute("contenteditable", true);
+            //this.application.ninja.selectedElements[0].setAttribute("contenteditable", true);
 
             //if (!this.application.ninja.textTool) {
 

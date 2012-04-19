@@ -49,12 +49,12 @@ var FlyMaterial = function FlyMaterial() {
 		if (world)  this.setWorld( world );
 
 		// set up the shader
-		this._shader = new jshader();
+		this._shader = new RDGE.jshader();
 		this._shader.def = flyMaterialDef;
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = createMaterialNode("flyMaterial" + "_" + world.generateUniqueNodeID());
+		this._materialNode = RDGE.createMaterialNode("flyMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;
@@ -70,7 +70,7 @@ var FlyMaterial = function FlyMaterial() {
 		this.updateTexture();
 		this.setResolution( [world.getViewportWidth(),world.getViewportHeight()] );
 		this.update( 0 );
-	}
+	};
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -78,7 +78,8 @@ var FlyMaterial = function FlyMaterial() {
  
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
 var flyMaterialDef =
-{'shaders': 
+{
+    'shaders': 
 	{
 		'defaultVShader':"assets/shaders/Basic.vert.glsl",
 		'defaultFShader':"assets/shaders/Fly.frag.glsl"

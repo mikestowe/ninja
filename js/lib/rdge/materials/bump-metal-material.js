@@ -114,45 +114,47 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 	this.init = function( world )
 	{
 		// save the world
-		if (world)  this.setWorld( world );
+		if (world) {
+			 this.setWorld( world );
+        }
 
 		// set up the shader
-		this._shader = new jshader();
+		this._shader = new RDGE.jshader();
 		this._shader.def = bumpMetalMaterialDef;
 		this._shader.init();
 		this._shader['default'].u_light0Diff.set( this.getLightDiff() );
 
 		// set up the material node
-		this._materialNode = createMaterialNode( this.getShaderName() + "_" + world.generateUniqueNodeID() );
+		this._materialNode = RDGE.createMaterialNode( this.getShaderName() + "_" + world.generateUniqueNodeID() );
 		this._materialNode.setShader(this._shader);
 
-        // DEBUG CODE
-        this.initTextures();
+		// DEBUG CODE
+		this.initTextures();
 	};
 
-    this.initTexture = function( index )
-    {
-        var dstWorld = this.getWorld();
-        if (dstWorld)
-        {
-            var texMapName = this._propValues[this._propNames[index]];
-            var texture = new Texture( dstWorld, texMapName );
-            this._textures[index] = texture;
-            this.updateTexture( index );
-        }
-    }
+	this.initTexture = function( index )
+	{
+		var dstWorld = this.getWorld();
+		if (dstWorld)
+		{
+			var texMapName = this._propValues[this._propNames[index]];
+			var texture = new Texture( dstWorld, texMapName );
+			this._textures[index] = texture;
+			this.updateTexture( index );
+		}
+	}
 
-    this.initTextures = function()
-    {
-         var dstWorld = this.getWorld();
-        if (dstWorld)
-        {
-            // find the world with the given id
-            for (var i=1;  i<=3;  i++)
-            {
-                this.initTexture( i );
-            }
-        }
+	this.initTextures = function()
+	{
+		 var dstWorld = this.getWorld();
+		if (dstWorld)
+		{
+			// find the world with the given id
+			for (var i=1;  i<=3;  i++)
+			{
+				this.initTexture( i );
+			}
+		}
    }
 
 	this.updateTexture = function( index )
@@ -161,7 +163,7 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 		if (material)
 		{
 			var technique = material.shaderProgram['default'];
-			var renderer = g_Engine.getContext().renderer;
+			var renderer = RDGE.globals.engine.getContext().renderer;
 			if (renderer && technique)
 			{
                 var glTex = this._textures[ index ];
@@ -224,60 +226,6 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 		}
 		
 		return;
-	};
-
-	this.export = function()
-	{
-		// every material needs the base type and instance name
-		var exportStr = "material: " + this.getShaderName() + "\n";
-		exportStr += "name: " + this.getName() + "\n";
-
-		var world = this.getWorld();
-		if (!world)
-			throw new Error( "no world in material.export, " + this.getName() );
-
-		exportStr += "lightDiff: "			+ this.getLightDiff()		+ "\n";
-		exportStr += "diffuseTexture: "		+ this.getDiffuseTexture()	+ "\n";
-		exportStr += "specularTexture: "	+ this.getSpecularTexture()	+ "\n";
-		exportStr += "normalMap: "			+ this.getNormalTexture()	+ "\n";
-
-		// every material needs to terminate like this
-		exportStr += "endMaterial\n";
-
-		return exportStr;
-	};
-
-	this.import = function( importStr )
-	{
-		var pu = new MaterialParser( importStr );
-		var material = pu.nextValue( "material: " );
-		if (material != this.getShaderName())  throw new Error( "ill-formed material" );
-		this.setName(  pu.nextValue( "name: ") );
-
-		var rtnStr;
-		try
-		{
-			var lightDiff  = eval( "[" + pu.nextValue( "lightDiff: " ) + "]" ),
-				dt = pu.nextValue( "diffuseTexture: " ),
-				st = pu.nextValue( "specularTexture: " ),
-				nt = pu.nextValue( "normalMap: " );
-		
-			this.setProperty( "lightDiff",  lightDiff);
-			this.setProperty( "diffuseTexture", dt );
-			this.setProperty( "specularTexture", st );
-			this.setProperty( "normalMap", nt );
-
-			var endKey = "endMaterial\n";
-			var index = importStr.indexOf( endKey );
-			index += endKey.length;
-			rtnStr = importStr.substr( index );
-		}
-		catch (e)
-		{
-			throw new Error( "could not import material: " + importStr );
-		}
-		
-		return rtnStr;
 	};
 };
 

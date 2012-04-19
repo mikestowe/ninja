@@ -111,6 +111,7 @@ exports.DragDropMediator = Montage.create(Component, {
         					fileName = tempName;
         				}
         				if (save && save.success && save.status === 201) {
+                            var self = this;
         					//
         					if (e.currentTarget.fileType.indexOf('svg') !== -1) {
         						element = NJUtils.makeNJElement('embed', 'SVG', 'block');//TODO: Verify this is proper
@@ -121,19 +122,18 @@ exports.DragDropMediator = Montage.create(Component, {
                     			element.src = url+'/'+fileName;
         					}
         					//TODO: Remove temp fix for elements to redraw on drop
+
 	        				element.onload = function () {
-        						NJevent("elementAdding", {el: element, data: rules});
-        					}
+                                self.application.ninja.elementMediator.addElements(element, rules);
+        					};
         					//
         					rules = {
                     					'position': 'absolute',
                     					'top' : (parseInt(e.currentTarget.filePosition.y) - parseInt(this.application.ninja.stage.userContentTop)) + 'px',
-                    					'left' : (parseInt(e.currentTarget.filePosition.x) - parseInt(this.application.ninja.stage.userContentLeft)) + 'px',
-                                        '-webkit-transform-style' : 'preserve-3d',
-                                        '-webkit-transform' : 'perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
+                    					'left' : (parseInt(e.currentTarget.filePosition.x) - parseInt(this.application.ninja.stage.userContentLeft)) + 'px'
                 			};
         					//
-                    		NJevent("elementAdding", {el: element, data: rules});
+                            self.application.ninja.elementMediator.addElements(element, rules);
         				} else {
         					//TODO: HANDLE ERROR ON SAVING FILE TO BE ADDED AS ELEMENT
         				}

@@ -212,7 +212,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 				{
 					/*
 					// Use this code to test the runtime version of WebGL
-					var cdm = new CanvasDataManager();
+					var cdm = new NinjaCvsRt.CanvasDataManager();
 					cdm.loadGLData(elt,  value,  null );
 					*/
 
@@ -276,13 +276,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 									var world = new GLWorld( canvas, useWebGL );
 									world.importJSON( jObj );
 								}
-								else
-								{
-									var index = importStr.indexOf( "webGL: " );
-									var useWebGL = (index >= 0);
-									var world = new GLWorld( canvas, useWebGL );
-									world.import( importStr );
-								}
 
 								this.buildShapeModel( canvas.elementModel, world );
 							}
@@ -307,19 +300,13 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 			{
 				shapeModel.GLGeomObj			= root;
 				shapeModel.strokeSize			= root._strokeWidth;
-				shapeModel.stroke				= root._strokeColor.slice();
-				shapeModel.strokeMaterial		= root._strikeMaterial ? root._strokeMaterial.dup() : null;
 				shapeModel.strokeStyle			= "solid";
 				//shapeModel.strokeStyleIndex
-				//shapeModel.border
-				//shapeModel.background
 				switch (root.geomType())
 				{
 					case root.GEOM_TYPE_RECTANGLE:
                         elementModel.selection = "Rectangle";
                         elementModel.pi = "RectanglePi";
-                        shapeModel.fill					= root._fillColor.slice();
-                        shapeModel.fillMaterial			= root._fillMaterial ? root._fillMaterial.dup() : null;
 						shapeModel.tlRadius = root._tlRadius;
 						shapeModel.trRadius = root._trRadius;
 						shapeModel.blRadius = root._blRadius;
@@ -329,8 +316,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 					case root.GEOM_TYPE_CIRCLE:
                         elementModel.selection = "Oval";
                         elementModel.pi = "OvalPi";
-                        shapeModel.fill					= root._fillColor.slice();
-                        shapeModel.fillMaterial			= root._fillMaterial ? root._fillMaterial.dup() : null;
 						shapeModel.innerRadius = root._innerRadius;
 						break;
 
@@ -339,6 +324,12 @@ exports.HTMLDocument = Montage.create(TextDocument, {
                         elementModel.pi = "LinePi";
 						shapeModel.slope = root._slope;
 						break;
+
+                    case root.GEOM_TYPE_BRUSH_STROKE:
+                        elementModel.selection = "BrushStroke";
+                        elementModel.pi = "BrushStrokePi";
+						break;
+
 
 					default:
 						console.log( "geometry type not supported for file I/O, " + root.geomType());
@@ -426,7 +417,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 			if (elt.elementModel && elt.elementModel.shapeModel && elt.elementModel.shapeModel.GLWorld)
 			{
 				var data = elt.elementModel.shapeModel.GLWorld.exportJSON();
-				//var data = elt.elementModel.shapeModel.GLWorld.export();
 				dataArray.push( data );
 			}
 
@@ -871,11 +861,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     		//TODO: Add logic to handle save before preview
     		this.application.ninja.documentController.handleExecuteSaveAll(null);
     		//Temp check for webGL Hack
-    		if (this.application.ninja.documentController.activeDocument.glData.length && this.application.ninja.documentController.activeDocument.glData.length > 1) {//TODO: Should be 0, temp hack fix
-    			setTimeout(function () {window.open(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);}.bind(this), 3500);
-    		} else {
-    			window.open(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);
-    		}
+    		window.open(this.application.ninja.coreIoApi.rootUrl + this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);
     		//chrome.tabs.create({url: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController._activeDocument.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]});		
     	}
     },

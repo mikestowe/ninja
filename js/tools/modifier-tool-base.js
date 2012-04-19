@@ -9,8 +9,8 @@ var Montage = require("montage/core/core").Montage,
     snapManager = require("js/helper-classes/3D/snap-manager").SnapManager,
     viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils,
     vecUtils = require("js/helper-classes/3D/vec-utils").VecUtils,
-    drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils,
-    Properties3D = ("js/models/properties-3d").Properties3D;
+    drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils;
+//    Properties3D = ("js/models/properties-3d").Properties3D;
 
 exports.ModifierToolBase = Montage.create(DrawingTool, {
 
@@ -25,6 +25,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 	_snapParam: { value: null },
 	_snapIndex: { value: -1 },
 	_useQuadPt: { value: false },
+    _shouldUseQuadPt: { value: false },
 
 	// we set snapping capabilities depending on the tool.
 	// The following variables are set in a tool's initializeSnapping method called on mouse down.
@@ -124,8 +125,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 //                }
 //            }
 
-
-            if(this._targets)
+            if(this.application.ninja.selectedElements.length)
             {
                 var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas,
                                                                 new WebKitPoint(event.pageX, event.pageY));
@@ -141,11 +141,10 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                 }
 
                 // we don't want to snap to selected objects during the drag
-                var len = this._targets.length;
-                for(var i=0; i<len; i++)
-                {
-                    snapManager.addToAvoidList( this._targets[i].elt );
-                }
+                this.application.ninja.selectedElements.forEach(function(element) {
+                    snapManager.addToAvoidList(element);
+                });
+
 				if (hitRec)
 				{
 					// disable snap attributes
@@ -174,6 +173,10 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                             this._dragPlane = snapManager.setupDragPlanes( hitRec, true );
 //                        }
                     }
+
+                    // only do quadrant snapping if the 4 corners of the element are in the drag plane
+                    var sign = MathUtils.fpSign( vecUtils.vecDot(3,this._dragPlane,[0,0,1]) + this._dragPlane[3] - 1.0);
+                    this._shouldUseQuadPt = (sign == 0)
 
 					var wpHitRec = hitRec.convertToWorkingPlane( this._dragPlane );
 					this._mouseDownHitRec = wpHitRec;
@@ -236,6 +239,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 				}
 			}
 
+            //console.log( "ParameterizeSnap: " + paramPt );
 			return paramPt;
 		}
 	},
@@ -284,14 +288,16 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 					y = x0 + ty*dy,
 					z = 0.0;
 				var localPt = [x,y,z];
+
 				globalPt = viewUtils.localToGlobal( localPt,  elt );
  
 				// add in the delta
 				var hitPt = this.GetObjectHitPoint();
 				var scrPt = viewUtils.localToGlobal( hitPt, this._clickedObject );
-				var delta = [xEvent-scrPt[0], yEvent-scrPt[1]];
+				var delta = [xEvent-scrPt[0], yEvent-scrPt[1], 0-scrPt[2]];
 				globalPt[0] += delta[0];
 				globalPt[1] += delta[1];
+                globalPt[2] += delta[2];
 			}
 
 			return globalPt;
@@ -396,7 +402,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
             {
                 var index = this._snapIndex;
                 var pt0;
-                var useViewPoint = (this._inLocalMode && (this._targets.length === 1));
+                var useViewPoint = (this._inLocalMode && (this.application.ninja.selectedElements.length === 1));
                 if (this._useQuadPt)
                 {
                     pt0 = this.GetQuadrantPoint(useViewPoint);
@@ -448,6 +454,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
             {
                 this.isDrawing = true;
                 this.application.ninja.stage.showSelectionBounds = false;
+                this._updateTargets();
 
                 if(this._canSnap)
                 {
@@ -517,7 +524,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 
 			// do the snap
 			var quadPt;
-			if (mouseIsDown)
+			if (mouseIsDown && !do3DSnap && this._shouldUseQuadPt && (this._handleMode === null) && (this._mode === 0))
 				quadPt = this.GetQuadrantSnapPoint(x,y);
 			var hitRec = snapManager.snap(x, y, do3DSnap, quadPt );
 
@@ -682,25 +689,6 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
     },
 
     _startMat: { value: Matrix.I(4) },
-    
-    _targets: { value: null },
-    targets:
-    {
-    	get: function () {
-    		return this._targets;
-    	},
-    	set: function (value) {
-    		this._targets = value;
-    		if (value !== null && value.length)
-            {
-    			this.target = value[0];
-    		}
-            else
-            {
-                this.target = null;
-            }
-    	}
-    },
 
     _undoArray: { value: [] },
 
@@ -743,7 +731,6 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
             } else {
                 this.eventManager.removeEventListener("selectionChange", this, true);
                 this.application.ninja.stage._iframeContainer.removeEventListener("scroll", this, false);
-                this._targets = [];
 
                 // Clean up
                 NJevent("disableStageMove");
@@ -757,6 +744,11 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                 snapManager.enableGridSnap( snapManager.gridSnapEnabledAppLevel() );
                 this.eventManager.removeEventListener( "toolOptionsChange", this, false);
                 this.eventManager.removeEventListener( "toolDoubleClick", this, false);
+
+                if (this._targetedElement) {
+                    this._targetedElement.classList.remove("active-element-outline");
+                    this._targetedElement = null;
+                }
             }
         }
     },
@@ -769,7 +761,6 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 
 	captureSelectionDrawn: {
 		value: function(event){
-			this._targets = [];
             this._origin = null;
             this._delta = null;
 
@@ -778,14 +769,14 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 			{
 				if(len === 1)
 				{
-					this.target = this.application.ninja.selectedElements[0]._element;
+					this.target = this.application.ninja.selectedElements[0];
 					drawUtils.addElement(this.target);
 				}
 				else
 				{
 					this.target = this.application.ninja.currentDocument.documentRoot;
 				}
-				this._updateTargets();
+//				this._updateTargets();
 			}
 			else
 			{
@@ -806,6 +797,8 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
     HandleLeftButtonDown: {
         value: function(event) {
 
+//            console.log( "modifier-tool-base.HandleLeftButtonDown" );
+
             var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(event.pageX, event.pageY));
             this.downPoint.x = point.x;
             this.downPoint.y = point.y;
@@ -816,7 +809,10 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
                 if(!this._activateOriginHandle)
                 {
                     this.application.ninja.stage.drawNow = true;
+                    var canSnap = this._canSnap;
+                    this._canSnap = true;
                     this.doSelection(event);
+                    this._canSnap = canSnap;
                 }
             }
 

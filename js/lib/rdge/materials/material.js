@@ -264,21 +264,6 @@ var Material = function GLMaterial( world ) {
 		// should override this function.
 	}
 
-	this.export = function() {
-		// this function should be overridden by subclasses
-		var exportStr = "material: " + this.getShaderName() + "\n" + "endMaterial\n";
-		return exportStr;
-	};
-
-	this.import = function( importStr ) {
-		var endKey = "endMaterial\n";
-		var index = importStr.indexOf( endKey );
-		index += endKey.length;
-		var rtnStr = importStr.substr( index );
-
-		return rtnStr;
-	};
-
 };
 
 if (typeof exports === "object") {

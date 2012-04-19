@@ -163,7 +163,9 @@ var TextDocument = exports.TextDocument = Montage.create(Component, {
 
     needsSave: {
         get: function() { return this._needsSave; },
-        set: function(value) { this._needsSave = value }
+        set: function(value) {
+            this._needsSave = value;
+        }
     },
 
     callback: {

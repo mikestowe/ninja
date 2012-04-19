@@ -23,11 +23,24 @@
 
 .propControl .inputRow div .hottext,
 .propControl .inputRow div .hottextInput,
-.prop-controller .nj-skinned
+.prop-controller .nj-skinned,
+.prop-controller .hottext,
+.prop-controller .hottextInput
 {
     border: 1px solid black;
     width: 30px !important;
     float:left;
     margin: 2px 0;
     text-align: center;
+}
+
+.prop-controller .file-path
+{
+    width: 170px !important;
+}
+
+.propControl .inputRow div.propControl
+{
+    float:left;
+    margin: 2px 0;
 }

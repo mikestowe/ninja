@@ -248,6 +248,7 @@ exports.MaterialsModel = Montage.create(Component, {
 					case "fly":					mat = new FlyMaterial();				break;
 					case "water":				mat = new WaterMaterial();				break;
 					case "paris":				mat = new ParisMaterial();				break;
+					case "raiders":		        mat = new RaidersMaterial();		    break;
 					case "zinvert":				mat = new ZInvertMaterial();			break;
 					case "deform":				mat = new DeformMaterial();				break;
 					case "star":				mat = new StarMaterial();				break;

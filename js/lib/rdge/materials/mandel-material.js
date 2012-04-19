@@ -58,12 +58,12 @@ var MandelMaterial = function MandelMaterial() {
 		if (world)  this.setWorld( world );
 
 		// set up the shader
-		this._shader = new jshader();
+		this._shader = new RDGE.jshader();
 		this._shader.def = MandelMaterialDef;
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = createMaterialNode("mandelMaterial" + "_" + world.generateUniqueNodeID());
+		this._materialNode = RDGE.createMaterialNode("mandelMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;
@@ -84,14 +84,14 @@ var MandelMaterial = function MandelMaterial() {
 		var material = this._materialNode;
 		if (material) {
 			var technique = material.shaderProgram['default'];
-			var renderer = g_Engine.getContext().renderer;
+			var renderer = RDGE.globals.engine.getContext().renderer;
 			if (renderer && technique) {
 				if (this._shader && this._shader['default'])
 					this._shader['default'].u_time.set( [this._time] );
 				this._time = time;
 			}
 		}
-	}
+	};
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////

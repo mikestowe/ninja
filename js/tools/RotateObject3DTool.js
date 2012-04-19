@@ -18,6 +18,7 @@ exports.RotateObject3DTool = Montage.create(Rotate3DToolBase, {
 
     _initializeToolHandles: {
         value: function() {
+            this.rotateStage = false;
             if(!this._handles)
             {
                 this._handles = [];
@@ -51,6 +52,7 @@ exports.RotateObject3DTool = Montage.create(Rotate3DToolBase, {
                     toolHandle._rotMat = Matrix.RotationZ( angle );
                 }
             }
+            this._inLocalMode = (this.options.selectedMode === "rotateLocally");
         }
     },
 

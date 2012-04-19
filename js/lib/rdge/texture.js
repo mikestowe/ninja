@@ -112,6 +112,7 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 				switch (type)
 				{
 					case notifier.OBJECT_DELETE:
+						texture.rebuildSrcLocally();
 						break;
 
 					case notifier.OBJECT_REINSTANTIATE:
@@ -131,6 +132,30 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 						break;
 				}
 		   }
+		}
+	}
+
+	this.rebuildSrcLocally = function()
+	{
+		var srcWorld = this._srcWorld;
+		if (srcWorld)
+		{
+			// get the data from the old world
+			var jStr = srcWorld.exportJSON();
+			var jObj = JSON.parse( jStr );
+			var oldCanvas = srcWorld.getCanvas();
+
+			// create a new canvas
+			this._srcCanvas = NJUtils.makeNJElement("canvas", canvasID, "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
+			srcCanvas = this._srcCanvas;
+			srcCanvas.width  = oldCanvas.width;
+			srcCanvas.height = oldCanvas.height;
+
+			// rebuild the world
+			this._srcWorld = new GLWorld( this._srcCanvas, true, true );
+			this._srcWorld.importSJON( jObj );
+
+			this._isLocal = true;
 		}
 	}
 
@@ -197,6 +222,12 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 		}
 		var srcCanvas = this._srcCanvas;
 
+		if (this._isLocal)
+		{
+			this._srcWorld.update();
+			this._srcWorld.draw();
+		}
+
 		var world = this.getDstWorld();
 		if (!world)
 		{
@@ -233,9 +264,19 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 
 		// copy the source canvas to the context to be used in the texture
 		renderCtx.drawImage(srcCanvas, 0, 0, width, height);
+		/*
+		renderCtx.fillStyle = "#00000a";
+		renderCtx.fillRect(0, 0, width, height );
+		var imageData = renderCtx.getImageData(0,0,width, height);
+		for (var i=3;  i<imageData.data.length;  i+=4)
+		{
+			imageData.data[i] = 128;
+		}
+		*/
 
 		/////////////////
 		tex.image = renderCanvas;
+
 		renderer.commitTexture( tex );
 
 		return tex;

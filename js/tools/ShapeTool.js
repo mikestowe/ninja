@@ -6,10 +6,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var Montage = require("montage/core/core").Montage,
     DrawingTool = require("js/tools/drawing-tool").DrawingTool,
-    viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils,
-    drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils,
     NJUtils = require("js/lib/NJUtils").NJUtils,
-    ElementMediator = require("js/mediators/element-mediator").ElementMediator,
     ShapesController = require("js/controllers/elements/shapes-controller").ShapesController,
     ShapeModel    = require("js/models/shape-model").ShapeModel,
     TagTool = require("js/tools/TagTool").TagTool;
@@ -62,30 +59,24 @@ exports.ShapeTool = Montage.create(DrawingTool, {
 		{
             var drawData;
 
-            drawData =  this.getDrawingData();
+            drawData = this.getDrawingData();
 
             if(drawData) {
                 var canvas;
-                if(!this._useExistingCanvas())
-                {
+                if(!this._useExistingCanvas()) {
                     canvas = NJUtils.makeNJElement("canvas", "Canvas", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
                     var elementModel = TagTool.makeElement(~~drawData.width, ~~drawData.height,
-                                                                        drawData.planeMat, drawData.midPt, canvas);
+                                                                        drawData.planeMat, drawData.midPt, canvas, true);
 
-                    ElementMediator.addElement(canvas, elementModel.data, true);
                     canvas.elementModel.isShape = true;
-                }
-                else
-                {
+                    this.application.ninja.elementMediator.addElements(canvas, elementModel.data);
+                } else {
                     canvas = this._targetedElement;
                     canvas.elementModel.controller = ShapesController;
-                    if(!canvas.elementModel.shapeModel)
-                    {
+                    if(!canvas.elementModel.shapeModel) {
                         canvas.elementModel.shapeModel = Montage.create(ShapeModel);
                     }
                 }
-                this.RenderShape(drawData.width, drawData.height, drawData.planeMat, drawData.midPt, canvas);
-                NJevent("elementAdded", canvas);
             }
 
 			this.endDraw(event);
@@ -93,17 +84,28 @@ exports.ShapeTool = Montage.create(DrawingTool, {
 			this._isDrawing = false;
 			this._hasDraw=false;
 
-
 			this.DrawHandles();
 		}
 	},
+
+    onAddElements: {
+        value: function(el) {
+            var drawData;
+
+            if(drawData = this.getDrawingData()) {
+                this.RenderShape(drawData.width, drawData.height, drawData.planeMat, drawData.midPt, el);
+            }
+        }
+    },
 
     Configure: {
         value: function(wasSelected) {
             if(wasSelected) {
                 this.AddCustomFeedback();
+                this.application.ninja.elementMediator.addDelegate = this;
             } else {
                 this.RemoveCustomFeedback();
+                this.application.ninja.elementMediator.addDelegate = null;
             }
         }
     },
@@ -119,7 +121,7 @@ exports.ShapeTool = Montage.create(DrawingTool, {
 	RemoveCustomFeedback: {
 		value: function (event) {
 			if (this._targetedElement) {
-                this._targetedElement.classList.remove("elem-red-outline");
+                this._targetedElement.classList.remove("active-element-outline");
 				this._targetedElement = null;
 			}
 
@@ -136,23 +138,22 @@ exports.ShapeTool = Montage.create(DrawingTool, {
 	_showFeedbackOnMouseMove: {
 		value: function (event) {
 			// TODO - This call is causing the canvas to redraw 3 times per mouse move
-			var targetedObject = this.application.ninja.stage.GetElement(event);
+			var targetedObject = this.application.ninja.stage.GetSelectableElement(event);
 
 			if (targetedObject) {
-				// TODO - Clean this up
 				if((targetedObject.nodeName === "CANVAS") && !ShapesController.isElementAShape(targetedObject))
 				{
 					if (targetedObject !== this._targetedElement) {
 						if(this._targetedElement)
 						{
-                            this._targetedElement.classList.remove("elem-red-outline");
+                            this._targetedElement.classList.remove("active-element-outline");
 						}
 						this._targetedElement = targetedObject;
-                        this._targetedElement.classList.add("elem-red-outline");
+                        this._targetedElement.classList.add("active-element-outline");
 					}
 				}
 				else if (this._targetedElement) {
-					this._targetedElement.classList.remove("elem-red-outline");
+					this._targetedElement.classList.remove("active-element-outline");
 					this._targetedElement = null;
 				}
 			}
@@ -174,12 +175,12 @@ exports.ShapeTool = Montage.create(DrawingTool, {
     getGLWorld: {
         value: function (canvas, use3D)
         {
-            var world = ElementMediator.getShapeProperty(canvas, "GLWorld");
+            var world = this.application.ninja.elementMediator.getShapeProperty(canvas, "GLWorld");
             if(!world)
             {
                 // create all the GL stuff
                 var world = new World(canvas, use3D);
-                ElementMediator.setShapeProperty(canvas, "GLWorld", world);
+                this.application.ninja.elementMediator.setShapeProperty(canvas, "GLWorld", world);
             }
 
             return world;
@@ -196,7 +197,7 @@ exports.ShapeTool = Montage.create(DrawingTool, {
                             'top' : top + 'px',
                             'left' : left + 'px',
                             '-webkit-transform-style' : 'preserve-3d',
-                            '-webkit-transform' : 'perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
+                            '-webkit-transform' : 'matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
                         };
 
             tmpDiv.width = w;
@@ -205,8 +206,6 @@ exports.ShapeTool = Montage.create(DrawingTool, {
             return {el: tmpDiv, rules: rules};
         }
     },
-
-
 
 	// We can draw on an existing canvas unless it has only a single shape object
 	_useExistingCanvas: {

@@ -56,12 +56,12 @@ var KeleidoscopeMaterial = function KeleidoscopeMaterial() {
 		if (world)  this.setWorld( world );
 
 		// set up the shader
-		this._shader = new jshader();
+		this._shader = new RDGE.jshader();
 		this._shader.def = keleidoscopeMaterialDef;
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = createMaterialNode("keleidoscopeMaterial" + "_" + world.generateUniqueNodeID());
+		this._materialNode = RDGE.createMaterialNode("keleidoscopeMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;
@@ -85,7 +85,7 @@ var KeleidoscopeMaterial = function KeleidoscopeMaterial() {
 		if (material)
 		{
 			var technique = material.shaderProgram['default'];
-			var renderer = g_Engine.getContext().renderer;
+			var renderer = RDGE.globals.engine.getContext().renderer;
 			if (renderer && technique)
 			{
 				if (this._shader && this._shader['default']) {
@@ -95,7 +95,7 @@ var KeleidoscopeMaterial = function KeleidoscopeMaterial() {
 				this._time = time;
 			}
 		}
-	}
+	};
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////

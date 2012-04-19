@@ -1,0 +1,34 @@
+.history_panel {
+    height: 100%;
+    overflow: hidden;
+}
+
+.scroller {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.history_panel ul {
+    padding: 0;
+    margin: 0;
+}
+
+.history_panel li {
+    padding: 10px 15px;
+    list-style: none;
+}
+
+.undo_list li {
+    background-color: hsl(0, 0%, 94%);
+    border-top: 1px solid hsl(0, 0%, 100%);
+    border-bottom: 1px solid hsl(0, 0%, 85%);
+}
+
+.redo_list li {
+    background-color: hsl(199, 71%, 79%);
+    border-top: 1px solid hsl(0, 0%, 100%);
+    border-bottom: 1px solid hsl(0, 0%, 85%);
+}
