@@ -24,8 +24,8 @@ var UberMaterial = function UberMaterial() {
     this._environmentAmount = 0.2; 	// 0 .. 1
 
     // set the default maps
-	this._diffuseMapOb = { 'texture' : 'assets/images/rocky-diffuse.jpg', 'wrap' : 'REPEAT' };
-	//this._diffuseMapOb = { 'texture' : 'texture', 'wrap' : 'REPEAT' };
+	//this._diffuseMapOb = { 'texture' : 'assets/images/rocky-diffuse.jpg', 'wrap' : 'REPEAT' };
+	this._diffuseMapOb = { 'texture' : 'texture', 'wrap' : 'REPEAT' };
     this._normalMapOb = { 'texture': 'assets/images/rocky-normal.jpg', 'wrap': 'REPEAT' };
     this._specularMapOb = { 'texture': 'assets/images/rocky-spec.jpg', 'wrap': 'REPEAT' };
     this._environmentMapOb = { 'texture': 'assets/images/silver.png', 'wrap': 'CLAMP', 'envReflection': this._environmentAmount };
@@ -255,34 +255,34 @@ var UberMaterial = function UberMaterial() {
         }
     };
 
-    this.updateDiffuseMap = function (value) {
-        var value = this._propValues["diffuseMap"];
-        this._diffuseMapOb.texture = value;
+ 	this.updateDiffuseMap = function(value) {
+		var value = this._propValues[ "diffuseMap" ];
+		this._diffuseMapOb.texture = value;
 
-        if ((value == null) || (value.length == 0)) {
-            if (this._useDiffuseMap) {
-                this._useDiffuseMap = false;
+		if ((value == null) || (value.length == 0)) {
+			if (this._useDiffuseMap) {
+				this._useDiffuseMap = false;
                 this._diffuseTexture = undefined;
-                this.rebuildShader();
-            }
-        } else {
-            if (!this._useDiffuseMap) {
-                this._useDiffuseMap = true;
-                this.rebuildShader();
-            } else {
-                var material = this._materialNode;
-                if (material) {
-                    var technique = material.shaderProgram.defaultTechnique;
-                    var renderer = RDGE.globals.engine.getContext().renderer;
-                    if (renderer && technique) {
-                        var tex = renderer.getTextureByName(value, caps.diffuseMap.wrap);
-                        this.registerTexture(tex);
-                        technique.s_diffuseMap.set(tex);
-                    }
-                }
-            }
-        }
-    };
+				this.rebuildShader();
+			}
+		} else {
+			if (!this._useDiffuseMap) {
+				this._useDiffuseMap = true;
+				this.rebuildShader();
+			} else {
+				var material = this._materialNode;
+				if (material) {
+					var technique = material.shaderProgram.defaultTechnique;
+					var renderer = RDGE.globals.engine.getContext().renderer;
+					if (renderer && technique) {
+                        this._diffuseTexture = new Texture( this.getWorld(), value,  caps.diffuseMap.wrap );
+                        var tex = this._diffuseTexture.getTexture();
+						technique.s_diffuseMap.set( tex );
+					}
+				}
+			}
+		}
+	};
 
 		
 	this.updateTextures = function()
@@ -404,7 +404,7 @@ var UberMaterial = function UberMaterial() {
 		if (material)
         {
 		    var technique = material.shaderProgram.defaultTechnique;
-		    var renderer = g_Engine.getContext().renderer;
+		    var renderer = RDGE.globals.engine.getContext().renderer;
 		    if (renderer && technique)
             {
                 if (this._diffuseTexture && this._diffuseTexture.isAnimated())
@@ -738,9 +738,9 @@ var UberMaterial = function UberMaterial() {
 
         var renderer = RDGE.globals.engine.getContext().renderer;
         if (this._useDiffuseMap) {
-            var tex = renderer.getTextureByName(caps.diffuseMap.texture, caps.diffuseMap.wrap, caps.diffuseMap.mips);
-            this.registerTexture(tex);
-            technique.s_diffuseMap.set(tex);
+			this._diffuseTexture = new Texture( this.getWorld(), caps.diffuseMap.texture,  caps.diffuseMap.wrap, caps.diffuseMap.mips );
+            var tex = this._diffuseTexture.getTexture();
+			technique.s_diffuseMap.set( tex );
         }
 
         if (this._useNormalMap) {

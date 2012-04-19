@@ -1214,7 +1214,7 @@ RectangleGeometry.addQuad = function( verts,  normals, uvs )
 RectangleGeometry.buildPrimitive = function()
 {
 	var nVertices = this.vertices.length/3;
-	return ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, g_Engine.getContext().renderer.TRIANGLES, nVertices);
+	return ShapePrimitive.create(this.vertices, this.normals, this.uvs, this.indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, nVertices);
 }
 
 
