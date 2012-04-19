@@ -15,7 +15,7 @@
     "notifications",
     "webRequest",
     "webRequestBlocking",
-    "http://www.google.com/*"
+    "http://localhost:/"
   ],
   "requirements": {
     "3D": {
