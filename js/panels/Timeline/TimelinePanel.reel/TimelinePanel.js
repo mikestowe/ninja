@@ -26,7 +26,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             return this._arrLayers;
         },
         set:function (newVal) {
-//            debugger;
             this._arrLayers = newVal;
             this.needsDraw = true;
             this.cacheTimeline();
@@ -113,8 +112,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 var selectIndex = this.getLayerIndexByID(newVal);
                 this._selectedLayerID = newVal;
                 this._captureSelection = true;
-                //console.log(selectIndex);
-                //debugger;
                 this.selectLayer(selectIndex, true);
             }
         }
@@ -386,10 +383,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             returnObj.layerData.tweens = [];
             returnObj.layerData.layerTag = "";
             returnObj.layerData.isVisible = true;
+            returnObj.layerData.docUUID = this.application.ninja.currentDocument._uuid;
             returnObj.layerData.isTrackAnimated = false;
             returnObj.parentElementUUID = null;
             returnObj.parentElement = null;
-            returnObj.docUUID = this.application.ninja.currentDocument._uuid;
             
             return returnObj;
         }
@@ -525,6 +522,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.drawTimeMarkers();
             // Document switching
             // Check to see if we have saved timeline information in the currentDocument.
+        	//debugger;
             if ((typeof(this.application.ninja.currentDocument.isTimelineInitialized) === "undefined") &&
             	(!this.application.ninja.currentDocument.breadCrumbClick)) {
             	//console.log('TimelinePanel.initTimelineForDocument: new Document');
@@ -581,7 +579,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 
                 // We're reading from the cache, not writing to it.
             	this._boolCacheArrays = false;
-
                 for (i = 0; i < tlArrLayersLength; i++) {
                     if (this.application.ninja.currentDocument.tlArrLayers[i].layerData.isSelected === true) {
                         this.application.ninja.currentDocument.tlArrLayers[i].layerData._isFirstDraw = true;
@@ -675,11 +672,16 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     handleBreadCrumbBinding:{
         value:function(event){
+        	// Might fire if currentDocument has not yet been initialized.
 			if (this.application.ninja.currentDocument == null) {
 				return;
 			}
-            if((typeof(this.application.ninja.currentDocument.isTimelineInitialized) === "undefined"))
-               return;
+			// Might fire if currentDocument is initialized but cache has not been initialized
+            if(typeof(this.application.ninja.currentDocument.isTimelineInitialized) === "undefined") {
+            	return;
+            }
+            
+            // If the breadCrumb has been clicked, we need to change documents.
             if(this.application.ninja.currentDocument.breadCrumbClick){
                 this.handleDocumentChange(event);
             }
@@ -1040,7 +1042,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
             this.layerRepetition.selectedIndexes = [layerIndex];
             this.currentLayerSelected = this.arrLayers[layerIndex];
-
             if (userSelection) {
                 if (this._captureSelection) {
 

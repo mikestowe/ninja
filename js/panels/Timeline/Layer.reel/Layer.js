@@ -482,6 +482,7 @@ var Layer = exports.Layer = Montage.create(Component, {
             this.layerTag = this.layerData.layerTag;
             this.isVisible = this.layerData.isVisible;
             this.isAnimated = this.layerData.isAnimated;
+            this.docUUID = this.layerData.docUUID;
             this.needsDraw = boolNeedsDraw;
         }
     },
