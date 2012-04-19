@@ -6,7 +6,6 @@
 
 var Montage = require("montage/core/core").Montage;
 var Component = require("montage/ui/component").Component;
-var ElementsMediator = require("js/mediators/element-mediator").ElementMediator;
 
 var Tween = exports.Tween = Montage.create(Component, {
 
@@ -228,8 +227,8 @@ var Tween = exports.Tween = Montage.create(Component, {
             var currentTop = this.tweenedProperties["top"] + "px";
             var currentLeft = this.tweenedProperties["left"] + "px";
 
-            ElementsMediator.setProperty([this.parentComponent.parentComponent.animatedElement], "top", [currentTop], "Change", "tween");
-            ElementsMediator.setProperty([this.parentComponent.parentComponent.animatedElement], "left", [currentLeft], "Change", "tween");
+            this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.animatedElement], "top", [currentTop], "Change", "tween");
+            this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.animatedElement], "left", [currentLeft], "Change", "tween");
 
         }
     },
