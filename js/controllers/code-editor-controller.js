@@ -199,5 +199,18 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
         value: function(){
             this.application.ninja.documentController.activeDocument.editor.setOption("theme", this.editorTheme);
         }
+    },
+
+    applySettings:{
+        value:function(){
+            var codeLineElem = null, i=0;
+            //set theme
+            this.handleThemeSelection();
+            //check autocomplete support
+            this.handleCodeCompletionSupport(this.application.ninja.documentController.activeDocument.editor.getOption("mode"));
+            //set zoom
+            codeLineElem = this.application.ninja.documentController.activeDocument.container.getElementsByClassName("CodeMirror-lines")[0];
+            codeLineElem.style.fontSize = ""+this._editorFont+"px";
+        }
     }
 });

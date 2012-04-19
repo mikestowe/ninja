@@ -94,14 +94,13 @@ exports.StageView = Montage.create(Component, {
             doc.editor = this.application.ninja.codeEditorController.createEditor(doc, type);
             doc.editor.hline = doc.editor.setLineClass(0, "activeline");
 
-            this.showCodeViewBar(true);
-
-            this.application.ninja.codeEditorController.handleCodeCompletionSupport(type);
-
             this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
             this.application.ninja.documentController.activeDocument = doc;
             this.application.ninja.stage.hideCanvas(true);
             document.getElementById("iframeContainer").style.display="none";//hide the iframe when switching to code view
+
+            this.showCodeViewBar(true);
+            this.application.ninja.codeEditorController.applySettings();
             this.collapseAllPanels();
         }
     },
@@ -117,11 +116,6 @@ exports.StageView = Montage.create(Component, {
 
             if(this.application.ninja.documentController.activeDocument.currentView === "design") {
                 this.application.ninja.currentDocument = this.application.ninja.documentController.activeDocument;
-
-                this.showCodeViewBar(false);
-            }else{
-                this.showCodeViewBar(true);
-                this.application.ninja.codeEditorController.handleCodeCompletionSupport(this.application.ninja.documentController.activeDocument.editor.getOption("mode"));
             }
 
             this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
@@ -129,13 +123,17 @@ exports.StageView = Montage.create(Component, {
             //focus editor
             if(!!this.application.ninja.documentController.activeDocument && !!this.application.ninja.documentController.activeDocument.editor){
                 this.application.ninja.documentController.activeDocument.editor.focus();
-                this.application.ninja.codeEditorController.handleThemeSelection();
+
+                this.showCodeViewBar(true);
+                this.application.ninja.codeEditorController.applySettings();
                 this.collapseAllPanels();
             }
 
             if(this.application.ninja.documentController.activeDocument.currentView === "design") {
                 this.application.ninja.stage._scrollFlag = true; // TODO HACK to prevent type error on Hide/Show Iframe
                 this.application.ninja.stage.stageDeps.reinitializeForSwitchDocument();//reinitialize draw-util, snapmanager and view-util
+
+                this.showCodeViewBar(false);
                 this.restoreAllPanels();
             }
 
