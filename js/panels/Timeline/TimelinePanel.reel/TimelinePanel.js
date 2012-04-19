@@ -112,7 +112,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 var selectIndex = this.getLayerIndexByID(newVal);
                 this._selectedLayerID = newVal;
                 this._captureSelection = true;
-                this.selectLayer(selectIndex);
+                //console.log(selectIndex);
+                //debugger;
+                this.selectLayer(selectIndex, true);
             }
         }
     },
@@ -410,6 +412,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             returnObj.layerData.isTrackAnimated = false;
             returnObj.parentElementUUID = null;
             returnObj.parentElement = null;
+            returnObj.docUUID = this.application.ninja.currentDocument._uuid;
             
             return returnObj;
         }
@@ -536,14 +539,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             // Initialize BreadCrumb 
             this.application.ninja.breadCrumbClick = false;
             this.enablePanel(false);
-            
-            /*
-            Object.defineBinding(this, "breadCrumbContainer", {
-                boundObject:this.application.ninja,
-                boundObjectPropertyPath:"currentSelectedContainer",
-                oneway:true
-            });
-            */
+
         }
     },
 
@@ -684,6 +680,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             // Clear the timeline but not the cache
             //console.log('TimelinePanel.handleDocumentChange');
             if ((event.type === "closeDocument") && (this.application.ninja.documentController._documents.length > 0)) {
+            	// Ignore extra closeDocument event that fires while there are still documents open.
             	return;
             }
             this._boolCacheArrays = false;

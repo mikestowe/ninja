@@ -113,7 +113,18 @@ var Layer = exports.Layer = Montage.create(Component, {
 	    	this.layerData.layerTag = newVal;
         }
     },
-    
+    _docUUID : {
+    	value: null
+    },
+    docUUID : {
+    	serializable: true,
+    	get: function() {
+    		return this._docUUID;
+    	},
+    	set: function(newVal) {
+    		this._docUUID = newVal;
+    	}
+    },
     /* Position and Transform hottext values */
     _dtextPositionX : {
         value:null,
@@ -555,10 +566,15 @@ var Layer = exports.Layer = Montage.create(Component, {
     },
     didDraw: {
     	value: function() {
-    		if ((this.isSelected === true) && (this._isFirstDraw === true)) {
-    			// Once we're done drawing the first time we need to tell the TimelinePanel if
-    			// this layer is supposed to be selected.
-    			this.parentComponent.parentComponent.selectedLayerID = this.layerID;
+    		if (this._isFirstDraw === true) {
+    			if (this.isSelected === true) {
+    				if (this.application.ninja.currentDocument._uuid === this._docUUID) {
+		    			// Once we're done drawing the first time we need to tell the TimelinePanel if
+		    			// this layer is supposed to be selected.
+		    			//console.log('layerName ' +  this.layerName);
+		    			this.parentComponent.parentComponent.selectedLayerID = this.layerID;
+					}
+    			}
     			this._isFirstDraw = false;
     		}
     	}
@@ -567,36 +583,16 @@ var Layer = exports.Layer = Montage.create(Component, {
 	
 	/* Begin: Controllers */
 	
-	// Initialize a just-created layer with some basic defaults and needed selectors.
+	// Initialize a just-created layer
 	init: {
 		value: function() {
-			// Default some vars
-			//this.arrLayerStyles = [];
-			
 			// Get some selectors.
         	this.label = this.element.querySelector(".label-layer");
         	this.titleSelector = this.label.querySelector(".collapsible-label");
         	this.buttonAddStyle = this.element.querySelector(".button-add");
         	this.buttonDeleteStyle = this.element.querySelector(".button-delete");
-        	
-        	
-
 		}
 	},
-    selectLayer:{
-        value:function(){
-            // this.mainCollapser.header.classList.add("layerSelected");
-            this.element.classList.add("layerSelected");
-            this.isSelected = true;
-        }
-    },
-    deselectLayer:{
-        value:function(){
-            // this.mainCollapser.header.classList.remove("layerSelected");
-            this.element.classList.remove("layerSelected");
-            this.isSelected = false;
-        }
-    },
 	addStyle : {
 		value: function() {
 			// Add a new style rule.  It should be added above the currently selected rule, 
