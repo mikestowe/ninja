@@ -1,7 +1,7 @@
 {
   "name": "Ninja",
   "description": "Ninja HTML5 Authoring Tool - Alpha Release",
-  "version": "0.5.1.0",
+  "version": "0.5.3.0",
   "app": {
     "launch": {
       "local_path": "index.html"
@@ -22,7 +22,7 @@
       "features": ["css3d", "webgl"]
     }
   },
-  "minimum_chrome_version": "17.0.0.0",
+  "minimum_chrome_version": "18.0.1025.162",
   "offline_enabled": true,
   "update_url": "http://ninjateam.am.mot.com/NinjaApp/update.xml"
 }
