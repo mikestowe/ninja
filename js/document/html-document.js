@@ -17,6 +17,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     
     _selectionExclude: { value: null, enumerable: false },
     _htmlTemplateUrl: { value: "js/document/templates/montage-html/index.html", enumerable: false},
+    _webTemplateUrl: { value: "js/document/templates/montage-web/index.html", enumerable: false},
     _iframe: { value: null, enumerable: false },
     _server: { value: null, enumerable: false },
     _templateDocument: { value: null, enumerable: false },
@@ -393,7 +394,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     ////////////////////////////////////////////////////////////////////
 	//
     initialize: {
-		value: function(file, uuid, iframe, callback) {
+		value: function(file, uuid, iframe, callback, webTemplate) {
 			this.application.ninja.documentController._hackRootFlag = false;
 			//
 			this._userDocument = file;
@@ -404,8 +405,13 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             this.selectionExclude = ["HTML", "BODY", "Viewport", "UserContent", "stageBG"];
             this.currentView = "design";
 			//
-			this.iframe.src = this._htmlTemplateUrl;
-            this.iframe.addEventListener("load", this, true);
+            if(webTemplate) {
+                this.iframe.src = this._webTemplateUrl;
+                this.iframe.addEventListener("load", this.handleWebTemplateLoad.bind(this), true);
+            } else {
+                this.iframe.src = this._htmlTemplateUrl;
+                this.iframe.addEventListener("load", this, true);
+            }
         }
     },
     ////////////////////////////////////////////////////////////////////
@@ -528,7 +534,215 @@ exports.HTMLDocument = Montage.create(TextDocument, {
   		value: 0
   	},
 */
-  	
+    handleWebTemplateLoad: {
+        value: function(event) {
+            //TODO: Clean up, using for prototyping save
+            this._templateDocument = {};
+            this._templateDocument.html = this.iframe.contentWindow.document;
+//            this._templateDocument.head = this.iframe.contentWindow.document.getElementById("userHead");
+            this._templateDocument.body = this.documentRoot = this.iframe.contentWindow.document.body;
+            //TODO: Remove, also for prototyping
+            this.application.ninja.documentController._hackRootFlag = true;
+            //
+//            this.stageBG = this.iframe.contentWindow.document.getElementById("stageBG");
+            this._document = this.iframe.contentWindow.document;
+            this._window = this.iframe.contentWindow;
+
+            for (var k in this._document.styleSheets) {
+                if (this._document.styleSheets[k].ownerNode && this._document.styleSheets[k].ownerNode.setAttribute) {
+                    this._document.styleSheets[k].ownerNode.setAttribute('data-ninja-template', 'true');
+                }
+            }
+
+            //Adding a handler for the main user document reel to finish loading
+            this._document.body.addEventListener("userTemplateDidLoad",  this.userTemplateDidLoad.bind(this), false);
+
+            // Live node list of the current loaded document
+            this._liveNodeList = this.documentRoot.getElementsByTagName('*');
+
+            // TODO Move this to the appropriate location
+            var len = this._liveNodeList.length;
+
+            for(var i = 0; i < len; i++) {
+                NJUtils.makeModelFromElement(this._liveNodeList[i]);
+            }
+
+            setTimeout(function () {
+
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                if(this._document.styleSheets.length) {
+                    //Checking all styleSheets in document
+                    for (var i in this._document.styleSheets) {
+                        //If rules are null, assuming cross-origin issue
+                        if(this._document.styleSheets[i].rules === null) {
+                            //TODO: Revisit URLs and URI creation logic, very hack right now
+                            var fileUri, cssUrl, cssData, query, prefixUrl, fileCouldDirUrl, docRootUrl;
+                            //
+                            docRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
+                            //TODO: Parse out relative URLs and map them to absolute
+                            if (this._document.styleSheets[i].href.indexOf(this.application.ninja.coreIoApi.rootUrl) !== -1) {
+                                //
+                                cssUrl = this._document.styleSheets[i].href.split(this.application.ninja.coreIoApi.rootUrl)[1];
+                                fileUri = this.application.ninja.coreIoApi.cloudData.root+cssUrl;
+                                //TODO: Add error handling for reading file
+                                cssData = this.application.ninja.coreIoApi.readFile({uri: fileUri});
+                                //
+                                var tag = this.iframe.contentWindow.document.createElement('style');
+                                tag.setAttribute('type', 'text/css');
+                                tag.setAttribute('data-ninja-uri', fileUri);
+                                tag.setAttribute('data-ninja-file-url', cssUrl);
+                                tag.setAttribute('data-ninja-file-read-only', JSON.parse(this.application.ninja.coreIoApi.isFileWritable({uri: fileUri}).content).readOnly);
+                                tag.setAttribute('data-ninja-file-name', cssUrl.split('/')[cssUrl.split('/').length-1]);
+                                //Copying attributes to maintain same properties as the <link>
+                                for (var n in this._document.styleSheets[i].ownerNode.attributes) {
+                                    if (this._document.styleSheets[i].ownerNode.attributes[n].value && this._document.styleSheets[i].ownerNode.attributes[n].name !== 'disabled' && this._document.styleSheets[i].ownerNode.attributes[n].name !== 'disabled') {
+                                        if (this._document.styleSheets[i].ownerNode.attributes[n].value.indexOf(docRootUrl) !== -1) {
+                                            tag.setAttribute(this._document.styleSheets[i].ownerNode.attributes[n].name, this._document.styleSheets[i].ownerNode.attributes[n].value.split(docRootUrl)[1]);
+                                        } else {
+                                            tag.setAttribute(this._document.styleSheets[i].ownerNode.attributes[n].name, this._document.styleSheets[i].ownerNode.attributes[n].value);
+                                        }
+                                    }
+                                }
+                                //
+                                fileCouldDirUrl = this._document.styleSheets[i].href.split(this._document.styleSheets[i].href.split('/')[this._document.styleSheets[i].href.split('/').length-1])[0];
+
+                                //TODO: Make public version of this.application.ninja.ioMediator.getNinjaPropUrlRedirect with dynamic ROOT
+                                tag.innerHTML = cssData.content.replace(/url\(()(.+?)\1\)/g, detectUrl);
+
+                                function detectUrl (prop) {
+                                    return prop.replace(/[^()\\""\\'']+/g, prefixUrl);;
+                                }
+
+                                function prefixUrl (url) {
+                                    if (url !== 'url') {
+                                        if (!url.match(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi)) {
+                                            url = fileCouldDirUrl+url;
+                                        }
+                                    }
+                                    return url;
+                                }
+
+                                //Looping through DOM to insert style tag at location of link element
+                                query = this._templateDocument.html.querySelectorAll(['link']);
+                                for (var j in query) {
+                                    if (query[j].href === this._document.styleSheets[i].href) {
+                                        //Disabling style sheet to reload via inserting in style tag
+                                        query[j].setAttribute('disabled', 'true');
+                                        //Inserting tag
+                                        this._templateDocument.head.insertBefore(tag, query[j]);
+                                    }
+                                }
+                            } else {
+                                console.log('ERROR: Cross-Domain-Stylesheet detected, unable to load in Ninja');
+                                //None local stylesheet, probably on a CDN (locked)
+                                var tag = this.iframe.contentWindow.document.createElement('style');
+                                tag.setAttribute('type', 'text/css');
+                                tag.setAttribute('data-ninja-external-url', this._document.styleSheets[i].href);
+                                tag.setAttribute('data-ninja-file-read-only', "true");
+                                tag.setAttribute('data-ninja-file-name', this._document.styleSheets[i].href.split('/')[this._document.styleSheets[i].href.split('/').length-1]);
+                                //Copying attributes to maintain same properties as the <link>
+                                for (var n in this._document.styleSheets[i].ownerNode.attributes) {
+                                    if (this._document.styleSheets[i].ownerNode.attributes[n].value && this._document.styleSheets[i].ownerNode.attributes[n].name !== 'disabled' && this._document.styleSheets[i].ownerNode.attributes[n].name !== 'disabled') {
+                                        if (this._document.styleSheets[i].ownerNode.attributes[n].value.indexOf(docRootUrl) !== -1) {
+                                            tag.setAttribute(this._document.styleSheets[i].ownerNode.attributes[n].name, this._document.styleSheets[i].ownerNode.attributes[n].value.split(docRootUrl)[1]);
+                                        } else {
+                                            tag.setAttribute(this._document.styleSheets[i].ownerNode.attributes[n].name, this._document.styleSheets[i].ownerNode.attributes[n].value);
+                                        }
+                                    }
+                                }
+                                /*
+
+                                //TODO: Figure out cross-domain XHR issue, might need cloud to handle
+                                var xhr = new XMLHttpRequest();
+                                xhr.open("GET", this._document.styleSheets[i].href, true);
+                                xhr.send();
+                                //
+                                if (xhr.readyState === 4) {
+                                    console.log(xhr);
+                                }
+                                //tag.innerHTML = xhr.responseText //xhr.response;
+                                */
+                                //Temp rule so it's registered in the array
+                                tag.innerHTML = 'noRULEjustHACK{background: #000}';
+                                //Disabling external style sheets
+                                query = this._templateDocument.html.querySelectorAll(['link']);
+                                for (var k in query) {
+                                    if (query[k].href === this._document.styleSheets[i].href) {
+
+                                        //TODO: Removed the temp insertion of the stylesheet
+                                        //because it wasn't the proper way to do it
+                                        //need to be handled via XHR with proxy in Cloud Sim
+
+                                        //Disabling style sheet to reload via inserting in style tag
+                                        //var tempCSS = query[k].cloneNode(true);
+                                        //tempCSS.setAttribute('data-ninja-template', 'true');
+                                        query[k].setAttribute('disabled', 'true');
+                                        //this.iframe.contentWindow.document.head.appendChild(tempCSS);
+                                        //Inserting tag
+                                        this._templateDocument.head.insertBefore(tag, query[k]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    ////////////////////////////////////////////////////////////////////////////
+                    ////////////////////////////////////////////////////////////////////////////
+
+                    //TODO: Check if this is needed
+                    this._stylesheets = this._document.styleSheets;
+
+                    ////////////////////////////////////////////////////////////////////////////
+                    ////////////////////////////////////////////////////////////////////////////
+
+                    //TODO Finish this implementation once we start caching Core Elements
+                    // Assign a model to the UserContent and add the ViewPort reference to it.
+                    NJUtils.makeElementModel(this.documentRoot, "Stage", "stage");
+                    //this.documentRoot.elementModel.viewPort = this.iframe.contentWindow.document.getElementById("Viewport");
+
+
+
+                    for(i = 0; i < this._stylesheets.length; i++) {
+                        if(this._stylesheets[i].ownerNode.id === this._stageStyleSheetId) {
+                            this.documentRoot.elementModel.defaultRule = this._stylesheets[i];
+                            break;
+                        }
+                    }
+
+                    //Temporary create properties for each rule we need to save the index of the rule
+                    var len = this.documentRoot.elementModel.defaultRule.cssRules.length;
+                    for(var j = 0; j < len; j++) {
+                        //console.log(this.documentRoot.elementModel.defaultRule.cssRules[j].selectorText);
+                        if(this.documentRoot.elementModel.defaultRule.cssRules[j].selectorText === "*") {
+
+                            this.documentRoot.elementModel.transitionStopRule = this.documentRoot.elementModel.defaultRule.cssRules[j];
+
+                        } else if(this.documentRoot.elementModel.defaultRule.cssRules[j].selectorText === "body") {
+
+                            this.documentRoot.elementModel.body = this.documentRoot.elementModel.defaultRule.cssRules[j];
+
+                        }
+                    }
+
+                    this.callback(this);
+
+                    //Setting webGL data
+                    if (this._templateDocument.webgl) {
+                        this.glData = this._templateDocument.webgl;
+                    }
+                }
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+            }.bind(this), 1000);
+        }
+    },
   	
 	////////////////////////////////////////////////////////////////////
 	//

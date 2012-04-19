@@ -187,6 +187,7 @@ exports.Properties = Montage.create(Component, {
 
     displayStageProperties: {
         value: function() {
+            /*
             var stage = this.application.ninja.currentDocument.documentRoot;
             //this is test code please remove
             this.elementName.value = "Stage";
