@@ -151,7 +151,17 @@ exports.PenTool = Montage.create(ShapeTool, {
     //use the snap manager to build a hit record corresponding to the screen X, Y position
     // will use the plane of the selected path as the working plane if available, else use stage
     getHitRecord:{
-        value: function(x,y){
+        value: function(x,y, doSnap){
+            var elemSnap = snapManager.elementSnapEnabled();
+            var gridSnap = snapManager.gridSnapEnabled();
+            var alignSnap = snapManager.snapAlignEnabled();
+
+            if (!doSnap){
+                snapManager.enableElementSnap(false);
+                snapManager.enableGridSnap(false);
+                snapManager.enableSnapAlign(false);
+            }
+
             if (this._selectedSubpathCanvas){
                 var drawingCanvas = this._selectedSubpathCanvas;
                 var contentPlane = ViewUtils.getUnprojectedElementPlane(drawingCanvas);
@@ -162,6 +172,12 @@ exports.PenTool = Montage.create(ShapeTool, {
             var hitRec = snapManager.snap(tmpPoint.x, tmpPoint.y, false);
             if (this._selectedSubpathCanvas){
                 snapManager.popWorkingPlane();
+            }
+
+            if (!doSnap){
+                snapManager.enableElementSnap(elemSnap);
+                snapManager.enableGridSnap(gridSnap);
+                snapManager.enableSnapAlign(alignSnap);
             }
             return hitRec;
         }
@@ -247,7 +263,7 @@ exports.PenTool = Montage.create(ShapeTool, {
             }
 
             //build the hit record for the current mouse position (on the stage or the plane of the path canvas)
-            var hitRec = this.getHitRecord(event.pageX, event.pageY);
+            var hitRec = this.getHitRecord(event.pageX, event.pageY, false);
             
             if (this._selectedSubpathCanvas === null){
                 //IF this is the first anchor point of the selected subpath
@@ -409,7 +425,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                     "url('images/cursors/penCursors/Pen_newPath.png') 5 1, default";
             }
 
-            var hitRec = this.getHitRecord(event.pageX, event.pageY);
+            var hitRec = this.getHitRecord(event.pageX, event.pageY, false);
 
             var drawingCanvas=null, globalMousePos=null, localMousePos=null;
             if (this._selectedSubpath ){
