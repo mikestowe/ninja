@@ -405,14 +405,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                 //NOTE: this will work on Webkit only...IE has different codes (left: 1, middle: 4, right: 2)
                 return;
             }
-
-            if (!this._selectedSubpath ){
-                return; //nothing to do in case no subpath is selected
-            }
-            //clear the canvas before we draw anything else
-            this.application.ninja.stage.clearDrawingCanvas();
-            this._hoveredAnchorIndex = -1;
-
+            
             //set the cursor to be the default cursor (depending on whether the selected subpath has any points yet)
             if (this._selectedSubpath && this._selectedSubpath.getNumAnchors()>0){
                 this.application.ninja.stage.drawingCanvas.style.cursor = //"auto";
@@ -423,13 +416,29 @@ exports.PenTool = Montage.create(ShapeTool, {
                     "url('images/cursors/penCursors/Pen_newPath.png') 5 1, default";
             }
 
+            if (!this._selectedSubpath ){
+                return; //nothing to do in case no subpath is selected
+            }
+
+            //clear the canvas before we draw anything else
+            this.application.ninja.stage.clearDrawingCanvas();
+            this._hoveredAnchorIndex = -1;
+
             var hitRec = this.getHitRecord(event.pageX, event.pageY, false);
+            var globalMousePos=null, localMousePos=null, stageWorldMousePos = null;
             var drawingCanvas = this._selectedSubpath.getCanvas();
             if (!drawingCanvas){
                 drawingCanvas = ViewUtils.getStageElement();
+                stageWorldMousePos = hitRec.calculateStageWorldPoint();
+                stageWorldMousePos[0]+= snapManager.getStageWidth()*0.5;
+                stageWorldMousePos[1]+= snapManager.getStageHeight()*0.5;
+                localMousePos = stageWorldMousePos; //since the subpath points are in stage world space, set the 'localMousePos' to be stage world as well
             }
-            var globalMousePos = hitRec.getScreenPoint();
-            var localMousePos = ViewUtils.globalToLocal(globalMousePos, drawingCanvas);
+            else {
+                globalMousePos = hitRec.getScreenPoint();
+                localMousePos = ViewUtils.globalToLocal(globalMousePos, drawingCanvas);
+            }
+
 
             if (this._isDrawing) {
                 //if there is a selected subpath with a selected anchor point
