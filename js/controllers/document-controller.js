@@ -332,7 +332,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 			this.documentHackReference = doc;
 			//
 			switch (doc.extension) {
-				case 'html': case 'html':
+				case 'html':
 					//Open in designer view
 					Montage.create(HTMLDocument).initialize(doc, Uuid.generate(), this._createIframeElement(), this._onOpenDocument.bind(this), this.webTemplate);
 					break;
