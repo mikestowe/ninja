@@ -6,10 +6,7 @@
 
 var Montage = require("montage/core/core").Montage;
 var Component = require("montage/ui/component").Component;
-var Layer = require("js/panels/Timeline/Layer.reel").Layer;
-var TimelineTrack = require("js/panels/Timeline/TimelineTrack.reel").TimelineTrack;
 var nj = require("js/lib/NJUtils").NJUtils;
-var ElementMediator = require("js/mediators/element-mediator").ElementMediator;
 
 var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
