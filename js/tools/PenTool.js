@@ -582,6 +582,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                 world.render();
                 //TODO this will not work if there are multiple shapes in the same canvas
                 newCanvas.elementModel.shapeModel.GLGeomObj = subpath;
+                newCanvas.elementModel.isShape = true;
                 newCanvas.elementModel.shapeModel.shapeCount++;
                 if(newCanvas.elementModel.shapeModel.shapeCount === 1)
                 {
@@ -601,7 +602,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                     // TODO - update the shape's info only.  shapeModel will likely need an array of shapes.
                 }
 
-                //if(newCanvas.elementModel.isShape) //todo why is this not true for the path canvas? 
+                if(newCanvas.elementModel.isShape) //todo why is this not true for the path canvas?
                 {
                     this.application.ninja.selectionController.selectElement(newCanvas);
                 }
@@ -643,7 +644,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                 //TODO this will not work if there are multiple shapes in the same canvas
                 canvas.elementModel.shapeModel.GLGeomObj = subpath;
 
-                //if(newCanvas.elementModel.isShape) //todo why is this not true for the path canvas?
+                if(canvas.elementModel.isShape) //todo why is this not true for the path canvas?
                 {
                     this.application.ninja.selectionController.selectElement(canvas);
                 }
@@ -776,6 +777,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                 var tMat = Matrix.Translation([centerDisp[0], centerDisp[1],centerDisp[2]]);
                 var tInvMat = Matrix.Translation([-centerDisp[0], -centerDisp[1], -centerDisp[2]]);
                 var newMat = Matrix.I(4);
+                this._selectedSubpathPlaneMat = ElementMediator.getMatrix(this._selectedSubpathCanvas);
                 glmat4.multiply( tInvMat, this._selectedSubpathPlaneMat, newMat);
                 glmat4.multiply( newMat, tMat, newMat);
                 this._selectedSubpathPlaneMat = newMat;
@@ -927,10 +929,8 @@ exports.PenTool = Montage.create(ShapeTool, {
 
     HandleDoubleClick: {
         value: function () {
-            return;
-            /*
             //if there is a selected anchor point
-            if (this._selectedSubpath && this._selectedSubpath.getSelectedAnchorIndex() !== -1) {
+            if (this._selectedSubpath && this._selectedSubpath.getNumAnchors()>1 && this._selectedSubpath.getSelectedAnchorIndex() !== -1) {
                 var selAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
                 var pos = [selAnchor.getPosX(), selAnchor.getPosY(), selAnchor.getPosZ()];
                 var distToPrev = selAnchor.getPrevDistanceSq(pos[0], pos[1], pos[2]);
@@ -992,7 +992,8 @@ exports.PenTool = Montage.create(ShapeTool, {
                 } // else of if (distToPrev < threshSq) {
 
                 this._selectedSubpath.makeDirty();
-                this._selectedSubpath.createSamples();
+                this._selectedSubpath.createSamples(false);
+                this.PrepareSelectedSubpathForRendering();
                 this.ShowSelectedSubpath();
 
                 //clear the canvas before we draw anything else
@@ -1000,7 +1001,7 @@ exports.PenTool = Montage.create(ShapeTool, {
 
                 this.DrawSubpathAnchors(this._selectedSubpath);
             } //if (this._selectedSubpath && this._selectedSubpath.getSelectedAnchorIndex() !== -1) 
-            */
+
         } //value: function () {
     }, //HandleDoubleClick: {
 
