@@ -675,7 +675,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     handleBreadCrumbBinding:{
         value:function(event){
-
+			if (this.application.ninja.currentDocument == null) {
+				return;
+			}
             if((typeof(this.application.ninja.currentDocument.isTimelineInitialized) === "undefined"))
                return;
             if(this.application.ninja.currentDocument.breadCrumbClick){
