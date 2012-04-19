@@ -213,7 +213,7 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
             				xhr.responseType = "arraybuffer"; 
             				xhr.send();
             				//Checking for status
-            				if (xhr.readyState === 4) { //TODO: add check for mime type
+            				if (xhr.readyState === 4) {
             					//Creating new file from loaded content
             					this.chromeApi.fileNew('/'+tocopylibs[i].name+'/'+tocopylibs[i].file, xhr.response, function (status) {if(status) this.libraryCopied()}.bind(this));
             				} else {
