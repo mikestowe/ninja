@@ -281,7 +281,7 @@ GLSubpath.prototype.setCanvasCenterLocalCoord = function(center){
 };
 
 GLSubpath.prototype.getCanvasCenterLocalCoord = function(){
-    return this._canvasCenterLocalCoord;
+    return [this._canvasCenterLocalCoord[0],this._canvasCenterLocalCoord[1],this._canvasCenterLocalCoord[2]];
 };
 
 GLSubpath.prototype.getNumAnchors = function () {

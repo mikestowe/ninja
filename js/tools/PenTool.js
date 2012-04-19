@@ -572,6 +572,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                 var world = this.getGLWorld(newCanvas, this._useWebGL);//this.options.use3D);//this.CreateGLWorld(planeMat, midPt, newCanvas, this._useWebGL);//fillMaterial, strokeMaterial);
                 //store a reference to this newly created canvas
                 this._selectedSubpathCanvas = newCanvas;
+                this._selectedSubpathPlaneMat = ElementMediator.getMatrix(newCanvas);
 
                 var subpath = this._selectedSubpath; //new GLSubpath();
                 subpath.setWorld(world);
@@ -820,6 +821,7 @@ exports.PenTool = Montage.create(ShapeTool, {
     },
 
     //perform the inverse of the perspective scaling performed by the browser
+    //  (currently unused function)
     _unprojectPt: {
         value: function(pt, pespectiveDist) {
             var retPt = pt.slice(0);
@@ -1254,6 +1256,8 @@ exports.PenTool = Montage.create(ShapeTool, {
             if (wasSelected) {
                 defaultEventManager.addEventListener("resetPenTool", this, false);
                 this.application.ninja.elementMediator.deleteDelegate = this;
+                this.application.ninja.stage.drawingCanvas.style.cursor = //"auto";
+                    "url('images/cursors/penCursors/Pen_newPath.png') 5 1, default";
 
                 if (this.application.ninja.selectedElements.length === 0){
                     this._entryEditMode = this.ENTRY_SELECT_NONE;
@@ -1328,6 +1332,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                      this._selectedSubpath.createSamples(false);
                      //clear the canvas
                      this.application.ninja.stage.clearDrawingCanvas();//stageManagerModule.stageManager.clearDrawingCanvas();
+                     this.PrepareSelectedSubpathForRendering();
                      this.DrawSubpathAnchors(this._selectedSubpath);
                      this.ShowSelectedSubpath();
                  }
