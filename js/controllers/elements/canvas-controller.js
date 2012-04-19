@@ -33,5 +33,13 @@ exports.CanvasController = Montage.create(ElementController, {
                     ElementController.setProperty(el, p, value);
             }
         }
+    },
+
+    setProperties: {
+        value: function(element, properties) {
+            for(var property in properties) {
+                this.setProperty(element, property, properties[property]);
+            }
+        }
     }
 });

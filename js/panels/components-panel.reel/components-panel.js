@@ -367,7 +367,7 @@ exports.ComponentsPanel = Montage.create(Component, {
                     break;
                 case "textarea":
                     el = NJUtils.makeNJElement("textarea", "TextArea", "component");
-                    el.elementModel.pi = "TextAreaPi";
+                    el.elementModel.pi = "TextareaPi";
                     break;
                 case "toggleButton":
                     el = NJUtils.makeNJElement("button", "Toggle Button", "component");

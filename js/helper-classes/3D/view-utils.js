@@ -135,6 +135,12 @@ exports.ViewUtils = Montage.create(Component, {
             var stageMat = this.getMatrixFromElement(stage);
             var stagePlane = [stageMat[8],  stageMat[9],  stageMat[10],  stageMat[11]];
 
+			if (elt === stage)
+			{
+				xVec = [1,0,0];
+				yVec = [0,1,0];
+			}
+
             var xDot = Math.abs(vecUtils.vecDot(3, xVec, stagePlane));
             var yDot = Math.abs(vecUtils.vecDot(3, yVec, stagePlane));
 
@@ -833,48 +839,6 @@ exports.ViewUtils = Montage.create(Component, {
         }
     },
 
-    /*
-    getStageWorldToGlobalMatrix: {
-        value: function() {
-            var stage = this.application.ninja.currentDocument.documentRoot,
-                projMat;
-            this.pushViewportObj( stage );
-
-            // get the matrix to the parent
-            var mat = Matrix.I(4);
-
-            var cop = this.getCenterOfProjection();
-            var v2s = Matrix.Translation([cop[0], cop[1], 0]);
-
-            var p = this.getPerspectiveDistFromElement(stage);
-            if(p)
-            {
-                projMat = glmat4.scale( Matrix.I(4), [p,p,p], [] );
-                projMat[11] = -1;
-                mat = glmat4.multiply( v2s, projMat, [] );
-            }
-            else
-            {
-                mat = v2s;
-            }
-
-            // offset to the parent
-            var offset = this.getElementOffset( stage );
-            var offMat = Matrix.Translation([offset[0], offset[1], 0]);
-            //mat = offMat.multiply( mat );
-            glmat4.multiply( offMat, mat, mat );
-
-            this.popViewportObj();
-
-    //        var mat2 = this.getLocalToGlobalMatrix( stage.parentElement );
-            var mat2 = this.getLocalToGlobalMatrix( this._rootElement );
-            //var mat = mat2.multiply( mat );
-            glmat4.multiply( mat2, mat, mat );
-
-            return mat;
-        }
-    },
-    */
     getStageWorldToGlobalMatrix:
     {
         value: function()
