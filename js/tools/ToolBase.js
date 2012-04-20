@@ -109,13 +109,13 @@ exports.toolBase = Montage.create(Component, {
         value:function(event){
             var upperBoundary ,previousZoomValue;
 
-            previousZoomValue = this.application.Ninja._documentBarRef.zoomFactor ;
+            previousZoomValue = this.application.ninja.documentBar.zoomFactor;
             upperBoundary = previousZoomValue *1.2 ;
             
             if(upperBoundary > 2000)
-                this.application.Ninja._documentBarRef.zoomFactor = 2000;
+                this.application.ninja.documentBar.zoomFactor = 2000;
             else
-                this.application.Ninja._documentBarRef.zoomFactor*= 1.2;
+                this.application.ninja.documentBar.zoomFactor*= 1.2;
 
         }
     },
@@ -124,13 +124,13 @@ exports.toolBase = Montage.create(Component, {
         value:function(){
             var lowerBoundary ,previousZoomValue;
             
-            previousZoomValue = this.application.Ninja._documentBarRef.zoomFactor ;
+            previousZoomValue = this.application.ninja.documentBar.zoomFactor ;
             lowerBoundary = previousZoomValue/1.2 ;
 
             if(lowerBoundary < 25)
-                this.application.Ninja._documentBarRef.zoomFactor = 25;
+                this.application.ninja.documentBar.zoomFactor = 25;
             else
-                this.application.Ninja._documentBarRef.zoomFactor/= 1.2;
+                this.application.ninja.documentBar.zoomFactor/= 1.2;
         }
     },
 
