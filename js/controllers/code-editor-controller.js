@@ -218,6 +218,7 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
     handleThemeSelection:{
         value: function(){
             this.application.ninja.documentController.activeDocument.editor.setOption("theme", this.editorTheme);
+            this.application.ninja.stage.stageView.applyTheme("cm-s-"+this.editorTheme);
         }
     },
 

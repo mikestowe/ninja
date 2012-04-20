@@ -201,5 +201,11 @@ exports.StageView = Montage.create(Component, {
             this.application.ninja.toolsSplitter.restore();
             this.application.ninja.optionsSplitter.restore();
         }
+    },
+
+    applyTheme:{
+        value:function(themeClass){
+            this.element.className = "codeViewContainer "+themeClass;
+        }
     }
 });
