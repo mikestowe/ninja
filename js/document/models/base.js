@@ -21,6 +21,10 @@ exports.BaseDocumentModel = Montage.create(Montage, {
 	file: {
         value: null
     },
+
+    _name: {
+        value: null
+    },
     ////////////////////////////////////////////////////////////////////
 	//
 	njdata: {

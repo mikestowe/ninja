@@ -11,6 +11,9 @@ var Montage = 		require("montage/core/core").Montage,
     Uuid = 			require("montage/core/uuid").Uuid,
     HTMLDocument =	require("js/document/html-document").HTMLDocument,
     TextDocument =	require("js/document/text-document").TextDocument;
+
+    // New Document Objects
+var Document =      require("js/document/document-html").HtmlDocument;
 ////////////////////////////////////////////////////////////////////////
 //
 var DocumentController = exports.DocumentController = Montage.create(Component, {
@@ -289,7 +292,12 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                 this.isNewFilePath = false;//reset path identifier flag
 
             	//Sending full response object
-            	this.openDocument(response);   
+                // TODO: Unify those 2 methods. Using if/else for the new template
+                if(this.webTemplate) {
+                    this.openWebDocument(response);
+                } else {
+            	    this.openDocument(response);
+                }
             } else if (!!response && (response.status === 404)){
                 alert("Unable to open file.\n [Error: File does not exist]");
             } else if (!!response && (response.status === 500)){
@@ -334,7 +342,31 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 			switch (doc.extension) {
 				case 'html':
 					//Open in designer view
-					Montage.create(HTMLDocument).initialize(doc, Uuid.generate(), this._createIframeElement(), this._onOpenDocument.bind(this), this.webTemplate);
+					Montage.create(HTMLDocument).initialize(doc, Uuid.generate(), this._createIframeElement(), this._onOpenDocument.bind(this));
+					break;
+				default:
+					//Open in code view
+					var code = Montage.create(TextDocument, {"source": {value: doc.content}}), docuuid = Uuid.generate(), textArea;
+					textArea = this.application.ninja.stage.stageView.createTextAreaElement(docuuid);
+					code.initialize(doc, docuuid, textArea, textArea.parentNode);
+					//code.init(doc.name, doc.uri, doc.extension, null, docuuid);
+					code.textArea.value = doc.content;
+					this.application.ninja.stage.stageView.createTextView(code);
+					break;
+			}
+        }
+    },
+    openWebDocument: {
+        value: function(doc) {
+            // TODO: HACKS to remove
+			this.documentHackReference = doc;
+            document.getElementById("iframeContainer").style.overflow = "hidden";
+			//
+			switch (doc.extension) {
+				case 'html':
+					//Open in designer view
+                    this._hackRootFlag = false;
+                    Montage.create(Document).init(doc, this, this._onOpenDocument);
 					break;
 				default:
 					//Open in code view
@@ -453,8 +485,6 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             this._showCurrentDocument();
 
             NJevent("onOpenDocument", doc);
-//            appDelegateModule.MyAppDelegate.onSetActiveDocument();
-
         }
     },
 

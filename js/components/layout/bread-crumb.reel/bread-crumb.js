@@ -58,7 +58,7 @@ exports.Breadcrumb = Montage.create(Component, {
     createContainerElements: {
         value: function() {
             var parentNode;
-/*
+
             this.containerElements.length = 0;
 
             parentNode = this.container;
@@ -70,7 +70,7 @@ exports.Breadcrumb = Montage.create(Component, {
 
             // This is always the top container which is now hardcoded to body
             this.containerElements.unshift({"node": parentNode, "nodeUuid":parentNode.uuid, "label": "Body"});
-*/
+
 
 
         }
