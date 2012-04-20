@@ -9,6 +9,15 @@
 
 .viewOptions .autoCodeComplete{
     float:left;
+    height: 20px;
+}
+
+.viewOptions .autoCodeComplete span{
+    vertical-align: middle;
+}
+
+.viewOptions .autoCodeComplete .disabled{
+    color:#515151;
 }
 
 .viewOptions .floatButtons{

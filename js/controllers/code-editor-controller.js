@@ -166,11 +166,31 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
 
     handleCodeCompletionSupport:{
         value:function(fileType){
-            var autoCodeCompleteElem = document.getElementsByClassName("autoCodeComplete")[0];
-            if(autoCodeCompleteElem && (this.codeCompletionSupport[fileType] === true)){
-                autoCodeCompleteElem.style.visibility = "visible";
-            }else if(autoCodeCompleteElem && !this.codeCompletionSupport[fileType]){
-                autoCodeCompleteElem.style.visibility = "hidden";
+            var autoCodeCompleteElem = document.getElementsByClassName("autoCodeComplete")[0], elems=null, i=0;
+            if(autoCodeCompleteElem){
+                elems = autoCodeCompleteElem.getElementsByTagName("*");
+            }
+
+            if(elems && (this.codeCompletionSupport[fileType] === true)){
+                //enable elements
+                for(i=0;i<elems.length;i++){
+                    if(elems[i].hasAttribute("disabled")){
+                        elems[i].removeAttribute("disabled");
+                    }
+                    if(elems[i].classList.contains("disabled")){
+                        elems[i].classList.remove("disabled");
+                    }
+                }
+            }else if(elems && !this.codeCompletionSupport[fileType]){
+                //disable elements
+                for(i=0;i<elems.length;i++){
+                    if(!elems[i].hasAttribute("disabled")){
+                        elems[i].setAttribute("disabled", "disabled");
+                    }
+                    if(!elems[i].classList.contains("disabled")){
+                        elems[i].classList.add("disabled");
+                    }
+                }
             }
         }
     },
