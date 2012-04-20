@@ -15,7 +15,7 @@
     "notifications",
     "webRequest",
     "webRequestBlocking",
-    "http://localhost:/"
+    "http://ninja/*"
   ],
   "requirements": {
     "3D": {
