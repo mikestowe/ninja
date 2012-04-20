@@ -469,7 +469,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     didDraw:{
         value:function () {
-            if ((!this.application.ninja.documentController.creatingNewFile) || (!this.application.ninja.currentDocument.breadCrumbClick)) {
+            if ((!this.application.ninja.documentController.creatingNewFile)||(!this.application.ninja.currentDocument.setLevel)) {
                 if (this.application.ninja.currentDocument.documentRoot.children[0]) {
                     var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
                     if (selectedIndex !== false) {
