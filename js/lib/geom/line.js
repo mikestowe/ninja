@@ -33,6 +33,8 @@ var Line = function GLLine( world, xOffset, yOffset, width, height, slope, strok
 	this._scaleX = 1.0;
 	this._scaleY = 1.0;
 
+    this.canFill = false;
+
 	if (arguments.length > 0) {
 		this._width = width;
 		this._height = height;
