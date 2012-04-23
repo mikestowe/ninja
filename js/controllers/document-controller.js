@@ -473,7 +473,6 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     // Event Detail: Contains the current ActiveDocument
     _onOpenDocument: {
         value: function(doc){
-            this.webTemplate = false;
             this.application.ninja.currentDocument = doc;
             this._hideCurrentDocument();
             this.application.ninja.stage.stageView.hideOtherDocuments(doc.uuid);
@@ -482,7 +481,11 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
             this.activeDocument = doc;
 
-            this._showCurrentDocument();
+            if(!this.webTemplate) {
+                this._showCurrentDocument();
+            }
+
+            this.webTemplate = false;
 
             NJevent("onOpenDocument", doc);
         }
@@ -578,7 +581,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                     this.application.ninja.stage.stageView.showRulers();
                 }else{
                     //hide the iframe when switching to code view
-                    document.getElementById("iframeContainer").style.display="none";
+                    document.getElementById("iframeContainer").style.display = "none";
                 }
         }
         }
