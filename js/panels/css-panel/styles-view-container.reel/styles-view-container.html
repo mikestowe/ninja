@@ -37,6 +37,13 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                     }
                 }
             },
+            "stylesViewDelegate" : {
+                "module": "js/panels/css-panel/styles-view-mediator",
+                "name": "StylesViewMediator",
+                "properties": {
+                    "ruleListContainer": {"@": "ruleListContainer"}
+                }
+            },
             "ruleListContainer": {
                 "module": "js/panels/css-panel/rule-list-container.reel",
                 "name": "RuleListContainer"
@@ -49,7 +56,14 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "module": "js/components/toolbar.reel",
                 "name": "Toolbar",
                 "properties": {
-                    "element": {"#": "styles-view-toolbar"}
+                    "element": {"#": "styles-view-toolbar"},
+                    "delegate": {"@": "stylesViewDelegate" },
+                    "buttons": [
+                        {
+                            "title": "Add",
+                            "identifier": "add"
+                        }
+                    ]
                 }
             }
         }

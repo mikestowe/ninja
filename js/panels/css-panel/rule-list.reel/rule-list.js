@@ -8,15 +8,10 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
 exports.RuleList = Montage.create(Component, {
-    hasTemplate: {
-        value: true
-    },
-    listElement : {
-        value: null
-    },
-    _rules: {
-        value: null
-    },
+
+    ruleNodeName : { value: 'li' },
+
+    _rules: { value: null },
     rules: {
         get: function() {
             return this._rules;
@@ -28,62 +23,77 @@ exports.RuleList = Montage.create(Component, {
             //debugger;
             console.log('list: ', list);
             this._rules = list;
-            this.needsDraw = true;
-            this._needsAppend = true;
-        }
-    },
-    templateDidLoad : {
-        value: function() {
-            console.log("Rule List : template did load");
-            //this.condition = true;
-            this.needsDraw = true;
-            //debugger;
-        }
-    },
-    prepareForDraw : {
-        value: function() {
-            console.log("Rule List : prepare for draw");
-        }
-    },
-    draw : {
-        value: function() {
-            console.log("Rule List - Draw");
-            if(this._needsAppend) {
-                this._rules.forEach(function(rule) {
-                    var componentBase = this.supportedRules[rule.type],
-                        instance, el;
 
-                    if(componentBase) {
-                        el = document.createElement(this.ruleNodeName);
-                        instance = Montage.create(componentBase);
-                        instance.element = el;
-                        instance.rule = rule;
-                        this.element.appendChild(instance.element);
-                        instance.needsDraw = true;
-                    }
-
-
+            ///// remove previsouly added rules
+            if(this.childComponents){
+                this.childComponents.forEach(function(ruleComponent) {
+                    this.removeRule(ruleComponent);
                 }, this);
             }
-            console.log("Rule List : draw");
-        }
-    },
-    _createRuleComponent: {
-        value: function(ruleType) {
+
+            this._rules.forEach(function(rule) {
+                this.addRule(rule);
+            }, this);
+
+            this.needsDraw = true;
 
         }
     },
-    ruleNodeName : {
-        value: 'li'
+
+    childComponents : {
+        value: [],
+        distinct: true
     },
-    ruleComponents : {
-        value: {
-            "1"  : 'css-style-rule',
-            "3"  : 'css-import-rule',
-            "4"  : 'css-media-rule',
-            "5"  : 'css-font-face-rule',
-            "6"  : 'css-page-rule',
-            "10" : 'namespace-rule'
+
+    rulesToDraw : {
+        value: [],
+        distinct: true
+    },
+
+    addRule: {
+        value: function(rule) {
+            var componentBase = this.supportedRules[rule.type],
+                instance, el;
+
+            ///// Draw the rule if we have a template for the rule type
+            if(componentBase) {
+                instance = Montage.create(componentBase);
+                instance.rule = rule;
+                this.rulesToDraw.push(instance);
+                this.needsDraw = true;
+            }
+        }
+    },
+
+    update : {
+        value: function() {
+            this.childComponents.forEach(function(component) {
+                component.update();
+            }, this);
+
+            //// TODO: find new styles based on selection
+        }
+    },
+
+    willDraw : {
+        value: function() {
+            this.rulesToDraw.forEach(function(component) {
+                component.element = document.createElement(this.ruleNodeName);
+            }, this);
+
+        }
+    },
+
+    draw : {
+        value: function() {
+            //// Iterate through all rules that need draw and append them
+            this.rulesToDraw.forEach(function(component) {
+                this.element.appendChild(component.element);
+                component.needsDraw = true;
+            }, this);
+
+            ///// Null out any rules that were just drawn
+            this.rulesToDraw.length = 0;
         }
     }
 });
