@@ -9,6 +9,9 @@ var Montage = require("montage/core/core").Montage,
     ShorthandProps = require("js/panels/CSSPanel/css-shorthand-map");
 
 exports.Declaration = Montage.create(Component, {
+    includeEmptyStyle : {
+        value: true
+    },
     templateDidLoad : {
         value: function() {
             console.log("declaration - template did load");
@@ -31,10 +34,18 @@ exports.Declaration = Montage.create(Component, {
         },
         set: function(dec) {
             this._declaration = dec;
-            console.log('here');
+
             ///// creates data structure to use with tree component
             this.buildStyleTree();
-            console.log('there');
+
+            if(this.includeEmptyStyle) {
+                this.styleTree.properties.push({
+                    "name": "property",
+                    "value" : "value",
+                    "isEmpty": true
+                });
+            }
+//debugger;
             this.needsDraw = true;
         }
     },

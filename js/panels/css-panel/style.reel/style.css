@@ -11,7 +11,7 @@
     border-bottom: 1px solid rgba(0,0,0,0);
     cursor: url(/js/../images/tools/hand_down.png), default;
     display: block;
-    overflow: hidden;
+    /*overflow: hidden;*/
     white-space: nowrap;
     text-overflow: ellipsis;
 }
@@ -92,6 +92,60 @@
     right: -1px;
 }
 
+/* ------------------------
+  Empty Style (Add Style)
+------------------------   */
+.add-style-button {
+    display: none;
+}
+.empty-css-style {
+    cursor: default;
+    -webkit-transition: -webkit-transform .2s cubic-bezier(0.44, 0.19, 0, 0.99);
+    -webkit-transform: translate3d(-120px, 0, 0);
+}
+.empty-css-style:hover {
+    border-right-style: none;
+}
+.empty-css-style .add-style-button {
+    cursor: pointer;
+    color: #333;
+    display: inline-block;
+    font-family: "Droid Sans", sans-serif;
+    background: -webkit-linear-gradient(top, rgba(242,242,242,1) 1%,rgba(221,221,221,1) 100%);
+    border-radius: 5px;
+    border: 1px solid #CCC;
+    padding: 1px 10px 0;
+    position: absolute;
+    left: 140px;
+    text-shadow: 1px 1px 0 #FFF;
+    -webkit-transition: opacity .2s cubic-bezier(0.44, 0.19, 0, 0.99);
+}
+.empty-css-style .add-style-button:hover {
+    background: -webkit-linear-gradient(top, rgba(252,252,252,1) 1%,rgba(234,234,234,1) 100%);
+}
+.empty-css-style .add-style-button:active {
+    background: -webkit-linear-gradient(top, rgba(234,234,234,1) 0%,rgba(252,252,252,1) 99%);
+}
+.empty-css-style .css-property, .empty-css-style .css-value {
+    -webkit-transition: opacity .2s cubic-bezier(0.44, 0.19, 0, 0.99);
+    opacity: 0;
+}
+.empty-css-style.edit-empty-style .css-property, .empty-css-style.edit-empty-style .css-value {
+    opacity: 1;
+}
+.empty-css-style.edit-empty-style {
+    border-right-style: none;
+    -webkit-transform: translate3d(0, 0, 0);
+}
+.empty-css-style.edit-empty-style .css-property, .empty-css-style.edit-empty-style .css-value {
+    color: #adadad;
+}
+.empty-css-style.edit-empty-style .add-style-button {
+    opacity: 0;
+}
+.empty-css-style input[type="checkbox"] {
+    visibility: hidden;
+}
 /* ------------------------
   Drag/Drop Styles
 ------------------------   */

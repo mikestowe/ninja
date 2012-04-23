@@ -11,6 +11,9 @@ exports.Style = Montage.create(TreeNode, {
     disabledClass : {
         value: 'style-item-disabled'
     },
+    editNewEmptyClass : {
+        value: 'edit-empty-style'
+    },
     propertyText : {
         value: "property"
     },
@@ -28,6 +31,30 @@ exports.Style = Montage.create(TreeNode, {
             this.needsDraw = true;
         }
     },
+
+
+    dirty : {
+        get: function() {
+            return this.propertyField.isDirty || this.valueField.isDirty;
+        },
+        set: function(value) {
+
+        }
+    },
+
+    _editingNewStyle : {
+        value: null
+    },
+    editingNewStyle : {
+        get: function() {
+            return this._editingNewStyle;
+        },
+        set: function(value) {
+            this._editingNewStyle = value;
+            this.needsDraw = true;
+        }
+    },
+
     handleEvent : {
         value: function(e) {
             console.log(e);
@@ -65,9 +92,37 @@ exports.Style = Montage.create(TreeNode, {
             this.valueText = this.sourceObject.value;
         }
     },
-    templateDidLoad : {
-        value: function() {
-            console.log("style - template did load");
+    handleWebkitTransitionEnd : {
+        value: function(e) {
+            console.log("trans end");
+        }
+    },
+    handleClick : {
+        value: function(e) {
+            console.log("handleAction");
+            this.editingNewStyle = true;
+        }
+    },
+
+    //// Handler for both hintable components
+    handleStop : {
+        value: function(e) {
+            var event = e;
+            ///// Function to determine if an empty (new) style should return
+            ///// to showing the add button, i.e. the fields were not clicked
+            function shouldStopEditing() {
+                var clicked;
+                if(e._event.detail.originalEventType === 'mousedown') {
+                    clicked = e._event.detail.originalEvent.target;
+                    return clicked !== this.propertyField.element && clicked !== this.valueField.element;
+                }
+                return
+            }
+
+            if(this.sourceObject.isEmpty && !this.dirty && shouldStopEditing.bind(this)()) {
+
+                this.editingNewStyle = false;
+            }
         }
     },
     prepareForDraw : {
@@ -75,12 +130,22 @@ exports.Style = Montage.create(TreeNode, {
             console.log("style's prepare for draw");
             this.element.addEventListener('dragstart', this, false);
             this.element.addEventListener('drag', this, false);
-//            this.element.addEventListener('dragenter', this, false);
-//            this.element.addEventListener('dragleave', this, false);
             this.element.addEventListener('dragend', this, false);
             this.element.addEventListener('drop', this, false);
+            this.element.addEventListener('webkitTransitionEnd', this, false);
+
+            if(this.sourceObject.isEmpty) {
+                this.element.draggable = false;
+                this.addStyleButton.addEventListener('click', this, false);
+                this.propertyField.addEventListener('stop', this, false);
+                this.valueField.addEventListener('stop', this, false);
+            } else {
+                this.element.removeChild(this.addStyleButton);
+                delete this.addStyleButton;
+            }
         }
     },
+
     draw : {
         value : function() {
             //debugger;
@@ -90,12 +155,24 @@ exports.Style = Montage.create(TreeNode, {
                 console.log("Label key unknown");
             }
 
+            if(this.sourceObject.isEmpty) {
+                this.element.classList.add('empty-css-style');
+            } else {
+                this.element.classList.remove('empty-css-style');
+            }
+
             if(this._enabled) {
                 this.element.classList.remove(this.disabledClass);
             } else {
                 this.element.classList.add(this.disabledClass);
             }
 
+            if(this._editingNewStyle) {
+                this.propertyField.start();
+                this.element.classList.add(this.editNewEmptyClass);
+            } else {
+                this.element.classList.remove(this.editNewEmptyClass);
+            }
         }
     }
 });

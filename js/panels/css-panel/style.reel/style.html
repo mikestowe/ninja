@@ -14,7 +14,10 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "module" : "js/panels/css-panel/style.reel",
                 "name" : "Style",
                 "properties" : {
-                    "element" : {"#" : "container"}
+                    "element" : {"#" : "container"},
+                    "addStyleButton": {"#": "add-style-button"},
+                    "propertyField": {"@": "property"},
+                    "valueField": {"@": "value"}
                 }
             },
             "checkbox": {
@@ -68,6 +71,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 <body>
 <div id="container" class="style-item"  spellcheck="false" draggable="true">
     <input type="checkbox" data-montage-id="disable-checkbox"><dt data-montage-id="property" class="css-property"></dt><dd data-montage-id="value" class="css-value"></dd>
+    <button data-montage-id="add-style-button" class="add-style-button">Add</button>
 </div>
 </body>
 </html>
