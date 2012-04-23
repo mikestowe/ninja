@@ -543,7 +543,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.drawTimeMarkers();
             // Document switching
             // Check to see if we have saved timeline information in the currentDocument.
-        	debugger;
+        	//debugger;
             if ((typeof(this.application.ninja.currentDocument.isTimelineInitialized) === "undefined")) {
             	//console.log('TimelinePanel.initTimelineForDocument: new Document');
                 // No, we have no information stored.
@@ -611,7 +611,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this.currentLayerSelected = this.application.ninja.currentDocument.tlCurrentLayerSelected;
 
 
-                debugger;
+                //debugger;
                 if (typeof(this.application.ninja.currentDocument.tlCurrentSelectedContainer) !== "undefined") {
                 	this.application.ninja.currentSelectedContainer=this.application.ninja.currentDocument.tlCurrentSelectedContainer;
                 }
@@ -774,13 +774,15 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:function () {
             var layerIndex, i = 0, arrLayersLength = this.arrLayers.length;
             this.deselectTweens();
-            if (this.application.ninja.selectedElements[0]) {
-                for (i = 0; i < arrLayersLength; i++) {
-                    if (this.application.ninja.selectedElements[0].uuid === this.arrLayers[i].layerData.elementsList[0].uuid) {
-                        layerIndex = this.getLayerIndexByID(this.arrLayers[i].layerData.layerID);
-                        this._captureSelection = false;
-                        this.selectLayer(layerIndex);
-                        this._captureSelection = true;
+            if (this.application.ninja.selectedElements.length === 1) {
+                if (this.application.ninja.selectedElements[0]) {
+                    for (i = 0; i < arrLayersLength; i++) {
+                        if (this.application.ninja.selectedElements[0].uuid === this.arrLayers[i].layerData.elementsList[0].uuid) {
+                            layerIndex = this.getLayerIndexByID(this.arrLayers[i].layerData.layerID);
+                            this._captureSelection = false;
+                            this.selectLayer(layerIndex);
+                            this._captureSelection = true;
+                        }
                     }
                 }
             }
