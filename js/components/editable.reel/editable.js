@@ -131,11 +131,11 @@ exports.Editable = Montage.create(Component, {
         }
     },
     stop : {
-        value: function() {
+        value: function(eventData) {
             this._isEditable = this._element.contentEditable = false;
             this._element.classList.remove(this.editingClass);
             
-            this._sendEvent('stop');
+            this._sendEvent('stop', eventData);
             
             ///// if value is different than pre-edit val, call onchange method
             if(this._preEditValue !== this.value) {
@@ -174,11 +174,11 @@ exports.Editable = Montage.create(Component, {
         }
     },
     blur : {
-        value : function() {
+        value : function(eventData) {
             if(this._hint) {
                 this.accept();
             }
-            this.stop();
+            this.stop(eventData);
             document.removeEventListener('mousedown', this, false);
             this._sendEvent('blur');
         }
@@ -207,7 +207,10 @@ exports.Editable = Montage.create(Component, {
             console.log('handle mouse down');
             ///// Listen for simulated blur event
             if(this.stopOnBlur && e._event.target !== this._element) {
-                this.blur();
+                this.blur({
+                    "originalEventType": "mousedown",
+                    "originalEvent": e
+                });
             }
         }
     },
@@ -221,9 +224,9 @@ exports.Editable = Montage.create(Component, {
         }
     },
     _sendEvent : {
-        value : function(type) {
+        value : function(type, data) {
             var evt = document.createEvent("CustomEvent");
-            evt.initCustomEvent(type, true, true);
+            evt.initCustomEvent(type, true, true, data);
             this.dispatchEvent(evt);
         }
     },
