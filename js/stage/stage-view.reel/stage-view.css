@@ -17,6 +17,10 @@
   cursor:text;
 }
 
+.codeViewContainer>div{
+    width:2050px;/*to prevent scrolling of editor container in the middle of the page for short files*/
+}
+
 /* OLD CSS for reference
 #mainContent #codeMirror_1 {
     height:100%;
