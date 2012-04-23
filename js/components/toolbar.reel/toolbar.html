@@ -14,14 +14,50 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "module" : "js/panels/css-panel/style-sheet.reel",
                 "name" : "StyleSheet",
                 "properties" : {
-                    "element" : {"#" : "toolbar-container"}
+                    "element" : {"#" : "toolbar-container"},
+                    "repetition": {"@": "buttonList" }
                 }
             },
+            
+            "buttonList": {
+                "module": "montage/ui/repetition.reel",
+                "name": "Repetition",
+                "properties": {
+                    "element": {"#": "repetition"}
+                },
+                "bindings": {
+                    "objects" : {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "buttons",
+                        "oneway": true
+                    }
+
+                }
+            },
+            
             "button": {
                 "module": "montage/ui/button.reel",
                 "name": "Button",
                 "properties": {
-
+                    "element": {"#": "button" },
+                    "label": " "
+                },
+                "bindings": {
+                    "label" : {
+                        "boundObject": {"@": "buttonList"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration.title",
+                        "oneway": true
+                    },
+                    "identifier": {
+                        "boundObject": {"@": "buttonList"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration.identifier",
+                        "oneway": true
+                    },
+                    "sourceObject": {
+                        "boundObject": {"@": "buttonList"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration",
+                        "oneway": true
+                    }
                 }
             }
         }
@@ -29,6 +65,9 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </head>
 <body>
 <div id="toolbar-container" class="toolbar-container">
+    <ul data-montage-id="repetition">
+        <li><button data-montage-id="button" class="toolbar-button"></button></li>
+    </ul>
 </div>
 </body>
 </html>
