@@ -47,10 +47,10 @@ exports.ElementController = Montage.create(Component, {
     },
 
     setProperties: {
-        value: function(el, props, index) {
-            for(var p in props) {
-                this.application.ninja.stylesController.setElementStyle(el, p, props[p][index]);
-            }
+        value: function(element, properties) {
+            for(var property in properties) {
+                this.application.ninja.stylesController.setElementStyle(element, property, properties[property]);
+        }
         }
     },
 
@@ -65,37 +65,29 @@ exports.ElementController = Montage.create(Component, {
     // borderSide : "top", "right", "bottom", or "left"
     getColor: {
         value: function(el, isFill, borderSide) {
-            var colorObj,
-                color,
-                image;
+            var colorObj, color, image;
 
             // Return cached value if one exists
-            if(isFill)
-            {
-                if(el.elementModel.fill)
-                {
+            if(isFill) {
+                if(el.elementModel.fill) {
                     return el.elementModel.fill;
                 }
                 //TODO: Once logic for color and gradient is established, this needs to be revised
                 color = this.getProperty(el, "background-color");
                 image = this.getProperty(el, "background-image");
-            }
-            else
-            {
+            } else {
                 // Try getting border color from specific side first
-                if(borderSide)
-                {
+                if(borderSide) {
                     color = this.getProperty(el, "border-" + borderSide + "-color");
                     image = this.getProperty(el, "border-" + borderSide + "-image");
                 }
 
                 // If no color was found, look up the shared border color
-                if(!color && !image)
-                {
-                    if(el.elementModel.stroke)
-                    {
+                if(!color && !image) {
+                    if(el.elementModel.stroke) {
                         return el.elementModel.stroke;
                     }
+
                     color = this.getProperty(el, "border-color");
                     image = this.getProperty(el, "border-image");
                 }
@@ -112,17 +104,12 @@ exports.ElementController = Montage.create(Component, {
             }
 
             // Update cache
-            if(isFill)
-            {
+            if(isFill) {
                 el.elementModel.fill = colorObj;
-            }
-            else if(!borderSide)
-            {
+            } else if(!borderSide) {
                 // TODO - Need to update border style and width also
                 el.elementModel.stroke = colorObj;
-            }
-            else
-            {
+            } else {
                 // TODO - Should update specific border sides too
             }
 
@@ -133,10 +120,9 @@ exports.ElementController = Montage.create(Component, {
     setColor: {
         value: function(el, color, isFill) {
             var mode = color.mode;
-            if(isFill)
-            {
-                if(mode)
-                {
+
+            if(isFill) {
+                if(mode) {
                     switch (mode) {
                         case 'nocolor':
                             this.setProperty(el, "background-image", "none");
@@ -152,12 +138,10 @@ exports.ElementController = Montage.create(Component, {
                             this.setProperty(el, "background-color", color.color.css);
                     }
                 }
+
                 el.elementModel.fill = color;
-            }
-            else
-            {
-                if(mode)
-                {
+            } else {
+                if(mode) {
                     switch (mode) {
                         case 'nocolor':
                             this.setProperty(el, "border-image", "none");
@@ -167,20 +151,16 @@ exports.ElementController = Montage.create(Component, {
                         case 'gradient':
                             this.setProperty(el, "border-image", color.color.css);
                             this.setProperty(el, "border-color", "none");
-                            if(color.borderInfo)
-                            {
-                                this.setProperty(el, "border-width", color.borderInfo.borderWidth +
-                                                                        color.borderInfo.borderUnits);
+                            if(color.borderInfo) {
+                                this.setProperty(el, "border-width", color.borderInfo.borderWidth + color.borderInfo.borderUnits);
                                 this.setProperty(el, "border-style", color.borderInfo.borderStyle);
                             }
                             break;
                         default:
                             this.setProperty(el, "border-image", "none");
                             this.setProperty(el, "border-color", color.color.css);
-                            if(color.borderInfo)
-                            {
-                                this.setProperty(el, "border-width", color.borderInfo.borderWidth +
-                                                                        color.borderInfo.borderUnits);
+                            if(color.borderInfo) {
+                                this.setProperty(el, "border-width", color.borderInfo.borderWidth + color.borderInfo.borderUnits);
                                 this.setProperty(el, "border-style", color.borderInfo.borderStyle);
                             }
                     }
@@ -209,8 +189,7 @@ exports.ElementController = Montage.create(Component, {
     // Routines to get/set 3D properties
     get3DProperty: {
         value: function(el, prop) {
-            if(el.elementModel && el.elementModel.props3D)
-            {
+            if(el.elementModel && el.elementModel.props3D) {
                 return el.elementModel.props3D[prop];
             }
         }
@@ -218,16 +197,12 @@ exports.ElementController = Montage.create(Component, {
 
     getMatrix: {
         value: function(el) {
-            if(el.elementModel && el.elementModel.props3D && el.elementModel.props3D.matrix3d)
-            {
+            if(el.elementModel && el.elementModel.props3D && el.elementModel.props3D.matrix3d) {
                 return el.elementModel.props3D.matrix3d.slice(0);
-            }
-            else
-            {
+            } else {
                 var mat;
 
-                if (el)
-                {
+                if (el) {
                     mat = this.application.ninja.stylesController.getMatrixFromElement(el, false);
                     if (!mat) {
                         mat = Matrix.I(4);
@@ -242,12 +217,9 @@ exports.ElementController = Montage.create(Component, {
 
     getPerspectiveDist: {
         value: function(el) {
-            if(el.elementModel && el.elementModel.props3D && el.elementModel.props3D.perspectiveDist)
-            {
+            if(el.elementModel && el.elementModel.props3D && el.elementModel.props3D.perspectiveDist) {
                 return el.elementModel.props3D.perspectiveDist;
-            }
-            else
-            {
+            } else {
                 var dist = this.application.ninja.stylesController.getPerspectiveDistFromElement(el, false);
                 el.elementModel.props3D.perspectiveDist = dist;
                 return dist;
@@ -257,23 +229,21 @@ exports.ElementController = Montage.create(Component, {
 
     // TODO - perspective distance needs to be passed in as "dist" and matrix3d needs to be passed in as "mat"
     set3DProperties: {
-        value: function(el, props, index, update3DModel) {
-            var dist = props[index]["dist"],
-                mat = props[index]["mat"];
-            this.application.ninja.stylesController.setElementStyle(el,
-                                                                    "-webkit-transform",
-                                                                    "matrix3d(" + MathUtils.scientificToDecimal(mat, 5) + ")");
+        value: function(el, props, update3DModel) {
+            var dist = props["dist"],
+                mat = props["mat"];
+
+            this.application.ninja.stylesController.setElementStyle(el, "-webkit-transform", "matrix3d(" + MathUtils.scientificToDecimal(mat, 5) + ")");
+
+            this.application.ninja.stylesController.setElementStyle(el, "-webkit-transform-style", "preserve-3d");
 
             // TODO - We don't support perspective on individual elements yet
-//            this.application.ninja.stylesController.setElementStyle(el,
-//                                                                    "-webkit-perspective",
-//                                                                    dist);
+            // this.application.ninja.stylesController.setElementStyle(el, "-webkit-perspective", dist);
 
             el.elementModel.props3D.matrix3d = mat;
             el.elementModel.props3D.perspectiveDist = dist;
 
-            if(update3DModel)
-            {
+            if(update3DModel) {
                 this._update3DProperties(el, mat, dist);
             }
         }

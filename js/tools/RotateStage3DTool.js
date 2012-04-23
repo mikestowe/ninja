@@ -7,10 +7,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage,
     Rotate3DToolBase = require("js/tools/Rotate3DToolBase").Rotate3DToolBase,
     toolHandleModule = require("js/stage/tool-handle"),
-    snapManager = require("js/helper-classes/3D/snap-manager").SnapManager,
     viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils,
     vecUtils = require("js/helper-classes/3D/vec-utils").VecUtils,
-    drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils,
     ElementsMediator = require("js/mediators/element-mediator").ElementMediator;
 
 exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
@@ -23,6 +21,7 @@ exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
 
     _initializeToolHandles: {
         value: function() {
+            this.rotateStage = true;
             if(!this._handles)
             {
                 this._handles = [];
@@ -62,7 +61,6 @@ exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
 
     _updateTargets: {
         value: function(addToUndoStack) {
-            this._targets = [];
             var elt = this._target;
 
             var curMat = viewUtils.getMatrixFromElement(elt);
@@ -72,9 +70,16 @@ exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
             var eltCtr = viewUtils.getCenterOfProjection();
             viewUtils.popViewportObj();
 
-            eltCtr = viewUtils.localToGlobal(eltCtr, elt);
+			// cache the local to global and global to local matrices
+			var l2gMat = viewUtils.getLocalToGlobalMatrix( elt );
+			var g2lMat = glmat4.inverse( l2gMat, [] );
+			eltCtr = MathUtils.transformAndDivideHomogeneousPoint( eltCtr, l2gMat );
 
-            this._targets.push({elt:elt, mat:curMat, matInv:curMatInv, ctr:eltCtr});
+            elt.elementModel.setProperty("mat", curMat);
+            elt.elementModel.setProperty("matInv", curMatInv);
+            elt.elementModel.setProperty("ctr", eltCtr);
+			elt.elementModel.setProperty("l2g", l2gMat);
+            elt.elementModel.setProperty("g2l", g2lMat);
 
             ElementsMediator.setMatrix(elt, curMat, false, "rotateStage3DTool");
         }
@@ -83,7 +88,6 @@ exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
     captureSelectionDrawn: {
         value: function(event){
             this._origin = null;
-            this._targets = [];
             this._startOriginArray = null;
 
             var stage = this.application.ninja.currentDocument.documentRoot;
@@ -93,12 +97,12 @@ exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
             var eltCtr = viewUtils.getCenterOfProjection();
             viewUtils.popViewportObj();
 
-            this._targets = [];
-
             var curMat = viewUtils.getMatrixFromElement(stage);
             var curMatInv = glmat4.inverse(curMat, []);
 
-            this._targets.push({elt:stage, mat:curMat, matInv:curMatInv, ctr:eltCtr});
+            stage.elementModel.setProperty("mat", curMat);
+            stage.elementModel.setProperty("matInv", curMatInv);
+            stage.elementModel.setProperty("ctr", eltCtr);
 
             var ctrOffset = stage.elementModel.props3D.m_transformCtr;
             if(ctrOffset)
@@ -149,6 +153,6 @@ exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
 //			this.UpdateSelection(true);
            this.Configure(true);
        }
-   }
+    }
 
 });

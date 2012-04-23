@@ -31,46 +31,34 @@ exports.StageController = Montage.create(ElementController, {
         }
     },
 
+
     // TODO - perspective distance needs to be passed in as "dist" and matrix3d needs to be passed in as "mat"
     set3DProperties: {
-        value: function(el, props, index, update3DModel) {
-            var dist = props[index]["dist"],
-                mat = props[index]["mat"];
-            this.application.ninja.stylesController.setElementStyle(el,
-                                                                    "-webkit-transform",
-                                                                    "perspective(" + dist + ") " +
-                                                                    "matrix3d(" + MathUtils.scientificToDecimal(mat, 5) + ")",
-                                                                    true);
+            value: function(el, props, update3DModel) {
+                var dist = props["dist"], mat = props["mat"];
+                this.application.ninja.stylesController.setElementStyle(el, "-webkit-transform", "perspective(" + dist + ") " + "matrix3d(" + MathUtils.scientificToDecimal(mat, 5) + ")", true);
 
-            el.elementModel.props3D.matrix3d = mat;
-            el.elementModel.props3D.perspectiveDist = dist;
+                el.elementModel.props3D.matrix3d = mat;
+                el.elementModel.props3D.perspectiveDist = dist;
 
-            // TODO - Move this to matrix class
-            if(this._isRotated(mat))
-            {
-                this.application.ninja.currentDocument.stageBG.style.display = "none";
+                // TODO - Move this to matrix class
+                if(this._isRotated(mat)) {
+                    this.application.ninja.currentDocument.stageBG.style.display = "none";
+                } else {
+                    this.application.ninja.stylesController.setElementStyle(this.application.ninja.currentDocument.stageBG, "-webkit-transform", "perspective(" + dist + ") " + "matrix3d(" + MathUtils.scientificToDecimal(mat, 5) + ")", true);
+
+                    this.application.ninja.currentDocument.stageBG.elementModel.props3D.matrix3d = mat;
+                    this.application.ninja.currentDocument.stageBG.elementModel.props3D.perspectiveDist = dist;
+                    this.application.ninja.currentDocument.stageBG.style.display = "block";
+                }
+
+                this.application.ninja.stage.updatedStage = true;
+
+                if(update3DModel) {
+                    this._update3DProperties(el, mat, dist);
+                }
             }
-            else
-            {
-                this.application.ninja.stylesController.setElementStyle(this.application.ninja.currentDocument.stageBG,
-                                                                        "-webkit-transform",
-                                                                        "perspective(" + dist + ") " +
-                                                                        "matrix3d(" + MathUtils.scientificToDecimal(mat, 5) + ")",
-                                                                        true);
-
-                this.application.ninja.currentDocument.stageBG.elementModel.props3D.matrix3d = mat;
-                this.application.ninja.currentDocument.stageBG.elementModel.props3D.perspectiveDist = dist;
-                this.application.ninja.currentDocument.stageBG.style.display = "block";
-            }
-
-            this.application.ninja.stage.updatedStage = true;
-
-            if(update3DModel)
-            {
-                this._update3DProperties(el, mat, dist);
-            }
-        }
-    },
+        },
 
     getProperty: {
         value: function(el, p) {

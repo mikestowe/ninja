@@ -105,6 +105,18 @@ exports.PanelsData = Montage.create(Montage, {
             open: true,
             modulePath: "js/panels/presets/content.reel",
             moduleName: "content"
+        },
+        {
+            name: "History",
+            minHeight: 100,
+            height: 100,
+            maxHeight: null,
+            flexible: true,
+            collapsed: true,
+            scrollable: true,
+            open: true,
+            modulePath: "js/panels/history-panel/history.reel",
+            moduleName: "History"
         }
     ]
     }

@@ -8,7 +8,6 @@ var Montage     = require("montage/core/core").Montage,
     Component   = require("montage/ui/component").Component,
     NJUtils     = require("js/lib/NJUtils").NJUtils;
 
-var treeControlModule   = require("js/components/tree.reel");
 var PIData              = require("js/data/pi/pi-data").PiData;
 
 String.prototype.capitalizeFirstChar = function() {
@@ -286,9 +285,7 @@ exports.ComponentsPanel = Montage.create(Component, {
                 var styles = {
                     'position': 'absolute',
                     'left'      : that.dragPosition[0] + 'px',
-                    'top'       : that.dragPosition[1] + 'px',
-                    '-webkit-transform-style' : 'preserve-3d',
-                    '-webkit-transform' : 'perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
+                    'top'       : that.dragPosition[1] + 'px'
                 };
 
                 var defaultStyles = component.defaultStyles;
@@ -369,7 +366,7 @@ exports.ComponentsPanel = Montage.create(Component, {
                     break;
                 case "textarea":
                     el = NJUtils.makeNJElement("textarea", "TextArea", "component");
-                    el.elementModel.pi = "TextAreaPi";
+                    el.elementModel.pi = "TextareaPi";
                     break;
                 case "toggleButton":
                     el = NJUtils.makeNJElement("button", "Toggle Button", "component");

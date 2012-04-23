@@ -135,6 +135,12 @@ exports.ViewUtils = Montage.create(Component, {
             var stageMat = this.getMatrixFromElement(stage);
             var stagePlane = [stageMat[8],  stageMat[9],  stageMat[10],  stageMat[11]];
 
+			if (elt === stage)
+			{
+				xVec = [1,0,0];
+				yVec = [0,1,0];
+			}
+
             var xDot = Math.abs(vecUtils.vecDot(3, xVec, stagePlane));
             var yDot = Math.abs(vecUtils.vecDot(3, yVec, stagePlane));
 
@@ -259,7 +265,7 @@ exports.ViewUtils = Montage.create(Component, {
 
             // transform the point up the tree
             var child = elt;
-            var parent = elt.parentElement;
+            var parent = elt.offsetParent;
             while ( parent )
             {
                 // go to screen space of the current child
@@ -287,7 +293,7 @@ exports.ViewUtils = Montage.create(Component, {
                 }
 
                 child = parent;
-                parent = parent.parentElement;
+                parent = parent.offsetParent;
             }
 
             return pt;
@@ -303,7 +309,7 @@ exports.ViewUtils = Montage.create(Component, {
 
             // transform the bounds up the tree
             var child = elt;
-            var parent = elt.parentElement;
+            var parent = elt.offsetParent;
             while ( parent )
             {
                 pt = this.childToParent( pt, child );
@@ -311,7 +317,7 @@ exports.ViewUtils = Montage.create(Component, {
                 if (parent === this._rootElement)  break;
 
                 child = parent;
-                parent = parent.parentElement;
+                parent = parent.offsetParent;
             }
 
             /////////////////////////////////////////////////////////
@@ -346,7 +352,7 @@ exports.ViewUtils = Montage.create(Component, {
             if (pt.length == 2)  pt[2] = 0;
 
             // transform the bounds up the tree
-            var parent = child.parentElement;
+            var parent = child.offsetParent;
             if ( parent )
             {
                 this.setViewportObj( child );
@@ -394,7 +400,7 @@ exports.ViewUtils = Montage.create(Component, {
             pt[3] = 1;
 
             // transform the bounds up the tree
-            var parent = child.parentElement;
+            var parent = child.offsetParent;
             if ( parent )
             {
                 this.setViewportObj( child );
@@ -429,7 +435,7 @@ exports.ViewUtils = Montage.create(Component, {
 
             /*
              this.pushViewportObj( elt );
-             var parent = elt.parentElement;
+             var parent = elt.offsetParent;
              var offset = this.getElementOffset( elt );
              offset[2] = 0;
              var localEyePt = this.getCenterOfProjection();
@@ -603,19 +609,6 @@ exports.ViewUtils = Montage.create(Component, {
                 w       = elt.offsetWidth,
                 h       = elt.offsetHeight;
 
-            if(elt.width)
-                w = elt.width;
-            if(elt.height)
-                h = elt.height;
-
-            if (elt.style)
-            {
-                if (elt.style.left)     left    = MathUtils.styleToNumber(elt.style.left);
-                if (elt.style.top)      top     = MathUtils.styleToNumber(elt.style.top);
-                if (elt.style.width)    w   = MathUtils.styleToNumber(elt.style.width);
-                if (elt.style.height)   h  = MathUtils.styleToNumber(elt.style.height);
-            }
-
 //            if (elt instanceof SVGSVGElement) {
             if(elt.nodeName.toLowerCase() === "svg") {
                         if(w instanceof SVGAnimatedLength)
@@ -658,6 +651,21 @@ exports.ViewUtils = Montage.create(Component, {
         //        if (elt.__ninjaXOff)  xOff = elt.__ninjaXOff;
         //        if (elt.__ninjaYOff)  yOff = elt.__ninjaYOff;
             var offset = [xOff, yOff];
+            if(elt.offsetParent && (elt.offsetParent !== this._stageElement))
+            {
+                var pS = elt.ownerDocument.defaultView.getComputedStyle(elt.offsetParent);
+
+                var border = parseInt(pS.getPropertyValue("border"));
+
+                if(border)
+                {
+                    var bl = parseInt(pS.getPropertyValue("border-left-width")),
+                        bt = parseInt(pS.getPropertyValue("border-top-width"));
+
+                    offset[0] += bl;
+                    offset[1] += bt;
+                }
+            }
 
             if(elt === this._stageElement)
             {
@@ -832,42 +840,43 @@ exports.ViewUtils = Montage.create(Component, {
         }
     },
 
-    getStageWorldToGlobalMatrix: {
-        value: function() {
-            var stage = this.application.ninja.currentDocument.documentRoot,
-                projMat;
-            this.pushViewportObj( stage );
-
+    getStageWorldToGlobalMatrix:
+	{
+        value: function()
+		{
+            var stage = this.application.ninja.currentDocument.documentRoot;
+                //projMat;
+				
             // get the matrix to the parent
-            var mat = Matrix.I(4);
+            //var mat = Matrix.I(4);
 
+            this.pushViewportObj( stage );
             var cop = this.getCenterOfProjection();
             var v2s = Matrix.Translation([cop[0], cop[1], 0]);
+            this.popViewportObj();
 
+			/*
             var p = this.getPerspectiveDistFromElement(stage);
             if(p)
             {
                 projMat = glmat4.scale( Matrix.I(4), [p,p,p], [] );
                 projMat[11] = -1;
-                mat = glmat4.multiply( v2s, projMat, [] );
             }
             else
             {
                 mat = v2s;
             }
-
             // offset to the parent
             var offset = this.getElementOffset( stage );
             var offMat = Matrix.Translation([offset[0], offset[1], 0]);
             //mat = offMat.multiply( mat );
             glmat4.multiply( offMat, mat, mat );
-
             this.popViewportObj();
+			*/
 
-    //        var mat2 = this.getLocalToGlobalMatrix( stage.parentElement );
-            var mat2 = this.getLocalToGlobalMatrix( this._rootElement );
-            //var mat = mat2.multiply( mat );
-            glmat4.multiply( mat2, mat, mat );
+			// append the localToGlobal matrix of the stage.
+            var mat = this.getLocalToGlobalMatrix( stage );
+			glmat4.multiply( mat, v2s );
 
             return mat;
         }
@@ -987,7 +996,7 @@ exports.ViewUtils = Montage.create(Component, {
 
                 if (elt === this._stageElement)  break;
                 if (elt === this._rootElement)  break;
-                elt = elt.parentElement;
+                elt = elt.offsetParent;
                 if (elt === this._rootElement)  break;
             }
 
@@ -1040,7 +1049,7 @@ exports.ViewUtils = Montage.create(Component, {
                 //mat = offMat.multiply( mat );
                 glmat4.multiply( offMat, mat, mat );
 
-                elt = elt.parentElement;
+                elt = elt.offsetParent;
             }
 
             return mat;

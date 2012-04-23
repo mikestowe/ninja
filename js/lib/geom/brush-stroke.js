@@ -44,6 +44,9 @@ var BrushStroke = function GLBrushStroke() {
     this._strokeAngle = 0;
     this._strokeAmountSmoothing = 0;
 
+    // currently, brush does not support a fill region
+    this.canFill = false;
+
     //threshold that tells us whether two samples are too far apart
     this._MAX_SAMPLE_DISTANCE_THRESHOLD = 5;
 
