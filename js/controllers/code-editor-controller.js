@@ -45,24 +45,15 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
         set: function(value){this._editorTheme = value;}
     },
 
-    originalEditorFont:{
-        value:"13"//px
-    },
-
-    _editorFont:{
+    _zoomFactor:{
         value:null
     },
 
-    editorFont:{
-        get: function(){return this._editorFont;},
-        set: function(value){//gets a zoom %
-            var codeLineElems = null, i=0;
-            this._editorFont = (value/100) * CodeEditorController.originalEditorFont;
-            //set the font size
-            codeLineElems = document.getElementsByClassName("CodeMirror-lines");
-            for(i=0;i<codeLineElems.length;i++){
-                codeLineElems[i].style.fontSize = ""+this._editorFont+"px";
-            }
+    zoomFactor:{
+        get: function(){return this._zoomFactor;},
+        set: function(value){
+            this._zoomFactor = value;
+            this.application.ninja.documentController.activeDocument.container.style.zoom = ""+value+"%";
         }
     },
 
@@ -224,14 +215,12 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
 
     applySettings:{
         value:function(){
-            var codeLineElem = null, i=0;
             //set theme
             this.handleThemeSelection();
             //check autocomplete support
             this.handleCodeCompletionSupport(this.application.ninja.documentController.activeDocument.editor.getOption("mode"));
             //set zoom
-            codeLineElem = this.application.ninja.documentController.activeDocument.container.getElementsByClassName("CodeMirror-lines")[0];
-            codeLineElem.style.fontSize = ""+this._editorFont+"px";
+            this.application.ninja.documentController.activeDocument.container.style.zoom = ""+this.zoomFactor+"%";
         }
     }
 });

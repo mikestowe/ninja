@@ -24,7 +24,7 @@ var CodeEditorViewOptions = exports.CodeEditorViewOptions = Montage.create(Compo
 
                 Object.defineBinding(this.zoomHottext , "value", {
                   boundObject: this.application.ninja.codeEditorController,
-                  boundObjectPropertyPath: "editorFont",
+                  boundObjectPropertyPath: "zoomFactor",
                   oneway : false
                 });
 
