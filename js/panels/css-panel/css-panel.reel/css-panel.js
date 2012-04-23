@@ -8,11 +8,28 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
 exports.CSSPanelNew = Montage.create(Component, {
-    templateDidLoad : {
-        value: function() {
-            console.log("css panel : template did load");
+    _resizedHeight : {
+        value: null
+    },
+    isResizing : {
+        value: null
+    },
+    _height: {
+        value: null
+    },
+    height: {
+        get: function() {
+            return this._height;
+        },
+        set: function(val) {
+            if(this._height !== val) {
+                this._height = val;
+                this.needsDraw = true;
+            }
         }
     },
+
+
     prepareForDraw : {
         value: function() {
             console.log("css panel : prepare for draw");
@@ -20,7 +37,19 @@ exports.CSSPanelNew = Montage.create(Component, {
     },
     draw : {
         value: function() {
-            console.log("css panel : draw");
+            console.log("css panel : draw. height: ", this.height);
+
+//            if(this.height) {
+//                console.log("CSS Panel draw - resizing to", (this.height + this._resizedHeight) + "px");
+//                this.styleSheetsView.element.style.height = (this.height + this._resizedHeight) + "px";
+//            }
+        }
+    },
+    didDraw: {
+        value: function() {
+            if(!this.isResizing) {
+                //this.height = this.element.offsetHeight;
+            }
         }
     }
 });
