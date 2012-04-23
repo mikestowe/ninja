@@ -269,6 +269,13 @@ exports.Ninja = Montage.create(Component, {
         value: function(event) {
             this.currentDocument = event.detail;
 
+            if(this.currentDocument.documentRoot) {
+                this.application.ninja.currentSelectedContainer = this.currentDocument.documentRoot;
+            } else {
+                alert("The current document has not loaded yet");
+                return;
+            }
+
             this.appModel.show3dGrid = this.currentDocument.draw3DGrid;
             NJevent("openDocument");
         }

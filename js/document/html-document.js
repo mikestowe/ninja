@@ -826,7 +826,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     // Setting up the currentSelectedContainer to the document body.
     userTemplateDidLoad: {
         value: function(){
-            this.application.ninja.currentSelectedContainer = this.documentRoot;
+            //this.application.ninja.currentSelectedContainer = this.documentRoot;
         }
     },
     

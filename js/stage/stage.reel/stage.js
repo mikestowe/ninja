@@ -252,7 +252,9 @@ exports.Stage = Montage.create(Component, {
             this.application.ninja.currentDocument.savedLeftScroll = this._iframeContainer.scrollLeft;
             this.application.ninja.currentDocument.savedTopScroll = this._iframeContainer.scrollTop;
 
-            this.userContentBorder = parseInt(this._documentRoot.elementModel.controller.getProperty(this._documentRoot, "border"));
+            // Hardcode this value so that it does not fail for the new stage architecture
+            // TODO: Remove marker for old template: NINJA-STAGE-REWORK
+            this.userContentBorder = 1; //parseInt(this._documentRoot.elementModel.controller.getProperty(this._documentRoot, "border"));
 
             this._userContentLeft = this._documentOffsetLeft - this._scrollLeft + this._userContentBorder;
             this._userContentTop = this._documentOffsetTop - this._scrollTop + this._userContentBorder;

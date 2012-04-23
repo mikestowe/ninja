@@ -38,10 +38,11 @@ exports.Main = Montage.create(Component, {
             };
 
             // Dispatch event when this template has loaded.
+            /*
             var newEvent = document.createEvent( "CustomEvent" );
             newEvent.initCustomEvent( "userTemplateDidLoad", false, true );
-
             document.body.dispatchEvent( newEvent );
+            */
 
         }
     }

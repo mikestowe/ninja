@@ -67,8 +67,8 @@ exports.HtmlDocument = Montage.create(Component, {
 
             // this.init(file.name, file.uri, file.extension, iframe, uuid, callback);
 
+
             this.iframe = this.createView();
-            this.iframe.addEventListener("load", this.handleWebTemplateLoad.bind(this), true);
 
             //this.selectionExclude = ["HTML", "BODY", "Viewport", "UserContent", "stageBG"];
             //this.currentView = "design";
@@ -96,6 +96,7 @@ exports.HtmlDocument = Montage.create(Component, {
 //            ifr.style.opacity = 0;
 
             ifr.src = "js/document/templates/montage-web/index.html";
+            ifr.addEventListener("load", this.handleWebTemplateLoad.bind(this), true);
 
             return document.getElementById("iframeContainer").appendChild(ifr);
         }
@@ -124,8 +125,7 @@ exports.HtmlDocument = Montage.create(Component, {
 
             // TODO: We don't need this anymore -> need to setup the main container still
             //Adding a handler for the main user document reel to finish loading
-            //this._document.body.addEventListener("userTemplateDidLoad",  this.userTemplateDidLoad.bind(this), false);
-            this.documentRoot.addEventListener("userTemplateDidLoad",  this.userTemplateDidLoad.bind(this), false);
+//            this.documentRoot.addEventListener("userTemplateDidLoad",  this.userTemplateDidLoad.bind(this), false);
 
             // Live node list of the current loaded document
             this._liveNodeList = this.documentRoot.getElementsByTagName('*');
@@ -314,7 +314,7 @@ exports.HtmlDocument = Montage.create(Component, {
     // Setting up the currentSelectedContainer to the document body.
     userTemplateDidLoad: {
         value: function(){
-            this.application.ninja.currentSelectedContainer = this.documentRoot;
+//            this.application.ninja.currentSelectedContainer = this.documentRoot;
         }
     }
 });
