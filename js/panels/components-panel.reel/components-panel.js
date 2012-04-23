@@ -8,7 +8,6 @@ var Montage     = require("montage/core/core").Montage,
     Component   = require("montage/ui/component").Component,
     NJUtils     = require("js/lib/NJUtils").NJUtils;
 
-var treeControlModule   = require("js/components/tree.reel");
 var PIData              = require("js/data/pi/pi-data").PiData;
 
 String.prototype.capitalizeFirstChar = function() {
@@ -367,7 +366,7 @@ exports.ComponentsPanel = Montage.create(Component, {
                     break;
                 case "textarea":
                     el = NJUtils.makeNJElement("textarea", "TextArea", "component");
-                    el.elementModel.pi = "TextAreaPi";
+                    el.elementModel.pi = "TextareaPi";
                     break;
                 case "toggleButton":
                     el = NJUtils.makeNJElement("button", "Toggle Button", "component");

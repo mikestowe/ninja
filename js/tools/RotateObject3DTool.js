@@ -4,7 +4,9 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var Montage = require("montage/core/core").Montage;
+var Montage = require("montage/core/core").Montage,
+    viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils,
+    snapManager = require("js/helper-classes/3D/snap-manager").SnapManager;
 
 var Rotate3DToolBase = require("js/tools/Rotate3DToolBase").Rotate3DToolBase;
 var toolHandleModule = require("js/stage/tool-handle");
