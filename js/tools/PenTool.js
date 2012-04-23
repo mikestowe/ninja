@@ -566,6 +566,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                 var newCanvas = null;
                 newCanvas = NJUtils.makeNJElement("canvas", "Subpath", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
                 var elementModel = TagTool.makeElement(parseInt(w), parseInt(h), planeMat, midPt, newCanvas, true);
+                //note that we set the notify event to false because we send the event separately at end of this code block
                 ElementMediator.addElements(newCanvas, elementModel.data, false);
 
                 // create all the GL stuff
@@ -601,6 +602,9 @@ exports.PenTool = Montage.create(ShapeTool, {
                 {
                     // TODO - update the shape's info only.  shapeModel will likely need an array of shapes.
                 }
+
+                //now send the event that will add this canvas to the timeline
+                NJevent("elementAdded", newCanvas);
 
                 if(newCanvas.elementModel.isShape) //todo why is this not true for the path canvas?
                 {
