@@ -1106,6 +1106,14 @@ GLSubpath.prototype.importJSON = function(jo) {
     this._fillColor = jo.fillColor;
 
     this._dirty = true;
+    this.createSamples(false);
+    this.offsetPerBBoxMin();
+
+    //compute and store the center of the bbox in local space
+    var bboxMin = this.getBBoxMin();
+    var bboxMax = this.getBBoxMax();
+    var bboxMid = [0.5*(bboxMin[0]+bboxMax[0]),0.5*(bboxMin[1]+bboxMax[1]),0.5*(bboxMin[2]+bboxMax[2])];
+    this.setCanvasCenterLocalCoord(bboxMid);
 };
 
 GLSubpath.prototype.import = function( importStr ) {

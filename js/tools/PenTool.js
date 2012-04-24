@@ -786,7 +786,8 @@ exports.PenTool = Montage.create(ShapeTool, {
                 glmat4.multiply( newMat, tMat, newMat);
                 this._selectedSubpathPlaneMat = newMat;
                 ViewUtils.setMatrixForElement(this._selectedSubpathCanvas, newMat, true);
-
+                
+                //now set the center of the canvas as the center of the bounding box expressed in stage world coordinates
                 var localToStageWorldMat = ViewUtils.getLocalToStageWorldMatrix(this._selectedSubpathCanvas, false, false);
                 this._selectedSubpathCanvasCenter = MathUtils.transformAndDivideHomogeneousPoint(bboxMid, localToStageWorldMat);
                 this._selectedSubpathCanvasCenter[0]+= xAdjustment;
