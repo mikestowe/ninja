@@ -20,8 +20,10 @@ exports.ShapesController = Montage.create(CanvasController, {
                 color;
             switch(p) {
                 case "strokeSize":
-                    // TODO - For now, just handling px units.
                     this.setShapeProperty(el, "strokeSize", value);
+                    var strokeInfo = value.split(" ");
+                    val = this.GetValueInPixels(strokeInfo[0], strokeInfo[1]);
+
                     // TODO - For now, just handle Line, Rectangle and Oval. Eventually, move this into each class's
                     // setStrokeWidth code like SubPath and BrushStroke do.
                     var geomType = el.elementModel.shapeModel.GLGeomObj.geomType();
@@ -527,16 +529,6 @@ exports.ShapesController = Montage.create(CanvasController, {
             }
             else
             {
-                // Support for ink-bottle tool
-                if(color.strokeInfo)
-                {
-                    var strokeWidth = this.GetValueInPixels(color.strokeInfo.strokeSize,
-                                                            color.strokeInfo.strokeUnits);
-                    el.elementModel.shapeModel.GLGeomObj.setStrokeWidth(strokeWidth);
-                    this.setShapeProperty(el, "strokeSize", color.strokeInfo.strokeSize + " "
-                                                                + color.strokeInfo.strokeUnits);
-                }
-
                 if(mode)
                 {
                     switch (mode) {
@@ -558,6 +550,12 @@ exports.ShapesController = Montage.create(CanvasController, {
                             webGl = this.application.ninja.colorController.colorModel.colorToWebGl(color.color);
                             el.elementModel.shapeModel.GLGeomObj.setStrokeColor(webGl);
                     }
+                }
+
+                // Support for ink-bottle tool
+                if(color.strokeInfo)
+                {
+                    this.setProperty(el, "strokeSize", color.strokeInfo.strokeSize + " " + color.strokeInfo.strokeUnits);
                 }
             }
             el.elementModel.shapeModel.GLWorld.render();

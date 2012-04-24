@@ -84,14 +84,22 @@ exports.InkBottleTool = Montage.create(ModifierToolBase, {
                                 };
                 }
 
-                colorInfo.borderInfo = { borderStyle:this.options._borderStyle.value,
-                                         borderWidth:this.options._borderWidth.value,
-                                         borderUnits:this.options._borderWidth.units
-                                       };
+                if(this.options.useBorderWidth.checked || this.options.useBorderStyle.checked) {
+                    colorInfo.borderInfo = {};
+                    if(this.options.useBorderWidth.checked) {
+                        colorInfo.borderInfo.borderWidth = this.options._borderWidth.value;
+                        colorInfo.borderInfo.borderUnits = this.options._borderWidth.units;
+                    }
+                    if(this.options.useBorderStyle.checked) {
+                        colorInfo.borderInfo.borderStyle = this.options._borderStyle.value;
+                    }
+                }
 
-                colorInfo.strokeInfo = { strokeSize:this.options._strokeSize.value,
-                                         strokeUnits:this.options._strokeSize.units
-                                       };
+                if(this.options.useStrokeSize.checked) {
+                    colorInfo.strokeInfo = {};
+                    colorInfo.strokeInfo.strokeSize = this.options._strokeSize.value;
+                    colorInfo.strokeInfo.strokeUnits = this.options._strokeSize.units;
+                }
 
                 ElementsMediator.setColor(this.application.ninja.selectedElements, colorInfo, false, "Change", "inkBottleTool");
             }

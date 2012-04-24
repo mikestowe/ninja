@@ -10,8 +10,6 @@ var Montage = require("montage/core/core").Montage,
 
 exports.InkBottleProperties = Montage.create(ToolProperties, {
 
-    _use3D:    { value: false },
-
     _subPrepare: {
         value: function() {
             Object.defineBinding(this._strokeMaterial, "items", {
@@ -19,23 +17,44 @@ exports.InkBottleProperties = Montage.create(ToolProperties, {
                 boundObjectPropertyPath: "materials",
                 oneway: false
             });
-
-            this.handleChange(null);
-            this._useWebGL.addEventListener("change", this, false);
         }
     },
 
-    handleChange: {
+    handleAction: {
         value: function(event) {
-            if(this._useWebGL.checked)
-            {
-                this._use3D = true;
-                this._materialsContainer.style["display"] = "";
-            }
-            else
-            {
-                this._use3D = false;
-                this._materialsContainer.style["display"] = "none";
+            var ch = event.currentTarget,
+                val = event.currentTarget.identifier;
+            switch(val) {
+                case "useBorderWidth":
+                    if(ch.checked) {
+                        this.borderWidthLabel.element.classList.remove("disabled");
+                        this._borderWidth.enabled = true;
+                    } else {
+                        this.borderWidthLabel.element.classList.add("disabled");
+                        this._borderWidth.enabled = false;
+                    }
+                    break;
+                case "useBorderStyle":
+                    if(ch.checked) {
+                        this.borderStyleLabel.element.classList.remove("disabled");
+                        this._borderStyle.removeAttribute("disabled")
+                    } else {
+                        this.borderStyleLabel.element.classList.add("disabled");
+                        this._borderStyle.setAttribute("disabled", "disabled");
+                    }
+                    break;
+                case "useStrokeSize":
+                    if(ch.checked) {
+                        this.strokeSizeLabel.element.classList.remove("disabled");
+                        this._strokeSize.enabled = true
+                    } else {
+                        this.strokeSizeLabel.element.classList.add("disabled");
+                        this._strokeSize.enabled = false;
+                    }
+                    break;
+                case "useWebGl":
+                    (ch.checked) ? this._materialsContainer.style["display"] = "" : this._materialsContainer.style["display"] = "none";
+                    break;
             }
         }
     }
