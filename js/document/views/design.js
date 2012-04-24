@@ -6,25 +6,18 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 ////////////////////////////////////////////////////////////////////////
 //
-var Montage = require("montage/core/core").Montage,
-	Component = require("montage/ui/component").Component;
+var Montage = 			require("montage/core/core").Montage,
+	Component = 		require("montage/ui/component").Component,
+	CodeDocumentView = 	require("js/document/views/code").CodeDocumentView;
 ////////////////////////////////////////////////////////////////////////
 //	
-exports.ENTERNAME = Montage.create(Montage, {
+exports.DesignDocumentView = Montage.create(CodeDocumentView, {
 	////////////////////////////////////////////////////////////////////
 	//
 	hasTemplate: {
 		enumerable: false,
         value: false
-    },
-	////////////////////////////////////////////////////////////////////
-    //
-	deserializedFromTemplate: {
-		enumerable: false,
-		value: function () {
-			//
-		}
-	}
+    }
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
 });
