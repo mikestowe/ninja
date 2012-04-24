@@ -21,7 +21,7 @@ exports.ShapesController = Montage.create(CanvasController, {
             switch(p) {
                 case "strokeSize":
                     this.setShapeProperty(el, "strokeSize", value);
-                    var strokeInfo = value.split(" ");
+                    var strokeInfo = njModule.NJUtils.getValueAndUnits(value);
                     val = this.GetValueInPixels(strokeInfo[0], strokeInfo[1]);
 
                     // TODO - For now, just handle Line, Rectangle and Oval. Eventually, move this into each class's
