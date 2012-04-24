@@ -186,11 +186,36 @@ var Tween = exports.Tween = Montage.create(Component, {
     setAbsoluteTweenProperties:{
         value:function (eventDetail) {
             //console.log(eventDetail);
-            if (this.parentComponent.parentComponent.animatedElement.offsetTop != this.tweenedProperties["top"] && this.parentComponent.parentComponent.animatedElement.offsetLeft != this.tweenedProperties["left"]) {
+
+            // top
+            if(this.parentComponent.parentComponent.animatedElement.offsetTop != this.tweenedProperties["top"]){
                 this.tweenedProperties["top"] = this.parentComponent.parentComponent.animatedElement.offsetTop;
-                this.tweenedProperties["left"] = this.parentComponent.parentComponent.animatedElement.offsetLeft;
-                this.parentComponent.parentComponent.updateKeyframeRule();
             }
+
+            // left
+            if(this.parentComponent.parentComponent.animatedElement.offsetLeft != this.tweenedProperties["left"]){
+                this.tweenedProperties["left"] = this.parentComponent.parentComponent.animatedElement.offsetLeft;
+            }
+
+            // width
+            if (this.parentComponent.parentComponent.animatedElement.offsetWidth != this.tweenedProperties["width"]){
+                this.tweenedProperties["width"] = this.parentComponent.parentComponent.animatedElement.offsetWidth;
+            }
+
+            // height
+            if (this.parentComponent.parentComponent.animatedElement.offsetHeight != this.tweenedProperties["height"]){
+                this.tweenedProperties["height"] = this.parentComponent.parentComponent.animatedElement.offsetHeight;
+            }
+
+            // skewX
+
+            // skewY
+
+            // rotation
+
+            // tell track to update css rule
+            this.parentComponent.parentComponent.updateKeyframeRule();
+
             // highlight the tween's span
             this.tweenspan.highlightSpan();
             this.isTweenAnimated = true;
