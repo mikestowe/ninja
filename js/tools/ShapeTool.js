@@ -54,9 +54,9 @@ exports.ShapeTool = Montage.create(DrawingTool, {
     },
 
 	HandleLeftButtonUp:
-	{
-		value: function (event)
-		{
+    {
+        value: function (event)
+        {
             var drawData;
 
             drawData = this.getDrawingData();
@@ -69,24 +69,26 @@ exports.ShapeTool = Montage.create(DrawingTool, {
                                                                         drawData.planeMat, drawData.midPt, canvas, true);
 
                     canvas.elementModel.isShape = true;
-                    this.application.ninja.elementMediator.addElements(canvas, elementModel.data);
                 } else {
                     canvas = this._targetedElement;
+                    if (!canvas.getAttribute( "data-RDGE-id" ))
+                        canvas.setAttribute( "data-RDGE-id", NJUtils.generateRandom() );
                     canvas.elementModel.controller = ShapesController;
                     if(!canvas.elementModel.shapeModel) {
                         canvas.elementModel.shapeModel = Montage.create(ShapeModel);
                     }
                 }
+                this.application.ninja.elementMediator.addElements(canvas, canvas.elementModel.data);
             }
 
-			this.endDraw(event);
+            this.endDraw(event);
 
-			this._isDrawing = false;
-			this._hasDraw=false;
+            this._isDrawing = false;
+            this._hasDraw=false;
 
-			this.DrawHandles();
-		}
-	},
+            this.DrawHandles();
+        }
+    },
 
     onAddElements: {
         value: function(el) {

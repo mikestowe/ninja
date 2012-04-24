@@ -46,6 +46,10 @@ var Circle = function GLCircle() {
 			this._fillColor = fillColor;
 
 			this._strokeStyle = strokeStyle;
+
+			this._matrix = Matrix.I(4);
+			//this._matrix[12] = xOffset;
+			//this._matrix[13] = yOffset;
 		}
 
 		this.m_world = world;
@@ -187,7 +191,7 @@ var Circle = function GLCircle() {
 		// get the normalized device coordinates (NDC) for
 		// all position and dimensions.
 		var	vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
-		var	xNDC = 2*this._xOffset/vpw,  yNDC = 2*this._yOffset/vph,
+		var	xNDC = 2*this._xOffset/vpw,  yNDC = -2*this._yOffset/vph,
 			xRadNDC = this._width/vpw,  yRadNDC = this._height/vph,
 			xStrokeNDC = 2*this._strokeWidth/vpw,  yStrokeNDC = 2*this._strokeWidth/vph,
 			xInnRadNDC = this._innerRadius*xRadNDC,  yInnRadNDC = this._innerRadius*yRadNDC;
@@ -725,7 +729,7 @@ var Circle = function GLCircle() {
 		// get the normalized device coordinates (NDC) for
 		// the position and radii.
 		var	vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
-		var	xNDC = 2*this._xOffset/vpw,  yNDC = 2*this._yOffset/vph,
+		var	xNDC = 2*this._xOffset/vpw,  yNDC = -2*this._yOffset/vph,
 			xRadNDC = this._width/vpw,  yRadNDC = this._height/vph;
 		var projMat = world.makePerspectiveMatrix();
 		var z = -world.getViewDistance();

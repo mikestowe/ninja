@@ -228,7 +228,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 					{
 						// JSON format.  pull off the
 						importStr = importStr.substr( index+1 );
-						jObj = jObj = JSON.parse( importStr );
+						jObj = JSON.parse( importStr );
 						id = jObj.id;
 					}
 					else
