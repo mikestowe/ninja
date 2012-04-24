@@ -39,8 +39,7 @@ exports.MenuData = Montage.create( Montage, {
                                 "boundProperty": "activeDocument",
                                 "oneway": true,
                                 "boundValueMutator": function(activeDocument){
-                                    if(activeDocument !== null){return true;}
-                                    else{return false;}
+                                    return activeDocument !== null;
                                 }
                             },
                             "action": "executeFileClose"
@@ -54,8 +53,7 @@ exports.MenuData = Montage.create( Montage, {
                                 "boundProperty": "activeDocument",
                                 "oneway": true,
                                 "boundValueMutator": function(activeDocument){
-                                    if(activeDocument !== null){return true;}
-                                    else{return false;}
+                                    return activeDocument !== null;
                                 }
                             },
                             "action": "executeFileCloseAll"
@@ -73,8 +71,7 @@ exports.MenuData = Montage.create( Montage, {
                                 "boundProperty": "activeDocument",
                                 "oneway": true,
                                 "boundValueMutator": function(activeDocument){
-                                    if(activeDocument !== null){return true;}
-                                    else{return false;}
+                                    return activeDocument !== null;
                                 }
                             },
                             "action": "executeSave"
@@ -87,9 +84,8 @@ exports.MenuData = Montage.create( Montage, {
                                 "boundObj": "documentController",
                                 "boundProperty": "activeDocument",
                                 "oneway": true,
-                                "boundValueMutator": function(activeDocument){
-                                    if(activeDocument !== null){return true;}
-                                    else{return false;}
+                                "boundValueMutator": function(activeDocument) {
+                                    return activeDocument !== null;
                                 }
                             },
                             "action":"executeSaveAs"
@@ -103,8 +99,7 @@ exports.MenuData = Montage.create( Montage, {
                                 "boundProperty": "activeDocument",
                                 "oneway": true,
                                 "boundValueMutator": function(activeDocument){
-                                    if(activeDocument !== null){return true;}
-                                    else{return false;}
+                                    return activeDocument !== null;
                                 }
                             },
                             "action": "executeSaveAll"
@@ -127,6 +122,26 @@ exports.MenuData = Montage.create( Montage, {
                             "displayText" : "Close Project",
                             "hasSubMenu" : false,
                             "enabled": false
+                        },
+                        {
+                            "displayText" : "",
+                            "separator":    true
+                        },
+                        {
+                            "displayText" : "",
+                            "separator":    true
+                        },
+                        {
+                            "displayText" : "New Webpage",
+                            "hasSubMenu" : false,
+                            "enabled": true,
+                            "action":   "executeNewWebpage"
+                        },
+                        {
+                            "displayText" : "Open Webpage",
+                            "hasSubMenu" : false,
+                            "enabled": true,
+                            "action": "executeWebpageOpen"
                         }
                     ]
                 },
@@ -184,8 +199,7 @@ exports.MenuData = Montage.create( Montage, {
                                 "boundProperty": "activeDocument",
                                 "oneway": true,
                                 "boundValueMutator": function(activeDocument){
-                                    if((activeDocument !== null) && (activeDocument.currentView === "design")){return true;}
-                                    else{return false;}
+                                    return (activeDocument !== null) && (activeDocument.currentView === "design");
                                 }
                             },
                             "checked": {
@@ -202,8 +216,7 @@ exports.MenuData = Montage.create( Montage, {
                                 "boundProperty": "activeDocument",
                                 "oneway": true,
                                 "boundValueMutator": function(activeDocument){
-                                    if((activeDocument !== null) && (activeDocument.currentView === "design")){return true;}
-                                    else{return false;}
+                                    return (activeDocument !== null) && (activeDocument.currentView === "design");
                                 }
                             },
                             "checked": {
@@ -220,8 +233,7 @@ exports.MenuData = Montage.create( Montage, {
                                 "boundProperty": "activeDocument",
                                 "oneway": true,
                                 "boundValueMutator": function(activeDocument){
-                                    if((activeDocument !== null) && (activeDocument.currentView === "design")){return true;}
-                                    else{return false;}
+                                    return (activeDocument !== null) && (activeDocument.currentView === "design");
                                 }
                             },
                             "submenu": true,
@@ -267,8 +279,7 @@ exports.MenuData = Montage.create( Montage, {
                                 "boundProperty": "activeDocument",
                                 "oneway": true,
                                 "boundValueMutator": function(activeDocument){
-                                    if((activeDocument !== null) && (activeDocument.currentView === "design")){return true;}
-                                    else{return false;}
+                                    return (activeDocument !== null) && (activeDocument.currentView === "design");
                                 }
                             },
                             "checked": {
@@ -326,8 +337,7 @@ exports.MenuData = Montage.create( Montage, {
                                 "boundProperty": "activeDocument",
                                 "oneway": true,
                                 "boundValueMutator": function(activeDocument){
-                                    if((activeDocument !== null) && (activeDocument.currentView === "design")){return true;}
-                                    else{return false;}
+                                    return (activeDocument !== null) && (activeDocument.currentView === "design");
                                 }
                             },
                             "checked": {
@@ -348,8 +358,7 @@ exports.MenuData = Montage.create( Montage, {
                                 "boundProperty": "activeDocument",
                                 "oneway": true,
                                 "boundValueMutator": function(activeDocument){
-                                    if((activeDocument !== null) && (activeDocument.currentView === "design")){return true;}
-                                    else{return false;}
+                                    return (activeDocument !== null) && (activeDocument.currentView === "design");
                                 }
                             },
                             "radio": true,
@@ -367,8 +376,7 @@ exports.MenuData = Montage.create( Montage, {
                                 "boundProperty": "activeDocument",
                                 "oneway": true,
                                 "boundValueMutator": function(activeDocument){
-                                    if((activeDocument !== null) && (activeDocument.currentView === "design")){return true;}
-                                    else{return false;}
+                                    return (activeDocument !== null) && (activeDocument.currentView === "design");
                                 }
                             },
                             "radio": true,
@@ -386,8 +394,7 @@ exports.MenuData = Montage.create( Montage, {
                                 "boundProperty": "activeDocument",
                                 "oneway": true,
                                 "boundValueMutator": function(activeDocument){
-                                    if((activeDocument !== null) && (activeDocument.currentView === "design")){return true;}
-                                    else{return false;}
+                                    return (activeDocument !== null) && (activeDocument.currentView === "design");
                                 }
                             },
                             "radio": true,
