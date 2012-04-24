@@ -10,6 +10,7 @@ var Montage = require("montage/core/core").Montage,
     AppData     = require("js/data/appdata").AppData;
 
 var matrix = require("js/lib/math/matrix");
+var NjUtils = require("js/lib/NJUtils").NJUtils;
 
 exports.Ninja = Montage.create(Component, {
 
@@ -143,6 +144,7 @@ exports.Ninja = Montage.create(Component, {
         value: function() {
             this.ninjaVersion = window.ninjaVersion.ninja.version;
             this.undoManager = document.application.undoManager = UndoManager.create();
+            document.application.njUtils = NjUtils;
         }
     },
 
@@ -187,28 +189,18 @@ exports.Ninja = Montage.create(Component, {
 
     willDraw: {
         value: function() {
-
         }
     },
 
     draw: {
         value: function() {
             if(this.isResizing) {
-                if (this.height - this._resizedHeight < 46) {
-                    this.timelineSplitter.collapsed = true;
-                } else {
-                    this.timelineSplitter.collapsed = false;
-                }
-
-                if (this.width - this._resizedWidth < 30) {
-                    this.panelSplitter.collapsed = true;
-                } else {
-                    this.panelSplitter.collapsed = false;
-                }
-
+                this.timelineSplitter.collapsed = this.height - this._resizedHeight < 46;
+                this.panelSplitter.collapsed = this.width - this._resizedWidth < 30;
             }
-                this.rightPanelContainer.style.width = (this.width - this._resizedWidth) + "px";
-                this.timeline.element.style.height = (this.height - this._resizedHeight) + "px";
+
+            this.rightPanelContainer.style.width = (this.width - this._resizedWidth) + "px";
+            this.timeline.element.style.height = (this.height - this._resizedHeight) + "px";
         }
     },
 
@@ -276,6 +268,13 @@ exports.Ninja = Montage.create(Component, {
     handleOnOpenDocument: {
         value: function(event) {
             this.currentDocument = event.detail;
+
+            if(this.currentDocument.documentRoot) {
+                this.application.ninja.currentSelectedContainer = this.currentDocument.documentRoot;
+            } else {
+                alert("The current document has not loaded yet");
+                return;
+            }
 
             this.appModel.show3dGrid = this.currentDocument.draw3DGrid;
             NJevent("openDocument");
