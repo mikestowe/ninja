@@ -21,10 +21,11 @@
 }
 .style-sheet-name {
     color: #333;
+    font-family: "Droid Sans", sans-serif;
+    padding-top: 1px;
     position: absolute;
     right: 8px;
     text-decoration: none;
-    font-family: "Droid Sans", sans-serif;
 }
 .css-style-rule-item .nj-css-selector {
     position: relative;
