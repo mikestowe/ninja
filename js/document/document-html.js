@@ -270,7 +270,8 @@ exports.HtmlDocument = Montage.create(Component, {
 
                     //TODO Finish this implementation once we start caching Core Elements
                     // Assign a model to the UserContent and add the ViewPort reference to it.
-                    document.application.njUtils.makeElementModel(this.documentRoot, "Stage", "stage");
+                    document.application.njUtils.makeElementModel(this.documentRoot, "Body", "body");
+//                    this.documentRoot.elementModel.props3D.init(this.documentRoot, true);
 
                     for(i = 0; i < this._stylesheets.length; i++) {
                         if(this._stylesheets[i].ownerNode.id === "nj-stage-stylesheet") {
