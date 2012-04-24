@@ -125,7 +125,10 @@ exports.Panel = Montage.create(Component, {
                 require.async(this.modulePath)
                     .then(function(panelContent) {
                         var componentRequire = panelContent[that.moduleName];
-                        that.panelContent.content = componentRequire.create();
+                        var componentInstance = componentRequire.create();
+
+                        componentInstance.ownerComponent = that.ownerComponent;
+                        that.panelContent.content = componentInstance;
                     })
                     .end();
             }

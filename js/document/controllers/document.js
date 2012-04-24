@@ -16,7 +16,7 @@ exports.DocumentController = Montage.create(Component, {
 	hasTemplate: {
 		enumerable: false,
         value: false
-    }
+    },
     ////////////////////////////////////////////////////////////////////
 	//
 	save: {
