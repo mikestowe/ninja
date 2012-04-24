@@ -14,7 +14,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "module" : "js/panels/css-panel/style-sheets-view.reel",
                 "name" : "StyleSheetsView",
                 "properties" : {
-                    "element" : {"#" : "style-sheets-view-container"}
+                    "element" : {"#" : "style-sheets-view-container"},
+                    "styleSheetList" : {"@" : "styleSheetList"}
                 }
             },
             "arrayController" : {
@@ -85,6 +86,28 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "properties": {
                     "element": {"#": "style-sheets-toolbar"}
                 }
+            },
+            "resizer": {
+                "module": "js/panels/resize-composer",
+                "name": "ResizeComposer",
+                "properties": {
+                    "element": {"#": "resizeBar"},
+                    "component": {"@": "owner"}
+                },
+                "listeners": [
+                    {
+                        "type": "resizeStart",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "resizeMove",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "resizeEnd",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             }
         }
     </script>
@@ -95,9 +118,10 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
     <ul id="sheet-list">
         <li><div id="sheet-item"></div></li>
     </ul>
-    <div id="style-sheets-toolbar-container">
+    <div id="style-sheets-toolbar-container" class="style-sheets-toolbar-container">
         <div id="style-sheets-toolbar"></div>
     </div>
+    <div data-montage-id="resizeBar" class="sub-panel-resizer"></div>
 </div>
 </body>
 </html>

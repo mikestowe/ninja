@@ -3,9 +3,16 @@
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
+
+.style-sheets-view-container {
+    position: relative;
+    overflow: hidden;
+}
+
 .style-sheets-view-container ul {
     margin: 0;
     padding: 0;
+    min-height: 55px;
 }
 .style-sheets-view-container li {
     list-style-type: none;
@@ -16,4 +23,27 @@
 }
 .style-sheets-view-container li:last-child {
     margin-bottom: 5px;
+}
+
+/* ---------------
+   Toolbar
+------------------- */
+
+.style-sheets-toolbar-container {
+    bottom: 0;
+    height: 24px;
+    position: absolute;
+    width: 100%;
+}
+
+/* ------------------
+   Resizer
+   ------------------ */
+
+.sub-panel-resizer {
+    bottom: 0;
+    cursor: row-resize;
+    height: 4px;
+    position: absolute;
+    width: 100%;
 }
