@@ -28,7 +28,7 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
     },
 
     _automaticCodeComplete: {
-        value:true
+        value:false
     },
 
     automaticCodeComplete:{
