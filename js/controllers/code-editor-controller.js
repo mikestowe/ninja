@@ -46,14 +46,13 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
     },
 
     _zoomFactor:{
-        value:null
+        value:100
     },
 
     zoomFactor:{
         get: function(){return this._zoomFactor;},
         set: function(value){
-            this._zoomFactor = value;
-            this.application.ninja.documentController.activeDocument.container.style.zoom = ""+value+"%";
+            this.handleZoom(value);
         }
     },
 
@@ -113,7 +112,7 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
         value: function(cm, keyEvent, type) {
             //===manually triggered code completion
             if((this.automaticCodeComplete === false)){
-                if((keyEvent.ctrlKey || keyEvent.metaKey) && keyEvent.keyCode === 32){//Ctrl-Space
+                if((keyEvent.ctrlKey || keyEvent.metaKey) && keyEvent.keyCode === 32){//Ctrl+Space
                     this.codeEditor.simpleHint(cm, this.codeEditor.javascriptHint);
                 }
             }
@@ -147,6 +146,9 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
                             || (keyEvent.shiftKey && keyEvent.keyCode === 57)//open bracket (
                             || (keyEvent.shiftKey && keyEvent.keyCode === 48)//close bracket )
                             || ((keyEvent.ctrlKey || keyEvent.metaKey) && keyEvent.keyCode === 83)//ctrl+S
+                            || ((keyEvent.ctrlKey || keyEvent.metaKey) && keyEvent.keyCode === 90)//ctrl+z
+                            || ((keyEvent.ctrlKey || keyEvent.metaKey) && keyEvent.shiftKey && keyEvent.keyCode === 90)//ctrl+shift+z
+                            || ((keyEvent.ctrlKey || keyEvent.metaKey) && keyEvent.keyCode === 89)//ctrl+y
                            )
                     ){return true;}
                 default :
@@ -213,6 +215,17 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
         }
     },
 
+    handleZoom:{
+        value:function(value){
+            var originalFont=13,originalLineHeight=16;
+            this._zoomFactor = value;
+            this.application.ninja.documentController.activeDocument.container.style.fontSize = ""+((value/100)*originalFont)+"px";
+            this.application.ninja.documentController.activeDocument.container.style.cursor = "text";
+            this.application.ninja.documentController.activeDocument.container.querySelector(".CodeMirror").style.lineHeight = ""+((value/100)*originalLineHeight)+"px";
+            this.application.ninja.documentController.activeDocument.editor.refresh();//refresh editor display for xoom
+        }
+    },
+
     applySettings:{
         value:function(){
             //set theme
@@ -220,7 +233,7 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
             //check autocomplete support
             this.handleCodeCompletionSupport(this.application.ninja.documentController.activeDocument.editor.getOption("mode"));
             //set zoom
-            this.application.ninja.documentController.activeDocument.container.style.zoom = ""+this.zoomFactor+"%";
+            this.handleZoom(this._zoomFactor);
         }
     }
 });
