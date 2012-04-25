@@ -117,6 +117,19 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
+    _currentLayersSelected:{
+        value:[]
+    },
+    currentLayersSelected:{
+        get:function () {
+            return this._currentLayersSelected;
+        },
+        set:function (newVal) {
+            this._currentLayersSelected = newVal;
+            this.cacheTimeline();
+        }
+    },
+
     _millisecondsOffset:{
         value:1000
     },
@@ -418,6 +431,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 	    		this.application.ninja.currentDocument.tlCurrentSelectedContainer = this.application.ninja.currentSelectedContainer;
 	    		this.application.ninja.currentDocument.tllayerNumber = this.currentLayerNumber;
 	    		this.application.ninja.currentDocument.tlCurrentLayerSelected = this.currentLayerSelected;
+	    		this.application.ninja.currentDocument.tlCurrentLayersSelected = this.currentLayersSelected;
 			}
     	}
     },
@@ -430,6 +444,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		this.application.ninja.currentDocument.tlCurrentSelectedContainer = this.application.ninja.currentSelectedContainer;
     		this.application.ninja.currentDocument.tllayerNumber = this.currentLayerNumber;
     		this.application.ninja.currentDocument.tlCurrentLayerSelected = null;
+    		this.application.ninja.currentDocument.tlCurrentLayersSelected = [];
     	}
     },
     
@@ -609,6 +624,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this.arrLayers = this.application.ninja.currentDocument.tlArrLayers;
                 this.currentLayerNumber = this.application.ninja.currentDocument.tllayerNumber;
                 this.currentLayerSelected = this.application.ninja.currentDocument.tlCurrentLayerSelected;
+                this.currentLayersSelected = this.application.ninja.currentDocument.tlCurrentLayersSelected;
 
 
                 //debugger;
@@ -772,8 +788,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     handleSelectionChange:{
         value:function () {
-            var layerIndex, i = 0, arrLayersLength = this.arrLayers.length;
+            var layerIndex, 
+            	i = 0, 
+            	arrLayersLength = this.arrLayers.length;
+            	
             this.deselectTweens();
+            
             if (this.application.ninja.selectedElements.length === 1) {
                 if (this.application.ninja.selectedElements[0]) {
                     for (i = 0; i < arrLayersLength; i++) {
@@ -786,8 +806,63 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                     }
                 }
             }
+            
+            if (this.application.ninja.selectedElements.length > 1) {
+            	
+            }
         }
     },
+
+
+
+    selectLayers:{
+        value:function (arrSelectedIndexes) {
+
+            var i = 0,
+            	j = 0,
+            	arrLayersLength = this.arrLayers.length,
+            	userSelection = false;
+
+            if (this.selectedKeyframes) {
+                this.deselectTweens();
+            }
+
+            for (i = 0; i < arrLayersLength; i++) {
+                if (i === layerIndex) {
+                    this.arrLayers[i].layerData.isSelected = true;
+                } else {
+                    this.arrLayers[i].layerData.isSelected = false;
+                }
+                
+                this.triggerLayerBinding(i);
+            }
+
+            this.layerRepetition.selectedIndexes = [layerIndex];
+            this.currentLayerSelected = this.arrLayers[layerIndex];
+            if (userSelection) {
+                if (this._captureSelection) {
+
+                    if (this.currentLayerSelected.layerData.elementsList.length >= 1) {
+                        this.application.ninja.selectionController.selectElements(this.currentLayerSelected.layerData.elementsList);
+                    } else {
+                        this.application.ninja.selectionController.executeSelectElement();
+                    }
+
+                }
+                this._captureSelection = true;
+            }
+            this.resetMasterDuration();
+        }
+    },
+
+
+
+
+
+
+
+
+
 
     deselectTweens:{
         value:function () {
