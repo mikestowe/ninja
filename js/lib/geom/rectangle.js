@@ -452,13 +452,13 @@ var Rectangle = function GLRectangle() {
 		// render the fill
 		ctx.beginPath();
 		if (this._fillColor) {
-            inset = Math.ceil( lw ) + 0.5;
+            inset = Math.ceil( lw );
 
             if(this._fillColor.gradientMode) {
                 if(this._fillColor.gradientMode === "radial") {
-                    gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w/2, h/2)-inset);
+                    gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w, h)/2);
                 } else {
-                    gradient = ctx.createLinearGradient(inset, h/2, w-2*inset, h/2);
+                    gradient = ctx.createLinearGradient(inset/2, h/2, w-inset, h/2);
                 }
                 colors = this._fillColor.color;
 
@@ -486,11 +486,11 @@ var Rectangle = function GLRectangle() {
 		// render the stroke
 		ctx.beginPath();
 		if (this._strokeColor) {
-            inset = Math.ceil( 0.5*lw ) + 0.5;
+            inset = Math.ceil( 0.5*lw );
 
             if(this._strokeColor.gradientMode) {
                 if(this._strokeColor.gradientMode === "radial") {
-                    gradient = ctx.createRadialGradient(w/2, h/2, Math.min(h/2, w/2)-inset, w/2, h/2, Math.max(h/2, w/2));
+                    gradient = ctx.createRadialGradient(w/2, h/2, Math.min(h, w)/2-inset, w/2, h/2, Math.max(h, w)/2);
                 } else {
                     gradient = ctx.createLinearGradient(0, h/2, w, h/2);
                 }
