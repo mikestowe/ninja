@@ -356,7 +356,9 @@ var Rectangle = function GLRectangle() {
 		// various declarations
 		var pt,  rad,  ctr,  startPt, bPts;
 		var width  = Math.round(this.getWidth()),
-			height = Math.round(this.getHeight());
+			height = Math.round(this.getHeight()),
+            hw = 0.5*width,
+            hh = 0.5*height;
 
 		pt = [inset, inset];	// top left corner
 
@@ -364,6 +366,12 @@ var Rectangle = function GLRectangle() {
 		var trRad = this._trRadius;
 		var blRad = this._blRadius;
 		var brRad = this._brRadius;
+        // limit the radii to half the rectangle dimension
+        var minDimen = hw < hh ? hw : hh;
+        if (tlRad > minDimen)  tlRad = minDimen;
+        if (blRad > minDimen)  blRad = minDimen;
+        if (brRad > minDimen)  brRad = minDimen;
+        if (trRad > minDimen)  trRad = minDimen;
 
 		if ((tlRad <= 0) && (blRad <= 0) && (brRad <= 0) && (trRad <= 0)) {
 			ctx.rect(pt[0], pt[1], width - 2*inset, height - 2*inset);
@@ -452,7 +460,7 @@ var Rectangle = function GLRectangle() {
 		// render the fill
 		ctx.beginPath();
 		if (this._fillColor) {
-            inset = Math.ceil( lw );
+            inset = Math.ceil( lw ) - 0.5;
 
             if(this._fillColor.gradientMode) {
                 if(this._fillColor.gradientMode === "radial") {
@@ -486,7 +494,7 @@ var Rectangle = function GLRectangle() {
 		// render the stroke
 		ctx.beginPath();
 		if (this._strokeColor) {
-            inset = Math.ceil( 0.5*lw );
+            inset = Math.ceil( 0.5*lw ) - 0.5;
 
             if(this._strokeColor.gradientMode) {
                 if(this._strokeColor.gradientMode === "radial") {
