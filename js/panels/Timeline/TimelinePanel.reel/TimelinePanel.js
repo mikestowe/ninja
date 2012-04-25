@@ -829,6 +829,14 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
             this.currentLayerNumber = this.currentLayerNumber + 1;
             newLayerName = "Layer " + this.currentLayerNumber;
+
+            for(k = 0; k < arrLayersLength; k++){
+                if(this.arrLayers[k].layerData.layerName === newLayerName){
+                     this.currentLayerNumber = this.currentLayerNumber + 1;
+                     newLayerName = "Layer " + this.currentLayerNumber;
+                     break;
+                }
+            }
             thingToPush.layerData.layerName = newLayerName;
             thingToPush.layerData.layerTag = "<" + object.nodeName.toLowerCase() + ">";
             thingToPush.layerData.layerID = this.currentLayerNumber;
