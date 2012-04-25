@@ -585,7 +585,20 @@ exports.TranslateHandle = Montage.create(ToolHandle, {
             this._origin = pointOnElt;
 
 
-            var viewMat = viewUtils.getMatrixFromElement(this.application.ninja.currentDocument.documentRoot);
+            var stage = this.application.ninja.currentDocument.documentRoot;
+            var viewMat = viewUtils.getMatrixFromElement(stage);
+            // Get viewMat without zoom value
+            var zoom = this.application.ninja.documentBar.zoomFactor/100;
+            if(zoom !== 1)
+            {
+                var zoomMatInv = Matrix.create( [
+                       [ 1/zoom,    0,    0, 0],
+                       [    0, 1/zoom,    0, 0],
+                       [    0,    0, 1/zoom, 0],
+                       [    0,    0,      0, 1]
+                   ] );
+                glmat4.multiply( zoomMatInv, viewMat, viewMat );
+            }
 
             var transMat = viewMat.slice(0);
             if(inLocalMode)
