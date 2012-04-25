@@ -112,7 +112,7 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
         value: function(cm, keyEvent, type) {
             //===manually triggered code completion
             if((this.automaticCodeComplete === false)){
-                if((keyEvent.ctrlKey || keyEvent.metaKey) && keyEvent.keyCode === 32){//Ctrl+Space
+                if(keyEvent.ctrlKey && keyEvent.keyCode === 32){//Ctrl+Space
                     this.codeEditor.simpleHint(cm, this.codeEditor.javascriptHint);
                 }
             }
