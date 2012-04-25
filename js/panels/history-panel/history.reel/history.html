@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html lang="en">
+	<head>
+    	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    	<link rel="stylesheet" type="text/css" href="history.css">
+
+        <script type="text/montage-serialization">
+        {
+            "owner": {
+                "prototype": "js/panels/history-panel/history.reel",
+                "properties": {
+                    "element": {"#": "history_panel"}
+                }
+            },
+
+            "defaultUndoManager": {
+                "object": "montage/core/undo-manager"
+            },
+
+            "scroller": {
+                "prototype": "montage/ui/scroller.reel",
+                "properties": {
+                    "element": {"#": "scroller"},
+                    "axis": "vertical"
+                 }
+            },
+
+            "undoList": {
+                "prototype": "montage/ui/repetition.reel",
+                "properties": {
+                    "element": {"#": "undo_list"}
+                },
+                "bindings": {
+                    "objects": {
+                        "boundObject": {"@": "defaultUndoManager"},
+                        "boundObjectPropertyPath": "undoStack",
+                        "oneway": true
+                    }
+                }
+            },
+
+            "undoItem": {
+                "prototype": "js/panels/history-panel/history-item.reel",
+                "properties": {
+                    "element": {"#": "undo_item"}
+                },
+                "bindings": {
+                    "title": {
+                        "boundObject": {"@": "undoList"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration.label",
+                        "oneway": true
+                    }
+                }
+            },
+
+            "redoList": {
+                "prototype": "montage/ui/repetition.reel",
+                "properties": {
+                    "element": {"#": "redo_list"}
+                },
+                "bindings": {
+                    "objects": {
+                        "boundObject": {"@": "defaultUndoManager"},
+                        "boundObjectPropertyPath": "redoStack",
+                        "oneway": true
+                    }
+                }
+            },
+
+            "redoItem": {
+                "prototype": "js/panels/history-panel/history-item.reel",
+                "properties": {
+                    "element": {"#": "redo_item"}
+                },
+                "bindings": {
+                    "title": {
+                        "boundObject": {"@": "redoList"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration.label",
+                        "oneway": true
+                    }
+                }
+            }
+        }
+        </script>
+
+	</head>
+	<body>
+
+    	<div data-montage-id="history_panel" class="history_panel">
+            <div data-montage-id="scroller" class="scroller">
+                <ul data-montage-id="undo_list" class="undo_list">
+                    <li data-montage-id="undo_item"></li>
+                </ul>
+                <ul data-montage-id="redo_list" class="redo_list">
+                    <li data-montage-id="redo_item"></li>
+                </ul>
+            </div>
+    	</div>
+
+    </body>
+</html>

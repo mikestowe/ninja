@@ -168,6 +168,24 @@ exports.KeyboardMediator = Montage.create(Component, {
                     return;
                 }
 
+                // Paint Bucket Tool and Ink Bottle tools share keyboard shortcut K
+                if(evt.keyCode === Keyboard.K ) {
+                    evt.preventDefault();
+                    if(this.application.ninja.toolsData.selectedTool.id === "FillTool") {
+                        this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[11]});
+                    } else {
+                        this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[10]});
+                    }
+                    return;
+                }
+
+                // Shortcut for Eyedropper Tool is I
+                if(evt.keyCode === Keyboard.I ) {
+                    evt.preventDefault();
+                    this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[12]});
+                    return;
+                }
+
                 // Rotate Stage Tool is M
                 if(evt.keyCode === Keyboard.M ) {
                     evt.preventDefault();

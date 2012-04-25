@@ -73,8 +73,9 @@ exports.Properties = Montage.create(Component, {
 
             this.eventManager.addEventListener( "elementChange", this, false);
 
-            // For now always assume that the stage is selected by default
-            if(this.application.ninja.selectedElements.length === 0) {
+            // For now always assume that the stage is selected by default when opening the old template
+            // TODO: Remove marker for old template: NINJA-STAGE-REWORK
+            if(this.application.ninja.selectedElements.length === 0 && this.application.ninja.currentDocument.documentRoot.nodeName.toLowerCase() !== "body") {
                 this.displayStageProperties();
             }
         }
@@ -113,13 +114,14 @@ exports.Properties = Montage.create(Component, {
                 }
 
                 if(this.application.ninja.selectedElements.length) {
-                    ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "id", this.elementId.value, "Change", "pi");
+//                    ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "id", this.elementId.value, "Change", "pi");
+                    ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "id", this.elementId.value, this.application.ninja.selectedElements[0].id, "pi");
                 } else {
                     ElementsMediator.setAttribute(this.application.ninja.currentDocument.documentRoot, "id", this.elementId.value, "Change", "pi", this.application.ninja.currentDocument.documentRoot.elementModel.id);
                 }
             } else if(event.target.id === "elementClass") {
                 if(this.application.ninja.selectedElements.length) {
-                    ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "class", this.elementClass.value, "Change", "pi");
+                    ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "class", this.elementClass.value, this.application.ninja.selectedElements[0].className, "pi");
                 } else {
                     ElementsMediator.setAttribute(this.application.ninja.currentDocument.documentRoot, "class", this.elementClass.value, "Change", "pi", this.application.ninja.currentDocument.documentRoot.elementModel.elementClass);
                 }
