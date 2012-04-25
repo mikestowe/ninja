@@ -302,7 +302,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
                 var deltaX = -snapManager.getStageWidth()*0.5;
                 var deltaY = -snapManager.getStageHeight()*0.5;
                 var swToGlobalMat = ViewUtils.getStageWorldToGlobalMatrix();
-                this._selectedBrushStroke.drawToContext(ctx, deltaX, deltaY, true, swToGlobalMat);
+                this._selectedBrushStroke.drawToContext(ctx, true, deltaX, deltaY, swToGlobalMat);
 
                 /*
                 origX=0;origY=0;
