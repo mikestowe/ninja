@@ -693,7 +693,6 @@ var Rectangle = function GLRectangle() {
 		var projPt = MathUtils.vecIntersectPlane ( pt, dir, plane );
 
 		// transform the projected point back to the XY plane
-		//var invMat = mat.inverse();
 		var invMat = glmat4.inverse(mat, []);
 		var planePt = MathUtils.transformPoint( projPt, invMat );
 
