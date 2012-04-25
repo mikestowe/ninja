@@ -14,12 +14,10 @@ var ElementMediator = require("js/mediators/element-mediator").ElementMediator;
 var TagTool = require("js/tools/TagTool").TagTool;
 var ElementController = require("js/controllers/elements/element-controller").ElementController;
 var snapManager = require("js/helper-classes/3D/snap-manager").SnapManager;
-
+var ViewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
 var AnchorPoint = require("js/lib/geom/anchor-point").AnchorPoint;
 var SubPath = require("js/lib/geom/sub-path").SubPath;
 
-//todo remove this global var
-var g_DoPenToolMouseMove = true;
 
 exports.PenTool = Montage.create(ShapeTool, {
 
@@ -35,14 +33,11 @@ exports.PenTool = Montage.create(ShapeTool, {
     _parentNode: { enumerable: false, value: null, writable: true },
     _toolsPropertiesContainer: { enumerable: false, value: null, writable: true },
 
-    // Need to keep track of current mouse position for KEY modifiers event which do not have mouse coordinates
-    _currentX: { value: 0, writable: true },
-    _currentY: { value: 0, writable: true },
+    //set this to true if you want to keep making subpaths after closing current subpath (debugging only)
+    _makeMultipleSubpaths: { value: true, writable: true },
 
-    //the subpaths are what is displayed on the screen currently, with _selectedSubpath being the active one currently being edited
-    _selectedSubpath: { value: null, writable: true },
-    _makeMultipleSubpaths: { value: true, writable: true },    //set this to true if you want to keep making subpaths after closing current subpath
-
+    //set this to false if you don't want the mouse move handler being called when the mouse is not down (debugging only)
+    _trackMouseMoveWhenUp: {value: true, writable: false},
 
     //whether the user has held down the Alt key
     _isAltDown: { value: false, writable: true },
@@ -50,29 +45,37 @@ exports.PenTool = Montage.create(ShapeTool, {
     //whether the user has held down the Esc key
     _isEscapeDown: {value: false, writable: true },
 
-    //whether we have just started a new path (set true in mousedown, and set false in mouse up
+    //whether we have just started a new path (may set true in mousedown, and always set false in mouse up
+    //todo this seems to be unnecessary
     _isNewPath: {value: false, writable: true},
 
     //whether we have clicked one of the endpoints after entering the pen tool in ENTRY_SELECT_PATH edit mode
     _isPickedEndPointInSelectPathMode: {value: false, writable: true},
 
     //when the user wants to place a selected anchor point on top of another point, this is the target where the point will be placed
-    _snapTarget: { value: null, writable: true },
-
-    //whether or not we're using webgl for drawing
-    _useWebGL: {value: false, writable: false },
-
-    //the canvas created by the pen tool...this is grown or shrunk with the path (if the canvas was not already provided)
-    _penCanvas: { value: null, writable: true },
-
-    //the plane matrix for the first click...so the entire path is on the same plane
-    _penPlaneMat: { value: null, writable: true },
+    _snapTargetIndex: { value: -1, writable: true },
 
     //index of the anchor point that the user has hovered over
     _hoveredAnchorIndex: {value: -1, writable: true},
 
-    //constants used for picking points --- NOTE: these should be user-settable parameters
-    _PICK_POINT_RADIUS: { value: 10, writable: false },
+    //whether or not we're using webgl for drawing (set to false until we have webgl-ready stroke and fill regions)
+    _useWebGL: {value: false, writable: false },
+
+    //the _selectedSubpath is the active subpath currently being edited
+    _selectedSubpath: { value: null, writable: true },
+
+    //the canvas for the selected subpath...this is grown or shrunk by the pen tool with the subpath (if the canvas was not already provided)
+    _selectedSubpathCanvas: { value: null, writable: true },
+
+    //the plane matrix for the first click...so the entire path is on the same plane
+    //  todo this might be unnecessary as we can get this from element mediator (but that may be slow)
+    _selectedSubpathPlaneMat: { value: null, writable: true },
+
+    //the center of the subpath center in stageworld space
+    _selectedSubpathCanvasCenter: {value: null, writable: true},
+    
+    //constants used for picking points --- todo: these should be user-settable parameters
+    _PICK_POINT_RADIUS: { value: 4, writable: false },
     _DISPLAY_ANCHOR_RADIUS: { value: 5, writable: false },
     _DISPLAY_SELECTED_ANCHOR_RADIUS: { value: 10, writable: false },
     _DISPLAY_SELECTED_ANCHOR_PREV_RADIUS: { value: 2, writable: false },
@@ -86,34 +89,49 @@ exports.PenTool = Montage.create(ShapeTool, {
     EDIT_PREV_NEXT: { value: 8, writable: false },
     _editMode: { value: this.EDIT_NONE, writable: true },
 
-    //constants used for selection modes on entry to pen tool (mutually exclusive)
+    //constants used for selection modes on entry to pen tool (mutually exclusive i.e. cannot be OR-ed)
     ENTRY_SELECT_NONE: { value: 0, writable: false},
     ENTRY_SELECT_CANVAS: { value: 1, writable: false},
     ENTRY_SELECT_PATH: { value: 2, writable: false},
     _entryEditMode: {value: this.ENTRY_SELECT_NONE, writable: true},
-    
 
+    //constants used for limiting size of the subpath canvas
+    _MAX_CANVAS_DIMENSION: {value: 3000, writable: false},
 
-    _getUnsnappedPosition: {
-        value: function(x,y){
+    /*
+    // get the stage world position corresponding to the (x,y) mouse event position by querying the snap manager
+    //  but temporarily turning off all snapping
+    _getMouseEventPosition : {
+        value: function(x,y, getStageWorld, doSnap){
             var elemSnap = snapManager.elementSnapEnabled();
             var gridSnap = snapManager.gridSnapEnabled();
             var alignSnap = snapManager.snapAlignEnabled();
 
-            snapManager.enableElementSnap(false);
-            snapManager.enableGridSnap(false);
-            snapManager.enableSnapAlign(false);
+            if (!doSnap){
+                snapManager.enableElementSnap(false);
+                snapManager.enableGridSnap(false);
+                snapManager.enableSnapAlign(false);
+            }
 
             var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(x,y));
-            var unsnappedpos = DrawingToolBase.getHitRecPos(snapManager.snap(point.x, point.y, false));
+            var pos;
+            if (getStageWorld){
+                pos = (snapManager.snap(point.x, point.y, false)).calculateStageWorldPoint();    
+            } else {
+                pos = (snapManager.snap(point.x, point.y, false)).getScreenPoint();
+            }
+            var dragPlane = snapManager.getDragPlane();
 
-            snapManager.enableElementSnap(elemSnap);
-            snapManager.enableGridSnap(gridSnap);
-            snapManager.enableSnapAlign(alignSnap);
+            if (!doSnap){
+                snapManager.enableElementSnap(elemSnap);
+                snapManager.enableGridSnap(gridSnap);
+                snapManager.enableSnapAlign(alignSnap);
+            }
 
-            return unsnappedpos;
+            return [pos, dragPlane];
         }
     },
+    */
 
     ShowToolProperties: {
         value: function () {
@@ -126,6 +144,61 @@ exports.PenTool = Montage.create(ShapeTool, {
 
     },
 
+    //use the snap manager to build a hit record corresponding to the screen X, Y position
+    // will use the plane of the selected path as the working plane if available, else use stage
+    getHitRecord:{
+        value: function(x,y, doSnap){
+            var elemSnap = snapManager.elementSnapEnabled();
+            var gridSnap = snapManager.gridSnapEnabled();
+            var alignSnap = snapManager.snapAlignEnabled();
+
+            if (!doSnap){
+                snapManager.enableElementSnap(false);
+                snapManager.enableGridSnap(false);
+                snapManager.enableSnapAlign(false);
+            }
+
+            if (this._selectedSubpathCanvas){
+                var drawingCanvas = this._selectedSubpathCanvas;
+                var contentPlane = ViewUtils.getUnprojectedElementPlane(drawingCanvas);
+                snapManager.pushWorkingPlane(contentPlane);
+
+            }
+            var tmpPoint = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(x,y));
+            var hitRec = snapManager.snap(tmpPoint.x, tmpPoint.y, false);
+            if (this._selectedSubpathCanvas){
+                snapManager.popWorkingPlane();
+            }
+
+            if (!doSnap){
+                snapManager.enableElementSnap(elemSnap);
+                snapManager.enableGridSnap(gridSnap);
+                snapManager.enableSnapAlign(alignSnap);
+            }
+            return hitRec;
+        }
+    },
+
+    // **********************************************************************************************************
+    //  Mouse down handler
+    //  IF the selected subpath is null, it means we're going to start a new subpath
+    //      Create a new subpath
+    //  Compute the mouse position in stage world space (lying on stage or selected subpath canvas)
+    //  IF selected subpath does not have a canvas yet,
+    //      IF this is the first anchor point of the selected subpath
+    //          Store the plane mat and drag plane of this hit record (will be used for creating a canvas)
+    //      Add the mouse position (in stage world space) as an anchor point
+    //  ELSE (we may add to the selected subpath)
+    //      Compute the mouse position in local (selected subpath canvas) space
+    //      IF we hit the path:
+    //          Either select an anchor or insert an anchor and select it
+    //          (also set proper flags when select endpoint of open path in ENTRY_SELECT_PATH mode)
+    //      ELSE
+    //          If selected subpath is closed (and we're not in ENTRY_SELECT_PATH mode)
+    //              Create a new subpath
+    //          Add the mouse position (in selected subpath's local space) as an anchor point (call global to local)
+    //  Draw the selected subpath anchors and the selected subpath itself in the stage's context
+    // **********************************************************************************************************
     HandleLeftButtonDown:
     {
         value: function (event) {
@@ -134,69 +207,151 @@ exports.PenTool = Montage.create(ShapeTool, {
                 //NOTE: this will work on Webkit only...IE has different codes (left: 1, middle: 4, right: 2)
                 return;
             }
+            
+            //set the drawing flags (see the drawing-tool.js base class)
             if (this._canDraw) {
                 this._isDrawing = true;
             }
 
-
-            this.startDraw(event);
-
-            //assume we are not starting a new path as we will set this to true if we create a new GLSubpath()
+            //assume we are not starting a new path as we will set this to true if we create a new Subpath()
             this._isNewPath = false;
 
-            //add an anchor point by computing position of mouse down
-            var mouseDownPos = this._getUnsnappedPosition(event.pageX, event.pageY); //this.getMouseDownPos();
-            if (mouseDownPos) {
-                //if we had closed the selected subpath previously, or if we have not yet started anything, create a subpath
-                if (this._selectedSubpath === null) {
-                    this._selectedSubpath = new SubPath();
-                    this._isNewPath = true;
-                    if (this._entryEditMode === this.ENTRY_SELECT_PATH){
-                        //this should not happen, as ENTRY_SELECT_PATH implies there was a selected subpath
-                        this._entryEditMode = this.ENTRY_SELECT_NONE;
-                        console.log("Warning...PenTool handleMouseDown: changing from SELECT_PATH to SELECT_NONE");
-                    }
+            //if we had closed the selected subpath previously, or if we have not yet started anything, create a subpath
+            if (this._entryEditMode !== this.ENTRY_SELECT_PATH && this._selectedSubpath && this._selectedSubpath.getIsClosed() && this._makeMultipleSubpaths) {
+                this._selectedSubpath = null;
+            }
+            if (this._selectedSubpath === null) {
+                this._selectedSubpath = new SubPath();
+                this._selectedSubpathCanvas = null;
+                this._selectedSubpathPlaneMat = null;
+                this._isNewPath = true;
+
+                if (this._entryEditMode === this.ENTRY_SELECT_PATH){
+                    //this should not happen, as ENTRY_SELECT_PATH implies there was a selected subpath
+                    this._entryEditMode = this.ENTRY_SELECT_NONE;
+                    throw("Warning...PenTool handleMouseDown: changing from SELECT_PATH to SELECT_NONE");
                 }
+
+                //set display parameters: stroke width, stroke color, and fill color
+                var strokeSize = 1.0;//default stroke width
+                if (this.options.strokeSize) {
+                    strokeSize = ShapesController.GetValueInPixels(this.options.strokeSize.value, this.options.strokeSize.units);
+                }
+                this._selectedSubpath.setStrokeWidth(strokeSize);
+
+                var colorArray=[];
+                var color = this.application.ninja.colorController.colorToolbar.stroke.color;
+                if (color){
+                    colorArray = [color.r/255, color.g/255, color.b/255, color.a];
+                }else {
+                    colorArray = [1,1,1,0];
+                }
+                this._selectedSubpath.setStrokeColor(colorArray);
+
+                color = this.application.ninja.colorController.colorToolbar.fill.color;
+                if (color){
+                    colorArray = [color.r/255, color.g/255, color.b/255, color.a];
+                } else {
+                    colorArray = [1,1,1,0];
+                }
+                this._selectedSubpath.setFillColor(colorArray);
+            }
+
+            //build the hit record for the current mouse position (on the stage or the plane of the path canvas)
+            var hitRec = this.getHitRecord(event.pageX, event.pageY, false);
+            
+            if (this._selectedSubpathCanvas === null){
+                //IF this is the first anchor point of the selected subpath
+                //          Store the plane mat and drag plane of this hit record (will be used for creating a canvas)
+                //      Add the mouse position (in stage world space) as an anchor point
+
+                if (this._selectedSubpath.getNumAnchors()===0) {
+                    this._selectedSubpathPlaneMat   = hitRec.getPlaneMatrix();
+                }
+
+                //calculate the stage world position from the hit record
+                var swMousePos = hitRec.calculateStageWorldPoint();
+                swMousePos[0]+= snapManager.getStageWidth()*0.5; swMousePos[1]+= snapManager.getStageHeight()*0.5;
+
+                this._selectedSubpath.addAnchor(new AnchorPoint());
+                var newAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
+                newAnchor.setPos(swMousePos[0], swMousePos[1], swMousePos[2]);
+                newAnchor.setPrevPos(swMousePos[0], swMousePos[1], swMousePos[2]);
+                newAnchor.setNextPos(swMousePos[0], swMousePos[1], swMousePos[2]);
+                //set the mode so that dragging will update the next and previous locations
+                this._editMode = this.EDIT_PREV_NEXT;
+            }
+
+            //the selected subpath has a canvas, so test within that canvas' space
+            else
+            {
+                //      (we may add to the selected subpath)
+                //      Compute the mouse position in local (selected subpath canvas) space
+                //      IF we hit the path:
+                //          Either select an anchor or insert an anchor and select it
+                //          (also set proper flags when select endpoint of open path in ENTRY_SELECT_PATH mode)
+                //      ELSE
+                //          If selected subpath is closed (and we're not in ENTRY_SELECT_PATH mode)
+                //              Create a new subpath
+                //          Add the mouse position (in selected subpath's local space) as an anchor point (call global to local)
+
+                // Compute the mouse position in local (selected subpath canvas) space
+                var globalPos = hitRec.getScreenPoint();
+                var localMousePos = ViewUtils.globalToLocal(globalPos, this._selectedSubpathCanvas);
                 
+                //now perform the hit testing
                 var prevSelectedAnchorIndex = this._selectedSubpath.getSelectedAnchorIndex();
-                // ************* Add/Select Anchor Point *************
-                //check if the clicked location is close to an anchor point...if so, make that anchor the selected point and do nothing else
-                // BUT if the anchor point selected is the first anchor point, check if the previous selected anchor was the last anchor point...in that case, close the path
-                var selParam = this._selectedSubpath.pickPath(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2], this._PICK_POINT_RADIUS);
+                var selAnchorAndParamAndCode = this._selectedSubpath.pickPath(localMousePos[0], localMousePos[1], localMousePos[2], this._PICK_POINT_RADIUS, false);
+                var selParam = selAnchorAndParamAndCode[1];
                 var whichPoint = this._selectedSubpath.getSelectedMode();
-                if (whichPoint & this._selectedSubpath.SEL_ANCHOR) {
-                    //if we're in ENTRY_SELECT_PATH mode AND we have not yet clicked on the endpoint AND if we have now clicked on the endpoint
-                    if (this._entryEditMode === this.ENTRY_SELECT_PATH && this._isPickedEndPointInSelectPathMode === false){
-                        var selAnchorIndex = this._selectedSubpath.getSelectedAnchorIndex();
-                        if (selAnchorIndex===0 || selAnchorIndex===this._selectedSubpath.getNumAnchors()-1){
-                            //we have picked the endpoint of this path...reverse the path if necessary
-                            if (selAnchorIndex ===0){
-                                //reverse this path
-                                this._selectedSubpath.reversePath();
-                                selAnchorIndex = this._selectedSubpath.getSelectedAnchorIndex();
+
+
+                // ******* if we hit the path anywhere *********
+
+                if (whichPoint !== this._selectedSubpath.SEL_NONE){
+                    //if we hit the anchor point itself
+                    if (whichPoint & this._selectedSubpath.SEL_ANCHOR) {
+                        //if we're in ENTRY_SELECT_PATH mode AND we have not yet clicked on the endpoint AND if we have now clicked on the endpoint
+                        if (this._entryEditMode === this.ENTRY_SELECT_PATH && this._isPickedEndPointInSelectPathMode === false){
+                            var selAnchorIndex = this._selectedSubpath.getSelectedAnchorIndex();
+                            if (selAnchorIndex===0 || selAnchorIndex===this._selectedSubpath.getNumAnchors()-1){
+                                //we have picked the endpoint of this path...reverse the path if necessary
+                                if (selAnchorIndex ===0){
+                                    //reverse this path
+                                    this._selectedSubpath.reversePath();
+                                    selAnchorIndex = this._selectedSubpath.getSelectedAnchorIndex();
+                                }
+                                this._isPickedEndPointInSelectPathMode = true;
                             }
-                            this._isPickedEndPointInSelectPathMode = true;
+                        }
+                        this._editMode = this.EDIT_ANCHOR;
+                        //if we have selected the first anchor point, and previously had selected the last anchor point, close the path
+                        var numAnchors = this._selectedSubpath.getNumAnchors();
+                        if (numAnchors>1 && !this._selectedSubpath.getIsClosed() && this._selectedSubpath.getSelectedAnchorIndex()===0 && prevSelectedAnchorIndex === numAnchors-1){
+                            //insert an anchor temporarily that will get removed in the mouse up handler
+                            this._selectedSubpath.addAnchor(new AnchorPoint());
+                            var newAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
+                            newAnchor.setPos(localMousePos[0], localMousePos[1], localMousePos[2]);
+                            newAnchor.setPrevPos(localMousePos[0], localMousePos[1], localMousePos[2]);
+                            newAnchor.setNextPos(localMousePos[0], localMousePos[1], localMousePos[2]);
+
+                            //set the snap target in case the mouse move handler doesn't get called
+                            this._snapTargetIndex = 0;
+                            this._editMode = this.EDIT_PREV_NEXT;
                         }
                     }
-                    this._editMode = this.EDIT_ANCHOR;
-                    //if we have selected the first anchor point, and previously had selected the last anchor point, close the path
-                    var numAnchors = this._selectedSubpath.getNumAnchors();
-                    if (numAnchors>1 && !this._selectedSubpath.getIsClosed() && this._selectedSubpath.getSelectedAnchorIndex()===0 && prevSelectedAnchorIndex === numAnchors-1){
-                        //setting the selection mode to NONE will effectively add a new anchor point at the click location and also give us snapping
-                        whichPoint = this._selectedSubpath.SEL_NONE;
-                        //set the snap target in case the mouse move handler doesn't get called
-                        this._snapTarget = this._selectedSubpath.getAnchor(0);
-                    }
-                }
-                //check if the clicked location is close to prev and next of the selected anchor point..if so select that anchor, set mode to PREV or NEXT and do nothing else
-                // but if the selectedAnchor index is not -1 and neither prev nor next are selected, it means click selected a point selParam along bezier segment starting at selectedAnchor
-                else if (this._selectedSubpath.getSelectedAnchorIndex() !== -1) {
-                    if (whichPoint & this._selectedSubpath.SEL_PREV){
+
+                    //if we hit the prev handle
+                    else if (whichPoint & this._selectedSubpath.SEL_PREV){
                         this._editMode = this.EDIT_PREV;
                     }
+
+                    //if we hit the next handle
                     else if (whichPoint & this._selectedSubpath.SEL_NEXT){
                         this._editMode = this.EDIT_NEXT;
                     }
+
+                    //if no anchor or handles
                     else if (whichPoint & this._selectedSubpath.SEL_PATH) {
                         //the click point is close enough to insert point in bezier segment after selected anchor at selParam
                         if (selParam > 0 && selParam < 1) {
@@ -205,55 +360,35 @@ exports.PenTool = Montage.create(ShapeTool, {
                             //this._editMode = this.EDIT_ANCHOR;
                         }
                     }
-                }
 
-                //the clicked location is not close to the path or any anchor point
-                if (whichPoint === this._selectedSubpath.SEL_NONE) {
-                    if (this._entryEditMode !== this.ENTRY_SELECT_PATH) {
-                        //since we're not in ENTRY_SELECT_PATH mode, we don't edit the closed path...we start a new path if we clicked far away from selected path
-                        if (this._selectedSubpath.getIsClosed() && this._makeMultipleSubpaths) {
-                            this._penCanvas = null;
-                            this._penPlaneMat = null;
-                            this._snapTarget = null;
-                            this._selectedSubpath = new SubPath();
-                            this._isNewPath = true;
-                        }
+                } //if the path was hit somewhere
 
-                        //add an anchor point to end of the subpath, and make it the selected anchor point
-                        if (!this._selectedSubpath.getIsClosed() || this._makeMultipleSubpaths) {
+                // ************ the path was not hit anywhere ************
+                else {
+                    //add an anchor point to end of the open selected subpath (in local space), and make it the selected anchor point
+                    // ONLY if we were not in SELECT_PATH entry mode or we are in SELECT_PATH entry mode and we have picked one of the endpoints
+                    if (this._entryEditMode !== this.ENTRY_SELECT_PATH || (this._entryEditMode === this.ENTRY_SELECT_PATH && this._isPickedEndPointInSelectPathMode)) {
+                        if (!this._selectedSubpath.getIsClosed()) { //todo this test is probably unnecessary, but doing it to be safe
                             this._selectedSubpath.addAnchor(new AnchorPoint());
                             var newAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
-                            newAnchor.setPos(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2]);
-                            newAnchor.setPrevPos(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2]);
-                            newAnchor.setNextPos(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2]);
+
+                            newAnchor.setPos(localMousePos[0], localMousePos[1], localMousePos[2]);
+                            newAnchor.setPrevPos(localMousePos[0], localMousePos[1], localMousePos[2]);
+                            newAnchor.setNextPos(localMousePos[0], localMousePos[1], localMousePos[2]);
 
                             //set the mode so that dragging will update the next and previous locations
                             this._editMode = this.EDIT_PREV_NEXT;
                         }
-                    } else {
-                        if (this._isPickedEndPointInSelectPathMode){
-                            //TODO clean up this code...very similar to the code block above
-                            if (!this._selectedSubpath.getIsClosed()) {
-                                this._selectedSubpath.addAnchor(new AnchorPoint());
-                                var newAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
-                                newAnchor.setPos(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2]);
-                                newAnchor.setPrevPos(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2]);
-                                newAnchor.setNextPos(mouseDownPos[0], mouseDownPos[1], mouseDownPos[2]);
-
-                                //set the mode so that dragging will update the next and previous locations
-                                this._editMode = this.EDIT_PREV_NEXT;
-                            }
-                        }
                     }
-                } //if (whichPoint === this._selectedSubpath.SEL_NONE) (i.e. no anchor point was selected)
-
-                //display the curve overlay
-                this.DrawSubpathAnchors(this._selectedSubpath);
-                this.DrawSubpathSVG(this._selectedSubpath);
-            } //if (mouseDownPos) { i.e. if mouse down yielded a valid position
+                }
+            } //end of testing when we have a subpath canvas
 
 
-            if (!g_DoPenToolMouseMove){
+            //display the curve overlay
+            this.DrawSubpathAnchors(this._selectedSubpath);
+            this.DrawSubpathOnStage(this._selectedSubpath);
+
+            if (!this._trackMouseMoveWhenUp){
                 NJevent("enableStageMove");
             }
 
@@ -262,9 +397,6 @@ exports.PenTool = Montage.create(ShapeTool, {
     }, //HandleLeftButtonDown
 
 
-    //need to override this function because the ShapeTool's definition contains a clearDrawingCanvas call  - Pushkar
-    //  might not need to override once we draw using OpenGL instead of SVG
-    // Also took out all the snapping code for now...need to add that back
     HandleMouseMove:
     {
         value: function (event) {
@@ -273,56 +405,81 @@ exports.PenTool = Montage.create(ShapeTool, {
                 //NOTE: this will work on Webkit only...IE has different codes (left: 1, middle: 4, right: 2)
                 return;
             }
+            
+            //set the cursor to be the default cursor (depending on whether the selected subpath has any points yet)
+            if (this._selectedSubpath && this._selectedSubpath.getNumAnchors()>0){
+                this.application.ninja.stage.drawingCanvas.style.cursor = //"auto";
+                    "url('images/cursors/penCursors/Pen_.png') 5 1, default";
+            }
+            else {
+                this.application.ninja.stage.drawingCanvas.style.cursor = //"auto";
+                    "url('images/cursors/penCursors/Pen_newPath.png') 5 1, default";
+            }
+
+            if (!this._selectedSubpath ){
+                return; //nothing to do in case no subpath is selected
+            }
 
             //clear the canvas before we draw anything else
             this.application.ninja.stage.clearDrawingCanvas();
             this._hoveredAnchorIndex = -1;
 
-            //set the cursor to be the default cursor
-            this.application.ninja.stage.drawingCanvas.style.cursor = "auto";
+            var hitRec = this.getHitRecord(event.pageX, event.pageY, false);
+            var globalMousePos=null, localMousePos=null, stageWorldMousePos = null;
+            var drawingCanvas = this._selectedSubpath.getCanvas();
+            if (!drawingCanvas){
+                drawingCanvas = ViewUtils.getStageElement();
+                stageWorldMousePos = hitRec.calculateStageWorldPoint();
+                stageWorldMousePos[0]+= snapManager.getStageWidth()*0.5;
+                stageWorldMousePos[1]+= snapManager.getStageHeight()*0.5;
+                localMousePos = stageWorldMousePos; //since the subpath points are in stage world space, set the 'localMousePos' to be stage world as well
+            }
+            else {
+                globalMousePos = hitRec.getScreenPoint();
+                localMousePos = ViewUtils.globalToLocal(globalMousePos, drawingCanvas);
+            }
+
 
             if (this._isDrawing) {
-                var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(event.pageX, event.pageY));
-                //go through the drawing toolbase to get the position of the mouse 
-                var currMousePos = DrawingToolBase.getHitRecPos(DrawingToolBase.getUpdatedSnapPoint(point.x, point.y, false, this.mouseDownHitRec));
-                if (currMousePos && this._selectedSubpath && (this._selectedSubpath.getSelectedAnchorIndex() >= 0 && this._selectedSubpath.getSelectedAnchorIndex() < this._selectedSubpath.getNumAnchors())) {
-                    //var scoord = this._getScreenCoord(this._mouseUpHitRec);
+                //if there is a selected subpath with a selected anchor point
+                if (this._selectedSubpath.getSelectedAnchorIndex() >= 0 && this._selectedSubpath.getSelectedAnchorIndex() < this._selectedSubpath.getNumAnchors()) {
+                    //compute the translation from the selected anchor
                     var selAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
-                    var selX = selAnchor.getPosX();
-                    var selY = selAnchor.getPosY();
-                    var selZ = selAnchor.getPosZ();
+                    var selAnchorPos = selAnchor.getAllPos();
+                    var localTranslation = VecUtils.vecSubtract(3, localMousePos, selAnchorPos[1]);
+                    
                     if (this._editMode & this.EDIT_ANCHOR) {
-                        selAnchor.translateAll(currMousePos[0] - selX, currMousePos[1] - selY, currMousePos[2] - selZ);
+                        selAnchor.translateAll(localTranslation[0], localTranslation[1], localTranslation[2]);
                     }
                     else if (this._editMode & this.EDIT_PREV) {
-                        var oldPX = selAnchor.getPrevX();
-                        var oldPY = selAnchor.getPrevY();
-                        var oldPZ = selAnchor.getPrevZ();
-                        selAnchor.translatePrev(currMousePos[0] - oldPX, currMousePos[1] - oldPY, currMousePos[2] - oldPZ);
+                        localTranslation = VecUtils.vecSubtract(3, localMousePos, selAnchorPos[0]);
+                        selAnchor.translatePrev(localTranslation[0], localTranslation[1], localTranslation[2]);
 
                         //move the next point if Alt key is down to ensure relative angle between prev and next
                         if (this._isAltDown) {
-                            selAnchor.translateNextFromPrev(currMousePos[0] - oldPX, currMousePos[1] - oldPY, currMousePos[2] - oldPZ);
+                            selAnchor.translateNextFromPrev(localTranslation[0], localTranslation[1], localTranslation[2]);
                         }
                     }
                     else if (this._editMode & this.EDIT_NEXT) {
-                        var oldNX = selAnchor.getNextX();
-                        var oldNY = selAnchor.getNextY();
-                        var oldNZ = selAnchor.getNextZ();
-                        selAnchor.translateNext(currMousePos[0] - oldNX, currMousePos[1] - oldNY, currMousePos[2] - oldNZ);
+                        localTranslation = VecUtils.vecSubtract(3, localMousePos, selAnchorPos[2]);
+                        selAnchor.translateNext(localTranslation[0], localTranslation[1], localTranslation[2]);
 
                         //move the prev point if Alt key is down to ensure relative angle between prev and next
                         if (this._isAltDown) {
-                            selAnchor.translatePrevFromNext(currMousePos[0] - oldNX, currMousePos[1] - oldNY, currMousePos[2] - oldNZ);
+                            selAnchor.translatePrevFromNext(localTranslation[0], localTranslation[1], localTranslation[2]);
                         }
                     }
                     else if (this._editMode & this.EDIT_PREV_NEXT) {
-                        selAnchor.setNextPos(currMousePos[0], currMousePos[1], currMousePos[2]);
+                        localTranslation = VecUtils.vecSubtract(3, localMousePos, selAnchorPos[2]);
+                        selAnchor.translateNext(localTranslation[0], localTranslation[1], localTranslation[2]);
                         selAnchor.setPrevFromNext();
                     }
 
                     //snapping...check if the new location of the anchor point is close to another anchor point
-                    this._snapTarget = null;
+                    var selX = selAnchor.getPosX();
+                    var selY = selAnchor.getPosY();
+                    var selZ = selAnchor.getPosZ();
+                    this._snapTargetIndex = -1;
                     var numAnchors = this._selectedSubpath.getNumAnchors();
                     for (var i = 0; i < numAnchors; i++) {
                         //check if the selected anchor is close to any other anchors
@@ -332,110 +489,201 @@ exports.PenTool = Montage.create(ShapeTool, {
                         var distSq = currAnchor.getDistanceSq(selX, selY, selZ);
                         if (distSq < this._PICK_POINT_RADIUS * this._PICK_POINT_RADIUS) {
                             //set the snap target to the location of the first close-enough anchor
-                            this._snapTarget = currAnchor;
+                            this._snapTargetIndex = i;
                             break;
                         }
                     }
 
                     //make the subpath dirty so it will get re-drawn
                     this._selectedSubpath.makeDirty();
-                    this.DrawSubpathSVG(this._selectedSubpath);
+                    this.DrawSubpathOnStage(this._selectedSubpath);
                 }
-
             } else { //if mouse is not down:
-                //this.doSnap(event);
-                //this.DrawHandles();
-
-                var currMousePos = this._getUnsnappedPosition(event.pageX, event.pageY);
-                if (currMousePos && this._selectedSubpath ){
-                    var selAnchor = this._selectedSubpath.pickAnchor(currMousePos[0], currMousePos[1], currMousePos[2], this._PICK_POINT_RADIUS);
-                    if (selAnchor >=0) {
-                        this._hoveredAnchorIndex = selAnchor;
-                    } else {
-                        //detect if the current mouse position will hit the path
-                        var pathHitTestData = this._selectedSubpath.pathHitTest(currMousePos[0], currMousePos[1], currMousePos[2], this._PICK_POINT_RADIUS);
-                        if (pathHitTestData[0]!==-1){
-                            //change the cursor
-                            var cursor = "url('images/cursors/penAdd.png') 10 10,default";
-                            this.application.ninja.stage.drawingCanvas.style.cursor = cursor;
-                        }
+                var selAnchorAndParamAndCode = this._selectedSubpath.pickPath(localMousePos[0], localMousePos[1], localMousePos[2], this._PICK_POINT_RADIUS, true);
+                if (selAnchorAndParamAndCode[0] >=0){ //something on the path was hit
+                    if ((selAnchorAndParamAndCode[2] & this._selectedSubpath.SEL_ANCHOR)
+                        || (selAnchorAndParamAndCode[2] & this._selectedSubpath.SEL_PREV)
+                        || (selAnchorAndParamAndCode[2] & this._selectedSubpath.SEL_NEXT))
+                    { //the anchor was hit
+                        this._hoveredAnchorIndex = selAnchorAndParamAndCode[0];
+                        var lastAnchorIndex = this._selectedSubpath.getNumAnchors()-1;
+                        var cursor = "url('images/cursors/penCursors/Pen_anchorSelect.png') 5 1, default";
+                        if (this._selectedSubpath.getIsClosed()===false){
+                            if (this._entryEditMode === this.ENTRY_SELECT_PATH && !this._isPickedEndPointInSelectPathMode && (this._hoveredAnchorIndex===0 || this._hoveredAnchorIndex===lastAnchorIndex)){
+                                //if we're in SELECT_PATH mode, have not yet clicked on the end anchors,  AND we hovered over one of the end anchors
+                                cursor = "url('images/cursors/penCursors/Pen_append.png') 5 1, default";
+                            } else if ( this._selectedSubpath.getSelectedAnchorIndex()===lastAnchorIndex && this._hoveredAnchorIndex===0)  {
+                                //if we've selected the last anchor and hover over the first anchor
+                                cursor = "url('images/cursors/penCursors/Pen_closePath.png') 5 1, default";
+                            }
+                        } //if path is not closed
+                        this.application.ninja.stage.drawingCanvas.style.cursor = cursor;
+                    } else if (selAnchorAndParamAndCode[2] & this._selectedSubpath.SEL_PATH) {
+                        //change the cursor
+                        var cursor = "url('images/cursors/penCursors/Pen_plus.png') 5 1, default";
+                        this.application.ninja.stage.drawingCanvas.style.cursor = cursor;
                     }
-                }
-            } //else of if (this._isDrawing) {
+                } //something on the path was hit
+            } //mouse is not down
 
             //this.drawLastSnap();        // Required cleanup for both Draw/Feedbacks
             if (this._selectedSubpath){
                 this.DrawSubpathAnchors(this._selectedSubpath);
             }
+
         }//value: function(event)
     },//HandleMouseMove
 
-    
-    TranslateSelectedSubpathPerPenCanvas:{
-        value: function() {
-            if (this._penCanvas!==null) {
-                //obtain the 2D translation of the canvas due to the Selection tool...assuming this is called in Configure
-                var penCanvasLeft = parseInt(ElementMediator.getProperty(this._penCanvas, "left"));//parseFloat(DocumentControllerModule.DocumentController.GetElementStyle(this._penCanvas, "left"));
-                var penCanvasTop = parseInt(ElementMediator.getProperty(this._penCanvas, "top"));//parseFloat(DocumentControllerModule.DocumentController.GetElementStyle(this._penCanvas, "top"));
-                var penCanvasWidth = parseInt(ElementMediator.getProperty(this._penCanvas, "width"));//this._penCanvas.width;
-                var penCanvasHeight = parseInt(ElementMediator.getProperty(this._penCanvas, "height"));//this._penCanvas.height;
-                var penCanvasOldX = penCanvasLeft + 0.5 * penCanvasWidth;
-                var penCanvasOldY = penCanvasTop + 0.5 * penCanvasHeight;
-
-                var translateCanvasX = penCanvasOldX - this._selectedSubpath.getCanvasX();
-                var translateCanvasY = penCanvasOldY - this._selectedSubpath.getCanvasY();
-
-                //update the canvasX and canvasY parameters for this subpath and also translate the subpath points (since they're stored in stage world space)
-                this._selectedSubpath.setCanvasX(translateCanvasX + this._selectedSubpath.getCanvasX());
-                this._selectedSubpath.setCanvasY(translateCanvasY + this._selectedSubpath.getCanvasY());
-                this._selectedSubpath.translateAnchors(translateCanvasX, translateCanvasY, 0);
-                this._selectedSubpath.createSamples(); //updates the bounding box
-            }
-        }
-    },
 
     ShowSelectedSubpath:{
         value: function() {
             if (this._selectedSubpath){
-                this._selectedSubpath.createSamples(); //dirty bit is checked here
+                //assume that we have already called PrepareSelectedSubpathForRendering on this
+                //build the width and height of this canvas by looking at the bounding box
                 var bboxMin = this._selectedSubpath.getBBoxMin();
                 var bboxMax = this._selectedSubpath.getBBoxMax();
                 var bboxWidth = bboxMax[0] - bboxMin[0];
                 var bboxHeight = bboxMax[1] - bboxMin[1];
-                var bboxMid = [0.5 * (bboxMax[0] + bboxMin[0]), 0.5 * (bboxMax[1] + bboxMin[1]), 0.5 * (bboxMax[2] + bboxMin[2])];
-
-                this._selectedSubpath.setCanvasX(bboxMid[0]);
-                this._selectedSubpath.setCanvasY(bboxMid[1]);
 
                 //call render shape with the bbox width and height
-                this.RenderShape(bboxWidth, bboxHeight, this._penPlaneMat, bboxMid, this._penCanvas);
+                this.RenderShape(bboxWidth, bboxHeight, this._selectedSubpathCanvasCenter, this._selectedSubpathPlaneMat, this._selectedSubpathCanvas);
             }
         }
     },
 
+    RenderShape: {
+        value: function (w, h, midPt, planeMat, canvas) {
+            if ((Math.floor(w) === 0) || (Math.floor(h) === 0)) {
+                return;
+            }
+
+            w= Math.round(w);
+            h = Math.round(h);
+            var left = Math.round(midPt[0] - 0.5 * w);
+            var top = Math.round(midPt[1] - 0.5 * h);
+
+            if (!canvas) {
+                var newCanvas = null;
+                newCanvas = NJUtils.makeNJElement("canvas", "Subpath", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
+                var elementModel = TagTool.makeElement(parseInt(w), parseInt(h), planeMat, midPt, newCanvas, true);
+                //note that we set the notify event to false because we send the event separately at end of this code block
+                ElementMediator.addElements(newCanvas, elementModel.data, false);
+
+                // create all the GL stuff
+                var world = this.getGLWorld(newCanvas, this._useWebGL);//this.options.use3D);//this.CreateGLWorld(planeMat, midPt, newCanvas, this._useWebGL);//fillMaterial, strokeMaterial);
+                //store a reference to this newly created canvas
+                this._selectedSubpathCanvas = newCanvas;
+                this._selectedSubpathPlaneMat = ElementMediator.getMatrix(newCanvas);
+
+                var subpath = this._selectedSubpath; //new GLSubpath();
+                subpath.setWorld(world);
+                subpath.setCanvas(newCanvas);
+
+                world.addObject(subpath);
+                world.render();
+                //TODO this will not work if there are multiple shapes in the same canvas
+                newCanvas.elementModel.shapeModel.GLGeomObj = subpath;
+                newCanvas.elementModel.isShape = true;
+                newCanvas.elementModel.shapeModel.shapeCount++;
+                if(newCanvas.elementModel.shapeModel.shapeCount === 1)
+                {
+                    newCanvas.elementModel.selection = "Subpath";
+                    newCanvas.elementModel.pi = "SubpathPi";
+                    newCanvas.elementModel.shapeModel.strokeSize = this.options.strokeSize.value + " " + this.options.strokeSize.units;
+                    var strokeColor = subpath.getStrokeColor();
+                    newCanvas.elementModel.shapeModel.stroke = strokeColor;
+                    if(strokeColor) {
+                        newCanvas.elementModel.shapeModel.border = this.application.ninja.colorController.colorToolbar.stroke;
+                    }
+                    newCanvas.elementModel.shapeModel.GLGeomObj = subpath;
+                    newCanvas.elementModel.shapeModel.useWebGl = false;//this.options.use3D;
+                }
+                else
+                {
+                    // TODO - update the shape's info only.  shapeModel will likely need an array of shapes.
+                }
+
+                //now send the event that will add this canvas to the timeline
+                NJevent("elementAdded", newCanvas);
+
+                if(newCanvas.elementModel.isShape) //todo why is this not true for the path canvas?
+                {
+                    this.application.ninja.selectionController.selectElement(newCanvas);
+                }
+            } //if (!canvas) {
+            else {
+
+                var world = null;
+                if (canvas.elementModel.shapeModel && canvas.elementModel.shapeModel.GLWorld) {
+                    world = canvas.elementModel.shapeModel.GLWorld;
+                } else {
+                    world = this.getGLWorld(canvas, this._useWebGL);//this.options.use3D);//this.CreateGLWorld(planeMat, midPt, canvas, this._useWebGL);//fillMaterial, strokeMaterial);
+                }
+
+                if (this._entryEditMode !== this.ENTRY_SELECT_CANVAS){
+                    //update the left and top of the canvas element
+                    var canvasArray=[canvas];
+
+                    ElementMediator.setProperty(canvasArray, "width", [w+"px"], "Changing", "penTool");//canvas.width = w;
+                    ElementMediator.setProperty(canvasArray, "height", [h+"px"], "Changing", "penTool");//canvas.height = h;
+                    ElementMediator.setProperty(canvasArray, "left", [left+"px"],"Changing", "penTool");//DocumentControllerModule.DocumentController.SetElementStyle(canvas, "left", parseInt(left) + "px");
+                    ElementMediator.setProperty(canvasArray, "top", [top + "px"],"Changing", "penTool");//DocumentControllerModule.DocumentController.SetElementStyle(canvas, "top", parseInt(top) + "px");
+
+                    //update the viewport and projection to reflect the new canvas width and height (todo might be unnecessary since we don't use RDGE for now)
+                    world.setViewportFromCanvas(canvas);
+                    if (this._useWebGL){
+                        var cam = world.renderer.cameraManager().getActiveCamera();
+                        cam.setPerspective(world.getFOV(), world.getAspect(), world.getZNear(), world.getZFar());
+                    }
+                }
+
+                var subpath = this._selectedSubpath;
+
+                subpath.setDrawingTool(this);
+                subpath.setWorld(world);
+
+                world.addIfNewObject(subpath);
+                world.render();
+
+                //TODO this will not work if there are multiple shapes in the same canvas
+                canvas.elementModel.shapeModel.GLGeomObj = subpath;
+
+                if(canvas.elementModel.isShape) //todo why is this not true for the path canvas?
+                {
+                    this.application.ninja.selectionController.selectElement(canvas);
+                }
+            } //else of if (!canvas) {
+        } //value: function (w, h, planeMat, midPt, canvas) {
+    }, //RenderShape: {
+
+
+
+    // **********************************************************************************************************
+    //  Mouse up handler
+    //  Check if the selected anchor point of the selected subpath should be snapped to another anchor point
+    //      (also sets open subpaths closed if appropriate)
+    //  IF the selected subpath does not have a canvas
+    //      
+    //  Draw the selected subpath anchors and the selected subpath itself in the stage's context
+    // **********************************************************************************************************
     HandleLeftButtonUp: {
         value: function (event) {
-            if (this._isAltDown) {
-                var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(event.pageX, event.pageY));
-                this.mouseUpHitRec = DrawingToolBase.getUpdatedSnapPoint(point.x, point.y, false, this.mouseDownHitRec);
-            }
-            else if (this._isDrawing) {
-                this.doDraw(event); //needed to get the mouse up point in case there was no mouse move
-            }
-
-            //snapping...if there was a snapTarget and a selected anchor, move the anchor to the snap target
-            if (this._snapTarget !== null && this._selectedSubpath && this._selectedSubpath.getSelectedAnchorIndex() !== -1) {
+            // ******************** snapping ***********************
+            //  if there was a snapTarget and a selected anchor, move the anchor to the snap target
+            if (this._snapTargetIndex !== -1 && this._selectedSubpath && this._selectedSubpath.getSelectedAnchorIndex() !== -1) {
                 var selAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
-                selAnchor.setPos(this._snapTarget.getPosX(), this._snapTarget.getPosY(), this._snapTarget.getPosZ());
+                var snapAnchor = this._selectedSubpath.getAnchor(this._snapTargetIndex);
+                selAnchor.setPos(snapAnchor.getPosX(), snapAnchor.getPosY(), snapAnchor.getPosZ());
                 this._selectedSubpath.makeDirty();
 
-                //if the first or last anchor point were snapped for an open path, check if the first and last anchor point are at the same position
+                //if the first or last anchor point were snapped for an open path, set the first and last anchor point to the same position
                 if (!this._selectedSubpath.getIsClosed()) {
                     var lastAnchorIndex = this._selectedSubpath.getNumAnchors() - 1;
                     var firstAnchor = this._selectedSubpath.getAnchor(0);
                     var lastAnchor = this._selectedSubpath.getAnchor(lastAnchorIndex);
-                    if ((this._selectedSubpath.getSelectedAnchorIndex() === 0 && this._snapTarget === lastAnchor) || (this._selectedSubpath.getSelectedAnchorIndex() === lastAnchorIndex && this._snapTarget === firstAnchor)) {
-                        this._selectedSubpath.setIsClosed(true);
+                    if ((this._selectedSubpath.getSelectedAnchorIndex() === 0 && this._snapTargetIndex === lastAnchorIndex)     //if the first anchor was snapped to the last
+                        || (this._selectedSubpath.getSelectedAnchorIndex() === lastAnchorIndex && this._snapTargetIndex === 0)) //OR if the last anchor was snapped to the first
+                    {
                         //set the prev of the first anchor to the be prev of the last anchor
                         firstAnchor.setPrevPos(lastAnchor.getPrevX(), lastAnchor.getPrevY(), lastAnchor.getPrevZ());
 
@@ -447,59 +695,150 @@ exports.PenTool = Montage.create(ShapeTool, {
                             //set the next of the last anchor to the be next of the first anchor
                             lastAnchor.setPrevPos(firstAnchor.getNextX(), firstAnchor.getNextY(), firstAnchor.getNextZ());
                         }
+                        //mark the path as closed...note that this flag should be set after the removeAnchor call above
+                        //  (the removeAnchor call may set the closed flag to be false)
+                        this._selectedSubpath.setIsClosed(true);
                     }
                 }
             }
-            this._snapTarget = null;
+            this._snapTargetIndex = -1;
 
-            var drawData = this.getDrawingData();
-            if (drawData) {
-                if (!this._penPlaneMat) {
-                    this._penPlaneMat = drawData.planeMat;
-                }
-
-                if (this._isNewPath) {
-                    var strokeSize = 1.0;//default stroke width
-                    if (this.options.strokeSize) {
-                        strokeSize = ShapesController.GetValueInPixels(this.options.strokeSize.value, this.options.strokeSize.units);
-                    }
-                    this._selectedSubpath.setStrokeWidth(strokeSize);
-                    if (this.application.ninja.colorController.colorToolbar.stroke.webGlColor){
-                        this._selectedSubpath.setStrokeColor(this.application.ninja.colorController.colorToolbar.stroke.webGlColor);
-                    }
-                    if (this.application.ninja.colorController.colorToolbar.fill.webGlColor){
-                        this._selectedSubpath.setFillColor(this.application.ninja.colorController.colorToolbar.fill.webGlColor);
-                    }
-                } //if this is a new path being rendered
-
-                this._selectedSubpath.makeDirty();
-
-                this._selectedSubpath.createSamples();
-                //if we have some samples to render...
-                if (this._selectedSubpath.getNumAnchors() > 1) {
-                    this.ShowSelectedSubpath();
-                } //if (this._selectedSubpath.getNumPoints() > 0) {
-            } //if drawData
+            //if we have some samples to render...
+            if (this._selectedSubpath.getNumAnchors() > 1) {
+                //prepare the selected subpath for rendering
+                this.PrepareSelectedSubpathForRendering();
+                this.ShowSelectedSubpath();
+            } //if (this._selectedSubpath.getNumPoints() > 0) {
 
             //always assume that we're not starting a new path anymore
             this._isNewPath = false;
-            this.endDraw(event);
-
             this._isDrawing = false;
-            this._hasDraw = false;
             this._editMode = this.EDIT_NONE;
 
-            this.DrawHandles();
-            //if (this._entryEditMode === this.ENTRY_SELECT_PATH || !this._selectedSubpath.getIsClosed()){
             if (this._selectedSubpath){
-                this.DrawSubpathAnchors(this._selectedSubpath);//render the subpath anchors on canvas (not GL)
+                this.DrawSubpathAnchors(this._selectedSubpath);//render the subpath anchors on canvas
             }
-            //}
 
-            if (!g_DoPenToolMouseMove){
+            if (!this._trackMouseMoveWhenUp){
                 NJevent("disableStageMove");
             }
             this._hoveredAnchorIndex = -1;
+        }
+    },
+
+    //prepare the selected subpath
+    //  compute the center of the future canvas of this subpath in stage world space
+    //  compute local coordinates for the subpath (in case it does not have a canvas)
+    PrepareSelectedSubpathForRendering: {
+        value: function(){
+            var i=0,d=0;
+            var currAnchor = null;
+            var xAdjustment = snapManager.getStageWidth()*0.5;
+            var yAdjustment = snapManager.getStageHeight()*0.5;
+            var swPos=null, swPrev=null, swNext=null;
+            var localPos=null, localPrev=null, localNext=null;
+
+            var numAnchors = this._selectedSubpath.getNumAnchors();
+            if (numAnchors<2){
+                return;//nothing to do
+            }
+            this._selectedSubpath.makeDirty();
+            
+            var bboxMin=null, bboxMax=null;
+            if (this._selectedSubpathCanvas) {
+                //if there already is a subpath canvas, it means the anchor points are in local space
+                //  so convert them to stage world space
+                //compute the bbox in local space
+                this._selectedSubpath.createSamples(false);
+                bboxMin = this._selectedSubpath.getBBoxMin();
+                bboxMax = this._selectedSubpath.getBBoxMax();
+
+                // *********** Test for Too Large Canvas *************
+                //check if the last point added made this canvas is now bigger than the max canvas size
+                var canvasTooLarge = false;
+                for (d=0;d<3;d++){
+                    if (bboxMax[d]-bboxMin[d]>this._MAX_CANVAS_DIMENSION){
+                        canvasTooLarge = true;
+                        break;
+                    }
+                }
+                if (canvasTooLarge){
+                    console.log("PEN: Warning! Ignoring last added point because canvas size too large");
+                    this._selectedSubpath.removeAnchor(numAnchors-1);
+                    numAnchors--;
+
+                    //recompute the bbox of this subpath
+                    this._selectedSubpath.createSamples(false);
+                    bboxMin = this._selectedSubpath.getBBoxMin();
+                    bboxMax = this._selectedSubpath.getBBoxMax();
+                }
+
+                //convert the midpoint of this bbox to stage world space
+                var bboxMid = VecUtils.vecInterpolate(3, bboxMin, bboxMax, 0.5);
+
+                //sandwich the planeMat between with the translation to the previous center of the canvas in local space and its inverse
+                var centerDisp = VecUtils.vecSubtract(3, bboxMid, this._selectedSubpath.getCanvasCenterLocalCoord());
+                var tMat = Matrix.Translation([centerDisp[0], centerDisp[1],centerDisp[2]]);
+                var tInvMat = Matrix.Translation([-centerDisp[0], -centerDisp[1], -centerDisp[2]]);
+                var newMat = Matrix.I(4);
+                this._selectedSubpathPlaneMat = ElementMediator.getMatrix(this._selectedSubpathCanvas);
+                glmat4.multiply( tInvMat, this._selectedSubpathPlaneMat, newMat);
+                glmat4.multiply( newMat, tMat, newMat);
+                this._selectedSubpathPlaneMat = newMat;
+                ViewUtils.setMatrixForElement(this._selectedSubpathCanvas, newMat, true);
+                
+                //now set the center of the canvas as the center of the bounding box expressed in stage world coordinates
+                var localToStageWorldMat = ViewUtils.getLocalToStageWorldMatrix(this._selectedSubpathCanvas, false, false);
+                this._selectedSubpathCanvasCenter = MathUtils.transformAndDivideHomogeneousPoint(bboxMid, localToStageWorldMat);
+                this._selectedSubpathCanvasCenter[0]+= xAdjustment;
+                this._selectedSubpathCanvasCenter[1]+= yAdjustment;
+
+            } else {
+                //compute the bbox in stage-world space (the points are already in stage world space)
+                this._selectedSubpath.createSamples(true);
+                bboxMin = this._selectedSubpath.getBBoxMin();
+                bboxMax = this._selectedSubpath.getBBoxMax();
+                this._selectedSubpathCanvasCenter = VecUtils.vecInterpolate(3, bboxMin, bboxMax, 0.5);
+
+                //convert the path points into local coordinates by multiplying by the inverse of the plane mat
+                for (i=0;i<numAnchors;i++) {
+                    currAnchor = this._selectedSubpath.getAnchor(i);
+                    swPos = [currAnchor.getPosX()-xAdjustment,currAnchor.getPosY()-yAdjustment,currAnchor.getPosZ()];
+                    swPrev = [currAnchor.getPrevX()-xAdjustment,currAnchor.getPrevY()-yAdjustment,currAnchor.getPrevZ()];
+                    swNext = [currAnchor.getNextX()-xAdjustment,currAnchor.getNextY()-yAdjustment,currAnchor.getNextZ()];
+                    var planeMatInv = glmat4.inverse(this._selectedSubpathPlaneMat, []);
+                    localPos = MathUtils.transformAndDivideHomogeneousPoint(swPos, planeMatInv);
+                    localPrev = MathUtils.transformAndDivideHomogeneousPoint(swPrev, planeMatInv);
+                    localNext = MathUtils.transformAndDivideHomogeneousPoint(swNext, planeMatInv);
+                    currAnchor.setPos(localPos[0],localPos[1],localPos[2]);
+                    currAnchor.setPrevPos(localPrev[0],localPrev[1],localPrev[2]);
+                    currAnchor.setNextPos(localNext[0],localNext[1],localNext[2]);
+                }
+            }
+            
+            this._selectedSubpath.makeDirty();
+            this._selectedSubpath.createSamples(false);
+            this._selectedSubpath.offsetPerBBoxMin();
+
+            //compute and store the center of the bbox in local space
+            bboxMin = this._selectedSubpath.getBBoxMin();
+            bboxMax = this._selectedSubpath.getBBoxMax();
+            this._selectedSubpath.setCanvasCenterLocalCoord(VecUtils.vecInterpolate(3, bboxMin, bboxMax, 0.5));
+        }
+    },
+
+    //perform the inverse of the perspective scaling performed by the browser
+    //  (currently unused function)
+    _unprojectPt: {
+        value: function(pt, pespectiveDist) {
+            var retPt = pt.slice(0);
+            if (MathUtils.fpCmp(pespectiveDist,-pt[2]) !== 0){
+                z = pt[2]*pespectiveDist/(pespectiveDist + pt[2]);
+                var x = pt[0]*(pespectiveDist - z)/pespectiveDist,
+                    y = pt[1]*(pespectiveDist - z)/pespectiveDist;
+                retPt[0] = x;  retPt[1] = y;  retPt[2] = z;
+            }
+            return retPt;
         }
     },
 
@@ -519,10 +858,13 @@ exports.PenTool = Montage.create(ShapeTool, {
         value: function(event) {
             this._isEscapeDown = true;
             //close the current subpath and reset the pen tool
-            this._penCanvas = null;
-            this._penPlaneMat = null;
-            this._snapTarget = null;
+            this._selectedSubpathCanvas = null;
+            this._selectedSubpathPlaneMat = null;
+            this._snapTargetIndex = -1;
             this._selectedSubpath = null;
+            if (this._entryEditMode === this.ENTRY_SELECT_PATH){
+                this._entryEditMode = this.ENTRY_SELECT_NONE;
+            }
             this.application.ninja.stage.clearDrawingCanvas();
         }
     },
@@ -571,101 +913,7 @@ exports.PenTool = Montage.create(ShapeTool, {
             this.DrawSubpathAnchors(this._selectedSubpath); 
         }
     },
-
-    RenderShape: {
-        value: function (w, h, planeMat, midPt, canvas) {
-            if ((Math.floor(w) === 0) || (Math.floor(h) === 0)) {
-                return;
-            }
-
-            var left = Math.round(midPt[0] - 0.5 * w);
-            var top = Math.round(midPt[1] - 0.5 * h);
-
-            if (!canvas) {
-                var newCanvas = null;
-                newCanvas = NJUtils.makeNJElement("canvas", "Subpath", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
-                var elementModel = TagTool.makeElement(parseInt(w), parseInt(h), planeMat, midPt, newCanvas, true);
-                ElementMediator.addElements(newCanvas, elementModel.data, false);
-
-                // create all the GL stuff
-                var world = this.getGLWorld(newCanvas, this._useWebGL);//this.options.use3D);//this.CreateGLWorld(planeMat, midPt, newCanvas, this._useWebGL);//fillMaterial, strokeMaterial);
-                //store a reference to this newly created canvas
-                this._penCanvas = newCanvas;
-
-                var subpath = this._selectedSubpath; //new GLSubpath();
-                subpath.setWorld(world);
-                subpath.setCanvas(newCanvas);
-                subpath.setPlaneMatrix(planeMat);
-                var planeMatInv = glmat4.inverse( planeMat, [] );
-                subpath.setPlaneMatrixInverse(planeMatInv);
-                subpath.setPlaneCenter(midPt);
-
-                world.addObject(subpath);
-                world.render();
-                //TODO this will not work if there are multiple shapes in the same canvas
-                newCanvas.elementModel.shapeModel.GLGeomObj = subpath;
-                newCanvas.elementModel.shapeModel.shapeCount++;
-                if(newCanvas.elementModel.shapeModel.shapeCount === 1)
-                {
-                    newCanvas.elementModel.selection = "Subpath";
-                    newCanvas.elementModel.pi = "SubpathPi";
-                    newCanvas.elementModel.shapeModel.strokeSize = this.options.strokeSize.value + " " + this.options.strokeSize.units;
-
-                    newCanvas.elementModel.shapeModel.GLGeomObj = subpath;
-                    newCanvas.elementModel.shapeModel.useWebGl = this.options.use3D;
-                }
-                else
-                {
-                    // TODO - update the shape's info only.  shapeModel will likely need an array of shapes.
-                }
-
-                if(newCanvas.elementModel.isShape)
-                {
-                    this.application.ninja.selectionController.selectElement(newCanvas);
-                }
-            } //if (!canvas) {
-            else {
-
-                var world = null;
-                if (canvas.elementModel.shapeModel && canvas.elementModel.shapeModel.GLWorld) {
-                    world = canvas.elementModel.shapeModel.GLWorld;
-                } else {
-                    world = this.getGLWorld(canvas, this._useWebGL);//this.options.use3D);//this.CreateGLWorld(planeMat, midPt, canvas, this._useWebGL);//fillMaterial, strokeMaterial);
-                }
-
-                if (this._entryEditMode !== this.ENTRY_SELECT_CANVAS){
-                    //update the left and top of the canvas element
-                    var canvasArray=[canvas];
-                    ElementMediator.setProperty(canvasArray, "left", [parseInt(left)+"px"],"Changing", "penTool");//DocumentControllerModule.DocumentController.SetElementStyle(canvas, "left", parseInt(left) + "px");
-                    ElementMediator.setProperty(canvasArray, "top", [parseInt(top) + "px"],"Changing", "penTool");//DocumentControllerModule.DocumentController.SetElementStyle(canvas, "top", parseInt(top) + "px");
-                    ElementMediator.setProperty(canvasArray, "width", [w+"px"], "Changing", "penTool");//canvas.width = w;
-                    ElementMediator.setProperty(canvasArray, "height", [h+"px"], "Changing", "penTool");//canvas.height = h;
-                    //update the viewport and projection to reflect the new canvas width and height
-                    world.setViewportFromCanvas(canvas);
-                    if (this._useWebGL){
-                        var cam = world.renderer.cameraManager().getActiveCamera();
-                        cam.setPerspective(world.getFOV(), world.getAspect(), world.getZNear(), world.getZFar());
-                    }
-                }
-
-                var subpath = this._selectedSubpath;
-
-                subpath.setDrawingTool(this);
-                subpath.setPlaneMatrix(planeMat);
-                var planeMatInv = glmat4.inverse( planeMat, [] );
-                subpath.setPlaneMatrixInverse(planeMatInv);
-                subpath.setPlaneCenter(midPt);
-                subpath.setWorld(world);
-
-                world.addIfNewObject(subpath);
-                world.render();
-
-                //TODO this will not work if there are multiple shapes in the same canvas
-                canvas.elementModel.shapeModel.GLGeomObj = subpath;
-            } //else of if (!canvas) {
-        } //value: function (w, h, planeMat, midPt, canvas) {
-    }, //RenderShape: {
-
+               
     BuildSecondCtrlPoint:{
         value: function(p0, p2, p3) {
             var baselineOrig = VecUtils.vecSubtract(3, p3, p0);
@@ -687,7 +935,7 @@ exports.PenTool = Montage.create(ShapeTool, {
     HandleDoubleClick: {
         value: function () {
             //if there is a selected anchor point
-            if (this._selectedSubpath && this._selectedSubpath.getSelectedAnchorIndex() !== -1) {
+            if (this._selectedSubpath && this._selectedSubpath.getNumAnchors()>1 && this._selectedSubpath.getSelectedAnchorIndex() !== -1) {
                 var selAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
                 var pos = [selAnchor.getPosX(), selAnchor.getPosY(), selAnchor.getPosZ()];
                 var distToPrev = selAnchor.getPrevDistanceSq(pos[0], pos[1], pos[2]);
@@ -749,7 +997,8 @@ exports.PenTool = Montage.create(ShapeTool, {
                 } // else of if (distToPrev < threshSq) {
 
                 this._selectedSubpath.makeDirty();
-                this._selectedSubpath.createSamples();
+                this._selectedSubpath.createSamples(false);
+                this.PrepareSelectedSubpathForRendering();
                 this.ShowSelectedSubpath();
 
                 //clear the canvas before we draw anything else
@@ -762,69 +1011,75 @@ exports.PenTool = Montage.create(ShapeTool, {
     }, //HandleDoubleClick: {
 
 
-    _getScreenCoord:
-    {
-        value: function (hitRec) {
-            var sRet = hitRec.getScreenPoint();
-            sRet[2] = 0;
-            return sRet;
-        }
-    }, //_getScreenCoord:
-
-
-    // DrawSubpathSVG
-    //  Draw the subpath using the SVG drawing capability (i.e. not WebGL)
-    DrawSubpathSVG:
+    // DrawSubpathOnStage
+    //  Draw the subpath using the canvas drawing capability
+    DrawSubpathOnStage:
     {
         value: function (subpath) {
             if (subpath === null)
                 return;
 
-            subpath.createSamples(); //dirty bit will be checked inside this function
+            subpath.createSamples(false); //dirty bit will be checked inside this function
             var numAnchors = subpath.getNumAnchors();
-            if (numAnchors === 0)
+            if (numAnchors < 2)
                 return;
 
-            var ctx = this.application.ninja.stage.drawingContext;//stageManagerModule.stageManager.drawingContext;
+            var ctx = this.application.ninja.stage.drawingContext;
             if (ctx === null)
-                throw ("null drawing context in Pentool::DrawSubpathSVG");
+                throw ("null drawing context in Pentool::DrawSubpathOnStage");
             ctx.save();
 
-            var horizontalOffset = this.application.ninja.stage.userContentLeft;
-            var verticalOffset = this.application.ninja.stage.userContentTop;
-            //display the subpath as a sequence of cubic beziers
-            ctx.lineWidth = 1;//TODO replace hardcoded stroke width with some programmatically set value (should not be same as stroke width)
-            ctx.strokeStyle = "green";
-            //if (subpath.getStrokeColor())
-			//    ctx.strokeStyle = MathUtils.colorToHex( subpath.getStrokeColor() );
-            ctx.beginPath();
-            var p0x = subpath.getAnchor(0).getPosX()+ horizontalOffset;
-            var p0y = subpath.getAnchor(0).getPosY()+ verticalOffset;
-            ctx.moveTo(p0x, p0y);
-            for (var i = 1; i < numAnchors; i++) {
-                var p1x = subpath.getAnchor(i - 1).getNextX()+ horizontalOffset;
-                var p1y = subpath.getAnchor(i - 1).getNextY()+ verticalOffset;
-                var p2x = subpath.getAnchor(i).getPrevX()+ horizontalOffset;
-                var p2y = subpath.getAnchor(i).getPrevY()+ verticalOffset;
-                var p3x = subpath.getAnchor(i).getPosX()+ horizontalOffset;
-                var p3y = subpath.getAnchor(i).getPosY()+ verticalOffset;
-                ctx.bezierCurveTo(p1x, p1y, p2x, p2y, p3x, p3y);
+            var widthAdjustment = 0;
+            var heightAdjustment = 0;
+            var localToGlobalMat;
+            var pathCanvas = this._selectedSubpathCanvas;
+            if (pathCanvas){
+                //convert from local coord to global (screen) coord
+                localToGlobalMat = ViewUtils.getLocalToGlobalMatrix(pathCanvas);
+            } else {
+                //in case the selected subpath has not been prepared for rendering
+                // (i.e. there are only two anchors and no subpath canvas),
+                // use the stage to world to transform the anchor points
+                widthAdjustment = -snapManager.getStageWidth()*0.5;
+                heightAdjustment = -snapManager.getStageHeight()*0.5;
+                localToGlobalMat = ViewUtils.getStageWorldToGlobalMatrix();
             }
-            if (subpath.getIsClosed()) {
-                var i = numAnchors - 1;
-                var p1x = subpath.getAnchor(i).getNextX()+ horizontalOffset;
-                var p1y = subpath.getAnchor(i).getNextY()+ verticalOffset;
-                var p2x = subpath.getAnchor(0).getPrevX()+ horizontalOffset;
-                var p2y = subpath.getAnchor(0).getPrevY()+ verticalOffset;
-                var p3x = subpath.getAnchor(0).getPosX()+ horizontalOffset;
-                var p3y = subpath.getAnchor(0).getPosY()+ verticalOffset;
-                ctx.bezierCurveTo(p1x, p1y, p2x, p2y, p3x, p3y);
+
+            var prevAnchor = subpath.getAnchor(0);
+            var c0=[0,0,0], c1=[0,0,0],c2=[0,0,0], c3=[0,0,0]; //screen coord of the bezier control points
+            c0 =[prevAnchor.getPosX()+widthAdjustment,prevAnchor.getPosY()+heightAdjustment,prevAnchor.getPosZ()];
+            c0 = MathUtils.transformAndDivideHomogeneousPoint(c0,localToGlobalMat); //convert from local coord to global (screen) coord
+
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = "green";
+
+            ctx.beginPath();
+            ctx.moveTo(c0[0],c0[1]);
+            var currAnchor = null;
+            var numBezierCurves = numAnchors;
+            if (subpath.getIsClosed()){
+                numBezierCurves+=1;
+            }
+
+            for (i = 1; i < numBezierCurves; i++) {
+                currAnchor = subpath.getAnchor(i%numAnchors);
+
+                c1 = [prevAnchor.getNextX()+widthAdjustment,prevAnchor.getNextY()+heightAdjustment,prevAnchor.getNextZ()];
+                c1 = MathUtils.transformAndDivideHomogeneousPoint(c1,localToGlobalMat);
+
+                c2 = [currAnchor.getPrevX()+widthAdjustment, currAnchor.getPrevY()+heightAdjustment,currAnchor.getPrevZ()];
+                c2 = MathUtils.transformAndDivideHomogeneousPoint(c2,localToGlobalMat);
+
+                c3 = [currAnchor.getPosX()+widthAdjustment,currAnchor.getPosY()+heightAdjustment, currAnchor.getPosZ()];
+                c3 = MathUtils.transformAndDivideHomogeneousPoint(c3,localToGlobalMat);
+
+                ctx.bezierCurveTo(c1[0], c1[1], c2[0], c2[1], c3[0], c3[1]);
+                prevAnchor = currAnchor;
             }
             ctx.stroke();
-
             ctx.restore();
         } //function (subpath)
-    },  //DrawSubpathSVG
+    },  //DrawSubpathOnStage
 
     DrawSubpathAnchors:
     {
@@ -835,53 +1090,76 @@ exports.PenTool = Montage.create(ShapeTool, {
             if (numAnchors === 0)
                 return;
 
-            var ctx = this.application.ninja.stage.drawingContext;//stageManagerModule.stageManager.drawingContext;
-            if (ctx === null)
+            var ctx = this.application.ninja.stage.drawingContext;
+            if (ctx === null){
                 throw ("null drawing context in Pentool::DrawSelectedSubpathAnchors");
+            }
             ctx.save();
 
-            var horizontalOffset = this.application.ninja.stage.userContentLeft;//stageManagerModule.stageManager.userContentLeft;
-            var verticalOffset = this.application.ninja.stage.userContentTop;//stageManagerModule.stageManager.userContentTop;
+            var widthAdjustment = 0;
+            var heightAdjustment = 0;
+            var localToGlobalMat;
+            var pathCanvas = this._selectedSubpathCanvas;
+            if (pathCanvas){
+                //convert from local coord to global (screen) coord
+                localToGlobalMat = ViewUtils.getLocalToGlobalMatrix(pathCanvas);
+            } else {
+                //in case the selected subpath has not been prepared for rendering
+                // (i.e. there are only two anchors and no subpath canvas),
+                // use the stage to world to transform the anchor points
+                widthAdjustment = -snapManager.getStageWidth()*0.5;
+                heightAdjustment = -snapManager.getStageHeight()*0.5;
+                localToGlobalMat = ViewUtils.getStageWorldToGlobalMatrix();
+            }
 
-            //display circles and squares near all control points 
+
+            //display circles and squares near all control points
             ctx.fillStyle = "#FFFFFF";
             ctx.lineWidth = 1;
             ctx.strokeStyle = "green";
             var anchorDelta = 2;
             var selAnchorDelta = 4;
-
+            var px=0,py=0;
+            var sp=[0,0,0];
+            var currAnchor = null, currAnchorPos=null;
             for (var i = 0; i < numAnchors; i++) {
-                var px = subpath.getAnchor(i).getPosX();
-                var py = subpath.getAnchor(i).getPosY();
+                currAnchor = subpath.getAnchor(i);
+                currAnchorPos = currAnchor.getAllPos();
+                currAnchorPos[1][0]+=widthAdjustment; currAnchorPos[1][1]+=heightAdjustment;
+                sp = MathUtils.transformAndDivideHomogeneousPoint(currAnchorPos[1],localToGlobalMat); //convert from local coord to global (screen) coord
+                px = sp[0]; py=sp[1];
+
                 ctx.beginPath();
-                //ctx.arc(px + horizontalOffset, py + verticalOffset, this._DISPLAY_ANCHOR_RADIUS, 0, 2 * Math.PI, false);
-                ctx.moveTo(px-anchorDelta+horizontalOffset, py-anchorDelta+verticalOffset);
-                ctx.lineTo(px+anchorDelta+horizontalOffset, py-anchorDelta+verticalOffset);
-                ctx.lineTo(px+anchorDelta+horizontalOffset, py+anchorDelta+verticalOffset);
-                ctx.lineTo(px-anchorDelta+horizontalOffset, py+anchorDelta+verticalOffset);
+                ctx.moveTo(px-anchorDelta, py-anchorDelta);
+                ctx.lineTo(px+anchorDelta, py-anchorDelta);
+                ctx.lineTo(px+anchorDelta, py+anchorDelta);
+                ctx.lineTo(px-anchorDelta, py+anchorDelta);
                 ctx.closePath();
                 ctx.fill();
                 ctx.stroke();
             }
 
+
             //display the hovered over anchor point
             ctx.lineWidth = 2;
             if (this._hoveredAnchorIndex>=0 && this._hoveredAnchorIndex<numAnchors) {
-                var px = subpath.getAnchor(this._hoveredAnchorIndex).getPosX();
-                var py = subpath.getAnchor(this._hoveredAnchorIndex).getPosY();
+                currAnchor = subpath.getAnchor(this._hoveredAnchorIndex);
+                currAnchorPos = currAnchor.getAllPos();
+                currAnchorPos[1][0]+=widthAdjustment; currAnchorPos[1][1]+=heightAdjustment;
+                sp = MathUtils.transformAndDivideHomogeneousPoint(currAnchorPos[1],localToGlobalMat); //convert from local coord to global (screen) coord
+                px = sp[0]; py=sp[1];
+
                 ctx.beginPath();
-                //ctx.arc(px + horizontalOffset, py + verticalOffset, this._DISPLAY_ANCHOR_RADIUS*1.5, 0, 2 * Math.PI, false);
-                ctx.moveTo(px-selAnchorDelta+horizontalOffset, py-selAnchorDelta+verticalOffset);
-                ctx.lineTo(px+selAnchorDelta+horizontalOffset, py-selAnchorDelta+verticalOffset);
-                ctx.lineTo(px+selAnchorDelta+horizontalOffset, py+selAnchorDelta+verticalOffset);
-                ctx.lineTo(px-selAnchorDelta+horizontalOffset, py+selAnchorDelta+verticalOffset);
+                ctx.moveTo(px-selAnchorDelta, py-selAnchorDelta);
+                ctx.lineTo(px+selAnchorDelta, py-selAnchorDelta);
+                ctx.lineTo(px+selAnchorDelta, py+selAnchorDelta);
+                ctx.lineTo(px-selAnchorDelta, py+selAnchorDelta);
                 ctx.closePath();
                 ctx.stroke();
             }
 
-
             //display selected anchor and its prev. and next points
-            if (this._selectedSubpath && subpath === this._selectedSubpath && this._selectedSubpath.getSelectedAnchorIndex()!== -1) {
+            if (subpath === this._selectedSubpath && this._selectedSubpath.getSelectedAnchorIndex()!== -1) {
                 ctx.lineWidth = 1;
                 var defFill = "#FFFFFF";
                 var defStroke = "green";
@@ -889,18 +1167,31 @@ exports.PenTool = Montage.create(ShapeTool, {
 
                 ctx.strokeStyle = defStroke;
                 ctx.fillStyle = defFill;
-                var selAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
                 var whichPoint = this._selectedSubpath.getSelectedMode(); //which of the selected handles to highlight
+
+                currAnchor = subpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
+                currAnchorPos = currAnchor.getAllPos();
+                currAnchorPos[1][0]+=widthAdjustment; currAnchorPos[1][1]+=heightAdjustment;
+                currAnchorPos[0][0]+=widthAdjustment; currAnchorPos[0][1]+=heightAdjustment;
+                currAnchorPos[2][0]+=widthAdjustment; currAnchorPos[2][1]+=heightAdjustment;
+                sp = MathUtils.transformAndDivideHomogeneousPoint(currAnchorPos[1],localToGlobalMat);
+                var posX = sp[0]; var posY=sp[1];
+
+                sp = MathUtils.transformAndDivideHomogeneousPoint(currAnchorPos[0],localToGlobalMat);
+                var prevX = sp[0]; var prevY=sp[1];
+
+                sp = MathUtils.transformAndDivideHomogeneousPoint(currAnchorPos[2],localToGlobalMat);
+                var nextX = sp[0]; var nextY=sp[1];
 
                 //line from prev to anchor
                 ctx.beginPath();
-                ctx.moveTo(selAnchor.getPrevX() + horizontalOffset, selAnchor.getPrevY() + verticalOffset);
-                ctx.lineTo(selAnchor.getPosX() + horizontalOffset, selAnchor.getPosY() + verticalOffset);
+                ctx.moveTo(prevX,prevY);
+                ctx.lineTo(posX, posY);
                 ctx.stroke();
 
                 //selected anchor prev
                 ctx.beginPath();
-                ctx.arc(selAnchor.getPrevX() + horizontalOffset, selAnchor.getPrevY() + verticalOffset, this._DISPLAY_SELECTED_ANCHOR_PREV_RADIUS, 0, 2 * Math.PI, false);
+                ctx.arc(prevX, prevY, this._DISPLAY_SELECTED_ANCHOR_PREV_RADIUS, 0, 2 * Math.PI, false);
                 ctx.closePath();
                 if (whichPoint & this._selectedSubpath.SEL_PREV){
                     ctx.fillStyle = selHandleFill;
@@ -913,13 +1204,13 @@ exports.PenTool = Montage.create(ShapeTool, {
 
                 //line from next to anchor
                 ctx.beginPath();
-                ctx.moveTo(selAnchor.getNextX() + horizontalOffset, selAnchor.getNextY() + verticalOffset);
-                ctx.lineTo(selAnchor.getPosX() + horizontalOffset, selAnchor.getPosY() + verticalOffset);
+                ctx.moveTo(nextX, nextY);
+                ctx.lineTo(posX, posY);
                 ctx.stroke();
 
                 //selected anchor next
                 ctx.beginPath();
-                ctx.arc(selAnchor.getNextX() + horizontalOffset, selAnchor.getNextY() + verticalOffset, this._DISPLAY_SELECTED_ANCHOR_NEXT_RADIUS, 0, 2 * Math.PI, false);
+                ctx.arc(nextX, nextY, this._DISPLAY_SELECTED_ANCHOR_NEXT_RADIUS, 0, 2 * Math.PI, false);
                 if (whichPoint & this._selectedSubpath.SEL_NEXT){
                     ctx.fillStyle = selHandleFill;
                     ctx.fill();
@@ -930,32 +1221,37 @@ exports.PenTool = Montage.create(ShapeTool, {
                 ctx.stroke();
 
                 //selected anchor point
-                var px = selAnchor.getPosX();
-                var py = selAnchor.getPosY();
+                px = posX;
+                py = posY;
                 ctx.beginPath();
-                //ctx.arc(selAnchor.getPosX() + horizontalOffset, selAnchor.getPosY() + verticalOffset, this._DISPLAY_SELECTED_ANCHOR_RADIUS, 0, 2 * Math.PI, false);
-                ctx.moveTo(px-selAnchorDelta+horizontalOffset, py-selAnchorDelta+verticalOffset);
-                ctx.lineTo(px+selAnchorDelta+horizontalOffset, py-selAnchorDelta+verticalOffset);
-                ctx.lineTo(px+selAnchorDelta+horizontalOffset, py+selAnchorDelta+verticalOffset);
-                ctx.lineTo(px-selAnchorDelta+horizontalOffset, py+selAnchorDelta+verticalOffset);
+                ctx.moveTo(px-selAnchorDelta, py-selAnchorDelta);
+                ctx.lineTo(px+selAnchorDelta, py-selAnchorDelta);
+                ctx.lineTo(px+selAnchorDelta, py+selAnchorDelta);
+                ctx.lineTo(px-selAnchorDelta, py+selAnchorDelta);
                 ctx.closePath();
                 ctx.fill();
                 ctx.stroke();
 
                 //display the snap target if it isn't null
-                if (this._snapTarget) {
+                if (this._snapTargetIndex>=0) {
+                    currAnchor = subpath.getAnchor(this._snapTargetIndex);
+                    currAnchorPos = currAnchor.getAllPos();
+                    currAnchorPos[1][0]+=widthAdjustment; currAnchorPos[1][1]+=heightAdjustment;
+                    sp = MathUtils.transformAndDivideHomogeneousPoint(currAnchorPos[1],localToGlobalMat);
+                    px = sp[0]; py=sp[1];
+
                     ctx.lineWidth = 2;
                     ctx.strokeStyle = "red";
                     ctx.beginPath();
-                    //ctx.arc(this._snapTarget.getPosX() + horizontalOffset, this._snapTarget.getPosY() + verticalOffset, this._DISPLAY_SELECTED_ANCHOR_RADIUS * 2, 0, 2 * Math.PI, false);
-                    ctx.moveTo(px-selAnchorDelta+horizontalOffset, py-selAnchorDelta+verticalOffset);
-                    ctx.lineTo(px+selAnchorDelta+horizontalOffset, py-selAnchorDelta+verticalOffset);
-                    ctx.lineTo(px+selAnchorDelta+horizontalOffset, py+selAnchorDelta+verticalOffset);
-                    ctx.lineTo(px-selAnchorDelta+horizontalOffset, py+selAnchorDelta+verticalOffset);
+                    ctx.moveTo(px-selAnchorDelta, py-selAnchorDelta);
+                    ctx.lineTo(px+selAnchorDelta, py-selAnchorDelta);
+                    ctx.lineTo(px+selAnchorDelta, py+selAnchorDelta);
+                    ctx.lineTo(px-selAnchorDelta, py+selAnchorDelta);
                     ctx.closePath();
                     ctx.stroke();
                 }
-            } //if this._selectedSubpath && subpath === this._selectedSubpath && this._selectedSubpath.getSelectedAnchorIndex()!== -1
+            } //if subpath === this._selectedSubpath && this._selectedSubpath.getSelectedAnchorIndex()!== -1
+
             ctx.restore();
         } //value: function() {
     }, //DrawSubpathAnchors {
@@ -966,23 +1262,26 @@ exports.PenTool = Montage.create(ShapeTool, {
             if (wasSelected) {
                 defaultEventManager.addEventListener("resetPenTool", this, false);
                 this.application.ninja.elementMediator.deleteDelegate = this;
+                this.application.ninja.stage.drawingCanvas.style.cursor = //"auto";
+                    "url('images/cursors/penCursors/Pen_newPath.png') 5 1, default";
 
                 if (this.application.ninja.selectedElements.length === 0){
                     this._entryEditMode = this.ENTRY_SELECT_NONE;
                 }
                 else{
                     for (var i=0;i<this.application.ninja.selectedElements.length;i++){
-                        var element = this.application.ninja.selectedElements[i]
-                        console.log("Entered pen tool, had selected: " + element.elementModel.selection);
+                        var element = this.application.ninja.selectedElements[i];
+                        //console.log("Entered pen tool, had selected: " + element.elementModel.selection);
                         if (element.elementModel.selection === 'Subpath'){ //TODO what to do if the canvas is drawn by tag tool?
                             //set the pen canvas to be the selected canvas
-                            this._penCanvas = this.application.ninja.selectedElements[i];
+                            this._selectedSubpathCanvas = this.application.ninja.selectedElements[i];
 
                             // get the subpath for this world
                             this._selectedSubpath = null;
                             this._entryEditMode = this.ENTRY_SELECT_CANVAS; //by default, we're in this mode...change if we find a subpath contained in this canvas
-                            var world = ElementMediator.getShapeProperty(this._penCanvas, "GLWorld");
+                            var world = ElementMediator.getShapeProperty(this._selectedSubpathCanvas, "GLWorld");
                             if (world === null){
+                                throw("Pen tool configure did not work correctly");
                                 break; //something bad happened //TODO handle this better
                             }
 
@@ -995,9 +1294,12 @@ exports.PenTool = Montage.create(ShapeTool, {
                                 if (go.geomType() === go.GEOM_TYPE_CUBIC_BEZIER){
                                     this._entryEditMode = this.ENTRY_SELECT_PATH;
                                     this._selectedSubpath = go;
-                                    this.TranslateSelectedSubpathPerPenCanvas();
                                     this._selectedSubpath.deselectAnchorPoint();
                                     this.DrawSubpathAnchors(this._selectedSubpath);
+
+                                    //get the selected subpath properties
+                                    this._selectedSubpathCanvas = element;
+                                    this._selectedSubpathPlaneMat = ElementMediator.getMatrix(element);
                                 }
                             }
                             break; //assume that we want to edit only the first subpath found in the selected canvases
@@ -1008,18 +1310,18 @@ exports.PenTool = Montage.create(ShapeTool, {
                 }
                 this._isPickedEndPointInSelectPathMode = false; //only applies to the ENTRY_SELECT_PATH mode
 
-                if (g_DoPenToolMouseMove){
+                if (this._trackMouseMoveWhenUp){
                     NJevent("enableStageMove");
                 }
             } //if the pen tool was selected
             else {
-                if (g_DoPenToolMouseMove){
+                if (this._trackMouseMoveWhenUp){
                     NJevent("disableStageMove");
                 }
                 this._selectedSubpath = null;
-                this._penCanvas = null;
-                this._penPlaneMat = null;
-                this._snapTarget = null;
+                this._selectedSubpathCanvas = null;
+                this._selectedSubpathPlaneMat = null;
+                this._snapTargetIndex = -1;
                 defaultEventManager.removeEventListener("resetPenTool", this, false);
                 this.application.ninja.elementMediator.deleteDelegate = null;
             } //if the pen tool was de-selected
@@ -1028,37 +1330,36 @@ exports.PenTool = Montage.create(ShapeTool, {
 
     handleDelete:{
         value: function(event){
-             var len = this.application.ninja.selectedElements.length;
-             if (len===0) {
-                 //clear the selected subpath...the only new additions to this function w.r.t. ToolBase
-                 if (this._selectedSubpath){
-                     if (this._selectedSubpath.getSelectedAnchorIndex()>=0){
-                         this._hoveredAnchorIndex=-1;
-                         this._selectedSubpath.removeAnchor(this._selectedSubpath.getSelectedAnchorIndex());
-                         this._selectedSubpath.createSamples();
-                         //clear the canvas
-                         this.application.ninja.stage.clearDrawingCanvas();//stageManagerModule.stageManager.clearDrawingCanvas();
-                         this.DrawSubpathAnchors(this._selectedSubpath);
-                         this.ShowSelectedSubpath();
-                     }
-                     else {
-                        this._selectedSubpath.clearAllAnchors(); //perhaps unnecessary
-                        this._selectedSubpath = null;
-                        //clear the canvas
-                        this.application.ninja.stage.clearDrawingCanvas();//stageManagerModule.stageManager.clearDrawingCanvas();
-
-                        //undo/redo...go through ElementController and NJEvent
-                        var els = [];
-                        ElementController.removeElement(this._penCanvas);
-                        els.push(this._penCanvas);
-                        NJevent( "elementsRemoved", els );
-                        this._penCanvas = null;
-                   }
+             //clear the selected subpath...the only new additions to this function w.r.t. ToolBase
+             if (this._selectedSubpath){
+                 if (this._selectedSubpath.getSelectedAnchorIndex()>=0){
+                     this._hoveredAnchorIndex=-1;
+                     this._selectedSubpath.removeAnchor(this._selectedSubpath.getSelectedAnchorIndex());
+                     this._selectedSubpath.createSamples(false);
+                     //clear the canvas
+                     this.application.ninja.stage.clearDrawingCanvas();//stageManagerModule.stageManager.clearDrawingCanvas();
+                     this.PrepareSelectedSubpathForRendering();
+                     this.DrawSubpathAnchors(this._selectedSubpath);
+                     this.ShowSelectedSubpath();
                  }
-                 //do nothing if there was no selected subpath and if there was no selection
+                 else {
+                    this._selectedSubpath.clearAllAnchors(); //perhaps unnecessary
+                    this._selectedSubpath = null;
+                    if (this._entryEditMode === this.ENTRY_SELECT_PATH){
+                        this._entryEditMode = this.ENTRY_SELECT_NONE;
+                    }
+                    //clear the canvas
+                    this.application.ninja.stage.clearDrawingCanvas();//stageManagerModule.stageManager.clearDrawingCanvas();
+
+                    //undo/redo...go through ElementController and NJEvent
+                    var els = [];
+                    ElementController.removeElement(this._selectedSubpathCanvas);
+                    els.push(this._selectedSubpathCanvas);
+                    NJevent( "elementsRemoved", els );
+                    this._selectedSubpathCanvas = null;
+               }
              }
              else {
-
                 //undo/redo...go through ElementMediator (see ElementMediator.handleDeleting() from where the much of this function is copied)
                 //clear the canvas
                 this.application.ninja.stage.clearDrawingCanvas();//stageManagerModule.stageManager.clearDrawingCanvas();
@@ -1071,15 +1372,16 @@ exports.PenTool = Montage.create(ShapeTool, {
                 }
                 NJevent( "elementsRemoved", els );
 
-                 //clear out the selected path if it exists
-                 if (this._selectedSubpath) {
-                     this._selectedSubpath.clearAllAnchors();
-                     this._selectedSubpath = null;
-                     if (this._entryEditMode === this.ENTRY_SELECT_PATH){
-                         this._entryEditMode = this.ENTRY_SELECT_NONE;
-                     }
-                     this._penCanvas = null;
-                 }
+                //clear out the selected path if it exists
+                if (this._selectedSubpath) {
+                    this._selectedSubpath.clearAllAnchors();
+                    this._selectedSubpath = null;
+                    this._selectedSubpathCanvas = null;
+                    this._selectedSubpathPlaneMat = null;
+                    if (this._entryEditMode === this.ENTRY_SELECT_PATH){
+                        this._entryEditMode = this.ENTRY_SELECT_NONE;
+                    }
+                }
              }
             //redraw the stage to update it
             this.application.ninja.stage.draw();
@@ -1107,7 +1409,7 @@ exports.PenTool = Montage.create(ShapeTool, {
             this._isDrawing = false;
 
             this._selectedSubpath = null;
-            this.DrawHandles();
+
             this.Configure(true);
         }
     }
