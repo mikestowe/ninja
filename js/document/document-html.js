@@ -310,6 +310,12 @@ exports.HtmlDocument = Montage.create(Component, {
         }
     },
 
+    GetElementFromPoint: {
+        value: function(x, y) {
+            return this._window.getElement(x,y);
+        }
+    },
+
     // Handler for user content main reel. Gets called once the main reel of the template
     // gets deserialized.
     // Setting up the currentSelectedContainer to the document body.

@@ -4,7 +4,10 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var Montage = require("montage/core/core").Montage;
+var Montage = require("montage/core/core").Montage,
+    Properties3D    = require("js/models/properties-3d").Properties3D,
+    ShapeModel    = require("js/models/shape-model").ShapeModel,
+    ControllerFactory   = require("js/controllers/elements/controller-factory").ControllerFactory;
 
 exports.ElementModel = Montage.create(Montage, {
     key:            { value: "_model_"},
@@ -16,35 +19,35 @@ exports.ElementModel = Montage.create(Montage, {
 
     id:             { value: "" },
     classList:      { value: null },
-
     defaultRule:    { value: null },
 
     top:            { value: null },
     left:           { value: null },
     width:          { value: null },
     height:         { value: null },
-
-    /**
-     * Properties 3D
-     */
     props3D:        { value: null },
 
-    /**
-     * Shape Info
-     */
     isShape:        { value: false },
     shapeModel:     { value: null },
-
-    /**
-     * SnapManager 2d Snap Cache Info
-     */
     isIn2DSnapCache : { value: false },
 
-    /**
-     * Color info
-     */
     fill:           { value: null },
     stroke:         { value: null },
+
+    initialize: {
+        value: function(type, selection, controller, isShape) {
+            /*
+            this.type = type;
+            this.selection = selection;
+
+            controller: { value: ControllerFactory.getController(controller)},
+            pi:         { value: pi},
+            props3D:    { value: p3d},
+            shapeModel: { value: shapeProps},
+            isShape:    { value: isShape}
+            */
+        }
+    },
 
     getProperty: {
         value: function(property) {
