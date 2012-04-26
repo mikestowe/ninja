@@ -31,6 +31,10 @@ exports.HtmlDocument = Montage.create(Component, {
         value: null
     },
 
+    exclusionList: {
+        value: ["HTML"]
+    },
+
     // Getters for the model.
     // TODO: Change how these properties are accessed through Ninja
     name: {
@@ -313,6 +317,17 @@ exports.HtmlDocument = Montage.create(Component, {
     GetElementFromPoint: {
         value: function(x, y) {
             return this._window.getElement(x,y);
+        }
+    },
+
+    inExclusion: {
+        value: function(element) {
+            if(this.exclusionList.indexOf(element.nodeName) === -1) {
+                return -1;
+            }
+
+            return 1;
+
         }
     },
 

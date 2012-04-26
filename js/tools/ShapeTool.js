@@ -138,7 +138,7 @@ exports.ShapeTool = Montage.create(DrawingTool, {
 	_showFeedbackOnMouseMove: {
 		value: function (event) {
 			// TODO - This call is causing the canvas to redraw 3 times per mouse move
-			var targetedObject = this.application.ninja.stage.GetSelectableElement(event);
+			var targetedObject = this.application.ninja.stage.getElement(event, true);
 
 			if (targetedObject) {
 				if((targetedObject.nodeName === "CANVAS") && !ShapesController.isElementAShape(targetedObject))
