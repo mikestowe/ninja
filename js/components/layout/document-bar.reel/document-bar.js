@@ -57,7 +57,6 @@ exports.DocumentBar = Montage.create(Component, {
 				this._zoomFactor = value;
 				if (!this._firstDraw)
 				{
-					var viewUtils = this.application.ninja.stage.viewUtils;
 					this.application.ninja.stage.setZoom(value);
 				}
 			}
