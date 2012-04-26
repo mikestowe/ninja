@@ -9,8 +9,7 @@
     <script type="text/montage-serialization">
     {
         "owner": {
-            "module" : "js/panels/properties.reel/section.reel",
-            "name" : "Section",
+            "prototype" : "js/panels/properties.reel/section.reel",
             "properties" : {
                 "element" : {"#": "section"},
                 "slot" : {"@": "sectionSlot"}
@@ -18,16 +17,14 @@
         },
 
         "sectionSlot": {
-            "module": "montage/ui/slot.reel",
-            "name": "Slot",
+            "prototype": "montage/ui/slot.reel",
             "properties": {
                 "element": {"#": "sectionSlot"}
             }
         },
 
         "sectionSplitter": {
-            "module": "js/panels/Splitter",
-            "name": "Splitter",
+            "prototype": "js/panels/Splitter",
             "properties": {
                 "element": {"#": "sectionSplitter"},
                 "panel": {"@": "sectionSlot"}
