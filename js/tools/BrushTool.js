@@ -100,6 +100,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
             }
             var tmpPoint = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(x,y));
             var hitRec = snapManager.snap(tmpPoint.x, tmpPoint.y, false);
+            this._draggingPlane = snapManager.getDragPlane();
             if (this._selectedSubpathCanvas){
                 snapManager.popWorkingPlane();
             }
