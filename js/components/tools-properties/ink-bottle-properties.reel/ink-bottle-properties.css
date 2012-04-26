@@ -4,3 +4,27 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
+.inkBottleProperties input[type="checkbox"].nj-skinned {
+    float:left;
+    margin-top:5px;
+}
+
+.inkBottleProperties select.nj-skinned {
+    float:left;
+    margin:2px 5px 0 0;
+}
+
+.inkBottleProperties label.disabled {
+    color:#999999;
+}
+
+.inkBottleProperties label.disabled:hover {
+    color:#999999;
+    background-color: transparent;
+    cursor:default;
+}
+
+.inkBottleProperties div.disabled:hover {
+    background-color: transparent;
+    cursor:default;
+}
