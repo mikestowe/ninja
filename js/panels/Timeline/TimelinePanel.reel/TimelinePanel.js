@@ -1042,16 +1042,16 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
 
     deleteLayer:{
-        value:function (elements) {
-            // Only delete a selected layer.  If no layer is selected, do nothing.
+        value:function (arrElements) {
+            // Only delete a selected layers.  If no layers are selected, do nothing.
             var i = 0,
-            	arrLayersLength = this.arrLayers.length;
-            //debugger;
-            for (i = 0; i < arrLayersLength; i++) {
-            	if (this.arrLayers[i].isSelected === true) {
+            	arrLayers = document.querySelectorAll(".container-layers .container-layer"),
+            	arrLayersLength = arrLayers.length;
+
+            for (i = arrLayersLength -1; i >= 0; i--) {
+            	if (arrLayers[i].classList.contains("selected")) {
             		this.arrLayers.splice(i, 1);
             	}
-            	
             }
             
             this.currentLayerSelected = false;
