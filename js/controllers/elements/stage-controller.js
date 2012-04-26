@@ -182,5 +182,5 @@ exports.StageController = Montage.create(ElementController, {
                 return dist;
             }
         }
-    },
+    }
 });

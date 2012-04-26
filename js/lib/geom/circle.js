@@ -457,9 +457,9 @@ var Circle = function GLCircle() {
                 if(this._fillColor.gradientMode) {
                     if(this._fillColor.gradientMode === "radial") {
                         gradient = ctx.createRadialGradient(xCtr, yCtr, 0,
-                                                            xCtr, yCtr, Math.max(yScale, xScale));
+                                                            xCtr, yCtr, Math.max(this._width, this._height)/2);
                     } else {
-                        gradient = ctx.createLinearGradient(0, this._height/2, this._width, this._height/2);
+                        gradient = ctx.createLinearGradient(lineWidth/2, this._height/2, this._width-lineWidth, this._height/2);
                     }
                     colors = this._fillColor.color;
 
