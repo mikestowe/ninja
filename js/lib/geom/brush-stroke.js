@@ -416,7 +416,7 @@ var BrushStroke = function GLBrushStroke() {
             this._LocalPoints[i][1]+= halfheight;
 
             //store the original points
-            this._OrigLocalPoints   .push([this._LocalPoints[i][0],this._LocalPoints[i][1],this._LocalPoints[i][2]]);
+            this._OrigLocalPoints.push([this._LocalPoints[i][0],this._LocalPoints[i][1],this._LocalPoints[i][2]]);
         }
         //update the bbox with the same adjustment as was made for the local points above
         this._BBoxMax[0]+= halfwidth;this._BBoxMin[0]+= halfwidth;
@@ -544,6 +544,10 @@ var BrushStroke = function GLBrushStroke() {
         var bboxWidth = bboxMax[0] - bboxMin[0];
         var bboxHeight = bboxMax[1] - bboxMin[1];
 
+        if (!this._canvas){
+            //set the canvas by querying the world
+            this._canvas = this.getWorld().getCanvas();
+        }
         if (this._canvas) {
             var newLeft = Math.round(this._stageWorldCenter[0] - 0.5 * bboxWidth);
             var newTop = Math.round(this._stageWorldCenter[1] - 0.5 * bboxHeight);
@@ -553,7 +557,7 @@ var BrushStroke = function GLBrushStroke() {
 
             CanvasController.setProperty(this._canvas, "width", bboxWidth+"px");
             CanvasController.setProperty(this._canvas, "height", bboxHeight+"px");
-            this._canvas.elementModel.shapeModel.GLWorld.setViewportFromCanvas(this._canvas);
+            //this._canvas.elementModel.shapeModel.GLWorld.setViewportFromCanvas(this._canvas);
         }
 
 
@@ -665,8 +669,8 @@ var BrushStroke = function GLBrushStroke() {
         this._copyCoordinates3D(this._OrigLocalPoints, retObject.origLocalPoints); //todo <ditto>
 
         retObject.stageWorldCenter = [this._stageWorldCenter[0],this._stageWorldCenter[1],this._stageWorldCenter[2]];
-        retObject.planeMat = [this._planeMat[0],this._planeMat[1],this._planeMat[2],this._planeMat[3]];
-        retObject.planeMatInv = [this._planeMatInv[0],this._planeMatInv[1],this._planeMatInv[2],this._planeMatInv[3]];
+        retObject.planeMat = this._planeMat;
+        retObject.planeMatInv = this._planeMatInv;
         retObject.dragPlane = [this._dragPlane[0],this._dragPlane[1],this._dragPlane[2],this._dragPlane[3]];
 
         //stroke appearance properties
@@ -694,8 +698,8 @@ var BrushStroke = function GLBrushStroke() {
         this._copyCoordinates3D(jo.origLocalPoints, this._OrigLocalPoints); //todo <ditto>
 
         this._stageWorldCenter = [jo.stageWorldCenter[0],jo.stageWorldCenter[1],jo.stageWorldCenter[2]];
-        this._planeMat = [jo.planeMat[0], jo.planeMat[1],jo.planeMat[2],jo.planeMat[3]];
-        this._planeMatInv = [jo.planeMatInv[0],jo.planeMatInv[1],jo.planeMatInv[2],jo.planeMatInv[3]];
+        this._planeMat = jo.planeMat;
+        this._planeMatInv = jo.planeMatInv;
         this._dragPlane = [jo.dragPlane[0],jo.dragPlane[1],jo.dragPlane[2],jo.dragPlane[3]];
 
         //stroke appearance properties
