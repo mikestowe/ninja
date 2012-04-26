@@ -577,6 +577,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 					}
     			}
     			this._isFirstDraw = false;
+    			this.layerData._isFirstDraw = false;
     		}
     	}
     },
