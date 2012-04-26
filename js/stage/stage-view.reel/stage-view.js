@@ -88,6 +88,27 @@ exports.StageView = Montage.create(Component, {
                 case "js" :
                     type = "javascript";
                     break;
+                case "html" :
+                    type = "htmlmixed";
+                    break;
+                case "json" :
+                    type = "javascript";
+                    break;
+                case "php" :
+                    type = "php";
+                    break;
+                case "pl" :
+                    type = "perl";
+                    break;
+                case "py" :
+                    type = "python";
+                    break;
+                case "rb" :
+                    type = "ruby";
+                    break;
+                case "xml" :
+                    type = "xml";
+                    break;
             }
             document.getElementById("codeMirror_"+doc.uuid).style.display="block";
 

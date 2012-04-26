@@ -130,6 +130,10 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
     _showAutoComplete : {
         enumerable:false,
         value:function(type, keyEvent){
+            var status=false;
+            if(((keyEvent.keyCode === 83) && (keyEvent.ctrlKey || keyEvent.metaKey))){
+                debugger;
+            }
             switch(type){
                 case "javascript":
                     if((keyEvent.type === "keyup")//need seperate keycode set per mode
@@ -145,15 +149,19 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
                             || (keyEvent.shiftKey && keyEvent.keyCode === 221)//close bracket }
                             || (keyEvent.shiftKey && keyEvent.keyCode === 57)//open bracket (
                             || (keyEvent.shiftKey && keyEvent.keyCode === 48)//close bracket )
-                            || ((keyEvent.ctrlKey || keyEvent.metaKey) && keyEvent.keyCode === 83)//ctrl+S
-                            || ((keyEvent.ctrlKey || keyEvent.metaKey) && keyEvent.keyCode === 90)//ctrl+z
-                            || ((keyEvent.ctrlKey || keyEvent.metaKey) && keyEvent.shiftKey && keyEvent.keyCode === 90)//ctrl+shift+z
-                            || ((keyEvent.ctrlKey || keyEvent.metaKey) && keyEvent.keyCode === 89)//ctrl+y
+                            || ((keyEvent.keyCode === 83) && (keyEvent.ctrlKey || keyEvent.metaKey))//ctrl+S
+                            || ((keyEvent.keyCode === 90) && (keyEvent.ctrlKey || keyEvent.metaKey))//ctrl+z
+                            || ((keyEvent.keyCode === 89) && (keyEvent.ctrlKey || keyEvent.metaKey))//ctrl+y
                            )
-                    ){return true;}
+                    ){
+                        status = true;
+                        break;
+                    }
                 default :
-                    return false;
+                    status = false;
             }
+
+            return status;
         }
     },
 
