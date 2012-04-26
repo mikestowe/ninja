@@ -812,9 +812,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 if (this.application.ninja.selectedElements[0]) {
                 	checkIndex = this.application.ninja.selectedElements[0].uuid;
                     for (i = 0; i < arrLayersLength; i++) {
-                    	if (typeof(this.arrLayers[i].layerData.elementsList[0]) === "undefined") {
-                    		debugger;
-                    	}
                     	var currIndex = this.arrLayers[i].layerData.elementsList[0].uuid,
                     		layerID = this.arrLayers[i].layerData.layerID,
                     		layerIndex = 0;
@@ -1111,7 +1108,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             	this.currentLayerSelected.layerData.elementsList = [];
             }
             this.currentLayerSelected.layerData.elementsList.push(this.application.ninja.selectedElements[0]);
-            //this.currentLayerSelected.layerData.elementsList[0].dataset.storedLayerName = this.currentLayerSelected.layerData.layerName;
+            this.currentLayerSelected.layerData.elementsList[0].dataset.storedLayerName = this.currentLayerSelected.layerData.layerName;
         }
     },
 
