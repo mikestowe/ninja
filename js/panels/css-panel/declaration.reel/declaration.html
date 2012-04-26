@@ -14,7 +14,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "module" : "js/panels/css-panel/declaration.reel",
                 "name" : "Declaration",
                 "properties" : {
-                    "element" : {"#" : "container"}
+                    "element" : {"#" : "container"},
+                    "treeController": {"@": "treeController"}
                 }
             },
             "styleShorthand": {
@@ -26,9 +27,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "name": "TreeController",
                 "properties" : {
                     "branchKey" : "properties",
-                    "labelKey" : "name",
-
-                    "delegate": {"@": "owner" }
+                    "labelKey" : "name"
                 },
                 "bindings": {
                     "content": {

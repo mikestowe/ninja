@@ -40,7 +40,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "name": "Hintable",
                 "properties": {
                     "startOnEvent": "click",
-                    "element": {"#": "property"}
+                    "element": {"#": "property"},
+                    "identifier": "property"
                 },
                 "bindings": {
                     "value" : {
@@ -48,14 +49,21 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                         "boundObjectPropertyPath": "propertyText",
                         "oneway": true
                     }
-                }
+                },
+                "listeners": [
+                    {
+                        "type": "change",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
             "value": {
                 "module": "js/components/hintable.reel",
                 "name": "Hintable",
                 "properties": {
                     "startOnEvent": "click",
-                    "element": {"#": "value"}
+                    "element": {"#": "value"},
+                    "identifier": "value"
                 },
                 "bindings": {
                     "value" : {
@@ -63,7 +71,13 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                         "boundObjectPropertyPath": "valueText",
                         "oneway": true
                     }
-                }
+                },
+                "listeners": [
+                    {
+                        "type": "change",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             }
         }
     </script>

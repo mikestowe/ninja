@@ -8,17 +8,46 @@ var Montage = require("montage/core/core").Montage,
     TreeNode = require("js/components/treeview/tree-node").TreeNode;
 
 exports.Style = Montage.create(TreeNode, {
+    delegate : {
+        value: null
+    },
     disabledClass : {
         value: 'style-item-disabled'
+    },
+    editingStyleClass : {
+        value: 'edit-style-item'
     },
     editNewEmptyClass : {
         value: 'edit-empty-style'
     },
+    invalidStyleClass : {
+        value: "style-item-invalid"
+    },
     propertyText : {
         value: "property"
     },
-    valueText : {
+    _valueText : {
         value: "value"
+    },
+    valueText : {
+        get: function() {
+            return this._valueText;
+        },
+        set: function(text) {
+            this._valueText = text;
+            this.units = this.getUnits(text);
+        }
+    },
+
+    getUnits : {
+        value: function(val) {
+            if(val.split(/\s/).length > 1) {
+                return false;
+            } else if(/(px|em|pt|in|cm|mm|ex|pc|%)$/.test(val)) {
+                return val.replace(/^.*(px|em|pt|in|cm|mm|ex|pc|%).*/, '$1');
+            }
+            return null;
+        }
     },
 
     _enabled : { value: true, distinct: true },
@@ -39,6 +68,28 @@ exports.Style = Montage.create(TreeNode, {
         },
         set: function(value) {
 
+        }
+    },
+
+    _invalid: { value: null },
+    invalid : {
+        get: function() {
+            return this._invalid;
+        },
+        set: function(value) {
+            this._invalid = value;
+            this.needsDraw = true;
+        }
+    },
+
+    _editing : { value : null },
+    editing : {
+        get: function() {
+            return this._editing;
+        },
+        set: function(value) {
+            this._editing = value;
+            this.needsDraw = true;
         }
     },
 
@@ -100,7 +151,13 @@ exports.Style = Montage.create(TreeNode, {
     handleClick : {
         value: function(e) {
             console.log("handleAction");
-            this.editingNewStyle = true;
+            this.editingNewStyle = this.editing = true;
+        }
+    },
+
+    handleStart : {
+        value: function(e) {
+            this.editing = true;
         }
     },
 
@@ -116,15 +173,42 @@ exports.Style = Montage.create(TreeNode, {
                     clicked = e._event.detail.originalEvent.target;
                     return clicked !== this.propertyField.element && clicked !== this.valueField.element;
                 }
-                return
+                return;
             }
 
             if(this.sourceObject.isEmpty && !this.dirty && shouldStopEditing.bind(this)()) {
 
                 this.editingNewStyle = false;
             }
+
+            this.treeView.contentController.delegate.handleStyleStop(e);
+            //this.editing = false;
+
         }
     },
+
+    handlePropertyChange : {
+        value: function(e) {
+            var property    = this.propertyField.value,
+                oldProperty = this.propertyField._preEditValue,
+                value       = this.valueField.value,
+                rule        = this.treeView.parentComponent.declaration.parentRule,
+                delegate    = this.treeView.contentController.delegate;
+
+            delegate.handlePropertyChange(rule, property, value, oldProperty, this);
+        }
+    },
+    handleValueChange : {
+        value: function(e) {
+            var property    = this.propertyField.value,
+                value       = this.valueField.value,
+                rule        = this.treeView.parentComponent.declaration.parentRule,
+                delegate    = this.treeView.contentController.delegate;
+
+            delegate.handleValueChange(rule, property, value, this);
+        }
+    },
+
     prepareForDraw : {
         value: function() {
             console.log("style's prepare for draw");
@@ -134,14 +218,30 @@ exports.Style = Montage.create(TreeNode, {
             this.element.addEventListener('drop', this, false);
             this.element.addEventListener('webkitTransitionEnd', this, false);
 
+            ///// Add listeners to the value/property fields
+            this.propertyField.addEventListener('start', this, false);
+            this.valueField.addEventListener('start', this, false);
+            this.propertyField.addEventListener('stop', this, false);
+            this.valueField.addEventListener('stop', this, false);
+//            this.propertyField.addEventListener('change', this, false);
+//            this.valueField.addEventListener('change', this, false);
+
             if(this.sourceObject.isEmpty) {
                 this.element.draggable = false;
                 this.addStyleButton.addEventListener('click', this, false);
-                this.propertyField.addEventListener('stop', this, false);
-                this.valueField.addEventListener('stop', this, false);
             } else {
                 this.element.removeChild(this.addStyleButton);
                 delete this.addStyleButton;
+            }
+        }
+    },
+
+    willDraw : {
+        value: function() {
+            if(this.invalid) {
+                this._element.title = "Unrecognized Style";
+            } else {
+                this._element.removeAttribute('title');
             }
         }
     },
@@ -168,10 +268,24 @@ exports.Style = Montage.create(TreeNode, {
             }
 
             if(this._editingNewStyle) {
-                this.propertyField.start();
+                if(!this.propertyField.isEditable) {
+                    this.propertyField.start();
+                }
                 this.element.classList.add(this.editNewEmptyClass);
             } else {
                 this.element.classList.remove(this.editNewEmptyClass);
+            }
+
+            if(this._invalid) {
+                this._element.classList.add(this.invalidStyleClass);
+            } else {
+                this._element.classList.remove(this.invalidStyleClass);
+            }
+
+            if(this.editing) {
+                this._element.classList.add(this.editingStyleClass);
+            } else {
+                this._element.classList.remove(this.editingStyleClass);
             }
         }
     }

@@ -116,6 +116,14 @@ exports.RuleListContainer = Montage.create(Component, {
         distinct: true
     },
 
+    templateDidLoad : {
+        value: function() {
+            if(this.focusDelegate) {
+                this.ruleListComponent.focusDelegate = this.focusDelegate;
+            }
+        }
+    },
+
     draw : {
         value: function() {
             if(this._appendElement) {

@@ -14,6 +14,10 @@ exports.CssStyleRule = Montage.create(Component, {
     hasTemplate: {
         value: true
     },
+    focusDelegate : {
+        value: null
+    },
+
     _rule : {
         value : null
     },
@@ -66,6 +70,10 @@ exports.CssStyleRule = Montage.create(Component, {
             console.log("css style rule : template did load");
             if(this._declaration) {
                 this.declarationComponent.declaration = this._declaration;
+            }
+
+            if(this.focusDelegate) {
+                this.declarationComponent.focusDelegate = this.focusDelegate;
             }
         }
     },

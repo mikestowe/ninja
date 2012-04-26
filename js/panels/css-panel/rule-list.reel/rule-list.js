@@ -8,7 +8,9 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
 exports.RuleList = Montage.create(Component, {
-
+    focusDelegate : {
+        value: null
+    },
     ruleNodeName : { value: 'li' },
 
     _rules: { value: null },
@@ -59,6 +61,11 @@ exports.RuleList = Montage.create(Component, {
             if(componentBase) {
                 instance = Montage.create(componentBase);
                 instance.rule = rule;
+
+                if(this.focusDelegate) {
+                    instance.focusDelegate = this.focusDelegate;
+                }
+
                 this.rulesToDraw.push(instance);
                 this.needsDraw = true;
             }

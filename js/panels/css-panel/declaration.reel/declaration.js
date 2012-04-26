@@ -9,12 +9,16 @@ var Montage = require("montage/core/core").Montage,
     ShorthandProps = require("js/panels/CSSPanel/css-shorthand-map");
 
 exports.Declaration = Montage.create(Component, {
+    focusDelegate : {
+        value: null
+    },
     includeEmptyStyle : {
         value: true
     },
     templateDidLoad : {
         value: function() {
             console.log("declaration - template did load");
+            this.treeController.delegate = this.focusDelegate || this;
         }
     },
     prepareForDraw : {
@@ -113,6 +117,12 @@ exports.Declaration = Montage.create(Component, {
             "properties" : []
         },
         distinct: true
+    },
+
+    addNewStyle : {
+        value: function() {
+            debugger;
+        }
     },
 
     /* drag/drop events */
