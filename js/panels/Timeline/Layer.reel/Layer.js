@@ -125,6 +125,21 @@ var Layer = exports.Layer = Montage.create(Component, {
     		this._docUUID = newVal;
     	}
     },
+    
+    
+    _elementsList : {
+    	value: []
+    },
+    elementsList : {
+    	serializable: true,
+    	get: function() {
+    		return this._elementsList;
+    	},
+    	set: function(newVal) {
+    		this._elementsList = newVal;
+    	}
+    },
+    
     /* Position and Transform hottext values */
     _dtextPositionX : {
         value:null,
