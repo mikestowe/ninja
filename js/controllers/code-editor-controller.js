@@ -131,9 +131,7 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
         enumerable:false,
         value:function(type, keyEvent){
             var status=false;
-            if(((keyEvent.keyCode === 83) && (keyEvent.ctrlKey || keyEvent.metaKey))){
-                debugger;
-            }
+
             switch(type){
                 case "javascript":
                     if((keyEvent.type === "keyup")//need seperate keycode set per mode
