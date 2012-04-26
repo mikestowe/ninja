@@ -2,6 +2,12 @@
   CodeMirror.simpleHint = function(editor, getHints) {
     // We want a single cursor position.
     if (editor.somethingSelected()) return;
+
+    // Ninja override: don't show code hinting if the token is empty
+    var tempToken = editor.getTokenAt(editor.getCursor());
+    if(tempToken && ((tempToken.string === "") || !(/[\S]/gi.test(tempToken.string)))) return;//check that token has only spaces
+
+
     var result = getHints(editor);
     if (!result || !result.list.length) return;
     var completions = result.list;
