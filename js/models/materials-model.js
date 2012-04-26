@@ -45,37 +45,37 @@ exports.MaterialsModel = Montage.create(Component, {
         value: false
     },
 
-    deserializedFromTemplate: {
-        value: function() {
-            // Load all the materials
-            this.addMaterial(new FlatMaterial());
-            this.addMaterial(new LinearGradientMaterial());
-            this.addMaterial(new RadialGradientMaterial());
-            this.addMaterial(new BumpMetalMaterial());
-            this.addMaterial(new UberMaterial());
-            this.addMaterial(new CloudMaterial());
-            this.addMaterial(new RadialBlurMaterial());
-            this.addMaterial(new RaidersMaterial());
-            this.addMaterial(new PlasmaMaterial());
-            this.addMaterial(new PulseMaterial());
-            this.addMaterial(new TunnelMaterial());
-            this.addMaterial(new ReliefTunnelMaterial());
-            this.addMaterial(new FlagMaterial());
-            this.addMaterial(new SquareTunnelMaterial());
-            this.addMaterial(new FlyMaterial());
-            this.addMaterial(new WaterMaterial());
-            this.addMaterial(new ParisMaterial());
-            this.addMaterial(new ZInvertMaterial());
-            this.addMaterial(new DeformMaterial());
-            this.addMaterial(new StarMaterial());
-            this.addMaterial(new TwistMaterial());
-            this.addMaterial(new TwistVertMaterial());
-            this.addMaterial(new TaperMaterial());
-            this.addMaterial(new JuliaMaterial());
-            this.addMaterial(new KeleidoscopeMaterial());
-            this.addMaterial(new MandelMaterial());
-        }
-    },
+	deserializedFromTemplate: {
+		value: function() {
+			// Load all the materials
+			this.addMaterial(new BumpMetalMaterial());
+			this.addMaterial(new CloudMaterial());
+			this.addMaterial(new DeformMaterial());
+			this.addMaterial(new FlagMaterial());
+			this.addMaterial(new FlatMaterial());
+			this.addMaterial(new FlyMaterial());
+			this.addMaterial(new JuliaMaterial());
+			this.addMaterial(new KeleidoscopeMaterial());
+			this.addMaterial(new LinearGradientMaterial());
+			this.addMaterial(new MandelMaterial());
+			this.addMaterial(new PlasmaMaterial());
+			this.addMaterial(new PulseMaterial());
+			this.addMaterial(new ParisMaterial());
+			this.addMaterial(new RadialGradientMaterial());
+			this.addMaterial(new RadialBlurMaterial());
+			this.addMaterial(new RaidersMaterial());
+			this.addMaterial(new ReliefTunnelMaterial());
+			this.addMaterial(new SquareTunnelMaterial());
+			this.addMaterial(new StarMaterial());
+			this.addMaterial(new TaperMaterial());
+			this.addMaterial(new TunnelMaterial());
+			this.addMaterial(new TwistMaterial());
+			this.addMaterial(new TwistVertMaterial());
+			this.addMaterial(new WaterMaterial());
+			this.addMaterial(new ZInvertMaterial());
+			this.addMaterial(new UberMaterial());
+		}
+	},
 
     _materials : {
         value: AppModel.materials

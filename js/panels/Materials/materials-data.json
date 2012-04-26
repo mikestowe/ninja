@@ -5,24 +5,96 @@
             "label": "Ninja Materials",
             "children": [
                 {
-                    "label": "Uber",
-                    "id" : "UberMaterial"
-                },
-                {
                     "label": "Bump Metal",
                     "id" : "BumpMetalMaterial"
+                },
+                {
+                    "label": "Deform",
+                    "id" : "DeformMaterial"
+                },
+                {
+                    "label": "Flat",
+                    "id" : "FlatMaterial"
+                },
+                {
+                    "label": "Flag",
+                    "id" : "FlagMaterial"
+                },
+                {
+                    "label": "Fly",
+                    "id" : "FlyMaterial"
+                },
+                {
+                    "label": "Julia",
+                    "id" : "JuliaMaterial"
+                },
+                {
+                    "label": "Keleidoscope",
+                    "id" : "KeleidoscopeMaterial"
                 },
                 {
                     "label": "Linear Gradient",
                     "id" : "LinearGradientMaterial"
                 },
                 {
+                    "label": "Mandel",
+                    "id" : "MandelMaterial"
+                },
+                {
+                    "label": "Plasma",
+                    "id" : "PlasmaMaterial"
+                },
+                {
+                    "label": "Pulse",
+                    "id" : "PulseMaterial"
+                },
+                {
+                    "label": "Radial Blur",
+                    "id" : "RadialBlurMaterial"
+                },
+                {
                     "label": "Radial Gradient",
                     "id" : "RadialGradientMaterial"
                 },
                 {
-                    "label": "Flat",
-                    "id" : "FlatMaterial"
+                    "label": "Relief Tunnel",
+                    "id" : "ReliefTunnelMaterial"
+                },
+                {
+                    "label": "Square Tunnel",
+                    "id" : "SquareTunnelMaterial"
+                },
+                {
+                    "label": "Star",
+                    "id" : "StarMaterial"
+                },
+                {
+                    "label": "Taper",
+                    "id" : "TaperMaterial"
+                },
+                {
+                    "label": "Tunnel",
+                    "id" : "TunnelMaterial"
+                },
+                {
+                    "label": "Twist",
+                    "id" : "TwistMaterial"
+                },
+                {
+                    "label": "Twist Vertex",
+                    "id" : "TwistVertMaterial"
+                },
+                {
+                    "label": "Uber",
+                    "id" : "UberMaterial"
+                },
+                {
+                    "label": "Water",
+                    "id" : "WaterMaterial"
+                },
+                {
+                    "label": "Z-Invert",
+                    "id" : "ZInvertMaterial"
                 }
             ]
         },

@@ -24,8 +24,8 @@ var UberMaterial = function UberMaterial() {
     this._environmentAmount = 0.2; 	// 0 .. 1
 
     // set the default maps
-	//this._diffuseMapOb = { 'texture' : 'assets/images/rocky-diffuse.jpg', 'wrap' : 'REPEAT' };
-	this._diffuseMapOb = { 'texture' : 'texture', 'wrap' : 'REPEAT' };
+	this._diffuseMapOb = { 'texture' : 'assets/images/rocky-diffuse.jpg', 'wrap' : 'REPEAT' };
+	//this._diffuseMapOb = { 'texture' : 'texture', 'wrap' : 'REPEAT' };
     this._normalMapOb = { 'texture': 'assets/images/rocky-normal.jpg', 'wrap': 'REPEAT' };
     this._specularMapOb = { 'texture': 'assets/images/rocky-spec.jpg', 'wrap': 'REPEAT' };
     this._environmentMapOb = { 'texture': 'assets/images/silver.png', 'wrap': 'CLAMP', 'envReflection': this._environmentAmount };
@@ -366,9 +366,13 @@ var UberMaterial = function UberMaterial() {
 
     // duplcate method requirde
     this.dup = function () {
-        // allocate a new uber material
-        var newMat = new UberMaterial();
 
+        // get the current values;
+        var propNames = [], propValues = [], propTypes = [], propLabels = [];
+        this.getAllProperties(propNames, propValues, propTypes, propLabels);
+        
+        // allocate a new material
+        var newMat = new UberMaterial();
         newMat._useDiffuseMap = this._useDiffuseMap;
         newMat._useEnvironmentMap = this._useEnvironmentMap;
         newMat._useLights = this._useLights;
@@ -376,9 +380,7 @@ var UberMaterial = function UberMaterial() {
         newMat._useSpecularMap = this._useSpecularMap;
         newMat.rebuildShader();
 
-        // copy over the current values;
-        var propNames = [], propValues = [], propTypes = [], propLabels = [];
-        this.getAllProperties(propNames, propValues, propTypes, propLabels);
+		// copy over the current values;
         var n = propNames.length;
         for (var i = 0; i < n; i++)
             newMat.setProperty(propNames[i], propValues[i]);

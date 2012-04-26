@@ -142,18 +142,23 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 		{
 			// get the data from the old world
 			var jStr = srcWorld.exportJSON();
+			var index = jStr.indexOf( ';' );
+			if ((jStr[0] === 'v') && (index < 24))
+				jStr = jStr.substr( index+1 );
 			var jObj = JSON.parse( jStr );
 			var oldCanvas = srcWorld.getCanvas();
 
 			// create a new canvas
-			this._srcCanvas = NJUtils.makeNJElement("canvas", canvasID, "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
+			var NJUtils = require("js/lib/NJUtils").NJUtils;
+			this._srcCanvas = NJUtils.makeNJElement("canvas", "texture_internal_canvas", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
 			srcCanvas = this._srcCanvas;
 			srcCanvas.width  = oldCanvas.width;
 			srcCanvas.height = oldCanvas.height;
 
 			// rebuild the world
+			var GLWorld = require("js/lib/drawing/world").World;
 			this._srcWorld = new GLWorld( this._srcCanvas, true, true );
-			this._srcWorld.importSJON( jObj );
+			this._srcWorld.importJSON( jObj );
 
 			this._isLocal = true;
 		}

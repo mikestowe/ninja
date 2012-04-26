@@ -164,8 +164,10 @@ exports.MaterialsPopup = Montage.create(Component, {
 						var index = value.lastIndexOf( "/" );
 						if (index < 0)  index = value.lastIndexOf( "\\" );
 						if (index >= 0)
+						{
 							value = value.substr( index+1 );
-						value = "assets\\images\\" + value;
+							value = "assets\\images\\" + value;
+						}
 						rtnValue = value.slice(0);
 					}
 					break;
@@ -214,30 +216,48 @@ exports.MaterialsPopup = Montage.create(Component, {
 		enumerable: true,
 		value: function(materialID)
 		{
-            //TODO - Hack to force repetition to draw. Setting .length = 0 did not work.
-            this.materialsData = [];
+			//TODO - Hack to force repetition to draw. Setting .length = 0 did not work.
+			this.materialsData = [];
 
-            this._materialName = materialID;
-            if(
-					(materialID ===  "UberMaterial")				||
-					(materialID ===  "FlatMaterial")				||
-					(materialID ===  "BumpMetalMaterial")			||
-					(materialID ===  "LinearGradientMaterial")		||
-					(materialID ===  "RadialGradientMaterial")
+			this._materialName = materialID;
+			if(
+					(materialID ===  "BumpMetalMaterial")		||
+					(materialID ===  "DeformMaterial")			||
+					(materialID ===  "FlatMaterial")			||
+					(materialID ===  "FlagMaterial")			||
+					(materialID ===  "FlyMaterial")				||
+					(materialID ===  "JuliaMaterial")			||
+					(materialID ===  "KeleidoscopeMaterial")	||
+					(materialID ===  "LinearGradientMaterial")	||
+					(materialID ===  "MandelMaterial")			||
+					(materialID ===  "PlasmaMaterial")			||
+					(materialID ===  "PulseMaterial")			||
+					(materialID ===  "RadialBlurMaterial")		||
+					(materialID ===  "RadialGradientMaterial")	||
+					(materialID ===  "ReliefTunnelMaterial")	||
+					(materialID ===  "SquareTunnelMaterial")	||
+					(materialID ===  "StarMaterial")			||
+					(materialID ===  "TaperMaterial")			||
+					(materialID ===  "TunnelMaterial")			||
+					(materialID ===  "TwistMaterial")			||
+					(materialID ===  "TwistVertMaterial")		||
+					(materialID ===  "UberMaterial")			||
+					(materialID ===  "WaterMaterial")			||
+					(materialID ===  "ZInvertMaterial")
 				)
 			{
 				var material = MaterialsModel.getMaterial( materialID );
 				if (material)
 				{
 					this._material = material;
-                    this.materialsData = this.getMaterialData( material );
+					this.materialsData = this.getMaterialData( material );
 				}
-            }
-            else
-            {
-                this.materialsData = this[materialID];
-            }
-            this.needsDraw = true;
+			}
+			else
+			{
+				this.materialsData = this[materialID];
+			}
+			this.needsDraw = true;
 		}
 	},
 

@@ -5,6 +5,7 @@
  </copyright> */
 
 
+var Material = require("js/lib/rdge/materials/material").Material;
 var PulseMaterial = require("js/lib/rdge/materials/pulse-material").PulseMaterial;
 var Texture = require("js/lib/rdge/texture").Texture;
 
@@ -47,19 +48,21 @@ var FlagMaterial = function FlagMaterial() {
     // Methods
     ///////////////////////////////////////////////////////////////////////
 	// duplcate method requirde
-	this.dup = function( world ) {
-		// allocate a new uber material
-		var newMat = new FlagMaterial();
+	this.dup = function( world )
+	{
+		// get the current values;
+        var propNames = [], propValues = [], propTypes = [], propLabels = [];
+        this.getAllProperties(propNames, propValues, propTypes, propLabels);
+        
+        // allocate a new uber material
+        var newMat = new FlagMaterial();
 
 		// copy over the current values;
-		var propNames = [],  propValues = [],  propTypes = [],  propLabels = [];
-		this.getAllProperties( propNames,  propValues,  propTypes,  propLabels);
-		var n = propNames.length;
-		for (var i=0;  i<n;  i++) {
-			newMat.setProperty( propNames[i], propValues[i] );
-        }
+        var n = propNames.length;
+        for (var i = 0; i < n; i++)
+            newMat.setProperty(propNames[i], propValues[i]);
 
-		return newMat;
+        return newMat;
 	};
 
 	this.init = function( world )
@@ -68,12 +71,12 @@ var FlagMaterial = function FlagMaterial() {
 		if (world)  this.setWorld( world );
 
 		// set up the shader
-		this._shader = new jshader();
+		this._shader = new RDGE.jshader();
 		this._shader.def = flagMaterialDef;
 		this._shader.init();
 
 		// set up the material node
-		this._materialNode = createMaterialNode("flagMaterial" + "_" + world.generateUniqueNodeID());
+		this._materialNode = RDGE.createMaterialNode("flagMaterial" + "_" + world.generateUniqueNodeID());
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;

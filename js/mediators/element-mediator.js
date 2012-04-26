@@ -12,7 +12,13 @@ var ElementController = require("js/controllers/elements/element-controller").El
     NJUtils = require("js/lib/NJUtils").NJUtils;
 
 exports.ElementMediator = Montage.create(Component, {
-
+	
+    _NJUtils: {
+    	get: function() {
+			if (!NJUtils)  NJUtils = require("js/lib/NJUtils").NJUtils;
+			return NJUtils;
+		}
+	},
 
     addDelegate: {
         enumerable: false,
@@ -104,7 +110,7 @@ exports.ElementMediator = Montage.create(Component, {
         value: function(el, prop, valueMutator) {
             if(!el.elementModel) {
                 console.log("Element has no Model -> One should have been created");
-                NJUtils.makeElementModel(el, "Div", "block");
+                this._NJUtils.makeElementModel(el, "Div", "block");
             }
 
             if(valueMutator && typeof valueMutator === "function") {
@@ -119,7 +125,7 @@ exports.ElementMediator = Montage.create(Component, {
         value: function(el, prop) {
             if(!el.elementModel) {
                 console.log("Element has no Model -> One should have been created");
-                NJUtils.makeElementModel(el, "Canvas", "block", true);
+                this._NJUtils.makeElementModel(el, "Canvas", "block", true);
             }
 
             return el.elementModel.controller["getShapeProperty"](el, prop);
@@ -130,7 +136,7 @@ exports.ElementMediator = Montage.create(Component, {
         value: function(el, prop, value) {
             if(!el.elementModel) {
                 console.log("Element has no Model -> One should have been created");
-                NJUtils.makeElementModel(el, "Canvas", "block", true);
+                this._NJUtils.makeElementModel(el, "Canvas", "block", true);
             }
 
             return el.elementModel.controller["setShapeProperty"](el, prop, value);
@@ -298,7 +304,7 @@ exports.ElementMediator = Montage.create(Component, {
     getColor: {
         value: function(el, isFill, borderSide) {
             if(!el.elementModel) {
-                NJUtils.makeModelFromElement(el);
+                this._NJUtils.makeModelFromElement(el);
             }
             return el.elementModel.controller["getColor"](el, isFill, borderSide);
         }
@@ -375,7 +381,7 @@ exports.ElementMediator = Montage.create(Component, {
     getStroke: {
         value: function(el) {
             if(!el.elementModel) {
-                NJUtils.makeElementModel(el, "Div", "block");
+                this._NJUtils.makeElementModel(el, "Div", "block");
             }
             return el.elementModel.controller["getStroke"](el);
         }
@@ -453,7 +459,7 @@ exports.ElementMediator = Montage.create(Component, {
     get3DProperty: {
         value: function(el, prop) {
             if(!el.elementModel) {
-                NJUtils.makeModelFromElement(el);
+                this._NJUtils.makeModelFromElement(el);
             }
             return el.elementModel.controller["get3DProperty"](el, prop);
         }
@@ -462,7 +468,7 @@ exports.ElementMediator = Montage.create(Component, {
     get3DProperties: {
         value: function(el) {
             if(!el.elementModel) {
-                NJUtils.makeModelFromElement(el);
+                this._NJUtils.makeModelFromElement(el);
             }
 //            var mat = this.getMatrix(el);
 //            var dist = this.getPerspectiveDist(el);
@@ -475,7 +481,7 @@ exports.ElementMediator = Montage.create(Component, {
     getMatrix: {
         value: function(el) {
             if(!el.elementModel) {
-                NJUtils.makeModelFromElement(el);
+                this._NJUtils.makeModelFromElement(el);
             }
             return el.elementModel.controller["getMatrix"](el);
         }
@@ -484,7 +490,7 @@ exports.ElementMediator = Montage.create(Component, {
     getPerspectiveDist: {
         value: function(el) {
             if(!el.elementModel) {
-                NJUtils.makeModelFromElement(el);
+                this._NJUtils.makeModelFromElement(el);
             }
             return el.elementModel.controller["getPerspectiveDist"](el);
         }

@@ -81,18 +81,19 @@ var PulseMaterial = function PulseMaterial()
 		// save the world
 		if (world)  this.setWorld( world );
 
-		// allocate a new uber material
-		var newMat = new PulseMaterial();
+        // get the current values;
+        var propNames = [], propValues = [], propTypes = [], propLabels = [];
+        this.getAllProperties(propNames, propValues, propTypes, propLabels);
+        
+        // allocate a new material
+        var newMat = new PulseMaterial();
 
 		// copy over the current values;
-		var propNames = [],  propValues = [],  propTypes = [],  propLabels = [];
-		this.getAllProperties( propNames,  propValues,  propTypes,  propLabels);
-		var n = propNames.length;
-		for (var i=0;  i<n;  i++) {
-			newMat.setProperty( propNames[i], propValues[i] );
-        }
+        var n = propNames.length;
+        for (var i = 0; i < n; i++)
+            newMat.setProperty(propNames[i], propValues[i]);
 
-		return newMat;
+        return newMat;
 	};
 
 	this.init = function( world ) {

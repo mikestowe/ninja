@@ -32,16 +32,17 @@ var TunnelMaterial = function TunnelMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // duplcate method requirde
     this.dup = function (world) {
-        // allocate a new uber material
-        var newMat = new TunnelMaterial();
-
-        // copy over the current values;
+        // get the current values;
         var propNames = [], propValues = [], propTypes = [], propLabels = [];
         this.getAllProperties(propNames, propValues, propTypes, propLabels);
+        
+        // allocate a new material
+        var newMat = new TunnelMaterial();
+
+		// copy over the current values;
         var n = propNames.length;
-        for (var i = 0; i < n; i++) {
+        for (var i = 0; i < n; i++)
             newMat.setProperty(propNames[i], propValues[i]);
-        }
 
         return newMat;
     };

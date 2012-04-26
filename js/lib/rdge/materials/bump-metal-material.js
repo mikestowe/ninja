@@ -22,7 +22,6 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
 	this._lightDiff = [0.3, 0.3, 0.3, 1.0];
 	
     this._diffuseTexture = "assets/images/metal.png";
-    //this._diffuseTexture = "texture";
     this._specularTexture = "assets/images/silver.png";
 	this._normalTexture = "assets/images/normalMap.png";
 
