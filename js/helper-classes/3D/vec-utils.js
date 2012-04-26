@@ -113,6 +113,25 @@ var VecUtils = exports.VecUtils = Object.create(Object.prototype,
         }
     },
 
+    vecDistSq : {
+            value: function( dimen,  a, b ) {
+                var sum;
+
+                if ((a.length < dimen) || (b.length < dimen))
+                {
+                    throw new Error( "dimension error in VecUtils.vecDistSq" );
+                }
+
+                var sum = 0.0;
+                for (var i=0;  i<dimen;  i++)
+                {
+                    var d = a[i] - b[i];
+                    sum += d*d;
+                }
+                return sum;
+            }
+        },
+
     vecDot : {
         value: function( dimen,  v0, v1 ) {
             if ((v0.length < dimen) || (v1.length < dimen))
