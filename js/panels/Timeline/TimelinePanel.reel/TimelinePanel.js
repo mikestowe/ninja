@@ -956,13 +956,14 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
 			// Possibly currentLayerNumber doesn't correctly reflect the
 			// number of layers.  Check that.
-            for(k = 0; k < arrLayersLength; k++){
+            // Commented out to fix WebGL rendering bug
+            /*for(k = 0; k < arrLayersLength; k++){
                 if(this.arrLayers[k].layerData.layerName === newLayerName){
                      this.currentLayerNumber = this.currentLayerNumber + 1;
                      newLayerName = "Layer " + this.currentLayerNumber;
                      break;
                 }
-            }
+            }*/
             // We will no longer have multiple things selected, so wipe that info out
             // if it isn't already gone.
             this.currentLayersSelected = false;
