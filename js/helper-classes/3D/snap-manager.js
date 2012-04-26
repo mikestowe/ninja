@@ -948,7 +948,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 							{
 
 								// see if we can snap to a contained geometry object
-								if (hitRec && this.getGLWorld(elt) && !this.isARectangle(elt))
+								if (hitRec && this.getGLWorld(elt))	// && !this.isARectangle(elt))
 								{
 									var localPt = hitRec.calculateElementWorldPoint();
 									if (hitRec.getType() != hitRec.SNAP_TYPE_ELEMENT)
@@ -1346,13 +1346,13 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 				var dist = vecUtils.vecDist(2, globalPt, targetScrPt );
 				if (dist < this.ELEMENT_VERTEX_HIT_RAD)
 				{
-					console.log( "hit a vertex" );
+					//console.log( "hit a vertex" );
 
 					// check if the distance is less than
 					// the distance on the current hit record
-					if (dist <= vecUtils.vecDist(2, targetScrPt, hitRec.getScreenPoint() ))
+					//if (dist <= vecUtils.vecDist(2, targetScrPt, hitRec.getScreenPoint() ))
 					{
-						console.log( "rejected - further than existing snap" );
+						//console.log( "rejected - further than existing snap" );
 
 						hitRec.setScreenPoint( globalPt );
 						//var localMatInv = hitRec.getPlaneMatrix().inverse();
@@ -1388,7 +1388,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 					var dist = vecUtils.vecDist(2, globalPt, targetScrPt );
 					if (dist < this.ELEMENT_EDGE_HIT_RAD)
 					{
-						console.log( "hit an edge" );
+						//console.log( "hit an edge" );
 
 						// check if the distance is less than
 						// the distance on the current hit record

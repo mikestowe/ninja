@@ -758,7 +758,7 @@ World.prototype.exportJSON = function () {
 	// would not be destructive of the data.  You would be wrong...
 	// We need to rebuild everything
     if (this._useWebGL) {
-        if (worldObj.children && (worldObj.children.length === 1)) {
+        if (worldObj.children && (worldObj.children.length >= 1)) {
             this.rebuildTree(this._geomRoot);
             this.restartRenderLoop();
 		}

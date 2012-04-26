@@ -69,6 +69,7 @@ exports.ShapeTool = Montage.create(DrawingTool, {
                                                                         drawData.planeMat, drawData.midPt, canvas, true);
 
                     canvas.elementModel.isShape = true;
+					this.application.ninja.elementMediator.addElements(canvas, elementModel.data);
                 } else {
                     canvas = this._targetedElement;
                     if (!canvas.getAttribute( "data-RDGE-id" ))
@@ -77,8 +78,8 @@ exports.ShapeTool = Montage.create(DrawingTool, {
                     if(!canvas.elementModel.shapeModel) {
                         canvas.elementModel.shapeModel = Montage.create(ShapeModel);
                     }
+					this.application.ninja.elementMediator.addElements(canvas, canvas.elementModel.data);
                 }
-                this.application.ninja.elementMediator.addElements(canvas, canvas.elementModel.data);
             }
 
             this.endDraw(event);
@@ -213,7 +214,20 @@ exports.ShapeTool = Montage.create(DrawingTool, {
 	_useExistingCanvas: {
 		value: function()
 		{
-			return (this._targetedElement && !ShapesController.isElementAShape(this._targetedElement));
+			var target;
+			if (this._targetedElement && (this._targetedElement.nodeName === "CANVAS") && !ShapesController.isElementAShape(this._targetedElement))
+				target = this._targetedElement;
+			else
+			{
+				var container = this.application.ninja.currentSelectedContainer;
+				if (container && (container.nodeName === "CANVAS"))
+				{
+					target = container;
+					this._targetedElement = target;
+				}
+			}
+
+			return target;
 		}
 	}
 

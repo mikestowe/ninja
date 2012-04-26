@@ -116,7 +116,8 @@ NinjaCvsRt.GLRuntime = function ( canvas, jObj,  assetPath )
 
 	this._aspect = canvas.width/canvas.height;
 
-	this._geomRoot = null;
+	//this._geomRoot = null;
+	this._rootChildren = [];
 
 	// all "live" materials
 	this._materials = [];
@@ -152,26 +153,36 @@ NinjaCvsRt.GLRuntime = function ( canvas, jObj,  assetPath )
 	this.loadScene = function()
 	{
 		var jObj = this._jObj;
-		if (!jObj.children || (jObj.children.length != 1))
+		if (!jObj.children)	// || (jObj.children.length != 1))
 			throw new Error( "ill-formed JSON for runtime load: " + jObj );
-		var root = jObj.children[0];
+		var nChildren = jObj.children.length;
 
 		// parse the data
+		var child;
 		if (jObj.scenedata)
 		{
 			this._useWebGL = true;
 
 			var rdgeStr = jObj.scenedata;
 			this.myScene.importJSON( rdgeStr );
-			this.importObjects( root );
-			this.linkMaterials( this._geomRoot );
+			for (var i=0;  i<nChildren;  i++)
+			{
+				child = jObj.children[i];
+				this.importObjects( child );
+			}
+			//this.linkMaterials( this._geomRoot );
+			this.linkMaterials( this._rootChildren );
 			this.initMaterials();
 			this.linkLights();
 		}
 		else
 		{
 			this._context = this._canvas.getContext( "2d" );
-			this.importObjects( root );
+			for (var i=0;  i<nChildren;  i++)
+			{
+				child = jObj.children[i];
+				this.importObjects( child );
+			}
 			this.render();
 		}
 	};
@@ -324,7 +335,10 @@ NinjaCvsRt.GLRuntime = function ( canvas, jObj,  assetPath )
 		obj.setWorld( this );
 
 		if (parent == null)
-			this._geomRoot = obj;
+		{
+			//this._geomRoot = obj;
+			this._rootChildren.push( obj );
+		}
 		else
 			parent.addChild( obj );
 	};
@@ -339,24 +353,31 @@ NinjaCvsRt.GLRuntime = function ( canvas, jObj,  assetPath )
 		}
 	};
 
-	this.linkMaterials = function( obj )
+	this.linkMaterials = function( objArray )
 	{
-		if (!obj)  return;
+		if (!objArray)  return;
 
-		// get the array of materials from the object
-		var matArray = obj._materials;
-		var nMats = matArray.length;
-		for (var i=0;  i<nMats;  i++)
+		for (var i=0;  i<objArray.length;  i++)
 		{
-			var mat = matArray[i];
-			var nodeName = mat._materialNodeName;
-			var matNode = this.findMaterialNode( nodeName, this.myScene.scene );
-			if (matNode)
+			var obj = objArray[i];
+
+			// get the array of materials from the object
+			var matArray = obj._materials;
+			var nMats = matArray.length;
+			for (var j=0;  j<nMats;  j++)
 			{
-				mat._materialNode = matNode;
-				mat._shader = matNode.shaderProgram;
-				this._materials.push( mat );
+				var mat = matArray[j];
+				var nodeName = mat._materialNodeName;
+				var matNode = this.findMaterialNode( nodeName, this.myScene.scene );
+				if (matNode)
+				{
+					mat._materialNode = matNode;
+					mat._shader = matNode.shaderProgram;
+					this._materials.push( mat );
+				}
 			}
+
+			this.linkMaterials( obj.children );
 		}
 	};
 
@@ -394,15 +415,24 @@ NinjaCvsRt.GLRuntime = function ( canvas, jObj,  assetPath )
 
 	this.render = function( obj )
 	{
-		if (!obj)  obj = this._geomRoot;
-		obj.render();
+		//if (!obj)  obj = this._geomRoot;
+		//obj.render();
 
-		if (obj.children)
+		var children;
+		if (obj)
 		{
-			var nKids = obj.children.length;
+			obj.render();
+			children = obj.children;
+		}
+		else
+			children = this._rootChildren;
+
+		if (children)
+		{
+			var nKids = children.length;
 			for (var i=0;  i<nKids;  i++)
 			{
-				var child = obj.children[i];
+				var child = children[i];
 				if (child)
 					this.render( child );
 			}
@@ -694,9 +724,17 @@ NinjaCvsRt.RuntimeRectangle = function ()
 		var blRad = this._blRadius;
 		var brRad = this._brRadius;
 
+		var world = this.getWorld();
+		var vpw = world.getViewportWidth(), vph = world.getViewportHeight();
+		var cop = [0.5*vpw, 0.5*vph, 0.0];
+		var xCtr = cop[0] + this._xOffset,					yCtr = cop[1] - this._yOffset;
+		var xLeft = xCtr - 0.5*this._width,					yTop = yCtr - 0.5*this._height;
+		var xDist = cop[0] - xLeft,							yDist = cop[1] - yTop;
+		var xOff = 0.5*vpw - xDist,							yOff  = 0.5*vph - yDist;
+
 		if ((tlRad <= 0) && (blRad <= 0) && (brRad <= 0) && (trRad <= 0))
 		{
-			ctx.rect(pt[0], pt[1], width - 2*inset, height - 2*inset);
+			ctx.rect(pt[0]+xOff, pt[1]+yOff, width - 2*inset, height - 2*inset);
 		}
 		else
 		{
@@ -705,53 +743,53 @@ NinjaCvsRt.RuntimeRectangle = function ()
 			if (rad < 0)  rad = 0;
 			pt[1] += rad;
 			if (Math.abs(rad) < 0.001)  pt[1] = inset;
-			ctx.moveTo( pt[0],  pt[1] );
+			ctx.moveTo( pt[0]+xOff,  pt[1]+yOff );
 
 			// get the bottom left point
 			pt = [inset, height - inset];
 			rad = blRad - inset;
 			if (rad < 0)  rad = 0;
 			pt[1] -= rad;
-			ctx.lineTo( pt[0],  pt[1] );
+			ctx.lineTo( pt[0]+xOff,  pt[1]+yOff );
 
 			// get the bottom left curve
 			if (rad > 0.001)
-				ctx.quadraticCurveTo( inset, height-inset,  inset+rad, height-inset );
+				ctx.quadraticCurveTo( inset+xOff, height-inset+yOff,  inset+rad+xOff, height-inset+yOff );
 
 			// do the bottom of the rectangle
 			pt = [width - inset,  height - inset];
 			rad = brRad - inset;
 			if (rad < 0)  rad = 0;
 			pt[0] -= rad;
-			ctx.lineTo( pt[0], pt[1] );
+			ctx.lineTo( pt[0]+xOff, pt[1]+yOff );
 
 			// get the bottom right arc
 			if (rad > 0.001)
-				ctx.quadraticCurveTo( width-inset, height-inset,  width-inset, height-inset-rad );
+				ctx.quadraticCurveTo( width-inset+xOff, height-inset+yOff,  width-inset+xOff, height-inset-rad+yOff );
 
 			// get the right of the rectangle
 			pt = [width - inset,  inset];
 			rad = trRad - inset;
 			if (rad < 0)  rad = 0;
 			pt[1] += rad;
-			ctx.lineTo( pt[0], pt[1] );
+			ctx.lineTo( pt[0]+xOff, pt[1]+yOff );
 
 			// do the top right corner
 			if (rad > 0.001)
-				ctx.quadraticCurveTo( width-inset, inset,  width-inset-rad, inset );
+				ctx.quadraticCurveTo( width-inset+xOff, inset+yOff,  width-inset-rad+xOff, inset+yOff );
 
 			// do the top of the rectangle
 			pt = [inset, inset];
 			rad = tlRad - inset;
 			if (rad < 0)  rad = 0;
 			pt[0] += rad;
-			ctx.lineTo( pt[0], pt[1] );
+			ctx.lineTo( pt[0]+xOff, pt[1]+yOff);
 
 			// do the top left corner
 			if (rad > 0.001)
-				ctx.quadraticCurveTo( inset, inset, inset, inset+rad );
+				ctx.quadraticCurveTo( inset+xOff, inset+yOff, inset+xOff, inset+rad+yOff );
 			else
-				ctx.lineTo( inset, 2*inset );
+				ctx.lineTo( inset+xOff, 2*inset+yOff );
 		}
 	};
 
