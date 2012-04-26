@@ -330,6 +330,10 @@ exports.HTMLDocument = Montage.create(TextDocument, {
                         elementModel.pi = "BrushStrokePi";
 						break;
 
+                    case root.GEOM_TYPE_CUBIC_BEZIER:
+                        elementModel.selection = "Subpath";
+                        elementModel.pi = "SubpathPi";
+                        break;
 
 					default:
 						console.log( "geometry type not supported for file I/O, " + root.geomType());
@@ -404,7 +408,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
             this.selectionExclude = ["HTML", "BODY", "Viewport", "UserContent", "stageBG"];
             this.currentView = "design";
 			//
-			this.iframe.src = this._htmlTemplateUrl;
+
+            this.iframe.src = this._htmlTemplateUrl;
             this.iframe.addEventListener("load", this, true);
         }
     },
@@ -528,8 +533,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
   		value: 0
   	},
 */
-  	
-  	
 	////////////////////////////////////////////////////////////////////
 	//
     handleEvent: {
@@ -827,7 +830,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     // Setting up the currentSelectedContainer to the document body.
     userTemplateDidLoad: {
         value: function(){
-            this.application.ninja.currentSelectedContainer = this.documentRoot;
+            //this.application.ninja.currentSelectedContainer = this.documentRoot;
         }
     },
     

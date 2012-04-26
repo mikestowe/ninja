@@ -221,6 +221,10 @@ GLAnchorPoint.prototype.getNext = function() {
     return [this._nextX, this._nextY, this._nextZ];
 };
 
+GLAnchorPoint.prototype.getAllPos = function() {
+    return [[this._prevX, this._prevY, this._prevZ],[this._x, this._y, this._z],[this._nextX, this._nextY, this._nextZ]];
+};
+
 //return the square of distance from passed in point to the anchor position
 GLAnchorPoint.prototype.getDistanceSq = function (x, y, z) {
     return (this._x - x) * (this._x - x) + (this._y - y) * (this._y - y) + (this._z - z) * (this._z - z);

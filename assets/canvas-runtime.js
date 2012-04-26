@@ -685,14 +685,22 @@ NinjaCvsRt.RuntimeRectangle = function ()
 		// various declarations
 		var pt,  rad,  ctr,  startPt, bPts;
 		var width  = Math.round(this._width),
-			height = Math.round(this._height);
+			height = Math.round(this._height),
+            hw = 0.5*width,
+            hh = 0.5*height;
 
-		pt = [inset, inset];	// top left corner
+        pt = [inset, inset];	// top left corner
 
-		var tlRad = this._tlRadius; //top-left radius
-		var trRad = this._trRadius;
-		var blRad = this._blRadius;
-		var brRad = this._brRadius;
+        var tlRad = this._tlRadius; //top-left radius
+        var trRad = this._trRadius;
+        var blRad = this._blRadius;
+        var brRad = this._brRadius;
+        // limit the radii to half the rectangle dimension
+        var minDimen = hw < hh ? hw : hh;
+        if (tlRad > minDimen)  tlRad = minDimen;
+        if (blRad > minDimen)  blRad = minDimen;
+        if (brRad > minDimen)  brRad = minDimen;
+        if (trRad > minDimen)  trRad = minDimen;
 
 		if ((tlRad <= 0) && (blRad <= 0) && (brRad <= 0) && (trRad <= 0))
 		{
@@ -769,7 +777,7 @@ NinjaCvsRt.RuntimeRectangle = function ()
 		var lw = this._strokeWidth;
 		var	w = world.getViewportWidth(),
 			h = world.getViewportHeight();
-		
+
         var c,
             inset,
             gradient,
@@ -781,13 +789,13 @@ NinjaCvsRt.RuntimeRectangle = function ()
         // render the fill
         ctx.beginPath();
         if (this._fillColor) {
-            inset = Math.ceil( lw ) + 0.5;
+            inset = Math.ceil( lw ) - 0.5;
 
             if(this._fillColor.gradientMode) {
                 if(this._fillColor.gradientMode === "radial") {
-                    gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w/2, h/2)-inset);
+                    gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w, h)/2);
                 } else {
-                    gradient = ctx.createLinearGradient(inset, h/2, w-2*inset, h/2);
+                    gradient = ctx.createLinearGradient(inset/2, h/2, w-inset, h/2);
                 }
                 colors = this._fillColor.color;
 
@@ -815,11 +823,11 @@ NinjaCvsRt.RuntimeRectangle = function ()
         // render the stroke
         ctx.beginPath();
         if (this._strokeColor) {
-            inset = Math.ceil( 0.5*lw ) + 0.5;
+            inset = Math.ceil( 0.5*lw ) - 0.5;
 
             if(this._strokeColor.gradientMode) {
                 if(this._strokeColor.gradientMode === "radial") {
-                    gradient = ctx.createRadialGradient(w/2, h/2, Math.min(h/2, w/2)-inset, w/2, h/2, Math.max(h/2, w/2));
+                    gradient = ctx.createRadialGradient(w/2, h/2, Math.min(h, w)/2-inset, w/2, h/2, Math.max(h, w)/2);
                 } else {
                     gradient = ctx.createLinearGradient(0, h/2, w, h/2);
                 }
@@ -1025,9 +1033,9 @@ NinjaCvsRt.RuntimeOval = function ()
                 if(this._fillColor.gradientMode) {
                     if(this._fillColor.gradientMode === "radial") {
                         gradient = ctx.createRadialGradient(xCtr, yCtr, 0,
-                                                            xCtr, yCtr, Math.max(yScale, xScale));
+                                                            xCtr, yCtr, Math.max(this._width, this._height)/2);
                     } else {
-                        gradient = ctx.createLinearGradient(0, this._height/2, this._width, this._height/2);
+                        gradient = ctx.createLinearGradient(lineWidth/2, this._height/2, this._width-lineWidth, this._height/2);
                     }
                     colors = this._fillColor.color;
 

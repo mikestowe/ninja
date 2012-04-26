@@ -985,7 +985,7 @@ World.prototype.importObjectJSON = function( jObj, parentGeomObj )
 {
 	var type = jObj.type;
     var BrushStroke = require("js/lib/geom/brush-stroke").BrushStroke;
-
+    var SubPath = require("js/lib/geom/sub-path").SubPath;
 	var obj;
 	switch (type)
 	{
@@ -1002,6 +1002,11 @@ World.prototype.importObjectJSON = function( jObj, parentGeomObj )
 		case 3:		// line
             obj = new Line();
             obj.importJSON( jObj );
+            break;
+
+        case 5:     //cubic bezier
+            obj = new SubPath();
+            obj.importJSON(jObj);
             break;
 
         case 6:     //brush stroke
