@@ -117,7 +117,7 @@ var BrushStroke = function GLBrushStroke() {
     };
 
     this.getPoint = function (index) {
-        return this._Points[index];
+        return this._Points[index].slice(0);
     };
 
     this.addPoint = function (pt) {
@@ -399,7 +399,7 @@ var BrushStroke = function GLBrushStroke() {
 
             // ***** unproject all the centered points and convert them to 2D (plane space)*****
             // (undo the projection step performed by the browser)
-            localPoint = this._unprojectPt(localPoint, 1400); //todo get the perspective distance from the canvas
+            //localPoint = this._unprojectPt(localPoint, 1400); //todo get the perspective distance from the canvas
             localPoint = MathUtils.transformPoint(localPoint, this._planeMatInv);
 
             //add to the list of local points
@@ -568,17 +568,17 @@ var BrushStroke = function GLBrushStroke() {
         }
         ctx.save();
         ctx.clearRect(0, 0, bboxWidth, bboxHeight);
-        this.drawToContext(ctx, 0, 0, false);
+        this.drawToContext(ctx, false);
         ctx.restore();
     } //this.render()
 
-    this.drawToContext = function(ctx, origX, origY, drawStageWorldPts){
+    this.drawToContext = function(ctx, drawStageWorldPts, stageWorldDeltaX, stageWorldDeltaY, stageWorldToScreenMat){
         var points = this._LocalPoints;
-        if (drawStageWorldPts){
+        if (drawStageWorldPts){ //this is usually true when we're drawing the brush stroke on the stage (no canvas yet)
             points = this._Points;
         }
         var numPoints = points.length;
-
+        var tempP, p;
         if (this._strokeUseCalligraphic) {
             //build the stamp for the brush stroke
             var t=0;
@@ -623,9 +623,23 @@ var BrushStroke = function GLBrushStroke() {
                 //ctx.strokeStyle="rgba("+parseInt(255*currStrokeColor[0])+","+parseInt(255*currStrokeColor[1])+","+parseInt(255*currStrokeColor[2])+","+alphaVal+")";
                 ctx.translate(disp[0],disp[1]);
                 ctx.beginPath();
-                ctx.moveTo(points[0][0]-origX, points[0][1]-origY);
+                if (drawStageWorldPts) {
+                    tempP = points[0].slice(0);
+                    tempP[0]+=stageWorldDeltaX; tempP[1]+=stageWorldDeltaY;
+                    p = MathUtils.transformAndDivideHomogeneousPoint(tempP, stageWorldToScreenMat);
+                } else {
+                    p = points[0];
+                }
+                ctx.moveTo(p[0],p[1]);
                 for (var i=0;i<numPoints;i++){
-                    ctx.lineTo(points[i][0]-origX, points[i][1]-origY);
+                    if (drawStageWorldPts) {
+                        tempP = points[i].slice(0);
+                        tempP[0]+=stageWorldDeltaX; tempP[1]+=stageWorldDeltaY;
+                        p = MathUtils.transformAndDivideHomogeneousPoint(tempP, stageWorldToScreenMat);
+                    } else {
+                        p = points[i];
+                    }
+                    ctx.lineTo(p[0],p[1]);
                 }
                 ctx.stroke();
                 ctx.restore();
@@ -641,13 +655,27 @@ var BrushStroke = function GLBrushStroke() {
             ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
             for (var l=0;l<numlayers;l++){
                 ctx.beginPath();
-                ctx.moveTo(points[0][0]-origX, points[0][1]-origY);
+                if (drawStageWorldPts) {
+                    tempP = points[0].slice(0);
+                    tempP[0]+=stageWorldDeltaX; tempP[1]+=stageWorldDeltaY;
+                    p = MathUtils.transformAndDivideHomogeneousPoint(tempP, stageWorldToScreenMat);
+                } else {
+                    p = points[0];
+                }
+                ctx.moveTo(p[0],p[1]);
                 if (numPoints===1){
                     //display a tiny segment as a single point
-                   ctx.lineTo(points[0][0]-origX, points[0][1]-origY+0.01);
+                   ctx.lineTo(p[0],p[1]+0.01);
                 }
                 for (var i=1;i<numPoints;i++){
-                    ctx.lineTo(points[i][0]-origX, points[i][1]-origY);
+                    if (drawStageWorldPts) {
+                        tempP = points[i].slice(0);
+                        tempP[0]+=stageWorldDeltaX; tempP[1]+=stageWorldDeltaY;
+                        p = MathUtils.transformAndDivideHomogeneousPoint(tempP, stageWorldToScreenMat);
+                    } else {
+                        p = points[i];
+                    }
+                    ctx.lineTo(p[0],p[1]);
                 }
                 ctx.lineWidth=2*l+minStrokeWidth;
                 ctx.stroke();
