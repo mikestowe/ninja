@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.
@@ -17,36 +17,30 @@
     <script type="text/montage-serialization">
         {
             "localStorage": {
-                "module": "js/controllers/local-storage-controller",
-                "name": "LocalStorage"
+                "prototype": "js/controllers/local-storage-controller[LocalStorage]"
             },
 
             "toolsData1": {
-                "module": "js/data/tools-data",
-                "name": "ToolsData"
+                "prototype": "js/data/tools-data"
             },
 
             "appModel": {
-                "module": "js/models/app-model",
-                "name": "AppModel"
+                "prototype": "js/models/app-model"
             },
 
             "materialsModel": {
-                "module": "js/models/materials-model",
-                "name": "MaterialsModel"
+                "prototype": "js/models/materials-model"
             },
 
             "menu": {
-                "module": "js/components/menu/menu.reel",
-                "name": "Menu",
+                "prototype": "js/components/menu/menu.reel",
                 "properties": {
                     "element": {"#": "mainMenuBar"}
                 }
             },
 
             "splitter1": {
-                "module": "js/panels/Splitter",
-                "name": "Splitter",
+                "prototype": "js/panels/Splitter",
                 "properties": {
                     "element": {"#": "topSplitter"},
                     "panel": {"#": "topPanelContainer"}
@@ -54,8 +48,7 @@
             },
 
             "splitter2": {
-                "module": "js/panels/Splitter",
-                "name": "Splitter",
+                "prototype": "js/panels/Splitter",
                 "properties": {
                     "element": {"#": "leftSplitter"},
                     "panel": {"#": "leftPanelContainer"}
@@ -63,8 +56,7 @@
             },
 
             "splitter3": {
-                "module": "js/panels/Splitter",
-                "name": "Splitter",
+                "prototype": "js/panels/Splitter",
                 "properties": {
                     "element": {"#": "rightSplitter"},
                     "panel": {"#": "rightPanelContainer"},
@@ -73,8 +65,7 @@
             },
 
             "splitter4": {
-                "module": "js/panels/Splitter",
-                "name": "Splitter",
+                "prototype": "js/panels/Splitter",
                 "properties": {
                     "element": {"#": "bottomSplitter"},
                     "panel": {"@": "timeline"}
@@ -82,8 +73,7 @@
             },
 
             "resizer1": {
-                "module": "js/panels/resize-composer",
-                "name": "ResizeComposer",
+                "prototype": "js/panels/resize-composer",
                 "properties": {
                     "element": {"#": "rightPanelResizer"},
                     "component": {"@": "owner"},
@@ -106,8 +96,7 @@
             },
 
             "resizer2": {
-                "module": "js/panels/resize-composer",
-                "name": "ResizeComposer",
+                "prototype": "js/panels/resize-composer",
                 "properties": {
                     "element": {"#": "timelineResizer"},
                     "component": {"@": "owner"},
@@ -130,8 +119,7 @@
             },
 
             "Resizer": {
-                "module": "js/panels/resize-composer",
-                "name": "ResizeComposer",
+                "prototype": "js/panels/resize-composer",
                 "properties": {
                     "element": {"#": "pasteboardResizer"},
                     "component": {"@": "owner"}
@@ -157,8 +145,7 @@
             },
 
             "stageMode": {
-                "module": "js/components/layout/stage-mode.reel",
-                "name": "StageMode",
+                "prototype": "js/components/layout/stage-mode.reel",
                 "properties": {
                     "element": {"#": "stageMode"}
                 },
@@ -172,8 +159,7 @@
             },
 
             "toolsList1": {
-                "module": "js/components/layout/tools-list.reel",
-                "name": "ToolsList",
+                "prototype": "js/components/layout/tools-list.reel",
                 "properties": {
                     "element": {"#": "toolsList"},
                     "toolsData": {"@": "toolsData1"}
@@ -181,8 +167,7 @@
             },
 
             "toolsProperties1": {
-                "module": "js/components/layout/tools-properties.reel",
-                "name": "ToolsProperties",
+                "prototype": "js/components/layout/tools-properties.reel",
                 "properties": {
                     "element": {"#": "toolsProperties"},
                     "toolsData": {"@": "toolsData1"}
@@ -190,16 +175,14 @@
             },
 
             "documentsTab": {
-                "module": "js/components/layout/documents-tab.reel",
-                "name": "DocumentsTab",
+                "prototype": "js/components/layout/documents-tab.reel",
                 "properties": {
                     "element": {"#": "openDocumentsTabComponent"}
                 }
             },
 
             "stage1": {
-                "module": "js/stage/stage.reel",
-                "name": "Stage",
+                "prototype": "js/stage/stage.reel",
                 "properties": {
                     "element": {"#": "stageAndScenesContainer"},
                     "appModel":     {"@": "appModel"}
@@ -207,16 +190,14 @@
             },
 
             "documentBar": {
-                "module": "js/components/layout/document-bar.reel",
-                "name": "DocumentBar",
+                "prototype": "js/components/layout/document-bar.reel",
                 "properties": {
                     "element": {"#": "documentBar"}
                 }
             },
 
             "panelContainer": {
-                "module": "js/panels/PanelContainer.reel",
-                "name": "PanelContainer",
+                "prototype": "js/panels/PanelContainer.reel",
                 "properties": {
                     "element": {"#": "rightPanelContent"},
                     "panelSplitter": {"@": "splitter3"},
@@ -225,8 +206,7 @@
             },
 
             "breadCrumb":{
-                "module": "js/components/layout/bread-crumb.reel",
-                "name": "Breadcrumb",
+                "prototype": "js/components/layout/bread-crumb.reel[Breadcrumb]",
                 "properties":{
                     "element":{"#" : "breadCrumbComponent"}
                 },
@@ -240,49 +220,41 @@
              },
 
             "timeline": {
-               "module": "js/panels/Timeline/TimelinePanel.reel",
-               "name": "TimelinePanel",
+               "prototype": "js/panels/Timeline/TimelinePanel.reel",
                "properties": {
                    "element": {"#": "timelinePanelComponent"}
                }
             },
 
             "mouseMediator": {
-                "module": "js/mediators/mouse-mediator",
-                "name": "MouseMediator"
+                "prototype": "js/mediators/mouse-mediator"
             },
 
             "keyboardMediator": {
-                "module": "js/mediators/keyboard-mediator",
-                "name": "KeyboardMediator",
+                "prototype": "js/mediators/keyboard-mediator",
                 "properties":{
                     "appModel":     {"@": "appModel"}
                 }
             },
 
             "dragDropMediator": {
-                "module": "js/mediators/drag-drop-mediator",
-                "name": "DragDropMediator"
+                "prototype": "js/mediators/drag-drop-mediator"
             },
 
             "elementMediator": {
-                "module": "js/mediators/element-mediator",
-                "name": "ElementMediator"
+                "prototype": "js/mediators/element-mediator"
             },
 
             "ioMediator": {
-                "module": "js/mediators/io-mediator",
-                "name": "IoMediator"
+                "prototype": "js/mediators/io-mediator"
             },
 
             "undocontroller1": {
-                "module": "js/controllers/undo-controller",
-                "name": "UndoController"
+                "prototype": "js/controllers/undo-controller"
             },
 
             "selectionController1": {
-                "module": "js/controllers/selection-controller",
-                "name": "SelectionController",
+                "prototype": "js/controllers/selection-controller",
                 "bindings" : {
                     "selectionContainer": {
                         "boundObject": {"@": "owner"},
@@ -294,51 +266,42 @@
             },
 
             "documentController1": {
-                "module": "js/controllers/document-controller",
-                "name": "DocumentController"
+                "prototype": "js/controllers/document-controller"
             },
 
             "popupManager1": {
-                "module": "js/components/popup-manager.reel",
-                "name": "PopupMananger",
+                "prototype": "js/components/popup-manager.reel",
                 "properties": {
                     "element": {"#": "popupWindows"}
                 }
             },
             
             "colorController1": {
-                "module": "js/controllers/color-controller",
-                "name": "ColorController"
+                "prototype": "js/controllers/color-controller"
             },
 
             "stylesController": {
-                "module": "js/controllers/styles-controller",
-                "name": "StylesController"
+                "prototype": "js/controllers/styles-controller"
             },
 
             "presetsController": {
-                "module": "js/controllers/presets-controller",
-                "name": "PresetsController"
+                "prototype": "js/controllers/presets-controller"
             },
 
             "filePickerController": {
-                "module": "js/io/ui/file-picker/file-picker-controller",
-                "name": "FilePickerController"
+                "prototype": "js/io/ui/file-picker/file-picker-controller"
             },
 
             "newFileController": {
-                "module": "js/io/ui/new-file-dialog/new-file-workflow-controller",
-                "name": "NewFileWorkflowController"
+                "prototype": "js/io/ui/new-file-dialog/new-file-workflow-controller"
             },
             
             "coreIoApi1": {
-                "module": "js/io/system/coreioapi",
-                "name": "CoreIoApi"
+                "prototype": "js/io/system/coreioapi[CoreIoApi]"
             },
 
             "mainMenuController": {
-                "module": "js/controllers/main-menu-controller",
-                "name": "MainMenuController"
+                "prototype": "js/controllers/main-menu-controller"
             },
 
             "focusManager": {
@@ -349,8 +312,7 @@
             },
 
             "owner": {
-                "module": "js/ninja.reel",
-                "name": "Ninja",
+                "prototype": "js/ninja.reel",
                 "properties": {
                     "element":              {"#": "main"},
                     "rulerTop":        		{"#": "rulerTop"},

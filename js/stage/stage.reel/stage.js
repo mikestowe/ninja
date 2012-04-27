@@ -224,14 +224,6 @@ exports.Stage = Montage.create(Component, {
     // Event details will contain the active document prior to opening a new one
     handleOpenDocument: {
         value: function(evt) {
-            
-            var prevActiveDocument = evt.detail;
-            // Hide current document is one is open
-            if(prevActiveDocument) {
-                prevActiveDocument.container.style["display"] = "none";
-                if(prevActiveDocument.documentType === "htm" || prevActiveDocument.documentType === "html") this.hideCanvas(true);
-            }
-
             this.hideCanvas(false);
 
             // Recalculate the canvas sizes because of splitter resizing
@@ -254,7 +246,11 @@ exports.Stage = Montage.create(Component, {
 
             // Hardcode this value so that it does not fail for the new stage architecture
             // TODO: Remove marker for old template: NINJA-STAGE-REWORK
-            this.userContentBorder = 1; //parseInt(this._documentRoot.elementModel.controller.getProperty(this._documentRoot, "border"));
+            if(this.application.ninja.currentDocument.documentRoot.id === "UserContent") {
+                this.userContentBorder = 1; //parseInt(this._documentRoot.elementModel.controller.getProperty(this._documentRoot, "border"));
+            } else {
+                this.userContentBorder = 0;
+            }
 
             this._userContentLeft = this._documentOffsetLeft - this._scrollLeft + this._userContentBorder;
             this._userContentTop = this._documentOffsetTop - this._scrollTop + this._userContentBorder;
@@ -521,62 +517,59 @@ exports.Stage = Montage.create(Component, {
     },
 
     /**
-     * GetSelectableElement: Returns a selectable object (direct child of current container) at clicked point
+     * GetElement: Returns the element or selectable element under the X,Y coordinates passed as an obj with x,y
      *
-     * @param: X,Y
-     * @return: Returns the current container if the the X,Y hits an element in the exclusion list
+     * @param position: mouse event
+     * @param selectable (default == null) if true this will return the current container element
+     * @return: Returns the element or container or null if the the X,Y hits the exclusion list and tool cannot operate on stage
      */
-    GetSelectableElement: {
-        value: function(pos) {
-            var item = this.GetElement(pos);
-            if(this.application.ninja.currentDocument.inExclusion(item) !== -1) {
-                return this.application.ninja.currentSelectedContainer;
-            }
-            var activeContainerId = this.application.ninja.currentSelectedContainer.uuid;
-            if(item.parentNode.uuid === activeContainerId) {
-                return item;
-            } else {
-                var outerElement = item.parentNode;
+    getElement: {
+        value: function(position, selectable) {
+            var point, element;
 
-                while(outerElement.parentNode && outerElement.parentNode.uuid !== activeContainerId) {
-                    // If element is higher up than current container then return
-                    if(outerElement.id === "UserContent") return;
-                    // else keep going up the chain
-                    outerElement = outerElement.parentNode;
-                }
-
-                return outerElement;
-            }
-        }
-    },
-
-    /**
-     * GetElement: Returns the object under the X,Y coordinates passed as an obj with x,y
-     *
-     * @param: X,Y
-     * @return: Returns the Object or null if the the X,Y hits the exclusion list and tool cannot operate on stage
-     */
-    GetElement: {
-        value: function(pos) {
-            var point = webkitConvertPointFromPageToNode(this.canvas, new WebKitPoint(pos.pageX, pos.pageY)),
-                elt = this.application.ninja.currentDocument.GetElementFromPoint(point.x + this.scrollLeft,point.y + this.scrollTop);
+            point = webkitConvertPointFromPageToNode(this.canvas, new WebKitPoint(position.pageX, position.pageY));
+            element = this.application.ninja.currentDocument.GetElementFromPoint(point.x + this.scrollLeft,point.y + this.scrollTop);
 
             // workaround Chrome 3d bug
-            if(this.application.ninja.toolsData.selectedToolInstance._canSnap && this.application.ninja.currentDocument.inExclusion(elt) !== -1) {
-                return this._getElementUsingSnapping(point);
+            if(this.application.ninja.toolsData.selectedToolInstance._canSnap && this.application.ninja.currentDocument.inExclusion(element) !== -1) {
+                element = this.getElementUsingSnapping(point);
+            }
+
+            if(selectable) {
+
+                if(this.application.ninja.currentDocument.inExclusion(element) !== -1) {
+                    return this.application.ninja.currentSelectedContainer;
+                }
+
+                var activeContainerId = this.application.ninja.currentSelectedContainer.uuid;
+                if(element.parentNode.uuid === activeContainerId) {
+                    return element;
+                } else {
+                    var outerElement = element.parentNode;
+
+                    while(outerElement.parentNode && outerElement.parentNode.uuid !== activeContainerId) {
+                        // If element is higher up than current container then return
+                        if(outerElement.id === "UserContent") return;
+                            // else keep going up the chain
+                            outerElement = outerElement.parentNode;
+                        }
+
+                    return outerElement;
+                }
+
             } else {
-                return elt;
+                return element;
             }
         }
     },
 
     /**
-     * _getElementUsingSnapping: Returns the object at point using snap manager
+     * getElementUsingSnapping: Returns the object at point using snap manager
      *
      * @param: point
      * @return: Returns the Object in the user document under the point
      */
-    _getElementUsingSnapping: {
+    getElementUsingSnapping: {
         value: function(point) {
             this.stageDeps.snapManager.enableElementSnap( true );
             var hitRec = this.stageDeps.snapManager.snap(point.x, point.y, true);

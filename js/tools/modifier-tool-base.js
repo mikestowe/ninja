@@ -134,7 +134,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 				var hitRec = snapManager.snap(point.x, point.y, do3DSnap);
 
                 // TODO - Check that hitRec's element matches element that browser says we clicked on
-                var elt = this.application.ninja.stage.GetSelectableElement(event);
+                var elt = this.application.ninja.stage.getElement(event, true);
                 if(elt !== hitRec.getElement())
                 {
                     hitRec = snapManager.findHitRecordForElement(elt);

@@ -1,4 +1,4 @@
-<!DOCTYPE HTML>
+﻿<!DOCTYPE HTML>
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -13,50 +13,43 @@
         {
 
             "selectionProperties1": {
-                "module": "js/components/tools-properties/selection-properties.reel",
-                "name": "SelectionProperties",
+                "prototype": "js/components/tools-properties/selection-properties.reel",
                 "properties": {
                     "element": {"#": "selectionProperties"}
                 }
             },
             "subSelectionProperties1": {
-                "module": "js/components/tools-properties/subselection-properties.reel",
-                "name": "SubSelectionProperties",
+                "prototype": "js/components/tools-properties/subselection-properties.reel[SubSelectionProperties]",
                 "properties": {
                     "element": {"#": "subSelectionProperties"}
                 }
             },
             "object3DProperties1": {
-                "module": "js/components/tools-properties/object3d-properties.reel",
-                "name": "Object3DProperties",
+                "prototype": "js/components/tools-properties/object3d-properties.reel[Object3DProperties]",
                 "properties": {
                     "element": {"#": "object3DProperties"}
                 }
             },
             "tagProperties1": {
-                "module": "js/components/tools-properties/tag-properties.reel",
-                "name": "TagProperties",
+                "prototype": "js/components/tools-properties/tag-properties.reel",
                 "properties": {
                     "element": {"#": "tagProperties"}
                 }
             },
             "penProperties1": {
-                "module": "js/components/tools-properties/pen-properties.reel",
-                "name": "PenProperties",
+                "prototype": "js/components/tools-properties/pen-properties.reel",
                 "properties": {
                     "element": {"#": "penProperties"}
                 }
             },
             "textProperties1": {
-                "module": "js/components/tools-properties/text-properties.reel",
-                "name": "TextProperties",
+                "prototype": "js/components/tools-properties/text-properties.reel",
                 "properties": {
                     "element": {"#": "textProperties"}
                 }
             },
             "shapeProperties1": {
-                "module": "js/components/tools-properties/shape-properties.reel",
-                "name": "ShapeProperties",
+                "prototype": "js/components/tools-properties/shape-properties.reel",
                 "properties": {
                     "element": {"#": "shapeProperties"}
                 },
@@ -74,72 +67,62 @@
                 }
             },
             "pencilProperties1": {
-                "module": "js/components/tools-properties/pencil-properties.reel",
-                "name": "PencilProperties",
+                "prototype": "js/components/tools-properties/pencil-properties.reel",
                 "properties": {
                     "element": {"#": "pencilProperties"}
                 }
             },
             "brushProperties1": {
-                "module": "js/components/tools-properties/brush-properties.reel",
-                "name": "BrushProperties",
+                "prototype": "js/components/tools-properties/brush-properties.reel",
                 "properties": {
                     "element": {"#": "brushProperties"}
                 }
             },
             "fillProperties1": {
-                "module": "js/components/tools-properties/fill-properties.reel",
-                "name": "FillProperties",
+                "prototype": "js/components/tools-properties/fill-properties.reel",
                 "properties": {
                     "element": {"#": "fillProperties"}
                 }
             },
             "inkbottleProperties1": {
-                "module": "js/components/tools-properties/ink-bottle-properties.reel",
-                "name": "InkBottleProperties",
+                "prototype": "js/components/tools-properties/ink-bottle-properties.reel",
                 "properties": {
                     "element": {"#": "inkbottleProperties"}
                 }
             },
             "eyedropperProperties1": {
-                "module": "js/components/tools-properties/eyedropper-properties.reel",
-                "name": "EyedropperProperties",
+                "prototype": "js/components/tools-properties/eyedropper-properties.reel",
                 "properties": {
                     "element": {"#": "eyedropperProperties"}
                 }
             },
             "eraserProperties1": {
-                "module": "js/components/tools-properties/eraser-properties.reel",
-                "name": "EraserProperties",
+                "prototype": "js/components/tools-properties/eraser-properties.reel",
                 "properties": {
                     "element": {"#": "eraserProperties"}
                 }
             },
             "rotateStageProperties1": {
-                "module": "js/components/tools-properties/rotate-stage-properties.reel",
-                "name": "RotateStageProperties",
+                "prototype": "js/components/tools-properties/rotate-stage-properties.reel",
                 "properties": {
                     "element": {"#": "rotateStageProperties"}
                 }
             },
             "panProperties1": {
-                "module": "js/components/tools-properties/pan-properties.reel",
-                "name": "PanProperties",
+                "prototype": "js/components/tools-properties/pan-properties.reel",
                 "properties": {
                     "element": {"#": "panProperties"}
                 }
             },
             "zoomProperties1": {
-                "module": "js/components/tools-properties/zoom-properties.reel",
-                "name": "ZoomProperties",
+                "prototype": "js/components/tools-properties/zoom-properties.reel",
                 "properties": {
                     "element": {"#": "zoomProperties"}
                 }
             },
 
             "disable": {
-                "module": "montage/ui/condition.reel",
-                "name": "Condition",
+                "prototype": "montage/ui/condition.reel",
                 "properties": {
                     "element": {"#": "disabledCondition"}
                 },
@@ -153,8 +136,7 @@
             },
             
             "owner": {
-                "module": "js/components/layout/tools-properties.reel",
-                "name": "ToolsProperties",
+                "prototype": "js/components/layout/tools-properties.reel",
                 "properties": {
                     "element": {"#": "toolsProperties"},
                     "selectionProperties":          {"@": "selectionProperties1"},

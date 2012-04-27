@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -11,8 +11,7 @@
    		<script type="text/montage-serialization">
             {
                 "owner": {
-                    "module": "js/panels/Timeline/Layer.reel",
-                    "name": "Layer",
+                    "prototype": "js/panels/Timeline/Layer.reel",
                     "properties": {
                         "element": {"#": "layer"},
 						"styleRepetition" : {"@":"repetition1"},
@@ -29,8 +28,7 @@
                     }
                 },
 	            "dtext1" : {
-	            	"module" : "montage/ui/dynamic-text.reel",
-	            	"name" : "DynamicText",
+	            	"prototype" : "montage/ui/dynamic-text.reel",
 	            	"properties" : {
 	            		"element" : {"#" : "layer-label-text"}
 	            	},
@@ -57,8 +55,7 @@
 	            	}
 	            },
 	            "repetition1": {
-	                "module": "montage/ui/repetition.reel",
-	                "name": "Repetition",
+	                "prototype": "montage/ui/repetition.reel",
 	                "properties": {
 	                    "element": {"#": "style-container"},
 	                    "isSelectionEnabled" : true
@@ -72,8 +69,7 @@
 	                }
 	            },
 	            "style" : {
-	            	"module" : "js/panels/Timeline/Style.reel",
-	            	"name" : "LayerStyle",
+	            	"prototype" : "js/panels/Timeline/Style.reel[LayerStyle]",
 	            	"properties" : {
 	            		"element" : {"#" : "layer-style"}
 	            	},
@@ -116,8 +112,7 @@
 	            	}
 	            },
 				"dtext_position_x" : {
-                    "module": "js/components/hottextunit.reel",
-            	    "name": "HotTextUnit",
+                    "prototype": "js/components/hottextunit.reel[HotTextUnit]",
             	    "properties": {
             	        "element": {"#": "position-x"},
             	        "maxValue" : 100000,
@@ -135,8 +130,7 @@
 	                }
 				},
 				"dtext_position_y" : {
-                    "module": "js/components/hottextunit.reel",
-            	    "name": "HotTextUnit",
+                    "prototype": "js/components/hottextunit.reel[HotTextUnit]",
             	    "properties": {
             	        "element": {"#": "position-y"},
             	        "maxValue" : 100000,
@@ -154,8 +148,7 @@
 	                }
 				},
 				"dtext_scale_x" : {
-                    "module": "js/components/hottextunit.reel",
-            	    "name": "HotTextUnit",
+                    "prototype": "js/components/hottextunit.reel[HotTextUnit]",
             	    "properties": {
             	        "element": {"#": "scale-x"},
             	        "maxValue" : 100,
@@ -173,8 +166,7 @@
 	                }
 				},
 				"dtext_scale_y" : {
-                    "module": "js/components/hottextunit.reel",
-            	    "name": "HotTextUnit",
+                    "prototype": "js/components/hottextunit.reel[HotTextUnit]",
             	    "properties": {
             	        "element": {"#": "scale-y"},
             	        "maxValue" : 100,
@@ -192,8 +184,7 @@
 	                }
 				},
 				"dtext_skew_x" : {
-                    "module": "js/components/hottextunit.reel",
-            	    "name": "HotTextUnit",
+                    "prototype": "js/components/hottextunit.reel[HotTextUnit]",
             	    "properties": {
             	        "element": {"#": "skew-x"},
             	        "maxValue" : 100,
@@ -211,8 +202,7 @@
 	                }
 				},
 				"dtext_skew_y" : {
-                    "module": "js/components/hottextunit.reel",
-            	    "name": "HotTextUnit",
+                    "prototype": "js/components/hottextunit.reel[HotTextUnit]",
             	    "properties": {
             	        "element": {"#": "skew-y"},
             	        "maxValue" : 100,
@@ -230,8 +220,7 @@
 	                }
 				},
 				"dtext_rotate" : {
-                    "module": "js/components/hottextunit.reel",
-            	    "name": "HotTextUnit",
+                    "prototype": "js/components/hottextunit.reel[HotTextUnit]",
             	    "properties": {
             	        "element": {"#": "rotation"},
             	        "maxValue" : 360,
@@ -250,8 +239,7 @@
 				},
 					
 				"mainCollapser" : {
-					"module" : "js/panels/timeline/Collapser.js",
-					"name" : "Collapser",
+					"prototype" : "js/panels/timeline/Collapser",
 					"properties" : {
 						"element" : {"#" : "content-main"},
 						"myContent" : {"#" : "content-main"},
@@ -271,8 +259,7 @@
 				},
 					
 				"positionCollapser" : {
-					"module" : "js/panels/timeline/Collapser.js",
-					"name" : "Collapser",
+					"prototype" : "js/panels/timeline/Collapser",
 					"properties" : {
 						"element" : {"#" : "content-position"},
 						"myContent" : {"#":"content-position"},
@@ -292,8 +279,7 @@
 				},
 					
 				"transformCollapser" : {
-					"module" : "js/panels/timeline/Collapser.js",
-					"name" : "Collapser",
+					"prototype" : "js/panels/timeline/Collapser",
 					"properties" : {
 						"element" : {"#" : "content-transform"},
 						"myContent" : {"#":"content-transform"},
@@ -313,8 +299,7 @@
 				},
 					
 				"styleCollapser" : {
-					"module" : "js/panels/timeline/Collapser.js",
-					"name" : "Collapser",
+					"prototype" : "js/panels/timeline/Collapser",
 					"properties" : {
 						"element" : {"#" : "content-style"},
 						"myContent" : {"#":"content-style"},
