@@ -67,10 +67,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 
 	/* Layer models: the name, ID, and selected and animation booleans for the layer */
     _layerName:{
-    	serializable: true,
-        value:null,
-        writable:true,
-        enumerable:true
+    	value: "Default Layer Name"
     },
     
     layerName:{
@@ -79,20 +76,17 @@ var Layer = exports.Layer = Montage.create(Component, {
             return this._layerName;
         },
         set:function(newVal){
-        	if (newVal !== this._layerName) {
-        		this._layerEditable.value = newVal;
-	        	this._layerName = newVal;
-	        	this.layerData.layerName = newVal;
-	        	this.log('layerName setter: ' + newVal)
-        	}
-        	
+
+			this._layerEditable.value = newVal;
+	    	this._layerName = newVal;
+	    	this.layerData.layerName = newVal;
+	    	if (typeof(this.dynamicLayerName) !== "undefined") {
+	    		this.dynamicLayerName.value = newVal;
+	    	}
         }
     },
     _layerID:{
-        value:null,
-        writable:true,
-    	serializable: true,
-        enumerable:true
+    	value: "Default Layer ID"
     },
 
     layerID:{
@@ -102,7 +96,48 @@ var Layer = exports.Layer = Montage.create(Component, {
         },
         set:function(value){
             this._layerID = value;
+            this.layerData.layerID = value;
         }
+    },
+    _layerTag:{
+    	value: "tag"
+    },
+    
+    layerTag:{
+    	serializable: true,
+        get:function(){
+            return this._layerTag;
+        },
+        set:function(newVal){
+	    	this._layerTag = newVal;
+	    	this.layerData.layerTag = newVal;
+        }
+    },
+    _docUUID : {
+    	value: null
+    },
+    docUUID : {
+    	serializable: true,
+    	get: function() {
+    		return this._docUUID;
+    	},
+    	set: function(newVal) {
+    		this._docUUID = newVal;
+    	}
+    },
+    
+    
+    _elementsList : {
+    	value: []
+    },
+    elementsList : {
+    	serializable: true,
+    	get: function() {
+    		return this._elementsList;
+    	},
+    	set: function(newVal) {
+    		this._elementsList = newVal;
+    	}
     },
     
     /* Position and Transform hottext values */
@@ -119,7 +154,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextPositionX !== value) {
         		this._dtextPositionX = value;
-        		//this.needsDraw = true;
+        		this.layerData.dtextPositionX = value;
         	}
             
         }
@@ -138,7 +173,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextPositionY !== value) {
         		this._dtextPositionY = value;
-        		//this.needsDraw = true;
+        		this.layerData.dtextPositionY = value;
         	}
             
         }
@@ -157,7 +192,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextScaleX !== value) {
         		this._dtextScaleX = value;
-        		//this.needsDraw = true;
+        		this.layerData.dtextScaleX = value;
         	}
             
         }
@@ -176,7 +211,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextScaleY !== value) {
         		this._dtextScaleY = value;
-        		//this.needsDraw = true;
+        		this.layerData.dtextScaleY = value;
         	}
             
         }
@@ -195,7 +230,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextSkewX !== value) {
         		this._dtextSkewX = value;
-        		//this.needsDraw = true;
+        		this.layerData.dtextSkewX = value;
         	}
             
         }
@@ -214,7 +249,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextSkewY !== value) {
         		this._dtextSkewY = value;
-        		//this.needsDraw = true;
+        		this.layerData.dtextSkewY = value;
         	}
             
         }
@@ -233,7 +268,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(value){
         	if (this._dtextRotate !== value) {
         		this._dtextRotate = value;
-        		//this.needsDraw = true;
+        		this.layerData.dtextRotate = value;
         	}
             
         }
@@ -278,6 +313,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._isActive = newVal;
+    		this.layerData.isActive = newVal;
     	}
     },
     
@@ -294,8 +330,30 @@ var Layer = exports.Layer = Montage.create(Component, {
         },
         set:function(value){
             this._isAnimated = value;
+            this.layerData.isAnimated = value;
         }
     },
+    _isVisible:{
+        value: true
+    },
+
+    isVisible:{
+        get:function(){
+            return this._isVisible;
+        },
+        set:function(value){
+        	if (this._isVisible !== value) {
+        		this._isVisible = value;
+        		if (value === true) {
+        			this.element.classList.remove("layer-hidden");
+        		} else {
+        			this.element.classList.add("layer-hidden");
+        		}
+        	}
+        	this.layerData.isVisible = value;
+        }
+    },
+    
     _justAdded: {
     	value: false
     },
@@ -314,10 +372,9 @@ var Layer = exports.Layer = Montage.create(Component, {
     		return this._isMainCollapsed;
     	},
     	set: function(newVal) {
-    		this.log('layer.js: isMainCollapsed: ' + newVal);
-    		if (newVal !== this._isMainCollapsed) {
-    			this._isMainCollapsed = newVal;
-    		}
+			this._isMainCollapsed = newVal;
+			this.layerData.isMainCollapsed = newVal;
+
     	}
     },
     
@@ -331,10 +388,8 @@ var Layer = exports.Layer = Montage.create(Component, {
     		return this._isTransformCollapsed;
     	},
     	set: function(newVal) {
-    		if (newVal !== this._isTransformCollapsed) {
-    			this._isTransformCollapsed = newVal;
-    			//this.needsDraw = true;
-    		}
+			this._isTransformCollapsed = newVal;
+			this.layerData.isTransformCollapsed = newVal;
     	}
     },
     
@@ -348,10 +403,8 @@ var Layer = exports.Layer = Montage.create(Component, {
     		return this._isPositionCollapsed;
     	},
     	set: function(newVal) {
-    		if (newVal !== this._isPositionCollapsed) {
-    			this._isPositionCollapsed = newVal;
-    			//this.needsDraw = true;
-    		}
+			this._isPositionCollapsed = newVal;
+			this.layerData.isPositionCollapsed = newVal;
     	}
     },
     
@@ -365,10 +418,8 @@ var Layer = exports.Layer = Montage.create(Component, {
     		return this._isStyleCollapsed;
     	},
     	set: function(newVal) {
-    		if (newVal !== this._isStyleCollapsed) {
-    			this._isStyleCollapsed = newVal;
-    			//this.needsDraw = true;
-    		}
+			this._isStyleCollapsed = newVal;
+			this.layerData.isStyleCollapsed = newVal;
     	}
     },
     _bypassAnimation : {
@@ -381,8 +432,16 @@ var Layer = exports.Layer = Montage.create(Component, {
     		return this._bypassAnimation;
     	},
     	set: function(newVal) {
-    		this._bypassAnimation = newVal;
+    		if (typeof(this.layerData) !== "undefined") {
+	    		this._bypassAnimation = newVal;
+	    		this.layerData.bypassAnimation = newVal;	
+    		}
     	}
+    },
+    
+    // Is this the first draw?
+    _isFirstDraw : {
+    	value: true
     },
 
     _layerData:{
@@ -398,13 +457,25 @@ var Layer = exports.Layer = Montage.create(Component, {
         set:function(val){
             this._layerData = val;
             if(this._layerData){
-                this.setData();
+                this.setData(true);
             }
         }
     },
 
     setData:{
-        value:function(){
+        value:function(boolNeedsDraw){
+        	if (typeof(this._layerData) === "undefined")  {
+        		return;
+        	} 
+        	
+        	if (typeof(this._layerData.layerName) === "undefined") {
+        		return;
+        	}
+        	
+        	if (typeof(boolNeedsDraw) === "undefined") {
+        		boolNeedsDraw = false;
+        	}
+        	
             this.layerName = this.layerData.layerName;
             this.layerID = this.layerData.layerID;
             this.arrLayerStyles = this.layerData.arrLayerStyles;
@@ -423,13 +494,41 @@ var Layer = exports.Layer = Montage.create(Component, {
             this.dtextScaleY = this.layerData.dtextScaleY;
             this.dtextRotate = this.layerData.dtextRotate;
             this._isFirstDraw = this.layerData._isFirstDraw;
-            this.needsDraw = true;
+            this.layerTag = this.layerData.layerTag;
+            this.isVisible = this.layerData.isVisible;
+            this.isAnimated = this.layerData.isAnimated;
+            this.docUUID = this.layerData.docUUID;
+            this.needsDraw = boolNeedsDraw;
         }
     },
-    _isFirstDraw : {
-    	value: true
+    
+    /* Data binding point and outgoing binding trigger method */
+    _bindingPoint : {
+    	serializable: true,
+    	value : {}
     },
-
+    bindingPoint: {
+    	serializable: true,
+    	get: function() {
+    		return this._bindingPoint;
+    	},
+    	set: function(newVal) {
+    		if (newVal !== this._bindingPoint) {
+	    		this._bindingPoint = newVal;
+	    		this.setData(true);
+    		}
+    	}
+    },
+    
+    triggerOutgoingBinding : {
+    	value: function() {
+    		if (this.layerData.triggerBinding === true) {
+    			this.layerData.triggerBinding = false;
+    		} else {
+    			this.layerData.triggerBinding = true;
+    		}
+    	}
+    },
 	/* END: Models */
 
 	/* Begin: Draw cycle */
@@ -439,41 +538,37 @@ var Layer = exports.Layer = Montage.create(Component, {
         	// Initialize myself
 			this.init();
 			
-        	var that = this;
-
         	// Make it editable!
         	this._layerEditable = Hintable.create();
         	this._layerEditable.element = this.titleSelector;
         	this.titleSelector.identifier = "selectorEditable";
         	this.titleSelector.addEventListener("click", this, false);
-        	this._layerEditable.addEventListener("blur", function(event) {
-        		that.handleSelectorEditableBlur(event);
-        	}, false);
-        	this._layerEditable.addEventListener("change", function(event) {
-				that.dynamicLayerName.value = that._layerEditable.value;
-				that.needsDraw = true;
-        	}, false);
+        	this._layerEditable.addEventListener("blur", this.handleSelectorEditableBlur.bind(this), false);
+        	this._layerEditable.addEventListener("change", this.handleLayerNameChange.bind(this), false);
         	this._layerEditable.editingClass = "editable2";
         	this._layerEditable.value = this.layerName;
-        	this._layerEditable.needsDraw = true;
-
+        	
+        	// Collapser event handlers.
             this.mainCollapser.clicker.addEventListener("click", this.handleMainCollapserClick.bind(this), false);
             this.positionCollapser.clicker.addEventListener("click", this.handlePositionCollapserClick.bind(this), false);
             this.transformCollapser.clicker.addEventListener("click", this.handleTransformCollapserClick.bind(this), false);
             this.styleCollapser.clicker.addEventListener("click", this.handleStyleCollapserClick.bind(this), false);
 
-
             // Add event listeners to add and delete style buttons
-            this.buttonAddStyle.identifier = "addStyle";
-            this.buttonAddStyle.addEventListener("click", this, false);
-            
-            this.buttonDeleteStyle.identifier = "deleteStyle";
-            this.buttonDeleteStyle.addEventListener("click", this, false);
+            this.buttonAddStyle.addEventListener("click", this.handleAddStyleClick.bind(this), false);
+            this.buttonDeleteStyle.addEventListener("click", this.handleDeleteStyleClick.bind(this), false);
             
             // Add mousedown listener to set isActive
             this.element.addEventListener("mousedown", this, false);
             this.element.addEventListener("click", this, false);
-
+            
+			// Drag and drop event handlers
+			this.myLabel.addEventListener("mouseover", this.handleMouseover.bind(this), false);
+			this.myLabel.addEventListener("mouseout", this.handleMouseout.bind(this), false);
+			this.element.addEventListener("dragover", this.handleDragover.bind(this), false);
+			this.element.addEventListener("dragleave", this.handleDragleave.bind(this), false);
+			this.element.addEventListener("dragstart", this.handleDragstart.bind(this), false);
+			this.element.addEventListener("drop", this.handleDrop.bind(this), false);
         }
     },
     draw: {
@@ -487,11 +582,17 @@ var Layer = exports.Layer = Montage.create(Component, {
     },
     didDraw: {
     	value: function() {
-    		if ((this.isSelected === true) && (this._isFirstDraw === true)) {
-    			// Once we're done drawing the first time we need to tell the TimelinePanel if
-    			// this layer is supposed to be selected.
-    			this.parentComponent.parentComponent.selectedLayerID = this.layerID;
+    		if (this._isFirstDraw === true) {
+    			if (this.isSelected === true) {
+    				if (this.application.ninja.currentDocument._uuid === this._docUUID) {
+		    			// Once we're done drawing the first time we need to tell the TimelinePanel if
+		    			// this layer is supposed to be selected.
+		    			//console.log('layerName ' +  this.layerName);
+		    			this.parentComponent.parentComponent.selectedLayerID = this.layerID;
+					}
+    			}
     			this._isFirstDraw = false;
+    			this.layerData._isFirstDraw = false;
     		}
     	}
     },
@@ -499,34 +600,16 @@ var Layer = exports.Layer = Montage.create(Component, {
 	
 	/* Begin: Controllers */
 	
-	// Initialize a just-created layer with some basic defaults and needed selectors.
+	// Initialize a just-created layer
 	init: {
 		value: function() {
-			// Default some vars
-			//this.arrLayerStyles = [];
-			
 			// Get some selectors.
         	this.label = this.element.querySelector(".label-layer");
         	this.titleSelector = this.label.querySelector(".collapsible-label");
         	this.buttonAddStyle = this.element.querySelector(".button-add");
         	this.buttonDeleteStyle = this.element.querySelector(".button-delete");
-
 		}
 	},
-    selectLayer:{
-        value:function(){
-            // this.mainCollapser.header.classList.add("layerSelected");
-            this.element.classList.add("layerSelected");
-            this.isSelected = true;
-        }
-    },
-    deselectLayer:{
-        value:function(){
-            // this.mainCollapser.header.classList.remove("layerSelected");
-            this.element.classList.remove("layerSelected");
-            this.isSelected = false;
-        }
-    },
 	addStyle : {
 		value: function() {
 			// Add a new style rule.  It should be added above the currently selected rule, 
@@ -539,6 +622,8 @@ var Layer = exports.Layer = Montage.create(Component, {
 				newEvent = document.createEvent("CustomEvent");
 			
 			this.isStyleCollapsed = false;
+			this.layerData.isStyleCollapsed = false;
+			this.triggerOutgoingBinding();
 			
 			newEvent.initCustomEvent("layerEvent", false, true);
 			newEvent.layerEventLocale = "styles";
@@ -569,7 +654,8 @@ var Layer = exports.Layer = Montage.create(Component, {
 			// Set up the event info and dispatch the event
 
 			newEvent.styleSelection = mySelection;
-			//defaultEventManager.dispatchEvent(newEvent);
+			defaultEventManager.dispatchEvent(newEvent);
+
 
 		}
 	},
@@ -589,7 +675,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 					newEvent.layerID = this.layerID;
 					newEvent.styleID = this.arrLayerStyles[selectedIndex].styleID;
 					newEvent.styleSelection = selectedIndex;
-					//defaultEventManager.dispatchEvent(newEvent);
+					defaultEventManager.dispatchEvent(newEvent);
 					
 					// Delete the style from the view
 					this.arrLayerStyles.splice(selectedIndex, 1);
@@ -653,6 +739,14 @@ var Layer = exports.Layer = Montage.create(Component, {
 	/* End: Controllers */
     
 	/* Begin: Event handlers */
+	handleLayerNameChange: {
+		value: function(event) {		
+			this.dynamicLayerName.value = this._layerEditable.value;
+			this.application.ninja.timeline.currentLayerSelected.layerData.elementsList[0].dataset.storedLayerName = this.dynamicLayerName.value;
+			this.needsDraw = true;
+			this.application.ninja.documentController.activeDocument.needsSave = true;
+		}
+	},
 	handleAddStyleClick: {
 		value: function(event) {
 			this.addStyle();
@@ -663,18 +757,22 @@ var Layer = exports.Layer = Montage.create(Component, {
 			this.deleteStyle();
 		}
 	},
-	handleSelectorEditableClick: {
-		value: function(event) {
-		}
-	},
 	handleSelectorEditableBlur : {
 		value: function(event) {
         	this.titleSelector.scrollLeft = 0;
+        	this.handleSelectorEditableChange(event);
 		}
 	},
 	handleSelectorEditableChange: {
 		value: function(event) {
-			this.layerName = this.dynamicLayerName.value;
+			var newVal = this._layerEditable.enteredValue;
+			if (this._layerEditable.enteredValue.length === 0) {
+				newVal = this._layerEditable._preEditValue;
+			}
+			this.dynamicLayerName.value = newVal;
+			this.layerName = newVal;
+			this.application.ninja.timeline.currentLayerSelected.layerData.elementsList[0].dataset.storedLayerName = newVal;
+			this.application.ninja.documentController.activeDocument.needsSave = true;
 			this.needsDraw = true;
 		}
 	},
@@ -700,44 +798,96 @@ var Layer = exports.Layer = Montage.create(Component, {
 		value: function(event) {
 			this.mainCollapser.bypassAnimation = false;
 			this.bypassAnimation = false;
+			this.layerData.bypassAnimation = false;
 			if (this.isMainCollapsed) {
 				this.isMainCollapsed = false;
 			} else {
 				this.isMainCollapsed = true;
 			}
+			this.triggerOutgoingBinding();
 		}
 	},
 	handlePositionCollapserClick : {
 		value: function(event) {
 			this.positionCollapser.bypassAnimation = false;
 			this.bypassAnimation = false;
+			this.layerData.bypassAnimation = false;
 			if (this.isPositionCollapsed) {
 				this.isPositionCollapsed = false;
 			} else {
 				this.isPositionCollapsed = true;
 			}
+			this.triggerOutgoingBinding();
 		}
 	},
 	handleTransformCollapserClick : {
 		value: function(event) {
 			this.transformCollapser.bypassAnimation = false;
 			this.bypassAnimation = false;
+			this.layerData.bypassAnimation = false;
 			if (this.isTransformCollapsed) {
 				this.isTransformCollapsed = false;
 			} else {
 				this.isTransformCollapsed = true;
 			}
+			this.triggerOutgoingBinding();
 		}
 	},
 	handleStyleCollapserClick : {
 		value: function(event) {
 			this.styleCollapser.bypassAnimation = false;
 			this.bypassAnimation = false;
+			this.layerData.bypassAnimation = false;
 			if (this.isStyleCollapsed) {
 				this.isStyleCollapsed = false;
 			} else {
 				this.isStyleCollapsed = true;
 			}
+			this.triggerOutgoingBinding();
+		}
+	},
+	handleMouseover: {
+		value: function(event) {
+			this.element.draggable = true;
+		}
+	},
+	handleMouseout: {
+		value: function(event) {
+			this.element.draggable = false;
+		}
+	},
+	handleDragenter: {
+		value: function(event) {
+		}
+	},
+	handleDragleave: {
+		value: function(event) {
+			this.element.classList.remove("dragOver");
+		}
+	},
+	handleDragstart: {
+		value: function(event) {
+			this.parentComponent.parentComponent.dragLayerID = this.layerID;
+            event.dataTransfer.setData('Text', 'Layer');
+		}
+	},
+	handleDragover: {
+		value: function(event) {
+			event.preventDefault();
+			this.element.classList.add("dragOver");
+			event.dataTransfer.dropEffect = "move";
+			return false;
+		}
+	},
+	
+	handleDrop : {
+		value: function(event) {
+			event.stopPropagation();
+			this.element.classList.remove("dragOver");
+			if (this.parentComponent.parentComponent.dragLayerID !== this.layerID) {
+				this.parentComponent.parentComponent.dropLayerID = this.layerID;
+			}
+			return false;
 		}
 	},
 	/* End: Event handlers */

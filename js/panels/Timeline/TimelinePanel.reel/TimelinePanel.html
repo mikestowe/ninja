@@ -19,11 +19,9 @@
                         "element": {"#": "timeline_panel"},
                         "user_layers": {"#": "user_layers"},
                         "track_container": {"#": "right_inside"},
-                        "timeline_leftpane" : {"#" : "timeline_leftpane"},
+                        "timeline_leftpane" : {"#" : "leftpane_inside"},
                         "layer_tracks": {"#": "layer_tracks"},
                         "master_track": {"#": "master_track"},
-                        "newlayer_button": {"#": "newlayer_button"},
-                        "deletelayer_button": {"#": "deletelayer_button"},
                         "time_markers" : {"#": "timeline_markers"},
                         "layerRepetition" : {"@": "repetition1"},
                         "trackRepetition" : {"@" : "repetition2"},
@@ -34,7 +32,11 @@
                         "container_tracks" : {"#" : "container-tracks"},
                         "end_hottext" : {"@" : "endHottext"},
                         "container_layers" : {"#" : "container-layers"},
-                        "timeline_disabler" : {"#" : "timeline-disabler"}
+                        "timeline_disabler" : {"#" : "timeline-disabler"},
+                        "checkable_relative" : {"#" : "checkable_relative"},
+                        "checkable_absolute" : {"#" : "checkable_absolute"},
+                        "checkable_animated" : {"#" : "checkable_animated"},
+                        "tl_configbutton" : {"#" : "tl-configbutton"}
                     }
                 },
 
@@ -77,7 +79,12 @@
                         	"boundObject" : {"@" : "repetition1"},
                         	"boundObjectPropertyPath" : "objectAtCurrentIteration.layerData",
                         	"oneway" : false
-                        }
+                        },
+                        "bindingPoint" : {
+            	            "boundObject" : {"@" : "repetition1"},
+            	            "boundObjectPropertyPath" : "objectAtCurrentIteration.layerData.triggerBinding",
+            	            "oneway" : false
+            	        }
 	            	}
 	            },
 	            
@@ -107,9 +114,33 @@
             	            "boundObject" : {"@" : "repetition2"},
             	            "boundObjectPropertyPath" : "objectAtCurrentIteration.layerData",
             	            "oneway" : false
+            	        },
+                        "bindingPoint" : {
+            	            "boundObject" : {"@" : "repetition2"},
+            	            "boundObjectPropertyPath" : "objectAtCurrentIteration.layerData.triggerBinding",
+            	            "oneway" : false
             	        }
+            	        
 	            	}
 	            },
+
+                "timelineZoomSlider":{
+                    "module":"js/components/slider.reel",
+                    "name":"Slider",
+                    "properties":{
+                        "element":{"#":"tl_slider"},
+                        "maxValue" : 10000,
+                        "minValue" : 1000
+                    },
+                    "bindings": {
+                        "value": {
+                            "boundObject": {"@": "owner"},
+                            "boundObjectPropertyPath": "millisecondsOffset",
+                            "oneway": false
+                        }
+                    }
+                },
+
                 "endHottext" : {
                     "module": "js/components/hottextunit.reel",
             	    "name": "HotTextUnit",
@@ -151,16 +182,26 @@
                         
                         <div id="user_layers" class="userlayers">
                             <div id="master_layer" class="masterlayer">
-                                <div>Master Layer</div>
+                                <div class="layer-master">Master Layer
+	                                <div class="tl-configbutton" data-montage-id="tl-configbutton">
+	                                	<div class="tl-dropdown">
+											<div class="checkable" data-montage-id="checkable_relative">Use relative positioning</div>
+											<div class="checkable checked" data-montage-id="checkable_absolute">Use absolute positioning</div>
+											<div class="nj-divider divider-horizontal"></div>
+	                                		<div class="checkable" data-montage-id="checkable_animated">Show only animated layers</div>
+	                                	</div>
+	                                </div>
+                                
+                                </div>
+
                             </div>
-                            <div id="container-layers">
+                            <div id="container-layers" style="position: relative;" class="container-layers">
                             	<div id="container-layer"></div>
                             </div>
                         </div>
 
                         <div id="timeline_gutter" class="timelinegutter">
-                            <div id="newlayer_button" class="newlayerbutton"></div>
-                            <div id="deletelayer_button" class="deletelayerbutton"></div>
+                            <div id="tl_slider" class="tl_slider"></div>
                             <input id="end_hottext" class="endhottext">
                         </div>
                     </div>

@@ -17,12 +17,15 @@
                         "element": {"#": "layer"},
 						"styleRepetition" : {"@":"repetition1"},
 						"dynamicLayerName" : {"@":"dtext1"},
+						"dynamicLayerTag" : {"@": "dtext2"},
 						"slotStyle" : {"@":"slot1"},
 						"mainCollapser" : {"@" : "mainCollapser"},
 						"positionCollapser" : {"@" : "positionCollapser"},
 						"transformCollapser" : {"@" : "transformCollapser"},
 						"styleCollapser" : {"@" : "styleCollapser"},
-						"clickerMain" : {"#" : "clicker-main"}
+						"clickerMain" : {"#" : "clicker-main"},
+						"myLabel" : {"#" : "myLabel"},
+						"dragDrop" : {"@" : "DragDrop"}
                     }
                 },
 	            "dtext1" : {
@@ -35,6 +38,20 @@
 	            		"value" : {
 	            			"boundObject" : {"@": "owner"},
 	            			"boundObjectPropertyPath" : "layerName",
+	            			"oneway" : false
+	            		}
+	            	}
+	            },
+	            "dtext2" : {
+	            	"module" : "montage/ui/dynamic-text.reel",
+	            	"name" : "DynamicText",
+	            	"properties" : {
+	            		"element" : {"#" : "layer-tag"}
+	            	},
+	            	"bindings" : {
+	            		"value" : {
+	            			"boundObject" : {"@": "owner"},
+	            			"boundObjectPropertyPath" : "layerTag",
 	            			"oneway" : false
 	            		}
 	            	}
@@ -301,7 +318,7 @@
 					"properties" : {
 						"element" : {"#" : "content-style"},
 						"myContent" : {"#":"content-style"},
-						"contentHeight" : 60,
+						"contentHeight" : 0,
 						"isLabelClickable" : true,
 						"clicker" : {"#" : "clicker-style"},
 						"isCollapsed" : true,
@@ -323,7 +340,8 @@
 	<body>
     
 		<div data-montage-id="layer" class="container-layer">
-			<div class="label-layer">
+			<div class="label-layer" data-montage-id="myLabel">
+				<span data-montage-id="layer-tag" class="layer-tag"></span>
 				<span class="collapsible-label" data-montage-id="layer-label-text" spellcheck="false">Label</span>
 				<span class="collapsible-clicker collapsible-collapsed" data-montage-id="clicker-main"></span>
 				<div class="cssbutton button-lock"></div>
@@ -335,14 +353,14 @@
 					<span class="collapsible-clicker clicker-position collapsible-collapsed" data-montage-id="clicker-position"></span>
 				</div>
 				<div class="content-position collapsible-content collapsible-collapsed" data-montage-id="content-position">
-					<div class="layout-table">
-						<div class="layout-row">
-							<div class="layout-cell">X</div>
-							<div class="layout-cell"><div data-montage-id="position-x"></div></div>
+					<div class="layout-tablew">
+						<div class="container-row">
+							<div class="cell-property">Left</div>
+							<div class="cell-value"><div data-montage-id="position-x"></div></div>
 						</div>
-						<div class="layout-row">
-							<div class="layout-cell">Y</div>
-							<div class="layout-cell"><div data-montage-id="position-y"></div></div>
+						<div class="container-row">
+							<div class="cell-property">Top</div>
+							<div class="cell-value"><div data-montage-id="position-y"></div></div>
 						</div>
 					</div>
 				</div>
@@ -351,26 +369,26 @@
 					<span class="clicker-transform collapsible-clicker collapsible-collapsed" data-montage-id="clicker-transform"></span>
 				</div>
 				<div class="content-transform collapsible-content collapsible-collapsed" data-montage-id="content-transform">
-					<div class="layout-table">
-						<div class="layout-row">
-							<div class="layout-cell">Scale X</div>
-							<div class="layout-cell"><div data-montage-id="scale-x"></div></div>
+					<div class="layout-tablew">
+						<div class="container-row">
+							<div class="cell-property">Width</div>
+							<div class="cell-value"><div data-montage-id="scale-x"></div></div>
 						</div>
-						<div class="layout-row">
-							<div class="layout-cell">Scale Y</div>
-							<div class="layout-cell"><div data-montage-id="scale-y"></div></div>
+						<div class="container-row">
+							<div class="cell-property">Height</div>
+							<div class="cell-value"><div data-montage-id="scale-y"></div></div>
 						</div>
-						<div class="layout-row">
-							<div class="layout-cell">Skew X</div>
-							<div class="layout-cell"><div data-montage-id="skew-x"></div></div>
+						<div class="container-row">
+							<div class="cell-property">Skew X</div>
+							<div class="cell-value"><div data-montage-id="skew-x"></div></div>
 						</div>
-						<div class="layout-row">
-							<div class="layout-cell">Skew Y</div>
-							<div class="layout-cell"><div data-montage-id="skew-y"></div></div>
+						<div class="container-row">
+							<div class="cell-property">Skew Y</div>
+							<div class="cell-value"><div data-montage-id="skew-y"></div></div>
 						</div>
-						<div class="layout-row">
-							<div class="layout-cell">Rotation</div>
-							<div class="layout-cell"><div data-montage-id="rotation"></div></div>
+						<div class="container-row">
+							<div class="cell-property">Rotation</div>
+							<div class="cell-value"><div data-montage-id="rotation"></div></div>
 						</div>
 					</div>
 					

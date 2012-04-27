@@ -23,6 +23,7 @@ exports.Breadcrumb = Montage.create(Component, {
         value: function(){
             if(!this.application.ninja.documentController.activeDocument) {
                 this.disabled = true;
+                this.application.ninja.currentSelectedContainer = this.application.ninja.currentDocument.documentRoot;
             }
         }
     },
@@ -90,6 +91,7 @@ exports.Breadcrumb = Montage.create(Component, {
     handleAction: {
         value: function(evt) {
 
+//           this.application.ninja.currentDocument.breadCrumbClick=true;
             if(evt.target.value === this.container.uuid) {
                 return;
             }
