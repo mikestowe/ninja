@@ -224,14 +224,6 @@ exports.Stage = Montage.create(Component, {
     // Event details will contain the active document prior to opening a new one
     handleOpenDocument: {
         value: function(evt) {
-            
-            var prevActiveDocument = evt.detail;
-            // Hide current document is one is open
-            if(prevActiveDocument) {
-                prevActiveDocument.container.style["display"] = "none";
-                if(prevActiveDocument.documentType === "htm" || prevActiveDocument.documentType === "html") this.hideCanvas(true);
-            }
-
             this.hideCanvas(false);
 
             // Recalculate the canvas sizes because of splitter resizing
@@ -254,7 +246,11 @@ exports.Stage = Montage.create(Component, {
 
             // Hardcode this value so that it does not fail for the new stage architecture
             // TODO: Remove marker for old template: NINJA-STAGE-REWORK
-            this.userContentBorder = 1; //parseInt(this._documentRoot.elementModel.controller.getProperty(this._documentRoot, "border"));
+            if(this.application.ninja.currentDocument.documentRoot.id === "UserContent") {
+                this.userContentBorder = 1; //parseInt(this._documentRoot.elementModel.controller.getProperty(this._documentRoot, "border"));
+            } else {
+                this.userContentBorder = 0;
+            }
 
             this._userContentLeft = this._documentOffsetLeft - this._scrollLeft + this._userContentBorder;
             this._userContentTop = this._documentOffsetTop - this._scrollTop + this._userContentBorder;

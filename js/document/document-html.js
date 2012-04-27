@@ -32,7 +32,7 @@ exports.HtmlDocument = Montage.create(Component, {
     },
 
     exclusionList: {
-        value: ["HTML"]
+        value: ["HTML", "BODY"]
     },
 
     // Getters for the model.
@@ -46,6 +46,24 @@ exports.HtmlDocument = Montage.create(Component, {
         }
     },
 
+    isActive: {
+        get: function() {
+            return this.model._isActive;
+        },
+        set: function(value) {
+            this.model._isActive = value;
+        }
+    },
+
+    needsSave: {
+        get: function() {
+            return this.model._needsSave;
+        },
+        set: function(value) {
+            this.model._needsSave = value;
+        }
+    },
+
     // View Properties
     // TODO: Move those into a view object - for now dump it here
     iframe: {
@@ -56,6 +74,10 @@ exports.HtmlDocument = Montage.create(Component, {
         get: function() {
             return this._uuid;
         }
+    },
+
+    currentView: {
+        value: "design"
     },
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
