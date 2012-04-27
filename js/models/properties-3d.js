@@ -5,8 +5,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var Montage = require("montage/core/core").Montage,
-    Component = require("montage/ui/component").Component,
-    NJUtils = require("js/lib/NJUtils").NJUtils;
+    Component = require("montage/ui/component").Component;
 
 exports.Properties3D = Montage.create(Component, {
 

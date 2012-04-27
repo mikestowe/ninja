@@ -759,10 +759,14 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 					//TODO Finish this implementation once we start caching Core Elements
 					// Assign a model to the UserContent and add the ViewPort reference to it.
 					NJUtils.makeElementModel(this.documentRoot, "Stage", "stage");
-					//this.documentRoot.elementModel.viewPort = this.iframe.contentWindow.document.getElementById("Viewport");
-					NJUtils.makeElementModel(this.stageBG, "Stage", "stage");
+                    NJUtils.makeElementModel(this.stageBG, "Stage", "stage");
 					NJUtils.makeElementModel(this.iframe.contentWindow.document.getElementById("Viewport"), "Stage", "stage");
-					 
+
+                    // Initialize the 3D properties
+                    this.documentRoot.elementModel.props3D.init(this.documentRoot, true);
+                    this.stageBG.elementModel.props3D.init(this.stageBG, true);
+                    this.iframe.contentWindow.document.getElementById("Viewport").elementModel.props3D.init(this.iframe.contentWindow.document.getElementById("Viewport"), true);
+
 					for(i = 0; i < this._stylesheets.length; i++) {
 						if(this._stylesheets[i].ownerNode.id === this._stageStyleSheetId) {
 							this.documentRoot.elementModel.defaultRule = this._stylesheets[i];

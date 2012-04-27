@@ -81,7 +81,6 @@ exports.Breadcrumb = Montage.create(Component, {
 
                 // This is always the top container which is now hardcoded to body
                 this.containerElements.unshift({"node": parentNode, "nodeUuid":parentNode.uuid, "label": parentNode.nodeName});
-                console.log("this works!");
             }
 
         }
