@@ -26,8 +26,32 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             return this._trackID;
         },
         set:function (value) {
-            this._trackID = value;
-            //this.needsDraw = true;
+        	if (value !== this._trackID) {
+        		this._trackID = value;
+                this.trackData.layerID = value;
+        	}
+        }
+    },
+    _isVisible:{
+        value: true
+    },
+
+    isVisible:{
+        get:function(){
+            return this._isVisible;
+        },
+        set:function(value){
+        	if (this._isVisible !== value) {
+        		this._isVisible = value;
+        		if (this.element !== null) {
+	        		if (value === true) {
+	        			this.element.classList.remove("layer-hidden");
+	        		} else {
+	        			this.element.classList.add("layer-hidden");
+	        		}
+        		}
+        	}
+        	this.trackData.isVisible = value;
         }
     },
 
@@ -40,11 +64,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             return this._isMainCollapsed;
         },
         set:function (newVal) {
-    		this.log('TimelineTrack.js: isMainCollapsed: ', newVal);
-            if (newVal !== this._isMainCollapsed) {
-                this._isMainCollapsed = newVal;
-            }
-
+            this._isMainCollapsed = newVal;
+            this.trackData.isMainCollapsed = newVal;
         }
     },
     _isTransformCollapsed:{
@@ -55,9 +76,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             return this._isTransformCollapsed;
         },
         set:function (newVal) {
-            if (newVal !== this._isTransformCollapsed) {
-                this._isTransformCollapsed = newVal;
-            }
+            this._isTransformCollapsed = newVal;
+            this.trackData.isTransformCollapsed = newVal;
         }
     },
     _isPositionCollapsed:{
@@ -68,9 +88,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             return this._isPositionCollapsed;
         },
         set:function (newVal) {
-            if (newVal !== this._isPositionCollapsed) {
-                this._isPositionCollapsed = newVal;
-            }
+            this._isPositionCollapsed = newVal;
+            this.trackData.isPositionCollapsed = newVal;
         }
     },
     _isStyleCollapsed:{
@@ -81,9 +100,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             return this._isStyleCollapsed;
         },
         set:function (newVal) {
-            if (newVal !== this._isStyleCollapsed) {
-                this._isStyleCollapsed = newVal;
-            }
+            this._isStyleCollapsed = newVal;
+            this.trackData.isStyleCollapsed = newVal;
         }
     },
     _bypassAnimation : {
@@ -96,8 +114,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     		return this._bypassAnimation;
     	},
     	set: function(newVal) {
-    		//console.log("timelinetrack bypassAnimation setter " + newVal)
-    		this._bypassAnimation = newVal;
+    		if (typeof(this.trackData) !== "undefined") {
+    			this._bypassAnimation = newVal;
+                this.trackData.bypassAnimation = newVal;
+    		}
     	}
     },
     
@@ -114,7 +134,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._arrStyleTracks = newVal;
-    		//this.needsDraw = true;
+            this.trackData.arrStyleTracks = newVal;
     	}
     },
     _styleTracksRepetition: {
@@ -128,7 +148,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._styleTracksRepetition = newVal;
-    		//needsDraw = true;
     	}
     },
     
@@ -146,7 +165,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._arrPositionTracks = newVal;
-    		//this.needsDraw = true;
+            this.trackData.arrPositionTracks = newVal;
     	}
     },
     _positionTracksRepetition: {
@@ -160,7 +179,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._positionTracksRepetition = newVal;
-    		//this.needsDraw = true;
     	}
     },
     
@@ -179,7 +197,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._arrTransformTracks = newVal;
-    		//this.needsDraw = true;
+            this.trackData.arrTransformTracks = newVal;
     	}
     },
     _transformTracksRepetition: {
@@ -193,7 +211,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._transformTracksRepetition = newVal;
-    		//this.needsDraw = true;
     	}
     },
 
@@ -209,7 +226,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         },
         set:function (newVal) {
             this._tweens = newVal;
-            //this.needsDraw=true;
+            this.trackData.tweens = newVal;
         }
     },
 
@@ -243,6 +260,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             if(this._trackDuration > this.application.ninja.timeline.masterDuration){
                 this.application.ninja.timeline.masterDuration = this._trackDuration;
             }
+            this.trackData.trackDuration = val;
         }
     },
 
@@ -258,6 +276,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         },
         set:function (val) {
             this._trackPosition = val;
+            this.trackData.trackPosition = val;
         }
     },
 
@@ -273,6 +292,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         },
         set:function(val){
             this._currentKeyframeRule = val;
+            this.trackData.currentKeyframeRule = val;
         }
     },
 
@@ -296,21 +316,25 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         },
         set:function(val){
             this._isTrackAnimated = val;
+            this.trackData.isTrackAnimated = val;
         }
     },
 
+    // should be unneeded with one element per layer restriction
     _animatedElement:{
+        enumerable: true,
         serializable:true,
         value:null
     },
-
     animatedElement:{
+        enumerable: true,
         serializable:true,
         get:function () {
             return this._animatedElement;
         },
         set:function (val) {
             this._animatedElement = val;
+            this.trackData.animatedElement = val;
         }
     },
 
@@ -326,6 +350,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         },
         set:function (val) {
             this._animationName = val;
+            this.trackData.animationName = val;
         }
     },
 
@@ -347,7 +372,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     },
 
     _trackData:{
-
+    	serializable: true,
+		value: false
     },
 
     trackData:{
@@ -358,16 +384,24 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         set:function(val){
             this._trackData = val;
             if(this._trackData){
-                this.setData();
+                 this.setData();
             }
         }
+    },
+    
+    _setDataTimestamp : {
+    	value: false
     },
 
     setData:{
         value:function(){
+        	if (typeof(this.trackData) === "undefined") {
+        		return;
+        	}
+            this.bypassAnimation = this.trackData.bypassAnimation;
             this.trackID = this.trackData.layerID;
             this.tweens = this.trackData.tweens;
-            this.animatedElement = this.trackData.animatedElement;
+            this.animatedElement = this.trackData.animatedElement; // unneeded with one element per layer restriction
             this.arrStyleTracks = this.trackData.arrStyleTracks;
             this.isTrackAnimated = this.trackData.isTrackAnimated;
             this.trackDuration = this.trackData.trackDuration;
@@ -376,11 +410,39 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.isMainCollapsed = this.trackData.isMainCollapsed;
             this.isPositionCollapsed = this.trackData.isPositionCollapsed;
             this.isTransformCollapsed = this.trackData.isTransformCollapsed;
-            this.bypassAnimation = this.trackData.bypassAnimation;
             this.isStyleCollapsed = this.trackData.isStyleCollapsed;
             this.trackPosition = this.trackData.trackPosition;
+            this.isVisible = this.trackData.isVisible;
             this.needsDraw = true;
         }
+    },
+    
+    // Data binding observation point and trigger method
+	_bindingPoint : {
+    	serializable: true,
+    	value : {}
+    },
+    bindingPoint: {
+    	serializable: true,
+    	get: function() {
+    		return this._bindingPoint;
+    	},
+    	set: function(newVal) {
+    		if (newVal !== this._bindingPoint) {
+	    		this._bindingPoint = newVal;
+	    		this.setData();
+    		}
+    	}
+    },
+    
+    triggerOutgoingBinding : {
+    	value: function() {
+    		if (this.trackData.triggerBinding === true) {
+    			this.trackData.triggerBinding = false;
+    		} else {
+    			this.trackData.triggerBinding = true;
+    		}
+    	}
     },
 
     prepareForDraw:{
@@ -388,6 +450,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.init();
             this.ninjaStylesContoller = this.application.ninja.stylesController;
             this.element.addEventListener("click", this, false);
+            this.eventManager.addEventListener("tlZoomSlider", this, false);
         }
     },
 
@@ -395,39 +458,85 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         value:function () {
             this.ninjaStylesContoller = this.application.ninja.stylesController;
             var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
-            if(this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList[0]){
-                this.animatedElement = this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList[0];
+            if (selectedIndex !== false) {
+	            if(this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList[0]){
+	                this.animatedElement = this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList[0];
+	            }
             }
+
         }
     },
 
     didDraw:{
         value:function () {
-            if(!this.application.ninja.documentController.creatingNewFile){
-                if(this.application.ninja.currentDocument.documentRoot.children[0]){
+            if ((!this.application.ninja.documentController.creatingNewFile)||(!this.application.ninja.currentDocument.setLevel)) {
+                if (this.application.ninja.currentDocument.documentRoot.children[0]) {
                     var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
-                     if(!this.application.ninja.timeline.arrLayers[selectedIndex].layerData.created){
-                        this.retrieveStoredTweens();
-                     }
+                    if (selectedIndex !== false) {
+	                    if (!this.application.ninja.timeline.arrLayers[selectedIndex].layerData.created) {
+	                        this.retrieveStoredTweens();
+
+	                    }
+                    }
                 }
             }
         }
     },
 
+	handleTlZoomSlider: {
+		value: function(event) {
+			
+	        var currentMilliSecPerPixel , currentMilliSec , clickPos,thingToPush;
+	        var i = 0,
+	        	tweensLength = this.tweens.length;
+
+	        for (i = 0; i < tweensLength; i++) {
+	        	
+	        	if (i === 0) {
+					// Exception: 0th item does not depend on anything
+					// TODO: If 0th tween is draggable, this will need to be fixed.
+			        this.tweens[i].tweenData.spanWidth=0;
+		            this.tweens[i].tweenData.spanPosition=0;
+		            this.tweens[i].tweenData.keyFramePosition=0;
+		            this.tweens[i].tweenData.keyFrameMillisec=0;
+	
+	        	} else {
+					var prevKeyFramePosition = this.tweens[i - 1].tweenData.keyFramePosition,
+						myObj = {},
+						thing = {};
+
+			        currentMilliSecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
+		            currentMilliSec = this.tweens[i].tweenData.keyFrameMillisec;
+		            clickPos = currentMilliSec / currentMilliSecPerPixel;
+
+		            for (thing in this.tweens[i].tweenData) {
+		            	myObj[thing] = this.tweens[i].tweenData[thing];
+		            }
+					myObj.spanWidth = clickPos - prevKeyFramePosition;
+		            myObj.keyFramePosition = clickPos;
+		            myObj.spanPosition = clickPos - (clickPos - prevKeyFramePosition);
+
+		            this.tweens[i].tweenData = myObj;
+	        	}
+	        	
+
+	        }
+		}
+	},
     handleClick:{
         value:function (ev) {
             // TEMP - if the SHIFT key is down, add a new keyframe or split an existing span
             // This needs to move to a keyboard shortcut that is TBD
-
             var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
-
             if (ev.shiftKey) {
                 if (this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList.length == 1) {
                     if (this.tweens.length < 1) {
                         this.insertTween(0);
                         this.addAnimationRuleToElement(ev);
+                        this.updateKeyframeRule();
                     } else {
                         this.handleNewTween(ev);
+                        this.updateKeyframeRule();
                     }
                 } else {
                     console.log("There must be exactly one element in an animated layer.");
@@ -439,6 +548,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     handleNewTween:{
         value:function (ev) {
             if (ev.offsetX > this.tweens[this.tweens.length - 1].tweenData.keyFramePosition) {
+                var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
+                this.application.ninja.timeline.selectLayer(selectedIndex, false);
                 this.insertTween(ev.offsetX);
             } else {
                 this.splitTween(ev);
@@ -448,6 +559,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     insertTween:{
         value:function (clickPos) {
+            var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
+                        this.application.ninja.timeline.selectLayer(selectedIndex, true);
+
             var currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
             var currentMillisec = currentMillisecPerPixel * clickPos;
             this.trackDuration = currentMillisec;
@@ -464,6 +578,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 newTween.tweenData.tweenedProperties = [];
                 newTween.tweenData.tweenedProperties["top"] = this.animatedElement.offsetTop;
                 newTween.tweenData.tweenedProperties["left"] = this.animatedElement.offsetLeft;
+                newTween.tweenData.tweenedProperties["width"] = this.animatedElement.offsetWidth;
+                newTween.tweenData.tweenedProperties["height"] = this.animatedElement.offsetHeight;
                 this.tweens.push(newTween);
             } else {
                 newTween.tweenData.spanWidth = clickPos - this.tweens[this.tweens.length - 1].tweenData.keyFramePosition;
@@ -474,6 +590,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 newTween.tweenData.tweenedProperties = [];
                 newTween.tweenData.tweenedProperties["top"] = this.animatedElement.offsetTop;
                 newTween.tweenData.tweenedProperties["left"] = this.animatedElement.offsetLeft;
+                newTween.tweenData.tweenedProperties["width"] = this.animatedElement.offsetWidth;
+                newTween.tweenData.tweenedProperties["height"] = this.animatedElement.offsetHeight;
                 this.tweens.push(newTween);
 
                 // update the animation duration
@@ -481,6 +599,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-duration", animationDuration);
                 this.nextKeyframe += 1;
             }
+
             this.application.ninja.documentController.activeDocument.needsSave = true;
         }
     },
@@ -569,7 +688,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-fill-mode", "both");
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-transition-timing-function", "linear");
             var initRule = "@-webkit-keyframes " + this.animationName + " { 0% {top: " + this.animatedElement.offsetTop + "px; left: " + this.animatedElement.offsetLeft + "px;} 100% {top: " + this.animatedElement.offsetTop + "px; left: " + this.animatedElement.offsetLeft + "px;} }";
+
             this.currentKeyframeRule = this.ninjaStylesContoller.addRule(initRule);
+
             this.insertTween(tweenEvent.offsetX);
             this.isTrackAnimated = true;
         }
@@ -605,13 +726,12 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     // Init and event handler for layer expand/collapse
     init:{
         value:function () {
-            var that = this;
             
             this.arrPositionTracks = [0, 1];
             this.arrTransformTracks = [0, 1, 2, 3, 4];
 
             // Register event handler for layer events.
-            //defaultEventManager.addEventListener("layerEvent", this, false);
+            defaultEventManager.addEventListener("layerEvent", this, false);
 
         }
     },
@@ -621,30 +741,26 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             if (layerEvent.layerID !== this.trackID) {
                 return;
             }
-            if (layerEvent.layerEventType === "labelClick") {
-                if (layerEvent.layerEventLocale === "content-main") {
-                    this._mainCollapser.bypassAnimation = layerEvent.bypassAnimation;
-                    this._mainCollapser.toggle();
-                } else if (layerEvent.layerEventLocale === "content-position") {
-                    this._positionCollapser.bypassAnimation = layerEvent.bypassAnimation;
-                    this._positionCollapser.handleCollapserLabelClick();
-                } else if (layerEvent.layerEventLocale === "content-transform") {
-                    this._transformCollapser.bypassAnimation = layerEvent.bypassAnimation;
-                    this._transformCollapser.handleCollapserLabelClick();
-                } else if (layerEvent.layerEventLocale === "content-style") {
-                    this._styleCollapser.bypassAnimation = layerEvent.bypassAnimation;
-                    this._styleCollapser.handleCollapserLabelClick();
-                }
-            } else if (layerEvent.layerEventType === "newStyle") {
+            if (layerEvent.layerEventType === "newStyle") {
+            	// TODO: Add a real track of tweens.  Probably need a method for that.
             	this.arrStyleTracks.push("1");
-            	if (this._styleCollapser.isCollapsed === true) {
-	                this._styleCollapser.bypassAnimation = layerEvent.bypassAnimation;
-	                this._styleCollapser.handleCollapserLabelClick();
-            	}
             } else if (layerEvent.layerEventType === "deleteStyle") {
+            	// TODO: Delete the right track.  Index can be passed in event object, use that for splice().
             	this.arrStyleTracks.pop();
             }
         }
+    },
+    getTweenIndexById: {
+    	value: function(intID) {
+    		var i = 0,
+    			arrTweensLength = this.tweens.length;
+			for (i = 0; i < arrTweensLength; i++) {
+			    if (this.tweens[i].tweenData.tweenID === intID) {
+			        returnVal = i;
+			    }
+			}
+			return returnVal;
+    	}
     },
 	/* Begin: Logging routines */
     _boolDebug: {

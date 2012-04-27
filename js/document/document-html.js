@@ -31,6 +31,10 @@ exports.HtmlDocument = Montage.create(Component, {
         value: null
     },
 
+    exclusionList: {
+        value: ["HTML", "BODY"]
+    },
+
     // Getters for the model.
     // TODO: Change how these properties are accessed through Ninja
     name: {
@@ -39,6 +43,24 @@ exports.HtmlDocument = Montage.create(Component, {
         },
         set: function(value) {
             this.model._name = value;
+        }
+    },
+
+    isActive: {
+        get: function() {
+            return this.model._isActive;
+        },
+        set: function(value) {
+            this.model._isActive = value;
+        }
+    },
+
+    needsSave: {
+        get: function() {
+            return this.model._needsSave;
+        },
+        set: function(value) {
+            this.model._needsSave = value;
         }
     },
 
@@ -52,6 +74,10 @@ exports.HtmlDocument = Montage.create(Component, {
         get: function() {
             return this._uuid;
         }
+    },
+
+    currentView: {
+        value: "design"
     },
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
@@ -270,7 +296,8 @@ exports.HtmlDocument = Montage.create(Component, {
 
                     //TODO Finish this implementation once we start caching Core Elements
                     // Assign a model to the UserContent and add the ViewPort reference to it.
-                    document.application.njUtils.makeElementModel(this.documentRoot, "Stage", "stage");
+                    document.application.njUtils.makeElementModel(this.documentRoot, "Body", "body");
+//                    this.documentRoot.elementModel.props3D.init(this.documentRoot, true);
 
                     for(i = 0; i < this._stylesheets.length; i++) {
                         if(this._stylesheets[i].ownerNode.id === "nj-stage-stylesheet") {
@@ -306,6 +333,23 @@ exports.HtmlDocument = Montage.create(Component, {
 
 
             }.bind(this), 1000);
+        }
+    },
+
+    GetElementFromPoint: {
+        value: function(x, y) {
+            return this._window.getElement(x,y);
+        }
+    },
+
+    inExclusion: {
+        value: function(element) {
+            if(this.exclusionList.indexOf(element.nodeName) === -1) {
+                return -1;
+            }
+
+            return 1;
+
         }
     },
 

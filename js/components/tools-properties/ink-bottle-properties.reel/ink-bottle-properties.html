@@ -1,4 +1,4 @@
-<!DOCTYPE HTML>
+﻿<!DOCTYPE HTML>
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -11,9 +11,32 @@
 
         <script type="text/montage-serialization">
         {
+            "borderWidthCh": {
+                "prototype": "montage/ui/checkbox.reel",
+                "properties": {
+                    "element": {"#": "useBorderWidthCh"},
+                    "identifier": "useBorderWidth",
+                    "checked": true
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"},
+                        "capture": false
+                    }
+                ]
+            },
+
+            "borderWidthLabel": {
+                "prototype": "montage/ui/dynamic-text.reel",
+                "properties": {
+                    "element": {"#": "borderWidthLabel"},
+                    "value": "Border:"
+                }
+            },
+
             "borderWidthHT": {
-                "module": "js/components/hottextunit.reel",
-                "name": "HotTextUnit",
+                "prototype": "js/components/hottextunit.reel[HotTextUnit]",
                 "properties": {
                     "element": {"#": "borderWidth"},
                     "minValue": 1,
@@ -23,9 +46,56 @@
                 }
             },
 
+            "borderStyleCh": {
+                "prototype": "montage/ui/checkbox.reel",
+                "properties": {
+                    "element": {"#": "useBorderStyleCh"},
+                    "identifier": "useBorderStyle",
+                    "checked": true
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"},
+                        "capture": false
+                    }
+                ]
+            },
+
+            "borderStyleLabel": {
+                "prototype": "montage/ui/dynamic-text.reel",
+                "properties": {
+                    "element": {"#": "borderStyleLabel"},
+                    "value": "Style:"
+                }
+            },
+
+            "strokeSizeCh": {
+                "prototype": "montage/ui/checkbox.reel",
+                "properties": {
+                    "element": {"#": "useStrokeSizeCh"},
+                    "identifier": "useStrokeSize",
+                    "checked": true
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"},
+                        "capture": false
+                    }
+                ]
+            },
+
+            "strokeSizeLabel": {
+                "prototype": "montage/ui/dynamic-text.reel",
+                "properties": {
+                    "element": {"#": "strokeSizeLabel"},
+                    "value": "Stroke:"
+                }
+            },
+
             "strokeSizeHT": {
-                "module": "js/components/hottextunit.reel",
-                "name": "HotTextUnit",
+                "prototype": "js/components/hottextunit.reel[HotTextUnit]",
                 "properties": {
                     "element": {"#": "strokeSize"},
                     "minValue": 1,
@@ -36,9 +106,24 @@
                 }
             },
 
+            "webGlCh": {
+                "prototype": "montage/ui/checkbox.reel",
+                "properties": {
+                    "element": {"#": "useWebGLCHIB"},
+                    "identifier": "useWebGl",
+                    "checked": true
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"},
+                        "capture": false
+                    }
+                ]
+            },
+
             "_strokeMaterialCB": {
-                "module": "js/components/combobox.reel",
-                "name": "Combobox",
+                "prototype": "js/components/combobox.reel",
                 "properties": {
                     "element": {"#": "strokeMaterialIBCB"},
                     "labelField": "_name",
@@ -47,17 +132,23 @@
             },
 
             "owner": {
-                "module": "js/components/tools-properties/ink-bottle-properties.reel",
-                "name": "InkBottleProperties",
+                "prototype": "js/components/tools-properties/ink-bottle-properties.reel",
                 "properties": {
                     "element": {"#": "inkBottleProperties"},
 
+                    "useBorderWidth": {"@": "borderWidthCh"},
+                    "borderWidthLabel": {"@": "borderWidthLabel"},
                     "_borderWidth": {"@": "borderWidthHT"},
+
+                    "useBorderStyle": {"@": "borderStyleCh"},
+                    "borderStyleLabel": {"@": "borderStyleLabel"},
                     "_borderStyle": {"#": "borderStyleCB"},
 
+                    "useStrokeSize": {"@": "strokeSizeCh"},
+                    "strokeSizeLabel": {"@": "strokeSizeLabel"},
                     "_strokeSize": {"@": "strokeSizeHT"},
 
-                    "_useWebGL": {"#": "useWebGLCHIB"},
+                    "_useWebGL": {"@": "webGlCh"},
                     "_materialsContainer": {"#": "materialsContainerIB"},
                     "_strokeMaterial": {"@": "_strokeMaterialCB"}
                 }
@@ -68,13 +159,15 @@
     </head>
 
     <body>
-        <div id="inkBottleProperties" class="subToolHolderPanel">
+        <div data-montage-id="inkBottleProperties" class="subToolHolderPanel inkBottleProperties">
 
-            <div id="bordersContainer" class="leftLabel" style="padding-top: 3px;">
-                <label class="label"> Border:</label>
-                <div id="borderWidth" class="label"></div>
-                <label class="label"> Style:</label>
-                <select id="borderStyleCB" class="nj-skinned">
+            <div data-montage-id="elementInkOptions" class="leftLabel" style="padding-top: 3px;">
+                <input data-montage-id="useBorderWidthCh" type="checkbox" name="useBorderWidthControl" class="nj-skinned" title="Apply border-width"/>
+                <label data-montage-id="borderWidthLabel" class="label"> Border:</label>
+                <div data-montage-id="borderWidth" class="label"></div>
+                <input data-montage-id="useBorderStyleCh" type="checkbox" name="useBorderStyleControl" class="nj-skinned" title="Apply border-style"/>
+                <label data-montage-id="borderStyleLabel" class="label"> Style:</label>
+                <select data-montage-id="borderStyleCB" class="nj-skinned">
                     <option value="none">none</option>
                     <option value="solid" selected>solid</option>
                     <option value="hidden">hidden</option>
@@ -88,18 +181,26 @@
                 </select>
             </div>
 
-            <div id="strokesContainer" class="leftLabel" style="margin-left:25px; padding-top: 3px;">
-                <label class="label"> Stroke:</label>
-                <div id="strokeSize" class="label"></div>
+            <div class="nj-divider divider-vertical" style="margin:8px 20px; float: left;">&nbsp;</div>
+
+            <div data-montage-id="shapeInkOptions" class="leftLabel" style="margin-top: 5px;">
+                <input data-montage-id="useStrokeSizeCh" type="checkbox" name="useStrokeControl" class="nj-skinned" title="Apply stroke size"/>
+                <label data-montage-id="strokeSizeLabel" class="label"> Stroke:</label>
+                <div data-montage-id="strokeSize" class="label"></div>
             </div>
 
-            <label class="label subOption"><input id="useWebGLCHIB" type="checkbox" name="useWebGLControl" class="checkBoxAlign"/> Use WebGL</label>
+            <div data-montage-id="webGLInkOptions" class="leftLabel">
+                <label class="label">
+                    <input data-montage-id="useWebGLCHIB" type="checkbox" name="useWebGLControl" class="nj-skinned"/>
+                    <label class="label"> Use WebGL</label>
+                </label>
 
-            <div id="materialsContainerIB" class="leftLabel" style="padding-top: 3px;">
-                <label class="label"> Materials:</label>
-                <div id="strokeIconIB" class="pencilToolUp" style="float: left;"></div>
-                <select id="strokeMaterialIBCB" class="nj-skinned">
-                </select>
+                <div data-montage-id="materialsContainerIB" class="leftLabel">
+                    <label class="label"> Materials:</label>
+                    <div data-montage-id="strokeIconIB" class="pencilToolUp" style="float: left; margin: 0 2px 0 5px;"></div>
+                    <select data-montage-id="strokeMaterialIBCB" class="nj-skinned">
+                    </select>
+                </div>
             </div>
         </div>
     </body>

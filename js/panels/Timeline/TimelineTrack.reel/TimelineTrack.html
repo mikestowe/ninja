@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -11,8 +11,7 @@
         <script type="text/montage-serialization">
                {
                    "owner": {
-                       "module": "js/panels/Timeline/TimelineTrack.reel",
-                       "name": "Track",
+                       "prototype": "js/panels/Timeline/TimelineTrack.reel[Track]",
                        "properties": {
                            "element": {"#": "track"},
                            "tweenRepetition" : {"@" : "tweenRepetition"},
@@ -26,8 +25,7 @@
                    },
 
                    "tween" : {
-                   		"module" : "js/panels/timeline/Tween.reel",
-                   		"name" : "Tween",
+                   		"prototype" : "js/panels/timeline/Tween.reel",
                    		"properties" : {
                    			"element":{"#": "track_lane"}
                    		},
@@ -41,8 +39,7 @@
                    },
 
                    "tweenRepetition": {
-                       "module": "montage/ui/repetition.reel",
-                   	   "name": "Repetition",
+                       "prototype": "montage/ui/repetition.reel",
                    	   "properties": {
                    	       "element": {"#": "track_lanes"},
                    	       "isSelectionEnabled" : false
@@ -57,8 +54,7 @@
                    },
 
                    "styleTrackRepetition": {
-                       "module": "montage/ui/repetition.reel",
-                   	   "name": "Repetition",
+                       "prototype": "montage/ui/repetition.reel",
                    	   "properties": {
                    	       "element": {"#": "content-styles"},
                    	       "isSelectionEnabled" : false
@@ -72,8 +68,7 @@
                    	   }
                    },
                    "positionTracksRepetition": {
-                       "module": "montage/ui/repetition.reel",
-                   	   "name": "Repetition",
+                       "prototype": "montage/ui/repetition.reel",
                    	   "properties": {
                    	       "element": {"#": "content-position-tracks"},
                    	       "isSelectionEnabled" : false
@@ -87,15 +82,13 @@
                    	   }
                    },
 					"positionPropertyTrack" : {
-						"module" : "js/panels/Timeline/PropertyTrack.reel",
-						"name" : "PropertyTrack",
+						"prototype" : "js/panels/Timeline/PropertyTrack.reel",
 						"properties" : {
 							"element":{"#": "position-track-base"}
 						}
 					},
                    "transformTracksRepetition": {
-                       "module": "montage/ui/repetition.reel",
-                   	   "name": "Repetition",
+                       "prototype": "montage/ui/repetition.reel",
                    	   "properties": {
                    	       "element": {"#": "content-transform-tracks"},
                    	       "isSelectionEnabled" : false
@@ -109,16 +102,14 @@
                    	   }
                    },
 					"transformPropertyTrack" : {
-						"module" : "js/panels/Timeline/PropertyTrack.reel",
-						"name" : "PropertyTrack",
+						"prototype" : "js/panels/Timeline/PropertyTrack.reel",
 						"properties" : {
 							"element":{"#": "transform-track-base"}
 						}
 					},
 					
 					"mainCollapser" : {
-						"module" : "js/panels/timeline/Collapser.js",
-						"name" : "Collapser",
+						"prototype" : "js/panels/timeline/Collapser",
 						"properties" : {
 							"element" : {"#" : "content-main"},
 							"myContent" : {"#":"content-main"},
@@ -143,8 +134,7 @@
 					},
 					
 					"positionCollapser" : {
-						"module" : "js/panels/timeline/Collapser.js",
-						"name" : "Collapser",
+						"prototype" : "js/panels/timeline/Collapser",
 						"properties" : {
 							"element" : {"#" : "content-position-tracks"},
 							"myContent" : {"#":"content-position-tracks"},
@@ -169,8 +159,7 @@
 					},
 					
 					"transformCollapser" : {
-						"module" : "js/panels/timeline/Collapser.js",
-						"name" : "Collapser",
+						"prototype" : "js/panels/timeline/Collapser",
 						"properties" : {
 							"element" : {"#" : "content-transform-tracks"},
 							"myContent" : {"#":"content-transform-tracks"},
@@ -195,12 +184,11 @@
 					},
 					
 					"styleCollapser" : {
-						"module" : "js/panels/timeline/Collapser.js",
-						"name" : "Collapser",
+						"prototype" : "js/panels/timeline/Collapser",
 						"properties" : {
 							"element" : {"#" : "content-styles"},
 							"myContent" : {"#":"content-styles"},
-							"contentHeight" : 40,
+							"contentHeight" : 0,
 							"isLabelClickable" : false,
 							"clicker" : {"#" : "label-styles"},
 							"isCollapsed" : true,

@@ -83,7 +83,7 @@ exports.TranslateObject3DTool = Montage.create(Translate3DToolBase, {
                     // Check that hitRec's element matches element that browser says we clicked on
                     // TODO - This is still not working when using a handle that is on top of an
                     // element that is not currently selected
-                    var elt = this.application.ninja.stage.GetSelectableElement(event);
+                    var elt = this.application.ninja.stage.getElement(event, true);
                     if(elt && (elt !== hitRec.getElement()))
                     {
                         hitRec = snapManager.findHitRecordForElement(elt);
