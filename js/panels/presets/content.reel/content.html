@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- <copyright>
 This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
 No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -11,8 +11,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
         <script type="text/montage-serialization">
         {
             "owner": {
-                "module" : "js/panels/presets/content.reel",
-                "name" : "Content",
+                "prototype" : "js/panels/presets/content.reel",
                 "properties" : {
                     "element" : {"#" : "presetsPanel"},
                     "activeTabIndex": 0,
@@ -25,8 +24,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 }
             },
             "substitution": {
-                "module": "montage/ui/substitution.reel",
-                "name": "Substitution",
+                "prototype": "montage/ui/substitution.reel",
                 "properties": {
                     "element": {"#": "librarySlot"},
                     "switchComponents": {
@@ -44,16 +42,13 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 }
             },
             "stylesLibrary": {
-                "module": "js/panels/presets/style-presets.reel",
-                "name": "StylesLibrary"
+                "prototype": "js/panels/presets/style-presets.reel[StylesLibrary]"
             },
             "transitionsLibrary": {
-                "module": "js/panels/presets/transitions-presets.reel",
-                "name": "TransitionsLibrary"
+                "prototype": "js/panels/presets/transitions-presets.reel[TransitionsLibrary]"
             },
             "animationsLibrary": {
-                "module": "js/panels/presets/animations-presets.reel",
-                "name": "AnimationsLibrary"
+                "prototype": "js/panels/presets/animations-presets.reel[AnimationsLibrary]"
             }
 
     	}

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- <copyright>
 This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
 No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -11,8 +11,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
         <script type="text/montage-serialization">
         {
             "owner" : {
-                "module" : "js/components/treeview/treeview.reel",
-                "name" : "Treeview",
+                "prototype" : "js/components/treeview/treeview.reel",
                 "properties" : {
                     "element" : { "#" : "treeView"},
                     "defaultBranchComponent" : { "@" : "defaultBranch"},
@@ -22,24 +21,20 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 }
             },
             "defaultBranch" : {
-                "module" : "js/components/treeview/branch.reel",
-                "name" : "Branch"
+                "prototype" : "js/components/treeview/branch.reel"                
             },
             "defaultLeaf" : {
-                "module" : "js/components/treeview/leaf.reel",
-                "name" : "Leaf"
+                "prototype" : "js/components/treeview/leaf.reel"                
             },
             "scrollview": {
-                "module": "montage/ui/scrollview.reel",
-                "name": "Scrollview",
+                "prototype": "montage/ui/scrollview.reel[Scrollview]",
                 "properties": {
                     "element": {"#": "treeView"},
                     "axis": "vertical"
                  }
             },
             "slot": {
-                "module": "montage/ui/slot.reel",
-                "name": "Slot",
+                "prototype": "montage/ui/slot.reel",
                 "properties": {
                     "element": {"#": "rootBranch"}
                 }

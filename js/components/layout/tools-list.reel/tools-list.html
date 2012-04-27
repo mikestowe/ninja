@@ -1,4 +1,4 @@
-<!DOCTYPE HTML>
+﻿<!DOCTYPE HTML>
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -11,8 +11,7 @@
         <script type="text/montage-serialization">
         {
             "toolbutton1": {
-                "module": "js/components/layout/tool-button.reel",
-                "name": "ToolButton",
+                "prototype": "js/components/layout/tool-button.reel",
                 "properties": {
                     "element": {"#": "toolbutton"}
                 },
@@ -26,8 +25,7 @@
             },
 
             "groupLine": {
-                "module": "montage/ui/condition.reel",
-                "name": "Condition",
+                "prototype": "montage/ui/condition.reel",
                 "properties": {
                     "element": {"#": "groupLine"}
                 },
@@ -41,8 +39,7 @@
             },
 
             "repetition1": {
-                "module": "montage/ui/repetition.reel",
-                "name": "Repetition",
+                "prototype": "montage/ui/repetition.reel",
                 "properties": {
                     "element": {"#": "toolscontainer"}
                 },
@@ -56,89 +53,68 @@
             },
 
             "SelectionTool1": {
-                "module": "js/tools/SelectionTool",
-                "name": "SelectionTool"
+                "prototype": "js/tools/SelectionTool"
             },
             "SubselectionTool1": {
-                "module": "js/tools/SubSelectTool",
-                "name": "SubSelectTool"
+                "prototype": "js/tools/SubSelectTool"
             },
             "Rotate3DTool1": {
-                "module": "js/tools/RotateObject3DTool",
-                "name": "RotateObject3DTool"
+                "prototype": "js/tools/RotateObject3DTool"
             },
             "Translate3DTool1": {
-                "module": "js/tools/TranslateObject3DTool",
-                "name": "TranslateObject3DTool"
+                "prototype": "js/tools/TranslateObject3DTool"
             },
             "TagTool1": {
-                "module": "js/tools/TagTool",
-                "name": "TagTool"
+                "prototype": "js/tools/TagTool"
             },
             "PenTool1": {
-                "module": "js/tools/PenTool",
-                "name": "PenTool"
+                "prototype": "js/tools/PenTool"
             },
             "TextTool1": {
-                "module": "js/tools/TextTool",
-                "name": "TextTool"
+                "prototype": "js/tools/TextTool"
             },
             "ShapeTool1": {
-                "module": "js/tools/ShapeTool",
-                "name": "ShapeTool"
+                "prototype": "js/tools/ShapeTool"
             },
             "OvalTool1": {
-                "module": "js/tools/OvalTool",
-                "name": "OvalTool"
+                "prototype": "js/tools/OvalTool"
             },
             "RectTool1": {
-                "module": "js/tools/RectTool",
-                "name": "RectTool"
+                "prototype": "js/tools/RectTool"
             },
             "LineTool1": {
-                "module": "js/tools/LineTool",
-                "name": "LineTool"
+                "prototype": "js/tools/LineTool"
             },
             "PencilTool1": {
-                "module": "js/tools/PencilTool",
-                "name": "PencilTool"
+                "prototype": "js/tools/PencilTool"
             },
             "BrushTool1": {
-                "module": "js/tools/BrushTool",
-                "name": "BrushTool"
+                "prototype": "js/tools/BrushTool"
             },
             "FillTool1": {
-                "module": "js/tools/FillTool",
-                "name": "FillTool"
+                "prototype": "js/tools/FillTool"
             },
             "InkBottleTool1": {
-                "module": "js/tools/InkBottleTool",
-                "name": "InkBottleTool"
+                "prototype": "js/tools/InkBottleTool"
             },
             "EyedropperTool1": {
-                "module": "js/tools/EyedropperTool",
-                "name": "EyedropperTool"
+                "prototype": "js/tools/EyedropperTool"
             },
             "EraserTool1": {
-                "module": "js/tools/EraserTool",
-                "name": "EraserTool"
+                "prototype": "js/tools/EraserTool"
             },
             "RotateStageTool3D1": {
-                "module": "js/tools/RotateStage3DTool",
-                "name": "RotateStage3DTool"
+                "prototype": "js/tools/RotateStage3DTool"
             },
             "PanTool1": {
-                "module": "js/tools/PanTool",
-                "name": "PanTool"
+                "prototype": "js/tools/PanTool"
             },
             "ZoomTool1": {
-                "module": "js/tools/ZoomTool",
-                "name": "ZoomTool"
+                "prototype": "js/tools/ZoomTool"
             },
 
             "disable": {
-                "module": "montage/ui/condition.reel",
-                "name": "Condition",
+                "prototype": "montage/ui/condition.reel",
                 "properties": {
                     "element": {"#": "disabledCondition"}
                 },
@@ -152,8 +128,7 @@
             },
 
             "owner": {
-                "module": "js/components/layout/tools-list.reel",
-                "name": "ToolsList",
+                "prototype": "js/components/layout/tools-list.reel",
                 "properties": {
                     "element": {"#": "toolsList"},
                     "SelectionTool":          {"@": "SelectionTool1"},
