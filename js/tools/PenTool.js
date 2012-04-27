@@ -737,14 +737,24 @@ exports.PenTool = Montage.create(ShapeTool, {
             this._isDrawing = false;
             this._editMode = this.EDIT_NONE;
 
+            //if we're not in edit_path mode and we closed the selected subpath, then we are going to start a new subpath, so we nullify the selected subpath
+            if (this._selectedSubpath.getIsClosed() && this._entryEditMode !== this.ENTRY_SELECT_PATH){
+                this._selectedSubpath = null;
+            }
+            
             if (this._selectedSubpath){
                 this.DrawSubpathAnchors(this._selectedSubpath);//render the subpath anchors on canvas
+            }else{
+                //clear the canvas
+                this.application.ninja.stage.clearDrawingCanvas();
             }
 
             if (!this._trackMouseMoveWhenUp){
                 NJevent("disableStageMove");
             }
             this._hoveredAnchorIndex = -1;
+
+
         }
     },
 
