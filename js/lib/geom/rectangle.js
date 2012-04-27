@@ -361,7 +361,9 @@ var Rectangle = function GLRectangle() {
 		// various declarations
 		var pt,  rad,  ctr,  startPt, bPts;
 		var width  = Math.round(this.getWidth()),
-			height = Math.round(this.getHeight());
+			height = Math.round(this.getHeight()),
+            hw = 0.5*width,
+            hh = 0.5*height;
 
 		pt = [inset, inset];	// top left corner
 
@@ -369,6 +371,12 @@ var Rectangle = function GLRectangle() {
 		var trRad = this._trRadius;
 		var blRad = this._blRadius;
 		var brRad = this._brRadius;
+        // limit the radii to half the rectangle dimension
+        var minDimen = hw < hh ? hw : hh;
+        if (tlRad > minDimen)  tlRad = minDimen;
+        if (blRad > minDimen)  blRad = minDimen;
+        if (brRad > minDimen)  brRad = minDimen;
+        if (trRad > minDimen)  trRad = minDimen;
 
 		var viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
 		var world = this.getWorld();
@@ -467,13 +475,13 @@ var Rectangle = function GLRectangle() {
 		// render the fill
 		ctx.beginPath();
 		if (this._fillColor) {
-            inset = Math.ceil( lw ) + 0.5;
+            inset = Math.ceil( lw ) - 0.5;
 
             if(this._fillColor.gradientMode) {
                 if(this._fillColor.gradientMode === "radial") {
-                    gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w/2, h/2)-inset);
+                    gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w, h)/2);
                 } else {
-                    gradient = ctx.createLinearGradient(inset, h/2, w-2*inset, h/2);
+                    gradient = ctx.createLinearGradient(inset/2, h/2, w-inset, h/2);
                 }
                 colors = this._fillColor.color;
 
@@ -501,11 +509,11 @@ var Rectangle = function GLRectangle() {
 		// render the stroke
 		ctx.beginPath();
 		if (this._strokeColor) {
-            inset = Math.ceil( 0.5*lw ) + 0.5;
+            inset = Math.ceil( 0.5*lw ) - 0.5;
 
             if(this._strokeColor.gradientMode) {
                 if(this._strokeColor.gradientMode === "radial") {
-                    gradient = ctx.createRadialGradient(w/2, h/2, Math.min(h/2, w/2)-inset, w/2, h/2, Math.max(h/2, w/2));
+                    gradient = ctx.createRadialGradient(w/2, h/2, Math.min(h, w)/2-inset, w/2, h/2, Math.max(h, w)/2);
                 } else {
                     gradient = ctx.createLinearGradient(0, h/2, w, h/2);
                 }
