@@ -1011,7 +1011,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
             }
 			// hit test the current object
 			var hit;
-			if (depth > 0)	// don't snap to the root
+			var snapToStage = ((depth === 0) && (elt === this.application.ninja.currentSelectedContainer) && (elt.nodeName === 'CANVAS'));
+			if ((depth > 0) || snapToStage)	// don't snap to the root unles we are working inside a canvas
 			{
 				// if the element is in the 2D cache snapping is done there
 				if (elt.elementModel && !elt.elementModel.isIn2DSnapCache)
