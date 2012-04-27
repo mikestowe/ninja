@@ -89,8 +89,6 @@ exports.Breadcrumb = Montage.create(Component, {
 
     handleAction: {
         value: function(evt) {
-
-//           this.application.ninja.currentDocument.breadCrumbClick=true;
             if(evt.target.value === this.container.uuid) {
                 return;
             }
