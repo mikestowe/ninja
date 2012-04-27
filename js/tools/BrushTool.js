@@ -417,6 +417,9 @@ exports.BrushTool = Montage.create(ShapeTool, {
                         // TODO - update the shape's info only.  shapeModel will likely need an array of shapes.
                     }
 
+                    //now send the event that will add this canvas to the timeline
+                    NJevent("elementAdded", newCanvas);
+
                     //if(newCanvas.elementModel.isShape)
                     if (true)
                     {
