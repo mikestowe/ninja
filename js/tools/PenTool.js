@@ -1278,10 +1278,45 @@ exports.PenTool = Montage.create(ShapeTool, {
         } //value: function() {
     }, //DrawSubpathAnchors {
 
+    deselectPenTool:{
+        value: function() {
+            this._selectedSubpath = null;
+            this._selectedSubpathCanvas = null;
+            this._selectedSubpathPlaneMat = null;
+            this._snapTargetIndex = -1;
+        }
+    },
+    //if the document is opened with the pen tool being active, we do the same thing as when configure(false) is called
+    handleOpenDocument: {
+        value: function() {
+            this.deselectPenTool();
+            //clear the canvas
+            this.application.ninja.stage.clearDrawingCanvas();
+        }
+    },
+    //if the document is switched with the pen tool being active, we do the same thing as when configure(false) is called
+    handleSwitchDocument: {
+        value: function() {
+            this.deselectPenTool();
+            //clear the canvas
+            this.application.ninja.stage.clearDrawingCanvas();
+        }
+    },
+    //if the document is closed with the pen tool being active, we do the same thing as when configure(false) is called
+    handleCloseDocument: {
+        value: function() {
+            this.deselectPenTool();
+            //clear the canvas
+            this.application.ninja.stage.clearDrawingCanvas();
+        }
+    },
 
     Configure: {
         value: function (wasSelected) {
             if (wasSelected) {
+                //first nullify any set values
+                this.deselectPenTool();
+
                 defaultEventManager.addEventListener("resetPenTool", this, false);
                 this.application.ninja.elementMediator.deleteDelegate = this;
                 this.application.ninja.stage.drawingCanvas.style.cursor = //"auto";
@@ -1335,17 +1370,21 @@ exports.PenTool = Montage.create(ShapeTool, {
                 if (this._trackMouseMoveWhenUp){
                     NJevent("enableStageMove");
                 }
+                this.eventManager.addEventListener("openDocument", this, false);
+                this.eventManager.addEventListener("switchDocument", this, false);
+                this.eventManager.addEventListener("closeDocument", this, false);
             } //if the pen tool was selected
             else {
                 if (this._trackMouseMoveWhenUp){
                     NJevent("disableStageMove");
                 }
-                this._selectedSubpath = null;
-                this._selectedSubpathCanvas = null;
-                this._selectedSubpathPlaneMat = null;
-                this._snapTargetIndex = -1;
+                this.deselectPenTool();
                 defaultEventManager.removeEventListener("resetPenTool", this, false);
                 this.application.ninja.elementMediator.deleteDelegate = null;
+                
+                this.eventManager.removeEventListener("openDocument", this, false);
+                this.eventManager.removeEventListener("switchDocument", this, false);
+                this.eventManager.removeEventListener("closeDocument", this, false);
             } //if the pen tool was de-selected
         }
     },
