@@ -264,13 +264,67 @@ var BrushStroke = function GLBrushStroke() {
         this._strokeStyle = s;
     };
 
-    this.setWidth = function () {
+    this.setWidth = function (newW) {
+        if (newW<1) {
+            newW=1; //clamp minimum width to 1
+        }
 
-    };//NO-OP for now
+        //scale the contents of this subpath to lie within this width
+        //determine the scale factor by comparing with the old width
+        var oldWidth = this._BBoxMax[0]-this._BBoxMin[0];
+        if (oldWidth<1) {
+            oldWidth=1;
+        }
 
-    this.setHeight = function () {
+        var scaleX = newW/oldWidth;
+        if (scaleX===1) {
+            return; //no need to do anything
+        }
 
-    };//NO-OP for now
+        //scale the local point positions such that the width of the bbox is the newW
+        var origX = this._BBoxMin[0];
+        var numPoints = this._LocalPoints.length;
+        for (var i=0;i<numPoints;i++){
+            //compute the distance from the bboxMin
+            var oldW = this._LocalPoints[i][0] - origX;
+            this._LocalPoints[i] = [(origX + oldW*scaleX),this._LocalPoints[i][1],this._LocalPoints[i][2]];
+
+            oldW = this._OrigLocalPoints[i][0] - origX;
+            this._OrigLocalPoints[i] = [(origX + oldW*scaleX),this._OrigLocalPoints[i][1],this._OrigLocalPoints[i][2]];
+        }
+        this._isDirty = true;
+    };
+
+    this.setHeight = function (newH) {
+        if (newH<1) {
+            newH=1; //clamp minimum width to 1
+        }
+
+        //scale the contents of this subpath to lie within this height
+        //determine the scale factor by comparing with the old height
+        var oldHeight = this._BBoxMax[1]-this._BBoxMin[1];
+        if (oldHeight<1) {
+            oldHeight=1;
+        }
+
+        var scaleY = newH/oldHeight;
+        if (scaleY===1) {
+            return; //no need to do anything
+        }
+
+        //scale the local point positions such that the width of the bbox is the newW
+        var origY = this._BBoxMin[1];
+        var numPoints = this._LocalPoints.length;
+        for (var i=0;i<numPoints;i++){
+            //compute the distance from the bboxMin
+            var oldH = this._LocalPoints[i][1] - origY;
+            this._LocalPoints[i] = [this._LocalPoints[i][0],(origY + oldH*scaleY),this._LocalPoints[i][2]];
+
+            oldH = this._OrigLocalPoints[i][1] - origY;
+            this._OrigLocalPoints[i] = [this._OrigLocalPoints[i][0],(origY + oldH*scaleY),this._OrigLocalPoints[i][2]];
+        }
+        this._isDirty = true;
+    };
 
     this.getWidth = function() {
         if (this._isDirty){
