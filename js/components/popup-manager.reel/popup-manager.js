@@ -10,8 +10,8 @@ var Montage = 			require("montage/core/core").Montage,
 	Component = 		require("montage/ui/component").Component,
 	Popup =				require("js/components/popup.reel").Popup;
 ////////////////////////////////////////////////////////////////////////
-//Exporting as PopupMananger
-exports.PopupMananger = Montage.create(Component, {
+//Exporting as PopupManager
+exports.PopupManager = Montage.create(Component, {
 	////////////////////////////////////////////////////////////////////
 	//
     deserializedFromTemplate: {

@@ -22,7 +22,7 @@ exports.FillTool = Montage.create(ModifierToolBase, {
     HandleMouseMove: {
         value : function (event)
 		{
-            var obj = this.application.ninja.stage.GetSelectableElement(event);
+            var obj = this.application.ninja.stage.getElement(event, true);
             var cursor = "url('images/cursors/fill.png') 14 14, default";
             var canColor = true;
             if (obj)

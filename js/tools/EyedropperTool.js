@@ -104,7 +104,7 @@ exports.EyedropperTool = Montage.create(toolBase, {
         value : function (event) {
             var c,
                 color,
-                obj = this.application.ninja.stage.GetElement(event);
+                obj = this.application.ninja.stage.getElement(event);
             if (obj)
             {
                 if(this.application.ninja.currentDocument.inExclusion(obj) !== -1)
