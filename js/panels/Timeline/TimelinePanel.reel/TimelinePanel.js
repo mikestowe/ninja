@@ -138,6 +138,20 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.cacheTimeline();
         }
     },
+    // The index of the last layer that was clicked on
+    // (used for shift-click multiselect)
+    _lastLayerClicked : {
+    	value: 0
+    }, 
+    lastLayerClicked: {
+    	serializable: true,
+    	get: function() {
+    		return this._lastLayerClicked;
+    	},
+    	set: function(newVal) {
+    		this._lastLayerClicked = newVal
+    	}
+    },
     
     _currentSelectedContainer: {
     	value: null
@@ -406,6 +420,15 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		}
     	}
     },
+	// is the control key currently being pressed (used for multiselect)
+	_isControlPressed: {
+		value: false
+	},
+
+	// is the shift key currently being pressed (used for multiselect) 
+	_isShiftPressed: {
+		value: false
+	},
     /* === END: Draw cycle === */
     /* === BEGIN: Controllers === */
     // Create an empty layer template object with minimal defaults and return it for use
@@ -549,14 +572,17 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.layout_markers = this.element.querySelector(".layout_markers");
             
             // Add some event handlers
-            this.timeline_leftpane.addEventListener("mousedown", this.timelineLeftPaneMousedown.bind(this), false);
-            this.timeline_leftpane.addEventListener("mouseup", this.timelineLeftPaneMouseup.bind(this), false);
+            //this.timeline_leftpane.addEventListener("mousedown", this.timelineLeftPanelMousedown.bind(this), false);
+            this.timeline_leftpane.addEventListener("click", this.timelineLeftPanelMousedown.bind(this), false);
+            //this.timeline_leftpane.addEventListener("mouseup", this.timelineLeftPaneMouseup.bind(this), false);
             this.layout_tracks.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
             this.user_layers.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
             this.end_hottext.addEventListener("changing", this.updateTrackContainerWidth.bind(this), false);
             this.playhead.addEventListener("mousedown", this.startPlayheadTracking.bind(this), false);
             this.playhead.addEventListener("mouseup", this.stopPlayheadTracking.bind(this), false);
             this.time_markers.addEventListener("click", this.updatePlayhead.bind(this), false);
+            document.addEventListener("keydown", this.timelineLeftPaneKeydown.bind(this), false);
+            document.addEventListener("keyup", this.timelineLeftPaneKeyup.bind(this), false);
             
             // Bind some bindings
             Object.defineBinding(this, "currentSelectedContainer", {
@@ -848,15 +874,19 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
 
     selectLayers:{
-        value:function (arrSelectedIndexes) {
+        value:function (arrSelectedIndexes, userSelection) {
 
             var i = 0,
             	arrLayersLength = this.arrLayers.length,
             	arrSelectedIndexesLength = arrSelectedIndexes.length,
+            	arrSelectedLayers = false;
+            
+            if (typeof(userSelection) === "undefined") {
             	userSelection = false;
+            }
             
-            //console.log(arrSelectedIndexes);
-            
+            console.log(arrSelectedIndexes);
+
 
             if (this.selectedKeyframes) {
                 this.deselectTweens();
@@ -867,9 +897,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             	this.triggerLayerBinding(i);
             }
             
-            this.currentLayersSelected = false;
             if (arrSelectedIndexesLength > 0) {
-            	this.currentLayersSelected = [];
+            	arrSelectedLayers = [];
             }
             
             
@@ -878,12 +907,18 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             		this.arrLayers[i].layerData.isSelected = true;
             		this.arrLayers[i].isSelected = true;
             		this.triggerLayerBinding(i);
-            		this.currentLayersSelected.push(i);
+            		arrSelectedLayers.push(i);
+            		
+            		if (userSelection && this._captureSelection) {
+            			this.application.ninja.selectionController.selectElements(this.arrLayers[i].layerData.elementsList);
+            		}
             	}
             }
-
+			
+			this.currentLayersSelected = arrSelectedLayers;
             this.layerRepetition.selectedIndexes = arrSelectedIndexes;
 
+/*
 			// TODO: Set up for user selection.
             if (userSelection) {
                 if (this._captureSelection) {
@@ -897,7 +932,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 }
                 this._captureSelection = true;
             }
-            
+*/
             // Finally, reset the master duration.
             this.resetMasterDuration();
         }
@@ -932,16 +967,117 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 }
                 
             }
-            this._isMousedown = true;
         }
     },
 
-    timelineLeftPaneMouseup:{
+	timelineLeftPanelMousedown: {
         value:function (event) {
-			this._isMousedown = false;
+        	console.log('click')
+            var ptrParent = nj.queryParentSelector(event.target, ".container-layer"),
+            	i = 0,
+            	arrLayers = document.querySelectorAll(".container-layer"),
+            	arrLayersLength = arrLayers.length,
+            	targetIndex = 0,
+	            isAlreadySelected = false,
+	            indexAlreadySelected = 0,
+	            indexLastClicked = 0;
+			
+			// Get targetIndex, the index of the clicked target within the DOM array of layers
+			if (ptrParent === false) {
+				return;
+			}
+            for (i = 0; i < arrLayersLength; i++) {
+            	if (arrLayers[i] == ptrParent) {
+            		targetIndex = i;
+            	}
+            }
+			if (this.currentLayersSelected !== false) {
+				indexAlreadySelected = this.currentLayersSelected.indexOf(targetIndex);
+			}
+			
+			if (indexAlreadySelected > -1) {
+				isAlreadySelected = true;
+			}
+			
+			if (targetIndex > -1) {
+				indexLastClicked = targetIndex;
+			}
+            
+            if (this.currentLayersSelected.length === 0) {
+            	this.currentLayersSelected.push(targetIndex);
+            } else {
+	            if (this._isControlPressed === true) {
+	            	// Control key is being pressed, so we need to 
+	            	// either add the current layer to selectedLayers
+	            	// or remove it if it's already there.
+					if (this.currentLayersSelected === false) {
+						this.currentLayersSelected = [];
+						this.currentLayerSelected = false;
+					}
+	            	if (isAlreadySelected === false) {
+	            		this.currentLayersSelected.push(targetIndex);
+	            	} else {
+	            		this.currentLayersSelected.splice(indexAlreadySelected, 1);
+	            	}
+	            	this.lastLayerClicked = indexLastClicked;
+	            } else if (this._isShiftPressed === true) {
+	            	// The shift key is being pressed.
+	            	// Start by selecting the lastLayerClicked
+					if (this.currentLayersSelected === false) {
+						this.currentLayersSelected = [];
+						this.currentLayerSelected = false;
+					}
+					this.currentLayersSelected = [this.lastLayerClicked];
+					// Add all the layers between lastLayerClicked and targetIndex
+	            	if (targetIndex > this.lastLayerClicked) {
+	            		for (i = this.lastLayerClicked+1; i <= targetIndex; i++) {
+	            			this.currentLayersSelected.push(i);
+	            		}
+	            	} else if (targetIndex < this.lastLayerClicked) {
+	            		for (i = targetIndex; i < this.lastLayerClicked; i++) {
+	            			this.currentLayersSelected.push(i);
+	            		}
+	            	}
+	            } else {
+	            	// No key is pressed, so just select the element
+	            	// and update lastLayerClicked
+	            	this.currentLayersSelected = [targetIndex];
+	            	this.lastLayerClicked = targetIndex;
+	            }
+	            
+            }
+            this._captureSelection = true;
+            this.selectLayers(this.currentLayersSelected, true);
         }
-    },
+	},
 
+	timelineLeftPaneKeydown: {
+		value: function(event) {
+			console.log('keydown')
+			if (event.keyCode === 16) {
+				// Shift key has been pressed
+				this._isShiftPressed = true;
+			}
+			if (event.keyCode === 17) {
+				// Control key has been pressed
+				this._isControlPressed = true;
+			}
+		}
+	},
+    
+	timelineLeftPaneKeyup: {
+		value: function(event) {
+			console.log('keyup')
+			if (event.keyCode === 16) {
+				// Shift key has been released
+				this._isShiftPressed = false;
+			}
+			if (event.keyCode === 17) {
+				// Control key has been released
+				this._isControlPressed = false;
+			}
+		}
+	},
     createNewLayer:{
         value:function (object) {
             var newLayerName = "",
