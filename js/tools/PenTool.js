@@ -273,14 +273,36 @@ exports.PenTool = Montage.create(ShapeTool, {
                 var swMousePos = hitRec.calculateStageWorldPoint();
                 swMousePos[0]+= snapManager.getStageWidth()*0.5; swMousePos[1]+= snapManager.getStageHeight()*0.5;
 
-                this._selectedSubpath.addAnchor(new AnchorPoint());
-                var newAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
-                newAnchor.setPos(swMousePos[0], swMousePos[1], swMousePos[2]);
-                newAnchor.setPrevPos(swMousePos[0], swMousePos[1], swMousePos[2]);
-                newAnchor.setNextPos(swMousePos[0], swMousePos[1], swMousePos[2]);
-                //set the mode so that dragging will update the next and previous locations
-                this._editMode = this.EDIT_PREV_NEXT;
-            }
+                //check if the mouse click location is close to the existing anchor
+                var indexAndCode = this._selectedSubpath.pickAnchor(swMousePos[0], swMousePos[1], swMousePos[2], this._PICK_POINT_RADIUS);
+                if (indexAndCode[0]>=0){
+                    //the anchor point was hit, so we do not add another anchor
+                    switch(indexAndCode[1]){
+                        case this._selectedSubpath.SEL_ANCHOR:
+                            this._editMode = this.EDIT_ANCHOR;
+                            break;
+                        case this._selectedSubpath.SEL_PREV:
+                            this._editMode = this.EDIT_PREV;
+                            break;
+                        case this._selectedSubpath.SEL_NEXT:
+                            this._editMode = this.EDIT_NEXT;
+                            break;
+                        default:
+                            this._editMode = this.EDIT_ANCHOR;
+                            console.log("WARNING picked anchor point with incorrect mode");
+                            break;
+                    }
+                    
+                } else {
+                    this._selectedSubpath.addAnchor(new AnchorPoint());
+                    var newAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
+                    newAnchor.setPos(swMousePos[0], swMousePos[1], swMousePos[2]);
+                    newAnchor.setPrevPos(swMousePos[0], swMousePos[1], swMousePos[2]);
+                    newAnchor.setNextPos(swMousePos[0], swMousePos[1], swMousePos[2]);
+                    //set the mode so that dragging will update the next and previous locations
+                    this._editMode = this.EDIT_PREV_NEXT;
+                }
+            } //if we have not yet created a canvas for this path
 
             //the selected subpath has a canvas, so test within that canvas' space
             else
