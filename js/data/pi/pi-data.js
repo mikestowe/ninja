@@ -9,6 +9,20 @@ var Montage = require("montage/core/core").Montage,
 
 exports.PiData = Montage.create( Montage, {
 
+    bodyPi: {
+        value: [
+            {
+                label: "Style",
+
+                                Section: [
+                                    [
+
+                                    ]
+                                ]
+            }
+        ]
+    },
+
     stagePi: {
         value: [
             {

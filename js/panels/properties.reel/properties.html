@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -27,8 +27,7 @@
             },
 
             "elementClass": {
-                "module": "montage/ui/textfield.reel",
-                "name": "Textfield",
+                "prototype": "montage/ui/textfield.reel",
                 "properties": {
                     "element": {"#": "elementClass"},
                     "readOnly": false
@@ -36,8 +35,7 @@
             },
 
             "PosSizeSection": {
-                "module": "js/panels/properties.reel/section.reel",
-                "name": "Section",
+                "prototype": "js/panels/properties.reel/section.reel",
                 "properties": {
                     "element": {"#": "PosSize"},
                     "content" : {"@": "PosSize"},
@@ -45,12 +43,10 @@
                 }
             },
             "PosSize": {
-                "module": "js/panels/properties.reel/sections/position-and-size.reel",
-                "name": "PosSize"
+                "prototype": "js/panels/properties.reel/sections/position-and-size.reel[PosSize]"
             },
             "threeDSection": {
-                "module": "js/panels/properties.reel/section.reel",
-                "name": "Section",
+                "prototype": "js/panels/properties.reel/section.reel",
                 "properties": {
                     "element": {"#": "threeD"},
                     "content" : {"@": "threeDProperties"},
@@ -58,13 +54,11 @@
                 }
             },
             "threeDProperties": {
-                "module": "js/panels/properties.reel/sections/three-d-view.reel",
-                "name": "ThreeD"
+                "prototype": "js/panels/properties.reel/sections/three-d-view.reel[ThreeD]"
             },
 
             "CustomSections": {
-                "module": "montage/ui/repetition.reel",
-                "name": "Repetition",
+                "prototype": "montage/ui/repetition.reel",
                 "properties": {
                     "element": {"#": "customSections"}
                 },
@@ -78,8 +72,7 @@
             },
 
             "customSection": {
-                "module": "js/panels/properties.reel/section.reel",
-                "name": "Section",
+                "prototype": "js/panels/properties.reel/section.reel",
                 "properties": {
                     "element": {"#": "customSection"}
                 },
@@ -98,8 +91,7 @@
             },
 
             "owner": {
-                "module": "js/panels/properties.reel",
-                "name": "Properties",
+                "prototype": "js/panels/properties.reel",
                 "properties": {
                     "element":              {"#": "propertiesPanel"},
                     "elementName":          {"@": "elementName"},

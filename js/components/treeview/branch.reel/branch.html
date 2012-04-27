@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- <copyright>
 This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
 No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -11,8 +11,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
     <script type="text/montage-serialization">
     {
         "owner": {
-            "module" : "js/components/treeview/branch.reel",
-            "name" : "Branch",
+            "prototype" : "js/components/treeview/branch.reel",
             "properties" : {
                 "element" : {"#" : "branch"},
                 "label" : { "@" : "textComponent" },
@@ -25,8 +24,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
         },
 
         "textComponent" : {
-            "module" : "montage/ui/dynamic-text.reel",
-            "name" : "DynamicText",
+            "prototype" : "montage/ui/dynamic-text.reel",
             "properties" : {
                 "element" : { "#" : "label" }
             },
@@ -40,8 +38,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
         },
 
         "arrayController": {
-            "module": "montage/ui/controller/array-controller",
-            "name": "ArrayController",
+            "prototype": "montage/ui/controller/array-controller",
             "bindings": {
                 "content": {
                     "boundObject": {"@": "owner"},
@@ -51,8 +48,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
         },
 
         "leaf": {
-            "module": "js/components/treeview/leaf.reel",
-            "name": "Leaf",
+            "prototype": "js/components/treeview/leaf.reel",
             "bindings": {
                 "sourceObject": {
                     "boundObject": {"@": "repetition" },
@@ -78,8 +74,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
         },
 
         "branch": {
-            "module": "js/components/treeview/branch.reel",
-            "name": "Branch",
+            "prototype": "js/components/treeview/branch.reel",
             "bindings": {
                 "sourceObject": {
                     "boundObject": {"@": "repetition" },
@@ -105,8 +100,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
         },
 
         "repetition": {
-            "module": "montage/ui/repetition.reel",
-            "name": "Repetition",
+            "prototype": "montage/ui/repetition.reel",
             "properties": {
                 "element": { "#": "branchList" },
                 "contentController": {"@": "arrayController" }
@@ -114,8 +108,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
         },
 
         "substitution": {
-            "module": "montage/ui/substitution.reel",
-            "name": "Substitution",
+            "prototype": "montage/ui/substitution.reel",
             "properties": {
                 "element": {"#": "treeItem"},
                 "switchComponents": {

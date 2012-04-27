@@ -1,286 +1,138 @@
-/* <copyright>
- This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
- No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
- (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
- </copyright> */
+@charset "UTF-8";
+/* <copyright> This file contains proprietary software owned by Motorola Mobility, Inc.<br/> No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/> (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved. </copyright> */
+/* TimelinePanel.scss Main SCSS file for TimelinePanel component, compiled by SASS into the file css/TimelinePanel.css. */
+/* line 22, ../scss/TimelinePanel.scss */
+.tl_container { display: -webkit-box; -webkit-box-orient: vertical; height: 100%; }
 
-.tl_container{
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    height: 100%;
-}
-.maintimeline{
-    -webkit-box-flex: 1;
-    display: -webkit-box;
-    -webkit-box-orient: horizontal;
-    height : 100%;
-    position: relative;
-    margin-top:1px;
-}
-.leftinside{
-    height: 100%;
-    width: 100%;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    position:absolute;
-    overflow: hidden;
-}
-.rightinside{
-    height: 100%;
-    width: 100%;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    position:absolute;
-}
-.tl_leftpane{
-    min-width: 200px;
-    max-width: 500px;
-    position: relative;
-    overflow: hidden;
-    -webkit-box-flex: 0;
-}
-.tl_rightpane{
-    width: 100%;
-    position: relative;
-    -webkit-box-flex: 1;
-}
+/* line 27, ../scss/TimelinePanel.scss */
+.maintimeline { -webkit-box-flex: 1; display: -webkit-box; -webkit-box-orient: horizontal; height: 100%; position: relative; margin-top: 1px; }
 
-#bottomPanelContainer {
-	overflow: hidden !IMPORTANT;
-}
+/* line 35, ../scss/TimelinePanel.scss */
+.leftinside { height: 100%; width: 100%; display: -webkit-box; -webkit-box-orient: vertical; position: absolute; overflow: hidden; }
 
-.layout-tracks {
-	width: 100%;
-	height: 100%;
-	padding-bottom: 6px;
-	box-sizing: border-box;
-	overflow: auto;
-	position: relative;
-}
-.tl_layertracks{
-    background-color: #222;
-    height: 100%;
-    width: 100%;
-    -webkit-box-flex: 1;
-    padding-top: 21px;
-	box-sizing: border-box;
-}
-.layerresizer{
-    height: auto;
-    width:6px;
-    border-right-style: solid;
-    border-right-color: #333;
-    border-right-width: thin;
-    border-left-style: solid;
-    border-left-color: #000;
-    border-left-width: thin;
-    background-color: #222;
-    cursor: col-resize;
-    -webkit-box-flex: 0;
-}
-.timelinecontroller{
-    height:20px;
-    background-color: #222;
-    -webkit-box-flex: 0;
-    border-bottom-style: solid;
-    border-bottom-width: thin;
-    border-bottom-color: #000;
-}
-.timelinecontrols{
-    width: 100%;
-    padding-left: 6px;
-    padding-top: 2px;
-    height: 18px;
-    background-color: #222;
-    float: left;
-}
-.timetext{
-    float: right;
-    padding-right: 10px;
-    color: white;
-}
-.rewindbutton{
-    background-image: url('../images/play_prev.png');
-    background-repeat: no-repeat;
-    height: 18px;
-    width: 18px;
-    float: left;
-    padding-right: 5px;
-}
-.playbutton{
-    background-image: url('../images/play.png');
-    background-repeat: no-repeat;
-    height: 18px;
-    width: 18px;
-    float: left;
-    padding-right: 5px;
-}
-.pausebutton{
-    background-image: url('../images/pause.png');
-    background-repeat: no-repeat;
-    height: 18px;
-    width: 18px;
-    float: left;
-    padding-right: 5px;
-}
-.forwardbutton{
-    background-image: url('../images/play_next.png');
-    background-repeat: no-repeat;
-    height: 18px;
-    width: 18px;
-    float: left;
-    padding-right: 5px;
-}
-.timelinemarkers{
-    height: 20px;
-    width: 100%;
-    background-color: #222;
-    border-bottom-style:  solid;
-    border-bottom-width: thin;
-    border-bottom-color: #000;
-    -webkit-box-flex: 0;
-    position: absolute;
-    background-image: url("../images/timetick.jpg");
-    overflow: visible;
-}
-.layout_markers {
-	position: absolute;
-	overflow: hidden;
-	top: 0px;
-	left: 0px;
-	height: 20px;
-	width: 100%;
-    border-bottom-style: solid;
-}
+/* line 43, ../scss/TimelinePanel.scss */
+.rightinside { height: 100%; width: 100%; display: -webkit-box; -webkit-box-orient: vertical; position: absolute; }
 
-.masterlayer{
-    font-family: 'Droid Sans';
-    font-size: 12px;
-    text-shadow: 1px 1px 1px black;
-    height: 18px;
-    background-color: #474747;
-    border-bottom-style: solid;
-    border-bottom-width: thin;
-    border-bottom-color: #555;
-    color: white;
-    padding-left: 15px;
-    padding-top: 2px;
-}
-.mastertrack{
-    -webkit-box-flex: 0;
-    color: white;
-    height: 20px;
-    width: 100%;
-    border-bottom-style: solid;
-    border-bottom-width: thin;
-    border-bottom-color: #444;
-    background-color: #222;
-    background-image: url("../../Track.reel/images/gridline.jpg");
-}
+/* line 50, ../scss/TimelinePanel.scss */
+.tl_leftpane { min-width: 200px; max-width: 500px; position: relative; overflow: hidden; -webkit-box-flex: 0; }
 
-.container-tracks,
-.timelinemarkers,
-.mastertrack {
-	width: 2000px;
-}
-.userlayers{
-    width: 100%;
-    background-color: #222;
-    -webkit-box-flex: 1;
-    overflow: hidden;
-    border-bottom-style: solid;
-    border-bottom-width: thin;
-    border-bottom-color: #000;
-}
-.timelinegutter{
-    height: 16px;
-    padding-top: 1px;
-    padding-left: 6px;
-    -webkit-box-flex: 0;
-    background-color: #222;
-    border-top-style: solid;
-    border-top-width: thin;
-    border-top-color: #444;
-}
-.newlayerbutton{
-    background-image: url('../images/plus.png');
-    background-repeat: no-repeat;
-    height: 16px;
-    width: 16px;
-    float: left;
-    padding-right: 5px;
-}
-.deletelayerbutton{
-    background-image: url('../images/trash.png');
-    background-repeat: no-repeat;
-    height: 16px;
-    width: 16px;
-    float: left;
-    padding-right: 5px;
-}
-.tracktick{
-    height: 100%;
-    width: 15px;
-    border-right-color: #444;
-    border-right-style: solid;
-    border-right-width: thin;
-    float: left;
-}
-.timemark{
-    font-family: 'Droid Sans';
-    font-size: 12px;
-    text-shadow: 1px 1px 1px black;
-    width: 76px;
-    color: #808080;
-    float: left;
-    padding-top: 6px;
-    padding-left: 4px;
-    text-align: left;
-}
-.playhead{
-    height: 14px;
-    width: 6px;
-    position: absolute;
-    top: 6px;
-    left: -3px;
-    z-index: 92;
-    background-color: #b50003;
-    opacity: 0.5;
-}
-.playheadmarker{
-    height: 100%;
-    width: 1px;
-    background-color: #cccccc;
-    top: 0;
-    left: 0;
-    position: absolute;
-    z-index: 91;
-}
-.timebar{
-    height: 3px;
-    width:0;
-    background-color: #ff0003;
-    opacity: 0.3;
-    top:10px;
-    position: absolute;
-    border-top: #c7a19f thin solid;
-    border-right: #ffffff thin solid;
-}
-.endhottext{
-    float: right;
-    font-family: 'Droid Sans';
-    font-size: 12px;
-    text-shadow: 1px 1px 1px black;
-    color: white;
-}
-.timeline-disabled {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	width: 100%;
-	height: 100%;
-	background-color: rgba(30,30,30, 0.796);
-	z-index: 100;
-	display: none;
-	box-shadow: rgb(17, 17, 17) 0px 0px 14px inset;
-}
+/* line 57, ../scss/TimelinePanel.scss */
+.tl_rightpane { width: 100%; position: relative; -webkit-box-flex: 1; }
+
+/* line 63, ../scss/TimelinePanel.scss */
+#bottomPanelContainer { overflow: hidden !IMPORTANT; }
+
+/* line 67, ../scss/TimelinePanel.scss */
+.layout-tracks { width: 100%; height: 100%; padding-bottom: 6px; box-sizing: border-box; overflow: auto; position: relative; }
+
+/* line 75, ../scss/TimelinePanel.scss */
+.tl_layertracks { background-color: #292929; height: 100%; width: 100%; -webkit-box-flex: 1; padding-top: 21px; box-sizing: border-box; }
+
+/* line 83, ../scss/TimelinePanel.scss */
+.layerresizer { height: auto; width: 6px; border-right-style: solid; border-right-color: #3a3a3a; border-right-width: thin; border-left-style: solid; border-left-color: black; border-left-width: thin; background-color: #232323; cursor: col-resize; -webkit-box-flex: 0; }
+
+/* line 96, ../scss/TimelinePanel.scss */
+.timelinecontroller { height: 20px; background-color: #474747; -webkit-box-flex: 0; border-bottom-style: solid; border-bottom-width: thin; border-bottom-color: black; }
+
+/* line 104, ../scss/TimelinePanel.scss */
+.timelinecontrols { width: 100%; padding-left: 6px; padding-top: 2px; height: 18px; background-color: #474747; float: left; }
+
+/* line 112, ../scss/TimelinePanel.scss */
+.timetext { float: right; padding-right: 10px; color: white; }
+
+/* line 117, ../scss/TimelinePanel.scss */
+.rewindbutton { background-image: url("../images/play_prev.png"); background-repeat: no-repeat; height: 18px; width: 18px; float: left; padding-right: 5px; }
+
+/* line 125, ../scss/TimelinePanel.scss */
+.playbutton { background-image: url("../images/play.png"); background-repeat: no-repeat; height: 18px; width: 18px; float: left; padding-right: 5px; }
+
+/* line 133, ../scss/TimelinePanel.scss */
+.pausebutton { background-image: url("../images/pause.png"); background-repeat: no-repeat; height: 18px; width: 18px; float: left; padding-right: 5px; }
+
+/* line 141, ../scss/TimelinePanel.scss */
+.forwardbutton { background-image: url("../images/play_next.png"); background-repeat: no-repeat; height: 18px; width: 18px; float: left; padding-right: 5px; }
+
+/* line 149, ../scss/TimelinePanel.scss */
+.timelinemarkers { height: 20px; width: 100%; background-color: #474747; border-bottom-style: solid; border-bottom-width: thin; border-bottom-color: black; -webkit-box-flex: 0; position: absolute; background-image: url("../images/timetick.jpg"); overflow: visible; }
+
+/* line 161, ../scss/TimelinePanel.scss */
+.layout_markers { position: absolute; overflow: hidden; top: 0px; left: 0px; height: 20px; width: 100%; border-bottom-style: solid; }
+
+/* line 171, ../scss/TimelinePanel.scss */
+.masterlayer { font-family: 'Droid Sans'; font-size: 12px; text-shadow: 1px 1px 1px black; height: 18px; background-color: #474747; border-bottom-style: solid; border-bottom-width: thin; border-bottom-color: #3a3a3a; color: white; padding-left: 15px; padding-top: 2px; }
+
+/* line 184, ../scss/TimelinePanel.scss */
+.mastertrack { -webkit-box-flex: 0; color: white; height: 20px; width: 100%; border-bottom-style: solid; border-bottom-width: thin; border-bottom-color: #3a3a3a; background-color: #232323; background-image: url("../../Track.reel/images/gridline.jpg"); }
+
+/* line 198, ../scss/TimelinePanel.scss */
+.container-tracks, .timelinemarkers, .mastertrack { width: 2000px; }
+
+/* line 201, ../scss/TimelinePanel.scss */
+.userlayers { width: 100%; background-color: #292929; -webkit-box-flex: 1; overflow: hidden; border-bottom-style: solid; border-bottom-width: thin; border-bottom-color: black; }
+
+/* line 210, ../scss/TimelinePanel.scss */
+.timelinegutter { height: 16px; padding-top: 1px; padding-left: 6px; -webkit-box-flex: 0; background-color: #474747; border-top-style: solid; border-top-width: thin; border-top-color: #3a3a3a; }
+
+/* line 220, ../scss/TimelinePanel.scss */
+.newlayerbutton { background-image: url("../images/plus.png"); background-repeat: no-repeat; height: 16px; width: 16px; float: left; padding-right: 5px; }
+
+/* line 228, ../scss/TimelinePanel.scss */
+.deletelayerbutton { background-image: url("../images/trash.png"); background-repeat: no-repeat; height: 16px; width: 16px; float: left; padding-right: 5px; }
+
+/* line 236, ../scss/TimelinePanel.scss */
+.tracktick { height: 100%; width: 15px; border-right-color: #3a3a3a; border-right-style: solid; border-right-width: thin; float: left; }
+
+/* line 244, ../scss/TimelinePanel.scss */
+.timemark { font-family: 'Droid Sans'; font-size: 12px; text-shadow: 1px 1px 1px #3a3a3a; width: 76px; color: gray; float: left; padding-top: 6px; padding-left: 4px; text-align: left; }
+
+/* line 255, ../scss/TimelinePanel.scss */
+.playhead { height: 14px; width: 6px; position: absolute; top: 6px; left: -3px; z-index: 92; background-color: #b50003; opacity: 0.5; }
+
+/* line 265, ../scss/TimelinePanel.scss */
+.playheadmarker { height: 100%; width: 1px; background-color: white; top: 0; left: 0; position: absolute; z-index: 91; opacity: 0.7; }
+
+/* line 275, ../scss/TimelinePanel.scss */
+.timebar { height: 3px; width: 0; background-color: #ff0003; opacity: 0.3; top: 10px; position: absolute; border-top: #c7a19f thin solid; border-right: #ffffff thin solid; }
+
+/* line 285, ../scss/TimelinePanel.scss */
+.endhottext { float: right; font-family: 'Droid Sans'; font-size: 12px; text-shadow: 1px 1px 1px #3a3a3a; color: white; margin-top: 0%; }
+
+/* line 293, ../scss/TimelinePanel.scss */
+.timeline-disabled { position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; background-color: rgba(30, 30, 30, 0.796); z-index: 100; display: none; box-shadow: #111111 0px 0px 14px inset; }
+
+/* line 304, ../scss/TimelinePanel.scss */
+.timeline-dnd-helper { -webkit-transform: scale(0.9, 0.9); }
+
+/* line 307, ../scss/TimelinePanel.scss */
+.tl_slider { width: 65px; height: 5px; background: none; float: left; margin-left: 5%; }
+
+/* Configuration menu */
+/* line 316, ../scss/TimelinePanel.scss */
+.layer-master { position: relative; }
+
+/* line 319, ../scss/TimelinePanel.scss */
+.tl-configbutton { position: absolute; top: 0px; right: 2px; width: 20px; height: 20px; background-image: url(../images/icon-gear.png); background-repeat: no-repeat; cursor: pointer; z-index: 100; background-position: 100% 0px; }
+
+/* line 331, ../scss/TimelinePanel.scss */
+.tl-configbutton:hover { width: 180px; }
+
+/* line 335, ../scss/TimelinePanel.scss */
+.tl-configbutton .tl-dropdown { position: absolute; border: 1px solid black; top: 16px; right: 2px; width: 180px; padding-bottom: 7px; background-color: #474747; box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5); display: none; }
+
+/* line 346, ../scss/TimelinePanel.scss */
+.tl-configbutton.checked .tl-dropdown { display: block; }
+
+/* line 350, ../scss/TimelinePanel.scss */
+.tl-configbutton .checkable { padding-left: 20px; height: 20px; line-height: 20px; margin-top: 3px; }
+
+/* line 356, ../scss/TimelinePanel.scss */
+.tl-configbutton .checkable:hover { background-color: #b2b2b2; color: #242424; text-shadow: none; }
+
+/* line 361, ../scss/TimelinePanel.scss */
+.tl-configbutton .checkable.checked { background-image: url(../images/icon-checkmark.png); background-repeat: no-repeat; background-position: 6px 4px; }
+
+/* line 367, ../scss/TimelinePanel.scss */
+.tl-configbutton .nj-divider { margin-top: 7px; }
+
+/* line 371, ../scss/TimelinePanel.scss */
+.layer-hidden { display: none; }
