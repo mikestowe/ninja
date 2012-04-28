@@ -46,6 +46,7 @@ var CodeEditorViewOptions = exports.CodeEditorViewOptions = Montage.create(Compo
                 this.comment.addEventListener("click", this.handleComment.bind(this), false);
                 this.uncomment.addEventListener("click", this.handleUncomment.bind(this), false);
                 this.themeSelect.addEventListener("change", this.handleThemeSelection.bind(this), false);
+                this.shortKeys.addEventListener("click", this.handleShortKeys.bind(this), false);
             }
         },
 
@@ -70,6 +71,19 @@ var CodeEditorViewOptions = exports.CodeEditorViewOptions = Montage.create(Compo
             value: function(evt){
                 this.application.ninja.codeEditorController.editorTheme = this.themeSelect.options[this.themeSelect.selectedIndex].value;
                 this.application.ninja.codeEditorController.handleThemeSelection();
+            }
+        },
+
+        handleShortKeys:{
+            value:function(evt){
+                var list = this.shortKeys.querySelector(".list");
+                if(list && list.classList.contains("hide")){
+                    list.classList.remove("hide");
+                    list.classList.add("show");
+                }else if(list && list.classList.contains("show")){
+                    list.classList.remove("show");
+                    list.classList.add("hide");
+                }
             }
         }
 

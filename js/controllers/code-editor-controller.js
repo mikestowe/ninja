@@ -140,16 +140,14 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
                             || (keyEvent.keyCode === 190)//period
                             || (keyEvent.keyCode === 189)//underscore, dash
                            )
-                        && !( (keyEvent.keyCode === 219)//open bracket [
-                            || (keyEvent.ctrlKey || keyEvent.metaKey)//ctrl
+                        && !(keyEvent.ctrlKey //ctrl
+                            || keyEvent.metaKey//cmd
+                            || (keyEvent.keyCode === 219)//open bracket [
                             || (keyEvent.keyCode === 221)//close bracket ]
                             || (keyEvent.shiftKey && keyEvent.keyCode === 219)//open bracket {
                             || (keyEvent.shiftKey && keyEvent.keyCode === 221)//close bracket }
                             || (keyEvent.shiftKey && keyEvent.keyCode === 57)//open bracket (
                             || (keyEvent.shiftKey && keyEvent.keyCode === 48)//close bracket )
-                            || ((keyEvent.keyCode === 83) && (keyEvent.ctrlKey || keyEvent.metaKey))//ctrl+S
-                            || ((keyEvent.keyCode === 90) && (keyEvent.ctrlKey || keyEvent.metaKey))//ctrl+z
-                            || ((keyEvent.keyCode === 89) && (keyEvent.ctrlKey || keyEvent.metaKey))//ctrl+y
                            )
                     ){
                         status = true;
