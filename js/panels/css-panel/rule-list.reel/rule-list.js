@@ -8,10 +8,9 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
 exports.RuleList = Montage.create(Component, {
-    focusDelegate : {
-        value: null
-    },
+    focusDelegate : { value: null },
     ruleNodeName : { value: 'li' },
+    _needsScrollToBottom: { value: null },
 
     _rules: { value: null },
     rules: {
@@ -69,6 +68,8 @@ exports.RuleList = Montage.create(Component, {
                 this.rulesToDraw.push(instance);
                 this.needsDraw = true;
             }
+
+            return instance;
         }
     },
 
@@ -93,9 +94,18 @@ exports.RuleList = Montage.create(Component, {
 
     draw : {
         value: function() {
+            ///// If needed, scroll to bottom
+            if(this._needsScrollToBottom) {
+                ///// Make sure the appended rule item is visible (scrolled-to)
+                this.element.scrollTop = this.element.offsetHeight;
+                console.log("Scroll top:", this.element.scrollTop);
+                this._needsScrollToBottom = false;
+            }
+
             //// Iterate through all rules that need draw and append them
             this.rulesToDraw.forEach(function(component) {
                 this.element.appendChild(component.element);
+                this._needsScrollToBottom = this.needsDraw = true;
                 component.needsDraw = true;
             }, this);
 
