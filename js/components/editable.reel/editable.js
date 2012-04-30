@@ -39,7 +39,9 @@ exports.Editable = Montage.create(Component, {
             this._element = el;
             this._element.addEventListener('keydown', this, false);
             this._element.addEventListener('input', this, false);
-            
+            this._element.addEventListener('paste', this, false);
+
+
             if(this.startOnEvent) {
                 this._element.addEventListener(this.startOnEvent, this, false);
             }
@@ -136,7 +138,9 @@ exports.Editable = Montage.create(Component, {
             this._element.classList.remove(this.editingClass);
             
             this._sendEvent('stop', eventData);
-            
+
+            document.removeEventListener('mousedown', this, false);
+
             ///// if value is different than pre-edit val, call onchange method
             if(this._preEditValue !== this.value) {
                 this._sendEvent('change');
@@ -179,7 +183,6 @@ exports.Editable = Montage.create(Component, {
                 this.accept();
             }
             this.stop(eventData);
-            document.removeEventListener('mousedown', this, false);
             this._sendEvent('blur');
         }
     },
@@ -212,6 +215,11 @@ exports.Editable = Montage.create(Component, {
                     "originalEvent": e
                 });
             }
+        }
+    },
+    handlePaste : {
+        value: function(e) {
+            this._sendEvent('paste', e);
         }
     },
     handleEvent : {
