@@ -15,6 +15,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "name" : "CssStyleRule",
                 "properties" : {
                     "element" : {"#" : "rule-item"},
+                    "selectorField": {"@": "selector"},
                     "declarationComponent": {"@": "declaration"}
                 }
             },
@@ -52,6 +53,18 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "name": "Declaration",
                 "properties": {
                     "element": {"#": "declaration-list"}
+                },
+                "bindings": {
+                    "focusDelegate" : {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "focusDelegate",
+                        "oneway": true
+                    },
+                    "declaration" : {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "_declaration",
+                        "oneway": true
+                    }
                 }
             },
             "sheetLink": {

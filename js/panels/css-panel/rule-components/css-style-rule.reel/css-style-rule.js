@@ -8,6 +8,9 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
 exports.CssStyleRule = Montage.create(Component, {
+    unappliedClass : {
+        value: 'unapplied-css-rule'
+    },
     cssText: {
         value: null
     },
@@ -16,6 +19,21 @@ exports.CssStyleRule = Montage.create(Component, {
     },
     focusDelegate : {
         value: null
+    },
+    _applied : {
+        value: true,
+        distinct: true
+    },
+    applied : {
+        get: function() {
+            return this._applied;
+        },
+        set: function(value) {
+            if(this._applied === value) { return false; }
+
+            this._applied = value;
+            this.needsDraw = true;
+        }
     },
 
     _rule : {
@@ -44,13 +62,7 @@ exports.CssStyleRule = Montage.create(Component, {
     },
     declarationComponent: {
         value: null
-    } ,
-//    declarationNodeName: {
-//        value: "dl"
-//    },
-//    declarationElement: {
-//        value: null
-//    },
+    },
     _declaration: {
         value: null
     },
@@ -65,35 +77,45 @@ exports.CssStyleRule = Montage.create(Component, {
     condition: {
         value: false
     },
+
+    handleChange : {
+        value: function(e) {
+            if(this.focusDelegate) {
+                this.focusDelegate.handleSelectorChange(this.rule, this.selectorField.value, this);
+            }
+        }
+    },
+
     templateDidLoad : {
         value: function() {
-            console.log("css style rule : template did load");
-            if(this._declaration) {
-                this.declarationComponent.declaration = this._declaration;
-            }
-
-            if(this.focusDelegate) {
-                this.declarationComponent.focusDelegate = this.focusDelegate;
-            }
+            //console.log("css style rule : template did load");
         }
     },
     prepareForDraw : {
         value: function() {
-            console.log("css style rule : prepare for draw");
+            this.selectorField.addEventListener('change', this, false);
 
-            if(!this.declarationElement) {
-                ///// Create element to contain declaration
-                this.declarationElement = document.createElement(this.declarationNodeName);
-            }
+            //console.log("css style rule : prepare for draw");
 
-            if(!this._declaration && this._rule) {
-
+        }
+    },
+    willDraw : {
+        value: function() {
+            if(this.applied) {
+                this.element.removeAttribute('title');
+            } else {
+                this.element.title = "Rule does not apply to selection";
             }
         }
     },
     draw : {
         value: function() {
-            console.log("css style rule : draw");
+            //console.log("css style rule : draw");
+            if(this.applied) {
+                this.element.classList.remove(this.unappliedClass);
+            } else {
+                this.element.classList.add(this.unappliedClass);
+            }
         }
     }
 });
