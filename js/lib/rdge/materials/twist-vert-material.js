@@ -47,7 +47,21 @@ var TwistVertMaterial = function TwistVertMaterial()
     // Methods
     ///////////////////////////////////////////////////////////////////////
     // duplcate method requirde
-    this.dup = function () { return new TwistVertMaterial(); };
+	this.dup = function() {
+        // get the current values;
+        var propNames = [], propValues = [], propTypes = [], propLabels = [];
+        this.getAllProperties(propNames, propValues, propTypes, propLabels);
+        
+        // allocate a new material
+        var newMat = new TwistVertMaterial();
+
+		// copy over the current values;
+        var n = propNames.length;
+        for (var i = 0; i < n; i++)
+            newMat.setProperty(propNames[i], propValues[i]);
+
+        return newMat;
+	};
 
     this.init = function (world)
 	{
@@ -162,8 +176,15 @@ var TwistVertMaterial = function TwistVertMaterial()
 				{
                     case "u_tex0":
                     case "u_tex1":
-                    case "color": this._shader.twistMe[propName].set(propValue); break;
-                    default: this._shader.twistMe[propName].set([propValue]); break;
+						break;
+
+                    case "color":
+						this._shader.twistMe[propName].set(propValue);
+						break;
+
+                    default:
+						this._shader.twistMe[propName].set([propValue]);
+						break;
                 }
             }
         }
