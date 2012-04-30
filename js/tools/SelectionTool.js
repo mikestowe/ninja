@@ -753,10 +753,10 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
 
             var zoomFactor = 1;
             var viewPort = this.application.ninja.stage._viewport;
-            if (viewPort.style && viewPort.style.zoom)
-            {
+            if (viewPort && viewPort.style && viewPort.style.zoom) {
                 zoomFactor = Number(viewPort.style.zoom);
             }
+
             var tmpMat = viewUtils.getLocalToGlobalMatrix( item );
             for (var j=0;  j<4;  j++)
             {
@@ -865,7 +865,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
 
             var zoomFactor = 1;
             var viewPort = this.application.ninja.stage._viewport;
-            if (viewPort.style && viewPort.style.zoom)
+            if (viewPort && viewPort.style && viewPort.style.zoom)
             {
                 zoomFactor = Number(viewPort.style.zoom);
             }

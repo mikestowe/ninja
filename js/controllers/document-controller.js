@@ -483,6 +483,8 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
             if(!this.webTemplate) {
                 this._showCurrentDocument();
+            } else {
+                this.application.ninja.stage.stageView.showRulers();
             }
 
             this.webTemplate = false;
