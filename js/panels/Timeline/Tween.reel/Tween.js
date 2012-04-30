@@ -14,12 +14,10 @@ var Tween = exports.Tween = Montage.create(Component, {
     },
 
     _tweenData:{
-        serializable: true,
         value:{}
     },
 
     tweenData:{
-        serializable: true,
         get:function(){
             return this._tweenData;
         },
@@ -32,7 +30,6 @@ var Tween = exports.Tween = Montage.create(Component, {
     },
 
     _spanWidth: {
-        serializable: true,
         value: 0
     },
 
@@ -109,7 +106,6 @@ var Tween = exports.Tween = Montage.create(Component, {
     },
 
     _tweenedProperties:{
-        serializable: true,
         value:[]
     },
 
@@ -124,7 +120,6 @@ var Tween = exports.Tween = Montage.create(Component, {
     },
 
     _isTweenAnimated:{
-        serializable:true,
         value:false
     },
 
