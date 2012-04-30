@@ -174,6 +174,7 @@ exports.Properties = Montage.create(Component, {
     handleSelectionChange: {
         value: function(event) {
             if(event.detail.isDocument) {
+                if(this.application.ninja.currentDocument.documentRoot.nodeName.toLowerCase() === "body") return;
                 this.displayStageProperties();
             } else {
                 if(this.application.ninja.selectedElements.length === 1) {

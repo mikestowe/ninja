@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -12,8 +12,7 @@
     <script type="text/montage-serialization">
         {
             "entriesController": {
-                "name": "ArrayController",
-                "module": "montage/ui/controller/array-controller",
+                "prototype": "montage/ui/controller/array-controller",
                 "properties": {
                     "automaticallyOrganizeObjects": false
                 },
@@ -27,8 +26,7 @@
             },
 
             "repetition": {
-                "module": "montage/ui/repetition.reel",
-                "name": "Repetition",
+                "prototype": "montage/ui/repetition.reel",
                 "properties": {
                     "element": {"#": "subEntries"},
                     "contentController": {"@": "entriesController"}
@@ -36,8 +34,7 @@
             },
 
             "menuItem": {
-                "module": "js/components/menu/menu-item.reel",
-                "name": "MenuItem",
+                "prototype": "js/components/menu/menu-item.reel",
                 "properties": {
                     "element": {"#": "menuEntryItem" }
                 },
@@ -51,8 +48,7 @@
             },
 
             "owner": {
-                "module": "js/components/menu/menu-item.reel",
-                "name": "MenuItem",
+                "prototype": "js/components/menu/menu-item.reel",
                 "properties": {
                     "element":          {"#": "menuItem"},
                     "itemBackground":   {"#": "menuItemBackground"},

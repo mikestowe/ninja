@@ -96,10 +96,10 @@ exports.NJUtils = Object.create(Object.prototype, {
     ///// TODO: find a different place for this function
     makeElementModel: {
         value: function(el, selection, controller, isShape) {
+            //el.elementModel = Montage.create(ElementModel).initialize(el.nodeName, selection, controller, isShape);
+
             var p3d = Montage.create(Properties3D);
-            if(selection === "Stage") {
-                p3d.init(el, true);
-            }
+
             var shapeProps = null;
             var pi = controller + "Pi";
 
@@ -145,6 +145,7 @@ exports.NJUtils = Object.create(Object.prototype, {
                     isShape:    { value: isShape}
             });
 
+
         }
     },
 
@@ -169,15 +170,12 @@ exports.NJUtils = Object.create(Object.prototype, {
                     break;
                 case "canvas":
                     isShape = el.getAttribute("data-RDGE-id");
-                    if(isShape)
-                    {
+                    if(isShape) {
                         // TODO - Need more info about the shape
                         selection = "canvas";
                         controller = "shape";
                         isShape = true;
-                    }
-                    else
-                    {
+                    } else {
                         selection = "canvas";
                         controller = "canvas";
                     }

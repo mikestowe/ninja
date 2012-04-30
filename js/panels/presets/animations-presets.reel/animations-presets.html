@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- <copyright>
 This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
 No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -11,16 +11,14 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
     <script type="text/montage-serialization">
         {
             "owner": {
-                "module" : "js/panels/presets/animations-presets.reel",
-                "name" : "AnimationsLibrary",
+                "prototype" : "js/panels/presets/animations-presets.reel[AnimationsLibrary]",
                 "properties" : {
                     "element" : {"#" : "animationsLibrary"},
                     "treeList" : {"@" : "treeList"}
                 }
             },
             "presetsController" : {
-                "module": "js/controllers/tree-controller",
-                "name": "TreeController",
+                "prototype": "js/controllers/tree-controller",
                 "properties" : {
                     "branchKey" : "children",
                     "labelKey" : "text",
@@ -34,8 +32,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 }
             },
             "presetsContainer" : {
-                "module" : "js/components/treeview/treeview.reel",
-                "name" : "Treeview",
+                "prototype" : "js/components/treeview/treeview.reel",
                 "properties" : {
                     "element" : {"#": "libraryContainer"},
                     "branchComponent" : {"@": "branch" },
@@ -45,8 +42,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 }
             },
             "branch" : {
-                "module" : "js/components/treeview/ninja-branch.reel",
-                "name" : "Branch"
+                "prototype" : "js/components/treeview/ninja-branch.reel[Branch]"
             }
         }
     </script>

@@ -214,10 +214,9 @@ exports.MaterialsPopup = Montage.create(Component, {
 		enumerable: true,
 		value: function(materialID)
 		{
-            // Note that setting Array.length = 0 will empty arrays,
-            // which is fine if you use getMaterialData to get a new array, but not for the
-            // dummyData arrays.
-            this._materialsData.length = 0;
+            //TODO - Hack to force repetition to draw. Setting .length = 0 did not work.
+            this.materialsData = [];
+
             this._materialName = materialID;
             if(
 					(materialID ===  "UberMaterial")				||
@@ -231,16 +230,14 @@ exports.MaterialsPopup = Montage.create(Component, {
 				if (material)
 				{
 					this._material = material;
-					var matData = this.getMaterialData( material );
-					this.materialsData = matData;
+                    this.materialsData = this.getMaterialData( material );
 				}
             }
             else
             {
-                this.materialsData = this._dummyData1.slice(0);
+                this.materialsData = this[materialID];
             }
-            
-           this.needsDraw = true;
+            this.needsDraw = true;
 		}
 	},
 
@@ -445,7 +442,8 @@ exports.MaterialsPopup = Montage.create(Component, {
 		}
 	},
 
-    _dummyData1: {
+    // _dummyData1
+    CheckerBoard: {
         value: [
             {
                 "label":         "Texture1",
@@ -588,7 +586,8 @@ exports.MaterialsPopup = Montage.create(Component, {
         ]
     },
 
-    _dummyData2: {
+    // _dummyData2
+    ShinyMetal: {
         value: [
                     {
                         "label":         "Diffuse",

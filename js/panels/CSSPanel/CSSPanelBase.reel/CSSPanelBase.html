@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -11,8 +11,7 @@
         <script type="text/montage-serialization">
         {
             "resizer1": {
-                "module": "js/panels/Resizer",
-                "name": "Resizer",
+                "prototype": "js/panels/Resizer",
                 "properties": {
                     "element": {"#": "subPanelResizer"},
                     "panel": {"#": "nj-section-stylesheets"},
@@ -21,16 +20,14 @@
             },
 
             "ComputedStyleSubPanel1": {
-                "module": "js/panels/CSSPanel/ComputedStyleSubPanel.reel",
-                "name": "ComputedStyleSubPanel",
+                "prototype": "js/panels/CSSPanel/ComputedStyleSubPanel.reel",
                 "properties": {
                     "element": {"#": "nj-computed-sub-panel"}
                 }
             },
 
             "owner": {
-                "module": "js/panels/CSSPanel/CSSPanelBase.reel",
-                "name": "CSSPanelBase",
+                "prototype": "js/panels/CSSPanel/CSSPanelBase.reel",
                 "properties": {
                     "element": {"#": "css_panel"},
                     "computedStyleSubPanel": {"@": "ComputedStyleSubPanel1"}

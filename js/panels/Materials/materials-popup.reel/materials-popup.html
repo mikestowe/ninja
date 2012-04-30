@@ -14,32 +14,28 @@
    		<script type="text/montage-serialization">
         {
             "okButton": {
-                "module": "montage/ui/button.reel",
-                "name": "Button",
+                "prototype": "montage/ui/button.reel",
                 "properties": {
                     "element": {"#": "mp_ok_btn"},
                     "label": "OK"
                 }
             },
             "cancelButton": {
-                "module": "montage/ui/button.reel",
-                "name": "Button",
+                "prototype": "montage/ui/button.reel",
                 "properties": {
                     "element": {"#": "mp_cancel_btn"},
                     "label": "Cancel"
                 }
             },
             "eventDelegator": {
-                "module": "montage/core/event/action-event-listener",
-                "name": "ActionEventListener",
+                "prototype": "montage/core/event/action-event-listener",
                 "properties": {
                     "handler": {"@": "owner"},
                     "action": "updatePreview"
                 }
             },
             "propControl1": {
-                "module": "js/components/ui/property-control.reel",
-                "name": "PropertyControl",
+                "prototype": "js/components/ui/property-control.reel",
                 "properties": {
                     "element": {"#": "mp_property"}
                 },
@@ -64,8 +60,7 @@
                             ]
             },
             "materialsProperties": {
-                "module": "montage/ui/repetition.reel",
-                "name": "Repetition",
+                "prototype": "montage/ui/repetition.reel",
                 "properties": {
                     "element": {"#": "mp_properties_list"}
                 },
@@ -78,8 +73,7 @@
                 }
             },
             "owner": {
-                "module": "js/panels/Materials/materials-popup.reel",
-                "name": "MaterialsPopup",
+                "prototype": "js/panels/Materials/materials-popup.reel",
                 "properties": {
                     "materialsProperties": {"@": "materialsProperties"},
                     "element": {"#": "materials_popup"},

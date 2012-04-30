@@ -90,10 +90,10 @@ exports.Hintable = Montage.create(Editable, {
     hintNext : {
         value : function(e) {
             if(e) { e.preventDefault(); }
-                console.log('next1');
+                //console.log('next1');
             
             if(this._matchIndex < this.matches.length - 1) {
-                console.log('next');
+                //console.log('next');
                 ++this._matchIndex;
                 this.hint = this._getHintDifference();
             }
@@ -102,9 +102,9 @@ exports.Hintable = Montage.create(Editable, {
     hintPrev : {
         value : function(e) {
             if(e) { e.preventDefault(); }
-                console.log('prev1');
+                //console.log('prev1');
             if(this._matchIndex !== 0) {
-                console.log('prev');
+                //console.log('prev');
                 --this._matchIndex;
                 this.hint = this._getHintDifference();
             }
@@ -135,7 +135,7 @@ exports.Hintable = Montage.create(Editable, {
                 /// revert to old value
                 this.value = (this._preEditValue);
                 this._sendEvent('revert');
-                console.log('reverting');
+                //console.log('reverting');
                 
             }
         }
@@ -156,6 +156,14 @@ exports.Hintable = Montage.create(Editable, {
                 isCaretAtEnd, selection, text;
                 
             this._super(arguments);
+            
+			/// Remove the phantom "<BR>" element that is generated when 
+			/// content editable element is empty
+			this._children(this._element, function(item) { 
+			    return item.nodeName === 'BR';
+			}).forEach(function(item) {
+			    this._element.removeChild(item);
+			}, this);
             
             if(k === 39) {
                 selection = window.getSelection();
@@ -180,7 +188,7 @@ exports.Hintable = Montage.create(Editable, {
             
             var val = this.value,
                  matches, hint;
-            console.log('val = "' + val + '"');
+            //console.log('val = "' + val + '"');
             //// Handle auto-suggest if configured
             if(this.hints instanceof Array) {
 

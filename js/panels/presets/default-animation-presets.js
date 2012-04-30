@@ -52,7 +52,6 @@ exports.animationPresets = {
                     "-webkit-animation-direction": "normal",
                     "-webkit-animation-timing-function": "ease",
                     "-webkit-transform-style": "preserve-3d",
-                    "-webkit-transform": "perspective(1000)",
                     "-webkit-animation-delay": "0s"
                 }
             },{
@@ -100,7 +99,6 @@ exports.animationPresets = {
                         "-webkit-animation-timing-function": "ease-out",
                         "-webkit-transform-origin": "100% 50%",
                         "-webkit-transform-style": "preserve-3d",
-                        "-webkit-transform": "perspective(1000)",
                         "-webkit-animation-delay": "0s"
                     }
                 },{
@@ -109,31 +107,31 @@ exports.animationPresets = {
                         "keyText": "0%",
                         "styles": {
                             "opacity": "1",
-                            "-webkit-transform": "perspective(1000) rotateY(0deg)"
+                            "-webkit-transform": "rotateY(0deg)"
                         }
                     }, {
                         "keyText": "70%",
                         "styles": {
                             "opacity": "1",
-                            "-webkit-transform": "perspective(1000) rotateY(0deg)"
+                            "-webkit-transform": "rotateY(0deg)"
                         }
                     }, {
                         "keyText": "85%",
                         "styles": {
                             "opacity": "0",
-                            "-webkit-transform": "perspective(1000) rotateY(95deg)"
+                            "-webkit-transform": "rotateY(95deg)"
                         }
                     }, {
                         "keyText": "86%",
                         "styles": {
                             "opacity": "0",
-                            "-webkit-transform": "perspective(1000) rotateY(-90deg)"
+                            "-webkit-transform": "rotateY(-90deg)"
                         }
                     }, {
                         "keyText": "100%",
                         "styles": {
                             "opacity": "1",
-                            "-webkit-transform": "perspective(1000) rotateY(0deg)"
+                            "-webkit-transform": "rotateY(0deg)"
                         }
                     }]
                 }]
@@ -151,7 +149,6 @@ exports.animationPresets = {
                         "-webkit-animation-timing-function": "ease-out",
                         "-webkit-transform-origin": "100% 50%",
                         "-webkit-transform-style": "preserve-3d",
-                        "-webkit-transform": "perspective(1000)",
                         "-webkit-animation-delay": "0s"
                     }
                 },{
@@ -160,25 +157,25 @@ exports.animationPresets = {
                         "keyText": "0%",
                         "styles": {
                             "opacity": "0",
-                            "-webkit-transform": "perspective(1000) rotateY(-90deg)"
+                            "-webkit-transform": "rotateY(-90deg)"
                         }
                     }, {
                         "keyText": "15%",
                         "styles": {
                             "opacity": "1",
-                            "-webkit-transform": "perspective(1000) rotateY(0deg)"
+                            "-webkit-transform": "rotateY(0deg)"
                         }
                     }, {
                         "keyText": "85%",
                         "styles": {
                             "opacity": "1",
-                            "-webkit-transform": "perspective(1000) rotateY(0deg)"
+                            "-webkit-transform": "rotateY(0deg)"
                         }
                     }, {
                         "keyText": "100%",
                         "styles": {
                             "opacity": "0",
-                            "-webkit-transform": "perspective(1000) rotateY(95deg)"
+                            "-webkit-transform": "rotateY(95deg)"
                         }
                     }]
                 }]

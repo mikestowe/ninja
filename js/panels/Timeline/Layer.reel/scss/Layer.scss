@@ -90,16 +90,23 @@
 
 .userlayers .collapsible-label {
 	display: block;
-	width: 100px;
     height: 21px;
     line-height: 20px;
 	color: $color-panel-text;
-	margin-left: 30px;
-	margin-right: 20px;
+	margin-left: 80px;
+	margin-right: 40px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.userlayers .layer-tag {
+	position: absolute;
+	top: 3px;
+	left: 20px;
+}
+
+
 .layerSelected .label-layer {
 	background-color: $color-panel-hilite-bg;
 	color: $color-panel-hilite-text;
@@ -123,8 +130,16 @@
 }
 
 .content-layer .collapsible-label,
-.content-layer .collapsible-content {
+.content-layer .collapsible-content,
+.content-layer .layer-tag {
 	font-size: 11px;
+}
+
+
+
+.label-layer .collapsible-label br,
+.content-style .editable br {
+	display: none;
 }
 
 .collapsible-clicker {
@@ -187,13 +202,37 @@
 .content-layer .collapsible-content {
 	padding-left: 30px;
 }
+.collapsible-content .collapsible-content .layout-table .layout-row {
+	height: 20px;
+	overflow: hidden;
+}
 .collapsible-content .collapsible-content .layout-table .layout-row .layout-cell {
 	width: 40%;
 	height: 20px;
 	border-bottom: 1px solid $color-menu-divider;
 	line-height: 20px;
 	text-align: left;
+	overflow: hidden;
 }
+
+.collapsible-content .collapsible-content .container-row {
+	border-bottom: 1px solid $color-menu-divider;
+	height: 20px;
+}
+
+.collapsible-content .collapsible-content .cell-property,
+.collapsible-content .collapsible-content .cell-value {
+	width: 45%;
+	float: left;
+	height: 20px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	line-height: 18px;
+}
+
+
+
 .collapsible-content .layout-table:first-child {
 	border-top: 1px solid $color-menu-divider;
 }
@@ -218,6 +257,9 @@
 	overflow: hidden;
     -webkit-user-select: text;
     text-overflow: clip;
+}
+.editable2 br {
+	display: inline;
 }
 
 .label-style .disabled {
