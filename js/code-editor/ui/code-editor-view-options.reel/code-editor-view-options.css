@@ -76,6 +76,7 @@
     white-space: nowrap;
     padding:5px;
     background-color: #313131;
+    width:200px;
 }
 
 .viewOptions .shortKeys .list div{
@@ -88,4 +89,17 @@
 
 .viewOptions .shortKeys .show{
     visibility: visible;
+}
+
+.viewOptions .shortKeys div{
+    padding:2px;
+}
+
+.viewOptions .shortKey{
+    font-style: italic;
+    color: #d1d1d1;
+}
+
+.viewOptions .shortKeyDesc{
+    float:right;
 }
