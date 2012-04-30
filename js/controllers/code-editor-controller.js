@@ -110,6 +110,17 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
     _codeCompletionKeyEventHandler:{
         enumerable:false,
         value: function(cm, keyEvent, documentType) {
+            //comment shortkeys
+            if((keyEvent.metaKey || keyEvent.ctrlKey) && !keyEvent.shiftKey && keyEvent.keyCode === 191){//ctrl+/
+                this.commentSelection(true);
+                return;
+            }
+            //uncomment shortkeys
+            if((keyEvent.metaKey || keyEvent.ctrlKey) && keyEvent.shiftKey && keyEvent.keyCode === 191){//ctrl+shift+/
+                this.commentSelection(false);
+                return;
+            }
+
             //===manually triggered code completion
             if((this.automaticCodeComplete === false)){
                 if(keyEvent.ctrlKey && keyEvent.keyCode === 32){//Ctrl+Space
