@@ -112,7 +112,7 @@ exports.StageView = Montage.create(Component, {
             }
             document.getElementById("codeMirror_"+doc.uuid).style.display="block";
 
-            doc.editor = this.application.ninja.codeEditorController.createEditor(doc, type);
+            doc.editor = this.application.ninja.codeEditorController.createEditor(doc, type, doc.documentType);
             doc.editor.hline = doc.editor.setLineClass(0, "activeline");
 
             this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe

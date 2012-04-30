@@ -24,7 +24,7 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
     },
 
     codeCompletionSupport : {
-        value: {"javascript": true}
+        value: {"js": true}
     },
 
     _automaticCodeComplete: {
@@ -68,7 +68,7 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
      * Creates an editor instance
      */
     createEditor : {
-        value:function(doc, type){
+        value:function(doc, type, documentType){
             var self = this, editorOptions = null;
 
             editorOptions = {
@@ -91,8 +91,8 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
                            };
 
             //configure auto code completion if it is supported for that document type
-            if(this.codeCompletionSupport[type] === true){
-                editorOptions.onKeyEvent = function(cm, keyEvent){self._codeCompletionKeyEventHandler.call(self, cm, keyEvent, type)};
+            if(this.codeCompletionSupport[documentType] === true){
+                editorOptions.onKeyEvent = function(cm, keyEvent){self._codeCompletionKeyEventHandler.call(self, cm, keyEvent, documentType)};
             }
 
             var editor = self.codeEditor.fromTextArea(doc.textArea, editorOptions);
@@ -109,7 +109,7 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
      */
     _codeCompletionKeyEventHandler:{
         enumerable:false,
-        value: function(cm, keyEvent, type) {
+        value: function(cm, keyEvent, documentType) {
             //===manually triggered code completion
             if((this.automaticCodeComplete === false)){
                 if(keyEvent.ctrlKey && keyEvent.keyCode === 32){//Ctrl+Space
@@ -117,7 +117,7 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
                 }
             }
             //===automatic auto complete [performance is slower]
-            else if(this._showAutoComplete(type, keyEvent)){
+            else if(this._showAutoComplete(documentType, keyEvent)){
                 this.codeEditor.simpleHint(cm, this.codeEditor.javascriptHint);
             }
        }
@@ -129,11 +129,15 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
      */
     _showAutoComplete : {
         enumerable:false,
-        value:function(type, keyEvent){
+        value:function(documentType, keyEvent){
             var status=false;
 
-            switch(type){
-                case "javascript":
+            if((keyEvent.metaKey || keyEvent.ctrlKey) &&  (keyEvent.keyCode === 83)){//ctrl+s
+                return false;
+            }
+
+            switch(documentType){
+                case "js":
                     if((keyEvent.type === "keyup")//need seperate keycode set per mode
                         && ((keyEvent.keyCode > 47 && keyEvent.keyCode < 57)//numbers
                             || (keyEvent.keyCode > 64 && keyEvent.keyCode <91)//letters
@@ -235,7 +239,7 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
             //set theme
             this.handleThemeSelection();
             //check autocomplete support
-            this.handleCodeCompletionSupport(this.application.ninja.documentController.activeDocument.editor.getOption("mode"));
+            this.handleCodeCompletionSupport(this.application.ninja.documentController.activeDocument.documentType);
             //set zoom
             this.handleZoom(this._zoomFactor);
         }
