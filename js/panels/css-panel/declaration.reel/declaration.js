@@ -18,7 +18,10 @@ exports.Declaration = Montage.create(Component, {
     templateDidLoad : {
         value: function() {
             console.log("declaration - template did load");
-            this.treeController.delegate = this.focusDelegate || this;
+
+            if(this.focusDelegate) {
+                this.treeController.delegate = this.focusDelegate;
+            }
         }
     },
     prepareForDraw : {
@@ -119,9 +122,17 @@ exports.Declaration = Montage.create(Component, {
         distinct: true
     },
 
-    addNewStyle : {
-        value: function() {
-            debugger;
+    addNewStyleAfter : {
+        value: function(style) {
+            //this.treeController.branchControllers[0].addObjects({
+            foo1 = style.parentComponent.parentComponent;
+            style.parentComponent.parentComponent.contentController.addObjects({
+                name: 'property',
+                value: 'value',
+                isEmpty: true,
+                treeNodeType: 'leaf'
+            });
+            style.parentComponent.parentComponent.needsDraw = true;
         }
     },
 

@@ -38,6 +38,15 @@ exports.Style = Montage.create(TreeNode, {
             this.units = this.getUnits(text);
         }
     },
+    _priority: { value: "", distinct: true },
+    priority: {
+        get: function() {
+            return this._priority;
+        },
+        set: function(value) {
+            this._priority = value;
+        }
+    },
 
     getUnits : {
         value: function(val) {
@@ -57,25 +66,35 @@ exports.Style = Montage.create(TreeNode, {
         },
         set: function(value) {
             this._enabled = value;
+            this.delegate.handleStyleToggle(this.getRule(), this._enabled, this);
             this.needsDraw = true;
         }
     },
 
+    _empty : { value: null },
+    empty : {
+        get: function() {
+            return this._empty;
+        },
+        set: function(isEmpty) {
+            if(this._empty === isEmpty) { return false; }
+            this._empty = isEmpty;
+            this.needsDraw = true;
+        }
+    },
 
     dirty : {
         get: function() {
             return this.propertyField.isDirty || this.valueField.isDirty;
         },
         set: function(value) {
-
+            return false;
         }
     },
 
     _invalid: { value: null },
     invalid : {
-        get: function() {
-            return this._invalid;
-        },
+        get: function() { return this._invalid; },
         set: function(value) {
             this._invalid = value;
             this.needsDraw = true;
@@ -88,6 +107,8 @@ exports.Style = Montage.create(TreeNode, {
             return this._editing;
         },
         set: function(value) {
+            if(this._editing === value) { return false; }
+
             this._editing = value;
             this.needsDraw = true;
         }
@@ -101,8 +122,18 @@ exports.Style = Montage.create(TreeNode, {
             return this._editingNewStyle;
         },
         set: function(value) {
+            if(this._editingNewStyle === value) {
+                return false;
+            }
+
             this._editingNewStyle = value;
             this.needsDraw = true;
+        }
+    },
+
+    getRule : {
+        value: function() {
+            return this.treeView.parentComponent.declaration.parentRule;
         }
     },
 
@@ -136,13 +167,7 @@ exports.Style = Montage.create(TreeNode, {
             this.element.classList.remove("drag-enter");
         }
     },
-    handleSourceObjectSet: {
-        value: function() {
-            //debugger;
-            this.propertyText = this.sourceObject.name;
-            this.valueText = this.sourceObject.value;
-        }
-    },
+
     handleWebkitTransitionEnd : {
         value: function(e) {
             console.log("trans end");
@@ -150,7 +175,9 @@ exports.Style = Montage.create(TreeNode, {
     },
     handleClick : {
         value: function(e) {
-            console.log("handleAction");
+            console.log("handle Add button click");
+            this.propertyField.start();
+            //this.editingNewStyle = true;
             this.editingNewStyle = this.editing = true;
         }
     },
@@ -167,23 +194,23 @@ exports.Style = Montage.create(TreeNode, {
             var event = e;
             ///// Function to determine if an empty (new) style should return
             ///// to showing the add button, i.e. the fields were not clicked
-            function shouldStopEditing() {
+            function fieldsClicked() {
                 var clicked;
                 if(e._event.detail.originalEventType === 'mousedown') {
                     clicked = e._event.detail.originalEvent.target;
-                    return clicked !== this.propertyField.element && clicked !== this.valueField.element;
+                    return clicked === this.propertyField.element || clicked === this.valueField.element;
                 }
-                return;
+                return false;
             }
 
-            if(this.sourceObject.isEmpty && !this.dirty && shouldStopEditing.bind(this)()) {
+            this.editing = false;
 
+            if(this.sourceObject.isEmpty && !this.dirty && !fieldsClicked.bind(this)()) {
+                ///// Show add button
                 this.editingNewStyle = false;
             }
 
-            this.treeView.contentController.delegate.handleStyleStop(e);
-            //this.editing = false;
-
+            this.delegate.handleStyleStop(e);
         }
     },
 
@@ -192,20 +219,47 @@ exports.Style = Montage.create(TreeNode, {
             var property    = this.propertyField.value,
                 oldProperty = this.propertyField._preEditValue,
                 value       = this.valueField.value,
-                rule        = this.treeView.parentComponent.declaration.parentRule,
-                delegate    = this.treeView.contentController.delegate;
+                rule        = this.getRule();
 
-            delegate.handlePropertyChange(rule, property, value, oldProperty, this);
+            this.delegate.handlePropertyChange(rule, property, value, oldProperty, this);
         }
     },
     handleValueChange : {
         value: function(e) {
             var property    = this.propertyField.value,
                 value       = this.valueField.value,
-                rule        = this.treeView.parentComponent.declaration.parentRule,
-                delegate    = this.treeView.contentController.delegate;
+                rule        = this.getRule();
 
-            delegate.handleValueChange(rule, property, value, this);
+            this.delegate.handleValueChange(rule, property, value, this);
+        }
+    },
+
+    handlePropertyDirty : {
+        value: function(e) {
+            this.empty = false;
+        }
+    },
+
+    handleValueDirty : {
+        value: function(e) {
+            this.empty = false;
+        }
+    },
+
+    handleSourceObjectSet: {
+        value: function() {
+            this.propertyText = this.sourceObject.name;
+            this.valueText = this.sourceObject.value;
+
+            if(this.sourceObject.isEmpty) {
+                this.empty = true;
+            }
+        }
+    },
+
+    templateDidLoad : {
+        value: function() {
+            this.delegate = this.treeView.contentController.delegate;
         }
     },
 
@@ -223,16 +277,26 @@ exports.Style = Montage.create(TreeNode, {
             this.valueField.addEventListener('start', this, false);
             this.propertyField.addEventListener('stop', this, false);
             this.valueField.addEventListener('stop', this, false);
+            this.propertyField.addEventListener('dirty', this, false);
+            this.valueField.addEventListener('dirty', this, false);
 //            this.propertyField.addEventListener('change', this, false);
 //            this.valueField.addEventListener('change', this, false);
+            this.propertyField.addEventListener('paste', this, false);
+            this.valueField.addEventListener('paste', this, false);
 
-            if(this.sourceObject.isEmpty) {
-                this.element.draggable = false;
+
+            if(this.empty) {
                 this.addStyleButton.addEventListener('click', this, false);
             } else {
-                this.element.removeChild(this.addStyleButton);
-                delete this.addStyleButton;
+                this.addStyleButton.removeEventListener('click', this, false);
             }
+
+        }
+    },
+
+    handlePaste: {
+        value: function(e) {
+            this.delegate.handlePaste(e);
         }
     },
 
@@ -248,17 +312,15 @@ exports.Style = Montage.create(TreeNode, {
 
     draw : {
         value : function() {
-            //debugger;
-            if(this.sourceObject[this.labelKey]) {
-                this._labelText = this.sourceObject[this.labelKey];
-            } else {
-                console.log("Label key unknown");
-            }
-
-            if(this.sourceObject.isEmpty) {
+            if(this.empty) {
+                this.element.draggable = false;
                 this.element.classList.add('empty-css-style');
             } else {
+                this.element.draggable = true;
                 this.element.classList.remove('empty-css-style');
+                if(this.addStyleButton.parentNode) {
+                    this.element.removeChild(this.addStyleButton);
+                }
             }
 
             if(this._enabled) {
@@ -268,9 +330,6 @@ exports.Style = Montage.create(TreeNode, {
             }
 
             if(this._editingNewStyle) {
-                if(!this.propertyField.isEditable) {
-                    this.propertyField.start();
-                }
                 this.element.classList.add(this.editNewEmptyClass);
             } else {
                 this.element.classList.remove(this.editNewEmptyClass);
