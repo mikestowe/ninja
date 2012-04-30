@@ -41,11 +41,21 @@ exports.DrawingToolBase = Montage.create(Montage, {
 
 			// do the snap
 			var hitRec = snapManager.snap(x, y,  true);
+			var dragPlane;
 			if (hitRec) {
 				// set up the working plane and convert the hit record to be working plane relative
-				var dragPlane = snapManager.setupDragPlanes( hitRec );
-				var wpHitRec = hitRec.convertToWorkingPlane( dragPlane );
+				if (hitRec.getElement() === snapManager.application.ninja.currentSelectedContainer)
+				{
+					dragPlane = viewUtils.getUnprojectedElementPlane( hitRec.getElement() );
+					snapManager.setupDragPlaneFromPlane( dragPlane );
+				}
+				else
+				{
+					dragPlane = snapManager.setupDragPlanes( hitRec );
+				}
+				console.log( "drag plane: " + dragPlane );
 
+				var wpHitRec = hitRec.convertToWorkingPlane( dragPlane );
 				var pt = hitRec.getScreenPoint();
 
                 return( [wpHitRec, pt[0], pt[1]] );

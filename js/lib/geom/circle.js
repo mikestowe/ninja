@@ -4,9 +4,12 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var GeomObj =           require("js/lib/geom/geom-obj").GeomObj;
-var ShapePrimitive =    require("js/lib/geom/shape-primitive").ShapePrimitive;
-var MaterialsModel = require("js/models/materials-model").MaterialsModel;
+var GeomObj			= require("js/lib/geom/geom-obj").GeomObj;
+var ShapePrimitive	= require("js/lib/geom/shape-primitive").ShapePrimitive;
+var MaterialsModel	= require("js/models/materials-model").MaterialsModel;
+var drawUtils		= require("js/helper-classes/3D/draw-utils").DrawUtils;
+var vecUtils		= require("js/helper-classes/3D/vec-utils").VecUtils;
+
 ///////////////////////////////////////////////////////////////////////
 // Class GLCircle
 //      GL representation of a circle.
@@ -46,6 +49,10 @@ var Circle = function GLCircle() {
 			this._fillColor = fillColor;
 
 			this._strokeStyle = strokeStyle;
+
+			this._matrix = Matrix.I(4);
+			//this._matrix[12] = xOffset;
+			//this._matrix[13] = yOffset;
 		}
 
 		this.m_world = world;
@@ -187,7 +194,7 @@ var Circle = function GLCircle() {
 		// get the normalized device coordinates (NDC) for
 		// all position and dimensions.
 		var	vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
-		var	xNDC = 2*this._xOffset/vpw,  yNDC = 2*this._yOffset/vph,
+		var	xNDC = 2*this._xOffset/vpw,  yNDC = -2*this._yOffset/vph,
 			xRadNDC = this._width/vpw,  yRadNDC = this._height/vph,
 			xStrokeNDC = 2*this._strokeWidth/vpw,  yStrokeNDC = 2*this._strokeWidth/vph,
 			xInnRadNDC = this._innerRadius*xRadNDC,  yInnRadNDC = this._innerRadius*yRadNDC;
@@ -706,6 +713,49 @@ var Circle = function GLCircle() {
 		return (MathUtils.fpCmp(distToPt,distToBoundary) <= 0);
     };
 
+    this.getNearPoint = function( pt, dir )
+	{
+        var world = this.getWorld();
+        if (!world)  throw( "null world in getNearPoint" );
+		
+		// the input point and direction are in GL space
+		// project to the z == 0 plane
+		var mat = this.getMatrix();
+		var plane = [0,0,1,0];
+		plane = MathUtils.transformPlane( plane, mat );
+		var projPt = MathUtils.vecIntersectPlane ( pt, dir, plane );
+
+		// get the center of the circle in GL space
+		var ctr = this.getGLCenter();
+
+		// transform the projected point to the plane of the circle
+		var planePt = MathUtils.transformPoint( projPt, mat );
+
+		// get a matrix mapping the circle to a 2D coordinate system
+		var normal = [ mat[8], mat[9], mat[10] ];
+		var planeMat = drawUtils.getPlaneToWorldMatrix(normal, ctr);
+		var planeMatInv = glmat4.inverse( planeMat, [] );
+		var planePt2D = MathUtils.transformPoint( planePt, planeMatInv );
+
+		// get 2 points on the axes of the oval
+		var wPt = this.preViewToGL( [this._xOffset + 0.5*this.getWidth(),   this._yOffset,  0] ),
+			hPt = this.preViewToGL( [this._xOffset,  this._yOffset + 0.5*this.getHeight(),  0] );
+		var w = vecUtils.vecDist( 2, wPt, ctr ),
+			h = vecUtils.vecDist( 2, hPt, ctr );
+		var aspect = w/h;
+
+		// get the angle of the projected point relative to the circle
+		var angle = Math.atan2( planePt2D[1], planePt2D[0]/aspect );
+		var degrees = angle*180.0/Math.PI;
+
+		// get the corresponding point on the object
+		var pt = [ Math.cos(angle)*w,  Math.sin(angle)*h,  0 ];
+		var glPt = MathUtils.transformPoint( pt, planeMat );
+
+		return glPt;
+	}
+
+	/*
     this.getNearPoint = function( pt, dir ) {
         var world = this.getWorld();
         if (!world)  throw( "null world in getNearPoint" );
@@ -725,7 +775,7 @@ var Circle = function GLCircle() {
 		// get the normalized device coordinates (NDC) for
 		// the position and radii.
 		var	vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
-		var	xNDC = 2*this._xOffset/vpw,  yNDC = 2*this._yOffset/vph,
+		var	xNDC = 2*this._xOffset/vpw,  yNDC = -2*this._yOffset/vph,
 			xRadNDC = this._width/vpw,  yRadNDC = this._height/vph;
 		var projMat = world.makePerspectiveMatrix();
 		var z = -world.getViewDistance();
@@ -755,6 +805,7 @@ var Circle = function GLCircle() {
 
 		return objPt;
     };
+	*/
 
 	 this.recalcTexMapCoords = function( vrts, uvs ) {
 		var n = vrts.length/3;

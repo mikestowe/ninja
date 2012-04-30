@@ -54,9 +54,9 @@ exports.ShapeTool = Montage.create(DrawingTool, {
     },
 
 	HandleLeftButtonUp:
-	{
-		value: function (event)
-		{
+    {
+        value: function (event)
+        {
             var drawData;
 
             drawData = this.getDrawingData();
@@ -64,29 +64,34 @@ exports.ShapeTool = Montage.create(DrawingTool, {
             if(drawData) {
                 var canvas;
                 if(!this._useExistingCanvas()) {
+					console.log( "creating a new canvas" );
                     canvas = NJUtils.makeNJElement("canvas", "Canvas", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
                     var elementModel = TagTool.makeElement(~~drawData.width, ~~drawData.height,
                                                                         drawData.planeMat, drawData.midPt, canvas, true);
 
                     canvas.elementModel.isShape = true;
-                    this.application.ninja.elementMediator.addElements(canvas, elementModel.data);
+					this.application.ninja.elementMediator.addElements(canvas, elementModel.data);
                 } else {
+					console.log( "inserting shape into container" );
                     canvas = this._targetedElement;
+                    if (!canvas.getAttribute( "data-RDGE-id" ))
+                        canvas.setAttribute( "data-RDGE-id", NJUtils.generateRandom() );
                     canvas.elementModel.controller = ShapesController;
                     if(!canvas.elementModel.shapeModel) {
                         canvas.elementModel.shapeModel = Montage.create(ShapeModel);
                     }
+					this.application.ninja.elementMediator.addElements(canvas, canvas.elementModel.data);
                 }
             }
 
-			this.endDraw(event);
+            this.endDraw(event);
 
-			this._isDrawing = false;
-			this._hasDraw=false;
+            this._isDrawing = false;
+            this._hasDraw=false;
 
-			this.DrawHandles();
-		}
-	},
+            this.DrawHandles();
+        }
+    },
 
     onAddElements: {
         value: function(el) {
@@ -211,7 +216,20 @@ exports.ShapeTool = Montage.create(DrawingTool, {
 	_useExistingCanvas: {
 		value: function()
 		{
-			return (this._targetedElement && !ShapesController.isElementAShape(this._targetedElement));
+			var target;
+			if (this._targetedElement && (this._targetedElement.nodeName === "CANVAS") && !ShapesController.isElementAShape(this._targetedElement))
+				target = this._targetedElement;
+			else
+			{
+				var container = this.application.ninja.currentSelectedContainer;
+				if (container && (container.nodeName === "CANVAS"))
+				{
+					target = container;
+					this._targetedElement = target;
+				}
+			}
+
+			return target;
 		}
 	}
 

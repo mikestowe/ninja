@@ -222,8 +222,10 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
         value: function(event) {
             if(this.application.ninja.selectedElements.length > 0) {
                 this.application.ninja.currentSelectedContainer = this.application.ninja.selectedElements[0];
+				console.log( "setting container to selected element" );
             } else {
                 this.application.ninja.currentSelectedContainer = this.application.ninja.currentDocument.documentRoot;
+				console.log( "setting container to stage" );
             }
         }
     },
