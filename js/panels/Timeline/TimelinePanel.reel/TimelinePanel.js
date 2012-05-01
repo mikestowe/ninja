@@ -705,7 +705,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 				// there is a currentDocument.  We don't do anything at that time.
 				return;
 			}
-            this.application.ninja.currentDocument.setLevel = true;
+            // this.application.ninja.currentDocument.setLevel = true;
             this._boolCacheArrays = false;
             this.clearTimelinePanel();
             this._boolCacheArrays = true;

@@ -558,6 +558,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     },
     didDraw: {
     	value: function() {
+    		// console.log("Layer.didDraw: Layer "+ this.layerID );
     		if (this._isFirstDraw === true) {
     			if (this.isSelected === true) {
     				if (this.application.ninja.currentDocument._uuid === this._docUUID) {
