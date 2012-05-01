@@ -66,7 +66,7 @@ exports.OvalTool = Montage.create(ShapeTool, {
             var world = this.getGLWorld(canvas, this.options.use3D);
 
             var xOffset = ((left - canvas.offsetLeft + w/2) - canvas.width/2);
-            var yOffset = (canvas.height/2 - (top - canvas.offsetTop + h/2));
+            var yOffset = -(canvas.height/2 - (top - canvas.offsetTop + h/2));
 
             var oval = new Circle(); //GLCircle();
             oval.init(world, xOffset, yOffset, w, h, strokeSize, strokeColor, fillColor, innerRadius, strokeMaterial, fillMaterial, strokeStyle);

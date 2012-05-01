@@ -331,10 +331,26 @@ exports.PanTool = Montage.create(toolBase,
 				
 				if (!this._altKeyDown)
 					delta[2] = 0;
-				var transMat = Matrix.Translation( delta );
-				this._worldPt = wPt;
+
+				// limit the change
+				var ucMat = viewUtils.getMatrixFromElement(this.application.ninja.currentDocument.documentRoot);
+				var tooMuch = false
+				if ((ucMat[12] >  12000) && (delta[0] > 0))  tooMuch = true;
+				if ((ucMat[12] < -12000) && (delta[0] < 0))  tooMuch = true;
+				if ((ucMat[13] >  12000) && (delta[1] > 0))  tooMuch = true;
+				if ((ucMat[13] < -12000) && (delta[1] < 0))  tooMuch = true;
+				if ((ucMat[14] >  12000) && (delta[2] > 0))  tooMuch = true;
+				if ((ucMat[14] < -12000) && (delta[2] < 0))  tooMuch = true;
+				if (tooMuch)
+				{
+					this._isDrawing = false;
+					delta = [0,0,0];
+				}
+				else
+					this._worldPt = wPt;
 
 				// update everything
+				var transMat = Matrix.Translation( delta );
 				this.applyDeltaMat( transMat );
 			}
 		}
