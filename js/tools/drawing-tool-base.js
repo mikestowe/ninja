@@ -53,7 +53,6 @@ exports.DrawingToolBase = Montage.create(Montage, {
 				{
 					dragPlane = snapManager.setupDragPlanes( hitRec );
 				}
-				console.log( "drag plane: " + dragPlane );
 
 				var wpHitRec = hitRec.convertToWorkingPlane( dragPlane );
 				var pt = hitRec.getScreenPoint();

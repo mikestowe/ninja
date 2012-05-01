@@ -64,7 +64,6 @@ exports.ShapeTool = Montage.create(DrawingTool, {
             if(drawData) {
                 var canvas;
                 if(!this._useExistingCanvas()) {
-					console.log( "creating a new canvas" );
                     canvas = NJUtils.makeNJElement("canvas", "Canvas", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
                     var elementModel = TagTool.makeElement(~~drawData.width, ~~drawData.height,
                                                                         drawData.planeMat, drawData.midPt, canvas, true);
@@ -72,7 +71,6 @@ exports.ShapeTool = Montage.create(DrawingTool, {
                     canvas.elementModel.isShape = true;
 					this.application.ninja.elementMediator.addElements(canvas, elementModel.data);
                 } else {
-					console.log( "inserting shape into container" );
                     canvas = this._targetedElement;
                     if (!canvas.getAttribute( "data-RDGE-id" ))
                         canvas.setAttribute( "data-RDGE-id", NJUtils.generateRandom() );
