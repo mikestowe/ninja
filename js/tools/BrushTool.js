@@ -225,9 +225,11 @@ exports.BrushTool = Montage.create(ShapeTool, {
             this._hasDraw = false;
 
             //finish giving enough info. to the brush stroke
-            this._selectedBrushStroke.setPlaneMatrix(this._brushStrokePlaneMat);
-            this._selectedBrushStroke.setPlaneMatrixInverse(glmat4.inverse(this._brushStrokePlaneMat,[]));
-            this._selectedBrushStroke.setDragPlane(this._draggingPlane);
+            if (this._selectedBrushStroke){
+                this._selectedBrushStroke.setPlaneMatrix(this._brushStrokePlaneMat);
+                this._selectedBrushStroke.setPlaneMatrixInverse(glmat4.inverse(this._brushStrokePlaneMat,[]));
+                this._selectedBrushStroke.setDragPlane(this._draggingPlane);
+            }
 
             //display the previously drawn stroke in a separate canvas
             this.RenderCurrentBrushStroke();
