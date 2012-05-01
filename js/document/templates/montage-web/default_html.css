@@ -10,6 +10,15 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
     -webkit-animation-name: none !important;
 }
 
+body {
+    margin: 0;
+    padding: 0;
+
+    position: absolute;
+    -webkit-transform-style: preserve-3d;
+    -webkit-perspective: 1400px;
+}
+
 .active-element-outline {
     outline: #adff2f solid 2px;
 }

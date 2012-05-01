@@ -12,6 +12,17 @@ exports.BodyController = Montage.create(ElementController, {
     // TODO - perspective distance needs to be passed in as "dist" and matrix3d needs to be passed in as "mat"
     set3DProperties: {
         value: function(el, props, update3DModel) {
+            var dist = props["dist"], mat = props["mat"];
+            this.application.ninja.stylesController.setElementStyle(el, "-webkit-transform", "perspective(" + dist + ") " + "matrix3d(" + MathUtils.scientificToDecimal(mat, 5) + ")", true);
+
+            el.elementModel.props3D.matrix3d = mat;
+            el.elementModel.props3D.perspectiveDist = dist;
+
+            this.application.ninja.stage.updatedStage = true;
+
+            if(update3DModel) {
+                this._update3DProperties(el, mat, dist);
+            }
         }
     },
 

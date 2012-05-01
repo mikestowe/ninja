@@ -415,6 +415,65 @@ var GeomObj = function GLGeomObj()
         }
     };
 
+
+	this.getGLCenter = function()
+	{
+		// get the normalized device coordinates (NDC) for
+		// all position and dimensions.
+		var world = this.getWorld();
+		var	vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
+		var	xNDC = 2*this._xOffset/vpw,  yNDC = -2*this._yOffset/vph;
+
+		var aspect = world.getAspect();
+		var zn = world.getZNear(),  zf = world.getZFar();
+		var	t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
+			b = -t,
+			r = aspect*t,
+			l = -r;
+
+		// calculate the object coordinates from their NDC coordinates
+		var z = -world.getViewDistance();
+
+		// unproject to get the position of the origin in GL
+		var x = -z*(r-l)/(2.0*zn)*xNDC,
+			y = -z*(t-b)/(2.0*zn)*yNDC;
+		z = 0.0;
+
+		// transform by the object's transformation matrix
+		var ctr = MathUtils.transformPoint( [x, y, z], this.getMatrix() );
+
+		return ctr;
+	};
+
+	this.preViewToGL = function( preViewPt )
+	{
+		// get the normalized device coordinates (NDC) for
+		// all position and dimensions.
+		var world = this.getWorld();
+		var	vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
+		var	xNDC = 2*preViewPt[0]/vpw,  yNDC = -2*preViewPt[1]/vph;
+
+		var aspect = world.getAspect();
+		var zn = world.getZNear(),  zf = world.getZFar();
+		var	t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
+			b = -t,
+			r = aspect*t,
+			l = -r;
+
+		// calculate the object coordinates from their NDC coordinates
+		var z = -world.getViewDistance();
+
+		// unproject to get the position of the origin in GL
+		var x = -z*(r-l)/(2.0*zn)*xNDC,
+			y = -z*(t-b)/(2.0*zn)*yNDC;
+		z = 0.0;
+
+		// transform by the object's transformation matrix
+		var glPt = MathUtils.transformPoint( [x, y, z], this.getMatrix() );
+
+		return glPt;
+	};
+
     this.buildBuffers = function () {
         // this function must be overridden by the base class
         alert("GLGeomObj.buildBuffers must be overridden by base class");
