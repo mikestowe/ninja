@@ -272,6 +272,8 @@ exports.Style = Montage.create(TreeNode, {
     templateDidLoad : {
         value: function() {
             this.delegate = this.treeView.contentController.delegate;
+
+            this.propertyField.hints = this.propertyNames;
         }
     },
 
@@ -312,6 +314,13 @@ exports.Style = Montage.create(TreeNode, {
         }
     },
 
+    setToolTips : {
+        value: function() {
+            this.propertyField.element.title = this.propertyField.value;
+            this.valueField.element.title = this.valueField.value;
+        }
+    },
+
     willDraw : {
         value: function() {
             if(this.invalid) {
@@ -319,6 +328,8 @@ exports.Style = Montage.create(TreeNode, {
             } else {
                 this._element.removeAttribute('title');
             }
+
+            this.setToolTips();
         }
     },
 

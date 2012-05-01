@@ -4,8 +4,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var cssPropertyNameList      = require("js/panels/CSSPanel/css-property-name-list").cssPropertyNameList,
-    cssCompletionMap         = require("js/panels/CSSPanel/css-value-completion-map").cssValueCompletionMap,
+var cssPropertyNameList      = require("js/panels/CSSPanel/css-property-name-list").CssPropertyNameList,
+    cssCompletionMap         = require("js/panels/CSSPanel/css-value-completion-map").CssValueCompletionMap,
     CSS_SHORTHAND_MAP        = require("js/panels/CSSPanel/css-shorthand-map").CSS_SHORTHAND_MAP,
     keyboardModule           = require("js/mediators/keyboard-mediator").Keyboard,
     nj                       = require("js/lib/NJUtils").NJUtils;

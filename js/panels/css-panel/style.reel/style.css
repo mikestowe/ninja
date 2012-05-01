@@ -110,6 +110,9 @@
     margin-right: -7px;
     right: -1px;
 }
+.style-item .hintable-hint {
+    color: #CCC;
+}
 
 /* ------------------------
   Empty Style (Add Style)
