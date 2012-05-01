@@ -637,7 +637,7 @@ var BrushStroke = function GLBrushStroke() {
             //build the stamp for the brush stroke
             var t=0;
             var numTraces = this._strokeWidth;
-            var halfNumTraces = numTraces/2;
+            var halfNumTraces = numTraces*0.5;
             var opaqueRegionHalfWidth = 0.5*this._strokeHardness*numTraces*0.01; //the 0.01 is to convert the strokeHardness from [0,100] to [0,1]
             var maxTransparentRegionHalfWidth = halfNumTraces-opaqueRegionHalfWidth;
 
@@ -658,21 +658,21 @@ var BrushStroke = function GLBrushStroke() {
             ctx.globalCompositeOperation = 'source-over';
             ctx.globalAlpha = this._strokeColor[3];
 
-
             for (t=0;t<numTraces;t++){
                 var disp = [brushStamp[t][0], brushStamp[t][1]];
                 var alphaVal = 1.0;
                 var distFromOpaqueRegion = Math.abs(t-halfNumTraces) - opaqueRegionHalfWidth;
                 if (distFromOpaqueRegion>0) {
-                    alphaVal = 1.0 - distFromOpaqueRegion/maxTransparentRegionHalfWidth;
-                    alphaVal *= 1.0/ctx.lineWidth; //factor that accounts for lineWidth !== 1
+                    var transparencyFactor = distFromOpaqueRegion/maxTransparentRegionHalfWidth;
+                    alphaVal = 1.0 - transparencyFactor;//(transparencyFactor*transparencyFactor);//the square term produces nonlinearly varying alpha values
                 }
                 ctx.save();
-                if (t === (numTraces-1)){
+                if (t === (numTraces-1) || t === 0){
                     ctx.lineWidth = 1;
                 } else {
                      //todo figure out the correct formula for the line width
                     ctx.lineWidth=2;
+                    alphaVal *= 0.5; //factor that accounts for lineWidth == 2
                 }
                 ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
                 //linearly interpolate between the two stroke colors
