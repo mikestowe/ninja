@@ -23,6 +23,11 @@ exports.HtmlDocument = Montage.create(Component, {
     model: {
         value: null
     },
+	////////////////////////////////////////////////////////////////////
+	//
+    loaded: {
+        value: {callback: null, context: null}
+    },
     ////////////////////////////////////////////////////////////////////
 	//
     _document: {
@@ -54,6 +59,9 @@ exports.HtmlDocument = Montage.create(Component, {
 	//
     init: {
         value:function(file, context, callback, view) {
+        	//
+        	this.loaded.callback = callback;
+        	this.loaded.context = context;
             //Creating instance of HTML Document Model
             this.model = Montage.create(HtmlDocumentModel,{
             	file: {value: file},
@@ -74,8 +82,7 @@ exports.HtmlDocument = Montage.create(Component, {
             	this.model.views.design.content = this.model.file.content;
             	//
             	this.model.views.design.render(function () {
-            		//Setting opacity to be viewable after load
-            		this.model.views.design.iframe.style.opacity = 1;
+            		
             		
             		
             		
@@ -84,19 +91,18 @@ exports.HtmlDocument = Montage.create(Component, {
             		this._document = this.model.views.design.document;
     				//TODO: Check for needed
             		this.documentRoot = this.model.views.design.document.body;
-            		//
+            		//TODO: Why is this needed?
             		this._liveNodeList = this.documentRoot.getElementsByTagName('*');
             		//
             		document.application.njUtils.makeElementModel(this.documentRoot, "Body", "body");
-            		
-            		
-            		
-            		
-            		this.hack = {callback: callback, context: context};
-            		
+            		//TODO: Figure out why timeout is needed
             		setTimeout(function () {
 	            		//Making callback after view is loaded
-    	        		this.hack.callback.call(this.hack.context, this);
+    	        		this.loaded.callback.call(this.loaded.context, this);
+    	        		//Setting opacity to be viewable after load
+    	        		setTimeout(function () {
+		            		this.model.views.design.iframe.style.opacity = 1;
+	            		}.bind(this), 1000);
             		}.bind(this), 1000);
             		
             		
