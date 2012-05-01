@@ -583,16 +583,23 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			// get a point that lies on the plane
 			var ptOnPlane = MathUtils.getPointOnPlane(this._workingPlane);
 
+            // define the grid parameters
+            var width,
+                height,
+                nLines = 10;
+
+            if(this.application.ninja.documentController.webTemplate) {
+                width = this.application.ninja.currentDocument.documentRoot.scrollWidth;
+                height = this.application.ninja.currentDocument.documentRoot.scrollHeight;
+            } else {
+                width = this.snapManager.getStageWidth();
+                height = this.snapManager.getStageHeight();
+            }
 			// get a matrix from working plane space to the world
 			var mat = this.getPlaneToWorldMatrix(zAxis, ptOnPlane);
-			var tMat = Matrix.Translation( [0.5*this.snapManager.getStageWidth(), 0.5*this.snapManager.getStageHeight(),0] );
+			var tMat = Matrix.Translation( [0.5*width, 0.5*height, 0] );
 			//mat = tMat.multiply(mat);
 			glmat4.multiply( tMat, mat, mat);
-
-			// define the grid parameters
-			var width = this.snapManager.getStageWidth(),
-				height = this.snapManager.getStageHeight();
-			var nLines = 10;
 
 			// the positioning of the grid may depend on the view direction.
 			var stage = this.snapManager.getStage();
@@ -662,6 +669,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 				var offset = this.viewUtils.getElementOffset(this._sourceSpaceElt);
 				offset[2] = 0;
 				this.viewUtils.setViewportObj(this._sourceSpaceElt);
+                var sourceSpaceMat = this.viewUtils.getLocalToGlobalMatrix( this._sourceSpaceElt );
 				for (var i = 0; i < nLines; i++) {
 					// transform the points from working plane space to world space
 					//var t0 = mat.multiply(p0),
@@ -671,8 +679,10 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 
 					// transform from world space to global screen space
 					if (this._sourceSpaceElt) {
-						t0 = this.viewUtils.localToGlobal(t0, this._sourceSpaceElt);
-						t1 = this.viewUtils.localToGlobal(t1, this._sourceSpaceElt);
+//						t0 = this.viewUtils.localToGlobal(t0, this._sourceSpaceElt);
+//						t1 = this.viewUtils.localToGlobal(t1, this._sourceSpaceElt);
+						t0 = this.viewUtils.localToGlobal2(t0, sourceSpaceMat);
+						t1 = this.viewUtils.localToGlobal2(t1, sourceSpaceMat);
 					}
 
 					// create a line from the endpoints
