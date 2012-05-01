@@ -657,11 +657,8 @@ var BrushStroke = function GLBrushStroke() {
             ctx.lineCap="butt";
             ctx.globalCompositeOperation = 'source-over';
             ctx.globalAlpha = this._strokeColor[3];
-            //todo figure out the correct formula for the line width
-            ctx.lineWidth=2;
-            if (t===numTraces-1){
-                ctx.lineWidth = 1;
-            }
+
+
             for (t=0;t<numTraces;t++){
                 var disp = [brushStamp[t][0], brushStamp[t][1]];
                 var alphaVal = 1.0;
@@ -671,6 +668,12 @@ var BrushStroke = function GLBrushStroke() {
                     alphaVal *= 1.0/ctx.lineWidth; //factor that accounts for lineWidth !== 1
                 }
                 ctx.save();
+                if (t === (numTraces-1)){
+                    ctx.lineWidth = 1;
+                } else {
+                     //todo figure out the correct formula for the line width
+                    ctx.lineWidth=2;
+                }
                 ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
                 //linearly interpolate between the two stroke colors
                 var currStrokeColor = VecUtils.vecInterpolate(4, this._strokeColor, this._secondStrokeColor, t/numTraces);
