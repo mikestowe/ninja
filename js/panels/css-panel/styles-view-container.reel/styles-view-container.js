@@ -29,6 +29,7 @@ exports.StylesViewContainer = Montage.create(Component, {
     templateDidLoad : {
         value: function() {
             this.eventManager.addEventListener('styleSheetsReady', this, false);
+            this.eventManager.addEventListener('elementChange', this, false);
         }
     },
     handleStyleSheetsReady: {
@@ -44,6 +45,13 @@ exports.StylesViewContainer = Montage.create(Component, {
 
             this.ruleListContainer.displayListForSelection(elements);
             this.hasStyles = true;
+        }
+    },
+    handleElementChange : {
+        value: function(e) {
+            if(e._event.detail.type !== 'cssChange') {
+                this.ruleListContainer.displayedList.component.update();
+            }
         }
     },
 

@@ -131,6 +131,18 @@ exports.Style = Montage.create(TreeNode, {
         }
     },
 
+    remove : {
+        value: function() {
+            var branchController = this.parentComponent.parentComponent.contentController;
+
+            ///// Remove style property from declaration
+            this.treeView.parentComponent.declaration.removeProperty(this.propertyField._preEditValue);
+
+            ///// Remove data from branch controller and update UI
+            branchController.removeObjects(this.sourceObject);
+        }
+    },
+
     getRule : {
         value: function() {
             return this.treeView.parentComponent.declaration.parentRule;
@@ -315,10 +327,16 @@ exports.Style = Montage.create(TreeNode, {
             if(this.empty) {
                 this.element.draggable = false;
                 this.element.classList.add('empty-css-style');
+                if(!this.addStyleButton.parentNode) {
+                    console.log("Adding style for ", this.propertyText);
+                    this.element.appendChild(this.addStyleButton);
+                    this.addStyleButton.addEventListener('click', this, false);
+                }
             } else {
                 this.element.draggable = true;
                 this.element.classList.remove('empty-css-style');
                 if(this.addStyleButton.parentNode) {
+                    console.log("Removing style for ", this.propertyText);
                     this.element.removeChild(this.addStyleButton);
                 }
             }

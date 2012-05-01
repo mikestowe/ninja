@@ -86,6 +86,15 @@ exports.CssStyleRule = Montage.create(Component, {
         }
     },
 
+    update: {
+        value: function() {
+            if(this.cssText !== this.rule.cssText) {
+                // TODO: add update for selector and stylesheet name
+                this.declarationComponent.update();
+            }
+        }
+    },
+
     templateDidLoad : {
         value: function() {
             //console.log("css style rule : template did load");
@@ -93,8 +102,11 @@ exports.CssStyleRule = Montage.create(Component, {
     },
     prepareForDraw : {
         value: function() {
-            this.selectorField.addEventListener('change', this, false);
-
+            if(this.rule.type === 'inline') {
+                this.selectorField.readOnly = true;
+            } else {
+                this.selectorField.addEventListener('change', this, false);
+            }
             //console.log("css style rule : prepare for draw");
 
         }

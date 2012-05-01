@@ -25,7 +25,7 @@ exports.RuleList = Montage.create(Component, {
             console.log('list: ', list);
             this._rules = list;
 
-            ///// remove previsouly added rules
+            ///// remove previously added rules
             if(this.childComponents){
                 this.childComponents.forEach(function(ruleComponent) {
                     this.removeRule(ruleComponent);
@@ -50,7 +50,10 @@ exports.RuleList = Montage.create(Component, {
         value: [],
         distinct: true
     },
-
+    rulesToRemove : {
+        value: [],
+        distinct: true
+    },
     addRule: {
         value: function(rule) {
             var componentBase = this.supportedRules[rule.type],
@@ -70,6 +73,14 @@ exports.RuleList = Montage.create(Component, {
             }
 
             return instance;
+        }
+    },
+
+    removeRule : {
+        value: function(rule) {
+            this.childComponents.splice(this.childComponents.indexOf(rule), 1);
+            this.rulesToRemove.push(rule);
+            this.needsDraw = true;
         }
     },
 
@@ -106,11 +117,18 @@ exports.RuleList = Montage.create(Component, {
             this.rulesToDraw.forEach(function(component) {
                 this.element.appendChild(component.element);
                 this._needsScrollToBottom = this.needsDraw = true;
+                this.childComponents.push(component);
                 component.needsDraw = true;
+            }, this);
+
+            //// Iterate through all rules that need draw and append them
+            this.rulesToRemove.forEach(function(component) {
+                this.element.removeChild(component.element);
             }, this);
 
             ///// Null out any rules that were just drawn
             this.rulesToDraw.length = 0;
+            this.rulesToRemove.length = 0;
         }
     }
 });

@@ -23,6 +23,12 @@ exports.StylesViewMediator = Montage.create(Component, {
 
     handleSelectorChange : {
         value: function(rule, newSelector, ruleComponent) {
+            if(newSelector === "") {
+                debugger;
+                ruleComponent.parentComponent.removeRule(ruleComponent);
+                return false;
+            }
+
             rule.selectorText = newSelector;
 
             ruleComponent.applied = this.ruleListContainer.displayedList.selection.every(function(el) {
@@ -103,6 +109,12 @@ exports.StylesViewMediator = Montage.create(Component, {
                 return false;
             }
 
+            if(property === '') {
+                style.remove();
+                this._dispatchChange(oldProperty, browserValue);
+                return false;
+            }
+
                 ///// Remove old property and add new one
             this.stylesController.deleteStyle(rule, oldProperty);
             browserValue = this.stylesController.setStyle(rule, property, value);
@@ -118,6 +130,12 @@ exports.StylesViewMediator = Montage.create(Component, {
     handleValueChange : {
         value: function(rule, property, value, style) {
             var browserValue, units;
+
+            if(value === '') {
+                style.remove();
+                this._dispatchChange(property, browserValue);
+                return false;
+            }
 
             ///// Auto-fill units if not provided and units
             ///// not previously stored
