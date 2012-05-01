@@ -104,6 +104,7 @@ exports.CssStyleRule = Montage.create(Component, {
         value: function() {
             if(this.rule.type === 'inline') {
                 this.selectorField.readOnly = true;
+                this.declarationComponent.type = 'inline';
             } else {
                 this.selectorField.addEventListener('change', this, false);
             }

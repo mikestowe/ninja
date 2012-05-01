@@ -145,7 +145,16 @@ exports.Style = Montage.create(TreeNode, {
 
     getRule : {
         value: function() {
-            return this.treeView.parentComponent.declaration.parentRule;
+            var declarationComponent = this.treeView.parentComponent,
+                rule;
+
+            if(declarationComponent.type === 'inline') {
+                rule = { style : declarationComponent.declaration }
+            } else {
+                rule = this.treeView.parentComponent.declaration.parentRule;
+            }
+
+            return rule;
         }
     },
 
