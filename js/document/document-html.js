@@ -18,25 +18,33 @@ exports.HtmlDocument = Montage.create(Component, {
 		enumerable: false,
         value: false
     },
-
+    ////////////////////////////////////////////////////////////////////
+	//
     model: {
+    	enumerable: false,
         value: null
     },
-
+	////////////////////////////////////////////////////////////////////
+	//
     loadDelegate: {
+    	enumerable: false,
         value: null
     },
-
+	////////////////////////////////////////////////////////////////////
+	//
     delegateContext: {
+    	enumerable: false,
         value: null
     },
-
+	////////////////////////////////////////////////////////////////////
+	//
     exclusionList: {
+    	enumerable: false,
         value: ["HTML", "BODY"]
     },
-
-    // Getters for the model.
-    // TODO: Change how these properties are accessed through Ninja
+	////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////
+	//TODO: Remove these setters/getters, should call model directly
     name: {
         get: function() {
             return this.model._name;
@@ -45,7 +53,7 @@ exports.HtmlDocument = Montage.create(Component, {
             this.model._name = value;
         }
     },
-
+    //
     isActive: {
         get: function() {
             return this.model._isActive;
@@ -54,7 +62,7 @@ exports.HtmlDocument = Montage.create(Component, {
             this.model._isActive = value;
         }
     },
-
+    //
     needsSave: {
         get: function() {
             return this.model._needsSave;
@@ -63,24 +71,42 @@ exports.HtmlDocument = Montage.create(Component, {
             this.model._needsSave = value;
         }
     },
-
-    // View Properties
-    // TODO: Move those into a view object - for now dump it here
-    iframe: {
-        value: null
-    },
-
+    //
     uuid: {
         get: function() {
             return this._uuid;
         }
     },
-
+    //
     currentView: {
         value: "design"
     },
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
+    //
+    iframe: { //MOVE TO: base.js in views
+        value: null 
+    },
+    //
+    createView: { //MOVE TO: design.js in views
+        value: function() {
+            var ifr = document.createElement("iframe");
+            //
+            ifr.id = "document_" + this._uuid;
+            ifr.style.border = "none";
+            ifr.style.background = "#FFF";
+            ifr.style.height = "100%";
+            ifr.style.width = "100%";
+            //
+            ifr.src = "js/document/templates/montage-web/index.html";
+            ifr.addEventListener("load", this.handleWebTemplateLoad.bind(this), true);
+			//
+            return document.getElementById("iframeContainer").appendChild(ifr);
+        }
+    },
+	////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////
+	//
     init: {
         value:function(file, context, callback) {
             this.model = Montage.create(HtmlDocumentModel, {
@@ -88,56 +114,18 @@ exports.HtmlDocument = Montage.create(Component, {
                     value: file
                 }
             });
-
             this.name = file.name;
-
-            // this.init(file.name, file.uri, file.extension, iframe, uuid, callback);
-
-
             this.iframe = this.createView();
-
-            //this.selectionExclude = ["HTML", "BODY", "Viewport", "UserContent", "stageBG"];
-            //this.currentView = "design";
-            //
-
             this.delegateContext = context;
             this.loadDelegate = callback;
         }
     },
-
-    // Create View
-    // Move this into a base view object
-    createView: {
-        value: function() {
-            var ifr = document.createElement("iframe");
-            ifr.id = "document_" + this._uuid;
-
-
-            ifr.style.border = "none";
-            ifr.style.background = "#FFF";
-            ifr.style.height = "100%";
-            ifr.style.width = "100%";
-
-            // TODO: Reable opacity to display only when done loading
-//            ifr.style.opacity = 0;
-
-            ifr.src = "js/document/templates/montage-web/index.html";
-            ifr.addEventListener("load", this.handleWebTemplateLoad.bind(this), true);
-
-            return document.getElementById("iframeContainer").appendChild(ifr);
-        }
-    },
-
+	////////////////////////////////////////////////////////////////////
+	//
     handleWebTemplateLoad: {
         value: function(event) {
             //TODO: Remove, also for prototyping
             this.application.ninja.documentController._hackRootFlag = true;
-
-
-            //TODO: Clean up, using for prototyping save
-//            this._templateDocument = {};
-//            this._templateDocument.html = this.iframe.contentWindow.document;
-//            this._templateDocument.body =
 
             this._window = this.iframe.contentWindow;
             this._document = this.iframe.contentWindow.document;

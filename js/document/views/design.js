@@ -7,7 +7,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 ////////////////////////////////////////////////////////////////////////
 //
 var Montage = 			require("montage/core/core").Montage,
-	Component = 		require("montage/ui/component").Component,
 	CodeDocumentView = 	require("js/document/views/code").CodeDocumentView;
 ////////////////////////////////////////////////////////////////////////
 //	
@@ -17,6 +16,54 @@ exports.DesignDocumentView = Montage.create(CodeDocumentView, {
 	hasTemplate: {
 		enumerable: false,
         value: false
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+	initiliaze: {
+		enumerable: false,
+        value: function () {
+        	//
+        }
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+	render: {
+		enumerable: false,
+        value: function () {
+        	//
+        }
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+    onTemplateLoad: {
+    	enumerable: false,
+        value: function () {
+        	//
+        }
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+    initCss: {
+    	enumerable: false,
+        value: function () {
+        	//
+        }
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+    initWebGl: {
+    	enumerable: false,
+        value: function () {
+        	//
+        }
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+    initMontage: {
+    	enumerable: false,
+        value: function () {
+        	//
+        }
     }
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
