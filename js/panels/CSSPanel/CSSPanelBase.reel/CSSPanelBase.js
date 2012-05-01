@@ -822,17 +822,14 @@ var CSSPanel = exports.CSSPanelBase = (require("montage/core/core").Montage).cre
     },
     getAllRelatedRules : {
         value: function(element) {
-            var pseudos = [null],//, 'link', 'visited', 'active', 'hover', 'focus', 'first-letter', 
-                            //'first-line', 'first-child', 'before', 'after', 'lang'],
-                rules = [],
+            var rules = [],
+                win = element.ownerDocument.defaultView,
                 self = this;
 
-            pseudos.forEach(function(pseudo) {
-                rules = rules.concat(nj.toArray(this.getMatchedCSSRules(element, ':'+pseudo)).filter(function(rule) {
-                    var sheetId = (rule.parentStyleSheet) ? rule.parentStyleSheet.ownerNode.id : null;
-                    return sheetId !== self._stageStyleSheetId;
-                }));
-            }, element.ownerDocument.defaultView);
+            rules = rules.concat(nj.toArray(win.getMatchedCSSRules(element)).filter(function(rule) {
+                var sheetId = (rule.parentStyleSheet) ? rule.parentStyleSheet.ownerNode.id : null;
+                return sheetId !== self._stageStyleSheetId;
+            }));
 
             return rules;
         }
