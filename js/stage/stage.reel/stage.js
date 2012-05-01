@@ -224,14 +224,6 @@ exports.Stage = Montage.create(Component, {
     // Event details will contain the active document prior to opening a new one
     handleOpenDocument: {
         value: function(evt) {
-            
-            var prevActiveDocument = evt.detail;
-            // Hide current document is one is open
-            if(prevActiveDocument) {
-                prevActiveDocument.container.style["display"] = "none";
-                if(prevActiveDocument.documentType === "htm" || prevActiveDocument.documentType === "html") this.hideCanvas(true);
-            }
-
             this.hideCanvas(false);
 
             // Recalculate the canvas sizes because of splitter resizing
@@ -239,29 +231,43 @@ exports.Stage = Montage.create(Component, {
             this._canvas.height = this._layoutCanvas.height = this._drawingCanvas.height = this.element.offsetHeight - 11;
 
             this._documentRoot = this.application.ninja.currentDocument.documentRoot;
-            this._viewport = this.application.ninja.currentDocument.documentRoot.parentNode;
-
-            this.documentOffsetLeft = this._viewport.offsetLeft;
-            this.documentOffsetTop = this._viewport.offsetTop;
-
-            // Center the stage
-            this.centerStage();
-
-            this._scrollLeft = this._iframeContainer.scrollLeft;
-            this._scrollTop = this._iframeContainer.scrollTop;
-            this.application.ninja.currentDocument.savedLeftScroll = this._iframeContainer.scrollLeft;
-            this.application.ninja.currentDocument.savedTopScroll = this._iframeContainer.scrollTop;
 
             // Hardcode this value so that it does not fail for the new stage architecture
             // TODO: Remove marker for old template: NINJA-STAGE-REWORK
-            this.userContentBorder = 1; //parseInt(this._documentRoot.elementModel.controller.getProperty(this._documentRoot, "border"));
+            if(this.application.ninja.currentDocument.documentRoot.id === "UserContent") {
+                this._viewport = this.application.ninja.currentDocument.documentRoot.parentNode;
 
-            this._userContentLeft = this._documentOffsetLeft - this._scrollLeft + this._userContentBorder;
-            this._userContentTop = this._documentOffsetTop - this._scrollTop + this._userContentBorder;
+                this.documentOffsetLeft = this._viewport.offsetLeft;
+                this.documentOffsetTop = this._viewport.offsetTop;
 
-            this.application.ninja.currentDocument.iframe.style.opacity = 1.0;
+                // Center the stage
+                this.centerStage();
 
-            this._iframeContainer.addEventListener("scroll", this, false);
+                this._scrollLeft = this._iframeContainer.scrollLeft;
+                this._scrollTop = this._iframeContainer.scrollTop;
+                this.application.ninja.currentDocument.savedLeftScroll = this._iframeContainer.scrollLeft;
+                this.application.ninja.currentDocument.savedTopScroll = this._iframeContainer.scrollTop;
+
+                this.userContentBorder = parseInt(this._documentRoot.elementModel.controller.getProperty(this._documentRoot, "border"));
+
+                this._userContentLeft = this._documentOffsetLeft - this._scrollLeft + this._userContentBorder;
+                this._userContentTop = this._documentOffsetTop - this._scrollTop + this._userContentBorder;
+
+                this._iframeContainer.addEventListener("scroll", this, false);
+
+                this.application.ninja.currentDocument.iframe.style.opacity = 1.0;
+            } else {
+                this.userContentBorder = 0;
+
+                this._scrollLeft = 0;
+                this._scrollTop = 0;
+                this._userContentLeft = 0;
+                this._userContentTop = 0;
+
+                this.application.ninja.currentDocument._window.addEventListener("scroll", this, false);
+            }
+
+
 
             // TODO - We will need to modify this once we support switching between multiple documents
             this.application.ninja.toolsData.selectedToolInstance._configure(true);
@@ -419,13 +425,10 @@ exports.Stage = Montage.create(Component, {
     handleSelectionChange: {
         value: function(event) {
             // TODO - this is a hack for now because some tools depend on selectionDrawn event for some logic
-            if(this.drawNow)
-            {
+            if(this.drawNow) {
                 this.draw();
                 this.drawNow = false;
-            }
-            else
-            {
+            } else {
                 this.needsDraw = true;
             }
         }
@@ -448,11 +451,20 @@ exports.Stage = Montage.create(Component, {
      */
     handleScroll: {
         value: function() {
-            this._scrollLeft = this._iframeContainer.scrollLeft;
-            this._scrollTop = this._iframeContainer.scrollTop;
+             // TODO: Remove marker for old template: NINJA-STAGE-REWORK
+            if(this.application.ninja.currentDocument.documentRoot.id === "UserContent") {
+                this._scrollLeft = this._iframeContainer.scrollLeft;
+                this._scrollTop = this._iframeContainer.scrollTop;
 
-            this.userContentLeft = this._documentOffsetLeft - this._scrollLeft + this._userContentBorder;
-            this.userContentTop = this._documentOffsetTop - this._scrollTop + this._userContentBorder;
+                this.userContentLeft = this._documentOffsetLeft - this._scrollLeft + this._userContentBorder;
+                this.userContentTop = this._documentOffsetTop - this._scrollTop + this._userContentBorder;
+            } else {
+                this._scrollLeft = this.application.ninja.currentDocument.documentRoot.scrollLeft;
+                this._scrollTop = this.application.ninja.currentDocument.documentRoot.scrollTop;
+
+                this.userContentLeft = -this._scrollLeft;
+                this.userContentTop = -this._scrollTop;
+            }
 
             // Need to clear the snap cache and set up the drag plane
             //snapManager.setupDragPlaneFromPlane( workingPlane );
@@ -461,7 +473,6 @@ exports.Stage = Montage.create(Component, {
             this.needsDraw = true;
             this.layout.draw();
             //this._toolsList.action("DrawHandles");
-
         }
     },
 
@@ -521,62 +532,59 @@ exports.Stage = Montage.create(Component, {
     },
 
     /**
-     * GetSelectableElement: Returns a selectable object (direct child of current container) at clicked point
+     * GetElement: Returns the element or selectable element under the X,Y coordinates passed as an obj with x,y
      *
-     * @param: X,Y
-     * @return: Returns the current container if the the X,Y hits an element in the exclusion list
+     * @param position: mouse event
+     * @param selectable (default == null) if true this will return the current container element
+     * @return: Returns the element or container or null if the the X,Y hits the exclusion list and tool cannot operate on stage
      */
-    GetSelectableElement: {
-        value: function(pos) {
-            var item = this.GetElement(pos);
-            if(this.application.ninja.currentDocument.inExclusion(item) !== -1) {
-                return this.application.ninja.currentSelectedContainer;
-            }
-            var activeContainerId = this.application.ninja.currentSelectedContainer.uuid;
-            if(item.parentNode.uuid === activeContainerId) {
-                return item;
-            } else {
-                var outerElement = item.parentNode;
+    getElement: {
+        value: function(position, selectable) {
+            var point, element;
 
-                while(outerElement.parentNode && outerElement.parentNode.uuid !== activeContainerId) {
-                    // If element is higher up than current container then return
-                    if(outerElement.id === "UserContent") return;
-                    // else keep going up the chain
-                    outerElement = outerElement.parentNode;
-                }
-
-                return outerElement;
-            }
-        }
-    },
-
-    /**
-     * GetElement: Returns the object under the X,Y coordinates passed as an obj with x,y
-     *
-     * @param: X,Y
-     * @return: Returns the Object or null if the the X,Y hits the exclusion list and tool cannot operate on stage
-     */
-    GetElement: {
-        value: function(pos) {
-            var point = webkitConvertPointFromPageToNode(this.canvas, new WebKitPoint(pos.pageX, pos.pageY)),
-                elt = this.application.ninja.currentDocument.GetElementFromPoint(point.x + this.scrollLeft,point.y + this.scrollTop);
+            point = webkitConvertPointFromPageToNode(this.canvas, new WebKitPoint(position.pageX, position.pageY));
+            element = this.application.ninja.currentDocument.GetElementFromPoint(point.x + this.scrollLeft,point.y + this.scrollTop);
 
             // workaround Chrome 3d bug
-            if(this.application.ninja.toolsData.selectedToolInstance._canSnap && this.application.ninja.currentDocument.inExclusion(elt) !== -1) {
-                return this._getElementUsingSnapping(point);
+            if(this.application.ninja.toolsData.selectedToolInstance._canSnap && this.application.ninja.currentDocument.inExclusion(element) !== -1) {
+                element = this.getElementUsingSnapping(point);
+            }
+
+            if(selectable) {
+
+                if(this.application.ninja.currentDocument.inExclusion(element) !== -1) {
+                    return this.application.ninja.currentSelectedContainer;
+                }
+
+                var activeContainerId = this.application.ninja.currentSelectedContainer.uuid;
+                if(element.parentNode.uuid === activeContainerId) {
+                    return element;
+                } else {
+                    var outerElement = element.parentNode;
+
+                    while(outerElement.parentNode && outerElement.parentNode.uuid !== activeContainerId) {
+                        // If element is higher up than current container then return
+                        if(outerElement.id === "UserContent") return;
+                            // else keep going up the chain
+                            outerElement = outerElement.parentNode;
+                        }
+
+                    return outerElement;
+                }
+
             } else {
-                return elt;
+                return element;
             }
         }
     },
 
     /**
-     * _getElementUsingSnapping: Returns the object at point using snap manager
+     * getElementUsingSnapping: Returns the object at point using snap manager
      *
      * @param: point
      * @return: Returns the Object in the user document under the point
      */
-    _getElementUsingSnapping: {
+    getElementUsingSnapping: {
         value: function(point) {
             this.stageDeps.snapManager.enableElementSnap( true );
             var hitRec = this.stageDeps.snapManager.snap(point.x, point.y, true);
@@ -694,7 +702,7 @@ exports.Stage = Montage.create(Component, {
 //            }
 
             var zoomFactor = 1;
-            if (this._viewport.style && this._viewport.style.zoom) {
+            if (this._viewport && this._viewport.style && this._viewport.style.zoom) {
 				zoomFactor = Number(this._viewport.style.zoom);
             }
 

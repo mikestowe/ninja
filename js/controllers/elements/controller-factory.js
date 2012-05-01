@@ -6,7 +6,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var Montage         = require("montage/core/core").Montage;
 
-var BlockController = require("js/controllers/elements/block-controller").BlockController,
+var BodyController = require("js/controllers/elements/body-controller").BodyController,
+    BlockController = require("js/controllers/elements/block-controller").BlockController,
     StageController = require("js/controllers/elements/stage-controller").StageController,
     ShapesController = require("js/controllers/elements/shapes-controller").ShapesController,
 	ImageController = require("js/controllers/elements/image-controller").ImageController,
@@ -27,6 +28,8 @@ exports.ControllerFactory = Montage.create(Montage, {
                     return BlockController;
                 } else if(value.indexOf("stage") !== -1) {
                     return StageController;
+                } else if(value.indexOf("body") !== -1) {
+                    return BodyController;
                 } else if(value.indexOf("shape") !== -1) {
                     return ShapesController;
                 } else if(value.indexOf("canvas") !== -1) {
