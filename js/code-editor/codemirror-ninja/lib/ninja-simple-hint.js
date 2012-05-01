@@ -1,3 +1,11 @@
+/* <copyright>
+This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+(c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+</copyright> */
+
+/* adopted from CodeMirror 2.23 (http://codemirror.net/) */
+
 (function() {
   CodeMirror.simpleHint = function(editor, getHints) {
     // We want a single cursor position.
