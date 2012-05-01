@@ -31,6 +31,11 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         	}
         }
     },
+    
+    _isFirstDraw: {
+    	value: true
+    },
+    
     _isVisible:{
         value: true
     },
@@ -448,6 +453,33 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                     }
                 }
             }
+            
+            
+    		if (this._isFirstDraw === true) {
+	    		
+	    		if (this.isMainCollapsed === false) {
+					this._mainCollapser.myContent.style.height = "auto";
+					this._mainCollapser.myContent.classList.remove(this._mainCollapser.collapsedClass);
+					this._mainCollapser.clicker.classList.remove(this._mainCollapser.collapsedClass);
+	    		}
+	    		if (this.isPositionCollapsed === false) {
+					this._positionCollapser.myContent.style.height = "auto";
+					this._positionCollapser.myContent.classList.remove(this._positionCollapser.collapsedClass);
+					this._positionCollapser.clicker.classList.remove(this._positionCollapser.collapsedClass);
+	    		}
+	    		if (this.isTransformCollapsed === false) {
+					this._transformCollapser.myContent.style.height = "auto";
+					this._transformCollapser.myContent.classList.remove(this._transformCollapser.collapsedClass);
+					this._transformCollapser.clicker.classList.remove(this._transformCollapser.collapsedClass);
+	    		}
+	    		if (this.isStyleCollapsed === false) {
+					this._styleCollapser.myContent.style.height = "auto";
+					this._styleCollapser.myContent.classList.remove(this._styleCollapser.collapsedClass);
+					this._styleCollapser.clicker.classList.remove(this._styleCollapser.collapsedClass);
+	    		}
+    			this._isFirstDraw = false;
+    		}
+            
         }
     },
 

@@ -471,7 +471,7 @@ var Layer = exports.Layer = Montage.create(Component, {
             this.dtextScaleX = this.layerData.dtextScaleX;
             this.dtextScaleY = this.layerData.dtextScaleY;
             this.dtextRotate = this.layerData.dtextRotate;
-            this._isFirstDraw = this.layerData._isFirstDraw;
+            //this._isFirstDraw = this.layerData._isFirstDraw;
             this.layerTag = this.layerData.layerTag;
             this.isVisible = this.layerData.isVisible;
             this.isAnimated = this.layerData.isAnimated;
@@ -545,6 +545,9 @@ var Layer = exports.Layer = Montage.create(Component, {
 			this.element.addEventListener("dragleave", this.handleDragleave.bind(this), false);
 			this.element.addEventListener("dragstart", this.handleDragstart.bind(this), false);
 			this.element.addEventListener("drop", this.handleDrop.bind(this), false);
+			
+
+
         }
     },
     draw: {
@@ -570,7 +573,33 @@ var Layer = exports.Layer = Montage.create(Component, {
     			}
     			this._isFirstDraw = false;
     			this.layerData._isFirstDraw = false;
+	    		
+	    		if (this.isMainCollapsed === false) {
+					this.mainCollapser.myContent.style.height = "auto";
+					this.mainCollapser.myContent.classList.remove(this.mainCollapser.collapsedClass);
+					this.mainCollapser.clicker.classList.remove(this.mainCollapser.collapsedClass);
+
+	    		}
+	    		if (this.isPositionCollapsed === false) {
+					this.positionCollapser.myContent.style.height = "auto";
+					this.positionCollapser.myContent.classList.remove(this.positionCollapser.collapsedClass);
+					this.positionCollapser.clicker.classList.remove(this.positionCollapser.collapsedClass);
+	    		}
+	    		if (this.isTransformCollapsed === false) {
+					this.transformCollapser.myContent.style.height = "auto";
+					this.transformCollapser.myContent.classList.remove(this.transformCollapser.collapsedClass);
+					this.transformCollapser.clicker.classList.remove(this.transformCollapser.collapsedClass);
+	    		}
+	    		if (this.isStyleCollapsed === false) {
+					this.styleCollapser.myContent.style.height = "auto";
+					this.styleCollapser.myContent.classList.remove(this.styleCollapser.collapsedClass);
+					this.styleCollapser.clicker.classList.remove(this.styleCollapser.collapsedClass);
+	    		}
+    			
     		}
+    		
+
+    		
     	}
     },
 	/* End: Draw cycle */
