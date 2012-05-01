@@ -704,7 +704,7 @@ var BrushStroke = function GLBrushStroke() {
             ctx.lineCap = "round";
             ctx.lineJoin="round";
             var minStrokeWidth = (this._strokeHardness*this._strokeWidth)/100; //the hardness is the percentage of the stroke width that's fully opaque
-            var numlayers = 1 + (this._strokeWidth-minStrokeWidth)/2;
+            var numlayers = 1 + Math.ceil((this._strokeWidth-minStrokeWidth)*0.5);
             var alphaVal = 1.0/(numlayers); //this way the alpha at the first path will be 1
             ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
             for (var l=0;l<numlayers;l++){
@@ -732,6 +732,16 @@ var BrushStroke = function GLBrushStroke() {
                     ctx.lineTo(p[0],p[1]);
                 }
                 ctx.lineWidth=2*l+minStrokeWidth;
+
+
+                //experiments with shadows
+                /*
+                ctx.shadowOffsetX = 10;
+                ctx.shadowOffsetY = 10;
+                ctx.shadowBlur    = 10;
+                ctx.shadowColor   = //"rgb("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+")";
+                    "#FF6666";  //or use rgb(red, green, blue)
+                 */
                 ctx.stroke();
             }//for every layer l
         } //if there is no calligraphic stroke
