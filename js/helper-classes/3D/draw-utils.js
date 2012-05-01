@@ -588,7 +588,8 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                 height,
                 nLines = 10;
 
-            if(this.application.ninja.documentController.webTemplate) {
+//            if(this.application.ninja.documentController.webTemplate) {
+            if(this.application.ninja.currentDocument.documentRoot.id !== "UserContent") {
                 width = this.application.ninja.currentDocument.documentRoot.scrollWidth;
                 height = this.application.ninja.currentDocument.documentRoot.scrollHeight;
             } else {
