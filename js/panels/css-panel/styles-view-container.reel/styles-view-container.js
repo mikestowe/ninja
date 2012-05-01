@@ -41,7 +41,10 @@ exports.StylesViewContainer = Montage.create(Component, {
         value: function() {
             var elements = this.application.ninja.selectedElements;
 
-            if(elements.length === 0) { return false; }
+            if(elements.length === 0) {
+                this.hasStyles = false;
+                return false;
+            }
 
             this.ruleListContainer.displayListForSelection(elements);
             this.hasStyles = true;
