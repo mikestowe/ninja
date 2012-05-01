@@ -15,35 +15,27 @@ exports.BaseDocumentView = Montage.create(Component, {
 	////////////////////////////////////////////////////////////////////
 	//
 	hasTemplate: {
-		enumerable: false,
         value: false
     },
     ////////////////////////////////////////////////////////////////////
 	//
-	parser: {
-		enumerable: false,
+	urlParser: {
         value: UrlParser
     },
 	////////////////////////////////////////////////////////////////////
 	//
 	_iframe: {
-		enumerable: false,
         value: null
     },
     ////////////////////////////////////////////////////////////////////
 	//
 	iframe: {
-		get: function() {
-            return this._iframe;
-        },
-        set: function(value) {
-            this._iframe= value;
-        }
+		get: function() {return this._iframe;},
+        set: function(value) {this._iframe= value;}
     },
    	////////////////////////////////////////////////////////////////////
 	//
 	show: {
-		enumerable: false,
         value: function (callback) {
         	if (this.iframe) {
         		this.iframe.style.display = 'block';
@@ -57,7 +49,6 @@ exports.BaseDocumentView = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
 	//
 	hide: {
-		enumerable: false,
         value: function (callback) {
         	if (this.iframe) {
         		this.iframe.style.display = 'none';

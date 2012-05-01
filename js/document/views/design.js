@@ -7,44 +7,85 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 ////////////////////////////////////////////////////////////////////////
 //
 var Montage = 			require("montage/core/core").Montage,
-	CodeDocumentView = 	require("js/document/views/code").CodeDocumentView;
+	BaseDocumentView = 	require("js/document/views/base").BaseDocumentView;
 ////////////////////////////////////////////////////////////////////////
 //	
-exports.DesignDocumentView = Montage.create(CodeDocumentView, {
+exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 	////////////////////////////////////////////////////////////////////
 	//
 	hasTemplate: {
-		enumerable: false,
         value: false
     },
     ////////////////////////////////////////////////////////////////////
 	//
+    _callback: {
+    	value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+	_document: {
+        value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+	content: {
+        value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+    document: {
+        get: function() {return this._document;},
+        set: function(value) {this._document = value;}
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
 	initiliaze: {
-		enumerable: false,
-        value: function () {
+        value: function (parent) {
         	//
+        	this.iframe = document.createElement("iframe");
+        	//
+        	this.iframe.style.border = "none";
+            this.iframe.style.background = "#FFF";
+            this.iframe.style.height = "100%";
+            this.iframe.style.width = "100%";
+            //
+            return parent.appendChild(this.iframe);
         }
     },
     ////////////////////////////////////////////////////////////////////
 	//
 	render: {
-		enumerable: false,
-        value: function () {
+        value: function (callback) {
         	//
+        	this._callback = callback;
+        	this.iframe.addEventListener("load", this.onTemplateLoad.bind(this), true);
+        	this.iframe.src = "js/document/templates/montage-web/index.html";
         }
     },
     ////////////////////////////////////////////////////////////////////
 	//
     onTemplateLoad: {
-    	enumerable: false,
-        value: function () {
+        value: function (e) {
         	//
+        	this.document = this.iframe.contentWindow.document;
+        	//
+        	
+        	
+        	
+        	
+        	//this.document.head.innerHTML += this.content.head;
+        	this.document.body.innerHTML = this.content.head + this.content.body;
+        	
+        	
+        	
+        	
+        	//
+        	if (this._callback) this._callback();
         }
     },
     ////////////////////////////////////////////////////////////////////
 	//
     initCss: {
-    	enumerable: false,
         value: function () {
         	//
         }
@@ -52,7 +93,6 @@ exports.DesignDocumentView = Montage.create(CodeDocumentView, {
     ////////////////////////////////////////////////////////////////////
 	//
     initWebGl: {
-    	enumerable: false,
         value: function () {
         	//
         }
@@ -60,11 +100,17 @@ exports.DesignDocumentView = Montage.create(CodeDocumentView, {
     ////////////////////////////////////////////////////////////////////
 	//
     initMontage: {
-    	enumerable: false,
         value: function () {
         	//
         }
-    }
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+    getElementFromPoint: {
+        value: function(x, y) {
+            return this.iframe.contentWindow.getElement(x,y);
+        }
+    },
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
 });

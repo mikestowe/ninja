@@ -7,117 +7,108 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 ////////////////////////////////////////////////////////////////////////
 //
 var Montage = 	        require("montage/core/core").Montage,
-	Component =         require("montage/ui/component").Component;
-    HtmlDocumentModel = require("js/document/models/html").HtmlDocumentModel;
+	Component =         require("montage/ui/component").Component,
+    HtmlDocumentModel = require("js/document/models/html").HtmlDocumentModel,
+    DesignDocumentView = require("js/document/views/design").DesignDocumentView;
 ////////////////////////////////////////////////////////////////////////
 //	
 exports.HtmlDocument = Montage.create(Component, {
 	////////////////////////////////////////////////////////////////////
 	//
 	hasTemplate: {
-		enumerable: false,
         value: false
     },
     ////////////////////////////////////////////////////////////////////
 	//
     model: {
-    	enumerable: false,
         value: null
     },
-	////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
 	//
-    loadDelegate: {
-    	enumerable: false,
-        value: null
-    },
-	////////////////////////////////////////////////////////////////////
-	//
-    delegateContext: {
-    	enumerable: false,
-        value: null
+    _document: {
+        value: null //TODO: Figure out if this will be needed, probably not
     },
 	////////////////////////////////////////////////////////////////////
 	//
     exclusionList: {
-    	enumerable: false,
-        value: ["HTML", "BODY"]
+        value: [] //TODO: Update to correct list
     },
 	////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////
-	//TODO: Remove these setters/getters, should call model directly
-    name: {
-        get: function() {
-            return this.model._name;
-        },
-        set: function(value) {
-            this.model._name = value;
-        }
-    },
-    //
-    isActive: {
-        get: function() {
-            return this.model._isActive;
-        },
-        set: function(value) {
-            this.model._isActive = value;
-        }
-    },
-    //
-    needsSave: {
-        get: function() {
-            return this.model._needsSave;
-        },
-        set: function(value) {
-            this.model._needsSave = value;
-        }
-    },
-    //
+	//
     uuid: {
         get: function() {
             return this._uuid;
         }
     },
-    //
-    currentView: {
-        value: "design"
-    },
-	////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////
-    //
-    iframe: { //MOVE TO: base.js in views
-        value: null 
-    },
-    //
-    createView: { //MOVE TO: design.js in views
-        value: function() {
-            var ifr = document.createElement("iframe");
-            //
-            ifr.id = "document_" + this._uuid;
-            ifr.style.border = "none";
-            ifr.style.background = "#FFF";
-            ifr.style.height = "100%";
-            ifr.style.width = "100%";
-            //
-            ifr.src = "js/document/templates/montage-web/index.html";
-            ifr.addEventListener("load", this.handleWebTemplateLoad.bind(this), true);
-			//
-            return document.getElementById("iframeContainer").appendChild(ifr);
+    ////////////////////////////////////////////////////////////////////
+	//
+    inExclusion: {
+        value: function(element) {
+            if(this.exclusionList.indexOf(element.nodeName) === -1) {
+                return -1;
+            }
+            return 1;
         }
     },
 	////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////
 	//
     init: {
-        value:function(file, context, callback) {
-            this.model = Montage.create(HtmlDocumentModel, {
-                file: {
-                    value: file
-                }
+        value:function(file, context, callback, view) {
+            //Creating instance of HTML Document Model
+            this.model = Montage.create(HtmlDocumentModel,{
+            	file: {value: file},
+            	views: {value: {'design': DesignDocumentView.create(), 'code': null}} //TODO: Add code view logic
             });
-            this.name = file.name;
-            this.iframe = this.createView();
-            this.delegateContext = context;
-            this.loadDelegate = callback;
+            //Initiliazing views and hiding
+           	if (this.model.views.design.initiliaze(document.getElementById("iframeContainer"))) {
+           		//Hiding iFrame, just initiliazing
+           		this.model.views.design.hide();
+           	} else {
+           		//ERROR: Design View not initilized
+           	}
+            //
+            if (view === 'design') {
+            	//Showing design iFrame
+            	this.model.views.design.show();
+            	this.model.views.design.iframe.style.opacity = 0;
+            	this.model.views.design.content = this.model.file.content;
+            	//
+            	this.model.views.design.render(function () {
+            		//Setting opacity to be viewable after load
+            		this.model.views.design.iframe.style.opacity = 1;
+            		
+            		
+            		
+            		
+            		//TODO: Identify and remove usage of '_document'
+            		this._document = this.model.views.design.document;
+    				//TODO: Check for needed
+            		this.documentRoot = this.model.views.design.document.body;
+            		//
+            		this._liveNodeList = this.documentRoot.getElementsByTagName('*');
+            		//
+            		document.application.njUtils.makeElementModel(this.documentRoot, "Body", "body");
+            		
+            		
+            		
+            		
+            		this.hack = {callback: callback, context: context};
+            		
+            		setTimeout(function () {
+	            		//Making callback after view is loaded
+    	        		this.hack.callback.call(this.hack.context, this);
+            		}.bind(this), 1000);
+            		
+            		
+            		
+            		
+            		
+            		
+            		
+            	}.bind(this));
+            } else {
+            	//TODO: Identify default view (probably code)
+            }
         }
     },
 	////////////////////////////////////////////////////////////////////
@@ -137,21 +128,9 @@ exports.HtmlDocument = Montage.create(Component, {
                 }
             }
 
-            // TODO: We don't need this anymore -> need to setup the main container still
-            //Adding a handler for the main user document reel to finish loading
-//            this.documentRoot.addEventListener("userTemplateDidLoad",  this.userTemplateDidLoad.bind(this), false);
-
             // Live node list of the current loaded document
             this._liveNodeList = this.documentRoot.getElementsByTagName('*');
-
-            // TODO Move this to the appropriate location
-            /*
-            var len = this._liveNodeList.length;
-
-            for(var i = 0; i < len; i++) {
-                NJUtils.makeModelFromElement(this._liveNodeList[i]);
-            }
-            */
+            
 
             setTimeout(function () {
 
@@ -321,32 +300,6 @@ exports.HtmlDocument = Montage.create(Component, {
 
 
             }.bind(this), 1000);
-        }
-    },
-
-    GetElementFromPoint: {
-        value: function(x, y) {
-            return this._window.getElement(x,y);
-        }
-    },
-
-    inExclusion: {
-        value: function(element) {
-            if(this.exclusionList.indexOf(element.nodeName) === -1) {
-                return -1;
-            }
-
-            return 1;
-
-        }
-    },
-
-    // Handler for user content main reel. Gets called once the main reel of the template
-    // gets deserialized.
-    // Setting up the currentSelectedContainer to the document body.
-    userTemplateDidLoad: {
-        value: function(){
-//            this.application.ninja.currentSelectedContainer = this.documentRoot;
         }
     }
 });
