@@ -72,10 +72,11 @@ exports.DrawingTool = Montage.create(ToolBase, {
             var snapData, point;
 
             this._isDrawing = true;
+            this.mouseDownHitRec = null;
             this.mouseUpHitRec = null;
 
             point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(event.pageX, event.pageY));
-            snapData = DrawingToolBase.getInitialSnapPoint(point.x, point.y); //event.layerX, event.layerY);
+            snapData = DrawingToolBase.getInitialSnapPoint(point.x, point.y, this._targetedElement); //event.layerX, event.layerY);
             this.mouseDownHitRec = snapData[0];
             this.downPoint.x = snapData[1];
             this.downPoint.y = snapData[2];
