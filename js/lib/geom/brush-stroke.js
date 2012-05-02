@@ -665,6 +665,7 @@ var BrushStroke = function GLBrushStroke() {
                 if (distFromOpaqueRegion>0) {
                     var transparencyFactor = distFromOpaqueRegion/maxTransparentRegionHalfWidth;
                     alphaVal = 1.0 - transparencyFactor;//(transparencyFactor*transparencyFactor);//the square term produces nonlinearly varying alpha values
+                    alphaVal *= 0.5; //factor that accounts for lineWidth == 2
                 }
                 ctx.save();
                 if (t === (numTraces-1) || t === 0){
@@ -672,7 +673,6 @@ var BrushStroke = function GLBrushStroke() {
                 } else {
                      //todo figure out the correct formula for the line width
                     ctx.lineWidth=2;
-                    alphaVal *= 0.5; //factor that accounts for lineWidth == 2
                 }
                 ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
                 //linearly interpolate between the two stroke colors
