@@ -233,7 +233,8 @@ exports.LineTool = Montage.create(ShapeTool, {
             var xOffset = ((left - canvas.offsetLeft + w/2) - canvas.width/2);
             var yOffset = (canvas.height/2 - (top - canvas.offsetTop + h/2));
 
-            var line = new Line(world, xOffset, yOffset, w, h, slope, strokeSize, strokeColor, strokeMaterial, strokeStyle, xAdj, yAdj);
+            var line = new Line();
+            line.init(world, xOffset, yOffset, w, h, slope, strokeSize, strokeColor, strokeMaterial, strokeStyle, xAdj, yAdj);
 
             world.addObject(line);
             world.render();
