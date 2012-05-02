@@ -11,9 +11,8 @@ exports.ElementController = Montage.create(Component, {
 
     addElement: {
         value: function(el, styles) {
-            this.application.ninja.currentDocument.documentRoot.appendChild(el);
-            // Nested elements - TODO make sure the CSS is correct before nesting elements
-            // this.application.ninja.currentSelectedContainer.appendChild(el);
+            this.application.ninja.currentSelectedContainer.appendChild(el);
+
             if(styles) {
                 this.application.ninja.stylesController.setElementStyles(el, styles);
             }

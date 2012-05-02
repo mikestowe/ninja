@@ -54,13 +54,25 @@ exports.NJUtils = Object.create(Object.prototype, {
             return document.createTextNode(text);
         }
     },
-    
+
     ///// Quick "createElement" function "attr" can be classname or object
     ///// with attribute key/values
-    ///// Suppor for data attributes
-    make : {
-        value: function(tag, attr) {
-            var el = document.createElement(tag);
+    ///// Support for data attributes
+    ///// Support user/ninja document
+    make: {
+        value: function(tag, attr, doc) {
+            var _doc, el;
+
+            _doc = doc ? doc._document : document;
+            el = _doc.createElement(tag);
+            this.decor(el, attr);
+
+            return el;
+        }
+    },
+    
+    decor: {
+        value: function(el, attr) {
             if (typeof attr === 'object') {
                 for (var a in attr) {
                     if (attr.hasOwnProperty(a)) {
@@ -74,8 +86,12 @@ exports.NJUtils = Object.create(Object.prototype, {
             } else if (typeof attr === 'string') {
                 el.className = (el.className + ' ' + attr).trim();
             }
-            
-            return el;
+        }
+    },
+
+    createModel: {
+        value: function(el) {
+            el.elementModel = Montage.create(ElementModel).initialize(el);
         }
     },
 
@@ -94,8 +110,6 @@ exports.NJUtils = Object.create(Object.prototype, {
     ///// TODO: find a different place for this function
     makeElementModel: {
         value: function(el, selection, controller, isShape) {
-            //el.elementModel = Montage.create(ElementModel).initialize(el.nodeName, selection, controller, isShape);
-
             var p3d = Montage.create(Properties3D);
 
             var shapeProps = null;

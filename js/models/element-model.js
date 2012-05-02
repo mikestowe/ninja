@@ -4,10 +4,11 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var Montage = require("montage/core/core").Montage,
-    Properties3D    = require("js/models/properties-3d").Properties3D,
-    ShapeModel    = require("js/models/shape-model").ShapeModel,
-    ControllerFactory   = require("js/controllers/elements/controller-factory").ControllerFactory;
+var Montage             = require("montage/core/core").Montage,
+    Properties3D        = require("js/models/properties-3d").Properties3D,
+    ShapeModel          = require("js/models/shape-model").ShapeModel,
+    ControllerFactory   = require("js/controllers/elements/controller-factory").ControllerFactory,
+    PiData              = require("js/data/pi/pi-data").PiData;
 
 exports.ElementModel = Montage.create(Montage, {
     key:            { value: "_model_"},
@@ -35,17 +36,47 @@ exports.ElementModel = Montage.create(Montage, {
     stroke:         { value: null },
 
     initialize: {
-        value: function(type, selection, controller, isShape) {
-            /*
-            this.type = type;
-            this.selection = selection;
+        value: function(el, isShape) {
+            var elementName, controller;
 
-            controller: { value: ControllerFactory.getController(controller)},
-            pi:         { value: pi},
-            props3D:    { value: p3d},
-            shapeModel: { value: shapeProps},
-            isShape:    { value: isShape}
-            */
+            elementName = el.nodeName.toLowerCase();
+            controller = this.elementNameToController(elementName);
+
+            this.type = el.nodeName;
+            this.selection = elementName;
+            this.controller = ControllerFactory.getController(controller);
+            this.pi = this.elementNameToPi(elementName);
+            this.props3D = Montage.create(Properties3D);
+
+            //shapeModel: { value: shapeProps},
+//            isShape:    { value: isShape}
+
+            return this;
+
+        }
+    },
+
+    elementNameToController: {
+        value: function(name) {
+            if(name === "div" || name === "custom") {
+                return "block";
+            } else if(name === "img") {
+                return "image";
+            } else {
+                return name;
+            }
+        }
+    },
+
+    elementNameToPi: {
+        value: function(name) {
+            var piString = name + "Pi";
+
+            if(!PiData.hasOwnProperty(piString)) {
+                piString = "blockPi";
+            }
+
+            return piString;
         }
     },
 

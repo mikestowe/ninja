@@ -37,11 +37,11 @@
     <body>
         <div id="tagProperties" class="subToolHolderPanel">
             <div id="tagToolContainer" class="tagRadioButtons">
-                <input type="radio" id="divTool" class="tag-type" title="Div Element" name="TagRadios" checked/>
-                <input type="radio" id="imageTool" class="tag-type" title="Image Element" name="TagRadios"/>
-                <input type="radio" id="videoTool" class="tag-type" title="Video Element" name="TagRadios"/>
-                <input type="radio" id="canvasTool" class="tag-type" title="Canvas Element" name="TagRadios"/>
-                <input type="radio" id="customTool" class="tag-type" title="Custom Element" name="TagRadios"/>
+                <input type="radio" id="divTool" data-montage-id="divTool" class="tag-type" title="Div Element" name="TagRadios" value="div" checked/>
+                <input type="radio" id="imageTool"  data-montage-id="imageTool" class="tag-type" title="Image Element" value="image" name="TagRadios"/>
+                <input type="radio" id="videoTool"  data-montage-id="videoTool" class="tag-type" title="Video Element" value="video" name="TagRadios"/>
+                <input type="radio" id="canvasTool" data-montage-id="canvasTool" class="tag-type" title="Canvas Element" value="canvas" name="TagRadios"/>
+                <input type="radio" id="customTool" data-montage-id="customTool" class="tag-type" title="Custom Element" value="custom" name="TagRadios"/>
 
                 <div class="nj-divider divider-vertical">&nbsp;</div>
 
@@ -67,10 +67,10 @@
                     <label class="label"> Position:</label>
 
                     <select id="positionCB" class="nj-skinned">
+                        <option>Static</option>
                         <option>Absolute</option>
                         <option>Relative</option>
                         <option>Fixed</option>
-                        <option>Static</option>
                         <option>Inherit</option>
                     </select>
 

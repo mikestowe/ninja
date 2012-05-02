@@ -13,18 +13,14 @@ var DrawingToolBase = require("js/tools/drawing-tool-base").DrawingToolBase;
 exports.TagTool = Montage.create(DrawingTool, {
     drawingFeedback: { value: { mode: "Draw3D", type: "rectangle" } },
 
-    _editSymbol: { value: null },
-
-    editSymbol:{
-        get: function() { return this._editSymbol; },
-        set: function(item) {
-            if(item) {
-//                stageManagerModule.stageManager.drawElementBoundingBox(item, true);
+    Configure: {
+        value: function(wasSelected) {
+            if(wasSelected) {
+                NJevent("enableStageMove");
+                this.application.ninja.stage.stageDeps.snapManager.setupDragPlaneFromPlane( workingPlane );
             } else {
-//                stageManagerModule.stageManager.drawSelectionRec(true);
+                NJevent("disableStageMove");
             }
-            
-            this._editSymbol = item;
         }
     },
 
@@ -59,11 +55,9 @@ exports.TagTool = Montage.create(DrawingTool, {
                 this._escape = false;
                 return;
             }
-            
-            var drawData, selectedItem;
 
             if(this._hasDraw) {
-                drawData =  this.getDrawingData();
+                var drawData =  this.getDrawingData();
 
                 if(drawData) {
                     this.insertElement(drawData);
@@ -72,82 +66,60 @@ exports.TagTool = Montage.create(DrawingTool, {
                 this._hasDraw = false;
                 this.endDraw(event);
             } else {
-                if(this.editSymbol) {
-                    this.insertElement();
-                } else {
-                    //selectedItem = this.doSelection(event);
-                    this.doSelection(event);
-                }
-
-                this._isDrawing = false;
+                this.doSelection(event);
             }
+
+            this._isDrawing = false;
         }
     },
 
-    HandleDoubleClick: {
-        value: function(event) {
-            /*
-            if(selectionManagerModule.selectionManager.isDocument) {
-                this.editSymbol = documentManagerModule.DocumentManager.activeDocument.documentRoot;
-            } else {
-                this.editSymbol = selectionManagerModule.selectionManager._selectedItems[0];
-            }
-            */
-        }
-    },
-
-    /* This will overwrite the existing function in drawing tool. Do not uncomment
-    HandleKeyPress: {
-        value: function(event) {
-            if(event.metaKey) {
-                // TODO fix this
-                if(selectionManagerModule.selectionManager.isDocument) {
-                    this.editSymbol = documentManagerModule.DocumentManager.activeDocument.documentRoot;
-                } else {
-                    this.editSymbol = selectionManagerModule.selectionManager._selectedItems[0];
-                }
-
-            }
-        }
-    },
-
-
-    HandleKeyUp: {
-        value: function(event) {
-            if(event.keyCode === 93 || event.keyCode === 91) {          // Command Keycode
-                this.editSymbol = null;
-            }
-        }
-    },
-    */
-
-    Configure: {
-        value: function(wasSelected) {
-            if(wasSelected) {
-                NJevent("enableStageMove");
-                this.application.ninja.stage.stageDeps.snapManager.setupDragPlaneFromPlane( workingPlane );
-            } else {
-                NJevent("disableStageMove");
-            }
-        }
-    },
-    
+    // TODO: Fix Classname
+    // TODO: Add position support
     insertElement: {
-        value: function(data) {
-            var element;
+        value: function(drawData) {
+            var element, styles;
 
-            // TODO Refactor into 1 function
-            if(data) {
-                // Get Tag & CSS -- ~~ shortcut for ABS
-                element = this.makeElement(~~data.width, ~~data.height, data.planeMat, data.midPt, this.makeTag());
-
-                // Insert Element
-                this.application.ninja.elementMediator.addElements(element.el, element.data);
+            // Create the element
+            if(this.options.selectedElement === "custom") {
+                element = document.application.njUtils.make(this.options.customName.value, null, this.application.ninja.currentDocument);
             } else {
-                element = this.makeStaticElement(this.makeTag());
-                this._insertStatic(this.editSymbol, element.el, element.style);
+                element = document.application.njUtils.make(this.options.selectedElement, null, this.application.ninja.currentDocument);
             }
 
+            // Create the model
+            document.application.njUtils.createModel(element);
+
+
+            // Create the styles
+            styles = this.makeStylesFromDraw(drawData);
+            if(element.nodeName === "CANVAS") {
+                element.width = parseInt(styles.width);
+                element.height = parseInt(styles.height);
+                delete styles['width'];
+                delete styles['height'];
+            }
+
+            // Add the element and styles
+            this.application.ninja.elementMediator.addElements(element, styles);
+        }
+    },
+
+    makeStylesFromDraw: {
+        value: function(drawData) {
+            var styles = {};
+
+            styles['position'] = "absolute";
+            styles['left'] = (Math.round(drawData.midPt[0] - 0.5 * ~~drawData.width)) - this.application.ninja.currentSelectedContainer.offsetLeft + 'px';
+            styles['top'] = (Math.round(drawData.midPt[1] - 0.5 * ~~drawData.height)) - this.application.ninja.currentSelectedContainer.offsetTop + 'px';
+            styles['width'] = ~~drawData.width + 'px';
+            styles['height'] = ~~drawData.height + 'px';
+
+            if(!MathUtils.isIdentityMatrix(drawData.planeMat)) {
+                styles['-webkit-transform-style'] = 'preserve-3d';
+                styles['-webkit-transform'] = DrawingToolBase.getElementMatrix(drawData.planeMat, drawData.midPt);
+            }
+
+            return styles;
         }
     },
 
@@ -157,17 +129,17 @@ exports.TagTool = Montage.create(DrawingTool, {
 
             selectedTag = this.options.selectedElement;
 
-            if(selectedTag === "divTool") {
+            if(selectedTag === "div") {
                 newTag = NJUtils.makeNJElement("div", "div", "block");
-            } else if(selectedTag === "imageTool") {
+            } else if(selectedTag === "image") {
                 newTag = NJUtils.makeNJElement("image", "image", "image");
-            } else if(selectedTag === "videoTool") {
+            } else if(selectedTag === "video") {
                 newTag = NJUtils.makeNJElement("video", "video", "video", {
                         innerHTML: "Your browser does not support the VIDEO element."
                 });
-            } else if(selectedTag === "canvasTool") {
+            } else if(selectedTag === "canvas") {
                 newTag = NJUtils.makeNJElement("canvas", "canvas", "canvas");
-            } else if(selectedTag === "customTool") {
+            } else if(selectedTag === "custom") {
                 newTag = NJUtils.makeNJElement(this.options.customName.value, this.options.customName.value, "block");
             }
             /* SWF Tag tool - Not used for now. Will revisit this at a later time.
@@ -222,13 +194,13 @@ exports.TagTool = Montage.create(DrawingTool, {
 
     makeElement: {
         value: function(w, h, planeMat, midPt, tag, isShape) {
-            var left = Math.round(midPt[0] - 0.5 * w);
-            var top = Math.round(midPt[1] - 0.5 * h);
+            var left = (Math.round(midPt[0] - 0.5 * w)) - this.application.ninja.currentSelectedContainer.offsetLeft + 'px';
+            var top = (Math.round(midPt[1] - 0.5 * h)) - this.application.ninja.currentSelectedContainer.offsetTop + 'px';
 
             var styles = {
                 'position': 'absolute',
-                'top' : top + 'px',
-                'left' : left + 'px'
+                'top' : top,
+                'left' : left
             };
 
             if(!MathUtils.isIdentityMatrix(planeMat)) {
@@ -249,23 +221,6 @@ exports.TagTool = Montage.create(DrawingTool, {
             }
 
             return {el: tag, data:styles};
-        }
-    },
-
-    makeStaticElement: {
-        value: function(tag) {
-            var styles = {
-                "-webkit-transform-style": "preserve-3d",
-                "-webkit-transform": "matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)"
-            };
-            tag.innerHTML = "content";
-
-            return {el: tag, data:styles};
-        }
-    },
-
-    _insertStatic: {
-        value: function(parent, tag, style) {
         }
     }
 });
