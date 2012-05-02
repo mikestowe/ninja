@@ -82,43 +82,71 @@ exports.HtmlDocument = Montage.create(Component, {
             	this.model.views.design.content = this.model.file.content;
             	//
             	this.model.views.design.render(function () {
-            		
-            		
-            		
-            		
-            		
             		//TODO: Identify and remove usage of '_document'
             		this._document = this.model.views.design.document;
     				//TODO: Check for needed
             		this.documentRoot = this.model.views.design.document.body;
             		//TODO: Why is this needed?
             		this._liveNodeList = this.documentRoot.getElementsByTagName('*');
-            		//
+            		//Initiliazing document model
             		document.application.njUtils.makeElementModel(this.documentRoot, "Body", "body");
-            		//TODO: Figure out why timeout is needed
-            		setTimeout(function () {
-	            		//Making callback after view is loaded
-    	        		this.loaded.callback.call(this.loaded.context, this);
-    	        		//Setting opacity to be viewable after load
-    	        		setTimeout(function () {
-		            		this.model.views.design.iframe.style.opacity = 1;
-	            		}.bind(this), 1000);
-            		}.bind(this), 1000);
-            		
-            		
-            		
-            		
-            		
-            		
-            		
+            		//Adding event to know when template is ready
+            		this.model.views.design.document.head.addEventListener('DOMSubtreeModified', this.handleTemplateReady.bind(this), false);
             	}.bind(this));
             } else {
             	//TODO: Identify default view (probably code)
             }
         }
     },
-	////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
 	//
+    handleTemplateReady: {
+    	value: function (e) {
+    		//Removing event listener, a must for this type of event
+    		this.model.views.design.document.head.removeEventListener('DOMSubtreeModified', this.handleTemplateReady.bind(this), false);
+    		//Making callback after view is loaded
+    	    this.loaded.callback.call(this.loaded.context, this);
+    	    //Setting opacity to be viewable after load
+		   	this.model.views.design.iframe.style.opacity = 1;
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+	
+	
     handleWebTemplateLoad: {
         value: function(event) {
             //TODO: Remove, also for prototyping

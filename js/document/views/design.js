@@ -28,6 +28,11 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     },
     ////////////////////////////////////////////////////////////////////
 	//
+	_headFragment: {
+        value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
 	content: {
         value: null
     },
@@ -69,19 +74,37 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         	//
         	this.document = this.iframe.contentWindow.document;
         	//
-        	
-        	
-        	
-        	
-        	//this.document.head.innerHTML += this.content.head;
-        	this.document.body.innerHTML = this.content.head + this.content.body;
-        	
-        	
-        	
-        	
+        	this._headFragment = this.document.createElement('head');
+        	this._headFragment.addEventListener('DOMSubtreeModified', this.insertHeadContent.bind(this), false);
+        	this._headFragment.innerHTML = this.content.head;   	
         	//
-        	if (this._callback) this._callback();
+        	this.document.body.addEventListener('DOMSubtreeModified', this.bodyContentLoaded.bind(this), false);
+        	this.document.body.innerHTML += this.content.body;
         }
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+    bodyContentLoaded: {
+    	value: function (e) {
+    		//
+    		this.document.body.removeEventListener('DOMSubtreeModified', this.bodyContentLoaded.bind(this), false);
+    		//
+    		if (this._callback) this._callback();
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+    insertHeadContent: {
+    	value: function (e) {
+    		//
+    		this._headFragment.removeEventListener('DOMSubtreeModified', this.insertHeadContent, false);
+    		//
+    		for(var i in this._headFragment.childNodes) {
+	        	if(this._headFragment.childNodes[i].outerHTML) {
+        			this.document.head.appendChild(this._headFragment.childNodes[i]);
+        		}
+        	}
+    	}
     },
     ////////////////////////////////////////////////////////////////////
 	//
