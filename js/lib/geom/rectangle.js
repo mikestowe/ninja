@@ -158,7 +158,7 @@ exports.Rectangle = Object.create(GeomObj, {
     },
 
     setTLRadius: {
-        value: function(w) {
+        value: function(r) {
             this._tlRadius = Math.min(r, (this._height - this._strokeWidth)/2, (this._width - this._strokeWidth)/2);
         }
     },
@@ -170,7 +170,7 @@ exports.Rectangle = Object.create(GeomObj, {
     },
 
     setTRRadius: {
-        value: function(w) {
+        value: function(r) {
             this._trRadius = Math.min(r, (this._height - this._strokeWidth)/2, (this._width - this._strokeWidth)/2);
         }
     },
@@ -182,7 +182,7 @@ exports.Rectangle = Object.create(GeomObj, {
     },
 
     setBLRadius: {
-        value: function(w) {
+        value: function(r) {
             this._blRadius = Math.min(r, (this._height - this._strokeWidth)/2, (this._width - this._strokeWidth)/2);
         }
     },
@@ -194,7 +194,7 @@ exports.Rectangle = Object.create(GeomObj, {
     },
 
     setBRRadius: {
-        value: function(w) {
+        value: function(r) {
             this._brRadius = Math.min(r, (this._height - this._strokeWidth)/2, (this._width - this._strokeWidth)/2);
         }
     },
@@ -1280,13 +1280,6 @@ RectangleGeometry.pushUV		= RectangleFill.pushUV;
 RectangleGeometry.pushIndices	= RectangleFill.pushIndices;
 RectangleGeometry.getVertex		= RectangleFill.getVertex;
 RectangleGeometry.getUV			= RectangleFill.getUV;
-
-
-Rectangle.prototype = new GeomObj();
-
-if (typeof exports === "object") {
-    exports.Rectangle = Rectangle;
-}
 
 
 
