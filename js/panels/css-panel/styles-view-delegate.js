@@ -24,7 +24,7 @@ exports.StylesViewMediator = Montage.create(Component, {
     handleSelectorChange : {
         value: function(rule, newSelector, ruleComponent) {
             if(newSelector === "") {
-                debugger;
+                //debugger;
                 ruleComponent.parentComponent.removeRule(ruleComponent);
                 return false;
             }
@@ -92,12 +92,55 @@ exports.StylesViewMediator = Montage.create(Component, {
         }
     },
 
-    handleStyleStop: {
-        value: function(e) {
-            console.log("Handle Style Stop");
-            //debugger;
-            if(e._event.detail.type === 'keydown') {
+    handlePropertyStop: {
+        value: function(e, style) {
+            var key, nextFocus;
 
+            console.log("Handle Style Stop");
+
+            if(e._event.detail.type === 'keydown') {
+                key = e._event.detail.keyCode;
+
+                if(key === Keyboard.ENTER || key === Keyboard.TAB) {
+                    e._event.detail.preventDefault();
+
+                    if(e._event.detail.shiftKey) {
+                        nextFocus = style.getSiblingStyle('prev') || style.getSiblingStyle('last');
+                        nextFocus.valueField.start();
+                    } else {
+                        style.valueField.start();
+                    }
+                }
+            }
+        }
+    },
+    handleValueStop: {
+        value: function(e, style) {
+            var key, nextFocus
+            console.log("Handle Value Stop");
+            console.log("Editing new style: ", style.editingNewStyle);
+
+            if(e._event.detail.type === 'keydown') {
+                key = e._event.detail.keyCode;
+
+                if(key === Keyboard.ENTER || key === Keyboard.TAB) {
+                    e._event.detail.preventDefault();
+
+                    if(e._event.detail.shiftKey) {
+                        style.propertyField.start();
+                    } else {
+                        nextFocus = style.getSiblingStyle('next');
+                        if(nextFocus) {
+                            nextFocus.propertyField.start();
+                        } else {
+                            style.treeView.parentComponent.addNewStyleAfter(style);
+                            style.editingNewStyle = false;
+                            setTimeout(function() {
+                                style.getSiblingStyle('next').propertyField.start();
+                            }, 50);
+                        }
+                    }
+                }
             }
         }
     },

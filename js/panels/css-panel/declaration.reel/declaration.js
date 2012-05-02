@@ -9,6 +9,9 @@ var Montage = require("montage/core/core").Montage,
     ShorthandProps = require("js/panels/CSSPanel/css-shorthand-map");
 
 exports.Declaration = Montage.create(Component, {
+    cssText : {
+        value: null
+    },
     focusDelegate : {
         value: null
     },
@@ -42,6 +45,8 @@ exports.Declaration = Montage.create(Component, {
         set: function(dec) {
             this._declaration = dec;
 
+            this.cssText = dec.cssText;
+
             ///// creates data structure to use with tree component
             this.buildStyleTree();
 
@@ -52,8 +57,31 @@ exports.Declaration = Montage.create(Component, {
                     "isEmpty": true
                 });
             }
-//debugger;
+
             this.needsDraw = true;
+        }
+    },
+
+    update : {
+        value: function() {
+            if(this.declaration.cssText !== this.cssText) {
+                ///// Needs update
+                this.treeController.branchControllers[0].content.forEach(function(obj) {
+                    this.treeController.branchControllers[0].removeObjects(obj);
+                }, this );
+
+                this.buildStyleTree();
+
+                if(this.includeEmptyStyle) {
+                    this.styleTree.properties.push({
+                        "name": "property",
+                        "value" : "value",
+                        "isEmpty": true
+                    });
+                }
+//debugger;
+                this.needsDraw = true;
+            }
         }
     },
 
@@ -124,8 +152,6 @@ exports.Declaration = Montage.create(Component, {
 
     addNewStyleAfter : {
         value: function(style) {
-            //this.treeController.branchControllers[0].addObjects({
-            foo1 = style.parentComponent.parentComponent;
             style.parentComponent.parentComponent.contentController.addObjects({
                 name: 'property',
                 value: 'value',

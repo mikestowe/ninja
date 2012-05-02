@@ -90,7 +90,7 @@ exports.CssStyleRule = Montage.create(Component, {
         value: function() {
             if(this.cssText !== this.rule.cssText) {
                 // TODO: add update for selector and stylesheet name
-                this.declarationComponent.update();
+                //this.declarationComponent.update();
             }
         }
     },

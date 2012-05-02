@@ -8,27 +8,14 @@ var Montage = require("montage/core/core").Montage,
     TreeNode = require("js/components/treeview/tree-node").TreeNode;
 
 exports.Style = Montage.create(TreeNode, {
-    delegate : {
-        value: null
-    },
-    disabledClass : {
-        value: 'style-item-disabled'
-    },
-    editingStyleClass : {
-        value: 'edit-style-item'
-    },
-    editNewEmptyClass : {
-        value: 'edit-empty-style'
-    },
-    invalidStyleClass : {
-        value: "style-item-invalid"
-    },
-    propertyText : {
-        value: "property"
-    },
-    _valueText : {
-        value: "value"
-    },
+    delegate          : { value: null },
+    disabledClass     : { value: 'style-item-disabled' },
+    editingStyleClass : { value: 'edit-style-item' },
+    editNewEmptyClass : { value: 'edit-empty-style' },
+    invalidStyleClass : { value: "style-item-invalid" },
+
+    propertyText : { value: "property" },
+    _valueText : { value: "value" },
     valueText : {
         get: function() {
             return this._valueText;
@@ -158,6 +145,27 @@ exports.Style = Montage.create(TreeNode, {
         }
     },
 
+    getSiblingStyle : {
+        value: function(which) {
+            var styles = this.parentComponent.parentComponent.childComponents.map(function(sub){
+                    return sub.childComponents[0];
+                }),
+                index = styles.indexOf(this);
+
+            switch (which) {
+                case "first":
+                    return styles[0];
+                case "last":
+                    return styles[styles.length-1];
+                case "next":
+                    return (index+1 < styles.length) ? styles[index+1] : null;
+                case "prev":
+                    return (index-1 >= 0) ? styles[index-1] : null;
+            }
+        }
+    },
+
+
     handleEvent : {
         value: function(e) {
             console.log(e);
@@ -206,11 +214,15 @@ exports.Style = Montage.create(TreeNode, {
     handleStart : {
         value: function(e) {
             this.editing = true;
+
+            if(this.empty) {
+                this.editingNewStyle = true;
+            }
         }
     },
 
     //// Handler for both hintable components
-    handleStop : {
+    handlePropertyStop : {
         value: function(e) {
             var event = e;
             ///// Function to determine if an empty (new) style should return
@@ -231,7 +243,32 @@ exports.Style = Montage.create(TreeNode, {
                 this.editingNewStyle = false;
             }
 
-            this.delegate.handleStyleStop(e);
+            this.delegate.handlePropertyStop(e, this);
+        }
+    },
+    //// Handler for both hintable components
+    handleValueStop : {
+        value: function(e) {
+            var event = e;
+            ///// Function to determine if an empty (new) style should return
+            ///// to showing the add button, i.e. the fields were not clicked
+            function fieldsClicked() {
+                var clicked;
+                if(e._event.detail.originalEventType === 'mousedown') {
+                    clicked = e._event.detail.originalEvent.target;
+                    return clicked === this.propertyField.element || clicked === this.valueField.element;
+                }
+                return false;
+            }
+
+            this.editing = false;
+
+            if(this.sourceObject.isEmpty && !this.dirty && !fieldsClicked.bind(this)()) {
+                ///// Show add button
+                this.editingNewStyle = false;
+            }
+
+            this.delegate.handleValueStop(e, this);
         }
     },
 
