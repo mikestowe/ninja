@@ -348,6 +348,23 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         value:null
     },
 
+	// Drag and Drop properties
+    _dragAndDropHelper : {
+    	value: false
+    },
+    _dragAndDropHelperCoords: {
+    	value: false
+    },
+    _dragAndDropHelperOffset : {
+    	value: false
+    },
+    _appendHelper: {
+    	value: false
+    },
+    _deleteHelper: {
+    	value: false
+    },
+
     _trackData:{
 		value: false
     },
@@ -424,6 +441,11 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.ninjaStylesContoller = this.application.ninja.stylesController;
             this.element.addEventListener("click", this, false);
             this.eventManager.addEventListener("tlZoomSlider", this, false);
+            
+			this.element.addEventListener("dragover", this.handleKeyframeDragover.bind(this), false);
+			this.element.addEventListener("dragstart", this.handleKeyframeDragstart.bind(this), false);
+			this.element.addEventListener("dragend", this.handleKeyframeDragend.bind(this), false);
+			this.element.addEventListener("drop", this.handleKeyframeDrop.bind(this), false);
         }
     },
 
@@ -436,6 +458,53 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 	                this.animatedElement = this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList[0];
 	            }
             }
+            
+            
+            
+            
+            
+            
+            
+            
+    		// Drag and Drop:
+    		// Do we have a helper to append?
+            if (this._appendHelper === true) {
+            	this.track_lanes.appendChild(this._dragAndDropHelper);
+            	this._appendHelper = false;
+            }
+            // Do we need to move the helper?
+    		if (this._dragAndDropHelperCoords !== false) {
+    			if (this._dragAndDropHelper !== null) {
+    				if (typeof(this._dragAndDropHelper.style) !== "undefined") {
+    					this._dragAndDropHelper.style.left = this._dragAndDropHelperCoords;
+    				}
+    			}
+    			this._dragAndDropHelperCoords = false;
+    		}
+    		// Do we have a helper to delete?
+    		if (this._deleteHelper === true) {
+    			if (this._dragAndDropHelper === null) {
+    				// Problem....maybe a helper didn't get appended, or maybe it didn't get stored.
+    				// Try and recover the helper so we can delete it.
+    				var myHelper = this.element.querySelector(".track-dnd-helper");
+    				if (myHelper != null) {
+    					this._dragAndDropHelper = myHelper;
+    				}
+    			}
+	            if (this._dragAndDropHelper !== null) {
+	            	// We need to delete the helper.  Can we delete it from track_lanes?
+	            	if (this._dragAndDropHelper && this._dragAndDropHelper.parentNode === this.track_lanes) {
+	            		this.track_lanes.removeChild(this._dragAndDropHelper);
+	            		this._dragAndDropHelper = null;
+	            		this._deleteHelper = false;
+	            	}
+	            }
+    		}
+            
+            
+            
+            
+            
 
         }
     },
@@ -762,6 +831,92 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 			return returnVal;
     	}
     },
+    
+    // Drag and drop event handlers
+    handleKeyframeDragstart : {
+    	value: function(event) {
+            var dragIcon = document.createElement("img");
+            event.dataTransfer.effectAllowed = 'move';
+            event.dataTransfer.setData('Text', this.identifier);
+            dragIcon.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjEwMPRyoQAAAA1JREFUGFdj+P//PwMACPwC/ohfBuAAAAAASUVORK5CYII="
+            dragIcon.width = 1;
+            event.dataTransfer.setDragImage(dragIcon, 0, 0);
+            
+            // Clone the element we're dragging
+            this._dragAndDropHelper = event.target.cloneNode(true);
+            this._dragAndDropHelper.style.opacity = 0.8;
+            this._dragAndDropHelper.style.position = "absolute";
+            this._dragAndDropHelper.style.top = "2px";
+            this._dragAndDropHelper.style.left = "0px";
+            this._dragAndDropHelper.style.zIndex = 700;
+            
+            //this._dragAndDropHelper.style.width = window.getComputedStyle(this.container_layers, null).getPropertyValue("width");
+            this._dragAndDropHelper.classList.add("track-dnd-helper");
+            
+            // Get the offset 
+    		var findYOffset = function(obj) {
+				var curleft = curtop = 0;
+				
+				if (obj.offsetParent) {
+					do {
+							curleft += obj.offsetLeft;
+							curtop += obj.offsetTop;
+				
+						} while (obj = obj.offsetParent);
+				}
+				return curtop;
+    		}
+    		//this._dragAndDropHelperOffset = findYOffset(this.container_layers);
+    		this._appendHelper = true;
+    		this._deleteHelper = false;
+    	}
+    },
+    handleKeyframeDragover: {
+    	value: function(event) {
+    		var currPos = 0;
+    		/*
+    			myScrollTest = ((event.y - (this._dragAndDropHelperOffset - this.user_layers.scrollTop)) + 28) - this.user_layers.scrollTop;
+    		if ((myScrollTest < 60) && (this.user_layers.scrollTop >0)) {
+    			this._scrollTracks = (this.user_layers.scrollTop - 10)
+    		}
+    		if ((myScrollTest < 50) && (this.user_layers.scrollTop >0)) {
+    			this._scrollTracks = (this.user_layers.scrollTop - 20)
+    		}
+    		if ((myScrollTest > (this.user_layers.clientHeight + 10))) {
+    			this._scrollTracks = (this.user_layers.scrollTop + 10)
+    		}
+    		if ((myScrollTest > (this.user_layers.clientHeight + 20))) {
+    			this._scrollTracks = (this.user_layers.scrollTop + 20)
+    			
+    		}
+    		*/
+    		//currPos = event.y - (this._dragAndDropHelperOffset - this.user_layers.scrollTop)- 28;
+    		currPos = event.x - 280;
+    		this._dragAndDropHelperCoords = currPos + "px";
+    		this.needsDraw = true;
+    	}
+    },
+	
+    handleKeyframeDragend : {
+    	value: function(event) {
+    		this._deleteHelper = true;
+    		this.needsDraw = true;
+           
+    	}
+    },
+    
+	handleKeyframeDrop : {
+		value: function(event) {
+			event.stopPropagation();
+			//this.element.classList.remove("dragOver");
+			//if (this.parentComponent.parentComponent.dragLayerID !== this.layerID) {
+				//this.parentComponent.parentComponent.dropLayerID = this.layerID;
+			//}
+			return false;
+		}
+	},
+    
+    
 	/* Begin: Logging routines */
     _boolDebug: {
     	enumerable: false,

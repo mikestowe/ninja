@@ -336,6 +336,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.container_layers.addEventListener("dragstart", this.handleLayerDragStart.bind(this), false);
             this.container_layers.addEventListener("dragend", this.handleLayerDragEnd.bind(this), false);
             this.container_layers.addEventListener("dragover", this.handleLayerDragover.bind(this), false);
+            //this.container_tracks.addEventListener("dragover", this.handleKeyframeDragover.bind(this), false);
             this.container_layers.addEventListener("drop", this.handleLayerDrop.bind(this), false);
             
             // Bind the handlers for the config menu
@@ -1469,6 +1470,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		currPos = event.y - (this._dragAndDropHelperOffset - this.user_layers.scrollTop)- 28;
     		this._dragAndDropHelperCoords = currPos + "px";
     		this.needsDraw = true;
+    	}
+    },
+    handleKeyframeDragover: {
+    	value: function(event) {
+    		
     	}
     },
     handleLayerDragEnd : {
