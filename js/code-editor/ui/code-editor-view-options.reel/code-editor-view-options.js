@@ -42,7 +42,7 @@ var CodeEditorViewOptions = exports.CodeEditorViewOptions = Montage.create(Compo
         didDraw: {
             enumerable: false,
             value: function() {
-                this.format.addEventListener("click", this.handleFormat.bind(this), false);
+                //this.format.addEventListener("click", this.handleFormat.bind(this), false);
                 this.comment.addEventListener("click", this.handleComment.bind(this), false);
                 this.uncomment.addEventListener("click", this.handleUncomment.bind(this), false);
                 this.themeSelect.addEventListener("change", this.handleThemeSelection.bind(this), false);
