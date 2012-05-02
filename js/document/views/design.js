@@ -33,6 +33,11 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     },
     ////////////////////////////////////////////////////////////////////
 	//
+	_observer: {
+        value: {head: null, body: null}
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
 	content: {
         value: null
     },
@@ -64,7 +69,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         	//Storing callback for dispatch ready
         	this._callback = callback;
         	//Adding listener to know when template is loaded to then load user content
-        	this.iframe.addEventListener("load", this.onTemplateLoad.bind(this), true);
+        	this.iframe.addEventListener("load", this.onTemplateLoad.bind(this), false);
         	//TODO: Add source parameter and root (optional)
         	this.iframe.src = "js/document/templates/montage-web/index.html";
         }
@@ -73,6 +78,8 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 	//
     onTemplateLoad: {
         value: function (e) {
+        	//Removing event
+        	this.iframe.removeEventListener("load", this.onTemplateLoad.bind(this), false);
         	//TODO: Improve usage of this reference
         	this.document = this.iframe.contentWindow.document;
         	//Looping through template styles and marking them with ninja data attribute for I/O clean up
@@ -84,11 +91,13 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         	//Creating temp code fragement to load head
         	this._headFragment = this.document.createElement('head');
         	//Adding event listener to know when head is ready, event only dispatched once when using innerHTML
-        	this._headFragment.addEventListener('DOMSubtreeModified', this.insertHeadContent.bind(this), false);
+        	this._observer.head = new WebKitMutationObserver(this.insertHeadContent.bind(this));
+        	this._observer.head.observe(this._headFragment, {childList: true});
         	//Inserting <head> HTML and parsing URLs via mediator method
         	this._headFragment.innerHTML = (this.content.head.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator));   	
-        	//Adding event listener to know when the body is ready and make callback
-        	this.document.body.addEventListener('DOMSubtreeModified', this.bodyContentLoaded.bind(this), false);
+        	//Adding event listener to know when the body is ready and make callback (using HTML5 new DOM Mutation Events)
+        	this._observer.body = new WebKitMutationObserver(this.bodyContentLoaded.bind(this));
+        	this._observer.body.observe(this.document.body, {childList: true});
         	//Inserting <body> HTML and parsing URLs via mediator method
         	this.document.body.innerHTML += (this.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator));
         }
@@ -98,7 +107,46 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     bodyContentLoaded: {
     	value: function (e) {
     		//Removing event, only needed on initial load
-    		this.document.body.removeEventListener('DOMSubtreeModified', this.bodyContentLoaded.bind(this), false);
+    		this._observer.body.disconnect();
+    		
+    		
+    		
+    		
+    		
+    		
+   			//Temporarily checking for disabled special case
+            var stags = this.document.getElementsByTagName('style'),
+            	ltags = this.document.getElementsByTagName('link');
+           	//
+            for (var m = 0; m < ltags.length; m++) {
+            	if (ltags[m].getAttribute('data-ninja-template') === null) {
+            		if (ltags[m].getAttribute('disabled')) {
+           				ltags[m].removeAttribute('disabled');
+           				ltags[m].setAttribute('data-ninja-disabled', 'true');
+           			}
+           		}
+           	}
+            //
+           	for (var n = 0; n < stags.length; n++) {
+           		if (stags[n].getAttribute('data-ninja-template') === null) {
+           			if (stags[n].getAttribute('disabled')) {
+           				stags[n].removeAttribute('disabled');
+           				stags[n].setAttribute('data-ninja-disabled', 'true');
+            		}
+            	}
+            }
+			//
+			if(this.document.styleSheets.length > 0) {
+				for (var i = 0; i < this.document.styleSheets.length; i++) {
+					console.log(i);
+				}
+			}
+    		
+    		
+    		
+    		
+    		
+    		
     		//Makign callback if specified
     		if (this._callback) this._callback();
     	}
@@ -108,7 +156,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     insertHeadContent: {
     	value: function (e) {
     		//Removing event
-    		this._headFragment.removeEventListener('DOMSubtreeModified', this.insertHeadContent, false);
+    		this._observer.head.disconnect();
     		//Adding the loaded nodes from code fragment into actual document head
     		for(var i in this._headFragment.childNodes) {
     			//Minor hack to know node is actual HTML node
