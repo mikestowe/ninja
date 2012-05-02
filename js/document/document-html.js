@@ -59,7 +59,7 @@ exports.HtmlDocument = Montage.create(Component, {
 	//
     init: {
         value:function(file, context, callback, view) {
-        	//
+        	//Storing callback data for loaded dispatch
         	this.loaded.callback = callback;
         	this.loaded.context = context;
             //Creating instance of HTML Document Model
@@ -295,11 +295,6 @@ exports.HtmlDocument = Montage.create(Component, {
                     ////////////////////////////////////////////////////////////////////////////
                     ////////////////////////////////////////////////////////////////////////////
 
-                    //TODO Finish this implementation once we start caching Core Elements
-                    // Assign a model to the UserContent and add the ViewPort reference to it.
-                    document.application.njUtils.makeElementModel(this.documentRoot, "Body", "body");
-//                    this.documentRoot.elementModel.props3D.init(this.documentRoot, true);
-
                     for(i = 0; i < this._stylesheets.length; i++) {
                         if(this._stylesheets[i].ownerNode.id === "nj-stage-stylesheet") {
                             this.documentRoot.elementModel.defaultRule = this._stylesheets[i];
@@ -314,16 +309,7 @@ exports.HtmlDocument = Montage.create(Component, {
                             this.documentRoot.elementModel.transitionStopRule = this.documentRoot.elementModel.defaultRule.cssRules[j];
                         }
                     }
-
-
-                    this.loadDelegate.call(this.delegateContext, this);
-
-                    //Setting webGL data
-                    /*
-                    if (this._templateDocument.webgl) {
-                        this.glData = this._templateDocument.webgl;
-                    }
-                    */
+                    
                 }
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
