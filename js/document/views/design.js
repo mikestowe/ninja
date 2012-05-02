@@ -88,18 +88,19 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
             		this.document.styleSheets[k].ownerNode.setAttribute('data-ninja-template', 'true');
             	}
             }
+            
         	//Creating temp code fragement to load head
         	this._headFragment = this.document.createElement('head');
         	//Adding event listener to know when head is ready, event only dispatched once when using innerHTML
         	this._observer.head = new WebKitMutationObserver(this.insertHeadContent.bind(this));
         	this._observer.head.observe(this._headFragment, {childList: true});
         	//Inserting <head> HTML and parsing URLs via mediator method
-        	this._headFragment.innerHTML = (this.content.head.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator));   	
+        	this._headFragment.innerHTML = (this.content.head.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator));
         	//Adding event listener to know when the body is ready and make callback (using HTML5 new DOM Mutation Events)
         	this._observer.body = new WebKitMutationObserver(this.bodyContentLoaded.bind(this));
         	this._observer.body.observe(this.document.body, {childList: true});
         	//Inserting <body> HTML and parsing URLs via mediator method
-        	this.document.body.innerHTML += (this.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator));
+        	this.document.body.innerHTML += '<ninjaloadinghack></ninjaloadinghack>'+(this.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator));
         }
     },
     ////////////////////////////////////////////////////////////////////
@@ -108,6 +109,10 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     	value: function (e) {
     		//Removing event, only needed on initial load
     		this._observer.body.disconnect();
+    		//Removing loading container
+    		this.document.body.removeChild(this.document.getElementsByTagName('ninjaloadinghack')[0]);
+    		
+    		
     		
     		
     		
@@ -138,9 +143,11 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 			//
 			if(this.document.styleSheets.length > 0) {
 				for (var i = 0; i < this.document.styleSheets.length; i++) {
-					console.log(i);
+					//
 				}
 			}
+    		
+    		
     		
     		
     		
