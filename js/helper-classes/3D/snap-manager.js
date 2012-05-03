@@ -948,7 +948,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 							{
 
 								// see if we can snap to a contained geometry object
-								if (hitRec && this.getGLWorld(elt) && !this.isARectangle(elt))
+								if (hitRec && this.getGLWorld(elt))	// && !this.isARectangle(elt))
 								{
 									var localPt = hitRec.calculateElementWorldPoint();
 									if (hitRec.getType() != hitRec.SNAP_TYPE_ELEMENT)
@@ -1011,7 +1011,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
             }
 			// hit test the current object
 			var hit;
-			if (depth > 0)	// don't snap to the root
+			var snapToStage = ((depth === 0) && (elt === this.application.ninja.currentSelectedContainer) && (elt.nodeName === 'CANVAS'));
+			if ((depth > 0) || snapToStage)	// don't snap to the root unles we are working inside a canvas
 			{
 				// if the element is in the 2D cache snapping is done there
 				if (elt.elementModel && !elt.elementModel.isIn2DSnapCache)
@@ -1077,7 +1078,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 			var hitRec = this.snapToScreenBounds( elt, globalScrPt, bounds, bounds3D );
 
 			// see if we can snap to a contained geometry object
-			if (hitRec && this.getGLWorld(elt) && !this.isARectangle(elt))
+			if (hitRec && this.getGLWorld(elt))	// && !this.isARectangle(elt))
 			{
 				var localPt = hitRec.calculateElementWorldPoint();
 				if (hitRec.getType() != hitRec.SNAP_TYPE_ELEMENT)
@@ -1320,6 +1321,106 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 		}
 	},
 
+	doSnapToContainedElement:
+	{
+		value: function( eyePt,  dir,  glObj,  hitRec, targetScrPt ) 
+		{
+			var rtnVal = false;
+
+			var elt = hitRec.getElt();
+			var world = glObj.getWorld();
+
+			var nearVrt = glObj.getNearVertex( eyePt, dir );
+			if (nearVrt)
+			{
+				var viewPt = this.GLToView(nearVrt, world );
+				var mat = viewUtils.getMatrixFromElement( elt );
+				var worldPt = MathUtils.transformPoint( viewPt, mat );
+
+				viewUtils.pushViewportObj( elt );
+				var scrPt = viewUtils.viewToScreen( worldPt );
+				var offset = viewUtils.getElementOffset( elt );
+				MathUtils.makeDimension3( offset );
+				var parentPt = vecUtils.vecAdd(3, scrPt, offset );
+				var globalPt = viewUtils.localToGlobal( parentPt, elt.offsetParent );
+
+				var dist = vecUtils.vecDist(2, globalPt, targetScrPt );
+				if (dist < this.ELEMENT_VERTEX_HIT_RAD)
+				{
+					//console.log( "hit a vertex" );
+
+					// check if the distance is less than
+					// the distance on the current hit record
+					//if (dist <= vecUtils.vecDist(2, targetScrPt, hitRec.getScreenPoint() ))
+					{
+						//console.log( "rejected - further than existing snap" );
+
+						hitRec.setScreenPoint( globalPt );
+						//var localMatInv = hitRec.getPlaneMatrix().inverse();
+						var localMatInv = glmat4.inverse( hitRec.getPlaneMatrix(), []);
+						viewUtils.pushViewportObj( hitRec.getElement() );
+						var localPt = viewUtils.screenToView( scrPt[0], scrPt[1], scrPt[2] );
+						viewUtils.popViewportObj();
+						localPt = MathUtils.transformPoint( localPt, localMatInv );
+						hitRec.setLocalPoint( localPt );
+						hitRec.setType( hitRec.SNAP_TYPE_CONTAINED_ELEMENT );
+
+						rtnVal = true;
+					}
+				}
+			}
+
+			if (!rtnVal)
+			{
+				var nearPt = glObj.getNearPoint( eyePt,  dir );
+				if (nearPt)
+				{
+					var viewPt = this.GLToView(nearPt, world );
+					var mat = viewUtils.getMatrixFromElement( elt );
+					var worldPt = MathUtils.transformPoint( viewPt, mat );
+
+					viewUtils.pushViewportObj( elt );
+					var scrPt = viewUtils.viewToScreen( worldPt );
+					var offset = viewUtils.getElementOffset( elt );
+					MathUtils.makeDimension3( offset );
+					var parentPt = vecUtils.vecAdd(3, scrPt, offset );
+					var globalPt = viewUtils.localToGlobal( parentPt, elt.offsetParent );
+
+					var dist = vecUtils.vecDist(2, globalPt, targetScrPt );
+					if (dist < this.ELEMENT_EDGE_HIT_RAD)
+					{
+						//console.log( "hit an edge" );
+
+						// check if the distance is less than
+						// the distance on the current hit record
+						//var dist2 = vecUtils.vecDist(2, targetScrPt, hitRec.getScreenPoint() );
+						//if (dist <= dist2+1 )
+						{
+							hitRec.setScreenPoint( globalPt );
+							//var localMatInv = hitRec.getPlaneMatrix().inverse();
+							var localMatInv = glmat4.inverse( hitRec.getPlaneMatrix(), []);
+							viewUtils.pushViewportObj( hitRec.getElement() );
+							var localPt = viewUtils.screenToView( scrPt[0], scrPt[1], scrPt[2] );
+							viewUtils.popViewportObj();
+							localPt = MathUtils.transformPoint( localPt, localMatInv );
+							hitRec.setLocalPoint( localPt );
+							hitRec.setType( hitRec.SNAP_TYPE_CONTAINED_ELEMENT );
+
+							rtnVal = true;
+						}
+					}
+				}
+			}	// if (!rtnVal)
+
+			if (!rtnVal && glObj.containsPoint( eyePt,  dir ))
+			{
+				rtnVal = true;
+			}
+
+			return rtnVal;
+		}
+	},
+
 	snapToContainedElement : 
 	{
 		value: function( eyePt,  dir,  glObj,  hitRec, targetScrPt ) 
@@ -1331,182 +1432,24 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 			switch (glObj.geomType())
 			{
 				case glObj.GEOM_TYPE_RECTANGLE:
+					if ((glObj.getWidth() != world.getViewportWidth()) || (glObj.getHeight() != world.getViewportHeight()))
+						rtnVal = this.doSnapToContainedElement( eyePt,  dir,  glObj,  hitRec, targetScrPt );
 					break;
 
 				case glObj.GEOM_TYPE_CIRCLE:
-					{
-						var nearVrt = glObj.getNearVertex( eyePt, dir );
-						if (nearVrt)
-						{
-							var viewPt = this.GLToView(nearVrt, world );
-							var mat = viewUtils.getMatrixFromElement( elt );
-							var worldPt = MathUtils.transformPoint( viewPt, mat );
-
-							viewUtils.pushViewportObj( elt );
-							var scrPt = viewUtils.viewToScreen( worldPt );
-							var offset = viewUtils.getElementOffset( elt );
-							MathUtils.makeDimension3( offset );
-							var parentPt = vecUtils.vecAdd(3, scrPt, offset );
-							var globalPt = viewUtils.localToGlobal( parentPt, elt.offsetParent );
-
-							var dist = vecUtils.vecDist(2, globalPt, targetScrPt );
-							if (dist < this.ELEMENT_VERTEX_HIT_RAD)
-							{
-								// check if the distance is less than
-								// the distance on the current hit record
-								if (dist <= vecUtils.vecDist(2, targetScrPt, hitRec.getScreenPoint() ))
-								{
-									hitRec.setScreenPoint( globalPt );
-									//var localMatInv = hitRec.getPlaneMatrix().inverse();
-									var localMatInv = glmat4.inverse( hitRec.getPlaneMatrix(), []);
-									viewUtils.pushViewportObj( hitRec.getElement() );
-									var localPt = viewUtils.screenToView( scrPt[0], scrPt[1], scrPt[2] );
-									viewUtils.popViewportObj();
-									localPt = MathUtils.transformPoint( localPt, localMatInv );
-									hitRec.setLocalPoint( localPt );
-									hitRec.setType( hitRec.SNAP_TYPE_CONTAINED_ELEMENT );
-
-									rtnVal = true;
-								}
-							}
-						}	// if (nearVrt)
-
-						if (!rtnVal)
-						{
-							var nearPt = glObj.getNearPoint( eyePt,  dir );
-							if (nearPt)
-							{
-								var viewPt = this.GLToView(nearPt, world );
-								var mat = viewUtils.getMatrixFromElement( elt );
-								var worldPt = MathUtils.transformPoint( viewPt, mat );
-
-								viewUtils.pushViewportObj( elt );
-								var scrPt = viewUtils.viewToScreen( worldPt );
-								var offset = viewUtils.getElementOffset( elt );
-								MathUtils.makeDimension3( offset );
-								var parentPt = vecUtils.vecAdd(3, scrPt, offset );
-								var globalPt = viewUtils.localToGlobal( parentPt, elt.offsetParent );
-
-								var dist = vecUtils.vecDist(2, globalPt, targetScrPt );
-								if (dist < this.ELEMENT_EDGE_HIT_RAD)
-								{
-									// check if the distance is less than
-									// the distance on the current hit record
-									//var dist2 = vecUtils.vecDist(2, targetScrPt, hitRec.getScreenPoint() );
-									//if (dist <= dist2+1 )
-									{
-										hitRec.setScreenPoint( globalPt );
-										//var localMatInv = hitRec.getPlaneMatrix().inverse();
-										var localMatInv = glmat4.inverse( hitRec.getPlaneMatrix(), []);
-										viewUtils.pushViewportObj( hitRec.getElement() );
-										var localPt = viewUtils.screenToView( scrPt[0], scrPt[1], scrPt[2] );
-										viewUtils.popViewportObj();
-										localPt = MathUtils.transformPoint( localPt, localMatInv );
-										hitRec.setLocalPoint( localPt );
-										hitRec.setType( hitRec.SNAP_TYPE_CONTAINED_ELEMENT );
-
-										rtnVal = true;
-									}
-								}
-							}
-						}	// if (!rtnVal)
-
-						if (!rtnVal && glObj.containsPoint( eyePt,  dir ))
-						{
-							rtnVal = true;
-						}
-					}
+					rtnVal = this.doSnapToContainedElement( eyePt,  dir,  glObj,  hitRec, targetScrPt );
 					break;
 
                 case glObj.GEOM_TYPE_LINE:
                 case glObj.GEOM_TYPE_PATH:
                     // Snapping not implemented for these type, but don't throw an error...
 					break;
-                case glObj.GEOM_TYPE_BRUSH_STROKE:
+                
+				case glObj.GEOM_TYPE_BRUSH_STROKE:
                     break; //don't throw error because snapping not yet implemented
-                case glObj.GEOM_TYPE_CUBIC_BEZIER:
-                    {
-                        var nearVrt = glObj.getNearVertex( eyePt, dir );
-						if (nearVrt)
-						{
-							var viewPt = this.GLToView(nearVrt, world );
-							var mat = viewUtils.getMatrixFromElement( elt );
-							var worldPt = MathUtils.transformPoint( viewPt, mat );
-
-							viewUtils.pushViewportObj( elt );
-							var scrPt = viewUtils.viewToScreen( worldPt );
-							var offset = viewUtils.getElementOffset( elt );
-							MathUtils.makeDimension3( offset );
-							var parentPt = vecUtils.vecAdd(3, scrPt, offset );
-							var globalPt = viewUtils.localToGlobal( parentPt, elt.offsetParent );
-
-							var dist = vecUtils.vecDist(2, globalPt, targetScrPt );
-							if (dist < this.ELEMENT_VERTEX_HIT_RAD)
-							{
-								// check if the distance is less than
-								// the distance on the current hit record
-								if (dist <= vecUtils.vecDist(2, targetScrPt, hitRec.getScreenPoint() ))
-								{
-									hitRec.setScreenPoint( globalPt );
-									//var localMatInv = hitRec.getPlaneMatrix().inverse();
-									var localMatInv = glmat4.inverse( hitRec.getPlaneMatrix(), []);
-									viewUtils.pushViewportObj( hitRec.getElement() );
-									var localPt = viewUtils.screenToView( scrPt[0], scrPt[1], scrPt[2] );
-									viewUtils.popViewportObj();
-									localPt = MathUtils.transformPoint( localPt, localMatInv );
-									hitRec.setLocalPoint( localPt );
-									hitRec.setType( hitRec.SNAP_TYPE_CONTAINED_ELEMENT );
-
-									rtnVal = true;
-								}
-							}
-						}	// if (nearVrt)
-
-						if (!rtnVal)
-						{
-							var nearPt = glObj.getNearPoint( eyePt,  dir );
-							if (nearPt)
-							{
-								var viewPt = this.GLToView(nearPt, world );
-								var mat = viewUtils.getMatrixFromElement( elt );
-								var worldPt = MathUtils.transformPoint( viewPt, mat );
-
-								viewUtils.pushViewportObj( elt );
-								var scrPt = viewUtils.viewToScreen( worldPt );
-								var offset = viewUtils.getElementOffset( elt );
-								MathUtils.makeDimension3( offset );
-								var parentPt = vecUtils.vecAdd(3, scrPt, offset );
-								var globalPt = viewUtils.localToGlobal( parentPt, elt.offsetParent );
-
-								var dist = vecUtils.vecDist(2, globalPt, targetScrPt );
-								if (dist < this.ELEMENT_EDGE_HIT_RAD)
-								{
-									// check if the distance is less than
-									// the distance on the current hit record
-									//var dist2 = vecUtils.vecDist(2, targetScrPt, hitRec.getScreenPoint() );
-									//if (dist <= dist2+1 )
-									{
-										hitRec.setScreenPoint( globalPt );
-										//var localMatInv = hitRec.getPlaneMatrix().inverse();
-										var localMatInv = glmat4.inverse( hitRec.getPlaneMatrix(), []);
-										viewUtils.pushViewportObj( hitRec.getElement() );
-										var localPt = viewUtils.screenToView( scrPt[0], scrPt[1], scrPt[2] );
-										viewUtils.popViewportObj();
-										localPt = MathUtils.transformPoint( localPt, localMatInv );
-										hitRec.setLocalPoint( localPt );
-										hitRec.setType( hitRec.SNAP_TYPE_CONTAINED_ELEMENT );
-
-										rtnVal = true;
-									}
-								}
-							}
-						}	// if (!rtnVal)
-
-						if (!rtnVal && glObj.containsPoint( eyePt,  dir ))
-						{
-							rtnVal = true;
-						}
-                    }
+                
+				case glObj.GEOM_TYPE_CUBIC_BEZIER:
+  					rtnVal = this.doSnapToContainedElement( eyePt,  dir,  glObj,  hitRec, targetScrPt );
                     break;
                 default:
 						throw new Error( "invalid GL geometry type: " + glObj.geomType() );
@@ -1674,7 +1617,11 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 					if (x > y) {
 						if (x > z) {
 							plane[0] = 1;
-							plane[3] = this.getStageWidth() / 2.0;
+                            if(this.application.ninja.currentDocument.documentRoot.id !== "UserContent") {
+                                plane[3] = stage.scrollWidth / 2.0;
+                            } else {
+                                plane[3] = this.getStageWidth() / 2.0;
+                            }
 							if (dir[0] > 0) plane[3] = -plane[3];
 							change = !drawUtils.drawYZ;
 							drawUtils.drawXY = drawUtils.drawXZ = false;
@@ -1692,7 +1639,11 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 					else {
 						if (y > z) {
 							plane[1] = 1;
-							plane[3] = this.getStageHeight() / 2.0;
+                            if(this.application.ninja.currentDocument.documentRoot.id !== "UserContent") {
+                                plane[3] = stage.scrollHeight / 2.0;
+                            } else {
+                                plane[3] = this.getStageHeight() / 2.0;
+                            }
 							if (dir[1] > 0) plane[3] = -plane[3];
 							change = !drawUtils.drawXZ;
 							drawUtils.drawXY = drawUtils.drawYZ = false;

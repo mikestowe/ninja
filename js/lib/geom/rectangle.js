@@ -7,6 +7,7 @@
 var GeomObj = require("js/lib/geom/geom-obj").GeomObj;
 var ShapePrimitive =    require("js/lib/geom/shape-primitive").ShapePrimitive;
 var MaterialsModel = require("js/models/materials-model").MaterialsModel;
+
  ///////////////////////////////////////////////////////////////////////
 // Class GLRectangle
 //      GL representation of a rectangle.
@@ -54,6 +55,10 @@ var Rectangle = function GLRectangle() {
 			this.setBRRadius(brRadius);
 
 			this._strokeStyle = strokeStyle;
+
+			this._matrix = Matrix.I(4);
+			//this._matrix[12] = xoffset;
+			//this._matrix[13] = yoffset;
 		}
 
 		// the overall radius includes the fill and the stroke.  separate the two based onthe stroke width
@@ -373,26 +378,36 @@ var Rectangle = function GLRectangle() {
         if (brRad > minDimen)  brRad = minDimen;
         if (trRad > minDimen)  trRad = minDimen;
 
+		var viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
+		var world = this.getWorld();
+		viewUtils.pushViewportObj( world.getCanvas() );
+		var cop = viewUtils.getCenterOfProjection();
+		viewUtils.popViewportObj();
+		var xCtr = cop[0] + this._xOffset,					yCtr = cop[1] - this._yOffset;
+		var xLeft = xCtr - 0.5*this.getWidth(),				yTop = yCtr - 0.5*this.getHeight();
+		var xDist = cop[0] - xLeft,							yDist = cop[1] - yTop;
+		var xOff = 0.5*world.getViewportWidth() - xDist,	yOff  = 0.5*world.getViewportHeight() - yDist;
+
 		if ((tlRad <= 0) && (blRad <= 0) && (brRad <= 0) && (trRad <= 0)) {
-			ctx.rect(pt[0], pt[1], width - 2*inset, height - 2*inset);
+			ctx.rect(pt[0]+xOff, pt[1]+yOff, width - 2*inset, height - 2*inset);
 		} else {
 			// get the top left point
 			rad = tlRad - inset;
 			if (rad < 0)  rad = 0;
 			pt[1] += rad;
 			if (MathUtils.fpSign(rad) == 0)  pt[1] = inset;
-			ctx.moveTo( pt[0],  pt[1] );
+			ctx.moveTo( pt[0]+xOff,  pt[1]+yOff );
 
 			// get the bottom left point
 			pt = [inset, height - inset];
 			rad = blRad - inset;
 			if (rad < 0)  rad = 0;
 			pt[1] -= rad;
-			ctx.lineTo( pt[0],  pt[1] );
+			ctx.lineTo( pt[0]+xOff,  pt[1]+yOff );
 
 			// get the bottom left curve
 			if (MathUtils.fpSign(rad) > 0) {
-				ctx.quadraticCurveTo( inset, height-inset,  inset+rad, height-inset );
+				ctx.quadraticCurveTo( inset+xOff, height-inset+yOff,  inset+rad+xOff, height-inset+yOff );
             }
 
 			// do the bottom of the rectangle
@@ -400,11 +415,11 @@ var Rectangle = function GLRectangle() {
 			rad = brRad - inset;
 			if (rad < 0)  rad = 0;
 			pt[0] -= rad;
-			ctx.lineTo( pt[0], pt[1] );
+			ctx.lineTo( pt[0]+xOff, pt[1]+yOff );
 
 			// get the bottom right arc
 			if (MathUtils.fpSign(rad) > 0) {
-				ctx.quadraticCurveTo( width-inset, height-inset,  width-inset, height-inset-rad );
+				ctx.quadraticCurveTo( width-inset+xOff, height-inset+yOff,  width-inset+xOff, height-inset-rad+yOff );
             }
 
 			// get the right of the rectangle
@@ -412,11 +427,11 @@ var Rectangle = function GLRectangle() {
 			rad = trRad - inset;
 			if (rad < 0)  rad = 0;
 			pt[1] += rad;
-			ctx.lineTo( pt[0], pt[1] );
+			ctx.lineTo( pt[0]+xOff, pt[1]+yOff );
 
 			// do the top right corner
 			if (MathUtils.fpSign(rad) > 0) {
-				ctx.quadraticCurveTo( width-inset, inset,  width-inset-rad, inset );
+				ctx.quadraticCurveTo( width-inset+xOff, inset+yOff,  width-inset-rad+xOff, inset+yOff );
             }
 
 			// do the top of the rectangle
@@ -424,13 +439,13 @@ var Rectangle = function GLRectangle() {
 			rad = tlRad - inset;
 			if (rad < 0)  rad = 0;
 			pt[0] += rad;
-			ctx.lineTo( pt[0], pt[1] );
+			ctx.lineTo( pt[0]+xOff, pt[1]+yOff );
 
 			// do the top left corner
 			if (MathUtils.fpSign(rad) > 0) {
-				ctx.quadraticCurveTo( inset, inset, inset, inset+rad );
+				ctx.quadraticCurveTo( inset+xOff, inset+yOff, inset+xOff, inset+rad+yOff );
             } else {
-				ctx.lineTo( inset, 2*inset );
+				ctx.lineTo( inset+xOff, 2*inset+yOff );
             }
 		}
 	};
@@ -438,7 +453,7 @@ var Rectangle = function GLRectangle() {
     this.render = function() {
         // get the world
         var world = this.getWorld();
-        if (!world)  throw( "null world in rectangle render" );
+        if (!world)  throw( "null world in rectangle render" );			
 
          // get the context
 		var ctx = world.get2DContext();
@@ -686,7 +701,6 @@ var Rectangle = function GLRectangle() {
 		var projPt = MathUtils.vecIntersectPlane ( pt, dir, plane );
 
 		// transform the projected point back to the XY plane
-		//var invMat = mat.inverse();
 		var invMat = glmat4.inverse(mat, []);
 		var planePt = MathUtils.transformPoint( projPt, invMat );
 
