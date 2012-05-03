@@ -1028,29 +1028,6 @@ World.prototype.importObjectJSON = function( jObj, parentGeomObj )
 	return obj;
 };
 
-World.prototype.refreshTextures = function( obj )
-{
-	if (obj == null)  obj = this._geomRoot;
-	if (!obj)  return;
-	if (obj._materialArray)
-	{
-		var nMats = obj._materialArray.length;
-		for (var i=0;  i<nMats;  i++)
-		{
-			var mat = obj._materialArray[i];
-			if (mat)
-				mat.updateTextures();
-		}
-	}
-
-	if (obj.getChild()) {
-		 this.refreshTextures( obj.getChild ()  );
-    }
-
-	if (obj.getNext())
-		this.refreshTextures( obj.getNext() );
-};
-
 function Notifier()
 {
     // notification types supported

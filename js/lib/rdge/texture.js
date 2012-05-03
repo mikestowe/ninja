@@ -123,8 +123,6 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 
 					case notifier.FIRST_RENDER:
 						texture._isAnimated = srcWorld.hasAnimatedMaterials();
-						//dstWorld.refreshTextures();
-						//dstWorld.restartRenderLoop();
 						break;
 
 					default:

@@ -28,6 +28,9 @@ var TwistVertMaterial = function TwistVertMaterial()
     this._tex0 = 'assets/images/rocky-normal.jpg';
     this._tex1 = 'assets/images/metal.png';
 
+	this._glTex0;
+	this._glTex1;
+
     this._angle = 0.0;
     this._deltaTime = 0.01;
 
@@ -78,6 +81,9 @@ var TwistVertMaterial = function TwistVertMaterial()
         // set up the material node
         this._materialNode = RDGE.createMaterialNode("twistVertMaterial" + "_" + world.generateUniqueNodeID());
         this._materialNode.setShader(this._shader);
+
+		// set up the texture maps
+		this.updateTextures();
 
         // initialize the twist vert properties
         this.updateShaderValues();
@@ -146,7 +152,9 @@ var TwistVertMaterial = function TwistVertMaterial()
 	{
         if (this._shader && this._shader.twistMe)
 		{
-            var angle = this._angle;
+			var technique = this._shader.twistMe;
+           
+		    var angle = this._angle;
             angle += this._deltaTime;
             if (angle > this._propValues["u_twistAmount"])
 			{
@@ -160,6 +168,25 @@ var TwistVertMaterial = function TwistVertMaterial()
             }
             this._angle = angle;
             this._shader.twistMe["u_twistAmount"].set([angle]);
+
+			var tex;
+			if (this._glTex0)
+            {
+                if (this._glTex0.isAnimated())
+                    this._glTex0.render();
+                tex = this._glTex0.getTexture();
+				if (tex)
+					technique.u_tex0.set( tex );
+            }
+			if (this._glTex1)
+            {
+                if (this._glTex1.isAnimated())
+                    this._glTex1.render();
+                tex = this._glTex1.getTexture();
+				if (tex)
+					technique.u_tex1.set( tex );
+            }
+
         }
     };
 
@@ -195,17 +222,22 @@ var TwistVertMaterial = function TwistVertMaterial()
         var material = this._materialNode;
         if (material)
 		{
-            var technique = material.shaderProgram['default'];
+            var technique = material.shaderProgram['twistMe'];
             var renderer = RDGE.globals.engine.getContext().renderer;
             if (renderer && technique)
 			{
-                var texMapName = this._propValues[this._propNames[5]];
+				var texMapName;
+                texMapName = this._propValues[this._propNames[5]];
                 var wrap = 'REPEAT', mips = true;
-                var tex = this.loadTexture(texMapName, wrap, mips);
+                //var tex = this.loadTexture(texMapName, wrap, mips);
+				this._glTex0 = new Texture( this.getWorld(), texMapName,  wrap, mips );
+				tex = this._glTex0.getTexture();
                 if (tex) technique.u_tex0.set(tex);
 
                 texMapName = this._propValues[this._propNames[6]];
-                tex = this.loadTexture(texMapName, wrap, mips);
+                //tex = this.loadTexture(texMapName, wrap, mips);
+				this._glTex1 = new Texture( this.getWorld(), texMapName,  wrap, mips );
+				tex = this._glTex1.getTexture();
                 if (tex) technique.u_tex1.set(tex);
             }
         }
@@ -242,7 +274,6 @@ twistVertShaderDef =
 
 				     'u_limit1': { 'type': 'float' },
 				     'u_limit2': { 'type': 'float' },
-				     'u_limit3': { 'type': 'float' },
 				     'u_minVal': { 'type': 'float' },
 				     'u_maxVal': { 'type': 'float' },
 				     'u_center': { 'type': 'float' },

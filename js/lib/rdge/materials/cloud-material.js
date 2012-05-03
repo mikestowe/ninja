@@ -203,18 +203,6 @@ var CloudMaterial = function CloudMaterial()
 			RDGE.globals.engine.setContext( saveContext.id );
         }
     };
-		
-	this.updateTextures = function()
-	{
-		if (this._glTex)
-		{
-			if (!this._glTex.isAnimated())
-			{
-				this._glTex.render();
-				this.updateTexture();
-			}
-		}
-	}
 
 	this.updateColor = function()
 	{
