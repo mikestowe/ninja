@@ -53,14 +53,14 @@ exports.OvalTool = Montage.create(ShapeTool, {
                 {
                     strokeMaterial = Object.create(MaterialsModel.getMaterial(strokeM));
                 }
-                strokeColor = ShapesController.getMaterialColor(strokeM) || strokeColor;
+                strokeColor = ShapesController.getMaterialColor(strokeMaterial) || strokeColor;
 
                 var fillM = this.options.fillMaterial;
                 if(fillM)
                 {
                     fillMaterial = Object.create(MaterialsModel.getMaterial(fillM));
                 }
-                fillColor = ShapesController.getMaterialColor(fillM) || fillColor;
+                fillColor = ShapesController.getMaterialColor(fillMaterial) || fillColor;
             }
 
             var world = this.getGLWorld(canvas, this.options.use3D);
