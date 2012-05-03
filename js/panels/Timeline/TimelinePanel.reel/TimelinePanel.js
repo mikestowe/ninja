@@ -16,7 +16,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     /* === BEGIN: Models === */
     _arrLayers:{
-        serializable:true,
         value:[]
     },
 
@@ -47,12 +46,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
 
     _layerRepetition:{
-        serializable:true,
         value:null
     },
 
     layerRepetition:{
-        serializable:true,
         get:function () {
             return this._layerRepetition;
         },
@@ -170,7 +167,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
 
     _masterDuration:{
-        serializable:true,
         value:0
     },
 
@@ -186,12 +182,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
 
     _trackRepetition:{
-        serializable:true,
         value:null
     },
 
     trackRepetition:{
-        serializable:true,
         get:function () {
             return this._trackRepetition;
         },
@@ -249,18 +243,15 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
 
     _firstTimeLoaded:{
-        value:true,
-        writable:true
+        value:true
     },
 
     _captureSelection:{
-        value:false,
-        writable:true
+        value:false
     },
 
     _openDoc:{
-        value:false,
-        writable:true
+        value:false
     },
 
     timeMarkerHolder:{
@@ -278,6 +269,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     _dragLayerID : {
     	value: null
     },
+
+    layersDragged:{
+           value:[],
+           writable:true
+    },
+
     dragLayerID : {
     	get: function() {
     		return this._dragLayerID;
@@ -302,6 +299,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     			var dragLayerIndex = this.getLayerIndexByID(this.dragLayerID),
     				dropLayerIndex = this.getLayerIndexByID(this.dropLayerID),
     				dragLayer = this.arrLayers[dragLayerIndex];
+                    this.layersDragged.push(dragLayer);
+                    this._layerDroppedInPlace = this.arrLayers[dropLayerIndex];
 
     			this.arrLayers.splice(dragLayerIndex, 1);
     			this.arrLayers.splice(dropLayerIndex, 0, dragLayer);
@@ -403,6 +402,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 	            		this._deleteHelper = false;
 	            	}
 	            }
+                this.application.ninja.elementMediator.reArrangeDOM(this.layersDragged , this._layerDroppedInPlace);
+                this.layersDragged =[];
     		}
     	}
     },
@@ -714,7 +715,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 				// there is a currentDocument.  We don't do anything at that time.
 				return;
 			}
-            this.application.ninja.currentDocument.setLevel = true;
+            // this.application.ninja.currentDocument.setLevel = true;
             this._boolCacheArrays = false;
             this.clearTimelinePanel();
             this._boolCacheArrays = true;
@@ -903,15 +904,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
-
-
-
-
-
-
-
-
-
     deselectTweens:{
         value:function () {
             for (var i = 0; i < this.selectedTweens.length; i++) {
@@ -1037,7 +1029,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             thingToPush.layerData.layerPosition = this.temparrLayers.length - 1;
 
             this._openDoc = false;
-
 
         }
     },

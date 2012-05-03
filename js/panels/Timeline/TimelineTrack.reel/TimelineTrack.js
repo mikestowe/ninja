@@ -16,7 +16,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     },
 
     _trackID:{
-        serializable:true,
         value:null
     },
 
@@ -105,7 +104,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         }
     },
     _bypassAnimation : {
-    	serializable: true,
     	value: false
     },
     bypassAnimation : {
@@ -122,13 +120,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     },
     
     _arrStyleTracks : {
-        serializable:true,
-        enumerable:true,
     	value: []
     },
     arrStyleTracks: {
         serializable:true,
-        enumerable:true,
     	get: function() {
     		return this._arrStyleTracks;
     	},
@@ -138,11 +133,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	}
     },
     _styleTracksRepetition: {
-    	serializable: true,
     	value: null
     },
     styleTracksRepetition : {
-    	serializable: true,
     	get: function() {
     		return this._styleTracksRepetition;
     	},
@@ -153,13 +146,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     
     /* Position Property Tracks */
     _arrPositionTracks : {
-        serializable:true,
-        enumerable:true,
     	value: []
     },
     arrPositionTracks: {
         serializable:true,
-        enumerable:true,
     	get: function() {
     		return this._arrPositionTracks;
     	},
@@ -169,11 +159,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	}
     },
     _positionTracksRepetition: {
-    	serializable: true,
     	value: null
     },
     positionTracksRepetition : {
-    	serializable: true,
     	get: function() {
     		return this._positionTracksRepetition;
     	},
@@ -185,13 +173,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     
     /* Transform Property Tracks */
     _arrTransformTracks : {
-        serializable:true,
-        enumerable:true,
     	value: []
     },
     arrTransformTracks: {
         serializable:true,
-        enumerable:true,
     	get: function() {
     		return this._arrTransformTracks;
     	},
@@ -201,11 +186,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	}
     },
     _transformTracksRepetition: {
-    	serializable: true,
     	value: null
     },
     transformTracksRepetition : {
-    	serializable: true,
     	get: function() {
     		return this._transformTracksRepetition;
     	},
@@ -215,12 +198,11 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     },
 
     _tweens:{
-        enumerable: false,
         value:[]
     },
 
     tweens:{
-        serializable:true,
+    	serializable: true,
         get:function () {
             return this._tweens;
         },
@@ -231,12 +213,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     },
 
     _tweenRepetition:{
-        serializable:true,
         value:null
     },
 
     tweenRepetition:{
-        serializable:true,
         get:function () {
             return this._spanRepetition;
         },
@@ -246,7 +226,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     },
 
     _trackDuration:{
-        serializable: true,
         value:0
     },
 
@@ -265,7 +244,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     },
 
     _trackPosition:{
-        serializable:true,
         value:0
     },
 
@@ -281,7 +259,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     },
 
     _currentKeyframeRule:{
-        serializable: true,
         value:null
     },
 
@@ -305,7 +282,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     },
 
     _isTrackAnimated:{
-        serializable: true,
         value:null
     },
 
@@ -322,12 +298,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     // should be unneeded with one element per layer restriction
     _animatedElement:{
-        enumerable: true,
-        serializable:true,
         value:null
     },
     animatedElement:{
-        enumerable: true,
         serializable:true,
         get:function () {
             return this._animatedElement;
@@ -339,7 +312,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     },
 
     _animationName:{
-        serializable:true,
         value:null
     },
 
@@ -372,12 +344,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     },
 
     _trackData:{
-    	serializable: true,
 		value: false
     },
 
     trackData:{
-        serializable:true,
         get:function(){
             return this._trackData;
         },
@@ -419,11 +389,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     
     // Data binding observation point and trigger method
 	_bindingPoint : {
-    	serializable: true,
     	value : {}
     },
     bindingPoint: {
-    	serializable: true,
     	get: function() {
     		return this._bindingPoint;
     	},
