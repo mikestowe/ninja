@@ -127,21 +127,12 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     		this._observer.body = null;
     		//Removing loading container
     		this.document.body.removeChild(this.document.getElementsByTagName('ninjaloadinghack')[0]);
-    		
-    		
-    		
-    		
-    		
-   			//
+   			//Getting style and link tags in document
             var stags = this.document.getElementsByTagName('style'),
             	ltags = this.document.getElementsByTagName('link');
            	//Temporarily checking for disabled special case (we must enabled for Ninja to access styles)
            	this.ninjaDisableAttribute(stags);
            	this.ninjaDisableAttribute(ltags);
-			
-			
-			
-			
 			//Looping through all link tags to reload into style tags
 			if(ltags.length > 0) {
 				for (var i = 0; i < ltags.length; i++) {
@@ -152,14 +143,15 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 						//Disabling tag once it has been reloaded
 						ltags[i].setAttribute('disabled', 'true');
 					} else {
-						//Error: broken?
+						//Error: TBD
+						//TODO: Determine what link tags would not have href data and error
 					}
 				}
 			}
     		
+    		//TODO: Load webGL (blocking)
     		
-    		
-    		
+    		//TODO: Load Montage Components (blocking)
     		
     		//Makign callback if specified
     		if (this._callback) this._callback();
@@ -186,6 +178,9 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         value: function (linktag) {
         	//
         	var tag, cssUrl, fileUri, cssData, docRootUrl;
+        	//Creating style tag to load CSS content into
+			tag = this.document.createElement('style');
+			tag.setAttribute('type', 'text/css');
         	//TODO: Remove usage of hack reference of URL
         	docRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
         	//Checking for location of href to load (special case for cross-domain)
@@ -195,19 +190,19 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 				fileUri = this.application.ninja.coreIoApi.cloudData.root+cssUrl;
 				//Loading data from CSS file
 				cssData = this.application.ninja.coreIoApi.readFile({uri: fileUri});
-				//
+				//Setting properties of locally loaded styles
+				tag.setAttribute('data-ninja-uri', fileUri);
+				tag.setAttribute('data-ninja-file-url', cssUrl);
+				tag.setAttribute('data-ninja-file-read-only', JSON.parse(this.application.ninja.coreIoApi.isFileWritable({uri: fileUri}).content).readOnly);
+				tag.setAttribute('data-ninja-file-name', cssUrl.split('/')[cssUrl.split('/').length-1]);
 			} else {
-				//Cross-domain resource
+				//Cross-domain content
+				cssData = this.application.ninja.coreIoApi.readExternalFile({url: linktag.href, binary: false});
+				//Setting properties of externally loaded styles
+				tag.setAttribute('data-ninja-external-url', linktag.href);
+				tag.setAttribute('data-ninja-file-read-only', "true");
+				tag.setAttribute('data-ninja-file-name', linktag.href.split('/')[linktag.href.split('/').length-1]);
 			}
-			//TODO: Improve into single method
-			fileCouldDirUrl = linktag.href.split(linktag.href.split('/')[linktag.href.split('/').length-1])[0];
-			//Creating style tag to load CSS content into
-			tag = this.document.createElement('style');
-			tag.setAttribute('type', 'text/css');
-			tag.setAttribute('data-ninja-uri', fileUri);
-			tag.setAttribute('data-ninja-file-url', cssUrl);
-			tag.setAttribute('data-ninja-file-read-only', JSON.parse(this.application.ninja.coreIoApi.isFileWritable({uri: fileUri}).content).readOnly);
-			tag.setAttribute('data-ninja-file-name', cssUrl.split('/')[cssUrl.split('/').length-1]);
 			//Copying attributes to maintain same properties as the <link>
 			for (var n in linktag.attributes) {
 				if (linktag.attributes[n].value && linktag.attributes[n].name !== 'disabled') {
@@ -218,9 +213,49 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 					}
 				}					
 			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			////////////////////////////////////////////////////////
+			////////////////////////////////////////////////////////
+			//TODO: Clean up and make proper method
+			fileCouldDirUrl = linktag.href.split(linktag.href.split('/')[linktag.href.split('/').length-1])[0];
 			//
-			//tag.innerHTML = cssData.content.replace(/url\(()(.+?)\1\)/g, detectUrl);
-			tag.innerHTML = cssData.content;
+			if (cssData && cssData.content) {
+				tag.innerHTML = cssData.content.replace(/url\(()(.+?)\1\)/g, parseToNinjaUrl.bind(this));
+			} else {
+				//Error: no data was loaded
+			}
+			//
+			function parseToNinjaUrl (prop) {
+				//
+				return prop.replace(/[^()\\""\\'']+/g, prefixWithNinjaUrl.bind(this));
+			}
+			//
+			function prefixWithNinjaUrl (url) {
+				//
+				if (url !== 'url' && !url.match(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi)) {
+					url = fileCouldDirUrl+url;
+				}
+				//
+				return url;
+			}
+			////////////////////////////////////////////////////////
+			////////////////////////////////////////////////////////
+			
+			
+			
+			
+			
+			
 			//
 			return tag;
         }

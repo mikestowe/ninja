@@ -193,6 +193,23 @@ exports.CoreIoApi = Montage.create(Component, {
         	this._fileServiceURL = value;
         }
     },
+    ////////////////////////////////////////////////////////////////////
+    //File service API URL
+    _webServiceURL: {
+        enumerable: false,
+        value: '/web'
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    webServiceURL: {
+    	enumerable: false,
+    	get: function() {
+            return String(this.rootUrl+this._webServiceURL);
+        },
+        set: function(value) {
+        	this._webServiceURL = value;
+        }
+    },
 	////////////////////////////////////////////////////////////////////
     //Directory service API URL
     _directoryServiceURL: {
@@ -633,6 +650,53 @@ exports.CoreIoApi = Montage.create(Component, {
                         retValue.status = xhr.status;
                         if(xhr.status == 200) {
                             retValue.content = xhr.responseText;
+                        }
+                        retValue.success = true;
+                    }
+                }
+                catch(error) {
+                    xhr = null;
+                    retValue.success = false;
+                }
+            }
+			//
+            return retValue;
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    // Reads an external file (cross-domain)
+    // Parameters:
+    //      the file parameter must contain the following properties
+    //          url: string value containing the full file path/URL i.e. "http://google.com/motorola.html"
+    //		binary parameter is optional if the content is to be binary
+    // Return values:
+    //    returns an object with two properties
+    //      success: boolean indicating if the call succeeded or failed
+    //      content: string containing the file contents
+    //      status: int indicating the request HTTP status code
+    //              200 - the file was read and its contents were returned
+    //              404 - the file does not exist
+    //              500 - unknown server error occurred    
+    readExternalFile: {
+    	enumerable: false,
+    	value: function(file) {
+    		//
+            var retValue = {success:null, content:null, status:null};
+            //
+            if(file && file.url && file.url.length) {
+                try {
+                	var serviceURL = this._prepareServiceURL(this.webServiceURL, ''),
+               			xhr = new XMLHttpRequest();
+                    //
+                    xhr.open("GET", serviceURL+"?url="+file.url, false);
+                    if (file.binary) xhr.setRequestHeader("return-type", "binary");
+                    xhr.setRequestHeader("Content-Type", "text/plain");
+                    xhr.send();
+					//
+                    if (xhr.readyState === 4) {
+                        retValue.status = xhr.status;
+                        if(xhr.status == 200) {
+                            retValue.content = xhr.response;
                         }
                         retValue.success = true;
                     }
