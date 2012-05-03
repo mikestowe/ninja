@@ -21,8 +21,15 @@ exports.StylesViewMediator = Montage.create(Component, {
         }
     },
 
+    ///// Selector Actions
+    //// -------------------------------------
+
+    ///// Show the targeted elements in the document by applying a class
+    ///// temporarily
     handleSelectorHover : {
         value: function(selector, direction) {
+            if(!selector) { return false; }
+
             var elements = this.stylesController._activeDocument._document.querySelectorAll(selector),
                 method = (direction === "out") ? "remove" : "add";
 
@@ -32,11 +39,17 @@ exports.StylesViewMediator = Montage.create(Component, {
         }
     },
 
+    ///// Apply new selector to the rule
+    //// Verify that it applies to the selected elements
+    //// Remove rule if the selector is deleted
     handleSelectorChange : {
         value: function(rule, newSelector, ruleComponent) {
             if(newSelector === "") {
-                //debugger;
                 ruleComponent.parentComponent.removeRule(ruleComponent);
+                this.stylesController.deleteRule(rule);
+                ///// Remove the hover style
+                this.handleSelectorHover(rule.selectorText, 'out');
+                this._dispatchChange();
                 return false;
             }
 
@@ -46,8 +59,19 @@ exports.StylesViewMediator = Montage.create(Component, {
                 return this._doesSelectorTargetElement(newSelector, el);
             }, this);
 
+            this._dispatchChange();
         }
     },
+
+    ///// Returns true if the passed-in selector targets the passed-in element
+    _doesSelectorTargetElement : {
+        value: function doesSelectorTargetElement(selector, element) {
+            var doc = element.ownerDocument,
+                matchingEls = Array.prototype.slice.call(doc.querySelectorAll(selector));
+            return matchingEls.indexOf(element) !== -1;
+        }
+    },
+
 
     /// Toolbar Button Actions
     /// -----------------------
@@ -85,6 +109,7 @@ exports.StylesViewMediator = Montage.create(Component, {
         }
     },
 
+    ///// Show/hide computed style sub panel
     handleComputedAction : {
         value: function(e) {
             var container = this.ownerComponent,
@@ -102,14 +127,8 @@ exports.StylesViewMediator = Montage.create(Component, {
         }
     },
 
-
-    _doesSelectorTargetElement : {
-        value: function doesSelectorTargetElement(selector, element) {
-            var doc = element.ownerDocument,
-                matchingEls = Array.prototype.slice.call(doc.querySelectorAll(selector));
-            return matchingEls.indexOf(element) !== -1;
-        }
-    },
+    ///// Style event handlers
+    //// -------------------------------------
 
     ///// Enable/Disable Style when checkbox is clicked
     handleStyleToggle : {
@@ -249,6 +268,9 @@ exports.StylesViewMediator = Montage.create(Component, {
             }
         }
     },
+
+    ///// Utilities
+    //// -------------------------------------
 
     _dispatchChange : {
         value: function(property, value) {
