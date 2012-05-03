@@ -177,7 +177,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         },
         set:function (val) {
             this._masterDuration = val;
-            this.timebar.style.width = (this._masterDuration / 12) + "px";
+            var intDur = Math.round(val/12),
+           		strWidth = intDur + "px";
+            this.timebar.style.width = strWidth;
         }
     },
 
@@ -515,8 +517,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                              "deleteLayer",
                              "elementAdded",
                              "elementsRemoved",
-                             "elementReplaced",
-                             "selectionChange"],
+                             "elementReplaced"],
+                             //"selectionChange"],
                 i,
                 arrEventsLength = arrEvents.length;
 
@@ -690,12 +692,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this._openDoc = false;
             this.end_hottext.value = 25;
             this.updateTrackContainerWidth();
-            this.masterDuration = 0;
             // Clear the repetitions
             if (this.arrLayers.length > 0) {
                 this.arrLayers = [];
                 this.arrLayers.length = 0;
             }
+            this.resetMasterDuration();
         }
     },
 
