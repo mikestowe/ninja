@@ -855,6 +855,12 @@ exports.Stage = Montage.create(Component, {
         }
     },
 
+    setStageAsViewport: {
+        value: function() {
+            this.stageDeps.viewUtils.setViewportObj(this.application.ninja.currentDocument.documentRoot);
+        }
+    },
+
     setZoom: {
         value: function(value) {
             if(!this._firstDraw)

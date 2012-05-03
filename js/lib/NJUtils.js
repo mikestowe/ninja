@@ -5,16 +5,15 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var Montage = require("montage/core/core").Montage,
+    Component = require("montage/ui/component").Component,
     Uuid = require("montage/core/uuid").Uuid,
     ElementModel        = require("js/models/element-model").ElementModel,
     Properties3D    = require("js/models/properties-3d").Properties3D,
     ShapeModel    = require("js/models/shape-model").ShapeModel,
     ControllerFactory   = require("js/controllers/elements/controller-factory").ControllerFactory;
 
-exports.NJUtils = Object.create(Object.prototype, {
-    
-    
-    
+exports.NJUtils = Montage.create(Component, {
+
     /* =============== DOM Access ================ */
     
     ///// Quick "getElementById"
@@ -95,14 +94,73 @@ exports.NJUtils = Object.create(Object.prototype, {
         }
     },
 
-    ///// Element factory function for Ninja Elements
-    ///// selection is the string displayed in the PI
-    makeNJElement: {
-        value: function(tag, selection, controller, attr, isShape) {
-            var el = this.make(tag, attr);
-            this.makeElementModel(el, selection, controller, isShape);
+    createModelWithShape: {
+        value: function(el, selection) {
+            el.elementModel = Montage.create(ElementModel).initialize(el, true, selection);
+        }
+    },
 
-            return el;
+    createModelWithSelection: {
+        value: function(el, selection) {
+            el.elementModel = Montage.create(ElementModel).initialize(el, false, selection);
+        }
+    },
+
+    createModelForComponent: {
+        value: function(el, selection) {
+            el.elementModel = Montage.create(ElementModel).initialize(el, false, selection, true);
+        }
+    },
+
+    // TODO: Find a better place for this method
+    stylesFromDraw: {
+        value: function(element, width, height, drawData, pos) {
+            var styles = {};
+
+            styles['position'] = pos ? pos: "absolute";
+            styles['left'] = (Math.round(drawData.midPt[0] - 0.5 * width)) - this.application.ninja.currentSelectedContainer.offsetLeft + 'px';
+            styles['top'] = (Math.round(drawData.midPt[1] - 0.5 * height)) - this.application.ninja.currentSelectedContainer.offsetTop + 'px';
+            styles['width'] = width + 'px';
+            styles['height'] = height + 'px';
+
+            // TODO: Check why Canvas has different tranform styles from default.
+            if(!MathUtils.isIdentityMatrix(drawData.planeMat)) {
+                styles['-webkit-transform-style'] = 'preserve-3d';
+                styles['-webkit-transform'] = this.getElementMatrix(drawData.planeMat, drawData.midPt);
+            }
+
+            if(element.nodeName === "CANVAS") {
+                element.width = width;
+                element.height = height;
+                delete styles['width'];
+                delete styles['height'];
+
+                styles['-webkit-transform-style'] = 'preserve-3d';
+            }
+
+            return styles;
+        }
+    },
+
+    // Get the matrix for the actual element being added to the user document.
+    // TODO: Find a better place for this method
+    getElementMatrix: {
+        value: function(planeMat, midPt) {
+            var divMat, flatMat, flatMatSafe;
+            // we should not need to worry about divide by zero below since we snapped to the point
+            divMat = planeMat.slice(0);
+            divMat[12] = 0.0;
+            divMat[13] = 0.0;
+            //divMat[14] = 0.0;
+            divMat[14] = midPt[2];
+
+            // set the left and top of the element such that the center of the rectangle is at the mid point
+            this.application.ninja.stage.setStageAsViewport();
+
+            flatMat = divMat;
+            flatMatSafe = MathUtils.scientificToDecimal(flatMat, 10);
+
+            return "matrix3d(" + flatMatSafe + ")";
         }
     },
 

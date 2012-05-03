@@ -32,24 +32,38 @@ exports.ElementModel = Montage.create(Montage, {
     shapeModel:     { value: null },
     isIn2DSnapCache : { value: false },
 
+    isComponent:    { value: false },
+
     fill:           { value: null },
     stroke:         { value: null },
 
     initialize: {
-        value: function(el, isShape) {
+        value: function(el, isShape, selection, isComponent) {
             var elementName, controller;
 
             elementName = el.nodeName.toLowerCase();
-            controller = this.elementNameToController(elementName);
 
             this.type = el.nodeName;
-            this.selection = elementName;
-            this.controller = ControllerFactory.getController(controller);
-            this.pi = this.elementNameToPi(elementName);
+            this.selection = selection ? selection : elementName;
+
+            if(isComponent) {
+                controller = "component";
+                this.pi = this.elementNameToPi(selection.replace(/\s+/g, ''));
+                this.isComponent = true;
+            } else {
+                controller = this.elementNameToController(elementName);
+                this.pi = this.elementNameToPi(elementName);
+            }
+
             this.props3D = Montage.create(Properties3D);
 
-            //shapeModel: { value: shapeProps},
-//            isShape:    { value: isShape}
+            if(isShape) {
+                this.controller = ControllerFactory.getController("shape");
+                this.shapeModel = Montage.create(ShapeModel);
+                this.isShape = true;
+            } else {
+                this.controller = ControllerFactory.getController(controller);
+            }
 
             return this;
 
