@@ -23,14 +23,16 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "module" : "js/panels/css-panel/style-sheets-view.reel",
                 "name": "StyleSheetsView",
                 "properties": {
-                    "element": {"#": "style-sheet-view" }
+                    "element": {"#": "style-sheet-view" },
+                    "documentNameLabel": {"#": "document-name" }
                 }
             },
             "stylesViewContainer": {
                 "module" : "js/panels/css-panel/styles-view-container.reel",
                 "name": "StylesViewContainer",
                 "properties": {
-                    "element": {"#": "styles-view-container" }
+                    "element": {"#": "styles-view-container" },
+                    "selectionNameLabel": {"#": "selection-name" }
                 }
             }
         }
@@ -38,9 +40,9 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </head>
 <body>
 <section id="container" class="css-panel">
-    <h3>Style Sheets</h3>
+    <h3>Style Sheets <span data-montage-id="document-name" class="document-name"></span></h3>
     <div id="style-sheet-view"></div>
-    <h3>Styles</h3>
+    <h3>Styles <span data-montage-id="selection-name" class="selection-name"></span></h3>
     <div id="styles-view-container"></div>
 </section>
 </body>

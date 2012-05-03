@@ -23,6 +23,13 @@
     -webkit-box-flex: 0;
     -webkit-user-select: none;
 }
+.css-panel .selection-name:before, .css-panel .document-name:before {
+    content:" - "
+}
+.css-panel .no-styles.selection-name, .css-panel .no-document.document-name {
+    display: none;
+}
+
 .css-panel .style-sheets-view-container {
     -webkit-box-flex: 0;
     min-height: 41px;

@@ -26,6 +26,23 @@ exports.StylesViewContainer = Montage.create(Component, {
             this.needsDraw = true;
         }
     },
+
+    _getElementLabel : {
+        value: function(el) {
+            var id = '#'+el.id,
+                className = '.'+Array.prototype.slice.call(el.classList).join('.'),
+                nodeName = el.nodeName;
+
+            if(id.length > 1) {
+                return nodeName + id;
+            } else if(className.length > 1) {
+                return nodeName + className;
+            }
+
+            return nodeName;
+        }
+    },
+
     templateDidLoad : {
         value: function() {
             this.eventManager.addEventListener('styleSheetsReady', this, false);
@@ -46,6 +63,10 @@ exports.StylesViewContainer = Montage.create(Component, {
                 this.hasStyles = false;
                 return false;
             } else if(elements.length === 1) {
+
+                ///// update the selection status label with the label of the element
+                this.selectionNameLabel.innerHTML = this._getElementLabel(elements[0]);
+
                 if(this.contentPanel === "rules") {
                     this.ruleListContainer.displayListForSelection(elements);
                 } else {
@@ -102,8 +123,10 @@ exports.StylesViewContainer = Montage.create(Component, {
         value: function() {
             if(this.hasStyles) {
                 this.element.classList.remove('no-styles');
+                this.selectionNameLabel.classList.remove('no-styles');
             } else {
                 this.element.classList.add('no-styles');
+                this.selectionNameLabel.classList.add('no-styles');
             }
         }
     }

@@ -8,21 +8,97 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
 exports.StyleSheetsView = Montage.create(Component, {
-    noDocumentCondition : {
-        value: true
+    noDocumentCondition  : { value: true },
+    showToolbar          : { value: false },
+    stylesController     : { value: null },
+    styleSheets          : { value: [] },
+    _initView            : { value: false },
+    documentNameLabel    : { value: null },
+    noDocumentLabelClass : { value: "no-document" },
+
+    _documentName : { value: null },
+    documentName : {
+        get: function() {
+            return this._documentName;
+        },
+        set: function(label) {
+            if(label === this._documentName) { return false; }
+            
+            this._documentName = label;
+            this.needsDraw = true;
+        }
     },
-    showToolbar : {
-        value: false
+    
+    /// Toolbar Button Actions
+    /// --------------------------------
+
+    ///// Add rule button action
+    handleAddAction : {
+        value: function(e) {
+            debugger;
+        }
     },
-    _resizedHeight : {
-        value: null
+
+    /// App event handlers
+    /// --------------------------------
+    
+    handleStyleSheetsReady : {
+        value: function(e) {
+            this.documentName = this.stylesController.activeDocument.name;
+            this._initView = this.needsDraw = true;
+        }
     },
-    isResizing : {
-        value: null
+
+    /// Draw cycle
+    /// --------------------------------
+    
+    templateDidLoad : {
+        value: function() {
+            this.stylesController = this.application.ninja.stylesController;
+        }
     },
-    _height: {
-        value: null
+    prepareForDraw : {
+        value: function() {
+            this.eventManager.addEventListener("styleSheetsReady", this, false);
+            this.eventManager.addEventListener("newStyleSheet", this, false);
+        }
     },
+    draw : {
+        value: function() {
+            if(this._initView) {
+                this.noDocumentCondition = false;
+                this.showToolbar = true;
+                this.styleSheets = this.stylesController.userStyleSheets;
+                this._initView = false;
+            }
+
+            if(this.height) {
+                this.styleSheetList.element.style.height = (this.height + this._resizedHeight) + "px";
+            }
+            
+            if(this.documentName && this.documentNameLabel) {
+                this.documentNameLabel.innerHTML = this.documentName;
+                this.documentNameLabel.classList.remove(this.noDocumentLabelClass);
+            } else {
+                this.documentNameLabel.classList.add(this.noDocumentLabelClass);
+            }
+        }
+    },
+    didDraw: {
+        value: function() {
+            if(!this.isResizing) {
+                this.height = this.styleSheetList.element.offsetHeight;
+            }
+        }
+    },
+
+
+    /// Resize properties
+    /// --------------------------------
+
+    _resizedHeight : { value: null },
+    isResizing     : { value: null },
+    _height        : { value: null },
     height: {
         get: function() {
             return this._height;
@@ -32,47 +108,6 @@ exports.StyleSheetsView = Montage.create(Component, {
                 this._height = val;
                 this.needsDraw = true;
             }
-        }
-    },
-
-    /// Toolbar Button Actions
-    /// -----------------------
-
-    ///// Add rule button action
-    handleAddAction : {
-        value: function(e) {
-            debugger;
-        }
-    },
-
-    styleSheets : {
-        value: []
-    },
-    stylesController : {
-        value: null
-    },
-    deserializedFromTemplate : {
-        value: function() {
-            console.log("style sheet view - deserialized");
-
-            this.stylesController = this.application.ninja.stylesController;
-
-            this.eventManager.addEventListener("styleSheetsReady", this, false);
-            this.eventManager.addEventListener("newStyleSheet", this, false);
-        }
-    },
-    _initView : {
-        value: false
-    },
-
-    handleStyleSheetsReady : {
-        value: function(e) {
-            this._initView = this.needsDraw = true;
-
-//            this.noDocumentCondition = false;
-//            this.showToolbar = true;
-//            this.styleSheets = this.stylesController.userStyleSheets;
-
         }
     },
     handleNewStyleSheet : {
@@ -102,35 +137,4 @@ exports.StyleSheetsView = Montage.create(Component, {
             this.needsDraw = true;
         }
     },
-
-
-    prepareForDraw : {
-        value: function() {
-            console.log("style sheet view - prepare for draw");
-        }
-    },
-    draw : {
-        value: function() {
-            console.log("styles sheet view - draw");
-
-            if(this._initView) {
-                this.noDocumentCondition = false;
-                this.showToolbar = true;
-                this.styleSheets = this.stylesController.userStyleSheets;
-                this._initView = false;
-            }
-
-            if(this.height) {
-                console.log("StyleSheetsView draw - resizing to", (this.height + this._resizedHeight) + "px");
-                this.styleSheetList.element.style.height = (this.height + this._resizedHeight) + "px";
-            }
-        }
-    },
-    didDraw: {
-        value: function() {
-            if(!this.isResizing) {
-                this.height = this.styleSheetList.element.offsetHeight;
-            }
-        }
-    }
 });
