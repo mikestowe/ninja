@@ -25,6 +25,9 @@ exports.Style = Montage.create(TreeNode, {
             this.units = this.getUnits(text);
         }
     },
+    browserValue: {
+        value: null
+    },
     _priority: { value: "", distinct: true },
     priority: {
         get: function() {

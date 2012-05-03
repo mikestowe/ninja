@@ -94,7 +94,7 @@ exports.StylesViewMediator = Montage.create(Component, {
     handleStyleToggle : {
         value: function(rule, enable, style) {
             if(enable) {
-                this.stylesController.setStyle(rule, style.propertyText, style.valueText, style.priority);
+                this.stylesController.setStyle(rule, style.propertyText, style.browserValue, style.priority);
             } else {
                 this.stylesController.deleteStyle(rule, style.propertyText);
             }
@@ -203,6 +203,7 @@ exports.StylesViewMediator = Montage.create(Component, {
 
             ///// update value
             browserValue = this.stylesController.setStyle(rule, property, value);
+            style.browserValue = browserValue;
 
             ///// Mark style as invalid if the browser doesn't accept it
             style.invalid = (browserValue === null);
