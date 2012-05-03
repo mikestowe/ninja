@@ -278,6 +278,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     _dragLayerID : {
     	value: null
     },
+
+    layersDragged:{
+           value:[],
+           writable:true
+    },
+
     dragLayerID : {
     	get: function() {
     		return this._dragLayerID;
@@ -302,6 +308,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     			var dragLayerIndex = this.getLayerIndexByID(this.dragLayerID),
     				dropLayerIndex = this.getLayerIndexByID(this.dropLayerID),
     				dragLayer = this.arrLayers[dragLayerIndex];
+                    this.layersDragged.push(dragLayer);
+                    this._layerDroppedInPlace = this.arrLayers[dropLayerIndex];
 
     			this.arrLayers.splice(dragLayerIndex, 1);
     			this.arrLayers.splice(dropLayerIndex, 0, dragLayer);
@@ -403,6 +411,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 	            		this._deleteHelper = false;
 	            	}
 	            }
+                this.application.ninja.elementMediator.reArrangeDOM(this.layersDragged , this._layerDroppedInPlace);
+                this.layersDragged =[];
     		}
     	}
     },
@@ -903,15 +913,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
-
-
-
-
-
-
-
-
-
     deselectTweens:{
         value:function () {
             for (var i = 0; i < this.selectedTweens.length; i++) {
@@ -1037,7 +1038,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             thingToPush.layerData.layerPosition = this.temparrLayers.length - 1;
 
             this._openDoc = false;
-
 
         }
     },
