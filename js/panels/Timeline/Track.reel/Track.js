@@ -15,9 +15,7 @@ var Track = exports.Track = Montage.create(Component, {
     },
 
     _trackID:{
-        value:null,
-        writable:true,
-        enumerable:true
+        value:null
     },
 
     trackID:{
@@ -30,7 +28,6 @@ var Track = exports.Track = Montage.create(Component, {
     },
 
     _spans:{
-        serializable:true,
         value:[]
     },
 
@@ -45,12 +42,10 @@ var Track = exports.Track = Montage.create(Component, {
     },
 
     _spanRepetition:{
-        serializable:true,
         value:null
     },
 
     spanRepetition:{
-        serializable:true,
         get:function () {
             return this._spanRepetition;
         },
@@ -85,9 +80,8 @@ var Track = exports.Track = Montage.create(Component, {
 
     //TEMP
     keyFrames:{
-        value:[],
-        writable:true,
-        enumerable:true
+    	serializable: true,
+        value:[]
     },
     
     prepareForDraw: {
