@@ -12,12 +12,13 @@
     padding: 8px 0;
     position: relative;
 }
-#nj-computed-sub-panel {
+.nj-css-panel-computed {
     display:-webkit-box;
     -webkit-box-flex: 1;
     -webkit-box-orient: vertical;
 }
-#nj-computed-sub-panel .nj-sub-panel {
+/*#nj-computed-sub-panel .nj-sub-panel {*/
+.sub-panel-slot .nj-sub-panel {
     -webkit-box-flex: 1;
     background-color: #474747;
     color: #FFF;
@@ -53,10 +54,10 @@
 #nj-css-computed-list {
     margin-top: 7px;
 }
+#nj-css-computed-list dt, #nj-css-computed-list dd {
+    cursor: default;
+}
 #nj-css-computed-list dt {
     color: #FFF;
     width: 55%;
-}
-#nj-computed-sub-panel.nj-css-panel-hide {
-    display: none;
 }

@@ -49,6 +49,9 @@ exports.StylesViewMediator = Montage.create(Component, {
         }
     },
 
+    /// Toolbar Button Actions
+    /// -----------------------
+
     ///// Add rule button action
     handleAddAction : {
         value: function(e) {
@@ -81,6 +84,24 @@ exports.StylesViewMediator = Montage.create(Component, {
 
         }
     },
+
+    handleComputedAction : {
+        value: function(e) {
+            var container = this.ownerComponent,
+                panelToShow = (container.contentPanel === "computed") ? "rules" : "computed";
+
+            ///// Handle showing and hiding of the add button
+            if(panelToShow === "computed") {
+                container.toolbar.hideButton('add');
+            } else {
+                container.toolbar.showButton('add');
+            }
+
+            container.contentPanel = panelToShow;
+            this.ownerComponent.handleSelectionChange();
+        }
+    },
+
 
     _doesSelectorTargetElement : {
         value: function doesSelectorTargetElement(selector, element) {

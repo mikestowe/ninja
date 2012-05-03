@@ -29,6 +29,7 @@ exports.StylesViewContainer = Montage.create(Component, {
     templateDidLoad : {
         value: function() {
             this.eventManager.addEventListener('styleSheetsReady', this, false);
+            //this.eventManager.addEventListener('elementChanging', this, false);
             this.eventManager.addEventListener('elementChange', this, false);
         }
     },
@@ -44,17 +45,56 @@ exports.StylesViewContainer = Montage.create(Component, {
             if(elements.length === 0) {
                 this.hasStyles = false;
                 return false;
+            } else if(elements.length === 1) {
+                if(this.contentPanel === "rules") {
+                    this.ruleListContainer.displayListForSelection(elements);
+                } else {
+                    this.computedStyleView.declaration = elements[0];
+                }
+            } else {
+
             }
 
-            this.ruleListContainer.displayListForSelection(elements);
             this.hasStyles = true;
         }
     },
     handleElementChange : {
         value: function(e) {
-            if(e._event.detail.type !== 'cssChange') {
-                this.ruleListContainer.displayedList.component.update();
+            var elements = this.application.ninja.selectedElements;
+
+            if(elements.length === 0) {
+                return false;
+            } else if(elements.length === 1) {
+                if(this.contentPanel === "rules") {
+                    if(e._event.detail.type !== 'cssChange') {
+                        this.ruleListContainer.displayedList.component.update();
+                    }
+                } else {
+                    this.computedStyleView.declaration = elements[0];
+                }
+            } else {
+                return false;
             }
+
+        }
+    },
+
+    handleElementChanging : {
+        value: function(e) {
+            var elements = this.application.ninja.selectedElements;
+
+            if(elements.length === 1) {
+                if(this.contentPanel === "rules") {
+//                    if(e._event.detail.type !== 'cssChange') {
+//                        this.ruleListContainer.displayedList.component.update();
+//                    }
+                } else {
+                    this.computedStyleView.declaration = elements[0];
+                }
+            }
+
+               return false;
+
         }
     },
 
