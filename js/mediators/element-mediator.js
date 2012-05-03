@@ -514,7 +514,35 @@ exports.ElementMediator = Montage.create(Component, {
             var str = this.getProperty(el, "-webkit-transform");
             return str && str.length;
         }
-    }
+    },
+
+    reArrangeDOM:{
+            value:function(layersDraggedArray  , layerDroppedAfter){
+
+                var documentRoot,length;
+
+                documentRoot = this.application.ninja.currentDocument.documentRoot;
+                length = layersDraggedArray.length;
+
+                for(i=0;documentRoot.children[i];i++){
+                    if(documentRoot.children[i]===layerDroppedAfter.layerData.elementsList[0]){
+                        if(length >0){
+                             documentRoot.children[i].parentNode.insertBefore(layersDraggedArray[length-1].layerData.elementsList[0],documentRoot.children[i]);
+                        }
+                        /* Will require for Multiple Drag n Drop */
+    //                    length = length-1;
+    //                    index=i;
+    //                    if(length>0){
+    //                        while(layersDraggedArray[length]){
+    //                            documentRoot.children[index].parentNode.insertBefore(layersDraggedArray[length-1].layerData.elementsList[0],documentRoot.children[k].nextSibling);
+    //                            length--;
+    //                            index++;
+    //                        }
+    //                    }
+                    }
+                }
+            }
+        }
 
 
 
