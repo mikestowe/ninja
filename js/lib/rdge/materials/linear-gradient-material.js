@@ -42,6 +42,7 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
 
     this.setColor1 = function (c) {
         this._color1 = c.slice();
+		this._propValues[this._propNames[0]] = this._color1.slice(0);
 
         if (this._shader && this._shader['default']) {
             this._shader['default'].u_color1.set(c);
@@ -54,6 +55,7 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
 
     this.setColor2 = function (c) {
         this._color2 = c.slice();
+		this._propValues[this._propNames[1]] = this._color2.slice(0);
 
         if (this._shader && this._shader['default']) {
             this._shader['default'].u_color2.set(c);
@@ -66,6 +68,7 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
 
     this.setColor3 = function (c) {
         this._color3 = c.slice();
+		this._propValues[this._propNames[2]] = this._color3.slice(0);
 
         if (this._shader && this._shader['default']) {
             this._shader['default'].u_color3.set(c);
@@ -78,6 +81,7 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
 
     this.setColor4 = function (c) {
         this._color4 = c.slice();
+		this._propValues[this._propNames[3]] = this._color4.slice(0);
 
         if (this._shader && this._shader['default']) {
             this._shader['default'].u_color4.set(c);

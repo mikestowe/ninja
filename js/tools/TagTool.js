@@ -157,6 +157,8 @@ exports.TagTool = Montage.create(DrawingTool, {
 
             selectedTag = this.options.selectedElement;
 
+			if (!NJUtils) NJUtils = require("js/lib/NJUtils").NJUtils;
+
             if(selectedTag === "divTool") {
                 newTag = NJUtils.makeNJElement("div", "div", "block");
             } else if(selectedTag === "imageTool") {

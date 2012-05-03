@@ -88,8 +88,9 @@ exports.MaterialsPopup = Montage.create(Component, {
 
     _handlePropertyChange:
     {
-        value: function(event)
+        value: function(theEvent)
         {
+			var event = theEvent._event;
             if(typeof event.propertyValue === "object")
             {
                 console.log(event.propertyLabel + " changed to ");
@@ -214,44 +215,61 @@ exports.MaterialsPopup = Montage.create(Component, {
 	loadMaterials:
 	{
 		enumerable: true,
-		value: function(materialID)
+		value: function(materialID,  useSelection,  whichMaterial)
 		{
 			//TODO - Hack to force repetition to draw. Setting .length = 0 did not work.
 			this.materialsData = [];
 
+			var material;
 			this._materialName = materialID;
-			if(
-					(materialID ===  "BumpMetalMaterial")		||
-					(materialID ===  "DeformMaterial")			||
-					(materialID ===  "FlatMaterial")			||
-					(materialID ===  "FlagMaterial")			||
-					(materialID ===  "FlyMaterial")				||
-					(materialID ===  "JuliaMaterial")			||
-					(materialID ===  "KeleidoscopeMaterial")	||
-					(materialID ===  "LinearGradientMaterial")	||
-					(materialID ===  "MandelMaterial")			||
-					(materialID ===  "PlasmaMaterial")			||
-					(materialID ===  "PulseMaterial")			||
-					(materialID ===  "RadialBlurMaterial")		||
-					(materialID ===  "RadialGradientMaterial")	||
-					(materialID ===  "ReliefTunnelMaterial")	||
-					(materialID ===  "SquareTunnelMaterial")	||
-					(materialID ===  "StarMaterial")			||
-					(materialID ===  "TaperMaterial")			||
-					(materialID ===  "TunnelMaterial")			||
-					(materialID ===  "TwistMaterial")			||
-					(materialID ===  "TwistVertMaterial")		||
-					(materialID ===  "UberMaterial")			||
-					(materialID ===  "WaterMaterial")			||
-					(materialID ===  "ZInvertMaterial")
-				)
+			if (useSelection)
 			{
-				var material = MaterialsModel.getMaterial( materialID );
-				if (material)
+				var selection = this.application.ninja.selectedElements;
+				if (selection && (selection.length > 0))
 				{
-					this._material = material;
-					this.materialsData = this.getMaterialData( material );
+					var canvas = selection[0];
+					var obj;
+					if (canvas.elementModel && canvas.elementModel.shapeModel)  obj = canvas.elementModel.shapeModel.GLGeomObj;
+					if (obj)
+						material = (whichMaterial === 'stroke') ? obj.getStrokeMaterial() : obj.getFillMaterial();
 				}
+			}
+			else
+			{
+				if(
+						(materialID ===  "BumpMetalMaterial")		||
+						(materialID ===  "DeformMaterial")			||
+						(materialID ===  "FlatMaterial")			||
+						(materialID ===  "FlagMaterial")			||
+						(materialID ===  "FlyMaterial")				||
+						(materialID ===  "JuliaMaterial")			||
+						(materialID ===  "KeleidoscopeMaterial")	||
+						(materialID ===  "LinearGradientMaterial")	||
+						(materialID ===  "MandelMaterial")			||
+						(materialID ===  "PlasmaMaterial")			||
+						(materialID ===  "PulseMaterial")			||
+						(materialID ===  "RadialBlurMaterial")		||
+						(materialID ===  "RadialGradientMaterial")	||
+						(materialID ===  "ReliefTunnelMaterial")	||
+						(materialID ===  "SquareTunnelMaterial")	||
+						(materialID ===  "StarMaterial")			||
+						(materialID ===  "TaperMaterial")			||
+						(materialID ===  "TunnelMaterial")			||
+						(materialID ===  "TwistMaterial")			||
+						(materialID ===  "TwistVertMaterial")		||
+						(materialID ===  "UberMaterial")			||
+						(materialID ===  "WaterMaterial")			||
+						(materialID ===  "ZInvertMaterial")
+					)
+				{
+					material = MaterialsModel.getMaterial( materialID );
+				}
+			}
+				
+			if (material)
+			{
+				this._material = material;
+				this.materialsData = this.getMaterialData( material );
 			}
 			else
 			{

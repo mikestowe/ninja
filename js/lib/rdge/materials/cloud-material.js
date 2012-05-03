@@ -183,7 +183,8 @@ var CloudMaterial = function CloudMaterial()
         if (material)
 		{
             var technique = material.shaderProgram['default'];
-            var renderer = RDGE.globals.engine.getContext().renderer;
+            var saveContext = RDGE.globals.engine.getContext();
+			var renderer = RDGE.globals.engine.getContext().renderer;
             if (renderer && technique)
 			{
                 var texMapName = this._propValues[this._propNames[0]];
@@ -213,6 +214,10 @@ var CloudMaterial = function CloudMaterial()
 				this.updateTexture();
 			}
 		}
+	}
+
+	this.updateColor = function()
+	{
 	}
 
 	this.update = function( time )
@@ -264,6 +269,7 @@ var CloudMaterial = function CloudMaterial()
 		this.getWorld().stop();	
 
 		// build a world to do the rendering
+		if (!GLWorld)  GLWorld = require("js/lib/drawing/world").World;
 		this._srcWorld = new GLWorld( this._srcCanvas, true, true );
 		var srcWorld = this._srcWorld;
 		if (!this._srcCanvas)  throw new Error( "No source canvas in Cloud material" );
@@ -273,13 +279,13 @@ var CloudMaterial = function CloudMaterial()
 		var prim = this.buildGeometry( srcWorld,  srcCanvas.width, srcCanvas.height );
 
 		// set up the shader
-		var shader = new jshader();
+		var shader = new RDGE.jshader();
 		shader.def = cloudMaterialDef;
 		shader.init();
 		this._srcShader = shader;
 
 		// set up the material node
-		var materialNode = createMaterialNode("cloudMaterial" + "_" + srcWorld.generateUniqueNodeID());
+		var materialNode = RDGE.createMaterialNode("cloudMaterial" + "_" + srcWorld.generateUniqueNodeID());
 		materialNode.setShader(shader);
 		this._srcMaterialNode = materialNode;
 
@@ -322,7 +328,6 @@ var CloudMaterial = function CloudMaterial()
 	this.buildGeometry = function(world,  canvasWidth,  canvasHeight)
 	{
 		var RectangleGeometry	= require("js/lib/geom/rectangle").RectangleGeometry;
-
 		RectangleGeometry.init();
 
 		// get the normalized device coordinates (NDC) for

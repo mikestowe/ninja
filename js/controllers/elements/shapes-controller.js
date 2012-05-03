@@ -166,10 +166,10 @@ exports.ShapesController = Montage.create(CanvasController, {
                     }
                     break;
                 case "editStrokeMaterial":
-                    NJevent("showMaterialPopup",{materialId : this.getProperty(el, "strokeMaterial")});
+                    NJevent("showMaterialPopup",{materialId : this.getProperty(el, "strokeMaterial"),  useSelection: true,  whichMaterial: 'stroke'});
                     break;
                 case "editFillMaterial":
-                    NJevent("showMaterialPopup",{materialId : this.getProperty(el, "fillMaterial")});
+                    NJevent("showMaterialPopup",{materialId : this.getProperty(el, "fillMaterial"),  useSelection: true,  whichMaterial: 'fill'});
                     break;
                 case "animate":
                     if(value)
