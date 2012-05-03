@@ -52,12 +52,11 @@ exports.StageView = Montage.create(Component, {
     },
 
     /**
-     * Creates a text area which will contain the content of the opened text document.
+     * Public method
+     * Creates a textarea element which will contain the content of the opened text document.
      */
     createTextAreaElement: {
         value: function(uuid) {
-
-
             var codeMirrorDiv = document.createElement("div");
             codeMirrorDiv.id = "codeMirror_"  + uuid;
             codeMirrorDiv.style.display = "block";
@@ -66,19 +65,22 @@ exports.StageView = Montage.create(Component, {
             var textArea = document.createElement("textarea");
             textArea.id = "code";
             textArea.name = "code";
-
             codeMirrorDiv.appendChild(textArea);
 
             return textArea;
         }
     },
 
-    // Temporary function to create a Codemirror text view
+    /**
+     * Public method
+     * Creates a new instance of a code editor
+     */
     createTextView: {
         value: function(doc) {
+            var type;
             this.application.ninja.documentController._hideCurrentDocument();
             this.hideOtherDocuments(doc.uuid);
-            var type;
+
             switch(doc.documentType) {
                 case  "css" :
                     type = "css";
@@ -86,43 +88,51 @@ exports.StageView = Montage.create(Component, {
                 case "js" :
                     type = "javascript";
                     break;
+                case "html" :
+                    type = "htmlmixed";
+                    break;
+                case "json" :
+                    type = "javascript";
+                    break;
+                case "php" :
+                    type = "php";
+                    break;
+                case "pl" :
+                    type = "perl";
+                    break;
+                case "py" :
+                    type = "python";
+                    break;
+                case "rb" :
+                    type = "ruby";
+                    break;
+                case "xml" :
+                    type = "xml";
+                    break;
             }
-
-            //fix hack
             document.getElementById("codeMirror_"+doc.uuid).style.display="block";
 
-            var documentController = this.application.ninja.documentController;
-            doc.editor = CodeMirror.fromTextArea(doc.textArea, {
-                lineNumbers: true,
-                       mode: type,
-                       onChange: function(){
-                           var historySize = doc.editor.historySize();
-                           if(historySize.undo>0){
-                                doc.needsSave = true;
-                           }else if(historySize.undo===0 && historySize.redo>0){
-                               doc.needsSave = false;
-                           }
-                       },
-                       onCursorActivity: function() {
-                           //documentController._codeEditor.editor.setLineClass(documentController._codeEditor.hline, null);
-                           //documentController._codeEditor.hline = documentController._codeEditor.editor.setLineClass(documentController._codeEditor.editor.getCursor().line, "activeline");
-                       }
-           });
+            doc.editor = this.application.ninja.codeEditorController.createEditor(doc, type, doc.documentType);
+            doc.editor.hline = doc.editor.setLineClass(0, "activeline");
 
-           //this.application.ninja.documentController._codeEditor.hline = this.application.ninja.documentController._codeEditor.editor.setLineClass(0, "activeline");
             this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
             this.application.ninja.documentController.activeDocument = doc;
             this.application.ninja.stage.hideCanvas(true);
-
             document.getElementById("iframeContainer").style.display="none";//hide the iframe when switching to code view
+
+            this.showCodeViewBar(true);
+            this.application.ninja.codeEditorController.applySettings();
+            this.collapseAllPanels();
         }
     },
 
-    //called for switching between html documents
+    /**
+     * Public method
+     * Switches between documents. Document state data is saved and restored whereever applicable
+     */
     switchDocument:{
         value: function(doc){
             this.application.ninja.documentController._hideCurrentDocument();
-
             this.application.ninja.documentController.activeDocument = doc;
 
             if(this.application.ninja.documentController.activeDocument.currentView === "design") {
@@ -131,62 +141,37 @@ exports.StageView = Montage.create(Component, {
 
             this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
             this.application.ninja.documentController._showCurrentDocument();
-
-            //focus current document
+            //focus editor
             if(!!this.application.ninja.documentController.activeDocument && !!this.application.ninja.documentController.activeDocument.editor){
-                document.getElementById("codeMirror_"+this.application.ninja.documentController.activeDocument.uuid).getElementsByClassName("CodeMirror")[0].focus();
+                this.application.ninja.documentController.activeDocument.editor.focus();
+
+                this.showCodeViewBar(true);
+                this.application.ninja.codeEditorController.applySettings();
+                this.collapseAllPanels();
             }
 
             if(this.application.ninja.documentController.activeDocument.currentView === "design") {
                 this.application.ninja.stage._scrollFlag = true; // TODO HACK to prevent type error on Hide/Show Iframe
+                this.application.ninja.stage.stageDeps.reinitializeForSwitchDocument();//reinitialize draw-util, snapmanager and view-util
 
-                //reinitialize draw-util, snapmanager and view-util
-                this.application.ninja.stage.stageDeps.reinitializeForSwitchDocument();
-
-                //this.application.ninja.stage.layout.reinitializeForSwitchDocument();
-
-                // TODO dispatch event here
-    //                appDelegateModule.MyAppDelegate.onSetActiveDocument();
+                this.showCodeViewBar(false);
+                this.restoreAllPanels();
             }
 
             NJevent("switchDocument");
-
         }
     },
 
-    refreshCodeDocument:{
-        value:function(doc){
-
+    /**
+     * Public method
+     * Switches between different views of a design document, like HTML design view, HTML code view
+     */
+    switchDesignDocViews: {
+        value: function() {
+            //TODO
         }
     },
-    addCodeDocument:{
-        value:function(doc){
-            var type;
-            switch(doc.documentType) {
-                case  "css" :
-                    type = "css";
-                    break;
-                case "js" :
-                    type = "javascript";
-                    break;
-            }
 
-            var codeM = CodeMirror.fromTextArea(doc.textArea, {
-                lineNumbers: true,
-                       mode: type,
-                       onCursorActivity: function() {
-                           //documentController._codeEditor.editor.setLineClass(documentController._codeEditor.hline, null);
-                           //documentController._codeEditor.hline = documentController._codeEditor.editor.setLineClass(documentController._codeEditor.editor.getCursor().line, "activeline");
-                       }
-           });
-        }
-    },
-    hideCodeDocument:{
-        value:function(docUuid){
-            //hide the previous Codemirror div
-
-        }
-    },
     hideOtherDocuments:{
         value:function(docUuid){
             this.application.ninja.documentController._documents.forEach(function(aDoc){
@@ -202,51 +187,46 @@ exports.StageView = Montage.create(Component, {
         value:function(){
             this.application.ninja.rulerTop.style.display = "block";
             this.application.ninja.rulerLeft.style.display = "block";
-//            this.application.ninja.rulerTop.style.background = "url('../images/temp/ruler-top.png')";
-//            this.application.ninja.rulerLeft.style.background = "url('../images/temp/ruler-left.png')";
         }
     },
     hideRulers:{
         value:function(){
             this.application.ninja.rulerTop.style.display = "none";
             this.application.ninja.rulerLeft.style.display = "none";
-//            this.application.ninja.rulerTop.style.background = "rgb(128,128,128)";
-//            this.application.ninja.rulerLeft.style.background = "rgb(128,128,128)";
+        }
+    },
+    showCodeViewBar:{
+        value:function(isCodeView){
+            if(isCodeView === true) {
+                this.application.ninja.editorViewOptions.element.style.display = "block";
+                this.application.ninja.documentBar.element.style.display = "none";
+            }else{
+                this.application.ninja.documentBar.element.style.display = "block";
+                this.application.ninja.editorViewOptions.element.style.display = "none";
+            }
         }
     },
 
-    switchViews: {
-        value: function() {
+    collapseAllPanels:{
+        value:function(){
+            this.application.ninja.panelSplitter.collapse();
+            this.application.ninja.timelineSplitter.collapse();
+            this.application.ninja.toolsSplitter.collapse();
+            this.application.ninja.optionsSplitter.collapse();
+        }
+    },
+    restoreAllPanels:{
+        value:function(){
+            this.application.ninja.panelSplitter.restore();
+            this.application.ninja.timelineSplitter.restore();
+            this.application.ninja.toolsSplitter.restore();
+            this.application.ninja.optionsSplitter.restore();
+        }
+    },
 
-            //save file if dirty
-
-            this.application.ninja.stage.saveStageScroll();
-            this.application.ninja.documentController._hideCurrentDocument();
-
-            if(this.application.ninja.documentController.activeDocument.currentView === "design") {
-                this.application.ninja.documentController._textHolder.style.display = "none";
-                this.application.ninja.documentController.activeDocument.container.style["display"] = "block";
-                this.application.ninja.stage._scrollFlag = true;
-                //this._showCurrentDocument();
-                this.application.ninja.stage.applySavedScroll();
-
-            } else {
-                this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
-
-                var codeview = this.application.ninja.documentController.activeDocument.container;
-                //this._textHolder.style.display = "block";
-                //codeview.firstChild.innerHTML = this.activeDocument.iframe.contentWindow.document.body.parentNode.innerHTML;
-
-//                this._codeEditor.editor = CodeMirror.fromTextArea(codeview.firstChild, {
-//                            lineNumbers: true,
-//                            mode: "htmlmixed",
-//                            onCursorActivity: function() {
-//                                DocumentController._codeEditor.editor.setLineClass(DocumentController._codeEditor.hline, null);
-//                                DocumentController._codeEditor.hline = DocumentController._codeEditor.editor.setLineClass(DocumentController._codeEditor.editor.getCursor().line, "activeline");
-//                            }
-//                });
-//                this._codeEditor.hline = DocumentController._codeEditor.editor.setLineClass(0, "activeline");
-            }
+    applyTheme:{
+        value:function(themeClass){
+            this.element.className = "codeViewContainer "+themeClass;
         }
     }
 });
