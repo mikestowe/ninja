@@ -36,6 +36,7 @@ exports.BrushProperties = Montage.create(ToolProperties, {
             }
         }
     },
+
     strokeSize: {
         get: function() { return this._strokeSize; }
     },

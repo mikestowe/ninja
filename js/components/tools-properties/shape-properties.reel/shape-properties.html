@@ -36,6 +36,7 @@
                 }
             },
 
+
             "_strokeSize1": {
                 "prototype": "js/components/hottextunit.reel[HotTextUnit]",
                 "properties": {
@@ -108,6 +109,10 @@
                     "_materialLabel": {"#": "materialLabel"},
                     "_strokeIcon": {"#": "strokeIcon"},
 
+                    "_fillColorCtrlIcon": {"#": "fillColorCtrlIcon"},
+                    "_fillColorCtrl": {"#": "fillColorCtrl"},
+                    "_strokeColorCtrl": {"#": "strokeColorCtrl"},
+
                     "_strokeSize": {"@": "_strokeSize1"},
                     "ovalProperties": {"@": "ovalProperties1"},
                     "rectProperties": {"@": "rectProperties1"},
@@ -121,20 +126,23 @@
 
             }
     	}
-	    </script>
+        </script>
 
      
     </head>
 
     <body>
-        <div id="shapeProperties" class="subToolHolderPanel">
+        <div id="shapeProperties" class="subToolHolderPanel optionsShapeTool">
             <div id="shapeToolsList">
                 <div id="toolbutton"></div>
             </div>
+            <div data-montage-id="fillColorCtrlIcon" class="colorCtrlIcon FillTool"></div>
+            <div data-montage-id="fillColorCtrl" class="fillColorCtrl"></div>
+            <div class="colorCtrlIcon PencilTool"></div>
+            <div data-montage-id="strokeColorCtrl" class="strokeColorCtrl"></div>
 
             <label class="label">Stroke:</label>
             <div id="strokeControl" class="label"></div>
-
             <div id="customProperties">
                 <div id="ovalProperties" class="label"></div>
                 <div id="rectProperties" class="label"></div>

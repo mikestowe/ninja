@@ -240,7 +240,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                 this._selectedSubpath.setStrokeWidth(strokeSize);
 
                 var colorArray=[];
-                var color = this.application.ninja.colorController.colorToolbar.stroke.color;
+                var color = this.options.stroke.color;
                 if (color){
                     colorArray = [color.r/255, color.g/255, color.b/255, color.a];
                 }else {
@@ -248,7 +248,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                 }
                 this._selectedSubpath.setStrokeColor(colorArray);
 
-                color = this.application.ninja.colorController.colorToolbar.fill.color;
+                color = this.options.fill.color;
                 if (color){
                     colorArray = [color.r/255, color.g/255, color.b/255, color.a];
                 } else {

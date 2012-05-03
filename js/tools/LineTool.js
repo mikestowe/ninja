@@ -44,8 +44,8 @@ exports.LineTool = Montage.create(ShapeTool, {
             }
 
             this._strokeSize = ShapesController.GetValueInPixels(this.options.strokeSize.value, this.options.strokeSize.units, null);
-			if (this.application.ninja.colorController.colorToolbar.stroke.color)
-				this._strokeColor = this.application.ninja.colorController.colorToolbar.stroke.color.css;
+            if (this.options.stroke.color)
+                this._strokeColor = this.options.stroke.color.css;
 			else
 				this._strokeColor = [0,0,0,1];
             this.startDraw(event);
@@ -214,7 +214,7 @@ exports.LineTool = Montage.create(ShapeTool, {
             var left = Math.round(midPt[0] - 0.5*w);
             var top = Math.round(midPt[1] - 0.5*h);
 
-            var strokeColor = this.application.ninja.colorController.colorToolbar.stroke.webGlColor;
+            var strokeColor = this.options.stroke.webGlColor;
             // for default stroke and fill/no materials
             var strokeMaterial = null;
 

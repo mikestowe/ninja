@@ -4,3 +4,23 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
+ 
+ .optionsPenTool {
+    padding: 6px;
+}
+
+ .optionsPenTool > * {
+    float:left;
+}
+
+ .optionsPenTool .fillColorCtrl,  .optionsPenTool .strokeColorCtrl {
+    width: 20px;
+    height: 18px;
+    margin: 2px 6px;
+}
+
+ .optionsPenTool .colorCtrlIcon {
+    width: 20px;
+    height: 20px;
+    background-color: rgb(54, 54, 54);
+}

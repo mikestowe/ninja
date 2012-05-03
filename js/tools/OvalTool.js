@@ -39,8 +39,8 @@ exports.OvalTool = Montage.create(ShapeTool, {
 
             var innerRadius = this.options.innerRadius.value / 100;
 
-            var strokeColor = this.application.ninja.colorController.colorToolbar.stroke.webGlColor;
-            var fillColor = this.application.ninja.colorController.colorToolbar.fill.webGlColor;
+            var strokeColor = this.options.stroke.webGlColor;
+            var fillColor = this.options.fill.webGlColor;
 
             // for default stroke and fill/no materials
             var strokeMaterial = null;

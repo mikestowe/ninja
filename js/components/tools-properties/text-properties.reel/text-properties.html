@@ -21,7 +21,7 @@
                     "fontSelection": {"@": "fontSelection"},
                     "fontSettings": {"@": "fontSettings"},
                     "fontSize": {"@": "fontSize"},
-                    "fontColor": {"@": "fontColor"},
+                    "fontColor": {"#": "fontColorCtrl"},
                     "btnBold": {"@": "btnBold"},
                     "btnItalic": {"@": "btnItalic"},
                     "btnUnderline": {"@": "btnUnderline"},
@@ -306,7 +306,7 @@
             <button id="fontSettings" style="display: none"></button>
             <label class="label">Size:</label>
             <select id="fontSize" class="nj-skinned"></select>
-            <div class="fontColor"></div>
+            <div data-montage-id="fontColorCtrl" class="fontColor"></div>
             <div class="btnGroup">
                 <button id="btnBold" class="btnBold nj-skinned" style="font-weight:bold"></button>
                 <button id="btnItalic" class="btnItalic nj-skinned" style="font-style: italic;"></button>

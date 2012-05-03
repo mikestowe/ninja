@@ -132,7 +132,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
              if (this._selectedBrushStroke === null){
                  this._selectedBrushStroke = new BrushStroke();
                  var colorArray=[0,0,0,0];
-                 var color = this.application.ninja.colorController.colorToolbar.fill.color;
+                 var color = this.options.fill.color;
                  if (color){
                      colorArray = [color.r/255, color.g/255, color.b/255, color.a];
                  } else {
