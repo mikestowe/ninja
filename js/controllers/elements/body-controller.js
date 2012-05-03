@@ -51,5 +51,45 @@ exports.BodyController = Montage.create(ElementController, {
                 return dist;
             }
         }
+    },
+
+    getMatrix: {
+        value: function(el) {
+            if(el.elementModel && el.elementModel.props3D && el.elementModel.props3D.matrix3d)
+            {
+                return el.elementModel.props3D.matrix3d.slice(0);
+            }
+            else
+            {
+                var mat;
+
+                if (el)
+                {
+                    mat = this.application.ninja.stylesController.getMatrixFromElement(el, true);
+                    if (!mat) {
+                        mat = Matrix.I(4);
+                    }
+
+                    var zoom = this.application.ninja.elementMediator.getProperty(el, "zoom");
+                    if (zoom)
+                    {
+                        zoom = Number(zoom);
+                        if (zoom != 1)
+                        {
+                            var zoomMat = Matrix.create(  [
+                                [ zoom,    0,    0, 0],
+                                [    0, zoom,    0, 0],
+                                [    0,    0, zoom, 0],
+                                [    0,    0,    0, 1]
+                            ] );
+                            glmat4.multiply( zoomMat, mat, mat );
+                        }
+                    }
+                }
+
+                el.elementModel.props3D.matrix3d = mat;
+                return mat;
+            }
+        }
     }
 });
