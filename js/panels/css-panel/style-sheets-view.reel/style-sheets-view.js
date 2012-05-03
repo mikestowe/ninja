@@ -35,6 +35,16 @@ exports.StyleSheetsView = Montage.create(Component, {
         }
     },
 
+    /// Toolbar Button Actions
+    /// -----------------------
+
+    ///// Add rule button action
+    handleAddAction : {
+        value: function(e) {
+            debugger;
+        }
+    },
+
     styleSheets : {
         value: []
     },

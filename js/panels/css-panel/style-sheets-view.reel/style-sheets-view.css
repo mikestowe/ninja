@@ -9,19 +9,19 @@
     overflow: hidden;
 }
 
-.style-sheets-view-container ul {
+.style-sheets-view-container .sheet-list {
     margin: 0;
     padding: 0;
     min-height: 55px;
 }
-.style-sheets-view-container li {
+.style-sheets-view-container .sheet-list li {
     list-style-type: none;
     margin: 0 8px;
 }
-.style-sheets-view-container li:first-child {
+.style-sheets-view-container .sheet-list li:first-child {
     margin-top: 5px;
 }
-.style-sheets-view-container li:last-child {
+.style-sheets-view-container .sheet-list li:last-child {
     margin-bottom: 5px;
 }
 

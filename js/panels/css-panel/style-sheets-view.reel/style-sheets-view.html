@@ -84,7 +84,14 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "module": "js/components/toolbar.reel",
                 "name": "Toolbar",
                 "properties": {
-                    "element": {"#": "style-sheets-toolbar"}
+                    "element": {"#": "style-sheets-toolbar"},
+                    "delegate": {"@": "owner" },
+                    "buttons": [
+                        {
+                            "title": "Add",
+                            "identifier": "add"
+                        }
+                    ]
                 }
             },
             "resizer": {
@@ -115,7 +122,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 <body>
 <div id="style-sheets-view-container" class="style-sheets-view-container">
     <h4 id="no-document-message" class="panel-message">No style sheets to display.</h4>
-    <ul id="sheet-list">
+    <ul id="sheet-list" class="sheet-list">
         <li><div id="sheet-item"></div></li>
     </ul>
     <div id="style-sheets-toolbar-container" class="style-sheets-toolbar-container">
