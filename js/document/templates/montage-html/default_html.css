@@ -72,3 +72,7 @@ body
 .nj-preset-transition {
     -webkit-transition: all 450ms linear !important;
 }
+
+.nj-element-highlight {
+    outline: 4px solid rgba(21, 190, 22, 0.60);
+}

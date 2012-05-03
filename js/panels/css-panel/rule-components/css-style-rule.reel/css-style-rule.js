@@ -85,7 +85,20 @@ exports.CssStyleRule = Montage.create(Component, {
             }
         }
     },
-
+    handleMouseover: {
+        value: function(e) {
+            if(this.focusDelegate) {
+                this.focusDelegate.handleSelectorHover(this.selectorField.value, 'over');
+            }
+        }
+    },
+    handleMouseout: {
+        value: function(e) {
+            if(this.focusDelegate) {
+                this.focusDelegate.handleSelectorHover(this.selectorField.value, 'out');
+            }
+        }
+    },
     update: {
         value: function() {
             if(this.cssText !== this.rule.cssText) {
@@ -107,11 +120,12 @@ exports.CssStyleRule = Montage.create(Component, {
                 this.declarationComponent.type = 'inline';
             } else {
                 this.selectorField.addEventListener('change', this, false);
+                this.selectorField.element.addEventListener('mouseover', this, false);
+                this.selectorField.element.addEventListener('mouseout', this, false);
             }
-            //console.log("css style rule : prepare for draw");
-
         }
     },
+
     willDraw : {
         value: function() {
             if(this.applied) {

@@ -9,15 +9,26 @@ var Montage = require("montage/core/core").Montage,
     Keyboard = require("js/mediators/keyboard-mediator").Keyboard;
 
 exports.StylesViewMediator = Montage.create(Component, {
-    newClassPrefix : {
-        value: "new-class"
-    },
+    newClassPrefix      : { value: "new-class" },
+    elementOutlineClass : { value: "nj-element-highlight" },
+
     stylesController : {
         get: function() {
             return this.application.ninja.stylesController;
         },
         set: function(){
             return;
+        }
+    },
+
+    handleSelectorHover : {
+        value: function(selector, direction) {
+            var elements = this.stylesController._activeDocument._document.querySelectorAll(selector),
+                method = (direction === "out") ? "remove" : "add";
+
+            Array.prototype.slice.call(elements).forEach(function(el) {
+                el.classList[method](this.elementOutlineClass);
+            }, this);
         }
     },
 
