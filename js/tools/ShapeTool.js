@@ -106,6 +106,9 @@ exports.ShapeTool = Montage.create(DrawingTool, {
             if(wasSelected) {
                 this.AddCustomFeedback();
                 this.application.ninja.elementMediator.addDelegate = this;
+                if(this.application.ninja.currentSelectedContainer.nodeName === "CANVAS") {
+                    this._targetedElement = this.application.ninja.currentSelectedContainer;
+                }
             } else {
                 this.RemoveCustomFeedback();
                 this.application.ninja.elementMediator.addDelegate = null;

@@ -651,6 +651,21 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			this._lineColor = saveColor;
 			this._drawingContext.lineWidth = saveLineWidth;
 
+            if(this.application.ninja.currentDocument.documentRoot.id !== "UserContent") {
+                // draw an outline around the body
+                var stagePt = MathUtils.getPointOnPlane([0,0,1,0]);
+                var stageMat = this.getPlaneToWorldMatrix([0,0,1], stagePt);
+    //            glmat4.multiply( tMat, stageMat, stageMat);
+                pt0 = [0, 0, 0];
+                pt1 = [0, height, 0];
+                delta = [width, 0, 0];
+                this.drawGridLines(pt0, pt1, delta, stageMat, 2);
+                pt0 = [0, 0, 0];
+                pt1 = [width, 0, 0];
+                delta = [0, height, 0];
+                this.drawGridLines(pt0, pt1, delta, stageMat, 2);
+            }
+
 			// draw the lines
 			this.redrawGridLines();
 
@@ -752,11 +767,26 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			this._drawingContext.lineWidth = 0.25;
 
 			// draw the lines
-			var nLines = this._gridLineArray.length;
+            var line,
+			    nLines = this._gridLineArray.length;
+            if(this.application.ninja.currentDocument.documentRoot.id !== "UserContent") {
+			    nLines = this._gridLineArray.length-4;
+            }
+
 			for (var i = 0; i < nLines; i++) {
-				var line = this._gridLineArray[i];
+				line = this._gridLineArray[i];
 				this.drawIntersectedLine(line, this._drawingContext);
 			}
+
+            if(this.application.ninja.currentDocument.documentRoot.id !== "UserContent") {
+                this._lineColor = "red";
+                i = nLines;
+                nLines += 4;
+                for (; i < nLines; i++) {
+                    line = this._gridLineArray[i];
+                    this.drawIntersectedLine(line, this._drawingContext);
+                }
+            }
 
 			this.popState();
 		}
