@@ -11,6 +11,8 @@ exports.Toolbar = Montage.create(Component, {
     _needsButtonProperties : {
         value: null
     },
+    leftAlignClass  : { value: "left-button" },
+    hideButtonClass : { value: "hide-button" },
     _buttons : { value: null },
     buttons : {
         get: function() {
@@ -22,6 +24,44 @@ exports.Toolbar = Montage.create(Component, {
             console.log("buttons set");
         }
     },
+
+    _buttonToHide : {
+        value: null
+    },
+    _buttonToShow : {
+        value: null
+    },
+    getButton : {
+        value: function(identifier) {
+            var buttons = this.repetition.childComponents,
+                buttonIds = buttons.map(function(component) {
+                    return component.sourceObject.identifier;
+                });
+
+            return buttons[buttonIds.indexOf(identifier)];
+        }
+    },
+    hideButton : {
+        value: function(identifier) {
+            var button = this.getButton(identifier);
+
+            if(button) {
+                this._buttonToHide = button;
+                this.needsDraw = true;
+            }
+        }
+    },
+    showButton : {
+        value: function(identifier) {
+            var button = this.getButton(identifier);
+
+            if(button) {
+                this._buttonToShow = button;
+                this.needsDraw = true;
+            }
+        }
+    },
+
     prepareForDraw : {
         value: function() {
             console.log("toolbar - prepare for draw");
@@ -40,7 +80,14 @@ exports.Toolbar = Montage.create(Component, {
 
                 this.repetition.childComponents.forEach(function(button) {
                     button.element.classList.add('toolbar-' + button.sourceObject.identifier + '-button');
+
+                    ///// add left align class if specified in serialization
+                    if(button.sourceObject.leftAlign) {
+                        button.element.parentElement.classList.add(this.leftAlignClass);
+                    }
                 }, this);
+
+                this._needsClass = false;
             }
 
             if(this._needsButtonProperties) {
@@ -48,6 +95,14 @@ exports.Toolbar = Montage.create(Component, {
                 this._needsButtonProperties = false;
             }
 
+            if(this._buttonToHide) {
+                this._buttonToHide.element.classList.add(this.hideButtonClass);
+                this._buttonToHide = null;
+            }
+            if(this._buttonToShow) {
+                this._buttonToShow.element.classList.remove(this.hideButtonClass);
+                this._buttonToShow = null;
+            }
 
         }
     },

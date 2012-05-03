@@ -18,7 +18,13 @@
     width: 100%;
     -webkit-box-flex: 0;
 }
-.toolbar-container ul, .toolbar-container li {
+.toolbar-container ul {
+    padding: 0 5px;
+    margin: 0;
+}
+.toolbar-container li {
+    display: inline-block;
+    float: right;
     margin: 0;
     padding: 0;
 }
@@ -48,6 +54,9 @@
     width: 16px;
     float: right;
 }
-.left-button {
+.toolbar-container .left-button {
     float: left;
+}
+.toolbar-container .hide-button {
+    display: none;
 }
