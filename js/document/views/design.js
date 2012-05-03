@@ -88,7 +88,6 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
             		this.document.styleSheets[k].ownerNode.setAttribute('data-ninja-template', 'true');
             	}
             }
-            
         	//Creating temp code fragement to load head
         	this._headFragment = this.document.createElement('head');
         	//Adding event listener to know when head is ready, event only dispatched once when using innerHTML
@@ -105,65 +104,11 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     },
     ////////////////////////////////////////////////////////////////////
 	//
-    bodyContentLoaded: {
-    	value: function (e) {
-    		//Removing event, only needed on initial load
-    		this._observer.body.disconnect();
-    		//Removing loading container
-    		this.document.body.removeChild(this.document.getElementsByTagName('ninjaloadinghack')[0]);
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-   			//Temporarily checking for disabled special case
-            var stags = this.document.getElementsByTagName('style'),
-            	ltags = this.document.getElementsByTagName('link');
-           	//
-            for (var m = 0; m < ltags.length; m++) {
-            	if (ltags[m].getAttribute('data-ninja-template') === null) {
-            		if (ltags[m].getAttribute('disabled')) {
-           				ltags[m].removeAttribute('disabled');
-           				ltags[m].setAttribute('data-ninja-disabled', 'true');
-           			}
-           		}
-           	}
-            //
-           	for (var n = 0; n < stags.length; n++) {
-           		if (stags[n].getAttribute('data-ninja-template') === null) {
-           			if (stags[n].getAttribute('disabled')) {
-           				stags[n].removeAttribute('disabled');
-           				stags[n].setAttribute('data-ninja-disabled', 'true');
-            		}
-            	}
-            }
-			//
-			if(this.document.styleSheets.length > 0) {
-				for (var i = 0; i < this.document.styleSheets.length; i++) {
-					//
-				}
-			}
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		//Makign callback if specified
-    		if (this._callback) this._callback();
-    	}
-    },
-    ////////////////////////////////////////////////////////////////////
-	//
     insertHeadContent: {
     	value: function (e) {
     		//Removing event
     		this._observer.head.disconnect();
+    		this._observer.head = null;
     		//Adding the loaded nodes from code fragment into actual document head
     		for(var i in this._headFragment.childNodes) {
     			//Minor hack to know node is actual HTML node
@@ -175,9 +120,109 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     },
     ////////////////////////////////////////////////////////////////////
 	//
-    initCss: {
-        value: function () {
+    bodyContentLoaded: {
+    	value: function (e) {
+    		//Removing event, only needed on initial load
+    		this._observer.body.disconnect();
+    		this._observer.body = null;
+    		//Removing loading container
+    		this.document.body.removeChild(this.document.getElementsByTagName('ninjaloadinghack')[0]);
+    		
+    		
+    		
+    		
+    		
+   			//
+            var stags = this.document.getElementsByTagName('style'),
+            	ltags = this.document.getElementsByTagName('link');
+           	//Temporarily checking for disabled special case (we must enabled for Ninja to access styles)
+           	this.ninjaDisableAttribute(stags);
+           	this.ninjaDisableAttribute(ltags);
+			
+			
+			
+			
+			//Looping through all link tags to reload into style tags
+			if(ltags.length > 0) {
+				for (var i = 0; i < ltags.length; i++) {
+					//
+					if (ltags[i].href) {
+						//TODO: Verify this works for tags in body as well (working in head)
+						this.document.head.insertBefore(this.getStyleTagFromCssFile(ltags[i]), ltags[i]) || this.document.body.insertBefore(this.getStyleTagFromCssFile(ltags[i]), ltags[i]);
+						//Disabling tag once it has been reloaded
+						ltags[i].setAttribute('disabled', 'true');
+					} else {
+						//Error: broken?
+					}
+				}
+			}
+    		
+    		
+    		
+    		
+    		
+    		//Makign callback if specified
+    		if (this._callback) this._callback();
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+	ninjaDisableAttribute: {
+		value: function (tags) {
+			//Looping through tags
+            for (var i = 0; i < tags.length; i++) {
+            	if (tags[i].getAttribute('data-ninja-template') === null) {
+            		if (tags[i].getAttribute('disabled')) {
+           				tags[i].removeAttribute('disabled');
+           				tags[i].setAttribute('data-ninja-disabled', 'true');
+           			}
+           		}
+           	}
+		}
+	},
+    ////////////////////////////////////////////////////////////////////
+	//
+    getStyleTagFromCssFile: {
+        value: function (linktag) {
         	//
+        	var tag, cssUrl, fileUri, cssData, docRootUrl;
+        	//TODO: Remove usage of hack reference of URL
+        	docRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
+        	//Checking for location of href to load (special case for cross-domain)
+			if (linktag.href.indexOf(this.application.ninja.coreIoApi.rootUrl) !== -1) {
+				//Getting file URI (not URL since we must load through I/O API)
+				cssUrl =  linktag.href.split(this.application.ninja.coreIoApi.rootUrl)[1];
+				fileUri = this.application.ninja.coreIoApi.cloudData.root+cssUrl;
+				//Loading data from CSS file
+				cssData = this.application.ninja.coreIoApi.readFile({uri: fileUri});
+				//
+			} else {
+				//Cross-domain resource
+			}
+			//TODO: Improve into single method
+			fileCouldDirUrl = linktag.href.split(linktag.href.split('/')[linktag.href.split('/').length-1])[0];
+			//Creating style tag to load CSS content into
+			tag = this.document.createElement('style');
+			tag.setAttribute('type', 'text/css');
+			tag.setAttribute('data-ninja-uri', fileUri);
+			tag.setAttribute('data-ninja-file-url', cssUrl);
+			tag.setAttribute('data-ninja-file-read-only', JSON.parse(this.application.ninja.coreIoApi.isFileWritable({uri: fileUri}).content).readOnly);
+			tag.setAttribute('data-ninja-file-name', cssUrl.split('/')[cssUrl.split('/').length-1]);
+			//Copying attributes to maintain same properties as the <link>
+			for (var n in linktag.attributes) {
+				if (linktag.attributes[n].value && linktag.attributes[n].name !== 'disabled') {
+					if (linktag.attributes[n].value.indexOf(docRootUrl) !== -1) {
+						tag.setAttribute(linktag.attributes[n].name, linktag.attributes[n].value.split(docRootUrl)[1]);
+					} else {
+						tag.setAttribute(linktag.attributes[n].name, linktag.attributes[n].value);
+					}
+				}					
+			}
+			//
+			//tag.innerHTML = cssData.content.replace(/url\(()(.+?)\1\)/g, detectUrl);
+			tag.innerHTML = cssData.content;
+			//
+			return tag;
         }
     },
     ////////////////////////////////////////////////////////////////////
