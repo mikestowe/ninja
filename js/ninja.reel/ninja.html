@@ -196,13 +196,12 @@
                 }
             },
 
-
-        "editorViewOptions": {
-                        "prototype": "js/code-editor/ui/code-editor-view-options.reel[CodeEditorViewOptions]",
-                        "properties": {
-                            "element": {"#": "editorViewOptions"}
-                        }
-                    },
+            "editorViewOptions": {
+                "prototype": "js/code-editor/ui/code-editor-view-options.reel",
+                "properties": {
+                    "element": {"#": "editorViewOptions"}
+                }
+            },
 
             "panelContainer": {
                 "prototype": "js/panels/PanelContainer.reel",
@@ -270,7 +269,6 @@
                         "oneway": true
                     }
                 }
-
             },
 
             "documentController1": {
@@ -320,7 +318,7 @@
             },
 
             "codeEditorController": {
-                "prototype": "js/controllers/code-editor-controller[CodeEditorController]"
+                "prototype": "js/controllers/code-editor-controller"
             },
 
             "owner": {
@@ -352,12 +350,12 @@
                     "ioMediator":           {"@": "ioMediator"},
                     "timeline":             {"@": "timeline"},
                     "mainMenuController":   {"@": "mainMenuController"},
-                    "codeEditorController":   {"@": "codeEditorController"},
+                    "codeEditorController": {"@": "codeEditorController"},
                     "rightPanelContainer":  {"#": "rightPanelContainer" },
-                    "panelSplitter":     {"@": "splitter3"},
+                    "panelSplitter":        {"@": "splitter3"},
                     "timelineSplitter":     {"@": "splitter4"},
-                    "toolsSplitter":     {"@": "splitter2"},
-                    "optionsSplitter":     {"@": "splitter1"}
+                    "toolsSplitter":        {"@": "splitter2"},
+                    "optionsSplitter":      {"@": "splitter1"}
                 }
             }
         }
