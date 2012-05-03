@@ -11,17 +11,16 @@ exports.ElementController = Montage.create(Component, {
 
     addElement: {
         value: function(el, styles) {
-            if(this.application.ninja.timeline.currentLayerSelected){
+            if(this.application.ninja.timeline.currentLayerSelected) {
                 var selectedLayerIndex = this.application.ninja.timeline.getLayerIndexByID(this.application.ninja.timeline.currentLayerSelected.layerData.layerID);
 
-                if(selectedLayerIndex==0){
+                if(selectedLayerIndex === 0) {
                     this.application.ninja.currentDocument.documentRoot.appendChild(el);
-                }else{
-                    var  element = this.application.ninja.timeline.arrLayers[selectedLayerIndex].layerData.elementsList[0];
-                    element.parentNode.insertBefore(el,element.nextSibling);
+                } else {
+                    var element = this.application.ninja.timeline.arrLayers[selectedLayerIndex].layerData.elementsList[0];
+                    element.parentNode.insertBefore(el, element.nextSibling);
                 }
-
-            }else{
+            } else {
                 this.application.ninja.currentDocument.documentRoot.appendChild(el);
             }
             // Nested elements - TODO make sure the CSS is correct before nesting elements
