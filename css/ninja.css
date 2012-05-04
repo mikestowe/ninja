@@ -212,7 +212,7 @@ body { position: absolute; margin: 0px; width: 100%; height: 100%; background-co
 
 #mainContent .CodeMirror { width: 100%; height: 100%; background: white; }
 
-#mainContent .CodeMirror-scroll { height: 100%; overflow: scroll; overflow-x: auto; overflow-y: auto; }
+#mainContent .CodeMirror-scroll { height: 100%; overflow:auto; }
 
 .montage-editor-frame { position: absolute; z-index: 7; top: 0; left: 0; display: none; -webkit-user-select: initial; }
 

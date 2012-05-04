@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="code-editor-view-options.css">
+    <script type="text/montage-serialization">
+    {
+        "codeCompleteCheck":{
+            "prototype": "montage/ui/checkbox.reel",
+            "properties": {
+                "element": {"#": "codeComplete"}
+            }
+        },
+
+        "zoomHottext": {
+            "prototype": "js/components/hottextunit.reel[HotTextUnit]",
+            "properties": {
+                "element": {"#": "zoomFont"},
+                "minValue":100,
+                "maxValue" :200,
+                "stepSize" :10,
+                "acceptableUnits" : ["%"],
+                "units" : "%"
+            }
+        },
+
+        "owner":{
+            "prototype": "js/code-editor/ui/code-editor-view-options.reel[CodeEditorViewOptions]",
+            "properties": {
+                "element": {"#": "viewOptions"},
+                "codeCompleteCheck":{"@": "codeCompleteCheck"},
+                "zoomHottext":{"@":"zoomHottext"},
+                "comment":{"#":"comment"},
+                "uncomment":{"#":"uncomment"},
+                "themeSelect":{"#":"themeSelect"},
+                "shortKeys":{"#":"shortKeys"}
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+<div data-montage-id="viewOptions" class="viewOptions">
+    <div>
+        <input class="zoomFont" data-montage-id="zoomFont"/>
+        <div class="autoCodeComplete" >
+            <input type="checkbox" data-montage-id="codeComplete" />
+            <span>Automatic Completion</span>
+        </div>
+        <div class="floatButtons">
+            <!--<button disabled="disabled" id="format" value="format" class="nj-skinned format">Format</button>-->
+            <button data-montage-id="comment" value="comment" class="nj-skinned format">comment</button>
+            <button data-montage-id="uncomment" value="uncomment" class="nj-skinned format">uncomment</button>
+        </div>
+        <div class="themeOptions">
+            <span>Theme :</span>
+            <select data-montage-id="themeSelect">
+                <option value="default" selected="">DEFAULT</option>
+                <option value="night">NIGHT</option>
+                <option value="monokai" >MONOKAI</option>
+                <option value="neat" >NEAT</option>
+                <option value="elegant" >ELEGANT</option>
+                <option value="cobalt" >COBALT</option>
+                <option value="eclipse" >ECLIPSE</option>
+                <option value="rubyblue" >RUBYBLUE</option>
+                <option value="lesser-dark" >LESSER-DARK</option>
+                <option value="xq-dark" >XQ-DARK</option>
+            </select>
+        </div>
+        <div data-montage-id="shortKeys" class="shortKeys">
+            <div class="list hide">
+                <div><span class="shortKey">ctrl+space :</span> <span class="shortKeyDesc">code hints</span></div>
+                <div><span class="shortKey">ctrl+/ :</span> <span class="shortKeyDesc">comment selection</span></div>
+                <div><span class="shortKey">ctrl+shift+/ :</span> <span class="shortKeyDesc">uncomment selection</span></div>
+            </div>
+            <span>ShortKeys</span>
+            <span class="dropdownArrow">&#9660</span>
+        </div>
+    </div>
+</div>
+</body>
+</html>

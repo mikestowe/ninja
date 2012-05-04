@@ -1,0 +1,112 @@
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+
+.viewOptions{
+    color:#F7F7F7;
+    font-size:12px;
+}
+
+.viewOptions div{
+    display:inline;
+}
+
+.viewOptions .autoCodeComplete{
+    float:left;
+    height: 20px;
+}
+
+.viewOptions .autoCodeComplete span{
+    vertical-align: middle;
+}
+
+.viewOptions .autoCodeComplete .disabled{
+    color:#515151;
+}
+
+.viewOptions .floatButtons{
+    float:left;
+    font-size:9px;
+    padding-left: 20px;
+}
+
+.viewOptions .format{
+    float:left;
+    margin-left:5px;
+    height: 20px;
+}
+
+.viewOptions .themeOptions{
+    float: right;
+    margin-right:5px;
+}
+
+.viewOptions .themeOptions select{
+    background-color: #616161;
+    color: white;
+    font-size:9px;
+    margin-top:2px;
+    border-color: #616161;
+}
+
+.viewOptions .themeOptions select option{
+    background-color: #616161;
+    color: white;
+    border-color: #616161;
+}
+
+.viewOptions .shortKeys{
+    float: right;
+    margin-right:30px;
+    border: 1px solid #616161;
+    border-radius: 6px;
+    padding-left: 5px;
+    padding-right: 5px;
+    cursor:pointer;
+    position:relative;
+}
+
+.viewOptions .shortKeys .dropdownArrow{
+    font-size: 0.7em;
+    color:#d1d1d1;
+}
+
+.viewOptions .shortKeys .list{
+    position:absolute;
+    border: 1px solid #616161;
+    bottom: 16px;
+    left: -2px;
+    opacity: 1;
+    white-space: nowrap;
+    padding:5px;
+    background-color: #313131;
+    width:200px;
+    cursor: text;
+}
+
+.viewOptions .shortKeys .list div{
+    display: block;
+}
+
+.viewOptions .shortKeys .hide{
+    visibility: hidden;
+}
+
+.viewOptions .shortKeys .show{
+    visibility: visible;
+}
+
+.viewOptions .shortKeys div{
+    padding:2px;
+}
+
+.viewOptions .shortKey{
+    font-style: italic;
+    color: #d1d1d1;
+}
+
+.viewOptions .shortKeyDesc{
+    float:right;
+}
