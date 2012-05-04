@@ -9,11 +9,18 @@
 /* line 19, ../scss/PropertyTrack.scss */
 .content-main .collapsible-content .timeline-track {
   height: 20px;
+  padding-top: 2px;
   border-bottom: 1px solid #505050;
   background-image: url("../images/gridline.jpg");
 }
 
-/* line 26, ../scss/PropertyTrack.scss */
+/* line 27, ../scss/PropertyTrack.scss */
 .timeline-track .content-main {
   background-color: #474747;
+}
+
+/* line 31, ../scss/PropertyTrack.scss */
+.prop-track .collapsible-content.collapsible-collapsed {
+  overflow: hidden;
+  height: 0px;
 }

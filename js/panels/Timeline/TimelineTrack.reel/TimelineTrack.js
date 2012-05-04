@@ -218,10 +218,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     tweenRepetition:{
         get:function () {
-            return this._spanRepetition;
+            return this._tweenRepetition;
         },
         set:function (newVal) {
-            this._spanRepetition = newVal;
+            this._tweenRepetition = newVal;
         }
     },
 
@@ -371,7 +371,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.bypassAnimation = this.trackData.bypassAnimation;
             this.trackID = this.trackData.layerID;
             this.tweens = this.trackData.tweens;
-            this.animatedElement = this.trackData.animatedElement; // unneeded with one element per layer restriction
+            this.animatedElement = this.trackData.animatedElement;
             this.arrStyleTracks = this.trackData.arrStyleTracks;
             this.isTrackAnimated = this.trackData.isTrackAnimated;
             this.trackDuration = this.trackData.trackDuration;
@@ -431,7 +431,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 	                this.animatedElement = this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList[0];
 	            }
             }
-
         }
     },
 
@@ -443,7 +442,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                     if (selectedIndex !== false) {
 	                    if (!this.application.ninja.timeline.arrLayers[selectedIndex].layerData.created) {
 	                        this.retrieveStoredTweens();
-
 	                    }
                     }
                 }
@@ -507,6 +505,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                         this.updateKeyframeRule();
                     }
                 } else {
+                    // TEMP error check
                     console.log("There must be exactly one element in an animated layer.");
                 }
             }
@@ -528,7 +527,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     insertTween:{
         value:function (clickPos) {
             var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
-                        this.application.ninja.timeline.selectLayer(selectedIndex, true);
+            this.application.ninja.timeline.selectLayer(selectedIndex, true);
 
             var currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
             var currentMillisec = currentMillisecPerPixel * clickPos;

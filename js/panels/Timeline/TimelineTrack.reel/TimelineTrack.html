@@ -52,7 +52,6 @@
                    	       }
                    	   }
                    },
-
                    "styleTrackRepetition": {
                        "prototype": "montage/ui/repetition.reel",
                    	   "properties": {
@@ -67,6 +66,12 @@
                    	       }
                    	   }
                    },
+                   "stylePropertyTrack" : {
+               	        "prototype" : "js/panels/Timeline/PropertyTrack.reel",
+               			"properties" : {
+               				"element":{"#": "style-track-base"}
+               			}
+               	   },
                    "positionTracksRepetition": {
                        "prototype": "montage/ui/repetition.reel",
                    	   "properties": {
@@ -236,7 +241,7 @@
             		
             	</div>
             	<div data-montage-id="content-styles" class="content-styles collapsible-content collapsible-collapsed">
-            		<div class="timeline-track"></div>
+            		<div data-montage-id="style-track-base"></div>
             	</div>
             </div>
     	</div>
