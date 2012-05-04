@@ -446,30 +446,6 @@ exports.DrawingToolBase = Montage.create(Montage, {
     },
 
     /**
-     * Get the matrix for the actual element being added to the user document.
-     */
-    getElementMatrix: {
-        value: function(planeMat, midPt) {
-            var divMat, flatMat, flatMatSafe;
-            // calculate the matrix for the element.
-            // we should not need to worry about divide by zero below since we snapped to the point
-            divMat = planeMat.slice(0);
-            divMat[12] = 0.0;
-            divMat[13] = 0.0;
-            //divMat[14] = 0.0;
-            divMat[14] = midPt[2];
-
-            // set the left and top of the element such that the center of the rectangle is at the mid point
-            viewUtils.setViewportObj(this.stage);
-
-            flatMat = divMat;
-            flatMatSafe = MathUtils.scientificToDecimal(flatMat, 10);
-
-            return "matrix3d(" + flatMatSafe + ")";
-        }
-    },
-
-    /**
      *  Draw Helper Functions
      */
 

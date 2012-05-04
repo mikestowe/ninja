@@ -129,7 +129,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                     el.elementModel.shapeModel.GLWorld.render();
                     break;
                 case "useWebGl":
-                    canvas = njModule.NJUtils.makeNJElement("canvas", "Canvas", "shape", el.className, true);
+                    canvas = njModule.NJUtils.make("canvas", el.className, this.application.ninja.currentDocument);
                     canvas.setAttribute("data-RDGE-id", njModule.NJUtils.generateRandom());
                     canvas.width = el.width;
                     canvas.height = el.height;

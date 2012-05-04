@@ -208,11 +208,7 @@ exports.Properties = Montage.create(Component, {
                 this.threeD.zAngle = ElementsMediator.get3DProperty(stage, "zAngle");
             }
 
-            if(ElementsMediator.getProperty(stage, "-webkit-transform-style") === "preserve-3d") {
-                this.threeD.flatten = false;
-            } else {
-                this.threeD.flatten = true;
-            }
+            this.threeD.flatten = ElementsMediator.getProperty(stage, "-webkit-transform-style") !== "preserve-3d";
 
             if(this.customPi !== stage.elementModel.pi) {
                 // We need to unregister color chips from the previous selection from the Color Model
