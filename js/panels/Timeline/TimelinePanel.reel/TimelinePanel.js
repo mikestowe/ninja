@@ -533,8 +533,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                              "deleteLayer",
                              "elementAdded",
                              "elementsRemoved",
-                             "elementReplaced"],
-                             //"selectionChange"],
+                             "elementReplaced",
+                             "selectionChange"],
                 i,
                 arrEventsLength = arrEvents.length;
 
