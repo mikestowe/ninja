@@ -21,15 +21,15 @@
     background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0.5, #1d1d1d), color-stop(0.75, #424242));
     border: none;
     height: 2px;
-    margin: 4px 0px 4px 0px;
+    margin: 4px 0 4px 0;
 }
 
-#mp_title {
-    margin: 4px 0px 0px 0px;
+.mp_title {
+    margin: 4px 0 0 0;
     text-align: center;
 }
 
-#mp_preview {
+.mp_preview {
     height: 100px;
     text-align: center;
 }
@@ -84,12 +84,17 @@
 	width: 27px !important;
 	height: 27px !important;
     overflow:hidden !important;
+    margin-top: -6px;
+}
+
+.mp_properties_list .mp_property:first-child {
+    margin-bottom: 12px;
 }
 
 .mp_buttons {
     clear:both;
     float: left;
-    margin: 0px -4px 0px 4px;
+    margin: 0 -4px 4px 4px;
     width: 97%;
 }
 

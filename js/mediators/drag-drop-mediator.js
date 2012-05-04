@@ -114,11 +114,13 @@ exports.DragDropMediator = Montage.create(Component, {
                             var self = this;
         					//
         					if (e.currentTarget.fileType.indexOf('svg') !== -1) {
-        						element = NJUtils.makeNJElement('embed', 'SVG', 'block');//TODO: Verify this is proper
+        						element = NJUtils.make('embed', null, this.application.ninja.currentDocument);//TODO: Verify this is proper
+                                NJUtils.createModelWithSelection(element, "SVG");
         						element.type = 'image/svg+xml';
                     			element.src = url+'/'+fileName;
         					} else {
-        						element = NJUtils.makeNJElement('image', 'image', 'image');
+        						element = NJUtils.make('image', null, this.application.ninja.currentDocument);
+                                NJUtils.createModel(element);
                     			element.src = url+'/'+fileName;
         					}
         					//Adding element once it is loaded

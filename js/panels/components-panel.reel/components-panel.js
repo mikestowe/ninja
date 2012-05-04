@@ -317,81 +317,77 @@ exports.ComponentsPanel = Montage.create(Component, {
 
             switch(name) {
                 case "anchor":
-                    el = NJUtils.makeNJElement("a", "Anchor", "component");
-                    el.elementModel.pi = "AnchorPi";
+                    el = document.application.njUtils.make("a", null, this.application.ninja.currentDocument);
+                    document.application.njUtils.createModelForComponent(el, "Anchor");
                     el.setAttribute("href", "http://www.motorola.com");
                     el.innerHTML = "link";
                     break;
                 case "button":
-                    el = NJUtils.makeNJElement(name, "Button", "component");
-                    el.elementModel.pi = "ButtonPi";
+                    el = document.application.njUtils.make(name, null, this.application.ninja.currentDocument);
+                    document.application.njUtils.createModelForComponent(el, "Button");
                     el.setAttribute("type", "button");
                     el.innerHTML = "Button";
                     break;
                 case "checkbox":
-                    el = NJUtils.makeNJElement("input", "Checkbox", "component");
-                    el.elementModel.pi = "CheckboxPi";
+                    el = document.application.njUtils.make("input", null, this.application.ninja.currentDocument);
+                    document.application.njUtils.createModelForComponent(el, "Checkbox");
                     el.setAttribute("type", "checkbox");
                     break;
                 case "imageComponent":
-                    el = NJUtils.makeNJElement("image", "Image", "component");
-                    el.elementModel.pi = "ImagePi";
+                    el = document.application.njUtils.make("image", null, this.application.ninja.currentDocument);
+                    document.application.njUtils.createModelForComponent(el, "Image");
                     el.setAttribute("width", 200);
                     el.setAttribute("height", 200);
                     break;
                 case "numberInput":
-                    el = NJUtils.makeNJElement("input", "Number Input", "component");
-                    el.elementModel.pi = "NumberInputPi";
+                    el = document.application.njUtils.make("input", null, this.application.ninja.currentDocument);
+                    document.application.njUtils.createModelForComponent(el, "Number Input");
                     el.setAttribute("type", "number");
                     break;
                 case "select":
-                    el = NJUtils.makeNJElement("select", "Select", "component");
-                    el.elementModel.pi = "SelectInputPi";
+                    el = document.application.njUtils.make("select", null, this.application.ninja.currentDocument);
+                    document.application.njUtils.createModelForComponent(el, "Select");
                     break;
                 case "radioButton":
-                    el = NJUtils.makeNJElement("input", "Radio Button", "component");
-                    el.elementModel.pi = "RadioButtonPi";
+                    el = document.application.njUtils.make("input", null, this.application.ninja.currentDocument);
+                    document.application.njUtils.createModelForComponent(el, "Radio Button");
                     el.setAttribute("type", "radio");
                     break;
                 case "rangeInput":
-                    el = NJUtils.makeNJElement("input", "Range Input", "component");
-                    el.elementModel.pi = "RangeInputPi";
+                    el = document.application.njUtils.make("input", null, this.application.ninja.currentDocument);
+                    document.application.njUtils.createModelForComponent(el, "Range Input");
                     el.setAttribute("type", "range");
                     break;
                 case "textfield":
                 case "searchfield":
-                    el = NJUtils.makeNJElement("input", "Textfield", "component");
-                    el.elementModel.pi = "TextfieldPi";
+                    el = document.application.njUtils.make("input", null, this.application.ninja.currentDocument);
+                    document.application.njUtils.createModelForComponent(el, "Textfield");
                     el.setAttribute("type", "text");
                     break;
                 case "textarea":
-                    el = NJUtils.makeNJElement("textarea", "TextArea", "component");
-                    el.elementModel.pi = "TextareaPi";
+                    el = document.application.njUtils.make("textarea", null, this.application.ninja.currentDocument);
+                    document.application.njUtils.createModelForComponent(el, "TextArea");
                     break;
                 case "toggleButton":
-                    el = NJUtils.makeNJElement("button", "Toggle Button", "component");
-                    el.elementModel.pi = "ToggleButtonPi";
+                    el = document.application.njUtils.make("button", null, this.application.ninja.currentDocument);
+                    document.application.njUtils.createModelForComponent(el, "Toggle Button");
                     el.innerHTML = "Off";
                     break;
                 case "map":
-                    el = NJUtils.makeNJElement("div", "Map", "component");
-                    el.elementModel.pi = "MapPi";
-                    el.elementModel.isComponent = true;
+                    el = document.application.njUtils.make("div", null, this.application.ninja.currentDocument);
+                    document.application.njUtils.createModelForComponent(el, "Map");
                     break;
                 case "feedreader":
-                    el = NJUtils.makeNJElement("div", "Feed Reader", "component");
-                    el.elementModel.pi = "FeedReaderPi";
-                    el.elementModel.isComponent = true;
+                    el = document.application.njUtils.make("div", null, this.application.ninja.currentDocument);
+                    document.application.njUtils.createModelForComponent(el, "Feed Reader");
                     break;
                 case "picasa-carousel":
-                    el = NJUtils.makeNJElement("div", "Picasa Carousel", "component");
-                    el.elementModel.pi = "PicasaCarouselPi";
-                    el.elementModel.isComponent = true;
+                    el = document.application.njUtils.make("div", null, this.application.ninja.currentDocument);
+                    document.application.njUtils.createModelForComponent(el, "Picasa Carousel");
                     break;
                 case "youtube-channel":
-                    el = NJUtils.makeNJElement("div", "Youtube Channel", "component");
-                    el.elementModel.pi = "YoutubeChannelPi";
-                    el.elementModel.isComponent = true;
+                    el = document.application.njUtils.make("div", null, this.application.ninja.currentDocument);
+                    document.application.njUtils.createModelForComponent(el, "Youtube Channel");
                     break;
 
             }
