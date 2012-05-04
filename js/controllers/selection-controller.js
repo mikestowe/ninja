@@ -112,12 +112,12 @@ exports.SelectionController = Montage.create(Component, {
 
     handleSelectAll: {
         value: function(event) {
-            var selected = [], childNodes = [];
+            var selected = [], childNodes = [], self = this;
 
             childNodes = this.application.ninja.currentDocument.documentRoot.childNodes;
             childNodes = Array.prototype.slice.call(childNodes, 0);
             childNodes.forEach(function(item) {
-                if(item.nodeType == 1) {
+                if(self.isNodeTraversable(item)) {
                     selected.push(item);
                 }
             });
@@ -280,6 +280,13 @@ exports.SelectionController = Montage.create(Component, {
             }
 
             return -1;
+        }
+    },
+
+    isNodeTraversable: {
+        value: function( item ) {
+            if(item.nodeType !== 1) return false;
+            return ((item.nodeName !== "STYLE") && (item.nodeName !== "SCRIPT"));
         }
     }
 
