@@ -118,9 +118,9 @@ body { position: absolute; margin: 0px; width: 100%; height: 100%; background-co
 
 #sceneBar { height: 70px; background-color: #474747; }
 
-#mainContainer #rulerTop { display: none; background: gray url("../images/temp/ruler-top.png"); height: 15px; margin-bottom: 0px; border-right: 11px solid black; }
+#mainContainer .rulerTop { display: none; background: gray url("../images/temp/ruler-top.png"); height: 15px; margin-bottom: 0px; border-right: 11px solid black; }
 
-#rulerLeft { display: none; background: gray url("../images/temp/ruler-left.png"); width: 16px; border-bottom: 11px solid black; }
+.rulerLeft { display: none; background: gray url("../images/temp/ruler-left.png"); width: 16px; border-bottom: 11px solid black; }
 
 #stateBar { height: 20px; background-color: #282828; margin-bottom: 0px; }
 
@@ -164,9 +164,7 @@ body { position: absolute; margin: 0px; width: 100%; height: 100%; background-co
 
 .verticalBox { -webkit-box-orient: vertical; -moz-box-orient: vertical; box-orient: vertical; }
 
-#rightPanelContent { overflow-y: hidden; }
-
-#openDocumentsTabComponent { height: 25px; position: relative; overflow: hidden; color: white; }
+.openDocumentsTab { height: 25px; position: relative; overflow: hidden; color: white; }
 
 #openDocuments { float: left; height: 25px; width: 100%; font-size: 12px; list-style: none; margin: 0; padding: 0; position: relative; text-decoration: none; }
 
@@ -174,7 +172,7 @@ body { position: absolute; margin: 0px; width: 100%; height: 100%; background-co
 
 #openDocuments li:hover, #openDocuments li:active, #openDocuments li.activeTab { background-color: #7f7f7f; }
 
-#documentBar { height: 25px; width: 1000px; position: relative; overflow: hidden; color: white; }
+.documentBar { height: 25px; width: 1000px; position: relative; overflow: hidden; color: white; }
 
 .montage-popup-modal-mask { opacity: 1; background: -webkit-radial-gradient(center, ellipse cover, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.8) 80%); }
 
@@ -212,7 +210,7 @@ body { position: absolute; margin: 0px; width: 100%; height: 100%; background-co
 
 #mainContent .CodeMirror { width: 100%; height: 100%; background: white; }
 
-#mainContent .CodeMirror-scroll { height: 100%; overflow:auto; }
+#mainContent .CodeMirror-scroll { height: 100%; overflow: auto; }
 
 .montage-editor-frame { position: absolute; z-index: 7; top: 0; left: 0; display: none; -webkit-user-select: initial; }
 
@@ -648,7 +646,7 @@ button.panel-button { -webkit-appearance: none; font-size: 9px; color: white; ba
 
 .panel.collapsed .arrowIcon { -webkit-transform: rotate(-90deg); }
 
-.rightPanelContent { position: absolute; height: 100%; width: 100%; }
+.rightPanelContent { position: absolute; overflow-y: hidden; height: 100%; width: 100%; }
 
 #rightPanelContainer .panel { -webkit-box-flex: 100; }
 

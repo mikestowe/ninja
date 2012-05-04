@@ -200,7 +200,7 @@
     background-color: #474747;
 }
 
-#mainContainer #rulerTop {
+#mainContainer .rulerTop {
   display: none;
     // TODO: temporary background please replace when component is implemented
     background:$color-stage url('../images/temp/ruler-top.png');
@@ -209,7 +209,7 @@
   border-right: 11px solid black;
 }
 
-#rulerLeft {
+.rulerLeft {
   display: none;
     // TODO: temporary background please replace when component is implemented
     background:$color-stage url('../images/temp/ruler-left.png');
@@ -305,12 +305,7 @@
     box-orient: vertical;
 }
 
-// TODO: REMOVE THIS
-#rightPanelContent {
-    overflow-y:hidden;
-}
-
-#openDocumentsTabComponent {
+.openDocumentsTab {
 	height: 25px;
     position: relative;
     overflow: hidden;
@@ -343,7 +338,7 @@
 	background-color: #7f7f7f;
 }
 
-#documentBar {
+.documentBar {
 	height: 25px;
 	width: 1000px;
 	position: relative;

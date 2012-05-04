@@ -1240,6 +1240,7 @@ display: -webkit-box;
 
 .rightPanelContent {
     position:absolute;
+    overflow-y:hidden;
     height:100%;
     width:100%;
 }
