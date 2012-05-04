@@ -836,7 +836,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     // Drag and drop event handlers
     handleKeyframeDragstart : {
     	value: function(event) {
-            var dragIcon = document.createElement("img");
+            var dragIcon = document.createElement("img"), 
+            	minPosition = 0,
+            	maxPosition = 100000000000;
+            	
             event.dataTransfer.effectAllowed = 'move';
             event.dataTransfer.setData('Text', this.identifier);
             dragIcon.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjEwMPRyoQAAAA1JREFUGFdj+P//PwMACPwC/ohfBuAAAAAASUVORK5CYII="
@@ -868,6 +871,14 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 				return curtop;
     		}
     		//this._dragAndDropHelperOffset = findYOffset(this.container_layers);
+    		if (this.draggingIndex !== (this.tweens.length -1)) {
+    			maxPosition = this.tweenRepetition.childComponents[this.draggingIndex +1].keyFramePosition;
+    		}
+    		if (this.draggingIndex > 1) {
+    			minPosition = this.tweenRepetition.childComponents[this.draggingIndex -1].keyFramePosition;
+    		}
+    		this._keyframeMinPosition = minPosition+2;
+    		this._keyframeMaxPosition = maxPosition-9;
     		this._appendHelper = true;
     		this._deleteHelper = false;
     	}
@@ -894,6 +905,15 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     		*/
     		//currPos = event.y - (this._dragAndDropHelperOffset - this.user_layers.scrollTop)- 28;
     		currPos = event.x - 277;
+    		
+    		// too much or too little?
+    		if (currPos < this._keyframeMinPosition) {
+    			currPos = this._keyframeMinPosition;
+    		}
+    		if (currPos > this._keyframeMaxPosition) {
+    			currPos = this._keyframeMaxPosition;
+    		}
+    		
     		this._dragAndDropHelperCoords = currPos + "px";
     		this.needsDraw = true;
     		return false;
@@ -923,16 +943,36 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 			 * 
 			 */
 			
-			var currPos = event.x - 277,
+			var currPos = event.x - 274,
 				currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80),
-				currentMillisec = currentMillisecPerPixel * currPos;
-			console.log(this.tweens[1].tweenData);
-			this.tweens[1].tweenData.spanWidth = currPos - this.tweens[0].tweenData.keyFramePosition;
-			this.tweens[1].tweenData.keyFramePosition = currPos;
-			this.tweens[1].tweenData.keyFrameMillisec = currentMillisec;
-			this.tweens[1].tweenData.spanPosition = currPos - this.tweens[1].tweenData.spanWidth;
-			this.tweenRepetition.childComponents[1].setData();
-			console.log(this.tweens[1].tweenData);
+				currentMillisec = 0,
+				i = 0, 
+				tweenIndex = this.draggingIndex;
+				
+			// too much or too little?
+    		if (currPos < this._keyframeMinPosition) {
+    			currPos = this._keyframeMinPosition + 3;
+    		}
+    		if (currPos > this._keyframeMaxPosition) {
+    			currPos = this._keyframeMaxPosition + 3;
+    		}
+    		
+    		currentMillisec = currentMillisecPerPixel * currPos;
+
+			this.tweens[tweenIndex].tweenData.spanWidth = currPos - this.tweens[tweenIndex - 1].tweenData.keyFramePosition;
+			this.tweens[tweenIndex].tweenData.keyFramePosition = currPos;
+			this.tweens[tweenIndex].tweenData.keyFrameMillisec = currentMillisec;
+			this.tweens[tweenIndex].tweenData.spanPosition = currPos - this.tweens[tweenIndex].tweenData.spanWidth;
+			this.tweenRepetition.childComponents[tweenIndex].setData();
+			if (tweenIndex < this.tweens.length -1) {
+				var spanWidth = this.tweens[tweenIndex +1].tweenData.keyFramePosition - currPos;
+				var spanPosition = currPos; 
+				this.tweens[tweenIndex +1].tweenData.spanWidth = spanWidth;
+				this.tweens[tweenIndex +1].tweenData.spanPosition = currPos;
+				this.tweenRepetition.childComponents[tweenIndex+1].setData();
+			}
+			this.tweenRepetition.childComponents[tweenIndex].selectTween();
+			this.updateKeyframeRule();
 			return false;
 		}
 	},

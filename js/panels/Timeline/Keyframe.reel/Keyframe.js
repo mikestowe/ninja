@@ -36,6 +36,7 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
 			this.element.addEventListener("mouseover", this.handleMouseover.bind(this), false);
 			this.element.addEventListener("mouseout", this.handleMouseout.bind(this), false);
 			this.element.addEventListener("dragstart", this.handleDragstart.bind(this), false);
+			this.element.addEventListener("dragend", this.handleDragend.bind(this), false);
 			
 
             
@@ -83,7 +84,13 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
 		value: function(event) {
 			//this.parentComponent.parentComponent.dragLayerID = this.layerID;
             event.dataTransfer.setData('Text', 'Keyframe');
+            this.parentComponent.parentComponent.parentComponent.draggingIndex = this.parentComponent.tweenID;
 		}
 	},
+	handleDragend: {
+		value: function(event) {
+			this.parentComponent.isDragging = false;
+		}
+	}
     
 });

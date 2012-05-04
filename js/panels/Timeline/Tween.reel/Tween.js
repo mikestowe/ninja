@@ -132,11 +132,24 @@ var Tween = exports.Tween = Montage.create(Component, {
             this._isTweenAnimated = value;
         }
     },
+    
+    _isDragging: {
+    	value: false
+    },
+    isDragging: {
+    	serializable: true,
+        get:function () {
+            return this._isDragging;
+        },
+        set:function (newVal) {
+            this._isDragging = newVal;
+        }
+    	
+    },
 
 
     draw:{
         value:function () {
-        	console.log("Tween.draw")
             this.element.style.left = this.spanPosition + "px";
             this.keyframe.position = this.spanWidth;
             this.tweenspan.spanWidth = this.spanWidth;
@@ -148,7 +161,6 @@ var Tween = exports.Tween = Montage.create(Component, {
 
     setData:{
         value:function(){
-        	console.log("Tween.setData")
             this.spanWidth = this.tweenData.spanWidth;
             this.keyFramePosition = this.tweenData.keyFramePosition;
             this.spanPosition = this.tweenData.spanPosition;
