@@ -305,16 +305,19 @@ NinjaCvsRt.GLRuntime = function ( canvas, jObj,  assetPath )
 		{
 			case 1:
 				obj = new NinjaCvsRt.RuntimeRectangle();
+                obj._materials = [];
 				obj.importJSON( jObj );
 				break;
 
 			case 2:		// circle
 				obj = new NinjaCvsRt.RuntimeOval();
+                obj._materials = [];
 				obj.importJSON( jObj );
 				break;
 
 			case 3:		// line
 				obj = new NinjaCvsRt.RuntimeLine();
+                obj._materials = [];
 				obj.importJSON( jObj );
 				break;
 
@@ -481,204 +484,205 @@ NinjaCvsRt.RuntimeGeomObj = function ()
 
 	// array of materials
 	this._materials = [];
+};
 
-    ///////////////////////////////////////////////////////////////////////
-    // Property accessors
-    ///////////////////////////////////////////////////////////////////////
+//NinjaCvsRt.RuntimeGeomObj.prototype = Object.create(Object.prototype, {});
+///////////////////////////////////////////////////////////////////////
+// Property accessors
+///////////////////////////////////////////////////////////////////////
 
-	this.geomType	= function()		{  return this.GEOM_TYPE_UNDEFINED;	};
+NinjaCvsRt.RuntimeGeomObj.prototype.geomType	= function()		{  return this.GEOM_TYPE_UNDEFINED;	};
 
-	this.setWorld	= function(w)		{  this._world = w;					};
-	this.getWorld	= function()		{  return this._world;				};
+NinjaCvsRt.RuntimeGeomObj.prototype.setWorld	= function(w)		{  this._world = w;					};
+NinjaCvsRt.RuntimeGeomObj.prototype.getWorld	= function()		{  return this._world;				};
 
-    ///////////////////////////////////////////////////////////////////////
-    // Methods
-    ///////////////////////////////////////////////////////////////////////    
-	this.addChild = function( child )
-	{
-		if (!this._children)  this._children = [];
-		this._children.push( child );
-	};
 
-    this.importJSON = function()
+///////////////////////////////////////////////////////////////////////
+// Methods
+///////////////////////////////////////////////////////////////////////
+NinjaCvsRt.RuntimeGeomObj.prototype.addChild = function( child )
+{
+    if (!this._children)  this._children = [];
+    this._children.push( child );
+};
+
+NinjaCvsRt.RuntimeGeomObj.prototype.importJSON = function()
+{
+};
+
+NinjaCvsRt.RuntimeGeomObj.prototype.importMaterials = function(jObj)
+{
+    if (!jObj || !jObj.materials)  return;
+
+    var nMaterials = jObj.nMaterials;
+    var matArray = jObj.materials;
+    for (var i=0;  i<nMaterials;  i++)
     {
-	};
-
-	this.importMaterials = function(jObj)
-	{
-		if (!jObj || !jObj.materials)  return;
-
-		var nMaterials = jObj.nMaterials;
-		var matArray = jObj.materials;
-		for (var i=0;  i<nMaterials;  i++)
-		{
-			var mat;
-			var matObj = matArray[i].material;
-			var matNodeName = matArray[i].materialNodeName;
-			var shaderName = matObj.material;
-			switch (shaderName)
-			{
-				case "flat":			mat = new NinjaCvsRt.RuntimeFlatMaterial();				break;
-				case "radialGradient":  mat = new NinjaCvsRt.RuntimeRadialGradientMaterial();		break;
-				case "linearGradient":  mat = new NinjaCvsRt.RuntimeLinearGradientMaterial();		break;
-				case "bumpMetal":		mat = new NinjaCvsRt.RuntimeBumpMetalMaterial();			break;
-				case "uber":			mat = new NinjaCvsRt.RuntimeUberMaterial();				break;
-				case "plasma":			mat = new NinjaCvsRt.RuntimePlasmaMaterial();				break;
-
-				case "deform":
-				case "water":
-				case "paris":
-				case "raiders":
-				case "tunnel":
-				case "reliefTunnel":
-				case "squareTunnel":
-				case "twist":
-				case "fly":
-				case "julia":
-				case "mandel":
-				case "star":
-				case "zinvert":
-				case "keleidoscope":
-				case "radialBlur":
-				case "pulse":			mat = new NinjaCvsRt.RuntimePulseMaterial();				break;
-
-				default:
-					console.log( "material type: " + shaderName + " is not supported" );
-					break;
-			}
-
-			if (mat)
-			{
-				mat.importJSON( matObj );
-				mat._materialNodeName = matNodeName;
-				this._materials.push( mat );
-			}
-		}
-	};
-
-	////////////////////////////////////////////////////////////////////
-	// vector function
-
-	this.vecAdd = function( dimen,  a, b )
-	{
-        var rtnVec;
-        if ((a.length < dimen) || (b.length < dimen))
+        var mat;
+        var matObj = matArray[i].material;
+        var matNodeName = matArray[i].materialNodeName;
+        var shaderName = matObj.material;
+        switch (shaderName)
         {
-            throw new Error( "dimension error in vecAdd" );
+            case "flat":			mat = new NinjaCvsRt.RuntimeFlatMaterial();				break;
+            case "radialGradient":  mat = new NinjaCvsRt.RuntimeRadialGradientMaterial();		break;
+            case "linearGradient":  mat = new NinjaCvsRt.RuntimeLinearGradientMaterial();		break;
+            case "bumpMetal":		mat = new NinjaCvsRt.RuntimeBumpMetalMaterial();			break;
+            case "uber":			mat = new NinjaCvsRt.RuntimeUberMaterial();				break;
+            case "plasma":			mat = new NinjaCvsRt.RuntimePlasmaMaterial();				break;
+
+            case "deform":
+            case "water":
+            case "paris":
+            case "raiders":
+            case "tunnel":
+            case "reliefTunnel":
+            case "squareTunnel":
+            case "twist":
+            case "fly":
+            case "julia":
+            case "mandel":
+            case "star":
+            case "zinvert":
+            case "keleidoscope":
+            case "radialBlur":
+            case "pulse":			mat = new NinjaCvsRt.RuntimePulseMaterial();				break;
+
+            default:
+                console.log( "material type: " + shaderName + " is not supported" );
+                break;
         }
 
+        if (mat)
+        {
+            mat.importJSON( matObj );
+            mat._materialNodeName = matNodeName;
+            this._materials.push( mat );
+        }
+    }
+};
+
+////////////////////////////////////////////////////////////////////
+// vector function
+NinjaCvsRt.RuntimeGeomObj.prototype.vecAdd = function( dimen,  a, b )
+{
+    var rtnVec;
+    if ((a.length < dimen) || (b.length < dimen))
+    {
+        throw new Error( "dimension error in vecAdd" );
+    }
+
+    rtnVec = [];
+    for (var i=0;  i<dimen;  i++)
+        rtnVec[i] = a[i] + b[i];
+
+    return rtnVec;
+};
+
+
+NinjaCvsRt.RuntimeGeomObj.prototype.vecSubtract =  function( dimen, a, b )
+{
+    var rtnVec;
+    if ((a.length < dimen) || (b.length < dimen))
+    {
+        throw new Error( "dimension error in vecSubtract" );
+    }
+
+    rtnVec = [];
+    for (var i=0;  i<dimen;  i++)
+        rtnVec[i] = a[i] - b[i];
+
+    return rtnVec;
+};
+
+NinjaCvsRt.RuntimeGeomObj.prototype.vecDot = function( dimen,  v0, v1 )
+{
+    if ((v0.length < dimen) || (v1.length < dimen))
+    {
+        throw new Error( "dimension error in vecDot" );
+    }
+
+    var sum = 0.0;
+    for (var i=0;  i<dimen;  i++)
+        sum += v0[i] * v1[i];
+
+    return sum;
+};
+
+NinjaCvsRt.RuntimeGeomObj.prototype.vecMag = function( dimen, vec )
+{
+    var sum = 0.0;
+    for (var i=0;  i<dimen;  i++)
+        sum += vec[i]*vec[i];
+    return Math.sqrt( sum );
+};
+
+NinjaCvsRt.RuntimeGeomObj.prototype.vecScale = function(dimen, vec, scale)
+{
+    for (var i=0;  i<dimen;  i++)
+        vec[i] *= scale;
+
+    return vec;
+};
+
+NinjaCvsRt.RuntimeGeomObj.prototype.vecNormalize = function(dimen, vec, len)
+{
+    var rtnVec;
+    if (!len)  len = 1.0;
+
+    var sum = 0.0, i = 0;
+    for (i = 0;  i<dimen;  i++)
+        sum += vec[i]*vec[i];
+    sum = Math.sqrt( sum );
+
+    if (Math.abs(sum) >= 0.001)
+    {
+        var scale = len/sum;
         rtnVec = [];
-        for (var i=0;  i<dimen;  i++)
-            rtnVec[i] = a[i] + b[i];
-
-        return rtnVec;
-    };
-
-
-	this.vecSubtract =  function( dimen, a, b )
-	{
-        var rtnVec;
-        if ((a.length < dimen) || (b.length < dimen))
-        {
-            throw new Error( "dimension error in vecSubtract" );
-        }
-
-        rtnVec = [];
-        for (var i=0;  i<dimen;  i++)
-            rtnVec[i] = a[i] - b[i];
-
-        return rtnVec;
-    };
-
-    this.vecDot = function( dimen,  v0, v1 )
-	{
-        if ((v0.length < dimen) || (v1.length < dimen))
-        {
-            throw new Error( "dimension error in vecDot" );
-        }
-
-        var sum = 0.0;
-        for (var i=0;  i<dimen;  i++)
-            sum += v0[i] * v1[i];
-
-        return sum;
-    };
-
-	this.vecMag = function( dimen, vec )
-	{
-        var sum = 0.0;
-        for (var i=0;  i<dimen;  i++)
-            sum += vec[i]*vec[i];
-        return Math.sqrt( sum );
-    };
-
-	this.vecScale = function(dimen, vec, scale)
-	{
-        for (var i=0;  i<dimen;  i++)
-            vec[i] *= scale;
-
-        return vec;
-    };
-
-    this.vecNormalize = function(dimen, vec, len)
-	{
-        var rtnVec;
-		if (!len)  len = 1.0;
-
-        var sum = 0.0, i = 0;
         for (i = 0;  i<dimen;  i++)
-            sum += vec[i]*vec[i];
-        sum = Math.sqrt( sum );
+            rtnVec[i] = vec[i]*scale;
+    }
 
-        if (Math.abs(sum) >= 0.001)
-        {
-            var scale = len/sum;
-            rtnVec = [];
-            for (i = 0;  i<dimen;  i++)
-                rtnVec[i] = vec[i]*scale;
-        }
+    return rtnVec;
+};
 
-        return rtnVec;
-    };
+NinjaCvsRt.RuntimeGeomObj.prototype.transformPoint = function( srcPt, mat )
+{
+    var pt = srcPt.slice(0);
+    var	x = this.vecDot(3,  pt, [mat[0], mat[4], mat[ 8]] ) + mat[12],
+        y = this.vecDot(3,  pt, [mat[1], mat[5], mat[ 9]] ) + mat[13],
+        z = this.vecDot(3,  pt, [mat[2], mat[6], mat[10]] ) + mat[14];
 
-	this.transformPoint = function( srcPt, mat )
-    {
-        var pt = srcPt.slice(0);
-        var	x = this.vecDot(3,  pt, [mat[0], mat[4], mat[ 8]] ) + mat[12],
-            y = this.vecDot(3,  pt, [mat[1], mat[5], mat[ 9]] ) + mat[13],
-            z = this.vecDot(3,  pt, [mat[2], mat[6], mat[10]] ) + mat[14];
-
-        return [x, y, z];
-    };
+    return [x, y, z];
+};
 	
-	this.MatrixIdentity = function(dimen)
-	{
-		var mat = [];
+NinjaCvsRt.RuntimeGeomObj.prototype.MatrixIdentity = function(dimen)
+{
+    var mat = [];
 
-		for (var i = 0; i<dimen*dimen; i++)  {
-			mat.push(0);
-		}
+    for (var i = 0; i<dimen*dimen; i++)  {
+        mat.push(0);
+    }
 
-		var index = 0;
-		for (var j = 0; j<dimen; j++) {
-			mat[index] = 1.0;
-			index += dimen + 1;
-		}
-	
-		return mat;	
-	};
+    var index = 0;
+    for (var j = 0; j<dimen; j++) {
+        mat[index] = 1.0;
+        index += dimen + 1;
+    }
 
-	this.MatrixRotationZ = function( angle )
-	{
-		var mat = this.MatrixIdentity(4);
-		//glmat4.rotateZ(mat, angle);
-		var sn = Math.sin(angle),
-			cs = Math.cos(angle);
-		mat[0] = cs;	mat[4] = -sn;
-		mat[1] = sn;	mat[5] =  cs;
+    return mat;
+};
 
-		return mat;
-	};
+NinjaCvsRt.RuntimeGeomObj.prototype.MatrixRotationZ = function( angle )
+{
+    var mat = this.MatrixIdentity(4);
+    //glmat4.rotateZ(mat, angle);
+    var sn = Math.sin(angle),
+        cs = Math.cos(angle);
+    mat[0] = cs;	mat[4] = -sn;
+    mat[1] = sn;	mat[5] =  cs;
+
+    return mat;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -686,162 +690,407 @@ NinjaCvsRt.RuntimeGeomObj = function ()
 ///////////////////////////////////////////////////////////////////////
 NinjaCvsRt.RuntimeRectangle = function ()
 {
+};
 	// inherit the members of NinjaCvsRt.RuntimeGeomObj
-	this.inheritedFrom = NinjaCvsRt.RuntimeGeomObj;
-	this.inheritedFrom();
+//	this.inheritedFrom = NinjaCvsRt.RuntimeGeomObj;
+//	this.inheritedFrom();
+NinjaCvsRt.RuntimeRectangle.prototype = Object.create(NinjaCvsRt.RuntimeGeomObj.prototype, {});
 
-	this.importJSON = function( jObj )
-	{
-		this._xOffset			= jObj.xoff;
-		this._yOffset			= jObj.yoff;
-		this._width				= jObj.width;
-		this._height			= jObj.height;
-		this._strokeWidth		= jObj.strokeWidth;
-		this._strokeColor		= jObj.strokeColor;
-		this._fillColor			= jObj.fillColor;
-		this._tlRadius			= jObj.tlRadius;
-		this._trRadius			= jObj.trRadius;
-		this._blRadius			= jObj.blRadius;
-		this._brRadius			= jObj.brRadius;
-		this._innerRadius		= jObj.innerRadius;
-		this._strokeStyle		= jObj.strokeStyle;
-		var strokeMaterialName	= jObj.strokeMat;
-		var fillMaterialName	= jObj.fillMat;
-		this.importMaterials( jObj.materials );
-	};
+NinjaCvsRt.RuntimeRectangle.prototype.importJSON = function( jObj )
+{
+    this._xOffset			= jObj.xoff;
+    this._yOffset			= jObj.yoff;
+    this._width				= jObj.width;
+    this._height			= jObj.height;
+    this._strokeWidth		= jObj.strokeWidth;
+    this._strokeColor		= jObj.strokeColor;
+    this._fillColor			= jObj.fillColor;
+    this._tlRadius			= jObj.tlRadius;
+    this._trRadius			= jObj.trRadius;
+    this._blRadius			= jObj.blRadius;
+    this._brRadius			= jObj.brRadius;
+    this._innerRadius		= jObj.innerRadius;
+    this._strokeStyle		= jObj.strokeStyle;
+    var strokeMaterialName	= jObj.strokeMat;
+    var fillMaterialName	= jObj.fillMat;
+    this.importMaterials( jObj.materials );
+};
 
-	this.renderPath = function( inset, ctx )
-	{
-		// various declarations
-		var pt,  rad,  ctr,  startPt, bPts;
-		var width  = Math.round(this._width),
-			height = Math.round(this._height),
-            hw = 0.5*width,
-            hh = 0.5*height;
+NinjaCvsRt.RuntimeRectangle.prototype.renderPath = function( inset, ctx )
+{
+    // various declarations
+    var pt,  rad,  ctr,  startPt, bPts;
+    var width  = Math.round(this._width),
+        height = Math.round(this._height),
+        hw = 0.5*width,
+        hh = 0.5*height;
 
-        pt = [inset, inset];	// top left corner
+    pt = [inset, inset];	// top left corner
 
-        var tlRad = this._tlRadius; //top-left radius
-        var trRad = this._trRadius;
-        var blRad = this._blRadius;
-        var brRad = this._brRadius;
-        // limit the radii to half the rectangle dimension
-        var minDimen = hw < hh ? hw : hh;
-        if (tlRad > minDimen)  tlRad = minDimen;
-        if (blRad > minDimen)  blRad = minDimen;
-        if (brRad > minDimen)  brRad = minDimen;
-        if (trRad > minDimen)  trRad = minDimen;
+    var tlRad = this._tlRadius; //top-left radius
+    var trRad = this._trRadius;
+    var blRad = this._blRadius;
+    var brRad = this._brRadius;
+    // limit the radii to half the rectangle dimension
+    var minDimen = hw < hh ? hw : hh;
+    if (tlRad > minDimen)  tlRad = minDimen;
+    if (blRad > minDimen)  blRad = minDimen;
+    if (brRad > minDimen)  brRad = minDimen;
+    if (trRad > minDimen)  trRad = minDimen;
 
-		var world = this.getWorld();
-		var vpw = world.getViewportWidth(), vph = world.getViewportHeight();
-		var cop = [0.5*vpw, 0.5*vph, 0.0];
-		var xCtr = cop[0] + this._xOffset,					yCtr = cop[1] - this._yOffset;
-		var xLeft = xCtr - 0.5*this._width,					yTop = yCtr - 0.5*this._height;
-		var xDist = cop[0] - xLeft,							yDist = cop[1] - yTop;
-		var xOff = 0.5*vpw - xDist,							yOff  = 0.5*vph - yDist;
+    var world = this.getWorld();
+    var vpw = world.getViewportWidth(), vph = world.getViewportHeight();
+    var cop = [0.5*vpw, 0.5*vph, 0.0];
+    var xCtr = cop[0] + this._xOffset,					yCtr = cop[1] - this._yOffset;
+    var xLeft = xCtr - 0.5*this._width,					yTop = yCtr - 0.5*this._height;
+    var xDist = cop[0] - xLeft,							yDist = cop[1] - yTop;
+    var xOff = 0.5*vpw - xDist,							yOff  = 0.5*vph - yDist;
 
-		if ((tlRad <= 0) && (blRad <= 0) && (brRad <= 0) && (trRad <= 0))
-		{
-			ctx.rect(pt[0]+xOff, pt[1]+yOff, width - 2*inset, height - 2*inset);
-		}
-		else
-		{
-			// get the top left point
-			rad = tlRad - inset;
-			if (rad < 0)  rad = 0;
-			pt[1] += rad;
-			if (Math.abs(rad) < 0.001)  pt[1] = inset;
-			ctx.moveTo( pt[0]+xOff,  pt[1]+yOff );
-
-			// get the bottom left point
-			pt = [inset, height - inset];
-			rad = blRad - inset;
-			if (rad < 0)  rad = 0;
-			pt[1] -= rad;
-			ctx.lineTo( pt[0]+xOff,  pt[1]+yOff );
-
-			// get the bottom left curve
-			if (rad > 0.001)
-				ctx.quadraticCurveTo( inset+xOff, height-inset+yOff,  inset+rad+xOff, height-inset+yOff );
-
-			// do the bottom of the rectangle
-			pt = [width - inset,  height - inset];
-			rad = brRad - inset;
-			if (rad < 0)  rad = 0;
-			pt[0] -= rad;
-			ctx.lineTo( pt[0]+xOff, pt[1]+yOff );
-
-			// get the bottom right arc
-			if (rad > 0.001)
-				ctx.quadraticCurveTo( width-inset+xOff, height-inset+yOff,  width-inset+xOff, height-inset-rad+yOff );
-
-			// get the right of the rectangle
-			pt = [width - inset,  inset];
-			rad = trRad - inset;
-			if (rad < 0)  rad = 0;
-			pt[1] += rad;
-			ctx.lineTo( pt[0]+xOff, pt[1]+yOff );
-
-			// do the top right corner
-			if (rad > 0.001)
-				ctx.quadraticCurveTo( width-inset+xOff, inset+yOff,  width-inset-rad+xOff, inset+yOff );
-
-			// do the top of the rectangle
-			pt = [inset, inset];
-			rad = tlRad - inset;
-			if (rad < 0)  rad = 0;
-			pt[0] += rad;
-			ctx.lineTo( pt[0]+xOff, pt[1]+yOff);
-
-			// do the top left corner
-			if (rad > 0.001)
-				ctx.quadraticCurveTo( inset+xOff, inset+yOff, inset+xOff, inset+rad+yOff );
-			else
-				ctx.lineTo( inset+xOff, 2*inset+yOff );
-		}
-	};
-
-    this.render = function()
+    if ((tlRad <= 0) && (blRad <= 0) && (brRad <= 0) && (trRad <= 0))
     {
-        // get the world
-        var world = this.getWorld();
-        if (!world)  throw( "null world in rectangle render" );
+        ctx.rect(pt[0]+xOff, pt[1]+yOff, width - 2*inset, height - 2*inset);
+    }
+    else
+    {
+        // get the top left point
+        rad = tlRad - inset;
+        if (rad < 0)  rad = 0;
+        pt[1] += rad;
+        if (Math.abs(rad) < 0.001)  pt[1] = inset;
+        ctx.moveTo( pt[0]+xOff,  pt[1]+yOff );
 
-         // get the context
-		var ctx = world.get2DContext();
-		if (!ctx)  return;
+        // get the bottom left point
+        pt = [inset, height - inset];
+        rad = blRad - inset;
+        if (rad < 0)  rad = 0;
+        pt[1] -= rad;
+        ctx.lineTo( pt[0]+xOff,  pt[1]+yOff );
 
-		// get some dimensions
-		var lw = this._strokeWidth;
-		var	w = world.getViewportWidth(),
-			h = world.getViewportHeight();
+        // get the bottom left curve
+        if (rad > 0.001)
+            ctx.quadraticCurveTo( inset+xOff, height-inset+yOff,  inset+rad+xOff, height-inset+yOff );
 
-        var c,
-            inset,
-            gradient,
+        // do the bottom of the rectangle
+        pt = [width - inset,  height - inset];
+        rad = brRad - inset;
+        if (rad < 0)  rad = 0;
+        pt[0] -= rad;
+        ctx.lineTo( pt[0]+xOff, pt[1]+yOff );
+
+        // get the bottom right arc
+        if (rad > 0.001)
+            ctx.quadraticCurveTo( width-inset+xOff, height-inset+yOff,  width-inset+xOff, height-inset-rad+yOff );
+
+        // get the right of the rectangle
+        pt = [width - inset,  inset];
+        rad = trRad - inset;
+        if (rad < 0)  rad = 0;
+        pt[1] += rad;
+        ctx.lineTo( pt[0]+xOff, pt[1]+yOff );
+
+        // do the top right corner
+        if (rad > 0.001)
+            ctx.quadraticCurveTo( width-inset+xOff, inset+yOff,  width-inset-rad+xOff, inset+yOff );
+
+        // do the top of the rectangle
+        pt = [inset, inset];
+        rad = tlRad - inset;
+        if (rad < 0)  rad = 0;
+        pt[0] += rad;
+        ctx.lineTo( pt[0]+xOff, pt[1]+yOff);
+
+        // do the top left corner
+        if (rad > 0.001)
+            ctx.quadraticCurveTo( inset+xOff, inset+yOff, inset+xOff, inset+rad+yOff );
+        else
+            ctx.lineTo( inset+xOff, 2*inset+yOff );
+    }
+};
+
+NinjaCvsRt.RuntimeRectangle.prototype.render = function()
+{
+    // get the world
+    var world = this.getWorld();
+    if (!world)  throw( "null world in rectangle render" );
+
+     // get the context
+    var ctx = world.get2DContext();
+    if (!ctx)  return;
+
+    // get some dimensions
+    var lw = this._strokeWidth;
+    var	w = world.getViewportWidth(),
+        h = world.getViewportHeight();
+
+    var c,
+        inset,
+        gradient,
+        colors,
+        len,
+        n,
+        position,
+        cs;
+    // render the fill
+    ctx.beginPath();
+    if (this._fillColor) {
+        inset = Math.ceil( lw ) - 0.5;
+
+        if(this._fillColor.gradientMode) {
+            if(this._fillColor.gradientMode === "radial") {
+                gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w, h)/2);
+            } else {
+                gradient = ctx.createLinearGradient(inset/2, h/2, w-inset, h/2);
+            }
+            colors = this._fillColor.color;
+
+            len = colors.length;
+
+            for(n=0; n<len; n++) {
+                position = colors[n].position/100;
+                cs = colors[n].value;
+                gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+            }
+
+            ctx.fillStyle = gradient;
+
+        } else {
+            c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";
+            ctx.fillStyle = c;
+        }
+
+        ctx.lineWidth	= lw;
+        this.renderPath( inset, ctx );
+        ctx.fill();
+        ctx.closePath();
+    }
+
+    // render the stroke
+    ctx.beginPath();
+    if (this._strokeColor) {
+        inset = Math.ceil( 0.5*lw ) - 0.5;
+
+        if(this._strokeColor.gradientMode) {
+            if(this._strokeColor.gradientMode === "radial") {
+                gradient = ctx.createRadialGradient(w/2, h/2, Math.min(h, w)/2-inset, w/2, h/2, Math.max(h, w)/2);
+            } else {
+                gradient = ctx.createLinearGradient(0, h/2, w, h/2);
+            }
+            colors = this._strokeColor.color;
+
+            len = colors.length;
+
+            for(n=0; n<len; n++) {
+                position = colors[n].position/100;
+                cs = colors[n].value;
+                gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+            }
+
+            ctx.strokeStyle = gradient;
+
+        } else {
+            c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";
+            ctx.strokeStyle = c;
+        }
+
+        ctx.lineWidth	= lw;
+        this.renderPath( inset, ctx );
+        ctx.stroke();
+        ctx.closePath();
+    }
+};
+
+///////////////////////////////////////////////////////////////////////
+// Class RuntimeLine
+///////////////////////////////////////////////////////////////////////
+NinjaCvsRt.RuntimeLine = function ()
+{
+};
+// inherit the members of NinjaCvsRt.RuntimeGeomObj
+//	this.inheritedFrom = NinjaCvsRt.RuntimeGeomObj;
+//	this.inheritedFrom();
+NinjaCvsRt.RuntimeLine.prototype = Object.create(NinjaCvsRt.RuntimeGeomObj.prototype, {});
+
+NinjaCvsRt.RuntimeLine.prototype.importJSON = function( jObj )
+{
+    this._xOffset			= jObj.xoff;
+    this._yOffset			= jObj.yoff;
+    this._width				= jObj.width;
+    this._height			= jObj.height;
+    this._xAdj			    = jObj.xAdj;
+    this._yAdj			    = jObj.yAdj;
+    this._strokeWidth		= jObj.strokeWidth;
+    this._slope 		    = jObj.slope;
+    this._strokeStyle		= jObj.strokeStyle;
+    this._strokeColor		= jObj.strokeColor;
+    var strokeMaterialName	= jObj.strokeMat;
+    this.importMaterials( jObj.materials );
+};
+
+NinjaCvsRt.RuntimeLine.prototype.render = function()
+{
+    // get the world
+    var world = this.getWorld();
+    if (!world)  throw( "null world in buildBuffers" );
+
+     // get the context
+    var ctx = world.get2DContext();
+    if (!ctx)  return;
+
+    // set up the stroke style
+    var lineWidth = this._strokeWidth,
+        w = this._width,
+        h = this._height;
+
+    var c,
+        gradient,
+        colors,
+        len,
+        n,
+        position,
+        cs;
+
+    ctx.beginPath();
+    ctx.lineWidth	= lineWidth;
+    if (this._strokeColor) {
+        if(this._strokeColor.gradientMode) {
+            if(this._strokeColor.gradientMode === "radial") {
+                gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w/2, h/2));
+            } else {
+                gradient = ctx.createLinearGradient(0, h/2, w, h/2);
+            }
+            colors = this._strokeColor.color;
+
+            len = colors.length;
+
+            for(n=0; n<len; n++) {
+                position = colors[n].position/100;
+                cs = colors[n].value;
+                gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+            }
+
+            ctx.strokeStyle = gradient;
+
+        } else {
+            c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";
+            ctx.strokeStyle = c;
+        }
+
+        // get the points
+        var p0,  p1;
+        if(this._slope === "vertical") {
+            p0 = [0.5*w, 0];
+            p1 = [0.5*w, h];
+        } else if(this._slope === "horizontal") {
+            p0 = [0, 0.5*h];
+            p1 = [w, 0.5*h];
+        } else if(this._slope > 0) {
+            p0 = [this._xAdj, this._yAdj];
+            p1 = [w - this._xAdj,  h - this._yAdj];
+        } else {
+            p0 = [this._xAdj, h - this._yAdj];
+            p1 = [w - this._xAdj,  this._yAdj];
+        }
+
+        // draw the line
+        ctx.moveTo( p0[0],  p0[1] );
+        ctx.lineTo( p1[0],  p1[1] );
+        ctx.stroke();
+    }
+};
+
+///////////////////////////////////////////////////////////////////////
+// Class RuntimeOval
+///////////////////////////////////////////////////////////////////////
+NinjaCvsRt.RuntimeOval = function ()
+{
+};
+	// inherit the members of NinjaCvsRt.RuntimeGeomObj
+//	this.inheritedFrom = NinjaCvsRt.RuntimeGeomObj;
+//	this.inheritedFrom();
+NinjaCvsRt.RuntimeOval.prototype = Object.create(NinjaCvsRt.RuntimeGeomObj.prototype, {});
+
+NinjaCvsRt.RuntimeOval.prototype.importJSON = function( jObj )
+{
+    this._xOffset			= jObj.xoff;
+    this._yOffset			= jObj.yoff;
+    this._width				= jObj.width;
+    this._height			= jObj.height;
+    this._strokeWidth		= jObj.strokeWidth;
+    this._strokeColor		= jObj.strokeColor;
+    this._fillColor			= jObj.fillColor;
+    this._innerRadius		= jObj.innerRadius;
+    this._strokeStyle		= jObj.strokeStyle;
+    var strokeMaterialName	= jObj.strokeMat;
+    var fillMaterialName	= jObj.fillMat;
+    this.importMaterials( jObj.materials );
+};
+
+NinjaCvsRt.RuntimeOval.prototype.render = function()
+{
+    // get the world
+    var world = this.getWorld();
+    if (!world)  throw( "null world in buildBuffers" );
+
+     // get the context
+    var ctx = world.get2DContext();
+    if (!ctx)  return;
+
+    // declare some variables
+    var p0, p1;
+    var x0, y0, x1, y1;
+
+    // create the matrix
+    var lineWidth = this._strokeWidth;
+    var innerRad  = this._innerRadius;
+    var xScale = 0.5*this._width - lineWidth,
+        yScale = 0.5*this._height - lineWidth;
+
+    // translate
+    var xCtr = 0.5*world.getViewportWidth() + this._xOffset,
+        yCtr = 0.5*world.getViewportHeight() + this._yOffset;
+    var mat = this.MatrixIdentity( 4 );
+    mat[0] = xScale;					mat[12] = xCtr;
+                    mat[5] = yScale;	mat[13] = yCtr;
+    /*
+    var mat = [
+                        [ xScale,     0.0,  0.0,  xCtr],
+                        [    0.0,  yScale,  0.0,  yCtr],
+                        [    0.0,     0.0,  1.0,   0.0],
+                        [    0.0,     0.0,  0.0,   1.0]
+                    ];
+    */
+
+    // get a bezier representation of the circle
+    var bezPts = this.circularArcToBezier( [0,0,0],  [1,0,0], 2.0*Math.PI );
+    if (bezPts)
+    {
+        var n = bezPts.length;
+        var gradient,
             colors,
             len,
-            n,
+            j,
             position,
-            cs;
-        // render the fill
-        ctx.beginPath();
-        if (this._fillColor) {
-            inset = Math.ceil( lw ) - 0.5;
+            cs,
+            c;
 
+        // set up the fill style
+        ctx.beginPath();
+        ctx.lineWidth = 0;
+        if (this._fillColor) {
             if(this._fillColor.gradientMode) {
                 if(this._fillColor.gradientMode === "radial") {
-                    gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w, h)/2);
+                    gradient = ctx.createRadialGradient(xCtr, yCtr, 0,
+                                                        xCtr, yCtr, Math.max(this._width, this._height)/2);
                 } else {
-                    gradient = ctx.createLinearGradient(inset/2, h/2, w-inset, h/2);
+                    gradient = ctx.createLinearGradient(lineWidth/2, this._height/2, this._width-lineWidth, this._height/2);
                 }
                 colors = this._fillColor.color;
 
                 len = colors.length;
 
-                for(n=0; n<len; n++) {
-                    position = colors[n].position/100;
-                    cs = colors[n].value;
+                for(j=0; j<len; j++) {
+                    position = colors[j].position/100;
+                    cs = colors[j].value;
                     gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
                 }
 
@@ -851,325 +1100,108 @@ NinjaCvsRt.RuntimeRectangle = function ()
                 c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";
                 ctx.fillStyle = c;
             }
-
-            ctx.lineWidth	= lw;
-            this.renderPath( inset, ctx );
-            ctx.fill();
-            ctx.closePath();
-        }
-
-        // render the stroke
-        ctx.beginPath();
-        if (this._strokeColor) {
-            inset = Math.ceil( 0.5*lw ) - 0.5;
-
-            if(this._strokeColor.gradientMode) {
-                if(this._strokeColor.gradientMode === "radial") {
-                    gradient = ctx.createRadialGradient(w/2, h/2, Math.min(h, w)/2-inset, w/2, h/2, Math.max(h, w)/2);
-                } else {
-                    gradient = ctx.createLinearGradient(0, h/2, w, h/2);
-                }
-                colors = this._strokeColor.color;
-
-                len = colors.length;
-
-                for(n=0; n<len; n++) {
-                    position = colors[n].position/100;
-                    cs = colors[n].value;
-                    gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
-                }
-
-                ctx.strokeStyle = gradient;
-
-            } else {
-                c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";
-                ctx.strokeStyle = c;
-            }
-
-            ctx.lineWidth	= lw;
-            this.renderPath( inset, ctx );
-            ctx.stroke();
-            ctx.closePath();
-        }
-    };
-};
-
-///////////////////////////////////////////////////////////////////////
-// Class RuntimeLine
-///////////////////////////////////////////////////////////////////////
-NinjaCvsRt.RuntimeLine = function ()
-{
-	this.inheritedFrom = NinjaCvsRt.RuntimeGeomObj;
-	this.inheritedFrom();
-
-	this.importJSON = function( jObj )
-	{
-		this._xOffset			= jObj.xoff;
-		this._yOffset			= jObj.yoff;
-		this._width				= jObj.width;
-		this._height			= jObj.height;
-		this._xAdj			    = jObj.xAdj;
-		this._yAdj			    = jObj.yAdj;
-		this._strokeWidth		= jObj.strokeWidth;
-		this._slope 		    = jObj.slope;
-		this._strokeStyle		= jObj.strokeStyle;
-		this._strokeColor		= jObj.strokeColor;
-		var strokeMaterialName	= jObj.strokeMat;
-        this.importMaterials( jObj.materials );
-    };
-
-	this.render = function()
-	{
-		// get the world
-		var world = this.getWorld();
-		if (!world)  throw( "null world in buildBuffers" );
-
-		 // get the context
-		var ctx = world.get2DContext();
-		if (!ctx)  return;
- 	
-		// set up the stroke style
-		var lineWidth = this._strokeWidth,
-            w = this._width,
-            h = this._height;
-
-        var c,
-            gradient,
-            colors,
-            len,
-            n,
-            position,
-            cs;
-
-		ctx.beginPath();
-		ctx.lineWidth	= lineWidth;
-		if (this._strokeColor) {
-            if(this._strokeColor.gradientMode) {
-                if(this._strokeColor.gradientMode === "radial") {
-                    gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w/2, h/2));
-                } else {
-                    gradient = ctx.createLinearGradient(0, h/2, w, h/2);
-                }
-                colors = this._strokeColor.color;
-
-                len = colors.length;
-
-                for(n=0; n<len; n++) {
-                    position = colors[n].position/100;
-                    cs = colors[n].value;
-                    gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
-                }
-
-                ctx.strokeStyle = gradient;
-
-            } else {
-                c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";
-                ctx.strokeStyle = c;
-            }
-
-			// get the points
-			var p0,  p1;
-			if(this._slope === "vertical") {
-				p0 = [0.5*w, 0];
-				p1 = [0.5*w, h];
-			} else if(this._slope === "horizontal") {
-				p0 = [0, 0.5*h];
-				p1 = [w, 0.5*h];
-			} else if(this._slope > 0) {
-				p0 = [this._xAdj, this._yAdj];
-				p1 = [w - this._xAdj,  h - this._yAdj];
-			} else {
-				p0 = [this._xAdj, h - this._yAdj];
-				p1 = [w - this._xAdj,  this._yAdj];
-			}
-			
-			// draw the line
-			ctx.moveTo( p0[0],  p0[1] );
-			ctx.lineTo( p1[0],  p1[1] );
-			ctx.stroke();
-		}
-    };
-};
-
-///////////////////////////////////////////////////////////////////////
-// Class RuntimeOval
-///////////////////////////////////////////////////////////////////////
-NinjaCvsRt.RuntimeOval = function ()
-{
-	// inherit the members of NinjaCvsRt.RuntimeGeomObj
-	this.inheritedFrom = NinjaCvsRt.RuntimeGeomObj;
-	this.inheritedFrom();
-
-	this.importJSON = function( jObj )
-	{
-		this._xOffset			= jObj.xoff;
-		this._yOffset			= jObj.yoff;
-		this._width				= jObj.width;
-		this._height			= jObj.height;
-		this._strokeWidth		= jObj.strokeWidth;
-		this._strokeColor		= jObj.strokeColor;
-		this._fillColor			= jObj.fillColor;
-		this._innerRadius		= jObj.innerRadius;
-		this._strokeStyle		= jObj.strokeStyle;
-		var strokeMaterialName	= jObj.strokeMat;
-		var fillMaterialName	= jObj.fillMat;
-		this.importMaterials( jObj.materials );
-	};
-
-	this.render = function()
-	{
-		// get the world
-		var world = this.getWorld();
-		if (!world)  throw( "null world in buildBuffers" );
-
-		 // get the context
-		var ctx = world.get2DContext();
-		if (!ctx)  return;
-
-		// declare some variables
-		var p0, p1;
-		var x0, y0, x1, y1;
-
-		// create the matrix
-		var lineWidth = this._strokeWidth;
-		var innerRad  = this._innerRadius;
-		var xScale = 0.5*this._width - lineWidth,
-			yScale = 0.5*this._height - lineWidth;
-
-		// translate
-		var xCtr = 0.5*world.getViewportWidth() + this._xOffset,
-			yCtr = 0.5*world.getViewportHeight() + this._yOffset;
-		var mat = this.MatrixIdentity( 4 );
-		mat[0] = xScale;					mat[12] = xCtr;
-						mat[5] = yScale;	mat[13] = yCtr;
-		/*
-		var mat = [
-							[ xScale,     0.0,  0.0,  xCtr],
-							[    0.0,  yScale,  0.0,  yCtr],
-							[    0.0,     0.0,  1.0,   0.0],
-							[    0.0,     0.0,  0.0,   1.0]
-						];
-		*/
-
-		// get a bezier representation of the circle
-		var bezPts = this.circularArcToBezier( [0,0,0],  [1,0,0], 2.0*Math.PI );
-		if (bezPts)
-		{
-			var n = bezPts.length;
-            var gradient,
-                colors,
-                len,
-                j,
-                position,
-                cs,
-                c;
-
-            // set up the fill style
-            ctx.beginPath();
-            ctx.lineWidth = 0;
-            if (this._fillColor) {
-                if(this._fillColor.gradientMode) {
-                    if(this._fillColor.gradientMode === "radial") {
-                        gradient = ctx.createRadialGradient(xCtr, yCtr, 0,
-                                                            xCtr, yCtr, Math.max(this._width, this._height)/2);
-                    } else {
-                        gradient = ctx.createLinearGradient(lineWidth/2, this._height/2, this._width-lineWidth, this._height/2);
-                    }
-                    colors = this._fillColor.color;
-
-                    len = colors.length;
-
-                    for(j=0; j<len; j++) {
-                        position = colors[j].position/100;
-                        cs = colors[j].value;
-                        gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
-                    }
-
-                    ctx.fillStyle = gradient;
-
-                } else {
-                    c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";
-                    ctx.fillStyle = c;
-                }
-                // draw the fill
+            // draw the fill
 //				ctx.beginPath();
-                var p = this.transformPoint( bezPts[0],   mat );
-                ctx.moveTo( p[0],  p[1] );
-                var index = 1;
-                while (index < n) {
-                    p0   = this.transformPoint( bezPts[index],  mat );
-                    p1 = this.transformPoint( bezPts[index+1],  mat );
+            var p = this.transformPoint( bezPts[0],   mat );
+            ctx.moveTo( p[0],  p[1] );
+            var index = 1;
+            while (index < n) {
+                p0   = this.transformPoint( bezPts[index],  mat );
+                p1 = this.transformPoint( bezPts[index+1],  mat );
 
-                    x0 = p0[0];  y0 = p0[1];
-                    x1 = p1[0];  y1 = p1[1];
-                    ctx.quadraticCurveTo( x0,  y0,  x1, y1 );
-                    index += 2;
-                }
-
-                if (innerRad > 0.001) {
-                    xScale = 0.5*innerRad*this._width;
-                    yScale = 0.5*innerRad*this._height;
-                    mat[0] = xScale;
-                    mat[5] = yScale;
-
-                    // get the bezier points
-                    var bezPtsInside = this.circularArcToBezier( [0,0,0], [1,0,0], -2.0*Math.PI );
-                    if (bezPtsInside) {
-                        n = bezPtsInside.length;
-                        p = this.transformPoint( bezPtsInside[0],   mat );
-                        ctx.moveTo( p[0],  p[1] );
-                        index = 1;
-                        while (index < n) {
-                            p0 = this.transformPoint( bezPtsInside[index],    mat );
-                            p1 = this.transformPoint( bezPtsInside[index+1],  mat );
-
-                            x0 = p0[0];
-                            y0 = p0[1];
-                            x1 = p1[0];
-                            y1 = p1[1];
-                            ctx.quadraticCurveTo( x0,  y0,  x1, y1 );
-                            index += 2;
-                        }
-                    }
-                }
-
-                // fill the path
-                ctx.fill();
+                x0 = p0[0];  y0 = p0[1];
+                x1 = p1[0];  y1 = p1[1];
+                ctx.quadraticCurveTo( x0,  y0,  x1, y1 );
+                index += 2;
             }
 
-            // calculate the stroke matrix
-            xScale = 0.5*this._width  - 0.5*lineWidth;
-            yScale = 0.5*this._height - 0.5*lineWidth;
-            mat[0] = xScale;
-            mat[5] = yScale;
+            if (innerRad > 0.001) {
+                xScale = 0.5*innerRad*this._width;
+                yScale = 0.5*innerRad*this._height;
+                mat[0] = xScale;
+                mat[5] = yScale;
 
-            // set up the stroke style
-            ctx.beginPath();
-            ctx.lineWidth	= lineWidth;
-            if (this._strokeColor) {
-                if(this._strokeColor.gradientMode) {
-                    if(this._strokeColor.gradientMode === "radial") {
-                        gradient = ctx.createRadialGradient(xCtr, yCtr, Math.min(xScale, yScale),
-                                                            xCtr, yCtr, 0.5*Math.max(this._height, this._width));
-                    } else {
-                        gradient = ctx.createLinearGradient(0, this._height/2, this._width, this._height/2);
+                // get the bezier points
+                var bezPtsInside = this.circularArcToBezier( [0,0,0], [1,0,0], -2.0*Math.PI );
+                if (bezPtsInside) {
+                    n = bezPtsInside.length;
+                    p = this.transformPoint( bezPtsInside[0],   mat );
+                    ctx.moveTo( p[0],  p[1] );
+                    index = 1;
+                    while (index < n) {
+                        p0 = this.transformPoint( bezPtsInside[index],    mat );
+                        p1 = this.transformPoint( bezPtsInside[index+1],  mat );
+
+                        x0 = p0[0];
+                        y0 = p0[1];
+                        x1 = p1[0];
+                        y1 = p1[1];
+                        ctx.quadraticCurveTo( x0,  y0,  x1, y1 );
+                        index += 2;
                     }
-                    colors = this._strokeColor.color;
-
-                    len = colors.length;
-
-                    for(j=0; j<len; j++) {
-                        position = colors[j].position/100;
-                        cs = colors[j].value;
-                        gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
-                    }
-
-                    ctx.strokeStyle = gradient;
-
-                } else {
-                    c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";
-                    ctx.strokeStyle = c;
                 }
+            }
+
+            // fill the path
+            ctx.fill();
+        }
+
+        // calculate the stroke matrix
+        xScale = 0.5*this._width  - 0.5*lineWidth;
+        yScale = 0.5*this._height - 0.5*lineWidth;
+        mat[0] = xScale;
+        mat[5] = yScale;
+
+        // set up the stroke style
+        ctx.beginPath();
+        ctx.lineWidth	= lineWidth;
+        if (this._strokeColor) {
+            if(this._strokeColor.gradientMode) {
+                if(this._strokeColor.gradientMode === "radial") {
+                    gradient = ctx.createRadialGradient(xCtr, yCtr, Math.min(xScale, yScale),
+                                                        xCtr, yCtr, 0.5*Math.max(this._height, this._width));
+                } else {
+                    gradient = ctx.createLinearGradient(0, this._height/2, this._width, this._height/2);
+                }
+                colors = this._strokeColor.color;
+
+                len = colors.length;
+
+                for(j=0; j<len; j++) {
+                    position = colors[j].position/100;
+                    cs = colors[j].value;
+                    gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+                }
+
+                ctx.strokeStyle = gradient;
+
+            } else {
+                c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";
+                ctx.strokeStyle = c;
+            }
+            // draw the stroke
+            p = this.transformPoint( bezPts[0],   mat );
+            ctx.moveTo( p[0],  p[1] );
+            index = 1;
+            while (index < n) {
+                p0   = this.transformPoint( bezPts[index],  mat );
+                p1 = this.transformPoint( bezPts[index+1],  mat );
+
+                x0 = p0[0];
+                y0 = p0[1];
+                x1 = p1[0];
+                y1 = p1[1];
+                ctx.quadraticCurveTo( x0,  y0,  x1, y1 );
+                index += 2;
+            }
+
+            if (innerRad > 0.001) {
+                // calculate the stroke matrix
+                xScale = 0.5*innerRad*this._width  - 0.5*lineWidth;
+                yScale = 0.5*innerRad*this._height - 0.5*lineWidth;
+                mat[0] = xScale;
+                mat[5] = yScale;
+
                 // draw the stroke
                 p = this.transformPoint( bezPts[0],   mat );
                 ctx.moveTo( p[0],  p[1] );
@@ -1185,90 +1217,66 @@ NinjaCvsRt.RuntimeOval = function ()
                     ctx.quadraticCurveTo( x0,  y0,  x1, y1 );
                     index += 2;
                 }
-
-                if (innerRad > 0.001) {
-                    // calculate the stroke matrix
-                    xScale = 0.5*innerRad*this._width  - 0.5*lineWidth;
-                    yScale = 0.5*innerRad*this._height - 0.5*lineWidth;
-                    mat[0] = xScale;
-                    mat[5] = yScale;
-
-                    // draw the stroke
-                    p = this.transformPoint( bezPts[0],   mat );
-                    ctx.moveTo( p[0],  p[1] );
-                    index = 1;
-                    while (index < n) {
-                        p0   = this.transformPoint( bezPts[index],  mat );
-                        p1 = this.transformPoint( bezPts[index+1],  mat );
-
-                        x0 = p0[0];
-                        y0 = p0[1];
-                        x1 = p1[0];
-                        y1 = p1[1];
-                        ctx.quadraticCurveTo( x0,  y0,  x1, y1 );
-                        index += 2;
-                    }
-                }
-
-                // render the stroke
-                ctx.stroke();
             }
-		}
-    };
 
-    ///////////////////////////////////////////////////////////////////////
-	// this function returns the quadratic Bezier approximation to the specified
-	// circular arc.  The input can be 2D or 3D, determined by the minimum dimension
-	// of the center and start point.
-	// includedAngle is in radians, can be positiveor negative
-	this.circularArcToBezier= function( ctr_, startPt_, includedAngle )
-	{
-        var dimen = 3;
-        var ctr = ctr_.slice();
-        var startPt = startPt_.slice();
-
-        // make sure the start point is good
-        var pt = this.vecSubtract(dimen, startPt, ctr);
-        var rad = this.vecMag(dimen, pt);
-
-        if ((dimen != 3) || (rad <= 0) || (includedAngle === 0))
-        {
-            if (dimen != 3)  console.log( "circularArcToBezier works for 3 dimensional points only.  Was " + dimen );
-            return [ startPt.slice(0), startPt.slice(0), startPt.slice(0) ];
+            // render the stroke
+            ctx.stroke();
         }
+    }
+};
 
-        // determine the number of segments.  45 degree span maximum.
-        var nSegs = Math.ceil( Math.abs(includedAngle)/(0.25*Math.PI) );
-        if (nSegs <= 0)  return [ startPt.slice(0), startPt.slice(0), startPt.slice(0) ];
-        var dAngle = includedAngle/nSegs;
+///////////////////////////////////////////////////////////////////////
+// this function returns the quadratic Bezier approximation to the specified
+// circular arc.  The input can be 2D or 3D, determined by the minimum dimension
+// of the center and start point.
+// includedAngle is in radians, can be positiveor negative
+NinjaCvsRt.RuntimeOval.prototype.circularArcToBezier= function( ctr_, startPt_, includedAngle )
+{
+    var dimen = 3;
+    var ctr = ctr_.slice();
+    var startPt = startPt_.slice();
 
-        // determine the length of the center control point from the circle center
-        var cs = Math.cos( 0.5*Math.abs(dAngle) ),  sn = Math.sin( 0.5*Math.abs(dAngle) );
-        var  c = rad*sn;
-        var  h = c*sn/cs;
-        var  d = rad*cs + h;
+    // make sure the start point is good
+    var pt = this.vecSubtract(dimen, startPt, ctr);
+    var rad = this.vecMag(dimen, pt);
 
-        var rtnPts = [ this.vecAdd(dimen, pt, ctr) ];
-        var rotMat = this.MatrixRotationZ( dAngle );
-        for ( var i=0;  i<nSegs;  i++)
-        {
-            // get the next end point
-            var pt2 = this.transformPoint( pt, rotMat );
+    if ((dimen != 3) || (rad <= 0) || (includedAngle === 0))
+    {
+        if (dimen != 3)  console.log( "circularArcToBezier works for 3 dimensional points only.  Was " + dimen );
+        return [ startPt.slice(0), startPt.slice(0), startPt.slice(0) ];
+    }
 
-            // get the next center control point
-            var midPt = this.vecAdd(3, pt, pt2);
-            this.vecScale(dimen, midPt, 0.5);
-            midPt = this.vecNormalize( dimen, midPt, d );
+    // determine the number of segments.  45 degree span maximum.
+    var nSegs = Math.ceil( Math.abs(includedAngle)/(0.25*Math.PI) );
+    if (nSegs <= 0)  return [ startPt.slice(0), startPt.slice(0), startPt.slice(0) ];
+    var dAngle = includedAngle/nSegs;
 
-            // save the next segment
-            rtnPts.push( this.vecAdd(dimen, midPt, ctr) );
-            rtnPts.push( this.vecAdd(dimen,   pt2, ctr) );
+    // determine the length of the center control point from the circle center
+    var cs = Math.cos( 0.5*Math.abs(dAngle) ),  sn = Math.sin( 0.5*Math.abs(dAngle) );
+    var  c = rad*sn;
+    var  h = c*sn/cs;
+    var  d = rad*cs + h;
 
-            // advance for the next segment
-            pt = pt2;
-        }
-        return rtnPts;
-	};
+    var rtnPts = [ this.vecAdd(dimen, pt, ctr) ];
+    var rotMat = this.MatrixRotationZ( dAngle );
+    for ( var i=0;  i<nSegs;  i++)
+    {
+        // get the next end point
+        var pt2 = this.transformPoint( pt, rotMat );
+
+        // get the next center control point
+        var midPt = this.vecAdd(3, pt, pt2);
+        this.vecScale(dimen, midPt, 0.5);
+        midPt = this.vecNormalize( dimen, midPt, d );
+
+        // save the next segment
+        rtnPts.push( this.vecAdd(dimen, midPt, ctr) );
+        rtnPts.push( this.vecAdd(dimen,   pt2, ctr) );
+
+        // advance for the next segment
+        pt = pt2;
+    }
+    return rtnPts;
 };
 
 ///////////////////////////////////////////////////////////////////////
