@@ -21,6 +21,17 @@
 
         <link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700|Droid+Sans+Mono' rel='stylesheet' type='text/css'>
         <link href="imports/codemirror/lib/codemirror.css" rel="stylesheet" type="text/css"/>
+        <link rel="stylesheet" href="imports/codemirror/lib/util/simple-hint.css">
+        <link rel="stylesheet" href="imports/codemirror/theme/neat.css">
+        <link rel="stylesheet" href="imports/codemirror/theme/elegant.css">
+        <link rel="stylesheet" href="imports/codemirror/theme/night.css">
+        <link rel="stylesheet" href="imports/codemirror/theme/monokai.css">
+        <link rel="stylesheet" href="imports/codemirror/theme/cobalt.css">
+        <link rel="stylesheet" href="imports/codemirror/theme/eclipse.css">
+        <link rel="stylesheet" href="js/code-editor/codemirror-ninja/theme/rubyblue-ninja.css">
+        <link rel="stylesheet" href="js/code-editor/codemirror-ninja/theme/lesser-dark-ninja.css">
+        <link rel="stylesheet" href="js/code-editor/codemirror-ninja/theme/xq-dark-ninja.css">
+
 	
     	<style type="text/css">
 			html, body
@@ -214,10 +225,23 @@
         <!-- End Ridge Uncompiled -->
 
         <script type="text/javascript" src="imports/codemirror/lib/codemirror.js"></script>
+        <!-- // modes // -->
         <script type="text/javascript" src="imports/codemirror/mode/htmlmixed/htmlmixed.js"></script>
         <script type="text/javascript" src="imports/codemirror/mode/xml/xml.js"></script>
         <script type="text/javascript" src="imports/codemirror/mode/javascript/javascript.js"></script>
         <script type="text/javascript" src="imports/codemirror/mode/css/css.js"></script>
+        <script type="text/javascript" src="imports/codemirror/mode/php/php.js"></script>
+        <script type="text/javascript" src="imports/codemirror/mode/clike/clike.js"></script>
+        <script type="text/javascript" src="imports/codemirror/mode/perl/perl.js"></script>
+        <script type="text/javascript" src="imports/codemirror/mode/python/python.js"></script>
+        <script type="text/javascript" src="imports/codemirror/mode/ruby/ruby.js"></script>
+        <!-- functionality libraries -->
+        <script type="text/javascript" src="imports/codemirror/lib/util/searchcursor.js"></script>
+        <script type="text/javascript" src="imports/codemirror/lib/util/match-highlighter.js"></script>
+        <script type="text/javascript" src="js/code-editor/codemirror-ninja/lib/ninja-simple-hint.js"></script>
+        <script type="text/javascript" src="imports/codemirror/lib/util/javascript-hint.js"></script>
+        <script type="text/javascript" src="imports/codemirror/lib/util/formatting.js"></script>
+        <!-- -->
 
     	<script type="text/javascript" src="node_modules/montage/montage.js"></script>
 
@@ -233,7 +257,7 @@
 	            }
         	}
         </script>
-    	
+
 	</head>
 
 	<body>
