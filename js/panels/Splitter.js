@@ -55,7 +55,6 @@ exports.Splitter = Montage.create(Component, {
         },
         set: function(value) {
             this._collapsed = value;
-
             this.application.localStorage.setItem(this.element.getAttribute("data-montage-id"), {"version": this.version, "value": value});
         }
     },
@@ -138,6 +137,40 @@ exports.Splitter = Montage.create(Component, {
     toggle: {
         value: function() {
             this.handleClick();
+        }
+    },
+
+    collapse:{
+        value: function() {
+            if (this.collapsed === false) {
+                if(this.panel.element) {
+                    this.panel.element.addEventListener("webkitTransitionEnd", this, false);
+                } else {
+                    this.panel.addEventListener("webkitTransitionEnd", this, false);
+                }
+                this._collapsed = true;
+                this.needsDraw = true;
+            }
+        }
+    },
+    restore:{
+        value: function() {
+            //Get splitter initial value from SettingManager
+            var storedData = this.application.localStorage.getItem(this.element.getAttribute("data-montage-id")), temp = this.collapsed;
+            if(storedData && this.element.getAttribute("data-montage-id") !== null) {
+                this._collapsed = storedData.value;
+
+            } else {
+                this._collapsed = false;
+            }
+            if(temp != this._collapsed){
+                if(this.panel.element) {
+                    this.panel.element.addEventListener("webkitTransitionEnd", this, false);
+                } else {
+                    this.panel.addEventListener("webkitTransitionEnd", this, false);
+                }
+                this.needsDraw = true;
+            }
         }
     }
 });

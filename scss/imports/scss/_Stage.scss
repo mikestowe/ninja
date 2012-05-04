@@ -188,9 +188,7 @@
 
 #mainContent .CodeMirror-scroll {
     height: 100%;
-    overflow: scroll;
-    overflow-x: auto;
-    overflow-y: auto;
+    overflow: auto;
 }
 
 .montage-editor-frame {

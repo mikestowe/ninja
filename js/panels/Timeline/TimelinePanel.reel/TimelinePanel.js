@@ -271,6 +271,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     _dragLayerID : {
     	value: null
     },
+
+    layersDragged:{
+           value:[],
+           writable:true
+    },
+
     dragLayerID : {
     	get: function() {
     		return this._dragLayerID;
@@ -295,6 +301,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     			var dragLayerIndex = this.getLayerIndexByID(this.dragLayerID),
     				dropLayerIndex = this.getLayerIndexByID(this.dropLayerID),
     				dragLayer = this.arrLayers[dragLayerIndex];
+                    this.layersDragged.push(dragLayer);
+                    this._layerDroppedInPlace = this.arrLayers[dropLayerIndex];
 
     			this.arrLayers.splice(dragLayerIndex, 1);
     			this.arrLayers.splice(dropLayerIndex, 0, dragLayer);
@@ -322,6 +330,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
     useAbsolutePosition:{
         value:true
+    },
+    _currentDocumentUuid: {
+    	value: false
+    },
+    _ignoreSelectionChanges: {
+    	value: false
     },
     /* === END: Models === */
     /* === BEGIN: Draw cycle === */
@@ -397,6 +411,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 	            		this._deleteHelper = false;
 	            	}
 	            }
+                this.application.ninja.elementMediator.reArrangeDOM(this.layersDragged , this._layerDroppedInPlace);
+                this.layersDragged =[];
     		}
     	}
     },
@@ -577,6 +593,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.drawTimeMarkers();
             // Document switching
             // Check to see if we have saved timeline information in the currentDocument.
+            //console.log("TimelinePanel.initTimelineForDocument");
+
             if ((typeof(this.application.ninja.currentDocument.isTimelineInitialized) === "undefined")) {
             	//console.log('TimelinePanel.initTimelineForDocument: new Document');
                 // No, we have no information stored.
@@ -602,12 +620,14 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 // Draw the repetition.
                 this.arrLayers = this.temparrLayers;
                 this.currentLayerNumber = this.arrLayers.length;
+                this._currentDocumentUuid = this.application.ninja.currentDocument.uuid;
                 boolAlreadyInitialized = true;
                 
 			} else if (this.application.ninja.currentDocument.setLevel) {
             	//console.log('TimelinePanel.initTimelineForDocument: breadCrumbClick');
 				// Information stored, but we're moving up or down in the breadcrumb.
 				// Get the current selection and restore timeline info for its children.
+				//debugger;
                 var parentNode = this.application.ninja.currentSelectedContainer,
                 	storedCurrentLayerNumber = this.application.ninja.currentDocument.tllayerNumber;
                 this.temparrLayers = [];
@@ -643,6 +663,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this.currentLayerNumber = this.application.ninja.currentDocument.tllayerNumber;
                 this.currentLayerSelected = this.application.ninja.currentDocument.tlCurrentLayerSelected;
                 this.currentLayersSelected = this.application.ninja.currentDocument.tlCurrentLayersSelected;
+                this._currentDocumentUuid = this.application.ninja.currentDocument.uuid;
 
 
                 //debugger;
@@ -703,12 +724,21 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     handleDocumentChange:{
         value:function () {
+        	// console.log("TimelinePanel.handleDocumentChange");
+        	
 			if (this.application.ninja.currentDocument == null) {
 				// On app initialization, the binding is triggered before
 				// there is a currentDocument.  We don't do anything at that time.
 				return;
 			}
-            // this.application.ninja.currentDocument.setLevel = true;
+			
+			// Is this the same document?
+			if (this._currentDocumentUuid === this.application.ninja.currentDocument.uuid) {
+				// Yes, same document, so we are changing levels.
+				this.application.ninja.currentDocument.setLevel = true;
+				this._ignoreSelectionChanges = true;
+			}
+			
             this._boolCacheArrays = false;
             this.clearTimelinePanel();
             this._boolCacheArrays = true;
@@ -792,15 +822,20 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             	arrLayersLength = this.arrLayers.length,
             	intNumSelected = this.application.ninja.selectedElements.length,
             	checkIndex = 0;
-            	
-            this.deselectTweens();
-            //console.log("TimelinePanel.handleSelectionChange")
+            
+            //console.log("TimelinePanel.handleSelectionChange, intNumSelected is ", intNumSelected)
+            
             if (intNumSelected === 0) {
-            	this.selectLayers([]);
+            	if (this._ignoreSelectionChanges !== true) {
+            		this.selectLayers([]);
+            	} else {
+            		this._ignoreSelectionChanges = false;
+            	}
+            	
             	this.currentLayerSelected = false;
             	this.currentLayersSelected = false;
             }
-            
+
             if (intNumSelected === 1) {
             	this.currentLayersSelected = false;
                 if (this.application.ninja.selectedElements[0]) {
@@ -851,7 +886,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             
             //console.log(arrSelectedIndexes);
             
-
+			
             if (this.selectedKeyframes) {
                 this.deselectTweens();
             }
@@ -860,8 +895,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             	this.arrLayers[i].layerData.isSelected = false;
             	this.triggerLayerBinding(i);
             }
-            
-            this.currentLayersSelected = false;
+
+            if (this.currentLayersSelected !== false) {
+            	this.currentLayersSelected = false;
+            }
             if (arrSelectedIndexesLength > 0) {
             	this.currentLayersSelected = [];
             }
@@ -896,15 +933,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.resetMasterDuration();
         }
     },
-
-
-
-
-
-
-
-
-
 
     deselectTweens:{
         value:function () {
@@ -1031,7 +1059,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             thingToPush.layerData.layerPosition = this.temparrLayers.length - 1;
 
             this._openDoc = false;
-
 
         }
     },
