@@ -16,7 +16,10 @@ body {
 
     position: absolute;
     -webkit-transform-style: preserve-3d;
-    -webkit-perspective: 1400px;
+    -webkit-transform: perspective(1400) matrix3d(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
+
+    width: 1460px;
+    height: 880px;
 }
 
 .active-element-outline {
