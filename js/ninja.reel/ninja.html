@@ -196,6 +196,13 @@
                 }
             },
 
+            "editorViewOptions": {
+                "prototype": "js/code-editor/ui/code-editor-view-options.reel",
+                "properties": {
+                    "element": {"#": "editorViewOptions"}
+                }
+            },
+
             "panelContainer": {
                 "prototype": "js/panels/PanelContainer.reel",
                 "properties": {
@@ -262,7 +269,6 @@
                         "oneway": true
                     }
                 }
-
             },
 
             "documentController1": {
@@ -311,6 +317,10 @@
                 }
             },
 
+            "codeEditorController": {
+                "prototype": "js/controllers/code-editor-controller"
+            },
+
             "owner": {
                 "prototype": "js/ninja.reel",
                 "properties": {
@@ -336,12 +346,16 @@
                     "newFileController":    {"@": "newFileController"},
                     "coreIoApi":    		{"@": "coreIoApi1"},
                     "documentBar":          {"@": "documentBar"},
+                    "editorViewOptions":    {"@": "editorViewOptions"},
                     "ioMediator":           {"@": "ioMediator"},
                     "timeline":             {"@": "timeline"},
                     "mainMenuController":   {"@": "mainMenuController"},
+                    "codeEditorController": {"@": "codeEditorController"},
                     "rightPanelContainer":  {"#": "rightPanelContainer" },
-                    "panelSplitter":     {"@": "splitter3"},
-                    "timelineSplitter":     {"@": "splitter4"}
+                    "panelSplitter":        {"@": "splitter3"},
+                    "timelineSplitter":     {"@": "splitter4"},
+                    "toolsSplitter":        {"@": "splitter2"},
+                    "optionsSplitter":      {"@": "splitter1"}
                 }
             }
         }
@@ -399,7 +413,8 @@
                         <section id="timelineResizer" class="timelineResizer resizeBar"></section>
                         <section id="stateBar">
                             <section id="documentBarContainer">
-                                <div id="documentBar" class="documentBar"><a href="#">HTML</a></div>
+                                <div id="documentBar" class="documentBar" style="display:block"><a href="#">HTML</a></div>
+                                <div id="editorViewOptions" class="editorViewOptions" style="display:none"><a href="#">HTML</a></div>
                             </section>
                         </section>
 

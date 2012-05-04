@@ -27,7 +27,6 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
     /* === BEGIN: Models === */
 	// isSelected: whether or not the style is selected
 	_isSelected: {
-		serializable: true,
 		value: false
 	},
 	isSelected: {
@@ -60,7 +59,6 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
    
    // Property for this editor
     _editorProperty: {
-    	serializable: true,
     	value: ""
     },
     editorProperty: {
@@ -76,7 +74,6 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
     
     // Value for the property for this editor.
     _editorValue: {
-    	serializable: true,
     	value: ""
     },
     editorValue: {
@@ -92,7 +89,6 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
     
 	// The tweener used to change the value for this property. 
     _ruleTweener: {
-    	serializable: true,
     	value: false
     },
     ruleTweener: {
@@ -137,7 +133,6 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
     
     // whichView: which view should we show: hintable or propval
     _whichView : {
-    	serializable: true,
     	value: "hintable"
     },
     whichView: {
@@ -161,7 +156,6 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
  	// styleID: the id for this style;
  	// Used to publish events
  	_styleID : {
- 		serializable: true,
  		value: null
  	},
  	styleID: {

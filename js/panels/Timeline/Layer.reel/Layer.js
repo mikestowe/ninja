@@ -36,13 +36,10 @@ var Layer = exports.Layer = Montage.create(Component, {
     
     /* Style models: the array of styles, and the repetition that uses them */
     _arrLayerStyles : {
-    	serializable: true,
-		enumerable: true,
 	    value: []
     },
     arrLayerStyles : {
     	serializable: true,
-        enumerable: true,
     	get: function() {
     		return this._arrLayerStyles;
     	},
@@ -142,8 +139,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     
     /* Position and Transform hottext values */
     _dtextPositionX : {
-        value:null,
-    	serializable: true
+        value:null
     },
 
     dtextPositionX:{
@@ -161,8 +157,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     },
     
     _dtextPositionY : {
-        value:null,
-    	serializable: true
+        value:null
     },
 
     dtextPositionY:{
@@ -180,8 +175,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     },
     
     _dtextScaleX : {
-        value:null,
-    	serializable: true
+        value:null
     },
 
     dtextScaleX:{
@@ -199,8 +193,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     },
     
     _dtextScaleY : {
-        value:null,
-    	serializable: true
+        value:null
     },
 
     dtextScaleY:{
@@ -218,8 +211,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     },
     
     _dtextSkewX : {
-        value:null,
-    	serializable: true
+        value:null
     },
 
     dtextSkewX:{
@@ -237,8 +229,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     },
     
     _dtextSkewY : {
-        value:null,
-    	serializable: true
+        value:null
     },
 
     dtextSkewY:{
@@ -256,8 +247,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     },
     
     _dtextRotate : {
-        value:null,
-    	serializable: true
+        value:null
     },
 
     dtextRotate:{
@@ -276,10 +266,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     
     /* isSelected: whether or not the layer is currently selected. */
     _isSelected:{
-        value: false,
-        writable: true,
-        serializable: true,
-        enumerable: false
+        value: false
     },
 
     isSelected:{
@@ -319,9 +306,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     
     
     _isAnimated:{
-        value: false,
-        writable: true,
-        enumerable: false
+        value: false
     },
 
     isAnimated:{
@@ -363,7 +348,6 @@ var Layer = exports.Layer = Montage.create(Component, {
     
     // Are the various collapsers collapsed or not
     _isMainCollapsed : {
-    	serializable: true,
     	value: true
     },
     isMainCollapsed : {
@@ -379,7 +363,6 @@ var Layer = exports.Layer = Montage.create(Component, {
     },
     
     _isTransformCollapsed : {
-    	serializable: true,
     	value: true
     },
     isTransformCollapsed : {
@@ -394,7 +377,6 @@ var Layer = exports.Layer = Montage.create(Component, {
     },
     
     _isPositionCollapsed : {
-    	serializable: true,
     	value: true
     },
     isPositionCollapsed : {
@@ -409,7 +391,6 @@ var Layer = exports.Layer = Montage.create(Component, {
     },
     
     _isStyleCollapsed : {
-    	serializable: true,
     	value: true
     },
     isStyleCollapsed : {
@@ -423,7 +404,6 @@ var Layer = exports.Layer = Montage.create(Component, {
     	}
     },
     _bypassAnimation : {
-    	serializable: true,
     	value: false
     },
     bypassAnimation : {
@@ -445,12 +425,10 @@ var Layer = exports.Layer = Montage.create(Component, {
     },
 
     _layerData:{
-        serializable:true,
         value:{}
     },
 
     layerData:{
-        serializable:true,
         get:function(){
             return this._layerData;
         },
@@ -504,11 +482,9 @@ var Layer = exports.Layer = Montage.create(Component, {
     
     /* Data binding point and outgoing binding trigger method */
     _bindingPoint : {
-    	serializable: true,
     	value : {}
     },
     bindingPoint: {
-    	serializable: true,
     	get: function() {
     		return this._bindingPoint;
     	},
@@ -582,6 +558,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     },
     didDraw: {
     	value: function() {
+    		// console.log("Layer.didDraw: Layer "+ this.layerID );
     		if (this._isFirstDraw === true) {
     			if (this.isSelected === true) {
     				if (this.application.ninja.currentDocument._uuid === this._docUUID) {
