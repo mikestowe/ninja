@@ -35,6 +35,10 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
         value:null
     },
 
+    isSubproperty:{
+        value:true
+    },
+
     propTweenRepetition:{
         serializable:true,
         get:function () {
@@ -111,11 +115,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
 
     handleClick:{
         value:function(ev){
-            var parentTrackID = this.parentComponent.parentComponent.parentComponent.trackID;
-            var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(parentTrackID);
             //console.log(this.application.ninja.timeline.arrLayers[selectedIndex].layerData);
-            this.application.ninja.timeline.selectLayer(selectedIndex, true);
-
             if (ev.shiftKey) {
                 if (this.propTweens.length < 1) {
                     this.insertPropTween(0);
@@ -137,6 +137,10 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
 
     insertPropTween:{
         value:function(clickPos){
+            var parentTrackID = this.parentComponent.parentComponent.parentComponent.trackID;
+            var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(parentTrackID);
+            this.application.ninja.timeline.selectLayer(selectedIndex, true);
+
             var currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
             var currentMillisec = currentMillisecPerPixel * clickPos;
 

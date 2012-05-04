@@ -225,6 +225,8 @@ var Tween = exports.Tween = Montage.create(Component, {
 
     selectTween:{
         value: function(){
+            console.log("tween select");
+
             // turn on event listener for element change
             this.eventManager.addEventListener("elementChange", this, false);
 
@@ -243,13 +245,17 @@ var Tween = exports.Tween = Montage.create(Component, {
             var currentMillisec = currentMillisecPerPixel * this.keyFramePosition;
             this.application.ninja.timeline.updateTimeText(currentMillisec);
 
-            // move animated element to correct position on stage
-            var currentTop = this.tweenedProperties["top"] + "px";
-            var currentLeft = this.tweenedProperties["left"] + "px";
+            if(this.parentComponent.parentComponent.isSubproperty){
+                console.log("sub prop tween selection");
+                // set property specific style on element
+            } else {
+                // move animated element to correct position on stage
+                var currentTop = this.tweenedProperties["top"] + "px";
+                var currentLeft = this.tweenedProperties["left"] + "px";
 
-            this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.animatedElement], "top", [currentTop], "Change", "tween");
-            this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.animatedElement], "left", [currentLeft], "Change", "tween");
-
+                this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.animatedElement], "top", [currentTop], "Change", "tween");
+                this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.animatedElement], "left", [currentLeft], "Change", "tween");
+            }
         }
     },
 
