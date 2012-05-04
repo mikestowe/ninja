@@ -152,7 +152,6 @@ exports.SelectionController = Montage.create(Component, {
 
     selectElement: {
         value: function(element) {
-
             if(this.findSelectedElement(element) === -1) {
 
                 if(this.application.ninja.currentDocument.inExclusion(element) !== -1){
