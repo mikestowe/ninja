@@ -16,6 +16,8 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
     prepareForDraw:{
         value:function(){
             this.element.addEventListener("click", this, false);
+            this.trackID = this.parentComponent.parentComponent.parentComponent.trackID;
+            this.animatedElement = this.parentComponent.parentComponent.parentComponent.animatedElement;
         }
     },
 
@@ -26,6 +28,10 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
     },
 
     _propTweenRepetition:{
+        value:null
+    },
+
+    animatedElement:{
         value:null
     },
 
@@ -53,8 +59,54 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
         }
     },
 
+    _propTrackData:{
+        value:false
+    },
+
+    propTrackData:{
+        get:function () {
+            return this._propTrackData;
+        },
+        set:function (val) {
+            this._propTrackData = val;
+            if (this._propTrackData) {
+                this.setData();
+            }
+        }
+    },
+
+    setData:{
+        value:function(){
+            if (typeof(this.propTrackData) === "undefined") {
+                return;
+            }
+
+
+            this.propTweens = this.propTrackData.propTweens;
+
+            this.needsDraw = true;
+        }
+    },
+
     nextKeyframe:{
         value:1
+    },
+
+    _trackID:{
+        value:null
+    },
+
+    trackID:{
+        serializable:true,
+        get:function () {
+            return this._trackID;
+        },
+        set:function (value) {
+            if (value !== this._trackID) {
+                this._trackID = value;
+                this.propTrackData.layerID = value;
+            }
+        }
     },
 
     handleClick:{
@@ -126,9 +178,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
 
     addPropAnimationRuleToElement:{
         value:function(tweenEvent){
-            console.log("SECOND PROP TWEEN ADDING at " + tweenEvent.offsetX);
             this.insertPropTween(tweenEvent.offsetX);
-
         }
     }
 });

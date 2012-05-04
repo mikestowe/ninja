@@ -70,7 +70,14 @@
                	        "prototype" : "js/panels/Timeline/PropertyTrack.reel",
                			"properties" : {
                				"element":{"#": "style-track-base"}
-               			}
+               			},
+                        "bindings" : {
+                            "trackData" : {
+                           	    "boundObject" : {"@" : "styleTrackRepetition"},
+                           	    "boundObjectPropertyPath" : "objectAtCurrentIteration.propTrackData",
+                           	    "oneway" : false
+                           	}
+                        }
                	   },
                    "positionTracksRepetition": {
                        "prototype": "montage/ui/repetition.reel",
