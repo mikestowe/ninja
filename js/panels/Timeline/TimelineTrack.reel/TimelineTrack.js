@@ -442,6 +442,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.element.addEventListener("click", this, false);
             this.eventManager.addEventListener("tlZoomSlider", this, false);
             
+            // Drag and Drop event handlers 
 			this.element.addEventListener("dragover", this.handleKeyframeDragover.bind(this), false);
 			this.element.addEventListener("dragstart", this.handleKeyframeDragstart.bind(this), false);
 			this.element.addEventListener("dragend", this.handleKeyframeDragend.bind(this), false);
@@ -873,6 +874,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     },
     handleKeyframeDragover: {
     	value: function(event) {
+    		event.preventDefault();
     		var currPos = 0;
     		/*
     			myScrollTest = ((event.y - (this._dragAndDropHelperOffset - this.user_layers.scrollTop)) + 28) - this.user_layers.scrollTop;
@@ -891,9 +893,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     		}
     		*/
     		//currPos = event.y - (this._dragAndDropHelperOffset - this.user_layers.scrollTop)- 28;
-    		currPos = event.x - 280;
+    		currPos = event.x - 277;
     		this._dragAndDropHelperCoords = currPos + "px";
     		this.needsDraw = true;
+    		return false;
     	}
     },
 	
@@ -912,6 +915,24 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 			//if (this.parentComponent.parentComponent.dragLayerID !== this.layerID) {
 				//this.parentComponent.parentComponent.dropLayerID = this.layerID;
 			//}
+			
+			/*
+			 * First, what keyframe is it (get the index);
+			 * Limit keyframe position to between index-1 and index+1 keyFramePosition
+			 * On update, be sure to update index+1's information too
+			 * 
+			 */
+			
+			var currPos = event.x - 277,
+				currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80),
+				currentMillisec = currentMillisecPerPixel * currPos;
+			console.log(this.tweens[1].tweenData);
+			this.tweens[1].tweenData.spanWidth = currPos - this.tweens[0].tweenData.keyFramePosition;
+			this.tweens[1].tweenData.keyFramePosition = currPos;
+			this.tweens[1].tweenData.keyFrameMillisec = currentMillisec;
+			this.tweens[1].tweenData.spanPosition = currPos - this.tweens[1].tweenData.spanWidth;
+			this.tweenRepetition.childComponents[1].setData();
+			console.log(this.tweens[1].tweenData);
 			return false;
 		}
 	},
