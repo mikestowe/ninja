@@ -104,8 +104,6 @@ exports.Ninja = Montage.create(Component, {
 
     handleResizeEnd: {
         value: function(e) {
-//            this.height -= this._resizedHeight;
-//            this.width -= this._resizedWidth;
             this.stage.resizeCanvases = true;
             this._resizedHeight = 0;
             this._resizedWidth = 0;
@@ -184,11 +182,6 @@ exports.Ninja = Montage.create(Component, {
     handleResize: {
         value: function() {
             this.stage.resizeCanvases = true;
-        }
-    },
-
-    willDraw: {
-        value: function() {
         }
     },
 

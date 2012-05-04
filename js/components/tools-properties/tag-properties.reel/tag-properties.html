@@ -1,4 +1,4 @@
-﻿<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -35,26 +35,26 @@
     </head>
 
     <body>
-        <div id="tagProperties" class="subToolHolderPanel">
+        <div data-montage-id="tagProperties" class="subToolHolderPanel">
             <div id="tagToolContainer" class="tagRadioButtons">
-                <input type="radio" id="divTool" class="tag-type" title="Div Element" name="TagRadios" checked/>
-                <input type="radio" id="imageTool" class="tag-type" title="Image Element" name="TagRadios"/>
-                <input type="radio" id="videoTool" class="tag-type" title="Video Element" name="TagRadios"/>
-                <input type="radio" id="canvasTool" class="tag-type" title="Canvas Element" name="TagRadios"/>
-                <input type="radio" id="customTool" class="tag-type" title="Custom Element" name="TagRadios"/>
+                <input type="radio" id="divTool" data-montage-id="divTool" class="tag-type" title="Div Element" name="TagRadios" value="div" checked/>
+                <input type="radio" id="imageTool"  data-montage-id="imageTool" class="tag-type" title="Image Element" value="image" name="TagRadios"/>
+                <input type="radio" id="videoTool"  data-montage-id="videoTool" class="tag-type" title="Video Element" value="video" name="TagRadios"/>
+                <input type="radio" id="canvasTool" data-montage-id="canvasTool" class="tag-type" title="Canvas Element" value="canvas" name="TagRadios"/>
+                <input type="radio" id="customTool" data-montage-id="customTool" class="tag-type" title="Custom Element" value="custom" name="TagRadios"/>
 
                 <div class="nj-divider divider-vertical">&nbsp;</div>
 
                 <div id="classNameContainer" class="leftLabel">
                     <label class="label"> Class:
-                        <input id="className" type="text" name="ClassNameTextBox" class="textBox nj-skinned">
+                        <input data-montage-id="className" type="text" name="ClassNameTextBox" class="textBox nj-skinned">
                     </label>
                 </div>
 
                 <div id="customContainer" class="leftLabel" style="padding-top: 3px;">
                     <label class="label"> Tag Name:</label>
 
-                    <select id="customTagCB" class="nj-skinned">
+                    <select data-montage-id="customTagCB" class="nj-skinned">
                         <option>article</option>
                         <option>aside</option>
                         <option>section</option>
@@ -66,11 +66,11 @@
                 <div id="positionContainer" class="leftLabel" style="padding-top: 3px;">
                     <label class="label"> Position:</label>
 
-                    <select id="positionCB" class="nj-skinned">
+                    <select data-montage-id="positionCB" class="nj-skinned">
+                        <option>Static</option>
                         <option>Absolute</option>
                         <option>Relative</option>
                         <option>Fixed</option>
-                        <option>Static</option>
                         <option>Inherit</option>
                     </select>
 
