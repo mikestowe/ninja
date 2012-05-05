@@ -87,7 +87,8 @@ exports.KeyboardMediator = Montage.create(Component, {
         value: function(evt) {
 
             //keyboard controls for html design view
-            if((!!this.application.ninja.documentController.activeDocument) && (this.application.ninja.documentController.activeDocument.currentView === "design")){
+            // TODO - New template mode doesn't set currentView yet.
+            if((!!this.application.ninja.currentDocument)){// && (this.application.ninja.currentDocument.model.currentView === "design")){
 
                 // Don't do anything if an input or other control is focused
                 if(document.activeElement.nodeName !== "BODY") {
@@ -256,7 +257,7 @@ exports.KeyboardMediator = Montage.create(Component, {
     handleKeyup: {
         value: function(evt) {
              //keyboard controls for html design view
-            if((!!this.application.ninja.documentController.activeDocument) && (this.application.ninja.documentController.activeDocument.currentView === "design")){
+            if((!!this.application.ninja.currentDocument)){// && (this.application.ninja.currentDocument.model.currentView === "design")){
                 if(document.activeElement.nodeName !== "BODY") {
                     // Don't do anything if an input or other control is focused
                     return;
@@ -265,31 +266,5 @@ exports.KeyboardMediator = Montage.create(Component, {
                 if(this.application.ninja.toolsData) this.application.ninja.toolsData.selectedToolInstance.HandleKeyUp(evt);
             }
         }
-    },
-    
-    _handleKeydown: {
-        value: function(evt) {
-
-            // Check if cmd-shift-+/ctrl-shift-+ for toggling snapping
-            if(evt.shiftKey && (evt.ctrlKey || evt.metaKey) && (evt.keyCode === 187))
-            {
-                MainMenuModule.MenuActionManager.toggleSnapping("snap", !DocumentManagerModule.DocumentManager.activeDocument.snapping);
-                evt.preventDefault();
-                return;
-            }
-
-            if(evt.keyCode === Keyboard.PLUS && (evt.metaKey||evt.ctrlKey)) {
-                evt.preventDefault();
-                this._toolsList.action("zoomIn", evt);
-                return;
-            }
-
-           if(evt.keyCode === Keyboard.MINUS && (evt.metaKey || evt.ctrlKey)) {
-                evt.preventDefault();
-                this._toolsList.action("zoomOut", evt);
-                return;
-            }
-
-         }
     }
 });
