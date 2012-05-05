@@ -51,6 +51,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     	value: false
     },
     styleRepetition : {
+        serializable: true,
     	get: function() {
     		return this._styleRepetition;
     	},
@@ -61,8 +62,17 @@ var Layer = exports.Layer = Montage.create(Component, {
     _styleCounter : {
     	value: 0
     },
+    styleCounter:{
+        serializable:true,
+        get:function () {
+            return this._styleCounter;
+        },
+        set:function (newVal) {
+            this._styleCounter = newVal;
+        }
+    },
 
-	/* Layer models: the name, ID, and selected and animation booleans for the layer */
+    /* Layer models: the name, ID, and selected and animation booleans for the layer */
     _layerName:{
     	value: "Default Layer Name"
     },
@@ -635,8 +645,8 @@ var Layer = exports.Layer = Montage.create(Component, {
 			newEvent.layerEventLocale = "styles";
 			newEvent.layerEventType = "newStyle";
 			newEvent.layerID = this.layerID;
-            newEvent.styleIndex = this._styleCounter;
-			newEvent.styleID = this.layerID + "@" + this._styleCounter;
+            newEvent.styleIndex = this.styleCounter;
+			newEvent.styleID = this.layerID + "@" + this.styleCounter;
 			
 			newStyle.styleID = newEvent.styleID;
 			newStyle.whichView = "hintable";
@@ -644,26 +654,12 @@ var Layer = exports.Layer = Montage.create(Component, {
 			newStyle.editorValue = "";
 			newStyle.ruleTweener = false;
 			newStyle.isSelected = false;
+            this.arrLayerStyles.push(newStyle);
 
-			if (!!this.styleRepetition.selectedIndexes) {
-				mySelection = this.styleRepetition.selectedIndexes[0];
-				this.arrLayerStyles.splice(mySelection, 0, newStyle);
-				//this.styleRepetition.selectedIndexes = [mySelection];
-				this.selectStyle(mySelection);
-			} else {
-				newLength = this.arrLayerStyles.length;
-				this.arrLayerStyles.push(newStyle);
-				mySelection = this.arrLayerStyles.length;
-				// this.styleRepetition.selectedIndexes = [mySelection-1];
-				this.selectStyle(mySelection-1);
-			}
-			
 			// Set up the event info and dispatch the event
-            this._styleCounter += 1;
+            this.styleCounter += 1;
 			newEvent.styleSelection = mySelection;
 			defaultEventManager.dispatchEvent(newEvent);
-
-
 		}
 	},
 	deleteStyle : {

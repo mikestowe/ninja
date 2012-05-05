@@ -157,8 +157,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
                     // check if there is an editor property assigned yet
                     // get this property track's editor prop name from layer data arrays
                     var selectIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
-                    console.log(this.application.ninja.timeline.arrLayers[selectIndex].layerData.arrLayerStyles);
-                    console.log(this.styleIndex);
+                    console.log(this.application.ninja.timeline.arrLayers[selectIndex].layerData.arrLayerStyles[this.styleIndex].editorProperty);
 
                     this.insertPropTween(0);
                     this.addPropAnimationRuleToElement(ev);

@@ -819,7 +819,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 newStyleTrack.propTrackData.styleSelection = layerEvent.styleSelection;
                 newStyleTrack.propTrackData.propTweens = [];
                 newStyleTrack.propTrackData.styleIndex = layerEvent.styleIndex;
-                console.log(layerEvent.styleSelection);
+
                 console.log(layerEvent.styleIndex);
 
             	this.arrStyleTracks.push(newStyleTrack);
