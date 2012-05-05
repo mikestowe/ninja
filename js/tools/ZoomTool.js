@@ -280,7 +280,9 @@ exports.ZoomTool = Montage.create(DrawingTool, {
 			this.application.ninja.documentBar.zoomFactor = zoomFactor*100;
             //this.application.ninja.stage.zoomFactor = zoomFactor;
 			if (zoomFactor >= 1)
-				this.application.ninja.currentDocument.iframe.style.zoom = zoomFactor;
+            {
+                this.application.ninja.currentDocument.model.views.design.iframe.style.zoom = zoomFactor;
+            }
 			this.application.ninja.stage._firstDraw = false;
 			//tmp3 = viewUtils.localToGlobal( localPt,  userContent );	// DEBUG - remove this line
 

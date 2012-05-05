@@ -139,7 +139,7 @@ exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
 			// let the document and stage manager know about the zoom change
 			this.application.ninja.stage._firstDraw = true;
 			this.application.ninja.documentBar.zoomFactor = 100;
-			this.application.ninja.currentDocument.iframe.style.zoom = 1.0;
+            this.application.ninja.currentDocument.model.views.design.iframe.style.zoom = 1.0;
 			this.application.ninja.stage._firstDraw = false;
 
            // TODO - Any updates to the stage should redraw stage's children. Move this to mediator?
