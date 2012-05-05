@@ -28,11 +28,39 @@ exports.BodyController = Montage.create(ElementController, {
 
     getProperty: {
         value: function(el, p) {
+            switch(p) {
+                case "background" :
+                    return this.application.ninja.colorController.getColorObjFromCss(this.application.ninja.stylesController.getElementStyle(el, "background-color", true, true));
+                case "border":
+                    return 0;
+                case "height":
+                case "width":
+                case "-webkit-transform-style":
+                    return this.application.ninja.stylesController.getElementStyle(el, p, true, true);
+                default:
+                    return ElementController.getProperty(el, p, true, true);
+                    //console.log("Undefined Stage property ", p);
+            }
         }
     },
 
     setProperty: {
         value: function(el, p, value) {
+            switch(p) {
+                case "body-background":
+                case "background":
+                    this.application.ninja.stylesController.setElementStyle(el, "background-color", value, true);
+                    break;
+                case "overflow":
+                case "width":
+                case "height":
+                case "-webkit-transform-style":
+                    this.application.ninja.stylesController.setElementStyle(el, p, value, true);
+                    this.application.ninja.stage.updatedStage = true;
+                    break;
+                default:
+                    console.log("Undefined property ", p, "for the Body Controller");
+            }
         }
     },
 

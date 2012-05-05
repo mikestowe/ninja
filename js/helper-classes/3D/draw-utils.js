@@ -584,18 +584,10 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			var ptOnPlane = MathUtils.getPointOnPlane(this._workingPlane);
 
             // define the grid parameters
-            var width,
-                height,
+            var width = this.snapManager.getStageWidth(),
+                height = this.snapManager.getStageHeight(),
                 nLines = 10;
 
-//            if(this.application.ninja.documentController.webTemplate) {
-            if(this.application.ninja.currentDocument.documentRoot.id !== "UserContent") {
-                width = this.application.ninja.currentDocument.documentRoot.scrollWidth;
-                height = this.application.ninja.currentDocument.documentRoot.scrollHeight;
-            } else {
-                width = this.snapManager.getStageWidth();
-                height = this.snapManager.getStageHeight();
-            }
 			// get a matrix from working plane space to the world
 			var mat = this.getPlaneToWorldMatrix(zAxis, ptOnPlane);
 			var tMat = Matrix.Translation( [0.5*width, 0.5*height, 0] );

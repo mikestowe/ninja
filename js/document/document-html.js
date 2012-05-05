@@ -41,7 +41,7 @@ exports.HtmlDocument = Montage.create(Component, {
 	////////////////////////////////////////////////////////////////////
 	//
     exclusionList: {
-        value: [] //TODO: Update to correct list
+        value: ["HTML", "BODY"] //TODO: Update to correct list
     },
 	////////////////////////////////////////////////////////////////////
 	//
@@ -73,7 +73,7 @@ exports.HtmlDocument = Montage.create(Component, {
             	views: {value: {'design': DesignDocumentView.create(), 'code': null}} //TODO: Add code view logic
             });
             //Initiliazing views and hiding
-           	if (this.model.views.design.initiliaze(document.getElementById("iframeContainer"))) {
+           	if (this.model.views.design.initialize(document.getElementById("iframeContainer"))) {
            		//Hiding iFrame, just initiliazing
            		this.model.views.design.hide();
            	} else {
@@ -115,6 +115,12 @@ exports.HtmlDocument = Montage.create(Component, {
     	    this.loaded.callback.call(this.loaded.context, this);
     	    //Setting opacity to be viewable after load
 		   	this.model.views.design.iframe.style.opacity = 1;
+
+
+
+
+
+            this.application.ninja.appModel.show3dGrid = true;
     	}
     }
     ////////////////////////////////////////////////////////////////////
