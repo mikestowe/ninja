@@ -151,7 +151,6 @@ var Montage = require("montage/core/core").Montage,
 
 	// isToggling: Bindable property. Set this (to anything) to trigger a toggle.
 	_isToggling: {
-		serializable: true,
 		value: true
 	},
 	isToggling: {
@@ -179,7 +178,6 @@ var Montage = require("montage/core/core").Montage,
 	
 	prepareForDraw: {
 		value: function() {
-
 			// Get the original value of the overflow property:
 			this._origOverflowValue = window.getComputedStyle(this.myContent, null).getPropertyValue("overflow");
 			if (this.isCollapsed === false) {

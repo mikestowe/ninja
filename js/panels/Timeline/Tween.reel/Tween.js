@@ -132,6 +132,20 @@ var Tween = exports.Tween = Montage.create(Component, {
             this._isTweenAnimated = value;
         }
     },
+    
+    _isDragging: {
+    	value: false
+    },
+    isDragging: {
+    	serializable: true,
+        get:function () {
+            return this._isDragging;
+        },
+        set:function (newVal) {
+            this._isDragging = newVal;
+        }
+    	
+    },
 
 
     draw:{

@@ -31,6 +31,11 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         	}
         }
     },
+    
+    _isFirstDraw: {
+    	value: true
+    },
+    
     _isVisible:{
         value: true
     },
@@ -343,6 +348,23 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         value:null
     },
 
+	// Drag and Drop properties
+    _dragAndDropHelper : {
+    	value: false
+    },
+    _dragAndDropHelperCoords: {
+    	value: false
+    },
+    _dragAndDropHelperOffset : {
+    	value: false
+    },
+    _appendHelper: {
+    	value: false
+    },
+    _deleteHelper: {
+    	value: false
+    },
+
     _trackData:{
 		value: false
     },
@@ -419,6 +441,12 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.ninjaStylesContoller = this.application.ninja.stylesController;
             this.element.addEventListener("click", this, false);
             this.eventManager.addEventListener("tlZoomSlider", this, false);
+            
+            // Drag and Drop event handlers 
+			this.element.addEventListener("dragover", this.handleKeyframeDragover.bind(this), false);
+			this.element.addEventListener("dragstart", this.handleKeyframeDragstart.bind(this), false);
+			this.element.addEventListener("dragend", this.handleKeyframeDragend.bind(this), false);
+			this.element.addEventListener("drop", this.handleKeyframeDrop.bind(this), false);
         }
     },
 
@@ -431,6 +459,54 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 	                this.animatedElement = this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList[0];
 	            }
             }
+            
+            
+            
+            
+            
+            
+            
+            
+    		// Drag and Drop:
+    		// Do we have a helper to append?
+            if (this._appendHelper === true) {
+            	this.track_lanes.appendChild(this._dragAndDropHelper);
+            	this._appendHelper = false;
+            }
+            // Do we need to move the helper?
+    		if (this._dragAndDropHelperCoords !== false) {
+    			if (this._dragAndDropHelper !== null) {
+    				if (typeof(this._dragAndDropHelper.style) !== "undefined") {
+    					this._dragAndDropHelper.style.left = this._dragAndDropHelperCoords;
+    				}
+    			}
+    			this._dragAndDropHelperCoords = false;
+    		}
+    		// Do we have a helper to delete?
+    		if (this._deleteHelper === true) {
+    			if (this._dragAndDropHelper === null) {
+    				// Problem....maybe a helper didn't get appended, or maybe it didn't get stored.
+    				// Try and recover the helper so we can delete it.
+    				var myHelper = this.element.querySelector(".track-dnd-helper");
+    				if (myHelper != null) {
+    					this._dragAndDropHelper = myHelper;
+    				}
+    			}
+	            if (this._dragAndDropHelper !== null) {
+	            	// We need to delete the helper.  Can we delete it from track_lanes?
+	            	if (this._dragAndDropHelper && this._dragAndDropHelper.parentNode === this.track_lanes) {
+	            		this.track_lanes.removeChild(this._dragAndDropHelper);
+	            		this._dragAndDropHelper = null;
+	            		this._deleteHelper = false;
+	            	}
+	            }
+    		}
+            
+            
+            
+            
+            
+
         }
     },
 
@@ -446,6 +522,33 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                     }
                 }
             }
+            
+            
+    		if (this._isFirstDraw === true) {
+	    		
+	    		if (this.isMainCollapsed === false) {
+					this._mainCollapser.myContent.style.height = "auto";
+					this._mainCollapser.myContent.classList.remove(this._mainCollapser.collapsedClass);
+					this._mainCollapser.clicker.classList.remove(this._mainCollapser.collapsedClass);
+	    		}
+	    		if (this.isPositionCollapsed === false) {
+					this._positionCollapser.myContent.style.height = "auto";
+					this._positionCollapser.myContent.classList.remove(this._positionCollapser.collapsedClass);
+					this._positionCollapser.clicker.classList.remove(this._positionCollapser.collapsedClass);
+	    		}
+	    		if (this.isTransformCollapsed === false) {
+					this._transformCollapser.myContent.style.height = "auto";
+					this._transformCollapser.myContent.classList.remove(this._transformCollapser.collapsedClass);
+					this._transformCollapser.clicker.classList.remove(this._transformCollapser.collapsedClass);
+	    		}
+	    		if (this.isStyleCollapsed === false) {
+					this._styleCollapser.myContent.style.height = "auto";
+					this._styleCollapser.myContent.classList.remove(this._styleCollapser.collapsedClass);
+					this._styleCollapser.clicker.classList.remove(this._styleCollapser.collapsedClass);
+	    		}
+    			this._isFirstDraw = false;
+    		}
+            
         }
     },
 
@@ -739,6 +842,152 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 			return returnVal;
     	}
     },
+    
+    // Drag and drop event handlers
+    handleKeyframeDragstart : {
+    	value: function(event) {
+            var dragIcon = document.createElement("img"), 
+            	minPosition = 0,
+            	maxPosition = 100000000000;
+            	
+            event.dataTransfer.effectAllowed = 'move';
+            event.dataTransfer.setData('Text', this.identifier);
+            dragIcon.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjEwMPRyoQAAAA1JREFUGFdj+P//PwMACPwC/ohfBuAAAAAASUVORK5CYII="
+            dragIcon.width = 1;
+            event.dataTransfer.setDragImage(dragIcon, 0, 0);
+            
+            // Clone the element we're dragging
+            this._dragAndDropHelper = event.target.cloneNode(true);
+            this._dragAndDropHelper.style.opacity = 0.8;
+            this._dragAndDropHelper.style.position = "absolute";
+            this._dragAndDropHelper.style.top = "2px";
+            this._dragAndDropHelper.style.left = "0px";
+            this._dragAndDropHelper.style.zIndex = 700;
+            
+            //this._dragAndDropHelper.style.width = window.getComputedStyle(this.container_layers, null).getPropertyValue("width");
+            this._dragAndDropHelper.classList.add("track-dnd-helper");
+            
+            // Get the offset 
+    		var findYOffset = function(obj) {
+				var curleft = curtop = 0;
+				
+				if (obj.offsetParent) {
+					do {
+							curleft += obj.offsetLeft;
+							curtop += obj.offsetTop;
+				
+						} while (obj = obj.offsetParent);
+				}
+				return curtop;
+    		}
+    		//this._dragAndDropHelperOffset = findYOffset(this.container_layers);
+    		if (this.draggingIndex !== (this.tweens.length -1)) {
+    			maxPosition = this.tweenRepetition.childComponents[this.draggingIndex +1].keyFramePosition;
+    		}
+    		if (this.draggingIndex > 1) {
+    			minPosition = this.tweenRepetition.childComponents[this.draggingIndex -1].keyFramePosition;
+    		}
+    		this._keyframeMinPosition = minPosition+2;
+    		this._keyframeMaxPosition = maxPosition-9;
+    		this._appendHelper = true;
+    		this._deleteHelper = false;
+    	}
+    },
+    handleKeyframeDragover: {
+    	value: function(event) {
+    		event.preventDefault();
+    		var currPos = 0;
+    		/*
+    			myScrollTest = ((event.y - (this._dragAndDropHelperOffset - this.user_layers.scrollTop)) + 28) - this.user_layers.scrollTop;
+    		if ((myScrollTest < 60) && (this.user_layers.scrollTop >0)) {
+    			this._scrollTracks = (this.user_layers.scrollTop - 10)
+    		}
+    		if ((myScrollTest < 50) && (this.user_layers.scrollTop >0)) {
+    			this._scrollTracks = (this.user_layers.scrollTop - 20)
+    		}
+    		if ((myScrollTest > (this.user_layers.clientHeight + 10))) {
+    			this._scrollTracks = (this.user_layers.scrollTop + 10)
+    		}
+    		if ((myScrollTest > (this.user_layers.clientHeight + 20))) {
+    			this._scrollTracks = (this.user_layers.scrollTop + 20)
+    			
+    		}
+    		*/
+    		//currPos = event.y - (this._dragAndDropHelperOffset - this.user_layers.scrollTop)- 28;
+    		currPos = event.x - 277;
+    		
+    		// too much or too little?
+    		if (currPos < this._keyframeMinPosition) {
+    			currPos = this._keyframeMinPosition;
+    		}
+    		if (currPos > this._keyframeMaxPosition) {
+    			currPos = this._keyframeMaxPosition;
+    		}
+    		
+    		this._dragAndDropHelperCoords = currPos + "px";
+    		this.needsDraw = true;
+    		return false;
+    	}
+    },
+	
+    handleKeyframeDragend : {
+    	value: function(event) {
+    		this._deleteHelper = true;
+    		this.needsDraw = true;
+           
+    	}
+    },
+    
+	handleKeyframeDrop : {
+		value: function(event) {
+			event.stopPropagation();
+			//this.element.classList.remove("dragOver");
+			//if (this.parentComponent.parentComponent.dragLayerID !== this.layerID) {
+				//this.parentComponent.parentComponent.dropLayerID = this.layerID;
+			//}
+			
+			/*
+			 * First, what keyframe is it (get the index);
+			 * Limit keyframe position to between index-1 and index+1 keyFramePosition
+			 * On update, be sure to update index+1's information too
+			 * 
+			 */
+			
+			var currPos = event.x - 274,
+				currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80),
+				currentMillisec = 0,
+				i = 0, 
+				tweenIndex = this.draggingIndex;
+				
+			// too much or too little?
+    		if (currPos < this._keyframeMinPosition) {
+    			currPos = this._keyframeMinPosition + 3;
+    		}
+    		if (currPos > this._keyframeMaxPosition) {
+    			currPos = this._keyframeMaxPosition + 3;
+    		}
+    		
+    		currentMillisec = currentMillisecPerPixel * currPos;
+
+			this.tweens[tweenIndex].tweenData.spanWidth = currPos - this.tweens[tweenIndex - 1].tweenData.keyFramePosition;
+			this.tweens[tweenIndex].tweenData.keyFramePosition = currPos;
+			this.tweens[tweenIndex].tweenData.keyFrameMillisec = currentMillisec;
+			this.tweens[tweenIndex].tweenData.spanPosition = currPos - this.tweens[tweenIndex].tweenData.spanWidth;
+			this.tweenRepetition.childComponents[tweenIndex].setData();
+			if (tweenIndex < this.tweens.length -1) {
+				var spanWidth = this.tweens[tweenIndex +1].tweenData.keyFramePosition - currPos;
+				var spanPosition = currPos; 
+				this.tweens[tweenIndex +1].tweenData.spanWidth = spanWidth;
+				this.tweens[tweenIndex +1].tweenData.spanPosition = currPos;
+				this.tweenRepetition.childComponents[tweenIndex+1].setData();
+			}
+			this.tweenRepetition.childComponents[tweenIndex].selectTween();
+			this.updateKeyframeRule();
+			return false;
+		}
+	},
+    
+    
 	/* Begin: Logging routines */
     _boolDebug: {
     	enumerable: false,
