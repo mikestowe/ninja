@@ -27,6 +27,10 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
         }
     },
 
+    trackEditorProperty:{
+        value:""
+    },
+
     _propTweenRepetition:{
         value:null
     },
@@ -68,6 +72,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
     },
 
     propTrackData:{
+        serializable:true,
         get:function () {
             return this._propTrackData;
         },
@@ -76,19 +81,6 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
             if (this._propTrackData) {
                 this.setData();
             }
-        }
-    },
-
-    setData:{
-        value:function(){
-            if (typeof(this.propTrackData) === "undefined") {
-                return;
-            }
-
-
-            this.propTweens = this.propTrackData.propTweens;
-
-            this.needsDraw = true;
         }
     },
 
@@ -108,16 +100,66 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
         set:function (value) {
             if (value !== this._trackID) {
                 this._trackID = value;
-                this.propTrackData.layerID = value;
             }
+        }
+    },
+
+    _styleSelection:{
+        value:null
+    },
+
+    styleSelection:{
+        serializable:true,
+        get:function () {
+            return this._styleSelection;
+        },
+        set:function (value) {
+            if (value !== this._styleSelection) {
+                this._styleSelection = value;
+            }
+        }
+    },
+
+    _styleIndex:{
+        value:null
+    },
+
+    styleIndex:{
+        serializable:true,
+        get:function () {
+            return this._styleIndex;
+        },
+        set:function (value) {
+            if (value !== this._styleIndex) {
+                this._styleIndex = value;
+            }
+        }
+    },
+
+    setData:{
+        value:function () {
+            if (typeof(this.propTrackData) === "undefined") {
+                return;
+            }
+
+            this.styleIndex = this.propTrackData.styleIndex;
+            this.propTweens = this.propTrackData.propTweens;
+            this.styleSelection = this.propTrackData.styleSelection;
+            this.needsDraw = true;
         }
     },
 
     handleClick:{
         value:function(ev){
-            //console.log(this.application.ninja.timeline.arrLayers[selectedIndex].layerData);
             if (ev.shiftKey) {
                 if (this.propTweens.length < 1) {
+
+                    // check if there is an editor property assigned yet
+                    // get this property track's editor prop name from layer data arrays
+                    var selectIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
+                    console.log(this.application.ninja.timeline.arrLayers[selectIndex].layerData.arrLayerStyles);
+                    console.log(this.styleIndex);
+
                     this.insertPropTween(0);
                     this.addPropAnimationRuleToElement(ev);
                     this.updatePropKeyframeRule();
@@ -137,8 +179,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
 
     insertPropTween:{
         value:function(clickPos){
-            var parentTrackID = this.parentComponent.parentComponent.parentComponent.trackID;
-            var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(parentTrackID);
+            var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
             this.application.ninja.timeline.selectLayer(selectedIndex, true);
 
             var currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);

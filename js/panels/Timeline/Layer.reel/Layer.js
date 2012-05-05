@@ -606,6 +606,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 			newEvent.layerEventLocale = "styles";
 			newEvent.layerEventType = "newStyle";
 			newEvent.layerID = this.layerID;
+            newEvent.styleIndex = this._styleCounter;
 			newEvent.styleID = this.layerID + "@" + this._styleCounter;
 			
 			newStyle.styleID = newEvent.styleID;
@@ -629,7 +630,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 			}
 			
 			// Set up the event info and dispatch the event
-
+            this._styleCounter += 1;
 			newEvent.styleSelection = mySelection;
 			defaultEventManager.dispatchEvent(newEvent);
 

@@ -710,7 +710,17 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             }
             if (layerEvent.layerEventType === "newStyle") {
             	// TODO: Add a real track of tweens.  Probably need a method for that.
-            	this.arrStyleTracks.push("1");
+
+                var newStyleTrack = {};
+                newStyleTrack.propTrackData = {};
+                newStyleTrack.propTrackData.styleSelection = layerEvent.styleSelection;
+                newStyleTrack.propTrackData.propTweens = [];
+                newStyleTrack.propTrackData.styleIndex = layerEvent.styleIndex;
+                console.log(layerEvent.styleSelection);
+                console.log(layerEvent.styleIndex);
+
+            	this.arrStyleTracks.push(newStyleTrack);
+
             } else if (layerEvent.layerEventType === "deleteStyle") {
             	// TODO: Delete the right track.  Index can be passed in event object, use that for splice().
             	this.arrStyleTracks.pop();
