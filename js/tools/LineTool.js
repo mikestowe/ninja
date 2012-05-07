@@ -77,10 +77,11 @@ exports.LineTool = Montage.create(ShapeTool, {
                             h += ~~(yAdj*2);
                         }
 
-                        canvas = NJUtils.makeNJElement("canvas", "Canvas", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
-                        var elementModel = TagTool.makeElement(w, h, drawData.planeMat, drawData.midPt, canvas, true);
-                        canvas.elementModel.isShape = true;
-                        this.application.ninja.elementMediator.addElements(canvas, elementModel.data);
+                        canvas = document.application.njUtils.make("canvas", {"data-RDGE-id": NJUtils.generateRandom()}, this.application.ninja.currentDocument);
+                        document.application.njUtils.createModelWithShape(canvas, "Line");
+
+                        var styles = document.application.njUtils.stylesFromDraw(canvas, w, h, drawData);
+                        this.application.ninja.elementMediator.addElements(canvas, styles);
                     } else {
                         canvas = this._targetedElement;
                         canvas.elementModel.controller = ShapesController;
@@ -242,7 +243,7 @@ exports.LineTool = Montage.create(ShapeTool, {
             canvas.elementModel.shapeModel.shapeCount++;
             if(canvas.elementModel.shapeModel.shapeCount === 1)
             {
-                canvas.elementModel.selection = "Line";
+//                canvas.elementModel.selection = "Line";
                 canvas.elementModel.pi = "LinePi";
                 canvas.elementModel.shapeModel.strokeSize = this.options.strokeSize.value + " " + this.options.strokeSize.units;
 

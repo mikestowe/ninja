@@ -4,10 +4,11 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var Montage = require("montage/core/core").Montage,
-    Properties3D    = require("js/models/properties-3d").Properties3D,
-    ShapeModel    = require("js/models/shape-model").ShapeModel,
-    ControllerFactory   = require("js/controllers/elements/controller-factory").ControllerFactory;
+var Montage             = require("montage/core/core").Montage,
+    Properties3D        = require("js/models/properties-3d").Properties3D,
+    ShapeModel          = require("js/models/shape-model").ShapeModel,
+    ControllerFactory   = require("js/controllers/elements/controller-factory").ControllerFactory,
+    PiData              = require("js/data/pi/pi-data").PiData;
 
 exports.ElementModel = Montage.create(Montage, {
     key:            { value: "_model_"},
@@ -31,21 +32,65 @@ exports.ElementModel = Montage.create(Montage, {
     shapeModel:     { value: null },
     isIn2DSnapCache : { value: false },
 
+    isComponent:    { value: false },
+
     fill:           { value: null },
     stroke:         { value: null },
 
     initialize: {
-        value: function(type, selection, controller, isShape) {
-            /*
-            this.type = type;
-            this.selection = selection;
+        value: function(el, isShape, selection, isComponent) {
+            var elementName, controller;
 
-            controller: { value: ControllerFactory.getController(controller)},
-            pi:         { value: pi},
-            props3D:    { value: p3d},
-            shapeModel: { value: shapeProps},
-            isShape:    { value: isShape}
-            */
+            elementName = el.nodeName.toLowerCase();
+
+            this.type = el.nodeName;
+            this.selection = selection ? selection : elementName;
+
+            if(isComponent) {
+                controller = "component";
+                this.pi = this.elementNameToPi(selection.replace(/\s+/g, ''));
+                this.isComponent = true;
+            } else {
+                controller = this.elementNameToController(elementName);
+                this.pi = this.elementNameToPi(elementName);
+            }
+
+            this.props3D = Montage.create(Properties3D);
+
+            if(isShape) {
+                this.controller = ControllerFactory.getController("shape");
+                this.shapeModel = Montage.create(ShapeModel);
+                this.isShape = true;
+            } else {
+                this.controller = ControllerFactory.getController(controller);
+            }
+
+            return this;
+
+        }
+    },
+
+    elementNameToController: {
+        value: function(name) {
+            if(name === "div" || name === "custom") {
+                return "block";
+            } else if(name === "img") {
+                return "image";
+            } else {
+                return name;
+            }
+        }
+    },
+
+    elementNameToPi: {
+        value: function(name) {
+            var piString = name + "Pi";
+
+            if(!PiData.hasOwnProperty(piString)) {
+                piString = "blockPi";
+            }
+
+            return piString;
         }
     },
 
