@@ -174,7 +174,7 @@ exports.Layout = Montage.create(Component, {
             var tmpMat = viewUtils.getLocalToGlobalMatrix( item );
 
             var zoomFactor = 1;
-            if (this.stage._viewport.style && this.stage._viewport.style.zoom) {
+            if (this.stage._viewport && this.stage._viewport.style && this.stage._viewport.style.zoom) {
 				zoomFactor = Number(this.stage._viewport.style.zoom);
             }
 

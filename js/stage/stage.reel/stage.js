@@ -231,33 +231,43 @@ exports.Stage = Montage.create(Component, {
             this._canvas.height = this._layoutCanvas.height = this._drawingCanvas.height = this.element.offsetHeight - 11;
 
             this._documentRoot = this.application.ninja.currentDocument.documentRoot;
-            this._viewport = this.application.ninja.currentDocument.documentRoot.parentNode;
-
-            this.documentOffsetLeft = this._viewport.offsetLeft;
-            this.documentOffsetTop = this._viewport.offsetTop;
-
-            // Center the stage
-            this.centerStage();
-
-            this._scrollLeft = this._iframeContainer.scrollLeft;
-            this._scrollTop = this._iframeContainer.scrollTop;
-            this.application.ninja.currentDocument.savedLeftScroll = this._iframeContainer.scrollLeft;
-            this.application.ninja.currentDocument.savedTopScroll = this._iframeContainer.scrollTop;
 
             // Hardcode this value so that it does not fail for the new stage architecture
             // TODO: Remove marker for old template: NINJA-STAGE-REWORK
             if(this.application.ninja.currentDocument.documentRoot.id === "UserContent") {
-                this.userContentBorder = 1; //parseInt(this._documentRoot.elementModel.controller.getProperty(this._documentRoot, "border"));
+                this._viewport = this.application.ninja.currentDocument.documentRoot.parentNode;
+
+                this.documentOffsetLeft = this._viewport.offsetLeft;
+                this.documentOffsetTop = this._viewport.offsetTop;
+
+                // Center the stage
+                this.centerStage();
+
+                this._scrollLeft = this._iframeContainer.scrollLeft;
+                this._scrollTop = this._iframeContainer.scrollTop;
+                this.application.ninja.currentDocument.savedLeftScroll = this._iframeContainer.scrollLeft;
+                this.application.ninja.currentDocument.savedTopScroll = this._iframeContainer.scrollTop;
+
+                this.userContentBorder = parseInt(this._documentRoot.elementModel.controller.getProperty(this._documentRoot, "border"));
+
+                this._userContentLeft = this._documentOffsetLeft - this._scrollLeft + this._userContentBorder;
+                this._userContentTop = this._documentOffsetTop - this._scrollTop + this._userContentBorder;
+
+                this._iframeContainer.addEventListener("scroll", this, false);
+
+                this.application.ninja.currentDocument.iframe.style.opacity = 1.0;
             } else {
                 this.userContentBorder = 0;
+
+                this._scrollLeft = 0;
+                this._scrollTop = 0;
+                this._userContentLeft = 0;
+                this._userContentTop = 0;
+
+                this.application.ninja.currentDocument._window.addEventListener("scroll", this, false);
             }
 
-            this._userContentLeft = this._documentOffsetLeft - this._scrollLeft + this._userContentBorder;
-            this._userContentTop = this._documentOffsetTop - this._scrollTop + this._userContentBorder;
 
-            this.application.ninja.currentDocument.iframe.style.opacity = 1.0;
-
-            this._iframeContainer.addEventListener("scroll", this, false);
 
             // TODO - We will need to modify this once we support switching between multiple documents
             this.application.ninja.toolsData.selectedToolInstance._configure(true);
@@ -415,13 +425,10 @@ exports.Stage = Montage.create(Component, {
     handleSelectionChange: {
         value: function(event) {
             // TODO - this is a hack for now because some tools depend on selectionDrawn event for some logic
-            if(this.drawNow)
-            {
+            if(this.drawNow) {
                 this.draw();
                 this.drawNow = false;
-            }
-            else
-            {
+            } else {
                 this.needsDraw = true;
             }
         }
@@ -444,11 +451,20 @@ exports.Stage = Montage.create(Component, {
      */
     handleScroll: {
         value: function() {
-            this._scrollLeft = this._iframeContainer.scrollLeft;
-            this._scrollTop = this._iframeContainer.scrollTop;
+             // TODO: Remove marker for old template: NINJA-STAGE-REWORK
+            if(this.application.ninja.currentDocument.documentRoot.id === "UserContent") {
+                this._scrollLeft = this._iframeContainer.scrollLeft;
+                this._scrollTop = this._iframeContainer.scrollTop;
 
-            this.userContentLeft = this._documentOffsetLeft - this._scrollLeft + this._userContentBorder;
-            this.userContentTop = this._documentOffsetTop - this._scrollTop + this._userContentBorder;
+                this.userContentLeft = this._documentOffsetLeft - this._scrollLeft + this._userContentBorder;
+                this.userContentTop = this._documentOffsetTop - this._scrollTop + this._userContentBorder;
+            } else {
+                this._scrollLeft = this.application.ninja.currentDocument.documentRoot.scrollLeft;
+                this._scrollTop = this.application.ninja.currentDocument.documentRoot.scrollTop;
+
+                this.userContentLeft = -this._scrollLeft;
+                this.userContentTop = -this._scrollTop;
+            }
 
             // Need to clear the snap cache and set up the drag plane
             //snapManager.setupDragPlaneFromPlane( workingPlane );
@@ -457,7 +473,6 @@ exports.Stage = Montage.create(Component, {
             this.needsDraw = true;
             this.layout.draw();
             //this._toolsList.action("DrawHandles");
-
         }
     },
 
@@ -687,7 +702,7 @@ exports.Stage = Montage.create(Component, {
 //            }
 
             var zoomFactor = 1;
-            if (this._viewport.style && this._viewport.style.zoom) {
+            if (this._viewport && this._viewport.style && this._viewport.style.zoom) {
 				zoomFactor = Number(this._viewport.style.zoom);
             }
 
@@ -840,6 +855,12 @@ exports.Stage = Montage.create(Component, {
         }
     },
 
+    setStageAsViewport: {
+        value: function() {
+            this.stageDeps.viewUtils.setViewportObj(this.application.ninja.currentDocument.documentRoot);
+        }
+    },
+
     setZoom: {
         value: function(value) {
             if(!this._firstDraw)
@@ -943,8 +964,9 @@ exports.Stage = Montage.create(Component, {
            this.application.ninja.documentController.activeDocument.savedLeftScroll = this._iframeContainer.scrollLeft;
            this.application.ninja.documentController.activeDocument.savedTopScroll = this._iframeContainer.scrollTop;
        }
-   },
-   restoreScroll:{
+    },
+
+    restoreScroll:{
        value: function(){
            this._iframeContainer.scrollLeft = this.application.ninja.documentController.activeDocument.savedLeftScroll;
            this._scrollLeft = this.application.ninja.documentController.activeDocument.savedLeftScroll;

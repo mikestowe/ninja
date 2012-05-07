@@ -78,9 +78,9 @@ var TagProperties = exports.TagProperties = Montage.create(ToolProperties, {
 
     handleClick: {
         value: function(event) {
-            this.selectedElement = event._event.target.id;
+            this.selectedElement = event._event.target.value;
 
-            if(this.selectedElement === "customTool") {
+            if(this.selectedElement === "custom") {
                 this.customName.style["display"] = "";
                 this.customLabel.style["display"] = "";
             } else {
@@ -91,7 +91,7 @@ var TagProperties = exports.TagProperties = Montage.create(ToolProperties, {
     },
 
     _selectedElement: {
-        value: "divTool", enumerable: false
+        value: "div", enumerable: false
     },
 
     selectedElement: {

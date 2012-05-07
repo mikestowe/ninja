@@ -222,10 +222,8 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
         value: function(event) {
             if(this.application.ninja.selectedElements.length > 0) {
                 this.application.ninja.currentSelectedContainer = this.application.ninja.selectedElements[0];
-				console.log( "setting container to selected element" );
             } else {
                 this.application.ninja.currentSelectedContainer = this.application.ninja.currentDocument.documentRoot;
-				console.log( "setting container to stage" );
             }
         }
     },
@@ -753,10 +751,10 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
 
             var zoomFactor = 1;
             var viewPort = this.application.ninja.stage._viewport;
-            if (viewPort.style && viewPort.style.zoom)
-            {
+            if (viewPort && viewPort.style && viewPort.style.zoom) {
                 zoomFactor = Number(viewPort.style.zoom);
             }
+
             var tmpMat = viewUtils.getLocalToGlobalMatrix( item );
             for (var j=0;  j<4;  j++)
             {
@@ -865,7 +863,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
 
             var zoomFactor = 1;
             var viewPort = this.application.ninja.stage._viewport;
-            if (viewPort.style && viewPort.style.zoom)
+            if (viewPort && viewPort.style && viewPort.style.zoom)
             {
                 zoomFactor = Number(viewPort.style.zoom);
             }
