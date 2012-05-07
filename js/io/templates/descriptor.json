@@ -6,7 +6,7 @@
 		"name":"Blank File",
 		"uri":"/",
 		"type":"directory",
-        "children":["js/io/templates/files/html.txt", "js/io/templates/files/js.txt", "js/io/templates/files/css.txt", "js/io/templates/files/json.txt", "js/io/templates/files/php.txt", "js/io/templates/files/pl.txt", "js/io/templates/files/py.txt", "js/io/templates/files/rb.txt"]
+        "children":["js/io/templates/files/html.txt", "js/io/templates/files/js.txt", "js/io/templates/files/css.txt", "js/io/templates/files/json.txt", "js/io/templates/files/php.txt", "js/io/templates/files/pl.txt", "js/io/templates/files/py.txt", "js/io/templates/files/rb.txt", "js/io/templates/files/xml.txt"]
 	},
 	"js/io/templates/files/html.txt":{
 		"name":"HTML",
@@ -64,6 +64,13 @@
         "fileExtension":".rb",
         "children":["defaultTemplate"]
 	},
+    "js/io/templates/files/xml.txt":{
+        "name":"XML",
+        "uri":"js/io/templates/files/xml.txt",
+        "type":"file",
+        "fileExtension":".xml",
+        "children":["defaultTemplate"]
+    },
     "defaultTemplate":{
         "name": "Basic",
         "uri": "defaultTemplate",

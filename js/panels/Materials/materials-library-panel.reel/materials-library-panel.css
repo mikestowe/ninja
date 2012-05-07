@@ -5,43 +5,34 @@
  </copyright> */
 
 .materials_library_panel hr {
-  float: left;
-  clear: both;
-  width: 100%;
-  display: block;
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0.5, #1d1d1d), color-stop(0.75, #424242));
-  border: none;
-  height: 2px;
-  margin: 4px 0px 4px 0px;
+    float: left;
+    clear: both;
+    width: 100%;
+    display: block;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0.5, #1d1d1d), color-stop(0.75, #424242));
+    border: none;
+    height: 2px;
+    margin: 4px 0 4px 0;
 }
 
 
-#ml_buttons {
+.ml_buttons {
     clear:both;
     float: left;
-    margin: 0px -4px 0px 4px;
+    margin: 0 -4px 0 4px;
     width: 97%;
 }
 
-#ml_buttons .nj-skinned{
-  height: 22px;
-  overflow: hidden;
-  display: block;
-  cursor: pointer;
-  margin: 0px 1px;
-}
-
-#ml_add_btn {
+.ml_buttons .nj-skinned {
+    height: 22px;
+    overflow: hidden;
+    display: block;
+    cursor: pointer;
+    margin: 0 1px;
     float: left;
     width: 60px;
 }
 
-#ml_copy_btn {
-    float: left;
-    width: 60px;
-}
-
-#ml_delete_btn {
+.ml_buttons .nj-skinned:last-child {
     float: right;
-    width: 60px;
 }

@@ -207,16 +207,16 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 			var elt = this.documentRoot;
 			if (elt)
 			{
+				/*
+				// Use this code to test the runtime version of WebGL
+				var cdm = new NinjaCvsRt.CanvasDataManager();
+				cdm.loadGLData(elt,  value,  null );
+				*/
+
+				// /*
 				var nWorlds= value.length;
 				for (var i=0;  i<nWorlds;  i++)
 				{
-					/*
-					// Use this code to test the runtime version of WebGL
-					var cdm = new NinjaCvsRt.CanvasDataManager();
-					cdm.loadGLData(elt,  value,  null );
-					*/
-
-					// /*
 					// get the data for the next canvas
 					var importStr = value[i];
 
@@ -228,7 +228,7 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 					{
 						// JSON format.  pull off the
 						importStr = importStr.substr( index+1 );
-						jObj = jObj = JSON.parse( importStr );
+						jObj = JSON.parse( importStr );
 						id = jObj.id;
 					}
 					else
@@ -281,8 +281,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 							}
 						}
 					}
-					// */
 				}
+				// */
 			}
 		}
     },

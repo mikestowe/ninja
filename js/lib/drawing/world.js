@@ -362,9 +362,9 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
     
     // start RDGE passing your runtime object, and false to indicate we don't need a an initialization state
     // in the case of a procedurally built scene an init state is not needed for loading data
+	this._canvas.rdgeid = this._canvas.getAttribute( "data-RDGE-id" );
 	if (this._useWebGL) {
 		rdgeStarted = true;
-		this._canvas.rdgeid = this._canvas.getAttribute( "data-RDGE-id" );
 		RDGE.globals.engine.unregisterCanvas( this._canvas );
 		RDGE.globals.engine.registerCanvas(this._canvas, this);
 		RDGE.RDGEStart( this._canvas );
@@ -758,7 +758,7 @@ World.prototype.exportJSON = function () {
 	// would not be destructive of the data.  You would be wrong...
 	// We need to rebuild everything
     if (this._useWebGL) {
-        if (worldObj.children && (worldObj.children.length === 1)) {
+        if (worldObj.children && (worldObj.children.length >= 1)) {
             this.rebuildTree(this._geomRoot);
             this.restartRenderLoop();
 		}
@@ -835,8 +835,11 @@ World.prototype.importJSON = function (jObj) {
 
 	// import the objects
 	// there should be exactly one child of the parent object
-	if (jObj.children && (jObj.children.length === 1))
-		this.importObjectsJSON( jObj.children[0] );
+	if (jObj.children)
+	{
+		for (var i=0;  i<jObj.children.length;  i++)
+			this.importObjectsJSON( jObj.children[i] );
+	}
 	else
 		throw new Error ("unrecoverable canvas import error - inconsistent root object: " + jObj.children );
 
