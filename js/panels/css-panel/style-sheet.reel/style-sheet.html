@@ -24,14 +24,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                     "deleteButton": {"@": "deleteButton"}
                 }
             },
-            "disableCheckbox": {
-                "module": "js/components/checkbox.reel",
-                "name": "Checkbox",
-                "properties": {
-                    "element": { "#": "disable-checkbox" },
-                    "checked": true
-                }
-            },
             "name": {
                 "module": "montage/ui/dynamic-text.reel",
                 "name": "DynamicText",
@@ -114,12 +106,12 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
     </script>
 </head>
 <body>
-<div id="style-sheet-container" class="style-sheet-container">
+<div data-montage-id="style-sheet-container" class="style-sheet-container">
     <div class="ss-icon"></div>
     <!--<div id="disable-checkbox"></div>-->
-    <span id="sheet-name"></span>
+    <span data-montage-id="sheet-name"></span>
     <label>Media:</label>
-    <div id="media-input"></div>
+    <div data-montage-id="media-input"></div>
 
     <div data-montage-id="style-sheet-edit" class="style-sheet-edit">
 

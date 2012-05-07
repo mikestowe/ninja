@@ -1252,6 +1252,8 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             doc.head.appendChild(sheetElement);
             sheet = this.getSheetFromElement(sheetElement, doc);
 
+            this.userStyleSheets.push(sheet);
+
             this.styleSheetModified(sheet);
 
             NJevent('newStyleSheet', sheet);

@@ -35,7 +35,7 @@ exports.StyleSheetsView = Montage.create(Component, {
     ///// Add rule button action
     handleAddAction : {
         value: function(e) {
-            debugger;
+            this.stylesController.createStylesheet();
         }
     },
 
@@ -45,6 +45,7 @@ exports.StyleSheetsView = Montage.create(Component, {
     handleStyleSheetsReady : {
         value: function(e) {
             this.documentName = this.stylesController.activeDocument.name;
+            this.styleSheets = this.stylesController.userStyleSheets;
             this._initView = this.needsDraw = true;
         }
     },
@@ -60,7 +61,6 @@ exports.StyleSheetsView = Montage.create(Component, {
     prepareForDraw : {
         value: function() {
             this.eventManager.addEventListener("styleSheetsReady", this, false);
-            this.eventManager.addEventListener("newStyleSheet", this, false);
         }
     },
     draw : {
@@ -68,7 +68,6 @@ exports.StyleSheetsView = Montage.create(Component, {
             if(this._initView) {
                 this.noDocumentCondition = false;
                 this.showToolbar = true;
-                this.styleSheets = this.stylesController.userStyleSheets;
                 this._initView = false;
             }
 
@@ -108,11 +107,6 @@ exports.StyleSheetsView = Montage.create(Component, {
                 this._height = val;
                 this.needsDraw = true;
             }
-        }
-    },
-    handleNewStyleSheet : {
-        value: function(e) {
-            this.styleSheets.push(e._event.detail);
         }
     },
     handleResizeStart: {
