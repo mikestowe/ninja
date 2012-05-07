@@ -683,7 +683,9 @@ nav.menuBar ul li:hover ul, nav.menuBar ul ul li:hover ul, nav.menuBar ul ul ul 
 
 .subToolHolderPanel .toolbutton:hover, .subToolHolderPanel .toolbutton.active { -webkit-transform: scale(0.75); }
 
-.subOption { float: left; margin-top: 5px; margin-left: 10px; margin-right: 10px; }
+.subOption { float: left; margin-top: 0px; margin-left: 1px; margin-right: 0px; }
+
+.subOptionSpacer { margin-right: 16px; }
 
 .toolSeparator { height: 1px; width: 30px; }
 

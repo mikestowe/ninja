@@ -25,10 +25,13 @@
 
 .subOption{
     float:left;
-    // margin:10px; 
-    margin-top: 5px;
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-top: 0px;
+    margin-left: 1px;
+    margin-right: 0px;
+}
+
+.subOptionSpacer{
+    margin-right: 16px;
 }
 
 .toolSeparator {
