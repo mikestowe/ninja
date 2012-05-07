@@ -49,7 +49,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     },
     ////////////////////////////////////////////////////////////////////
 	//
-	initiliaze: {
+	initialize: {
         value: function (parent) {
         	//Creating iFrame for view
         	this.iframe = document.createElement("iframe");

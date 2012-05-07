@@ -332,7 +332,6 @@
                     "toolsList":            {"@": "toolsList1"},
                     "toolsProperties":      {"@": "toolsProperties1"},
                     "stage":                {"@": "stage1"},
-                    "settings":             {"@": "settings1"},
                     "elementMediator":      {"@": "elementMediator"},
                     "dragDropMediator":     {"@": "dragDropMediator"},
                     "undocontroller":       {"@": "undocontroller1"},
@@ -364,10 +363,10 @@
 </head>
 <body>
 
-    <div id="main" class="main">
+    <div data-montage-id="main" class="main">
 
         <section id="topMenu">
-            <nav id="mainMenuBar"></nav>
+            <nav data-montage-id="mainMenuBar"></nav>
         </section>
 
         <section data-montage-id="leftSplitter" class="leftSplitter splitter"></section>
@@ -377,22 +376,20 @@
         <section id="appContainer">
             <section data-montage-id="topSplitter" class="topSplitter splitter"></section>
 
-            <section id="topPanelContainer" class="panelContainer">
+            <section data-montage-id="topPanelContainer" id="topPanelContainer" class="panelContainer">
                 <div id="topPanel" class="panel">
                     <div id="toolPropertiesPanel">
-                        <div id="toolsProperties"></div>
+                        <div data-montage-id="toolsProperties"></div>
                     </div>
 
-                    <div id="stageMode" class="unselectable marginposition">
-                        <!--<div id="stageModeImg" class="unselectable editMode"></div>-->
-                    </div>
+                    <div data-montage-id="stageMode" class="unselectable marginposition"></div>
                 </div>
             </section>
 
             <section id="appWorkspace">
-                <section id="leftPanelContainer" class="panelContainer">
+                <section data-montage-id="leftPanelContainer" id="leftPanelContainer" class="panelContainer">
                     <section id="toolsPanelContent" class="panel">
-                        <div id="toolsList"></div>
+                        <div data-montage-id="toolsList"></div>
                     </section>
                 </section>
 
@@ -400,33 +397,33 @@
                     <section class="mainContainerContent">
 
                         <section id="documentTabs">
-                            <div id="openDocumentsTabComponent"></div>
+                            <div data-montage-id="openDocumentsTabComponent" class="openDocumentsTab"></div>
                         </section>
 
-                        <section id="rulerTop"></section>
+                        <section data-montage-id="rulerTop" class="rulerTop"></section>
 
                         <section id="mainContent">
-                            <section id="rulerLeft"></section>
-                            <section id="stageAndScenesContainer"></section>
-                            <section id="pasteboardResizer" class="pasteboardResizer resizeBar"></section>
+                            <section data-montage-id="rulerLeft" class="rulerLeft"></section>
+                            <section data-montage-id="stageAndScenesContainer"></section>
+                            <section data-montage-id="pasteboardResizer" class="pasteboardResizer resizeBar"></section>
                         </section>
-                        <section id="timelineResizer" class="timelineResizer resizeBar"></section>
+                        <section data-montage-id="timelineResizer" class="timelineResizer resizeBar"></section>
                         <section id="stateBar">
                             <section id="documentBarContainer">
-                                <div id="documentBar" class="documentBar" style="display:block"><a href="#">HTML</a></div>
-                                <div id="editorViewOptions" class="editorViewOptions" style="display:none"><a href="#">HTML</a></div>
+                                <div data-montage-id="documentBar" class="documentBar" style="display:block"><a href="#">HTML</a></div>
+                                <div data-montage-id="editorViewOptions" class="editorViewOptions" style="display:none"><a href="#">HTML</a></div>
                             </section>
                         </section>
 
-                        <section id="breadCrumbComponent"></section>
-                        <div id="timelinePanelComponent" data-montage-id="timelinePanel" class="timelinePanel"></div>
+                        <section data-montage-id="breadCrumbComponent"></section>
+                        <div data-montage-id="timelinePanelComponent" class="timelinePanel"></div>
                     </section>
                 </section>
 
                 <section data-montage-id="rightPanelResizer" class="rightPanelResizer resizeBar"></section>
 
-                <section id="rightPanelContainer" data-montage-id="rightPanelContainer" class="rightPanelContainer panelContainer">
-                    <section id="rightPanelContent" class="rightPanelContent">
+                <section data-montage-id="rightPanelContainer" id="rightPanelContainer" class="rightPanelContainer panelContainer">
+                    <section data-montage-id="rightPanelContent" class="rightPanelContent">
                     </section>
                 </section>
             </section>
@@ -436,7 +433,7 @@
 
         <div data-montage-id="focus-container" class="hidden"></div>
 
-        <section id="popupWindows"></section>
+        <section data-montage-id="popupWindows"></section>
 
     </div>
 

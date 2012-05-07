@@ -133,7 +133,7 @@
    
 }
 
-#drawingCanvas {
+.drawingCanvas {
     position: absolute;
     margin: 0px;
     border: none;
@@ -144,7 +144,7 @@
 }
 
 
-#stageCanvas {
+.stageCanvas {
     position: absolute;
     margin: 0px;
     border: none;
@@ -154,7 +154,7 @@
     z-index: 5;
 }
 
-#layoutCanvas {
+.layoutCanvas {
     position: absolute;
     margin: 0px;
     border: none;
