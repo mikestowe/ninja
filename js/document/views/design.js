@@ -131,9 +131,8 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     		this.document.body.removeChild(this.document.getElementsByTagName('ninjaloadinghack')[0]);
    			//Getting style and link tags in document
             var stags = this.document.getElementsByTagName('style'),
-            	ltags = this.document.getElementsByTagName('link'),
-            	scripttags = this.document.getElementsByTagName('script'),
-            	i, n, webgldata;
+            	ltags = this.document.getElementsByTagName('link'), i,
+            	scripttags = this.document.getElementsByTagName('script');
            	//Temporarily checking for disabled special case (we must enabled for Ninja to access styles)
            	this.ninjaDisableAttribute(stags);
            	this.ninjaDisableAttribute(ltags);
@@ -152,28 +151,16 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 					}
 				}
 			}
-            //Checking for webGL Data
-            for (var w in scripttags) {
-            	//
-            	webgldata = null;
-            	//
-            	if (scripttags[w].getAttribute) {
-            		if (scripttags[w].getAttribute('data-ninja-webgl') !== null) {
-            			//TODO: Add logic to handle more than one data tag
-            			webgldata = JSON.parse((scripttags[w].innerHTML.replace("(", "")).replace(")", ""));
-            		}
-            		//
-            		if (webgldata) {
-            			for (n = 0; webgldata.data[n]; n++) {
-            				webgldata.data[n] = unescape(webgldata.data[n]);
-            			}
-            			//this._templateDocument.webgl = webgldata.data;
-            			this.model.glData = webgldata.data;
-            		}
-            	}
-            }
+            //Checking and initializing webGL
+            if (scripttags.length > 0) {
+            	this.initWebGl(scripttags);
+            } //Else there is not data to parse
+    		
+    		
     		
     		//TODO: Load Montage Components (blocking)
+    		//this.initMontage();
+    		
     		
     		//Makign callback if specified
     		if (this._callback) this._callback();
@@ -195,31 +182,28 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 		}
 	},
     ////////////////////////////////////////////////////////////////////
-	//
+	//TODO: Move to url-parser helper class
     getStyleTagFromCssFile: {
         value: function (linktag) {
         	//
-        	var tag, cssUrl, fileUri, cssData, docRootUrl;
+        	var tag, cssData,
+	        	//TODO: Remove usage of hack reference of URL
+        		docRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
         	//Creating style tag to load CSS content into
 			tag = this.document.createElement('style');
 			tag.setAttribute('type', 'text/css');
-        	//TODO: Remove usage of hack reference of URL
-        	docRootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
         	//Checking for location of href to load (special case for cross-domain)
 			if (linktag.href.indexOf(this.application.ninja.coreIoApi.rootUrl) !== -1) {
-				//Getting file URI (not URL since we must load through I/O API)
-				cssUrl =  linktag.href.split(this.application.ninja.coreIoApi.rootUrl)[1];
-				fileUri = this.application.ninja.coreIoApi.cloudData.root+cssUrl;
-				//Loading data from CSS file
-				cssData = this.application.ninja.coreIoApi.readFile({uri: fileUri});
+				//Loading data from file
+				cssData = this.urlParser.loadLocalStyleSheet(linktag.href);
 				//Setting properties of locally loaded styles
-				tag.setAttribute('data-ninja-uri', fileUri);
-				tag.setAttribute('data-ninja-file-url', cssUrl);
-				tag.setAttribute('data-ninja-file-read-only', JSON.parse(this.application.ninja.coreIoApi.isFileWritable({uri: fileUri}).content).readOnly);
-				tag.setAttribute('data-ninja-file-name', cssUrl.split('/')[cssUrl.split('/').length-1]);
+				tag.setAttribute('data-ninja-uri', cssData.fileUri);
+				tag.setAttribute('data-ninja-file-url', cssData.cssUrl);
+				tag.setAttribute('data-ninja-file-read-only', cssData.writable);
+				tag.setAttribute('data-ninja-file-name', cssData.cssUrl.split('/')[cssData.cssUrl.split('/').length-1]);
 			} else {
 				//Cross-domain content
-				cssData = this.application.ninja.coreIoApi.readExternalFile({url: linktag.href, binary: false});
+				cssData = this.urlParser.loadExternalStyleSheet(linktag.href);
 				//Setting properties of externally loaded styles
 				tag.setAttribute('data-ninja-external-url', linktag.href);
 				tag.setAttribute('data-ninja-file-read-only', "true");
@@ -235,58 +219,38 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 					}
 				}					
 			}
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			////////////////////////////////////////////////////////
-			////////////////////////////////////////////////////////
-			//TODO: Clean up and make proper method
-			fileCouldDirUrl = linktag.href.split(linktag.href.split('/')[linktag.href.split('/').length-1])[0];
-			//
-			if (cssData && cssData.content) {
-				tag.innerHTML = cssData.content.replace(/url\(()(.+?)\1\)/g, parseToNinjaUrl.bind(this));
-			} else {
-				//Error: no data was loaded
-			}
-			//
-			function parseToNinjaUrl (prop) {
-				//
-				return prop.replace(/[^()\\""\\'']+/g, prefixWithNinjaUrl.bind(this));
-			}
-			//
-			function prefixWithNinjaUrl (url) {
-				//
-				if (url !== 'url' && !url.match(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi)) {
-					url = fileCouldDirUrl+url;
-				}
-				//
-				return url;
-			}
-			////////////////////////////////////////////////////////
-			////////////////////////////////////////////////////////
-			
-			
-			
-			
-			
-			
-			//
+			//Setting content from loaded data
+			if (cssData.content) tag.innerHTML = cssData.content;
+			//Returning <style> with loaded contents
 			return tag;
         }
     },
     ////////////////////////////////////////////////////////////////////
-	//
+	//Method to parse and initialize all webGL data read from file
     initWebGl: {
-        value: function () {
+        value: function (scripttags) {
         	//
+        	var i, n, webgldata;
+        	//Checking for webGL Data
+            for (var w in scripttags) {
+            	//
+            	webgldata = null;
+            	//Checking for tags with webGL data
+            	if (scripttags[w].getAttribute) {
+            		if (scripttags[w].getAttribute('data-ninja-webgl') !== null) {
+            			//TODO: Add logic to handle more than one data tag
+            			webgldata = JSON.parse((scripttags[w].innerHTML.replace("(", "")).replace(")", ""));
+            		}
+            		//Checking for webGL data and building data array
+            		if (webgldata && webgldata.data) {
+            			for (n = 0; webgldata.data[n]; n++) {
+            				webgldata.data[n] = unescape(webgldata.data[n]);
+            			}
+            			//TODO: Improve setter of webGL and reference
+            			this.model.glData = webgldata.data;
+            		}
+            	}
+            }
         }
     },
     ////////////////////////////////////////////////////////////////////
@@ -297,12 +261,12 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         }
     },
     ////////////////////////////////////////////////////////////////////
-	//
+	//Method to get element from point, used by Ninja
     getElementFromPoint: {
         value: function(x, y) {
             return this.iframe.contentWindow.getElement(x,y);
         }
-    },
+    }
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
 });

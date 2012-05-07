@@ -81,6 +81,10 @@ exports.HtmlDocument = Montage.create(Component, {
            	}
             //
             if (view === 'design') {
+            	//TODO: Remove reference and use as part of model
+            	this.currentView = 'design';
+            	//Setting current view object to design
+            	this.model.currentView = this.model.views.design;
             	//Showing design iFrame
             	this.model.views.design.show();
             	this.model.views.design.iframe.style.opacity = 0;
@@ -118,8 +122,6 @@ exports.HtmlDocument = Montage.create(Component, {
     	    this.loaded.callback.call(this.loaded.context, this);
     	    //Setting opacity to be viewable after load
 		   	this.model.views.design.iframe.style.opacity = 1;
-			//TODO: Remove, this is a temp hard-coded hack
-            this.application.ninja.appModel.show3dGrid = true;
     	}
     }
     ////////////////////////////////////////////////////////////////////
