@@ -179,13 +179,6 @@ exports.KeyboardMediator = Montage.create(Component, {
                     return;
                 }
 
-                // Shortcut for Eyedropper Tool is I
-                if(evt.keyCode === Keyboard.I && !(evt.ctrlKey || evt.metaKey)) {
-                    evt.preventDefault();
-                    this.application.ninja.handleSelectTool({"detail": this.application.ninja.toolsData.defaultToolsData[12]});
-                    return;
-                }
-
                 // Rotate Stage Tool is M
                 if(evt.keyCode === Keyboard.M ) {
                     evt.preventDefault();

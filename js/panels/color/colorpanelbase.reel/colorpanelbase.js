@@ -128,7 +128,6 @@ exports.ColorPanelBase = Montage.create(Component, {
         enumerable: true,
         value: function (e) {
             //
-            this.application.ninja.colorController.createToolbar();
             this.applyDefaultColors();
             this.removeEventListener('firstDraw', this, false);
 

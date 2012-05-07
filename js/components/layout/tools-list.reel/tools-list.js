@@ -20,11 +20,9 @@ exports.ToolsList = Montage.create(Component, {
     OvalTool:               { value: null },
     RectTool:               { value: null },
     LineTool:               { value: null },
-    PencilTool:             { value: null },
     BrushTool:              { value: null },
     FillTool:               { value: null },
     InkBottleTool:          { value: null },
-    EyedropperTool:         { value: null },
     EraserTool:             { value: null },
     RotateStageTool3D:      { value: null },
     PanTool:                { value: null },
@@ -68,10 +66,8 @@ exports.ToolsList = Montage.create(Component, {
             this.OvalTool.options = this.application.ninja.toolsProperties.shapeProperties.ovalProperties;
             this.RectTool.options = this.application.ninja.toolsProperties.shapeProperties.rectProperties;
             this.LineTool.options = this.application.ninja.toolsProperties.shapeProperties.lineProperties;
-            this.PencilTool.options = this.application.ninja.toolsProperties.pencilProperties;
             this.BrushTool.options = this.application.ninja.toolsProperties.brushProperties;
             
-            this.EyedropperTool.options = this.application.ninja.toolsProperties.eyedropperProperties;
             this.EraserTool.options = this.application.ninja.toolsProperties.eraserProperties;
             this.RotateStageTool3D.options = this.application.ninja.toolsProperties.rotateStageProperties;
             this.PanTool.options = this.application.ninja.toolsProperties.panProperties;

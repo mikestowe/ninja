@@ -17,7 +17,9 @@
                 "properties": {
                     "element": {"#": "tagProperties"},
 
-                    "divElement": {"#": "divTool"},
+                    "_fillColorCtrl": {"#": "fillColorCtrl"},
+
+                   "divElement": {"#": "divTool"},
                     "imageElement": {"#": "imageTool"},
                     "videoElement": {"#": "videoTool"},
                     "canvasElement": {"#": "canvasTool"},
@@ -30,13 +32,17 @@
                 }
             }
     	}
-	    </script>
+        </script>
        
     </head>
 
     <body>
         <div id="tagProperties" class="subToolHolderPanel">
             <div id="tagToolContainer" class="tagRadioButtons">
+                <div class="leftLabel colorCtrlIcon FillTool"></div>
+                <div data-montage-id="fillColorCtrl" class="leftLabel fillColorCtrl"></div>
+                <div class="nj-divider divider-vertical">&nbsp;</div>
+
                 <input type="radio" id="divTool" class="tag-type" title="Div Element" name="TagRadios" checked/>
                 <input type="radio" id="imageTool" class="tag-type" title="Image Element" name="TagRadios"/>
                 <input type="radio" id="videoTool" class="tag-type" title="Video Element" name="TagRadios"/>

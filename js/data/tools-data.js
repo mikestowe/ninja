@@ -125,17 +125,6 @@ exports.ToolsData = Montage.create(Montage, {
                 "selected":     false
             },
             {
-                "id":           "PencilTool",
-                "properties":   "pencilProperties",
-                "spriteSheet":  true,
-                "action":       "PencilTool",
-                "toolTip":      "Pencil Tool",
-                "cursor":       "auto",
-                "lastInGroup":  false,
-                "container":    false,
-                "selected":     false
-            },
-            {
                 "id":           "BrushTool",
                 "properties":   "brushProperties",
                 "spriteSheet":  true,
@@ -163,19 +152,8 @@ exports.ToolsData = Montage.create(Montage, {
                 "spriteSheet":  true,
                 "action":       "InkBottleTool",
                 "toolTip":      "Ink Bottle Tool (K)",
-                "cursor":       "url('images/tools/inkbottle_down.png'), default",
+                "cursor":       "url('images/tools/inkbottle_cursor.png'), default",
                 "lastInGroup":  true,
-                "container":    false,
-                "selected":     false
-            },
-            {
-                "id":           "EyedropperTool",
-                "properties":   "eyedropperProperties",
-                "spriteSheet":  true,
-                "action":       "EyedropperTool",
-                "toolTip":      "Eyedropper Tool (I)",
-                "cursor":       "url('images/tools/eyedropper_down.png') 6 20, default",
-                "lastInGroup":  false,
                 "container":    false,
                 "selected":     false
             },

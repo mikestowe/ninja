@@ -5,7 +5,7 @@
  </copyright> */
  
  .optionsShapeTool {
-    padding: 6px;
+    padding: 4px;
 }
 
  .optionsShapeTool > * {
@@ -16,10 +16,13 @@
     width: 20px;
     height: 18px;
     margin: 2px 6px;
+    border: 1px black solid;
 }
 
  .optionsShapeTool .colorCtrlIcon {
     width: 20px;
     height: 20px;
-    background-color: rgb(54, 54, 54);
+    margin-top: 2px;
+    -webkit-transform: scale(0.8);
+    background-color: rgb(40, 40, 40);
 }

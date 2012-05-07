@@ -3,4 +3,26 @@
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
+ 
+ .optionsBrushTool {
+    padding: 6px;
+}
 
+ .optionsBrushTool > * {
+    float:left;
+}
+
+ .optionsBrushTool .fillColorCtrl {
+    width: 20px;
+    height: 18px;
+    margin-left: 3px;    
+    margin-right: 8px;    
+    border: 1px black solid;
+}
+
+ .optionsBrushTool .colorCtrlIcon {
+    width: 20px;
+    height: 20px;
+    -webkit-transform: scale(0.8);
+    background-color: rgb(40, 40, 40);
+}

@@ -8,7 +8,46 @@ var Montage = require("montage/core/core").Montage;
 var Component = require("montage/ui/component").Component;
 var ToolProperties = require("js/components/tools-properties/tool-properties").ToolProperties;
 
-exports.BrushProperties = Montage.create(ToolProperties, {
+var BrushProperties = exports.BrushProperties = Montage.create(ToolProperties, {
+    addedColorChips: { value: false },
+
+    _fill: {
+        enumerable: false,
+        value: { colorMode: 'rgb', color: { r: 0, g: 0, b: 0, a: 1, css: 'rgb(0,0,0)', mode: 'rgb', wasSetByCode: true, type: 'change' }, webGlColor: [0, 0, 0, 1] }
+    },
+
+    fill: {
+        enumerable: true,
+        get: function () {
+            return this._fill;
+        },
+        set: function (value) {
+            if (value !== this._fill) {
+                this._fill = value;
+            }
+        }
+    },
+
+    draw: {
+        enumerable: false,
+        value: function () {
+            Object.getPrototypeOf(BrushProperties).draw.call(this);
+
+            if (this.addedColorChips === false && this.application.ninja.colorController.colorPanelDrawn) {
+                this._fillColorCtrl.props = { side: 'top', align: 'center', wheel: true, palette: true, gradient: false, image: false, nocolor: true, offset: -80 };
+                this.application.ninja.colorController.addButton("chip", this._fillColorCtrl);
+
+                this._fillColorCtrl.addEventListener("change", this.handleFillColorChange.bind(this), false);
+
+                this.addedColorChips = true;
+            }
+
+            if (this.addedColorChips) {
+                this._fillColorCtrl.color(this._fill.colorMode, this._fill.color);
+            }
+        }
+    },
+
     _subPrepare: {
         value: function() {
             this.handleChange(null);
@@ -34,6 +73,13 @@ exports.BrushProperties = Montage.create(ToolProperties, {
                 this._smoothingAmount.element.style["display"] = "none";
                 this._smoothingAmount.visible = false;
             }
+        }
+    },
+
+    handleFillColorChange: {
+        value: function (e) {
+            this.fill = e._event;
+            this.fill.webGlColor = this.application.ninja.colorController.colorModel.colorToWebGl(e._event.color);
         }
     },
 
