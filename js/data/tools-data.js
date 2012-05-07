@@ -222,6 +222,17 @@ exports.ToolsData = Montage.create(Montage, {
                 "lastInGroup":  true,
                 "container":    false,
                 "selected":     false
+            },
+            {
+                "id":           "bindingTool",
+                "properties":   "bindingProperties",
+                "spriteSheet":  true,
+                "action":       "bindingTool",
+                "toolTip":      "Binding (B)",
+                "cursor":       "url('images/cursors/binding.png'),default",
+                "lastInGroup":  true,
+                "container":    false,
+                "selected":     false
             }
         ]
     },

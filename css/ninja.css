@@ -873,6 +873,8 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .InkBottleTool { background-image: url("../images/tools/Tool-FillColor.png"); }
 
+.bindingTool { background-image: url("../images/tools/binding.png"); }
+
 .toolsList .colortoolbar { padding-left: 1px; padding-top: 4px; }
 
 .toolsList .colortoolbar button { width: 27px; height: 27px; background: black; border: 1px solid #000; padding: 0; margin: 0px; }

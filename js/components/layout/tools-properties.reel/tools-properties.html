@@ -120,6 +120,12 @@
                     "element": {"#": "zoomProperties"}
                 }
             },
+            "bindingProperties1": {
+                "prototype": "js/components/tools-properties/binding-properties.reel",
+                "properties": {
+                    "element": {"#": "bindingProperties"}
+                }
+            },
 
             "disable": {
                 "prototype": "montage/ui/condition.reel",
@@ -155,7 +161,8 @@
                     "eraserProperties":             {"@": "eraserProperties1"},
                     "rotateStageProperties":        {"@": "rotateStageProperties1"},
                     "panProperties":                {"@": "panProperties1"},
-                    "zoomProperties":               {"@": "zoomProperties1"}
+                    "zoomProperties":               {"@": "zoomProperties1"},
+                    "bindingProperties":            {"@": "bindingProperties1"}
                 },
                 "bindings": {
                     "currentSelectedTool": {
@@ -188,6 +195,7 @@
             <div id="rotateStageProperties"></div>
             <div id="panProperties"></div>
             <div id="zoomProperties"></div>
+            <div id="bindingProperties"></div>
             <div id="disabledCondition" class="panelDisabled"></div>
         </div>
     </body>
