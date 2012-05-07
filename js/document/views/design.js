@@ -65,7 +65,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     ////////////////////////////////////////////////////////////////////
 	//
 	render: {
-        value: function (callback) {
+        value: function (callback, template) {//TODO: Add support for templates
         	//Storing callback for dispatch ready
         	this._callback = callback;
         	//Adding listener to know when template is loaded to then load user content
@@ -116,6 +116,8 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         			this.document.head.appendChild(this._headFragment.childNodes[i]);
         		}
         	}
+        	//Garbage collection
+        	this._headFragment = null;
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -129,13 +131,15 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     		this.document.body.removeChild(this.document.getElementsByTagName('ninjaloadinghack')[0]);
    			//Getting style and link tags in document
             var stags = this.document.getElementsByTagName('style'),
-            	ltags = this.document.getElementsByTagName('link');
+            	ltags = this.document.getElementsByTagName('link'),
+            	scripttags = this.document.getElementsByTagName('script'),
+            	i, n, webgldata;
            	//Temporarily checking for disabled special case (we must enabled for Ninja to access styles)
            	this.ninjaDisableAttribute(stags);
            	this.ninjaDisableAttribute(ltags);
 			//Looping through all link tags to reload into style tags
 			if(ltags.length > 0) {
-				for (var i = 0; i < ltags.length; i++) {
+				for (i = 0; i < ltags.length; i++) {
 					//
 					if (ltags[i].href) {
 						//TODO: Verify this works for tags in body as well (working in head)
@@ -148,8 +152,26 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 					}
 				}
 			}
-    		
-    		//TODO: Load webGL (blocking)
+            //Checking for webGL Data
+            for (var w in scripttags) {
+            	//
+            	webgldata = null;
+            	//
+            	if (scripttags[w].getAttribute) {
+            		if (scripttags[w].getAttribute('data-ninja-webgl') !== null) {
+            			//TODO: Add logic to handle more than one data tag
+            			webgldata = JSON.parse((scripttags[w].innerHTML.replace("(", "")).replace(")", ""));
+            		}
+            		//
+            		if (webgldata) {
+            			for (n = 0; webgldata.data[n]; n++) {
+            				webgldata.data[n] = unescape(webgldata.data[n]);
+            			}
+            			//this._templateDocument.webgl = webgldata.data;
+            			this.model.glData = webgldata.data;
+            		}
+            	}
+            }
     		
     		//TODO: Load Montage Components (blocking)
     		

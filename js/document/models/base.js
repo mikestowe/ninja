@@ -74,6 +74,19 @@ exports.BaseDocumentModel = Montage.create(Component, {
     },
     ////////////////////////////////////////////////////////////////////
 	//
+	browserPreview: {
+        value: function (browser) {
+        	//
+        	switch (browser) {
+        		case 'chrome':
+        			break;
+        		default:
+        			break;
+        	}
+        }
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
 	save: {
         value: function () {
         	//

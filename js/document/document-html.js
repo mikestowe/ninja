@@ -63,7 +63,7 @@ exports.HtmlDocument = Montage.create(Component, {
 	////////////////////////////////////////////////////////////////////
 	//
     init: {
-        value:function(file, context, callback, view) {
+        value:function(file, context, callback, view, template) { //TODO: Add template support logic
         	//Storing callback data for loaded dispatch
         	this.loaded.callback = callback;
         	this.loaded.context = context;
@@ -85,16 +85,19 @@ exports.HtmlDocument = Montage.create(Component, {
             	this.model.views.design.show();
             	this.model.views.design.iframe.style.opacity = 0;
             	this.model.views.design.content = this.model.file.content;
+            	//TODO: Improve reference
+            	this.model.views.design.model = this.model;
+            	//
             	//TODO: Clean up
             	this.model.views.design.render(function () {
             		//TODO: Identify and remove usage of '_document'
             		this._document = this.model.views.design.document;
-    				//TODO: Check for needed
+    				//TODO: Remove usage, seems as not needed
             		this.documentRoot = this.model.views.design.document.body;
             		//TODO: Why is this needed?
-            		this._liveNodeList = this.documentRoot.getElementsByTagName('*');
+            		this._liveNodeList = this.model.views.design.document.body.getElementsByTagName('*');
             		//Initiliazing document model
-            		document.application.njUtils.makeElementModel(this.documentRoot, "Body", "body");
+            		document.application.njUtils.makeElementModel(this.model.views.design.document.body, "Body", "body");
             		//Adding observer to know when template is ready
             		this._observer = new WebKitMutationObserver(this.handleTemplateReady.bind(this));
         			this._observer.observe(this.model.views.design.document.head, {childList: true});
@@ -115,11 +118,7 @@ exports.HtmlDocument = Montage.create(Component, {
     	    this.loaded.callback.call(this.loaded.context, this);
     	    //Setting opacity to be viewable after load
 		   	this.model.views.design.iframe.style.opacity = 1;
-
-
-
-
-
+			//TODO: Remove, this is a temp hard-coded hack
             this.application.ninja.appModel.show3dGrid = true;
     	}
     }
