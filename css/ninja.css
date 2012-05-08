@@ -831,6 +831,34 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .object3DToolContainer input.rotateGlobally:checked { background-position: 0px -20px; }
 
+.optionsSelectionTool { padding: 6px; }
+
+.optionsSelectionTool > * { float: left; }
+
+.topAlignUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -240px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
+
+.rightAlignUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -270px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
+
+.bottomAlignUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -300px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
+
+.verticalLeftUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -330px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
+
+.verticalCenterUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -360px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
+
+.verticalRightUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -390px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
+
+.distRightUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: 0px -81px; background-repeat: no-repeat; height: 23px; width: 26px; }
+
+.distLeftUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -420px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
+
+.distCenterUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -60px -81px; background-repeat: no-repeat; height: 23px; width: 26px; }
+
+.distTopUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -30px -81px; background-repeat: no-repeat; height: 23px; width: 26px; }
+
+.distBottomUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -90px -81px; background-repeat: no-repeat; height: 23px; width: 26px; }
+
+.distVCenterUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -450px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
+
 #toolsPanelContent { width: 40px; }
 
 .toolsList { width: 29px; margin: auto; }
@@ -882,32 +910,6 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 .ZoomTool { background-image: url("../images/tools/Tool-Zoom.png"); }
 
 .InkBottleTool { background-image: url("../images/tools/Tool-FillColor.png"); }
-
-.topAlignUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -240px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.rightAlignUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -270px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.bottomAlignUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -300px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.verticalLeftUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -330px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.verticalCenterUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -360px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.verticalRightUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -390px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.distRightUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: 0px -81px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.distLeftUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -420px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.distCenterUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -60px -81px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.distTopUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -30px -81px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.distBottomUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -90px -81px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.distVCenterUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -450px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.bucketToolUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -330px 0px; background-repeat: no-repeat; height: 23px; width: 26px; }
 
 .blueDiv { background: blue; opacity: 0.2; }
 
