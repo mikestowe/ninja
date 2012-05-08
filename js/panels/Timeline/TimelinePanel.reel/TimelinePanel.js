@@ -1580,7 +1580,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		}
     		*/
     		//currPos = event.y - (this._dragAndDropHelperOffset - this.user_layers.scrollTop)- 28;
-    		currPos = event.x - 277;
+
+    		currPos = (event.x + this.layout_tracks.scrollLeft) - 277;
     		
     		// too much or too little?
     		if (currPos < this.trackRepetition.childComponents[this.draggingTrackId-1]._keyframeMinPosition) {
@@ -1613,7 +1614,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 			 * 
 			 */
 			
-			var currPos = event.x - 274,
+			var currPos = (event.x + this.layout_tracks.scrollLeft) - 277,
 				currentMillisecPerPixel = Math.floor(this.millisecondsOffset / 80),
 				currentMillisec = 0,
 				i = 0, 
