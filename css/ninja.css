@@ -763,49 +763,41 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .optionLabel { margin-top: 5px; }
 
-#tagToolContainer input.tag-type, #rotateObjectToolContainer input.tag-type, #translateObjectToolContainer input.tag-type { background: none; width: 20px; height: 20px; display: block; float: left; margin: 0px; padding: 0px; margin-right: 5px; margin-top: 4px; background-repeat: no-repeat; opacity: 0.8; text-indent: -9999px; cursor: pointer; -webkit-border-radius: 3px; -webkit-user-select: none; border: 1px solid transparent; }
+.tagRadioButtons input.tag-type { background: none; width: 20px; height: 20px; display: block; float: left; margin: 0px; padding: 0px; margin-right: 5px; margin-top: 4px; background-repeat: no-repeat; opacity: 0.8; text-indent: -9999px; cursor: pointer; -webkit-border-radius: 3px; -webkit-user-select: none; border: 1px solid transparent; }
 
-#tagToolContainer input.tag-type { background-image: url("../images/tools/sprite-toolbar-tag.png"); }
+.tagRadioButtons input.tag-type { background-image: url("../images/tools/sprite-toolbar-tag.png"); }
 
-#rotateObjectToolContainer input.tag-type { background-image: url("../images/tools/sprite-toolbar-3d.png"); }
+.tagRadioButtons input.tag-type:active { border: 1px solid transparent; }
 
-#translateObjectToolContainer input.tag-type { background-image: url("../images/tools/sprite-toolbar-3d.png"); }
+.tagRadioButtons input.tag-type:hover { opacity: 1.0; -webkit-box-shadow: 0px 0px 4px #fff; }
 
-#tagToolContainer input.tag-type:active, #rotateObjectToolContainer input.tag-type:active, #translateObjectToolContainer input.tag-type:active { border: 1px solid transparent; }
+.tagRadioButtons input.tag-type:checked { background-color: transparent; opacity: 1.0; cursor: default; -webkit-box-shadow: none; }
 
-#tagToolContainer input.tag-type:hover, #rotateObjectToolContainer input.tag-type:hover, #translateObjectToolContainer input.tag-type:hover { opacity: 1.0; -webkit-box-shadow: 0px 0px 4px #fff; }
+.tagRadioButtons input.divTool { background-position: -40px 0px; }
 
-#tagToolContainer input.tag-type:checked, #rotateObjectToolContainer input.tag-type:checked, #translateObjectToolContainer input.tag-type:checked { background-color: transparent; opacity: 1.0; cursor: default; -webkit-box-shadow: none; }
+.tagRadioButtons input.divTool:checked { background-position: -40px -20px; }
 
-#tagToolContainer input#divTool { background-position: -40px 0px; }
+.tagRadioButtons input.imageTool { background-position: -60px 0px; }
 
-#tagToolContainer input#divTool:checked { background-position: -40px -20px; }
+.tagRadioButtons input.imageTool:checked { background-position: -60px -20px; }
 
-#tagToolContainer input#imageTool { background-position: -60px 0px; }
+.tagRadioButtons input.videoTool { background-position: -100px 0px; }
 
-#tagToolContainer input#imageTool:checked { background-position: -60px -20px; }
+.tagRadioButtons input.videoTool:checked { background-position: -100px -20px; }
 
-#tagToolContainer input#videoTool { background-position: -100px 0px; }
+.tagRadioButtons input.canvasTool { background-position: -20px 0px; }
 
-#tagToolContainer input#videoTool:checked { background-position: -100px -20px; }
+.tagRadioButtons input.canvasTool:checked { background-position: -20px -20px; }
 
-#tagToolContainer input#canvasTool, #rotateObjectToolContainer input#rotateLocally, #translateObjectToolContainer input#translateLocally { background-position: -20px 0px; }
+.tagRadioButtons input.customTool { background-position: 0px 0px; }
 
-#tagToolContainer input#canvasTool:checked, #rotateObjectToolContainer input#rotateLocally:checked, #translateObjectToolContainer input#translateLocally:checked { background-position: -20px -20px; }
+.tagRadioButtons input.customTool:checked { background-position: 0px -20px; }
 
-#tagToolContainer input#flashTool { background-position: -80px 0px; }
+.tagRadioButtons .nj-divider { height: 100%; float: left; position: relative; top: 5px; }
 
-#tagToolContainer input#flashTool:checked { background-position: -80px -20px; }
+.tagRadioButtons select.nj-skinned { visibility: visible; position: relative; }
 
-#tagToolContainer input#customTool, #rotateObjectToolContainer input#rotateGlobally, #translateObjectToolContainer input#translateGlobally { background-position: 0px 0px; }
-
-#tagToolContainer input#customTool:checked, #rotateObjectToolContainer input#rotateGlobally:checked, #translateObjectToolContainer input#translateGlobally:checked { background-position: 0px -20px; }
-
-#tagToolContainer .nj-divider { height: 100%; float: left; position: relative; top: 5px; }
-
-#tagToolContainer select.nj-skinned { visibility: visible; position: relative; }
-
-#tagToolContainer select[disabled="true"].nj-skinned, #tagToolContainer select[disabled].nj-skinned { visibility: hidden; }
+.tagRadioButtons select[disabled="true"].nj-skinned, .tagRadioButtons select[disabled].nj-skinned { visibility: hidden; }
 
 #zoomToolOptionHolder input#zoomInTool:checked { border-style: solid; border-width: 1px; border-color: white; background-image: url("../images/optionsbar/zoom/zoom_plus.png"); background-repeat: no-repeat; background-position: 4px 3px; }
 
@@ -816,6 +808,24 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 #zoomToolOptionHolder input#zoomOutTool { border-style: solid; border-width: 1px; background-image: url("../images/optionsbar/zoom/zoom_minus.png"); background-repeat: no-repeat; background-position: 4px 3px; }
 
 #zoomToolOptionHolder input.zoom-option { background: none; }
+
+.object3DToolContainer input.tag-type { background: none; width: 20px; height: 20px; display: block; float: left; margin: 0px; padding: 0px; margin-right: 5px; margin-top: 4px; background-repeat: no-repeat; opacity: 0.8; text-indent: -9999px; cursor: pointer; -webkit-border-radius: 3px; -webkit-user-select: none; border: 1px solid transparent; }
+
+.object3DToolContainer input.tag-type { background-image: url("../images/tools/sprite-toolbar-3d.png"); }
+
+.object3DToolContainer input.tag-type:active { border: 1px solid transparent; }
+
+.object3DToolContainer input.tag-type:hover { opacity: 1.0; -webkit-box-shadow: 0px 0px 4px #fff; }
+
+.object3DToolContainer input.tag-type:checked { background-color: transparent; opacity: 1.0; cursor: default; -webkit-box-shadow: none; }
+
+.object3DToolContainer input.rotateLocally { background-position: -20px 0px; }
+
+.object3DToolContainer input.rotateLocally:checked { background-position: -20px -20px; }
+
+.object3DToolContainer input.rotateGlobally { background-position: 0px 0px; }
+
+.object3DToolContainer input.rotateGlobally:checked { background-position: 0px -20px; }
 
 #toolsPanelContent { width: 40px; }
 
