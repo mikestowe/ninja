@@ -33,17 +33,17 @@
                     },
                     "name": {
                         "boundObject": {"@": "repetition1"},
-                        "boundObjectPropertyPath": "objectAtCurrentIteration.name",
+                        "boundObjectPropertyPath": "objectAtCurrentIteration.model.file.name",
                         "oneway": true
                     },
                     "saveFlag": {
                         "boundObject": {"@": "repetition1"},
-                        "boundObjectPropertyPath": "objectAtCurrentIteration.needsSave",
+                        "boundObjectPropertyPath": "objectAtCurrentIteration.model.needsSave",
                         "oneway": true
                     },
                     "active": {
                         "boundObject": {"@": "repetition1"},
-                        "boundObjectPropertyPath": "objectAtCurrentIteration.isActive",
+                        "boundObjectPropertyPath": "objectAtCurrentIteration.model.isActive",
                         "oneway": true
                     }
                 }
@@ -69,9 +69,9 @@
     </head>
 
     <body>
-        <div id="openDocumentsTabComponent" class="documentsTab">
-            <ul id="openDocuments" class="openDocuments">
-                <li id="document"></li>
+        <div data-montage-id="openDocumentsTabComponent" class="documentsTab">
+            <ul data-montage-id="openDocuments" class="openDocuments">
+                <li data-montage-id="document"></li>
             </ul>
         </div>
     </body>

@@ -70,7 +70,7 @@ exports.ColorPopupManager = Montage.create(Component, {
             //
             document.addEventListener('mousedown', function (e) {
                 //
-                if (e._event.srcElement.id === 'stageCanvas' || e._event.srcElement.id === 'mainContainer' || e._event.srcElement.id === 'drawingCanvas') {
+                if (e._event.srcElement.getAttribute('data-montage-id') === 'stageCanvas' || e._event.srcElement.id === 'mainContainer' || e._event.srcElement.getAttribute('data-montage-id') === 'drawingCanvas') {
                 	this.application.ninja.colorController.colorPopupManager.hideColorPopup();
                 }
             }.bind(this));

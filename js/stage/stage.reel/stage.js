@@ -264,7 +264,7 @@ exports.Stage = Montage.create(Component, {
                 this._userContentLeft = 0;
                 this._userContentTop = 0;
 
-                this.application.ninja.currentDocument._window.addEventListener("scroll", this, false);
+                //this.application.ninja.currentDocument._window.addEventListener("scroll", this, false);
             }
 
 
@@ -543,7 +543,7 @@ exports.Stage = Montage.create(Component, {
             var point, element;
 
             point = webkitConvertPointFromPageToNode(this.canvas, new WebKitPoint(position.pageX, position.pageY));
-            element = this.application.ninja.currentDocument.GetElementFromPoint(point.x + this.scrollLeft,point.y + this.scrollTop);
+            element = this.application.ninja.currentDocument.model.views.design.getElementFromPoint(point.x + this.scrollLeft,point.y + this.scrollTop);
 
             // workaround Chrome 3d bug
             if(this.application.ninja.toolsData.selectedToolInstance._canSnap && this.application.ninja.currentDocument.inExclusion(element) !== -1) {
@@ -855,6 +855,12 @@ exports.Stage = Montage.create(Component, {
         }
     },
 
+    setStageAsViewport: {
+        value: function() {
+            this.stageDeps.viewUtils.setViewportObj(this.application.ninja.currentDocument.documentRoot);
+        }
+    },
+
     setZoom: {
         value: function(value) {
             if(!this._firstDraw)
@@ -958,8 +964,9 @@ exports.Stage = Montage.create(Component, {
            this.application.ninja.documentController.activeDocument.savedLeftScroll = this._iframeContainer.scrollLeft;
            this.application.ninja.documentController.activeDocument.savedTopScroll = this._iframeContainer.scrollTop;
        }
-   },
-   restoreScroll:{
+    },
+
+    restoreScroll:{
        value: function(){
            this._iframeContainer.scrollLeft = this.application.ninja.documentController.activeDocument.savedLeftScroll;
            this._scrollLeft = this.application.ninja.documentController.activeDocument.savedLeftScroll;

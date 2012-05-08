@@ -6,16 +6,26 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 ////////////////////////////////////////////////////////////////////////
 //
-var Montage = 			require("montage/core/core").Montage,
-    BaseDocumentModel = require("js/document/models/base").BaseDocumentModel;
+var Montage = 				require("montage/core/core").Montage,
+    BaseDocumentModel = 	require("js/document/models/base").BaseDocumentModel,
+    webGlDocumentHelper = 	require("js/document/helpers/webgl-helper").webGlDocumentHelper;
 ////////////////////////////////////////////////////////////////////////
 //	
 exports.HtmlDocumentModel = Montage.create(BaseDocumentModel, {
 	////////////////////////////////////////////////////////////////////
 	//
 	hasTemplate: {
-		enumerable: false,
         value: false
+    },
+	////////////////////////////////////////////////////////////////////
+	//
+    draw3DGrid: {
+        value: false
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+	webGlHelper: {
+        value: webGlDocumentHelper
     }
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////

@@ -24,6 +24,9 @@ exports.DrawingToolBase = Montage.create(Montage, {
         value: null
     },
 
+    dragPlane: {
+        value: null
+    },
     /**
      * Used on the initial MouseDown for Drawing Tools
      * 
@@ -33,28 +36,30 @@ exports.DrawingToolBase = Montage.create(Montage, {
      *          2 - Y value converted to screen point
      */
     getInitialSnapPoint: {
-        value: function(x,y) {
+        value: function(x, y, shapeCanvas) {
+            snapManager.clearDragPlane();
+
             // update the snap settings
 			snapManager.enableSnapAlign( snapManager.snapAlignEnabledAppLevel() );
 			snapManager.enableElementSnap( snapManager.elementSnapEnabledAppLevel() );
 			snapManager.enableGridSnap( snapManager.gridSnapEnabledAppLevel() );
 
 			// do the snap
-			var hitRec = snapManager.snap(x, y,  true);
-			var dragPlane;
+			this.dragPlane = null;
+            var hitRec = snapManager.snap(x, y,  true);
 			if (hitRec) {
-				// set up the working plane and convert the hit record to be working plane relative
-				if (hitRec.getElement() === snapManager.application.ninja.currentSelectedContainer)
+				if (shapeCanvas)
 				{
-					dragPlane = viewUtils.getUnprojectedElementPlane( hitRec.getElement() );
-					snapManager.setupDragPlaneFromPlane( dragPlane );
+					this.dragPlane = viewUtils.getUnprojectedElementPlane( shapeCanvas );
+					snapManager.setupDragPlaneFromPlane( this.dragPlane );
 				}
 				else
 				{
-					dragPlane = snapManager.setupDragPlanes( hitRec );
+					this.dragPlane = snapManager.setupDragPlanes( hitRec, true );
 				}
+//				console.log( "drag plane: " + this.dragPlane );
 
-				var wpHitRec = hitRec.convertToWorkingPlane( dragPlane );
+				var wpHitRec = hitRec.convertToWorkingPlane( this.dragPlane );
 				var pt = hitRec.getScreenPoint();
 
                 return( [wpHitRec, pt[0], pt[1]] );
@@ -72,28 +77,32 @@ exports.DrawingToolBase = Montage.create(Montage, {
 			snapManager.enableElementSnap( snapManager.elementSnapEnabledAppLevel() );
 			snapManager.enableGridSnap( snapManager.gridSnapEnabledAppLevel() );
 
-
-			// do the first snap
 			var hitRec = snapManager.snap(x, y, snap3d );
 			if (hitRec) {
-				if ((hitRec.getType() !== hitRec.SNAP_TYPE_STAGE) && !hitRec.isSomeGridTypeSnap()) {
-					hitRec = hitRec.convertToWorkingPlane( snapManager.getDragPlane() );
-				}
-
-				if(downHitRec !== null) {
-					// if we are working off-plane, do a snap to the projected locations of the geometry
-					var thePlane = workingPlane;
-					if (snapManager.hasDragPlane())
-					{
-						thePlane = snapManager.getDragPlane();
-					}
-
-                    // Return the up HitRec
-                    return hitRec;
-				} else {
-                    return null;
+//				if ((hitRec.getType() !== hitRec.SNAP_TYPE_STAGE) && !hitRec.isSomeGridTypeSnap()) {
+//					hitRec = hitRec.convertToWorkingPlane( snapManager.getDragPlane() );
+//				}
+//
+//				if(downHitRec !== null) {
+//					// if we are working off-plane, do a snap to the projected locations of the geometry
+//					var thePlane = workingPlane;
+//					if (snapManager.hasDragPlane())
+//					{
+//						thePlane = snapManager.getDragPlane();
+//					}
+//
+//                    // Return the up HitRec
+//                    return hitRec;
+//				} else {
+//                    return null;
+//                }
+                if(downHitRec) {
+                    hitRec = hitRec.convertToWorkingPlane(this.dragPlane);
+                } else if ((hitRec.getType() !== hitRec.SNAP_TYPE_STAGE) && !hitRec.isSomeGridTypeSnap()) {
+                    hitRec = hitRec.convertToWorkingPlane( snapManager.getDragPlane() );
                 }
             }
+            return hitRec;
         }
     },
 
@@ -433,30 +442,6 @@ exports.DrawingToolBase = Montage.create(Montage, {
             var p0 = hitRec0.getScreenPoint(),
                 p1 = hitRec1.getScreenPoint();
             this.stageComponent.drawLine(p0[0], p0[1], p1[0], p1[1], strokeSize, strokeColor);
-        }
-    },
-
-    /**
-     * Get the matrix for the actual element being added to the user document.
-     */
-    getElementMatrix: {
-        value: function(planeMat, midPt) {
-            var divMat, flatMat, flatMatSafe;
-            // calculate the matrix for the element.
-            // we should not need to worry about divide by zero below since we snapped to the point
-            divMat = planeMat.slice(0);
-            divMat[12] = 0.0;
-            divMat[13] = 0.0;
-            //divMat[14] = 0.0;
-            divMat[14] = midPt[2];
-
-            // set the left and top of the element such that the center of the rectangle is at the mid point
-            viewUtils.setViewportObj(this.stage);
-
-            flatMat = divMat;
-            flatMatSafe = MathUtils.scientificToDecimal(flatMat, 10);
-
-            return "matrix3d(" + flatMatSafe + ")";
         }
     },
 

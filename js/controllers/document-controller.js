@@ -366,7 +366,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 				case 'html':
 					//Open in designer view
                     this._hackRootFlag = false;
-                    Montage.create(Document).init(doc, this, this._onOpenDocument);
+                    Montage.create(Document).init(doc, this, this._onOpenDocument, 'design');
 					break;
 				default:
 					//Open in code view
@@ -490,6 +490,9 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             this.webTemplate = false;
 
             NJevent("onOpenDocument", doc);
+
+			this.application.ninja.stage.stageView.showCodeViewBar(false);
+            this.application.ninja.stage.stageView.restoreAllPanels();
         }
     },
 

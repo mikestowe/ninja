@@ -153,10 +153,6 @@ exports.IoMediator = Montage.create(Component, {
             //
             switch (file.mode) {
                 case 'html':
-
-
-                    //TODO: Add check for Monatage library to copy
-
                     //Getting content from function to properly handle saving assets (as in external if flagged)
                     contents = this.parseNinjaTemplateToHtml(file);
                     break;

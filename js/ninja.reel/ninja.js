@@ -104,8 +104,6 @@ exports.Ninja = Montage.create(Component, {
 
     handleResizeEnd: {
         value: function(e) {
-//            this.height -= this._resizedHeight;
-//            this.width -= this._resizedWidth;
             this.stage.resizeCanvases = true;
             this._resizedHeight = 0;
             this._resizedWidth = 0;
@@ -184,11 +182,6 @@ exports.Ninja = Montage.create(Component, {
     handleResize: {
         value: function() {
             this.stage.resizeCanvases = true;
-        }
-    },
-
-    willDraw: {
-        value: function() {
         }
     },
 
@@ -307,7 +300,7 @@ exports.Ninja = Montage.create(Component, {
     // Turn on WebGL animation during preview
     _toggleWebGlAnimation: {
         value: function(inLivePreview) {
-            var glCanvases = this.currentDocument.iframe.contentWindow.document.querySelectorAll('[data-RDGE-id]'),
+            var glCanvases = this.currentDocument.model.views.design.iframe.contentWindow.document.querySelectorAll('[data-RDGE-id]'),
                 glShapeModel;
             if(glCanvases) {
                 for(var i = 0, len = glCanvases.length; i<len; i++) {

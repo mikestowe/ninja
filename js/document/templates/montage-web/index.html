@@ -10,8 +10,39 @@
 	<head>
 	
 		<title>Ninja Prototype</title>
+        
+       	<style type="text/css" id="nj-stage-stylesheet">
+       		* {
+        		-webkit-transition-duration: 0s !important;
+    			-webkit-animation-duration: 0s !important;
+    			-webkit-animation-name: none !important;
+			}
+			
+			body {
+				margin: 0;
+    			padding: 0;
+				position: absolute;
+				-webkit-transform-style: preserve-3d;
+				-webkit-transform: perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+			}
 
-        <link href="default_html.css" id="nj-stage-stylesheet" rel="stylesheet" type="text/css" media="screen"/>
+            html, body {
+                width: 100%;
+                height: 100%;
+            }
+			
+			ninjaloadinghack {
+				display: none;
+			}
+
+			.active-element-outline {
+    			outline: #adff2f solid 2px;
+			}
+
+			.nj-preset-transition {
+				-webkit-transition: all 450ms linear !important;
+			}
+        </style>
     
     	<script type="text/javascript" data-package="." src="../../../../node_modules/montage/montage.js"></script>
     
@@ -24,7 +55,7 @@
         <script type="text/montage-serialization">
         {
             "owner": {
-                "prototype": "main.reel"
+                "prototype": "main"
             }
         }
         </script>
@@ -32,7 +63,6 @@
 	</head>
 
 	<body>
-        <style></style>
 	</body>
 
 </html>

@@ -12,11 +12,11 @@
     background: #B2B2B2;
 }
 
-#toolBarButton {
+.toolBarButton {
     border: 3px;
     float: left;
 }
 
-#toolBarButton:hover {
+.toolBarButton:hover {
     opacity: 1;
 }
