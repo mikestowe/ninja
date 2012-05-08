@@ -85,13 +85,13 @@ exports.RuleList = Montage.create(Component, {
     },
 
     update : {
-        value: function() {
+        value: function(rules) {
             this.childComponents.forEach(function(component) {
                 component.update();
             }, this);
 
             //// TODO: find new styles based on selection
-            if()
+
         }
     },
 

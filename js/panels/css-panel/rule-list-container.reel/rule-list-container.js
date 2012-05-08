@@ -78,18 +78,7 @@ exports.RuleListContainer = Montage.create(Component, {
                 container = document.createElement('div'),
                 rules, ruleListLog;
 
-            if(selection.length === 1) {
-                rules = stylesController.getMatchingRules(selection[0]);
-
-                ///// Add inline style to rule list
-                rules.splice(0, 0, {
-                    type             : 'inline',
-                    selectorText     : 'element.style',
-                    parentStyleSheet : 'Inline Style',
-                    style            : selection[0].style
-                });
-
-            } //// TODO: support more selection types
+            rules = this.getRulesForSelection(selection);
 
             this._instanceToAdd = listInstance;
             listInstance.rules = rules;
@@ -108,6 +97,43 @@ exports.RuleListContainer = Montage.create(Component, {
         }
     },
 
+    getRulesForSelection : {
+        value: function(selection) {
+            var rules;
+
+            if(selection.length === 1) {
+                rules = this.stylesController.getMatchingRules(selection[0]);
+
+                ///// Add inline style to rule list
+                rules.splice(0, 0, {
+                    type             : 'inline',
+                    selectorText     : 'element.style',
+                    parentStyleSheet : 'Inline Style',
+                    style            : selection[0].style
+                });
+
+            } //// TODO: support more selection types
+
+            return rules;
+        }
+    },
+
+    update : {
+        value: function() {
+            var stylesController = this.application.ninja.stylesController,
+                rules = this.getRulesForSelection(this.displayedList.selection),
+                newRules;
+
+            newRules = rules.filter(function(rule) {
+                return rule.type !== 'inline' && this.displayedList.component.rules.indexOf(rule) === -1;
+            }, this);
+
+            newRules.forEach(function(rule) {
+                this.displayedList.component.addRule(rule);
+            },this);
+        }
+    },
+
     //// Array of lists that have been added to the container
     //// Lists include selection type (element/stylesheet), and
     //// the selection itself
@@ -121,6 +147,7 @@ exports.RuleListContainer = Montage.create(Component, {
             if(this.focusDelegate) {
                 this.ruleListComponent.focusDelegate = this.focusDelegate;
             }
+            this.stylesController = this.application.ninja.stylesController;
         }
     },
 

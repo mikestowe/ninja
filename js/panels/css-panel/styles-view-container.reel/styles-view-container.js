@@ -88,7 +88,7 @@ exports.StylesViewContainer = Montage.create(Component, {
             } else if(elements.length === 1) {
                 if(this.contentPanel === "rules") {
                     if(e._event.detail.type !== 'cssChange') {
-                        this.ruleListContainer.displayedList.component.update();
+                        this.ruleListContainer.update();
                     }
                 } else {
                     this.computedStyleView.declaration = elements[0];
