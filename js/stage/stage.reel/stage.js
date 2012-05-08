@@ -551,13 +551,16 @@ exports.Stage = Montage.create(Component, {
      */
     getElement: {
         value: function(position, selectable) {
-            var point, element;
+            var point, element,
+                docView = this.application.ninja.currentDocument.model.views.design;
 
-            point = webkitConvertPointFromPageToNode(this.canvas, new WebKitPoint(position.pageX, position.pageY));
-            element = this.application.ninja.currentDocument.model.views.design.getElementFromPoint(point.x + this.userContentLeft,point.y + this.userContentTop);
+            point = webkitConvertPointFromPageToNode(this.canvas, new WebKitPoint(position.pageX - docView.iframe.contentWindow.pageXOffset, position.pageY - docView.iframe.contentWindow.pageYOffset));
+            element = this.application.ninja.currentDocument.model.views.design.getElementFromPoint(point.x - this.userContentLeft,point.y - this.userContentTop);
 
+            if(!element) debugger;
             // workaround Chrome 3d bug
             if(this.application.ninja.toolsData.selectedToolInstance._canSnap && this.application.ninja.currentDocument.inExclusion(element) !== -1) {
+                point = webkitConvertPointFromPageToNode(this.canvas, new WebKitPoint(position.pageX, position.pageY));
                 element = this.getElementUsingSnapping(point);
             }
 
@@ -888,7 +891,7 @@ exports.Stage = Montage.create(Component, {
                     //TODO - Maybe move to mediator.
 					var newVal = value/100.0;
 					if (newVal >= 1)
-						this.application.ninja.currentDocument.iframe.style.zoom = value/100;
+						this.application.ninja.currentDocument.model.views.design.iframe.style.zoom = value/100;
 
                     this.updatedStage = true;
 
