@@ -231,6 +231,8 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         value: function (scripttags) {
         	//
         	var i, n, webgldata;
+        	//Setting the iFrame property for reference in helper class
+        	this.model.webGlHelper.iframe = this.model.views.design.iframe;
         	//Checking for webGL Data
             for (var w in scripttags) {
             	//
@@ -247,7 +249,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
             				webgldata.data[n] = unescape(webgldata.data[n]);
             			}
             			//TODO: Improve setter of webGL and reference
-            			this.model.glData = webgldata.data;
+            			this.model.webGlHelper.glData = webgldata.data;
             		}
             	}
             }
