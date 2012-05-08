@@ -23,7 +23,7 @@ exports.Breadcrumb = Montage.create(Component, {
         value: function(){
             if(!this.application.ninja.documentController.activeDocument) {
                 this.disabled = true;
-                this.application.ninja.currentSelectedContainer = this.application.ninja.currentDocument.documentRoot;
+                this.application.ninja.currentSelectedContainer = (this.application.ninja.currentDocument ? this.application.ninja.currentDocument.documentRoot : null);
             }
         }
     },

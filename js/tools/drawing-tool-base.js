@@ -36,9 +36,8 @@ exports.DrawingToolBase = Montage.create(Montage, {
      *          2 - Y value converted to screen point
      */
     getInitialSnapPoint: {
-        value: function(x, y, shapeCanvas) {
-            snapManager.clearDragPlane();
-
+        value: function(x, y, shapeCanvas)
+		{
             // update the snap settings
 			snapManager.enableSnapAlign( snapManager.snapAlignEnabledAppLevel() );
 			snapManager.enableElementSnap( snapManager.elementSnapEnabledAppLevel() );
