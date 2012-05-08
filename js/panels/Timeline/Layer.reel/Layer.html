@@ -20,7 +20,6 @@
 						"slotStyle" : {"@":"slot1"},
 						"mainCollapser" : {"@" : "mainCollapser"},
 						"positionCollapser" : {"@" : "positionCollapser"},
-						"transformCollapser" : {"@" : "transformCollapser"},
 						"styleCollapser" : {"@" : "styleCollapser"},
 						"clickerMain" : {"#" : "clicker-main"},
 						"myLabel" : {"#" : "myLabel"},
@@ -182,60 +181,6 @@
 	                    }
 	                }
 				},
-				"dtext_skew_x" : {
-                    "prototype": "js/components/hottextunit.reel[HotTextUnit]",
-            	    "properties": {
-            	        "element": {"#": "skew-x"},
-            	        "maxValue" : 100,
-                        "minValue" : 0,
-                        "acceptableUnits" : "%",
-                        "units" : "%",
-                        "value" : 0
-            	    },
-	                "bindings": {
-	                    "value": {
-	                        "boundObject": {"@": "owner"},
-	                        "boundObjectPropertyPath": "dtextSkewX",
-	                        "oneway": false
-	                    }
-	                }
-				},
-				"dtext_skew_y" : {
-                    "prototype": "js/components/hottextunit.reel[HotTextUnit]",
-            	    "properties": {
-            	        "element": {"#": "skew-y"},
-            	        "maxValue" : 100,
-                        "minValue" : 0,
-                        "acceptableUnits" : "%",
-                        "units" : "%",
-                        "value" : 0
-            	    },
-	                "bindings": {
-	                    "value": {
-	                        "boundObject": {"@": "owner"},
-	                        "boundObjectPropertyPath": "dtextSkewY",
-	                        "oneway": false
-	                    }
-	                }
-				},
-				"dtext_rotate" : {
-                    "prototype": "js/components/hottextunit.reel[HotTextUnit]",
-            	    "properties": {
-            	        "element": {"#": "rotation"},
-            	        "maxValue" : 360,
-                        "minValue" : -360,
-                        "acceptableUnits" : "degrees",
-                        "units" : "degrees",
-                        "value" : 0
-            	    },
-	                "bindings": {
-	                    "value": {
-	                        "boundObject": {"@": "owner"},
-	                        "boundObjectPropertyPath": "dtextRotate",
-	                        "oneway": false
-	                    }
-	                }
-				},
 					
 				"mainCollapser" : {
 					"prototype" : "js/panels/timeline/Collapser",
@@ -277,26 +222,6 @@
 					}
 				},
 					
-				"transformCollapser" : {
-					"prototype" : "js/panels/timeline/Collapser",
-					"properties" : {
-						"element" : {"#" : "content-transform"},
-						"myContent" : {"#":"content-transform"},
-						"contentHeight" : 60,
-						"isLabelClickable" : true,
-						"clicker" : {"#" : "clicker-transform"},
-						"isCollapsed" : true,
-						"isAnimated" : true	
-					},
-					"bindings" : {
-						"isToggling" : {
-							"boundObject" : {"@" : "owner" },
-							"boundObjectPropertyPath" : "isTransformCollapsed",
-							"oneway" : false
-						}
-					}
-				},
-					
 				"styleCollapser" : {
 					"prototype" : "js/panels/timeline/Collapser",
 					"properties" : {
@@ -333,7 +258,7 @@
 			</div>
 			<div class="collapsible-content content-layer collapsible-collapsed" data-montage-id="content-main">
 				<div class="label-position">
-					<span class="collapsible-label">Position</span>
+					<span class="collapsible-label">Position and Size</span>
 					<span class="collapsible-clicker clicker-position collapsible-collapsed" data-montage-id="clicker-position"></span>
 				</div>
 				<div class="content-position collapsible-content collapsible-collapsed" data-montage-id="content-position">
@@ -346,36 +271,15 @@
 							<div class="cell-property">Top</div>
 							<div class="cell-value"><div data-montage-id="position-y"></div></div>
 						</div>
+                        <div class="container-row">
+                            <div class="cell-property">Width</div>
+                            <div class="cell-value"><div data-montage-id="scale-x"></div></div>
+                        </div>
+                        <div class="container-row">
+                            <div class="cell-property">Height</div>
+                            <div class="cell-value"><div data-montage-id="scale-y"></div></div>
+                        </div>
 					</div>
-				</div>
-				<div class="label-transform">
-					<span class="collapsible-label">Transform</span>
-					<span class="clicker-transform collapsible-clicker collapsible-collapsed" data-montage-id="clicker-transform"></span>
-				</div>
-				<div class="content-transform collapsible-content collapsible-collapsed" data-montage-id="content-transform">
-					<div class="layout-tablew">
-						<div class="container-row">
-							<div class="cell-property">Width</div>
-							<div class="cell-value"><div data-montage-id="scale-x"></div></div>
-						</div>
-						<div class="container-row">
-							<div class="cell-property">Height</div>
-							<div class="cell-value"><div data-montage-id="scale-y"></div></div>
-						</div>
-						<div class="container-row">
-							<div class="cell-property">Skew X</div>
-							<div class="cell-value"><div data-montage-id="skew-x"></div></div>
-						</div>
-						<div class="container-row">
-							<div class="cell-property">Skew Y</div>
-							<div class="cell-value"><div data-montage-id="skew-y"></div></div>
-						</div>
-						<div class="container-row">
-							<div class="cell-property">Rotation</div>
-							<div class="cell-value"><div data-montage-id="rotation"></div></div>
-						</div>
-					</div>
-					
 				</div>
 				<div class="label-style">
 					<span class="collapsible-label">Style</span>

@@ -100,26 +100,6 @@
 							"element":{"#": "position-track-base"}
 						}
 					},
-                   "transformTracksRepetition": {
-                       "prototype": "montage/ui/repetition.reel",
-                   	   "properties": {
-                   	       "element": {"#": "content-transform-tracks"},
-                   	       "isSelectionEnabled" : false
-                   	   },
-                   	   "bindings": {
-                   	       "objects": {
-                   	           "boundObject": {"@": "owner"},
-                   	           "boundObjectPropertyPath": "arrTransformTracks",
-                   	           "oneway": false
-                   	       }
-                   	   }
-                   },
-					"transformPropertyTrack" : {
-						"prototype" : "js/panels/Timeline/PropertyTrack.reel",
-						"properties" : {
-							"element":{"#": "transform-track-base"}
-						}
-					},
 					
 					"mainCollapser" : {
 						"prototype" : "js/panels/timeline/Collapser",
@@ -161,31 +141,6 @@
 							"isToggling" : {
 								"boundObject" : {"@" : "owner" },
 								"boundObjectPropertyPath" : "isPositionCollapsed",
-								"oneway" : false
-							},
-							"bypassAnimation" : {
-								"boundObject" : {"@": "owner"},
-								"boundObjectPropertyPath" : "bypassAnimation",
-								"oneway" : false
-							}
-						}
-					},
-					
-					"transformCollapser" : {
-						"prototype" : "js/panels/timeline/Collapser",
-						"properties" : {
-							"element" : {"#" : "content-transform-tracks"},
-							"myContent" : {"#":"content-transform-tracks"},
-							"contentHeight" : 40,
-							"isLabelClickable" : false,
-							"clicker" : {"#" : "label-transform"},
-							"isCollapsed" : true,
-							"isAnimated" : true	
-						},
-						"bindings" : {
-							"isToggling" : {
-								"boundObject" : {"@" : "owner" },
-								"boundObjectPropertyPath" : "isTransformCollapsed",
 								"oneway" : false
 							},
 							"bypassAnimation" : {
@@ -239,12 +194,7 @@
             	<div class="content-position collapsible-content collapsible-collapsed" data-montage-id="content-position-tracks">
             		<div data-montage-id="position-track-base"></div>
             	</div>
-            	<div class="label-transform collapsible-label collapsible-collapsed" data-montage-id="label-transform">
-            		
-            	</div>
-            	<div class="content-transform collapsible-content collapsible-collapsed" data-montage-id="content-transform-tracks">
-            		<div data-montage-id="transform-track-base"></div>
-            	</div>
+
             	<div class="label-styles collapsible-label collapsible-collapsed" data-montage-id="label-styles">
             		
             	</div>

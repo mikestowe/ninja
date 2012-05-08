@@ -147,7 +147,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     	}
     },
     
-    /* Position and Transform hottext values */
+    /* Position and Size hottext values */
     _dtextPositionX : {
         value:null
     },
@@ -215,60 +215,6 @@ var Layer = exports.Layer = Montage.create(Component, {
         	if (this._dtextScaleY !== value) {
         		this._dtextScaleY = value;
         		this.layerData.dtextScaleY = value;
-        	}
-            
-        }
-    },
-    
-    _dtextSkewX : {
-        value:null
-    },
-
-    dtextSkewX:{
-    	serializable: true,
-        get:function(){
-            return this._dtextSkewX;
-        },
-        set:function(value){
-        	if (this._dtextSkewX !== value) {
-        		this._dtextSkewX = value;
-        		this.layerData.dtextSkewX = value;
-        	}
-            
-        }
-    },
-    
-    _dtextSkewY : {
-        value:null
-    },
-
-    dtextSkewY:{
-    	serializable: true,
-        get:function(){
-            return this._dtextSkewY;
-        },
-        set:function(value){
-        	if (this._dtextSkewY !== value) {
-        		this._dtextSkewY = value;
-        		this.layerData.dtextSkewY = value;
-        	}
-            
-        }
-    },
-    
-    _dtextRotate : {
-        value:null
-    },
-
-    dtextRotate:{
-    	serializable: true,
-        get:function(){
-            return this._dtextRotate;
-        },
-        set:function(value){
-        	if (this._dtextRotate !== value) {
-        		this._dtextRotate = value;
-        		this.layerData.dtextRotate = value;
         	}
             
         }
@@ -372,20 +318,6 @@ var Layer = exports.Layer = Montage.create(Component, {
     	}
     },
     
-    _isTransformCollapsed : {
-    	value: true
-    },
-    isTransformCollapsed : {
-    	serializable: true,
-    	get: function() {
-    		return this._isTransformCollapsed;
-    	},
-    	set: function(newVal) {
-			this._isTransformCollapsed = newVal;
-			this.layerData.isTransformCollapsed = newVal;
-    	}
-    },
-    
     _isPositionCollapsed : {
     	value: true
     },
@@ -469,7 +401,6 @@ var Layer = exports.Layer = Montage.create(Component, {
             this.arrLayerStyles = this.layerData.arrLayerStyles;
             this.isMainCollapsed = this.layerData.isMainCollapsed;
             this.isPositionCollapsed = this.layerData.isPositionCollapsed;
-            this.isTransformCollapsed = this.layerData.isTransformCollapsed;
             this.isSelected = this.layerData.isSelected;
             this.isActive = this.layerData.isActive;
             this.isStyleCollapsed = this.layerData.isStyleCollapsed;
@@ -537,7 +468,6 @@ var Layer = exports.Layer = Montage.create(Component, {
         	// Collapser event handlers.
             this.mainCollapser.clicker.addEventListener("click", this.handleMainCollapserClick.bind(this), false);
             this.positionCollapser.clicker.addEventListener("click", this.handlePositionCollapserClick.bind(this), false);
-            this.transformCollapser.clicker.addEventListener("click", this.handleTransformCollapserClick.bind(this), false);
             this.styleCollapser.clicker.addEventListener("click", this.handleStyleCollapserClick.bind(this), false);
 
             // Add event listeners to add and delete style buttons
@@ -594,11 +524,6 @@ var Layer = exports.Layer = Montage.create(Component, {
 					this.positionCollapser.myContent.style.height = "auto";
 					this.positionCollapser.myContent.classList.remove(this.positionCollapser.collapsedClass);
 					this.positionCollapser.clicker.classList.remove(this.positionCollapser.collapsedClass);
-	    		}
-	    		if (this.isTransformCollapsed === false) {
-					this.transformCollapser.myContent.style.height = "auto";
-					this.transformCollapser.myContent.classList.remove(this.transformCollapser.collapsedClass);
-					this.transformCollapser.clicker.classList.remove(this.transformCollapser.collapsedClass);
 	    		}
 	    		if (this.isStyleCollapsed === false) {
 					this.styleCollapser.myContent.style.height = "auto";
@@ -819,19 +744,6 @@ var Layer = exports.Layer = Montage.create(Component, {
 				this.isPositionCollapsed = false;
 			} else {
 				this.isPositionCollapsed = true;
-			}
-			this.triggerOutgoingBinding();
-		}
-	},
-	handleTransformCollapserClick : {
-		value: function(event) {
-			this.transformCollapser.bypassAnimation = false;
-			this.bypassAnimation = false;
-			this.layerData.bypassAnimation = false;
-			if (this.isTransformCollapsed) {
-				this.isTransformCollapsed = false;
-			} else {
-				this.isTransformCollapsed = true;
 			}
 			this.triggerOutgoingBinding();
 		}

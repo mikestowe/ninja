@@ -771,6 +771,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             // delete the current rule
             this.ninjaStylesContoller.deleteRule(this.currentKeyframeRule);
 
+            // first combine all style track tween arrays with the main track tween array
+
             // build the new keyframe string
             var keyframeString = "@-webkit-keyframes " + this.animationName + " {";
 
@@ -796,13 +798,24 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     // Init and event handler for layer expand/collapse
     init:{
         value:function () {
-            
-            this.arrPositionTracks = [0, 1];
-            this.arrTransformTracks = [0, 1, 2, 3, 4];
+
+            // create track objects for position and transform tracks and push into arrays instead of dummy arrays
+
+            //this.createPositionTracks();
+            this.arrPositionTracks = [0, 1, 2, 3];
+
+            // get rid of transform tracks
+            //this.arrTransformTracks = [0, 1, 2, 3, 4];
 
             // Register event handler for layer events.
             defaultEventManager.addEventListener("layerEvent", this, false);
 
+        }
+    },
+
+    createPositionTracks:{
+        value:function(){
+            // create track objects for position and transform tracks and push into arrays
         }
     },
 

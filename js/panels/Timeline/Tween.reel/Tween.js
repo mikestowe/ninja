@@ -239,8 +239,6 @@ var Tween = exports.Tween = Montage.create(Component, {
 
     selectTween:{
         value: function(){
-            console.log("tween select");
-
             // turn on event listener for element change
             this.eventManager.addEventListener("elementChange", this, false);
 
@@ -248,7 +246,7 @@ var Tween = exports.Tween = Montage.create(Component, {
             var selectIndex = this.application.ninja.timeline.getLayerIndexByID(this.parentComponent.parentComponent.trackID);
             this.application.ninja.timeline.selectLayer(selectIndex, true);
 
-            // tell timeline to deselect all other tweens and push this one as the currentSelectedTweens in timeline
+            // tell timeline to deselect all other tweens and push this one into the selectedTweens in timeline
             this.application.ninja.timeline.deselectTweens();
             this.application.ninja.timeline.selectedTweens.push(this);
 

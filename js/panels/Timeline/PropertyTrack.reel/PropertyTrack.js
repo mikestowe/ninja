@@ -18,6 +18,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
             this.element.addEventListener("click", this, false);
             this.trackID = this.parentComponent.parentComponent.parentComponent.trackID;
             this.animatedElement = this.parentComponent.parentComponent.parentComponent.animatedElement;
+
         }
     },
 
@@ -157,7 +158,15 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
                     // check if there is an editor property assigned yet
                     // get this property track's editor prop name from layer data arrays
                     var selectIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
-                    console.log(this.application.ninja.timeline.arrLayers[selectIndex].layerData.arrLayerStyles[this.styleIndex].editorProperty);
+
+                    if (this.application.ninja.timeline.arrLayers[selectIndex].layerData.arrLayerStyles[this.styleIndex].editorProperty == null) {
+                        console.log("Please enter a style property for this track before adding keyframes.");
+                        return;
+                    } else {
+                        this.trackEditorProperty = this.application.ninja.timeline.arrLayers[selectIndex].layerData.arrLayerStyles[this.styleIndex].editorProperty;
+                        console.log("Property track editorProperty set to: " + this.trackEditorProperty);
+                    }
+
 
                     this.insertPropTween(0);
                     this.addPropAnimationRuleToElement(ev);
@@ -223,6 +232,8 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
     addPropAnimationRuleToElement:{
         value:function(tweenEvent){
             this.insertPropTween(tweenEvent.offsetX);
+            this.animationName = this.parentComponent.parentComponent.parentComponent.animationName;
+            console.log(this.animationName);
         }
     }
 });
