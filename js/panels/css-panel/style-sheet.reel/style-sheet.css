@@ -127,6 +127,10 @@
     margin-right: 25px;
 }
 
+.default-style-sheet > span {
+    font-weight: bold;
+}
+
 .ss-invisible {
     display: none;
 }

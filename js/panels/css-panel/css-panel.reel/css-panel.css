@@ -31,12 +31,14 @@
 }
 
 .css-panel .style-sheets-view-container {
-    -webkit-box-flex: 0;
+    display: -webkit-box;
     min-height: 41px;
+    -webkit-box-flex: 0;
+    -webkit-box-orient: vertical;
 }
 .css-panel .styles-view-container {
-    -webkit-box-flex: 1;
     display: -webkit-box;
+    -webkit-box-flex: 1;
     -webkit-box-orient: vertical;
 }
 .panel-message {

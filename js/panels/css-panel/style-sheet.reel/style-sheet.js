@@ -12,6 +12,12 @@ exports.StyleSheet = Montage.create(Component, {
         value: null
     },
 
+    prepareForDraw : {
+        value: function() {
+            this.nameText.element.addEventListener('click', this, false);
+        }
+    },
+
     willDraw : {
         value: function() {
             if(this.editing) {
@@ -45,6 +51,12 @@ exports.StyleSheet = Montage.create(Component, {
                 this.importButton.element.classList.add('ss-invisible');
             }
 
+            if(this.default) {
+                this._element.classList.add('default-style-sheet');
+            } else {
+                this._element.classList.remove('default-style-sheet');
+            }
+
         }
     },
 
@@ -63,6 +75,12 @@ exports.StyleSheet = Montage.create(Component, {
             if(nonBlurringElements.indexOf(e.target) === -1) {
                 this.editing = false;
             }
+        }
+    },
+
+    handleClick : {
+        value: function(e) {
+            this.parentComponent.parentComponent.defaultStyleSheet = this.source;
         }
     },
 
@@ -126,6 +144,17 @@ exports.StyleSheet = Montage.create(Component, {
         },
         set: function(isReadOnly) {
             this._readOnly = isReadOnly;
+            this.needsDraw = true;
+        }
+    },
+
+    _default : { value: null },
+    default : {
+        get: function() {
+            return this._default;
+        },
+        set: function(value) {
+            this._default = value;
             this.needsDraw = true;
         }
     },

@@ -13,6 +13,7 @@ exports.StyleSheetsView = Montage.create(Component, {
     stylesController     : { value: null },
     styleSheets          : { value: [] },
     _initView            : { value: false },
+    _needsScroll         : { value: false },
     documentNameLabel    : { value: null },
     noDocumentLabelClass : { value: "no-document" },
 
@@ -28,6 +29,29 @@ exports.StyleSheetsView = Montage.create(Component, {
             this.needsDraw = true;
         }
     },
+    _defaultStyleSheet: { value: null },
+    defaultStyleSheet: {
+        get: function() {
+            return this._defaultStyleSheet;
+        },
+        set: function(sheet) {
+            if(sheet === this._defaultStyleSheet) { return false; }
+
+            var sheetComponent, oldDefaultSheet;
+
+            if(this.styleSheetList) {
+                sheetComponent = this.styleSheetList.childComponents[this.styleSheets.indexOf(sheet)];
+                sheetComponent.default = true;
+                if(this._defaultStyleSheet) {
+                    oldDefaultSheet = this.styleSheetList.childComponents[this.styleSheets.indexOf(this._defaultStyleSheet)];
+                    oldDefaultSheet.default = false;
+                }
+            }
+
+            this._defaultStyleSheet = sheet;
+            this.needsDraw = true;
+        }
+    },
     
     /// Toolbar Button Actions
     /// --------------------------------
@@ -36,6 +60,8 @@ exports.StyleSheetsView = Montage.create(Component, {
     handleAddAction : {
         value: function(e) {
             this.stylesController.createStylesheet();
+            this.needsDraw = this._needsScroll = true;
+
         }
     },
 
@@ -46,6 +72,13 @@ exports.StyleSheetsView = Montage.create(Component, {
         value: function(e) {
             this.documentName = this.stylesController.activeDocument.name;
             this.styleSheets = this.stylesController.userStyleSheets;
+
+            Object.defineBinding(this, 'defaultStyleSheet', {
+                'boundObject': this.stylesController,
+                'boundObjectPropertyPath': 'defaultStylesheet',
+                'oneway': false
+            });
+
             this._initView = this.needsDraw = true;
         }
     },
@@ -80,6 +113,17 @@ exports.StyleSheetsView = Montage.create(Component, {
                 this.documentNameLabel.classList.remove(this.noDocumentLabelClass);
             } else {
                 this.documentNameLabel.classList.add(this.noDocumentLabelClass);
+            }
+
+            if(this._needsScroll) {
+
+                setTimeout(function() {
+                    console.log('setting scroll top to:', this.styleSheetList.element.scrollHeight);
+                    //debugger;
+                    this.styleSheetList.element.scrollTop = this.styleSheetList.element.scrollHeight;
+                }.bind(this), 50);
+
+                this._needsScroll = false;
             }
         }
     },
