@@ -91,6 +91,7 @@ exports.RuleList = Montage.create(Component, {
             }, this);
 
             //// TODO: find new styles based on selection
+            if()
         }
     },
 

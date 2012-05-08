@@ -184,7 +184,8 @@ exports.StylesViewMediator = Montage.create(Component, {
                         if(nextFocus) {
                             nextFocus.propertyField.start();
                         } else {
-                            style.treeView.parentComponent.addNewStyleAfter(style);
+                            //style.parentComponent.parentComponent.addNewStyleAfter(style);
+                            style.parentComponent.parentComponent.addNewStyle();
                             style.editingNewStyle = false;
                             setTimeout(function() {
                                 style.getSiblingStyle('next').propertyField.start();
@@ -253,7 +254,7 @@ exports.StylesViewMediator = Montage.create(Component, {
             this._dispatchChange(property, browserValue);
 
             if(style.editingNewStyle) {
-                style.treeView.parentComponent.addNewStyleAfter(style);
+                style.parentComponent.parentComponent.addNewStyle();
                 style.editingNewStyle = false;
             }
         }
