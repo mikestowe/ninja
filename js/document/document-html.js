@@ -81,7 +81,10 @@ exports.HtmlDocument = Montage.create(Component, {
            	}
             //
             if (view === 'design') {
-                this.currentView = "design";
+            	//TODO: Remove reference and use as part of model
+            	this.currentView = 'design';
+            	//Setting current view object to design
+            	this.model.currentView = this.model.views.design;
             	//Showing design iFrame
             	this.model.views.design.show();
             	this.model.views.design.iframe.style.opacity = 0;
