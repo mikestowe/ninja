@@ -273,6 +273,17 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     _dragLayerID : {
     	value: null
     },
+    _draggingType: {
+    	value: false
+    },
+    draggingType: {
+    	get: function() {
+    		return this._draggingType;
+    	},
+    	set: function(newVal) {
+    		this._draggingType = newVal;
+    	}
+    },
 
     layersDragged:{
            value:[],
@@ -1499,6 +1510,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
     handleLayerDragover: {
     	value: function(event) {
+    		if (this.draggingType !== "layer") {
+    			return;
+    		}
     		var currPos = 0,
     			myScrollTest = ((event.y - (this._dragAndDropHelperOffset - this.user_layers.scrollTop)) + 28) - this.user_layers.scrollTop;
     		if ((myScrollTest < 60) && (this.user_layers.scrollTop >0)) {
@@ -1521,6 +1535,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
     handleLayerDragEnd : {
     	value: function(event) {
+    		if (this.draggingType !== "layer") {
+    			return;
+    		}
     		this._deleteHelper = true;
     		this.needsDraw = true;
            
@@ -1528,6 +1545,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
     handleLayerDrop : {
     	value: function(event) {
+    		if (this.draggingType !== "layer") {
+    			return;
+    		}
             event.stopPropagation();
             event.preventDefault();
             this._deleteHelper = true; 
@@ -1538,6 +1558,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     // Keyframe drag-and-drop
     handleKeyframeDragover: {
     	value: function(event) {
+    		if (this.draggingType !== "keyframe") {
+    			return;
+    		}
     		event.preventDefault();
     		var currPos = 0;
     		/*
@@ -1574,6 +1597,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
     handleKeyframeDrop: {
     	value: function(event) {
+    		if (this.draggingType !== "keyframe") {
+    			return;
+    		}
 			event.stopPropagation();
 			//this.element.classList.remove("dragOver");
 			//if (this.parentComponent.parentComponent.dragLayerID !== this.layerID) {

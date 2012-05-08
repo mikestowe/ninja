@@ -890,10 +890,14 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     		this._appendHelper = true;
     		this._deleteHelper = false;
     		this.parentComponent.parentComponent.draggingTrackId = this.trackID;
+    		this.parentComponent.parentComponent.draggingType = "keyframe";
     	}
     },
     handleKeyframeDragend : {
     	value: function(event) {
+    		if (this.parentComponent.parentComponent.draggingType !== "keyframe") {
+    			return;
+    		}
     		this._deleteHelper = true;
     		this.needsDraw = true;
            
