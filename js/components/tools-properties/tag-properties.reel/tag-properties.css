@@ -3,20 +3,3 @@
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
-
- .tagRadioButtons .fillColorCtrl {
-    width: 18px;
-    height: 18px;
-    margin-top: 6px;
-    margin-left: 3px;    
-    margin-right: 8px;    
-    border: 1px black solid;
-}
-
- .tagRadioButtons .colorCtrlIcon {
-    width: 20px;
-    height: 20px;
-    margin-top: 6px;
-    -webkit-transform: scale(0.8);
-    background-color: rgb(40, 40, 40);
-}

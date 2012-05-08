@@ -773,7 +773,7 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .tagRadioButtons input.tag-type:checked { background-color: transparent; opacity: 1.0; cursor: default; -webkit-box-shadow: none; }
 
-.tagRadioButtons input.divTool { background-position: -40px 0px; }
+.tagRadioButtons input.divTool { margin-left: 8px; background-position: -40px 0px; }
 
 .tagRadioButtons input.divTool:checked { background-position: -40px -20px; }
 
@@ -798,6 +798,10 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 .tagRadioButtons select.nj-skinned { visibility: visible; position: relative; }
 
 .tagRadioButtons select[disabled="true"].nj-skinned, .tagRadioButtons select[disabled].nj-skinned { visibility: hidden; }
+
+.tagRadioButtons .fillColorCtrl { width: 18px; height: 18px; margin-top: 6px; margin-left: 3px; margin-right: 8px; border: 1px black solid; }
+
+.tagRadioButtons .colorCtrlIcon { width: 20px; height: 20px; margin-top: 6px; -webkit-transform: scale(0.8); background-color: #282828; }
 
 #zoomToolOptionHolder input#zoomInTool:checked { border-style: solid; border-width: 1px; border-color: white; background-image: url("../images/optionsbar/zoom/zoom_plus.png"); background-repeat: no-repeat; background-position: 4px 3px; }
 
