@@ -14,7 +14,7 @@
 .rightinside { height: 100%; width: 100%; display: -webkit-box; -webkit-box-orient: vertical; position: absolute; }
 
 /* line 50, ../scss/TimelinePanel.scss */
-.tl_leftpane { min-width: 200px; max-width: 500px; position: relative; overflow: hidden; -webkit-box-flex: 0; }
+.tl_leftpane { min-width: 210px; max-width: 500px; position: relative; overflow: hidden; -webkit-box-flex: 0; }
 
 /* line 57, ../scss/TimelinePanel.scss */
 .tl_rightpane { width: 100%; position: relative; -webkit-box-flex: 1; }
