@@ -88,7 +88,8 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     			
     			
     			
-
+	//TODO: Ensure these APIs are not needed
+	/*
 ////////////////////////////////////////////////////////////////////
 	//
     handleWebRequest: {
@@ -119,6 +120,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         }
     },
 	////////////////////////////////////////////////////////////////////
+*/
 
 
 	

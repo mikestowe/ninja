@@ -230,7 +230,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     initWebGl: {
         value: function (scripttags) {
         	//
-        	var i, n, webgldata;
+        	var n, webgldata;
         	//Setting the iFrame property for reference in helper class
         	this.model.webGlHelper.iframe = this.model.views.design.iframe;
         	//Checking for webGL Data

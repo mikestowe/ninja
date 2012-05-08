@@ -173,12 +173,17 @@ exports.Ninja = Montage.create(Component, {
         }
     },
     
+    
+    ////////////////////////////////////////////////////////////////////
+	//TODO: Expand method to allow other browsers for preview
     executeChromePreview: {
     	value: function () {
-    		this.application.ninja.documentController.activeDocument.livePreview();
+    		this.application.ninja.documentController.activeDocument.model.browserPreview('chrome');
     	}
     },
-
+	////////////////////////////////////////////////////////////////////
+	
+	
     handleResize: {
         value: function() {
             this.stage.resizeCanvases = true;

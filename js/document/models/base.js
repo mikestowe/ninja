@@ -68,19 +68,24 @@ exports.BaseDocumentModel = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
 	//
 	switchViewTo: {
-        value: function () {
+        value: function (view) {
         	//
         }
     },
     ////////////////////////////////////////////////////////////////////
-	//
+	//TODO: Add API to allow other browser support
 	browserPreview: {
         value: function (browser) {
-        	//
+        	
+        	//TODO: Add file save before previewing
+        	
+        	//Currently only supporting current browser (Chrome, obviously)
         	switch (browser) {
         		case 'chrome':
+        			window.open(this.application.ninja.coreIoApi.rootUrl + this.file.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);
         			break;
         		default:
+        			window.open(this.application.ninja.coreIoApi.rootUrl + this.file.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);
         			break;
         	}
         }
