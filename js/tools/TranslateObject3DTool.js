@@ -54,10 +54,10 @@ exports.TranslateObject3DTool = Montage.create(Translate3DToolBase, {
             else
             {
                 this._delta = null;
-                // special case for z-translation
-                if(this._handleMode === 2)
+                //if(this._handleMode === 2)
                 {
-                    this._dragPlane = viewUtils.getNormalToUnprojectedElementPlane(this._target);
+                    this._dragPlane = viewUtils.getNormalToUnprojectedElementPlane(this._target, this._handleMode, this._inLocalMode);
+					//console.log( "dragPlane: " + this._dragPlane );
                     snapManager.setupDragPlaneFromPlane(this._dragPlane);
                     do3DSnap = false;
 
@@ -86,7 +86,8 @@ exports.TranslateObject3DTool = Montage.create(Translate3DToolBase, {
                     var elt = this.application.ninja.stage.getElement(event, true);
                     if(elt && (elt !== hitRec.getElement()))
                     {
-                        hitRec = snapManager.findHitRecordForElement(elt);
+                        var otherSnap = snapManager.findHitRecordForElement(elt);
+						if (otherSnap)  hitRec = otherSnap;
                     }
                     if(elt === this.application.ninja.currentSelectedContainer)
                     {
