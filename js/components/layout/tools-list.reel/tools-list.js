@@ -10,7 +10,6 @@ var Component = require("montage/ui/component").Component;
 exports.ToolsList = Montage.create(Component, {
 
     SelectionTool:          { value: null },
-    SubselectionTool:       { value: null },
     Rotate3DTool:           { value: null },
     Translate3DTool:        { value: null },
     TagTool:                { value: null },
@@ -51,7 +50,6 @@ exports.ToolsList = Montage.create(Component, {
             this.PenTool.options = this.application.ninja.toolsProperties.shapeProperties.lineProperties;//this.application.Ninja.toolsProperties.penProperties;
 
             this.SelectionTool.options = this.application.ninja.toolsProperties.selectionProperties;
-            this.SubselectionTool.options = this.application.ninja.toolsProperties.subSelectionProperties;
 
             this.Rotate3DTool.options = this.application.ninja.toolsProperties.rotate3DProperties;
             this.Translate3DTool.options = this.application.ninja.toolsProperties.rotate3DProperties;

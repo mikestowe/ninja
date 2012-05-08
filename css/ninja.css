@@ -833,8 +833,6 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .SelectionTool { background-image: url("../images/tools/Tool-Selection.png"); }
 
-.SubselectionTool { background-image: url("../images/tools/Tool-Subselect.png"); }
-
 .RotateTool3D { background-image: url("../images/tools/Tool-3DRotate.png"); }
 
 .Translate3D { background-image: url("../images/tools/Tool-3DTranslate.png"); }
