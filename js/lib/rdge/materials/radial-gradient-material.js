@@ -6,6 +6,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var MaterialParser = require("js/lib/rdge/materials/material-parser").MaterialParser;
 var Material = require("js/lib/rdge/materials/material").Material;
+var ShapePrimitive = require("js/lib/geom/shape-primitive").ShapePrimitive;
 
 var RadialGradientMaterial = function RadialGradientMaterial() {
     ///////////////////////////////////////////////////////////////////////
@@ -23,6 +24,9 @@ var RadialGradientMaterial = function RadialGradientMaterial() {
     this._colorStop3 = 0.6;
     this._colorStop4 = 1.0;
     //	this._colorCount	= 4;
+
+	var s = Math.sqrt( 2.0 );
+	this._textureTransform = [s,0,0, 0,s,0, 0,0,1];
 
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
@@ -231,8 +235,44 @@ var RadialGradientMaterial = function RadialGradientMaterial() {
             this._shader['default'].u_colorStop3.set([s]);
             s = this.getColorStop4();
             this._shader['default'].u_colorStop4.set([s]);
+
+			this._shader['default'].u_texTransform.set( this._textureTransform );
         }
     };
+
+	this.fitToPrimitive = function( prim )
+	{
+		var bounds = ShapePrimitive.getBounds( prim );
+		if (bounds)
+		{
+			var dx = Math.abs( bounds[3] - bounds[0] ),
+				dy = Math.abs( bounds[4] - bounds[1] );
+			if (dy == 0)  dy = 1.0;
+			if (dx == 0)  dx = 1.0;
+			var xScale = 2.0, yScale = 2.0;
+			if (dx > dy)
+				yScale *= dy/dx;
+			else
+				xScale *= dx/dy;
+
+			// build the matrix - the translation to the origin, the scale,
+			// and the translation back to the center (hard coded at (0.5, 0.5) for now).
+			// the matrix is build directly instead of with matrix multiplications
+			// for efficiency, not to mention that the multiplication function does
+			// not exist for mat3's.
+			// the matrix as laid out below looks transposed - order is columnwise.
+			var xCtr = 0.5,  yCtr = 0.5;
+			this._textureTransform = [
+													 xScale,                0.0,  0.0,
+														0.0,             yScale,  0.0,
+											xCtr*(1-xScale),  yCtr*(1 - yScale),  1.0
+									];
+			
+			if (this._shader && this._shader['default'])
+				this._shader['default'].u_texTransform.set( this._textureTransform );	
+
+		}
+	};
 
     this.exportJSON = function () {
         var jObj =
@@ -316,7 +356,8 @@ var radialGradientMaterialDef =
 				    'u_colorStop1': { 'type': 'float' },
 				    'u_colorStop2': { 'type': 'float' },
 				    'u_colorStop3': { 'type': 'float' },
-				    'u_colorStop4': { 'type': 'float' }
+				    'u_colorStop4': { 'type': 'float' },
+					'u_texTransform': { 'type' : 'mat3' }
 				    //'u_colorCount':		{'type' : 'int' }
 				},
 

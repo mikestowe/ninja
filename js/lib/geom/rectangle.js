@@ -57,13 +57,10 @@ var Rectangle = function GLRectangle() {
 			this._strokeStyle = strokeStyle;
 
 			this._matrix = Matrix.I(4);
-			//this._matrix[12] = xoffset;
-			//this._matrix[13] = yoffset;
 		}
 
 		// the overall radius includes the fill and the stroke.  separate the two based onthe stroke width
 		//  this._fillRad = this._radius - this._strokeWidth;
-		//    var err = 0.05;
 		var err = 0;
 		this._fillWidth = this._width - this._strokeWidth  + err;
 		this._fillHeight = this._height - this._strokeWidth + err;
@@ -116,17 +113,9 @@ var Rectangle = function GLRectangle() {
         return this._strokeColor;
     };
 
-	//this.setStrokeColor = function(c) {
-	// this._strokeColor = c;
-	// };
-
 	this.getFillColor = function() {
         return this._fillColor;
     };
-
-	//this.setFillColor = function(c) {
-	// this._fillColor = c.slice(0);
-	// };
 
 	this.getTLRadius = function() {
         return this._tlRadius;
@@ -324,6 +313,7 @@ var Rectangle = function GLRectangle() {
 		// stroke
 		var strokeMaterial = this.makeStrokeMaterial();
 		var strokePrim = this.createStroke([x,y],  2*xFill,  2*yFill,  strokeSize,  tlRadius, blRadius, brRadius, trRadius, strokeMaterial);
+		strokeMaterial.fitToPrimitive( strokePrim );
         this._primArray.push( strokePrim );
 		this._materialNodeArray.push( strokeMaterial.getMaterialNode() );
 
@@ -337,6 +327,7 @@ var Rectangle = function GLRectangle() {
 		var fillMaterial = this.makeFillMaterial();
 		//console.log( "fillMaterial: " + fillMaterial.getName() );
 		var fillPrim = this.createFill([x,y],  2*xFill,  2*yFill,  tlRadius, blRadius, brRadius, trRadius, fillMaterial);
+		fillMaterial.fitToPrimitive( fillPrim );
         this._primArray.push( fillPrim );
 		this._materialNodeArray.push( fillMaterial.getMaterialNode() );
 

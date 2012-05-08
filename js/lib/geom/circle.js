@@ -279,6 +279,7 @@ var Circle = function GLCircle() {
 
 		if (fillPrim) {
             fillMaterial = this.makeFillMaterial();
+			fillMaterial.fitToPrimitive( fillPrim );
 
             this._primArray.push( fillPrim );
             this._materialNodeArray.push( fillMaterial.getMaterialNode() );
@@ -286,6 +287,7 @@ var Circle = function GLCircle() {
 
 		if (strokePrim0) {
             strokeMaterial0 = this.makeStrokeMaterial();
+			strokeMaterial0.fitToPrimitive( strokePrim0 );
 
             this._primArray.push( strokePrim0 );
             this._materialNodeArray.push( strokeMaterial0.getMaterialNode() );
@@ -293,6 +295,7 @@ var Circle = function GLCircle() {
 
 		if (strokePrim1) {
             strokeMaterial2 = this.makeStrokeMaterial();
+			strokeMaterial2.fitToPrimitive( strokePrim1 );
 
             this._primArray.push( strokePrim1 );
             this._materialNodeArray.push( strokeMaterial2.getMaterialNode() );
