@@ -259,6 +259,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     timeMarkerHolder:{
         value:null
     },
+    
+    // Drag and Drop properties
     _dragAndDropHelper : {
     	value: false
     },
@@ -328,6 +330,21 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     _scrollTracks: {
     	value: false
     },
+    
+    // Keyframe drag and drop properties
+    _draggingTrackId: {
+    	value: false
+    },
+    draggingTrackId: {
+    	get: function() {
+    		return this._draggingTrackId;
+    	},
+    	set: function(newVal) {
+    		this._draggingTrackId = newVal;
+    	}
+    },
+    
+    
     useAbsolutePosition:{
         value:true
     },
@@ -352,8 +369,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.container_layers.addEventListener("dragstart", this.handleLayerDragStart.bind(this), false);
             this.container_layers.addEventListener("dragend", this.handleLayerDragEnd.bind(this), false);
             this.container_layers.addEventListener("dragover", this.handleLayerDragover.bind(this), false);
-            //this.container_tracks.addEventListener("dragover", this.handleKeyframeDragover.bind(this), false);
             this.container_layers.addEventListener("drop", this.handleLayerDrop.bind(this), false);
+            this.container_tracks.addEventListener("dragover", this.handleKeyframeDragover.bind(this), false);
+            this.container_tracks.addEventListener("drop", this.handleKeyframeDrop.bind(this), false);
             
             // Bind the handlers for the config menu
             this.checkable_animated.addEventListener("click", this.handleAnimatedClick.bind(this), false);
@@ -1501,11 +1519,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		this.needsDraw = true;
     	}
     },
-    handleKeyframeDragover: {
-    	value: function(event) {
-    		
-    	}
-    },
     handleLayerDragEnd : {
     	value: function(event) {
     		this._deleteHelper = true;
@@ -1519,6 +1532,92 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             event.preventDefault();
             this._deleteHelper = true; 
             this.needsDraw = true;
+    	}
+    },
+    
+    // Keyframe drag-and-drop
+    handleKeyframeDragover: {
+    	value: function(event) {
+    		event.preventDefault();
+    		var currPos = 0;
+    		/*
+    			myScrollTest = ((event.y - (this._dragAndDropHelperOffset - this.user_layers.scrollTop)) + 28) - this.user_layers.scrollTop;
+    		if ((myScrollTest < 60) && (this.user_layers.scrollTop >0)) {
+    			this._scrollTracks = (this.user_layers.scrollTop - 10)
+    		}
+    		if ((myScrollTest < 50) && (this.user_layers.scrollTop >0)) {
+    			this._scrollTracks = (this.user_layers.scrollTop - 20)
+    		}
+    		if ((myScrollTest > (this.user_layers.clientHeight + 10))) {
+    			this._scrollTracks = (this.user_layers.scrollTop + 10)
+    		}
+    		if ((myScrollTest > (this.user_layers.clientHeight + 20))) {
+    			this._scrollTracks = (this.user_layers.scrollTop + 20)
+    			
+    		}
+    		*/
+    		//currPos = event.y - (this._dragAndDropHelperOffset - this.user_layers.scrollTop)- 28;
+    		currPos = event.x - 277;
+    		
+    		// too much or too little?
+    		if (currPos < this.trackRepetition.childComponents[this.draggingTrackId-1]._keyframeMinPosition) {
+    			currPos = this.trackRepetition.childComponents[this.draggingTrackId-1]._keyframeMinPosition;
+    		}
+    		if (currPos > this.trackRepetition.childComponents[this.draggingTrackId-1]._keyframeMaxPosition) {
+    			currPos = this.trackRepetition.childComponents[this.draggingTrackId-1]._keyframeMaxPosition;
+    		}
+    		//debugger;
+    		this.trackRepetition.childComponents[this.draggingTrackId-1].dragAndDropHelperCoords = currPos + "px";
+    		this.trackRepetition.childComponents[this.draggingTrackId-1].needsDraw = true;
+    		return false;
+    	}
+    },
+    handleKeyframeDrop: {
+    	value: function(event) {
+			event.stopPropagation();
+			//this.element.classList.remove("dragOver");
+			//if (this.parentComponent.parentComponent.dragLayerID !== this.layerID) {
+				//this.parentComponent.parentComponent.dropLayerID = this.layerID;
+			//}
+			
+			/*
+			 * First, what keyframe is it (get the index);
+			 * Limit keyframe position to between index-1 and index+1 keyFramePosition
+			 * On update, be sure to update index+1's information too
+			 * 
+			 */
+			
+			var currPos = event.x - 274,
+				currentMillisecPerPixel = Math.floor(this.millisecondsOffset / 80),
+				currentMillisec = 0,
+				i = 0, 
+				tweenIndex = this.trackRepetition.childComponents[this.draggingTrackId-1].draggingIndex;
+				
+			// too much or too little?
+    		if (currPos < this.trackRepetition.childComponents[this.draggingTrackId-1]._keyframeMinPosition) {
+    			currPos = this.trackRepetition.childComponents[this.draggingTrackId-1]._keyframeMinPosition + 3;
+    		}
+    		if (currPos > this.trackRepetition.childComponents[this.draggingTrackId-1]._keyframeMaxPosition) {
+    			currPos = this.trackRepetition.childComponents[this.draggingTrackId-1]._keyframeMaxPosition + 3;
+    		}
+    		
+    		currentMillisec = currentMillisecPerPixel * currPos;
+
+			this.trackRepetition.childComponents[this.draggingTrackId-1].tweens[tweenIndex].tweenData.spanWidth = currPos - this.trackRepetition.childComponents[this.draggingTrackId-1].tweens[tweenIndex - 1].tweenData.keyFramePosition;
+			this.trackRepetition.childComponents[this.draggingTrackId-1].tweens[tweenIndex].tweenData.keyFramePosition = currPos;
+			this.trackRepetition.childComponents[this.draggingTrackId-1].tweens[tweenIndex].tweenData.keyFrameMillisec = currentMillisec;
+			this.trackRepetition.childComponents[this.draggingTrackId-1].tweens[tweenIndex].tweenData.spanPosition = currPos - this.trackRepetition.childComponents[this.draggingTrackId-1].tweens[tweenIndex].tweenData.spanWidth;
+			this.trackRepetition.childComponents[this.draggingTrackId-1].tweenRepetition.childComponents[tweenIndex].setData();
+			if (tweenIndex < this.trackRepetition.childComponents[this.draggingTrackId-1].tweens.length -1) {
+				var spanWidth = this.trackRepetition.childComponents[this.draggingTrackId-1].tweens[tweenIndex +1].tweenData.keyFramePosition - currPos;
+				var spanPosition = currPos; 
+				this.trackRepetition.childComponents[this.draggingTrackId-1].tweens[tweenIndex +1].tweenData.spanWidth = spanWidth;
+				this.trackRepetition.childComponents[this.draggingTrackId-1].tweens[tweenIndex +1].tweenData.spanPosition = currPos;
+				this.trackRepetition.childComponents[this.draggingTrackId-1].tweenRepetition.childComponents[tweenIndex+1].setData();
+			}
+			this.trackRepetition.childComponents[this.draggingTrackId-1].tweenRepetition.childComponents[tweenIndex].selectTween();
+			this.trackRepetition.childComponents[this.draggingTrackId-1].updateKeyframeRule();
+			return false;
     	}
     },
     /* === END: Controllers === */
