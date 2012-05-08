@@ -404,45 +404,56 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     
     draw: {
     	value: function() {
+    		
     		// Drag and Drop:
-    		// Do we have a helper to append?
-            if (this._appendHelper === true) {
-            	this.container_layers.appendChild(this._dragAndDropHelper);
-            	this._appendHelper = false;
-            }
-            // Do we need to move the helper?
-    		if (this._dragAndDropHelperCoords !== false) {
-    			if (this._dragAndDropHelper !== null) {
-    				this._dragAndDropHelper.style.top = this._dragAndDropHelperCoords;
-    			}
-    			this._dragAndDropHelperCoords = false;
-    		}
-    		// Do we need to scroll the tracks?
-    		if (this._scrollTracks !== false) {
-    			this.layout_tracks.scrollTop = this._scrollTracks;
-    			this._scrollTracks = false;
-    		}
-    		// Do we have a helper to delete?
-    		if (this._deleteHelper === true) {
-    			if (this._dragAndDropHelper === null) {
-    				// Problem....maybe a helper didn't get appended, or maybe it didn't get stored.
-    				// Try and recover the helper so we can delete it.
-    				var myHelper = this.container_layers.querySelector(".timeline-dnd-helper");
-    				if (myHelper != null) {
-    					this._dragAndDropHelper = myHelper;
-    				}
-    			}
-	            if (this._dragAndDropHelper !== null) {
-	            	// We need to delete the helper.  Can we delete it from container_layers?
-	            	if (this._dragAndDropHelper && this._dragAndDropHelper.parentNode === this.container_layers) {
-	            		this.container_layers.removeChild(this._dragAndDropHelper);
-	            		this._dragAndDropHelper = null;
-	            		this._deleteHelper = false;
-	            	}
+    		if (this.draggingType === "layer") {
+	    		
+	    		// Do we have a helper to append?
+	            if (this._appendHelper === true) {
+	            	this.container_layers.appendChild(this._dragAndDropHelper);
+	            	this._appendHelper = false;
 	            }
-                this.application.ninja.elementMediator.reArrangeDOM(this.layersDragged , this._layerDroppedInPlace);
-                this.layersDragged =[];
+	            // Do we need to move the helper?
+	    		if (this._dragAndDropHelperCoords !== false) {
+	    			if (this._dragAndDropHelper !== null) {
+	    				this._dragAndDropHelper.style.top = this._dragAndDropHelperCoords;
+	    			}
+	    			this._dragAndDropHelperCoords = false;
+	    		}
+	    		// Do we need to scroll the tracks?
+	    		if (this._scrollTracks !== false) {
+	    			this.layout_tracks.scrollTop = this._scrollTracks;
+	    			this._scrollTracks = false;
+	    		}
+	    		// Do we have a helper to delete?
+	    		if (this._deleteHelper === true) {
+	    			if (this._dragAndDropHelper === null) {
+	    				// Problem....maybe a helper didn't get appended, or maybe it didn't get stored.
+	    				// Try and recover the helper so we can delete it.
+	    				var myHelper = this.container_layers.querySelector(".timeline-dnd-helper");
+	    				if (myHelper != null) {
+	    					this._dragAndDropHelper = myHelper;
+	    				}
+	    			}
+		            if (this._dragAndDropHelper !== null) {
+		            	// We need to delete the helper.  Can we delete it from container_layers?
+		            	if (this._dragAndDropHelper && this._dragAndDropHelper.parentNode === this.container_layers) {
+		            		this.container_layers.removeChild(this._dragAndDropHelper);
+		            		this._dragAndDropHelper = null;
+		            		this._deleteHelper = false;
+		            	}
+		            }
+	                this.application.ninja.elementMediator.reArrangeDOM(this.layersDragged , this._layerDroppedInPlace);
+	                this.layersDragged =[];
+	    		}
+    		} else if (this.draggingType === "keyframe") {
+	    		// Do we need to scroll the tracks?
+	    		if (this._scrollTracks !== false) {
+	    			this.layout_tracks.scrollLeft = this._scrollTracks;
+	    			this._scrollTracks = false;
+	    		}
     		}
+
     	}
     },
     /* === END: Draw cycle === */
@@ -1510,6 +1521,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
     handleLayerDragover: {
     	value: function(event) {
+    		
+    		// If this isn't a layer event we don't do anything.
     		if (this.draggingType !== "layer") {
     			return;
     		}
@@ -1535,6 +1548,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
     handleLayerDragEnd : {
     	value: function(event) {
+    		
+    		// If this isn't a layer event we don't do anything.
     		if (this.draggingType !== "layer") {
     			return;
     		}
@@ -1545,6 +1560,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
     handleLayerDrop : {
     	value: function(event) {
+    		
+    		// If this isn't a layer event we don't do anything.
     		if (this.draggingType !== "layer") {
     			return;
     		}
@@ -1558,39 +1575,35 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     // Keyframe drag-and-drop
     handleKeyframeDragover: {
     	value: function(event) {
+    		
+    		// If this isn't a keyframe drag and drop event, we don't want to do anything.
     		if (this.draggingType !== "keyframe") {
     			return;
     		}
     		event.preventDefault();
     		var currPos = 0;
-    		/*
-    			myScrollTest = ((event.y - (this._dragAndDropHelperOffset - this.user_layers.scrollTop)) + 28) - this.user_layers.scrollTop;
-    		if ((myScrollTest < 60) && (this.user_layers.scrollTop >0)) {
-    			this._scrollTracks = (this.user_layers.scrollTop - 10)
-    		}
-    		if ((myScrollTest < 50) && (this.user_layers.scrollTop >0)) {
-    			this._scrollTracks = (this.user_layers.scrollTop - 20)
-    		}
-    		if ((myScrollTest > (this.user_layers.clientHeight + 10))) {
-    			this._scrollTracks = (this.user_layers.scrollTop + 10)
-    		}
-    		if ((myScrollTest > (this.user_layers.clientHeight + 20))) {
-    			this._scrollTracks = (this.user_layers.scrollTop + 20)
-    			
-    		}
-    		*/
-    		//currPos = event.y - (this._dragAndDropHelperOffset - this.user_layers.scrollTop)- 28;
 
     		currPos = (event.x + this.layout_tracks.scrollLeft) - 277;
     		
-    		// too much or too little?
+    		// Prevent dragging beyond previous or next keyframe, if any
     		if (currPos < this.trackRepetition.childComponents[this.draggingTrackId-1]._keyframeMinPosition) {
     			currPos = this.trackRepetition.childComponents[this.draggingTrackId-1]._keyframeMinPosition;
     		}
     		if (currPos > this.trackRepetition.childComponents[this.draggingTrackId-1]._keyframeMaxPosition) {
     			currPos = this.trackRepetition.childComponents[this.draggingTrackId-1]._keyframeMaxPosition;
     		}
-    		//debugger;
+
+			// Automatic scrolling when dragged to edge of window
+			if (currPos < (this.layout_tracks.scrollLeft + 10)) {
+				this._scrollTracks = (this.layout_tracks.scrollLeft -10);
+				this.needsDraw = true;
+			}
+			if (currPos > (this.layout_tracks.offsetWidth + this.layout_tracks.scrollLeft - 20)) {
+				this._scrollTracks = (this.layout_tracks.scrollLeft +10);
+				this.needsDraw = true;
+			}
+
+			// Set up values in appropriate track and set that track to draw.
     		this.trackRepetition.childComponents[this.draggingTrackId-1].dragAndDropHelperCoords = currPos + "px";
     		this.trackRepetition.childComponents[this.draggingTrackId-1].needsDraw = true;
     		return false;
@@ -1598,52 +1611,51 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
     handleKeyframeDrop: {
     	value: function(event) {
+    		
+    		// If this isn't a keyframe drop event, we don't want to do anything.
     		if (this.draggingType !== "keyframe") {
     			return;
     		}
 			event.stopPropagation();
-			//this.element.classList.remove("dragOver");
-			//if (this.parentComponent.parentComponent.dragLayerID !== this.layerID) {
-				//this.parentComponent.parentComponent.dropLayerID = this.layerID;
-			//}
-			
-			/*
-			 * First, what keyframe is it (get the index);
-			 * Limit keyframe position to between index-1 and index+1 keyFramePosition
-			 * On update, be sure to update index+1's information too
-			 * 
-			 */
 			
 			var currPos = (event.x + this.layout_tracks.scrollLeft) - 277,
 				currentMillisecPerPixel = Math.floor(this.millisecondsOffset / 80),
 				currentMillisec = 0,
-				i = 0, 
-				tweenIndex = this.trackRepetition.childComponents[this.draggingTrackId-1].draggingIndex;
+				i = 0,
+				trackIndex = this.draggingTrackId -1, 
+				tweenIndex = this.trackRepetition.childComponents[trackIndex].draggingIndex;
 				
-			// too much or too little?
-    		if (currPos < this.trackRepetition.childComponents[this.draggingTrackId-1]._keyframeMinPosition) {
-    			currPos = this.trackRepetition.childComponents[this.draggingTrackId-1]._keyframeMinPosition + 3;
+			// Make sure drop happens between previous and next keyframe, if any.
+    		if (currPos < this.trackRepetition.childComponents[trackIndex]._keyframeMinPosition) {
+    			currPos = this.trackRepetition.childComponents[trackIndex]._keyframeMinPosition + 3;
     		}
-    		if (currPos > this.trackRepetition.childComponents[this.draggingTrackId-1]._keyframeMaxPosition) {
-    			currPos = this.trackRepetition.childComponents[this.draggingTrackId-1]._keyframeMaxPosition + 3;
+    		if (currPos > this.trackRepetition.childComponents[trackIndex]._keyframeMaxPosition) {
+    			currPos = this.trackRepetition.childComponents[trackIndex]._keyframeMaxPosition + 3;
     		}
     		
+    		// Calculate the millisecond values, set repetitions, and update the rule.
     		currentMillisec = currentMillisecPerPixel * currPos;
 
-			this.trackRepetition.childComponents[this.draggingTrackId-1].tweens[tweenIndex].tweenData.spanWidth = currPos - this.trackRepetition.childComponents[this.draggingTrackId-1].tweens[tweenIndex - 1].tweenData.keyFramePosition;
-			this.trackRepetition.childComponents[this.draggingTrackId-1].tweens[tweenIndex].tweenData.keyFramePosition = currPos;
-			this.trackRepetition.childComponents[this.draggingTrackId-1].tweens[tweenIndex].tweenData.keyFrameMillisec = currentMillisec;
-			this.trackRepetition.childComponents[this.draggingTrackId-1].tweens[tweenIndex].tweenData.spanPosition = currPos - this.trackRepetition.childComponents[this.draggingTrackId-1].tweens[tweenIndex].tweenData.spanWidth;
-			this.trackRepetition.childComponents[this.draggingTrackId-1].tweenRepetition.childComponents[tweenIndex].setData();
-			if (tweenIndex < this.trackRepetition.childComponents[this.draggingTrackId-1].tweens.length -1) {
-				var spanWidth = this.trackRepetition.childComponents[this.draggingTrackId-1].tweens[tweenIndex +1].tweenData.keyFramePosition - currPos;
-				var spanPosition = currPos; 
-				this.trackRepetition.childComponents[this.draggingTrackId-1].tweens[tweenIndex +1].tweenData.spanWidth = spanWidth;
-				this.trackRepetition.childComponents[this.draggingTrackId-1].tweens[tweenIndex +1].tweenData.spanPosition = currPos;
-				this.trackRepetition.childComponents[this.draggingTrackId-1].tweenRepetition.childComponents[tweenIndex+1].setData();
+			this.trackRepetition.childComponents[trackIndex].tweens[tweenIndex].tweenData.spanWidth = 
+				currPos - this.trackRepetition.childComponents[trackIndex].tweens[tweenIndex - 1].tweenData.keyFramePosition;
+				
+			this.trackRepetition.childComponents[trackIndex].tweens[tweenIndex].tweenData.keyFramePosition = currPos;
+			this.trackRepetition.childComponents[trackIndex].tweens[tweenIndex].tweenData.keyFrameMillisec = currentMillisec;
+			
+			this.trackRepetition.childComponents[trackIndex].tweens[tweenIndex].tweenData.spanPosition = 
+				currPos - this.trackRepetition.childComponents[trackIndex].tweens[tweenIndex].tweenData.spanWidth;
+				
+			this.trackRepetition.childComponents[trackIndex].tweenRepetition.childComponents[tweenIndex].setData();
+			
+			if (tweenIndex < this.trackRepetition.childComponents[trackIndex].tweens.length -1) {
+				var spanWidth = this.trackRepetition.childComponents[trackIndex].tweens[tweenIndex +1].tweenData.keyFramePosition - currPos,
+					spanPosition = currPos; 
+				this.trackRepetition.childComponents[trackIndex].tweens[tweenIndex +1].tweenData.spanWidth = spanWidth;
+				this.trackRepetition.childComponents[trackIndex].tweens[tweenIndex +1].tweenData.spanPosition = currPos;
+				this.trackRepetition.childComponents[trackIndex].tweenRepetition.childComponents[tweenIndex+1].setData();
 			}
-			this.trackRepetition.childComponents[this.draggingTrackId-1].tweenRepetition.childComponents[tweenIndex].selectTween();
-			this.trackRepetition.childComponents[this.draggingTrackId-1].updateKeyframeRule();
+			this.trackRepetition.childComponents[trackIndex].tweenRepetition.childComponents[tweenIndex].selectTween();
+			this.trackRepetition.childComponents[trackIndex].updateKeyframeRule();
 			return false;
     	}
     },
