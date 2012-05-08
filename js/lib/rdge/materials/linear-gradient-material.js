@@ -6,6 +6,7 @@
 
 var MaterialParser = require("js/lib/rdge/materials/material-parser").MaterialParser;
 var Material = require("js/lib/rdge/materials/material").Material;
+var ShapePrimitive = require("js/lib/geom/shape-primitive").ShapePrimitive;
 
 var LinearGradientMaterial = function LinearGradientMaterial() {
     ///////////////////////////////////////////////////////////////////////
@@ -245,8 +246,45 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
             this._shader['default'].u_colorStop4.set([s]);
 
             this.setAngle(this.getAngle());
-        }
+ 
+			this._shader['default'].u_texTransform.set( [1,0,0,  0,1,0,  0,0,1] );	
+       }
     };
+
+	this.fitToPrimitive = function( prim )
+	{
+		/*
+		var bounds = ShapePrimitive.getBounds( prim );
+		if (bounds)
+		{
+			var dx = Math.abs( bounds[3] - bounds[0] ),
+				dy = Math.abs( bounds[4] - bounds[1] );
+			if (dy == 0)  dy = 1.0;
+			if (dx == 0)  dx = 1.0;
+			var xScale = 2.0, yScale = 2.0;
+			if (dx > dy)
+				yScale *= dy/dx;
+			else
+				xScale *= dx/dy;
+
+			// build the matrix - the translation to the origin, the scale,
+			// and the translation back to the center (hard coded at (0.5, 0.5) for now).
+			// the matrix is build directly instead of with matrix multiplications
+			// for efficiency, not to mention that the multiplication function does
+			// not exist for mat3's.
+			// the matrix as laid out below looks transposed - order is columnwise.
+			var xCtr = 0.5,  yCtr = 0.5;
+			this._textureTransform = [
+													 xScale,        0.0,  0.0,
+														0.0,     yScale,  0.0,
+														0.0,        0.0,  1.0
+								];
+			
+			if (this._shader && this._shader['default'])
+				this._shader['default'].u_texTransform.set( this._textureTransform );	
+		}
+		*/
+	};
 
     this.exportJSON = function () {
         var jObj =
@@ -367,7 +405,8 @@ var linearGradientMaterialDef =
 						'u_colorStop2':		{ 'type' : 'float' },									
 						'u_colorStop3':		{ 'type' : 'float' },									
 						'u_colorStop4':		{ 'type' : 'float' },									
-						'u_cos_sin_angle' : { 'type' : 'vec2' }
+						'u_cos_sin_angle':  { 'type' : 'vec2' },
+						'u_texTransform':   { 'type' : 'mat3' }
 						//'u_colorCount':		{'type' : 'int' }
 
 					},
