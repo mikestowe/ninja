@@ -61,9 +61,9 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
         value:function(clipboardEvent){
             //depends on the clipboard event
             if(this.application.ninja.selectedElements.length > 0){
-            clipboardEvent.clipboardData.setData('text/html', ''+this.application.ninja.selectedElements[0].outerHTML);//copying first selected element for POC
+                clipboardEvent.clipboardData.setData('text/html', ''+this.application.ninja.selectedElements[0].outerHTML);//copying first selected element for POC
 
-            clipboardEvent.preventDefault();
+                clipboardEvent.preventDefault();
             }
         }
     },
@@ -78,7 +78,6 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
 
 
             clipboardEvent.preventDefault();
-                        clipboardEvent.stopPropagation();
         }
     },
 
@@ -100,52 +99,5 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
 
             clipboardEvent.preventDefault();
         }
-    },
-
-    /*
-    does not preserve the css class / html structure while copying
-     */
-    copyUsingContenteditable:{
-        value:function(){
-            var clipboardHelper=document.getElementById("clipboardHelper"),copyElement = null, textData = "";
-            if((this.copyFlag === true) ) {
-                if(!clipboardHelper) clipboardHelper.innerHTML = "";//clear
-                this.copyFlag = false;
-                return;//break infinite loop
-            }
-
-            //dynamically create editable div for execCommand->copy
-            if(!clipboardHelper){
-                clipboardHelper = document.createElement ("div");
-                clipboardHelper.id = "clipboardHelper";
-                    // place outside the visible area
-                clipboardHelper.style.position = "absolute";
-                clipboardHelper.style.left = "-10000px";
-                clipboardHelper.style.top = "-10000px";
-                clipboardHelper.setAttribute("contenteditable", "true");
-                clipboardHelper.style.webkitUserSelect = "auto";
-
-//                clipboardHelper.style.width = "500px";
-//                clipboardHelper.style.height = "125px";
-//                clipboardHelper.style.overflow = "visible";
-//                clipboardHelper.style.zIndex = "10000";
-//                clipboardHelper.style.border = "1px solid red";
-//                clipboardHelper.style.backgroundColor = "yellow";
-
-                document.body.appendChild (clipboardHelper);
-            }
-
-            clipboardHelper.focus();
-            //copy single selection for POC
-            if(this.application.ninja.selectedElements.length > 0){
-                clipboardHelper.innerHTML = this.application.ninja.selectedElements[0].outerHTML;
-            }
-            //do selection
-            document.execCommand('selectAll',false,null);
-            this.copyFlag = true;//flag to prevent infinite loop
-            document.execCommand('copy',false,null);
-
-        }
     }
-
 });
