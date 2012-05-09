@@ -278,7 +278,7 @@ exports.ComponentsPanel = Montage.create(Component, {
             that = this;
             element = this.makeComponent(component.component);
 
-            this.application.ninja.currentDocument._window.addComponent(element, {name: component.name, path: component.module}, function(instance, element) {
+            this.application.ninja.currentDocument.model.views.design.iframe.contentWindow.addComponent(element, {name: component.name, path: component.module}, function(instance, element) {
 
                 //var pos = that.getStageCenter();
 
@@ -297,7 +297,7 @@ exports.ComponentsPanel = Montage.create(Component, {
                 
                 instance.addEventListener('firstDraw', that, false);
 
-                that.application.ninja.currentDocument.setComponentInstance(instance, element);
+                that.application.ninja.currentDocument.model.setComponentInstance(instance, element);
 
                 that.application.ninja.elementMediator.addElements(element, styles);
             });
