@@ -1586,11 +1586,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		currPos = (event.x + this.layout_tracks.scrollLeft) - 277;
     		
     		// Prevent dragging beyond previous or next keyframe, if any
-    		if (currPos < this.trackRepetition.childComponents[this.draggingTrackId-1]._keyframeMinPosition) {
-    			currPos = this.trackRepetition.childComponents[this.draggingTrackId-1]._keyframeMinPosition;
+    		if (currPos < this.trackRepetition.childComponents[this.draggingTrackId]._keyframeMinPosition) {
+    			currPos = this.trackRepetition.childComponents[this.draggingTrackId]._keyframeMinPosition;
     		}
-    		if (currPos > this.trackRepetition.childComponents[this.draggingTrackId-1]._keyframeMaxPosition) {
-    			currPos = this.trackRepetition.childComponents[this.draggingTrackId-1]._keyframeMaxPosition;
+    		if (currPos > this.trackRepetition.childComponents[this.draggingTrackId]._keyframeMaxPosition) {
+    			currPos = this.trackRepetition.childComponents[this.draggingTrackId]._keyframeMaxPosition;
     		}
 
 			// Automatic scrolling when dragged to edge of window
@@ -1604,8 +1604,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 			}
 
 			// Set up values in appropriate track and set that track to draw.
-    		this.trackRepetition.childComponents[this.draggingTrackId-1].dragAndDropHelperCoords = currPos + "px";
-    		this.trackRepetition.childComponents[this.draggingTrackId-1].needsDraw = true;
+    		this.trackRepetition.childComponents[this.draggingTrackId].dragAndDropHelperCoords = currPos + "px";
+    		this.trackRepetition.childComponents[this.draggingTrackId].needsDraw = true;
     		return false;
     	}
     },
@@ -1622,7 +1622,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 				currentMillisecPerPixel = Math.floor(this.millisecondsOffset / 80),
 				currentMillisec = 0,
 				i = 0,
-				trackIndex = this.draggingTrackId -1, 
+				trackIndex = this.draggingTrackId, 
 				tweenIndex = this.trackRepetition.childComponents[trackIndex].draggingIndex;
 				
 			// Make sure drop happens between previous and next keyframe, if any.
@@ -1656,11 +1656,17 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 			}
 			this.trackRepetition.childComponents[trackIndex].tweenRepetition.childComponents[tweenIndex].selectTween();
 			this.trackRepetition.childComponents[trackIndex].updateKeyframeRule();
+			
+			// If this is the last keyframe, we'll need to update the track duration
+			if (tweenIndex === (this.trackRepetition.childComponents[trackIndex].tweens.length-1)) {
+				this.arrLayers[trackIndex].layerData.trackDuration = currentMillisec;
+				this.resetMasterDuration();
+			}
 			return false;
     	}
     },
     /* === END: Controllers === */
-
+   
     /* === BEGIN: Logging routines === */
     _boolDebug:{
         enumerable:false,
