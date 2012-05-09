@@ -53,23 +53,17 @@ exports.ShapeTool = Montage.create(DrawingTool, {
         }
     },
 
-	HandleLeftButtonUp:
-    {
-        value: function (event)
-        {
-            var drawData;
-
-            drawData = this.getDrawingData();
+	HandleLeftButtonUp: {
+        value: function (event) {
+            var canvas, drawData = this.getDrawingData();
 
             if(drawData) {
-                var canvas;
                 if(!this._useExistingCanvas()) {
-                    canvas = NJUtils.makeNJElement("canvas", "Canvas", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
-                    var elementModel = TagTool.makeElement(~~drawData.width, ~~drawData.height,
-                                                                        drawData.planeMat, drawData.midPt, canvas, true);
+                    canvas = document.application.njUtils.make("canvas", {"data-RDGE-id": NJUtils.generateRandom()}, this.application.ninja.currentDocument);
+                    document.application.njUtils.createModelWithShape(canvas);
 
-                    canvas.elementModel.isShape = true;
-					this.application.ninja.elementMediator.addElements(canvas, elementModel.data);
+                    var styles = document.application.njUtils.stylesFromDraw(canvas, ~~drawData.width, ~~drawData.height, drawData);
+                    this.application.ninja.elementMediator.addElements(canvas, styles);
                 } else {
                     canvas = this._targetedElement;
                     if (!canvas.getAttribute( "data-RDGE-id" ))
@@ -190,26 +184,6 @@ exports.ShapeTool = Montage.create(DrawingTool, {
             }
 
             return world;
-        }
-    },
-
-    createCanvas: {
-        value: function (left, top, w, h)
-        {
-            //var tmpDiv = document.createElement("canvas");
-            var tmpDiv = NJUtils.makeNJElement("canvas", "Canvas", "block");
-            var rules = {
-                            'position': 'absolute',
-                            'top' : top + 'px',
-                            'left' : left + 'px',
-                            '-webkit-transform-style' : 'preserve-3d',
-                            '-webkit-transform' : 'matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
-                        };
-
-            tmpDiv.width = w;
-            tmpDiv.height = h;
-
-            return {el: tmpDiv, rules: rules};
         }
     },
 

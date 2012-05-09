@@ -427,10 +427,6 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
     closeDocument: {
         value: function(id) {
-            if(this.activeDocument.needsSave === true){
-                //if file dirty then alert user to save
-        }
-
             var doc = this._findDocumentByUUID(id);
 
             var closeDocumentIndex = this._findIndexByUUID(id);

@@ -668,7 +668,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
                 //debugger;
                 if (typeof(this.application.ninja.currentDocument.tlCurrentSelectedContainer) !== "undefined") {
-                	this.application.ninja.currentSelectedContainer=this.application.ninja.currentDocument.tlCurrentSelectedContainer;
+//                	this.application.ninja.currentSelectedContainer=this.application.ninja.currentDocument.tlCurrentSelectedContainer;
                 }
                 
                 // Are we only showing animated layers?
