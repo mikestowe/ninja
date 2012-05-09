@@ -1102,7 +1102,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 ///// The dominant rule might not have the style property defined - why?
                 ///// If no rules have the property defined, we can use the
                 ///// most-specific single-target rule as the dominant rule (for setting styles)
-                return element.ownerDocument.defaultView.getComputedStyle(element).getPropertyValue(property);
+                return (element.ownerDocument.defaultView ? element.ownerDocument.defaultView.getComputedStyle(element).getPropertyValue(property) : null);
             }
 
             return value;

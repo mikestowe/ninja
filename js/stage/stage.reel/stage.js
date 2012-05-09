@@ -118,6 +118,9 @@ exports.Stage = Montage.create(Component, {
     _userContentTop:        { value: 0 },
     _userContentBorder:     { value: 0 },
 
+    _maxHorizontalScroll:   { value: 0 },
+    _maxVerticalScroll:     { value: 0 },
+
     documentRoot: {
         get: function () { return this._documentRoot; },
         set: function(value) { this._documentRoot = value; }
@@ -264,7 +267,9 @@ exports.Stage = Montage.create(Component, {
                 this._userContentLeft = 0;
                 this._userContentTop = 0;
 
-                //this.application.ninja.currentDocument._window.addEventListener("scroll", this, false);
+                this._maxHorizontalScroll = this._documentRoot.scrollWidth - this._canvas.width - 11;
+                this._maxVerticalScroll = this._documentRoot.scrollHeight - this._canvas.height - 11;
+                this.application.ninja.currentDocument.model.views.design.iframe.contentWindow.addEventListener("scroll", this, false);
             }
 
 
@@ -464,6 +469,12 @@ exports.Stage = Montage.create(Component, {
 
                 this.userContentLeft = -this._scrollLeft;
                 this.userContentTop = -this._scrollTop;
+
+                // TODO - scroll events are not dependable.  We may need to use a timer to simulate
+                // scrollBegin and scrollEnd. For now, the Pan Tool will keep track of the stage's scroll values
+                // on mouse down.
+//                this._maxHorizontalScroll = this._documentRoot.scrollWidth - this._canvas.width - 11;
+//                this._maxVerticalScroll = this._documentRoot.scrollHeight - this._canvas.height - 11;
             }
 
             // Need to clear the snap cache and set up the drag plane
@@ -540,13 +551,16 @@ exports.Stage = Montage.create(Component, {
      */
     getElement: {
         value: function(position, selectable) {
-            var point, element;
+            var point, element,
+                docView = this.application.ninja.currentDocument.model.views.design;
 
-            point = webkitConvertPointFromPageToNode(this.canvas, new WebKitPoint(position.pageX, position.pageY));
-            element = this.application.ninja.currentDocument.model.views.design.getElementFromPoint(point.x + this.scrollLeft,point.y + this.scrollTop);
+            point = webkitConvertPointFromPageToNode(this.canvas, new WebKitPoint(position.pageX - docView.iframe.contentWindow.pageXOffset, position.pageY - docView.iframe.contentWindow.pageYOffset));
+            element = this.application.ninja.currentDocument.model.views.design.getElementFromPoint(point.x - this.userContentLeft,point.y - this.userContentTop);
 
+            if(!element) debugger;
             // workaround Chrome 3d bug
             if(this.application.ninja.toolsData.selectedToolInstance._canSnap && this.application.ninja.currentDocument.inExclusion(element) !== -1) {
+                point = webkitConvertPointFromPageToNode(this.canvas, new WebKitPoint(position.pageX, position.pageY));
                 element = this.getElementUsingSnapping(point);
             }
 
@@ -877,7 +891,7 @@ exports.Stage = Montage.create(Component, {
                     //TODO - Maybe move to mediator.
 					var newVal = value/100.0;
 					if (newVal >= 1)
-						this.application.ninja.currentDocument.iframe.style.zoom = value/100;
+						this.application.ninja.currentDocument.model.views.design.iframe.style.zoom = value/100;
 
                     this.updatedStage = true;
 
