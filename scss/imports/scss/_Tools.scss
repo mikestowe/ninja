@@ -23,15 +23,8 @@
     -webkit-transform: scale(0.75);
 }
 
-.subOption{
-    float:left;
-    margin-top: 0px;
-    margin-left: 1px;
-    margin-right: 0px;
-}
-
-.subOptionSpacer{
-    margin-right: 16px;
+.toolOptionsSpacer{
+    margin-right: 9px;
 }
 
 .toolSeparator {
@@ -484,62 +477,76 @@ input[type="radio"]:disabled {
     float:left;
 }
 
-.topAlignUp {
-
-  @include background-pos(8,2,26px,23px);
+.optionsSelectionTool button {
+	padding-top: 0px;
 }
 
-.rightAlignUp {
-
-  @include background-pos(9,2,26px,23px);
+.selectionToolIcon {
+	width: 16px;
+	height: 16px;
+	background-repeat:no-repeat;
+	background-position: 1px 2px;
+}
+.alignTopIcon {
+	background-image: url("../images/tools/AlignTop.png");  
 }
 
-.bottomAlignUp {
-
-  @include background-pos(10,2,26px,23px);
+.alignMiddleIcon {
+	background-image: url("../images/tools/AlignMiddle.png");  
 }
 
-.verticalLeftUp {
-
-  @include background-pos(11,2,26px,23px);
+.alignBottomIcon {
+	background-image: url("../images/tools/AlignBottom.png");  
 }
 
-.verticalCenterUp {
-
-  @include background-pos(12,2,26px,23px);
+.alignLeftIcon {
+	background-image: url("../images/tools/AlignLeft.png");  
 }
 
-.verticalRightUp {
-
-  @include background-pos(13,2,26px,23px);
+.alignCenterIcon {
+	background-image: url("../images/tools/AlignCenter.png");  
 }
 
-.distRightUp {
-
-  @include background-pos(0,3,26px,23px);
+.alignRightIcon {
+	background-image: url("../images/tools/AlignRight.png");  
 }
 
-.distLeftUp {
-
-  @include background-pos(14,2,26px,23px);
+.arrangeBringForwardIcon {
+	background-image: url("../images/tools/ArrangeBringForward.png");  
 }
 
-.distCenterUp {
-
-  @include background-pos(2,3,26px,23px);
+.arrangeSendBackwardIcon {
+	background-image: url("../images/tools/ArrangeSendBackward.png");  
 }
 
-.distTopUp {
-
-  @include background-pos(1,3,26px,23px);
+.arrangeBringToFrontIcon {
+	background-image: url("../images/tools/ArrangeBringToFront.png");  
 }
 
-.distBottomUp {
-
-  @include background-pos(3,3,26px,23px);
+.arrangeSendToBackIcon {
+	background-image: url("../images/tools/ArrangeSendToBack.png");  
 }
 
-.distVCenterUp {
+.distTopIcon {
+	background-image: url("../images/tools/DistTop.png");  
+}
 
-  @include background-pos(15,2,26px,23px);
+.distMiddleIcon {
+	background-image: url("../images/tools/DistMiddle.png");  
+}
+
+.distBottomIcon {
+	background-image: url("../images/tools/DistBottom.png");  
+}
+
+.distLeftIcon {
+	background-image: url("../images/tools/DistLeft.png");  
+}
+
+.distCenterIcon {
+	background-image: url("../images/tools/DistCenter.png");  
+}
+
+.distRightIcon {
+	background-image: url("../images/tools/DistRight.png");  
 }

@@ -681,9 +681,7 @@ nav.menuBar ul li:hover ul, nav.menuBar ul ul li:hover ul, nav.menuBar ul ul ul 
 
 .subToolHolderPanel .toolbutton:hover, .subToolHolderPanel .toolbutton.active { -webkit-transform: scale(0.75); }
 
-.subOption { float: left; margin-top: 0px; margin-left: 1px; margin-right: 0px; }
-
-.subOptionSpacer { margin-right: 16px; }
+.toolOptionsSpacer { margin-right: 9px; }
 
 .toolSeparator { height: 1px; width: 30px; }
 
@@ -835,29 +833,41 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .optionsSelectionTool > * { float: left; }
 
-.topAlignUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -240px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
+.optionsSelectionTool button { padding-top: 0px; }
 
-.rightAlignUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -270px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
+.selectionToolIcon { width: 16px; height: 16px; background-repeat: no-repeat; background-position: 1px 2px; }
 
-.bottomAlignUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -300px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
+.alignTopIcon { background-image: url("../images/tools/AlignTop.png"); }
 
-.verticalLeftUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -330px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
+.alignMiddleIcon { background-image: url("../images/tools/AlignMiddle.png"); }
 
-.verticalCenterUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -360px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
+.alignBottomIcon { background-image: url("../images/tools/AlignBottom.png"); }
 
-.verticalRightUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -390px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
+.alignLeftIcon { background-image: url("../images/tools/AlignLeft.png"); }
 
-.distRightUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: 0px -81px; background-repeat: no-repeat; height: 23px; width: 26px; }
+.alignCenterIcon { background-image: url("../images/tools/AlignCenter.png"); }
 
-.distLeftUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -420px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
+.alignRightIcon { background-image: url("../images/tools/AlignRight.png"); }
 
-.distCenterUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -60px -81px; background-repeat: no-repeat; height: 23px; width: 26px; }
+.arrangeBringForwardIcon { background-image: url("../images/tools/ArrangeBringForward.png"); }
 
-.distTopUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -30px -81px; background-repeat: no-repeat; height: 23px; width: 26px; }
+.arrangeSendBackwardIcon { background-image: url("../images/tools/ArrangeSendBackward.png"); }
 
-.distBottomUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -90px -81px; background-repeat: no-repeat; height: 23px; width: 26px; }
+.arrangeBringToFrontIcon { background-image: url("../images/tools/ArrangeBringToFront.png"); }
 
-.distVCenterUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -450px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
+.arrangeSendToBackIcon { background-image: url("../images/tools/ArrangeSendToBack.png"); }
+
+.distTopIcon { background-image: url("../images/tools/DistTop.png"); }
+
+.distMiddleIcon { background-image: url("../images/tools/DistMiddle.png"); }
+
+.distBottomIcon { background-image: url("../images/tools/DistBottom.png"); }
+
+.distLeftIcon { background-image: url("../images/tools/DistLeft.png"); }
+
+.distCenterIcon { background-image: url("../images/tools/DistCenter.png"); }
+
+.distRightIcon { background-image: url("../images/tools/DistRight.png"); }
 
 #toolsPanelContent { width: 40px; }
 

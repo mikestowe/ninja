@@ -16,31 +16,66 @@
                 "prototype": "js/components/tools-properties/selection-properties.reel",
                 "properties": {
                     "element": {"#": "selectionProperties"},
-                    "transform": {"#": "transformCheck"}
+                    "transform": {"#": "transformCheck"},
+                    
+                    "topAlign": {"#": "topAlignBtn"},
+                    "middleAlign": {"#": "middleAlignBtn"},
+                    "bottomAlign": {"#": "bottomAlignBtn"},
+
+                    "leftAlign": {"#": "leftAlignBtn"},
+                    "centerAlign": {"#": "centerAlignBtn"},
+                    "rightAlign": {"#": "rightAlignBtn"},
+
+                    "distTop": {"#": "distTopBtn"},
+                    "distMiddle": {"#": "distMiddleBtn"},
+                    "distBottom": {"#": "distBottomBtn"},
+
+                    "distLeft": {"#": "distLeftBtn"},
+                    "distCenter": {"#": "distCenterBtn"},
+                    "distRight": {"#": "distRightBtn"},
+
+                    "arrangeBringForward": {"#": "arrangeBringForwardBtn"},
+                    "arrangeSendBackward": {"#": "arrangeSendBackwardBtn"},
+                    "arrangeBringToFront": {"#": "arrangeBringToFrontBtn"},
+                    "arrangeSendToBack": {"#": "arrangeSendToBackBtn"}
                 }
             }
     	}
-	    </script>
+        </script>
 
     </head>
 
     <body>
         <div data-montage-id="selectionProperties" class="subToolHolderPanel optionsSelectionTool">
-            <input data-montage-id="transformCheck" type="checkbox" name="transformControl" class="nj-skinned"/><label class="label">Transform Controls&nbsp&nbsp</label>
-            <div id="toolPropertiesPanel-selectionDivOptions">
-                <div class="subOption"><div id="topAlign" class="topAlignUp" title="Top Align"></div></div>
-                <div class="subOption"><div id="rightAlign" class="rightAlignUp" title="Right Align"></div></div>
-                <div class="subOption subOptionSpacer"><div id="bottomAlign" class="bottomAlignUp" title="Bottom Align"></div></div>
-                <div class="subOption"><div id="vLeft" class="verticalLeftUp" title="Vertical Left"></div></div>
-                <div class="subOption"><div id="vRight" class="verticalRightUp" title="Vertical Right"></div></div>
-                <div class="subOption subOptionSpacer"><div id="vCenter" class="verticalCenterUp" title="Vertical Center"></div></div>
-                <div class="subOption"><div id="distTop" class="distTopUp" title="Distance Top"></div></div>
-                <div class="subOption"><div id="distCenter" class="distCenterUp" title="Distance Center"></div></div>
-                <div class="subOption subOptionSpacer"><div id="distBottom" class="distBottomUp" title="Distance Bottom"></div></div>
-                <div class="subOption"><div id="distLeft" class="distLeftUp" title="Distance Left"></div></div>
-                <div class="subOption"><div id="distVCenter" class="distVCenterUp" title="Distance Center"></div></div>
-                <div class="subOption"><div id="distRight" class="distRightUp" title="Distance Right"></div></div>
-            </div>
+            <input data-montage-id="transformCheck" type="checkbox" name="transformControl" class="nj-skinned"/>
+            <label class="label">Transform Control</label>
+            <div class="toolOptionsSpacer">&nbsp</div>
+
+            <button data-montage-id="topAlignBtn" class="nj-skinned" role="button"><div id="topAlign" class="selectionToolIcon alignTopIcon" title="Align Top"/></button>
+            <button data-montage-id="middleAlignBtn" class="nj-skinned" role="button"><div id="middleAlign" class="selectionToolIcon alignMiddleIcon" title="Align Vertical Center"/></button>
+            <button data-montage-id="bottomAlignBtn" class="nj-skinned" role="button"><div id="bottomAlign" class="selectionToolIcon alignBottomIcon" title="Align Bottom"></button>
+            <div class="toolOptionsSpacer">&nbsp</div>
+
+            <button data-montage-id="leftAlignBtn" class="nj-skinned" role="button"><div id="leftAlign" class="selectionToolIcon alignLeftIcon" title="Align Left"/></button>
+            <button data-montage-id="centerAlignBtn" class="nj-skinned" role="button"><div id="centerAlign" class="selectionToolIcon alignCenterIcon" title="Align Horizontal Center"/></button>
+            <button data-montage-id="rightAlignBtn" class="nj-skinned" role="button"><div id="rightAlign" class="selectionToolIcon alignRightIcon" title="Align Right"/></button>
+            <div class="toolOptionsSpacer">&nbsp</div>
+
+            <button data-montage-id="distTopBtn" class="nj-skinned" role="button"><div id="distTop" class="selectionToolIcon distTopIcon" title="Distribute Top"/></button>
+            <button data-montage-id="distMiddleBtn" class="nj-skinned" role="button"><div id="distMiddle" class="selectionToolIcon distMiddleIcon" title="Distribute Vertical Center"/></button>
+            <button data-montage-id="distBottomBtn" class="nj-skinned" role="button"><div id="distBottom" class="selectionToolIcon distBottomIcon" title="Distribute Bottom"/></button>
+            <div class="toolOptionsSpacer">&nbsp</div>
+
+            <button data-montage-id="distLeftBtn" class="nj-skinned" role="button"><div id="distLeft" class="selectionToolIcon distLeftIcon" title="Distribute Left"/></button>
+            <button data-montage-id="distCenterBtn" class="nj-skinned" role="button"><div id="distCenter" class="selectionToolIcon distCenterIcon" title="Distribute Horizontal Center"/></button>
+            <button data-montage-id="distRightBtn" class="nj-skinned" role="button"><div id="distRight" class="selectionToolIcon distRightIcon" title="Distribute Right"/></button>
+            <div class="toolOptionsSpacer">&nbsp</div>
+
+            <button data-montage-id="arrangeBringForwardBtn" class="nj-skinned" role="button"><div id="arrangeBringForward" class="selectionToolIcon arrangeBringForwardIcon" title="Bring Forward"/></button>
+            <button data-montage-id="arrangeSendBackwardBtn" class="nj-skinned" role="button"><div id="arrangeSendBackward" class="selectionToolIcon arrangeSendBackwardIcon" title="Send Backward"/></button>
+            <button data-montage-id="arrangeBringToFrontBtn" class="nj-skinned" role="button"><div id="arrangeBringToFront" class="selectionToolIcon arrangeBringToFrontIcon" title="Bring To Front"/></button>
+            <button data-montage-id="arrangeSendToBackBtn" class="nj-skinned" role="button"><div id="arrangeSendToBack" class="selectionToolIcon arrangeSendToBackIcon" title="Send To Back"/></button>
+
         </div>
     </body>
 
