@@ -17,6 +17,7 @@
 .subToolHolderPanel .toolbutton {
     float:left;
     -webkit-transform: scale(0.6);
+	margin-top: -4px;
 }
 
 .subToolHolderPanel .toolbutton:hover, .subToolHolderPanel .toolbutton.active {
@@ -27,6 +28,7 @@
     margin-right: 9px;
 }
 
+/* These appear to be unused
 .toolSeparator {
     height:1px;
     width:30px;
@@ -61,10 +63,10 @@
    opacity: 1.0;
    }
 
-
 .drawingMode {
     outline:blue solid thin;
 }
+*/
 
 
 //  Added new styling Sub Tool Shape Options 

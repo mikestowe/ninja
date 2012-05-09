@@ -5,17 +5,26 @@
  </copyright> */
  
  .optionsShapeTool {
-    padding: 4px;
+    padding: 6px;
 }
 
  .optionsShapeTool > * {
     float:left;
 }
 
+.optionsShapeTool select.nj-skinned {
+    margin-top: 2px;
+}
+
+.optionsShapeTool .shapeCustomProps {
+    margin-top: -3px;
+    margin-left: -31px;
+}
+
  .optionsShapeTool .fillColorCtrl,  .optionsShapeTool .strokeColorCtrl {
     width: 20px;
     height: 18px;
-    margin: 2px 6px;
+    margin: 1px 6px;
     border: 1px black solid;
 }
 
@@ -25,4 +34,8 @@
     margin-top: 2px;
     -webkit-transform: scale(0.8);
     background-color: rgb(40, 40, 40);
+}
+
+.optionsShapeTool checkbox {
+    padding: 6px;
 }

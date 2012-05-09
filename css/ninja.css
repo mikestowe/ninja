@@ -677,7 +677,7 @@ nav.menuBar ul ul, nav.menuBar ul li:hover ul ul, nav.menuBar ul ul li:hover ul 
 
 nav.menuBar ul li:hover ul, nav.menuBar ul ul li:hover ul, nav.menuBar ul ul ul li:hover ul { display: block; }
 
-.subToolHolderPanel .toolbutton { float: left; -webkit-transform: scale(0.6); }
+.subToolHolderPanel .toolbutton { float: left; -webkit-transform: scale(0.6); margin-top: -4px; }
 
 .subToolHolderPanel .toolbutton:hover, .subToolHolderPanel .toolbutton.active { -webkit-transform: scale(0.75); }
 
