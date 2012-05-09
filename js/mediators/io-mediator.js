@@ -147,21 +147,21 @@ exports.IoMediator = Montage.create(Component, {
     //
     fileSave: {
         enumerable: false,
-        value: function (file, callback) {
+        value: function (doc, callback) {
             //
             var contents, save;
             //
-            switch (file.mode) {
+            switch (doc.mode) {
                 case 'html':
                     //Getting content from function to properly handle saving assets (as in external if flagged)
-                    contents = this.parseNinjaTemplateToHtml(file);
+                    contents = this.parseNinjaTemplateToHtml(doc);
                     break;
                 default:
-                    contents = file.content;
+                    contents = doc.content;
                     break;
             }
             //Making call to save file
-            save = this.fio.saveFile({ uri: file.document.uri, contents: contents });
+            save = this.fio.saveFile({ uri: doc.file.uri, contents: contents });
             //Checking for callback
             if (callback) callback(save);
         }
@@ -192,7 +192,7 @@ exports.IoMediator = Montage.create(Component, {
             //Setting content to temp
             doc.getElementsByTagName('html')[0].innerHTML = html;
             //Creating return object
-            return { head: doc.head.innerHTML, body: doc.body.innerHTML, document: doc };
+            return {head: doc.head.innerHTML, body: doc.body.innerHTML, document: doc};
         }
     },
     ////////////////////////////////////////////////////////////////////
@@ -203,12 +203,26 @@ exports.IoMediator = Montage.create(Component, {
             var regexRootUrl, rootUrl = this.application.ninja.coreIoApi.rootUrl + escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]));
             regexRootUrl = new RegExp(rootUrl.replace(/\//gi, '\\\/'), 'gi');
             //Injecting head and body into old document
-            template.document.content.document.head.innerHTML = template.head.replace(regexRootUrl, '');
-            template.document.content.document.body.innerHTML = template.body.replace(regexRootUrl, '');
+            template.file.content.document.head.innerHTML = template.head.innerHTML.replace(regexRootUrl, '');
+            template.file.content.document.body.innerHTML = template.body.innerHTML.replace(regexRootUrl, '');
             //Getting all CSS (style or link) tags
-            var styletags = template.document.content.document.getElementsByTagName('style'),
-    			linktags = template.document.content.document.getElementsByTagName('link'),
-    			toremovetags = [];
+            var styletags = template.file.content.document.getElementsByTagName('style'),
+    			linktags = template.file.content.document.getElementsByTagName('link'),
+    			toremovetags = [],
+    			njtemplatetags = template.file.content.document.querySelectorAll('[data-ninja-template]'),
+    			basetags = template.file.content.document.getElementsByTagName('base');
+    		
+    		//////////////////////////////////////////////////
+    		//TODO: Remove, temp hack to avoid montage
+    		for (var g in basetags) {
+    			if (basetags[g].getAttribute) toremovetags.push(basetags[g]);
+    		}
+    		//////////////////////////////////////////////////
+    		
+    		//
+    		for (var f in njtemplatetags) {
+    			if (njtemplatetags[f].getAttribute) toremovetags.push(njtemplatetags[f]);
+    		}
             //Getting styles tags to be removed from document
             if (styletags.length) {
                 for (var j = 0; j < styletags.length; j++) {
@@ -225,15 +239,16 @@ exports.IoMediator = Montage.create(Component, {
             for (var h = 0; toremovetags[h]; h++) {
                 try {
                     //Checking head first
-                    template.document.content.document.head.removeChild(toremovetags[h]);
+                    template.file.content.document.head.removeChild(toremovetags[h]);
                 } catch (e) {
-                    try {
+                    
+                }
+                try {
                         //Checking body if not in head
-                        template.document.content.document.body.removeChild(toremovetags[h]);
+                        template.file.content.document.body.removeChild(toremovetags[h]);
                     } catch (e) {
                         //Error, not found!
                     }
-                }
             }
             //Removing disabled tags from tags that were not originally disabled by user (Ninja enables all)
             for (var l in linktags) {
@@ -251,13 +266,13 @@ exports.IoMediator = Montage.create(Component, {
             if (template.styles) {
                 //Getting all style tags
                 var styleCounter = 0,
-    				docStyles = template.document.content.document.getElementsByTagName('style');
+    				docStyles = template.file.content.document.getElementsByTagName('style');
                 //Looping through all style tags
                 for (var i in template.styles) {
                     if (template.styles[i].ownerNode) {
                         if (template.styles[i].ownerNode.getAttribute) {
                             //Checking for node not to be loaded from file
-                            if (template.styles[i].ownerNode.getAttribute('data-ninja-uri') === null && !template.styles[i].ownerNode.getAttribute('data-ninja-template')) {
+                            if (template.styles[i].ownerNode.getAttribute('data-ninja-uri') === null && !template.styles[i].ownerNode.getAttribute('data-ninja-template') && !template.styles[i].ownerNode.getAttribute('data-ninja-external-url')) {
                                 if (docStyles[styleCounter]) {
                                     //Inseting data from rules array into tag as string
                                     docStyles[styleCounter].innerHTML = this.getCssFromRules(template.styles[i].cssRules);
@@ -271,8 +286,8 @@ exports.IoMediator = Montage.create(Component, {
             } else if (template.css) {
                 //Getting all style and link tags
                 var styleCounter = 0,
-    				docStyles = template.document.content.document.getElementsByTagName('style'),
-    				docLinks = template.document.content.document.getElementsByTagName('link');
+    				docStyles = template.file.content.document.getElementsByTagName('style'),
+    				docLinks = template.file.content.document.getElementsByTagName('link');
                 //Removing Ninja Data Attributes
                 for (var n in docLinks) {
                     if (docLinks[n].attributes) {
@@ -352,13 +367,13 @@ exports.IoMediator = Montage.create(Component, {
                     if (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'RDGE') {
                         rdgeDirName = (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name + this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version).toLowerCase();
                         rdgeVersion = this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version;
-                        this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.document.root, rdgeDirName);
+                        this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.file.root, rdgeDirName);
                     } else {
                         //TODO: Error handle no available library to copy
                     }
                 }
                 //
-                var json, matchingtags = [], webgltag, scripts = template.document.content.document.getElementsByTagName('script'), webgljstag, webgllibtag, webglrdgetag, mjstag, mjslibtag;
+                var json, matchingtags = [], webgltag, scripts = template.file.content.document.getElementsByTagName('script'), webgljstag, webgllibtag, webglrdgetag, mjstag, mjslibtag;
                 //
                 for (var i in scripts) {
                     if (scripts[i].getAttribute) {
@@ -393,32 +408,32 @@ exports.IoMediator = Montage.create(Component, {
                 }
                 //
                 if (!webglrdgetag) {
-                    webglrdgetag = template.document.content.document.createElement('script');
+                    webglrdgetag = template.file.content.document.createElement('script');
                     webglrdgetag.setAttribute('type', 'text/javascript');
                     webglrdgetag.setAttribute('src', rdgeDirName + '/rdge-compiled.js');
                     webglrdgetag.setAttribute('data-ninja-webgl-rdge', 'true');
-                    template.document.content.document.head.appendChild(webglrdgetag);
+                    template.file.content.document.head.appendChild(webglrdgetag);
                 }
                 //
                 if (!webgllibtag) {
-                    webgllibtag = template.document.content.document.createElement('script');
+                    webgllibtag = template.file.content.document.createElement('script');
                     webgllibtag.setAttribute('type', 'text/javascript');
                     webgllibtag.setAttribute('src', rdgeDirName + '/canvas-runtime.js');
                     webgllibtag.setAttribute('data-ninja-webgl-lib', 'true');
-                    template.document.content.document.head.appendChild(webgllibtag);
+                    template.file.content.document.head.appendChild(webgllibtag);
                 }
                 //
                 if (!webgltag) {
-                    webgltag = template.document.content.document.createElement('script');
+                    webgltag = template.file.content.document.createElement('script');
                     webgltag.setAttribute('data-ninja-webgl', 'true');
-                    template.document.content.document.head.appendChild(webgltag);
+                    template.file.content.document.head.appendChild(webgltag);
                 }
                 //TODO: Remove this tag and place inside JS file
                 if (!webgljstag) {
-                    webgljstag = template.document.content.document.createElement('script');
+                    webgljstag = template.file.content.document.createElement('script');
                     webgljstag.setAttribute('type', 'text/javascript');
                     webgljstag.setAttribute('data-ninja-webgl-js', 'true');
-                    template.document.content.document.head.appendChild(webgljstag);
+                    template.file.content.document.head.appendChild(webgljstag);
                 }
                 //TODO: Decide if this should be over-writter or only written on creation
                 var rootElement = 'document.body'; //TODO: Set actual root element
@@ -463,33 +478,33 @@ function loadWebGL (e) {\n\
             //
             if (template.mjs && mjsCounter > 0) {
                 var mjsDirName, mjsVersion,
-    				mjscode = temp.initWithHeadAndBodyElements(template.document.content.document.documentElement.head, template.document.content.document.documentElement.body, mjsComponents)._ownerSerialization;
+    				mjscode = temp.initWithHeadAndBodyElements(template.file.content.document.documentElement.head, template.file.content.document.documentElement.body, mjsComponents)._ownerSerialization;
                 //Copy Montage library if needed
                 for (var i in this.application.ninja.coreIoApi.ninjaLibrary.libs) {
                     //Checking for Montage library to be available
                     if (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'Montage') {
                         mjsDirName = (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name + this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version).toLowerCase();
                         mjsVersion = this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version;
-                        this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.document.root, mjsDirName);
+                        this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.file.root, mjsDirName);
                         //TODO: Fix to allow no overwrite and nested locations
-                        var packjson = this.application.ninja.coreIoApi.createFile({ uri: template.document.root + 'package.json', contents: '{"mappings": {"montage": "' + mjsDirName + '/"}}' });
+                        var packjson = this.application.ninja.coreIoApi.createFile({ uri: template.file.root + 'package.json', contents: '{"mappings": {"montage": "' + mjsDirName + '/"}}' });
                     } else {
                         //TODO: Error handle no available library to copy
                     }
                 }
                 //
                 if (!mjslibtag) {
-                    mjslibtag = template.document.content.document.createElement('script');
+                    mjslibtag = template.file.content.document.createElement('script');
                     mjslibtag.setAttribute('type', 'text/javascript');
                     mjslibtag.setAttribute('src', mjsDirName + '/montage.js');
                     mjslibtag.setAttribute('data-mjs-lib', 'true');
-                    template.document.content.document.head.appendChild(mjslibtag);
+                    template.file.content.document.head.appendChild(mjslibtag);
                 }
                 //
                 if (!mjstag) {
-                    mjstag = template.document.content.document.createElement('script');
+                    mjstag = template.file.content.document.createElement('script');
                     mjstag.setAttribute('type', 'text/montage-serialization');
-                    template.document.content.document.head.appendChild(mjstag);
+                    template.file.content.document.head.appendChild(mjstag);
                 }
                 //
                 mjstag.innerHTML = mjscode;
@@ -502,7 +517,7 @@ function loadWebGL (e) {\n\
 
 
             //Cleaning URLs from HTML
-            var cleanHTML = template.document.content.document.documentElement.outerHTML.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaRootUrl.bind(this));
+            var cleanHTML = template.file.content.document.documentElement.outerHTML.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaRootUrl.bind(this));
             //
             function parseNinjaRootUrl(url) {
                 if (url.indexOf(this.application.ninja.coreIoApi.rootUrl) !== -1) {

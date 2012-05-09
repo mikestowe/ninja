@@ -5,13 +5,20 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> -->
  
+ 
+<!-- 
+	NOTE(s):
+	All elements in the head of the document to be exclude from I/O
+	must set the 'data-ninja-template'
+	data-ninja-template="true"
+-->
 <html>
 
 	<head>
 	
-		<title>Ninja Prototype</title>
+		<title data-ninja-template="true">Ninja Prototype</title>
         
-       	<style type="text/css" id="nj-stage-stylesheet">
+       	<style type="text/css" id="nj-stage-stylesheet" data-ninja-template="true">
        		* {
         		-webkit-transition-duration: 0s !important;
     			-webkit-animation-duration: 0s !important;
@@ -49,15 +56,15 @@
 			}
         </style>
     
-    	<script type="text/javascript" data-package="." src="../../../../node_modules/montage/montage.js"></script>
+    	<script type="text/javascript" data-package="." src="../../../../node_modules/montage/montage.js" data-ninja-template="true"></script>
     
-    	<script type="text/javascript">
+    	<script type="text/javascript" data-ninja-template="true">
       		function getElement(x,y) {
             	return document.elementFromPoint(x,y);
         	}
     	</script>
 
-        <script type="text/montage-serialization">
+        <script type="text/montage-serialization" data-ninja-template="true">
         {
             "owner": {
                 "prototype": "main"
