@@ -203,20 +203,23 @@ exports.IoMediator = Montage.create(Component, {
             var regexRootUrl, rootUrl = this.application.ninja.coreIoApi.rootUrl + escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]));
             regexRootUrl = new RegExp(rootUrl.replace(/\//gi, '\\\/'), 'gi');
             //Injecting head and body into old document
-            //template.file.content.document.head.innerHTML = template.head.innerHTML.replace(regexRootUrl, '');
-            //template.file.content.document.body.innerHTML = template.body.innerHTML.replace(regexRootUrl, '');
+            template.file.content.document.head.innerHTML = template.head.innerHTML.replace(regexRootUrl, '');
+            template.file.content.document.body.innerHTML = template.body.innerHTML.replace(regexRootUrl, '');
             
             
             
-            //Testing using montage clean up method
+            /*
+//Testing using montage clean up method
             var mjscode, mjsTemp = TemplateCreator.create();
         	
             //mjscode = mjsTemp.initWithHeadAndBodyElements(template.head, template.body);
-            mjscode = mjsTemp.initWithDocument(template.file.content.document);
+            //mjscode = mjsTemp.initWithDocument(template.file.content.document);
+            mjscode = mjsTemp.initWithDocument(template.document);
             
             console.log(template.head, mjscode._document.head);
             template.file.content.document.head.innerHTML = mjscode._document.head.innerHTML.replace(regexRootUrl, '');
             template.file.content.document.body.innerHTML = mjscode._document.body.innerHTML.replace(regexRootUrl, '');
+*/
             
             
             
@@ -229,12 +232,10 @@ exports.IoMediator = Montage.create(Component, {
     		
     		//////////////////////////////////////////////////
     		//TODO: Remove, temp hack, this is to be fixed by Montage
-    		/*
-var basetags = template.file.content.document.getElementsByTagName('base');
+    		var basetags = template.file.content.document.getElementsByTagName('base');
     		for (var g in basetags) {
     			if (basetags[g].getAttribute) toremovetags.push(basetags[g]);
     		}
-*/
     		//////////////////////////////////////////////////
     		
     		//
