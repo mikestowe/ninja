@@ -100,6 +100,13 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         	this._observer.body.observe(this.document.body, {childList: true});
         	//Inserting <body> HTML and parsing URLs via mediator method
         	this.document.body.innerHTML += '<ninjaloadinghack></ninjaloadinghack>'+(this.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator));
+        	//Copying attributes to maintain same properties as the <body>
+			for (var n in this.content.document.body.attributes) {
+				if (this.content.document.body.attributes[n].value) {
+					this.document.body.setAttribute(this.content.document.body.attributes[n].name, this.content.document.body.attributes[n].value);
+				}
+			}
+			//TODO: Add attribute copying for <HEAD> and <HTML>
         }
     },
     ////////////////////////////////////////////////////////////////////

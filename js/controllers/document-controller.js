@@ -166,23 +166,34 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             }
     },
 	////////////////////////////////////////////////////////////////////
-	//TODO: Check for appropiate structures
+	//
     handleExecuteSave: {
     	value: function(event) {
-            if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
-                //Text and HTML document classes should return the same save object for fileSave
-                this.application.ninja.ioMediator.fileSave(this.activeDocument.save(), this.fileSaveResult.bind(this));
-            }
+    		//
+    		if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
+    			//
+    			this.activeDocument.model.save(this.testCallback.bind(this)); //this.fileSaveResult.bind(this)
+    		} else {
+    			//Error:
+    		}
 		}
+    },
+    testCallback: {
+    	value: function (value) {
+    		console.log(value);
+    	}
     },
     ////////////////////////////////////////////////////////////////////
 	//TODO: Check for appropiate structures
     handleExecuteSaveAll: {
     	value: function(event) {
-            if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
-                //Text and HTML document classes should return the same save object for fileSave
-                this.application.ninja.ioMediator.fileSave(this.activeDocument.saveAll(), this.fileSaveResult.bind(this));
-            }
+           //
+    		if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
+    			//
+    			this.activeDocument.model.saveAll(this.testCallback.bind(this)); //this.fileSaveResult.bind(this)
+    		} else {
+    			//Error:
+    		}
 		}
     },
     ////////////////////////////////////////////////////////////////////

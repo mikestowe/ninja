@@ -76,25 +76,92 @@ exports.BaseDocumentModel = Montage.create(Component, {
 	//TODO: Add API to allow other browser support
 	browserPreview: {
         value: function (browser) {
-        	
-        	//TODO: Add file save before previewing
-        	
-        	//Currently only supporting current browser (Chrome, obviously)
-        	switch (browser) {
-        		case 'chrome':
-        			window.open(this.application.ninja.coreIoApi.rootUrl + this.file.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);
-        			break;
-        		default:
-        			window.open(this.application.ninja.coreIoApi.rootUrl + this.file.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1]);
-        			break;
+        	//Generating URL for document
+        	var url = this.application.ninja.coreIoApi.rootUrl + this.file.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1];
+        	//TODO: Add logic to prompt user to save (all) before preview
+        	this.saveAll(function (result) {
+        		//Currently only supporting current browser (Chrome, obviously)
+        		switch (this.browser) {
+        			case 'chrome':
+        				window.open(this.url);
+	        			break;
+    	    		default:
+        				window.open(this.url);
+        				break;
+	        	}
+        	}.bind({browser: browser, url: url}));
+        }
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+	getStyleSheets: {
+		value: function () {
+			//
+			var styles = [];
+    		//
+    		for (var k in this.views.design.iframe.contentWindow.document.styleSheets) {
+    			if (this.views.design.iframe.contentWindow.document.styleSheets[k].ownerNode && this.views.design.iframe.contentWindow.document.styleSheets[k].ownerNode.getAttribute) {
+            		if (this.views.design.iframe.contentWindow.document.styleSheets[k].ownerNode.getAttribute('data-ninja-template') === null) {
+            			styles.push(this.views.design.iframe.contentWindow.document.styleSheets[k]);
+            		}
+            	}
+           	}
+           	//
+           	return styles;
+		}
+	},
+    ////////////////////////////////////////////////////////////////////
+	//
+	save: {
+        value: function (callback) {
+        	//
+        	if (this.currentView === this.views.design) {
+            	//
+        		this.application.ninja.ioMediator.fileSave({
+        			mode: 'html',
+        			file: this.file,
+        			webgl: this.webGlHelper.glData,
+        			styles: this.getStyleSheets(),
+        			document: this.views.design.iframe.contentWindow.document,
+        			head: this.views.design.iframe.contentWindow.document.head,
+        			body: this.views.design.iframe.contentWindow.document.body
+        		}, callback.bind(this));
+        	} else {
+        		//TODO: Add logic to save code view data
+        	}
+        	//
+        	if (this.needsSave) {
+        		//Save
+        	} else {
+        		//Ignore command
         	}
         }
     },
     ////////////////////////////////////////////////////////////////////
 	//
-	save: {
-        value: function () {
+	saveAll: {
+        value: function (callback) {
         	//
+        	if (this.currentView === this.views.design) {
+            	//
+        		this.application.ninja.ioMediator.fileSave({
+        			mode: 'html',
+        			file: this.file,
+        			webgl: this.webGlHelper.glData,
+        			css: this.getStyleSheets(),
+        			document: this.views.design.iframe.contentWindow.document,
+        			head: this.views.design.iframe.contentWindow.document.head,
+        			body: this.views.design.iframe.contentWindow.document.body
+        		}, callback.bind(this));
+        	} else {
+        		//TODO: Add logic to save code view data
+        	}
+        	//
+        	if (this.needsSave) {
+        		//Save
+        	} else {
+        		//Ignore command
+        	}
         }
     },
     ////////////////////////////////////////////////////////////////////
@@ -102,13 +169,11 @@ exports.BaseDocumentModel = Montage.create(Component, {
 	saveAs: {
         value: function () {
         	//
-        }
-    },
-    ////////////////////////////////////////////////////////////////////
-	//
-	saveAll: {
-        value: function () {
-        	//
+        	if (this.needsSave) {
+        		//Save current file on memory
+        	} else {
+        		//Copy file from disk
+        	}
         }
     },
     ////////////////////////////////////////////////////////////////////
@@ -116,6 +181,11 @@ exports.BaseDocumentModel = Montage.create(Component, {
 	close: {
         value: function () {
         	//
+        	if (this.needsSave) {
+        		//Prompt user to save of lose data
+        	} else {
+        		//Close file
+        	}
         }
     }
 	////////////////////////////////////////////////////////////////////
