@@ -42,6 +42,11 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         value: null
     },
     ////////////////////////////////////////////////////////////////////
+	//TODO: Remove usage
+	model: {
+        value: null
+    },
+    ////////////////////////////////////////////////////////////////////
 	//
     document: {
         get: function() {return this._document;},
@@ -78,6 +83,8 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 	//
     onTemplateLoad: {
         value: function (e) {
+        	//TODO: Add support to constructing URL with a base HREF
+        	var basetag = this.content.document.getElementsByTagName('base');
         	//Removing event
         	this.iframe.removeEventListener("load", this.onTemplateLoad.bind(this), false);
         	//TODO: Improve usage of this reference
@@ -88,6 +95,13 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
             		this.document.styleSheets[k].ownerNode.setAttribute('data-ninja-template', 'true');
             	}
             }
+            //Checking for a base URL
+            if (basetag.length) {
+            	if (basetag[basetag.length-1].getAttribute && basetag[basetag.length-1].getAttribute('href')) {
+            		//Setting base HREF in model
+        			this.model.baseHref = basetag[basetag.length-1].getAttribute('href');
+        		}
+        	}
         	//Creating temp code fragement to load head
         	this._headFragment = this.document.createElement('head');
         	//Adding event listener to know when head is ready, event only dispatched once when using innerHTML
