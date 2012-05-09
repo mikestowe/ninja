@@ -795,7 +795,9 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             ///// method to apply/test the new value
             dec.setProperty(property, value, priority);
 
-            this.styleSheetModified(rule.parentStyleSheet);
+            if(rule.parentStyleSheet) {
+                this.styleSheetModified(rule.parentStyleSheet);
+            }
 
             ///// Return browser value for value we just set
             return dec.getPropertyValue(property);
