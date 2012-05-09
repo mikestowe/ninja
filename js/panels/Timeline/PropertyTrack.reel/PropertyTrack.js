@@ -24,7 +24,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
 
     draw:{
         value:function(){
-
+            console.log(this.trackType);
         }
     },
 
@@ -105,18 +105,18 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
         }
     },
 
-    _styleSelection:{
+    _trackType:{
         value:null
     },
 
-    styleSelection:{
+    trackType:{
         serializable:true,
         get:function () {
-            return this._styleSelection;
+            return this._trackType;
         },
         set:function (value) {
-            if (value !== this._styleSelection) {
-                this._styleSelection = value;
+            if (value !== this._trackType) {
+                this._trackType = value;
             }
         }
     },
@@ -145,7 +145,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
 
             this.styleIndex = this.propTrackData.styleIndex;
             this.propTweens = this.propTrackData.propTweens;
-            this.styleSelection = this.propTrackData.styleSelection;
+            this.trackType = this.propTrackData.trackType;
             this.needsDraw = true;
         }
     },
@@ -153,19 +153,27 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
     handleClick:{
         value:function(ev){
             if (ev.shiftKey) {
+                console.log(this.trackType);
                 if (this.propTweens.length < 1) {
 
                     // check if there is an editor property assigned yet
                     // get this property track's editor prop name from layer data arrays
                     var selectIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
 
-                    if (this.application.ninja.timeline.arrLayers[selectIndex].layerData.arrLayerStyles[this.styleIndex].editorProperty == null) {
-                        console.log("Please enter a style property for this track before adding keyframes.");
-                        return;
-                    } else {
-                        this.trackEditorProperty = this.application.ninja.timeline.arrLayers[selectIndex].layerData.arrLayerStyles[this.styleIndex].editorProperty;
-                        console.log("Property track editorProperty set to: " + this.trackEditorProperty);
+                    if (this.trackType === "style") {
+                        if (this.application.ninja.timeline.arrLayers[selectIndex].layerData.arrLayerStyles[this.styleIndex].editorProperty == null) {
+                            console.log("Please enter a style property for this track before adding keyframes.");
+                            return;
+                        } else {
+                            this.trackEditorProperty = this.application.ninja.timeline.arrLayers[selectIndex].layerData.arrLayerStyles[this.styleIndex].editorProperty;
+                            console.log("Property track editorProperty set to: " + this.trackEditorProperty);
+                        }
+                    } else if (this.trackType === "position") {
+                        console.log("clicking on position track");
+
+                        console.log(this.trackEditorProperty);
                     }
+
 
 
                     this.insertPropTween(0);

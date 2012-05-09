@@ -60,7 +60,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     	}
     },
     _styleCounter : {
-    	value: 0
+    	value: 4
     },
     styleCounter:{
         serializable:true,
@@ -557,7 +557,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 			// Or at the end, if no rule is selected.
 
 			var newLength = 0, 
-				mySelection = 0,
+				// mySelection = 0,
 				// newStyle = LayerStyle.create(),
 				newStyle = {},
 				newEvent = document.createEvent("CustomEvent");
@@ -571,7 +571,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 			newEvent.layerEventType = "newStyle";
 			newEvent.layerID = this.layerID;
             newEvent.styleIndex = this.styleCounter;
-			newEvent.styleID = this.layerID + "@" + this.styleCounter;
+			newEvent.styleID = this.layerID + "@" + this.styleCounter; // is this property needed?
 			
 			newStyle.styleID = newEvent.styleID;
 			newStyle.whichView = "hintable";
@@ -583,7 +583,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 
 			// Set up the event info and dispatch the event
             this.styleCounter += 1;
-			newEvent.styleSelection = mySelection;
+			// newEvent.styleSelection = mySelection;
 			defaultEventManager.dispatchEvent(newEvent);
 		}
 	},

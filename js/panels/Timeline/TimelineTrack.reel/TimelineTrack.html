@@ -98,7 +98,14 @@
 						"prototype" : "js/panels/Timeline/PropertyTrack.reel",
 						"properties" : {
 							"element":{"#": "position-track-base"}
-						}
+						},
+                        "bindings" : {
+                            "propTrackData" : {
+                                 "boundObject" : {"@" : "positionTracksRepetition"},
+                                 "boundObjectPropertyPath" : "objectAtCurrentIteration.propTrackData",
+                                 "oneway" : false
+                            }
+                        }
 					},
 					
 					"mainCollapser" : {
