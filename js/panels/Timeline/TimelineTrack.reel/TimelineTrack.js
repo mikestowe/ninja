@@ -363,6 +363,17 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     		this._dragAndDropHelperCoords = newVal;
     	}
     },
+    _draggingIndex: {
+    	value: false
+    },
+    draggingIndex: {
+    	get: function() {
+    		return this._draggingIndex;
+    	},
+    	set: function(newVal) {
+    		this._draggingIndex = newVal;
+    	}
+    },
     _dragAndDropHelperOffset : {
     	value: false
     },
@@ -864,32 +875,29 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             
             //this._dragAndDropHelper.style.width = window.getComputedStyle(this.container_layers, null).getPropertyValue("width");
             this._dragAndDropHelper.classList.add("track-dnd-helper");
-            
-            // Get the offset 
-    		var findYOffset = function(obj) {
-				var curleft = curtop = 0;
-				
-				if (obj.offsetParent) {
-					do {
-							curleft += obj.offsetLeft;
-							curtop += obj.offsetTop;
-				
-						} while (obj = obj.offsetParent);
-				}
-				return curtop;
-    		}
-    		//this._dragAndDropHelperOffset = findYOffset(this.container_layers);
-    		if (this.draggingIndex !== (this.tweens.length -1)) {
-    			maxPosition = this.tweenRepetition.childComponents[this.draggingIndex +1].keyFramePosition;
+ 
+    		if (this.draggingIndex < (this.tweens.length -1)) {
+    			maxPosition = this.tweenRepetition.childComponents[this.draggingIndex+1].keyFramePosition;
     		}
     		if (this.draggingIndex > 1) {
-    			minPosition = this.tweenRepetition.childComponents[this.draggingIndex -1].keyFramePosition;
+    			minPosition = this.tweenRepetition.childComponents[this.draggingIndex-1].keyFramePosition;
     		}
     		this._keyframeMinPosition = minPosition+2;
     		this._keyframeMaxPosition = maxPosition-9;
     		this._appendHelper = true;
     		this._deleteHelper = false;
-    		this.parentComponent.parentComponent.draggingTrackId = this.trackID;
+    		
+    		// Get my index in the track array
+    		var i = 0,
+    			arrLayersLength = this.parentComponent.parentComponent.arrLayers.length,
+    			myId = null;
+    		for (i = 0; i < arrLayersLength; i++) {
+    			var currUuid = this.parentComponent.parentComponent.trackRepetition.childComponents[i].uuid;
+    			if ( currUuid === this.uuid) {
+    				myId = i;
+    			}
+    		}
+    		this.parentComponent.parentComponent.draggingTrackId = myId;
     		this.parentComponent.parentComponent.draggingType = "keyframe";
     	}
     },
