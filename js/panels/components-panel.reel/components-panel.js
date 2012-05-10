@@ -346,7 +346,7 @@ exports.ComponentsPanel = Montage.create(Component, {
                     break;
                 case "select":
                     el = document.application.njUtils.make("select", null, this.application.ninja.currentDocument);
-                    document.application.njUtils.createModelForComponent(el, "Select");
+                    document.application.njUtils.createModelForComponent(el, "SelectInput");
                     break;
                 case "radioButton":
                     el = document.application.njUtils.make("input", null, this.application.ninja.currentDocument);
@@ -366,7 +366,7 @@ exports.ComponentsPanel = Montage.create(Component, {
                     break;
                 case "textarea":
                     el = document.application.njUtils.make("textarea", null, this.application.ninja.currentDocument);
-                    document.application.njUtils.createModelForComponent(el, "TextArea");
+                    document.application.njUtils.createModelForComponent(el, "Textarea");
                     break;
                 case "toggleButton":
                     el = document.application.njUtils.make("button", null, this.application.ninja.currentDocument);
@@ -404,8 +404,8 @@ exports.ComponentsPanel = Montage.create(Component, {
             //if(!this.centerStage) {
                 var top, left;
 
-                top = ~~((parseFloat(this.application.ninja.elementMediator.getProperty(this.application.ninja.currentDocument.documentRoot, "height"))) / 2);
-                left = ~~((parseFloat(this.application.ninja.elementMediator.getProperty(this.application.ninja.currentDocument.documentRoot, "width"))) / 2);
+                top = (this.application.ninja.stage.canvas.height / 2); // ~~((parseFloat(this.application.ninja.elementMediator.getProperty(this.application.ninja.currentDocument.documentRoot, "height"))) / 2);
+                left = (this.application.ninja.stage.canvas.width / 2); //~~((parseFloat(this.application.ninja.elementMediator.getProperty(this.application.ninja.currentDocument.documentRoot, "width"))) / 2);
                 //this.centerStage = [top, left];
                 return [left, top];
             //}
