@@ -1,1 +1,1 @@
-Codemirror Version: 2.22
+Codemirror Version: 2.23

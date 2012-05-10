@@ -5,13 +5,18 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var Montage = require("montage/core/core").Montage,
-    DrawingTool = require("js/tools/drawing-tool").DrawingTool;
+    DrawingTool = require("js/tools/drawing-tool").DrawingTool,
     RichTextEditor = require("node_modules/labs/rich-text-editor.reel").RichTextEditor,
     ElementsMediator = require("js/mediators/element-mediator").ElementMediator;
 
 exports.TextTool = Montage.create(DrawingTool, {
+    drawingFeedback: {
+        value: { mode: "Draw3D", type: "rectangle" }
+    },
 
-    _selectedElement: { value : null },
+    _selectedElement: {
+        value : null
+    },
 
     selectedElement: {
         get: function() {
@@ -35,9 +40,6 @@ exports.TextTool = Montage.create(DrawingTool, {
             }
         }
     },
-    
-
-    drawingFeedback: { value: { mode: "Draw3D", type: "rectangle" } },
 
     HandleLeftButtonDown: {
         value: function(event) {
@@ -81,15 +83,7 @@ exports.TextTool = Montage.create(DrawingTool, {
                 return;
             }
 
-            var drawData, selectedItem;
-
             if(this._hasDraw) {
-                drawData =  this.getDrawingData();
-
-                if(drawData) {
-                    //this.insertElement(drawData);
-                }
-                
                 this._hasDraw = false;
                 this.endDraw(event);
             } else {
@@ -113,6 +107,8 @@ exports.TextTool = Montage.create(DrawingTool, {
 
     drawTextTool: {
         value: function() {
+            var self = this;
+
             this.application.ninja.stage.textTool.value = this.selectedElement.innerHTML;
             if(this.application.ninja.stage.textTool.value === "") { this.application.ninja.stage.textTool.value = " "; }
             this.selectedElement.innerHTML = "";
@@ -125,35 +121,27 @@ exports.TextTool = Montage.create(DrawingTool, {
             this.application.ninja.stage.textTool.element.style.width = this.selectedElement.offsetWidth + "px";
             this.application.ninja.stage.textTool.element.style.height = this.selectedElement.offsetHeight + "px";
 
-
             // Set font styling (Size, Style, Weight)
-
-            me = this;
             this.application.ninja.stage.textTool.didDraw = function() {
-                me.applyElementStyles(me.selectedElement, me.application.ninja.stage.textTool.element, ["overflow"]);
-                me.applyElementStyles(me.selectedElement, me.application.ninja.stage.textTool.element.firstChild, ["font","padding-left","padding-top","padding-right","padding-bottom", "color"]);
+                self.applyElementStyles(self.selectedElement, self.application.ninja.stage.textTool.element, ["overflow"]);
+                self.applyElementStyles(self.selectedElement, self.application.ninja.stage.textTool.element.firstChild, ["font","padding-left","padding-top","padding-right","padding-bottom", "color"]);
                 var range = document.createRange(),
                 sel   = window.getSelection();
                 sel.removeAllRanges();
-                range.selectNodeContents(this.application.ninja.stage.textTool.element.firstChild);
+                range.selectNodeContents(self.application.ninja.stage.textTool.element.firstChild);
                 sel.addRange(range);
                 this.didDraw = function() {};
             }
         }
     },
 
+    /*
     HandleDoubleClick: {
         value: function(e) {
             //this.application.ninja.selectedElements[0].setAttribute("contenteditable", true);
-
-            //if (!this.application.ninja.textTool) {
-
-            //}
-
-
-
         }
     },
+    */
 
     Configure: {
         value: function(wasSelected) {
