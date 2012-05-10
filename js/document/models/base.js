@@ -62,6 +62,11 @@ exports.BaseDocumentModel = Montage.create(Component, {
     },
     ////////////////////////////////////////////////////////////////////
 	//
+    parentContainer: {
+        value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
 	views: {
         value: null
     },
@@ -115,6 +120,12 @@ exports.BaseDocumentModel = Montage.create(Component, {
 	save: {
         value: function (callback) {
         	//
+        	if (this.needsSave) {
+        		//Save
+        	} else {
+        		//Ignore command
+        	}
+        	//
         	if (this.currentView === this.views.design) {
             	//
         		this.application.ninja.ioMediator.fileSave({
@@ -129,18 +140,18 @@ exports.BaseDocumentModel = Montage.create(Component, {
         	} else {
         		//TODO: Add logic to save code view data
         	}
-        	//
-        	if (this.needsSave) {
-        		//Save
-        	} else {
-        		//Ignore command
-        	}
         }
     },
     ////////////////////////////////////////////////////////////////////
 	//
 	saveAll: {
         value: function (callback) {
+           	//
+        	if (this.needsSave) {
+        		//Save
+        	} else {
+        		//Ignore command
+        	}
         	//
         	if (this.currentView === this.views.design) {
             	//
@@ -156,12 +167,7 @@ exports.BaseDocumentModel = Montage.create(Component, {
         	} else {
         		//TODO: Add logic to save code view data
         	}
-        	//
-        	if (this.needsSave) {
-        		//Save
-        	} else {
-        		//Ignore command
-        	}
+
         }
     },
     ////////////////////////////////////////////////////////////////////
@@ -179,13 +185,24 @@ exports.BaseDocumentModel = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
 	//
 	close: {
-        value: function () {
+        value: function (view, callback) {
+        	//Outcome of close (pending on save logic)
+        	var success;
         	//
         	if (this.needsSave) {
         		//Prompt user to save of lose data
         	} else {
         		//Close file
+        		success = true;
         	}
+        	//
+        	if (this.views.design && (!view || view === 'design')) {
+        		//
+        		this.parentContainer.removeChild(this.views.design.iframe);
+        		this.views.design = null;
+        	}
+        	//
+        	if (callback) callback(success);
         }
     }
 	////////////////////////////////////////////////////////////////////

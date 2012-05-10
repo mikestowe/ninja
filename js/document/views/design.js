@@ -289,6 +289,37 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         value: function(x, y) {
             return this.iframe.contentWindow.getElement(x,y);
         }
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    pauseVideos:{
+        value:function(){
+        	var i, videos = this.document.getElementsByTagName("video");
+            for(i = 0; i < videos.length; i++){
+                if(!videos[i].paused) videos[i].pause();
+            }
+        }
+    },
+	////////////////////////////////////////////////////////////////////
+    //
+    stopVideos:{
+        value:function(){
+        	var i, videos = this.document.getElementsByTagName("video");
+            for(i = 0; i < videos.length; i++){
+                videos[i].src = "";
+            }
+        }
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    pauseAndStopVideos:{
+        value:function(){
+        	var i, videos = this.document.getElementsByTagName("video");
+            for(i = 0; i < videos.length; i++){
+            	if(!videos[i].paused) videos[i].pause();
+                videos[i].src = "";
+            }
+        }
     }
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
