@@ -13,6 +13,7 @@ exports.CssStyle = Montage.create(Component, {
     editingStyleClass : { value: 'edit-style-item' },
     editNewEmptyClass : { value: 'edit-empty-style' },
     invalidStyleClass : { value: "style-item-invalid" },
+    emptyStyleClass   : { value: "empty-css-style" },
 
     propertyText : { value: "property" },
     _valueText : { value: "value" },
@@ -240,7 +241,7 @@ exports.CssStyle = Montage.create(Component, {
 
             this.editing = false;
 
-            if(this.sourceObject.isEmpty && !this.dirty && !fieldsClicked.bind(this)()) {
+            if(this.empty && !this.dirty && !fieldsClicked.bind(this)()) {
                 ///// Show add button
                 this.editingNewStyle = false;
             }
@@ -265,7 +266,7 @@ exports.CssStyle = Montage.create(Component, {
 
             this.editing = false;
 
-            if(this.sourceObject.isEmpty && !this.dirty && !fieldsClicked.bind(this)()) {
+            if(this.empty && !this.dirty && !fieldsClicked.bind(this)()) {
                 ///// Show add button
                 this.editingNewStyle = false;
             }
@@ -306,39 +307,9 @@ exports.CssStyle = Montage.create(Component, {
         }
     },
 
-//    handleSourceObjectSet: {
-//        value: function() {
-//            this.propertyText = this.sourceObject.name;
-//            this.valueText = this.sourceObject.value;
-//
-//            if(this.sourceObject.isEmpty) {
-//                this.empty = true;
-//            }
-//        }
-//    },
-
-    _sourceObject : { value: null },
-    sourceObject: {
-        get: function() {
-            return this._sourceObject;
-        },
-        set: function(sourceObject) {
-            this._sourceObject = sourceObject;
-
-            this.propertyText = sourceObject.name;
-            this.valueText = sourceObject.value;
-
-            if(sourceObject.isEmpty) {
-                this.empty = true;
-            }
-        }
-    },
-
     templateDidLoad : {
         value: function() {
-            //this.delegate = this.treeView.contentController.delegate;
-//debugger;
-            //this.propertyField.hints = this.propertyNames;
+            this.propertyField.hints = this.propertyNames;
         }
     },
 
@@ -402,17 +373,15 @@ exports.CssStyle = Montage.create(Component, {
         value : function() {
             if(this.empty) {
                 this.element.draggable = false;
-                this.element.classList.add('empty-css-style');
+                this.element.classList.add(this.emptyStyleClass);
                 if(!this.addStyleButton.parentNode) {
-                    console.log("Adding style for ", this.propertyText);
                     this.element.appendChild(this.addStyleButton);
                     this.addStyleButton.addEventListener('click', this, false);
                 }
             } else {
                 this.element.draggable = true;
-                this.element.classList.remove('empty-css-style');
+                this.element.classList.remove(this.emptyStyleClass);
                 if(this.addStyleButton.parentNode) {
-                    console.log("Removing style for ", this.propertyText);
                     this.element.removeChild(this.addStyleButton);
                 }
             }

@@ -22,6 +22,9 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
             },
             "arrayController": {
                 "prototype": "montage/ui/controller/array-controller",
+                "properties": {
+                    "automaticallyOrganizeObjects": true
+                },
                 "bindings": {
                     "content": {
                         "boundObject": {"@": "owner"},
@@ -44,9 +47,17 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                     "declaration": {"@": "owner"}
                 },
                 "bindings": {
-                    "sourceObject" : {
+                    "propertyText" : {
                         "boundObject": {"@": "repetition"},
-                        "boundObjectPropertyPath": "objectAtCurrentIteration"
+                        "boundObjectPropertyPath": "objectAtCurrentIteration.name"
+                    },
+                    "valueText" : {
+                        "boundObject": {"@": "repetition"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration.value"
+                    },
+                    "empty" : {
+                        "boundObject": {"@": "repetition"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration.isEmpty"
                     },
                     "delegate": {
                         "boundObject": {"@": "owner"},

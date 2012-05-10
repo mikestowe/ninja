@@ -9,38 +9,61 @@ var Montage = require("montage/core/core").Montage,
     ShorthandProps = require("js/panels/CSSPanel/css-shorthand-map");
 
 exports.StyleDeclaration = Montage.create(Component, {
-    cssText : {
-        value: null
-    },
-    focusDelegate : {
-        value: null
-    },
+    cssText : { value: null },
+    focusDelegate : { value: null },
+
     includeEmptyStyle : {
-        value: true
+        value: true,
+        distinct: true
     },
     styles : {
         value: [],
         distinct: true
     },
 
-    templateDidLoad : {
-        value: function() {
-            console.log("Style declaration - template did load");
+    _styleSortFunction : {
+        value: function(styleA, styleB) {
+            ///// If the style is an empty style (with Add button)
+            ///// push to end of declaration
+            if(styleA.isEmpty) {
+                return 1;
+            } else if (styleB.isEmpty) {
+                return -1;
+            }
 
-            if(this.focusDelegate) {
-                //this.treeController.delegate = this.focusDelegate;
-                this.styleComponent.delegate = this.focusDelegate;
+            ///// Alphabetic sort based on property name
+            if (styleA.name < styleB.name) {
+                return -1;
+            } else if (styleA.name > styleB.name) {
+                return 1;
+            } else {
+                return 0;
             }
         }
     },
-    prepareForDraw : {
-        value: function(e) {
-            console.log("Style Declaration :: prepare for draw");
-            this._element.addEventListener('drop', this, false);
-            this.element.addEventListener('dragenter', this, false);
-            this.element.addEventListener('dragleave', this, false);
+    _styleFilterFunction: {
+        value: function(style, styleArray) {
+            var shorthands = ShorthandProps.CSS_SHORTHAND_MAP[style.name];
+
+            ///// No shorthands, return true to include style
+            if(!shorthands) { return true; }
+
+            var subProps = ShorthandProps.CSS_SHORTHAND_TO_SUBPROP_MAP[shorthands[0]],
+                stylesArray = styleArray,
+                hasAll;
+
+            debugger;
+            hasAll = subProps.every(function(subProp) {
+                debugger;
+                return this.declaration[subProp];
+            }, this);
+
+            if(hasAll) {
+                return false;
+            }
         }
     },
+
     _declaration: {
         value: null
     },
@@ -49,21 +72,17 @@ exports.StyleDeclaration = Montage.create(Component, {
             return this._declaration;
         },
         set: function(dec) {
-            if(this._declaration) {
-                this.arrayController.removeObjects(this.styles);
-            }
-console.log("dec being set", this);
-            this._declaration = dec;
+            var stylesArray;
 
+            if(this._declaration) {
+                this.styles = null;
+                this.styles = [];
+            }
+
+            ///// Take snapshot of declaration
             this.cssText = dec.cssText;
 
-            Array.prototype.slice.call(dec).forEach(function(prop, index) {
-                this.styles.push({
-                    name: prop,
-                    value: dec.getPropertyValue(prop)
-                });
-
-            }, this);
+            stylesArray = Array.prototype.slice.call(dec);
 
             if(this.includeEmptyStyle) {
                 this.styles.push({
@@ -72,127 +91,91 @@ console.log("dec being set", this);
                     "isEmpty": true
                 });
             }
-            ///// creates data structure to use with tree component
-            //this.buildStyleTree();
 
-//            if(this.includeEmptyStyle) {
-//                this.styleTree.properties.push({
-//                    "name": "property",
-//                    "value" : "value",
-//                    "isEmpty": true
-//                });
-//            }
+            stylesArray.forEach(function(prop, index) {
+                this.styles.push({
+                    name: prop,
+                    value: dec.getPropertyValue(prop)
+                });
+            }, this);
 
+            this._declaration = dec;
             this.needsDraw = true;
+        }
+    },
+
+    styleShorthander : {
+        value: function(styles) {
+            var shorthandsToAdd = [],
+                subProps, hasAll;
+
+            styles.forEach(function(property, index, styleArray) {
+                var shorthands = ShorthandProps.CSS_SHORTHAND_MAP[property];
+
+                if(!shorthands) { return false; }
+
+                var subProps = ShorthandProps.CSS_SHORTHAND_TO_SUBPROP_MAP[shorthands[0]],
+                    stylesArray = styleArray;
+
+                hasAll = subProps.every(function(subProp) {
+                    return stylesArray.indexOf(subProp) !== -1;
+                });
+
+                if(hasAll) {
+                    subProps.forEach(function(subProp) {
+                        stylesArray.splice(stylesArray.indexOf(subProp), 1);
+                    }, this);
+                    shorthandsToAdd.push(shorthands[0]);
+                }
+            }, this);
+
+            return styles.concat(shorthandsToAdd);
+        }
+    },
+
+    _getStyleToIndexMap : {
+        value: function() {
+            var map = {};
+
+            for(var i = 0; i<this.styles.length; i++) {
+                map[this.styles[i].name] = i;
+            }
+
+            return map;
         }
     },
 
     update : {
         value: function() {
             if(this.declaration.cssText !== this.cssText) {
-                ///// Needs update
-//debugger;
-
-                this.styles = null;
-                this.styles = [];
+                var usedIndices = [],
+                    styleToIndexMap = this._getStyleToIndexMap();
 
                 Array.prototype.slice.call(this.declaration).forEach(function(prop, index) {
-                    this.styles.push({
-                        name: prop,
-                        value: this.declaration.getPropertyValue(prop)
-                    });
+                    var i = styleToIndexMap[prop];
 
+                    ///// Style component exists for property
+                    ///// Update its value
+                    if(i) {
+                        this.styles[i].value = this.declaration.getPropertyValue(prop);
+                        usedIndices.push(i);
+                    }
                 }, this);
 
-                if(this.includeEmptyStyle) {
-                    this.styles.push({
-                        "name": "property",
-                        "value" : "value",
-                        "isEmpty": true
-                    });
-                }
-//debugger;
+                ///// Keep copy of cssText to know when we need to
+                ///// update the view
+                this.cssText = this.declaration.cssText;
                 this.needsDraw = true;
             }
         }
     },
 
-//    buildStyleTree : {
-//        value: function() {
-//            var styles = Array.prototype.slice.call(this._declaration).sort();
-//            this.styleTree = {
-//                properties : styles.map(this.styleTreeMapper, this)
-//            };
-//        }
-//    },
-    styleTreeMapper : {
-        value: function arrayToTreeMapper(property, i, styleArray) {
-            var shorthands = ShorthandProps.CSS_SHORTHAND_MAP[property],
-                subProps, hasAll;
-
-            ///// Is this a sub property of a shorthand property?
-            if(shorthands) {
-                //debugger;
-                ///// Yes.
-                ///// Now, are all sub properties in the declaration?
-                subProps = ShorthandProps.CSS_SHORTHAND_TO_SUBPROP_MAP[shorthands[0]];
-                hasAll = subProps.every(function(subProp) {
-                    return styleArray.indexOf(subProp) !== -1;
-                });
-
-                if(hasAll) {
-                    ///// It has all sub properties
-                    ///// Let's return a tree branch and remove the
-                    ///// sub properties from the flat array
-
-                    this._removeItemsFromArray(styleArray, subProps);
-
-                    return {
-                        name: shorthands[0],
-                        value: this._declaration.getPropertyValue(shorthands[0]),
-                        properties: subProps.map(function(p, i, array) {
-                            return {
-                                name: p,
-                                value: this._declaration.getPropertyValue(p)
-                            };
-                        }, this)
-                    };
-                }
-            }
-
-
-            return {
-                name: property,
-                value: this._declaration.getPropertyValue(property)
-            };
-        }
-    },
-    _removeItemsFromArray : {
-        value: function(array, items) {
-            items.forEach(function(item) {
-                var index = array.indexOf(item);
-                array.splice(index, 1);
-            }, this);
-        }
-    },
     styleTree : {
         value: {
             "properties" : []
         },
         distinct: true
     },
-
-//    addNewStyleAfter : {
-//        value: function(style) {
-//            style.parentComponent.parentComponent.contentController.addObjects({
-//                name: 'property',
-//                value: 'value',
-//                isEmpty: true,
-//                treeNodeType: 'leaf'
-//            });
-//            style.parentComponent.parentComponent.needsDraw = true;
-//        }
-//    },
 
     addNewStyle : {
         value: function() {
@@ -203,7 +186,6 @@ console.log("dec being set", this);
             });
         }
     },
-
 
     /* drag/drop events */
     handleDrop : {
@@ -234,11 +216,20 @@ console.log("dec being set", this);
         }
     },
 
-    draw: {
+    templateDidLoad : {
         value: function() {
-            if(this._declaration) {
-
+            if(this.focusDelegate) {
+                this.styleComponent.delegate = this.focusDelegate;
             }
+            this.arrayController.sortFunction = this._styleSortFunction;
+        }
+    },
+
+    prepareForDraw : {
+        value: function(e) {
+            this._element.addEventListener('drop', this, false);
+            this.element.addEventListener('dragenter', this, false);
+            this.element.addEventListener('dragleave', this, false);
         }
     },
 
