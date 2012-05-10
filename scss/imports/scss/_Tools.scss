@@ -114,28 +114,28 @@
     opacity:1;
 }
 
-.cornerRadius.topLeft
-{
+.cornerRadius.topLeft {
     -webkit-transform: rotate(0deg);
+	margin-top: 1px;
+	margin-right: 3px;
 }
 
-.cornerRadius.topRight
-{
+.cornerRadius.topRight {
     -webkit-transform: rotate(90deg);
-//     margin-right : -2px;
+	margin-right: 3px;
+	margin-top: 1px;
 }
 
-.cornerRadius.bottomLeft
-{
-//     margin-top: 3px;
+.cornerRadius.bottomLeft {
     -webkit-transform: rotate(270deg);
+	margin-right: 2px;
+     margin-top: -1px;
 }
 
-.cornerRadius.bottomRight
-{
-//     margin-top: 3px;
+.cornerRadius.bottomRight {
     -webkit-transform: rotate(180deg);
-//     margin-right : -2px;
+	margin-right: 4px;
+	margin-top: -1px;
 }
 
 #toolOptionsContainer
@@ -451,66 +451,66 @@ input[type="radio"]:disabled {
 }
 
 .alignTopIcon {
-	background-image: url("../images/tools/AlignTop.png");  
+	background-image: url("../images/optionsbar/selection/AlignTop.png");  
 }
 
 .alignMiddleIcon {
-	background-image: url("../images/tools/AlignMiddle.png");  
+	background-image: url("../images/optionsbar/selection/AlignMiddle.png");  
 }
 
 .alignBottomIcon {
-	background-image: url("../images/tools/AlignBottom.png");  
+	background-image: url("../images/optionsbar/selection/AlignBottom.png");  
 }
 
 .alignLeftIcon {
-	background-image: url("../images/tools/AlignLeft.png");  
+	background-image: url("../images/optionsbar/selection/AlignLeft.png");  
 }
 
 .alignCenterIcon {
-	background-image: url("../images/tools/AlignCenter.png");  
+	background-image: url("../images/optionsbar/selection/AlignCenter.png");  
 }
 
 .alignRightIcon {
-	background-image: url("../images/tools/AlignRight.png");  
+	background-image: url("../images/optionsbar/selection/AlignRight.png");  
 }
 
 .arrangeBringForwardIcon {
-	background-image: url("../images/tools/ArrangeBringForward.png");  
+	background-image: url("../images/optionsbar/selection/ArrangeBringForward.png");  
 }
 
 .arrangeSendBackwardIcon {
-	background-image: url("../images/tools/ArrangeSendBackward.png");  
+	background-image: url("../images/optionsbar/selection/ArrangeSendBackward.png");  
 }
 
 .arrangeBringToFrontIcon {
-	background-image: url("../images/tools/ArrangeBringToFront.png");  
+	background-image: url("../images/optionsbar/selection/ArrangeBringToFront.png");  
 }
 
 .arrangeSendToBackIcon {
-	background-image: url("../images/tools/ArrangeSendToBack.png");  
+	background-image: url("../images/optionsbar/selection/ArrangeSendToBack.png");  
 }
 
 .distTopIcon {
-	background-image: url("../images/tools/DistTop.png");  
+	background-image: url("../images/optionsbar/selection/DistTop.png");  
 }
 
 .distMiddleIcon {
-	background-image: url("../images/tools/DistMiddle.png");  
+	background-image: url("../images/optionsbar/selection/DistMiddle.png");  
 }
 
 .distBottomIcon {
-	background-image: url("../images/tools/DistBottom.png");  
+	background-image: url("../images/optionsbar/selection/DistBottom.png");  
 }
 
 .distLeftIcon {
-	background-image: url("../images/tools/DistLeft.png");  
+	background-image: url("../images/optionsbar/selection/DistLeft.png");  
 }
 
 .distCenterIcon {
-	background-image: url("../images/tools/DistCenter.png");  
+	background-image: url("../images/optionsbar/selection/DistCenter.png");  
 }
 
 .distRightIcon {
-	background-image: url("../images/tools/DistRight.png");  
+	background-image: url("../images/optionsbar/selection/DistRight.png");  
 }
 

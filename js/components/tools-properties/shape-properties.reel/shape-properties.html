@@ -118,6 +118,8 @@
                     "rectProperties": {"@": "rectProperties1"},
                     "lineProperties": {"@": "lineProperties1"},
 
+                    "endDivider": {"#": "endDivider"},
+
                     "components": [
                         {"@": "repetition1"}
                     ]
@@ -144,14 +146,14 @@
             <div class="nj-divider divider-vertical">&nbsp;</div>
             <label class="label">Stroke:</label>
             <div data-montage-id="strokeControl" class="label"></div>
+            <div class="nj-divider divider-vertical">&nbsp;</div>
             <div id="customProperties" class="shapeCustomProps">
                 <div data-montage-id="ovalProperties" class="label"></div>
                 <div data-montage-id="rectProperties" class="label"></div>
                 <div data-montage-id="lineProperties" class="label"></div>
             </div>
-
+            <div data-montage-id="endDivider" class="nj-divider divider-vertical toolOptionsSpacer">&nbsp;</div>
             <input data-montage-id="useWebGLCH" type="checkbox" name="useWebGLControl" class="nj-skinned"/><label class="label">Use WebGL</label>
-
             <label data-montage-id="materialLabel" class="label">Material:</label>
             <div data-montage-id="strokeIcon" class="toolColorChipIcon PencilTool"></div>
 
@@ -160,9 +162,7 @@
 
             <div data-montage-id="fillIcon" class="toolColorChipIcon FillTool"></div>
             <select class="selectBox" data-montage-id="fillMaterialCB">
-            </select>
-            
-            
+            </select>            
         </div>
     </body>
 

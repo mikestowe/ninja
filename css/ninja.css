@@ -701,13 +701,13 @@ nav.menuBar ul li:hover ul, nav.menuBar ul ul li:hover ul, nav.menuBar ul ul ul 
 
 .cornerRadius:hover, .cornerRadius:active { opacity: 1; }
 
-.cornerRadius.topLeft { -webkit-transform: rotate(0deg); }
+.cornerRadius.topLeft { -webkit-transform: rotate(0deg); margin-top: 1px; margin-right: 3px; }
 
-.cornerRadius.topRight { -webkit-transform: rotate(90deg); }
+.cornerRadius.topRight { -webkit-transform: rotate(90deg); margin-right: 3px; margin-top: 1px; }
 
-.cornerRadius.bottomLeft { -webkit-transform: rotate(270deg); }
+.cornerRadius.bottomLeft { -webkit-transform: rotate(270deg); margin-right: 2px; margin-top: -1px; }
 
-.cornerRadius.bottomRight { -webkit-transform: rotate(180deg); }
+.cornerRadius.bottomRight { -webkit-transform: rotate(180deg); margin-right: 4px; margin-top: -1px; }
 
 #toolOptionsContainer { display: inline; float: left; }
 
@@ -819,37 +819,37 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .selectionToolIcon { width: 16px; height: 16px; background-repeat: no-repeat; background-position: 1px 2px; }
 
-.alignTopIcon { background-image: url("../images/tools/AlignTop.png"); }
+.alignTopIcon { background-image: url("../images/optionsbar/selection/AlignTop.png"); }
 
-.alignMiddleIcon { background-image: url("../images/tools/AlignMiddle.png"); }
+.alignMiddleIcon { background-image: url("../images/optionsbar/selection/AlignMiddle.png"); }
 
-.alignBottomIcon { background-image: url("../images/tools/AlignBottom.png"); }
+.alignBottomIcon { background-image: url("../images/optionsbar/selection/AlignBottom.png"); }
 
-.alignLeftIcon { background-image: url("../images/tools/AlignLeft.png"); }
+.alignLeftIcon { background-image: url("../images/optionsbar/selection/AlignLeft.png"); }
 
-.alignCenterIcon { background-image: url("../images/tools/AlignCenter.png"); }
+.alignCenterIcon { background-image: url("../images/optionsbar/selection/AlignCenter.png"); }
 
-.alignRightIcon { background-image: url("../images/tools/AlignRight.png"); }
+.alignRightIcon { background-image: url("../images/optionsbar/selection/AlignRight.png"); }
 
-.arrangeBringForwardIcon { background-image: url("../images/tools/ArrangeBringForward.png"); }
+.arrangeBringForwardIcon { background-image: url("../images/optionsbar/selection/ArrangeBringForward.png"); }
 
-.arrangeSendBackwardIcon { background-image: url("../images/tools/ArrangeSendBackward.png"); }
+.arrangeSendBackwardIcon { background-image: url("../images/optionsbar/selection/ArrangeSendBackward.png"); }
 
-.arrangeBringToFrontIcon { background-image: url("../images/tools/ArrangeBringToFront.png"); }
+.arrangeBringToFrontIcon { background-image: url("../images/optionsbar/selection/ArrangeBringToFront.png"); }
 
-.arrangeSendToBackIcon { background-image: url("../images/tools/ArrangeSendToBack.png"); }
+.arrangeSendToBackIcon { background-image: url("../images/optionsbar/selection/ArrangeSendToBack.png"); }
 
-.distTopIcon { background-image: url("../images/tools/DistTop.png"); }
+.distTopIcon { background-image: url("../images/optionsbar/selection/DistTop.png"); }
 
-.distMiddleIcon { background-image: url("../images/tools/DistMiddle.png"); }
+.distMiddleIcon { background-image: url("../images/optionsbar/selection/DistMiddle.png"); }
 
-.distBottomIcon { background-image: url("../images/tools/DistBottom.png"); }
+.distBottomIcon { background-image: url("../images/optionsbar/selection/DistBottom.png"); }
 
-.distLeftIcon { background-image: url("../images/tools/DistLeft.png"); }
+.distLeftIcon { background-image: url("../images/optionsbar/selection/DistLeft.png"); }
 
-.distCenterIcon { background-image: url("../images/tools/DistCenter.png"); }
+.distCenterIcon { background-image: url("../images/optionsbar/selection/DistCenter.png"); }
 
-.distRightIcon { background-image: url("../images/tools/DistRight.png"); }
+.distRightIcon { background-image: url("../images/optionsbar/selection/DistRight.png"); }
 
 #toolsPanelContent { width: 40px; }
 
