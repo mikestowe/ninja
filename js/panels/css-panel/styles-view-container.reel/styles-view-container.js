@@ -14,6 +14,9 @@ exports.StylesViewContainer = Montage.create(Component, {
     contentPanel : {
         value: 'rules'
     },
+    _lastSelection : {
+        value: null
+    },
     _hasStyles : {
         value: false
     },
@@ -58,6 +61,10 @@ exports.StylesViewContainer = Montage.create(Component, {
     handleSelectionChange: {
         value: function() {
             var elements = this.application.ninja.selectedElements;
+
+            if(this._isSameArray(elements, this._lastSelection)) { console.log('new selection is identical');return false; }
+
+            this._lastSelection = elements;
 
             if(elements.length === 0) {
                 this.hasStyles = false;
@@ -128,6 +135,17 @@ exports.StylesViewContainer = Montage.create(Component, {
                 this.element.classList.add('no-styles');
                 this.selectionNameLabel.classList.add('no-styles');
             }
+        }
+    },
+
+    _isSameArray : {
+        value: function(left, right) {
+            if(!left || !right) { return false; }
+            if(left.length !== right.length) { return false; }
+
+            return left.every(function(item, i) {
+                return item === right[i];
+            });
         }
     }
 });
