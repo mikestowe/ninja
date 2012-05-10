@@ -12,7 +12,7 @@
     background-color: #FFF;
     background: #FFF -webkit-linear-gradient(top, rgba(0,0,0,0.12) 0%,rgba(0,0,0,0) 4px);
     color: #333;
-    display: -webkit-box;
+    display: block;
     font-family: monospace;
     padding: 0;
     margin: 0;
