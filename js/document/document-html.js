@@ -70,10 +70,11 @@ exports.HtmlDocument = Montage.create(Component, {
             //Creating instance of HTML Document Model
             this.model = Montage.create(HtmlDocumentModel,{
             	file: {value: file},
+            	parentContainer: {value: document.getElementById("iframeContainer")}, //Saving reference to parent container of all views (should be changed to buckets approach
             	views: {value: {'design': DesignDocumentView.create(), 'code': null}} //TODO: Add code view logic
             });
             //Initiliazing views and hiding
-           	if (this.model.views.design.initialize(document.getElementById("iframeContainer"))) {
+           	if (this.model.views.design.initialize(this.model.parentContainer)) {
            		//Hiding iFrame, just initiliazing
            		this.model.views.design.hide();
            	} else {
@@ -122,6 +123,40 @@ exports.HtmlDocument = Montage.create(Component, {
     	    this.loaded.callback.call(this.loaded.context, this);
     	    //Setting opacity to be viewable after load
 		   	this.model.views.design.iframe.style.opacity = 1;
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+	closeDocument: {
+		value: function () {
+			//
+			this.model.close(null, this.handleCloseDocument.bind(this));
+		}
+	},
+	////////////////////////////////////////////////////////////////////
+	//
+	handleCloseDocument: {
+		value: function (success) {
+			//TODO: Add logic for handling success or failure
+			//
+			this.application.ninja.documentController._documents.splice(this.uuid, 1);
+			//
+			NJevent("closeDocument", this.model.file.uri);
+			//TODO: Delete object here
+		}
+	},
+    ////////////////////////////////////////////////////////////////////
+	//
+    saveAppState: {
+    	value: function () {
+    		//TODO: Import functionality
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+    restoreAppState: {
+    	value: function () {
+    		//TODO: Import functionality
     	}
     }
     ////////////////////////////////////////////////////////////////////
