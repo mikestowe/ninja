@@ -346,7 +346,7 @@ exports.ComponentsPanel = Montage.create(Component, {
                     break;
                 case "select":
                     el = document.application.njUtils.make("select", null, this.application.ninja.currentDocument);
-                    document.application.njUtils.createModelForComponent(el, "Select");
+                    document.application.njUtils.createModelForComponent(el, "SelectInput");
                     break;
                 case "radioButton":
                     el = document.application.njUtils.make("input", null, this.application.ninja.currentDocument);
@@ -366,7 +366,7 @@ exports.ComponentsPanel = Montage.create(Component, {
                     break;
                 case "textarea":
                     el = document.application.njUtils.make("textarea", null, this.application.ninja.currentDocument);
-                    document.application.njUtils.createModelForComponent(el, "TextArea");
+                    document.application.njUtils.createModelForComponent(el, "Textarea");
                     break;
                 case "toggleButton":
                     el = document.application.njUtils.make("button", null, this.application.ninja.currentDocument);
