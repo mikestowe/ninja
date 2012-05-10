@@ -72,61 +72,6 @@ exports.StylesViewMediator = Montage.create(Component, {
         }
     },
 
-
-    /// Toolbar Button Actions
-    /// -----------------------
-
-    ///// Add rule button action
-    handleAddAction : {
-        value: function(e) {
-            var selector,
-                newRule,
-                applies = true;
-
-            ///// Get selection prefix
-            if(this.ruleListContainer.displayedList.selection.length > 1) {
-                selector = this.stylesController.generateClassName(null, true);
-            } else {
-                selector = this.stylesController.generateClassName(this.newClassPrefix);
-            }
-
-            ///// Create the rule with generated selector
-            newRule = this.application.ninja.stylesController.addRule('.'+selector, ' { }');
-
-            ///// Add the generated class to each element in selection
-            ///// and check whether it applies to the element
-            this.ruleListContainer.displayedList.selection.forEach(function(el) {
-                this.stylesController.addClass(el, selector);
-                
-                if(applies) {
-                    applies = (this._doesSelectorTargetElement('.'+selector, el));
-                }
-            },this);
-
-            ///// Add rule directly to the rule list
-            this.ruleListContainer.displayedList.component.addRule(newRule).applied = applies;
-
-        }
-    },
-
-    ///// Show/hide computed style sub panel
-    handleComputedAction : {
-        value: function(e) {
-            var container = this.ownerComponent,
-                panelToShow = (container.contentPanel === "computed") ? "rules" : "computed";
-
-            ///// Handle showing and hiding of the add button
-            if(panelToShow === "computed") {
-                container.toolbar.hideButton('add');
-            } else {
-                container.toolbar.showButton('add');
-            }
-
-            container.contentPanel = panelToShow;
-            this.ownerComponent.handleSelectionChange();
-        }
-    },
-
     ///// Style event handlers
     //// -------------------------------------
 
@@ -267,6 +212,60 @@ exports.StylesViewMediator = Montage.create(Component, {
             if(text.matches(/([a-zA-Z-]+:[a-zA-Z-]+){,1}/)) {
 
             }
+        }
+    },
+
+    /// Toolbar Button Actions
+    /// -----------------------
+
+    ///// Add rule button action
+    handleAddAction : {
+        value: function(e) {
+            var selector,
+                newRule,
+                applies = true;
+
+            ///// Get selection prefix
+            if(this.ruleListContainer.displayedList.selection.length > 1) {
+                selector = this.stylesController.generateClassName(null, true);
+            } else {
+                selector = this.stylesController.generateClassName(this.newClassPrefix);
+            }
+
+            ///// Create the rule with generated selector
+            newRule = this.application.ninja.stylesController.addRule('.'+selector, ' { }');
+
+            ///// Add the generated class to each element in selection
+            ///// and check whether it applies to the element
+            this.ruleListContainer.displayedList.selection.forEach(function(el) {
+                this.stylesController.addClass(el, selector);
+
+                if(applies) {
+                    applies = (this._doesSelectorTargetElement('.'+selector, el));
+                }
+            },this);
+
+            ///// Add rule directly to the rule list
+            this.ruleListContainer.displayedList.component.addRule(newRule).applied = applies;
+
+        }
+    },
+
+    ///// Show/hide computed style sub panel
+    handleComputedAction : {
+        value: function(e) {
+            var container = this.ownerComponent,
+                panelToShow = (container.contentPanel === "computed") ? "rules" : "computed";
+
+            ///// Handle showing and hiding of the add button
+            if(panelToShow === "computed") {
+                container.toolbar.hideButton('add');
+            } else {
+                container.toolbar.showButton('add');
+            }
+
+            container.contentPanel = panelToShow;
+            this.ownerComponent.handleSelectionChange();
         }
     },
 

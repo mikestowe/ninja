@@ -11,8 +11,8 @@ exports.RuleListContainer = Montage.create(Component, {
     _instanceToAdd     : { value: null },
     _appendElement     : { value: null },
     _lastDisplayedList : { value: null },
-    _displayedList     : { value: null },
 
+    _displayedList     : { value: null },
     displayedList : {
         get: function() {
             return this._displayedList;
@@ -74,22 +74,21 @@ exports.RuleListContainer = Montage.create(Component, {
     add : {
         value: function(selection) {
             var stylesController = this.application.ninja.stylesController,
-                listInstance = Montage.create(this.ruleListComponent),
+                instance = Montage.create(this.ruleListComponent),
                 container = document.createElement('div'),
                 rules, ruleListLog;
 
             rules = this.getRulesForSelection(selection);
 
-            this._instanceToAdd = listInstance;
-            listInstance.rules = rules;
+            this._instanceToAdd = instance;
+            instance.rules = rules;
 
             ruleListLog = {
                 selection: selection,
-                component : listInstance
+                component : instance
             };
 
             this.ruleLists.push(ruleListLog);
-
             this._appendElement = container;
             this.needsDraw = true;
 
@@ -120,17 +119,21 @@ exports.RuleListContainer = Montage.create(Component, {
 
     update : {
         value: function() {
-            var stylesController = this.application.ninja.stylesController,
-                rules = this.getRulesForSelection(this.displayedList.selection),
-                newRules;
+            this.displayedList.component.rules = this.getRulesForSelection(this.displayedList.selection);
 
-            newRules = rules.filter(function(rule) {
-                return rule.type !== 'inline' && this.displayedList.component.rules.indexOf(rule) === -1;
-            }, this);
 
-            newRules.forEach(function(rule) {
-                this.displayedList.component.addRule(rule);
-            },this);
+            ///// Update the currently displayed list
+            //this.displayedList.component.update();
+
+            ///// Find the new rules which need to be added to the rule-list
+//            newRules = rules.filter(function(rule) {
+//                return rule.type !== 'inline' && this.displayedList.component.rules.indexOf(rule) === -1;
+//            }, this);
+//
+//            ///// Add the new rules
+//            newRules.forEach(function(rule) {
+//                this.displayedList.component.addRule(rule);
+//            },this);
         }
     },
 

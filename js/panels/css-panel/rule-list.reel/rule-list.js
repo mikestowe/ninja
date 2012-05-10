@@ -12,35 +12,6 @@ exports.RuleList = Montage.create(Component, {
     ruleNodeName : { value: 'li' },
     _needsScrollToBottom: { value: null },
 
-    _rules: { value: null },
-    rules: {
-        get: function() {
-            return this._rules;
-        },
-        set: function(list) {
-            if(!list) {
-                return null;
-            }
-            //debugger;
-            console.log('list: ', list);
-            this._rules = list;
-
-            ///// remove previously added rules
-            if(this.childComponents){
-                this.childComponents.forEach(function(ruleComponent) {
-                    this.removeRule(ruleComponent);
-                }, this);
-            }
-
-            this._rules.forEach(function(rule) {
-                this.addRule(rule);
-            }, this);
-
-            this.needsDraw = true;
-
-        }
-    },
-
     childComponents : {
         value: [],
         distinct: true
@@ -54,51 +25,98 @@ exports.RuleList = Montage.create(Component, {
         value: [],
         distinct: true
     },
-    addRule: {
-        value: function(rule) {
-            var componentBase = this.supportedRules[rule.type],
-                instance, el;
-
-            ///// Draw the rule if we have a template for the rule type
-            if(componentBase) {
-                instance = Montage.create(componentBase);
-                instance.rule = rule;
-
-                if(this.focusDelegate) {
-                    instance.focusDelegate = this.focusDelegate;
-                }
-
-                this.rulesToDraw.push(instance);
-                this.needsDraw = true;
-            }
-
-            return instance;
-        }
-    },
-
-    removeRule : {
-        value: function(rule) {
-            this.childComponents.splice(this.childComponents.indexOf(rule), 1);
-            this.rulesToRemove.push(rule);
-            this.needsDraw = true;
-        }
-    },
 
     update : {
         value: function(rules) {
             this.childComponents.forEach(function(component) {
                 component.update();
             }, this);
+        }
+    },
 
-            //// TODO: find new styles based on selection
+    _rules: { value: null },
+    rules: {
+        get: function() {
+            return this._rules;
+        },
+        set: function(list) {
+            if(!list) {
+                return null;
+            }
 
+            var foundIndices = [];
+
+            //// Iterate existing rules, update those which rule exists in new
+            //// rule list
+            this.childComponents.forEach(function(ruleComponent, i, drawnRules) {
+                //// If rule exists in new list, update it
+                var index = list.indexOf(ruleComponent.rule);
+
+                if(ruleComponent.rule.type === 'inline') {
+                    //// Let's emulate finding the line rule at the first index
+                    index = 0;
+                }
+
+                if(index !== -1) {
+                    // found rule in our component list, or it's the inline rule
+                    ruleComponent.update();
+                    foundIndices.push(index);
+                } else {
+                    this.rulesToRemove.push(ruleComponent);
+                }
+            }, this);
+
+            //// Find rules to add
+            list.forEach(function(rule, index) {
+                //// If we haven't updated the rule already,
+                //// we're dealing with a new rule to add
+                if(foundIndices.indexOf(index) === -1) {
+                    this.addRule(rule, index);
+                }
+            }, this);
+
+            this._rules = list;
+
+            this.needsDraw = true;
+
+        }
+    },
+
+    addRule: {
+        value: function(rule, atIndex) {
+            var insertIndex = atIndex || this.childComponents.length;
+
+            this.rulesToDraw.push({
+                rule: rule,
+                index: insertIndex,
+                instance : null
+            });
+
+            this.needsDraw = true;
         }
     },
 
     willDraw : {
         value: function() {
-            this.rulesToDraw.forEach(function(component) {
-                component.element = document.createElement(this.ruleNodeName);
+            this.rulesToDraw.forEach(function(ruleObj) {
+                var el = document.createElement(this.ruleNodeName);
+
+                var componentBase = this.supportedRules[ruleObj.rule.type],
+                    instance;
+
+                ///// Draw the rule if we have a template for the rule type
+                if(!componentBase) { return false; }
+
+                instance = Montage.create(componentBase);
+                instance.element = document.createElement(this.ruleNodeName);
+                instance.rule = ruleObj.rule;
+
+                if(this.focusDelegate) {
+                    instance.focusDelegate = this.focusDelegate;
+                }
+
+                ruleObj.instance = instance;
+
             }, this);
 
         }
@@ -114,21 +132,41 @@ exports.RuleList = Montage.create(Component, {
                 this._needsScrollToBottom = false;
             }
 
-            //// Iterate through all rules that need draw and append them
-            this.rulesToDraw.forEach(function(component) {
-                this.element.appendChild(component.element);
-                this._needsScrollToBottom = this.needsDraw = true;
-                this.childComponents.push(component);
-                component.needsDraw = true;
+            //// Iterate through all rules needing removal
+            console.log("Rule List :: Rules to draw:,", this.rulesToDraw.length);
+            this.rulesToRemove.forEach(function(ruleComponent) {
+                var componentIndex = this.childComponents.indexOf(ruleComponent);
+                this.childComponents.splice(componentIndex, 1);
+                this.element.removeChild(ruleComponent.element);
             }, this);
 
             //// Iterate through all rules that need draw and append them
-            this.rulesToRemove.forEach(function(component) {
-                this.element.removeChild(component.element);
+            this.rulesToDraw.forEach(function(ruleObj) {
+                var ruleAtIndex = this.childComponents[ruleObj.index];
+
+                if(ruleAtIndex) {
+                    //// Insert rule at appropriate index
+                    this.element.insertBefore(ruleObj.instance.element, ruleAtIndex.element);
+                } else {
+                    this.element.appendChild(ruleObj.instance.element);
+                }
+
+                this._needsScrollToBottom = this.needsDraw = true;
+                this.childComponents.push(ruleObj.instance);
+                ruleObj.instance.needsDraw = true;
             }, this);
 
             ///// Null out any rules that were just drawn
             this.rulesToDraw.length = 0;
+
+        }
+    },
+
+    didDraw : {
+        value: function() {
+            this.rulesToRemove.forEach(function(ruleObj) {
+                ruleObj.instance = null;
+            }, this);
             this.rulesToRemove.length = 0;
         }
     }
