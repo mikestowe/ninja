@@ -11,7 +11,6 @@ exports.ComponentController = Montage.create(ElementController, {
 
     getProperty: {
         value: function(el, prop) {
-            console.log("safdasdasdasd");
             var component = el.controller || this.application.ninja.currentDocument.model.getComponentFromElement(el);
 
             switch(prop) {
