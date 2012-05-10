@@ -211,9 +211,14 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     ////////////////////////////////////////////////////////////////////
     handleExecuteFileClose:{
         value: function(event) {
-            if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
+        	if (this.activeDocument) {
+        		this.activeDocument.closeDocument();
+        	}
+            /*
+if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
                 this.closeDocument(this.activeDocument.uuid);
             }
+*/
         }
     },
     ////////////////////////////////////////////////////////////////////
