@@ -10,7 +10,7 @@ var Montage = 			require("montage/core/core").Montage,
 	Component = 		require("montage/ui/component").Component,
 	FileIo = 			require("js/io/system/fileio").FileIo,
 	ProjectIo = 		require("js/io/system/projectio").ProjectIo,
-	TemplateCreator = 	require("node_modules/tools/template-creator").TemplateCreator;
+	TemplateCreator = 	require("node_modules/tools/template/template-creator").TemplateCreator;
 ////////////////////////////////////////////////////////////////////////
 //
 exports.IoMediator = Montage.create(Component, {
@@ -205,15 +205,34 @@ exports.IoMediator = Montage.create(Component, {
             //Injecting head and body into old document
             template.file.content.document.head.innerHTML = template.head.innerHTML.replace(regexRootUrl, '');
             template.file.content.document.body.innerHTML = template.body.innerHTML.replace(regexRootUrl, '');
+            
+            
+            
+            /*
+//Testing using montage clean up method
+            var mjscode, mjsTemp = TemplateCreator.create();
+        	
+            //mjscode = mjsTemp.initWithHeadAndBodyElements(template.head, template.body);
+            //mjscode = mjsTemp.initWithDocument(template.file.content.document);
+            mjscode = mjsTemp.initWithDocument(template.document);
+            
+            console.log(template.head, mjscode._document.head);
+            template.file.content.document.head.innerHTML = mjscode._document.head.innerHTML.replace(regexRootUrl, '');
+            template.file.content.document.body.innerHTML = mjscode._document.body.innerHTML.replace(regexRootUrl, '');
+*/
+            
+            
+            
+            
             //Getting all CSS (style or link) tags
             var styletags = template.file.content.document.getElementsByTagName('style'),
     			linktags = template.file.content.document.getElementsByTagName('link'),
     			toremovetags = [],
-    			njtemplatetags = template.file.content.document.querySelectorAll('[data-ninja-template]'),
-    			basetags = template.file.content.document.getElementsByTagName('base');
+    			njtemplatetags = template.file.content.document.querySelectorAll('[data-ninja-template]');
     		
     		//////////////////////////////////////////////////
-    		//TODO: Remove, temp hack to avoid montage
+    		//TODO: Remove, temp hack, this is to be fixed by Montage
+    		var basetags = template.file.content.document.getElementsByTagName('base');
     		for (var g in basetags) {
     			if (basetags[g].getAttribute) toremovetags.push(basetags[g]);
     		}
@@ -469,9 +488,9 @@ function loadWebGL (e) {\n\
 
 
             //
-            var mjsCounter = 0, mjsComponents = [], temp = TemplateCreator.create();
-            //
-            for (var m in template.mjs) {
+            
+            /*
+for (var m in template.mjs) {
                 mjsComponents.push(template.mjs[m]);
                 mjsCounter++;
             }
@@ -509,6 +528,7 @@ function loadWebGL (e) {\n\
                 //
                 mjstag.innerHTML = mjscode;
             }
+*/
 
 
 
@@ -570,7 +590,8 @@ function loadWebGL (e) {\n\
     //
     getDocRootUrl: {
         value: function () {
-            return this.application.ninja.coreIoApi.rootUrl + escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
+        	//TODO: Add support for model.baseHref (base tag)
+        	return this.application.ninja.coreIoApi.rootUrl + escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
         }
     },
     ////////////////////////////////////////////////////////////////////
