@@ -230,64 +230,19 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 				else
 					parentPt = [xScreen, yScreen, 0.0];
 
-                var eyePt = [];
-				var vec = viewUtils.parentToChildVec(parentPt, stage, eyePt);
-				if (vec)
-				{
-					// activate the drag working plane
-					if (!snap3D && this.hasDragPlane())
-						this.activateDragPlane();
+				var hitRec = this.snapToStage( parentPt,  quadPt );
 
-					// project to the working plane
-					var currentWorkingPlane = workingPlane.slice(0);
-					var wp = currentWorkingPlane.slice(0);
-					var mat = viewUtils.getMatrixFromElement(stage);
-					wp = MathUtils.transformPlane(wp, mat);
-					var projPt = MathUtils.vecIntersectPlane(eyePt, vec, wp);
-					if (projPt)
-					{
-						// the local point gets stored in the coordinate space of the plane
-						var wpMat = drawUtils.getPlaneToWorldMatrix(currentWorkingPlane, MathUtils.getPointOnPlane(currentWorkingPlane));
-						projPt[3] = 1.0;
-						//var planeToViewMat = mat.multiply(wpMat);
-						var planeToViewMat = glmat4.multiply(mat, wpMat, []);
-						//var viewToPlaneMat = planeToViewMat.inverse();
-						var viewToPlaneMat = glmat4.inverse( planeToViewMat, [] );
-						var planePt = projPt.slice(0);
-						planePt[3] = 1.0;
-						//planePt = viewToPlaneMat.multiply(planePt);
-						planePt = glmat4.multiplyVec3( viewToPlaneMat, planePt );
+				// try snapping to the 3D grid, or to the stage boundaries if the grid is not displayed
+				if (this.gridSnapEnabled())
+					this.snapToGrid( hitRec );
 
-						// get the screen position of the projected point
-						viewUtils.setViewportObj(stage);
-						var offset = viewUtils.getElementOffset(stage);
-						offset[2] = 0;
-						var scrPt = viewUtils.viewToScreen(projPt);
-						//scrPt = scrPt.add(offset);
-						scrPt = vecUtils.vecAdd(3, scrPt, offset);
+				// save the hit record
+				hitRecArray.push( hitRec );
 
-						// create the hit record
-						var hitRec = Object.create(HitRecord);//new HitRecord();
-						hitRec.setLocalPoint(planePt);
-						hitRec.setPlaneMatrix( wpMat );
-						hitRec.setScreenPoint(scrPt);
-						hitRec.setPlane(currentWorkingPlane);
-						hitRec.setType( hitRec.SNAP_TYPE_STAGE );
-						hitRec.setElt( stage );
-						if (quadPt)  hitRec.setUseQuadPoint( true );
+				// restore the original working plane
+				if (!snap3D && this.hasDragPlane())
+					this.deactivateDragPlane();
 
-						// try snapping to the 3D grid, or to the stage boundaries if the grid is not displayed
-						if (this.gridSnapEnabled())
-							this.snapToGrid( hitRec );
-
-						// save the hit record
-						hitRecArray.push( hitRec );
-
-						// restore the original working plane
-						if (!snap3D && this.hasDragPlane())
-							this.deactivateDragPlane();
-					}
-				}
 			}	//if (hitRecArray.length == 0)
 
 			var rtnHit;
@@ -309,6 +264,62 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 			
 			//rtnHit.test();		// DEBUG CODE.  REMOVE THIS
 			return rtnHit;
+		}
+	},
+
+	snapToStage:
+	{
+		value: function( scrPt,  quadPt )
+		{
+			var stage = this.getStage();
+			var l2g = viewUtils.getLocalToGlobalMatrix( stage );
+			var g2l = glmat4.inverse( l2g, [] );
+
+			var pt0 = scrPt.slice(),  pt1 = scrPt.slice();
+			pt0[2] = 0.0;   pt1[2] = 10;
+
+			var localPt0 = MathUtils.transformAndDivideHomogeneousPoint( pt0, g2l ),
+				localPt1 = MathUtils.transformAndDivideHomogeneousPoint( pt1, g2l );
+
+			var stageWorldPt0 = viewUtils.localToStageWorld( localPt0, stage ),
+				stageWorldPt1 = viewUtils.localToStageWorld( localPt1, stage );
+			var vec = vecUtils.vecSubtract( 3,  stageWorldPt1, stageWorldPt0 );
+			
+			var ptOnWorkingPlane = MathUtils.vecIntersectPlane(stageWorldPt0, vec, workingPlane);
+
+			var wpMat = drawUtils.getPlaneToWorldMatrix(workingPlane, MathUtils.getPointOnPlane(workingPlane)),
+				wpMatInv = glmat4.inverse( wpMat, [] );
+			var localPt = MathUtils.transformPoint( ptOnWorkingPlane, wpMatInv );
+
+			// create the hit record
+			var hitRec = Object.create(HitRecord);
+			hitRec.setLocalPoint( localPt );
+			hitRec.setPlaneMatrix( wpMat );
+			hitRec.setScreenPoint(scrPt);
+			hitRec.setPlane(workingPlane);
+			hitRec.setType( hitRec.SNAP_TYPE_STAGE );
+			hitRec.setElt( stage );
+			if (quadPt)  hitRec.setUseQuadPoint( true );
+
+			// DEBUG CODE
+			// check that the point is on the working plane
+			var tmpStageWorldPt = hitRec.calculateStageWorldPoint();
+			var err = vecUtils.vecDot(3, tmpStageWorldPt, workingPlane) + workingPlane[3];
+			if (MathUtils.fpSign(err) !== 0)
+				console.log( "snapToStage (function) not on working plane: " + err );
+			//////////////////////////////////////////////////////////////////////
+
+			var calculatedScreenPt = hitRec.calculateScreenPoint();
+			hitRec.setScreenPoint(calculatedScreenPt);
+
+			// DEBUG CODE
+			// check that the point is on the working plane
+			var err2 = vecUtils.vecDist(2,  calculatedScreenPt, scrPt );
+			if (MathUtils.fpSign(err2) !== 0)
+				console.log( "snapToStage (function) error in screen point: " + err2 );
+			//////////////////////////////////////////////////////////////////////
+
+			return hitRec;
 		}
 	},
 
@@ -481,7 +492,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
 				this._elementCache = null;
 			}
-			//console.log( "clear 2D cache" );
+			console.log( "clear 2D cache" );
 		}
 	},
 
@@ -494,7 +505,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 			this.hLoadElementCache( stage,  plane, 0 );
             this._isCacheInvalid = false;
 
-			//console.log( "2D cache loaded with " + this._elementCache.length + " elements" );
+			console.log( "2D cache loaded with " + this._elementCache.length + " elements" );
 		}
 	},
 
@@ -1779,7 +1790,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
 					if (hSnap && vSnap)
 					{
-						//console.log( "\tmerge 1" );
+						console.log( "\tmerge 1" );
 
 						// intersect the 2 lines on the plane
 						var hPt = hSnap.getLocalPoint(),
@@ -1828,7 +1839,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
 					if (hSnap && vSnap)
 					{
-						//console.log( "\tmerge 2" );
+						console.log( "\tmerge 2" );
 
 						// intersect the 2 lines on the plane
 						var hPt = hSnap.getLocalPoint(),
@@ -1881,7 +1892,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
 						if (hSnap && vSnap)
 						{
-							//console.log( "merge edge" );
+							console.log( "merge edge" );
 
 							var hPt = hSnap.getLocalPoint(),
 								vPt = vSnap.getLocalPoint();
@@ -1944,6 +1955,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 			this._stageWorldToGlobalMat = viewUtils.getStageWorldToGlobalMatrix();
 			//this._globalToStageWorldMat = this._stageWorldToGlobalMat.inverse();
 			this._globalToStageWorldMat = glmat4.inverse( this._stageWorldToGlobalMat, [] );
+
+			console.log( "setupDragPlane: " + this._dragPlane );
 
 			// load the 2D elements
 			this.load2DCache( this._dragPlane );
