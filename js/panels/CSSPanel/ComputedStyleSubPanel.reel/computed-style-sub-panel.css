@@ -4,7 +4,7 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
-#nj-css-filter-panel {
+.nj-css-filter-panel {
     background-color: #474747;
     box-shadow: 0 1px 1px #505050;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -25,39 +25,37 @@
     font-family: 'Droid Sans', sans-serif;
     overflow-y: scroll;
 }
-#nj-css-filter, #nj-css-group-select {
+.nj-css-filter-input, .nj-css-group-select {
     width: 42%;
 }
-#nj-css-filter {
+.nj-css-filter-input{
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1%2BjfqAAAACXBIWXMAAAsTAAALEwEAmpwYAAADGGlDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjaY2BgnuDo4uTKJMDAUFBUUuQe5BgZERmlwH6egY2BmYGBgYGBITG5uMAxIMCHgYGBIS8%2FL5UBFTAyMHy7xsDIwMDAcFnX0cXJlYE0wJpcUFTCwMBwgIGBwSgltTiZgYHhCwMDQ3p5SUEJAwNjDAMDg0hSdkEJAwNjAQMDg0h2SJAzAwNjCwMDE09JakUJAwMDg3N%2BQWVRZnpGiYKhpaWlgmNKflKqQnBlcUlqbrGCZ15yflFBflFiSWoKAwMD1A4GBgYGXpf8EgX3xMw8BSMDVQYqg4jIKAUICxE%2BCDEESC4tKoMHJQODAIMCgwGDA0MAQyJDPcMChqMMbxjFGV0YSxlXMN5jEmMKYprAdIFZmDmSeSHzGxZLlg6WW6x6rK2s99gs2aaxfWMPZ9%2FNocTRxfGFM5HzApcj1xZuTe4FPFI8U3mFeCfxCfNN45fhXyygI7BD0FXwilCq0A%2FhXhEVkb2i4aJfxCaJG4lfkaiQlJM8JpUvLS19QqZMVl32llyfvIv8H4WtioVKekpvldeqFKiaqP5UO6jepRGqqaT5QeuA9iSdVF0rPUG9V%2FpHDBYY1hrFGNuayJsym740u2C%2B02KJ5QSrOutcmzjbQDtXe2sHY0cdJzVnJRcFV3k3BXdlD3VPXS8Tbxsfd99gvwT%2F%2FID6wIlBS4N3hVwMfRnOFCEXaRUVEV0RMzN2T9yDBLZE3aSw5IaUNak30zkyLDIzs%2BZmX8xlz7PPryjYVPiuWLskq3RV2ZsK%2FcqSql01jLVedVPrHzbqNdU0n22VaytsP9op3VXUfbpXta%2Bx%2F%2B5Em0mzJ%2F%2BdGj%2Ft8AyNmf2zvs9JmHt6vvmCpYtEFrcu%2BbYsc%2Fm9lSGrTq9xWbtvveWGbZtMNm%2FZarJt%2Bw6rnft3u%2B45uy9s%2F4ODOYd%2BHmk%2FJn58xUnrU%2BfOJJ%2F9dX7SRe1LR68kXv13fc5Nm1t379TfU75%2F4mHeY7En%2B59lvhB5efB1%2Flv5dxc%2BNH0y%2Ffzq64Lv4T8Ffp360%2FrP8f9%2FAA0ADzT6lvFdAAAAIGNIUk0AAHolAACAgwAA%2Bf8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAE6SURBVHjahJFNSwJhFIWfd2aYYMTKJEJMpOjLVv2CVrUKitpEBa3atcmglu1Cd%2F2CVlG4DP9Cyz4oiiSoxFwYTIYY1uiob4uZYbCFne09PPece4WkuzQAgT2h7skQmsxoGX8oAQXAmmyn62Hz6rPY2n9eRO1ASCRfx9Xz2DSzzGcPzYu5iGeRSIdQH8xdFqMY2OmbuiZGMRAewFmhyHFUCjxs1VByBsE%2FIQvZ4e3Tt%2FL7clzsmHe6ho7ArSckIIZSG0srelPTGvfNKcs6OTi6pu20cAxBxgaiMZtyPJxK6QHr5XF39QnpG1T6iRJCQVlPJDcDfY3SzALfUroZaFGhgUkP8systJNrpVdiFPjxCG4eBAKDERL0kudWfngE%2Fy5QI0%2BTCFWafovO%2Fyj0YNCiJm3X0E3KP3N%2BBwBmgXFVnpvsaQAAAABJRU5ErkJggg%3D%3D);
     background-position: 1px 1px;
     background-repeat: no-repeat;
     padding-left: 11px;
-}
-#nj-css-filter {
     margin-right: 4%;
 }
-#nj-css-group-select {
+.nj-css-group-select {
     padding-left: 5px;
 }
 /* ----------------------------------------
         Computed Style List
 ---------------------------------------- */
-#nj-css-computed-list > div {
+.nj-css-computed-list > div {
     margin: 0 15px;
     border-bottom: 1px solid #505050;
     padding: 1px 0;
 }
-#nj-css-computed-list > div:last-child {
+.nj-css-computed-list > div:last-child {
     margin-bottom: 10px;
 }
-#nj-css-computed-list {
+.nj-css-computed-list {
     margin-top: 7px;
 }
-#nj-css-computed-list dt, #nj-css-computed-list dd {
+.nj-css-computed-list dt, .nj-css-computed-list dd {
     cursor: default;
 }
-#nj-css-computed-list dt {
+.nj-css-style-list.nj-css-computed-list dt {
     color: #FFF;
     width: 55%;
 }
