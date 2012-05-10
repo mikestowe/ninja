@@ -8,10 +8,55 @@ var Montage = require("montage/core/core").Montage,
     ShapesController = require("js/controllers/elements/shapes-controller").ShapesController,
     ToolProperties = require("js/components/tools-properties/tool-properties").ToolProperties;
 
-exports.FillProperties = Montage.create(ToolProperties, {
+var FillProperties = exports.FillProperties = Montage.create(ToolProperties, {
 
-    _use3D:    { value: false },
-    
+    _use3D: { value: false },
+    addedColorChips: { value: false },
+
+    _fill: {
+        enumerable: false,
+        value: { colorMode: 'rgb', color: { r: 0, g: 0, b: 0, a: 1, css: 'rgb(0,0,0)', mode: 'rgb', wasSetByCode: true, type: 'change' }, webGlColor: [0, 0, 0, 1] }
+    },
+
+    fill: {
+        enumerable: true,
+        get: function () {
+            return this._fill;
+        },
+        set: function (value) {
+            if (value !== this._fill) {
+                this._fill = value;
+            }
+        }
+    },
+
+    draw: {
+        enumerable: false,
+        value: function () {
+            Object.getPrototypeOf(FillProperties).draw.call(this);
+
+            if (this.addedColorChips === false && this.application.ninja.colorController.colorPanelDrawn) {
+                this._fillColorCtrl.props = { side: 'top', align: 'center', wheel: true, palette: true, gradient: false, image: false, nocolor: true, offset: -80 };
+                this.application.ninja.colorController.addButton("chip", this._fillColorCtrl);
+
+                this._fillColorCtrl.addEventListener("change", this.handleFillColorChange.bind(this), false);
+
+                this.addedColorChips = true;
+            }
+
+            if (this.addedColorChips) {
+                this._fillColorCtrl.color(this._fill.colorMode, this._fill.color);
+            }
+        }
+    },
+
+    handleFillColorChange: {
+        value: function (e) {
+            this.fill = e._event;
+            this.fill.webGlColor = this.application.ninja.colorController.colorModel.colorToWebGl(e._event.color);
+        }
+    },
+
     _subPrepare: {
         value: function() {
             Object.defineBinding(this._fillMaterial, "items", {

@@ -136,6 +136,8 @@
                 "properties": {
                     "element": {"#": "inkBottleProperties"},
 
+                    "_strokeColorCtrl": {"#": "strokeColorCtrl"},
+
                     "useBorderWidth": {"@": "borderWidthCh"},
                     "borderWidthLabel": {"@": "borderWidthLabel"},
                     "_borderWidth": {"@": "borderWidthHT"},
@@ -154,13 +156,17 @@
                 }
             }
         }
-	    </script>
+        </script>
         
     </head>
 
     <body>
         <div data-montage-id="inkBottleProperties" class="subToolHolderPanel inkBottleOptions toolOptionsFloatChildren">
             <div data-montage-id="elementInkOptions" class="toolOptionsFloatChildren">
+                <div class="toolColorChipIcon PencilTool"></div>
+                <div data-montage-id="strokeColorCtrl" class="toolColorChipCtrl"></div>
+                <div class="nj-divider divider-vertical toolOptionsSpacer">&nbsp;</div>
+
                 <input data-montage-id="useBorderWidthCh" type="checkbox" name="useBorderWidthControl" class="nj-skinned" title="Apply border-width"/>
                 <label data-montage-id="borderWidthLabel" class="label"> Border:</label>
                 <div data-montage-id="borderWidth" class="label"></div>

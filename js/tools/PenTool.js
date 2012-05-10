@@ -592,7 +592,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                     var strokeColor = subpath.getStrokeColor();
                     newCanvas.elementModel.shapeModel.stroke = strokeColor;
                     if(strokeColor) {
-                        newCanvas.elementModel.shapeModel.border = this.application.ninja.colorController.colorToolbar.stroke;
+                        newCanvas.elementModel.shapeModel.border = this.options.stroke;
                     }
                     newCanvas.elementModel.shapeModel.GLGeomObj = subpath;
                     newCanvas.elementModel.shapeModel.useWebGl = false;//this.options.use3D;
