@@ -71,6 +71,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 	//
 	render: {
         value: function (callback, template) {//TODO: Add support for templates
+        	this.application.ninja.documentController._hackRootFlag = false;
         	//Storing callback for dispatch ready
         	this._callback = callback;
         	//Adding listener to know when template is loaded to then load user content
@@ -83,6 +84,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 	//
     onTemplateLoad: {
         value: function (e) {
+        	this.application.ninja.documentController._hackRootFlag = true;
         	//TODO: Add support to constructing URL with a base HREF
         	var basetag = this.content.document.getElementsByTagName('base');
         	//Removing event

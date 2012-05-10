@@ -89,8 +89,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     			
     			
 	//TODO: Ensure these APIs are not needed
-	/*
-////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////
 	//
     handleWebRequest: {
     	value: function (request) {
@@ -100,7 +99,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     			//console.log(request);
     			//console.log(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1], request.url);
 				//return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split('/')[request.url.split('/').length-1]};
-				return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/montage-html/'))[1]};
+				return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/montage-web/'))[1]};
 			}
 		}
     },
@@ -120,7 +119,6 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         }
     },
 	////////////////////////////////////////////////////////////////////
-*/
 
 
 	
