@@ -204,14 +204,6 @@ body { position: absolute; margin: 0px; width: 100%; height: 100%; background-co
 
 .layoutCanvas { position: absolute; margin: 0px; border: none; padding: 0px; top: 0px; left: 0px; z-index: 4; }
 
-#codeViewContainer { position: absolute; top: 0px; left: 0px; margin: 0px; padding: 0px; background: black; width: 100%; height: 100%; display: none; }
-
-#mainContent #codeMirror_1 { height: 100%; }
-
-#mainContent .CodeMirror { width: 100%; height: 100%; background: white; }
-
-#mainContent .CodeMirror-scroll { height: 100%; overflow: auto; }
-
 .montage-editor-frame { position: absolute; z-index: 7; top: 0; left: 0; display: none; -webkit-user-select: initial; }
 
 .montage-editor { padding: 0px; word-wrap: normal; }

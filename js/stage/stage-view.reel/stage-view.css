@@ -17,29 +17,20 @@
   cursor:text;
 }
 
+.codeViewContainer .CodeMirror {
+    width: 100%;
+    height: 100%;
+    background: white;
+}
+
+.codeViewContainer .CodeMirror-scroll {
+    height: 100%;
+    overflow: auto;
+}
+
 .codeViewContainer>div{
     width:2500px;/*to prevent scrolling of editor container in the middle of the page for short files*/
 }
-
-/* OLD CSS for reference
-#mainContent #codeMirror_1 {
-    height:100%;
-}
-*/
-
-/*.CodeMirror {*/
-    /*width: 100%;*/
-    /*height: 100%;*/
-    /*background: white;*/
-/*}*/
-
-/*.CodeMirror .CodeMirror-scroll {*/
-    /*height: 100%;*/
-    /*overflow: scroll;*/
-    /*overflow-x: auto;*/
-    /*overflow-y: auto;*/
-/*}*/
-
 
 span.CodeMirror-matchhighlight { background: #e9e9e9 }
 .CodeMirror-focused span.CodeMirror-matchhighlight { background: #e7e4ff; !important }
