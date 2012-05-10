@@ -21,7 +21,6 @@ exports.Toolbar = Montage.create(Component, {
         set: function(btns) {
             this._buttons = btns;
             this._needsButtonProperties = true;
-            console.log("buttons set");
         }
     },
 
@@ -64,7 +63,6 @@ exports.Toolbar = Montage.create(Component, {
 
     prepareForDraw : {
         value: function() {
-            console.log("toolbar - prepare for draw");
             if(this._needsButtonProperties) {
                 this.repetition.childComponents.forEach(function(button) {
                     button.identifier = button.sourceObject.identifier;
@@ -75,7 +73,6 @@ exports.Toolbar = Montage.create(Component, {
     },
     draw : {
         value: function() {
-            console.log("toolbar - draw - repetition ", this.repetition);
             if(this._needsClass) {
 
                 this.repetition.childComponents.forEach(function(button) {
