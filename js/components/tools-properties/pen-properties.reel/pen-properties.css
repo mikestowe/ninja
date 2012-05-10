@@ -5,24 +5,8 @@
  </copyright> */
 
  .optionsPenTool {
-    padding: 6px;
 }
 
  .optionsPenTool > * {
     float:left;
-}
-
- .optionsPenTool .fillColorCtrl,  .optionsPenTool .strokeColorCtrl {
-    width: 20px;
-    height: 18px;
-    margin-left: 3px;    
-    margin-right: 8px;    
-    border: 1px black solid;
-}
-
- .optionsPenTool .colorCtrlIcon {
-    width: 20px;
-    height: 20px;
-    -webkit-transform: scale(0.8);
-    background-color: rgb(40, 40, 40);
 }

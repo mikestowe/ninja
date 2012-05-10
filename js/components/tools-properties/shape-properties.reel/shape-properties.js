@@ -16,7 +16,6 @@ var ShapeProperties = exports.ShapeProperties = Montage.create(ToolProperties, {
     _fill: {
         enumerable: false,
         value: { colorMode: 'rgb', color: { r: 255, g: 255, b: 255, a: 1, css: 'rgb(255,255,255)', mode: 'rgb', wasSetByCode: true, type: 'change' }, webGlColor: [1, 1, 1, 1] }
-        //this._fillColorCtrl.color('nocolor', null);
     },
 
     _stroke: {

@@ -16,7 +16,7 @@
 }
 
 .rectProperties .subToolButton {
-    float:left;
+    margin-right: 7px;
 }
 
 .rectProperties .button:hover

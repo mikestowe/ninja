@@ -526,10 +526,6 @@ div.pp-button.button-divider div { height: 1px; width: 24px; background-color: b
 
 #pp-container-assets input.inline-editor { height: 11px; width: 80%; background-color: #242424 !important; color: #b2b2b2 !important; top: -2px; border-width: 0px; font-size: 11px; }
 
-.subToolHolderPanel { margin-left: 42px; }
-
-.subToolPanel { margin-top: -6px; }
-
 .properties_panel { overflow-x: hidden; color: white; }
 
 .properties_panel select { -webkit-appearance: none; font-size: 9px; color: white; background-color: #444444; border: 1px solid #313131; width: 120px; height: 15px; outline: none; background-image: url("../images/dropdown-bg.png"); background-repeat: no-repeat; background-position: right center; }
@@ -677,25 +673,19 @@ nav.menuBar ul ul, nav.menuBar ul li:hover ul ul, nav.menuBar ul ul li:hover ul 
 
 nav.menuBar ul li:hover ul, nav.menuBar ul ul li:hover ul, nav.menuBar ul ul ul li:hover ul { display: block; }
 
+.subToolHolderPanel { margin-left: 42px; padding: 6px; float: left; }
+
 .subToolHolderPanel .toolbutton { float: left; -webkit-transform: scale(0.6); margin-top: -4px; }
 
 .subToolHolderPanel .toolbutton:hover, .subToolHolderPanel .toolbutton.active { -webkit-transform: scale(0.75); }
 
+.toolOptionsFloatChildren > * { float: left; }
+
 .toolOptionsSpacer { margin-right: 9px; }
 
-.toolSeparator { height: 1px; width: 30px; }
+.toolColorChipCtrl { width: 18px; height: 18px; margin-top: 1px; margin-left: 3px; margin-right: 8px; border: 1px black solid; }
 
-.toolSeparatorTop { margin-top: 3px; margin-bottom: 0px; }
-
-.toolSeparatorMiddle { margin-top: 0px; margin-bottom: 0px; }
-
-.toolSeparatorBottom { margin-top: 0px; margin-bottom: 3px; }
-
-.toolImageBase { padding: 0px; width: 26px; height: 23px; opacity: 0.7; background-repeat: no-repeat; }
-
-.toolImageBase:hover { opacity: 1.0; }
-
-.drawingMode { outline: blue solid thin; }
+.toolColorChipIcon { width: 20px; height: 20px; margin-top: 1px; -webkit-transform: scale(0.8); background-color: #282828; }
 
 .textBox { padding-top: 3px; min-width: 10em; margin-left: 5px; position: relative; margin-top: 0px; }
 
@@ -713,11 +703,11 @@ nav.menuBar ul li:hover ul, nav.menuBar ul ul li:hover ul, nav.menuBar ul ul ul 
 
 .cornerRadius.topLeft { -webkit-transform: rotate(0deg); }
 
-.cornerRadius.topRight { -webkit-transform: rotate(90deg); margin-right: -2px; }
+.cornerRadius.topRight { -webkit-transform: rotate(90deg); }
 
-.cornerRadius.bottomLeft { margin-top: 3px; -webkit-transform: rotate(270deg); }
+.cornerRadius.bottomLeft { -webkit-transform: rotate(270deg); }
 
-.cornerRadius.bottomRight { margin-top: 3px; -webkit-transform: rotate(180deg); margin-right: -2px; }
+.cornerRadius.bottomRight { -webkit-transform: rotate(180deg); }
 
 #toolOptionsContainer { display: inline; float: left; }
 
@@ -761,7 +751,7 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .optionLabel { margin-top: 5px; }
 
-.tagRadioButtons input.tag-type { background: none; width: 20px; height: 20px; display: block; float: left; margin: 0px; padding: 0px; margin-right: 5px; margin-top: 4px; background-repeat: no-repeat; opacity: 0.8; text-indent: -9999px; cursor: pointer; -webkit-border-radius: 3px; -webkit-user-select: none; border: 1px solid transparent; }
+.tagRadioButtons input.tag-type { background: none; width: 20px; height: 20px; display: block; float: left; margin: 0px; padding: 0px; margin-right: 5px; margin-top: 0px; background-repeat: no-repeat; opacity: 0.8; text-indent: -9999px; cursor: pointer; -webkit-border-radius: 3px; -webkit-user-select: none; border: 1px solid transparent; }
 
 .tagRadioButtons input.tag-type { background-image: url("../images/tools/sprite-toolbar-tag.png"); }
 
@@ -791,15 +781,11 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .tagRadioButtons input.customTool:checked { background-position: 0px -20px; }
 
-.tagRadioButtons .nj-divider { height: 100%; float: left; position: relative; top: 5px; }
+.tagRadioButtons .nj-divider { height: 100%; float: left; position: relative; }
 
-.tagRadioButtons select.nj-skinned { visibility: visible; position: relative; }
+.tagRadioButtons select.nj-skinned { visibility: visible; position: relative; margin-top: 1px; }
 
 .tagRadioButtons select[disabled="true"].nj-skinned, .tagRadioButtons select[disabled].nj-skinned { visibility: hidden; }
-
-.tagRadioButtons .fillColorCtrl { width: 18px; height: 18px; margin-top: 6px; margin-left: 3px; margin-right: 8px; border: 1px black solid; }
-
-.tagRadioButtons .colorCtrlIcon { width: 20px; height: 20px; margin-top: 6px; -webkit-transform: scale(0.8); background-color: #282828; }
 
 #zoomToolOptionHolder input#zoomInTool:checked { border-style: solid; border-width: 1px; border-color: white; background-image: url("../images/optionsbar/zoom/zoom_plus.png"); background-repeat: no-repeat; background-position: 4px 3px; }
 
@@ -811,7 +797,7 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 #zoomToolOptionHolder input.zoom-option { background: none; }
 
-.object3DToolContainer input.tag-type { background: none; width: 20px; height: 20px; display: block; float: left; margin: 0px; padding: 0px; margin-right: 5px; margin-top: 4px; background-repeat: no-repeat; opacity: 0.8; text-indent: -9999px; cursor: pointer; -webkit-border-radius: 3px; -webkit-user-select: none; border: 1px solid transparent; }
+.object3DToolContainer input.tag-type { background: none; width: 20px; height: 20px; display: block; float: left; margin: 0px; margin-right: 5px; background-repeat: no-repeat; opacity: 0.8; text-indent: -9999px; cursor: pointer; -webkit-border-radius: 3px; -webkit-user-select: none; border: 1px solid transparent; }
 
 .object3DToolContainer input.tag-type { background-image: url("../images/tools/sprite-toolbar-3d.png"); }
 
@@ -828,10 +814,6 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 .object3DToolContainer input.rotateGlobally { background-position: 0px 0px; }
 
 .object3DToolContainer input.rotateGlobally:checked { background-position: 0px -20px; }
-
-.optionsSelectionTool { padding: 6px; }
-
-.optionsSelectionTool > * { float: left; }
 
 .optionsSelectionTool button { padding-top: 0px; }
 

@@ -11,8 +11,11 @@
 // _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss
 // 
   
-
-// Made changes to toolButton  }
+.subToolHolderPanel {
+    margin-left: 42px;
+    padding: 6px;
+    float:left;
+}
 
 .subToolHolderPanel .toolbutton {
     float:left;
@@ -24,53 +27,37 @@
     -webkit-transform: scale(0.75);
 }
 
-.toolOptionsSpacer{
+.toolOptionsFloatChildren > * {
+    float:left;
+}
+
+// .toolOptionsFloatChildren select.nj-skinned {
+//     margin-top: 2px;
+// }
+
+
+.toolOptionsSpacer {
     margin-right: 9px;
 }
 
-/* These appear to be unused
-.toolSeparator {
-    height:1px;
-    width:30px;
-    // margin-left: 3px; 
-    // margin-right: 3px; 
+.toolColorChipCtrl {
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    margin-left: 3px;    
+    margin-right: 8px;    
+    border: 1px black solid;
 }
 
-.toolSeparatorTop {
-    margin-top: 3px;
-    margin-bottom: 0px;
+.toolColorChipIcon {
+    width: 20px;
+    height: 20px;
+    margin-top: 1px;
+    -webkit-transform: scale(0.8);
+    background-color: rgb(40, 40, 40);
 }
-
-.toolSeparatorMiddle {
-    margin-top: 0px;
-    margin-bottom: 0px;
-}
-
-.toolSeparatorBottom {
-    margin-top: 0px;
-    margin-bottom: 3px;
-}
-
-.toolImageBase {
-    padding: 0px;
-    width: 26px;
-    height: 23px;
-    opacity: 0.7;
-    background-repeat:no-repeat;
-}
-
-.toolImageBase:hover {
-   opacity: 1.0;
-   }
-
-.drawingMode {
-    outline:blue solid thin;
-}
-*/
-
 
 //  Added new styling Sub Tool Shape Options 
-
 .textBox {
 
    padding-top:3px;
@@ -135,20 +122,20 @@
 .cornerRadius.topRight
 {
     -webkit-transform: rotate(90deg);
-    margin-right : -2px;
+//     margin-right : -2px;
 }
 
 .cornerRadius.bottomLeft
 {
-    margin-top: 3px;
+//     margin-top: 3px;
     -webkit-transform: rotate(270deg);
 }
 
 .cornerRadius.bottomRight
 {
-    margin-top: 3px;
+//     margin-top: 3px;
     -webkit-transform: rotate(180deg);
-    margin-right : -2px;
+//     margin-right : -2px;
 }
 
 #toolOptionsContainer
@@ -292,7 +279,7 @@ input[type="radio"]:disabled {
 	margin: 0px;
 	padding: 0px;
 	margin-right: 5px;
-	margin-top: 4px;
+	margin-top: 0px;
 	background-repeat: no-repeat;
 	opacity: 0.8;
 	text-indent: -9999px;
@@ -353,34 +340,17 @@ input[type="radio"]:disabled {
 	height: 100%;
 	float: left;
 	position: relative;
-	top: 5px;
 }
 
 .tagRadioButtons select.nj-skinned {
 	visibility: visible;
 	position: relative;
+	margin-top: 1px;
 }
 
 .tagRadioButtons select[disabled="true"].nj-skinned,
 .tagRadioButtons select[disabled].nj-skinned  {
 	visibility: hidden;
-}
-
-.tagRadioButtons .fillColorCtrl {
-    width: 18px;
-    height: 18px;
-    margin-top: 6px;
-    margin-left: 3px;    
-    margin-right: 8px;    
-    border: 1px black solid;
-}
-
-.tagRadioButtons .colorCtrlIcon {
-    width: 20px;
-    height: 20px;
-    margin-top: 6px;
-    -webkit-transform: scale(0.8);
-    background-color: rgb(40, 40, 40);
 }
 //  End: styles for tag toolbar  
 
@@ -430,9 +400,7 @@ input[type="radio"]:disabled {
 	display: block;
 	float: left;
 	margin: 0px;
-	padding: 0px;
-	margin-right: 5px;
-	margin-top: 4px;
+ 	margin-right: 5px;
 	background-repeat: no-repeat;
 	opacity: 0.8;
 	text-indent: -9999px;
@@ -470,15 +438,7 @@ input[type="radio"]:disabled {
 	background-position: 0px -20px;
 }
 
-// Selection Tool Options
-.optionsSelectionTool {
-    padding: 6px;
-}
-
- .optionsSelectionTool > * {
-    float:left;
-}
-
+// Selection Tool Options Styles
 .optionsSelectionTool button {
 	padding-top: 0px;
 }
@@ -489,6 +449,7 @@ input[type="radio"]:disabled {
 	background-repeat:no-repeat;
 	background-position: 1px 2px;
 }
+
 .alignTopIcon {
 	background-image: url("../images/tools/AlignTop.png");  
 }
@@ -552,3 +513,4 @@ input[type="radio"]:disabled {
 .distRightIcon {
 	background-image: url("../images/tools/DistRight.png");  
 }
+

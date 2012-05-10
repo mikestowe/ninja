@@ -4,32 +4,11 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
-.optionsFillTool {
-    padding: 6px;
-}
-.optionsFillTool > * {
-    float:left;
-}
-.optionsFillTool > * > *{
-    float:left;
-}
-
-.optionsFillTool label {
-    margin-right: 8px;
-} 
-.optionsFillTool .colorCtrlIcon {
-    width: 20px;
-    height: 20px;
-    margin-top: 0px;
-    margin-left: 10px;    
-    -webkit-transform: scale(0.8);
-    background-color: rgb(40, 40, 40);
-}
 
 .materialsContainerOptions select {
     margin-top: 2px;
 }
 
 .materialsContainerOptions label {
-    margin-right: 0px;
+    margin-right: 3px;
 }
