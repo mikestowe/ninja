@@ -498,6 +498,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
             this.webTemplate = false;
 
+            this._initializeBodyStyles();
             NJevent("onOpenDocument", doc);
 
 			this.application.ninja.stage.stageView.showCodeViewBar(false);
@@ -644,6 +645,38 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     handleStyleSheetDirty:{
         value:function(){
             this.activeDocument.needsSave = true;
+        }
+    },
+
+    _initializeBodyStyles: {
+        value: function() {
+            var sc = this.application.ninja.stylesController,
+                docRoot = this.application.ninja.currentDocument.documentRoot,
+                styles = {},
+                needsRule = false,
+                rule;
+
+            if(sc.getElementStyle(docRoot, "width", false, false) == null) {
+                styles['width'] = '100%';
+                needsRule = true;
+            }
+            if(sc.getElementStyle(docRoot, "height", false, false) == null) {
+                styles['height'] = '100%';
+                needsRule = true;
+            }
+            if(sc.getElementStyle(docRoot, "-webkit-transform", false, false) == null) {
+                styles['-webkit-transform'] = 'perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)';
+                needsRule = true;
+            }
+            if(sc.getElementStyle(docRoot, "-webkit-transform-style", false, false) == null) {
+                styles['-webkit-transform-style'] = 'preserve-3d';
+                needsRule = true;
+            }
+
+            if(needsRule) {
+                rule = sc.addRule('body{}');
+                sc.setStyles(rule, styles);
+            }
         }
     }
 });
