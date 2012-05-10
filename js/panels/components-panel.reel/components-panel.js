@@ -404,8 +404,8 @@ exports.ComponentsPanel = Montage.create(Component, {
             //if(!this.centerStage) {
                 var top, left;
 
-                top = ~~((parseFloat(this.application.ninja.elementMediator.getProperty(this.application.ninja.currentDocument.documentRoot, "height"))) / 2);
-                left = ~~((parseFloat(this.application.ninja.elementMediator.getProperty(this.application.ninja.currentDocument.documentRoot, "width"))) / 2);
+                top = (this.application.ninja.stage.canvas.height / 2); // ~~((parseFloat(this.application.ninja.elementMediator.getProperty(this.application.ninja.currentDocument.documentRoot, "height"))) / 2);
+                left = (this.application.ninja.stage.canvas.width / 2); //~~((parseFloat(this.application.ninja.elementMediator.getProperty(this.application.ninja.currentDocument.documentRoot, "width"))) / 2);
                 //this.centerStage = [top, left];
                 return [left, top];
             //}
