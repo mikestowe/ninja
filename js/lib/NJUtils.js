@@ -18,8 +18,9 @@ exports.NJUtils = Montage.create(Component, {
     
     ///// Quick "getElementById"
     $ : {
-        value: function(id) {
-            return document.getElementById(id);            
+        value: function(id, doc) {
+            var _doc = doc || document;
+            return _doc.getElementById(id);
         }
     },
     
