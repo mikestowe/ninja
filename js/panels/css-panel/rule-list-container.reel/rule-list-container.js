@@ -120,20 +120,6 @@ exports.RuleListContainer = Montage.create(Component, {
     update : {
         value: function() {
             this.displayedList.component.rules = this.getRulesForSelection(this.displayedList.selection);
-
-
-            ///// Update the currently displayed list
-            //this.displayedList.component.update();
-
-            ///// Find the new rules which need to be added to the rule-list
-//            newRules = rules.filter(function(rule) {
-//                return rule.type !== 'inline' && this.displayedList.component.rules.indexOf(rule) === -1;
-//            }, this);
-//
-//            ///// Add the new rules
-//            newRules.forEach(function(rule) {
-//                this.displayedList.component.addRule(rule);
-//            },this);
         }
     },
 
