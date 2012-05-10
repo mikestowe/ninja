@@ -501,11 +501,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 	            	}
 	            }
     		}
-            
-            
-            
-            
-            
 
         }
     },
@@ -798,18 +793,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     // Init and event handler for layer expand/collapse
     init:{
         value:function () {
-
-            // create track objects for position and transform tracks and push into arrays instead of dummy arrays
-
             this.createPositionTracks();
-            //this.arrPositionTracks = [0, 1, 2, 3];
-
-            // get rid of transform tracks
-            //this.arrTransformTracks = [0, 1, 2, 3, 4];
-
             // Register event handler for layer events.
             defaultEventManager.addEventListener("layerEvent", this, false);
-
         }
     },
 
@@ -823,6 +809,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             newTopTrack.propTrackData.propTweens = [];
             newTopTrack.propTrackData.styleIndex = 0;
             newTopTrack.propTrackData.trackType = "position";
+            newTopTrack.propTrackData.trackEditorProperty = "top";
             this.arrPositionTracks.push(newTopTrack);
 
             // create 'left' track
@@ -831,6 +818,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             newLeftTrack.propTrackData.propTweens = [];
             newLeftTrack.propTrackData.styleIndex = 1;
             newLeftTrack.propTrackData.trackType = "position";
+            newLeftTrack.propTrackData.trackEditorProperty = "left";
             this.arrPositionTracks.push(newLeftTrack);
 
             // create 'width' track
@@ -839,6 +827,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             newWidthTrack.propTrackData.propTweens = [];
             newWidthTrack.propTrackData.styleIndex = 2;
             newWidthTrack.propTrackData.trackType = "position";
+            newWidthTrack.propTrackData.trackEditorProperty = "width";
             this.arrPositionTracks.push(newWidthTrack);
 
             // create 'height' track
@@ -847,6 +836,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             newHeightTrack.propTrackData.propTweens = [];
             newHeightTrack.propTrackData.styleIndex = 3;
             newHeightTrack.propTrackData.trackType = "position";
+            newHeightTrack.propTrackData.trackEditorProperty = "height";
             this.arrPositionTracks.push(newHeightTrack);
         }
     },
@@ -864,6 +854,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 newStyleTrack.propTrackData.styleSelection = layerEvent.styleSelection;
                 newStyleTrack.propTrackData.propTweens = [];
                 newStyleTrack.propTrackData.trackType = "style";
+                newStyleTrack.propTrackData.trackEditorProperty = "";
                 newStyleTrack.propTrackData.styleIndex = layerEvent.styleIndex;
 
                 console.log(layerEvent.styleIndex);

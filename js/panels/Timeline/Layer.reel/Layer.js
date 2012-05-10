@@ -60,7 +60,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     	}
     },
     _styleCounter : {
-    	value: 4
+    	value: 0
     },
     styleCounter:{
         serializable:true,

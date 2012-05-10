@@ -146,6 +146,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
             this.styleIndex = this.propTrackData.styleIndex;
             this.propTweens = this.propTrackData.propTweens;
             this.trackType = this.propTrackData.trackType;
+            this.trackEditorProperty = this.propTrackData.trackEditorProperty;
             this.needsDraw = true;
         }
     },
@@ -170,11 +171,8 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
                         }
                     } else if (this.trackType === "position") {
                         console.log("clicking on position track");
-
                         console.log(this.trackEditorProperty);
                     }
-
-
 
                     this.insertPropTween(0);
                     this.addPropAnimationRuleToElement(ev);
