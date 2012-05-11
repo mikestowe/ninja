@@ -232,7 +232,7 @@ var GLSubpath = function GLSubpath() {
 
 }; //function GLSubpath ...class definition
 
-GLSubpath.prototype = new GeomObj();
+GLSubpath.prototype = Object.create(GeomObj, {});
 
 /////////////////////////////////////////////////////////
 // Property Accessors/Setters

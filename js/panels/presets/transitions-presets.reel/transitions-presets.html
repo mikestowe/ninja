@@ -13,12 +13,11 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
             "owner": {
                 "prototype" : "js/panels/presets/transitions-presets.reel[TransitionsLibrary]",
                 "properties" : {
-                    "element" : {"#" : "transitionsLibrary"},
-                    "treeList" : {"@" : "treeList"}
+                    "element" : {"#" : "transitionsLibrary"}
                 }
             },
             "presetsController" : {
-                "prototype": "js/controllers/tree-controller",
+                "prototype": "js/components/controllers/tree-controller",
                 "properties" : {
                     "branchKey" : "children",
                     "labelKey" : "text",
@@ -48,8 +47,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
     </script>
 </head>
 <body>
-<section id="transitionsLibrary" class="transitionsLibrary">
-    <div id="libraryContainer"></div>
+<section data-montage-id="transitionsLibrary" class="transitionsLibrary">
+    <div data-montage-id="libraryContainer"></div>
 </section>
 </body>
 </html>

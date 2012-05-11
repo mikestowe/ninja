@@ -777,6 +777,9 @@ var Layer = exports.Layer = Montage.create(Component, {
 	},
 	handleDragleave: {
 		value: function(event) {
+			if (this.parentComponent.parentComponent.draggingType !== "layer") {
+				return;
+			}
 			this.element.classList.remove("dragOver");
 		}
 	},
@@ -784,10 +787,14 @@ var Layer = exports.Layer = Montage.create(Component, {
 		value: function(event) {
 			this.parentComponent.parentComponent.dragLayerID = this.layerID;
             event.dataTransfer.setData('Text', 'Layer');
+            this.parentComponent.parentComponent.draggingType = "layer";
 		}
 	},
 	handleDragover: {
 		value: function(event) {
+			if (this.parentComponent.parentComponent.draggingType !== "layer") {
+				return;
+			}
 			event.preventDefault();
 			this.element.classList.add("dragOver");
 			event.dataTransfer.dropEffect = "move";
@@ -797,6 +804,9 @@ var Layer = exports.Layer = Montage.create(Component, {
 	
 	handleDrop : {
 		value: function(event) {
+			if (this.parentComponent.parentComponent.draggingType !== "layer") {
+				return;
+			}
 			event.stopPropagation();
 			this.element.classList.remove("dragOver");
 			if (this.parentComponent.parentComponent.dragLayerID !== this.layerID) {

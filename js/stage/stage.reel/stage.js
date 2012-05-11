@@ -855,6 +855,12 @@ exports.Stage = Montage.create(Component, {
         }
     },
 
+    setStageAsViewport: {
+        value: function() {
+            this.stageDeps.viewUtils.setViewportObj(this.application.ninja.currentDocument.documentRoot);
+        }
+    },
+
     setZoom: {
         value: function(value) {
             if(!this._firstDraw)
@@ -958,8 +964,9 @@ exports.Stage = Montage.create(Component, {
            this.application.ninja.documentController.activeDocument.savedLeftScroll = this._iframeContainer.scrollLeft;
            this.application.ninja.documentController.activeDocument.savedTopScroll = this._iframeContainer.scrollTop;
        }
-   },
-   restoreScroll:{
+    },
+
+    restoreScroll:{
        value: function(){
            this._iframeContainer.scrollLeft = this.application.ninja.documentController.activeDocument.savedLeftScroll;
            this._scrollLeft = this.application.ninja.documentController.activeDocument.savedLeftScroll;

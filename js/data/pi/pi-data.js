@@ -100,7 +100,7 @@ exports.PiData = Montage.create( Montage, {
             }
         ]
     },
-    imagePi: {
+    imgPi: {
         value: [
             {
                 label: "Image Properties",
@@ -807,8 +807,8 @@ exports.PiData = Montage.create( Montage, {
                     ]
                 ]
             }
-        ] //value: [
-    } //BrushStrokePi: {
+        ]
+    }
 });
 
 
