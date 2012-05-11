@@ -1810,8 +1810,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 						hSnap.setScreenPoint( scrPt );
 						hSnap.setType( hSnap.SNAP_TYPE_ALIGN_MERGED );
 						hSnap.setElement( stage );
-						hSnap.setPlane( [0,0,1,0] );
-						hSnap.setPlaneMatrix( Matrix.I(4) );
+						//hSnap.setPlane( [0,0,1,0] );
+						//hSnap.setPlaneMatrix( Matrix.I(4) );
 						if (vSnap.hasAssociatedScreenPoint() )
 							hSnap.setAssociatedScreenPoint( vSnap.getAssociatedScreenPoint() );
 						if (vSnap.hasAssociatedScreenPoint2() )
@@ -1859,8 +1859,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 						hSnap.setScreenPoint( scrPt );
 						hSnap.setType( hSnap.SNAP_TYPE_ALIGN_MERGED );
 						hSnap.setElement( stage );
-						hSnap.setPlane( [0,0,1,0] );
-						hSnap.setPlaneMatrix( Matrix.I(4) );
+						//hSnap.setPlane( [0,0,1,0] );
+						//hSnap.setPlaneMatrix( Matrix.I(4) );
 						if (vSnap.hasAssociatedScreenPoint() )
 							hSnap.setAssociatedScreenPoint( vSnap.getAssociatedScreenPoint() );
 						if (vSnap.hasAssociatedScreenPoint2() )
@@ -1914,8 +1914,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 							hSnap.setScreenPoint( scrPt );
 							hSnap.setType( hSnap.SNAP_TYPE_ALIGN_MERGED );
 							hSnap.setElement( stage );
-							hSnap.setPlane( [0,0,1,0] );
-							hSnap.setPlaneMatrix( Matrix.I(4) );
+							//hSnap.setPlane( [0,0,1,0] );
+							//hSnap.setPlaneMatrix( Matrix.I(4) );
 							if (vSnap.hasAssociatedScreenPoint() )
 								hSnap.setAssociatedScreenPoint( vSnap.getAssociatedScreenPoint() );
 							if (vSnap.hasAssociatedScreenPoint2() )
