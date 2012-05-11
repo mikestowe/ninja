@@ -246,7 +246,9 @@ exports.StylesViewMediator = Montage.create(Component, {
             },this);
 
             ///// Add rule directly to the rule list
-            this.ruleListContainer.displayedList.component.addRule(newRule).applied = applies;
+            this.ruleListContainer.displayedList.component.addRule(newRule, null, applies, function(ruleComponent) {
+                ruleComponent.selectorField.start();
+            });
 
         }
     },

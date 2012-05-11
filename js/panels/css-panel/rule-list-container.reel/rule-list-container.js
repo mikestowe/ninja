@@ -30,8 +30,6 @@ exports.RuleListContainer = Montage.create(Component, {
 
             if(!list) {
                 list = this.add(selection);
-            } else {
-                console.log("rule list found!");
             }
 
             this.displayedList = list;

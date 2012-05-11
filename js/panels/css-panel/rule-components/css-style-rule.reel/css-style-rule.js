@@ -29,7 +29,7 @@ exports.CssStyleRule = Montage.create(Component, {
             return this._applied;
         },
         set: function(value) {
-            if(this._applied === value) { return false; }
+            if(this._applied === value || value === undefined || value === null) { return false; }
 
             this._applied = value;
             this.needsDraw = true;

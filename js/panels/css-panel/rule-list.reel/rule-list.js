@@ -83,15 +83,24 @@ exports.RuleList = Montage.create(Component, {
     },
 
     addRule: {
-        value: function(rule, atIndex) {
+        value: function(rule, atIndex, applies, drawCallback) {
             var insertIndex = atIndex || this.childComponents.length;
 
             this.rulesToDraw.push({
                 rule: rule,
                 index: insertIndex,
-                instance : null
+                instance : null,
+                applies : applies,
+                callback : drawCallback
             });
 
+            this.needsDraw = true;
+        }
+    },
+
+    removeRule: {
+        value: function(ruleComponent) {
+            this.rulesToRemove.push(ruleComponent);
             this.needsDraw = true;
         }
     },
@@ -110,6 +119,7 @@ exports.RuleList = Montage.create(Component, {
                 instance = Montage.create(componentBase);
                 instance.element = document.createElement(this.ruleNodeName);
                 instance.rule = ruleObj.rule;
+                instance.applied = ruleObj.applies;
 
                 if(this.focusDelegate) {
                     instance.focusDelegate = this.focusDelegate;
@@ -156,17 +166,23 @@ exports.RuleList = Montage.create(Component, {
                 ruleObj.instance.needsDraw = true;
             }, this);
 
-            ///// Null out any rules that were just drawn
-            this.rulesToDraw.length = 0;
-
         }
     },
 
     didDraw : {
         value: function() {
+            this.rulesToDraw.forEach(function(ruleObj) {
+                if(typeof ruleObj.callback === 'function') {
+                    ruleObj.callback(ruleObj.instance);
+                }
+            });
+
             this.rulesToRemove.forEach(function(ruleObj) {
                 ruleObj.instance = null;
             }, this);
+
+            ///// Null out any rules that were just drawn
+            this.rulesToDraw.length = 0;
             this.rulesToRemove.length = 0;
         }
     }
