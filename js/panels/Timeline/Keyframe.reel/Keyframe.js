@@ -67,6 +67,7 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
     handleClick:{
         value:function(ev){
             this.selectKeyframe();
+            ev.stopPropagation();
         }
     },
     

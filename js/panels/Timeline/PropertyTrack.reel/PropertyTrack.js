@@ -24,7 +24,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
 
     draw:{
         value:function(){
-            console.log(this.trackType);
+
         }
     },
 

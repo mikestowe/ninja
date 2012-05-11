@@ -216,12 +216,6 @@ var Tween = exports.Tween = Montage.create(Component, {
                 this.tweenedProperties["height"] = this.parentComponent.parentComponent.animatedElement.offsetHeight;
             }
 
-            // skewX
-
-            // skewY
-
-            // rotation
-
             // tell track to update css rule
             this.parentComponent.parentComponent.updateKeyframeRule();
 

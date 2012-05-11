@@ -671,7 +671,40 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     splitTween:{
         value:function (ev) {
-            console.log("Splitting an existing span with a new keyframe is not yet supported.");
+            console.log("Splitting an existing span with a new keyframe.");
+            var clickPos = ev.target.parentElement.offsetLeft + ev.offsetX;
+            var i;
+            var tweensLength = this.tweens.length-1;
+            var prevTween, nextTween, splitTweenIndex;
+            for(i=0; i<tweensLength; i++){
+                prevTween = this.tweens[i].tweenData.keyFramePosition;
+                nextTween = this.tweens[i+1].tweenData.keyFramePosition;
+                if(clickPos > prevTween && clickPos < nextTween){
+                    console.log(clickPos + " found on tween: "+ this.tweens[i+1].tweenData.tweenID);
+                    splitTweenIndex = this.tweens[i+1].tweenData.tweenID;
+                    this.tweens[i+1].tweenData.spanWidth = this.tweens[i+1].tweenData.keyFramePosition - clickPos;
+                    this.tweens[i+1].tweenData.spanPosition = ev.target.parentElement.offsetLeft + ev.offsetX;
+                    ev.target.style.width = this.tweens[i+1].tweenData.spanWidth + "px";
+                    ev.target.parentElement.style.left = clickPos + "px";
+                    ev.target.parentElement.children[1].style.left = (this.tweens[i+1].tweenData.spanWidth - 3) + "px";
+
+                    var newTweenToInsert = {};
+                    newTweenToInsert.tweenData = {};
+                    newTweenToInsert.tweenData.spanWidth = clickPos - prevTween;
+                    newTweenToInsert.tweenData.keyFramePosition = clickPos;
+                    newTweenToInsert.tweenData.keyFrameMillisec = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80) * clickPos;
+                    newTweenToInsert.tweenData.tweenID = splitTweenIndex - 1;
+                    newTweenToInsert.tweenData.spanPosition = clickPos - newTweenToInsert.tweenData.spanWidth;
+                    newTweenToInsert.tweenData.tweenedProperties = [];
+                    newTweenToInsert.tweenData.tweenedProperties["top"] = this.animatedElement.offsetTop;
+                    newTweenToInsert.tweenData.tweenedProperties["left"] = this.animatedElement.offsetLeft;
+                    newTweenToInsert.tweenData.tweenedProperties["width"] = this.animatedElement.offsetWidth;
+                    newTweenToInsert.tweenData.tweenedProperties["height"] = this.animatedElement.offsetHeight;
+                    this.tweens.splice(splitTweenIndex, 0, newTweenToInsert);
+                }
+            }
+
+            this.application.ninja.documentController.activeDocument.needsSave = true;
         }
     },
 
@@ -746,7 +779,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.tweens[0].tweenData.tweenedProperties["top"] = this.animatedElement.offsetTop;
             this.tweens[0].tweenData.tweenedProperties["left"] = this.animatedElement.offsetLeft;
             var animationDuration = Math.round(this.trackDuration / 1000) + "s";
-            this.animationName = "animation_" + this.animatedElement.classList[0];
+            this.animationName = this.animatedElement.classList[0] + "_PositionSize";
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-name", this.animationName);
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-duration", animationDuration);
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-iteration-count", 1);
@@ -765,8 +798,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         value:function () {
             // delete the current rule
             this.ninjaStylesContoller.deleteRule(this.currentKeyframeRule);
-
-            // first combine all style track tween arrays with the main track tween array
 
             // build the new keyframe string
             var keyframeString = "@-webkit-keyframes " + this.animationName + " {";
