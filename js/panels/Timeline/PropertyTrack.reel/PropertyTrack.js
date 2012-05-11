@@ -154,7 +154,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
     handleClick:{
         value:function(ev){
             if (ev.shiftKey) {
-                console.log(this.trackType);
+
                 if (this.propTweens.length < 1) {
 
                     // check if there is an editor property assigned yet
@@ -170,8 +170,8 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
                             console.log("Property track editorProperty set to: " + this.trackEditorProperty);
                         }
                     } else if (this.trackType === "position") {
-                        console.log("clicking on position track");
-                        console.log(this.trackEditorProperty);
+                        //console.log("clicking on position track");
+                        //console.log(this.trackEditorProperty);
                     }
 
                     this.insertPropTween(0);
@@ -239,7 +239,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
         value:function(tweenEvent){
             this.insertPropTween(tweenEvent.offsetX);
             this.animationName = this.parentComponent.parentComponent.parentComponent.animationName;
-            console.log(this.animationName);
+            //console.log(this.animationName);
         }
     }
 });

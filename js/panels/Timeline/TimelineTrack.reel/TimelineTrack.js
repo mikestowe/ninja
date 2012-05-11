@@ -617,6 +617,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 this.application.ninja.timeline.selectLayer(selectedIndex, false);
                 this.insertTween(ev.offsetX);
             } else {
+                console.log(ev.target);
                 this.splitTween(ev);
             }
         }
@@ -671,7 +672,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     splitTween:{
         value:function (ev) {
-            console.log("Splitting an existing span with a new keyframe.");
             var clickPos = ev.target.parentElement.offsetLeft + ev.offsetX;
             var i;
             var tweensLength = this.tweens.length-1;
@@ -680,14 +680,17 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 prevTween = this.tweens[i].tweenData.keyFramePosition;
                 nextTween = this.tweens[i+1].tweenData.keyFramePosition;
                 if(clickPos > prevTween && clickPos < nextTween){
-                    console.log(clickPos + " found on tween: "+ this.tweens[i+1].tweenData.tweenID);
+                    //console.log(clickPos + " found on tween: "+ this.tweens[i+1].tweenData.tweenID);
                     splitTweenIndex = this.tweens[i+1].tweenData.tweenID;
                     this.tweens[i+1].tweenData.spanWidth = this.tweens[i+1].tweenData.keyFramePosition - clickPos;
                     this.tweens[i+1].tweenData.spanPosition = ev.target.parentElement.offsetLeft + ev.offsetX;
-                    ev.target.style.width = this.tweens[i+1].tweenData.spanWidth + "px";
-                    ev.target.parentElement.style.left = clickPos + "px";
-                    ev.target.parentElement.children[1].style.left = (this.tweens[i+1].tweenData.spanWidth - 3) + "px";
-
+                    if (ev.target.className != "tween-span") {
+                        // don't set styles on timeline track if event is coming from the track
+                    } else {
+                        ev.target.style.width = this.tweens[i + 1].tweenData.spanWidth + "px";
+                        ev.target.parentElement.style.left = clickPos + "px";
+                        ev.target.parentElement.children[1].style.left = (this.tweens[i + 1].tweenData.spanWidth - 3) + "px";
+                    }
                     var newTweenToInsert = {};
                     newTweenToInsert.tweenData = {};
                     newTweenToInsert.tweenData.spanWidth = clickPos - prevTween;
@@ -701,9 +704,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                     newTweenToInsert.tweenData.tweenedProperties["width"] = this.animatedElement.offsetWidth;
                     newTweenToInsert.tweenData.tweenedProperties["height"] = this.animatedElement.offsetHeight;
                     this.tweens.splice(splitTweenIndex, 0, newTweenToInsert);
+                    break;
                 }
             }
-
             this.application.ninja.documentController.activeDocument.needsSave = true;
         }
     },

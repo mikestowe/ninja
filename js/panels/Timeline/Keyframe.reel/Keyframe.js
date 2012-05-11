@@ -37,11 +37,6 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
 			this.element.addEventListener("mouseout", this.handleMouseout.bind(this), false);
 			this.element.addEventListener("dragstart", this.handleDragstart.bind(this), false);
 			this.element.addEventListener("dragend", this.handleDragend.bind(this), false);
-			
-
-            
-            
-            
         }
     },
 
