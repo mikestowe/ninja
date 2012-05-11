@@ -346,31 +346,6 @@ exports.Ninja = Montage.create(Component, {
         }
     },
 
-    _handleAppLoaded: {
-        value: function(event){
-
-            /*
-            Object.defineBinding(docBar, "type", {
-                boundObject: DocumentManagerModule.DocumentManager,
-                boundObjectPropertyPath: "activeDocument.documentType"
-            });
-
-            Object.defineBinding(docBar, "currentView", {
-                boundObject: DocumentManagerModule.DocumentManager,
-                boundObjectPropertyPath: "activeDocument.currentView",
-                oneway: false
-            });
-
-            Object.defineBinding(docBar, "zoomFactor", {
-                boundObject: DocumentManagerModule.DocumentManager,
-                boundObjectPropertyPath: "activeDocument.zoomFactor",
-                oneway: false
-            });
-            */
-
-        }
-    },
-    
     setupGlobalHelpers: {
         value: function() {
 
