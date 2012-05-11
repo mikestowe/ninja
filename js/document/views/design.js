@@ -168,7 +168,8 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 				}
 			}
 			//Adjusting margin per size of document
-			this.document.head.getElementsByTagName('style')[0].innerHTML += '\n ninja-banner {overflow: visible !important; margin-top: -'+Math.floor(this._template.size.height/2)+'px; margin-left: -'+Math.floor(this._template.size.width/2)+'px}';
+			//this.document.head.getElementsByTagName('style')[0].innerHTML += '\n ninja-banner {overflow: visible !important; margin-top: -'+Math.floor(this._template.size.height/2)+'px; margin-left: -'+Math.floor(this._template.size.width/2)+'px}';
+			this.document.head.getElementsByTagName('style')[0].innerHTML += '\n ninja-banner {overflow: visible !important;}';
 			//Setting content in template
     		ninjaBanner.innerHTML = banner.innerHTML;
         	//Garbage collection
