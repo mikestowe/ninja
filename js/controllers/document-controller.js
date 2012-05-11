@@ -99,7 +99,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     			//console.log(request);
     			//console.log(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1], request.url);
 				//return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split('/')[request.url.split('/').length-1]};
-				return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/montage-web/'))[1]};
+				return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/'))[1]};
 			}
 		}
     },
@@ -244,20 +244,20 @@ if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
     	}
     },
 	
+	
+	
+	////////////////////////////////////////////////////////////////////
+	//
     createNewFile:{
         value:function(newFileObj){
-            //console.log(newFileObj);//contains the template uri and the new file uri
+            //
             if(!newFileObj) return;
-            this.application.ninja.ioMediator.fileNew(newFileObj.newFilePath, newFileObj.fileTemplateUri, this.openNewFileCallback.bind(this));
-
-            if((newFileObj.fileExtension !== ".html") && (newFileObj.fileExtension !== ".htm")){//open code view
-
-                } else {
-                //open design view
-                }
+            //
+            this.application.ninja.ioMediator.fileNew(newFileObj.newFilePath, newFileObj.fileTemplateUri, this.openNewFileCallback.bind(this), newFileObj.template);
         }
     },
-
+	////////////////////////////////////////////////////////////////////
+	
     /**
      * Public method
      * doc contains:
@@ -374,6 +374,12 @@ if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
     },
     openWebDocument: {
         value: function(doc) {
+        	var template, dimensions;
+        	if (doc.content.body.indexOf('Ninja-Banner Dimensions@@@') !== -1) {
+        		dimensions = (doc.content.body.split('Ninja-Banner Dimensions@@@'))[1].split('-->')[0].split('x');
+        		dimensions = {width: parseInt(dimensions[0]), height: parseInt(dimensions[1])};
+        		template = {type: 'banner', size: dimensions};
+        	}
             // TODO: HACKS to remove
 			this.documentHackReference = doc;
             document.getElementById("iframeContainer").style.overflow = "hidden";
@@ -382,7 +388,7 @@ if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
 				case 'html':
 					//Open in designer view
                     this._hackRootFlag = false;
-                    Montage.create(Document).init(doc, this, this._onOpenDocument, 'design');
+                    Montage.create(Document).init(doc, this, this._onOpenDocument, 'design', template);
 					break;
 				default:
 					//Open in code view
