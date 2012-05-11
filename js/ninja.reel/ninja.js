@@ -18,6 +18,24 @@ exports.Ninja = Montage.create(Component, {
         value: null
     },
 
+    _workspaceMode: {
+        value: null
+    },
+
+    workspaceMode: {
+        get: function() {
+            return this.workspaceMode;
+        },
+        set: function(val) {
+            if( this._workspaceMode === val ) {
+                if(this._workspaceMode !== null) {
+                   document.body.classList.remove("ws-" + val);
+                }
+                document.body.classList.add("ws-" + val);
+            }
+        }
+    },
+
     toolsData: { value: null },
     appData:    { value: AppData },
 

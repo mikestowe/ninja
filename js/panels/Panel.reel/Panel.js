@@ -13,6 +13,10 @@ exports.Panel = Montage.create(Component, {
         value: "Panel"
     },
 
+    groups: {
+        value: []
+    },
+
     _collapsed: {
         value: false
     },
@@ -117,6 +121,12 @@ exports.Panel = Montage.create(Component, {
         value: function() {
             if(this.name === "Color") {
                 this.application.ninja.colorController.colorView = this.application.ninja.colorController.colorPanelBase.create();
+            }
+
+            if(this.groups) {
+                this.groups.forEach(function(className) {
+                    this.element.classList.add(className);
+                }.bind(this));
             }
 
             if(this.modulePath && this.moduleName) {

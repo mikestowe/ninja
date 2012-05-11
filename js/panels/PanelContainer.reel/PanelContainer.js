@@ -21,6 +21,18 @@ exports.PanelContainer = Montage.create(Component, {
         value: []
     },
 
+    panelsAvailable: {
+        value: function() {
+            var pAvail = [];
+            this.panels.forEach(function(obj) {
+                if (window.getComputedStyle(obj.element).display !== "none") {
+                    pAvail.push(obj);
+                }
+            });
+            return pAvail;
+        }
+    },
+
     currentPanelState: {
         value: {}
     },
@@ -49,6 +61,8 @@ exports.PanelContainer = Montage.create(Component, {
                 this['panel_'+i].modulePath = p.modulePath;
                 this['panel_'+i].moduleName = p.moduleName;
                 this['panel_'+i].disabled = true;
+                this['panel_'+i].groups = p.groups;
+
 
                 this.currentPanelState[p.name] = {};
                 this.currentPanelState.version = "1.0";
@@ -144,6 +158,7 @@ exports.PanelContainer = Montage.create(Component, {
  
     _setPanelsSizes: {
         value: function(panelActivated) {
+            this.panelsAvailable();
             var len = this.panels.length, setLocked = true;
 
             for(var i = 0; i < len; i++) {
@@ -160,6 +175,7 @@ exports.PanelContainer = Montage.create(Component, {
     _redrawPanels: {
         value: function(panelActivated, unlockPanels) {
             var maxHeight = this.element.offsetHeight, setLocked = true;
+            var availablePanels = this.panelsAvailable();
             var len = this.panels.length;
 
             if(unlockPanels === true) {

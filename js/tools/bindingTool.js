@@ -5,10 +5,29 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var Montage = require("montage/core/core").Montage,
-    DrawingTool = require("js/tools/drawing-tool").DrawingTool;
+    DrawingTool = require("js/tools/drawing-tool").DrawingTool,
+ModifierToolBase = require("js/tools/modifier-tool-base").ModifierToolBase;
 
-exports.BindingTool = Montage.create(DrawingTool, {
+
+exports.BindingTool = Montage.create(ModifierToolBase, {
     drawingFeedback: { value: { mode: "Draw2D", type: "" } },
+
+    Configure: {
+        value: function (doActivate)
+        {
+            if (doActivate)
+            {
+                NJevent("enableStageMove");
+                document.body.classList.add("ws-binding");
+
+            }
+            else
+            {
+                NJevent("disableStageMove");
+                document.body.classList.remove("ws-binding");
+            }
+        }
+    },
 
     HandleLeftButtonDown: {
         value: function(event) {
