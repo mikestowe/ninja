@@ -78,6 +78,7 @@ exports.Properties = Montage.create(Component, {
             if(this.application.ninja.selectedElements.length === 0 && this.application.ninja.currentDocument.documentRoot.nodeName.toLowerCase() !== "body") {
                 this.displayStageProperties();
             }
+            this.displayElementProperties(this.application.ninja.currentDocument.documentRoot);
         }
     },
 
@@ -174,8 +175,9 @@ exports.Properties = Montage.create(Component, {
     handleSelectionChange: {
         value: function(event) {
             if(event.detail.isDocument) {
-                if(this.application.ninja.currentDocument.documentRoot.nodeName.toLowerCase() === "body") return;
-                this.displayStageProperties();
+//                if(this.application.ninja.currentDocument.documentRoot.nodeName.toLowerCase() === "body") return;
+//                this.displayStageProperties();
+                this.displayElementProperties(this.application.ninja.currentDocument.documentRoot);
             } else {
                 if(this.application.ninja.selectedElements.length === 1) {
                     this.displayElementProperties(this.application.ninja.selectedElements[0]);
