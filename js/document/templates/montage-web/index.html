@@ -15,8 +15,6 @@
 <html>
 
 	<head>
-	
-		<title data-ninja-template="true">Ninja Prototype</title>
         
        	<style type="text/css" id="nj-stage-stylesheet" data-ninja-template="true">
        		* {
@@ -35,7 +33,6 @@
 
             html {
                 overflow: scroll;
-                padding: 0 11px 11px 0;
             }
 
             html, body {
@@ -55,14 +52,16 @@
 				-webkit-transition: all 450ms linear !important;
 			}
         </style>
-    
-    	<script type="text/javascript" data-package="." src="../../../../node_modules/montage/montage.js" data-ninja-template="true"></script>
-    
-    	<script type="text/javascript" data-ninja-template="true">
+        
+        <script type="text/javascript" data-ninja-template="true">
       		function getElement(x,y) {
             	return document.elementFromPoint(x,y);
         	}
     	</script>
+    	
+    	<!-- TODO: Determine if loading Montage is always needed or if it could be done author-time or on file open -->
+    
+    	<script type="text/javascript" data-package="." src="../../../../node_modules/montage/montage.js" data-ninja-template="true"></script>
 
         <script type="text/montage-serialization" data-ninja-template="true">
         {
@@ -74,7 +73,6 @@
 
 	</head>
 
-	<body>
-	</body>
+	<body></body>
 
 </html>
