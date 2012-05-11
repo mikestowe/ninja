@@ -354,14 +354,13 @@ exports.ViewUtils = Montage.create(Component, {
 
             // transform the bounds up the tree
             var child = elt;
-            var parent = elt.offsetParent;
             while ( child )
             {
                 pt = this.childToParent( pt, child );
 
                 if (child === this._stageElement)  break;
 
-                child = parent;
+                child = child.offsetParent;
             }
 
             /////////////////////////////////////////////////////////
