@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+ 
+ 
+<!-- 
+	NOTE(s):
+	All elements in the head of the document to be exclude from I/O
+	must set the 'data-ninja-template'
+	data-ninja-template="true"
+-->
+<html>
+
+	<head>
+        
+       	<style type="text/css" id="nj-stage-stylesheet" data-ninja-template="true">
+       		* {
+        		-webkit-transition-duration: 0s !important;
+    			-webkit-animation-duration: 0s !important;
+    			-webkit-animation-name: none !important;
+			}
+			
+			body {
+				margin: 0;
+    			padding: 0;
+				position: absolute;
+				-webkit-transform-style: preserve-3d;
+				-webkit-transform: perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+			}
+
+            html {
+                overflow: scroll;
+            }
+
+            html, body {
+                width: 100%;
+                height: 100%;
+            }
+			
+			ninjaloadinghack {
+				display: none;
+			}
+
+			.active-element-outline {
+    			outline: #adff2f solid 2px;
+			}
+
+			.nj-preset-transition {
+				-webkit-transition: all 450ms linear !important;
+			}
+        </style>
+        
+        <script type="text/javascript" data-ninja-template="true">
+      		function getElement(x,y) {
+            	return document.elementFromPoint(x,y);
+        	}
+    	</script>
+    	
+    	<!-- TODO: Determine if loading Montage is always needed or if it could be done author-time or on file open -->
+    
+    	<script type="text/javascript" data-package="." src="../../../../node_modules/montage/montage.js" data-ninja-template="true"></script>
+
+        <script type="text/montage-serialization" data-ninja-template="true">
+        {
+            "owner": {
+                "prototype": "main"
+            }
+        }
+        </script>
+
+	</head>
+
+	<body></body>
+
+</html>

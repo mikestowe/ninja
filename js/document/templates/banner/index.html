@@ -15,8 +15,6 @@
 <html>
 
 	<head>
-	
-		<title data-ninja-template="true">Ninja Prototype</title>
         
        	<style type="text/css" id="nj-stage-stylesheet" data-ninja-template="true">
        		* {
@@ -35,12 +33,12 @@
 
             html {
                 overflow: scroll;
-                padding: 0 11px 11px 0;
             }
 
             html, body {
                 width: 100%;
                 height: 100%;
+                background: #666;
             }
 			
 			ninjaloadinghack {
@@ -54,15 +52,29 @@
 			.nj-preset-transition {
 				-webkit-transition: all 450ms linear !important;
 			}
+			
+			ninja-banner {
+				display: block;
+				margin: 0;
+				padding: 0;
+				border: 0;
+				position: absolute;
+				overflow: visible;
+				top: 50%;
+				left: 50%;
+				background: #FFF;
+			}
         </style>
-    
-    	<script type="text/javascript" data-package="." src="../../../../node_modules/montage/montage.js" data-ninja-template="true"></script>
-    
-    	<script type="text/javascript" data-ninja-template="true">
+        
+        <script type="text/javascript" data-ninja-template="true">
       		function getElement(x,y) {
             	return document.elementFromPoint(x,y);
         	}
     	</script>
+    	
+    	<!-- TODO: Determine if loading Montage is always needed or if it could be done author-time or on file open -->
+    
+    	<script type="text/javascript" data-package="." src="../../../../node_modules/montage/montage.js" data-ninja-template="true"></script>
 
         <script type="text/montage-serialization" data-ninja-template="true">
         {
@@ -75,6 +87,8 @@
 	</head>
 
 	<body>
+		<ninjaloadinghack></ninjaloadinghack>
+		<ninja-banner></ninja-banner>
 	</body>
 
 </html>
