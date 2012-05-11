@@ -768,7 +768,7 @@ var BrushStroke = function GLBrushStroke() {
 
 }; //function BrushStroke ...class definition
 
-BrushStroke.prototype = new GeomObj();
+BrushStroke.prototype = Object.create(GeomObj, {});
 
 BrushStroke.prototype._CatmullRomSplineInterpolate = function(ctrlPts, t)
 {
