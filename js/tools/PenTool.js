@@ -186,26 +186,26 @@ exports.PenTool = Montage.create(ShapeTool, {
     },
 
     _removeSelectedSubpathAndCanvas:{
-        value: function(removeSelectedSubpath, removeSelectedSubpathCanvas){
-            if (removeSelectedSubpathCanvas) {
-                if (removeSelectedSubpath){
-                    this._selectedSubpath.clearAllAnchors(); //perhaps unnecessary
-                    this._selectedSubpath = null;
-                    if (this._entryEditMode === this.ENTRY_SELECT_PATH){
-                        this._entryEditMode = this.ENTRY_SELECT_NONE;
-                    }
-                    this._subtool = this.SUBTOOL_NONE;
+        value: function(removeSelectedSubpath){
+            if (removeSelectedSubpath){
+                this._selectedSubpath.clearAllAnchors(); //perhaps unnecessary
+                this._selectedSubpath = null;
+                if (this._entryEditMode === this.ENTRY_SELECT_PATH){
+                    this._entryEditMode = this.ENTRY_SELECT_NONE;
                 }
-                //clear the canvas
-                this.application.ninja.stage.clearDrawingCanvas();//stageManagerModule.stageManager.clearDrawingCanvas();
-
-                //undo/redo...go through ElementController and NJEvent
-                var els = [];
-                ElementController.removeElement(this._selectedSubpathCanvas);
-                els.push(this._selectedSubpathCanvas);
-                NJevent( "elementsRemoved", els );
-                this._selectedSubpathCanvas = null;
+                this._subtool = this.SUBTOOL_NONE;
+            } else {
+                this._selectedSubpath.setCanvas(null);
             }
+            //clear the canvas
+            this.application.ninja.stage.clearDrawingCanvas();//stageManagerModule.stageManager.clearDrawingCanvas();
+
+            //undo/redo...go through ElementController and NJEvent
+            var els = [];
+            ElementController.removeElement(this._selectedSubpathCanvas);
+            els.push(this._selectedSubpathCanvas);
+            NJevent( "elementsRemoved", els );
+            this._selectedSubpathCanvas = null;
         }
     },
 
@@ -213,26 +213,39 @@ exports.PenTool = Montage.create(ShapeTool, {
         value: function(){
             this._hoveredAnchorIndex=-1;
             this._selectedSubpath.removeAnchor(this._selectedSubpath.getSelectedAnchorIndex());
-            this._selectedSubpath.createSamples(false);
+            if (this._selectedSubpath.getNumAnchors()===1){
+                //convert the remaining anchor point to stage world coords
+                var xDelta = snapManager.getStageWidth()*0.5;
+                var yDelta = snapManager.getStageHeight()*0.5;
+                var anchor = this._selectedSubpath.getAnchor(0);
+                var swPos = ViewUtils.localToStageWorld([anchor.getPosX(),anchor.getPosY(),anchor.getPosZ()], this._selectedSubpathCanvas);
+                anchor.setPos(swPos[0]+xDelta, swPos[1]+yDelta, swPos[2]);
+                swPos = ViewUtils.localToStageWorld([anchor.getPrevX(),anchor.getPrevY(),anchor.getPrevZ()], this._selectedSubpathCanvas);
+                anchor.setPrevPos(swPos[0]+xDelta, swPos[1]+yDelta, swPos[2]);
+                swPos = ViewUtils.localToStageWorld([anchor.getNextX(),anchor.getNextY(),anchor.getNextZ()], this._selectedSubpathCanvas);
+                anchor.setNextPos(swPos[0]+xDelta, swPos[1]+yDelta, swPos[2]);
+            }
             //clear the canvas
             this.application.ninja.stage.clearDrawingCanvas();//stageManagerModule.stageManager.clearDrawingCanvas();
-            this.PrepareSelectedSubpathForRendering();
-            this.DrawSubpathAnchors(this._selectedSubpath);
             var removeSelectedSubpath=true;
-            var removeSelectedSubpathCanvas=false;
             var newNumAnchors = this._selectedSubpath.getNumAnchors();
             if (newNumAnchors>1) {
+                this._selectedSubpath.createSamples(false);
+                this.PrepareSelectedSubpathForRendering();
                 this.ShowSelectedSubpath();
             }
             else {
+                //since we have 0 or 1 anchors, we will remove the selected canvas (as the path does not exist)
                 if (newNumAnchors===0){
                     removeSelectedSubpath = true;
                 } else{
                     removeSelectedSubpath = false; //don't remove the selected subpath if there is still one anchor
                 }
-                removeSelectedSubpathCanvas = true;
+                this._removeSelectedSubpathAndCanvas(removeSelectedSubpath);
             }
-            this._removeSelectedSubpathAndCanvas(removeSelectedSubpath, removeSelectedSubpathCanvas);
+            if (!removeSelectedSubpath){
+                this.DrawSubpathAnchors(this._selectedSubpath);
+            }
         }
     },
 
@@ -1487,7 +1500,8 @@ exports.PenTool = Montage.create(ShapeTool, {
                  if (this._selectedSubpath.getSelectedAnchorIndex()>=0){
                      this._removeSelectedAnchorPoint();
                  } else {
-                     this._removeSelectedSubpathAndCanvas(true, true);
+                     //remove the entire subpath and its canvas if no anchor was selected
+                     this._removeSelectedSubpathAndCanvas(true);
                  }
              }
              else {
