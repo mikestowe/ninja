@@ -235,7 +235,7 @@ if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
     fileSaveResult: {
     	value: function (result) {
             if((result.status === 204) || (result.status === 404)){//204=>existing file || 404=>new file... saved
-                this.activeDocument.needsSave = false;
+                this.activeDocument.model.needsSave = false;
                 if(this.application.ninja.currentDocument !== null){
                     //clear Dirty StyleSheets for the saved document
                     this.application.ninja.stylesController.clearDirtyStyleSheets(this.application.ninja.currentDocument);
@@ -647,7 +647,7 @@ if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
 
     handleStyleSheetDirty:{
         value:function(){
-            this.activeDocument.needsSave = true;
+//            this.activeDocument.model.needsSave = true;
         }
     },
 
