@@ -100,7 +100,6 @@ exports.HtmlDocument = Montage.create(Component, {
             		this._document = this.model.views.design.document;
             		//TODO: Remove usage, seems as not needed
     				if (template && template.type === 'banner') {
-    					//this.documentRoot = this.model.views.design.document.body;
     					this.documentRoot = this.model.views.design.document.body.getElementsByTagName('ninja-banner')[0];
     				} else {
     					this.documentRoot = this.model.views.design.document.body;
