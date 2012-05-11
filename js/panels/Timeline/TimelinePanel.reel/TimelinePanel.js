@@ -994,7 +994,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this.arrLayers.splice(myIndex, 0, thingToPush);
 
             }
-            this.selectLayer(myIndex);
+            this.selectLayer(myIndex, false);
         }
     },
 
