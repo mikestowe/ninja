@@ -53,14 +53,14 @@ exports.IoMediator = Montage.create(Component, {
     //
     fileNew: {
         enumerable: false,
-        value: function (file, template, callback) {
+        value: function (file, url, callback, template) {
             //Loading template from template URL
             var xhr = new XMLHttpRequest(), result;
-            xhr.open("GET", template, false);
+            xhr.open("GET", url, false);
             xhr.send();
             if (xhr.readyState === 4) {
                 //Making call to create file, checking for return code
-                switch (this.fio.newFile({ uri: file, contents: xhr.response })) {
+                switch (this.fio.newFile({ uri: file, contents: parseTemplate(xhr.response, template) })) {
                     case 201:
                         result = { status: 201, success: true, uri: file };
                         break;
@@ -73,6 +73,20 @@ exports.IoMediator = Montage.create(Component, {
                     default:
                         result = { status: 500, success: false, uri: file };
                         break;
+                }
+                //TODO: Improve template data injection
+                function parseTemplate (content, template) {
+                	//
+                	if (template.name.toLowerCase() === 'banner') {
+                		//Getting dimensions of banner
+                		var dimensions = template.id.split('x');
+                		dimensions = {width: String(dimensions[0])+'px', height: String(dimensions[1])+'px'};
+                		//
+                		content = content.replace(/Dimensions@@@/gi, "Dimensions@@@"+template.id);
+                		content = content.replace(/ninja-banner {}/gi, "ninja-banner {width: "+dimensions.width+"; height: "+dimensions.height+"}");
+                	}
+                	//
+                	return content;
                 }
             } else {
                 result = { status: 500, success: false, uri: file };

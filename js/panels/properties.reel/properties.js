@@ -75,9 +75,7 @@ exports.Properties = Montage.create(Component, {
 
             // For now always assume that the stage is selected by default when opening the old template
             // TODO: Remove marker for old template: NINJA-STAGE-REWORK
-            if(this.application.ninja.selectedElements.length === 0 && this.application.ninja.currentDocument.documentRoot.nodeName.toLowerCase() !== "body") {
-                this.displayStageProperties();
-            }
+           
             this.displayElementProperties(this.application.ninja.currentDocument.documentRoot);
         }
     },
