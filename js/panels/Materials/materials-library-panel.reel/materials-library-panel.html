@@ -50,7 +50,7 @@
                 "prototype": "js/panels/Materials/materials-popup.reel"
             },
             "materialsController" : {
-                "prototype": "js/controllers/tree-controller",
+                "prototype": "js/components/controllers/tree-controller",
                 "properties" : {
                     "branchKey" : "children",
                     "labelKey" : "label",
@@ -88,15 +88,15 @@
 	</head>
 	<body>
 
-    	<div id="materials_library_panel" class="materials_library_panel">
-            <section id="ml_tree_holder" class="animationsLibrary">
-                <div id="materials_library_tree"></div>
+    	<div data-montage-id="materials_library_panel" class="materials_library_panel">
+            <section data-montage-id="ml_tree_holder" class="animationsLibrary">
+                <div data-montage-id="materials_library_tree"></div>
             </section>
             <hr />
-            <div id="ml_buttons">
-                <button id="ml_add_btn" class="nj-skinned">Add</button>
-                <button id="ml_copy_btn" class="nj-skinned">Copy</button>
-                <button id="ml_delete_btn" class="nj-skinned">Delete</button>
+            <div data-montage-id="ml_buttons" class="ml_buttons">
+                <button data-montage-id="ml_add_btn" class="nj-skinned">Add</button>
+                <button data-montage-id="ml_copy_btn" class="nj-skinned">Copy</button>
+                <button data-montage-id="ml_delete_btn" class="nj-skinned">Delete</button>
             </div>
     	</div>
 
