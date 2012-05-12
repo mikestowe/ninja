@@ -141,6 +141,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	value: null
     },
     styleTracksRepetition : {
+        serializable:true,
     	get: function() {
     		return this._styleTracksRepetition;
     	},
@@ -188,17 +189,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	set: function(newVal) {
     		this._arrTransformTracks = newVal;
             this.trackData.arrTransformTracks = newVal;
-    	}
-    },
-    _transformTracksRepetition: {
-    	value: null
-    },
-    transformTracksRepetition : {
-    	get: function() {
-    		return this._transformTracksRepetition;
-    	},
-    	set: function(newVal) {
-    		this._transformTracksRepetition = newVal;
     	}
     },
 
