@@ -679,13 +679,11 @@ nav.menuBar ul li:hover ul, nav.menuBar ul ul li:hover ul, nav.menuBar ul ul ul 
 
 .toolColorChipIcon { width: 20px; height: 20px; margin-top: 1px; -webkit-transform: scale(0.8); background-color: #282828; }
 
-.subToolHolderPanel input.toolOptsRadioButton { background: none; width: 20px; height: 20px; display: block; margin: 0px; padding: 0px; margin-right: 5px; margin-top: 0px; background-repeat: no-repeat; opacity: 0.8; text-indent: -9999px; cursor: pointer; -webkit-border-radius: 3px; -webkit-user-select: none; border: 1px solid transparent; background-position: 1px 1px; }
+.subToolHolderPanel input.toolOptsRadioButton { width: 24px; height: 24px; margin: 0px 5px 0px 0px; padding: 0px; cursor: pointer; border-radius: 3px; -webkit-user-select: none; border: 1px solid transparent; background: none; background-repeat: no-repeat; background-position: center center; -webkit-transform: scale(0.9); }
 
-.subToolHolderPanel input.toolOptsRadioButton:active { border: 1px solid transparent; }
+.subToolHolderPanel input.toolOptsRadioButton:hover { box-shadow: 0px 0px 2px 2px #999; -webkit-transform: scale(1); }
 
-.subToolHolderPanel input.toolOptsRadioButton:hover { opacity: 1.0; -webkit-box-shadow: 0px 0px 4px #fff; }
-
-.subToolHolderPanel input.toolOptsRadioButton:checked { background-color: #b2b2b2; opacity: 1.0; cursor: default; -webkit-box-shadow: none; background-repeat: no-repeat; background-position: 1px 1px; }
+.subToolHolderPanel input.toolOptsRadioButton:checked { box-shadow: inset 0px 0px 2px 2px #999; background-color: #363636; background-position: center center; background-repeat: no-repeat; -webkit-transform: scale(1); }
 
 .textBox { padding-top: 3px; min-width: 10em; margin-left: 5px; position: relative; margin-top: 0px; }
 
@@ -837,7 +835,7 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .toolbutton:active { background-color: #8c8c8c; }
 
-.toolbutton.active { box-shadow: inset 0px 0px 2px 2px #555; background-color: #363636; }
+.toolbutton.active { box-shadow: inset 0px 0px 2px 2px #999; background-color: #363636; }
 
 .SelectionTool { background-image: url("../images/tools/Tool-Selection.png"); }
 

@@ -54,42 +54,32 @@
 
 // generic styles for image radio button groups used in the tool options bar
 .subToolHolderPanel input.toolOptsRadioButton {
-	background: none;
-	width: 20px;
-	height: 20px;
-	display: block;
-	margin: 0px;
+	width: 24px;
+	height: 24px;
+	margin: 0px 5px 0px 0px;
 	padding: 0px;
-	margin-right: 5px;
-	margin-top: 0px;
-	background-repeat: no-repeat;
-	opacity: 0.8;
-	text-indent: -9999px;
 	cursor: pointer;
-	-webkit-border-radius: 3px;
+	border-radius: 3px;
 	-webkit-user-select: none;
 	border: 1px solid transparent;
-	background-position: 1px 1px;
-}
-
-.subToolHolderPanel input.toolOptsRadioButton:active {
-	border: 1px solid transparent;
+	background: none;
+	background-repeat: no-repeat;
+	background-position: center center;
+	-webkit-transform: scale(0.9);
 }
 
 .subToolHolderPanel input.toolOptsRadioButton:hover {
-	opacity: 1.0;
-	-webkit-box-shadow: 0px 0px 4px #fff;
+	box-shadow:  0px 0px 2px 2px #999;
+    -webkit-transform: scale(1);
 }
 
 .subToolHolderPanel input.toolOptsRadioButton:checked {
-	background-color: $color-tool-bg-active;
-	opacity: 1.0;
-	cursor: default;
-	-webkit-box-shadow: none;
+    box-shadow: inset 0px 0px 2px 2px #999;
+    background-color:#363636;
+	background-position: center center;
 	background-repeat: no-repeat;
-	background-position: 1px 1px;
+    -webkit-transform: scale(1);
 }
-
 
 //  Added new styling Sub Tool Shape Options 
 .textBox {
