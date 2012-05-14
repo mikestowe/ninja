@@ -155,13 +155,13 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     },
 
     handleExecuteNewFile: {
-            value: function(event) {
-                var newFileSettings = event._event.settings || {};
-                if (this.application.ninja.coreIoApi.cloudAvailable()) {
-                    newFileSettings.callback = this.createNewFile.bind(this);
-                    this.application.ninja.newFileController.showNewFileDialog(newFileSettings);
-                }
+        value: function(event) {
+            var newFileSettings = event._event.settings || {};
+            if (this.application.ninja.coreIoApi.cloudAvailable()) {
+                newFileSettings.callback = this.createNewFile.bind(this);
+                this.application.ninja.newFileController.showNewFileDialog(newFileSettings);
             }
+        }
     },
 	////////////////////////////////////////////////////////////////////
 	//
@@ -607,7 +607,7 @@ if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
                     //hide the iframe when switching to code view
                     document.getElementById("iframeContainer").style.display = "none";
                 }
-        }
+            }
         }
     },
 
