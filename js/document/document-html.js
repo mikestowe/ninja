@@ -107,7 +107,7 @@ exports.HtmlDocument = Montage.create(Component, {
             		//TODO: Why is this needed?
             		this._liveNodeList = this.model.views.design.document.body.getElementsByTagName('*');
             		//Initiliazing document model
-            		document.application.njUtils.makeElementModel(this.model.views.design.document.body, "Body", "body");
+            		document.application.njUtils.makeElementModel(this.documentRoot, "Body", "body");
             		//Adding observer to know when template is ready
             		this._observer = new WebKitMutationObserver(this.handleTemplateReady.bind(this));
         			this._observer.observe(this.model.views.design.document.head, {childList: true});
