@@ -156,14 +156,6 @@ exports.ViewUtils = Montage.create(Component, {
 				viewDir = MathUtils.transformVector( [0,0,1],  stageInv );
 			}
 
-			/*
-			if (elt === stage)
-			{
-				xVec = [1,0,0];
-				yVec = [0,1,0];
-			}
-			*/
-
 			var plane;
 			var xDot, yDot, zDot;
 			switch (axis)

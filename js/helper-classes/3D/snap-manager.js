@@ -230,6 +230,9 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 				else
 					parentPt = [xScreen, yScreen, 0.0];
 
+				if (!snap3D && this._hasDragPlane)
+					this.activateDragPlane();
+
 				var hitRec = this.snapToStage( parentPt,  quadPt );
 
 				// try snapping to the 3D grid, or to the stage boundaries if the grid is not displayed
