@@ -997,10 +997,10 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .montage-invisible { display: none; }
 
-body .panel.ws-binding { display: none; }
+body .panel.ws-binding { display: none; -webkit-box-flex-group: 2; }
 
 body.ws-binding .rightPanelContent .panel { display: none; }
 
-body.ws-binding .rightPanelContent .panel.ws-binding { display: block; }
+body.ws-binding .rightPanelContent .panel.ws-binding { display: -webkit-box; }
 
 /*77*/

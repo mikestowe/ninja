@@ -116,7 +116,7 @@ exports.PanelsData = Montage.create(Montage, {
             collapsed: true,
             scrollable: true,
             open: true,
-            modulePath: "js/panels/binding.reel",
+            modulePath: "js/panels/binding-panel.reel",
             moduleName: "BindingPanel"
         },
         {

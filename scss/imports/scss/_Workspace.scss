@@ -8,6 +8,7 @@
 
 body .panel.ws-binding {
     display:none;
+    -webkit-box-flex-group:2;
 }
 
 body.ws-binding .rightPanelContent .panel {
@@ -15,5 +16,5 @@ body.ws-binding .rightPanelContent .panel {
 }
 
 body.ws-binding .rightPanelContent .panel.ws-binding {
-    display:block;
+    display:-webkit-box;
 }
