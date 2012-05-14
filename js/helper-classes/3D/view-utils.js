@@ -124,35 +124,81 @@ exports.ViewUtils = Montage.create(Component, {
         }
     },
 
-    getNormalToUnprojectedElementPlane: {
-        value: function( elt ) {
-            var mat = this.getMatrixFromElement(elt);
+    /*
+	 *  This method will return a normal to a plane containing the Z axis and either the
+	 *  x or y axis of the element.
+	 */
+	getNormalToUnprojectedElementPlane:
+	{
+        value: function( elt, axis,  localMode )
+		{
+            var objMat = this.getMatrixFromElement(elt);
+			var objMatInv = glmat4.inverse( objMat, [] );
 
-            var xVec = [mat[0],  mat[1],  mat[2],  mat[3]];
-            var yVec = [mat[4],  mat[5],  mat[6],  mat[7]];
+            var xVec = [1,0,0];
+            var yVec = [0,1,0];
+            var zVec = [0,0,1];
 
             var stage = this.application.ninja.currentDocument.documentRoot;
             var stageMat = this.getMatrixFromElement(stage);
-            var stagePlane = [stageMat[8],  stageMat[9],  stageMat[10],  stageMat[11]];
 
+			var mat = glmat4.multiply( stageMat, objMat, [] );
+			
+			var viewDir;
+			if (localMode)
+			{
+				var matInv = glmat4.inverse( mat, [] );
+				viewDir = MathUtils.transformVector( [0,0,1], matInv );
+			}
+			else
+			{
+				var stageInv = glmat4.inverse( stageMat, [] );
+				viewDir = MathUtils.transformVector( [0,0,1],  stageInv );
+			}
+
+			/*
 			if (elt === stage)
 			{
 				xVec = [1,0,0];
 				yVec = [0,1,0];
 			}
+			*/
 
-            var xDot = Math.abs(vecUtils.vecDot(3, xVec, stagePlane));
-            var yDot = Math.abs(vecUtils.vecDot(3, yVec, stagePlane));
+			var plane;
+			var xDot, yDot, zDot;
+			switch (axis)
+			{
+				case 0:
+					yDot = Math.abs(vecUtils.vecDot(3, yVec, viewDir));
+					zDot = Math.abs(vecUtils.vecDot(3, zVec, viewDir));
+					if(yDot > zDot)
+						plane = vecUtils.vecCross( 3, zVec, xVec );
+					else
+						plane = vecUtils.vecCross( 3, yVec, xVec );
+					break;
+					
+				case 1:
+					xDot = Math.abs(vecUtils.vecDot(3, yVec, viewDir));
+					zDot = Math.abs(vecUtils.vecDot(3, zVec, viewDir));
+					if(xDot > zDot)
+						plane = vecUtils.vecCross( 3, zVec, yVec );
+					else
+						plane = vecUtils.vecCross( 3, xVec, yVec );
+					break;
+					break;
 
-            var plane;
-            if(xDot > yDot)
-            {
-                plane = xVec;
-            }
-            else
-            {
-                plane = yVec;
-            }
+				case 2:
+					xDot = Math.abs(vecUtils.vecDot(3, xVec, viewDir));
+					yDot = Math.abs(vecUtils.vecDot(3, yVec, viewDir));
+
+					if(xDot > yDot)
+						plane = vecUtils.vecCross( 3, yVec, zVec );
+					else
+						plane = vecUtils.vecCross( 3, xVec, zVec );
+					break;
+			}
+
+			if (localMode)  plane = MathUtils.transformVector( plane, objMat );
 
             // The translation value is a point on the plane
             this.pushViewportObj( elt );

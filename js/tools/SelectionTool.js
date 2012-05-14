@@ -505,7 +505,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                 delta = vecUtils.vecSubtract( 3, data.pt1, data.pt0 );
                 delta[0] = ~~delta[0];
                 delta[1] = ~~delta[1];
-                delta[2] = 0;
+                //delta[2] = 0;
                 var transMat = Matrix.Translation( delta );
                 this._moveElements(transMat);
             }

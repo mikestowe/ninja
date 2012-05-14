@@ -1949,6 +1949,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 			var localPt = hitRec.getLocalPoint();
 			var planeMat = hitRec.getPlaneMatrix();
             var stageWorldPt;
+
+			/*
             if(inGlobalMode)
             {
                 stageWorldPt = MathUtils.transformPoint(localPt,planeMat);
@@ -1957,6 +1959,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
             {
                 stageWorldPt = viewUtils.postViewToStageWorld( MathUtils.transformPoint(localPt,planeMat),  elt );
             }
+			*/
+            stageWorldPt = viewUtils.postViewToStageWorld( MathUtils.transformPoint(localPt,planeMat),  elt );
 
 			/*
 			 // get a working plane parallel to the current working plane through the stage world point

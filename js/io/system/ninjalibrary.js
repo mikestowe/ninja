@@ -152,7 +152,8 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
     		//
     		this.chromeApi = chrome;
     		//
-    		var i, l, libs, libjson, xhr = new XMLHttpRequest(), tocopylibs = [], copied;
+//            debugger;
+    		var i, l, libs, libjson, xhr = new XMLHttpRequest(), tocopylibs = [];
             //Getting known json list of libraries to copy to chrome
            	xhr.open("GET", '/js/io/system/ninjalibrary.json', false);
             xhr.send();
@@ -166,23 +167,18 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
             	if (chromeLibs.length > 0) {
             		//
 	            	for (i=0; chromeLibs[i]; i++) {
-	            		copied = false;
 	            		for (var j in libs.libraries) {
 	            			if (String(libs.libraries[j].name+libs.libraries[j].version).toLowerCase() === chromeLibs[i]) {
-	            				copied = true;
-	            			}
-	            		}
-	            		//
-	            		if (!copied) {
-	            			if (libs.libraries[j].file) {
-            					tocopylibs.push({name: String(libs.libraries[j].name+libs.libraries[j].version).toLowerCase(), path: libs.libraries[j].path, file: libs.libraries[j].file});
-        		    		} else {
-		            			tocopylibs.push({name: String(libs.libraries[j].name+libs.libraries[j].version).toLowerCase(), path: libs.libraries[j].path});
-            				}
-	            		} else {
-	            			//TODO: Remove, currently manually removing copied libraries
-	            			//this.chromeApi.directoryDelete(chromeLibs[i]);
-	            		}
+                                //TODO: Remove, currently manually removing copied libraries
+                                // //this.chromeApi.directoryDelete(chromeLibs[i]);
+	            			} else {
+                                if (libs.libraries[j].file) {
+                                    tocopylibs.push({name: String(libs.libraries[j].name+libs.libraries[j].version).toLowerCase(), path: libs.libraries[j].path, file: libs.libraries[j].file});
+                                } else {
+                                    tocopylibs.push({name: String(libs.libraries[j].name+libs.libraries[j].version).toLowerCase(), path: libs.libraries[j].path});
+                                }
+                            }
+                        }
             		}
             		
             	} else {
