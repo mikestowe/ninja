@@ -492,7 +492,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
 				this._elementCache = null;
 			}
-			console.log( "clear 2D cache" );
+			//console.log( "clear 2D cache" );
 		}
 	},
 
@@ -505,7 +505,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 			this.hLoadElementCache( stage,  plane, 0 );
             this._isCacheInvalid = false;
 
-			console.log( "2D cache loaded with " + this._elementCache.length + " elements" );
+			//console.log( "2D cache loaded with " + this._elementCache.length + " elements" );
 		}
 	},
 
@@ -1956,7 +1956,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 			//this._globalToStageWorldMat = this._stageWorldToGlobalMat.inverse();
 			this._globalToStageWorldMat = glmat4.inverse( this._stageWorldToGlobalMat, [] );
 
-			console.log( "setupDragPlane: " + this._dragPlane );
+			//console.log( "setupDragPlane: " + this._dragPlane );
 
 			// load the 2D elements
 			this.load2DCache( this._dragPlane );
