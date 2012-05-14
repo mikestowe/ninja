@@ -83,13 +83,13 @@ var Layer = exports.Layer = Montage.create(Component, {
             return this._layerName;
         },
         set:function(newVal){
-
 			this._layerEditable.value = newVal;
 	    	this._layerName = newVal;
 	    	this.layerData.layerName = newVal;
 	    	if (typeof(this.dynamicLayerName) !== "undefined") {
 	    		this.dynamicLayerName.value = newVal;
 	    	}
+
         }
     },
     _layerID:{
@@ -485,6 +485,8 @@ var Layer = exports.Layer = Montage.create(Component, {
 			this.element.addEventListener("dragleave", this.handleDragleave.bind(this), false);
 			this.element.addEventListener("dragstart", this.handleDragstart.bind(this), false);
 			this.element.addEventListener("drop", this.handleDrop.bind(this), false);
+
+            this.eventManager.addEventListener("updatedID", this, false);
 			
 
 
@@ -668,11 +670,11 @@ var Layer = exports.Layer = Montage.create(Component, {
     
 	/* Begin: Event handlers */
 	handleLayerNameChange: {
-		value: function(event) {		
+		value: function(event) {
 			this.dynamicLayerName.value = this._layerEditable.value;
-			this.application.ninja.timeline.currentLayerSelected.layerData.elementsList[0].dataset.storedLayerName = this.dynamicLayerName.value;
 			this.needsDraw = true;
 			this.application.ninja.documentController.activeDocument.needsSave = true;
+            this.layerData.elementsList[0].setAttribute("id",this.dynamicLayerName.value);
 		}
 	},
 	handleAddStyleClick: {
@@ -699,7 +701,6 @@ var Layer = exports.Layer = Montage.create(Component, {
 			}
 			this.dynamicLayerName.value = newVal;
 			this.layerName = newVal;
-			this.application.ninja.timeline.currentLayerSelected.layerData.elementsList[0].dataset.storedLayerName = newVal;
 			this.application.ninja.documentController.activeDocument.needsSave = true;
 			this.needsDraw = true;
 		}
@@ -845,7 +846,24 @@ var Layer = exports.Layer = Montage.create(Component, {
 				return e.stack.split("at")[3].split(":")[2];
 			}
     	}
+    },
+
+    handleUpdatedID:{
+        value:function(event){
+            var i= this.application.ninja.timeline.arrLayers.length;
+            if(event.detail.id){
+                for(var k=0;k<i;k++){
+                    if(this.application.ninja.timeline.arrLayers[k].layerData.layerID=== this.application.ninja.timeline.currentLayerSelected.layerData.layerID){
+                        this.application.ninja.timeline.currentLayerSelected.layerData.layerName = event.detail.id;
+                        this.application.ninja.timeline.triggerLayerBinding(k);
+                        this.needsDraw=true;
+                    }
+                }
+
+            }
+        }
     }
+
 	/* End: Logging routines */
 
 });

@@ -101,7 +101,6 @@ exports.Properties = Montage.create(Component, {
      */
     handleBlur: {
         value: function(event) {
-
             if(event.target.id === "elementId") {
 
                 // Remove all white spaces from the id
@@ -126,6 +125,7 @@ exports.Properties = Montage.create(Component, {
                     ElementsMediator.setAttribute(this.application.ninja.currentDocument.documentRoot, "class", this.elementClass.value, "Change", "pi", this.application.ninja.currentDocument.documentRoot.elementModel.elementClass);
                 }
             }
+            NJevent("updatedID",this.application.ninja.selectedElements[0]);
         }
     },
     

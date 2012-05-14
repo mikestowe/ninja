@@ -402,7 +402,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
     
-    draw: {
+    draw:{
     	value: function() {
     		
     		// Drag and Drop:
@@ -568,8 +568,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     // Bind all document-specific events (pass in true to unbind)
     _bindDocumentEvents : {
         value: function(boolUnbind) {
-            var arrEvents = ["deleteLayerClick",
-                             "newLayer",
+            var arrEvents = [ "newLayer",
                              "deleteLayer",
                              "elementAdded",
                              "elementsRemoved",
@@ -1014,7 +1013,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
 			// Make up a layer name.
             this.currentLayerNumber = this.currentLayerNumber + 1;
-            newLayerName = "Layer " + this.currentLayerNumber;
+//            newLayerName = "Layer " + this.currentLayerNumber;
+            newLayerName="         ";
 
 			// Possibly currentLayerNumber doesn't correctly reflect the
 			// number of layers.  Check that.
@@ -1074,12 +1074,14 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             var newLayerName, thingToPush = this.createLayerTemplate();
 
             this.currentLayerNumber = this.currentLayerNumber + 1;
-            newLayerName = "Layer " + this.currentLayerNumber;
+//            newLayerName = "Layer " + this.currentLayerNumber;
 
-            if(ele.dataset.storedLayerName){
-                newLayerName = ele.dataset.storedLayerName;
+//            if(ele.dataset.storedLayerName){
+//                newLayerName = ele.dataset.storedLayerName;
+//            }
+            if(ele.id){
+                thingToPush.layerData.layerName = ele.id;
             }
-            thingToPush.layerData.layerName = newLayerName;
             thingToPush.layerData.layerID = this.currentLayerNumber;
             thingToPush.layerData.layerTag = "<" + ele.nodeName.toLowerCase() + ">";
             thingToPush.parentElement = this.application.ninja.currentSelectedContainer;
@@ -1170,7 +1172,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             	this.currentLayerSelected.layerData.elementsList = [];
             }
             this.currentLayerSelected.layerData.elementsList.push(this.application.ninja.selectedElements[0]);
-            this.currentLayerSelected.layerData.elementsList[0].dataset.storedLayerName = this.currentLayerSelected.layerData.layerName;
+//            this.currentLayerSelected.layerData.elementsList[0].dataset.storedLayerName = this.currentLayerSelected.layerData.layerName;
         }
     },
 
@@ -1178,7 +1180,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:function (event) {
             var deleteElements = event.detail;
             //console.log("TimelinePanel.handleElementsRemoved; event.detail is ", event.detail);
-            //debugger;
             this.deleteLayer(deleteElements);
         }
     },
