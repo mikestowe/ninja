@@ -50,6 +50,18 @@
 			.nj-preset-transition {
 				-webkit-transition: all 450ms linear !important;
 			}
+
+           ninja-viewport {
+               display: block;
+               margin: 0;
+               padding: 0;
+               border: 0;
+               position: absolute;
+               overflow: visible;
+               top: 0;
+               left: 0;
+               background: #FFF;
+           }
 			
 			ninja-banner {
 				display: block;
@@ -60,7 +72,7 @@
 				overflow: visible;
 				top: 0;
 				left: 0;
-				background: #FFF;
+				background: transparent;
                 -webkit-transform-style: preserve-3d;
                 -webkit-transform: perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 
@@ -89,7 +101,10 @@
 
 	<body>
 		<ninjaloadinghack></ninjaloadinghack>
-		<ninja-banner></ninja-banner>
+        <ninja-viewport>
+            <!--TODO - rename-->
+		    <ninja-banner></ninja-banner>
+        </ninja-viewport>
 	</body>
 
 </html>
