@@ -1793,7 +1793,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
 					if (hSnap && vSnap)
 					{
-						console.log( "\tmerge 1" );
+						//console.log( "\tmerge 1" );
 
 						// intersect the 2 lines on the plane
 						var hPt = hSnap.getLocalPoint(),
@@ -1842,7 +1842,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
 					if (hSnap && vSnap)
 					{
-						console.log( "\tmerge 2" );
+						//console.log( "\tmerge 2" );
 
 						// intersect the 2 lines on the plane
 						var hPt = hSnap.getLocalPoint(),
@@ -1895,7 +1895,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
 						if (hSnap && vSnap)
 						{
-							console.log( "merge edge" );
+							//console.log( "merge edge" );
 
 							var hPt = hSnap.getLocalPoint(),
 								vPt = vSnap.getLocalPoint();
@@ -2052,7 +2052,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 					var z = s0[2];
 
 					var typeStr = hitRec.getTypeString();
-					console.log( "\ttype: " + typeStr + ", screen point z: " + hitRec.getScreenPoint()[2] + ", calculated z: " + z );
+					//console.log( "\ttype: " + typeStr + ", screen point z: " + hitRec.getScreenPoint()[2] + ", calculated z: " + z );
 				}
 			}
 		}
