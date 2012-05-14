@@ -14,12 +14,11 @@ var MaterialsModel = require("js/models/materials-model").MaterialsModel;
 //      Derived from class GeomObj
 ///////////////////////////////////////////////////////////////////////
 exports.Rectangle = Object.create(GeomObj, {
-{
-	if (!MaterialsModel)
-		MaterialsModel = require("js/models/materials-model").MaterialsModel;
-
 	// CONSTANTS
 	N_TRIANGLES: { value : 15, writable: false },       // TODO - This is not being used anywhere. Remove?
+
+	//if (!MaterialsModel)
+	//	MaterialsModel = require("js/models/materials-model").MaterialsModel;
 
 	///////////////////////////////////////////////////////////////////////
 	// Instance variables
@@ -1180,8 +1179,10 @@ RectangleStroke.create = function( rectCtr,  width, height, strokeWidth,  tlRad,
 	}
 
 	//refine the mesh for vertex deformations
-	if (material) {
-		if (material.hasVertexDeformation()) {
+	if (material)
+	{
+		if (material.hasVertexDeformation())
+		{
 			var paramRange = material.getVertexDeformationRange();
 			var tolerance = material.getVertexDeformationTolerance();
 			nVertices = ShapePrimitive.refineMesh( this.vertices, this.normals, this.uvs, this.indices, nVertices,  paramRange,  tolerance );

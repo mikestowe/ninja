@@ -325,11 +325,9 @@ exports.GeomObj = Object.create(Object.prototype, {
             if (this._materialArray && this._materialNodeArray && this.getWorld().isWebGL()) {
                 var nMats = this._materialArray.length;
                 if (nMats > 0) {
-				{
                     var arr = [];
 
                     for (var i = 0; i < nMats; i++) {
-					{
                         var matObj =
                         {
                             'materialNodeName':this._materialNodeArray[i].name,
