@@ -686,11 +686,9 @@ if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
             }
 
             if(needsRule) {
-//                rule = sc.addRule('body{}');
-//                sc.setStyles(rule, styles);
-                rule = sc.addRule('.ninjaUserDoc{}');
+                rule = sc.addRule('.ninja-body{}');
                 sc.setStyles(rule, styles);
-                sc.addClass(docRoot, "ninjaUserDoc");
+                sc.addClass(docRoot, "ninja-body");
             }
         }
     }
