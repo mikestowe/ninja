@@ -679,6 +679,14 @@ nav.menuBar ul li:hover ul, nav.menuBar ul ul li:hover ul, nav.menuBar ul ul ul 
 
 .toolColorChipIcon { width: 20px; height: 20px; margin-top: 1px; -webkit-transform: scale(0.8); background-color: #282828; }
 
+.subToolHolderPanel input.toolOptsRadioButton { background: none; width: 20px; height: 20px; display: block; margin: 0px; padding: 0px; margin-right: 5px; margin-top: 0px; background-repeat: no-repeat; opacity: 0.8; text-indent: -9999px; cursor: pointer; -webkit-border-radius: 3px; -webkit-user-select: none; border: 1px solid transparent; background-position: 1px 1px; }
+
+.subToolHolderPanel input.toolOptsRadioButton:active { border: 1px solid transparent; }
+
+.subToolHolderPanel input.toolOptsRadioButton:hover { opacity: 1.0; -webkit-box-shadow: 0px 0px 4px #fff; }
+
+.subToolHolderPanel input.toolOptsRadioButton:checked { background-color: #b2b2b2; opacity: 1.0; cursor: default; -webkit-box-shadow: none; background-repeat: no-repeat; background-position: 1px 1px; }
+
 .textBox { padding-top: 3px; min-width: 10em; margin-left: 5px; position: relative; margin-top: 0px; }
 
 .selectBox { width: 10em; opacity: 0.9; margin-left: 10px; float: left; display: block; background-color: #666666; border: 1px solid black; color: white; outline: none; }
@@ -743,35 +751,15 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .optionLabel { margin-top: 5px; }
 
-.tagRadioButtons input.tag-type { background: none; width: 20px; height: 20px; display: block; float: left; margin: 0px; padding: 0px; margin-right: 5px; margin-top: 0px; background-repeat: no-repeat; opacity: 0.8; text-indent: -9999px; cursor: pointer; -webkit-border-radius: 3px; -webkit-user-select: none; border: 1px solid transparent; }
+.tagRadioButtons input.divTool { background-image: url("../images/optionsbar/tag/div-tag.png"); }
 
-.tagRadioButtons input.tag-type { background-image: url("../images/tools/sprite-toolbar-tag.png"); }
+.tagRadioButtons input.imageTool { background-image: url("../images/optionsbar/tag/img-tag.png"); }
 
-.tagRadioButtons input.tag-type:active { border: 1px solid transparent; }
+.tagRadioButtons input.videoTool { background-image: url("../images/optionsbar/tag/vid-tag.png"); }
 
-.tagRadioButtons input.tag-type:hover { opacity: 1.0; -webkit-box-shadow: 0px 0px 4px #fff; }
+.tagRadioButtons input.canvasTool { background-image: url("../images/optionsbar/tag/canvas-tag.png"); }
 
-.tagRadioButtons input.tag-type:checked { background-color: transparent; opacity: 1.0; cursor: default; -webkit-box-shadow: none; }
-
-.tagRadioButtons input.divTool { margin-left: 8px; background-position: -40px 0px; }
-
-.tagRadioButtons input.divTool:checked { background-position: -40px -20px; }
-
-.tagRadioButtons input.imageTool { background-position: -60px 0px; }
-
-.tagRadioButtons input.imageTool:checked { background-position: -60px -20px; }
-
-.tagRadioButtons input.videoTool { background-position: -100px 0px; }
-
-.tagRadioButtons input.videoTool:checked { background-position: -100px -20px; }
-
-.tagRadioButtons input.canvasTool { background-position: -20px 0px; }
-
-.tagRadioButtons input.canvasTool:checked { background-position: -20px -20px; }
-
-.tagRadioButtons input.customTool { background-position: 0px 0px; }
-
-.tagRadioButtons input.customTool:checked { background-position: 0px -20px; }
+.tagRadioButtons input.customTool { background-image: url("../images/optionsbar/tag/custom-tag.png"); }
 
 .tagRadioButtons .nj-divider { height: 100%; float: left; position: relative; }
 
@@ -779,15 +767,9 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .tagRadioButtons select[disabled="true"].nj-skinned, .tagRadioButtons select[disabled].nj-skinned { visibility: hidden; }
 
-#zoomToolOptionHolder input#zoomInTool:checked { border-style: solid; border-width: 1px; border-color: white; background-image: url("../images/optionsbar/zoom/zoom_plus.png"); background-repeat: no-repeat; background-position: 4px 3px; }
+#zoomToolOptionHolder .zoomOutToolIcon { background-image: url("../images/optionsbar/zoom/zoom_minus.png"); }
 
-#zoomToolOptionHolder input#zoomOutTool:checked { border-style: solid; border-width: 1px; border-color: white; background-image: url("../images/optionsbar/zoom/zoom_minus.png"); background-repeat: no-repeat; background-position: 4px 3px; }
-
-#zoomToolOptionHolder input#zoomInTool { border-style: solid; border-width: 1px; background-image: url("../images/optionsbar/zoom/zoom_plus.png"); background-repeat: no-repeat; background-position: 4px 3px; }
-
-#zoomToolOptionHolder input#zoomOutTool { border-style: solid; border-width: 1px; background-image: url("../images/optionsbar/zoom/zoom_minus.png"); background-repeat: no-repeat; background-position: 4px 3px; }
-
-#zoomToolOptionHolder input.zoom-option { background: none; }
+#zoomToolOptionHolder .zoomInToolIcon { background-image: url("../images/optionsbar/zoom/zoom_plus.png"); }
 
 .object3DToolContainer input.tag-type { background: none; width: 20px; height: 20px; display: block; float: left; margin: 0px; margin-right: 5px; background-repeat: no-repeat; opacity: 0.8; text-indent: -9999px; cursor: pointer; -webkit-border-radius: 3px; -webkit-user-select: none; border: 1px solid transparent; }
 
