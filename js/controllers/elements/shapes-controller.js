@@ -142,7 +142,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                     if(m)
                     {
                         el.elementModel.shapeModel.GLGeomObj.setStrokeMaterial(m);
-                        color = this.getMaterialColor(m);
+                        color = this.getMaterialColor(value);
                         if(color)
                         {
                             el.elementModel.shapeModel.GLGeomObj.setStrokeColor(color);
@@ -156,7 +156,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                     if(m)
                     {
                         el.elementModel.shapeModel.GLGeomObj.setFillMaterial(m);
-                        color = this.getMaterialColor(m);
+                        color = this.getMaterialColor(value);
                         if(color)
                         {
                             el.elementModel.shapeModel.GLGeomObj.setFillColor(color);
@@ -750,34 +750,14 @@ exports.ShapesController = Montage.create(CanvasController, {
         value: function(m)
         {
             var css,
-                colorObj,
-                c,
-                mName = m.getName();
-            if(mName === "LinearGradientMaterial")
+                colorObj;
+            if(m === "LinearGradientMaterial")
             {
-                css = "-webkit-gradient(linear, left top, right top, from(";
-                c = this.webGlColorToCss(m, 1);
-                css += c.rgb + ")";
-                c = this.webGlColorToCss(m, 2);
-                css += ", color-stop(" + c.stop + ", " + c.rgb + ")";
-                c = this.webGlColorToCss(m, 3);
-                css += ", color-stop(" + c.stop + ", " + c.rgb + ")";
-                c = this.webGlColorToCss(m, 4);
-                css += ", to(" + c.rgb + "))";
-//                console.log(css);
+                css = "-webkit-gradient(linear, left top, right top, from(rgb(255, 0, 0)), color-stop(0.3, rgb(0, 255, 0)), color-stop(0.6, rgb(0, 0, 255)), to(rgb(0, 255, 255)))";
             }
-            else if(mName === "RadialGradientMaterial")
+            else if(m === "RadialGradientMaterial")
             {
-                css = "-webkit-radial-gradient(50% 50%, ellipse cover, ";
-                c = this.webGlColorToCss(m, 1);
-                css += c.rgb + " " + c.stop*100 + "%";
-                c = this.webGlColorToCss(m, 2);
-                css += c.rgb + " " + c.stop*100 + "%";
-                c = this.webGlColorToCss(m, 3);
-                css += c.rgb + " " + c.stop*100 + "%";
-                c = this.webGlColorToCss(m, 4);
-                css += c.rgb + " " + c.stop*100 + "%)";
-//                console.log(css);
+                css = "-webkit-radial-gradient(50% 50%, ellipse cover, rgb(255, 0, 0) 0%, rgb(0, 255, 0) 30%, rgb(0, 0, 255) 60%, rgb(0, 255, 255) 100%)";
             }
 
             if(css)
@@ -790,18 +770,6 @@ exports.ShapesController = Montage.create(CanvasController, {
             }
 
             return null;
-        }
-    },
-
-    webGlColorToCss: {
-        value: function(m, index)
-        {
-            var color, rgba, cStop;
-            color = m["getColor" + index]();
-            rgba = 'rgba(' + color[0]*255 + ',' + color[1]*255 + ',' + color[2]*255 + ',' + color[3] + ')';
-            cStop = m["getColorStop" + index]();
-
-            return {rgb:rgba, stop: cStop};
         }
     }
 

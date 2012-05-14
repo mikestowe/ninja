@@ -31,7 +31,6 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
     this._canvas = canvas;
 	if (this._useWebGL)
 	{
-        preserveDrawingBuffer = true;
         if(preserveDrawingBuffer)
 		{
             this._glContext = canvas.getContext("experimental-webgl", {preserveDrawingBuffer: true});
@@ -79,7 +78,6 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 	this._firstRender = true;
 
 	this._worldCount = worldCounter;
-	console.log( "creating world " + this._worldCount );
 	worldCounter++;
 
 	// keep a counter for generating node names

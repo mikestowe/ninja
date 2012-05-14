@@ -11,7 +11,6 @@ var MaterialsModel = require("js/models/materials-model").MaterialsModel;
 //      Super class for all geometry classes
 ///////////////////////////////////////////////////////////////////////
 exports.GeomObj = Object.create(Object.prototype, {
-{
     ///////////////////////////////////////////////////////////////////////
     // Constants
     ///////////////////////////////////////////////////////////////////////
@@ -181,14 +180,12 @@ exports.GeomObj = Object.create(Object.prototype, {
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
-    setMaterialColor: {
+   setMaterialColor: {
         value: function(c, type) {
             var i = 0,
                 nMats = 0;
             if (c) {
                 if (c.gradientMode) {
-            if (c.gradientMode)
-			{
                     // Gradient support
                     if (this._materialArray && this._materialTypeArray) {
                         nMats = this._materialArray.length;
@@ -204,7 +201,6 @@ exports.GeomObj = Object.create(Object.prototype, {
                     }
 
                     for (var n = 0; n < len; n++) {
-				{
                         var position = colors[n].position / 100;
                         var cs = colors[n].value;
                         var stop = [cs.r / 255, cs.g / 255, cs.b / 255, cs.a];
@@ -213,9 +209,6 @@ exports.GeomObj = Object.create(Object.prototype, {
                         if (nMats === this._materialTypeArray.length) {
                             for (i = 0; i < nMats; i++) {
                                 if (this._materialTypeArray[i] == type) {
-						{
-                            if (this._materialTypeArray[i] == type)
-							{
                                     this._materialArray[i].setProperty("color" + (n + 1), stop.slice(0));
                                     this._materialArray[i].setProperty("colorStop" + (n + 1), position);
                                 }
@@ -225,15 +218,12 @@ exports.GeomObj = Object.create(Object.prototype, {
                     if (type === "fill") {
                         this._fillColor = c;
                     } else {
-				else {
                         this._strokeColor = c;
                     }
                 } else {
-			else {
                     if (type === "fill") {
                         this._fillColor = c.slice(0);
                     } else {
-				else {
                         this._strokeColor = c.slice(0);
                     }
 
@@ -241,7 +231,6 @@ exports.GeomObj = Object.create(Object.prototype, {
                         nMats = this._materialArray.length;
                         if (nMats === this._materialTypeArray.length) {
                             for (i = 0; i < nMats; i++) {
-						{
                                 if (this._materialTypeArray[i] == type) {
                                     this._materialArray[i].setProperty("color", c.slice(0));
                                 }
@@ -250,24 +239,17 @@ exports.GeomObj = Object.create(Object.prototype, {
                     }
                 }
             } else {
-		else
-		{
                 if (type === "fill") {
                     this._fillColor = null;
                 } else {
-			else {
                     this._strokeColor = null;
                 }
 
                 if (this._materialArray && this._materialTypeArray) {
-			{
                     nMats = this._materialArray.length;
                     if (nMats === this._materialTypeArray.length) {
                         for (i = 0; i < nMats; i++) {
                             if (this._materialTypeArray[i] == type) {
-					{
-                        if (this._materialTypeArray[i] == type)
-						{
                                 // TODO - Not sure how to set color to null values in shaders
                                 this._materialArray[i].setProperty("color", [0, 0, 0, 0]);
                             }
@@ -289,7 +271,6 @@ exports.GeomObj = Object.create(Object.prototype, {
             if (this.getStrokeMaterial()) {
                 strokeMaterial = this.getStrokeMaterial().dup();
             } else {
-		else {
                 strokeMaterial = MaterialsModel.exportFlatMaterial();
             }
 
@@ -304,7 +285,7 @@ exports.GeomObj = Object.create(Object.prototype, {
                 this.setStrokeColor(this._strokeColor);
             }
 
-        this._strokeMaterial = strokeMaterial;
+			this._strokeMaterial = strokeMaterial;
 
             return strokeMaterial;
         }
@@ -316,7 +297,6 @@ exports.GeomObj = Object.create(Object.prototype, {
             if (this.getFillMaterial()) {
                 fillMaterial = this.getFillMaterial().dup();
             } else {
-		else {
                 fillMaterial = MaterialsModel.exportFlatMaterial();
             }
 
@@ -339,17 +319,17 @@ exports.GeomObj = Object.create(Object.prototype, {
 
     exportMaterialsJSON: {
         value: function() {
-		MaterialsModel = require("js/models/materials-model").MaterialsModel;
+			MaterialsModel = require("js/models/materials-model").MaterialsModel;
 
             var jObj;
             if (this._materialArray && this._materialNodeArray && this.getWorld().isWebGL()) {
                 var nMats = this._materialArray.length;
                 if (nMats > 0) {
-			{
+				{
                     var arr = [];
 
                     for (var i = 0; i < nMats; i++) {
-				{
+					{
                         var matObj =
                         {
                             'materialNodeName':this._materialNodeArray[i].name,
@@ -373,7 +353,7 @@ exports.GeomObj = Object.create(Object.prototype, {
 
     importMaterialsJSON: {
         value: function(jObj) {
-		MaterialsModel = require("js/models/materials-model").MaterialsModel;
+			MaterialsModel = require("js/models/materials-model").MaterialsModel;
 
             this._materialArray = [];
             this._materialTypeArray = [];
@@ -383,12 +363,10 @@ exports.GeomObj = Object.create(Object.prototype, {
             var nMaterials = jObj.nMaterials;
             var matArray = jObj.materials;
             for (var i = 0; i < nMaterials; i++) {
-		{
                 var mat;
                 var matObj = matArray[i].material;
                 var shaderName = matObj.material;
                 switch (shaderName) {
-			{
                     case "flat":
                     case "radialGradient":
                     case "linearGradient":
@@ -402,7 +380,7 @@ exports.GeomObj = Object.create(Object.prototype, {
                     case "tunnel":
                     case "reliefTunnel":
                     case "squareTunnel":
-                case "flag":
+					case "flag":
                     case "twist":
                     case "fly":
                     case "julia":
