@@ -4,25 +4,25 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 var Montage = require("montage").Montage,
-Converter = require("montage/core/converter/converter").Converter;
+    Converter = require("montage/core/converter/converter").Converter,
+    NJUtils = require("js/lib/NJUtils").NJUtils;
 
-exports.ValueUnitsConverter = Montage.create(Converter, {
+exports.StringValueConverter = Montage.create(Converter, {
 
     // convert fahrenheit to celsius (showing our non-metric heritage here)
     convert: {
         value: function(value) {
-//            return (parseInt(value, 10) - 32) / 1.8;
-//            console.log(value);
             console.log(value);
-            return parseInt(value);
+            console.log(parseInt(value));
+                return parseInt(value);
         }
     },
 
     // revert celsius to fahrenheit
     revert: {
         value: function(value) {
-//            return (1.8 * parseInt(value, 10)) + 32;
-            console.log(value);
+            console.log("revert string to value ", value);
+            return value;
         }
     }
 
