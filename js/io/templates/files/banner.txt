@@ -2,12 +2,11 @@
 
 <div class="ninja-content-wrapper">
 	
-	<!-- Created with Motorola Mobility Ninja -->
-	
-	<!-- Ninja-Banner Dimensions@@@ -->
-	
 	<div class="ninja-banner">
-	
+		
+		<!-- Created with Motorola Mobility Ninja -->
+		<!-- Ninja-Banner Dimensions@@@ -->
+		
 		<style type="text/css">
 			.ninja-content-wrapper {}
 			.ninja-banner {}
