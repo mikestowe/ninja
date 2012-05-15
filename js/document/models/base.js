@@ -138,6 +138,7 @@ exports.BaseDocumentModel = Montage.create(Component, {
         			file: this.file,
         			webgl: this.webGlHelper.glData,
         			styles: this.getStyleSheets(),
+        			template: this.fileTemplate,
         			document: this.views.design.iframe.contentWindow.document,
         			head: this.views.design.iframe.contentWindow.document.head,
         			body: this.views.design.iframe.contentWindow.document.body
@@ -165,6 +166,7 @@ exports.BaseDocumentModel = Montage.create(Component, {
         			file: this.file,
         			webgl: this.webGlHelper.glData,
         			css: this.getStyleSheets(),
+        			template: this.fileTemplate,
         			document: this.views.design.iframe.contentWindow.document,
         			head: this.views.design.iframe.contentWindow.document.head,
         			body: this.views.design.iframe.contentWindow.document.body
