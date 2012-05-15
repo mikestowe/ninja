@@ -246,6 +246,12 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
         }
     },
 
+    retrieveStoredStyleTweens:{
+        value:function(){
+
+        }
+    },
+
     updatePropKeyframeRule:{
         value:function(){
             // delete the current rule
@@ -278,14 +284,13 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
             var currentStyleValue = this.ninjaStylesContoller.getElementStyle(this.animatedElement, this.trackEditorProperty);
             this.propTweens[0].tweenData.tweenedProperties[this.trackEditorProperty] = currentStyleValue;
 
-
             this.animationName = this.animatedElement.classList[0] + "_" + this.trackEditorProperty;
             var currentAnimationNameString = this.parentComponent.parentComponent.parentComponent.animationNamesString;
             var newAnimationNames = currentAnimationNameString + "," + this.animationName;
-            var currentAnimationDuration = this.ninjaStylesContoller.getElementStyle(this.animatedElement, "-webkit-animation-duration");
-            var newAnimationDuration = currentAnimationDuration + "," + currentAnimationDuration;
-            var currentIterationCount = this.ninjaStylesContoller.getElementStyle(this.animatedElement, "-webkit-animation-iteration-count");
-            var newIterationCount = currentIterationCount + ",1";
+            //var currentAnimationDuration = this.ninjaStylesContoller.getElementStyle(this.animatedElement, "-webkit-animation-duration");
+            //var newAnimationDuration = currentAnimationDuration + "," + currentAnimationDuration;
+            //var currentIterationCount = this.ninjaStylesContoller.getElementStyle(this.animatedElement, "-webkit-animation-iteration-count");
+            //var newIterationCount = currentIterationCount + ",1";
 
             this.parentComponent.parentComponent.parentComponent.animationNamesString = newAnimationNames;
 

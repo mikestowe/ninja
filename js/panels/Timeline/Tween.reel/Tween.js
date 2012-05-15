@@ -282,9 +282,14 @@ var Tween = exports.Tween = Montage.create(Component, {
                 // move animated element to correct position on stage
                 var currentTop = this.tweenedProperties["top"] + "px";
                 var currentLeft = this.tweenedProperties["left"] + "px";
+                var currentWidth = this.tweenedProperties["width"] + "px";
+                var currentHeight = this.tweenedProperties["height"] + "px";
 
                 this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.animatedElement], "top", [currentTop], "Change", "tween");
                 this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.animatedElement], "left", [currentLeft], "Change", "tween");
+                this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.animatedElement], "width", [currentWidth], "Change", "tween");
+                this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.animatedElement], "height", [currentHeight], "Change", "tween");
+
             }
         }
     },

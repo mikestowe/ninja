@@ -718,7 +718,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     retrieveStoredTweens:{
         value:function () {
-            var percentValue, fraction, splitValue,offsetAttribute,topOffSetAttribute,leftOffsetAttribute;
+            var percentValue, fraction, splitValue,offsetAttribute,topOffSetAttribute,leftOffsetAttribute,widthOffsetAttribute,heightOffsetAttribute;
             var currentMilliSec,currentMilliSecPerPixel,clickPosition,tempTiming,tempTimingFloat,trackTiming,i = 0;
 
             var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
@@ -737,11 +737,16 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                         newTween.tweenData = {};
 
                         offsetAttribute = this.currentKeyframeRule[i].cssText.split(" ");
+                        
                         topOffSetAttribute = offsetAttribute[3].split("px");
                         leftOffsetAttribute = offsetAttribute[5].split("px");
+                        widthOffsetAttribute = offsetAttribute[7].split("px");
+                        heightOffsetAttribute = offsetAttribute[9].split("px");
 
                         var tempTopOffset = parseInt(topOffSetAttribute[0]);
-                        var tempLeftOffset =parseInt(leftOffsetAttribute[0]);
+                        var tempLeftOffset = parseInt(leftOffsetAttribute[0]);
+                        var tempWidthOffset = parseInt(widthOffsetAttribute[0]);
+                        var tempHeightOffset = parseInt(heightOffsetAttribute[0]);
 
                         if (this.currentKeyframeRule[i].keyText === "0%") {
                             newTween.tweenData.spanWidth = 0;
@@ -752,6 +757,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                             newTween.tweenData.tweenedProperties = [];
                             newTween.tweenData.tweenedProperties["top"] = tempTopOffset;
                             newTween.tweenData.tweenedProperties["left"] = tempLeftOffset;
+                            newTween.tweenData.tweenedProperties["width"] = tempWidthOffset;
+                            newTween.tweenData.tweenedProperties["height"] = tempHeightOffset;
                             this.tweens.push(newTween);
                         }
                         else {
@@ -772,6 +779,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                             newTween.tweenData.tweenedProperties=[];
                             newTween.tweenData.tweenedProperties["top"] = tempTopOffset;
                             newTween.tweenData.tweenedProperties["left"] = tempLeftOffset;
+                            newTween.tweenData.tweenedProperties["width"] = tempWidthOffset;
+                            newTween.tweenData.tweenedProperties["height"] = tempHeightOffset;
                             this.tweens.push(newTween);
                         }
                         this.nextKeyframe += 1;
