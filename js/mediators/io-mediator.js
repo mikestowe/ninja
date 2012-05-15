@@ -77,7 +77,7 @@ exports.IoMediator = Montage.create(Component, {
                 //TODO: Improve template data injection
                 function parseTemplate (content, template) {
                 	//
-                	if (template.name.toLowerCase() === 'banner') {
+                	if (template.name.toLowerCase() === 'banner' || template.name.toLowerCase() === 'animation') {
                 		//Getting dimensions of banner
                 		var dimensions = template.id.split('x');
                 		dimensions = {width: String(dimensions[0])+'px', height: String(dimensions[1])+'px'};
