@@ -23,6 +23,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "bindButton":       {"@": "bindButton"}
             }
         },
+
         "PosX": {
             "prototype": "js/components/hottextunit.reel[HotTextUnit]",
             "properties": {
@@ -31,11 +32,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "minValue": -10000
             },
             "bindings": {
-                "value": {
-                    "boundObject": {"@": "owner"},
-                    "boundObjectPropertyPath": "leftPosition",
-                    "oneway": false
-                }
+                "value": {"<<->": "@owner.leftPosition"}
             }
         },
         "PosY": {
@@ -46,11 +43,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "minValue": -10000
             },
             "bindings": {
-                "value": {
-                    "boundObject": {"@": "owner"},
-                    "boundObjectPropertyPath": "topPosition",
-                    "oneway": false
-                }
+                "value": {"<<->": "@owner.topPosition"}
             }
         },
         "PosH": {
@@ -59,25 +52,20 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "element": {"#": "PosH"}
             },
             "bindings": {
-                "value": {
-                    "boundObject": {"@": "owner"},
-                    "boundObjectPropertyPath": "heightSize",
-                    "oneway": false
-                }
+                "value": {"<<->": "@owner.heightSize"}
             }
         },
         "PosW": {
             "prototype": "js/components/hottextunit.reel[HotTextUnit]",
             "properties": {
-                "element": {"#": "PosW"}
+                "element": {"#": "PosW"},
+                "acceptableUnits" : ["px", "%"],
+                "units": "px"
             },
             "bindings": {
-                "value": {
-                    "boundObject": {"@": "owner"},
-                    "boundObjectPropertyPath": "widthSize",
-                    "oneway": false
-                }
+                "value": {"<<->": "@owner.widthSize"}
             }
+
         },
         "bindButton": {
             "prototype": "montage/ui/toggle-button.reel",

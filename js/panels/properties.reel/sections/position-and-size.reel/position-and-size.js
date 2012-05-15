@@ -23,7 +23,19 @@ exports.PosSize = Montage.create(Component, {
     widthSize: {
         value: 0
     },
+/*
+    widthSize: {
+        get: function() { return this._widthSize;},
+        set: function(value) {
+            this._widthSize = parseInt(value);
+            this.widthUnit = value;
+        }
+    },
 
+    widthUnit: {
+        value: "px"
+    },
+*/
     savedPosition: {
         value: null
     },

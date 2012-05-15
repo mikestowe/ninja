@@ -14,25 +14,11 @@ exports.PiData = Montage.create( Montage, {
             {
                 label: "Style",
 
-                                Section: [
-                                    [
-
-                                    ]
-                                ]
-            }
-        ]
-    },
-
-    stagePi: {
-        value: [
-            {
-                label: "Style",
-
                 Section: [
                     [
                         {
-                            type : "chip",
-                            id : "background",
+                            type: "chip",
+                            id: "background",
                             prop: "background"
                         }
                     ]
