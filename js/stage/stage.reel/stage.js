@@ -387,9 +387,9 @@ exports.Stage = Montage.create(Component, {
     handleMousewheel: {
         value: function(event) {
             if(event._event.wheelDelta > 0) {
-                this._iframeContainer.scrollTop -= 20;
+                this.application.ninja.currentDocument.model.views.design.document.body.scrollTop -= 20;
             } else {
-                this._iframeContainer.scrollTop += 20;
+                this.application.ninja.currentDocument.model.views.design.document.body.scrollTop += 20;
             }
         }
     },
