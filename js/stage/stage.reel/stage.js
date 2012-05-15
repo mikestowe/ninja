@@ -464,8 +464,8 @@ exports.Stage = Montage.create(Component, {
                 this.userContentLeft = this._documentOffsetLeft - this._scrollLeft + this._userContentBorder;
                 this.userContentTop = this._documentOffsetTop - this._scrollTop + this._userContentBorder;
             } else {
-                this._scrollLeft = this.application.ninja.currentDocument.documentRoot.scrollLeft;
-                this._scrollTop = this.application.ninja.currentDocument.documentRoot.scrollTop;
+                this._scrollLeft = this.application.ninja.currentDocument.model.views.design.document.body.scrollLeft;
+                this._scrollTop = this.application.ninja.currentDocument.model.views.design.document.body.scrollTop;
 
                 this.userContentLeft = -this._scrollLeft;
                 this.userContentTop = -this._scrollTop;
@@ -512,11 +512,16 @@ exports.Stage = Montage.create(Component, {
      */
     centerStage: {
         value: function() {
-            this._iframeContainer.scrollLeft = this._documentOffsetLeft - (this._iframeContainer.offsetWidth - this._documentRoot.parentNode.offsetWidth)/2;
-            this._iframeContainer.scrollTop = this._documentOffsetTop - (this._iframeContainer.offsetHeight - this._documentRoot.parentNode.offsetHeight)/2;
+            if(this.application.ninja.currentDocument.documentRoot.id === "UserContent") {
+                this._iframeContainer.scrollLeft = this._documentOffsetLeft - (this._iframeContainer.offsetWidth - this._documentRoot.parentNode.offsetWidth)/2;
+                this._iframeContainer.scrollTop = this._documentOffsetTop - (this._iframeContainer.offsetHeight - this._documentRoot.parentNode.offsetHeight)/2;
 
-            this._scrollLeft = this._iframeContainer.scrollLeft;
-            this._scrollTop = this._iframeContainer.scrollTop;
+                this._scrollLeft = this._iframeContainer.scrollLeft;
+                this._scrollTop = this._iframeContainer.scrollTop;
+            } else {
+                this._scrollLeft = this._userContentLeft = this.application.ninja.currentDocument.model.views.design.document.body.scrollLeft = 0;
+                this._scrollTop = this._userContentTop = this.application.ninja.currentDocument.model.views.design.document.body.scrollTop = 0;
+            }
         }
     },
 
