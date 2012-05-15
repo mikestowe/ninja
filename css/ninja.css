@@ -823,6 +823,12 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .distRightIcon { background-image: url("../images/optionsbar/selection/DistRight.png"); }
 
+.optionsPenTool input.penToolIcon { background-image: url("../images/tools/Tool-Pen.png"); }
+
+.optionsPenTool input.penPlusToolIcon { background-image: url("../images/optionsbar/pen/penPlus.png"); }
+
+.optionsPenTool input.penMinusToolIcon { background-image: url("../images/optionsbar/pen/penMinus.png"); }
+
 #toolsPanelContent { width: 40px; }
 
 .toolsList { width: 29px; margin: auto; }

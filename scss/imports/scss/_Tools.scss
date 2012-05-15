@@ -458,3 +458,17 @@ input[type="radio"]:disabled {
 	background-image: url("../images/optionsbar/selection/DistRight.png");  
 }
 
+.optionsPenTool {
+}
+
+.optionsPenTool input.penToolIcon {
+    background-image:url("../images/tools/Tool-Pen.png");
+}
+
+.optionsPenTool input.penPlusToolIcon {
+    background-image:url("../images/optionsbar/pen/penPlus.png");
+}
+
+.optionsPenTool input.penMinusToolIcon {
+    background-image:url("../images/optionsbar/pen/penMinus.png");
+}

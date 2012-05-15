@@ -28,18 +28,28 @@
                 "prototype": "js/components/tools-properties/pen-properties.reel",
                 "properties": {
                     "element": {"#": "penProperties"},
+
+                    "_penToolRadio": {"#": "penTool"},
+                    "_penPlusRadio": {"#": "penPlus"},
+                    "_penMinusRadio": {"#": "penMinus"},
+
                     "_fillColorCtrl": {"#": "fillColorCtrl"},
                     "_strokeColorCtrl": {"#": "strokeColorCtrl"},
                     "_strokeSize": {"@": "strokeSizeHT"}
                 }
             }
     	}
-	    </script>
+        </script>
        
     </head>
 
     <body>
-    <div data-montage-id="penProperties" class="subToolHolderPanel optionsPenTool">
+    <div data-montage-id="penProperties" class="subToolHolderPanel toolOptionsFloatChildren optionsPenTool">
+        <input type="radio" data-montage-id="penTool" class="toolOptsRadioButton penToolIcon" title="Pen Tool" name="penSubtoolRadios" value="pen" checked/>
+        <input type="radio" data-montage-id="penPlus" class="toolOptsRadioButton penPlusToolIcon" title="Pen Plus" name="penSubtoolRadios" value="penPlus"/>
+        <input type="radio" data-montage-id="penMinus" class="toolOptsRadioButton penMinusToolIcon toolOptionsSpacer" title="Pen Minus" name="penSubtoolRadios" value="penMinus"/>
+        <div class="nj-divider divider-vertical toolOptionsSpacer">&nbsp;</div>
+
         <div class="toolColorChipIcon PencilTool"></div>
         <div data-montage-id="strokeColorCtrl" class="toolColorChipCtrl"></div>
         <div class="toolColorChipIcon FillTool"></div>
