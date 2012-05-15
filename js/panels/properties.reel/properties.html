@@ -38,13 +38,15 @@
                 "prototype": "js/panels/properties.reel/section.reel",
                 "properties": {
                     "element": {"#": "PosSize"},
-                    "content" : {"@": "PosSize"},
+                    "content" : {"@": "positionSize"},
                     "name" : "Position And Size"
                 }
             },
-            "PosSize": {
-                "prototype": "js/panels/properties.reel/sections/position-and-size.reel[PosSize]"
+
+            "positionSize": {
+                "prototype": "js/panels/properties.reel/sections/position-size.reel"
             },
+
             "threeDSection": {
                 "prototype": "js/panels/properties.reel/section.reel",
                 "properties": {
@@ -97,7 +99,7 @@
                     "elementName":          {"@": "elementName"},
                     "elementClass":         {"@": "elementClass"},
                     "elementId":            {"@": "elementId"},
-                    "positionSize":         {"@": "PosSize"},
+                    "positionSize":         {"@": "positionSize"},
                     "threeD":               {"@": "threeDProperties"}
                 }
             }
