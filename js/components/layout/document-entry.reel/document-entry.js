@@ -7,8 +7,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage;
 var Component = require("montage/ui/component").Component;
 
-//var documentManagerModule = ("js/document/documentManager");
-
 exports.DocumentEntry = Montage.create(Component, {
 
     dirty: { value: null },
