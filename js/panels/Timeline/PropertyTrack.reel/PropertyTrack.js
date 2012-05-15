@@ -225,6 +225,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
                 newTween.tweenData.tweenID = 0;
                 newTween.tweenData.spanPosition = 0;
                 newTween.tweenData.tweenedProperties = [];
+                newTween.tweenData.tweenedProperties[this.trackEditorProperty] = this.ninjaStylesContoller.getElementStyle(this.animatedElement, this.trackEditorProperty);
 
                 this.propTweens.push(newTween);
 
@@ -290,7 +291,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
 
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-name", newAnimationNames);
 
-            this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-duration", newAnimationDuration);
+            //this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-duration", newAnimationDuration);
             //this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-iteration-count", newIterationCount);
             //this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-fill-mode", "both");
             //this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-transition-timing-function", "linear");

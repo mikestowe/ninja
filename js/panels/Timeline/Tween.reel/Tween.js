@@ -201,28 +201,18 @@ var Tween = exports.Tween = Montage.create(Component, {
 
     setAbsoluteTweenProperties:{
         value:function (eventDetail) {
-            //console.log(eventDetail);
-
-            // top
             if(this.parentComponent.parentComponent.animatedElement.offsetTop != this.tweenedProperties["top"]){
                 this.tweenedProperties["top"] = this.parentComponent.parentComponent.animatedElement.offsetTop;
             }
-
-            // left
             if(this.parentComponent.parentComponent.animatedElement.offsetLeft != this.tweenedProperties["left"]){
                 this.tweenedProperties["left"] = this.parentComponent.parentComponent.animatedElement.offsetLeft;
             }
-
-            // width
             if (this.parentComponent.parentComponent.animatedElement.offsetWidth != this.tweenedProperties["width"]){
                 this.tweenedProperties["width"] = this.parentComponent.parentComponent.animatedElement.offsetWidth;
             }
-
-            // height
             if (this.parentComponent.parentComponent.animatedElement.offsetHeight != this.tweenedProperties["height"]){
                 this.tweenedProperties["height"] = this.parentComponent.parentComponent.animatedElement.offsetHeight;
             }
-
             // tell track to update css rule
             this.parentComponent.parentComponent.updateKeyframeRule();
 
@@ -247,21 +237,22 @@ var Tween = exports.Tween = Montage.create(Component, {
                 // ignore top, left, width, and height
                 console.log(eventDetail.data.value[0]);
                 this.tweenedProperties[this.parentComponent.parentComponent.trackEditorProperty] = eventDetail.data.value[0];
-                console.log(this.tweenedProperties);
+                this.parentComponent.parentComponent.updatePropKeyframeRule();
+
             } else if(eventDetail.type == "setColor"){
                 var prop = this.parentComponent.parentComponent.trackEditorProperty;
                 this.tweenedProperties[prop] = eventDetail.data.value.color.css;
                 this.parentComponent.parentComponent.updatePropKeyframeRule();
+
             } else if(eventDetail.type == "setProperty"){
                 // ignore top, left, width, and height
                 console.log(eventDetail.data.value[0]);
                 this.tweenedProperties[this.parentComponent.parentComponent.trackEditorProperty] = eventDetail.data.value[0];
-                console.log(this.tweenedProperties);
+                this.parentComponent.parentComponent.updatePropKeyframeRule();
+
             }else {
                 console.log("TWEEN Unhandled type - setStyleTweenProperty : " + eventDetail.type);
             }
-
-
         }
     },
 
