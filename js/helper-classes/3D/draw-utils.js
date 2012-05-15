@@ -1170,8 +1170,8 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			var saveColor = this._lineColor;
 			var saveLineWidth = this._lineWidth;
 
-			var origLeft = 50;
-			var origTop = 50;
+			var origLeft = 60;
+			var origTop = this.snapManager.getStageHeight() - 60;
 
 			var mat = this.viewUtils.getMatrixFromElement( this._sourceSpaceElt );
 			var tMat = Matrix.Translation([origLeft,origTop,0]);
@@ -1203,7 +1203,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			this.setDrawingSurfaceElement(this.application.ninja.stage.layoutCanvas);
 			// clear just the 3d compass area
 			this._drawingContext.save();
-			this._drawingContext.rect(0, 0, 100, 100);
+			this._drawingContext.rect(10, origTop-60, 100, 110);
 			this._drawingContext.clip();
 
 			this._drawingContext.lineWidth = 2.0;

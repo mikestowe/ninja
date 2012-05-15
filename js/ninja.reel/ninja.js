@@ -193,12 +193,17 @@ exports.Ninja = Montage.create(Component, {
         }
     },
     
+    
+    ////////////////////////////////////////////////////////////////////
+	//TODO: Expand method to allow other browsers for preview
     executeChromePreview: {
     	value: function () {
-    		this.application.ninja.documentController.activeDocument.livePreview();
+    		this.application.ninja.documentController.activeDocument.model.browserPreview('chrome');
     	}
     },
-
+	////////////////////////////////////////////////////////////////////
+	
+	
     handleResize: {
         value: function() {
             this.stage.resizeCanvases = true;
@@ -299,19 +304,23 @@ exports.Ninja = Montage.create(Component, {
             var background, overflow, transitionStopRule;
             this.stage.hideCanvas(this.appModel.livePreview);
 
+            // TODO: Remove marker for old template: NINJA-STAGE-REWORK
             if(this.appModel.livePreview) {
-                background =  "#000000";
-                overflow = "hidden";
+//                background =  "#000000";
+//                overflow = "hidden";
                 transitionStopRule = "nj-css-garbage-selector";
             } else {
-                background =  "#808080";
-                overflow = "visible";
+//                background =  "#808080";
+//                overflow = "visible";
                 transitionStopRule = "*"
             }
 
-            this.currentDocument.documentRoot.elementModel.controller.setProperty(this.currentDocument.documentRoot, "body-background", background);
-            this.currentDocument.documentRoot.elementModel.controller.setProperty(this.currentDocument.documentRoot, "overflow", overflow);
-            this.currentDocument.documentRoot.elementModel.controller.changeSelector(this.currentDocument.documentRoot, "transitionStopRule", transitionStopRule);
+            // TODO: Remove marker for old template: NINJA-STAGE-REWORK
+//            this.currentDocument.documentRoot.elementModel.controller.setProperty(this.currentDocument.documentRoot, "body-background", background);
+//            this.currentDocument.documentRoot.elementModel.controller.setProperty(this.currentDocument.documentRoot, "overflow", overflow);
+//            this.currentDocument.documentRoot.elementModel.controller.changeSelector(this.currentDocument.documentRoot, "transitionStopRule", transitionStopRule);
+
+            this.application.ninja.stylesController._stageStylesheet.rules[0].selectorText = transitionStopRule;
 
             this._toggleWebGlAnimation(this.appModel.livePreview);
         }
@@ -357,31 +366,6 @@ exports.Ninja = Montage.create(Component, {
         }
     },
 
-    _handleAppLoaded: {
-        value: function(event){
-
-            /*
-            Object.defineBinding(docBar, "type", {
-                boundObject: DocumentManagerModule.DocumentManager,
-                boundObjectPropertyPath: "activeDocument.documentType"
-            });
-
-            Object.defineBinding(docBar, "currentView", {
-                boundObject: DocumentManagerModule.DocumentManager,
-                boundObjectPropertyPath: "activeDocument.currentView",
-                oneway: false
-            });
-
-            Object.defineBinding(docBar, "zoomFactor", {
-                boundObject: DocumentManagerModule.DocumentManager,
-                boundObjectPropertyPath: "activeDocument.zoomFactor",
-                oneway: false
-            });
-            */
-
-        }
-    },
-    
     setupGlobalHelpers: {
         value: function() {
 

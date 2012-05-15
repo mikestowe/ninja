@@ -88,18 +88,21 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     			
     			
     			
-
-////////////////////////////////////////////////////////////////////
+	//TODO: Ensure these APIs are not needed
+	////////////////////////////////////////////////////////////////////
 	//
     handleWebRequest: {
     	value: function (request) {
     		//TODO: Check if frameId is proper
     		if (this._hackRootFlag && request.parentFrameId !== -1) {
-    			//TODO: Optimize creating string
-    			//console.log(request);
-    			//console.log(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1], request.url);
-				//return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split('/')[request.url.split('/').length-1]};
-				return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/montage-html/'))[1]};
+    			//Checking for proper URL redirect (from different directories)
+    			if (request.url.indexOf('js/document/templates/banner') !== -1) {
+					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/banner/'))[1]};
+				} else if (request.url.indexOf('js/document/templates/html')  !== -1) {
+					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/html/'))[1]};
+				} else {
+					//Error, not a valid folder
+				}
 			}
 		}
     },
@@ -155,32 +158,43 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     },
 
     handleExecuteNewFile: {
-            value: function(event) {
-                var newFileSettings = event._event.settings || {};
-                if (this.application.ninja.coreIoApi.cloudAvailable()) {
-                    newFileSettings.callback = this.createNewFile.bind(this);
-                    this.application.ninja.newFileController.showNewFileDialog(newFileSettings);
-                }
+        value: function(event) {
+            var newFileSettings = event._event.settings || {};
+            if (this.application.ninja.coreIoApi.cloudAvailable()) {
+                newFileSettings.callback = this.createNewFile.bind(this);
+                this.application.ninja.newFileController.showNewFileDialog(newFileSettings);
             }
+        }
     },
 	////////////////////////////////////////////////////////////////////
-	//TODO: Check for appropiate structures
+	//
     handleExecuteSave: {
     	value: function(event) {
-            if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
-                //Text and HTML document classes should return the same save object for fileSave
-                this.application.ninja.ioMediator.fileSave(this.activeDocument.save(), this.fileSaveResult.bind(this));
-            }
+    		//
+    		if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
+    			//
+    			this.activeDocument.model.save(this.testCallback.bind(this)); //this.fileSaveResult.bind(this)
+    		} else {
+    			//Error:
+    		}
 		}
+    },
+    testCallback: {
+    	value: function (value) {
+    		console.log(value);
+    	}
     },
     ////////////////////////////////////////////////////////////////////
 	//TODO: Check for appropiate structures
     handleExecuteSaveAll: {
     	value: function(event) {
-            if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
-                //Text and HTML document classes should return the same save object for fileSave
-                this.application.ninja.ioMediator.fileSave(this.activeDocument.saveAll(), this.fileSaveResult.bind(this));
-            }
+           //
+    		if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
+    			//
+    			this.activeDocument.model.saveAll(this.testCallback.bind(this)); //this.fileSaveResult.bind(this)
+    		} else {
+    			//Error:
+    		}
 		}
     },
     ////////////////////////////////////////////////////////////////////
@@ -198,9 +212,14 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     ////////////////////////////////////////////////////////////////////
     handleExecuteFileClose:{
         value: function(event) {
-            if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
+        	if (this.activeDocument) {
+        		this.activeDocument.closeDocument();
+        	}
+            /*
+if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
                 this.closeDocument(this.activeDocument.uuid);
             }
+*/
         }
     },
     ////////////////////////////////////////////////////////////////////
@@ -219,7 +238,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     fileSaveResult: {
     	value: function (result) {
             if((result.status === 204) || (result.status === 404)){//204=>existing file || 404=>new file... saved
-                this.activeDocument.needsSave = false;
+                this.activeDocument.model.needsSave = false;
                 if(this.application.ninja.currentDocument !== null){
                     //clear Dirty StyleSheets for the saved document
                     this.application.ninja.stylesController.clearDirtyStyleSheets(this.application.ninja.currentDocument);
@@ -228,20 +247,20 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     	}
     },
 	
+	
+	
+	////////////////////////////////////////////////////////////////////
+	//
     createNewFile:{
         value:function(newFileObj){
-            //console.log(newFileObj);//contains the template uri and the new file uri
+            //
             if(!newFileObj) return;
-            this.application.ninja.ioMediator.fileNew(newFileObj.newFilePath, newFileObj.fileTemplateUri, this.openNewFileCallback.bind(this));
-
-            if((newFileObj.fileExtension !== ".html") && (newFileObj.fileExtension !== ".htm")){//open code view
-
-                } else {
-                //open design view
-                }
+            //
+            this.application.ninja.ioMediator.fileNew(newFileObj.newFilePath, newFileObj.fileTemplateUri, this.openNewFileCallback.bind(this), newFileObj.template);
         }
     },
-
+	////////////////////////////////////////////////////////////////////
+	
     /**
      * Public method
      * doc contains:
@@ -358,6 +377,12 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     },
     openWebDocument: {
         value: function(doc) {
+        	var template, dimensions;
+        	if (doc.content.body.indexOf('Ninja-Banner Dimensions@@@') !== -1) {
+        		dimensions = (doc.content.body.split('Ninja-Banner Dimensions@@@'))[1].split('-->')[0].split('x');
+        		dimensions = {width: parseInt(dimensions[0]), height: parseInt(dimensions[1])};
+        		template = {type: 'banner', size: dimensions};
+        	}
             // TODO: HACKS to remove
 			this.documentHackReference = doc;
             document.getElementById("iframeContainer").style.overflow = "hidden";
@@ -366,7 +391,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 				case 'html':
 					//Open in designer view
                     this._hackRootFlag = false;
-                    Montage.create(Document).init(doc, this, this._onOpenDocument, 'design');
+                    Montage.create(Document).init(doc, this, this._onOpenDocument, 'design', template);
 					break;
 				default:
 					//Open in code view
@@ -485,6 +510,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
             this.webTemplate = false;
 
+            this._initializeBodyStyles();
             NJevent("onOpenDocument", doc);
 
 			this.application.ninja.stage.stageView.showCodeViewBar(false);
@@ -584,7 +610,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                     //hide the iframe when switching to code view
                     document.getElementById("iframeContainer").style.display = "none";
                 }
-        }
+            }
         }
     },
 
@@ -630,7 +656,40 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
     handleStyleSheetDirty:{
         value:function(){
-            this.activeDocument.needsSave = true;
+//            this.activeDocument.model.needsSave = true;
+        }
+    },
+
+    _initializeBodyStyles: {
+        value: function() {
+            var sc = this.application.ninja.stylesController,
+                docRoot = this.application.ninja.currentDocument.documentRoot,
+                styles = {},
+                needsRule = false,
+                rule;
+
+            if(sc.getElementStyle(docRoot, "width", false, false) == null) {
+                styles['width'] = '100%';
+                needsRule = true;
+            }
+            if(sc.getElementStyle(docRoot, "height", false, false) == null) {
+                styles['height'] = '100%';
+                needsRule = true;
+            }
+            if(sc.getElementStyle(docRoot, "-webkit-transform", false, false) == null) {
+                styles['-webkit-transform'] = 'perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)';
+                needsRule = true;
+            }
+            if(sc.getElementStyle(docRoot, "-webkit-transform-style", false, false) == null) {
+                styles['-webkit-transform-style'] = 'preserve-3d';
+                needsRule = true;
+            }
+
+            if(needsRule) {
+                rule = sc.addRule('.ninja-body{}');
+                sc.setStyles(rule, styles);
+                sc.addClass(docRoot, "ninja-body");
+            }
         }
     }
 });

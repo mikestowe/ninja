@@ -26,26 +26,10 @@
                     "element": {"#": "document"}
                 },
                 "bindings": {
-                    "document": {
-                        "boundObject": {"@": "repetition1"},
-                        "boundObjectPropertyPath": "objectAtCurrentIteration",
-                        "oneway": true
-                    },
-                    "name": {
-                        "boundObject": {"@": "repetition1"},
-                        "boundObjectPropertyPath": "objectAtCurrentIteration.model.file.name",
-                        "oneway": true
-                    },
-                    "saveFlag": {
-                        "boundObject": {"@": "repetition1"},
-                        "boundObjectPropertyPath": "objectAtCurrentIteration.model.needsSave",
-                        "oneway": true
-                    },
-                    "active": {
-                        "boundObject": {"@": "repetition1"},
-                        "boundObjectPropertyPath": "objectAtCurrentIteration.model.isActive",
-                        "oneway": true
-                    }
+                    "document": {"<-": "@repetition1.objectAtCurrentIteration"},
+                    "name":     {"<-": "@repetition1.objectAtCurrentIteration.model.file.name"},
+                    "saveFlag": {"<-": "@repetition1.objectAtCurrentIteration.model.needsSave"},
+                    "active":   {"<-": "@repetition1.objectAtCurrentIteration.model.isActive"}
                 }
             },
             

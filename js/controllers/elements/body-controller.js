@@ -13,7 +13,7 @@ exports.BodyController = Montage.create(ElementController, {
     set3DProperties: {
         value: function(el, props, update3DModel) {
             var dist = props["dist"], mat = props["mat"];
-            this.application.ninja.stylesController.setElementStyle(el, "-webkit-transform", "perspective(" + dist + ") " + "matrix3d(" + MathUtils.scientificToDecimal(mat, 5) + ")", true);
+            this.application.ninja.stylesController.setElementStyle(el, "-webkit-transform", "perspective(" + dist + ") " + "matrix3d(" + MathUtils.scientificToDecimal(mat, 5) + ")");
 
             el.elementModel.props3D.matrix3d = mat;
             el.elementModel.props3D.perspectiveDist = dist;
@@ -49,13 +49,13 @@ exports.BodyController = Montage.create(ElementController, {
             switch(p) {
                 case "body-background":
                 case "background":
-                    this.application.ninja.stylesController.setElementStyle(el, "background-color", value, true);
+                    this.application.ninja.stylesController.setElementStyle(el, "background-color", value);
                     break;
                 case "overflow":
                 case "width":
                 case "height":
                 case "-webkit-transform-style":
-                    this.application.ninja.stylesController.setElementStyle(el, p, value, true);
+                    this.application.ninja.stylesController.setElementStyle(el, p, value);
                     this.application.ninja.stage.updatedStage = true;
                     break;
                 default:

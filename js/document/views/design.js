@@ -23,7 +23,17 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     },
     ////////////////////////////////////////////////////////////////////
 	//
+    _template: {
+    	value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
 	_document: {
+        value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+	_bodyFragment: {
         value: null
     },
     ////////////////////////////////////////////////////////////////////
@@ -39,6 +49,11 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     ////////////////////////////////////////////////////////////////////
 	//
 	content: {
+        value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+	//TODO: Remove usage
+	model: {
         value: null
     },
     ////////////////////////////////////////////////////////////////////
@@ -65,19 +80,29 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     ////////////////////////////////////////////////////////////////////
 	//
 	render: {
-        value: function (callback, template) {//TODO: Add support for templates
+        value: function (callback, template) {
+        	//TODO: Remove, this is a temp patch for webRequest API gate
+        	this.application.ninja.documentController._hackRootFlag = false;
         	//Storing callback for dispatch ready
         	this._callback = callback;
+        	this._template = template;
         	//Adding listener to know when template is loaded to then load user content
         	this.iframe.addEventListener("load", this.onTemplateLoad.bind(this), false);
         	//TODO: Add source parameter and root (optional)
-        	this.iframe.src = "js/document/templates/montage-web/index.html";
+			if (template && template.type === 'banner' && template.size) {
+        		this.iframe.src = "js/document/templates/banner/index.html";
+        	} else {
+	        	this.iframe.src = "js/document/templates/html/index.html";
+	        }
         }
     },
     ////////////////////////////////////////////////////////////////////
 	//
     onTemplateLoad: {
         value: function (e) {
+        	this.application.ninja.documentController._hackRootFlag = true;
+        	//TODO: Add support to constructing URL with a base HREF
+        	var basetag = this.content.document.getElementsByTagName('base');
         	//Removing event
         	this.iframe.removeEventListener("load", this.onTemplateLoad.bind(this), false);
         	//TODO: Improve usage of this reference
@@ -88,19 +113,78 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
             		this.document.styleSheets[k].ownerNode.setAttribute('data-ninja-template', 'true');
             	}
             }
-        	//Creating temp code fragement to load head
-        	this._headFragment = this.document.createElement('head');
-        	//Adding event listener to know when head is ready, event only dispatched once when using innerHTML
-        	this._observer.head = new WebKitMutationObserver(this.insertHeadContent.bind(this));
-        	this._observer.head.observe(this._headFragment, {childList: true});
-        	//Inserting <head> HTML and parsing URLs via mediator method
-        	this._headFragment.innerHTML = (this.content.head.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator));
-        	//Adding event listener to know when the body is ready and make callback (using HTML5 new DOM Mutation Events)
-        	this._observer.body = new WebKitMutationObserver(this.bodyContentLoaded.bind(this));
-        	this._observer.body.observe(this.document.body, {childList: true});
-        	//Inserting <body> HTML and parsing URLs via mediator method
-        	this.document.body.innerHTML += '<ninjaloadinghack></ninjaloadinghack>'+(this.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator));
+            //Checking for a base URL
+            if (basetag.length) {
+            	if (basetag[basetag.length-1].getAttribute && basetag[basetag.length-1].getAttribute('href')) {
+            		//Setting base HREF in model
+        			this.model.baseHref = basetag[basetag.length-1].getAttribute('href');
+        		}
+        	}
+        	//Checking to content to be template
+        	if (this._template) {
+        		if (this._template.type === 'banner') {
+        			//Loading contents into a fragment
+        			this._bodyFragment = this.document.createElement('body');
+        			//Listening for content to be ready
+        			this._observer.body = new WebKitMutationObserver(this.insertBannerContent.bind(this));
+    	    		this._observer.body.observe(this._bodyFragment, {childList: true});
+	        		//Inserting <body> HTML and parsing URLs via mediator method
+        			this._bodyFragment.innerHTML = '<ninjaloadinghack></ninjaloadinghack>'+(this.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator));
+    	    	}
+        	} else {
+    	    	//Creating temp code fragement to load head
+	        	this._headFragment = this.document.createElement('head');
+        		//Adding event listener to know when head is ready, event only dispatched once when using innerHTML
+        		this._observer.head = new WebKitMutationObserver(this.insertHeadContent.bind(this));
+    	    	this._observer.head.observe(this._headFragment, {childList: true});
+	        	//Inserting <head> HTML and parsing URLs via mediator method
+        		this._headFragment.innerHTML = (this.content.head.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator));
+        		//Adding event listener to know when the body is ready and make callback (using HTML5 new DOM Mutation Events)
+    	    	this._observer.body = new WebKitMutationObserver(this.bodyContentLoaded.bind(this));
+	        	this._observer.body.observe(this.document.body, {childList: true});
+        		//Inserting <body> HTML and parsing URLs via mediator method
+        		this.document.body.innerHTML += '<ninjaloadinghack></ninjaloadinghack>'+(this.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator));
+    	    	//Copying attributes to maintain same properties as the <body>
+				for (var n in this.content.document.body.attributes) {
+					if (this.content.document.body.attributes[n].value) {
+						this.document.body.setAttribute(this.content.document.body.attributes[n].name, this.content.document.body.attributes[n].value);
+					}
+				}
+				//TODO: Add attribute copying for <HEAD> and <HTML>
+			}
         }
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+    insertBannerContent: {
+    	value: function (e) {
+    		//Getting first element in DOM (assumes it's root)
+    		//TODO: Ensure wrapper logic is proper
+    		var wrapper =	this._bodyFragment.getElementsByTagName('*')[1],
+    			banner =	this._bodyFragment.getElementsByTagName('*')[2],
+    			ninjaBanner = this.document.body.getElementsByTagName('ninja-content')[0],
+    			ninjaWrapper = this.document.body.getElementsByTagName('ninja-viewport')[0];
+    		//Copying attributes to maintain same properties as the banner wrapper
+			for (var n in wrapper.attributes) {
+				if (wrapper.attributes[n].value) {
+					ninjaWrapper.setAttribute(wrapper.attributes[n].name, wrapper.attributes[n].value);
+				}
+			}
+			//Copying attributes to maintain same properties as the banner content
+			for (var n in banner.attributes) {
+				if (banner.attributes[n].value) {
+					ninjaBanner.setAttribute(banner.attributes[n].name, banner.attributes[n].value);
+				}
+			}
+			//Adjusting margin per size of document
+			this.document.head.getElementsByTagName('style')[0].innerHTML += '\n ninja-viewport {overflow: visible !important;} ninja-content, ninja-viewport {width: ' + this._template.size.width + 'px; height: ' + this._template.size.height + 'px;}';
+			//Setting content in template
+    		ninjaBanner.innerHTML = banner.innerHTML;
+        	//Garbage collection
+        	this._bodyFragment = null;
+        	//Calling standard method to finish opening document
+        	this.bodyContentLoaded(null);
+    	}
     },
     ////////////////////////////////////////////////////////////////////
 	//
@@ -127,7 +211,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     		//Removing event, only needed on initial load
     		this._observer.body.disconnect();
     		this._observer.body = null;
-    		//Removing loading container
+    		//Removing loading container (should be removed)
     		this.document.body.removeChild(this.document.getElementsByTagName('ninjaloadinghack')[0]);
    			//Getting style and link tags in document
             var stags = this.document.getElementsByTagName('style'),
@@ -141,8 +225,12 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 				for (i = 0; i < ltags.length; i++) {
 					//
 					if (ltags[i].href) {
-						//TODO: Verify this works for tags in body as well (working in head)
-						this.document.head.insertBefore(this.getStyleTagFromCssFile(ltags[i]), ltags[i]) || this.document.body.insertBefore(this.getStyleTagFromCssFile(ltags[i]), ltags[i]);
+						//Inseting <style> right above of <link> to maintain hierarchy
+						try {
+							this.document.head.insertBefore(this.getStyleTagFromCssFile(ltags[i]), ltags[i])
+						} catch (e) {
+							this.document.body.insertBefore(this.getStyleTagFromCssFile(ltags[i]), ltags[i]);
+						}
 						//Disabling tag once it has been reloaded
 						ltags[i].setAttribute('disabled', 'true');
 					} else {
@@ -230,7 +318,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     initWebGl: {
         value: function (scripttags) {
         	//
-        	var i, n, webgldata;
+        	var n, webgldata;
         	//Setting the iFrame property for reference in helper class
         	this.model.webGlHelper.iframe = this.model.views.design.iframe;
         	//Checking for webGL Data
@@ -267,6 +355,37 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     getElementFromPoint: {
         value: function(x, y) {
             return this.iframe.contentWindow.getElement(x,y);
+        }
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    pauseVideos:{
+        value:function(){
+        	var i, videos = this.document.getElementsByTagName("video");
+            for(i = 0; i < videos.length; i++){
+                if(!videos[i].paused) videos[i].pause();
+            }
+        }
+    },
+	////////////////////////////////////////////////////////////////////
+    //
+    stopVideos:{
+        value:function(){
+        	var i, videos = this.document.getElementsByTagName("video");
+            for(i = 0; i < videos.length; i++){
+                videos[i].src = "";
+            }
+        }
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    pauseAndStopVideos:{
+        value:function(){
+        	var i, videos = this.document.getElementsByTagName("video");
+            for(i = 0; i < videos.length; i++){
+            	if(!videos[i].paused) videos[i].pause();
+                videos[i].src = "";
+            }
         }
     }
 	////////////////////////////////////////////////////////////////////

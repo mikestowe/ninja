@@ -63,17 +63,19 @@ exports.HtmlDocument = Montage.create(Component, {
 	////////////////////////////////////////////////////////////////////
 	//
     init: {
-        value:function(file, context, callback, view, template) { //TODO: Add template support logic
+        value:function(file, context, callback, view, template) {
         	//Storing callback data for loaded dispatch
         	this.loaded.callback = callback;
         	this.loaded.context = context;
             //Creating instance of HTML Document Model
             this.model = Montage.create(HtmlDocumentModel,{
             	file: {value: file},
+            	fileTemplate: {value: template},
+            	parentContainer: {value: document.getElementById("iframeContainer")}, //Saving reference to parent container of all views (should be changed to buckets approach
             	views: {value: {'design': DesignDocumentView.create(), 'code': null}} //TODO: Add code view logic
             });
             //Initiliazing views and hiding
-           	if (this.model.views.design.initialize(document.getElementById("iframeContainer"))) {
+           	if (this.model.views.design.initialize(this.model.parentContainer)) {
            		//Hiding iFrame, just initiliazing
            		this.model.views.design.hide();
            	} else {
@@ -96,16 +98,20 @@ exports.HtmlDocument = Montage.create(Component, {
             	this.model.views.design.render(function () {
             		//TODO: Identify and remove usage of '_document'
             		this._document = this.model.views.design.document;
-    				//TODO: Remove usage, seems as not needed
-            		this.documentRoot = this.model.views.design.document.body;
+            		//TODO: Remove usage, seems as not needed
+    				if (template && template.type === 'banner') {
+    					this.documentRoot = this.model.views.design.document.body.getElementsByTagName('ninja-content')[0];
+    				} else {
+    					this.documentRoot = this.model.views.design.document.body;
+    				}
             		//TODO: Why is this needed?
-            		this._liveNodeList = this.model.views.design.document.body.getElementsByTagName('*');
+            		this._liveNodeList = this.documentRoot.getElementsByTagName('*');
             		//Initiliazing document model
-            		document.application.njUtils.makeElementModel(this.model.views.design.document.body, "Body", "body");
+            		document.application.njUtils.makeElementModel(this.documentRoot, "Body", "body");
             		//Adding observer to know when template is ready
             		this._observer = new WebKitMutationObserver(this.handleTemplateReady.bind(this));
         			this._observer.observe(this.model.views.design.document.head, {childList: true});
-            	}.bind(this));
+            	}.bind(this), template);
             } else {
             	//TODO: Identify default view (probably code)
             }
@@ -122,6 +128,40 @@ exports.HtmlDocument = Montage.create(Component, {
     	    this.loaded.callback.call(this.loaded.context, this);
     	    //Setting opacity to be viewable after load
 		   	this.model.views.design.iframe.style.opacity = 1;
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+	closeDocument: {
+		value: function () {
+			//
+			this.model.close(null, this.handleCloseDocument.bind(this));
+		}
+	},
+	////////////////////////////////////////////////////////////////////
+	//
+	handleCloseDocument: {
+		value: function (success) {
+			//TODO: Add logic for handling success or failure
+			//
+			this.application.ninja.documentController._documents.splice(this.uuid, 1);
+			//
+			NJevent("closeDocument", this.model.file.uri);
+			//TODO: Delete object here
+		}
+	},
+    ////////////////////////////////////////////////////////////////////
+	//
+    saveAppState: {
+    	value: function () {
+    		//TODO: Import functionality
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+    restoreAppState: {
+    	value: function () {
+    		//TODO: Import functionality
     	}
     }
     ////////////////////////////////////////////////////////////////////
