@@ -177,7 +177,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 				}
 			}
 			//Adjusting margin per size of document
-			this.document.head.getElementsByTagName('style')[0].innerHTML += '\n ninja-content {overflow: visible !important;} ninja-content, ninja-viewport {width: ' + this._template.size.width + 'px; height: ' + this._template.size.height + 'px;}';
+			this.document.head.getElementsByTagName('style')[0].innerHTML += '\n ninja-viewport {overflow: visible !important;} ninja-content, ninja-viewport {width: ' + this._template.size.width + 'px; height: ' + this._template.size.height + 'px;}';
 			//Setting content in template
     		ninjaBanner.innerHTML = banner.innerHTML;
         	//Garbage collection
