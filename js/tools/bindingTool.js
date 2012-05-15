@@ -24,7 +24,6 @@ exports.BindingTool = Montage.create(ModifierToolBase, {
             else
             {
                 NJevent("disableStageMove");
-                debugger;
                 this.application.ninja.workspaceMode = "default";
             }
         }
