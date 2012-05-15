@@ -603,8 +603,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                         this.addAnimationRuleToElement(ev);
                         this.updateKeyframeRule();
                     } else {
-                        this.handleNewTween(ev);
                         if (ev.target.className === "tracklane") {
+                            this.handleNewTween(ev);
                             this.updateKeyframeRule();
                         }
                     }

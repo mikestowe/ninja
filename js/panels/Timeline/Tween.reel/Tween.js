@@ -240,22 +240,18 @@ var Tween = exports.Tween = Montage.create(Component, {
 
     setStyleTweenProperty:{
         value:function (eventDetail) {
-            console.log("Setting style tween properties for: " + this.parentComponent.parentComponent.trackEditorProperty);
-            console.log(eventDetail);
+            //console.log("Setting style tween properties for: " + this.parentComponent.parentComponent.trackEditorProperty);
+            //console.log(eventDetail);
 
             if(eventDetail.type == "setProperties"){
                 // ignore top, left, width, and height
                 console.log(eventDetail.data.value[0]);
                 this.tweenedProperties[this.parentComponent.parentComponent.trackEditorProperty] = eventDetail.data.value[0];
                 console.log(this.tweenedProperties);
-
             } else if(eventDetail.type == "setColor"){
-                console.log(eventDetail.data.value.color.css);
                 var prop = this.parentComponent.parentComponent.trackEditorProperty;
                 this.tweenedProperties[prop] = eventDetail.data.value.color.css;
-                console.log(this.tweenedProperties[prop]);
                 this.parentComponent.parentComponent.updatePropKeyframeRule();
-
             } else if(eventDetail.type == "setProperty"){
                 // ignore top, left, width, and height
                 console.log(eventDetail.data.value[0]);
