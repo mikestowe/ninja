@@ -72,7 +72,7 @@ var TagProperties = exports.TagProperties = Montage.create(ToolProperties, {
     handleFillColorChange: {
         value: function (e) {
             this.fill = e._event;
-            this.fill.webGlColor = this.application.ninja.colorController.colorModel.colorToWebGl(e._event.color);
+//            this.fill.webGlColor = this.application.ninja.colorController.colorModel.colorToWebGl(e._event.color);
         }
     },
 
