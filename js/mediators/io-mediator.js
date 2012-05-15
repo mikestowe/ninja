@@ -77,7 +77,7 @@ exports.IoMediator = Montage.create(Component, {
                 //TODO: Improve template data injection
                 function parseTemplate (content, template) {
                 	//
-                	if (template.name.toLowerCase() === 'banner') {
+                	if (template.name.toLowerCase() === 'banner' || template.name.toLowerCase() === 'animation') {
                 		//Getting dimensions of banner
                 		var dimensions = template.id.split('x');
                 		dimensions = {width: String(dimensions[0])+'px', height: String(dimensions[1])+'px'};
@@ -169,7 +169,11 @@ exports.IoMediator = Montage.create(Component, {
             switch (doc.mode) {
                 case 'html':
                     //Getting content from function to properly handle saving assets (as in external if flagged)
-                    contents = this.parseNinjaTemplateToHtml(doc);
+                    if (doc.template && (doc.template.type === 'banner' || doc.template.type === 'animation')) {
+                    	contents = this.parseNinjaTemplateToHtml(doc, true);
+                    } else {
+                    	contents = this.parseNinjaTemplateToHtml(doc);
+                    }
                     break;
                 default:
                     contents = doc.content;
@@ -214,14 +218,20 @@ exports.IoMediator = Montage.create(Component, {
     //TODO: Expand to allow more templates, clean up variables
     parseNinjaTemplateToHtml: {
         enumerable: false,
-        value: function (template) {
+        value: function (template, ninjaWrapper) {
             var regexRootUrl, rootUrl = this.application.ninja.coreIoApi.rootUrl + escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]));
             regexRootUrl = new RegExp(rootUrl.replace(/\//gi, '\\\/'), 'gi');
             //Injecting head and body into old document
             template.file.content.document.head.innerHTML = template.head.innerHTML.replace(regexRootUrl, '');
             template.file.content.document.body.innerHTML = template.body.innerHTML.replace(regexRootUrl, '');
-            
-            
+            //Copying attributes to maintain same properties as the <body>
+			for (var n in template.body.attributes) {
+				if (template.body.attributes[n].value) {
+					//
+					template.file.content.document.body.setAttribute(template.body.attributes[n].name, template.body.attributes[n].value);
+				}				
+			}
+            //TODO: Add attribute copying for <HEAD> and <HTML>
             
             /*
 //Testing using montage clean up method
@@ -446,7 +456,11 @@ exports.IoMediator = Montage.create(Component, {
                     webglrdgetag.setAttribute('type', 'text/javascript');
                     webglrdgetag.setAttribute('src', rdgeDirName + '/rdge-compiled.js');
                     webglrdgetag.setAttribute('data-ninja-webgl-rdge', 'true');
-                    template.file.content.document.head.appendChild(webglrdgetag);
+                    if (ninjaWrapper) {
+                    	template.file.content.document.body.getElementsByTagName('ninja-content')[0].appendChild(webglrdgetag);
+                    } else {
+                    	template.file.content.document.head.appendChild(webglrdgetag);
+                    }
                 }
                 //
                 if (!webgllibtag) {
@@ -454,20 +468,32 @@ exports.IoMediator = Montage.create(Component, {
                     webgllibtag.setAttribute('type', 'text/javascript');
                     webgllibtag.setAttribute('src', rdgeDirName + '/canvas-runtime.js');
                     webgllibtag.setAttribute('data-ninja-webgl-lib', 'true');
-                    template.file.content.document.head.appendChild(webgllibtag);
+                    if (ninjaWrapper) {
+                    	template.file.content.document.body.getElementsByTagName('ninja-content')[0].appendChild(webgllibtag);
+                    } else {
+                    	template.file.content.document.head.appendChild(webgllibtag);
+                    }
                 }
                 //
                 if (!webgltag) {
                     webgltag = template.file.content.document.createElement('script');
                     webgltag.setAttribute('data-ninja-webgl', 'true');
-                    template.file.content.document.head.appendChild(webgltag);
+                    if (ninjaWrapper) {
+                    	template.file.content.document.body.getElementsByTagName('ninja-content')[0].appendChild(webgltag);
+                    } else {
+	                    template.file.content.document.head.appendChild(webgltag);
+	                }
                 }
                 //TODO: Remove this tag and place inside JS file
                 if (!webgljstag) {
                     webgljstag = template.file.content.document.createElement('script');
                     webgljstag.setAttribute('type', 'text/javascript');
                     webgljstag.setAttribute('data-ninja-webgl-js', 'true');
-                    template.file.content.document.head.appendChild(webgljstag);
+                    if (ninjaWrapper) {
+                    	template.file.content.document.body.getElementsByTagName('ninja-content')[0].appendChild(webgljstag);
+                    } else {
+	                    template.file.content.document.head.appendChild(webgljstag);
+	                }
                 }
                 //TODO: Decide if this should be over-writter or only written on creation
                 var rootElement = 'document.body'; //TODO: Set actual root element
@@ -549,10 +575,15 @@ for (var m in template.mjs) {
 
 
 
-
+			
 
             //Cleaning URLs from HTML
-            var cleanHTML = template.file.content.document.documentElement.outerHTML.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaRootUrl.bind(this));
+            var cleanHTML;
+            if (ninjaWrapper) {
+            	cleanHTML = template.file.content.document.body.innerHTML.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaRootUrl.bind(this));
+            } else {
+            	cleanHTML = template.file.content.document.documentElement.outerHTML.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaRootUrl.bind(this));
+      	    }
             //
             function parseNinjaRootUrl(url) {
                 if (url.indexOf(this.application.ninja.coreIoApi.rootUrl) !== -1) {
@@ -561,6 +592,12 @@ for (var m in template.mjs) {
                     return url;
                 }
             }
+            //
+            if (ninjaWrapper) {
+            	cleanHTML = cleanHTML.replace(/ninja-viewport/gi, 'div');
+            	cleanHTML = cleanHTML.replace(/ninja-content/gi, 'div');
+            }
+            
             //
             return this.getPrettyHtml(cleanHTML.replace(this.getAppTemplatesUrlRegEx(), ''));
         }
