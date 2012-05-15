@@ -57,6 +57,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this._layerRepetition = newVal;
         }
     },
+    
+    _areTracksScrolling: {
+    	value: false
+    },
 
     // Set to false to skip array caching array sets in current document
     _boolCacheArrays:{
@@ -240,10 +244,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
-    _isLayer:{
-        value:false
-    },
-
     _firstTimeLoaded:{
         value:true
     },
@@ -370,35 +370,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     prepareForDraw:{
         value:function () {
             this.initTimeline();
-            // Bind the event handler for the document change events
-            //this.eventManager.addEventListener("onOpenDocument", this.handleDocumentChange.bind(this), false);
-            this.eventManager.addEventListener("closeDocument", this.handleDocumentChange.bind(this), false);
-            //this.eventManager.addEventListener("switchDocument", this.handleDocumentChange.bind(this), false);
-            //this.eventManager.addEventListener("breadCrumbBinding",this,false);
-            
-            // Bind drag and drop event handlers
-            this.container_layers.addEventListener("dragstart", this.handleLayerDragStart.bind(this), false);
-            this.container_layers.addEventListener("dragend", this.handleLayerDragEnd.bind(this), false);
-            this.container_layers.addEventListener("dragover", this.handleLayerDragover.bind(this), false);
-            this.container_layers.addEventListener("drop", this.handleLayerDrop.bind(this), false);
-            this.container_tracks.addEventListener("dragover", this.handleKeyframeDragover.bind(this), false);
-            this.container_tracks.addEventListener("drop", this.handleKeyframeDrop.bind(this), false);
-            
-            // Bind the handlers for the config menu
-            this.checkable_animated.addEventListener("click", this.handleAnimatedClick.bind(this), false);
-            this.checkable_relative.addEventListener("click", this.handleRelativeClick.bind(this), false);
-            this.checkable_absolute.addEventListener("click", this.handleAbsoluteClick.bind(this), false);
-            this.tl_configbutton.addEventListener("click", this.handleConfigButtonClick.bind(this), false);
-            document.addEventListener("click", this.handleDocumentClick.bind(this), false);
-
-        }
-    },
-
-    willDraw:{
-        value:function () {
-            if (this._isLayer) {
-                this._isLayer = false;
-            }
         }
     },
     
@@ -452,6 +423,14 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 	    			this.layout_tracks.scrollLeft = this._scrollTracks;
 	    			this._scrollTracks = false;
 	    		}
+    		}
+    		
+    		// Do we need to scroll the layers?
+    		if (this._areTracksScrolling) {
+    			this._areTracksScrolling = false;
+	            this.user_layers.scrollTop = this.layout_tracks.scrollTop;
+	            this.layout_markers.scrollLeft = this.layout_tracks.scrollLeft;
+	         	this.playheadmarker.style.top = this.layout_tracks.scrollTop + "px";
     		}
 
     	}
@@ -596,6 +575,28 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         	// Get some selectors
             this.layout_tracks = this.element.querySelector(".layout-tracks");
             this.layout_markers = this.element.querySelector(".layout_markers");
+            
+            
+            // Bind the event handler for the document change events
+            //this.eventManager.addEventListener("onOpenDocument", this.handleDocumentChange.bind(this), false);
+            this.eventManager.addEventListener("closeDocument", this.handleDocumentChange.bind(this), false);
+            //this.eventManager.addEventListener("switchDocument", this.handleDocumentChange.bind(this), false);
+            //this.eventManager.addEventListener("breadCrumbBinding",this,false);
+            
+            // Bind drag and drop event handlers
+            this.container_layers.addEventListener("dragstart", this.handleLayerDragStart.bind(this), false);
+            this.container_layers.addEventListener("dragend", this.handleLayerDragEnd.bind(this), false);
+            this.container_layers.addEventListener("dragover", this.handleLayerDragover.bind(this), false);
+            this.container_layers.addEventListener("drop", this.handleLayerDrop.bind(this), false);
+            this.container_tracks.addEventListener("dragover", this.handleKeyframeDragover.bind(this), false);
+            this.container_tracks.addEventListener("drop", this.handleKeyframeDrop.bind(this), false);
+            
+            // Bind the handlers for the config menu
+            this.checkable_animated.addEventListener("click", this.handleAnimatedClick.bind(this), false);
+            this.checkable_relative.addEventListener("click", this.handleRelativeClick.bind(this), false);
+            this.checkable_absolute.addEventListener("click", this.handleAbsoluteClick.bind(this), false);
+            this.tl_configbutton.addEventListener("click", this.handleConfigButtonClick.bind(this), false);
+            document.addEventListener("click", this.handleDocumentClick.bind(this), false);
             
             // Add some event handlers
             this.timeline_leftpane.addEventListener("mousedown", this.timelineLeftPaneMousedown.bind(this), false);
@@ -824,9 +825,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     updateLayerScroll:{
         value:function () {
-            this.user_layers.scrollTop = this.layout_tracks.scrollTop;
-            this.layout_markers.scrollLeft = this.layout_tracks.scrollLeft;
-         	this.playheadmarker.style.top = this.layout_tracks.scrollTop + "px";
+        	this._areTracksScrolling = true;
+        	this.needsDraw = true;
         }
     },
 
