@@ -603,7 +603,11 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                         this.addAnimationRuleToElement(ev);
                         this.updateKeyframeRule();
                     } else {
+                        //console.log(ev);
                         if (ev.target.className === "tracklane") {
+                            this.handleNewTween(ev);
+                            this.updateKeyframeRule();
+                        } else if (ev.target.className === "tween_span" && ev.target.parentElement.parentElement.className === "tracklane"){
                             this.handleNewTween(ev);
                             this.updateKeyframeRule();
                         }

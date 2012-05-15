@@ -201,7 +201,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
                             //console.log("Property track editorProperty set to: " + this.trackEditorProperty);
                         }
                     } else if (this.trackType === "position") {
-                        console.log("Property track editorProperty set to: " + this.trackEditorProperty);
+                        //console.log("Property track editorProperty set to: " + this.trackEditorProperty);
                     }
 
                     this.insertPropTween(0);
@@ -217,7 +217,12 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
 
     handleNewPropTween:{
         value:function(ev){
-            this.insertPropTween(ev.offsetX);
+            if (ev.offsetX > this.propTweens[this.propTweens.length - 1].tweenData.keyFramePosition) {
+                this.insertPropTween(ev.offsetX);
+            } else {
+                console.log("spitting sub keyframes not yet supported");
+            }
+
         }
     },
 
