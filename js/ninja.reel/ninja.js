@@ -27,11 +27,12 @@ exports.Ninja = Montage.create(Component, {
             return this.workspaceMode;
         },
         set: function(val) {
-            if( this._workspaceMode === val ) {
+            if(this._workspaceMode !== val ) {
                 if(this._workspaceMode !== null) {
-                   document.body.classList.remove("ws-" + val);
+                   document.body.classList.remove("ws-" + this._workspaceMode);
                 }
                 document.body.classList.add("ws-" + val);
+                this._workspaceMode = val;
             }
         }
     },
@@ -166,6 +167,7 @@ exports.Ninja = Montage.create(Component, {
 
     prepareForDraw: {
         value: function() {
+            this.workspaceMode = "default";
             console.log("Loading Ninja --> ", this.ninjaVersion);
 
             this.application.ninja = this;

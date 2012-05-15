@@ -12,6 +12,7 @@ exports.PanelsData = Montage.create(Montage, {
         value: [
         {
             name: "Color",
+            groups: ["default"],
             height: 200,
             minHeight: 200,
             maxHeight: null,
@@ -24,6 +25,7 @@ exports.PanelsData = Montage.create(Montage, {
         },
         {
             name: "Properties",
+            groups: ["default", "ws-binding"],
             minHeight: 200,
             height: 200,
             maxHeight: null,
@@ -36,6 +38,7 @@ exports.PanelsData = Montage.create(Montage, {
         },
         {
             name: "Materials",
+            groups: ["default"],
             minHeight: 100,
             height: 100,
             maxHeight: null,
@@ -48,6 +51,7 @@ exports.PanelsData = Montage.create(Montage, {
         },
         {
             name: "Components",
+            groups: ["default", "ws-binding"],
             minHeight: 100,
             height: 200,
             maxHeight: null,
@@ -72,6 +76,7 @@ exports.PanelsData = Montage.create(Montage, {
 //        },
         {
             name: "CSS",
+            groups: ["default"],
             minHeight: 195,
             height: 195,
             maxHeight: null,
@@ -84,6 +89,7 @@ exports.PanelsData = Montage.create(Montage, {
         },
         {
             name: "Presets",
+            groups: ["default"],
             minHeight: 100,
             height: 100,
             maxHeight: null,
@@ -96,6 +102,7 @@ exports.PanelsData = Montage.create(Montage, {
         },
         {
             name: "History",
+            groups: ["default"],
             minHeight: 100,
             height: 100,
             maxHeight: null,

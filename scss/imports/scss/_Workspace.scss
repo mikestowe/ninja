@@ -6,15 +6,20 @@
 
 //Binding Mode
 
-body .panel.ws-binding {
+.panels .panel {
+    display: none;
+}
+
+.panels .panel.ws-binding {
     display:none;
     -webkit-box-flex-group:2;
 }
 
-body.ws-binding .rightPanelContent .panel {
-    display:none;
+body.ws-binding .panel.ws-binding {
+    display:-webkit-box;
 }
 
-body.ws-binding .rightPanelContent .panel.ws-binding {
+body.ws-default .panel.default {
     display:-webkit-box;
+    -webkit-box-flex-group:1;
 }

@@ -18,13 +18,14 @@ exports.BindingTool = Montage.create(ModifierToolBase, {
             if (doActivate)
             {
                 NJevent("enableStageMove");
-                document.body.classList.add("ws-binding");
+                this.application.ninja.workspaceMode = "binding";
 
             }
             else
             {
                 NJevent("disableStageMove");
-                document.body.classList.remove("ws-binding");
+                debugger;
+                this.application.ninja.workspaceMode = "default";
             }
         }
     },
