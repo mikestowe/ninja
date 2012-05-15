@@ -224,8 +224,14 @@ exports.IoMediator = Montage.create(Component, {
             //Injecting head and body into old document
             template.file.content.document.head.innerHTML = template.head.innerHTML.replace(regexRootUrl, '');
             template.file.content.document.body.innerHTML = template.body.innerHTML.replace(regexRootUrl, '');
-            
-            
+            //Copying attributes to maintain same properties as the <body>
+			for (var n in template.body.attributes) {
+				if (template.body.attributes[n].value) {
+					//
+					template.file.content.document.body.setAttribute(template.body.attributes[n].name, template.body.attributes[n].value);
+				}				
+			}
+            //TODO: Add attribute copying for <HEAD> and <HTML>
             
             /*
 //Testing using montage clean up method
