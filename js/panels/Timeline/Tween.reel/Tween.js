@@ -234,8 +234,8 @@ var Tween = exports.Tween = Montage.create(Component, {
             //console.log(eventDetail);
 
             if(eventDetail.type == "setProperties"){
-                // ignore top, left, width, and height
-                console.log(eventDetail.data.value[0]);
+                // need to ignore top, left, width, and height
+                //console.log(eventDetail.data.value[0]);
                 this.tweenedProperties[this.parentComponent.parentComponent.trackEditorProperty] = eventDetail.data.value[0];
                 this.parentComponent.parentComponent.updatePropKeyframeRule();
 
@@ -245,8 +245,8 @@ var Tween = exports.Tween = Montage.create(Component, {
                 this.parentComponent.parentComponent.updatePropKeyframeRule();
 
             } else if(eventDetail.type == "setProperty"){
-                // ignore top, left, width, and height
-                console.log(eventDetail.data.value[0]);
+                // need to ignore top, left, width, and height
+                //console.log(eventDetail.data.value[0]);
                 this.tweenedProperties[this.parentComponent.parentComponent.trackEditorProperty] = eventDetail.data.value[0];
                 this.parentComponent.parentComponent.updatePropKeyframeRule();
 
@@ -278,6 +278,9 @@ var Tween = exports.Tween = Montage.create(Component, {
 
             if(this.parentComponent.parentComponent.isSubproperty){
                 // set property specific style on element
+                var currentValue = this.tweenedProperties[this.parentComponent.parentComponent.trackEditorProperty];
+                this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.animatedElement], this.parentComponent.parentComponent.trackEditorProperty, [currentValue], "Change", "tween");
+                //console.log(currentValue);
             } else {
                 // move animated element to correct position on stage
                 var currentTop = this.tweenedProperties["top"] + "px";

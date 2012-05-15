@@ -603,7 +603,11 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                         this.addAnimationRuleToElement(ev);
                         this.updateKeyframeRule();
                     } else {
+                        //console.log(ev);
                         if (ev.target.className === "tracklane") {
+                            this.handleNewTween(ev);
+                            this.updateKeyframeRule();
+                        } else if (ev.target.className === "tween_span" && ev.target.parentElement.parentElement.className === "tracklane"){
                             this.handleNewTween(ev);
                             this.updateKeyframeRule();
                         }
@@ -726,6 +730,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.animatedElement = this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList[0];
             if(this.animatedElement!==undefined){
                 this.animationName = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-name");
+                this.animationNamesString = this.animationName;
                 if(this.animationName){
                     trackTiming = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-duration");
                     this.nextKeyframe = 0;

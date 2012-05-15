@@ -28,6 +28,21 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
         }
     },
 
+    didDraw:{
+        value:function () {
+            if ((!this.application.ninja.documentController.creatingNewFile) || (!this.application.ninja.currentDocument.setLevel)) {
+                if (this.application.ninja.currentDocument.documentRoot.children[0]) {
+                    var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
+                    if (selectedIndex !== false) {
+                        if (!this.application.ninja.timeline.arrLayers[selectedIndex].layerData.created) {
+                            //this.retrieveStoredStyleTweens();
+                        }
+                    }
+                }
+            }
+        }
+    },
+
     trackEditorProperty:{
         value:""
     },
@@ -186,7 +201,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
                             //console.log("Property track editorProperty set to: " + this.trackEditorProperty);
                         }
                     } else if (this.trackType === "position") {
-                        console.log("Property track editorProperty set to: " + this.trackEditorProperty);
+                        //console.log("Property track editorProperty set to: " + this.trackEditorProperty);
                     }
 
                     this.insertPropTween(0);
@@ -202,7 +217,12 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
 
     handleNewPropTween:{
         value:function(ev){
-            this.insertPropTween(ev.offsetX);
+            if (ev.offsetX > this.propTweens[this.propTweens.length - 1].tweenData.keyFramePosition) {
+                this.insertPropTween(ev.offsetX);
+            } else {
+                console.log("spitting sub keyframes not yet supported");
+            }
+
         }
     },
 
@@ -248,7 +268,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
 
     retrieveStoredStyleTweens:{
         value:function(){
-
+            console.log("retrieve style tweens");
         }
     },
 
