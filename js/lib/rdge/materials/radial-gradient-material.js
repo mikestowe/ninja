@@ -25,8 +25,7 @@ var RadialGradientMaterial = function RadialGradientMaterial() {
     this._colorStop4 = 1.0;
     //	this._colorCount	= 4;
 
-	var s = Math.sqrt( 2.0 );
-	this._textureTransform = [s,0,0, 0,s,0, 0,0,1];
+	this._textureTransform = [1,0,0, 0,1,0, 0,0,1];
 
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
@@ -147,9 +146,9 @@ var RadialGradientMaterial = function RadialGradientMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
-    this._propNames = ["color1", "color2", "color3", "color4", "colorStop1", "colorStop2", "colorStop3", "colorStop4", "angle"];
-    this._propLabels = ["Color 1", "Color 2", "Color 3", "Color 4", "Color Stop 1", "Color Stop 2", "Color Stop 3", "Color Stop 4", "Angle"];
-    this._propTypes = ["color", "color", "color", "color", "float", "float", "float", "float", "float"];
+    this._propNames = ["color1", "color2", "color3", "color4", "colorStop1", "colorStop2", "colorStop3", "colorStop4" ];
+    this._propLabels = ["Color 1", "Color 2", "Color 3", "Color 4", "Color Stop 1", "Color Stop 2", "Color Stop 3", "Color Stop 4" ];
+    this._propTypes = ["color", "color", "color", "color", "float", "float", "float", "float" ];
     this._propValues = [];
 
     this._propValues[this._propNames[0]] = this._color1.slice(0);
@@ -192,9 +191,21 @@ var RadialGradientMaterial = function RadialGradientMaterial() {
     // Methods
     ///////////////////////////////////////////////////////////////////////
     // duplcate method requirde
-    this.dup = function () {
-        return new RadialGradientMaterial();
-    };
+	this.dup = function () {
+		// allocate a new material
+		var newMat = new RadialGradientMaterial();
+
+		// copy over the current values;
+		var propNames = [],  propValues = [],  propTypes = [],  propLabels = [];
+		this.getAllProperties( propNames,  propValues,  propTypes,  propLabels);
+		var n = propNames.length;
+		for (var i=0;  i<n;  i++) {
+			newMat.setProperty( propNames[i], propValues[i] );
+		}
+		newMat._textureTransform = this._textureTransform.slice();
+
+		return newMat;
+	};
 
     this.init = function (world) {
         this.setWorld(world);
@@ -287,7 +298,8 @@ var RadialGradientMaterial = function RadialGradientMaterial() {
 		    'colorStop1': this.getColorStop1(),
 		    'colorStop2': this.getColorStop2(),
 		    'colorStop3': this.getColorStop3(),
-		    'colorStop4': this.getColorStop4()
+		    'colorStop4': this.getColorStop4(),
+			'textureTransform': this._textureTransform
 		};
 
         return jObj;
@@ -306,6 +318,7 @@ var RadialGradientMaterial = function RadialGradientMaterial() {
 				colorStop2 = jObj.colorStop2,
 				colorStop3 = jObj.colorStop3,
 				colorStop4 = jObj.colorStop4;
+			this._textureTransform = jObj.textureTransform;
 
             this.setProperty("color1", color1);
             this.setProperty("color2", color2);
