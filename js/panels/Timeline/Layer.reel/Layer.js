@@ -494,10 +494,14 @@ var Layer = exports.Layer = Montage.create(Component, {
     },
     draw: {
     	value: function() {
-            if (this.isSelected) {
-            	this.element.classList.add("selected");
-            } else {
-            	this.element.classList.remove("selected");
+    		var boolHasClass = this.element.classList.contains("layerSelected");
+            if (this.isSelected && !boolHasClass) {
+            	//console.log('Layer.draw, adding selection for layer ', this.layerName)
+            	this.element.classList.add("layerSelected");
+            }
+			if (!this.isSelected && boolHasClass) {
+            	//console.log('Layer.draw, removing selection for layer ', this.layerName)
+            	this.element.classList.remove("layerSelected");
             }
     	}
     },

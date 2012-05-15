@@ -74,7 +74,8 @@
 
 /******************************************/
 
-.container-layer {
+.container-layer,
+.container-layer.selected {
 	background-color: $color-panel-bg;
 	color: $color-panel-text;
 	font-size: 12px;
@@ -108,7 +109,7 @@
 
 
 .layerSelected .label-layer {
-	background-color: $color-panel-hilite-bg;
+	background-color: $color-menu-hilite-bg;
 	color: $color-panel-hilite-text;
 }
 .content-layer {
