@@ -160,16 +160,23 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     	value: function (e) {
     		//Getting first element in DOM (assumes it's root)
     		//TODO: Ensure wrapper logic is proper
-    		var banner = this._bodyFragment.getElementsByTagName('*')[2],
-    			ninjaBanner = this.document.body.getElementsByTagName('ninja-content')[0];
-    		//Copying attributes to maintain same properties as the banner root
+    		var wrapper =	this._bodyFragment.getElementsByTagName('*')[1],
+    			banner =	this._bodyFragment.getElementsByTagName('*')[2],
+    			ninjaBanner = this.document.body.getElementsByTagName('ninja-content')[0],
+    			ninjaWrapper = this.document.body.getElementsByTagName('ninja-viewport')[0];
+    		//Copying attributes to maintain same properties as the banner wrapper
+			for (var n in wrapper.attributes) {
+				if (wrapper.attributes[n].value) {
+					ninjaWrapper.setAttribute(wrapper.attributes[n].name, wrapper.attributes[n].value);
+				}
+			}
+			//Copying attributes to maintain same properties as the banner content
 			for (var n in banner.attributes) {
 				if (banner.attributes[n].value) {
 					ninjaBanner.setAttribute(banner.attributes[n].name, banner.attributes[n].value);
 				}
 			}
 			//Adjusting margin per size of document
-			//this.document.head.getElementsByTagName('style')[0].innerHTML += '\n ninja-banner {overflow: visible !important; margin-top: -'+Math.floor(this._template.size.height/2)+'px; margin-left: -'+Math.floor(this._template.size.width/2)+'px}';
 			this.document.head.getElementsByTagName('style')[0].innerHTML += '\n ninja-content {overflow: visible !important;} ninja-content, ninja-viewport {width: ' + this._template.size.width + 'px; height: ' + this._template.size.height + 'px;}';
 			//Setting content in template
     		ninjaBanner.innerHTML = banner.innerHTML;
@@ -204,7 +211,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     		//Removing event, only needed on initial load
     		this._observer.body.disconnect();
     		this._observer.body = null;
-    		//Removing loading container
+    		//Removing loading container (should be removed)
     		this.document.body.removeChild(this.document.getElementsByTagName('ninjaloadinghack')[0]);
    			//Getting style and link tags in document
             var stags = this.document.getElementsByTagName('style'),
@@ -218,8 +225,12 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 				for (i = 0; i < ltags.length; i++) {
 					//
 					if (ltags[i].href) {
-						//TODO: Verify this works for tags in body as well (working in head)
-						this.document.head.insertBefore(this.getStyleTagFromCssFile(ltags[i]), ltags[i]) || this.document.body.insertBefore(this.getStyleTagFromCssFile(ltags[i]), ltags[i]);
+						//Inseting <style> right above of <link> to maintain hierarchy
+						try {
+							this.document.head.insertBefore(this.getStyleTagFromCssFile(ltags[i]), ltags[i])
+						} catch (e) {
+							this.document.body.insertBefore(this.getStyleTagFromCssFile(ltags[i]), ltags[i]);
+						}
 						//Disabling tag once it has been reloaded
 						ltags[i].setAttribute('disabled', 'true');
 					} else {
