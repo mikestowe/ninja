@@ -337,49 +337,11 @@ input[type="radio"]:disabled {
 }
 
 // object 3D container styles
-.object3DToolContainer input.tag-type {
-	background: none;
-	width: 20px;
-	height: 20px;
-	display: block;
-	float: left;
-	margin: 0px;
- 	margin-right: 5px;
-	background-repeat: no-repeat;
-	opacity: 0.8;
-	text-indent: -9999px;
-	cursor: pointer;
-	-webkit-border-radius: 3px;
-	-webkit-user-select: none;
-	border: 1px solid transparent;
-}
-.object3DToolContainer input.tag-type {
-	background-image: url("../images/tools/sprite-toolbar-3d.png");
-}
-.object3DToolContainer input.tag-type:active {
-	border: 1px solid transparent;
-}
-.object3DToolContainer input.tag-type:hover {
-	opacity: 1.0;
-	-webkit-box-shadow: 0px 0px 4px #fff;
-}
-.object3DToolContainer input.tag-type:checked {
-	background-color: transparent;
-	opacity: 1.0;
-	cursor: default;
-	-webkit-box-shadow: none;
-}
 .object3DToolContainer input.rotateLocally {
-	background-position: -20px 0px;
-}
-.object3DToolContainer input.rotateLocally:checked {
-	background-position: -20px -20px;
+	background-image: url("../images/optionsbar/options3D/rotate-locally.png");
 }
 .object3DToolContainer input.rotateGlobally {
-	background-position: 0px 0px;
-}
-.object3DToolContainer input.rotateGlobally:checked {
-	background-position: 0px -20px;
+	background-image: url("../images/optionsbar/options3D/rotate-globally.png");
 }
 
 // Selection Tool Options Styles
