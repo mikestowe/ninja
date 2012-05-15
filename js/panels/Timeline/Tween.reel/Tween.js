@@ -147,7 +147,6 @@ var Tween = exports.Tween = Montage.create(Component, {
     	
     },
 
-
     draw:{
         value:function () {
             this.element.style.left = this.spanPosition + "px";
@@ -186,20 +185,14 @@ var Tween = exports.Tween = Montage.create(Component, {
                     if (this.application.ninja.selectedElements[0] != this.parentComponent.parentComponent.animatedElement) {
                         console.log("Wrong element selected for this keyframe track");
                     } else {
-                        if (useAbsolute) {
-                            this.setAbsoluteTweenProperties(event.detail);
-                        } else {
-                            this.setRelativeTweenProperties(event.detail);
-                        }
+                        this.setTweenProperties(event.detail);
                     }
                 }
-
-
             }
         }
     },
 
-    setAbsoluteTweenProperties:{
+    setTweenProperties:{
         value:function (eventDetail) {
             if(this.parentComponent.parentComponent.animatedElement.offsetTop != this.tweenedProperties["top"]){
                 this.tweenedProperties["top"] = this.parentComponent.parentComponent.animatedElement.offsetTop;
@@ -222,17 +215,10 @@ var Tween = exports.Tween = Montage.create(Component, {
         }
     },
 
-    setRelativeTweenProperties:{
-        value:function(eventDetail){
-            //console.log(eventDetail);
-        }
-    },
-
     setStyleTweenProperty:{
         value:function (eventDetail) {
             //console.log("Setting style tween properties for: " + this.parentComponent.parentComponent.trackEditorProperty);
             //console.log(eventDetail);
-
             if(eventDetail.type == "setProperties"){
                 // need to ignore top, left, width, and height
                 //console.log(eventDetail.data.value[0]);
@@ -292,7 +278,6 @@ var Tween = exports.Tween = Montage.create(Component, {
                 this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.animatedElement], "left", [currentLeft], "Change", "tween");
                 this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.animatedElement], "width", [currentWidth], "Change", "tween");
                 this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.animatedElement], "height", [currentHeight], "Change", "tween");
-
             }
         }
     },
@@ -301,10 +286,8 @@ var Tween = exports.Tween = Montage.create(Component, {
         value:function(){
             // turn off event listener for element change
             this.eventManager.removeEventListener("elementChange", this, false);
-
             // deselect the keyframe for this tween
             this.keyframe.deselectKeyframe();
         }
     }
-
 });
