@@ -152,7 +152,7 @@ exports.Properties = Montage.create(Component, {
                 this.positionSize.leftPosition = parseFloat(ElementsMediator.getProperty(el, "left"));
                 this.positionSize.topPosition = parseFloat(ElementsMediator.getProperty(el, "top"));
                 this.positionSize.heightSize = parseFloat(ElementsMediator.getProperty(el, "height"));
-                this.positionSize.widthSize = ElementsMediator.getProperty(el, "width");
+                this.positionSize.widthSize = parseFloat(ElementsMediator.getProperty(el, "width"));
 
                 if(this.threeD.inGlobalMode) {
                     this.threeD.x3D = ElementsMediator.get3DProperty(el, "x3D");
