@@ -98,7 +98,9 @@ exports.RuleListContainer = Montage.create(Component, {
         value: function(selection) {
             var rules;
 
-            if(selection.length === 1) {
+            if(selection.length > 1) {
+                rules = this.stylesController.getCommonRules(selection);
+            } else if(selection.length === 1) {
                 rules = this.stylesController.getMatchingRules(selection[0]);
 
                 ///// Add inline style to rule list
@@ -109,7 +111,7 @@ exports.RuleListContainer = Montage.create(Component, {
                     style            : selection[0].style
                 });
 
-            } //// TODO: support more selection types
+            }
 
             return rules;
         }

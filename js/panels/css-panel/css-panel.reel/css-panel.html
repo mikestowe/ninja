@@ -32,7 +32,20 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "name": "StylesViewContainer",
                 "properties": {
                     "element": {"#": "styles-view-container" },
-                    "selectionNameLabel": {"#": "selection-name" }
+                    "selectionName": {"@": "selectionName" }
+                }
+            },
+            "selectionName" : {
+                "prototype": "montage/ui/dynamic-text.reel",
+                "properties": {
+                    "element": {"#":"selection-name"}
+                },
+                "bindings": {
+                    "value" : {
+                        "boundObject": {"@": "stylesViewContainer"},
+                        "boundObjectPropertyPath": "selectionNameLabelText",
+                        "oneway": true
+                    }
                 }
             }
         }

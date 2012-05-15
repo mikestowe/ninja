@@ -14,6 +14,21 @@ exports.StylesViewContainer = Montage.create(Component, {
     contentPanel : {
         value: 'rules'
     },
+    _selectionNameLabelText : {
+        value: null
+    },
+    selectionNameLabelText : {
+        get: function() {
+            return this._selectionNameLabelText;
+        },
+        set: function(value) {
+            if(value === this._selectionNameLabelText) { return false; }
+
+            this._selectionNameLabelText = value;
+
+            this.needsDraw = true;
+        }
+    },
     _lastSelection : {
         value: null
     },
@@ -62,7 +77,10 @@ exports.StylesViewContainer = Montage.create(Component, {
         value: function() {
             var elements = this.application.ninja.selectedElements;
 
-            if(this._isSameArray(elements, this._lastSelection)) { console.log('new selection is identical');return false; }
+            if(this._isSameArray(elements, this._lastSelection) && this.contentPanel === "rules") {
+                console.log('new selection is identical');
+                return false;
+            }
 
             this._lastSelection = elements;
 
@@ -72,14 +90,20 @@ exports.StylesViewContainer = Montage.create(Component, {
             } else if(elements.length === 1) {
 
                 ///// update the selection status label with the label of the element
-                this.selectionNameLabel.innerHTML = this._getElementLabel(elements[0]);
+                this.selectionNameLabelText = this._getElementLabel(elements[0]);
 
                 if(this.contentPanel === "rules") {
                     this.ruleListContainer.displayListForSelection(elements);
                 } else {
                     this.computedStyleView.declaration = elements[0];
                 }
+                this.toolbar.showButton('computed');
             } else {
+                this.toolbar.hideButton('computed');
+                this.contentPanel = "rules";
+                this.selectionNameLabelText = elements.length + " elements selected.";
+                ///// find common rules
+                this.ruleListContainer.displayListForSelection(elements);
 
             }
 
@@ -130,10 +154,12 @@ exports.StylesViewContainer = Montage.create(Component, {
         value: function() {
             if(this.hasStyles) {
                 this.element.classList.remove('no-styles');
-                this.selectionNameLabel.classList.remove('no-styles');
+                //this.selectionNameLabel.classList.remove('no-styles');
+                this.selectionName.element.classList.remove('no-styles');
             } else {
                 this.element.classList.add('no-styles');
-                this.selectionNameLabel.classList.add('no-styles');
+                //this.selectionNameLabel.classList.add('no-styles');
+                this.selectionName.element.classList.add('no-styles');
             }
         }
     },

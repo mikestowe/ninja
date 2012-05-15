@@ -267,7 +267,7 @@ exports.StylesViewMediator = Montage.create(Component, {
             }
 
             container.contentPanel = panelToShow;
-            this.ownerComponent.handleSelectionChange();
+            container.handleSelectionChange();
         }
     },
 
