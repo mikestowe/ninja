@@ -148,8 +148,7 @@ exports.PanTool = Montage.create(toolBase,
 				delta = 10*event.wheelDelta/120;
 			//console.log( "delta: " + delta );
 
-            this.application.ninja.currentDocument.documentRoot.scrollLeft += delta;
-//            this.application.ninja.stage._scrollLeft += delta;
+            this.application.ninja.currentDocument.model.views.design.document.body.scrollLeft += delta;
 
 			delta *= zoom;
            
@@ -330,8 +329,8 @@ exports.PanTool = Montage.create(toolBase,
                 var limitX = false;
                 var limitY = false;
 
-				var oldLeft = this.application.ninja.currentDocument.documentRoot.scrollLeft,
-					oldTop  = this.application.ninja.currentDocument.documentRoot.scrollTop,
+				var oldLeft = this.application.ninja.currentDocument.model.views.design.document.body.scrollLeft,
+					oldTop  = this.application.ninja.currentDocument.model.views.design.document.body.scrollTop,
                     newLeft = oldLeft - deltaGPt[0],
                     newTop = oldTop - deltaGPt[1];
                 if((newLeft < 0) || (newLeft > this._maxHorizontalScroll))
@@ -342,10 +341,10 @@ exports.PanTool = Montage.create(toolBase,
                 {
                     limitY = true;
                 }
-                this.application.ninja.currentDocument.documentRoot.scrollLeft -= deltaGPt[0];
-                this.application.ninja.currentDocument.documentRoot.scrollTop  -= deltaGPt[1];
-				deltaGPt[0] = oldLeft - this.application.ninja.currentDocument.documentRoot.scrollLeft;
-				deltaGPt[1] = oldTop  - this.application.ninja.currentDocument.documentRoot.scrollTop;
+                this.application.ninja.currentDocument.model.views.design.document.body.scrollLeft -= deltaGPt[0];
+                this.application.ninja.currentDocument.model.views.design.document.body.scrollTop  -= deltaGPt[1];
+				deltaGPt[0] = oldLeft - this.application.ninja.currentDocument.model.views.design.document.body.scrollLeft;
+				deltaGPt[1] = oldTop  - this.application.ninja.currentDocument.model.views.design.document.body.scrollTop;
 
 				gPt[0] -= deltaGPt[0];
 				gPt[1] -= deltaGPt[1];
