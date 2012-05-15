@@ -7,7 +7,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage;
 var Component = require("montage/ui/component").Component;
 
-exports.PosSize = Montage.create(Component, {
+exports.PositionSize = Montage.create(Component, {
     leftPosition: {
         value: 0
     },
