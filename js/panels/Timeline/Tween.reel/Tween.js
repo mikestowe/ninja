@@ -178,16 +178,23 @@ var Tween = exports.Tween = Montage.create(Component, {
         	var useAbsolute = true;
 
             if (event.detail.source && event.detail.source !== "tween") {
-                // check for correct element selection
-                if (this.application.ninja.selectedElements[0] != this.parentComponent.parentComponent.animatedElement) {
-                    console.log("Wrong element selected for this keyframe track");
+
+                if(this.parentComponent.parentComponent.isSubproperty){
+                    this.setStyleTweenProperty(event.detail);
                 } else {
-                    if(useAbsolute){
-                        this.setAbsoluteTweenProperties(event.detail);
+                    // check for correct element selection
+                    if (this.application.ninja.selectedElements[0] != this.parentComponent.parentComponent.animatedElement) {
+                        console.log("Wrong element selected for this keyframe track");
                     } else {
-                        this.setRelativeTweenProperties(event.detail);
+                        if (useAbsolute) {
+                            this.setAbsoluteTweenProperties(event.detail);
+                        } else {
+                            this.setRelativeTweenProperties(event.detail);
+                        }
                     }
                 }
+
+
             }
         }
     },
@@ -231,6 +238,36 @@ var Tween = exports.Tween = Montage.create(Component, {
         }
     },
 
+    setStyleTweenProperty:{
+        value:function (eventDetail) {
+            console.log("Setting style tween properties for: " + this.parentComponent.parentComponent.trackEditorProperty);
+            console.log(eventDetail);
+
+            if(eventDetail.type == "setProperties"){
+                // ignore top, left, width, and height
+                console.log(eventDetail.data.value[0]);
+                this.tweenedProperties[this.parentComponent.parentComponent.trackEditorProperty] = eventDetail.data.value[0];
+                console.log(this.tweenedProperties);
+
+            } else if(eventDetail.type == "setColor"){
+                console.log(eventDetail.data.value.color.css);
+                var prop = this.parentComponent.parentComponent.trackEditorProperty;
+                this.tweenedProperties[prop] = eventDetail.data.value.color.css;
+                console.log(this.tweenedProperties[prop]);
+
+            } else if(eventDetail.type == "setProperty"){
+                // ignore top, left, width, and height
+                console.log(eventDetail.data.value[0]);
+                this.tweenedProperties[this.parentComponent.parentComponent.trackEditorProperty] = eventDetail.data.value[0];
+                console.log(this.tweenedProperties);
+            }else {
+                console.log("TWEEN Unhandled type - setStyleTweenProperty : " + eventDetail.type);
+            }
+
+
+        }
+    },
+
     selectTween:{
         value: function(){
             // turn on event listener for element change
@@ -252,7 +289,6 @@ var Tween = exports.Tween = Montage.create(Component, {
             this.application.ninja.timeline.updateTimeText(currentMillisec);
 
             if(this.parentComponent.parentComponent.isSubproperty){
-                console.log("sub prop tween selection");
                 // set property specific style on element
             } else {
                 // move animated element to correct position on stage

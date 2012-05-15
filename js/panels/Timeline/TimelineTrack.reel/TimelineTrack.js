@@ -321,6 +321,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         }
     },
 
+    animationNamesString:{
+        value:""
+    },
+
     ninjaStylesContoller:{
         value:null
     },
@@ -468,14 +472,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 	                this.animatedElement = this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList[0];
 	            }
             }
-            
-            
-            
-            
-            
-            
-            
-            
+
     		// Drag and Drop:
     		// Do we have a helper to append?
             if (this._appendHelper === true) {
@@ -526,7 +523,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                     }
                 }
             }
-            
             
     		if (this._isFirstDraw === true) {
 	    		
@@ -591,11 +587,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
 		            this.tweens[i].tweenData = myObj;
 	        	}
-	        	
-
 	        }
 		}
 	},
+
     handleClick:{
         value:function (ev) {
             // TEMP - if the SHIFT key is down, add a new keyframe or split an existing span
@@ -609,7 +604,9 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                         this.updateKeyframeRule();
                     } else {
                         this.handleNewTween(ev);
-                        this.updateKeyframeRule();
+                        if (ev.target.className === "tracklane") {
+                            this.updateKeyframeRule();
+                        }
                     }
                 } else {
                     // TEMP error check
@@ -626,7 +623,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 this.application.ninja.timeline.selectLayer(selectedIndex, false);
                 this.insertTween(ev.offsetX);
             } else {
-                console.log(ev.target);
                 this.splitTween(ev);
             }
         }
@@ -792,6 +788,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.tweens[0].tweenData.tweenedProperties["left"] = this.animatedElement.offsetLeft;
             var animationDuration = Math.round(this.trackDuration / 1000) + "s";
             this.animationName = this.animatedElement.classList[0] + "_PositionSize";
+            this.animationNamesString = this.animationName;
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-name", this.animationName);
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-duration", animationDuration);
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-iteration-count", 1);
@@ -899,8 +896,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 newStyleTrack.propTrackData.trackType = "style";
                 newStyleTrack.propTrackData.trackEditorProperty = "";
                 newStyleTrack.propTrackData.styleIndex = layerEvent.styleIndex;
-
-                console.log(layerEvent.styleIndex);
 
             	this.arrStyleTracks.push(newStyleTrack);
 
