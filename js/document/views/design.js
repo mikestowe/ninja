@@ -159,8 +159,9 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     insertBannerContent: {
     	value: function (e) {
     		//Getting first element in DOM (assumes it's root)
-    		var banner = this._bodyFragment.getElementsByTagName('*')[1],
-    			ninjaBanner = this.document.body.getElementsByTagName('ninja-banner')[0];
+    		//TODO: Ensure wrapper logic is proper
+    		var banner = this._bodyFragment.getElementsByTagName('*')[2],
+    			ninjaBanner = this.document.body.getElementsByTagName('ninja-content')[0];
     		//Copying attributes to maintain same properties as the banner root
 			for (var n in banner.attributes) {
 				if (banner.attributes[n].value) {
@@ -169,7 +170,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 			}
 			//Adjusting margin per size of document
 			//this.document.head.getElementsByTagName('style')[0].innerHTML += '\n ninja-banner {overflow: visible !important; margin-top: -'+Math.floor(this._template.size.height/2)+'px; margin-left: -'+Math.floor(this._template.size.width/2)+'px}';
-			this.document.head.getElementsByTagName('style')[0].innerHTML += '\n ninja-banner {overflow: visible !important;} ninja-banner, ninja-viewport {width: ' + this._template.size.width + 'px; height: ' + this._template.size.height + 'px;}';
+			this.document.head.getElementsByTagName('style')[0].innerHTML += '\n ninja-content {overflow: visible !important;} ninja-content, ninja-viewport {width: ' + this._template.size.width + 'px; height: ' + this._template.size.height + 'px;}';
 			//Setting content in template
     		ninjaBanner.innerHTML = banner.innerHTML;
         	//Garbage collection

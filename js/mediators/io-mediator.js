@@ -84,6 +84,7 @@ exports.IoMediator = Montage.create(Component, {
                 		//
                 		content = content.replace(/Dimensions@@@/gi, "Dimensions@@@"+template.id);
                 		content = content.replace(/ninja-banner {}/gi, "ninja-banner {overflow: visible; width: "+dimensions.width+"; height: "+dimensions.height+"}");
+                		content = content.replace(/ninja-content-wrapper {}/gi, "ninja-content-wrapper {overflow: hidden; width: "+dimensions.width+"; height: "+dimensions.height+"}");
                 	}
                 	//
                 	return content;

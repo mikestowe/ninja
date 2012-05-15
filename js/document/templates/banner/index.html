@@ -38,10 +38,6 @@
                 height: 100%;
                 background: #666;
             }
-			
-			ninjaloadinghack {
-				display: none;
-			}
 
 			.active-element-outline {
     			outline: #adff2f solid 2px;
@@ -50,32 +46,30 @@
 			.nj-preset-transition {
 				-webkit-transition: all 450ms linear !important;
 			}
-
-           ninja-viewport {
-               display: block;
-               margin: 0;
-               padding: 0;
-               border: 0;
-               position: absolute;
-               overflow: visible;
-               top: 0;
-               left: 0;
-               background: #FFF;
-           }
 			
-			ninja-banner {
+			ninjaloadinghack {
+				display: none;
+			}
+			
+			ninja-viewport, ninja-content {
 				display: block;
-				margin: 0;
-				padding: 0;
-				border: 0;
-				position: absolute;
-				overflow: visible;
-				top: 0;
-				left: 0;
-				background: transparent;
+               	margin: 0;
+               	padding: 0;
+               	border: 0;
+               	position: absolute;
+               	overflow: visible;
+               	top: 0;
+               	left: 0;
+               	background: transparent;
+			}
+			
+			ninja-viewport {
+               	background: #FFF;
+           	}
+			
+			ninja-content {
                 -webkit-transform-style: preserve-3d;
                 -webkit-transform: perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-
 			}
         </style>
         
@@ -100,11 +94,15 @@
 	</head>
 
 	<body>
+		
 		<ninjaloadinghack></ninjaloadinghack>
+        
         <ninja-viewport>
-            <!--TODO - rename-->
-		    <ninja-banner></ninja-banner>
+		    
+		    <ninja-content></ninja-content>
+		    
         </ninja-viewport>
+        
 	</body>
 
 </html>
