@@ -101,6 +101,10 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
         value:null
     },
 
+    trackDuration:{
+        value:0
+    },
+
     _trackID:{
         value:null
     },
@@ -209,6 +213,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
 
             var currentMillisecPerPixel = Math.floor(this.application.ninja.timeline.millisecondsOffset / 80);
             var currentMillisec = currentMillisecPerPixel * clickPos;
+            this.trackDuration = currentMillisec;
 
             var newTween = {};
             newTween.tweenData = {};
@@ -242,7 +247,28 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
 
     updatePropKeyframeRule:{
         value:function(){
+            // delete the current rule
+            this.ninjaStylesContoller.deleteRule(this.currentKeyframeRule);
 
+            // build the new keyframe string
+            var keyframeString = "@-webkit-keyframes " + this.animationName + " {";
+
+            for (var i = 0; i < this.propTweens.length; i++) {
+                var keyMill = parseInt(this.propTweens[i].tweenData.keyFrameMillisec);
+                // TODO - trackDur should be parseFloat rounded to significant digits
+                var trackDur = parseInt(this.trackDuration);
+                var keyframePercent = Math.round((keyMill / trackDur) * 100) + "%";
+                var keyframePropertyString = " " + keyframePercent + " {";
+                for(var prop in this.propTweens[i].tweenData.tweenedProperties){
+                    keyframePropertyString += prop + ": " + this.propTweens[i].tweenData.tweenedProperties[prop];
+                }
+                keyframePropertyString += "}";
+                keyframeString += keyframePropertyString;
+            }
+            keyframeString += " }";
+            // set the keyframe string as the new rule
+            this.currentKeyframeRule = this.ninjaStylesContoller.addRule(keyframeString);
+            this.application.ninja.documentController.activeDocument.needsSave = true;
         }
     },
 
@@ -268,9 +294,6 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-iteration-count", newIterationCount);
             //this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-fill-mode", "both");
             //this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-transition-timing-function", "linear");
-
-
-            console.log(currentStyleValue);
 
             var initRule = "@-webkit-keyframes " + this.animationName + " { 0% {" + this.trackEditorProperty + ": " + currentStyleValue + ";} 100% {" + this.trackEditorProperty + ": " + currentStyleValue + ";} }";
             console.log(initRule);

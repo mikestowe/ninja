@@ -254,6 +254,7 @@ var Tween = exports.Tween = Montage.create(Component, {
                 var prop = this.parentComponent.parentComponent.trackEditorProperty;
                 this.tweenedProperties[prop] = eventDetail.data.value.color.css;
                 console.log(this.tweenedProperties[prop]);
+                this.parentComponent.parentComponent.updatePropKeyframeRule();
 
             } else if(eventDetail.type == "setProperty"){
                 // ignore top, left, width, and height
