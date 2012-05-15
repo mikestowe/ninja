@@ -1,4 +1,4 @@
-<!DOCTYPE HTML>
+﻿<!DOCTYPE HTML>
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -11,8 +11,7 @@
     <script type="text/montage-serialization">
         {
             "owner":{
-                "module": "js/io/ui/file-picker/picker-navigator.reel",
-                "name":"PickerNavigator",
+                "prototype": "js/io/ui/file-picker/picker-navigator.reel",
                 "properties":{
                     "element": {"#": "picker"},
                     "filterVal" : {"#": "filterVal"},
@@ -39,41 +38,41 @@
 
 </head>
 <body>
-<div id="picker" class="picker" style="visibility:hidden;">
-    <div><span id="error" class="error"></span></div>
+<div data-montage-id="picker" class="picker" style="visibility:hidden;">
+    <div><span data-montage-id="error" class="error"></span></div>
     <div class="pickerHeader">
         <div class="historyArrows">
-            <span id="backArrow" class="backArrow disable">&#9664</span>
-            <span id="forwardArrow" class="forwardArrow disable">&#9654</span>
+            <span data-montage-id="backArrow" class="backArrow disable">&#9664</span>
+            <span data-montage-id="forwardArrow" class="forwardArrow disable">&#9654</span>
         </div>
-        <img id="reload" alt="refresh" title="refresh" width="25px" height="15px" class="reload" src="data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%24%00%00%00%16%08%06%00%00%00%A8%B2%3E%3E%00%00%00%04gAMA%00%00%D6%D8%D4OX2%00%00%00%18tEXtSoftware%00Paint.NET%20v3.30%40%84G%10%00%00%03%96IDATHK%B5%96%CBK%5BA%14%C6%13Z%84%D2B%A1%AB%82%FF%82%60%E2%2B%BAs%A1%18_%88%22f%25n*%0A%25%8A%BAiEQD%11%C4%85%DA%85%8AK%05)U%0C%8A%18%15%8A%82n%8C%8F%12%04A%17%09%D1Z%C4%92%14%91P%2Cr%3A%BF%A1%09%86%C6%DCK%AD%81%8Fsg%CE%99%EF%FBr%E7q%C7j%B9%E7W%5E%5E%FEJ%A5%5CV%AB%D5%A9b%BA%8A6%15%9F%A8%A8G%C4%E2%7D%E3ED%A7%FE%C4%5B%15%BF%A8%E6W%15%BD*~%5C%5E%5E%0E%DF76%A1%BF%B4%B4%F4YYY%D9%BB%CA%CA%CA%1F%FD%FD%FD%B2%B1%B1!'''r%7B%0B%E7%BF%FD%18%0B%07%5Cp%C2%8D%06Z)M%A9%82%D7%AAp%A7%B1%B1Q%8E%8E%8E%B4%89%C7%00%DCh%A0%85fRSN%A73%5D%15%84%26%26%26%E4%FA%FAZnnn%1E%15h%A0%85%26%DA%09%A6JJJ%D2T%C27%3B%3B%2B%D1h%F4%BFall%CC%90%0BM%B4%F1%107%A5%1C%BE%EF%EB%EB%93%AB%AB%2B%D3888%90%D6%D6V)**%92%CC%CCL%1Di%D3%0F%CF%E8%E8%A8%D8l6S%7Ch%E3A%1BR%CE%5E%B2%C8%98%D7p8l%88%8B%8B%0B-%96%93%93%23%D9%D9%D9%92%9B%9B%2Byyy%3A%C6%DA%CD%CD%CD%FA%99%1A3%9Ch%E3%01%2F%16%F5%E0%EE%ED%ED%15%84%CC%A0%BB%BB%5B%B2%B2%B2%C4%E1p%C8%D0%D0%90%EC%EE%EEJ%24%12%D1%916%FD%98%8BE3%9C%D4%E0%01%2F%96%9A%9A%9A%CF%F3%F3%F3rvvf%88%D5%D5Um%26%3F%3F_oa%88%CE%CF%CF%F58%E2%C8%C8%886B%BE%A0%A0%40%1B3%C3K%0D%1E%F0%C2%1B%FA%EE%F3%F9%24%10%08%18%A2%A5%A5EO%C3%F0%F0%B0%84B%A1%84%FA%C1%C1A%3DM1C%98%A2%D6%0C%2F5x%C0%0Bk%E8%17sx%7C%7Cl%88%E2%E2b%FD%AFwvv%12j%07%06%06%C4n%B7%EB%1CFb%C0%90%19%5Ej%F0%80%17%8B%DAr%3F%F7%F6%F6%E4%F0%F0%D0%10%2C%5ED%FC~%7FB-%A7%F0%E9%E9iR%98%E1%A5%06%0Fx%B1TWW%7F%5B%5B%5B%D3%DB%D5%08%BC!%0C%99%AD7%E2%BB%9B%87%13%2F%96%FA%FAz%DF%D4%D4%94%9E%06%23%B0%86X'%3D%3D%3D)k%C7%C7%C7%85%0D%60%C4w7%8F%07%BCX%3A%3B%3B%3F%B4%B7%B7%CB%F6%F6%B6!%E6%E6%E6%E2g%CD%F4%F4t%D2%FA%99%99%19%BD%13YO%FCk3%BC%D4%E0%01%2F%16u~8***%A2%1E%8FGo%E5T%60%60GG%87%5E%C0%9C%CE%9C%CC%18%60%0C%916%FD%9C%D0mmm%B2%B9%B9i%C8%C9X%B4%F1%80%17%EE%2Bi%5D%5D%5D%9F%DCn%B7%AC%AF%AF%1B%02S%1Cb%AC%25%C4322%E2%A0M%3Fy%EA%CC%F0Q%836%1E%F0%A2%3F%1F%C1%60%D0QWW%17%E4%AE%B2%B2%B2%92%12%5E%AFW%B6%B6%B6dqqQ_!%0A%0B%0B%F5%1B%23%D2%A6%9F%3CuF%5C%E4%D1D%1B%0F%F1%8F%ABr%F6Tm%BB7UUU%115%8F%FA%15.--%A5%04%82%BC%05%0E%B4%FD%FD%7D%1Di%D3o4%96%3C%1Ah%A1%896%1E%12%AE%20%AA%E3%B9%9A%C3%16%97%CB%15P%8EerrR%16%16%16%1E%05p%A3%81%16%9Ah'%BD%A4%A9%C4%8B%CB%CB%CB%3A%F5%01%F5%A8C*%DA%D4%D4%A4%3F%98lcv%D8C%00%07%5Cp%C2%8D%06Zh%A6%BC%C6%F2%EA%14%ECjN%DF%AA%EF%D3lCC%83%BF%B6%B66%C4%A1%F8%10%C0%01%17%9Cp%A3%F1%D74)g%BF%01%E1'%8B%DA%0F%0A%90%D8%00%00%00%00IEND%AEB%60%82" />
+        <img data-montage-id="reload" alt="refresh" title="refresh" width="25px" height="15px" class="reload" src="data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%24%00%00%00%16%08%06%00%00%00%A8%B2%3E%3E%00%00%00%04gAMA%00%00%D6%D8%D4OX2%00%00%00%18tEXtSoftware%00Paint.NET%20v3.30%40%84G%10%00%00%03%96IDATHK%B5%96%CBK%5BA%14%C6%13Z%84%D2B%A1%AB%82%FF%82%60%E2%2B%BAs%A1%18_%88%22f%25n*%0A%25%8A%BAiEQD%11%C4%85%DA%85%8AK%05)U%0C%8A%18%15%8A%82n%8C%8F%12%04A%17%09%D1Z%C4%92%14%91P%2Cr%3A%BF%A1%09%86%C6%DCK%AD%81%8Fsg%CE%99%EF%FBr%E7q%C7j%B9%E7W%5E%5E%FEJ%A5%5CV%AB%D5%A9b%BA%8A6%15%9F%A8%A8G%C4%E2%7D%E3ED%A7%FE%C4%5B%15%BF%A8%E6W%15%BD*~%5C%5E%5E%0E%DF76%A1%BF%B4%B4%F4YYY%D9%BB%CA%CA%CA%1F%FD%FD%FD%B2%B1%B1!'''r%7B%0B%E7%BF%FD%18%0B%07%5Cp%C2%8D%06Z)M%A9%82%D7%AAp%A7%B1%B1Q%8E%8E%8E%B4%89%C7%00%DCh%A0%85fRSN%A73%5D%15%84%26%26%26%E4%FA%FAZnnn%1E%15h%A0%85%26%DA%09%A6JJJ%D2T%C27%3B%3B%2B%D1h%F4%BFall%CC%90%0BM%B4%F1%107%A5%1C%BE%EF%EB%EB%93%AB%AB%2B%D3888%90%D6%D6V)**%92%CC%CCL%1Di%D3%0F%CF%E8%E8%A8%D8l6S%7Ch%E3A%1BR%CE%5E%B2%C8%98%D7p8l%88%8B%8B%0B-%96%93%93%23%D9%D9%D9%92%9B%9B%2Byyy%3A%C6%DA%CD%CD%CD%FA%99%1A3%9Ch%E3%01%2F%16%F5%E0%EE%ED%ED%15%84%CC%A0%BB%BB%5B%B2%B2%B2%C4%E1p%C8%D0%D0%90%EC%EE%EEJ%24%12%D1%916%FD%98%8BE3%9C%D4%E0%01%2F%96%9A%9A%9A%CF%F3%F3%F3rvvf%88%D5%D5Um%26%3F%3F_oa%88%CE%CF%CF%F58%E2%C8%C8%886B%BE%A0%A0%40%1B3%C3K%0D%1E%F0%C2%1B%FA%EE%F3%F9%24%10%08%18%A2%A5%A5EO%C3%F0%F0%B0%84B%A1%84%FA%C1%C1A%3DM1C%98%A2%D6%0C%2F5x%C0%0Bk%E8%17sx%7C%7Cl%88%E2%E2b%FD%AFwvv%12j%07%06%06%C4n%B7%EB%1CFb%C0%90%19%5Ej%F0%80%17%8B%DAr%3F%F7%F6%F6%E4%F0%F0%D0%10%2C%5ED%FC~%7FB-%A7%F0%E9%E9iR%98%E1%A5%06%0Fx%B1TWW%7F%5B%5B%5B%D3%DB%D5%08%BC!%0C%99%AD7%E2%BB%9B%87%13%2F%96%FA%FAz%DF%D4%D4%94%9E%06%23%B0%86X'%3D%3D%3D)k%C7%C7%C7%85%0D%60%C4w7%8F%07%BCX%3A%3B%3B%3F%B4%B7%B7%CB%F6%F6%B6!%E6%E6%E6%E2g%CD%F4%F4t%D2%FA%99%99%19%BD%13YO%FCk3%BC%D4%E0%01%2F%16u~8***%A2%1E%8FGo%E5T%60%60GG%87%5E%C0%9C%CE%9C%CC%18%60%0C%916%FD%9C%D0mmm%B2%B9%B9i%C8%C9X%B4%F1%80%17%EE%2Bi%5D%5D%5D%9F%DCn%B7%AC%AF%AF%1B%02S%1Cb%AC%25%C4322%E2%A0M%3Fy%EA%CC%F0Q%836%1E%F0%A2%3F%1F%C1%60%D0QWW%17%E4%AE%B2%B2%B2%92%12%5E%AFW%B6%B6%B6dqqQ_!%0A%0B%0B%F5%1B%23%D2%A6%9F%3CuF%5C%E4%D1D%1B%0F%F1%8F%ABr%F6Tm%BB7UUU%115%8F%FA%15.--%A5%04%82%BC%05%0E%B4%FD%FD%7D%1Di%D3o4%96%3C%1Ah%A1%896%1E%12%AE%20%AA%E3%B9%9A%C3%16%97%CB%15P%8EerrR%16%16%16%1E%05p%A3%81%16%9Ah'%BD%A4%A9%C4%8B%CB%CB%CB%3A%F5%01%F5%A8C*%DA%D4%D4%A4%3F%98lcv%D8C%00%07%5Cp%C2%8D%06Zh%A6%BC%C6%F2%EA%14%ECjN%DF%AA%EF%D3lCC%83%BF%B6%B66%C4%A1%F8%10%C0%01%17%9Cp%A3%F1%D74)g%BF%01%E1'%8B%DA%0F%0A%90%D8%00%00%00%00IEND%AEB%60%82" />
         <div class="addressbar">
-            <input id="addressbarUri" class="nj-skinned addressbarUri" type="search" value="" />
+            <input data-montage-id="addressbarUri" class="nj-skinned addressbarUri" type="search" value="" />
             <!--<span id="go" class="go">&#9992</span>-->
             <span class="dropdownArrow">&#9660</span>
             <div class="dropdown hide"></div>
         </div>
         <div class="viewSwitcher">
-            <span id="iconView" class="iconView" title="icon view">&#164</span>
-            <span id="treeView" class="treeView" title="tree view">&#165</span>
+            <span data-montage-id="iconView" class="iconView" title="icon view">&#164</span>
+            <span data-montage-id="treeView" class="treeView" title="tree view">&#165</span>
         </div>
     </div>
-    <div id="left-nav" class="container left-nav"></div>
+    <div data-montage-id="left-nav" class="container left-nav"></div>
     <div class="container right-nav">
-        <div id="right-top" class="right-top">
-            <div id="iconViewContainer" class="iconViewContainer" style="display:block;"></div>
-            <div id="treeViewContainer" class="treeViewContainer" style="display:none;"></div>
+        <div data-montage-id="right-top" class="right-top">
+            <div data-montage-id="iconViewContainer" class="iconViewContainer" style="display:block;"></div>
+            <div data-montage-id="treeViewContainer" class="treeViewContainer" style="display:none;"></div>
         </div>
-        <div id="right-bottom" class="right-bottom"></div>
+        <div data-montage-id="right-bottom" class="right-bottom"></div>
     </div>
     <div class="buttons">
-        <button id="cancelButton" value="CANCEL" class="cancelButton nj-skinned">Cancel</button>
-        <button id="okButton" disabled="true" value="OK" class="okButton nj-skinned">Ok</button>
+        <button data-montage-id="cancelButton" value="CANCEL" class="cancelButton nj-skinned">Cancel</button>
+        <button data-montage-id="okButton" disabled="true" value="OK" class="okButton nj-skinned">Ok</button>
     </div>
-    <div id="filters" class="filters" style="display:block;">
+    <div data-montage-id="filters" class="filters" style="display:block;">
         <div class="dropdown hide"></div>
         <span class="dropdownArrow">&#9660</span>
-        <span id="filterVal" class="filterVal">*.*</span>
+        <span data-montage-id="filterVal" class="filterVal">*.*</span>
     </div>
 </div>
 </body>

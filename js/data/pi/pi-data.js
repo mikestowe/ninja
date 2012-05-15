@@ -9,6 +9,20 @@ var Montage = require("montage/core/core").Montage,
 
 exports.PiData = Montage.create( Montage, {
 
+    bodyPi: {
+        value: [
+            {
+                label: "Style",
+
+                                Section: [
+                                    [
+
+                                    ]
+                                ]
+            }
+        ]
+    },
+
     stagePi: {
         value: [
             {
@@ -86,7 +100,7 @@ exports.PiData = Montage.create( Montage, {
             }
         ]
     },
-    imagePi: {
+    imgPi: {
         value: [
             {
                 label: "Image Properties",
@@ -793,8 +807,8 @@ exports.PiData = Montage.create( Montage, {
                     ]
                 ]
             }
-        ] //value: [
-    } //BrushStrokePi: {
+        ]
+    }
 });
 
 

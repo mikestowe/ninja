@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -12,24 +12,21 @@
     <script type="text/montage-serialization">
         {
             "stageView" : {
-                "module": "js/stage/stage-view.reel",
-                "name": "StageView",
+                "prototype": "js/stage/stage-view.reel",
                 "properties": {
                     "element": {"#": "stageView"}
                 }
             },
 
             "StageDeps1": {
-                "module": "js/stage/stage-deps",
-                "name": "StageDeps",
+                "prototype": "js/stage/stage-deps",
                 "properties": {
                     "stage": {"@": "owner"}
                 }
             },
 
             "layout1": {
-                "module": "js/stage/layout",
-                "name": "Layout",
+                "prototype": "js/stage/layout",
                 "properties": {
                     "canvas": {"#": "layoutCanvas"},
                     "stage": {"@": "owner"}
@@ -44,8 +41,7 @@
             },
 
             "textTool": {
-                "module": "node_modules/labs/rich-text-editor.reel",
-                "name": "RichTextEditor",
+                "prototype": "node_modules/labs/rich-text-editor.reel",
                 "properties": {
                     "element" : {"#": "textToolObject"}
                 }
@@ -56,8 +52,7 @@
             },
             
             "owner": {
-                "module": "js/stage/stage.reel",
-                "name": "Stage",
+                "prototype": "js/stage/stage.reel",
                 "properties": {
                     "element":          {"#": "stageAndScenesContainer"},
                     "_iframeContainer":  {"#": "iframeContainer"},
@@ -84,13 +79,13 @@
 </head>
 <body>
 
-    <section id="stageAndScenesContainer" class="stageAndScenesContainer">
-        <section id="stageView"></section>
-        <section id="iframeContainer"></section>
-        <section id="textToolObject"></section>
-        <canvas id="layoutCanvas"></canvas>
-        <canvas id="stageCanvas"></canvas>
-        <canvas id="drawingCanvas"></canvas>
+    <section data-montage-id="stageAndScenesContainer" class="stageAndScenesContainer">
+        <section data-montage-id="stageView"></section>
+        <section data-montage-id="iframeContainer" id="iframeContainer"></section>
+        <section data-montage-id="textToolObject"></section>
+        <canvas data-montage-id="layoutCanvas" class="layoutCanvas"></canvas>
+        <canvas data-montage-id="stageCanvas" class="stageCanvas"></canvas>
+        <canvas data-montage-id="drawingCanvas" class="drawingCanvas"></canvas>
     </section>
 
 </body>

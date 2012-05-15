@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -11,26 +11,21 @@
    		<script type="text/montage-serialization">
             {
                 "owner": {
-                    "module": "js/panels/Timeline/Layer.reel",
-                    "name": "Layer",
+                    "prototype": "js/panels/Timeline/Layer.reel",
                     "properties": {
                         "element": {"#": "layer"},
 						"styleRepetition" : {"@":"repetition1"},
 						"dynamicLayerName" : {"@":"dtext1"},
 						"dynamicLayerTag" : {"@": "dtext2"},
-						"slotStyle" : {"@":"slot1"},
 						"mainCollapser" : {"@" : "mainCollapser"},
 						"positionCollapser" : {"@" : "positionCollapser"},
-						"transformCollapser" : {"@" : "transformCollapser"},
 						"styleCollapser" : {"@" : "styleCollapser"},
 						"clickerMain" : {"#" : "clicker-main"},
-						"myLabel" : {"#" : "myLabel"},
-						"dragDrop" : {"@" : "DragDrop"}
+						"myLabel" : {"#" : "myLabel"}
                     }
                 },
 	            "dtext1" : {
-	            	"module" : "montage/ui/dynamic-text.reel",
-	            	"name" : "DynamicText",
+	            	"prototype" : "montage/ui/dynamic-text.reel",
 	            	"properties" : {
 	            		"element" : {"#" : "layer-label-text"}
 	            	},
@@ -43,8 +38,7 @@
 	            	}
 	            },
 	            "dtext2" : {
-	            	"module" : "montage/ui/dynamic-text.reel",
-	            	"name" : "DynamicText",
+	            	"prototype" : "montage/ui/dynamic-text.reel",
 	            	"properties" : {
 	            		"element" : {"#" : "layer-tag"}
 	            	},
@@ -57,8 +51,7 @@
 	            	}
 	            },
 	            "repetition1": {
-	                "module": "montage/ui/repetition.reel",
-	                "name": "Repetition",
+	                "prototype": "montage/ui/repetition.reel",
 	                "properties": {
 	                    "element": {"#": "style-container"},
 	                    "isSelectionEnabled" : true
@@ -72,8 +65,7 @@
 	                }
 	            },
 	            "style" : {
-	            	"module" : "js/panels/Timeline/Style.reel",
-	            	"name" : "LayerStyle",
+	            	"prototype" : "js/panels/Timeline/Style.reel[LayerStyle]",
 	            	"properties" : {
 	            		"element" : {"#" : "layer-style"}
 	            	},
@@ -116,8 +108,7 @@
 	            	}
 	            },
 				"dtext_position_x" : {
-                    "module": "js/components/hottextunit.reel",
-            	    "name": "HotTextUnit",
+                    "prototype": "js/components/hottextunit.reel[HotTextUnit]",
             	    "properties": {
             	        "element": {"#": "position-x"},
             	        "maxValue" : 100000,
@@ -135,8 +126,7 @@
 	                }
 				},
 				"dtext_position_y" : {
-                    "module": "js/components/hottextunit.reel",
-            	    "name": "HotTextUnit",
+                    "prototype": "js/components/hottextunit.reel[HotTextUnit]",
             	    "properties": {
             	        "element": {"#": "position-y"},
             	        "maxValue" : 100000,
@@ -154,8 +144,7 @@
 	                }
 				},
 				"dtext_scale_x" : {
-                    "module": "js/components/hottextunit.reel",
-            	    "name": "HotTextUnit",
+                    "prototype": "js/components/hottextunit.reel[HotTextUnit]",
             	    "properties": {
             	        "element": {"#": "scale-x"},
             	        "maxValue" : 100,
@@ -173,8 +162,7 @@
 	                }
 				},
 				"dtext_scale_y" : {
-                    "module": "js/components/hottextunit.reel",
-            	    "name": "HotTextUnit",
+                    "prototype": "js/components/hottextunit.reel[HotTextUnit]",
             	    "properties": {
             	        "element": {"#": "scale-y"},
             	        "maxValue" : 100,
@@ -191,67 +179,9 @@
 	                    }
 	                }
 				},
-				"dtext_skew_x" : {
-                    "module": "js/components/hottextunit.reel",
-            	    "name": "HotTextUnit",
-            	    "properties": {
-            	        "element": {"#": "skew-x"},
-            	        "maxValue" : 100,
-                        "minValue" : 0,
-                        "acceptableUnits" : "%",
-                        "units" : "%",
-                        "value" : 0
-            	    },
-	                "bindings": {
-	                    "value": {
-	                        "boundObject": {"@": "owner"},
-	                        "boundObjectPropertyPath": "dtextSkewX",
-	                        "oneway": false
-	                    }
-	                }
-				},
-				"dtext_skew_y" : {
-                    "module": "js/components/hottextunit.reel",
-            	    "name": "HotTextUnit",
-            	    "properties": {
-            	        "element": {"#": "skew-y"},
-            	        "maxValue" : 100,
-                        "minValue" : 0,
-                        "acceptableUnits" : "%",
-                        "units" : "%",
-                        "value" : 0
-            	    },
-	                "bindings": {
-	                    "value": {
-	                        "boundObject": {"@": "owner"},
-	                        "boundObjectPropertyPath": "dtextSkewY",
-	                        "oneway": false
-	                    }
-	                }
-				},
-				"dtext_rotate" : {
-                    "module": "js/components/hottextunit.reel",
-            	    "name": "HotTextUnit",
-            	    "properties": {
-            	        "element": {"#": "rotation"},
-            	        "maxValue" : 360,
-                        "minValue" : -360,
-                        "acceptableUnits" : "degrees",
-                        "units" : "degrees",
-                        "value" : 0
-            	    },
-	                "bindings": {
-	                    "value": {
-	                        "boundObject": {"@": "owner"},
-	                        "boundObjectPropertyPath": "dtextRotate",
-	                        "oneway": false
-	                    }
-	                }
-				},
 					
 				"mainCollapser" : {
-					"module" : "js/panels/timeline/Collapser.js",
-					"name" : "Collapser",
+					"prototype" : "js/panels/timeline/Collapser",
 					"properties" : {
 						"element" : {"#" : "content-main"},
 						"myContent" : {"#" : "content-main"},
@@ -271,8 +201,7 @@
 				},
 					
 				"positionCollapser" : {
-					"module" : "js/panels/timeline/Collapser.js",
-					"name" : "Collapser",
+					"prototype" : "js/panels/timeline/Collapser",
 					"properties" : {
 						"element" : {"#" : "content-position"},
 						"myContent" : {"#":"content-position"},
@@ -291,30 +220,8 @@
 					}
 				},
 					
-				"transformCollapser" : {
-					"module" : "js/panels/timeline/Collapser.js",
-					"name" : "Collapser",
-					"properties" : {
-						"element" : {"#" : "content-transform"},
-						"myContent" : {"#":"content-transform"},
-						"contentHeight" : 60,
-						"isLabelClickable" : true,
-						"clicker" : {"#" : "clicker-transform"},
-						"isCollapsed" : true,
-						"isAnimated" : true	
-					},
-					"bindings" : {
-						"isToggling" : {
-							"boundObject" : {"@" : "owner" },
-							"boundObjectPropertyPath" : "isTransformCollapsed",
-							"oneway" : false
-						}
-					}
-				},
-					
 				"styleCollapser" : {
-					"module" : "js/panels/timeline/Collapser.js",
-					"name" : "Collapser",
+					"prototype" : "js/panels/timeline/Collapser",
 					"properties" : {
 						"element" : {"#" : "content-style"},
 						"myContent" : {"#":"content-style"},
@@ -349,7 +256,7 @@
 			</div>
 			<div class="collapsible-content content-layer collapsible-collapsed" data-montage-id="content-main">
 				<div class="label-position">
-					<span class="collapsible-label">Position</span>
+					<span class="collapsible-label">Position and Size</span>
 					<span class="collapsible-clicker clicker-position collapsible-collapsed" data-montage-id="clicker-position"></span>
 				</div>
 				<div class="content-position collapsible-content collapsible-collapsed" data-montage-id="content-position">
@@ -362,36 +269,15 @@
 							<div class="cell-property">Top</div>
 							<div class="cell-value"><div data-montage-id="position-y"></div></div>
 						</div>
+                        <div class="container-row">
+                            <div class="cell-property">Width</div>
+                            <div class="cell-value"><div data-montage-id="scale-x"></div></div>
+                        </div>
+                        <div class="container-row">
+                            <div class="cell-property">Height</div>
+                            <div class="cell-value"><div data-montage-id="scale-y"></div></div>
+                        </div>
 					</div>
-				</div>
-				<div class="label-transform">
-					<span class="collapsible-label">Transform</span>
-					<span class="clicker-transform collapsible-clicker collapsible-collapsed" data-montage-id="clicker-transform"></span>
-				</div>
-				<div class="content-transform collapsible-content collapsible-collapsed" data-montage-id="content-transform">
-					<div class="layout-tablew">
-						<div class="container-row">
-							<div class="cell-property">Width</div>
-							<div class="cell-value"><div data-montage-id="scale-x"></div></div>
-						</div>
-						<div class="container-row">
-							<div class="cell-property">Height</div>
-							<div class="cell-value"><div data-montage-id="scale-y"></div></div>
-						</div>
-						<div class="container-row">
-							<div class="cell-property">Skew X</div>
-							<div class="cell-value"><div data-montage-id="skew-x"></div></div>
-						</div>
-						<div class="container-row">
-							<div class="cell-property">Skew Y</div>
-							<div class="cell-value"><div data-montage-id="skew-y"></div></div>
-						</div>
-						<div class="container-row">
-							<div class="cell-property">Rotation</div>
-							<div class="cell-value"><div data-montage-id="rotation"></div></div>
-						</div>
-					</div>
-					
 				</div>
 				<div class="label-style">
 					<span class="collapsible-label">Style</span>

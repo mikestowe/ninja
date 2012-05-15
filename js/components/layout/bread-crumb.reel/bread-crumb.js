@@ -23,7 +23,7 @@ exports.Breadcrumb = Montage.create(Component, {
         value: function(){
             if(!this.application.ninja.documentController.activeDocument) {
                 this.disabled = true;
-                this.application.ninja.currentSelectedContainer = this.application.ninja.currentDocument.documentRoot;
+                this.application.ninja.currentSelectedContainer = (this.application.ninja.currentDocument ? this.application.ninja.currentDocument.documentRoot : null);
             }
         }
     },
@@ -82,7 +82,6 @@ exports.Breadcrumb = Montage.create(Component, {
 
                 // This is always the top container which is now hardcoded to body
                 this.containerElements.unshift({"node": parentNode, "nodeUuid":parentNode.uuid, "label": parentNode.nodeName});
-                console.log("this works!");
             }
 
         }
@@ -90,8 +89,6 @@ exports.Breadcrumb = Montage.create(Component, {
 
     handleAction: {
         value: function(evt) {
-
-//           this.application.ninja.currentDocument.breadCrumbClick=true;
             if(evt.target.value === this.container.uuid) {
                 return;
             }

@@ -101,7 +101,6 @@ exports.Properties = Montage.create(Component, {
      */
     handleBlur: {
         value: function(event) {
-
             if(event.target.id === "elementId") {
 
                 // Remove all white spaces from the id
@@ -126,6 +125,7 @@ exports.Properties = Montage.create(Component, {
                     ElementsMediator.setAttribute(this.application.ninja.currentDocument.documentRoot, "class", this.elementClass.value, "Change", "pi", this.application.ninja.currentDocument.documentRoot.elementModel.elementClass);
                 }
             }
+            NJevent("updatedID",this.application.ninja.selectedElements[0]);
         }
     },
     
@@ -174,6 +174,7 @@ exports.Properties = Montage.create(Component, {
     handleSelectionChange: {
         value: function(event) {
             if(event.detail.isDocument) {
+                if(this.application.ninja.currentDocument.documentRoot.nodeName.toLowerCase() === "body") return;
                 this.displayStageProperties();
             } else {
                 if(this.application.ninja.selectedElements.length === 1) {
@@ -207,11 +208,7 @@ exports.Properties = Montage.create(Component, {
                 this.threeD.zAngle = ElementsMediator.get3DProperty(stage, "zAngle");
             }
 
-            if(ElementsMediator.getProperty(stage, "-webkit-transform-style") === "preserve-3d") {
-                this.threeD.flatten = false;
-            } else {
-                this.threeD.flatten = true;
-            }
+            this.threeD.flatten = ElementsMediator.getProperty(stage, "-webkit-transform-style") !== "preserve-3d";
 
             if(this.customPi !== stage.elementModel.pi) {
                 // We need to unregister color chips from the previous selection from the Color Model

@@ -14,32 +14,28 @@
    		<script type="text/montage-serialization">
         {
             "okButton": {
-                "module": "montage/ui/button.reel",
-                "name": "Button",
+                "prototype": "montage/ui/button.reel",
                 "properties": {
                     "element": {"#": "mp_ok_btn"},
                     "label": "OK"
                 }
             },
             "cancelButton": {
-                "module": "montage/ui/button.reel",
-                "name": "Button",
+                "prototype": "montage/ui/button.reel",
                 "properties": {
                     "element": {"#": "mp_cancel_btn"},
                     "label": "Cancel"
                 }
             },
             "eventDelegator": {
-                "module": "montage/core/event/action-event-listener",
-                "name": "ActionEventListener",
+                "prototype": "montage/core/event/action-event-listener",
                 "properties": {
                     "handler": {"@": "owner"},
                     "action": "updatePreview"
                 }
             },
             "propControl1": {
-                "module": "js/components/ui/property-control.reel",
-                "name": "PropertyControl",
+                "prototype": "js/components/ui/property-control.reel",
                 "properties": {
                     "element": {"#": "mp_property"}
                 },
@@ -64,8 +60,7 @@
                             ]
             },
             "materialsProperties": {
-                "module": "montage/ui/repetition.reel",
-                "name": "Repetition",
+                "prototype": "montage/ui/repetition.reel",
                 "properties": {
                     "element": {"#": "mp_properties_list"}
                 },
@@ -78,8 +73,7 @@
                 }
             },
             "owner": {
-                "module": "js/panels/Materials/materials-popup.reel",
-                "name": "MaterialsPopup",
+                "prototype": "js/panels/Materials/materials-popup.reel",
                 "properties": {
                     "materialsProperties": {"@": "materialsProperties"},
                     "element": {"#": "materials_popup"},
@@ -94,29 +88,19 @@
 	</head>
 
 	<body>
-
-    	<div id="materials_popup" class="materials_popup">
-            <div id="mp_title">Material Name</div>
-
+    	<div data-montage-id="materials_popup" class="materials_popup">
+            <div data-montage-id="mp_title" class="mp_title">Material Name</div>
             <hr />
-
-    		<div id="mp_preview">Preview Pane</div>
-
+    		<div data-montage-id="mp_preview" class="mp_preview">Preview Pane</div>
             <hr />
-
-            <div id="mp_properties_list" class="mp_properties_list">
-                <div id="mp_property" class="mp_property"></div>
+            <div data-montage-id="mp_properties_list" class="mp_properties_list">
+                <div data-montage-id="mp_property" class="mp_property"></div>
             </div>
-
             <hr />
-            
-            <div id="mp_buttons" class="mp_buttons">
-                <button id="mp_cancel_btn" class="mp_cancel_btn nj-skinned"></button>
-                <button id="mp_ok_btn" class="mp_ok_btn nj-skinned"></button>
+            <div data-montage-id="mp_buttons" class="mp_buttons">
+                <button data-montage-id="mp_cancel_btn" class="mp_cancel_btn nj-skinned"></button>
+                <button data-montage-id="mp_ok_btn" class="mp_ok_btn nj-skinned"></button>
             </div>
-
     	</div>
-
 	</body>
-
 </html>

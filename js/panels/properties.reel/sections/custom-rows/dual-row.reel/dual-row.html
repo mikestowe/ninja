@@ -9,8 +9,7 @@
     <script type="text/montage-serialization">
     {
         "owner": {
-            "module" : "js/panels/properties.reel/sections/custom-rows/dual-row.reel",
-            "name" : "DualRow",
+            "prototype" : "js/panels/properties.reel/sections/custom-rows/dual-row.reel",
             "properties" : {
                 "element" : {"#": "section"},
                 "slot" : {"@": "slot"},
@@ -18,8 +17,7 @@
             }
         },
         "slot": {
-            "module": "montage/ui/slot.reel",
-            "name": "Slot",
+            "prototype": "montage/ui/slot.reel",
             "properties": {
                 "element": { "#": "slotElement" }
             },
@@ -31,8 +29,7 @@
             }
         },
         "slot2": {
-            "module": "montage/ui/slot.reel",
-            "name": "Slot",
+            "prototype": "montage/ui/slot.reel",
             "properties": {
                 "element": { "#": "slotElement2" }
             },
@@ -47,17 +44,17 @@
     </script>
 </head>
 <body>
-    <div id="section">
+    <div data-montage-id="section">
         <section class="fieldCol">
             <label class="lbl"></label>
             <article class="fieldRow">
-                <div id="slotElement" class="inputField">
+                <div data-montage-id="slotElement" class="inputField">
                     
                 </div>
             </article>
             <label class="lbl"></label>
             <article class="fieldRow">
-                <div id="slotElement2" class="inputField">
+                <div data-montage-id="slotElement2" class="inputField">
 
                 </div>
             </article>

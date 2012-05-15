@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -12,8 +12,7 @@
     <script type="text/montage-serialization">
         {
             "owner": {
-                "module": "js/panels/CSSPanel/ComputedStyleSubPanel.reel",
-                "name": "ComputedStyleSubPanel",
+                "prototype": "js/panels/CSSPanel/ComputedStyleSubPanel.reel",
                 "properties": {
                     "element": {"#": "nj-css-panel-computed"},
                     "groupDropDown": {"#": "nj-css-group-select"},
@@ -27,10 +26,10 @@
 
 </head>
 <body id="computestylesubpanel" onload="">
-	<div id="nj-css-panel-computed" class="nj-css-panel-hide">
+	<div data-montage-id="nj-css-panel-computed" class="nj-css-panel-hide">
 		<div id="nj-css-filter-panel">
-			<input id="nj-css-filter" class="nj-skinned" type="search">
-			<select id="nj-css-group-select" class="nj-skinned">
+			<input data-montage-id="nj-css-filter" class="nj-skinned" type="search">
+			<select data-montage-id="nj-css-group-select" class="nj-skinned">
 				<option value="all">All</option>
 				<option value="summary" selected>Summary</option>
 				<option value="background">Background</option>
@@ -41,7 +40,7 @@
 			</select>
 		</div>
 		<div class="nj-sub-panel">
-			<dl id="nj-css-computed-list" class="nj-css-style-list"></dl>
+			<dl data-montage-id="nj-css-computed-list" class="nj-css-style-list"></dl>
 		</div>
 	</div>
 </body>

@@ -25,6 +25,14 @@ exports.BaseDocumentModel = Montage.create(Montage, {
     _name: {
         value: null
     },
+
+    _isActive: {
+        value: null
+    },
+
+    _needsSave: {
+        value: null
+    },
     ////////////////////////////////////////////////////////////////////
 	//
 	njdata: {

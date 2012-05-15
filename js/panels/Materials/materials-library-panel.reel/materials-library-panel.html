@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -47,12 +47,10 @@
                 ]
              },
             "materialInfo": {
-                "module": "js/panels/Materials/materials-popup.reel",
-                "name": "MaterialsPopup"
+                "prototype": "js/panels/Materials/materials-popup.reel"
             },
             "materialsController" : {
-                "module": "js/controllers/tree-controller",
-                "name": "TreeController",
+                "prototype": "js/components/controllers/tree-controller",
                 "properties" : {
                     "branchKey" : "children",
                     "labelKey" : "label",
@@ -66,8 +64,7 @@
                 }
             },
             "materialsContainer" : {
-                "module" : "js/components/treeview/treeview.reel",
-                "name" : "Treeview",
+                "prototype" : "js/components/treeview/treeview.reel",
                 "properties" : {
                     "element" : {"#": "materials_library_tree"},
                     "branchComponent" : {"@": "branch" },
@@ -76,12 +73,10 @@
                 }
             },
             "branch" : {
-                "module" : "js/components/treeview/ninja-branch.reel",
-                "name" : "Branch"
+                "prototype" : "js/components/treeview/ninja-branch.reel[Branch]"
             },
             "owner": {
-                "module": "js/panels/Materials/materials-library-panel.reel",
-                "name": "MaterialsLibraryPanels",
+                "prototype": "js/panels/Materials/materials-library-panel.reel[MaterialsLibraryPanels]",
                 "properties": {
                     "element": {"#": "materials_library_panel"},
                     "_materialInfo": {"@": "materialInfo"}
@@ -93,15 +88,15 @@
 	</head>
 	<body>
 
-    	<div id="materials_library_panel" class="materials_library_panel">
-            <section id="ml_tree_holder" class="animationsLibrary">
-                <div id="materials_library_tree"></div>
+    	<div data-montage-id="materials_library_panel" class="materials_library_panel">
+            <section data-montage-id="ml_tree_holder" class="animationsLibrary">
+                <div data-montage-id="materials_library_tree"></div>
             </section>
             <hr />
-            <div id="ml_buttons">
-                <button id="ml_add_btn" class="nj-skinned">Add</button>
-                <button id="ml_copy_btn" class="nj-skinned">Copy</button>
-                <button id="ml_delete_btn" class="nj-skinned">Delete</button>
+            <div data-montage-id="ml_buttons" class="ml_buttons">
+                <button data-montage-id="ml_add_btn" class="nj-skinned">Add</button>
+                <button data-montage-id="ml_copy_btn" class="nj-skinned">Copy</button>
+                <button data-montage-id="ml_delete_btn" class="nj-skinned">Delete</button>
             </div>
     	</div>
 

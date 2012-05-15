@@ -89,9 +89,9 @@ exports.toolBase = Montage.create(Component, {
 
             if(this._canOperateOnStage) {
                 if(event.shiftKey) {
-                    this.application.ninja.selectionController.shiftSelectElement(this.application.ninja.stage.GetElement(event));
+                    this.application.ninja.selectionController.shiftSelectElement(this.application.ninja.stage.getElement(event));
                 } else {
-                    this.application.ninja.selectionController.selectElement(this.application.ninja.stage.GetElement(event));
+                    this.application.ninja.selectionController.selectElement(this.application.ninja.stage.getElement(event));
                 }
             }
 

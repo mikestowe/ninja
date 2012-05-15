@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -12,8 +12,7 @@
     <script type="text/montage-serialization">
         {
             "owner": {
-                "module": "js/components/slider.reel",
-                "name": "Slider",
+                "prototype": "js/components/slider.reel",
                 "properties": {
                     "element": {"#": "slider"},
                     "parentDiv": {"#": "parentDiv"},
@@ -28,10 +27,10 @@
 
 </head>
 <body>
-    <div id="slider" class="slider">
-        <div id="parentDiv" class="slider-parent">
-            <canvas id="slider_track" class="slider-track"></canvas>
-            <div id="knob" class="knob"></div>
+    <div data-montage-id="slider" class="slider">
+        <div data-montage-id="parentDiv" class="slider-parent">
+            <canvas data-montage-id="slider_track" class="slider-track"></canvas>
+            <div data-montage-id="knob" class="knob"></div>
         </div>
     </div>
 </body>

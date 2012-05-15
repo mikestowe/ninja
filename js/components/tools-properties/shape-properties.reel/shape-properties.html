@@ -13,8 +13,7 @@
         {
 
             "ovalProperties1": {
-                "module": "js/components/tools-properties/oval-properties.reel",
-                "name": "OvalProperties",
+                "prototype": "js/components/tools-properties/oval-properties.reel",
                 "properties": {
                     "element": {"#": "ovalProperties"},
                     "base": {"@": "owner"}
@@ -22,8 +21,7 @@
             },
 
             "rectProperties1": {
-                "module": "js/components/tools-properties/rect-properties.reel",
-                "name": "RectProperties",
+                "prototype": "js/components/tools-properties/rect-properties.reel",
                 "properties": {
                     "element": {"#": "rectProperties"},
                     "base": {"@": "owner"}
@@ -31,8 +29,7 @@
             },
 
             "lineProperties1": {
-                "module": "js/components/tools-properties/line-properties.reel",
-                "name": "LineProperties",
+                "prototype": "js/components/tools-properties/line-properties.reel",
                 "properties": {
                     "element": {"#": "lineProperties"},
                     "base": {"@": "owner"}
@@ -40,8 +37,7 @@
             },
 
             "_strokeSize1": {
-                "module": "js/components/hottextunit.reel",
-                "name": "HotTextUnit",
+                "prototype": "js/components/hottextunit.reel[HotTextUnit]",
                 "properties": {
                     "element": {"#": "strokeControl"},
                     "minValue": 1,
@@ -54,8 +50,7 @@
             },
 
             "_strokeMaterial1": {
-                "module": "js/components/combobox.reel",
-                "name": "Combobox",
+                "prototype": "js/components/combobox.reel",
                 "properties": {
                     "element": {"#": "strokeMaterialCB"},
                     "labelField": "_name",
@@ -64,8 +59,7 @@
             },
 
             "_fillMaterial1": {
-                "module": "js/components/combobox.reel",
-                "name": "Combobox",
+                "prototype": "js/components/combobox.reel",
                 "properties": {
                     "element": {"#": "fillMaterialCB"},
                     "labelField": "_name",
@@ -74,8 +68,7 @@
             },
 
             "toolbutton1": {
-                "module": "js/components/layout/subtool-button.reel",
-                "name": "SubToolButton",
+                "prototype": "js/components/layout/subtool-button.reel[SubToolButton]",
                 "properties": {
                     "element": {"#": "toolbutton"}
                 },
@@ -89,8 +82,7 @@
             },
 
             "repetition1": {
-                "module": "montage/ui/repetition.reel",
-                "name": "Repetition",
+                "prototype": "montage/ui/repetition.reel",
                 "properties": {
                     "element": {"#": "shapeToolsList"}
                 },
@@ -105,8 +97,7 @@
 
 
             "owner": {
-                "module": "js/components/tools-properties/shape-properties.reel",
-                "name": "ShapeProperties",
+                "prototype": "js/components/tools-properties/shape-properties.reel",
                 "properties": {
                     "element": {"#": "shapeProperties"},
                     "_strokeMaterial": {"@": "_strokeMaterial1"},
@@ -136,30 +127,30 @@
     </head>
 
     <body>
-        <div id="shapeProperties" class="subToolHolderPanel">
-            <div id="shapeToolsList">
-                <div id="toolbutton"></div>
+        <div data-montage-id="shapeProperties" class="subToolHolderPanel">
+            <div data-montage-id="shapeToolsList">
+                <div data-montage-id="toolbutton"></div>
             </div>
 
             <label class="label">Stroke:</label>
-            <div id="strokeControl" class="label"></div>
+            <div data-montage-id="strokeControl" class="label"></div>
 
             <div id="customProperties">
-                <div id="ovalProperties" class="label"></div>
-                <div id="rectProperties" class="label"></div>
-                <div id="lineProperties" class="label"></div>
+                <div data-montage-id="ovalProperties" class="label"></div>
+                <div data-montage-id="rectProperties" class="label"></div>
+                <div data-montage-id="lineProperties" class="label"></div>
             </div>
 
-            <label class="label subOption optionLabel"><input id="useWebGLCH" type="checkbox" name="useWebGLControl" class="checkBoxAlign"/>Use WebGL</label>
+            <label class="label subOption optionLabel"><input data-montage-id="useWebGLCH" type="checkbox" name="useWebGLControl" class="checkBoxAlign"/>Use WebGL</label>
 
-            <label id="materialLabel" class="label">Material:</label>
-            <div id="strokeIcon" class="pencilToolUp" style="float: left;"></div>
+            <label data-montage-id="materialLabel" class="label">Material:</label>
+            <div data-montage-id="strokeIcon" class="pencilToolUp" style="float: left;"></div>
 
-            <select class="selectBox" id="strokeMaterialCB">
+            <select class="selectBox" data-montage-id="strokeMaterialCB">
             </select>
 
-            <div id="fillIcon" class="bucketToolUp" style="float: left;"></div>
-            <select class="selectBox" id="fillMaterialCB">
+            <div data-montage-id="fillIcon" class="bucketToolUp" style="float: left;"></div>
+            <select class="selectBox" data-montage-id="fillMaterialCB">
             </select>
             
             

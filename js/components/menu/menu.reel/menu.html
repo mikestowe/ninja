@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -12,13 +12,11 @@
     <script type="text/montage-serialization">
         {
             "menudata": {
-                "name": "MenuData",
-                "module": "js/data/menu-data"
+                "prototype": "js/data/menu-data"
             },
 
             "menuController": {
-                "name": "ArrayController",
-                "module": "montage/ui/controller/array-controller",
+                "prototype": "montage/ui/controller/array-controller",
                 "properties": {
                     "automaticallyOrganizeObjects": false
                 },
@@ -32,8 +30,7 @@
             },
 
             "repetition": {
-                "module": "montage/ui/repetition.reel",
-                "name": "Repetition",
+                "prototype": "montage/ui/repetition.reel",
                 "properties": {
                     "element": { "#": "topMenu" },
                     "contentController": {"@": "menuController"},
@@ -42,8 +39,7 @@
             },
 
             "menuEntry": {
-                "module": "js/components/menu/menu-entry.reel",
-                "name": "MenuEntry",
+                "prototype": "js/components/menu/menu-entry.reel",
                 "properties": {
                     "element": { "#": "menuItem" }
                 },
@@ -64,8 +60,7 @@
             },
             
             "owner": {
-                "module": "js/components/menu/menu.reel",
-                "name": "Menu",
+                "prototype": "js/components/menu/menu.reel",
                 "properties": {
                     "element":  {"#": "mainMenuBar"},
                     "controller": {"@": "menuController"},
@@ -78,9 +73,9 @@
 </head>
 <body>
 
-    <nav id="mainMenuBar" class="mainMenuBar unselectable">
-        <ul id="topMenu" class="horizontal-menu">
-            <li id="menuItem"></li>
+    <nav data-montage-id="mainMenuBar" class="mainMenuBar unselectable">
+        <ul data-montage-id="topMenu" class="horizontal-menu">
+            <li data-montage-id="menuItem"></li>
         </ul>
     </nav>
 

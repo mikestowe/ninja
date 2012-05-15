@@ -221,10 +221,8 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
     HandleDoubleClick: {
         value: function(event) {
             if(this.application.ninja.selectedElements.length > 0) {
-//                this.application.ninja.currentDocument.breadCrumbClick = true;
                 this.application.ninja.currentSelectedContainer = this.application.ninja.selectedElements[0];
             } else {
-//                this.application.ninja.currentDocument.breadCrumbClick = true;
                 this.application.ninja.currentSelectedContainer = this.application.ninja.currentDocument.documentRoot;
             }
         }
@@ -506,7 +504,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                 delta = vecUtils.vecSubtract( 3, data.pt1, data.pt0 );
                 delta[0] = ~~delta[0];
                 delta[1] = ~~delta[1];
-                delta[2] = 0;
+                //delta[2] = 0;
                 var transMat = Matrix.Translation( delta );
                 this._moveElements(transMat);
             }
@@ -753,10 +751,10 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
 
             var zoomFactor = 1;
             var viewPort = this.application.ninja.stage._viewport;
-            if (viewPort.style && viewPort.style.zoom)
-            {
+            if (viewPort && viewPort.style && viewPort.style.zoom) {
                 zoomFactor = Number(viewPort.style.zoom);
             }
+
             var tmpMat = viewUtils.getLocalToGlobalMatrix( item );
             for (var j=0;  j<4;  j++)
             {
@@ -865,7 +863,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
 
             var zoomFactor = 1;
             var viewPort = this.application.ninja.stage._viewport;
-            if (viewPort.style && viewPort.style.zoom)
+            if (viewPort && viewPort.style && viewPort.style.zoom)
             {
                 zoomFactor = Number(viewPort.style.zoom);
             }

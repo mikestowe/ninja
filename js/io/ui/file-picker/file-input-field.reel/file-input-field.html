@@ -1,4 +1,4 @@
-<!DOCTYPE HTML>
+﻿<!DOCTYPE HTML>
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -19,8 +19,7 @@
         },
 
         "owner":{
-            "module": "js/io/ui/file-picker/file-input-field.reel",
-            "name": "FileInputField",
+            "prototype": "js/io/ui/file-picker/file-input-field.reel",
             "properties": {
                 "element": {"#": "fileInputField"},
                 "findDirectory": {"#": "findDirectory"},
@@ -31,9 +30,9 @@
     </script>
 </head>
 <body>
-<div id="fileInputField" class="fileInputField">
-    <input type="search" id="newFileDirectory" class="nj-skinned newFileDirectory" />
-    <span id="findDirectory" class="findDirectory"></span>
+<div data-montage-id="fileInputField" class="fileInputField">
+    <input type="search" data-montage-id="newFileDirectory" class="nj-skinned newFileDirectory" />
+    <span data-montage-id="findDirectory" class="findDirectory"></span>
 </div>
 </body>
 </html>

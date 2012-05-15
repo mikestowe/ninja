@@ -16,7 +16,7 @@ exports.InkBottleTool = Montage.create(ModifierToolBase, {
     HandleMouseMove: {
         value : function (event)
 		{
-            var obj = this.application.ninja.stage.GetSelectableElement(event);
+            var obj = this.application.ninja.stage.getElement(event, true);
             var cursor = "url('images/cursors/ink.png') 6 11, default";
             var canColor = true;
             if (obj)

@@ -9,8 +9,7 @@
     <script type="text/montage-serialization">
     {
         "owner": {
-            "module" : "js/panels/properties.reel/sections/custom-rows/color-select.reel",
-            "name" : "ColorSelect",
+            "prototype" : "js/panels/properties.reel/sections/custom-rows/color-select.reel",
             "properties" : {
                 "element" : {"#": "section"},
                 "Stroke" : {"#": "Stroke"},
@@ -22,16 +21,14 @@
 
 
         "colorChip": {
-            "module" : "js/components/ui/color-chip.reel",
-            "name" : "ColorChip",
+            "prototype" : "js/components/ui/color-chip.reel",
             "properties" : {
                 "element" : {"#": "Stroke"}
             }
         },
 
         "colorChip2": {
-               "module" : "js/components/ui/color-chip.reel",
-               "name" : "ColorChip",
+               "prototype" : "js/components/ui/color-chip.reel",
                "properties" : {
                    "element" : {"#": "Fill"},
                    "mode": "fill"
@@ -41,11 +38,11 @@
     </script>
 </head>
 <body>
-    <div id="section">
+    <div data-montage-id="section">
         <section class="fieldCol">
             <article class="fieldRow colorSelect">
-                <div id="Stroke"></div>
-                <div id="Fill"></div>
+                <div data-montage-id="Stroke"></div>
+                <div data-montage-id="Fill"></div>
             </article>
         </section>
     </div>

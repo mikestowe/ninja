@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- 
 <copyright>
 	This file contains proprietary software owned by Motorola Mobility, Inc.
@@ -16,8 +16,7 @@
 		<script type="text/montage-serialization">
    			{
             	"owner": {
-                	"module": "js/components/colorwheel.reel",
-                	"name": "ColorWheel",
+                	"prototype": "js/components/colorwheel.reel[ColorWheel]",
                 	"properties": {
                     	"element": {"#": "colorwheel"}
 
@@ -30,7 +29,7 @@
 	
 	<body>
     
-    	<div id="colorwheel" class="colorwheel">
+    	<div data-montage-id="colorwheel" class="colorwheel">
     		<canvas></canvas>
     		<canvas></canvas>
     		<canvas></canvas>

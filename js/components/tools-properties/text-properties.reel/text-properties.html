@@ -1,4 +1,4 @@
-<!DOCTYPE HTML>
+﻿<!DOCTYPE HTML>
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -13,8 +13,7 @@
         {
 
             "owner": {
-                "module": "js/components/tools-properties/text-properties.reel",
-                "name": "TextProperties",
+                "prototype": "js/components/tools-properties/text-properties.reel",
                 "properties": {
                     "element": {"#": "textProperties"},
                     "className": {"@": "className"},
@@ -22,13 +21,10 @@
                     "fontSelection": {"@": "fontSelection"},
                     "fontSettings": {"@": "fontSettings"},
                     "fontSize": {"@": "fontSize"},
-                    "fontColor": {"@": "fontColor"},
                     "btnBold": {"@": "btnBold"},
                     "btnItalic": {"@": "btnItalic"},
                     "btnUnderline": {"@": "btnUnderline"},
                     "btnStrikethrough": {"@": "btnStrikethrough"},
-                    "txtLink": {"@": "txtLink"},
-                    "linkTarget": {"@": "linkTarget"},
                     "alignLeft": {"@": "alignLeft"},
                     "alignCenter": {"@": "alignCenter"},
                     "alignRight": {"@": "alignRight"},
@@ -40,22 +36,19 @@
                 }
             },
             "className": {
-                "module": "js/components/textfield.reel",
-                "name": "TextField",
+                "prototype": "js/components/textfield.reel[TextField]",
                 "properties": {
                     "element": {"#": "className"}
                 }
             },
             "tagType": {
-                "module": "js/components/combobox.reel",
-                "name": "Combobox",
+                "prototype": "js/components/combobox.reel",
                 "properties": {
                     "element": {"#": "tagType"}
                 }
             },
             "fontSelection": {
-                "module": "js/components/combobox.reel",
-                "name": "Combobox",
+                "prototype": "js/components/combobox.reel",
                 "properties": {
                     "element": {"#": "fontSelection"},
                     "identifier": "fontSelection"
@@ -69,16 +62,14 @@
 
             },
             "fontSettings": {
-                "module": "montage/ui/button.reel",
-                "name": "Button",
+                "prototype": "montage/ui/button.reel",
                 "properties": {
                     "element": {"#": "fontSettings"}
                 }
             },
 
             "fontSize": {
-                "module": "js/components/combobox.reel",
-                "name": "Combobox",
+                "prototype": "js/components/combobox.reel",
                 "properties": {
                     "element": {"#": "fontSize"},
                     "identifier": "fontSize"
@@ -93,8 +84,7 @@
             },
         
             "btnBold": {
-                "module": "montage/ui/toggle-button.reel",
-                "name": "ToggleButton",
+                "prototype": "montage/ui/toggle-button.reel",
                 "properties": {
                     "element": {"#": "btnBold"},
                     "pressedClass": "active",
@@ -111,8 +101,7 @@
                 ]
             },
             "btnItalic": {
-                "module": "montage/ui/toggle-button.reel",
-                "name": "ToggleButton",
+                "prototype": "montage/ui/toggle-button.reel",
                 "properties": {
                     "element": {"#": "btnItalic"},
                     "pressedClass": "active",
@@ -129,8 +118,7 @@
                 ]
             },
             "btnUnderline": {
-                "module": "montage/ui/toggle-button.reel",
-                "name": "ToggleButton",
+                "prototype": "montage/ui/toggle-button.reel",
                 "properties": {
                     "element": {"#": "btnUnderline"},
                     "pressedClass": "active",
@@ -147,8 +135,7 @@
                 ]
             },
             "btnStrikethrough": {
-                "module": "montage/ui/toggle-button.reel",
-                "name": "ToggleButton",
+                "prototype": "montage/ui/toggle-button.reel",
                 "properties": {
                     "element": {"#": "btnStrikethrough"},
                     "pressedClass": "active",
@@ -166,8 +153,7 @@
             },
             
             "alignLeft": {
-                "module": "montage/ui/toggle-button.reel",
-                "name": "ToggleButton",
+                "prototype": "montage/ui/toggle-button.reel",
                 "properties": {
                     "element": {"#": "alignLeft"},
                     "pressedClass": "active",
@@ -184,8 +170,7 @@
                 ]
             },
             "alignCenter": {
-                "module": "montage/ui/toggle-button.reel",
-                "name": "ToggleButton",
+                "prototype": "montage/ui/toggle-button.reel",
                 "properties": {
                     "element": {"#": "alignCenter"},
                     "pressedClass": "active",
@@ -202,8 +187,7 @@
                 ]
             },
             "alignRight": {
-                "module": "montage/ui/toggle-button.reel",
-                "name": "ToggleButton",
+                "prototype": "montage/ui/toggle-button.reel",
                 "properties": {
                     "element": {"#": "alignRight"},
                     "pressedClass": "active",
@@ -220,8 +204,7 @@
                 ]
             },
             "alignJustify": {
-                "module": "montage/ui/toggle-button.reel",
-                "name": "ToggleButton",
+                "prototype": "montage/ui/toggle-button.reel",
                 "properties": {
                     "element": {"#": "alignJustify"},
                     "pressedClass": "active",
@@ -238,8 +221,7 @@
                 ]
             },
             "indent": {
-                "module": "montage/ui/button.reel",
-                "name": "Button",
+                "prototype": "montage/ui/button.reel",
                 "properties": {
                     "element": {"#": "indent"},
                     "pressedClass": "active",
@@ -255,8 +237,7 @@
                 ]
             },
             "outdent": {
-                "module": "montage/ui/button.reel",
-                "name": "Button",
+                "prototype": "montage/ui/button.reel",
                 "properties": {
                     "element": {"#": "outdent"},
                     "pressedClass": "active",
@@ -272,8 +253,7 @@
                 ]
             },
             "bulletedList": {
-                "module": "montage/ui/toggle-button.reel",
-                "name": "ToggleButton",
+                "prototype": "montage/ui/toggle-button.reel",
                 "properties": {
                     "element": {"#": "bulletedList"},
                     "pressedClass": "active",
@@ -290,8 +270,7 @@
                 ]
             },
             "numberedList": {
-                "module": "montage/ui/toggle-button.reel",
-                "name": "ToggleButton",
+                "prototype": "montage/ui/toggle-button.reel",
                 "properties": {
                     "element": {"#": "numberedList"},
                     "pressedClass": "active",
@@ -314,36 +293,36 @@
     </head>
 
     <body>
-        <div id="textProperties" class="subToolHolderPanel optionsTextTool">
+        <div data-montage-id="textProperties" class="subToolHolderPanel optionsTextTool">
             <label class="label" style="display: none">Class:</label>
-            <input id="className" style="display: none" />
+            <input data-montage-id="className" style="display: none" />
             <label class="label" style="display: none">Tag:</label>
-            <select id="tagType" style="display: none"></select>
+            <select data-montage-id="tagType" style="display: none"></select>
             <label class="label">Font:</label>
-            <select id="fontSelection" class="nj-skinned fontSelection"></select>
-            <button id="fontSettings" style="display: none"></button>
+            <select data-montage-id="fontSelection" class="nj-skinned fontSelection"></select>
+            <button data-montage-id="fontSettings" style="display: none"></button>
             <label class="label">Size:</label>
-            <select id="fontSize" class="nj-skinned"></select>
+            <select data-montage-id="fontSize" class="nj-skinned"></select>
             <div class="fontColor"></div>
             <div class="btnGroup">
-                <button id="btnBold" class="btnBold nj-skinned" style="font-weight:bold"></button>
-                <button id="btnItalic" class="btnItalic nj-skinned" style="font-style: italic;"></button>
-                <button id="btnUnderline" class="btnUnderline nj-skinned" style="text-decoration: underline;"></button>
-                <button id="btnStrikethrough" class="btnStriketrough nj-skinned" style="text-decoration: line-through;"></button>
+                <button data-montage-id="btnBold" class="btnBold nj-skinned" style="font-weight:bold"></button>
+                <button data-montage-id="btnItalic" class="btnItalic nj-skinned" style="font-style: italic;"></button>
+                <button data-montage-id="btnUnderline" class="btnUnderline nj-skinned" style="text-decoration: underline;"></button>
+                <button data-montage-id="btnStrikethrough" class="btnStriketrough nj-skinned" style="text-decoration: line-through;"></button>
             </div>
             <div class="btnGroup">
-                <button id="alignLeft" class="nj-skinned"></button>
-                <button id="alignCenter" class="nj-skinned"></button>
-                <button id="alignRight" class="nj-skinned"></button>
-                <button id="alignJustify" class="nj-skinned"></button>
+                <button data-montage-id="alignLeft" class="nj-skinned"></button>
+                <button data-montage-id="alignCenter" class="nj-skinned"></button>
+                <button data-montage-id="alignRight" class="nj-skinned"></button>
+                <button data-montage-id="alignJustify" class="nj-skinned"></button>
             </div>
             <div class="btnGroup">
-                <button id="indent" class="nj-skinned"></button>
-                <button id="outdent" class="nj-skinned"></button>
+                <button data-montage-id="indent" class="nj-skinned"></button>
+                <button data-montage-id="outdent" class="nj-skinned"></button>
             </div>
             <div class="btnGroup">
-                <button id="bulletedList" class="nj-skinned"></button>
-                <button id="numberedList" class="nj-skinned"></button>
+                <button data-montage-id="bulletedList" class="nj-skinned"></button>
+                <button data-montage-id="numberedList" class="nj-skinned"></button>
             </div>
         </div>
     </body>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -12,8 +12,7 @@
         {
             
             "owner": {
-                "module": "js/components/layout/document-entry.reel",
-                "name": "DocumentEntry",
+                "prototype": "js/components/layout/document-entry.reel",
                 "properties": {
                     "element": {"#": "documentEntry"},
                     "label":    {"#": "name"},
@@ -24,9 +23,9 @@
 		</script>
     </head>
     <body>
-        <li id="documentEntry" class="documentEntry">
-            <div id="isActive"></div>
-            <span id="name"></span>
+        <li data-montage-id="documentEntry" class="documentEntry">
+            <div data-montage-id="isActive"></div>
+            <span data-montage-id="name"></span>
             <img src="js/components/layout/document-entry.reel/close_button.gif">
         </li>
     </body>

@@ -9,8 +9,7 @@
     <script type="text/montage-serialization">
         {
             "Resizer": {
-                "module": "js/panels/resize-composer",
-                "name": "ResizeComposer",
+                "prototype": "js/panels/resize-composer",
                 "properties": {
                     "element": {"#": "resizeBar"},
                     "component": {"@": "owner"}
@@ -32,8 +31,7 @@
             },
 
             "DragDrop": {
-                "module": "js/panels/drag-drop-composer",
-                "name": "DragDropComposer",
+                "prototype": "js/panels/drag-drop-composer",
                 "properties": {
                     "element": {"@": "panelTitle"},
                     "component": {"@": "owner"}
@@ -59,8 +57,7 @@
             },
 
             "btnCollapse": {
-                "module": "montage/ui/toggle-button.reel",
-                "name": "ToggleButton",
+                "prototype": "montage/ui/toggle-button.reel",
                 "properties": {
                     "element": {"#": "btnCollapse"},
                     "pressedClass": "hide",
@@ -75,8 +72,7 @@
             },
 
             "btnClose": {
-                "module": "montage/ui/button.reel",
-                "name": "Button",
+                "prototype": "montage/ui/button.reel",
                 "properties": {
                     "element": {"#": "btnClose"},
                     "pressedClass": "hide",
@@ -91,16 +87,14 @@
             },
 
             "slot1": {
-                "module": "montage/ui/slot.reel",
-                "name": "Slot",
+                "prototype": "montage/ui/slot.reel",
                 "properties": {
                     "element": {"#": "panelObject"}
                 }
             },
 
             "panelTitle": {
-                "module": "montage/ui/dynamic-text.reel",
-                "name": "DynamicText",
+                "prototype": "montage/ui/dynamic-text.reel",
                 "properties": {
                     "element": {"#": "panelTitle"}
                 },
@@ -114,8 +108,7 @@
             },
 
             "disabledCondition": {
-                "module": "montage/ui/condition.reel",
-                "name": "Condition",
+                "prototype": "montage/ui/condition.reel",
                 "properties": {
                     "element": {"#": "disabledCondition"}
                 },
@@ -129,8 +122,7 @@
             },
 
             "owner": {
-                "module": "js/panels/Panel.reel",
-                "name": "Panel",
+                "prototype": "js/panels/Panel.reel",
                 "properties": {
                     "element": {"#": "panel"},
                     "resizer": {"@": "Resizer"},
@@ -143,19 +135,19 @@
 	</head>
 <body>
 
-<article id="panel" class="panel" draggable="draggable">
+<article data-montage-id="panel" class="panel" draggable="draggable">
     <div id="head" class="head">
-        <span id="btnCollapse" class="arrowIcon"></span>
-        <span id="panelTitle" class="panelTitle">Panel</span>
-        <span id="btnClose" class="closeBtn"></span>
+        <span data-montage-id="btnCollapse" class="arrowIcon"></span>
+        <span data-montage-id="panelTitle" class="panelTitle">Panel</span>
+        <span data-montage-id="btnClose" class="closeBtn"></span>
     </div>
     <div class="panelBody">
         <div class="panelBodyContent">
-            <div id="disabledCondition" class="panelDisabled"></div>
-            <div id="panelObject" class="panelObjects"></div>
+            <div data-montage-id="disabledCondition" class="panelDisabled"></div>
+            <div data-montage-id="panelObject" class="panelObjects"></div>
         </div>
     </div>
-    <div id="resizeBar" class="resizeBar"></div>
+    <div data-montage-id="resizeBar" class="resizeBar"></div>
 </article>
 
 </body>

@@ -1,4 +1,4 @@
-<!DOCTYPE HTML>
+﻿<!DOCTYPE HTML>
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -14,8 +14,7 @@
         {
 
             "owner": {
-                "module": "js/components/tools-properties/object3d-properties.reel",
-                "name": "Object3DProperties",
+                "prototype": "js/components/tools-properties/object3d-properties.reel[Object3DProperties]",
                 "properties": {
                     "element": {"#": "object3DProperties"},
 
@@ -30,10 +29,10 @@
     </head>
 
     <body>
-        <div id="object3DProperties" class="subToolHolderPanel">
+        <div data-montage-id="object3DProperties" class="subToolHolderPanel">
             <div id="rotateObjectToolContainer" class="tagRadioButtons">
-                <input type="radio" id="rotateLocally" class="tag-type" title="Rotate Locally" name="rotateObject" checked/>
-                <input type="radio" id="rotateGlobally" class="tag-type" title="Rotate Globally" name="rotateObject"/>
+                <input type="radio" data-montage-id="rotateLocally" id="rotateLocally" class="tag-type" title="Rotate Locally" name="rotateObject" checked/>
+                <input type="radio" data-montage-id="rotateGlobally" id="rotateGlobally" class="tag-type" title="Rotate Globally" name="rotateObject"/>
             </div>
         </div>
     </body>

@@ -104,7 +104,7 @@ exports.EyedropperTool = Montage.create(toolBase, {
         value : function (event) {
             var c,
                 color,
-                obj = this.application.ninja.stage.GetElement(event);
+                obj = this.application.ninja.stage.getElement(event);
             if (obj)
             {
                 if(this.application.ninja.currentDocument.inExclusion(obj) !== -1)
@@ -375,7 +375,8 @@ exports.EyedropperTool = Montage.create(toolBase, {
                     var worldData = elt.elementModel.shapeModel.GLWorld.exportJSON();
                     if(worldData)
                     {
-                        this._webGlDataCanvas = njModule.NJUtils.makeNJElement("canvas", "Canvas", "shape", {"data-RDGE-id": njModule.NJUtils.generateRandom()}, true);
+                        this._webGlDataCanvas = njModule.NJUtils.make("canvas", {"data-RDGE-id": njModule.NJUtils.generateRandom()}, this.application.ninja.currentDocument);
+                        njModule.NJUtils.createModelWithShape(this._webGlDataCanvas, "Canvas");
                         this._applyElementStyles(elt, this._webGlDataCanvas, ["display", "position", "width", "height",
                                                                     "-webkit-transform", "-webkit-transform-style"]);
                         this._webGlDataCanvas.style.left = eltCoords[0] + "px";

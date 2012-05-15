@@ -31,6 +31,12 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
     prepareForDraw:{
         value:function(){
             this.element.addEventListener("click", this, false);
+            
+			// Drag and drop event handlers
+			this.element.addEventListener("mouseover", this.handleMouseover.bind(this), false);
+			this.element.addEventListener("mouseout", this.handleMouseout.bind(this), false);
+			this.element.addEventListener("dragstart", this.handleDragstart.bind(this), false);
+			this.element.addEventListener("dragend", this.handleDragend.bind(this), false);
         }
     },
 
@@ -56,6 +62,41 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
     handleClick:{
         value:function(ev){
             this.selectKeyframe();
+            ev.stopPropagation();
         }
-    }
+    },
+    
+	handleMouseover: {
+		value: function(event) {
+			this.element.draggable = true;
+		}
+	},
+	handleMouseout: {
+		value: function(event) {
+			this.element.draggable = false;
+		}
+	},
+	handleDragstart: {
+		value: function(event) {
+			//this.parentComponent.parentComponent.dragLayerID = this.layerID;
+            event.dataTransfer.setData('Text', 'Keyframe');
+            
+            // Get my index in my track's tween array
+            var i = 0,
+            	tweenRepetitionLength = this.parentComponent.parentComponent.parentComponent.tweenRepetition.childComponents.length,
+            	myIndex = null;
+            for (i = 0; i < tweenRepetitionLength; i++) {
+            	if (this.parentComponent.parentComponent.parentComponent.tweenRepetition.childComponents[i].uuid === this.parentComponent.uuid) {
+            		myIndex = i;
+            	}
+            }
+            this.parentComponent.parentComponent.parentComponent.draggingIndex = myIndex;
+		}
+	},
+	handleDragend: {
+		value: function(event) {
+			this.parentComponent.isDragging = false;
+		}
+	}
+    
 });

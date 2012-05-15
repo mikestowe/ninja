@@ -7,772 +7,860 @@
 var GeomObj = require("js/lib/geom/geom-obj").GeomObj;
 var ShapePrimitive =    require("js/lib/geom/shape-primitive").ShapePrimitive;
 var MaterialsModel = require("js/models/materials-model").MaterialsModel;
+
  ///////////////////////////////////////////////////////////////////////
 // Class GLRectangle
 //      GL representation of a rectangle.
 //      Derived from class GeomObj
 ///////////////////////////////////////////////////////////////////////
-var Rectangle = function GLRectangle() {
+exports.Rectangle = Object.create(GeomObj, {
 	// CONSTANTS
-	this.N_TRIANGLES = 15;
+	N_TRIANGLES: { value : 15, writable: false },       // TODO - This is not being used anywhere. Remove?
 
 	///////////////////////////////////////////////////////////////////////
 	// Instance variables
 	///////////////////////////////////////////////////////////////////////
-	this._width = 2.0;
-	this._height = 2.0;
-	this._xOffset = 0;
-	this._yOffset = 0;
+    _width: { value : 2.0, writable: true },
+    _height: { value : 2.0, writable: true },
+    _xOffset: { value : 0, writable: true },
+    _yOffset: { value : 0, writable: true },
 
-	this._tlRadius = 0;
-	this._trRadius = 0;
-	this._blRadius = 0;
-	this._brRadius = 0;
+    _tlRadius: { value : 0, writable: true },
+    _trRadius: { value : 0, writable: true },
+    _blRadius: { value : 0, writable: true },
+    _brRadius: { value : 0, writable: true },
 
-	this._strokeWidth = 0.25;
+    _strokeWidth: { value : 0.25, writable: true },
+    _strokeStyle: { value : "Solid", writable: true },
 
-	this._strokeStyle = "Solid";
-	this.init = function(world, xOffset, yOffset, width, height, strokeSize, strokeColor, fillColor,
+    init: {
+        value: function(world, xOffset, yOffset, width, height, strokeSize, strokeColor, fillColor,
                       tlRadius, trRadius, blRadius, brRadius, strokeMaterial, fillMaterial, strokeStyle) {
+            this.m_world = world;
 
+            if (arguments.length > 0) {
+                this._width = width;
+                this._height = height;
+                this._xOffset = xOffset;
+                this._yOffset = yOffset;
 
-		this.m_world = world;
+                this._strokeWidth = strokeSize;
+                this._strokeColor = strokeColor;
+                this._fillColor = fillColor;
 
-		if (arguments.length > 0) {
-			this._width = width;
-			this._height = height;
-			this._xOffset = xOffset;
-			this._yOffset = yOffset;
+                this.setTLRadius(tlRadius);
+                this.setTRRadius(trRadius);
+                this.setBLRadius(blRadius);
+                this.setBRRadius(brRadius);
 
-			this._strokeWidth = strokeSize;
-			this._strokeColor = strokeColor;
-			this._fillColor = fillColor;
+                this._strokeStyle = strokeStyle;
 
-			this.setTLRadius(tlRadius);
-			this.setTRRadius(trRadius);
-			this.setBLRadius(blRadius);
-			this.setBRRadius(brRadius);
+			this._matrix = Matrix.I(4);
+			//this._matrix[12] = xoffset;
+			//this._matrix[13] = yoffset;
+            }
 
-			this._strokeStyle = strokeStyle;
-		}
+            // the overall radius includes the fill and the stroke.  separate the two based on the stroke width
+            //  this._fillRad = this._radius - this._strokeWidth;
+            //    var err = 0.05;
+            var err = 0;
+            this._fillWidth = this._width - this._strokeWidth  + err;
+            this._fillHeight = this._height - this._strokeWidth + err;
 
-		// the overall radius includes the fill and the stroke.  separate the two based onthe stroke width
-		//  this._fillRad = this._radius - this._strokeWidth;
-		//    var err = 0.05;
-		var err = 0;
-		this._fillWidth = this._width - this._strokeWidth  + err;
-		this._fillHeight = this._height - this._strokeWidth + err;
+            this._materialAmbient  = [0.2, 0.2, 0.2,  1.0];
+            this._materialDiffuse  = [0.4, 0.4, 0.4,  1.0];
+            this._materialSpecular = [0.4, 0.4, 0.4,  1.0];
 
-		this._materialAmbient  = [0.2, 0.2, 0.2,  1.0];
-		this._materialDiffuse  = [0.4, 0.4, 0.4,  1.0];
-		this._materialSpecular = [0.4, 0.4, 0.4,  1.0];
+            if(strokeMaterial) {
+                this._strokeMaterial = strokeMaterial;
+            } else {
+                this._strokeMaterial = MaterialsModel.getMaterial( MaterialsModel.getDefaultMaterialName() );
+            }
 
-		if(strokeMaterial) {
-			this._strokeMaterial = strokeMaterial;
-        } else {
-			this._strokeMaterial = MaterialsModel.getMaterial( MaterialsModel.getDefaultMaterialName() );
+            if(fillMaterial) {
+                this._fillMaterial = fillMaterial;
+            } else {
+                this._fillMaterial = MaterialsModel.getMaterial( MaterialsModel.getDefaultMaterialName() );
+            }
         }
-
-		if(fillMaterial) {
-			this._fillMaterial = fillMaterial;
-        } else {
-			this._fillMaterial = MaterialsModel.getMaterial( MaterialsModel.getDefaultMaterialName() );
-        }
-	};
+    },
 
 	///////////////////////////////////////////////////////////////////////
-	// Property Accessors
+    // Property Accessors
+    ///////////////////////////////////////////////////////////////////////
+    // TODO - Use getters/setters in the future
+    getStrokeWidth: {
+        value: function() {
+            return this._strokeWidth;
+        }
+    },
+
+    setStrokeWidth: {
+        value: function(w) {
+            this._strokeWidth = w;
+        }
+    },
+
+    getStrokeMaterial: {
+        value: function() {
+            return this._strokeMaterial;
+        }
+    },
+
+    setStrokeMaterial: {
+        value: function(m) {
+            this._strokeMaterial = m;
+        }
+    },
+
+    getFillMaterial: {
+        value: function() {
+            return this._fillMaterial;
+        }
+    },
+
+    setFillMaterial: {
+        value: function(m) {
+            this._fillMaterial = m;
+        }
+    },
+
 	///////////////////////////////////////////////////////////////////////
-	this.getStrokeWidth = function() {
-        return this._strokeWidth;
-    };
+    // update the "color of the material
+    getFillColor: {
+        value: function() {
+            return this._fillColor;
+        }
+    },
 
-	this.setStrokeWidth = function(w) {
-        this._strokeWidth = w;
-    };
+//    setFillColor: {
+//        value: function(c) {
+//            this._fillColor = c;
+//        }
+//    },
 
-	this.getStrokeMaterial = function() {
-        return this._strokeMaterial;
-    };
+    getStrokeColor: {
+        value: function() {
+            return this._strokeColor;
+        }
+    },
 
-	this.setStrokeMaterial = function(m) {
-        this._strokeMaterial = m;
-    };
+//    setStrokeColor: {
+//        value: function(c) {
+//            this._strokeColor = c;
+//        }
+//    },
+    ///////////////////////////////////////////////////////////////////////
+    getTLRadius: {
+        value: function() {
+            return this._tlRadius;
+        }
+    },
 
-	this.getFillMaterial = function() {
-        return this._fillMaterial;
-    };
+    setTLRadius: {
+        value: function(r) {
+            this._tlRadius = Math.min(r, (this._height - this._strokeWidth)/2, (this._width - this._strokeWidth)/2);
+        }
+    },
 
-	this.setFillMaterial = function(m) {
-        this._fillMaterial = m;
-    };
+    getTRRadius: {
+        value: function() {
+            return this._trRadius;
+        }
+    },
 
-	this.getStrokeColor = function() {
-        return this._strokeColor;
-    };
+    setTRRadius: {
+        value: function(r) {
+            this._trRadius = Math.min(r, (this._height - this._strokeWidth)/2, (this._width - this._strokeWidth)/2);
+        }
+    },
 
-	//this.setStrokeColor = function(c) {
-	// this._strokeColor = c;
-	// };
+    getBLRadius: {
+        value: function() {
+            return this._blRadius;
+        }
+    },
 
-	this.getFillColor = function() {
-        return this._fillColor;
-    };
+    setBLRadius: {
+        value: function(r) {
+            this._blRadius = Math.min(r, (this._height - this._strokeWidth)/2, (this._width - this._strokeWidth)/2);
+        }
+    },
 
-	//this.setFillColor = function(c) {
-	// this._fillColor = c.slice(0);
-	// };
+    getBRRadius: {
+        value: function() {
+            return this._brRadius;
+        }
+    },
 
-	this.getTLRadius = function() {
-        return this._tlRadius;
-    };
+    setBRRadius: {
+        value: function(r) {
+            this._brRadius = Math.min(r, (this._height - this._strokeWidth)/2, (this._width - this._strokeWidth)/2);
+        }
+    },
 
-	this.setTLRadius = function(r) {
-        this._tlRadius = Math.min(r, (this._height - this._strokeWidth)/2, (this._width - this._strokeWidth)/2);
-    };
+    getStrokeStyle: {
+        value: function() {
+            return this._strokeStyle;
+        }
+    },
 
-	this.getTRRadius = function() {
-        return this._trRadius;
-    };
+    setStrokeStyle: {
+        value: function(s) {
+            this._strokeStyle = s;
+        }
+    },
 
-	this.setTRRadius = function(r) {
-        this._trRadius = Math.min(r, (this._height - this._strokeWidth)/2, (this._width - this._strokeWidth)/2);
-    };
+    getWidth: {
+        value: function() {
+            return this._width;
+        }
+    },
 
-	this.getBLRadius = function() {
-        return this._blRadius;
-    };
+    setWidth: {
+        value: function(w) {
+            this._width = w;
+        }
+    },
 
-	this.setBLRadius = function(r) {
-        this._blRadius = Math.min(r, (this._height - this._strokeWidth)/2, (this._width - this._strokeWidth)/2);
-    };
+    getHeight: {
+        value: function() {
+            return this._height;
+        }
+    },
 
-	this.getBRRadius = function() {
-        return this._brRadius;
-    };
+    setHeight: {
+        value: function(h) {
+            this._height = h;
+        }
+    },
 
-	this.setBRRadius = function(r) {
-        this._brRadius = Math.min(r, (this._height - this._strokeWidth)/2, (this._width - this._strokeWidth)/2);
-    };
-
-	this.getStrokeStyle = function() {
-        return this._strokeStyle;
-    };
-
-	this.setStrokeStyle = function(s) {
-        this._strokeStyle = s;
-    };
-
-	this.getWidth = function() {
-        return this._width;
-    };
-
-	this.setWidth = function(w) {
-        this._width = w;
-    };
-
-	this.getHeight = function() {
-        return this._height;
-    };
-
-	this.setHeight = function(h) {
-        this._height = h;
-    };
-
-	this.geomType = function() {
-        return this.GEOM_TYPE_RECTANGLE;
-    };
-
+    geomType: {
+        value: function() {
+            return this.GEOM_TYPE_RECTANGLE;
+        }
+    },
 
 	///////////////////////////////////////////////////////////////////////
 	// Methods
 	///////////////////////////////////////////////////////////////////////
 	// JSON export
-	this.exportJSON = function()
-	{
-		var jObj = 
-		{
-			'type'			: this.geomType(),
-			'xoff'			: this._xOffset,
-			'yoff'			: this._yOffset,
-			'width'			: this._width,
-			'height'		: this._height,
-			'strokeWidth'	: this._strokeWidth,
-			'strokeColor'	: this._strokeColor,
-			'fillColor'		: this._fillColor,
-			'tlRadius'		: this._tlRadius,
-			'trRadius'		: this._trRadius,
-			'blRadius'		: this._blRadius,
-			'brRadius'		: this._brRadius,
-			'innerRadius'	: this._innerRadius,
-			'strokeStyle'	: this._strokeStyle,
-			'strokeMat'		: this._strokeMaterial ? this._strokeMaterial.getName() :  MaterialsModel.getDefaultMaterialName(),
-			'fillMat'		: this._fillMaterial ?  this._fillMaterial.getName() :  MaterialsModel.getDefaultMaterialName(),
-			'materials'		: this.exportMaterialsJSON()
-		};
+    exportJSON: {
+        value: function() {
+            var jObj =
+            {
+                'type'			: this.geomType(),
+                'xoff'			: this._xOffset,
+                'yoff'			: this._yOffset,
+                'width'			: this._width,
+                'height'		: this._height,
+                'strokeWidth'	: this._strokeWidth,
+                'strokeColor'	: this._strokeColor,
+                'fillColor'		: this._fillColor,
+                'tlRadius'		: this._tlRadius,
+                'trRadius'		: this._trRadius,
+                'blRadius'		: this._blRadius,
+                'brRadius'		: this._brRadius,
+                'innerRadius'	: this._innerRadius,
+                'strokeStyle'	: this._strokeStyle,
+                'strokeMat'		: this._strokeMaterial ? this._strokeMaterial.getName() :  MaterialsModel.getDefaultMaterialName(),
+                'fillMat'		: this._fillMaterial ?  this._fillMaterial.getName() :  MaterialsModel.getDefaultMaterialName(),
+                'materials'		: this.exportMaterialsJSON()
+            };
 
-		return jObj;
-	};
-
-	this.importJSON = function( jObj )
-	{
-		this._xOffset			= jObj.xoff;
-		this._yOffset			= jObj.yoff;
-		this._width				= jObj.width;
-		this._height			= jObj.height;
-		this._strokeWidth		= jObj.strokeWidth;
-		this._strokeColor		= jObj.strokeColor;
-		this._fillColor			= jObj.fillColor;
-		this._tlRadius			= jObj.tlRadius;
-		this._trRadius			= jObj.trRadius;
-		this._blRadius			= jObj.blRadius;
-		this._brRadius			= jObj.brRadius;
-		this._innerRadius		= jObj.innerRadius;
-		this._strokeStyle		= jObj.strokeStyle;
-		var strokeMaterialName	= jObj.strokeMat;
-		var fillMaterialName	= jObj.fillMat;
-
-        var strokeMat = MaterialsModel.getMaterial( strokeMaterialName );
-        if (!strokeMat) {
-            console.log( "object material not found in library: " + strokeMaterialName );
-            strokeMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() );
+            return jObj;
         }
-        this._strokeMaterial = strokeMat;
+    },
 
-        var fillMat = MaterialsModel.getMaterial( fillMaterialName );
-        if (!fillMat) {
-            console.log( "object material not found in library: " + fillMaterialName );
-            fillMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() );
+    importJSON: {
+        value: function(jObj) {
+            this._xOffset			= jObj.xoff;
+            this._yOffset			= jObj.yoff;
+            this._width				= jObj.width;
+            this._height			= jObj.height;
+            this._strokeWidth		= jObj.strokeWidth;
+            this._strokeColor		= jObj.strokeColor;
+            this._fillColor			= jObj.fillColor;
+            this._tlRadius			= jObj.tlRadius;
+            this._trRadius			= jObj.trRadius;
+            this._blRadius			= jObj.blRadius;
+            this._brRadius			= jObj.brRadius;
+            this._innerRadius		= jObj.innerRadius;
+            this._strokeStyle		= jObj.strokeStyle;
+            var strokeMaterialName	= jObj.strokeMat;
+            var fillMaterialName	= jObj.fillMat;
+
+            var strokeMat = MaterialsModel.getMaterial( strokeMaterialName );
+            if (!strokeMat) {
+                console.log( "object material not found in library: " + strokeMaterialName );
+                strokeMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() );
+            }
+            this._strokeMaterial = strokeMat;
+
+            var fillMat = MaterialsModel.getMaterial( fillMaterialName );
+            if (!fillMat) {
+                console.log( "object material not found in library: " + fillMaterialName );
+                fillMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() );
+            }
+            this._fillMaterial = fillMat;
+
+            this.importMaterialsJSON( jObj.materials );
         }
-        this._fillMaterial = fillMat;
+    },
 
-		this.importMaterialsJSON( jObj.materials );
-	};
+    buildBuffers: {
+        value: function() {
+            // get the world
+            var world = this.getWorld();
+            if (!world)  throw( "null world in buildBuffers" );
+            //console.log( "GLRectangle.buildBuffers " + world._worldCount );
+            if (!world._useWebGL)  return;
 
-	this.buildBuffers = function() {
-		// get the world
+            // make sure RDGE has the correct context
+            RDGE.globals.engine.setContext( world.getCanvas().rdgeid );
+
+            // create the gl buffer
+            var gl = world.getGLContext();
+
+            var tlRadius = this._tlRadius; //top-left radius
+            var trRadius = this._trRadius;
+            var blRadius = this._blRadius;
+            var brRadius = this._brRadius;
+
+            // declare the arrays to hold the parts
+            this._primArray = [];
+            this._materialArray = [];
+            this._materialTypeArray = [];
+            this._materialNodeArray = [];
+
+            // get the normalized device coordinates (NDC) for
+            // all position and dimensions.
+            var vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
+            var xNDC = 2*this._xOffset/vpw,  yNDC = 2*this._yOffset/vph,
+                xFillNDC = this._width/vpw,  yFillNDC = this._height/vph,
+                strokeSizeNDC = 2*this._strokeWidth/vpw,
+                tlRadiusNDC = 2*tlRadius/vpw,  yTLRadiusNDC = 2*tlRadius/vph,
+                trRadiusNDC = 2*trRadius/vpw,  yTRRadiusNDC = 2*trRadius/vph,
+                blRadiusNDC = 2*blRadius/vpw,  yBLRadiusNDC = 2*blRadius/vph,
+                brRadiusNDC = 2*brRadius/vpw,  yBRRadiusNDC = 2*brRadius/vph;
+
+            var aspect = world.getAspect();
+            var zn = world.getZNear(),  zf = world.getZFar();
+            var t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
+                b = -t,
+                r = aspect*t,
+                l = -r;
+
+            // calculate the object coordinates from their NDC coordinates
+            var z = -world.getViewDistance();
+
+            // get the position of the origin
+            var x = -z*(r-l)/(2.0*zn)*xNDC,
+                y = -z*(t-b)/(2.0*zn)*yNDC;
+
+            // get the x and y fill
+            var xFill = -z*(r-l)/(2.0*zn)*xFillNDC,
+                yFill = -z*(t-b)/(2.0*zn)*yFillNDC;
+
+            // keep some variables giving the overall dimensions of the
+            // rectangle. These values are used to calculate consistent
+            // texture map coordinates across all pieces.
+            this._rectWidth = xFill;  this._rectHeight = yFill;
+
+            // get the stroke size
+            var strokeSize = -z*(r-l)/(2.0*zn)*strokeSizeNDC;
+
+            // get the absolute corner radii
+            tlRadius = -z*(r-l)/(2.0*zn)*tlRadiusNDC,
+            trRadius = -z*(r-l)/(2.0*zn)*trRadiusNDC,
+            blRadius = -z*(r-l)/(2.0*zn)*blRadiusNDC,
+            brRadius = -z*(r-l)/(2.0*zn)*brRadiusNDC;
+
+            // stroke
+            var strokeMaterial = this.makeStrokeMaterial();
+            var strokePrim = this.createStroke([x,y],  2*xFill,  2*yFill,  strokeSize,  tlRadius, blRadius, brRadius, trRadius, strokeMaterial);
+            this._primArray.push( strokePrim );
+            this._materialNodeArray.push( strokeMaterial.getMaterialNode() );
+
+            // fill
+            tlRadius -= strokeSize;  if (tlRadius < 0)  tlRadius = 0.0;
+            blRadius -= strokeSize;  if (blRadius < 0)  blRadius = 0.0;
+            brRadius -= strokeSize;  if (brRadius < 0)  brRadius = 0.0;
+            trRadius -= strokeSize;  if (trRadius < 0)  trRadius = 0.0;
+            xFill -= strokeSize;
+            yFill -= strokeSize;
+            var fillMaterial = this.makeFillMaterial();
+            //console.log( "fillMaterial: " + fillMaterial.getName() );
+            var fillPrim = this.createFill([x,y],  2*xFill,  2*yFill,  tlRadius, blRadius, brRadius, trRadius, fillMaterial);
+            this._primArray.push( fillPrim );
+            this._materialNodeArray.push( fillMaterial.getMaterialNode() );
+
+            world.updateObject(this);
+        }
+    },
+
+    renderQuadraticBezier: {
+        value: function(bPts, ctx) {
+            if (!bPts)  return;
+
+            var nSegs = (bPts.length - 1)/2.0;
+            if (nSegs <= 0)  return;
+
+            var index = 1;
+            for (var i=0;  i<nSegs;  i++) {
+                ctx.quadraticCurveTo(  bPts[index][0],  bPts[index][1],    bPts[index+1][0], bPts[index+1][1] );
+                index += 2;
+            }
+	    }
+    },
+
+    renderPath: {
+        value: function(inset, ctx) {
+            // various declarations
+            var pt,  rad,  ctr,  startPt, bPts;
+            var width  = Math.round(this.getWidth()),
+                height = Math.round(this.getHeight()),
+                hw = 0.5*width,
+                hh = 0.5*height;
+
+            pt = [inset, inset];	// top left corner
+
+            var tlRad = this._tlRadius; //top-left radius
+            var trRad = this._trRadius;
+            var blRad = this._blRadius;
+            var brRad = this._brRadius;
+            // limit the radii to half the rectangle dimension
+            var minDimen = hw < hh ? hw : hh;
+            if (tlRad > minDimen)  tlRad = minDimen;
+            if (blRad > minDimen)  blRad = minDimen;
+            if (brRad > minDimen)  brRad = minDimen;
+            if (trRad > minDimen)  trRad = minDimen;
+
+		var viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
 		var world = this.getWorld();
-		if (!world)  throw( "null world in buildBuffers" );
-		//console.log( "GLRectangle.buildBuffers " + world._worldCount );
-		if (!world._useWebGL)  return;
-		
-		// make sure RDGE has the correct context
-		RDGE.globals.engine.setContext( world.getCanvas().rdgeid );
+		viewUtils.pushViewportObj( world.getCanvas() );
+		var cop = viewUtils.getCenterOfProjection();
+		viewUtils.popViewportObj();
+		var xCtr = cop[0] + this._xOffset,					yCtr = cop[1] - this._yOffset;
+		var xLeft = xCtr - 0.5*this.getWidth(),				yTop = yCtr - 0.5*this.getHeight();
+		var xDist = cop[0] - xLeft,							yDist = cop[1] - yTop;
+		var xOff = 0.5*world.getViewportWidth() - xDist,	yOff  = 0.5*world.getViewportHeight() - yDist;
 
-		// create the gl buffer
-		var gl = world.getGLContext();
-
-		var tlRadius = this._tlRadius; //top-left radius
-		var trRadius = this._trRadius;
-		var blRadius = this._blRadius;
-		var brRadius = this._brRadius;
-
-		// declare the arrays to hold the parts
-        this._primArray = [];
-    	this._materialArray = [];
-		this._materialTypeArray = [];
-	    this._materialNodeArray = [];
-
-		// get the normalized device coordinates (NDC) for
-		// all position and dimensions.
-		var vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
-		var xNDC = 2*this._xOffset/vpw,  yNDC = 2*this._yOffset/vph,
-			xFillNDC = this._width/vpw,  yFillNDC = this._height/vph,
-			strokeSizeNDC = 2*this._strokeWidth/vpw,
-			tlRadiusNDC = 2*tlRadius/vpw,  yTLRadiusNDC = 2*tlRadius/vph,
-			trRadiusNDC = 2*trRadius/vpw,  yTRRadiusNDC = 2*trRadius/vph,
-			blRadiusNDC = 2*blRadius/vpw,  yBLRadiusNDC = 2*blRadius/vph,
-			brRadiusNDC = 2*brRadius/vpw,  yBRRadiusNDC = 2*brRadius/vph;
-
-		var aspect = world.getAspect();
-		var zn = world.getZNear(),  zf = world.getZFar();
-		var t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
-			b = -t,
-			r = aspect*t,
-			l = -r;
-
-		// calculate the object coordinates from their NDC coordinates
-		var z = -world.getViewDistance();
-
-		// get the position of the origin
-		var x = -z*(r-l)/(2.0*zn)*xNDC,
-			y = -z*(t-b)/(2.0*zn)*yNDC;
-
-		// get the x and y fill
-		var xFill = -z*(r-l)/(2.0*zn)*xFillNDC,
-			yFill = -z*(t-b)/(2.0*zn)*yFillNDC;
-
-		// keep some variables giving the overall dimensions of the
-		// rectangle. These values are used to calculate consistent
-		// texture map coordinates across all pieces.
-		this._rectWidth = xFill;  this._rectHeight = yFill;
-
-		// get the stroke size
-		var strokeSize = -z*(r-l)/(2.0*zn)*strokeSizeNDC;
-
-		// get the absolute corner radii
-		tlRadius = -z*(r-l)/(2.0*zn)*tlRadiusNDC,
-		trRadius = -z*(r-l)/(2.0*zn)*trRadiusNDC,
-		blRadius = -z*(r-l)/(2.0*zn)*blRadiusNDC,
-		brRadius = -z*(r-l)/(2.0*zn)*brRadiusNDC;
-
-		// stroke
-		var strokeMaterial = this.makeStrokeMaterial();
-		var strokePrim = this.createStroke([x,y],  2*xFill,  2*yFill,  strokeSize,  tlRadius, blRadius, brRadius, trRadius, strokeMaterial);
-        this._primArray.push( strokePrim );
-		this._materialNodeArray.push( strokeMaterial.getMaterialNode() );
-
-		// fill
-		tlRadius -= strokeSize;  if (tlRadius < 0)  tlRadius = 0.0;
-		blRadius -= strokeSize;  if (blRadius < 0)  blRadius = 0.0;
-		brRadius -= strokeSize;  if (brRadius < 0)  brRadius = 0.0;
-		trRadius -= strokeSize;  if (trRadius < 0)  trRadius = 0.0;
-		xFill -= strokeSize;
-		yFill -= strokeSize;
-		var fillMaterial = this.makeFillMaterial();
-		//console.log( "fillMaterial: " + fillMaterial.getName() );
-		var fillPrim = this.createFill([x,y],  2*xFill,  2*yFill,  tlRadius, blRadius, brRadius, trRadius, fillMaterial);
-        this._primArray.push( fillPrim );
-		this._materialNodeArray.push( fillMaterial.getMaterialNode() );
-
-        world.updateObject(this);
-	};
-
-	this.renderQuadraticBezier = function( bPts, ctx ) {
-		if (!bPts)  return;
-
-		var nSegs = (bPts.length - 1)/2.0;
-		if (nSegs <= 0)  return;
-
-		var index = 1;
-		for (var i=0;  i<nSegs;  i++) {
-			ctx.quadraticCurveTo(  bPts[index][0],  bPts[index][1],    bPts[index+1][0], bPts[index+1][1] );
-			index += 2;
-		}
-	};
-
-	this.renderPath = function( inset, ctx )
-	{
-		// various declarations
-		var pt,  rad,  ctr,  startPt, bPts;
-		var width  = Math.round(this.getWidth()),
-			height = Math.round(this.getHeight()),
-            hw = 0.5*width,
-            hh = 0.5*height;
-
-		pt = [inset, inset];	// top left corner
-
-		var tlRad = this._tlRadius; //top-left radius
-		var trRad = this._trRadius;
-		var blRad = this._blRadius;
-		var brRad = this._brRadius;
-        // limit the radii to half the rectangle dimension
-        var minDimen = hw < hh ? hw : hh;
-        if (tlRad > minDimen)  tlRad = minDimen;
-        if (blRad > minDimen)  blRad = minDimen;
-        if (brRad > minDimen)  brRad = minDimen;
-        if (trRad > minDimen)  trRad = minDimen;
-
-		if ((tlRad <= 0) && (blRad <= 0) && (brRad <= 0) && (trRad <= 0)) {
-			ctx.rect(pt[0], pt[1], width - 2*inset, height - 2*inset);
-		} else {
-			// get the top left point
-			rad = tlRad - inset;
-			if (rad < 0)  rad = 0;
-			pt[1] += rad;
-			if (MathUtils.fpSign(rad) == 0)  pt[1] = inset;
-			ctx.moveTo( pt[0],  pt[1] );
-
-			// get the bottom left point
-			pt = [inset, height - inset];
-			rad = blRad - inset;
-			if (rad < 0)  rad = 0;
-			pt[1] -= rad;
-			ctx.lineTo( pt[0],  pt[1] );
-
-			// get the bottom left curve
-			if (MathUtils.fpSign(rad) > 0) {
-				ctx.quadraticCurveTo( inset, height-inset,  inset+rad, height-inset );
-            }
-
-			// do the bottom of the rectangle
-			pt = [width - inset,  height - inset];
-			rad = brRad - inset;
-			if (rad < 0)  rad = 0;
-			pt[0] -= rad;
-			ctx.lineTo( pt[0], pt[1] );
-
-			// get the bottom right arc
-			if (MathUtils.fpSign(rad) > 0) {
-				ctx.quadraticCurveTo( width-inset, height-inset,  width-inset, height-inset-rad );
-            }
-
-			// get the right of the rectangle
-			pt = [width - inset,  inset];
-			rad = trRad - inset;
-			if (rad < 0)  rad = 0;
-			pt[1] += rad;
-			ctx.lineTo( pt[0], pt[1] );
-
-			// do the top right corner
-			if (MathUtils.fpSign(rad) > 0) {
-				ctx.quadraticCurveTo( width-inset, inset,  width-inset-rad, inset );
-            }
-
-			// do the top of the rectangle
-			pt = [inset, inset];
-			rad = tlRad - inset;
-			if (rad < 0)  rad = 0;
-			pt[0] += rad;
-			ctx.lineTo( pt[0], pt[1] );
-
-			// do the top left corner
-			if (MathUtils.fpSign(rad) > 0) {
-				ctx.quadraticCurveTo( inset, inset, inset, inset+rad );
+            if ((tlRad <= 0) && (blRad <= 0) && (brRad <= 0) && (trRad <= 0)) {
+			ctx.rect(pt[0]+xOff, pt[1]+yOff, width - 2*inset, height - 2*inset);
             } else {
-				ctx.lineTo( inset, 2*inset );
-            }
-		}
-	};
+                // get the top left point
+                rad = tlRad - inset;
+                if (rad < 0)  rad = 0;
+                pt[1] += rad;
+                if (MathUtils.fpSign(rad) == 0)  pt[1] = inset;
+			ctx.moveTo( pt[0]+xOff,  pt[1]+yOff );
 
-    this.render = function() {
-        // get the world
-        var world = this.getWorld();
-        if (!world)  throw( "null world in rectangle render" );
+                // get the bottom left point
+                pt = [inset, height - inset];
+                rad = blRad - inset;
+                if (rad < 0)  rad = 0;
+                pt[1] -= rad;
+			ctx.lineTo( pt[0]+xOff,  pt[1]+yOff );
 
-         // get the context
-		var ctx = world.get2DContext();
-		if (!ctx)  return;
+                // get the bottom left curve
+                if (MathUtils.fpSign(rad) > 0) {
+				ctx.quadraticCurveTo( inset+xOff, height-inset+yOff,  inset+rad+xOff, height-inset+yOff );
+                }
 
-		// get some dimensions
-		var lw = this._strokeWidth;
-		var	w = world.getViewportWidth(),
-			h = world.getViewportHeight();
+                // do the bottom of the rectangle
+                pt = [width - inset,  height - inset];
+                rad = brRad - inset;
+                if (rad < 0)  rad = 0;
+                pt[0] -= rad;
+			ctx.lineTo( pt[0]+xOff, pt[1]+yOff );
 
-        var c,
-            inset,
-            gradient,
-            colors,
-            len,
-            n,
-            position,
-            cs;
-		// render the fill
-		ctx.beginPath();
-		if (this._fillColor) {
-            inset = Math.ceil( lw ) - 0.5;
+                // get the bottom right arc
+                if (MathUtils.fpSign(rad) > 0) {
+				ctx.quadraticCurveTo( width-inset+xOff, height-inset+yOff,  width-inset+xOff, height-inset-rad+yOff );
+                }
 
-            if(this._fillColor.gradientMode) {
-                if(this._fillColor.gradientMode === "radial") {
-                    gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w, h)/2);
+                // get the right of the rectangle
+                pt = [width - inset,  inset];
+                rad = trRad - inset;
+                if (rad < 0)  rad = 0;
+                pt[1] += rad;
+			ctx.lineTo( pt[0]+xOff, pt[1]+yOff );
+
+                // do the top right corner
+                if (MathUtils.fpSign(rad) > 0) {
+				ctx.quadraticCurveTo( width-inset+xOff, inset+yOff,  width-inset-rad+xOff, inset+yOff );
+                }
+
+                // do the top of the rectangle
+                pt = [inset, inset];
+                rad = tlRad - inset;
+                if (rad < 0)  rad = 0;
+                pt[0] += rad;
+			ctx.lineTo( pt[0]+xOff, pt[1]+yOff );
+
+                // do the top left corner
+                if (MathUtils.fpSign(rad) > 0) {
+				ctx.quadraticCurveTo( inset+xOff, inset+yOff, inset+xOff, inset+rad+yOff );
                 } else {
-                    gradient = ctx.createLinearGradient(inset/2, h/2, w-inset, h/2);
+				ctx.lineTo( inset+xOff, 2*inset+yOff );
                 }
-                colors = this._fillColor.color;
-
-                len = colors.length;
-
-                for(n=0; n<len; n++) {
-                    position = colors[n].position/100;
-                    cs = colors[n].value;
-                    gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
-                }
-
-                ctx.fillStyle = gradient;
-
-            } else {
-                c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";
-                ctx.fillStyle = c;
             }
+        }
+    },
 
-			ctx.lineWidth	= lw;
-			this.renderPath( inset, ctx );
-			ctx.fill();
-			ctx.closePath();
-		}
+    render: {
+        value: function() {
+            // get the world
+            var world = this.getWorld();
+            if (!world)  throw( "null world in rectangle render" );
 
-		// render the stroke
-		ctx.beginPath();
-		if (this._strokeColor) {
-            inset = Math.ceil( 0.5*lw ) - 0.5;
+             // get the context
+            var ctx = world.get2DContext();
+            if (!ctx)  return;
 
-            if(this._strokeColor.gradientMode) {
-                if(this._strokeColor.gradientMode === "radial") {
-                    gradient = ctx.createRadialGradient(w/2, h/2, Math.min(h, w)/2-inset, w/2, h/2, Math.max(h, w)/2);
+            // get some dimensions
+            var lw = this._strokeWidth;
+            var	w = world.getViewportWidth(),
+                h = world.getViewportHeight();
+
+            var c,
+                inset,
+                gradient,
+                colors,
+                len,
+                n,
+                position,
+                cs;
+            // render the fill
+            ctx.beginPath();
+            if (this._fillColor) {
+                inset = Math.ceil( lw ) - 0.5;
+
+                if(this._fillColor.gradientMode) {
+                    if(this._fillColor.gradientMode === "radial") {
+                        gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w, h)/2);
+                    } else {
+                        gradient = ctx.createLinearGradient(inset/2, h/2, w-inset, h/2);
+                    }
+                    colors = this._fillColor.color;
+
+                    len = colors.length;
+
+                    for(n=0; n<len; n++) {
+                        position = colors[n].position/100;
+                        cs = colors[n].value;
+                        gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+                    }
+
+                    ctx.fillStyle = gradient;
+
                 } else {
-                    gradient = ctx.createLinearGradient(0, h/2, w, h/2);
-                }
-                colors = this._strokeColor.color;
-
-                len = colors.length;
-
-                for(n=0; n<len; n++) {
-                    position = colors[n].position/100;
-                    cs = colors[n].value;
-                    gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+                    c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";
+                    ctx.fillStyle = c;
                 }
 
-                ctx.strokeStyle = gradient;
-
-            } else {
-                c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";
-                ctx.strokeStyle = c;
+                ctx.lineWidth	= lw;
+                this.renderPath( inset, ctx );
+                ctx.fill();
+                ctx.closePath();
             }
 
-			ctx.lineWidth	= lw;
-			this.renderPath( inset, ctx );
-			ctx.stroke();
-			ctx.closePath();
-		}
-    };
+            // render the stroke
+            ctx.beginPath();
+            if (this._strokeColor) {
+                inset = Math.ceil( 0.5*lw ) - 0.5;
 
-	this.createStroke = function(ctr,  width,  height,  strokeWidth,  tlRad, blRad, brRad, trRad, material) {
-		// create the geometry
-		return RectangleStroke.create( ctr,  width, height, strokeWidth,  tlRad, blRad,  brRad, trRad, material);
-	};
+                if(this._strokeColor.gradientMode) {
+                    if(this._strokeColor.gradientMode === "radial") {
+                        gradient = ctx.createRadialGradient(w/2, h/2, Math.min(h, w)/2-inset, w/2, h/2, Math.max(h, w)/2);
+                    } else {
+                        gradient = ctx.createLinearGradient(0, h/2, w, h/2);
+                    }
+                    colors = this._strokeColor.color;
 
-	this.createFill = function( ctr,  width,  height,  tlRad, blRad, brRad, trRad, material) {
-		// create the geometry
-		// special the (common) case of no rounded corners
-		var prim;
+                    len = colors.length;
 
-		if ((tlRad <= 0) && (blRad <= 0) && (brRad <= 0) && (trRad <= 0)) {
-			prim = RectangleGeometry.create( ctr, width, height, material );
-        } else {
-			prim = RectangleFill.create( ctr,  width, height,  tlRad, blRad,  brRad, trRad, material);
+                    for(n=0; n<len; n++) {
+                        position = colors[n].position/100;
+                        cs = colors[n].value;
+                        gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+                    }
+
+                    ctx.strokeStyle = gradient;
+
+                } else {
+                    c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";
+                    ctx.strokeStyle = c;
+                }
+
+                ctx.lineWidth	= lw;
+                this.renderPath( inset, ctx );
+                ctx.stroke();
+                ctx.closePath();
+            }
         }
+    },
 
-		return prim;
-	};
+    createStroke: {
+        value: function(ctr,  width,  height,  strokeWidth,  tlRad, blRad, brRad, trRad, material) {
+            // create the geometry
+            return RectangleStroke.create( ctr,  width, height, strokeWidth,  tlRad, blRad,  brRad, trRad, material);
+	    }
+    },
 
-	this.collidesWithPoint = function( x, y ) {
-		if(x < this._xOffset) return false;
-		if(x > (this._xOffset + this._width)) return false;
-		if(y < this._yOffset) return false;
-		if(y > (this._yOffset + this._height)) return false;
+    createFill: {
+        value: function(ctr,  width,  height,  tlRad, blRad, brRad, trRad, material) {
+            // create the geometry
+            // special the (common) case of no rounded corners
+            var prim;
 
-		return true;
-	};
-	
-    this.containsPoint = function( pt,  dir ) {
-        var world = this.getWorld();
-        if (!world)  throw( "null world in containsPoint" );
-		
-		// get a point on the plane of the circle
-		// the point is in NDC, as is the input parameters
-		var mat = this.getMatrix();
-		var plane = [0,0,1,0];
-		plane = MathUtils.transformPlane( plane, mat );
-		var projPt = MathUtils.vecIntersectPlane ( pt, dir, plane );
+            if ((tlRad <= 0) && (blRad <= 0) && (brRad <= 0) && (trRad <= 0)) {
+                prim = RectangleGeometry.create( ctr, width, height, material );
+            } else {
+                prim = RectangleFill.create( ctr,  width, height,  tlRad, blRad,  brRad, trRad, material);
+            }
 
-		// transform the projected point back to the XY plane
-		//var invMat = mat.inverse();
-		var invMat = glmat4.inverse( mat, [] );
-		var planePt = MathUtils.transformPoint( projPt, invMat );
-
-		// get the normalized device coordinates (NDC) for
-		// the position and radii.
-		var	vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
-		var	xNDC = 2*this._xOffset/vpw,  yNDC = 2*this._yOffset/vph,
-			xRadNDC = this._width/vpw,  yRadNDC = this._height/vph;
-		var projMat = world.makePerspectiveMatrix();
-		var z = -world.getViewDistance();
-		var planePtNDC = planePt.slice(0);
-		planePtNDC[2] = z;
-		planePtNDC = MathUtils.transformHomogeneousPoint( planePtNDC, projMat );
-		planePtNDC = MathUtils.applyHomogeneousCoordinate( planePtNDC );
-
-		// get the center and dimensions of the rect in NDC
-		var vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
-		var xNDC = 2*this._xOffset/vpw,  yNDC = 2*this._yOffset/vph,
-			hw = this._width/vpw,  hh = this._height/vph;
-
-		var x = planePtNDC[0],  y = planePtNDC[1];
-		if (x < (xNDC - hw))  return false;
-		if (x > (xNDC + hw))  return false;
-		if (y < (yNDC - hh))  return false;
-		if (y > (yNDC + hh))  return false;
-
-		return true;
-	};
-
-	this.getNearVertex = function( pt, dir ) {
-        var world = this.getWorld();
-        if (!world)  throw( "null world in getNearPoint" );
-		
-		// get a point on the plane of the circle
-		// the point is in NDC, as is the input parameters
-		var mat = this.getMatrix();
-		var plane = [0,0,1,0];
-		plane = MathUtils.transformPlane( plane, mat );
-		var projPt = MathUtils.vecIntersectPlane ( pt, dir, plane );
-
-		// transform the projected point back to the XY plane
-		//var invMat = mat.inverse();
-		var invMat = glmat4.inverse(mat, []);
-		var planePt = MathUtils.transformPoint( projPt, invMat );
-
-		// get the normalized device coordinates (NDC) for
-		// the position and radii.
-		var	vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
-		var	xNDC = 2*this._xOffset/vpw,  yNDC = 2*this._yOffset/vph,
-			hwNDC = this._width/vpw,  hhNDC = this._height/vph;
-		var projMat = world.makePerspectiveMatrix();
-		var z = -world.getViewDistance();
-		var planePtNDC = planePt.slice(0);
-		planePtNDC[2] = z;
-		planePtNDC = MathUtils.transformHomogeneousPoint( planePtNDC, projMat );
-		planePtNDC = MathUtils.applyHomogeneousCoordinate( planePtNDC );
-
-		// get the near point in NDC
-		var x = planePtNDC[0],  y = planePtNDC[1];
-		var xMin = xNDC - hwNDC,  xMax = xNDC + hwNDC,
-			yMin = yNDC - hhNDC,  yMax = yNDC + hhNDC;
-
-		// compare the point against the 4 corners
-			var pt, dist;
-			pt = [xMin, yMin, 0];
-			dist = VecUtils.vecDist(2, pt, planePtNDC);
-			var minPt = pt,  minDist = dist;
-		
-			pt = [xMin, yMax, 0];
-			dist = VecUtils.vecDist(2, pt, planePtNDC);
-			if (dist < minDist) {
-				minDist = dist;
-				minPt = pt;
-			}
-
-			pt = [xMax, yMax, 0];
-			dist = VecUtils.vecDist(2, pt, planePtNDC);
-			if (dist < minDist) {
-				minDist = dist;
-				minPt = pt;
-			}
-		
-			pt = [xMax, yMin, 0];
-			dist = VecUtils.vecDist(2, pt, planePtNDC);
-			if (dist < minDist) {
-				minDist = dist;
-				minPt = pt;
-			}
-		
-		// convert to GL coordinates
-		x = minPt[0];  y = minPt[1];
-		var aspect = world.getAspect();
-		var zn = world.getZNear(),  zf = world.getZFar();
-		var	t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
-			b = -t,
-			r = aspect*t,
-			l = -r;
-		var objPt = [0,0,0];
-		objPt[0] = -z*(r-l)/(2.0*zn)*x;
-		objPt[1] = -z*(t-b)/(2.0*zn)*y;
-
-		// re-apply the transform
-		objPt = MathUtils.transformPoint( objPt, mat );
-
-		return objPt;
-	};
-	
-    this.getNearPoint = function( pt, dir ) {
-        var world = this.getWorld();
-        if (!world)  throw( "null world in getNearPoint" );
-		
-		// get a point on the plane of the circle
-		// the point is in NDC, as is the input parameters
-		var mat = this.getMatrix();
-		var plane = [0,0,1,0];
-		plane = MathUtils.transformPlane( plane, mat );
-		var projPt = MathUtils.vecIntersectPlane ( pt, dir, plane );
-
-		// transform the projected point back to the XY plane
-		//var invMat = mat.inverse();
-		var invMat = glmat4.inverse(mat, []);
-		var planePt = MathUtils.transformPoint( projPt, invMat );
-
-		// get the normalized device coordinates (NDC) for
-		// the position and radii.
-		var	vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
-		var	xNDC = 2*this._xOffset/vpw,  yNDC = 2*this._yOffset/vph,
-			hwNDC = this._width/vpw,  hhNDC = this._height/vph;
-		var projMat = world.makePerspectiveMatrix();
-		var z = -world.getViewDistance();
-		var planePtNDC = planePt.slice(0);
-		planePtNDC[2] = z;
-		planePtNDC = MathUtils.transformHomogeneousPoint( planePtNDC, projMat );
-		planePtNDC = MathUtils.applyHomogeneousCoordinate( planePtNDC );
-
-		// get the near point in NDC
-		var x = planePtNDC[0],  y = planePtNDC[1];
-		var xMin = xNDC - hwNDC,  xMax = xNDC + hwNDC,
-			yMin = yNDC - hhNDC,  yMax = yNDC + hhNDC;
-
-		// compare the point against the near point on the 4 sides
-        var pt, dist;
-        pt = [xMin, y, 0];
-        if      (pt[1] < yMin)  pt[1] = yMin;
-        else if (pt[1] > yMax)  pt[1] = yMax;
-        dist = VecUtils.vecDist(2, pt, planePtNDC);
-        var minPt = pt,  minDist = dist;
-
-        pt = [x, yMax, 0];
-        if      (pt[0] < xMin)  pt[0] = xMin;
-        else if (pt[0] > xMax)  pt[0] = xMax;
-        dist = VecUtils.vecDist(2, pt, planePtNDC);
-        if (dist < minDist) {
-            minDist = dist;
-            minPt = pt;
+            return prim;
         }
+    },
 
-        pt = [xMax, y, 0];
-        if      (pt[1] < yMin)  pt[1] = yMin;
-        else if (pt[1] > yMax)  pt[1] = yMax;
-        dist = VecUtils.vecDist(2, pt, planePtNDC);
-        if (dist < minDist) {
-            minDist = dist;
-            minPt = pt;
+    collidesWithPoint: {
+        value: function(x, y) {
+            if(x < this._xOffset) return false;
+            if(x > (this._xOffset + this._width)) return false;
+            if(y < this._yOffset) return false;
+            if(y > (this._yOffset + this._height)) return false;
+
+            return true;
+	    }
+    },
+
+    containsPoint: {
+        value: function(pt, dir) {
+            var world = this.getWorld();
+            if (!world)  throw( "null world in containsPoint" );
+
+            // get a point on the plane of the circle
+            // the point is in NDC, as is the input parameters
+            var mat = this.getMatrix();
+            var plane = [0,0,1,0];
+            plane = MathUtils.transformPlane( plane, mat );
+            var projPt = MathUtils.vecIntersectPlane ( pt, dir, plane );
+
+            // transform the projected point back to the XY plane
+            //var invMat = mat.inverse();
+            var invMat = glmat4.inverse( mat, [] );
+            var planePt = MathUtils.transformPoint( projPt, invMat );
+
+            // get the normalized device coordinates (NDC) for
+            // the position and radii.
+            var	vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
+            var	xNDC = 2*this._xOffset/vpw,  yNDC = 2*this._yOffset/vph,
+                xRadNDC = this._width/vpw,  yRadNDC = this._height/vph;
+            var projMat = world.makePerspectiveMatrix();
+            var z = -world.getViewDistance();
+            var planePtNDC = planePt.slice(0);
+            planePtNDC[2] = z;
+            planePtNDC = MathUtils.transformHomogeneousPoint( planePtNDC, projMat );
+            planePtNDC = MathUtils.applyHomogeneousCoordinate( planePtNDC );
+
+            // get the center and dimensions of the rect in NDC
+            var vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
+            var xNDC = 2*this._xOffset/vpw,  yNDC = 2*this._yOffset/vph,
+                hw = this._width/vpw,  hh = this._height/vph;
+
+            var x = planePtNDC[0],  y = planePtNDC[1];
+            if (x < (xNDC - hw))  return false;
+            if (x > (xNDC + hw))  return false;
+            if (y < (yNDC - hh))  return false;
+            if (y > (yNDC + hh))  return false;
+
+            return true;
         }
+    },
 
-        pt = [x, yMin, 0];
-        if      (pt[0] < xMin)  pt[0] = xMin;
-        else if (pt[0] > xMax)  pt[0] = xMax;
-        dist = VecUtils.vecDist(2, pt, planePtNDC);
-        if (dist < minDist) {
-            minDist = dist;
-            minPt = pt;
+    getNearVertex: {
+        value: function(pt, dir) {
+            var world = this.getWorld();
+            if (!world)  throw( "null world in getNearPoint" );
+
+            // get a point on the plane of the circle
+            // the point is in NDC, as is the input parameters
+            var mat = this.getMatrix();
+            var plane = [0,0,1,0];
+            plane = MathUtils.transformPlane( plane, mat );
+            var projPt = MathUtils.vecIntersectPlane ( pt, dir, plane );
+
+            // transform the projected point back to the XY plane
+            //var invMat = mat.inverse();
+            var invMat = glmat4.inverse(mat, []);
+            var planePt = MathUtils.transformPoint( projPt, invMat );
+
+            // get the normalized device coordinates (NDC) for
+            // the position and radii.
+            var	vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
+            var	xNDC = 2*this._xOffset/vpw,  yNDC = 2*this._yOffset/vph,
+                hwNDC = this._width/vpw,  hhNDC = this._height/vph;
+            var projMat = world.makePerspectiveMatrix();
+            var z = -world.getViewDistance();
+            var planePtNDC = planePt.slice(0);
+            planePtNDC[2] = z;
+            planePtNDC = MathUtils.transformHomogeneousPoint( planePtNDC, projMat );
+            planePtNDC = MathUtils.applyHomogeneousCoordinate( planePtNDC );
+
+            // get the near point in NDC
+            var x = planePtNDC[0],  y = planePtNDC[1];
+            var xMin = xNDC - hwNDC,  xMax = xNDC + hwNDC,
+                yMin = yNDC - hhNDC,  yMax = yNDC + hhNDC;
+
+            // compare the point against the 4 corners
+                var pt, dist;
+                pt = [xMin, yMin, 0];
+                dist = VecUtils.vecDist(2, pt, planePtNDC);
+                var minPt = pt,  minDist = dist;
+
+                pt = [xMin, yMax, 0];
+                dist = VecUtils.vecDist(2, pt, planePtNDC);
+                if (dist < minDist) {
+                    minDist = dist;
+                    minPt = pt;
+                }
+
+                pt = [xMax, yMax, 0];
+                dist = VecUtils.vecDist(2, pt, planePtNDC);
+                if (dist < minDist) {
+                    minDist = dist;
+                    minPt = pt;
+                }
+
+                pt = [xMax, yMin, 0];
+                dist = VecUtils.vecDist(2, pt, planePtNDC);
+                if (dist < minDist) {
+                    minDist = dist;
+                    minPt = pt;
+                }
+
+            // convert to GL coordinates
+            x = minPt[0];  y = minPt[1];
+            var aspect = world.getAspect();
+            var zn = world.getZNear(),  zf = world.getZFar();
+            var	t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
+                b = -t,
+                r = aspect*t,
+                l = -r;
+            var objPt = [0,0,0];
+            objPt[0] = -z*(r-l)/(2.0*zn)*x;
+            objPt[1] = -z*(t-b)/(2.0*zn)*y;
+
+            // re-apply the transform
+            objPt = MathUtils.transformPoint( objPt, mat );
+
+            return objPt;
         }
-		
-		// convert to GL coordinates
-		x = minPt[0];  y = minPt[1];
-		var aspect = world.getAspect();
-		var zn = world.getZNear(),  zf = world.getZFar();
-		var	t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
-			b = -t,
-			r = aspect*t,
-			l = -r;
-		var objPt = [0,0,0];
-		objPt[0] = -z*(r-l)/(2.0*zn)*x;
-		objPt[1] = -z*(t-b)/(2.0*zn)*y;
+    },
 
-		// re-apply the transform
-		objPt = MathUtils.transformPoint( objPt, mat );
+    getNearPoint: {
+        value: function(pt, dir) {
+            var world = this.getWorld();
+            if (!world)  throw( "null world in getNearPoint" );
 
-		return objPt;
-    };
+            // get a point on the plane of the circle
+            // the point is in NDC, as is the input parameters
+            var mat = this.getMatrix();
+            var plane = [0,0,1,0];
+            plane = MathUtils.transformPlane( plane, mat );
+            var projPt = MathUtils.vecIntersectPlane ( pt, dir, plane );
 
+            // transform the projected point back to the XY plane
+            var invMat = glmat4.inverse(mat, []);
+            var planePt = MathUtils.transformPoint( projPt, invMat );
 
-	 this.recalcTexMapCoords = function( vrts, uvs ) {
-		var n = vrts.length/3;
-		var ivrt = 0,  iuv = 0;
+            // get the normalized device coordinates (NDC) for
+            // the position and radii.
+            var	vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
+            var	xNDC = 2*this._xOffset/vpw,  yNDC = 2*this._yOffset/vph,
+                hwNDC = this._width/vpw,  hhNDC = this._height/vph;
+            var projMat = world.makePerspectiveMatrix();
+            var z = -world.getViewDistance();
+            var planePtNDC = planePt.slice(0);
+            planePtNDC[2] = z;
+            planePtNDC = MathUtils.transformHomogeneousPoint( planePtNDC, projMat );
+            planePtNDC = MathUtils.applyHomogeneousCoordinate( planePtNDC );
 
-		for (var i=0;  i<n;  i++) {
-			uvs[iuv] = 0.5*(vrts[ivrt]/this._rectWidth + 1);
-			iuv++;  ivrt++;
-			uvs[iuv] = 0.5*(vrts[ivrt]/this._rectHeight + 1);
-			iuv++;  ivrt += 2;
-		}
-	 }
- };
+            // get the near point in NDC
+            var x = planePtNDC[0],  y = planePtNDC[1];
+            var xMin = xNDC - hwNDC,  xMax = xNDC + hwNDC,
+                yMin = yNDC - hhNDC,  yMax = yNDC + hhNDC;
+
+            // compare the point against the near point on the 4 sides
+            var pt, dist;
+            pt = [xMin, y, 0];
+            if      (pt[1] < yMin)  pt[1] = yMin;
+            else if (pt[1] > yMax)  pt[1] = yMax;
+            dist = VecUtils.vecDist(2, pt, planePtNDC);
+            var minPt = pt,  minDist = dist;
+
+            pt = [x, yMax, 0];
+            if      (pt[0] < xMin)  pt[0] = xMin;
+            else if (pt[0] > xMax)  pt[0] = xMax;
+            dist = VecUtils.vecDist(2, pt, planePtNDC);
+            if (dist < minDist) {
+                minDist = dist;
+                minPt = pt;
+            }
+
+            pt = [xMax, y, 0];
+            if      (pt[1] < yMin)  pt[1] = yMin;
+            else if (pt[1] > yMax)  pt[1] = yMax;
+            dist = VecUtils.vecDist(2, pt, planePtNDC);
+            if (dist < minDist) {
+                minDist = dist;
+                minPt = pt;
+            }
+
+            pt = [x, yMin, 0];
+            if      (pt[0] < xMin)  pt[0] = xMin;
+            else if (pt[0] > xMax)  pt[0] = xMax;
+            dist = VecUtils.vecDist(2, pt, planePtNDC);
+            if (dist < minDist) {
+                minDist = dist;
+                minPt = pt;
+            }
+
+            // convert to GL coordinates
+            x = minPt[0];  y = minPt[1];
+            var aspect = world.getAspect();
+            var zn = world.getZNear(),  zf = world.getZFar();
+            var	t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
+                b = -t,
+                r = aspect*t,
+                l = -r;
+            var objPt = [0,0,0];
+            objPt[0] = -z*(r-l)/(2.0*zn)*x;
+            objPt[1] = -z*(t-b)/(2.0*zn)*y;
+
+            // re-apply the transform
+            objPt = MathUtils.transformPoint( objPt, mat );
+
+            return objPt;
+        }
+    },
+
+    recalcTexMapCoords: {
+        value: function(vrts, uvs) {
+            var n = vrts.length/3;
+            var ivrt = 0,  iuv = 0;
+
+            for (var i=0;  i<n;  i++) {
+                uvs[iuv] = 0.5*(vrts[ivrt]/this._rectWidth + 1);
+                iuv++;  ivrt++;
+                uvs[iuv] = 0.5*(vrts[ivrt]/this._rectHeight + 1);
+                iuv++;  ivrt += 2;
+            }
+        }
+    }
+});
 
 var RectangleFill = {};
 RectangleFill.create = function( rectCtr,  width, height, tlRad, blRad,  brRad, trRad,  material) {
@@ -1192,13 +1280,6 @@ RectangleGeometry.pushUV		= RectangleFill.pushUV;
 RectangleGeometry.pushIndices	= RectangleFill.pushIndices;
 RectangleGeometry.getVertex		= RectangleFill.getVertex;
 RectangleGeometry.getUV			= RectangleFill.getUV;
-
-
-Rectangle.prototype = new GeomObj();
-
-if (typeof exports === "object") {
-    exports.Rectangle = Rectangle;
-}
 
 
 

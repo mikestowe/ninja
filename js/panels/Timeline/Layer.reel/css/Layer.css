@@ -224,22 +224,27 @@
 }
 
 /* line 199, ../scss/Layer.scss */
+.timeline-track .collapsible-content {
+  position: relative;
+}
+
+/* line 202, ../scss/Layer.scss */
 .collapsible-content .layout-table {
   width: 99.9%;
 }
 
-/* line 202, ../scss/Layer.scss */
+/* line 205, ../scss/Layer.scss */
 .content-layer .collapsible-content {
   padding-left: 30px;
 }
 
-/* line 205, ../scss/Layer.scss */
+/* line 208, ../scss/Layer.scss */
 .collapsible-content .collapsible-content .layout-table .layout-row {
   height: 20px;
   overflow: hidden;
 }
 
-/* line 209, ../scss/Layer.scss */
+/* line 212, ../scss/Layer.scss */
 .collapsible-content .collapsible-content .layout-table .layout-row .layout-cell {
   width: 40%;
   height: 20px;
@@ -249,13 +254,13 @@
   overflow: hidden;
 }
 
-/* line 218, ../scss/Layer.scss */
+/* line 221, ../scss/Layer.scss */
 .collapsible-content .collapsible-content .container-row {
   border-bottom: 1px solid #505050;
   height: 20px;
 }
 
-/* line 224, ../scss/Layer.scss */
+/* line 227, ../scss/Layer.scss */
 .collapsible-content .collapsible-content .cell-property,
 .collapsible-content .collapsible-content .cell-value {
   width: 45%;
@@ -267,24 +272,24 @@
   line-height: 18px;
 }
 
-/* line 236, ../scss/Layer.scss */
+/* line 239, ../scss/Layer.scss */
 .collapsible-content .layout-table:first-child {
   border-top: 1px solid #505050;
 }
 
-/* line 240, ../scss/Layer.scss */
+/* line 243, ../scss/Layer.scss */
 .collapsible-content .hottextunit {
   width: auto;
 }
 
-/* line 243, ../scss/Layer.scss */
+/* line 246, ../scss/Layer.scss */
 .collapsible-transition {
   -webkit-transition-property: height;
   -webkit-transition-duration: 200ms;
   -webkit-transition-timing-function: ease-in;
 }
 
-/* line 251, ../scss/Layer.scss */
+/* line 254, ../scss/Layer.scss */
 .editable2 {
   height: 20px;
   background-color: #242424 !important;
@@ -296,29 +301,29 @@
   text-overflow: clip;
 }
 
-/* line 261, ../scss/Layer.scss */
+/* line 264, ../scss/Layer.scss */
 .editable2 br {
   display: inline;
 }
 
-/* line 265, ../scss/Layer.scss */
+/* line 268, ../scss/Layer.scss */
 .label-style .disabled {
   cursor: default;
 }
 
 /* styles elements */
-/* line 270, ../scss/Layer.scss */
+/* line 273, ../scss/Layer.scss */
 .content-style .item-template {
   display: none;
 }
 
-/* line 273, ../scss/Layer.scss */
+/* line 276, ../scss/Layer.scss */
 .content-style .layout-row.selected .layout-cell {
   background-color: #b2b2b2;
   color: #242424;
 }
 
-/* line 277, ../scss/Layer.scss */
+/* line 280, ../scss/Layer.scss */
 .style-row {
   height: 20px;
 }

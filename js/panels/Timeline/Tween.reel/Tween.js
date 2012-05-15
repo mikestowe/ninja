@@ -14,12 +14,10 @@ var Tween = exports.Tween = Montage.create(Component, {
     },
 
     _tweenData:{
-        serializable: true,
         value:{}
     },
 
     tweenData:{
-        serializable: true,
         get:function(){
             return this._tweenData;
         },
@@ -32,7 +30,6 @@ var Tween = exports.Tween = Montage.create(Component, {
     },
 
     _spanWidth: {
-        serializable: true,
         value: 0
     },
 
@@ -109,7 +106,6 @@ var Tween = exports.Tween = Montage.create(Component, {
     },
 
     _tweenedProperties:{
-        serializable: true,
         value:[]
     },
 
@@ -124,7 +120,6 @@ var Tween = exports.Tween = Montage.create(Component, {
     },
 
     _isTweenAnimated:{
-        serializable:true,
         value:false
     },
 
@@ -136,6 +131,20 @@ var Tween = exports.Tween = Montage.create(Component, {
         set:function (value) {
             this._isTweenAnimated = value;
         }
+    },
+    
+    _isDragging: {
+    	value: false
+    },
+    isDragging: {
+    	serializable: true,
+        get:function () {
+            return this._isDragging;
+        },
+        set:function (newVal) {
+            this._isDragging = newVal;
+        }
+    	
     },
 
 
@@ -169,50 +178,41 @@ var Tween = exports.Tween = Montage.create(Component, {
         	var useAbsolute = true;
 
             if (event.detail.source && event.detail.source !== "tween") {
-                // check for correct element selection
-                if (this.application.ninja.selectedElements[0] != this.parentComponent.parentComponent.animatedElement) {
-                    console.log("Wrong element selected for this keyframe track");
+
+                if(this.parentComponent.parentComponent.isSubproperty){
+                    this.setStyleTweenProperty(event.detail);
                 } else {
-                    if(useAbsolute){
-                        this.setAbsoluteTweenProperties(event.detail);
+                    // check for correct element selection
+                    if (this.application.ninja.selectedElements[0] != this.parentComponent.parentComponent.animatedElement) {
+                        console.log("Wrong element selected for this keyframe track");
                     } else {
-                        this.setRelativeTweenProperties(event.detail);
+                        if (useAbsolute) {
+                            this.setAbsoluteTweenProperties(event.detail);
+                        } else {
+                            this.setRelativeTweenProperties(event.detail);
+                        }
                     }
                 }
+
+
             }
         }
     },
 
     setAbsoluteTweenProperties:{
         value:function (eventDetail) {
-            //console.log(eventDetail);
-
-            // top
             if(this.parentComponent.parentComponent.animatedElement.offsetTop != this.tweenedProperties["top"]){
                 this.tweenedProperties["top"] = this.parentComponent.parentComponent.animatedElement.offsetTop;
             }
-
-            // left
             if(this.parentComponent.parentComponent.animatedElement.offsetLeft != this.tweenedProperties["left"]){
                 this.tweenedProperties["left"] = this.parentComponent.parentComponent.animatedElement.offsetLeft;
             }
-
-            // width
             if (this.parentComponent.parentComponent.animatedElement.offsetWidth != this.tweenedProperties["width"]){
                 this.tweenedProperties["width"] = this.parentComponent.parentComponent.animatedElement.offsetWidth;
             }
-
-            // height
             if (this.parentComponent.parentComponent.animatedElement.offsetHeight != this.tweenedProperties["height"]){
                 this.tweenedProperties["height"] = this.parentComponent.parentComponent.animatedElement.offsetHeight;
             }
-
-            // skewX
-
-            // skewY
-
-            // rotation
-
             // tell track to update css rule
             this.parentComponent.parentComponent.updateKeyframeRule();
 
@@ -228,6 +228,34 @@ var Tween = exports.Tween = Montage.create(Component, {
         }
     },
 
+    setStyleTweenProperty:{
+        value:function (eventDetail) {
+            //console.log("Setting style tween properties for: " + this.parentComponent.parentComponent.trackEditorProperty);
+            //console.log(eventDetail);
+
+            if(eventDetail.type == "setProperties"){
+                // ignore top, left, width, and height
+                console.log(eventDetail.data.value[0]);
+                this.tweenedProperties[this.parentComponent.parentComponent.trackEditorProperty] = eventDetail.data.value[0];
+                this.parentComponent.parentComponent.updatePropKeyframeRule();
+
+            } else if(eventDetail.type == "setColor"){
+                var prop = this.parentComponent.parentComponent.trackEditorProperty;
+                this.tweenedProperties[prop] = eventDetail.data.value.color.css;
+                this.parentComponent.parentComponent.updatePropKeyframeRule();
+
+            } else if(eventDetail.type == "setProperty"){
+                // ignore top, left, width, and height
+                console.log(eventDetail.data.value[0]);
+                this.tweenedProperties[this.parentComponent.parentComponent.trackEditorProperty] = eventDetail.data.value[0];
+                this.parentComponent.parentComponent.updatePropKeyframeRule();
+
+            }else {
+                console.log("TWEEN Unhandled type - setStyleTweenProperty : " + eventDetail.type);
+            }
+        }
+    },
+
     selectTween:{
         value: function(){
             // turn on event listener for element change
@@ -237,7 +265,7 @@ var Tween = exports.Tween = Montage.create(Component, {
             var selectIndex = this.application.ninja.timeline.getLayerIndexByID(this.parentComponent.parentComponent.trackID);
             this.application.ninja.timeline.selectLayer(selectIndex, true);
 
-            // tell timeline to deselect all other tweens and push this one as the currentSelectedTweens in timeline
+            // tell timeline to deselect all other tweens and push this one into the selectedTweens in timeline
             this.application.ninja.timeline.deselectTweens();
             this.application.ninja.timeline.selectedTweens.push(this);
 
@@ -248,13 +276,21 @@ var Tween = exports.Tween = Montage.create(Component, {
             var currentMillisec = currentMillisecPerPixel * this.keyFramePosition;
             this.application.ninja.timeline.updateTimeText(currentMillisec);
 
-            // move animated element to correct position on stage
-            var currentTop = this.tweenedProperties["top"] + "px";
-            var currentLeft = this.tweenedProperties["left"] + "px";
+            if(this.parentComponent.parentComponent.isSubproperty){
+                // set property specific style on element
+            } else {
+                // move animated element to correct position on stage
+                var currentTop = this.tweenedProperties["top"] + "px";
+                var currentLeft = this.tweenedProperties["left"] + "px";
+                var currentWidth = this.tweenedProperties["width"] + "px";
+                var currentHeight = this.tweenedProperties["height"] + "px";
 
-            this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.animatedElement], "top", [currentTop], "Change", "tween");
-            this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.animatedElement], "left", [currentLeft], "Change", "tween");
+                this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.animatedElement], "top", [currentTop], "Change", "tween");
+                this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.animatedElement], "left", [currentLeft], "Change", "tween");
+                this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.animatedElement], "width", [currentWidth], "Change", "tween");
+                this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.animatedElement], "height", [currentHeight], "Change", "tween");
 
+            }
         }
     },
 

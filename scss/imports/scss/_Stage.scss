@@ -133,7 +133,7 @@
    
 }
 
-#drawingCanvas {
+.drawingCanvas {
     position: absolute;
     margin: 0px;
     border: none;
@@ -144,7 +144,7 @@
 }
 
 
-#stageCanvas {
+.stageCanvas {
     position: absolute;
     margin: 0px;
     border: none;
@@ -154,7 +154,7 @@
     z-index: 5;
 }
 
-#layoutCanvas {
+.layoutCanvas {
     position: absolute;
     margin: 0px;
     border: none;
@@ -162,35 +162,6 @@
     top: 0px;
     left: 0px;
     z-index: 4;
-}
-
-#codeViewContainer {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    margin: 0px;
-    padding: 0px;
-    background: $color-app-bg;
-    width:100%;
-    height:100%;
-    display:none;
-}
-
-#mainContent #codeMirror_1 {
-    height:100%;
-}
-
-#mainContent .CodeMirror {
-    width: 100%;
-    height: 100%;
-    background: white;
-}
-
-#mainContent .CodeMirror-scroll {
-    height: 100%;
-    overflow: scroll;
-    overflow-x: auto;
-    overflow-y: auto;
 }
 
 .montage-editor-frame {

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -11,8 +11,7 @@
         <script type="text/montage-serialization">
                     {
                         "owner": {
-                            "module": "js/panels/Timeline/Tween.reel",
-                            "name": "Tween",
+                            "prototype": "js/panels/Timeline/Tween.reel",
                             "properties": {
                                 "element": {"#": "tweenspace"},
                                 "keyframe": {"@": "keyframe"},
@@ -21,16 +20,14 @@
                         },
                         
                         "span": {
-                            "module": "js/panels/Timeline/Span.reel",
-                            "name": "Span",
+                            "prototype": "js/panels/Timeline/Span.reel",
                             "properties": {
                                 "element": {"#": "span_container"}
                             }
                         },
 
                         "keyframe": {
-                            "module": "js/panels/Timeline/Keyframe.reel",
-                            "name": "Keyframe",
+                            "prototype": "js/panels/Timeline/Keyframe.reel",
                             "properties": {
                                 "element": {"#": "keyframe_container"}
                             }
@@ -40,9 +37,9 @@
 	</head>
 	<body>
 
-    <div id="tweenspace" class="tween_container">
-        <div id="span_container"></div>
-        <div id="keyframe_container"></div>
+    <div data-montage-id="tweenspace" class="tween_container">
+        <div data-montage-id="span_container"></div>
+        <div data-montage-id="keyframe_container"></div>
     </div>
 
     </body>

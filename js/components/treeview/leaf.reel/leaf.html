@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- <copyright>
 This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
 No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -11,16 +11,14 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
         <script type="text/montage-serialization">
         {
             "owner": {
-                "module" : "js/components/treeview/leaf.reel",
-                "name" : "Leaf",
+                "prototype" : "js/components/treeview/leaf.reel",
                 "properties" : {
                     "element" : {"#" : "leaf"},
                     "label" : { "@" : "textComponent" }
                 }
             },
             "textComponent" : {
-                "module" : "montage/ui/dynamic-text.reel",
-                "name" : "DynamicText",
+                "prototype" : "montage/ui/dynamic-text.reel",
                 "properties" : {
                     "element" : { "#" : "label" }
                 },
@@ -36,8 +34,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 		</script>
 </head>
 <body>
-    <div id="leaf" class="leaf">
-        <span id="label" class="leaf-label"></span>
+    <div data-montage-id="leaf" class="leaf">
+        <span data-montage-id="label" class="leaf-label"></span>
     </div>
 </body>
 </html>

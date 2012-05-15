@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -11,19 +11,52 @@
         <script type="text/montage-serialization">
                     {
                         "owner": {
-                            "module": "js/panels/Timeline/PropertyTrack.reel",
-                            "name": "PropertyTrack",
+                            "prototype": "js/panels/Timeline/PropertyTrack.reel",
                             "properties": {
-                                "element": {"#": "property-track"}
+                                "element": {"#": "property-track"},
+                                "propTweenRepetition" : {"@" : "propTweenRepetition"},
+                                "propTween": {"@" : "propTween"}
+                            }
+                        },
+
+                        "propTween" : {
+                            "prototype" : "js/panels/timeline/Tween.reel",
+                            "properties" : {
+                               	"element":{"#": "prop_track_lane"}
+                            },
+            				"bindings" : {
+                                "tweenData" : {
+                                   "boundObject" : {"@": "propTweenRepetition"},
+                                   "boundObjectPropertyPath" : "objectAtCurrentIteration.tweenData",
+                                   "oneway" : false
+                                }
+                            }
+                        },
+
+                        "propTweenRepetition": {
+                            "prototype": "montage/ui/repetition.reel",
+                            "properties": {
+                               	"element": {"#": "prop_track_lanes"},
+                               	   "isSelectionEnabled" : false
+                            },
+                            "bindings": {
+                               "objects": {
+                               	 "boundObject": {"@": "owner"},
+                               	 "boundObjectPropertyPath": "propTweens",
+                               	 "oneway": false
+                               }
                             }
                         }
-
                     }
         </script>
 	</head>
 	<body>
 
-		<div id="property-track" class="timeline-track"></div>
+		<div data-montage-id="property-track" class="timeline-track">
+            <div data-montage-id="prop_track_lanes" class="prop-track">
+                <div data-montage-id="prop_track_lane"></div>
+            </div>
+		</div>
 
     </body>
 </html>

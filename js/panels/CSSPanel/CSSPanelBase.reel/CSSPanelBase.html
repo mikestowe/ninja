@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
@@ -11,8 +11,7 @@
         <script type="text/montage-serialization">
         {
             "resizer1": {
-                "module": "js/panels/Resizer",
-                "name": "Resizer",
+                "prototype": "js/panels/Resizer",
                 "properties": {
                     "element": {"#": "subPanelResizer"},
                     "panel": {"#": "nj-section-stylesheets"},
@@ -21,16 +20,14 @@
             },
 
             "ComputedStyleSubPanel1": {
-                "module": "js/panels/CSSPanel/ComputedStyleSubPanel.reel",
-                "name": "ComputedStyleSubPanel",
+                "prototype": "js/panels/CSSPanel/ComputedStyleSubPanel.reel",
                 "properties": {
                     "element": {"#": "nj-computed-sub-panel"}
                 }
             },
 
             "owner": {
-                "module": "js/panels/CSSPanel/CSSPanelBase.reel",
-                "name": "CSSPanelBase",
+                "prototype": "js/panels/CSSPanel/CSSPanelBase.reel",
                 "properties": {
                     "element": {"#": "css_panel"},
                     "computedStyleSubPanel": {"@": "ComputedStyleSubPanel1"}
@@ -41,13 +38,13 @@
 		</script>
 	</head>
 <body>
-    <div id="css_panel" class="css_panel">
+    <div data-montage-id="css_panel" class="css_panel">
 		<!-- Stylesheet list subsection -->
 		<h2 id="nj-css-sheets-header" class="nj-section-header">
 			<div id="nj-css-sheets-arrow" class="panelDisclosureIcon"></div>
 			Stylesheets <span id="nj-current-doc-name"></span>
 		</h2>       	
-        <div id="nj-section-stylesheets" class="nj-sub-panel">
+        <div data-montage-id="nj-section-stylesheets" id="nj-section-stylesheets" class="nj-sub-panel">
        		<ul id="nj-sheet-list"></ul>
         </div>
 		<div  id="nj-css-stylesheet-toolbar" class="nj-css-toolbar">
@@ -62,7 +59,7 @@
 				<span id="nj-num-items">0</span> elements selected
 			</span>
 		</h2>
-		<div id="nj-computed-sub-panel"></div>
+		<div data-montage-id="nj-computed-sub-panel" id="nj-computed-sub-panel"></div>
         <div id="nj-section-styles" class="nj-sub-panel">
         	<!-- <ul id="nj-css-rule-list"></ul> -->
         </div>
