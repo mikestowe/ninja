@@ -100,15 +100,14 @@ exports.HtmlDocument = Montage.create(Component, {
             		this._document = this.model.views.design.document;
             		//TODO: Remove usage, seems as not needed
     				if (template && template.type === 'banner') {
-    					//this.documentRoot = this.model.views.design.document.body;
-    					this.documentRoot = this.model.views.design.document.body.getElementsByTagName('ninja-banner')[0];
+    					this.documentRoot = this.model.views.design.document.body.getElementsByTagName('ninja-content')[0];
     				} else {
     					this.documentRoot = this.model.views.design.document.body;
     				}
             		//TODO: Why is this needed?
-            		this._liveNodeList = this.model.views.design.document.body.getElementsByTagName('*');
+            		this._liveNodeList = this.documentRoot.getElementsByTagName('*');
             		//Initiliazing document model
-            		document.application.njUtils.makeElementModel(this.model.views.design.document.body, "Body", "body");
+            		document.application.njUtils.makeElementModel(this.documentRoot, "Body", "body");
             		//Adding observer to know when template is ready
             		this._observer = new WebKitMutationObserver(this.handleTemplateReady.bind(this));
         			this._observer.observe(this.model.views.design.document.head, {childList: true});
