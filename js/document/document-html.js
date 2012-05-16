@@ -43,13 +43,6 @@ exports.HtmlDocument = Montage.create(Component, {
     exclusionList: {
         value: ["HTML", "BODY"] //TODO: Update to correct list
     },
-	////////////////////////////////////////////////////////////////////
-	//
-    uuid: {
-        get: function() {
-            return this._uuid;
-        }
-    },
     ////////////////////////////////////////////////////////////////////
 	//
     inExclusion: {
@@ -133,21 +126,10 @@ exports.HtmlDocument = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
 	//
 	closeDocument: {
-		value: function () {
-			//
-			this.model.close(null, this.handleCloseDocument.bind(this));
-		}
-	},
-	////////////////////////////////////////////////////////////////////
-	//
-	handleCloseDocument: {
-		value: function (success) {
-			//TODO: Add logic for handling success or failure
-			//
-			this.application.ninja.documentController._documents.splice(this.uuid, 1);
-			//
-			NJevent("closeDocument", this.model.file.uri);
-			//TODO: Delete object here
+		value: function (context, callback) {
+			var closed = this.model.close(null);
+
+            callback.call(context, this);
 		}
 	},
     ////////////////////////////////////////////////////////////////////

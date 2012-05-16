@@ -214,10 +214,11 @@ exports.BaseDocumentModel = Montage.create(Component, {
         	if (this.views.design && (!view || view === 'design')) {
         		//
         		this.parentContainer.removeChild(this.views.design.iframe);
+                this.views.design.pauseAndStopVideos();
         		this.views.design = null;
         	}
         	//
-        	if (callback) callback(success);
+        	return success;
         }
     }
 	////////////////////////////////////////////////////////////////////
