@@ -42,6 +42,14 @@ exports.RectProperties = Montage.create(ToolProperties, {
     },
 
     // Public API
+    fill: {
+        get: function () { return this.base.fill; }
+    },
+
+    stroke: {
+        get: function () { return this.base.stroke; }
+    },
+
     use3D: {
         get: function() { return this.base._use3D; }
     },
@@ -125,6 +133,4 @@ exports.RectProperties = Montage.create(ToolProperties, {
             
         }
     }
-
-
 });

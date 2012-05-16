@@ -4,27 +4,22 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
-.inkBottleProperties input[type="checkbox"].nj-skinned {
-    float:left;
-    margin-top:5px;
+
+.inkBottleOptions select.nj-skinned {
+	margin-top: 2px;
 }
 
-.inkBottleProperties select.nj-skinned {
-    float:left;
-    margin:2px 5px 0 0;
-}
-
-.inkBottleProperties label.disabled {
+.inkBottleOptions label.disabled {
     color:#999999;
 }
 
-.inkBottleProperties label.disabled:hover {
+.inkBottleOptions label.disabled:hover {
     color:#999999;
     background-color: transparent;
     cursor:default;
 }
 
-.inkBottleProperties div.disabled:hover {
+.inkBottleOptions div.disabled:hover {
     background-color: transparent;
     cursor:default;
 }
