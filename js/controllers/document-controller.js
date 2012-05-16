@@ -33,6 +33,10 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     	value: false
     },
 
+    _hackInitialStyles: {
+        value: true
+    },
+
     _activeDocument: { value: null },
     _iframeCounter: { value: 1, enumerable: false },
     _iframeHolder: { value: null, enumerable: false },
@@ -44,8 +48,10 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             return this._activeDocument;
         },
         set: function(doc) {
-            if(!!this._activeDocument){ this._activeDocument.isActive = false;}
+//            if(!!this._activeDocument){ this._activeDocument.isActive = false;}
+
             this._activeDocument = doc;
+
             if(!!this._activeDocument){
                 if(this._documents.indexOf(doc) === -1) this._documents.push(doc);
                 this._activeDocument.isActive = true;
@@ -213,13 +219,9 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     handleExecuteFileClose:{
         value: function(event) {
         	if (this.activeDocument) {
-        		this.activeDocument.closeDocument();
+//        		this.activeDocument.closeDocument();
+                this.closeFile(this.activeDocument);
         	}
-            /*
-if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
-                this.closeDocument(this.activeDocument.uuid);
-            }
-*/
         }
     },
     ////////////////////////////////////////////////////////////////////
@@ -448,7 +450,32 @@ if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
            */
 
             }
-   },
+    },
+
+    closeFile: {
+        value: function(document) {
+            document.closeDocument(this, this.onCloseFile);
+        }
+    },
+
+    onCloseFile: {
+        value: function(doc) {
+
+			this._documents.splice(this._documents.indexOf(doc), 1);
+
+            this.activeDocument = null;
+
+            this.application.ninja.stage.stageView.hideRulers();
+
+//            document.getElementById("iframeContainer").style.display="block";
+
+            this.application.ninja.stage.hideCanvas(true);
+
+
+			NJevent("closeDocument", doc.model.file.uri);
+			//TODO: Delete object here
+        }
+    },
 
     closeDocument: {
         value: function(id) {
@@ -468,15 +495,7 @@ if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
                 if(typeof doc.stopVideos !== "undefined"){doc.stopVideos();}
                 this._removeDocumentView(doc.container);
             }else if(this._documents.length === 0){
-                if(typeof this.activeDocument.pauseAndStopVideos !== "undefined"){
-                    this.activeDocument.pauseAndStopVideos();
-                }
-                this.activeDocument = null;
-                this._removeDocumentView(doc.container);
-                this.application.ninja.stage.stageView.hideRulers();
-                document.getElementById("iframeContainer").style.display="block";
-
-                this.application.ninja.stage.hideCanvas(true);
+                // See above
             }else{//closing inactive document tab - just clear DOM
                 if(typeof doc.pauseAndStopVideos !== "undefined"){
                     doc.pauseAndStopVideos();
@@ -515,6 +534,9 @@ if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
 
 			this.application.ninja.stage.stageView.showCodeViewBar(false);
             this.application.ninja.stage.stageView.restoreAllPanels();
+
+            // Flag to stop stylesheet dirty event
+            this._hackInitialStyles = false;
         }
     },
 
@@ -552,12 +574,6 @@ if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
     /**
      * VIEW Related Methods
      */
-    // PUBLIC
-    ShowActiveDocument: {
-        value: function() {
-            this.activeDocument.iframe.style.opacity = 1.0;
-        }
-    },
 
     // PRIVATE
     _findDocumentByUUID: {
@@ -656,7 +672,9 @@ if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
 
     handleStyleSheetDirty:{
         value:function(){
-//            this.activeDocument.model.needsSave = true;
+            if(!this._hackInitialStyles) {
+                this.activeDocument.model.needsSave = true;
+            }
         }
     },
 
