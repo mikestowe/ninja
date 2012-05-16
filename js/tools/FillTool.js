@@ -72,9 +72,9 @@ exports.FillTool = Montage.create(ModifierToolBase, {
         value: function(event) {
             this.isDrawing = true;
 
-            if(this._canColor && this.application.ninja.selectedElements.length)
-            {
-                var color = this.application.ninja.colorController.colorToolbar.fill,
+            if(this._canColor && this.application.ninja.selectedElements.length) {
+
+                var color = this.options.fill,
                     colorInfo;
                 if(color && color.color)
                 {
@@ -92,5 +92,4 @@ exports.FillTool = Montage.create(ModifierToolBase, {
             }
         }
     }
-
 });

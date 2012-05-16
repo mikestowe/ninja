@@ -53,16 +53,12 @@
 }
 
 .toolbutton.active {
-    box-shadow: inset 0px 0px 2px 2px #555;
+    box-shadow: inset 0px 0px 2px 2px #999;
     background-color:#363636;
 }
 
 .SelectionTool {
     background-image:url("../images/tools/Tool-Selection.png");
-}
-
-.SubselectionTool {
-    background-image:url("../images/tools/Tool-Subselect.png");
 }
 
 .RotateTool3D {
@@ -113,10 +109,6 @@
     background-image:url("../images/tools/Tool-Fill.png");
 }
 
-.EyedropperTool {
-    background-image:url("../images/tools/Tool-EyeDropper.png");
-}
-
 .EraserTool {
     background-image:url("../images/tools/Tool-Erase.png");
 }
@@ -141,117 +133,3 @@
     background-image:url("../images/tools/Tool-FillColor.png");
 }
 
-.toolsList .colortoolbar {
-    padding-left: 1px;
-    padding-top:4px;
-}
-
-.toolsList .colortoolbar button
-{
-	width: 27px;
-	height: 27px;
-	background: black;
-	border: 1px solid #000;
-	padding: 0;
-	margin: 0px;
-}
-
-.toolsList .colortoolbar div
-{
-	width: 27px;
-	height: 27px;
-	margin: 0;
-   margin-top:3px;
-}
-
-.toolsList .colortoolbar div.cpe_colortoolbar_container
-{
-	margin: 0;
-}
-
-
-
-/*.InkBottleToolPressed {*/
-    /*background-image: url("../images/tools/inkbottle_down.png");*/
-    /*background-repeat: no-repeat;*/
-    /*height: 23px;*/
-    /*width: 26px;*/
-    /*opacity: 1;*/
-/*}*/
-
-/*.InkBottleToolUnpressed {*/
-    /*background-image: url("../images/tools/inkbottle_down.png");*/
-    /*background-repeat: no-repeat;*/
-    /*height: 23px;*/
-    /*width: 26px;*/
-    /*opacity: 0.7;*/
-/*}*/
-
-//  Selection Tool Options
-.topAlignUp {
-
-  @include background-pos(8,2,26px,23px);
-}
-
-.rightAlignUp {
-
-  @include background-pos(9,2,26px,23px);
-}
-
-.bottomAlignUp {
-
-  @include background-pos(10,2,26px,23px);
-}
-
-.verticalLeftUp {
-
-  @include background-pos(11,2,26px,23px);
-}
-
-.verticalCenterUp {
-
-  @include background-pos(12,2,26px,23px);
-}
-
-.verticalRightUp {
-
-  @include background-pos(13,2,26px,23px);
-}
-
-.distRightUp {
-
-  @include background-pos(0,3,26px,23px);
-}
-
-.distLeftUp {
-
-  @include background-pos(14,2,26px,23px);
-}
-
-.distCenterUp {
-
-  @include background-pos(2,3,26px,23px);
-}
-
-.distTopUp {
-
-  @include background-pos(1,3,26px,23px);
-}
-
-.distBottomUp {
-
-  @include background-pos(3,3,26px,23px);
-}
-
-.distVCenterUp {
-
-  @include background-pos(15,2,26px,23px);
-}
-
-.bucketToolUp {
-   @include background-pos(11,0,26px,23px);
-}
-
-.pencilToolUp {
-   @include background-pos(9,1,26px,23px);
-}

@@ -152,9 +152,9 @@ exports.Ninja = Montage.create(Component, {
 
             this.application.ninja = this;
 
-            this.toolsData.selectedTool = this.toolsData.defaultToolsData[0];
-            this.toolsData.defaultSubToolsData = this.toolsData.defaultToolsData[7].subtools;
-            this.toolsData.selectedSubTool = this.toolsData.defaultToolsData[7].subtools[1];
+            this.toolsData.selectedTool = this.toolsData.defaultToolsData[this.application.ninja.toolsData.selectionToolIndex];
+            this.toolsData.defaultSubToolsData = this.toolsData.defaultToolsData[this.application.ninja.toolsData.shapeToolIndex].subtools;
+            this.toolsData.selectedSubTool = this.toolsData.defaultToolsData[this.application.ninja.toolsData.shapeToolIndex].subtools[1];
             this.toolsData.selectedToolInstance = this.toolsList[this.toolsData.selectedTool.action];
 
             this.setupGlobalHelpers();

@@ -187,6 +187,37 @@ exports.Stage = Montage.create(Component, {
         enumerable : false
     },
 
+    _userPaddingLeft: { value: 0 },
+    _userPaddingTop: { value: 0 },
+
+    userPaddingLeft: {
+        get: function() { return this._userPaddingLeft; },
+        set: function(value) {
+            this._userPaddingLeft = value;
+            this._documentOffsetLeft = -value;
+            if(!this._documentRoot) {
+                this._documentRoot = this.application.ninja.currentDocument.documentRoot;
+            }
+            this._documentRoot.ownerDocument.getElementsByTagName("HTML")[0].style["padding-left"] = -value + "px";
+            this.userContentLeft = this._documentOffsetLeft;
+            this.updatedStage = true;
+        }
+    },
+
+    userPaddingTop: {
+        get: function() { return this._userPaddingTop; },
+        set: function(value) {
+            this._userPaddingTop = value;
+            this._documentOffsetTop = -value;
+            if(!this._documentRoot) {
+                this._documentRoot = this.application.ninja.currentDocument.documentRoot;
+            }
+            this._documentRoot.ownerDocument.getElementsByTagName("HTML")[0].style["padding-top"] = -value + "px";
+            this.userContentTop = this._documentOffsetTop;
+            this.updatedStage = true;
+        }
+    },
+
     willDraw: {
         value: function() {
             if(this.resizeCanvases) {
@@ -287,8 +318,8 @@ exports.Stage = Montage.create(Component, {
 
                 this._scrollLeft = 0;
                 this._scrollTop = 0;
-                this._userContentLeft = 0;
-                this._userContentTop = 0;
+                this._userContentLeft =  this._documentOffsetLeft;
+                this._userContentTop =  this._documentOffsetTop;
 
                 this._maxHorizontalScroll = this._documentRoot.scrollWidth - this._canvas.width - 11;
                 this._maxVerticalScroll = this._documentRoot.scrollHeight - this._canvas.height - 11;
@@ -489,8 +520,8 @@ exports.Stage = Montage.create(Component, {
                 this._scrollLeft = this.application.ninja.currentDocument.model.views.design.document.body.scrollLeft;
                 this._scrollTop = this.application.ninja.currentDocument.model.views.design.document.body.scrollTop;
 
-                this.userContentLeft = -this._scrollLeft;
-                this.userContentTop = -this._scrollTop;
+                this.userContentLeft = this._documentOffsetLeft - this._scrollLeft;
+                this.userContentTop = this._documentOffsetTop - this._scrollTop;
 
                 // TODO - scroll events are not dependable.  We may need to use a timer to simulate
                 // scrollBegin and scrollEnd. For now, the Pan Tool will keep track of the stage's scroll values
@@ -581,7 +612,7 @@ exports.Stage = Montage.create(Component, {
             var point, element,
                 docView = this.application.ninja.currentDocument.model.views.design;
 
-            point = webkitConvertPointFromPageToNode(this.canvas, new WebKitPoint(position.pageX - docView.iframe.contentWindow.pageXOffset, position.pageY - docView.iframe.contentWindow.pageYOffset));
+            point = webkitConvertPointFromPageToNode(this.canvas, new WebKitPoint(position.pageX - docView.iframe.contentWindow.pageXOffset + this.documentOffsetLeft, position.pageY - docView.iframe.contentWindow.pageYOffset + this.documentOffsetTop));
             element = this.application.ninja.currentDocument.model.views.design.getElementFromPoint(point.x - this.userContentLeft,point.y - this.userContentTop);
 
             if(!element) debugger;

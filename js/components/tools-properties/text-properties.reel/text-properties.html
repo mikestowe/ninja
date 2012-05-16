@@ -21,6 +21,7 @@
                     "fontSelection": {"@": "fontSelection"},
                     "fontSettings": {"@": "fontSettings"},
                     "fontSize": {"@": "fontSize"},
+                    "fontColor": {"#": "fontColorCtrl"},
                     "btnBold": {"@": "btnBold"},
                     "btnItalic": {"@": "btnItalic"},
                     "btnUnderline": {"@": "btnUnderline"},
@@ -159,8 +160,8 @@
                     "pressedClass": "active",
                     "preventFocus": true,
                     "identifier": "alignLeft",
-                    "pressedLabel": "Left",
-                    "unpressedLabel": "Left"
+                    "pressedLabel": "",
+                    "unpressedLabel": ""
                 },
                 "listeners": [
                     {
@@ -176,8 +177,8 @@
                     "pressedClass": "active",
                     "preventFocus": true,
                     "identifier": "alignCenter",
-                    "pressedLabel": "Center",
-                    "unpressedLabel": "Center"
+                    "pressedLabel": "",
+                    "unpressedLabel": ""
                 },
                 "listeners": [
                     {
@@ -193,8 +194,8 @@
                     "pressedClass": "active",
                     "preventFocus": true,
                     "identifier": "alignRight",
-                    "pressedLabel": "Right",
-                    "unpressedLabel": "Right"
+                    "pressedLabel": "",
+                    "unpressedLabel": ""
                 },
                 "listeners": [
                     {
@@ -210,8 +211,8 @@
                     "pressedClass": "active",
                     "preventFocus": true,
                     "identifier": "alignJustify",
-                    "pressedLabel": "Justify",
-                    "unpressedLabel": "Justify"
+                    "pressedLabel": "",
+                    "unpressedLabel": ""
                 },
                 "listeners": [
                     {
@@ -293,36 +294,36 @@
     </head>
 
     <body>
-        <div data-montage-id="textProperties" class="subToolHolderPanel optionsTextTool">
+        <div data-montage-id="textProperties" class="subToolHolderPanel optionsTextTool toolOptionsFloatChildren">
             <label class="label" style="display: none">Class:</label>
             <input data-montage-id="className" style="display: none" />
             <label class="label" style="display: none">Tag:</label>
             <select data-montage-id="tagType" style="display: none"></select>
-            <label class="label">Font:</label>
+            <label class="label overrideMargin">Font:</label>
             <select data-montage-id="fontSelection" class="nj-skinned fontSelection"></select>
             <button data-montage-id="fontSettings" style="display: none"></button>
             <label class="label">Size:</label>
             <select data-montage-id="fontSize" class="nj-skinned"></select>
-            <div class="fontColor"></div>
-            <div class="btnGroup">
-                <button data-montage-id="btnBold" class="btnBold nj-skinned" style="font-weight:bold"></button>
-                <button data-montage-id="btnItalic" class="btnItalic nj-skinned" style="font-style: italic;"></button>
-                <button data-montage-id="btnUnderline" class="btnUnderline nj-skinned" style="text-decoration: underline;"></button>
-                <button data-montage-id="btnStrikethrough" class="btnStriketrough nj-skinned" style="text-decoration: line-through;"></button>
+            <div data-montage-id="fontColorCtrl" class="toolColorChipCtrl"></div>
+            <div class="btnGroup toolOptionsFloatChildren">
+                <button data-montage-id="btnBold" class="btnBold nj-skinned textButton" style="font-weight:bold" title="Bold"></button>
+                <button data-montage-id="btnItalic" class="btnItalic nj-skinned textButton" style="font-style: italic;"></button>
+                <button data-montage-id="btnUnderline" class="btnUnderline nj-skinned textButton" style="text-decoration: underline;"></button>
+                <button data-montage-id="btnStrikethrough" class="btnStriketrough nj-skinned textButton" style="text-decoration: line-through;"></button>
             </div>
-            <div class="btnGroup">
-                <button data-montage-id="alignLeft" class="nj-skinned"></button>
-                <button data-montage-id="alignCenter" class="nj-skinned"></button>
-                <button data-montage-id="alignRight" class="nj-skinned"></button>
-                <button data-montage-id="alignJustify" class="nj-skinned"></button>
+            <div class="btnGroup toolOptionsFloatChildren">
+                <button data-montage-id="alignLeft" class="nj-skinned imageButton"><img src="../../../../images/optionsbar/text/AlignLeft.png" class="unselectable"/></button>
+                <button data-montage-id="alignCenter" class="nj-skinned imageButton"><img src="../../../../images/optionsbar/text/AlignCenter.png"  class="unselectable"/></button>
+                <button data-montage-id="alignRight" class="nj-skinned imageButton"><img src="../../../../images/optionsbar/text/AlignRight.png"  class="unselectable"/></button>
+                <button data-montage-id="alignJustify" class="nj-skinned imageButton"><img src="../../../../images/optionsbar/text/AlignJustified.png"  class="unselectable"/></button>
             </div>
-            <div class="btnGroup">
-                <button data-montage-id="indent" class="nj-skinned"></button>
-                <button data-montage-id="outdent" class="nj-skinned"></button>
+            <div class="btnGroup toolOptionsFloatChildren">
+                <button data-montage-id="indent" class="nj-skinned textButton"></button>
+                <button data-montage-id="outdent" class="nj-skinned textButton"></button>
             </div>
-            <div class="btnGroup">
-                <button data-montage-id="bulletedList" class="nj-skinned"></button>
-                <button data-montage-id="numberedList" class="nj-skinned"></button>
+            <div class="btnGroup toolOptionsFloatChildren">
+                <button data-montage-id="bulletedList" class="nj-skinned imageButton"><img src="../../../../images/optionsbar/text/BulletedList.png" /></button>
+                <button data-montage-id="numberedList" class="nj-skinned imageButton"><img src="../../../../images/optionsbar/text/NumberedList.png" /></button>
             </div>
         </div>
     </body>

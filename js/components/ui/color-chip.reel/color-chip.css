@@ -19,13 +19,3 @@
     padding: 0;
     background: none;
 }
-
-.colortoolbar .chipContainer {
-	margin: 1px 1px 1px 1px !important;
-	width: 40px !important;
-	height: 20px !important;
-    border: 0;
-    padding: 0;
-    background-image: url(../../../../images/colorpanel/transparent.png) !important;
-    background-repeat: repeat !important;
-}
