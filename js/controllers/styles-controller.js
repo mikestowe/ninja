@@ -94,10 +94,17 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             // Returns null if sheet not found (as in non-ninja projects)
             // Setter will handle null case
             this.defaultStylesheet = this.getSheetFromElement(this.CONST.DEFAULT_SHEET_ID);
-                        
-            //debugger;
+
+            this.userStyleSheets = nj.toArray(document._document.styleSheets).filter(function(sheet) {
+                return sheet !== this._stageStylesheet;
+            }, this);
+
+            NJevent('styleSheetsReady', this);
         },
         enumerable : false
+    },
+    userStyleSheets : {
+        value : null
     },
     _stageStylesheet : {
         value : null
@@ -183,6 +190,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             ///// attach specificity to rule object
             ///// if rule is css keyframes, return rule and don't attach specificity
             if (rule instanceof WebKitCSSKeyframesRule) {
+
                 return rule;
             }
             rule[this.CONST.SPECIFICITY_KEY] = this.getSpecificity(rule.selectorText);
@@ -209,10 +217,12 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             }
 
             var selectorToOverride = getSelector.bind(this)(element, ruleToOverride),
-                overrideData, rule;
+                overrideData, rule, isRuleLocked;
+
+            isRuleLocked = this.isSheetLocked(ruleToOverride.parentStyleSheet);
 
             ///// Get the overriding selector and className
-            overrideData = this.createOverrideSelector(selectorToOverride, element.nodeName);
+            overrideData = this.createOverrideSelector(selectorToOverride, element.nodeName, isRuleLocked);
 
             ///// Create new rule with selector and insert it after the rule we're overriding
             rule = this.addRule(overrideData.selector + ' { }', this.getRuleIndex(ruleToOverride)+1);
@@ -226,7 +236,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     },
 
     createOverrideSelector : {
-        value: function(selectorToOverride, classPrefix, className) {
+        value: function(selectorToOverride, classPrefix, increaseSpecificity, className) {
             var tokens = selectorToOverride.split(/\s/),
                 newClass = className || this.generateClassName(classPrefix, true),
                 lastToken, pseudoSplit, base, pseudo, newToken, newSelector;
@@ -247,10 +257,19 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             if(base.indexOf('#') !== -1) {
                 newToken = base + '.' + newClass + pseudo;
             } else {
-                ///// Replace last class or attribute selector
-                ///// Get everything right before the last class or attribute selector
-                ///// to support compound selector values: (i.e. .firstClass.secondClass)
-                newToken = base.substring(0, Math.max(base.lastIndexOf('.'), base.lastIndexOf('[')));
+                if(increaseSpecificity) {
+                    ///// Increases specificity by one class selector
+                    ///// We'll do a direct append to the base class
+                    ///// if we want to increase the specificity
+                    newToken = base;
+                } else {
+                    ///// Maintains original specificity
+                    ///// Replace last class or attribute selector
+                    ///// Get everything right before the last class or attribute selector
+                    ///// to support compound selector values: (i.e. .firstClass.secondClass)
+                    newToken = base.substring(0, Math.max(base.lastIndexOf('.'), base.lastIndexOf('[')));
+                }
+
                 ///// Append the generated class
                 newToken += '.' + newClass + pseudo;
             }
@@ -795,7 +814,9 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             ///// method to apply/test the new value
             dec.setProperty(property, value, priority);
 
-            this.styleSheetModified(rule.parentStyleSheet);
+            if(rule.parentStyleSheet) {
+                this.styleSheetModified(rule.parentStyleSheet);
+            }
 
             ///// Return browser value for value we just set
             return dec.getPropertyValue(property);
@@ -969,12 +990,13 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             var doc = element.ownerDocument,
                 useImportant = false,
                 cache = this._getCachedRuleForProperty(element, property),
-                dominantRule, override, className, browserValue;
+                dominantRule, override, className, browserValue, cacheMatchesMany;
 
             if(cache) {
                 ///// We've cached the rule for this property!
                 //console.log('Styles Controller :: setElementStyle - We found the cached rule!');
                 dominantRule = cache;
+                cacheMatchesMany = this.matchesMultipleElements(dominantRule, doc);
             } else {
                 ///// Use Dominant Rule logic to find the right place to add the style
                 ///// Pass "true" to method to return an override object, which
@@ -982,7 +1004,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 dominantRule = this.getDominantRuleForElement(element, property, true, isStageElement);
 
             }
-               
+
             ///// Did we find a dominant rule?
             if(!dominantRule) {
                 ///// No. This means there was no rule with this property, and no
@@ -1000,6 +1022,13 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 useImportant = dominantRule.useImportant;
                 dominantRule = override.rule;
                 this.addClass(element, override.className);
+            } else if(cacheMatchesMany) {
+                ///// Only happens when the cached rule applies to multiple
+                ///// elements - we must create override
+                override = this.createOverrideRule(dominantRule, element);
+                useImportant = !!dominantRule.style.getPropertyPriority(property);
+                dominantRule = override.rule;
+                this.addClass(element, override.className);
             }
 
 
@@ -1007,7 +1036,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             browserValue = this.setStyle(dominantRule, property, value, useImportant);
 
             ///// Only cache the dominant rule if the style value was valid, and not already cached
-            if(browserValue && !cache) {
+            if(browserValue && (!cache || cacheMatchesMany)) {
                 this._setCachedRuleForProperty(element, property, dominantRule);
             }
 
@@ -1242,7 +1271,11 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             doc.head.appendChild(sheetElement);
             sheet = this.getSheetFromElement(sheetElement, doc);
 
+            this.userStyleSheets.push(sheet);
+
             this.styleSheetModified(sheet);
+
+            NJevent('newStyleSheet', sheet);
 
             return sheet;
         }
@@ -1263,6 +1296,12 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             
             return;
             
+        }
+    },
+
+    isSheetLocked : {
+        value: function(sheet) {
+            return !!sheet.ownerNode.dataset['ninjaFileReadOnly'];
         }
     },
 
@@ -1306,11 +1345,10 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             this.dirtyStyleSheets.length = 0;
 
             if(doc) {
-                var stillDirty = this.dirtyStyleSheets.filter(function(sheet) {
+                this.dirtyStyleSheets = null;
+                this.dirtyStyleSheets = this.dirtyStyleSheets.filter(function(sheet) {
                     return sheet.document !== doc;
                 });
-                this.dirtyStyleSheets = null;
-                this.dirtyStyleSheets = stillDirty;
             }
 
 

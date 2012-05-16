@@ -8,7 +8,10 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 //
 var Montage = 		require("montage/core/core").Montage,
     Component = 	require("montage/ui/component").Component,
-    NJUtils     = require("js/lib/NJUtils").NJUtils;
+    NJUtils     = require("js/lib/NJUtils").NJUtils,
+    World = require("js/lib/drawing/world").World,
+    ShapesController = require("js/controllers/elements/shapes-controller").ShapesController,
+        ShapeModel    = require("js/models/shape-model").ShapeModel;
 
 var ClipboardController = exports.ClipboardController = Montage.create(Component, {
     hasTemplate: {
@@ -27,6 +30,10 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
             this.eventManager.addEventListener("executePaste", this, false);
 
         }
+    },
+
+    copiedObjects:{
+        value: null
     },
 
     _copyFlag:{
@@ -65,7 +72,11 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
             if(this.application.ninja.documentController.activeDocument.currentView === "code") return;
 
             if(this.application.ninja.selectedElements.length > 0){
-                //handling 1 selected element
+                //handling 1 selected element for now
+
+                if(this.application.ninja.selectedElements[0].tagName === "CANVAS"){
+                    this.copiedObjects = this.application.ninja.selectedElements[0];
+                }
 
                 elem = this.application.ninja.selectedElements[0];
                 originalStyleAttr = elem.getAttribute("style");//preserve the current styles
@@ -100,6 +111,8 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
         value:function(clipboardEvent){
             if(this.application.ninja.documentController.activeDocument.currentView === "code") return;
 
+            //TODO: return if stage is not focussed
+
             var clipboardData = clipboardEvent.clipboardData,
                 htmlData = clipboardData.getData("text/html"),
                 textData = clipboardData.getData("text/plain");
@@ -121,41 +134,103 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
 
             data = htmlData || textData;
 
-            if(data){
+            if(htmlData){
                 //TODO: cleanse HTML
 
                 this.application.ninja.selectedElements.length = 0;
                 NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": true} );
 
-                clipboardHelper.innerHTML = data;//add the copied html to generate the nodes
+                clipboardHelper.innerHTML = htmlData;//add the copied html to generate the nodes
 
                 while(clipboardHelper.hasChildNodes()){
-                    if(clipboardHelper.lastChild.tagName !== "META") {
-                        node = clipboardHelper.removeChild(clipboardHelper.lastChild);
-
-                        node.removeAttribute("style");//remove the computed styles attribute which is placed only for pasting to external applications
-
-                        //get class string while copying .... generate styles from class
-                       styles = {"top":"100px", "left":"100px"};//get real stage center coordinates
-                        this.pastePositioned(node, styles);
-
-
-
-
-                        //this.pasteInPlace(temp);//does not work now
-
-
-//                        this.application.ninja.documentController.activeDocument.documentRoot.insertBefore(temp, this.application.ninja.documentController.activeDocument.documentRoot.firstChild);
-//                        NJUtils.makeModelFromElement(temp);
-//                        NJevent("elementAdded", temp);
-
-                    }
-                    else {
+                    if(clipboardHelper.lastChild.tagName === "META") {
                         clipboardHelper.removeChild(clipboardHelper.lastChild);//remove unnecesary meta tag
                     }
+                    else if (clipboardHelper.lastChild.tagName === "CANVAS"){//temporary - we probably won't need to serialize this to the system clipboard
+
+                        //only handling 1 canvas for POC
+
+
+                        //clone copied canvas
+                        var canvas = document.application.njUtils.make("canvas", this.copiedObjects.className, this.application.ninja.currentDocument);
+                        canvas.width = this.copiedObjects.width;
+                        canvas.height = this.copiedObjects.height;
+                        //end - clone copied canvas
+
+                        if (!canvas.getAttribute( "data-RDGE-id" )) canvas.setAttribute( "data-RDGE-id", NJUtils.generateRandom() );
+                        document.application.njUtils.createModelWithShape(canvas);
+//                        canvas.elementModel.controller = ShapesController;
+//                        if(!canvas.elementModel.shapeModel) {
+//                            canvas.elementModel.shapeModel = Montage.create(ShapeModel);
+//                        }
+                        styles = canvas.elementModel.data || {};
+                        styles.top = "" + (this.application.ninja.elementMediator.getProperty(this.copiedObjects, "top", parseInt) - 50) + "px";
+                        styles.left = "" + (this.application.ninja.elementMediator.getProperty(this.copiedObjects, "left", parseInt) - 50) + "px";
+
+                        this.application.ninja.elementMediator.addElements(canvas, styles, false);
+
+                        var world, worldData = this.copiedObjects.elementModel.shapeModel.GLWorld.exportJSON();
+                        if(worldData)
+                        {
+
+                            var jObj;
+                            var index = worldData.indexOf( ';' );
+                            if ((worldData[0] === 'v') && (index < 24))
+                            {
+                                // JSON format.  separate the version info from the JSON info
+                                //var vStr = importStr.substr( 0, index+1 );
+                                var jStr = worldData.substr( index+1 );
+                                jObj = JSON.parse( jStr );
+
+                                world = new World(canvas, jObj.useWebGl);
+                                canvas.elementModel.shapeModel.GLWorld = world;
+                                canvas.elementModel.shapeModel.useWebGl = jObj.useWebGl;
+                                world.importJSON(jObj);
+                                this.application.ninja.currentDocument.buildShapeModel( canvas.elementModel, world );
+                            }
+
+                       }
+
+                        NJevent("elementAdded", canvas);
+
+
+                        clipboardHelper.removeChild(clipboardHelper.lastChild);
+                    }
+                    else if(clipboardHelper.lastChild.nodeType === 3){//TextNode
+                        node = clipboardHelper.removeChild(clipboardHelper.lastChild);
+
+                        //USE styles controller to create the styles of the div and span
+                        var doc = this.application.ninja.currentDocument ? this.application.ninja.currentDocument._document : document;
+                        var aspan = doc.createElement("span");
+                        aspan.appendChild(node);
+                        var adiv = doc.createElement("div");
+                        adiv.appendChild(aspan);
+                        styles = {"top":"100px", "left":"100px"};
+
+
+                        this.pastePositioned(node, styles);
+                    }
+                    else {
+                        node = clipboardHelper.removeChild(clipboardHelper.lastChild);
+
+                        if(node.removeAttribute) {node.removeAttribute("style");}//remove the computed styles attribute which is placed only for pasting to external applications
+
+                        //get class string while copying .... generate styles from class
+                        //styles = {"top":"100px", "left":"100px"};
+
+                        this.pastePositioned(node, styles);
+                    }
+
                 }
 
                 this.application.ninja.documentController.activeDocument.needsSave = true;
+            }else if(textData){
+
+                //USE styles controller to create the styles of the div and span
+                clipboardHelper.innerHTML = "<div><span>"+ textData +"</span></div>";//add the copied html to generate the nodes
+                node = clipboardHelper.removeChild(clipboardHelper.lastChild);
+                styles = {"top":"100px", "left":"100px"};//get real stage center coordinates
+                this.pastePositioned(node, styles);
             }
 
         }
