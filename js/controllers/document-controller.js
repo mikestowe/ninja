@@ -76,24 +76,13 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
             this.eventManager.addEventListener("styleSheetDirty", this, false);
             
-            this.eventManager.addEventListener("addComponentFirstDraw", this, false);
-
             // Temporary add listeners for the new stage templates
             this.eventManager.addEventListener("executeWebpageOpen", this, false);
             this.eventManager.addEventListener("executeNewWebpage", this, false);
         }
     },
     
-    handleAddComponentFirstDraw: {
-    	value: function (e) {
-    		//TODO: Add logic to reparse the document for dynamically added styles
-    		//console.log(e);
-    	}
-    },
-    
-    			
-    			
-    			
+
 	//TODO: Ensure these APIs are not needed
 	////////////////////////////////////////////////////////////////////
 	//
