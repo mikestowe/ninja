@@ -3,10 +3,10 @@
 <div class="ninja-content-wrapper">
 	
 	<div class="ninja-banner">
-		
+	
 		<!-- Created with Motorola Mobility Ninja -->
 		<!-- Ninja-Banner Dimensions@@@ -->
-		
+	
 		<style type="text/css">
 			html, body {
        			width: 100%;

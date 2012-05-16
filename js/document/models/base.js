@@ -93,13 +93,21 @@ exports.BaseDocumentModel = Montage.create(Component, {
         		//Currently only supporting current browser (Chrome, obviously)
         		switch (this.browser) {
         			case 'chrome':
-        				window.open(this.url);
+        				if (this.template.type === 'banner' || this.template.type === 'animation') {
+        					window.open('/js/document/templates/preview/banner.html?width='+this.template.size.width+'&height='+this.template.size.height+'&url='+this.url);
+        				} else {
+        					window.open(this.url);
+        				}
 	        			break;
     	    		default:
-        				window.open(this.url);
+        				if (this.template.type === 'banner' || this.template.type === 'animation') {
+        					window.open('/js/document/templates/preview/banner.html?width='+this.template.size.width+'&height='+this.template.size.height+'&url='+this.url);
+        				} else {
+        					window.open(this.url);
+        				}
         				break;
 	        	}
-        	}.bind({browser: browser, url: url}));
+        	}.bind({browser: browser, url: url, template: this.fileTemplate}));
         }
     },
     ////////////////////////////////////////////////////////////////////
@@ -138,6 +146,7 @@ exports.BaseDocumentModel = Montage.create(Component, {
         			file: this.file,
         			webgl: this.webGlHelper.glData,
         			styles: this.getStyleSheets(),
+        			template: this.fileTemplate,
         			document: this.views.design.iframe.contentWindow.document,
         			head: this.views.design.iframe.contentWindow.document.head,
         			body: this.views.design.iframe.contentWindow.document.body
@@ -165,6 +174,7 @@ exports.BaseDocumentModel = Montage.create(Component, {
         			file: this.file,
         			webgl: this.webGlHelper.glData,
         			css: this.getStyleSheets(),
+        			template: this.fileTemplate,
         			document: this.views.design.iframe.contentWindow.document,
         			head: this.views.design.iframe.contentWindow.document.head,
         			body: this.views.design.iframe.contentWindow.document.body
@@ -204,10 +214,11 @@ exports.BaseDocumentModel = Montage.create(Component, {
         	if (this.views.design && (!view || view === 'design')) {
         		//
         		this.parentContainer.removeChild(this.views.design.iframe);
+                this.views.design.pauseAndStopVideos();
         		this.views.design = null;
         	}
         	//
-        	if (callback) callback(success);
+        	return success;
         }
     }
 	////////////////////////////////////////////////////////////////////

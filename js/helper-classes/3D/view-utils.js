@@ -358,9 +358,13 @@ exports.ViewUtils = Montage.create(Component, {
             {
                 pt = this.childToParent( pt, child );
 
-                if (child === this._stageElement)  break;
+//                if (child === this._stageElement)  break;
+//                child = child.offsetParent;
 
+                if (child === this._stageElement)  break;
+                if (child === this._rootElement)  break;
                 child = child.offsetParent;
+                if (child === this._rootElement)  break;
             }
 
             /////////////////////////////////////////////////////////

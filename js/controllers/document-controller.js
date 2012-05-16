@@ -33,6 +33,10 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     	value: false
     },
 
+    _hackInitialStyles: {
+        value: true
+    },
+
     _activeDocument: { value: null },
     _iframeCounter: { value: 1, enumerable: false },
     _iframeHolder: { value: null, enumerable: false },
@@ -44,8 +48,10 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             return this._activeDocument;
         },
         set: function(doc) {
-            if(!!this._activeDocument){ this._activeDocument.isActive = false;}
+//            if(!!this._activeDocument){ this._activeDocument.isActive = false;}
+
             this._activeDocument = doc;
+
             if(!!this._activeDocument){
                 if(this._documents.indexOf(doc) === -1) this._documents.push(doc);
                 this._activeDocument.isActive = true;
@@ -95,11 +101,14 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     	value: function (request) {
     		//TODO: Check if frameId is proper
     		if (this._hackRootFlag && request.parentFrameId !== -1) {
-    			//TODO: Optimize creating string
-    			//console.log(request);
-    			//console.log(this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1], request.url);
-				//return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split('/')[request.url.split('/').length-1]};
-				return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/'))[1]};
+    			//Checking for proper URL redirect (from different directories)
+    			if (request.url.indexOf('js/document/templates/banner') !== -1) {
+					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/banner/'))[1]};
+				} else if (request.url.indexOf('js/document/templates/html')  !== -1) {
+					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/html/'))[1]};
+				} else {
+					//Error, not a valid folder
+				}
 			}
 		}
     },
@@ -155,13 +164,13 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     },
 
     handleExecuteNewFile: {
-            value: function(event) {
-                var newFileSettings = event._event.settings || {};
-                if (this.application.ninja.coreIoApi.cloudAvailable()) {
-                    newFileSettings.callback = this.createNewFile.bind(this);
-                    this.application.ninja.newFileController.showNewFileDialog(newFileSettings);
-                }
+        value: function(event) {
+            var newFileSettings = event._event.settings || {};
+            if (this.application.ninja.coreIoApi.cloudAvailable()) {
+                newFileSettings.callback = this.createNewFile.bind(this);
+                this.application.ninja.newFileController.showNewFileDialog(newFileSettings);
             }
+        }
     },
 	////////////////////////////////////////////////////////////////////
 	//
@@ -210,13 +219,9 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     handleExecuteFileClose:{
         value: function(event) {
         	if (this.activeDocument) {
-        		this.activeDocument.closeDocument();
+//        		this.activeDocument.closeDocument();
+                this.closeFile(this.activeDocument);
         	}
-            /*
-if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
-                this.closeDocument(this.activeDocument.uuid);
-            }
-*/
         }
     },
     ////////////////////////////////////////////////////////////////////
@@ -445,7 +450,32 @@ if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
            */
 
             }
-   },
+    },
+
+    closeFile: {
+        value: function(document) {
+            document.closeDocument(this, this.onCloseFile);
+        }
+    },
+
+    onCloseFile: {
+        value: function(doc) {
+
+			this._documents.splice(this._documents.indexOf(doc), 1);
+
+            this._activeDocument = null;
+
+            this.application.ninja.stage.stageView.hideRulers();
+
+//            document.getElementById("iframeContainer").style.display="block";
+
+            this.application.ninja.stage.hideCanvas(true);
+
+
+			NJevent("closeDocument", doc.model.file.uri);
+			//TODO: Delete object here
+        }
+    },
 
     closeDocument: {
         value: function(id) {
@@ -465,15 +495,7 @@ if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
                 if(typeof doc.stopVideos !== "undefined"){doc.stopVideos();}
                 this._removeDocumentView(doc.container);
             }else if(this._documents.length === 0){
-                if(typeof this.activeDocument.pauseAndStopVideos !== "undefined"){
-                    this.activeDocument.pauseAndStopVideos();
-                }
-                this.activeDocument = null;
-                this._removeDocumentView(doc.container);
-                this.application.ninja.stage.stageView.hideRulers();
-                document.getElementById("iframeContainer").style.display="block";
-
-                this.application.ninja.stage.hideCanvas(true);
+                // See above
             }else{//closing inactive document tab - just clear DOM
                 if(typeof doc.pauseAndStopVideos !== "undefined"){
                     doc.pauseAndStopVideos();
@@ -512,6 +534,9 @@ if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
 
 			this.application.ninja.stage.stageView.showCodeViewBar(false);
             this.application.ninja.stage.stageView.restoreAllPanels();
+
+            // Flag to stop stylesheet dirty event
+            this._hackInitialStyles = false;
         }
     },
 
@@ -549,12 +574,6 @@ if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
     /**
      * VIEW Related Methods
      */
-    // PUBLIC
-    ShowActiveDocument: {
-        value: function() {
-            this.activeDocument.iframe.style.opacity = 1.0;
-        }
-    },
 
     // PRIVATE
     _findDocumentByUUID: {
@@ -607,7 +626,7 @@ if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
                     //hide the iframe when switching to code view
                     document.getElementById("iframeContainer").style.display = "none";
                 }
-        }
+            }
         }
     },
 
@@ -653,7 +672,9 @@ if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
 
     handleStyleSheetDirty:{
         value:function(){
-//            this.activeDocument.model.needsSave = true;
+            if(!this._hackInitialStyles) {
+                this.activeDocument.model.needsSave = true;
+            }
         }
     },
 
@@ -683,8 +704,9 @@ if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
             }
 
             if(needsRule) {
-                rule = sc.addRule('body{}');
+                rule = sc.addRule('.ninja-body{}');
                 sc.setStyles(rule, styles);
+                sc.addClass(docRoot, "ninja-body");
             }
         }
     }

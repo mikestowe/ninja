@@ -13,7 +13,7 @@
 		"name":"Template",
 		"uri":"/template",
 		"type":"directory",
-        "children":["js/io/templates/files/banner.txt"]
+        "children":["js/io/templates/files/banner.txt", "js/io/templates/files/animation.txt"]
 	},
 	
 	"js/io/templates/files/html.txt":{
@@ -90,7 +90,7 @@
 		"uri":"js/io/templates/files/banner.txt",
 		"type":"file",
         "fileExtension":".html",
-        "children":["120x600", "160x600", "200x200", "250x250", "300x250", "336x280", "550x400"]
+        "children":["120x600", "160x600", "200x200", "250x250", "300x250", "336x280"]
 	},
     
     "120x600":{
@@ -123,8 +123,17 @@
         "uri": "336x280",
         "type":"file"
     },
-    "550x400":{
-        "name": "Animation Default",
+    
+    "js/io/templates/files/animation.txt":{
+		"name":"Animation",
+		"uri":"js/io/templates/files/animation.txt",
+		"type":"file",
+        "fileExtension":".html",
+        "children":["550x400"]
+	},
+	
+	"550x400":{
+        "name": "Default",
         "uri": "550x400",
         "type":"file"
     }

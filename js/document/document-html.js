@@ -43,13 +43,6 @@ exports.HtmlDocument = Montage.create(Component, {
     exclusionList: {
         value: ["HTML", "BODY"] //TODO: Update to correct list
     },
-	////////////////////////////////////////////////////////////////////
-	//
-    uuid: {
-        get: function() {
-            return this._uuid;
-        }
-    },
     ////////////////////////////////////////////////////////////////////
 	//
     inExclusion: {
@@ -100,14 +93,14 @@ exports.HtmlDocument = Montage.create(Component, {
             		this._document = this.model.views.design.document;
             		//TODO: Remove usage, seems as not needed
     				if (template && template.type === 'banner') {
-    					this.documentRoot = this.model.views.design.document.body.getElementsByTagName('ninja-banner')[0];
+    					this.documentRoot = this.model.views.design.document.body.getElementsByTagName('ninja-content')[0];
     				} else {
     					this.documentRoot = this.model.views.design.document.body;
     				}
             		//TODO: Why is this needed?
-            		this._liveNodeList = this.model.views.design.document.body.getElementsByTagName('*');
+            		this._liveNodeList = this.documentRoot.getElementsByTagName('*');
             		//Initiliazing document model
-            		document.application.njUtils.makeElementModel(this.model.views.design.document.body, "Body", "body");
+            		document.application.njUtils.makeElementModel(this.documentRoot, "Body", "body");
             		//Adding observer to know when template is ready
             		this._observer = new WebKitMutationObserver(this.handleTemplateReady.bind(this));
         			this._observer.observe(this.model.views.design.document.head, {childList: true});
@@ -133,21 +126,10 @@ exports.HtmlDocument = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
 	//
 	closeDocument: {
-		value: function () {
-			//
-			this.model.close(null, this.handleCloseDocument.bind(this));
-		}
-	},
-	////////////////////////////////////////////////////////////////////
-	//
-	handleCloseDocument: {
-		value: function (success) {
-			//TODO: Add logic for handling success or failure
-			//
-			this.application.ninja.documentController._documents.splice(this.uuid, 1);
-			//
-			NJevent("closeDocument", this.model.file.uri);
-			//TODO: Delete object here
+		value: function (context, callback) {
+			var closed = this.model.close(null);
+
+            callback.call(context, this);
 		}
 	},
     ////////////////////////////////////////////////////////////////////
