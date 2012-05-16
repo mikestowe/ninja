@@ -228,7 +228,7 @@ exports.Properties = Montage.create(Component, {
 
             if(isRoot) {
                 var backgroundChip = this.customSections[0].content.controls["background"];
-                backgroundChip.color = ElementsMediator.getProperty(el, "background");
+                if(backgroundChip) backgroundChip.color = ElementsMediator.getProperty(el, "background");
             }
 
 			var previousInput = this.application.ninja.colorController.colorModel.input;
