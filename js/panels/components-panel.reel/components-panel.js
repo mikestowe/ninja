@@ -6,7 +6,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var Montage     = require("montage/core/core").Montage,
     Component   = require("montage/ui/component").Component,
-    NJUtils     = require("js/lib/NJUtils").NJUtils;
+    ClassUUID   = require("js/components/core/class-uuid").ClassUuid;
 
 var PIData              = require("js/data/pi/pi-data").PiData;
 
@@ -391,6 +391,8 @@ exports.ComponentsPanel = Montage.create(Component, {
                     break;
 
             }
+
+            el.setAttribute("data-montage-id", ClassUUID.generate());
 
             return el;
         }
