@@ -4,6 +4,7 @@
        },
        "mappings": {
            "montage": "../../../../node_modules/montage/",
+           "tools": "../../../../node_modules/tools/",
            "montage-google": "../../../../node_modules/montage-google/"
        }
 }

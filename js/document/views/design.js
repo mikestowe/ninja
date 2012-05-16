@@ -347,7 +347,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 	//
     initMontage: {
         value: function () {
-        	//
+        	//initWithDocument(window.document) instantiateWithOwnerAndDocument(null, window.document)
         }
     },
     ////////////////////////////////////////////////////////////////////
