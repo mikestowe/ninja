@@ -93,13 +93,21 @@ exports.BaseDocumentModel = Montage.create(Component, {
         		//Currently only supporting current browser (Chrome, obviously)
         		switch (this.browser) {
         			case 'chrome':
-        				window.open(this.url);
+        				if (this.template.type === 'banner' || this.template.type === 'animation') {
+        					window.open('/js/document/templates/preview/banner.html?width='+this.template.size.width+'&height='+this.template.size.height+'&url='+this.url);
+        				} else {
+        					window.open(this.url);
+        				}
 	        			break;
     	    		default:
-        				window.open(this.url);
+        				if (this.template.type === 'banner' || this.template.type === 'animation') {
+        					window.open('/js/document/templates/preview/banner.html?width='+this.template.size.width+'&height='+this.template.size.height+'&url='+this.url);
+        				} else {
+        					window.open(this.url);
+        				}
         				break;
 	        	}
-        	}.bind({browser: browser, url: url}));
+        	}.bind({browser: browser, url: url, template: this.fileTemplate}));
         }
     },
     ////////////////////////////////////////////////////////////////////
