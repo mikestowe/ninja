@@ -183,8 +183,12 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
     },
 
     handleClick:{
-        value:function(ev){
+        value:function (ev) {
             if (ev.shiftKey) {
+
+                if (this.trackType == "position") {
+                    this.parentComponent.parentComponent.parentComponent.handleNewTween(ev);
+                }
 
                 if (this.propTweens.length < 1) {
 
@@ -192,7 +196,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
                     // get this property track's editor prop name from layer data arrays
                     var selectIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
 
-                    if (this.trackType === "style") {
+                    if (this.trackType == "style") {
                         if (this.application.ninja.timeline.arrLayers[selectIndex].layerData.arrLayerStyles[this.styleIndex].editorProperty == null) {
                             console.log("Please enter a style property for this track before adding keyframes.");
                             return;
@@ -200,7 +204,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
                             this.trackEditorProperty = this.application.ninja.timeline.arrLayers[selectIndex].layerData.arrLayerStyles[this.styleIndex].editorProperty;
                             //console.log("Property track editorProperty set to: " + this.trackEditorProperty);
                         }
-                    } else if (this.trackType === "position") {
+                    } else if (this.trackType == "position") {
                         //console.log("Property track editorProperty set to: " + this.trackEditorProperty);
                     }
 
@@ -220,7 +224,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
             if (ev.offsetX > this.propTweens[this.propTweens.length - 1].tweenData.keyFramePosition) {
                 this.insertPropTween(ev.offsetX);
             } else {
-                console.log("spitting sub keyframes not yet supported");
+                console.log("Splitting style tweens not yet supported.");
             }
         }
     },

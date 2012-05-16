@@ -208,9 +208,6 @@ var Tween = exports.Tween = Montage.create(Component, {
             }
             // tell track to update css rule
             this.parentComponent.parentComponent.updateKeyframeRule();
-
-            // highlight the tween's span
-            this.tweenspan.highlightSpan();
             this.isTweenAnimated = true;
         }
     },
