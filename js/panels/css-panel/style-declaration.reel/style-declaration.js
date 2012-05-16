@@ -86,9 +86,9 @@ exports.StyleDeclaration = Montage.create(Component, {
 
             if(this.includeEmptyStyle) {
                 this.styles.push({
-                    "name": "property",
-                    "value" : "value",
-                    "isEmpty": true
+                    name    : "property",
+                    value   : "value",
+                    isEmpty : true
                 });
             }
 
@@ -159,6 +159,26 @@ exports.StyleDeclaration = Montage.create(Component, {
                     if(i) {
                         this.styles[i].value = this.declaration.getPropertyValue(prop);
                         usedIndices.push(i);
+                    } else {
+                        //// styles doesn't exist, does shorthand?
+                        var shorthands = ShorthandProps.CSS_SHORTHAND_MAP[prop],
+                            shorthandUpdated = false;
+
+                        if(shorthands) {
+                            shorthands.forEach(function(shorthand) {
+                                var shorthandIndex = styleToIndexMap[shorthand];
+                                if(shorthandIndex) {
+                                    //// if shorthand exists in list of rendered styles
+                                    //// update it
+                                    this.styles[shorthandIndex].value = this.declaration.getPropertyValue(shorthand);
+                                    shorthandUpdated = true;
+                                }
+                            }, this);
+                        }
+
+                        if(!shorthandUpdated) {
+                            this.addStyle(prop, this.declaration.getPropertyValue(prop));
+                        }
                     }
                 }, this);
 
@@ -179,11 +199,25 @@ exports.StyleDeclaration = Montage.create(Component, {
 
     addNewStyle : {
         value: function() {
-            this.styles.push({
-                "name": "property",
-                "value" : "value",
-                "isEmpty": true
+            this.addStyle('property', 'value', {
+                isEmpty : true
             });
+        }
+    },
+    addStyle : {
+        value: function(property, value, data) {
+            var styleDescriptor = {
+                property : property,
+                value : value
+            }, prop;
+
+            for(prop in data) {
+                if(data.hasOwnProperty(prop)) {
+                    styleDescriptor[prop] = data[prop];
+                }
+            }
+
+            this.arrayController.addObjects(styleDescriptor);
         }
     },
 
