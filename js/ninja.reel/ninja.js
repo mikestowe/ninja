@@ -165,9 +165,9 @@ exports.Ninja = Montage.create(Component, {
             this.eventManager.addEventListener( "selectSubTool", this, false);
             this.eventManager.addEventListener( "onOpenDocument", this, false);
 
-            this.addEventListener("change@appModel.livePreview", this.executeLivePreview, false);
-            this.addEventListener("change@appModel.chromePreview", this.executeChromePreview, false);
-            this.addEventListener("change@appModel.debug", this.toggleDebug, false);
+            this.addPropertyChangeListener("appModel.livePreview", this.executeLivePreview, false);
+            this.addPropertyChangeListener("appModel.chromePreview", this.executeChromePreview, false);
+            this.addPropertyChangeListener("appModel.debug", this.toggleDebug, false);
 
             NJevent("appLoading");
         }

@@ -16,7 +16,7 @@ var FileInputField = exports.FileInputField = Montage.create(Component, {
             this.findDirectory.identifier = "findDirectory";
             this.findDirectory.addEventListener("click", this, false);
             this.eventManager.addEventListener("pickerSelectionsDone", this.handleFileInputPickerSelectionsDone, false);
-            this.addEventListener("change@newFileDirectory.value", this.handleNewFileDirectoryChange, false);
+            this.addPropertyChangeListener("newFileDirectory.value", this.handleNewFileDirectoryChange, false);
             this.newFileDirectory.element.addEventListener("keyup", this, false);
         }
     },

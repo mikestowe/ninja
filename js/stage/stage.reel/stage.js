@@ -300,7 +300,7 @@ exports.Stage = Montage.create(Component, {
             // TODO - We will need to modify this once we support switching between multiple documents
             this.application.ninja.toolsData.selectedToolInstance._configure(true);
 
-            this.addEventListener("change@appModel.show3dGrid", this, false);
+            this.addPropertyChangeListener("appModel.show3dGrid", this, false);
 
             this.layout.handleOpenDocument();
         }
@@ -309,10 +309,9 @@ exports.Stage = Montage.create(Component, {
     /**
     * Event handler for the change @ 3DGrid
     */
-    handleEvent: {
-        value: function(e) {
-            if(e.type === "change@appModel.show3dGrid") {
-
+    handleChange: {
+        value: function(notification) {
+            if("appModel.show3dGrid" === notification.currentPropertyPath) {
                 if(this.appModel.show3dGrid) {
 
                     drawUtils.drawXY = true;
