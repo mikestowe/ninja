@@ -10,184 +10,239 @@ var MaterialsModel = require("js/models/materials-model").MaterialsModel;
 // Class GLGeomObj
 //      Super class for all geometry classes
 ///////////////////////////////////////////////////////////////////////
-var GeomObj = function GLGeomObj() {
+exports.GeomObj = Object.create(Object.prototype, {
     ///////////////////////////////////////////////////////////////////////
     // Constants
     ///////////////////////////////////////////////////////////////////////
-    this.GEOM_TYPE_RECTANGLE = 1;
-    this.GEOM_TYPE_CIRCLE = 2;
-    this.GEOM_TYPE_LINE = 3;
-    this.GEOM_TYPE_PATH = 4;
-    this.GEOM_TYPE_CUBIC_BEZIER = 5;
-    this.GEOM_TYPE_BRUSH_STROKE = 6;
-    this.GEOM_TYPE_UNDEFINED = -1;
-
-    // Needed for calculating dashed/dotted strokes
-    this.DASH_LENGTH = 0.15;
-    this.DOT_LENGTH = 0.05;
-    this.GAP_LENGTH = 0.05;
+    // TODO - Is there a way to make these static constants?
+    GEOM_TYPE_RECTANGLE: { value : 1, writable: false },
+    GEOM_TYPE_CIRCLE: { value : 2, writable: false },
+    GEOM_TYPE_LINE: { value : 3, writable: false },
+    GEOM_TYPE_PATH: { value : 4, writable: false },
+    GEOM_TYPE_CUBIC_BEZIER: { value : 5, writable: false },
+    GEOM_TYPE_BRUSH_STROKE: { value : 6, writable: false },
+    GEOM_TYPE_UNDEFINED: { value : -1, writable: false },
 
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-    this._matrix = Matrix.I(4);
+    _matrix: { value : Matrix.I(4), writable: true },
 
-    this._next = undefined;
-    this._prev = undefined;
-    this._child = undefined;
-    this._parent = undefined;
+    _next: { value : undefined, writable: true },
+    _prev: { value : undefined, writable: true },
+    _child: { value : undefined, writable: true },
+    _parent: { value : undefined, writable: true },
 
-    this.m_world = null;
+    m_world: { value : null, writable: true },
 
     // stroke and fill colors
-    this._strokeColor = [0, 0, 0, 0];
-    this._fillColor = [0, 0, 0, 0];
+    _strokeColor: { value : [0, 0, 0, 0], writable: true },
+    _fillColor: { value : [0, 0, 0, 0], writable: true },
 
     // stroke and fill materials
-    this._fillMaterial = null;
-    this._strokeMaterial = null;
+    _fillMaterial: { value : null, writable: true },
+    _strokeMaterial: { value : null, writable: true },
 
     // Shapes (such as lines) that don't support fill should set this to false
-    this.canFill = true;
+    canFill: { value : true, writable: true },
 
     // array of primitives - used in RDGE
-    this._primArray = [];
-    this._materialNodeArray = [];
-    this._materialArray = [];
-    this._materialTypeArray = [];
+    _primArray: { value : [], writable: true },
+    _materialNodeArray: { value : [], writable: true },
+    _materialArray: { value : [], writable: true },
+    _materialTypeArray: { value : [], writable: true },
 
     // the transform node used by RDGE
-    this._trNode = null;
+    _trNode: { value : null, writable: true },
 
     ///////////////////////////////////////////////////////////////////////
     // Property accessors
     ///////////////////////////////////////////////////////////////////////
-    this.setWorld = function (world) {
-        this.m_world = world;
-    };
+    getWorld: {
+        value: function() {
+            return this.m_world;
+        }
+    },
 
-    this.getWorld = function () {
-        return this.m_world;
-    };
+    setWorld: {
+        value: function(world) {
+            this.m_world = world;
+        }
+    },
 
-    this.getMatrix = function () {
-        return this._matrix.slice(0);
-    };
+    getMatrix: {
+        value: function() {
+            return this._matrix.slice(0);
+        }
+    },
 
-    this.setMatrix = function (m) {
-        this._matrix = m.slice(0);
-    };
+    setMatrix: {
+        value: function(m) {
+            this._matrix = m.slice(0);
+        }
+    },
 
-    this.setNext = function (next) {
-        this._next = next;
-    };
+    getNext: {
+        value: function() {
+            return this._next;
+        }
+    },
 
-    this.getNext = function () {
-        return this._next;
-    };
+    setNext: {
+        value: function(next) {
+            this._next = next;
+        }
+    },
 
-    this.setPrev = function (prev) {
-        this._prev = prev;
-    };
+    getPrev: {
+        value: function() {
+            return this._prev;
+        }
+    },
 
-    this.getPrev = function () {
-        return this._prev;
-    };
+    setPrev: {
+        value: function(prev) {
+            this._prev = prev;
+        }
+    },
 
-    this.setChild = function (child) {
-        this._child = child;
-    };
+    getChild: {
+        value: function() {
+            return this._child;
+        }
+    },
 
-    this.getChild = function () {
-        return this._child;
-    };
+    setChild: {
+        value: function(child) {
+            this._child = child;
+        }
+    },
 
-    this.setParent = function (parent) {
-        this._parent = parent;
-    };
+    getParent: {
+        value: function() {
+            return this._parent;
+        }
+    },
 
-    this.getParent = function () {
-        return this._parent;
-    };
+    setParent: {
+        value: function(parent) {
+            this._parent = parent;
+        }
+    },
 
-    this.geomType = function () {
-        return this.GEOM_TYPE_UNDEFINED;
-    };
+    geomType: {
+        value: function() {
+            return this.GEOM_TYPE_UNDEFINED;
+        }
+    },
 
-    this.getPrimitiveArray = function () {
-        return this._primArray;
-    };
+    getPrimitiveArray: {
+        value: function() {
+            return this._primArray;
+        }
+    },
 
-    this.getMaterialNodeArray = function () {
-        return this._materialNodeArray;
-    };
+    getMaterialNodeArray: {
+        value: function() {
+            return this._materialNodeArray;
+        }
+    },
 
-    this.getMaterialArray = function () {
-        return this._materialArray;
-    };
+    getMaterialArray: {
+        value: function() {
+            return this._materialArray;
+        }
+    },
 
-    this.getTransformNode = function () {
-        return this._trNode;
-    };
+    getTransformNode: {
+        value: function() {
+            return this._trNode;
+        }
+    },
 
-    this.setTransformNode = function (t) {
-        this._trNode = t;
-    };
+    setTransformNode: {
+        value: function(t) {
+            this._trNode = t;
+        }
+    },
 
-    this.setFillColor = function (c) {
-        this.setMaterialColor(c, "fill");
-    };
+    setFillColor: {
+        value: function(c) {
+            this.setMaterialColor(c, "fill");
+        }
+    },
 
-    this.setStrokeColor = function (c) {
-        this.setMaterialColor(c, "stroke");
-    };
+    setStrokeColor: {
+        value: function(c) {
+            this.setMaterialColor(c, "stroke");
+        }
+    },
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
-    this.setMaterialColor = function (c, type) {
-        var i = 0,
-            nMats = 0;
-        if (c) {
-            if (c.gradientMode) {
-                // Gradient support
-                if (this._materialArray && this._materialTypeArray) {
-                    nMats = this._materialArray.length;
-                }
+    setMaterialColor: {
+        value: function(c, type) {
+            var i = 0,
+                nMats = 0;
+            if (c) {
+                if (c.gradientMode) {
+                    // Gradient support
+                    if (this._materialArray && this._materialTypeArray) {
+                        nMats = this._materialArray.length;
+                    }
 
-                var stops = [],
-                    colors = c.color;
+                    var stops = [],
+                        colors = c.color;
 
-                var len = colors.length;
-                // TODO - Current shaders only support 4 color stops
-                if (len > 4) {
-                    len = 4;
-                }
+                    var len = colors.length;
+                    // TODO - Current shaders only support 4 color stops
+                    if (len > 4) {
+                        len = 4;
+                    }
 
-                for (var n = 0; n < len; n++) {
-                    var position = colors[n].position / 100;
-                    var cs = colors[n].value;
-                    var stop = [cs.r / 255, cs.g / 255, cs.b / 255, cs.a];
-                    stops.push(stop);
+                    for (var n = 0; n < len; n++) {
+                        var position = colors[n].position / 100;
+                        var cs = colors[n].value;
+                        var stop = [cs.r / 255, cs.g / 255, cs.b / 255, cs.a];
+                        stops.push(stop);
 
-                    if (nMats === this._materialTypeArray.length) {
-                        for (i = 0; i < nMats; i++) {
-                            if (this._materialTypeArray[i] == type) {
-                                this._materialArray[i].setProperty("color" + (n + 1), stop.slice(0));
-                                this._materialArray[i].setProperty("colorStop" + (n + 1), position);
+                        if (nMats === this._materialTypeArray.length) {
+                            for (i = 0; i < nMats; i++) {
+                                if (this._materialTypeArray[i] == type) {
+                                    this._materialArray[i].setProperty("color" + (n + 1), stop.slice(0));
+                                    this._materialArray[i].setProperty("colorStop" + (n + 1), position);
+                                }
+                            }
+                        }
+                    }
+                    if (type === "fill") {
+                        this._fillColor = c;
+                    } else {
+                        this._strokeColor = c;
+                    }
+                } else {
+                    if (type === "fill") {
+                        this._fillColor = c.slice(0);
+                    } else {
+                        this._strokeColor = c.slice(0);
+                    }
+
+                    if (this._materialArray && this._materialTypeArray) {
+                        nMats = this._materialArray.length;
+                        if (nMats === this._materialTypeArray.length) {
+                            for (i = 0; i < nMats; i++) {
+                                if (this._materialTypeArray[i] == type) {
+                                    this._materialArray[i].setProperty("color", c.slice(0));
+                                }
                             }
                         }
                     }
                 }
-                if (type === "fill") {
-                    this._fillColor = c;
-                } else {
-                    this._strokeColor = c;
-                }
             } else {
                 if (type === "fill") {
-                    this._fillColor = c.slice(0);
+                    this._fillColor = null;
                 } else {
-                    this._strokeColor = c.slice(0);
+                    this._strokeColor = null;
                 }
 
                 if (this._materialArray && this._materialTypeArray) {
@@ -195,326 +250,342 @@ var GeomObj = function GLGeomObj() {
                     if (nMats === this._materialTypeArray.length) {
                         for (i = 0; i < nMats; i++) {
                             if (this._materialTypeArray[i] == type) {
-                                this._materialArray[i].setProperty("color", c.slice(0));
+                                // TODO - Not sure how to set color to null values in shaders
+                                this._materialArray[i].setProperty("color", [0, 0, 0, 0]);
                             }
                         }
                     }
                 }
             }
-        } else {
-            if (type === "fill") {
-                this._fillColor = null;
+
+            var world = this.getWorld();
+            if (world) {
+                world.restartRenderLoop();
+            }
+        }
+    },
+
+    makeStrokeMaterial: {
+        value: function() {
+            var strokeMaterial;
+            if (this.getStrokeMaterial()) {
+                strokeMaterial = this.getStrokeMaterial().dup();
             } else {
-                this._strokeColor = null;
+                strokeMaterial = MaterialsModel.exportFlatMaterial();
             }
 
-            if (this._materialArray && this._materialTypeArray) {
-                nMats = this._materialArray.length;
-                if (nMats === this._materialTypeArray.length) {
-                    for (i = 0; i < nMats; i++) {
-                        if (this._materialTypeArray[i] == type) {
-                            // TODO - Not sure how to set color to null values in shaders
-                            this._materialArray[i].setProperty("color", [0, 0, 0, 0]);
+            if (strokeMaterial) {
+                strokeMaterial.init(this.getWorld());
+            }
+
+            this._materialArray.push(strokeMaterial);
+            this._materialTypeArray.push("stroke");
+
+            if (this._strokeColor) {
+                this.setStrokeColor(this._strokeColor);
+            }
+
+            return strokeMaterial;
+        }
+    },
+
+    makeFillMaterial: {
+        value: function() {
+            var fillMaterial;
+            if (this.getFillMaterial()) {
+                fillMaterial = this.getFillMaterial().dup();
+            } else {
+                fillMaterial = MaterialsModel.exportFlatMaterial();
+            }
+
+            if (fillMaterial) {
+                fillMaterial.init(this.getWorld());
+            }
+
+            this._materialArray.push(fillMaterial);
+            this._materialTypeArray.push("fill");
+
+            if (this._fillColor) {
+                this.setFillColor(this._fillColor);
+            }
+
+            return fillMaterial;
+        }
+    },
+
+    exportMaterialsJSON: {
+        value: function() {
+            var jObj;
+            if (this._materialArray && this._materialNodeArray && this.getWorld().isWebGL()) {
+                var nMats = this._materialArray.length;
+                if (nMats > 0) {
+                    var arr = [];
+
+                    for (var i = 0; i < nMats; i++) {
+                        var matObj =
+                        {
+                            'materialNodeName':this._materialNodeArray[i].name,
+                            'material':this._materialArray[i].exportJSON(),
+                            'type':this._materialTypeArray[i]
                         }
+                        arr.push(matObj);
                     }
-                }
-            }
-        }
 
-        var world = this.getWorld();
-        if (world) {
-            world.restartRenderLoop();
-        }
-    };
-
-    this.makeStrokeMaterial = function () {
-        var strokeMaterial;
-        if (this.getStrokeMaterial()) {
-            strokeMaterial = this.getStrokeMaterial().dup();
-        } else {
-            strokeMaterial = MaterialsModel.exportFlatMaterial();
-        }
-
-        if (strokeMaterial) {
-            strokeMaterial.init(this.getWorld());
-        }
-
-        this._materialArray.push(strokeMaterial);
-        this._materialTypeArray.push("stroke");
-
-        if (this._strokeColor) {
-            this.setStrokeColor(this._strokeColor);
-        }
-
-        return strokeMaterial;
-    };
-
-    this.makeFillMaterial = function () {
-        var fillMaterial;
-        if (this.getFillMaterial()) {
-            fillMaterial = this.getFillMaterial().dup();
-        } else {
-            fillMaterial = MaterialsModel.exportFlatMaterial();
-        }
-
-        if (fillMaterial) {
-            fillMaterial.init(this.getWorld());
-        }
-
-        this._materialArray.push(fillMaterial);
-        this._materialTypeArray.push("fill");
-
-        if (this._fillColor) {
-            this.setFillColor(this._fillColor);
-        }
-
-        return fillMaterial;
-    };
-
-    this.exportMaterialsJSON = function () {
-        var jObj;
-        if (this._materialArray && this._materialNodeArray && this.getWorld().isWebGL()) {
-            var nMats = this._materialArray.length;
-            if (nMats > 0) {
-                var arr = [];
-
-                for (var i = 0; i < nMats; i++) {
-                    var matObj =
+                    jObj =
                     {
-                        'materialNodeName':this._materialNodeArray[i].name,
-                        'material':this._materialArray[i].exportJSON(),
-                        'type':this._materialTypeArray[i]
-                    }
-                    arr.push(matObj);
+                        'nMaterials':nMats,
+                        'materials':arr
+                    };
+                }
+            }
+
+            return jObj;
+        }
+    },
+
+    importMaterialsJSON: {
+        value: function(jObj) {
+            this._materialArray = [];
+            this._materialTypeArray = [];
+
+            if (!jObj)  return;
+
+            var nMaterials = jObj.nMaterials;
+            var matArray = jObj.materials;
+            for (var i = 0; i < nMaterials; i++) {
+                var mat;
+                var matObj = matArray[i].material;
+                var shaderName = matObj.material;
+                switch (shaderName) {
+                    case "flat":
+                    case "radialGradient":
+                    case "linearGradient":
+                    case "bumpMetal":
+                    case "uber":
+                    case "plasma":
+                    case "deform":
+                    case "water":
+                    case "paris":
+                    case "raiders":
+                    case "tunnel":
+                    case "reliefTunnel":
+                    case "squareTunnel":
+                    case "twist":
+                    case "fly":
+                    case "julia":
+                    case "mandel":
+                    case "star":
+                    case "zinvert":
+                    case "keleidoscope":
+                    case "radialBlur":
+                    case "pulse":
+                        mat = MaterialsModel.getMaterialByShader(shaderName);
+                        if (mat)  mat = mat.dup();
+                        break;
+
+                    default:
+                        console.log("material type: " + shaderName + " is not supported");
+                        break;
                 }
 
-                jObj =
-                {
-                    'nMaterials':nMats,
-                    'materials':arr
-                };
+                if (mat) {
+                    mat.importJSON(matObj);
+                    this._materialArray.push(mat);
+                    this._materialTypeArray.push(matObj.type);
+                    var type = matArray[i].type;
+                    if (type == "fill")  this._fillMaterial = mat;
+                    else  this._strokeMaterial = mat;
+                }
             }
         }
+    },
 
-        return jObj;
-    }
-
-    this.importMaterialsJSON = function (jObj) {
-        this._materialArray = [];
-        this._materialTypeArray = [];
-
-        if (!jObj)  return;
-
-        var nMaterials = jObj.nMaterials;
-        var matArray = jObj.materials;
-        for (var i = 0; i < nMaterials; i++) {
-            var mat;
-            var matObj = matArray[i].material;
-            var shaderName = matObj.material;
-            switch (shaderName) {
-                case "flat":
-                case "radialGradient":
-                case "linearGradient":
-                case "bumpMetal":
-                case "uber":
-                case "plasma":
-                case "deform":
-                case "water":
-                case "paris":
-                case "raiders":
-                case "tunnel":
-                case "reliefTunnel":
-                case "squareTunnel":
-                case "twist":
-                case "fly":
-                case "julia":
-                case "mandel":
-                case "star":
-                case "zinvert":
-                case "keleidoscope":
-                case "radialBlur":
-                case "pulse":
-                    mat = MaterialsModel.getMaterialByShader(shaderName);
-                    if (mat)  mat = mat.dup();
-                    break;
-
-                default:
-                    console.log("material type: " + shaderName + " is not supported");
-                    break;
-            }
-
-            if (mat) {
-                mat.importJSON(matObj);
-                this._materialArray.push(mat);
-                this._materialTypeArray.push(matObj.type);
-                var type = matArray[i].type;
-                if (type == "fill")  this._fillMaterial = mat;
-                else  this._strokeMaterial = mat;
-            }
-        }
-    };
-
-    this.translate = function (v) {
-        var mat = Matrix.Translation(v);
-        //var mat2 = mat.multiply( this._matrix );
-        //this._matrix = mat2;
-        glmat4.multiply(mat, this._matrix, this._matrix);
-    };
-
-    this.transform = function (mat) {
-        if (mat) {
-            //this._matrix = mat.multiply( this._matrix );
+    translate: {
+        value: function(v) {
+            var mat = Matrix.Translation(v);
+            //var mat2 = mat.multiply( this._matrix );
+            //this._matrix = mat2;
             glmat4.multiply(mat, this._matrix, this._matrix);
         }
-    };
+    },
 
-    this.setMatrix = function (mat) {
-        var gl = this.getWorld().getGLContext();
-        if (gl) {
-            gl.uniformMatrix4fv(this.getWorld().getShaderProgram().mvMatrixUniform, false, new Float32Array(mat));
+    transform: {
+        value: function(mat) {
+            if (mat) {
+                //this._matrix = mat.multiply( this._matrix );
+                glmat4.multiply(mat, this._matrix, this._matrix);
+            }
         }
-    };
+    },
 
-
-	this.getGLCenter = function()
-	{
-		// get the normalized device coordinates (NDC) for
-		// all position and dimensions.
-		var world = this.getWorld();
-		var	vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
-		var	xNDC = 2*this._xOffset/vpw,  yNDC = -2*this._yOffset/vph;
-
-		var aspect = world.getAspect();
-		var zn = world.getZNear(),  zf = world.getZFar();
-		var	t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
-			b = -t,
-			r = aspect*t,
-			l = -r;
-
-		// calculate the object coordinates from their NDC coordinates
-		var z = -world.getViewDistance();
-
-		// unproject to get the position of the origin in GL
-		var x = -z*(r-l)/(2.0*zn)*xNDC,
-			y = -z*(t-b)/(2.0*zn)*yNDC;
-		z = 0.0;
-
-		// transform by the object's transformation matrix
-		var ctr = MathUtils.transformPoint( [x, y, z], this.getMatrix() );
-
-		return ctr;
-	};
-
-	this.preViewToGL = function( preViewPt )
-	{
-		// get the normalized device coordinates (NDC) for
-		// all position and dimensions.
-		var world = this.getWorld();
-		var	vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
-		var	xNDC = 2*preViewPt[0]/vpw,  yNDC = -2*preViewPt[1]/vph;
-
-		var aspect = world.getAspect();
-		var zn = world.getZNear(),  zf = world.getZFar();
-		var	t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
-			b = -t,
-			r = aspect*t,
-			l = -r;
-
-		// calculate the object coordinates from their NDC coordinates
-		var z = -world.getViewDistance();
-
-		// unproject to get the position of the origin in GL
-		var x = -z*(r-l)/(2.0*zn)*xNDC,
-			y = -z*(t-b)/(2.0*zn)*yNDC;
-		z = 0.0;
-
-		// transform by the object's transformation matrix
-		var glPt = MathUtils.transformPoint( [x, y, z], this.getMatrix() );
-
-		return glPt;
-	};
-
-    this.buildBuffers = function () {
-        // this function must be overridden by the base class
-        alert("GLGeomObj.buildBuffers must be overridden by base class");
-    };
-
-    this.render = function () {
-        alert("GLGeomObj.render method must be overridden by sub class");
-    };
-
-    this.collidesWithPoint = function (x, y) {
-        alert("GLGeomObj.collidesWithPoint method must be overridden by sub class");
-    };
-
-    this.getNearPoint = function (pt, dir) {
-        // the alert is not displayed.  Objects may choose not to implement this method.
-        //alert( "GLGeomObj.getNearPoint method must be overridden by sub class" );
-    };
-
-    this.getNearVertex = function (pt, dir) {
-        // this should be overridden by objects (such as rectangles) that have corners
-    };
-
-    this.containsPoint = function (pt, dir) {
-        // the alert is not displayed.  Objects may choose not to implement this method.
-        //alert( "GLGeomObj.containsPoint method must be overridden by sub class" );
-    };
-
-    this.getPropertyFromString = function (prop, str) {
-        var index = str.indexOf(prop);
-        if (index < 0)  throw new Error("property " + prop + " not found in string: " + str);
-
-        var rtnStr = str.substr(index + prop.length);
-        index = rtnStr.indexOf("\n");
-        if (index >= 0) {
-            rtnStr = rtnStr.substr(0, index);
+    setMatrix: {
+        value: function(mat) {
+            var gl = this.getWorld().getGLContext();
+            if (gl) {
+                gl.uniformMatrix4fv(this.getWorld().getShaderProgram().mvMatrixUniform, false, new Float32Array(mat));
+            }
         }
+    },
 
-        return rtnStr;
-    };
+    getGLCenter: {
+        value: function() {
+            // get the normalized device coordinates (NDC) for
+            // all position and dimensions.
+            var world = this.getWorld();
+            var	vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
+            var	xNDC = 2*this._xOffset/vpw,  yNDC = -2*this._yOffset/vph;
+
+            var aspect = world.getAspect();
+            var zn = world.getZNear(),  zf = world.getZFar();
+            var	t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
+                b = -t,
+                r = aspect*t,
+                l = -r;
+
+            // calculate the object coordinates from their NDC coordinates
+            var z = -world.getViewDistance();
+
+            // unproject to get the position of the origin in GL
+            var x = -z*(r-l)/(2.0*zn)*xNDC,
+                y = -z*(t-b)/(2.0*zn)*yNDC;
+            z = 0.0;
+
+            // transform by the object's transformation matrix
+            var ctr = MathUtils.transformPoint( [x, y, z], this.getMatrix() );
+
+            return ctr;
+        }
+    },
+
+    preViewToGL: {
+        value: function(preViewPt) {
+            // get the normalized device coordinates (NDC) for
+            // all position and dimensions.
+            var world = this.getWorld();
+            var	vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
+            var	xNDC = 2*preViewPt[0]/vpw,  yNDC = -2*preViewPt[1]/vph;
+
+            var aspect = world.getAspect();
+            var zn = world.getZNear(),  zf = world.getZFar();
+            var	t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
+                b = -t,
+                r = aspect*t,
+                l = -r;
+
+            // calculate the object coordinates from their NDC coordinates
+            var z = -world.getViewDistance();
+
+            // unproject to get the position of the origin in GL
+            var x = -z*(r-l)/(2.0*zn)*xNDC,
+                y = -z*(t-b)/(2.0*zn)*yNDC;
+            z = 0.0;
+
+            // transform by the object's transformation matrix
+            var glPt = MathUtils.transformPoint( [x, y, z], this.getMatrix() );
+
+            return glPt;
+        }
+    },
+
+    buildBuffers: {
+        value: function() {
+            // this function must be overridden by the base class
+            alert("GLGeomObj.buildBuffers must be overridden by base class");
+        }
+    },
+
+    render: {
+        value: function() {
+            alert("GLGeomObj.render method must be overridden by sub class");
+        }
+    },
+
+    collidesWithPoint: {
+        value: function(x, y) {
+            alert("GLGeomObj.collidesWithPoint method must be overridden by sub class");
+        }
+    },
+
+    getNearPoint: {
+        value: function(pt, dir) {
+            // the alert is not displayed.  Objects may choose not to implement this method.
+            //alert( "GLGeomObj.getNearPoint method must be overridden by sub class" );
+        }
+    },
+
+    getNearVertex: {
+        value: function(pt, dir) {
+            // this should be overridden by objects (such as rectangles) that have corners
+        }
+    },
+
+    containsPoint: {
+        value: function(pt, dir) {
+            // the alert is not displayed.  Objects may choose not to implement this method.
+            //alert( "GLGeomObj.containsPoint method must be overridden by sub class" );
+        }
+    },
+
+    getPropertyFromString: {
+        value: function(prop, str) {
+            var index = str.indexOf(prop);
+            if (index < 0)  throw new Error("property " + prop + " not found in string: " + str);
+
+            var rtnStr = str.substr(index + prop.length);
+            index = rtnStr.indexOf("\n");
+            if (index >= 0) {
+                rtnStr = rtnStr.substr(0, index);
+            }
+
+            return rtnStr;
+        }
+    },
 
     // Gradient stops for rgba(255,0,0,1) at 0%; rgba(0,255,0,1) at 33%; rgba(0,0,255,1) at 100% will return
     // 255,0,0,1@0;0,255,0,1@33;0,0,255,1@100
-    this.gradientToString = function (colors) {
-        var rtnStr = "";
-        if (colors && colors.length) {
-            var c = colors[0],
-                len = colors.length;
+    gradientToString: {
+        value: function(colors) {
+            var rtnStr = "";
+            if (colors && colors.length) {
+                var c = colors[0],
+                    len = colors.length;
 
-            rtnStr += String(c.value.r + "," + c.value.g + "," + c.value.b + "," + c.value.a + "@" + c.position);
-            for (var i = 1; i < len; i++) {
-                c = colors[i];
-                rtnStr += ";" + String(c.value.r + "," + c.value.g + "," + c.value.b + "," + c.value.a + "@" + c.position);
+                rtnStr += String(c.value.r + "," + c.value.g + "," + c.value.b + "," + c.value.a + "@" + c.position);
+                for (var i = 1; i < len; i++) {
+                    c = colors[i];
+                    rtnStr += ";" + String(c.value.r + "," + c.value.g + "," + c.value.b + "," + c.value.a + "@" + c.position);
+                }
             }
+            return rtnStr;
         }
-        return rtnStr;
-    };
+    },
 
     // Given a gradientStr "255,0,0,1@0;0,255,0,1@33;0,0,255,1@100" will return:
     // colors array [{position:0, value:{r:255, g:0, b:0, a:1}},
     //               {position:33, value:{r:0, g:255, b:0, a:1}},
     //               {position:100, value:{r:0, g:0, b:255, a:1}}
     //             ]
-    this.stringToGradient = function (gradientStr) {
-        var rtnArr = [];
+    stringToGradient: {
+        value: function(gradientStr) {
+            var rtnArr = [];
 
-        var i,
-            len,
-            stops,
-            stop,
-            c;
+            var i,
+                len,
+                stops,
+                stop,
+                c;
 
-        stops = gradientStr.split(";");
-        len = stops.length;
-        for (i = 0; i < len; i++) {
-            stop = stops[i].split("@");
-            c = stop[0].split(",");
-            rtnArr.push({ position:Number(stop[1]), value:{r:Number(c[0]), g:Number(c[1]), b:Number(c[2]), a:Number(c[3])} });
+            stops = gradientStr.split(";");
+            len = stops.length;
+            for (i = 0; i < len; i++) {
+                stop = stops[i].split("@");
+                c = stop[0].split(",");
+                rtnArr.push({ position:Number(stop[1]), value:{r:Number(c[0]), g:Number(c[1]), b:Number(c[2]), a:Number(c[3])} });
+            }
+
+            return rtnArr;
         }
-
-        return rtnArr;
-    };
+    }
 
     /*
      this.export = function() {
@@ -522,10 +593,5 @@ var GeomObj = function GLGeomObj() {
      return rtnStr;
      }
      */
-};
-
-if (typeof exports === "object") {
-    exports.GeomObj = GeomObj;
-}
-
+});
 
