@@ -78,6 +78,7 @@ exports.StylesViewMediator = Montage.create(Component, {
     ///// Enable/Disable Style when checkbox is clicked
     handleStyleToggle : {
         value: function(rule, enable, style) {
+            debugger;
             if(enable) {
                 this.stylesController.setStyle(rule, style.propertyText, style.browserValue, style.priority);
             } else {
@@ -112,7 +113,7 @@ exports.StylesViewMediator = Montage.create(Component, {
     },
     handleValueStop: {
         value: function(e, style) {
-            var key, nextFocus
+            var key, nextFocus;
             console.log("Handle Value Stop");
             console.log("Editing new style: ", style.editingNewStyle);
 
@@ -125,11 +126,11 @@ exports.StylesViewMediator = Montage.create(Component, {
                     if(e._event.detail.shiftKey) {
                         style.propertyField.start();
                     } else {
+
                         nextFocus = style.getSiblingStyle('next');
                         if(nextFocus) {
                             nextFocus.propertyField.start();
                         } else {
-                            //style.parentComponent.parentComponent.addNewStyleAfter(style);
                             style.parentComponent.parentComponent.addNewStyle();
                             style.editingNewStyle = false;
                             setTimeout(function() {
@@ -247,7 +248,11 @@ exports.StylesViewMediator = Montage.create(Component, {
 
             ///// Add rule directly to the rule list
             this.ruleListContainer.displayedList.component.addRule(newRule, null, applies, function(ruleComponent) {
-                ruleComponent.selectorField.start();
+                var rC = ruleComponent;
+                setTimeout(function() {
+                    rC.selectorField.start();
+                },50);
+
             });
 
         }
