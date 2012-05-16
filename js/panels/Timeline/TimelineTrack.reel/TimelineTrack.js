@@ -730,7 +730,13 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.animatedElement = this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList[0];
             if(this.animatedElement!==undefined){
                 this.animationName = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-name");
+                var animationNameList = this.animationName.split(",");
+                if(animationNameList.length > 1){
+                    this.animationName = animationNameList[0];
+                }
+
                 this.animationNamesString = this.animationName;
+                
                 if(this.animationName){
                     trackTiming = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-duration");
                     this.nextKeyframe = 0;
