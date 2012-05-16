@@ -433,7 +433,7 @@ exports.IoMediator = Montage.create(Component, {
                         if (scripts[i].getAttribute('data-ninja-webgl-rdge') !== null) {
                             webglrdgetag = scripts[i]; // TODO: Add logic to delete unneccesary tags
                         }
-                        if (scripts[i].getAttribute('type') !== 'text/montage-serialization') {
+                        if (scripts[i].getAttribute('type') === 'text/montage-serialization') {
                             mjstag = scripts[i]; // TODO: Add logic to delete unneccesary tags
                         }
                         if (scripts[i].getAttribute('data-mjs-lib') !== null) {
