@@ -1315,6 +1315,9 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 return sheetObj.stylesheet === sheet;
             });
 
+            ///// Dispatch modified event
+            NJevent('styleSheetModified', eventData);
+
             ///// If the sheet doesn't already exist in the list of modified
             ///// sheets, dispatch dirty event and add the sheet to the list
             if(sheetSearch.length === 0) {
@@ -1348,6 +1351,8 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 this.dirtyStyleSheets = this.dirtyStyleSheets.filter(function(sheet) {
                     return sheet.document !== doc;
                 });
+            } else {
+                this.dirtyStyleSheets = [];
             }
 
 

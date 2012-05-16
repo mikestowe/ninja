@@ -17,6 +17,8 @@ exports.StyleSheetsView = Montage.create(Component, {
     documentNameLabel    : { value: null },
     noDocumentLabelClass : { value: "no-document" },
 
+    dirtyStyleSheets: { value: null },
+
     _documentName : { value: null },
     documentName : {
         get: function() {
@@ -52,7 +54,21 @@ exports.StyleSheetsView = Montage.create(Component, {
             this.needsDraw = true;
         }
     },
-    
+
+    _dirtyStyleSheets : { value: null },
+    dirtyStyleSheets : {
+        get: function() {
+            return this._dirtyStyleSheets;
+        },
+        set: function(value) {
+            if(value === this._dirtyStyleSheets) { return false; }
+
+            this._dirtyStyleSheets = value;
+
+            this.needsDraw = true;
+        }
+    },
+
     /// Toolbar Button Actions
     /// --------------------------------
 
@@ -79,7 +95,19 @@ exports.StyleSheetsView = Montage.create(Component, {
                 'oneway': false
             });
 
+            Object.defineBinding(this, 'dirtyStyleSheets', {
+                'boundObject': this.stylesController,
+                'boundObjectPropertyPath': 'dirtyStyleSheets',
+                'oneway': true
+            });
+
             this._initView = this.needsDraw = true;
+        }
+    },
+
+    handleStyleSheetModified : {
+        value: function(e) {
+            this.needsDraw = true;
         }
     },
 
@@ -94,6 +122,7 @@ exports.StyleSheetsView = Montage.create(Component, {
     prepareForDraw : {
         value: function() {
             this.eventManager.addEventListener("styleSheetsReady", this, false);
+            this.eventManager.addEventListener("styleSheetModified", this, false);
         }
     },
     draw : {
@@ -113,6 +142,16 @@ exports.StyleSheetsView = Montage.create(Component, {
                 this.documentNameLabel.classList.remove(this.noDocumentLabelClass);
             } else {
                 this.documentNameLabel.classList.add(this.noDocumentLabelClass);
+            }
+
+            if(this.dirtyStyleSheets) {
+                var dirtySheets = this.dirtyStyleSheets.map(function(sheetDescriptor) {
+                    return sheetDescriptor.stylesheet;
+                });
+
+                this.styleSheetList.childComponents.forEach(function(sheetComponent) {
+                    sheetComponent.dirty = dirtySheets.indexOf(sheetComponent.source) !== -1;
+                }, this);
             }
 
             if(this._needsScroll) {

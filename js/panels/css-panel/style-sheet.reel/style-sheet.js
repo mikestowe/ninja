@@ -57,6 +57,12 @@ exports.StyleSheet = Montage.create(Component, {
                 this._element.classList.remove('default-style-sheet');
             }
 
+            if(this.dirty) {
+                this.nameText.element.classList.add('ss-dirty');
+            } else {
+                this.nameText.element.classList.remove('ss-dirty');
+            }
+
         }
     },
 
@@ -137,6 +143,21 @@ exports.StyleSheet = Montage.create(Component, {
             this._name = text;
         }
     },
+    _dirty : {
+        value: null
+    },
+    dirty : {
+        get: function() {
+            return this._dirty;
+        },
+        set: function(value) {
+            if(value === this._dirty) { return false; }
+
+            this._dirty = value;
+            this.needsDraw = true;
+        }
+    },
+
     _readOnly : { value: null },
     readOnly : {
         get: function() {

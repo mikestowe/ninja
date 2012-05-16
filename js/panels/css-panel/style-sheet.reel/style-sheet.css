@@ -131,6 +131,11 @@
     font-weight: bold;
 }
 
+.ss-dirty:after {
+    content: "*";
+    color: #A33939;
+}
+
 .ss-invisible {
     display: none;
 }
