@@ -234,17 +234,13 @@ exports.IoMediator = Montage.create(Component, {
             //TODO: Add attribute copying for <HEAD> and <HTML>
             
             /*
-//Testing using montage clean up method
-            var mjscode, mjsTemp = TemplateCreator.create();
-        	
-            //mjscode = mjsTemp.initWithHeadAndBodyElements(template.head, template.body);
-            //mjscode = mjsTemp.initWithDocument(template.file.content.document);
-            mjscode = mjsTemp.initWithDocument(template.document);
+			var tc = this.application.ninja.documentController.activeDocument.model.views.design.iframe.contentWindow.mjsTemplateCreator, code;
+            code = tc.initWithDocument(this.application.ninja.documentController.activeDocument.model.views.design.iframe.contentWindow.document);
+            console.log(code._ownerSerialization, code._document.getElementsByTagName('html')[0].innerHTML);
             
-            console.log(template.head, mjscode._document.head);
             template.file.content.document.head.innerHTML = mjscode._document.head.innerHTML.replace(regexRootUrl, '');
             template.file.content.document.body.innerHTML = mjscode._document.body.innerHTML.replace(regexRootUrl, '');
-*/
+			*/
             
             
             
