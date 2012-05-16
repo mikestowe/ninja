@@ -40,9 +40,9 @@ exports.Main = Montage.create(Component, {
 
             };
             //
-            window.mjsTemplateCreator = TemplateCreator.create();
+            window.mjsTemplateCreator = TemplateCreator;
             //
-            window.mjsTemplate = Template.create();
+            window.mjsTemplate = Template;
 			
 			
             // Dispatch event when this template has loaded.
