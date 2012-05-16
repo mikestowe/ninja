@@ -222,7 +222,6 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
             } else {
                 console.log("spitting sub keyframes not yet supported");
             }
-
         }
     },
 
