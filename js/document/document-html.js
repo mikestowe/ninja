@@ -41,7 +41,7 @@ exports.HtmlDocument = Montage.create(Component, {
 	////////////////////////////////////////////////////////////////////
 	//
     exclusionList: {
-        value: ["HTML", "BODY"] //TODO: Update to correct list
+        value: ["HTML", "BODY", "NINJA-CONTENT"] //TODO: Update to correct list
     },
     ////////////////////////////////////////////////////////////////////
 	//
