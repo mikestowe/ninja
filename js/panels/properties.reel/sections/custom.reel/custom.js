@@ -19,7 +19,7 @@ var HT = require("js/components/hottext.reel").HotText;
 var Dropdown = require("js/components/combobox.reel").Combobox;
 var TextField = require("js/components/textfield.reel").TextField;
 var FileInput = require("js/components/ui/file-input.reel").FileInput;
-var Checkbox = require("js/components/checkbox.reel").Checkbox;
+var LabelCheckbox = require("js/components/ui/label-checkbox.reel").LabelCheckbox;
 var ColorChip = require("js/components/ui/color-chip.reel").ColorChip;
 var Button = require("montage/ui/button.reel").Button;
 
@@ -77,7 +77,7 @@ exports.CustomSection = Montage.create(Component, {
                     this.rows.push(tmpRow);
 
                 } else if(this._fields[i].length === 3) {
-                    
+
                 }
 
             }
@@ -103,7 +103,7 @@ exports.CustomSection = Montage.create(Component, {
     handleChange: {
 		value:function(event) {
             if(event._event.wasSetByCode) return;
-            
+
             var obj = event.currentTarget;
             this._dispatchPropEvent({"type": "change", "id": obj.id, "prop": obj.prop, "value": obj.value, "control": obj});
 		}
@@ -349,7 +349,7 @@ exports.CustomSection = Montage.create(Component, {
         value: function(aField) {
 
             // Generate Textfield
-            var obj = Checkbox.create();
+            var obj = LabelCheckbox.create();
 
             // Set Values for TextField
             if (aField.id)          obj.id = aField.id;

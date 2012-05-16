@@ -256,17 +256,17 @@ padding-right:6px;
     content: "•";
 }
 
-.propertiesPanel input.nj-skinned label {
+.propertiesPanel .checkbox-label {
     position: absolute;
-    top: 0;
-    left: 15px;
+    top: 4px;
+    padding-left: 5px;
+    /*left: 15px;*/
     font-size: 10px;
     width:55px;
     text-align: left;
     font-weight: normal;
     color:#FFF;
 }
-
 .propertiesPanel input[type='radio'].nj-skinned {
     text-indent: 0px;
     line-height: 5px;
