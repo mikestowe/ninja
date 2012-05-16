@@ -239,6 +239,14 @@ var Tween = exports.Tween = Montage.create(Component, {
         }
     },
 
+    setKeyframeEase:{
+        value:function(easeType){
+            // easeTypes - ease, ease-out, ease-in, ease-in-out, linear, cubic-bezier(x1, y1, x2, y2)
+            this.tweenedProperties["-webkit-animation-timing-function"] = easeType;
+            this.parentComponent.parentComponent.updatePropKeyframeRule();
+        }
+    },
+
     selectTween:{
         value: function(){
             // turn on event listener for element change
