@@ -195,8 +195,10 @@ exports.Stage = Montage.create(Component, {
         set: function(value) {
             this._userPaddingLeft = value;
             this._documentOffsetLeft = -value;
-            this.application.ninja.stylesController.setElementStyle(this._documentRoot.ownerDocument.getElementsByTagName("HTML")[0],
-                                                                    "padding-left", -value + "px", true);
+            if(!this._documentRoot) {
+                this._documentRoot = this.application.ninja.currentDocument.documentRoot;
+            }
+            this._documentRoot.ownerDocument.getElementsByTagName("HTML")[0].style["padding-left"] = -value + "px";
             this.userContentLeft = this._documentOffsetLeft;
             this.updatedStage = true;
         }
@@ -207,8 +209,10 @@ exports.Stage = Montage.create(Component, {
         set: function(value) {
             this._userPaddingTop = value;
             this._documentOffsetTop = -value;
-            this.application.ninja.stylesController.setElementStyle(this._documentRoot.ownerDocument.getElementsByTagName("HTML")[0],
-                                                                    "padding-top", -value + "px", true);
+            if(!this._documentRoot) {
+                this._documentRoot = this.application.ninja.currentDocument.documentRoot;
+            }
+            this._documentRoot.ownerDocument.getElementsByTagName("HTML")[0].style["padding-top"] = -value + "px";
             this.userContentTop = this._documentOffsetTop;
             this.updatedStage = true;
         }
@@ -314,8 +318,8 @@ exports.Stage = Montage.create(Component, {
 
                 this._scrollLeft = 0;
                 this._scrollTop = 0;
-                this._userContentLeft = 0;
-                this._userContentTop = 0;
+                this._userContentLeft =  this._documentOffsetLeft;
+                this._userContentTop =  this._documentOffsetTop;
 
                 this._maxHorizontalScroll = this._documentRoot.scrollWidth - this._canvas.width - 11;
                 this._maxVerticalScroll = this._documentRoot.scrollHeight - this._canvas.height - 11;

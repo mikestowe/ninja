@@ -119,19 +119,43 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 
     initializeFromDocument:{
         value:function(){
-            var documentRootChildren = null, i;
+            var documentRootChildren = null, i, stage = this.application.ninja.stage;
             //initialize with current document
             this._eltArray = [];
             this._planesArray = [];
-            this.setDrawingSurfaceElement(this.application.ninja.stage.canvas);
-            this.setSourceSpaceElement( this.application.ninja.stage.stageDeps.currentStage );
+            this.setDrawingSurfaceElement(stage.canvas);
+            this.setSourceSpaceElement( stage.stageDeps.currentStage );
             this.setWorkingPlane( [0,0,1,0] );
 
             //Loop through all the top-level children of the current document and call drawUtils.addElement on them
             if(this.application.ninja.currentDocument._liveNodeList.length > 0){
                 documentRootChildren = this.application.ninja.currentDocument._liveNodeList;
-                for(i=0;i<documentRootChildren.length;i++){
-                    this.addElement(documentRootChildren[i]);
+                var len = documentRootChildren.length,
+                    minLeft = stage.userPaddingLeft,
+                    minTop = stage.userPaddingTop,
+                    docLeft = stage.documentOffsetLeft,
+                    docTop = stage.documentOffsetTop,
+                    l,
+                    t,
+                    plane,
+                    elt
+                for(i=0; i<len; i++) {
+                    elt = documentRootChildren[i];
+                    plane = this.addElement(elt);
+                    l = plane._rect.m_left - docLeft;
+                    t = plane._rect.m_top - docTop;
+                    if(l < minLeft) {
+                        minLeft = l;
+                    }
+                    if(t < minTop) {
+                        minTop = t;
+                    }
+                }
+                if(minLeft !== stage.userPaddingLeft) {
+                    stage.userPaddingLeft = minLeft;
+                }
+                if(minTop !== stage.userPaddingTop) {
+                    stage.userPaddingTop = minTop;
                 }
             }
         }
@@ -310,6 +334,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			plane.init();
 			this._planesArray.push( plane );
             elt.elementModel.props3D.elementPlane = plane;
+            return plane;
 		}
 	},
 
