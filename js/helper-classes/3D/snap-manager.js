@@ -130,10 +130,10 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
     bindSnap: {
         value: function() {
-            this.addEventListener("change@appModel.snap", this.toggleSnap, false);
-            this.addEventListener("change@appModel.snapGrid", this.toggleSnapGrid, false);
-            this.addEventListener("change@appModel.snapObjects", this.toggleSnapObjects, false);
-            this.addEventListener("change@appModel.snapAlign", this.toggleSnapAlign, false);
+            this.addPropertyChangeListener("appModel.snap", this.toggleSnap, false);
+            this.addPropertyChangeListener("appModel.snapGrid", this.toggleSnapGrid, false);
+            this.addPropertyChangeListener("appModel.snapObjects", this.toggleSnapObjects, false);
+            this.addPropertyChangeListener("appModel.snapAlign", this.toggleSnapAlign, false);
         }
     },
 
