@@ -23,14 +23,29 @@ var WaterMaterial = function WaterMaterial() {
 
     this._time = 0.0;
     this._dTime = 0.01;
+	this._emboss = 0.3;
+	this._delta = 20.0;
+	this._intensity = 3.0;
+
+	this._speed = 0.2;
 
     ///////////////////////////////////////////////////////////////////////
     // Properties
     ///////////////////////////////////////////////////////////////////////
     // all defined in parent PulseMaterial.js
     // load the local default value
-    this._propValues = [];
-    this._propValues[this._propNames[0]] = this._texMap.slice(0);
+    //this._propValues = [];
+    //this._propValues[this._propNames[0]] = this._texMap.slice(0);
+	this._propNames			= ["texmap",		"emboss",	"delta",		  "intensity",		"speed"];
+	this._propLabels		= ["Texture map",	"Emboss",	"Delta",		"Intensity",		"Speed"];
+	this._propTypes			= ["file",			"float",	"float",			"float",		"float"];
+
+	this._propValues		= [];
+	this._propValues[ this._propNames[0] ] = this._texMap.slice(0);
+	this._propValues[ this._propNames[1] ] = this._emboss;
+	this._propValues[ this._propNames[2] ] = this._delta;
+	this._propValues[ this._propNames[3] ] = this._intensity;
+	this._propValues[ this._propNames[4] ] = this._speed;
 
     ///////////////////////////////////////////////////////////////////////
     // Methods
@@ -52,32 +67,141 @@ var WaterMaterial = function WaterMaterial() {
         return newMat;
     };
 
+	this.setProperty = function( prop, value ) {
+		// make sure we have legitimate imput
+		var ok = this.validateProperty( prop, value );
+		if (!ok) {
+			console.log( "invalid property in Water Material:" + prop + " : " + value );
+		}
+
+		switch (prop)
+		{
+			case "texmap":
+				this.setTextureMap(value);
+				break;
+
+			case "emboss":
+				this.setEmboss( value );
+				break;
+
+			case "delta":
+				this.setDelta( value );
+				break;
+
+			case "intensity":
+				this.setIntensity( value );
+				break;
+
+			case "speed":
+				this.setSpeed( value );
+				break;
+
+			case "color":
+				break;
+		}
+	};
+
     this.init = function (world) {
-        // save the world
-        if (world) this.setWorld(world);
+		// save the world
+		if (world) this.setWorld(world);
 
-        // set up the shader
-        this._shader = new RDGE.jshader();
-        this._shader.def = waterMaterialDef;
-        this._shader.init();
+		// set up the shader
+		this._shader = new RDGE.jshader();
+		this._shader.def = waterMaterialDef;
+		this._shader.init();
 
-        // set up the material node
-        this._materialNode = RDGE.createMaterialNode("waterMaterial" + "_" + world.generateUniqueNodeID());
-        this._materialNode.setShader(this._shader);
+		// set up the material node
+		this._materialNode = RDGE.createMaterialNode("waterMaterial" + "_" + world.generateUniqueNodeID());
+		this._materialNode.setShader(this._shader);
 
-        this._time = 0;
-        if (this._shader && this._shader['default']) {
-            this._shader['default'].u_time.set([this._time]);
-        }
+		this._time = 0;
+		if (this._shader && this._shader['default']) {
+			this._shader['default'].u_time.set([this._time]);
 
-        var texMapName = this._propValues[this._propNames[0]];
-        this._glTex = new Texture( world, texMapName );
+			this._shader['default'].u_emboss.set( [this._emboss] );
+			this._shader['default'].u_delta.set( [this._delta] );
+			this._shader['default'].u_intensity.set( [this._intensity] );
+			this._shader['default'].u_speed.set( [this._speed] );
+		}
 
-        // set the shader values in the shader
-        this.updateTexture();
-        this.setResolution([world.getViewportWidth(), world.getViewportHeight()]);
-        this.update(0);
-    };
+		var texMapName = this._propValues[this._propNames[0]];
+		this._glTex = new Texture( world, texMapName );
+
+		// set the shader values in the shader
+		this.updateTexture();
+		this.setResolution([world.getViewportWidth(), world.getViewportHeight()]);
+		this.update(0);
+	};
+
+	this.setTextureMap = function( texMapName )
+	{
+		this._texMap = texMapName.slice();
+		this._propValues[ this._propNames[0] ] = this._texMap.slice(0);
+
+		this._glTex = new Texture( this.getWorld(), texMapName );
+		this.updateTexture();
+	}
+
+	this.setEmboss = function( value )
+	{
+		this._emboss = value;
+		this._propValues[ "emboss" ] = value;
+
+		var material = this._materialNode;
+		if (material) {
+			var technique = material.shaderProgram['default'];
+			var renderer = RDGE.globals.engine.getContext().renderer;
+			if (renderer && technique) {
+					technique.u_emboss.set( [value] );
+			}
+		}
+	}
+
+	this.setIntensity = function( value )
+	{
+		this._intensity = value;
+		this._propValues[ "intensity" ] = value;
+
+		var material = this._materialNode;
+		if (material) {
+			var technique = material.shaderProgram['default'];
+			var renderer = RDGE.globals.engine.getContext().renderer;
+			if (renderer && technique) {
+					technique.u_intensity.set( [value] );
+					console.log( "setting intensity to: " + value );
+			}
+		}
+	}
+
+	this.setDelta = function( value )
+	{
+		this._delta = value;
+		this._propValues[ "delta" ] = value;
+
+		var material = this._materialNode;
+		if (material) {
+			var technique = material.shaderProgram['default'];
+			var renderer = RDGE.globals.engine.getContext().renderer;
+			if (renderer && technique) {
+					technique.u_delta.set( [value] );
+			}
+		}
+	}
+
+	this.setSpeed = function( value )
+	{
+		this._speed = value;
+		this._propValues[ "speed" ] = value;
+
+		var material = this._materialNode;
+		if (material) {
+			var technique = material.shaderProgram['default'];
+			var renderer = RDGE.globals.engine.getContext().renderer;
+			if (renderer && technique) {
+					technique.u_speed.set( [value] );
+			}
+		}
+	}
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -109,6 +233,10 @@ var waterMaterialDef =
 				{
 				    'u_tex0': { 'type': 'tex2d' },
 				    'u_time': { 'type': 'float' },
+				    'u_emboss': { 'type': 'float' },
+				    'u_delta': { 'type': 'float' },
+				    'u_speed': { 'type': 'float' },
+				    'u_intensity': { 'type': 'float' },
 				    'u_resolution': { 'type': 'vec2' }
 				},
 

@@ -371,7 +371,7 @@ exports.MaterialsPopup = Montage.create(Component, {
                 "defaults":
                 {
                     "minValue": 0,
-                    "maxValue": 128,
+                    "maxValue": 400,
                     "decimalPlace": 100,
 					"value": value
                 }
