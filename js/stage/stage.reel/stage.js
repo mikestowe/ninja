@@ -609,7 +609,7 @@ exports.Stage = Montage.create(Component, {
             var point, element,
                 docView = this.application.ninja.currentDocument.model.views.design;
 
-            point = webkitConvertPointFromPageToNode(this.canvas, new WebKitPoint(position.pageX - docView.iframe.contentWindow.pageXOffset, position.pageY - docView.iframe.contentWindow.pageYOffset));
+            point = webkitConvertPointFromPageToNode(this.canvas, new WebKitPoint(position.pageX - docView.iframe.contentWindow.pageXOffset + this.documentOffsetLeft, position.pageY - docView.iframe.contentWindow.pageYOffset + this.documentOffsetTop));
             element = this.application.ninja.currentDocument.model.views.design.getElementFromPoint(point.x - this.userContentLeft,point.y - this.userContentTop);
 
             if(!element) debugger;
