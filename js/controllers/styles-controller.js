@@ -1345,7 +1345,6 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             this.dirtyStyleSheets.length = 0;
 
             if(doc) {
-                this.dirtyStyleSheets = null;
                 this.dirtyStyleSheets = this.dirtyStyleSheets.filter(function(sheet) {
                     return sheet.document !== doc;
                 });
