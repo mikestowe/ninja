@@ -95,12 +95,6 @@ exports.StageDeps = Montage.create(Component, {
     handleAppLoaded: {
         value: function() {
 
-            Object.defineBinding(this, "currentDocument", {
-                boundObject: this.application.ninja,
-                boundObjectPropertyPath: "currentDocument",
-                oneway: true
-            });
-
             Object.defineBinding(this, "userContentLeft", {
                 boundObject: this.stage,
                 boundObjectPropertyPath: "_userContentLeft",

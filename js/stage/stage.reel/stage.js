@@ -164,6 +164,29 @@ exports.Stage = Montage.create(Component, {
         set: function(value) { this._userContentBorder = value; }
     },
 
+    _activeDocument : {
+        value : null,
+        enumerable : false
+    },
+
+    activeDocument : {
+        get : function() {
+            return this._activeDocument;
+        },
+        set : function(document) {
+            ///// If the document is null set default stylesheets to null
+
+            if(!document) {
+                return false;
+            }
+
+            ///// setting document via binding
+            this._activeDocument = document;
+
+        },
+        enumerable : false
+    },
+
     willDraw: {
         value: function() {
             if(this.resizeCanvases) {
