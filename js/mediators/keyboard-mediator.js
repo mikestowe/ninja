@@ -67,7 +67,7 @@ exports.KeyboardMediator = Montage.create(Component, {
             document.addEventListener("keydown", this, false);
             document.addEventListener("keyup", this, false);
 
-            this.addEventListener("change@appModel.livePreview", this.handleLivePreview, false);
+            this.addPropertyChangeListener("appModel.livePreview", this.handleLivePreview, false);
         }
     },
 
