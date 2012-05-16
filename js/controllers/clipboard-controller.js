@@ -159,10 +159,7 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
 
                         if (!canvas.getAttribute( "data-RDGE-id" )) canvas.setAttribute( "data-RDGE-id", NJUtils.generateRandom() );
                         document.application.njUtils.createModelWithShape(canvas);
-//                        canvas.elementModel.controller = ShapesController;
-//                        if(!canvas.elementModel.shapeModel) {
-//                            canvas.elementModel.shapeModel = Montage.create(ShapeModel);
-//                        }
+
                         styles = canvas.elementModel.data || {};
                         styles.top = "" + (this.application.ninja.elementMediator.getProperty(this.copiedObjects, "top", parseInt) - 50) + "px";
                         styles.left = "" + (this.application.ninja.elementMediator.getProperty(this.copiedObjects, "left", parseInt) - 50) + "px";
@@ -182,9 +179,9 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
                                 var jStr = worldData.substr( index+1 );
                                 jObj = JSON.parse( jStr );
 
-                                world = new World(canvas, jObj.useWebGl);
+                                world = new World(canvas, jObj.webGL);
                                 canvas.elementModel.shapeModel.GLWorld = world;
-                                canvas.elementModel.shapeModel.useWebGl = jObj.useWebGl;
+                                canvas.elementModel.shapeModel.useWebGl = jObj.webGL;
                                 world.importJSON(jObj);
                                 this.application.ninja.currentDocument.buildShapeModel( canvas.elementModel, world );
                             }
