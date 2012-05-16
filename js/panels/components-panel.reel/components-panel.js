@@ -295,20 +295,12 @@ exports.ComponentsPanel = Montage.create(Component, {
                     }
                 }
                 
-                instance.addEventListener('firstDraw', that, false);
-
                 that.application.ninja.currentDocument.model.setComponentInstance(instance, element);
 
                 that.application.ninja.elementMediator.addElements(element, styles);
             });
 
         }
-    },
-    
-    handleFirstDraw: {
-    	value: function (e) {
-    		NJevent("addComponentFirstDraw");
-    	}
     },
 
     makeComponent: {
