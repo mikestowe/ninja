@@ -463,7 +463,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
 			this._documents.splice(this._documents.indexOf(doc), 1);
 
-            this.activeDocument = null;
+            this._activeDocument = null;
 
             this.application.ninja.stage.stageView.hideRulers();
 
