@@ -184,6 +184,9 @@ exports.RuleList = Montage.create(Component, {
             ///// Null out any rules that were just drawn
             this.rulesToDraw.length = 0;
             this.rulesToRemove.length = 0;
+
+            this.parentComponent.ruleListDrawn = true;
+            this.parentComponent.needsDraw = true;
         }
     }
 });

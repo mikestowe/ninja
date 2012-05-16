@@ -11,6 +11,7 @@ exports.RuleListContainer = Montage.create(Component, {
     _instanceToAdd     : { value: null },
     _appendElement     : { value: null },
     _lastDisplayedList : { value: null },
+    ruleListDrawn      : { value: null },
 
     _displayedList     : { value: null },
     displayedList : {
@@ -156,6 +157,17 @@ exports.RuleListContainer = Montage.create(Component, {
                     this._displayedList.component.element.style.display = null;
                 }
             }
+        }
+        
+    },
+    
+    didDraw: {
+        value: function() {
+            if(this.ruleListDrawn === true) {
+                var stylesView = this.parentComponent.parentComponent;
+                stylesView.needsDraw = stylesView.hasStyles = true;
+            }
+
         }
     }
 });

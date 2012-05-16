@@ -41,7 +41,8 @@ exports.StylesViewContainer = Montage.create(Component, {
         },
         set: function(hasThem) {
             this._hasStyles = hasThem;
-            this.needsDraw = true;
+            //caller needs to set ndt
+            //this.needsDraw = true;
         }
     },
 
