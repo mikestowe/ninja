@@ -187,6 +187,33 @@ exports.Stage = Montage.create(Component, {
         enumerable : false
     },
 
+    _userPaddingLeft: { value: 0 },
+    _userPaddingTop: { value: 0 },
+
+    userPaddingLeft: {
+        get: function() { return this._userPaddingLeft; },
+        set: function(value) {
+            this._userPaddingLeft = value;
+            this._documentOffsetLeft = -value;
+            this.application.ninja.stylesController.setElementStyle(this._documentRoot.ownerDocument.getElementsByTagName("HTML")[0],
+                                                                    "padding-left", -value + "px", true);
+            this.userContentLeft = this._documentOffsetLeft;
+            this.updatedStage = true;
+        }
+    },
+
+    userPaddingTop: {
+        get: function() { return this._userPaddingTop; },
+        set: function(value) {
+            this._userPaddingTop = value;
+            this._documentOffsetTop = -value;
+            this.application.ninja.stylesController.setElementStyle(this._documentRoot.ownerDocument.getElementsByTagName("HTML")[0],
+                                                                    "padding-top", -value + "px", true);
+            this.userContentTop = this._documentOffsetTop;
+            this.updatedStage = true;
+        }
+    },
+
     willDraw: {
         value: function() {
             if(this.resizeCanvases) {
@@ -490,8 +517,8 @@ exports.Stage = Montage.create(Component, {
                 this._scrollLeft = this.application.ninja.currentDocument.model.views.design.document.body.scrollLeft;
                 this._scrollTop = this.application.ninja.currentDocument.model.views.design.document.body.scrollTop;
 
-                this.userContentLeft = -this._scrollLeft;
-                this.userContentTop = -this._scrollTop;
+                this.userContentLeft = this._documentOffsetLeft - this._scrollLeft;
+                this.userContentTop = this._documentOffsetTop - this._scrollTop;
 
                 // TODO - scroll events are not dependable.  We may need to use a timer to simulate
                 // scrollBegin and scrollEnd. For now, the Pan Tool will keep track of the stage's scroll values

@@ -245,16 +245,45 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
             }
             var els = event.detail.data.els;
             if(els && this._shouldUpdatePlanes(event.detail.data.prop)) {
-                var len = els.length;
+                var len = els.length,
+                    stage = this.application.ninja.stage,
+                    minLeft = stage.userPaddingLeft,
+                    minTop = stage.userPaddingTop,
+                    docLeft = stage.documentOffsetLeft,
+                    docTop = stage.documentOffsetTop,
+                    l,
+                    t,
+                    plane,
+                    changed = false;
                 for(var i=0; i < len; i++) {
-                    if(els[i].elementModel.props3D.elementPlane) {
-                        els[i].elementModel.props3D.elementPlane.init();
+                    plane = els[i].elementModel.props3D.elementPlane;
+                    if(plane) {
+                        plane.init();
+                        l = plane._rect.m_left - docLeft;
+                        t = plane._rect.m_top - docTop;
+                        if(l < minLeft) {
+                            minLeft = l;
+                        }
+                        if(t < minTop) {
+                            minTop = t;
+                        }
                     }
                 }
 
-                this.application.ninja.stage.layout.draw();
-                this.drawWorkingPlane();
-                this.draw3DCompass();
+                if(minLeft !== stage.userPaddingLeft) {
+                    stage.userPaddingLeft = minLeft;
+                    changed = true;
+                }
+                if(minTop !== stage.userPaddingTop) {
+                    stage.userPaddingTop = minTop;
+                    changed = true;
+                }
+
+                if(!changed) {
+                    stage.layout.draw();
+                    this.drawWorkingPlane();
+                    this.draw3DCompass();
+                }
             }
         }
     },
