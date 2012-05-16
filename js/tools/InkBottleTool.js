@@ -69,7 +69,7 @@ exports.InkBottleTool = Montage.create(ModifierToolBase, {
 
             if(this._canColor && this.application.ninja.selectedElements.length)
             {
-                var color = this.application.ninja.colorController.colorToolbar.stroke,
+                var color = this.options.stroke,
                     colorInfo;
                 if(color && color.color)
                 {

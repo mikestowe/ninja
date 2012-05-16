@@ -240,7 +240,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                 this._selectedSubpath.setStrokeWidth(strokeSize);
 
                 var colorArray=[];
-                var color = this.application.ninja.colorController.colorToolbar.stroke.color;
+                var color = this.options.stroke.color;
                 if (color){
                     colorArray = [color.r/255, color.g/255, color.b/255, color.a];
                 }else {
@@ -248,7 +248,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                 }
                 this._selectedSubpath.setStrokeColor(colorArray);
 
-                color = this.application.ninja.colorController.colorToolbar.fill.color;
+                color = this.options.fill.color;
                 if (color){
                     colorArray = [color.r/255, color.g/255, color.b/255, color.a];
                 } else {
@@ -592,7 +592,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                     var strokeColor = subpath.getStrokeColor();
                     newCanvas.elementModel.shapeModel.stroke = strokeColor;
                     if(strokeColor) {
-                        newCanvas.elementModel.shapeModel.border = this.application.ninja.colorController.colorToolbar.stroke;
+                        newCanvas.elementModel.shapeModel.border = this.options.stroke;
                     }
                     newCanvas.elementModel.shapeModel.GLGeomObj = subpath;
                     newCanvas.elementModel.shapeModel.useWebGl = false;//this.options.use3D;
