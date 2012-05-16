@@ -22,7 +22,7 @@ exports.CssStyle = Montage.create(Component, {
             return this._valueText;
         },
         set: function(text) {
-            this._valueText = text;
+            this._valueText = this.browserValue = text;
             this.units = this.getUnits(text);
         }
     },
@@ -315,7 +315,6 @@ exports.CssStyle = Montage.create(Component, {
 
     prepareForDraw : {
         value: function() {
-            console.log("style's prepare for draw");
             this.element.addEventListener('dragstart', this, false);
             this.element.addEventListener('drag', this, false);
             this.element.addEventListener('dragend', this, false);

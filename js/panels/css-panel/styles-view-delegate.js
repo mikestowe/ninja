@@ -78,7 +78,6 @@ exports.StylesViewMediator = Montage.create(Component, {
     ///// Enable/Disable Style when checkbox is clicked
     handleStyleToggle : {
         value: function(rule, enable, style) {
-            debugger;
             if(enable) {
                 this.stylesController.setStyle(rule, style.propertyText, style.browserValue, style.priority);
             } else {
@@ -92,8 +91,6 @@ exports.StylesViewMediator = Montage.create(Component, {
     handlePropertyStop: {
         value: function(e, style) {
             var key, nextFocus;
-
-            console.log("Handle Style Stop");
 
             if(e._event.detail.type === 'keydown') {
                 key = e._event.detail.keyCode;
@@ -114,8 +111,6 @@ exports.StylesViewMediator = Montage.create(Component, {
     handleValueStop: {
         value: function(e, style) {
             var key, nextFocus;
-            console.log("Handle Value Stop");
-            console.log("Editing new style: ", style.editingNewStyle);
 
             if(e._event.detail.type === 'keydown') {
                 key = e._event.detail.keyCode;
@@ -163,8 +158,6 @@ exports.StylesViewMediator = Montage.create(Component, {
             ///// Mark style as invalid if the browser doesn't accept it
             style.invalid = (browserValue === null);
 
-            console.log("BrowserValue: ", browserValue, rule);
-
             this._dispatchChange(property, browserValue);
         }
     },
@@ -194,8 +187,6 @@ exports.StylesViewMediator = Montage.create(Component, {
 
             ///// Mark style as invalid if the browser doesn't accept it
             style.invalid = (browserValue === null);
-
-            console.log("BrowserValue: ", browserValue, rule);
 
             this._dispatchChange(property, browserValue);
 
