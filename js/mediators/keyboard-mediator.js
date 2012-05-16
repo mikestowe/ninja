@@ -172,11 +172,13 @@ exports.KeyboardMediator = Montage.create(Component, {
                 if(evt.keyCode === Keyboard.K ) {
                     evt.preventDefault();
                     if(this.application.ninja.toolsData.selectedTool.id === "FillTool") {
+                        this.application.ninja.handleSelectTool({ "detail": this.application.ninja.toolsData.defaultToolsData[this.application.ninja.toolsData.inkBottleToolIndex] });
+                    } else if(this.application.ninja.toolsData.selectedTool.id === "InkBottleTool") {
                         this.application.ninja.handleSelectTool({ "detail": this.application.ninja.toolsData.defaultToolsData[this.application.ninja.toolsData.fillToolIndex] });
                     } else {
-                        this.application.ninja.handleSelectTool({ "detail": this.application.ninja.toolsData.defaultToolsData[this.application.ninja.toolsData.inkBottleToolIndex] });
+                        this.application.ninja.handleSelectTool({ "detail": this.application.ninja.toolsData.defaultToolsData[this.application.ninja.toolsData.fillToolIndex] });
                     }
-                    return;
+                   return;
                 }
 
                 // Rotate Stage Tool is M
