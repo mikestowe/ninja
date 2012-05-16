@@ -33,8 +33,10 @@ exports.DocumentEntry = Montage.create(Component, {
             }
 
             this._document = value;
-            this._uuid = value.uuid;
-            //this.needsDraw = true;
+
+            if(value) {
+                this._uuid = value.uuid;
+            }
         }
     },
 
