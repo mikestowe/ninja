@@ -7,6 +7,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage,
     DrawingTool = require("js/tools/drawing-tool").DrawingTool,
 ModifierToolBase = require("js/tools/modifier-tool-base").ModifierToolBase;
+SelectionTool = require("js/tools/SelectionTool").SelectionTool;
 
 
 exports.BindingTool = Montage.create(ModifierToolBase, {
@@ -44,8 +45,24 @@ exports.BindingTool = Montage.create(ModifierToolBase, {
 
     HandleLeftButtonUp: {
         value: function(event) {
-            this.endDraw(event);
-            NJevent("disableStageMove");
+
+            if(this._escape) {
+                this._escape = false;
+                return;
+            }
+
+            if(this._hasDraw) {
+                this._hasDraw = false;
+                this.endDraw(event);
+            } else {
+                this.doSelection(event);
+                if (this.application.ninja.selectedElements.length !== 0 ) {
+                    this.selectedElement = this.application.ninja.selectedElements[0];
+                }
+                this._isDrawing = false;
+            }
+            //this.endDraw(event);
+            //NJevent("disableStageMove");
         }
     }
 });
