@@ -199,11 +199,11 @@ exports.StylesViewMediator = Montage.create(Component, {
 
     handlePaste : {
         value: function(e) {
-            var text = document.execCommand('insertHTML', null, e._event.clipboardData.getData("Text")).trim();
-
-            if(text.matches(/([a-zA-Z-]+:[a-zA-Z-]+){,1}/)) {
-
-            }
+//            var text = document.execCommand('insertHTML', null, e._event.clipboardData.getData("Text")).trim();
+//
+//            if(text.matches(/([a-zA-Z-]+:[a-zA-Z-]+){,1}/)) {
+//
+//            }
         }
     },
 
