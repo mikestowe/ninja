@@ -1456,6 +1456,8 @@ NinjaCvsRt.RuntimeRadialGradientMaterial = Object.create(NinjaCvsRt.RuntimeMater
     _colorStop3: { value: 0.6, writable: true },
     _colorStop4: { value: 1.0, writable: true },
 
+	_textureTransform: { value: [1,0,0,  0,1,0,  0,0,1], writable: true },
+
     init: {
         value: function(world) {
             var material = this._materialNode;
@@ -1477,6 +1479,8 @@ NinjaCvsRt.RuntimeRadialGradientMaterial = Object.create(NinjaCvsRt.RuntimeMater
                         this._shader["default"].u_colorStop3.set( [this._colorStop3] );
                         this._shader["default"].u_colorStop4.set( [this._colorStop4] );
 
+                        this._shader["default"].u_texTransform.set( this._textureTransform );
+
                         if (this._angle !== undefined)
                             this._shader["default"].u_cos_sin_angle.set([Math.cos(this._angle), Math.sin(this._angle)]);
                     }
@@ -1495,6 +1499,8 @@ NinjaCvsRt.RuntimeRadialGradientMaterial = Object.create(NinjaCvsRt.RuntimeMater
             this._colorStop2	= jObj.colorStop2;
             this._colorStop3	= jObj.colorStop3;
             this._colorStop4	= jObj.colorStop4;
+
+			this._textureTransform = jObj.textureTransform;
 
             if (this._angle !== undefined)
                 this._angle = jObj.angle;

@@ -26,6 +26,8 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
     //	this._colorCount	= 4;
     this._angle = 0.0; // the shader takes [cos(a), sin(a)]
 
+	this._textureTransform = [1,0,0, 0,1,0, 0,0,1];
+
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
     ///////////////////////////////////////////////////////////////////////
@@ -195,7 +197,21 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
     // Methods
     ///////////////////////////////////////////////////////////////////////
     // duplcate method requirde
-    this.dup = function () { return new LinearGradientMaterial(); };
+	this.dup = function () {
+		// allocate a new material
+		var newMat = new LinearGradientMaterial();
+
+		// copy over the current values;
+		var propNames = [],  propValues = [],  propTypes = [],  propLabels = [];
+		this.getAllProperties( propNames,  propValues,  propTypes,  propLabels);
+		var n = propNames.length;
+		for (var i=0;  i<n;  i++) {
+			newMat.setProperty( propNames[i], propValues[i] );
+		}
+		newMat._textureTransform = this._textureTransform.slice();
+
+		return newMat;
+	};
 
     this.init = function (world) {
         this.setWorld(world);
@@ -241,7 +257,7 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
 
             this.setAngle(this.getAngle());
  
-			this._shader['default'].u_texTransform.set( [1,0,0,  0,1,0,  0,0,1] );	
+			this._shader['default'].u_texTransform.set( this._textureTransform );
        }
     };
 
@@ -258,7 +274,8 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
 		    'colorStop2': this.getColorStop2(),
 		    'colorStop3': this.getColorStop3(),
 		    'colorStop4': this.getColorStop4(),
-		    'angle': this.getAngle()
+		    'angle': this.getAngle(),
+			'textureTransform': this._textureTransform
 		};
 
         return jObj;
@@ -278,6 +295,7 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
 				colorStop3 = jObj.colorStop3,
 				colorStop4 = jObj.colorStop4,
 				angle = jObj.angle;
+			this._textureTransform = jObj.textureTransform;
 
             this.setProperty("color1", color1);
             this.setProperty("color2", color2);
