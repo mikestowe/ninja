@@ -83,6 +83,11 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             ///// If the document is null set default stylesheets to null
 
             if(!document) {
+                this._activeDocument   = null;
+                this._stageStylesheet  = null;
+                this.defaultStylesheet = null;
+                this.userStyleSheets   = [];
+                this.clearDirtyStyleSheets();
                 return false;
             }
 
@@ -120,7 +125,10 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             if(sheet) {
                 this._defaultStylesheet = sheet;
             } else {
-                
+                if(sheet === null) {
+                    this._defaultStylesheet = null;
+                    return false;
+                }
                 ///// Use the last stylesheet in the document as the default
                 
                 var sheets = this._activeDocument._document.styleSheets,
