@@ -184,6 +184,10 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         	this._bodyFragment = null;
         	//Calling standard method to finish opening document
         	this.bodyContentLoaded(null);
+
+            // TODO: Clean up this code
+            this.application.ninja.stage.documentOffsetLeft = parseInt((this.document.body.scrollWidth - this._template.size.width)/2);
+            this.application.ninja.stage.documentOffsetTop = parseInt((this.document.body.scrollHeight - this._template.size.height)/2);
     	}
     },
     ////////////////////////////////////////////////////////////////////
