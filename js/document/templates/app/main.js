@@ -3,8 +3,8 @@
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
-var Montage = require("montage/core/core").Montage,
-    Component = require("montage/ui/component").Component,
+var Montage = 			require("montage/core/core").Montage,
+    Component = 		require("montage/ui/component").Component,
     Template =			require("montage/ui/template").Template,
     TemplateCreator =	require("tools/template/template-creator").TemplateCreator;
 
@@ -20,6 +20,7 @@ exports.Main = Montage.create(Component, {
     templateDidLoad: {
         value: function(){
             var self = this;
+            //
             window.addComponent = function(element, data, callback) {
                 var component;
 
@@ -38,11 +39,16 @@ exports.Main = Montage.create(Component, {
                     .end();
 
             };
-
+            //
             window.mjsTemplateCreator = TemplateCreator;
             //
             window.mjsTemplate = Template;
-
+            //
+            var templateEvent = document.createEvent("CustomEvent");
+            templateEvent.initCustomEvent("mjsTemplateReady", false, true);
+            document.body.dispatchEvent(templateEvent);
+			
+			
             // Dispatch event when this template has loaded.
             /*
             var newEvent = document.createEvent( "CustomEvent" );
