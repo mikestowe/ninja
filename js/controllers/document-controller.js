@@ -458,8 +458,10 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             if(this.activeDocument) {
                 // There is a document currently opened
 
-//                this.application.ninja.stage.stageView.showCodeViewBar(false);
-//                this.application.ninja.stage.stageView.restoreAllPanels();
+
+
+                //this.application.ninja.stage.stageView.showCodeViewBar(false);
+                //this.application.ninja.stage.stageView.restoreAllPanels();
 
                 //
                 /*
@@ -471,6 +473,18 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                 }
 
                 this.activeDocument.container.style["display"] = "none";
+                */
+
+                /*
+                this.activeDocument.container.style["display"] = "block";
+                                if(this.activeDocument.currentView === "design"){
+                                    this.activeDocument.container.parentNode.style["display"] = "block";
+                                    this.activeDocument.restoreAppState();
+                                }else{
+                                    //hide the iframe when switching to code view
+                                    document.getElementById("iframeContainer").style.display = "none";
+                                }
+
                 */
                 // hide current document
             } else {
@@ -561,21 +575,6 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             }
 
             return false;
-        }
-    },
-
-    _showCurrentDocument: {
-        value: function() {
-            if(this.activeDocument) {
-                this.activeDocument.container.style["display"] = "block";
-                if(this.activeDocument.currentView === "design"){
-                    this.activeDocument.container.parentNode.style["display"] = "block";
-                    this.activeDocument.restoreAppState();
-                }else{
-                    //hide the iframe when switching to code view
-                    document.getElementById("iframeContainer").style.display = "none";
-                }
-            }
         }
     },
 
