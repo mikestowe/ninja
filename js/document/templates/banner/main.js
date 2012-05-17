@@ -4,7 +4,9 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 var Montage = require("montage/core/core").Montage,
-    Component = require("montage/ui/component").Component;
+    Component = require("montage/ui/component").Component,
+    Template =			require("montage/ui/template").Template,
+    TemplateCreator =	require("tools/template/template-creator").TemplateCreator;
 
 exports.Main = Montage.create(Component, {
 
@@ -36,6 +38,10 @@ exports.Main = Montage.create(Component, {
                     .end();
 
             };
+
+            window.mjsTemplateCreator = TemplateCreator;
+            //
+            window.mjsTemplate = Template;
 
             // Dispatch event when this template has loaded.
             /*
