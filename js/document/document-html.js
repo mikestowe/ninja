@@ -41,14 +41,7 @@ exports.HtmlDocument = Montage.create(Component, {
 	////////////////////////////////////////////////////////////////////
 	//
     exclusionList: {
-        value: ["HTML", "BODY"] //TODO: Update to correct list
-    },
-	////////////////////////////////////////////////////////////////////
-	//
-    uuid: {
-        get: function() {
-            return this._uuid;
-        }
+        value: ["HTML", "BODY", "NINJA-CONTENT"] //TODO: Update to correct list
     },
     ////////////////////////////////////////////////////////////////////
 	//
@@ -133,33 +126,37 @@ exports.HtmlDocument = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
 	//
 	closeDocument: {
-		value: function () {
-			//
-			this.model.close(null, this.handleCloseDocument.bind(this));
-		}
-	},
-	////////////////////////////////////////////////////////////////////
-	//
-	handleCloseDocument: {
-		value: function (success) {
-			//TODO: Add logic for handling success or failure
-			//
-			this.application.ninja.documentController._documents.splice(this.uuid, 1);
-			//
-			NJevent("closeDocument", this.model.file.uri);
-			//TODO: Delete object here
+		value: function (context, callback) {
+			var closed = this.model.close(null);
+
+            callback.call(context, this);
 		}
 	},
     ////////////////////////////////////////////////////////////////////
 	//
-    saveAppState: {
+    serializeDocument: {
     	value: function () {
-    		//TODO: Import functionality
+            // There are not needed for now ssince we cannot change them
+            //this.gridHorizontalSpacing = this.application.ninja.stage.drawUtils.gridHorizontalSpacing;
+            //this.gridVerticalSpacing = this.application.ninja.stage.drawUtils.gridVerticalSpacing;
+
+            // Serialize the current scroll position
+            // TODO: Implement
+
+            // Serialize the selection
+            this.model.selection = this.application.ninja.selectedElements.slice(0);
+            this.draw3DGrid = this.application.ninja.appModel.show3dGrid;
+
+            // Serialize the undo
+            // TODO: Save the montage undo queue
+
+            // Pause the videos
+            this.model.views.design.pauseVideos();
     	}
     },
     ////////////////////////////////////////////////////////////////////
 	//
-    restoreAppState: {
+    deserializeDocument: {
     	value: function () {
     		//TODO: Import functionality
     	}

@@ -141,7 +141,7 @@ exports.MenuItem = Montage.create(Component, {
 
             if(this.data.radio && this.checked) return;
 
-            if((this.enabled === true) && (this.submenu === false) ) {
+            if( ( this.enabled === true || this.enabled > 0 ) && (this.submenu === false) ) {
                 if(this.data.action) {
                     NJevent ( this.data.action );
                 } else  if(this.checked !== null) {

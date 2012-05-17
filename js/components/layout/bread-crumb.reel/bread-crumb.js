@@ -60,30 +60,18 @@ exports.Breadcrumb = Montage.create(Component, {
         value: function() {
             var parentNode;
 
-            this.containerElements.length = 0;
+//            delete this.containerElements;
+                this.containerElements = [];
 
             parentNode = this.container;
 
-            // This is for the old template support.
-            // TODO: Remove marker for old template: NINJA-STAGE-REWORK
-            if(this.application.ninja.currentDocument.documentRoot.id === "UserContent") {
-                while(parentNode.id !== "UserContent") {
-                    this.containerElements.unshift({"node": parentNode, "nodeUuid":parentNode.uuid, "label": parentNode.nodeName});
-                    parentNode = parentNode.parentNode;
-                }
-
-                // This is always the top container which is now hardcoded to body
-                this.containerElements.unshift({"node": parentNode, "nodeUuid":parentNode.uuid, "label": "Body"});
-            } else {
-                while(parentNode !== this.application.ninja.currentDocument.documentRoot) {
-                    this.containerElements.unshift({"node": parentNode, "nodeUuid":parentNode.uuid, "label": parentNode.nodeName});
-                    parentNode = parentNode.parentNode;
-                }
-
-                // This is always the top container which is now hardcoded to body
+            while(parentNode !== this.application.ninja.currentDocument.documentRoot) {
                 this.containerElements.unshift({"node": parentNode, "nodeUuid":parentNode.uuid, "label": parentNode.nodeName});
+                parentNode = parentNode.parentNode;
             }
 
+            // This is always the top container which is now hardcoded to body
+            this.containerElements.unshift({"node": parentNode, "nodeUuid":parentNode.uuid, "label": parentNode.nodeName});
         }
     },
 

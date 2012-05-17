@@ -10,7 +10,6 @@ var Component = require("montage/ui/component").Component;
 exports.ToolsList = Montage.create(Component, {
 
     SelectionTool:          { value: null },
-    SubselectionTool:       { value: null },
     Rotate3DTool:           { value: null },
     Translate3DTool:        { value: null },
     TagTool:                { value: null },
@@ -20,11 +19,9 @@ exports.ToolsList = Montage.create(Component, {
     OvalTool:               { value: null },
     RectTool:               { value: null },
     LineTool:               { value: null },
-    PencilTool:             { value: null },
     BrushTool:              { value: null },
     FillTool:               { value: null },
     InkBottleTool:          { value: null },
-    EyedropperTool:         { value: null },
     EraserTool:             { value: null },
     RotateStageTool3D:      { value: null },
     PanTool:                { value: null },
@@ -53,7 +50,6 @@ exports.ToolsList = Montage.create(Component, {
             this.PenTool.options = this.application.ninja.toolsProperties.shapeProperties.lineProperties;//this.application.Ninja.toolsProperties.penProperties;
 
             this.SelectionTool.options = this.application.ninja.toolsProperties.selectionProperties;
-            this.SubselectionTool.options = this.application.ninja.toolsProperties.subSelectionProperties;
 
             this.Rotate3DTool.options = this.application.ninja.toolsProperties.rotate3DProperties;
             this.Translate3DTool.options = this.application.ninja.toolsProperties.rotate3DProperties;
@@ -68,10 +64,8 @@ exports.ToolsList = Montage.create(Component, {
             this.OvalTool.options = this.application.ninja.toolsProperties.shapeProperties.ovalProperties;
             this.RectTool.options = this.application.ninja.toolsProperties.shapeProperties.rectProperties;
             this.LineTool.options = this.application.ninja.toolsProperties.shapeProperties.lineProperties;
-            this.PencilTool.options = this.application.ninja.toolsProperties.pencilProperties;
             this.BrushTool.options = this.application.ninja.toolsProperties.brushProperties;
             
-            this.EyedropperTool.options = this.application.ninja.toolsProperties.eyedropperProperties;
             this.EraserTool.options = this.application.ninja.toolsProperties.eraserProperties;
             this.RotateStageTool3D.options = this.application.ninja.toolsProperties.rotateStageProperties;
             this.PanTool.options = this.application.ninja.toolsProperties.panProperties;

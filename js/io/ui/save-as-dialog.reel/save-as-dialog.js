@@ -57,7 +57,7 @@ var SaveAsDialog = exports.SaveAsDialog = Montage.create(Component, {
             this.fileInputField.selectDirectory = true;
             this.fileInputField.pickerName = "saveAsDirectoryPicker";
 
-            this.addEventListener("change@newFileName.value", this.handleNewFileNameChange, false);
+            this.addPropertyChangeListener("newFileName.value", this.handleNewFileNameChange, false);
             this.newFileName.element.addEventListener("keyup", this, false);
             this.eventManager.addEventListener("newFileDirectorySet", function(evt){self.handleNewFileDirectorySet(evt);}, false);
             this.okButton.addEventListener("click", function(evt){self.handleOkButtonAction(evt);}, false);

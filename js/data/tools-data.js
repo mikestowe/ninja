@@ -7,7 +7,48 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage;
 
 exports.ToolsData = Montage.create(Montage, {
+     selectionToolIndex : {
+        value: 0
+    },
+    rotate3DToolIndex: {
+        value: 1
+    },
+    translate3DToolIndex: {
+        value: 2
+    },
+    tagToolIndex: {
+        value: 3
+    },
+    penToolIndex: {
+        value: 4
+    },
+    textToolIndex: {
+        value: 5
+    },
+   shapeToolIndex: {
+        value: 6
+    },
+    brushToolIndex: {
+        value: 7
+    },
+    fillToolIndex: {
+        value: 8
+    },
+    inkBottleToolIndex: {
+        value: 9
+    },
+    rotateStage3DToolIndex: {
+        value: 10
+    },
+    panToolIndex: {
+        value: 11
+    },
+    zoomToolIndex: {
+        value: 12
+    },
 
+    // NOTE: additions or removal of any tools, or any changes in the order of these entries requires updating the constant index properties above. 
+    //       Code in the keyboard mediator and ninja.js accesses the array below through the index constants above
     defaultToolsData: {
         value: [
             {
@@ -20,17 +61,6 @@ exports.ToolsData = Montage.create(Montage, {
                 "lastInGroup":  false,
                 "container":    false,
                 "selected":     true
-            },
-            {
-                "id":           "SubselectionTool",
-                "properties":   "subSelectionProperties",
-                "spriteSheet":  true,
-                "action":       "SubselectionTool",
-                "toolTip":      "Subselect Tool",
-                "cursor":       "auto",
-                "lastInGroup":  true,
-                "container":    false,
-                "selected":     false
             },
             {
                 "id":           "RotateTool3D",
@@ -125,17 +155,6 @@ exports.ToolsData = Montage.create(Montage, {
                 "selected":     false
             },
             {
-                "id":           "PencilTool",
-                "properties":   "pencilProperties",
-                "spriteSheet":  true,
-                "action":       "PencilTool",
-                "toolTip":      "Pencil Tool",
-                "cursor":       "auto",
-                "lastInGroup":  false,
-                "container":    false,
-                "selected":     false
-            },
-            {
                 "id":           "BrushTool",
                 "properties":   "brushProperties",
                 "spriteSheet":  true,
@@ -163,19 +182,8 @@ exports.ToolsData = Montage.create(Montage, {
                 "spriteSheet":  true,
                 "action":       "InkBottleTool",
                 "toolTip":      "Ink Bottle Tool (K)",
-                "cursor":       "url('images/tools/inkbottle_down.png'), default",
+                "cursor":       "url('images/tools/inkbottle_cursor.png'), default",
                 "lastInGroup":  true,
-                "container":    false,
-                "selected":     false
-            },
-            {
-                "id":           "EyedropperTool",
-                "properties":   "eyedropperProperties",
-                "spriteSheet":  true,
-                "action":       "EyedropperTool",
-                "toolTip":      "Eyedropper Tool (I)",
-                "cursor":       "url('images/tools/eyedropper_down.png') 6 20, default",
-                "lastInGroup":  false,
                 "container":    false,
                 "selected":     false
             },

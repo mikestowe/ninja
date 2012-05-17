@@ -32,30 +32,23 @@
                         }
                     ],
                     "bindings": {
-                        "label": {
-                            "boundObject": {"@": "repetition1"},
-                            "boundObjectPropertyPath": "objectAtCurrentIteration.label",
-                            "oneway": true
-                        },
-                        "value": {
-                            "boundObject": {"@": "repetition1"},
-                            "boundObjectPropertyPath": "objectAtCurrentIteration.nodeUuid",
-                            "oneway": true
-                        }
+                        "label": {"<-": "@buttonsList.objectAtCurrentIteration.label"},
+                        "value": {"<-": "@buttonsList.objectAtCurrentIteration.nodeUuid"}
                     }
                 },
 
-                "repetition1": {
+                "buttonsListController": {
+                    "prototype": "montage/ui/controller/array-controller",
+                    "bindings": {
+                        "content": {"<<->": "@owner.containerElements"}
+                    }
+                },
+
+                "buttonsList": {
                     "prototype": "montage/ui/repetition.reel",
                     "properties": {
-                        "element": {"#": "breadcrumb_container"}
-                    },
-                    "bindings": {
-                        "objects": {
-                            "boundObject": {"@": "owner"},
-                            "boundObjectPropertyPath": "containerElements",
-                            "oneway": true
-                        }
+                        "element": {"#": "breadcrumb_container"},
+                        "contentController": {"@": "buttonsListController"}
                     }
                 },
 
@@ -65,11 +58,7 @@
                         "element": {"#": "disabledCondition"}
                     },
                     "bindings": {
-                        "condition": {
-                            "boundObject": {"@": "owner"},
-                            "boundObjectPropertyPath": "disabled",
-                            "oneway": true
-                        }
+                        "condition": {"<-": "@owner.disabled"}
                     }
                 }
             }

@@ -186,6 +186,9 @@
                 "properties": {
                     "element": {"#": "stageAndScenesContainer"},
                     "appModel":     {"@": "appModel"}
+                },
+                "bindings": {
+                    "activeDocument": {"<-": "@documentController1.activeDocument"}
                 }
             },
 
@@ -263,11 +266,7 @@
             "selectionController1": {
                 "prototype": "js/controllers/selection-controller",
                 "bindings" : {
-                    "selectionContainer": {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "currentSelectedContainer",
-                        "oneway": true
-                    }
+                    "selectionContainer": {"<-": "@owner.currentSelectedContainer"}
                 }
             },
 
@@ -287,7 +286,10 @@
             },
 
             "stylesController": {
-                "prototype": "js/controllers/styles-controller"
+                "prototype": "js/controllers/styles-controller",
+                "bindings": {
+                    "activeDocument": {"<-": "@documentController1.activeDocument"}
+                }
             },
 
             "presetsController": {

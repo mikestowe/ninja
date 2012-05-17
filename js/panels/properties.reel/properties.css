@@ -4,6 +4,21 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
+/* Cleanup TODO - now that we removed the color toolbar from the tools panel, we no longer load the colortoolbar reel.
+                  Currently the color chips in the property inspector rely on the colortoolbar button style so we
+                  copied the class here. When we do the color feature cleanup we should remove this dependency.
+*/
+.colortoolbar button {
+  float: left;
+  clear: both;
+  width: 27px;
+  height: 27px;
+  background: black;
+  border: 1px solid #000;
+  padding: 0;
+  margin: 0px;
+}
+
 .propertiesPanel {
     color:#FFF;
     overflow-x: hidden;
@@ -256,17 +271,17 @@ padding-right:6px;
     content: "•";
 }
 
-.propertiesPanel input.nj-skinned label {
+.propertiesPanel .checkbox-label {
     position: absolute;
-    top: 0;
-    left: 15px;
+    top: 4px;
+    padding-left: 5px;
+    /*left: 15px;*/
     font-size: 10px;
     width:55px;
     text-align: left;
     font-weight: normal;
     color:#FFF;
 }
-
 .propertiesPanel input[type='radio'].nj-skinned {
     text-indent: 0px;
     line-height: 5px;

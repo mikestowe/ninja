@@ -7,8 +7,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage     = require("montage/core/core").Montage,
     Component   = require("montage/ui/component").Component,
     NJUtils     = require("js/lib/NJUtils").NJUtils;
-
-var PIData              = require("js/data/pi/pi-data").PiData;
+    ClassUUID   = require("js/components/core/class-uuid").ClassUuid,
+    PIData      = require("js/data/pi/pi-data").PiData;
 
 String.prototype.capitalizeFirstChar = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
@@ -295,20 +295,12 @@ exports.ComponentsPanel = Montage.create(Component, {
                     }
                 }
                 
-                instance.addEventListener('firstDraw', that, false);
-
                 that.application.ninja.currentDocument.model.setComponentInstance(instance, element);
 
                 that.application.ninja.elementMediator.addElements(element, styles);
             });
 
         }
-    },
-    
-    handleFirstDraw: {
-    	value: function (e) {
-    		NJevent("addComponentFirstDraw");
-    	}
     },
 
     makeComponent: {
@@ -391,6 +383,8 @@ exports.ComponentsPanel = Montage.create(Component, {
                     break;
 
             }
+
+            el.setAttribute("data-montage-id", ClassUUID.generate());
 
             return el;
         }

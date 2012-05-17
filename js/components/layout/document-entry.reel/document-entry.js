@@ -33,8 +33,10 @@ exports.DocumentEntry = Montage.create(Component, {
             }
 
             this._document = value;
-            this._uuid = value.uuid;
-            //this.needsDraw = true;
+
+            if(value) {
+                this._uuid = value.uuid;
+            }
         }
     },
 
@@ -117,7 +119,7 @@ exports.DocumentEntry = Montage.create(Component, {
     handleClick: {
         value: function(event) {
             if(event._event.target.nodeName === "IMG") {
-                this.application.ninja.documentController.closeDocument(this._uuid);
+                this.application.ninja.documentController.closeFile(this.application.ninja.documentController._findDocumentByUUID(this._uuid));
             } else {
                 if(!this._document.isActive) {
                     this.application.ninja.stage.stageView.switchDocument(this.application.ninja.documentController._findDocumentByUUID(this._uuid));

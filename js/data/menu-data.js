@@ -22,13 +22,13 @@ exports.MenuData = Montage.create( Montage, {
                             "displayText" : "New File",
                             "hasSubMenu" : false,
                             "enabled": true,
-                            "action":   "executeNewWebpage"
+                            "action":   "executeNewFile"
                         },
                         {
                             "displayText" : "Open File",
                             "hasSubMenu" : false,
                             "enabled": true,
-                            "action": "executeWebpageOpen"
+                            "action": "executeFileOpen"
                         },
                         {
                             "displayText" : "Close File",
@@ -36,11 +36,8 @@ exports.MenuData = Montage.create( Montage, {
                             "enabled": {
                                 "value": false,
                                 "boundObj": "documentController",
-                                "boundProperty": "activeDocument",
-                                "oneway": true,
-                                "boundValueMutator": function(activeDocument){
-                                    return activeDocument !== null;
-                                }
+                                "boundProperty": "_documents.count()",
+                                "oneway": true
                             },
                             "action": "executeFileClose"
                         },
@@ -50,11 +47,8 @@ exports.MenuData = Montage.create( Montage, {
                             "enabled": {
                                 "value": false,
                                 "boundObj": "documentController",
-                                "boundProperty": "activeDocument",
-                                "oneway": true,
-                                "boundValueMutator": function(activeDocument){
-                                    return activeDocument !== null;
-                                }
+                                "boundProperty": "_documents.count()",
+                                "oneway": true
                             },
                             "action": "executeFileCloseAll"
                         },
@@ -68,11 +62,8 @@ exports.MenuData = Montage.create( Montage, {
                             "enabled": {
                                 "value": false,
                                 "boundObj": "documentController",
-                                "boundProperty": "activeDocument",
-                                "oneway": true,
-                                "boundValueMutator": function(activeDocument){
-                                    return activeDocument !== null;
-                                }
+                                "boundProperty": "_documents.count()",
+                                "oneway": true
                             },
                             "action": "executeSave"
                         },
@@ -82,11 +73,8 @@ exports.MenuData = Montage.create( Montage, {
                             "enabled": {
                                 "value": false,
                                 "boundObj": "documentController",
-                                "boundProperty": "activeDocument",
-                                "oneway": true,
-                                "boundValueMutator": function(activeDocument) {
-                                    return activeDocument !== null;
-                                }
+                                "boundProperty": "_documents.count()",
+                                "oneway": true
                             },
                             "action":"executeSaveAs"
                         },
@@ -96,11 +84,8 @@ exports.MenuData = Montage.create( Montage, {
                             "enabled": {
                                 "value": false,
                                 "boundObj": "documentController",
-                                "boundProperty": "activeDocument",
-                                "oneway": true,
-                                "boundValueMutator": function(activeDocument){
-                                    return activeDocument !== null;
-                                }
+                                "boundProperty": "_documents.count()",
+                                "oneway": true
                             },
                             "action": "executeSaveAll"
                         },

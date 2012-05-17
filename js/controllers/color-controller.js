@@ -9,7 +9,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage =           	require("montage/core/core").Montage,
     Component =         	require("montage/ui/component").Component,
     ColorModel =        	require("js/models/color-model").ColorModel,
-    ColorToolbar =      	require("js/panels/Color/colortoolbar.reel").ColorToolbar,
     ColorPanelBase =    	require("js/panels/Color/colorpanelbase.reel").ColorPanelBase,
     ElementsMediator =  	require("js/mediators/element-mediator").ElementMediator,
     ColorPopupManager =		require("js/panels/Color/colorpopup-manager").ColorPopupManager,
@@ -368,20 +367,5 @@ exports.ColorController = Montage.create(Component, {
        		//Must be a valid CSS or null will be returned
        		return color;
         }
-    },
-    ////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////
-    //TODO: Remove, add via toolbar repetition
-    createToolbar: {
-        enumerable: true,
-        value: function () {
-            this.colorToolbar = ColorToolbar.create();
-            this.colorToolbar.element = document.getElementById("colortoolbar");
-            this.colorToolbar.needsDraw = true;
-        }
     }
-    ////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////
 });

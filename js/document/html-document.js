@@ -920,32 +920,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     		}
     	}
 	},
-	////////////////////////////////////////////////////////////////////
-    saveAppState:{
-        enumerable: false,
-        value: function () {
-
-            this.savedLeftScroll = this.application.ninja.stage._iframeContainer.scrollLeft;
-            this.savedTopScroll = this.application.ninja.stage._iframeContainer.scrollTop;
-
-            this.gridHorizontalSpacing = this.application.ninja.stage.drawUtils.gridHorizontalSpacing;
-            this.gridVerticalSpacing = this.application.ninja.stage.drawUtils.gridVerticalSpacing;
-
-            if(typeof this.application.ninja.selectedElements !== 'undefined'){
-                this.selectionModel = this.application.ninja.selectedElements.slice(0);
-            }
-
-            this.draw3DGrid = this.application.ninja.appModel.show3dGrid;
-
-            //persist a clone of history per document
-            this.undoStack = this.application.ninja.undocontroller.undoQueue.slice(0);
-            this.redoStack = this.application.ninja.undocontroller.redoQueue.slice(0);
-            this.application.ninja.undocontroller.clearHistory();//clear history to give the next document a fresh start
-
-            //pause videos on switching or closing the document, so that the browser does not keep downloading the media data
-            this.pauseVideos();
-        }
-    },
 
     ////////////////////////////////////////////////////////////////////
     restoreAppState:{
@@ -972,44 +946,5 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 
 
         }
-    },
-	////////////////////////////////////////////////////////////////////
-    /**
-     *pause videos on switching or closing the document, so that the browser does not keep downloading the media data
-    */
-    pauseVideos:{
-        value:function(){
-            var videosArr = this.documentRoot.getElementsByTagName("video"), i=0;
-            for(i=0;i<videosArr.length;i++){
-                if(!videosArr[i].paused){
-                    videosArr[i].pause();
-                }
-            }
-        }
-    },
-
-    /**
-     * remove the video src on closing the document, so that the browser does not keep downloading the media data, if the tag does not get garbage collected
-     *removeSrc : boolean to remove the src if the video... set only in the close document flow
-    */
-    stopVideos:{
-        value:function(){
-            var videosArr = this.documentRoot.getElementsByTagName("video"), i=0;
-            for(i=0;i<videosArr.length;i++){
-                videosArr[i].src = "";
-            }
-        }
-    },
-    pauseAndStopVideos:{
-        value:function(){
-            var videosArr = this.documentRoot.getElementsByTagName("video"), i=0;
-            for(i=0;i<videosArr.length;i++){
-                if(!videosArr[i].paused){
-                    videosArr[i].pause();
-                }
-                videosArr[i].src = "";
-            }
-        }
     }
-    ////////////////////////////////////////////////////////////////////
 });

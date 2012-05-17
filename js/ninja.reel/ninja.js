@@ -172,9 +172,9 @@ exports.Ninja = Montage.create(Component, {
 
             this.application.ninja = this;
 
-            this.toolsData.selectedTool = this.toolsData.defaultToolsData[0];
-            this.toolsData.defaultSubToolsData = this.toolsData.defaultToolsData[7].subtools;
-            this.toolsData.selectedSubTool = this.toolsData.defaultToolsData[7].subtools[1];
+            this.toolsData.selectedTool = this.toolsData.defaultToolsData[this.application.ninja.toolsData.selectionToolIndex];
+            this.toolsData.defaultSubToolsData = this.toolsData.defaultToolsData[this.application.ninja.toolsData.shapeToolIndex].subtools;
+            this.toolsData.selectedSubTool = this.toolsData.defaultToolsData[this.application.ninja.toolsData.shapeToolIndex].subtools[1];
             this.toolsData.selectedToolInstance = this.toolsList[this.toolsData.selectedTool.action];
 
             this.setupGlobalHelpers();
@@ -185,9 +185,9 @@ exports.Ninja = Montage.create(Component, {
             this.eventManager.addEventListener( "selectSubTool", this, false);
             this.eventManager.addEventListener( "onOpenDocument", this, false);
 
-            this.addEventListener("change@appModel.livePreview", this.executeLivePreview, false);
-            this.addEventListener("change@appModel.chromePreview", this.executeChromePreview, false);
-            this.addEventListener("change@appModel.debug", this.toggleDebug, false);
+            this.addPropertyChangeListener("appModel.livePreview", this.executeLivePreview, false);
+            this.addPropertyChangeListener("appModel.chromePreview", this.executeChromePreview, false);
+            this.addPropertyChangeListener("appModel.debug", this.toggleDebug, false);
 
             NJevent("appLoading");
         }

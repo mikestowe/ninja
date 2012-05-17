@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html>
+<head>
+    <link rel="stylesheet" href="label-checkbox.css" />
+    <script type="text/montage-serialization">
+    {
+        "owner": {
+            "prototype": "js/components/ui/label-checkbox.reel",
+            "properties": {
+                "element": {"#": "labelCheckbox"},
+
+                "_checkbox": {"@": "checkbox"},
+                "_labelText": {"@": "labelText"}
+            }
+        },
+
+        "checkbox": {
+            "prototype": "montage/ui/checkbox.reel",
+            "properties": {
+                "element": {"#": "checkbox"},
+                "checked": false
+            },
+            "listeners": [
+                {
+                    "type": "action",
+                    "listener": {"@": "owner"},
+                    "capture": false
+                }
+            ]
+        },
+
+        "labelText": {
+            "prototype": "montage/ui/dynamic-text.reel",
+            "properties": {
+                "element": {"#": "label"}
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+    <!--<span data-montage-id="labelCheckbox" class="labelCheckbox">-->
+        <label data-montage-id="labelCheckbox" class="label-checkbox">
+            <input data-montage-id="checkbox" class="nj-skinned" type="checkbox">
+            <span data-montage-id="label" class="checkbox-label"></span>
+        </label>
+    <!--</span>-->
+</body>
+</html>

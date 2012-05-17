@@ -219,11 +219,27 @@ exports.IoMediator = Montage.create(Component, {
     parseNinjaTemplateToHtml: {
         enumerable: false,
         value: function (template, ninjaWrapper) {
-            var regexRootUrl, rootUrl = this.application.ninja.coreIoApi.rootUrl + escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]));
+        	//TODO: Improve reference for rootUrl
+            var regexRootUrl,
+            	rootUrl = this.application.ninja.coreIoApi.rootUrl + escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1])),
+            	mjsCreator = template.mjsTemplateCreator.create(),
+            	mJsSerialization,
+            	montageTemplate;
+            //
+            montageTemplate = mjsCreator.initWithDocument(template.document);
+            //Setting up expression for parsing URLs
             regexRootUrl = new RegExp(rootUrl.replace(/\//gi, '\\\/'), 'gi');
             //Injecting head and body into old document
-            template.file.content.document.head.innerHTML = template.head.innerHTML.replace(regexRootUrl, '');
-            template.file.content.document.body.innerHTML = template.body.innerHTML.replace(regexRootUrl, '');
+            if (montageTemplate._ownerSerialization.length > 0) {
+            	template.file.content.document.head.innerHTML = montageTemplate._document.head.innerHTML.replace(regexRootUrl, '');
+	            template.file.content.document.body.innerHTML = montageTemplate._document.body.innerHTML.replace(regexRootUrl, '');
+	            //
+	            mJsSerialization = montageTemplate._ownerSerialization;
+            } else {
+            	template.file.content.document.head.innerHTML = template.head.innerHTML.replace(regexRootUrl, '');
+	            template.file.content.document.body.innerHTML = template.body.innerHTML.replace(regexRootUrl, '');
+            }
+            
             //Copying attributes to maintain same properties as the <body>
 			for (var n in template.body.attributes) {
 				if (template.body.attributes[n].value) {
@@ -232,19 +248,6 @@ exports.IoMediator = Montage.create(Component, {
 				}				
 			}
             //TODO: Add attribute copying for <HEAD> and <HTML>
-            
-            /*
-//Testing using montage clean up method
-            var mjscode, mjsTemp = TemplateCreator.create();
-        	
-            //mjscode = mjsTemp.initWithHeadAndBodyElements(template.head, template.body);
-            //mjscode = mjsTemp.initWithDocument(template.file.content.document);
-            mjscode = mjsTemp.initWithDocument(template.document);
-            
-            console.log(template.head, mjscode._document.head);
-            template.file.content.document.head.innerHTML = mjscode._document.head.innerHTML.replace(regexRootUrl, '');
-            template.file.content.document.body.innerHTML = mjscode._document.body.innerHTML.replace(regexRootUrl, '');
-*/
             
             
             
@@ -433,7 +436,7 @@ exports.IoMediator = Montage.create(Component, {
                         if (scripts[i].getAttribute('data-ninja-webgl-rdge') !== null) {
                             webglrdgetag = scripts[i]; // TODO: Add logic to delete unneccesary tags
                         }
-                        if (scripts[i].getAttribute('type') !== 'text/montage-serialization') {
+                        if (scripts[i].getAttribute('type') === 'text/montage-serialization') {
                             mjstag = scripts[i]; // TODO: Add logic to delete unneccesary tags
                         }
                         if (scripts[i].getAttribute('data-mjs-lib') !== null) {
@@ -525,21 +528,10 @@ function loadWebGL (e) {\n\
 
 
 
-
-
-
-            //
-            
-            /*
-for (var m in template.mjs) {
-                mjsComponents.push(template.mjs[m]);
-                mjsCounter++;
-            }
-            //
-            if (template.mjs && mjsCounter > 0) {
-                var mjsDirName, mjsVersion,
-    				mjscode = temp.initWithHeadAndBodyElements(template.file.content.document.documentElement.head, template.file.content.document.documentElement.body, mjsComponents)._ownerSerialization;
-                //Copy Montage library if needed
+			
+			//Checking for Montage
+			if (mJsSerialization) {
+				//Copy Montage library if needed
                 for (var i in this.application.ninja.coreIoApi.ninjaLibrary.libs) {
                     //Checking for Montage library to be available
                     if (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'Montage') {
@@ -547,7 +539,7 @@ for (var m in template.mjs) {
                         mjsVersion = this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version;
                         this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.file.root, mjsDirName);
                         //TODO: Fix to allow no overwrite and nested locations
-                        var packjson = this.application.ninja.coreIoApi.createFile({ uri: template.file.root + 'package.json', contents: '{"mappings": {"montage": "' + mjsDirName + '/"}}' });
+                        var packjson = this.application.ninja.coreIoApi.createFile({ uri: template.file.root + 'package.json', contents: '{"mappings": {"montage": "' + mjsDirName + '/montage/"}}' });
                     } else {
                         //TODO: Error handle no available library to copy
                     }
@@ -556,27 +548,30 @@ for (var m in template.mjs) {
                 if (!mjslibtag) {
                     mjslibtag = template.file.content.document.createElement('script');
                     mjslibtag.setAttribute('type', 'text/javascript');
-                    mjslibtag.setAttribute('src', mjsDirName + '/montage.js');
+                    mjslibtag.setAttribute('src', mjsDirName + '/montage/montage.js');
                     mjslibtag.setAttribute('data-mjs-lib', 'true');
-                    template.file.content.document.head.appendChild(mjslibtag);
+                    if (ninjaWrapper) {
+                    	template.file.content.document.body.getElementsByTagName('ninja-content')[0].appendChild(mjslibtag);
+                    } else {
+                    	template.file.content.document.head.appendChild(mjslibtag);
+                    }
+                    
                 }
                 //
                 if (!mjstag) {
                     mjstag = template.file.content.document.createElement('script');
                     mjstag.setAttribute('type', 'text/montage-serialization');
-                    template.file.content.document.head.appendChild(mjstag);
+                    if (ninjaWrapper) {
+                    	template.file.content.document.body.getElementsByTagName('ninja-content')[0].appendChild(mjstag);
+                    } else {
+                    	template.file.content.document.head.appendChild(mjstag);
+                    }
+                    
                 }
                 //
-                mjstag.innerHTML = mjscode;
-            }
-*/
-
-
-
-
-
-			
-
+                mjstag.innerHTML = mJsSerialization;
+                mjsCreator = null;
+			}
             //Cleaning URLs from HTML
             var cleanHTML;
             if (ninjaWrapper) {
@@ -597,7 +592,6 @@ for (var m in template.mjs) {
             	cleanHTML = cleanHTML.replace(/ninja-viewport/gi, 'div');
             	cleanHTML = cleanHTML.replace(/ninja-content/gi, 'div');
             }
-            
             //
             return this.getPrettyHtml(cleanHTML.replace(this.getAppTemplatesUrlRegEx(), ''));
         }
