@@ -136,6 +136,8 @@
                 "properties": {
                     "element": {"#": "inkBottleProperties"},
 
+                    "_strokeColorCtrl": {"#": "strokeColorCtrl"},
+
                     "useBorderWidth": {"@": "borderWidthCh"},
                     "borderWidthLabel": {"@": "borderWidthLabel"},
                     "_borderWidth": {"@": "borderWidthHT"},
@@ -154,14 +156,17 @@
                 }
             }
         }
-	    </script>
+        </script>
         
     </head>
 
     <body>
-        <div data-montage-id="inkBottleProperties" class="subToolHolderPanel inkBottleProperties">
+        <div data-montage-id="inkBottleProperties" class="subToolHolderPanel inkBottleOptions toolOptionsFloatChildren">
+            <div data-montage-id="elementInkOptions" class="toolOptionsFloatChildren">
+                <div class="toolColorChipIcon PencilTool"></div>
+                <div data-montage-id="strokeColorCtrl" class="toolColorChipCtrl"></div>
+                <div class="nj-divider divider-vertical toolOptionsSpacer">&nbsp;</div>
 
-            <div data-montage-id="elementInkOptions" class="leftLabel" style="padding-top: 3px;">
                 <input data-montage-id="useBorderWidthCh" type="checkbox" name="useBorderWidthControl" class="nj-skinned" title="Apply border-width"/>
                 <label data-montage-id="borderWidthLabel" class="label"> Border:</label>
                 <div data-montage-id="borderWidth" class="label"></div>
@@ -181,25 +186,24 @@
                 </select>
             </div>
 
-            <div class="nj-divider divider-vertical" style="margin:8px 20px; float: left;">&nbsp;</div>
+            <div class="toolOptionsSpacer">&nbsp;</div>
+            <div class="nj-divider divider-vertical">&nbsp;</div>
+            <div class="toolOptionsSpacer">&nbsp;</div>
 
-            <div data-montage-id="shapeInkOptions" class="leftLabel" style="margin-top: 5px;">
+            <div data-montage-id="shapeInkOptions" class="toolOptionsFloatChildren">
                 <input data-montage-id="useStrokeSizeCh" type="checkbox" name="useStrokeControl" class="nj-skinned" title="Apply stroke size"/>
                 <label data-montage-id="strokeSizeLabel" class="label"> Stroke:</label>
                 <div data-montage-id="strokeSize" class="label"></div>
             </div>
 
-            <div data-montage-id="webGLInkOptions" class="leftLabel">
-                <label class="label">
-                    <input data-montage-id="useWebGLCHIB" type="checkbox" name="useWebGLControl" class="nj-skinned"/>
-                    <label class="label"> Use WebGL</label>
-                </label>
+            <div data-montage-id="webGLInkOptions" class="toolOptionsFloatChildren">
+                <input data-montage-id="useWebGLCHIB" type="checkbox" name="useWebGLControl" class="nj-skinned"/>
+                <label class="label"> Use WebGL</label>
 
-                <div data-montage-id="materialsContainerIB" class="leftLabel">
+                <div data-montage-id="materialsContainerIB" class="toolOptionsFloatChildren">
                     <label class="label"> Materials:</label>
-                    <div data-montage-id="strokeIconIB" class="pencilToolUp" style="float: left; margin: 0 2px 0 5px;"></div>
-                    <select data-montage-id="strokeMaterialIBCB" class="nj-skinned">
-                    </select>
+                    <div data-montage-id="strokeIconIB" class="toolColorChipIcon PencilTool"></div>
+                    <select data-montage-id="strokeMaterialIBCB" class="nj-skinned"></select>
                 </div>
             </div>
         </div>

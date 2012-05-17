@@ -8,7 +8,53 @@ var Montage = require("montage/core/core").Montage,
     ShapesController = require("js/controllers/elements/shapes-controller").ShapesController,
     ToolProperties = require("js/components/tools-properties/tool-properties").ToolProperties;
 
-exports.InkBottleProperties = Montage.create(ToolProperties, {
+var InkBottleProperties = exports.InkBottleProperties = Montage.create(ToolProperties, {
+    addedColorChips: { value: false },
+
+    _stroke: {
+        enumerable: false,
+        value: { colorMode: 'rgb', color: { r: 255, g: 255, b: 255, a: 1, css: 'rgb(255,255,255)', mode: 'rgb', wasSetByCode: true, type: 'change' }, webGlColor: [1, 1, 1, 1] }
+    },
+
+    stroke: {
+        enumerable: true,
+        get: function () {
+            return this._stroke;
+        },
+        set: function (value) {
+            if (value !== this._stroke) {
+                this._stroke = value;
+            }
+        }
+    },
+
+        draw: {
+        enumerable: false,
+        value: function () {
+            Object.getPrototypeOf(InkBottleProperties).draw.call(this);
+
+            if (this.addedColorChips === false && this.application.ninja.colorController.colorPanelDrawn) {
+                // setup stroke color
+                this._strokeColorCtrl.props = { side: 'top', align: 'center', wheel: true, palette: true, gradient: false, image: false, nocolor: true, offset: -80 };
+                this.application.ninja.colorController.addButton("chip", this._strokeColorCtrl);
+
+                this._strokeColorCtrl.addEventListener("change", this.handleStrokeColorChange.bind(this), false);
+
+                this.addedColorChips = true;
+            }
+
+            if (this.addedColorChips) {
+                this._strokeColorCtrl.color(this._stroke.colorMode, this._stroke.color);
+            }
+        }
+    },
+
+    handleStrokeColorChange: {
+        value: function (e) {
+            this.stroke = e._event;
+            this.stroke.webGlColor = this.application.ninja.colorController.colorModel.colorToWebGl(e._event.color);
+        }
+    },
 
     _subPrepare: {
         value: function() {
