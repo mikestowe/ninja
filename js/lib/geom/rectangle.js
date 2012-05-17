@@ -541,7 +541,7 @@ exports.Rectangle = Object.create(GeomObj, {
 						//gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2-this._strokeWidth, h/2, Math.max(ww, hh)/2);
 						gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(ww, hh)/2);
 					} else {
-						gradient = ctx.createLinearGradient(inset/2, h/2, w-inset, h/2);
+						gradient = ctx.createLinearGradient(inset, h/2, w-inset, h/2);
 					}
 					colors = this._fillColor.color;
 
