@@ -175,7 +175,6 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
                             if ((worldData[0] === 'v') && (index < 24))
                             {
                                 // JSON format.  separate the version info from the JSON info
-                                //var vStr = importStr.substr( 0, index+1 );
                                 var jStr = worldData.substr( index+1 );
                                 jObj = JSON.parse( jStr );
 
