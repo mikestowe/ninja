@@ -6,9 +6,9 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 var Montage     = require("montage/core/core").Montage,
     Component   = require("montage/ui/component").Component,
-    ClassUUID   = require("js/components/core/class-uuid").ClassUuid;
-
-var PIData              = require("js/data/pi/pi-data").PiData;
+    NJUtils     = require("js/lib/NJUtils").NJUtils;
+    ClassUUID   = require("js/components/core/class-uuid").ClassUuid,
+    PIData      = require("js/data/pi/pi-data").PiData;
 
 String.prototype.capitalizeFirstChar = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);

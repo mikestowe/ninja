@@ -17,6 +17,11 @@ exports.HtmlDocumentModel = Montage.create(BaseDocumentModel, {
 	hasTemplate: {
         value: false
     },
+    ////////////////////////////////////////////////////////////////////
+    //
+    selection: {
+        value: []
+    },
 	////////////////////////////////////////////////////////////////////
 	//
     draw3DGrid: {

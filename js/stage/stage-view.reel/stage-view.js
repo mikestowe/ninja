@@ -25,29 +25,9 @@ exports.StageView = Montage.create(Component, {
         }
     },
 
-    templateDidLoad: {
-        value: function() {
-            this.eventManager.addEventListener("appLoaded", this, false);
-        }
-    },
-
     didDraw:{
         value: function() {
             if(!this.application.ninja.documentController._textHolder) this.application.ninja.documentController._textHolder = this.element;
-        }
-    },
-
-    handleAppLoaded: {
-        value: function() {
-
-            // Don't bind for now
-            /*
-            Object.defineBinding(this, "docs", {
-              boundObject: this.application.ninja.documentController,
-              boundObjectPropertyPath: "_documents"
-            });
-            */
-
         }
     },
 
@@ -140,7 +120,22 @@ exports.StageView = Montage.create(Component, {
             }
 
             this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
-            this.application.ninja.documentController._showCurrentDocument();
+
+
+//            this.application.ninja.documentController._showCurrentDocument();
+            // Inline function below
+            if(this.activeDocument) {
+                this.activeDocument.container.style["display"] = "block";
+                if(this.activeDocument.currentView === "design"){
+                    this.activeDocument.container.parentNode.style["display"] = "block";
+                    this.activeDocument.restoreAppState();
+                } else {
+                    //hide the iframe when switching to code view
+                    document.getElementById("iframeContainer").style.display = "none";
+                }
+            }
+
+
             //focus editor
             if(!!this.application.ninja.documentController.activeDocument && !!this.application.ninja.documentController.activeDocument.editor){
                 this.application.ninja.documentController.activeDocument.editor.focus();
@@ -172,17 +167,6 @@ exports.StageView = Montage.create(Component, {
         }
     },
 
-    hideOtherDocuments:{
-        value:function(docUuid){
-            this.application.ninja.documentController._documents.forEach(function(aDoc){
-                if(aDoc.currentView === "design"){
-                    aDoc.container.parentNode.style["display"] = "none";
-                }else if((aDoc.currentView === "code") && (aDoc.uuid !== docUuid)){
-                    aDoc.container.style["display"] = "none";
-                }
-            }, this);
-        }
-    },
     showRulers:{
         value:function(){
             this.application.ninja.rulerTop.style.display = "block";
@@ -200,7 +184,7 @@ exports.StageView = Montage.create(Component, {
             if(isCodeView === true) {
                 this.application.ninja.editorViewOptions.element.style.display = "block";
                 this.application.ninja.documentBar.element.style.display = "none";
-            }else{
+            } else {
                 this.application.ninja.documentBar.element.style.display = "block";
                 this.application.ninja.editorViewOptions.element.style.display = "none";
             }
