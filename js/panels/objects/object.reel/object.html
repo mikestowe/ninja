@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="object.css">
+
+    <script type="text/montage-serialization">
+        {
+            "owner": {
+                "prototype": "js/panels/objects/object.reel",
+                "properties": {
+                    "element": {"#": "object"}
+                }
+            },
+            "labelText": {
+                "prototype": "montage/ui/dynamic-text.reel",
+                "properties": {
+                    "element": {"#": "label" }
+                },
+                "bindings": {
+                    "value" : {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "label",
+                        "oneway": true
+                    }
+                }
+            }
+
+        }
+    </script>
+
+</head>
+<body>
+
+
+<li data-montage-id="object">
+    <div class="object-icon"></div>
+    <span data-montage-id="label" class="object-label"></span>
+</li>
+
+</body>
+</html>
