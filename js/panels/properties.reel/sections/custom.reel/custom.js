@@ -262,10 +262,10 @@ exports.CustomSection = Montage.create(Component, {
                 if(aField.enabled.boundObject) {
                     // TODO - For now, always bind to this.controls[someProperty]
                     Object.defineBinding(obj, "enabled", {
-                                    boundObject: this.controls,
-                                    boundObjectPropertyPath: aField.enabled.boundProperty,
-                                    oneway: false
-                                });
+                        boundObject: this.controls,
+                        boundObjectPropertyPath: aField.enabled.boundProperty,
+                        oneway: false
+                    });
                 } else {
                     obj.enabled = aField.enabled;
                 }

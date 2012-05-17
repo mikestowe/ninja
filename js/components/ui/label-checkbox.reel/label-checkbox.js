@@ -42,6 +42,25 @@ exports.LabelCheckbox = Montage.create(Component, {
         }
     },
 
+    _enabled: {
+        enumerable: false,
+        value: true
+    },
+
+    enabled: {
+        enumerable: true,
+        serializable: true,
+        get: function() {
+            return this._enabled;
+        },
+        set: function(value) {
+            if(value !== this._enabled) {
+                this._enabled = value;
+                this.needsDraw = true;
+            }
+        }
+    },
+
     value: {
         value: false
     },
@@ -52,7 +71,7 @@ exports.LabelCheckbox = Montage.create(Component, {
             e.initEvent("change", true, true);
             e.type = "change";
             e.wasSetByCode = false;
-            this.value = e.value = this._checkbox.checked;
+            this.checked = this.value = e.value = this._checkbox.checked;
             this.dispatchEvent(e);
         }
     },
@@ -61,6 +80,7 @@ exports.LabelCheckbox = Montage.create(Component, {
         value: function() {
             this._labelText.value = this.label;
             this._checkbox.checked = this.checked;
+            this._checkbox.disabled = !this._enabled;
         }
 
     }
