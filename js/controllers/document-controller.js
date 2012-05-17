@@ -177,6 +177,8 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     testCallback: {
     	value: function (value) {
     		console.log(value);
+            //TODO: Move this to the model.save()
+            this.activeDocument.model.needsSave = false;
     	}
     },
     ////////////////////////////////////////////////////////////////////
