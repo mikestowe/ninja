@@ -207,7 +207,7 @@ exports.StyleDeclaration = Montage.create(Component, {
     addStyle : {
         value: function(property, value, data) {
             var styleDescriptor = {
-                property : property,
+                name : property,
                 value : value
             }, prop;
 
