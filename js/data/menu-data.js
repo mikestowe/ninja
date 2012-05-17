@@ -22,13 +22,13 @@ exports.MenuData = Montage.create( Montage, {
                             "displayText" : "New File",
                             "hasSubMenu" : false,
                             "enabled": true,
-                            "action":   "executeNewWebpage"
+                            "action":   "executeNewFile"
                         },
                         {
                             "displayText" : "Open File",
                             "hasSubMenu" : false,
                             "enabled": true,
-                            "action": "executeWebpageOpen"
+                            "action": "executeFileOpen"
                         },
                         {
                             "displayText" : "Close File",

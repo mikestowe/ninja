@@ -21,10 +21,6 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value: false
     },
 
-    webTemplate: {
-        value: false
-    },
-
     _documents: {
         value: []
     },
@@ -75,10 +71,6 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             this.eventManager.addEventListener("executeFileCloseAll", this, false);
 
             this.eventManager.addEventListener("styleSheetDirty", this, false);
-            
-            // Temporary add listeners for the new stage templates
-            this.eventManager.addEventListener("executeWebpageOpen", this, false);
-            this.eventManager.addEventListener("executeNewWebpage", this, false);
         }
     },
     
@@ -135,20 +127,6 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                 pickerSettings.inFileMode = true;
                 this.application.ninja.filePickerController.showFilePicker(pickerSettings);
             }
-        }
-    },
-
-    handleExecuteWebpageOpen: {
-        value: function(event) {
-            this.webTemplate = true;
-            this.handleExecuteFileOpen(event);
-        }
-    },
-
-    handleExecuteNewWebpage: {
-        value: function(event) {
-            this.webTemplate = true;
-            this.handleExecuteNewFile(event);
         }
     },
 
@@ -304,12 +282,8 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                 this.isNewFilePath = false;//reset path identifier flag
 
             	//Sending full response object
-                // TODO: Unify those 2 methods. Using if/else for the new template
-                if(this.webTemplate) {
-                    this.openWebDocument(response);
-                } else {
-            	    this.openDocument(response);
-                }
+                this.openDocument(response);
+
             } else if (!!response && (response.status === 404)){
                 alert("Unable to open file.\n [Error: File does not exist]");
             } else if (!!response && (response.status === 500)){
@@ -345,30 +319,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     },
 
     ////////////////////////////////////////////////////////////////////
-	openDocument: {
-		value: function(doc) {
-			
-			//
-			this.documentHackReference = doc;
-			//
-			switch (doc.extension) {
-				case 'html':
-					//Open in designer view
-					Montage.create(HTMLDocument).initialize(doc, Uuid.generate(), this._createIframeElement(), this._onOpenDocument.bind(this));
-					break;
-				default:
-					//Open in code view
-					var code = Montage.create(TextDocument, {"source": {value: doc.content}}), docuuid = Uuid.generate(), textArea;
-					textArea = this.application.ninja.stage.stageView.createTextAreaElement(docuuid);
-					code.initialize(doc, docuuid, textArea, textArea.parentNode);
-					//code.init(doc.name, doc.uri, doc.extension, null, docuuid);
-					code.textArea.value = doc.content;
-					this.application.ninja.stage.stageView.createTextView(code);
-					break;
-			}
-        }
-    },
-    openWebDocument: {
+    openDocument: {
         value: function(doc) {
         	var template, dimensions;
         	if (doc.content.body.indexOf('Ninja-Banner Dimensions@@@') !== -1) {
@@ -484,14 +435,14 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                 }
                 this.application.ninja.stage.stageView.switchDocument(this._documents[nextDocumentIndex]);
                 if(typeof doc.stopVideos !== "undefined"){doc.stopVideos();}
-                this._removeDocumentView(doc.container);
+                doc.container.parentNode.removeChild(doc.container);
             }else if(this._documents.length === 0){
                 // See above
             }else{//closing inactive document tab - just clear DOM
                 if(typeof doc.pauseAndStopVideos !== "undefined"){
                     doc.pauseAndStopVideos();
                 }
-                this._removeDocumentView(doc.container);
+                doc.container.parentNode.removeChild(doc.container);
             }
 
             NJevent("closeDocument", doc.uri);
@@ -500,41 +451,65 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         }
     },
 
-    // Document has been loaded into the Iframe. Dispatch the event.
-    // Event Detail: Contains the current ActiveDocument
+    // Open document callback
     _onOpenDocument: {
         value: function(doc){
-            this.application.ninja.currentDocument = doc;
-            this._hideCurrentDocument();
-            this.application.ninja.stage.stageView.hideOtherDocuments(doc.uuid);
 
-            this.application.ninja.stage.hideCanvas(false);
+            if(this.activeDocument) {
+                // There is a document currently opened
 
-            this.activeDocument = doc;
+//                this.application.ninja.stage.stageView.showCodeViewBar(false);
+//                this.application.ninja.stage.stageView.restoreAllPanels();
 
-            if(!this.webTemplate) {
-                this._showCurrentDocument();
+                //
+                /*
+                if(this.activeDocument.currentView === "design"){
+                    this.activeDocument.saveAppState();
+                    this.activeDocument.container.parentNode.style["display"] = "none";
+                    this.application.ninja.stage.hideCanvas(true);
+                    this.application.ninja.stage.stageView.hideRulers();
+                }
+
+                this.activeDocument.container.style["display"] = "none";
+                */
+                // hide current document
             } else {
+                // There is no document opened
+
+                // Set the active document
+                this.activeDocument = doc;
+
+                // Show the canvas
+                this.application.ninja.stage.hideCanvas(false);
+
+                // Show the rulers
+                // TODO: Move this indo design view
                 this.application.ninja.stage.stageView.showRulers();
+
+                // Initialize the documentRoot styles
+                this.initializeRootStyles(doc.documentRoot);
+                // Flag to stop stylesheet dirty event
+                this._hackInitialStyles = false;
+
+                NJevent("onOpenDocument", doc);
             }
-
-            this.webTemplate = false;
-
-            this._initializeBodyStyles();
-            NJevent("onOpenDocument", doc);
-
-			this.application.ninja.stage.stageView.showCodeViewBar(false);
-            this.application.ninja.stage.stageView.restoreAllPanels();
-
-            // Flag to stop stylesheet dirty event
-            this._hackInitialStyles = false;
         }
     },
 
 
     _onOpenTextDocument: {
         value: function(doc) {
-            this._hideCurrentDocument();
+            if(this.activeDocument) {
+                if(this.activeDocument.currentView === "design"){
+                    this.activeDocument.saveAppState();
+                    this.activeDocument.container.parentNode.style["display"] = "none";
+                    this.application.ninja.stage.hideCanvas(true);
+                    this.application.ninja.stage.stageView.hideRulers();
+                }
+
+                this.activeDocument.container.style["display"] = "none";
+            }
+
             this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
             this.activeDocument = doc;
 
@@ -589,21 +564,6 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         }
     },
 
-    _hideCurrentDocument: {
-        value: function() {
-            if(this.activeDocument) {
-                if(this.activeDocument.currentView === "design"){
-                    this.activeDocument.saveAppState();
-                    this.activeDocument.container.parentNode.style["display"] = "none";
-                    this.application.ninja.stage.hideCanvas(true);
-                    this.application.ninja.stage.stageView.hideRulers();
-                }
-
-                this.activeDocument.container.style["display"] = "none";
-            }
-        }
-    },
-
     _showCurrentDocument: {
         value: function() {
             if(this.activeDocument) {
@@ -611,53 +571,11 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                 if(this.activeDocument.currentView === "design"){
                     this.activeDocument.container.parentNode.style["display"] = "block";
                     this.activeDocument.restoreAppState();
-                    this.application.ninja.stage.hideCanvas(false);
-                    this.application.ninja.stage.stageView.showRulers();
                 }else{
                     //hide the iframe when switching to code view
                     document.getElementById("iframeContainer").style.display = "none";
                 }
             }
-        }
-    },
-
-    _removeDocumentView: {
-        value: function(node) {
-            node.parentNode.removeChild(node);
-        }
-    },
-
-    reloadDocumentContent: {
-        value: function() {
-            this.activeDocument._window.location.reload();
-        }
-    },
-
-    /**
-     * Creates a new iFrame element using a new unique ID for it. Returns the iframe ID.
-     */
-    _createIframeElement: {
-        value: function() {
-            var e = document.createElement("iframe");
-            e.id = this._createIframeID();
-            e.style.border = "none";
-            e.style.opacity = 0;
-            e.height = 1000;
-            e.width = 2000;
-            e.src = "";
-
-            if(!this._iframeHolder) this._iframeHolder = document.getElementById("iframeContainer");
-            
-            this._iframeHolder.appendChild(e);
-
-            return e;
-        }
-    },
-
-
-    _createIframeID: {
-        value: function() {
-            return "userDocument_" + (this._iframeCounter++);
         }
     },
 
@@ -669,27 +587,27 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         }
     },
 
-    _initializeBodyStyles: {
-        value: function() {
+    // TODO: Move this into the design views
+    initializeRootStyles: {
+        value: function(documentRoot) {
             var sc = this.application.ninja.stylesController,
-                docRoot = this.application.ninja.currentDocument.documentRoot,
                 styles = {},
                 needsRule = false,
                 rule;
 
-            if(sc.getElementStyle(docRoot, "width", false, false) == null) {
+            if(sc.getElementStyle(documentRoot, "width", false, false) == null) {
                 styles['width'] = '100%';
                 needsRule = true;
             }
-            if(sc.getElementStyle(docRoot, "height", false, false) == null) {
+            if(sc.getElementStyle(documentRoot, "height", false, false) == null) {
                 styles['height'] = '100%';
                 needsRule = true;
             }
-            if(sc.getElementStyle(docRoot, "-webkit-transform", false, false) == null) {
+            if(sc.getElementStyle(documentRoot, "-webkit-transform", false, false) == null) {
                 styles['-webkit-transform'] = 'perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)';
                 needsRule = true;
             }
-            if(sc.getElementStyle(docRoot, "-webkit-transform-style", false, false) == null) {
+            if(sc.getElementStyle(documentRoot, "-webkit-transform-style", false, false) == null) {
                 styles['-webkit-transform-style'] = 'preserve-3d';
                 needsRule = true;
             }
@@ -697,7 +615,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             if(needsRule) {
                 rule = sc.addRule('.ninja-body{}');
                 sc.setStyles(rule, styles);
-                sc.addClass(docRoot, "ninja-body");
+                sc.addClass(documentRoot, "ninja-body");
             }
         }
     }
