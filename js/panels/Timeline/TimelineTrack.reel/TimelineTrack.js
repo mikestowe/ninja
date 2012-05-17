@@ -468,8 +468,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.ninjaStylesContoller = this.application.ninja.stylesController;
             var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
             if (selectedIndex !== false) {
-	            if(this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList[0]){
-	                this.animatedElement = this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList[0];
+	            if(this.application.ninja.timeline.arrLayers[selectedIndex].layerData.stageElement){
+	                this.animatedElement = this.application.ninja.timeline.arrLayers[selectedIndex].layerData.stageElement;
 	            }
             }
 
@@ -597,7 +597,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             // This needs to move to a keyboard shortcut that is TBD
             var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
             if (ev.shiftKey) {
-                if (this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList.length == 1) {
+                //if (this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList.length == 1) {
                     if (this.tweens.length < 1) {
                         this.insertTween(0);
                         this.addAnimationRuleToElement(ev);
@@ -612,10 +612,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                             this.updateKeyframeRule();
                         }
                     }
-                } else {
+                //} else {
                     // TEMP error check
-                    console.log("There must be exactly one element in an animated layer.");
-                }
+                    //console.log("There must be exactly one element in an animated layer.");
+                //}
             }
         }
     },
@@ -644,7 +644,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             newTween.tweenData = {};
 
             if (clickPos == 0) {
-                this.animatedElement = this.application.ninja.timeline.currentLayerSelected.layerData.elementsList[0];
+                this.animatedElement = this.application.ninja.timeline.currentLayerSelected.layerData.stageElement;
                 newTween.tweenData.spanWidth = 0;
                 newTween.tweenData.keyFramePosition = 0;
                 newTween.tweenData.keyFrameMillisec = 0;
@@ -727,7 +727,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
             var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
             this.application.ninja.timeline.arrLayers[selectedIndex].layerData.created=true;
-            this.animatedElement = this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList[0];
+            this.animatedElement = this.application.ninja.timeline.arrLayers[selectedIndex].layerData.stageElement;
             if(this.animatedElement!==undefined){
                 this.animationName = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-name");
                 this.animationNamesString = this.animationName;

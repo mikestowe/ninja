@@ -17,7 +17,7 @@ exports.ElementController = Montage.create(Component, {
                 if(selectedLayerIndex === 0) {
                     this.application.ninja.currentSelectedContainer.appendChild(el);
                 } else {
-                    var element = this.application.ninja.timeline.arrLayers[selectedLayerIndex].layerData.elementsList[0];
+                    var element = this.application.ninja.timeline.arrLayers[selectedLayerIndex].layerData.stageElement;
                     element.parentNode.insertBefore(el, element.nextSibling);
                 }
             } else {

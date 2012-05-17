@@ -133,6 +133,20 @@ var Layer = exports.Layer = Montage.create(Component, {
     	}
     },
     
+    _stageElement: {
+    	value: null
+    },
+    
+    stageElement: {
+    	get: function() {
+    		return this._stageElement;
+    	},
+    	set: function(newVal) {
+    		this._stageElement = newVal;
+    		this.layerData.stageElement = newVal;
+    	}
+    },
+    
     
     _elementsList : {
     	value: []
@@ -398,6 +412,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         	
             this.layerName = this.layerData.layerName;
             this.layerID = this.layerData.layerID;
+            this.stageElement = this.layerData.stageElement
             this.arrLayerStyles = this.layerData.arrLayerStyles;
             this.isMainCollapsed = this.layerData.isMainCollapsed;
             this.isPositionCollapsed = this.layerData.isPositionCollapsed;
@@ -678,7 +693,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 			this.dynamicLayerName.value = this._layerEditable.value;
 			this.needsDraw = true;
 			this.application.ninja.documentController.activeDocument.needsSave = true;
-            this.layerData.elementsList[0].setAttribute("id",this.dynamicLayerName.value);
+            this.layerData.stageElement.setAttribute("id",this.dynamicLayerName.value);
 		}
 	},
 	handleAddStyleClick: {
@@ -790,7 +805,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 	},
 	handleDragstart: {
 		value: function(event) {
-			this.parentComponent.parentComponent.dragLayerID = this.layerID;
+			//this.parentComponent.parentComponent.dragLayerID = this.layerID;
             event.dataTransfer.setData('Text', 'Layer');
             this.parentComponent.parentComponent.draggingType = "layer";
 		}

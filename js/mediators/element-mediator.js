@@ -524,9 +524,9 @@ exports.ElementMediator = Montage.create(Component, {
             length = layersDraggedArray.length;
 
             for(var i=0; documentRoot.children[i]; i++) {
-                if(documentRoot.children[i] === layerDroppedAfter.layerData.elementsList[0]) {
+                if(documentRoot.children[i] === layerDroppedAfter.layerData.stageElement) {
                     if(length >0){
-                        documentRoot.children[i].parentNode.insertBefore(layersDraggedArray[length-1].layerData.elementsList[0], documentRoot.children[i]);
+                        documentRoot.children[i].parentNode.insertBefore(layersDraggedArray[length-1].layerData.stageElement, documentRoot.children[i]);
                     }
 
                     /* Will require for Multiple Drag n Drop */

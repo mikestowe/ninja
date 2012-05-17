@@ -326,6 +326,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		}
     	}
     },
+    _dragLayerIndexes: {
+    	value: []
+    },
     _dropLayerID : {
     	value: null
     },
@@ -337,6 +340,38 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		if (newVal !== this._dropLayerID) {
     			this._dropLayerID = newVal;
     			
+    			var dropLayerIndex = this.getLayerIndexByID(this.dropLayerID),
+    				arrDragLayers = [], 
+    				i = 0, 
+    				dragLayerIndexesLength = this._dragLayerIndexes.length;
+    			
+    			// TODO: possibly we'll need to sort dragLayerIndexes so things don't get out of order?
+    			
+    			for (i = 0; i < dragLayerIndexesLength; i++) {
+    				var myDraggingLayer = this.arrLayers[this._dragLayerIndexes[i]];
+    				arrDragLayers.push(myDraggingLayer);
+    				this.arrLayers.splice(this._dragLayerIndexes[i], 1);
+    				this.arrLayers.splice(dropLayerIndex, 0, myDraggingLayer);
+    			}
+				console.log(arrDragLayers);
+    			//this.arrLayers.splice(dropLayerIndex, 0, arrDragLayers);
+    			this.layersDragged = arrDragLayers;
+    			console.log(this.layersDragged);
+    			console.log(this.arrLayers);
+    			this._layerDroppedInPlace = this.arrLayers[dropLayerIndex];
+    			this.cacheTimeline();
+    			
+    			this._dropLayerID = null;
+    			this.dragLayerIndexes = [];
+    			this._dragLayerIndexes = [];
+    			this.lastLayerClicked = 0;
+
+    			// Sometimes, just to be fun, the drop and dragend events don't fire.
+    			// So just in case, set the draw routine to delete the helper.
+    			this._deleteHelper = true;
+    			this.needsDraw = true;
+
+/*
     			var dragLayerIndex = this.getLayerIndexByID(this.dragLayerID),
     				dropLayerIndex = this.getLayerIndexByID(this.dropLayerID),
     				dragLayer = this.arrLayers[dragLayerIndex];
@@ -355,6 +390,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     			// So just in case, set the draw routine to delete the helper.
     			this._deleteHelper = true;
     			this.needsDraw = true;
+*/
     		}
     	}
     },
@@ -480,6 +516,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             returnObj.layerData = {};
             returnObj.layerData.layerName = null;
             returnObj.layerData.layerID = null;
+            returnObj.layerData.stageElement = null;
             returnObj.layerData.isMainCollapsed = true;
             returnObj.layerData.isPositionCollapsed = true;
             returnObj.layerData.isTransformCollapsed = true;
@@ -584,7 +621,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     // Bind all document-specific events (pass in true to unbind)
     _bindDocumentEvents : {
         value: function(boolUnbind) {
-            var arrEvents = [ "newLayer",
+            var arrEvents = [ "stageElement",
                              "deleteLayer",
                              "elementAdded",
                              "elementsRemoved",
@@ -895,13 +932,16 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 	
-    handleSelectionChange:{
-        value:function () {
+	// Event handler for changes in stage selection.
+    handleSelectionChange: {
+        value:function (event) {
+        	this.updateLayerSelection();
+        	/*
             var layerIndex, 
             	i = 0,
             	j = 0,
             	arrLayersLength = this.arrLayers.length,
-            	intNumSelected = this.application.ninja.selectedElements.length,
+            	intNumSelected = event.detail.elements.length,
             	checkIndex = 0;
 
             //console.log("TimelinePanel.handleSelectionChange, intNumSelected is ", intNumSelected)
@@ -919,12 +959,17 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             	// Build an array of indexes of selected layers to give to the selectLayers method
             	var arrSelectedIndexes = [];
             	//this.currentLayerSelected = false;
+
+				//console.log(event.detail.elements);
+				//console.log(this.layerRepetition.childComponents);
+
             	for (i = 0; i < intNumSelected; i++) {
-            		var currentCheck = this.application.ninja.selectedElements[i].uuid;
+            		var currentCheck = event.detail.elements[i];
             		//console.log("checking ", currentCheck);
             		for (j = 0; j < arrLayersLength; j++) {
-            			//console.log(".......... ", this.arrLayers[j].layerData.elementsList[0].uuid)
-            			if (currentCheck === this.arrLayers[j].layerData.elementsList[0].uuid) {
+            			//console.log(".......... ", this.arrLayers[j].layerData.stageElement)
+            			// if (currentCheck === this.arrLayers[j].layerData.elementsList[0].uuid) {
+            			if (currentCheck === this.arrLayers[j].layerData.stageElement) {
             				//console.log("...............Yes!")
             				arrSelectedIndexes.push(j);
             			}
@@ -932,17 +977,120 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             	}
             	this.selectLayers(arrSelectedIndexes);
             }
+            */
         }
     },
 
+	// Select the layers whose indexes are passed in as arrSelectedIndexes.
+	// Pass in an empty array to clear all selections.
     selectLayers:{
-        value:function (arrSelectedIndexes, userSelection) {
+        value:function (arrSelectedIndexes) {
+        	var i = 0,
+        		j = 0,
+        		arrLayersLength = this.arrLayers.length,
+        		arrSelectedIndexesLength = arrSelectedIndexes.length,
+        		currentLayersSelectedLength = this.currentLayersSelected.length,
+        		boolContinue = false,
+        		arrSelectedLayers = false,
+        		arrCurrentElementsSelected = [];
+        	/*
+        	        		console.log(arrSelectedIndexes);
+        		console.log(this.currentLayersSelected);
+        	// Compare arrSelectedIndexes with this.currentLayersSelected
+        	// If the items are the same, we do not need to do anything.
+        	if (arrSelectedIndexesLength !== currentLayersSelectedLength) {
+        		// Different length in the arrays, we definitely need to continue.
+        		console.log('diferent length')
+        		boolContinue = true;
+        	} else {
+        		// Check each selected index and see if it's in this.currentLayersSelected
+        		// If we find one that isn't, we need to continue
 
+        		for (i = 0; i < arrSelectedIndexesLength; i++) {
+        			console.log('checking for ', arrSelectedIndexes[i]);
+					if (this.currentLayersSelected.indexOf(arrSelectedIndexes[i]) === -1) {
+						// Ooops, one of them was not found.
+						boolContinue = true;
+					}
+        		}
+        	}
+        	if (boolContinue === false) {
+        		console.log('exiting')
+        		return;
+        	}
+        	*/
+        	
+
+            // Deselect all layers.
+            for (i = 0; i < arrLayersLength; i++) {
+            	if (this.arrLayers[i].layerData.isSelected === true) {
+					this.arrLayers[i].layerData.isSelected = false;
+            		this.triggerLayerBinding(i);
+            	}
+            }
+            if (this.currentLayersSelected !== false) {
+            	this.currentLayersSelected = false;
+            }
+            
+            // If we are actually going to be selecting things, create an empty array to use
+            if (arrSelectedIndexesLength > 0) {
+            	arrSelectedLayers = [];
+            }
+            
+            // Loop through arrLayers and do the selection.
+            for (i = 0; i < arrLayersLength; i++) {
+            	if (arrSelectedIndexes.indexOf(i) > -1) {
+            		//console.log('TimelinePanel.selectLayers, selecting layer at index ', i)
+            		this.arrLayers[i].layerData.isSelected = true;
+            		this.arrLayers[i].isSelected = true;
+            		this.triggerLayerBinding(i);
+            		arrSelectedLayers.push(i);
+            		arrCurrentElementsSelected.push(this.arrLayers[i].layerData.stageElement);
+            	}
+            }
+
+			// Store the selected layer information
+			this.currentLayersSelected = arrSelectedLayers;
+			this.currentElementsSelected = arrCurrentElementsSelected;
+			
+			// Tell the repetition what has been selected
+            this.layerRepetition.selectedIndexes = arrSelectedIndexes;
+
+            // Finally, reset the master duration.
+            this.resetMasterDuration();
+        	
+/*
             var i = 0,
+            	j = 0,
             	arrLayersLength = this.arrLayers.length,
             	arrSelectedIndexesLength = arrSelectedIndexes.length,
+            	currentElementsSelectedLength = this.currentElementsSelected.length,
+            	boolUpdate = false,
             	arrSelectedLayers = false,
             	arrCurrentElementsSelected = [];
+
+
+            // Only run if arrSelectedIndexes has things that aren't already selected.
+            if (arrSelectedIndexesLength !== currentElementsSelectedLength) {
+            	// If the two arrays are different lengths, then we need to update
+            	boolUpdate = true;
+            } else {
+            	// If arrSelectedIndexes has things in it that aren't present in this.currentElementsSelected 
+            	// we need to update
+	            for (i = 0; i < arrSelectedIndexesLength; i++) {
+	            	var boolWasIFound = false;
+	            	for (j = 0; j < currentElementsSelectedLength; j++) {
+	            		
+	            	}
+	            	if (boolWasIFound === false) {
+	            		boolUpdate = true;
+	            	}
+	            }
+            }
+            if (boolUpdate === false) {
+            	return;
+            }
+
             
             // Set a default for userSelection if it wasn't passed in the method call.
 			if (typeof(userSelection) === "undefined") {
@@ -1002,7 +1150,63 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
             // Finally, reset the master duration.
             this.resetMasterDuration();
+*/
         }
+    },
+    
+    // Get the indexes of layers that should be selected from
+    // the elements that are currently selected on stage.
+    getSelectedLayerIndexesFromStage: {
+    	value: function() {
+    		var arrIndexes = [],
+    			i = 0, 
+    			j = 0,
+    			arrLayersLength = this.arrLayers.length,
+    			selectedElementsLength = this.application.ninja.selectedElements.length;
+    		
+    		for (i = 0; i < selectedElementsLength; i++) {
+    			var currentTestElement = this.application.ninja.selectedElements[i];
+    			for (j = 0; j < arrLayersLength; j++) {
+    				if (this.arrLayers[j].layerData.stageElement == currentTestElement) {
+    					arrIndexes.push(j);
+    				}
+    			}
+    		}
+    		return arrIndexes;
+    	}
+    },
+    
+    // Update the selected layers based on what is selected on stage
+    updateLayerSelection: {
+    	value: function() {
+    		var arrIndexes = this.getSelectedLayerIndexesFromStage();
+    		this.selectLayers(arrIndexes);
+    	}
+    },
+    
+    // Update stage selection based on what layers are selected
+    updateStageSelection: {
+    	value: function() {
+    		var arrSelectedElements = [],
+    			i = 0,
+    			arrLayersLength = this.arrLayers.length;
+    		
+    		// Get the selected layers
+    		for (i = 0; i < arrLayersLength; i++) {
+    			if (this.arrLayers[i].layerData.isSelected === true) {
+    				arrSelectedElements.push(this.arrLayers[i].layerData.stageElement);
+    			}
+    		}
+    		
+    		// Select the layers, or clear the selection if none were found
+    		if (arrSelectedElements.length > 0) {
+    			console.log("TimelinePanel.updateStageSelection, ", arrSelectedElements)
+    			this.application.ninja.selectionController.selectElements(arrSelectedElements);
+    		} else {
+    			this.application.ninja.selectionController.executeSelectElement();
+    		}
+    		
+    	}
     },
 
     deselectTweens:{
@@ -1025,7 +1229,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 	            isAlreadySelected = false,
 	            indexAlreadySelected = 0,
 	            indexLastClicked = 0;
-			
+
+			console.log(ptrParent);
 			// Did the mousedown event originate within a layer?
 			if (ptrParent === false) {
 				// No it did not.  Do nothing.
@@ -1101,8 +1306,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 	            }
 	            
             }
-            this._captureSelection = true;
-            this.selectLayers(this.currentLayersSelected, true);
+            //this._captureSelection = true;
+            this.selectLayers(this.currentLayersSelected);
+            this.updateStageSelection();
         }
 	},
 
@@ -1131,9 +1337,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 			}
 		}
 	},
-    createNewLayer:{
+    createstageElement:{
         value:function (object) {
-            var newLayerName = "",
+            var stageElementName = "",
                 thingToPush = this.createLayerTemplate(),
                 myIndex = 0,
                 i = 0,
@@ -1141,16 +1347,16 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
 			// Make up a layer name.
             this.currentLayerNumber = this.currentLayerNumber + 1;
-//            newLayerName = "Layer " + this.currentLayerNumber;
-            newLayerName="         ";
+//            stageElementName = "Layer " + this.currentLayerNumber;
+            stageElementName="         ";
 
 			// Possibly currentLayerNumber doesn't correctly reflect the
 			// number of layers.  Check that.
             // Commented out to fix WebGL rendering bug
             /*for(k = 0; k < arrLayersLength; k++){
-                if(this.arrLayers[k].layerData.layerName === newLayerName){
+                if(this.arrLayers[k].layerData.layerName === stageElementName){
                      this.currentLayerNumber = this.currentLayerNumber + 1;
-                     newLayerName = "Layer " + this.currentLayerNumber;
+                     stageElementName = "Layer " + this.currentLayerNumber;
                      break;
                 }
             }*/
@@ -1159,14 +1365,15 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.currentLayersSelected = false;
             
             // thingToPush is the template we just got.  Now fill it in.
-            thingToPush.layerData.layerName = newLayerName;
+            thingToPush.layerData.layerName = stageElementName;
             thingToPush.layerData.layerTag = "<" + object.nodeName.toLowerCase() + ">";
             thingToPush.layerData.layerID = this.currentLayerNumber;
             thingToPush.parentElement = this.application.ninja.currentSelectedContainer;
             thingToPush.layerData.isSelected = true;
             thingToPush.layerData._isFirstDraw = true;
             thingToPush.layerData.created = true;
-            
+            thingToPush.layerData.stageElement = object;
+
             if (this.checkable_animated.classList.contains("checked")) {
             	thingToPush.layerData.isVisible = false;
             }
@@ -1199,13 +1406,14 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     restoreLayer:{
         value:function (ele) {
 
-            var newLayerName, thingToPush = this.createLayerTemplate();
+            var stageElementName, 
+            	thingToPush = this.createLayerTemplate();
 
             this.currentLayerNumber = this.currentLayerNumber + 1;
-//            newLayerName = "Layer " + this.currentLayerNumber;
+//            stageElementName = "Layer " + this.currentLayerNumber;
 
 //            if(ele.dataset.storedLayerName){
-//                newLayerName = ele.dataset.storedLayerName;
+//                stageElementName = ele.dataset.storedLayerName;
 //            }
             if(ele.id){
                 thingToPush.layerData.layerName = ele.id;
@@ -1213,17 +1421,19 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             thingToPush.layerData.layerID = this.currentLayerNumber;
             thingToPush.layerData.layerTag = "<" + ele.nodeName.toLowerCase() + ">";
             thingToPush.parentElement = this.application.ninja.currentSelectedContainer;
+            if (this._openDoc) {
+                //thingToPush.layerData.elementsList.push(ele);
+                thingToPush.layerData.stageElement = ele;
+            }
             if (this.checkable_animated.classList.contains("checked")) {
             	thingToPush.layerData.isVisible = false;
             }
+            
             // Are there styles to add?
             thingToPush.layerData.arrLayerStyles = this.createLayerStyles();
             thingToPush.layerData.arrStyleTracks = this.createStyleTracks();
 
-            if (this._openDoc) {
-                thingToPush.layerData.elementsList.push(ele);
-            }
-
+			// Add the layer to the repetition
             this.temparrLayers.splice(0, 0, thingToPush);
             thingToPush.layerData.trackPosition = this.temparrLayers.length - 1;
             thingToPush.layerData.layerPosition = this.temparrLayers.length - 1;
@@ -1236,6 +1446,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     deleteLayer:{
         value:function (arrElements) {
             // Only delete selected layers.  If no layers are selected, do nothing.
+            // TODO: maybe this should use this.selectedElements instead of a call to querySelectorAll.
             var i = 0,
             	arrLayers = document.querySelectorAll(".container-layers .container-layer"),
             	arrLayersLength = arrLayers.length;
@@ -1252,6 +1463,26 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.resetMasterDuration();
 
         }
+    },
+    
+    deleteLayers: {
+    	value: function(arrElements) {
+    		var i = 0, 
+    			j = 0,
+    			arrLayersLength = this.arrLayers.length,
+    			arrElementsLength = arrElements.length;
+    		
+    		for (i = 0; i < arrElementsLength; i++) {
+    			var currentTest = arrElements[i];
+    			for (j = 0; j < arrLayersLength; j++) {
+    				if (this.arrLayers[j].layerData.stageElement == currentTest) {
+    					this.arrLayers.splice(j, 1);
+    				}
+    			}
+    		}
+    		this.selectLayers([]);
+    		this.resetMasterDuration();
+    	}
     },
 
     resetMasterDuration:{
@@ -1274,36 +1505,37 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     handleElementAdded:{
         value:function() {
-            this.createNewLayer(this.application.ninja.selectedElements[0]);
-
+            this.createstageElement(this.application.ninja.selectedElements[0]);
+/*
             if (typeof(this.currentLayerSelected) === "undefined") {
             	// Edge case: currentLayerSelected needs to be initialized.
             	this.currentLayerSelected = {};
             	this.currentLayerSelected.layerData = {};
             	this.currentLayerSelected.layerData.elementsList = [];
             }
-            this.currentLayerSelected.layerData.elementsList.push(this.application.ninja.selectedElements[0]);
-            
-            // TODO: verify this is correct.
+            //this.currentLayerSelected.layerData.elementsList.push(this.application.ninja.selectedElements[0]);
+			// this.currentLayerSelected.layerData.elementsList[0].dataset.storedLayerName = this.currentLayerSelected.layerData.layerName;
+
             this.selectedElements = [];
             this.selectedElements.push(this.application.ninja.selectedElements[0]);
-//            this.currentLayerSelected.layerData.elementsList[0].dataset.storedLayerName = this.currentLayerSelected.layerData.layerName;
+*/
         }
     },
 
     handleElementsRemoved:{
         value:function (event) {
-            var deleteElements = event.detail;
-            //console.log("TimelinePanel.handleElementsRemoved; event.detail is ", event.detail);
-            this.deleteLayer(deleteElements);
+            this.deleteLayers(event.detail);
         }
     },
 
     handleElementReplaced:{
         value:function(event){
+        	// TODO: this needs to be updated. Not sure when an elementReplaced event will be fired?
+        	/*
             this.currentLayerSelected.layerData.elementsList.pop();
             this.currentLayerSelected.layerData.elementsList.push(event.detail.data.newChild);
             this.currentLayerSelected.layerData.animatedElement = event.detail.data.newChild;
+            */
         }
     },
 
@@ -1609,6 +1841,8 @@ console.log('TimelinePanel.selectLayer')
             event.dataTransfer.setDragImage(dragIcon, 0, 0);
             
             // Clone the element we're dragging
+            this.buildDragHelper();
+            /*
             this._dragAndDropHelper = event.target.cloneNode(true);
             this._dragAndDropHelper.style.opacity = 0.8;
             this._dragAndDropHelper.style.position = "absolute";
@@ -1618,6 +1852,7 @@ console.log('TimelinePanel.selectLayer')
             
             this._dragAndDropHelper.style.width = window.getComputedStyle(this.container_layers, null).getPropertyValue("width");
             this._dragAndDropHelper.classList.add("timeline-dnd-helper");
+            */
             
             // Get the offset 
     		var findYOffset = function(obj) {
@@ -1635,6 +1870,30 @@ console.log('TimelinePanel.selectLayer')
     		this._dragAndDropHelperOffset = findYOffset(this.container_layers);
     		this._appendHelper = true;
     		this._deleteHelper = false;
+    	}
+    },
+    
+    buildDragHelper: {
+    	value: function() {
+    		var myContainer = document.createElement("div"),
+    			i = 0, 
+    			currentLayersSelectedLength = this.currentLayersSelected.length;
+    		
+    		for (i = 0; i < currentLayersSelectedLength; i++) {
+    			var currentClone = this.layerRepetition.childComponents[this.currentLayersSelected[i]].element.cloneNode(true);
+    			currentClone.classList.add("layerSelected");
+    			myContainer.appendChild(currentClone);
+    			this._dragLayerIndexes.push(this.currentLayersSelected[i]);
+    		}
+    		this._dragAndDropHelper = myContainer;
+            this._dragAndDropHelper.style.opacity = 0.8;
+            this._dragAndDropHelper.style.position = "absolute";
+            this._dragAndDropHelper.style.top = "0px";
+            this._dragAndDropHelper.style.left = "0px";
+            this._dragAndDropHelper.style.zIndex = 700;
+            
+            this._dragAndDropHelper.style.width = window.getComputedStyle(this.container_layers, null).getPropertyValue("width");
+            this._dragAndDropHelper.classList.add("timeline-dnd-helper");
     	}
     },
     handleLayerDragover: {
