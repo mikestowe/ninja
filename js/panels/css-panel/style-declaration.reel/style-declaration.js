@@ -11,6 +11,7 @@ var Montage = require("montage/core/core").Montage,
 exports.StyleDeclaration = Montage.create(Component, {
     cssText : { value: null },
     focusDelegate : { value: null },
+    needsSort : { value: null },
 
     includeEmptyStyle : {
         value: true,
@@ -100,7 +101,7 @@ exports.StyleDeclaration = Montage.create(Component, {
             }, this);
 
             this._declaration = dec;
-            this.needsDraw = true;
+            this.needsDraw = this.needsSort = true;
         }
     },
 
@@ -264,6 +265,15 @@ exports.StyleDeclaration = Montage.create(Component, {
             this._element.addEventListener('drop', this, false);
             this.element.addEventListener('dragenter', this, false);
             this.element.addEventListener('dragleave', this, false);
+        }
+    },
+
+    willDraw : {
+        value: function() {
+            if(this.needsSort) {
+                this.arrayController.organizeObjects();
+                this.needsSort = false;
+            }
         }
     },
 
