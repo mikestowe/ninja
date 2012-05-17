@@ -67,6 +67,7 @@ exports.StylesViewContainer = Montage.create(Component, {
             this.eventManager.addEventListener('styleSheetsReady', this, false);
             //this.eventManager.addEventListener('elementChanging', this, false);
             this.eventManager.addEventListener('elementChange', this, false);
+            this.eventManager.addEventListener("closeDocument", this, false);
         }
     },
     handleStyleSheetsReady: {
@@ -148,6 +149,12 @@ exports.StylesViewContainer = Montage.create(Component, {
 
                return false;
 
+        }
+    },
+    handleCloseDocument: {
+        value: function(e) {
+            this.hasStyles = false;
+            this.needsDraw = true;
         }
     },
 
