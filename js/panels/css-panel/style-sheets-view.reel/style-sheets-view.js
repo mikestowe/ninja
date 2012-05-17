@@ -17,8 +17,6 @@ exports.StyleSheetsView = Montage.create(Component, {
     documentNameLabel    : { value: null },
     noDocumentLabelClass : { value: "no-document" },
 
-    dirtyStyleSheets: { value: null },
-
     _documentName : { value: null },
     documentName : {
         get: function() {
