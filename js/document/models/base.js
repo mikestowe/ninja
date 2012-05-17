@@ -149,7 +149,8 @@ exports.BaseDocumentModel = Montage.create(Component, {
         			template: this.fileTemplate,
         			document: this.views.design.iframe.contentWindow.document,
         			head: this.views.design.iframe.contentWindow.document.head,
-        			body: this.views.design.iframe.contentWindow.document.body
+        			body: this.views.design.iframe.contentWindow.document.body,
+        			mjsTemplateCreator: this.views.design.iframe.contentWindow.mjsTemplateCreator
         		}, callback.bind(this));
         	} else {
         		//TODO: Add logic to save code view data
@@ -177,7 +178,8 @@ exports.BaseDocumentModel = Montage.create(Component, {
         			template: this.fileTemplate,
         			document: this.views.design.iframe.contentWindow.document,
         			head: this.views.design.iframe.contentWindow.document.head,
-        			body: this.views.design.iframe.contentWindow.document.body
+        			body: this.views.design.iframe.contentWindow.document.body,
+        			mjsTemplateCreator: this.views.design.iframe.contentWindow.mjsTemplateCreator
         		}, callback.bind(this));
         	} else {
         		//TODO: Add logic to save code view data
