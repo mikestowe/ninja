@@ -59,8 +59,8 @@ exports.RectTool = Montage.create(ShapeTool, {
             var blRadius = ShapesController.GetValueInPixels(this.options.BLRadiusControl.value, this.options.BLRadiusControl.units, h);
             var brRadius = ShapesController.GetValueInPixels(this.options.BRRadiusControl.value, this.options.BRRadiusControl.units, h);
 
-            var strokeColor = this.application.ninja.colorController.colorToolbar.stroke.webGlColor;
-            var fillColor = this.application.ninja.colorController.colorToolbar.fill.webGlColor;
+            var strokeColor = this.options.stroke.webGlColor;
+            var fillColor = this.options.fill.webGlColor;
             // for default stroke and fill/no materials
             var strokeMaterial = null;
             var fillMaterial = null;

@@ -94,6 +94,11 @@ exports.TagTool = Montage.create(DrawingTool, {
             // Create the styles
             styles = document.application.njUtils.stylesFromDraw(element, ~~drawData.width, ~~drawData.height, drawData);
 
+            // Add color
+            if(this.options.getProperty("fill.colorMode") !== "nocolor") {
+                styles['background-color'] = this.options.getProperty("fill.color.css");
+            }
+
             // Add the element and styles
             this.application.ninja.elementMediator.addElements(element, styles);
         }
