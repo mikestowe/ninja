@@ -229,6 +229,8 @@ exports.Editable = Montage.create(Component, {
     },
     handlePaste : {
         value: function(e) {
+            e.preventDefault();
+            document.execCommand('insertHTML', null, e._event.clipboardData.getData("Text"));
             this._sendEvent('paste', e);
         }
     },
