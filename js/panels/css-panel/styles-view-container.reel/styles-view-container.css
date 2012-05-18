@@ -18,12 +18,12 @@
 .styles-view-container.no-styles .panel-message {
     display: block;
 }
-.styles-view-toolbar-container {
-    border-top: 1px solid #303030;
-}
-.styles-view-toolbar-container .toolbar-container {
-    border-top: 1px solid #5c5c5c;
-}
+/*.styles-view-toolbar-container {*/
+    /*border-top: 1px solid #303030;*/
+/*}*/
+/*.styles-view-toolbar-container .toolbar-container {*/
+    /*border-top: 1px solid #5c5c5c;*/
+/*}*/
 
 /* ----- Toolbar ----*/
 
