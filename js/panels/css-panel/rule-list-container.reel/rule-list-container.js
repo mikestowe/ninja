@@ -46,8 +46,8 @@ exports.RuleListContainer = Montage.create(Component, {
                 list = this.ruleLists[i];
 
                 if(selection.length > 1) {
-                    matchesAll = list.selection.every(function(element, index, array) {
-                        return array.indexOf(element) !== 0;
+                    matchesAll = selection.every(function(element, index, array) {
+                        return list.selection.indexOf(element) !== -1;
                     });
 
                     if(matchesAll) {
