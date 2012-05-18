@@ -119,19 +119,43 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 
     initializeFromDocument:{
         value:function(){
-            var documentRootChildren = null, i;
+            var documentRootChildren = null, i, stage = this.application.ninja.stage;
             //initialize with current document
             this._eltArray = [];
             this._planesArray = [];
-            this.setDrawingSurfaceElement(this.application.ninja.stage.canvas);
-            this.setSourceSpaceElement( this.application.ninja.stage.stageDeps.currentStage );
+            this.setDrawingSurfaceElement(stage.canvas);
+            this.setSourceSpaceElement( stage.stageDeps.currentStage );
             this.setWorkingPlane( [0,0,1,0] );
 
             //Loop through all the top-level children of the current document and call drawUtils.addElement on them
             if(this.application.ninja.currentDocument._liveNodeList.length > 0){
                 documentRootChildren = this.application.ninja.currentDocument._liveNodeList;
-                for(i=0;i<documentRootChildren.length;i++){
-                    this.addElement(documentRootChildren[i]);
+                var len = documentRootChildren.length,
+                    minLeft = stage.userPaddingLeft,
+                    minTop = stage.userPaddingTop,
+                    docLeft = stage.documentOffsetLeft,
+                    docTop = stage.documentOffsetTop,
+                    l,
+                    t,
+                    plane,
+                    elt
+                for(i=0; i<len; i++) {
+                    elt = documentRootChildren[i];
+                    plane = this.addElement(elt);
+                    l = plane._rect.m_left - docLeft;
+                    t = plane._rect.m_top - docTop;
+                    if(l < minLeft) {
+                        minLeft = l;
+                    }
+                    if(t < minTop) {
+                        minTop = t;
+                    }
+                }
+                if(minLeft !== stage.userPaddingLeft) {
+                    stage.userPaddingLeft = minLeft;
+                }
+                if(minTop !== stage.userPaddingTop) {
+                    stage.userPaddingTop = minTop;
                 }
             }
         }
@@ -245,16 +269,45 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
             }
             var els = event.detail.data.els;
             if(els && this._shouldUpdatePlanes(event.detail.data.prop)) {
-                var len = els.length;
+                var len = els.length,
+                    stage = this.application.ninja.stage,
+                    minLeft = stage.userPaddingLeft,
+                    minTop = stage.userPaddingTop,
+                    docLeft = stage.documentOffsetLeft,
+                    docTop = stage.documentOffsetTop,
+                    l,
+                    t,
+                    plane,
+                    changed = false;
                 for(var i=0; i < len; i++) {
-                    if(els[i].elementModel.props3D.elementPlane) {
-                        els[i].elementModel.props3D.elementPlane.init();
+                    plane = els[i].elementModel.props3D.elementPlane;
+                    if(plane) {
+                        plane.init();
+                        l = plane._rect.m_left - docLeft;
+                        t = plane._rect.m_top - docTop;
+                        if(l < minLeft) {
+                            minLeft = l;
+                        }
+                        if(t < minTop) {
+                            minTop = t;
+                        }
                     }
                 }
 
-                this.application.ninja.stage.layout.draw();
-                this.drawWorkingPlane();
-                this.draw3DCompass();
+                if(minLeft !== stage.userPaddingLeft) {
+                    stage.userPaddingLeft = minLeft;
+                    changed = true;
+                }
+                if(minTop !== stage.userPaddingTop) {
+                    stage.userPaddingTop = minTop;
+                    changed = true;
+                }
+
+                if(!changed) {
+                    stage.layout.draw();
+                    this.drawWorkingPlane();
+                    this.draw3DCompass();
+                }
             }
         }
     },
@@ -281,6 +334,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			plane.init();
 			this._planesArray.push( plane );
             elt.elementModel.props3D.elementPlane = plane;
+            return plane;
 		}
 	},
 
@@ -584,18 +638,10 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			var ptOnPlane = MathUtils.getPointOnPlane(this._workingPlane);
 
             // define the grid parameters
-            var width,
-                height,
+            var width = this.snapManager.getStageWidth(),
+                height = this.snapManager.getStageHeight(),
                 nLines = 10;
 
-//            if(this.application.ninja.documentController.webTemplate) {
-            if(this.application.ninja.currentDocument.documentRoot.id !== "UserContent") {
-                width = this.application.ninja.currentDocument.documentRoot.scrollWidth;
-                height = this.application.ninja.currentDocument.documentRoot.scrollHeight;
-            } else {
-                width = this.snapManager.getStageWidth();
-                height = this.snapManager.getStageHeight();
-            }
 			// get a matrix from working plane space to the world
 			var mat = this.getPlaneToWorldMatrix(zAxis, ptOnPlane);
 			var tMat = Matrix.Translation( [0.5*width, 0.5*height, 0] );
@@ -1178,8 +1224,8 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			var saveColor = this._lineColor;
 			var saveLineWidth = this._lineWidth;
 
-			var origLeft = 50;
-			var origTop = 50;
+			var origLeft = 60;
+			var origTop = this.snapManager.getStageHeight() - 60;
 
 			var mat = this.viewUtils.getMatrixFromElement( this._sourceSpaceElt );
 			var tMat = Matrix.Translation([origLeft,origTop,0]);
@@ -1211,7 +1257,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			this.setDrawingSurfaceElement(this.application.ninja.stage.layoutCanvas);
 			// clear just the 3d compass area
 			this._drawingContext.save();
-			this._drawingContext.rect(0, 0, 100, 100);
+			this._drawingContext.rect(10, origTop-60, 100, 110);
 			this._drawingContext.clip();
 
 			this._drawingContext.lineWidth = 2.0;

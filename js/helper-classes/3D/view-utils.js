@@ -354,15 +354,17 @@ exports.ViewUtils = Montage.create(Component, {
 
             // transform the bounds up the tree
             var child = elt;
-            var parent = elt.offsetParent;
-            while ( parent )
+            while ( child )
             {
                 pt = this.childToParent( pt, child );
 
-                if (parent === this._rootElement)  break;
+//                if (child === this._stageElement)  break;
+//                child = child.offsetParent;
 
-                child = parent;
-                parent = parent.offsetParent;
+                if (child === this._stageElement)  break;
+                if (child === this._rootElement)  break;
+                child = child.offsetParent;
+                if (child === this._rootElement)  break;
             }
 
             /////////////////////////////////////////////////////////
@@ -398,7 +400,8 @@ exports.ViewUtils = Montage.create(Component, {
 
             // transform the bounds up the tree
             var parent = child.offsetParent;
-            if ( parent )
+            // TODO - Should have a different way to check for new template mode
+            if ( parent || ((child === this.application.ninja.currentDocument.documentRoot) && (child.id !== "UserContent")) )
             {
                 this.setViewportObj( child );
 

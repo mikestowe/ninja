@@ -165,10 +165,11 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
 					box[3] = point.y;
 
                     //selectionManagerModule.selectionManager.marqueeSelection(box);
-                    var childNodes = this.application.ninja.currentDocument.documentRoot.childNodes;
+                    var childNodes = this.application.ninja.currentDocument.documentRoot.childNodes,
+                        selectionController = this.application.ninja.selectionController;
                     childNodes = Array.prototype.slice.call(childNodes, 0);
                     childNodes.forEach(function(item) {
-                        if(item.nodeType == 1 && SelectionTool._complicatedCollisionDetection(item, box)) {
+                        if(selectionController.isNodeTraversable(item) && SelectionTool._complicatedCollisionDetection(item, box)) {
                             selectedItems.push(item);
                         }
                     });

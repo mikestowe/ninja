@@ -53,11 +53,11 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             ///// Bind app's activeDocument property to
             ///// styles controller's _activeDocument property
 
-            Object.defineBinding(this, "activeDocument", {
-                boundObject: this.application.ninja,
-                boundObjectPropertyPath: "currentDocument",
-                oneway: true
-            });
+//            Object.defineBinding(this, "activeDocument", {
+//                boundObject: this.application.ninja,
+//                boundObjectPropertyPath: "currentDocument",
+//                oneway: true
+//            });
         }
     },
 
@@ -79,7 +79,6 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             return this._activeDocument;
         },
         set : function(document) {
-
             ///// If the document is null set default stylesheets to null
 
             if(!document) {
@@ -1167,6 +1166,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
     getMatrixFromElement : {
         value: function(element, isStage) {
+            isStage = false;
             var xformStr = this.getElementStyle(element, "-webkit-transform", true, isStage),
                 mat;
 
@@ -1200,6 +1200,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
     getPerspectiveDistFromElement : {
         value: function(element, isStage) {
+            isStage = false;
             var xformStr = this.getElementStyle(element, "-webkit-perspective", false, isStage),
                 dist;
 

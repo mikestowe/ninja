@@ -110,7 +110,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this._selectedLayerID = newVal;
                 this._captureSelection = true;
                 if (this.currentLayerSelected !== false) {
-                	this.selectLayer(selectIndex, true);
+                	this.selectLayer(selectIndex, false);
                 }
                 if (this.currentLayersSelected !== false) {
                 	this.selectLayers(this.currentLayersSelected);
@@ -994,7 +994,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this.arrLayers.splice(myIndex, 0, thingToPush);
 
             }
-            this.selectLayer(myIndex);
+            this.selectLayer(myIndex, false);
         }
     },
 

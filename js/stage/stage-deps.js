@@ -52,7 +52,7 @@ exports.StageDeps = Montage.create(Component, {
     userContentLeft: {
         get: function() { return this._userContentLeft; },
         set: function(value) {
-            if(value) {
+            if(value != null) {
                 viewUtils.setUserContentLeft(value);
             }
         }
@@ -65,7 +65,7 @@ exports.StageDeps = Montage.create(Component, {
     userContentTop: {
         get: function() { return this._userContentTop; },
         set: function(value) {
-            if(value) {
+            if(value != null) {
                 viewUtils.setUserContentTop(value);
             }
         }
@@ -94,12 +94,6 @@ exports.StageDeps = Montage.create(Component, {
 
     handleAppLoaded: {
         value: function() {
-
-            Object.defineBinding(this, "currentDocument", {
-                boundObject: this.application.ninja,
-                boundObjectPropertyPath: "currentDocument",
-                oneway: true
-            });
 
             Object.defineBinding(this, "userContentLeft", {
                 boundObject: this.stage,

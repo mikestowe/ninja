@@ -156,7 +156,7 @@ exports.Layout = Montage.create(Component, {
     drawTagOutline: {
         value: function (item) {
 
-            if(!item || (item.nodeType !== 1)) return;
+            if(!item || !this.application.ninja.selectionController.isNodeTraversable(item)) return;
 
             // TODO Bind the layoutview mode to the current document
             // var mode  = this.application.ninja.currentDocument.layoutMode;

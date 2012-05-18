@@ -130,10 +130,10 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
     bindSnap: {
         value: function() {
-            this.addEventListener("change@appModel.snap", this.toggleSnap, false);
-            this.addEventListener("change@appModel.snapGrid", this.toggleSnapGrid, false);
-            this.addEventListener("change@appModel.snapObjects", this.toggleSnapObjects, false);
-            this.addEventListener("change@appModel.snapAlign", this.toggleSnapAlign, false);
+            this.addPropertyChangeListener("appModel.snap", this.toggleSnap, false);
+            this.addPropertyChangeListener("appModel.snapGrid", this.toggleSnapGrid, false);
+            this.addPropertyChangeListener("appModel.snapObjects", this.toggleSnapObjects, false);
+            this.addPropertyChangeListener("appModel.snapAlign", this.toggleSnapAlign, false);
         }
     },
 
@@ -1617,11 +1617,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 					if (x > y) {
 						if (x > z) {
 							plane[0] = 1;
-                            if(this.application.ninja.currentDocument.documentRoot.id !== "UserContent") {
-                                plane[3] = stage.scrollWidth / 2.0;
-                            } else {
-                                plane[3] = this.getStageWidth() / 2.0;
-                            }
+                            plane[3] = this.getStageWidth() / 2.0;
 							if (dir[0] > 0) plane[3] = -plane[3];
 							change = !drawUtils.drawYZ;
 							drawUtils.drawXY = drawUtils.drawXZ = false;
@@ -1639,11 +1635,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 					else {
 						if (y > z) {
 							plane[1] = 1;
-                            if(this.application.ninja.currentDocument.documentRoot.id !== "UserContent") {
-                                plane[3] = stage.scrollHeight / 2.0;
-                            } else {
-                                plane[3] = this.getStageHeight() / 2.0;
-                            }
+                            plane[3] = this.getStageHeight() / 2.0;
 							if (dir[1] > 0) plane[3] = -plane[3];
 							change = !drawUtils.drawXZ;
 							drawUtils.drawXY = drawUtils.drawYZ = false;

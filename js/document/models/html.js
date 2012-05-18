@@ -6,16 +6,59 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 ////////////////////////////////////////////////////////////////////////
 //
-var Montage = 			require("montage/core/core").Montage,
-    BaseDocumentModel = require("js/document/models/base").BaseDocumentModel;
+var Montage = 				require("montage/core/core").Montage,
+    BaseDocumentModel = 	require("js/document/models/base").BaseDocumentModel,
+    webGlDocumentHelper = 	require("js/document/helpers/webgl-helper").webGlDocumentHelper;
 ////////////////////////////////////////////////////////////////////////
 //	
 exports.HtmlDocumentModel = Montage.create(BaseDocumentModel, {
 	////////////////////////////////////////////////////////////////////
 	//
 	hasTemplate: {
-		enumerable: false,
         value: false
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    selection: {
+        value: []
+    },
+	////////////////////////////////////////////////////////////////////
+	//
+    draw3DGrid: {
+        value: false
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+	baseHref: {
+		value: null
+	},
+    ////////////////////////////////////////////////////////////////////
+	//
+	webGlHelper: {
+        value: webGlDocumentHelper
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+    userComponents: {
+        value: {}
+    },
+	////////////////////////////////////////////////////////////////////
+	//Add a reference to a component instance to the userComponents hash using the element UUID
+    setComponentInstance: {
+        value: function(instance, el) {
+            this.userComponents[el.uuid] = instance;
+        }
+    },
+    ////////////////////////////////////////////////////////////////////
+	//Returns the component instance obj from the element
+    getComponentFromElement: {
+        value: function(el) {
+            if(el) {
+                if(el.uuid) return this.userComponents[el.uuid];
+            } else {
+                return null;
+            }
+        }
     }
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
