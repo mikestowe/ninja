@@ -119,8 +119,6 @@ exports.HtmlDocument = Montage.create(Component, {
     		this._observer = null;
     		//Making callback after view is loaded
     	    this.loaded.callback.call(this.loaded.context, this);
-    	    //Setting opacity to be viewable after load
-		   	this.model.views.design.iframe.style.opacity = 1;
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -136,7 +134,7 @@ exports.HtmlDocument = Montage.create(Component, {
 	//
     serializeDocument: {
     	value: function () {
-            // There are not needed for now ssince we cannot change them
+            // There are not needed for now since we cannot change them
             //this.gridHorizontalSpacing = this.application.ninja.stage.drawUtils.gridHorizontalSpacing;
             //this.gridVerticalSpacing = this.application.ninja.stage.drawUtils.gridVerticalSpacing;
 
@@ -152,13 +150,29 @@ exports.HtmlDocument = Montage.create(Component, {
 
             // Pause the videos
             this.model.views.design.pauseVideos();
+
+            this.model.isActive = false;
     	}
     },
     ////////////////////////////////////////////////////////////////////
 	//
     deserializeDocument: {
     	value: function () {
-    		//TODO: Import functionality
+            // There are not needed for now since we cannot change them
+            //this.application.ninja.stage.drawUtils.gridHorizontalSpacing = this.gridHorizontalSpacing;
+            //this.application.ninja.stage.drawUtils.gridVerticalSpacing = this.gridVerticalSpacing;
+
+            // Deserialize the current scroll position
+            // TODO: Implement
+
+            this.application.ninja.selectedElements = this.model.selection.slice(0);
+
+            this.application.ninja.appModel.show3dGrid = this.draw3DGrid;
+
+            // Serialize the undo
+            // TODO: Save the montage undo queue
+
+            this.model.isActive = true;
     	}
     }
     ////////////////////////////////////////////////////////////////////
