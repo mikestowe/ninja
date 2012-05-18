@@ -85,6 +85,13 @@ exports.StyleDeclaration = Montage.create(Component, {
 
             stylesArray = Array.prototype.slice.call(dec);
 
+            stylesArray.forEach(function(prop, index) {
+                this.styles.push({
+                    name: prop,
+                    value: dec.getPropertyValue(prop)
+                });
+            }, this);
+
             if(this.includeEmptyStyle) {
                 this.styles.push({
                     name    : "property",
@@ -92,13 +99,6 @@ exports.StyleDeclaration = Montage.create(Component, {
                     isEmpty : true
                 });
             }
-
-            stylesArray.forEach(function(prop, index) {
-                this.styles.push({
-                    name: prop,
-                    value: dec.getPropertyValue(prop)
-                });
-            }, this);
 
             this._declaration = dec;
             this.needsDraw = this.needsSort = true;
@@ -218,7 +218,8 @@ exports.StyleDeclaration = Montage.create(Component, {
                 }
             }
 
-            this.arrayController.addObjects(styleDescriptor);
+            this.styles.push(styleDescriptor);
+            this.arrayController.organizeObjects();
         }
     },
 

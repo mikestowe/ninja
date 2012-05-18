@@ -15,8 +15,15 @@ exports.CssStyle = Montage.create(Component, {
     invalidStyleClass : { value: "style-item-invalid" },
     emptyStyleClass   : { value: "empty-css-style" },
 
-    propertyText : { value: "property" },
-    _valueText : { value: "value" },
+    propertyText : {
+        value: "property",
+        distinct: true
+    },
+
+    _valueText : {
+        value: "value",
+        distinct: true
+    },
     valueText : {
         get: function() {
             return this._valueText;
@@ -207,10 +214,8 @@ exports.CssStyle = Montage.create(Component, {
     },
     handleClick : {
         value: function(e) {
-            console.log("handle Add button click");
+            this.buttonClicked = true;
             this.propertyField.start();
-            //this.editingNewStyle = true;
-            this.editingNewStyle = this.editing = true;
         }
     },
 
@@ -282,6 +287,8 @@ exports.CssStyle = Montage.create(Component, {
                 value       = this.valueField.value,
                 rule        = this.getRule();
 
+            this.propertyText = property;
+
             this.delegate.handlePropertyChange(rule, property, value, oldProperty, this);
         }
     },
@@ -290,6 +297,8 @@ exports.CssStyle = Montage.create(Component, {
             var property    = this.propertyField.value,
                 value       = this.valueField.value,
                 rule        = this.getRule();
+
+            this.valueText = value;
 
             this.delegate.handleValueChange(rule, property, value, this);
         }
@@ -333,13 +342,6 @@ exports.CssStyle = Montage.create(Component, {
             this.propertyField.addEventListener('paste', this, false);
             this.valueField.addEventListener('paste', this, false);
 
-
-            if(this.empty) {
-                this.addStyleButton.addEventListener('click', this, false);
-            } else {
-                this.addStyleButton.removeEventListener('click', this, false);
-            }
-
         }
     },
 
@@ -362,6 +364,12 @@ exports.CssStyle = Montage.create(Component, {
                 this._element.title = "Unrecognized Style";
             } else {
                 this._element.removeAttribute('title');
+            }
+
+            if(this.empty) {
+                this.addStyleButton.addEventListener('click', this, false);
+            } else {
+                this.addStyleButton.removeEventListener('click', this, false);
             }
 
             this.setToolTips();

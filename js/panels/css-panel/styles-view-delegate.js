@@ -125,7 +125,7 @@ exports.StylesViewMediator = Montage.create(Component, {
                         nextFocus = style.getSiblingStyle('next');
                         if(nextFocus) {
                             nextFocus.propertyField.start();
-                        } else {
+                        } else if(style.dirty) {
                             style.parentComponent.parentComponent.addNewStyle();
                             style.editingNewStyle = false;
                             setTimeout(function() {
@@ -189,11 +189,6 @@ exports.StylesViewMediator = Montage.create(Component, {
             style.invalid = (browserValue === null);
 
             this._dispatchChange(property, browserValue);
-
-            if(style.editingNewStyle) {
-                style.parentComponent.parentComponent.addNewStyle();
-                style.editingNewStyle = false;
-            }
         }
     },
 
