@@ -158,7 +158,7 @@ exports.StyleDeclaration = Montage.create(Component, {
 
                     ///// Style component exists for property
                     ///// Update its value
-                    if(i) {
+                    if(i !== undefined) {
                         this.styles[i].value = this.declaration.getPropertyValue(prop);
                         usedIndices.push(i);
                     } else {
