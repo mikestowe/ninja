@@ -13,7 +13,8 @@ var Montage = 		require("montage/core/core").Montage,
     TextDocument =	require("js/document/text-document").TextDocument;
 
     // New Document Objects
-var Document =      require("js/document/document-html").HtmlDocument;
+var Document_HTML =      require("js/document/document-html").HtmlDocument;
+var Document_Text =      require("js/document/document-text").TextDocument;
 ////////////////////////////////////////////////////////////////////////
 //
 var DocumentController = exports.DocumentController = Montage.create(Component, {
@@ -320,32 +321,30 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
     ////////////////////////////////////////////////////////////////////
     openDocument: {
-        value: function(doc) {
+        value: function(file) {
         	var template, dimensions;
-        	if (doc.content.body.indexOf('Ninja-Banner Dimensions@@@') !== -1) {
-        		dimensions = (doc.content.body.split('Ninja-Banner Dimensions@@@'))[1].split('-->')[0].split('x');
-        		dimensions = {width: parseInt(dimensions[0]), height: parseInt(dimensions[1])};
-        		template = {type: 'banner', size: dimensions};
-        	}
+
             // TODO: HACKS to remove
-			this.documentHackReference = doc;
+			this.documentHackReference = file;
             document.getElementById("iframeContainer").style.overflow = "hidden";
 			//
-			switch (doc.extension) {
+			switch (file.extension) {
 				case 'html':
+
+                    if (file.content.body.indexOf('Ninja-Banner Dimensions@@@') !== -1) {
+                        dimensions = (file.content.body.split('Ninja-Banner Dimensions@@@'))[1].split('-->')[0].split('x');
+                        dimensions = {width: parseInt(dimensions[0]), height: parseInt(dimensions[1])};
+                        template = {type: 'banner', size: dimensions};
+                    }
+
 					//Open in designer view
                     this._hackRootFlag = false;
-                    Montage.create(Document).init(doc, this, this._onOpenDocument, 'design', template);
+                    Montage.create(Document_HTML).init(file, this, this._onOpenDocument, 'design', template);
 					break;
 				default:
-					//Open in code view
-					var code = Montage.create(TextDocument, {"source": {value: doc.content}}), docuuid = Uuid.generate(), textArea;
-					textArea = this.application.ninja.stage.stageView.createTextAreaElement(docuuid);
-					code.initialize(doc, docuuid, textArea, textArea.parentNode);
-					//code.init(doc.name, doc.uri, doc.extension, null, docuuid);
-					code.textArea.value = doc.content;
-					this.application.ninja.stage.stageView.createTextView(code);
-					break;
+                    //Open in code view
+                    Montage.create(Document_Text).init(file, this, this._onOpenTextDocument, 'code');
+                    break;
 			}
         }
     },
@@ -514,9 +513,10 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     _onOpenTextDocument: {
         value: function(doc) {
             if(this.activeDocument) {
+
                 if(this.activeDocument.currentView === "design"){
                     this.activeDocument.saveAppState();
-                    this.activeDocument.container.parentNode.style["display"] = "none";
+                    this.activeDocument.parentContainer.style["display"] = "none";
                     this.application.ninja.stage.hideCanvas(true);
                     this.application.ninja.stage.stageView.hideRulers();
                 }
@@ -526,28 +526,11 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
             this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
             this.activeDocument = doc;
-
-            var type;
-
-            switch(doc.documentType) {
-                case  "css" :
-                    type = "css";
-                    break;
-                case "js" :
-                    type = "javascript";
-                    break;
-            }
-
-            DocumentController._codeEditor.editor = CodeMirror.fromTextArea(doc.textArea, {
-                        lineNumbers: true,
-                        mode: type,
-                        onCursorActivity: function() {
-                            DocumentController._codeEditor.editor.setLineClass(DocumentController._codeEditor.hline, null);
-                            DocumentController._codeEditor.hline = DocumentController._codeEditor.editor.setLineClass(DocumentController._codeEditor.editor.getCursor().line, "activeline");
-                        }
-            });
-            DocumentController._codeEditor.hline = DocumentController._codeEditor.editor.setLineClass(0, "activeline");
-
+            //hide the iframe when switching to code view
+            document.getElementById("iframeContainer").style.display = "none";
+            doc.model.views.code.showCodeViewBar(true);
+            this.application.ninja.codeEditorController.applySettings();
+            doc.model.views.code.collapseAllPanels();
         }
     },
 
