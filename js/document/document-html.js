@@ -139,7 +139,11 @@ exports.HtmlDocument = Montage.create(Component, {
             //this.gridVerticalSpacing = this.application.ninja.stage.drawUtils.gridVerticalSpacing;
 
             // Serialize the current scroll position
-            // TODO: Implement
+            this.model.scrollLeft = this.application.ninja.stage._scrollLeft;
+            this.model.scrollTop = this.application.ninja.stage._scrollTop;
+            this.model.userContentLeft = this.application.ninja.stage._userContentLeft;
+            this.model.userContentTop = this.application.ninja.stage._userContentTop;
+
 
             // Serialize the selection
             this.model.selection = this.application.ninja.selectedElements.slice(0);
@@ -163,7 +167,10 @@ exports.HtmlDocument = Montage.create(Component, {
             //this.application.ninja.stage.drawUtils.gridVerticalSpacing = this.gridVerticalSpacing;
 
             // Deserialize the current scroll position
-            // TODO: Implement
+            this.application.ninja.stage._scrollLeft = this.model.scrollLeft;
+            this.application.ninja.stage._scrollTop = this.model.scrollTop;
+            this.application.ninja.stage._userContentLeft = this.model.userContentLeft;
+            this.application.ninja.stage._userContentTop = this.model.userContentTop;
 
             this.application.ninja.selectedElements = this.model.selection.slice(0);
 
