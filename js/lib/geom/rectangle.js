@@ -507,7 +507,7 @@ exports.Rectangle = Object.create(GeomObj, {
         }
     },
 
-    render: {
+	render: {
 		value: function() {
 			// get the world
 			var world = this.getWorld();
@@ -538,7 +538,6 @@ exports.Rectangle = Object.create(GeomObj, {
 				if(this._fillColor.gradientMode) {
 					if(this._fillColor.gradientMode === "radial") {
 						var ww = w - 2*lw,  hh = h - 2*lw;
-						//gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2-this._strokeWidth, h/2, Math.max(ww, hh)/2);
 						gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(ww, hh)/2);
 					} else {
 						gradient = ctx.createLinearGradient(inset, h/2, w-inset, h/2);
@@ -572,11 +571,10 @@ exports.Rectangle = Object.create(GeomObj, {
 				inset = Math.ceil( 0.5*lw ) - 0.5;
 
 				if(this._strokeColor.gradientMode) {
-					if(this._strokeColor.gradientMode === "radial") {
-						gradient = ctx.createRadialGradient(w/2, h/2, Math.min(h, w)/2-inset, w/2, h/2, Math.max(h, w)/2);
-					} else {
+					if(this._strokeColor.gradientMode === "radial")
+						gradient = ctx.createRadialGradient(w/2, h/2, 0,  w/2, h/2, Math.max(h, w)/2);
+					else
 						gradient = ctx.createLinearGradient(0, h/2, w, h/2);
-					}
 					colors = this._strokeColor.color;
 
 					len = colors.length;

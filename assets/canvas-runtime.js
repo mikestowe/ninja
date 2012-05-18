@@ -878,11 +878,12 @@ NinjaCvsRt.RuntimeRectangle = Object.create(NinjaCvsRt.RuntimeGeomObj, {
                 inset = Math.ceil( lw ) - 0.5;
 
                 if(this._fillColor.gradientMode) {
-                    if(this._fillColor.gradientMode === "radial") {
-                        gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w, h)/2);
-                    } else {
-                        gradient = ctx.createLinearGradient(inset/2, h/2, w-inset, h/2);
-                    }
+					if(this._fillColor.gradientMode === "radial") {
+						var ww = w - 2*lw,  hh = h - 2*lw;
+						gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(ww, hh)/2);
+					} else {
+						gradient = ctx.createLinearGradient(inset, h/2, w-inset, h/2);
+					}
                     colors = this._fillColor.color;
 
                     len = colors.length;
@@ -912,11 +913,10 @@ NinjaCvsRt.RuntimeRectangle = Object.create(NinjaCvsRt.RuntimeGeomObj, {
                 inset = Math.ceil( 0.5*lw ) - 0.5;
 
                 if(this._strokeColor.gradientMode) {
-                    if(this._strokeColor.gradientMode === "radial") {
-                        gradient = ctx.createRadialGradient(w/2, h/2, Math.min(h, w)/2-inset, w/2, h/2, Math.max(h, w)/2);
-                    } else {
-                        gradient = ctx.createLinearGradient(0, h/2, w, h/2);
-                    }
+					if(this._strokeColor.gradientMode === "radial")
+						gradient = ctx.createRadialGradient(w/2, h/2, 0,  w/2, h/2, Math.max(h, w)/2);
+					else
+						gradient = ctx.createLinearGradient(0, h/2, w, h/2);
                     colors = this._strokeColor.color;
 
                     len = colors.length;
@@ -1116,9 +1116,9 @@ NinjaCvsRt.RuntimeOval = Object.create(NinjaCvsRt.RuntimeGeomObj, {
                     if(this._fillColor.gradientMode) {
                         if(this._fillColor.gradientMode === "radial") {
                             gradient = ctx.createRadialGradient(xCtr, yCtr, 0,
-                                                                xCtr, yCtr, Math.max(this._width, this._height)/2);
+                                                                xCtr, yCtr, Math.max(this._width, this._height)/2 - lineWidth);
                         } else {
-                            gradient = ctx.createLinearGradient(lineWidth/2, this._height/2, this._width-lineWidth, this._height/2);
+                            gradient = ctx.createLinearGradient(lineWidth, this._height/2, this._width-lineWidth, this._height/2);
                         }
                         colors = this._fillColor.color;
 
@@ -1194,7 +1194,7 @@ NinjaCvsRt.RuntimeOval = Object.create(NinjaCvsRt.RuntimeGeomObj, {
                 if (this._strokeColor) {
                     if(this._strokeColor.gradientMode) {
                         if(this._strokeColor.gradientMode === "radial") {
-                            gradient = ctx.createRadialGradient(xCtr, yCtr, Math.min(xScale, yScale),
+                            gradient = ctx.createRadialGradient(xCtr, yCtr, 0,
                                                                 xCtr, yCtr, 0.5*Math.max(this._height, this._width));
                         } else {
                             gradient = ctx.createLinearGradient(0, this._height/2, this._width, this._height/2);

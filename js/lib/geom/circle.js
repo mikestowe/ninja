@@ -581,7 +581,7 @@ exports.Circle = Object.create(GeomObj, {
                 if (this._strokeColor) {
                     if(this._strokeColor.gradientMode) {
                         if(this._strokeColor.gradientMode === "radial") {
-                            gradient = ctx.createRadialGradient(xCtr, yCtr, Math.min(xScale, yScale),
+                            gradient = ctx.createRadialGradient(xCtr, yCtr, 0,
                                                                 xCtr, yCtr, 0.5*Math.max(this._height, this._width));
                         } else {
                             gradient = ctx.createLinearGradient(0, this._height/2, this._width, this._height/2);
