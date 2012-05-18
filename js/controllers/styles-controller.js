@@ -173,13 +173,17 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     
     addRule : {
         value : function(selector, declaration, stylesheet, index) {
-            //console.log("Add rule");
+            stylesheet = stylesheet || this._defaultStylesheet;
+
+            if(stylesheet === null) {
+                stylesheet = this.defaultStylesheet = this.createStylesheet();
+            }
+
             var rulesLength = this._defaultStylesheet.rules.length,
                 argType     = (typeof declaration),
                 ruleText    = selector,
-                stylesheet  = stylesheet || this._defaultStylesheet,
-                property, rule;
-            
+                rule;
+
             index = index || (argType === 'number') ? declaration : rulesLength;
             
             if(argType === 'string') {
@@ -1295,11 +1299,17 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
     removeStyleSheet : {
         value: function(sheet) {
-            var sheetEl = sheet.ownerNode;
+            var sheetEl = sheet.ownerNode, sheetCount;
 
             if(sheetEl) {
                 sheetEl.disabled = true;
                 this.userStyleSheets.splice(this.userStyleSheets.indexOf(sheet), 1);
+
+                ///// Check to see if we're removing the default style sheet
+                if(sheet === this._defaultStylesheet) {
+                    sheetCount = this.userStyleSheets.length;
+                    this.defaultStylesheet = (sheetCount) ? this.userStyleSheets[sheetCount-1] : null;
+                }
 
                 ///// Mark for removal for i/o
                 sheetEl.setAttribute('data-ninja-remove', 'true');

@@ -37,6 +37,11 @@ exports.StyleSheetsView = Montage.create(Component, {
         set: function(sheet) {
             if(sheet === this._defaultStyleSheet) { return false; }
 
+            if(sheet === null) {
+                this._defaultStyleSheet = null;
+                return;
+            }
+
             var sheetComponent, oldDefaultSheet;
 
             if(this.styleSheetList) {
