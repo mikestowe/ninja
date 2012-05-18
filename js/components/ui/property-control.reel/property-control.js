@@ -120,8 +120,13 @@ var PropertyControl = exports.PropertyControl = Montage.create(Component, {
         set: function (data) {
             if (data !== this._data) {
                 this._data = data;
-                this.label = data.label;
-                this.controlType = data.controlType;
+                if(data) {
+                    this._label = data.label;
+                    this._controlType = data.controlType;
+                } else {
+                    this._label = "";
+                    this._controlType = null;
+                }
                 this.needsDraw = true;
             }
         }
@@ -143,6 +148,9 @@ var PropertyControl = exports.PropertyControl = Montage.create(Component, {
 	{
 		value:function(event)
 		{
+            if(event.wasSetByCode) {
+                return;
+            }
             this._dispatchPropEvent(event);
 		}
 	},
