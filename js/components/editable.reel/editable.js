@@ -140,15 +140,14 @@ exports.Editable = Montage.create(Component, {
         value: function(eventData) {
             this._isEditable = this._element.contentEditable = false;
             this._element.classList.remove(this.editingClass);
-            
-            this._sendEvent('stop', eventData);
-
-            document.removeEventListener('mousedown', this, false);
 
             ///// if value is different than pre-edit val, call onchange method
             if(this._preEditValue !== this.value) {
                 this._sendEvent('change');
             }
+
+            this._sendEvent('stop', eventData);
+            document.removeEventListener('mousedown', this, false);
         }
     },
     selectAll : {
