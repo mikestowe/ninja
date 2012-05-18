@@ -81,10 +81,10 @@ exports.SelectionController = Montage.create(Component, {
 
     handleSwitchDocument: {
         value: function() {
-            if(this.application.ninja.documentController.activeDocument.currentView === "design"){
+//            if(this.application.ninja.documentController.activeDocument.currentView === "design"){
                 this._isDocument = this.application.ninja.selectedElements.length === 0;
                 NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument} );
-            }
+//            }
         }
     },
 

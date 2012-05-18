@@ -55,7 +55,6 @@ exports.Properties = Montage.create(Component, {
             }
 
             this.eventManager.addEventListener("openDocument", this, false);
-            this.eventManager.addEventListener("switchDocument", this, false);
 
             this.elementId.element.addEventListener("blur", this, false);
             this.elementId.element.addEventListener("focus", this, false);
@@ -73,21 +72,6 @@ exports.Properties = Montage.create(Component, {
 
             // Display the default document root PI
             this.displayElementProperties(this.application.ninja.currentDocument.documentRoot);
-        }
-    },
-
-    handleSwitchDocument: {
-        value: function(){
-            // For now always assume that the stage is selected by default
-            if(this.application.ninja.selectedElements.length === 0) {
-                this.displayStageProperties();
-            } else {
-                if(this.application.ninja.selectedElements.length === 1) {
-                    this.displayElementProperties(this.application.ninja.selectedElements[0]);
-                } else {
-                    this.displayGroupProperties(this.application.ninja.selectedElements);
-                }
-            }
         }
     },
 

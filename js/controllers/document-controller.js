@@ -459,16 +459,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                 // There is a document currently opened
                 currentDocument = this.activeDocument;
 
-                //this.application.ninja.stage.stageView.showCodeViewBar(false);
                 //this.application.ninja.stage.stageView.restoreAllPanels();
-
-                //this.activeDocument.saveAppState();
-
-                // TODO: Do we need this?
-                //this.application.ninja.stage.hideCanvas(true);
-                //this.application.ninja.stage.stageView.hideRulers();
-
-                //this.activeDocument.restoreAppState();             
             } else {
                 // There is no document opened
 
@@ -480,7 +471,6 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                 this.application.ninja.stage.hideCanvas(false);
             }
 
-
             // Set the active document
             this.activeDocument = doc;
 
@@ -489,22 +479,27 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             // Flag to stop stylesheet dirty event
             this._hackInitialStyles = false;
 
-            this.switchDocuments(currentDocument, doc);
-
-            NJevent("onOpenDocument", doc);
-
-            //Setting opacity to be viewable after load
-            //doc.model.views.design.iframe.style.opacity = 1;
-
+            this.switchDocuments(currentDocument, doc, true);
         }
     },
 
     switchDocuments: {
-        value: function(current, newDocument) {
-            newDocument.model.views.design.iframe.style.opacity = 1;
+        value: function(currentDocument, newDocument, didCreate) {
 
-            if(current) {
-                current.model.views.design.hide();
+            if(currentDocument) {
+                currentDocument.serializeDocument();
+
+                currentDocument.model.views.design.hide();
+            }
+
+            if(didCreate) {
+                newDocument.model.views.design.iframe.style.opacity = 1;
+                NJevent("onOpenDocument", newDocument);
+            } else {
+                this.activeDocument = newDocument;
+                newDocument.model.views.design.show();
+                newDocument.deserializeDocument();
+                NJevent("switchDocument");
             }
         }
     },

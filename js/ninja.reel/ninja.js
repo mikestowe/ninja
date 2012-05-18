@@ -161,9 +161,10 @@ exports.Ninja = Montage.create(Component, {
 
             window.addEventListener("resize", this, false);
 
-            this.eventManager.addEventListener( "selectTool", this, false);
-            this.eventManager.addEventListener( "selectSubTool", this, false);
-            this.eventManager.addEventListener( "onOpenDocument", this, false);
+            this.eventManager.addEventListener("selectTool", this, false);
+            this.eventManager.addEventListener("selectSubTool", this, false);
+            this.eventManager.addEventListener("onOpenDocument", this, false);
+            this.eventManager.addEventListener("switchDocument", this, false);
 
             this.addPropertyChangeListener("appModel.livePreview", this.executeLivePreview, false);
             this.addPropertyChangeListener("appModel.chromePreview", this.executeChromePreview, false);
@@ -276,6 +277,16 @@ exports.Ninja = Montage.create(Component, {
 
             this.appModel.show3dGrid = this.currentDocument.draw3DGrid;
             NJevent("openDocument");
+        }
+    },
+
+    handleSwitchDocument: {
+        value: function() {
+            this.currentDocument = this.documentController.activeDocument;
+
+            if(this.currentDocument.documentRoot) {
+                this.application.ninja.currentSelectedContainer = this.currentDocument.documentRoot;
+            }
         }
     },
 

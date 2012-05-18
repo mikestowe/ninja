@@ -55,8 +55,9 @@ exports.StageDeps = Montage.create(Component, {
     deserializedFromTemplate: {
         value: function() {
 
-            this.eventManager.addEventListener( "appLoaded", this, false);
-            this.eventManager.addEventListener( "openDocument", this, false);
+            this.eventManager.addEventListener("appLoaded", this, false);
+            this.eventManager.addEventListener("openDocument", this, false);
+            this.eventManager.addEventListener("switchDocument", this, false);
 
             // Initialize Deps
             // HACK
@@ -111,9 +112,8 @@ exports.StageDeps = Montage.create(Component, {
         }
     },
 
-    reinitializeForSwitchDocument: {
-        value: function() {
-
+    handleSwitchDocument: {
+        value: function(){
             workingPlane = [0,0,1,0];
 
             snapManager._isCacheInvalid = true;
@@ -122,7 +122,4 @@ exports.StageDeps = Montage.create(Component, {
             drawUtils.initializeFromDocument();
         }
     }
-
-
-
 });
