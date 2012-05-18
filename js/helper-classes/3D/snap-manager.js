@@ -21,7 +21,6 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 	///////////////////////////////////////////////////////////////////////
 	// Instance variables
 	///////////////////////////////////////////////////////////////////////
-    currentStage: { value: null, writable: true },
     drawingCanvas: { value: null, writable: true},
     
 	// we keep a stack of working planes to facilitate working on other planes temporarily
@@ -84,14 +83,14 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 	popWorkingPlane : { value: function ()		{ workingPlane = this._workingPlaneStack.pop(); return workingPlane; }},
 
 	getStageWidth : { value: function ()		{
-		return parseInt(this.currentStage.offsetWidth);
+		return parseInt(this.application.ninja.currentDocument.documentRoot.offsetWidth);
 	}},
 
 	getStageHeight : { value: function ()		{
-		return parseInt(this.currentStage.offsetHeight);
+		return parseInt(this.application.ninja.currentDocument.documentRoot.offsetHeight);
 	}},
 
-    getStage : { value: function()		{        return this.currentStage;    }},
+    getStage : { value: function()		{        return this.application.ninja.currentDocument.documentRoot;    }},
 
 	getGridVertexHitRad : { value: function()		{  return this._gridVertexHitRad;				}},
 	getGridEdgeHitRad : { value: function()		{  return this._gridEdgeHitRad;					}},
@@ -182,12 +181,6 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
     handleElementReplaced: {
         value: function(event) {
             this._isCacheInvalid = true;
-        }
-    },
-
-    setCurrentStage: {
-        value: function(stage) {
-            this.currentStage = stage;
         }
     },
 

@@ -138,7 +138,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                     l,
                     t,
                     plane,
-                    elt
+                    elt;
                 for(i=0; i<len; i++) {
                     elt = documentRootChildren[i];
                     plane = this.addElement(elt);
