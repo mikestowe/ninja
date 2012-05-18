@@ -79,6 +79,13 @@ exports.StyleSheetsView = Montage.create(Component, {
         }
     },
 
+    handleDeleteAction : {
+        value: function(sheetComponent) {
+            this.stylesController.removeStyleSheet(sheetComponent.source);
+            this._dispatchChange();
+        }
+    },
+
     /// App event handlers
     /// --------------------------------
     
@@ -212,4 +219,22 @@ exports.StyleSheetsView = Montage.create(Component, {
             this.needsDraw = true;
         }
     },
+
+    ///// Utilities
+    //// -------------------------------------
+
+    _dispatchChange : {
+        value: function(category, type, data) {
+            this.application.ninja.stage.updatedStage = true;
+
+            category = category || 'elementChange';
+            type = type || 'styleSheetRemoved';
+
+            NJevent(category, {
+                type : type,
+                data: data,
+                redraw: null
+            });
+        }
+    }
 });

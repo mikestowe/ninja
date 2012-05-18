@@ -20,7 +20,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                     "editButton": {"@": "editButton"},
                     "editView": {"#": "style-sheet-edit"},
                     "disableButton": {"@": "disableButton"},
-                    "importButton": {"@": "importButton"},
                     "deleteButton": {"@": "deleteButton"}
                 }
             },
@@ -75,20 +74,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 }]
 
             },
-            "importButton": {
-                "module": "montage/ui/button.reel",
-                "name": "Button",
-                "properties": {
-                    "element": {"#": "import-button"},
-                    "identifier": "importButton",
-                    "label": "Import"
-                },
-                "listeners": [{
-                    "type": "action",
-                    "listener": {"@": "owner"}
-                }]
-
-            },
             "deleteButton": {
                 "module": "montage/ui/button.reel",
                 "name": "Button",
@@ -118,7 +103,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
         <button data-montage-id="edit-button" class="ss-edit-button"></button>
         <button data-montage-id="delete-button" class="ss-delete-button nj-skinned"></button>
-        <button data-montage-id="import-button" class="ss-import-button nj-skinned"></button>
         <button data-montage-id="disable-button" class="ss-disable-button nj-skinned"></button>
 
     </div>

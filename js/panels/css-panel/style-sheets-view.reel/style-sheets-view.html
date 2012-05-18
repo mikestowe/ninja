@@ -11,16 +11,14 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
     <script type="text/montage-serialization">
         {
             "owner": {
-                "module" : "js/panels/css-panel/style-sheets-view.reel",
-                "name" : "StyleSheetsView",
+                "prototype" : "js/panels/css-panel/style-sheets-view.reel",
                 "properties" : {
                     "element" : {"#" : "style-sheets-view-container"},
                     "styleSheetList" : {"@" : "styleSheetList"}
                 }
             },
             "arrayController" : {
-                "module" : "montage/ui/controller/array-controller",
-                "name": "ArrayController",
+                "prototype" : "montage/ui/controller/array-controller",
                 "bindings": {
                     "content": {
                         "boundObject": {"@": "owner"},
@@ -30,16 +28,14 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 }
             },
             "styleSheetList": {
-                "module" : "montage/ui/repetition.reel",
-                "name": "Repetition",
+                "prototype" : "montage/ui/repetition.reel",
                 "properties": {
                     "element": {"#": "sheet-list" },
                     "contentController": {"@": "arrayController"}
                 }
             },
             "sheet": {
-                "module": "js/panels/css-panel/style-sheet.reel",
-                "name": "StyleSheet",
+                "prototype": "js/panels/css-panel/style-sheet.reel",
                 "properties": {
                     "element": {"#": "sheet-item"}
                 },
@@ -52,8 +48,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 }
             },
             "noDocumentCondition": {
-                "module": "montage/ui/condition.reel",
-                "name": "Condition",
+                "prototype": "montage/ui/condition.reel",
                 "properties": {
                     "element": {"#": "no-document-message" }
                 },
@@ -67,8 +62,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 }
             },
             "showToolbarCondition": {
-                "module": "montage/ui/condition.reel",
-                "name": "Condition",
+                "prototype": "montage/ui/condition.reel",
                 "properties": {
                     "element": {"#": "style-sheets-toolbar-container" }
                 },
@@ -81,8 +75,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 }
             },
             "toolbar": {
-                "module": "js/components/toolbar.reel",
-                "name": "Toolbar",
+                "prototype": "js/components/toolbar.reel",
                 "properties": {
                     "element": {"#": "style-sheets-toolbar"},
                     "delegate": {"@": "owner" },
@@ -95,8 +88,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 }
             },
             "resizer": {
-                "module": "js/panels/resize-composer",
-                "name": "ResizeComposer",
+                "prototype": "js/panels/resize-composer",
                 "properties": {
                     "element": {"#": "resizeBar"},
                     "component": {"@": "owner"}

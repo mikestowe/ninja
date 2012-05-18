@@ -143,17 +143,8 @@ exports.CssStyle = Montage.create(Component, {
 
     getRule : {
         value: function() {
-            //var declarationComponent = this.treeView.parentComponent,
-            var declarationComponent = this.parentComponent.parentComponent.parentComponent,
-                rule;
-
-            if(declarationComponent.type === 'inline') {
-                rule = { style : declarationComponent.declaration }
-            } else {
-                rule = this.parentComponent.parentComponent.parentComponent.declaration.parentRule;
-            }
-
-            return rule;
+            var declarationComponent = this.parentComponent.parentComponent.parentComponent
+            return declarationComponent.rule;
         }
     },
 

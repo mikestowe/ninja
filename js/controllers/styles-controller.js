@@ -821,7 +821,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             ///// method to apply/test the new value
             dec.setProperty(property, value, priority);
 
-            if(rule.parentStyleSheet) {
+            if(rule.type !== 'inline' && rule.parentStyleSheet) {
                 this.styleSheetModified(rule.parentStyleSheet);
             }
 
@@ -1287,6 +1287,27 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             NJevent('newStyleSheet', sheet);
 
             return sheet;
+        }
+    },
+
+    ///// Remove Style sheet
+    ///// Removes style sheet from document
+
+    removeStyleSheet : {
+        value: function(sheet) {
+            var sheetEl = sheet.ownerNode;
+
+            if(sheetEl) {
+                sheetEl.disabled = true;
+                this.userStyleSheets.splice(this.userStyleSheets.indexOf(sheet), 1);
+
+                ///// Mark for removal for i/o
+                sheetEl.setAttribute('data-ninja-remove', 'true');
+
+                NJevent('removeStyleSheet', sheet);
+            }
+
+
         }
     },
     

@@ -11,6 +11,10 @@ exports.StyleSheet = Montage.create(Component, {
     _translateDistance: {
         value: null
     },
+    viewContainer : {
+        value: null,
+        serializable: true
+    },
 
     prepareForDraw : {
         value: function() {
@@ -43,14 +47,6 @@ exports.StyleSheet = Montage.create(Component, {
                 this.editView.style.removeProperty(transStr);
             }
 
-            if(this._readOnly) {
-                this._element.classList.add('ss-locked');
-                this.importButton.element.classList.remove('ss-invisible');
-            } else {
-                this._element.classList.remove('ss-locked');
-                this.importButton.element.classList.add('ss-invisible');
-            }
-
             if(this.default) {
                 this._element.classList.add('default-style-sheet');
             } else {
@@ -73,10 +69,7 @@ exports.StyleSheet = Montage.create(Component, {
             var nonBlurringElements = [
                 this.editView,
                 this.deleteButton.element,
-                this.disableButton.element,
-                this.importButton.element];
-
-            console.log("handle mousedown");
+                this.disableButton.element];
 
             if(nonBlurringElements.indexOf(e.target) === -1) {
                 this.editing = false;
@@ -112,7 +105,7 @@ exports.StyleSheet = Montage.create(Component, {
     handleDeleteButtonAction : {
         value: function(e) {
             e.stopPropagation();
-            debugger;
+            this.parentComponent.parentComponent.handleDeleteAction(this);
         }
     },
 
@@ -208,6 +201,8 @@ exports.StyleSheet = Montage.create(Component, {
             return this._source;
         },
         set: function(sheet) {
+            if(!sheet || sheet === this._source) { return; }
+
             console.log('sheet being set: ', this);
 
             this._extractData(sheet.ownerNode);
