@@ -1239,6 +1239,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     			for (j = 0; j < arrLayersLength; j++) {
     				if (this.arrLayers[j].layerData.stageElement == currentTest) {
     					this.arrLayers.splice(j, 1);
+    					// Super-secret magic trick: Now that we've spliced out an element,
+    					// arrLayers.length is different. We need to update it.
+    					arrLayersLength = this.arrLayers.length;
     				}
     			}
     		}
