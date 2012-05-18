@@ -108,37 +108,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     	}
     },
 
-    _selectedLayerID:{
-        value:false
-    },
-    selectedLayerID:{
-        get:function () {
-            return this._selectedLayerID;
-        },
-        set:function (newVal) {
-            if (newVal === false) {
-                // We are clearing the timeline, so just set the value and return.
-                this._selectedLayerID = newVal;
-                return;
-            }
-            if (newVal !== this._selectedLayerID) {
-                var selectIndex = this.getLayerIndexByID(newVal);
-                this._selectedLayerID = newVal;
-                this._captureSelection = true;
-                if (this.currentLayerSelected !== false) {
-                	this.selectLayer(selectIndex, true);
-                }
-                if (this.currentLayersSelected !== false) {
-                	this.selectLayers(this.currentLayersSelected);
-                }
-                if ((this.currentLayersSelected === false) && (this.currentLayerSelected === false)) {
-                	this.selectLayers([]);
-                }
-                
-            }
-        }
-    },
-
     _currentLayersSelected:{
         value:[]
     },
@@ -151,6 +120,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.cacheTimeline();
         }
     },
+    
     // The index of the last layer that was clicked on
     // (used for shift-click multiselect)
     _lastLayerClicked : {
@@ -265,7 +235,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         set:function (value) {
             if (this._breadCrumbContainer !== value) {
                 this._breadCrumbContainer = value;
-                //this.LayerBinding();
             }
         }
     },
@@ -350,17 +319,17 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     			for (i = 0; i < dragLayerIndexesLength; i++) {
     				var myDraggingLayer = this.arrLayers[this._dragLayerIndexes[i]];
     				arrDragLayers.push(myDraggingLayer);
+    				// Splice arrLayers
     				this.arrLayers.splice(this._dragLayerIndexes[i], 1);
     				this.arrLayers.splice(dropLayerIndex, 0, myDraggingLayer);
     			}
-				console.log(arrDragLayers);
-    			//this.arrLayers.splice(dropLayerIndex, 0, arrDragLayers);
     			this.layersDragged = arrDragLayers;
-    			console.log(this.layersDragged);
-    			console.log(this.arrLayers);
     			this._layerDroppedInPlace = this.arrLayers[dropLayerIndex];
+    			
+    			// Cache the new info
     			this.cacheTimeline();
     			
+    			// Clear drag and drop variables for future re-use
     			this._dropLayerID = null;
     			this.dragLayerIndexes = [];
     			this._dragLayerIndexes = [];
@@ -370,27 +339,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     			// So just in case, set the draw routine to delete the helper.
     			this._deleteHelper = true;
     			this.needsDraw = true;
-
-/*
-    			var dragLayerIndex = this.getLayerIndexByID(this.dragLayerID),
-    				dropLayerIndex = this.getLayerIndexByID(this.dropLayerID),
-    				dragLayer = this.arrLayers[dragLayerIndex];
-                    this.layersDragged.push(dragLayer);
-                    this._layerDroppedInPlace = this.arrLayers[dropLayerIndex];
-
-    			this.arrLayers.splice(dragLayerIndex, 1);
-    			this.arrLayers.splice(dropLayerIndex, 0, dragLayer);
-    			this.cacheTimeline();
-    			
-    			// Clear for future DnD
-    			this._dropLayerID = null;
-    			this._dragLayerID = null;
-    			
-    			// Sometimes, just to be fun, the drop and dragend events don't fire.
-    			// So just in case, set the draw routine to delete the helper.
-    			this._deleteHelper = true;
-    			this.needsDraw = true;
-*/
     		}
     	}
     },
@@ -428,6 +376,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     	value: false
     },
     /* === END: Models === */
+   
     /* === BEGIN: Draw cycle === */
     prepareForDraw:{
         value:function () {
@@ -780,14 +729,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 this.currentLayersSelected = this.application.ninja.currentDocument.tlCurrentLayersSelected;
                 this.currentElementsSelected = this.application.ninja.currentDocument.tlCurrentElementsSelected;
                 this._currentDocumentUuid = this.application.ninja.currentDocument.uuid;
-
-
-                //debugger;
-                if (typeof(this.application.ninja.currentDocument.tlCurrentSelectedContainer) !== "undefined") {
-//                	this.application.ninja.currentSelectedContainer=this.application.ninja.currentDocument.tlCurrentSelectedContainer;
-                }
-                
-                // TODO: select elements stored in currentElementsSelected.
                 
                 // Are we only showing animated layers?
 				if (this.application.ninja.currentDocument.boolShowOnlyAnimated) {
@@ -816,7 +757,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.deselectTweens();
 
             // Reset visual appearance
-            // Todo: Maybe this should be stored per document, so we can persist between document switch?
+            // TODO: Maybe playhead position should be stored per document, so we can persist between document switch?
             this.application.ninja.timeline.playhead.style.left = "-2px";
             this.application.ninja.timeline.playheadmarker.style.left = "0px";
             this.application.ninja.timeline.updateTimeText(0.00);
@@ -876,20 +817,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
-    LayerBinding:{
-        value:function (node) {
-            var i = 0;
-
-            if(this._firstTimeLoaded){
-                this._firstTimeLoaded = false;
-                return;
-            }
-
-           this.handleDocumentChange(node);
-        }
-    },
-
-
     updateTrackContainerWidth:{
         value:function () {
             this.container_tracks.style.width = (this.end_hottext.value * 80) + "px";
@@ -936,48 +863,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     handleSelectionChange: {
         value:function (event) {
         	this.updateLayerSelection();
-        	/*
-            var layerIndex, 
-            	i = 0,
-            	j = 0,
-            	arrLayersLength = this.arrLayers.length,
-            	intNumSelected = event.detail.elements.length,
-            	checkIndex = 0;
-
-            //console.log("TimelinePanel.handleSelectionChange, intNumSelected is ", intNumSelected)
-            
-            if (intNumSelected === 0) {
-            	if (this._ignoreSelectionChanges !== true) {
-            		this.selectLayers([]);
-            	} else {
-            		this._ignoreSelectionChanges = false;
-            	}
-            	
-            	this.currentLayerSelected = false;
-            	this.currentLayersSelected = false;
-            } else {
-            	// Build an array of indexes of selected layers to give to the selectLayers method
-            	var arrSelectedIndexes = [];
-            	//this.currentLayerSelected = false;
-
-				//console.log(event.detail.elements);
-				//console.log(this.layerRepetition.childComponents);
-
-            	for (i = 0; i < intNumSelected; i++) {
-            		var currentCheck = event.detail.elements[i];
-            		//console.log("checking ", currentCheck);
-            		for (j = 0; j < arrLayersLength; j++) {
-            			//console.log(".......... ", this.arrLayers[j].layerData.stageElement)
-            			// if (currentCheck === this.arrLayers[j].layerData.elementsList[0].uuid) {
-            			if (currentCheck === this.arrLayers[j].layerData.stageElement) {
-            				//console.log("...............Yes!")
-            				arrSelectedIndexes.push(j);
-            			}
-            		}
-            	}
-            	this.selectLayers(arrSelectedIndexes);
-            }
-            */
         }
     },
 
@@ -994,6 +879,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         		arrSelectedLayers = false,
         		arrCurrentElementsSelected = [];
         	/*
+        	 // TODO: this should probably check to see if it actually needs to run.
         	        		console.log(arrSelectedIndexes);
         		console.log(this.currentLayersSelected);
         	// Compare arrSelectedIndexes with this.currentLayersSelected
@@ -1059,98 +945,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             // Finally, reset the master duration.
             this.resetMasterDuration();
         	
-/*
-            var i = 0,
-            	j = 0,
-            	arrLayersLength = this.arrLayers.length,
-            	arrSelectedIndexesLength = arrSelectedIndexes.length,
-            	currentElementsSelectedLength = this.currentElementsSelected.length,
-            	boolUpdate = false,
-            	arrSelectedLayers = false,
-            	arrCurrentElementsSelected = [];
-
-
-            // Only run if arrSelectedIndexes has things that aren't already selected.
-            if (arrSelectedIndexesLength !== currentElementsSelectedLength) {
-            	// If the two arrays are different lengths, then we need to update
-            	boolUpdate = true;
-            } else {
-            	// If arrSelectedIndexes has things in it that aren't present in this.currentElementsSelected 
-            	// we need to update
-	            for (i = 0; i < arrSelectedIndexesLength; i++) {
-	            	var boolWasIFound = false;
-	            	for (j = 0; j < currentElementsSelectedLength; j++) {
-	            		
-	            	}
-	            	if (boolWasIFound === false) {
-	            		boolUpdate = true;
-	            	}
-	            }
-            }
-            if (boolUpdate === false) {
-            	return;
-            }
-
-            
-            // Set a default for userSelection if it wasn't passed in the method call.
-			if (typeof(userSelection) === "undefined") {
-            	userSelection = false;
-            }
-
-			// Deselect tweens if necessary.
-            if (this.selectedKeyframes) {	
-                this.deselectTweens();
-            }
-            
-            // deselect all layers.
-            for (i = 0; i < arrLayersLength; i++) {
-            	if (this.arrLayers[i].layerData.isSelected === true) {
-					this.arrLayers[i].layerData.isSelected = false;
-            		this.triggerLayerBinding(i);
-            	}
-            }
-            if (this.currentLayersSelected !== false) {
-            	this.currentLayersSelected = false;
-            }
-            
-            // If we are actually going to be selecting things, create an empty array to use
-            if (arrSelectedIndexesLength > 0) {
-            	arrSelectedLayers = [];
-            }
-            
-            // Loop through arrLayers and do the selection.
-            for (i = 0; i < arrLayersLength; i++) {
-            	if (arrSelectedIndexes.indexOf(i) > -1) {
-            		//console.log('TimelinePanel.selectLayers, selecting layer at index ', i)
-            		this.arrLayers[i].layerData.isSelected = true;
-            		this.arrLayers[i].isSelected = true;
-            		this.triggerLayerBinding(i);
-            		arrSelectedLayers.push(i);
-            		arrCurrentElementsSelected.push(this.arrLayers[i].layerData.elementsList[0]);
-            	}
-            }
-            
-
-            // Select the element(s) on the stage.
-    		if (userSelection && this._captureSelection) {
-    			if (this.currentElementsSelected.length >0) {
-    				this.application.ninja.selectionController.selectElements(arrCurrentElementsSelected);
-    			} else {
-    				this.application.ninja.selectionController.executeSelectElement();
-    			}
-    			
-    		}
-
-			// Store the selected layer information
-			this.currentLayersSelected = arrSelectedLayers;
-			this.currentElementsSelected = arrCurrentElementsSelected;
-			
-			// Tell the repetition what has been selected
-            this.layerRepetition.selectedIndexes = arrSelectedIndexes;
-
-            // Finally, reset the master duration.
-            this.resetMasterDuration();
-*/
         }
     },
     
@@ -1229,7 +1023,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 	            indexAlreadySelected = 0,
 	            indexLastClicked = 0;
 
-			console.log(ptrParent);
 			// Did the mousedown event originate within a layer?
 			if (ptrParent === false) {
 				// No it did not.  Do nothing.
@@ -1442,28 +1235,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
-    deleteLayer:{
-        value:function (arrElements) {
-            // Only delete selected layers.  If no layers are selected, do nothing.
-            // TODO: maybe this should use this.selectedElements instead of a call to querySelectorAll.
-            var i = 0,
-            	arrLayers = document.querySelectorAll(".container-layers .container-layer"),
-            	arrLayersLength = arrLayers.length;
-
-            for (i = arrLayersLength -1; i >= 0; i--) {
-            	if (arrLayers[i].classList.contains("selected")) {
-            		this.arrLayers.splice(i, 1);
-            	}
-            }
-            
-            this.currentLayerSelected = false;
-            this.currentLayersSelected = false;
-            this.selectedElements = [];
-            this.resetMasterDuration();
-
-        }
-    },
-    
     deleteLayers: {
     	value: function(arrElements) {
     		var i = 0, 
@@ -1505,19 +1276,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     handleElementAdded:{
         value:function() {
             this.createstageElement(this.application.ninja.selectedElements[0]);
-/*
-            if (typeof(this.currentLayerSelected) === "undefined") {
-            	// Edge case: currentLayerSelected needs to be initialized.
-            	this.currentLayerSelected = {};
-            	this.currentLayerSelected.layerData = {};
-            	this.currentLayerSelected.layerData.elementsList = [];
-            }
-            //this.currentLayerSelected.layerData.elementsList.push(this.application.ninja.selectedElements[0]);
-			// this.currentLayerSelected.layerData.elementsList[0].dataset.storedLayerName = this.currentLayerSelected.layerData.layerName;
-
-            this.selectedElements = [];
-            this.selectedElements.push(this.application.ninja.selectedElements[0]);
-*/
         }
     },
 
@@ -1640,49 +1398,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     selectLayer:{
         value:function (layerIndex, userSelection) {
-        	console.log("=----> Please update your component to use the new TimelinePanel.selectLayers method. <----=");
+        	console.log("=----> Please update this component to use TimelinePanel.selectLayers. See this message for syntax. <----=");
         	this.selectLayers([layerIndex]);
         	if (userSelection === true) {
         		this.updateStageSelection();
         	}
-        	
-        	/*
-
-console.log('TimelinePanel.selectLayer')
-
-            var i = 0;
-            var arrLayersLength = this.arrLayers.length;
-
-            if (this.selectedKeyframes) {
-                this.deselectTweens();
-            }
-
-            for (i = 0; i < arrLayersLength; i++) {
-                if (i === layerIndex) {
-                    this.arrLayers[i].layerData.isSelected = true;
-                } else {
-                    this.arrLayers[i].layerData.isSelected = false;
-                }
-                
-                this.triggerLayerBinding(i);
-            }
-
-            this.layerRepetition.selectedIndexes = [layerIndex];
-            this.currentLayerSelected = this.arrLayers[layerIndex];
-            if (userSelection) {
-                if (this._captureSelection) {
-
-                    if (this.currentLayerSelected.layerData.elementsList.length >= 1) {
-                        this.application.ninja.selectionController.selectElements(this.currentLayerSelected.layerData.elementsList);
-                    } else {
-                        this.application.ninja.selectionController.executeSelectElement();
-                    }
-
-                }
-                this._captureSelection = true;
-            }
-            this.resetMasterDuration();
-            */
         }
     },
 
@@ -1706,36 +1426,6 @@ console.log('TimelinePanel.selectLayer')
                     if (this.arrLayers[i].layerData.layerID === layerID) {
                         returnVal = i;
                     }
-                }
-            }
-            return returnVal;
-        }
-    },
-
-    getLayerIndexByName:{
-        value:function (layerName) {
-            var i = 0,
-                returnVal = false,
-                arrLayersLength = this.arrLayers.length;
-
-            for (i = 0; i < arrLayersLength; i++) {
-                if (this.arrLayers[i].layerData.layerName === layerName) {
-                    returnVal = i;
-                }
-            }
-            return returnVal;
-        }
-    },
-
-    getActiveLayerIndex:{
-        value:function () {
-            var i = 0,
-                returnVal = false,
-                arrLayersLength = this.arrLayers.length;
-            for (i = 0; i < arrLayersLength; i++) {
-                if (this.arrLayers[i].layerData.isActive === true) {
-                    returnVal = i;
-                    this.arrLayers[i].layerData.isActive = false;
                 }
             }
             return returnVal;
@@ -1849,17 +1539,6 @@ console.log('TimelinePanel.selectLayer')
             
             // Clone the element we're dragging
             this.buildDragHelper();
-            /*
-            this._dragAndDropHelper = event.target.cloneNode(true);
-            this._dragAndDropHelper.style.opacity = 0.8;
-            this._dragAndDropHelper.style.position = "absolute";
-            this._dragAndDropHelper.style.top = "0px";
-            this._dragAndDropHelper.style.left = "0px";
-            this._dragAndDropHelper.style.zIndex = 700;
-            
-            this._dragAndDropHelper.style.width = window.getComputedStyle(this.container_layers, null).getPropertyValue("width");
-            this._dragAndDropHelper.classList.add("timeline-dnd-helper");
-            */
             
             // Get the offset 
     		var findYOffset = function(obj) {
@@ -1903,6 +1582,7 @@ console.log('TimelinePanel.selectLayer')
             this._dragAndDropHelper.classList.add("timeline-dnd-helper");
     	}
     },
+    
     handleLayerDragover: {
     	value: function(event) {
     		

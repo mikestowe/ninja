@@ -524,14 +524,6 @@ var Layer = exports.Layer = Montage.create(Component, {
     	value: function() {
     		// console.log("Layer.didDraw: Layer "+ this.layerID );
     		if (this._isFirstDraw === true) {
-    			if (this.isSelected === true) {
-    				if (this.application.ninja.currentDocument._uuid === this._docUUID) {
-		    			// Once we're done drawing the first time we need to tell the TimelinePanel if
-		    			// this layer is supposed to be selected.
-		    			//console.log('layerName ' +  this.layerName);
-		    			this.parentComponent.parentComponent.selectedLayerID = this.layerID;
-					}
-    			}
     			this._isFirstDraw = false;
     			this.layerData._isFirstDraw = false;
 	    		
@@ -539,7 +531,6 @@ var Layer = exports.Layer = Montage.create(Component, {
 					this.mainCollapser.myContent.style.height = "auto";
 					this.mainCollapser.myContent.classList.remove(this.mainCollapser.collapsedClass);
 					this.mainCollapser.clicker.classList.remove(this.mainCollapser.collapsedClass);
-
 	    		}
 	    		if (this.isPositionCollapsed === false) {
 					this.positionCollapser.myContent.style.height = "auto";
@@ -553,9 +544,6 @@ var Layer = exports.Layer = Montage.create(Component, {
 	    		}
     			
     		}
-    		
-
-    		
     	}
     },
 	/* End: Draw cycle */
