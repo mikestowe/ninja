@@ -593,6 +593,14 @@ exports.Stage = Montage.create(Component, {
         }
     },
 
+    clearAllCanvas: {
+        value: function() {
+            this._drawingContext.clearRect(0, 0, this._drawingCanvas.width, this._drawingCanvas.height);
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.layout.clearCanvas();
+        }
+    },
+
     SelectTool: {
         value: function(cursor) {
             this._drawingCanvas.style.cursor = cursor;

@@ -492,6 +492,8 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                 currentDocument.model.views.design.hide();
             }
 
+            this.application.ninja.stage.clearAllCanvas();
+
             if(didCreate) {
                 newDocument.model.views.design.iframe.style.opacity = 1;
                 NJevent("onOpenDocument", newDocument);
@@ -499,7 +501,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                 this.activeDocument = newDocument;
                 newDocument.model.views.design.show();
                 newDocument.deserializeDocument();
-                NJevent("switchDocument");
+                NJevent("onSwitchDocument");
             }
         }
     },

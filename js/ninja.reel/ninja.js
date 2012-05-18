@@ -175,7 +175,7 @@ exports.Ninja = Montage.create(Component, {
             this.eventManager.addEventListener("selectTool", this, false);
             this.eventManager.addEventListener("selectSubTool", this, false);
             this.eventManager.addEventListener("onOpenDocument", this, false);
-            this.eventManager.addEventListener("switchDocument", this, false);
+            this.eventManager.addEventListener("onSwitchDocument", this, false);
 
             this.addPropertyChangeListener("appModel.livePreview", this.executeLivePreview, false);
             this.addPropertyChangeListener("appModel.chromePreview", this.executeChromePreview, false);
@@ -291,13 +291,15 @@ exports.Ninja = Montage.create(Component, {
         }
     },
 
-    handleSwitchDocument: {
+    handleOnSwitchDocument: {
         value: function() {
             this.currentDocument = this.documentController.activeDocument;
 
             if(this.currentDocument.documentRoot) {
                 this._currentSelectedContainer = this.selectionController._currentSelectedContainer = this.currentDocument.documentRoot;
             }
+
+            NJevent("switchDocument");
         }
     },
 
