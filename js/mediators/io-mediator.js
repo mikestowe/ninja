@@ -557,6 +557,7 @@ function loadWebGL (e) {\n\
                     mjslibtag = template.file.content.document.createElement('script');
                     mjslibtag.setAttribute('type', 'text/javascript');
                     mjslibtag.setAttribute('src', mjsDirName + '/montage/montage.js');
+                    mjslibtag.setAttribute('data-package', '.');
                     mjslibtag.setAttribute('data-mjs-lib', 'true');
                     if (ninjaWrapper) {
                     	template.file.content.document.body.getElementsByTagName('ninja-content')[0].appendChild(mjslibtag);

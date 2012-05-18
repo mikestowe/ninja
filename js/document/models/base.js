@@ -151,7 +151,7 @@ exports.BaseDocumentModel = Montage.create(Component, {
         			head: this.views.design.iframe.contentWindow.document.head,
         			body: this.views.design.iframe.contentWindow.document.body,
         			mjsTemplateCreator: this.views.design.iframe.contentWindow.mjsTemplateCreator
-        		}, callback.bind(this));
+        		}, this.handleSaved.bind({callback: callback, model: this}));
         	} else {
         		//TODO: Add logic to save code view data
         	}
@@ -180,7 +180,7 @@ exports.BaseDocumentModel = Montage.create(Component, {
         			head: this.views.design.iframe.contentWindow.document.head,
         			body: this.views.design.iframe.contentWindow.document.body,
         			mjsTemplateCreator: this.views.design.iframe.contentWindow.mjsTemplateCreator
-        		}, callback.bind(this));
+        		}, this.handleSaved.bind({callback: callback, model: this}));
         	} else {
         		//TODO: Add logic to save code view data
         	}
@@ -190,7 +190,7 @@ exports.BaseDocumentModel = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
 	//
 	saveAs: {
-        value: function () {
+        value: function (callback) {
         	//
         	if (this.needsSave) {
         		//Save current file on memory
@@ -199,6 +199,18 @@ exports.BaseDocumentModel = Montage.create(Component, {
         	}
         }
     },
+    ////////////////////////////////////////////////////////////////////
+	//
+	handleSaved: {
+		value: function (result) {
+			//
+			if (result.status === 204) {
+				this.model.needsSave = false;
+			}
+			//
+			if (this.callback) this.callback(result);
+		}
+	},
     ////////////////////////////////////////////////////////////////////
 	//
 	close: {
