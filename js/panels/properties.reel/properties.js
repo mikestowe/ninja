@@ -101,8 +101,7 @@ exports.Properties = Montage.create(Component, {
      */
     handleBlur: {
         value: function(event) {
-            if(event.target.id === "elementId") {
-
+            if(event.target.dataset.montageId === "elementId") {
                 // Remove all white spaces from the id
                 this.elementId.value = this.elementId.value.replace(/\s/g, '');
 
@@ -118,7 +117,7 @@ exports.Properties = Montage.create(Component, {
                 } else {
                     ElementsMediator.setAttribute(this.application.ninja.currentDocument.documentRoot, "id", this.elementId.value, "Change", "pi", this.application.ninja.currentDocument.documentRoot.elementModel.id);
                 }
-            } else if(event.target.id === "elementClass") {
+            } else if(event.target.dataset.montageId === "elementClass") {
                 if(this.application.ninja.selectedElements.length) {
                     ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "class", this.elementClass.value, this.application.ninja.selectedElements[0].className, "pi");
                 } else {

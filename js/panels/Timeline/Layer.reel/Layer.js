@@ -500,11 +500,6 @@ var Layer = exports.Layer = Montage.create(Component, {
 			this.element.addEventListener("dragleave", this.handleDragleave.bind(this), false);
 			this.element.addEventListener("dragstart", this.handleDragstart.bind(this), false);
 			this.element.addEventListener("drop", this.handleDrop.bind(this), false);
-
-            this.eventManager.addEventListener("updatedID", this, false);
-			
-
-
         }
     },
     draw: {
@@ -854,23 +849,6 @@ var Layer = exports.Layer = Montage.create(Component, {
 			}
     	}
     },
-
-    handleUpdatedID:{
-        value:function(event){
-            var i= this.application.ninja.timeline.arrLayers.length;
-            if(event.detail.id){
-                for(var k=0;k<i;k++){
-                    if(this.application.ninja.timeline.arrLayers[k].layerData.layerID=== this.application.ninja.timeline.currentLayerSelected.layerData.layerID){
-                        this.application.ninja.timeline.currentLayerSelected.layerData.layerName = event.detail.id;
-                        this.application.ninja.timeline.triggerLayerBinding(k);
-                        this.needsDraw=true;
-                    }
-                }
-
-            }
-        }
-    }
-
 	/* End: Logging routines */
 
 });

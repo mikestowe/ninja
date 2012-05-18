@@ -62,11 +62,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     	value: false
     },
 
-    // Set to false to skip array caching array sets in current document
+    // Set to false to skip array caching array sets in currentDocument
     _boolCacheArrays:{
         value:true
     },
 
+	// Current layer number: iterated and used to assign layer IDs.
     _currentLayerNumber:{
         value:0
     },
@@ -633,6 +634,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.time_markers.addEventListener("click", this.updatePlayhead.bind(this), false);
             document.addEventListener("keydown", this.timelineLeftPaneKeydown.bind(this), false);
             document.addEventListener("keyup", this.timelineLeftPaneKeyup.bind(this), false);
+            this.eventManager.addEventListener("updatedID", this.handleLayerIdUpdate.bind(this), false);
             
             // Bind some bindings
             Object.defineBinding(this, "currentSelectedContainer", {
@@ -926,7 +928,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             // Loop through arrLayers and do the selection.
             for (i = 0; i < arrLayersLength; i++) {
             	if (arrSelectedIndexes.indexOf(i) > -1) {
-            		//console.log('TimelinePanel.selectLayers, selecting layer at index ', i)
             		this.arrLayers[i].layerData.isSelected = true;
             		this.arrLayers[i].isSelected = true;
             		this.triggerLayerBinding(i);
@@ -944,7 +945,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
             // Finally, reset the master duration.
             this.resetMasterDuration();
-        	
         }
     },
     
@@ -1169,35 +1169,27 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             if (this.checkable_animated.classList.contains("checked")) {
             	thingToPush.layerData.isVisible = false;
             }
-			
-            if (this.layerRepetition.selectedIndexes) {
-                // There is a selected layer, so we need to splice the new layer on top of it.
-                myIndex = this.layerRepetition.selectedIndexes[0];
-                if (typeof(myIndex) === "undefined") {
-                	// Edge case: sometimes there's nothing selected, so this will be "undefined"
-                	// In that case, set it to 0, the first layer.
-                	myIndex = 0;
-                }
-                for (var i = 0; i < this.layerRepetition.selectedIndexes.length; i++) {
-                	if (myIndex > this.layerRepetition.selectedIndexes[i]) {
-                		myIndex = this.layerRepetition.selectedIndexes[i];
-                	}
-                }
-                thingToPush.layerData.layerPosition = myIndex;
-                thingToPush.layerData.trackPosition = myIndex;
-                this.arrLayers.splice(myIndex, 0, thingToPush);
-            } else {
-                thingToPush.layerData.layerPosition = myIndex;
-                this.arrLayers.splice(myIndex, 0, thingToPush);
-
+            
+            // Determine where the new array should be inserted in arrLayers.
+            // Ordinarily we could use this.getInsertionIndex BUT the new element
+            // insertion and selection has already fired, so getInsertionIndex will return 
+            // incorrect info. So we need to look at the DOM.
+            var childrenLength = this.application.ninja.currentSelectedContainer.children.length,
+            	newIndex = childrenLength -1;
+            for (i = 0; i < childrenLength; i++) {
+            	var currTest = this.application.ninja.currentSelectedContainer.children[i];
+            	if (object == currTest) {
+            		myIndex = newIndex - i;
+            	}
             }
+
+            this.arrLayers.splice(myIndex, 0, thingToPush);
             this.selectLayers([myIndex]);
         }
     },
 
     restoreLayer:{
         value:function (ele) {
-
             var stageElementName, 
             	thingToPush = this.createLayerTemplate();
 
@@ -1406,6 +1398,28 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         }
     },
 
+	// Get the index where a layer should be inserted based on selection.
+	// If nothing is selected, returns false.
+	// Used by ElementController.addElement.
+	getInsertionIndex: {
+		value: function() {
+			var i = 0, 
+				currentLayersSelectedLength = this.currentLayersSelected.length,
+				arrLayersLength = this.arrLayers.length,
+				returnVal = arrLayersLength -1;
+			if (this.currentLayersSelected === false) {
+				return false;
+			}
+			
+			for (i = 0; i < arrLayersLength; i++) {
+				if (this.arrLayers[i].layerData.isSelected) {
+					returnVal = i;
+				}
+			}
+			return returnVal;
+		}
+	},
+
     getLayerIndexByID:{
         value:function (layerID, tempArr) {
             var i = 0,
@@ -1516,6 +1530,24 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		}
     	}
     },
+
+	// A layer's ID has been updated in the property panel. We need to update
+	// our layer.
+	handleLayerIdUpdate: {
+		value: function(event) {
+			var i = 0,
+				arrLayersLength = this.arrLayers.length; 
+			for (i = 0; i < arrLayersLength; i++) {
+				var myTest = this.arrLayers[i].layerData.stageElement;
+				if (this.application.ninja.selectedElements[0] == myTest) {
+					this.arrLayers[i].layerData.layerName = event.detail.id;
+					this.arrLayers[i].layerName = event.detail.id;
+					this.triggerLayerBinding(i);
+				}
+			}
+		}
+	},
+
     // Trigger the layer/track data binding
     triggerLayerBinding : {
     	value: function(intIndex) {
