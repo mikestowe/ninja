@@ -376,6 +376,15 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     _ignoreSelectionChanges: {
     	value: false
     },
+	// is the control key currently being pressed (used for multiselect)
+	_isControlPressed: {
+		value: false
+	},
+
+	// is the shift key currently being pressed (used for multiselect) 
+	_isShiftPressed: {
+		value: false
+	},
     /* === END: Models === */
    
     /* === BEGIN: Draw cycle === */
@@ -447,15 +456,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     	}
     },
-	// is the control key currently being pressed (used for multiselect)
-	_isControlPressed: {
-		value: false
-	},
 
-	// is the shift key currently being pressed (used for multiselect) 
-	_isShiftPressed: {
-		value: false
-	},
     /* === END: Draw cycle === */
     /* === BEGIN: Controllers === */
     // Create an empty layer template object with minimal defaults and return it for use
@@ -571,11 +572,16 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     // Bind all document-specific events (pass in true to unbind)
     _bindDocumentEvents : {
         value: function(boolUnbind) {
-            var arrEvents = [ "stageElement",
+        	/*
+			var arrEvents = [ "stageElement",
                              "deleteLayer",
                              "elementAdded",
                              "elementsRemoved",
                              "elementReplaced",
+                             "selectionChange"],
+        	 */
+			var arrEvents = ["elementAdded",
+                             "elementsRemoved",
                              "selectionChange"],
                 i,
                 arrEventsLength = arrEvents.length;
@@ -623,7 +629,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             document.addEventListener("click", this.handleDocumentClick.bind(this), false);
             
             // Add some event handlers
-            this.timeline_leftpane.addEventListener("mousedown", this.timelineLeftPanelMousedown.bind(this), false);
+            this.timeline_leftpane.addEventListener("click", this.timelineLeftPanelMousedown.bind(this), false);
             //this.timeline_leftpane.addEventListener("click", this.timelineLeftPanelMousedown.bind(this), false);
             //this.timeline_leftpane.addEventListener("mouseup", this.timelineLeftPaneMouseup.bind(this), false);
             this.layout_tracks.addEventListener("scroll", this.updateLayerScroll.bind(this), false);
@@ -1349,45 +1355,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             }
             timeToReturn = returnMin + ":" + returnSec + ":" + returnMillisec;
             return timeToReturn;
-        }
-    },
-
-    createLayerHashTable:{
-        value:function (key, value) {
-            var hashLayerObject;
-            hashLayerObject = Object.create(Object.prototype, {
-                counter:{
-                    value:0,
-                    writable:true
-                },
-
-                setItem:{
-                    value:function (key, value, index) {
-                        if (hashLayerObject[key] === undefined) {
-                            hashLayerObject[key] = {};
-                        }
-                        if (hashLayerObject[key][index] !== undefined) {
-
-
-                            for (this.counter = index; hashLayerObject[key][this.counter]; this.counter++) {
-                            }
-
-                            for (; this.counter !== index; this.counter--) {
-                                hashLayerObject[key][this.counter] = hashLayerObject[key][this.counter - 1];
-                            }
-                        }
-                        hashLayerObject[key][index] = value;
-                        this.counter = 0;
-                    }
-                },
-
-                getItem:{
-                    value:function (key) {
-                        return hashLayerObject[key];
-                    }
-                }
-            });
-            return hashLayerObject;
         }
     },
 
