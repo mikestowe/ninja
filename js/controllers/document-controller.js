@@ -177,8 +177,8 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value: function(event) {
             var saveAsSettings = event._event.settings || {};
             if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
-                saveAsSettings.fileName = this.activeDocument.name;
-                saveAsSettings.folderUri = this.activeDocument.uri.substring(0, this.activeDocument.uri.lastIndexOf("/"));
+                saveAsSettings.fileName = this.activeDocument.model.file.name;
+                saveAsSettings.folderUri = this.activeDocument.model.file.uri.substring(0, this.activeDocument.model.file.uri.lastIndexOf("/"));
                 saveAsSettings.callback = this.saveAsCallback.bind(this);
                 this.application.ninja.newFileController.showSaveAsDialog(saveAsSettings);
             }
