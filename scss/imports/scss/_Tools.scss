@@ -11,68 +11,77 @@
 // _scss/themes/themename/_colors.scss and _scss/themes/themename/_fonts.scss
 // 
   
-
-// Made changes to toolButton  }
+.subToolHolderPanel {
+    margin-left: 42px;
+    padding: 6px;
+    float:left;
+}
 
 .subToolHolderPanel .toolbutton {
     float:left;
     -webkit-transform: scale(0.6);
+	margin-top: -4px;
 }
 
 .subToolHolderPanel .toolbutton:hover, .subToolHolderPanel .toolbutton.active {
     -webkit-transform: scale(0.75);
 }
 
-.subOption{
+.toolOptionsFloatChildren > * {
     float:left;
-    // margin:10px; 
-    margin-top: 5px;
-    margin-left: 10px;
-    margin-right: 10px;
 }
 
-.toolSeparator {
-    height:1px;
-    width:30px;
-    // margin-left: 3px; 
-    // margin-right: 3px; 
+.toolOptionsSpacer {
+    margin-right: 9px;
 }
 
-.toolSeparatorTop {
-    margin-top: 3px;
-    margin-bottom: 0px;
+.toolColorChipCtrl {
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    margin-left: 3px;    
+    margin-right: 8px;    
+    border: 1px black solid;
 }
 
-.toolSeparatorMiddle {
-    margin-top: 0px;
-    margin-bottom: 0px;
+.toolColorChipIcon {
+    width: 20px;
+    height: 20px;
+    margin-top: 1px;
+    -webkit-transform: scale(0.8);
+    background-color: rgb(40, 40, 40);
 }
 
-.toolSeparatorBottom {
-    margin-top: 0px;
-    margin-bottom: 3px;
+// generic styles for image radio button groups used in the tool options bar
+.subToolHolderPanel input.toolOptsRadioButton {
+	width: 24px;
+	height: 24px;
+	margin: 0px 5px 0px 0px;
+	padding: 0px;
+	cursor: pointer;
+	border-radius: 3px;
+	-webkit-user-select: none;
+	border: 1px solid transparent;
+	background: none;
+	background-repeat: no-repeat;
+	background-position: center center;
+	-webkit-transform: scale(0.9);
 }
 
-.toolImageBase {
-    padding: 0px;
-    width: 26px;
-    height: 23px;
-    opacity: 0.7;
-    background-repeat:no-repeat;
+.subToolHolderPanel input.toolOptsRadioButton:hover {
+	box-shadow:  0px 0px 2px 2px #999;
+    -webkit-transform: scale(1);
 }
 
-.toolImageBase:hover {
-   opacity: 1.0;
-   }
-
-
-.drawingMode {
-    outline:blue solid thin;
+.subToolHolderPanel input.toolOptsRadioButton:checked {
+    box-shadow: inset 0px 0px 2px 2px #999;
+    background-color:#363636;
+	background-position: center center;
+	background-repeat: no-repeat;
+    -webkit-transform: scale(1);
 }
-
 
 //  Added new styling Sub Tool Shape Options 
-
 .textBox {
 
    padding-top:3px;
@@ -129,28 +138,28 @@
     opacity:1;
 }
 
-.cornerRadius.topLeft
-{
+.cornerRadius.topLeft {
     -webkit-transform: rotate(0deg);
+	margin-top: 1px;
+	margin-right: 3px;
 }
 
-.cornerRadius.topRight
-{
+.cornerRadius.topRight {
     -webkit-transform: rotate(90deg);
-    margin-right : -2px;
+	margin-right: 3px;
+	margin-top: 1px;
 }
 
-.cornerRadius.bottomLeft
-{
-    margin-top: 3px;
+.cornerRadius.bottomLeft {
     -webkit-transform: rotate(270deg);
+	margin-right: 2px;
+     margin-top: -1px;
 }
 
-.cornerRadius.bottomRight
-{
-    margin-top: 3px;
+.cornerRadius.bottomRight {
     -webkit-transform: rotate(180deg);
-    margin-right : -2px;
+	margin-right: 4px;
+	margin-top: -1px;
 }
 
 #toolOptionsContainer
@@ -285,159 +294,143 @@ input[type="radio"]:disabled {
 }
 
 //  Begin: styles for tag toolbar  
-#tagToolContainer input.tag-type,
-#rotateObjectToolContainer input.tag-type,
-#translateObjectToolContainer input.tag-type {
-	background: none;
-	width: 20px;
-	height: 20px;
-	display: block;
-	float: left;
-	margin: 0px;
-	padding: 0px;
-	margin-right: 5px;
-	margin-top: 4px;
-	background-repeat: no-repeat;
-	opacity: 0.8;
-	text-indent: -9999px;
-	cursor: pointer;
-	-webkit-border-radius: 3px;
-	-webkit-user-select: none;
-	border: 1px solid transparent;
+.tagRadioButtons input.divTool {
+	background-image: url("../images/optionsbar/tag/div-tag.png");
 }
-#tagToolContainer input.tag-type {
-	background-image: url("../images/tools/sprite-toolbar-tag.png");
+.tagRadioButtons input.imageTool {
+	background-image: url("../images/optionsbar/tag/img-tag.png");
 }
-#rotateObjectToolContainer input.tag-type {
-	background-image: url("../images/tools/sprite-toolbar-3d.png");
+.tagRadioButtons input.videoTool {
+	background-image: url("../images/optionsbar/tag/vid-tag.png");
 }
-#translateObjectToolContainer input.tag-type {
-	background-image: url("../images/tools/sprite-toolbar-3d.png");
+.tagRadioButtons input.canvasTool {
+	background-image: url("../images/optionsbar/tag/canvas-tag.png");
+}
+.tagRadioButtons input.customTool {
+	background-image: url("../images/optionsbar/tag/custom-tag.png");
 }
 
-#tagToolContainer input.tag-type:active,
-#rotateObjectToolContainer input.tag-type:active,
-#translateObjectToolContainer input.tag-type:active {
-	border: 1px solid transparent;
-}
-#tagToolContainer input.tag-type:hover,
-#rotateObjectToolContainer input.tag-type:hover,
-#translateObjectToolContainer input.tag-type:hover {
-	opacity: 1.0;
-	-webkit-box-shadow: 0px 0px 4px #fff;
-}
-#tagToolContainer input.tag-type:checked,
-#rotateObjectToolContainer input.tag-type:checked,
-#translateObjectToolContainer input.tag-type:checked {
-	background-color: transparent;
-	opacity: 1.0;
-	cursor: default;
-	-webkit-box-shadow: none;
-}
-#tagToolContainer input#divTool {
-	background-position: -40px 0px;
-}
-#tagToolContainer input#divTool:checked {
-	background-position: -40px -20px;
-}
-#tagToolContainer input#imageTool {
-	background-position: -60px 0px;
-}
-#tagToolContainer input#imageTool:checked {
-	background-position: -60px -20px;
-}
-#tagToolContainer input#videoTool {
-	background-position: -100px 0px;
-}
-#tagToolContainer input#videoTool:checked {
-	background-position: -100px -20px;
-}
-#tagToolContainer input#canvasTool,
-#rotateObjectToolContainer input#rotateLocally,
-#translateObjectToolContainer input#translateLocally   {
-	background-position: -20px 0px;
-}
-#tagToolContainer input#canvasTool:checked,
-#rotateObjectToolContainer input#rotateLocally:checked,
-#translateObjectToolContainer input#translateLocally:checked {
-	background-position: -20px -20px;
-}
-#tagToolContainer input#flashTool {
-	background-position: -80px 0px;
-}
-#tagToolContainer input#flashTool:checked {
-	background-position: -80px -20px;
-}
-#tagToolContainer input#customTool,
-#rotateObjectToolContainer input#rotateGlobally,
-#translateObjectToolContainer input#translateGlobally {
-	background-position: 0px 0px;
-}
-#tagToolContainer input#customTool:checked,
-#rotateObjectToolContainer input#rotateGlobally:checked,
-#translateObjectToolContainer input#translateGlobally:checked {
-	background-position: 0px -20px;
-}
-
-
-#tagToolContainer .nj-divider {
+.tagRadioButtons .nj-divider {
 	height: 100%;
 	float: left;
 	position: relative;
-	top: 5px;
 }
 
-#tagToolContainer select.nj-skinned {
+.tagRadioButtons select.nj-skinned {
 	visibility: visible;
 	position: relative;
+	margin-top: 1px;
 }
 
-#tagToolContainer select[disabled="true"].nj-skinned,
-#tagToolContainer select[disabled].nj-skinned  {
+.tagRadioButtons select[disabled="true"].nj-skinned,
+.tagRadioButtons select[disabled].nj-skinned  {
 	visibility: hidden;
 }
+//  End: styles for tag toolbar  
 
-#zoomToolOptionHolder input#zoomInTool:checked{
-    border-style:solid;
-    border-width:1px ;
-    border-color: $color-input;
-    background-image:url("../images/optionsbar/zoom/zoom_plus.png");
-    background-repeat: no-repeat;
-    background-position:4px 3px;
-  
-}
-
-#zoomToolOptionHolder input#zoomOutTool:checked{
-    border-style:solid;
-    border-width:1px ;
-    border-color: $color-input;
+#zoomToolOptionHolder .zoomOutToolIcon {
     background-image:url("../images/optionsbar/zoom/zoom_minus.png");
-    background-repeat: no-repeat;
-    background-position:4px 3px;
-
-
 }
 
-#zoomToolOptionHolder input#zoomInTool{
-    border-style:solid;
-    border-width:1px ;
+#zoomToolOptionHolder .zoomInToolIcon {
     background-image:url("../images/optionsbar/zoom/zoom_plus.png");
-    background-repeat: no-repeat;
-    background-position:4px 3px;
-
 }
 
-#zoomToolOptionHolder input#zoomOutTool{
-    border-style:solid;
-    border-width:1px ;
-    background-image:url("../images/optionsbar/zoom/zoom_minus.png");
-    background-repeat: no-repeat;
-    background-position:4px 3px;
-
+// object 3D container styles
+.object3DToolContainer input.rotateLocally {
+	background-image: url("../images/optionsbar/options3D/rotate-locally.png");
 }
-#zoomToolOptionHolder input.zoom-option {
-    background:none;
-
+.object3DToolContainer input.rotateGlobally {
+	background-image: url("../images/optionsbar/options3D/rotate-globally.png");
 }
 
-//  Endi: styles for tag toolbar  
+// Selection Tool Options Styles
+.optionsSelectionTool button {
+	padding-top: 0px;
+}
+
+.selectionToolIcon {
+	width: 16px;
+	height: 16px;
+	background-repeat:no-repeat;
+	background-position: 1px 2px;
+}
+
+.alignTopIcon {
+	background-image: url("../images/optionsbar/selection/AlignTop.png");  
+}
+
+.alignMiddleIcon {
+	background-image: url("../images/optionsbar/selection/AlignMiddle.png");  
+}
+
+.alignBottomIcon {
+	background-image: url("../images/optionsbar/selection/AlignBottom.png");  
+}
+
+.alignLeftIcon {
+	background-image: url("../images/optionsbar/selection/AlignLeft.png");  
+}
+
+.alignCenterIcon {
+	background-image: url("../images/optionsbar/selection/AlignCenter.png");  
+}
+
+.alignRightIcon {
+	background-image: url("../images/optionsbar/selection/AlignRight.png");  
+}
+
+.arrangeBringForwardIcon {
+	background-image: url("../images/optionsbar/selection/ArrangeBringForward.png");  
+}
+
+.arrangeSendBackwardIcon {
+	background-image: url("../images/optionsbar/selection/ArrangeSendBackward.png");  
+}
+
+.arrangeBringToFrontIcon {
+	background-image: url("../images/optionsbar/selection/ArrangeBringToFront.png");  
+}
+
+.arrangeSendToBackIcon {
+	background-image: url("../images/optionsbar/selection/ArrangeSendToBack.png");  
+}
+
+.distTopIcon {
+	background-image: url("../images/optionsbar/selection/DistTop.png");  
+}
+
+.distMiddleIcon {
+	background-image: url("../images/optionsbar/selection/DistMiddle.png");  
+}
+
+.distBottomIcon {
+	background-image: url("../images/optionsbar/selection/DistBottom.png");  
+}
+
+.distLeftIcon {
+	background-image: url("../images/optionsbar/selection/DistLeft.png");  
+}
+
+.distCenterIcon {
+	background-image: url("../images/optionsbar/selection/DistCenter.png");  
+}
+
+.distRightIcon {
+	background-image: url("../images/optionsbar/selection/DistRight.png");  
+}
+
+.optionsPenTool {
+}
+
+.optionsPenTool input.penToolIcon {
+    background-image:url("../images/tools/Tool-Pen.png");
+}
+
+.optionsPenTool input.penPlusToolIcon {
+    background-image:url("../images/optionsbar/pen/penPlus.png");
+}
+
+.optionsPenTool input.penMinusToolIcon {
+    background-image:url("../images/optionsbar/pen/penMinus.png");
+}

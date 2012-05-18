@@ -23,23 +23,30 @@
                 "prototype": "js/components/tools-properties/fill-properties.reel",
                 "properties": {
                     "element": {"#": "fillProperties"},
+
+                    "_fillColorCtrl": {"#": "fillColorCtrl"},
+
                     "_useWebGL": {"#": "useWebGLCH"},
                     "_materialsContainer": {"#": "materialsContainer"},
                     "_fillMaterial": {"@": "_fillMaterialCB"}
                 }
             }
     	}
-	    </script>
+        </script>
 
     </head>
 
     <body>
-        <div data-montage-id="fillProperties" class="subToolHolderPanel">
-            <label class="label subOption"><input data-montage-id="useWebGLCH" type="checkbox" name="useWebGLControl" class="checkBoxAlign"/> Use WebGL</label>
+        <div data-montage-id="fillProperties" class="subToolHolderPanel optionsFillTool toolOptionsFloatChildren">
+            <div class="toolColorChipIcon FillTool"></div>
+            <div data-montage-id="fillColorCtrl" class="toolColorChipCtrl"></div>
+            <div class="nj-divider divider-vertical toolOptionsSpacer">&nbsp;</div>
 
-            <div data-montage-id="materialsContainer" class="leftLabel" style="padding-top: 3px;">
-                <label class="label"> Materials:</label>
-                <div data-montage-id="fillIcon" class="bucketToolUp" style="float: left;"></div>
+            <input data-montage-id="useWebGLCH" type="checkbox" name="useWebGLControl" class="nj-skinned"/>
+            <label class="label">Use WebGL</label>
+            <div data-montage-id="materialsContainer" class="materialsContainerOptions toolOptionsFloatChildren">
+                <label class="label">Material:</label>
+                <div data-montage-id="fillIcon" class="toolColorChipIcon FillTool"></div>
                 <select data-montage-id="fillMaterialCB" class="nj-skinned">
                 </select>
             </div>
