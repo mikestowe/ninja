@@ -18,8 +18,11 @@
     font-weight: normal;
     height: 16px;
     margin: 0;
+    overflow: hidden;
     padding: 4px 0 2px 10px;
+    text-overflow: ellipsis;
     vertical-align: top;
+    white-space: nowrap;
     -webkit-box-flex: 0;
     -webkit-user-select: none;
 }
