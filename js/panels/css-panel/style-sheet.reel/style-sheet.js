@@ -11,10 +11,6 @@ exports.StyleSheet = Montage.create(Component, {
     _translateDistance: {
         value: null
     },
-    viewContainer : {
-        value: null,
-        serializable: true
-    },
 
     prepareForDraw : {
         value: function() {
