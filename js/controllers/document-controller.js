@@ -489,6 +489,8 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             if(currentDocument) {
                 currentDocument.serializeDocument();
 
+                this.application.ninja.selectionController._selectionContainer = null;
+                currentDocument.model.views.design.propertiesPanel.clear();
                 currentDocument.model.views.design.hide();
             }
 
