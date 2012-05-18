@@ -11,8 +11,7 @@ var Montage = 			require("montage/core/core").Montage,
     drawUtils = 		require("js/helper-classes/3D/draw-utils").DrawUtils,
     ElementPlanes = 	require("js/helper-classes/3D/element-planes").ElementPlanes,
     MathUtilsClass = 	require("js/helper-classes/3D/math-utils").MathUtilsClass,
-    VecUtils = 			require("js/helper-classes/3D/vec-utils").VecUtils,
-    DrawingToolBase =	require("js/tools/drawing-tool-base").DrawingToolBase;
+    VecUtils = 			require("js/helper-classes/3D/vec-utils").VecUtils;
 
 exports.StageDeps = Montage.create(Component, {
     viewUtils: {
@@ -25,24 +24,6 @@ exports.StageDeps = Montage.create(Component, {
 
     drawUtils: {
         value: drawUtils
-    },
-
-    currentStage: {
-        value: null
-    },
-    
-    _currentDocument: {
-        value: null
-    },
-
-    currentDocument: {
-        get: function() { return this._currentDocument; },
-        set: function(value) {
-            if(value) {
-                this._currentDocument = value;
-                this.currentStage = value.documentRoot;
-            }
-        }
     },
 
     _userContentLeft: {
@@ -74,8 +55,9 @@ exports.StageDeps = Montage.create(Component, {
     deserializedFromTemplate: {
         value: function() {
 
-            this.eventManager.addEventListener( "appLoaded", this, false);
-            this.eventManager.addEventListener( "openDocument", this, false);
+            this.eventManager.addEventListener("appLoaded", this, false);
+            this.eventManager.addEventListener("openDocument", this, false);
+            this.eventManager.addEventListener("switchDocument", this, false);
 
             // Initialize Deps
             // HACK
@@ -112,7 +94,9 @@ exports.StageDeps = Montage.create(Component, {
             // bind the snap properties to the snap manager
             snapManager.bindSnap();
 
-
+            drawUtils.viewUtils = viewUtils;
+            drawUtils.snapManager = snapManager;
+            drawUtils.ElementPlanes = ElementPlanes;
         }
     },
 
@@ -121,53 +105,22 @@ exports.StageDeps = Montage.create(Component, {
 
             workingPlane = [0,0,1,0];
 
-            snapManager.setCurrentStage(this.currentStage);
-
-            viewUtils.setCurrentDocument(this.currentDocument);
-            viewUtils.setRootElement(this.currentStage.parentNode);
-            viewUtils.setStageElement(this.currentStage);
-
-            drawUtils.viewUtils = viewUtils;
-            drawUtils.snapManager = snapManager;
-            drawUtils.ElementPlanes = ElementPlanes;
-
-            snapManager._isCacheInvalid=true;
-
-            snapManager.setupDragPlaneFromPlane ( workingPlane );
-
-            DrawingToolBase.stage = this.currentStage;
-            DrawingToolBase.stageComponent = this.stage;
+            snapManager.reload2DCache();
+            snapManager.setupDragPlaneFromPlane (workingPlane);
 
             drawUtils.initializeFromDocument();
         }
     },
 
-    reinitializeForSwitchDocument: {
-        value: function() {
-
+    handleSwitchDocument: {
+        value: function(){
             workingPlane = [0,0,1,0];
 
-            snapManager.setCurrentStage(this.currentStage);
+            snapManager.setupDragPlaneFromPlane (workingPlane);
+            snapManager.reload2DCache();
 
-            viewUtils.setCurrentDocument(this.currentDocument);
-            viewUtils.setRootElement(this.currentStage.parentNode);
-            viewUtils.setStageElement(this.currentStage);
-
-            drawUtils.viewUtils = viewUtils;
-            drawUtils.snapManager = snapManager;
-            drawUtils.ElementPlanes = ElementPlanes;
-
-            snapManager._isCacheInvalid=true;
-
-            snapManager.setupDragPlaneFromPlane ( workingPlane );
-
-            DrawingToolBase.stage = this.currentStage;
-            DrawingToolBase.stageComponent = this.stage;
 
             drawUtils.initializeFromDocument();
         }
     }
-
-
-
 });

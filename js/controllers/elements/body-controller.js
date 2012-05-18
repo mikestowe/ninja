@@ -30,7 +30,7 @@ exports.BodyController = Montage.create(ElementController, {
         value: function(el, p) {
             switch(p) {
                 case "background" :
-                    return this.application.ninja.colorController.getColorObjFromCss(this.application.ninja.stylesController.getElementStyle(el, "background-color", true, true));
+                    return this.application.ninja.colorController.getColorObjFromCss(this.application.ninja.stylesController.getElementStyle(el, "background-color", false, true));
                 case "border":
                     return 0;
                 case "height":

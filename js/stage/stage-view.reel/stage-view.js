@@ -37,28 +37,6 @@ exports.StageView = Montage.create(Component, {
      */
     switchDocument:{
         value: function(doc){
-            this.application.ninja.documentController._hideCurrentDocument();
-            this.application.ninja.documentController.activeDocument = doc;
-
-            if(this.application.ninja.documentController.activeDocument.currentView === "design") {
-                this.application.ninja.currentDocument = this.application.ninja.documentController.activeDocument;
-            }
-
-            this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
-
-
-//            this.application.ninja.documentController._showCurrentDocument();
-            // Inline function below
-            if(this.activeDocument) {
-                this.activeDocument.container.style["display"] = "block";
-                if(this.activeDocument.currentView === "design"){
-                    this.activeDocument.container.parentNode.style["display"] = "block";
-                    this.activeDocument.restoreAppState();
-                } else {
-                    //hide the iframe when switching to code view
-                    document.getElementById("iframeContainer").style.display = "none";
-                }
-            }
 
 
             //focus editor

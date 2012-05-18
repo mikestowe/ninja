@@ -64,6 +64,11 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     },
     ////////////////////////////////////////////////////////////////////
 	//
+    propertiesPanel: {
+        value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
 	initialize: {
         value: function (parent) {
         	//Creating iFrame for view
@@ -184,6 +189,9 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         	this._bodyFragment = null;
         	//Calling standard method to finish opening document
         	this.bodyContentLoaded(null);
+            //TODO: Move this to be set via the controller
+            this.application.ninja.stage.documentOffsetLeft = parseInt((this.document.body.scrollWidth - this._template.size.width)/2);
+            this.application.ninja.stage.documentOffsetTop = parseInt((this.document.body.scrollHeight - this._template.size.height)/2);
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -239,17 +247,15 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 					}
 				}
 			}
-            //Checking and initializing webGL
+           	//Checking for script tags then parsing check for montage and webgl
             if (scripttags.length > 0) {
+            	//Checking and initializing webGL
             	this.initWebGl(scripttags);
-            } //Else there is not data to parse
-    		
-    		
-    		
-    		//TODO: Load Montage Components (blocking)
-    		//this.initMontage();
-    		
-    		
+            	//Checking and initializing Montage
+            	this.initMontage(scripttags);
+            } else {
+            	//Else there is not data to parse
+            }
     		//Makign callback if specified
     		if (this._callback) this._callback();
     	}
@@ -346,8 +352,14 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     ////////////////////////////////////////////////////////////////////
 	//
     initMontage: {
-        value: function () {
-        	//initWithDocument(window.document) instantiateWithOwnerAndDocument(null, window.document)
+        value: function (scripttags) {
+        	//
+        	this.iframe.contentWindow.document.body.addEventListener('mjsTemplateReady', function () {
+        		//Initializing template with user's seriliazation
+        		var template = this.iframe.contentWindow.mjsTemplate.create();
+        		template.initWithDocument(this.iframe.contentWindow.document);
+        		template.instantiateWithOwnerAndDocument(null, this.iframe.contentWindow.document, function (e){/*Nothing just a required extra parameter*/});
+        	}.bind(this), false);
         }
     },
     ////////////////////////////////////////////////////////////////////
