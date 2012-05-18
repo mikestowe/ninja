@@ -454,58 +454,57 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     // Open document callback
     _onOpenDocument: {
         value: function(doc){
-
+            var currentDocument;
             if(this.activeDocument) {
                 // There is a document currently opened
-
-
+                currentDocument = this.activeDocument;
 
                 //this.application.ninja.stage.stageView.showCodeViewBar(false);
                 //this.application.ninja.stage.stageView.restoreAllPanels();
 
-                //
-                /*
-                if(this.activeDocument.currentView === "design"){
-                    this.activeDocument.saveAppState();
-                    this.activeDocument.container.parentNode.style["display"] = "none";
-                    this.application.ninja.stage.hideCanvas(true);
-                    this.application.ninja.stage.stageView.hideRulers();
-                }
+                //this.activeDocument.saveAppState();
 
-                this.activeDocument.container.style["display"] = "none";
-                */
+                // TODO: Do we need this?
+                //this.application.ninja.stage.hideCanvas(true);
+                //this.application.ninja.stage.stageView.hideRulers();
 
-                /*
-                this.activeDocument.container.style["display"] = "block";
-                                if(this.activeDocument.currentView === "design"){
-                                    this.activeDocument.container.parentNode.style["display"] = "block";
-                                    this.activeDocument.restoreAppState();
-                                }else{
-                                    //hide the iframe when switching to code view
-                                    document.getElementById("iframeContainer").style.display = "none";
-                                }
-
-                */
-                // hide current document
+                //this.activeDocument.restoreAppState();             
             } else {
                 // There is no document opened
-
-                // Set the active document
-                this.activeDocument = doc;
-
-                // Show the canvas
-                this.application.ninja.stage.hideCanvas(false);
 
                 // Show the rulers
                 // TODO: Move this indo design view
                 this.application.ninja.stage.stageView.showRulers();
 
-                // Initialize the documentRoot styles
-                this.initializeRootStyles(doc.documentRoot);
-                // Flag to stop stylesheet dirty event
-                this._hackInitialStyles = false;
+                // Show the canvas
+                this.application.ninja.stage.hideCanvas(false);
+            }
 
-                NJevent("onOpenDocument", doc);
+
+            // Set the active document
+            this.activeDocument = doc;
+
+            // Initialize the documentRoot styles
+            this.initializeRootStyles(doc.documentRoot);
+            // Flag to stop stylesheet dirty event
+            this._hackInitialStyles = false;
+
+            this.switchDocuments(currentDocument, doc);
+
+            NJevent("onOpenDocument", doc);
+
+            //Setting opacity to be viewable after load
+            //doc.model.views.design.iframe.style.opacity = 1;
+
+        }
+    },
+
+    switchDocuments: {
+        value: function(current, newDocument) {
+            newDocument.model.views.design.iframe.style.opacity = 1;
+
+            if(current) {
+                current.model.views.design.hide();
             }
         }
     },

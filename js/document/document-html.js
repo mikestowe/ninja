@@ -119,8 +119,6 @@ exports.HtmlDocument = Montage.create(Component, {
     		this._observer = null;
     		//Making callback after view is loaded
     	    this.loaded.callback.call(this.loaded.context, this);
-    	    //Setting opacity to be viewable after load
-		   	this.model.views.design.iframe.style.opacity = 1;
     	}
     },
     ////////////////////////////////////////////////////////////////////
