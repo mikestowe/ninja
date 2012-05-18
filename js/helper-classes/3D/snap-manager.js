@@ -456,6 +456,13 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 		}
 	},
 
+    reload2DCache: {
+        value: function() {
+            this.clear2DCache();
+            this.load2DCache(workingPlane);
+        }
+    },
+
 	clear2DCache : {
 		value : function() {
 			// clear the 2D cache flags in the objects

@@ -134,8 +134,19 @@ exports.Ninja = Montage.create(Component, {
         value: []
     },
 
-    currentSelectedContainer: {
+    _currentSelectedContainer: {
         value: null
+    },
+
+    currentSelectedContainer: {
+        get: function() {
+            return this._currentSelectedContainer;
+        },
+        set: function(value) {
+            if(value !== this._currentSelectedContainer) {
+                this._currentSelectedContainer = value;
+            }
+        }
     },
 
     templateDidLoad: {
@@ -285,7 +296,7 @@ exports.Ninja = Montage.create(Component, {
             this.currentDocument = this.documentController.activeDocument;
 
             if(this.currentDocument.documentRoot) {
-                this.application.ninja.currentSelectedContainer = this.currentDocument.documentRoot;
+                this._currentSelectedContainer = this.selectionController._currentSelectedContainer = this.currentDocument.documentRoot;
             }
         }
     },

@@ -105,7 +105,7 @@ exports.StageDeps = Montage.create(Component, {
 
             workingPlane = [0,0,1,0];
 
-            snapManager._isCacheInvalid = true;
+            snapManager.reload2DCache();
             snapManager.setupDragPlaneFromPlane (workingPlane);
 
             drawUtils.initializeFromDocument();
@@ -116,8 +116,9 @@ exports.StageDeps = Montage.create(Component, {
         value: function(){
             workingPlane = [0,0,1,0];
 
-            snapManager._isCacheInvalid = true;
             snapManager.setupDragPlaneFromPlane (workingPlane);
+            snapManager.reload2DCache();
+
 
             drawUtils.initializeFromDocument();
         }
