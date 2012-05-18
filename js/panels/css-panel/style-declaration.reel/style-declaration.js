@@ -88,7 +88,8 @@ exports.StyleDeclaration = Montage.create(Component, {
             stylesArray.forEach(function(prop, index) {
                 this.styles.push({
                     name: prop,
-                    value: dec.getPropertyValue(prop)
+                    value: dec.getPropertyValue(prop),
+                    isEmpty: false
                 });
             }, this);
 
@@ -209,7 +210,8 @@ exports.StyleDeclaration = Montage.create(Component, {
         value: function(property, value, data) {
             var styleDescriptor = {
                 name : property,
-                value : value
+                value : value,
+                isEmpty: false
             }, prop;
 
             for(prop in data) {
