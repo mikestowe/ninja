@@ -1200,7 +1200,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		
     		// Select the layers, or clear the selection if none were found
     		if (arrSelectedElements.length > 0) {
-    			console.log("TimelinePanel.updateStageSelection, ", arrSelectedElements)
     			this.application.ninja.selectionController.selectElements(arrSelectedElements);
     		} else {
     			this.application.ninja.selectionController.executeSelectElement();
@@ -1641,6 +1640,13 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     selectLayer:{
         value:function (layerIndex, userSelection) {
+        	console.log("=----> Please update your component to use the new TimelinePanel.selectLayers method. <----=");
+        	this.selectLayers([layerIndex]);
+        	if (userSelection === true) {
+        		this.updateStageSelection();
+        	}
+        	
+        	/*
 
 console.log('TimelinePanel.selectLayer')
 
@@ -1676,6 +1682,7 @@ console.log('TimelinePanel.selectLayer')
                 this._captureSelection = true;
             }
             this.resetMasterDuration();
+            */
         }
     },
 

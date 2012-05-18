@@ -644,7 +644,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             newTween.tweenData = {};
 
             if (clickPos == 0) {
-                this.animatedElement = this.application.ninja.timeline.currentLayerSelected.layerData.stageElement;
+                this.animatedElement = this.application.ninja.timeline.arrLayers[this.application.ninja.timeline.currentLayersSelected[0]].layerData.stageElement;
                 newTween.tweenData.spanWidth = 0;
                 newTween.tweenData.keyFramePosition = 0;
                 newTween.tweenData.keyFrameMillisec = 0;
