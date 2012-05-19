@@ -154,13 +154,13 @@ exports.StyleDeclaration = Montage.create(Component, {
                     styleToIndexMap = this._getStyleToIndexMap();
 
                 Array.prototype.slice.call(this.declaration).forEach(function(prop, index) {
-                    var i = styleToIndexMap[prop];
+                    var styleObjectIndex = styleToIndexMap[prop];
 
                     ///// Style component exists for property
                     ///// Update its value
-                    if(i !== undefined) {
-                        this.styles[i].value = this.declaration.getPropertyValue(prop);
-                        usedIndices.push(i);
+                    if(styleObjectIndex !== undefined) {
+                        this.styles[styleObjectIndex].value = this.declaration.getPropertyValue(prop);
+                        usedIndices.push(styleObjectIndex);
                     } else {
                         //// styles doesn't exist, does shorthand?
                         var shorthands = ShorthandProps.CSS_SHORTHAND_MAP[prop],
@@ -179,15 +179,26 @@ exports.StyleDeclaration = Montage.create(Component, {
                         }
 
                         if(!shorthandUpdated) {
+                            //// push to usedIndices so we don't remove styles we just added
+                            usedIndices.push(this.styles.length);
                             this.addStyle(prop, this.declaration.getPropertyValue(prop));
                         }
                     }
                 }, this);
 
+                for(var i = this.styles.length-1; i>=0; i--) {
+                    if(usedIndices.indexOf(i) === -1) {
+                        if(!this.styles[i].isEmpty) {
+                            ///// index not used, remove style
+                            this.removeStyle(this.styles[i]);
+                        }
+                    }
+                }
+
                 ///// Keep copy of cssText to know when we need to
                 ///// update the view
                 this.cssText = this.declaration.cssText;
-                this.needsDraw = true;
+                this.needsDraw = this.needsSort = true;
             }
         }
     },
@@ -221,7 +232,18 @@ exports.StyleDeclaration = Montage.create(Component, {
             }
 
             this.styles.push(styleDescriptor);
-            this.arrayController.organizeObjects();
+
+            this.needsSort = this.needsDraw = true;
+        }
+    },
+    removeStyle : {
+        value: function(styleDescriptor) {
+            var styleDescriptorIndex = this.styles.indexOf(styleDescriptor);
+
+            this.styles.splice(styleDescriptorIndex, 1);
+            //this.arrayController.removeObjects(styleDescriptor);
+
+            //this.needsDraw = true;
         }
     },
 
@@ -259,7 +281,7 @@ exports.StyleDeclaration = Montage.create(Component, {
             if(this.focusDelegate) {
                 this.styleComponent.delegate = this.focusDelegate;
             }
-            this.arrayController.sortFunction = this._styleSortFunction;
+            //this.arrayController.sortFunction = this._styleSortFunction;
         }
     },
 
@@ -274,7 +296,7 @@ exports.StyleDeclaration = Montage.create(Component, {
     willDraw : {
         value: function() {
             if(this.needsSort) {
-                this.arrayController.organizeObjects();
+                //this.arrayController.organizeObjects();
                 this.needsSort = false;
             }
         }

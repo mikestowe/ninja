@@ -44,6 +44,11 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                     "declaration": {"@": "owner"}
                 },
                 "bindings": {
+                    "source" : {
+                        "boundObject": {"@": "repetition"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration",
+                        "oneway": true
+                    },
                     "propertyText" : {
                         "boundObject": {"@": "repetition"},
                         "boundObjectPropertyPath": "objectAtCurrentIteration.name"

@@ -145,14 +145,16 @@ exports.StylesViewMediator = Montage.create(Component, {
                 return false;
             }
 
+            ///// Remove old property
+            this.stylesController.deleteStyle(rule, oldProperty);
+
             if(property === '') {
-                style.remove();
+                style.parentComponent.parentComponent.removeStyle(style.source);
                 this._dispatchChange(oldProperty, browserValue);
                 return false;
             }
 
-                ///// Remove old property and add new one
-            this.stylesController.deleteStyle(rule, oldProperty);
+            // now add new property
             browserValue = this.stylesController.setStyle(rule, property, value);
 
             ///// Mark style as invalid if the browser doesn't accept it
@@ -166,7 +168,9 @@ exports.StylesViewMediator = Montage.create(Component, {
             var browserValue, units;
 
             if(value === '') {
-                style.remove();
+                ///// Remove old property
+                this.stylesController.deleteStyle(rule, property);
+                style.parentComponent.parentComponent.removeStyle(style.source);
                 this._dispatchChange(property, browserValue);
                 return false;
             }

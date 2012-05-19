@@ -14,6 +14,7 @@ exports.CssStyle = Montage.create(Component, {
     editNewEmptyClass : { value: 'edit-empty-style' },
     invalidStyleClass : { value: "style-item-invalid" },
     emptyStyleClass   : { value: "empty-css-style" },
+    source            : { value: null },
 
     propertyText : {
         value: "property",
@@ -29,6 +30,10 @@ exports.CssStyle = Montage.create(Component, {
             return this._valueText;
         },
         set: function(text) {
+            /// TODO: Figure out why montage is trying to set this to undefined
+            /// TODO: when the style object is removed from the repetition
+            if(text === null || text === undefined) { return; }
+
             this._valueText = this.browserValue = text;
             this.units = this.getUnits(text);
         }
