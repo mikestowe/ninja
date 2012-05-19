@@ -356,7 +356,8 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             console.log("URI is: ", uri);
         }
     },
-    
+
+    //todo: remove this funciton as it is not used
     textDocumentOpened: {
        value: function(doc) {
 
@@ -412,6 +413,11 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 //            document.getElementById("iframeContainer").style.display="block";
 
             this.application.ninja.stage.hideCanvas(true);
+
+            if(this._documents.length === 0){
+                document.getElementById("iframeContainer").style.display="block";
+                document.getElementById("codeViewContainer").style.display="block";
+            }
 
 
 			NJevent("closeDocument", doc.model.file.uri);

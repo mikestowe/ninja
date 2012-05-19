@@ -53,8 +53,16 @@ exports.TextDocument = Montage.create(Component, {
 
             callback.call(context, this);
         }
-    }
+    },
 ////////////////////////////////////////////////////////////////////
+    //
+    closeDocument: {
+    		value: function (context, callback) {
+    			var closed = this.model.close(null);
+
+                callback.call(context, this);
+    		}
+    	}
 ////////////////////////////////////////////////////////////////////
 });
 ////////////////////////////////////////////////////////////////////////

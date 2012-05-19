@@ -16,7 +16,58 @@ exports.TextDocumentModel = Montage.create(BaseDocumentModel, {
 	hasTemplate: {
 		enumerable: false,
         value: false
-    }
+    },
+////////////////////////////////////////////////////////////////////
+	//
+    save: {
+        enumerable: false,
+        value: function (callback) {
+            this.application.ninja.documentController.activeDocument.model.views.code.editor.save();//save to textarea
+
+            var self = this;
+
+            this.application.ninja.ioMediator.fileSave({
+                mode: ""+ self.file.extension,
+                file: self.file,
+                content:self.views.code.textArea.value
+            }, this.handleSaved.bind({callback: callback, model: this}));
+        }
+    },
+////////////////////////////////////////////////////////////////////
+	//
+    handleSaved: {
+    		value: function (result) {
+    			//
+    			if (result.status === 204) {
+    				this.model.needsSave = false;
+    			}
+    			//
+    			if (this.callback) this.callback(result);
+    		}
+    	},
+    ////////////////////////////////////////////////////////////////////
+    	//
+    close: {
+            value: function (view, callback) {
+            	//Outcome of close (pending on save logic)
+            	var success;
+            	//
+            	if (this.needsSave) {
+            		//Prompt user to save of lose data
+            	} else {
+            		//Close file
+            		success = true;
+            	}
+            	//
+                this.views.code.textParentContainer.removeChild(this.views.code.textViewContainer);
+                this.views.code.restoreAllPanels();
+                this.views.code.showCodeViewBar(false);
+                this.views.code = null;
+
+            	//
+            	return success;
+            }
+        }
 });
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
