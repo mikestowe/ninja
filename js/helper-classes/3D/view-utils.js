@@ -1303,15 +1303,6 @@ exports.ViewUtils = Montage.create(Component, {
 //	MISCELLANEOUS
 //	event.layerX/Y:					var pt = viewUtils.getMousePoint(event);
 
-    getStageDimension: {
-        value: function()
-        {
-            var width = parseInt(this.application.ninja.stage.documentRoot.elementModel.stageDimension.style.getProperty("width"));
-            var height= parseInt(this.application.ninja.stage.documentRoot.elementModel.stageDimension.style.getProperty("height"));
-            return[width,height];
-        }
-    },
-
     getStage: {
         value: function()
 		{

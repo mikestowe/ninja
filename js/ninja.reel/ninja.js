@@ -280,7 +280,7 @@ exports.Ninja = Montage.create(Component, {
             this.currentDocument = event.detail;
 
             if(this.currentDocument.documentRoot) {
-                this.application.ninja.currentSelectedContainer = this.currentDocument.documentRoot;
+                this.currentSelectedContainer = this.currentDocument.documentRoot;
             } else {
                 alert("The current document has not loaded yet");
                 return;

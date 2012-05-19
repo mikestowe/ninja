@@ -145,18 +145,19 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     	value: function(event) {
     		//
     		if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
-    			//
-    			this.activeDocument.model.save(this.testCallback.bind(this)); //this.fileSaveResult.bind(this)
+    			//Currently we don't need a callback handler
+    			//this.activeDocument.model.save(this.saveExecuted.bind(this));
+    			this.activeDocument.model.save();
     		} else {
-    			//Error:
+    			//Error: cloud not available and/or no active document
     		}
 		}
     },
-    testCallback: {
+    ////////////////////////////////////////////////////////////////////
+	//
+    saveExecuted: {
     	value: function (value) {
-    		console.log(value);
-            //TODO: Move this to the model.save()
-            this.activeDocument.model.needsSave = false;
+    		//File saved, any callbacks or events should go here
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -489,6 +490,8 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             if(currentDocument) {
                 currentDocument.serializeDocument();
 
+                this.application.ninja.selectionController._selectionContainer = null;
+                currentDocument.model.views.design.propertiesPanel.clear();
                 currentDocument.model.views.design.hide();
             }
 
