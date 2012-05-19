@@ -62,7 +62,7 @@ exports.RadioGroup = Montage.create(Component, {
     {
         value:function(radio)
         {
-            radio.element.setAttribute("name", this.name);
+            radio.radioField.setAttribute("name", this.name);
             radio.addEventListener("change", this, false);
             this.radios.push(radio);
         }
@@ -104,6 +104,14 @@ exports.Radio = Montage.create(Component, {
         value: null
     },
 
+    labelField: {
+        value: null
+    },
+
+    radioField: {
+        value: null
+    },
+
     _checked: {
         enumerable: false,
         value: false
@@ -140,13 +148,13 @@ exports.Radio = Montage.create(Component, {
 		{
             this._valueSyncedWithInputField = true;
             this._wasSetByCode = false;
-            this.checked = this.element.checked;
+            this.checked = this.radioField.checked;
 		}
     },
     handleClick: {
         value: function() {
             this._wasSetByCode = false;
-            this.checked = !this.element.checked;
+            this.checked = !this.radioField.checked;
         }
     },
     
@@ -154,7 +162,7 @@ exports.Radio = Montage.create(Component, {
         value: function() {
             if(!this._valueSyncedWithInputField)
             {
-                this.element.checked = this._checked;
+                this.radioField.checked = this._checked;
             }
             this._valueSyncedWithInputField = false;
         }
@@ -163,15 +171,13 @@ exports.Radio = Montage.create(Component, {
     prepareForDraw: {
         value: function() {
             if (this.label !== null) {
-                var b = document.createElement("label");
-                b.innerHTML = this.label;
-                this.element.appendChild(b);
-                b.addEventListener("click", this, false);
+                this.labelField.innerHTML = this.label;
             }
+            this.element.addEventListener("click", this, false);
             if (this.group !== null) {
                 this.group.addRadio(this);
             }
-            this.element.addEventListener("change", this, false);
+            this.radioField.addEventListener("change", this, false);
         }
     }
 

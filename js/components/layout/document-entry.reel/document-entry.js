@@ -121,8 +121,8 @@ exports.DocumentEntry = Montage.create(Component, {
             if(event._event.target.nodeName === "IMG") {
                 this.application.ninja.documentController.closeFile(this.application.ninja.documentController._findDocumentByUUID(this._uuid));
             } else {
-                if(!this._document.isActive) {
-                    this.application.ninja.stage.stageView.switchDocument(this.application.ninja.documentController._findDocumentByUUID(this._uuid));
+                if(!this.active) {
+                    this.application.ninja.documentController.switchDocuments(this.application.ninja.currentDocument, this.application.ninja.documentController._findDocumentByUUID(this._uuid));
                 }
             }
         }

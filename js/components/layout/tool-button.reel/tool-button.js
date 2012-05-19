@@ -48,19 +48,8 @@ exports.ToolButton = Montage.create(Component, {
             this.element.addEventListener("mousedown", this, false);
             this.element.addEventListener("dblclick", this, false);
 
-            Object.defineBinding(this, "selected", {
-              boundObject: this.data,
-              boundObjectPropertyPath: "selected",
-              oneway: false
-            });
-
             if(this.data.container) {
                 this.element.title = this.data.subtools[this._subselected].toolTip;
-                Object.defineBinding(this, "subselected", {
-                    boundObject: this.data.subtools,
-                    boundObjectPropertyPath: "selected",
-                    oneway: true
-                });
             }
 
             this.element.classList.add(this.data.id)

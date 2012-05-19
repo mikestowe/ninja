@@ -46,16 +46,13 @@ exports.Properties = Montage.create(Component, {
 
     prepareForDraw: {
         value : function() {
-
+            this.eventManager.addEventListener("openDocument", this, false);
             this.eventManager.addEventListener("selectionChange", this, false);
 
             // This will be a toggle option
             if(this.application.ninja.appData.PILiveUpdate) {
                 this.eventManager.addEventListener( "elementChanging", this, false);
             }
-
-            this.eventManager.addEventListener("openDocument", this, false);
-            this.eventManager.addEventListener("switchDocument", this, false);
 
             this.elementId.element.addEventListener("blur", this, false);
             this.elementId.element.addEventListener("focus", this, false);
@@ -71,23 +68,11 @@ exports.Properties = Montage.create(Component, {
         value: function() {
             this.eventManager.addEventListener( "elementChange", this, false);
 
+            // Save a reference of the pi inside the document view to be able to clear
+            this.application.ninja.currentDocument.model.views.design.propertiesPanel = this;
+
             // Display the default document root PI
             this.displayElementProperties(this.application.ninja.currentDocument.documentRoot);
-        }
-    },
-
-    handleSwitchDocument: {
-        value: function(){
-            // For now always assume that the stage is selected by default
-            if(this.application.ninja.selectedElements.length === 0) {
-                this.displayStageProperties();
-            } else {
-                if(this.application.ninja.selectedElements.length === 1) {
-                    this.displayElementProperties(this.application.ninja.selectedElements[0]);
-                } else {
-                    this.displayGroupProperties(this.application.ninja.selectedElements);
-                }
-            }
         }
     },
 
@@ -181,6 +166,15 @@ exports.Properties = Montage.create(Component, {
         }
     },
 
+    clear: {
+        value: function() {
+            this.elementName.value = "";
+            this.elementId.value = "";
+            this.elementClass.value = "";
+            this.customPi = null;
+        }
+    },
+
     displayElementProperties: {
         value: function (el) {
             var customPI, currentValue, isRoot = this.application.ninja.selectionController.isDocument;
@@ -226,9 +220,16 @@ exports.Properties = Montage.create(Component, {
                 this.displayCustomProperties(el, el.elementModel.pi);
             }
 
+            // Root element color chip
             if(isRoot) {
                 var backgroundChip = this.customSections[0].content.controls["background"];
-                if(backgroundChip) backgroundChip.color = ElementsMediator.getProperty(el, "background");
+                var rootBackgroundColor = ElementsMediator.getProperty(el, "background");
+
+                if(rootBackgroundColor) {
+                    backgroundChip.color = rootBackgroundColor;
+                } else {
+                    backgroundChip.color = null;
+                }
             }
 
 			var previousInput = this.application.ninja.colorController.colorModel.input;

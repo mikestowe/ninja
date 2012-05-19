@@ -134,8 +134,19 @@ exports.Ninja = Montage.create(Component, {
         value: []
     },
 
-    currentSelectedContainer: {
+    _currentSelectedContainer: {
         value: null
+    },
+
+    currentSelectedContainer: {
+        get: function() {
+            return this._currentSelectedContainer;
+        },
+        set: function(value) {
+            if(value !== this._currentSelectedContainer) {
+                this._currentSelectedContainer = value;
+            }
+        }
     },
 
     templateDidLoad: {
@@ -161,9 +172,10 @@ exports.Ninja = Montage.create(Component, {
 
             window.addEventListener("resize", this, false);
 
-            this.eventManager.addEventListener( "selectTool", this, false);
-            this.eventManager.addEventListener( "selectSubTool", this, false);
-            this.eventManager.addEventListener( "onOpenDocument", this, false);
+            this.eventManager.addEventListener("selectTool", this, false);
+            this.eventManager.addEventListener("selectSubTool", this, false);
+            this.eventManager.addEventListener("onOpenDocument", this, false);
+            this.eventManager.addEventListener("onSwitchDocument", this, false);
 
             this.addPropertyChangeListener("appModel.livePreview", this.executeLivePreview, false);
             this.addPropertyChangeListener("appModel.chromePreview", this.executeChromePreview, false);
@@ -268,7 +280,7 @@ exports.Ninja = Montage.create(Component, {
             this.currentDocument = event.detail;
 
             if(this.currentDocument.documentRoot) {
-                this.application.ninja.currentSelectedContainer = this.currentDocument.documentRoot;
+                this.currentSelectedContainer = this.currentDocument.documentRoot;
             } else {
                 alert("The current document has not loaded yet");
                 return;
@@ -276,6 +288,18 @@ exports.Ninja = Montage.create(Component, {
 
             this.appModel.show3dGrid = this.currentDocument.draw3DGrid;
             NJevent("openDocument");
+        }
+    },
+
+    handleOnSwitchDocument: {
+        value: function() {
+            this.currentDocument = this.documentController.activeDocument;
+
+            if(this.currentDocument.documentRoot) {
+                this._currentSelectedContainer = this.selectionController._currentSelectedContainer = this.currentDocument.documentRoot;
+            }
+
+            NJevent("switchDocument");
         }
     },
 

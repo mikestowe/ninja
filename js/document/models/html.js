@@ -28,6 +28,23 @@ exports.HtmlDocumentModel = Montage.create(BaseDocumentModel, {
         value: false
     },
     ////////////////////////////////////////////////////////////////////
+    //
+    scrollLeft: {
+        value: null
+    },
+
+    scrollTop: {
+        value: null
+    },
+
+    userContentLeft: {
+        value: null
+    },
+
+    userContentTop: {
+        value: null
+    },
+    ////////////////////////////////////////////////////////////////////
 	//
 	baseHref: {
 		value: null
