@@ -22,5 +22,15 @@ exports.bindingView = Montage.create(Component, {
         set: function(val) {
             this._bindables = val;
         }
+    },
+
+
+    nonVisualComponents: {
+        get: function() {
+            return this._bindables;
+        },
+        set: function(val) {
+            this._bindables = val;
+        }
     }
 });

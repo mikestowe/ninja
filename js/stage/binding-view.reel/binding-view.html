@@ -14,10 +14,11 @@
             "owner": {
                 "prototype": "js/stage/binding-view.reel",
                 "properties": {
-                    "element": {"#": "bindingView"}
+                    "element": {"#": "bindingView"},
+                    "hudRepeater": {"@": "hudRepeater"}
                 }
             },
-            "repeater": {
+            "hudRepeater": {
                 "prototype": "montage/ui/repetition.reel",
                 "properties": {
                     "element": {"#": "hudRepetition"}
@@ -34,6 +35,37 @@
                 "prototype": "js/stage/binding-view.reel/binding-hud.reel",
                 "properties": {
                     "element": {"#" : "hud"}
+                }
+            },
+            "nonVisualRepeater": {
+                "prototype": "montage/ui/repetition.reel",
+                "properties": {
+                    "element": {"#": "nonVisualRepeater"}
+                },
+                "bindings": {
+                    "objects": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "nonVisualComponents",
+                        "oneway": true
+                    }
+                }
+            },
+            "nonVisualComponent": {
+                "prototype": "js/stage/binding-view.reel/non-visual-component.reel",
+                "properties": {
+                    "element": {"#": "nonVisualComponent"}
+                },
+                "bindings": {
+                    "objectName": {
+                        "boundObject": {"@": "hudRepetition"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration.objectName",
+                        "oneway": true
+                    },
+                    "objectImage": {
+                        "boundObject": {"@": "undoList"},
+                        "boundObjectPropertyPath": "objectAtCurrentIteration.objectImage",
+                        "oneway": true
+                    }
                 }
             }
         }

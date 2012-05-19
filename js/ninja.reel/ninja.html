@@ -324,7 +324,10 @@
             },
 
             "objectsController" : {
-                "prototype": "js/controllers/objects-controller"
+                "prototype": "js/controllers/objects-controller",
+                "bindings": {
+                    "activeDocument": {"<-": "@owner.currentDocument"}
+                }
             },
 
             "owner": {

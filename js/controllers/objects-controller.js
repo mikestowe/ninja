@@ -16,12 +16,6 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
         value: function() {
             ///// Bind app's activeDocument property to
             ///// objects controller's _activeDocument property
-
-            Object.defineBinding(this, "activeDocument", {
-                boundObject: this.application.ninja,
-                boundObjectPropertyPath: "currentDocument",
-                oneway: true
-            });
         }
     },
 
