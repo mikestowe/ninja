@@ -88,6 +88,7 @@ exports.StylesViewContainer = Montage.create(Component, {
 
             if(elements.length === 0) {
                 this.hasStyles = false;
+                this.needsDraw = true;
                 return false;
             } else if(elements.length === 1) {
 
