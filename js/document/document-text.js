@@ -31,7 +31,6 @@ exports.TextDocument = Montage.create(Component, {
         enumerable: false,
         value : function(file, context, callback, view){
             var codeDocumentView = CodeDocumentView.create(), container = null;
-            codeDocumentView.initialize();
 
             //Creating instance of Text Document Model
             this.model = Montage.create(TextDocumentModel,{
@@ -39,6 +38,8 @@ exports.TextDocument = Montage.create(Component, {
                 parentContainer: {value: document.getElementById("codeViewContainer")},
                 views: {value: {'code': codeDocumentView, 'design': null}}
             });
+
+            codeDocumentView.initialize(this.model.parentContainer);
 
             codeDocumentView.textArea.value = file.content;
             codeDocumentView.initializeTextView(file, this);

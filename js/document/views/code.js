@@ -41,18 +41,6 @@ var CodeDocumentView = exports.CodeDocumentView = Montage.create(BaseDocumentVie
         get: function() {return this._textArea;},
         set: function(value) {this._textArea= value;}
     },
-
-     ////////////////////////////////////////////////////////////////////
-    //remove _extParentContainer after moving to bucket structure for documents
-    _textParentContainer: {
-        value: null
-    },
-    ////////////////////////////////////////////////////////////////////
-    //
-    textParentContainer: {
-        get: function() {return this._textParentContainer;},
-        set: function(value) {this._textParentContainer= value;}
-    },
     ////////////////////////////////////////////////////////////////////
     //
     _textViewContainer: {
@@ -71,15 +59,12 @@ var CodeDocumentView = exports.CodeDocumentView = Montage.create(BaseDocumentVie
      * Public method
      */
     initialize:{
-        value: function(){
-            //populate _textParentContainer
-            this.textParentContainer = document.getElementById("codeViewContainer");
-
+        value: function(parentContainer){
             //create contianer
             this.textViewContainer = document.createElement("div");
             //this.textViewContainer.id = "codemirror_" + uuid;
             this.textViewContainer.style.display = "block";
-            this.textParentContainer.appendChild(this.textViewContainer);
+            parentContainer.appendChild(this.textViewContainer);
 
             //create text area
             this.textArea = this.createTextAreaElement();
@@ -200,7 +185,7 @@ var CodeDocumentView = exports.CodeDocumentView = Montage.create(BaseDocumentVie
     applyTheme:{
         value:function(themeClass){
             //Todo: change for bucket structure of documents
-            this.textParentContainer.className = "codeViewContainer "+themeClass;
+            this.textViewContainer.className = "codeViewContainer "+themeClass;
         }
     }
 

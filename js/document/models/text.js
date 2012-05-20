@@ -59,7 +59,7 @@ exports.TextDocumentModel = Montage.create(BaseDocumentModel, {
             		success = true;
             	}
             	//
-                this.views.code.textParentContainer.removeChild(this.views.code.textViewContainer);
+                this.parentContainer.removeChild(this.views.code.textViewContainer);
                 this.views.code.restoreAllPanels();
                 this.views.code.showCodeViewBar(false);
                 this.views.code = null;
