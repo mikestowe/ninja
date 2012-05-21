@@ -39,8 +39,8 @@ exports.OvalTool = Montage.create(ShapeTool, {
 
             var innerRadius = this.options.innerRadius.value / 100;
 
-            var strokeColor = this.application.ninja.colorController.colorToolbar.stroke.webGlColor;
-            var fillColor = this.application.ninja.colorController.colorToolbar.fill.webGlColor;
+            var strokeColor = this.options.stroke.webGlColor;
+            var fillColor = this.options.fill.webGlColor;
 
             // for default stroke and fill/no materials
             var strokeMaterial = null;
@@ -68,7 +68,7 @@ exports.OvalTool = Montage.create(ShapeTool, {
             var xOffset = ((left - canvas.offsetLeft + w/2) - canvas.width/2);
             var yOffset = -(canvas.height/2 - (top - canvas.offsetTop + h/2));
 
-            var oval = new Circle(); //GLCircle();
+            var oval = Object.create(Circle, {});
             oval.init(world, xOffset, yOffset, w, h, strokeSize, strokeColor, fillColor, innerRadius, strokeMaterial, fillMaterial, strokeStyle);
 
             world.addObject(oval);

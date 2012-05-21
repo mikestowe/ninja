@@ -874,17 +874,17 @@ World.prototype.importObjectJSON = function( jObj, parentGeomObj )
 	switch (type)
 	{
 		case 1:
-			obj = new Rectangle();
+			obj = Object.create(Rectangle, {});
 			obj.importJSON( jObj );
 			break;
 
 		case 2:		// circle
-			obj = new Circle();
+			obj = Object.create(Circle, {});
 			obj.importJSON( jObj );
 			break;
 
 		case 3:		// line
-            obj = new Line();
+            obj = Object.create(Line, {});
             obj.importJSON( jObj );
             break;
 

@@ -4,3 +4,14 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
+.ovalProperties{
+}
+
+.ovalProperties  hottextunit {
+    width: 22px;
+}   
+
+.ovalProperties  label {
+    margin-left: 6px;
+    margin-right: 6px;
+}  
