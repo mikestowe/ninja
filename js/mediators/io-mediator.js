@@ -541,7 +541,7 @@ function loadWebGL (e) {\n\
                         mjsCheck = this.application.ninja.coreIoApi.fileExists({uri: mjsPath});
                         //
                         if (!mjsCheck || mjsCheck.status !== 204) {
-	                        var packjson = this.application.ninja.coreIoApi.createFile({ uri: mjsPath, contents: '{"mappings": {"montage": "' + mjsDirName + '/montage/"}}' });
+	                        var packjson = this.application.ninja.coreIoApi.createFile({ uri: mjsPath, contents: '{"mappings": {\n\t\t"montage": "' + mjsDirName + '/montage/",\n\t\t"montage-google": "' + mjsDirName + '/montage-google/"\n\t}\n}' });
                         } else {
                         	//Already exists
                         }
