@@ -136,6 +136,10 @@
     color: #A33939;
 }
 
+.ss-disabled {
+    opacity: .65;
+}
+
 .ss-invisible {
     display: none;
 }

@@ -55,6 +55,12 @@ exports.StyleSheet = Montage.create(Component, {
                 this.nameText.element.classList.remove('ss-dirty');
             }
 
+            if(this.disabled) {
+                this.element.classList.add('ss-disabled');
+            } else {
+                this.element.classList.remove('ss-disabled');
+            }
+
         }
     },
 
@@ -182,6 +188,7 @@ exports.StyleSheet = Montage.create(Component, {
             this.disableButton.label = label;
 
             this._disabled = disable;
+            this.needsDraw = true;
         }
     },
 
