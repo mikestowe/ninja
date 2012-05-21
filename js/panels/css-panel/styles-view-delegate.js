@@ -92,7 +92,7 @@ exports.StylesViewMediator = Montage.create(Component, {
         value: function(e, style) {
             var key, nextFocus;
 
-            if(e._event.detail.type === 'keydown') {
+            if(e._event.detail.type === 'keydown' && !style.deleting) {
                 key = e._event.detail.keyCode;
 
                 if(key === Keyboard.ENTER || key === Keyboard.TAB) {
@@ -112,7 +112,7 @@ exports.StylesViewMediator = Montage.create(Component, {
         value: function(e, style) {
             var key, nextFocus;
 
-            if(e._event.detail.type === 'keydown') {
+            if(e._event.detail.type === 'keydown' && !style.deleting) {
                 key = e._event.detail.keyCode;
 
                 if(key === Keyboard.ENTER || key === Keyboard.TAB) {
@@ -149,6 +149,7 @@ exports.StylesViewMediator = Montage.create(Component, {
             this.stylesController.deleteStyle(rule, oldProperty);
 
             if(property === '') {
+                style.deleting = true;
                 style.parentComponent.parentComponent.removeStyle(style.source);
                 this._dispatchChange(oldProperty, browserValue);
                 return false;
@@ -169,6 +170,7 @@ exports.StylesViewMediator = Montage.create(Component, {
 
             if(value === '') {
                 ///// Remove old property
+                style.deleting = true;
                 this.stylesController.deleteStyle(rule, property);
                 style.parentComponent.parentComponent.removeStyle(style.source);
                 this._dispatchChange(property, browserValue);
