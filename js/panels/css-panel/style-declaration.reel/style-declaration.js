@@ -32,14 +32,15 @@ exports.StyleDeclaration = Montage.create(Component, {
                 return -1;
             }
 
+            return 0;
             ///// Alphabetic sort based on property name
-            if (styleA.name < styleB.name) {
-                return -1;
-            } else if (styleA.name > styleB.name) {
-                return 1;
-            } else {
-                return 0;
-            }
+//            if (styleA.name < styleB.name) {
+//                return -1;
+//            } else if (styleA.name > styleB.name) {
+//                return 1;
+//            } else {
+//                return 0;
+//            }
         }
     },
     _styleFilterFunction: {
@@ -173,6 +174,7 @@ exports.StyleDeclaration = Montage.create(Component, {
                                     //// if shorthand exists in list of rendered styles
                                     //// update it
                                     this.styles[shorthandIndex].value = this.declaration.getPropertyValue(shorthand);
+                                    usedIndices.push(shorthandIndex);
                                     shorthandUpdated = true;
                                 }
                             }, this);
@@ -225,13 +227,16 @@ exports.StyleDeclaration = Montage.create(Component, {
                 isEmpty: false
             }, prop;
 
+            console.log('adding "'+ property+'" with value "' + value + '"');
+
             for(prop in data) {
                 if(data.hasOwnProperty(prop)) {
                     styleDescriptor[prop] = data[prop];
                 }
             }
 
-            this.styles.push(styleDescriptor);
+            //this.styles.push(styleDescriptor);
+            this.arrayController.addObjects(styleDescriptor);
 
             this.needsSort = this.needsDraw = true;
         }
@@ -239,9 +244,9 @@ exports.StyleDeclaration = Montage.create(Component, {
     removeStyle : {
         value: function(styleDescriptor) {
             var styleDescriptorIndex = this.styles.indexOf(styleDescriptor);
-
-            this.styles.splice(styleDescriptorIndex, 1);
-            //this.arrayController.removeObjects(styleDescriptor);
+console.log("removing style", styleDescriptor);
+            //this.styles.splice(styleDescriptorIndex, 1);
+            this.arrayController.removeObjects(styleDescriptor);
 
             //this.needsDraw = true;
         }
@@ -281,7 +286,7 @@ exports.StyleDeclaration = Montage.create(Component, {
             if(this.focusDelegate) {
                 this.styleComponent.delegate = this.focusDelegate;
             }
-            //this.arrayController.sortFunction = this._styleSortFunction;
+            this.arrayController.sortFunction = this._styleSortFunction;
         }
     },
 
