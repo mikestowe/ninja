@@ -29,8 +29,17 @@ exports.StylesViewContainer = Montage.create(Component, {
             this.needsDraw = true;
         }
     },
-    _lastSelection : {
+    _prevSelection : {
         value: null
+    },
+    prevSelection : {
+        get: function() {
+            return this._prevSelection;
+        },
+        set: function(value) {
+            console.log("setting last selection to " + value);
+            this._prevSelection = value;
+        }
     },
     _hasStyles : {
         value: false
@@ -75,16 +84,25 @@ exports.StylesViewContainer = Montage.create(Component, {
             this.eventManager.addEventListener( "selectionChange", this, false);
         }
     },
+    _copy : {
+        value: function(array) {
+            return array.map(function(item) { return item; });
+        }
+    },
     handleSelectionChange: {
         value: function() {
-            var elements = this.application.ninja.selectedElements;
+            var elements = this.application.ninja.selectedElements,
+                elementsCopy = this._copy(elements);
 
-            if(this._isSameArray(elements, this._lastSelection) && this.contentPanel === "rules") {
+            if(this._isSameArray(elements, this.prevSelection) && this.contentPanel === "rules") {
                 console.log('new selection is identical');
                 return false;
             }
 
-            this._lastSelection = elements;
+            // TODO: should selection always create new array
+            // TODO: pushing to selection array makes prevSelection
+            // TODO: invalid
+            this.prevSelection = elementsCopy;
 
             if(elements.length === 0) {
                 this.hasStyles = false;
@@ -96,7 +114,7 @@ exports.StylesViewContainer = Montage.create(Component, {
                 this.selectionNameLabelText = this._getElementLabel(elements[0]);
 
                 if(this.contentPanel === "rules") {
-                    this.ruleListContainer.displayListForSelection(elements);
+                    this.ruleListContainer.displayListForSelection(elementsCopy);
                 } else {
                     this.computedStyleView.declaration = elements[0];
                 }
@@ -106,7 +124,7 @@ exports.StylesViewContainer = Montage.create(Component, {
                 this.contentPanel = "rules";
                 this.selectionNameLabelText = elements.length + " elements selected.";
                 ///// find common rules
-                this.ruleListContainer.displayListForSelection(elements);
+                this.ruleListContainer.displayListForSelection(elementsCopy);
 
             }
 
