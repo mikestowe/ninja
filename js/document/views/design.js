@@ -64,6 +64,11 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     },
     ////////////////////////////////////////////////////////////////////
 	//
+    propertiesPanel: {
+        value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
 	initialize: {
         value: function (parent) {
         	//Creating iFrame for view
