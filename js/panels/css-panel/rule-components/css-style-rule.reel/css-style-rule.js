@@ -115,6 +115,8 @@ exports.CssStyleRule = Montage.create(Component, {
     },
     prepareForDraw : {
         value: function() {
+            this.selectorField.keyActions = this.keyActions;
+
             if(this.rule.type === 'inline') {
                 this.selectorField.readOnly = true;
                 this.declarationComponent.type = 'inline';
@@ -144,5 +146,26 @@ exports.CssStyleRule = Montage.create(Component, {
                 this.element.classList.add(this.unappliedClass);
             }
         }
+    },
+
+    keyActions : {
+        value : {
+            hint : {
+                accept : [9,13], // accept hint
+                stop   : [27],   // stop editing
+                next   : [40],   // cycle to next hint
+                prev   : [38],   // cycle to prev hint
+                revert : [27],   // revert value
+                backsp : [8]     // backspace hit
+            },
+            noHint : {
+                stop   : [27,9,13],
+                next   : [40],
+                prev   : [38],
+                revert : [27],
+                backsp : [8]
+            }
+        },
+        distinct: true
     }
 });

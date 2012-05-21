@@ -61,7 +61,7 @@ exports.RuleList = Montage.create(Component, {
                     // found rule in our component list, or it's the inline rule
                     ruleComponent.update();
                     foundIndices.push(index);
-                } else {
+                } else if(!rule.applied) { /// remove rule (unless unapplied)
                     this.rulesToRemove.push(ruleComponent);
                 }
             }, this);
