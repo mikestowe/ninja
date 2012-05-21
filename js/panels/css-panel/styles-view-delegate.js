@@ -142,6 +142,11 @@ exports.StylesViewMediator = Montage.create(Component, {
             var browserValue;
 
             if(style.editingNewStyle) {
+                if(property === '') {
+                    style.propertyField.value = 'property';
+                    style.propertyField.isDirty = false;
+                    style.editingNewStyle = false;
+                }
                 return false;
             }
 
