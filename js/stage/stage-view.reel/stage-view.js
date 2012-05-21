@@ -58,19 +58,5 @@ exports.StageView = Montage.create(Component, {
 
             NJevent("switchDocument");
         }
-    },
-
-    showRulers:{
-        value:function(){
-            this.application.ninja.rulerTop.style.display = "block";
-            this.application.ninja.rulerLeft.style.display = "block";
-        }
-    },
-    hideRulers:{
-        value:function(){
-            this.application.ninja.rulerTop.style.display = "none";
-            this.application.ninja.rulerLeft.style.display = "none";
-        }
     }
-
 });

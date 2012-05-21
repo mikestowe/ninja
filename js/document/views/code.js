@@ -140,56 +140,30 @@ var CodeDocumentView = exports.CodeDocumentView = Montage.create(BaseDocumentVie
     },
     ////////////////////////////////////////////////////////////////////
     //
-
-    showRulers:{
-        value:function(){
-            this.application.ninja.rulerTop.style.display = "block";
-            this.application.ninja.rulerLeft.style.display = "block";
+    show: {
+        value: function (callback) {
+            this.textViewContainer.style.display = "block";
+            //
+            if (callback) callback();
         }
     },
-    hideRulers:{
-        value:function(){
-            this.application.ninja.rulerTop.style.display = "none";
-            this.application.ninja.rulerLeft.style.display = "none";
+    ////////////////////////////////////////////////////////////////////
+    //
+    hide: {
+        value: function (callback) {
+            this.textViewContainer.style.display = "none";
+            //
+            if (callback) callback();
         }
     },
-    showCodeViewBar:{
-        value:function(isCodeView){
-            if(isCodeView === true) {
-                this.application.ninja.editorViewOptions.element.style.display = "block";
-                this.application.ninja.documentBar.element.style.display = "none";
-            } else {
-                this.application.ninja.documentBar.element.style.display = "block";
-                this.application.ninja.editorViewOptions.element.style.display = "none";
-            }
-        }
-    },
-
-    collapseAllPanels:{
-        value:function(){
-            this.application.ninja.panelSplitter.collapse();
-            this.application.ninja.timelineSplitter.collapse();
-            this.application.ninja.toolsSplitter.collapse();
-            this.application.ninja.optionsSplitter.collapse();
-        }
-    },
-    restoreAllPanels:{
-        value:function(){
-            this.application.ninja.panelSplitter.restore();
-            this.application.ninja.timelineSplitter.restore();
-            this.application.ninja.toolsSplitter.restore();
-            this.application.ninja.optionsSplitter.restore();
-        }
-    },
-
+    ////////////////////////////////////////////////////////////////////
+    //
     applyTheme:{
         value:function(themeClass){
             //Todo: change for bucket structure of documents
             this.textViewContainer.className = "codeViewContainer "+themeClass;
         }
     }
-
-
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 });

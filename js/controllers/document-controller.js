@@ -52,10 +52,6 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             if(!!this._activeDocument){
                 if(this._documents.indexOf(doc) === -1) this._documents.push(doc);
                 this._activeDocument.isActive = true;
-
-                if(!!this._activeDocument.editor){
-                    this._activeDocument.editor.focus();
-                }
             }
         }
     },
@@ -312,10 +308,9 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             this.activeDocument.uri = fileUri;
             //save a new file
             //use the ioMediator.fileSaveAll when implemented
-            this.activeDocument._userDocument.name=filename;
-            this.activeDocument._userDocument.root=destination;
-            this.activeDocument._userDocument.uri=fileUri;
-            this.application.ninja.ioMediator.fileSave(this.activeDocument.save(), this.fileSaveResult.bind(this));
+            this.activeDocument.model.file.name=filename;
+            this.activeDocument.model.file.uri=fileUri;
+            this.activeDocument.model.save();
             //
         }
     },
@@ -408,7 +403,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
             this._activeDocument = null;
 
-            this.application.ninja.stage.stageView.hideRulers();
+            this.application.ninja.stage.hideRulers();
 
 //            document.getElementById("iframeContainer").style.display="block";
 
@@ -471,7 +466,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
                 // Show the rulers
                 // TODO: Move this indo design view
-                this.application.ninja.stage.stageView.showRulers();
+                this.application.ninja.stage.showRulers();
 
                 // Show the canvas
                 this.application.ninja.stage.hideCanvas(false);
@@ -489,53 +484,81 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         }
     },
 
+
+    _onOpenTextDocument: {
+        value: function(doc) {
+            var currentDocument=null;
+            if(this.activeDocument) {
+                // There is a document currently opened
+                currentDocument = this.activeDocument;
+            }
+
+            this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
+            this.activeDocument = doc;
+            document.getElementById("iframeContainer").style.display = "none";
+            this.application.ninja.codeEditorController.applySettings();
+            this.switchDocuments(currentDocument, doc, true);
+        }
+    },
+
     switchDocuments: {
         value: function(currentDocument, newDocument, didCreate) {
 
-            if(currentDocument) {
+            if(currentDocument && currentDocument.currentView === "design") {
                 currentDocument.serializeDocument();
-
                 this.application.ninja.selectionController._selectionContainer = null;
                 currentDocument.model.views.design.propertiesPanel.clear();
-                currentDocument.model.views.design.hide();
+            }
+
+            if(currentDocument) {
+                currentDocument.model.currentView.hide();
+                currentDocument.model.isActive = false;
+            }
+            if(currentDocument && newDocument && (currentDocument.model.parentContainer !== newDocument.model.parentContainer)){
+                currentDocument.model.parentContainer.style["display"] = "none";
+            }
+
+            if(newDocument && newDocument.currentView === "code"){
+                this.application.ninja.stage.showCodeViewBar(true);
+                this.application.ninja.stage.collapseAllPanels();
+                this.application.ninja.stage.hideCanvas(true);
+                this.application.ninja.stage.hideRulers();
+
+                newDocument.model.views.code.editor.focus();
+
+            }else if(currentDocument && newDocument && newDocument.currentView === "design"){
+                this.application.ninja.stage.showCodeViewBar(false);
+                this.application.ninja.stage.restoreAllPanels();
+                this.application.ninja.stage.hideCanvas(false);
+                this.application.ninja.stage.showRulers();
             }
 
             this.application.ninja.stage.clearAllCanvas();
 
             if(didCreate) {
-                newDocument.model.views.design.iframe.style.opacity = 1;
-                NJevent("onOpenDocument", newDocument);
-            } else {
-                this.activeDocument = newDocument;
-                newDocument.model.views.design.show();
-                newDocument.deserializeDocument();
-                NJevent("onSwitchDocument");
+                newDocument.model.currentView.show();
+                newDocument.model.parentContainer.style["display"] = "block";
+                if(newDocument.currentView === "design") {
+                    newDocument.model.views.design.iframe.style.opacity = 1;
+                    NJevent("onOpenDocument", newDocument);
+                }
             }
-        }
-    },
+            else {
+                this.activeDocument = newDocument;
 
-
-    _onOpenTextDocument: {
-        value: function(doc) {
-            if(this.activeDocument) {
-
-                if(this.activeDocument.currentView === "design"){
-                    this.activeDocument.saveAppState();
-                    this.activeDocument.parentContainer.style["display"] = "none";
-                    this.application.ninja.stage.hideCanvas(true);
-                    this.application.ninja.stage.stageView.hideRulers();
+                newDocument.model.currentView.show();
+                if(currentDocument && newDocument && (currentDocument.model.parentContainer !== newDocument.model.parentContainer)){
+                    newDocument.model.parentContainer.style["display"] = "block";
                 }
 
-                this.activeDocument.container.style["display"] = "none";
+                if(newDocument.currentView === "design") {
+                    newDocument.deserializeDocument();
+                    NJevent("onSwitchDocument");
+                }else{
+                    newDocument.model.isActive = true;
+                    this.application.ninja.codeEditorController.applySettings();//should be called after activeDocument is updated
+                }
             }
-
-            this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
-            this.activeDocument = doc;
-            //hide the iframe when switching to code view
-            document.getElementById("iframeContainer").style.display = "none";
-            doc.model.views.code.showCodeViewBar(true);
-            this.application.ninja.codeEditorController.applySettings();
-            doc.model.views.code.collapseAllPanels();
         }
     },
 
