@@ -11,8 +11,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
     <script type="text/montage-serialization">
         {
             "owner": {
-                "module" : "js/panels/css-panel/style-sheet.reel",
-                "name" : "StyleSheet",
+                "prototype" : "js/components/toolbar.reel",
                 "properties" : {
                     "element" : {"#" : "toolbar-container"},
                     "repetition": {"@": "buttonList" }
@@ -36,8 +35,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
             },
             
             "button": {
-                "module": "montage/ui/button.reel",
-                "name": "Button",
+                "prototype": "montage/ui/button.reel",
                 "properties": {
                     "element": {"#": "button" },
                     "label": " "
@@ -64,7 +62,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
     </script>
 </head>
 <body>
-<div id="toolbar-container" class="toolbar-container">
+<div data-montage-id="toolbar-container" class="toolbar-container">
     <ul data-montage-id="repetition">
         <li><button data-montage-id="button" class="toolbar-button"></button></li>
     </ul>

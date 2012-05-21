@@ -14,6 +14,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "prototype" : "js/panels/css-panel/style-sheets-view.reel",
                 "properties" : {
                     "element" : {"#" : "style-sheets-view-container"},
+                    "toolbar" : {"@": "toolbar"},
                     "styleSheetList" : {"@" : "styleSheetList"}
                 }
             },
@@ -47,29 +48,30 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                     }
                 }
             },
-            "noDocumentCondition": {
+            "documentLoaded": {
                 "prototype": "montage/ui/condition.reel",
                 "properties": {
-                    "element": {"#": "no-document-message" }
+                    "element": {"#": "style-sheets-toolbar-container" },
+                    "removalStrategy": "hide"
                 },
                 "bindings": {
                     "condition": {
                         "boundObject": {"@": "owner" },
-                        "boundObjectPropertyPath": "styleSheets.count()",
-                        "boundValueMutator": {"->": {"arguments": ["val"], "body": "return !val;"}},
+                        "boundObjectPropertyPath": "documentLoaded",
                         "oneway": true
                     }
                 }
             },
-            "showToolbarCondition": {
+            "hasSheets": {
                 "prototype": "montage/ui/condition.reel",
                 "properties": {
-                    "element": {"#": "style-sheets-toolbar-container" }
+                    "element": {"#": "no-sheets-message" }
                 },
                 "bindings" : {
                     "condition": {
                         "boundObject": {"@": "owner"},
                         "boundObjectPropertyPath": "styleSheets.count()",
+                        "boundValueMutator": {"->": {"arguments": ["val"], "body": "return !val;"}},
                         "oneway": true
                     }
                 }
@@ -113,7 +115,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </head>
 <body>
 <div data-montage-id="style-sheets-view-container" class="style-sheets-view-container">
-    <h4 data-montage-id="no-document-message" class="panel-message">No style sheets to display.</h4>
+    <h4 data-montage-id="no-sheets-message" class="panel-message">No style sheets to display.</h4>
     <ul data-montage-id="sheet-list" class="sheet-list">
         <li><div data-montage-id="sheet-item"></div></li>
     </ul>

@@ -20,7 +20,7 @@ exports.Toolbar = Montage.create(Component, {
         },
         set: function(btns) {
             this._buttons = btns;
-            this._needsButtonProperties = true;
+            this._needsButtonProperties = this.needsDraw = true;;
         }
     },
 

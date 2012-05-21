@@ -8,7 +8,7 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
 exports.StyleSheetsView = Montage.create(Component, {
-    noDocumentCondition  : { value: true },
+    documentLoaded       : { value: false },
     showToolbar          : { value: false },
     stylesController     : { value: null },
     styleSheets          : { value: [] },
@@ -16,6 +16,22 @@ exports.StyleSheetsView = Montage.create(Component, {
     _needsScroll         : { value: false },
     documentNameLabel    : { value: null },
     noDocumentLabelClass : { value: "no-document" },
+
+    _activeDocument: {
+        value: null
+    },
+    activeDocument : {
+        get: function() {
+            return this._activeDocument;
+        },
+        set: function(value) {
+            if(value === this._activeDocument) { return;}
+
+            this.documentLoaded = !!value;
+
+            this._activeDocument = value;
+        }
+    },
 
     _documentName : { value: null },
     documentName : {
@@ -98,6 +114,12 @@ exports.StyleSheetsView = Montage.create(Component, {
         value: function(e) {
             this.documentName = this.stylesController.activeDocument.name;
             this.styleSheets = this.stylesController.userStyleSheets;
+
+            Object.defineBinding(this, 'activeDocument', {
+                'boundObject': this.stylesController,
+                'boundObjectPropertyPath': 'activeDocument',
+                'oneway': true
+            });
 
             Object.defineBinding(this, 'defaultStyleSheet', {
                 'boundObject': this.stylesController,
