@@ -177,16 +177,6 @@ exports.StylesViewMediator = Montage.create(Component, {
                 return false;
             }
 
-            ///// Auto-fill units if not provided and units
-            ///// not previously stored
-            units = style.getUnits(value);
-            if(style.units && units === null && parseInt(value)) {
-                value += style.units;
-                style.valueField.value = value;
-            } else if (value !== '0') {
-                style.units = units;
-            }
-
             ///// update value
             browserValue = this.stylesController.setStyle(rule, property, value);
             style.browserValue = browserValue;

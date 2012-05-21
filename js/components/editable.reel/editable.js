@@ -195,7 +195,6 @@ exports.Editable = Montage.create(Component, {
     handleKeydown : {
         value : function(e) {
             var k = e.keyCode;
-            console.log("editable - keycode", k);
         }
     },
     

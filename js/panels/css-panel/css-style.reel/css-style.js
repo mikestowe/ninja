@@ -15,6 +15,7 @@ exports.CssStyle = Montage.create(Component, {
     invalidStyleClass : { value: "style-item-invalid" },
     emptyStyleClass   : { value: "empty-css-style" },
     source            : { value: null },
+    units             : { value: null },
 
     propertyText : {
         value: "property",
@@ -292,7 +293,17 @@ exports.CssStyle = Montage.create(Component, {
         value: function(e) {
             var property    = this.propertyField.value,
                 value       = this.valueField.value,
-                rule        = this.getRule();
+                rule        = this.getRule(),
+                units;
+
+            ///// Auto-fill units if not provided and units
+            ///// not previously stored
+            units = this.getUnits(value);
+            if(this.units && units === null && parseInt(value)) {
+                value += this.units;
+            } else if (value !== '0') {
+                this.units = units;
+            }
 
             this.valueText = value;
 
