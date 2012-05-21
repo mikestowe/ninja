@@ -62,10 +62,12 @@ exports.StyleSheetsView = Montage.create(Component, {
 
             if(this.styleSheetList) {
                 sheetComponent = this.styleSheetList.childComponents[this.styleSheets.indexOf(sheet)];
-                sheetComponent.default = true;
-                if(this._defaultStyleSheet) {
-                    oldDefaultSheet = this.styleSheetList.childComponents[this.styleSheets.indexOf(this._defaultStyleSheet)];
-                    oldDefaultSheet.default = false;
+                if(sheetComponent) {
+                    sheetComponent.default = true;
+                    if(this._defaultStyleSheet) {
+                        oldDefaultSheet = this.styleSheetList.childComponents[this.styleSheets.indexOf(this._defaultStyleSheet)];
+                        oldDefaultSheet.default = false;
+                    }
                 }
             }
 
