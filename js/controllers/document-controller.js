@@ -311,7 +311,6 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             this.activeDocument.model.file.name=filename;
             this.activeDocument.model.file.uri=fileUri;
             this.activeDocument.model.save();
-            //
         }
     },
 
