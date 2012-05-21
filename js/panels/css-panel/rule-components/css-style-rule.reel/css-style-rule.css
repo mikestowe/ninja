@@ -30,13 +30,37 @@
     right: 8px;
     text-decoration: none;
 }
+
+/* -------------------
+   Selector Styles
+------------------ */
+
 .css-style-rule-item .nj-css-selector {
-    position: relative;
     border: 1px solid rgba(0,0,0,0);
+    display: inline-block;
+    font-weight: bold;
+    padding: 0 2px;
+    position: relative;
+    outline: none;
+
+}
+.nj-css-selector:after {
+    content: " {";
+    font-weight: normal;
+}
+.nj-css-selector.nj-editable-focus {
+    position: relative;
+}
+.nj-css-rule-list .nj-css-selector.nj-editable-focus:after {
+    position: absolute;
+}
+.css-style-rule-item .nj-css-selector:focus {
+    box-shadow: none;
 }
 .css-style-rule-item .nj-css-selector.editable {
+    background-color: #FFF;
     border: 1px solid #999;
-    border-radius: 3px;
+    border-radius: 2px;
     box-shadow: 1px 1px 1px #CCC;
     color: #333;
     display: inline-block;
@@ -56,8 +80,8 @@
    Unapplied Rule
 ------------------ */
 .unapplied-css-rule {
-    opacity: .8;
-    background-color: #f3f3f3;
+    /*opacity: .8;*/
+    /*background-color: #f3f3f3;*/
 }
 .unapplied-css-rule .style-rule-heading {
     background-repeat: no-repeat;

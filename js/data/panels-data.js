@@ -72,18 +72,6 @@ exports.PanelsData = Montage.create(Montage, {
 //        },
         {
             name: "CSS",
-            minHeight: 195,
-            height: 195,
-            maxHeight: null,
-            flexible: true,
-            scrollable: true,
-            collapsed: true,
-            open: true,
-            modulePath: "js/panels/CSSPanel/CSSPanelBase.reel",
-            moduleName: "CSSPanelBase"
-        },
-        {
-            name: "CSSPanel",
             height: 200,
             minHeight: 200,
             maxHeight: null,
