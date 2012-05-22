@@ -53,17 +53,17 @@ exports.StylesViewDelegate = Montage.create(Component, {
                 return false;
             }
 
-            if(!ruleComponent.firstChangeHappened) {
-                var lastClass = newSelector.substring(newSelector.lastIndexOf('.')+1);
+            if(ruleComponent.addClassNameOnChange) {
+                var lastClass = this._getClassNameFromSelector(newSelector);
 
-                if(lastClass !== newSelector) {
+                if(lastClass) {
                     ///// Add the generated class to each element in selection
                     ///// and check whether it applies to the element
                     this.ruleListContainer.displayedList.selection.forEach(function(el) {
                         this.stylesController.addClass(el, lastClass);
                     },this);
                 }
-                ruleComponent.firstChangeHappened = true;
+                ruleComponent.addClassNameOnChange = false;
             }
 
             rule.selectorText = newSelector;
@@ -73,6 +73,13 @@ exports.StylesViewDelegate = Montage.create(Component, {
             }, this);
 
             this._dispatchChange();
+        }
+    },
+    _getClassNameFromSelector : {
+        value: function(selectorText) {
+            var results = /.*\.([A-Za-z0-9_-]+)\:?[A-Za-z0-9_"=-]*$/.exec(selectorText);
+
+            return (results) ? results[1] : null;
         }
     },
 
@@ -249,6 +256,9 @@ exports.StylesViewDelegate = Montage.create(Component, {
             ///// Add rule directly to the rule list
             this.ruleListContainer.displayedList.component.addRule(newRule, null, applies, function(ruleComponent) {
                 var rC = ruleComponent;
+
+                rC.addClassNameOnChange = true;
+
                 setTimeout(function() {
                     rC.selectorField.start();
                 },50);

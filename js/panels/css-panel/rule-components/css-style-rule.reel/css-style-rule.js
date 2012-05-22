@@ -8,6 +8,9 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
 exports.CssStyleRule = Montage.create(Component, {
+    addClassNameOnChange : {
+        value: null
+    },
     unappliedClass : {
         value: 'unapplied-css-rule'
     },
