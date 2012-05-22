@@ -147,9 +147,10 @@ exports.HtmlDocument = Montage.create(Component, {
             this.model.userContentTop = this.application.ninja.stage._userContentTop;
 
 
-            // Serialize the selection
+            // Serialize the selection, the container and grid
             //TODO: Move this property to the design view class
             this.model.selection = this.application.ninja.selectedElements.slice(0);
+            this.model.selectionContainer = this.application.ninja.currentSelectedContainer;
             this.draw3DGrid = this.application.ninja.appModel.show3dGrid;
 
             // Serialize the undo
@@ -177,7 +178,7 @@ exports.HtmlDocument = Montage.create(Component, {
 			
 			//TODO: Move this property to the design view class
             this.application.ninja.selectedElements = this.model.selection.slice(0);
-
+//            this.application.ninja.currentSelectedContainer = this.model.selectionContainer;
             this.application.ninja.appModel.show3dGrid = this.draw3DGrid;
 
             // Serialize the undo

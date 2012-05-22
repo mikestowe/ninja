@@ -500,7 +500,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             if(currentDocument) {
                 if(currentDocument.currentView === "design") {
                     currentDocument.serializeDocument();
-                    this.application.ninja.selectionController._selectionContainer = null;
+                    this.application.ninja._currentSelectedContainer = this.application.ninja.selectionController._selectionContainer = null;
                     currentDocument.model.views.design.propertiesPanel.clear();
                 }
 
