@@ -100,7 +100,7 @@ exports.BaseDocumentModel = Montage.create(Component, {
         				}
 	        			break;
     	    		default:
-        				if (this.template.type === 'banner' || this.template.type === 'animation') {
+        				if (this.template && (this.template.type === 'banner' || this.template.type === 'animation')) {
         					window.open('/js/document/templates/preview/banner.html?width='+this.template.size.width+'&height='+this.template.size.height+'&url='+this.url);
         				} else {
         					window.open(this.url);

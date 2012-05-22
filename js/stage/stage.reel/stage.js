@@ -468,26 +468,19 @@ exports.Stage = Montage.create(Component, {
      */
     handleScroll: {
         value: function() {
-             // TODO: Remove marker for old template: NINJA-STAGE-REWORK
-            if(this.application.ninja.currentDocument.documentRoot.id === "UserContent") {
-                this._scrollLeft = this._iframeContainer.scrollLeft;
-                this._scrollTop = this._iframeContainer.scrollTop;
 
-                this.userContentLeft = this._documentOffsetLeft - this._scrollLeft + this._userContentBorder;
-                this.userContentTop = this._documentOffsetTop - this._scrollTop + this._userContentBorder;
-            } else {
-                this._scrollLeft = this.application.ninja.currentDocument.model.views.design.document.body.scrollLeft;
-                this._scrollTop = this.application.ninja.currentDocument.model.views.design.document.body.scrollTop;
+            this._scrollLeft = this.application.ninja.currentDocument.model.views.design.document.body.scrollLeft;
+            this._scrollTop = this.application.ninja.currentDocument.model.views.design.document.body.scrollTop;
 
-                this.userContentLeft = this._documentOffsetLeft - this._scrollLeft;
-                this.userContentTop = this._documentOffsetTop - this._scrollTop;
+            this.userContentLeft = this._documentOffsetLeft - this._scrollLeft;
+            this.userContentTop = this._documentOffsetTop - this._scrollTop;
 
-                // TODO - scroll events are not dependable.  We may need to use a timer to simulate
-                // scrollBegin and scrollEnd. For now, the Pan Tool will keep track of the stage's scroll values
-                // on mouse down.
-//                this._maxHorizontalScroll = this.application.ninja.currentDocument.documentRoot.scrollWidth - this._canvas.width - 11;
-//                this._maxVerticalScroll = this.application.ninja.currentDocument.documentRoot.scrollHeight - this._canvas.height - 11;
-            }
+            // TODO - scroll events are not dependable.  We may need to use a timer to simulate
+            // scrollBegin and scrollEnd. For now, the Pan Tool will keep track of the stage's scroll values
+            // on mouse down.
+            // this._maxHorizontalScroll = this.application.ninja.currentDocument.documentRoot.scrollWidth - this._canvas.width - 11;
+            // this._maxVerticalScroll = this.application.ninja.currentDocument.documentRoot.scrollHeight - this._canvas.height - 11;
+
 
             // Need to clear the snap cache and set up the drag plane
             //snapManager.setupDragPlaneFromPlane( workingPlane );
@@ -1012,5 +1005,47 @@ exports.Stage = Montage.create(Component, {
            this._iframeContainer.scrollTop = this.application.ninja.documentController.activeDocument.savedTopScroll;
            this._scrollTop = this.application.ninja.documentController.activeDocument.savedTopScroll;
        }
-   }
+   },
+
+    showRulers:{
+        value:function(){
+            this.application.ninja.rulerTop.style.display = "block";
+            this.application.ninja.rulerLeft.style.display = "block";
+        }
+    },
+    hideRulers:{
+        value:function(){
+            this.application.ninja.rulerTop.style.display = "none";
+            this.application.ninja.rulerLeft.style.display = "none";
+        }
+    },
+    showCodeViewBar:{
+        value:function(isCodeView){
+            if(isCodeView === true) {
+                this.application.ninja.editorViewOptions.element.style.display = "block";
+                this.application.ninja.documentBar.element.style.display = "none";
+            } else {
+                this.application.ninja.documentBar.element.style.display = "block";
+                this.application.ninja.editorViewOptions.element.style.display = "none";
+            }
+        }
+    },
+
+    collapseAllPanels:{
+        value:function(){
+            this.application.ninja.panelSplitter.collapse();
+            this.application.ninja.timelineSplitter.collapse();
+            this.application.ninja.toolsSplitter.collapse();
+            this.application.ninja.optionsSplitter.collapse();
+        }
+    },
+    restoreAllPanels:{
+        value:function(){
+            this.application.ninja.panelSplitter.restore();
+            this.application.ninja.timelineSplitter.restore();
+            this.application.ninja.toolsSplitter.restore();
+            this.application.ninja.optionsSplitter.restore();
+        }
+    }
+
 });

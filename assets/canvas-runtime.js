@@ -8,9 +8,37 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var NinjaCvsRt =  NinjaCvsRt || {};
 
 ///////////////////////////////////////////////////////////////////////
+//Loading webGL/canvas data on window load
+window.addEventListener('load', loadCanvasData, false);
+//Load data function (on document loaded)
+function loadCanvasData (e) {
+	//Cleaning up events
+	window.removeEventListener('load', loadCanvasData, false);
+    //Getting tag with data, MUST contain attribute
+    var xhr, tag = document.querySelectorAll(['script[data-ninja-canvas-lib]'])[0];
+   	//Checking for data to be external file
+   	if (tag.getAttribute('data-ninja-canvas-json') !== null) {
+   		//Loading JSON data
+   		xhr = new XMLHttpRequest();
+        xhr.open("GET", tag.getAttribute('data-ninja-canvas-json'), false);
+        xhr.send();
+		//Checking for data
+       	if (xhr.readyState === 4) {
+       		//Calling method to initialize all webGL/canvas(es)
+   			NinjaCvsRt.initWebGl(document.body, tag.getAttribute('data-ninja-canvas-libpath'), xhr.response);
+       	} else {
+       		//TODO: Add error for users
+       	}
+   	} else {//Data in document itself
+   		//Calling method to initialize all webGL/canvas(es)
+   		NinjaCvsRt.initWebGl(document.body, tag.getAttribute('data-ninja-canvas-libpath'), document.querySelectorAll(['script[data-ninja-canvas]'])[0].innerHTML);
+   	}
+}
+
+///////////////////////////////////////////////////////////////////////
 //Loading webGL/canvas data
-NinjaCvsRt.initWebGl = function (rootElement, directory) {
-	var cvsDataMngr, ninjaWebGlData = JSON.parse((document.querySelectorAll(['script[data-ninja-webgl]'])[0].innerHTML.replace('(', '')).replace(')', ''));
+NinjaCvsRt.initWebGl = function (rootElement, directory, data) {
+	var cvsDataMngr, ninjaWebGlData = JSON.parse((data.replace('(', '')).replace(')', ''));
 	if (ninjaWebGlData && ninjaWebGlData.data) {
 		for (var n=0; ninjaWebGlData.data[n]; n++) {
 			ninjaWebGlData.data[n] = unescape(ninjaWebGlData.data[n]);
@@ -878,11 +906,12 @@ NinjaCvsRt.RuntimeRectangle = Object.create(NinjaCvsRt.RuntimeGeomObj, {
                 inset = Math.ceil( lw ) - 0.5;
 
                 if(this._fillColor.gradientMode) {
-                    if(this._fillColor.gradientMode === "radial") {
-                        gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w, h)/2);
-                    } else {
-                        gradient = ctx.createLinearGradient(inset/2, h/2, w-inset, h/2);
-                    }
+					if(this._fillColor.gradientMode === "radial") {
+						var ww = w - 2*lw,  hh = h - 2*lw;
+						gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(ww, hh)/2);
+					} else {
+						gradient = ctx.createLinearGradient(inset, h/2, w-inset, h/2);
+					}
                     colors = this._fillColor.color;
 
                     len = colors.length;
@@ -912,11 +941,10 @@ NinjaCvsRt.RuntimeRectangle = Object.create(NinjaCvsRt.RuntimeGeomObj, {
                 inset = Math.ceil( 0.5*lw ) - 0.5;
 
                 if(this._strokeColor.gradientMode) {
-                    if(this._strokeColor.gradientMode === "radial") {
-                        gradient = ctx.createRadialGradient(w/2, h/2, Math.min(h, w)/2-inset, w/2, h/2, Math.max(h, w)/2);
-                    } else {
-                        gradient = ctx.createLinearGradient(0, h/2, w, h/2);
-                    }
+					if(this._strokeColor.gradientMode === "radial")
+						gradient = ctx.createRadialGradient(w/2, h/2, 0,  w/2, h/2, Math.max(h, w)/2);
+					else
+						gradient = ctx.createLinearGradient(0, h/2, w, h/2);
                     colors = this._strokeColor.color;
 
                     len = colors.length;
@@ -1116,9 +1144,9 @@ NinjaCvsRt.RuntimeOval = Object.create(NinjaCvsRt.RuntimeGeomObj, {
                     if(this._fillColor.gradientMode) {
                         if(this._fillColor.gradientMode === "radial") {
                             gradient = ctx.createRadialGradient(xCtr, yCtr, 0,
-                                                                xCtr, yCtr, Math.max(this._width, this._height)/2);
+                                                                xCtr, yCtr, Math.max(this._width, this._height)/2 - lineWidth);
                         } else {
-                            gradient = ctx.createLinearGradient(lineWidth/2, this._height/2, this._width-lineWidth, this._height/2);
+                            gradient = ctx.createLinearGradient(lineWidth, this._height/2, this._width-lineWidth, this._height/2);
                         }
                         colors = this._fillColor.color;
 
@@ -1194,7 +1222,7 @@ NinjaCvsRt.RuntimeOval = Object.create(NinjaCvsRt.RuntimeGeomObj, {
                 if (this._strokeColor) {
                     if(this._strokeColor.gradientMode) {
                         if(this._strokeColor.gradientMode === "radial") {
-                            gradient = ctx.createRadialGradient(xCtr, yCtr, Math.min(xScale, yScale),
+                            gradient = ctx.createRadialGradient(xCtr, yCtr, 0,
                                                                 xCtr, yCtr, 0.5*Math.max(this._height, this._width));
                         } else {
                             gradient = ctx.createLinearGradient(0, this._height/2, this._width, this._height/2);
@@ -1456,6 +1484,8 @@ NinjaCvsRt.RuntimeRadialGradientMaterial = Object.create(NinjaCvsRt.RuntimeMater
     _colorStop3: { value: 0.6, writable: true },
     _colorStop4: { value: 1.0, writable: true },
 
+	_textureTransform: { value: [1,0,0,  0,1,0,  0,0,1], writable: true },
+
     init: {
         value: function(world) {
             var material = this._materialNode;
@@ -1477,6 +1507,8 @@ NinjaCvsRt.RuntimeRadialGradientMaterial = Object.create(NinjaCvsRt.RuntimeMater
                         this._shader["default"].u_colorStop3.set( [this._colorStop3] );
                         this._shader["default"].u_colorStop4.set( [this._colorStop4] );
 
+                        this._shader["default"].u_texTransform.set( this._textureTransform );
+
                         if (this._angle !== undefined)
                             this._shader["default"].u_cos_sin_angle.set([Math.cos(this._angle), Math.sin(this._angle)]);
                     }
@@ -1495,6 +1527,8 @@ NinjaCvsRt.RuntimeRadialGradientMaterial = Object.create(NinjaCvsRt.RuntimeMater
             this._colorStop2	= jObj.colorStop2;
             this._colorStop3	= jObj.colorStop3;
             this._colorStop4	= jObj.colorStop4;
+
+			this._textureTransform = jObj.textureTransform;
 
             if (this._angle !== undefined)
                 this._angle = jObj.angle;
