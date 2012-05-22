@@ -583,7 +583,7 @@ exports.IoMediator = Montage.create(Component, {
                 	cvsDataFileUrl = this.getNinjaPropUrlRedirect(cvsDataFilePath.split(this.application.ninja.coreIoApi.cloudData.root+'/')[1]),
                 	cvsDataFileCheck = this.application.ninja.coreIoApi.fileExists({uri: cvsDataFilePath}),
                 	//Setting the local path to the JSON file
-                	webgllibtag.setAttribute('data-ninja-canvas-json', cvsDataFileUrl);
+                	webgllibtag.setAttribute('data-ninja-canvas-json', this.application.ninja.coreIoApi.rootUrl+'/'+cvsDataFileUrl);
                 	webgllibtag.setAttribute('data-ninja-canvas-libpath', rdgeDirName);
                 	//
                 	if (cvsDataFileCheck.status === 404 || cvsDataFileCheck.status === 204) {
