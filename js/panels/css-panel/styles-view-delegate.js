@@ -78,7 +78,6 @@ exports.StylesViewDelegate = Montage.create(Component, {
     _getClassNameFromSelector : {
         value: function(selectorText) {
             var results = /.*\.([A-Za-z0-9_-]+)\:?[A-Za-z0-9_"=-]*$/.exec(selectorText);
-
             return (results) ? results[1] : null;
         }
     },
@@ -243,24 +242,16 @@ exports.StylesViewDelegate = Montage.create(Component, {
             ///// Create the rule with generated selector
             newRule = this.application.ninja.stylesController.addRule('.'+selector, ' { }');
 
-            ///// Add the generated class to each element in selection
-            ///// and check whether it applies to the element
-//            this.ruleListContainer.displayedList.selection.forEach(function(el) {
-//                this.stylesController.addClass(el, selector);
-//
-//                if(applies) {
-//                    applies = (this._doesSelectorTargetElement('.'+selector, el));
-//                }
-//            },this);
-
             ///// Add rule directly to the rule list
             this.ruleListContainer.displayedList.component.addRule(newRule, null, applies, function(ruleComponent) {
                 var rC = ruleComponent;
 
+                // TODO: use stop event to apply class to element
                 rC.addClassNameOnChange = true;
 
                 setTimeout(function() {
                     rC.selectorField.start();
+                    rC.selectorField._preEditValue = "";
                 },50);
 
             });
