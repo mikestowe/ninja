@@ -333,7 +333,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
             	webgldata = null;
             	//Checking for tags with webGL data
             	if (scripttags[w].getAttribute) {
-            		if (scripttags[w].getAttribute('data-ninja-webgl') !== null) {
+            		if (scripttags[w].getAttribute('data-ninja-canvas') !== null) {
             			//TODO: Add logic to handle more than one data tag
             			webgldata = JSON.parse((scripttags[w].innerHTML.replace("(", "")).replace(")", ""));
             		} else if (scripttags[w].getAttribute('data-ninja-canvas-json') !== null) {
