@@ -133,6 +133,20 @@ var Layer = exports.Layer = Montage.create(Component, {
     	}
     },
     
+    _stageElement: {
+    	value: null
+    },
+    
+    stageElement: {
+    	get: function() {
+    		return this._stageElement;
+    	},
+    	set: function(newVal) {
+    		this._stageElement = newVal;
+    		this.layerData.stageElement = newVal;
+    	}
+    },
+    
     
     _elementsList : {
     	value: []
@@ -398,6 +412,7 @@ var Layer = exports.Layer = Montage.create(Component, {
         	
             this.layerName = this.layerData.layerName;
             this.layerID = this.layerData.layerID;
+            this.stageElement = this.layerData.stageElement
             this.arrLayerStyles = this.layerData.arrLayerStyles;
             this.isMainCollapsed = this.layerData.isMainCollapsed;
             this.isPositionCollapsed = this.layerData.isPositionCollapsed;
@@ -485,19 +500,18 @@ var Layer = exports.Layer = Montage.create(Component, {
 			this.element.addEventListener("dragleave", this.handleDragleave.bind(this), false);
 			this.element.addEventListener("dragstart", this.handleDragstart.bind(this), false);
 			this.element.addEventListener("drop", this.handleDrop.bind(this), false);
-
-            this.eventManager.addEventListener("updatedID", this, false);
-			
-
-
         }
     },
     draw: {
     	value: function() {
-            if (this.isSelected) {
-            	this.element.classList.add("selected");
-            } else {
-            	this.element.classList.remove("selected");
+    		var boolHasClass = this.element.classList.contains("layerSelected");
+            if (this.isSelected && !boolHasClass) {
+            	//console.log('Layer.draw, adding selection for layer ', this.layerName)
+            	this.element.classList.add("layerSelected");
+            }
+			if (!this.isSelected && boolHasClass) {
+            	//console.log('Layer.draw, removing selection for layer ', this.layerName)
+            	this.element.classList.remove("layerSelected");
             }
     	}
     },
@@ -505,14 +519,6 @@ var Layer = exports.Layer = Montage.create(Component, {
     	value: function() {
     		// console.log("Layer.didDraw: Layer "+ this.layerID );
     		if (this._isFirstDraw === true) {
-    			if (this.isSelected === true) {
-    				if (this.application.ninja.currentDocument._uuid === this._docUUID) {
-		    			// Once we're done drawing the first time we need to tell the TimelinePanel if
-		    			// this layer is supposed to be selected.
-		    			//console.log('layerName ' +  this.layerName);
-		    			this.parentComponent.parentComponent.selectedLayerID = this.layerID;
-					}
-    			}
     			this._isFirstDraw = false;
     			this.layerData._isFirstDraw = false;
 	    		
@@ -520,7 +526,6 @@ var Layer = exports.Layer = Montage.create(Component, {
 					this.mainCollapser.myContent.style.height = "auto";
 					this.mainCollapser.myContent.classList.remove(this.mainCollapser.collapsedClass);
 					this.mainCollapser.clicker.classList.remove(this.mainCollapser.collapsedClass);
-
 	    		}
 	    		if (this.isPositionCollapsed === false) {
 					this.positionCollapser.myContent.style.height = "auto";
@@ -534,9 +539,6 @@ var Layer = exports.Layer = Montage.create(Component, {
 	    		}
     			
     		}
-    		
-
-    		
     	}
     },
 	/* End: Draw cycle */
@@ -674,7 +676,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 			this.dynamicLayerName.value = this._layerEditable.value;
 			this.needsDraw = true;
 			this.application.ninja.documentController.activeDocument.needsSave = true;
-            this.layerData.elementsList[0].setAttribute("id",this.dynamicLayerName.value);
+            this.layerData.stageElement.setAttribute("id",this.dynamicLayerName.value);
 		}
 	},
 	handleAddStyleClick: {
@@ -786,7 +788,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 	},
 	handleDragstart: {
 		value: function(event) {
-			this.parentComponent.parentComponent.dragLayerID = this.layerID;
+			//this.parentComponent.parentComponent.dragLayerID = this.layerID;
             event.dataTransfer.setData('Text', 'Layer');
             this.parentComponent.parentComponent.draggingType = "layer";
 		}
@@ -847,23 +849,6 @@ var Layer = exports.Layer = Montage.create(Component, {
 			}
     	}
     },
-
-    handleUpdatedID:{
-        value:function(event){
-            var i= this.application.ninja.timeline.arrLayers.length;
-            if(event.detail.id){
-                for(var k=0;k<i;k++){
-                    if(this.application.ninja.timeline.arrLayers[k].layerData.layerID=== this.application.ninja.timeline.currentLayerSelected.layerData.layerID){
-                        this.application.ninja.timeline.currentLayerSelected.layerData.layerName = event.detail.id;
-                        this.application.ninja.timeline.triggerLayerBinding(k);
-                        this.needsDraw=true;
-                    }
-                }
-
-            }
-        }
-    }
-
 	/* End: Logging routines */
 
 });

@@ -71,26 +71,27 @@
 }
 
 /******************************************/
-/* line 77, ../scss/Layer.scss */
-.container-layer {
+/* line 78, ../scss/Layer.scss */
+.container-layer,
+.container-layer.selected {
   background-color: #474747;
   color: white;
   font-size: 12px;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
 }
 
-/* line 83, ../scss/Layer.scss */
+/* line 84, ../scss/Layer.scss */
 .selected .container-layer {
   background-color: #474747;
 }
 
-/* line 86, ../scss/Layer.scss */
+/* line 87, ../scss/Layer.scss */
 .selected .container-layer .label-layer {
   background-color: #b2b2b2;
   color: #242424;
 }
 
-/* line 91, ../scss/Layer.scss */
+/* line 92, ../scss/Layer.scss */
 .userlayers .collapsible-label {
   display: block;
   height: 21px;
@@ -103,32 +104,32 @@
   text-overflow: ellipsis;
 }
 
-/* line 103, ../scss/Layer.scss */
+/* line 104, ../scss/Layer.scss */
 .userlayers .layer-tag {
   position: absolute;
   top: 3px;
   left: 20px;
 }
 
-/* line 110, ../scss/Layer.scss */
+/* line 111, ../scss/Layer.scss */
 .layerSelected .label-layer {
   background-color: #b2b2b2;
   color: #242424;
 }
 
-/* line 114, ../scss/Layer.scss */
+/* line 115, ../scss/Layer.scss */
 .content-layer {
   background-color: #474747;
   color: white;
 }
 
-/* line 118, ../scss/Layer.scss */
+/* line 119, ../scss/Layer.scss */
 .content-layer .collapsible-label {
   background-position: 14px 5px;
   border-width: 0px;
 }
 
-/* line 126, ../scss/Layer.scss */
+/* line 127, ../scss/Layer.scss */
 .label-layer,
 .label-position,
 .label-transform,
@@ -139,20 +140,20 @@
   cursor: pointer;
 }
 
-/* line 134, ../scss/Layer.scss */
+/* line 135, ../scss/Layer.scss */
 .content-layer .collapsible-label,
 .content-layer .collapsible-content,
 .content-layer .layer-tag {
   font-size: 11px;
 }
 
-/* line 141, ../scss/Layer.scss */
+/* line 142, ../scss/Layer.scss */
 .label-layer .collapsible-label br,
 .content-style .editable br {
   display: none;
 }
 
-/* line 145, ../scss/Layer.scss */
+/* line 146, ../scss/Layer.scss */
 .collapsible-clicker {
   position: absolute;
   width: 10px;
@@ -165,23 +166,23 @@
   background-repeat: no-repeat;
 }
 
-/* line 156, ../scss/Layer.scss */
+/* line 157, ../scss/Layer.scss */
 .collapsible-clicker.collapsible-collapsed {
   background-image: url(../images/icon-collapsed.png);
 }
 
-/* line 159, ../scss/Layer.scss */
+/* line 160, ../scss/Layer.scss */
 .collapsible-content .collapsible-clicker {
   left: 12px;
 }
 
-/* line 162, ../scss/Layer.scss */
+/* line 163, ../scss/Layer.scss */
 .container-layer .collapsible-content.collapsible-collapsed {
   height: 0px;
   overflow: hidden;
 }
 
-/* line 168, ../scss/Layer.scss */
+/* line 169, ../scss/Layer.scss */
 .label-layer .cssbutton,
 .label-style .cssbutton {
   width: 14px;
@@ -191,21 +192,21 @@
   background-repeat: no-repeat;
 }
 
-/* line 175, ../scss/Layer.scss */
+/* line 176, ../scss/Layer.scss */
 .label-layer .button-lock {
   background-image: url(../images/icon-lock.png);
   top: 3px;
   right: 27px;
 }
 
-/* line 180, ../scss/Layer.scss */
+/* line 181, ../scss/Layer.scss */
 .label-layer .button-visible {
   background-image: url(../images/icon-eye.png);
   top: 3px;
   right: 7px;
 }
 
-/* line 185, ../scss/Layer.scss */
+/* line 186, ../scss/Layer.scss */
 .label-style .button-add {
   background-image: url(../images/icon-plus.png);
   width: 15px;
@@ -214,7 +215,7 @@
   right: 11px;
 }
 
-/* line 192, ../scss/Layer.scss */
+/* line 193, ../scss/Layer.scss */
 .label-style .button-delete {
   background-image: url(../images/icon-minus.png);
   width: 15px;
@@ -223,28 +224,28 @@
   right: 31px;
 }
 
-/* line 199, ../scss/Layer.scss */
+/* line 200, ../scss/Layer.scss */
 .timeline-track .collapsible-content {
   position: relative;
 }
 
-/* line 202, ../scss/Layer.scss */
+/* line 203, ../scss/Layer.scss */
 .collapsible-content .layout-table {
   width: 99.9%;
 }
 
-/* line 205, ../scss/Layer.scss */
+/* line 206, ../scss/Layer.scss */
 .content-layer .collapsible-content {
   padding-left: 30px;
 }
 
-/* line 208, ../scss/Layer.scss */
+/* line 209, ../scss/Layer.scss */
 .collapsible-content .collapsible-content .layout-table .layout-row {
   height: 20px;
   overflow: hidden;
 }
 
-/* line 212, ../scss/Layer.scss */
+/* line 213, ../scss/Layer.scss */
 .collapsible-content .collapsible-content .layout-table .layout-row .layout-cell {
   width: 40%;
   height: 20px;
@@ -254,13 +255,13 @@
   overflow: hidden;
 }
 
-/* line 221, ../scss/Layer.scss */
+/* line 222, ../scss/Layer.scss */
 .collapsible-content .collapsible-content .container-row {
   border-bottom: 1px solid #505050;
   height: 20px;
 }
 
-/* line 227, ../scss/Layer.scss */
+/* line 228, ../scss/Layer.scss */
 .collapsible-content .collapsible-content .cell-property,
 .collapsible-content .collapsible-content .cell-value {
   width: 45%;
@@ -272,24 +273,24 @@
   line-height: 18px;
 }
 
-/* line 239, ../scss/Layer.scss */
+/* line 240, ../scss/Layer.scss */
 .collapsible-content .layout-table:first-child {
   border-top: 1px solid #505050;
 }
 
-/* line 243, ../scss/Layer.scss */
+/* line 244, ../scss/Layer.scss */
 .collapsible-content .hottextunit {
   width: auto;
 }
 
-/* line 246, ../scss/Layer.scss */
+/* line 247, ../scss/Layer.scss */
 .collapsible-transition {
   -webkit-transition-property: height;
   -webkit-transition-duration: 200ms;
   -webkit-transition-timing-function: ease-in;
 }
 
-/* line 254, ../scss/Layer.scss */
+/* line 255, ../scss/Layer.scss */
 .editable2 {
   height: 20px;
   background-color: #242424 !important;
@@ -301,29 +302,29 @@
   text-overflow: clip;
 }
 
-/* line 264, ../scss/Layer.scss */
+/* line 265, ../scss/Layer.scss */
 .editable2 br {
   display: inline;
 }
 
-/* line 268, ../scss/Layer.scss */
+/* line 269, ../scss/Layer.scss */
 .label-style .disabled {
   cursor: default;
 }
 
 /* styles elements */
-/* line 273, ../scss/Layer.scss */
+/* line 274, ../scss/Layer.scss */
 .content-style .item-template {
   display: none;
 }
 
-/* line 276, ../scss/Layer.scss */
+/* line 277, ../scss/Layer.scss */
 .content-style .layout-row.selected .layout-cell {
   background-color: #b2b2b2;
   color: #242424;
 }
 
-/* line 280, ../scss/Layer.scss */
+/* line 281, ../scss/Layer.scss */
 .style-row {
   height: 20px;
 }

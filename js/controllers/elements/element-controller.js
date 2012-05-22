@@ -11,13 +11,32 @@ exports.ElementController = Montage.create(Component, {
 
     addElement: {
         value: function(el, styles) {
+        	// Updated to use new methods in TimelinePanel. JR.
+        	var insertionIndex = this.application.ninja.timeline.getInsertionIndex();
+        	if (insertionIndex === false) {
+        		this.application.ninja.currentSelectedContainer.appendChild(el);
+        	} else {
+	        	if (insertionIndex === 0) {
+	        		this.application.ninja.currentSelectedContainer.appendChild(el);
+	        	} else {
+                    var element = this.application.ninja.timeline.arrLayers[insertionIndex].layerData.stageElement;
+                    element.parentNode.insertBefore(el, element.nextSibling);
+	        	}
+        	}
+        	
+            if(styles) {
+                this.application.ninja.stylesController.setElementStyles(el, styles);
+            }
+        	
+        	/*
+			// Old methods. Kept for reference. Delete if not needed. JR.
             if(this.application.ninja.timeline.currentLayerSelected) {
                 var selectedLayerIndex = this.application.ninja.timeline.getLayerIndexByID(this.application.ninja.timeline.currentLayerSelected.layerData.layerID);
 
                 if(selectedLayerIndex === 0) {
                     this.application.ninja.currentSelectedContainer.appendChild(el);
                 } else {
-                    var element = this.application.ninja.timeline.arrLayers[selectedLayerIndex].layerData.elementsList[0];
+                    var element = this.application.ninja.timeline.arrLayers[selectedLayerIndex].layerData.stageElement;
                     element.parentNode.insertBefore(el, element.nextSibling);
                 }
             } else {
@@ -27,6 +46,7 @@ exports.ElementController = Montage.create(Component, {
             if(styles) {
                 this.application.ninja.stylesController.setElementStyles(el, styles);
             }
+            */
         }
     },
 
