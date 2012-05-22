@@ -1468,8 +1468,8 @@ exports.PenTool = Montage.create(ShapeTool, {
                 }
                 this._isPickedEndPointInSelectPathMode = false; //only applies to the ENTRY_SELECT_PATH mode
 
-                this._subtool = this.SUBTOOL_NONE;
-                                //this.SUBTOOL_PENMINUS;
+                this.handlePenSubToolChange();
+                //this._subtool = this.SUBTOOL_NONE; //this.SUBTOOL_PENMINUS;
                 
                 if (this._trackMouseMoveWhenUp){
                     NJevent("enableStageMove");
@@ -1477,6 +1477,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                 this.eventManager.addEventListener("openDocument", this, false);
                 this.eventManager.addEventListener("switchDocument", this, false);
                 this.eventManager.addEventListener("closeDocument", this, false);
+                this.eventManager.addEventListener("penSubToolChange", this, false);
             } //if the pen tool was selected
             else {
                 if (this._trackMouseMoveWhenUp){
@@ -1489,10 +1490,36 @@ exports.PenTool = Montage.create(ShapeTool, {
                 this.eventManager.removeEventListener("openDocument", this, false);
                 this.eventManager.removeEventListener("switchDocument", this, false);
                 this.eventManager.removeEventListener("closeDocument", this, false);
+                this.eventManager.removeEventListener("penSubToolChange", this, false);
             } //if the pen tool was de-selected
         }
     },
 
+    handlePenSubToolChange: {
+        value: function() {
+            switch (this.options.selectedSubtool){
+                case "pen":
+                    this._subtool = this.SUBTOOL_NONE;
+                    console.log("Setting pen tool subtool to NONE");
+                    break;
+
+                case "penPlus":
+                    console.log("Setting pen tool subtool to PLUS");
+                    this._subtool = this.SUBTOOL_PENPLUS;
+                    break;
+
+                case "penMinus":
+                    console.log("Setting pen tool subtool to MINUS");
+                    this._subtool = this.SUBTOOL_PENMINUS;
+                    break;
+
+                default:
+                    console.log("Setting pen tool subtool to NONE");
+                    this._subtool = this.SUBTOOL_NONE;
+                    break;
+            }
+        }
+    },
     handleDelete:{
         value: function(event){
              //clear the selected subpath...the only new additions to this function w.r.t. ToolBase
