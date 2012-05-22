@@ -18,6 +18,8 @@ exports.MaterialsPopup = Montage.create(Component, {
         value: ""
     },
 
+	_useSelection: {  value: false,  enumerable: true },
+
 	captureAction: {
 		value:function(event) {
 			switch(event._currentTarget.label)
@@ -134,6 +136,11 @@ exports.MaterialsPopup = Montage.create(Component, {
 					var value = this.decodeValue( this._propTypes[index],  propValue );
 					this._material.setProperty( this._propNames[index],  value );
 				}
+
+				if (this._useSelection)
+				{
+					console.log( "apply to selection" );
+				}
 			}
 		}
 	},
@@ -224,6 +231,7 @@ exports.MaterialsPopup = Montage.create(Component, {
 			this._materialName = materialID;
 			if (useSelection)
 			{
+				this._useSelection = true;
 				var selection = this.application.ninja.selectedElements;
 				if (selection && (selection.length > 0))
 				{
@@ -236,6 +244,8 @@ exports.MaterialsPopup = Montage.create(Component, {
 			}
 			else
 			{
+				this._useSelection = false;
+
 				if(
 						(materialID ===  "BumpMetalMaterial")		||
 						(materialID ===  "DeformMaterial")			||
@@ -342,7 +352,7 @@ exports.MaterialsPopup = Montage.create(Component, {
 	{
 		value:  function( label,  color )
 		{
-            var css = 'rgba(' + color[0]*255 + ',' + color[1]*255 + ',' + color[2]*255 + ',' + color[3] + ')';
+            var css = 'rgba(' + Math.floor(color[0]*255) + ',' + Math.floor(color[1]*255) + ',' + Math.floor(color[2]*255) + ',' + color[3] + ')';
             var colorObj = this.application.ninja.colorController.getColorObjFromCss(css)
 			var obj =
 			{

@@ -180,6 +180,7 @@ var UberMaterial = function UberMaterial() {
     this.updateAmbientColor = function () {
         this._ambientColor = this._propValues['ambientColor'].slice(0);
         var material = this._materialNode;
+		console.log( "ambient color: " + this._ambientColor );
         if (material) {
             var technique = material.shaderProgram.defaultTechnique;
             technique.u_ambientColor.set(this._ambientColor);

@@ -180,14 +180,14 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
         
 		// create some lights
 		// light 1
-		this.light = RDGE.createLightNode("myLight");
-		this.light.setPosition([0,0,1.2]);
-		this.light.setDiffuseColor([0.75,0.9,1.0,1.0]);
+//		this.light = RDGE.createLightNode("myLight");
+//		this.light.setPosition([0,0,1.2]);
+//		this.light.setDiffuseColor([0.75,0.9,1.0,1.0]);
         
 		// light 2
-		this.light2 = RDGE.createLightNode("myLight2");
-		this.light2.setPosition([-0.5,0,1.2]);
-		this.light2.setDiffuseColor([1.0,0.9,0.75,1.0]);
+//		this.light2 = RDGE.createLightNode("myLight2");
+//		this.light2.setPosition([-0.5,0,1.2]);
+//		this.light2.setDiffuseColor([1.0,0.9,0.75,1.0]);
         
 		// create a light transform
 		var lightTr = RDGE.createTransformNode("lightTr");
@@ -196,8 +196,8 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 		lightTr.attachMaterial(RDGE.createMaterialNode("lights"));
         
 		// enable light channels 1, 2 - channel 0 is used by the default shader
-		lightTr.materialNode.enableLightChannel(1, this.light);
-		lightTr.materialNode.enableLightChannel(2, this.light2);
+//		lightTr.materialNode.enableLightChannel(1, this.light);
+//		lightTr.materialNode.enableLightChannel(2, this.light2);
      
 		// all added objects are parented to the light node
 		this._rootNode = lightTr;
@@ -225,8 +225,8 @@ var World = function GLWorld( canvas, use3D, preserveDrawingBuffer ) {
 		    RDGE.rdgeGlobalParameters.u_light0Pos.set([5 * Math.cos(this.elapsed), 5 * Math.sin(this.elapsed), 20]);
         
 			// orbit the light nodes around the boxes
-			this.light.setPosition([1.2*Math.cos(this.elapsed*2.0), 1.2*Math.sin(this.elapsed*2.0), 1.2*Math.cos(this.elapsed*2.0)]);
-			this.light2.setPosition([-1.2*Math.cos(this.elapsed*2.0), 1.2*Math.sin(this.elapsed*2.0), -1.2*Math.cos(this.elapsed)]);
+//			this.light.setPosition([1.2*Math.cos(this.elapsed*2.0), 1.2*Math.sin(this.elapsed*2.0), 1.2*Math.cos(this.elapsed*2.0)]);
+//			this.light2.setPosition([-1.2*Math.cos(this.elapsed*2.0), 1.2*Math.sin(this.elapsed*2.0), -1.2*Math.cos(this.elapsed)]);
 		}
         
 		this.updateMaterials( this.getGeomRoot(), this.elapsed );
