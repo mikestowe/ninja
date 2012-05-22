@@ -12,6 +12,7 @@ var LayerStyle = require("js/panels/Timeline/Style.reel").LayerStyle;
 var DynamicText = require("montage/ui/dynamic-text.reel").DynamicText;
 var defaultEventManager = require("montage/core/event/event-manager").defaultEventManager;
 var nj = require("js/lib/NJUtils").NJUtils;
+var ElementsMediator = require("js/mediators/element-mediator").ElementMediator;
 
 var Layer = exports.Layer = Montage.create(Component, {
 
@@ -162,7 +163,6 @@ var Layer = exports.Layer = Montage.create(Component, {
         		this._dtextPositionX = value;
         		this.layerData.dtextPositionX = value;
         	}
-            
         }
     },
     
@@ -487,11 +487,36 @@ var Layer = exports.Layer = Montage.create(Component, {
 			this.element.addEventListener("drop", this.handleDrop.bind(this), false);
 
             this.eventManager.addEventListener("updatedID", this, false);
-			
+            this.eventManager.addEventListener("elementChange",this,false);
 
+            this.leftControl.identifier = "left";
+            this.leftControl.addEventListener("changing",this,false);
+            this.leftControl.addEventListener("change",this,false);
+
+            this.topControl.identifier = "top";
+            this.topControl.addEventListener("changing",this,false);
+            this.topControl.addEventListener("change",this,false);
+
+            this.widthControl.identifier = "width";
+            this.widthControl.addEventListener("changing",this,false);
+            this.widthControl.addEventListener("change",this,false);
+
+            this.heightControl.identifier = "height";
+            this.heightControl.addEventListener("changing",this,false);
+            this.heightControl.addEventListener("change",this,false);
+
+            el=this.layerData.elementsList[0];
+
+            this.dtextPositionX = parseFloat(ElementsMediator.getProperty(el, "left"));
+            this.dtextPositionY = parseFloat(ElementsMediator.getProperty(el, "top"));
+            this.dtextScaleY = parseFloat(ElementsMediator.getProperty(el, "height"));
+            this.dtextScaleX= parseFloat(ElementsMediator.getProperty(el, "width"));
+
+//            this.eventManager.addEventListener("changing",this,false);
 
         }
     },
+
     draw: {
     	value: function() {
             if (this.isSelected) {
@@ -582,6 +607,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 			newStyle.ruleTweener = false;
 			newStyle.isSelected = false;
             this.arrLayerStyles.push(newStyle);
+            console.log(newStyle.editorValue)
 
 			// Set up the event info and dispatch the event
             this.styleCounter += 1;
@@ -589,6 +615,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 			defaultEventManager.dispatchEvent(newEvent);
 		}
 	},
+
 	deleteStyle : {
 		value: function() {
 			var newEvent = document.createEvent("CustomEvent"),
@@ -816,6 +843,100 @@ var Layer = exports.Layer = Montage.create(Component, {
 			return false;
 		}
 	},
+
+    handleLeftChange:{
+        value:function(){
+            this.application.ninja.elementMediator.setProperty(this.layerData.elementsList, "left", [this.dtextPositionX + "px"] , "Change", "timeline");
+        }
+    },
+
+    handleTopChange:{
+        value:function(){
+            this.application.ninja.elementMediator.setProperty(this.layerData.elementsList, "top", [this.dtextPositionY + "px"] , "Change", "timeline");
+        }
+    },
+
+    handleWidthChange:{
+        value:function(){
+            this.application.ninja.elementMediator.setProperty(this.layerData.elementsList, "width", [this.dtextScaleX + "px"] , "Change", "timeline");
+        }
+    },
+
+    handleHeightChange:{
+        value:function(){
+            this.application.ninja.elementMediator.setProperty(this.layerData.elementsList, "height", [this.dtextScaleY + "px"] , "Change", "timeline");
+        }
+    },
+
+    handleLeftChanging:{
+        value:function(){
+            this.application.ninja.elementMediator.setProperty(this.layerData.elementsList, "left", [this.dtextPositionX + "px"] , "Changing", "timeline");
+        }
+    },
+
+    handleTopChanging:{
+        value:function(){
+            this.application.ninja.elementMediator.setProperty(this.layerData.elementsList, "top", [this.dtextPositionY + "px"] , "Changing", "timeline");
+        }
+    },
+
+    handleWidthChanging:{
+        value:function(){
+            this.application.ninja.elementMediator.setProperty(this.layerData.elementsList, "width", [this.dtextScaleX + "px"] , "Changing", "timeline");
+        }
+    },
+
+    handleHeightChanging:{
+        value:function(){
+            this.application.ninja.elementMediator.setProperty(this.layerData.elementsList, "height", [this.dtextScaleY + "px"] , "Changing", "timeline");
+        }
+    },
+
+
+    handleElementChange:{
+        value:function(event){
+            var el = this.layerData.elementsList[0];
+            var length = this.arrLayerStyles.length , i;
+
+            if(event.detail.source && event.detail.source!== "timeline"){
+                this.dtextPositionX = parseFloat(ElementsMediator.getProperty(el, "left"));
+                this.dtextPositionY = parseFloat(ElementsMediator.getProperty(el, "top"));
+                this.dtextScaleY = parseFloat(ElementsMediator.getProperty(el, "height"));
+                this.dtextScaleX= parseFloat(ElementsMediator.getProperty(el, "width"));
+
+                for(i=0; i<length; i++){
+                    if(event.detail.data.prop === this.arrLayerStyles[i].editorProperty){
+                        this.arrLayerStyles[i].editorValue = parseFloat(ElementsMediator.getProperty(el, this.arrLayerStyles[i].editorProperty));
+                        break;
+                    }
+                }
+            }
+
+        }
+    },
+
+    handleUpdatedID:{
+        value:function(event){
+            var i= this.application.ninja.timeline.arrLayers.length;
+            if(event.detail.id){
+                for(var k=0;k<i;k++){
+                    if(this.application.ninja.timeline.arrLayers[k].layerData.layerID=== this.application.ninja.timeline.currentLayerSelected.layerData.layerID){
+                        this.application.ninja.timeline.currentLayerSelected.layerData.layerName = event.detail.id;
+                        this.application.ninja.timeline.triggerLayerBinding(k);
+                        this.needsDraw=true;
+                    }
+                }
+
+            }
+        }
+    },
+
+    handleChanging:{
+        value:function(){
+            console.log("in layer.js")
+        }
+    },
+
 	/* End: Event handlers */
 	
 	/* Begin: Logging routines */
@@ -846,23 +967,10 @@ var Layer = exports.Layer = Montage.create(Component, {
 				return e.stack.split("at")[3].split(":")[2];
 			}
     	}
-    },
-
-    handleUpdatedID:{
-        value:function(event){
-            var i= this.application.ninja.timeline.arrLayers.length;
-            if(event.detail.id){
-                for(var k=0;k<i;k++){
-                    if(this.application.ninja.timeline.arrLayers[k].layerData.layerID=== this.application.ninja.timeline.currentLayerSelected.layerData.layerID){
-                        this.application.ninja.timeline.currentLayerSelected.layerData.layerName = event.detail.id;
-                        this.application.ninja.timeline.triggerLayerBinding(k);
-                        this.needsDraw=true;
-                    }
-                }
-
-            }
-        }
     }
+
+
+
 
 	/* End: Logging routines */
 

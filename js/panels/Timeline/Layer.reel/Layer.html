@@ -21,7 +21,12 @@
 						"positionCollapser" : {"@" : "positionCollapser"},
 						"styleCollapser" : {"@" : "styleCollapser"},
 						"clickerMain" : {"#" : "clicker-main"},
-						"myLabel" : {"#" : "myLabel"}
+						"myLabel" : {"#" : "myLabel"},
+                        "leftControl": {"@" : "dtext_position_x"},
+                        "topControl": {"@" : "dtext_position_y"},
+                        "widthControl": {"@" : "dtext_scale_x"},
+                        "heightControl": {"@" : "dtext_scale_y"},
+                        "styleType":{"@" : "style"}
                     }
                 },
 	            "dtext1" : {
@@ -147,10 +152,10 @@
                     "prototype": "js/components/hottextunit.reel[HotTextUnit]",
             	    "properties": {
             	        "element": {"#": "scale-x"},
-            	        "maxValue" : 100,
-                        "minValue" : 0,
-                        "acceptableUnits" : "%",
-                        "units" : "%",
+            	        "maxValue" : 100000,
+                        "minValue" : -100000,
+                        "acceptableUnits" : "px",
+                        "units" : "px",
                         "value" : 0
             	    },
 	                "bindings": {
@@ -165,10 +170,10 @@
                     "prototype": "js/components/hottextunit.reel[HotTextUnit]",
             	    "properties": {
             	        "element": {"#": "scale-y"},
-            	        "maxValue" : 100,
-                        "minValue" : 0,
-                        "acceptableUnits" : "%",
-                        "units" : "%",
+            	        "maxValue" : 100000,
+                        "minValue" : -100000,
+                        "acceptableUnits" : "px",
+                        "units" : "px",
                         "value" : 0
             	    },
 	                "bindings": {

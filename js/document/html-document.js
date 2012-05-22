@@ -82,7 +82,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
         }
     },
 
-
     // GETTERS / SETTERS
 
     codeViewDocument:{

@@ -221,7 +221,6 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 		value: function(event) {
 			// this should be handled via binding, but somehow is not. Setting manually for now.
 		    this.editorProperty = this.myHintable.value;
-		    
 		    // Change views.
 		    this.whichView = "propval";
 		}
@@ -303,6 +302,9 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 				this.valueEditorHottext.units = tweenable.units;
 				this.valueEditorHottext.minValue = tweenable.min;
 				this.valueEditorHottext.maxValue = tweenable.max;
+                this.valueEditorHottext.identifier="hottext"
+                this.valueEditorHottext.addEventListener("change",this,false);
+                this.valueEditorHottext.addEventListener("changing",this,false);
 				this.valueEditorHottext.needsDraw = true;
 			} else if (tweenable.tweener === "color" ) {
 				this.editorInputContainer.classList.add("hidden");
@@ -612,6 +614,21 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
     		}
     	]
     	
+    },
+
+    handleHottextChange:{
+        value:function(){
+            debugger;
+            this.application.ninja.elementMediator.setProperty(this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.elementsList, this.editorProperty, [this.editorValue + "%"] , "Change", "timeline");
+        }
+    },
+
+    handleHottextChanging:{
+        value:function(){
+
+           debugger;
+           this.application.ninja.elementMediator.setProperty(this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.elementsList, this.editorProperty, [this.editorValue + "%"] , "Changing", "timeline");
+        }
     },
 	
 	/* Begin: Logging routines */
