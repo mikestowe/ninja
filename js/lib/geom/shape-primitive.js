@@ -49,7 +49,7 @@ ShapePrimitive.create = function(coords,  normals,  uvs,  indices, primType, ver
 	return prim;
 };
 
-ShapePrimitive.getMeshBounds = function( verts,  nVerts )
+ShapePrimitive.getBounds = function( prim )
 {
 	if (!verts || (nVerts <= 0))  return null;
 
@@ -76,6 +76,31 @@ ShapePrimitive.refineMesh = function( verts, norms, uvs, indices, nVertices,  pa
 	var oldVrtCount = nVertices;
 
 	// get the param range
+	var verts = prim.bufferStreams[0];
+	var nVerts = verts.length;
+	var xMin = verts[0],  xMax = verts[0],
+		yMin = verts[1],  yMax = verts[1],
+		zMin = verts[2],  zMax = verts[2];
+
+	for (var index=3;  index<verts.length;  )
+	{
+		if (verts[index] < xMin)  xMin = verts[index];
+		else if (verts[index] > xMax)  xMax = verts[index];
+
+		index++;
+		if (verts[index] < yMin)  yMin = verts[index];
+		else if (verts[index] > yMax)  yMax = verts[index];
+
+		index++;
+		if (verts[index] < zMin)  zMin = verts[index];
+		else if (verts[index] > zMax)  zMax = verts[index];
+
+		index++;
+	}
+
+	return [xMin, yMin, zMin,  xMax, yMax, zMax];
+};
+
 	var pUMin = paramRange[0],  pVMin = paramRange[1],
 		pUMax = paramRange[2],  pVMax = paramRange[3];
 	var iTriangle = 0;

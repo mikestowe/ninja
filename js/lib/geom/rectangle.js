@@ -59,8 +59,6 @@ exports.Rectangle = Object.create(GeomObj, {
                 this._strokeStyle = strokeStyle;
 
 			this._matrix = Matrix.I(4);
-			//this._matrix[12] = xoffset;
-			//this._matrix[13] = yoffset;
             }
 
             // the overall radius includes the fill and the stroke.  separate the two based on the stroke width
@@ -127,7 +125,6 @@ exports.Rectangle = Object.create(GeomObj, {
             this._fillMaterial = m;
         }
     },
-
 	///////////////////////////////////////////////////////////////////////
     // update the "color of the material
     getFillColor: {
@@ -141,7 +138,6 @@ exports.Rectangle = Object.create(GeomObj, {
 //            this._fillColor = c;
 //        }
 //    },
-
     getStrokeColor: {
         value: function() {
             return this._strokeColor;
@@ -382,6 +378,7 @@ exports.Rectangle = Object.create(GeomObj, {
             // stroke
             var strokeMaterial = this.makeStrokeMaterial();
             var strokePrim = this.createStroke([x,y],  2*xFill,  2*yFill,  strokeSize,  tlRadius, blRadius, brRadius, trRadius, strokeMaterial);
+		strokeMaterial.fitToPrimitive( strokePrim );
             this._primArray.push( strokePrim );
             this._materialNodeArray.push( strokeMaterial.getMaterialNode() );
 
@@ -395,6 +392,7 @@ exports.Rectangle = Object.create(GeomObj, {
             var fillMaterial = this.makeFillMaterial();
             //console.log( "fillMaterial: " + fillMaterial.getName() );
             var fillPrim = this.createFill([x,y],  2*xFill,  2*yFill,  tlRadius, blRadius, brRadius, trRadius, fillMaterial);
+		fillMaterial.fitToPrimitive( fillPrim );
             this._primArray.push( fillPrim );
             this._materialNodeArray.push( fillMaterial.getMaterialNode() );
 
@@ -512,98 +510,98 @@ exports.Rectangle = Object.create(GeomObj, {
         }
     },
 
-    render: {
-        value: function() {
-            // get the world
-            var world = this.getWorld();
-            if (!world)  throw( "null world in rectangle render" );
+	render: {
+		value: function() {
+			// get the world
+			var world = this.getWorld();
+			if (!world)  throw( "null world in rectangle render" );
 
-             // get the context
-            var ctx = world.get2DContext();
-            if (!ctx)  return;
+			 // get the context
+			var ctx = world.get2DContext();
+			if (!ctx)  return;
 
-            // get some dimensions
-            var lw = this._strokeWidth;
-            var	w = world.getViewportWidth(),
-                h = world.getViewportHeight();
+			// get some dimensions
+			var lw = this._strokeWidth;
+			var	w = world.getViewportWidth(),
+				h = world.getViewportHeight();
 
-            var c,
-                inset,
-                gradient,
-                colors,
-                len,
-                n,
-                position,
-                cs;
-            // render the fill
-            ctx.beginPath();
-            if (this._fillColor) {
-                inset = Math.ceil( lw ) - 0.5;
+			var c,
+				inset,
+				gradient,
+				colors,
+				len,
+				n,
+				position,
+				cs;
+			// render the fill
+			ctx.beginPath();
+			if (this._fillColor) {
+				inset = Math.ceil( lw ) - 0.5;
 
-                if(this._fillColor.gradientMode) {
-                    if(this._fillColor.gradientMode === "radial") {
-                        gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w, h)/2);
-                    } else {
-                        gradient = ctx.createLinearGradient(inset/2, h/2, w-inset, h/2);
-                    }
-                    colors = this._fillColor.color;
+				if(this._fillColor.gradientMode) {
+					if(this._fillColor.gradientMode === "radial") {
+						var ww = w - 2*lw,  hh = h - 2*lw;
+						gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(ww, hh)/2);
+					} else {
+						gradient = ctx.createLinearGradient(inset, h/2, w-inset, h/2);
+					}
+					colors = this._fillColor.color;
 
-                    len = colors.length;
+					len = colors.length;
 
-                    for(n=0; n<len; n++) {
-                        position = colors[n].position/100;
-                        cs = colors[n].value;
-                        gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
-                    }
+					for(n=0; n<len; n++) {
+						position = colors[n].position/100;
+						cs = colors[n].value;
+						gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+					}
 
-                    ctx.fillStyle = gradient;
+					ctx.fillStyle = gradient;
 
-                } else {
-                    c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";
-                    ctx.fillStyle = c;
-                }
+				} else {
+					c = "rgba(" + 255*this._fillColor[0] + "," + 255*this._fillColor[1] + "," + 255*this._fillColor[2] + "," + this._fillColor[3] + ")";
+					ctx.fillStyle = c;
+				}
 
-                ctx.lineWidth	= lw;
-                this.renderPath( inset, ctx );
-                ctx.fill();
-                ctx.closePath();
-            }
+				ctx.lineWidth	= lw;
+				this.renderPath( inset, ctx );
+				ctx.fill();
+				ctx.closePath();
+			}
 
-            // render the stroke
-            ctx.beginPath();
-            if (this._strokeColor) {
-                inset = Math.ceil( 0.5*lw ) - 0.5;
+			// render the stroke
+			ctx.beginPath();
+			if (this._strokeColor) {
+				inset = Math.ceil( 0.5*lw ) - 0.5;
 
-                if(this._strokeColor.gradientMode) {
-                    if(this._strokeColor.gradientMode === "radial") {
-                        gradient = ctx.createRadialGradient(w/2, h/2, Math.min(h, w)/2-inset, w/2, h/2, Math.max(h, w)/2);
-                    } else {
-                        gradient = ctx.createLinearGradient(0, h/2, w, h/2);
-                    }
-                    colors = this._strokeColor.color;
+				if(this._strokeColor.gradientMode) {
+					if(this._strokeColor.gradientMode === "radial")
+						gradient = ctx.createRadialGradient(w/2, h/2, 0,  w/2, h/2, Math.max(h, w)/2);
+					else
+						gradient = ctx.createLinearGradient(0, h/2, w, h/2);
+					colors = this._strokeColor.color;
 
-                    len = colors.length;
+					len = colors.length;
 
-                    for(n=0; n<len; n++) {
-                        position = colors[n].position/100;
-                        cs = colors[n].value;
-                        gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
-                    }
+					for(n=0; n<len; n++) {
+						position = colors[n].position/100;
+						cs = colors[n].value;
+						gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+					}
 
-                    ctx.strokeStyle = gradient;
+					ctx.strokeStyle = gradient;
 
-                } else {
-                    c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";
-                    ctx.strokeStyle = c;
-                }
+				} else {
+					c = "rgba(" + 255*this._strokeColor[0] + "," + 255*this._strokeColor[1] + "," + 255*this._strokeColor[2] + "," + this._strokeColor[3] + ")";
+					ctx.strokeStyle = c;
+				}
 
-                ctx.lineWidth	= lw;
-                this.renderPath( inset, ctx );
-                ctx.stroke();
-                ctx.closePath();
-            }
-        }
-    },
+				ctx.lineWidth	= lw;
+				this.renderPath( inset, ctx );
+				ctx.stroke();
+				ctx.closePath();
+			}
+		}
+	},
 
     createStroke: {
         value: function(ctr,  width,  height,  strokeWidth,  tlRad, blRad, brRad, trRad, material) {
