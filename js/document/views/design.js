@@ -324,7 +324,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     initWebGl: {
         value: function (scripttags) {
         	//
-        	var n, webgldata;
+        	var n, webgldata, fileRead;
         	//Setting the iFrame property for reference in helper class
         	this.model.webGlHelper.iframe = this.model.views.design.iframe;
         	//Checking for webGL Data
@@ -333,9 +333,18 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
             	webgldata = null;
             	//Checking for tags with webGL data
             	if (scripttags[w].getAttribute) {
-            		if (scripttags[w].getAttribute('data-ninja-webgl') !== null) {
+            		if (scripttags[w].getAttribute('data-ninja-canvas') !== null) {
             			//TODO: Add logic to handle more than one data tag
             			webgldata = JSON.parse((scripttags[w].innerHTML.replace("(", "")).replace(")", ""));
+            		} else if (scripttags[w].getAttribute('data-ninja-canvas-json') !== null) {
+            			//TODO: Add check for hardcoded URL
+            			fileRead = this.application.ninja.ioMediator.fio.readFile({uri: this.application.ninja.documentController.documentHackReference.root+scripttags[w].getAttribute('data-ninja-canvas-json')});
+            			//
+            			if (fileRead.status === 204) {
+            				webgldata = JSON.parse((fileRead.file.content.replace("(", "")).replace(")", ""));
+            			} else {
+            				//Error
+            			}
             		}
             		//Checking for webGL data and building data array
             		if (webgldata && webgldata.data) {
