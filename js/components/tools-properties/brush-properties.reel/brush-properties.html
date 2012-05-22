@@ -64,6 +64,7 @@
                 "prototype": "js/components/tools-properties/brush-properties.reel",
                 "properties": {
                     "element": {"#": "brushProperties"},
+                    "_fillColorCtrl": {"#": "fillColorCtrl"},
                     "_strokeSize": {"@": "strokeSizeHT"},
                     "_strokeHardness": {"@": "strokeHardnessHT"},
                     "_doSmoothing": {"#": "doSmoothing"},
@@ -79,19 +80,19 @@
     </head>
 
     <body>
-        <div data-montage-id="brushProperties" class="subToolHolderPanel">
-            <div id="strokesContainer" class="leftLabel" style="margin-left:25px; padding-top: 3px;">
-                <label class="label"> Width:</label>
-                <div id="strokeSize" class="label"></div>
-                <label class="label"> Hardness:</label>
-                <div id="strokeHardness" class="label"></div>
-                <label class="label"><input id="doSmoothing" type="checkbox" name="doSmoothingControl" class="checkBoxAlign"/>Smoothing</label>
-                <div id="smoothingAmount" class="label"></div>
-                <label class="label"><input id="useCalligraphic" type="checkbox" name="useCalligraphicControl" class="checkBoxAlign"/>Calligraphic</label>
-                <label class="label" id="angleLabel"> Angle:</label>
-                <div id="strokeAngle" class="label"></div>
-
-            </div>
+        <div data-montage-id="brushProperties" class="subToolHolderPanel toolOptionsFloatChildren">
+            <div class="toolColorChipIcon FillTool"></div>
+            <div data-montage-id="fillColorCtrl" class="toolColorChipCtrl"></div>
+            <div class="nj-divider divider-vertical">&nbsp;</div>
+            <label class="label"> Width:</label>
+            <div data-montage-id="strokeSize" class="label"></div>
+            <label class="label"> Hardness:</label>
+            <div data-montage-id="strokeHardness" class="label"></div>
+            <input data-montage-id="doSmoothing" type="checkbox" name="doSmoothingControl" class="nj-skinned"/><label class="label">Smoothing</label>
+            <div data-montage-id="smoothingAmount" class="label"></div>
+            <input data-montage-id="useCalligraphic" type="checkbox" name="useCalligraphicControl" class="nj-skinned"/><label class="label">Calligraphic</label>
+            <label data-montage-id="angleLabel" class="label"">Angle:</label>
+            <div data-montage-id="strokeAngle" class="label"></div>
         </div>
     </body>
 

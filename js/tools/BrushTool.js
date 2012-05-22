@@ -132,7 +132,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
              if (this._selectedBrushStroke === null){
                  this._selectedBrushStroke = new BrushStroke();
                  var colorArray=[0,0,0,0];
-                 var color = this.application.ninja.colorController.colorToolbar.fill.color;
+                 var color = this.options.fill.color;
                  if (color){
                      colorArray = [color.r/255, color.g/255, color.b/255, color.a];
                  } else {
@@ -376,13 +376,11 @@ exports.BrushTool = Montage.create(ShapeTool, {
                 return;
             }
 
-            var left = Math.round(midPt[0] - 0.5 * w);
-            var top = Math.round(midPt[1] - 0.5 * h);
-
             if (!canvas) {
-                var newCanvas = NJUtils.makeNJElement("canvas", "Brushstroke", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
-                var elementModel = TagTool.makeElement(w, h, planeMat, midPt, newCanvas, true);
-                ElementMediator.addElements(newCanvas, elementModel.data, false);
+                var newCanvas = document.application.njUtils.make("canvas", {"data-RDGE-id": NJUtils.generateRandom()}, this.application.ninja.currentDocument);
+                document.application.njUtils.createModelWithShape(newCanvas, "Brushstroke");
+                var styles = document.application.njUtils.stylesFromDraw(newCanvas, w, h, {midPt: midPt, planeMat: planeMat});
+                this.application.ninja.elementMediator.addElements(newCanvas, styles, false);
 
                 // create all the GL stuff
                 var world = this.getGLWorld(newCanvas, this._useWebGL);

@@ -17,6 +17,8 @@
                 "properties": {
                     "element": {"#": "tagProperties"},
 
+                    "_fillColorCtrl": {"#": "fillColorCtrl"},
+
                     "divElement": {"#": "divTool"},
                     "imageElement": {"#": "imageTool"},
                     "videoElement": {"#": "videoTool"},
@@ -35,48 +37,44 @@
     </head>
 
     <body>
-        <div id="tagProperties" class="subToolHolderPanel">
-            <div id="tagToolContainer" class="tagRadioButtons">
-                <input type="radio" id="divTool" class="tag-type" title="Div Element" name="TagRadios" checked/>
-                <input type="radio" id="imageTool" class="tag-type" title="Image Element" name="TagRadios"/>
-                <input type="radio" id="videoTool" class="tag-type" title="Video Element" name="TagRadios"/>
-                <input type="radio" id="canvasTool" class="tag-type" title="Canvas Element" name="TagRadios"/>
-                <input type="radio" id="customTool" class="tag-type" title="Custom Element" name="TagRadios"/>
+        <div data-montage-id="tagProperties" class="subToolHolderPanel toolOptionsFloatChildren">
+            <div data-montage-id="tagToolContainer" class="tagRadioButtons toolOptionsFloatChildren">
+                <input type="radio" data-montage-id="divTool" class="toolOptsRadioButton divTool" title="Div Element" name="TagRadios" value="div" checked/>
+                <input type="radio" data-montage-id="imageTool" class="toolOptsRadioButton imageTool" title="Image Element" name="TagRadios" value="image"/>
+                <input type="radio" data-montage-id="videoTool" class="toolOptsRadioButton videoTool" title="Video Element" name="TagRadios" value="video"/>
+                <input type="radio" data-montage-id="canvasTool" class="toolOptsRadioButton canvasTool" title="Canvas Element" name="TagRadios" value="canvas"/>
+                <input type="radio" data-montage-id="customTool" class="toolOptsRadioButton customTool" title="Custom Element" name="TagRadios" value="custom"/>
 
-                <div class="nj-divider divider-vertical">&nbsp;</div>
+                <div class="nj-divider divider-vertical toolOptionsSpacer">&nbsp;</div>
 
-                <div id="classNameContainer" class="leftLabel">
-                    <label class="label"> Class:
-                        <input id="className" type="text" name="ClassNameTextBox" class="textBox nj-skinned">
-                    </label>
+                <div class="toolColorChipIcon FillTool"></div>
+                <div data-montage-id="fillColorCtrl" class="toolColorChipCtrl"></div>
+                <div class="nj-divider divider-vertical toolOptionsSpacer">&nbsp;</div>
+
+                <div id="classNameContainer">
+                    <label class="label"> Class:</label>
+                    <input data-montage-id="className" type="text" name="ClassNameTextBox" class="textBox nj-skinned"/>
                 </div>
 
-                <div id="customContainer" class="leftLabel" style="padding-top: 3px;">
+                <div id="customContainer">
                     <label class="label"> Tag Name:</label>
-
-                    <select id="customTagCB" class="nj-skinned">
+                    <select data-montage-id="customTagCB" class="nj-skinned">
                         <option>article</option>
                         <option>aside</option>
                         <option>section</option>
                     </select>
                 </div>
 
-
-
-                <div id="positionContainer" class="leftLabel" style="padding-top: 3px;">
+                <div id="positionContainer">
                     <label class="label"> Position:</label>
-
-                    <select id="positionCB" class="nj-skinned">
+                    <select data-montage-id="positionCB" class="nj-skinned">
+                        <option>Static</option>
                         <option>Absolute</option>
                         <option>Relative</option>
                         <option>Fixed</option>
-                        <option>Static</option>
                         <option>Inherit</option>
                     </select>
-
                 </div>
-
-
             </div>
         </div>
     </body>

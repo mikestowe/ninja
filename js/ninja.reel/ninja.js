@@ -104,8 +104,6 @@ exports.Ninja = Montage.create(Component, {
 
     handleResizeEnd: {
         value: function(e) {
-//            this.height -= this._resizedHeight;
-//            this.width -= this._resizedWidth;
             this.stage.resizeCanvases = true;
             this._resizedHeight = 0;
             this._resizedWidth = 0;
@@ -154,9 +152,9 @@ exports.Ninja = Montage.create(Component, {
 
             this.application.ninja = this;
 
-            this.toolsData.selectedTool = this.toolsData.defaultToolsData[0];
-            this.toolsData.defaultSubToolsData = this.toolsData.defaultToolsData[7].subtools;
-            this.toolsData.selectedSubTool = this.toolsData.defaultToolsData[7].subtools[1];
+            this.toolsData.selectedTool = this.toolsData.defaultToolsData[this.application.ninja.toolsData.selectionToolIndex];
+            this.toolsData.defaultSubToolsData = this.toolsData.defaultToolsData[this.application.ninja.toolsData.shapeToolIndex].subtools;
+            this.toolsData.selectedSubTool = this.toolsData.defaultToolsData[this.application.ninja.toolsData.shapeToolIndex].subtools[1];
             this.toolsData.selectedToolInstance = this.toolsList[this.toolsData.selectedTool.action];
 
             this.setupGlobalHelpers();
@@ -184,11 +182,6 @@ exports.Ninja = Montage.create(Component, {
     handleResize: {
         value: function() {
             this.stage.resizeCanvases = true;
-        }
-    },
-
-    willDraw: {
-        value: function() {
         }
     },
 

@@ -42,6 +42,8 @@ exports.ControllerFactory = Montage.create(Montage, {
                     return ImageController;
                 } else if(value.indexOf("video") !== -1) {
                     return VideoController;
+                } else {
+                    return BlockController;
                 }
             } catch (err) {
                 console.log("Could not create Controller Factory " + err);

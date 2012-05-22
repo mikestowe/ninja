@@ -240,7 +240,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                 this._selectedSubpath.setStrokeWidth(strokeSize);
 
                 var colorArray=[];
-                var color = this.application.ninja.colorController.colorToolbar.stroke.color;
+                var color = this.options.stroke.color;
                 if (color){
                     colorArray = [color.r/255, color.g/255, color.b/255, color.a];
                 }else {
@@ -248,7 +248,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                 }
                 this._selectedSubpath.setStrokeColor(colorArray);
 
-                color = this.application.ninja.colorController.colorToolbar.fill.color;
+                color = this.options.fill.color;
                 if (color){
                     colorArray = [color.r/255, color.g/255, color.b/255, color.a];
                 } else {
@@ -579,17 +579,16 @@ exports.PenTool = Montage.create(ShapeTool, {
                 return;
             }
 
-            w= Math.round(w);
+            w = Math.round(w);
             h = Math.round(h);
             var left = Math.round(midPt[0] - 0.5 * w);
             var top = Math.round(midPt[1] - 0.5 * h);
 
             if (!canvas) {
-                var newCanvas = null;
-                newCanvas = NJUtils.makeNJElement("canvas", "Subpath", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
-                var elementModel = TagTool.makeElement(parseInt(w), parseInt(h), planeMat, midPt, newCanvas, true);
-                //note that we set the notify event to false because we send the event separately at end of this code block
-                ElementMediator.addElements(newCanvas, elementModel.data, false);
+                var newCanvas = document.application.njUtils.make("canvas", {"data-RDGE-id": NJUtils.generateRandom()}, this.application.ninja.currentDocument);
+                document.application.njUtils.createModelWithShape(newCanvas, "Subpath");
+                var styles = document.application.njUtils.stylesFromDraw(newCanvas, parseInt(w), parseInt(h), {midPt: midPt, planeMat: planeMat});
+                this.application.ninja.elementMediator.addElements(newCanvas, styles, false);
 
                 // create all the GL stuff
                 var world = this.getGLWorld(newCanvas, this._useWebGL);//this.options.use3D);//this.CreateGLWorld(planeMat, midPt, newCanvas, this._useWebGL);//fillMaterial, strokeMaterial);
@@ -615,7 +614,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                     var strokeColor = subpath.getStrokeColor();
                     newCanvas.elementModel.shapeModel.stroke = strokeColor;
                     if(strokeColor) {
-                        newCanvas.elementModel.shapeModel.border = this.application.ninja.colorController.colorToolbar.stroke;
+                        newCanvas.elementModel.shapeModel.border = this.options.stroke;
                     }
                     newCanvas.elementModel.shapeModel.GLGeomObj = subpath;
                     newCanvas.elementModel.shapeModel.useWebGl = false;//this.options.use3D;

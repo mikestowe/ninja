@@ -55,9 +55,6 @@
             "SelectionTool1": {
                 "prototype": "js/tools/SelectionTool"
             },
-            "SubselectionTool1": {
-                "prototype": "js/tools/SubSelectTool"
-            },
             "Rotate3DTool1": {
                 "prototype": "js/tools/RotateObject3DTool"
             },
@@ -85,9 +82,6 @@
             "LineTool1": {
                 "prototype": "js/tools/LineTool"
             },
-            "PencilTool1": {
-                "prototype": "js/tools/PencilTool"
-            },
             "BrushTool1": {
                 "prototype": "js/tools/BrushTool"
             },
@@ -96,9 +90,6 @@
             },
             "InkBottleTool1": {
                 "prototype": "js/tools/InkBottleTool"
-            },
-            "EyedropperTool1": {
-                "prototype": "js/tools/EyedropperTool"
             },
             "EraserTool1": {
                 "prototype": "js/tools/EraserTool"
@@ -132,7 +123,6 @@
                 "properties": {
                     "element": {"#": "toolsList"},
                     "SelectionTool":          {"@": "SelectionTool1"},
-                    "SubselectionTool":       {"@": "SubselectionTool1"},
                     "Rotate3DTool":           {"@": "Rotate3DTool1"},
                     "Translate3DTool":        {"@": "Translate3DTool1"},
                     "TagTool":                {"@": "TagTool1"},
@@ -142,11 +132,9 @@
                     "OvalTool":               {"@": "OvalTool1"},
                     "RectTool":               {"@": "RectTool1"},
                     "LineTool":               {"@": "LineTool1"},
-                    "PencilTool":             {"@": "PencilTool1"},
                     "BrushTool":              {"@": "BrushTool1"},
                     "FillTool":               {"@": "FillTool1"},
                     "InkBottleTool":          {"@": "InkBottleTool1"},
-                    "EyedropperTool":         {"@": "EyedropperTool1"},
                     "EraserTool":             {"@": "EraserTool1"},
                     "RotateStageTool3D":      {"@": "RotateStageTool3D1"},
                     "PanTool":                {"@": "PanTool1"},
@@ -162,16 +150,14 @@
     </head>
 
     <body>
-        <div id="toolsList" class="toolsList">
-            <div id="toolscontainer" class="toolscontainer">
-                <div id="toolbutton" class="toolbutton"></div>
-                <div id="groupLine">
+        <div data-montage-id="toolsList" class="toolsList">
+            <div data-montage-id="toolscontainer" class="toolscontainer">
+                <div data-montage-id="toolbutton" class="toolbutton"></div>
+                <div data-montage-id="groupLine">
                     <hr />
                 </div>
             </div>
-            <!-- TODO: Remove and add as a component -->
-            <div id="colortoolbar"></div>
-            <div id="disabledCondition" class="panelDisabled"></div>
+            <div data-montage-id="disabledCondition" class="panelDisabled"></div>
         </div>
 
     </body>

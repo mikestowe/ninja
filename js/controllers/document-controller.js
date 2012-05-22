@@ -427,10 +427,6 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
     closeDocument: {
         value: function(id) {
-            if(this.activeDocument.needsSave === true){
-                //if file dirty then alert user to save
-        }
-
             var doc = this._findDocumentByUUID(id);
 
             var closeDocumentIndex = this._findIndexByUUID(id);
@@ -483,11 +479,16 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
             if(!this.webTemplate) {
                 this._showCurrentDocument();
+            } else {
+                this.application.ninja.stage.stageView.showRulers();
             }
 
             this.webTemplate = false;
 
             NJevent("onOpenDocument", doc);
+
+			this.application.ninja.stage.stageView.showCodeViewBar(false);
+            this.application.ninja.stage.stageView.restoreAllPanels();
         }
     },
 

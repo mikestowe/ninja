@@ -53,40 +53,37 @@ exports.ShapeTool = Montage.create(DrawingTool, {
         }
     },
 
-	HandleLeftButtonUp:
-	{
-		value: function (event)
-		{
-            var drawData;
-
-            drawData = this.getDrawingData();
+	HandleLeftButtonUp: {
+        value: function (event) {
+            var canvas, drawData = this.getDrawingData();
 
             if(drawData) {
-                var canvas;
                 if(!this._useExistingCanvas()) {
-                    canvas = NJUtils.makeNJElement("canvas", "Canvas", "shape", {"data-RDGE-id": NJUtils.generateRandom()}, true);
-                    var elementModel = TagTool.makeElement(~~drawData.width, ~~drawData.height,
-                                                                        drawData.planeMat, drawData.midPt, canvas, true);
+                    canvas = document.application.njUtils.make("canvas", {"data-RDGE-id": NJUtils.generateRandom()}, this.application.ninja.currentDocument);
+                    document.application.njUtils.createModelWithShape(canvas);
 
-                    canvas.elementModel.isShape = true;
-                    this.application.ninja.elementMediator.addElements(canvas, elementModel.data);
+                    var styles = document.application.njUtils.stylesFromDraw(canvas, ~~drawData.width, ~~drawData.height, drawData);
+                    this.application.ninja.elementMediator.addElements(canvas, styles);
                 } else {
                     canvas = this._targetedElement;
+                    if (!canvas.getAttribute( "data-RDGE-id" ))
+                        canvas.setAttribute( "data-RDGE-id", NJUtils.generateRandom() );
                     canvas.elementModel.controller = ShapesController;
                     if(!canvas.elementModel.shapeModel) {
                         canvas.elementModel.shapeModel = Montage.create(ShapeModel);
                     }
+					this.application.ninja.elementMediator.addElements(canvas, canvas.elementModel.data);
                 }
             }
 
-			this.endDraw(event);
+            this.endDraw(event);
 
-			this._isDrawing = false;
-			this._hasDraw=false;
+            this._isDrawing = false;
+            this._hasDraw=false;
 
-			this.DrawHandles();
-		}
-	},
+            this.DrawHandles();
+        }
+    },
 
     onAddElements: {
         value: function(el) {
@@ -103,6 +100,9 @@ exports.ShapeTool = Montage.create(DrawingTool, {
             if(wasSelected) {
                 this.AddCustomFeedback();
                 this.application.ninja.elementMediator.addDelegate = this;
+                if(this.application.ninja.currentSelectedContainer.nodeName === "CANVAS") {
+                    this._targetedElement = this.application.ninja.currentSelectedContainer;
+                }
             } else {
                 this.RemoveCustomFeedback();
                 this.application.ninja.elementMediator.addDelegate = null;
@@ -187,31 +187,24 @@ exports.ShapeTool = Montage.create(DrawingTool, {
         }
     },
 
-    createCanvas: {
-        value: function (left, top, w, h)
-        {
-            //var tmpDiv = document.createElement("canvas");
-            var tmpDiv = NJUtils.makeNJElement("canvas", "Canvas", "block");
-            var rules = {
-                            'position': 'absolute',
-                            'top' : top + 'px',
-                            'left' : left + 'px',
-                            '-webkit-transform-style' : 'preserve-3d',
-                            '-webkit-transform' : 'matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)'
-                        };
-
-            tmpDiv.width = w;
-            tmpDiv.height = h;
-
-            return {el: tmpDiv, rules: rules};
-        }
-    },
-
 	// We can draw on an existing canvas unless it has only a single shape object
 	_useExistingCanvas: {
 		value: function()
 		{
-			return (this._targetedElement && !ShapesController.isElementAShape(this._targetedElement));
+			var target;
+			if (this._targetedElement && (this._targetedElement.nodeName === "CANVAS") && !ShapesController.isElementAShape(this._targetedElement))
+				target = this._targetedElement;
+			else
+			{
+				var container = this.application.ninja.currentSelectedContainer;
+				if (container && (container.nodeName === "CANVAS"))
+				{
+					target = container;
+					this._targetedElement = target;
+				}
+			}
+
+			return target;
 		}
 	}
 

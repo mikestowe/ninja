@@ -855,20 +855,7 @@ div.pp-button.button-divider div {
 
 //  End: Tree component for Project Panel  
 
-
-.subToolHolderPanel{
-    margin-left:42px
-}
-
-.subToolPanel{
-    margin-top:-6px
-}
-
-// .marginposition{ 
-    // margin-top:-26px 
-// } 
 //  Begin: Properties Panel styles  
-
 .properties_panel {
 	overflow-x: hidden;
 	color: $color-panel-text;
@@ -1240,6 +1227,7 @@ display: -webkit-box;
 
 .rightPanelContent {
     position:absolute;
+    overflow-y:hidden;
     height:100%;
     width:100%;
 }

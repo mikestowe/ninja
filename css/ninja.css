@@ -118,9 +118,9 @@ body { position: absolute; margin: 0px; width: 100%; height: 100%; background-co
 
 #sceneBar { height: 70px; background-color: #474747; }
 
-#mainContainer #rulerTop { display: none; background: gray url("../images/temp/ruler-top.png"); height: 15px; margin-bottom: 0px; border-right: 11px solid black; }
+#mainContainer .rulerTop { display: none; background: gray url("../images/temp/ruler-top.png"); height: 15px; margin-bottom: 0px; border-right: 11px solid black; }
 
-#rulerLeft { display: none; background: gray url("../images/temp/ruler-left.png"); width: 16px; border-bottom: 11px solid black; }
+.rulerLeft { display: none; background: gray url("../images/temp/ruler-left.png"); width: 16px; border-bottom: 11px solid black; }
 
 #stateBar { height: 20px; background-color: #282828; margin-bottom: 0px; }
 
@@ -164,9 +164,7 @@ body { position: absolute; margin: 0px; width: 100%; height: 100%; background-co
 
 .verticalBox { -webkit-box-orient: vertical; -moz-box-orient: vertical; box-orient: vertical; }
 
-#rightPanelContent { overflow-y: hidden; }
-
-#openDocumentsTabComponent { height: 25px; position: relative; overflow: hidden; color: white; }
+.openDocumentsTab { height: 25px; position: relative; overflow: hidden; color: white; }
 
 #openDocuments { float: left; height: 25px; width: 100%; font-size: 12px; list-style: none; margin: 0; padding: 0; position: relative; text-decoration: none; }
 
@@ -174,7 +172,7 @@ body { position: absolute; margin: 0px; width: 100%; height: 100%; background-co
 
 #openDocuments li:hover, #openDocuments li:active, #openDocuments li.activeTab { background-color: #7f7f7f; }
 
-#documentBar { height: 25px; width: 1000px; position: relative; overflow: hidden; color: white; }
+.documentBar { height: 25px; position: relative; overflow: hidden; color: white; }
 
 .montage-popup-modal-mask { opacity: 1; background: -webkit-radial-gradient(center, ellipse cover, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.8) 80%); }
 
@@ -200,19 +198,11 @@ body { position: absolute; margin: 0px; width: 100%; height: 100%; background-co
 
 #iframeContainer { position: absolute; top: 0px; left: 0px; margin: 0px; padding: 0px; width: 100%; height: 100%; overflow: scroll; background: gray; }
 
-#drawingCanvas { position: absolute; margin: 0px; border: none; padding: 0px; top: 0px; left: 0px; z-index: 6; }
+.drawingCanvas { position: absolute; margin: 0px; border: none; padding: 0px; top: 0px; left: 0px; z-index: 6; }
 
-#stageCanvas { position: absolute; margin: 0px; border: none; padding: 0px; top: 0px; left: 0px; z-index: 5; }
+.stageCanvas { position: absolute; margin: 0px; border: none; padding: 0px; top: 0px; left: 0px; z-index: 5; }
 
-#layoutCanvas { position: absolute; margin: 0px; border: none; padding: 0px; top: 0px; left: 0px; z-index: 4; }
-
-#codeViewContainer { position: absolute; top: 0px; left: 0px; margin: 0px; padding: 0px; background: black; width: 100%; height: 100%; display: none; }
-
-#mainContent #codeMirror_1 { height: 100%; }
-
-#mainContent .CodeMirror { width: 100%; height: 100%; background: white; }
-
-#mainContent .CodeMirror-scroll { height: 100%; overflow: scroll; overflow-x: auto; overflow-y: auto; }
+.layoutCanvas { position: absolute; margin: 0px; border: none; padding: 0px; top: 0px; left: 0px; z-index: 4; }
 
 .montage-editor-frame { position: absolute; z-index: 7; top: 0; left: 0; display: none; -webkit-user-select: initial; }
 
@@ -528,10 +518,6 @@ div.pp-button.button-divider div { height: 1px; width: 24px; background-color: b
 
 #pp-container-assets input.inline-editor { height: 11px; width: 80%; background-color: #242424 !important; color: #b2b2b2 !important; top: -2px; border-width: 0px; font-size: 11px; }
 
-.subToolHolderPanel { margin-left: 42px; }
-
-.subToolPanel { margin-top: -6px; }
-
 .properties_panel { overflow-x: hidden; color: white; }
 
 .properties_panel select { -webkit-appearance: none; font-size: 9px; color: white; background-color: #444444; border: 1px solid #313131; width: 120px; height: 15px; outline: none; background-image: url("../images/dropdown-bg.png"); background-repeat: no-repeat; background-position: right center; }
@@ -648,7 +634,7 @@ button.panel-button { -webkit-appearance: none; font-size: 9px; color: white; ba
 
 .panel.collapsed .arrowIcon { -webkit-transform: rotate(-90deg); }
 
-.rightPanelContent { position: absolute; height: 100%; width: 100%; }
+.rightPanelContent { position: absolute; overflow-y: hidden; height: 100%; width: 100%; }
 
 #rightPanelContainer .panel { -webkit-box-flex: 100; }
 
@@ -679,25 +665,25 @@ nav.menuBar ul ul, nav.menuBar ul li:hover ul ul, nav.menuBar ul ul li:hover ul 
 
 nav.menuBar ul li:hover ul, nav.menuBar ul ul li:hover ul, nav.menuBar ul ul ul li:hover ul { display: block; }
 
-.subToolHolderPanel .toolbutton { float: left; -webkit-transform: scale(0.6); }
+.subToolHolderPanel { margin-left: 42px; padding: 6px; float: left; }
+
+.subToolHolderPanel .toolbutton { float: left; -webkit-transform: scale(0.6); margin-top: -4px; }
 
 .subToolHolderPanel .toolbutton:hover, .subToolHolderPanel .toolbutton.active { -webkit-transform: scale(0.75); }
 
-.subOption { float: left; margin-top: 5px; margin-left: 10px; margin-right: 10px; }
+.toolOptionsFloatChildren > * { float: left; }
 
-.toolSeparator { height: 1px; width: 30px; }
+.toolOptionsSpacer { margin-right: 9px; }
 
-.toolSeparatorTop { margin-top: 3px; margin-bottom: 0px; }
+.toolColorChipCtrl { width: 18px; height: 18px; margin-top: 1px; margin-left: 3px; margin-right: 8px; border: 1px black solid; }
 
-.toolSeparatorMiddle { margin-top: 0px; margin-bottom: 0px; }
+.toolColorChipIcon { width: 20px; height: 20px; margin-top: 1px; -webkit-transform: scale(0.8); background-color: #282828; }
 
-.toolSeparatorBottom { margin-top: 0px; margin-bottom: 3px; }
+.subToolHolderPanel input.toolOptsRadioButton { width: 24px; height: 24px; margin: 0px 5px 0px 0px; padding: 0px; cursor: pointer; border-radius: 3px; -webkit-user-select: none; border: 1px solid transparent; background: none; background-repeat: no-repeat; background-position: center center; -webkit-transform: scale(0.9); }
 
-.toolImageBase { padding: 0px; width: 26px; height: 23px; opacity: 0.7; background-repeat: no-repeat; }
+.subToolHolderPanel input.toolOptsRadioButton:hover { box-shadow: 0px 0px 2px 2px #999; -webkit-transform: scale(1); }
 
-.toolImageBase:hover { opacity: 1.0; }
-
-.drawingMode { outline: blue solid thin; }
+.subToolHolderPanel input.toolOptsRadioButton:checked { box-shadow: inset 0px 0px 2px 2px #999; background-color: #363636; background-position: center center; background-repeat: no-repeat; -webkit-transform: scale(1); }
 
 .textBox { padding-top: 3px; min-width: 10em; margin-left: 5px; position: relative; margin-top: 0px; }
 
@@ -713,13 +699,13 @@ nav.menuBar ul li:hover ul, nav.menuBar ul ul li:hover ul, nav.menuBar ul ul ul 
 
 .cornerRadius:hover, .cornerRadius:active { opacity: 1; }
 
-.cornerRadius.topLeft { -webkit-transform: rotate(0deg); }
+.cornerRadius.topLeft { -webkit-transform: rotate(0deg); margin-top: 1px; margin-right: 3px; }
 
-.cornerRadius.topRight { -webkit-transform: rotate(90deg); margin-right: -2px; }
+.cornerRadius.topRight { -webkit-transform: rotate(90deg); margin-right: 3px; margin-top: 1px; }
 
-.cornerRadius.bottomLeft { margin-top: 3px; -webkit-transform: rotate(270deg); }
+.cornerRadius.bottomLeft { -webkit-transform: rotate(270deg); margin-right: 2px; margin-top: -1px; }
 
-.cornerRadius.bottomRight { margin-top: 3px; -webkit-transform: rotate(180deg); margin-right: -2px; }
+.cornerRadius.bottomRight { -webkit-transform: rotate(180deg); margin-right: 4px; margin-top: -1px; }
 
 #toolOptionsContainer { display: inline; float: left; }
 
@@ -763,65 +749,77 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .optionLabel { margin-top: 5px; }
 
-#tagToolContainer input.tag-type, #rotateObjectToolContainer input.tag-type, #translateObjectToolContainer input.tag-type { background: none; width: 20px; height: 20px; display: block; float: left; margin: 0px; padding: 0px; margin-right: 5px; margin-top: 4px; background-repeat: no-repeat; opacity: 0.8; text-indent: -9999px; cursor: pointer; -webkit-border-radius: 3px; -webkit-user-select: none; border: 1px solid transparent; }
+.tagRadioButtons input.divTool { background-image: url("../images/optionsbar/tag/div-tag.png"); }
 
-#tagToolContainer input.tag-type { background-image: url("../images/tools/sprite-toolbar-tag.png"); }
+.tagRadioButtons input.imageTool { background-image: url("../images/optionsbar/tag/img-tag.png"); }
 
-#rotateObjectToolContainer input.tag-type { background-image: url("../images/tools/sprite-toolbar-3d.png"); }
+.tagRadioButtons input.videoTool { background-image: url("../images/optionsbar/tag/vid-tag.png"); }
 
-#translateObjectToolContainer input.tag-type { background-image: url("../images/tools/sprite-toolbar-3d.png"); }
+.tagRadioButtons input.canvasTool { background-image: url("../images/optionsbar/tag/canvas-tag.png"); }
 
-#tagToolContainer input.tag-type:active, #rotateObjectToolContainer input.tag-type:active, #translateObjectToolContainer input.tag-type:active { border: 1px solid transparent; }
+.tagRadioButtons input.customTool { background-image: url("../images/optionsbar/tag/custom-tag.png"); }
 
-#tagToolContainer input.tag-type:hover, #rotateObjectToolContainer input.tag-type:hover, #translateObjectToolContainer input.tag-type:hover { opacity: 1.0; -webkit-box-shadow: 0px 0px 4px #fff; }
+.tagRadioButtons .nj-divider { height: 100%; float: left; position: relative; }
 
-#tagToolContainer input.tag-type:checked, #rotateObjectToolContainer input.tag-type:checked, #translateObjectToolContainer input.tag-type:checked { background-color: transparent; opacity: 1.0; cursor: default; -webkit-box-shadow: none; }
+.tagRadioButtons select.nj-skinned { visibility: visible; position: relative; margin-top: 1px; }
 
-#tagToolContainer input#divTool { background-position: -40px 0px; }
+.tagRadioButtons select[disabled="true"].nj-skinned, .tagRadioButtons select[disabled].nj-skinned { visibility: hidden; }
 
-#tagToolContainer input#divTool:checked { background-position: -40px -20px; }
+#zoomToolOptionHolder .zoomOutToolIcon { background-image: url("../images/optionsbar/zoom/zoom_minus.png"); }
 
-#tagToolContainer input#imageTool { background-position: -60px 0px; }
+#zoomToolOptionHolder .zoomInToolIcon { background-image: url("../images/optionsbar/zoom/zoom_plus.png"); }
 
-#tagToolContainer input#imageTool:checked { background-position: -60px -20px; }
+.object3DToolContainer input.rotateLocally { background-image: url("../images/optionsbar/options3D/rotate-locally.png"); }
 
-#tagToolContainer input#videoTool { background-position: -100px 0px; }
+.object3DToolContainer input.rotateGlobally { background-image: url("../images/optionsbar/options3D/rotate-globally.png"); }
 
-#tagToolContainer input#videoTool:checked { background-position: -100px -20px; }
+.optionsSelectionTool button { padding-top: 0px; }
 
-#tagToolContainer input#canvasTool, #rotateObjectToolContainer input#rotateLocally, #translateObjectToolContainer input#translateLocally { background-position: -20px 0px; }
+.selectionToolIcon { width: 16px; height: 16px; background-repeat: no-repeat; background-position: 1px 2px; }
 
-#tagToolContainer input#canvasTool:checked, #rotateObjectToolContainer input#rotateLocally:checked, #translateObjectToolContainer input#translateLocally:checked { background-position: -20px -20px; }
+.alignTopIcon { background-image: url("../images/optionsbar/selection/AlignTop.png"); }
 
-#tagToolContainer input#flashTool { background-position: -80px 0px; }
+.alignMiddleIcon { background-image: url("../images/optionsbar/selection/AlignMiddle.png"); }
 
-#tagToolContainer input#flashTool:checked { background-position: -80px -20px; }
+.alignBottomIcon { background-image: url("../images/optionsbar/selection/AlignBottom.png"); }
 
-#tagToolContainer input#customTool, #rotateObjectToolContainer input#rotateGlobally, #translateObjectToolContainer input#translateGlobally { background-position: 0px 0px; }
+.alignLeftIcon { background-image: url("../images/optionsbar/selection/AlignLeft.png"); }
 
-#tagToolContainer input#customTool:checked, #rotateObjectToolContainer input#rotateGlobally:checked, #translateObjectToolContainer input#translateGlobally:checked { background-position: 0px -20px; }
+.alignCenterIcon { background-image: url("../images/optionsbar/selection/AlignCenter.png"); }
 
-#tagToolContainer .nj-divider { height: 100%; float: left; position: relative; top: 5px; }
+.alignRightIcon { background-image: url("../images/optionsbar/selection/AlignRight.png"); }
 
-#tagToolContainer select.nj-skinned { visibility: visible; position: relative; }
+.arrangeBringForwardIcon { background-image: url("../images/optionsbar/selection/ArrangeBringForward.png"); }
 
-#tagToolContainer select[disabled="true"].nj-skinned, #tagToolContainer select[disabled].nj-skinned { visibility: hidden; }
+.arrangeSendBackwardIcon { background-image: url("../images/optionsbar/selection/ArrangeSendBackward.png"); }
 
-#zoomToolOptionHolder input#zoomInTool:checked { border-style: solid; border-width: 1px; border-color: white; background-image: url("../images/optionsbar/zoom/zoom_plus.png"); background-repeat: no-repeat; background-position: 4px 3px; }
+.arrangeBringToFrontIcon { background-image: url("../images/optionsbar/selection/ArrangeBringToFront.png"); }
 
-#zoomToolOptionHolder input#zoomOutTool:checked { border-style: solid; border-width: 1px; border-color: white; background-image: url("../images/optionsbar/zoom/zoom_minus.png"); background-repeat: no-repeat; background-position: 4px 3px; }
+.arrangeSendToBackIcon { background-image: url("../images/optionsbar/selection/ArrangeSendToBack.png"); }
 
-#zoomToolOptionHolder input#zoomInTool { border-style: solid; border-width: 1px; background-image: url("../images/optionsbar/zoom/zoom_plus.png"); background-repeat: no-repeat; background-position: 4px 3px; }
+.distTopIcon { background-image: url("../images/optionsbar/selection/DistTop.png"); }
 
-#zoomToolOptionHolder input#zoomOutTool { border-style: solid; border-width: 1px; background-image: url("../images/optionsbar/zoom/zoom_minus.png"); background-repeat: no-repeat; background-position: 4px 3px; }
+.distMiddleIcon { background-image: url("../images/optionsbar/selection/DistMiddle.png"); }
 
-#zoomToolOptionHolder input.zoom-option { background: none; }
+.distBottomIcon { background-image: url("../images/optionsbar/selection/DistBottom.png"); }
+
+.distLeftIcon { background-image: url("../images/optionsbar/selection/DistLeft.png"); }
+
+.distCenterIcon { background-image: url("../images/optionsbar/selection/DistCenter.png"); }
+
+.distRightIcon { background-image: url("../images/optionsbar/selection/DistRight.png"); }
+
+.optionsPenTool input.penToolIcon { background-image: url("../images/tools/Tool-Pen.png"); }
+
+.optionsPenTool input.penPlusToolIcon { background-image: url("../images/optionsbar/pen/penPlus.png"); }
+
+.optionsPenTool input.penMinusToolIcon { background-image: url("../images/optionsbar/pen/penMinus.png"); }
 
 #toolsPanelContent { width: 40px; }
 
 .toolsList { width: 29px; margin: auto; }
 
-.toolsList hr { border: 0px; border-top: 1px solid #232323; border-bottom: 1px solid #3A3A3A; margin: 2px; }
+.toolsList hr { border: 0px; border-top: 1px solid #232323; border-bottom: 1px solid #3A3A3A; margin: 2px; width: 100%; }
 
 .toolbutton { width: 29px; height: 29px; background-position: center center; background-repeat: no-repeat; border-radius: 3px; opacity: 1; margin-bottom: 2px; -webkit-transform: scale(0.8); -webkit-transition: 0.15s all cubic-bezier(0.44, 0.19, 0, 0.99); }
 
@@ -829,11 +827,9 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .toolbutton:active { background-color: #8c8c8c; }
 
-.toolbutton.active { box-shadow: inset 0px 0px 2px 2px #555; background-color: #363636; }
+.toolbutton.active { box-shadow: inset 0px 0px 2px 2px #999; background-color: #363636; }
 
 .SelectionTool { background-image: url("../images/tools/Tool-Selection.png"); }
-
-.SubselectionTool { background-image: url("../images/tools/Tool-Subselect.png"); }
 
 .RotateTool3D { background-image: url("../images/tools/Tool-3DRotate.png"); }
 
@@ -859,8 +855,6 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 .FillTool { background-image: url("../images/tools/Tool-Fill.png"); }
 
-.EyedropperTool { background-image: url("../images/tools/Tool-EyeDropper.png"); }
-
 .EraserTool { background-image: url("../images/tools/Tool-Erase.png"); }
 
 .RotateStageTool3D { background-image: url("../images/tools/Tool-3DRotateStage.png"); }
@@ -872,56 +866,6 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 .ZoomTool { background-image: url("../images/tools/Tool-Zoom.png"); }
 
 .InkBottleTool { background-image: url("../images/tools/Tool-FillColor.png"); }
-
-.toolsList .colortoolbar { padding-left: 1px; padding-top: 4px; }
-
-.toolsList .colortoolbar button { width: 27px; height: 27px; background: black; border: 1px solid #000; padding: 0; margin: 0px; }
-
-.toolsList .colortoolbar div { width: 27px; height: 27px; margin: 0; margin-top: 3px; }
-
-.toolsList .colortoolbar div.cpe_colortoolbar_container { margin: 0; }
-
-/*.InkBottleToolPressed {*/
-/*background-image: url("../images/tools/inkbottle_down.png");*/
-/*background-repeat: no-repeat;*/
-/*height: 23px;*/
-/*width: 26px;*/
-/*opacity: 1;*/
-/*}*/
-/*.InkBottleToolUnpressed {*/
-/*background-image: url("../images/tools/inkbottle_down.png");*/
-/*background-repeat: no-repeat;*/
-/*height: 23px;*/
-/*width: 26px;*/
-/*opacity: 0.7;*/
-/*}*/
-.topAlignUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -240px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.rightAlignUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -270px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.bottomAlignUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -300px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.verticalLeftUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -330px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.verticalCenterUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -360px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.verticalRightUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -390px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.distRightUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: 0px -81px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.distLeftUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -420px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.distCenterUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -60px -81px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.distTopUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -30px -81px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.distBottomUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -90px -81px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.distVCenterUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -450px -54px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.bucketToolUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -330px 0px; background-repeat: no-repeat; height: 23px; width: 26px; }
-
-.pencilToolUp { background-image: url("../images/SpriteSheets/NinjaSpriteSheet2_5.png"); background-position: -270px -27px; background-repeat: no-repeat; height: 23px; width: 26px; }
 
 .blueDiv { background: blue; opacity: 0.2; }
 
