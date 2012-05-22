@@ -12,6 +12,21 @@ exports.RuleList = Montage.create(Component, {
     ruleNodeName : { value: 'li' },
     _needsScrollToBottom: { value: null },
 
+    _hide : {
+        value: null
+    },
+    hide : {
+        get: function() {
+            return this._hide;
+        },
+        set: function(value) {
+            if(value === this._hide) { return; }
+
+            this._hide = value;
+            this.needsDraw = true;
+        }
+    },
+
     childComponents : {
         value: [],
         distinct: true
@@ -138,12 +153,10 @@ exports.RuleList = Montage.create(Component, {
             if(this._needsScrollToBottom) {
                 ///// Make sure the appended rule item is visible (scrolled-to)
                 this.element.scrollTop = this.element.offsetHeight;
-                console.log("Scroll top:", this.element.scrollTop);
                 this._needsScrollToBottom = false;
             }
 
             //// Iterate through all rules needing removal
-            console.log("Rule List :: Rules to draw:,", this.rulesToDraw.length);
             this.rulesToRemove.forEach(function(ruleComponent) {
                 var componentIndex = this.childComponents.indexOf(ruleComponent);
                 this.childComponents.splice(componentIndex, 1);
@@ -166,6 +179,12 @@ exports.RuleList = Montage.create(Component, {
                 ruleObj.instance.needsDraw = true;
             }, this);
 
+            if(this.hide) {
+                this.element.classList.add('hidden-rule-list');
+            } else {
+                this.element.classList.remove('hidden-rule-list');
+            }
+
         }
     },
 
@@ -185,8 +204,10 @@ exports.RuleList = Montage.create(Component, {
             this.rulesToDraw.length = 0;
             this.rulesToRemove.length = 0;
 
-            this.parentComponent.ruleListDrawn = true;
-            this.parentComponent.needsDraw = true;
+            if(!this.parentComponent.ruleListDrawn) {
+                this.parentComponent.ruleListDrawn = true;
+                this.parentComponent.needsDraw = true;
+            }
         }
     }
 });

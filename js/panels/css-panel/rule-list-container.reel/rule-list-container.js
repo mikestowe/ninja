@@ -78,8 +78,6 @@ exports.RuleListContainer = Montage.create(Component, {
                 rules, ruleListLog;
 
             rules = this.getRulesForSelection(selection);
-
-            this._instanceToAdd = instance;
             instance.rules = rules;
 
             ruleListLog = {
@@ -88,11 +86,20 @@ exports.RuleListContainer = Montage.create(Component, {
             };
 
             this.ruleLists.push(ruleListLog);
-            this._appendElement = container;
+
+            this.ruleListsToDraw.push({
+                element : container,
+                component : instance
+            });
+
             this.needsDraw = true;
 
             return ruleListLog;
         }
+    },
+
+    ruleListsToDraw : {
+        value: []
     },
 
     getRulesForSelection : {
@@ -141,22 +148,27 @@ exports.RuleListContainer = Montage.create(Component, {
         }
     },
 
+    willDraw : {
+        value: function() {
+            //// hide all rule lists
+            this.ruleLists.forEach(function(ruleListDescriptor) {
+                ruleListDescriptor.component.hide = true;
+            });
+
+            if(this.displayedList) {
+                this.displayedList.component.hide = false;
+            }
+        }
+    },
+
     draw : {
         value: function() {
-            if(this._appendElement) {
-                this.element.appendChild(this._appendElement);
-                this._instanceToAdd.element = this._appendElement;
-                this._appendElement = null;
-                this.needsDraw = true;
-                return;
-            }
-
-            if(this._lastDisplayedList) {
-                this._lastDisplayedList.component.element.style.display = 'none';
-                if(this._displayedList.component.element) {
-                    this._displayedList.component.element.style.display = null;
-                }
-            }
+            this.ruleListsToDraw.forEach(function(ruleListDescriptor) {
+                this.element.appendChild(ruleListDescriptor.element);
+                ruleListDescriptor.component.element = ruleListDescriptor.element;
+                ruleListDescriptor.component.needsDraw = true;
+            }, this);
+            this.ruleListsToDraw.length = 0;
         }
         
     },
