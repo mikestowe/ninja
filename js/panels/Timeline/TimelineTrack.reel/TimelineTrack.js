@@ -730,13 +730,17 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.animatedElement = this.application.ninja.timeline.arrLayers[selectedIndex].layerData.elementsList[0];
             if(this.animatedElement!==undefined){
                 this.animationName = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-name");
+
+                // check for multiple animation names
                 var animationNameList = this.animationName.split(",");
                 if(animationNameList.length > 1){
                     this.animationName = animationNameList[0];
+                    this.extractKeyframesFromRules(animationNameList);
                 }
 
                 this.animationNamesString = this.animationName;
-                
+
+                // build tweens for this tracks's keyframe rule
                 if(this.animationName){
                     trackTiming = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-duration");
                     this.nextKeyframe = 0;
@@ -798,6 +802,18 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                     }
                     this.isTrackAnimated = true;
                 }
+            }
+        }
+    },
+
+    extractKeyframesFromRules:{
+        value:function(ruleNames){
+            //console.log(ruleNames);
+            for(var i in ruleNames){
+                console.log(ruleNames[i].replace(/^\s+|\s+$/g,""));
+                var currName = ruleNames[i].replace(/^\s+|\s+$/g,"");
+                var test = this.application.ninja.stylesController.getAnimationRuleWithName(currName, this.application.ninja.currentDocument._document);
+                console.log(test);
             }
         }
     },
