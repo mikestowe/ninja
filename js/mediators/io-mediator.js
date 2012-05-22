@@ -486,7 +486,7 @@ exports.IoMediator = Montage.create(Component, {
             if (template.webgl && template.webgl.length > 1) {//TODO: Should be length 0, hack for a temp fix
                 var rdgeDirName, rdgeVersion, cvsDataDir = this.getCanvasDirectory(template.file.root), fileCvsDir, fileCvsDirAppend, cvsDirCounter = 1;
                 //
-                if (cvsDataDir) {
+                if (cvsDataDir && !matchingtags.length) {
                 	fileCvsDir = cvsDataDir+template.file.name.split('.'+template.file.extension)[0];
                 	if (!this._getUserDirectory(fileCvsDir)) {
                 		fileCvsDirAppend = fileCvsDir+cvsDirCounter;
