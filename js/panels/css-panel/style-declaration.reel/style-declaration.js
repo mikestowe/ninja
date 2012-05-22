@@ -84,8 +84,7 @@ exports.StyleDeclaration = Montage.create(Component, {
             ///// Take snapshot of declaration
             this.cssText = dec.cssText;
 
-            stylesArray = Array.prototype.slice.call(dec);
-
+            stylesArray = this.filterShorthands(Array.prototype.slice.call(dec));
             stylesArray.forEach(function(prop, index) {
                 this.styles.push({
                     name: prop,
@@ -107,28 +106,32 @@ exports.StyleDeclaration = Montage.create(Component, {
         }
     },
 
-    styleShorthander : {
+    filterShorthands : {
         value: function(styles) {
             var shorthandsToAdd = [],
                 subProps, hasAll;
 
-            styles.forEach(function(property, index, styleArray) {
+            var stylesCopy = styles.map(function(style) {
+                return style;
+            });
+
+            stylesCopy.forEach(function(property, index) {
                 var shorthands = ShorthandProps.CSS_SHORTHAND_MAP[property];
+                if(shorthands) {
+                    subProps = ShorthandProps.CSS_SHORTHAND_TO_SUBPROP_MAP[shorthands[0]];
 
-                if(!shorthands) { return false; }
+                    hasAll = subProps.every(function(subProp) {
+                        return styles.indexOf(subProp) !== -1;
+                    });
 
-                var subProps = ShorthandProps.CSS_SHORTHAND_TO_SUBPROP_MAP[shorthands[0]],
-                    stylesArray = styleArray;
+                    if(hasAll) {
+                        for(var i = subProps.length-1; i>=0; i--) {
+                            styles.splice(styles.indexOf(subProps[i]), 1);
+                        }
+                        shorthandsToAdd.push(shorthands[0]);
+                    }
 
-                hasAll = subProps.every(function(subProp) {
-                    return stylesArray.indexOf(subProp) !== -1;
-                });
-
-                if(hasAll) {
-                    subProps.forEach(function(subProp) {
-                        stylesArray.splice(stylesArray.indexOf(subProp), 1);
-                    }, this);
-                    shorthandsToAdd.push(shorthands[0]);
+                    return true;
                 }
             }, this);
 
@@ -227,8 +230,6 @@ exports.StyleDeclaration = Montage.create(Component, {
                 isEmpty: false
             }, prop;
 
-            console.log('adding "'+ property+'" with value "' + value + '"');
-
             for(prop in data) {
                 if(data.hasOwnProperty(prop)) {
                     styleDescriptor[prop] = data[prop];
@@ -244,7 +245,6 @@ exports.StyleDeclaration = Montage.create(Component, {
     removeStyle : {
         value: function(styleDescriptor) {
             var styleDescriptorIndex = this.styles.indexOf(styleDescriptor);
-console.log("removing style", styleDescriptor);
             //this.styles.splice(styleDescriptorIndex, 1);
             this.arrayController.removeObjects(styleDescriptor);
 
