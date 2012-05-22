@@ -206,8 +206,6 @@ exports.StyleSheet = Montage.create(Component, {
         set: function(sheet) {
             if(!sheet || sheet === this._source) { return; }
 
-            console.log('sheet being set: ', this);
-
             this._extractData(sheet.ownerNode);
             this._source = sheet;
         }

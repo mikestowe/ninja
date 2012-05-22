@@ -37,7 +37,6 @@ exports.StylesViewContainer = Montage.create(Component, {
             return this._prevSelection;
         },
         set: function(value) {
-            console.log("setting last selection to " + value);
             this._prevSelection = value;
         }
     },
@@ -74,7 +73,6 @@ exports.StylesViewContainer = Montage.create(Component, {
     templateDidLoad : {
         value: function() {
             this.eventManager.addEventListener('styleSheetsReady', this, false);
-            //this.eventManager.addEventListener('elementChanging', this, false);
             this.eventManager.addEventListener('elementChange', this, false);
             this.eventManager.addEventListener("closeDocument", this, false);
         }
@@ -94,8 +92,8 @@ exports.StylesViewContainer = Montage.create(Component, {
             var elements = this.application.ninja.selectedElements,
                 elementsCopy = this._copy(elements);
 
+            ///// Is selection identical? If so, do nothing.
             if(this._isSameArray(elements, this.prevSelection) && this.contentPanel === "rules") {
-                console.log('new selection is identical');
                 return false;
             }
 
@@ -152,24 +150,6 @@ exports.StylesViewContainer = Montage.create(Component, {
         }
     },
 
-    handleElementChanging : {
-        value: function(e) {
-            var elements = this.application.ninja.selectedElements;
-
-            if(elements.length === 1) {
-                if(this.contentPanel === "rules") {
-//                    if(e._event.detail.type !== 'cssChange') {
-//                        this.ruleListContainer.displayedList.component.update();
-//                    }
-                } else {
-                    this.computedStyleView.declaration = elements[0];
-                }
-            }
-
-               return false;
-
-        }
-    },
     handleCloseDocument: {
         value: function(e) {
             this.hasStyles = false;

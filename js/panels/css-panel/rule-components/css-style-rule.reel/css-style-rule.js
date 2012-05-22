@@ -55,7 +55,7 @@ exports.CssStyleRule = Montage.create(Component, {
             this.selector = rule.selectorText;
             this.declaration = rule.style;
 
-            console.log('Rule with selector "' +rule.selectorText+ '" is set on componenet.');
+            //console.log('Rule with selector "' +rule.selectorText+ '" is set on componenet.');
 
             this._rule = rule;
         }
