@@ -9,12 +9,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = 		require("montage/core/core").Montage,
     Component = 	require("montage/ui/component").Component,
     Uuid = 			require("montage/core/uuid").Uuid,
-    HTMLDocument =	require("js/document/html-document").HTMLDocument,
-    TextDocument =	require("js/document/text-document").TextDocument;
-
-    // New Document Objects
-var Document_HTML =      require("js/document/document-html").HtmlDocument;
-var Document_Text =      require("js/document/document-text").TextDocument;
+    HTMLDocument =  require("js/document/document-html").HtmlDocument,
+    TextDocument =  require("js/document/document-text").TextDocument;
 ////////////////////////////////////////////////////////////////////////
 //
 var DocumentController = exports.DocumentController = Montage.create(Component, {
@@ -308,8 +304,8 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             this.activeDocument.uri = fileUri;
             //save a new file
             //use the ioMediator.fileSaveAll when implemented
-            this.activeDocument.model.file.name=filename;
-            this.activeDocument.model.file.uri=fileUri;
+            this.activeDocument.model.file.name = filename;
+            this.activeDocument.model.file.uri = fileUri;
             this.activeDocument.model.save();
         }
     },
@@ -334,11 +330,11 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
 					//Open in designer view
                     this._hackRootFlag = false;
-                    Montage.create(Document_HTML).init(file, this, this._onOpenDocument, 'design', template);
+                    Montage.create(HTMLDocument).init(file, this, this._onOpenDocument, 'design', template);
 					break;
 				default:
                     //Open in code view
-                    Montage.create(Document_Text).init(file, this, this._onOpenTextDocument, 'code');
+                    Montage.create(TextDocument).init(file, this, this._onOpenTextDocument, 'code');
                     break;
 			}
         }
@@ -404,17 +400,16 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
             this.application.ninja.stage.hideRulers();
 
-//            document.getElementById("iframeContainer").style.display="block";
-
             this.application.ninja.stage.hideCanvas(true);
 
+            //TODO: Use references for those instead of calling getElementById
             if(this._documents.length === 0){
                 document.getElementById("iframeContainer").style.display="block";
                 document.getElementById("codeViewContainer").style.display="block";
             }
 
-
 			NJevent("closeDocument", doc.model.file.uri);
+
 			//TODO: Delete object here
         }
     },
@@ -458,8 +453,6 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             if(this.activeDocument) {
                 // There is a document currently opened
                 currentDocument = this.activeDocument;
-
-                //this.application.ninja.stage.stageView.restoreAllPanels();
             } else {
                 // There is no document opened
 
@@ -486,16 +479,17 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
     _onOpenTextDocument: {
         value: function(doc) {
-            var currentDocument=null;
+            var currentDocument = null;
             if(this.activeDocument) {
                 // There is a document currently opened
                 currentDocument = this.activeDocument;
             }
 
-            this.application.ninja.stage._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
-            this.activeDocument = doc;
+            this.application.ninja.currentDocument = this.activeDocument = doc;
+
             document.getElementById("iframeContainer").style.display = "none";
             this.application.ninja.codeEditorController.applySettings();
+
             this.switchDocuments(currentDocument, doc, true);
         }
     },
@@ -503,57 +497,57 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     switchDocuments: {
         value: function(currentDocument, newDocument, didCreate) {
 
-            if(currentDocument && currentDocument.currentView === "design") {
-                currentDocument.serializeDocument();
-                this.application.ninja.selectionController._selectionContainer = null;
-                currentDocument.model.views.design.propertiesPanel.clear();
-            }
-
             if(currentDocument) {
-                currentDocument.model.currentView.hide();
+                if(currentDocument.currentView === "design") {
+                    currentDocument.serializeDocument();
+                    this.application.ninja.selectionController._selectionContainer = null;
+                    currentDocument.model.views.design.propertiesPanel.clear();
+                }
+
                 currentDocument.model.isActive = false;
-            }
-            if(currentDocument && newDocument && (currentDocument.model.parentContainer !== newDocument.model.parentContainer)){
-                currentDocument.model.parentContainer.style["display"] = "none";
-            }
 
-            if(newDocument && newDocument.currentView === "code"){
-                this.application.ninja.stage.showCodeViewBar(true);
-                this.application.ninja.stage.collapseAllPanels();
-                this.application.ninja.stage.hideCanvas(true);
-                this.application.ninja.stage.hideRulers();
+                currentDocument.model.currentView.hide();
 
-                newDocument.model.views.code.editor.focus();
+                if(currentDocument.model.parentContainer !== newDocument.model.parentContainer) {
+                    currentDocument.model.parentContainer.style["display"] = "none";
+                    newDocument.model.parentContainer.style["display"] = "block";
+                }
 
-            }else if(currentDocument && newDocument && newDocument.currentView === "design"){
-                this.application.ninja.stage.showCodeViewBar(false);
-                this.application.ninja.stage.restoreAllPanels();
-                this.application.ninja.stage.hideCanvas(false);
-                this.application.ninja.stage.showRulers();
+                if(currentDocument.currentView === "code" && newDocument.currentView === "design") {
+                    this.application.ninja.stage.showCodeViewBar(false);
+                    this.application.ninja.stage.restoreAllPanels();
+                    this.application.ninja.stage.hideCanvas(false);
+                    this.application.ninja.stage.showRulers();
+                } else if(currentDocument.currentView === "design" && newDocument.currentView === "code") {
+                    this.application.ninja.stage.showCodeViewBar(true);
+                    this.application.ninja.stage.collapseAllPanels();
+                    this.application.ninja.stage.hideCanvas(true);
+                    this.application.ninja.stage.hideRulers();
+                }
             }
 
             this.application.ninja.stage.clearAllCanvas();
 
             if(didCreate) {
                 newDocument.model.currentView.show();
-                newDocument.model.parentContainer.style["display"] = "block";
+
                 if(newDocument.currentView === "design") {
-                    newDocument.model.views.design.iframe.style.opacity = 1;
                     NJevent("onOpenDocument", newDocument);
+                } else {
+                    newDocument.model.parentContainer.style["display"] = "block";
                 }
-            }
-            else {
+            } else {
                 this.activeDocument = newDocument;
 
                 newDocument.model.currentView.show();
-                if(currentDocument && newDocument && (currentDocument.model.parentContainer !== newDocument.model.parentContainer)){
-                    newDocument.model.parentContainer.style["display"] = "block";
-                }
 
                 if(newDocument.currentView === "design") {
                     newDocument.deserializeDocument();
                     NJevent("onSwitchDocument");
-                }else{
+                } else {
+                    this.application.ninja.currentDocument = newDocument;
+                    newDocument.model.views.code.editor.focus();
+
                     newDocument.model.isActive = true;
                     this.application.ninja.codeEditorController.applySettings();//should be called after activeDocument is updated
                 }

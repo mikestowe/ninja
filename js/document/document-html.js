@@ -155,7 +155,7 @@ exports.HtmlDocument = Montage.create(Component, {
             // Pause the videos
             this.model.views.design.pauseVideos();
 
-            this.model.isActive = false;
+//            this.model.isActive = false;
     	}
     },
     ////////////////////////////////////////////////////////////////////
