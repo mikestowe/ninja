@@ -166,6 +166,8 @@ var GLSubpath = function GLSubpath() {
     };
 
     this.setWidth = function (newW) {
+        var strokeWidth = this._strokeWidth;
+        var halfStrokeWidth = strokeWidth*0.5;
         if (newW<1) {
             newW=1; //clamp minimum width to 1
         }
@@ -183,7 +185,7 @@ var GLSubpath = function GLSubpath() {
         }
 
         //scale the anchor point positions such that the width of the bbox is the newW
-        var origX = this._BBoxMin[0];
+        var origX = this._BBoxMin[0]; //this should always be zero since we only deal with local coordinates
         var numAnchors = this._Anchors.length;
         for (var i=0;i<numAnchors;i++){
             //compute the distance from the bboxMin
@@ -196,6 +198,7 @@ var GLSubpath = function GLSubpath() {
             this._Anchors[i].setNextPos(origX + nextW*scaleX,this._Anchors[i].getNextY(),this._Anchors[i].getNextZ());
         }
         this.makeDirty();
+        this.computeBoundingBox(true, false);
     };
 
     this.setHeight = function (newH) {
