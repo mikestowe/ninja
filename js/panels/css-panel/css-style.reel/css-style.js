@@ -172,13 +172,6 @@ exports.CssStyle = Montage.create(Component, {
         }
     },
 
-
-    handleEvent : {
-        value: function(e) {
-            console.log(e);
-        }
-    },
-
     handleDragstart : {
         value: function(e) {
             e.dataTransfer.effectAllowed = 'move';
@@ -204,11 +197,6 @@ exports.CssStyle = Montage.create(Component, {
         }
     },
 
-    handleWebkitTransitionEnd : {
-        value: function(e) {
-            console.log("trans end");
-        }
-    },
     handleClick : {
         value: function(e) {
             this.buttonClicked = true;
