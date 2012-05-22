@@ -6,6 +6,7 @@
 
 var MaterialParser = require("js/lib/rdge/materials/material-parser").MaterialParser;
 var Material = require("js/lib/rdge/materials/material").Material;
+var ShapePrimitive = require("js/lib/geom/shape-primitive").ShapePrimitive;
 
 var LinearGradientMaterial = function LinearGradientMaterial() {
     ///////////////////////////////////////////////////////////////////////
@@ -24,6 +25,8 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
     this._colorStop4 = 1.0;
     //	this._colorCount	= 4;
     this._angle = 0.0; // the shader takes [cos(a), sin(a)]
+
+	this._textureTransform = [1,0,0, 0,1,0, 0,0,1];
 
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
@@ -132,12 +135,6 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
         }
     };
 
-    //	this.getColorCount	= function()	{  return this._colorCount;		};
-    //	this.setColorCount	= function(c)	{  this._colorCount = c;
-    //												if (this._shader && this._shader['default'])
-    //													this._shader['default'].u_colorCount.set([c]);
-    //										};
-
     this.getAngle = function () {
         return this._angle;
     };
@@ -200,7 +197,21 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
     // Methods
     ///////////////////////////////////////////////////////////////////////
     // duplcate method requirde
-    this.dup = function () { return new LinearGradientMaterial(); };
+	this.dup = function () {
+		// allocate a new material
+		var newMat = new LinearGradientMaterial();
+
+		// copy over the current values;
+		var propNames = [],  propValues = [],  propTypes = [],  propLabels = [];
+		this.getAllProperties( propNames,  propValues,  propTypes,  propLabels);
+		var n = propNames.length;
+		for (var i=0;  i<n;  i++) {
+			newMat.setProperty( propNames[i], propValues[i] );
+		}
+		newMat._textureTransform = this._textureTransform.slice();
+
+		return newMat;
+	};
 
     this.init = function (world) {
         this.setWorld(world);
@@ -245,7 +256,9 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
             this._shader['default'].u_colorStop4.set([s]);
 
             this.setAngle(this.getAngle());
-        }
+ 
+			this._shader['default'].u_texTransform.set( this._textureTransform );
+       }
     };
 
     this.exportJSON = function () {
@@ -261,7 +274,8 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
 		    'colorStop2': this.getColorStop2(),
 		    'colorStop3': this.getColorStop3(),
 		    'colorStop4': this.getColorStop4(),
-		    'angle': this.getAngle()
+		    'angle': this.getAngle(),
+			'textureTransform': this._textureTransform
 		};
 
         return jObj;
@@ -281,6 +295,7 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
 				colorStop3 = jObj.colorStop3,
 				colorStop4 = jObj.colorStop4,
 				angle = jObj.angle;
+			this._textureTransform = jObj.textureTransform;
 
             this.setProperty("color1", color1);
             this.setProperty("color2", color2);
@@ -367,7 +382,8 @@ var linearGradientMaterialDef =
 						'u_colorStop2':		{ 'type' : 'float' },									
 						'u_colorStop3':		{ 'type' : 'float' },									
 						'u_colorStop4':		{ 'type' : 'float' },									
-						'u_cos_sin_angle' : { 'type' : 'vec2' }
+						'u_cos_sin_angle':  { 'type' : 'vec2' },
+						'u_texTransform':   { 'type' : 'mat3' }
 						//'u_colorCount':		{'type' : 'int' }
 
 					},
