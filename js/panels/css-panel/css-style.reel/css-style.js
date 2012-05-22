@@ -292,8 +292,8 @@ exports.CssStyle = Montage.create(Component, {
             } else if (value !== '0') {
                 this.units = units;
             }
-
-            this.valueText = value;
+            
+            this.valueField.value = value;
 
             this.delegate.handleValueChange(rule, property, value, this);
         }
