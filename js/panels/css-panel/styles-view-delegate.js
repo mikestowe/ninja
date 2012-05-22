@@ -53,6 +53,19 @@ exports.StylesViewMediator = Montage.create(Component, {
                 return false;
             }
 
+            if(!ruleComponent.firstChangeHappened) {
+                var lastClass = newSelector.substring(newSelector.lastIndexOf('.')+1);
+
+                if(lastClass !== newSelector) {
+                    ///// Add the generated class to each element in selection
+                    ///// and check whether it applies to the element
+                    this.ruleListContainer.displayedList.selection.forEach(function(el) {
+                        this.stylesController.addClass(el, lastClass);
+                    },this);
+                }
+                ruleComponent.firstChangeHappened = true;
+            }
+
             rule.selectorText = newSelector;
 
             ruleComponent.applied = this.ruleListContainer.displayedList.selection.every(function(el) {
@@ -225,13 +238,13 @@ exports.StylesViewMediator = Montage.create(Component, {
 
             ///// Add the generated class to each element in selection
             ///// and check whether it applies to the element
-            this.ruleListContainer.displayedList.selection.forEach(function(el) {
-                this.stylesController.addClass(el, selector);
-
-                if(applies) {
-                    applies = (this._doesSelectorTargetElement('.'+selector, el));
-                }
-            },this);
+//            this.ruleListContainer.displayedList.selection.forEach(function(el) {
+//                this.stylesController.addClass(el, selector);
+//
+//                if(applies) {
+//                    applies = (this._doesSelectorTargetElement('.'+selector, el));
+//                }
+//            },this);
 
             ///// Add rule directly to the rule list
             this.ruleListContainer.displayedList.component.addRule(newRule, null, applies, function(ruleComponent) {
