@@ -374,14 +374,14 @@ exports.CssStyle = Montage.create(Component, {
     draw : {
         value : function() {
             if(this.empty) {
-                this.element.draggable = false;
+                //this.element.draggable = false;
                 this.element.classList.add(this.emptyStyleClass);
                 if(!this.addStyleButton.parentNode) {
                     this.element.appendChild(this.addStyleButton);
                     this.addStyleButton.addEventListener('click', this, false);
                 }
             } else {
-                this.element.draggable = true;
+                //this.element.draggable = true;
                 this.element.classList.remove(this.emptyStyleClass);
                 if(this.addStyleButton.parentNode) {
                     this.element.removeChild(this.addStyleButton);

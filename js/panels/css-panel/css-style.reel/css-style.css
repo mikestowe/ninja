@@ -9,15 +9,15 @@
 ------------------------  */
 .style-item {
     border-bottom: 1px solid rgba(0,0,0,0);
-    cursor: url(/js/../images/tools/hand_down.png), default;
+    /*cursor: url(/js/../images/tools/hand_down.png), default;*/
     display: block;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
 .style-item:hover {
-    border-right: 3px double #999;
-    margin-right: 3px;
+    /*border-right: 3px double #999;*/
+    /*margin-right: 3px;*/
 }
 
 /* ------------------------
