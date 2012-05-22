@@ -18,11 +18,13 @@ attribute vec2 texcoord;
 // matrix uniforms
 uniform mat4 u_mvMatrix;
 uniform mat4 u_projMatrix;
+uniform mat3 u_texTransform;
 
 varying		vec2	v_uv;
 
 void main(void)
 {
 	gl_Position = u_projMatrix * u_mvMatrix * vec4(vert,1.0) ;
-	v_uv = texcoord;
+	vec3 tmp = u_texTransform * vec3( texcoord, 1.0);
+	v_uv = tmp.xy;
 }
