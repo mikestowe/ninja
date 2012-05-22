@@ -80,7 +80,7 @@ exports.PanelsData = Montage.create(Montage, {
             collapsed: false,
             open: true,
             modulePath: "js/panels/css-panel/css-panel.reel",
-            moduleName: "CSSPanelNew"
+            moduleName: "CssPanel"
         },
         {
             name: "Presets",

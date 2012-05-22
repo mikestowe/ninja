@@ -11,8 +11,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
     <script type="text/montage-serialization">
         {
             "owner": {
-                "module" : "js/panels/css-panel/rule-components/css-style-rule.reel",
-                "name" : "CssStyleRule",
+                "prototype" : "js/panels/css-panel/rule-components/css-style-rule.reel",
                 "properties" : {
                     "element" : {"#" : "rule-item"},
                     "selectorField": {"@": "selector"},
@@ -20,56 +19,37 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 }
             },
             "sheetName": {
-                "module": "montage/ui/dynamic-text.reel",
-                "name" : "DynamicText",
+                "prototype": "montage/ui/dynamic-text.reel",
                 "properties": {
                     "element": {"#": "style-sheet-name"}
                 },
                 "bindings": {
-                    "value" : {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "sheetName",
-                        "oneway": true
-                    }
+                    "value" : {"<-": "@owner.sheetName" }
                 }
             },
             "selector": {
-                "module": "js/components/hintable.reel",
-                "name" : "Hintable",
+                "prototype": "js/components/hintable.reel",
                 "properties": {
                     "startOnEvent": "click",
                     "element": {"#": "rule-selector"}
                 },
                 "bindings": {
-                    "value" : {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "selector",
-                        "oneway": true
-                    }
+                    "value" : {"<<->":"@owner.selector" }
                 }
             },
             "declaration": {
-                "module": "js/panels/css-panel/style-declaration.reel",
-                "name": "StyleDeclaration",
+                "prototype": "js/panels/css-panel/style-declaration.reel",
                 "properties": {
                     "element": {"#": "declaration-list"}
                 },
                 "bindings": {
-                    "focusDelegate" : {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "focusDelegate",
-                        "oneway": true
-                    },
-                    "declaration" : {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "_declaration",
-                        "oneway": true
-                    }
+                    "focusDelegate" : {"<-": "@owner.focusDelegate" },
+                    "declaration" : {"<-": "@owner._declaration" }
+
                 }
             },
             "sheetLink": {
-                "module": "montage/ui/anchor.reel",
-                "name": "Anchor",
+                "prototype": "montage/ui/anchor.reel",
                 "properties": {
                     "element": {"#": "style-sheet-name"}
                 }

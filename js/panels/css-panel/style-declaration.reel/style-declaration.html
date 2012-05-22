@@ -11,8 +11,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
     <script type="text/montage-serialization">
         {
             "owner": {
-                "module" : "js/panels/css-panel/style-declaration.reel",
-                "name" : "Declaration",
+                "prototype" : "js/panels/css-panel/style-declaration.reel",
                 "properties" : {
                     "element" : {"#" : "container"},
                     "arrayController": {"@": "arrayController"},
@@ -26,11 +25,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                     "automaticallyOrganizeObjects": true
                 },
                 "bindings": {
-                    "content": {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "styles",
-                        "oneway": true
-                    }
+                    "content": {"<-": "@owner.styles" }
                 }
             },
             "repetition": {
@@ -47,27 +42,11 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                     "declaration": {"@": "owner"}
                 },
                 "bindings": {
-                    "source" : {
-                        "boundObject": {"@": "repetition"},
-                        "boundObjectPropertyPath": "objectAtCurrentIteration",
-                        "oneway": true
-                    },
-                    "propertyText" : {
-                        "boundObject": {"@": "repetition"},
-                        "boundObjectPropertyPath": "objectAtCurrentIteration.name"
-                    },
-                    "valueText" : {
-                        "boundObject": {"@": "repetition"},
-                        "boundObjectPropertyPath": "objectAtCurrentIteration.value"
-                    },
-                    "empty" : {
-                        "boundObject": {"@": "repetition"},
-                        "boundObjectPropertyPath": "objectAtCurrentIteration.isEmpty"
-                    },
-                    "delegate": {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "focusDelegate"
-                    }
+                    "source": {"<-": "@repetition.objectAtCurrentIteration" },
+                    "propertyText": {"<<->": "@repetition.objectAtCurrentIteration.name" },
+                    "valueText": {"<<->": "@repetition.objectAtCurrentIteration.value" },
+                    "empty": {"<<->": "@repetition.objectAtCurrentIteration.isEmpty" },
+                    "delegate": {"<-": "@owner.focusDelegate" }
                 }
             }
 

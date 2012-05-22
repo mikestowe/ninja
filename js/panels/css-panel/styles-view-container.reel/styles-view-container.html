@@ -11,8 +11,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
     <script type="text/montage-serialization">
         {
             "owner": {
-                "module" : "js/panels/css-panel/styles-view-container.reel",
-                "name" : "StylesViewContainer",
+                "prototype" : "js/panels/css-panel/styles-view-container.reel",
                 "properties" : {
                     "element" : {"#" : "container"},
                     "ruleListContainer": {"@": "ruleListContainer" },
@@ -23,8 +22,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 }
             },
             "substitution": {
-                "module": "montage/ui/substitution.reel",
-                "name": "Substitution",
+                "prototype": "montage/ui/substitution.reel",
                 "properties": {
                     "element": {"#": "sub-panel-slot"},
                     "switchComponents": {
@@ -33,34 +31,26 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                     }
                 },
                 "bindings": {
-                    "switchValue": {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "contentPanel",
-                        "oneway": true
-                    }
+                    "switchValue": { "<-": "@owner.contentPanel" }
                 }
             },
             "stylesViewDelegate" : {
-                "module": "js/panels/css-panel/styles-view-delegate",
-                "name": "StylesViewMediator",
+                "prototype": "js/panels/css-panel/styles-view-delegate",
                 "properties": {
                     "ruleListContainer": {"@": "ruleListContainer"}
                 }
             },
             "ruleListContainer": {
-                "module": "js/panels/css-panel/rule-list-container.reel",
-                "name": "RuleListContainer",
+                "prototype": "js/panels/css-panel/rule-list-container.reel",
                 "properties": {
                     "focusDelegate": {"@": "stylesViewDelegate"}
                 }
             },
             "computedStyleView": {
-                "module": "js/panels/CSSPanel/ComputedStyleSubPanel.reel",
-                "name": "ComputedStyleSubPanel"
+                "prototype": "js/panels/CSSPanel/ComputedStyleSubPanel.reel"
             },
             "toolbar": {
-                "module": "js/components/toolbar.reel",
-                "name": "Toolbar",
+                "prototype": "js/components/toolbar.reel",
                 "properties": {
                     "element": {"#": "styles-view-toolbar"},
                     "delegate": {"@": "stylesViewDelegate" },

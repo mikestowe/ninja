@@ -6,7 +6,7 @@
 
 var Montage = require("montage/core/core").Montage;
 var PanelBase = require("js/panels/PanelBase").PanelBase;
-var Content = require("js/panels/css-panel/css-panel.reel").CSSPanelNew;
+var Content = require("js/panels/css-panel/css-panel.reel").CssPanel;
 
 exports.CSSPanelContainer = Montage.create(PanelBase, {
     panelName : { value: "CSS Panel" },

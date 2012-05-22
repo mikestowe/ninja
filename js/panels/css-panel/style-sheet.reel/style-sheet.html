@@ -11,8 +11,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
     <script type="text/montage-serialization">
         {
             "owner": {
-                "module" : "js/panels/css-panel/style-sheet.reel",
-                "name" : "StyleSheet",
+                "prototype" : "js/panels/css-panel/style-sheet.reel",
                 "properties" : {
                     "element" : {"#" : "style-sheet-container"},
                     "nameText": {"@": "name"},
@@ -24,31 +23,24 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 }
             },
             "name": {
-                "module": "montage/ui/dynamic-text.reel",
-                "name": "DynamicText",
+                "prototype": "montage/ui/dynamic-text.reel",
                 "properties": {
                     "element": {"#": "sheet-name"},
                     "identifier": "nameText",
                     "defaultText": "Style sheet"
                 },
                 "bindings": {
-                    "value": {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "name",
-                        "onewway": true
-                    }
+                    "value": {"<-": "@owner.name"}
                 }
             },
             "mediaInput": {
-                "module": "js/components/textfield.reel",
-                "name": "TextField",
+                "prototype": "js/components/textfield.reel[TextField]",
                 "properties": {
                     "element": {"#": "media-input"}
                 }
             },
             "editButton": {
-                "module": "montage/ui/button.reel",
-                "name": "Button",
+                "prototype": "montage/ui/button.reel",
                 "properties": {
                     "element": {"#": "edit-button"},
                     "identifier": "editButton",
@@ -61,8 +53,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
             },
             "disableButton": {
-                "module": "montage/ui/button.reel",
-                "name": "Button",
+                "prototype": "montage/ui/button.reel",
                 "properties": {
                     "element": {"#": "disable-button"},
                     "identifier": "disableButton",
@@ -75,8 +66,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
             },
             "deleteButton": {
-                "module": "montage/ui/button.reel",
-                "name": "Button",
+                "prototype": "montage/ui/button.reel",
                 "properties": {
                     "element": {"#": "delete-button"},
                     "identifier": "deleteButton",

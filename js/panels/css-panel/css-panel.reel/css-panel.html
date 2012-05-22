@@ -11,8 +11,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
     <script type="text/montage-serialization">
         {
             "owner": {
-                "module" : "js/panels/css-panel/css-panel.reel",
-                "name" : "CSSPanelNew",
+                "prototype" : "js/panels/css-panel/css-panel.reel",
                 "properties" : {
                     "element" : {"#" : "container"},
                     "styleSheetsView": {"@": "styleSheetsView"},
@@ -21,16 +20,14 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
             },
 
             "styleSheetsView": {
-                "module" : "js/panels/css-panel/style-sheets-view.reel",
-                "name": "StyleSheetsView",
+                "prototype" : "js/panels/css-panel/style-sheets-view.reel",
                 "properties": {
                     "element": {"#": "style-sheet-view" },
                     "documentNameLabel": {"#": "document-name" }
                 }
             },
             "stylesViewContainer": {
-                "module" : "js/panels/css-panel/styles-view-container.reel",
-                "name": "StylesViewContainer",
+                "prototype" : "js/panels/css-panel/styles-view-container.reel",
                 "properties": {
                     "element": {"#": "styles-view-container" },
                     "selectionName": {"@": "selectionName" }
@@ -42,22 +39,18 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                     "element": {"#":"selection-name"}
                 },
                 "bindings": {
-                    "value" : {
-                        "boundObject": {"@": "stylesViewContainer"},
-                        "boundObjectPropertyPath": "selectionNameLabelText",
-                        "oneway": true
-                    }
+                    "value" : {"<-": "@stylesViewContainer.selectionNameLabelText" }
                 }
             }
         }
     </script>
 </head>
 <body>
-<section id="container" class="css-panel">
+<section data-montage-id="container" class="css-panel">
     <h3>Style Sheets <span data-montage-id="document-name" class="document-name"></span></h3>
-    <div id="style-sheet-view"></div>
+    <div data-montage-id="style-sheet-view"></div>
     <h3>Styles <span data-montage-id="selection-name" class="selection-name"></span></h3>
-    <div id="styles-view-container"></div>
+    <div data-montage-id="styles-view-container"></div>
 </section>
 </body>
 </html>

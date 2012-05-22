@@ -25,12 +25,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                     "element": {"#": "repetition"}
                 },
                 "bindings": {
-                    "objects" : {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "buttons",
-                        "oneway": true
-                    }
-
+                    "objects": {"<-": "@owner.buttons"}
                 }
             },
             
@@ -41,21 +36,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                     "label": " "
                 },
                 "bindings": {
-                    "label" : {
-                        "boundObject": {"@": "buttonList"},
-                        "boundObjectPropertyPath": "objectAtCurrentIteration.title",
-                        "oneway": true
-                    },
-                    "identifier": {
-                        "boundObject": {"@": "buttonList"},
-                        "boundObjectPropertyPath": "objectAtCurrentIteration.identifier",
-                        "oneway": true
-                    },
-                    "sourceObject": {
-                        "boundObject": {"@": "buttonList"},
-                        "boundObjectPropertyPath": "objectAtCurrentIteration",
-                        "oneway": true
-                    }
+                    "label": {"<-": "@buttonList.objectAtCurrentIteration.title"},
+                    "sourceObject": {"<-": "@buttonList.objectAtCurrentIteration"}
                 }
             }
         }

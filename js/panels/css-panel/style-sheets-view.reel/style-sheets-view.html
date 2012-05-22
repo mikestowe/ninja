@@ -21,11 +21,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
             "arrayController" : {
                 "prototype" : "montage/ui/controller/array-controller",
                 "bindings": {
-                    "content": {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "styleSheets",
-                        "oneway": true
-                    }
+                    "content": {"<-": "@owner.styleSheets" }
                 }
             },
             "styleSheetList": {
@@ -41,11 +37,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                     "element": {"#": "sheet-item"}
                 },
                 "bindings": {
-                    "source": {
-                        "boundObject": {"@": "styleSheetList"},
-                        "boundObjectPropertyPath": "objectAtCurrentIteration",
-                        "oneway": true
-                    }
+                    "source": {"<-": "@styleSheetList.objectAtCurrentIteration" }
                 }
             },
             "documentLoaded": {
@@ -55,11 +47,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                     "removalStrategy": "hide"
                 },
                 "bindings": {
-                    "condition": {
-                        "boundObject": {"@": "owner" },
-                        "boundObjectPropertyPath": "documentLoaded",
-                        "oneway": true
-                    }
+                    "condition": {"<-": "@owner.documentLoaded" }
                 }
             },
             "hasSheets": {

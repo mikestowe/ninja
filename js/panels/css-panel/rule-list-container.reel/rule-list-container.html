@@ -10,16 +10,14 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
     <script type="text/montage-serialization">
         {
             "owner": {
-                "module" : "js/panels/css-panel/rule-list-container.reel",
-                "name" : "RuleListContainer",
+                "prototype" : "js/panels/css-panel/rule-list-container.reel",
                 "properties" : {
                     "element" : {"#" : "container"},
                     "ruleListComponent": {"@": "ruleList"}
                 }
             },
             "ruleList": {
-                "module" : "js/panels/css-panel/rule-list.reel",
-                "name": "RuleList",
+                "prototype" : "js/panels/css-panel/rule-list.reel",
                 "properties": {
                     "supportedRules" : {
                         "inline": {"@": "cssStyleRule" },
@@ -28,8 +26,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 }
             },
             "cssStyleRule": {
-                "module": "js/panels/css-panel/rule-components/css-style-rule.reel",
-                "name": "CssStyleRule"
+                "prototype": "js/panels/css-panel/rule-components/css-style-rule.reel"
             }
         }
     </script>
@@ -46,6 +43,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
     </script>
 </head>
 <body>
-<div id="container" class="rule-list-container"></div>
+<div data-montage-id="container" class="rule-list-container"></div>
 </body>
 </html>

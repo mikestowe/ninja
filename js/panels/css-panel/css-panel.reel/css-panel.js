@@ -7,7 +7,7 @@
 var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
-exports.CSSPanelNew = Montage.create(Component, {
+exports.CssPanel = Montage.create(Component, {
     prepareForDraw : {
         value: function() {
         }

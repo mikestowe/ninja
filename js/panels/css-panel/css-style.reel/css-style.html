@@ -11,8 +11,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
     <script type="text/montage-serialization">
         {
             "owner": {
-                "module" : "js/panels/css-panel/css-style.reel",
-                "name" : "CssStyle",
+                "prototype" : "js/panels/css-panel/css-style.reel",
                 "properties" : {
                     "element" : {"#" : "container"},
                     "addStyleButton": {"#": "add-style-button"},
@@ -25,34 +24,24 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "object": "js/panels/CSSPanel/css-property-name-list"
             },
             "checkbox": {
-                "module": "montage/ui/checkbox.reel",
-                "name": "Checkbox",
+                "prototype": "montage/ui/checkbox.reel",
                 "properties": {
                     "element": {"#": "disable-checkbox"},
                     "checked": true
                 },
                 "bindings": {
-                    "checked" : {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "enabled",
-                        "oneway": false
-                    }
+                    "checked" : {"<<->": "@owner.enabled" }
                 }
             },
             "property": {
-                "module": "js/components/hintable.reel",
-                "name": "Hintable",
+                "prototype": "js/components/hintable.reel",
                 "properties": {
                     "startOnEvent": "click",
                     "element": {"#": "property"},
                     "identifier": "property"
                 },
                 "bindings": {
-                    "value" : {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "propertyText",
-                        "oneway": true
-                    }
+                    "value" : {"<-": "@owner.propertyText" }
                 },
                 "listeners": [
                     {
@@ -66,19 +55,14 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 ]
             },
             "value": {
-                "module": "js/components/hintable.reel",
-                "name": "Hintable",
+                "prototype": "js/components/hintable.reel",
                 "properties": {
                     "startOnEvent": "click",
                     "element": {"#": "value"},
                     "identifier": "value"
                 },
                 "bindings": {
-                    "value" : {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "valueText",
-                        "oneway": true
-                    }
+                    "value" : {"<-": "@owner.valueText" }
                 },
                 "listeners": [
                     {
@@ -95,7 +79,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
     </script>
 </head>
 <body>
-<div id="container" class="style-item"  spellcheck="false" draggable="false">
+<div data-montage-id="container" class="style-item"  spellcheck="false" draggable="false">
     <input type="checkbox" data-montage-id="disable-checkbox"><dt data-montage-id="property" class="css-property"></dt><dd data-montage-id="value" class="css-value"></dd>
     <button data-montage-id="add-style-button" class="add-style-button">Add</button>
 </div>

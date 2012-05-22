@@ -11,17 +11,31 @@ exports.Toolbar = Montage.create(Component, {
     _needsButtonProperties : {
         value: null
     },
+    _sourceObject : {
+        value: null
+    },
+    sourceObject : {
+        get: function() {
+            return this._sourceObject;
+        },
+        set: function(value) {
+            if(value === this._sourceObject) { return; }
+            this._sourceObject = value;
+        },
+        serializable: true
+    },
     leftAlignClass  : { value: "left-button" },
     hideButtonClass : { value: "hide-button" },
-    _buttons : { value: null },
+    _buttons : { value: [], distinct: true },
     buttons : {
         get: function() {
             return this._buttons;
         },
         set: function(btns) {
             this._buttons = btns;
-            this._needsButtonProperties = this.needsDraw = true;;
-        }
+            this._needsButtonProperties = this.needsDraw = true;
+        },
+        serializable: true
     },
 
     _buttonToHide : {
