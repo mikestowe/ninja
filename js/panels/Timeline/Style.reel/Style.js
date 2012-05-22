@@ -316,6 +316,7 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 				this.editorColorContainer.classList.add("hidden");
 				this.editorHottextContainer.classList.add("hidden");
 				this.valueEditorInput.value = this.editorValue;
+                this.valueEditorInput.addEventListener("blur",this,false);
 			} else {
 				this.log("Warning: unknown tweenable -"+tweenable.tweener+"- specified in style.js.")
 			}
@@ -559,7 +560,7 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
     		{
     			"property" : "opacity",
     			"tweener" : "hottext",
-    			"units" : "%",
+    			"units" : "",
     			"min" : 0,
     			"max" : 100,
     			"default" : 100
@@ -617,19 +618,31 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
     },
 
     handleHottextChange:{
-        value:function(){
-            debugger;
-            this.application.ninja.elementMediator.setProperty(this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.elementsList, this.editorProperty, [this.editorValue + "%"] , "Change", "timeline");
+        value:function(event){
+
+            if(this.editorValue===""){
+                this.editorValue = 0;
+            }
+            this.application.ninja.elementMediator.setProperty(this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.elementsList, this.editorProperty, [this.editorValue + event.target._units] , "Change", "timeline");
         }
     },
 
     handleHottextChanging:{
-        value:function(){
+        value:function(event){
 
-           debugger;
-           this.application.ninja.elementMediator.setProperty(this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.elementsList, this.editorProperty, [this.editorValue + "%"] , "Changing", "timeline");
+            if(this.editorValue===""){
+                this.editorValue = 0;
+            }
+            this.application.ninja.elementMediator.setProperty(this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.elementsList, this.editorProperty, [this.editorValue + event.target._units ] , "Changing", "timeline");
         }
     },
+
+    handleBlur:{
+        value:function(event){
+            this.application.ninja.elementMediator.setProperty(this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.elementsList, this.editorProperty, [event.target.value] , "Change", "timeline");
+        }
+    },
+
 	
 	/* Begin: Logging routines */
     _boolDebug: {
