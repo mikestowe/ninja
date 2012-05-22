@@ -21,8 +21,9 @@ var FlagMaterial = function FlagMaterial() {
 	this._time = 0.0;
 	this._dTime = 0.1;
 
-    this._defaultWaveWidth = 1.0;
-    this._defaultWaveHeight = 1.0;
+	this._speed = 1.0;
+    this._waveWidth = 1.0;
+    this._waveHeight = 1.0;
 
 	this._hasVertexDeformation = true;
 
@@ -31,14 +32,16 @@ var FlagMaterial = function FlagMaterial() {
     ///////////////////////////////////////////////////////////////////////
 	// all defined in parent PulseMaterial.js
 	// load the local default value
-	this._propNames			= ["texmap",        "wavewidth",        "waveheight" ];
-	this._propLabels		= ["Texture map",   "Wave Width",       "Wave Height" ];
-	this._propTypes			= ["file",          "float",            "float" ];
+	this._propNames			= ["texmap",        "wavewidth",        "waveheight",		"speed" ];
+	this._propLabels		= ["Texture map",   "Wave Width",       "Wave Height",		"Speed" ];
+	this._propTypes			= ["file",          "float",            "float",			"float" ];
 	this._propValues		= [];
 
 	this._propValues[ this._propNames[0] ] = this._texMap.slice(0);
-    this._propValues[ this._propNames[1] ] = this._defaultWaveWidth;
-    this._propValues[ this._propNames[2] ] = this._defaultWaveHeight;
+    this._propValues[ this._propNames[1] ] = this._waveWidth;
+    this._propValues[ this._propNames[2] ] = this._waveHeight;
+    this._propValues[ this._propNames[3] ] = this._speed;
+
 
 	// a material can be animated or not. default is not.  
 	// Any material needing continuous rendering should override this method
@@ -64,6 +67,68 @@ var FlagMaterial = function FlagMaterial() {
 
         return newMat;
 	};
+
+	this.setProperty = function( prop, value )
+	{
+		// make sure we have legitimate imput
+		var ok = this.validateProperty( prop, value );
+		if (!ok) {
+			console.log( "invalid property in Radial Gradient Material:" + prop + " : " + value );
+		}
+
+		switch (prop)
+		{
+			case "texmap":
+				this.setTextureMap(value);
+				break;
+
+			case "wavewidth":
+				this._waveWidth = value;
+				this._propValues[ this._propNames[1] ] = this._waveWidth;
+				this.updateParameters();
+				break;
+
+			case "waveheight":
+				this._waveHeight = value;
+				this._propValues[ this._propNames[2] ] = this._waveHeight;
+				this.updateParameters();
+				break;
+
+			case "speed":
+				this._speed = value;
+				this._propValues[ this._propNames[3] ] = this._speed;
+				this.updateParameters();
+				break;
+
+			case "color":
+				break;
+		}
+	};
+
+
+	this.updateParameters = function()
+	{
+		this._propValues[ this._propNames[1] ] = this._waveWidth;
+		this._propValues[ this._propNames[2] ] = this._waveHeight;
+		this._propValues[ this._propNames[3] ] = this._speed;
+
+		var material = this._materialNode;
+		if (material)
+		{
+			var technique = material.shaderProgram['default'];
+			var renderer = RDGE.globals.engine.getContext().renderer;
+			if (renderer && technique)
+			{
+
+				if (this._shader && this._shader['default']) {
+					this._shader['default'].u_speed.set( [this._speed] );
+					this._shader['default'].u_waveWidth.set( [this._waveWidth] );
+					this._shader['default'].u_waveHeight.set( [this._waveHeight] );
+				}
+			}
+		}
+	};
+
 
 	this.init = function( world )
 	{
@@ -91,6 +156,7 @@ var FlagMaterial = function FlagMaterial() {
         this._glTex = new Texture( world, texMapName );
 
 		// set the shader values in the shader
+		this.updateParameters();
 		this.updateTexture();
 		this.update( 0 );
 	}
@@ -125,6 +191,7 @@ var flagMaterialDef =
 				{
 					'u_tex0': { 'type' : 'tex2d' },
 					'u_time' : { 'type' : 'float' },
+					'u_speed' : { 'type' : 'float' },
 					'u_waveWidth'  :   { 'type' : 'float' },
 					'u_waveHeight'  :   { 'type' : 'float' }
 				},

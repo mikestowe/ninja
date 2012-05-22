@@ -147,9 +147,9 @@ var RadialGradientMaterial = function RadialGradientMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
-    this._propNames = ["color1", "color2", "color3", "color4", "colorStop1", "colorStop2", "colorStop3", "colorStop4", "angle"];
-    this._propLabels = ["Color 1", "Color 2", "Color 3", "Color 4", "Color Stop 1", "Color Stop 2", "Color Stop 3", "Color Stop 4", "Angle"];
-    this._propTypes = ["color", "color", "color", "color", "float", "float", "float", "float", "float"];
+    this._propNames = ["color1", "color2", "color3", "color4", "colorStop1", "colorStop2", "colorStop3", "colorStop4" ];
+    this._propLabels = ["Color 1", "Color 2", "Color 3", "Color 4", "Color Stop 1", "Color Stop 2", "Color Stop 3", "Color Stop 4" ];
+    this._propTypes = ["color", "color", "color", "color", "float", "float", "float", "float" ];
     this._propValues = [];
 
     this._propValues[this._propNames[0]] = this._color1.slice(0);
@@ -180,7 +180,6 @@ var RadialGradientMaterial = function RadialGradientMaterial() {
             case "colorStop2": this.setColorStop2(value); break;
             case "colorStop3": this.setColorStop3(value); break;
             case "colorStop4": this.setColorStop4(value); break;
-            case "angle": this.setAngle(value); break;
         }
 
         //this.updateValuesInShader();

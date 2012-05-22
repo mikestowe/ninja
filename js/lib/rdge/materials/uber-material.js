@@ -247,9 +247,9 @@ var UberMaterial = function UberMaterial() {
                     var technique = material.shaderProgram.defaultTechnique;
                     var renderer = RDGE.globals.engine.getContext().renderer;
                     if (renderer && technique) {
-                        var tex = renderer.getTextureByName(value, caps.environmentMap.wrap);
+                        var tex = renderer.getTextureByName(value, this._ubershaderCaps.environmentMap.wrap);
                         this.registerTexture(tex);
-                        technique.s_environmentMap.set(tex);
+                        technique.s_envMap.set(tex);
                     }
                 }
             }
@@ -276,7 +276,7 @@ var UberMaterial = function UberMaterial() {
 					var technique = material.shaderProgram.defaultTechnique;
 					var renderer = RDGE.globals.engine.getContext().renderer;
 					if (renderer && technique) {
-                        this._diffuseTexture = new Texture( this.getWorld(), value,  caps.diffuseMap.wrap );
+                        this._diffuseTexture = new Texture( this.getWorld(), value,  this._ubershaderCaps.diffuseMap.wrap );
                         var tex = this._diffuseTexture.getTexture();
 						technique.s_diffuseMap.set( tex );
 					}
@@ -304,7 +304,7 @@ var UberMaterial = function UberMaterial() {
                     var technique = material.shaderProgram.defaultTechnique;
                     var renderer = RDGE.globals.engine.getContext().renderer;
                     if (renderer && technique) {
-                        var tex = renderer.getTextureByName(value, caps.specularMap.wrap);
+                        var tex = renderer.getTextureByName(value, this._ubershaderCaps.specularMap.wrap);
                         this.registerTexture(tex);
                         technique.s_specularMap.set(tex);
                     }
@@ -332,7 +332,7 @@ var UberMaterial = function UberMaterial() {
                     var technique = material.shaderProgram.defaultTechnique;
                     var renderer = RDGE.globals.engine.getContext().renderer;
                     if (renderer && technique) {
-                        var tex = renderer.getTextureByName(value, caps.normalMap.wrap);
+                        var tex = renderer.getTextureByName(value, this._ubershaderCaps.normalMap.wrap);
                         this.registerTexture(tex);
                         technique.s_normalMap.set(tex);
                     }
@@ -798,7 +798,7 @@ var UberMaterial = function UberMaterial() {
 
         var material = this._materialNode;
         if (material) {
-            material.setShader(buildUbershader(this._ubershaderCaps));
+            material.setShader( this.buildUberShader(this._ubershaderCaps) );
         }
     };
 };

@@ -224,8 +224,6 @@ var PulseMaterial = function PulseMaterial()
 					this._shader['default'].u_time.set( [this._time] );
 				}
 				this._time += this._dTime;
-
-				if (this._time > 200.0)  this._time = 0.0;
 			}
 		}
 	};

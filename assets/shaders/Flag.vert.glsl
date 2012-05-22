@@ -16,6 +16,7 @@ attribute vec2 texcoord;
 
 // scalar uniforms
 uniform float u_time;
+uniform float u_speed;
 uniform float u_waveWidth;
 uniform float u_waveHeight;
 
@@ -30,8 +31,9 @@ varying vec2 v_uv;
 
 void main()
 {
-	float pi = 3.14159;
-	float angle = u_time;
+	float time = u_time * u_speed;
+	const float pi = 3.14159;
+	float angle = time;
 
     v_uv = texcoord;
 
@@ -39,9 +41,11 @@ void main()
 	float y = 2.0*pi*texcoord.y;
 
     vec3 v = a_pos;
-	v.z  = sin( x + angle ) - 2.0*u_waveHeight;
+	v.z  = sin( x + angle );
 	v.z += sin( 0.2*y + angle);
-	v.z *= x * 0.09 * u_waveHeight;
+	v.z *= u_waveHeight;
+	v.z -=  2.0*u_waveHeight;
+	v.z *= x * 0.09;
 	
     gl_Position = u_projMatrix * u_mvMatrix * vec4(v,1.0) ;
 }
