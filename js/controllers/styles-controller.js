@@ -128,21 +128,23 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                     this._defaultStylesheet = null;
                     return false;
                 }
-                ///// Use the last stylesheet in the document as the default
-                
-                var sheets = this._activeDocument._document.styleSheets,
-                    lastIndex = sheets.length-1;
-                
-                ///// If the only sheet is the stage stylesheet, this will be true
-                ///// in which case, we want to create a stylesheet to hold the 
-                ///// user's style rules
-                
-                if(sheets[lastIndex] === this._stageStyleSheet) {
-                    this._defaultStylesheet = this.createStylesheet('nj-default');
-                } else {
-                    this._defaultStylesheet = sheets[lastIndex];
-                }
+                //check that the document has a design view
+                else if(this._activeDocument.model && this._activeDocument.model.views && this._activeDocument.model.views.design){
+                    ///// Use the last stylesheet in the document as the default
 
+                    var sheets = this._activeDocument._document.styleSheets,
+                        lastIndex = sheets.length-1;
+
+                    ///// If the only sheet is the stage stylesheet, this will be true
+                    ///// in which case, we want to create a stylesheet to hold the
+                    ///// user's style rules
+
+                    if(sheets[lastIndex] === this._stageStyleSheet) {
+                        this._defaultStylesheet = this.createStylesheet('nj-default');
+                    } else {
+                        this._defaultStylesheet = sheets[lastIndex];
+                    }
+                }
             }
         }
     },
