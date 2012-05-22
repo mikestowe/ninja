@@ -1012,5 +1012,47 @@ exports.Stage = Montage.create(Component, {
            this._iframeContainer.scrollTop = this.application.ninja.documentController.activeDocument.savedTopScroll;
            this._scrollTop = this.application.ninja.documentController.activeDocument.savedTopScroll;
        }
-   }
+   },
+
+    showRulers:{
+        value:function(){
+            this.application.ninja.rulerTop.style.display = "block";
+            this.application.ninja.rulerLeft.style.display = "block";
+        }
+    },
+    hideRulers:{
+        value:function(){
+            this.application.ninja.rulerTop.style.display = "none";
+            this.application.ninja.rulerLeft.style.display = "none";
+        }
+    },
+    showCodeViewBar:{
+        value:function(isCodeView){
+            if(isCodeView === true) {
+                this.application.ninja.editorViewOptions.element.style.display = "block";
+                this.application.ninja.documentBar.element.style.display = "none";
+            } else {
+                this.application.ninja.documentBar.element.style.display = "block";
+                this.application.ninja.editorViewOptions.element.style.display = "none";
+            }
+        }
+    },
+
+    collapseAllPanels:{
+        value:function(){
+            this.application.ninja.panelSplitter.collapse();
+            this.application.ninja.timelineSplitter.collapse();
+            this.application.ninja.toolsSplitter.collapse();
+            this.application.ninja.optionsSplitter.collapse();
+        }
+    },
+    restoreAllPanels:{
+        value:function(){
+            this.application.ninja.panelSplitter.restore();
+            this.application.ninja.timelineSplitter.restore();
+            this.application.ninja.toolsSplitter.restore();
+            this.application.ninja.optionsSplitter.restore();
+        }
+    }
+
 });

@@ -111,7 +111,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
         set : function(sheet) {
             if(sheet) {
                 this._defaultStylesheet = sheet;
-            } else {
+            } else if(this._activeDocument.model && this._activeDocument.model.views && this._activeDocument.model.views.design){//check that the document has a design view
                 
                 ///// Use the last stylesheet in the document as the default
                 

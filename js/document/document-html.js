@@ -158,9 +158,6 @@ exports.HtmlDocument = Montage.create(Component, {
             // Pause the videos
             //TODO: Move these to be handled on the show/hide methods in the view
             this.model.views.design.pauseVideos();
-			
-			//TODO: Move this to the document controller
-            this.model.isActive = false;
     	}
     },
     ////////////////////////////////////////////////////////////////////

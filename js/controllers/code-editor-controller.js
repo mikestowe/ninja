@@ -68,7 +68,7 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
      * Creates an editor instance
      */
     createEditor : {
-        value:function(doc, type, documentType){
+        value:function(codeDocumentView, type, documentType, textDocument){
             var self = this, editorOptions = null;
 
             editorOptions = {
@@ -76,17 +76,17 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
                                matchBrackets:true,
                                mode: type,
                                onChange: function(){
-                                   var historySize = doc.editor.historySize();
+                                   var historySize = codeDocumentView.editor.historySize();
                                    if(historySize.undo>0){
-                                        doc.needsSave = true;
+                                       textDocument.model.needsSave = true;
                                    }else if(historySize.undo===0 && historySize.redo>0){
-                                       doc.needsSave = false;
+                                       textDocument.model.needsSave = false;
                                    }
                                },
                                onCursorActivity: function() {
-                                   doc.editor.matchHighlight("CodeMirror-matchhighlight");
-                                   doc.editor.setLineClass(doc.editor.hline, null, null);
-                                   doc.editor.hline = doc.editor.setLineClass(doc.editor.getCursor().line, null, "activeline");
+                                   codeDocumentView.editor.matchHighlight("CodeMirror-matchhighlight");
+                                   codeDocumentView.editor.setLineClass(codeDocumentView.editor.hline, null, null);
+                                   codeDocumentView.editor.hline = codeDocumentView.editor.setLineClass(codeDocumentView.editor.getCursor().line, null, "activeline");
                                }
                            };
 
@@ -95,9 +95,7 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
                 editorOptions.onKeyEvent = function(cm, keyEvent){self._codeCompletionKeyEventHandler.call(self, cm, keyEvent, documentType)};
             }
 
-            var editor = self.codeEditor.fromTextArea(doc.textArea, editorOptions);
-
-            //editor.setOption("theme", "night");
+            var editor = self.codeEditor.fromTextArea(codeDocumentView.textArea, editorOptions);
 
             return editor;
         }
@@ -215,22 +213,22 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
 
     autoFormatSelection:{
         value: function(){
-            var range = this.getSelectedRange(this.application.ninja.documentController.activeDocument.editor);
-            this.application.ninja.documentController.activeDocument.editor.autoFormatRange(range.from, range.to);
+            var range = this.getSelectedRange(this.application.ninja.documentController.activeDocument.model.views.code.editor);
+            this.application.ninja.documentController.activeDocument.model.views.code.editor.autoFormatRange(range.from, range.to);
         }
     },
 
     commentSelection:{
         value: function(isComment){
-            var range = this.getSelectedRange(this.application.ninja.documentController.activeDocument.editor);
-            this.application.ninja.documentController.activeDocument.editor.commentRange(isComment, range.from, range.to);
+            var range = this.getSelectedRange(this.application.ninja.documentController.activeDocument.model.views.code.editor);
+            this.application.ninja.documentController.activeDocument.model.views.code.editor.commentRange(isComment, range.from, range.to);
         }
     },
 
     handleThemeSelection:{
         value: function(){
-            this.application.ninja.documentController.activeDocument.editor.setOption("theme", this.editorTheme);
-            this.application.ninja.stage.stageView.applyTheme("cm-s-"+this.editorTheme);
+            this.application.ninja.documentController.activeDocument.model.views.code.editor.setOption("theme", this.editorTheme);
+            this.application.ninja.documentController.activeDocument.model.views.code.applyTheme("cm-s-"+this.editorTheme);
         }
     },
 
@@ -238,10 +236,10 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
         value:function(value){
             var originalFont=13,originalLineHeight=16;
             this._zoomFactor = value;
-            this.application.ninja.documentController.activeDocument.container.style.fontSize = ""+((value/100)*originalFont)+"px";
-            this.application.ninja.documentController.activeDocument.container.style.cursor = "text";
-            this.application.ninja.documentController.activeDocument.container.querySelector(".CodeMirror").style.lineHeight = ""+((value/100)*originalLineHeight)+"px";
-            this.application.ninja.documentController.activeDocument.editor.refresh();//refresh editor display for xoom
+            this.application.ninja.documentController.activeDocument.model.views.code.textViewContainer.style.fontSize = ""+((value/100)*originalFont)+"px";
+            this.application.ninja.documentController.activeDocument.model.views.code.textViewContainer.style.cursor = "text";
+            this.application.ninja.documentController.activeDocument.model.views.code.textViewContainer.querySelector(".CodeMirror").style.lineHeight = ""+((value/100)*originalLineHeight)+"px";
+            this.application.ninja.documentController.activeDocument.model.views.code.editor.refresh();//refresh editor display for xoom
         }
     },
 
@@ -250,7 +248,7 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
             //set theme
             this.handleThemeSelection();
             //check autocomplete support
-            this.handleCodeCompletionSupport(this.application.ninja.documentController.activeDocument.documentType);
+            this.handleCodeCompletionSupport(this.application.ninja.documentController.activeDocument.model.file.extension);
             //set zoom
             this.handleZoom(this._zoomFactor);
         }
