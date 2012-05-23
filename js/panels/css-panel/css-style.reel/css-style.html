@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<!-- <copyright>
+This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+(c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+</copyright> -->
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link href="css-style.css" type="text/css" rel="stylesheet" media="screen">
+    <script type="text/montage-serialization">
+        {
+            "owner": {
+                "prototype" : "js/panels/css-panel/css-style.reel",
+                "properties" : {
+                    "element" : {"#" : "container"},
+                    "addStyleButton": {"#": "add-style-button"},
+                    "propertyField": {"@": "property"},
+                    "valueField": {"@": "value"},
+                    "propertyNames" : {"@": "propertyNames"}
+                }
+            },
+            "propertyNames": {
+                "object": "js/panels/CSSPanel/css-property-name-list"
+            },
+            "checkbox": {
+                "prototype": "montage/ui/checkbox.reel",
+                "properties": {
+                    "element": {"#": "disable-checkbox"},
+                    "checked": true
+                },
+                "bindings": {
+                    "checked" : {"<<->": "@owner.enabled" }
+                }
+            },
+            "property": {
+                "prototype": "js/components/hintable.reel",
+                "properties": {
+                    "startOnEvent": "click",
+                    "element": {"#": "property"},
+                    "identifier": "property"
+                },
+                "bindings": {
+                    "value" : {"<-": "@owner.propertyText" }
+                },
+                "listeners": [
+                    {
+                        "type": "change",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "stop",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            },
+            "value": {
+                "prototype": "js/components/hintable.reel",
+                "properties": {
+                    "startOnEvent": "click",
+                    "element": {"#": "value"},
+                    "identifier": "value"
+                },
+                "bindings": {
+                    "value" : {"<-": "@owner.valueText" }
+                },
+                "listeners": [
+                    {
+                        "type": "change",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "stop",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            }
+        }
+    </script>
+</head>
+<body>
+<div data-montage-id="container" class="style-item"  spellcheck="false" draggable="false">
+    <input type="checkbox" data-montage-id="disable-checkbox"><dt data-montage-id="property" class="css-property"></dt><dd data-montage-id="value" class="css-value"></dd>
+    <button data-montage-id="add-style-button" class="add-style-button">Add</button>
+</div>
+</body>
+</html>

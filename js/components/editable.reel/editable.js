@@ -40,7 +40,9 @@ exports.Editable = Montage.create(Component, {
             this._element.addEventListener('keydown', this, false);
             this._element.addEventListener('keyup', this, false);
             this._element.addEventListener('input', this, false);
-            
+            this._element.addEventListener('paste', this, false);
+
+
             if(this.startOnEvent) {
                 this._element.addEventListener(this.startOnEvent, this, false);
             }
@@ -126,7 +128,7 @@ exports.Editable = Montage.create(Component, {
                 if(this.stopOnBlur) {
                     //console.log('adding mousedown event listener');
                     ///// Simulate blur on editable node by listening to the doc
-                    document.addEventListener('mouseup', this, false);
+                    document.addEventListener('mousedown', this, false);
                 }
                 
                 this._sendEvent('start');
@@ -135,16 +137,17 @@ exports.Editable = Montage.create(Component, {
         }
     },
     stop : {
-        value: function() {
+        value: function(eventData) {
             this._isEditable = this._element.contentEditable = false;
             this._element.classList.remove(this.editingClass);
-            
-            this._sendEvent('stop');
-            
+
             ///// if value is different than pre-edit val, call onchange method
             if(this._preEditValue !== this.value) {
                 this._sendEvent('change');
             }
+
+            this._sendEvent('stop', eventData);
+            document.removeEventListener('mousedown', this, false);
         }
     },
     selectAll : {
@@ -178,12 +181,11 @@ exports.Editable = Montage.create(Component, {
         }
     },
     blur : {
-        value : function() {
+        value : function(eventData) {
             if(this._hint) {
                 this.accept();
             }
-            this.stop();
-            document.removeEventListener('mouseup', this, false);
+            this.stop(eventData);
             this._sendEvent('blur');
         }
     },
@@ -212,13 +214,23 @@ exports.Editable = Montage.create(Component, {
             this._sendEvent('input');
         }
     },
-    handleMouseup : {
+    handleMousedown : {
         value : function(e) {
             //console.log('handle mouse down');
             ///// Listen for simulated blur event
             if(this.stopOnBlur && e._event.target !== this._element) {
-                this.blur();
+                this.blur({
+                    "originalEventType": "mousedown",
+                    "originalEvent": e
+                });
             }
+        }
+    },
+    handlePaste : {
+        value: function(e) {
+            e.preventDefault();
+            document.execCommand('insertHTML', null, e._event.clipboardData.getData("Text"));
+            this._sendEvent('paste', e);
         }
     },
     handleEvent : {
@@ -231,9 +243,9 @@ exports.Editable = Montage.create(Component, {
         }
     },
     _sendEvent : {
-        value : function(type) {
+        value : function(type, data) {
             var evt = document.createEvent("CustomEvent");
-            evt.initCustomEvent(type, true, true);
+            evt.initCustomEvent(type, true, true, data);
             this.dispatchEvent(evt);
         }
     },
@@ -257,10 +269,11 @@ exports.Editable = Montage.create(Component, {
     },
     keyActions : { 
         value : {
-            stop   : [27,9,13,186],
+            stop   : [27,9,13],
             revert : [27],
             backsp : [8]
-        }
+        },
+        distinct: true
     }
     
 });

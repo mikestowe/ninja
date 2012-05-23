@@ -1,0 +1,93 @@
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+.css-style-rule-item {
+    min-height: 69px;
+    position: relative;
+}
+.css-style-rule-item:after {
+    content: "}";
+    padding: 0 0 0 4px;
+    position: relative;
+    top: -10px;
+}
+.style-rule-heading {
+    background-color: #f3f3f3;
+    /*background-color: #DDDDDD;*/
+    border: 1px #e7e7e7;
+    /*border: 1px #CCC;*/
+    border-style: solid none;
+    box-shadow: inset 0 0 1px #FFF;
+    padding: 4px;
+}
+.style-sheet-name {
+    color: #333;
+    font-family: "Droid Sans", sans-serif;
+    padding-top: 1px;
+    position: absolute;
+    right: 8px;
+    text-decoration: none;
+}
+
+/* -------------------
+   Selector Styles
+------------------ */
+
+.css-style-rule-item .nj-css-selector {
+    border: 1px solid rgba(0,0,0,0);
+    display: inline-block;
+    font-weight: bold;
+    padding: 0 2px;
+    position: relative;
+    outline: none;
+
+}
+.nj-css-selector:after {
+    content: " {";
+    font-weight: normal;
+}
+.nj-css-selector.nj-editable-focus {
+    position: relative;
+}
+.nj-css-rule-list .nj-css-selector.nj-editable-focus:after {
+    position: absolute;
+}
+.css-style-rule-item .nj-css-selector:focus {
+    box-shadow: none;
+}
+.css-style-rule-item .nj-css-selector.editable {
+    background-color: #FFF;
+    border: 1px solid #999;
+    border-radius: 2px;
+    box-shadow: 1px 1px 1px #CCC;
+    color: #333;
+    display: inline-block;
+    margin-right: 7px;
+    max-width: none;
+    overflow: visible;
+    -webkit-user-select: text;
+}
+.css-style-rule-item .nj-css-selector:after {
+    position: absolute;
+
+    right: -10px;
+
+}
+
+/* -------------------
+   Unapplied Rule
+------------------ */
+.unapplied-css-rule {
+    /*opacity: .8;*/
+    /*background-color: #f3f3f3;*/
+}
+.unapplied-css-rule .style-rule-heading {
+    background-repeat: no-repeat;
+    background-position: 6px 6px;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAALCAYAAABGbhwYAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw%2FeHBhY2tldCBiZWdpbj0i77u%2FIiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8%2BIDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowMzYyMERFNTQwNzMxMUUxQTREQ0IxQTRGNEI2MTE3RiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDowMzYyMERFNjQwNzMxMUUxQTREQ0IxQTRGNEI2MTE3RiI%2BIDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjAzNjIwREUzNDA3MzExRTFBNERDQjFBNEY0QjYxMTdGIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjAzNjIwREU0NDA3MzExRTFBNERDQjFBNEY0QjYxMTdGIi8%2BIDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY%2BIDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8%2Bc4fwegAAAWpJREFUeNo8kLtLA0EQxr%2B9l3lcDAaCBsEqEOysBFEQsRAsRVCEpBREsbIUSxtBrAxEewsrK8VHQIhK%2FoIUUVJIQFFjYi65XDZ36%2Bz5GFgWZr75fjPDhBD4C%2BucjWgaphjQdTgK%2FfPi5a%2FGpPDtjEVjERyqKlag%2FlY8gHPsfzSwPbQgbDyfIs6vURa3EKK8Jf6jmhUy51yiWDlBUDED2NF0JKGQS3IPVn4ATXqIL0EYJgwD42YQG4quE45EggOtCwbWrUM1Ej%2F0jkXDAYaOtOa6iIH2YSQOBugPj4KN3aFdnIThkprynoeUYjtwIRO0hCLxiU3wp12odgl0AXhUa3VQ0xoWCqEApiNhEpFzt7Tm%2F4Tzo9kGvtq4UjNzqJB1mswURvNoqayP57V7KcB7HfZnE8v%2BHYtZtmiGcBzqQ1TSZUPP85HVlo1MfCaX94WPpSO83qwO6wbWCTtBQocoD70eDgZncw3Z%2BC3AAFMzlxlnnpevAAAAAElFTkSuQmCC);
+}
+.unapplied-css-rule .nj-css-selector {
+    margin-left: 16px;
+}

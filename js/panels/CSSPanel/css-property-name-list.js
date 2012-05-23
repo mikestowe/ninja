@@ -4,7 +4,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-exports.cssPropertyNameList = [
+exports.CssPropertyNameList = [
     '-webkit-',
     "-webkit-animation",
     "-webkit-animation-delay",

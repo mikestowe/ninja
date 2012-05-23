@@ -1,0 +1,33 @@
+/* <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> */
+.sub-panel-slot {
+    background-color: #FFF;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-box-flex: 1;
+}
+.no-styles .sub-panel-slot, .no-styles .styles-view-toolbar-container {
+    display: none;
+}
+.styles-view-container .panel-message {
+    display: none;
+}
+.styles-view-container.no-styles .panel-message {
+    display: block;
+}
+/*.styles-view-toolbar-container {*/
+    /*border-top: 1px solid #303030;*/
+/*}*/
+/*.styles-view-toolbar-container .toolbar-container {*/
+    /*border-top: 1px solid #5c5c5c;*/
+/*}*/
+
+/* ----- Toolbar ----*/
+
+.styles-view-container .toolbar-computed-button {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8%2F9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw%2FeHBhY2tldCBiZWdpbj0i77u%2FIiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8%2BIDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowMTYyOTg1RURFNTIxMUUwQkQyRkUwNDk1QUNCRDQ2NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDowMTYyOTg1RkRFNTIxMUUwQkQyRkUwNDk1QUNCRDQ2NiI%2BIDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjAxNjI5ODVDREU1MjExRTBCRDJGRTA0OTVBQ0JENDY2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjAxNjI5ODVEREU1MjExRTBCRDJGRTA0OTVBQ0JENDY2Ii8%2BIDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY%2BIDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8%2BQa86dAAAAgdJREFUeNpiZmBgEABiFSAWAuIfQPwPKsYPZf9mIAAM9u%2Ff%2F3%2Fp0qV3oQbxFBQU5M6dO%2FcQkG0BxFz4NDNBbWP48eMHN5CSBGLhFy9eyCkpKdlOmDBhNpCvh88QkAF%2FQQw2NjZuX1%2FfxNDQ0AIREREbkJi%2Bvr7OxIkTZwGZaiAl2AxgBGLtVatW7RMVFRXDZcvBgwcnNDQ01AKZX9DlmIH417Vr186ws7NzPn78%2BNW9e%2Feevnz5kkFGRgYUiAyXLl26XFFR0QBkvoC5FpsrOIFYHIjlQX4OCgqaAgrYvr6%2B60C%2BHRBzQ73LAqVRwuA%2FEH8H4pdA%2FBCI7wO98%2FjRo0dPgE4%2FYmJi8hcalXxxcXG2QFoKOTyYsTnpPxCIiYkZRkREBL5%2B%2FfruuXPnzgKFJSorK5cpKCioHDt27BqQ%2FwnkJSYs%2Bn8DNTyFuozh7du3skBKEZRGvn37xuft7Z2Ym5sLChMlkEtYsDkAFLDMzMx%2FQBwzMzMvHR0d3d%2B%2Ff3Pw8vKCUisDMIzCgfK%2FgemkghFHzAkkJSXlxsbGNuGK2p9A4OHhoc%2BCQ%2F7LvHnz5j98%2BPCepKSk1r9%2F%2F5g%2Ff%2F4sBkxkYbKystzAVPt7ypQpIMPfEUrmHKDQhyZ3mwULFjzZsWPHTy8vrxogXxpXJOACSsAMdxro%2FwJkzYwkGMANdc0PWBSCBAECDAAwy7PLmtswugAAAABJRU5ErkJggg%3D%3D);
+
+}
