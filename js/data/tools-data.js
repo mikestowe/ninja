@@ -46,6 +46,9 @@ exports.ToolsData = Montage.create(Montage, {
     zoomToolIndex: {
         value: 12
     },
+    bindingToolIndex: {
+        value: 12
+    },
 
     // NOTE: additions or removal of any tools, or any changes in the order of these entries requires updating the constant index properties above. 
     //       Code in the keyboard mediator and ninja.js accesses the array below through the index constants above
@@ -253,6 +256,7 @@ exports.ToolsData = Montage.create(Montage, {
                 "cursor":       "url('images/cursors/binding.png'),default",
                 "lastInGroup":  true,
                 "container":    false,
+                "subtools":     [],
                 "selected":     false
             }
         ]
