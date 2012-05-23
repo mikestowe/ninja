@@ -21,7 +21,7 @@
             "hudRepeater": {
                 "prototype": "montage/ui/repetition.reel",
                 "properties": {
-                    "element": {"#": "hudRepetition"}
+                    "element": {"#": "hudRepeater"}
                 },
                 "bindings": {
                     "objects": {
@@ -57,12 +57,12 @@
                 },
                 "bindings": {
                     "objectName": {
-                        "boundObject": {"@": "hudRepetition"},
+                        "boundObject": {"@": "hudRepeater"},
                         "boundObjectPropertyPath": "objectAtCurrentIteration.objectName",
                         "oneway": true
                     },
                     "objectImage": {
-                        "boundObject": {"@": "undoList"},
+                        "boundObject": {"@": "hudRepeater"},
                         "boundObjectPropertyPath": "objectAtCurrentIteration.objectImage",
                         "oneway": true
                     }
@@ -76,10 +76,13 @@
 
 
     <section data-montage-id="bindingView" class="bindingView">
-        <div data-montage-id="hudRepetition" class="hudRepetition">
+        <div data-montage-id="hudRepeater" class="hudRepetition">
             <div data-montage-id="hud">
 
             </div>
+        </div>
+        <div data-montage-id="nonVisualRepeater">
+            <div data-montage-id="nonVisualComponent"></div>
         </div>
     </section>
 

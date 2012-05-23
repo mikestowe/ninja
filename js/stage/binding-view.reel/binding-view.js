@@ -11,9 +11,30 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
-exports.bindingView = Montage.create(Component, {
+exports.BindingView = Montage.create(Component, {
+    //private Properties
+    _selectedElement: {
+        value: null
+    },
     _bindables: {
         value: []
+    },
+    _nonVisualComponents: {
+        value:null
+    },
+
+    //Public Objects
+    hudRepeater: { value: null },
+
+
+    //Public Properties
+    selectedElement: {
+        get: function() {
+            return this._selectedElement;
+        },
+        set: function(val) {
+            this._selectedElement = val;
+        }
     },
     bindables: {
         get: function() {
@@ -23,14 +44,16 @@ exports.bindingView = Montage.create(Component, {
             this._bindables = val;
         }
     },
-
-
     nonVisualComponents: {
         get: function() {
-            return this._bindables;
+            return this._nonVisualComponents;
         },
         set: function(val) {
-            this._bindables = val;
+            this._nonVisualComponents = val;
         }
     }
+
+    //Methods
+
+
 });

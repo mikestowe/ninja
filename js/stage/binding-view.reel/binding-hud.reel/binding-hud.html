@@ -25,11 +25,20 @@
                 "bindings": {
                     "objects": {
                         "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "bindables",
+                        "boundObjectPropertyPath": "properties",
                         "oneway": true
                     }
                 }
             },
+            "hudOption": {
+                "prototype": "js/stage/binding-view.reel/binding-hud-option.reel",
+                "properties": {
+                    "element": {"#" : "hudOption"}
+                },
+                "bindings": {
+                    "title": {"<-": "@objectAtCurrentIteration.title"}
+                }
+            }
         }
     </script>
 
@@ -39,7 +48,7 @@
 
     <section data-montage-id="bindingHud" class="bindingHud">
         <div data-montage-id="hudRepetition" class="hudRepetition">
-
+            <div data-montage-id="hudOption" class="hudOption"></div>
         </div>
     </section>
 
