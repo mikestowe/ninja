@@ -105,6 +105,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 	//
     onTemplateLoad: {
         value: function (e) {
+        	//console.log(this.iframe.contentWindow);
         	this.application.ninja.documentController._hackRootFlag = true;
         	//TODO: Add support to constructing URL with a base HREF
         	var basetag = this.content.document.getElementsByTagName('base');

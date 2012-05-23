@@ -80,6 +80,8 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/banner/'))[1]};
 				} else if (request.url.indexOf('js/document/templates/html')  !== -1) {
 					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/html/'))[1]};
+				} else if (request.url.indexOf('js/document/templates/app')  !== -1) {
+					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/app/'))[1]};
 				} else {
 					//Error, not a valid folder
 				}
@@ -102,7 +104,6 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         }
     },
 	////////////////////////////////////////////////////////////////////
-
 
 	
 	
