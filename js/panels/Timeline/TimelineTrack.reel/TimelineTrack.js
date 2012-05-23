@@ -994,9 +994,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this._dragAndDropHelper = event.target.cloneNode(true);
             this._dragAndDropHelper.style.opacity = 0.8;
             this._dragAndDropHelper.style.position = "absolute";
-            this._dragAndDropHelper.style.top = "2px";
+            this._dragAndDropHelper.style.top = "5px";
             this._dragAndDropHelper.style.left = "0px";
             this._dragAndDropHelper.style.zIndex = 700;
+            this._dragAndDropHelper.classList.add("keyframeSelected");
             
             //this._dragAndDropHelper.style.width = window.getComputedStyle(this.container_layers, null).getPropertyValue("width");
             this._dragAndDropHelper.classList.add("track-dnd-helper");

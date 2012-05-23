@@ -57,6 +57,22 @@ var Span = exports.Span = Montage.create(Component, {
     		}
     	}
     },
+    
+    _easing: {
+    	value: "ease-in"
+    },
+    easing: {
+    	get: function() {
+    		return this._easing;
+    	},
+    	set: function(newVal) {
+    		if (newVal !== this._easing) {
+    			this._easing = newVal;
+    			this.parentComponent.setKeyframeEase(newVal);
+    			this.needsDraw = true;
+    		}
+    	}
+    },
 	
 	// BEGIN: draw cycle
 	prepareForDraw: {
@@ -67,7 +83,27 @@ var Span = exports.Span = Montage.create(Component, {
 	
     draw:{
         value: function(){
+        	
             this.element.style.width = this.spanWidth + "px";
+
+            if ((this.spanWidth <= 70) && (this.spanWidth >0)) {
+            	var containerWidth = this.spanWidth -18,
+            		choiceWidth;
+            	if (containerWidth < 0) {
+            		containerWidth = 0;
+            	}
+            	choiceWidth = containerWidth -3;
+            	if (choiceWidth < 0) {
+            		choiceWidth = 0;
+            	}
+            	this.container_easing.style.width = containerWidth + "px";
+            	this.easing_choice.style.width = choiceWidth + "px";
+            	this.easing_choice.style.overflow = "hidden";
+            }
+			if (this.spanWidth > 70) {
+            	this.container_easing.setAttribute("style", "");
+            	this.easing_choice.setAttribute("style", "");
+            }
             
             // Highlight the span?
             if (this.isHighlighted === true) {
@@ -82,6 +118,12 @@ var Span = exports.Span = Montage.create(Component, {
             } else {
             	this.easing_choices.style.display = "none";
             }
+            
+            // Change easing?
+            if (this.easing_choice.innerText !== this.easing) {
+            	this.easing_choice.innerText = this.easing;
+            }
+            
         }
     },
 
@@ -90,6 +132,7 @@ var Span = exports.Span = Montage.create(Component, {
 		value: function() {
 			this.easing_choice.addEventListener("click", this.handleEasingChoiceClick.bind(this), false);
 			this.easing_choices.addEventListener("click", this.handleEasingChoicesClick.bind(this), false);
+
 		}
 	},
 	
@@ -108,6 +151,12 @@ var Span = exports.Span = Montage.create(Component, {
     },
     handleEasingChoicesClick: {
     	value: function(event) {
+
+    		this.easing_choices.querySelector(".easing-selected").classList.remove("easing-selected");
+    		event.target.classList.add("easing-selected");
+    		this.easing = event.target.dataset.ninjaEase;
+
+    		// Which element was just 
     		this.areChoicesVisible = false;
     	}
     }

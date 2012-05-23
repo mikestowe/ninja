@@ -42,7 +42,7 @@
 .container-easing {
 	position: absolute;
 	top: 2px;
-	right: 6px;
+	right: 8px;
 	font-size: 10px;
 	line-height: 8px;
 	border: 1px solid $color-menu-border;
@@ -53,6 +53,7 @@
 .container-easing .easing-choice,
 .container-easing .easing-choices {
 	width: 70px;
+	white-space: nowrap;
 }
 .container-easing,
 .container-easing .easing-choice {
@@ -84,4 +85,17 @@
 	list-style-type: none;
 	margin: 0px;
 	padding: 0px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-left: 3px;
+	cursor: pointer;
+}
+
+.container-easing .easing-choices li:hover,
+.container-easing .easing-choices li.easing-selected {
+	color: $color-menu-hilite-text;
+	background-color: $color-menu-hilite-bg;
+}
+.container-easing .easing-choices li.easing-selected {
+	cursor: default;
 }

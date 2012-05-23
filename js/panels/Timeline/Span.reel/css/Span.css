@@ -34,7 +34,7 @@
 .container-easing {
   position: absolute;
   top: 2px;
-  right: 6px;
+  right: 8px;
   font-size: 10px;
   line-height: 8px;
   border: 1px solid black;
@@ -47,15 +47,16 @@
 .container-easing .easing-choice,
 .container-easing .easing-choices {
   width: 70px;
+  white-space: nowrap;
 }
 
-/* line 58, ../scss/Span.scss */
+/* line 59, ../scss/Span.scss */
 .container-easing,
 .container-easing .easing-choice {
   height: 10px;
 }
 
-/* line 61, ../scss/Span.scss */
+/* line 62, ../scss/Span.scss */
 .container-easing .easing-choice {
   position: absolute;
   top: 0px;
@@ -64,7 +65,7 @@
   cursor: pointer;
 }
 
-/* line 68, ../scss/Span.scss */
+/* line 69, ../scss/Span.scss */
 .container-easing .easing-choices {
   position: absolute;
   display: none;
@@ -81,9 +82,25 @@
   padding: 0px;
 }
 
-/* line 83, ../scss/Span.scss */
+/* line 84, ../scss/Span.scss */
 .container-easing .easing-choices li {
   list-style-type: none;
   margin: 0px;
   padding: 0px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 3px;
+  cursor: pointer;
+}
+
+/* line 95, ../scss/Span.scss */
+.container-easing .easing-choices li:hover,
+.container-easing .easing-choices li.easing-selected {
+  color: #242424;
+  background-color: #b2b2b2;
+}
+
+/* line 99, ../scss/Span.scss */
+.container-easing .easing-choices li.easing-selected {
+  cursor: default;
 }
