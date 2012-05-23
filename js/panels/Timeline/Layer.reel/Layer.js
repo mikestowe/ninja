@@ -498,11 +498,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     
     triggerOutgoingBinding : {
     	value: function() {
-    		if (this.layerData.triggerBinding === true) {
-    			this.layerData.triggerBinding = false;
-    		} else {
-    			this.layerData.triggerBinding = true;
-    		}
+            this.layerData.triggerBinding = !this.layerData.triggerBinding;
     	}
     },
 	/* END: Models */

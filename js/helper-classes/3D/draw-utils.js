@@ -124,7 +124,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
             this._eltArray = [];
             this._planesArray = [];
             this.setDrawingSurfaceElement(stage.canvas);
-            this.setSourceSpaceElement( stage.stageDeps.currentStage );
+            this.setSourceSpaceElement( this.application.ninja.currentDocument.documentRoot);
             this.setWorkingPlane( [0,0,1,0] );
 
             //Loop through all the top-level children of the current document and call drawUtils.addElement on them
@@ -138,7 +138,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                     l,
                     t,
                     plane,
-                    elt
+                    elt;
                 for(i=0; i<len; i++) {
                     elt = documentRootChildren[i];
                     plane = this.addElement(elt);

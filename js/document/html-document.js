@@ -209,8 +209,8 @@ exports.HTMLDocument = Montage.create(TextDocument, {
 			{
 				/*
 				// Use this code to test the runtime version of WebGL
-				var cdm = new NinjaCvsRt.CanvasDataManager();
-				cdm.loadGLData(elt,  value,  null );
+				var cvsDataMngr = Object.create(NinjaCvsRt.CanvasDataManager, {});
+				cvsDataMngr.loadGLData(elt, value);
 				*/
 
 				// /*
@@ -450,55 +450,6 @@ exports.HTMLDocument = Montage.create(TextDocument, {
                 return -1;
             } else {
                 return 1;
-            }
-        }
-    },
-
-    /**
-     * Return the specified inline attribute from the element.
-     */
-    GetElementAttribute: {
-        value: function(element, attribute) {
-
-            var value;
-
-            if(attribute === "src") {
-                return element[attribute].replace(window.location.href, '');
-            }
-
-            value = element[attribute];
-
-            if(value !== undefined) return value;
-//            if(value || value === false) return [value, "inline"];
-
-            // 3.
-            //value = this._document.defaultView.getComputedStyle(element,null).getPropertyValue(attribute);
-            //if(value) return value;
-
-            return null;
-        }
-    },
-
-    GetElementStyle: {
-        value: function(element, style) {
-//            return this._queryStylesheets(element, style);
-        }
-    },
-
-    SetStyle: {
-        value: function(type, selector, style, value) {
-            try {
-                for(var j=0; j<this._stylesheets.length;j++){
-                    for(var i=0; i<this._stylesheets[j].cssRules.length;i++) {
-                        if(this._stylesheets[j].cssRules[i].selectorText === type + selector) {
-                            this._stylesheets[j].cssRules[i].style[style] = value;
-
-                            return true;
-                        }
-                    }
-                }
-            } catch(err) {
-                console.log("Cannot change the style of selector: " + selector + " " + err);
             }
         }
     },
@@ -919,32 +870,5 @@ exports.HTMLDocument = Montage.create(TextDocument, {
     			//Error
     		}
     	}
-	},
-
-    ////////////////////////////////////////////////////////////////////
-    restoreAppState:{
-        enumerable: false,
-        value: function () {
-            this.application.ninja.stage.drawUtils.gridHorizontalSpacing = this.gridHorizontalSpacing;
-            this.application.ninja.stage.drawUtils.gridVerticalSpacing = this.gridVerticalSpacing;
-           
-            if((this.savedLeftScroll !== null) && (this.savedTopScroll !== null)){
-                this.application.ninja.stage._iframeContainer.scrollLeft = this.savedLeftScroll;
-                this.application.ninja.stage._iframeContainer.scrollTop = this.savedTopScroll;
-                this.application.ninja.stage.handleScroll();
-            }
-
-            this.application.ninja.currentSelectedContainer = this.documentRoot;
-            if(this.selectionModel){
-                this.application.ninja.selectedElements = this.selectionModel.slice(0);
-            }
-
-            this.application.ninja.appModel.show3dGrid = this.draw3DGrid;
-
-            this.application.ninja.undocontroller.undoQueue = this.undoStack.slice(0);
-            this.application.ninja.undocontroller.redoQueue = this.redoStack.slice(0);
-
-
-        }
-    }
+	}
 });

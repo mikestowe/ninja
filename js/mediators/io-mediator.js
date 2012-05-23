@@ -203,6 +203,59 @@ exports.IoMediator = Montage.create(Component, {
     },
     ////////////////////////////////////////////////////////////////////
     //
+    getDataDirectory: {
+    	value: function (path) {
+    		//TODO: Implement user overwrite
+        	return this._getUserDirectory(path+'data/');
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    getNinjaDirectory: {
+    	value: function (path) {
+    		//TODO: Implement user overwrite
+    		return this._getUserDirectory(this.getDataDirectory(path)+'ninja/');
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    getCanvasDirectory: {
+    	value: function (path) {
+    		//TODO: Implement user overwrite
+    		return this._getUserDirectory(this.getNinjaDirectory(path)+'canvas/');
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    _getUserDirectory: {
+    	value: function (path) {
+    		//Checking for data directory
+            var check = this.application.ninja.coreIoApi.fileExists({uri: path}), directory;
+            //Creating directory if doesn't exists
+            switch (check.status) {
+            	case 204: //Exists
+            		directory = path;
+            		break;
+            	case 404: //Doesn't exists
+            		directory = this.application.ninja.coreIoApi.createDirectory({uri: path});
+            		//Checking for success
+            		if (directory.status === 201) {
+            			directory = path;
+            		} else {
+            			//Error
+            			directory = null;
+            		}
+            		break;
+            	default: //Error
+            		directory = null;
+            		break;
+            }
+            //Returning the path to the directory on disk (null for any error)
+            return directory;
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
     parseHtmlToNinjaTemplate: {
         enumerable: false,
         value: function (html) {
@@ -225,7 +278,7 @@ exports.IoMediator = Montage.create(Component, {
             	mjsCreator = template.mjsTemplateCreator.create(),
             	mJsSerialization,
             	montageTemplate;
-            //
+            //Creating instance of template creator
             montageTemplate = mjsCreator.initWithDocument(template.document);
             //Setting up expression for parsing URLs
             regexRootUrl = new RegExp(rootUrl.replace(/\//gi, '\\\/'), 'gi');
@@ -239,7 +292,6 @@ exports.IoMediator = Montage.create(Component, {
             	template.file.content.document.head.innerHTML = template.head.innerHTML.replace(regexRootUrl, '');
 	            template.file.content.document.body.innerHTML = template.body.innerHTML.replace(regexRootUrl, '');
             }
-            
             //Copying attributes to maintain same properties as the <body>
 			for (var n in template.body.attributes) {
 				if (template.body.attributes[n].value) {
@@ -250,6 +302,7 @@ exports.IoMediator = Montage.create(Component, {
             //TODO: Add attribute copying for <HEAD> and <HTML>
             
             
+            //console.log(template.file.content.document.getElementsByTagName('html')[0].innerHTML);
             
             
             //Getting all CSS (style or link) tags
@@ -266,7 +319,7 @@ exports.IoMediator = Montage.create(Component, {
     		}
     		//////////////////////////////////////////////////
     		
-    		//
+    		//Adding to tags to be removed form template
     		for (var f in njtemplatetags) {
     			if (njtemplatetags[f].getAttribute) toremovetags.push(njtemplatetags[f]);
     		}
@@ -405,9 +458,45 @@ exports.IoMediator = Montage.create(Component, {
                     }
                 }
             }
+            //
+            var matchingtags = [], scripts = template.file.content.document.getElementsByTagName('script'), webgltag, webgllibtag, webglrdgetag, mjstag, mjslibtag;
+           	//this.getDataDirectory(template.file.root)
+           	//this.getNinjaDirectory(template.file.root)
+            //
+            for (var i in scripts) {
+            	if (scripts[i].getAttribute) {
+               		if (scripts[i].getAttribute('data-ninja-canvas') !== null) {//TODO: Use querySelectorAll
+               			matchingtags.push(scripts[i]);
+                    }
+                    if (scripts[i].getAttribute('data-ninja-canvas-lib') !== null) {
+                        webgllibtag = scripts[i]; // TODO: Add logic to delete unneccesary tags
+                    }
+                    if (scripts[i].getAttribute('data-ninja-canvas-rdge') !== null) {
+               	        webglrdgetag = scripts[i]; // TODO: Add logic to delete unneccesary tags
+                    }
+                    if (scripts[i].getAttribute('type') === 'text/montage-serialization') {
+                        mjstag = scripts[i]; // TODO: Add logic to delete unneccesary tags
+                    }
+                    if (scripts[i].getAttribute('data-mjs-lib') !== null) {
+                     	mjslibtag = scripts[i]; // TODO: Add logic to delete unneccesary tags
+                    }
+                }
+            }
             //Checking for webGL elements in document
             if (template.webgl && template.webgl.length > 1) {//TODO: Should be length 0, hack for a temp fix
-                var rdgeDirName, rdgeVersion;
+                var rdgeDirName, rdgeVersion, cvsDataDir = this.getCanvasDirectory(template.file.root), fileCvsDir, fileCvsDirAppend, cvsDirCounter = 1;
+                //
+                if (cvsDataDir && !matchingtags.length) {
+                	fileCvsDir = cvsDataDir+template.file.name.split('.'+template.file.extension)[0];
+                	if (!this._getUserDirectory(fileCvsDir)) {
+                		fileCvsDirAppend = fileCvsDir+cvsDirCounter;
+                		while (!this._getUserDirectory(fileCvsDirAppend)) {
+                			fileCvsDirAppend = fileCvsDir+(cvsDirCounter++);
+                		}
+                	}
+                	//TODO: Allow user overwrite
+                	fileCvsDir += '/';
+                }
                 //Copy webGL library if needed
                 for (var i in this.application.ninja.coreIoApi.ninjaLibrary.libs) {
                     //Checking for RDGE library to be available
@@ -420,31 +509,6 @@ exports.IoMediator = Montage.create(Component, {
                     }
                 }
                 //
-                var json, matchingtags = [], webgltag, scripts = template.file.content.document.getElementsByTagName('script'), webgljstag, webgllibtag, webglrdgetag, mjstag, mjslibtag;
-                //
-                for (var i in scripts) {
-                    if (scripts[i].getAttribute) {
-                        if (scripts[i].getAttribute('data-ninja-webgl') !== null) {//TODO: Use querySelectorAll
-                            matchingtags.push(scripts[i]);
-                        }
-                        if (scripts[i].getAttribute('data-ninja-webgl-js') !== null) {
-                            webgljstag = scripts[i]; // TODO: Add logic to delete unneccesary tags
-                        }
-                        if (scripts[i].getAttribute('data-ninja-webgl-lib') !== null) {
-                            webgllibtag = scripts[i]; // TODO: Add logic to delete unneccesary tags
-                        }
-                        if (scripts[i].getAttribute('data-ninja-webgl-rdge') !== null) {
-                            webglrdgetag = scripts[i]; // TODO: Add logic to delete unneccesary tags
-                        }
-                        if (scripts[i].getAttribute('type') === 'text/montage-serialization') {
-                            mjstag = scripts[i]; // TODO: Add logic to delete unneccesary tags
-                        }
-                        if (scripts[i].getAttribute('data-mjs-lib') !== null) {
-                            mjslibtag = scripts[i]; // TODO: Add logic to delete unneccesary tags
-                        }
-                    }
-                }
-                //
                 if (matchingtags.length) {
                     if (matchingtags.length === 1) {
                         webgltag = matchingtags[0];
@@ -453,12 +517,12 @@ exports.IoMediator = Montage.create(Component, {
                         webgltag = matchingtags[matchingtags.length - 1]; //Saving all data to last one...
                     }
                 }
-                //
+                //TODO: Add check for file needed
                 if (!webglrdgetag) {
                     webglrdgetag = template.file.content.document.createElement('script');
                     webglrdgetag.setAttribute('type', 'text/javascript');
                     webglrdgetag.setAttribute('src', rdgeDirName + '/rdge-compiled.js');
-                    webglrdgetag.setAttribute('data-ninja-webgl-rdge', 'true');
+                    webglrdgetag.setAttribute('data-ninja-canvas-rdge', 'true');
                     if (ninjaWrapper) {
                     	template.file.content.document.body.getElementsByTagName('ninja-content')[0].appendChild(webglrdgetag);
                     } else {
@@ -470,7 +534,7 @@ exports.IoMediator = Montage.create(Component, {
                     webgllibtag = template.file.content.document.createElement('script');
                     webgllibtag.setAttribute('type', 'text/javascript');
                     webgllibtag.setAttribute('src', rdgeDirName + '/canvas-runtime.js');
-                    webgllibtag.setAttribute('data-ninja-webgl-lib', 'true');
+                    webgllibtag.setAttribute('data-ninja-canvas-lib', 'true');
                     if (ninjaWrapper) {
                     	template.file.content.document.body.getElementsByTagName('ninja-content')[0].appendChild(webgllibtag);
                     } else {
@@ -478,57 +542,63 @@ exports.IoMediator = Montage.create(Component, {
                     }
                 }
                 //
-                if (!webgltag) {
+                if (!webgltag && !fileCvsDir) {
                     webgltag = template.file.content.document.createElement('script');
-                    webgltag.setAttribute('data-ninja-webgl', 'true');
+                    webgltag.setAttribute('data-ninja-canvas', 'true');
                     if (ninjaWrapper) {
                     	template.file.content.document.body.getElementsByTagName('ninja-content')[0].appendChild(webgltag);
                     } else {
 	                    template.file.content.document.head.appendChild(webgltag);
 	                }
                 }
-                //TODO: Remove this tag and place inside JS file
-                if (!webgljstag) {
-                    webgljstag = template.file.content.document.createElement('script');
-                    webgljstag.setAttribute('type', 'text/javascript');
-                    webgljstag.setAttribute('data-ninja-webgl-js', 'true');
-                    if (ninjaWrapper) {
-                    	template.file.content.document.body.getElementsByTagName('ninja-content')[0].appendChild(webgljstag);
-                    } else {
-	                    template.file.content.document.head.appendChild(webgljstag);
-	                }
-                }
+                
                 //TODO: Decide if this should be over-writter or only written on creation
                 var rootElement = 'document.body'; //TODO: Set actual root element
-                webgljstag.innerHTML = "\
-//Loading webGL/canvas data on window load\n\
-window.addEventListener('load', loadWebGL, false);\n\
-function loadWebGL (e) {\n\
-	window.removeEventListener('load', loadWebGL, false);\n\
-	//Calling method to initialize all webGL/canvas(es)\n\
-	NinjaCvsRt.initWebGl(" + rootElement + ", '" + rdgeDirName + "/');\n\
-}\
-    			";
+                
                 //TODO: This data should be saved to a JSON file eventually
-                json = '\n({\n\t"version": "' + rdgeVersion + '",\n\t"directory": "' + rdgeDirName + '/",\n\t"data": [';
+                var json = '\n({\n\t"version": "' + rdgeVersion + '",\n\t"directory": "' + rdgeDirName + '/",\n\t"data": [';
                 //Looping through data to create escaped array
                 for (var j = 0; template.webgl[j]; j++) {
                     if (j === 0) {
-                        json += '\n\t\t\t"' + escape(template.webgl[j]) + '"';
+                    	//if (fileCvsDir) {
+                    	//	json += '\n\t\t\t"' + template.webgl[j] + '"';
+                    	//} else {
+                    		json += '\n\t\t\t"' + escape(template.webgl[j]) + '"';
+                    	//}
                     } else {
-                        json += ',\n\t\t\t"' + escape(template.webgl[j]) + '"';
+                    	//if (fileCvsDir) {
+                    	//	json += ',\n\t\t\t"' + template.webgl[j] + '"';
+                    	//} else {
+                    		json += ',\n\t\t\t"' + escape(template.webgl[j]) + '"';
+                    	//}
                     }
                 }
                 //Closing array (make-shift JSON string to validate data in <script> tag)
                 json += '\n\t\t]\n})\n';
                 //Setting string in tag
-                webgltag.innerHTML = json;
+                if (fileCvsDir) {
+                	//
+                	var cvsDataFilePath = fileCvsDir+'data.json', cvsDataFileUrl, cvsDataFileCheck, cvsDataFileOperation;
+                	//
+                	cvsDataFileUrl = this.getNinjaPropUrlRedirect(cvsDataFilePath.split(this.application.ninja.coreIoApi.cloudData.root+'/')[1]),
+                	cvsDataFileCheck = this.application.ninja.coreIoApi.fileExists({uri: cvsDataFilePath}),
+                	//Setting the local path to the JSON file
+                	webgllibtag.setAttribute('data-ninja-canvas-json', this.application.ninja.coreIoApi.rootUrl+'/'+cvsDataFileUrl);
+                	webgllibtag.setAttribute('data-ninja-canvas-libpath', rdgeDirName);
+                	//
+                	if (cvsDataFileCheck.status === 404 || cvsDataFileCheck.status === 204) {
+                		//Saving file
+                		cvsDataFileOperation = this.fio.saveFile({uri: cvsDataFilePath, contents: json});
+                	} else {
+                		//Error
+                	}
+                	
+                	
+                } else {
+                	webgllibtag.setAttribute('data-ninja-canvas-libpath', rdgeDirName);
+                	webgltag.innerHTML = json;
+                }
             }
-
-
-
-
-			
 			//Checking for Montage
 			if (mJsSerialization) {
 				//Copy Montage library if needed
@@ -538,8 +608,21 @@ function loadWebGL (e) {\n\
                         mjsDirName = (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name + this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version).toLowerCase();
                         mjsVersion = this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version;
                         this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.file.root, mjsDirName);
+                        
+                        
+                        
                         //TODO: Fix to allow no overwrite and nested locations
-                        var packjson = this.application.ninja.coreIoApi.createFile({ uri: template.file.root + 'package.json', contents: '{"mappings": {"montage": "' + mjsDirName + '/montage/"}}' });
+                        var mjsCheck, mjsPath = template.file.root + 'package.json';
+                        mjsCheck = this.application.ninja.coreIoApi.fileExists({uri: mjsPath});
+                        //
+                        if (!mjsCheck || mjsCheck.status !== 204) {
+	                        var packjson = this.application.ninja.coreIoApi.createFile({ uri: mjsPath, contents: '{"mappings": {\n\t\t"montage": "' + mjsDirName + '/montage/",\n\t\t"montage-google": "' + mjsDirName + '/montage-google/"\n\t}\n}' });
+                        } else {
+                        	//Already exists
+                        }
+                        
+                        
+                        
                     } else {
                         //TODO: Error handle no available library to copy
                     }
@@ -549,6 +632,7 @@ function loadWebGL (e) {\n\
                     mjslibtag = template.file.content.document.createElement('script');
                     mjslibtag.setAttribute('type', 'text/javascript');
                     mjslibtag.setAttribute('src', mjsDirName + '/montage/montage.js');
+                    mjslibtag.setAttribute('data-package', '.');
                     mjslibtag.setAttribute('data-mjs-lib', 'true');
                     if (ninjaWrapper) {
                     	template.file.content.document.body.getElementsByTagName('ninja-content')[0].appendChild(mjslibtag);

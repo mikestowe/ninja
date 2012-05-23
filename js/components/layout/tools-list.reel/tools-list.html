@@ -16,11 +16,7 @@
                     "element": {"#": "toolbutton"}
                 },
                 "bindings": {
-                    "data": {
-                        "boundObject": {"@": "repetition1"},
-                        "boundObjectPropertyPath": "objectAtCurrentIteration",
-                        "oneway": true
-                    }
+                    "data": {"<-": "@repetition1.objectAtCurrentIteration"}
                 }
             },
 
@@ -30,11 +26,7 @@
                     "element": {"#": "groupLine"}
                 },
                 "bindings": {
-                    "condition": {
-                        "boundObject": {"@": "repetition1"},
-                        "boundObjectPropertyPath": "objectAtCurrentIteration.lastInGroup",
-                        "oneway": true
-                    }
+                    "condition": {"<-": "@repetition1.objectAtCurrentIteration.lastInGroup"}
                 }
             },
 

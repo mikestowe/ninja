@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<!-- <copyright>
+This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+(c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+</copyright> -->
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link href="style-declaration.css" rel="stylesheet" type="text/css" />
+    <script type="text/montage-serialization">
+        {
+            "owner": {
+                "prototype" : "js/panels/css-panel/style-declaration.reel",
+                "properties" : {
+                    "element" : {"#" : "container"},
+                    "arrayController": {"@": "arrayController"},
+                    "styleComponent": {"@":"styleItem"},
+                    "repetition": {"@": "repetition"}
+                }
+            },
+            "arrayController": {
+                "prototype": "montage/ui/controller/array-controller",
+                "properties": {
+                    "automaticallyOrganizeObjects": true
+                },
+                "bindings": {
+                    "content": {"<-": "@owner.styles" }
+                }
+            },
+            "repetition": {
+                "prototype": "montage/ui/repetition.reel",
+                "properties": {
+                    "element": {"#": "declaration-list"},
+                    "contentController": {"@": "arrayController"}
+                }
+            },
+            "styleItem": {
+                "prototype": "js/panels/css-panel/css-style.reel",
+                "properties": {
+                    "element" : {"#": "style-item"},
+                    "declaration": {"@": "owner"}
+                },
+                "bindings": {
+                    "source": {"<-": "@repetition.objectAtCurrentIteration" },
+                    "propertyText": {"<<->": "@repetition.objectAtCurrentIteration.name" },
+                    "valueText": {"<<->": "@repetition.objectAtCurrentIteration.value" },
+                    "empty": {"<<->": "@repetition.objectAtCurrentIteration.isEmpty" },
+                    "delegate": {"<-": "@owner.focusDelegate" }
+                }
+            }
+
+        }
+    </script>
+</head>
+<body>
+<div id="container">
+    <dl data-montage-id="declaration-list" class="declaration-list">
+        <div data-montage-id="style-item"></div>
+    </dl>
+</div>
+</body>
+</html>

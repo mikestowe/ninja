@@ -119,38 +119,45 @@ exports.HtmlDocument = Montage.create(Component, {
     		this._observer = null;
     		//Making callback after view is loaded
     	    this.loaded.callback.call(this.loaded.context, this);
-    	    //Setting opacity to be viewable after load
-		   	this.model.views.design.iframe.style.opacity = 1;
     	}
     },
     ////////////////////////////////////////////////////////////////////
 	//
 	closeDocument: {
 		value: function (context, callback) {
+			//Closing document and getting outcome
 			var closed = this.model.close(null);
-
-            callback.call(context, this);
+			//Making callback if specified
+			if (callback) callback.call(context, this);
 		}
 	},
     ////////////////////////////////////////////////////////////////////
 	//
     serializeDocument: {
     	value: function () {
-            // There are not needed for now ssince we cannot change them
+            // There are not needed for now since we cannot change them
             //this.gridHorizontalSpacing = this.application.ninja.stage.drawUtils.gridHorizontalSpacing;
             //this.gridVerticalSpacing = this.application.ninja.stage.drawUtils.gridVerticalSpacing;
 
             // Serialize the current scroll position
-            // TODO: Implement
+            //TODO: Move these properties to the design view class
+            this.model.scrollLeft = this.application.ninja.stage._scrollLeft;
+            this.model.scrollTop = this.application.ninja.stage._scrollTop;
+            this.model.userContentLeft = this.application.ninja.stage._userContentLeft;
+            this.model.userContentTop = this.application.ninja.stage._userContentTop;
 
-            // Serialize the selection
+
+            // Serialize the selection, the container and grid
+            //TODO: Move this property to the design view class
             this.model.selection = this.application.ninja.selectedElements.slice(0);
+            this.model.selectionContainer = this.application.ninja.currentSelectedContainer;
             this.draw3DGrid = this.application.ninja.appModel.show3dGrid;
 
             // Serialize the undo
             // TODO: Save the montage undo queue
 
             // Pause the videos
+            //TODO: Move these to be handled on the show/hide methods in the view
             this.model.views.design.pauseVideos();
     	}
     },
@@ -158,7 +165,27 @@ exports.HtmlDocument = Montage.create(Component, {
 	//
     deserializeDocument: {
     	value: function () {
-    		//TODO: Import functionality
+            // There are not needed for now since we cannot change them
+            //this.application.ninja.stage.drawUtils.gridHorizontalSpacing = this.gridHorizontalSpacing;
+            //this.application.ninja.stage.drawUtils.gridVerticalSpacing = this.gridVerticalSpacing;
+
+            // Deserialize the current scroll position
+             //TODO: Move these properties to the design view class
+            this.application.ninja.stage._scrollLeft = this.model.scrollLeft;
+            this.application.ninja.stage._scrollTop = this.model.scrollTop;
+            this.application.ninja.stage._userContentLeft = this.model.userContentLeft;
+            this.application.ninja.stage._userContentTop = this.model.userContentTop;
+			
+			//TODO: Move this property to the design view class
+            this.application.ninja.selectedElements = this.model.selection.slice(0);
+//            this.application.ninja.currentSelectedContainer = this.model.selectionContainer;
+            this.application.ninja.appModel.show3dGrid = this.draw3DGrid;
+
+            // Serialize the undo
+            // TODO: Save the montage undo queue
+			
+			//TODO: Move this to the document controller
+            this.model.isActive = true;
     	}
     }
     ////////////////////////////////////////////////////////////////////

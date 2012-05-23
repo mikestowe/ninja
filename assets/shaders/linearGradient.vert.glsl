@@ -37,6 +37,7 @@ uniform float	u_colorStop3;
 uniform float	u_colorStop4;									
 uniform vec2	u_cos_sin_angle;
 //uniform int		u_colorCount;	// currently using 4
+uniform mat3 u_texTransform;
 
 varying		vec2 v_uv;
 
@@ -44,5 +45,7 @@ varying		vec2 v_uv;
 void main(void)
 {
 	gl_Position = u_projMatrix * u_mvMatrix * vec4(vert,1.0) ;
-	v_uv = texcoord;
+	//v_uv = texcoord;
+	vec3 tmp = u_texTransform * vec3( texcoord, 1.0);
+	v_uv = tmp.xy;
 }

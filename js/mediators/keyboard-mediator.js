@@ -88,7 +88,7 @@ exports.KeyboardMediator = Montage.create(Component, {
 
             //keyboard controls for html design view
             // TODO - New template mode doesn't set currentView yet.
-            if((!!this.application.ninja.currentDocument)){// && (this.application.ninja.currentDocument.model.currentView === "design")){
+            if((!!this.application.ninja.currentDocument) && (this.application.ninja.currentDocument.model.currentView === "design")){
 
                 // Don't do anything if an input or other control is focused
                 if(document.activeElement.nodeName !== "BODY") {

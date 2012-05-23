@@ -22,10 +22,32 @@ exports.HtmlDocumentModel = Montage.create(BaseDocumentModel, {
     selection: {
         value: []
     },
+    ////////////////////////////////////////////////////////////////////
+    //
+    selectionContainer: {
+        value: []
+    },
 	////////////////////////////////////////////////////////////////////
 	//
     draw3DGrid: {
         value: false
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    scrollLeft: {
+        value: null
+    },
+
+    scrollTop: {
+        value: null
+    },
+
+    userContentLeft: {
+        value: null
+    },
+
+    userContentTop: {
+        value: null
     },
     ////////////////////////////////////////////////////////////////////
 	//

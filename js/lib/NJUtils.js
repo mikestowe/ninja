@@ -19,16 +19,17 @@ exports.NJUtils = Montage.create(Component, {
     ///// Quick "getElementById"
     $ : {
         value: function(id, doc) {
-            var _doc = doc || document;
-            return _doc.getElementById(id);
+            doc = doc || document;
+            return doc.getElementById(id);
         }
     },
     
     ///// Quick "getElementsByClassName" which also returns as an Array
     ///// Can return as NodeList by passing true as second argument
     $$ : {
-        value: function(className, asNodeList) {
-            var list = document.getElementsByClassName(className);
+        value: function(className, asNodeList, doc) {
+            doc = doc || document;
+            var list = doc.getElementsByClassName(className);
             return (asNodeList) ? list : this.toArray(list);
         }
     },
