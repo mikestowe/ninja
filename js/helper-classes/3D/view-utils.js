@@ -143,14 +143,6 @@ exports.ViewUtils = Montage.create(Component, {
 				viewDir = MathUtils.transformVector( [0,0,1],  stageInv );
 			}
 
-			/*
-			if (elt === stage)
-			{
-				xVec = [1,0,0];
-				yVec = [0,1,0];
-			}
-			*/
-
 			var plane;
 			var xDot, yDot, zDot;
 			switch (axis)
@@ -275,6 +267,11 @@ exports.ViewUtils = Montage.create(Component, {
         value: function( localPt,  elt ) {
             this.pushViewportObj( elt );
             var viewPt = this.screenToView( localPt[0], localPt[1], localPt[2] );
+			if ((elt == null) || (elt === this._stageElement))
+			{
+				this.popViewportObj();
+				return viewPt;
+			}
             var mat = this.getMatrixFromElement( elt );
             var worldPt = MathUtils.transformPoint( viewPt, mat );
             var stageWorldPt = this.postViewToStageWorld( worldPt, elt );

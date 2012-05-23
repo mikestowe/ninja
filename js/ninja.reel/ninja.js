@@ -296,7 +296,7 @@ exports.Ninja = Montage.create(Component, {
             this.currentDocument = this.documentController.activeDocument;
 
             if(this.currentDocument.documentRoot) {
-                this._currentSelectedContainer = this.selectionController._currentSelectedContainer = this.currentDocument.documentRoot;
+                this._currentSelectedContainer = this.selectionController._selectionContainer = this.currentDocument.documentRoot;
             }
 
             NJevent("switchDocument");
