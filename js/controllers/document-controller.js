@@ -393,14 +393,20 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
     onCloseFile: {
         value: function(doc) {
+            var previousFocusedDocument;
 
-			this._documents.splice(this._documents.indexOf(doc), 1);
+            this._documents.splice(this._documents.indexOf(doc), 1);
 
-            this._activeDocument = null;
+            if(this._documents.length > 0) {
+                previousFocusedDocument = this._documents[this._documents.length - 1];
+                this.activeDocument = previousFocusedDocument;
+                this.switchDocuments(this.activeDocument, previousFocusedDocument, false);
+            } else {
+                this.activeDocument = null;
+                this.application.ninja.stage.hideRulers();
 
-            this.application.ninja.stage.hideRulers();
-
-            this.application.ninja.stage.hideCanvas(true);
+                this.application.ninja.stage.hideCanvas(true);
+            }
 
             //TODO: Use references for those instead of calling getElementById
             if(this._documents.length === 0){
@@ -518,12 +524,14 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                     this.application.ninja.stage.restoreAllPanels();
                     this.application.ninja.stage.hideCanvas(false);
                     this.application.ninja.stage.showRulers();
-                } else if(currentDocument.currentView === "design" && newDocument.currentView === "code") {
-                    this.application.ninja.stage.showCodeViewBar(true);
-                    this.application.ninja.stage.collapseAllPanels();
-                    this.application.ninja.stage.hideCanvas(true);
-                    this.application.ninja.stage.hideRulers();
                 }
+            }
+
+            if(newDocument.currentView === "code") {
+                this.application.ninja.stage.showCodeViewBar(true);
+                this.application.ninja.stage.collapseAllPanels();
+                this.application.ninja.stage.hideCanvas(true);
+                this.application.ninja.stage.hideRulers();
             }
 
             this.application.ninja.stage.clearAllCanvas();
