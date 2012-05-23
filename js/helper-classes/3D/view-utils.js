@@ -1005,9 +1005,9 @@ exports.ViewUtils = Montage.create(Component, {
                 this.popViewportObj();
 
                 if (elt === this.application.ninja.currentDocument.documentRoot)  break;
-                if (this.application.ninja.currentDocument.documentRoot && elt === this.application.ninja.currentDocument.documentRoot.parentNode)  break;
+                if (elt === this.application.ninja.currentDocument.documentRoot.parentNode)  break;
                 elt = elt.offsetParent;
-                if (this.application.ninja.currentDocument.documentRoot && elt === this.application.ninja.currentDocument.documentRoot.parentNode)  break;
+                if (elt === this.application.ninja.currentDocument.documentRoot.parentNode)  break;
             }
 
             return mat;

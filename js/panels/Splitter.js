@@ -111,7 +111,7 @@ exports.Splitter = Montage.create(Component, {
             } else {
                 this.panel.removeEventListener("webkitTransitionEnd", this, false);
             }
-            if(this.application.ninja.currentDocument.currentView === "design"){
+            if(this.application.ninja.currentDocument && this.application.ninja.currentDocument.currentView === "design"){
                 this.application.ninja.stage.resizeCanvases = true;
             }
         }
