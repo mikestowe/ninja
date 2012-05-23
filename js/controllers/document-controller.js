@@ -530,6 +530,11 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                     this.application.ninja.stage.hideCanvas(true);
                     this.application.ninja.stage.hideRulers();
                 }
+            }else if(!currentDocument && newDocument.currentView === "code"){
+                this.application.ninja.stage.showCodeViewBar(true);
+                this.application.ninja.stage.collapseAllPanels();
+                this.application.ninja.stage.hideCanvas(true);
+                this.application.ninja.stage.hideRulers();
             }
 
             this.application.ninja.stage.clearAllCanvas();
