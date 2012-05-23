@@ -42,7 +42,7 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
 
     draw:{
         value:function(){
-            this.element.style.left = (this.position - 3) + "px";
+            this.element.style.left = (this.position - 6) + "px";
         }
     },
 
