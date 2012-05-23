@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<!-- <copyright>
+This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+(c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+</copyright> -->
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link href="toolbar.css" rel="stylesheet" type="text/css">
+    <script type="text/montage-serialization">
+        {
+            "owner": {
+                "prototype" : "js/components/toolbar.reel",
+                "properties" : {
+                    "element" : {"#" : "toolbar-container"},
+                    "repetition": {"@": "buttonList" }
+                }
+            },
+            
+            "buttonList": {
+                "module": "montage/ui/repetition.reel",
+                "name": "Repetition",
+                "properties": {
+                    "element": {"#": "repetition"}
+                },
+                "bindings": {
+                    "objects": {"<-": "@owner.buttons"}
+                }
+            },
+            
+            "button": {
+                "prototype": "montage/ui/button.reel",
+                "properties": {
+                    "element": {"#": "button" },
+                    "label": " "
+                },
+                "bindings": {
+                    "label": {"<-": "@buttonList.objectAtCurrentIteration.title"},
+                    "sourceObject": {"<-": "@buttonList.objectAtCurrentIteration"}
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<div data-montage-id="toolbar-container" class="toolbar-container">
+    <ul data-montage-id="repetition">
+        <li><button data-montage-id="button" class="toolbar-button"></button></li>
+    </ul>
+</div>
+</body>
+</html>

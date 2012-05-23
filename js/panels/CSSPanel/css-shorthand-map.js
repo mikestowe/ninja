@@ -16,24 +16,24 @@ exports.CSS_SHORTHAND_MAP = {
     'background-repeat-y' : ['background', 'background-repeat'],
     
     'border-bottom' : ['border'],
-    'border-bottom-color' : ['border', 'border-bottom'],
-    'border-bottom-style' : ['border', 'border-bottom'],
-    'border-bottom-width' : ['border', 'border-bottom'],
+    'border-bottom-color' : ['border-bottom'],
+    'border-bottom-style' : ['border-bottom'],
+    'border-bottom-width' : ['border-bottom'],
     
     'border-left' : ['border'],
-    'border-left-color' : ['border', 'border-left'],
-    'border-left-style' : ['border', 'border-left'],
-    'border-left-width' : ['border', 'border-left'],
+    'border-left-color' : ['border-left'],
+    'border-left-style' : ['border-left'],
+    'border-left-width' : ['border-left'],
     
     'border-right' : ['border'],
-    'border-right-color' : ['border', 'border-right'],
-    'border-right-style' : ['border', 'border-right'],
-    'border-right-width' : ['border', 'border-right'],
+    'border-right-color' : ['border-right'],
+    'border-right-style' : ['border-right'],
+    'border-right-width' : ['border-right'],
     
     'border-top' : ['border'],
-    'border-top-color' : ['border', 'border-top'],
-    'border-top-style' : ['border', 'border-top'],
-    'border-top-width' : ['border', 'border-top'],
+    'border-top-color' : ['border-top'],
+    'border-top-style' : ['border-top'],
+    'border-top-width' : ['border-top'],
     
     'border-color' : ['border'],
     'border-style' : ['border'],
@@ -52,7 +52,6 @@ exports.CSS_SHORTHAND_MAP = {
     'font-style' : ['font'],
     'font-family' : ['font'],
     'font-size' : ['font'],
-    'font-style' : ['font'],
     'font-variant' : ['font'],
     'font-weight' : ['font'],
     
@@ -74,4 +73,24 @@ exports.CSS_SHORTHAND_MAP = {
     '-webkit-transition-duration' : ['-webkit-transition'],
     '-webkit-transition-timing-function' : ['-webkit-transition'],
     '-webkit-transition-delay' : ['-webkit-transition']
+};
+
+exports.CSS_SHORTHAND_TO_SUBPROP_MAP = {
+    'background' : ["background-image", "background-repeat-x", "background-repeat-y", "background-attachment",
+                    "background-position-x", "background-position-y", "background-origin", "background-clip",
+                    "background-color"],
+    'border' : ['border-width', 'border-style', 'border-color'],
+    'border-top' : ['border-top-width', 'border-top-style', 'border-top-color'],
+    'border-right' : ['border-right-width', 'border-right-style', 'border-right-color'],
+    'border-bottom' : ['border-bottom-width', 'border-bottom-style', 'border-bottom-color'],
+    'border-left' : ['border-left-width', 'border-left-style', 'border-left-color'],
+    'border-image' : ['border-image-outset', 'border-image-repeat','border-image-slice', 'border-image-source', 'border-image-width'],
+    'border-radius' : ["border-top-left-radius", "border-top-right-radius", "border-bottom-right-radius",
+                       "border-bottom-left-radius"],
+    'font' : ["font-family", "font-size", "font-style", "font-variant", "font-weight", "line-height"],
+    'list' : ["list-style-type", "list-style-image", "list-style-position"],
+    'margin' : ["margin-top", "margin-right", "margin-bottom", "margin-left"],
+    'padding' : ["padding-top", "padding-right", "padding-bottom", "padding-left"],
+    '-webkit-transition' : ["-webkit-transition-property", "-webkit-transition-duration",
+                            "-webkit-transition-timing-function", "-webkit-transition-delay"]
 };

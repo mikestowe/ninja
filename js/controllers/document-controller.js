@@ -394,14 +394,20 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
     onCloseFile: {
         value: function(doc) {
+            var previousFocusedDocument;
 
-			this._documents.splice(this._documents.indexOf(doc), 1);
+            this._documents.splice(this._documents.indexOf(doc), 1);
 
-            this._activeDocument = null;
+            if(this._documents.length > 0) {
+                previousFocusedDocument = this._documents[this._documents.length - 1];
+                this._activeDocument = previousFocusedDocument;
+                this.switchDocuments(this.activeDocument, previousFocusedDocument, true);
+            } else {
+                this._activeDocument = null;
+                this.application.ninja.stage.hideRulers();
 
-            this.application.ninja.stage.hideRulers();
-
-            this.application.ninja.stage.hideCanvas(true);
+                this.application.ninja.stage.hideCanvas(true);
+            }
 
             //TODO: Use references for those instead of calling getElementById
             if(this._documents.length === 0){
