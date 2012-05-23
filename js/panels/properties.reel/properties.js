@@ -48,6 +48,7 @@ exports.Properties = Montage.create(Component, {
         value : function() {
             this.eventManager.addEventListener("openDocument", this, false);
             this.eventManager.addEventListener("selectionChange", this, false);
+            this.eventManager.addEventListener("closeDocument", this, false);
 
             // This will be a toggle option
             if(this.application.ninja.appData.PILiveUpdate) {
@@ -73,6 +74,12 @@ exports.Properties = Montage.create(Component, {
 
             // Display the default document root PI
             this.displayElementProperties(this.application.ninja.currentDocument.documentRoot);
+        }
+    },
+
+    handleCloseDocument: {
+        value: function(){
+            this.clear();
         }
     },
 
@@ -172,6 +179,7 @@ exports.Properties = Montage.create(Component, {
             this.elementId.value = "";
             this.elementClass.value = "";
             this.customPi = null;
+            this.customSections = [];
         }
     },
 
@@ -211,26 +219,28 @@ exports.Properties = Montage.create(Component, {
                     controls = this.customSections[n].content.controls;
                     if(controls["colorSelect"]) {
                         controls["colorSelect"].destroy();
-                    } else if(controls["stageBackground"]) {
-                        controls["stageBackground"].destroy();
+                    } else if(controls["background"]) {
+                        controls["background"].destroy();
                     }
                 }
 
                 this.customPi = el.elementModel.pi;
                 this.displayCustomProperties(el, el.elementModel.pi);
-            }
 
-            // Root element color chip
-            if(isRoot) {
-                var backgroundChip = this.customSections[0].content.controls["background"];
-                var rootBackgroundColor = ElementsMediator.getProperty(el, "background");
+                // Root element color chip
+                if(isRoot) {
+                    var backgroundChip = this.customSections[0].content.controls["background"];
+                    var rootBackgroundColor = ElementsMediator.getProperty(el, "background");
 
-                if(rootBackgroundColor) {
-                    backgroundChip.color = rootBackgroundColor;
-                } else {
-                    backgroundChip.color = null;
+                    if(rootBackgroundColor) {
+                        backgroundChip.color = rootBackgroundColor;
+                    } else {
+                        backgroundChip.color = null;
+                    }
                 }
             }
+
+
 
 			var previousInput = this.application.ninja.colorController.colorModel.input;
             customPI = PiData[this.customPi];
