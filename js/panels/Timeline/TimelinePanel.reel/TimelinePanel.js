@@ -437,6 +437,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             returnObj.layerData.isVisible = true;
             returnObj.layerData.docUUID = this.application.ninja.currentDocument._uuid;
             returnObj.layerData.isTrackAnimated = false;
+            returnObj.layerData.triggerBinding = false;
             returnObj.parentElementUUID = null;
             returnObj.parentElement = null;
             
@@ -1402,12 +1403,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     // Trigger the layer/track data binding
     triggerLayerBinding : {
     	value: function(intIndex) {
-    		if (this.arrLayers[intIndex].layerData.triggerBinding === true) {
-    			this.arrLayers[intIndex].layerData.triggerBinding = false;
-    		} else {
-    			this.arrLayers[intIndex].layerData.triggerBinding = true;
-    		}
-    	}
+            this.arrLayers[intIndex].layerData.triggerBinding = !this.arrLayers[intIndex].layerData.triggerBinding;
+        }
     },
     
     handleLayerDragStart : {
