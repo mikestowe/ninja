@@ -6,11 +6,13 @@
 
 .tween_keyframe{
     position: absolute;
-    height: 16px;
-    width: 5px;
+    height: 10px;
+    width: 10px;
+    top: 3px;
     background-color: white;
     z-index: 23;
-    border-radius: 3px;
+    border-radius: 2px;
+    -webkit-transform: rotate(45deg);
 }
 
 .tween_keyframe.keyframeSelected{

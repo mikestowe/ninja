@@ -321,6 +321,19 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         }
     },
 
+    _ruleList:{
+        value:[]
+    },
+
+    ruleList:{
+        get:function () {
+            return this._ruleList;
+        },
+        set:function (val) {
+            this._ruleList = val;
+        }
+    },
+
     animationNamesString:{
         value:""
     },
@@ -735,7 +748,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 var animationNameList = this.animationName.split(",");
                 if(animationNameList.length > 1){
                     this.animationName = animationNameList[0];
-                    this.extractKeyframesFromRules(animationNameList);
+                    this.getAllAnimationRules(animationNameList);
                 }
 
                 this.animationNamesString = this.animationName;
@@ -806,14 +819,24 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         }
     },
 
-    extractKeyframesFromRules:{
+    getAllAnimationRules:{
         value:function(ruleNames){
             //console.log(ruleNames);
+
             for(var i in ruleNames){
-                console.log(ruleNames[i].replace(/^\s+|\s+$/g,""));
-                var currName = ruleNames[i].replace(/^\s+|\s+$/g,"");
-                var test = this.application.ninja.stylesController.getAnimationRuleWithName(currName, this.application.ninja.currentDocument._document);
-                console.log(test);
+                var currentName = ruleNames[i].replace(/^\s+|\s+$/g,"");  // trim whitespace
+                var currentRule = this.application.ninja.stylesController.getAnimationRuleWithName(currentName, this.application.ninja.currentDocument._document);
+                this.ruleList[currentName] = currentRule;
+            }
+            this.recreatePropertyTracks(this.ruleList);
+        }
+    },
+
+    recreatePropertyTracks:{
+        value:function(ruleSet){
+            for(var i in ruleSet){
+                //console.log(i);
+                //console.log(ruleSet[i]);
             }
         }
     },

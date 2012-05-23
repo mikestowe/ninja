@@ -248,7 +248,6 @@ var Tween = exports.Tween = Montage.create(Component, {
             } else {
                 this.parentComponent.parentComponent.updateKeyframeRule();
             }
-
         }
     },
 
