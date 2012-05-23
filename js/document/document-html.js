@@ -98,7 +98,7 @@ exports.HtmlDocument = Montage.create(Component, {
     					this.documentRoot = this.model.views.design.document.body;
     				}
             		//TODO: Why is this needed?
-            		this._liveNodeList = this.documentRoot.getElementsByTagName('*');
+                    this.model.views.design._liveNodeList = this.documentRoot.getElementsByTagName('*');
             		//Initiliazing document model
             		document.application.njUtils.makeElementModel(this.documentRoot, "Body", "body");
             		//Adding observer to know when template is ready
