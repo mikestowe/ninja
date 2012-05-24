@@ -64,10 +64,6 @@ exports.Layout = Montage.create(Component, {
             if(this.application.ninja.documentController.activeDocument.currentView === "design") {
                 this.elementsToDraw = this.application.ninja.documentController.activeDocument.documentRoot.childNodes;
             }
-//
-//            // Draw the elements and the 3d info
-//            this.draw();
-//            this.draw3DInfo(false);
         }
     },
 
@@ -89,7 +85,6 @@ exports.Layout = Montage.create(Component, {
 
             if(this.application.ninja.documentController.activeDocument.currentView === "design"){
                 // Make an array copy of the line node list which is not an array like object
-//                this.domTree = Array.prototype.slice.call(this.application.ninja.documentController.activeDocument._liveNodeList, 0);
                 this.domTree = this.application.ninja.currentDocument.model.views.design.getLiveNodeList(true);
                 // Index of the current container
                 containerIndex = this.domTree.indexOf(this.application.ninja.currentSelectedContainer);

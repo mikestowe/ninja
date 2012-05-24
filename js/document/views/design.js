@@ -94,16 +94,6 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     ////////////////////////////////////////////////////////////////////
     //
 
-    initialPaddingLeft: {
-        value: 0
-    },
-
-    initialPaddingTop: {
-        value: 0
-    },
-    ////////////////////////////////////////////////////////////////////
-    //
-
     //
 	initialize: {
         value: function (parent) {
@@ -225,11 +215,6 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         	this._bodyFragment = null;
         	//Calling standard method to finish opening document
         	this.bodyContentLoaded(null);
-            //TODO: Move this to be set via the controller
-//            this.application.ninja.stage.documentOffsetLeft = parseInt((this.document.body.scrollWidth - this._template.size.width)/2);
-//            this.application.ninja.stage.documentOffsetTop = parseInt((this.document.body.scrollHeight - this._template.size.height)/2);
-//            this.initialPaddingLeft = parseInt((this.document.body.scrollWidth - this._template.size.width)/2);
-//            this.initialPaddingTop = parseInt((this.document.body.scrollHeight - this._template.size.height)/2);
     	}
     },
     ////////////////////////////////////////////////////////////////////
