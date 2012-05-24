@@ -248,6 +248,7 @@ exports.Stage = Montage.create(Component, {
 
 
             this.eventManager.addEventListener( "openDocument", this, false);
+            this.eventManager.addEventListener( "switchDocument", this, false);
             this.eventManager.addEventListener( "enableStageMove", this, false);
             this.eventManager.addEventListener( "disableStageMove", this, false);
 
@@ -260,6 +261,18 @@ exports.Stage = Montage.create(Component, {
 
     // Event details will contain the active document prior to opening a new one
     handleOpenDocument: {
+        value: function(evt) {
+            this._initFromDocument(evt);
+        }
+    },
+
+    handleSwitchDocument: {
+        value: function(evt) {
+            this._initFromDocument(evt);
+        }
+    },
+
+    _initFromDocument: {
         value: function(evt) {
             var designView = this.application.ninja.currentDocument.model.views.design;
 
