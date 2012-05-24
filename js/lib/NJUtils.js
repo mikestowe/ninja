@@ -64,7 +64,7 @@ exports.NJUtils = Montage.create(Component, {
         value: function(tag, attr, doc) {
             var _doc, el;
 
-            _doc = doc ? doc._document : document;
+            _doc = doc ? doc.model.views.design.document : document;
             el = _doc.createElement(tag);
             this.decor(el, attr);
 
