@@ -113,7 +113,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 	render: {
         value: function (callback, template) {
         	//TODO: Remove, this is a temp patch for webRequest API gate
-        	this.application.ninja.documentController._hackRootFlag = false;
+        	this.application.ninja.documentController.redirectRequests = false;
         	//Storing callback for dispatch ready
         	this._callback = callback;
         	this._template = template;
@@ -131,7 +131,8 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 	//
     onTemplateLoad: {
         value: function (e) {
-        	this.application.ninja.documentController._hackRootFlag = true;
+        	//console.log(this.iframe.contentWindow);
+        	this.application.ninja.documentController.redirectRequests = true;
         	//TODO: Add support to constructing URL with a base HREF
         	var basetag = this.content.document.getElementsByTagName('base');
         	//Removing event
@@ -279,6 +280,16 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
             } else {
             	//Else there is not data to parse
             }
+            //TODO: Verify appropiate location for this operation
+    		if (this._template && this._template.type === 'banner') {
+    			this.model.documentRoot = this.document.body.getElementsByTagName('ninja-content')[0];
+    		} else {
+    			this.model.documentRoot = this.document.body;
+    		}
+    		//Storing node list for reference (might need to store in the model)
+    		this._liveNodeList = this.model.documentRoot.getElementsByTagName('*');
+    		//Initiliazing document model
+    		document.application.njUtils.makeElementModel(this.model.documentRoot, "Body", "body");
     		//Makign callback if specified
     		if (this._callback) this._callback();
     	}

@@ -90,7 +90,7 @@ exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
             this._origin = null;
             this._startOriginArray = null;
 
-            var stage = this.application.ninja.currentDocument.documentRoot;
+            var stage = this.application.ninja.currentDocument.model.documentRoot;
             this.target = stage;
 
             viewUtils.pushViewportObj( stage );
@@ -119,7 +119,7 @@ exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
 
     captureElementChange: {
         value: function(event) {
-            if(event._event.item === this.application.ninja.currentDocument.documentRoot)
+            if(event._event.item === this.application.ninja.currentDocument.model.documentRoot)
             {
                 this.captureSelectionDrawn(null);
             }
@@ -132,9 +132,9 @@ exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
            // Reset stage to identity matrix
            var iMat = Matrix.I(4);
 
-           ElementsMediator.setMatrix(this.application.ninja.currentDocument.documentRoot,
+           ElementsMediator.setMatrix(this.application.ninja.currentDocument.model.documentRoot,
                                         iMat, false, "rotateStage3DTool");
-           this.application.ninja.currentDocument.documentRoot.elementModel.props3D.m_transformCtr = null;
+           this.application.ninja.currentDocument.model.documentRoot.elementModel.props3D.m_transformCtr = null;
 
 			// let the document and stage manager know about the zoom change
 			this.application.ninja.stage._firstDraw = true;

@@ -32,7 +32,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
 
             var selectedElements = this.application.ninja.selectedElements;
             if(this.rotateStage) {
-                selectedElements = [this.application.ninja.currentDocument.documentRoot];
+                selectedElements = [this.application.ninja.currentDocument.model.documentRoot];
             }
 
 			this._mouseDownHitRec = null;
@@ -225,7 +225,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
 
             var selectedElements = this.application.ninja.selectedElements;
             if(this.rotateStage) {
-                selectedElements = [this.application.ninja.currentDocument.documentRoot];
+                selectedElements = [this.application.ninja.currentDocument.model.documentRoot];
             }
 
             if(this._handleMode !== null)
@@ -345,7 +345,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
             var selectedElements = this.application.ninja.selectedElements;
 
             if(this.rotateStage) {
-                selectedElements = [this.application.ninja.currentDocument.documentRoot];
+                selectedElements = [this.application.ninja.currentDocument.model.documentRoot];
             }
             var len = selectedElements.length;
             for(var i = 0; i < len; i++) {
@@ -481,7 +481,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
                 }
                 else
                 {
-                    this.target = this.application.ninja.currentDocument.documentRoot;
+                    this.target = this.application.ninja.currentDocument.model.documentRoot;
                     //this._origin = drawUtils._selectionCtr.slice(0);
                     //this._origin[0] += this.application.ninja.stage.userContentLeft;
                     //this._origin[1] += this.application.ninja.stage.userContentTop;
@@ -609,7 +609,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
 
             if(this.rotateStage || (this.application.ninja.selectedElements.length === 1)) {
 				if(this.rotateStage) {
-                	element = this.application.ninja.currentDocument.documentRoot;
+                	element = this.application.ninja.currentDocument.model.documentRoot;
                 } else {
                     element = this.application.ninja.selectedElements[0];
                 }
@@ -851,7 +851,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
             else
             {
                 lMode = false;
-                viewUtils.pushViewportObj( this.application.ninja.currentDocument.documentRoot );
+                viewUtils.pushViewportObj( this.application.ninja.currentDocument.model.documentRoot );
             }
             var base = this._origin;
 			//console.log( "Rotate3DToolBase.DrawHandles, base: " + base );

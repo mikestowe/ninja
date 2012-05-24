@@ -158,7 +158,7 @@ exports.PositionSize = Montage.create(Component, {
             if(!event.wasSetByCode) {
                 if(this.savedPosition) prevPosition = [this.savedPosition + "px"];
 
-                this.application.ninja.selectedElements.length ? items = this.application.ninja.selectedElements : items = [this.application.ninja.currentDocument.documentRoot];
+                this.application.ninja.selectedElements.length ? items = this.application.ninja.selectedElements : items = [this.application.ninja.currentDocument.model.documentRoot];
 
                 if(this.bindButton.pressed) {
 
@@ -183,7 +183,7 @@ exports.PositionSize = Montage.create(Component, {
             if(!event.wasSetByCode) {
                 if(this.savedPosition) prevPosition = [this.savedPosition + "px"];
 
-                this.application.ninja.selectedElements.length ? items = this.application.ninja.selectedElements : items = [this.application.ninja.currentDocument.documentRoot];
+                this.application.ninja.selectedElements.length ? items = this.application.ninja.selectedElements : items = [this.application.ninja.currentDocument.model.documentRoot];
 
                 if(this.bindButton.pressed) {
 
@@ -231,7 +231,7 @@ exports.PositionSize = Montage.create(Component, {
 
                 if(!this.savedPosition) this.savedPosition = this.heightSize;
 
-                this.application.ninja.selectedElements.length ? items = this.application.ninja.selectedElements : items = [this.application.ninja.currentDocument.documentRoot];
+                this.application.ninja.selectedElements.length ? items = this.application.ninja.selectedElements : items = [this.application.ninja.currentDocument.model.documentRoot];
 
                 if(this.bindButton.pressed) {
 
@@ -256,7 +256,7 @@ exports.PositionSize = Montage.create(Component, {
 
                 if(!this.savedPosition) this.savedPosition = this.widthSize;
 
-                this.application.ninja.selectedElements.length ? items = this.application.ninja.selectedElements : items = [this.application.ninja.currentDocument.documentRoot];
+                this.application.ninja.selectedElements.length ? items = this.application.ninja.selectedElements : items = [this.application.ninja.currentDocument.model.documentRoot];
 
                 if(this.bindButton.pressed) {
                     var newHeight = Math.round(this.aspectRatioWidth * this.widthControl.value);

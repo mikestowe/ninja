@@ -116,7 +116,7 @@ exports.CustomSection = Montage.create(Component, {
         value: function(event) {
             // Change the stage color for now
             //console.log(this, event);
-            ElementsMediator.setProperty([this.application.ninja.currentDocument.documentRoot], this.id, [event._event.color.css], "Change", "pi", '');
+            ElementsMediator.setProperty([this.application.ninja.currentDocument.model.documentRoot], this.id, [event._event.color.css], "Change", "pi", '');
             /*
             var propEvent = document.createEvent("CustomEvent");
             propEvent.initEvent("propertyChange", true, true);

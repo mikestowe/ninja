@@ -184,7 +184,7 @@ exports.ZoomTool = Montage.create(DrawingTool, {
     _setZoom:{
         value:function(mode,zoomFactor)
 		{
-            var userContent = this.application.ninja.currentDocument.documentRoot;
+            var userContent = this.application.ninja.currentDocument.model.documentRoot;
             this._oldValue = this.application.ninja.documentBar.zoomFactor;
 
 			var globalPt;
