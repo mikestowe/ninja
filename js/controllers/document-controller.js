@@ -13,24 +13,14 @@ var Montage = 		require("montage/core/core").Montage,
     TextDocument =  require("js/document/document-text").TextDocument;
 ////////////////////////////////////////////////////////////////////////
 //
-var DocumentController = exports.DocumentController = Montage.create(Component, {
-    hasTemplate: {
-        value: false
-    },
-
-    _documents: {
-        value: []
-    },
-    
-    redirectRequests: {
-    	value: false
-    },
-
-    _hackInitialStyles: {
-        value: true
-    },
-
+exports.DocumentController = Montage.create(Component, {
+	//
+    hasTemplate: {value: false},
+    _documents: {value: []},
+	//TODO: what is this?!?!
+    _hackInitialStyles: {value: true},
     _activeDocument: { value: null },
+    //TODO: Are any of these needed?
     _iframeCounter: { value: 1, enumerable: false },
     _iframeHolder: { value: null, enumerable: false },
     _textHolder: { value: null, enumerable: false },
@@ -41,7 +31,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             return this._activeDocument;
         },
         set: function(doc) {
-//            if(!!this._activeDocument){ this._activeDocument.isActive = false;}
+			//if(!!this._activeDocument){ this._activeDocument.isActive = false;}
 
             this._activeDocument = doc;
 
@@ -53,7 +43,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     },
 
     deserializedFromTemplate: {
-        value: function() {
+        value: function() { //TODO: Add event naming consistency (save, fileOpen and newFile should be consistent, all file events should be executeFile[operation name])
             this.eventManager.addEventListener("appLoaded", this, false);
             this.eventManager.addEventListener("executeFileOpen", this, false);
             this.eventManager.addEventListener("executeNewFile", this, false);
@@ -69,6 +59,9 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     
 
 	//TODO: Ensure these APIs are not needed
+	redirectRequests: {
+    	value: false
+    },
 	////////////////////////////////////////////////////////////////////
 	//
     handleWebRequest: {
@@ -151,7 +144,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 	//
     saveExecuted: {
     	value: function (value) {
-    		//File saved, any callbacks or events should go here
+    		//File saved, any callbacks or events should go here (must be added in handleExecuteSave passed as callback)
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -161,9 +154,9 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
            //
     		if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
     			//
-    			this.activeDocument.model.saveAll(this.testCallback.bind(this)); //this.fileSaveResult.bind(this)
+    			this.activeDocument.model.saveAll();
     		} else {
-    			//Error:
+    			//TODO: Add error handling
     		}
 		}
     },
@@ -183,38 +176,22 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     handleExecuteFileClose:{
         value: function(event) {
         	if (this.activeDocument) {
-//        		this.activeDocument.closeDocument();
                 this.closeFile(this.activeDocument);
         	}
         }
     },
     ////////////////////////////////////////////////////////////////////
+    //TODO: Is this used, should be cleaned up
     handleExecuteFileCloseAll:{
-            value: function(event) {
-                var i=0;
-                if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
-                    while(this._documents.length > 0){
-                        this.closeDocument(this._documents[this._documents.length -1].uuid);
-                    }
-                }
-            }
-        },
-        ////////////////////////////////////////////////////////////////////
-    //
-    fileSaveResult: {
-    	value: function (result) {
-            if((result.status === 204) || (result.status === 404)){//204=>existing file || 404=>new file... saved
-                this.activeDocument.model.needsSave = false;
-                if(this.application.ninja.currentDocument !== null){
-                    //clear Dirty StyleSheets for the saved document
-                    this.application.ninja.stylesController.clearDirtyStyleSheets(this.application.ninja.currentDocument);
-                }
-            }
-    	}
-    },
-	
-	
-	
+		value: function(event) {
+			var i=0;//TODO: who is using this??
+			if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
+				while(this._documents.length > 0){
+					this.closeDocument(this._documents[this._documents.length -1].uuid);
+				}
+			}
+		}
+	},
 	////////////////////////////////////////////////////////////////////
 	//
     createNewFile:{
