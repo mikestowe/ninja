@@ -117,9 +117,6 @@ exports.Stage = Montage.create(Component, {
     _userContentTop:        { value: 0 },
     _userContentBorder:     { value: 0 },
 
-    _maxHorizontalScroll:   { value: 0 },
-    _maxVerticalScroll:     { value: 0 },
-
     viewport: {
         get: function () { return this._viewport; },
         set: function(value) { this._viewport = value; }
@@ -262,18 +259,18 @@ exports.Stage = Montage.create(Component, {
     // Event details will contain the active document prior to opening a new one
     handleOpenDocument: {
         value: function(evt) {
-            this._initFromDocument(evt);
+            this.initWithDocument();
         }
     },
 
     handleSwitchDocument: {
         value: function(evt) {
-            this._initFromDocument(evt);
+            this.initWithDocument(true);
         }
     },
 
-    _initFromDocument: {
-        value: function(evt) {
+    initWithDocument: {
+        value: function(didSwitch) {
             var designView = this.application.ninja.currentDocument.model.views.design;
 
             this.hideCanvas(false);
@@ -282,11 +279,21 @@ exports.Stage = Montage.create(Component, {
             this._canvas.width = this._layoutCanvas.width = this._drawingCanvas.width = this.element.offsetWidth - 11 ;
             this._canvas.height = this._layoutCanvas.height = this._drawingCanvas.height = this.element.offsetHeight - 11;
 
-            this._maxHorizontalScroll = this.application.ninja.currentDocument.documentRoot.scrollWidth - this._canvas.width - 11;
-            this._maxVerticalScroll = this.application.ninja.currentDocument.documentRoot.scrollHeight - this._canvas.height - 11;
             designView.iframe.contentWindow.addEventListener("scroll", this, false);
 
             this.addPropertyChangeListener("appModel.show3dGrid", this, false);
+
+            this._userPaddingLeft = 0;
+            this._userPaddingTop = 0;
+
+            this._documentOffsetLeft = 0;
+            this._documentOffsetTop  = 0;
+
+            this._userContentLeft = 0;
+            this._userContentTop = 0;
+
+            this._scrollLeft = 0;
+            this._scrollTop = 0;
 
             this.stageDeps.handleOpenDocument();
             this.layout.handleOpenDocument();
@@ -302,7 +309,13 @@ exports.Stage = Montage.create(Component, {
                 }
             }
 
-            this.centerStage();
+            if(didSwitch) {
+                this.application.ninja.currentDocument.model.views.design.document.body.scrollLeft = this.application.ninja.currentDocument.model.scrollLeft;
+                this.application.ninja.currentDocument.model.views.design.document.body.scrollTop = this.application.ninja.currentDocument.model.scrollTop;
+                this.handleScroll();
+            } else {
+                this.centerStage();
+            }
 
             // TODO - We will need to modify this once we support switching between multiple documents
             this.application.ninja.toolsData.selectedToolInstance._configure(true);
@@ -487,13 +500,6 @@ exports.Stage = Montage.create(Component, {
 
             this.userContentLeft = this._documentOffsetLeft - this._scrollLeft;
             this.userContentTop = this._documentOffsetTop - this._scrollTop;
-
-            // TODO - scroll events are not dependable.  We may need to use a timer to simulate
-            // scrollBegin and scrollEnd. For now, the Pan Tool will keep track of the stage's scroll values
-            // on mouse down.
-            // this._maxHorizontalScroll = this.application.ninja.currentDocument.documentRoot.scrollWidth - this._canvas.width - 11;
-            // this._maxVerticalScroll = this.application.ninja.currentDocument.documentRoot.scrollHeight - this._canvas.height - 11;
-
 
             // Need to clear the snap cache and set up the drag plane
             //snapManager.setupDragPlaneFromPlane( workingPlane );

@@ -30,8 +30,6 @@ exports.StageDeps = Montage.create(Component, {
         value: function() {
 
             this.eventManager.addEventListener("appLoaded", this, false);
-//            this.eventManager.addEventListener("openDocument", this, false);
-//            this.eventManager.addEventListener("switchDocument", this, false);
 
             // Initialize Deps
             // HACK
