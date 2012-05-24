@@ -96,7 +96,8 @@ exports.Editable = Montage.create(Component, {
             return this._element.textContent;
         },
         set: function(str) {
-            this._element.textContent = str;
+            //this._element.textContent = str;
+            this._element.innerText = str;
         }
     },
 
