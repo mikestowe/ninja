@@ -286,6 +286,8 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     		} else {
     			this.model.documentRoot = this.document.body;
     		}
+    		//Storing node list for reference (might need to store in the model)
+    		this._liveNodeList = this.model.documentRoot.getElementsByTagName('*');
     		//Initiliazing document model
     		document.application.njUtils.makeElementModel(this.model.documentRoot, "Body", "body");
     		//Makign callback if specified
