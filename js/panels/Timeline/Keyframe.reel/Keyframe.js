@@ -91,6 +91,7 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
             	}
             }
             this.parentComponent.parentComponent.parentComponent.draggingIndex = myIndex;
+            this.selectKeyframe();
 		}
 	},
 	handleDragend: {

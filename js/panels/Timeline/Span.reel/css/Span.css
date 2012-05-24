@@ -1,17 +1,106 @@
+@charset "UTF-8";
 /* <copyright>
  This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
-
-.tween_span{
-    position: absolute;
-    height: 16px;
-    opacity: 0.15;
-    background-color: white;
+/* Span.scss
+ * Main SCSS file for Span component, compiled by SASS into the file css/Span.css.
+ */
+/* line 22, ../scss/Span.scss */
+.tween_span {
+  position: absolute;
+  height: 16px;
 }
 
-.tween_span.spanHighlight{
-    background-color: #a0c8ff;
-    opacity: 0.4;
+/* line 26, ../scss/Span.scss */
+.tween_span .tween_span_bar {
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  opacity: 0.15;
+}
+
+/* line 33, ../scss/Span.scss */
+.tween_span.spanHighlight .tween_span_bar {
+  background-color: #a0c8ff;
+  opacity: 0.4;
+}
+
+/*
+ * Easing picker
+ */
+/* line 42, ../scss/Span.scss */
+.container-easing {
+  position: absolute;
+  top: 2px;
+  right: 8px;
+  font-size: 10px;
+  line-height: 8px;
+  border: 1px solid black;
+  color: white;
+  background-color: #474747;
+}
+
+/* line 54, ../scss/Span.scss */
+.container-easing,
+.container-easing .easing-choice,
+.container-easing .easing-choices {
+  width: 70px;
+  white-space: nowrap;
+}
+
+/* line 59, ../scss/Span.scss */
+.container-easing,
+.container-easing .easing-choice {
+  height: 10px;
+}
+
+/* line 62, ../scss/Span.scss */
+.container-easing .easing-choice {
+  position: absolute;
+  top: 0px;
+  left: 3px;
+  width: 67px;
+  cursor: pointer;
+}
+
+/* line 69, ../scss/Span.scss */
+.container-easing .easing-choices {
+  position: absolute;
+  display: none;
+  bottom: -1px;
+  left: -1px;
+  z-index: 100;
+  height: auto;
+  border: 1px solid black;
+  color: white;
+  background-color: #474747;
+  overflow: hidden;
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+/* line 84, ../scss/Span.scss */
+.container-easing .easing-choices li {
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 3px;
+  cursor: pointer;
+}
+
+/* line 95, ../scss/Span.scss */
+.container-easing .easing-choices li:hover,
+.container-easing .easing-choices li.easing-selected {
+  color: #242424;
+  background-color: #b2b2b2;
+}
+
+/* line 99, ../scss/Span.scss */
+.container-easing .easing-choices li.easing-selected {
+  cursor: default;
 }
