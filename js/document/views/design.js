@@ -67,7 +67,33 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     propertiesPanel: {
         value: null
     },
+
     ////////////////////////////////////////////////////////////////////
+    //
+    _liveNodeList: {
+        value: null
+    },
+
+    getLiveNodeList: {
+        value: function(useFilter) {
+            if(useFilter) {
+                var filteredNodes = [],
+                    childNodes = Array.prototype.slice.call(this._liveNodeList, 0);
+
+                childNodes.forEach(function(item) {
+                    if( (item.nodeType === 1) && (item.nodeName !== "STYLE") && (item.nodeName !== "SCRIPT")) {
+                        filteredNodes.push(item);
+                    }
+                });
+                return filteredNodes;
+            } else {
+                return Array.prototype.slice.call(this._liveNodeList, 0);
+            }
+        }
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+
     //
 	initialize: {
         value: function (parent) {
@@ -189,9 +215,6 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         	this._bodyFragment = null;
         	//Calling standard method to finish opening document
         	this.bodyContentLoaded(null);
-            //TODO: Move this to be set via the controller
-            this.application.ninja.stage.documentOffsetLeft = parseInt((this.document.body.scrollWidth - this._template.size.width)/2);
-            this.application.ninja.stage.documentOffsetTop = parseInt((this.document.body.scrollHeight - this._template.size.height)/2);
     	}
     },
     ////////////////////////////////////////////////////////////////////
