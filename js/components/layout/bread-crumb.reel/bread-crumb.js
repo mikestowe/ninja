@@ -21,7 +21,7 @@ exports.Breadcrumb = Montage.create(Component, {
 
     handleCloseDocument: {
         value: function(){
-            if(!this.application.ninja.documentController.activeDocument) {
+            if(!this.application.ninja.documentController.activeDocument && this.application.ninja.currentDocument.currentView !== "code") {
                 this.disabled = true;
                 this.application.ninja.currentSelectedContainer = (this.application.ninja.currentDocument ? this.application.ninja.currentDocument.model.documentRoot : null);
             }

@@ -26,38 +26,10 @@ exports.StageDeps = Montage.create(Component, {
         value: drawUtils
     },
 
-    _userContentLeft: {
-        value: null
-    },
-
-    userContentLeft: {
-        get: function() { return this._userContentLeft; },
-        set: function(value) {
-            if(value != null) {
-                viewUtils.setUserContentLeft(value);
-            }
-        }
-    },
-
-    _userContentTop: {
-        value: null
-    },
-
-    userContentTop: {
-        get: function() { return this._userContentTop; },
-        set: function(value) {
-            if(value != null) {
-                viewUtils.setUserContentTop(value);
-            }
-        }
-    },
-
     deserializedFromTemplate: {
         value: function() {
 
             this.eventManager.addEventListener("appLoaded", this, false);
-            this.eventManager.addEventListener("openDocument", this, false);
-            this.eventManager.addEventListener("switchDocument", this, false);
 
             // Initialize Deps
             // HACK
@@ -76,19 +48,6 @@ exports.StageDeps = Montage.create(Component, {
 
     handleAppLoaded: {
         value: function() {
-
-            Object.defineBinding(this, "userContentLeft", {
-                boundObject: this.stage,
-                boundObjectPropertyPath: "_userContentLeft",
-                oneway: true
-            });
-
-            Object.defineBinding(this, "userContentTop", {
-                boundObject: this.stage,
-                boundObjectPropertyPath: "_userContentTop",
-                oneway: true
-            });
-
             // Setup the snap manager pointer to the app model
             snapManager.appModel = this.application.ninja.appModel;
             // bind the snap properties to the snap manager
@@ -105,7 +64,7 @@ exports.StageDeps = Montage.create(Component, {
 
             workingPlane = [0,0,1,0];
 
-            snapManager.reload2DCache();
+            snapManager._isCacheInvalid = true;
             snapManager.setupDragPlaneFromPlane (workingPlane);
 
             drawUtils.initializeFromDocument();
@@ -116,9 +75,8 @@ exports.StageDeps = Montage.create(Component, {
         value: function(){
             workingPlane = [0,0,1,0];
 
+            snapManager._isCacheInvalid = true;
             snapManager.setupDragPlaneFromPlane (workingPlane);
-            snapManager.reload2DCache();
-
 
             drawUtils.initializeFromDocument();
         }

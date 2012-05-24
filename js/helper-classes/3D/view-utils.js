@@ -24,9 +24,6 @@ exports.ViewUtils = Montage.create(Component, {
     // keep a stack of viewport objects
     _viewportObjStack: { value: []},
 
-    _userContentLeft: { value: null},
-    _userContentTop: { value: null},
-
     ///////////////////////////////////////////////////////////////////////
     // Property accessors
     ///////////////////////////////////////////////////////////////////////
@@ -38,9 +35,6 @@ exports.ViewUtils = Montage.create(Component, {
         }
     },
     getViewportObj: { value: function()                 {  return this.m_viewportObj;   } },
-
-    setUserContentLeft: { value: function(value) { this._userContentLeft = value; }},
-    setUserContentTop: { value: function(value) { this._userContentTop = value; }},
 
     getPerspectiveDistance: { value: function () { return this._perspectiveDist; } },
 
@@ -385,7 +379,7 @@ exports.ViewUtils = Montage.create(Component, {
             // transform the bounds up the tree
             var parent = child.offsetParent;
             // TODO - Should have a different way to check for new template mode
-            if ( parent || ((child === this.application.ninja.currentDocument.model.documentRoot) && (child.id !== "UserContent")) )
+            if ( parent || (child === this.application.ninja.currentDocument.model.documentRoot) )
             {
                 this.setViewportObj( child );
 
@@ -703,8 +697,8 @@ exports.ViewUtils = Montage.create(Component, {
             {
                 // TODO - Call a routine from the user document controller to get the offsets/margins
                 // Once we expose the document controller to ViewUtils
-                offset[0] += this._userContentLeft;
-                offset[1] += this._userContentTop;
+                offset[0] += this.application.ninja.stage._userContentLeft;
+                offset[1] += this.application.ninja.stage._userContentTop;
             }
 
             return offset;
@@ -1282,7 +1276,6 @@ exports.ViewUtils = Montage.create(Component, {
 //	stageManager._canvas:			this.application.ninja.stage.canvas
 //	stageManager.layoutCanvas:		this.application.ninja.stage.layoutCanvas
 //	stageManager.drawingCanvas:		this.application.ninja.stage.drawingCanvas
-//	stageManager.userContentLeft	this.application.ninja.stage.userContentLeft
 //	viewUtils:						stage.viewUtils;
 //	snapManager						stage.snapManager;
 //

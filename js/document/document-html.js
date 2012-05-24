@@ -84,7 +84,7 @@ exports.HtmlDocument = Montage.create(Component, {
             	//Rendering design view, using observers to know when template is ready
             	this.model.views.design.render(function () {
             		//TODO: Why is this needed?
-            		this._liveNodeList = this.model.documentRoot.getElementsByTagName('*');
+                    this.model.views.design._liveNodeList = this.documentRoot.getElementsByTagName('*');
             		//Adding observer to know when template is ready
             		this._observer = new WebKitMutationObserver(this.handleTemplateReady.bind(this));
         			this._observer.observe(this.model.views.design.document.head, {childList: true});

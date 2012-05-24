@@ -67,10 +67,9 @@ exports.SelectionController = Montage.create(Component, {
             this._isDocument = true;
 
             if(currentSelectionArray) {
-                if(currentSelectionArray.length >= 1) {
+                this.application.ninja.selectedElements = currentSelectionArray;
+                if(currentSelectionArray.length) {
                     this._isDocument = false;
-
-                    this.application.ninja.selectedElements = currentSelectionArray;
                     NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument});
                 }
             }

@@ -119,7 +119,10 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 
     initializeFromDocument:{
         value:function(){
-            var documentRootChildren = null, i, stage = this.application.ninja.stage;
+            var i,
+                documentRootChildren = this.application.ninja.currentDocument.model.views.design.getLiveNodeList(true),
+                stage = this.application.ninja.stage,
+                len = documentRootChildren.length;
             //initialize with current document
             this._eltArray = [];
             this._planesArray = [];
@@ -128,11 +131,11 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
             this.setWorkingPlane( [0,0,1,0] );
 
             //Loop through all the top-level children of the current document and call drawUtils.addElement on them
-            if(this.application.ninja.currentDocument._liveNodeList.length > 0){
-                documentRootChildren = this.application.ninja.currentDocument._liveNodeList;
-                var len = documentRootChildren.length,
-                    minLeft = stage.userPaddingLeft,
-                    minTop = stage.userPaddingTop,
+            if(len > 0) {
+                var initL = 0,
+                    initT = 0,
+                    minLeft = 0,
+                    minTop = 0,
                     docLeft = stage.documentOffsetLeft,
                     docTop = stage.documentOffsetTop,
                     l,
@@ -151,10 +154,10 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                         minTop = t;
                     }
                 }
-                if(minLeft !== stage.userPaddingLeft) {
+                if(minLeft !== initL) {
                     stage.userPaddingLeft = minLeft;
                 }
-                if(minTop !== stage.userPaddingTop) {
+                if(minTop !== initT) {
                     stage.userPaddingTop = minTop;
                 }
             }

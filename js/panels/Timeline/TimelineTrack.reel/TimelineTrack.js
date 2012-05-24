@@ -405,11 +405,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     
     triggerOutgoingBinding : {
     	value: function() {
-    		if (this.trackData.triggerBinding === true) {
-    			this.trackData.triggerBinding = false;
-    		} else {
-    			this.trackData.triggerBinding = true;
-    		}
+            this.trackData.triggerBinding = !this.trackData.triggerBinding;
     	}
     },
 
