@@ -23,7 +23,7 @@ exports.Breadcrumb = Montage.create(Component, {
         value: function(){
             if(!this.application.ninja.documentController.activeDocument && this.application.ninja.currentDocument.currentView !== "code") {
                 this.disabled = true;
-                this.application.ninja.currentSelectedContainer = (this.application.ninja.currentDocument ? this.application.ninja.currentDocument.documentRoot : null);
+                this.application.ninja.currentSelectedContainer = (this.application.ninja.currentDocument ? this.application.ninja.currentDocument.model.documentRoot : null);
             }
         }
     },
@@ -65,7 +65,7 @@ exports.Breadcrumb = Montage.create(Component, {
 
             parentNode = this.container;
 
-            while(parentNode !== this.application.ninja.currentDocument.documentRoot) {
+            while(parentNode !== this.application.ninja.currentDocument.model.documentRoot) {
                 this.containerElements.unshift({"node": parentNode, "nodeUuid":parentNode.uuid, "label": parentNode.nodeName});
                 parentNode = parentNode.parentNode;
             }

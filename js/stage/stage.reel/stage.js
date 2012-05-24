@@ -186,7 +186,7 @@ exports.Stage = Montage.create(Component, {
         set: function(value) {
             this._userPaddingLeft = value;
             this._documentOffsetLeft = -value;
-            this.application.ninja.currentDocument.documentRoot.ownerDocument.getElementsByTagName("HTML")[0].style["padding-left"] = -value + "px";
+            this.application.ninja.currentDocument.model.documentRoot.ownerDocument.getElementsByTagName("HTML")[0].style["padding-left"] = -value + "px";
             this.userContentLeft = this._documentOffsetLeft;
             this.updatedStage = true;
         }
@@ -197,7 +197,7 @@ exports.Stage = Montage.create(Component, {
         set: function(value) {
             this._userPaddingTop = value;
             this._documentOffsetTop = -value;
-            this.application.ninja.currentDocument.documentRoot.ownerDocument.getElementsByTagName("HTML")[0].style["padding-top"] = -value + "px";
+            this.application.ninja.currentDocument.model.documentRoot.ownerDocument.getElementsByTagName("HTML")[0].style["padding-top"] = -value + "px";
             this.userContentTop = this._documentOffsetTop;
             this.updatedStage = true;
         }
@@ -904,7 +904,7 @@ exports.Stage = Montage.create(Component, {
 
     setStageAsViewport: {
         value: function() {
-            this.stageDeps.viewUtils.setViewportObj(this.application.ninja.currentDocument.documentRoot);
+            this.stageDeps.viewUtils.setViewportObj(this.application.ninja.currentDocument.model.documentRoot);
         }
     },
 
@@ -912,7 +912,7 @@ exports.Stage = Montage.create(Component, {
         value: function(value) {
             if(!this._firstDraw)
             {
-                var userContent = this.application.ninja.currentDocument.documentRoot;
+                var userContent = this.application.ninja.currentDocument.model.documentRoot;
                 if (userContent)
                 {
                     var w = this._canvas.width,
@@ -943,12 +943,12 @@ exports.Stage = Montage.create(Component, {
 			{
                 case "top":
 					plane = [0,1,0,0];
- 					plane[3] = this.application.ninja.currentDocument.documentRoot.offsetHeight / 2.0;
+ 					plane[3] = this.application.ninja.currentDocument.model.documentRoot.offsetHeight / 2.0;
                    break;
 
                 case "side":
 					plane = [1,0,0,0];
- 					plane[3] = this.application.ninja.currentDocument.documentRoot.offsetWidth / 2.0;
+ 					plane[3] = this.application.ninja.currentDocument.model.documentRoot.offsetWidth / 2.0;
                    break;
 
                 case "front":
@@ -967,7 +967,7 @@ exports.Stage = Montage.create(Component, {
     setStageView: {
         value: function(side) {
             var mat,
-                currentDoc = this.application.ninja.currentDocument.documentRoot,
+                currentDoc = this.application.ninja.currentDocument.model.documentRoot,
                 isDrawingGrid = this.application.ninja.appModel.show3dGrid;
             // Stage 3d Props.
             currentDoc.elementModel.props3D.ResetTranslationValues();

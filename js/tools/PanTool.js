@@ -47,8 +47,8 @@ exports.PanTool = Montage.create(toolBase,
     HandleLeftButtonDown: {
         value : function ( event ) {
             // Determine the maximum horizontal and vertical scroll values
-            this._maxHorizontalScroll = this.application.ninja.currentDocument.documentRoot.scrollWidth - this.application.ninja.stage._canvas.width - 11;
-            this._maxVerticalScroll = this.application.ninja.currentDocument.documentRoot.scrollHeight - this.application.ninja.stage._canvas.height - 11;
+            this._maxHorizontalScroll = this.application.ninja.currentDocument.model.documentRoot.scrollWidth - this.application.ninja.stage._canvas.width - 11;
+            this._maxVerticalScroll = this.application.ninja.currentDocument.model.documentRoot.scrollHeight - this.application.ninja.stage._canvas.height - 11;
             if((this._maxHorizontalScroll > 0) || (this._maxVerticalScroll > 0) || this._altKeyDown)
             {
                 this._isDrawing = true;
@@ -121,7 +121,7 @@ exports.PanTool = Montage.create(toolBase,
 	{
         value: function ()
 		{
-			var uc = this.application.ninja.currentDocument.documentRoot;
+			var uc = this.application.ninja.currentDocument.model.documentRoot;
 			//var uc = documentManagerModule.DocumentManager.activeDocument
 			var ucMat = viewUtils.getMatrixFromElement(uc);
 
@@ -152,7 +152,7 @@ exports.PanTool = Montage.create(toolBase,
 
 			delta *= zoom;
            
-			var uc = this.application.ninja.currentDocument.documentRoot;
+			var uc = this.application.ninja.currentDocument.model.documentRoot;
 			var ucMat = viewUtils.getMatrixFromElement(uc);
 			var offset = viewUtils.getElementOffset( uc );
 			//console.log( "uc offset: " + offset[0] );
@@ -224,7 +224,7 @@ exports.PanTool = Montage.create(toolBase,
 				if (elt)
 				{
 					// get the userContent object (stage) and its matrix
-					var userContent = this.application.ninja.currentDocument.documentRoot;
+					var userContent = this.application.ninja.currentDocument.model.documentRoot;
 					var ucMat = viewUtils.getMatrixFromElement(userContent);
 
 					var localToGlobalMat = viewUtils.getLocalToGlobalMatrix( elt );
@@ -358,7 +358,7 @@ exports.PanTool = Montage.create(toolBase,
 					delta[2] = 0;
 
 				// limit the change
-				var ucMat = viewUtils.getMatrixFromElement(this.application.ninja.currentDocument.documentRoot);
+				var ucMat = viewUtils.getMatrixFromElement(this.application.ninja.currentDocument.model.documentRoot);
 				var tooMuch = false;
 				if ((ucMat[12] >  12000) && (delta[0] > 0))  tooMuch = true;
 				if ((ucMat[12] < -12000) && (delta[0] < 0))  tooMuch = true;
@@ -397,7 +397,7 @@ exports.PanTool = Montage.create(toolBase,
 		value: function( transMat )
 		{
 			// update the user content matrix
-			var uc = this.application.ninja.currentDocument.documentRoot;
+			var uc = this.application.ninja.currentDocument.model.documentRoot;
 			var ucMat = viewUtils.getMatrixFromElement(uc);
 			var newUCMat = glmat4.multiply( transMat, ucMat, [] );
 			viewUtils.setMatrixForElement( uc, newUCMat );
@@ -412,7 +412,7 @@ exports.PanTool = Montage.create(toolBase,
 		value: function()
 		{
 			// get the userContent object
-			var userContent = this.application.ninja.currentDocument.documentRoot;
+			var userContent = this.application.ninja.currentDocument.model.documentRoot;
 
 			// get a matrix from user content world space to the screen
 			viewUtils.pushViewportObj( userContent );

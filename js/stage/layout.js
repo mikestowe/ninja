@@ -62,7 +62,7 @@ exports.Layout = Montage.create(Component, {
         value: function() {
             // Initial elements to draw are the childrens of the root element
             if(this.application.ninja.documentController.activeDocument.currentView === "design") {
-                this.elementsToDraw = this.application.ninja.documentController.activeDocument.documentRoot.childNodes;
+                this.elementsToDraw = this.application.ninja.documentController.activeDocument.model.documentRoot.childNodes;
             }
         }
     },
@@ -237,7 +237,7 @@ exports.Layout = Montage.create(Component, {
         value: function() {
             if(this.application.ninja.currentDocument) {
                 this.clearCanvas();
-                this.WalkDOM(this.application.ninja.currentDocument.documentRoot);
+                this.WalkDOM(this.application.ninja.currentDocument.model.documentRoot);
 
                 //drawUtils.updatePlanes();
                 //if(this.application.ninja.currentDocument.draw3DGrid) drawUtils.drawWorkingPlane();
@@ -249,7 +249,7 @@ exports.Layout = Montage.create(Component, {
     drawElementsOutline: {
         value: function(elements) {
             this.clearCanvas();
-            this.WalkDOM(this.application.ninja.currentDocument.documentRoot, elements);
+            this.WalkDOM(this.application.ninja.currentDocument.model.documentRoot, elements);
         }
     },
 
