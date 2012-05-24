@@ -22,7 +22,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         value: []
     },
     
-    _hackRootFlag: {
+    redirectRequests: {
     	value: false
     },
 
@@ -74,7 +74,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     handleWebRequest: {
     	value: function (request) {
     		//TODO: Check if frameId is proper
-    		if (this._hackRootFlag && request.parentFrameId !== -1) {
+    		if (this.redirectRequests && request.parentFrameId !== -1) {
     			//Checking for proper URL redirect (from different directories)
     			if (request.url.indexOf('js/document/templates/banner') !== -1) {
 					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/banner/'))[1]};
@@ -330,7 +330,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                     }
 
 					//Open in designer view
-                    this._hackRootFlag = false;
+                    this.redirectRequests = false;
                     Montage.create(HTMLDocument).init(file, this, this._onOpenDocument, 'design', template);
 					break;
 				default:

@@ -87,7 +87,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 	render: {
         value: function (callback, template) {
         	//TODO: Remove, this is a temp patch for webRequest API gate
-        	this.application.ninja.documentController._hackRootFlag = false;
+        	this.application.ninja.documentController.redirectRequests = false;
         	//Storing callback for dispatch ready
         	this._callback = callback;
         	this._template = template;
@@ -106,7 +106,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     onTemplateLoad: {
         value: function (e) {
         	//console.log(this.iframe.contentWindow);
-        	this.application.ninja.documentController._hackRootFlag = true;
+        	this.application.ninja.documentController.redirectRequests = true;
         	//TODO: Add support to constructing URL with a base HREF
         	var basetag = this.content.document.getElementsByTagName('base');
         	//Removing event
