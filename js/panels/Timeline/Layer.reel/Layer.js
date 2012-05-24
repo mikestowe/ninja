@@ -556,7 +556,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 		}
 	},
 	addStyle : {
-		value: function() {
+		value: function(styleProperty) {
 			// Add a new style rule.  It should be added above the currently selected rule, 
 			// Or at the end, if no rule is selected.
 
@@ -579,7 +579,12 @@ var Layer = exports.Layer = Montage.create(Component, {
 			
 			newStyle.styleID = newEvent.styleID;
 			newStyle.whichView = "hintable";
-			newStyle.editorProperty = "";
+            newStyle.editorProperty = "";
+            if(styleProperty){
+                newStyle.editorProperty = styleProperty;
+                newEvent.layerEventType = "restoreStyle";
+                newEvent.trackEditorProperty = styleProperty;
+            }
 			newStyle.editorValue = "";
 			newStyle.ruleTweener = false;
 			newStyle.isSelected = false;

@@ -834,9 +834,17 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     recreatePropertyTracks:{
         value:function(ruleSet){
+
+            //var selectIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
+            //var test = this.application.ninja.timeline.layerRepetition.childComponents[0].addStyle();
+            //console.log(test);
+
             for(var i in ruleSet){
-                //console.log(i);
+                console.log(i);
                 //console.log(ruleSet[i]);
+                var styleProp = ruleSet[i][0].style[0];
+                console.log(styleProp);
+                this.application.ninja.timeline.layerRepetition.childComponents[0].addStyle(styleProp);
             }
         }
     },
@@ -958,9 +966,22 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
             	this.arrStyleTracks.push(newStyleTrack);
 
-            } else if (layerEvent.layerEventType === "deleteStyle") {
-            	// TODO: Delete the right track.  Index can be passed in event object, use that for splice().
-            	this.arrStyleTracks.pop();
+            } else if (layerEvent.layerEventType === "restoreStyle") {
+                var restoredStyleTrack = {};
+                restoredStyleTrack.propTrackData = {};
+                restoredStyleTrack.propTrackData.styleSelection = layerEvent.styleSelection;
+                restoredStyleTrack.propTrackData.propTweens = [];
+                restoredStyleTrack.propTrackData.trackType = "style";
+                restoredStyleTrack.propTrackData.trackEditorProperty = layerEvent.trackEditorProperty;
+                restoredStyleTrack.propTrackData.styleIndex = layerEvent.styleIndex;
+
+                this.arrStyleTracks.push(restoredStyleTrack);
+
+                this.isStyleCollapsed = true;
+            }
+            else if (layerEvent.layerEventType === "deleteStyle") {
+                // TODO: Delete the right track.  Index can be passed in event object, use that for splice().
+                this.arrStyleTracks.pop();
             }
         }
     },
