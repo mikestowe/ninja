@@ -87,7 +87,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
                 });
                 return filteredNodes;
             } else {
-                return this._liveNodeList;
+                return Array.prototype.slice.call(this._liveNodeList, 0);
             }
         }
     },
