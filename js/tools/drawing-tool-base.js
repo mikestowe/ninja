@@ -154,8 +154,8 @@ exports.DrawingToolBase = Montage.create(Component, {
             // get the hit rec. points in plane space
             var psPos = hitRec.getLocalPoint();
 
-            var stageOffset = viewUtils.getElementOffset(this.application.ninja.currentDocument.documentRoot);
-            viewUtils.setViewportObj(this.application.ninja.currentDocument.documentRoot);
+            var stageOffset = viewUtils.getElementOffset(this.application.ninja.currentDocument.model.documentRoot);
+            viewUtils.setViewportObj(this.application.ninja.currentDocument.model.documentRoot);
 
             // get the matrix taking the local hit point in plane space
             // to world space of whatever element it is in.
@@ -183,8 +183,8 @@ exports.DrawingToolBase = Montage.create(Component, {
 				var p0 = hitRec0.getLocalPoint(),
 					p1 = hitRec1.getLocalPoint();
 
-				var stageOffset = viewUtils.getElementOffset(this.application.ninja.currentDocument.documentRoot);
-				viewUtils.setViewportObj(this.application.ninja.currentDocument.documentRoot);
+				var stageOffset = viewUtils.getElementOffset(this.application.ninja.currentDocument.model.documentRoot);
+				viewUtils.setViewportObj(this.application.ninja.currentDocument.model.documentRoot);
 
 				// get the matrix taking the local hit point in plane space
 				// to world space of whatever element it is in.
@@ -308,10 +308,10 @@ exports.DrawingToolBase = Montage.create(Component, {
             var p0 = hitRec0.getLocalPoint(),
 				p1 = hitRec1.getLocalPoint();
 
-			var stageMat = viewUtils.getMatrixFromElement(this.application.ninja.currentDocument.documentRoot);
+			var stageMat = viewUtils.getMatrixFromElement(this.application.ninja.currentDocument.model.documentRoot);
 			var elt = hitRec0.getElt();
 			if (!elt) {  elt = hitRec1.getElt();  }
-			if (!elt) {  elt = this.application.ninja.currentDocument.documentRoot;  }
+			if (!elt) {  elt = this.application.ninja.currentDocument.model.documentRoot;  }
 			if (elt)
 			{
 				viewUtils.pushViewportObj(elt);

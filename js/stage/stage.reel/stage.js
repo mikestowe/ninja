@@ -189,7 +189,7 @@ exports.Stage = Montage.create(Component, {
         set: function(value) {
             this._userPaddingLeft = value;
             this._documentOffsetLeft = -value;
-            this.application.ninja.currentDocument.documentRoot.ownerDocument.getElementsByTagName("HTML")[0].style["padding-left"] = -value + "px";
+            this.application.ninja.currentDocument.model.documentRoot.ownerDocument.getElementsByTagName("HTML")[0].style["padding-left"] = -value + "px";
             this.userContentLeft = this._documentOffsetLeft;
             this.updatedStage = true;
         }
@@ -200,7 +200,7 @@ exports.Stage = Montage.create(Component, {
         set: function(value) {
             this._userPaddingTop = value;
             this._documentOffsetTop = -value;
-            this.application.ninja.currentDocument.documentRoot.ownerDocument.getElementsByTagName("HTML")[0].style["padding-top"] = -value + "px";
+            this.application.ninja.currentDocument.model.documentRoot.ownerDocument.getElementsByTagName("HTML")[0].style["padding-top"] = -value + "px";
             this.userContentTop = this._documentOffsetTop;
             this.updatedStage = true;
         }
@@ -283,8 +283,8 @@ exports.Stage = Montage.create(Component, {
             this._userContentLeft = this._documentOffsetLeft;
             this._userContentTop = this._documentOffsetTop;
 
-            this._maxHorizontalScroll = this.application.ninja.currentDocument.documentRoot.scrollWidth - this._canvas.width - 11;
-            this._maxVerticalScroll = this.application.ninja.currentDocument.documentRoot.scrollHeight - this._canvas.height - 11;
+            this._maxHorizontalScroll = this.application.ninja.currentDocument.model.documentRoot.scrollWidth - this._canvas.width - 11;
+            this._maxVerticalScroll = this.application.ninja.currentDocument.model.documentRoot.scrollHeight - this._canvas.height - 11;
             this.application.ninja.currentDocument.model.views.design.iframe.contentWindow.addEventListener("scroll", this, false);
 
             // TODO - We will need to modify this once we support switching between multiple documents
@@ -478,8 +478,8 @@ exports.Stage = Montage.create(Component, {
             // TODO - scroll events are not dependable.  We may need to use a timer to simulate
             // scrollBegin and scrollEnd. For now, the Pan Tool will keep track of the stage's scroll values
             // on mouse down.
-            // this._maxHorizontalScroll = this.application.ninja.currentDocument.documentRoot.scrollWidth - this._canvas.width - 11;
-            // this._maxVerticalScroll = this.application.ninja.currentDocument.documentRoot.scrollHeight - this._canvas.height - 11;
+            // this._maxHorizontalScroll = this.application.ninja.currentDocument.model.documentRoot.scrollWidth - this._canvas.width - 11;
+            // this._maxVerticalScroll = this.application.ninja.currentDocument.model.documentRoot.scrollHeight - this._canvas.height - 11;
 
 
             // Need to clear the snap cache and set up the drag plane
@@ -517,9 +517,9 @@ exports.Stage = Montage.create(Component, {
      */
     centerStage: {
         value: function() {
-            if(this.application.ninja.currentDocument.documentRoot.id === "UserContent") {
-                this._iframeContainer.scrollLeft = this._documentOffsetLeft - (this._iframeContainer.offsetWidth - this.application.ninja.currentDocument.documentRoot.parentNode.offsetWidth)/2;
-                this._iframeContainer.scrollTop = this._documentOffsetTop - (this._iframeContainer.offsetHeight - this.application.ninja.currentDocument.documentRoot.parentNode.offsetHeight)/2;
+            if(this.application.ninja.currentDocument.model.documentRoot.id === "UserContent") {
+                this._iframeContainer.scrollLeft = this._documentOffsetLeft - (this._iframeContainer.offsetWidth - this.application.ninja.currentDocument.model.documentRoot.parentNode.offsetWidth)/2;
+                this._iframeContainer.scrollTop = this._documentOffsetTop - (this._iframeContainer.offsetHeight - this.application.ninja.currentDocument.model.documentRoot.parentNode.offsetHeight)/2;
 
                 this._scrollLeft = this._iframeContainer.scrollLeft;
                 this._scrollTop = this._iframeContainer.scrollTop;
@@ -889,7 +889,7 @@ exports.Stage = Montage.create(Component, {
 
     setStageAsViewport: {
         value: function() {
-            this.stageDeps.viewUtils.setViewportObj(this.application.ninja.currentDocument.documentRoot);
+            this.stageDeps.viewUtils.setViewportObj(this.application.ninja.currentDocument.model.documentRoot);
         }
     },
 
@@ -897,7 +897,7 @@ exports.Stage = Montage.create(Component, {
         value: function(value) {
             if(!this._firstDraw)
             {
-                var userContent = this.application.ninja.currentDocument.documentRoot;
+                var userContent = this.application.ninja.currentDocument.model.documentRoot;
                 if (userContent)
                 {
                     var w = this._canvas.width,
@@ -928,12 +928,12 @@ exports.Stage = Montage.create(Component, {
 			{
                 case "top":
 					plane = [0,1,0,0];
- 					plane[3] = this.application.ninja.currentDocument.documentRoot.offsetHeight / 2.0;
+ 					plane[3] = this.application.ninja.currentDocument.model.documentRoot.offsetHeight / 2.0;
                    break;
 
                 case "side":
 					plane = [1,0,0,0];
- 					plane[3] = this.application.ninja.currentDocument.documentRoot.offsetWidth / 2.0;
+ 					plane[3] = this.application.ninja.currentDocument.model.documentRoot.offsetWidth / 2.0;
                    break;
 
                 case "front":
@@ -952,7 +952,7 @@ exports.Stage = Montage.create(Component, {
     setStageView: {
         value: function(side) {
             var mat,
-                currentDoc = this.application.ninja.currentDocument.documentRoot,
+                currentDoc = this.application.ninja.currentDocument.model.documentRoot,
                 isDrawingGrid = this.application.ninja.appModel.show3dGrid;
             // Stage 3d Props.
             currentDoc.elementModel.props3D.ResetTranslationValues();

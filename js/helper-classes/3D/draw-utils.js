@@ -124,7 +124,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
             this._eltArray = [];
             this._planesArray = [];
             this.setDrawingSurfaceElement(stage.canvas);
-            this.setSourceSpaceElement( this.application.ninja.currentDocument.documentRoot);
+            this.setSourceSpaceElement( this.application.ninja.currentDocument.model.documentRoot);
             this.setWorkingPlane( [0,0,1,0] );
 
             //Loop through all the top-level children of the current document and call drawUtils.addElement on them
@@ -697,7 +697,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			this._lineColor = saveColor;
 			this._drawingContext.lineWidth = saveLineWidth;
 
-            if(this.application.ninja.currentDocument.documentRoot.id !== "UserContent") {
+            if(this.application.ninja.currentDocument.model.documentRoot.id !== "UserContent") {
                 // draw an outline around the body
                 var stagePt = MathUtils.getPointOnPlane([0,0,1,0]);
                 var stageMat = this.getPlaneToWorldMatrix([0,0,1], stagePt);
@@ -815,7 +815,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			// draw the lines
             var line,
 			    nLines = this._gridLineArray.length;
-            if(this.application.ninja.currentDocument.documentRoot.id !== "UserContent") {
+            if(this.application.ninja.currentDocument.model.documentRoot.id !== "UserContent") {
 			    nLines = this._gridLineArray.length-4;
             }
 
@@ -824,7 +824,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 				this.drawIntersectedLine(line, this._drawingContext);
 			}
 
-            if(this.application.ninja.currentDocument.documentRoot.id !== "UserContent") {
+            if(this.application.ninja.currentDocument.model.documentRoot.id !== "UserContent") {
                 this._lineColor = "red";
                 i = nLines;
                 nLines += 4;
@@ -923,7 +923,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 				// if all of the planes are aligned, check if they are aligned with the view direction
 				if (flat)
 				{
-					var stage = this.application.ninja.currentDocument.documentRoot;
+					var stage = this.application.ninja.currentDocument.model.documentRoot;
 					var stageMat = this.viewUtils.getMatrixFromElement(stage);
 					var viewDir = [ stageMat[8], stageMat[9], stageMat[10] ];
 					viewDir = vecUtils.vecNormalize( 3, viewDir );
@@ -1213,7 +1213,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 		value: function() {
 			// set the element to be the viewport object - temporarily
 			var tmpCanvas = this.application.ninja.stage.canvas;
-			var tmpStage = this.application.ninja.currentDocument.documentRoot;
+			var tmpStage = this.application.ninja.currentDocument.model.documentRoot;
 			this.viewUtils.pushViewportObj( tmpCanvas );
 
 			// save the source space object and set to the target object

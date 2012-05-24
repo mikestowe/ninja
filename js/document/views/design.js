@@ -257,6 +257,14 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
             } else {
             	//Else there is not data to parse
             }
+            //TODO: Verify appropiate location for this operation
+    		if (this._template && this._template.type === 'banner') {
+    			this.model.documentRoot = this.document.body.getElementsByTagName('ninja-content')[0];
+    		} else {
+    			this.model.documentRoot = this.document.body;
+    		}
+    		//Initiliazing document model
+    		document.application.njUtils.makeElementModel(this.model.documentRoot, "Body", "body");
     		//Makign callback if specified
     		if (this._callback) this._callback();
     	}

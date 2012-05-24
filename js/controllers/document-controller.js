@@ -475,7 +475,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             this.activeDocument = doc;
 
             // Initialize the documentRoot styles
-            this.initializeRootStyles(doc.documentRoot);
+            this.initializeRootStyles(doc.model.documentRoot);
             // Flag to stop stylesheet dirty event
             this._hackInitialStyles = false;
 

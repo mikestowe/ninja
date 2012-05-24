@@ -73,7 +73,7 @@ exports.Properties = Montage.create(Component, {
             this.application.ninja.currentDocument.model.views.design.propertiesPanel = this;
 
             // Display the default document root PI
-            this.displayElementProperties(this.application.ninja.currentDocument.documentRoot);
+            this.displayElementProperties(this.application.ninja.currentDocument.model.documentRoot);
         }
     },
 
@@ -95,7 +95,7 @@ exports.Properties = Montage.create(Component, {
                 this.elementId.value = this.elementId.value.replace(/\s/g, '');
 
                 // Check if that id is in use
-                if(this.application.ninja.currentDocument._document.getElementById(this.elementId.value) !== null) {
+                if(this.application.ninja.currentDocument.model.views.design.document.getElementById(this.elementId.value) !== null) {
                     // TODO: Replace with Ninja Alert
                     alert("The following ID: " + this.elementId.value + " is already in use");
                 }
@@ -104,13 +104,13 @@ exports.Properties = Montage.create(Component, {
 //                    ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "id", this.elementId.value, "Change", "pi");
                     ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "id", this.elementId.value, this.application.ninja.selectedElements[0].id, "pi");
                 } else {
-                    ElementsMediator.setAttribute(this.application.ninja.currentDocument.documentRoot, "id", this.elementId.value, "Change", "pi", this.application.ninja.currentDocument.documentRoot.elementModel.id);
+                    ElementsMediator.setAttribute(this.application.ninja.currentDocument.model.documentRoot, "id", this.elementId.value, "Change", "pi", this.application.ninja.currentDocument.model.documentRoot.elementModel.id);
                 }
             } else if(event.target.id === "elementClass") {
                 if(this.application.ninja.selectedElements.length) {
                     ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "class", this.elementClass.value, this.application.ninja.selectedElements[0].className, "pi");
                 } else {
-                    ElementsMediator.setAttribute(this.application.ninja.currentDocument.documentRoot, "class", this.elementClass.value, "Change", "pi", this.application.ninja.currentDocument.documentRoot.elementModel.elementClass);
+                    ElementsMediator.setAttribute(this.application.ninja.currentDocument.model.documentRoot, "class", this.elementClass.value, "Change", "pi", this.application.ninja.currentDocument.model.documentRoot.elementModel.elementClass);
                 }
             }
         }
@@ -135,7 +135,7 @@ exports.Properties = Montage.create(Component, {
         value: function(event) {
 //            console.log("Element Change PI ", event.detail.source); // If the event comes from the pi don't need to update
             if(event.detail.source && event.detail.source !== "pi") {
-                var el = this.application.ninja.currentDocument.documentRoot;
+                var el = this.application.ninja.currentDocument.model.documentRoot;
                 if(this.application.ninja.selectedElements.length) {
                     el = this.application.ninja.selectedElements[0];
                 }
@@ -161,7 +161,7 @@ exports.Properties = Montage.create(Component, {
     handleSelectionChange: {
         value: function(event) {
             if(event.detail.isDocument) {
-                this.displayElementProperties(this.application.ninja.currentDocument.documentRoot);
+                this.displayElementProperties(this.application.ninja.currentDocument.model.documentRoot);
             } else {
                 if(this.application.ninja.selectedElements.length === 1) {
                     this.displayElementProperties(this.application.ninja.selectedElements[0]);
