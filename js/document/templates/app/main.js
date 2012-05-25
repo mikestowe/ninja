@@ -29,6 +29,7 @@ exports.Main = Montage.create(Component, {
                         var componentRequire = component[data.name];
                         var componentInstance = componentRequire.create();
 
+                        componentInstance._montage_metadata.label = data.name;
                         componentInstance.element = element;
 
                         componentInstance.needsDraw = true;
