@@ -34,6 +34,7 @@ exports.BindingView = Montage.create(Component, {
         },
         set: function(val) {
             this._selectedElement = val;
+            this.needsDraw = true;
         }
     },
     bindables: {
@@ -51,9 +52,31 @@ exports.BindingView = Montage.create(Component, {
         set: function(val) {
             this._nonVisualComponents = val;
         }
-    }
+    },
 
     //Methods
 
+    //Montage Draw Cycle
+    prepareForDraw: {
+        value: function() {
+
+        }
+    },
+
+    draw: {
+        value: function() {
+            if(this.selectedElement !== null) {
+                this.bindables = [
+                    {"objectName": "Input1", "objectTitle": ""},
+                ]
+            }
+        }
+    },
+
+    didDraw: {
+        value: function() {
+
+        }
+    }
 
 });

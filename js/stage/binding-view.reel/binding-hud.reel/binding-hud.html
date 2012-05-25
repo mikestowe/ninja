@@ -23,11 +23,7 @@
                     "element": {"#": "hudRepetition"}
                 },
                 "bindings": {
-                    "objects": {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "properties",
-                        "oneway": true
-                    }
+                    "objects": {"<-": "@owner.properties"}
                 }
             },
             "hudOption": {
@@ -36,7 +32,7 @@
                     "element": {"#" : "hudOption"}
                 },
                 "bindings": {
-                    "title": {"<-": "@objectAtCurrentIteration.title"}
+                    "title": {"<-": "@repeater.objectAtCurrentIteration.title"}
                 }
             }
         }
