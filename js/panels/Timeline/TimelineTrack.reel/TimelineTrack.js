@@ -747,11 +747,12 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 // check for multiple animation names
                 var animationNameList = this.animationName.split(",");
                 if(animationNameList.length > 1){
+                    this.animationNamesString = this.animationName;
                     this.animationName = animationNameList[0];
                     this.getAllAnimationRules(animationNameList);
+                } else {
+                    this.animationNamesString = this.animationName;
                 }
-
-                this.animationNamesString = this.animationName;
 
                 // build tweens for this tracks's keyframe rule
                 if(this.animationName){
