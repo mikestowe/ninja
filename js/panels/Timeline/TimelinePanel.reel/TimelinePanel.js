@@ -473,7 +473,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             returnObj.layerData.isTransformCollapsed = true;
             returnObj.layerData.isStyleCollapsed = true;
             returnObj.layerData.arrLayerStyles = [];
-            returnObj.layerData.arrLayerStyles = [];
             returnObj.layerData.elementsList = [];
             returnObj.layerData.deleted = false;
             returnObj.layerData.isSelected = false;
@@ -915,11 +914,13 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         	*/
         	
 
-            // Deselect all layers.
+            // Deselect selected layers if they're not in arrSelectedIndexes.
             for (i = 0; i < arrLayersLength; i++) {
             	if (this.arrLayers[i].layerData.isSelected === true) {
-					this.arrLayers[i].layerData.isSelected = false;
-            		this.triggerLayerBinding(i);
+            		if (arrSelectedIndexes.indexOf(i) < 0) {
+						this.arrLayers[i].layerData.isSelected = false;
+	            		this.triggerLayerBinding(i);
+            		}
             	}
             }
             if (this.currentLayersSelected !== false) {
@@ -1360,7 +1361,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     selectLayer:{
         value:function (layerIndex, userSelection) {
-        	console.log("=----> Please update this component to use TimelinePanel.selectLayers. See this message for syntax. <----=");
+        	//console.log("=----> Please update this component to use TimelinePanel.selectLayers. See this message for syntax. <----=");
         	this.selectLayers([layerIndex]);
         	if (userSelection === true) {
         		this.updateStageSelection();

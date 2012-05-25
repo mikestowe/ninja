@@ -71,6 +71,24 @@ var Layer = exports.Layer = Montage.create(Component, {
             this._styleCounter = newVal;
         }
     },
+    _selectedStyleIndex: {
+    	value: false
+    },
+    selectedStyleIndex: {
+    	get: function() {
+    		return this._selectedStyleIndex;
+    	},
+    	set: function(newVal) {
+    		if (typeof(newVal) === "undefined") {
+    			return;
+    		}
+    		if (newVal !== this._selectedStyleIndex) {
+    			this._selectedStyleIndex = newVal;
+    			this.layerData.selectedStyleIndex = newVal;
+    			this.needsDraw = true;
+    		}
+    	}
+    },
 
     /* Layer models: the name, ID, and selected and animation booleans for the layer */
     _layerName:{
@@ -441,6 +459,7 @@ var Layer = exports.Layer = Montage.create(Component, {
             this.isVisible = this.layerData.isVisible;
             this.isAnimated = this.layerData.isAnimated;
             this.docUUID = this.layerData.docUUID;
+            this.selectedStyleIndex = this.layerData.selectedStyleIndex;
             this.needsDraw = boolNeedsDraw;
         }
     },
@@ -517,10 +536,20 @@ var Layer = exports.Layer = Montage.create(Component, {
             if (this.isSelected && !boolHasClass) {
             	//console.log('Layer.draw, adding selection for layer ', this.layerName)
             	this.element.classList.add("layerSelected");
+            	
             }
 			if (!this.isSelected && boolHasClass) {
             	//console.log('Layer.draw, removing selection for layer ', this.layerName)
             	this.element.classList.remove("layerSelected");
+            }
+            // Enable or disable the delete style button as appropriate
+            if (this.isSelected) {
+            	if (this.selectedStyleIndex !== "false") {
+            		this.selectStyle(this.selectedStyleIndex);
+            		this.buttonDeleteStyle.classList.remove("disabled");
+            	}
+            } else {
+            	this.buttonDeleteStyle.classList.add("disabled");
             }
             
             // Update layer name?
@@ -643,31 +672,38 @@ var Layer = exports.Layer = Montage.create(Component, {
 	},
 	selectStyle : {
 		value: function(styleIndex) {
+			//console.log("Layer.selectStyle ", styleIndex);
 
     		// Select a style based on its index.
     		// use layerIndex = false to deselect all styles.
     		var i = 0,
     			arrLayerStylesLength = this.arrLayerStyles.length;
+    			
 
     		// First, update this.arrStyles[].isSelected
     		for (i = 0; i < arrLayerStylesLength; i++) {
     			if (i === styleIndex) {
     				this.arrLayerStyles[i].isSelected = true;
     			} else {
-    				this.arrLayerStyles[i].isSelected = false;
+    				if (this.arrLayerStyles[i].isSelected === true) {
+    					this.arrLayerStyles[i].isSelected = false;
+    				}
     			}
     		}
     		
+
+    		/*
     		// Next, update this.styleRepetition.selectedIndexes.
     		if (styleIndex !== false) {
-    			this.styleRepetition.selectedIndexes = [styleIndex];
+    			//this.styleRepetition.selectedIndexes = [styleIndex];
     			this.buttonDeleteStyle.classList.remove("disabled");
     		} else {
-    			this.styleRepetition.selectedIndexes = null;
+    			//this.styleRepetition.selectedIndexes = null;
     			if (typeof(this.buttonDeleteStyle) !== "undefined") {
     				this.buttonDeleteStyle.classList.add("disabled");
     			}
     		}
+    		*/
 			
 		}
 	},
@@ -685,6 +721,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     				this.arrLayerStyles[i].isActive = false;
     			}
     		}
+    		//console.log("Layer.getActiveStyleIndex, returnVal ", returnVal)
     		return returnVal;
     	}
     },
@@ -738,15 +775,19 @@ var Layer = exports.Layer = Montage.create(Component, {
 	},
 	handleMousedown: {
 		value: function(event) {
+			//console.log("Layer.handleMousedown")
 			this.layerData.isActive = true;
-			var ptrParent = nj.queryParentSelector(event.target, ".content-style");
+			var ptrParent = nj.queryParentSelector(event.target, ".content-style"),
+				activeStyleIndex = this.getActiveStyleIndex();
+			this.selectedStyleIndex = activeStyleIndex;
 			if (ptrParent !== false) {
-				this.selectStyle(this.getActiveStyleIndex());
+				this.selectStyle(this.selectedStyleIndex);
 			}
 		}
 	},
 	handleLayerClick : {
 		value: function(event) {
+			//console.log("Layer.handleLayerClick")
 			var ptrParent = nj.queryParentSelector(event.target, ".content-style");
 			if (ptrParent !== false) {
 				var myIndex = this.getActiveStyleIndex();
