@@ -819,7 +819,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     getAllAnimationRules:{
         value:function(ruleNames){
-            //console.log(ruleNames);
 
             for(var i in ruleNames){
                 var currentName = ruleNames[i].replace(/^\s+|\s+$/g,"");  // trim whitespace
@@ -833,17 +832,11 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     recreatePropertyTracks:{
         value:function(ruleSet){
 
-            //var selectIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
-            //var test = this.application.ninja.timeline.layerRepetition.childComponents[0].addStyle();
-            //console.log(test);
-
             for(var i in ruleSet){
-                console.log(i);
-                //console.log(ruleSet[i]);
                 var styleProp = ruleSet[i][0].style[0];
-                console.log(styleProp);
                 this.application.ninja.timeline.layerRepetition.childComponents[0].addStyle(styleProp);
             }
+
         }
     },
 
@@ -881,14 +874,13 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 var keyframePercent = Math.round((keyMill / trackDur) * 100) + "%";
                 var keyframePropertyString = " " + keyframePercent + " {";
                 for(var prop in this.tweens[i].tweenData.tweenedProperties){
-                    console.log(prop + " - " + this.tweens[i].tweenData.tweenedProperties[prop]);
+                    //console.log(prop + " - " + this.tweens[i].tweenData.tweenedProperties[prop]);
                     keyframePropertyString += prop + ": " + this.tweens[i].tweenData.tweenedProperties[prop] + ";";
                 }
                 keyframePropertyString += "}";
                 keyframeString += keyframePropertyString;
             }
             keyframeString += " }";
-            console.log(keyframeString);
             // set the keyframe string as the new rule
             this.currentKeyframeRule = this.ninjaStylesContoller.addRule(keyframeString);
             this.application.ninja.documentController.activeDocument.needsSave = true;
