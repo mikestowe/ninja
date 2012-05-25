@@ -67,7 +67,33 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     propertiesPanel: {
         value: null
     },
+
     ////////////////////////////////////////////////////////////////////
+    //
+    _liveNodeList: {
+        value: null
+    },
+
+    getLiveNodeList: {
+        value: function(useFilter) {
+            if(useFilter) {
+                var filteredNodes = [],
+                    childNodes = Array.prototype.slice.call(this._liveNodeList, 0);
+
+                childNodes.forEach(function(item) {
+                    if( (item.nodeType === 1) && (item.nodeName !== "STYLE") && (item.nodeName !== "SCRIPT")) {
+                        filteredNodes.push(item);
+                    }
+                });
+                return filteredNodes;
+            } else {
+                return Array.prototype.slice.call(this._liveNodeList, 0);
+            }
+        }
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+
     //
 	initialize: {
         value: function (parent) {
@@ -87,7 +113,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 	render: {
         value: function (callback, template) {
         	//TODO: Remove, this is a temp patch for webRequest API gate
-        	this.application.ninja.documentController._hackRootFlag = false;
+        	this.application.ninja.documentController.redirectRequests = false;
         	//Storing callback for dispatch ready
         	this._callback = callback;
         	this._template = template;
@@ -105,7 +131,8 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 	//
     onTemplateLoad: {
         value: function (e) {
-        	this.application.ninja.documentController._hackRootFlag = true;
+        	//console.log(this.iframe.contentWindow);
+        	this.application.ninja.documentController.redirectRequests = true;
         	//TODO: Add support to constructing URL with a base HREF
         	var basetag = this.content.document.getElementsByTagName('base');
         	//Removing event
@@ -189,9 +216,6 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         	this._bodyFragment = null;
         	//Calling standard method to finish opening document
         	this.bodyContentLoaded(null);
-            //TODO: Move this to be set via the controller
-            this.application.ninja.stage.documentOffsetLeft = parseInt((this.document.body.scrollWidth - this._template.size.width)/2);
-            this.application.ninja.stage.documentOffsetTop = parseInt((this.document.body.scrollHeight - this._template.size.height)/2);
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -256,6 +280,16 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
             } else {
             	//Else there is not data to parse
             }
+            //TODO: Verify appropiate location for this operation
+    		if (this._template && this._template.type === 'banner') {
+    			this.model.documentRoot = this.document.body.getElementsByTagName('ninja-content')[0];
+    		} else {
+    			this.model.documentRoot = this.document.body;
+    		}
+    		//Storing node list for reference (might need to store in the model)
+    		this._liveNodeList = this.model.documentRoot.getElementsByTagName('*');
+    		//Initiliazing document model
+    		document.application.njUtils.makeElementModel(this.model.documentRoot, "Body", "body");
     		//Makign callback if specified
     		if (this._callback) this._callback();
     	}

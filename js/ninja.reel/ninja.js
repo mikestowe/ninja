@@ -299,8 +299,8 @@ exports.Ninja = Montage.create(Component, {
         value: function(event) {
             this.currentDocument = event.detail;
 
-            if(this.currentDocument.documentRoot) {
-                this.currentSelectedContainer = this.currentDocument.documentRoot;
+            if(this.currentDocument.model.documentRoot) {
+                this.currentSelectedContainer = this.currentDocument.model.documentRoot;
             } else {
                 alert("The current document has not loaded yet");
                 return;
@@ -315,8 +315,8 @@ exports.Ninja = Montage.create(Component, {
         value: function() {
             this.currentDocument = this.documentController.activeDocument;
 
-            if(this.currentDocument.documentRoot) {
-                this._currentSelectedContainer = this.selectionController._selectionContainer = this.currentDocument.documentRoot;
+            if(this.currentDocument.model.documentRoot) {
+                this._currentSelectedContainer = this.selectionController._selectionContainer = this.currentDocument.model.documentRoot;
             }
 
             NJevent("switchDocument");
@@ -340,9 +340,9 @@ exports.Ninja = Montage.create(Component, {
             }
 
             // TODO: Remove marker for old template: NINJA-STAGE-REWORK
-//            this.currentDocument.documentRoot.elementModel.controller.setProperty(this.currentDocument.documentRoot, "body-background", background);
-//            this.currentDocument.documentRoot.elementModel.controller.setProperty(this.currentDocument.documentRoot, "overflow", overflow);
-//            this.currentDocument.documentRoot.elementModel.controller.changeSelector(this.currentDocument.documentRoot, "transitionStopRule", transitionStopRule);
+//            this.currentDocument.model.documentRoot.elementModel.controller.setProperty(this.currentDocument.model.documentRoot, "body-background", background);
+//            this.currentDocument.model.documentRoot.elementModel.controller.setProperty(this.currentDocument.model.documentRoot, "overflow", overflow);
+//            this.currentDocument.model.documentRoot.elementModel.controller.changeSelector(this.currentDocument.model.documentRoot, "transitionStopRule", transitionStopRule);
 
             this.application.ninja.stylesController._stageStylesheet.rules[0].selectorText = transitionStopRule;
 

@@ -62,12 +62,8 @@ exports.Layout = Montage.create(Component, {
         value: function() {
             // Initial elements to draw are the childrens of the root element
             if(this.application.ninja.documentController.activeDocument.currentView === "design") {
-                this.elementsToDraw = this.application.ninja.documentController.activeDocument.documentRoot.childNodes;
+                this.elementsToDraw = this.application.ninja.documentController.activeDocument.model.documentRoot.childNodes;
             }
-
-            // Draw the elements and the 3d info
-            this.draw();
-            this.draw3DInfo(false);
         }
     },
 
@@ -89,7 +85,7 @@ exports.Layout = Montage.create(Component, {
 
             if(this.application.ninja.documentController.activeDocument.currentView === "design"){
                 // Make an array copy of the line node list which is not an array like object
-                this.domTree = Array.prototype.slice.call(this.application.ninja.documentController.activeDocument._liveNodeList, 0);
+                this.domTree = this.application.ninja.currentDocument.model.views.design.getLiveNodeList(true);
                 // Index of the current container
                 containerIndex = this.domTree.indexOf(this.application.ninja.currentSelectedContainer);
 
@@ -241,7 +237,7 @@ exports.Layout = Montage.create(Component, {
         value: function() {
             if(this.application.ninja.currentDocument) {
                 this.clearCanvas();
-                this.WalkDOM(this.application.ninja.currentDocument.documentRoot);
+                this.WalkDOM(this.application.ninja.currentDocument.model.documentRoot);
 
                 //drawUtils.updatePlanes();
                 //if(this.application.ninja.currentDocument.draw3DGrid) drawUtils.drawWorkingPlane();
@@ -253,7 +249,7 @@ exports.Layout = Montage.create(Component, {
     drawElementsOutline: {
         value: function(elements) {
             this.clearCanvas();
-            this.WalkDOM(this.application.ninja.currentDocument.documentRoot, elements);
+            this.WalkDOM(this.application.ninja.currentDocument.model.documentRoot, elements);
         }
     },
 

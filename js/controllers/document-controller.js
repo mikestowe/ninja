@@ -13,24 +13,14 @@ var Montage = 		require("montage/core/core").Montage,
     TextDocument =  require("js/document/document-text").TextDocument;
 ////////////////////////////////////////////////////////////////////////
 //
-var DocumentController = exports.DocumentController = Montage.create(Component, {
-    hasTemplate: {
-        value: false
-    },
-
-    _documents: {
-        value: []
-    },
-    
-    _hackRootFlag: {
-    	value: false
-    },
-
-    _hackInitialStyles: {
-        value: true
-    },
-
+exports.DocumentController = Montage.create(Component, {
+	//
+    hasTemplate: {value: false},
+    _documents: {value: []},
+	//TODO: what is this?!?!
+    _hackInitialStyles: {value: true},
     _activeDocument: { value: null },
+    //TODO: Are any of these needed?
     _iframeCounter: { value: 1, enumerable: false },
     _iframeHolder: { value: null, enumerable: false },
     _textHolder: { value: null, enumerable: false },
@@ -41,7 +31,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             return this._activeDocument;
         },
         set: function(doc) {
-//            if(!!this._activeDocument){ this._activeDocument.isActive = false;}
+			//if(!!this._activeDocument){ this._activeDocument.isActive = false;}
 
             this._activeDocument = doc;
 
@@ -53,7 +43,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     },
 
     deserializedFromTemplate: {
-        value: function() {
+        value: function() { //TODO: Add event naming consistency (save, fileOpen and newFile should be consistent, all file events should be executeFile[operation name])
             this.eventManager.addEventListener("appLoaded", this, false);
             this.eventManager.addEventListener("executeFileOpen", this, false);
             this.eventManager.addEventListener("executeNewFile", this, false);
@@ -69,17 +59,22 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     
 
 	//TODO: Ensure these APIs are not needed
+	redirectRequests: {
+    	value: false
+    },
 	////////////////////////////////////////////////////////////////////
 	//
     handleWebRequest: {
     	value: function (request) {
     		//TODO: Check if frameId is proper
-    		if (this._hackRootFlag && request.parentFrameId !== -1) {
+    		if (this.redirectRequests && request.parentFrameId !== -1) {
     			//Checking for proper URL redirect (from different directories)
     			if (request.url.indexOf('js/document/templates/banner') !== -1) {
 					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/banner/'))[1]};
 				} else if (request.url.indexOf('js/document/templates/html')  !== -1) {
 					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/html/'))[1]};
+				} else if (request.url.indexOf('js/document/templates/app')  !== -1) {
+					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/app/'))[1]};
 				} else {
 					//Error, not a valid folder
 				}
@@ -102,7 +97,6 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
         }
     },
 	////////////////////////////////////////////////////////////////////
-
 
 	
 	
@@ -150,7 +144,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 	//
     saveExecuted: {
     	value: function (value) {
-    		//File saved, any callbacks or events should go here
+    		//File saved, any callbacks or events should go here (must be added in handleExecuteSave passed as callback)
     	}
     },
     ////////////////////////////////////////////////////////////////////
@@ -160,9 +154,9 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
            //
     		if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
     			//
-    			this.activeDocument.model.saveAll(this.testCallback.bind(this)); //this.fileSaveResult.bind(this)
+    			this.activeDocument.model.saveAll();
     		} else {
-    			//Error:
+    			//TODO: Add error handling
     		}
 		}
     },
@@ -182,38 +176,22 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
     handleExecuteFileClose:{
         value: function(event) {
         	if (this.activeDocument) {
-//        		this.activeDocument.closeDocument();
                 this.closeFile(this.activeDocument);
         	}
         }
     },
     ////////////////////////////////////////////////////////////////////
+    //TODO: Is this used, should be cleaned up
     handleExecuteFileCloseAll:{
-            value: function(event) {
-                var i=0;
-                if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
-                    while(this._documents.length > 0){
-                        this.closeDocument(this._documents[this._documents.length -1].uuid);
-                    }
-                }
-            }
-        },
-        ////////////////////////////////////////////////////////////////////
-    //
-    fileSaveResult: {
-    	value: function (result) {
-            if((result.status === 204) || (result.status === 404)){//204=>existing file || 404=>new file... saved
-                this.activeDocument.model.needsSave = false;
-                if(this.application.ninja.currentDocument !== null){
-                    //clear Dirty StyleSheets for the saved document
-                    this.application.ninja.stylesController.clearDirtyStyleSheets(this.application.ninja.currentDocument);
-                }
-            }
-    	}
-    },
-	
-	
-	
+		value: function(event) {
+			var i=0;//TODO: who is using this??
+			if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
+				while(this._documents.length > 0){
+					this.closeDocument(this._documents[this._documents.length -1].uuid);
+				}
+			}
+		}
+	},
 	////////////////////////////////////////////////////////////////////
 	//
     createNewFile:{
@@ -329,7 +307,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                     }
 
 					//Open in designer view
-                    this._hackRootFlag = false;
+                    this.redirectRequests = false;
                     Montage.create(HTMLDocument).init(file, this, this._onOpenDocument, 'design', template);
 					break;
 				default:
@@ -399,10 +377,10 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
 
             if(this._documents.length > 0) {
                 previousFocusedDocument = this._documents[this._documents.length - 1];
-                this._activeDocument = previousFocusedDocument;
-                this.switchDocuments(this.activeDocument, previousFocusedDocument, true);
+                this.activeDocument = previousFocusedDocument;
+                this.switchDocuments(this.activeDocument, previousFocusedDocument, false);
             } else {
-                this._activeDocument = null;
+                this.activeDocument = null;
                 this.application.ninja.stage.hideRulers();
 
                 this.application.ninja.stage.hideCanvas(true);
@@ -474,7 +452,7 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
             this.activeDocument = doc;
 
             // Initialize the documentRoot styles
-            this.initializeRootStyles(doc.documentRoot);
+            this.initializeRootStyles(doc.model.documentRoot);
             // Flag to stop stylesheet dirty event
             this._hackInitialStyles = false;
 
@@ -524,13 +502,10 @@ var DocumentController = exports.DocumentController = Montage.create(Component, 
                     this.application.ninja.stage.restoreAllPanels();
                     this.application.ninja.stage.hideCanvas(false);
                     this.application.ninja.stage.showRulers();
-                } else if(currentDocument.currentView === "design" && newDocument.currentView === "code") {
-                    this.application.ninja.stage.showCodeViewBar(true);
-                    this.application.ninja.stage.collapseAllPanels();
-                    this.application.ninja.stage.hideCanvas(true);
-                    this.application.ninja.stage.hideRulers();
                 }
-            }else if(!currentDocument && newDocument.currentView === "code"){
+            }
+
+            if(newDocument.currentView === "code") {
                 this.application.ninja.stage.showCodeViewBar(true);
                 this.application.ninja.stage.collapseAllPanels();
                 this.application.ninja.stage.hideCanvas(true);
