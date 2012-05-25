@@ -57,39 +57,17 @@ exports.Object = Montage.create(Component, {
         get: function() {
             return this._montageLabel;
         },
-        set: function(value) {
-            if(this._montageMetaData === value) { return false; }
+        set: function(data) {
+            if(this._montageMetaData === data) { return false; }
 
-            this._montageMetaData = value;
+            this._montageMetaData = data;
 
-            if(!this.identifier && value.label) {
-                this.label = value.label;
+            if(!this.identifier && data.label) {
+                this.label = data.label;
                 this.needsDraw = true;
             }
         }
 
-    },
-
-    templateDidLoad: {
-        value: function() {
-            console.log('object loaded');
-        }
-    },
-
-    prepareForDraw : {
-        value: function() {
-
-        }
-    },
-    
-    willDraw : {
-        value: function() {
-            if(this._needsPropertyInspection) {
-                
-            }
-
-            console.log("This label ", this.label);
-        }
     },
 
     draw : {
