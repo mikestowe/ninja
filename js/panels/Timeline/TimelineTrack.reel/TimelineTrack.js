@@ -764,17 +764,25 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                         var newTween = {};
                         newTween.tweenData = {};
 
-                        offsetAttribute = this.currentKeyframeRule[i].cssText.split(" ");
-                        
-                        topOffSetAttribute = offsetAttribute[3].split("px");
-                        leftOffsetAttribute = offsetAttribute[5].split("px");
-                        widthOffsetAttribute = offsetAttribute[7].split("px");
-                        heightOffsetAttribute = offsetAttribute[9].split("px");
+                        var j, styleLength = this.currentKeyframeRule[i].style.length, keyframeStyles = [];
 
-                        var tempTopOffset = parseInt(topOffSetAttribute[0]);
-                        var tempLeftOffset = parseInt(leftOffsetAttribute[0]);
-                        var tempWidthOffset = parseInt(widthOffsetAttribute[0]);
-                        var tempHeightOffset = parseInt(heightOffsetAttribute[0]);
+                        for(j=0; j<styleLength; j++){
+                            // check for vendor prefixes and skip them for now
+                            var firstChar = this.currentKeyframeRule[i].style[j].charAt(0);
+                            if(firstChar === "-"){
+                                break;
+                            } else {
+                                var currProp = this.currentKeyframeRule[i].style[j];
+                                var propVal = this.currentKeyframeRule[i].style[currProp];
+                                keyframeStyles.push([currProp, propVal]);
+                            }
+                        }
+
+                        // recreate tween properties array for timeline tween
+                        newTween.tweenData.tweenedProperties = [];
+                        for(var k in keyframeStyles){
+                            newTween.tweenData.tweenedProperties[keyframeStyles[k][0]] = keyframeStyles[k][1];
+                        }
 
                         if (this.currentKeyframeRule[i].keyText === "0%") {
                             newTween.tweenData.spanWidth = 0;
@@ -782,11 +790,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                             newTween.tweenData.keyFrameMillisec = 0;
                             newTween.tweenData.tweenID = 0;
                             newTween.tweenData.spanPosition = 0;
-                            newTween.tweenData.tweenedProperties = [];
-                            newTween.tweenData.tweenedProperties["top"] = tempTopOffset + "px";
-                            newTween.tweenData.tweenedProperties["left"] = tempLeftOffset + "px";
-                            newTween.tweenData.tweenedProperties["width"] = tempWidthOffset + "px";
-                            newTween.tweenData.tweenedProperties["height"] = tempHeightOffset + "px";
                             this.tweens.push(newTween);
                         }
                         else {
@@ -804,11 +807,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                             newTween.tweenData.keyFrameMillisec = currentMilliSec;
                             newTween.tweenData.tweenID = this.nextKeyframe;
                             newTween.tweenData.spanPosition =clickPosition - newTween.tweenData.spanWidth;
-                            newTween.tweenData.tweenedProperties=[];
-                            newTween.tweenData.tweenedProperties["top"] = tempTopOffset + "px";
-                            newTween.tweenData.tweenedProperties["left"] = tempLeftOffset + "px";
-                            newTween.tweenData.tweenedProperties["width"] = tempWidthOffset + "px";
-                            newTween.tweenData.tweenedProperties["height"] = tempHeightOffset + "px";
                             this.tweens.push(newTween);
                         }
                         this.nextKeyframe += 1;
