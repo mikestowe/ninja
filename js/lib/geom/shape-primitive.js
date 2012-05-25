@@ -71,6 +71,33 @@ ShapePrimitive.getMeshBounds = function( verts,  nVerts )
 	return bounds;
 };
 
+ShapePrimitive.getBounds = function( prim )
+{
+	var verts = prim.bufferStreams[0];
+	var nVerts = verts.length;
+	var xMin = verts[0],  xMax = verts[0],
+		yMin = verts[1],  yMax = verts[1],
+		zMin = verts[2],  zMax = verts[2];
+
+	for (var index=3;  index<verts.length;  )
+	{
+		if (verts[index] < xMin)  xMin = verts[index];
+		else if (verts[index] > xMax)  xMax = verts[index];
+
+		index++;
+		if (verts[index] < yMin)  yMin = verts[index];
+		else if (verts[index] > yMax)  yMax = verts[index];
+
+		index++;
+		if (verts[index] < zMin)  zMin = verts[index];
+		else if (verts[index] > zMax)  zMax = verts[index];
+
+		index++;
+	}
+
+	return [xMin, yMin, zMin,  xMax, yMax, zMax];
+};
+
 ShapePrimitive.refineMesh = function( verts, norms, uvs, indices, nVertices,  paramRange,  tolerance )
 {
 	var oldVrtCount = nVertices;
