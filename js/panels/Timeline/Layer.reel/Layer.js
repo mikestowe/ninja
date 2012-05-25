@@ -74,7 +74,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 
     /* Layer models: the name, ID, and selected and animation booleans for the layer */
     _layerName:{
-    	value: "Default Layer Name"
+    	value: ""
     },
     
     layerName:{
@@ -83,13 +83,22 @@ var Layer = exports.Layer = Montage.create(Component, {
             return this._layerName;
         },
         set:function(newVal){
-			this._layerEditable.value = newVal;
-	    	this._layerName = newVal;
-	    	this.layerData.layerName = newVal;
-	    	if (typeof(this.dynamicLayerName) !== "undefined") {
-	    		this.dynamicLayerName.value = newVal;
-	    	}
+			if (this._layerEditable.value !== newVal) {
+				this._layerEditable.value = newVal;
+			}
+			if (this._layerName !== newVal) {
+				this._layerName = newVal;
+			}
+			if (this.layerData.layerName !== newVal) {
+				this.layerData.layerName = newVal;
+			}
 
+	    	if (typeof(this.dynamicLayerName) !== "undefined") {
+	    		if (this.dynamicLayerName.value !== newVal) {
+	    			this.dynamicLayerName.value = newVal;
+	    		}
+	    	}
+	    	this.needsDraw = true;
         }
     },
     _layerID:{
@@ -513,6 +522,11 @@ var Layer = exports.Layer = Montage.create(Component, {
             	//console.log('Layer.draw, removing selection for layer ', this.layerName)
             	this.element.classList.remove("layerSelected");
             }
+            
+            // Update layer name?
+            if (this.layerName !== this.layer_label_text.innerText) {
+            	this.layer_label_text.innerText = this.layerName;
+            }
     	}
     },
     didDraw: {
@@ -678,10 +692,12 @@ var Layer = exports.Layer = Montage.create(Component, {
 	/* Begin: Event handlers */
 	handleLayerNameChange: {
 		value: function(event) {
-			this.dynamicLayerName.value = this._layerEditable.value;
-			this.needsDraw = true;
-			this.application.ninja.documentController.activeDocument.needsSave = true;
-            this.layerData.stageElement.setAttribute("id",this.dynamicLayerName.value);
+			
+			if (this._layerEditable.value !== this.layerName) {
+				this.layerName = this._layerEditable.value;
+				this.application.ninja.documentController.activeDocument.needsSave = true;
+				this.layerData.stageElement.setAttribute("id",this._layerEditable.value);
+			}
 		}
 	},
 	handleAddStyleClick: {
@@ -706,10 +722,12 @@ var Layer = exports.Layer = Montage.create(Component, {
 			if (this._layerEditable.enteredValue.length === 0) {
 				newVal = this._layerEditable._preEditValue;
 			}
-			this.dynamicLayerName.value = newVal;
 			this.layerName = newVal;
-			this.application.ninja.documentController.activeDocument.needsSave = true;
-			this.needsDraw = true;
+			if (newVal !== this.layerName) {
+				this.layerName = newVal;
+				this.application.ninja.documentController.activeDocument.needsSave = true;
+				this.layerData.stageElement.setAttribute("id", newVal);
+			}
 		}
 	},
 	handleMousedown: {
