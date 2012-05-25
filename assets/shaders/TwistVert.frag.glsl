@@ -28,5 +28,4 @@ void main()
 		col = texture2D(u_tex1, v_texcoord).xyz;
 
     gl_FragColor = vec4(col, 1.0);
-    //gl_FragColor = v_color;
 }

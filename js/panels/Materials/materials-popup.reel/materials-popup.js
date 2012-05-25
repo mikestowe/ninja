@@ -166,6 +166,10 @@ exports.MaterialsPopup = Montage.create(Component, {
 					rtnValue = value;
 					break;
 
+				case "angle":
+					rtnValue = value*3.14159/180.0;
+					break;
+
 				case "file":
 					if (value && (value.length > 0))
 					{
@@ -322,6 +326,10 @@ exports.MaterialsPopup = Montage.create(Component, {
 
 					case "float":
 						obj = this.createFloatData( propLabels[i], propValues[i] );
+						break;
+
+					case "angle":
+						obj = this.createFloatData( propLabels[i], propValues[i]*180.0/3.14159 );
 						break;
 
 					case "file":

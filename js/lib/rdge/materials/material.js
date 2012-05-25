@@ -192,6 +192,7 @@ var Material = function GLMaterial( world ) {
 							rtnVal = ((valType == "object") && (value.length >= 3));
 							break;
 
+						case "angle":
 						case "float":
 							rtnVal = (valType == "number");
 							break;
