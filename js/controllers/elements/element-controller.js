@@ -159,8 +159,6 @@ exports.ElementController = Montage.create(Component, {
                             el.elementModel.stroke = null;
                             return;
                         case 'gradient':
-                            this.setProperty(el, "border-image", color.color.css);
-                            this.setProperty(el, "border-color", "none");
                             if(color.borderInfo) {
                                 if(color.borderInfo.borderWidth) {
                                     this.setProperty(el, "border-width", color.borderInfo.borderWidth + color.borderInfo.borderUnits);
@@ -169,9 +167,11 @@ exports.ElementController = Montage.create(Component, {
                                     this.setProperty(el, "border-style", color.borderInfo.borderStyle);
                                 }
                             }
+                            this.setGradientBorder(el, color.color.gradientMode, color.color.css);
                             break;
                         default:
                             this.setProperty(el, "border-image", "none");
+                            this.setProperty(el, "border-image-slice", "");
                             this.setProperty(el, "border-color", color.color.css);
                             if(color.borderInfo) {
                                 if(color.borderInfo.borderWidth) {
@@ -185,6 +185,25 @@ exports.ElementController = Montage.create(Component, {
                 }
                 el.elementModel.stroke = color;
             }
+        }
+    },
+
+    setGradientBorder: {
+        value: function(el, gradientMode, css) {
+            if(gradientMode === "radial") {
+                this.setProperty(el, "border-image", css.replace("ellipse", "circle"));
+            } else {
+                this.setProperty(el, "border-image", css);
+            }
+            this.setProperty(el, "border-color", "none");
+            // gradient slice = borderWidth/totalWidth
+            var b = parseInt(this.getProperty(el, "border-left-width", true)),
+                w = parseInt(this.getProperty(el, "width", true)),
+                h = parseInt(this.getProperty(el, "height", true));
+            if(h > w) {
+                w = h;
+            }
+            this.setProperty(el, "border-image-slice", Math.floor(b/(w+b+b) * 100) + "%");
         }
     },
 
