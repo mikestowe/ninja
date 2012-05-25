@@ -6,10 +6,10 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 ////////////////////////////////////////////////////////////////////////
 //
-var Montage = 	        require("montage/core/core").Montage,
-	Component =         require("montage/ui/component").Component,
-    HtmlDocumentModel = require("js/document/models/html").HtmlDocumentModel,
-    DesignDocumentView = require("js/document/views/design").DesignDocumentView;
+var Montage = 	        	require("montage/core/core").Montage,
+	Component =         	require("montage/ui/component").Component,
+    HtmlDocumentModel = 	require("js/document/models/html").HtmlDocumentModel,
+    DesignDocumentView = 	require("js/document/views/design").DesignDocumentView;
 ////////////////////////////////////////////////////////////////////////
 //	
 exports.HtmlDocument = Montage.create(Component, {
@@ -33,15 +33,10 @@ exports.HtmlDocument = Montage.create(Component, {
     _observer: {
         value: null
     },
-    ////////////////////////////////////////////////////////////////////
-	//
-    _document: {
-        value: null //TODO: Figure out if this will be needed, probably not
-    },
 	////////////////////////////////////////////////////////////////////
 	//
     exclusionList: {
-        value: ["HTML", "BODY", "NINJA-CONTENT"] //TODO: Update to correct list
+        value: ["HTML", "BODY", "NINJA-CONTENT"]
     },
     ////////////////////////////////////////////////////////////////////
 	//
@@ -72,7 +67,7 @@ exports.HtmlDocument = Montage.create(Component, {
            		//Hiding iFrame, just initiliazing
            		this.model.views.design.hide();
            	} else {
-           		//ERROR: Design View not initilized
+           		//ERROR: Design View not initialized
            	}
             //
             if (view === 'design') {
@@ -84,23 +79,10 @@ exports.HtmlDocument = Montage.create(Component, {
             	this.model.views.design.show();
             	this.model.views.design.iframe.style.opacity = 0;
             	this.model.views.design.content = this.model.file.content;
-            	//TODO: Improve reference
+            	//TODO: Improve reference (probably through binding values)
             	this.model.views.design.model = this.model;
-            	//
-            	//TODO: Clean up
+            	//Rendering design view, using observers to know when template is ready
             	this.model.views.design.render(function () {
-            		//TODO: Identify and remove usage of '_document'
-            		this._document = this.model.views.design.document;
-            		//TODO: Remove usage, seems as not needed
-    				if (template && template.type === 'banner') {
-    					this.documentRoot = this.model.views.design.document.body.getElementsByTagName('ninja-content')[0];
-    				} else {
-    					this.documentRoot = this.model.views.design.document.body;
-    				}
-            		//TODO: Why is this needed?
-            		this._liveNodeList = this.documentRoot.getElementsByTagName('*');
-            		//Initiliazing document model
-            		document.application.njUtils.makeElementModel(this.documentRoot, "Body", "body");
             		//Adding observer to know when template is ready
             		this._observer = new WebKitMutationObserver(this.handleTemplateReady.bind(this));
         			this._observer.observe(this.model.views.design.document.head, {childList: true});

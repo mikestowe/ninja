@@ -86,7 +86,7 @@ exports.ElementMediator = Montage.create(Component, {
     replaceElement: {
         value: function(newChild, oldChild, notify) {
 
-            this.application.ninja.currentDocument.documentRoot.replaceChild(newChild, oldChild);
+            this.application.ninja.currentDocument.model.documentRoot.replaceChild(newChild, oldChild);
 
             var undoLabel = "replace element";
 
@@ -520,7 +520,7 @@ exports.ElementMediator = Montage.create(Component, {
         value: function(layersDraggedArray, layerDroppedAfter) {
             var documentRoot,length;
 
-            documentRoot = this.application.ninja.currentDocument.documentRoot;
+            documentRoot = this.application.ninja.currentDocument.model.documentRoot;
             length = layersDraggedArray.length;
 
             for(var i=0; documentRoot.children[i]; i++) {

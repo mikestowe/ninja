@@ -24,17 +24,16 @@
                     "element": {"#": "hudRepeater"}
                 },
                 "bindings": {
-                    "objects": {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "bindables",
-                        "oneway": true
-                    }
+                    "objects": {"<-": "@owner.bindables"}
                 }
             },
             "hud": {
                 "prototype": "js/stage/binding-view.reel/binding-hud.reel",
                 "properties": {
                     "element": {"#" : "hud"}
+                },
+                "bindings": {
+                    "name": {
                 }
             },
             "nonVisualRepeater": {
@@ -43,11 +42,7 @@
                     "element": {"#": "nonVisualRepeater"}
                 },
                 "bindings": {
-                    "objects": {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "nonVisualComponents",
-                        "oneway": true
-                    }
+                    "objects": {"<-": "@owner.nonVisualComponents"}
                 }
             },
             "nonVisualComponent": {
@@ -56,16 +51,8 @@
                     "element": {"#": "nonVisualComponent"}
                 },
                 "bindings": {
-                    "objectName": {
-                        "boundObject": {"@": "hudRepeater"},
-                        "boundObjectPropertyPath": "objectAtCurrentIteration.objectName",
-                        "oneway": true
-                    },
-                    "objectImage": {
-                        "boundObject": {"@": "hudRepeater"},
-                        "boundObjectPropertyPath": "objectAtCurrentIteration.objectImage",
-                        "oneway": true
-                    }
+                    "objectName": {"<-": "@hudRepeater.objectAtCurrentIteration.objectName"},
+                    "objectImage": {"<-": "@hudRepeater.objectAtCurrentIteration.objectImage"}
                 }
             }
         }
@@ -82,7 +69,9 @@
             </div>
         </div>
         <div data-montage-id="nonVisualRepeater">
-            <div data-montage-id="nonVisualComponent"></div>
+            <div data-montage-id="nonVisualComponent">
+
+            </div>
         </div>
     </section>
 

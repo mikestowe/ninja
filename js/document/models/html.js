@@ -64,6 +64,11 @@ exports.HtmlDocumentModel = Montage.create(BaseDocumentModel, {
     userComponents: {
         value: {}
     },
+    ////////////////////////////////////////////////////////////////////
+	//
+    documentRoot: {
+        value: null
+    },
 	////////////////////////////////////////////////////////////////////
 	//Add a reference to a component instance to the userComponents hash using the element UUID
     setComponentInstance: {

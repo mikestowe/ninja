@@ -67,10 +67,9 @@ exports.SelectionController = Montage.create(Component, {
             this._isDocument = true;
 
             if(currentSelectionArray) {
-                if(currentSelectionArray.length >= 1) {
+                this.application.ninja.selectedElements = currentSelectionArray;
+                if(currentSelectionArray.length) {
                     this._isDocument = false;
-
-                    this.application.ninja.selectedElements = currentSelectionArray;
                     NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument});
                 }
             }
@@ -114,7 +113,7 @@ exports.SelectionController = Montage.create(Component, {
         value: function(event) {
             var selected = [], childNodes = [], self = this;
 
-            childNodes = this.application.ninja.currentDocument.documentRoot.childNodes;
+            childNodes = this.application.ninja.currentDocument.model.documentRoot.childNodes;
             childNodes = Array.prototype.slice.call(childNodes, 0);
             childNodes.forEach(function(item) {
                 if(self.isNodeTraversable(item)) {
@@ -256,10 +255,10 @@ exports.SelectionController = Montage.create(Component, {
 
             for(var i=0, uuid; this.application.ninja.selectedElements[i];i++) {
                 // Check for multiple selection and excluding inner elements
-                if(item.parentNode && item.parentNode !== this.application.ninja.currentDocument.documentRoot) {
+                if(item.parentNode && item.parentNode !== this.application.ninja.currentDocument.model.documentRoot) {
                     var outerElement = item.parentNode;
 
-                    while(outerElement.parentNode && outerElement.parentNode !== this.application.ninja.currentDocument.documentRoot) {
+                    while(outerElement.parentNode && outerElement.parentNode !== this.application.ninja.currentDocument.model.documentRoot) {
                         outerElement = outerElement.parentNode;
                     }
 
