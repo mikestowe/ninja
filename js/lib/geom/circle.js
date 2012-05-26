@@ -295,39 +295,39 @@ exports.Circle = Object.create(GeomObj, {
             if(this._strokeWidth > 0) {
                 var numStrokes = 1;
                 if(this._innerRadius !== 0) {
-                    strokePrim0 = this.generateOvalRing(x, y, reverseRotMat, innerStrokeScaleMat, innerRadiusScaleMat, nTriangles);
+					strokeMaterial0 = this.makeStrokeMaterial();
+                    strokePrim0 = this.generateOvalRing(x, y, reverseRotMat, innerStrokeScaleMat, innerRadiusScaleMat, nTriangles,  strokeMaterial0);
                 }
 
-                strokePrim1 = this.generateOvalRing(x, y, reverseRotMat, fillScaleMat, strokeScaleMat, nTriangles);
+                strokeMaterial2 = this.makeStrokeMaterial();
+                strokePrim1 = this.generateOvalRing(x, y, reverseRotMat, fillScaleMat, strokeScaleMat, nTriangles,  strokeMaterial2);
             }
 
             /////////////////////////////////////////////////////////////
             //  Fill
+            fillMaterial = this.makeFillMaterial();
             if(this._innerRadius === 0) {
-                fillPrim = this.generateOval(x, y, mat, fillScaleMat, nTriangles);
+                fillPrim = this.generateOval(x, y, mat, fillScaleMat, nTriangles,  fillMaterial);
             } else {
-                fillPrim = this.generateOvalRing(x, y, reverseRotMat, innerRadiusScaleMat, fillScaleMat, nTriangles);
+                fillPrim = this.generateOvalRing(x, y, reverseRotMat, innerRadiusScaleMat, fillScaleMat, nTriangles,  fillMaterial);
             }
 
             if (fillPrim) {
-                fillMaterial = this.makeFillMaterial();
-			fillMaterial.fitToPrimitive( fillPrim );
+				fillMaterial.fitToPrimitive( fillPrim );
 
                 this._primArray.push( fillPrim );
                 this._materialNodeArray.push( fillMaterial.getMaterialNode() );
             }
 
             if (strokePrim0) {
-                strokeMaterial0 = this.makeStrokeMaterial();
-			strokeMaterial0.fitToPrimitive( strokePrim0 );
+				strokeMaterial0.fitToPrimitive( strokePrim0 );
 
                 this._primArray.push( strokePrim0 );
                 this._materialNodeArray.push( strokeMaterial0.getMaterialNode() );
             }
 
             if (strokePrim1) {
-                strokeMaterial2 = this.makeStrokeMaterial();
-			strokeMaterial2.fitToPrimitive( strokePrim1 );
+				strokeMaterial2.fitToPrimitive( strokePrim1 );
 
                 this._primArray.push( strokePrim1 );
                 this._materialNodeArray.push( strokeMaterial2.getMaterialNode() );
@@ -338,7 +338,7 @@ exports.Circle = Object.create(GeomObj, {
     },
 
     generateOval: {
-        value: function(xOff, yOff, rotationMat, scaleMat, nTriangles) {
+        value: function(xOff, yOff, rotationMat, scaleMat, nTriangles,  material) {
             var pt = [1.0, 0.0, 0.0];
             //var pts = scaleMat.multiply(pt);
             var pts = glmat4.multiplyVec3( scaleMat, pt, []);
@@ -392,12 +392,21 @@ exports.Circle = Object.create(GeomObj, {
 
             this.recalcTexMapCoords( vrts, uvs );
 
+			//refine the mesh for vertex deformations
+			if (material) {
+				if (material.hasVertexDeformation()) {
+					var paramRange = material.getVertexDeformationRange();
+					var tolerance = material.getVertexDeformationTolerance();
+					ShapePrimitive.refineMesh( vrts, nrms, uvs, indices, vrts.length/3,  paramRange,  tolerance );
+				}
+			}
+
             return ShapePrimitive.create(vrts, nrms, uvs, indices, RDGE.globals.engine.getContext().renderer.TRIANGLES, index);
         }
     },
 
     generateOvalRing: {
-        value: function(xOff, yOff, rotationMat, innerScaleMat, outerScaleMat, nTriangles) {
+        value: function(xOff, yOff, rotationMat, innerScaleMat, outerScaleMat, nTriangles,  material) {
             var pt = [1.0, 0.0, 0.0];
 
             var z = 0;
@@ -450,6 +459,17 @@ exports.Circle = Object.create(GeomObj, {
             }
 
             this.recalcTexMapCoords( vrts, uvs );
+
+			/*
+			//refine the mesh for vertex deformations
+			if (material) {
+				if (material.hasVertexDeformation()) {
+					var paramRange = material.getVertexDeformationRange();
+					var tolerance = material.getVertexDeformationTolerance();
+					ShapePrimitive.refineMesh( vrts, nrms, uvs, indices, indices.length,  paramRange,  tolerance );
+				}
+			}
+			*/
 
             return ShapePrimitive.create(vrts, nrms, uvs, indices, RDGE.globals.engine.getContext().renderer.TRIANGLE_STRIP, indices.length);
         }
