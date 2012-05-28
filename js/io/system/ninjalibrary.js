@@ -65,8 +65,13 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
     	    			if (libName === contents[i].name) {
 	        				//Getting contents of library to be copied
         					this.chromeApi.directoryContents(contents[i], function (lib) {
-        						//Creating directory structure from subfolders
-        						this.copyDirectoryToCloud(path, contents[i], path, callback);
+        						//Copying to cloud, adding blocking if no callback specified
+        						if (!callback) {
+        							//TODO: Add blocking logic here
+	        						this.copyDirectoryToCloud(path, contents[i], path);
+        						} else {
+        							this.copyDirectoryToCloud(path, contents[i], path, callback);
+        						}
         					}.bind(this));
         					break;
         				}
