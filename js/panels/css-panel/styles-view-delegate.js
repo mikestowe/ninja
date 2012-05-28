@@ -145,7 +145,7 @@ exports.StylesViewDelegate = Montage.create(Component, {
                         if(nextFocus) {
                             nextFocus.propertyField.start();
                         } else if(style.dirty) {
-                            style.parentComponent.parentComponent.addNewStyle();
+                            style.parentComponent.parentComponent.addNewStyle(true);
                             style.editingNewStyle = false;
                             setTimeout(function() {
                                 style.getSiblingStyle('next').propertyField.start();
