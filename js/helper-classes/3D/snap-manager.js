@@ -83,14 +83,14 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 	popWorkingPlane : { value: function ()		{ workingPlane = this._workingPlaneStack.pop(); return workingPlane; }},
 
 	getStageWidth : { value: function ()		{
-		return parseInt(this.application.ninja.currentDocument.documentRoot.offsetWidth);
+		return parseInt(this.application.ninja.currentDocument.model.documentRoot.offsetWidth);
 	}},
 
 	getStageHeight : { value: function ()		{
-		return parseInt(this.application.ninja.currentDocument.documentRoot.offsetHeight);
+		return parseInt(this.application.ninja.currentDocument.model.documentRoot.offsetHeight);
 	}},
 
-    getStage : { value: function()		{        return this.application.ninja.currentDocument.documentRoot;    }},
+    getStage : { value: function()		{        return this.application.ninja.currentDocument.model.documentRoot;    }},
 
 	getGridVertexHitRad : { value: function()		{  return this._gridVertexHitRad;				}},
 	getGridEdgeHitRad : { value: function()		{  return this._gridEdgeHitRad;					}},
@@ -469,13 +469,6 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 			return false;
 		}
 	},
-
-    reload2DCache: {
-        value: function() {
-            this.clear2DCache();
-            this.load2DCache(workingPlane);
-        }
-    },
 
 	clear2DCache : {
 		value : function() {

@@ -243,7 +243,7 @@ exports.RotateHandle = Montage.create(ToolHandle, {
             this._origin = pointOnElt;
 
 
-            var viewMat = viewUtils.getMatrixFromElement(this.application.ninja.currentDocument.documentRoot);
+            var viewMat = viewUtils.getMatrixFromElement(this.application.ninja.currentDocument.model.documentRoot);
 
             var transMat = viewMat.slice(0);
             if(inLocalMode)
@@ -585,7 +585,7 @@ exports.TranslateHandle = Montage.create(ToolHandle, {
             this._origin = pointOnElt;
 
 
-            var stage = this.application.ninja.currentDocument.documentRoot;
+            var stage = this.application.ninja.currentDocument.model.documentRoot;
             var viewMat = viewUtils.getMatrixFromElement(stage);
             // Get viewMat without zoom value
             var zoom = this.application.ninja.documentBar.zoomFactor/100;

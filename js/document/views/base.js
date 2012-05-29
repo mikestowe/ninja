@@ -28,7 +28,7 @@ exports.BaseDocumentView = Montage.create(Component, {
         value: null
     },
     ////////////////////////////////////////////////////////////////////
-	//
+	//TODO: This should be renamed to better illustrate it's a container (iframe for design, div for code view)
 	iframe: {
 		get: function() {return this._iframe;},
         set: function(value) {this._iframe= value;}

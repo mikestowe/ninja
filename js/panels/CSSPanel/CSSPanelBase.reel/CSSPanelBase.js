@@ -87,7 +87,7 @@ var CSSPanel = exports.CSSPanelBase = (require("montage/core/core").Montage).cre
 
     populateStyleSheetList: {
         value: function() {
-            this.sections.sheets.doc = this.application.ninja.currentDocument._document;
+            this.sections.sheets.doc = this.application.ninja.currentDocument.model.views.design.document;
             var styleTagCount = 0,
                 sect          = this.sections.sheets,
                 sheetsArray   = nj.toArray(sect.doc.styleSheets),

@@ -437,6 +437,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             returnObj.layerData.isVisible = true;
             returnObj.layerData.docUUID = this.application.ninja.currentDocument._uuid;
             returnObj.layerData.isTrackAnimated = false;
+            returnObj.layerData.triggerBinding = false;
             returnObj.parentElementUUID = null;
             returnObj.parentElement = null;
             
@@ -595,13 +596,13 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
 				// That's all we need to do for a brand new file. 
                 // But what if we're opening an existing document?
-                if (!this.application.ninja.documentController.creatingNewFile) {
+                if (!this.application.ninja.documentController.creatingNewFile && this.application.ninja.currentDocument.currentView !== "code") {
                     // Opening an existing document. If it has DOM elements we need to restore their timeline info
-                    if (this.application.ninja.currentDocument.documentRoot.children[0]) {
+                    if (this.application.ninja.currentDocument.model.documentRoot.children[0]) {
                         // Yes, it has DOM elements. Loop through them and create a new object for each.
-                        for (myIndex = 0; this.application.ninja.currentDocument.documentRoot.children[myIndex]; myIndex++) {
+                        for (myIndex = 0; this.application.ninja.currentDocument.model.documentRoot.children[myIndex]; myIndex++) {
                             this._openDoc = true;
-                            this.restoreLayer(this.application.ninja.currentDocument.documentRoot.children[myIndex]);
+                            this.restoreLayer(this.application.ninja.currentDocument.model.documentRoot.children[myIndex]);
                         }
                     }
                 }
@@ -1402,12 +1403,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     // Trigger the layer/track data binding
     triggerLayerBinding : {
     	value: function(intIndex) {
-    		if (this.arrLayers[intIndex].layerData.triggerBinding === true) {
-    			this.arrLayers[intIndex].layerData.triggerBinding = false;
-    		} else {
-    			this.arrLayers[intIndex].layerData.triggerBinding = true;
-    		}
-    	}
+            this.arrLayers[intIndex].layerData.triggerBinding = !this.arrLayers[intIndex].layerData.triggerBinding;
+        }
     },
     
     handleLayerDragStart : {
