@@ -193,7 +193,7 @@ exports.Stage = Montage.create(Component, {
             this._userPaddingLeft = value;
             this._documentOffsetLeft = -value;
             this.application.ninja.currentDocument.model.documentRoot.ownerDocument.getElementsByTagName("HTML")[0].style["padding-left"] = -value + "px";
-            this.userContentLeft = this._documentOffsetLeft;
+            this.userContentLeft = this._documentOffsetLeft - this._scrollLeft;
             this.updatedStage = true;
         }
     },
@@ -204,7 +204,7 @@ exports.Stage = Montage.create(Component, {
             this._userPaddingTop = value;
             this._documentOffsetTop = -value;
             this.application.ninja.currentDocument.model.documentRoot.ownerDocument.getElementsByTagName("HTML")[0].style["padding-top"] = -value + "px";
-            this.userContentTop = this._documentOffsetTop;
+            this.userContentTop = this._documentOffsetTop - this._scrollTop;
             this.updatedStage = true;
         }
     },
