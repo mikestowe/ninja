@@ -73,7 +73,6 @@ var PenProperties = exports.PenProperties = Montage.create(ToolProperties, {
     handleClick: {
         value: function(event) {
             this._selectedSubtool = event._event.target.value;
-            console.log("handleClick changing pen tool subtool to "+this.selectedSubtool);
             NJevent("penSubToolChange");
         }
     },
