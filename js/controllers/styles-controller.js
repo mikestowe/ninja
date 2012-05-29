@@ -1229,9 +1229,10 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 }
             }
             if(isNaN(dist)) {
-                dist = null;
+                return "none";
+            } else {
+                return dist;
             }
-            return dist;
         }
     },
 
