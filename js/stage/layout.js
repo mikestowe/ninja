@@ -23,6 +23,28 @@ exports.Layout = Montage.create(Component, {
     drawFillColor: { value: 'rgba(255,255,255,1)' },
     ctxLineWidth: { value: 0.2 },
 
+    _currentDocument: {
+        value : null,
+        enumerable : false
+    },
+
+    currentDocument : {
+        get : function() {
+            return this._currentDocument;
+        },
+        set : function(value) {
+            if (value === this._currentDocument || value.getProperty("currentView") !== "design") {
+                return;
+            }
+
+            this._currentDocument = value;
+
+            if(this._currentDocument) {
+                this.elementsToDraw = this._currentDocument.model.documentRoot.childNodes;
+            }
+        }
+    },
+
     _layoutView: {
         value: "layoutAll"
     },
@@ -58,15 +80,6 @@ exports.Layout = Montage.create(Component, {
         }
     },
 
-    handleOpenDocument: {
-        value: function() {
-            // Initial elements to draw are the childrens of the root element
-            if(this.application.ninja.documentController.activeDocument.currentView === "design") {
-                this.elementsToDraw = this.application.ninja.documentController.activeDocument.model.documentRoot.childNodes;
-            }
-        }
-    },
-
     // Redraw stage only once after all deletion is completed
     handleElementsRemoved: {
         value: function(event) {
@@ -79,11 +92,11 @@ exports.Layout = Montage.create(Component, {
         value: function(event) {
             var containerIndex;
 
-            if(this.application.ninja.documentController.activeDocument === null){
+            if(this.currentDocument === null){
                 return;
             }
 
-            if(this.application.ninja.documentController.activeDocument.currentView === "design"){
+            if(this.currentDocument.currentView === "design"){
                 // Make an array copy of the line node list which is not an array like object
                 this.domTree = this.application.ninja.currentDocument.model.views.design.getLiveNodeList(true);
                 // Index of the current container
@@ -219,7 +232,7 @@ exports.Layout = Montage.create(Component, {
             if(this.layoutView === "layoutAll") {
                 this.ctx.strokeStyle = 'rgba(0,0,0,1)'; // Black Stroke
                 this.ctx.strokeRect(bounds3D[0][0]+5.5, bounds3D[0][1]-15.5, 70, 11);
-                this.ctx.fillStyle = 'rgba(255,255,255,1)' // White Fill
+                this.ctx.fillStyle = 'rgba(255,255,255,1)'; // White Fill
                 this.ctx.fillRect(bounds3D[0][0]+6, bounds3D[0][1]-15, 69, 10);
 
                 this.ctx.fillStyle = 'rgba(0,0,0,1)';

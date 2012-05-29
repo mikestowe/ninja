@@ -13,6 +13,32 @@ var ElementsMediator = require("js/mediators/element-mediator").ElementMediator;
 
 exports.Properties = Montage.create(Component, {
 
+    _currentDocument: {
+        value : null,
+        enumerable : false
+    },
+
+    currentDocument : {
+        get : function() {
+            return this._currentDocument;
+        },
+        set : function(value) {
+            if (value === this._currentDocument) {
+                return;
+            }
+
+            this._currentDocument = value;
+
+            if(this._currentDocument.currentView === "design") {
+                // Save a reference of the pi inside the document view to be able to clear
+                this._currentDocument.model.views.design.propertiesPanel = this;
+
+                // Display the default document root PI
+                this.displayElementProperties(this._currentDocument.model.documentRoot);
+            }
+        }
+    },
+
     elementName: {
         value: null
     },
@@ -46,7 +72,7 @@ exports.Properties = Montage.create(Component, {
 
     prepareForDraw: {
         value : function() {
-            this.eventManager.addEventListener("openDocument", this, false);
+            this.eventManager.addEventListener("elementChange", this, false);
             this.eventManager.addEventListener("selectionChange", this, false);
             this.eventManager.addEventListener("closeDocument", this, false);
 
@@ -62,18 +88,6 @@ exports.Properties = Montage.create(Component, {
             this.elementClass.element.addEventListener("blur", this, false);
             this.elementClass.element.addEventListener("focus", this, false);
             this.elementClass.element.addEventListener("keyup", this, false);
-        }
-    },
-
-    handleOpenDocument: {
-        value: function() {
-            this.eventManager.addEventListener( "elementChange", this, false);
-
-            // Save a reference of the pi inside the document view to be able to clear
-            this.application.ninja.currentDocument.model.views.design.propertiesPanel = this;
-
-            // Display the default document root PI
-            this.displayElementProperties(this.application.ninja.currentDocument.model.documentRoot);
         }
     },
 

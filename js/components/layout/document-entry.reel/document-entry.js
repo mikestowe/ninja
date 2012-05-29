@@ -58,25 +58,6 @@ exports.DocumentEntry = Montage.create(Component, {
         }
     },
 
-    _active: {
-        enumerable: false,
-        value: null
-    },
-
-    active: {
-        get: function() {
-            return this._active;
-        },
-        set: function(value) {
-            var previousValue = this._active;
-            this._active = value;
-
-            if (previousValue !== this._active) {
-                this.needsDraw = true;
-            }
-        }
-    },
-
     _saveFlag: {
         value: false
     },
@@ -96,7 +77,8 @@ exports.DocumentEntry = Montage.create(Component, {
     prepareForDraw: {
         enumerable: false,
         value: function() {
-           this.element.addEventListener("click", this, false);
+//           this.element.addEventListener("click", this, false);
+//            this.closeBtn.addEventListener("click", this, true);
         }
     },
 
@@ -106,7 +88,7 @@ exports.DocumentEntry = Montage.create(Component, {
         value: function() {
             this.label.innerText = this._name ? this._name : "";
 
-            this._active ? this.element.classList.add("activeTab") : this.element.classList.remove("activeTab");
+//            this._active ? this.element.classList.add("activeTab") : this.element.classList.remove("activeTab");
 
             if(this.saveFlag) {
                 this.label.classList.add("dirty");
@@ -116,15 +98,19 @@ exports.DocumentEntry = Montage.create(Component, {
         }
     },
 
-    handleClick: {
+    captureClick: {
         value: function(event) {
-            if(event._event.target.nodeName === "IMG") {
-                this.application.ninja.documentController.closeFile(this.application.ninja.documentController._findDocumentByUUID(this._uuid));
-            } else {
-                if(!this.active) {
-                    this.application.ninja.documentController.switchDocuments(this.application.ninja.currentDocument, this.application.ninja.documentController._findDocumentByUUID(this._uuid));
-                }
-            }
+            console.log("clicked on the X");
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            event.stopPropagation();
+//            if(event._event.target.nodeName === "IMG") {
+//                this.application.ninja.documentController.closeFile(this.application.ninja.documentController._findDocumentByUUID(this._uuid));
+//            } else {
+//                if(!this.active) {
+//                    this.application.ninja.documentController.switchDocuments(this.application.ninja.currentDocument, this.application.ninja.documentController._findDocumentByUUID(this._uuid));
+//                }
+//            }
         }
     }
 

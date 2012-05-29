@@ -9,13 +9,45 @@ var Montage = require("montage/core/core").Montage,
 
 exports.Breadcrumb = Montage.create(Component, {
 
-    disabled: {
+    _currentDocument: {
+        enumerable: false,
+        value: null
+    },
+
+    currentDocument: {
+        enumerable: false,
+        get: function() {
+            return this._currentDocument;
+        },
+        set: function(value) {
+            if (value === this._currentDocument) {
+                return;
+            }
+
+            this._currentDocument = value;
+
+            if(!this._currentDocument) {
+                this.disabled = true;
+            }
+
+            this.disabled = this._currentDocument.currentView !== "design";
+
+        }
+    },
+
+
+    _disabled: {
         value: true
     },
 
-    handleOpenDocument: {
-        value: function(){
-            this.disabled = false;
+    disabled: {
+        get: function() {
+            return this._disabled;
+        },
+        set: function(value) {
+            if(value !== this._disabled) {
+                this._disabled = value;
+            }
         }
     },
 
@@ -50,7 +82,6 @@ exports.Breadcrumb = Montage.create(Component, {
 
     prepareForDraw: {
         value: function() {
-            this.eventManager.addEventListener("openDocument", this, false);
             this.eventManager.addEventListener("closeDocument", this, false);
             this.breadcrumbBt.addEventListener("action", this, false);
         }
@@ -65,7 +96,7 @@ exports.Breadcrumb = Montage.create(Component, {
 
             parentNode = this.container;
 
-            while(parentNode !== this.application.ninja.currentDocument.model.documentRoot) {
+            while(parentNode !== this.currentDocument.model.documentRoot) {
                 this.containerElements.unshift({"node": parentNode, "nodeUuid":parentNode.uuid, "label": parentNode.nodeName});
                 parentNode = parentNode.parentNode;
             }
@@ -87,6 +118,7 @@ exports.Breadcrumb = Montage.create(Component, {
                 this.containerElements.pop();
             }
 
+            // TODO: This is bound 2 ways, update the internal property
             this.application.ninja.currentSelectedContainer = this.containerElements[i].node;
         }
     }

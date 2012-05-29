@@ -18,11 +18,32 @@ exports.Ninja = Montage.create(Component, {
         value: null
     },
 
-    toolsData: { value: null },
-    appData:    { value: AppData },
+    toolsData: {
+        value: null
+    },
 
+    appData: {
+        value: AppData
+    },
+
+    /*
     currentDocument: {
         value: null
+    },
+    */
+
+    documentList: {
+        value: null
+    },
+
+    currentDocument: {
+        get: function() {
+            if(this.documentList.selectedObjects) {
+                return this.documentList.selectedObjects[0];
+            } else {
+                return null;
+            }
+        }
     },
 
     _isResizing: {
@@ -55,9 +76,10 @@ exports.Ninja = Montage.create(Component, {
         }
     },
 
-    _resizedWidth : {
+    _resizedWidth: {
         value: 0
     },
+
     _width: {
         value: null
     },
@@ -174,7 +196,6 @@ exports.Ninja = Montage.create(Component, {
 
             this.eventManager.addEventListener("selectTool", this, false);
             this.eventManager.addEventListener("selectSubTool", this, false);
-            this.eventManager.addEventListener("onOpenDocument", this, false);
             this.eventManager.addEventListener("onSwitchDocument", this, false);
 
             this.addPropertyChangeListener("appModel.livePreview", this.executeLivePreview, false);
@@ -190,7 +211,7 @@ exports.Ninja = Montage.create(Component, {
 	//TODO: Expand method to allow other browsers for preview
     executeChromePreview: {
     	value: function () {
-    		this.application.ninja.documentController.activeDocument.model.browserPreview('chrome');
+    		this.currentDocument.model.browserPreview('chrome');
     	}
     },
 	////////////////////////////////////////////////////////////////////
@@ -276,7 +297,22 @@ exports.Ninja = Montage.create(Component, {
     },
 
     handleOnOpenDocument: {
-        value: function(event) {
+        value: function(doc) {
+
+
+
+            this.documentList.content.push(doc);
+            // This is not needed with the latest 0.10 montage.
+            // TODO: Remove this when integrating the next montage
+            this.documentList.selectedObjects = [doc];
+
+            // TODO: Find a better place for this
+            doc.model.currentView.show();
+
+            // TODO: Bind directly to the model of the document in components instead of this property
+            this.currentSelectedContainer = doc.model.documentRoot;
+
+            /*
             this.currentDocument = event.detail;
 
             if(this.currentDocument.model.documentRoot) {
@@ -288,6 +324,8 @@ exports.Ninja = Montage.create(Component, {
 
             this.appModel.show3dGrid = this.currentDocument.draw3DGrid;
             NJevent("openDocument");
+            */
+
         }
     },
 

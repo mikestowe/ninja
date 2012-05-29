@@ -18,25 +18,25 @@
                 }
             },
 
-            "StageDeps1": {
+            "stageDeps": {
                 "prototype": "js/stage/stage-deps",
                 "properties": {
                     "stage": {"@": "owner"}
+                },
+                "bindings": {
+                    "currentDocument": {"<-": "@owner.currentDocument"}
                 }
             },
 
-            "layout1": {
+            "layout": {
                 "prototype": "js/stage/layout",
                 "properties": {
                     "canvas": {"#": "layoutCanvas"},
                     "stage": {"@": "owner"}
                 },
                 "bindings": {
-                    "layoutView": {
-                        "boundObject": {"@": "owner" },
-                        "boundObjectPropertyPath": "appModel.layoutView",
-                        "oneway": true
-                    }
+                    "layoutView": {"<-": "@owner.appModel.layoutView"},
+                    "currentDocument": {"<-": "@owner.currentDocument"}
                 }
             },
 
@@ -59,8 +59,8 @@
                     "_layoutCanvas":  {"#": "layoutCanvas"},
                     "_canvas":  {"#": "stageCanvas"},
                     "_drawingCanvas":  {"#": "drawingCanvas"},
-                    "stageDeps": {"@": "StageDeps1"},
-                    "layout":   {"@": "layout1"},
+                    "stageDeps": {"@": "stageDeps"},
+                    "layout":   {"@": "layout"},
 					"stageView": {"@": "stageView"},
                     "textTool": {"@": "textTool"},
                     "focusManager": {"@": "focusManager"}

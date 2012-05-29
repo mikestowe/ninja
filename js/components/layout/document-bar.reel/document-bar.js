@@ -9,13 +9,32 @@ var Component = require("montage/ui/component").Component;
 
 exports.DocumentBar = Montage.create(Component, {
 
+    _currentDocument: {
+        enumerable: false,
+        value: null
+    },
+
+    currentDocument: {
+        enumerable: false,
+        get: function() {
+            return this._currentDocument;
+        },
+        set: function(value) {
+            if (value === this._currentDocument) {
+                return;
+            }
+
+            this._currentDocument = value;
+
+            this.disabled = !this._currentDocument;
+
+        }
+    },
+
     designView: { value: null, enumerable: false},
     codeView: { value: null, enumerable: false},
     zoomControl: { value: null, enumerable: false },
     _type: { enumerable: false, value: null },
-    disabled: { value: true },
-
-
 
     type: {
         enumerable: false,
@@ -86,7 +105,6 @@ exports.DocumentBar = Montage.create(Component, {
 
     prepareForDraw: {
         value: function() {
-            this.eventManager.addEventListener( "openDocument", this, false);
             this.eventManager.addEventListener( "closeDocument", this, false);
             this.designView.addEventListener("click", this, false);
             this.codeView.addEventListener("click", this, false);
@@ -94,18 +112,28 @@ exports.DocumentBar = Montage.create(Component, {
         }
     },
 
+    _disabled: {
+        value: true
+    },
+
+    disabled: {
+        get: function() {
+            return this._disabled;
+        },
+        set: function(value) {
+            if(value !== this._disabled) {
+                this._disabled = value;
+            }
+        }
+    },
+
+
     handleClick: {
         value: function(event) {
             if(event._event.target.id === this.currentView) return;
 
             this.currentView = event._event.target.id;
             this.application.ninja.documentController.stage.stageView.switchDesignDocViews(event._event.target.id);//switch between design view
-        }
-    },
-
-    handleOpenDocument: {
-        value: function() {
-            this.disabled = false;
         }
     },
 

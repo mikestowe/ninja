@@ -9,8 +9,41 @@ var Component = require("montage/ui/component").Component;
 
 exports.ToolsProperties = Montage.create(Component, {
 
-    disabled: {
+    _currentDocument: {
+        enumerable: false,
+        value: null
+    },
+
+    currentDocument: {
+        enumerable: false,
+        get: function() {
+            return this._currentDocument;
+        },
+        set: function(value) {
+            if (value === this._currentDocument) {
+                return;
+            }
+
+            this._currentDocument = value;
+
+            this.disabled = !this._currentDocument;
+
+        }
+    },
+
+    _disabled: {
         value: true
+    },
+
+    disabled: {
+        get: function() {
+            return this._disabled;
+        },
+        set: function(value) {
+            if(value !== this._disabled) {
+                this._disabled = value;
+            }
+        }
     },
 
     handleCloseDocument: {
@@ -21,16 +54,9 @@ exports.ToolsProperties = Montage.create(Component, {
         }
     },
 
-    handleOpenDocument: {
-        value: function() {
-            this.disabled = false;
-        }
-    },
-
     prepareForDraw: {
         enumerable: false,
         value: function() {
-            this.eventManager.addEventListener( "openDocument", this, false);
             this.eventManager.addEventListener( "closeDocument", this, false);
         }
     },

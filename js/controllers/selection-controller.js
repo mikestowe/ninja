@@ -20,6 +20,41 @@ exports.SelectionController = Montage.create(Component, {
         }
     },
 
+    _currentDocument: {
+        value : null,
+        enumerable : false
+    },
+
+    currentDocument : {
+        get : function() {
+            return this._currentDocument;
+        },
+        set : function(value) {
+            if (value === this._currentDocument) {
+                return;
+            }
+
+            this._currentDocument = value;
+
+            if(this._currentDocument.currentView === "design") {
+
+                /*
+                this._isDocument = true;
+
+                if(currentSelectionArray) {
+                    this.application.ninja.selectedElements = currentSelectionArray;
+                    if(currentSelectionArray.length) {
+                        this._isDocument = false;
+                        NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument});
+                    }
+                }
+
+                this._selectionContainer = this.application.ninja.currentSelectedContainer;
+                */
+            }
+        }
+    },
+
     /*
      * Bound property to the ninja currentSelectedContainer
      */
@@ -49,32 +84,6 @@ exports.SelectionController = Montage.create(Component, {
             this.eventManager.addEventListener("selectAll", this, false);
             this.eventManager.addEventListener("switchDocument", this, false);
             this.eventManager.addEventListener("closeDocument", this, false);
-        }
-    },
-
-    /**
-     * Get the current document selection array. If nothing is selected the currentSelectionArray should be null
-     */
-    handleOpenDocument: {
-        value: function() {
-            // Handle initializing the selection array here.
-            this.initWithDocument([]);
-        }
-    },
-    
-    initWithDocument: {
-        value: function(currentSelectionArray) {
-            this._isDocument = true;
-
-            if(currentSelectionArray) {
-                this.application.ninja.selectedElements = currentSelectionArray;
-                if(currentSelectionArray.length) {
-                    this._isDocument = false;
-                    NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument});
-                }
-            }
-
-            this._selectionContainer = this.application.ninja.currentSelectedContainer;
         }
     },
 

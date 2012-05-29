@@ -16,7 +16,24 @@ exports.PanelContainer = Montage.create(Component, {
         value: null
     },
 
-    // This will hold the current loaded panels.
+    _currentDocument: {
+        value : null,
+        enumerable : false
+    },
+
+    currentDocument : {
+        get : function() {
+            return this._currentDocument;
+        },
+        set : function(value) {
+            if (value === this._currentDocument) {
+                return;
+            }
+
+            this._currentDocument = value;
+        }
+    },
+
     panels: {
         value: []
     },
@@ -65,8 +82,6 @@ exports.PanelContainer = Montage.create(Component, {
 
             this.application.localStorage.setItem("panels", this.currentPanelState);
 
-
-            this.eventManager.addEventListener( "onOpenDocument", this, false);
             this.eventManager.addEventListener( "closeDocument", this, false);
         }
     },
@@ -86,14 +101,6 @@ exports.PanelContainer = Montage.create(Component, {
     handleResize: {
          value: function(e) {
             this._redrawPanels(null, true);
-        }
-    },
-
-    handleOnOpenDocument: {
-        value: function(){
-            this.panels.forEach(function(obj) {
-                obj.disabled = false;
-            });
         }
     },
 

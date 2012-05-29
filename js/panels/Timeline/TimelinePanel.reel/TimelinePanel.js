@@ -335,7 +335,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         value:function () {
             this.initTimeline();
             // Bind the event handler for the document change events
-            //this.eventManager.addEventListener("onOpenDocument", this.handleDocumentChange.bind(this), false);
             this.eventManager.addEventListener("closeDocument", this.handleDocumentChange.bind(this), false);
             //this.eventManager.addEventListener("switchDocument", this.handleDocumentChange.bind(this), false);
             //this.eventManager.addEventListener("breadCrumbBinding",this,false);

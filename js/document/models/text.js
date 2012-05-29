@@ -22,7 +22,7 @@ exports.TextDocumentModel = Montage.create(BaseDocumentModel, {
     save: {
         enumerable: false,
         value: function (callback) {
-            this.application.ninja.documentController.activeDocument.model.views.code.editor.save();//save to textarea
+            this.application.ninja.currentDocument.model.views.code.editor.save();//save to textarea
 
             var self = this;
 

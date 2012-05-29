@@ -118,7 +118,7 @@
                 ]
             },
 
-            "Resizer": {
+            "resizer3": {
                 "prototype": "js/panels/resize-composer",
                 "properties": {
                     "element": {"#": "pasteboardResizer"},
@@ -150,45 +150,48 @@
                     "element": {"#": "stageMode"}
                 },
                 "bindings" : {
-                    "livePreview": {
-                        "boundObject": {"@": "appModel"},
-                        "boundObjectPropertyPath": "livePreview",
-                        "oneway": false
-                    }
+                    "livePreview": {"<<->": "@appModel.livePreview"}
                 }
             },
 
-            "toolsList1": {
+            "toolsList": {
                 "prototype": "js/components/layout/tools-list.reel",
                 "properties": {
                     "element": {"#": "toolsList"},
                     "toolsData": {"@": "toolsData1"}
+                },
+                "bindings": {
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
                 }
             },
 
-            "toolsProperties1": {
+            "toolsProperties": {
                 "prototype": "js/components/layout/tools-properties.reel",
                 "properties": {
                     "element": {"#": "toolsProperties"},
                     "toolsData": {"@": "toolsData1"}
+                },
+                "bindings": {
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
                 }
             },
 
             "documentsTab": {
                 "prototype": "js/components/layout/documents-tab.reel",
                 "properties": {
-                    "element": {"#": "openDocumentsTabComponent"}
+                    "element": {"#": "openDocumentsTabComponent"},
+                    "contentController": {"@": "documentList"}
                 }
             },
 
-            "stage1": {
+            "stage": {
                 "prototype": "js/stage/stage.reel",
                 "properties": {
                     "element": {"#": "stageAndScenesContainer"},
                     "appModel":     {"@": "appModel"}
                 },
                 "bindings": {
-                    "activeDocument": {"<-": "@documentController1.activeDocument"}
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
                 }
             },
 
@@ -196,6 +199,9 @@
                 "prototype": "js/components/layout/document-bar.reel",
                 "properties": {
                     "element": {"#": "documentBar"}
+                },
+                "bindings": {
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
                 }
             },
 
@@ -212,6 +218,9 @@
                     "element": {"#": "rightPanelContent"},
                     "panelSplitter": {"@": "splitter3"},
                     "appModel":     {"@": "appModel"}
+                },
+                "bindings" : {
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
                 }
             },
 
@@ -221,19 +230,16 @@
                     "element":{"#" : "breadCrumbComponent"}
                 },
                 "bindings" : {
-                    "container": {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "currentSelectedContainer",
-                        "oneway": false
-                    }
+                    "container": {"<<->": "@owner.currentSelectedContainer"},
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
                 }
-             },
+            },
 
             "timeline": {
-               "prototype": "js/panels/Timeline/TimelinePanel.reel",
-               "properties": {
-                   "element": {"#": "timelinePanelComponent"}
-               }
+                "prototype": "js/panels/Timeline/TimelinePanel.reel",
+                "properties": {
+                    "element": {"#": "timelinePanelComponent"}
+                }
             },
 
             "mouseMediator": {
@@ -263,15 +269,26 @@
                 "prototype": "js/controllers/undo-controller"
             },
 
-            "selectionController1": {
+            "selectionController": {
                 "prototype": "js/controllers/selection-controller",
                 "bindings" : {
-                    "selectionContainer": {"<-": "@owner.currentSelectedContainer"}
+                    "selectionContainer": {"<-": "@owner.currentSelectedContainer"},
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
                 }
             },
 
-            "documentController1": {
+            "documentController": {
                 "prototype": "js/controllers/document-controller"
+            },
+
+            "documentList": {
+                "prototype": "montage/ui/controller/array-controller",
+                "properties": {
+                    "selectObjectsOnAddition": true
+                },
+                "bindings": {
+                    "content": {"<<->": "@documentController.documents"}
+                }
             },
 
             "popupManager1": {
@@ -288,7 +305,7 @@
             "stylesController": {
                 "prototype": "js/controllers/styles-controller",
                 "bindings": {
-                    "activeDocument": {"<-": "@documentController1.activeDocument"}
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
                 }
             },
 
@@ -331,14 +348,14 @@
                     "rulerLeft":        	{"#": "rulerLeft"},
                     "appModel":             {"@": "appModel"},
                     "toolsData":            {"@": "toolsData1"},
-                    "toolsList":            {"@": "toolsList1"},
-                    "toolsProperties":      {"@": "toolsProperties1"},
-                    "stage":                {"@": "stage1"},
+                    "toolsList":            {"@": "toolsList"},
+                    "toolsProperties":      {"@": "toolsProperties"},
+                    "stage":                {"@": "stage"},
                     "elementMediator":      {"@": "elementMediator"},
                     "dragDropMediator":     {"@": "dragDropMediator"},
                     "undocontroller":       {"@": "undocontroller1"},
-                    "selectionController":  {"@": "selectionController1"},
-                    "documentController":   {"@": "documentController1"},
+                    "selectionController":  {"@": "selectionController"},
+                    "documentController":   {"@": "documentController"},
                     "popupManager":         {"@": "popupManager1"},
 					"colorController":      {"@": "colorController1"},
                     "stylesController":     {"@": "stylesController"},
@@ -356,7 +373,8 @@
                     "panelSplitter":        {"@": "splitter3"},
                     "timelineSplitter":     {"@": "splitter4"},
                     "toolsSplitter":        {"@": "splitter2"},
-                    "optionsSplitter":      {"@": "splitter1"}
+                    "optionsSplitter":      {"@": "splitter1"},
+                    "documentList":         {"@": "documentList"}
                 }
             }
         }

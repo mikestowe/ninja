@@ -19,7 +19,20 @@
     min-width:0px;
 }
 
-.documentEntry img {
+.mybutton {
+    display: inline;
+    -webkit-appearance: none;
+    outline: none;
+
+    font-size: 9px;
+    cursor: pointer;
+    border: 0px;
+    background-color: #474747;
+    background-image: -webkit-linear-gradient(top, #505050 0%, #3c3c3c 100%);
+
+}
+
+.documentEntry button {
     opacity: 0.5; /* 50% */
     width: 12px;
     max-width:12px;
@@ -29,16 +42,13 @@
     transition: opacity 0.2s ease;
 }
 
-.documentEntry:hover,
-.documentEntry:active,
-.documentEntry.activeTab {
-    /*background-color: #7f7f7f; *//* rgb(127, 127, 127); */
+.documentEntry.selected {
+    background-color:#7F7F7F;
 }
 
 .documentEntry img:hover {
     opacity: 1.0; /* 100% */
 }
-
 
 .documentEntry span.dirty:before{
     content: "*";

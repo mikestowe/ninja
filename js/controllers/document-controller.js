@@ -8,38 +8,18 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 //
 var Montage = 		require("montage/core/core").Montage,
     Component = 	require("montage/ui/component").Component,
-    Uuid = 			require("montage/core/uuid").Uuid,
     HTMLDocument =  require("js/document/document-html").HtmlDocument,
     TextDocument =  require("js/document/document-text").TextDocument;
 ////////////////////////////////////////////////////////////////////////
 //
 exports.DocumentController = Montage.create(Component, {
 	//
-    hasTemplate: {value: false},
-    _documents: {value: []},
-	//TODO: what is this?!?!
-    _hackInitialStyles: {value: true},
-    _activeDocument: { value: null },
-    //TODO: Are any of these needed?
-    _iframeCounter: { value: 1, enumerable: false },
-    _iframeHolder: { value: null, enumerable: false },
-    _textHolder: { value: null, enumerable: false },
-    _codeMirrorCounter: {value: 1, enumerable: false},
-    
-    activeDocument: {
-        get: function() {
-            return this._activeDocument;
-        },
-        set: function(doc) {
-			//if(!!this._activeDocument){ this._activeDocument.isActive = false;}
+    hasTemplate: {
+        value: false
+    },
 
-            this._activeDocument = doc;
-
-            if(!!this._activeDocument){
-                if(this._documents.indexOf(doc) === -1) this._documents.push(doc);
-                this._activeDocument.isActive = true;
-            }
-        }
+    documents: {
+        value: []
     },
 
     deserializedFromTemplate: {
@@ -52,8 +32,6 @@ exports.DocumentController = Montage.create(Component, {
             this.eventManager.addEventListener("executeSaveAll", this, false);
             this.eventManager.addEventListener("executeFileClose", this, false);
             this.eventManager.addEventListener("executeFileCloseAll", this, false);
-
-            this.eventManager.addEventListener("styleSheetDirty", this, false);
         }
     },
     
@@ -70,11 +48,11 @@ exports.DocumentController = Montage.create(Component, {
     		if (this.redirectRequests && request.parentFrameId !== -1) {
     			//Checking for proper URL redirect (from different directories)
     			if (request.url.indexOf('js/document/templates/banner') !== -1) {
-					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/banner/'))[1]};
+					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/banner/'))[1]};
 				} else if (request.url.indexOf('js/document/templates/html')  !== -1) {
-					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/html/'))[1]};
+					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/html/'))[1]};
 				} else if (request.url.indexOf('js/document/templates/app')  !== -1) {
-					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/app/'))[1]};
+					return {redirectUrl: this.application.ninja.coreIoApi.rootUrl+this.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]+request.url.split(chrome.extension.getURL('js/document/templates/app/'))[1]};
 				} else {
 					//Error, not a valid folder
 				}
@@ -98,13 +76,7 @@ exports.DocumentController = Montage.create(Component, {
     },
 	////////////////////////////////////////////////////////////////////
 
-	
-	
-	
-	
-	
-	
-	
+
     handleExecuteFileOpen: {
         value: function(event) {
             var pickerSettings = event._event.settings || {};
@@ -325,44 +297,6 @@ exports.DocumentController = Montage.create(Component, {
         }
     },
 
-    //todo: remove this funciton as it is not used
-    textDocumentOpened: {
-       value: function(doc) {
-
-
-
-           this.application.ninja.stage.stageView.createTextView(doc);
-
-           /*
-           DocumentManager._hideCurrentDocument();
-           stageManagerModule.stageManager._scrollFlag = false;    // TODO HACK to prevent type error on Hide/Show Iframe
-           DocumentManager.activeDocument = doc;
-
-           var type;
-
-           switch(doc.documentType) {
-               case  "css" :
-                   type = "css";
-                   break;
-               case "js" :
-                   type = "javascript";
-                   break;
-           }
-
-           DocumentManager._codeEditor.editor = CodeMirror.fromTextArea(doc.textArea, {
-                            lineNumbers: true,
-                       mode: type,
-                            onCursorActivity: function() {
-                                DocumentManager._codeEditor.editor.setLineClass(DocumentManager._codeEditor.hline, null);
-                                DocumentManager._codeEditor.hline = DocumentManager._codeEditor.editor.setLineClass(DocumentManager._codeEditor.editor.getCursor().line, "activeline");
-                            }
-                });
-           DocumentManager._codeEditor.hline = DocumentManager._codeEditor.editor.setLineClass(0, "activeline");
-           */
-
-            }
-    },
-
     closeFile: {
         value: function(document) {
             document.closeDocument(this, this.onCloseFile);
@@ -373,7 +307,8 @@ exports.DocumentController = Montage.create(Component, {
         value: function(doc) {
             var previousFocusedDocument;
 
-            this._documents.splice(this._documents.indexOf(doc), 1);
+//            this._documents.splice(this._documents.indexOf(doc), 1);
+            this.application.ninja.docController.removeObjects(this._documents.indexOf(doc));
 
             if(this._documents.length > 0) {
                 previousFocusedDocument = this._documents[this._documents.length - 1];
@@ -433,48 +368,44 @@ exports.DocumentController = Montage.create(Component, {
     // Open document callback
     _onOpenDocument: {
         value: function(doc){
-            var currentDocument;
-            if(this.activeDocument) {
+
+
+            // Bypass all and call main.
+            // TODO: Call ninja directly once this is all cleaned up.
+
+            this.application.ninja.handleOnOpenDocument(doc);
+
+
+//            var currentDocument;
+//            if(this.activeDocument) {
                 // There is a document currently opened
-                currentDocument = this.activeDocument;
-            } else {
+//                currentDocument = this.activeDocument;
+//            } else {
                 // There is no document opened
 
-                // Show the rulers
-                // TODO: Move this indo design view
-                this.application.ninja.stage.showRulers();
-
-                // Show the canvas
-                this.application.ninja.stage.hideCanvas(false);
-            }
+//            }
 
             // Set the active document
-            this.activeDocument = doc;
+//            this.activeDocument = doc;
 
-            // Initialize the documentRoot styles
-            this.initializeRootStyles(doc.model.documentRoot);
-            // Flag to stop stylesheet dirty event
-            this._hackInitialStyles = false;
 
-            this.switchDocuments(currentDocument, doc, true);
+//            this.switchDocuments(currentDocument, doc, true);
+
+
         }
     },
 
 
     _onOpenTextDocument: {
         value: function(doc) {
-            var currentDocument = null;
-            if(this.activeDocument) {
-                // There is a document currently opened
-                currentDocument = this.activeDocument;
-            }
 
-            this.application.ninja.currentDocument = this.activeDocument = doc;
+            this.application.ninja.handleOnOpenDocument(doc);
 
-            document.getElementById("iframeContainer").style.display = "none";
-            this.application.ninja.codeEditorController.applySettings();
+            // Main DIFFERENCE --
+            // TODO: Implement Code View here
+            //document.getElementById("iframeContainer").style.display = "none";
+            //this.application.ninja.codeEditorController.applySettings();
 
-            this.switchDocuments(currentDocument, doc, true);
         }
     },
 
@@ -512,10 +443,10 @@ exports.DocumentController = Montage.create(Component, {
                 this.application.ninja.stage.hideRulers();
             }
 
-            this.application.ninja.stage.clearAllCanvas();
+//            this.application.ninja.stage.clearAllCanvas();
 
             if(didCreate) {
-                newDocument.model.currentView.show();
+//                newDocument.model.currentView.show();
 
                 if(newDocument.currentView === "design") {
                     NJevent("onOpenDocument", newDocument);
@@ -565,47 +496,6 @@ exports.DocumentController = Montage.create(Component, {
             }
 
             return false;
-        }
-    },
-
-    handleStyleSheetDirty:{
-        value:function(){
-            if(!this._hackInitialStyles) {
-                this.activeDocument.model.needsSave = true;
-            }
-        }
-    },
-
-    // TODO: Move this into the design views
-    initializeRootStyles: {
-        value: function(documentRoot) {
-            var sc = this.application.ninja.stylesController,
-                styles = {},
-                needsRule = false,
-                rule;
-
-            if(sc.getElementStyle(documentRoot, "width", false, false) == null) {
-                styles['width'] = '100%';
-                needsRule = true;
-            }
-            if(sc.getElementStyle(documentRoot, "height", false, false) == null) {
-                styles['height'] = '100%';
-                needsRule = true;
-            }
-            if(sc.getElementStyle(documentRoot, "-webkit-transform", false, false) == null) {
-                styles['-webkit-transform'] = 'perspective(1400) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)';
-                needsRule = true;
-            }
-            if(sc.getElementStyle(documentRoot, "-webkit-transform-style", false, false) == null) {
-                styles['-webkit-transform-style'] = 'preserve-3d';
-                needsRule = true;
-            }
-
-            if(needsRule) {
-                rule = sc.addRule('.ninja-body{}');
-                sc.setStyles(rule, styles);
-                sc.addClass(documentRoot, "ninja-body");
-            }
         }
     }
 });

@@ -155,25 +155,41 @@ exports.Stage = Montage.create(Component, {
         set: function(value) { this._userContentBorder = value; }
     },
 
-    _activeDocument : {
+    _currentDocument: {
         value : null,
         enumerable : false
     },
 
-    activeDocument : {
+    currentDocument : {
         get : function() {
-            return this._activeDocument;
+            return this._currentDocument;
         },
-        set : function(document) {
-            ///// If the document is null set default stylesheets to null
-
-            if(!document) {
-                return false;
+        set : function(value) {
+            // TODO: WRONG! Fails when going from design to code view
+            if (value === this._currentDocument || value.getProperty("currentView") !== "design") {
+                console.log("Stage - current document not set since the same value of " + this._currentDocument + " and value " + value);
+                return;
             }
 
-            ///// setting document via binding
-            this._activeDocument = document;
+            if(!value) {
+                // Show the rulers
+                this.showRulers();
+                // Show the canvas
+                this.hideCanvas(false);
+            }
 
+            //console.log("Stage - set current document with value of " + value);
+            this._currentDocument = value;
+
+            if(this._currentDocument.currentView === "design") {
+                this.clearAllCanvas();
+                this.initWithDocument(false);
+            }
+
+            if(!this._currentDocument) {
+                this.hideRulers();
+                this.hideCanvas(true);
+            }
         },
         enumerable : false
     },
@@ -294,9 +310,6 @@ exports.Stage = Montage.create(Component, {
 
             this._scrollLeft = 0;
             this._scrollTop = 0;
-
-            this.stageDeps.handleOpenDocument();
-            this.layout.handleOpenDocument();
 
             if(designView._template) {
                 var initialLeft = parseInt((this.canvas.width - designView._template.size.width)/2);

@@ -82,7 +82,7 @@ exports.MenuItem = Montage.create(Component, {
                 });
 
             }
-
+/*
             if(this.data.enabled.boundProperty) {
 
                 boundObject = this.application.ninja[this.data.enabled.boundObj];
@@ -95,9 +95,11 @@ exports.MenuItem = Montage.create(Component, {
                 });
 
             } else {
+            */
                 this.enabled = this.data.enabled;
+            /*
             }
-
+            */
             if(this.data.submenu) {
                 this.submenu = true;
 

@@ -9,6 +9,7 @@ var Component = require("montage/ui/component").Component;
 
 exports.DocumentsTab = Montage.create(Component, {
 
+    /*
     openDocuments: {
         value: []
     },
@@ -39,5 +40,9 @@ exports.DocumentsTab = Montage.create(Component, {
         value: function(event) {
             
         }
+    }
+    */
+    contentController: {
+        value: null
     }
 });

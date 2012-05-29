@@ -14,6 +14,34 @@ var Montage = 			require("montage/core/core").Montage,
     VecUtils = 			require("js/helper-classes/3D/vec-utils").VecUtils;
 
 exports.StageDeps = Montage.create(Component, {
+
+    _currentDocument: {
+        value : null,
+        enumerable : false
+    },
+
+    currentDocument : {
+        get : function() {
+            return this._currentDocument;
+        },
+        set : function(value) {
+            if (value === this._currentDocument || value.getProperty("currentView") !== "design") {
+                return;
+            }
+
+            this._currentDocument = value;
+
+            if(this._currentDocument) {
+                workingPlane = [0,0,1,0];
+
+                snapManager._isCacheInvalid = true;
+                snapManager.setupDragPlaneFromPlane (workingPlane);
+
+                drawUtils.initializeFromDocument();
+            }
+        }
+    },
+
     viewUtils: {
         value: viewUtils
     },
@@ -56,18 +84,6 @@ exports.StageDeps = Montage.create(Component, {
             drawUtils.viewUtils = viewUtils;
             drawUtils.snapManager = snapManager;
             drawUtils.ElementPlanes = ElementPlanes;
-        }
-    },
-
-    handleOpenDocument: {
-        value: function() {
-
-            workingPlane = [0,0,1,0];
-
-            snapManager._isCacheInvalid = true;
-            snapManager.setupDragPlaneFromPlane (workingPlane);
-
-            drawUtils.initializeFromDocument();
         }
     },
 

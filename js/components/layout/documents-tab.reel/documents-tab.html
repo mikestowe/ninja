@@ -28,22 +28,19 @@
                 "bindings": {
                     "document": {"<-": "@repetition1.objectAtCurrentIteration"},
                     "name":     {"<-": "@repetition1.objectAtCurrentIteration.model.file.name"},
-                    "saveFlag": {"<-": "@repetition1.objectAtCurrentIteration.model.needsSave"},
-                    "active":   {"<-": "@repetition1.objectAtCurrentIteration.model.isActive"}
+                    "saveFlag": {"<-": "@repetition1.objectAtCurrentIteration.model.needsSave"}
                 }
             },
             
             "repetition1": {
                 "prototype": "montage/ui/repetition.reel",
                 "properties": {
-                    "element": {"#": "openDocuments"}
+                    "element": {"#": "openDocuments"},
+                    "isSelectionEnabled": true
                 },
                 "bindings": {
-                    "objects": {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "openDocuments",
-                        "oneway": true
-                    }
+
+                    "contentController": {"<-": "@owner.contentController"}
                 }
             }
 
