@@ -171,10 +171,8 @@ exports.Stage = Montage.create(Component, {
                 return;
             }
 
-            if(!value) {
-                // Show the rulers
+            if(!this._currentDocument) {
                 this.showRulers();
-                // Show the canvas
                 this.hideCanvas(false);
             }
 
@@ -186,7 +184,7 @@ exports.Stage = Montage.create(Component, {
                 this.initWithDocument(false);
             }
 
-            if(!this._currentDocument) {
+            if(!value) {
                 this.hideRulers();
                 this.hideCanvas(true);
             }

@@ -19,17 +19,13 @@
     min-width:0px;
 }
 
-.mybutton {
+.documentCloseButton {
     display: inline;
     -webkit-appearance: none;
     outline: none;
-
-    font-size: 9px;
     cursor: pointer;
     border: 0px;
-    background-color: #474747;
-    background-image: -webkit-linear-gradient(top, #505050 0%, #3c3c3c 100%);
-
+    background: #474747 url(../../../../images/documentsTab/close_button.gif) center center no-repeat;
 }
 
 .documentEntry button {

@@ -20,44 +20,7 @@ exports.SelectionController = Montage.create(Component, {
         }
     },
 
-    _currentDocument: {
-        value : null,
-        enumerable : false
-    },
-
-    currentDocument : {
-        get : function() {
-            return this._currentDocument;
-        },
-        set : function(value) {
-            if (value === this._currentDocument) {
-                return;
-            }
-
-            this._currentDocument = value;
-
-            if(this._currentDocument.currentView === "design") {
-
-                /*
-                this._isDocument = true;
-
-                if(currentSelectionArray) {
-                    this.application.ninja.selectedElements = currentSelectionArray;
-                    if(currentSelectionArray.length) {
-                        this._isDocument = false;
-                        NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument});
-                    }
-                }
-
-                this._selectionContainer = this.application.ninja.currentSelectedContainer;
-                */
-            }
-        }
-    },
-
-    /*
-     * Bound property to the ninja currentSelectedContainer
-     */
+    // Bound property to the ninja currentSelectedContainer
     _selectionContainer: {
         value: null
     },
@@ -77,7 +40,6 @@ exports.SelectionController = Montage.create(Component, {
 
     deserializedFromTemplate: {
         value: function() {
-            this.eventManager.addEventListener("openDocument", this, false);
             this.eventManager.addEventListener("elementAdded", this, false);
             this.eventManager.addEventListener("elementsRemoved", this, false);
             this.eventManager.addEventListener("elementReplaced", this, false);

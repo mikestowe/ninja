@@ -22,8 +22,16 @@
             "closeButton": {
                 "prototype": "montage/ui/button.reel",
                 "properties": {
-                    "element": {"#": "close-btn"}
-                }
+                    "element": {"#": "close-btn"},
+                    "identifier": "closeButton"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"},
+                        "capture": false
+                    }
+                ]
             }
     	}
 		</script>
@@ -31,8 +39,7 @@
     <body>
         <li data-montage-id="documentEntry" class="documentEntry">
             <span data-montage-id="name"></span>
-            <!--<img src="js/components/layout/document-entry.reel/close_button.gif" data-montage-id="close-btn">-->
-            <button type="button" class="mybutton" data-montage-id="close-btn"></button>
+            <button type="button" class="documentCloseButton" data-montage-id="close-btn"></button>
         </li>
     </body>
 </html>
