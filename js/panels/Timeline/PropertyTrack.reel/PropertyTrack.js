@@ -344,27 +344,31 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
     addPropAnimationRuleToElement:{
         value:function(tweenEvent){
             var currentStyleValue = this.ninjaStylesContoller.getElementStyle(this.animatedElement, this.trackEditorProperty);
+            if (currentStyleValue == null) {
+                currentStyleValue = "1px";
+            }
+            console.log(currentStyleValue);
+
             this.propTweens[0].tweenData.tweenedProperties[this.trackEditorProperty] = currentStyleValue;
+
 
             this.animationName = this.animatedElement.classList[0] + "_" + this.trackEditorProperty;
             var currentAnimationNameString = this.parentComponent.parentComponent.parentComponent.animationNamesString;
             var newAnimationNames = currentAnimationNameString + "," + this.animationName;
-            //var currentAnimationDuration = this.ninjaStylesContoller.getElementStyle(this.animatedElement, "-webkit-animation-duration");
-            //var newAnimationDuration = currentAnimationDuration + "," + currentAnimationDuration;
-            //var currentIterationCount = this.ninjaStylesContoller.getElementStyle(this.animatedElement, "-webkit-animation-iteration-count");
-            //var newIterationCount = currentIterationCount + ",1";
+            var currentAnimationDuration = this.ninjaStylesContoller.getElementStyle(this.animatedElement, "-webkit-animation-duration");
+            var newAnimationDuration = currentAnimationDuration + "," + currentAnimationDuration;
+            var currentIterationCount = this.ninjaStylesContoller.getElementStyle(this.animatedElement, "-webkit-animation-iteration-count");
+            var newIterationCount = currentIterationCount + ",1";
 
             this.parentComponent.parentComponent.parentComponent.animationNamesString = newAnimationNames;
 
             this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-name", newAnimationNames);
 
-            //this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-duration", newAnimationDuration);
-            //this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-iteration-count", newIterationCount);
-            //this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-fill-mode", "both");
-            //this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-transition-timing-function", "linear");
+            this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-duration", newAnimationDuration);
+            this.ninjaStylesContoller.setElementStyle(this.animatedElement, "-webkit-animation-iteration-count", newIterationCount);
 
             var initRule = "@-webkit-keyframes " + this.animationName + " { 0% {" + this.trackEditorProperty + ": " + currentStyleValue + ";} 100% {" + this.trackEditorProperty + ": " + currentStyleValue + ";} }";
-            //console.log(initRule);
+            console.log(initRule);
             this.currentKeyframeRule = this.ninjaStylesContoller.addRule(initRule);
 
             this.insertPropTween(tweenEvent.offsetX);
