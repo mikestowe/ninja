@@ -97,6 +97,12 @@ exports.Stage = Montage.create(Component, {
     _layoutCanvas: { value: null },
     layoutCanvas: { get: function() { return this._layoutCanvas; } },
 
+    _gridCanvas: { value: null },
+    gridCanvas: { get: function() { return this._gridCanvas; } },
+
+    _gridContext: { value: null },
+    gridContext: { get: function() { return this._gridContext; } },
+
     _drawingCanvas: { value: null },
     drawingCanvas: { get: function() { return this._drawingCanvas; } },
 
@@ -207,11 +213,14 @@ exports.Stage = Montage.create(Component, {
         value: function() {
             if(this.resizeCanvases) {
                 // TODO GET THE SCROLL SIZE FROM THE CSS -- 11 px
-                this._canvas.width = this._layoutCanvas.width = this._drawingCanvas.width = this.element.offsetWidth - 11 ;
-                this._canvas.height = this._layoutCanvas.height = this._drawingCanvas.height = this.element.offsetHeight - 11;// - 26 - 26;
+                this._canvas.width = this._layoutCanvas.width = this._drawingCanvas.width = this._gridCanvas.width = this.element.offsetWidth - 11 ;
+                this._canvas.height = this._layoutCanvas.height = this._drawingCanvas.height = this._gridCanvas.height = this.element.offsetHeight - 11;// - 26 - 26;
 
                 // Hack for now until a full component
                 this.layout.draw();
+                if(this.application.ninja.currentDocument) {
+                    this.layout.draw3DInfo(true);
+                }
             } else if(this.updatedStage) {
                 this.layout.draw();
                 this.layout.draw3DInfo(true);
@@ -231,6 +240,7 @@ exports.Stage = Montage.create(Component, {
 
             this._context = this._canvas.getContext("2d");
             this._drawingContext= this._drawingCanvas.getContext("2d");
+            this._gridContext= this._gridCanvas.getContext("2d");
 
             // Setup event listeners
             this._drawingCanvas.addEventListener("mousedown", this, false);
@@ -276,8 +286,8 @@ exports.Stage = Montage.create(Component, {
             this.hideCanvas(false);
 
             // Recalculate the canvas sizes because of splitter resizing
-            this._canvas.width = this._layoutCanvas.width = this._drawingCanvas.width = this.element.offsetWidth - 11 ;
-            this._canvas.height = this._layoutCanvas.height = this._drawingCanvas.height = this.element.offsetHeight - 11;
+            this._canvas.width = this._layoutCanvas.width = this._drawingCanvas.width = this._gridCanvas.width = this.element.offsetWidth - 11 ;
+            this._canvas.height = this._layoutCanvas.height = this._drawingCanvas.height = this._gridCanvas.height = this.element.offsetHeight - 11;
 
             designView.iframe.contentWindow.addEventListener("scroll", this, false);
 
@@ -519,11 +529,12 @@ exports.Stage = Montage.create(Component, {
                 this._canvas.style.visibility = "hidden";
                 this._layoutCanvas.style.visibility = "hidden";
                 this._drawingCanvas.style.visibility = "hidden";
+                this._gridCanvas.style.visibility = "hidden";
             } else {
                 this._canvas.style.visibility = "visible";
                 this._layoutCanvas.style.visibility = "visible";
                 this._drawingCanvas.style.visibility = "visible";
-
+                this._gridCanvas.style.visibility = "visible";
             }
         }
     },
@@ -560,10 +571,17 @@ exports.Stage = Montage.create(Component, {
         }
     },
 
+    clearGridCanvas: {
+        value: function() {
+            this._gridContext.clearRect(0, 0, this._gridCanvas.width, this._gridCanvas.height);
+        }
+    },
+
     clearAllCanvas: {
         value: function() {
             this._drawingContext.clearRect(0, 0, this._drawingCanvas.width, this._drawingCanvas.height);
             this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this._gridContext.clearRect(0, 0, this._gridCanvas.width, this._gridCanvas.height);
             this.layout.clearCanvas();
         }
     },

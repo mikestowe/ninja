@@ -126,7 +126,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
             //initialize with current document
             this._eltArray = [];
             this._planesArray = [];
-            this.setDrawingSurfaceElement(stage.canvas);
+            this.setDrawingSurfaceElement(stage.gridCanvas);
             this.setSourceSpaceElement( this.application.ninja.currentDocument.model.documentRoot);
             this.setWorkingPlane( [0,0,1,0] );
 
@@ -307,7 +307,6 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                 }
 
                 if(!changed) {
-                    stage.layout.draw();
                     this.drawWorkingPlane();
                     this.draw3DCompass();
                 }
@@ -631,8 +630,8 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			if (!this.isDrawingGrid()) return;
 
 			var saveContext = this.getDrawingSurfaceElement();
-			//this.setDrawingSurfaceElement(window.stageManager.layoutCanvas);
-			this.setDrawingSurfaceElement(this.application.ninja.stage.layoutCanvas);
+			this.setDrawingSurfaceElement(this.application.ninja.stage.gridCanvas);
+            this.clear();
 
 			// 3 coordinate axes for the plane
 			var zAxis = [this._workingPlane[0], this._workingPlane[1], this._workingPlane[2]];

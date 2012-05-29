@@ -37,8 +37,6 @@ exports.StageDeps = Montage.create(Component, {
             window.MathUtils   = MathUtilsClass;
             window.VecUtils   = VecUtils;
 
-            snapManager.drawingCanvas = this.stage.drawingCanvas;
-
             // Setup the listeners for the draw-util and snapmanager when removing elements
             // TODO Revisit when supporting multiple documents
             drawUtils.initialize();
