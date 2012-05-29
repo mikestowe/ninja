@@ -305,8 +305,7 @@ exports.Stage = Montage.create(Component, {
             this._scrollLeft = 0;
             this._scrollTop = 0;
 
-            this.stageDeps.handleOpenDocument();
-            this.layout.handleOpenDocument();
+            this.initialize3DOnOpenDocument();
 
             if(designView._template) {
                 var initialLeft = parseInt((this.canvas.width - designView._template.size.width)/2);
@@ -1078,6 +1077,18 @@ exports.Stage = Montage.create(Component, {
             this.application.ninja.timelineSplitter.restore();
             this.application.ninja.toolsSplitter.restore();
             this.application.ninja.optionsSplitter.restore();
+        }
+    },
+
+    initialize3DOnOpenDocument: {
+        value: function() {
+
+            workingPlane = [0,0,1,0];
+
+            this.snapManager._isCacheInvalid = true;
+            this.snapManager.setupDragPlaneFromPlane (workingPlane);
+
+            this.drawUtils.initializeFromDocument();
         }
     }
 

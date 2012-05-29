@@ -140,9 +140,8 @@ exports.Layout = Montage.create(Component, {
 
             if(this.stage.appModel.show3dGrid) {
                 this.application.ninja.stage.stageDeps.snapManager.updateWorkingPlaneFromView();
-                drawUtils.drawWorkingPlane();
             }
-
+            drawUtils.drawWorkingPlane();
             drawUtils.draw3DCompass();
         }
     },

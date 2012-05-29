@@ -55,28 +55,6 @@ exports.StageDeps = Montage.create(Component, {
             drawUtils.snapManager = snapManager;
             drawUtils.ElementPlanes = ElementPlanes;
         }
-    },
-
-    handleOpenDocument: {
-        value: function() {
-
-            workingPlane = [0,0,1,0];
-
-            snapManager._isCacheInvalid = true;
-            snapManager.setupDragPlaneFromPlane (workingPlane);
-
-            drawUtils.initializeFromDocument();
-        }
-    },
-
-    handleSwitchDocument: {
-        value: function(){
-            workingPlane = [0,0,1,0];
-
-            snapManager._isCacheInvalid = true;
-            snapManager.setupDragPlaneFromPlane (workingPlane);
-
-            drawUtils.initializeFromDocument();
-        }
     }
+
 });
