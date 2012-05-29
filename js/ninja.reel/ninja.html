@@ -277,7 +277,10 @@
             },
 
             "documentController": {
-                "prototype": "js/controllers/document-controller"
+                "prototype": "js/controllers/document-controller",
+                "bindings": {
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
+                }
             },
 
             "documentList": {

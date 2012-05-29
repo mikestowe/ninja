@@ -296,7 +296,7 @@ exports.Ninja = Montage.create(Component, {
         }
     },
 
-    handleOnOpenDocument: {
+    openDocument: {
         value: function(doc) {
 
 
@@ -306,25 +306,18 @@ exports.Ninja = Montage.create(Component, {
             // TODO: Remove this when integrating the next montage
             this.documentList.selectedObjects = [doc];
 
-            // TODO: Find a better place for this
-            doc.model.currentView.show();
-
             // TODO: Bind directly to the model of the document in components instead of this property
             this.currentSelectedContainer = doc.model.documentRoot;
 
-            /*
-            this.currentDocument = event.detail;
+//            if(this.currentDocument.model.documentRoot) {
+//                this.currentSelectedContainer = this.currentDocument.model.documentRoot;
+//            } else {
+//                alert("The current document has not loaded yet");
+//                return;
+//            }
 
-            if(this.currentDocument.model.documentRoot) {
-                this.currentSelectedContainer = this.currentDocument.model.documentRoot;
-            } else {
-                alert("The current document has not loaded yet");
-                return;
-            }
-
-            this.appModel.show3dGrid = this.currentDocument.draw3DGrid;
-            NJevent("openDocument");
-            */
+//            this.appModel.show3dGrid = this.currentDocument.draw3DGrid;
+//            NJevent("openDocument");
 
         }
     },

@@ -42,7 +42,7 @@
     background-color:#7F7F7F;
 }
 
-.documentEntry img:hover {
+.documentEntry button:hover {
     opacity: 1.0; /* 100% */
 }
 

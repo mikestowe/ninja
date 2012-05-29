@@ -22,6 +22,30 @@ exports.DocumentController = Montage.create(Component, {
         value: []
     },
 
+    _currentDocument: {
+            value : null
+    },
+
+    currentDocument : {
+        get : function() {
+            return this._currentDocument;
+        },
+        set : function(value) {
+            if (value === this._currentDocument || value.getProperty("currentView") !== "design") {
+                return;
+            }
+
+            if(this._currentDocument) {
+                this._currentDocument.model.currentView.hide();
+            }
+
+            this._currentDocument = value;
+
+            this._currentDocument.model.currentView.show();
+
+        }
+    },
+
     deserializedFromTemplate: {
         value: function() { //TODO: Add event naming consistency (save, fileOpen and newFile should be consistent, all file events should be executeFile[operation name])
             this.eventManager.addEventListener("appLoaded", this, false);
@@ -280,11 +304,11 @@ exports.DocumentController = Montage.create(Component, {
 
 					//Open in designer view
                     this.redirectRequests = false;
-                    Montage.create(HTMLDocument).init(file, this, this._onOpenDocument, 'design', template);
+                    Montage.create(HTMLDocument).init(file, this.application.ninja, this.application.ninja.openDocument, 'design', template);
 					break;
 				default:
                     //Open in code view
-                    Montage.create(TextDocument).init(file, this, this._onOpenTextDocument, 'code');
+                    Montage.create(TextDocument).init(file, this.application.ninja, this.application.ninja.openDocument, 'code');
                     break;
 			}
         }
@@ -365,41 +389,9 @@ exports.DocumentController = Montage.create(Component, {
         }
     },
 
-    // Open document callback
-    _onOpenDocument: {
-        value: function(doc){
-
-
-            // Bypass all and call main.
-            // TODO: Call ninja directly once this is all cleaned up.
-
-            this.application.ninja.handleOnOpenDocument(doc);
-
-
-//            var currentDocument;
-//            if(this.activeDocument) {
-                // There is a document currently opened
-//                currentDocument = this.activeDocument;
-//            } else {
-                // There is no document opened
-
-//            }
-
-            // Set the active document
-//            this.activeDocument = doc;
-
-
-//            this.switchDocuments(currentDocument, doc, true);
-
-
-        }
-    },
-
 
     _onOpenTextDocument: {
         value: function(doc) {
-
-            this.application.ninja.handleOnOpenDocument(doc);
 
             // Main DIFFERENCE --
             // TODO: Implement Code View here

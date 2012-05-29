@@ -46,28 +46,6 @@ exports.ToolsProperties = Montage.create(Component, {
         }
     },
 
-    handleCloseDocument: {
-        value: function(){
-            if(!this.application.ninja.documentController.activeDocument) {
-                this.disabled = true;
-            }
-        }
-    },
-
-    prepareForDraw: {
-        enumerable: false,
-        value: function() {
-            this.eventManager.addEventListener( "closeDocument", this, false);
-        }
-    },
-
-    draw: {
-        enumerable: false,
-        value: function() {
-            //this.selectionProperties.needsDraw = true;
-        }
-    },
-
     _currentSelectedTool : {
       value: null
     },

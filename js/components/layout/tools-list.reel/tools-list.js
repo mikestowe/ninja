@@ -64,18 +64,9 @@ exports.ToolsList = Montage.create(Component, {
         }
     },
 
-    handleCloseDocument: {
-        value: function(){
-            if(!this.application.ninja.documentController.activeDocument) {
-                this.disabled = true;
-            }
-        }
-    },
-
     prepareForDraw: {
         enumerable: false,
         value: function() {
-            this.eventManager.addEventListener( "closeDocument", this, false);
             this.PenTool.options = this.application.ninja.toolsProperties.shapeProperties.lineProperties;//this.application.Ninja.toolsProperties.penProperties;
 
             this.SelectionTool.options = this.application.ninja.toolsProperties.selectionProperties;
