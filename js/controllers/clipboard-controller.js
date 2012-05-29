@@ -216,7 +216,7 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
             }
 
 
-            //this.application.ninja.selectionController.selectElements(pastedElements);//select pasted elements - not working!
+            this.application.ninja.selectionController.selectElements(pastedElements);//select pasted elements - not working!
 
 
             this.application.ninja.documentController.activeDocument.needsSave = true;
