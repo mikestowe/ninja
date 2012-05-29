@@ -6,17 +6,16 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 ////////////////////////////////////////////////////////////////////////
 //
-var Montage = 	require("montage/core/core").Montage,
-	Component = require("montage/ui/component").Component,
+var Montage = 			require("montage/core/core").Montage,
+	Component = 		require("montage/ui/component").Component,
     TextDocumentModel = require("js/document/models/text").TextDocumentModel,
-    CodeDocumentView = require("js/document/views/code").CodeDocumentView;
+    CodeDocumentView = 	require("js/document/views/code").CodeDocumentView;
 ////////////////////////////////////////////////////////////////////////
 //	
 exports.TextDocument = Montage.create(Component, {
 	////////////////////////////////////////////////////////////////////
 	//
 	hasTemplate: {
-		enumerable: false,
         value: false
     },
 	////////////////////////////////////////////////////////////////////
@@ -26,45 +25,47 @@ exports.TextDocument = Montage.create(Component, {
     },
     ////////////////////////////////////////////////////////////////////
     //
-
     init:{
-        enumerable: false,
-        value : function(file, context, callback, view){
-            var codeDocumentView = CodeDocumentView.create(), container = null;
-
+        value: function(file, context, callback, view){
+        	//
+            var codeDocumentView = CodeDocumentView.create(), container = null; //TODO: Why is this initilzied to null?
             //Creating instance of Text Document Model
             this.model = Montage.create(TextDocumentModel,{
                 file: {value: file},
-                parentContainer: {value: document.getElementById("codeViewContainer")},
-                views: {value: {'code': codeDocumentView, 'design': null}}
+                parentContainer: {value: document.getElementById("codeViewContainer")}, //TODO: Remove reference to this element, should be dynamic
+                views: {value: {'code': codeDocumentView, 'design': null}} //TODO: Add check if file might have design view, if so, then create it
             });
-
+            //TODO: Add design view logic
+            //Initilizing view(s)
             codeDocumentView.initialize(this.model.parentContainer);
-
-            codeDocumentView.textArea.value = file.content;
-            codeDocumentView.initializeTextView(file, this);
-
+            //Checking for view specified
             if (view === 'code') {
                 //TODO: Remove reference and use as part of model
                 this.currentView = 'code';
                 //Setting current view object to design
                 this.model.currentView = this.model.views.code;
+                //Rendering view
+                codeDocumentView.textArea.value = file.content;
+                codeDocumentView.initializeTextView(file, this);
+            } else {
+	            //Other view(s) logic goes here
             }
-
-
-            callback.call(context, this);
+            //Checking if callback is needed
+            if (callback) callback.call(context, this);
         }
     },
-////////////////////////////////////////////////////////////////////
-    //
-    closeDocument: {
-    		value: function (context, callback) {
-    			var closed = this.model.close(null);
-
-                callback.call(context, this);
-    		}
-    	}
-////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+	//
+	closeDocument: {
+		value: function (context, callback) {
+			//Closing document and getting outcome
+			var closed = this.model.close(null);
+			//Making callback if specified
+			if (callback) callback.call(context, this);
+		}
+	}
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
 });
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
