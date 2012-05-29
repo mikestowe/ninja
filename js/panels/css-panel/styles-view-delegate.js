@@ -75,6 +75,13 @@ exports.StylesViewDelegate = Montage.create(Component, {
             this._dispatchChange();
         }
     },
+
+    handleSelectorStop : {
+        value: function(rule, newSelector, ruleComponent) {
+            ruleComponent.declarationComponent.repetition.childComponents[0].propertyField.start()
+        }
+    },
+
     _getClassNameFromSelector : {
         value: function(selectorText) {
             var results = /.*\.([A-Za-z0-9_-]+)\:?[A-Za-z0-9_"=-]*$/.exec(selectorText);
