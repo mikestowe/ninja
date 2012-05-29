@@ -125,8 +125,17 @@ var TwistVertMaterial = function TwistVertMaterial()
 	this.exportJSON = function () {
 		var jObj =
 		{
-			'material': this.getShaderName(),
-			'name': this.getName(),
+			'material'	: this.getShaderName(),
+			'name'		: this.getName(),
+
+			'tex0'		: this._propValues[this._propNames[4]],
+			'tex1'		: this._propValues[this._propNames[5]],
+
+			'speed'		: this._propValues[this._propNames[3]],
+
+			'limit1'	: this._propValues[this._propNames[0]],
+			'limit2'	: this._propValues[this._propNames[1]],
+			'angle'		: this._propValues[this._propNames[2]]
 		}
 
 		return jObj;
@@ -137,6 +146,17 @@ var TwistVertMaterial = function TwistVertMaterial()
 		this.setName(jObj.name);
 
 		try {
+
+			this._propValues[this._propNames[4]] = jObj.tex0;
+			this._propValues[this._propNames[5]] = jObj.tex1;
+
+			this._propValues[this._propNames[3]] = jObj.speed;
+
+			this._propValues[this._propNames[0]] = jObj.limit1;
+			this._propValues[this._propNames[1]] = jObj.limit2;
+			this._propValues[this._propNames[2]] = jObj.angle;
+
+			this.updateShaderValues();
 		}
 		catch (e) {
 			throw new Error("could not import material: " + importStr);

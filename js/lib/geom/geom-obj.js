@@ -388,6 +388,7 @@ exports.GeomObj = Object.create(Object.prototype, {
                     case "keleidoscope":
                     case "radialBlur":
                     case "pulse":
+					case "twistVert":
                         mat = MaterialsModel.getMaterialByShader(shaderName);
                         if (mat)  mat = mat.dup();
                         break;
