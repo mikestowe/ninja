@@ -195,7 +195,12 @@ exports.ViewUtils = Montage.create(Component, {
 
     getPerspectiveDistFromElement: {
         value: function( elt ) {
-            return ElementsMediator.getPerspectiveDist(elt);
+            var pDist = ElementsMediator.getPerspectiveDist(elt);
+            if(pDist === "none") {
+                return null;
+            } else {
+                return pDist;
+            }
         }
     },
 
@@ -1319,14 +1324,6 @@ exports.ViewUtils = Montage.create(Component, {
             }
 	    }
     },
-
-	getCurrentDocument:
-	{
-		value: function()
-		{
-			return snapManagerModule.SnapManager.application.ninja.currentDocument;
-		}
-	},
 
 	setStageZoom: {
         value:function( globalPt,  zoomFactor ) {

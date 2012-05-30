@@ -136,6 +136,10 @@ exports.Layout = Montage.create(Component, {
         value: function() {
             this.clearCanvas();
 
+            // TODO Bind the layoutview mode to the current document
+            // var mode  = this.application.ninja.currentDocument.layoutMode;
+            if(this.layoutView === "layoutOff") return;
+
             var els = this.elementsToDraw.length;
             for(var i = 0, el; i < els; i++){
                 this.drawTagOutline(this.elementsToDraw[i]);
@@ -147,13 +151,13 @@ exports.Layout = Montage.create(Component, {
         value: function(updatePlanes) {
             if(updatePlanes) {
                 drawUtils.updatePlanes();
+                this.application.ninja.stage.stageDeps.snapManager._isCacheInvalid = true;
             }
 
             if(this.stage.appModel.show3dGrid) {
                 this.application.ninja.stage.stageDeps.snapManager.updateWorkingPlaneFromView();
-                drawUtils.drawWorkingPlane();
             }
-
+            drawUtils.drawWorkingPlane();
             drawUtils.draw3DCompass();
         }
     },
@@ -169,11 +173,6 @@ exports.Layout = Montage.create(Component, {
 
             if(!item || !this.application.ninja.selectionController.isNodeTraversable(item)) return;
 
-            // TODO Bind the layoutview mode to the current document
-            // var mode  = this.application.ninja.currentDocument.layoutMode;
-
-            if(this.layoutView === "layoutOff") return;
-            
             // Don't draw outlines for shapes.
             // TODO Use the element mediator/controller/model to see if its a shape
             // if (utilsModule.utils.isElementAShape(item)) return;

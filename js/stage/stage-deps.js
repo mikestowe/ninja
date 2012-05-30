@@ -25,7 +25,7 @@ exports.StageDeps = Montage.create(Component, {
             return this._currentDocument;
         },
         set : function(value) {
-            if (value === this._currentDocument) {// || value.getProperty("currentView") !== "design") {
+            if (value === this._currentDocument) {
                 return;
             }
 
@@ -68,8 +68,6 @@ exports.StageDeps = Montage.create(Component, {
             window.MathUtils   = MathUtilsClass;
             window.VecUtils   = VecUtils;
 
-            snapManager.drawingCanvas = this.stage.drawingCanvas;
-
             // Setup the listeners for the draw-util and snapmanager when removing elements
             // TODO Revisit when supporting multiple documents
             drawUtils.initialize();
@@ -88,16 +86,6 @@ exports.StageDeps = Montage.create(Component, {
             drawUtils.snapManager = snapManager;
             drawUtils.ElementPlanes = ElementPlanes;
         }
-    },
-
-    handleSwitchDocument: {
-        value: function(){
-            workingPlane = [0,0,1,0];
-
-            snapManager._isCacheInvalid = true;
-            snapManager.setupDragPlaneFromPlane (workingPlane);
-
-            drawUtils.initializeFromDocument();
-        }
     }
+
 });

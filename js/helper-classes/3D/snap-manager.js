@@ -21,8 +21,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 	///////////////////////////////////////////////////////////////////////
 	// Instance variables
 	///////////////////////////////////////////////////////////////////////
-    drawingCanvas: { value: null, writable: true},
-    
+
 	// we keep a stack of working planes to facilitate working on other planes temporarily
 	_workingPlaneStack : { value: [], writable: true },
 
@@ -2124,7 +2123,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 			if (hitRec)
 			{
 				var saveContext = drawUtils.getDrawingSurfaceElement();
-				drawUtils.setDrawingSurfaceElement(this.drawingCanvas);
+				drawUtils.setDrawingSurfaceElement(this.application.ninja.stage.drawingCanvas);
 				var context = drawUtils.getDrawingContext();
 				if (context)
 				{
