@@ -136,6 +136,7 @@ exports.Layout = Montage.create(Component, {
         value: function(updatePlanes) {
             if(updatePlanes) {
                 drawUtils.updatePlanes();
+                this.application.ninja.stage.stageDeps.snapManager._isCacheInvalid = true;
             }
 
             if(this.stage.appModel.show3dGrid) {
