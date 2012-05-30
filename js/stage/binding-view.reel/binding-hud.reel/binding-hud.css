@@ -3,3 +3,60 @@
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
+
+.bindingHud {
+    position: absolute;
+    background: #282828;
+    padding: 0px;
+    color: #FFF;
+    font-size: 11px;
+    box-shadow: 2px 2px 3px black;
+    border-radius: 3px;
+    padding: 3px;
+    padding-top:0px;
+    border:1px solid #000;
+}
+
+.bindingHud .bindingTitle {
+    font-weight:bold;
+    background: url('/images/panels/horizontal-resize.png') no-repeat;
+    padding-left: 10px;
+    line-height: 20px;
+    background-position: left center;
+    padding-top: 2px;
+}
+
+.bindingHud .hudRepetition {
+    background: #555;
+    padding:1px 9px;
+    line-height:16px;
+    border:1px solid #000;
+    box-shadow: inset 0px 0px 4px #333, 1px 1px 0px #3A3A3A;
+    min-width: 65px;
+}
+
+.bindingHud .hudOption {
+    position:relative;
+    border-bottom:1px solid #505050;
+    line-height:16px;
+}
+
+.bindingHud .hudOption:last-child {
+    border-bottom: 0px;
+}
+
+.bindingHud .hudOption .connectorBubble {
+    position: absolute;
+    right: -20px;
+    top: 2px;
+    background: #555;
+    border: 1px solid black;
+    border-radius: 0px;
+    width: 12px;
+    height: 12px;
+    border-left: 0px;
+    /*border-bottom-right-radius: 50%;
+    border-top-right-radius: 50%;*/
+
+
+}

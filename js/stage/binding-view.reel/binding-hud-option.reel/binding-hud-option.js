@@ -11,7 +11,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
-exports.bindingHud = Montage.create(Component, {
+exports.BindingHudOption = Montage.create(Component, {
     title: {
         value: "value"
     }

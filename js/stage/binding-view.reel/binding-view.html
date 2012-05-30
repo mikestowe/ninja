@@ -33,7 +33,10 @@
                     "element": {"#" : "hud"}
                 },
                 "bindings": {
-                    "name": {
+                    "title": {"<-": "@hudRepeater.objectAtCurrentIteration.title"},
+                    "properties": {"<-": "@hudRepeater.objectAtCurrentIteration.properties"},
+                    "x": {"<-": "@hudRepeater.objectAtCurrentIteration.x"},
+                    "y": {"<-": "@hudRepeater.objectAtCurrentIteration.y"}
                 }
             },
             "nonVisualRepeater": {
