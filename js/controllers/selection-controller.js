@@ -45,7 +45,6 @@ exports.SelectionController = Montage.create(Component, {
             this.eventManager.addEventListener("elementReplaced", this, false);
             this.eventManager.addEventListener("selectAll", this, false);
             this.eventManager.addEventListener("switchDocument", this, false);
-            this.eventManager.addEventListener("closeDocument", this, false);
         }
     },
 

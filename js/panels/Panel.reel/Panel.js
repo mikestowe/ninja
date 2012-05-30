@@ -120,7 +120,12 @@ exports.Panel = Montage.create(Component, {
                 this.panelContent.content[0].controller.currentDocument = this._currentDocument;
             }
 
-            this.disabled = this._currentDocument.currentView !== "design";
+            if(!value) {
+                this.disabled = true;
+            } else {
+                this.disabled = this._currentDocument.currentView !== "design";
+            }
+
         }
     },
 

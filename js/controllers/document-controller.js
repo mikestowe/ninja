@@ -31,7 +31,7 @@ exports.DocumentController = Montage.create(Component, {
             return this._currentDocument;
         },
         set : function(value) {
-            if (value === this._currentDocument || value.getProperty("currentView") !== "design") {
+            if (value === this._currentDocument) {
                 return;
             }
 
@@ -41,7 +41,13 @@ exports.DocumentController = Montage.create(Component, {
 
             this._currentDocument = value;
 
-            this._currentDocument.model.currentView.show();
+            if(!value) {
+
+            }  else {
+                this._currentDocument.model.currentView.show();
+            }
+
+
 
         }
     },
@@ -323,7 +329,7 @@ exports.DocumentController = Montage.create(Component, {
 
     closeFile: {
         value: function(document) {
-            document.closeDocument(this, this.onCloseFile);
+            document.closeDocument(this.application.ninja, this.application.ninja.closeFile);
         }
     },
 
@@ -356,39 +362,6 @@ exports.DocumentController = Montage.create(Component, {
 			//TODO: Delete object here
         }
     },
-
-    closeDocument: {
-        value: function(id) {
-            var doc = this._findDocumentByUUID(id);
-
-            var closeDocumentIndex = this._findIndexByUUID(id);
-            this._documents.splice(this._findIndexByUUID(id), 1);
-
-            if(this.activeDocument.uuid === id && this._documents.length > 0) {//closing the active document tab
-                var nextDocumentIndex = -1 ;
-                if((this._documents.length > 0) && (closeDocumentIndex === 0)){
-                    nextDocumentIndex = 0;
-                }else if((this._documents.length > 0) && (closeDocumentIndex > 0)){
-                    nextDocumentIndex = closeDocumentIndex - 1;
-                }
-                this.application.ninja.stage.stageView.switchDocument(this._documents[nextDocumentIndex]);
-                if(typeof doc.stopVideos !== "undefined"){doc.stopVideos();}
-                doc.container.parentNode.removeChild(doc.container);
-            }else if(this._documents.length === 0){
-                // See above
-            }else{//closing inactive document tab - just clear DOM
-                if(typeof doc.pauseAndStopVideos !== "undefined"){
-                    doc.pauseAndStopVideos();
-                }
-                doc.container.parentNode.removeChild(doc.container);
-            }
-
-            NJevent("closeDocument", doc.uri);
-
-            doc=null;
-        }
-    },
-
 
     _onOpenTextDocument: {
         value: function(doc) {
@@ -461,33 +434,6 @@ exports.DocumentController = Montage.create(Component, {
                     this.application.ninja.codeEditorController.applySettings();//should be called after activeDocument is updated
                 }
             }
-        }
-    },
-
-    /**
-     * VIEW Related Methods
-     */
-
-    // PRIVATE
-    _findDocumentByUUID: {
-        value: function(uuid) {
-            var len =  this._documents.length;
-            for(var i = 0; i < len; i++) {
-                if(this._documents[i].uuid === uuid) return this._documents[i];
-            }
-
-            return false;
-        }
-    },
-
-    _findIndexByUUID: {
-        value: function(uuid) {
-            var len =  this._documents.length;
-            for(var i = 0; i < len; i++) {
-                if(this._documents[i].uuid === uuid) return i;
-            }
-
-            return false;
         }
     }
 });

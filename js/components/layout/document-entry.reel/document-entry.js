@@ -9,10 +9,6 @@ var Component = require("montage/ui/component").Component;
 
 exports.DocumentEntry = Montage.create(Component, {
 
-    _uuid: {
-        value: null
-    },
-
     _document: {
         value: null
     },
@@ -23,16 +19,11 @@ exports.DocumentEntry = Montage.create(Component, {
             return this._document;
         },
         set: function(value) {
-
             if (this._document === value) {
                 return;
             }
 
             this._document = value;
-
-            if(value) {
-                this._uuid = value.uuid;
-            }
         }
     },
 
@@ -87,7 +78,7 @@ exports.DocumentEntry = Montage.create(Component, {
 
     handleCloseButtonAction: {
         value: function() {
-            //this.application.ninja.documentController.closeFile(this.application.ninja.documentController._findDocumentByUUID(this._uuid));
+            this.application.ninja.documentController.closeFile(this.document);
         }
     }
 

@@ -164,27 +164,23 @@ exports.Stage = Montage.create(Component, {
             return this._currentDocument;
         },
         set : function(value) {
-            // TODO: WRONG! Fails when going from design to code view
-            if (value === this._currentDocument || value.getProperty("currentView") !== "design") {
-                console.log("Stage - current document not set since the same value of " + this._currentDocument + " and value " + value);
+            if (value === this._currentDocument) {
                 return;
             }
 
-            if(!this._currentDocument) {
+            if(!this._currentDocument && value.currentView === "design") {
                 this.showRulers();
                 this.hideCanvas(false);
             }
 
             this._currentDocument = value;
 
-            if(this._currentDocument.currentView === "design") {
-                this.clearAllCanvas();
-                this.initWithDocument(false);
-            }
-
             if(!value) {
                 this.hideRulers();
                 this.hideCanvas(true);
+            } else if(this._currentDocument.currentView === "design") {
+                this.clearAllCanvas();
+                this.initWithDocument(false);
             }
         }
     },

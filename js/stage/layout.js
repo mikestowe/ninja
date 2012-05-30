@@ -33,13 +33,15 @@ exports.Layout = Montage.create(Component, {
             return this._currentDocument;
         },
         set : function(value) {
-            if (value === this._currentDocument || value.getProperty("currentView") !== "design") {
+            if (value === this._currentDocument) {// || value.getProperty("currentView") !== "design") {
                 return;
             }
 
             this._currentDocument = value;
 
-            if(this._currentDocument) {
+            if(!value) {
+
+            } else if(this._currentDocument.currentView === "design") {
                 this.elementsToDraw = this._currentDocument.model.documentRoot.childNodes;
             }
         }

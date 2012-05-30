@@ -105,7 +105,6 @@ exports.DocumentBar = Montage.create(Component, {
 
     prepareForDraw: {
         value: function() {
-            this.eventManager.addEventListener( "closeDocument", this, false);
             this.designView.addEventListener("click", this, false);
             this.codeView.addEventListener("click", this, false);
 
@@ -134,20 +133,6 @@ exports.DocumentBar = Montage.create(Component, {
 
             this.currentView = event._event.target.id;
             this.application.ninja.documentController.stage.stageView.switchDesignDocViews(event._event.target.id);//switch between design view
-        }
-    },
-
-    handleCloseDocument: {
-        value: function() {
-            if(!this.application.ninja.documentController.activeDocument) {
-                this.disabled = true;
-            }
-        }
-    },
-
-    handleOnDocumentChanged:{
-        value:function(event){
-
         }
     }
 });

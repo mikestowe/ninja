@@ -81,8 +81,6 @@ exports.PanelContainer = Montage.create(Component, {
             }
 
             this.application.localStorage.setItem("panels", this.currentPanelState);
-
-            this.eventManager.addEventListener( "closeDocument", this, false);
         }
     },
  
@@ -104,16 +102,6 @@ exports.PanelContainer = Montage.create(Component, {
         }
     },
 
-    handleCloseDocument: {
-        value: function(){
-            if(!this.application.ninja.documentController.activeDocument) {
-                this.panels.forEach(function(obj) {
-                    obj.disabled = true;
-                });
-            }
-        }
-    },
- 
     handleDropped: {
         value: function(e) {
             var draggedIndex, droppedIndex = 0, len = this.panels.length;

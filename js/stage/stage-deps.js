@@ -25,13 +25,15 @@ exports.StageDeps = Montage.create(Component, {
             return this._currentDocument;
         },
         set : function(value) {
-            if (value === this._currentDocument || value.getProperty("currentView") !== "design") {
+            if (value === this._currentDocument) {// || value.getProperty("currentView") !== "design") {
                 return;
             }
 
             this._currentDocument = value;
 
-            if(this._currentDocument) {
+            if(!value) {
+
+            } else if(this._currentDocument.currentView === "design") {
                 workingPlane = [0,0,1,0];
 
                 snapManager._isCacheInvalid = true;
@@ -39,6 +41,7 @@ exports.StageDeps = Montage.create(Component, {
 
                 drawUtils.initializeFromDocument();
             }
+
         }
     },
 

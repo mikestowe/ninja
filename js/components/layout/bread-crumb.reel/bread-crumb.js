@@ -26,11 +26,11 @@ exports.Breadcrumb = Montage.create(Component, {
 
             this._currentDocument = value;
 
-            if(!this._currentDocument) {
+            if(!value) {
                 this.disabled = true;
+            } else {
+                this.disabled = this._currentDocument.currentView !== "design";
             }
-
-            this.disabled = this._currentDocument.currentView !== "design";
 
         }
     },
@@ -47,15 +47,6 @@ exports.Breadcrumb = Montage.create(Component, {
         set: function(value) {
             if(value !== this._disabled) {
                 this._disabled = value;
-            }
-        }
-    },
-
-    handleCloseDocument: {
-        value: function(){
-            if(!this.application.ninja.documentController.activeDocument && this.application.ninja.currentDocument.currentView !== "code") {
-                this.disabled = true;
-                this.application.ninja.currentSelectedContainer = (this.application.ninja.currentDocument ? this.application.ninja.currentDocument.model.documentRoot : null);
             }
         }
     },
@@ -82,7 +73,6 @@ exports.Breadcrumb = Montage.create(Component, {
 
     prepareForDraw: {
         value: function() {
-            this.eventManager.addEventListener("closeDocument", this, false);
             this.breadcrumbBt.addEventListener("action", this, false);
         }
     },

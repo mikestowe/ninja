@@ -29,7 +29,9 @@ exports.Properties = Montage.create(Component, {
 
             this._currentDocument = value;
 
-            if(this._currentDocument.currentView === "design") {
+            if(!value) {
+                this.clear();
+            } else if(this._currentDocument.currentView === "design") {
                 // Save a reference of the pi inside the document view to be able to clear
                 this._currentDocument.model.views.design.propertiesPanel = this;
 
@@ -74,7 +76,6 @@ exports.Properties = Montage.create(Component, {
         value : function() {
             this.eventManager.addEventListener("elementChange", this, false);
             this.eventManager.addEventListener("selectionChange", this, false);
-            this.eventManager.addEventListener("closeDocument", this, false);
 
             // This will be a toggle option
             if(this.application.ninja.appData.PILiveUpdate) {
@@ -88,12 +89,6 @@ exports.Properties = Montage.create(Component, {
             this.elementClass.element.addEventListener("blur", this, false);
             this.elementClass.element.addEventListener("focus", this, false);
             this.elementClass.element.addEventListener("keyup", this, false);
-        }
-    },
-
-    handleCloseDocument: {
-        value: function(){
-            this.clear();
         }
     },
 
