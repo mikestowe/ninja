@@ -35,7 +35,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
                     var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
                     if (selectedIndex !== false) {
                         if (!this.application.ninja.timeline.arrLayers[selectedIndex].layerData.created) {
-                            //this.retrieveStoredStyleTweens();
+                            this.retrieveStoredStyleTweens();
                         }
                     }
                 }
@@ -240,6 +240,14 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
 
             var newTween = {};
             newTween.tweenData = {};
+            newTween.tweenData.tweenedProperties = [];
+
+            // TODO - check for color values vs px values and set the correct default
+            var propVal = this.ninjaStylesContoller.getElementStyle(this.animatedElement, this.trackEditorProperty);
+            if(propVal == null){
+                propVal = "1px";
+            }
+            newTween.tweenData.tweenedProperties[this.trackEditorProperty] = propVal;
 
             if (clickPos == 0) {
                 newTween.tweenData.spanWidth = 0;
@@ -247,8 +255,6 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
                 newTween.tweenData.keyFrameMillisec = 0;
                 newTween.tweenData.tweenID = 0;
                 newTween.tweenData.spanPosition = 0;
-                newTween.tweenData.tweenedProperties = [];
-                newTween.tweenData.tweenedProperties[this.trackEditorProperty] = this.ninjaStylesContoller.getElementStyle(this.animatedElement, this.trackEditorProperty);
 
                 this.propTweens.push(newTween);
 
@@ -258,8 +264,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
                 newTween.tweenData.keyFrameMillisec = currentMillisec;
                 newTween.tweenData.tweenID = this.nextKeyframe;
                 newTween.tweenData.spanPosition = clickPos - newTween.tweenData.spanWidth;
-                newTween.tweenData.tweenedProperties = [];
-                newTween.tweenData.tweenedProperties[this.trackEditorProperty] = this.ninjaStylesContoller.getElementStyle(this.animatedElement, this.trackEditorProperty);
+
                 this.propTweens.push(newTween);
 
                 this.nextKeyframe += 1;
