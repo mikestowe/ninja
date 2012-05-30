@@ -6,9 +6,9 @@
 
 .tween_keyframe{
     position: absolute;
-    height: 10px;
-    width: 10px;
-    top: 3px;
+    height: 8px;
+    width: 8px;
+    top: 4px;
     background-color: white;
     z-index: 23;
     border-radius: 2px;
@@ -16,6 +16,9 @@
 }
 
 .tween_keyframe.keyframeSelected{
+    height: 10px;
+    width: 10px;
+    top: 3px;
     background-color: #570e19;
     border-style: solid;
     border-width: thin;

@@ -820,12 +820,14 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     getAllAnimationRules:{
         value:function(ruleNames){
+            ruleNames.splice(0,1); // temp remove first animation already retrieved for main track
 
             for(var i in ruleNames){
                 var currentName = ruleNames[i].replace(/^\s+|\s+$/g,"");  // trim whitespace
                 var currentRule = this.application.ninja.stylesController.getAnimationRuleWithName(currentName, this.application.ninja.currentDocument._document);
                 this.ruleList[currentName] = currentRule;
             }
+
             this.recreatePropertyTracks(this.ruleList);
         }
     },
@@ -833,8 +835,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     recreatePropertyTracks:{
         value:function(ruleSet){
 
+
             for(var i in ruleSet){
                 var styleProp = ruleSet[i][0].style[0];
+                console.log(styleProp);
                 this.application.ninja.timeline.layerRepetition.childComponents[0].addStyle(styleProp);
             }
 
