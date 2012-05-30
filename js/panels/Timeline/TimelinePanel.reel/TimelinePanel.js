@@ -15,6 +15,41 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
 
     /* === BEGIN: Models === */
+    _currentDocument: {
+        value : null
+    },
+
+    currentDocument : {
+        get : function() {
+            return this._currentDocument;
+        },
+        set : function(value) {
+            if (value === this._currentDocument) {
+                return;
+            }
+
+            if(!this._currentDocument && value.currentView === "design") {
+                this.enablePanel(true);
+            }
+
+            this._currentDocument = value;
+
+            if(!value) {
+                this.enablePanel(false);
+            } else if(this._currentDocument.currentView === "design") {
+                this._boolCacheArrays = false;
+                this.clearTimelinePanel();
+                this._boolCacheArrays = true;
+
+                // Rebind the document events for the new document context
+                this._bindDocumentEvents();
+
+                // TODO: Fix the init function so that it can be called here instead of when container changes
+                // this.initTimelineForDocument();
+            }
+        }
+    },
+
     _arrLayers:{
         value:[]
     },
@@ -144,8 +179,16 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		return this._currentSelectedContainer;
     	},
     	set: function(newVal) {
-    		this._currentSelectedContainer = newVal;
-    		this.handleDocumentChange();
+            if(this._currentSelectedContainer !== newVal) {
+    		    this._currentSelectedContainer = newVal;
+
+                this._boolCacheArrays = false;
+                this.clearTimelinePanel();
+                this._boolCacheArrays = true;
+
+                // TODO: Fix the function so that we can remove this call here.
+                this.initTimelineForDocument();
+            }
     	}
     },
 
@@ -233,7 +276,6 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         set:function (value) {
             if (this._breadCrumbContainer !== value) {
                 this._breadCrumbContainer = value;
-                //this.LayerBinding();
             }
         }
     },
@@ -334,11 +376,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     prepareForDraw:{
         value:function () {
             this.initTimeline();
-            // Bind the event handler for the document change events
-            this.eventManager.addEventListener("closeDocument", this.handleDocumentChange.bind(this), false);
-            //this.eventManager.addEventListener("switchDocument", this.handleDocumentChange.bind(this), false);
-            //this.eventManager.addEventListener("breadCrumbBinding",this,false);
-            
+
             // Bind drag and drop event handlers
             this.container_layers.addEventListener("dragstart", this.handleLayerDragStart.bind(this), false);
             this.container_layers.addEventListener("dragend", this.handleLayerDragEnd.bind(this), false);
@@ -710,43 +748,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     handleDocumentChange:{
         value:function () {
-			if (this.application.ninja.currentDocument == null) {
-				// On app initialization, the binding is triggered before
-				// there is a currentDocument.  We don't do anything at that time.
-				return;
-			}
-            // this.application.ninja.currentDocument.setLevel = true;
-            this._boolCacheArrays = false;
-            this.clearTimelinePanel();
-            this._boolCacheArrays = true;
 
-            // Rebind the document events for the new document context
-            this._bindDocumentEvents();
-
-            // Reinitialize the timeline...but only if there are open documents.
-            if (this.application.ninja.documentController._documents.length > 0) {
-                this.enablePanel(true);
-                this.initTimelineForDocument();
-
-            } else {
-                this.enablePanel(false);
-            }
         }
     },
-
-    LayerBinding:{
-        value:function (node) {
-            var i = 0;
-
-            if(this._firstTimeLoaded){
-                this._firstTimeLoaded = false;
-                return;
-            }
-
-           this.handleDocumentChange(node);
-        }
-    },
-
 
     updateTrackContainerWidth:{
         value:function () {

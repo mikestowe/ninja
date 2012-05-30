@@ -14,8 +14,7 @@ var ElementsMediator = require("js/mediators/element-mediator").ElementMediator;
 exports.Properties = Montage.create(Component, {
 
     _currentDocument: {
-        value : null,
-        enumerable : false
+        value : null
     },
 
     currentDocument : {
