@@ -428,7 +428,7 @@ exports.PenTool = Montage.create(ShapeTool, {
             var globalMousePos=null, localMousePos=null, stageWorldMousePos = null;
             var drawingCanvas = this._selectedSubpath.getCanvas();
             if (!drawingCanvas){
-                drawingCanvas = ViewUtils.getStageElement();
+                drawingCanvas = this.application.ninja.currentDocument.model.documentRoot;
                 stageWorldMousePos = hitRec.calculateStageWorldPoint();
                 stageWorldMousePos[0]+= snapManager.getStageWidth()*0.5;
                 stageWorldMousePos[1]+= snapManager.getStageHeight()*0.5;
