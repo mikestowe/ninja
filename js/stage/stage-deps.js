@@ -15,36 +15,6 @@ var Montage = 			require("montage/core/core").Montage,
 
 exports.StageDeps = Montage.create(Component, {
 
-    _currentDocument: {
-        value : null,
-        enumerable : false
-    },
-
-    currentDocument : {
-        get : function() {
-            return this._currentDocument;
-        },
-        set : function(value) {
-            if (value === this._currentDocument) {
-                return;
-            }
-
-            this._currentDocument = value;
-
-            if(!value) {
-
-            } else if(this._currentDocument.currentView === "design") {
-                workingPlane = [0,0,1,0];
-
-                snapManager._isCacheInvalid = true;
-                snapManager.setupDragPlaneFromPlane (workingPlane);
-
-                drawUtils.initializeFromDocument();
-            }
-
-        }
-    },
-
     viewUtils: {
         value: viewUtils
     },
