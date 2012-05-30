@@ -12,7 +12,10 @@
     <script type="text/montage-serialization">
         {
             "menudata": {
-                "prototype": "js/data/menu-data"
+                "prototype": "js/data/menu-data",
+                "bindings": {
+                    "currentDocument": {"<-": "@owner.currentDocument"}
+                }
             },
 
             "menuController": {

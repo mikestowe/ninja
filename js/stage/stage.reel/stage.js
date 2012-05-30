@@ -156,8 +156,7 @@ exports.Stage = Montage.create(Component, {
     },
 
     _currentDocument: {
-        value : null,
-        enumerable : false
+        value : null
     },
 
     currentDocument : {
@@ -176,7 +175,6 @@ exports.Stage = Montage.create(Component, {
                 this.hideCanvas(false);
             }
 
-            //console.log("Stage - set current document with value of " + value);
             this._currentDocument = value;
 
             if(this._currentDocument.currentView === "design") {
@@ -188,8 +186,7 @@ exports.Stage = Montage.create(Component, {
                 this.hideRulers();
                 this.hideCanvas(true);
             }
-        },
-        enumerable : false
+        }
     },
 
     _userPaddingLeft: { value: 0 },
@@ -286,8 +283,6 @@ exports.Stage = Montage.create(Component, {
     initWithDocument: {
         value: function(didSwitch) {
             var designView = this.application.ninja.currentDocument.model.views.design;
-
-            this.hideCanvas(false);
 
             // Recalculate the canvas sizes because of splitter resizing
             this._canvas.width = this._layoutCanvas.width = this._drawingCanvas.width = this.element.offsetWidth - 11 ;
