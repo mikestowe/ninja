@@ -418,6 +418,10 @@ exports.PenTool = Montage.create(ShapeTool, {
                             this._removeSelectedAnchorPoint();
                             return;
                         }
+                        if (this._subtool === this.SUBTOOL_PENPLUS){
+                            //nothing to do for the pen plus subtool
+                            return;
+                        }
                         //if we're in ENTRY_SELECT_PATH mode AND we have not yet clicked on the endpoint AND if we have now clicked on the endpoint
                         if (this._entryEditMode === this.ENTRY_SELECT_PATH && this._isPickedEndPointInSelectPathMode === false){
                             var selAnchorIndex = this._selectedSubpath.getSelectedAnchorIndex();
