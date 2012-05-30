@@ -9,13 +9,13 @@ var Montage = require("montage/core/core").Montage,
 
 var objectsController = exports.ObjectsController = Montage.create(Component, {
 
-    _activeDocument : {
+    _currentDocument : {
         value : null,
         enumerable : false
     },
-    activeDocument : {
+    currentDocument : {
         get : function() {
-            return this._activeDocument;
+            return this._currentDocument;
         },
         set : function(doc) {
             if(!doc) { return false; }
@@ -25,7 +25,7 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
                 this.bindToModelObjects();
             }.bind(this), 1000);
 
-            this._activeDocument = doc;
+            this._currentDocument = doc;
         },
         enumerable : false
     },
@@ -46,7 +46,7 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
             }
 
             Object.defineBinding(this, 'objects', {
-                boundObject: this.activeDocument.model,
+                boundObject: this.currentDocument.model,
                 boundObjectPropertyPath: 'objects',
                 oneway: false
             });
@@ -58,28 +58,75 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
     ----------------------------- */
     
     addBinding : {
-        value: function(bindingDescriptor) {
-            if(!bindingDescriptor.sourceObject || !bindingDescriptor.sourceObjectPropertyPath || !bindingDescriptor) { return; }
+        value: function(bindingArgs) {
+            if(!bindingArgs.sourceObject || !bindingArgs.sourceObjectPropertyPath || !bindingArgs) { return; }
 
-            Object.defineBinding(bindingDescriptor.sourceObject, bindingDescriptor.sourceObjectPropertyPath, bindingDescriptor);
+            Object.defineBinding(bindingArgs.sourceObject, bindingArgs.sourceObjectPropertyPath, bindingArgs);
         }
     },
 
     removeBinding : {
-        value: function(bindingDescriptor) {
-            if(!bindingDescriptor) { return; }
+        value: function(bindingArgs) {
+            if(!bindingArgs) { return; }
 
-            Object.deleteBinding(bindingDescriptor.sourceObject, bindingDescriptor.sourceObjectPropertyBindingPath);
+            Object.deleteBinding(bindingArgs.sourceObject, bindingArgs.sourceObjectPropertyPath);
         }
     },
 
     editBindingPropertyPath : {
-        value: function(bindingDescriptor, newPropertyPath) {
-            this.removeBinding(bindingDescriptor);
+        value: function(bindingArgs, newPropertyPath) {
+            this.removeBinding(bindingArgs);
 
-            //this.addBinding()
+            bindingArgs.boundObjectPropertyPath = 'newPropertyPath';
 
+            this.addBinding(bindingArgs);
+        }
+    },
+    
+    getObjectBindings : {
+        value: function(object) {
+            var descriptors = object._bindingDescriptors,
+                bindingsArray = [],
+                property, descriptor, bindingArgsObject;
 
+            for(property in descriptors) {
+                if(descriptors.hasOwnProperty(property)) {
+                    descriptor = descriptors[property];
+
+                    bindingArgsObject = {
+                        sourceObject : object,
+                        sourceObjectPropertyPath : property,
+                        boundObject : descriptor.boundObject,
+                        boundObjectPropertyPath : descriptor.boundObjectPropertyPath,
+                        onweway : descriptor.oneway
+                    };
+
+                    bindingsArray.push(bindingArgsObject);
+                }
+            }
+
+            return bindingsArray;
+        }
+    },
+
+    /* ---- Bindable controller properties ---- */
+
+    currentObjectBindings : {
+        value: null
+    },
+    _currentObject : {
+        value: null
+    },
+    currentObject : {
+        get: function() {
+            return this._currentObject;
+        },
+        set: function(value) {
+            if(value === this._currentObject) { return; }
+
+            this.currentObjectBindings = this.getObjectBindings(value);
+
+            this._currentObject = value;
         }
     }
 
