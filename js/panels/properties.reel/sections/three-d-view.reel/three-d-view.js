@@ -198,6 +198,10 @@ exports.ThreeD = Montage.create(Component, {
         }
     },
 
+    _currentDocument: {
+        value : null
+    },
+
     currentDocument : {
         get : function() {
             return this._currentDocument;
