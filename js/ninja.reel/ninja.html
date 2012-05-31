@@ -345,7 +345,10 @@
             },
 
             "codeEditorController": {
-                "prototype": "js/controllers/code-editor-controller"
+                "prototype": "js/controllers/code-editor-controller",
+                "bindings": {
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
+                }
             },
 
             "owner": {

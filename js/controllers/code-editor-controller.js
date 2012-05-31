@@ -9,9 +9,32 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = 		require("montage/core/core").Montage,
     Component = 	require("montage/ui/component").Component;
 
-var CodeEditorController = exports.CodeEditorController = Montage.create(Component, {
+exports.CodeEditorController = Montage.create(Component, {
     hasTemplate: {
         value: false
+    },
+
+    _currentDocument: {
+        value : null
+    },
+
+    currentDocument : {
+        get : function() {
+            return this._currentDocument;
+        },
+        set : function(value) {
+            if (value === this._currentDocument) {
+                return;
+            }
+
+            this._currentDocument = value;
+
+            if(!value) {
+
+            } else if(this._currentDocument.currentView === "code") {
+                this.applySettings();
+            }
+        }
     },
 
     _codeEditor : {
@@ -213,22 +236,22 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
 
     autoFormatSelection:{
         value: function(){
-            var range = this.getSelectedRange(this.application.ninja.documentController.activeDocument.model.views.code.editor);
-            this.application.ninja.documentController.activeDocument.model.views.code.editor.autoFormatRange(range.from, range.to);
+            var range = this.getSelectedRange(this.currentDocument.model.views.code.editor);
+            this.currentDocument.model.views.code.editor.autoFormatRange(range.from, range.to);
         }
     },
 
     commentSelection:{
         value: function(isComment){
-            var range = this.getSelectedRange(this.application.ninja.documentController.activeDocument.model.views.code.editor);
-            this.application.ninja.documentController.activeDocument.model.views.code.editor.commentRange(isComment, range.from, range.to);
+            var range = this.getSelectedRange(this.currentDocument.model.views.code.editor);
+            this.currentDocument.model.views.code.editor.commentRange(isComment, range.from, range.to);
         }
     },
 
     handleThemeSelection:{
         value: function(){
-            this.application.ninja.documentController.activeDocument.model.views.code.editor.setOption("theme", this.editorTheme);
-            this.application.ninja.documentController.activeDocument.model.views.code.applyTheme("cm-s-"+this.editorTheme);
+            this.currentDocument.model.views.code.editor.setOption("theme", this.editorTheme);
+            this.currentDocument.model.views.code.applyTheme("cm-s-"+this.editorTheme);
         }
     },
 
@@ -236,10 +259,10 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
         value:function(value){
             var originalFont=13,originalLineHeight=16;
             this._zoomFactor = value;
-            this.application.ninja.documentController.activeDocument.model.views.code.textViewContainer.style.fontSize = ""+((value/100)*originalFont)+"px";
-            this.application.ninja.documentController.activeDocument.model.views.code.textViewContainer.style.cursor = "text";
-            this.application.ninja.documentController.activeDocument.model.views.code.textViewContainer.querySelector(".CodeMirror").style.lineHeight = ""+((value/100)*originalLineHeight)+"px";
-            this.application.ninja.documentController.activeDocument.model.views.code.editor.refresh();//refresh editor display for xoom
+            this.currentDocument.model.views.code.textViewContainer.style.fontSize = ""+((value/100)*originalFont)+"px";
+            this.currentDocument.model.views.code.textViewContainer.style.cursor = "text";
+            this.currentDocument.model.views.code.textViewContainer.querySelector(".CodeMirror").style.lineHeight = ""+((value/100)*originalLineHeight)+"px";
+            this.currentDocument.model.views.code.editor.refresh();//refresh editor display for xoom
         }
     },
 
@@ -248,7 +271,7 @@ var CodeEditorController = exports.CodeEditorController = Montage.create(Compone
             //set theme
             this.handleThemeSelection();
             //check autocomplete support
-            this.handleCodeCompletionSupport(this.application.ninja.documentController.activeDocument.model.file.extension);
+            this.handleCodeCompletionSupport(this.currentDocument.model.file.extension);
             //set zoom
             this.handleZoom(this._zoomFactor);
         }

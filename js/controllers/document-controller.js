@@ -18,6 +18,14 @@ exports.DocumentController = Montage.create(Component, {
         value: false
     },
 
+    iframeContainer: {
+        value: null
+    },
+
+    codeContainer: {
+        value: null
+    },
+
     documents: {
         value: []
     },
@@ -42,12 +50,14 @@ exports.DocumentController = Montage.create(Component, {
             this._currentDocument = value;
 
             if(!value) {
-
-            }  else {
+                document.getElementById("iframeContainer").style.display = "block";
+                document.getElementById("codeViewContainer").style.display = "block";
+            } else if(this._currentDocument.currentView === "design") {
+                this._currentDocument.model.currentView.show();
+            } else {
+                document.getElementById("iframeContainer").style.display = "none";
                 this._currentDocument.model.currentView.show();
             }
-
-
 
         }
     },
@@ -64,7 +74,13 @@ exports.DocumentController = Montage.create(Component, {
             this.eventManager.addEventListener("executeFileCloseAll", this, false);
         }
     },
-    
+
+    didCreate: {
+        value: function() {
+            this.iframeContainer = document.getElementById("iframeContainer");
+            this.codeContainer = document.getElementById("codeViewContainer");
+        }
+    },
 
 	//TODO: Ensure these APIs are not needed
 	redirectRequests: {
@@ -330,47 +346,6 @@ exports.DocumentController = Montage.create(Component, {
     closeFile: {
         value: function(document) {
             document.closeDocument(this.application.ninja, this.application.ninja.closeFile);
-        }
-    },
-
-    onCloseFile: {
-        value: function(doc) {
-            var previousFocusedDocument;
-
-//            this._documents.splice(this._documents.indexOf(doc), 1);
-            this.application.ninja.docController.removeObjects(this._documents.indexOf(doc));
-
-            if(this._documents.length > 0) {
-                previousFocusedDocument = this._documents[this._documents.length - 1];
-                this.activeDocument = previousFocusedDocument;
-                this.switchDocuments(this.activeDocument, previousFocusedDocument, false);
-            } else {
-                this.activeDocument = null;
-                this.application.ninja.stage.hideRulers();
-
-                this.application.ninja.stage.hideCanvas(true);
-            }
-
-            //TODO: Use references for those instead of calling getElementById
-            if(this._documents.length === 0){
-                document.getElementById("iframeContainer").style.display="block";
-                document.getElementById("codeViewContainer").style.display="block";
-            }
-
-			NJevent("closeDocument", doc.model.file.uri);
-
-			//TODO: Delete object here
-        }
-    },
-
-    _onOpenTextDocument: {
-        value: function(doc) {
-
-            // Main DIFFERENCE --
-            // TODO: Implement Code View here
-            //document.getElementById("iframeContainer").style.display = "none";
-            //this.application.ninja.codeEditorController.applySettings();
-
         }
     },
 
