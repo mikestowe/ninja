@@ -1040,22 +1040,6 @@ exports.Stage = Montage.create(Component, {
         }
     },
 
-    saveScroll:{
-       value: function(){
-           this.application.ninja.documentController.activeDocument.savedLeftScroll = this._iframeContainer.scrollLeft;
-           this.application.ninja.documentController.activeDocument.savedTopScroll = this._iframeContainer.scrollTop;
-       }
-    },
-
-    restoreScroll:{
-       value: function(){
-           this._iframeContainer.scrollLeft = this.application.ninja.documentController.activeDocument.savedLeftScroll;
-           this._scrollLeft = this.application.ninja.documentController.activeDocument.savedLeftScroll;
-           this._iframeContainer.scrollTop = this.application.ninja.documentController.activeDocument.savedTopScroll;
-           this._scrollTop = this.application.ninja.documentController.activeDocument.savedTopScroll;
-       }
-   },
-
     showRulers:{
         value:function(){
             this.application.ninja.rulerTop.style.display = "block";
