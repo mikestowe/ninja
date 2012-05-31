@@ -20,7 +20,7 @@ exports.BindingView = Montage.create(Component, {
         value: []
     },
     _nonVisualComponents: {
-        value:null
+        value:[]
     },
 
     //Public Objects
@@ -67,8 +67,27 @@ exports.BindingView = Montage.create(Component, {
         value: function() {
             if(this.selectedElement !== null) {
                 this.bindables = [
-                    {"objectName": "Input1", "objectTitle": ""},
-                ]
+                    {
+                        "title": "Input1",
+                        "properties": [
+                            {"title":"Value"},
+                            {"title": "Width"}
+                        ],
+                        "x": 20,
+                        "y": 20
+                    },
+                    {
+                        "title": "Checkbox1",
+                        "properties": [
+                            {"title":"Group"},
+                            {"title": "Value"}
+                        ],
+                        "x": 120,
+                        "y": 120
+                    }
+                ];
+            } else {
+                this.bindables = [];
             }
         }
     },

@@ -7,7 +7,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link rel="stylesheet" type="text/css" href="binding-view.css">
+    <link rel="stylesheet" type="text/css" href="binding-hud.css">
 
     <script type="text/montage-serialization">
         {
@@ -32,7 +32,16 @@
                     "element": {"#" : "hudOption"}
                 },
                 "bindings": {
-                    "title": {"<-": "@repeater.objectAtCurrentIteration.title"}
+                   "title": {"<-": "@repeater.objectAtCurrentIteration.title"}
+                }
+            },
+            "Title": {
+                "prototype": "montage/ui/dynamic-text.reel",
+                "properties": {
+                    "element": {"#": "title"}
+                },
+                "bindings": {
+                    "value": {"<-": "@owner.title"}
                 }
             }
         }
@@ -40,9 +49,8 @@
 
 </head>
 <body>
-
-
     <section data-montage-id="bindingHud" class="bindingHud">
+        <div data-montage-id="title" class="bindingTitle"></div>
         <div data-montage-id="hudRepetition" class="hudRepetition">
             <div data-montage-id="hudOption" class="hudOption"></div>
         </div>

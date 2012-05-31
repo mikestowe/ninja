@@ -7,14 +7,23 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link rel="stylesheet" type="text/css" href="binding-view.css">
+    <link rel="stylesheet" type="text/css" href="binding-hud-option.css">
 
     <script type="text/montage-serialization">
         {
             "owner": {
-                "prototype": "js/stage/binding-view.reel/binding-hud.reel",
+                "prototype": "js/stage/binding-view.reel/binding-hud-option.reel",
                 "properties": {
                     "element": {"#": "hudOption"}
+                }
+            },
+            "label": {
+                "prototype": "montage/ui/dynamic-text.reel",
+                "properties": {
+                    "element": {"#": "hudLabel"}
+                },
+                "bindings": {
+                    "value": {"<-": "@owner.title"}
                 }
             }
         }
@@ -22,6 +31,9 @@
 
 </head>
 <body>
-    <div class="hudOption">Label for options</div>
+    <div data-montage-id="hudOption" class="hudOption">
+        <label data-montage-id="hudLabel" class="hudLabel">Label</label>
+        <div class="connectorBubble"></div>
+    </div>
 </body>
 </html>

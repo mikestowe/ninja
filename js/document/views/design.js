@@ -67,13 +67,13 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     propertiesPanel: {
         value: null
     },
-
     ////////////////////////////////////////////////////////////////////
     //
     _liveNodeList: {
         value: null
     },
-
+    ////////////////////////////////////////////////////////////////////
+    //
     getLiveNodeList: {
         value: function(useFilter) {
             if(useFilter) {
@@ -92,8 +92,6 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         }
     },
     ////////////////////////////////////////////////////////////////////
-    //
-
     //
 	initialize: {
         value: function (parent) {
