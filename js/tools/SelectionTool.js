@@ -165,10 +165,11 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
 					box[3] = point.y;
 
                     //selectionManagerModule.selectionManager.marqueeSelection(box);
-                    var childNodes = this.application.ninja.currentDocument.documentRoot.childNodes;
+                    var childNodes = this.application.ninja.currentDocument.model.documentRoot.childNodes,
+                        selectionController = this.application.ninja.selectionController;
                     childNodes = Array.prototype.slice.call(childNodes, 0);
                     childNodes.forEach(function(item) {
-                        if(item.nodeType == 1 && SelectionTool._complicatedCollisionDetection(item, box)) {
+                        if(selectionController.isNodeTraversable(item) && SelectionTool._complicatedCollisionDetection(item, box)) {
                             selectedItems.push(item);
                         }
                     });
@@ -223,7 +224,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             if(this.application.ninja.selectedElements.length > 0) {
                 this.application.ninja.currentSelectedContainer = this.application.ninja.selectedElements[0];
             } else {
-                this.application.ninja.currentSelectedContainer = this.application.ninja.currentDocument.documentRoot;
+                this.application.ninja.currentSelectedContainer = this.application.ninja.currentDocument.model.documentRoot;
             }
         }
     },
@@ -504,7 +505,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                 delta = vecUtils.vecSubtract( 3, data.pt1, data.pt0 );
                 delta[0] = ~~delta[0];
                 delta[1] = ~~delta[1];
-                delta[2] = 0;
+                //delta[2] = 0;
                 var transMat = Matrix.Translation( delta );
                 this._moveElements(transMat);
             }
@@ -689,7 +690,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             this.application.ninja.stage.clearDrawingCanvas();
 
             var item = this._target;
-            if(!item || (item === this.application.ninja.currentDocument.documentRoot))
+            if(!item || (item === this.application.ninja.currentDocument.model.documentRoot))
             {
                 return;
             }

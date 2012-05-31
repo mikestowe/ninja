@@ -10,7 +10,7 @@ var Montage = require("montage/core/core").Montage,
     HotTextUnit = require("js/components/hottextunit.reel").HotTextUnit,
     Slider = require("js/components/slider.reel").Slider,
     Button = require("montage/ui/button.reel").Button,
-    Checkbox = require("js/components/checkbox.reel").Checkbox,
+    Checkbox = require("js/components/ui/label-checkbox.reel").LabelCheckbox,
     Combobox = require("js/components/combobox.reel").Combobox,
     TextField = require("js/components/TextField.reel").TextField,
     ColorChip = require("js/components/ui/color-chip.reel").ColorChip,
@@ -120,8 +120,13 @@ var PropertyControl = exports.PropertyControl = Montage.create(Component, {
         set: function (data) {
             if (data !== this._data) {
                 this._data = data;
-                this.label = data.label;
-                this.controlType = data.controlType;
+                if(data) {
+                    this._label = data.label;
+                    this._controlType = data.controlType;
+                } else {
+                    this._label = "";
+                    this._controlType = null;
+                }
                 this.needsDraw = true;
             }
         }
@@ -143,6 +148,9 @@ var PropertyControl = exports.PropertyControl = Montage.create(Component, {
 	{
 		value:function(event)
 		{
+            if(event.wasSetByCode) {
+                return;
+            }
             this._dispatchPropEvent(event);
 		}
 	},

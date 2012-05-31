@@ -18,18 +18,11 @@ exports.ViewUtils = Montage.create(Component, {
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
 
-    m_viewportObj : { value: null, writable: true},
-    _perspectiveDist: { value: null, writable: true},
+    m_viewportObj : { value: null},
+    _perspectiveDist: { value: null},
 
     // keep a stack of viewport objects
-    _viewportObjStack: { value: [], writable: true },
-
-    _currentDocument: { value: null , writable: true},
-    _userContentLeft: { value: null , writable: true},
-    _userContentTop: { value: null , writable: true},
-
-    _rootElement: { value: null, writable: true},
-    _stageElement: { value: null, writable: true},
+    _viewportObjStack: { value: []},
 
     ///////////////////////////////////////////////////////////////////////
     // Property accessors
@@ -42,18 +35,6 @@ exports.ViewUtils = Montage.create(Component, {
         }
     },
     getViewportObj: { value: function()                 {  return this.m_viewportObj;   } },
-
-    setRootElement: { value: function( elt )            { this._rootElement = elt; } },
-    getRootElement: { value: function ()                { return this._rootElement;        } },
-
-    setStageElement: { value: function( elt )    {  this._stageElement = elt;    } },
-    getStageElement: { value: function () { return this._stageElement; } },
-
-    setCurrentDocument: { value: function(value) { this._currentDocument = value; }},
-
-    setUserContentLeft: { value: function(value) { this._userContentLeft = value; }},
-    setUserContentTop: { value: function(value) { this._userContentTop = value; }},
-
 
     getPerspectiveDistance: { value: function () { return this._perspectiveDist; } },
 
@@ -124,35 +105,73 @@ exports.ViewUtils = Montage.create(Component, {
         }
     },
 
-    getNormalToUnprojectedElementPlane: {
-        value: function( elt ) {
-            var mat = this.getMatrixFromElement(elt);
+    /*
+	 *  This method will return a normal to a plane containing the Z axis and either the
+	 *  x or y axis of the element.
+	 */
+	getNormalToUnprojectedElementPlane:
+	{
+        value: function( elt, axis,  localMode )
+		{
+            var objMat = this.getMatrixFromElement(elt);
+			var objMatInv = glmat4.inverse( objMat, [] );
 
-            var xVec = [mat[0],  mat[1],  mat[2],  mat[3]];
-            var yVec = [mat[4],  mat[5],  mat[6],  mat[7]];
+            var xVec = [1,0,0];
+            var yVec = [0,1,0];
+            var zVec = [0,0,1];
 
-            var stage = this.application.ninja.currentDocument.documentRoot;
+            var stage = this.application.ninja.currentDocument.model.documentRoot;
             var stageMat = this.getMatrixFromElement(stage);
-            var stagePlane = [stageMat[8],  stageMat[9],  stageMat[10],  stageMat[11]];
 
-			if (elt === stage)
+			var mat = glmat4.multiply( stageMat, objMat, [] );
+			
+			var viewDir;
+			if (localMode)
 			{
-				xVec = [1,0,0];
-				yVec = [0,1,0];
+				var matInv = glmat4.inverse( mat, [] );
+				viewDir = MathUtils.transformVector( [0,0,1], matInv );
+			}
+			else
+			{
+				var stageInv = glmat4.inverse( stageMat, [] );
+				viewDir = MathUtils.transformVector( [0,0,1],  stageInv );
 			}
 
-            var xDot = Math.abs(vecUtils.vecDot(3, xVec, stagePlane));
-            var yDot = Math.abs(vecUtils.vecDot(3, yVec, stagePlane));
+			var plane;
+			var xDot, yDot, zDot;
+			switch (axis)
+			{
+				case 0:
+					yDot = Math.abs(vecUtils.vecDot(3, yVec, viewDir));
+					zDot = Math.abs(vecUtils.vecDot(3, zVec, viewDir));
+					if(yDot > zDot)
+						plane = vecUtils.vecCross( 3, zVec, xVec );
+					else
+						plane = vecUtils.vecCross( 3, yVec, xVec );
+					break;
+					
+				case 1:
+					xDot = Math.abs(vecUtils.vecDot(3, yVec, viewDir));
+					zDot = Math.abs(vecUtils.vecDot(3, zVec, viewDir));
+					if(xDot > zDot)
+						plane = vecUtils.vecCross( 3, zVec, yVec );
+					else
+						plane = vecUtils.vecCross( 3, xVec, yVec );
+					break;
+					break;
 
-            var plane;
-            if(xDot > yDot)
-            {
-                plane = xVec;
-            }
-            else
-            {
-                plane = yVec;
-            }
+				case 2:
+					xDot = Math.abs(vecUtils.vecDot(3, xVec, viewDir));
+					yDot = Math.abs(vecUtils.vecDot(3, yVec, viewDir));
+
+					if(xDot > yDot)
+						plane = vecUtils.vecCross( 3, yVec, zVec );
+					else
+						plane = vecUtils.vecCross( 3, xVec, zVec );
+					break;
+			}
+
+			if (localMode)  plane = MathUtils.transformVector( plane, objMat );
 
             // The translation value is a point on the plane
             this.pushViewportObj( elt );
@@ -242,6 +261,11 @@ exports.ViewUtils = Montage.create(Component, {
         value: function( localPt,  elt ) {
             this.pushViewportObj( elt );
             var viewPt = this.screenToView( localPt[0], localPt[1], localPt[2] );
+			if ((elt == null) || (elt === this._stageElement))
+			{
+				this.popViewportObj();
+				return viewPt;
+			}
             var mat = this.getMatrixFromElement( elt );
             var worldPt = MathUtils.transformPoint( viewPt, mat );
             var stageWorldPt = this.postViewToStageWorld( worldPt, elt );
@@ -256,7 +280,7 @@ exports.ViewUtils = Montage.create(Component, {
     // into stage world space.
     postViewToStageWorld: {
         value: function( localPt, elt ) {
-            if ((elt == null) || (elt === this._stageElement))  return localPt;
+            if ((elt == null) || (elt === this.application.ninja.currentDocument.model.documentRoot))  return localPt;
 
             // get the 3D transformation and 2D offset from the element
             var pt = localPt.slice(0);
@@ -283,7 +307,7 @@ exports.ViewUtils = Montage.create(Component, {
                 this.popViewportObj();
 
                 // check if we are done
-                if (parent === this._stageElement)  break;
+                if (parent === this.application.ninja.currentDocument.model.documentRoot)  break;
 
                 if (this.elementHas3D( parent ))
                 {
@@ -308,15 +332,17 @@ exports.ViewUtils = Montage.create(Component, {
 
             // transform the bounds up the tree
             var child = elt;
-            var parent = elt.offsetParent;
-            while ( parent )
+            while ( child )
             {
                 pt = this.childToParent( pt, child );
 
-                if (parent === this._rootElement)  break;
+//                if (child === this.application.ninja.currentDocument.model.documentRoot)  break;
+//                child = child.offsetParent;
 
-                child = parent;
-                parent = parent.offsetParent;
+                if (child === this.application.ninja.currentDocument.model.documentRoot)  break;
+                if (child === this.application.ninja.currentDocument.model.documentRoot.parentNode)  break;
+                child = child.offsetParent;
+                if (child === this.application.ninja.currentDocument.model.documentRoot.parentNode)  break;
             }
 
             /////////////////////////////////////////////////////////
@@ -352,7 +378,8 @@ exports.ViewUtils = Montage.create(Component, {
 
             // transform the bounds up the tree
             var parent = child.offsetParent;
-            if ( parent )
+            // TODO - Should have a different way to check for new template mode
+            if ( parent || (child === this.application.ninja.currentDocument.model.documentRoot) )
             {
                 this.setViewportObj( child );
 
@@ -365,7 +392,7 @@ exports.ViewUtils = Montage.create(Component, {
                 {
                     // TODO - Commenting out flatten support until new perspective workflow is fully working
                     // if (flatten)  pt[2] = 0;
-//                    var flatten = (parent !== this._rootElement) && (ElementsMediator.getProperty(parent, "-webkit-transform-style") !== "preserve-3d");
+//                    var flatten = (parent !== this.application.ninja.currentDocument.model.documentRoot.parentNode) && (ElementsMediator.getProperty(parent, "-webkit-transform-style") !== "preserve-3d");
 //                    if(flatten)
 //                    {
 //                        pt[2] = 0;
@@ -425,7 +452,7 @@ exports.ViewUtils = Montage.create(Component, {
             // get the four corners of the element in global space
             var bounds = this.getElementViewBounds3D( elt );
             var bounds3D = new Array();
-            var stage = this.application.ninja.currentDocument.documentRoot;
+            var stage = this.application.ninja.currentDocument.model.documentRoot;
             for (var i=0;  i<3;  i++)
             {
                 var gPt = this.localToGlobal( bounds[i],  elt );
@@ -650,7 +677,7 @@ exports.ViewUtils = Montage.create(Component, {
         //        if (elt.__ninjaXOff)  xOff = elt.__ninjaXOff;
         //        if (elt.__ninjaYOff)  yOff = elt.__ninjaYOff;
             var offset = [xOff, yOff];
-            if(elt.offsetParent && (elt.offsetParent !== this._stageElement))
+            if(elt.offsetParent && (elt.offsetParent !== this.application.ninja.currentDocument.model.documentRoot))
             {
                 var pS = elt.ownerDocument.defaultView.getComputedStyle(elt.offsetParent);
 
@@ -666,12 +693,12 @@ exports.ViewUtils = Montage.create(Component, {
                 }
             }
 
-            if(elt === this._stageElement)
+            if(elt === this.application.ninja.currentDocument.model.documentRoot)
             {
                 // TODO - Call a routine from the user document controller to get the offsets/margins
                 // Once we expose the document controller to ViewUtils
-                offset[0] += this._userContentLeft;
-                offset[1] += this._userContentTop;
+                offset[0] += this.application.ninja.stage._userContentLeft;
+                offset[1] += this.application.ninja.stage._userContentTop;
             }
 
             return offset;
@@ -843,7 +870,7 @@ exports.ViewUtils = Montage.create(Component, {
     {
         value: function()
         {
-            var stage = this.application.ninja.currentDocument.documentRoot;
+            var stage = this.application.ninja.currentDocument.model.documentRoot;
 
             this.pushViewportObj( stage );
             // put the point into screen space of the stage - requires
@@ -957,7 +984,7 @@ exports.ViewUtils = Montage.create(Component, {
                     glmat4.multiply( v2s, mat, mat );
 
                 // TODO - Commenting out flatten support until new perspective workflow is fully working
-//                    var flatten = (elt !== this._rootElement) && (elt.parentElement !== this._rootElement) && (ElementsMediator.getProperty(elt.parentElement, "-webkit-transform-style") !== "preserve-3d");
+//                    var flatten = (elt !== this.application.ninja.currentDocument.model.documentRoot.parentNode) && (elt.parentElement !== this.application.ninja.currentDocument.model.documentRoot.parentNode) && (ElementsMediator.getProperty(elt.parentElement, "-webkit-transform-style") !== "preserve-3d");
 //                    if(flatten)
 //                    {
 //                        glmat4.multiply( zMat, mat, mat );
@@ -971,10 +998,10 @@ exports.ViewUtils = Montage.create(Component, {
 
                 this.popViewportObj();
 
-                if (elt === this._stageElement)  break;
-                if (elt === this._rootElement)  break;
+                if (elt === this.application.ninja.currentDocument.model.documentRoot)  break;
+                if (elt === this.application.ninja.currentDocument.model.documentRoot.parentNode)  break;
                 elt = elt.offsetParent;
-                if (elt === this._rootElement)  break;
+                if (elt === this.application.ninja.currentDocument.model.documentRoot.parentNode)  break;
             }
 
             return mat;
@@ -1008,7 +1035,7 @@ exports.ViewUtils = Montage.create(Component, {
                 // multiply all the matrices together
                 //mat = s2v.multiply( mat );
                 glmat4.multiply( s2v, mat, mat );
-                if (elt === this._stageElement)  break;
+                if (elt === this.application.ninja.currentDocument.model.documentRoot)  break;
                 //mat = objMat.multiply( mat );
                 glmat4.multiply( objMat, mat, mat );
                 if(shouldProject && pDist)
@@ -1057,7 +1084,7 @@ exports.ViewUtils = Montage.create(Component, {
                 // multiply all the matrices together
                 //mat = s2v.multiply( mat );
                 glmat4.multiply( s2v, mat, mat );
-                if (elt === this._stageElement)  break;
+                if (elt === this.application.ninja.currentDocument.model.documentRoot)  break;
                 //mat = objMat.multiply( mat );
                 if (shouldLocalTransform) {
                     glmat4.multiply( objMat, mat, mat );
@@ -1244,12 +1271,11 @@ exports.ViewUtils = Montage.create(Component, {
 //
 //	STAGE ACCESSORS:
 //	activeDocument:					this.application.ninja.currentDocument				
-//	userContent (stage):			this.application.ninja.currentDocument.documentRoot
+//	userContent (stage):			this.application.ninja.currentDocument.model.documentRoot
 //	stageManager:					this.application.ninja.stage								// MainApp\js\stage\stage.reel\stage.js
 //	stageManager._canvas:			this.application.ninja.stage.canvas
 //	stageManager.layoutCanvas:		this.application.ninja.stage.layoutCanvas
 //	stageManager.drawingCanvas:		this.application.ninja.stage.drawingCanvas
-//	stageManager.userContentLeft	this.application.ninja.stage.userContentLeft
 //	viewUtils:						stage.viewUtils;
 //	snapManager						stage.snapManager;
 //
@@ -1267,15 +1293,6 @@ exports.ViewUtils = Montage.create(Component, {
 //	MISCELLANEOUS
 //	event.layerX/Y:					var pt = viewUtils.getMousePoint(event);
 
-    getStageDimension: {
-        value: function()
-        {
-            var width = parseInt(this.application.ninja.stage.documentRoot.elementModel.stageDimension.style.getProperty("width"));
-            var height= parseInt(this.application.ninja.stage.documentRoot.elementModel.stageDimension.style.getProperty("height"));
-            return[width,height];
-        }
-    },
-
     getStage: {
         value: function()
 		{
@@ -1288,7 +1305,7 @@ exports.ViewUtils = Montage.create(Component, {
             if (this.application.ninja.currentDocument)
             {
                 // get the user content object
-                var userContent = this.application.ninja.currentDocument.documentRoot;
+                var userContent = this.application.ninja.currentDocument.model.documentRoot;
                 if (!userContent)  return;
                 this.setViewportObj( userContent );
 
@@ -1318,7 +1335,7 @@ exports.ViewUtils = Montage.create(Component, {
 
             if (this.application.ninja.currentDocument)
             {
-                var userContent = this.application.ninja.currentDocument.documentRoot;
+                var userContent = this.application.ninja.currentDocument.model.documentRoot;
                 if (!userContent)  return;
                 this.setViewportObj( userContent );
                 var userContentMat = this.getMatrixFromElement(userContent);

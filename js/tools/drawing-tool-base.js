@@ -12,17 +12,7 @@ var viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
 var vecUtils = require("js/helper-classes/3D/vec-utils").VecUtils;
 var drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils;
 
-exports.DrawingToolBase = Montage.create(Montage, {
-
-    //!!!! HACK
-    // TODO: Need to find a better way to address this
-    stage: {
-        value: null
-    },
-
-    stageComponent: {
-        value: null
-    },
+exports.DrawingToolBase = Montage.create(Component, {
 
     dragPlane: {
         value: null
@@ -36,9 +26,8 @@ exports.DrawingToolBase = Montage.create(Montage, {
      *          2 - Y value converted to screen point
      */
     getInitialSnapPoint: {
-        value: function(x, y, shapeCanvas) {
-            snapManager.clearDragPlane();
-
+        value: function(x, y, shapeCanvas)
+		{
             // update the snap settings
 			snapManager.enableSnapAlign( snapManager.snapAlignEnabledAppLevel() );
 			snapManager.enableElementSnap( snapManager.elementSnapEnabledAppLevel() );
@@ -165,9 +154,8 @@ exports.DrawingToolBase = Montage.create(Montage, {
             // get the hit rec. points in plane space
             var psPos = hitRec.getLocalPoint();
 
-            var stage = this.stage;
-            var stageOffset = viewUtils.getElementOffset(stage);
-            viewUtils.setViewportObj(stage);
+            var stageOffset = viewUtils.getElementOffset(this.application.ninja.currentDocument.model.documentRoot);
+            viewUtils.setViewportObj(this.application.ninja.currentDocument.model.documentRoot);
 
             // get the matrix taking the local hit point in plane space
             // to world space of whatever element it is in.
@@ -195,9 +183,8 @@ exports.DrawingToolBase = Montage.create(Montage, {
 				var p0 = hitRec0.getLocalPoint(),
 					p1 = hitRec1.getLocalPoint();
 
-				var stage = this.stage;
-				var stageOffset = viewUtils.getElementOffset(stage);
-				viewUtils.setViewportObj(stage);
+				var stageOffset = viewUtils.getElementOffset(this.application.ninja.currentDocument.model.documentRoot);
+				viewUtils.setViewportObj(this.application.ninja.currentDocument.model.documentRoot);
 
 				// get the matrix taking the local hit point in plane space
 				// to world space of whatever element it is in.
@@ -302,10 +289,10 @@ exports.DrawingToolBase = Montage.create(Montage, {
 
     draw2DRectangle: {
         value: function(x0, y0, x1, y1) {
-            var drawingContext = this.stageComponent.drawingContext,
-                drawingPrefs = this.stageComponent.drawingContextPreferences;
+            var drawingContext = this.application.ninja.stage.drawingContext,
+                drawingPrefs = this.application.ninja.stage.drawingContextPreferences;
 
-            this.stageComponent.clearDrawingCanvas();
+            this.application.ninja.stage.clearDrawingCanvas();
             //TODO Save and restore state
             drawingContext.strokeStyle = drawingPrefs.color;
             drawingContext.lineWidth = drawingPrefs.thickness;
@@ -321,11 +308,10 @@ exports.DrawingToolBase = Montage.create(Montage, {
             var p0 = hitRec0.getLocalPoint(),
 				p1 = hitRec1.getLocalPoint();
 
-			var stage = this.stage;
-			var stageMat = viewUtils.getMatrixFromElement( stage );
+			var stageMat = viewUtils.getMatrixFromElement(this.application.ninja.currentDocument.model.documentRoot);
 			var elt = hitRec0.getElt();
 			if (!elt) {  elt = hitRec1.getElt();  }
-			if (!elt) {  elt = stage;  }
+			if (!elt) {  elt = this.application.ninja.currentDocument.model.documentRoot;  }
 			if (elt)
 			{
 				viewUtils.pushViewportObj(elt);
@@ -421,11 +407,11 @@ exports.DrawingToolBase = Montage.create(Montage, {
 				if ( isProjected)
 				{
 					var unprojPtArr = [s0, s1, s2, s3];
-					this.stageComponent.draw3DProjectedAndUnprojectedRectangles( unprojPtArr,  projPtArr );
+					this.application.ninja.stage.draw3DProjectedAndUnprojectedRectangles( unprojPtArr,  projPtArr );
 				}
 				else
                 {
-					this.stageComponent.draw3DSelectionRectangle(s0[0], s0[1],
+					this.application.ninja.stage.draw3DSelectionRectangle(s0[0], s0[1],
 																		s1[0], s1[1],
 																		s2[0], s2[1],
 																		s3[0], s3[1],
@@ -441,7 +427,7 @@ exports.DrawingToolBase = Montage.create(Montage, {
         value: function (hitRec0, hitRec1, strokeSize, strokeColor) {
             var p0 = hitRec0.getScreenPoint(),
                 p1 = hitRec1.getScreenPoint();
-            this.stageComponent.drawLine(p0[0], p0[1], p1[0], p1[1], strokeSize, strokeColor);
+            this.application.ninja.stage.drawLine(p0[0], p0[1], p1[0], p1[1], strokeSize, strokeColor);
         }
     },
 

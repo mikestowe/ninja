@@ -39,7 +39,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 			return this._clickedObject;
 		},
 		set: function (value) {
-			if(value === this.application.ninja.currentDocument.documentRoot)
+			if(value === this.application.ninja.currentDocument.model.documentRoot)
 			{
 				this._clickedObject = this._target;
 			}
@@ -64,7 +64,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
         value: function(hitRec)
         {
             var elt = hitRec.getElt();
-            if(elt === this.application.ninja.currentDocument.documentRoot)
+            if(elt === this.application.ninja.currentDocument.model.documentRoot)
             {
                 elt = this._target;
             }
@@ -531,7 +531,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 
 			snapManager.enableSnapAlign( snapManager.snapAlignEnabledAppLevel()	);
 			if ( snapManager.snapAlignEnabled() && this._clickedObject &&
-                (this._clickedObject !== this.application.ninja.currentDocument.documentRoot) )
+                (this._clickedObject !== this.application.ninja.currentDocument.model.documentRoot) )
 			{
 				var alignBounds = !hitRec || (hitRec.getType() == hitRec.SNAP_TYPE_STAGE) || hitRec.isSomeGridTypeSnap();
 				if (alignBounds)
@@ -776,7 +776,7 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 				}
 				else
 				{
-					this.target = this.application.ninja.currentDocument.documentRoot;
+					this.target = this.application.ninja.currentDocument.model.documentRoot;
 				}
 //				this._updateTargets();
 			}

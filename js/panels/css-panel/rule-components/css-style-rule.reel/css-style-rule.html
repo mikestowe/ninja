@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<!-- <copyright>
+This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+(c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+</copyright> -->
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link href="css-style-rule.css" rel="stylesheet" type="text/css">
+    <script type="text/montage-serialization">
+        {
+            "owner": {
+                "prototype" : "js/panels/css-panel/rule-components/css-style-rule.reel",
+                "properties" : {
+                    "element" : {"#" : "rule-item"},
+                    "selectorField": {"@": "selector"},
+                    "declarationComponent": {"@": "declaration"}
+                }
+            },
+            "sheetName": {
+                "prototype": "montage/ui/dynamic-text.reel",
+                "properties": {
+                    "element": {"#": "style-sheet-name"}
+                },
+                "bindings": {
+                    "value" : {"<-": "@owner.sheetName" }
+                }
+            },
+            "selector": {
+                "prototype": "js/components/hintable.reel",
+                "properties": {
+                    "startOnEvent": "click",
+                    "element": {"#": "rule-selector"}
+                },
+                "bindings": {
+                    "value" : {"<<->":"@owner.selector" }
+                }
+            },
+            "declaration": {
+                "prototype": "js/panels/css-panel/style-declaration.reel",
+                "properties": {
+                    "element": {"#": "declaration-list"}
+                },
+                "bindings": {
+                    "focusDelegate" : {"<-": "@owner.focusDelegate" },
+                    "declaration" : {"<-": "@owner._declaration" }
+
+                }
+            },
+            "sheetLink": {
+                "prototype": "montage/ui/anchor.reel",
+                "properties": {
+                    "element": {"#": "style-sheet-name"}
+                }
+            }
+        }
+    </script>
+    <script type="text/json">
+        "declaration": {
+        "module": "js/panels/css-panel/declaration.reel",
+        "name": "Declaration",
+        "properties": {
+        "element": {"#": "declaration-list"}
+        },
+        "bindings": {
+        "focusDelegate" : {
+        "boundObject": {"@": "owner"},
+        "boundObjectPropertyPath": "focusDelegate",
+        "oneway": true
+        },
+        "declaration" : {
+        "boundObject": {"@": "owner"},
+        "boundObjectPropertyPath": "_declaration",
+        "oneway": true
+        }
+        }
+        },
+    </script>
+</head>
+<body>
+<li data-montage-id="rule-item" class="css-style-rule-item">
+    <div class="style-rule-heading">
+        <a href="#" id="style-sheet-name" class="style-sheet-name"></a>
+        <span id="rule-selector" class="nj-css-selector"></span>
+    </div>
+    <dl id="declaration-list"></dl>
+</li>
+</body>
+</html>
