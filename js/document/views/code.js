@@ -10,15 +10,13 @@ var Montage = 			require("montage/core/core").Montage,
 	Component = 		require("montage/ui/component").Component,
 	BaseDocumentView = 	require("js/document/views/base").BaseDocumentView;
 ////////////////////////////////////////////////////////////////////////
-//	
-var CodeDocumentView = exports.CodeDocumentView = Montage.create(BaseDocumentView, {
+//
+exports.CodeDocumentView = Montage.create(BaseDocumentView, {
 	////////////////////////////////////////////////////////////////////
 	//
 	hasTemplate: {
-		enumerable: false,
         value: false
     },
-
     ////////////////////////////////////////////////////////////////////
     //
     _editor: {
@@ -28,7 +26,7 @@ var CodeDocumentView = exports.CodeDocumentView = Montage.create(BaseDocumentVie
     //
     editor: {
         get: function() {return this._editor;},
-        set: function(value) {this._editor= value;}
+        set: function(value) {this._editor = value;}
     },
     ////////////////////////////////////////////////////////////////////
     //
@@ -39,7 +37,7 @@ var CodeDocumentView = exports.CodeDocumentView = Montage.create(BaseDocumentVie
     //
     textArea: {
         get: function() {return this._textArea;},
-        set: function(value) {this._textArea= value;}
+        set: function(value) {this._textArea = value;}
     },
     ////////////////////////////////////////////////////////////////////
     //
@@ -50,14 +48,10 @@ var CodeDocumentView = exports.CodeDocumentView = Montage.create(BaseDocumentVie
     //
     textViewContainer: {
         get: function() {return this._textViewContainer;},
-        set: function(value) {this._textViewContainer= value;}
+        set: function(value) {this._textViewContainer = value;}
     },
     ////////////////////////////////////////////////////////////////////
     //
-
-    /**
-     * Public method
-     */
     initialize:{
         value: function(parentContainer){
             //create contianer
@@ -65,42 +59,35 @@ var CodeDocumentView = exports.CodeDocumentView = Montage.create(BaseDocumentVie
             //this.textViewContainer.id = "codemirror_" + uuid;
             this.textViewContainer.style.display = "block";
             parentContainer.appendChild(this.textViewContainer);
-
             //create text area
             this.textArea = this.createTextAreaElement();
         }
     },
-
-    /**
-     * Public method
-     * Creates a textarea element which will contain the content of the opened text document.
-     */
+    ////////////////////////////////////////////////////////////////////
+    //Creates a textarea element which will contain the content of the opened text document
     createTextAreaElement: {
         value: function() {
             var textArea = document.createElement("textarea");
-//            textArea.id = "code";
-//            textArea.name = "code";
+            //textArea.id = "code";
+            //textArea.name = "code";
             this.textViewContainer.appendChild(textArea);
-
+            //Returns textarea element
             return textArea;
         }
     },
     ////////////////////////////////////////////////////////////////////
-    //
-    /**
-     * Public method
-     * Creates a new instance of a code editor
-     */
+    //Creates a new instance of a code editor
     initializeTextView: {
         value: function(file, textDocument) {
+        	//
             var type;
-
+            //
             if(this.activeDocument) {
                 //need to hide only if another document was open before
-//                this.application.ninja.documentController._hideCurrentDocument();
-//                this.hideOtherDocuments(doc.uuid);
+                //this.application.ninja.documentController._hideCurrentDocument();
+				//this.hideOtherDocuments(doc.uuid);
             }
-
+            //
             switch(file.extension) {
                 case  "css" :
                     type = "css";
@@ -130,18 +117,18 @@ var CodeDocumentView = exports.CodeDocumentView = Montage.create(BaseDocumentVie
                     type = "xml";
                     break;
             }
+            //
             this.textViewContainer.style.display="block";
-
+            //
             this.editor = this.application.ninja.codeEditorController.createEditor(this, type, file.extension, textDocument);
             this.editor.hline = this.editor.setLineClass(0, "activeline");
-
-
         }
     },
     ////////////////////////////////////////////////////////////////////
     //
     show: {
         value: function (callback) {
+        	//
             this.textViewContainer.style.display = "block";
             //
             if (callback) callback();
@@ -151,6 +138,7 @@ var CodeDocumentView = exports.CodeDocumentView = Montage.create(BaseDocumentVie
     //
     hide: {
         value: function (callback) {
+        	//
             this.textViewContainer.style.display = "none";
             //
             if (callback) callback();
@@ -164,8 +152,8 @@ var CodeDocumentView = exports.CodeDocumentView = Montage.create(BaseDocumentVie
             this.textViewContainer.className = "codeViewContainer "+themeClass;
         }
     }
-////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
 });
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
