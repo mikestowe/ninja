@@ -350,6 +350,10 @@ NinjaCvsRt.GLRuntime = Object.create(Object.prototype, {
                     obj.importJSON( jObj );
                     break;
 
+                case 5:     //subpath (created by pen tool)
+                    obj = Object.create(NinjaCvsRt.RuntimeSubPath, {_materials: { value:[], writable:true}});
+                    obj.importJSON (jObj );
+                    break;
                 default:
                     throw new Error( "Attempting to load unrecognized object type: " + type );
                     break;
@@ -1768,5 +1772,202 @@ NinjaCvsRt.RuntimePlasmaMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
         }
     }
 });
+
+
+
+// **************************************************************************
+// Runtime for the pen tool path
+// **************************************************************************
+NinjaCvsRt.AnchorPoint = Object.create(Object.prototype, {
+    /////////////////////////////////////////
+    // Instance variables
+    /////////////////////////////////////////
+    _x: {value: 0.0, writable: true},
+    _y: {value: 0.0, writable: true},
+    _z: {value: 0.0, writable: true},
+
+    _prevX: {value: 0.0, writable: true},
+    _prevY: {value: 0.0, writable: true},
+    _prevZ: {value: 0.0, writable: true},
+
+    _nextX: {value: 0.0, writable: true},
+    _nextY: {value: 0.0, writable: true},
+    _nextZ: {value: 0.0, writable: true},
+
+    // *********** setters ************
+    setPos: {
+        value: function(x,y,z){
+            this._x = x;
+            this._y = y;
+            this._z = z;
+        }
+    },
+
+    setPrevPos: {
+        value: function (x, y, z) {
+            this._prevX = x;
+            this._prevY = y;
+            this._prevZ = z;
+        }
+    },
+
+    setNextPos: {
+        value: function (x, y, z) {
+            this._nextX = x;
+            this._nextY = y;
+            this._nextZ = z;
+        }
+    },
+
+    // *************** getters ******************
+    // (add as needed)
+    getPosX: {
+        value: function () {
+            return this._x;
+        }
+    },
+
+    getPosY: {
+        value: function () {
+            return this._y;
+        }
+    },
+
+    getPosZ: {
+        value: function () {
+            return this._z;
+        }
+    },
+
+    getPrevX: {
+        value: function () {
+            return this._prevX;
+        }
+    },
+
+    getPrevY: {
+        value: function () {
+            return this._prevY;
+        }
+    },
+
+    getPrevZ: {
+        value: function () {
+            return this._prevZ;
+        }
+    },
+
+    getNextX: {
+        value: function () {
+            return this._nextX;
+        }
+    },
+
+    getNextY: {
+        value: function () {
+            return this._nextY;
+        }
+    },
+
+    getNextZ: {
+        value: function () {
+            return this._nextZ;
+        }
+    }
+});
+
+NinjaCvsRt.RuntimeSubPath = Object.create(NinjaCvsRt.RuntimeGeomObj, {
+    // array of anchor points
+    _Anchors: { value: null, writable: true },
+
+    //path properties
+    _isClosed: {value: false, writable: true},
+    _strokeWidth: {value: 0, writable: true},
+    _strokeColor: {value: null, writable: true},
+    _fillColor: {value: null, writable: true},
+
+    importJSON: {
+        value: function(jo) {
+            if (this.geomType()!== jo.geomType){
+                return;
+            }
+            //the geometry for this object
+            this._Anchors = [];
+            var i=0;
+            for (i=0;i<jo.anchors.length;i++){
+                var newAnchor = new NinjaCvsRt.AnchorPoint();
+                var ipAnchor = jo.anchors[i];
+                newAnchor.setPos(ipAnchor._x, ipAnchor._y, ipAnchor._z);
+                newAnchor.setPrevPos(ipAnchor._prevX, ipAnchor._prevY, ipAnchor._prevZ);
+                newAnchor.setNextPos(ipAnchor._nextX, ipAnchor._nextY, ipAnchor._nextZ);
+                this._Anchors.push(newAnchor);
+            }
+            this._isClosed = jo.isClosed;
+
+            //stroke appearance properties
+            this._strokeWidth = jo.strokeWidth;
+            this._strokeColor = jo.strokeColor;
+            this._fillColor = jo.fillColor;
+        }
+    },
+
+    render: {
+        value: function() {
+            // get the world
+            var world = this.getWorld();
+            if (!world)  {
+                throw( "null world in subpath render" );
+                return;
+            }
+
+             // get the context
+            var ctx = world.get2DContext();
+            if (!ctx)  {
+                throw( "null world in subpath render" );
+                return;
+            }
+
+            ctx.save();
+            ctx.lineWidth = this._strokeWidth;
+            ctx.strokeStyle = "black";
+            if (this._strokeColor) {
+                var strokeColorStr = "rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+this._strokeColor[3]+")";
+                ctx.strokeStyle = strokeColorStr;
+            }
+
+            ctx.fillStyle = "white";
+            if (this._fillColor){
+                var fillColorStr = "rgba("+parseInt(255*this._fillColor[0])+","+parseInt(255*this._fillColor[1])+","+parseInt(255*this._fillColor[2])+","+this._fillColor[3]+")";
+                ctx.fillStyle = fillColorStr;
+            }
+            var lineCap = ['butt','round','square'];
+            ctx.lineCap = lineCap[1];
+            var lineJoin = ['round','bevel','miter'];
+            ctx.lineJoin = lineJoin[0];
+
+            var numAnchors = this._Anchors.length;
+            if (numAnchors>1) {
+                ctx.beginPath();
+                var prevAnchor = this._Anchors[0];
+                ctx.moveTo(prevAnchor.getPosX(),prevAnchor.getPosY());
+                for (var i = 1; i < numAnchors; i++) {
+                    var currAnchor = this._Anchors[i];
+                    ctx.bezierCurveTo(prevAnchor.getNextX(),prevAnchor.getNextY(), currAnchor.getPrevX(), currAnchor.getPrevY(), currAnchor.getPosX(), currAnchor.getPosY());
+                    prevAnchor = currAnchor;
+                }
+                if (this._isClosed === true) {
+                    var currAnchor = this._Anchors[0];
+                    ctx.bezierCurveTo(prevAnchor.getNextX(),prevAnchor.getNextY(), currAnchor.getPrevX(), currAnchor.getPrevY(), currAnchor.getPosX(), currAnchor.getPosY());
+                    prevAnchor = currAnchor;
+                    ctx.fill();
+                }
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+    }
+});// **************************************************************************
+// END runtime for the pen tool path
+// **************************************************************************
 
 
