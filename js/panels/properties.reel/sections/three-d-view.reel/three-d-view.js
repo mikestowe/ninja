@@ -213,7 +213,7 @@ exports.ThreeD = Montage.create(Component, {
 
             this._currentDocument = value;
 
-            if(this._currentDocument.currentView === "design") {
+            if(this._currentDocument && this._currentDocument.currentView === "design") {
                 // Save a reference of the pi inside the document view to be able to clear
                 Object.defineBinding(this, "item", {
                     boundObject: this,

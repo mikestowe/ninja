@@ -53,10 +53,9 @@ exports.DocumentController = Montage.create(Component, {
                 document.getElementById("iframeContainer").style.display = "block";
                 document.getElementById("codeViewContainer").style.display = "block";
             } else if(this._currentDocument.currentView === "design") {
-                this._currentDocument.model.currentView.show();
+
             } else {
                 document.getElementById("iframeContainer").style.display = "none";
-                this._currentDocument.model.currentView.show();
             }
 
         }
