@@ -19,11 +19,6 @@ exports.HtmlDocumentModel = Montage.create(BaseDocumentModel, {
     },
     ////////////////////////////////////////////////////////////////////
     //
-    selection: {
-        value: []
-    },
-    ////////////////////////////////////////////////////////////////////
-    //
     selectionContainer: {
         value: []
     },

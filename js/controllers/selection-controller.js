@@ -20,6 +20,60 @@ exports.SelectionController = Montage.create(Component, {
         }
     },
 
+    _currentDocument: {
+            value : null
+    },
+
+    currentDocument : {
+        get : function() {
+            return this._currentDocument;
+        },
+        set : function(value) {
+            if (value === this._currentDocument) {
+                return;
+            }
+
+            if(this._currentDocument) {
+                this._currentDocument.model.selection = this.application.ninja.selectedElements;
+                this._currentDocument.model.selectionContainer = this.application.ninja._currentSelectedContainer;
+            }
+
+            this._currentDocument = value;
+
+            if(!value) {
+            } else if(this._currentDocument.currentView === "design") {
+            } else {
+            }
+
+        }
+    },
+
+    _selectedElements: {
+        value: null
+    },
+
+    selectedElements: {
+        get: function() {
+            return this._selectedElements;
+        },
+        set: function(value) {
+            if(value) {
+                this._selectedElements = value;
+
+                this.application.ninja.selectedElements = this._selectedElements;
+                this.application.ninja._currentSelectedContainer = this._selectionContainer = this.application.ninja.currentDocument.model.documentRoot;
+
+                if(this._selectedElements.length === 0) {
+                    this.executeSelectElement();
+                } else {
+                    this.executeSelectElement(this._selectedElements);
+                }
+
+
+            }
+        }
+    },
+
     // Bound property to the ninja currentSelectedContainer
     _selectionContainer: {
         value: null
@@ -44,16 +98,6 @@ exports.SelectionController = Montage.create(Component, {
             this.eventManager.addEventListener("elementsRemoved", this, false);
             this.eventManager.addEventListener("elementReplaced", this, false);
             this.eventManager.addEventListener("selectAll", this, false);
-            this.eventManager.addEventListener("switchDocument", this, false);
-        }
-    },
-
-    handleSwitchDocument: {
-        value: function() {
-//            if(this.application.ninja.documentController.activeDocument.currentView === "design"){
-                this._isDocument = this.application.ninja.selectedElements.length === 0;
-                NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument} );
-//            }
         }
     },
 

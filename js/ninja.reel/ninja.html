@@ -278,7 +278,9 @@
             "selectionController": {
                 "prototype": "js/controllers/selection-controller",
                 "bindings" : {
-                    "selectionContainer": {"<-": "@owner.currentSelectedContainer"}
+                    "selectionContainer": {"<-": "@owner.currentSelectedContainer"},
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"},
+                    "selectedElements": {"<-": "@documentList.selectedObjects.0.model.selection"}
                 }
             },
 

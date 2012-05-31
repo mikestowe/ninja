@@ -151,7 +151,6 @@ exports.Ninja = Montage.create(Component, {
         }
     },
 
-
     selectedElements: {
         value: []
     },
@@ -196,7 +195,6 @@ exports.Ninja = Montage.create(Component, {
 
             this.eventManager.addEventListener("selectTool", this, false);
             this.eventManager.addEventListener("selectSubTool", this, false);
-            this.eventManager.addEventListener("onSwitchDocument", this, false);
 
             this.addPropertyChangeListener("appModel.livePreview", this.executeLivePreview, false);
             this.addPropertyChangeListener("appModel.chromePreview", this.executeChromePreview, false);
@@ -311,15 +309,9 @@ exports.Ninja = Montage.create(Component, {
                 this.currentSelectedContainer = doc.model.documentRoot;
             }
 
-//            if(this.currentDocument.model.documentRoot) {
-//                this.currentSelectedContainer = this.currentDocument.model.documentRoot;
-//            } else {
-//                alert("The current document has not loaded yet");
-//                return;
-//            }
 
 //            this.appModel.show3dGrid = this.currentDocument.draw3DGrid;
-//            NJevent("openDocument");
+
 
         }
     },
@@ -329,18 +321,6 @@ exports.Ninja = Montage.create(Component, {
             var doc = this.documentList.content[this.documentList.content.indexOf(document)];
 
             this.documentList.removeObjects(doc);
-        }
-    },
-
-    handleOnSwitchDocument: {
-        value: function() {
-            this.currentDocument = this.documentController.activeDocument;
-
-            if(this.currentDocument.model.documentRoot) {
-                this._currentSelectedContainer = this.selectionController._selectionContainer = this.currentDocument.model.documentRoot;
-            }
-
-            NJevent("switchDocument");
         }
     },
 

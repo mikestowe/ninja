@@ -53,9 +53,11 @@ exports.DocumentController = Montage.create(Component, {
                 document.getElementById("iframeContainer").style.display = "block";
                 document.getElementById("codeViewContainer").style.display = "block";
             } else if(this._currentDocument.currentView === "design") {
-
+                this._currentDocument.model.currentView.show();
+                this._currentDocument.model.views.design._liveNodeList = this._currentDocument.model.documentRoot.getElementsByTagName('*');
             } else {
                 document.getElementById("iframeContainer").style.display = "none";
+                this._currentDocument.model.currentView.show();
             }
 
         }
@@ -354,13 +356,7 @@ exports.DocumentController = Montage.create(Component, {
             if(currentDocument) {
                 if(currentDocument.currentView === "design") {
                     currentDocument.serializeDocument();
-                    this.application.ninja._currentSelectedContainer = this.application.ninja.selectionController._selectionContainer = null;
-                    currentDocument.model.views.design.propertiesPanel.clear();
                 }
-
-                currentDocument.model.isActive = false;
-
-                currentDocument.model.currentView.hide();
 
                 if(currentDocument.model.parentContainer !== newDocument.model.parentContainer) {
                     currentDocument.model.parentContainer.style["display"] = "none";
@@ -382,13 +378,9 @@ exports.DocumentController = Montage.create(Component, {
                 this.application.ninja.stage.hideRulers();
             }
 
-//            this.application.ninja.stage.clearAllCanvas();
-
             if(didCreate) {
-//                newDocument.model.currentView.show();
-
                 if(newDocument.currentView === "design") {
-                    NJevent("onOpenDocument", newDocument);
+
                 } else {
                     newDocument.model.parentContainer.style["display"] = "block";
                 }

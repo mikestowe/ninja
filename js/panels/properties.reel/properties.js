@@ -28,15 +28,17 @@ exports.Properties = Montage.create(Component, {
 
             this._currentDocument = value;
 
-            if(!value) {
+//            if(!value) {
                 this.clear();
-            } else if(this._currentDocument.currentView === "design") {
-                // Save a reference of the pi inside the document view to be able to clear
-                this._currentDocument.model.views.design.propertiesPanel = this;
+//            }
 
+            /*
+            else if(this._currentDocument.currentView === "design") {
                 // Display the default document root PI
-                this.displayElementProperties(this._currentDocument.model.documentRoot);
+                //this.displayElementProperties(this._currentDocument.model.documentRoot);
+//                this.displaySelection(this._currentDocument.model.selection);
             }
+            */
         }
     },
 
@@ -177,6 +179,20 @@ exports.Properties = Montage.create(Component, {
                     this.displayGroupProperties(this.application.ninja.selectedElements);
                 }
 
+            }
+        }
+    },
+
+    displaySelection: {
+        value: function(selection) {
+            if(selection.length === 0) {
+                this.displayElementProperties(this._currentDocument.model.documentRoot);
+            } else {
+                if(selection.length === 1) {
+                    this.displayElementProperties(this.application.ninja.selectedElements[0]);
+                } else {
+                    this.displayGroupProperties(this.application.ninja.selectedElements);
+                }
             }
         }
     },
