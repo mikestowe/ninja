@@ -32,6 +32,7 @@ exports.CodeEditorController = Montage.create(Component, {
             if(!value) {
 
             } else if(this._currentDocument.currentView === "code") {
+                this._currentDocument.model.views.code.editor.focus();
                 this.applySettings();
             }
         }
