@@ -405,11 +405,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     
     triggerOutgoingBinding : {
     	value: function() {
-    		if (this.trackData.triggerBinding === true) {
-    			this.trackData.triggerBinding = false;
-    		} else {
-    			this.trackData.triggerBinding = true;
-    		}
+            this.trackData.triggerBinding = !this.trackData.triggerBinding;
     	}
     },
 
@@ -438,7 +434,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     didDraw:{
         value:function () {
             if ((!this.application.ninja.documentController.creatingNewFile)||(!this.application.ninja.currentDocument.setLevel)) {
-                if (this.application.ninja.currentDocument.documentRoot.children[0]) {
+                if (this.application.ninja.currentDocument.model.documentRoot.children[0]) {
                     var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
                     if (selectedIndex !== false) {
 	                    if (!this.application.ninja.timeline.arrLayers[selectedIndex].layerData.created) {
@@ -568,7 +564,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 this.nextKeyframe += 1;
             }
 
-            this.application.ninja.documentController.activeDocument.needsSave = true;
+            this.application.ninja.documentController.activeDocument.model.needsSave = true;
         }
     },
 
@@ -592,7 +588,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                     trackTiming = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-duration");
                     this.nextKeyframe = 0;
 
-                    this.currentKeyframeRule = this.application.ninja.stylesController.getAnimationRuleWithName(this.animationName, this.application.ninja.currentDocument._document);
+                    this.currentKeyframeRule = this.application.ninja.stylesController.getAnimationRuleWithName(this.animationName, this.application.ninja.currentDocument.model.views.design.document);
 
                     for (i =0; this.currentKeyframeRule[i] ;i++) {
                         var newTween = {};
@@ -687,7 +683,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             keyframeString += " }";
             // set the keyframe string as the new rule
             this.currentKeyframeRule = this.ninjaStylesContoller.addRule(keyframeString);
-            this.application.ninja.documentController.activeDocument.needsSave = true;
+            this.application.ninja.documentController.activeDocument.model.needsSave = true;
         }
     },
 

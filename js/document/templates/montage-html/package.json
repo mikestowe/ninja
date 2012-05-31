@@ -1,9 +1,0 @@
-{
-       "directories": {
-           "lib": ""
-       },
-       "mappings": {
-           "montage": "../../../../node_modules/montage/",
-           "montage-google": "../../../../node_modules/montage-google/"
-       }
-}

@@ -44,8 +44,7 @@ exports.DualRow = Montage.create(Component, {
             }
             if(this.label2 !== null) {
                 if(this.content2.type === "button") {
-                    this.content2.element = document.createElement("button");
-                    this.content2.element.classList.add("nj-skinned");
+                    this.content2.label = this.label2;
                     this.element.getElementsByClassName("lbl")[1].style.display = "none";
                 } else {
                     this.element.getElementsByClassName("lbl")[1].innerHTML = this.label2 + ":";

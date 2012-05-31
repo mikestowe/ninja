@@ -21,7 +21,6 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 	///////////////////////////////////////////////////////////////////////
 	// Instance variables
 	///////////////////////////////////////////////////////////////////////
-    currentStage: { value: null, writable: true },
     drawingCanvas: { value: null, writable: true},
     
 	// we keep a stack of working planes to facilitate working on other planes temporarily
@@ -84,14 +83,14 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 	popWorkingPlane : { value: function ()		{ workingPlane = this._workingPlaneStack.pop(); return workingPlane; }},
 
 	getStageWidth : { value: function ()		{
-		return parseInt(this.currentStage.offsetWidth);
+		return parseInt(this.application.ninja.currentDocument.model.documentRoot.offsetWidth);
 	}},
 
 	getStageHeight : { value: function ()		{
-		return parseInt(this.currentStage.offsetHeight);
+		return parseInt(this.application.ninja.currentDocument.model.documentRoot.offsetHeight);
 	}},
 
-    getStage : { value: function()		{        return this.currentStage;    }},
+    getStage : { value: function()		{        return this.application.ninja.currentDocument.model.documentRoot;    }},
 
 	getGridVertexHitRad : { value: function()		{  return this._gridVertexHitRad;				}},
 	getGridEdgeHitRad : { value: function()		{  return this._gridEdgeHitRad;					}},
@@ -130,10 +129,10 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 
     bindSnap: {
         value: function() {
-            this.addEventListener("change@appModel.snap", this.toggleSnap, false);
-            this.addEventListener("change@appModel.snapGrid", this.toggleSnapGrid, false);
-            this.addEventListener("change@appModel.snapObjects", this.toggleSnapObjects, false);
-            this.addEventListener("change@appModel.snapAlign", this.toggleSnapAlign, false);
+            this.addPropertyChangeListener("appModel.snap", this.toggleSnap, false);
+            this.addPropertyChangeListener("appModel.snapGrid", this.toggleSnapGrid, false);
+            this.addPropertyChangeListener("appModel.snapObjects", this.toggleSnapObjects, false);
+            this.addPropertyChangeListener("appModel.snapAlign", this.toggleSnapAlign, false);
         }
     },
 
@@ -185,12 +184,6 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
         }
     },
 
-    setCurrentStage: {
-        value: function(stage) {
-            this.currentStage = stage;
-        }
-    },
-
 	snap : {
 		value: function (xScreen, yScreen, snap3D,  quadPt) 
 		{
@@ -230,64 +223,22 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 				else
 					parentPt = [xScreen, yScreen, 0.0];
 
-                var eyePt = [];
-				var vec = viewUtils.parentToChildVec(parentPt, stage, eyePt);
-				if (vec)
-				{
-					// activate the drag working plane
-					if (!snap3D && this.hasDragPlane())
-						this.activateDragPlane();
+				if (!snap3D && this._hasDragPlane)
+					this.activateDragPlane();
 
-					// project to the working plane
-					var currentWorkingPlane = workingPlane.slice(0);
-					var wp = currentWorkingPlane.slice(0);
-					var mat = viewUtils.getMatrixFromElement(stage);
-					wp = MathUtils.transformPlane(wp, mat);
-					var projPt = MathUtils.vecIntersectPlane(eyePt, vec, wp);
-					if (projPt)
-					{
-						// the local point gets stored in the coordinate space of the plane
-						var wpMat = drawUtils.getPlaneToWorldMatrix(currentWorkingPlane, MathUtils.getPointOnPlane(currentWorkingPlane));
-						projPt[3] = 1.0;
-						//var planeToViewMat = mat.multiply(wpMat);
-						var planeToViewMat = glmat4.multiply(mat, wpMat, []);
-						//var viewToPlaneMat = planeToViewMat.inverse();
-						var viewToPlaneMat = glmat4.inverse( planeToViewMat, [] );
-						var planePt = projPt.slice(0);
-						planePt[3] = 1.0;
-						//planePt = viewToPlaneMat.multiply(planePt);
-						planePt = glmat4.multiplyVec3( viewToPlaneMat, planePt );
+				var hitRec = this.snapToStage( parentPt,  quadPt );
 
-						// get the screen position of the projected point
-						viewUtils.setViewportObj(stage);
-						var offset = viewUtils.getElementOffset(stage);
-						offset[2] = 0;
-						var scrPt = viewUtils.viewToScreen(projPt);
-						//scrPt = scrPt.add(offset);
-						scrPt = vecUtils.vecAdd(3, scrPt, offset);
+				// try snapping to the 3D grid, or to the stage boundaries if the grid is not displayed
+				if (this.gridSnapEnabled())
+					this.snapToGrid( hitRec );
 
-						// create the hit record
-						var hitRec = Object.create(HitRecord);//new HitRecord();
-						hitRec.setLocalPoint(planePt);
-						hitRec.setPlaneMatrix( wpMat );
-						hitRec.setScreenPoint(scrPt);
-						hitRec.setPlane(currentWorkingPlane);
-						hitRec.setType( hitRec.SNAP_TYPE_STAGE );
-						hitRec.setElt( stage );
-						if (quadPt)  hitRec.setUseQuadPoint( true );
+				// save the hit record
+				hitRecArray.push( hitRec );
 
-						// try snapping to the 3D grid, or to the stage boundaries if the grid is not displayed
-						if (this.gridSnapEnabled())
-							this.snapToGrid( hitRec );
+				// restore the original working plane
+				if (!snap3D && this.hasDragPlane())
+					this.deactivateDragPlane();
 
-						// save the hit record
-						hitRecArray.push( hitRec );
-
-						// restore the original working plane
-						if (!snap3D && this.hasDragPlane())
-							this.deactivateDragPlane();
-					}
-				}
 			}	//if (hitRecArray.length == 0)
 
 			var rtnHit;
@@ -309,6 +260,62 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 			
 			//rtnHit.test();		// DEBUG CODE.  REMOVE THIS
 			return rtnHit;
+		}
+	},
+
+	snapToStage:
+	{
+		value: function( scrPt,  quadPt )
+		{
+			var stage = this.getStage();
+			var l2g = viewUtils.getLocalToGlobalMatrix( stage );
+			var g2l = glmat4.inverse( l2g, [] );
+
+			var pt0 = scrPt.slice(),  pt1 = scrPt.slice();
+			pt0[2] = 0.0;   pt1[2] = 10;
+
+			var localPt0 = MathUtils.transformAndDivideHomogeneousPoint( pt0, g2l ),
+				localPt1 = MathUtils.transformAndDivideHomogeneousPoint( pt1, g2l );
+
+			var stageWorldPt0 = viewUtils.localToStageWorld( localPt0, stage ),
+				stageWorldPt1 = viewUtils.localToStageWorld( localPt1, stage );
+			var vec = vecUtils.vecSubtract( 3,  stageWorldPt1, stageWorldPt0 );
+			
+			var ptOnWorkingPlane = MathUtils.vecIntersectPlane(stageWorldPt0, vec, workingPlane);
+
+			var wpMat = drawUtils.getPlaneToWorldMatrix(workingPlane, MathUtils.getPointOnPlane(workingPlane)),
+				wpMatInv = glmat4.inverse( wpMat, [] );
+			var localPt = MathUtils.transformPoint( ptOnWorkingPlane, wpMatInv );
+
+			// create the hit record
+			var hitRec = Object.create(HitRecord);
+			hitRec.setLocalPoint( localPt );
+			hitRec.setPlaneMatrix( wpMat );
+			hitRec.setScreenPoint(scrPt);
+			hitRec.setPlane(workingPlane);
+			hitRec.setType( hitRec.SNAP_TYPE_STAGE );
+			hitRec.setElt( stage );
+			if (quadPt)  hitRec.setUseQuadPoint( true );
+
+			// DEBUG CODE
+			// check that the point is on the working plane
+			var tmpStageWorldPt = hitRec.calculateStageWorldPoint();
+			var err = vecUtils.vecDot(3, tmpStageWorldPt, workingPlane) + workingPlane[3];
+			if (MathUtils.fpSign(err) !== 0)
+				console.log( "snapToStage (function) not on working plane: " + err );
+			//////////////////////////////////////////////////////////////////////
+
+			var calculatedScreenPt = hitRec.calculateScreenPoint();
+			hitRec.setScreenPoint(calculatedScreenPt);
+
+			// DEBUG CODE
+			// check that the point is on the working plane
+			var err2 = vecUtils.vecDist(2,  calculatedScreenPt, scrPt );
+			if (MathUtils.fpSign(err2) !== 0)
+				console.log( "snapToStage (function) error in screen point: " + err2 );
+			//////////////////////////////////////////////////////////////////////
+
+			return hitRec;
 		}
 	},
 
@@ -1617,11 +1624,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 					if (x > y) {
 						if (x > z) {
 							plane[0] = 1;
-                            if(this.application.ninja.currentDocument.documentRoot.id !== "UserContent") {
-                                plane[3] = stage.scrollWidth / 2.0;
-                            } else {
-                                plane[3] = this.getStageWidth() / 2.0;
-                            }
+                            plane[3] = this.getStageWidth() / 2.0;
 							if (dir[0] > 0) plane[3] = -plane[3];
 							change = !drawUtils.drawYZ;
 							drawUtils.drawXY = drawUtils.drawXZ = false;
@@ -1639,11 +1642,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 					else {
 						if (y > z) {
 							plane[1] = 1;
-                            if(this.application.ninja.currentDocument.documentRoot.id !== "UserContent") {
-                                plane[3] = stage.scrollHeight / 2.0;
-                            } else {
-                                plane[3] = this.getStageHeight() / 2.0;
-                            }
+                            plane[3] = this.getStageHeight() / 2.0;
 							if (dir[1] > 0) plane[3] = -plane[3];
 							change = !drawUtils.drawXZ;
 							drawUtils.drawXY = drawUtils.drawYZ = false;
@@ -1799,8 +1798,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 						hSnap.setScreenPoint( scrPt );
 						hSnap.setType( hSnap.SNAP_TYPE_ALIGN_MERGED );
 						hSnap.setElement( stage );
-						hSnap.setPlane( [0,0,1,0] );
-						hSnap.setPlaneMatrix( Matrix.I(4) );
+						//hSnap.setPlane( [0,0,1,0] );
+						//hSnap.setPlaneMatrix( Matrix.I(4) );
 						if (vSnap.hasAssociatedScreenPoint() )
 							hSnap.setAssociatedScreenPoint( vSnap.getAssociatedScreenPoint() );
 						if (vSnap.hasAssociatedScreenPoint2() )
@@ -1848,8 +1847,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 						hSnap.setScreenPoint( scrPt );
 						hSnap.setType( hSnap.SNAP_TYPE_ALIGN_MERGED );
 						hSnap.setElement( stage );
-						hSnap.setPlane( [0,0,1,0] );
-						hSnap.setPlaneMatrix( Matrix.I(4) );
+						//hSnap.setPlane( [0,0,1,0] );
+						//hSnap.setPlaneMatrix( Matrix.I(4) );
 						if (vSnap.hasAssociatedScreenPoint() )
 							hSnap.setAssociatedScreenPoint( vSnap.getAssociatedScreenPoint() );
 						if (vSnap.hasAssociatedScreenPoint2() )
@@ -1903,8 +1902,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 							hSnap.setScreenPoint( scrPt );
 							hSnap.setType( hSnap.SNAP_TYPE_ALIGN_MERGED );
 							hSnap.setElement( stage );
-							hSnap.setPlane( [0,0,1,0] );
-							hSnap.setPlaneMatrix( Matrix.I(4) );
+							//hSnap.setPlane( [0,0,1,0] );
+							//hSnap.setPlaneMatrix( Matrix.I(4) );
 							if (vSnap.hasAssociatedScreenPoint() )
 								hSnap.setAssociatedScreenPoint( vSnap.getAssociatedScreenPoint() );
 							if (vSnap.hasAssociatedScreenPoint2() )
@@ -1944,6 +1943,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 			this._stageWorldToGlobalMat = viewUtils.getStageWorldToGlobalMatrix();
 			//this._globalToStageWorldMat = this._stageWorldToGlobalMat.inverse();
 			this._globalToStageWorldMat = glmat4.inverse( this._stageWorldToGlobalMat, [] );
+
+			//console.log( "setupDragPlane: " + this._dragPlane );
 
 			// load the 2D elements
 			this.load2DCache( this._dragPlane );
@@ -2036,7 +2037,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 					var z = s0[2];
 
 					var typeStr = hitRec.getTypeString();
-					console.log( "\ttype: " + typeStr + ", screen point z: " + hitRec.getScreenPoint()[2] + ", calculated z: " + z );
+					//console.log( "\ttype: " + typeStr + ", screen point z: " + hitRec.getScreenPoint()[2] + ", calculated z: " + z );
 				}
 			}
 		}

@@ -311,6 +311,7 @@ exports.Circle = Object.create(GeomObj, {
 
             if (fillPrim) {
                 fillMaterial = this.makeFillMaterial();
+			fillMaterial.fitToPrimitive( fillPrim );
 
                 this._primArray.push( fillPrim );
                 this._materialNodeArray.push( fillMaterial.getMaterialNode() );
@@ -318,6 +319,7 @@ exports.Circle = Object.create(GeomObj, {
 
             if (strokePrim0) {
                 strokeMaterial0 = this.makeStrokeMaterial();
+			strokeMaterial0.fitToPrimitive( strokePrim0 );
 
                 this._primArray.push( strokePrim0 );
                 this._materialNodeArray.push( strokeMaterial0.getMaterialNode() );
@@ -325,6 +327,7 @@ exports.Circle = Object.create(GeomObj, {
 
             if (strokePrim1) {
                 strokeMaterial2 = this.makeStrokeMaterial();
+			strokeMaterial2.fitToPrimitive( strokePrim1 );
 
                 this._primArray.push( strokePrim1 );
                 this._materialNodeArray.push( strokeMaterial2.getMaterialNode() );
@@ -502,9 +505,9 @@ exports.Circle = Object.create(GeomObj, {
                     if(this._fillColor.gradientMode) {
                         if(this._fillColor.gradientMode === "radial") {
                             gradient = ctx.createRadialGradient(xCtr, yCtr, 0,
-                                                                xCtr, yCtr, Math.max(this._width, this._height)/2);
+                                                                xCtr, yCtr, Math.max(this._width, this._height)/2 - lineWidth);
                         } else {
-                            gradient = ctx.createLinearGradient(lineWidth/2, this._height/2, this._width-lineWidth, this._height/2);
+                            gradient = ctx.createLinearGradient(lineWidth, this._height/2, this._width-lineWidth, this._height/2);
                         }
                         colors = this._fillColor.color;
 
@@ -578,7 +581,7 @@ exports.Circle = Object.create(GeomObj, {
                 if (this._strokeColor) {
                     if(this._strokeColor.gradientMode) {
                         if(this._strokeColor.gradientMode === "radial") {
-                            gradient = ctx.createRadialGradient(xCtr, yCtr, Math.min(xScale, yScale),
+                            gradient = ctx.createRadialGradient(xCtr, yCtr, 0,
                                                                 xCtr, yCtr, 0.5*Math.max(this._height, this._width));
                         } else {
                             gradient = ctx.createLinearGradient(0, this._height/2, this._width, this._height/2);
@@ -801,79 +804,44 @@ exports.Circle = Object.create(GeomObj, {
         }
     },
 
-	/*
-    this.getNearPoint = function( pt, dir ) {
-        var world = this.getWorld();
-        if (!world)  throw( "null world in getNearPoint" );
-		
-		// get a point on the plane of the circle
-		// the point is in NDC, as is the input parameters
-		var mat = this.getMatrix();
-		var plane = [0,0,1,0];
-		plane = MathUtils.transformPlane( plane, mat );
-		var projPt = MathUtils.vecIntersectPlane ( pt, dir, plane );
+	recalcTexMapCoords: {
+		value: function(vrts, uvs) {
+			var n = vrts.length/3;
+			if (n === 0)  return;
+			var ivrt = 0,  iuv = 0;
+			var uMin = 1.e8,  uMax = -1.e8,
+				vMin = 1.e8,  vMax = -1.e8;
+			
+			var i, index = 3;
+			var xMin = vrts[0], xMax = vrts[0],
+				yMin = vrts[1], yMax = vrts[1];
+			for (i=1;  i<n;  i++)
+			{
+				if (vrts[index] < xMin)  xMin = vrts[index];
+				else if (vrts[index] > xMax)  xMax = vrts[index];
 
-		// transform the projected point back to the XY plane
-		//var invMat = mat.inverse();
-		var invMat = glmat4.inverse( mat, [] );
-		var planePt = MathUtils.transformPoint( projPt, invMat );
+				if (vrts[index+1] < yMin)  yMin = vrts[index+1];
+				else if (vrts[index+1] > yMax)  yMax = vrts[index+1];
 
-		// get the normalized device coordinates (NDC) for
-		// the position and radii.
-		var	vpw = world.getViewportWidth(),  vph = world.getViewportHeight();
-		var	xNDC = 2*this._xOffset/vpw,  yNDC = -2*this._yOffset/vph,
-			xRadNDC = this._width/vpw,  yRadNDC = this._height/vph;
-		var projMat = world.makePerspectiveMatrix();
-		var z = -world.getViewDistance();
-		var planePtNDC = planePt.slice(0);
-		planePtNDC[2] = z;
-		planePtNDC = MathUtils.transformHomogeneousPoint( planePtNDC, projMat );
-		planePtNDC = MathUtils.applyHomogeneousCoordinate( planePtNDC );
+				index += 3;
+			}
+			var ovalWidth  = xMax - xMin,
+				ovalHeight = yMax - yMin;
+			for (i=0;  i<n;  i++) {
+				uvs[iuv] = (vrts[ivrt]-xMin)/ovalWidth;
+				if (uvs[iuv] < uMin)  uMin = uvs[iuv];
+				if (uvs[iuv] > uMax)  uMax = uvs[iuv];
 
-        // get the gl coordinates
-		var aspect = world.getAspect();
-		var zn = world.getZNear(),  zf = world.getZFar();
-		var	t = zn * Math.tan(world.getFOV() * Math.PI / 360.0),
-			b = -t,
-			r = aspect*t,
-			l = -r;
+				iuv++;  ivrt++;
+				uvs[iuv] = (vrts[ivrt]-yMin)/ovalHeight;
+				if (uvs[iuv] < vMin)  vMin = uvs[iuv];
+				if (uvs[iuv] > vMax)  vMax = uvs[iuv];
+				iuv++;  ivrt += 2;
+			}
 
-		var angle = Math.atan2( planePtNDC[1] - yNDC, planePtNDC[0] - xNDC );
-		var degrees = angle*180.0/Math.PI;
-		var objPt = [Math.cos(angle)*xRadNDC + xNDC, Math.sin(angle)*yRadNDC + yNDC, 0];
-		
-		// convert to GL coordinates
-		objPt[0] = -z*(r-l)/(2.0*zn)*objPt[0];
-		objPt[1] = -z*(t-b)/(2.0*zn)*objPt[1];
-
-		// re-apply the transform
-		objPt = MathUtils.transformPoint( objPt, mat );
-
-		return objPt;
-    };
-	*/
-    recalcTexMapCoords: {
-        value: function(vrts, uvs) {
-            var n = vrts.length/3;
-            var ivrt = 0,  iuv = 0;
-            var uMin = 1.e8,  uMax = -1.e8,
-                vMin = 1.e8,  vMax = -1.e8;
-
-            for (var i=0;  i<n;  i++) {
-                uvs[iuv] = 0.5*(vrts[ivrt]/this._ovalWidth + 1);
-                if (uvs[iuv] < uMin)  uMin = uvs[iuv];
-                if (uvs[iuv] > uMax)  uMax = uvs[iuv];
-
-                iuv++;  ivrt++;
-                uvs[iuv] = 0.5*(vrts[ivrt]/this._ovalHeight + 1);
-                if (uvs[iuv] < vMin)  vMin = uvs[iuv];
-                if (uvs[iuv] > vMax)  vMax = uvs[iuv];
-                iuv++;  ivrt += 2;
-            }
-
-            //console.log( "remap: " + uvs );
-            //console.log( "uRange: " + uMin + " => " + uMax );
-            //console.log( "vRange: " + vMin + " => " + vMax );
-        }
-    }
+			//console.log( "remap" );
+			//console.log( "uRange: " + uMin + " => " + uMax );
+			//console.log( "vRange: " + vMin + " => " + vMax );
+		}
+	}
 });

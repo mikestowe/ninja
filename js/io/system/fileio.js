@@ -146,7 +146,7 @@ exports.FileIo = Montage.create(Component, {
     	}
     },
     ////////////////////////////////////////////////////////////////////
-    //
+    //TODO: Add functionality
     deleteFile: {
     	enumerable: true,
     	value: function() {
@@ -159,7 +159,7 @@ exports.FileIo = Montage.create(Component, {
     	}
     },
     ////////////////////////////////////////////////////////////////////
-    //
+    //TODO: Add functionality
     copyFile: {
     	enumerable: true,
     	value: function() {
