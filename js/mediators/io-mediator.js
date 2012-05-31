@@ -405,7 +405,7 @@ exports.IoMediator = Montage.create(Component, {
                 for (var n in docLinks) {
                     if (docLinks[n].attributes) {
                         for (var m in docLinks[n].attributes) {
-                            if (docLinks[n].attributes[m].name && docLinks[n].attributes[m].name.indexOf('data-ninja') != -1) {
+                            if (docLinks[n].attributes[m].name && docLinks[n].attributes[m].name.indexOf('data-ninja') !== -1) {
                                 docLinks[n].removeAttribute(docLinks[n].attributes[m].name);
                             }
                         }
@@ -417,7 +417,7 @@ exports.IoMediator = Montage.create(Component, {
                         if (template.css[i].ownerNode.getAttribute) {
                             if (template.css[i].ownerNode.getAttribute('data-ninja-uri') === null && !template.css[i].ownerNode.getAttribute('data-ninja-template')) {//TODO: Use querySelectorAll
                                 //Inseting data from rules array into <style> as string
-                                if (docStyles[styleCounter] && !template.css[i].ownerNode.getAttribute('data-ninja-external-url')) {
+                                if (docStyles[styleCounter] && !template.css[i].ownerNode.getAttribute('data-ninja-external-url') && template.css[i].ownerNode.getAttribute('data-ninja-node')) {
                                     docStyles[styleCounter].innerHTML = this.getCssFromRules(template.css[i].cssRules);
                                     styleCounter++;
                                 }
