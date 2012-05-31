@@ -24,6 +24,9 @@ exports.ViewUtils = Montage.create(Component, {
     // keep a stack of viewport objects
     _viewportObjStack: { value: []},
 
+    _rootElement: { value: null},
+    _stageElement: { value: null},
+
     ///////////////////////////////////////////////////////////////////////
     // Property accessors
     ///////////////////////////////////////////////////////////////////////
@@ -35,6 +38,13 @@ exports.ViewUtils = Montage.create(Component, {
         }
     },
     getViewportObj: { value: function()                 {  return this.m_viewportObj;   } },
+
+    setRootElement: { value: function( elt )            { this._rootElement = elt; } },
+    getRootElement: { value: function ()                { return this._rootElement;        } },
+
+    setStageElement: { value: function( elt )    {  this._stageElement = elt;    } },
+    getStageElement: { value: function () { return this._stageElement; } },
+
 
     getPerspectiveDistance: { value: function () { return this._perspectiveDist; } },
 
@@ -285,7 +295,7 @@ exports.ViewUtils = Montage.create(Component, {
     // into stage world space.
     postViewToStageWorld: {
         value: function( localPt, elt ) {
-            if ((elt == null) || (elt === this.application.ninja.currentDocument.model.documentRoot))  return localPt;
+            if ((elt == null) || (elt === this._stageElement))  return localPt;
 
             // get the 3D transformation and 2D offset from the element
             var pt = localPt.slice(0);
@@ -312,7 +322,7 @@ exports.ViewUtils = Montage.create(Component, {
                 this.popViewportObj();
 
                 // check if we are done
-                if (parent === this.application.ninja.currentDocument.model.documentRoot)  break;
+                if (parent === this._stageElement)  break;
 
                 if (this.elementHas3D( parent ))
                 {
@@ -344,10 +354,10 @@ exports.ViewUtils = Montage.create(Component, {
 //                if (child === this.application.ninja.currentDocument.model.documentRoot)  break;
 //                child = child.offsetParent;
 
-                if (child === this.application.ninja.currentDocument.model.documentRoot)  break;
-                if (child === this.application.ninja.currentDocument.model.documentRoot.parentNode)  break;
+                if (child === this._stageElement)  break;
+                if (child === this._rootElement)  break;
                 child = child.offsetParent;
-                if (child === this.application.ninja.currentDocument.model.documentRoot.parentNode)  break;
+                if (child === this._rootElement)  break;
             }
 
             /////////////////////////////////////////////////////////
@@ -397,7 +407,7 @@ exports.ViewUtils = Montage.create(Component, {
                 {
                     // TODO - Commenting out flatten support until new perspective workflow is fully working
                     // if (flatten)  pt[2] = 0;
-//                    var flatten = (parent !== this.application.ninja.currentDocument.model.documentRoot.parentNode) && (ElementsMediator.getProperty(parent, "-webkit-transform-style") !== "preserve-3d");
+//                    var flatten = (parent !== this._rootElement) && (ElementsMediator.getProperty(parent, "-webkit-transform-style") !== "preserve-3d");
 //                    if(flatten)
 //                    {
 //                        pt[2] = 0;
@@ -682,7 +692,7 @@ exports.ViewUtils = Montage.create(Component, {
         //        if (elt.__ninjaXOff)  xOff = elt.__ninjaXOff;
         //        if (elt.__ninjaYOff)  yOff = elt.__ninjaYOff;
             var offset = [xOff, yOff];
-            if(elt.offsetParent && (elt.offsetParent !== this.application.ninja.currentDocument.model.documentRoot))
+            if(elt.offsetParent && (elt.offsetParent !== this._stageElement))
             {
                 var pS = elt.ownerDocument.defaultView.getComputedStyle(elt.offsetParent);
 
@@ -698,7 +708,7 @@ exports.ViewUtils = Montage.create(Component, {
                 }
             }
 
-            if(elt === this.application.ninja.currentDocument.model.documentRoot)
+            if(elt === this._stageElement)
             {
                 // TODO - Call a routine from the user document controller to get the offsets/margins
                 // Once we expose the document controller to ViewUtils
@@ -989,7 +999,7 @@ exports.ViewUtils = Montage.create(Component, {
                     glmat4.multiply( v2s, mat, mat );
 
                 // TODO - Commenting out flatten support until new perspective workflow is fully working
-//                    var flatten = (elt !== this.application.ninja.currentDocument.model.documentRoot.parentNode) && (elt.parentElement !== this.application.ninja.currentDocument.model.documentRoot.parentNode) && (ElementsMediator.getProperty(elt.parentElement, "-webkit-transform-style") !== "preserve-3d");
+//                    var flatten = (elt !== this._rootElement) && (elt.parentElement !== this._rootElement) && (ElementsMediator.getProperty(elt.parentElement, "-webkit-transform-style") !== "preserve-3d");
 //                    if(flatten)
 //                    {
 //                        glmat4.multiply( zMat, mat, mat );
@@ -1003,10 +1013,10 @@ exports.ViewUtils = Montage.create(Component, {
 
                 this.popViewportObj();
 
-                if (elt === this.application.ninja.currentDocument.model.documentRoot)  break;
-                if (elt === this.application.ninja.currentDocument.model.documentRoot.parentNode)  break;
+                if (elt === this._stageElement)  break;
+                if (elt === this._rootElement)  break;
                 elt = elt.offsetParent;
-                if (elt === this.application.ninja.currentDocument.model.documentRoot.parentNode)  break;
+                if (elt === this._rootElement)  break;
             }
 
             return mat;
@@ -1040,7 +1050,7 @@ exports.ViewUtils = Montage.create(Component, {
                 // multiply all the matrices together
                 //mat = s2v.multiply( mat );
                 glmat4.multiply( s2v, mat, mat );
-                if (elt === this.application.ninja.currentDocument.model.documentRoot)  break;
+                if (elt === this._stageElement)  break;
                 //mat = objMat.multiply( mat );
                 glmat4.multiply( objMat, mat, mat );
                 if(shouldProject && pDist)
@@ -1089,7 +1099,7 @@ exports.ViewUtils = Montage.create(Component, {
                 // multiply all the matrices together
                 //mat = s2v.multiply( mat );
                 glmat4.multiply( s2v, mat, mat );
-                if (elt === this.application.ninja.currentDocument.model.documentRoot)  break;
+                if (elt === this._stageElement)  break;
                 //mat = objMat.multiply( mat );
                 if (shouldLocalTransform) {
                     glmat4.multiply( objMat, mat, mat );

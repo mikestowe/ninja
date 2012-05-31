@@ -1090,7 +1090,11 @@ exports.Stage = Montage.create(Component, {
 
             workingPlane = [0,0,1,0];
 
+            this.viewUtils.setStageElement(this.application.ninja.currentDocument.model.documentRoot);
+            this.viewUtils.setRootElement(this.application.ninja.currentDocument.model.documentRoot.parentNode);
+
             this.snapManager._isCacheInvalid = true;
+            this.snapManager.currentStage = this.application.ninja.currentDocument.model.documentRoot;
             this.snapManager.setupDragPlaneFromPlane (workingPlane);
 
             this.drawUtils.initializeFromDocument();
