@@ -179,6 +179,11 @@ exports.Stage = Montage.create(Component, {
                 this.hideCanvas(false);
             }
 
+            if(this.currentDocument && (this.currentDocument.currentView === "design")) {
+                this.currentDocument.model.scrollLeft = this._scrollLeft;
+                this.currentDocument.model.scrollTop = this._scrollTop;
+            }
+
             this._currentDocument = value;
 
             if(!value) {
@@ -193,7 +198,7 @@ exports.Stage = Montage.create(Component, {
                 this.showRulers();
 
                 this.clearAllCanvas();
-                this.initWithDocument(false);
+                this.initWithDocument();
             } else {
                 this.showCodeViewBar(true);
                 this.collapseAllPanels();
@@ -299,8 +304,14 @@ exports.Stage = Montage.create(Component, {
     },
 
     initWithDocument: {
-        value: function(didSwitch) {
-            var designView = this.application.ninja.currentDocument.model.views.design;
+        value: function() {
+            var model = this.currentDocument.model,
+                designView = this.currentDocument.model.views.design,
+                didSwitch = false;
+
+            if(model.scrollLeft != null) {
+                didSwitch = true;
+            }
 
             // Recalculate the canvas sizes because of splitter resizing
             this._canvas.width = this._layoutCanvas.width = this._drawingCanvas.width = this._gridCanvas.width = this.element.offsetWidth - 11 ;
@@ -336,8 +347,8 @@ exports.Stage = Montage.create(Component, {
             }
 
             if(didSwitch) {
-                this.application.ninja.currentDocument.model.views.design.document.body.scrollLeft = this.application.ninja.currentDocument.model.scrollLeft;
-                this.application.ninja.currentDocument.model.views.design.document.body.scrollTop = this.application.ninja.currentDocument.model.scrollTop;
+                this.application.ninja.currentDocument.model.views.design.document.body.scrollLeft = this.currentDocument.model.scrollLeft;
+                this.application.ninja.currentDocument.model.views.design.document.body.scrollTop = this.currentDocument.model.scrollTop;
                 this.handleScroll();
             } else {
                 this.centerStage();
