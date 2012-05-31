@@ -277,6 +277,8 @@ exports.IoMediator = Montage.create(Component, {
             	rootUrl = this.application.ninja.coreIoApi.rootUrl + escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1])),
             	mjsCreator = template.mjsTemplateCreator.create(),
             	mJsSerialization,
+            	toremovetags = [],
+            	presentNodes,
             	montageTemplate;
             //Creating instance of template creator
             montageTemplate = mjsCreator.initWithDocument(template.document);
@@ -299,23 +301,34 @@ exports.IoMediator = Montage.create(Component, {
 					template.file.content.document.body.setAttribute(template.body.attributes[n].name, template.body.attributes[n].value);
 				}				
 			}
+            
+            
+            
             //TODO: Add attribute copying for <HEAD> and <HTML>
             
             
-            //console.log(template.file.content.document.getElementsByTagName('html')[0].innerHTML);
             
-            
+            //Getting list of current nodes (Ninja DOM)
+            presentNodes = template.file.content.document.getElementsByTagName('*');
+            //Looping through nodes to determine origin and removing if not inserted by Ninja
+            for (var n in presentNodes) {
+	    		if (presentNodes[n].getAttribute && presentNodes[n].getAttribute('data-ninja-node') === null) {
+		    	 	toremovetags.push(presentNodes[n]);	
+	    		} else if (presentNodes[n].getAttribute && presentNodes[n].getAttribute('data-ninja-node') !== null) {
+	    			//Removing attribute
+		    		presentNodes[n].removeAttribute('data-ninja-node');
+	    		}
+    		}
             //Getting all CSS (style or link) tags
             var styletags = template.file.content.document.getElementsByTagName('style'),
     			linktags = template.file.content.document.getElementsByTagName('link'),
-    			toremovetags = [],
     			njtemplatetags = template.file.content.document.querySelectorAll('[data-ninja-template]');
     		
     		//////////////////////////////////////////////////
     		//TODO: Remove, temp hack, this is to be fixed by Montage
     		var basetags = template.file.content.document.getElementsByTagName('base');
     		for (var g in basetags) {
-    			if (basetags[g].getAttribute) toremovetags.push(basetags[g]);
+    			if (basetags[g].getAttribute && basetags[g].href && basetags[g].href.indexOf('chrome-extension://') !== -1) toremovetags.push(basetags[g]);
     		}
     		//////////////////////////////////////////////////
     		
