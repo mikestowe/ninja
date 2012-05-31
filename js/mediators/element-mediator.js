@@ -48,7 +48,7 @@ exports.ElementMediator = Montage.create(Component, {
 
             document.application.undoManager.add(undoLabel, this.removeElements, this, elements, notify);
 
-            this.application.ninja.documentController.activeDocument.needsSave = true;
+            this.application.ninja.documentController.activeDocument.model.needsSave = true;
 
             if(notify || notify === undefined) {
                 NJevent("elementAdded", elements);
@@ -77,7 +77,7 @@ exports.ElementMediator = Montage.create(Component, {
 
             document.application.undoManager.add(undoLabel, this.addElements, this, elements, null, notify);
 
-            this.application.ninja.documentController.activeDocument.needsSave = true;
+            this.application.ninja.documentController.activeDocument.model.needsSave = true;
 
             NJevent("elementsRemoved", elements);
         }
@@ -86,13 +86,13 @@ exports.ElementMediator = Montage.create(Component, {
     replaceElement: {
         value: function(newChild, oldChild, notify) {
 
-            this.application.ninja.currentDocument.documentRoot.replaceChild(newChild, oldChild);
+            this.application.ninja.currentDocument.model.documentRoot.replaceChild(newChild, oldChild);
 
             var undoLabel = "replace element";
 
             document.application.undoManager.add(undoLabel, this.replaceElement, this, oldChild, newChild);
 
-            this.application.ninja.documentController.activeDocument.needsSave = true;
+            this.application.ninja.documentController.activeDocument.model.needsSave = true;
 
             if(notify || notify === undefined) {
                 NJevent("elementReplaced", {type : "replaceElement", data: {"newChild": newChild, "oldChild": oldChild}});
@@ -520,13 +520,13 @@ exports.ElementMediator = Montage.create(Component, {
         value: function(layersDraggedArray, layerDroppedAfter) {
             var documentRoot,length;
 
-            documentRoot = this.application.ninja.currentDocument.documentRoot;
+            documentRoot = this.application.ninja.currentDocument.model.documentRoot;
             length = layersDraggedArray.length;
 
             for(var i=0; documentRoot.children[i]; i++) {
-                if(documentRoot.children[i] === layerDroppedAfter.layerData.elementsList[0]) {
+                if(documentRoot.children[i] === layerDroppedAfter.layerData.stageElement) {
                     if(length >0){
-                        documentRoot.children[i].parentNode.insertBefore(layersDraggedArray[length-1].layerData.elementsList[0], documentRoot.children[i]);
+                        documentRoot.children[i].parentNode.insertBefore(layersDraggedArray[length-1].layerData.stageElement, documentRoot.children[i]);
                     }
 
                     /* Will require for Multiple Drag n Drop */

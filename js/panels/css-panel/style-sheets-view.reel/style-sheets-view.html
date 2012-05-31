@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<!-- <copyright>
+This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+(c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+</copyright> -->
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link href="style-sheets-view.css" rel="stylesheet" type="text/css">
+    <script type="text/montage-serialization">
+        {
+            "owner": {
+                "prototype" : "js/panels/css-panel/style-sheets-view.reel",
+                "properties" : {
+                    "element" : {"#" : "style-sheets-view-container"},
+                    "toolbar" : {"@": "toolbar"},
+                    "styleSheetList" : {"@" : "styleSheetList"}
+                }
+            },
+            "arrayController" : {
+                "prototype" : "montage/ui/controller/array-controller",
+                "bindings": {
+                    "content": {"<-": "@owner.styleSheets" }
+                }
+            },
+            "styleSheetList": {
+                "prototype" : "montage/ui/repetition.reel",
+                "properties": {
+                    "element": {"#": "sheet-list" },
+                    "contentController": {"@": "arrayController"}
+                }
+            },
+            "sheet": {
+                "prototype": "js/panels/css-panel/style-sheet.reel",
+                "properties": {
+                    "element": {"#": "sheet-item"}
+                },
+                "bindings": {
+                    "source": {"<-": "@styleSheetList.objectAtCurrentIteration" }
+                }
+            },
+            "documentLoaded": {
+                "prototype": "montage/ui/condition.reel",
+                "properties": {
+                    "element": {"#": "style-sheets-toolbar-container" },
+                    "removalStrategy": "hide"
+                },
+                "bindings": {
+                    "condition": {"<-": "@owner.documentLoaded" }
+                }
+            },
+            "hasSheets": {
+                "prototype": "montage/ui/condition.reel",
+                "properties": {
+                    "element": {"#": "no-sheets-message" }
+                },
+                "bindings" : {
+                    "condition": {
+                        "boundObject": {"@": "owner"},
+                        "boundObjectPropertyPath": "styleSheets.count()",
+                        "boundValueMutator": {"->": {"arguments": ["val"], "body": "return !val;"}},
+                        "oneway": true
+                    }
+                }
+            },
+            "toolbar": {
+                "prototype": "js/components/toolbar.reel",
+                "properties": {
+                    "element": {"#": "style-sheets-toolbar"},
+                    "delegate": {"@": "owner" },
+                    "buttons": [
+                        {
+                            "title": "Add",
+                            "identifier": "add"
+                        }
+                    ]
+                }
+            },
+            "resizer": {
+                "prototype": "js/panels/resize-composer",
+                "properties": {
+                    "element": {"#": "resizeBar"},
+                    "component": {"@": "owner"}
+                },
+                "listeners": [
+                    {
+                        "type": "resizeStart",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "resizeMove",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "resizeEnd",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            }
+        }
+    </script>
+</head>
+<body>
+<div data-montage-id="style-sheets-view-container" class="style-sheets-view-container">
+    <h4 data-montage-id="no-sheets-message" class="panel-message">No style sheets to display.</h4>
+    <ul data-montage-id="sheet-list" class="sheet-list">
+        <li><div data-montage-id="sheet-item"></div></li>
+    </ul>
+    <div data-montage-id="style-sheets-toolbar-container" class="style-sheets-toolbar-container">
+        <div data-montage-id="style-sheets-toolbar"></div>
+    </div>
+    <div data-montage-id="resizeBar" class="sub-panel-resizer"></div>
+</div>
+</body>
+</html>

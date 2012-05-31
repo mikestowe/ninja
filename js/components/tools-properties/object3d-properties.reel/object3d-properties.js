@@ -14,17 +14,21 @@ exports.Object3DProperties = Montage.create(ToolProperties, {
     rotateGlobally: { value: null, enumerable: false },
 
     _subPrepare: {
-        value: function() {
+        value: function () {
             this.rotateLocally.addEventListener("click", this, false);
             this.rotateGlobally.addEventListener("click", this, false);
         }
     },
 
     handleClick: {
-        value: function(event) {
-            this.selectedMode = event._event.target.id;
+        value: function (event) {
+            if (event._event.target === this.rotateLocally) {
+                this.selectedMode = "rotateLocally";
+            } else {
+                this.selectedMode = "rotateGlobally";
+            }
 
-            NJevent("toolOptionsChange", {source: "Object3DProperties", mode: (this.selectedMode === "rotateLocally")});
+            NJevent("toolOptionsChange", { source: "Object3DProperties", mode: (this.selectedMode === "rotateLocally") });
         }
     },
 
@@ -33,8 +37,8 @@ exports.Object3DProperties = Montage.create(ToolProperties, {
     },
 
     selectedMode: {
-        get: function() { return this._selectedMode;},
-        set: function(value) { this._selectedMode = value; }
+        get: function () { return this._selectedMode; },
+        set: function (value) { this._selectedMode = value; }
     }
 
 

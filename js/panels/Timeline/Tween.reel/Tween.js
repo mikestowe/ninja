@@ -195,16 +195,16 @@ var Tween = exports.Tween = Montage.create(Component, {
     setTweenProperties:{
         value:function (eventDetail) {
             if(this.parentComponent.parentComponent.animatedElement.offsetTop != this.tweenedProperties["top"]){
-                this.tweenedProperties["top"] = this.parentComponent.parentComponent.animatedElement.offsetTop;
+                this.tweenedProperties["top"] = this.parentComponent.parentComponent.animatedElement.offsetTop + "px";
             }
             if(this.parentComponent.parentComponent.animatedElement.offsetLeft != this.tweenedProperties["left"]){
-                this.tweenedProperties["left"] = this.parentComponent.parentComponent.animatedElement.offsetLeft;
+                this.tweenedProperties["left"] = this.parentComponent.parentComponent.animatedElement.offsetLeft + "px";
             }
             if (this.parentComponent.parentComponent.animatedElement.offsetWidth != this.tweenedProperties["width"]){
-                this.tweenedProperties["width"] = this.parentComponent.parentComponent.animatedElement.offsetWidth;
+                this.tweenedProperties["width"] = this.parentComponent.parentComponent.animatedElement.offsetWidth + "px";
             }
             if (this.parentComponent.parentComponent.animatedElement.offsetHeight != this.tweenedProperties["height"]){
-                this.tweenedProperties["height"] = this.parentComponent.parentComponent.animatedElement.offsetHeight;
+                this.tweenedProperties["height"] = this.parentComponent.parentComponent.animatedElement.offsetHeight + "px";
             }
             // tell track to update css rule
             this.parentComponent.parentComponent.updateKeyframeRule();
@@ -243,7 +243,11 @@ var Tween = exports.Tween = Montage.create(Component, {
         value:function(easeType){
             // easeTypes - ease, ease-out, ease-in, ease-in-out, linear, cubic-bezier(x1, y1, x2, y2)
             this.tweenedProperties["-webkit-animation-timing-function"] = easeType;
-            this.parentComponent.parentComponent.updatePropKeyframeRule();
+            if(this.parentComponent.parentComponent.isSubproperty){
+                this.parentComponent.parentComponent.updatePropKeyframeRule();
+            } else {
+                this.parentComponent.parentComponent.updateKeyframeRule();
+            }
         }
     },
 
@@ -274,10 +278,10 @@ var Tween = exports.Tween = Montage.create(Component, {
                 console.log(currentValue);
             } else {
                 // move animated element to correct position on stage
-                var currentTop = this.tweenedProperties["top"] + "px";
-                var currentLeft = this.tweenedProperties["left"] + "px";
-                var currentWidth = this.tweenedProperties["width"] + "px";
-                var currentHeight = this.tweenedProperties["height"] + "px";
+                var currentTop = this.tweenedProperties["top"];
+                var currentLeft = this.tweenedProperties["left"];
+                var currentWidth = this.tweenedProperties["width"];
+                var currentHeight = this.tweenedProperties["height"];
 
                 this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.animatedElement], "top", [currentTop], "Change", "tween");
                 this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.animatedElement], "left", [currentLeft], "Change", "tween");

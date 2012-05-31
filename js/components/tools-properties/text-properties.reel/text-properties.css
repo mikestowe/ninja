@@ -5,7 +5,10 @@
  </copyright> */
 
 .optionsTextTool {
-    padding: 6px;
+}
+
+.optionsTextTool .overrideMargin{
+    margin-left: 0px;
 }
 
 .optionsTextTool .btnGroup {
@@ -16,26 +19,27 @@
     margin: 2px;
 }
 
-.optionsTextTool > *, .optionsTextTool .btnGroup > * {
-    float:left;
+.optionsTextTool .btnGroup .textButton {
+    width: auto;
+    padding: 4px 8px;
+    margin-left: 0px;
 }
 
-.optionsTextTool button {
-    width: auto;
-    padding: 4px 8px !important;
-    margin-left:4px;
+.optionsTextTool .btnGroup .imageButton {
+    padding-top: 2px;
+    height: 22px;
 }
 
 .optionsTextTool .label, .optionsTextTool .hottextunit {
     font-size:11px;
+    margin-top: 1px;
 }
 
 .optionsTextTool .fontSelection {
-    width:100px;
+    width: 160px;
 }
 
-.optionsTextTool .fontColor {
-    width: 20px;
-    height: 18px;
-    margin: 2px 6px;
+.optionsTextTool .toolColorChipCtrl {
+    margin-left: 6px;
+    margin-right: 0px;
 }

@@ -16,6 +16,10 @@
                 "prototype": "js/components/layout/tool-button.reel",
                 "properties": {
                     "element": {"#": "toolBarButton"}
+                },
+                "bindings": {
+                    "selected": {"<<->": "@owner.data.selected"},
+                    "subselected": {"<-": "@owner.data.subtools.selected"}
                 }
             }
         }

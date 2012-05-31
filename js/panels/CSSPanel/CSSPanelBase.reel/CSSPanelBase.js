@@ -4,8 +4,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var cssPropertyNameList      = require("js/panels/CSSPanel/css-property-name-list").cssPropertyNameList,
-    cssCompletionMap         = require("js/panels/CSSPanel/css-value-completion-map").cssValueCompletionMap,
+var cssPropertyNameList      = require("js/panels/CSSPanel/css-property-name-list").CssPropertyNameList,
+    cssCompletionMap         = require("js/panels/CSSPanel/css-value-completion-map").CssValueCompletionMap,
     CSS_SHORTHAND_MAP        = require("js/panels/CSSPanel/css-shorthand-map").CSS_SHORTHAND_MAP,
     keyboardModule           = require("js/mediators/keyboard-mediator").Keyboard,
     nj                       = require("js/lib/NJUtils").NJUtils;
@@ -87,7 +87,7 @@ var CSSPanel = exports.CSSPanelBase = (require("montage/core/core").Montage).cre
 
     populateStyleSheetList: {
         value: function() {
-            this.sections.sheets.doc = this.application.ninja.currentDocument._document;
+            this.sections.sheets.doc = this.application.ninja.currentDocument.model.views.design.document;
             var styleTagCount = 0,
                 sect          = this.sections.sheets,
                 sheetsArray   = nj.toArray(sect.doc.styleSheets),
@@ -822,17 +822,14 @@ var CSSPanel = exports.CSSPanelBase = (require("montage/core/core").Montage).cre
     },
     getAllRelatedRules : {
         value: function(element) {
-            var pseudos = [null],//, 'link', 'visited', 'active', 'hover', 'focus', 'first-letter', 
-                            //'first-line', 'first-child', 'before', 'after', 'lang'],
-                rules = [],
+            var rules = [],
+                win = element.ownerDocument.defaultView,
                 self = this;
 
-            pseudos.forEach(function(pseudo) {
-                rules = rules.concat(nj.toArray(this.getMatchedCSSRules(element, ':'+pseudo)).filter(function(rule) {
-                    var sheetId = (rule.parentStyleSheet) ? rule.parentStyleSheet.ownerNode.id : null;
-                    return sheetId !== self._stageStyleSheetId;
-                }));
-            }, element.ownerDocument.defaultView);
+            rules = rules.concat(nj.toArray(win.getMatchedCSSRules(element)).filter(function(rule) {
+                var sheetId = (rule.parentStyleSheet) ? rule.parentStyleSheet.ownerNode.id : null;
+                return sheetId !== self._stageStyleSheetId;
+            }));
 
             return rules;
         }

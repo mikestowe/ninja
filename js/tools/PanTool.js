@@ -21,6 +21,9 @@ exports.PanTool = Montage.create(toolBase,
 	_lastGPt :{value: [0,0], writable:true},
 	_lastY :{value: 0, writable:true},
 
+	_maxHorizontalScroll: {value: 0, writable:true},
+	_maxVerticalScroll: {value: 0, writable:true},
+
     Configure: {
         value: function ( doActivate )
 		{
@@ -43,10 +46,19 @@ exports.PanTool = Montage.create(toolBase,
 
     HandleLeftButtonDown: {
         value : function ( event ) {
-            this._isDrawing = true;
-			this.isDrawing = true;
- 
-				this.mouseDown( event );
+            // Determine the maximum horizontal and vertical scroll values
+            this._maxHorizontalScroll = this.application.ninja.currentDocument.model.documentRoot.scrollWidth - this.application.ninja.stage._canvas.width - 11;
+            this._maxVerticalScroll = this.application.ninja.currentDocument.model.documentRoot.scrollHeight - this.application.ninja.stage._canvas.height - 11;
+            if((this._maxHorizontalScroll > 0) || (this._maxVerticalScroll > 0) || this._altKeyDown)
+            {
+                this._isDrawing = true;
+                this.isDrawing = true;
+                this.mouseDown( event );
+            }
+//            else
+//            {
+//                console.log("nothing to scroll");
+//            }
        }
     },
 
@@ -109,7 +121,7 @@ exports.PanTool = Montage.create(toolBase,
 	{
         value: function ()
 		{
-			var uc = this.application.ninja.currentDocument.documentRoot;
+			var uc = this.application.ninja.currentDocument.model.documentRoot;
 			//var uc = documentManagerModule.DocumentManager.activeDocument
 			var ucMat = viewUtils.getMatrixFromElement(uc);
 
@@ -136,12 +148,11 @@ exports.PanTool = Montage.create(toolBase,
 				delta = 10*event.wheelDelta/120;
 			//console.log( "delta: " + delta );
 
-            this.application.ninja.stage._iframeContainer.scrollLeft += delta;
-            this.application.ninja.stage._scrollLeft += delta;
+            this.application.ninja.currentDocument.model.views.design.document.body.scrollLeft += delta;
 
 			delta *= zoom;
            
-			var uc = this.application.ninja.currentDocument.documentRoot;
+			var uc = this.application.ninja.currentDocument.model.documentRoot;
 			var ucMat = viewUtils.getMatrixFromElement(uc);
 			var offset = viewUtils.getElementOffset( uc );
 			//console.log( "uc offset: " + offset[0] );
@@ -213,7 +224,7 @@ exports.PanTool = Montage.create(toolBase,
 				if (elt)
 				{
 					// get the userContent object (stage) and its matrix
-					var userContent = this.application.ninja.currentDocument.documentRoot;
+					var userContent = this.application.ninja.currentDocument.model.documentRoot;
 					var ucMat = viewUtils.getMatrixFromElement(userContent);
 
 					var localToGlobalMat = viewUtils.getLocalToGlobalMatrix( elt );
@@ -291,17 +302,19 @@ exports.PanTool = Montage.create(toolBase,
 			if (this._isDrawing)
 			{
 				// get the global screen point
-				var gPt = [point.x, point.y, this._globalPt[2]];
+				var gPt = [point.x, point.y, this._globalPt[2]],
+                    dx,
+                    dy;
 				if (this._altKeyDown)
 				{
-					var dy = 5*(point.y - this._lastY);
+					dy = 5*(point.y - this._lastY);
 					this._globalPt[2] += dy;
 					gPt = [this._lastGPt[0], this._lastGPt[1], this._globalPt[2]];
 				}
 				else if (this._shiftKeyDown)
 				{
-					var dx = Math.abs( this._shiftPt[0] - gPt[0] ),
-						dy = Math.abs( this._shiftPt[1] - gPt[1] );
+					dx = Math.abs( this._shiftPt[0] - gPt[0] );
+					dy = Math.abs( this._shiftPt[1] - gPt[1] );
 
 					if (dx >= dy)
 						gPt[1] = this._shiftPt[1];
@@ -310,16 +323,28 @@ exports.PanTool = Montage.create(toolBase,
 				}
 
 				// update the scrollbars
-				var deltaGPt = VecUtils.vecSubtract(2, gPt, this._lastGPt);
+				var deltaGPt = vecUtils.vecSubtract(2, gPt, this._lastGPt);
 				this._lastGPt = gPt.slice();
 				this._lastY = point.y;
+                var limitX = false;
+                var limitY = false;
 
-				var oldLeft = this.application.ninja.stage._iframeContainer.scrollLeft,
-					oldTop  = this.application.ninja.stage._iframeContainer.scrollTop;
-				this.application.ninja.stage._iframeContainer.scrollLeft -= deltaGPt[0];
-				this.application.ninja.stage._iframeContainer.scrollTop  -= deltaGPt[1];
-				deltaGPt[0] = oldLeft - this.application.ninja.stage._iframeContainer.scrollLeft;
-				deltaGPt[1] = oldTop  - this.application.ninja.stage._iframeContainer.scrollTop;
+				var oldLeft = this.application.ninja.currentDocument.model.views.design.document.body.scrollLeft,
+					oldTop  = this.application.ninja.currentDocument.model.views.design.document.body.scrollTop,
+                    newLeft = oldLeft - deltaGPt[0],
+                    newTop = oldTop - deltaGPt[1];
+                if((newLeft < 0) || (newLeft > this._maxHorizontalScroll))
+                {
+                    limitX = true;
+                }
+                if((newTop < 0) || (newTop > this._maxVerticalScroll))
+                {
+                    limitY = true;
+                }
+                this.application.ninja.currentDocument.model.views.design.document.body.scrollLeft -= deltaGPt[0];
+                this.application.ninja.currentDocument.model.views.design.document.body.scrollTop  -= deltaGPt[1];
+				deltaGPt[0] = oldLeft - this.application.ninja.currentDocument.model.views.design.document.body.scrollLeft;
+				deltaGPt[1] = oldTop  - this.application.ninja.currentDocument.model.views.design.document.body.scrollTop;
 
 				gPt[0] -= deltaGPt[0];
 				gPt[1] -= deltaGPt[1];
@@ -333,8 +358,8 @@ exports.PanTool = Montage.create(toolBase,
 					delta[2] = 0;
 
 				// limit the change
-				var ucMat = viewUtils.getMatrixFromElement(this.application.ninja.currentDocument.documentRoot);
-				var tooMuch = false
+				var ucMat = viewUtils.getMatrixFromElement(this.application.ninja.currentDocument.model.documentRoot);
+				var tooMuch = false;
 				if ((ucMat[12] >  12000) && (delta[0] > 0))  tooMuch = true;
 				if ((ucMat[12] < -12000) && (delta[0] < 0))  tooMuch = true;
 				if ((ucMat[13] >  12000) && (delta[1] > 0))  tooMuch = true;
@@ -349,6 +374,8 @@ exports.PanTool = Montage.create(toolBase,
 				else
 					this._worldPt = wPt;
 
+                if(limitX) delta[0] = 0;
+                if(limitY) delta[1] = 0;
 				// update everything
 				var transMat = Matrix.Translation( delta );
 				this.applyDeltaMat( transMat );
@@ -370,7 +397,7 @@ exports.PanTool = Montage.create(toolBase,
 		value: function( transMat )
 		{
 			// update the user content matrix
-			var uc = this.application.ninja.currentDocument.documentRoot;
+			var uc = this.application.ninja.currentDocument.model.documentRoot;
 			var ucMat = viewUtils.getMatrixFromElement(uc);
 			var newUCMat = glmat4.multiply( transMat, ucMat, [] );
 			viewUtils.setMatrixForElement( uc, newUCMat );
@@ -385,7 +412,7 @@ exports.PanTool = Montage.create(toolBase,
 		value: function()
 		{
 			// get the userContent object
-			var userContent = this.application.ninja.currentDocument.documentRoot;
+			var userContent = this.application.ninja.currentDocument.model.documentRoot;
 
 			// get a matrix from user content world space to the screen
 			viewUtils.pushViewportObj( userContent );

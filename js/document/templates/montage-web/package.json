@@ -1,8 +1,0 @@
-{
-       "directories": {
-           "lib": ""
-       },
-       "mappings": {
-           "montage": "../../../../node_modules/montage/"
-       }
-}

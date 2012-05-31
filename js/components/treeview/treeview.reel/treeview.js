@@ -11,6 +11,7 @@ exports.Treeview = Montage.create(Component, {
 
     substitution      : { value : null },
     data              : { value : null },
+    rootBranch        : { value : null },
 
     _hasBeenDeserialized: {
         value: false,
@@ -54,6 +55,8 @@ exports.Treeview = Montage.create(Component, {
             this.slot.content = rootBranch;
             rootBranch.sourceObject = this.contentController.root;
             rootBranch.needsDraw = true;
+            this.rootBranch = rootBranch;
+
             this.needsDraw = true;
 
         }
@@ -84,6 +87,8 @@ exports.Treeview = Montage.create(Component, {
             this._contentController = value;
 
             if (this._contentController) {
+
+//this._initializeRootBranch();
 
                 // And bind what we need from the new contentController
                 var selectedIndexesBindingDescriptor;

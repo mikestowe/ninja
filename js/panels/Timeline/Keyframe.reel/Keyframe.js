@@ -42,19 +42,21 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
 
     draw:{
         value:function(){
-            this.element.style.left = (this.position - 3) + "px";
+            this.element.style.left = (this.position - 5) + "px";
         }
     },
 
     deselectKeyframe:{
         value:function(){
             this.element.classList.remove("keyframeSelected");
+            this.element.style.left = (this.position - 5) + "px";
         }
     },
 
     selectKeyframe:{
         value:function(){
             this.element.classList.add("keyframeSelected");
+            this.element.style.left = (this.position - 6) + "px";
             this.parentComponent.selectTween();
         }
     },
@@ -91,6 +93,7 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
             	}
             }
             this.parentComponent.parentComponent.parentComponent.draggingIndex = myIndex;
+            this.selectKeyframe();
 		}
 	},
 	handleDragend: {

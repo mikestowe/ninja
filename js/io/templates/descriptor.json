@@ -1,13 +1,21 @@
 {
 	"categories":{
-		"children":["/"]
+		"children":["/basic", "/template"]
 	},
-	"/":{
+	
+	"/basic":{
 		"name":"Blank File",
-		"uri":"/",
+		"uri":"/basic",
 		"type":"directory",
         "children":["js/io/templates/files/html.txt", "js/io/templates/files/js.txt", "js/io/templates/files/css.txt", "js/io/templates/files/json.txt", "js/io/templates/files/php.txt", "js/io/templates/files/pl.txt", "js/io/templates/files/py.txt", "js/io/templates/files/rb.txt", "js/io/templates/files/xml.txt"]
 	},
+	"/template":{
+		"name":"Template",
+		"uri":"/template",
+		"type":"directory",
+        "children":["js/io/templates/files/banner.txt", "js/io/templates/files/animation.txt"]
+	},
+	
 	"js/io/templates/files/html.txt":{
 		"name":"HTML",
 		"uri":"js/io/templates/files/html.txt",
@@ -75,6 +83,58 @@
         "name": "Basic",
         "uri": "defaultTemplate",
         "type":"file"
+    },
+    
+    "js/io/templates/files/banner.txt":{
+		"name":"Banner",
+		"uri":"js/io/templates/files/banner.txt",
+		"type":"file",
+        "fileExtension":".html",
+        "children":["120x600", "160x600", "200x200", "250x250", "300x250", "336x280"]
+	},
+    
+    "120x600":{
+        "name": "Skyscraper",
+        "uri": "120x600",
+        "type":"file"
+    },
+    "160x600":{
+        "name": "Wide Skyscraper",
+        "uri": "160x600",
+        "type":"file"
+    },
+    "200x200":{
+        "name": "Small Square",
+        "uri": "200x200",
+        "type":"file"
+    },
+    "250x250":{
+        "name": "Square",
+        "uri": "250x250",
+        "type":"file"
+    },
+    "300x250":{
+        "name": "Medium Rectangle",
+        "uri": "300x250",
+        "type":"file"
+    },
+    "336x280":{
+        "name": "Large Rectangle",
+        "uri": "336x280",
+        "type":"file"
+    },
+    
+    "js/io/templates/files/animation.txt":{
+		"name":"Animation",
+		"uri":"js/io/templates/files/animation.txt",
+		"type":"file",
+        "fileExtension":".html",
+        "children":["550x400"]
+	},
+	
+	"550x400":{
+        "name": "Default",
+        "uri": "550x400",
+        "type":"file"
     }
-
 }

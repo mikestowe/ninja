@@ -146,7 +146,11 @@ exports.Hintable = Montage.create(Editable, {
         },
         set: function(str) {
             var node = this._getFirstTextNode();
-            node.textContent = str;
+            if (node.textContent !== str) {
+            	node.textContent = str;
+            }
+            
+            //node.innerText = str;
         }
     },
 
@@ -327,48 +331,8 @@ exports.Hintable = Montage.create(Editable, {
                 revert : [27],
                 backsp : [8]
             }
-        }
+        },
+        distinct: true
     }
     
 });
-
-// suggest : {
-//     value : function(hint) {
-//         ///// if no hint argument passed, clear suggestions
-//         if(!hint) {
-//             this.clearHint();
-//             return false;            
-//         }
-//         
-//         this._hint = hint;            
-// 
-//         ///// append span with suggested hint
-//         if(this.hintElement) {
-//             this.clearHint();
-//             
-//             ///// Set the hint element's text
-//             this._getFirstTextNode(this.hintElement).textContent = hint;
-// 
-//             ///// if hintElement was removed from the DOM, the object still
-//             ///// exists, so it needs to be re-appended
-//             if(this.hintElement.parentNode === null) {
-//                 this._element.appendChild(this.hintElement);
-//             }
-//         } else {
-//             /// Remove the phantom "<BR>" element that is generated when 
-//             /// content editable element is empty
-//             this._children(this._element, function(item) { 
-//                 return item.nodeName === 'BR';
-//             }).forEach(function(item) {
-//                 this._element.removeChild(item);
-//             }, this);
-// 
-//             this.hintElement = document.createElement('span');
-//             this.hintElement.classList.add(this.suggestClass);
-//             this.hintElement.appendChild(document.createTextNode(hint));
-//             this._element.appendChild(this.hintElement);
-//         }
-// 
-//         this._hint = hint;
-//     }
-// },

@@ -3,3 +3,17 @@
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
+ 
+.optionsShapeTool select.nj-skinned {
+    margin-top: 2px;
+}
+
+.optionsShapeTool .shapeCustomProps {
+    margin-top: 0px;
+    margin-left: -7px;
+}
+
+.optionsShapeTool checkbox {
+    padding: 6px;
+    margin-left: 4px;
+}

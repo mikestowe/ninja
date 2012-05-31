@@ -52,6 +52,10 @@ exports.TreeNode = Montage.create(Component, {
                 }, this);
             }
             this._sourceObject = object;
+
+            if(this.handleSourceObjectSet) {
+                this.handleSourceObjectSet();
+            }
         }
     },
     childNodes : {

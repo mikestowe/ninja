@@ -111,8 +111,9 @@ exports.Splitter = Montage.create(Component, {
             } else {
                 this.panel.removeEventListener("webkitTransitionEnd", this, false);
             }
-
-            this.application.ninja.stage.resizeCanvases = true;
+            if(this.application.ninja.currentDocument && this.application.ninja.currentDocument.currentView === "design"){
+                this.application.ninja.stage.resizeCanvases = true;
+            }
         }
     },
 
@@ -149,6 +150,7 @@ exports.Splitter = Montage.create(Component, {
                     this.panel.addEventListener("webkitTransitionEnd", this, false);
                 }
                 this._collapsed = true;
+                this.disabled = true;
                 this.needsDraw = true;
             }
         }
@@ -169,6 +171,7 @@ exports.Splitter = Montage.create(Component, {
                 } else {
                     this.panel.addEventListener("webkitTransitionEnd", this, false);
                 }
+                this.disabled = false;
                 this.needsDraw = true;
             }
         }

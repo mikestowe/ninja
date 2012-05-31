@@ -19,7 +19,7 @@ var HT = require("js/components/hottext.reel").HotText;
 var Dropdown = require("js/components/combobox.reel").Combobox;
 var TextField = require("js/components/textfield.reel").TextField;
 var FileInput = require("js/components/ui/file-input.reel").FileInput;
-var Checkbox = require("js/components/checkbox.reel").Checkbox;
+var LabelCheckbox = require("js/components/ui/label-checkbox.reel").LabelCheckbox;
 var ColorChip = require("js/components/ui/color-chip.reel").ColorChip;
 var Button = require("montage/ui/button.reel").Button;
 
@@ -77,7 +77,7 @@ exports.CustomSection = Montage.create(Component, {
                     this.rows.push(tmpRow);
 
                 } else if(this._fields[i].length === 3) {
-                    
+
                 }
 
             }
@@ -103,7 +103,7 @@ exports.CustomSection = Montage.create(Component, {
     handleChange: {
 		value:function(event) {
             if(event._event.wasSetByCode) return;
-            
+
             var obj = event.currentTarget;
             this._dispatchPropEvent({"type": "change", "id": obj.id, "prop": obj.prop, "value": obj.value, "control": obj});
 		}
@@ -116,7 +116,7 @@ exports.CustomSection = Montage.create(Component, {
         value: function(event) {
             // Change the stage color for now
             //console.log(this, event);
-            ElementsMediator.setProperty([this.application.ninja.currentDocument.documentRoot], this.id, [event._event.color.css], "Change", "pi", '');
+            ElementsMediator.setProperty([this.application.ninja.currentDocument.model.documentRoot], this.id, [event._event.color.css], "Change", "pi", '');
             /*
             var propEvent = document.createEvent("CustomEvent");
             propEvent.initEvent("propertyChange", true, true);
@@ -262,10 +262,10 @@ exports.CustomSection = Montage.create(Component, {
                 if(aField.enabled.boundObject) {
                     // TODO - For now, always bind to this.controls[someProperty]
                     Object.defineBinding(obj, "enabled", {
-                                    boundObject: this.controls,
-                                    boundObjectPropertyPath: aField.enabled.boundProperty,
-                                    oneway: false
-                                });
+                        boundObject: this.controls,
+                        boundObjectPropertyPath: aField.enabled.boundProperty,
+                        oneway: false
+                    });
                 } else {
                     obj.enabled = aField.enabled;
                 }
@@ -349,7 +349,7 @@ exports.CustomSection = Montage.create(Component, {
         value: function(aField) {
 
             // Generate Textfield
-            var obj = Checkbox.create();
+            var obj = LabelCheckbox.create();
 
             // Set Values for TextField
             if (aField.id)          obj.id = aField.id;
@@ -400,7 +400,7 @@ exports.CustomSection = Montage.create(Component, {
             this.controls[aField.id] = obj;
 
             // TODO - Hack for now to reference the color select object to unregister color chips
-            this.controls["stageBackground"] = obj;
+            this.controls["background"] = obj;
 
             return obj;
         }

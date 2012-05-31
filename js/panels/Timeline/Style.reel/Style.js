@@ -35,6 +35,7 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 			return this._isSelected;
 		},
 		set: function(newVal) {
+			console.log("Style["+this.styleID+"].isSelected.set ", newVal)
 			if (newVal !== this._isSelected) {
 				this._isSelected = newVal;
 				this.needsDraw = true;
@@ -191,9 +192,9 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
     			this._showView();
     		}
     		if (this.isSelected) {
-    			this.element.classList.add("selected");
+    			this.element.classList.add("style-selected");
     		} else {
-    			this.element.classList.remove("selected");
+    			this.element.classList.remove("style-selected");
     		}
     	}
     },

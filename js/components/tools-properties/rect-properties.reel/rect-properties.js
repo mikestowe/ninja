@@ -19,12 +19,6 @@ exports.RectProperties = Montage.create(ToolProperties, {
 
     _subPrepare: {
         value: function() {
-            this.lockButton.identifier = "lockButton";
-            this.lockButton.addEventListener("action", this, false);
-
-            this._setBindings([this.TRRadiusControl, this.BLRadiusControl, this.BRRadiusControl]);
-            this._setCap([this.TLRadiusControl,this.TRRadiusControl, this.BLRadiusControl, this.BRRadiusControl]);
-
         }
     },
 
@@ -33,15 +27,20 @@ exports.RectProperties = Montage.create(ToolProperties, {
             this.TRRadiusControl.enabled = this.BLRadiusControl.enabled = this.BRRadiusControl.enabled = !this.lockButton.pressed;
 
             if(this.lockButton.pressed) {
-                this._setBindings([this.TRRadiusControl, this.BLRadiusControl, this.BRRadiusControl]);
-            } else {
-                this._removeBindings([this.TRRadiusControl, this.BLRadiusControl, this.BRRadiusControl]);
+                this._syncRadii(this.TLRadiusControl.value, this.TLRadiusControl.units);
             }
-
         }
     },
 
     // Public API
+    fill: {
+        get: function () { return this.base.fill; }
+    },
+
+    stroke: {
+        get: function () { return this.base.stroke; }
+    },
+
     use3D: {
         get: function() { return this.base._use3D; }
     },
@@ -72,59 +71,51 @@ exports.RectProperties = Montage.create(ToolProperties, {
         get: function() { return this.base._fillMaterial.value; }
     },
 
-    _setBindings: {
-        value: function(els) {
-            var that = this;
-            els.forEach(function(el) {
-                Object.defineBinding(el, "value", {
-                    boundObject: that.TLRadiusControl,
-                    boundObjectPropertyPath: "value",
-                    boundValueMutator: function(value) {
-                        if (typeof value === "string") {
-                            return parseFloat(value);
-                        }
+    handleChanging: {
+        value: function(event) {
+            if(event.wasSetByCode) {
+                return;
+            }
 
-                        return value;
-                    }
-                });
-
-                Object.defineBinding(el, "units", {
-                    boundObject: that.TLRadiusControl,
-                    boundObjectPropertyPath: "units"
-                });
-            });
-        }
-    },
-
-    _removeBindings: {
-        value: function(els) {
-            els.forEach(function(el) {
-                Object.deleteBindings(el);
-            });
-        }
-    },
-
-    _setCap: {
-        value: function(els) {
-            var that = this;
-            els.forEach(function(el) {
-                el.addEventListener("change", that, false);
-            });
+            this._setBorderRadius(event);
         }
     },
 
     handleChange: {
+        value: function(event) {
+            if(event.wasSetByCode) {
+                return;
+            }
+
+            this._setBorderRadius(event);
+        }
+    },
+
+    _setBorderRadius: {
         value: function(event) {
             var hotTxt = event.currentTarget;
             if(hotTxt.units === "%") {
                 if(hotTxt.value > 50) {
                     hotTxt.maxValue = 50;
                 }
-                return hotTxt.value;
             }
-            
+
+            if(this.lockButton.pressed && (this.TLRadiusControl === hotTxt)) {
+                this._syncRadii(hotTxt.value, hotTxt.units);
+            }
+        }
+    },
+
+    _syncRadii: {
+        value: function(value, units) {
+            this.TRRadiusControl.value = value;
+            this.BLRadiusControl.value = value;
+            this.BRRadiusControl.value = value;
+
+            this.TRRadiusControl.units = units;
+            this.BLRadiusControl.units = units;
+            this.BRRadiusControl.units = units;
         }
     }
-
 
 });

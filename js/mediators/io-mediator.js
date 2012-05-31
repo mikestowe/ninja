@@ -10,7 +10,7 @@ var Montage = 			require("montage/core/core").Montage,
 	Component = 		require("montage/ui/component").Component,
 	FileIo = 			require("js/io/system/fileio").FileIo,
 	ProjectIo = 		require("js/io/system/projectio").ProjectIo,
-	TemplateCreator = 	require("node_modules/tools/template-creator").TemplateCreator;
+	TemplateCreator = 	require("node_modules/tools/template/template-creator").TemplateCreator;
 ////////////////////////////////////////////////////////////////////////
 //
 exports.IoMediator = Montage.create(Component, {
@@ -53,14 +53,14 @@ exports.IoMediator = Montage.create(Component, {
     //
     fileNew: {
         enumerable: false,
-        value: function (file, template, callback) {
+        value: function (file, url, callback, template) {
             //Loading template from template URL
             var xhr = new XMLHttpRequest(), result;
-            xhr.open("GET", template, false);
+            xhr.open("GET", url, false);
             xhr.send();
             if (xhr.readyState === 4) {
                 //Making call to create file, checking for return code
-                switch (this.fio.newFile({ uri: file, contents: xhr.response })) {
+                switch (this.fio.newFile({ uri: file, contents: parseTemplate(xhr.response, template) })) {
                     case 201:
                         result = { status: 201, success: true, uri: file };
                         break;
@@ -73,6 +73,21 @@ exports.IoMediator = Montage.create(Component, {
                     default:
                         result = { status: 500, success: false, uri: file };
                         break;
+                }
+                //TODO: Improve template data injection
+                function parseTemplate (content, template) {
+                	//
+                	if (template.name.toLowerCase() === 'banner' || template.name.toLowerCase() === 'animation') {
+                		//Getting dimensions of banner
+                		var dimensions = template.id.split('x');
+                		dimensions = {width: String(dimensions[0])+'px', height: String(dimensions[1])+'px'};
+                		//
+                		content = content.replace(/Dimensions@@@/gi, "Dimensions@@@"+template.id);
+                		content = content.replace(/ninja-banner {}/gi, "ninja-banner {overflow: visible; width: "+dimensions.width+"; height: "+dimensions.height+"}");
+                		content = content.replace(/ninja-content-wrapper {}/gi, "ninja-content-wrapper {overflow: hidden; width: "+dimensions.width+"; height: "+dimensions.height+"}");
+                	}
+                	//
+                	return content;
                 }
             } else {
                 result = { status: 500, success: false, uri: file };
@@ -147,25 +162,25 @@ exports.IoMediator = Montage.create(Component, {
     //
     fileSave: {
         enumerable: false,
-        value: function (file, callback) {
+        value: function (doc, callback) {
             //
             var contents, save;
             //
-            switch (file.mode) {
+            switch (doc.mode) {
                 case 'html':
-
-
-                    //TODO: Add check for Monatage library to copy
-
                     //Getting content from function to properly handle saving assets (as in external if flagged)
-                    contents = this.parseNinjaTemplateToHtml(file);
+                    if (doc.template && (doc.template.type === 'banner' || doc.template.type === 'animation')) {
+                    	contents = this.parseNinjaTemplateToHtml(doc, true);
+                    } else {
+                    	contents = this.parseNinjaTemplateToHtml(doc);
+                    }
                     break;
                 default:
-                    contents = file.content;
+                    contents = doc.content;
                     break;
             }
             //Making call to save file
-            save = this.fio.saveFile({ uri: file.document.uri, contents: contents });
+            save = this.fio.saveFile({ uri: doc.file.uri, contents: contents });
             //Checking for callback
             if (callback) callback(save);
         }
@@ -188,6 +203,59 @@ exports.IoMediator = Montage.create(Component, {
     },
     ////////////////////////////////////////////////////////////////////
     //
+    getDataDirectory: {
+    	value: function (path) {
+    		//TODO: Implement user overwrite
+        	return this._getUserDirectory(path+'data/');
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    getNinjaDirectory: {
+    	value: function (path) {
+    		//TODO: Implement user overwrite
+    		return this._getUserDirectory(this.getDataDirectory(path)+'ninja/');
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    getCanvasDirectory: {
+    	value: function (path) {
+    		//TODO: Implement user overwrite
+    		return this._getUserDirectory(this.getNinjaDirectory(path)+'canvas/');
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    _getUserDirectory: {
+    	value: function (path) {
+    		//Checking for data directory
+            var check = this.application.ninja.coreIoApi.fileExists({uri: path}), directory;
+            //Creating directory if doesn't exists
+            switch (check.status) {
+            	case 204: //Exists
+            		directory = path;
+            		break;
+            	case 404: //Doesn't exists
+            		directory = this.application.ninja.coreIoApi.createDirectory({uri: path});
+            		//Checking for success
+            		if (directory.status === 201) {
+            			directory = path;
+            		} else {
+            			//Error
+            			directory = null;
+            		}
+            		break;
+            	default: //Error
+            		directory = null;
+            		break;
+            }
+            //Returning the path to the directory on disk (null for any error)
+            return directory;
+    	}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
     parseHtmlToNinjaTemplate: {
         enumerable: false,
         value: function (html) {
@@ -196,23 +264,65 @@ exports.IoMediator = Montage.create(Component, {
             //Setting content to temp
             doc.getElementsByTagName('html')[0].innerHTML = html;
             //Creating return object
-            return { head: doc.head.innerHTML, body: doc.body.innerHTML, document: doc };
+            return {head: doc.head.innerHTML, body: doc.body.innerHTML, document: doc};
         }
     },
     ////////////////////////////////////////////////////////////////////
     //TODO: Expand to allow more templates, clean up variables
     parseNinjaTemplateToHtml: {
         enumerable: false,
-        value: function (template) {
-            var regexRootUrl, rootUrl = this.application.ninja.coreIoApi.rootUrl + escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]));
+        value: function (template, ninjaWrapper) {
+        	//TODO: Improve reference for rootUrl
+            var regexRootUrl,
+            	rootUrl = this.application.ninja.coreIoApi.rootUrl + escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1])),
+            	mjsCreator = template.mjsTemplateCreator.create(),
+            	mJsSerialization,
+            	montageTemplate;
+            //Creating instance of template creator
+            montageTemplate = mjsCreator.initWithDocument(template.document);
+            //Setting up expression for parsing URLs
             regexRootUrl = new RegExp(rootUrl.replace(/\//gi, '\\\/'), 'gi');
             //Injecting head and body into old document
-            template.document.content.document.head.innerHTML = template.head.replace(regexRootUrl, '');
-            template.document.content.document.body.innerHTML = template.body.replace(regexRootUrl, '');
+            if (montageTemplate._ownerSerialization.length > 0) {
+            	template.file.content.document.head.innerHTML = montageTemplate._document.head.innerHTML.replace(regexRootUrl, '');
+	            template.file.content.document.body.innerHTML = montageTemplate._document.body.innerHTML.replace(regexRootUrl, '');
+	            //
+	            mJsSerialization = montageTemplate._ownerSerialization;
+            } else {
+            	template.file.content.document.head.innerHTML = template.head.innerHTML.replace(regexRootUrl, '');
+	            template.file.content.document.body.innerHTML = template.body.innerHTML.replace(regexRootUrl, '');
+            }
+            //Copying attributes to maintain same properties as the <body>
+			for (var n in template.body.attributes) {
+				if (template.body.attributes[n].value) {
+					//
+					template.file.content.document.body.setAttribute(template.body.attributes[n].name, template.body.attributes[n].value);
+				}				
+			}
+            //TODO: Add attribute copying for <HEAD> and <HTML>
+            
+            
+            //console.log(template.file.content.document.getElementsByTagName('html')[0].innerHTML);
+            
+            
             //Getting all CSS (style or link) tags
-            var styletags = template.document.content.document.getElementsByTagName('style'),
-    			linktags = template.document.content.document.getElementsByTagName('link'),
-    			toremovetags = [];
+            var styletags = template.file.content.document.getElementsByTagName('style'),
+    			linktags = template.file.content.document.getElementsByTagName('link'),
+    			toremovetags = [],
+    			njtemplatetags = template.file.content.document.querySelectorAll('[data-ninja-template]');
+    		
+    		//////////////////////////////////////////////////
+    		//TODO: Remove, temp hack, this is to be fixed by Montage
+    		var basetags = template.file.content.document.getElementsByTagName('base');
+    		for (var g in basetags) {
+    			if (basetags[g].getAttribute) toremovetags.push(basetags[g]);
+    		}
+    		//////////////////////////////////////////////////
+    		
+    		//Adding to tags to be removed form template
+    		for (var f in njtemplatetags) {
+    			if (njtemplatetags[f].getAttribute) toremovetags.push(njtemplatetags[f]);
+    		}
             //Getting styles tags to be removed from document
             if (styletags.length) {
                 for (var j = 0; j < styletags.length; j++) {
@@ -229,15 +339,16 @@ exports.IoMediator = Montage.create(Component, {
             for (var h = 0; toremovetags[h]; h++) {
                 try {
                     //Checking head first
-                    template.document.content.document.head.removeChild(toremovetags[h]);
+                    template.file.content.document.head.removeChild(toremovetags[h]);
                 } catch (e) {
-                    try {
+                    
+                }
+                try {
                         //Checking body if not in head
-                        template.document.content.document.body.removeChild(toremovetags[h]);
+                        template.file.content.document.body.removeChild(toremovetags[h]);
                     } catch (e) {
                         //Error, not found!
                     }
-                }
             }
             //Removing disabled tags from tags that were not originally disabled by user (Ninja enables all)
             for (var l in linktags) {
@@ -255,13 +366,13 @@ exports.IoMediator = Montage.create(Component, {
             if (template.styles) {
                 //Getting all style tags
                 var styleCounter = 0,
-    				docStyles = template.document.content.document.getElementsByTagName('style');
+    				docStyles = template.file.content.document.getElementsByTagName('style');
                 //Looping through all style tags
                 for (var i in template.styles) {
                     if (template.styles[i].ownerNode) {
                         if (template.styles[i].ownerNode.getAttribute) {
                             //Checking for node not to be loaded from file
-                            if (template.styles[i].ownerNode.getAttribute('data-ninja-uri') === null && !template.styles[i].ownerNode.getAttribute('data-ninja-template')) {
+                            if (template.styles[i].ownerNode.getAttribute('data-ninja-uri') === null && !template.styles[i].ownerNode.getAttribute('data-ninja-template') && !template.styles[i].ownerNode.getAttribute('data-ninja-external-url')) {
                                 if (docStyles[styleCounter]) {
                                     //Inseting data from rules array into tag as string
                                     docStyles[styleCounter].innerHTML = this.getCssFromRules(template.styles[i].cssRules);
@@ -275,8 +386,8 @@ exports.IoMediator = Montage.create(Component, {
             } else if (template.css) {
                 //Getting all style and link tags
                 var styleCounter = 0,
-    				docStyles = template.document.content.document.getElementsByTagName('style'),
-    				docLinks = template.document.content.document.getElementsByTagName('link');
+    				docStyles = template.file.content.document.getElementsByTagName('style'),
+    				docLinks = template.file.content.document.getElementsByTagName('link');
                 //Removing Ninja Data Attributes
                 for (var n in docLinks) {
                     if (docLinks[n].attributes) {
@@ -347,43 +458,54 @@ exports.IoMediator = Montage.create(Component, {
                     }
                 }
             }
+            //
+            var matchingtags = [], scripts = template.file.content.document.getElementsByTagName('script'), webgltag, webgllibtag, webglrdgetag, mjstag, mjslibtag;
+           	//this.getDataDirectory(template.file.root)
+           	//this.getNinjaDirectory(template.file.root)
+            //
+            for (var i in scripts) {
+            	if (scripts[i].getAttribute) {
+               		if (scripts[i].getAttribute('data-ninja-canvas') !== null) {//TODO: Use querySelectorAll
+               			matchingtags.push(scripts[i]);
+                    }
+                    if (scripts[i].getAttribute('data-ninja-canvas-lib') !== null) {
+                        webgllibtag = scripts[i]; // TODO: Add logic to delete unneccesary tags
+                    }
+                    if (scripts[i].getAttribute('data-ninja-canvas-rdge') !== null) {
+               	        webglrdgetag = scripts[i]; // TODO: Add logic to delete unneccesary tags
+                    }
+                    if (scripts[i].getAttribute('type') === 'text/montage-serialization') {
+                        mjstag = scripts[i]; // TODO: Add logic to delete unneccesary tags
+                    }
+                    if (scripts[i].getAttribute('data-mjs-lib') !== null) {
+                     	mjslibtag = scripts[i]; // TODO: Add logic to delete unneccesary tags
+                    }
+                }
+            }
             //Checking for webGL elements in document
             if (template.webgl && template.webgl.length > 1) {//TODO: Should be length 0, hack for a temp fix
-                var rdgeDirName, rdgeVersion;
+                var rdgeDirName, rdgeVersion, cvsDataDir = this.getCanvasDirectory(template.file.root), fileCvsDir, fileCvsDirAppend, cvsDirCounter = 1;
+                //
+                if (cvsDataDir && !matchingtags.length) {
+                	fileCvsDir = cvsDataDir+template.file.name.split('.'+template.file.extension)[0];
+                	if (!this._getUserDirectory(fileCvsDir)) {
+                		fileCvsDirAppend = fileCvsDir+cvsDirCounter;
+                		while (!this._getUserDirectory(fileCvsDirAppend)) {
+                			fileCvsDirAppend = fileCvsDir+(cvsDirCounter++);
+                		}
+                	}
+                	//TODO: Allow user overwrite
+                	fileCvsDir += '/';
+                }
                 //Copy webGL library if needed
                 for (var i in this.application.ninja.coreIoApi.ninjaLibrary.libs) {
                     //Checking for RDGE library to be available
                     if (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'RDGE') {
                         rdgeDirName = (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name + this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version).toLowerCase();
                         rdgeVersion = this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version;
-                        this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.document.root, rdgeDirName);
+                        this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.file.root, rdgeDirName);
                     } else {
                         //TODO: Error handle no available library to copy
-                    }
-                }
-                //
-                var json, matchingtags = [], webgltag, scripts = template.document.content.document.getElementsByTagName('script'), webgljstag, webgllibtag, webglrdgetag, mjstag, mjslibtag;
-                //
-                for (var i in scripts) {
-                    if (scripts[i].getAttribute) {
-                        if (scripts[i].getAttribute('data-ninja-webgl') !== null) {//TODO: Use querySelectorAll
-                            matchingtags.push(scripts[i]);
-                        }
-                        if (scripts[i].getAttribute('data-ninja-webgl-js') !== null) {
-                            webgljstag = scripts[i]; // TODO: Add logic to delete unneccesary tags
-                        }
-                        if (scripts[i].getAttribute('data-ninja-webgl-lib') !== null) {
-                            webgllibtag = scripts[i]; // TODO: Add logic to delete unneccesary tags
-                        }
-                        if (scripts[i].getAttribute('data-ninja-webgl-rdge') !== null) {
-                            webglrdgetag = scripts[i]; // TODO: Add logic to delete unneccesary tags
-                        }
-                        if (scripts[i].getAttribute('type') !== 'text/montage-serialization') {
-                            mjstag = scripts[i]; // TODO: Add logic to delete unneccesary tags
-                        }
-                        if (scripts[i].getAttribute('data-mjs-lib') !== null) {
-                            mjslibtag = scripts[i]; // TODO: Add logic to delete unneccesary tags
-                        }
                     }
                 }
                 //
@@ -395,118 +517,152 @@ exports.IoMediator = Montage.create(Component, {
                         webgltag = matchingtags[matchingtags.length - 1]; //Saving all data to last one...
                     }
                 }
-                //
+                //TODO: Add check for file needed
                 if (!webglrdgetag) {
-                    webglrdgetag = template.document.content.document.createElement('script');
+                    webglrdgetag = template.file.content.document.createElement('script');
                     webglrdgetag.setAttribute('type', 'text/javascript');
                     webglrdgetag.setAttribute('src', rdgeDirName + '/rdge-compiled.js');
-                    webglrdgetag.setAttribute('data-ninja-webgl-rdge', 'true');
-                    template.document.content.document.head.appendChild(webglrdgetag);
+                    webglrdgetag.setAttribute('data-ninja-canvas-rdge', 'true');
+                    if (ninjaWrapper) {
+                    	template.file.content.document.body.getElementsByTagName('ninja-content')[0].appendChild(webglrdgetag);
+                    } else {
+                    	template.file.content.document.head.appendChild(webglrdgetag);
+                    }
                 }
                 //
                 if (!webgllibtag) {
-                    webgllibtag = template.document.content.document.createElement('script');
+                    webgllibtag = template.file.content.document.createElement('script');
                     webgllibtag.setAttribute('type', 'text/javascript');
                     webgllibtag.setAttribute('src', rdgeDirName + '/canvas-runtime.js');
-                    webgllibtag.setAttribute('data-ninja-webgl-lib', 'true');
-                    template.document.content.document.head.appendChild(webgllibtag);
+                    webgllibtag.setAttribute('data-ninja-canvas-lib', 'true');
+                    if (ninjaWrapper) {
+                    	template.file.content.document.body.getElementsByTagName('ninja-content')[0].appendChild(webgllibtag);
+                    } else {
+                    	template.file.content.document.head.appendChild(webgllibtag);
+                    }
                 }
                 //
-                if (!webgltag) {
-                    webgltag = template.document.content.document.createElement('script');
-                    webgltag.setAttribute('data-ninja-webgl', 'true');
-                    template.document.content.document.head.appendChild(webgltag);
+                if (!webgltag && !fileCvsDir) {
+                    webgltag = template.file.content.document.createElement('script');
+                    webgltag.setAttribute('data-ninja-canvas', 'true');
+                    if (ninjaWrapper) {
+                    	template.file.content.document.body.getElementsByTagName('ninja-content')[0].appendChild(webgltag);
+                    } else {
+	                    template.file.content.document.head.appendChild(webgltag);
+	                }
                 }
-                //TODO: Remove this tag and place inside JS file
-                if (!webgljstag) {
-                    webgljstag = template.document.content.document.createElement('script');
-                    webgljstag.setAttribute('type', 'text/javascript');
-                    webgljstag.setAttribute('data-ninja-webgl-js', 'true');
-                    template.document.content.document.head.appendChild(webgljstag);
-                }
+                
                 //TODO: Decide if this should be over-writter or only written on creation
                 var rootElement = 'document.body'; //TODO: Set actual root element
-                webgljstag.innerHTML = "\
-//Loading webGL/canvas data on window load\n\
-window.addEventListener('load', loadWebGL, false);\n\
-function loadWebGL (e) {\n\
-	window.removeEventListener('load', loadWebGL, false);\n\
-	//Calling method to initialize all webGL/canvas(es)\n\
-	NinjaCvsRt.initWebGl(" + rootElement + ", '" + rdgeDirName + "/');\n\
-}\
-    			";
+                
                 //TODO: This data should be saved to a JSON file eventually
-                json = '\n({\n\t"version": "' + rdgeVersion + '",\n\t"directory": "' + rdgeDirName + '/",\n\t"data": [';
+                var json = '\n({\n\t"version": "' + rdgeVersion + '",\n\t"directory": "' + rdgeDirName + '/",\n\t"data": [';
                 //Looping through data to create escaped array
                 for (var j = 0; template.webgl[j]; j++) {
                     if (j === 0) {
-                        json += '\n\t\t\t"' + escape(template.webgl[j]) + '"';
+                    	//if (fileCvsDir) {
+                    	//	json += '\n\t\t\t"' + template.webgl[j] + '"';
+                    	//} else {
+                    		json += '\n\t\t\t"' + escape(template.webgl[j]) + '"';
+                    	//}
                     } else {
-                        json += ',\n\t\t\t"' + escape(template.webgl[j]) + '"';
+                    	//if (fileCvsDir) {
+                    	//	json += ',\n\t\t\t"' + template.webgl[j] + '"';
+                    	//} else {
+                    		json += ',\n\t\t\t"' + escape(template.webgl[j]) + '"';
+                    	//}
                     }
                 }
                 //Closing array (make-shift JSON string to validate data in <script> tag)
                 json += '\n\t\t]\n})\n';
                 //Setting string in tag
-                webgltag.innerHTML = json;
+                if (fileCvsDir) {
+                	//
+                	var cvsDataFilePath = fileCvsDir+'data.json', cvsDataFileUrl, cvsDataFileCheck, cvsDataFileOperation;
+                	//
+                	cvsDataFileUrl = this.getNinjaPropUrlRedirect(cvsDataFilePath.split(this.application.ninja.coreIoApi.cloudData.root+'/')[1]),
+                	cvsDataFileCheck = this.application.ninja.coreIoApi.fileExists({uri: cvsDataFilePath}),
+                	//Setting the local path to the JSON file
+                	webgllibtag.setAttribute('data-ninja-canvas-json', this.application.ninja.coreIoApi.rootUrl+'/'+cvsDataFileUrl);
+                	webgllibtag.setAttribute('data-ninja-canvas-libpath', rdgeDirName);
+                	//
+                	if (cvsDataFileCheck.status === 404 || cvsDataFileCheck.status === 204) {
+                		//Saving file
+                		cvsDataFileOperation = this.fio.saveFile({uri: cvsDataFilePath, contents: json});
+                	} else {
+                		//Error
+                	}
+                	
+                	
+                } else {
+                	webgllibtag.setAttribute('data-ninja-canvas-libpath', rdgeDirName);
+                	webgltag.innerHTML = json;
+                }
             }
-
-
-
-
-
-
-
-            //
-            var mjsCounter = 0, mjsComponents = [], temp = TemplateCreator.create();
-            //
-            for (var m in template.mjs) {
-                mjsComponents.push(template.mjs[m]);
-                mjsCounter++;
-            }
-            //
-            if (template.mjs && mjsCounter > 0) {
-                var mjsDirName, mjsVersion,
-    				mjscode = temp.initWithHeadAndBodyElements(template.document.content.document.documentElement.head, template.document.content.document.documentElement.body, mjsComponents)._ownerSerialization;
-                //Copy Montage library if needed
+			//Checking for Montage
+			if (mJsSerialization) {
+				//Copy Montage library if needed
                 for (var i in this.application.ninja.coreIoApi.ninjaLibrary.libs) {
                     //Checking for Montage library to be available
                     if (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'Montage') {
                         mjsDirName = (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name + this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version).toLowerCase();
                         mjsVersion = this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version;
-                        this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.document.root, mjsDirName);
+                        this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.file.root, mjsDirName);
+                        
+                        
+                        
                         //TODO: Fix to allow no overwrite and nested locations
-                        var packjson = this.application.ninja.coreIoApi.createFile({ uri: template.document.root + 'package.json', contents: '{"mappings": {"montage": "' + mjsDirName + '/"}}' });
+                        var mjsCheck, mjsPath = template.file.root + 'package.json';
+                        mjsCheck = this.application.ninja.coreIoApi.fileExists({uri: mjsPath});
+                        //
+                        if (!mjsCheck || mjsCheck.status !== 204) {
+	                        var packjson = this.application.ninja.coreIoApi.createFile({ uri: mjsPath, contents: '{"mappings": {\n\t\t"montage": "' + mjsDirName + '/montage/",\n\t\t"montage-google": "' + mjsDirName + '/montage-google/"\n\t}\n}' });
+                        } else {
+                        	//Already exists
+                        }
+                        
+                        
+                        
                     } else {
                         //TODO: Error handle no available library to copy
                     }
                 }
                 //
                 if (!mjslibtag) {
-                    mjslibtag = template.document.content.document.createElement('script');
+                    mjslibtag = template.file.content.document.createElement('script');
                     mjslibtag.setAttribute('type', 'text/javascript');
-                    mjslibtag.setAttribute('src', mjsDirName + '/montage.js');
+                    mjslibtag.setAttribute('src', mjsDirName + '/montage/montage.js');
+                    mjslibtag.setAttribute('data-package', '.');
                     mjslibtag.setAttribute('data-mjs-lib', 'true');
-                    template.document.content.document.head.appendChild(mjslibtag);
+                    if (ninjaWrapper) {
+                    	template.file.content.document.body.getElementsByTagName('ninja-content')[0].appendChild(mjslibtag);
+                    } else {
+                    	template.file.content.document.head.appendChild(mjslibtag);
+                    }
+                    
                 }
                 //
                 if (!mjstag) {
-                    mjstag = template.document.content.document.createElement('script');
+                    mjstag = template.file.content.document.createElement('script');
                     mjstag.setAttribute('type', 'text/montage-serialization');
-                    template.document.content.document.head.appendChild(mjstag);
+                    if (ninjaWrapper) {
+                    	template.file.content.document.body.getElementsByTagName('ninja-content')[0].appendChild(mjstag);
+                    } else {
+                    	template.file.content.document.head.appendChild(mjstag);
+                    }
+                    
                 }
                 //
-                mjstag.innerHTML = mjscode;
-            }
-
-
-
-
-
-
-
+                mjstag.innerHTML = mJsSerialization;
+                mjsCreator = null;
+			}
             //Cleaning URLs from HTML
-            var cleanHTML = template.document.content.document.documentElement.outerHTML.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaRootUrl.bind(this));
+            var cleanHTML;
+            if (ninjaWrapper) {
+            	cleanHTML = template.file.content.document.body.innerHTML.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaRootUrl.bind(this));
+            } else {
+            	cleanHTML = template.file.content.document.documentElement.outerHTML.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaRootUrl.bind(this));
+      	    }
             //
             function parseNinjaRootUrl(url) {
                 if (url.indexOf(this.application.ninja.coreIoApi.rootUrl) !== -1) {
@@ -514,6 +670,11 @@ function loadWebGL (e) {\n\
                 } else {
                     return url;
                 }
+            }
+            //
+            if (ninjaWrapper) {
+            	cleanHTML = cleanHTML.replace(/ninja-viewport/gi, 'div');
+            	cleanHTML = cleanHTML.replace(/ninja-content/gi, 'div');
             }
             //
             return this.getPrettyHtml(cleanHTML.replace(this.getAppTemplatesUrlRegEx(), ''));
@@ -559,7 +720,8 @@ function loadWebGL (e) {\n\
     //
     getDocRootUrl: {
         value: function () {
-            return this.application.ninja.coreIoApi.rootUrl + escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
+        	//TODO: Add support for model.baseHref (base tag)
+        	return this.application.ninja.coreIoApi.rootUrl + escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1]).replace(/\/\//gi, '/'));
         }
     },
     ////////////////////////////////////////////////////////////////////

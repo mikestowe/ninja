@@ -202,7 +202,6 @@ exports.TextProperties = Montage.create(ToolProperties, {
             if (!this.initialized) {
 
                 //Setup Font Selection tool
-                this.fontColor = this.element.getElementsByClassName("fontColor")[0];
                 this.fontColor.props = {side: 'top', align: 'center', wheel: true, palette: true, gradient: false, image: false, nocolor: true, offset: -80};
                 this.application.ninja.colorController.addButton("chip", this.fontColor);
                 this.fontColor.color('rgb', {wasSetByCode: true, type: 'change', color: {r: 0, g: 0, b: 0}, css: 'rgb(0,0,0)'});

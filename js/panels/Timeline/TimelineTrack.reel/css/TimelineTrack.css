@@ -17,7 +17,7 @@
   border-bottom-style: solid;
   border-bottom-width: thin;
   background-image: url("../images/gridline.jpg");
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* line 34, ../scss/TimelineTrack.scss */

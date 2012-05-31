@@ -38,7 +38,7 @@ var FileInput = exports.FileInput = Montage.create(Component, {
     {
         value:function(event)
 		{
-            if(event.currentTarget.id === "fileInputControl")
+            if(event.currentTarget.type === "file")
             {
                 this.filePath = this.inputField.value;
             }
