@@ -184,6 +184,8 @@ exports.Stage = Montage.create(Component, {
             if(!value) {
                 this.hideRulers();
                 this.hideCanvas(true);
+                drawUtils._eltArray.length = 0;
+                drawUtils._planesArray.length = 0;
             } else if(this._currentDocument.currentView === "design") {
                 this.clearAllCanvas();
                 this.initWithDocument(false);

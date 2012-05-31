@@ -45,6 +45,11 @@ exports.DocumentController = Montage.create(Component, {
 
             if(this._currentDocument) {
                 this._currentDocument.model.currentView.hide();
+
+                if(this._currentDocument.model.parentContainer !== value.model.parentContainer) {
+                    this._currentDocument.model.parentContainer.style["display"] = "none";
+                    value.model.parentContainer.style["display"] = "block";
+                }
             }
 
             this._currentDocument = value;
@@ -355,10 +360,7 @@ exports.DocumentController = Montage.create(Component, {
                     currentDocument.serializeDocument();
                 }
 
-                if(currentDocument.model.parentContainer !== newDocument.model.parentContainer) {
-                    currentDocument.model.parentContainer.style["display"] = "none";
-                    newDocument.model.parentContainer.style["display"] = "block";
-                }
+
 
                 if(currentDocument.currentView === "code" && newDocument.currentView === "design") {
                     this.application.ninja.stage.showCodeViewBar(false);

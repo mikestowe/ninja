@@ -112,7 +112,6 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
             this.eventManager.addEventListener("elementsRemoved", this, false);
             this.eventManager.addEventListener("elementChange", this, false);
             this.eventManager.addEventListener("elementChanging", this, false);
-            this.eventManager.addEventListener("closeDocument", this, false);
             this.eventManager.addEventListener("elementReplaced", this, false);
 		}
 	},
@@ -160,15 +159,6 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                 if(minTop !== initT) {
                     stage.userPaddingTop = minTop;
                 }
-            }
-        }
-    },
-
-    handleCloseDocument:{
-        value: function() {
-            if(this.application.ninja.documentController._documents.length === 0){
-                this._eltArray.length = 0;
-                this._planesArray.length = 0;
             }
         }
     },
