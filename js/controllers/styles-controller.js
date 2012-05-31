@@ -1204,7 +1204,6 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
     getMatrixFromElement : {
         value: function(element, isStage) {
-            isStage = false;
             var xformStr = this.getElementStyle(element, "-webkit-transform", true, isStage),
                 mat;
 
@@ -1238,7 +1237,6 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
     getPerspectiveDistFromElement : {
         value: function(element, isStage) {
-            isStage = false;
             var xformStr = this.getElementStyle(element, "-webkit-perspective", false, isStage),
                 dist;
 
