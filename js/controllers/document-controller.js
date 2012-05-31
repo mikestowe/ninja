@@ -45,11 +45,6 @@ exports.DocumentController = Montage.create(Component, {
 
             if(this._currentDocument) {
                 this._currentDocument.model.currentView.hide();
-
-                if(this._currentDocument.model.parentContainer !== value.model.parentContainer) {
-                    this._currentDocument.model.parentContainer.style["display"] = "none";
-                    value.model.parentContainer.style["display"] = "block";
-                }
             }
 
             this._currentDocument = value;
@@ -58,10 +53,13 @@ exports.DocumentController = Montage.create(Component, {
                 document.getElementById("iframeContainer").style.display = "block";
                 document.getElementById("codeViewContainer").style.display = "block";
             } else if(this._currentDocument.currentView === "design") {
+                document.getElementById("codeViewContainer").style.display = "none";
+                document.getElementById("iframeContainer").style.display = "block";
                 this._currentDocument.model.currentView.show();
                 this._currentDocument.model.views.design._liveNodeList = this._currentDocument.model.documentRoot.getElementsByTagName('*');
             } else {
                 document.getElementById("iframeContainer").style.display = "none";
+                this._currentDocument.model.parentContainer.style["display"] = "block";
                 this._currentDocument.model.currentView.show();
             }
 
@@ -355,26 +353,8 @@ exports.DocumentController = Montage.create(Component, {
     switchDocuments: {
         value: function(currentDocument, newDocument, didCreate) {
 
-            if(currentDocument) {
-                if(currentDocument.currentView === "design") {
-                    currentDocument.serializeDocument();
-                }
-
-
-
-                if(currentDocument.currentView === "code" && newDocument.currentView === "design") {
-                    this.application.ninja.stage.showCodeViewBar(false);
-                    this.application.ninja.stage.restoreAllPanels();
-                    this.application.ninja.stage.hideCanvas(false);
-                    this.application.ninja.stage.showRulers();
-                }
-            }
-
-            if(newDocument.currentView === "code") {
-                this.application.ninja.stage.showCodeViewBar(true);
-                this.application.ninja.stage.collapseAllPanels();
-                this.application.ninja.stage.hideCanvas(true);
-                this.application.ninja.stage.hideRulers();
+            if(currentDocument.currentView === "design") {
+                currentDocument.serializeDocument();
             }
 
             if(didCreate) {
@@ -384,19 +364,8 @@ exports.DocumentController = Montage.create(Component, {
                     newDocument.model.parentContainer.style["display"] = "block";
                 }
             } else {
-                this.activeDocument = newDocument;
-
-                newDocument.model.currentView.show();
-
                 if(newDocument.currentView === "design") {
                     newDocument.deserializeDocument();
-                    NJevent("onSwitchDocument");
-                } else {
-                    this.application.ninja.currentDocument = newDocument;
-                    newDocument.model.views.code.editor.focus();
-
-                    newDocument.model.isActive = true;
-                    this.application.ninja.codeEditorController.applySettings();//should be called after activeDocument is updated
                 }
             }
         }

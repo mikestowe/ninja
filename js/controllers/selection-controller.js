@@ -33,17 +33,19 @@ exports.SelectionController = Montage.create(Component, {
                 return;
             }
 
-            if(this._currentDocument) {
+            if(this._currentDocument && this._currentDocument.currentView === "design") {
                 this._currentDocument.model.selection = this.application.ninja.selectedElements;
                 this._currentDocument.model.selectionContainer = this.application.ninja._currentSelectedContainer;
             }
 
             this._currentDocument = value;
 
+            /*
             if(!value) {
             } else if(this._currentDocument.currentView === "design") {
             } else {
             }
+            */
 
         }
     },
@@ -57,6 +59,8 @@ exports.SelectionController = Montage.create(Component, {
             return this._selectedElements;
         },
         set: function(value) {
+            if(this.currentDocument && this.currentDocument.currentView === "code") return;
+
             if(value) {
                 this._selectedElements = value;
 

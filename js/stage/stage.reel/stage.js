@@ -187,8 +187,18 @@ exports.Stage = Montage.create(Component, {
                 drawUtils._eltArray.length = 0;
                 drawUtils._planesArray.length = 0;
             } else if(this._currentDocument.currentView === "design") {
+                this.showCodeViewBar(false);
+                this.restoreAllPanels();
+                this.hideCanvas(false);
+                this.showRulers();
+
                 this.clearAllCanvas();
                 this.initWithDocument(false);
+            } else {
+                this.showCodeViewBar(true);
+                this.collapseAllPanels();
+                this.hideCanvas(true);
+                this.hideRulers();
             }
         }
         },
