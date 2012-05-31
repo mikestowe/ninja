@@ -99,8 +99,6 @@ exports.HtmlDocument = Montage.create(Component, {
     		//Removing observer, only needed on initial load
     		this._observer.disconnect();
     		this._observer = null;
-            //Show the view
-            this.model.currentView.show();
     		//Making callback after view is loaded
     	    this.loaded.callback.call(this.loaded.context, this);
     	}
