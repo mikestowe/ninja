@@ -315,10 +315,10 @@ exports.ElementMediator = Montage.create(Component, {
      @param stageRedraw: *OPTIONAL*: True. If set to false the stage will not redraw the selection/outline
      */
     setColor: {
-        value: function(els, value, isFill, eventType, source, currentValue) {
+        value: function(els, value, isFill, eventType, source, currentValue,borderSide) {
 
             if(eventType === "Changing") {
-                this._setColor(els, value, isFill, eventType, source);
+                this._setColor(els, value, isFill, eventType, source,borderSide);
             } else {
                 // Calculate currentValue if not found for each element
                 if(!currentValue) {
@@ -337,11 +337,12 @@ exports.ElementMediator = Montage.create(Component, {
                     _source:            { value: "undo-redo"},
                     description:        { value: "Set Color"},
                     receiver:           { value: this},
+                    _borderSide:         { value: borderSide},
 
                     execute: {
                         value: function(senderObject) {
                             if(senderObject) this._source = senderObject;
-                            this.receiver._setColor(this._els, this._value, this._isFill, this._eventType, this._source);
+                            this.receiver._setColor(this._els, this._value, this._isFill, this._eventType, this._source,this._borderSide);
                             this._source = "undo-redo";
                             return "";
                         }
@@ -363,9 +364,9 @@ exports.ElementMediator = Montage.create(Component, {
     },
 
     _setColor: {
-        value: function(els, value, isFill, eventType, source) {
+        value: function(els, value, isFill, eventType, source,borderSide) {
             for(var i=0, item; item = els[i]; i++) {
-                item.elementModel.controller["setColor"](item, value, isFill);
+                item.elementModel.controller["setColor"](item, value, isFill,borderSide);
             }
 
             NJevent("element" + eventType, {type : "setColor", source: source, data: {"els": els, "prop": "color", "value": value, "isFill": isFill}, redraw: null});

@@ -17,6 +17,8 @@
 
 var Montage = require("montage/core/core").Montage;
 var Component = require("montage/ui/component").Component;
+var ElementsMediator =  	require("js/mediators/element-mediator").ElementMediator
+
 
 var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 
@@ -169,7 +171,27 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
  			this.needsDraw = true;
  		}
  	},
- 	
+
+    addedColorChips:
+        { value: false },
+
+    _fill: {
+        enumerable: false,
+        value: { colorMode: 'rgb', color: { r: 255, g: 255, b: 255, a: 1, css: 'rgb(255,255,255)', mode: 'rgb', wasSetByCode: true, type: 'change' }, webGlColor: [1, 1, 1, 1] }
+    },
+
+    fill: {
+        enumerable: true,
+        get: function () {
+            return this._fill;
+        },
+        set: function (value) {
+            if (value !== this._fill) {
+                this._fill = value;
+            }
+        }
+    },
+
  	handleMousedown: {
  		value: function(event) {
  			this.isActive = true;
@@ -196,6 +218,8 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
     		} else {
     			this.element.classList.remove("style-selected");
     		}
+
+
     	}
     },
     didDraw: {
@@ -311,6 +335,38 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 				this.editorInputContainer.classList.add("hidden");
 				this.editorColorContainer.classList.remove("hidden");
 				this.editorHottextContainer.classList.add("hidden");
+
+                if(tweenable.colorType === "fill"){
+                                    this._isFill = true;
+                                }else{
+                                    if(tweenable.colorType === "stroke"){
+                                        this._isFill = false;
+                                        this._borderSide = tweenable.strokePosition
+                                    }
+
+                                }
+
+                if (this.addedColorChips === false && this.application.ninja.colorController.colorPanelDrawn) {
+                    // setup fill color
+                    this._fillColorCtrl.props = { side: 'top', align: 'center', wheel: true, palette: true, gradient: false, image: false, nocolor: true, offset: -80 };
+                    this.application.ninja.colorController.addButton("chip", this._fillColorCtrl);
+
+    //                setup stroke color
+    //                this._strokeColorCtrl.props = { side: 'top', align: 'center', wheel: true, palette: true, gradient: false, image: false, nocolor: true, offset: -80 };
+    //                this.application.ninja.colorController.addButton("chip", this._strokeColorCtrl);
+
+                    this._fillColorCtrl.addEventListener("change", this.handleFillColorChange.bind(this), false);
+
+                    this.addedColorChips = true;
+                }
+
+                if (this.addedColorChips) {
+                    this._fillColorCtrl.color(this._fill.colorMode, this._fill.color);
+    //                this._strokeColorCtrl.color(this._stroke.colorMode, this._stroke.color);
+                }
+
+
+
 				// TODO: set up color chip here.
 			} else if (tweenable.tweener === "input"){
 				this.editorInputContainer.classList.remove("hidden");
@@ -327,295 +383,321 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 	/* === END: Controllers === */
     
     _myTweenables: {
-    	value: [
-    		{
-    			"property" : "background-color",
-    			"tweener" : "color",
-    			"units" : "",
-    			"min" : "",
-    			"max" : "",
-    			"default" :"#FFFFFF"
-    		},
-    		{
-    			"property" : "background-position-x",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : -9999,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "background-position-y",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : -9999,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "border-color",
-    			"tweener" : "color",
-    			"units" : "",
-    			"min" : "",
-    			"max" : "",
-    			"default" : "#FFFFFF"
-    		},
-    		{
-    			"property" : "border-width",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "border-bottom-color",
-    			"tweener" : "color",
-    			"units" : "",
-    			"default" : "#FFFFFF"
-    		},
-    		{
-    			"property" : "border-bottom-width",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "border-left-color",
-    			"tweener" : "color",
-    			"units" : "",
-    			"default" : "#FFFFFF"
-    		},
-    		{
-    			"property" : "border-left-width",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "border-top-color",
-    			"tweener" : "color",
-    			"units" : "",
-    			"default" : "#FFFFFF"
-    		},
-    		{
-    			"property" : "border-top-width",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "border-right-color",
-    			"tweener" : "color",
-    			"units" : "",
-    			"default" : "#FFFFFF"
-    		},
-    		{
-    			"property" : "border-right-width",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "border-radius",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "bottom",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : -9999,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "color",
-    			"tweener" : "color",
-    			"units" : "",
-    			"default" : "#FFFFFF"
-    		},
-    		{
-    			"property" : "margin",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : -9999,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "margin-left",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : -9999,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "margin-right",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : -9999,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "margin-top",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : -9999,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "margin-bottom",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : -9999,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "padding",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "padding-left",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "padding-right",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "padding-top",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "padding-bottom",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "max-height",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "max-width",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "min-height",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "min-width",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "opacity",
-    			"tweener" : "hottext",
-    			"units" : "",
-    			"min" : 0,
-    			"max" : 100,
-    			"default" : 100
-    		},
-    		{
-    			"property" : "text-indent",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : -9999,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "top",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : -9999,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "right",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : -9999,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "left",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : -9999,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "width",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		},
-    		{
-    			"property" : "height",
-    			"tweener" : "hottext",
-    			"units" : "px",
-    			"min" : 0,
-    			"max" : 9999,
-    			"default" : 0
-    		}
-    	]
-    	
+        value: [
+            {
+                "property" : "background-color",
+                "tweener" : "color",
+                "units" : "",
+                "min" : "",
+                "max" : "",
+                "default" :"#FFFFFF",
+                "colorType" :"fill"
+            },
+            {
+                "property" : "background-position-x",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : -9999,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "background-position-y",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : -9999,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "border-color",
+                "tweener" : "color",
+                "units" : "",
+                "min" : "",
+                "max" : "",
+                "default" : "#FFFFFF",
+                "colorType" : "stroke",
+                "strokePosition" : false
+            },
+            {
+                "property" : "border-width",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "border-bottom-color",
+                "tweener" : "color",
+                "units" : "",
+                "default" : "#FFFFFF",
+                "colorType" : "stroke",
+                "strokePosition" : "bottom"
+
+            },
+            {
+                "property" : "border-bottom-width",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "border-left-color",
+                "tweener" : "color",
+                "units" : "",
+                "default" : "#FFFFFF",
+                "colorType" : "stroke",
+                "strokePosition" : "left"
+
+            },
+            {
+                "property" : "border-left-width",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "border-top-color",
+                "tweener" : "color",
+                "units" : "",
+                "default" : "#FFFFFF",
+                "colorType" : "stroke",
+                "strokePosition" : "top"
+
+            },
+            {
+                "property" : "border-top-width",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "border-right-color",
+                "tweener" : "color",
+                "units" : "",
+                "default" : "#FFFFFF",
+                "colorType" : "stroke",
+                "strokePosition" : "right"
+
+            },
+            {
+                "property" : "border-right-width",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "border-radius",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "bottom",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : -9999,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "color",
+                "tweener" : "color",
+                "units" : "",
+                "default" : "#FFFFFF"
+            },
+            {
+                "property" : "margin",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : -9999,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "margin-left",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : -9999,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "margin-right",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : -9999,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "margin-top",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : -9999,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "margin-bottom",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : -9999,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "padding",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "padding-left",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "padding-right",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "padding-top",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "padding-bottom",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "max-height",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "max-width",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "min-height",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "min-width",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "opacity",
+                "tweener" : "hottext",
+                "units" : "%",
+                "min" : 0,
+                "max" : 100,
+                "default" : 100
+            },
+            {
+                "property" : "text-indent",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : -9999,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "top",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : -9999,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "right",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : -9999,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "left",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : -9999,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "width",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            },
+            {
+                "property" : "height",
+                "tweener" : "hottext",
+                "units" : "px",
+                "min" : 0,
+                "max" : 9999,
+                "default" : 0
+            }
+        ]
+
+    },
+
+    handleFillColorChange: {
+        value: function (event) {
+debugger;
+
+            var fillColorObject={};
+            fillColorObject.color=event._event.color;
+            fillColorObject.mode=event._event.colorMode;
+            ElementsMediator.setColor(this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.elementsList, fillColorObject, this._isFill, "Change", "timeline",null,this._borderSide)
+        }
     },
 
     handleHottextChange:{

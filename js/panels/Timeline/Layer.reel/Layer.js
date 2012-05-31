@@ -625,6 +625,7 @@ var Layer = exports.Layer = Montage.create(Component, {
                 newStyle.editorProperty = styleProperty;
                 newEvent.layerEventType = "restoreStyle";
                 newEvent.trackEditorProperty = styleProperty;
+                newEvent.trackEditorProperty = styleProperty;
             }
 			newStyle.editorValue = "";
 			newStyle.ruleTweener = false;
@@ -744,6 +745,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 			this.triggerOutgoingBinding();
 
 			this.addStyle();
+
 		}
 	},
 	handleDeleteStyleClick: {

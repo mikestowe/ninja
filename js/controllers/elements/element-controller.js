@@ -148,7 +148,7 @@ exports.ElementController = Montage.create(Component, {
     },
 
     setColor: {
-        value: function(el, color, isFill) {
+        value: function(el, color, isFill,borderSide) {
             var mode = color.mode;
 
             if(isFill) {
@@ -191,8 +191,12 @@ exports.ElementController = Montage.create(Component, {
                             }
                             break;
                         default:
-                            this.setProperty(el, "border-image", "none");
-                            this.setProperty(el, "border-color", color.color.css);
+                            if(borderSide){
+                                this.setProperty(el,"border-"+borderSide+"-color",color.color.css);
+                            }else{
+                                this.setProperty(el, "border-image", "none");
+                                this.setProperty(el, "border-color", color.color.css);
+                            }
                             if(color.borderInfo) {
                                 if(color.borderInfo.borderWidth) {
                                     this.setProperty(el, "border-width", color.borderInfo.borderWidth + color.borderInfo.borderUnits);
