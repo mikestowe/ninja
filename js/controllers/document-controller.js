@@ -150,10 +150,10 @@ exports.DocumentController = Montage.create(Component, {
     handleExecuteSave: {
     	value: function(event) {
     		//
-    		if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
+    		if((typeof this.currentDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
     			//Currently we don't need a callback handler
     			//this.activeDocument.model.save(this.saveExecuted.bind(this));
-    			this.activeDocument.model.save();
+    			this.currentDocument.model.save();
     		} else {
     			//Error: cloud not available and/or no active document
     		}
@@ -194,16 +194,13 @@ exports.DocumentController = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     handleExecuteFileClose:{
         value: function(event) {
-        	if (this.activeDocument) {
-                this.closeFile(this.activeDocument);
-        	}
+            this.closeFile(this.currentDocument);
         }
     },
     ////////////////////////////////////////////////////////////////////
     //TODO: Is this used, should be cleaned up
     handleExecuteFileCloseAll:{
 		value: function(event) {
-			var i=0;//TODO: who is using this??
 			if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
 				while(this._documents.length > 0){
 					this.closeDocument(this._documents[this._documents.length -1].uuid);
