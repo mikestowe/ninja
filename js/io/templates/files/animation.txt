@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+
+<div class="ninja-content-wrapper">
+	
+	<div class="ninja-banner">
+	
+		<!-- Created with Motorola Mobility Ninja -->
+		<!-- Ninja-Banner Dimensions@@@ -->
+	
+		<style type="text/css">
+			html, body {
+       			width: 100%;
+       			height: 100%;
+       			margin: 0;
+       			padding: 0;
+       		}
+			.ninja-content-wrapper {}
+			.ninja-banner {}
+		</style>
+
+	</div>
+
+</div>

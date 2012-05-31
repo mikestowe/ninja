@@ -8,9 +8,37 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var NinjaCvsRt =  NinjaCvsRt || {};
 
 ///////////////////////////////////////////////////////////////////////
+//Loading webGL/canvas data on window load
+window.addEventListener('load', loadCanvasData, false);
+//Load data function (on document loaded)
+function loadCanvasData (e) {
+	//Cleaning up events
+	window.removeEventListener('load', loadCanvasData, false);
+    //Getting tag with data, MUST contain attribute
+    var xhr, tag = document.querySelectorAll(['script[data-ninja-canvas-lib]'])[0];
+   	//Checking for data to be external file
+   	if (tag.getAttribute('data-ninja-canvas-json') !== null) {
+   		//Loading JSON data
+   		xhr = new XMLHttpRequest();
+        xhr.open("GET", tag.getAttribute('data-ninja-canvas-json'), false);
+        xhr.send();
+		//Checking for data
+       	if (xhr.readyState === 4) {
+       		//Calling method to initialize all webGL/canvas(es)
+   			NinjaCvsRt.initWebGl(document.body, tag.getAttribute('data-ninja-canvas-libpath'), xhr.response);
+       	} else {
+       		//TODO: Add error for users
+       	}
+   	} else {//Data in document itself
+   		//Calling method to initialize all webGL/canvas(es)
+   		NinjaCvsRt.initWebGl(document.body, tag.getAttribute('data-ninja-canvas-libpath'), document.querySelectorAll(['script[data-ninja-canvas]'])[0].innerHTML);
+   	}
+}
+
+///////////////////////////////////////////////////////////////////////
 //Loading webGL/canvas data
-NinjaCvsRt.initWebGl = function (rootElement, directory) {
-	var cvsDataMngr, ninjaWebGlData = JSON.parse((document.querySelectorAll(['script[data-ninja-webgl]'])[0].innerHTML.replace('(', '')).replace(')', ''));
+NinjaCvsRt.initWebGl = function (rootElement, directory, data) {
+	var cvsDataMngr, ninjaWebGlData = JSON.parse((data.replace('(', '')).replace(')', ''));
 	if (ninjaWebGlData && ninjaWebGlData.data) {
 		for (var n=0; ninjaWebGlData.data[n]; n++) {
 			ninjaWebGlData.data[n] = unescape(ninjaWebGlData.data[n]);

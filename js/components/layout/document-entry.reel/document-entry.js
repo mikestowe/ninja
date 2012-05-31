@@ -7,8 +7,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var Montage = require("montage/core/core").Montage;
 var Component = require("montage/ui/component").Component;
 
-//var documentManagerModule = ("js/document/documentManager");
-
 exports.DocumentEntry = Montage.create(Component, {
 
     dirty: { value: null },
@@ -35,8 +33,10 @@ exports.DocumentEntry = Montage.create(Component, {
             }
 
             this._document = value;
-            this._uuid = value.uuid;
-            //this.needsDraw = true;
+
+            if(value) {
+                this._uuid = value.uuid;
+            }
         }
     },
 
@@ -119,10 +119,10 @@ exports.DocumentEntry = Montage.create(Component, {
     handleClick: {
         value: function(event) {
             if(event._event.target.nodeName === "IMG") {
-                this.application.ninja.documentController.closeDocument(this._uuid);
+                this.application.ninja.documentController.closeFile(this.application.ninja.documentController._findDocumentByUUID(this._uuid));
             } else {
-                if(!this._document.isActive) {
-                    this.application.ninja.stage.stageView.switchDocument(this.application.ninja.documentController._findDocumentByUUID(this._uuid));
+                if(!this.active) {
+                    this.application.ninja.documentController.switchDocuments(this.application.ninja.currentDocument, this.application.ninja.documentController._findDocumentByUUID(this._uuid));
                 }
             }
         }

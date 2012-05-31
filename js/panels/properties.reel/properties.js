@@ -46,16 +46,14 @@ exports.Properties = Montage.create(Component, {
 
     prepareForDraw: {
         value : function() {
-
+            this.eventManager.addEventListener("openDocument", this, false);
             this.eventManager.addEventListener("selectionChange", this, false);
+            this.eventManager.addEventListener("closeDocument", this, false);
 
             // This will be a toggle option
             if(this.application.ninja.appData.PILiveUpdate) {
                 this.eventManager.addEventListener( "elementChanging", this, false);
             }
-
-            this.eventManager.addEventListener("openDocument", this, false);
-            this.eventManager.addEventListener("switchDocument", this, false);
 
             this.elementId.element.addEventListener("blur", this, false);
             this.elementId.element.addEventListener("focus", this, false);
@@ -67,32 +65,21 @@ exports.Properties = Montage.create(Component, {
         }
     },
 
-    // Document is opened - Display the current selection
     handleOpenDocument: {
         value: function() {
-
             this.eventManager.addEventListener( "elementChange", this, false);
 
-            // For now always assume that the stage is selected by default when opening the old template
-            // TODO: Remove marker for old template: NINJA-STAGE-REWORK
-            if(this.application.ninja.selectedElements.length === 0 && this.application.ninja.currentDocument.documentRoot.nodeName.toLowerCase() !== "body") {
-                this.displayStageProperties();
-            }
+            // Save a reference of the pi inside the document view to be able to clear
+            this.application.ninja.currentDocument.model.views.design.propertiesPanel = this;
+
+            // Display the default document root PI
+            this.displayElementProperties(this.application.ninja.currentDocument.model.documentRoot);
         }
     },
 
-    handleSwitchDocument: {
+    handleCloseDocument: {
         value: function(){
-            // For now always assume that the stage is selected by default
-            if(this.application.ninja.selectedElements.length === 0) {
-                this.displayStageProperties();
-            } else {
-                if(this.application.ninja.selectedElements.length === 1) {
-                    this.displayElementProperties(this.application.ninja.selectedElements[0]);
-                } else {
-                    this.displayGroupProperties(this.application.ninja.selectedElements);
-                }
-            }
+            this.clear();
         }
     },
 
@@ -101,12 +88,14 @@ exports.Properties = Montage.create(Component, {
      */
     handleBlur: {
         value: function(event) {
-            if(event.target.dataset.montageId === "elementId") {
+
+            if(event.target === this.elementId.element) {
+
                 // Remove all white spaces from the id
                 this.elementId.value = this.elementId.value.replace(/\s/g, '');
 
                 // Check if that id is in use
-                if(this.application.ninja.currentDocument._document.getElementById(this.elementId.value) !== null) {
+                if(this.application.ninja.currentDocument.model.views.design.document.getElementById(this.elementId.value) !== null) {
                     // TODO: Replace with Ninja Alert
                     alert("The following ID: " + this.elementId.value + " is already in use");
                 }
@@ -115,13 +104,13 @@ exports.Properties = Montage.create(Component, {
 //                    ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "id", this.elementId.value, "Change", "pi");
                     ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "id", this.elementId.value, this.application.ninja.selectedElements[0].id, "pi");
                 } else {
-                    ElementsMediator.setAttribute(this.application.ninja.currentDocument.documentRoot, "id", this.elementId.value, "Change", "pi", this.application.ninja.currentDocument.documentRoot.elementModel.id);
+                    ElementsMediator.setAttribute(this.application.ninja.currentDocument.model.documentRoot, "id", this.elementId.value, "Change", "pi", this.application.ninja.currentDocument.model.documentRoot.elementModel.id);
                 }
-            } else if(event.target.dataset.montageId === "elementClass") {
+            } else if(event.target === this.elementClass.element) {
                 if(this.application.ninja.selectedElements.length) {
                     ElementsMediator.setAttribute(this.application.ninja.selectedElements[0], "class", this.elementClass.value, this.application.ninja.selectedElements[0].className, "pi");
                 } else {
-                    ElementsMediator.setAttribute(this.application.ninja.currentDocument.documentRoot, "class", this.elementClass.value, "Change", "pi", this.application.ninja.currentDocument.documentRoot.elementModel.elementClass);
+                    ElementsMediator.setAttribute(this.application.ninja.currentDocument.model.documentRoot, "class", this.elementClass.value, "Change", "pi", this.application.ninja.currentDocument.model.documentRoot.elementModel.elementClass);
                 }
             }
             NJevent("updatedID",this.application.ninja.selectedElements[0]);
@@ -147,7 +136,7 @@ exports.Properties = Montage.create(Component, {
         value: function(event) {
 //            console.log("Element Change PI ", event.detail.source); // If the event comes from the pi don't need to update
             if(event.detail.source && event.detail.source !== "pi") {
-                var el = this.application.ninja.currentDocument.documentRoot;
+                var el = this.application.ninja.currentDocument.model.documentRoot;
                 if(this.application.ninja.selectedElements.length) {
                     el = this.application.ninja.selectedElements[0];
                 }
@@ -173,8 +162,7 @@ exports.Properties = Montage.create(Component, {
     handleSelectionChange: {
         value: function(event) {
             if(event.detail.isDocument) {
-                if(this.application.ninja.currentDocument.documentRoot.nodeName.toLowerCase() === "body") return;
-                this.displayStageProperties();
+                this.displayElementProperties(this.application.ninja.currentDocument.model.documentRoot);
             } else {
                 if(this.application.ninja.selectedElements.length === 1) {
                     this.displayElementProperties(this.application.ninja.selectedElements[0]);
@@ -186,98 +174,33 @@ exports.Properties = Montage.create(Component, {
         }
     },
 
-    displayStageProperties: {
+    clear: {
         value: function() {
-            var stage = this.application.ninja.currentDocument.documentRoot;
-            //this is test code please remove
-            this.elementName.value = "Stage";
-            this.elementId.value = stage.elementModel.id;
+            this.elementName.value = "";
+            this.elementId.value = "";
             this.elementClass.value = "";
-
-            this.positionSize.disablePosition = true;
-            this.threeD.disableTranslation = true;
-
-            this.positionSize.heightSize = parseFloat(ElementsMediator.getProperty(stage, "height"));
-            this.positionSize.widthSize = parseFloat(ElementsMediator.getProperty(stage, "width"));
-
-            if(this.threeD.inGlobalMode)
-            {
-                this.threeD.xAngle = ElementsMediator.get3DProperty(stage, "xAngle");
-                this.threeD.yAngle = ElementsMediator.get3DProperty(stage, "yAngle");
-                this.threeD.zAngle = ElementsMediator.get3DProperty(stage, "zAngle");
-            }
-
-            this.threeD.flatten = ElementsMediator.getProperty(stage, "-webkit-transform-style") !== "preserve-3d";
-
-            if(this.customPi !== stage.elementModel.pi) {
-                // We need to unregister color chips from the previous selection from the Color Model
-                var len = this.customSections.length;
-                for(var n = 0, controls; n < len; n++) {
-                    controls = this.customSections[n].content.controls;
-                    if(controls["colorSelect"]) {
-                        controls["colorSelect"].destroy();
-                    } else if(controls["stageBackground"]) {
-                        controls["stageBackground"].destroy();
-                    }
-                }
-
-                this.customPi = stage.elementModel.pi;
-                this.displayCustomProperties(stage, stage.elementModel.pi);
-            }
-
-            // For now hardcode the background since it is the only custom property
-            // No need to loop through all the properties.
-            var backgroundChip = this.customSections[0].content.controls["background"];
-            backgroundChip.color = ElementsMediator.getProperty(stage, "background");
-
-            /*
-            var customPI = PiData[this.customPi];
-            // Get all the custom section for the custom PI
-            for(var i = 0, customSec; customSec = customPI[i]; i++) {
-
-                // Now set the Fields for the custom PI
-                for(var j = 0, fields; fields = customSec.Section[j]; j++) {
-                    for(var k = 0, control; control = fields[k]; k++) {
-
-                        var colorChipEl = this.customSections[i].content.controls[control.id];
-                        this.foo = colorChipEl;
-                        colorChipEl.addEventListener("firstDraw", this, false);
-
-                    }
-                }
-            }
-            */
-        }
-    },
-
-    handleFirstDraw: {
-        value: function() {
-            this.foo.chipBtn.color('rgb', {wasSetByCode: true, type: 'change', color: {r: 255, g: 0, b: 0}, css: 'rgb(255,0,0)'});
+            this.customPi = null;
+            this.customSections = [];
         }
     },
 
     displayElementProperties: {
         value: function (el) {
-            var customPI,
-                currentValue;
+            var customPI, currentValue, isRoot = this.application.ninja.selectionController.isDocument;
 
             this.elementName.value = el.elementModel.selection;
             this.elementId.value = el.getAttribute("id") || "";
             this.elementClass.value = el.getAttribute("class");
 
-            this.positionSize.disablePosition = false;
-            this.threeD.disableTranslation = false;
+            this.positionSize.disablePosition = isRoot;
+            this.threeD.disableTranslation = isRoot;
+            this.threeD.flatten = ElementsMediator.getProperty(el, "-webkit-transform-style") !== "preserve-3d";
 
             this.positionSize.leftPosition = parseFloat(ElementsMediator.getProperty(el, "left"));
             this.positionSize.topPosition = parseFloat(ElementsMediator.getProperty(el, "top"));
             this.positionSize.heightSize = parseFloat(ElementsMediator.getProperty(el, "height"));
             this.positionSize.widthSize = parseFloat(ElementsMediator.getProperty(el, "width"));
-
-            if(ElementsMediator.getProperty(el, "-webkit-transform-style") === "preserve-3d") {
-                this.threeD.flatten = false;
-            } else {
-                this.threeD.flatten = true;
-            }
+//            this.positionSize.widthSize = ElementsMediator.getProperty(el, "width");
 
             if(this.threeD.inGlobalMode)
             {
@@ -297,14 +220,29 @@ exports.Properties = Montage.create(Component, {
                     controls = this.customSections[n].content.controls;
                     if(controls["colorSelect"]) {
                         controls["colorSelect"].destroy();
-                    } else if(controls["stageBackground"]) {
-                        controls["stageBackground"].destroy();
+                    } else if(controls["background"]) {
+                        controls["background"].destroy();
                     }
                 }
 
                 this.customPi = el.elementModel.pi;
                 this.displayCustomProperties(el, el.elementModel.pi);
+
+                // Root element color chip
+                if(isRoot) {
+                    var backgroundChip = this.customSections[0].content.controls["background"];
+                    var rootBackgroundColor = ElementsMediator.getProperty(el, "background");
+
+                    if(rootBackgroundColor) {
+                        backgroundChip.color = rootBackgroundColor;
+                    } else {
+                        backgroundChip.color = null;
+                    }
+                }
             }
+
+
+
 			var previousInput = this.application.ninja.colorController.colorModel.input;
             customPI = PiData[this.customPi];
             // Get all the custom section for the custom PI
@@ -316,64 +254,47 @@ exports.Properties = Montage.create(Component, {
 
                         if(control.type !== "color") {
                             currentValue = ElementsMediator.getProperty(el, control.prop, control.valueMutator);
-                            if(currentValue === null)
-                            {
+                            if(currentValue === null) {
                                 currentValue = control.defaultValue;
                             }
                             this.customSections[i].content.controls[control.id] = currentValue;
-                        }
-                        else
-                        {
-                            if(control.prop === "border")
-                            {
+                        } else {
+                            if(control.prop === "border") {
                                 // TODO - For now, always return the top border if multiple border sides
                                 currentValue = ElementsMediator.getColor(el, false, "top");
                                 this.application.ninja.colorController.colorModel.input = "stroke";
-                            }
-                            else if(control.prop === "background")
-                            {
+                            } else if(control.prop === "background") {
                                 currentValue = ElementsMediator.getColor(el, true);
                                 this.application.ninja.colorController.colorModel.input = "fill";
                             }
 
-                            if(currentValue)
-                            {
-                                if(currentValue.color)
-                                {
+                            if(currentValue) {
+                                if(currentValue.color) {
                                     currentValue.color.wasSetByCode = true;
                                     currentValue.color.type = "change";
                                 }
 
-                                if(currentValue.mode === "gradient")
-                                {
-                                    this.application.ninja.colorController.colorModel["gradient"] =
-                                                    {value: currentValue.color, wasSetByCode: true, type: 'change'};
-                                }
-                                else
-                                {
-                                    if (currentValue.color.a !== undefined)
-                                    {
-                                        this.application.ninja.colorController.colorModel.alpha =
-                                                        {value: currentValue.color.a, wasSetByCode: true, type: 'change'};
+                                if(currentValue.mode === "gradient") {
+                                    this.application.ninja.colorController.colorModel["gradient"] = {value: currentValue.color, wasSetByCode: true, type: 'change'};
+                                } else {
+                                    if (currentValue.color.a !== undefined) {
+                                        this.application.ninja.colorController.colorModel.alpha = {value: currentValue.color.a, wasSetByCode: true, type: 'change'};
                                     }
-                                    if(currentValue.color.mode)
-                                    {
+
+                                    if(currentValue.color.mode) {
                                         this.application.ninja.colorController.colorModel[currentValue.color.mode] = currentValue.color;
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         this.application.ninja.colorController.colorModel["rgb"] = currentValue.color;
                                     }
                                 }
-                            }
-                            else
-                            {
+                            } else {
                                 this.application.ninja.colorController.colorModel.alpha = {value: 1, wasSetByCode: true, type: 'change'};
                                 this.application.ninja.colorController.colorModel.applyNoColor();
                             }
                         }
                     }
                 }
+
                 this.application.ninja.colorController.colorModel.input =  previousInput;
                 var color = this.application.ninja.colorController.colorModel.colorHistory[previousInput][this.application.ninja.colorController.colorModel.colorHistory[previousInput].length-1];
     			color.c.wasSetByCode = true;
@@ -408,6 +329,8 @@ exports.Properties = Montage.create(Component, {
     displayGroupProperties: {
         value: function (els) {
             this.elementName.value = "Multiple Elements";
+            this.elementId.value = "";
+            this.elementClass.value = "";
         }
     },
 
@@ -456,10 +379,7 @@ exports.Properties = Montage.create(Component, {
         value: function(e) {
             if(e.wasSetByCode) return;
 
-//            ElementsMediator.setProperty(this.application.ninja.selectedElements, "border-style", [this.customSections[0].content.controls.borderStyle], "Changing", "pi");
             ElementsMediator.setProperty(this.application.ninja.selectedElements, e.prop, [e.value + "px"], "Changing", "pi");
-
-
         }
     }
 
