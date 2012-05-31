@@ -337,7 +337,7 @@ exports.PenTool = Montage.create(ShapeTool, {
             var hitRec = this.getHitRecord(event.pageX, event.pageY, false);
             var globalMousePos=null, localMousePos=null, stageWorldMousePos = null, drawingCanvas=null;
             if (!this._selectedSubpathCanvas){
-                drawingCanvas = ViewUtils.getStageElement();
+                drawingCanvas = this.application.ninja.currentDocument.model.documentRoot;//ViewUtils.getStageElement();
                 stageWorldMousePos = hitRec.calculateStageWorldPoint();
                 stageWorldMousePos[0]+= snapManager.getStageWidth()*0.5;
                 stageWorldMousePos[1]+= snapManager.getStageHeight()*0.5;
@@ -550,7 +550,7 @@ exports.PenTool = Montage.create(ShapeTool, {
             var globalMousePos=null, localMousePos=null, stageWorldMousePos = null;
             var drawingCanvas = this._selectedSubpath.getCanvas();
             if (!drawingCanvas){
-                drawingCanvas = ViewUtils.getStageElement();
+                drawingCanvas = this.application.ninja.currentDocument.model.documentRoot; //ViewUtils.getStageElement();
                 stageWorldMousePos = hitRec.calculateStageWorldPoint();
                 stageWorldMousePos[0]+= snapManager.getStageWidth()*0.5;
                 stageWorldMousePos[1]+= snapManager.getStageHeight()*0.5;

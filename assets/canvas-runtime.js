@@ -1920,6 +1920,12 @@ NinjaCvsRt.RuntimeSubPath = Object.create(NinjaCvsRt.RuntimeGeomObj, {
     _strokeColor: {value: null, writable: true},
     _fillColor: {value: null, writable: true},
 
+    geomType: {
+        value: function () {
+            return this.GEOM_TYPE_CUBIC_BEZIER;
+        }
+    },
+
     importJSON: {
         value: function(jo) {
             if (this.geomType()!== jo.geomType){
@@ -1929,7 +1935,7 @@ NinjaCvsRt.RuntimeSubPath = Object.create(NinjaCvsRt.RuntimeGeomObj, {
             this._Anchors = [];
             var i=0;
             for (i=0;i<jo.anchors.length;i++){
-                var newAnchor = new NinjaCvsRt.AnchorPoint();
+                var newAnchor = Object.create(NinjaCvsRt.AnchorPoint);
                 var ipAnchor = jo.anchors[i];
                 newAnchor.setPos(ipAnchor._x, ipAnchor._y, ipAnchor._z);
                 newAnchor.setPrevPos(ipAnchor._prevX, ipAnchor._prevY, ipAnchor._prevZ);
@@ -1993,8 +1999,8 @@ NinjaCvsRt.RuntimeSubPath = Object.create(NinjaCvsRt.RuntimeGeomObj, {
                     var currAnchor = this._Anchors[0];
                     ctx.bezierCurveTo(prevAnchor.getNextX(),prevAnchor.getNextY(), currAnchor.getPrevX(), currAnchor.getPrevY(), currAnchor.getPosX(), currAnchor.getPosY());
                     prevAnchor = currAnchor;
-                    ctx.fill();
                 }
+                ctx.fill();
                 ctx.stroke();
             }
             ctx.restore();
