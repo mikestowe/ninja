@@ -31,7 +31,7 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
     didDraw:{
         value:function () {
             if ((!this.application.ninja.documentController.creatingNewFile) || (!this.application.ninja.currentDocument.setLevel)) {
-                if (this.application.ninja.currentDocument.documentRoot.children[0]) {
+                if (this.application.ninja.currentDocument.model.documentRoot.children[0]) {
                     var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
                     if (selectedIndex !== false) {
                         if (!this.application.ninja.timeline.arrLayers[selectedIndex].layerData.created) {
