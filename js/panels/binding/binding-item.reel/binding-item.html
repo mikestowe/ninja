@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="binding-item.css" type="text/css">
+    <script type="text/montage-serialization">
+        {
+            "owner": {
+                "prototype": "js/panels/binding/binding-item.reel",
+                "properties": {
+                    "element": {"#": "binding-item"}
+                }
+            },
+            "soProperty": {
+                "prototype": "montage/ui/dynamic-text.reel",
+                "properties": {
+                    "element": {"#": "so-property"}
+                },
+                "bindings": {
+                    "value": {"<-": "@owner.sourceObjectPropertyPath"}
+                }
+            },
+            "soObject": {
+                "prototype": "montage/ui/dynamic-text.reel",
+                "properties": {
+                    "element": {"#": "so-object"}
+                },
+                "bindings": {
+                    "value": {"<-": "@owner.sourceObjectLabel"}
+                }
+            },
+            "boProperty" : {
+                "prototype": "montage/ui/dynamic-text.reel",
+                "properties": {
+                    "element": {"#": "bo-property"}
+                },
+                "bindings": {
+                    "value": {"<-": "@owner.boundObjectPropertyPath"}
+                }
+            },
+            "boObject": {
+                "prototype": "montage/ui/dynamic-text.reel",
+                "properties": {
+                    "element": {"#": "bo-object"}
+                },
+                "bindings": {
+                    "value": {"<-": "@owner.boundObjectLabel"}
+                }
+            },
+            "editButton": {
+                "prototype": "montage/ui/button.reel",
+                "properties": {
+                    "element": {"#": "edit-button"},
+                    "identifier": "editButton",
+                    "label": " "
+                },
+                "listeners": [{
+                    "type": "action",
+                    "listener": {"@": "owner"}
+                }]
+
+            }
+
+        }
+    </script>
+</head>
+<body>
+<li data-montage-id="binding-item" class="binding-item">
+    <div data-montage-id="sourceObject" class="source-object">
+        <span data-montage-id="so-property" class="so-property"></span>
+        <span data-montage-id="so-object" class="so-object-identifier"></span>
+    </div>
+    <div data-montage-id="boundObject" class="bound-object">
+        <span data-montage-id="bo-property" class="bo-property"></span>
+        <span data-montage-id="bo-object" class="bo-object-identifier"></span>
+    </div>
+    <button data-montage-id="edit-button" class="binding-edit-button"></button>
+</li>
+</body>
+</html>

@@ -74,6 +74,7 @@ exports.HtmlDocumentModel = Montage.create(BaseDocumentModel, {
     setComponentInstance: {
         value: function(instance, el) {
             this.userComponents[el.uuid] = instance;
+            this.objects.push(instance);
         }
     },
     ////////////////////////////////////////////////////////////////////
@@ -86,6 +87,10 @@ exports.HtmlDocumentModel = Montage.create(BaseDocumentModel, {
                 return null;
             }
         }
+    },
+    ////////////////////////////////////////////////////////////////////
+    objects : {
+        value: null
     }
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////

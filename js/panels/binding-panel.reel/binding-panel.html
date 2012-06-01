@@ -15,6 +15,32 @@
                 "properties": {
                     "element": {"#": "binding"}
                 }
+            },
+            "arrayController": {
+                "prototype": "montage/ui/controller/array-controller",
+                "bindings": {
+                    "content" : {"<-": "@owner.bindings" }
+                }
+            },
+            "repetition": {
+                "prototype": "montage/ui/repetition.reel",
+                "properties": {
+                    "element": {"#": "bindings-list"},
+                    "contentController": {"@": "arrayController"}
+                }
+            },
+            "bindingItem": {
+                "prototype": "js/panels/binding/binding-item.reel",
+                "properties": {
+                    "element": {"#": "binding-item"}
+                },
+                "bindings": {
+                    "sourceObjectPropertyPath": {"<-": "@repetition.objectAtCurrentIteration.sourceObjectPropertyPath"},
+                    "sourceObject": {"<-": "@repetition.objectAtCurrentIteration.sourceObject"},
+                    "boundObjectPropertyPath": {"<-": "@repetition.objectAtCurrentIteration.boundObjectPropertyPath"},
+                    "boundObject": {"<-": "@repetition.objectAtCurrentIteration.boundObject"},
+                    "oneway": {"<-": "@repetition.objectAtCurrentIteration.oneway"}
+                }
             }
 
     	}
@@ -22,7 +48,9 @@
 	</head>
 <body>
     <div data-montage-id="binding">
-        this is a test
+        <ul data-montage-id="bindings-list" class="bindings-list">
+            <li data-montage-id="binding-item" class="binding-item"></li>
+        </ul>
     </div>
 </body>
 </html>
