@@ -10,11 +10,12 @@
     padding: 3px;
     border-bottom: 1px solid #505050;
     list-style-type: none;
-    display: -webkit-box;
-    -webkit-box-orient: horizontal;
+    /*display: -webkit-box;*/
+    /*-webkit-box-orient: horizontal;*/
 }
 .binding-item > * {
-    -webkit-box-flex: 1;
+    /*-webkit-box-flex: 1;*/
+    display: inline-block;
 }
 .source-object, .bound-object {
     padding: 5px 0 3px;
@@ -24,9 +25,11 @@
     background-position: right center;
     background-repeat: no-repeat;
     padding-right: 30px;
+    width: 41%;
 }
 .bound-object {
     padding-left: 12px;
+    width: 41%;
 }
 .so-object-identifier, .bo-object-identifier {
     float: right;
