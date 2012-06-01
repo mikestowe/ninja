@@ -109,9 +109,6 @@ exports.cssValueCompletionMap = {
     "border-top-width": [
     "medium", "thick", "thin"
     ],
-    "outline-color": [
-    "invert"
-    ],
     "text-line-through-style": [
     "none", "dotted", "dashed", "solid", "double", "dot-dash", "dot-dot-dash", "wave"
     ],
@@ -218,7 +215,7 @@ exports.cssValueCompletionMap = {
     "text-overline-color" : colorKeywords,
     "background-color" : colorKeywords,
     "-webkit-text-emphasis-color" : colorKeywords,
-    "outline-color" : colorKeywords,
+    "outline-color" : colorKeywords.concat(["invert"]),
     "text-underline-color" : colorKeywords,
     "color" : colorKeywords,
     "color-rendering": [

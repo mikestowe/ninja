@@ -16,7 +16,17 @@
                 "properties": {
                     "element": {"#": "TLRadiusControl"},
                     "acceptableUnits" : ["px", "pt", "%"]
-                }
+                },
+                "listeners": [
+                    {
+                        "type": "change",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "changing",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
 
             "hottext2": {
@@ -25,7 +35,13 @@
                     "element": {"#": "TRRadiusControl"},
                     "acceptableUnits" : ["px", "pt", "%"],
                     "enabled": false
-                }
+                },
+                "listeners": [
+                    {
+                        "type": "change",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
 
             "hottext3": {
@@ -34,7 +50,13 @@
                     "element": {"#": "BLRadiusControl"},
                     "acceptableUnits" : ["px", "pt", "%"],
                     "enabled": false
-                }
+                },
+                "listeners": [
+                    {
+                        "type": "change",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
 
             "hottext4": {
@@ -43,7 +65,13 @@
                     "element": {"#": "BRRadiusControl"},
                     "acceptableUnits" : ["px", "pt", "%"],
                     "enabled": false
-                }
+                },
+                "listeners": [
+                    {
+                        "type": "change",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
 
             "lockButton": {
@@ -53,8 +81,14 @@
                     "pressed": true,
                     "pressedClass": "lockUp",
                     "preventFocus": true,
-                    "identifier": "ratio"
-                }
+                    "identifier": "lockButton"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
 
             "owner": {

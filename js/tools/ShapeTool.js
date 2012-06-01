@@ -72,7 +72,7 @@ exports.ShapeTool = Montage.create(DrawingTool, {
                     if(!canvas.elementModel.shapeModel) {
                         canvas.elementModel.shapeModel = Montage.create(ShapeModel);
                     }
-					this.application.ninja.elementMediator.addElements(canvas, canvas.elementModel.data);
+                    this.RenderShape(drawData.width, drawData.height, drawData.planeMat, drawData.midPt, canvas);
                 }
             }
 

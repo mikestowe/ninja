@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<!-- <copyright>
+This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+(c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+</copyright> -->
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link href="style-sheet.css" rel="stylesheet" type="text/css">
+    <script type="text/montage-serialization">
+        {
+            "owner": {
+                "prototype" : "js/panels/css-panel/style-sheet.reel",
+                "properties" : {
+                    "element" : {"#" : "style-sheet-container"},
+                    "nameText": {"@": "name"},
+                    "mediaInput": {"@": "mediaInput"},
+                    "editButton": {"@": "editButton"},
+                    "editView": {"#": "style-sheet-edit"},
+                    "disableButton": {"@": "disableButton"},
+                    "deleteButton": {"@": "deleteButton"}
+                }
+            },
+            "name": {
+                "prototype": "montage/ui/dynamic-text.reel",
+                "properties": {
+                    "element": {"#": "sheet-name"},
+                    "identifier": "nameText",
+                    "defaultText": "Style sheet"
+                },
+                "bindings": {
+                    "value": {"<-": "@owner.name"}
+                }
+            },
+            "mediaInput": {
+                "prototype": "js/components/textfield.reel[TextField]",
+                "properties": {
+                    "element": {"#": "media-input"}
+                }
+            },
+            "editButton": {
+                "prototype": "montage/ui/button.reel",
+                "properties": {
+                    "element": {"#": "edit-button"},
+                    "identifier": "editButton",
+                    "label": " "
+                },
+                "listeners": [{
+                    "type": "action",
+                    "listener": {"@": "owner"}
+                }]
+
+            },
+            "disableButton": {
+                "prototype": "montage/ui/button.reel",
+                "properties": {
+                    "element": {"#": "disable-button"},
+                    "identifier": "disableButton",
+                    "label": "Disable"
+                },
+                "listeners": [{
+                    "type": "action",
+                    "listener": {"@": "owner"}
+                }]
+
+            },
+            "deleteButton": {
+                "prototype": "montage/ui/button.reel",
+                "properties": {
+                    "element": {"#": "delete-button"},
+                    "identifier": "deleteButton",
+                    "label": "Delete"
+                },
+                "listeners": [{
+                    "type": "action",
+                    "listener": {"@": "owner"}
+                }]
+
+            }
+        }
+    </script>
+</head>
+<body>
+<div data-montage-id="style-sheet-container" class="style-sheet-container">
+    <div class="ss-icon"></div>
+    <!--<div id="disable-checkbox"></div>-->
+    <span data-montage-id="sheet-name"></span>
+    <label>Media:</label>
+    <div data-montage-id="media-input"></div>
+
+    <div data-montage-id="style-sheet-edit" class="style-sheet-edit">
+
+        <button data-montage-id="edit-button" class="ss-edit-button"></button>
+        <button data-montage-id="delete-button" class="ss-delete-button nj-skinned"></button>
+        <button data-montage-id="disable-button" class="ss-disable-button nj-skinned"></button>
+
+    </div>
+</div>
+</body>
+</html>

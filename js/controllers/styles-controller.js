@@ -53,11 +53,11 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             ///// Bind app's activeDocument property to
             ///// styles controller's _activeDocument property
 
-            Object.defineBinding(this, "activeDocument", {
-                boundObject: this.application.ninja,
-                boundObjectPropertyPath: "currentDocument",
-                oneway: true
-            });
+//            Object.defineBinding(this, "activeDocument", {
+//                boundObject: this.application.ninja,
+//                boundObjectPropertyPath: "currentDocument",
+//                oneway: true
+//            });
         }
     },
 
@@ -79,10 +79,14 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             return this._activeDocument;
         },
         set : function(document) {
-
             ///// If the document is null set default stylesheets to null
 
-            if(!document) {
+            if(!document || document.currentView === "code") {
+                this._activeDocument   = null;
+                this._stageStylesheet  = null;
+                this.defaultStylesheet = null;
+                this.userStyleSheets   = [];
+                this.clearDirtyStyleSheets();
                 return false;
             }
 
@@ -94,10 +98,17 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             // Returns null if sheet not found (as in non-ninja projects)
             // Setter will handle null case
             this.defaultStylesheet = this.getSheetFromElement(this.CONST.DEFAULT_SHEET_ID);
-                        
-            //debugger;
+
+            this.userStyleSheets = nj.toArray(document.model.views.design.document.styleSheets).filter(function(sheet) {
+                return sheet !== this._stageStylesheet;
+            }, this);
+
+            NJevent('styleSheetsReady', this);
         },
         enumerable : false
+    },
+    userStyleSheets : {
+        value : null
     },
     _stageStylesheet : {
         value : null
@@ -113,22 +124,27 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             if(sheet) {
                 this._defaultStylesheet = sheet;
             } else {
-                
-                ///// Use the last stylesheet in the document as the default
-                
-                var sheets = this._activeDocument._document.styleSheets,
-                    lastIndex = sheets.length-1;
-                
-                ///// If the only sheet is the stage stylesheet, this will be true
-                ///// in which case, we want to create a stylesheet to hold the 
-                ///// user's style rules
-                
-                if(sheets[lastIndex] === this._stageStyleSheet) {
-                    this._defaultStylesheet = this.createStylesheet('nj-default');
-                } else {
-                    this._defaultStylesheet = sheets[lastIndex];
+                if(sheet === null) {
+                    this._defaultStylesheet = null;
+                    return false;
                 }
+                //check that the document has a design view
+                else if(this._activeDocument.model && this._activeDocument.model.views && this._activeDocument.model.views.design){
+                    ///// Use the last stylesheet in the document as the default
 
+                    var sheets = this._activeDocument.model.views.design.document.styleSheets,
+                        lastIndex = sheets.length-1;
+
+                    ///// If the only sheet is the stage stylesheet, this will be true
+                    ///// in which case, we want to create a stylesheet to hold the
+                    ///// user's style rules
+
+                    if(sheets[lastIndex] === this._stageStyleSheet) {
+                        this._defaultStylesheet = this.createStylesheet('nj-default');
+                    } else {
+                        this._defaultStylesheet = sheets[lastIndex];
+                    }
+                }
             }
         }
     },
@@ -159,13 +175,17 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     
     addRule : {
         value : function(selector, declaration, stylesheet, index) {
-            //console.log("Add rule");
+            stylesheet = stylesheet || this._defaultStylesheet;
+
+            if(stylesheet === null) {
+                stylesheet = this.defaultStylesheet = this.createStylesheet();
+            }
+
             var rulesLength = this._defaultStylesheet.rules.length,
                 argType     = (typeof declaration),
                 ruleText    = selector,
-                stylesheet  = stylesheet || this._defaultStylesheet,
-                property, rule;
-            
+                rule;
+
             index = index || (argType === 'number') ? declaration : rulesLength;
             
             if(argType === 'string') {
@@ -183,6 +203,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             ///// attach specificity to rule object
             ///// if rule is css keyframes, return rule and don't attach specificity
             if (rule instanceof WebKitCSSKeyframesRule) {
+
                 return rule;
             }
             rule[this.CONST.SPECIFICITY_KEY] = this.getSpecificity(rule.selectorText);
@@ -209,10 +230,12 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             }
 
             var selectorToOverride = getSelector.bind(this)(element, ruleToOverride),
-                overrideData, rule;
+                overrideData, rule, isRuleLocked;
+
+            isRuleLocked = this.isSheetLocked(ruleToOverride.parentStyleSheet);
 
             ///// Get the overriding selector and className
-            overrideData = this.createOverrideSelector(selectorToOverride, element.nodeName);
+            overrideData = this.createOverrideSelector(selectorToOverride, element.nodeName, isRuleLocked);
 
             ///// Create new rule with selector and insert it after the rule we're overriding
             rule = this.addRule(overrideData.selector + ' { }', this.getRuleIndex(ruleToOverride)+1);
@@ -226,7 +249,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     },
 
     createOverrideSelector : {
-        value: function(selectorToOverride, classPrefix, className) {
+        value: function(selectorToOverride, classPrefix, increaseSpecificity, className) {
             var tokens = selectorToOverride.split(/\s/),
                 newClass = className || this.generateClassName(classPrefix, true),
                 lastToken, pseudoSplit, base, pseudo, newToken, newSelector;
@@ -247,10 +270,19 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             if(base.indexOf('#') !== -1) {
                 newToken = base + '.' + newClass + pseudo;
             } else {
-                ///// Replace last class or attribute selector
-                ///// Get everything right before the last class or attribute selector
-                ///// to support compound selector values: (i.e. .firstClass.secondClass)
-                newToken = base.substring(0, Math.max(base.lastIndexOf('.'), base.lastIndexOf('[')));
+                if(increaseSpecificity) {
+                    ///// Increases specificity by one class selector
+                    ///// We'll do a direct append to the base class
+                    ///// if we want to increase the specificity
+                    newToken = base;
+                } else {
+                    ///// Maintains original specificity
+                    ///// Replace last class or attribute selector
+                    ///// Get everything right before the last class or attribute selector
+                    ///// to support compound selector values: (i.e. .firstClass.secondClass)
+                    newToken = base.substring(0, Math.max(base.lastIndexOf('.'), base.lastIndexOf('[')));
+                }
+
                 ///// Append the generated class
                 newToken += '.' + newClass + pseudo;
             }
@@ -795,7 +827,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             ///// method to apply/test the new value
             dec.setProperty(property, value, priority);
 
-            if(rule.parentStyleSheet) {
+            if(rule.type !== 'inline' && rule.parentStyleSheet) {
                 this.styleSheetModified(rule.parentStyleSheet);
             }
 
@@ -855,7 +887,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
     getAnimationRuleWithName : {
         value: function(name, document) {
-            var doc = document || this._activeDocument._document,
+            var doc = document || this._activeDocument.model.views.design.document,
                 animRules = this.getDocumentAnimationRules(doc),
                 rule, i;
 
@@ -877,7 +909,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
     getDocumentAnimationRules : {
         value: function(document) {
-            var sheets = (document) ? document.styleSheets : this._activeDocument._document.styleSheets,
+            var sheets = (document) ? document.styleSheets : this._activeDocument.model.views.design.document.styleSheets,
                 rules = [];
 
             nj.toArray(sheets).forEach(function(sheet) {
@@ -971,12 +1003,13 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             var doc = element.ownerDocument,
                 useImportant = false,
                 cache = this._getCachedRuleForProperty(element, property),
-                dominantRule, override, className, browserValue;
+                dominantRule, override, className, browserValue, cacheMatchesMany;
 
             if(cache) {
                 ///// We've cached the rule for this property!
                 //console.log('Styles Controller :: setElementStyle - We found the cached rule!');
                 dominantRule = cache;
+                cacheMatchesMany = this.matchesMultipleElements(dominantRule, doc);
             } else {
                 ///// Use Dominant Rule logic to find the right place to add the style
                 ///// Pass "true" to method to return an override object, which
@@ -984,7 +1017,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 dominantRule = this.getDominantRuleForElement(element, property, true, isStageElement);
 
             }
-               
+
             ///// Did we find a dominant rule?
             if(!dominantRule) {
                 ///// No. This means there was no rule with this property, and no
@@ -1002,6 +1035,13 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 useImportant = dominantRule.useImportant;
                 dominantRule = override.rule;
                 this.addClass(element, override.className);
+            } else if(cacheMatchesMany) {
+                ///// Only happens when the cached rule applies to multiple
+                ///// elements - we must create override
+                override = this.createOverrideRule(dominantRule, element);
+                useImportant = !!dominantRule.style.getPropertyPriority(property);
+                dominantRule = override.rule;
+                this.addClass(element, override.className);
             }
 
 
@@ -1009,7 +1049,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             browserValue = this.setStyle(dominantRule, property, value, useImportant);
 
             ///// Only cache the dominant rule if the style value was valid, and not already cached
-            if(browserValue && !cache) {
+            if(browserValue && (!cache || cacheMatchesMany)) {
                 this._setCachedRuleForProperty(element, property, dominantRule);
             }
 
@@ -1132,6 +1172,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
     getMatrixFromElement : {
         value: function(element, isStage) {
+            isStage = false;
             var xformStr = this.getElementStyle(element, "-webkit-transform", true, isStage),
                 mat;
 
@@ -1165,6 +1206,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
     getPerspectiveDistFromElement : {
         value: function(element, isStage) {
+            isStage = false;
             var xformStr = this.getElementStyle(element, "-webkit-perspective", false, isStage),
                 dist;
 
@@ -1230,7 +1272,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     
     createStylesheet : {
         value: function(id, document) {
-            var doc = document || this._activeDocument._document,
+            var doc = document || this._activeDocument.model.views.design.document,
                 sheetElement, sheet;
             
             sheetElement = nj.make('style', {
@@ -1244,9 +1286,40 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             doc.head.appendChild(sheetElement);
             sheet = this.getSheetFromElement(sheetElement, doc);
 
+            this.userStyleSheets.push(sheet);
+
             this.styleSheetModified(sheet);
 
+            NJevent('newStyleSheet', sheet);
+
             return sheet;
+        }
+    },
+
+    ///// Remove Style sheet
+    ///// Removes style sheet from document
+
+    removeStyleSheet : {
+        value: function(sheet) {
+            var sheetEl = sheet.ownerNode, sheetCount;
+
+            if(sheetEl) {
+                sheetEl.disabled = true;
+                this.userStyleSheets.splice(this.userStyleSheets.indexOf(sheet), 1);
+
+                ///// Check to see if we're removing the default style sheet
+                if(sheet === this._defaultStylesheet) {
+                    sheetCount = this.userStyleSheets.length;
+                    this.defaultStylesheet = (sheetCount) ? this.userStyleSheets[sheetCount-1] : null;
+                }
+
+                ///// Mark for removal for i/o
+                sheetEl.setAttribute('data-ninja-remove', 'true');
+
+                NJevent('removeStyleSheet', sheet);
+            }
+
+
         }
     },
     
@@ -1256,7 +1329,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     
     getSheetFromElement : {
         value : function(element, context) {
-            var doc = context || this._activeDocument._document,
+            var doc = context || this._activeDocument.model.views.design.document,
                 el  = (typeof element === 'string') ? nj.$(element, doc) : element;
                 
             if(el && el.sheet) {
@@ -1265,6 +1338,12 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             
             return;
             
+        }
+    },
+
+    isSheetLocked : {
+        value: function(sheet) {
+            return !!sheet.ownerNode.dataset['ninjaFileReadOnly'];
         }
     },
 
@@ -1277,6 +1356,9 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             var sheetSearch = this.dirtyStyleSheets.filter(function(sheetObj) {
                 return sheetObj.stylesheet === sheet;
             });
+
+            ///// Dispatch modified event
+            NJevent('styleSheetModified', eventData);
 
             ///// If the sheet doesn't already exist in the list of modified
             ///// sheets, dispatch dirty event and add the sheet to the list
@@ -1308,11 +1390,11 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             this.dirtyStyleSheets.length = 0;
 
             if(doc) {
-                var stillDirty = this.dirtyStyleSheets.filter(function(sheet) {
+                this.dirtyStyleSheets = this.dirtyStyleSheets.filter(function(sheet) {
                     return sheet.document !== doc;
                 });
-                this.dirtyStyleSheets = null;
-                this.dirtyStyleSheets = stillDirty;
+            } else {
+                this.dirtyStyleSheets = [];
             }
 
 
@@ -1490,7 +1572,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             getStyleTest : function() {
                 var properties = ['background-position', 'width', 'height'];
                 
-                var el = stylesController.activeDocument._document.getElementById('Div_1');
+                var el = stylesController.activeDocument.model.views.design.document.getElementById('Div_1');
                 
                 properties.forEach(function(prop) {
                     console.log('Getting value for "' + prop + '": ' + stylesController.getElementStyle(el, prop, true));
@@ -1509,7 +1591,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 });
             },
             getMatchingRulesTest : function() {
-                var el = stylesController.activeDocument._document.getElementById('Div_1'),
+                var el = stylesController.activeDocument.model.views.design.document.getElementById('Div_1'),
                     mRules;
                     
                 this.addRulesTest();
@@ -1524,7 +1606,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 ///// apply a new style using setElementStyle, and print out the new
                 ///// value.
                 
-                var el = stylesController.activeDocument._document.getElementById('Div_1'),
+                var el = stylesController.activeDocument.model.views.design.document.getElementById('Div_1'),
                     bg;
                 
                 console.log('----- Set Element Style Test -----');
@@ -1549,14 +1631,14 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 var rules = ['#UserContent div { background-color: blue }'];
                 rules.forEach(function(rule) { stylesController.addRule(rule); });
 
-                var el = stylesController.activeDocument._document.getElementById('Div_1');
+                var el = stylesController.activeDocument.model.views.design.document.getElementById('Div_1');
                 stylesController.setElementStyle(el, 'color', 'red');
                 
                 ///// the #Div_1 rule created by tag tool should have the color style
             },
             setElementStyle3Test : function() {
                 ///// First, draw a div onto the stage
-                var el = stylesController.activeDocument._document.getElementById('Div_1');
+                var el = stylesController.activeDocument.model.views.design.document.getElementById('Div_1');
 
                 //// now add a multi-target rule overriding the bg color
                 var rules = [
@@ -1573,14 +1655,14 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             },
             setGroupStyleTest : function() {
                 ///// draw 2 divs on stage
-                var el1 = stylesController.activeDocument._document.getElementById('Div_1');
-                var el2 = stylesController.activeDocument._document.getElementById('Div_2');
+                var el1 = stylesController.activeDocument.model.views.design.document.getElementById('Div_1');
+                var el2 = stylesController.activeDocument.model.views.design.document.getElementById('Div_2');
 
                 var dominantRule = stylesController.getDominantRuleForGroup([el1, el2], 'color');
             },
             setElementStylesTest : function() {
                 ///// draw a div on stage
-                var el = stylesController.activeDocument._document.getElementById('Div_1');
+                var el = stylesController.activeDocument.model.views.design.document.getElementById('Div_1');
                 
                 mRules = stylesController.getMatchingRules(el, true);
                 mRules.forEach(function(rule) {
@@ -1599,7 +1681,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                                 
                 console.log('----- Create Override Rule Test -----');
 
-                var el = stylesController.activeDocument._document.getElementById('Div_1'),
+                var el = stylesController.activeDocument.model.views.design.document.getElementById('Div_1'),
                     rule = stylesController.addRule('#UserContent div { background-color: blue }'),
                     override;
                     
@@ -1611,7 +1693,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             },
             deleteRulesTest : function() {
                 // drag one div on stage
-                var el = stylesController.activeDocument._document.getElementById('Div_1');
+                var el = stylesController.activeDocument.model.views.design.document.getElementById('Div_1');
                 this.addRulesTest();
                 
                 mRules = stylesController.getMatchingRules(el, true);
@@ -1623,8 +1705,8 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             matchesElementsExclusivelyTest : function() {
                 /// drag two divs on stage
                 var rule = stylesController.addRule('#Div_1, #Div_3 { color:black; }');
-                var el1 = stylesController.activeDocument._document.getElementById('Div_1');
-                var el2 = stylesController.activeDocument._document.getElementById('Div_2');
+                var el1 = stylesController.activeDocument.model.views.design.document.getElementById('Div_1');
+                var el2 = stylesController.activeDocument.model.views.design.document.getElementById('Div_2');
 
                 console.log('Does rule match elements exclusively? ' + stylesController.matchesElementsExclusively(rule, [el1, el2]));
             }

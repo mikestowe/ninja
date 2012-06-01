@@ -681,6 +681,11 @@ exports.MaterialsPopup = Montage.create(Component, {
                     }
                 ]
     },
+
+    materialsProperties: {
+        serializable: true,
+        value: null
+    },
     
     _materialsData: {
 		enumerable: true,
@@ -697,7 +702,7 @@ exports.MaterialsPopup = Montage.create(Component, {
             },
         set: function(data) {
             this._materialsData = data;
-            if(this.materialsProperties)
+            if(this.materialsProperties && data.length)
             {
                 this.materialsProperties.needsDraw = true;
             }

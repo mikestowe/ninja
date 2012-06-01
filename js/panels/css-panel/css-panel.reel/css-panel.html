@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<!-- <copyright>
+This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+(c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+</copyright> -->
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="css-panel.css" type="text/css">
+    <script type="text/montage-serialization">
+        {
+            "owner": {
+                "prototype" : "js/panels/css-panel/css-panel.reel",
+                "properties" : {
+                    "element" : {"#" : "container"},
+                    "styleSheetsView": {"@": "styleSheetsView"},
+                    "stylesViewContainer": {"@": "stylesViewContainer"}
+                }
+            },
+
+            "styleSheetsView": {
+                "prototype" : "js/panels/css-panel/style-sheets-view.reel",
+                "properties": {
+                    "element": {"#": "style-sheet-view" },
+                    "documentNameLabel": {"#": "document-name" }
+                }
+            },
+            "stylesViewContainer": {
+                "prototype" : "js/panels/css-panel/styles-view-container.reel",
+                "properties": {
+                    "element": {"#": "styles-view-container" },
+                    "selectionName": {"@": "selectionName" }
+                }
+            },
+            "selectionName" : {
+                "prototype": "montage/ui/dynamic-text.reel",
+                "properties": {
+                    "element": {"#":"selection-name"}
+                },
+                "bindings": {
+                    "value" : {"<-": "@stylesViewContainer.selectionNameLabelText" }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<section data-montage-id="container" class="css-panel">
+    <h3>Style Sheets <span data-montage-id="document-name" class="document-name"></span></h3>
+    <div data-montage-id="style-sheet-view"></div>
+    <h3>Styles <span data-montage-id="selection-name" class="selection-name"></span></h3>
+    <div data-montage-id="styles-view-container"></div>
+</section>
+</body>
+</html>

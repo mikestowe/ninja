@@ -498,11 +498,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     
     triggerOutgoingBinding : {
     	value: function() {
-    		if (this.layerData.triggerBinding === true) {
-    			this.layerData.triggerBinding = false;
-    		} else {
-    			this.layerData.triggerBinding = true;
-    		}
+            this.layerData.triggerBinding = !this.layerData.triggerBinding;
     	}
     },
 	/* END: Models */
@@ -721,7 +717,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 			this.dynamicLayerName.value = this._layerEditable.value;
 			this.application.ninja.timeline.currentLayerSelected.layerData.elementsList[0].dataset.storedLayerName = this.dynamicLayerName.value;
 			this.needsDraw = true;
-			this.application.ninja.documentController.activeDocument.needsSave = true;
+			this.application.ninja.documentController.activeDocument.model.needsSave = true;
 		}
 	},
 	handleAddStyleClick: {
@@ -749,7 +745,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 			this.dynamicLayerName.value = newVal;
 			this.layerName = newVal;
 			this.application.ninja.timeline.currentLayerSelected.layerData.elementsList[0].dataset.storedLayerName = newVal;
-			this.application.ninja.documentController.activeDocument.needsSave = true;
+			this.application.ninja.documentController.activeDocument.model.needsSave = true;
 			this.needsDraw = true;
 		}
 	},

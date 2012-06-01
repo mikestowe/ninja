@@ -11,13 +11,18 @@
         "owner": {
             "prototype": "js/components/radio.reel",
             "properties": {
-                "element": {"#": "ch_comp"}
+                "element": {"#": "radio_comp"},
+                "labelField": {"#": "labelField"},
+                "radioField": {"#": "radioField"}
             }
         }
     }
     </script>
 </head>
 <body>
-    <input data-montage-id="ch_comp" class="nj-skinned" type="radio">
+    <div data-montage-id="radio_comp">
+        <input data-montage-id="radioField" class="nj-skinned" type="radio">
+        <label data-montage-id="labelField" class="nj-skinned"></label>
+    </div>
 </body>
 </html>
