@@ -26,12 +26,6 @@ exports.Ninja = Montage.create(Component, {
         value: AppData
     },
 
-    /*
-    currentDocument: {
-        value: null
-    },
-    */
-
     documentList: {
         value: null
     },
@@ -46,9 +40,6 @@ exports.Ninja = Montage.create(Component, {
         }
     },
 
-    _isResizing: {
-        value: null
-    },
     _resizedHeight : {
         value: 0
     },
@@ -199,8 +190,6 @@ exports.Ninja = Montage.create(Component, {
             this.addPropertyChangeListener("appModel.livePreview", this.executeLivePreview, false);
             this.addPropertyChangeListener("appModel.chromePreview", this.executeChromePreview, false);
             this.addPropertyChangeListener("appModel.debug", this.toggleDebug, false);
-
-            NJevent("appLoading");
         }
     },
     
@@ -312,16 +301,20 @@ exports.Ninja = Montage.create(Component, {
         value: function(document) {
             var doc = this.documentList.content[this.documentList.content.indexOf(document)], activeDocument;
 
-            if(this.documentList.selectedObjects[0] === doc) {
-                activeDocument = this.documentList.content[0];
-            } else {
+            if(this.documentList.selectedObjects[0] !== doc) {
                 activeDocument = this.documentList.selectedObjects[0];
+            } else {
+                activeDocument = null;
             }
 
             this.documentList.removeObjects(doc);
 
-            if(this.documentList.content.length) {
+            if(activeDocument) {
                 this.documentList.selectedObjects = [activeDocument];
+            } else {
+                if(this.documentList.content.length) {
+                    this.documentList.selectedObjects = this.documentList.content[0];
+                }
             }
         }
     },
@@ -380,16 +373,6 @@ exports.Ninja = Montage.create(Component, {
             if(!this.consoleLog) this.consoleLog = console.log;
 
             this.appModel.debug ? console.log = this.consoleLog : console.log = function() {};
-        }
-    },
-
-    getCurrentToolInstance: {
-        value: function() {
-            if(this.toolsData.selectedTool.container) {
-                return this.toolsList[this.toolsData.selectedSubTool.action];
-            } else {
-                return this.toolsList[this.toolsData.selectedTool.action];
-            }
         }
     },
 

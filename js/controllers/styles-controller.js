@@ -48,25 +48,6 @@ var stylesController = exports.StylesController = Montage.create(Component, {
     ///// bind the document to prop w/ setter. The setter calls to find
     ///// the stage and default css files.
 
-    handleAppLoaded : {
-        value: function() {
-            ///// Bind app's currentDocument property to
-            ///// styles controller's _currentDocument property
-
-//            Object.defineBinding(this, "currentDocument", {
-//                boundObject: this.application.ninja,
-//                boundObjectPropertyPath: "currentDocument",
-//                oneway: true
-//            });
-        }
-    },
-
-    deserializedFromTemplate : {
-        value: function() {
-            this.eventManager.addEventListener( "appLoaded", this, false);
-        },
-        enumerable : false
-    },
     ///// Active document gets automatically set when the 
     ///// document controller changes it
     _currentDocument : {
