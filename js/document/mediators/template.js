@@ -197,6 +197,25 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                     }
                 }
             }
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            //TODO: Make proper CSS method
+            
+            
+            
             //Checking for type of save: styles = <style> only | css = <style> and <link> (all CSS)
             if (template.styles) {
                 //Getting all style tags
@@ -293,10 +312,26 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                     }
                 }
             }
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            //TODO: Make proper webGL/Canvas method
+            
             //
             var matchingtags = [], scripts = template.file.content.document.getElementsByTagName('script'), webgltag, webgllibtag, webglrdgetag, mjstag, mjslibtag;
-           	//this.getDataDirectory(template.file.root)
-           	//this.getNinjaDirectory(template.file.root)
             //
             for (var i in scripts) {
             	if (scripts[i].getAttribute) {
@@ -319,9 +354,9 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
             }
             //Checking for webGL elements in document
             if (template.webgl && template.webgl.length > 1) {//TODO: Should be length 0, hack for a temp fix
-                var rdgeDirName, rdgeVersion, cvsDataDir = this.getCanvasDirectory(template.file.root), fileCvsDir, fileCvsDirAppend, cvsDirCounter = 1;
+                var rdgeDirName, rdgeVersion, cvsDataDir = this.getCanvasDirectory(template.file.root), fileCvsDir, fileCvsDirAppend, cvsDirCounter = 1, fileOrgDataSrc;
                 //
-                if (cvsDataDir && !matchingtags.length) {
+                if (cvsDataDir && !matchingtags.length && !webgllibtag) {
                 	fileCvsDir = cvsDataDir+template.file.name.split('.'+template.file.extension)[0];
                 	if (!this._getUserDirectory(fileCvsDir)) {
                 		fileCvsDirAppend = fileCvsDir+cvsDirCounter;
@@ -331,6 +366,8 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                 	}
                 	//TODO: Allow user overwrite
                 	fileCvsDir += '/';
+                } else if (webgllibtag && webgllibtag.getAttribute && webgllibtag.getAttribute('data-ninja-canvas-json') !== null) {
+                	fileOrgDataSrc = template.file.root+webgllibtag.getAttribute('data-ninja-canvas-json');
                 }
                 //Copy webGL library if needed
                 for (var i in this.application.ninja.coreIoApi.ninjaLibrary.libs) {
@@ -411,9 +448,15 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                 //Closing array (make-shift JSON string to validate data in <script> tag)
                 json += '\n\t\t]\n})\n';
                 //Setting string in tag
-                if (fileCvsDir) {
+                if (fileCvsDir || fileOrgDataSrc) {
                 	//
-                	var cvsDataFilePath = fileCvsDir+'data.json', cvsDataFileUrl, cvsDataFileCheck, cvsDataFileOperation;
+                	var cvsDataFilePath, cvsDataFileUrl, cvsDataFileCheck, cvsDataFileOperation;
+                	//
+                	if (fileOrgDataSrc) {
+	                	cvsDataFilePath = fileOrgDataSrc;
+                	} else {
+	                	cvsDataFilePath = fileCvsDir+'data.json';
+                	}
                 	//
                 	cvsDataFileUrl = this.getNinjaPropUrlRedirect(cvsDataFilePath.split(this.application.ninja.coreIoApi.cloudData.root+'/')[1]),
                 	cvsDataFileCheck = this.application.ninja.coreIoApi.fileExists({uri: cvsDataFilePath}),
@@ -434,6 +477,22 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                 	webgltag.innerHTML = json;
                 }
             }
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            //TODO: Make proper Montage method
+            
 			//Checking for Montage
 			if (mJsSerialization) {
 				//Copy Montage library if needed
@@ -491,6 +550,19 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                 mjstag.innerHTML = mJsSerialization;
                 mjsCreator = null;
 			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
             //Cleaning URLs from HTML
             var cleanHTML;
             if (ninjaWrapper) {
