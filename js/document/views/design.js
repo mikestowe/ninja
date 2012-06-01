@@ -159,7 +159,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         			this._observer.body = new WebKitMutationObserver(this.insertBannerContent.bind(this));
     	    		this._observer.body.observe(this._bodyFragment, {childList: true});
 	        		//Inserting <body> HTML and parsing URLs via mediator method
-        			this._bodyFragment.innerHTML = '<ninjaloadinghack></ninjaloadinghack>'+(this.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator));
+        			this._bodyFragment.innerHTML = '<ninjaloadinghack></ninjaloadinghack>'+(this.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.tmplt.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator.tmplt))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.tmplt.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator.tmplt));
     	    	}
         	} else {
     	    	//Creating temp code fragement to load head
@@ -168,12 +168,12 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         		this._observer.head = new WebKitMutationObserver(this.insertHeadContent.bind(this));
     	    	this._observer.head.observe(this._headFragment, {childList: true});
 	        	//Inserting <head> HTML and parsing URLs via mediator method
-        		this._headFragment.innerHTML = (this.content.head.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator));
+        		this._headFragment.innerHTML = (this.content.head.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.tmplt.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator.tmplt))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.tmplt.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator.tmplt));
         		//Adding event listener to know when the body is ready and make callback (using HTML5 new DOM Mutation Events)
     	    	this._observer.body = new WebKitMutationObserver(this.bodyContentLoaded.bind(this));
 	        	this._observer.body.observe(this.document.body, {childList: true});
         		//Inserting <body> HTML and parsing URLs via mediator method
-        		this.document.body.innerHTML += '<ninjaloadinghack></ninjaloadinghack>'+(this.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator));
+        		this.document.body.innerHTML += '<ninjaloadinghack></ninjaloadinghack>'+(this.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.tmplt.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator.tmplt))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.tmplt.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator.tmplt));
     	    	//Copying attributes to maintain same properties as the <body>
 				for (var n in this.content.document.body.attributes) {
 					if (this.content.document.body.attributes[n].value) {
