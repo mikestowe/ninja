@@ -160,6 +160,37 @@ var FlagMaterial = function FlagMaterial() {
 		this.updateTexture();
 		this.update( 0 );
 	}
+
+	this.exportJSON = function () {
+		var jObj =
+		{
+			'material'		: this.getShaderName(),
+			'name'			: this.getName(),
+
+			'texMap'		: this._propValues[this._propNames[0]],
+			'waveWidth'		: this._propValues[this._propNames[1]],
+			'waveHeight'	: this._propValues[this._propNames[2]],
+			'speed'			: this._propValues[this._propNames[3]]
+		};
+
+		return jObj;
+	};
+
+	this.importJSON = function (jObj) {
+		if (this.getShaderName() != jObj.material) throw new Error("ill-formed material");
+		this.setName(jObj.name);
+
+		try {
+
+			this._texMap	 = this._propValues[this._propNames[0]] = jObj.texMap;
+			this._waveWidth  = this._propValues[this._propNames[1]] = jObj.waveWidth;
+			this._waveHeight = this._propValues[this._propNames[2]] = jObj.waveHeight;
+			this._speed		 = this._propValues[this._propNames[3]] = jObj.speed;
+		}
+		catch (e) {
+			throw new Error("could not import material: " + importStr);
+		}
+	};
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////

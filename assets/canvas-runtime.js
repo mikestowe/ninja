@@ -580,9 +580,17 @@ NinjaCvsRt.RuntimeGeomObj = Object.create(Object.prototype, {
 					case "zinvert":
 					case "keleidoscope":
 					case "radialBlur":
-					case "pulse":			mat = Object.create(NinjaCvsRt.RuntimePulseMaterial, {});			break;
+					case "pulse":
+						mat = Object.create(NinjaCvsRt.RuntimePulseMaterial, {});
+						break;
 
-					case "twistVert":		mat = Object.create(NinjaCvsRt.RuntimeTwistVertMaterial, {});			break;
+					case "twistVert":
+						mat = Object.create(NinjaCvsRt.RuntimeTwistVertMaterial, {});
+						break;
+					
+					case "flag":
+						mat = Object.create(NinjaCvsRt.RuntimeFlagMaterial, {});
+						break;
 
 					default:
 						console.log( "material type: " + shaderName + " is not supported" );
@@ -1381,6 +1389,7 @@ NinjaCvsRt.RuntimeFlatMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
 
 });
 
+
 NinjaCvsRt.RuntimeTwistVertMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
 	_name: { value: "TwistVertMaterial", writable: true },
 	_shaderName: { value: "twistVert", writable: true },
@@ -1410,7 +1419,7 @@ NinjaCvsRt.RuntimeTwistVertMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, 
 
 	init: {
 		value: function(world) {
-			 var material = this._materialNode;
+			var material = this._materialNode;
 			if (material)
 			{
 				var technique = material.shaderProgram["twistMe"];
@@ -1488,6 +1497,7 @@ NinjaCvsRt.RuntimePulseMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
 						if (tex)
 							technique.u_tex0.set( tex );
 
+						this._shader["default"].u_speed.set( [1.0] );
 						this._shader["default"].u_time.set( [this._time] );
 					}
 				}
@@ -1510,6 +1520,72 @@ NinjaCvsRt.RuntimePulseMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
 						this._shader["default"].u_time.set( [this._time] );
 					this._time += this._dTime;
 					if (this._time > 200.0)  this._time = 0.0;
+				}
+			}
+		}
+	}
+});
+
+
+NinjaCvsRt.RuntimeFlagMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
+	_name: { value: "FlagMaterial", writable: true },
+	_shaderName: { value: "flag", writable: true },
+
+	// default values
+	_texMap: { value: 'assets/images/cubelight.png', writable: true },
+	_speed: { value: 1.0, writable: true },
+	_waveWidth: { value: 1.0, writable: true },
+	_waveHeight: { value: 1.0, writable: true },
+	_dTime: { value: 0.1, writable: true },
+
+	importJSON: {
+		value: function(jObj) {
+			this._texMap	 = jObj.texMap;
+			this._waveWidth  = jObj.waveWidth;
+			this._waveHeight = jObj.waveHeight;
+			this._speed		 = jObj.speed;
+		}
+	},
+
+	init: {
+		value: function(world) {
+			if (this._shader) {
+				var material = this._materialNode;
+				if (material)
+				{
+					var technique = material.shaderProgram['default'];
+					var renderer = RDGE.globals.engine.getContext().renderer;
+					if (renderer && technique)
+					{
+
+						if (this._shader && this._shader['default']) {
+							var wrap = 'REPEAT',  mips = true;
+							var tex = renderer.getTextureByName(this._texMap, wrap, mips );
+							if (tex)  technique.u_tex0.set( tex );
+
+							technique.u_speed.set( [this._speed] );
+							technique.u_waveWidth.set( [this._waveWidth] );
+							technique.u_waveHeight.set( [this._waveHeight] );
+						}
+					}
+				}
+			}
+		}
+	},
+
+	update: {
+		value: function(time) {
+			var material = this._materialNode;
+			if (material)
+			{
+				var technique = material.shaderProgram['default'];
+				var renderer = RDGE.globals.engine.getContext().renderer;
+				if (renderer && technique)
+				{
+					if (this._shader && this._shader['default']) {
+						this._shader['default'].u_time.set( [this._time] );
+					}
+					this._time += this._dTime * this._speed;
 				}
 			}
 		}
