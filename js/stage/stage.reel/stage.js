@@ -1090,7 +1090,9 @@ exports.Stage = Montage.create(Component, {
 
             this.snapManager._isCacheInvalid = true;
             this.snapManager.currentStage = this.currentDocument.model.documentRoot;
-            this.snapManager.setupDragPlaneFromPlane (workingPlane);
+ 			//TODO - StylesController needs to initialize the stage's styles prior to calling this.
+            // So, moving this into styles-controller.initializeRootStyles code.
+//            this.snapManager.setupDragPlaneFromPlane (workingPlane);
 
             this.drawUtils.initializeFromDocument();
         }

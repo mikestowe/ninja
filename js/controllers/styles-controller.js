@@ -179,6 +179,10 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 this.setStyles(rule, styles);
                 this.addClass(this.currentDocument.model.documentRoot, "ninja-body");
             }
+
+            //TODO - Temporarily moving this here so we guarantee the StylesController has a chance
+            // to initialize the stage's styles prior to doing any styles lookup.
+            this.application.ninja.stage.snapManager.setupDragPlaneFromPlane (workingPlane);
         }
     },
     /* ----------------- Rule methods ----------------- */
@@ -1204,6 +1208,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
     getMatrixFromElement : {
         value: function(element, isStage) {
+            isStage = false;
             var xformStr = this.getElementStyle(element, "-webkit-transform", true, isStage),
                 mat;
 
@@ -1237,6 +1242,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
     getPerspectiveDistFromElement : {
         value: function(element, isStage) {
+            isStage = false;
             var xformStr = this.getElementStyle(element, "-webkit-perspective", false, isStage),
                 dist;
 
