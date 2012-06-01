@@ -30,7 +30,7 @@ exports.StylesViewDelegate = Montage.create(Component, {
         value: function(selector, direction) {
             if(!selector) { return false; }
 
-            var elements = this.stylesController._activeDocument.model.views.design.document.querySelectorAll(selector),
+            var elements = this.stylesController.currentDocument.model.views.design.document.querySelectorAll(selector),
                 method = (direction === "out") ? "remove" : "add";
 
             Array.prototype.slice.call(elements).forEach(function(el) {
