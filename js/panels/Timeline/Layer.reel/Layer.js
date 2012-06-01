@@ -83,12 +83,13 @@ var Layer = exports.Layer = Montage.create(Component, {
     			return;
     		}
     		if (newVal !== this._selectedStyleIndex) {
-    			console.log("Layer.selectedStyleIndex.set ", newVal);
     			this._selectedStyleIndex = newVal;
     			this.layerData.selectedStyleIndex = newVal;
-    			this.needsDraw = true;
     		}
     	}
+    },
+    _storedStyleIndex : {
+        value: false
     },
 
     /* Layer models: the name, ID, and selected and animation booleans for the layer */
@@ -277,6 +278,10 @@ var Layer = exports.Layer = Montage.create(Component, {
         		if (value === false) {
         			// If changing from true to false, we need to deselect any associated styles
         			this.selectStyle(false);
+        		} else {
+        		    if (this._storedStyleIndex !== false) {
+        		        this.selectStyle(this._storedStyleIndex);
+        		    }
         		}
         		this._isSelected = value;
         		this.layerData.isSelected = value;
@@ -541,7 +546,7 @@ var Layer = exports.Layer = Montage.create(Component, {
             }
             // Enable or disable the delete style button as appropriate
             if (this.isSelected) {
-            	if (this.selectedStyleIndex !== "false") {
+            	if (this.selectedStyleIndex !== false) {
             		this.selectStyle(this.selectedStyleIndex);
             		this.buttonDeleteStyle.classList.remove("disabled");
             	}
@@ -630,6 +635,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 			newStyle.ruleTweener = false;
 			newStyle.isSelected = false;
             this.arrLayerStyles.push(newStyle);
+            this.selectStyle(this.arrLayerStyles.length -1);
 
 			// Set up the event info and dispatch the event
             this.styleCounter += 1;
@@ -666,26 +672,37 @@ var Layer = exports.Layer = Montage.create(Component, {
 	},
 	selectStyle : {
 		value: function(styleIndex) {
-			console.log("Layer.selectStyle ", styleIndex);
-
     		// Select a style based on its index.
     		// use layerIndex = false to deselect all styles.
     		var i = 0,
     			arrLayerStylesLength = this.arrLayerStyles.length;
     			
-
-    		// First, update this.arrStyles[].isSelected
-    		for (i = 0; i < arrLayerStylesLength; i++) {
-    			if (i === styleIndex) {
-    				this.arrLayerStyles[i].isSelected = true;
-    			} else {
-    				if (this.arrLayerStyles[i].isSelected === true) {
-    					this.arrLayerStyles[i].isSelected = false;
-    				}
-    			}
-    		}
-    		
-
+            if (styleIndex === false) {
+                if (arrLayerStylesLength === 0) {
+                    // No styles selected, so do nothing.
+                    return;
+                }
+                for (i = 0; i < arrLayerStylesLength; i++) {
+                    if (this.arrLayerStyles[i].isSelected === true) {
+                        this.arrLayerStyles[i].isSelected = false;
+                    }
+                }
+            } else {
+                for (i = 0; i < arrLayerStylesLength; i++) {
+                    if (i === styleIndex) {
+                        this.arrLayerStyles[i].isSelected = true;
+                    } else {
+                        if (this.arrLayerStyles[i].isSelected === true) {
+                            this.arrLayerStyles[i].isSelected = false;
+                        }
+                    }
+                }
+                this.selectedStyleIndex = styleIndex;
+                this._storedStyleIndex = styleIndex;
+            }
+            
+            
+            
     		/*
     		// Next, update this.styleRepetition.selectedIndexes.
     		if (styleIndex !== false) {
@@ -744,6 +761,9 @@ var Layer = exports.Layer = Montage.create(Component, {
 	},
 	handleDeleteStyleClick: {
 		value: function(event) {
+		    if (event.target.classList.contains("disabled")) {
+		        return;
+		    }
 			this.deleteStyle();
 		}
 	},
