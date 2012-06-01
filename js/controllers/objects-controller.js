@@ -109,6 +109,26 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
         }
     },
 
+    /* ---- Bindable Properties ---- */
+
+    getEnumerableProperties : {
+        value: function(object, excludeUnderscoreProperties) {
+            var properties = [];
+
+            for(var key in object) {
+                properties.push(key);
+            }
+
+            if(excludeUnderscoreProperties) {
+                properties = properties.filter(function(property) {
+                    return property[0] !== '_';
+                }, this);
+            }
+
+            return properties.sort();
+        }
+    },
+
     /* ---- Bindable controller properties ---- */
 
     currentObjectBindings : {
