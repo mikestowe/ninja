@@ -12,7 +12,7 @@ var Montage = 		require("montage/core/core").Montage,
 exports.CodeEditorViewOptions = Montage.create(Component, {
 
     _currentDocument: {
-            value : null
+        value : null
     },
 
     currentDocument : {

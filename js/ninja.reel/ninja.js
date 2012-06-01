@@ -296,9 +296,6 @@ exports.Ninja = Montage.create(Component, {
 
     openDocument: {
         value: function(doc) {
-
-
-
             this.documentList.content.push(doc);
             // This is not needed with the latest 0.10 montage.
             // TODO: Remove this when integrating the next montage
@@ -308,11 +305,6 @@ exports.Ninja = Montage.create(Component, {
                 // TODO: Bind directly to the model of the document in components instead of this property
                 this.currentSelectedContainer = doc.model.documentRoot;
             }
-
-
-//            this.appModel.show3dGrid = this.currentDocument.draw3DGrid;
-
-
         }
     },
 

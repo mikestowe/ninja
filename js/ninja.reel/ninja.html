@@ -25,7 +25,10 @@
             },
 
             "appModel": {
-                "prototype": "js/models/app-model"
+                "prototype": "js/models/app-model",
+                "bindings": {
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
+                }
             },
 
             "materialsModel": {
