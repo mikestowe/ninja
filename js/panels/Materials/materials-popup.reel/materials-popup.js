@@ -178,7 +178,7 @@ exports.MaterialsPopup = Montage.create(Component, {
 						if (index >= 0)
 						{
 							value = value.substr( index+1 );
-							value = "assets\\images\\" + value;
+							value = "assets/images/" + value;
 						}
 						rtnValue = value.slice(0);
 					}

@@ -68,9 +68,12 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 	{
 		// determine if the source is a canvas or an image file
 		var viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils;
-		var root = viewUtils.application.ninja.currentDocument.documentRoot;
+		//var root = viewUtils.application.ninja.currentDocument.documentRoot;
+		var root;
+		if (viewUtils.application.ninja.currentDocument)
+			root = viewUtils.application.ninja.currentDocument.model.documentRoot;
 		var srcCanvas = this._srcCanvas;
-		if (!srcCanvas)
+		if (!srcCanvas && root)
 			srcCanvas = this.findCanvas( this._texMapName, root );
 		if (srcCanvas)
 		{
