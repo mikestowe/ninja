@@ -292,6 +292,7 @@ exports.Ninja = Montage.create(Component, {
 
             if(doc.currentView === "design") {
                 // TODO: Bind directly to the model of the document in components instead of this property
+                this._currentSelectedContainer = null;
                 this.currentSelectedContainer = doc.model.documentRoot;
             }
         }

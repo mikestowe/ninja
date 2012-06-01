@@ -34,7 +34,7 @@ exports.SelectionController = Montage.create(Component, {
             }
 
             if(this._currentDocument && this._currentDocument.currentView === "design") {
-                this._currentDocument.model.selection = this.application.ninja.selectedElements;
+                this._currentDocument.model._selection = this.application.ninja.selectedElements;
                 this._currentDocument.model.selectionContainer = this.application.ninja._currentSelectedContainer;
             }
 

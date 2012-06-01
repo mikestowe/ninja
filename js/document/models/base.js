@@ -62,8 +62,17 @@ exports.BaseDocumentModel = Montage.create(Component, {
     },
     ////////////////////////////////////////////////////////////////////
 	//
-    selection: {
+    _selection: {
         value: []
+    },
+
+    selection: {
+        get: function() {
+            return this._selection;
+        },
+        set: function(value) {
+            this._selection = value;
+        }
     },
     ////////////////////////////////////////////////////////////////////
     //
