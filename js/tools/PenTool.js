@@ -577,8 +577,8 @@ exports.PenTool = Montage.create(ShapeTool, {
                         localTranslation = VecUtils.vecSubtract(3, localMousePos, selAnchorPos[0]);
                         selAnchor.translatePrev(localTranslation[0], localTranslation[1], localTranslation[2]);
                         if (!this._isAltDown){
-                            //selAnchor.translateNextFromPrev(localTranslation[0], localTranslation[1], localTranslation[2]);
-                            selAnchor.setNextFromPrev();
+                            selAnchor.translateNextFromPrev(localTranslation[0], localTranslation[1], localTranslation[2]);
+                            //selAnchor.setNextFromPrev();
                         }
                     }
                     else if (this._editMode & this.EDIT_NEXT) {
@@ -586,8 +586,8 @@ exports.PenTool = Montage.create(ShapeTool, {
                         //move the prev point if Alt key is down to ensure relative angle between prev and next
                         selAnchor.translateNext(localTranslation[0], localTranslation[1], localTranslation[2]);
                         if (!this._isAltDown){
-                            //selAnchor.translatePrevFromNext(localTranslation[0], localTranslation[1], localTranslation[2]);
-                            selAnchor.setPrevFromNext();
+                            selAnchor.translatePrevFromNext(localTranslation[0], localTranslation[1], localTranslation[2]);
+                            //selAnchor.setPrevFromNext();
                         }
                     }
                     else if (this._editMode & this.EDIT_PREV_NEXT) {
