@@ -524,6 +524,32 @@ var Layer = exports.Layer = Montage.create(Component, {
 			this.element.addEventListener("dragleave", this.handleDragleave.bind(this), false);
 			this.element.addEventListener("dragstart", this.handleDragstart.bind(this), false);
 			this.element.addEventListener("drop", this.handleDrop.bind(this), false);
+
+            this.eventManager.addEventListener("elementChange",this,false);
+
+            this.leftControl.identifier = "left";
+            this.leftControl.addEventListener("changing",this,false);
+            this.leftControl.addEventListener("change",this,false);
+
+            this.topControl.identifier = "top";
+            this.topControl.addEventListener("changing",this,false);
+            this.topControl.addEventListener("change",this,false);
+
+            this.widthControl.identifier = "width";
+            this.widthControl.addEventListener("changing",this,false);
+            this.widthControl.addEventListener("change",this,false);
+
+            this.heightControl.identifier = "height";
+            this.heightControl.addEventListener("changing",this,false);
+            this.heightControl.addEventListener("change",this,false);
+
+            el=this.layerData.stageElement;
+            debugger;
+
+            this.dtextPositionX = parseFloat(ElementsMediator.getProperty(el, "left"));
+            this.dtextPositionY = parseFloat(ElementsMediator.getProperty(el, "top"));
+            this.dtextScaleY = parseFloat(ElementsMediator.getProperty(el, "height"));
+            this.dtextScaleX= parseFloat(ElementsMediator.getProperty(el, "width"));
         }
     },
 
@@ -891,19 +917,20 @@ var Layer = exports.Layer = Montage.create(Component, {
 
     handleLeftChange:{
         value:function(){
-            this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "left", [this.dtextPositionX + "px"] , "Change", "timeline");
+            debugger;
+            this.application.ninja.elementMediator.setProperty(this.layerData.stageElement, "left", [this.dtextPositionX + "px"] , "Change", "timeline");
         }
     },
 
     handleTopChange:{
         value:function(){
-            this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "top", [this.dtextPositionY + "px"] , "Change", "timeline");
+            this.application.ninja.elementMediator.setProperty(this.layerData.stageElement, "top", [this.dtextPositionY + "px"] , "Change", "timeline");
         }
     },
 
     handleWidthChange:{
         value:function(){
-            this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "width", [this.dtextScaleX + "px"] , "Change", "timeline");
+            this.application.ninja.elementMediator.setProperty(this.layerData.stageElement, "width", [this.dtextScaleX + "px"] , "Change", "timeline");
         }
     },
 
@@ -915,25 +942,25 @@ var Layer = exports.Layer = Montage.create(Component, {
 
     handleLeftChanging:{
         value:function(){
-            this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "left", [this.dtextPositionX + "px"] , "Changing", "timeline");
+            this.application.ninja.elementMediator.setProperty(this.layerData.stageElement, "left", [this.dtextPositionX + "px"] , "Changing", "timeline");
         }
     },
 
     handleTopChanging:{
         value:function(){
-            this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "top", [this.dtextPositionY + "px"] , "Changing", "timeline");
+            this.application.ninja.elementMediator.setProperty(this.layerData.stageElement, "top", [this.dtextPositionY + "px"] , "Changing", "timeline");
         }
     },
 
     handleWidthChanging:{
         value:function(){
-            this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "width", [this.dtextScaleX + "px"] , "Changing", "timeline");
+            this.application.ninja.elementMediator.setProperty(this.layerData.stageElement, "width", [this.dtextScaleX + "px"] , "Changing", "timeline");
         }
     },
 
     handleHeightChanging:{
         value:function(){
-            this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "height", [this.dtextScaleY + "px"] , "Changing", "timeline");
+            this.application.ninja.elementMediator.setProperty(this.layerData.stageElement, "height", [this.dtextScaleY + "px"] , "Changing", "timeline");
         }
     },
 
@@ -1012,7 +1039,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 				return e.stack.split("at")[3].split(":")[2];
 			}
     	}
-    },
+    }
 	/* End: Logging routines */
 
 });
