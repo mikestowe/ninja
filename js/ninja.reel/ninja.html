@@ -150,6 +150,13 @@
                 ]
             },
 
+            "stylesController": {
+                "prototype": "js/controllers/styles-controller",
+                "bindings": {
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
+                }
+            },
+
             "stageMode": {
                 "prototype": "js/components/layout/stage-mode.reel",
                 "properties": {
@@ -316,13 +323,6 @@
             
             "colorController1": {
                 "prototype": "js/controllers/color-controller"
-            },
-
-            "stylesController": {
-                "prototype": "js/controllers/styles-controller",
-                "bindings": {
-                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
-                }
             },
 
             "presetsController": {
