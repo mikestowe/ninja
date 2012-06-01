@@ -62,6 +62,8 @@ exports.HtmlDocument = Montage.create(Component, {
             	parentContainer: {value: document.getElementById("iframeContainer")}, //Saving reference to parent container of all views (should be changed to buckets approach
             	views: {value: {'design': DesignDocumentView.create(), 'code': null}} //TODO: Add code view logic
             });
+            //Calling the any init routines in the model
+            this.model.init();
             //Initiliazing views and hiding
            	if (this.model.views.design.initialize(this.model.parentContainer)) {
            		//Hiding iFrame, just initiliazing

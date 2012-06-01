@@ -124,7 +124,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 	//
     onTemplateLoad: {
         value: function (e) {
-        	//console.log(this.iframe.contentWindow);
+        	//TODO: Remove, this is a temp patch for webRequest API gate
         	this.application.ninja.documentController.redirectRequests = true;
         	//TODO: Add support to constructing URL with a base HREF
         	var basetag = this.content.document.getElementsByTagName('base');
@@ -240,7 +240,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     		this.document.body.removeChild(this.document.getElementsByTagName('ninjaloadinghack')[0]);
    			//Getting style and link tags in document
             var stags = this.document.getElementsByTagName('style'),
-            	ltags = this.document.getElementsByTagName('link'), i,
+            	ltags = this.document.getElementsByTagName('link'), i, orgNodes,
             	scripttags = this.document.getElementsByTagName('script');
            	//Temporarily checking for disabled special case (we must enabled for Ninja to access styles)
            	this.ninjaDisableAttribute(stags);
@@ -281,6 +281,12 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     		}
     		//Storing node list for reference (might need to store in the model)
     		this._liveNodeList = this.model.documentRoot.getElementsByTagName('*');
+    		//Getting list of original nodes
+    		orgNodes = this.document.getElementsByTagName('*');
+    		//TODO: Figure out if this is ideal for identifying nodes created by Ninja
+    		for (var n in orgNodes) {
+	    		if (orgNodes[n].getAttribute) orgNodes[n].setAttribute('data-ninja-node', 'true');
+    		}
     		//Initiliazing document model
     		document.application.njUtils.makeElementModel(this.model.documentRoot, "Body", "body");
     		//Makign callback if specified

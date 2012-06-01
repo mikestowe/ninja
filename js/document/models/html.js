@@ -18,6 +18,14 @@ exports.HtmlDocumentModel = Montage.create(BaseDocumentModel, {
         value: false
     },
     ////////////////////////////////////////////////////////////////////
+	//Called by the document immidiately after the model is created
+    init: {
+        value:function() {
+        	//Creating instance of the webGL helper for this model
+        	this.webGlHelper = webGlDocumentHelper.create();
+		}           
+    },
+    ////////////////////////////////////////////////////////////////////
     //
     selectionContainer: {
         value: []
@@ -52,7 +60,7 @@ exports.HtmlDocumentModel = Montage.create(BaseDocumentModel, {
     ////////////////////////////////////////////////////////////////////
 	//
 	webGlHelper: {
-        value: webGlDocumentHelper
+        value: null
     },
     ////////////////////////////////////////////////////////////////////
 	//
