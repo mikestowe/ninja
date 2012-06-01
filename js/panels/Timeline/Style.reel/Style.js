@@ -337,26 +337,19 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 				this.editorHottextContainer.classList.add("hidden");
 
                 if(tweenable.colorType === "fill"){
-                                    this._isFill = true;
-                                }else{
-                                    if(tweenable.colorType === "stroke"){
-                                        this._isFill = false;
-                                        this._borderSide = tweenable.strokePosition
-                                    }
-
-                                }
+                    this._isFill = true;
+                }else{
+                    if(tweenable.colorType === "stroke"){
+                        this._isFill = false;
+                        this._borderSide = tweenable.strokePosition
+                    }
+                }
 
                 if (this.addedColorChips === false && this.application.ninja.colorController.colorPanelDrawn) {
                     // setup fill color
                     this._fillColorCtrl.props = { side: 'top', align: 'center', wheel: true, palette: true, gradient: false, image: false, nocolor: true, offset: -80 };
                     this.application.ninja.colorController.addButton("chip", this._fillColorCtrl);
-
-    //                setup stroke color
-    //                this._strokeColorCtrl.props = { side: 'top', align: 'center', wheel: true, palette: true, gradient: false, image: false, nocolor: true, offset: -80 };
-    //                this.application.ninja.colorController.addButton("chip", this._strokeColorCtrl);
-
                     this._fillColorCtrl.addEventListener("change", this.handleFillColorChange.bind(this), false);
-
                     this.addedColorChips = true;
                 }
 
@@ -695,7 +688,6 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
             var fillColorObject={};
             fillColorObject.color=event._event.color;
             fillColorObject.mode=event._event.colorMode;
-            console.log(this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement);
             ElementsMediator.setColor([this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement], fillColorObject, this._isFill, "Change", "timeline",null,this._borderSide)
         }
     },
