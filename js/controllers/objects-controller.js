@@ -8,46 +8,126 @@ var Montage = require("montage/core/core").Montage,
     Component        = require("montage/ui/component").Component;
 
 var objectsController = exports.ObjectsController = Montage.create(Component, {
+
+    _currentDocument : {
+        value : null,
+        enumerable : false
+    },
+    currentDocument : {
+        get : function() {
+            return this._currentDocument;
+        },
+        set : function(doc) {
+            if(!doc) { return false; }
+
+            // TODO: remove setTimeout when timing of montage initialization is done
+            setTimeout(function() {
+                this.bindToModelObjects();
+            }.bind(this), 1000);
+
+            this._currentDocument = doc;
+        },
+        enumerable : false
+    },
+
     objects : {
         value: []
     },
 
-    handleAppLoaded : {
+    _isBoundToModelObjects : {
+        value: null
+    },
+    bindToModelObjects : {
         value: function() {
-            ///// Bind app's activeDocument property to
-            ///// objects controller's _activeDocument property
+            //// Remove any previous bindings if previously bound
+            if(!this._isBoundToModelObjects) {
+                Object.deleteBinding(this, 'objects');
+                this._isBoundToModelObjects = true;
+            }
+
+            Object.defineBinding(this, 'objects', {
+                boundObject: this.currentDocument.model,
+                boundObjectPropertyPath: 'objects',
+                oneway: false
+            });
+        }
+    },
+    
+    /* --------------------------
+          Binding Methods
+    ----------------------------- */
+    
+    addBinding : {
+        value: function(bindingArgs) {
+            if(!bindingArgs.sourceObject || !bindingArgs.sourceObjectPropertyPath || !bindingArgs) { return; }
+
+            Object.defineBinding(bindingArgs.sourceObject, bindingArgs.sourceObjectPropertyPath, bindingArgs);
         }
     },
 
-    deserializedFromTemplate : {
-        value: function() {
-            this.eventManager.addEventListener( "appLoaded", this, false);
-        },
-        enumerable : false
+    removeBinding : {
+        value: function(bindingArgs) {
+            if(!bindingArgs) { return; }
+
+            Object.deleteBinding(bindingArgs.sourceObject, bindingArgs.sourceObjectPropertyPath);
+        }
     },
 
-    _activeDocument : {
-        value : null,
-        enumerable : false
+    editBindingPropertyPath : {
+        value: function(bindingArgs, newPropertyPath) {
+            this.removeBinding(bindingArgs);
+
+            bindingArgs.boundObjectPropertyPath = 'newPropertyPath';
+
+            this.addBinding(bindingArgs);
+        }
+    },
+    
+    getObjectBindings : {
+        value: function(object) {
+            var descriptors = object._bindingDescriptors,
+                bindingsArray = [],
+                property, descriptor, bindingArgsObject;
+
+            for(property in descriptors) {
+                if(descriptors.hasOwnProperty(property)) {
+                    descriptor = descriptors[property];
+
+                    bindingArgsObject = {
+                        sourceObject : object,
+                        sourceObjectPropertyPath : property,
+                        boundObject : descriptor.boundObject,
+                        boundObjectPropertyPath : descriptor.boundObjectPropertyPath,
+                        onweway : descriptor.oneway
+                    };
+
+                    bindingsArray.push(bindingArgsObject);
+                }
+            }
+
+            return bindingsArray;
+        }
     },
 
-    activeDocument : {
-        get : function() {
-            return this._activeDocument;
+    /* ---- Bindable controller properties ---- */
+
+    currentObjectBindings : {
+        value: null
+    },
+    _currentObject : {
+        value: null
+    },
+    currentObject : {
+        get: function() {
+            return this._currentObject;
         },
-        set : function(document) {
-            ///// If the document is null set default stylesheets to null
-            if(!document) { return false; }
+        set: function(value) {
+            if(value === this._currentObject) { return; }
 
-            setTimeout(function() {
-                this.objects = document._document.application._template._deserializer.getObjectsFromLastDeserialization();
-            }.bind(this), 1000);
+            this.currentObjectBindings = this.getObjectBindings(value);
 
-
-            ///// setting document via binding
-            this._activeDocument = document;
-        },
-        enumerable : false
+            this._currentObject = value;
+        }
     }
 
 });

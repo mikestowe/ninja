@@ -4,44 +4,34 @@
  No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> -->
-<html>
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link rel="stylesheet" type="text/css" href="object.css">
-
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="binding-item.css" type="text/css">
     <script type="text/montage-serialization">
         {
             "owner": {
-                "prototype": "js/panels/objects/object.reel",
+                "prototype": "js/panels/binding/binding-item.reel",
                 "properties": {
-                    "element": {"#": "object"}
+                    "element": {"#": "binding-item"}
                 }
             },
-            "labelText": {
+            "label": {
                 "prototype": "montage/ui/dynamic-text.reel",
                 "properties": {
-                    "element": {"#": "label" }
+                    "element": {"#": "label"}
                 },
                 "bindings": {
-                    "value" : {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "label",
-                        "oneway": true
-                    }
+                    "value": {"<-": "@owner.sourceObjectPropertyPath"}
                 }
             }
 
         }
     </script>
-
 </head>
 <body>
-
-
-<li data-montage-id="object" draggable="true">
-    <div class="object-icon"></div>
-    <span data-montage-id="label" class="object-label"></span>
+<li data-montage-id="binding-item" class="binding-item">
+    <span data-montage-id="label"></span>
 </li>
-
 </body>
 </html>

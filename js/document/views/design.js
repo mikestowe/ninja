@@ -395,11 +395,15 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     initMontage: {
         value: function (scripttags) {
         	//
+            //debugger;
         	this.iframe.contentWindow.document.body.addEventListener('mjsTemplateReady', function () {
         		//Initializing template with user's seriliazation
         		var template = this.iframe.contentWindow.mjsTemplate.create();
+
         		template.initWithDocument(this.iframe.contentWindow.document);
-        		template.instantiateWithOwnerAndDocument(null, this.iframe.contentWindow.document, function (e){/*Nothing just a required extra parameter*/});
+        		template.instantiateWithOwnerAndDocument(null, this.iframe.contentWindow.document, function (e){
+                    this.model.objects = template.deserializer.getObjectsFromLastDeserialization();
+                }.bind(this));
         	}.bind(this), false);
         }
     },

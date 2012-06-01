@@ -4,8 +4,10 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
-
-.bindings-list {
-    padding: 0;
-    margin: 0;
+.binding-item {
+    color: #FFF;
+    margin: 0 8px;
+    padding: 3px;
+    border-bottom: 1px solid #FFF;
+    list-style-type: none;
 }
