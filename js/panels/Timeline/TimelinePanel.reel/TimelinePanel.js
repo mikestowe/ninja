@@ -919,6 +919,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             for (i = 0; i < arrLayersLength; i++) {
             	if (this.arrLayers[i].layerData.isSelected === true) {
             		if (arrSelectedIndexes.indexOf(i) < 0) {
+            			console.log("TimelinePanel.selectLayers, deselecting ", i);
 						this.arrLayers[i].layerData.isSelected = false;
 	            		this.triggerLayerBinding(i);
             		}

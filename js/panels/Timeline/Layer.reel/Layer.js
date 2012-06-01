@@ -83,6 +83,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     			return;
     		}
     		if (newVal !== this._selectedStyleIndex) {
+    			console.log("Layer.selectedStyleIndex.set ", newVal);
     			this._selectedStyleIndex = newVal;
     			this.layerData.selectedStyleIndex = newVal;
     			this.needsDraw = true;
@@ -638,37 +639,34 @@ var Layer = exports.Layer = Montage.create(Component, {
 	},
 	deleteStyle : {
 		value: function() {
-			var newEvent = document.createEvent("CustomEvent"),
-				selectedIndex = 0;
-			if (this.arrLayerStyles.length > 0) {
-				if (!!this.styleRepetition.selectedIndexes) {
-					
-					selectedIndex = this.styleRepetition.selectedIndexes[0];
+		
+			// Only delete a style if we have one or more styles, and one of them is selected
+			if ((this.arrLayerStyles.length > 0) && (this.selectedStyleIndex !== false)) {
+				var newEvent = document.createEvent("CustomEvent");
 
-					// Set up the event info and dispatch the event
-					newEvent.initCustomEvent("layerEvent", false, true);
-					newEvent.layerEventLocale = "styles";
-					newEvent.layerEventType = "deleteStyle";
-					newEvent.layerID = this.layerID;
-					newEvent.styleID = this.arrLayerStyles[selectedIndex].styleID;
-					newEvent.styleSelection = selectedIndex;
-					defaultEventManager.dispatchEvent(newEvent);
-					
-					// Delete the style from the view
-					this.arrLayerStyles.splice(selectedIndex, 1);
-					
-					// Was that the last style?
-					if (this.arrLayerStyles.length === 0) {
-						this.buttonDeleteStyle.classList.add("disabled");
-					}
-					
-				}
-			}
+				// Set up the event info and dispatch the event
+				newEvent.initCustomEvent("layerEvent", false, true);
+				newEvent.layerEventLocale = "styles";
+				newEvent.layerEventType = "deleteStyle";
+				newEvent.layerID = this.layerID;
+				newEvent.styleID = this.selectedStyleIndex;
+				newEvent.selectedStyleIndex = this.selectedStyleIndex;
+				defaultEventManager.dispatchEvent(newEvent);
+				
+				// Delete the style from the view
+				this.arrLayerStyles.splice(this.selectedStyleIndex, 1);
+				
+				// Set selection to none
+				this.selectedStyleIndex = false;
+				
+				// Disable the delete style button, because now nothing is selected
+				this.buttonDeleteStyle.classList.add("disabled");
+			}	
 		}
 	},
 	selectStyle : {
 		value: function(styleIndex) {
-			//console.log("Layer.selectStyle ", styleIndex);
+			console.log("Layer.selectStyle ", styleIndex);
 
     		// Select a style based on its index.
     		// use layerIndex = false to deselect all styles.
@@ -771,7 +769,9 @@ var Layer = exports.Layer = Montage.create(Component, {
 	},
 	handleMousedown: {
 		value: function(event) {
-			//console.log("Layer.handleMousedown")
+			if (event.target.classList.contains("button-delete")) {
+				return;
+			}
 			this.layerData.isActive = true;
 			var ptrParent = nj.queryParentSelector(event.target, ".content-style"),
 				activeStyleIndex = this.getActiveStyleIndex();
@@ -783,7 +783,6 @@ var Layer = exports.Layer = Montage.create(Component, {
 	},
 	handleLayerClick : {
 		value: function(event) {
-			//console.log("Layer.handleLayerClick")
 			var ptrParent = nj.queryParentSelector(event.target, ".content-style");
 			if (ptrParent !== false) {
 				var myIndex = this.getActiveStyleIndex();

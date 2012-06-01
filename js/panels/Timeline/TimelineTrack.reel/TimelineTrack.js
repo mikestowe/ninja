@@ -969,8 +969,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 this.arrStyleTracks.push(restoredStyleTrack);
             }
             else if (layerEvent.layerEventType === "deleteStyle") {
-                // TODO: Delete the right track.  Index can be passed in event object, use that for splice().
-                this.arrStyleTracks.pop();
+            	// We are deleting a style, so delete the associated track
+            	this.arrStyleTracks.splice(layerEvent._event.selectedStyleIndex, 1);
             }
         }
     },
