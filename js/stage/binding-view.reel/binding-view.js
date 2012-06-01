@@ -23,6 +23,10 @@ exports.BindingView = Montage.create(Component, {
         value:[]
     },
 
+    _bindingViewCanvas: {
+        value:null
+    },
+
     //Public Objects
     hudRepeater: { value: null },
 
@@ -53,8 +57,18 @@ exports.BindingView = Montage.create(Component, {
             this._nonVisualComponents = val;
         }
     },
+    bindingViewCanvas: {
+        get: function() {
+            return this._bindingViewCanvas;
+        },
+        set: function(val) {
+            this._bindingViewCanvas = val;
+        }
+    },
 
     //Methods
+
+
 
     //Montage Draw Cycle
     prepareForDraw: {
@@ -70,7 +84,10 @@ exports.BindingView = Montage.create(Component, {
                     {
                         "title": "Input1",
                         "properties": [
-                            {"title":"Value"},
+                            {"title":"Value",
+                                "bindings": [
+                                    {"direction": "<-", "boundObject":"Checkbox1", "boundProperty": "Value"}
+                                ]},
                             {"title": "Width"}
                         ],
                         "x": 20,
@@ -89,6 +106,18 @@ exports.BindingView = Montage.create(Component, {
             } else {
                 this.bindables = [];
             }
+        }
+    },
+
+    drawBlueLine: {
+        value: function(fromX,fromY,toX,toY) {
+
+        }
+    },
+
+    handleMousedown: {
+        value: function(event) {
+            debugger;
         }
     },
 

@@ -20,7 +20,6 @@ exports.BindingTool = Montage.create(ModifierToolBase, {
             {
                 NJevent("enableStageMove");
                 this.application.ninja.workspaceMode = "binding";
-
             }
             else
             {
@@ -33,6 +32,7 @@ exports.BindingTool = Montage.create(ModifierToolBase, {
     HandleLeftButtonDown: {
         value: function(event) {
             NJevent("enableStageMove");
+            this.application.ninja.stage.bindingView.handleMouseDown(event);
         }
     },
 
