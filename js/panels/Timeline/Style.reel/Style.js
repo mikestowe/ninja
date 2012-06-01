@@ -691,12 +691,12 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 
     handleFillColorChange: {
         value: function (event) {
-debugger;
 
             var fillColorObject={};
             fillColorObject.color=event._event.color;
             fillColorObject.mode=event._event.colorMode;
-            ElementsMediator.setColor(this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.elementsList, fillColorObject, this._isFill, "Change", "timeline",null,this._borderSide)
+            console.log(this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement);
+            ElementsMediator.setColor([this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement], fillColorObject, this._isFill, "Change", "timeline",null,this._borderSide)
         }
     },
 
@@ -706,7 +706,7 @@ debugger;
             if(this.editorValue===""){
                 this.editorValue = 0;
             }
-            this.application.ninja.elementMediator.setProperty(this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.elementsList, this.editorProperty, [this.editorValue + event.target._units] , "Change", "timeline");
+            this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement], this.editorProperty, [this.editorValue + event.target._units] , "Change", "timeline");
         }
     },
 
@@ -716,13 +716,13 @@ debugger;
             if(this.editorValue===""){
                 this.editorValue = 0;
             }
-            this.application.ninja.elementMediator.setProperty(this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.elementsList, this.editorProperty, [this.editorValue + event.target._units ] , "Changing", "timeline");
+            this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement], this.editorProperty, [this.editorValue + event.target._units ] , "Changing", "timeline");
         }
     },
 
     handleBlur:{
         value:function(event){
-            this.application.ninja.elementMediator.setProperty(this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.elementsList, this.editorProperty, [event.target.value] , "Change", "timeline");
+            this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement], this.editorProperty, [event.target.value] , "Change", "timeline");
         }
     },
 

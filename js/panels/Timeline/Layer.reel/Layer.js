@@ -891,56 +891,56 @@ var Layer = exports.Layer = Montage.create(Component, {
 
     handleLeftChange:{
         value:function(){
-            this.application.ninja.elementMediator.setProperty(this.layerData.elementsList, "left", [this.dtextPositionX + "px"] , "Change", "timeline");
+            this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "left", [this.dtextPositionX + "px"] , "Change", "timeline");
         }
     },
 
     handleTopChange:{
         value:function(){
-            this.application.ninja.elementMediator.setProperty(this.layerData.elementsList, "top", [this.dtextPositionY + "px"] , "Change", "timeline");
+            this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "top", [this.dtextPositionY + "px"] , "Change", "timeline");
         }
     },
 
     handleWidthChange:{
         value:function(){
-            this.application.ninja.elementMediator.setProperty(this.layerData.elementsList, "width", [this.dtextScaleX + "px"] , "Change", "timeline");
+            this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "width", [this.dtextScaleX + "px"] , "Change", "timeline");
         }
     },
 
     handleHeightChange:{
         value:function(){
-            this.application.ninja.elementMediator.setProperty(this.layerData.elementsList, "height", [this.dtextScaleY + "px"] , "Change", "timeline");
+            this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "height", [this.dtextScaleY + "px"] , "Change", "timeline");
         }
     },
 
     handleLeftChanging:{
         value:function(){
-            this.application.ninja.elementMediator.setProperty(this.layerData.elementsList, "left", [this.dtextPositionX + "px"] , "Changing", "timeline");
+            this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "left", [this.dtextPositionX + "px"] , "Changing", "timeline");
         }
     },
 
     handleTopChanging:{
         value:function(){
-            this.application.ninja.elementMediator.setProperty(this.layerData.elementsList, "top", [this.dtextPositionY + "px"] , "Changing", "timeline");
+            this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "top", [this.dtextPositionY + "px"] , "Changing", "timeline");
         }
     },
 
     handleWidthChanging:{
         value:function(){
-            this.application.ninja.elementMediator.setProperty(this.layerData.elementsList, "width", [this.dtextScaleX + "px"] , "Changing", "timeline");
+            this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "width", [this.dtextScaleX + "px"] , "Changing", "timeline");
         }
     },
 
     handleHeightChanging:{
         value:function(){
-            this.application.ninja.elementMediator.setProperty(this.layerData.elementsList, "height", [this.dtextScaleY + "px"] , "Changing", "timeline");
+            this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "height", [this.dtextScaleY + "px"] , "Changing", "timeline");
         }
     },
 
 
     handleElementChange:{
         value:function(event){
-            var el = this.layerData.elementsList[0];
+            var el =this.layerData.stageElement;
             var length = this.arrLayerStyles.length , i;
 
             if(event.detail.source && event.detail.source!== "timeline"){
