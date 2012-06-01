@@ -192,7 +192,6 @@ exports.Stage = Montage.create(Component, {
                 drawUtils._eltArray.length = 0;
                 drawUtils._planesArray.length = 0;
             } else if(this._currentDocument.currentView === "design") {
-                this.showCodeViewBar(false);
                 this.restoreAllPanels();
                 this.hideCanvas(false);
                 this.showRulers();
@@ -200,7 +199,6 @@ exports.Stage = Montage.create(Component, {
                 this.clearAllCanvas();
                 this.initWithDocument();
             } else {
-                this.showCodeViewBar(true);
                 this.collapseAllPanels();
                 this.hideCanvas(true);
                 this.hideRulers();
@@ -1062,17 +1060,6 @@ exports.Stage = Montage.create(Component, {
         value:function(){
             this.application.ninja.rulerTop.style.display = "none";
             this.application.ninja.rulerLeft.style.display = "none";
-        }
-    },
-    showCodeViewBar:{
-        value:function(isCodeView){
-            if(isCodeView === true) {
-
-                this.application.ninja.documentBar.element.style.display = "none";
-            } else {
-                this.application.ninja.documentBar.element.style.display = "block";
-
-            }
         }
     },
 

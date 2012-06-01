@@ -60,7 +60,6 @@ exports.TextDocumentModel = Montage.create(BaseDocumentModel, {
             	}
             	//
                 this.parentContainer.removeChild(this.views.code.textViewContainer);
-                this.application.ninja.stage.showCodeViewBar(false);
                 this.application.ninja.stage.restoreAllPanels();
                 this.views.code = null;
 
