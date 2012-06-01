@@ -86,7 +86,7 @@ exports.DrawingToolBase = Montage.create(Component, {
 //                    return null;
 //                }
                 if(downHitRec) {
-                    hitRec = hitRec.convertToWorkingPlane(this.dragPlane);
+                    hitRec = hitRec.convertToWorkingPlane(this.dragPlane || downHitRec.getPlane());
                 } else if ((hitRec.getType() !== hitRec.SNAP_TYPE_STAGE) && !hitRec.isSomeGridTypeSnap()) {
                     hitRec = hitRec.convertToWorkingPlane( snapManager.getDragPlane() );
                 }
