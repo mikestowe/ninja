@@ -206,7 +206,7 @@ exports.Stage = Montage.create(Component, {
                 this.hideRulers();
             }
         }
-        },
+    },
 
     _userPaddingLeft: { value: 0 },
     _userPaddingTop: { value: 0 },
@@ -216,7 +216,7 @@ exports.Stage = Montage.create(Component, {
         set: function(value) {
             this._userPaddingLeft = value;
             this._documentOffsetLeft = -value;
-            this.application.ninja.currentDocument.model.documentRoot.ownerDocument.getElementsByTagName("HTML")[0].style["padding-left"] = -value + "px";
+            this.currentDocument.model.documentRoot.ownerDocument.getElementsByTagName("HTML")[0].style["padding-left"] = -value + "px";
             this.userContentLeft = this._documentOffsetLeft - this._scrollLeft;
             this.updatedStage = true;
         }
@@ -227,7 +227,7 @@ exports.Stage = Montage.create(Component, {
         set: function(value) {
             this._userPaddingTop = value;
             this._documentOffsetTop = -value;
-            this.application.ninja.currentDocument.model.documentRoot.ownerDocument.getElementsByTagName("HTML")[0].style["padding-top"] = -value + "px";
+            this.currentDocument.model.documentRoot.ownerDocument.getElementsByTagName("HTML")[0].style["padding-top"] = -value + "px";
             this.userContentTop = this._documentOffsetTop - this._scrollTop;
             this.updatedStage = true;
         }
@@ -242,7 +242,7 @@ exports.Stage = Montage.create(Component, {
 
                 // Hack for now until a full component
                 this.layout.draw();
-                if(this.application.ninja.currentDocument) {
+                if(this.currentDocument) {
                     this.layout.draw3DInfo(true);
                 }
             } else if(this.updatedStage) {
@@ -347,8 +347,8 @@ exports.Stage = Montage.create(Component, {
             }
 
             if(didSwitch) {
-                this.application.ninja.currentDocument.model.views.design.document.body.scrollLeft = this.currentDocument.model.scrollLeft;
-                this.application.ninja.currentDocument.model.views.design.document.body.scrollTop = this.currentDocument.model.scrollTop;
+                this.currentDocument.model.views.design.document.body.scrollLeft = this.currentDocument.model.scrollLeft;
+                this.currentDocument.model.views.design.document.body.scrollTop = this.currentDocument.model.scrollTop;
                 this.handleScroll();
             } else {
                 this.centerStage();
@@ -462,9 +462,9 @@ exports.Stage = Montage.create(Component, {
     handleMousewheel: {
         value: function(event) {
             if(event._event.wheelDelta > 0) {
-                this.application.ninja.currentDocument.model.views.design.document.body.scrollTop -= 20;
+                this.currentDocument.model.views.design.document.body.scrollTop -= 20;
             } else {
-                this.application.ninja.currentDocument.model.views.design.document.body.scrollTop += 20;
+                this.currentDocument.model.views.design.document.body.scrollTop += 20;
             }
         }
     },
@@ -532,8 +532,8 @@ exports.Stage = Montage.create(Component, {
     handleScroll: {
         value: function() {
 
-            this._scrollLeft = this.application.ninja.currentDocument.model.views.design.document.body.scrollLeft;
-            this._scrollTop = this.application.ninja.currentDocument.model.views.design.document.body.scrollTop;
+            this._scrollLeft = this.currentDocument.model.views.design.document.body.scrollLeft;
+            this._scrollTop = this.currentDocument.model.views.design.document.body.scrollTop;
 
             this.userContentLeft = this._documentOffsetLeft - this._scrollLeft;
             this.userContentTop = this._documentOffsetTop - this._scrollTop;
@@ -571,7 +571,7 @@ exports.Stage = Montage.create(Component, {
      */
     centerStage: {
         value: function() {
-            var designView = this.application.ninja.currentDocument.model.views.design;
+            var designView = this.currentDocument.model.views.design;
             if(designView._template) {
                 designView.document.body.scrollLeft = this._documentOffsetLeft - parseInt((this.canvas.width - designView._template.size.width)/2);
                 designView.document.body.scrollTop = this._documentOffsetTop - parseInt((this.canvas.height - designView._template.size.height)/2);
@@ -630,21 +630,21 @@ exports.Stage = Montage.create(Component, {
     getElement: {
         value: function(position, selectable) {
             var point, element,
-                docView = this.application.ninja.currentDocument.model.views.design;
+                docView = this.currentDocument.model.views.design;
 
             point = webkitConvertPointFromPageToNode(this.canvas, new WebKitPoint(position.pageX - docView.iframe.contentWindow.pageXOffset + this.documentOffsetLeft, position.pageY - docView.iframe.contentWindow.pageYOffset + this.documentOffsetTop));
-            element = this.application.ninja.currentDocument.model.views.design.getElementFromPoint(point.x - this.userContentLeft,point.y - this.userContentTop);
+            element = this.currentDocument.model.views.design.getElementFromPoint(point.x - this.userContentLeft,point.y - this.userContentTop);
 
             if(!element) debugger;
             // workaround Chrome 3d bug
-            if(this.application.ninja.toolsData.selectedToolInstance._canSnap && this.application.ninja.currentDocument.inExclusion(element) !== -1) {
+            if(this.application.ninja.toolsData.selectedToolInstance._canSnap && this.currentDocument.inExclusion(element) !== -1) {
                 point = webkitConvertPointFromPageToNode(this.canvas, new WebKitPoint(position.pageX, position.pageY));
                 element = this.getElementUsingSnapping(point);
             }
 
             if(selectable) {
 
-                if(this.application.ninja.currentDocument.inExclusion(element) !== -1) {
+                if(this.currentDocument.inExclusion(element) !== -1) {
                     return this.application.ninja.currentSelectedContainer;
                 }
 
@@ -949,7 +949,7 @@ exports.Stage = Montage.create(Component, {
 
     setStageAsViewport: {
         value: function() {
-            this.stageDeps.viewUtils.setViewportObj(this.application.ninja.currentDocument.model.documentRoot);
+            this.stageDeps.viewUtils.setViewportObj(this.currentDocument.model.documentRoot);
         }
     },
 
@@ -957,7 +957,7 @@ exports.Stage = Montage.create(Component, {
         value: function(value) {
             if(!this._firstDraw)
             {
-                var userContent = this.application.ninja.currentDocument.model.documentRoot;
+                var userContent = this.currentDocument.model.documentRoot;
                 if (userContent)
                 {
                     var w = this._canvas.width,
@@ -969,7 +969,7 @@ exports.Stage = Montage.create(Component, {
                     //TODO - Maybe move to mediator.
 					var newVal = value/100.0;
 					if (newVal >= 1)
-						this.application.ninja.currentDocument.model.views.design.iframe.style.zoom = value/100;
+						this.currentDocument.model.views.design.iframe.style.zoom = value/100;
 
                     this.updatedStage = true;
 
@@ -988,12 +988,12 @@ exports.Stage = Montage.create(Component, {
 			{
                 case "top":
 					plane = [0,1,0,0];
- 					plane[3] = this.application.ninja.currentDocument.model.documentRoot.offsetHeight / 2.0;
+ 					plane[3] = this.currentDocument.model.documentRoot.offsetHeight / 2.0;
                    break;
 
                 case "side":
 					plane = [1,0,0,0];
- 					plane[3] = this.application.ninja.currentDocument.model.documentRoot.offsetWidth / 2.0;
+ 					plane[3] = this.currentDocument.model.documentRoot.offsetWidth / 2.0;
                    break;
 
                 case "front":
@@ -1012,7 +1012,7 @@ exports.Stage = Montage.create(Component, {
     setStageView: {
         value: function(side) {
             var mat,
-                currentDoc = this.application.ninja.currentDocument.model.documentRoot,
+                currentDoc = this.currentDocument.model.documentRoot,
                 isDrawingGrid = this.application.ninja.appModel.show3dGrid;
             // Stage 3d Props.
             currentDoc.elementModel.props3D.ResetTranslationValues();
@@ -1057,6 +1057,7 @@ exports.Stage = Montage.create(Component, {
             this.application.ninja.rulerLeft.style.display = "block";
         }
     },
+
     hideRulers:{
         value:function(){
             this.application.ninja.rulerTop.style.display = "none";
@@ -1066,11 +1067,11 @@ exports.Stage = Montage.create(Component, {
     showCodeViewBar:{
         value:function(isCodeView){
             if(isCodeView === true) {
-                this.application.ninja.editorViewOptions.element.style.display = "block";
+
                 this.application.ninja.documentBar.element.style.display = "none";
             } else {
                 this.application.ninja.documentBar.element.style.display = "block";
-                this.application.ninja.editorViewOptions.element.style.display = "none";
+
             }
         }
     },
@@ -1097,11 +1098,11 @@ exports.Stage = Montage.create(Component, {
 
             workingPlane = [0,0,1,0];
 
-            this.viewUtils.setStageElement(this.application.ninja.currentDocument.model.documentRoot);
-            this.viewUtils.setRootElement(this.application.ninja.currentDocument.model.documentRoot.parentNode);
+            this.viewUtils.setStageElement(this.currentDocument.model.documentRoot);
+            this.viewUtils.setRootElement(this.currentDocument.model.documentRoot.parentNode);
 
             this.snapManager._isCacheInvalid = true;
-            this.snapManager.currentStage = this.application.ninja.currentDocument.model.documentRoot;
+            this.snapManager.currentStage = this.currentDocument.model.documentRoot;
             this.snapManager.setupDragPlaneFromPlane (workingPlane);
 
             this.drawUtils.initializeFromDocument();

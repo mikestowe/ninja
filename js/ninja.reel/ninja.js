@@ -318,9 +318,19 @@ exports.Ninja = Montage.create(Component, {
 
     closeFile: {
         value: function(document) {
-            var doc = this.documentList.content[this.documentList.content.indexOf(document)];
+            var doc = this.documentList.content[this.documentList.content.indexOf(document)], activeDocument;
+
+            if(this.documentList.selectedObjects[0] === doc) {
+                activeDocument = this.documentList.content[0];
+            } else {
+                activeDocument = this.documentList.selectedObjects[0];
+            }
 
             this.documentList.removeObjects(doc);
+
+            if(this.documentList.content.length) {
+                this.documentList.selectedObjects = [activeDocument];
+            }
         }
     },
 

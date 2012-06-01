@@ -18,7 +18,7 @@
     height: 20px;
 }
 
-.viewOptions .autoCodeComplete span{
+.viewOptions .autoCodeComplete label{
     vertical-align: middle;
 }
 

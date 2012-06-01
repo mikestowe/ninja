@@ -14,6 +14,9 @@
             "prototype": "montage/ui/checkbox.reel",
             "properties": {
                 "element": {"#": "codeComplete"}
+            },
+            "bindings": {
+                "disabled": {"<-": "@owner.autocomplete"}
             }
         },
 
@@ -33,6 +36,7 @@
             "prototype": "js/code-editor/ui/code-editor-view-options.reel[CodeEditorViewOptions]",
             "properties": {
                 "element": {"#": "viewOptions"},
+                "autoCompleteLabel": {"#": "autoCompleteLabel"},
                 "codeCompleteCheck":{"@": "codeCompleteCheck"},
                 "zoomHottext":{"@":"zoomHottext"},
                 "comment":{"#":"comment"},
@@ -50,7 +54,7 @@
         <input class="zoomFont" data-montage-id="zoomFont"/>
         <div class="autoCodeComplete" >
             <input type="checkbox" data-montage-id="codeComplete" />
-            <span>Automatic Completion</span>
+            <label data-montage-id="autoCompleteLabel">Automatic Completion</label>
         </div>
         <div class="floatButtons">
             <!--<button disabled="disabled" id="format" value="format" class="nj-skinned format">Format</button>-->
