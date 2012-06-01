@@ -405,7 +405,13 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         		//Initializing template with user's seriliazation
         		var template = this.iframe.contentWindow.mjsTemplate.create();
         		template.initWithDocument(this.iframe.contentWindow.document);
-        		template.instantiateWithOwnerAndDocument(null, this.iframe.contentWindow.document, function (e){/*Nothing just a required extra parameter*/});
+        		template.instantiateWithOwnerAndDocument(null, this.iframe.contentWindow.document, function (){
+        			//TODO: Verify this is properly done, seems like a hack
+        			for (var c in template._deserializer._objects) {
+        				//Forcing draw on components
+	        			template._deserializer._objects[c].needsDraw = true;
+        			}
+        		});
         	}.bind(this), false);
         }
     },
