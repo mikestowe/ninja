@@ -32,6 +32,7 @@ exports.CodeEditorController = Montage.create(Component, {
             if(!value) {
 
             } else if(this._currentDocument.currentView === "code") {
+                this.autocomplete = !this.codeCompletionSupport[this._currentDocument.model.file.extension];
                 this._currentDocument.model.views.code.editor.focus();
                 this.applySettings();
             }
@@ -51,13 +52,23 @@ exports.CodeEditorController = Montage.create(Component, {
         value: {"js": true}
     },
 
+    autocomplete: {
+        value: false
+    },
+
     _automaticCodeComplete: {
         value:false
     },
 
     automaticCodeComplete:{
-        get: function(){return this._automaticCodeComplete;},
-        set: function(value){this._automaticCodeComplete = value;}
+        get: function(){
+            return this._automaticCodeComplete;
+        },
+        set: function(value) {
+            if(this._automaticCodeComplete !== value) {
+                this._automaticCodeComplete = value;
+            }
+        }
     },
 
     _editorTheme: {
@@ -65,17 +76,23 @@ exports.CodeEditorController = Montage.create(Component, {
     },
 
     editorTheme:{
-        get: function(){return this._editorTheme;},
-        set: function(value){this._editorTheme = value;}
+        get: function(){
+            return this._editorTheme;
+        },
+        set: function(value){
+            this._editorTheme = value;
+        }
     },
 
-    _zoomFactor:{
+    _zoomFactor: {
         value:100
     },
 
     zoomFactor:{
-        get: function(){return this._zoomFactor;},
-        set: function(value){
+        get: function() {
+            return this._zoomFactor;
+        },
+        set: function(value) {
             this.handleZoom(value);
         }
     },
@@ -115,13 +132,15 @@ exports.CodeEditorController = Montage.create(Component, {
                            };
 
             //configure auto code completion if it is supported for that document type
-            if(this.codeCompletionSupport[documentType] === true){
-                editorOptions.onKeyEvent = function(cm, keyEvent){self._codeCompletionKeyEventHandler.call(self, cm, keyEvent, documentType)};
+            if(this.autocomplete) {
+
+                editorOptions.onKeyEvent = function(cm, keyEvent){
+                    self._codeCompletionKeyEventHandler.call(self, cm, keyEvent, documentType)
+                };
+
             }
 
-            var editor = self.codeEditor.fromTextArea(codeDocumentView.textArea, editorOptions);
-
-            return editor;
+            return self.codeEditor.fromTextArea(codeDocumentView.textArea, editorOptions);
         }
     },
 
@@ -198,47 +217,9 @@ exports.CodeEditorController = Montage.create(Component, {
         }
     },
 
-    handleCodeCompletionSupport:{
-        value:function(fileType){
-            var autoCodeCompleteElem = document.getElementsByClassName("autoCodeComplete")[0], elems=null, i=0;
-            if(autoCodeCompleteElem){
-                elems = autoCodeCompleteElem.getElementsByTagName("*");
-            }
-
-            if(elems && (this.codeCompletionSupport[fileType] === true)){
-                //enable elements
-                for(i=0;i<elems.length;i++){
-                    if(elems[i].hasAttribute("disabled")){
-                        elems[i].removeAttribute("disabled");
-                    }
-                    if(elems[i].classList.contains("disabled")){
-                        elems[i].classList.remove("disabled");
-                    }
-                }
-            }else if(elems && !this.codeCompletionSupport[fileType]){
-                //disable elements
-                for(i=0;i<elems.length;i++){
-                    if(!elems[i].hasAttribute("disabled")){
-                        elems[i].setAttribute("disabled", "disabled");
-                    }
-                    if(!elems[i].classList.contains("disabled")){
-                        elems[i].classList.add("disabled");
-                    }
-                }
-            }
-        }
-    },
-
     getSelectedRange:{
         value:function(editor){
             return { from: editor.getCursor(true), to: editor.getCursor(false) };
-        }
-    },
-
-    autoFormatSelection:{
-        value: function(){
-            var range = this.getSelectedRange(this.currentDocument.model.views.code.editor);
-            this.currentDocument.model.views.code.editor.autoFormatRange(range.from, range.to);
         }
     },
 
@@ -271,8 +252,6 @@ exports.CodeEditorController = Montage.create(Component, {
         value:function(){
             //set theme
             this.handleThemeSelection();
-            //check autocomplete support
-            this.handleCodeCompletionSupport(this.currentDocument.model.file.extension);
             //set zoom
             this.handleZoom(this._zoomFactor);
         }

@@ -296,9 +296,6 @@ exports.Ninja = Montage.create(Component, {
 
     openDocument: {
         value: function(doc) {
-
-
-
             this.documentList.content.push(doc);
             // This is not needed with the latest 0.10 montage.
             // TODO: Remove this when integrating the next montage
@@ -308,19 +305,24 @@ exports.Ninja = Montage.create(Component, {
                 // TODO: Bind directly to the model of the document in components instead of this property
                 this.currentSelectedContainer = doc.model.documentRoot;
             }
-
-
-//            this.appModel.show3dGrid = this.currentDocument.draw3DGrid;
-
-
         }
     },
 
     closeFile: {
         value: function(document) {
-            var doc = this.documentList.content[this.documentList.content.indexOf(document)];
+            var doc = this.documentList.content[this.documentList.content.indexOf(document)], activeDocument;
+
+            if(this.documentList.selectedObjects[0] === doc) {
+                activeDocument = this.documentList.content[0];
+            } else {
+                activeDocument = this.documentList.selectedObjects[0];
+            }
 
             this.documentList.removeObjects(doc);
+
+            if(this.documentList.content.length) {
+                this.documentList.selectedObjects = [activeDocument];
+            }
         }
     },
 

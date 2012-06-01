@@ -25,7 +25,10 @@
             },
 
             "appModel": {
-                "prototype": "js/models/app-model"
+                "prototype": "js/models/app-model",
+                "bindings": {
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
+                }
             },
 
             "materialsModel": {
@@ -212,6 +215,9 @@
                 "prototype": "js/code-editor/ui/code-editor-view-options.reel",
                 "properties": {
                     "element": {"#": "editorViewOptions"}
+                },
+                "bindings" : {
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
                 }
             },
 
@@ -349,7 +355,8 @@
             "codeEditorController": {
                 "prototype": "js/controllers/code-editor-controller",
                 "bindings": {
-                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"},
+                    "automaticCodeComplete": {"<-": "@editorViewOptions.codeCompleteCheck.disabled"}
                 }
             },
 
@@ -443,8 +450,8 @@
                         <section data-montage-id="timelineResizer" class="timelineResizer resizeBar"></section>
                         <section id="stateBar">
                             <section id="documentBarContainer">
-                                <div data-montage-id="documentBar" class="documentBar" style="display:block"><a href="#">HTML</a></div>
-                                <div data-montage-id="editorViewOptions" class="editorViewOptions" style="display:none"><a href="#">HTML</a></div>
+                                <div data-montage-id="documentBar" class="documentBar" style="display:block"></div>
+                                <div data-montage-id="editorViewOptions" class="editorViewOptions" style="display:none"></div>
                             </section>
                         </section>
 

@@ -117,10 +117,6 @@ exports.HtmlDocument = Montage.create(Component, {
 	//
     serializeDocument: {
     	value: function () {
-            // There are not needed for now since we cannot change them
-            //this.gridHorizontalSpacing = this.application.ninja.stage.drawUtils.gridHorizontalSpacing;
-            //this.gridVerticalSpacing = this.application.ninja.stage.drawUtils.gridVerticalSpacing;
-
             // Serialize the current scroll position
             //TODO: Move these properties to the design view class
             this.model.scrollLeft = this.application.ninja.stage._scrollLeft;
@@ -132,11 +128,6 @@ exports.HtmlDocument = Montage.create(Component, {
             // Serialize the selection, the container and grid
             //TODO: Move this property to the design view class
             this.model.selection = this.application.ninja.selectedElements.slice(0);
-            this.model.selectionContainer = this.application.ninja.currentSelectedContainer;
-            this.draw3DGrid = this.application.ninja.appModel.show3dGrid;
-
-            // Serialize the undo
-            // TODO: Save the montage undo queue
 
             // Pause the videos
             //TODO: Move these to be handled on the show/hide methods in the view
@@ -147,27 +138,15 @@ exports.HtmlDocument = Montage.create(Component, {
 	//
     deserializeDocument: {
     	value: function () {
-            // There are not needed for now since we cannot change them
-            //this.application.ninja.stage.drawUtils.gridHorizontalSpacing = this.gridHorizontalSpacing;
-            //this.application.ninja.stage.drawUtils.gridVerticalSpacing = this.gridVerticalSpacing;
-
             // Deserialize the current scroll position
              //TODO: Move these properties to the design view class
             this.application.ninja.stage._scrollLeft = this.model.scrollLeft;
             this.application.ninja.stage._scrollTop = this.model.scrollTop;
             this.application.ninja.stage._userContentLeft = this.model.userContentLeft;
             this.application.ninja.stage._userContentTop = this.model.userContentTop;
-			
-			//TODO: Move this property to the design view class
-            this.application.ninja.selectedElements = this.model.selection.slice(0);
-//            this.application.ninja.currentSelectedContainer = this.model.selectionContainer;
-            this.application.ninja.appModel.show3dGrid = this.draw3DGrid;
 
             // Serialize the undo
             // TODO: Save the montage undo queue
-			
-			//TODO: Move this to the document controller
-            this.model.isActive = true;
     	}
     }
     ////////////////////////////////////////////////////////////////////

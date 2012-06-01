@@ -348,26 +348,5 @@ exports.DocumentController = Montage.create(Component, {
         value: function(document) {
             document.closeDocument(this.application.ninja, this.application.ninja.closeFile);
         }
-    },
-
-    switchDocuments: {
-        value: function(currentDocument, newDocument, didCreate) {
-
-            if(currentDocument.currentView === "design") {
-                currentDocument.serializeDocument();
-            }
-
-            if(didCreate) {
-                if(newDocument.currentView === "design") {
-
-                } else {
-                    newDocument.model.parentContainer.style["display"] = "block";
-                }
-            } else {
-                if(newDocument.currentView === "design") {
-                    newDocument.deserializeDocument();
-                }
-            }
-        }
     }
 });

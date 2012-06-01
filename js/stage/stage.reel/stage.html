@@ -11,13 +11,6 @@
 
     <script type="text/montage-serialization">
         {
-            "stageView" : {
-                "prototype": "js/stage/stage-view.reel",
-                "properties": {
-                    "element": {"#": "stageView"}
-                }
-            },
-
             "stageDeps": {
                 "prototype": "js/stage/stage-deps",
                 "properties": {
@@ -59,7 +52,6 @@
                     "_drawingCanvas":  {"#": "drawingCanvas"},
                     "stageDeps": {"@": "stageDeps"},
                     "layout":   {"@": "layout"},
-					"stageView": {"@": "stageView"},
                     "textTool": {"@": "textTool"},
                     "focusManager": {"@": "focusManager"}
                 },
@@ -78,7 +70,7 @@
 <body>
 
     <section data-montage-id="stageAndScenesContainer" class="stageAndScenesContainer">
-        <section data-montage-id="stageView"></section>
+        <section id="codeViewContainer" class="codeViewContainer"></section>
         <section data-montage-id="iframeContainer" id="iframeContainer"></section>
         <section data-montage-id="textToolObject"></section>
         <canvas data-montage-id="gridCanvas" class="gridCanvas"></canvas>
