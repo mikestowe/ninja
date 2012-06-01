@@ -35,7 +35,11 @@
                     "element": {"#": "binding-item"}
                 },
                 "bindings": {
-                    "sourceObjectPropertyPath": {"<-": "@repetition.objectAtCurrentIteration.sourceObjectPropertyPath"}
+                    "sourceObjectPropertyPath": {"<-": "@repetition.objectAtCurrentIteration.sourceObjectPropertyPath"},
+                    "sourceObject": {"<-": "@repetition.objectAtCurrentIteration.sourceObject"},
+                    "boundObjectPropertyPath": {"<-": "@repetition.objectAtCurrentIteration.boundObjectPropertyPath"},
+                    "boundObject": {"<-": "@repetition.objectAtCurrentIteration.boundObject"},
+                    "oneway": {"<-": "@repetition.objectAtCurrentIteration.oneway"}
                 }
             }
 

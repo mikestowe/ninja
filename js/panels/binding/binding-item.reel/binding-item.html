@@ -16,14 +16,54 @@
                     "element": {"#": "binding-item"}
                 }
             },
-            "label": {
+            "soProperty": {
                 "prototype": "montage/ui/dynamic-text.reel",
                 "properties": {
-                    "element": {"#": "label"}
+                    "element": {"#": "so-property"}
                 },
                 "bindings": {
                     "value": {"<-": "@owner.sourceObjectPropertyPath"}
                 }
+            },
+            "soObject": {
+                "prototype": "montage/ui/dynamic-text.reel",
+                "properties": {
+                    "element": {"#": "so-object"}
+                },
+                "bindings": {
+                    "value": {"<-": "@owner.sourceObjectLabel"}
+                }
+            },
+            "boProperty" : {
+                "prototype": "montage/ui/dynamic-text.reel",
+                "properties": {
+                    "element": {"#": "bo-property"}
+                },
+                "bindings": {
+                    "value": {"<-": "@owner.boundObjectPropertyPath"}
+                }
+            },
+            "boObject": {
+                "prototype": "montage/ui/dynamic-text.reel",
+                "properties": {
+                    "element": {"#": "bo-object"}
+                },
+                "bindings": {
+                    "value": {"<-": "@owner.boundObjectLabel"}
+                }
+            },
+            "editButton": {
+                "prototype": "montage/ui/button.reel",
+                "properties": {
+                    "element": {"#": "edit-button"},
+                    "identifier": "editButton",
+                    "label": " "
+                },
+                "listeners": [{
+                    "type": "action",
+                    "listener": {"@": "owner"}
+                }]
+
             }
 
         }
@@ -31,7 +71,15 @@
 </head>
 <body>
 <li data-montage-id="binding-item" class="binding-item">
-    <span data-montage-id="label"></span>
+    <div data-montage-id="sourceObject" class="source-object">
+        <span data-montage-id="so-property" class="so-property"></span>
+        <span data-montage-id="so-object" class="so-object-identifier"></span>
+    </div>
+    <div data-montage-id="boundObject" class="bound-object">
+        <span data-montage-id="bo-property" class="bo-property"></span>
+        <span data-montage-id="bo-object" class="bo-object-identifier"></span>
+    </div>
+    <button data-montage-id="edit-button" class="binding-edit-button"></button>
 </li>
 </body>
 </html>
