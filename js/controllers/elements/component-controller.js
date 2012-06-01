@@ -11,7 +11,7 @@ exports.ComponentController = Montage.create(ElementController, {
 
     getProperty: {
         value: function(el, prop) {
-            var component = el.controller || this.application.ninja.currentDocument.getComponentFromElement(el);
+            var component = el.controller || this.application.ninja.currentDocument.model.getComponentFromElement(el);
 
             switch(prop) {
                 case "id":
@@ -34,7 +34,7 @@ exports.ComponentController = Montage.create(ElementController, {
 
     setProperty: {
         value: function(el, p, value) {
-            var component = el.controller || this.application.ninja.currentDocument.getComponentFromElement(el);
+            var component = el.controller || this.application.ninja.currentDocument.model.getComponentFromElement(el);
 
             switch(p) {
                 case "id":

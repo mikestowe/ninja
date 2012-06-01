@@ -247,7 +247,7 @@ exports.ThreeD = Montage.create(Component, {
             if(els.length) {
                 return els[0];
             } else {
-                return this.boundObject.application.ninja.currentDocument.documentRoot;
+                return this.boundObject.application.ninja.currentDocument.model.documentRoot;
             }
         }
     },

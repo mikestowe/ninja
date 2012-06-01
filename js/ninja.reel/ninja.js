@@ -134,8 +134,19 @@ exports.Ninja = Montage.create(Component, {
         value: []
     },
 
-    currentSelectedContainer: {
+    _currentSelectedContainer: {
         value: null
+    },
+
+    currentSelectedContainer: {
+        get: function() {
+            return this._currentSelectedContainer;
+        },
+        set: function(value) {
+            if(value !== this._currentSelectedContainer) {
+                this._currentSelectedContainer = value;
+            }
+        }
     },
 
     templateDidLoad: {
@@ -161,24 +172,30 @@ exports.Ninja = Montage.create(Component, {
 
             window.addEventListener("resize", this, false);
 
-            this.eventManager.addEventListener( "selectTool", this, false);
-            this.eventManager.addEventListener( "selectSubTool", this, false);
-            this.eventManager.addEventListener( "onOpenDocument", this, false);
+            this.eventManager.addEventListener("selectTool", this, false);
+            this.eventManager.addEventListener("selectSubTool", this, false);
+            this.eventManager.addEventListener("onOpenDocument", this, false);
+            this.eventManager.addEventListener("onSwitchDocument", this, false);
 
-            this.addEventListener("change@appModel.livePreview", this.executeLivePreview, false);
-            this.addEventListener("change@appModel.chromePreview", this.executeChromePreview, false);
-            this.addEventListener("change@appModel.debug", this.toggleDebug, false);
+            this.addPropertyChangeListener("appModel.livePreview", this.executeLivePreview, false);
+            this.addPropertyChangeListener("appModel.chromePreview", this.executeChromePreview, false);
+            this.addPropertyChangeListener("appModel.debug", this.toggleDebug, false);
 
             NJevent("appLoading");
         }
     },
     
+    
+    ////////////////////////////////////////////////////////////////////
+	//TODO: Expand method to allow other browsers for preview
     executeChromePreview: {
     	value: function () {
-    		this.application.ninja.documentController.activeDocument.livePreview();
+    		this.application.ninja.documentController.activeDocument.model.browserPreview('chrome');
     	}
     },
-
+	////////////////////////////////////////////////////////////////////
+	
+	
     handleResize: {
         value: function() {
             this.stage.resizeCanvases = true;
@@ -262,8 +279,8 @@ exports.Ninja = Montage.create(Component, {
         value: function(event) {
             this.currentDocument = event.detail;
 
-            if(this.currentDocument.documentRoot) {
-                this.application.ninja.currentSelectedContainer = this.currentDocument.documentRoot;
+            if(this.currentDocument.model.documentRoot) {
+                this.currentSelectedContainer = this.currentDocument.model.documentRoot;
             } else {
                 alert("The current document has not loaded yet");
                 return;
@@ -274,24 +291,40 @@ exports.Ninja = Montage.create(Component, {
         }
     },
 
+    handleOnSwitchDocument: {
+        value: function() {
+            this.currentDocument = this.documentController.activeDocument;
+
+            if(this.currentDocument.model.documentRoot) {
+                this._currentSelectedContainer = this.selectionController._selectionContainer = this.currentDocument.model.documentRoot;
+            }
+
+            NJevent("switchDocument");
+        }
+    },
+
     executeLivePreview: {
         value: function() {
             var background, overflow, transitionStopRule;
             this.stage.hideCanvas(this.appModel.livePreview);
 
+            // TODO: Remove marker for old template: NINJA-STAGE-REWORK
             if(this.appModel.livePreview) {
-                background =  "#000000";
-                overflow = "hidden";
+//                background =  "#000000";
+//                overflow = "hidden";
                 transitionStopRule = "nj-css-garbage-selector";
             } else {
-                background =  "#808080";
-                overflow = "visible";
+//                background =  "#808080";
+//                overflow = "visible";
                 transitionStopRule = "*"
             }
 
-            this.currentDocument.documentRoot.elementModel.controller.setProperty(this.currentDocument.documentRoot, "body-background", background);
-            this.currentDocument.documentRoot.elementModel.controller.setProperty(this.currentDocument.documentRoot, "overflow", overflow);
-            this.currentDocument.documentRoot.elementModel.controller.changeSelector(this.currentDocument.documentRoot, "transitionStopRule", transitionStopRule);
+            // TODO: Remove marker for old template: NINJA-STAGE-REWORK
+//            this.currentDocument.model.documentRoot.elementModel.controller.setProperty(this.currentDocument.model.documentRoot, "body-background", background);
+//            this.currentDocument.model.documentRoot.elementModel.controller.setProperty(this.currentDocument.model.documentRoot, "overflow", overflow);
+//            this.currentDocument.model.documentRoot.elementModel.controller.changeSelector(this.currentDocument.model.documentRoot, "transitionStopRule", transitionStopRule);
+
+            this.application.ninja.stylesController._stageStylesheet.rules[0].selectorText = transitionStopRule;
 
             this._toggleWebGlAnimation(this.appModel.livePreview);
         }
@@ -300,7 +333,7 @@ exports.Ninja = Montage.create(Component, {
     // Turn on WebGL animation during preview
     _toggleWebGlAnimation: {
         value: function(inLivePreview) {
-            var glCanvases = this.currentDocument.iframe.contentWindow.document.querySelectorAll('[data-RDGE-id]'),
+            var glCanvases = this.currentDocument.model.views.design.iframe.contentWindow.document.querySelectorAll('[data-RDGE-id]'),
                 glShapeModel;
             if(glCanvases) {
                 for(var i = 0, len = glCanvases.length; i<len; i++) {
@@ -337,31 +370,6 @@ exports.Ninja = Montage.create(Component, {
         }
     },
 
-    _handleAppLoaded: {
-        value: function(event){
-
-            /*
-            Object.defineBinding(docBar, "type", {
-                boundObject: DocumentManagerModule.DocumentManager,
-                boundObjectPropertyPath: "activeDocument.documentType"
-            });
-
-            Object.defineBinding(docBar, "currentView", {
-                boundObject: DocumentManagerModule.DocumentManager,
-                boundObjectPropertyPath: "activeDocument.currentView",
-                oneway: false
-            });
-
-            Object.defineBinding(docBar, "zoomFactor", {
-                boundObject: DocumentManagerModule.DocumentManager,
-                boundObjectPropertyPath: "activeDocument.zoomFactor",
-                oneway: false
-            });
-            */
-
-        }
-    },
-    
     setupGlobalHelpers: {
         value: function() {
 

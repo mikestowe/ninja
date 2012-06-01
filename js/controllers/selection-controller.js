@@ -67,10 +67,9 @@ exports.SelectionController = Montage.create(Component, {
             this._isDocument = true;
 
             if(currentSelectionArray) {
-                if(currentSelectionArray.length >= 1) {
+                this.application.ninja.selectedElements = currentSelectionArray;
+                if(currentSelectionArray.length) {
                     this._isDocument = false;
-
-                    this.application.ninja.selectedElements = currentSelectionArray;
                     NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument});
                 }
             }
@@ -81,10 +80,10 @@ exports.SelectionController = Montage.create(Component, {
 
     handleSwitchDocument: {
         value: function() {
-            if(this.application.ninja.documentController.activeDocument.currentView === "design"){
+//            if(this.application.ninja.documentController.activeDocument.currentView === "design"){
                 this._isDocument = this.application.ninja.selectedElements.length === 0;
                 NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument} );
-            }
+//            }
         }
     },
 
@@ -112,12 +111,12 @@ exports.SelectionController = Montage.create(Component, {
 
     handleSelectAll: {
         value: function(event) {
-            var selected = [], childNodes = [];
+            var selected = [], childNodes = [], self = this;
 
-            childNodes = this.application.ninja.currentDocument.documentRoot.childNodes;
+            childNodes = this.application.ninja.currentDocument.model.documentRoot.childNodes;
             childNodes = Array.prototype.slice.call(childNodes, 0);
             childNodes.forEach(function(item) {
-                if(item.nodeType == 1) {
+                if(self.isNodeTraversable(item)) {
                     selected.push(item);
                 }
             });
@@ -152,7 +151,6 @@ exports.SelectionController = Montage.create(Component, {
 
     selectElement: {
         value: function(element) {
-
             if(this.findSelectedElement(element) === -1) {
 
                 if(this.application.ninja.currentDocument.inExclusion(element) !== -1){
@@ -166,7 +164,7 @@ exports.SelectionController = Montage.create(Component, {
 
                         while(outerElement.parentNode && outerElement.parentNode.uuid !== this.selectionContainer.uuid) {
                             // If element is higher up than current container then return
-                            if(outerElement.id === "UserContent") return;
+                            if(outerElement.nodeName === "BODY") return;
                             // else keep going up the chain
                             outerElement = outerElement.parentNode;
                         }
@@ -247,25 +245,20 @@ exports.SelectionController = Montage.create(Component, {
 		}
 	},
 
-    /**
-     * Looks into the selectionObject for the item to be found using it's id
-     *
-     * @return: Item index in the selectionObject if found
-     *          -1 if not found
-     */
     findSelectedElement: {
         value: function(item) {
-            // TODO do the loop check in the select element and only use the index here
-            // return this.application.ninja.selectedElements.indexOf(item);
+            // TODO: Remove this function and use the stage selectable. Then only return a match in the array
+            //return this.application.ninja.selectedElements.indexOf(item);
 
+            //TODO: Make sure we don't need to loop back to the container element.
             var itemUUID;
 
             for(var i=0, uuid; this.application.ninja.selectedElements[i];i++) {
                 // Check for multiple selection and excluding inner elements
-                if(item.parentNode && item.parentNode.id !== "UserContent") {
+                if(item.parentNode && item.parentNode !== this.application.ninja.currentDocument.model.documentRoot) {
                     var outerElement = item.parentNode;
 
-                    while(outerElement.parentNode && outerElement.parentNode.id !== "UserContent") {
+                    while(outerElement.parentNode && outerElement.parentNode !== this.application.ninja.currentDocument.model.documentRoot) {
                         outerElement = outerElement.parentNode;
                     }
 
@@ -280,6 +273,13 @@ exports.SelectionController = Montage.create(Component, {
             }
 
             return -1;
+        }
+    },
+
+    isNodeTraversable: {
+        value: function( item ) {
+            if(item.nodeType !== 1) return false;
+            return ((item.nodeName !== "STYLE") && (item.nodeName !== "SCRIPT"));
         }
     }
 

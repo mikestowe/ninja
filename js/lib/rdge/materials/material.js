@@ -228,6 +228,10 @@ var Material = function GLMaterial( world ) {
 		// animated materials should implement the update method
 	};
 
+	this.fitToPrimitive = function( prim )  {
+		// some materials need to preserve an aspect ratio - or someting else.
+	};
+
 	this.registerTexture = function( texture ) {
 		// the world needs to know about the texture map
 		var world = this.getWorld();

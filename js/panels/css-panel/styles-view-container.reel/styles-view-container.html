@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<!-- <copyright>
+This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+(c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+</copyright> -->
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link href="styles-view-container.css" rel="stylesheet" type="text/css">
+    <script type="text/montage-serialization">
+        {
+            "owner": {
+                "prototype" : "js/panels/css-panel/styles-view-container.reel",
+                "properties" : {
+                    "element" : {"#" : "container"},
+                    "ruleListContainer": {"@": "ruleListContainer" },
+                    "computedStyleView": {"@": "computedStyleView" },
+                    "substitution": {"@": "substitution" },
+                    "delegate": {"@": "stylesViewDelegate"},
+                    "toolbar": {"@": "toolbar"}
+                }
+            },
+            "substitution": {
+                "prototype": "montage/ui/substitution.reel",
+                "properties": {
+                    "element": {"#": "sub-panel-slot"},
+                    "switchComponents": {
+                        "rules": {"@": "ruleListContainer"},
+                        "computed": {"@": "computedStyleView"}
+                    }
+                },
+                "bindings": {
+                    "switchValue": { "<-": "@owner.contentPanel" }
+                }
+            },
+            "stylesViewDelegate" : {
+                "prototype": "js/panels/css-panel/styles-view-delegate",
+                "properties": {
+                    "ruleListContainer": {"@": "ruleListContainer"}
+                }
+            },
+            "ruleListContainer": {
+                "prototype": "js/panels/css-panel/rule-list-container.reel",
+                "properties": {
+                    "focusDelegate": {"@": "stylesViewDelegate"}
+                }
+            },
+            "computedStyleView": {
+                "prototype": "js/panels/CSSPanel/ComputedStyleSubPanel.reel"
+            },
+            "toolbar": {
+                "prototype": "js/components/toolbar.reel",
+                "properties": {
+                    "element": {"#": "styles-view-toolbar"},
+                    "delegate": {"@": "stylesViewDelegate" },
+                    "buttons": [
+                        {
+                            "title": "Add",
+                            "identifier": "add"
+                        },
+                        {
+                            "title": "Computed Styles",
+                            "identifier": "computed",
+                            "leftAlign": true
+                        }
+                    ]
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<div id="container" class="styles-view-container">
+    <h4 data-montage-id="no-styles-message" class="panel-message">No styles to display.</h4>
+    <div data-montage-id="sub-panel-slot" class="sub-panel-slot"></div>
+    <div class="styles-view-toolbar-container">
+        <div data-montage-id="styles-view-toolbar"></div>
+    </div>
+</div>
+</body>
+</html>

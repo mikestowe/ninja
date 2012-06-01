@@ -8,9 +8,37 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 var NinjaCvsRt =  NinjaCvsRt || {};
 
 ///////////////////////////////////////////////////////////////////////
+//Loading webGL/canvas data on window load
+window.addEventListener('load', loadCanvasData, false);
+//Load data function (on document loaded)
+function loadCanvasData (e) {
+	//Cleaning up events
+	window.removeEventListener('load', loadCanvasData, false);
+    //Getting tag with data, MUST contain attribute
+    var xhr, tag = document.querySelectorAll(['script[data-ninja-canvas-lib]'])[0];
+   	//Checking for data to be external file
+   	if (tag.getAttribute('data-ninja-canvas-json') !== null) {
+   		//Loading JSON data
+   		xhr = new XMLHttpRequest();
+        xhr.open("GET", tag.getAttribute('data-ninja-canvas-json'), false);
+        xhr.send();
+		//Checking for data
+       	if (xhr.readyState === 4) {
+       		//Calling method to initialize all webGL/canvas(es)
+   			NinjaCvsRt.initWebGl(document.body, tag.getAttribute('data-ninja-canvas-libpath'), xhr.response);
+       	} else {
+       		//TODO: Add error for users
+       	}
+   	} else {//Data in document itself
+   		//Calling method to initialize all webGL/canvas(es)
+   		NinjaCvsRt.initWebGl(document.body, tag.getAttribute('data-ninja-canvas-libpath'), document.querySelectorAll(['script[data-ninja-canvas]'])[0].innerHTML);
+   	}
+}
+
+///////////////////////////////////////////////////////////////////////
 //Loading webGL/canvas data
-NinjaCvsRt.initWebGl = function (rootElement, directory) {
-	var cvsDataMngr, ninjaWebGlData = JSON.parse((document.querySelectorAll(['script[data-ninja-webgl]'])[0].innerHTML.replace('(', '')).replace(')', ''));
+NinjaCvsRt.initWebGl = function (rootElement, directory, data) {
+	var cvsDataMngr, ninjaWebGlData = JSON.parse((data.replace('(', '')).replace(')', ''));
 	if (ninjaWebGlData && ninjaWebGlData.data) {
 		for (var n=0; ninjaWebGlData.data[n]; n++) {
 			ninjaWebGlData.data[n] = unescape(ninjaWebGlData.data[n]);
@@ -350,6 +378,10 @@ NinjaCvsRt.GLRuntime = Object.create(Object.prototype, {
                     obj.importJSON( jObj );
                     break;
 
+                case 5:     //subpath (created by pen tool)
+                    obj = Object.create(NinjaCvsRt.RuntimeSubPath, {_materials: { value:[], writable:true}});
+                    obj.importJSON (jObj );
+                    break;
                 default:
                     throw new Error( "Attempting to load unrecognized object type: " + type );
                     break;
@@ -878,11 +910,12 @@ NinjaCvsRt.RuntimeRectangle = Object.create(NinjaCvsRt.RuntimeGeomObj, {
                 inset = Math.ceil( lw ) - 0.5;
 
                 if(this._fillColor.gradientMode) {
-                    if(this._fillColor.gradientMode === "radial") {
-                        gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w, h)/2);
-                    } else {
-                        gradient = ctx.createLinearGradient(inset/2, h/2, w-inset, h/2);
-                    }
+					if(this._fillColor.gradientMode === "radial") {
+						var ww = w - 2*lw,  hh = h - 2*lw;
+						gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(ww, hh)/2);
+					} else {
+						gradient = ctx.createLinearGradient(inset, h/2, w-inset, h/2);
+					}
                     colors = this._fillColor.color;
 
                     len = colors.length;
@@ -912,11 +945,10 @@ NinjaCvsRt.RuntimeRectangle = Object.create(NinjaCvsRt.RuntimeGeomObj, {
                 inset = Math.ceil( 0.5*lw ) - 0.5;
 
                 if(this._strokeColor.gradientMode) {
-                    if(this._strokeColor.gradientMode === "radial") {
-                        gradient = ctx.createRadialGradient(w/2, h/2, Math.min(h, w)/2-inset, w/2, h/2, Math.max(h, w)/2);
-                    } else {
-                        gradient = ctx.createLinearGradient(0, h/2, w, h/2);
-                    }
+					if(this._strokeColor.gradientMode === "radial")
+						gradient = ctx.createRadialGradient(w/2, h/2, 0,  w/2, h/2, Math.max(h, w)/2);
+					else
+						gradient = ctx.createLinearGradient(0, h/2, w, h/2);
                     colors = this._strokeColor.color;
 
                     len = colors.length;
@@ -1116,9 +1148,9 @@ NinjaCvsRt.RuntimeOval = Object.create(NinjaCvsRt.RuntimeGeomObj, {
                     if(this._fillColor.gradientMode) {
                         if(this._fillColor.gradientMode === "radial") {
                             gradient = ctx.createRadialGradient(xCtr, yCtr, 0,
-                                                                xCtr, yCtr, Math.max(this._width, this._height)/2);
+                                                                xCtr, yCtr, Math.max(this._width, this._height)/2 - lineWidth);
                         } else {
-                            gradient = ctx.createLinearGradient(lineWidth/2, this._height/2, this._width-lineWidth, this._height/2);
+                            gradient = ctx.createLinearGradient(lineWidth, this._height/2, this._width-lineWidth, this._height/2);
                         }
                         colors = this._fillColor.color;
 
@@ -1194,7 +1226,7 @@ NinjaCvsRt.RuntimeOval = Object.create(NinjaCvsRt.RuntimeGeomObj, {
                 if (this._strokeColor) {
                     if(this._strokeColor.gradientMode) {
                         if(this._strokeColor.gradientMode === "radial") {
-                            gradient = ctx.createRadialGradient(xCtr, yCtr, Math.min(xScale, yScale),
+                            gradient = ctx.createRadialGradient(xCtr, yCtr, 0,
                                                                 xCtr, yCtr, 0.5*Math.max(this._height, this._width));
                         } else {
                             gradient = ctx.createLinearGradient(0, this._height/2, this._width, this._height/2);
@@ -1456,6 +1488,8 @@ NinjaCvsRt.RuntimeRadialGradientMaterial = Object.create(NinjaCvsRt.RuntimeMater
     _colorStop3: { value: 0.6, writable: true },
     _colorStop4: { value: 1.0, writable: true },
 
+	_textureTransform: { value: [1,0,0,  0,1,0,  0,0,1], writable: true },
+
     init: {
         value: function(world) {
             var material = this._materialNode;
@@ -1477,6 +1511,8 @@ NinjaCvsRt.RuntimeRadialGradientMaterial = Object.create(NinjaCvsRt.RuntimeMater
                         this._shader["default"].u_colorStop3.set( [this._colorStop3] );
                         this._shader["default"].u_colorStop4.set( [this._colorStop4] );
 
+                        this._shader["default"].u_texTransform.set( this._textureTransform );
+
                         if (this._angle !== undefined)
                             this._shader["default"].u_cos_sin_angle.set([Math.cos(this._angle), Math.sin(this._angle)]);
                     }
@@ -1495,6 +1531,8 @@ NinjaCvsRt.RuntimeRadialGradientMaterial = Object.create(NinjaCvsRt.RuntimeMater
             this._colorStop2	= jObj.colorStop2;
             this._colorStop3	= jObj.colorStop3;
             this._colorStop4	= jObj.colorStop4;
+
+			this._textureTransform = jObj.textureTransform;
 
             if (this._angle !== undefined)
                 this._angle = jObj.angle;
@@ -1768,5 +1806,208 @@ NinjaCvsRt.RuntimePlasmaMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
         }
     }
 });
+
+
+
+// **************************************************************************
+// Runtime for the pen tool path
+// **************************************************************************
+NinjaCvsRt.AnchorPoint = Object.create(Object.prototype, {
+    /////////////////////////////////////////
+    // Instance variables
+    /////////////////////////////////////////
+    _x: {value: 0.0, writable: true},
+    _y: {value: 0.0, writable: true},
+    _z: {value: 0.0, writable: true},
+
+    _prevX: {value: 0.0, writable: true},
+    _prevY: {value: 0.0, writable: true},
+    _prevZ: {value: 0.0, writable: true},
+
+    _nextX: {value: 0.0, writable: true},
+    _nextY: {value: 0.0, writable: true},
+    _nextZ: {value: 0.0, writable: true},
+
+    // *********** setters ************
+    setPos: {
+        value: function(x,y,z){
+            this._x = x;
+            this._y = y;
+            this._z = z;
+        }
+    },
+
+    setPrevPos: {
+        value: function (x, y, z) {
+            this._prevX = x;
+            this._prevY = y;
+            this._prevZ = z;
+        }
+    },
+
+    setNextPos: {
+        value: function (x, y, z) {
+            this._nextX = x;
+            this._nextY = y;
+            this._nextZ = z;
+        }
+    },
+
+    // *************** getters ******************
+    // (add as needed)
+    getPosX: {
+        value: function () {
+            return this._x;
+        }
+    },
+
+    getPosY: {
+        value: function () {
+            return this._y;
+        }
+    },
+
+    getPosZ: {
+        value: function () {
+            return this._z;
+        }
+    },
+
+    getPrevX: {
+        value: function () {
+            return this._prevX;
+        }
+    },
+
+    getPrevY: {
+        value: function () {
+            return this._prevY;
+        }
+    },
+
+    getPrevZ: {
+        value: function () {
+            return this._prevZ;
+        }
+    },
+
+    getNextX: {
+        value: function () {
+            return this._nextX;
+        }
+    },
+
+    getNextY: {
+        value: function () {
+            return this._nextY;
+        }
+    },
+
+    getNextZ: {
+        value: function () {
+            return this._nextZ;
+        }
+    }
+});
+
+NinjaCvsRt.RuntimeSubPath = Object.create(NinjaCvsRt.RuntimeGeomObj, {
+    // array of anchor points
+    _Anchors: { value: null, writable: true },
+
+    //path properties
+    _isClosed: {value: false, writable: true},
+    _strokeWidth: {value: 0, writable: true},
+    _strokeColor: {value: null, writable: true},
+    _fillColor: {value: null, writable: true},
+
+    geomType: {
+        value: function () {
+            return this.GEOM_TYPE_CUBIC_BEZIER;
+        }
+    },
+
+    importJSON: {
+        value: function(jo) {
+            if (this.geomType()!== jo.geomType){
+                return;
+            }
+            //the geometry for this object
+            this._Anchors = [];
+            var i=0;
+            for (i=0;i<jo.anchors.length;i++){
+                var newAnchor = Object.create(NinjaCvsRt.AnchorPoint);
+                var ipAnchor = jo.anchors[i];
+                newAnchor.setPos(ipAnchor._x, ipAnchor._y, ipAnchor._z);
+                newAnchor.setPrevPos(ipAnchor._prevX, ipAnchor._prevY, ipAnchor._prevZ);
+                newAnchor.setNextPos(ipAnchor._nextX, ipAnchor._nextY, ipAnchor._nextZ);
+                this._Anchors.push(newAnchor);
+            }
+            this._isClosed = jo.isClosed;
+
+            //stroke appearance properties
+            this._strokeWidth = jo.strokeWidth;
+            this._strokeColor = jo.strokeColor;
+            this._fillColor = jo.fillColor;
+        }
+    },
+
+    render: {
+        value: function() {
+            // get the world
+            var world = this.getWorld();
+            if (!world)  {
+                throw( "null world in subpath render" );
+                return;
+            }
+
+             // get the context
+            var ctx = world.get2DContext();
+            if (!ctx)  {
+                throw( "null world in subpath render" );
+                return;
+            }
+
+            ctx.save();
+            ctx.lineWidth = this._strokeWidth;
+            ctx.strokeStyle = "black";
+            if (this._strokeColor) {
+                var strokeColorStr = "rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+this._strokeColor[3]+")";
+                ctx.strokeStyle = strokeColorStr;
+            }
+
+            ctx.fillStyle = "white";
+            if (this._fillColor){
+                var fillColorStr = "rgba("+parseInt(255*this._fillColor[0])+","+parseInt(255*this._fillColor[1])+","+parseInt(255*this._fillColor[2])+","+this._fillColor[3]+")";
+                ctx.fillStyle = fillColorStr;
+            }
+            var lineCap = ['butt','round','square'];
+            ctx.lineCap = lineCap[1];
+            var lineJoin = ['round','bevel','miter'];
+            ctx.lineJoin = lineJoin[0];
+
+            var numAnchors = this._Anchors.length;
+            if (numAnchors>1) {
+                ctx.beginPath();
+                var prevAnchor = this._Anchors[0];
+                ctx.moveTo(prevAnchor.getPosX(),prevAnchor.getPosY());
+                for (var i = 1; i < numAnchors; i++) {
+                    var currAnchor = this._Anchors[i];
+                    ctx.bezierCurveTo(prevAnchor.getNextX(),prevAnchor.getNextY(), currAnchor.getPrevX(), currAnchor.getPrevY(), currAnchor.getPosX(), currAnchor.getPosY());
+                    prevAnchor = currAnchor;
+                }
+                if (this._isClosed === true) {
+                    var currAnchor = this._Anchors[0];
+                    ctx.bezierCurveTo(prevAnchor.getNextX(),prevAnchor.getNextY(), currAnchor.getPrevX(), currAnchor.getPrevY(), currAnchor.getPosX(), currAnchor.getPosY());
+                    prevAnchor = currAnchor;
+                }
+                ctx.fill();
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+    }
+});// **************************************************************************
+// END runtime for the pen tool path
+// **************************************************************************
 
 

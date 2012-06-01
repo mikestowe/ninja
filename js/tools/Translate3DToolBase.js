@@ -296,7 +296,7 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
                     //this._setTransformOrigin(false);
                 }
                 else {
-                    this.target = this.application.ninja.currentDocument.documentRoot;
+                    this.target = this.application.ninja.currentDocument.model.documentRoot;
                     //this._origin = drawUtils._selectionCtr.slice(0);
                     //this._origin[0] += this.application.ninja.stage.userContentLeft;
                     //this._origin[1] += this.application.ninja.stage.userContentTop;
@@ -407,7 +407,7 @@ exports.Translate3DToolBase = Montage.create(ModifierToolBase,
 			else
 			{
 				lMode = false;
-				viewUtils.pushViewportObj( this.application.ninja.currentDocument.documentRoot );
+				viewUtils.pushViewportObj( this.application.ninja.currentDocument.model.documentRoot );
 			}
 
 			if(this._handleMode !== null)

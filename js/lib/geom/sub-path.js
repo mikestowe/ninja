@@ -68,178 +68,179 @@ var GLSubpath = function GLSubpath() {
     this._selectedAnchorIndex = -1;
 
     this._SAMPLING_EPSILON = 0.5; //epsilon used for sampling the curve
-
-    // (current GeomObj complains if buildBuffers/render is added to GLSubpath prototype)
-    //buildBuffers
-    //  Build the stroke vertices, normals, textures and colors
-    //  Add that array data to the GPU using OpenGL data binding
-    this.buildBuffers = function () {
-        // return; //no need to do anything for now
-    };
-
-    //render
-    //  specify how to render the subpath in Canvas2D
-    this.render = function () {
-        // get the world
-        var world = this.getWorld();
-        if (!world)  throw( "null world in subpath render" );
-        if (!this._canvas){
-            //set the canvas by querying the world
-            this._canvas = this.getWorld().getCanvas();
-        }
-        // get the context
-        var ctx = world.get2DContext();
-        if (!ctx)  throw ("null context in subpath render");
-
-        var numAnchors = this.getNumAnchors();
-        if (numAnchors === 0) {
-            return; //nothing to do for empty paths
-        }
-        this.createSamples(false); //dirty bit checked in this function...will generate a polyline representation
-
-        var numPoints = this._Samples.length;
-        if (numPoints === 0){
-            return; //nothing to do for empty paths
-        }
-        
-        //figure the size of the area we will draw into
-        var bboxWidth=0, bboxHeight=0;
-        bboxWidth = this._BBoxMax[0] - this._BBoxMin[0];
-        bboxHeight = this._BBoxMax[1] - this._BBoxMin[1];
-
-        ctx.save();
-        ctx.clearRect(0, 0, bboxWidth, bboxHeight);
-
-        ctx.lineWidth = this._strokeWidth;
-        ctx.strokeStyle = "black";
-        if (this._strokeColor) {
-            //ctx.strokeStyle = MathUtils.colorToHex( this._strokeColor );
-            var strokeColorStr = "rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+this._strokeColor[3]+")";
-            ctx.strokeStyle = strokeColorStr;
-        }
-
-        ctx.fillStyle = "white";
-        if (this._fillColor){
-            //ctx.fillStyle = MathUtils.colorToHex( this._fillColor );
-            var fillColorStr = "rgba("+parseInt(255*this._fillColor[0])+","+parseInt(255*this._fillColor[1])+","+parseInt(255*this._fillColor[2])+","+this._fillColor[3]+")";
-            ctx.fillStyle = fillColorStr;
-        }
-        var lineCap = ['butt','round','square'];
-        ctx.lineCap = lineCap[1];
-        var lineJoin = ['round','bevel','miter'];
-        ctx.lineJoin = lineJoin[0];
-
-        /*
-        commenting this out for now because of Chrome bug where coincident endpoints of bezier curve cause the curve to not be rendered
-        ctx.beginPath();
-        var prevAnchor = this.getAnchor(0);
-        ctx.moveTo(prevAnchor.getPosX()-bboxMin[0],prevAnchor.getPosY()-bboxMin[1]);
-        for (var i = 1; i < numAnchors; i++) {
-            var currAnchor = this.getAnchor(i);
-            ctx.bezierCurveTo(prevAnchor.getNextX()-bboxMin[0],prevAnchor.getNextY()-bboxMin[1], currAnchor.getPrevX()-bboxMin[0], currAnchor.getPrevY()-bboxMin[1], currAnchor.getPosX()-bboxMin[0], currAnchor.getPosY()-bboxMin[1]);
-            prevAnchor = currAnchor;
-        }
-        if (this._isClosed === true) {
-            var currAnchor = this.getAnchor(0);
-            ctx.bezierCurveTo(prevAnchor.getNextX()-bboxMin[0],prevAnchor.getNextY()-bboxMin[1], currAnchor.getPrevX()-bboxMin[0], currAnchor.getPrevY()-bboxMin[1], currAnchor.getPosX()-bboxMin[0], currAnchor.getPosY()-bboxMin[1]);
-            prevAnchor = currAnchor;
-            ctx.fill();
-        }
-        */
-
-
-        ctx.beginPath();
-        ctx.moveTo(this._Samples[0][0],this._Samples[0][1]);
-        for (var i=0;i<numPoints;i++){
-            ctx.lineTo(this._Samples[i][0],this._Samples[i][1]);
-        }
-        if (this._isClosed === true) {
-            ctx.lineTo(this._Samples[0][0],this._Samples[0][1]);
-        }
-        ctx.fill();
-        ctx.stroke();
-        ctx.restore();
-    }; //render()
-
-    this.geomType = function () {
-        return this.GEOM_TYPE_CUBIC_BEZIER;
-    };
-
-    this.setWidth = function (newW) {
-        var strokeWidth = this._strokeWidth;
-        var halfStrokeWidth = strokeWidth*0.5;
-        if (newW<1) {
-            newW=1; //clamp minimum width to 1
-        }
-
-        //scale the contents of this subpath to lie within this width
-        //determine the scale factor by comparing with the old width
-        var oldWidth = this._BBoxMax[0]-this._BBoxMin[0];
-        if (oldWidth<1) {
-            oldWidth=1;
-        }
-
-        var scaleX = newW/oldWidth;
-        if (scaleX===1) {
-            return; //no need to do anything
-        }
-
-        //scale the anchor point positions such that the width of the bbox is the newW
-        var origX = this._BBoxMin[0]; //this should always be zero since we only deal with local coordinates
-        var numAnchors = this._Anchors.length;
-        for (var i=0;i<numAnchors;i++){
-            //compute the distance from the bboxMin
-            var oldW = this._Anchors[i].getPosX() - origX;
-            var prevW = this._Anchors[i].getPrevX() - origX;
-            var nextW = this._Anchors[i].getNextX() - origX;
-
-            this._Anchors[i].setPos(origX + oldW*scaleX,this._Anchors[i].getPosY(),this._Anchors[i].getPosZ());
-            this._Anchors[i].setPrevPos(origX + prevW*scaleX,this._Anchors[i].getPrevY(),this._Anchors[i].getPrevZ());
-            this._Anchors[i].setNextPos(origX + nextW*scaleX,this._Anchors[i].getNextY(),this._Anchors[i].getNextZ());
-        }
-        this.makeDirty();
-        this.computeBoundingBox(true, false);
-    };
-
-    this.setHeight = function (newH) {
-        if (newH<1) {
-            newH=1; //clamp minimum width to 1
-        }
-        //scale the contents of this subpath to lie within this height
-        //determine the scale factor by comparing with the old height
-        var oldHeight = this._BBoxMax[1]-this._BBoxMin[1];
-        if (oldHeight<1){
-            oldHeight=1;
-        }
-
-        var scaleY = newH/oldHeight;
-        if (scaleY===1){
-            return; //no need to do anything
-        }
-
-        //scale the anchor point positions such that the height of the bbox is the newH
-        var origY = this._BBoxMin[1];
-        var numAnchors = this._Anchors.length;
-        for (var i=0;i<numAnchors;i++){
-            //compute the distance from the bboxMin
-            var oldW = this._Anchors[i].getPosY() - origY;
-            var prevW = this._Anchors[i].getPrevY() - origY;
-            var nextW = this._Anchors[i].getNextY() - origY;
-
-            this._Anchors[i].setPos(this._Anchors[i].getPosX(), origY + oldW*scaleY,this._Anchors[i].getPosZ());
-            this._Anchors[i].setPrevPos(this._Anchors[i].getPrevX(), origY + prevW*scaleY,this._Anchors[i].getPrevZ());
-            this._Anchors[i].setNextPos(this._Anchors[i].getNextX(), origY + nextW*scaleY,this._Anchors[i].getNextZ());
-        }
-        this.makeDirty();
-    }
-
 }; //function GLSubpath ...class definition
 
 GLSubpath.prototype = Object.create(GeomObj, {});
 
+//buildBuffers
+GLSubpath.prototype.buildBuffers = function () {
+    //no need to do anything for now (no WebGL)
+};
+
+//render
+//  specify how to render the subpath in Canvas2D
+GLSubpath.prototype.render = function () {
+    // get the world
+    var world = this.getWorld();
+    if (!world)  throw( "null world in subpath render" );
+    if (!this._canvas){
+        //set the canvas by querying the world
+        this._canvas = this.getWorld().getCanvas();
+    }
+    // get the context
+    var ctx = world.get2DContext();
+    if (!ctx)  throw ("null context in subpath render");
+
+    var numAnchors = this.getNumAnchors();
+    if (numAnchors === 0) {
+        return; //nothing to do for empty paths
+    }
+    this.createSamples(false); //dirty bit checked in this function...will generate a polyline representation
+
+    var numPoints = this._Samples.length;
+    if (numPoints === 0){
+        return; //nothing to do for empty paths
+    }
+
+    //figure the size of the area we will draw into
+    var bboxWidth=0, bboxHeight=0;
+    bboxWidth = this._BBoxMax[0] - this._BBoxMin[0];
+    bboxHeight = this._BBoxMax[1] - this._BBoxMin[1];
+
+    ctx.save();
+    ctx.clearRect(0, 0, bboxWidth, bboxHeight);
+
+    ctx.lineWidth = this._strokeWidth;
+    ctx.strokeStyle = "black";
+    if (this._strokeColor) {
+        //ctx.strokeStyle = MathUtils.colorToHex( this._strokeColor );
+        var strokeColorStr = "rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+this._strokeColor[3]+")";
+        ctx.strokeStyle = strokeColorStr;
+    }
+
+    ctx.fillStyle = "white";
+    if (this._fillColor){
+        //ctx.fillStyle = MathUtils.colorToHex( this._fillColor );
+        var fillColorStr = "rgba("+parseInt(255*this._fillColor[0])+","+parseInt(255*this._fillColor[1])+","+parseInt(255*this._fillColor[2])+","+this._fillColor[3]+")";
+        ctx.fillStyle = fillColorStr;
+    }
+    var lineCap = ['butt','round','square'];
+    ctx.lineCap = lineCap[1];
+    var lineJoin = ['round','bevel','miter'];
+    ctx.lineJoin = lineJoin[0];
+
+
+    //commenting this out for now because of Chrome bug where coincident endpoints of bezier curve cause the curve to not be rendered
+    /*
+    ctx.beginPath();
+    var prevAnchor = this.getAnchor(0);
+    ctx.moveTo(prevAnchor.getPosX(),prevAnchor.getPosY());
+    for (var i = 1; i < numAnchors; i++) {
+        var currAnchor = this.getAnchor(i);
+        ctx.bezierCurveTo(prevAnchor.getNextX(),prevAnchor.getNextY(), currAnchor.getPrevX(), currAnchor.getPrevY(), currAnchor.getPosX(), currAnchor.getPosY());
+        prevAnchor = currAnchor;
+    }
+    if (this._isClosed === true) {
+        var currAnchor = this.getAnchor(0);
+        ctx.bezierCurveTo(prevAnchor.getNextX(),prevAnchor.getNextY(), currAnchor.getPrevX(), currAnchor.getPrevY(), currAnchor.getPosX(), currAnchor.getPosY());
+        prevAnchor = currAnchor;
+    }
+    ctx.fill();
+    ctx.stroke();
+    */
+
+
+    ctx.beginPath();
+    ctx.moveTo(this._Samples[0][0],this._Samples[0][1]);
+    for (var i=0;i<numPoints;i++){
+        ctx.lineTo(this._Samples[i][0],this._Samples[i][1]);
+    }
+    if (this._isClosed === true) {
+        ctx.lineTo(this._Samples[0][0],this._Samples[0][1]);
+    }
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.restore();
+}; //render()
+
 /////////////////////////////////////////////////////////
 // Property Accessors/Setters
 /////////////////////////////////////////////////////////
+
+
+GLSubpath.prototype.geomType = function () {
+    return this.GEOM_TYPE_CUBIC_BEZIER;
+};
+
+GLSubpath.prototype.setWidth = function (newW) {
+    var strokeWidth = this._strokeWidth;
+    var halfStrokeWidth = strokeWidth*0.5;
+    if (newW<1) {
+        newW=1; //clamp minimum width to 1
+    }
+
+    //scale the contents of this subpath to lie within this width
+    //determine the scale factor by comparing with the old width
+    var oldWidth = this._BBoxMax[0]-this._BBoxMin[0];
+    if (oldWidth<1) {
+        oldWidth=1;
+    }
+
+    var scaleX = newW/oldWidth;
+    if (scaleX===1) {
+        return; //no need to do anything
+    }
+
+    //scale the anchor point positions such that the width of the bbox is the newW
+    var origX = this._BBoxMin[0]; //this should always be zero since we only deal with local coordinates
+    var numAnchors = this._Anchors.length;
+    for (var i=0;i<numAnchors;i++){
+        //compute the distance from the bboxMin
+        var oldW = this._Anchors[i].getPosX() - origX;
+        var prevW = this._Anchors[i].getPrevX() - origX;
+        var nextW = this._Anchors[i].getNextX() - origX;
+
+        this._Anchors[i].setPos(origX + oldW*scaleX,this._Anchors[i].getPosY(),this._Anchors[i].getPosZ());
+        this._Anchors[i].setPrevPos(origX + prevW*scaleX,this._Anchors[i].getPrevY(),this._Anchors[i].getPrevZ());
+        this._Anchors[i].setNextPos(origX + nextW*scaleX,this._Anchors[i].getNextY(),this._Anchors[i].getNextZ());
+    }
+    this.makeDirty();
+    this.computeBoundingBox(true, false);
+};
+
+GLSubpath.prototype.setHeight = function (newH) {
+    if (newH<1) {
+        newH=1; //clamp minimum width to 1
+    }
+    //scale the contents of this subpath to lie within this height
+    //determine the scale factor by comparing with the old height
+    var oldHeight = this._BBoxMax[1]-this._BBoxMin[1];
+    if (oldHeight<1){
+        oldHeight=1;
+    }
+
+    var scaleY = newH/oldHeight;
+    if (scaleY===1){
+        return; //no need to do anything
+    }
+
+    //scale the anchor point positions such that the height of the bbox is the newH
+    var origY = this._BBoxMin[1];
+    var numAnchors = this._Anchors.length;
+    for (var i=0;i<numAnchors;i++){
+        //compute the distance from the bboxMin
+        var oldW = this._Anchors[i].getPosY() - origY;
+        var prevW = this._Anchors[i].getPrevY() - origY;
+        var nextW = this._Anchors[i].getNextY() - origY;
+
+        this._Anchors[i].setPos(this._Anchors[i].getPosX(), origY + oldW*scaleY,this._Anchors[i].getPosZ());
+        this._Anchors[i].setPrevPos(this._Anchors[i].getPrevX(), origY + prevW*scaleY,this._Anchors[i].getPrevZ());
+        this._Anchors[i].setNextPos(this._Anchors[i].getNextX(), origY + nextW*scaleY,this._Anchors[i].getNextZ());
+    }
+    this.makeDirty();
+};
+
 GLSubpath.prototype.setWorld = function (world) {
     this._world = world;
 };

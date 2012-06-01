@@ -23,6 +23,16 @@ var Montage = require("montage").Montage,
 */
 var TreeController = exports.TreeController = Montage.create(ObjectController, /** @lends module:montage/ui/controller/tree-controller.TreeController# */ {
 
+    _delegate : { value: null },
+    delegate : {
+        get: function() {
+            return this._delegate;
+        },
+        set: function(value) {
+            this._delegate = value;
+        }
+    },
+
     rootKey : {
         value: null
     },

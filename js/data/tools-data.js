@@ -60,6 +60,7 @@ exports.ToolsData = Montage.create(Montage, {
                 "cursor":       "auto",
                 "lastInGroup":  false,
                 "container":    false,
+                "subtools":     [],
                 "selected":     true
             },
             {
@@ -71,6 +72,7 @@ exports.ToolsData = Montage.create(Montage, {
                 "cursor":       "auto",
                 "lastInGroup":  false,
                 "container":    false,
+                "subtools":     [],
                 "selected":     false
             },
             {
@@ -82,6 +84,7 @@ exports.ToolsData = Montage.create(Montage, {
                 "cursor":       "auto",
                 "lastInGroup":  true,
                 "container":    false,
+                "subtools":     [],
                 "selected":     false
             },
             {
@@ -93,6 +96,7 @@ exports.ToolsData = Montage.create(Montage, {
                 "cursor":       "url('images/cursors/Crosshair.png') 8 8, default",
                 "lastInGroup":  false,
                 "container":    false,
+                "subtools":     [],
                 "selected":     false
             },
             {
@@ -104,6 +108,7 @@ exports.ToolsData = Montage.create(Montage, {
                 "cursor":       "auto",
                 "lastInGroup":  false,
                 "container":    false,
+                "subtools":     [],
                 "selected":     false
             },
             {
@@ -115,6 +120,7 @@ exports.ToolsData = Montage.create(Montage, {
                 "cursor":       "text",
                 "lastInGroup":  false,
                 "container":    false,
+                "subtools":     [],
                 "selected":     false
             },
             {
@@ -163,6 +169,7 @@ exports.ToolsData = Montage.create(Montage, {
                 "cursor":       "url('images/tools/brush_down.png') 9 17, default",
                 "lastInGroup":  false,
                 "container":    false,
+                "subtools":     [],
                 "selected":     false
             },
             {
@@ -174,6 +181,7 @@ exports.ToolsData = Montage.create(Montage, {
                 "cursor":       "url('images/tools/bucket_down.png'), default",
                 "lastInGroup":  false,
                 "container":    false,
+                "subtools":     [],
                 "selected":     false
             },
             {
@@ -185,6 +193,7 @@ exports.ToolsData = Montage.create(Montage, {
                 "cursor":       "url('images/tools/inkbottle_cursor.png'), default",
                 "lastInGroup":  true,
                 "container":    false,
+                "subtools":     [],
                 "selected":     false
             },
 //            {
@@ -196,6 +205,7 @@ exports.ToolsData = Montage.create(Montage, {
 //                "cursor":       "auto",
 //                "lastInGroup":  false,
 //                "container":    false,
+//                "subtools":     [],
 //                "selected":     false
 //            },
             {
@@ -207,6 +217,7 @@ exports.ToolsData = Montage.create(Montage, {
                 "cursor":       "auto",
                 "lastInGroup":  false,
                 "container":    false,
+                "subtools":     [],
                 "selected":     false
             },
             {
@@ -218,6 +229,7 @@ exports.ToolsData = Montage.create(Montage, {
                 "cursor":       "url('images/tools/hand_down.png'), default",
                 "lastInGroup":  false,
                 "container":    false,
+                "subtools":     [],
                 "selected":     false
             },
             {
@@ -229,6 +241,7 @@ exports.ToolsData = Montage.create(Montage, {
                 "cursor":       "url('images/cursors/zoom.png'),default",
                 "lastInGroup":  true,
                 "container":    false,
+                "subtools":     [],
                 "selected":     false
             }
         ]

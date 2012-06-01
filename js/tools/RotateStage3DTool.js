@@ -90,18 +90,12 @@ exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
             this._origin = null;
             this._startOriginArray = null;
 
-            var stage = this.application.ninja.currentDocument.documentRoot;
+            var stage = this.application.ninja.currentDocument.model.documentRoot;
             this.target = stage;
 
             viewUtils.pushViewportObj( stage );
             var eltCtr = viewUtils.getCenterOfProjection();
             viewUtils.popViewportObj();
-//            if(this.application.ninja.documentController.webTemplate)
-            if(this.application.ninja.currentDocument.documentRoot.id !== "UserContent")
-            {
-                eltCtr[0] = stage.scrollWidth/2;
-                eltCtr[1] = stage.scrollHeight/2;
-            }
 
             var curMat = viewUtils.getMatrixFromElement(stage);
             var curMatInv = glmat4.inverse(curMat, []);
@@ -118,24 +112,14 @@ exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
             }
 
             this._origin = viewUtils.localToGlobal(eltCtr, stage);
-
-//            if(this.application.ninja.documentController.webTemplate)
-            if(this.application.ninja.currentDocument.documentRoot.id !== "UserContent")
-            {
-                this._startOriginArray = [];
-                this._startOriginArray.push(this._origin.slice());
-            }
-            else
-            {
-                this._setTransformOrigin(false);
-            }
+            this._setTransformOrigin(false);
             this.DrawHandles();
         }
     },
 
     captureElementChange: {
         value: function(event) {
-            if(event._event.item === this.application.ninja.currentDocument.documentRoot)
+            if(event._event.item === this.application.ninja.currentDocument.model.documentRoot)
             {
                 this.captureSelectionDrawn(null);
             }
@@ -146,20 +130,22 @@ exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
        value : function()
        {
            // Reset stage to identity matrix
-           var iMat = Matrix.I(4);
+           var iMat = Matrix.I(4),
+               stage = this.application.ninja.stage;
 
-           ElementsMediator.setMatrix(this.application.ninja.currentDocument.documentRoot,
+           ElementsMediator.setMatrix(this.application.ninja.currentDocument.model.documentRoot,
                                         iMat, false, "rotateStage3DTool");
-           this.application.ninja.currentDocument.documentRoot.elementModel.props3D.m_transformCtr = null;
+           this.application.ninja.currentDocument.model.documentRoot.elementModel.props3D.m_transformCtr = null;
 
 			// let the document and stage manager know about the zoom change
-			this.application.ninja.stage._firstDraw = true;
+			stage._firstDraw = true;
 			this.application.ninja.documentBar.zoomFactor = 100;
-			this.application.ninja.currentDocument.iframe.style.zoom = 1.0;
-			this.application.ninja.stage._firstDraw = false;
+            this.application.ninja.currentDocument.model.views.design.iframe.style.zoom = 1.0;
+			stage._firstDraw = false;
 
-           // TODO - Any updates to the stage should redraw stage's children. Move this to mediator?
-           this.application.ninja.stage.updatedStage = true;
+           viewUtils.clearStageTranslation();
+           stage.centerStage();
+           stage.draw();
 
            this.isDrawing = false;
            this.endDraw(event);

@@ -190,10 +190,11 @@ exports.PenTool = Montage.create(ShapeTool, {
             if (removeSelectedSubpath){
                 this._selectedSubpath.clearAllAnchors(); //perhaps unnecessary
                 this._selectedSubpath = null;
-                if (this._entryEditMode === this.ENTRY_SELECT_PATH){
-                    this._entryEditMode = this.ENTRY_SELECT_NONE;
+                if (this._subtool === this.SUBTOOL_NONE){
+                    if (this._entryEditMode === this.ENTRY_SELECT_PATH){
+                        this._entryEditMode = this.ENTRY_SELECT_NONE;
+                    }
                 }
-                this._subtool = this.SUBTOOL_NONE;
             } else {
                 this._selectedSubpath.setCanvas(null);
             }
@@ -274,7 +275,7 @@ exports.PenTool = Montage.create(ShapeTool, {
         value: function (event) {
             //ignore any right or middle clicks
             if (event.button !== 0) {
-                //NOTE: this will work on Webkit only...IE has different codes (left: 1, middle: 4, right: 2)
+                //todo NOTE: this will work on Webkit only...IE has different codes (left: 1, middle: 4, right: 2)
                 return;
             }
             
@@ -334,8 +335,20 @@ exports.PenTool = Montage.create(ShapeTool, {
 
             //build the hit record for the current mouse position (on the stage or the plane of the path canvas)
             var hitRec = this.getHitRecord(event.pageX, event.pageY, false);
-            
-            if (this._selectedSubpathCanvas === null){
+            var globalMousePos=null, localMousePos=null, stageWorldMousePos = null, drawingCanvas=null;
+            if (!this._selectedSubpathCanvas){
+                drawingCanvas = this.application.ninja.currentDocument.model.documentRoot;//ViewUtils.getStageElement();
+                stageWorldMousePos = hitRec.calculateStageWorldPoint();
+                stageWorldMousePos[0]+= snapManager.getStageWidth()*0.5;
+                stageWorldMousePos[1]+= snapManager.getStageHeight()*0.5;
+                localMousePos = stageWorldMousePos; //since the subpath points are in stage world space, set the 'localMousePos' to be stage world as well
+            }
+            else {
+                globalMousePos = hitRec.getScreenPoint();
+                localMousePos = ViewUtils.globalToLocal(globalMousePos, this._selectedSubpathCanvas);
+            }
+
+            if (this._selectedSubpathCanvas === null && this._subtool===this.SUBTOOL_NONE){
                 //IF this is the first anchor point of the selected subpath
                 //          Store the plane mat and drag plane of this hit record (will be used for creating a canvas)
                 //      Add the mouse position (in stage world space) as an anchor point
@@ -344,12 +357,8 @@ exports.PenTool = Montage.create(ShapeTool, {
                     this._selectedSubpathPlaneMat   = hitRec.getPlaneMatrix();
                 }
 
-                //calculate the stage world position from the hit record
-                var swMousePos = hitRec.calculateStageWorldPoint();
-                swMousePos[0]+= snapManager.getStageWidth()*0.5; swMousePos[1]+= snapManager.getStageHeight()*0.5;
-
                 //check if the mouse click location is close to the existing anchor
-                var indexAndCode = this._selectedSubpath.pickAnchor(swMousePos[0], swMousePos[1], swMousePos[2], this._PICK_POINT_RADIUS);
+                var indexAndCode = this._selectedSubpath.pickAnchor(stageWorldMousePos[0], stageWorldMousePos[1], stageWorldMousePos[2], this._PICK_POINT_RADIUS);
                 if (indexAndCode[0]>=0){
                     //the anchor point was hit, so we do not add another anchor
                     switch(indexAndCode[1]){
@@ -371,9 +380,9 @@ exports.PenTool = Montage.create(ShapeTool, {
                 } else {
                     this._selectedSubpath.addAnchor(new AnchorPoint());
                     var newAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
-                    newAnchor.setPos(swMousePos[0], swMousePos[1], swMousePos[2]);
-                    newAnchor.setPrevPos(swMousePos[0], swMousePos[1], swMousePos[2]);
-                    newAnchor.setNextPos(swMousePos[0], swMousePos[1], swMousePos[2]);
+                    newAnchor.setPos(stageWorldMousePos[0], stageWorldMousePos[1], stageWorldMousePos[2]);
+                    newAnchor.setPrevPos(stageWorldMousePos[0], stageWorldMousePos[1], stageWorldMousePos[2]);
+                    newAnchor.setNextPos(stageWorldMousePos[0], stageWorldMousePos[1], stageWorldMousePos[2]);
                     //set the mode so that dragging will update the next and previous locations
                     this._editMode = this.EDIT_PREV_NEXT;
                 }
@@ -392,10 +401,6 @@ exports.PenTool = Montage.create(ShapeTool, {
                 //              Create a new subpath
                 //          Add the mouse position (in selected subpath's local space) as an anchor point (call global to local)
 
-                // Compute the mouse position in local (selected subpath canvas) space
-                var globalPos = hitRec.getScreenPoint();
-                var localMousePos = ViewUtils.globalToLocal(globalPos, this._selectedSubpathCanvas);
-                
                 //now perform the hit testing
                 var prevSelectedAnchorIndex = this._selectedSubpath.getSelectedAnchorIndex();
                 var selAnchorAndParamAndCode = this._selectedSubpath.pickPath(localMousePos[0], localMousePos[1], localMousePos[2], this._PICK_POINT_RADIUS, false);
@@ -411,6 +416,10 @@ exports.PenTool = Montage.create(ShapeTool, {
                         if (this._subtool===this.SUBTOOL_PENMINUS){
                             //remove the selected anchor, similar to HandleDelete
                             this._removeSelectedAnchorPoint();
+                            return;
+                        }
+                        if (this._subtool === this.SUBTOOL_PENPLUS){
+                            //nothing to do for the pen plus subtool
                             return;
                         }
                         //if we're in ENTRY_SELECT_PATH mode AND we have not yet clicked on the endpoint AND if we have now clicked on the endpoint
@@ -444,22 +453,24 @@ exports.PenTool = Montage.create(ShapeTool, {
                     }
 
                     //if we hit the prev handle
-                    else if (whichPoint & this._selectedSubpath.SEL_PREV){
+                    else if (whichPoint & this._selectedSubpath.SEL_PREV && this._subtool===this.SUBTOOL_NONE){
                         this._editMode = this.EDIT_PREV;
                     }
 
                     //if we hit the next handle
-                    else if (whichPoint & this._selectedSubpath.SEL_NEXT){
+                    else if (whichPoint & this._selectedSubpath.SEL_NEXT && this._subtool===this.SUBTOOL_NONE){
                         this._editMode = this.EDIT_NEXT;
                     }
 
                     //if no anchor or handles
                     else if (whichPoint & this._selectedSubpath.SEL_PATH) {
                         //the click point is close enough to insert point in bezier segment after selected anchor at selParam
-                        if (selParam > 0 && selParam < 1) {
+                        if ((selParam > 0 && selParam < 1) && this._subtool!==this.SUBTOOL_PENMINUS) {
                             this._selectedSubpath.insertAnchorAtParameter(this._selectedSubpath.getSelectedAnchorIndex(), selParam);
                             //set the mode so that dragging will update anchor point positions
                             //this._editMode = this.EDIT_ANCHOR;
+                        } else {
+                            this._selectedSubpath.deselectAnchorPoint(); //set that no anchor is selected since the path was not hit anywhere useful
                         }
                     }
 
@@ -469,7 +480,10 @@ exports.PenTool = Montage.create(ShapeTool, {
                 else {
                     //add an anchor point to end of the open selected subpath (in local space), and make it the selected anchor point
                     // ONLY if we were not in SELECT_PATH entry mode or we are in SELECT_PATH entry mode and we have picked one of the endpoints
-                    if (this._entryEditMode !== this.ENTRY_SELECT_PATH || (this._entryEditMode === this.ENTRY_SELECT_PATH && this._isPickedEndPointInSelectPathMode)) {
+                    if (this._subtool===this.SUBTOOL_NONE &&
+                        (this._entryEditMode !== this.ENTRY_SELECT_PATH ||
+                            (this._entryEditMode === this.ENTRY_SELECT_PATH && this._isPickedEndPointInSelectPathMode))
+                        ) {
                         if (!this._selectedSubpath.getIsClosed()) { //todo this test is probably unnecessary, but doing it to be safe
                             this._selectedSubpath.addAnchor(new AnchorPoint());
                             var newAnchor = this._selectedSubpath.getAnchor(this._selectedSubpath.getSelectedAnchorIndex());
@@ -509,15 +523,20 @@ exports.PenTool = Montage.create(ShapeTool, {
             }
             
             //set the cursor to be the default cursor (depending on whether the selected subpath has any points yet)
-            if (this._selectedSubpath && this._selectedSubpath.getNumAnchors()>0){
+            if (this._subtool===this.SUBTOOL_NONE){
+                if (this._selectedSubpath && this._selectedSubpath.getNumAnchors()>0){
+                    this.application.ninja.stage.drawingCanvas.style.cursor = //"auto";
+                        "url('images/cursors/penCursors/Pen_.png') 5 1, default";
+                }
+                else {
+                    this.application.ninja.stage.drawingCanvas.style.cursor = //"auto";
+                        "url('images/cursors/penCursors/Pen_newPath.png') 5 1, default";
+                }
+            } else {
+                //use the standard pen cursor for Pen Plus and Pen Minus
                 this.application.ninja.stage.drawingCanvas.style.cursor = //"auto";
-                    "url('images/cursors/penCursors/Pen_.png') 5 1, default";
+                        "url('images/cursors/penCursors/Pen_.png') 5 1, default";
             }
-            else {
-                this.application.ninja.stage.drawingCanvas.style.cursor = //"auto";
-                    "url('images/cursors/penCursors/Pen_newPath.png') 5 1, default";
-            }
-
 
             if (!this._selectedSubpath ){
                 return; //nothing to do in case no subpath is selected
@@ -531,7 +550,7 @@ exports.PenTool = Montage.create(ShapeTool, {
             var globalMousePos=null, localMousePos=null, stageWorldMousePos = null;
             var drawingCanvas = this._selectedSubpath.getCanvas();
             if (!drawingCanvas){
-                drawingCanvas = ViewUtils.getStageElement();
+                drawingCanvas = this.application.ninja.currentDocument.model.documentRoot; //ViewUtils.getStageElement();
                 stageWorldMousePos = hitRec.calculateStageWorldPoint();
                 stageWorldMousePos[0]+= snapManager.getStageWidth()*0.5;
                 stageWorldMousePos[1]+= snapManager.getStageHeight()*0.5;
@@ -558,8 +577,8 @@ exports.PenTool = Montage.create(ShapeTool, {
                         localTranslation = VecUtils.vecSubtract(3, localMousePos, selAnchorPos[0]);
                         selAnchor.translatePrev(localTranslation[0], localTranslation[1], localTranslation[2]);
                         if (!this._isAltDown){
-                            //selAnchor.translateNextFromPrev(localTranslation[0], localTranslation[1], localTranslation[2]);
-                            selAnchor.setNextFromPrev();
+                            selAnchor.translateNextFromPrev(localTranslation[0], localTranslation[1], localTranslation[2]);
+                            //selAnchor.setNextFromPrev();
                         }
                     }
                     else if (this._editMode & this.EDIT_NEXT) {
@@ -567,8 +586,8 @@ exports.PenTool = Montage.create(ShapeTool, {
                         //move the prev point if Alt key is down to ensure relative angle between prev and next
                         selAnchor.translateNext(localTranslation[0], localTranslation[1], localTranslation[2]);
                         if (!this._isAltDown){
-                            //selAnchor.translatePrevFromNext(localTranslation[0], localTranslation[1], localTranslation[2]);
-                            selAnchor.setPrevFromNext();
+                            selAnchor.translatePrevFromNext(localTranslation[0], localTranslation[1], localTranslation[2]);
+                            //selAnchor.setPrevFromNext();
                         }
                     }
                     else if (this._editMode & this.EDIT_PREV_NEXT) {
@@ -621,7 +640,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                                     cursor = "url('images/cursors/penCursors/Pen_closePath.png') 5 1, default";
                                 }
                             } //if path is not closed
-                        } else if (this._subtool === this.SUBTOOL_PENMINUS){
+                        } else if (this._subtool === this.SUBTOOL_PENMINUS && selAnchorAndParamAndCode[2] & this._selectedSubpath.SEL_ANCHOR){
                             cursor = "url('images/cursors/penCursors/Pen_minus.png') 5 1, default";
                         } 
                         this.application.ninja.stage.drawingCanvas.style.cursor = cursor;
@@ -776,6 +795,7 @@ exports.PenTool = Montage.create(ShapeTool, {
     // **********************************************************************************************************
     HandleLeftButtonUp: {
         value: function (event) {
+            this._isDrawing = false;
             //do nothing in case of pen minus tool
             if (this._subtool===this.SUBTOOL_PENMINUS){
                 return;
@@ -825,7 +845,6 @@ exports.PenTool = Montage.create(ShapeTool, {
 
             //always assume that we're not starting a new path anymore
             this._isNewPath = false;
-            this._isDrawing = false;
             this._editMode = this.EDIT_NONE;
 
             //if we're not in edit_path mode and we closed the selected subpath, then we are going to start a new subpath, so we nullify the selected subpath
@@ -1500,21 +1519,17 @@ exports.PenTool = Montage.create(ShapeTool, {
             switch (this.options.selectedSubtool){
                 case "pen":
                     this._subtool = this.SUBTOOL_NONE;
-                    console.log("Setting pen tool subtool to NONE");
                     break;
 
                 case "penPlus":
-                    console.log("Setting pen tool subtool to PLUS");
                     this._subtool = this.SUBTOOL_PENPLUS;
                     break;
 
                 case "penMinus":
-                    console.log("Setting pen tool subtool to MINUS");
                     this._subtool = this.SUBTOOL_PENMINUS;
                     break;
 
                 default:
-                    console.log("Setting pen tool subtool to NONE");
                     this._subtool = this.SUBTOOL_NONE;
                     break;
             }
