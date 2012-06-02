@@ -35,7 +35,7 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
     },
 
     copiedObjects:{
-        value: []
+        value: {}
     },
 
     _copyFlag:{
@@ -69,8 +69,8 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
     },
 
     handleCopy:{
-        value:function(clipboardEvent, test){
-            if(this.application.ninja.documentController.activeDocument.currentView === "code") return;
+        value:function(clipboardEvent){
+            if(this.application.ninja.currentDocument.currentView === "code") return;
 
             this.copy(clipboardEvent);
 
@@ -78,9 +78,19 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
         }
     },
 
+    handleCut:{
+        value:function(clipboardEvent){
+            if(this.application.ninja.currentDocument.currentView === "code") return;
+
+            this.cut(clipboardEvent);
+
+            clipboardEvent.preventDefault();
+        }
+    },
+
     handlePaste:{
         value:function(clipboardEvent){
-            if(this.application.ninja.documentController.activeDocument.currentView === "code") return;//for design view only
+            if(this.application.ninja.currentDocument.currentView === "code") return;//for design view only
 
             //TODO: return if stage is not focussed
 
@@ -94,11 +104,12 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
                 svgData = clipboardData.getData("image/svg");
 
             if(ninjaData){
-                this.pasteFromNinja();
+                if(this.copiedObjects.copy){this.pasteFromCopy();}
+                else{this.pasteFromCut();}
             }else if(imageData){
                 this.pasteImage(imageData);
             }else{
-                this.pasteItems(htmlData, textData);
+                this.pasteFromExternalSource(htmlData, textData);
             }
 
 
@@ -112,18 +123,19 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
     copy:{
         value: function(clipboardEvent){
             var j=0, htmlToClipboard = "", ninjaClipboardObj = {}, textToClipboard = "";
-            this.copiedObjects.length = 0;
+            this.copiedObjects = {};
+            this.copiedObjects["copy"] = [];
 
             if(clipboardEvent){
                 for(j=0; j < this.application.ninja.selectedElements.length; j++){//copying from stage
-                    this.copiedObjects.push(this.application.ninja.selectedElements[j]);
+                    this.copiedObjects.copy.push(this.application.ninja.selectedElements[j]);
 
                     if(this.application.ninja.selectedElements[j].tagName === "CANVAS"){
                         if(!ninjaClipboardObj.canvas){
                             ninjaClipboardObj.canvas = true;
                         }
                     }else{
-                        htmlToClipboard = htmlToClipboard + this.serialize(this.application.ninja.selectedElements[j]);
+                        htmlToClipboard = htmlToClipboard + this.serializeHTMLElement(this.application.ninja.selectedElements[j]);
                         if(!ninjaClipboardObj.plainHtml){
                             ninjaClipboardObj.plainHtml = true;
                         }
@@ -142,7 +154,7 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
         }
     },
 
-    pasteFromNinja:{//todo: change to appropriate name
+    pasteFromCopy:{//todo: change to appropriate name
         value:function(){
                 var i=0, j=0,
                 pastedElements = [],//array of te pastes clones - for selection
@@ -157,47 +169,14 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
             NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": true} );
 
 
-            for(j=0; j< this.copiedObjects.length; j++){
-                copiedElement = this.copiedObjects[j];
+            for(j=0; j< this.copiedObjects.copy.length; j++){
+                copiedElement = this.copiedObjects.copy[j];
                 styles = null;
 
                 if (copiedElement.tagName === "CANVAS"){
                     //clone copied canvas
-                    var canvas = document.application.njUtils.make("canvas", copiedElement.className, this.application.ninja.currentDocument);
-                    canvas.width = copiedElement.width;
-                    canvas.height = copiedElement.height;
-                    //end - clone copied canvas
-
-                    if (!canvas.getAttribute( "data-RDGE-id" )) canvas.setAttribute( "data-RDGE-id", NJUtils.generateRandom() );
-                    document.application.njUtils.createModelWithShape(canvas);
-
-                    styles = canvas.elementModel.data || {};
-                    styles.top = "" + (this.application.ninja.elementMediator.getProperty(copiedElement, "top", parseInt) - 50) + "px";
-                    styles.left = "" + (this.application.ninja.elementMediator.getProperty(copiedElement, "left", parseInt) - 50) + "px";
-
-                    this.application.ninja.elementMediator.addElements(canvas, styles, false);
-
-                    var world, worldData = copiedElement.elementModel.shapeModel.GLWorld.exportJSON();
-                    if(worldData)
-                    {
-                        var jObj;
-                        var index = worldData.indexOf( ';' );
-                        if ((worldData[0] === 'v') && (index < 24))
-                        {
-                            // JSON format.  separate the version info from the JSON info
-                            var jStr = worldData.substr( index+1 );
-                            jObj = JSON.parse( jStr );
-
-                            world = new World(canvas, jObj.webGL);
-                            canvas.elementModel.shapeModel.GLWorld = world;
-                            canvas.elementModel.shapeModel.useWebGl = jObj.webGL;
-                            world.importJSON(jObj);
-                            this.application.ninja.currentDocument.buildShapeModel( canvas.elementModel, world );
-                        }
-                   }
-
+                    var canvas = this.cloneCanvas(copiedElement);
                     NJevent("elementAdded", canvas);
-
                     pastedElements.push(canvas);
                 }
                 else {
@@ -215,16 +194,38 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
 
             }
 
+            this.application.ninja.selectionController.selectElements(pastedElements);
 
-            this.application.ninja.selectionController.selectElements(pastedElements);//select pasted elements - not working!
-
-
-            this.application.ninja.documentController.activeDocument.needsSave = true;
+            this.application.ninja.currentDocument.model.needsSave = true;
         }
     },
 
+    pasteFromCut:{
+          value:function(){
+              var i=0, j=0, clipboardHelper=this.createClipboardHelper(), node=null, styles=null;
+
+              for(j=0; j< this.copiedObjects.cut.length; j++){
+                  clipboardHelper.innerHTML = this.copiedObjects.cut[j].outerhtml;
+
+                  if (clipboardHelper.lastChild.tagName === "CANVAS"){
+                      //paste canvas
+
+
+                  }
+                  else if((clipboardHelper.lastChild.nodeType === 3) || (clipboardHelper.lastChild.tagName === "A")){//TextNode
+
+
+                  }
+                  else {
+                      node = clipboardHelper.removeChild(clipboardHelper.lastChild);
+                      this.pastePositioned(node, this.copiedObjects.cut[j].styles);
+                  }
+              }
+          }
+    },
+
     //paste from external applicaitons
-    pasteItems:{//todo: change to pasteNinja, pasteHTML, etc
+    pasteFromExternalSource:{//todo: change to pasteNinja, pasteHTML, etc
         value: function(htmlData, textData){
             var i=0,
                 pasteDataObject=null,
@@ -283,7 +284,7 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
 
                 }
 
-                this.application.ninja.documentController.activeDocument.needsSave = true;
+                this.application.ninja.currentDocument.model.needsSave = true;
             }else if(textData){
 
                 //USE styles controller to create the styles of the div and span
@@ -296,14 +297,43 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
         }
     },
 
-    handleCut:{
+    cut:{
         value:function(clipboardEvent){
-            var clipboardData = clipboardEvent.clipboardData,
-                htmlData = clipboardData.getData("text/html"),
-                textData = clipboardData.getData("text/plain");
+            var j=0, htmlToClipboard = "", ninjaClipboardObj = {}, textToClipboard = "", elObj = null;
+            this.copiedObjects = {};
+            this.copiedObjects["cut"] = [];
 
-            console.log("$$$ handleCut ", textData);
+            if(clipboardEvent){
+                for(j=0; j < this.application.ninja.selectedElements.length; j++){//copying from stage
+                    elObj = {};
+                    elObj["outerhtml"] = this.application.ninja.selectedElements[j].outerHTML;
+                    elObj["styles"] = this.getDominantStyles(this.application.ninja.selectedElements[j]);
 
+                    if(this.application.ninja.selectedElements[j].tagName === "CANVAS"){
+                        if(!ninjaClipboardObj.canvas){
+                            ninjaClipboardObj.canvas = true;
+                        }
+                        elObj["worldJson"] = this.application.ninja.selectedElements[j].elementModel.shapeModel.GLWorld.exportJSON();
+                    }else{
+                        htmlToClipboard = htmlToClipboard + this.serializeHTMLElement(this.application.ninja.selectedElements[j]);
+                        if(!ninjaClipboardObj.plainHtml){
+                            ninjaClipboardObj.plainHtml = true;
+                        }
+                        textToClipboard = textToClipboard + this.getText(this.application.ninja.selectedElements[j]) + " ";
+                    }
+                    this.copiedObjects.cut.push(elObj);
+                }
+                //set clipboard data
+                clipboardEvent.clipboardData.setData('ninja', ''+ JSON.stringify(ninjaClipboardObj));
+                clipboardEvent.clipboardData.setData('text/html', '<HTML><BODY>' + htmlToClipboard + '</BODY></HTML>');
+                clipboardEvent.clipboardData.setData('text/plain', textToClipboard);
+
+            }
+            else{
+                //TODO: custom copy/paste, ex: css, animation, materials
+            }
+
+            this.application.ninja.elementMediator.removeElements(this.application.ninja.selectedElements);
 
             clipboardEvent.preventDefault();
         }
@@ -311,24 +341,24 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
 
     createClipboardHelper:{
         value:function(){
-            var doc = this.application.ninja.currentDocument ? this.application.ninja.currentDocument._document : document,
+            var doc = this.application.ninja.currentDocument ? this.application.ninja.currentDocument.model.views.design.document : document,
                 clipboardHelper=doc.getElementById("clipboardHelper");
             if(!clipboardHelper){
-                clipboardHelper = doc.createElement ("div");
-                clipboardHelper.id = "clipboardHelper";
-                clipboardHelper.style.display="none";
-                clipboardHelper.style.position = "absolute";
-                clipboardHelper.style.right = "-1000px";
-                clipboardHelper.style.top = "-1000px";
+                            clipboardHelper = doc.createElement ("div");
+                            clipboardHelper.id = "clipboardHelper";
+                            clipboardHelper.style.display="none";
+                            clipboardHelper.style.position = "absolute";
+                            clipboardHelper.style.right = "-1000px";
+                            clipboardHelper.style.top = "-1000px";
 
-                document.body.appendChild (clipboardHelper);
-            }
-            return clipboardHelper;
+                            document.body.appendChild (clipboardHelper);
+                        }
+                        return clipboardHelper;
         }
     },
 
 
-    serialize:{
+    serializeHTMLElement:{
         value: function(elem){
             var computedStyles = null, originalStyleAttr = null, computedStylesStr = "", i=0, stylePropertyName="", outerHtml = "";
 
@@ -356,22 +386,52 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
         }
     },
 
+    cloneCanvas:{
+        value: function(sourceCanvas){
+            var canvas = document.application.njUtils.make("canvas", sourceCanvas.className, this.application.ninja.currentDocument);
+            canvas.width = sourceCanvas.width;
+            canvas.height = sourceCanvas.height;
+            //end - clone copied canvas
+
+            if (!canvas.getAttribute( "data-RDGE-id" )) canvas.setAttribute( "data-RDGE-id", NJUtils.generateRandom() );
+            document.application.njUtils.createModelWithShape(canvas);
+
+            styles = canvas.elementModel.data || {};
+            styles.top = "" + (this.application.ninja.elementMediator.getProperty(sourceCanvas, "top", parseInt) - 50) + "px";
+            styles.left = "" + (this.application.ninja.elementMediator.getProperty(sourceCanvas, "left", parseInt) - 50) + "px";
+
+            this.application.ninja.elementMediator.addElements(canvas, styles, false);
+
+            var world, worldData = sourceCanvas.elementModel.shapeModel.GLWorld.exportJSON();
+            if(worldData)
+            {
+                var jObj;
+                var index = worldData.indexOf( ';' );
+                if ((worldData[0] === 'v') && (index < 24))
+                {
+                    // JSON format.  separate the version info from the JSON info
+                    var jStr = worldData.substr( index+1 );
+                    jObj = JSON.parse( jStr );
+
+                    world = new World(canvas, jObj.webGL);
+                    canvas.elementModel.shapeModel.GLWorld = world;
+                    canvas.elementModel.shapeModel.useWebGl = jObj.webGL;
+                    world.importJSON(jObj);
+                    this.application.ninja.currentDocument.model.webGlHelper.buildShapeModel( canvas.elementModel, world );
+                }
+            }
+
+            return canvas;
+        }
+    },
+
+    serializeCanvas:{
+        value:function(sourceCanvas){
+
+        }
+    },
+
     copyMontageComponents:{
-        value: function(){
-
-        }
-    },
-
-    /*
-    parameters:
-     */
-    paste:{
-        value: function(){
-
-        }
-    },
-
-    pasteHTML:{
         value: function(){
 
         }
@@ -413,6 +473,16 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
         value: function(element){
             NJUtils.createModel(element);
             this.application.ninja.elementMediator.addElements(element, null);//does not work now
+        }
+    },
+
+    getDominantStyles:{
+        value: function(el){
+            var styles = {};
+            styles.top = "" + (this.application.ninja.elementMediator.getProperty(el, "top", parseInt) - 50) + "px";
+            styles.left = "" + (this.application.ninja.elementMediator.getProperty(el, "left", parseInt) - 50) + "px";
+
+            return null;
         }
     }
 
