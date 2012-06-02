@@ -11,6 +11,9 @@ exports.ElementController = Montage.create(Component, {
 
     addElement: {
         value: function(el, styles) {
+        
+        	if (el.getAttribute) el.setAttribute('data-ninja-node', 'true');
+        	
             if(this.application.ninja.timeline.currentLayerSelected) {
                 var selectedLayerIndex = this.application.ninja.timeline.getLayerIndexByID(this.application.ninja.timeline.currentLayerSelected.layerData.layerID);
 
