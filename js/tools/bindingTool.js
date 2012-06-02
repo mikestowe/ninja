@@ -61,6 +61,7 @@ exports.BindingTool = Montage.create(ModifierToolBase, {
                     this.selectedElement = null;
                 }
                 this.application.ninja.stage.bindingView.selectedElement = this.selectedElement;
+                this.application.ninja.objectsController.currentObject = this.selectedElement.controller;
                 this._isDrawing = false;
             }
             //this.endDraw(event);

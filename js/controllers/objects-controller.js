@@ -89,19 +89,21 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
                 bindingsArray = [],
                 property, descriptor, bindingArgsObject;
 
-            for(property in descriptors) {
-                if(descriptors.hasOwnProperty(property)) {
-                    descriptor = descriptors[property];
+            if(descriptors) {
+                for(property in descriptors) {
+                    if(descriptors.hasOwnProperty(property)) {
+                        descriptor = descriptors[property];
 
-                    bindingArgsObject = {
-                        sourceObject : object,
-                        sourceObjectPropertyPath : property,
-                        boundObject : descriptor.boundObject,
-                        boundObjectPropertyPath : descriptor.boundObjectPropertyPath,
-                        onweway : descriptor.oneway
-                    };
+                        bindingArgsObject = {
+                            sourceObject : object,
+                            sourceObjectPropertyPath : property,
+                            boundObject : descriptor.boundObject,
+                            boundObjectPropertyPath : descriptor.boundObjectPropertyPath,
+                            oneway : (descriptor.oneway || descriptor.oneway === null) ? true : false
+                        };
 
-                    bindingsArray.push(bindingArgsObject);
+                        bindingsArray.push(bindingArgsObject);
+                    }
                 }
             }
 
