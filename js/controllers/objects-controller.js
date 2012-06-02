@@ -99,7 +99,7 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
                             sourceObjectPropertyPath : property,
                             boundObject : descriptor.boundObject,
                             boundObjectPropertyPath : descriptor.boundObjectPropertyPath,
-                            oneway : (descriptor.oneway || descriptor.oneway === null) ? true : false
+                            oneway : descriptor.oneway
                         };
 
                         bindingsArray.push(bindingArgsObject);
