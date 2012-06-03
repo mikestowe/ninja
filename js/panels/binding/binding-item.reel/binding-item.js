@@ -74,6 +74,16 @@ exports.BindingItem = Montage.create(Component, {
         }
     },
 
+    /* -------------- Events -------------- */
+
+    handleDirectionToggleButtonAction : {
+        value: function(e) {
+            this.oneway = !this.oneway;
+        }
+    },
+
+    /* -------------- Component Draw Cycle -------------- */
+
     templateDidLoad : {
         value: function() {
             console.log("loaded binding item");
@@ -83,6 +93,16 @@ exports.BindingItem = Montage.create(Component, {
     prepareForDraw: {
         value: function() {
             console.log("preparing to draw binding item");
+        }
+    },
+
+    draw : {
+        value: function() {
+            if(this.oneway) {
+                this.directionToggleButton.element.classList.remove('two-way');
+            } else {
+                this.directionToggleButton.element.classList.add('two-way');
+            }
         }
     }
 });
