@@ -331,7 +331,8 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
             //TODO: Make proper webGL/Canvas method
             
             //
-            var matchingtags = [], scripts = template.file.content.document.getElementsByTagName('script'), webgltag, webgllibtag, webglrdgetag, mjstag, mjslibtag;
+            var webgltag, webgllibtag, webglrdgetag, mjstag, mjslibtag, matchingtags = [],
+            	scripts = template.file.content.document.getElementsByTagName('script');
             //
             for (var i in scripts) {
             	if (scripts[i].getAttribute) {
@@ -375,7 +376,7 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                     if (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'RDGE') {
                         rdgeDirName = (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name + this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version).toLowerCase();
                         rdgeVersion = this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version;
-                        this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.file.root, rdgeDirName);
+                        this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.file.root, rdgeDirName, function(result) {console.log(result)});
                     } else {
                         //TODO: Error handle no available library to copy
                     }
@@ -501,7 +502,7 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                     if (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'Montage') {
                         mjsDirName = (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name + this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version).toLowerCase();
                         mjsVersion = this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version;
-                        this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.file.root, mjsDirName);
+                        this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.file.root, mjsDirName, function(result) {console.log(result)});
                         
                         
                         
