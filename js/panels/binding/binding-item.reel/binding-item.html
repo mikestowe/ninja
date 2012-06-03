@@ -13,7 +13,8 @@
             "owner": {
                 "prototype": "js/panels/binding/binding-item.reel",
                 "properties": {
-                    "element": {"#": "binding-item"}
+                    "element": {"#": "binding-item"},
+                    "directionToggleButton": {"@": "directionToggleButton" }
                 }
             },
             "soProperty": {
@@ -64,6 +65,19 @@
                     "listener": {"@": "owner"}
                 }]
 
+            },
+            "directionToggleButton": {
+                "prototype": "montage/ui/button.reel",
+                "properties": {
+                    "element": {"#": "direction-toggle-button"},
+                    "identifier": "directionToggleButton",
+                    "label": " "
+                },
+                "listeners": [{
+                    "type": "action",
+                    "listener": {"@": "owner"}
+                }]
+
             }
 
         }
@@ -75,6 +89,7 @@
         <span data-montage-id="so-property" class="so-property"></span>
         <span data-montage-id="so-object" class="so-object-identifier"></span>
     </div>
+    <button data-montage-id="direction-toggle-button" class="direction-toggle-button"></button>
     <div data-montage-id="boundObject" class="bound-object">
         <span data-montage-id="bo-property" class="bo-property"></span>
         <span data-montage-id="bo-object" class="bo-object-identifier"></span>
