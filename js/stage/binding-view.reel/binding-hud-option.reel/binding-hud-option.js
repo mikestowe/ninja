@@ -14,5 +14,28 @@ var Montage = require("montage/core/core").Montage,
 exports.BindingHudOption = Montage.create(Component, {
     title: {
         value: "value"
+    },
+    _bindings: {
+        value: []
+    },
+
+    bindings: {
+        get: function() {
+            return this._bindings;
+        },
+        set: function(val) {
+            this._bindings = val;
+            this.needsDraw = true;
+        }
+    },
+
+    draw: {
+        value:function() {
+            if(this.bindings.length > 0) {
+                this.element.classList.add("bound");
+            } else {
+                this.element.classList.remove("bound");
+            }
+        }
     }
 });

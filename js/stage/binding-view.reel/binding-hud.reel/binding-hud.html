@@ -32,7 +32,8 @@
                     "element": {"#" : "hudOption"}
                 },
                 "bindings": {
-                   "title": {"<-": "@repeater.objectAtCurrentIteration.title"}
+                    "title": {"<-": "@repeater.objectAtCurrentIteration.title"},
+                    "bindings": {"<-": "@repeater.objectAtCurrentIteration.bindings"}
                 }
             },
             "Title": {

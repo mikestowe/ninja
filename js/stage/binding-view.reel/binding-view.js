@@ -26,6 +26,12 @@ exports.BindingView = Montage.create(Component, {
     _bindingViewCanvas: {
         value:null
     },
+    _canvas: {
+        value:null
+    },
+    _context : {
+        value: null
+    },
 
     //Public Objects
     hudRepeater: { value: null },
@@ -73,7 +79,9 @@ exports.BindingView = Montage.create(Component, {
     //Montage Draw Cycle
     prepareForDraw: {
         value: function() {
-
+            this._canvas = this.application.ninja.stage.drawingCanvas;
+            this._context = this._canvas.getContext('2d');
+            this.application.ninja.stage._iframeContainer.addEventListener("scroll", this, false);
         }
     },
 
@@ -87,8 +95,9 @@ exports.BindingView = Montage.create(Component, {
                             {"title":"Value",
                                 "bindings": [
                                     {"direction": "<-", "boundObject":"Checkbox1", "boundProperty": "Value"}
-                                ]},
-                            {"title": "Width"}
+                                ]
+                            },
+                            {"title": "Width", "bindings": []}
                         ],
                         "x": 20,
                         "y": 20
@@ -96,28 +105,47 @@ exports.BindingView = Montage.create(Component, {
                     {
                         "title": "Checkbox1",
                         "properties": [
-                            {"title":"Group"},
-                            {"title": "Value"}
+                            {"title":"Group" , "bindings": []},
+                            {"title":"Value",
+                                "bindings": [
+                                    {"direction": "->", "boundObject":"Input1", "boundProperty": "Value"}
+                                ]
+                            }
                         ],
                         "x": 120,
                         "y": 120
                     }
                 ];
+                this.drawBlueLine(100,100,200,200)
+
             } else {
                 this.bindables = [];
             }
+
         }
     },
 
     drawBlueLine: {
         value: function(fromX,fromY,toX,toY) {
+            this._context.lineWidth = 4; // Set Line Thickness
+            this._context.strokeStyle = "#00F"
 
+            this._context.beginPath(); // Start Drawing Line
+            this._context.moveTo(fromX, fromY);
+            this._context.lineTo(toX, toY);
+            this._context.stroke();
         }
     },
 
     handleMousedown: {
         value: function(event) {
-            debugger;
+
+        }
+    },
+
+    handleScroll: {
+        value: function() {
+            this.needsDraw = true;
         }
     },
 

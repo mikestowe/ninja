@@ -12,6 +12,18 @@ SelectionTool = require("js/tools/SelectionTool").SelectionTool;
 
 exports.BindingTool = Montage.create(ModifierToolBase, {
     drawingFeedback: { value: { mode: "Draw2D", type: "" } },
+    _selectedComponent: {
+        value: null
+    },
+
+    selectedComponent: {
+        get:function() {
+            return this._selectedComponent;
+        },
+        set: function(val) {
+            this._selectedComponent = val;
+        }
+    },
 
     Configure: {
         value: function (doActivate)
@@ -32,13 +44,13 @@ exports.BindingTool = Montage.create(ModifierToolBase, {
     HandleLeftButtonDown: {
         value: function(event) {
             NJevent("enableStageMove");
-            this.application.ninja.stage.bindingView.handleMouseDown(event);
+            this.application.ninja.stage.bindingView.handleMousedown(event);
         }
     },
 
     HandleMouseMove: {
         value: function(event) {
-            this.doDraw(event);
+            //this.doDraw(event);
         }
     },
 
@@ -56,11 +68,14 @@ exports.BindingTool = Montage.create(ModifierToolBase, {
             } else {
                 this.doSelection(event);
                 if (this.application.ninja.selectedElements.length !== 0 ) {
-                    this.selectedElement = this.application.ninja.selectedElements[0];
+                    if(this.application.ninja.selectedElements[0].controller) {
+                        this.selectedComponent = this.application.ninja.selectedElements[0].controller;
+                    }
                 } else {
-                    this.selectedElement = null;
+                    this.selectedComponent = null;
                 }
-                this.application.ninja.stage.bindingView.selectedElement = this.selectedElement;
+                this.application.ninja.stage.bindingView.selectedElement = this.selectedComponent;
+                this.application.ninja.objectsController.currentObject = this.selectedComponent;
                 this._isDrawing = false;
             }
             //this.endDraw(event);
