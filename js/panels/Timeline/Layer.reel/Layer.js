@@ -543,13 +543,13 @@ var Layer = exports.Layer = Montage.create(Component, {
             this.heightControl.addEventListener("changing",this,false);
             this.heightControl.addEventListener("change",this,false);
 
-            el=this.layerData.stageElement;
-            debugger;
-
-            this.dtextPositionX = parseFloat(ElementsMediator.getProperty(el, "left"));
-            this.dtextPositionY = parseFloat(ElementsMediator.getProperty(el, "top"));
-            this.dtextScaleY = parseFloat(ElementsMediator.getProperty(el, "height"));
-            this.dtextScaleX= parseFloat(ElementsMediator.getProperty(el, "width"));
+//            el=this.layerData.stageElement;
+//            debugger;
+//
+//            this.dtextPositionX = parseFloat(ElementsMediator.getProperty(el, "left"));
+//            this.dtextPositionY = parseFloat(ElementsMediator.getProperty(el, "top"));
+//            this.dtextScaleY = parseFloat(ElementsMediator.getProperty(el, "height"));
+//            this.dtextScaleX= parseFloat(ElementsMediator.getProperty(el, "width"));
         }
     },
 
@@ -916,7 +916,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 	},
 
     handleLeftChange:{
-        value:function(){
+        value:function(event){
             debugger;
             this.application.ninja.elementMediator.setProperty(this.layerData.stageElement, "left", [this.dtextPositionX + "px"] , "Change", "timeline");
         }
@@ -1003,11 +1003,6 @@ var Layer = exports.Layer = Montage.create(Component, {
         }
     },
 
-    handleChanging:{
-        value:function(){
-            console.log("in layer.js")
-        }
-    },
 
 	/* End: Event handlers */
 	

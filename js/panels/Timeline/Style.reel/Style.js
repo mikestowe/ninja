@@ -310,6 +310,12 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 			// First, get the appropriate editor type from the data structure.
 			var tweenable = {},
 				i = 0;
+
+            if (this.ruleTweener === true) {
+               return;
+            } else {
+               this.ruleTweener = true;
+            }
 				
 			tweenable.tweener = "input";
 
@@ -357,8 +363,6 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
                     this._fillColorCtrl.color(this._fill.colorMode, this._fill.color);
     //                this._strokeColorCtrl.color(this._stroke.colorMode, this._stroke.color);
                 }
-
-
 
 				// TODO: set up color chip here.
 			} else if (tweenable.tweener === "input"){
