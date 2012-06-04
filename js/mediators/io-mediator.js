@@ -43,6 +43,24 @@ exports.IoMediator = Montage.create(Component, {
     },
     ////////////////////////////////////////////////////////////////////
     //
+    parseToTemplate: {
+	    value: function(content, template) {
+		    //
+            if (template.name.toLowerCase() === 'banner' || template.name.toLowerCase() === 'animation') {
+            	//Getting dimensions of banner
+           		var dimensions = template.id.split('x');
+                dimensions = {width: String(dimensions[0])+'px', height: String(dimensions[1])+'px'};
+                //
+                content = content.replace(/Dimensions@@@/gi, "Dimensions@@@"+template.id);
+                content = content.replace(/ninja-banner {}/gi, "ninja-banner {overflow: visible; width: "+dimensions.width+"; height: "+dimensions.height+"}");
+                content = content.replace(/ninja-content-wrapper {}/gi, "ninja-content-wrapper {overflow: hidden; width: "+dimensions.width+"; height: "+dimensions.height+"}");
+            }
+            //
+            return content;
+	    }
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
     fileNew: {
         value: function (file, url, callback, template) {
             //Loading template from template URL
@@ -51,7 +69,7 @@ exports.IoMediator = Montage.create(Component, {
             xhr.send();
             if (xhr.readyState === 4) {
                 //Making call to create file, checking for return code
-                switch (this.fio.newFile({ uri: file, contents: parseTemplate(xhr.response, template) })) {
+                switch (this.fio.newFile({ uri: file, contents: this.parseToTemplate(xhr.response, template) })) {
                     case 201:
                         result = { status: 201, success: true, uri: file };
                         break;
@@ -64,21 +82,6 @@ exports.IoMediator = Montage.create(Component, {
                     default:
                         result = { status: 500, success: false, uri: file };
                         break;
-                }
-                //TODO: Improve template data injection
-                function parseTemplate (content, template) {
-                	//
-                	if (template.name.toLowerCase() === 'banner' || template.name.toLowerCase() === 'animation') {
-                		//Getting dimensions of banner
-                		var dimensions = template.id.split('x');
-                		dimensions = {width: String(dimensions[0])+'px', height: String(dimensions[1])+'px'};
-                		//
-                		content = content.replace(/Dimensions@@@/gi, "Dimensions@@@"+template.id);
-                		content = content.replace(/ninja-banner {}/gi, "ninja-banner {overflow: visible; width: "+dimensions.width+"; height: "+dimensions.height+"}");
-                		content = content.replace(/ninja-content-wrapper {}/gi, "ninja-content-wrapper {overflow: hidden; width: "+dimensions.width+"; height: "+dimensions.height+"}");
-                	}
-                	//
-                	return content;
                 }
             } else {
                 result = { status: 500, success: false, uri: file };
@@ -151,7 +154,7 @@ exports.IoMediator = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     fileSave: {
-        value: function (doc, callback) {
+        value: function (doc, callback, libCopyCallback) {
             //
             var contents, save;
             //
@@ -159,9 +162,9 @@ exports.IoMediator = Montage.create(Component, {
                 case 'html':
                     //Getting content from function to properly handle saving assets (as in external if flagged)
                     if (doc.template && (doc.template.type === 'banner' || doc.template.type === 'animation')) {
-                    	contents = this.tmplt.parseNinjaTemplateToHtml(doc, true);
+                    	contents = this.tmplt.parseNinjaTemplateToHtml(doc, true, libCopyCallback);
                     } else {
-                    	contents = this.tmplt.parseNinjaTemplateToHtml(doc);
+                    	contents = this.tmplt.parseNinjaTemplateToHtml(doc, false, libCopyCallback);
                     }
                     break;
                 default:

@@ -93,7 +93,7 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //TODO: Expand to allow more templates, clean up variables
     parseNinjaTemplateToHtml: {
-        value: function (template, ninjaWrapper) {
+        value: function (template, ninjaWrapper, libCopyCallback) {
         	//TODO: Improve reference for rootUrl
             var regexRootUrl,
             	rootUrl = this.application.ninja.coreIoApi.rootUrl + escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1])),
@@ -332,7 +332,9 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
             
             //
             var webgltag, webgllibtag, webglrdgetag, mjstag, mjslibtag, matchingtags = [],
-            	scripts = template.file.content.document.getElementsByTagName('script');
+            	scripts = template.file.content.document.getElementsByTagName('script'),
+            	libsobserver = {montage: false, canvas: false, montageCopied: null, canvasCopied: null, callback: libCopyCallback, dispatched: false};
+            
             //
             for (var i in scripts) {
             	if (scripts[i].getAttribute) {
@@ -376,7 +378,8 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                     if (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'RDGE') {
                         rdgeDirName = (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name + this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version).toLowerCase();
                         rdgeVersion = this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version;
-                        this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.file.root, rdgeDirName, function(result) {console.log(result)});
+                        libsobserver.canvas = true;
+                        this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.file.root, rdgeDirName, function(result) {libsobserver.canvasCopied = result; this.libCopied(libsobserver);}.bind(this));
                     } else {
                         //TODO: Error handle no available library to copy
                     }
@@ -502,7 +505,8 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                     if (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name === 'Montage') {
                         mjsDirName = (this.application.ninja.coreIoApi.ninjaLibrary.libs[i].name + this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version).toLowerCase();
                         mjsVersion = this.application.ninja.coreIoApi.ninjaLibrary.libs[i].version;
-                        this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.file.root, mjsDirName, function(result) {console.log(result)});
+                        libsobserver.montage = true;
+                        this.application.ninja.coreIoApi.ninjaLibrary.copyLibToCloud(template.file.root, mjsDirName, function(result) {libsobserver.montageCopied = result; this.libCopied(libsobserver);}.bind(this));
                         
                         
                         
@@ -587,6 +591,44 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
             //
             return this.getPrettyHtml(cleanHTML.replace(this.getAppTemplatesUrlRegEx(), ''));
         }
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    libCopied: {
+	    value: function (observer) {
+		    if (observer.montage && observer.canvas) {
+			    //
+			    if (observer.montageCopied && observer.canvasCopied) {
+					if (observer.callback && !observer.dispatched) observer.callback(true);
+					observer.dispatched = true;
+			    } else if (observer.montageCopied === false || observer.canvasCopied === false) {
+				    if (observer.callback && !observer.dispatched) observer.callback(false);
+				    observer.dispatched = true;
+			    }
+		    } else if (observer.montage) {
+			    //
+			    if (observer.montageCopied) {
+				    if (observer.callback && !observer.dispatched) observer.callback(true);
+				    observer.dispatched = true;
+			    } else {
+				    if (observer.callback && !observer.dispatched) observer.callback(false);
+				    observer.dispatched = true;
+			    }
+		    } else if (observer.canvas && observer.canvasCopied) {
+			    //
+			    if (observer.canvasCopied) {
+				    if (observer.callback && !observer.dispatched) observer.callback(true);
+				    observer.dispatched = true;
+			    } else {
+				    if (observer.callback && !observer.dispatched) observer.callback(false);
+				    observer.dispatched = true;
+			    }
+		    } else {
+			    //Error
+			    if (observer.callback && !observer.dispatched) observer.callback(false);
+			    observer.dispatched = true;
+		    }
+	    }
     },
     ////////////////////////////////////////////////////////////////////
     //

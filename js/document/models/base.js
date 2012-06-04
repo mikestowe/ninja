@@ -103,7 +103,7 @@ exports.BaseDocumentModel = Montage.create(Component, {
         	//Generating URL for document
         	var url = this.application.ninja.coreIoApi.rootUrl + this.file.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1];
         	//TODO: Add logic to prompt user to save (all) before preview
-        	this.saveAll(function (result) {
+        	this.saveAll(null,function (result) {
         		//Currently only supporting current browser (Chrome, obviously)
         		switch (this.browser) {
         			case 'chrome':
@@ -145,7 +145,7 @@ exports.BaseDocumentModel = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
 	//
 	save: {
-        value: function (callback) {
+        value: function (callback, libCopyCallback) {
         	//
         	if (this.needsSave) {
         		//Save
@@ -165,7 +165,7 @@ exports.BaseDocumentModel = Montage.create(Component, {
         			head: this.views.design.iframe.contentWindow.document.head,
         			body: this.views.design.iframe.contentWindow.document.body,
         			mjsTemplateCreator: this.views.design.iframe.contentWindow.mjsTemplateCreator
-        		}, this.handleSaved.bind({callback: callback, model: this}));
+        		}, this.handleSaved.bind({callback: callback, model: this}), libCopyCallback);
         	} else {
         		//TODO: Add logic to save code view data
         	}
@@ -174,7 +174,7 @@ exports.BaseDocumentModel = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
 	//
 	saveAll: {
-        value: function (callback) {
+        value: function (callback, libCopyCallback) {
            	//
         	if (this.needsSave) {
         		//Save
@@ -194,7 +194,7 @@ exports.BaseDocumentModel = Montage.create(Component, {
         			head: this.views.design.iframe.contentWindow.document.head,
         			body: this.views.design.iframe.contentWindow.document.body,
         			mjsTemplateCreator: this.views.design.iframe.contentWindow.mjsTemplateCreator
-        		}, this.handleSaved.bind({callback: callback, model: this}));
+        		}, this.handleSaved.bind({callback: callback, model: this}), libCopyCallback);
         	} else {
         		//TODO: Add logic to save code view data
         	}
