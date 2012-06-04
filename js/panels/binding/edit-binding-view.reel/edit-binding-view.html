@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<!-- <copyright>
+ This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+ No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+ (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+ </copyright> -->
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="edit-binding-view.css" type="text/css">
+    <script type="text/montage-serialization">
+        {
+            "owner": {
+                "prototype": "js/panels/binding/edit-binding-view.reel",
+                "properties": {
+                    "element": {"#": "edit-binding"}
+                }
+            },
+            "objectsList" : {
+                "prototype": "montage/ui/controller/array-controller",
+                "bindings" : {
+                    "content": {"<-": "@owner.objectsList"}
+                }
+            },
+            "sourceObjectSelect": {
+                "prototype": "montage/ui/select-input.reel",
+                "properties": {
+                    "element": {"#": "sourceObjectSelect"},
+                    "contentController": {"@": "objectsList"}
+
+                }
+            },
+            "boundObjectSelect": {
+                "prototype": "montage/ui/select-input.reel",
+                "properties": {
+                    "element": {"#": "boundObjectSelect"},
+                    "contentController": {"@": "objectsList"}
+
+                }
+            },
+            "sourceObjectPropertyPathField": {
+                "prototype": "js/components/hintable.reel",
+                "properties": {
+                    "element": {"#": "so-pp"},
+                    "identifier": "sourceProperty"
+                },
+                "bindings": {
+                    "value": {"<-": "@owner.sourceObjectPropertyPath"}
+                },
+                "listeners" : [
+                    {
+                        "type": "change",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            },
+            "boundObjectPropertyPathField": {
+                "prototype": "js/components/hintable.reel",
+                "properties": {
+                    "element": {"#": "bo-pp"},
+                    "identifier": "boundProperty"
+                },
+                "bindings": {
+                    "value": {"<-": "@owner.boundObjectPropertyPath"}
+                },
+                "listeners" : [
+                    {
+                        "type": "change",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            }
+
+        }
+    </script>
+</head>
+<body>
+<div data-montage-id="edit-binding" class="edit-binding-view">
+
+    <ul>
+        <li class="edit-source-object">
+            <label>Source Object:</label><select data-montage-id="sourceObjectSelect"  class="nj-skinned"></select>
+            <br>
+            <label>Source Object Property Path:</label><span data-montage-id="so-pp" class="so-pp">Test</span>
+        </li>
+
+        <li class="edit-bound-object">
+            <label>Bound Object:</label><select data-montage-id="boundObjectSelect"  class="nj-skinned"></select>
+            <br>
+            <label>Bound Object Property Path:</label><span data-montage-id="bo-pp" class="bo-pp">Test</span>
+        </li>
+
+        <li class="edit-general-properties">
+            <input data-montage-id="oneway-checkbox" type="checkbox" class="nj-skinned"><label>Oneway</label>
+        </li>
+        <li>
+            <label>Converter</label><span>Test</span>
+        </li>
+    </ul>
+
+</div>
+</body>
+</html>

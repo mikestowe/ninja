@@ -82,6 +82,12 @@ exports.BindingItem = Montage.create(Component, {
         }
     },
 
+    handleEditButtonAction : {
+        value: function(e) {
+            this.parentComponent.parentComponent.displayEditView();
+        }
+    },
+
     /* -------------- Component Draw Cycle -------------- */
 
     templateDidLoad : {
