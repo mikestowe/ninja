@@ -18,16 +18,28 @@ exports.Ninja = Montage.create(Component, {
         value: null
     },
 
-    toolsData: { value: null },
-    appData:    { value: AppData },
+    toolsData: {
+        value: null
+    },
+
+    appData: {
+        value: AppData
+    },
+
+    documentList: {
+        value: null
+    },
 
     currentDocument: {
-        value: null
+        get: function() {
+            if(this.documentList.selectedObjects) {
+                return this.documentList.selectedObjects[0];
+            } else {
+                return null;
+            }
+        }
     },
 
-    _isResizing: {
-        value: null
-    },
     _resizedHeight : {
         value: 0
     },
@@ -55,9 +67,10 @@ exports.Ninja = Montage.create(Component, {
         }
     },
 
-    _resizedWidth : {
+    _resizedWidth: {
         value: 0
     },
+
     _width: {
         value: null
     },
@@ -129,7 +142,6 @@ exports.Ninja = Montage.create(Component, {
         }
     },
 
-
     selectedElements: {
         value: []
     },
@@ -174,14 +186,10 @@ exports.Ninja = Montage.create(Component, {
 
             this.eventManager.addEventListener("selectTool", this, false);
             this.eventManager.addEventListener("selectSubTool", this, false);
-            this.eventManager.addEventListener("onOpenDocument", this, false);
-            this.eventManager.addEventListener("onSwitchDocument", this, false);
 
             this.addPropertyChangeListener("appModel.livePreview", this.executeLivePreview, false);
             this.addPropertyChangeListener("appModel.chromePreview", this.executeChromePreview, false);
             this.addPropertyChangeListener("appModel.debug", this.toggleDebug, false);
-
-            NJevent("appLoading");
         }
     },
     
@@ -190,7 +198,7 @@ exports.Ninja = Montage.create(Component, {
 	//TODO: Expand method to allow other browsers for preview
     executeChromePreview: {
     	value: function () {
-    		this.application.ninja.documentController.activeDocument.model.browserPreview('chrome');
+    		this.currentDocument.model.browserPreview('chrome');
     	}
     },
 	////////////////////////////////////////////////////////////////////
@@ -275,31 +283,40 @@ exports.Ninja = Montage.create(Component, {
         }
     },
 
-    handleOnOpenDocument: {
-        value: function(event) {
-            this.currentDocument = event.detail;
+    openDocument: {
+        value: function(doc) {
+            this.documentList.content.push(doc);
+            // This is not needed with the latest 0.10 montage.
+            // TODO: Remove this when integrating the next montage
+            this.documentList.selectedObjects = [doc];
 
-            if(this.currentDocument.model.documentRoot) {
-                this.currentSelectedContainer = this.currentDocument.model.documentRoot;
-            } else {
-                alert("The current document has not loaded yet");
-                return;
+            if(doc.currentView === "design") {
+                // TODO: Bind directly to the model of the document in components instead of this property
+                this._currentSelectedContainer = null;
+                this.currentSelectedContainer = doc.model.documentRoot;
             }
-
-            this.appModel.show3dGrid = this.currentDocument.draw3DGrid;
-            NJevent("openDocument");
         }
     },
 
-    handleOnSwitchDocument: {
-        value: function() {
-            this.currentDocument = this.documentController.activeDocument;
+    closeFile: {
+        value: function(document) {
+            var doc = this.documentList.content[this.documentList.content.indexOf(document)], activeDocument;
 
-            if(this.currentDocument.model.documentRoot) {
-                this._currentSelectedContainer = this.selectionController._selectionContainer = this.currentDocument.model.documentRoot;
+            if(this.documentList.selectedObjects[0] !== doc) {
+                activeDocument = this.documentList.selectedObjects[0];
+            } else {
+                activeDocument = null;
             }
 
-            NJevent("switchDocument");
+            this.documentList.removeObjects(doc);
+
+            if(activeDocument) {
+                this.documentList.selectedObjects = [activeDocument];
+            } else {
+                if(this.documentList.content.length) {
+                    this.documentList.selectedObjects = this.documentList.content[0];
+                }
+            }
         }
     },
 
@@ -357,16 +374,6 @@ exports.Ninja = Montage.create(Component, {
             if(!this.consoleLog) this.consoleLog = console.log;
 
             this.appModel.debug ? console.log = this.consoleLog : console.log = function() {};
-        }
-    },
-
-    getCurrentToolInstance: {
-        value: function() {
-            if(this.toolsData.selectedTool.container) {
-                return this.toolsList[this.toolsData.selectedSubTool.action];
-            } else {
-                return this.toolsList[this.toolsData.selectedTool.action];
-            }
         }
     },
 

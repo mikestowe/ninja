@@ -112,7 +112,6 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
             this.eventManager.addEventListener("elementsRemoved", this, false);
             this.eventManager.addEventListener("elementChange", this, false);
             this.eventManager.addEventListener("elementChanging", this, false);
-            this.eventManager.addEventListener("closeDocument", this, false);
             this.eventManager.addEventListener("elementReplaced", this, false);
 		}
 	},
@@ -126,7 +125,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
             //initialize with current document
             this._eltArray = [];
             this._planesArray = [];
-            this.setDrawingSurfaceElement(stage.canvas);
+            this.setDrawingSurfaceElement(stage.gridCanvas);
             this.setSourceSpaceElement( this.application.ninja.currentDocument.model.documentRoot);
             this.setWorkingPlane( [0,0,1,0] );
 
@@ -160,15 +159,6 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                 if(minTop !== initT) {
                     stage.userPaddingTop = minTop;
                 }
-            }
-        }
-    },
-
-    handleCloseDocument:{
-        value: function() {
-            if(this.application.ninja.documentController._documents.length === 0){
-                this._eltArray.length = 0;
-                this._planesArray.length = 0;
             }
         }
     },
@@ -276,8 +266,8 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                     stage = this.application.ninja.stage,
                     minLeft = stage.userPaddingLeft,
                     minTop = stage.userPaddingTop,
-                    docLeft = stage.documentOffsetLeft,
-                    docTop = stage.documentOffsetTop,
+                    docLeft = stage.userContentLeft,
+                    docTop = stage.userContentTop,
                     l,
                     t,
                     plane,
@@ -307,7 +297,6 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                 }
 
                 if(!changed) {
-                    stage.layout.draw();
                     this.drawWorkingPlane();
                     this.draw3DCompass();
                 }
@@ -628,11 +617,11 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 	{
 		value: function ()
 		{
+            this.application.ninja.stage.clearGridCanvas();
 			if (!this.isDrawingGrid()) return;
 
 			var saveContext = this.getDrawingSurfaceElement();
-			//this.setDrawingSurfaceElement(window.stageManager.layoutCanvas);
-			this.setDrawingSurfaceElement(this.application.ninja.stage.layoutCanvas);
+			this.setDrawingSurfaceElement(this.application.ninja.stage.gridCanvas);
 
 			// 3 coordinate axes for the plane
 			var zAxis = [this._workingPlane[0], this._workingPlane[1], this._workingPlane[2]];

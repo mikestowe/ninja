@@ -37,11 +37,7 @@
                     "element": {"#": "disabledCondition"}
                 },
                 "bindings": {
-                    "condition": {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "disabled",
-                        "oneway": true
-                    }
+                    "condition": {"<-": "@owner.disabled"}
                 }
             },
 

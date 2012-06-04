@@ -12,7 +12,10 @@
     <script type="text/montage-serialization">
         {
             "menudata": {
-                "prototype": "js/data/menu-data"
+                "prototype": "js/data/menu-data",
+                "bindings": {
+                    "currentDocument": {"<-": "@owner.currentDocument"}
+                }
             },
 
             "menuController": {
@@ -21,11 +24,7 @@
                     "automaticallyOrganizeObjects": false
                 },
                 "bindings": {
-                    "content": {
-                        "boundObject": {"@": "menudata"},
-                        "boundObjectPropertyPath": "topLevelMenu",
-                        "oneway": true
-                    }
+                    "content": {"<-": "@menudata.topLevelMenu"}
                 }
             },
 
@@ -44,18 +43,8 @@
                     "element": { "#": "menuItem" }
                 },
                 "bindings": {
-                    "data": {
-                        "boundObject": {"@": "repetition"},
-                        "boundObjectPropertyPath": "objectAtCurrentIteration",
-                        "oneway": true
-                    },
-                    "_menu": {
-                        "boundObject": {"@": "repetition"},
-                        "boundObjectPropertyPath": "menuComponent",
-                        "oneway": true
-                    }
-
-
+                    "data": {"<-": "@repetition.objectAtCurrentIteration"},
+                    "_menu": {"<-": "@repetition.menuComponent"}
                 }
             },
             

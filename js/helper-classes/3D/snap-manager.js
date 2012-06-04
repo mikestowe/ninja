@@ -21,8 +21,9 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 	///////////////////////////////////////////////////////////////////////
 	// Instance variables
 	///////////////////////////////////////////////////////////////////////
-    drawingCanvas: { value: null, writable: true},
-    
+
+    currentStage: { value: null },
+
 	// we keep a stack of working planes to facilitate working on other planes temporarily
 	_workingPlaneStack : { value: [], writable: true },
 
@@ -83,14 +84,14 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 	popWorkingPlane : { value: function ()		{ workingPlane = this._workingPlaneStack.pop(); return workingPlane; }},
 
 	getStageWidth : { value: function ()		{
-		return parseInt(this.application.ninja.currentDocument.model.documentRoot.offsetWidth);
+		return parseInt(this.currentStage.offsetWidth);
 	}},
 
 	getStageHeight : { value: function ()		{
-		return parseInt(this.application.ninja.currentDocument.model.documentRoot.offsetHeight);
+		return parseInt(this.currentStage.offsetHeight);
 	}},
 
-    getStage : { value: function()		{        return this.application.ninja.currentDocument.model.documentRoot;    }},
+    getStage : { value: function()		{        return this.currentStage;    }},
 
 	getGridVertexHitRad : { value: function()		{  return this._gridVertexHitRad;				}},
 	getGridEdgeHitRad : { value: function()		{  return this._gridEdgeHitRad;					}},
@@ -2124,7 +2125,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 			if (hitRec)
 			{
 				var saveContext = drawUtils.getDrawingSurfaceElement();
-				drawUtils.setDrawingSurfaceElement(this.drawingCanvas);
+				drawUtils.setDrawingSurfaceElement(this.application.ninja.stage.drawingCanvas);
 				var context = drawUtils.getDrawingContext();
 				if (context)
 				{

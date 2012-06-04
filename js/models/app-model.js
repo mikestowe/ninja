@@ -9,6 +9,32 @@ var Montage = require("montage/core/core").Montage,
 
 exports.AppModel = Montage.create(Component, {
 
+    _currentDocument: {
+        value : null
+    },
+
+    currentDocument : {
+        get : function() {
+            return this._currentDocument;
+        },
+        set : function(value) {
+            if (value === this._currentDocument) {
+                return;
+            }
+
+            if(this._currentDocument && this._currentDocument.currentView === "design") {
+                this._currentDocument.model.draw3DGrid = this.show3dGrid;
+            }
+
+            this._currentDocument = value;
+
+            if(this._currentDocument && this._currentDocument.currentView === "design") {
+                this.show3dGrid = this._currentDocument.model.draw3DGrid;
+            }
+
+        }
+    },
+
     _livePreview: {
         value: false
     },
