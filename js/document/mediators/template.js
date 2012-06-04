@@ -227,7 +227,7 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                         if (template.styles[i].ownerNode.getAttribute) {
                             //Checking for node not to be loaded from file
                             if (template.styles[i].ownerNode.getAttribute('data-ninja-uri') === null && !template.styles[i].ownerNode.getAttribute('data-ninja-template') && !template.styles[i].ownerNode.getAttribute('data-ninja-external-url')) {
-                                if (docStyles[styleCounter]) {
+                                if (docStyles[styleCounter] && template.styles[i].ownerNode.getAttribute('data-ninja-node')) {
                                     //Inseting data from rules array into tag as string
                                     docStyles[styleCounter].innerHTML = this.getCssFromRules(template.styles[i].cssRules);
                                     //Syncing <style> tags count since it might be mixed with <link>
