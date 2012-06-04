@@ -99,11 +99,20 @@ exports.BaseDocumentModel = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
 	//TODO: Add API to allow other browser support
 	browserPreview: {
-        value: function (browser) {
+        value: function (browser, screen, context) {
+        	//Making call to show feedback screen
+        	if (screen) screen.show(context);
         	//Generating URL for document
         	var url = this.application.ninja.coreIoApi.rootUrl + this.file.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1];
         	//TODO: Add logic to prompt user to save (all) before preview
-        	this.saveAll(null,function (result) {
+        	this.saveAll(null,function (success) {
+        		//Making call to show feedback screen
+        		if (screen) screen.hide(context);
+        		//TODO: Add error handling logic
+        		if (!success) {
+	        		console.log('Error!');
+	        		return;
+        		}
         		//Currently only supporting current browser (Chrome, obviously)
         		switch (this.browser) {
         			case 'chrome':

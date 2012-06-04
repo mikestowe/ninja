@@ -152,29 +152,38 @@ exports.IoMediator = Montage.create(Component, {
         }
     },
     ////////////////////////////////////////////////////////////////////
-    //
+    //TODO: Optimize
     fileSave: {
         value: function (doc, callback, libCopyCallback) {
             //
-            var contents, save;
+            var content, parsedDoc, save;
             //
             switch (doc.mode) {
                 case 'html':
                     //Getting content from function to properly handle saving assets (as in external if flagged)
                     if (doc.template && (doc.template.type === 'banner' || doc.template.type === 'animation')) {
-                    	contents = this.tmplt.parseNinjaTemplateToHtml(doc, true, libCopyCallback);
+                    	parsedDoc = this.tmplt.parseNinjaTemplateToHtml(doc, true, libCopyCallback);
                     } else {
-                    	contents = this.tmplt.parseNinjaTemplateToHtml(doc, false, libCopyCallback);
+                    	parsedDoc = this.tmplt.parseNinjaTemplateToHtml(doc, false, libCopyCallback);
                     }
                     break;
                 default:
-                    contents = doc.content;
+                    content = doc.content;
                     break;
             }
-            //Making call to save file
-            save = this.fio.saveFile({ uri: doc.file.uri, contents: contents });
-            //Checking for callback
-            if (callback) callback(save);
+            if (parsedDoc) {
+            	//Making call to save file
+            	save = this.fio.saveFile({uri: doc.file.uri, contents: parsedDoc.content});
+            	//Checking for callback
+            	if (callback) callback(save);
+            	//
+            	if (!parsedDoc.libs && libCopyCallback) libCopyCallback(true); 
+            } else {
+	            //Making call to save file
+            	save = this.fio.saveFile({uri: doc.file.uri, contents: content});
+            	//Checking for callback
+            	if (callback) callback(save);
+            }
         }
     },
     ////////////////////////////////////////////////////////////////////
