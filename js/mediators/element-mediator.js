@@ -54,7 +54,7 @@ exports.ElementMediator = Montage.create(Component, {
 
             document.application.undoManager.add(undoLabel, this.removeElements, this, elements, notify);
 
-            this.application.ninja.documentController.activeDocument.model.needsSave = true;
+            this.application.ninja.currentDocument.model.needsSave = true;
 
             if(notify || notify === undefined) {
                 NJevent("elementAdded", elements);
@@ -83,7 +83,7 @@ exports.ElementMediator = Montage.create(Component, {
 
             document.application.undoManager.add(undoLabel, this.addElements, this, elements, null, notify);
 
-            this.application.ninja.documentController.activeDocument.model.needsSave = true;
+            this.application.ninja.currentDocument.model.needsSave = true;
 
             NJevent("elementsRemoved", elements);
         }
@@ -98,7 +98,7 @@ exports.ElementMediator = Montage.create(Component, {
 
             document.application.undoManager.add(undoLabel, this.replaceElement, this, oldChild, newChild);
 
-            this.application.ninja.documentController.activeDocument.model.needsSave = true;
+            this.application.ninja.currentDocument.model.needsSave = true;
 
             if(notify || notify === undefined) {
                 NJevent("elementReplaced", {type : "replaceElement", data: {"newChild": newChild, "oldChild": oldChild}});

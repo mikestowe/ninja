@@ -22,7 +22,7 @@ exports.TextDocumentModel = Montage.create(BaseDocumentModel, {
     save: {
         enumerable: false,
         value: function (callback) {
-            this.application.ninja.documentController.activeDocument.model.views.code.editor.save();//save to textarea
+            this.application.ninja.currentDocument.model.views.code.editor.save();//save to textarea
 
             var self = this;
 
@@ -60,7 +60,6 @@ exports.TextDocumentModel = Montage.create(BaseDocumentModel, {
             	}
             	//
                 this.parentContainer.removeChild(this.views.code.textViewContainer);
-                this.application.ninja.stage.showCodeViewBar(false);
                 this.application.ninja.stage.restoreAllPanels();
                 this.views.code = null;
 

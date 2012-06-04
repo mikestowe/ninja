@@ -56,7 +56,10 @@
                 }
             },
             "threeDProperties": {
-                "prototype": "js/panels/properties.reel/sections/three-d-view.reel[ThreeD]"
+                "prototype": "js/panels/properties.reel/sections/three-d-view.reel[ThreeD]",
+                "bindings": {
+                    "currentDocument": {"<-": "@owner.currentDocument"}
+                }
             },
 
             "CustomSections": {

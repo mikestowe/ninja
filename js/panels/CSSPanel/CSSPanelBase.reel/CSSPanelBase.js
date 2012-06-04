@@ -57,11 +57,6 @@ var CSSPanel = exports.CSSPanelBase = (require("montage/core/core").Montage).cre
 
             this.eventManager.addEventListener("selectionChange", this, true);
             this.eventManager.addEventListener("elementChange", this, true);
-            this.eventManager.addEventListener("openDocument", this, true);
-
-            if(this.application.ninja.currentDocument) {
-                this.captureOpenDocument();
-            }
 
             this.addEventListener('webkitTransitionEnd', this, false);
             ['sheets', 'styles'].forEach(function(section) {
@@ -73,11 +68,29 @@ var CSSPanel = exports.CSSPanelBase = (require("montage/core/core").Montage).cre
             this._setUpToolbars();
         }
     },
-    captureOpenDocument : {
-        value : function(e) {
-            this.populateStyleSheetList();
+
+    _currentDocument: {
+        value : null,
+        enumerable : false
+    },
+
+    currentDocument : {
+        get : function() {
+            return this._currentDocument;
+        },
+        set : function(value) {
+            if (value === this._currentDocument) {
+                return;
+            }
+
+            this._currentDocument = value;
+
+            if(this._currentDocument.currentView === "design") {
+                this.populateStyleSheetList();
+            }
         }
     },
+
     handleWebkitTransitionEnd : {
         value: function(e) {
             //console.log('transition end at panel base');

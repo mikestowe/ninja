@@ -213,7 +213,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                 default:
                     CanvasController.setProperty(el, p, value);
             }
-            this.application.ninja.documentController.activeDocument.model.needsSave = true;
+            this.application.ninja.currentDocument.model.needsSave = true;
         }
     },
 
@@ -559,7 +559,7 @@ exports.ShapesController = Montage.create(CanvasController, {
                 }
             }
             el.elementModel.shapeModel.GLWorld.render();
-            this.application.ninja.documentController.activeDocument.model.needsSave = true;
+            this.application.ninja.currentDocument.model.needsSave = true;
         }
     },
 

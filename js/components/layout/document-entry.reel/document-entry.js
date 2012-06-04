@@ -9,15 +9,7 @@ var Component = require("montage/ui/component").Component;
 
 exports.DocumentEntry = Montage.create(Component, {
 
-    dirty: { value: null },
-
-    _uuid: {
-        value: null,
-        enumerable: false
-    },
-
     _document: {
-        enumerable: false,
         value: null
     },
 
@@ -27,20 +19,17 @@ exports.DocumentEntry = Montage.create(Component, {
             return this._document;
         },
         set: function(value) {
-
             if (this._document === value) {
                 return;
             }
 
             this._document = value;
-
-            if(value) {
-                this._uuid = value.uuid;
-            }
         }
     },
 
-    _name: { value: null },
+    _name: {
+        value: null
+    },
 
     name: {
         enumerable: false,
@@ -55,25 +44,6 @@ exports.DocumentEntry = Montage.create(Component, {
 
             this._name = value;
             this.needsDraw = true;
-        }
-    },
-
-    _active: {
-        enumerable: false,
-        value: null
-    },
-
-    active: {
-        get: function() {
-            return this._active;
-        },
-        set: function(value) {
-            var previousValue = this._active;
-            this._active = value;
-
-            if (previousValue !== this._active) {
-                this.needsDraw = true;
-            }
         }
     },
 
@@ -93,20 +63,10 @@ exports.DocumentEntry = Montage.create(Component, {
         }
     },
 
-    prepareForDraw: {
-        enumerable: false,
-        value: function() {
-           this.element.addEventListener("click", this, false);
-        }
-    },
-
-
     draw: {
         enumerable: false,
         value: function() {
             this.label.innerText = this._name ? this._name : "";
-
-            this._active ? this.element.classList.add("activeTab") : this.element.classList.remove("activeTab");
 
             if(this.saveFlag) {
                 this.label.classList.add("dirty");
@@ -116,15 +76,9 @@ exports.DocumentEntry = Montage.create(Component, {
         }
     },
 
-    handleClick: {
-        value: function(event) {
-            if(event._event.target.nodeName === "IMG") {
-                this.application.ninja.documentController.closeFile(this.application.ninja.documentController._findDocumentByUUID(this._uuid));
-            } else {
-                if(!this.active) {
-                    this.application.ninja.documentController.switchDocuments(this.application.ninja.currentDocument, this.application.ninja.documentController._findDocumentByUUID(this._uuid));
-                }
-            }
+    handleCloseButtonAction: {
+        value: function() {
+            this.application.ninja.documentController.closeFile(this.document);
         }
     }
 
