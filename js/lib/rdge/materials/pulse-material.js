@@ -61,8 +61,8 @@ var PulseMaterial = function PulseMaterial()
 	this.setProperty = function( prop, value ) {
 		// make sure we have legitimate imput
 		var ok = this.validateProperty( prop, value );
-		if (!ok) {
-			console.log( "invalid property in Radial Gradient Material:" + prop + " : " + value );
+		if (!ok && (prop != 'color')) {
+			console.log( "invalid property in Material:" + prop + " : " + value );
 		}
 
 		switch (prop)

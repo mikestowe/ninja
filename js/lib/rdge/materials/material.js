@@ -210,7 +210,7 @@ var Material = function GLMaterial( world ) {
 			console.log( "setting invalid material property: " + prop + ", value: " + value );
 		}
 		
-		if (!rtnVal) {
+		if (!rtnVal && (prop != 'color')) {
 			console.log( "invalid material property: " + prop + " : " + value );
         }
 
