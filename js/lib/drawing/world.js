@@ -437,15 +437,15 @@ World.prototype.getGeomRoot = function()  {
 World.prototype.updateObject = function (obj) {
 	if (!this._useWebGL)  return;
 
-    var prims = obj.getPrimitiveArray();
+	var prims = obj.getPrimitiveArray();
 	var materialNodes = obj.getMaterialNodeArray();
-    if (prims.length != materialNodes.length)
-        throw new Error("inconsistent material and primitive counts");
-    var nPrims = prims.length;
-    var ctrTrNode;
-    if (nPrims > 0)
+	if (prims.length != materialNodes.length)
+		throw new Error("inconsistent material and primitive counts");
+	var nPrims = prims.length;
+	var ctrTrNode;
+	if (nPrims > 0)
 	{
-        ctrTrNode = obj.getTransformNode();
+		ctrTrNode = obj.getTransformNode();
 		if (ctrTrNode == null) {
 			ctrTrNode = RDGE.createTransformNode("objRootNode_" + this._nodeCounter++);
 			this._rootNode.insertAsChild( ctrTrNode );
@@ -459,42 +459,42 @@ World.prototype.updateObject = function (obj) {
 		);
 		ctrTrNode.meshes = [];
 
-        ctrTrNode.attachMeshNode(this.renderer.id + "_prim_" + this._nodeCounter++, prims[0]);
-        ctrTrNode.attachMaterial(materialNodes[0]);
-    }
+		ctrTrNode.attachMeshNode(this.renderer.id + "_prim_" + this._nodeCounter++, prims[0]);
+		ctrTrNode.attachMaterial(materialNodes[0]);
+	}
 	
+	// delete all of the child nodes
+	var i;
+	var childTrNode;
 	var children = ctrTrNode.children;
-    for (var i = 1; i < nPrims; i++)
+	for (i=0;  i<children.length;  i++)
 	{
-        // get the next primitive
-        var prim = prims[i];
+		childTrNode = children[i].transformNode;
+		childTrNode.meshes.forEach(
+			function(thisMesh)
+			{
+				RDGE.globals.meshMan.deleteMesh(thisMesh.mesh.name);
+			}
+		);
+		childTrNode.meshes = [];
+		children[i] = null;
+	}
+	ctrTrNode.children = [];
 
-        // get a previously created transform node.  If the transform has not been created, create it
-        var childTrNode;
-		if (children && children.length >= i) {
-			childTrNode = children[i-1].transformNode;
+	for (var i = 1; i < nPrims; i++)
+	{
+		// get the next primitive
+		var prim = prims[i];
+		childTrNode = RDGE.createTransformNode("objNode_" + this._nodeCounter++);
+		ctrTrNode.insertAsChild(childTrNode);
 
-			childTrNode.meshes.forEach(
-				function(thisMesh)
-				{
-					RDGE.globals.meshMan.deleteMesh(thisMesh.mesh.name);
-				}
-			);
-			childTrNode.meshes = [];
-		}
-		else
-		{
-			childTrNode = RDGE.createTransformNode("objNode_" + this._nodeCounter++);
-			ctrTrNode.insertAsChild(childTrNode);
-		}
+		// attach the instanced box goe
+		childTrNode.attachMeshNode(this.renderer.id + "_prim_" + this._nodeCounter++, prim);
+		childTrNode.attachMaterial(materialNodes[i]);
+	}
 
-        // attach the instanced box goe
-        childTrNode.attachMeshNode(this.renderer.id + "_prim_" + this._nodeCounter++, prim);
-        childTrNode.attachMaterial(materialNodes[i]);
-    }
-
-    // send a notification that the tree has changed
-    this._notifier.sendNotification( this._notifier.OBJECT_CHANGE );
+	// send a notification that the tree has changed
+	this._notifier.sendNotification( this._notifier.OBJECT_CHANGE );
 };
 
 World.prototype.addObject = function( obj )
