@@ -85,6 +85,12 @@ exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
         }
     },
 
+    captureSelectionChange: {
+        value: function(event){
+            this.eventManager.addEventListener("selectionDrawn", this, true);
+        }
+    },
+
     captureSelectionDrawn: {
         value: function(event){
             this._origin = null;
@@ -114,6 +120,11 @@ exports.RotateStage3DTool = Montage.create(Rotate3DToolBase, {
             this._origin = viewUtils.localToGlobal(eltCtr, stage);
             this._setTransformOrigin(false);
             this.DrawHandles();
+
+            if(event)
+            {
+                this.eventManager.removeEventListener("selectionDrawn", this, true);
+            }
         }
     },
 

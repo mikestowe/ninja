@@ -45,18 +45,12 @@ exports.RuleListContainer = Montage.create(Component, {
             for(i = 0; i<this.ruleLists.length; i++) {
                 list = this.ruleLists[i];
 
-                if(selection.length > 1) {
+                if(selection.length === list.selection.length) {
                     matchesAll = selection.every(function(element, index, array) {
                         return list.selection.indexOf(element) !== -1;
                     });
 
                     if(matchesAll) {
-                        break;
-                    }
-                } else {
-                    ///// Selection (single element or stylesheet) is the same,
-                    ///// Use the existing rule list
-                    if(list.selection[0] === selection[0]) {
                         break;
                     }
                 }

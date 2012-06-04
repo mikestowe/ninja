@@ -11,3 +11,6 @@
 .drag-over {
     /*background-color: red;*/
 }
+.css-animation-prevent * {
+    -webkit-transition-duration: 0 !important;
+}

@@ -25,7 +25,10 @@
             },
 
             "appModel": {
-                "prototype": "js/models/app-model"
+                "prototype": "js/models/app-model",
+                "bindings": {
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
+                }
             },
 
             "materialsModel": {
@@ -36,6 +39,9 @@
                 "prototype": "js/components/menu/menu.reel",
                 "properties": {
                     "element": {"#": "mainMenuBar"}
+                },
+                "bindings": {
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
                 }
             },
 
@@ -118,7 +124,7 @@
                 ]
             },
 
-            "Resizer": {
+            "resizer3": {
                 "prototype": "js/panels/resize-composer",
                 "properties": {
                     "element": {"#": "pasteboardResizer"},
@@ -144,51 +150,61 @@
                 ]
             },
 
+            "stylesController": {
+                "prototype": "js/controllers/styles-controller",
+                "bindings": {
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
+                }
+            },
+
             "stageMode": {
                 "prototype": "js/components/layout/stage-mode.reel",
                 "properties": {
                     "element": {"#": "stageMode"}
                 },
                 "bindings" : {
-                    "livePreview": {
-                        "boundObject": {"@": "appModel"},
-                        "boundObjectPropertyPath": "livePreview",
-                        "oneway": false
-                    }
+                    "livePreview": {"<<->": "@appModel.livePreview"}
                 }
             },
 
-            "toolsList1": {
+            "toolsList": {
                 "prototype": "js/components/layout/tools-list.reel",
                 "properties": {
                     "element": {"#": "toolsList"},
                     "toolsData": {"@": "toolsData1"}
+                },
+                "bindings": {
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
                 }
             },
 
-            "toolsProperties1": {
+            "toolsProperties": {
                 "prototype": "js/components/layout/tools-properties.reel",
                 "properties": {
                     "element": {"#": "toolsProperties"},
                     "toolsData": {"@": "toolsData1"}
+                },
+                "bindings": {
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
                 }
             },
 
             "documentsTab": {
                 "prototype": "js/components/layout/documents-tab.reel",
                 "properties": {
-                    "element": {"#": "openDocumentsTabComponent"}
+                    "element": {"#": "openDocumentsTabComponent"},
+                    "contentController": {"@": "documentList"}
                 }
             },
 
-            "stage1": {
+            "stage": {
                 "prototype": "js/stage/stage.reel",
                 "properties": {
                     "element": {"#": "stageAndScenesContainer"},
                     "appModel":     {"@": "appModel"}
                 },
                 "bindings": {
-                    "activeDocument": {"<-": "@documentController1.activeDocument"}
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
                 }
             },
 
@@ -196,6 +212,9 @@
                 "prototype": "js/components/layout/document-bar.reel",
                 "properties": {
                     "element": {"#": "documentBar"}
+                },
+                "bindings": {
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
                 }
             },
 
@@ -203,6 +222,9 @@
                 "prototype": "js/code-editor/ui/code-editor-view-options.reel",
                 "properties": {
                     "element": {"#": "editorViewOptions"}
+                },
+                "bindings" : {
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
                 }
             },
 
@@ -212,6 +234,9 @@
                     "element": {"#": "rightPanelContent"},
                     "panelSplitter": {"@": "splitter3"},
                     "appModel":     {"@": "appModel"}
+                },
+                "bindings" : {
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
                 }
             },
 
@@ -221,19 +246,19 @@
                     "element":{"#" : "breadCrumbComponent"}
                 },
                 "bindings" : {
-                    "container": {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "currentSelectedContainer",
-                        "oneway": false
-                    }
+                    "container": {"<-": "@owner.currentSelectedContainer"},
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
                 }
-             },
+            },
 
             "timeline": {
-               "prototype": "js/panels/Timeline/TimelinePanel.reel",
-               "properties": {
-                   "element": {"#": "timelinePanelComponent"}
-               }
+                "prototype": "js/panels/Timeline/TimelinePanel.reel",
+                "properties": {
+                    "element": {"#": "timelinePanelComponent"}
+                },
+                "bindings": {
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
+                }
             },
 
             "mouseMediator": {
@@ -263,15 +288,30 @@
                 "prototype": "js/controllers/undo-controller"
             },
 
-            "selectionController1": {
+            "selectionController": {
                 "prototype": "js/controllers/selection-controller",
                 "bindings" : {
-                    "selectionContainer": {"<-": "@owner.currentSelectedContainer"}
+                    "selectionContainer": {"<-": "@owner.currentSelectedContainer"},
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"},
+                    "selectedElements": {"<-": "@documentList.selectedObjects.0.model.selection"}
                 }
             },
 
-            "documentController1": {
-                "prototype": "js/controllers/document-controller"
+            "documentController": {
+                "prototype": "js/controllers/document-controller",
+                "bindings": {
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"}
+                }
+            },
+
+            "documentList": {
+                "prototype": "montage/ui/controller/array-controller",
+                "properties": {
+                    "selectObjectsOnAddition": true
+                },
+                "bindings": {
+                    "content": {"<<->": "@documentController.documents"}
+                }
             },
 
             "popupManager1": {
@@ -283,13 +323,6 @@
             
             "colorController1": {
                 "prototype": "js/controllers/color-controller"
-            },
-
-            "stylesController": {
-                "prototype": "js/controllers/styles-controller",
-                "bindings": {
-                    "activeDocument": {"<-": "@documentController1.activeDocument"}
-                }
             },
 
             "presetsController": {
@@ -320,7 +353,11 @@
             },
 
             "codeEditorController": {
-                "prototype": "js/controllers/code-editor-controller"
+                "prototype": "js/controllers/code-editor-controller",
+                "bindings": {
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"},
+                    "automaticCodeComplete": {"<-": "@editorViewOptions.codeCompleteCheck.disabled"}
+                }
             },
 
             "clipboardController": {
@@ -335,14 +372,14 @@
                     "rulerLeft":            {"#": "rulerLeft"},
                     "appModel":             {"@": "appModel"},
                     "toolsData":            {"@": "toolsData1"},
-                    "toolsList":            {"@": "toolsList1"},
-                    "toolsProperties":      {"@": "toolsProperties1"},
-                    "stage":                {"@": "stage1"},
+                    "toolsList":            {"@": "toolsList"},
+                    "toolsProperties":      {"@": "toolsProperties"},
+                    "stage":                {"@": "stage"},
                     "elementMediator":      {"@": "elementMediator"},
                     "dragDropMediator":     {"@": "dragDropMediator"},
                     "undocontroller":       {"@": "undocontroller1"},
-                    "selectionController":  {"@": "selectionController1"},
-                    "documentController":   {"@": "documentController1"},
+                    "selectionController":  {"@": "selectionController"},
+                    "documentController":   {"@": "documentController"},
                     "popupManager":         {"@": "popupManager1"},
 					"colorController":      {"@": "colorController1"},
                     "stylesController":     {"@": "stylesController"},
@@ -361,7 +398,8 @@
                     "timelineSplitter":     {"@": "splitter4"},
                     "toolsSplitter":        {"@": "splitter2"},
                     "optionsSplitter":      {"@": "splitter1"},
-                    "clipboardController":  {"@": "clipboardController"}
+					"clipboardController":  {"@": "clipboardController"},
+                    "documentList":         {"@": "documentList"}
                 }
             }
         }
@@ -417,8 +455,8 @@
                         <section data-montage-id="timelineResizer" class="timelineResizer resizeBar"></section>
                         <section id="stateBar">
                             <section id="documentBarContainer">
-                                <div data-montage-id="documentBar" class="documentBar" style="display:block"><a href="#">HTML</a></div>
-                                <div data-montage-id="editorViewOptions" class="editorViewOptions" style="display:none"><a href="#">HTML</a></div>
+                                <div data-montage-id="documentBar" class="documentBar" style="display:block"></div>
+                                <div data-montage-id="editorViewOptions" class="editorViewOptions" style="display:none"></div>
                             </section>
                         </section>
 
