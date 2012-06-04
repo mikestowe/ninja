@@ -419,7 +419,7 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                     }
                 }
                 //
-                if (!webgltag && !fileCvsDir) {
+                if (!webgltag && !fileCvsDir && !fileOrgDataSrc) {
                     webgltag = template.file.content.document.createElement('script');
                     webgltag.setAttribute('data-ninja-canvas', 'true');
                     if (ninjaWrapper) {
