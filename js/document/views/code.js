@@ -82,12 +82,6 @@ exports.CodeDocumentView = Montage.create(BaseDocumentView, {
         	//
             var type;
             //
-            if(this.activeDocument) {
-                //need to hide only if another document was open before
-                //this.application.ninja.documentController._hideCurrentDocument();
-				//this.hideOtherDocuments(doc.uuid);
-            }
-            //
             switch(file.extension) {
                 case  "css" :
                     type = "css";

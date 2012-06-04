@@ -63,11 +63,6 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         set: function(value) {this._document = value;}
     },
     ////////////////////////////////////////////////////////////////////
-	//
-    propertiesPanel: {
-        value: null
-    },
-    ////////////////////////////////////////////////////////////////////
     //
     _liveNodeList: {
         value: null
