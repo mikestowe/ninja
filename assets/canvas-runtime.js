@@ -2030,8 +2030,6 @@ NinjaCvsRt.RuntimeBrushStroke = Object.create(NinjaCvsRt.RuntimeGeomObj, {
     _OrigLocalPoints: {value: null, writable: true},
 
     _strokeWidth: {value: 0, writable: true},
-    _strokeColor: {value: null, writable: true},
-    _strokeWidth: {value: 0, writable: true},
     _strokeColor: {value: 0, writable: true},
     _strokeHardness: {value: 0, writable: true},
     _strokeUseCalligraphic : {value: 0, writable: true},
@@ -2113,7 +2111,7 @@ NinjaCvsRt.RuntimeBrushStroke = Object.create(NinjaCvsRt.RuntimeGeomObj, {
                 return;
             }
 
-             // get the context
+            // get the context
             var ctx = world.get2DContext();
             if (!ctx)  {
                 throw( "null world in brush stroke render" );
