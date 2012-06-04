@@ -8,6 +8,24 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
 exports.CssPanel = Montage.create(Component, {
+
+    _currentDocument: {
+        value : null
+    },
+
+    currentDocument : {
+        get : function() {
+            return this._currentDocument;
+        },
+        set : function(value) {
+            if (value === this._currentDocument) {
+                return;
+            }
+
+            this._currentDocument = value;
+        }
+    },
+
     prepareForDraw : {
         value: function() {
         }

@@ -40,11 +40,6 @@ exports.ComponentsPanel = Montage.create(Component, {
                             "component": "picasa-carousel"
                         },
                         {
-                            "text": "Search Bar",
-                            "dataFile" : "node_modules/components-data/searchfield.json",
-                            "component": "searchfield"
-                        },
-                        {
                             "text": "Youtube Channel",
                             "dataFile" : "node_modules/components-data/youtube-channel.json",
                             "component": "youtube-channel"
@@ -351,7 +346,6 @@ exports.ComponentsPanel = Montage.create(Component, {
                     el.setAttribute("type", "range");
                     break;
                 case "textfield":
-                case "searchfield":
                     el = document.application.njUtils.make("input", null, this.application.ninja.currentDocument);
                     document.application.njUtils.createModelForComponent(el, "Textfield");
                     el.setAttribute("type", "text");

@@ -19,7 +19,16 @@
     min-width:0px;
 }
 
-.documentEntry img {
+.documentCloseButton {
+    display: inline;
+    -webkit-appearance: none;
+    outline: none;
+    cursor: pointer;
+    border: 0px;
+    background: #474747 url(../../../../images/documentsTab/close_button.gif) center center no-repeat;
+}
+
+.documentEntry button {
     opacity: 0.5; /* 50% */
     width: 12px;
     max-width:12px;
@@ -29,16 +38,13 @@
     transition: opacity 0.2s ease;
 }
 
-.documentEntry:hover,
-.documentEntry:active,
-.documentEntry.activeTab {
-    /*background-color: #7f7f7f; *//* rgb(127, 127, 127); */
+.documentEntry.selected {
+    background-color:#7F7F7F;
 }
 
-.documentEntry img:hover {
+.documentEntry button:hover {
     opacity: 1.0; /* 100% */
 }
-
 
 .documentEntry span.dirty:before{
     content: "*";

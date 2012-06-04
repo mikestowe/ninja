@@ -122,7 +122,6 @@ exports.PanTool = Montage.create(toolBase,
         value: function ()
 		{
 			var uc = this.application.ninja.currentDocument.model.documentRoot;
-			//var uc = documentManagerModule.DocumentManager.activeDocument
 			var ucMat = viewUtils.getMatrixFromElement(uc);
 
 			var noTrans = ucMat.slice();
