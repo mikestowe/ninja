@@ -13,7 +13,8 @@
             "owner": {
                 "prototype": "js/panels/binding-panel.reel",
                 "properties": {
-                    "element": {"#": "binding"}
+                    "element": {"#": "binding"},
+                    "editView": {"@": "editBinding"}
                 }
             },
             "arrayController": {
@@ -41,16 +42,23 @@
                     "boundObject": {"<-": "@repetition.objectAtCurrentIteration.boundObject"},
                     "oneway": {"<-": "@repetition.objectAtCurrentIteration.oneway"}
                 }
+            },
+            "editBinding": {
+                "prototype": "js/panels/binding/edit-binding-view.reel",
+                "properties": {
+                    "element": {"#": "edit-binding-view" }
+                }
             }
 
     	}
 		</script>
 	</head>
 <body>
-    <div data-montage-id="binding">
+    <div data-montage-id="binding" class="binding-panel">
         <ul data-montage-id="bindings-list" class="bindings-list">
             <li data-montage-id="binding-item" class="binding-item"></li>
         </ul>
+        <div data-montage-id="edit-binding-view" class="edit-binding-view"></div>
     </div>
 </body>
 </html>
