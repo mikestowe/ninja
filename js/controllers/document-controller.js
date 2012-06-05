@@ -291,19 +291,19 @@ exports.DocumentController = Montage.create(Component, {
         value:function(saveAsDetails){
             var fileUri = null, filename = saveAsDetails.filename, destination = saveAsDetails.destination;
             //update document metadata
-            this.activeDocument.name = ""+filename;
+            this.currentDocument.model.file.name = ""+filename;
             //prepare new file uri
             if(destination && (destination.charAt(destination.length -1) !== "/")){
                 destination = destination + "/";
             }
             fileUri = destination+filename;
 
-            this.activeDocument.uri = fileUri;
+            this.currentDocument.model.file.uri = fileUri;
             //save a new file
             //use the ioMediator.fileSaveAll when implemented
-            this.activeDocument.model.file.name = filename;
-            this.activeDocument.model.file.uri = fileUri;
-            this.activeDocument.model.save();
+            this.currentDocument.model.file.name = filename;
+            this.currentDocument.model.file.uri = fileUri;
+            this.currentDocument.model.save();
         }
     },
 
