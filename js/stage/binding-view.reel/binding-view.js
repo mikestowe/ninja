@@ -13,7 +13,7 @@ var Montage = require("montage/core/core").Montage,
 
 exports.BindingView = Montage.create(Component, {
     //private Properties
-    _selectedElement: {
+    _selectedComponent: {
         value: null
     },
     _bindables: {
@@ -38,12 +38,22 @@ exports.BindingView = Montage.create(Component, {
 
 
     //Public Properties
-    selectedElement: {
+    selectedComponent: {
         get: function() {
-            return this._selectedElement;
+            return this._selectedComponent;
         },
         set: function(val) {
-            this._selectedElement = val;
+            this._selectedComponent = val;
+            this.application.ninja.objectsController.currentObject = this.selectedComponent;
+            var arrBindings = this.application.ninja.objectsController.currentObjectBindings;
+            arrBindings.forEach(function(obj) {
+                 
+            }.bind(this));
+            // Get Bindings that exist;
+
+
+            //Get Properties of Elements in bindings;
+
             this.needsDraw = true;
         }
     },
@@ -73,13 +83,19 @@ exports.BindingView = Montage.create(Component, {
     },
 
     //Methods
-
-
+    canvas: {
+        get: function() {
+            return this._canvas;
+        },
+        set: function(val) {
+            this._canvas = val;
+        }
+    },
 
     //Montage Draw Cycle
     prepareForDraw: {
         value: function() {
-            this._canvas = this.application.ninja.stage.drawingCanvas;
+            //this._canvas = this.application.ninja.stage.drawingCanvas;
             this._context = this._canvas.getContext('2d');
             this.application.ninja.stage._iframeContainer.addEventListener("scroll", this, false);
         }
@@ -87,39 +103,42 @@ exports.BindingView = Montage.create(Component, {
 
     draw: {
         value: function() {
-            if(this.selectedElement !== null) {
-                this.bindables = [
-                    {
-                        "title": "Input1",
-                        "properties": [
-                            {"title":"Value",
-                                "bindings": [
-                                    {"direction": "<-", "boundObject":"Checkbox1", "boundProperty": "Value"}
-                                ]
-                            },
-                            {"title": "Width", "bindings": []}
-                        ],
-                        "x": 20,
-                        "y": 20
-                    },
-                    {
-                        "title": "Checkbox1",
-                        "properties": [
-                            {"title":"Group" , "bindings": []},
-                            {"title":"Value",
-                                "bindings": [
-                                    {"direction": "->", "boundObject":"Input1", "boundProperty": "Value"}
-                                ]
-                            }
-                        ],
-                        "x": 120,
-                        "y": 120
-                    }
-                ];
-                this.drawBlueLine(100,100,200,200)
+            if(this.selectedComponent !== null) {
+//                this.bindables = [
+//                    {
+//                        "title": "Input1",
+//                        "properties": [
+//                            {"title":"Value",
+//                                "bindings": [
+//                                    {"direction": "<-", "boundObject":"Checkbox1", "boundProperty": "Value"}
+//                                ]
+//                            },
+//                            {"title": "Width", "bindings": []}
+//                        ],
+//                        "x": 20,
+//                        "y": 20
+//                    },
+//                    {
+//                        "title": "Checkbox1",
+//                        "properties": [
+//                            {"title":"Group" , "bindings": []},
+//                            {"title":"Value",
+//                                "bindings": [
+//                                    {"direction": "->", "boundObject":"Input1", "boundProperty": "Value"}
+//                                ]
+//                            }
+//                        ],
+//                        "x": 120,
+//                        "y": 120
+//                    }
+//                ];
+                this.canvas.width  = this.application.ninja.stage.drawingCanvas.offsetWidth;
+                this.canvas.height = this.application.ninja.stage.drawingCanvas.offsetHeight;
+                this.clearCanvas();
+                this.drawBlueLine(110,53,210,173);
 
             } else {
-                this.bindables = [];
+                //this.bindables = [];
             }
 
         }
@@ -128,12 +147,18 @@ exports.BindingView = Montage.create(Component, {
     drawBlueLine: {
         value: function(fromX,fromY,toX,toY) {
             this._context.lineWidth = 4; // Set Line Thickness
-            this._context.strokeStyle = "#00F"
+            this._context.strokeStyle = "#5e9eff"
 
             this._context.beginPath(); // Start Drawing Line
             this._context.moveTo(fromX, fromY);
             this._context.lineTo(toX, toY);
             this._context.stroke();
+        }
+    },
+
+    clearCanvas: {
+        value: function() {
+            this._context.clearRect(0,0,this._canvas.offsetWidth,this._canvas.offsetHeight);
         }
     },
 

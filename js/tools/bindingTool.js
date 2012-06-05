@@ -64,7 +64,7 @@ exports.BindingTool = Montage.create(ModifierToolBase, {
 
             if(this._hasDraw) {
                 this._hasDraw = false;
-                this.endDraw(event);
+                //this.endDraw(event);
             } else {
                 this.doSelection(event);
                 if (this.application.ninja.selectedElements.length !== 0 ) {
@@ -74,8 +74,7 @@ exports.BindingTool = Montage.create(ModifierToolBase, {
                 } else {
                     this.selectedComponent = null;
                 }
-                this.application.ninja.stage.bindingView.selectedElement = this.selectedComponent;
-                this.application.ninja.objectsController.currentObject = this.selectedComponent;
+                this.application.ninja.stage.bindingView.selectedComponent = this.selectedComponent;
                 this._isDrawing = false;
             }
             //this.endDraw(event);

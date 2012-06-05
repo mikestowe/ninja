@@ -12,30 +12,53 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
 exports.BindingHudOption = Montage.create(Component, {
-    title: {
-        value: "value"
+    _title: {
+        value: null
     },
-    _bindings: {
+
+    title: {
+        get: function() {
+            return this._title;
+        },
+        set: function(val) {
+            this._title = val;
+            this.needsDraw = true;
+        }
+    },
+
+    bound: {
+        value: false
+    },
+
+    _hudOptions: {
         value: []
     },
 
-    bindings: {
+    hudOptions: {
         get: function() {
-            return this._bindings;
+            return this._hudOptions;
         },
         set: function(val) {
-            this._bindings = val;
+            this._hudOptions = val;
+            this.title = val.title;
+            this.bound = val.bound;
             this.needsDraw = true;
         }
     },
 
     draw: {
         value:function() {
-            if(this.bindings.length > 0) {
+            if(this.bound) {
+                console.log(this.title);
                 this.element.classList.add("bound");
             } else {
                 this.element.classList.remove("bound");
             }
+//            if(this.bindings.length > 0) {
+//                this.element.classList.add("bound");
+//            } else {
+//                this.element.classList.remove("bound");
+//            }
         }
     }
 });

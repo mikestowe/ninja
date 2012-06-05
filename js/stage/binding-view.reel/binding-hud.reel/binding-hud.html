@@ -14,7 +14,8 @@
             "owner": {
                 "prototype": "js/stage/binding-view.reel/binding-hud.reel",
                 "properties": {
-                    "element": {"#": "bindingHud"}
+                    "element": {"#": "bindingHud"},
+                    "titleElement": {"#": "title"}
                 }
             },
             "repeater": {
@@ -32,17 +33,7 @@
                     "element": {"#" : "hudOption"}
                 },
                 "bindings": {
-                    "title": {"<-": "@repeater.objectAtCurrentIteration.title"},
-                    "bindings": {"<-": "@repeater.objectAtCurrentIteration.bindings"}
-                }
-            },
-            "Title": {
-                "prototype": "montage/ui/dynamic-text.reel",
-                "properties": {
-                    "element": {"#": "title"}
-                },
-                "bindings": {
-                    "value": {"<-": "@owner.title"}
+                    "hudOptions": {"<-": "@repeater.objectAtCurrentIteration"}
                 }
             }
         }

@@ -16,7 +16,7 @@
                 "properties": {
                     "element": {"#": "bindingView"},
                     "hudRepeater": {"@": "hudRepeater"},
-                    "bindingViewCanvas": {"#": "bindingViewCanvas"}
+                    "canvas": {"#": "bindingViewCanvas"}
                 }
             },
             "hudRepeater": {
@@ -34,10 +34,7 @@
                     "element": {"#" : "hud"}
                 },
                 "bindings": {
-                    "title": {"<-": "@hudRepeater.objectAtCurrentIteration.title"},
-                    "properties": {"<-": "@hudRepeater.objectAtCurrentIteration.properties"},
-                    "x": {"<-": "@hudRepeater.objectAtCurrentIteration.x"},
-                    "y": {"<-": "@hudRepeater.objectAtCurrentIteration.y"}
+                    "bindingArgs": {"<-": "@hudRepeater.objectAtCurrentIteration"}
                 }
             },
             "nonVisualRepeater": {
@@ -67,7 +64,7 @@
 
 
     <section data-montage-id="bindingView" class="bindingView">
-        <div data-montage-id="hudRepeater" class="hudRepetition">
+        <div data-montage-id="hudRepeater" class="hudRepeater">
             <div data-montage-id="hud">
 
             </div>
