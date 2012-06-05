@@ -69,39 +69,46 @@ exports.InkBottleTool = Montage.create(ModifierToolBase, {
 
             if(this._canColor && this.application.ninja.selectedElements.length)
             {
-                var color = this.options.stroke,
-                    colorInfo;
-                if(color && color.color)
-                {
-                    colorInfo = { mode:color.colorMode,
-                                   color:color.color
-                                };
-                }
-                else
-                {
-                    colorInfo = { mode:"nocolor",
-                                   color:color.color
-                                };
+                var strokeInfo = {},
+                    color;
+                if(this.options.useStrokeColor.checked) {
+                    strokeInfo.colorInfo = {};
+                    color = this.options.stroke;
+                    if(color && color.color)
+                    {
+                        strokeInfo.colorInfo.mode = color.colorMode;
+                        strokeInfo.colorInfo.color = color.color;
+                    } else {
+                        strokeInfo.colorInfo.mode = "nocolor";
+                        strokeInfo.colorInfo.color = null;
+                    }
                 }
 
                 if(this.options.useBorderWidth.checked || this.options.useBorderStyle.checked) {
-                    colorInfo.borderInfo = {};
+                    strokeInfo.borderInfo = {};
                     if(this.options.useBorderWidth.checked) {
-                        colorInfo.borderInfo.borderWidth = this.options.borderWidth.value;
-                        colorInfo.borderInfo.borderUnits = this.options.borderWidth.units;
+                        strokeInfo.borderInfo.borderWidth = this.options.borderWidth.value;
+                        strokeInfo.borderInfo.borderUnits = this.options.borderWidth.units;
                     }
                     if(this.options.useBorderStyle.checked) {
-                        colorInfo.borderInfo.borderStyle = this.options.borderStyle.value;
+                        strokeInfo.borderInfo.borderStyle = this.options.borderStyle.value;
                     }
                 }
 
                 if(this.options.useStrokeSize.checked) {
-                    colorInfo.strokeInfo = {};
-                    colorInfo.strokeInfo.strokeSize = this.options.strokeSize.value;
-                    colorInfo.strokeInfo.strokeUnits = this.options.strokeSize.units;
+                    strokeInfo.shapeInfo = {};
+                    strokeInfo.shapeInfo.strokeSize = this.options.strokeSize.value;
+                    strokeInfo.shapeInfo.strokeUnits = this.options.strokeSize.units;
                 }
 
-                ElementsMediator.setColor(this.application.ninja.selectedElements, colorInfo, false, "Change", "inkBottleTool");
+                if(this.options.useWebGL.checked) {
+                    strokeInfo.webGLInfo = {};
+                    strokeInfo.webGLInfo.material = this.options.strokeMaterial.value;
+                }
+
+                if(strokeInfo.colorInfo || strokeInfo.borderInfo || strokeInfo.shapeInfo || strokeInfo.webGLInfo) {
+                    ElementsMediator.setStroke(this.application.ninja.selectedElements, strokeInfo, "Change", "inkBottleTool");
+                }
             }
         }
     }
