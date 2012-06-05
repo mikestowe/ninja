@@ -77,6 +77,37 @@ GLSubpath.prototype.buildBuffers = function () {
     //no need to do anything for now (no WebGL)
 };
 
+//buildColor returns the fillStyle or strokeStyle for the Canvas 2D context
+GLSubpath.prototype.buildColor = function(ctx,          //the 2D rendering context (for creating gradients if necessary)
+                                          ipColor,      //color string, also encodes whether there's a gradient and of what type
+                                          w,            //width of the region of color
+                                          h,            //height of the region of color
+                                          lw)           //linewidth (i.e. stroke width/size)
+{
+    if (ipColor.gradientMode){
+        var position, gradient, cs, inset; //vars used in gradient calculations
+        inset = Math.ceil( lw ) - 0.5;
+
+        if(ipColor.gradientMode === "radial") {
+            var ww = w - 2*lw,  hh = h - 2*lw;
+            gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(ww, hh)/2);
+        } else {
+            gradient = ctx.createLinearGradient(inset, h/2, w-inset, h/2);
+        }
+        var colors = ipColor.color;
+
+        var len = colors.length;
+        for(n=0; n<len; n++) {
+            position = colors[n].position/100;
+            cs = colors[n].value;
+            gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+        }
+        return gradient;
+    } else {
+        var c = "rgba(" + 255*ipColor[0] + "," + 255*ipColor[1] + "," + 255*ipColor[2] + "," + ipColor[3] + ")";
+        return c;
+    }
+};
 //render
 //  specify how to render the subpath in Canvas2D
 GLSubpath.prototype.render = function () {
@@ -112,17 +143,17 @@ GLSubpath.prototype.render = function () {
 
     ctx.lineWidth = this._strokeWidth;
     ctx.strokeStyle = "black";
+
+    //vars used for the gradient computation in buildColor
+    var w = world.getViewportWidth(), h = world.getViewportHeight();
+
     if (this._strokeColor) {
-        //ctx.strokeStyle = MathUtils.colorToHex( this._strokeColor );
-        var strokeColorStr = "rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+this._strokeColor[3]+")";
-        ctx.strokeStyle = strokeColorStr;
+        ctx.strokeStyle = this.buildColor(ctx, this._strokeColor, w,h, this._strokeWidth);
     }
 
     ctx.fillStyle = "white";
     if (this._fillColor){
-        //ctx.fillStyle = MathUtils.colorToHex( this._fillColor );
-        var fillColorStr = "rgba("+parseInt(255*this._fillColor[0])+","+parseInt(255*this._fillColor[1])+","+parseInt(255*this._fillColor[2])+","+this._fillColor[3]+")";
-        ctx.fillStyle = fillColorStr;
+        ctx.fillStyle = this.buildColor(ctx, this._fillColor, w, h, this._strokeWidth);
     }
     var lineCap = ['butt','round','square'];
     ctx.lineCap = lineCap[1];
