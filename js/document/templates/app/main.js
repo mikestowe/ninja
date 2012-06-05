@@ -81,6 +81,7 @@ exports.Main = Montage.create(Component, {
             //
             var templateEvent = document.createEvent("CustomEvent");
             templateEvent.initCustomEvent("mjsTemplateReady", false, true);
+            document.body.dispatchEvent(templateEvent);
         }
     },
 
