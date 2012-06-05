@@ -46,7 +46,6 @@ exports.PenTool = Montage.create(ShapeTool, {
     _isEscapeDown: {value: false, writable: true },
 
     //whether we have just started a new path (may set true in mousedown, and always set false in mouse up
-    //todo this seems to be unnecessary
     _isNewPath: {value: false, writable: true},
 
     //whether we have clicked one of the endpoints after entering the pen tool in ENTRY_SELECT_PATH edit mode
@@ -73,7 +72,10 @@ exports.PenTool = Montage.create(ShapeTool, {
 
     //the center of the subpath center in stageworld space
     _selectedSubpathCanvasCenter: {value: null, writable: true},
-    
+
+    //this flag is set true by the Configure(true) and set false by Configure(false) or handleSelectionChange
+    _doesSelectionChangeNeedHandling: {value: false, writable: true},
+
     //constants used for picking points --- todo: these should be user-settable parameters
     _PICK_POINT_RADIUS: { value: 4, writable: false },
     _DISPLAY_ANCHOR_RADIUS: { value: 5, writable: false },
@@ -286,7 +288,7 @@ exports.PenTool = Montage.create(ShapeTool, {
 
             //assume we are not starting a new path as we will set this to true if we create a new Subpath()
             this._isNewPath = false;
-
+            
             //if we had closed the selected subpath previously, or if we have not yet started anything, create a subpath
             if (this._entryEditMode !== this.ENTRY_SELECT_PATH && this._selectedSubpath && this._selectedSubpath.getIsClosed() && this._makeMultipleSubpaths) {
                 this._selectedSubpath = null;
@@ -691,6 +693,7 @@ exports.PenTool = Montage.create(ShapeTool, {
             var top = Math.round(midPt[1] - 0.5 * h);
 
             if (!canvas) {
+                this._doesSelectionChangeNeedHandling = false; //this will ignore the selection change event triggered by the new canvas
                 var newCanvas = document.application.njUtils.make("canvas", {"data-RDGE-id": NJUtils.generateRandom()}, this.application.ninja.currentDocument);
                 document.application.njUtils.createModelWithShape(newCanvas, "Subpath");
                 var styles = document.application.njUtils.stylesFromDraw(newCanvas, parseInt(w), parseInt(h), {midPt: midPt, planeMat: planeMat});
@@ -733,8 +736,9 @@ exports.PenTool = Montage.create(ShapeTool, {
                 //now send the event that will add this canvas to the timeline
                 NJevent("elementAdded", newCanvas);
 
-                if(newCanvas.elementModel.isShape) //todo why is this not true for the path canvas?
+                if(newCanvas.elementModel.isShape)
                 {
+                    this._doesSelectionChangeNeedHandling = false; //this will ignore the selection change event triggered by the new canvas
                     this.application.ninja.selectionController.selectElement(newCanvas);
                 }
             } //if (!canvas) {
@@ -775,8 +779,9 @@ exports.PenTool = Montage.create(ShapeTool, {
                 //TODO this will not work if there are multiple shapes in the same canvas
                 canvas.elementModel.shapeModel.GLGeomObj = subpath;
 
-                if(canvas.elementModel.isShape) //todo why is this not true for the path canvas?
+                if(canvas.elementModel.isShape) 
                 {
+                    this._doesSelectionChangeNeedHandling = false; //this will ignore the selection change event triggered by the canvas
                     this.application.ninja.selectionController.selectElement(canvas);
                 }
             } //else of if (!canvas) {
@@ -842,6 +847,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                 this.PrepareSelectedSubpathForRendering();
                 this.ShowSelectedSubpath();
             } //if (this._selectedSubpath.getNumPoints() > 0) {
+
 
             //always assume that we're not starting a new path anymore
             this._isNewPath = false;
@@ -1404,6 +1410,8 @@ exports.PenTool = Montage.create(ShapeTool, {
             this._selectedSubpathCanvas = null;
             this._selectedSubpathPlaneMat = null;
             this._snapTargetIndex = -1;
+            //clear the canvas
+            this.application.ninja.stage.clearDrawingCanvas();
         }
     },
     //if the document is opened with the pen tool being active, we do the same thing as when configure(false) is called
@@ -1442,9 +1450,14 @@ exports.PenTool = Montage.create(ShapeTool, {
                 this.application.ninja.stage.drawingCanvas.style.cursor = //"auto";
                     "url('images/cursors/penCursors/Pen_newPath.png') 5 1, default";
 
-                if (this.application.ninja.selectedElements.length === 0){
+                //TODO in case of switching between docs, this call to setEntryMode may refer to the old document,
+                //   which is why we set the _doesSelectionChangeNeedHandling flag next
+                this.setEntryMode();
+                this._doesSelectionChangeNeedHandling = true; //this will make sure that the setEntry mode gets called by the selectionChange handler
+                /*if (this.application.ninja.selectedElements.length === 0){
                     this._entryEditMode = this.ENTRY_SELECT_NONE;
                 }
+                
                 else{
                     for (var i=0;i<this.application.ninja.selectedElements.length;i++){
                         var element = this.application.ninja.selectedElements[i];
@@ -1486,6 +1499,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                     }
                 }
                 this._isPickedEndPointInSelectPathMode = false; //only applies to the ENTRY_SELECT_PATH mode
+                */
 
                 this.handlePenSubToolChange();
                 //this._subtool = this.SUBTOOL_NONE; //this.SUBTOOL_PENMINUS;
@@ -1497,12 +1511,15 @@ exports.PenTool = Montage.create(ShapeTool, {
                 this.eventManager.addEventListener("switchDocument", this, false);
                 this.eventManager.addEventListener("closeDocument", this, false);
                 this.eventManager.addEventListener("penSubToolChange", this, false);
+                this.eventManager.addEventListener("selectionChange", this, false);
+                                
             } //if the pen tool was selected
             else {
                 if (this._trackMouseMoveWhenUp){
                     NJevent("disableStageMove");
                 }
                 this.deselectPenTool();
+
                 defaultEventManager.removeEventListener("resetPenTool", this, false);
                 this.application.ninja.elementMediator.deleteDelegate = null;
                 
@@ -1510,10 +1527,70 @@ exports.PenTool = Montage.create(ShapeTool, {
                 this.eventManager.removeEventListener("switchDocument", this, false);
                 this.eventManager.removeEventListener("closeDocument", this, false);
                 this.eventManager.removeEventListener("penSubToolChange", this, false);
+                this.eventManager.removeEventListener("selectionChange", this, false);
+                this._doesSelectionChangeNeedHandling = false;
             } //if the pen tool was de-selected
         }
     },
 
+    handleSelectionChange: {
+        value: function(){
+            if (this._doesSelectionChangeNeedHandling){
+                this.setEntryMode();
+            }
+            this._doesSelectionChangeNeedHandling = false;
+        }
+    },
+    setEntryMode:{
+        value: function(){
+            if (this.application.ninja.selectedElements.length === 0){
+                this._entryEditMode = this.ENTRY_SELECT_NONE;
+                this._selectedSubpath = null;
+            }
+            else {
+                for (var i=0;i<this.application.ninja.selectedElements.length;i++){
+                    var element = this.application.ninja.selectedElements[i];
+                    //console.log("Entered pen tool, had selected: " + element.elementModel.selection);
+                    if (element.elementModel.selection === 'Subpath'){ //TODO what to do if the canvas is drawn by tag tool?
+                        //set the pen canvas to be the selected canvas
+                        this._selectedSubpathCanvas = this.application.ninja.selectedElements[i];
+
+                        // get the subpath for this world
+                        this._selectedSubpath = null;
+                        this._entryEditMode = this.ENTRY_SELECT_CANVAS; //by default, we're in this mode...change if we find a subpath contained in this canvas
+                        var world = ElementMediator.getShapeProperty(this._selectedSubpathCanvas, "GLWorld");
+                        if (world === null){
+                            throw("Pen tool handleSelectionChange did not work correctly");
+                            break; //something bad happened //TODO handle this better
+                        }
+
+                        //TODO assuming that we want the first subpath in this world...fix this!
+                        var go = world.getGeomRoot();
+                        if (go !== null){
+                            while (go.geomType() !== go.GEOM_TYPE_CUBIC_BEZIER && go.getNext()) {
+                                go = go.getNext(); //find the first subpath in this world
+                            }
+                            if (go.geomType() === go.GEOM_TYPE_CUBIC_BEZIER){
+                                this._entryEditMode = this.ENTRY_SELECT_PATH;
+                                this._selectedSubpath = go;
+                                this._selectedSubpath.deselectAnchorPoint();
+                                this.DrawSubpathAnchors(this._selectedSubpath);
+
+                                //get the selected subpath properties
+                                this._selectedSubpathCanvas = element;
+                                this._selectedSubpathPlaneMat = ElementMediator.getMatrix(element);
+                            }
+                        }
+                        break; //assume that we want to edit only the first subpath found in the selected canvases
+                    } else {
+                        this._entryEditMode = this.ENTRY_SELECT_NONE;
+                    }
+                }
+            }
+            this._isPickedEndPointInSelectPathMode = false; //only applies to the ENTRY_SELECT_PATH mode
+        }
+    },
+    
     handlePenSubToolChange: {
         value: function() {
             switch (this.options.selectedSubtool){
@@ -1559,8 +1636,6 @@ exports.PenTool = Montage.create(ShapeTool, {
                     ElementController.removeElement(els[i]);
                 }
                 NJevent( "elementsRemoved", els );
-
-                console.log("handleDelete with "+len+" selected elements");
                  
                 //clear out the selected path if it exists
                 if (this._selectedSubpath) {
