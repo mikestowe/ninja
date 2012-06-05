@@ -684,7 +684,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 this.nextKeyframe += 1;
             }
 
-            this.application.ninja.documentController.activeDocument.model.needsSave = true;
+            this.application.ninja.currentDocument.model.needsSave = true;
         }
     },
 
@@ -884,7 +884,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             keyframeString += " }";
             // set the keyframe string as the new rule
             this.currentKeyframeRule = this.ninjaStylesContoller.addRule(keyframeString);
-            this.application.ninja.documentController.activeDocument.model.needsSave = true;
+            this.application.ninja.currentDocument.model.needsSave = true;
         }
     },
 

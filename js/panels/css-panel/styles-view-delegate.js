@@ -30,7 +30,7 @@ exports.StylesViewDelegate = Montage.create(Component, {
         value: function(selector, direction) {
             if(!selector) { return false; }
 
-            var elements = this.stylesController._activeDocument.model.views.design.document.querySelectorAll(selector),
+            var elements = this.stylesController.currentDocument.model.views.design.document.querySelectorAll(selector),
                 method = (direction === "out") ? "remove" : "add";
 
             Array.prototype.slice.call(elements).forEach(function(el) {
@@ -75,6 +75,13 @@ exports.StylesViewDelegate = Montage.create(Component, {
             this._dispatchChange();
         }
     },
+
+    handleSelectorStop : {
+        value: function(rule, newSelector, ruleComponent) {
+            ruleComponent.declarationComponent.repetition.childComponents[0].propertyField.start()
+        }
+    },
+
     _getClassNameFromSelector : {
         value: function(selectorText) {
             var results = /.*\.([A-Za-z0-9_-]+)\:?[A-Za-z0-9_"=-]*$/.exec(selectorText);
@@ -145,7 +152,7 @@ exports.StylesViewDelegate = Montage.create(Component, {
                         if(nextFocus) {
                             nextFocus.propertyField.start();
                         } else if(style.dirty) {
-                            style.parentComponent.parentComponent.addNewStyle();
+                            style.parentComponent.parentComponent.addNewStyle(true);
                             style.editingNewStyle = false;
                             setTimeout(function() {
                                 style.getSiblingStyle('next').propertyField.start();

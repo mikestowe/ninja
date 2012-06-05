@@ -88,6 +88,14 @@ exports.CssStyleRule = Montage.create(Component, {
             }
         }
     },
+    handleStop : {
+        value: function(e) {
+            if(this.focusDelegate) {
+                e._event.detail.preventDefault();
+                this.focusDelegate.handleSelectorStop(this.rule, this.selectorField.value, this);
+            }
+        }
+    },
     handleMouseover: {
         value: function(e) {
             if(this.focusDelegate) {
@@ -125,6 +133,7 @@ exports.CssStyleRule = Montage.create(Component, {
                 this.declarationComponent.type = 'inline';
             } else {
                 this.selectorField.addEventListener('change', this, false);
+                this.selectorField.addEventListener('stop', this, false);
                 this.selectorField.element.addEventListener('mouseover', this, false);
                 this.selectorField.element.addEventListener('mouseout', this, false);
             }

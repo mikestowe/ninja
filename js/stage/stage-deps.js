@@ -14,6 +14,7 @@ var Montage = 			require("montage/core/core").Montage,
     VecUtils = 			require("js/helper-classes/3D/vec-utils").VecUtils;
 
 exports.StageDeps = Montage.create(Component, {
+
     viewUtils: {
         value: viewUtils
     },
@@ -37,8 +38,6 @@ exports.StageDeps = Montage.create(Component, {
             window.MathUtils   = MathUtilsClass;
             window.VecUtils   = VecUtils;
 
-            snapManager.drawingCanvas = this.stage.drawingCanvas;
-
             // Setup the listeners for the draw-util and snapmanager when removing elements
             // TODO Revisit when supporting multiple documents
             drawUtils.initialize();
@@ -57,28 +56,6 @@ exports.StageDeps = Montage.create(Component, {
             drawUtils.snapManager = snapManager;
             drawUtils.ElementPlanes = ElementPlanes;
         }
-    },
-
-    handleOpenDocument: {
-        value: function() {
-
-            workingPlane = [0,0,1,0];
-
-            snapManager._isCacheInvalid = true;
-            snapManager.setupDragPlaneFromPlane (workingPlane);
-
-            drawUtils.initializeFromDocument();
-        }
-    },
-
-    handleSwitchDocument: {
-        value: function(){
-            workingPlane = [0,0,1,0];
-
-            snapManager._isCacheInvalid = true;
-            snapManager.setupDragPlaneFromPlane (workingPlane);
-
-            drawUtils.initializeFromDocument();
-        }
     }
+
 });

@@ -15,6 +15,41 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     },
 
     /* === BEGIN: Models === */
+    _currentDocument: {
+        value : null
+    },
+
+    currentDocument : {
+        get : function() {
+            return this._currentDocument;
+        },
+        set : function(value) {
+            if (value === this._currentDocument) {
+                return;
+            }
+
+            if(!this._currentDocument && value.currentView === "design") {
+                this.enablePanel(true);
+            }
+
+            this._currentDocument = value;
+
+            if(!value) {
+                this.enablePanel(false);
+            } else if(this._currentDocument.currentView === "design") {
+                this._boolCacheArrays = false;
+                this.clearTimelinePanel();
+                this._boolCacheArrays = true;
+
+                // Rebind the document events for the new document context
+                this._bindDocumentEvents();
+
+                // TODO: Fix the init function so that it can be called here instead of when container changes
+                // this.initTimelineForDocument();
+            }
+        }
+    },
+
     _arrLayers:{
         value:[]
     },
@@ -145,8 +180,16 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     		return this._currentSelectedContainer;
     	},
     	set: function(newVal) {
-    		this._currentSelectedContainer = newVal;
-    		this.handleDocumentChange();
+            if(this._currentSelectedContainer !== newVal) {
+    		    this._currentSelectedContainer = newVal;
+
+                this._boolCacheArrays = false;
+                this.clearTimelinePanel();
+                this._boolCacheArrays = true;
+
+                // TODO: Fix the function so that we can remove this call here.
+                this.initTimelineForDocument();
+            }
     	}
     },
 
@@ -391,6 +434,20 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     prepareForDraw:{
         value:function () {
             this.initTimeline();
+
+            // Bind drag and drop event handlers
+            this.container_layers.addEventListener("dragstart", this.handleLayerDragStart.bind(this), false);
+            this.container_layers.addEventListener("dragend", this.handleLayerDragEnd.bind(this), false);
+            this.container_layers.addEventListener("dragover", this.handleLayerDragover.bind(this), false);
+            this.container_layers.addEventListener("drop", this.handleLayerDrop.bind(this), false);
+            
+            // Bind the handlers for the config menu
+            this.checkable_animated.addEventListener("click", this.handleAnimatedClick.bind(this), false);
+            this.checkable_relative.addEventListener("click", this.handleRelativeClick.bind(this), false);
+            this.checkable_absolute.addEventListener("click", this.handleAbsoluteClick.bind(this), false);
+            this.tl_configbutton.addEventListener("click", this.handleConfigButtonClick.bind(this), false);
+            document.addEventListener("click", this.handleDocumentClick.bind(this), false);
+
         }
     },
     
@@ -792,36 +849,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
     handleDocumentChange:{
         value:function () {
-        	// console.log("TimelinePanel.handleDocumentChange");
-        	
-			if (this.application.ninja.currentDocument == null) {
-				// On app initialization, the binding is triggered before
-				// there is a currentDocument.  We don't do anything at that time.
-				return;
-			}
-			
-			// Is this the same document?
-			if (this._currentDocumentUuid === this.application.ninja.currentDocument.uuid) {
-				// Yes, same document, so we are changing levels.
-				this.application.ninja.currentDocument.setLevel = true;
-				this._ignoreSelectionChanges = true;
-			}
-			
-            this._boolCacheArrays = false;
-            this.clearTimelinePanel();
-            this._boolCacheArrays = true;
 
-            // Rebind the document events for the new document context
-            this._bindDocumentEvents();
-
-            // Reinitialize the timeline...but only if there are open documents.
-            if (this.application.ninja.documentController._documents.length > 0) {
-                this.enablePanel(true);
-                this.initTimelineForDocument();
-
-            } else {
-                this.enablePanel(false);
-            }
         }
     },
 
