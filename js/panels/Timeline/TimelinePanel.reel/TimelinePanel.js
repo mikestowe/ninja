@@ -618,7 +618,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this.end_hottext.addEventListener("changing", this.updateTrackContainerWidth.bind(this), false);
             this.playhead.addEventListener("mousedown", this.startPlayheadTracking.bind(this), false);
             this.playhead.addEventListener("mouseup", this.stopPlayheadTracking.bind(this), false);
-            this.time_markers.addEventListener("click", this.updatePlayhead.bind(this), false); 
+            this.time_markers.addEventListener("click", this.updatePlayhead.bind(this), false);
+ 
 			// Start the panel out in disabled mode by default
 			// (Will be switched on later, if appropriate).
             this.enablePanel(false);
