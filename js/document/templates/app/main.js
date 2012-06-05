@@ -8,10 +8,36 @@ var Montage = 			require("montage/core/core").Montage,
     Template =			require("montage/ui/template").Template,
     TemplateCreator =	require("tools/template/template-creator").TemplateCreator;
 
+
+//var njmodelGet = function njmodelGet() {
+//    return (this.hasOwnProperty("_model") ? this._model: document.modelGenerator.call(this));
+//};
+//
+//Object.defineProperty(Object.prototype, "_model", {
+//    enumerable: false,
+//    value: null,
+//    writable: true
+//});
+//
+//Object.defineProperty(Object.prototype, "elementModel", {
+//    configurable: true,
+//    get: njmodelGet,
+//    set: function() {
+//    }
+//});
+
 exports.Main = Montage.create(Component, {
 
     hasTemplate: {
         value: false
+    },
+
+    componentToInsert: {
+        value: null
+    },
+
+    firstDrawCallback: {
+        value: null
     },
 
     /**
@@ -24,6 +50,12 @@ exports.Main = Montage.create(Component, {
             window.addComponent = function(element, data, callback) {
                 var component;
 
+                if(!self.firstDrawCallback) {
+                    self.firstDrawCallback = {};
+                    self.firstDrawCallback.callback = data.firstDraw.cb;
+                    self.firstDrawCallback.context = data.firstDraw.ctx;
+                }
+
                 component = require.async(data.path)
                     .then(function(component) {
                         var componentRequire = component[data.name];
@@ -33,6 +65,9 @@ exports.Main = Montage.create(Component, {
 
                         componentInstance.needsDraw = true;
                         componentInstance.ownerComponent = self;
+
+                        self.componentToInsert = componentInstance;
+                        componentInstance.addEventListener("firstDraw", self, false);
 
                         callback(componentInstance, element);
                     })
@@ -47,15 +82,15 @@ exports.Main = Montage.create(Component, {
             var templateEvent = document.createEvent("CustomEvent");
             templateEvent.initCustomEvent("mjsTemplateReady", false, true);
             document.body.dispatchEvent(templateEvent);
-			
-			
-            // Dispatch event when this template has loaded.
-            /*
-            var newEvent = document.createEvent( "CustomEvent" );
-            newEvent.initCustomEvent( "userTemplateDidLoad", false, true );
-            document.body.dispatchEvent( newEvent );
-            */
+        }
+    },
 
+    handleFirstDraw: {
+        value: function() {
+            this.firstDrawCallback.callback.call(this.firstDrawCallback.context, this.componentToInsert);
+
+            this.componentToInsert.removeEventListener("firstDraw", this, false);
+            this.componentToInsert = null;
         }
     }
 });

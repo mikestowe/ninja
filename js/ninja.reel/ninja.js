@@ -4,10 +4,11 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
-var Montage = require("montage/core/core").Montage,
-    Component   = require("montage/ui/component").Component,
-    UndoManager = require("montage/core/undo-manager").UndoManager,
-    AppData     = require("js/data/appdata").AppData;
+var Montage = 		require("montage/core/core").Montage,
+    Component =		require("montage/ui/component").Component,
+    UndoManager = 	require("montage/core/undo-manager").UndoManager,
+    AppData = 		require("js/data/appdata").AppData,
+    Popup = 		require("js/components/popup.reel").Popup;
 
 var matrix = require("js/lib/math/matrix");
 var NjUtils = require("js/lib/NJUtils").NJUtils;
@@ -195,12 +196,42 @@ exports.Ninja = Montage.create(Component, {
     
     
     ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
 	//TODO: Expand method to allow other browsers for preview
     executeChromePreview: {
     	value: function () {
-    		this.currentDocument.model.browserPreview('chrome');
+    		//TODO: Make into proper component
+    		this.saveOperationScreen = {};
+    		this._saveOperationPopup = {};
+    		//Show
+    		this.saveOperationScreen.show = function (ctxt) {
+    			//
+    			ctxt._saveOperationPopup.blackout = document.createElement('div');
+    			ctxt._saveOperationPopup.blackout.style.width = '100%';
+    			ctxt._saveOperationPopup.blackout.style.height = '100%';
+    			ctxt._saveOperationPopup.blackout.style.background = 'rgba(0,0,0,0.8)'; //'-webkit-radial-gradient(center, ellipse cover, rgba(0,0,0,.65) 0%, rgba(0,0,0,0.8) 80%)';
+    			ctxt.application.ninja.popupManager.addPopup(ctxt._saveOperationPopup.blackout);
+    		};
+    		//Hide
+    		this.saveOperationScreen.hide = function (ctxt) {
+	    		ctxt.application.ninja.popupManager.removePopup(ctxt._saveOperationPopup.blackout);
+    		};
+    		//
+    		this.currentDocument.model.browserPreview('chrome', this.saveOperationScreen, this);
     	}
     },
+	////////////////////////////////////////////////////////////////////
+	
+	//TODO: Make into proper component
+	_saveOperationPopup: {
+		value: null
+	},
+	//TODO: Make into proper component
+	saveOperationScreen: {
+		value: null
+	},
+	
+	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
 	
 	
