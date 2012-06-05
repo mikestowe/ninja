@@ -389,7 +389,6 @@ exports.ElementMediator = Montage.create(Component, {
      @param eventType: Change/Changing. Will be passed to the dispatched event
      @param source: String for the source object making the call
      @param currentValue *OPTIONAL*: current value array. If not found the current value is calculated
-     @param stageRedraw: *OPTIONAL*: True. If set to false the stage will not redraw the selection/outline
      */
     setStroke: {
         value: function(els, value, eventType, source, currentValue) {
@@ -445,6 +444,44 @@ exports.ElementMediator = Montage.create(Component, {
             }
 
             NJevent("element" + eventType, {type : "setStroke", source: source, data: {"els": els, "prop": "stroke", "value": value}, redraw: null});
+        }
+    },
+
+    getFill: {
+        value: function(el, fillProperties) {
+            return el.elementModel.controller["getFill"](el, fillProperties);
+        }
+    },
+
+
+    /**
+     Set a property change command for an element or array of elements
+     @param els: Array of elements. Can contain 1 or more elements
+     @param value: Value to be set. This is the fill info
+     @param eventType: Change/Changing. Will be passed to the dispatched event
+     @param source: String for the source object making the call
+     @param currentValue *OPTIONAL*: current value array. If not found the current value is calculated
+     */
+    setFill: {
+        value: function(els, value, eventType, source, currentValue) {
+
+            if(eventType !== "Changing") {
+                // Calculate currentValue if not found for each element
+                if(!currentValue) {
+                    var that = this,
+                        val = value;
+                    currentValue = els.map(function(item) {
+                        return that.getFill(item, val);
+                    });
+                }
+                document.application.undoManager.add("Set fill", this.setFill, this, els, currentValue, eventType, source, value);
+            }
+
+            for(var i=0, item; item = els[i]; i++) {
+                item.elementModel.controller["setFill"](item, (value[i] || value), eventType, source);
+            }
+
+            NJevent("element" + eventType, {type : "setFill", source: source, data: {"els": els, "prop": "fill", "value": value}, redraw: null});
         }
     },
 

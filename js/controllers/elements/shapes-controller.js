@@ -584,6 +584,44 @@ exports.ShapesController = Montage.create(CanvasController, {
         }
     },
 
+    getFill: {
+        value: function(el, fill) {
+            var fillInfo = {},
+                color;
+            if(fill.colorInfo) {
+                fillInfo.colorInfo = {};
+                color = this.getColor(el, true);
+                if(color && color.color) {
+                    fillInfo.colorInfo.mode = color.mode;
+                    fillInfo.colorInfo.color = color.color;
+                } else {
+                    fillInfo.colorInfo.mode = "nocolor";
+                    fillInfo.colorInfo.color = null;
+                }
+            }
+            if(fill.webGLInfo) {
+                fillInfo.webGLInfo = {};
+                if(this.getShapeProperty(el, "useWebGl")) {
+                    fillInfo.webGLInfo.material = this.getProperty("fillMaterial");
+                } else {
+                    fillInfo.webGLInfo.material = null;
+                }
+            }
+            return fillInfo;
+        }
+    },
+
+    setFill: {
+        value: function(el, fill, eventType, source) {
+            if(fill.colorInfo) {
+                this.setColor(el, fill.colorInfo, true);
+            }
+            if(fill.webGLInfo) {
+                this.setProperty(el, "fillMaterial", fill.webGLInfo.material, eventType, source);
+            }
+        }
+    },
+
     DisplayMaterials: {
         value: function (cb)
         {
