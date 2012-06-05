@@ -240,7 +240,7 @@ exports.Stage = Montage.create(Component, {
 
                 // Hack for now until a full component
                 this.layout.draw();
-                if(this.currentDocument) {
+                if(this.currentDocument && (this.currentDocument.currentView === "design")) {
                     this.layout.draw3DInfo(true);
                 }
             } else if(this.updatedStage) {
