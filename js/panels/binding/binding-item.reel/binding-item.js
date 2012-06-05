@@ -20,8 +20,10 @@ exports.BindingItem = Montage.create(Component, {
         set: function(value) {
             if(value === this._sourceObject) { return; }
 
-            this.sourceObjectLabel = value.identifier;
-            
+            if(value && value.identifier) {
+                this.sourceObjectLabel = value.identifier;
+            }
+
             this._sourceObject = value;
         }
     },
@@ -33,7 +35,9 @@ exports.BindingItem = Montage.create(Component, {
         set: function(value) {
             if(value === this._boundObject) { return; }
 
-            this.boundObjectLabel = value.identifier;
+            if(value && value.identifier) {
+                this.boundObjectLabel = value.identifier;
+            }
 
             this._boundObject = value;
         }

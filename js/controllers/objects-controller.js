@@ -113,12 +113,38 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
 
     /* ---- Bindable Properties ---- */
 
-    getEnumerableProperties : {
+    getPropertyList : {
         value: function(object, excludeUnderscoreProperties) {
+            var object_i = object,
+                prototypes = [object_i];
+
+            ///// Collect prototypes
+            while(Object.getPrototypeOf(object_i)) {
+                object_i = Object.getPrototypeOf(object_i);
+                prototypes.push(object_i);
+            }
+
+            return prototypes.map(function(proto) {
+                var metadata = proto._montage_metadata,
+                    objectName = (metadata) ? metadata.objectName : "Object";
+
+                return {
+                    category : objectName,
+                    properties : this.getPropertiesFromObject(proto)
+                };
+            }, this);
+
+        }
+    },
+
+    getPropertiesFromObject : {
+        value: function (object, excludeUnderscoreProperties) {
             var properties = [];
 
             for(var key in object) {
-                properties.push(key);
+                if(object.hasOwnProperty(key)) {
+                    properties.push(key);
+                }
             }
 
             if(excludeUnderscoreProperties) {
@@ -146,7 +172,12 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
         set: function(value) {
             if(value === this._currentObject) { return; }
 
-            this.currentObjectBindings = this.getObjectBindings(value);
+            if(value) {
+                this.currentObjectBindings = this.getObjectBindings(value);
+                console.log("Property list", this.getPropertyList(value, true));
+            } else {
+                this.currentObjectBindings = [];
+            }
 
             this._currentObject = value;
         }
