@@ -57,35 +57,38 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
     //
     copyLibToCloud: {
         value: function (path, libName, callback) {
+        	var libCheck = this.coreApi.directoryExists({uri: path+libName});
         	//Checking for library to exists
-        	if(this.coreApi.directoryExists({uri: path+libName}).status === 404) {
+        	if(libCheck.status === 404) {
         		//Getting contents to begin copying
         		this.chromeApi.directoryContents(this.chromeApi.fileSystem.root, function (contents) {
         			for (var i in contents) {
     	    			if (libName === contents[i].name) {
 	        				//Getting contents of library to be copied
         					this.chromeApi.directoryContents(contents[i], function (lib) {
-        						//Copying to cloud, adding blocking if no callback specified
-        						if (!callback) {
-        							//TODO: Add blocking logic here
-	        						this.copyDirectoryToCloud(path, contents[i], path);
-        						} else {
-        							this.copyDirectoryToCloud(path, contents[i], path, callback);
-        						}
+        						//Copying to cloud
+        						if (callback) {
+           							this.copyDirectoryToCloud(path, contents[i], path, {total: 0, copied: 0, callback: callback.bind(this)});
+           						} else {
+	           						this.copyDirectoryToCloud(path, contents[i], path, {total: 0, copied: 0});
+           						}
         					}.bind(this));
         					break;
         				}
     	    		}
 	        	}.bind(this));
+        	} else if (libCheck.status === 204){
+        		//Already present, so sending success
+        		if (callback) callback(true);
         	} else {
-        		//TODO: Add error handling
+	        	if (callback) callback(false);
         	}
         }
     },
     ////////////////////////////////////////////////////////////////////
     //
     copyDirectoryToCloud: {
-    	value: function(root, folder, fileRoot, callback) {
+    	value: function(root, folder, fileRoot, tracking) {
     		//Setting up directory name
     		if (folder.name) {
     			var dir;
@@ -109,19 +112,30 @@ exports.NinjaLibrary = Montage.create(Object.prototype, {
 						//Checking for file or directory
 						if (contents[i].isDirectory) {
 							//Recursive call if directory
-							this.copyDirectoryToCloud(dir, contents[i], fileRoot);
+							this.copyDirectoryToCloud(dir, contents[i], fileRoot, tracking);
 						} else if (contents[i].isFile){
+							//
+							tracking.total++;
 							//Copying file 
 							this.chromeApi.fileContent(contents[i].fullPath, function (result) {
 								//Using binary when copying files to allow images and such to work
-								this.coreApi.createFile({uri: (fileRoot+result.file.fullPath).replace(/\/\//gi, '/'), contents: result.content});
+								var file = this.coreApi.createFile({uri: (fileRoot+result.file.fullPath).replace(/\/\//gi, '/'), contents: result.content});
+								//Checking for file copy success
+								if (file.status === 201) {
+									tracking.copied++;
+								} else {
+									//Error
+									tracking.callback(false);
+								}
+								//Checking for all files to be copied to make callback
+								if (tracking.copied === tracking.total && tracking.callback) {
+									tracking.callback(true);
+								}
 							}.bind(this));
 						}
 					}
 				}.bind(this));
 			}
-			//TODO Add logic for proper callback status(es)
-			if (callback) callback(true);
     	}
     },
 	////////////////////////////////////////////////////////////////////
