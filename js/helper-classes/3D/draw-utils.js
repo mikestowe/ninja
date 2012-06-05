@@ -1217,7 +1217,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			var saveLineWidth = this._lineWidth;
 
 			var origLeft = 60;
-			var origTop = this.snapManager.getStageHeight() - 60;
+			var origTop = tmpCanvas.height - 60;
 
 			var mat = this.viewUtils.getMatrixFromElement( this._sourceSpaceElt );
 			var tMat = Matrix.Translation([origLeft,origTop,0]);
