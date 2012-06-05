@@ -739,19 +739,18 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.animatedElement = this.application.ninja.timeline.arrLayers[selectedIndex].layerData.stageElement;
             if(this.animatedElement!==undefined){
                 this.animationName = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-name");
-
-                // check for multiple animation names
-                var animationNameList = this.animationName.split(",");
-                if(animationNameList.length > 1){
-                    this.animationNamesString = this.animationName;
-                    this.animationName = animationNameList[0];
-                    this.getAllAnimationRules(animationNameList);
-                } else {
-                    this.animationNamesString = this.animationName;
-                }
-
                 // build tweens for this tracks's keyframe rule
                 if(this.animationName){
+                    // check for multiple animation names
+                    var animationNameList = this.animationName.split(",");
+                    if (animationNameList.length > 1) {
+                        this.animationNamesString = this.animationName;
+                        this.animationName = animationNameList[0];
+                        this.getAllAnimationRules(animationNameList);
+                    } else {
+                        this.animationNamesString = this.animationName;
+                    }
+
                     trackTiming = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-duration");
                     this.nextKeyframe = 0;
 
