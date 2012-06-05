@@ -4,6 +4,10 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
+.binding-panel {
+    position: relative;
+    height: 100%;
+}
 
 .bindings-list {
     padding: 0;
