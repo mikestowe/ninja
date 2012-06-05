@@ -84,3 +84,15 @@ div.content-style input.nj-skinned {
 div.style-row .container-propvals {
   overflow: hidden;
 }
+
+/* line 80, ../scss/Style.scss */
+.content-style .style-row.selected {
+  background-color: #474747;
+  color: white;
+}
+
+/* line 84, ../scss/Style.scss */
+.content-style .style-row.style-selected {
+  background-color: #b2b2b2;
+  color: #242424;
+}

@@ -947,6 +947,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             for (i = 0; i < arrLayersLength; i++) {
             	if (this.arrLayers[i].layerData.isSelected === true) {
             		if (arrSelectedIndexes.indexOf(i) < 0) {
+
 						this.arrLayers[i].layerData.isSelected = false;
 	            		this.triggerLayerBinding(i);
             		}
@@ -1019,7 +1020,12 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     	value: function() {
     		var arrSelectedElements = [],
     			i = 0,
-    			arrLayersLength = this.arrLayers.length;
+    			j = 0,
+    			arrLayersLength = this.arrLayers.length,
+    			boolDoIt = false,
+    			arrSelectedElementsLength = 0,
+    			arrStageIndexes = this.getSelectedLayerIndexesFromStage(),
+    			arrStageIndexesLength = arrStageIndexes.length;
     		
     		// Get the selected layers
     		for (i = 0; i < arrLayersLength; i++) {
@@ -1027,9 +1033,25 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     				arrSelectedElements.push(this.arrLayers[i].layerData.stageElement);
     			}
     		}
+    		arrSelectedElementsLength = arrSelectedElements.length;
+
+			// check to see if we even need to continue...
+    		if (arrSelectedElementsLength !== arrStageIndexesLength) {
+    			boolDoIt = true;
+    		} else {
+    			for (i = 0; i < arrStageIndexesLength; i++) {
+    				if (this.currentLayersSelected.indexOf(arrStageIndexes[i]) < 0) {
+    					boolDoIt = true;
+    				}
+    			}
+    		}
+    		
+    		if (boolDoIt === false) {
+    			return;
+    		}
     		
     		// Select the layers, or clear the selection if none were found
-    		if (arrSelectedElements.length > 0) {
+    		if (arrSelectedElementsLength > 0) {
     			this.application.ninja.selectionController.selectElements(arrSelectedElements);
     		} else {
     			this.application.ninja.selectionController.executeSelectElement();

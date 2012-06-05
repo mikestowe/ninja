@@ -35,7 +35,7 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 			return this._isSelected;
 		},
 		set: function(newVal) {
-			console.log("Style["+this.styleID+"].isSelected.set ", newVal)
+
 			if (newVal !== this._isSelected) {
 				this._isSelected = newVal;
 				this.needsDraw = true;
