@@ -11,12 +11,21 @@
 
         <script type="text/montage-serialization">
         {
-            "borderWidthCh": {
+            "useStrokeColor": {
                 "prototype": "montage/ui/checkbox.reel",
                 "properties": {
-                    "element": {"#": "useBorderWidthCh"},
-                    "identifier": "useBorderWidth",
+                    "element": {"#": "useStrokeColor"},
+                    "identifier": "useStrokeColor",
                     "checked": true
+                }
+            },
+
+            "useBorderWidth": {
+                "prototype": "montage/ui/checkbox.reel",
+                "properties": {
+                    "element": {"#": "useBorderWidth"},
+                    "identifier": "useBorderWidth",
+                    "checked": false
                 },
                 "listeners": [
                     {
@@ -27,31 +36,24 @@
                 ]
             },
 
-            "borderWidthLabel": {
-                "prototype": "montage/ui/dynamic-text.reel",
-                "properties": {
-                    "element": {"#": "borderWidthLabel"},
-                    "value": "Border:"
-                }
-            },
-
-            "borderWidthHT": {
+            "borderWidth": {
                 "prototype": "js/components/hottextunit.reel[HotTextUnit]",
                 "properties": {
                     "element": {"#": "borderWidth"},
                     "minValue": 1,
                     "maxValue": 100,
                     "value": 1,
-                    "acceptableUnits" : ["px", "pt"]
+                    "acceptableUnits" : ["px", "pt"],
+                    "enabled": false
                 }
             },
 
-            "borderStyleCh": {
+            "useBorderStyle": {
                 "prototype": "montage/ui/checkbox.reel",
                 "properties": {
-                    "element": {"#": "useBorderStyleCh"},
+                    "element": {"#": "useBorderStyle"},
                     "identifier": "useBorderStyle",
-                    "checked": true
+                    "checked": false
                 },
                 "listeners": [
                     {
@@ -62,20 +64,12 @@
                 ]
             },
 
-            "borderStyleLabel": {
-                "prototype": "montage/ui/dynamic-text.reel",
-                "properties": {
-                    "element": {"#": "borderStyleLabel"},
-                    "value": "Style:"
-                }
-            },
-
-            "strokeSizeCh": {
+            "useStrokeSize": {
                 "prototype": "montage/ui/checkbox.reel",
                 "properties": {
-                    "element": {"#": "useStrokeSizeCh"},
+                    "element": {"#": "useStrokeSize"},
                     "identifier": "useStrokeSize",
-                    "checked": true
+                    "checked": false
                 },
                 "listeners": [
                     {
@@ -86,15 +80,7 @@
                 ]
             },
 
-            "strokeSizeLabel": {
-                "prototype": "montage/ui/dynamic-text.reel",
-                "properties": {
-                    "element": {"#": "strokeSizeLabel"},
-                    "value": "Stroke:"
-                }
-            },
-
-            "strokeSizeHT": {
+            "strokeSize": {
                 "prototype": "js/components/hottextunit.reel[HotTextUnit]",
                 "properties": {
                     "element": {"#": "strokeSize"},
@@ -102,16 +88,17 @@
                     "maxValue": 100,
                     "value": 1,
                     "decimalPlace": 10,
-                    "acceptableUnits" : ["px", "pt"]
+                    "acceptableUnits" : ["px", "pt"],
+                    "enabled": false
                 }
             },
 
-            "webGlCh": {
+            "useWebGL": {
                 "prototype": "montage/ui/checkbox.reel",
                 "properties": {
-                    "element": {"#": "useWebGLCHIB"},
-                    "identifier": "useWebGl",
-                    "checked": true
+                    "element": {"#": "useWebGL"},
+                    "identifier": "useWebGL",
+                    "checked": false
                 },
                 "listeners": [
                     {
@@ -122,10 +109,10 @@
                 ]
             },
 
-            "_strokeMaterialCB": {
+            "strokeMaterial": {
                 "prototype": "js/components/combobox.reel",
                 "properties": {
-                    "element": {"#": "strokeMaterialIBCB"},
+                    "element": {"#": "strokeMaterial"},
                     "labelField": "_name",
                     "dataField": "_name"
                 }
@@ -136,23 +123,21 @@
                 "properties": {
                     "element": {"#": "inkBottleProperties"},
 
+                    "useStrokeColor": {"@": "useStrokeColor"},
                     "_strokeColorCtrl": {"#": "strokeColorCtrl"},
 
-                    "useBorderWidth": {"@": "borderWidthCh"},
-                    "borderWidthLabel": {"@": "borderWidthLabel"},
-                    "_borderWidth": {"@": "borderWidthHT"},
+                    "useBorderWidth": {"@": "useBorderWidth"},
+                    "borderWidth": {"@": "borderWidth"},
 
-                    "useBorderStyle": {"@": "borderStyleCh"},
-                    "borderStyleLabel": {"@": "borderStyleLabel"},
-                    "_borderStyle": {"#": "borderStyleCB"},
+                    "useBorderStyle": {"@": "useBorderStyle"},
+                    "borderStyle": {"#": "borderStyle"},
 
-                    "useStrokeSize": {"@": "strokeSizeCh"},
-                    "strokeSizeLabel": {"@": "strokeSizeLabel"},
-                    "_strokeSize": {"@": "strokeSizeHT"},
+                    "useStrokeSize": {"@": "useStrokeSize"},
+                    "strokeSize": {"@": "strokeSize"},
 
-                    "_useWebGL": {"@": "webGlCh"},
+                    "useWebGL": {"@": "useWebGL"},
                     "_materialsContainer": {"#": "materialsContainerIB"},
-                    "_strokeMaterial": {"@": "_strokeMaterialCB"}
+                    "strokeMaterial": {"@": "strokeMaterial"}
                 }
             }
         }
@@ -163,16 +148,19 @@
     <body>
         <div data-montage-id="inkBottleProperties" class="subToolHolderPanel inkBottleOptions toolOptionsFloatChildren">
             <div data-montage-id="elementInkOptions" class="toolOptionsFloatChildren">
+
+                <input data-montage-id="useStrokeColor" type="checkbox" name="useStrokeColor" class="nj-skinned" title="Apply stroke or border-color"/>
                 <div class="toolColorChipIcon PencilTool"></div>
                 <div data-montage-id="strokeColorCtrl" class="toolColorChipCtrl"></div>
                 <div class="nj-divider divider-vertical toolOptionsSpacer">&nbsp;</div>
 
-                <input data-montage-id="useBorderWidthCh" type="checkbox" name="useBorderWidthControl" class="nj-skinned" title="Apply border-width"/>
-                <label data-montage-id="borderWidthLabel" class="label"> Border:</label>
+                <input data-montage-id="useBorderWidth" type="checkbox" name="useBorderWidthControl" class="nj-skinned" title="Apply border-width"/>
+                <label class="label"> Border:</label>
                 <div data-montage-id="borderWidth" class="label"></div>
-                <input data-montage-id="useBorderStyleCh" type="checkbox" name="useBorderStyleControl" class="nj-skinned" title="Apply border-style"/>
-                <label data-montage-id="borderStyleLabel" class="label"> Style:</label>
-                <select data-montage-id="borderStyleCB" class="nj-skinned">
+
+                <input data-montage-id="useBorderStyle" type="checkbox" name="useBorderStyleControl" class="nj-skinned" title="Apply border-style"/>
+                <label class="label"> Style:</label>
+                <select data-montage-id="borderStyle" class="nj-skinned" disabled="disabled">
                     <option value="none">none</option>
                     <option value="solid" selected>solid</option>
                     <option value="hidden">hidden</option>
@@ -191,19 +179,19 @@
             <div class="toolOptionsSpacer">&nbsp;</div>
 
             <div data-montage-id="shapeInkOptions" class="toolOptionsFloatChildren">
-                <input data-montage-id="useStrokeSizeCh" type="checkbox" name="useStrokeControl" class="nj-skinned" title="Apply stroke size"/>
-                <label data-montage-id="strokeSizeLabel" class="label"> Stroke:</label>
+                <input data-montage-id="useStrokeSize" type="checkbox" name="useStrokeControl" class="nj-skinned" title="Apply stroke size"/>
+                <label class="label"> Stroke:</label>
                 <div data-montage-id="strokeSize" class="label"></div>
             </div>
 
             <div data-montage-id="webGLInkOptions" class="toolOptionsFloatChildren">
-                <input data-montage-id="useWebGLCHIB" type="checkbox" name="useWebGLControl" class="nj-skinned"/>
+                <input data-montage-id="useWebGL" type="checkbox" name="useWebGLControl" class="nj-skinned"/>
                 <label class="label"> Use WebGL</label>
 
-                <div data-montage-id="materialsContainerIB" class="toolOptionsFloatChildren">
+                <div data-montage-id="materialsContainerIB" class="toolOptionsFloatChildren" style="display:none;">
                     <label class="label"> Materials:</label>
                     <div data-montage-id="strokeIconIB" class="toolColorChipIcon PencilTool"></div>
-                    <select data-montage-id="strokeMaterialIBCB" class="nj-skinned"></select>
+                    <select data-montage-id="strokeMaterial" class="nj-skinned"></select>
                 </div>
             </div>
         </div>

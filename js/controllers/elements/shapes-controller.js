@@ -551,12 +551,6 @@ exports.ShapesController = Montage.create(CanvasController, {
                             el.elementModel.shapeModel.GLGeomObj.setStrokeColor(webGl);
                     }
                 }
-
-                // Support for ink-bottle tool
-                if(color.strokeInfo)
-                {
-                    this.setProperty(el, "strokeSize", color.strokeInfo.strokeSize + " " + color.strokeInfo.strokeUnits);
-                }
             }
             el.elementModel.shapeModel.GLWorld.render();
             this.application.ninja.currentDocument.model.needsSave = true;
@@ -564,23 +558,92 @@ exports.ShapesController = Montage.create(CanvasController, {
     },
 
     getStroke: {
-        value: function(el) {
-            // TODO - Need to figure out which border side user wants
-            var size = this.getShapeProperty(el, "strokeSize");
-            var color = this.getShapeProperty(el, "stroke");
-            return {stroke:color, strokeSize:size};
+        value: function(el, stroke) {
+            var strokeInfo = {},
+                color,
+                strokeWidth,
+                strokeSize;
+            if(stroke.colorInfo) {
+                strokeInfo.colorInfo = {};
+                color = this.getColor(el, false);
+                if(color && color.color) {
+                    strokeInfo.colorInfo.mode = color.mode;
+                    strokeInfo.colorInfo.color = color.color;
+                } else {
+                    strokeInfo.colorInfo.mode = "nocolor";
+                    strokeInfo.colorInfo.color = null;
+                }
+            }
+            if(stroke.shapeInfo) {
+                strokeInfo.shapeInfo = {};
+                strokeWidth = this.getProperty(el, "strokeSize");
+                if(strokeWidth) {
+                    strokeSize = njModule.NJUtils.getValueAndUnits(strokeWidth);
+                    strokeInfo.shapeInfo.strokeSize = strokeSize[0];
+                    strokeInfo.shapeInfo.strokeUnits = strokeSize[1];
+                }
+            }
+            if(stroke.webGLInfo) {
+                strokeInfo.webGLInfo = {};
+                if(this.getShapeProperty(el, "useWebGl")) {
+                    strokeInfo.webGLInfo.material = this.getProperty(el, "strokeMaterial");
+                } else {
+                    strokeInfo.webGLInfo.material = null;
+                }
+            }
+            return strokeInfo;
         }
     },
 
     setStroke: {
-        value: function(el, stroke) {
-            el.elementModel.shapeModel.GLGeomObj.setStrokeColor(stroke.color.webGlColor);
-            var strokeWidth = this.GetValueInPixels(stroke.strokeSize, stroke.strokeUnits);
-            el.elementModel.shapeModel.GLGeomObj.setStrokeWidth(strokeWidth);
-            this.setShapeProperty(el, "stroke", stroke.color.webGlColor);
-            this.setShapeProperty(el, "strokeSize", stroke.strokeSize + " " + stroke.strokeUnits);
-            el.elementModel.shapeModel.GLGeomObj.buildBuffers();
-            el.elementModel.shapeModel.GLWorld.render();
+        value: function(el, stroke, eventType, source) {
+            if(stroke.colorInfo) {
+                this.setColor(el, stroke.colorInfo, false);
+            }
+            if(stroke.shapeInfo) {
+                this.setProperty(el, "strokeSize", stroke.shapeInfo.strokeSize + " " + stroke.shapeInfo.strokeUnits, eventType, source);
+            }
+            if(stroke.webGLInfo) {
+                this.setProperty(el, "strokeMaterial", stroke.webGLInfo.material);
+            }
+        }
+    },
+
+    getFill: {
+        value: function(el, fill) {
+            var fillInfo = {},
+                color;
+            if(fill.colorInfo) {
+                fillInfo.colorInfo = {};
+                color = this.getColor(el, true);
+                if(color && color.color) {
+                    fillInfo.colorInfo.mode = color.mode;
+                    fillInfo.colorInfo.color = color.color;
+                } else {
+                    fillInfo.colorInfo.mode = "nocolor";
+                    fillInfo.colorInfo.color = null;
+                }
+            }
+            if(fill.webGLInfo) {
+                fillInfo.webGLInfo = {};
+                if(this.getShapeProperty(el, "useWebGl")) {
+                    fillInfo.webGLInfo.material = this.getProperty(el, "fillMaterial");
+                } else {
+                    fillInfo.webGLInfo.material = null;
+                }
+            }
+            return fillInfo;
+        }
+    },
+
+    setFill: {
+        value: function(el, fill) {
+            if(fill.colorInfo) {
+                this.setColor(el, fill.colorInfo, true);
+            }
+            if(fill.webGLInfo) {
+                this.setProperty(el, "fillMaterial", fill.webGLInfo.material);
+            }
         }
     },
 
