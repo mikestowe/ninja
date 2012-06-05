@@ -174,9 +174,9 @@ exports.DocumentController = Montage.create(Component, {
     handleExecuteSaveAll: {
     	value: function(event) {
            //
-    		if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
+    		if((typeof this.currentDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
     			//
-    			this.activeDocument.model.saveAll();
+    			this.currentDocument.model.saveAll();
     		} else {
     			//TODO: Add error handling
     		}
