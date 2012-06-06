@@ -182,6 +182,8 @@ exports.Stage = Montage.create(Component, {
             if(this.currentDocument && (this.currentDocument.currentView === "design")) {
                 this.currentDocument.model.scrollLeft = this._scrollLeft;
                 this.currentDocument.model.scrollTop = this._scrollTop;
+                //call configure false with the old document on the selected tool to tear down down any temp. stuff
+                this.application.ninja.toolsData.selectedToolInstance._configure(false);
             }
 
             this._currentDocument = value;
@@ -351,7 +353,6 @@ exports.Stage = Montage.create(Component, {
             } else {
                 this.centerStage();
             }
-
             // TODO - We will need to modify this once we support switching between multiple documents
             this.application.ninja.toolsData.selectedToolInstance._configure(true);
         }

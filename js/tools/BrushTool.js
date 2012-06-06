@@ -39,7 +39,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
     //view options
     _brushStrokeCanvas: {value: null, writable: true},
     _brushStrokePlaneMat: {value: null, writable: true},
-    _draggingPlane: {value: null, writable: true},
+    dragPlane: {value: null, writable: true},
 
     //the current brush stroke
     _selectedBrushStroke: {value: null, writable: true},
@@ -67,7 +67,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
 
             var point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(x,y));
             var unsnappedpos = DrawingToolBase.getHitRecPos(snapManager.snap(point.x, point.y, false));
-            this._draggingPlane = snapManager.getDragPlane();
+            this.dragPlane = snapManager.getDragPlane();
 
             snapManager.enableElementSnap(elemSnap);
             snapManager.enableGridSnap(gridSnap);
@@ -100,7 +100,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
             }
             var tmpPoint = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(x,y));
             var hitRec = snapManager.snap(tmpPoint.x, tmpPoint.y, false);
-            this._draggingPlane = snapManager.getDragPlane();
+            this.dragPlane = snapManager.getDragPlane();
             if (this._selectedSubpathCanvas){
                 snapManager.popWorkingPlane();
             }
@@ -225,9 +225,11 @@ exports.BrushTool = Montage.create(ShapeTool, {
             this._hasDraw = false;
 
             //finish giving enough info. to the brush stroke
-            this._selectedBrushStroke.setPlaneMatrix(this._brushStrokePlaneMat);
-            this._selectedBrushStroke.setPlaneMatrixInverse(glmat4.inverse(this._brushStrokePlaneMat,[]));
-            this._selectedBrushStroke.setDragPlane(this._draggingPlane);
+            if (this._selectedBrushStroke){
+                this._selectedBrushStroke.setPlaneMatrix(this._brushStrokePlaneMat);
+                this._selectedBrushStroke.setPlaneMatrixInverse(glmat4.inverse(this._brushStrokePlaneMat,[]));
+                this._selectedBrushStroke.setDragPlane(this.dragPlane);
+            }
 
             //display the previously drawn stroke in a separate canvas
             this.RenderCurrentBrushStroke();
