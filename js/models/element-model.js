@@ -28,9 +28,7 @@ var modelGenerator = exports.modelGenerator = function() {
         })
     });
 
-    if(this._model.selection === "body") {
-        this._model.props3D.init(this, true);
-    } else {
+    if(this._model.selection !== "body") {
         this._model.props3D.init(this, false);
     }
 
