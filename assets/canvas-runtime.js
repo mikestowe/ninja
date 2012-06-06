@@ -2137,15 +2137,59 @@ NinjaCvsRt.RuntimeBrushStroke = Object.create(NinjaCvsRt.RuntimeGeomObj, {
         }
     },
 
+    //buildColor returns the fillStyle or strokeStyle for the Canvas 2D context
+    buildColor: {
+        value: function(ctx,   //the 2D rendering context (for creating gradients if necessary)
+                 ipColor,      //color string, also encodes whether there's a gradient and of what type
+                 w,            //width of the region of color
+                 h,            //height of the region of color
+                 lw)           //linewidth (i.e. stroke width/size)
+        {
+            if (ipColor.gradientMode){
+                var position, gradient, cs, inset; //vars used in gradient calculations
+                inset = Math.ceil( lw ) - 0.5;
+
+                if(ipColor.gradientMode === "radial") {
+                    var ww = w - 2*lw,  hh = h - 2*lw;
+                    gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(ww, hh)/2);
+                } else {
+                    gradient = ctx.createLinearGradient(inset, h/2, w-inset, h/2);
+                }
+                var colors = ipColor.color;
+
+                var len = colors.length;
+                for(n=0; n<len; n++) {
+                    position = colors[n].position/100;
+                    cs = colors[n].value;
+                    gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+                }
+                return gradient;
+            } else {
+                var c = "rgba(" + 255*ipColor[0] + "," + 255*ipColor[1] + "," + 255*ipColor[2] + "," + ipColor[3] + ")";
+                return c;
+            }
+        }
+    },
+
     render: {
         value: function() {
+            //vars for gradient code
+            var w,h;
+
             // get the world
             var world = this.getWorld();
             if (!world)  {
                 throw( "null world in brush stroke render" );
                 return;
-            }
+            } else {
 
+                if (this._strokeColor.gradientMode){
+                    useBuildColor = true;
+                }
+                //vars used for the gradient computation in buildColor
+                w = world.getViewportWidth();
+                h = world.getViewportHeight();
+            }
             // get the context
             var ctx = world.get2DContext();
             if (!ctx)  {
@@ -2169,7 +2213,7 @@ NinjaCvsRt.RuntimeBrushStroke = Object.create(NinjaCvsRt.RuntimeGeomObj, {
 
                 //build an angled (calligraphic) brush stamp
                 var deltaDisplacement = [Math.cos(this._strokeAngle),Math.sin(this._strokeAngle)];
-                deltaDisplacement = VecUtils.vecNormalize(2, deltaDisplacement, 1);
+                deltaDisplacement = this.vecNormalize(2, deltaDisplacement, 1);
                 var startPos = [-halfNumTraces*deltaDisplacement[0],-halfNumTraces*deltaDisplacement[1]];
 
                 var brushStamp = [];
@@ -2198,7 +2242,11 @@ NinjaCvsRt.RuntimeBrushStroke = Object.create(NinjaCvsRt.RuntimeGeomObj, {
                     } else {
                         ctx.lineWidth=2;
                     }
-                    ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
+                    if (!useBuildColor){
+                        ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
+                    } else {
+                        ctx.strokeStyle = this.buildColor(ctx, this._strokeColor, w, h, this._strokeWidth, alphaVal);
+                    }
                     ctx.translate(disp[0],disp[1]);
                     ctx.beginPath();
                     p = points[0];
@@ -2218,7 +2266,13 @@ NinjaCvsRt.RuntimeBrushStroke = Object.create(NinjaCvsRt.RuntimeGeomObj, {
                 var minStrokeWidth = (this._strokeHardness*this._strokeWidth)/100; //the hardness is the percentage of the stroke width that's fully opaque
                 var numlayers = 1 + Math.ceil((this._strokeWidth-minStrokeWidth)*0.5);
                 var alphaVal = 1.0/(numlayers); //this way the alpha at the first path will be 1
-                ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
+
+                if (!useBuildColor){
+                    ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
+                } else {
+                    ctx.strokeStyle = this.buildColor(ctx, this._strokeColor, w,h, this._strokeWidth, alphaVal);
+                }
+                
                 for (var l=0;l<numlayers;l++){
                     ctx.beginPath();
                     p = points[0];
