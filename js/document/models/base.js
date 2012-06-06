@@ -65,7 +65,8 @@ exports.BaseDocumentModel = Montage.create(Component, {
     _selection: {
         value: []
     },
-
+    ////////////////////////////////////////////////////////////////////
+    //
     selection: {
         get: function() {
             return this._selection;
@@ -134,20 +135,22 @@ exports.BaseDocumentModel = Montage.create(Component, {
         }
     },
     ////////////////////////////////////////////////////////////////////
-	//
+	//Gets all stylesheets in document
 	getStyleSheets: {
 		value: function () {
-			//
+			//Array to store styles (style and link tags)
 			var styles = [];
-    		//
+    		//Looping through document sytles
     		for (var k in this.views.design.iframe.contentWindow.document.styleSheets) {
+    			//Check for styles to has proper propeties
     			if (this.views.design.iframe.contentWindow.document.styleSheets[k].ownerNode && this.views.design.iframe.contentWindow.document.styleSheets[k].ownerNode.getAttribute) {
+    				//Check for ninja-template styles, if so, exclude
             		if (this.views.design.iframe.contentWindow.document.styleSheets[k].ownerNode.getAttribute('data-ninja-template') === null) {
             			styles.push(this.views.design.iframe.contentWindow.document.styleSheets[k]);
             		}
             	}
            	}
-           	//
+           	//Returning filtered results
            	return styles;
 		}
 	},
@@ -155,7 +158,7 @@ exports.BaseDocumentModel = Montage.create(Component, {
 	//
 	save: {
         value: function (callback, libCopyCallback) {
-        	//
+        	//TODO: Implement on demand logic
         	if (this.needsSave) {
         		//Save
         	} else {
@@ -184,7 +187,7 @@ exports.BaseDocumentModel = Montage.create(Component, {
 	//
 	saveAll: {
         value: function (callback, libCopyCallback) {
-           	//
+           	//TODO: Implement on demand logic
         	if (this.needsSave) {
         		//Save
         	} else {
@@ -214,47 +217,49 @@ exports.BaseDocumentModel = Montage.create(Component, {
 	//
 	saveAs: {
         value: function (callback) {
-        	//
+        	//TODO: Implement on demand logic
         	if (this.needsSave) {
         		//Save current file on memory
         	} else {
         		//Copy file from disk
         	}
+        	//TODO: Add functionality
         }
     },
     ////////////////////////////////////////////////////////////////////
 	//
 	handleSaved: {
 		value: function (result) {
-			//
+			//Checking for success code in save
 			if (result.status === 204) {
+				//Clearing flag with successful save
 				this.model.needsSave = false;
 			}
-			//
+			//Making callback call if specifed with results of operation
 			if (this.callback) this.callback(result);
 		}
 	},
     ////////////////////////////////////////////////////////////////////
-	//
+	//TODO: Implement better logic to include different views on single document
 	close: {
         value: function (view, callback) {
         	//Outcome of close (pending on save logic)
         	var success;
         	//
         	if (this.needsSave) {
-        		//Prompt user to save of lose data
+        		//TODO: Prompt user to save or lose data
         	} else {
         		//Close file
         		success = true;
         	}
-        	//
+        	//Checking for view mode to close
         	if (this.views.design && (!view || view === 'design')) {
-        		//
+        		//TODO: Create a destroy method, this is messy
+        		this.views.design.pauseAndStopVideos();
         		this.parentContainer.removeChild(this.views.design.iframe);
-                this.views.design.pauseAndStopVideos();
         		this.views.design = null;
         	}
-        	//
+        	//Returning result of operation
         	return success;
         }
     }

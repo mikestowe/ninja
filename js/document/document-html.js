@@ -68,6 +68,8 @@ exports.HtmlDocument = Montage.create(Component, {
            	if (this.model.views.design.initialize(this.model.parentContainer)) {
            		//Hiding iFrame, just initiliazing
            		this.model.views.design.hide();
+           		//Setting the iFrame property for reference in helper class
+           		this.model.webGlHelper.iframe = this.model.views.design.iframe;
            	} else {
            		//ERROR: Design View not initialized
            	}
@@ -82,7 +84,7 @@ exports.HtmlDocument = Montage.create(Component, {
             	this.model.views.design.iframe.style.opacity = 0;
             	this.model.views.design.content = this.model.file.content;
             	//TODO: Improve reference (probably through binding values)
-            	this.model.views.design.model = this.model;
+            	this.model.views.design._webGlHelper = this.model.webGlHelper;
             	//Rendering design view, using observers to know when template is ready
             	this.model.views.design.render(function () {
             		//Adding observer to know when template is ready
