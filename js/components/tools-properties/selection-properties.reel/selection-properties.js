@@ -10,7 +10,91 @@ var ToolProperties = require("js/components/tools-properties/tool-properties").T
 
 exports.SelectionProperties = Montage.create(ToolProperties, {
 
-    transform: { value: null },
+    transform: {
+        value: null,
+        serializable: true
+    },
+
+    topAlign: {
+        value: null,
+        serializable: true
+    },
+
+    middleAlign: {
+        value: null,
+        serializable: true
+    },
+
+    bottomAlign: {
+        value: null,
+        serializable: true
+    },
+
+    leftAlign: {
+        value: null,
+        serializable: true
+    },
+
+    centerAlign: {
+        value: null,
+        serializable: true
+    },
+
+    rightAlign: {
+        value: null,
+        serializable: true
+    },
+
+    distTop: {
+        value: null,
+        serializable: true
+    },
+
+    distMiddle: {
+        value: null,
+        serializable: true
+    },
+
+    distBottom: {
+        value: null,
+        serializable: true
+    },
+
+    distLeft: {
+        value: null,
+        serializable: true
+    },
+
+    distCenter: {
+        value: null,
+        serializable: true
+    },
+
+    distRight: {
+        value: null,
+        serializable: true
+    },
+
+    arrangeBringForward: {
+        value: null,
+        serializable: true
+    },
+
+    arrangeSendBackward: {
+        value: null,
+        serializable: true
+    },
+
+    arrangeBringToFront: {
+        value: null,
+        serializable: true
+    },
+
+    arrangeSendToBack: {
+        value: null,
+        serializable: true
+    },
+
     _controls: { value: false },
 
     _subPrepare: {

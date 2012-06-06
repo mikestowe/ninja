@@ -10,6 +10,21 @@ var ToolProperties = require("js/components/tools-properties/tool-properties").T
 var PenProperties = exports.PenProperties = Montage.create(ToolProperties, {
     addedColorChips: { value: false },
 
+    _fillColorCtrl: {
+        value: null,
+        serializable: true
+    },
+
+    _strokeColorCtrl: {
+        value: null,
+        serializable: true
+    },
+
+    _strokeSize: {
+        value: null,
+        serializable: true
+    },
+
     _fill: {
         enumerable: false,
         value: { colorMode: 'rgb', color: { r: 255, g: 255, b: 255, a: 1, css: 'rgb(255,255,255)', mode: 'rgb', wasSetByCode: true, type: 'change' }, webGlColor: [1, 1, 1, 1] }

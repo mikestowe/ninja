@@ -12,8 +12,54 @@ var Montage         = require("montage/core/core").Montage,
  
 exports.PanelContainer = Montage.create(Component, {
 
+    panelSplitter: {
+        value: null,
+        serializable: true
+    },
+
+    appModel: {
+        value: null,
+        serializable: true
+    },
+
     panelData: {
-        value: null
+        value: null,
+        serializable: true
+    },
+
+    panel_0: {
+        value: null,
+        serializable: true
+    },
+
+    panel_1: {
+        value: null,
+        serializable: true
+    },
+
+    panel_2: {
+        value: null,
+        serializable: true
+    },
+
+    panel_3: {
+        value: null,
+        serializable: true
+    },
+
+    panel_4: {
+        value: null,
+        serializable: true
+    },
+
+    panel_5: {
+        value: null,
+        serializable: true
+    },
+
+    panel_6: {
+        value: null,
+        serializable: true
     },
 
     _currentDocument: {

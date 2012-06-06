@@ -8,6 +8,47 @@ var Montage = require("montage/core/core").Montage;
 var Component = require("montage/ui/component").Component;
 
 exports.PositionSize = Montage.create(Component, {
+
+    position: {
+        value: null,
+        serializable: true
+    },
+
+    leftLabel: {
+        value: null,
+        serializable: true
+    },
+
+    leftControl: {
+        value: null,
+        serializable: true
+    },
+
+    topLabel: {
+        value: null,
+        serializable: true
+    },
+
+    topControl: {
+        value: null,
+        serializable: true
+    },
+
+    heightControl: {
+        value: null,
+        serializable: true
+    },
+
+    widthControl: {
+        value: null,
+        serializable: true
+    },
+
+    bindButton: {
+        value: null,
+        serializable: true
+    },
+
     leftPosition: {
         value: 0
     },

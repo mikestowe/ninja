@@ -18,8 +18,7 @@ exports.Splitter = Montage.create(Component, {
     },
 
     _panel: {
-        value: null,
-        enumerable:true
+        value: null
     },
 
     panel: {
@@ -28,7 +27,8 @@ exports.Splitter = Montage.create(Component, {
         },
         set: function(value) {
             this._panel = value;
-        }
+        },
+        serializable: true
     },
 
     _resizeBar: {
@@ -41,7 +41,8 @@ exports.Splitter = Montage.create(Component, {
         },
         set: function(val) {
             this._resizeBar = val;
-        }
+        },
+        serializable: true
     },
 
     _collapsed : {

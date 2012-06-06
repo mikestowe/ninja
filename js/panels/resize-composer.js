@@ -10,11 +10,13 @@ var Composer = require("montage/ui/composer/composer").Composer;
 exports.ResizeComposer = Montage.create(Composer, {
 
     xAxis: {
-        value: true
+        value: true,
+        serializable: true
     },
 
     yAxis: {
-        value: true
+        value: true,
+        serializable: true
     },
 
     enabled : {

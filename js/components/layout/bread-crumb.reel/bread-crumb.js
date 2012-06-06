@@ -9,6 +9,11 @@ var Montage = require("montage/core/core").Montage,
 
 exports.Breadcrumb = Montage.create(Component, {
 
+    breadcrumbBt: {
+        value: null,
+        serializable: true
+    },
+
     _currentDocument: {
         enumerable: false,
         value: null

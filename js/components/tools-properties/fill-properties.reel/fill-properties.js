@@ -10,6 +10,26 @@ var Montage = require("montage/core/core").Montage,
 
 var FillProperties = exports.FillProperties = Montage.create(ToolProperties, {
 
+    _fillColorCtrl: {
+        value: null,
+        serializable: true
+    },
+
+    _useWebGL: {
+        value: null,
+        serializable: true
+    },
+
+    _materialsContainer: {
+        value: null,
+        serializable: true
+    },
+
+    _fillMaterial: {
+        value: null,
+        serializable: true
+    },
+
     _use3D: { value: false },
     addedColorChips: { value: false },
 

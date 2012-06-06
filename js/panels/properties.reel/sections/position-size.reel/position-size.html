@@ -32,7 +32,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "minValue": -10000
             },
             "bindings": {
-                "value": {"<<->": "@owner.leftPosition"}
+                "value": {"<->": "@owner.leftPosition"}
             }
         },
         "PosY": {
@@ -43,7 +43,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "minValue": -10000
             },
             "bindings": {
-                "value": {"<<->": "@owner.topPosition"}
+                "value": {"<->": "@owner.topPosition"}
             }
         },
 
@@ -53,7 +53,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "element": {"#": "PosH"}
             },
             "bindings": {
-                "value": {"<<->": "@owner.heightSize"}
+                "value": {"<->": "@owner.heightSize"}
             }
         },
 
@@ -65,7 +65,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "units": "px"
             },
             "bindings": {
-                "value": {"<<->": "@owner.widthSize"}
+                "value": {"<->": "@owner.widthSize"}
             }
 
         },
@@ -74,7 +74,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
             "properties": {
                 "element": {"#": "posBound"},
                 "pressedClass": "lockUp",
-                "preventFocus": true,
                 "identifier": "ratio"
             }
         }

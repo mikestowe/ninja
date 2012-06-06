@@ -13,6 +13,11 @@ exports.Panel = Montage.create(Component, {
         value: "Panel"
     },
 
+    panelContent: {
+        value: null,
+        serializable: true
+    },
+
     _collapsed: {
         value: false
     },
@@ -46,7 +51,8 @@ exports.Panel = Montage.create(Component, {
     },
 
     resizer: {
-        value: null
+        value: null,
+        serializable: true
     },
 
     modulePath: {

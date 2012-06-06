@@ -8,12 +8,41 @@ var Montage = require("montage").Montage,
     TreeNode = require("js/components/treeview/tree-node").TreeNode;
 
 var Branch = exports.Branch = Montage.create(TreeNode, {
-    hasTemplate:{
-        value:true
+    label: {
+        value: null,
+        serializable: true
     },
+
+    branchList: {
+        value: null,
+        serializable: true
+    },
+
+    arrayController: {
+        value: null,
+        serializable: true
+    },
+
     repetition:{
-        value: null
+        value: null,
+        serializable: true
     },
+
+    leafComponent: {
+        value: null,
+        serializable: true
+    },
+
+    branchComponent: {
+        value: null,
+        serializable: true
+    },
+
+    collapser: {
+        value: null,
+        serializable: true
+    },
+
     prepareForDraw : {
         value: function() {
             this.collapser.removeAttribute('id');
