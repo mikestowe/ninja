@@ -292,8 +292,6 @@ exports.ComponentsPanel = Montage.create(Component, {
                         }
                     }
 
-//                    that.application.ninja.currentDocument.model.setComponentInstance(instance, element);
-
                     //that.application.ninja.elementMediator.addElements(element, styles);
                     ElementController.addElement(element, styles);
                 });
@@ -303,11 +301,6 @@ exports.ComponentsPanel = Montage.create(Component, {
 
     componentInstanceOnFirstDraw: {
         value: function(instance) {
-            // Temporary hack until the element model rework goes into place
-            // TODO: Remove this once we have the element model define property code in place.
-            if(!instance.element.elementModel) {
-                this.application.njUtils.makeModelFromElement(instance.element);
-            }
             this.application.ninja.elementMediator.addElements(instance.element);
         }
     },
@@ -319,75 +312,60 @@ exports.ComponentsPanel = Montage.create(Component, {
             switch(name) {
                 case "anchor":
                     el = document.application.njUtils.make("a", null, this.application.ninja.currentDocument);
-                    document.application.njUtils.createModelForComponent(el, "Anchor");
                     el.setAttribute("href", "http://www.motorola.com");
                     el.innerHTML = "link";
                     break;
                 case "button":
                     el = document.application.njUtils.make(name, null, this.application.ninja.currentDocument);
-                    document.application.njUtils.createModelForComponent(el, "Button");
                     el.setAttribute("type", "button");
                     el.innerHTML = "Button";
                     break;
                 case "checkbox":
                     el = document.application.njUtils.make("input", null, this.application.ninja.currentDocument);
-                    document.application.njUtils.createModelForComponent(el, "Checkbox");
                     el.setAttribute("type", "checkbox");
                     break;
                 case "imageComponent":
                     el = document.application.njUtils.make("image", null, this.application.ninja.currentDocument);
-                    document.application.njUtils.createModelForComponent(el, "Image");
                     el.setAttribute("width", 200);
                     el.setAttribute("height", 200);
                     break;
                 case "numberInput":
                     el = document.application.njUtils.make("input", null, this.application.ninja.currentDocument);
-                    document.application.njUtils.createModelForComponent(el, "Number Input");
                     el.setAttribute("type", "number");
                     break;
                 case "select":
                     el = document.application.njUtils.make("select", null, this.application.ninja.currentDocument);
-                    document.application.njUtils.createModelForComponent(el, "SelectInput");
                     break;
                 case "radioButton":
                     el = document.application.njUtils.make("input", null, this.application.ninja.currentDocument);
-                    document.application.njUtils.createModelForComponent(el, "Radio Button");
                     el.setAttribute("type", "radio");
                     break;
                 case "rangeInput":
                     el = document.application.njUtils.make("input", null, this.application.ninja.currentDocument);
-                    document.application.njUtils.createModelForComponent(el, "Range Input");
                     el.setAttribute("type", "range");
                     break;
                 case "textfield":
                     el = document.application.njUtils.make("input", null, this.application.ninja.currentDocument);
-                    document.application.njUtils.createModelForComponent(el, "Textfield");
                     el.setAttribute("type", "text");
                     break;
                 case "textarea":
                     el = document.application.njUtils.make("textarea", null, this.application.ninja.currentDocument);
-                    document.application.njUtils.createModelForComponent(el, "Textarea");
                     break;
                 case "toggleButton":
                     el = document.application.njUtils.make("button", null, this.application.ninja.currentDocument);
-                    document.application.njUtils.createModelForComponent(el, "Toggle Button");
                     el.innerHTML = "Off";
                     break;
                 case "map":
                     el = document.application.njUtils.make("div", null, this.application.ninja.currentDocument);
-                    document.application.njUtils.createModelForComponent(el, "Map");
                     break;
                 case "feedreader":
                     el = document.application.njUtils.make("div", null, this.application.ninja.currentDocument);
-                    document.application.njUtils.createModelForComponent(el, "Feed Reader");
                     break;
                 case "picasa-carousel":
                     el = document.application.njUtils.make("div", null, this.application.ninja.currentDocument);
-                    document.application.njUtils.createModelForComponent(el, "Picasa Carousel");
                     break;
                 case "youtube-channel":
                     el = document.application.njUtils.make("div", null, this.application.ninja.currentDocument);
-                    document.application.njUtils.createModelForComponent(el, "Youtube Channel");
                     break;
 
             }

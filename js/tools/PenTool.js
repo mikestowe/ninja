@@ -564,7 +564,6 @@ exports.PenTool = Montage.create(ShapeTool, {
 
             if (!canvas) {
                 var newCanvas = document.application.njUtils.make("canvas", {"data-RDGE-id": NJUtils.generateRandom()}, this.application.ninja.currentDocument);
-                document.application.njUtils.createModelWithShape(newCanvas, "Subpath");
                 var styles = document.application.njUtils.stylesFromDraw(newCanvas, parseInt(w), parseInt(h), {midPt: midPt, planeMat: planeMat});
                 this.application.ninja.elementMediator.addElements(newCanvas, styles, false);
 

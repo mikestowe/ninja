@@ -7,7 +7,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 ////////////////////////////////////////////////////////////////////////
 //
 var Montage = 			require("montage/core/core").Montage,
-	BaseDocumentView = 	require("js/document/views/base").BaseDocumentView;
+	BaseDocumentView = 	require("js/document/views/base").BaseDocumentView,
+    ElementModel =      require("js/models/element-model");
 ////////////////////////////////////////////////////////////////////////
 //	
 exports.DesignDocumentView = Montage.create(BaseDocumentView, {
@@ -20,6 +21,11 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 	//
     _callback: {
     	value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    _viewCallback: {
+        value: null
     },
     ////////////////////////////////////////////////////////////////////
 	//
@@ -104,12 +110,13 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     ////////////////////////////////////////////////////////////////////
 	//
 	render: {
-        value: function (callback, template) {
+        value: function (callback, template, viewCallback) {
         	//TODO: Remove, this is a temp patch for webRequest API gate
         	this.application.ninja.documentController.redirectRequests = false;
         	//Storing callback for dispatch ready
         	this._callback = callback;
         	this._template = template;
+            this._viewCallback = viewCallback;
         	//Adding listener to know when template is loaded to then load user content
         	this.iframe.addEventListener("load", this.onTemplateLoad.bind(this), false);
         	//TODO: Add source parameter and root (optional)
@@ -264,6 +271,10 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 					}
 				}
 			}
+
+            // Assign the modelGenerator reference from the template to our own modelGenerator
+            this.document.modelGenerator = ElementModel.modelGenerator;
+
            	//Checking for script tags then parsing check for montage and webgl
             if (scripttags.length > 0) {
             	//Checking and initializing webGL
@@ -272,6 +283,9 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
             	this.initMontage(scripttags);
             } else {
             	//Else there is not data to parse
+                if(this._viewCallback) {
+                    this._viewCallback.viewCallback.call(this._viewCallback.context);
+                }
             }
             //TODO: Verify appropiate location for this operation
     		if (this._template && this._template.type === 'banner') {
@@ -287,8 +301,9 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     		for (var n in orgNodes) {
 	    		if (orgNodes[n].getAttribute) orgNodes[n].setAttribute('data-ninja-node', 'true');
     		}
-    		//Initiliazing document model
-    		document.application.njUtils.makeElementModel(this.model.documentRoot, "Body", "body");
+    		
+
+
     		//Makign callback if specified
     		if (this._callback) this._callback();
     	}
@@ -395,6 +410,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 	//
     initMontage: {
         value: function (scripttags) {
+            var self = this;
         	//
         	this.iframe.contentWindow.document.body.addEventListener('mjsTemplateReady', function () {
         		//Initializing template with user's seriliazation
@@ -406,6 +422,12 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         				//Forcing draw on components
 	        			template._deserializer._objects[c].needsDraw = true;
         			}
+
+                    // Now call the view callback
+                    if(self._viewCallback) {
+                        self._viewCallback.viewCallback.call(self._viewCallback.context);
+                    }
+
         		});
         	}.bind(this), false);
         }
