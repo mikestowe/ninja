@@ -28,11 +28,6 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     },
     ////////////////////////////////////////////////////////////////////
 	//
-	_document: {
-        value: null
-    },
-    ////////////////////////////////////////////////////////////////////
-	//
 	_bodyFragment: {
         value: null
     },
@@ -52,14 +47,13 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         value: null
     },
     ////////////////////////////////////////////////////////////////////
-	//
-    document: {
-        get: function() {return this._document;},
-        set: function(value) {this._document = value;}
+    //
+    _liveNodeList: {
+        value: null
     },
     ////////////////////////////////////////////////////////////////////
     //
-    _liveNodeList: {
+    _webGlHelper: {
         value: null
     },
     ////////////////////////////////////////////////////////////////////
@@ -75,6 +69,17 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     },
     ////////////////////////////////////////////////////////////////////
 	//
+	_document: {
+        value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+    document: {
+        get: function() {return this._document;},
+        set: function(value) {this._document = value;}
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
     _documentRoot: {
         value: null
     },
@@ -83,11 +88,6 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     documentRoot: {
         get: function() {return this._documentRoot;},
         set: function(value) {this._documentRoot = value;}
-    },
-    ////////////////////////////////////////////////////////////////////
-    //
-    _webGlHelper: {
-        value: null
     },
     ////////////////////////////////////////////////////////////////////
     //
