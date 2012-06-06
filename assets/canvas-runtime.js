@@ -378,6 +378,10 @@ NinjaCvsRt.GLRuntime = Object.create(Object.prototype, {
                     obj.importJSON( jObj );
                     break;
 
+                case 5:     //subpath (created by pen tool)
+                    obj = Object.create(NinjaCvsRt.RuntimeSubPath, {_materials: { value:[], writable:true}});
+                    obj.importJSON (jObj );
+                    break;
                 default:
                     throw new Error( "Attempting to load unrecognized object type: " + type );
                     break;
@@ -1802,5 +1806,244 @@ NinjaCvsRt.RuntimePlasmaMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
         }
     }
 });
+
+
+
+// **************************************************************************
+// Runtime for the pen tool path
+// **************************************************************************
+NinjaCvsRt.AnchorPoint = Object.create(Object.prototype, {
+    /////////////////////////////////////////
+    // Instance variables
+    /////////////////////////////////////////
+    _x: {value: 0.0, writable: true},
+    _y: {value: 0.0, writable: true},
+    _z: {value: 0.0, writable: true},
+
+    _prevX: {value: 0.0, writable: true},
+    _prevY: {value: 0.0, writable: true},
+    _prevZ: {value: 0.0, writable: true},
+
+    _nextX: {value: 0.0, writable: true},
+    _nextY: {value: 0.0, writable: true},
+    _nextZ: {value: 0.0, writable: true},
+
+    // *********** setters ************
+    setPos: {
+        value: function(x,y,z){
+            this._x = x;
+            this._y = y;
+            this._z = z;
+        }
+    },
+
+    setPrevPos: {
+        value: function (x, y, z) {
+            this._prevX = x;
+            this._prevY = y;
+            this._prevZ = z;
+        }
+    },
+
+    setNextPos: {
+        value: function (x, y, z) {
+            this._nextX = x;
+            this._nextY = y;
+            this._nextZ = z;
+        }
+    },
+
+    // *************** getters ******************
+    // (add as needed)
+    getPosX: {
+        value: function () {
+            return this._x;
+        }
+    },
+
+    getPosY: {
+        value: function () {
+            return this._y;
+        }
+    },
+
+    getPosZ: {
+        value: function () {
+            return this._z;
+        }
+    },
+
+    getPrevX: {
+        value: function () {
+            return this._prevX;
+        }
+    },
+
+    getPrevY: {
+        value: function () {
+            return this._prevY;
+        }
+    },
+
+    getPrevZ: {
+        value: function () {
+            return this._prevZ;
+        }
+    },
+
+    getNextX: {
+        value: function () {
+            return this._nextX;
+        }
+    },
+
+    getNextY: {
+        value: function () {
+            return this._nextY;
+        }
+    },
+
+    getNextZ: {
+        value: function () {
+            return this._nextZ;
+        }
+    }
+});
+
+NinjaCvsRt.RuntimeSubPath = Object.create(NinjaCvsRt.RuntimeGeomObj, {
+    // array of anchor points
+    _Anchors: { value: null, writable: true },
+
+    //path properties
+    _isClosed: {value: false, writable: true},
+    _strokeWidth: {value: 0, writable: true},
+    _strokeColor: {value: null, writable: true},
+    _fillColor: {value: null, writable: true},
+
+    geomType: {
+        value: function () {
+            return this.GEOM_TYPE_CUBIC_BEZIER;
+        }
+    },
+
+    importJSON: {
+        value: function(jo) {
+            if (this.geomType()!== jo.geomType){
+                return;
+            }
+            //the geometry for this object
+            this._Anchors = [];
+            var i=0;
+            for (i=0;i<jo.anchors.length;i++){
+                var newAnchor = Object.create(NinjaCvsRt.AnchorPoint);
+                var ipAnchor = jo.anchors[i];
+                newAnchor.setPos(ipAnchor._x, ipAnchor._y, ipAnchor._z);
+                newAnchor.setPrevPos(ipAnchor._prevX, ipAnchor._prevY, ipAnchor._prevZ);
+                newAnchor.setNextPos(ipAnchor._nextX, ipAnchor._nextY, ipAnchor._nextZ);
+                this._Anchors.push(newAnchor);
+            }
+            this._isClosed = jo.isClosed;
+
+            //stroke appearance properties
+            this._strokeWidth = jo.strokeWidth;
+            this._strokeColor = jo.strokeColor;
+            this._fillColor = jo.fillColor;
+        }
+    },
+
+    //buildColor returns the fillStyle or strokeStyle for the Canvas 2D context
+    buildColor: {
+        value: function(ctx,   //the 2D rendering context (for creating gradients if necessary)
+                 ipColor,      //color string, also encodes whether there's a gradient and of what type
+                 w,            //width of the region of color
+                 h,            //height of the region of color
+                 lw)           //linewidth (i.e. stroke width/size)
+        {
+            if (ipColor.gradientMode){
+                var position, gradient, cs, inset; //vars used in gradient calculations
+                inset = Math.ceil( lw ) - 0.5;
+
+                if(ipColor.gradientMode === "radial") {
+                    var ww = w - 2*lw,  hh = h - 2*lw;
+                    gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(ww, hh)/2);
+                } else {
+                    gradient = ctx.createLinearGradient(inset, h/2, w-inset, h/2);
+                }
+                var colors = ipColor.color;
+
+                var len = colors.length;
+                for(n=0; n<len; n++) {
+                    position = colors[n].position/100;
+                    cs = colors[n].value;
+                    gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+                }
+                return gradient;
+            } else {
+                var c = "rgba(" + 255*ipColor[0] + "," + 255*ipColor[1] + "," + 255*ipColor[2] + "," + ipColor[3] + ")";
+                return c;
+            }
+        }
+    },
+
+    render: {
+        value: function() {
+            // get the world
+            var world = this.getWorld();
+            if (!world)  {
+                throw( "null world in subpath render" );
+                return;
+            }
+
+             // get the context
+            var ctx = world.get2DContext();
+            if (!ctx)  {
+                throw( "null world in subpath render" );
+                return;
+            }
+
+            //vars used for the gradient computation in buildColor
+            var w = world.getViewportWidth(), h = world.getViewportHeight();
+
+            ctx.save();
+            ctx.lineWidth = this._strokeWidth;
+            ctx.strokeStyle = "black";
+            if (this._strokeColor) {
+                ctx.strokeStyle = this.buildColor(ctx, this._strokeColor, w,h, this._strokeWidth);
+            }
+
+            ctx.fillStyle = "white";
+            if (this._fillColor){
+                ctx.fillStyle = this.buildColor(ctx, this._fillColor, w,h, this._strokeWidth);
+            }
+            var lineCap = ['butt','round','square'];
+            ctx.lineCap = lineCap[1];
+            var lineJoin = ['round','bevel','miter'];
+            ctx.lineJoin = lineJoin[0];
+
+            var numAnchors = this._Anchors.length;
+            if (numAnchors>1) {
+                ctx.beginPath();
+                var prevAnchor = this._Anchors[0];
+                ctx.moveTo(prevAnchor.getPosX(),prevAnchor.getPosY());
+                for (var i = 1; i < numAnchors; i++) {
+                    var currAnchor = this._Anchors[i];
+                    ctx.bezierCurveTo(prevAnchor.getNextX(),prevAnchor.getNextY(), currAnchor.getPrevX(), currAnchor.getPrevY(), currAnchor.getPosX(), currAnchor.getPosY());
+                    prevAnchor = currAnchor;
+                }
+                if (this._isClosed === true) {
+                    var currAnchor = this._Anchors[0];
+                    ctx.bezierCurveTo(prevAnchor.getNextX(),prevAnchor.getNextY(), currAnchor.getPrevX(), currAnchor.getPrevY(), currAnchor.getPosX(), currAnchor.getPosY());
+                    prevAnchor = currAnchor;
+                }
+                ctx.fill();
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+    }
+});
+// **************************************************************************
+// END runtime for the pen tool path
+// **************************************************************************
 
 

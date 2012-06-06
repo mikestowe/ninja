@@ -264,13 +264,67 @@ var BrushStroke = function GLBrushStroke() {
         this._strokeStyle = s;
     };
 
-    this.setWidth = function () {
+    this.setWidth = function (newW) {
+        if (newW<1) {
+            newW=1; //clamp minimum width to 1
+        }
 
-    };//NO-OP for now
+        //scale the contents of this subpath to lie within this width
+        //determine the scale factor by comparing with the old width
+        var oldWidth = this._BBoxMax[0]-this._BBoxMin[0];
+        if (oldWidth<1) {
+            oldWidth=1;
+        }
 
-    this.setHeight = function () {
+        var scaleX = newW/oldWidth;
+        if (scaleX===1) {
+            return; //no need to do anything
+        }
 
-    };//NO-OP for now
+        //scale the local point positions such that the width of the bbox is the newW
+        var origX = this._BBoxMin[0];
+        var numPoints = this._LocalPoints.length;
+        for (var i=0;i<numPoints;i++){
+            //compute the distance from the bboxMin
+            var oldW = this._LocalPoints[i][0] - origX;
+            this._LocalPoints[i] = [(origX + oldW*scaleX),this._LocalPoints[i][1],this._LocalPoints[i][2]];
+
+            oldW = this._OrigLocalPoints[i][0] - origX;
+            this._OrigLocalPoints[i] = [(origX + oldW*scaleX),this._OrigLocalPoints[i][1],this._OrigLocalPoints[i][2]];
+        }
+        this._isDirty = true;
+    };
+
+    this.setHeight = function (newH) {
+        if (newH<1) {
+            newH=1; //clamp minimum width to 1
+        }
+
+        //scale the contents of this subpath to lie within this height
+        //determine the scale factor by comparing with the old height
+        var oldHeight = this._BBoxMax[1]-this._BBoxMin[1];
+        if (oldHeight<1) {
+            oldHeight=1;
+        }
+
+        var scaleY = newH/oldHeight;
+        if (scaleY===1) {
+            return; //no need to do anything
+        }
+
+        //scale the local point positions such that the width of the bbox is the newW
+        var origY = this._BBoxMin[1];
+        var numPoints = this._LocalPoints.length;
+        for (var i=0;i<numPoints;i++){
+            //compute the distance from the bboxMin
+            var oldH = this._LocalPoints[i][1] - origY;
+            this._LocalPoints[i] = [this._LocalPoints[i][0],(origY + oldH*scaleY),this._LocalPoints[i][2]];
+
+            oldH = this._OrigLocalPoints[i][1] - origY;
+            this._OrigLocalPoints[i] = [this._OrigLocalPoints[i][0],(origY + oldH*scaleY),this._OrigLocalPoints[i][2]];
+        }
+        this._isDirty = true;
+    };
 
     this.getWidth = function() {
         if (this._isDirty){
@@ -583,7 +637,7 @@ var BrushStroke = function GLBrushStroke() {
             //build the stamp for the brush stroke
             var t=0;
             var numTraces = this._strokeWidth;
-            var halfNumTraces = numTraces/2;
+            var halfNumTraces = numTraces*0.5;
             var opaqueRegionHalfWidth = 0.5*this._strokeHardness*numTraces*0.01; //the 0.01 is to convert the strokeHardness from [0,100] to [0,1]
             var maxTransparentRegionHalfWidth = halfNumTraces-opaqueRegionHalfWidth;
 
@@ -603,20 +657,23 @@ var BrushStroke = function GLBrushStroke() {
             ctx.lineCap="butt";
             ctx.globalCompositeOperation = 'source-over';
             ctx.globalAlpha = this._strokeColor[3];
-            //todo figure out the correct formula for the line width
-            ctx.lineWidth=2;
-            if (t===numTraces-1){
-                ctx.lineWidth = 1;
-            }
+
             for (t=0;t<numTraces;t++){
                 var disp = [brushStamp[t][0], brushStamp[t][1]];
                 var alphaVal = 1.0;
                 var distFromOpaqueRegion = Math.abs(t-halfNumTraces) - opaqueRegionHalfWidth;
                 if (distFromOpaqueRegion>0) {
-                    alphaVal = 1.0 - distFromOpaqueRegion/maxTransparentRegionHalfWidth;
-                    alphaVal *= 1.0/ctx.lineWidth; //factor that accounts for lineWidth !== 1
+                    var transparencyFactor = distFromOpaqueRegion/maxTransparentRegionHalfWidth;
+                    alphaVal = 1.0 - transparencyFactor;//(transparencyFactor*transparencyFactor);//the square term produces nonlinearly varying alpha values
+                    alphaVal *= 0.5; //factor that accounts for lineWidth == 2
                 }
                 ctx.save();
+                if (t === (numTraces-1) || t === 0){
+                    ctx.lineWidth = 1;
+                } else {
+                     //todo figure out the correct formula for the line width
+                    ctx.lineWidth=2;
+                }
                 ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
                 //linearly interpolate between the two stroke colors
                 var currStrokeColor = VecUtils.vecInterpolate(4, this._strokeColor, this._secondStrokeColor, t/numTraces);
@@ -650,7 +707,7 @@ var BrushStroke = function GLBrushStroke() {
             ctx.lineCap = "round";
             ctx.lineJoin="round";
             var minStrokeWidth = (this._strokeHardness*this._strokeWidth)/100; //the hardness is the percentage of the stroke width that's fully opaque
-            var numlayers = 1 + (this._strokeWidth-minStrokeWidth)/2;
+            var numlayers = 1 + Math.ceil((this._strokeWidth-minStrokeWidth)*0.5);
             var alphaVal = 1.0/(numlayers); //this way the alpha at the first path will be 1
             ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
             for (var l=0;l<numlayers;l++){
@@ -678,6 +735,16 @@ var BrushStroke = function GLBrushStroke() {
                     ctx.lineTo(p[0],p[1]);
                 }
                 ctx.lineWidth=2*l+minStrokeWidth;
+
+
+                //experiments with shadows
+                /*
+                ctx.shadowOffsetX = 10;
+                ctx.shadowOffsetY = 10;
+                ctx.shadowBlur    = 10;
+                ctx.shadowColor   = //"rgb("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+")";
+                    "#FF6666";  //or use rgb(red, green, blue)
+                 */
                 ctx.stroke();
             }//for every layer l
         } //if there is no calligraphic stroke

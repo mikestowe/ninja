@@ -23,7 +23,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     	value: null
     },
     ////////////////////////////////////////////////////////////////////
-    //
+	//
     _viewCallback: {
         value: null
     },
@@ -31,11 +31,6 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 	//
     _template: {
     	value: null
-    },
-    ////////////////////////////////////////////////////////////////////
-	//
-	_document: {
-        value: null
     },
     ////////////////////////////////////////////////////////////////////
 	//
@@ -58,8 +53,29 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         value: null
     },
     ////////////////////////////////////////////////////////////////////
-	//TODO: Remove usage
-	model: {
+    //
+    _liveNodeList: {
+        value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    _webGlHelper: {
+        value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    _baseHref: {
+        value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+    baseHref: {
+        get: function() {return this._baseHref;},
+        set: function(value) {this._baseHref = value;}
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+	_document: {
         value: null
     },
     ////////////////////////////////////////////////////////////////////
@@ -69,9 +85,15 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         set: function(value) {this._document = value;}
     },
     ////////////////////////////////////////////////////////////////////
-    //
-    _liveNodeList: {
+	//
+    _documentRoot: {
         value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+    documentRoot: {
+        get: function() {return this._documentRoot;},
+        set: function(value) {this._documentRoot = value;}
     },
     ////////////////////////////////////////////////////////////////////
     //
@@ -149,7 +171,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
             if (basetag.length) {
             	if (basetag[basetag.length-1].getAttribute && basetag[basetag.length-1].getAttribute('href')) {
             		//Setting base HREF in model
-        			this.model.baseHref = basetag[basetag.length-1].getAttribute('href');
+        			this.baseHref = basetag[basetag.length-1].getAttribute('href');
         		}
         	}
         	//Checking to content to be template
@@ -285,16 +307,16 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
             	//Else there is not data to parse
                 if(this._viewCallback) {
                     this._viewCallback.viewCallback.call(this._viewCallback.context);
-                }
+            }
             }
             //TODO: Verify appropiate location for this operation
     		if (this._template && this._template.type === 'banner') {
-    			this.model.documentRoot = this.document.body.getElementsByTagName('ninja-content')[0];
+    			this.documentRoot = this.document.body.getElementsByTagName('ninja-content')[0];
     		} else {
-    			this.model.documentRoot = this.document.body;
+    			this.documentRoot = this.document.body;
     		}
     		//Storing node list for reference (might need to store in the model)
-    		this._liveNodeList = this.model.documentRoot.getElementsByTagName('*');
+    		this._liveNodeList = this.documentRoot.getElementsByTagName('*');
     		//Getting list of original nodes
     		orgNodes = this.document.getElementsByTagName('*');
     		//TODO: Figure out if this is ideal for identifying nodes created by Ninja
@@ -302,8 +324,6 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 	    		if (orgNodes[n].getAttribute) orgNodes[n].setAttribute('data-ninja-node', 'true');
     		}
     		
-
-
     		//Makign callback if specified
     		if (this._callback) this._callback();
     	}
@@ -373,8 +393,6 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         value: function (scripttags) {
         	//
         	var n, webgldata, fileRead;
-        	//Setting the iFrame property for reference in helper class
-        	this.model.webGlHelper.iframe = this.model.views.design.iframe;
         	//Checking for webGL Data
             for (var w in scripttags) {
             	//
@@ -400,7 +418,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
             				webgldata.data[n] = unescape(webgldata.data[n]);
             			}
             			//TODO: Improve setter of webGL and reference
-            			this.model.webGlHelper.glData = webgldata.data;
+            			this._webGlHelper.glData = webgldata.data;
             		}
             	}
             }
