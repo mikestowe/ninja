@@ -100,6 +100,35 @@ exports.Panel = Montage.create(Component, {
         }
     },
 
+    _currentDocument: {
+        value : null,
+        enumerable : false
+    },
+
+    currentDocument : {
+        get : function() {
+            return this._currentDocument;
+        },
+        set : function(value) {
+            if (value === this._currentDocument) {
+                return;
+            }
+
+            this._currentDocument = value;
+
+            if(typeof this.panelContent.content[0].controller._currentDocument !== "undefined") {
+                this.panelContent.content[0].controller.currentDocument = this._currentDocument;
+            }
+
+            if(!value) {
+                this.disabled = true;
+            } else {
+                this.disabled = this._currentDocument.currentView !== "design";
+            }
+
+        }
+    },
+
     handleBtnCollapseAction: {
         value: function() {
             this.collapsed = !this.collapsed;

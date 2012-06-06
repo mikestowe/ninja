@@ -4,11 +4,11 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var Montage     = require("montage/core/core").Montage,
-    Component   = require("montage/ui/component").Component,
-    NJUtils     = require("js/lib/NJUtils").NJUtils;
-    ClassUUID   = require("js/components/core/class-uuid").ClassUuid,
-    PIData      = require("js/data/pi/pi-data").PiData;
+var Montage             = require("montage/core/core").Montage,
+    Component           = require("montage/ui/component").Component,
+    ElementController   = require("js/controllers/elements/element-controller").ElementController,
+    ClassUUID           = require("js/components/core/class-uuid").ClassUuid,
+    PIData              = require("js/data/pi/pi-data").PiData;
 
 String.prototype.capitalizeFirstChar = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
@@ -38,11 +38,6 @@ exports.ComponentsPanel = Montage.create(Component, {
                             "text": "Picasa Carousel",
                             "dataFile" : "node_modules/components-data/picasa-carousel.json",
                             "component": "picasa-carousel"
-                        },
-                        {
-                            "text": "Search Bar",
-                            "dataFile" : "node_modules/components-data/searchfield.json",
-                            "component": "searchfield"
                         },
                         {
                             "text": "Youtube Channel",
@@ -278,28 +273,42 @@ exports.ComponentsPanel = Montage.create(Component, {
             that = this;
             element = this.makeComponent(component.component);
 
-            this.application.ninja.currentDocument.model.views.design.iframe.contentWindow.addComponent(element, {name: component.name, path: component.module}, function(instance, element) {
+            this.application.ninja.currentDocument.model.views.design.iframe.contentWindow.addComponent(element,
+                {name: component.name, path: component.module, firstDraw: {cb: this.componentInstanceOnFirstDraw, ctx: this}},
+                function(instance, element) {
 
-                //var pos = that.getStageCenter();
+                    //var pos = that.getStageCenter();
 
-                var styles = {
-                    'position': 'absolute',
-                    'left'      : that.dragPosition[0] + 'px',
-                    'top'       : that.dragPosition[1] + 'px'
-                };
+                    var styles = {
+                        'position': 'absolute',
+                        'left'      : that.dragPosition[0] + 'px',
+                        'top'       : that.dragPosition[1] + 'px'
+                    };
 
-                var defaultStyles = component.defaultStyles;
-                if(defaultStyles) {
-                    for(var n in defaultStyles) {
-                        styles[n] = defaultStyles[n];
+                    var defaultStyles = component.defaultStyles;
+                    if(defaultStyles) {
+                        for(var n in defaultStyles) {
+                            styles[n] = defaultStyles[n];
+                        }
                     }
-                }
-                
-                that.application.ninja.currentDocument.model.setComponentInstance(instance, element);
 
-                that.application.ninja.elementMediator.addElements(element, styles);
-            });
+//                    that.application.ninja.currentDocument.model.setComponentInstance(instance, element);
 
+                    //that.application.ninja.elementMediator.addElements(element, styles);
+                    ElementController.addElement(element, styles);
+                });
+
+        }
+    },
+
+    componentInstanceOnFirstDraw: {
+        value: function(instance) {
+            // Temporary hack until the element model rework goes into place
+            // TODO: Remove this once we have the element model define property code in place.
+            if(!instance.element.elementModel) {
+                this.application.njUtils.makeModelFromElement(instance.element);
+            }
+            this.application.ninja.elementMediator.addElements(instance.element);
         }
     },
 
@@ -351,7 +360,6 @@ exports.ComponentsPanel = Montage.create(Component, {
                     el.setAttribute("type", "range");
                     break;
                 case "textfield":
-                case "searchfield":
                     el = document.application.njUtils.make("input", null, this.application.ninja.currentDocument);
                     document.application.njUtils.createModelForComponent(el, "Textfield");
                     el.setAttribute("type", "text");

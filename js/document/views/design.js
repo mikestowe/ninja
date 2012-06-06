@@ -63,11 +63,6 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         set: function(value) {this._document = value;}
     },
     ////////////////////////////////////////////////////////////////////
-	//
-    propertiesPanel: {
-        value: null
-    },
-    ////////////////////////////////////////////////////////////////////
     //
     _liveNodeList: {
         value: null
@@ -129,7 +124,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 	//
     onTemplateLoad: {
         value: function (e) {
-        	//console.log(this.iframe.contentWindow);
+        	//TODO: Remove, this is a temp patch for webRequest API gate
         	this.application.ninja.documentController.redirectRequests = true;
         	//TODO: Add support to constructing URL with a base HREF
         	var basetag = this.content.document.getElementsByTagName('base');
@@ -159,7 +154,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         			this._observer.body = new WebKitMutationObserver(this.insertBannerContent.bind(this));
     	    		this._observer.body.observe(this._bodyFragment, {childList: true});
 	        		//Inserting <body> HTML and parsing URLs via mediator method
-        			this._bodyFragment.innerHTML = '<ninjaloadinghack></ninjaloadinghack>'+(this.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator));
+        			this._bodyFragment.innerHTML = '<ninjaloadinghack></ninjaloadinghack>'+(this.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.tmplt.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator.tmplt))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.tmplt.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator.tmplt));
     	    	}
         	} else {
     	    	//Creating temp code fragement to load head
@@ -168,12 +163,12 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         		this._observer.head = new WebKitMutationObserver(this.insertHeadContent.bind(this));
     	    	this._observer.head.observe(this._headFragment, {childList: true});
 	        	//Inserting <head> HTML and parsing URLs via mediator method
-        		this._headFragment.innerHTML = (this.content.head.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator));
+        		this._headFragment.innerHTML = (this.content.head.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.tmplt.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator.tmplt))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.tmplt.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator.tmplt));
         		//Adding event listener to know when the body is ready and make callback (using HTML5 new DOM Mutation Events)
     	    	this._observer.body = new WebKitMutationObserver(this.bodyContentLoaded.bind(this));
 	        	this._observer.body.observe(this.document.body, {childList: true});
         		//Inserting <body> HTML and parsing URLs via mediator method
-        		this.document.body.innerHTML += '<ninjaloadinghack></ninjaloadinghack>'+(this.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator));
+        		this.document.body.innerHTML += '<ninjaloadinghack></ninjaloadinghack>'+(this.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.tmplt.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator.tmplt))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.tmplt.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator.tmplt));
     	    	//Copying attributes to maintain same properties as the <body>
 				for (var n in this.content.document.body.attributes) {
 					if (this.content.document.body.attributes[n].value) {
@@ -245,7 +240,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     		this.document.body.removeChild(this.document.getElementsByTagName('ninjaloadinghack')[0]);
    			//Getting style and link tags in document
             var stags = this.document.getElementsByTagName('style'),
-            	ltags = this.document.getElementsByTagName('link'), i,
+            	ltags = this.document.getElementsByTagName('link'), i, orgNodes,
             	scripttags = this.document.getElementsByTagName('script');
            	//Temporarily checking for disabled special case (we must enabled for Ninja to access styles)
            	this.ninjaDisableAttribute(stags);
@@ -286,6 +281,12 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     		}
     		//Storing node list for reference (might need to store in the model)
     		this._liveNodeList = this.model.documentRoot.getElementsByTagName('*');
+    		//Getting list of original nodes
+    		orgNodes = this.document.getElementsByTagName('*');
+    		//TODO: Figure out if this is ideal for identifying nodes created by Ninja
+    		for (var n in orgNodes) {
+	    		if (orgNodes[n].getAttribute) orgNodes[n].setAttribute('data-ninja-node', 'true');
+    		}
     		//Initiliazing document model
     		document.application.njUtils.makeElementModel(this.model.documentRoot, "Body", "body");
     		//Makign callback if specified
@@ -399,7 +400,13 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         		//Initializing template with user's seriliazation
         		var template = this.iframe.contentWindow.mjsTemplate.create();
         		template.initWithDocument(this.iframe.contentWindow.document);
-        		template.instantiateWithOwnerAndDocument(null, this.iframe.contentWindow.document, function (e){/*Nothing just a required extra parameter*/});
+        		template.instantiateWithOwnerAndDocument(null, this.iframe.contentWindow.document, function (){
+        			//TODO: Verify this is properly done, seems like a hack
+        			for (var c in template._deserializer._objects) {
+        				//Forcing draw on components
+	        			template._deserializer._objects[c].needsDraw = true;
+        			}
+        		});
         	}.bind(this), false);
         }
     },

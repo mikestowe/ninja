@@ -20,9 +20,65 @@ exports.SelectionController = Montage.create(Component, {
         }
     },
 
-    /*
-     * Bound property to the ninja currentSelectedContainer
-     */
+    _currentDocument: {
+            value : null
+    },
+
+    currentDocument : {
+        get : function() {
+            return this._currentDocument;
+        },
+        set : function(value) {
+            if (value === this._currentDocument) {
+                return;
+            }
+
+            if(this._currentDocument && this._currentDocument.currentView === "design") {
+                this._currentDocument.model._selection = this.application.ninja.selectedElements;
+                this._currentDocument.model.selectionContainer = this.application.ninja._currentSelectedContainer;
+            }
+
+            this._currentDocument = value;
+
+            /*
+            if(!value) {
+            } else if(this._currentDocument.currentView === "design") {
+            } else {
+            }
+            */
+
+        }
+    },
+
+    _selectedElements: {
+        value: null
+    },
+
+    selectedElements: {
+        get: function() {
+            return this._selectedElements;
+        },
+        set: function(value) {
+            if(this.currentDocument && this.currentDocument.currentView === "code") return;
+
+            if(value) {
+                this._selectedElements = value;
+
+                this.application.ninja.selectedElements = this._selectedElements;
+                this.application.ninja._currentSelectedContainer = this._selectionContainer = this.application.ninja.currentDocument.model.documentRoot;
+
+                if(this._selectedElements.length === 0) {
+                    this.executeSelectElement();
+                } else {
+                    this.executeSelectElement(this._selectedElements);
+                }
+
+
+            }
+        }
+    },
+
+    // Bound property to the ninja currentSelectedContainer
     _selectionContainer: {
         value: null
     },
@@ -42,48 +98,10 @@ exports.SelectionController = Montage.create(Component, {
 
     deserializedFromTemplate: {
         value: function() {
-            this.eventManager.addEventListener("openDocument", this, false);
             this.eventManager.addEventListener("elementAdded", this, false);
             this.eventManager.addEventListener("elementsRemoved", this, false);
             this.eventManager.addEventListener("elementReplaced", this, false);
             this.eventManager.addEventListener("selectAll", this, false);
-            this.eventManager.addEventListener("switchDocument", this, false);
-            this.eventManager.addEventListener("closeDocument", this, false);
-        }
-    },
-
-    /**
-     * Get the current document selection array. If nothing is selected the currentSelectionArray should be null
-     */
-    handleOpenDocument: {
-        value: function() {
-            // Handle initializing the selection array here.
-            this.initWithDocument([]);
-        }
-    },
-    
-    initWithDocument: {
-        value: function(currentSelectionArray) {
-            this._isDocument = true;
-
-            if(currentSelectionArray) {
-                this.application.ninja.selectedElements = currentSelectionArray;
-                if(currentSelectionArray.length) {
-                    this._isDocument = false;
-                    NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument});
-                }
-            }
-
-            this._selectionContainer = this.application.ninja.currentSelectedContainer;
-        }
-    },
-
-    handleSwitchDocument: {
-        value: function() {
-//            if(this.application.ninja.documentController.activeDocument.currentView === "design"){
-                this._isDocument = this.application.ninja.selectedElements.length === 0;
-                NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": this._isDocument} );
-//            }
         }
     },
 
