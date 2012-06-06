@@ -94,15 +94,15 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
                     if(descriptors.hasOwnProperty(property)) {
                         descriptor = descriptors[property];
 
-                        bindingArgsObject = {
-                            sourceObject : object,
-                            sourceObjectPropertyPath : property,
-                            boundObject : descriptor.boundObject,
-                            boundObjectPropertyPath : descriptor.boundObjectPropertyPath,
-                            oneway : descriptor.oneway
-                        };
+                            bindingArgsObject = {
+                                sourceObject : object,
+                                sourceObjectPropertyPath : property,
+                                boundObject : descriptor.boundObject,
+                                boundObjectPropertyPath : descriptor.boundObjectPropertyPath,
+                                oneway : descriptor.oneway
+                            };
 
-                        bindingsArray.push(bindingArgsObject);
+                            bindingsArray.push(bindingArgsObject);
                     }
                 }
             }
@@ -125,6 +125,7 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
             }
 
             return prototypes.map(function(proto) {
+
                 var metadata = proto._montage_metadata,
                     objectName = (metadata) ? metadata.objectName : "Object";
 
@@ -142,8 +143,11 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
             var properties = [];
 
             for(var key in object) {
+                debugger;
                 if(object.hasOwnProperty(key)) {
-                    properties.push(key);
+                    if(key.serializable) {
+                        properties.push(key);
+                    }
                 }
             }
 

@@ -46,6 +46,7 @@ exports.BindingView = Montage.create(Component, {
             this._selectedComponent = val;
             this.application.ninja.objectsController.currentObject = this.selectedComponent;
             var arrBindings = this.application.ninja.objectsController.currentObjectBindings;
+            debugger;
             arrBindings.forEach(function(obj) {
                  
             }.bind(this));
