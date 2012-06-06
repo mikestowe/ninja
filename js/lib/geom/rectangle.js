@@ -73,16 +73,19 @@ exports.Rectangle = Object.create(GeomObj, {
             this._materialSpecular = [0.4, 0.4, 0.4,  1.0];
 
             if(strokeMaterial) {
-                this._strokeMaterial = strokeMaterial;
+                this._strokeMaterial = strokeMaterial.dup();
             } else {
-                this._strokeMaterial = MaterialsModel.getMaterial( MaterialsModel.getDefaultMaterialName() );
+                this._strokeMaterial = MaterialsModel.getMaterial( MaterialsModel.getDefaultMaterialName() ).dup();
             }
+			if (strokeColor && this._strokeMaterial.hasProperty( "color" ))  this._strokeMaterial.setProperty( "color",  this._strokeColor );
+
 
             if(fillMaterial) {
-                this._fillMaterial = fillMaterial;
+                this._fillMaterial = fillMaterial.dup();
             } else {
-                this._fillMaterial = MaterialsModel.getMaterial( MaterialsModel.getDefaultMaterialName() );
+                this._fillMaterial = MaterialsModel.getMaterial( MaterialsModel.getDefaultMaterialName() ).dup();
             }
+			if (fillColor && this._fillMaterial.hasProperty( "color" ))  this._fillMaterial.setProperty( "color",  this._fillColor );
         }
     },
 
@@ -289,19 +292,23 @@ exports.Rectangle = Object.create(GeomObj, {
             var strokeMaterialName	= jObj.strokeMat;
             var fillMaterialName	= jObj.fillMat;
 
-            var strokeMat = MaterialsModel.getMaterial( strokeMaterialName );
+            var strokeMat = MaterialsModel.getMaterial( strokeMaterialName ).dup();
             if (!strokeMat) {
                 console.log( "object material not found in library: " + strokeMaterialName );
-                strokeMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() );
+                strokeMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() ).dup();
             }
             this._strokeMaterial = strokeMat;
+			if (this._strokeMaterial.hasProperty( 'color' ))
+				this._strokeMaterial.setProperty( 'color', this._strokeColor );
 
-            var fillMat = MaterialsModel.getMaterial( fillMaterialName );
+            var fillMat = MaterialsModel.getMaterial( fillMaterialName ).dup();
             if (!fillMat) {
                 console.log( "object material not found in library: " + fillMaterialName );
-                fillMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() );
+                fillMat = MaterialsModel.getMaterial(  MaterialsModel.getDefaultMaterialName() ).dup();
             }
             this._fillMaterial = fillMat;
+			if (this._fillMaterial.hasProperty( 'color' ))
+				this._fillMaterial.setProperty( 'color', this._fillColor );
 
             this.importMaterialsJSON( jObj.materials );
         }

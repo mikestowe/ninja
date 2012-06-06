@@ -50,22 +50,6 @@ var WaterMaterial = function WaterMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
-    // duplcate method requirde
-    this.dup = function (world) {
-        // get the current values;
-        var propNames = [], propValues = [], propTypes = [], propLabels = [];
-        this.getAllProperties(propNames, propValues, propTypes, propLabels);
-        
-        // allocate a new material
-        var newMat = new WaterMaterial();
-
-		// copy over the current values;
-        var n = propNames.length;
-        for (var i = 0; i < n; i++)
-            newMat.setProperty(propNames[i], propValues[i]);
-
-        return newMat;
-    };
 
 	this.setProperty = function( prop, value ) {
 		// make sure we have legitimate imput
@@ -141,6 +125,32 @@ var WaterMaterial = function WaterMaterial() {
 		this._glTex = new Texture( this.getWorld(), texMapName );
 		this.updateTexture();
 	}
+
+	this.updateTexture = function() {
+		
+		var texMapName = this._propValues[this._propNames[0]];
+		this._glTex = new Texture( this.getWorld(), texMapName );
+
+		var material = this._materialNode;
+		if (material) {
+			var technique = material.shaderProgram['default'];
+			var renderer = RDGE.globals.engine.getContext().renderer;
+			if (renderer && technique) {
+				var wrap = 'REPEAT',  mips = true;
+				var tex;
+				if (this._glTex)
+				{
+					if (this._glTex.isAnimated())
+						this._glTex.render();
+					tex = this._glTex.getTexture();
+				}
+				
+				if (tex) {
+					technique.u_tex0.set( tex );
+				}
+			}
+		}
+	};
 
 	this.setEmboss = function( value )
 	{
@@ -251,6 +261,7 @@ var waterMaterialDef =
 	}
 };
 
+/*
 var ParisMaterial = function ParisMaterial() {
     // initialize the inherited members
     this.inheritedFrom = WaterMaterial;
@@ -349,7 +360,7 @@ var parisMaterialDef =
 		]
 	}
 };
-
+*/
 
 WaterMaterial.prototype = new PulseMaterial();
 

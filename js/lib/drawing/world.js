@@ -484,11 +484,11 @@ World.prototype.updateObject = function (obj) {
 	for (var i = 1; i < nPrims; i++)
 	{
 		// get the next primitive
-		var prim = prims[i];
 		childTrNode = RDGE.createTransformNode("objNode_" + this._nodeCounter++);
 		ctrTrNode.insertAsChild(childTrNode);
 
 		// attach the instanced box goe
+		var prim = prims[i];
 		childTrNode.attachMeshNode(this.renderer.id + "_prim_" + this._nodeCounter++, prim);
 		childTrNode.attachMaterial(materialNodes[i]);
 	}

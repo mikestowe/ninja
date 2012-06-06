@@ -108,8 +108,6 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
-	// duplcate method requirde
-	this.dup = function()	{  return new BumpMetalMaterial();	};
 
 	this.init = function( world )
 	{

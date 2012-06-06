@@ -106,23 +106,6 @@ var CloudMaterial = function CloudMaterial()
     ///////////////////////////////////////////////////////////////////////
     // duplicate method required
     /**************************************************************/
-	this.dup = function (world) {
-        // save the world
-        if (world) this.setWorld(world);
-
-        // allocate a new uber material
-        var newMat = new CloudMaterial();
-
-        // copy over the current values;
-        var propNames = [], propValues = [], propTypes = [], propLabels = [];
-        this.getAllProperties(propNames, propValues, propTypes, propLabels);
-        var n = propNames.length;
-        for (var i = 0; i < n; i++) {
-            newMat.setProperty(propNames[i], propValues[i]);
-        }
-
-        return newMat;
-    };
 
     this.init = function (world) {
 		var GLWorld = require("js/lib/drawing/world").World,

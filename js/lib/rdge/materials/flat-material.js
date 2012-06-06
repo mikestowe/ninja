@@ -34,7 +34,22 @@ var FlatMaterial = function FlatMaterial() {
     // Methods
     ///////////////////////////////////////////////////////////////////////
     // duplcate method requirde
-    this.dup = function () { return new FlatMaterial(); };
+	this.dup = function( world )
+	{
+        // get the current values;
+        var propNames = [], propValues = [], propTypes = [], propLabels = [];
+        this.getAllProperties(propNames, propValues, propTypes, propLabels);
+        
+        // allocate a new material
+        var newMat = new FlatMaterial();
+
+		// copy over the current values;
+        var n = propNames.length;
+        for (var i = 0; i < n; i++)
+            newMat.setProperty(propNames[i], propValues[i]);
+
+        return newMat;
+	};
 
     this.init = function (world) {
         // save the world
@@ -72,6 +87,7 @@ var FlatMaterial = function FlatMaterial() {
         // make sure we have legitimate input
         if (this.validateProperty(prop, value)) {
             this._propValues[prop] = value;
+			if (prop === 'color')  this._color = value.slice();
             if (this._shader && this._shader.colorMe) {
                 this._shader.colorMe[prop].set(value);
             }

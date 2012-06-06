@@ -30,69 +30,30 @@ var PulseMaterial = function PulseMaterial()
 	this._time = 0.0;
 	this._dTime = 0.01;
 
-	this._xScale = 0.5;
-	this._yScale = 0.4;
-	this._speed  = 1.0;
-
 	///////////////////////////////////////////////////////////////////////
 	// Property Accessors
 	///////////////////////////////////////////////////////////////////////
-	this.getName		= function()	{ return this._name;			};
-	this.getShaderName	= function()	{  return this._shaderName;		};
-
-	this.getTextureMap			= function()		{  return this._propValues[this._propNames[0]] ? this._propValues[this._propNames[0]].slice() : null	};
-	this.setTextureMap			= function(m)		{  this._propValues[this._propNames[0]] = m ? m.slice(0) : null;  this.updateTexture();  	};
-
-	this.isAnimated			= function()			{  return true;					};
+	this.isAnimated			= function()			{  return true;		};
+	this.getShaderDef		= function()			{  return pulseMaterialDef;	}
 
 	///////////////////////////////////////////////////////////////////////
 	// Material Property Accessors
 	///////////////////////////////////////////////////////////////////////
-	this._propNames			= ["texmap",		"xscale",		"yscale",		"speed" ];
+
+	var u_tex0_index	= 0,
+		u_xScale_index	= 1,
+		u_yScale_index	= 2,
+		u_speed_index	= 3;
+
+	this._propNames			= ["u_tex0",		"u_xscale",		"u_yscale",		"u_speed" ];
 	this._propLabels		= ["Texture map",	"X Range",		"Y Range",		"Speed" ];
 	this._propTypes			= ["file",			"float",		"float",		"float"];
 	this._propValues		= [];
 
-	this._propValues[ this._propNames[0] ] = this._texMap.slice(0);
-	this._propValues[ this._propNames[1] ] = this._xScale;
-	this._propValues[ this._propNames[2] ] = this._yScale;
-	this._propValues[ this._propNames[3] ] = this._speed;
-
-	this.setProperty = function( prop, value ) {
-		// make sure we have legitimate imput
-		var ok = this.validateProperty( prop, value );
-		if (!ok && (prop != 'color')) {
-			console.log( "invalid property in Material:" + prop + " : " + value );
-		}
-
-		switch (prop)
-		{
-			case "texmap":
-				this.setTextureMap(value);
-				break;
-
-			case "speed":
-				this._speed = value;
-				this._propValues[ this._propNames[3] ] = this._speed;
-				this.updateParameters();
-				break;
-
-			case "xscale":
-				this._xScale = value;
-				this._propValues[ this._propNames[1] ] = this._xScale;
-				this.updateParameters();
-				break;
-
-			case "yscale":
-				this._yScale = value;
-				this._propValues[ this._propNames[2] ] = this._yScale;
-				this.updateParameters();
-				break;
-
-			case "color":
-				break;
-		}
-	};
+	this._propValues[ this._propNames[  u_tex0_index] ] = this._texMap.slice(0);
+	this._propValues[ this._propNames[u_xScale_index] ] = 0.5;
+	this._propValues[ this._propNames[u_yScale_index] ] = 0.4;
+	this._propValues[ this._propNames[ u_speed_index] ] = 1.0;
 	///////////////////////////////////////////////////////////////////////
 
 
@@ -100,26 +61,9 @@ var PulseMaterial = function PulseMaterial()
 	// Methods
 	///////////////////////////////////////////////////////////////////////
 	// duplicate method required
-	this.dup = function( world ) {
-		// save the world
-		if (world)  this.setWorld( world );
 
-		// get the current values;
-		var propNames = [], propValues = [], propTypes = [], propLabels = [];
-		this.getAllProperties(propNames, propValues, propTypes, propLabels);
-		
-		// allocate a new material
-		var newMat = new PulseMaterial();
-
-		// copy over the current values;
-		var n = propNames.length;
-		for (var i = 0; i < n; i++)
-			newMat.setProperty(propNames[i], propValues[i]);
-
-		return newMat;
-	};
-
-	this.init = function( world ) {
+	this.init = function( world )
+	{
 		// save the world
 		if (world)  this.setWorld( world );
 
@@ -140,65 +84,15 @@ var PulseMaterial = function PulseMaterial()
 		if (this._shader && this._shader['default']) {
 			this._shader['default'].u_time.set( [this._time] );
 		}
-		this.updateParameters();
 
 		// set up the texture
-		var texMapName = this._propValues[this._propNames[0]];
-		this._glTex = new Texture( world, texMapName );
+		//var texMapName = this._propValues[this._propNames[0]];
+		//this.setProperty( "u_tex0",  texMapName );
 
 		// set the shader values in the shader
-		this.updateTexture();
+		this.setShaderValues();
 		this.setResolution( [world.getViewportWidth(),world.getViewportHeight()] );
 		this.update( 0 );
-	};
-
-	this.updateParameters = function()
-	{
-		this._propValues[ this._propNames[1] ] = this._xScale;
-		this._propValues[ this._propNames[2] ] = this._yScale;
-		this._propValues[ this._propNames[3] ] = this._speed;
-
-		var material = this._materialNode;
-		if (material)
-		{
-			var technique = material.shaderProgram['default'];
-			var renderer = RDGE.globals.engine.getContext().renderer;
-			if (renderer && technique)
-			{
-
-				if (this._shader && this._shader['default']) {
-					this._shader['default'].u_speed.set( [this._speed] );
-					this._shader['default'].u_xscale.set( [this._xScale] );
-					this._shader['default'].u_yscale.set( [this._yScale] );
-				}
-			}
-		}
-	}
-
-	this.updateTexture = function() {
-		
-		var texMapName = this._propValues[this._propNames[0]];
-		this._glTex = new Texture( this.getWorld(), texMapName );
-
-		var material = this._materialNode;
-		if (material) {
-			var technique = material.shaderProgram['default'];
-			var renderer = RDGE.globals.engine.getContext().renderer;
-			if (renderer && technique) {
-				var wrap = 'REPEAT',  mips = true;
-				var tex;
-				if (this._glTex)
-				{
-					if (this._glTex.isAnimated())
-						this._glTex.render();
-					tex = this._glTex.getTexture();
-				}
-				
-				if (tex) {
-					technique.u_tex0.set( tex );
-				}
-			}
-		}
 	};
 
 	this.update = function( time )
@@ -210,12 +104,13 @@ var PulseMaterial = function PulseMaterial()
 			var renderer = RDGE.globals.engine.getContext().renderer;
 			if (renderer && technique)
 			{
-				if (this._glTex)
+				var glTex = this._glTextures["u_tex0"];
+				if (glTex)
 				{
 					//this.updateTexture();
-					if (this._glTex.isAnimated())
-						this._glTex.render();
-					tex = this._glTex.getTexture();
+					if (glTex.isAnimated())
+						glTex.render();
+					tex = glTex.getTexture();
 					if (tex)
 						technique.u_tex0.set( tex );
 				}
@@ -239,44 +134,6 @@ var PulseMaterial = function PulseMaterial()
 		}
 	};
 
-	// JSON export
-	this.exportJSON = function()
-	{
-		var jObj =
-		{
-			'material'		: this.getShaderName(),
-			'name'			: this.getName(),
-			'texture'		: this._propValues[this._propNames[0]],
-			'dTime'         : this._dTime,
-			'speed'			: this._speed,
-			'xScale'		: this._xScale,
-			'yScale'		: this._yScale
-		};
-
-		return jObj;
-	};
-
-	this.importJSON = function( jObj ) {
-		if (this.getShaderName() != jObj.material)  throw new Error( "ill-formed material" );
-		this.setName(  jObj.name );
-
-		try {
-			this._propValues[this._propNames[0]] = jObj.texture;
-			this._texMap = jObj.texture;
-			if (jObj.dTime) {
-				this._dTime = jObj.dTime;
-			}
-
-			this._speed = jObj.speed;
-			this._xScale = jObj.xScale;
-			this._yScale = jObj.yScale;
-			this.updateParameters();
-		}
-		catch (e)
-		{
-			throw new Error( "could not import material: " + jObj );
-		}
-	};
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////

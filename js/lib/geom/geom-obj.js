@@ -281,9 +281,11 @@ exports.GeomObj = Object.create(Object.prototype, {
             this._materialArray.push(strokeMaterial);
             this._materialTypeArray.push("stroke");
 
-            if (this._strokeColor) {
-                this.setStrokeColor(this._strokeColor);
-            }
+			// don't set the value here.  The material editor may set a color directly
+			// to the material without setting this value in the obj.  The following
+			// lines of code will clobber the value in the material
+            //if (this._strokeColor)
+            //    this.setStrokeColor(this._strokeColor);
 
 			this._strokeMaterial = strokeMaterial;
 
@@ -306,12 +308,14 @@ exports.GeomObj = Object.create(Object.prototype, {
 
             this._materialArray.push(fillMaterial);
             this._materialTypeArray.push("fill");
+			
+			// don't set the value here.  The material editor may set a color directly
+			// to the material without setting this value in the obj.  The following
+			// lines of code will clobber the value in the material
+            //if (this._fillColor)
+            //     this.setFillColor(this._fillColor);
 
-            if (this._fillColor) {
-                this.setFillColor(this._fillColor);
-            }
-
-        this._fillMaterial = fillMaterial;
+			this._fillMaterial = fillMaterial;
 
             return fillMaterial;
         }
@@ -389,6 +393,7 @@ exports.GeomObj = Object.create(Object.prototype, {
                     case "radialBlur":
                     case "pulse":
 					case "twistVert":
+					case "taper":
                         mat = MaterialsModel.getMaterialByShader(shaderName);
                         if (mat)  mat = mat.dup();
                         break;

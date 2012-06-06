@@ -4,6 +4,9 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
+var Texture = require("js/lib/rdge/texture").Texture;
+
+
 ///////////////////////////////////////////////////////////////////////
 // Class GLMaterial
 //      GL representation of a material.
@@ -15,19 +18,16 @@ var Material = function GLMaterial( world ) {
 	this._name = "GLMaterial";
 	this._shaderName = "undefined";
 
+	this._time = 0.0;
+	this._dTime = 0.01;
+
 	// keep a reference to the owning GLWorld
 	this._world = null;
     if(world) {
         this._world = world;
     }
 
-	this._shininess = 60;
-		
-	this._ambient  = [0.0, 0.0, 0.0,  1.0];
-	this._diffuse  = [0.0, 0.0, 0.0,  1.0];
-	this._specular = [0.0, 0.0, 0.0,  1.0];
-
-	this._texture = null;
+	this._glTextures = [];		// indexed by uniform name
 
 	// vertex deformation variables
 	this._hasVertexDeformation = false;
@@ -46,13 +46,6 @@ var Material = function GLMaterial( world ) {
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
     ///////////////////////////////////////////////////////////////////////
-	this.getShininess = function() {
-        return this._shininess;
-    };
-
-	this.setShininess = function(s) {
-        this._shininess = s;
-    };
 
 	this.setName = function(n) {
         this._name = n;
@@ -78,30 +71,6 @@ var Material = function GLMaterial( world ) {
         return this._world;
     };
 
-	this.setAmbient	= function(r, g, b, a)	{
-        this._ambient = [r, g, b, a];
-    };
-
-	this.getAmbient = function() {
-        return [this._ambient[0], this._ambient[1], this._ambient[2], this._ambient[3]];
-    };
-
-	this.setDiffuse	= function(r, g, b, a)	{
-        this._diffuse = [r, g, b, a];
-    };
-
-	this.getDiffuse	= function() {
-        return [this._diffuse[0], this._diffuse[1], this._diffuse[2], this._diffuse[3]];
-    };
-
-	this.setSpecular = function(r, g, b, a)	{
-        this._specular = [r, g, b, a];
-    };
-
-	this.getSpecular = function() {
-        return [this._specular[0], this._specular[1], this._specular[2], this._specular[3]];
-    };
-
 	this.getShader = function() {
         return this._shader;
     };
@@ -115,6 +84,10 @@ var Material = function GLMaterial( world ) {
 	this.isAnimated	= function() {
         return false;
     };
+
+	this.getTechniqueName	= function() {
+		return 'default'
+	};
 
 	// the vertex shader can apply deformations requiring refinement in
 	// certain areas.
@@ -166,6 +139,43 @@ var Material = function GLMaterial( world ) {
 		}
 	};
 
+	this.hasProperty = function( prop )
+	{
+		var propNames = [],  dummy = [];
+		this.getAllProperties( propNames, dummy, dummy, dummy )
+		for (var i=0;  i<propNames.length;  i++)
+		{
+			if (prop === propNames[i])  return true;
+		}
+	};
+
+	this.getPropertyType = function( prop )
+	{
+		var n = this.getPropertyCount();
+		for (var i=0;  i<n;  i++)
+		{
+			if (prop === this._propNames[i])  return this._propTypes[i];
+		}
+	};
+
+    this.dup = function ()
+	{
+        // get the current values;
+        var propNames = [], propValues = [], propTypes = [], propLabels = [];
+        this.getAllProperties(propNames, propValues, propTypes, propLabels);
+        
+        // allocate a new material
+		var MaterialLibrary = require("js/models/materials-model").MaterialsModel;
+        var newMat = MaterialLibrary.createMaterialByShaderName( this.getShaderName() );
+
+		// copy over the current values;
+        var n = propNames.length;
+        for (var i = 0; i < n; i++)
+            newMat.setProperty(propNames[i], propValues[i]);
+
+        return newMat;
+    };
+
 	this.validateProperty = function( prop, value ) {
 		var rtnVal = false;
 		try
@@ -216,16 +226,139 @@ var Material = function GLMaterial( world ) {
 
 		return rtnVal;
 	};
+
+	this.setProperty = function( prop,  value )
+	{
+		var ok = this.validateProperty( prop, value );
+		if (!ok && (prop != 'color')) {
+			console.log( "invalid property in Material:" + prop + " : " + value );
+			return;
+		}
+
+		// get the technique if the shader is instantiated
+		var technique;
+		var material = this._materialNode;
+		if (material)  technique = material.shaderProgram[this.getTechniqueName()];
+
+		switch (this.getPropertyType(prop))
+		{
+			case "angle":
+			case "float":
+				this._propValues[prop] = value;
+				if (technique)  technique[prop].set( [value] );
+				break;
+
+			case "file":
+				this._propValues[prop] = value.slice();
+				if (technique)
+				{
+					var glTex = new Texture( this.getWorld(),  value );
+					this._glTextures[prop] = glTex;
+					glTex.render();
+					var tex = glTex.getTexture();
+					if (tex)  technique[prop].set( tex );
+				}
+				break;
+
+			case "color":
+			case "vector2d":
+			case "vector3d":
+				this._propValues[prop] = value.slice();
+				if (technique)  technique[prop].set( value );
+				break;
+		}
+	};
+
+	this.setShaderValues = function()
+	{
+		var material = this._materialNode;
+		if (material)
+		{
+			var technique = material.shaderProgram[this.getTechniqueName()];
+			if (technique)
+			{
+				var n = this.getPropertyCount();
+				for (var i=0;  i<n;  i++)
+				{
+					var prop = this._propNames[i],
+						value = this._propValues[prop];
+
+					switch (this._propTypes[i])
+					{
+						case "angle":
+						case "float":
+							technique[prop].set( [value] );
+							break;
+
+						case "file":
+							var glTex = this._glTextures[prop];
+							if (glTex)
+							{
+								var tex = glTex.getTexture();
+								if (tex)  technique[prop].set( tex );
+							}
+							else
+								this.setProperty( prop, value );
+							break;
+
+						case "color":
+						case "vector2d":
+						case "vector3d":
+							technique[prop].set( value );
+							break;
+					}
+				}
+			}
+		}
+	};
+
+	// JSON export
+	this.exportJSON = function()
+	{
+		var jObj =
+		{
+			'material'		: this.getShaderName(),
+			'name'			: this.getName(),
+			'dTime'         : this._dTime
+		};
+
+		var n = this.getPropertyCount();
+		for (var i=0;  i<n;  i++)
+		{
+			var	prop  = this._propNames[i],
+				value = this._propValues[prop];
+
+			jObj[prop] = value;
+		}
+
+		return jObj;
+	};
+	
+    this.importJSON = function (jObj) {
+        if (this.getShaderName() != jObj.material) throw new Error("ill-formed material");
+        this.setName(jObj.name);
+
+        try
+		{
+			for (var prop in jObj)
+			{
+				if ((prop != 'material') && (prop != 'name'))
+				{
+					var value = jObj[prop];
+					this.setProperty( prop, value );
+				}
+			}
+        }
+        catch (e) {
+            throw new Error("could not import material: " + jObj);
+        }
+    };
+
     ///////////////////////////////////////////////////////////////////////
     
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
-	// duplcate method required by sub class
-	this.dup = function() {
-		throw new Error( "Material.dup() must be overridden by subclass" );
-	};
-
 	this.init = function( world ) {
 		throw new Error( "Material.init() must be overridden by subclass" );
 	};

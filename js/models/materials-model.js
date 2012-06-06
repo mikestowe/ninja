@@ -27,7 +27,7 @@ var FlagMaterial = require("js/lib/rdge/materials/flag-material").FlagMaterial;
 var SquareTunnelMaterial = require("js/lib/rdge/materials/square-tunnel-material").SquareTunnelMaterial;
 var FlyMaterial = require("js/lib/rdge/materials/fly-material").FlyMaterial;
 var WaterMaterial = require("js/lib/rdge/materials/water-material").WaterMaterial;
-var ParisMaterial = require("js/lib/rdge/materials/water-material").ParisMaterial;
+//var ParisMaterial = require("js/lib/rdge/materials/water-material").ParisMaterial;
 var ZInvertMaterial = require("js/lib/rdge/materials/z-invert-material").ZInvertMaterial;
 var DeformMaterial = require("js/lib/rdge/materials/deform-material").DeformMaterial;
 var StarMaterial = require("js/lib/rdge/materials/star-material").StarMaterial;
@@ -60,7 +60,7 @@ exports.MaterialsModel = Montage.create(Component, {
 			this.addMaterial(new MandelMaterial());
 			this.addMaterial(new PlasmaMaterial());
 			this.addMaterial(new PulseMaterial());
-			this.addMaterial(new ParisMaterial());
+			//this.addMaterial(new ParisMaterial());
 			this.addMaterial(new RadialGradientMaterial());
 			this.addMaterial(new RadialBlurMaterial());
 			this.addMaterial(new RaidersMaterial());
@@ -210,6 +210,51 @@ exports.MaterialsModel = Montage.create(Component, {
 		}
 	},
 
+	createMaterialByShaderName:
+	{
+		value: function(shaderName)
+		{
+			var mat;
+			switch (shaderName)
+			{
+				case "flat":				mat = new FlatMaterial();				break;
+				case "linearGradient":		mat = new LinearGradientMaterial();		break;
+				case "radialGradient":		mat = new RadialGradientMaterial();		break;
+				case "bumpMetal":			mat = new BumpMetalMaterial();			break;
+				case "uber":				mat = new UberMaterial();				break;
+				case "cloud":				mat = new CloudMaterial();				break;
+
+				case "taper":				mat = new TaperMaterial();				break;
+				case "twistVert":			mat = new TwistVertMaterial();			break;
+				case "radialBlur":			mat = new RadialBlurMaterial();			break;
+				case "plasma":				mat = new PlasmaMaterial();				break;
+				case "pulse":				mat = new PulseMaterial();				break;
+				case "tunnel":				mat = new TunnelMaterial();				break;
+				case "reliefTunnel":		mat = new ReliefTunnelMaterial();		break;
+				case "squareTunnel":		mat = new SquareTunnelMaterial();		break;
+				case "flag":		        mat = new FlagMaterial();		        break;
+				case "fly":					mat = new FlyMaterial();				break;
+				case "water":				mat = new WaterMaterial();				break;
+				//case "paris":				mat = new ParisMaterial();				break;
+				case "raiders":		        mat = new RaidersMaterial();		    break;
+				case "zinvert":				mat = new ZInvertMaterial();			break;
+				case "deform":				mat = new DeformMaterial();				break;
+				case "star":				mat = new StarMaterial();				break;
+				case "twist":				mat = new TwistMaterial();				break;
+				case "julia":				mat = new JuliaMaterial();				break;
+				case "keleidoscope":		mat = new KeleidoscopeMaterial();		break;
+				case "mandel":				mat = new MandelMaterial();				break;
+
+
+				default:
+					console.log( "Unrecognized shader name: " + shaderName );
+					break;
+			}
+
+			return mat;
+		}
+	},
+
 	importMaterials: {
 		value: function( jObj )
         {
@@ -224,45 +269,9 @@ exports.MaterialsModel = Montage.create(Component, {
 			var nMats = matArray.length;
             for (var i=0;  i<nMats;  i++)
             {
-              var mat = null;
-              var jMatObj = matArray[i];
+                var jMatObj = matArray[i];
                 var type = jMatObj.material;
-                switch (type)
-                {
-					case "flat":				mat = new FlatMaterial();				break;
-					case "linearGradient":		mat = new LinearGradientMaterial();		break;
-					case "radialGradient":		mat = new RadialGradientMaterial();		break;
-					case "bumpMetal":			mat = new BumpMetalMaterial();			break;
-					case "uber":				mat = new UberMaterial();				break;
-					case "cloud":				mat = new CloudMaterial();				break;
-
-					case "taper":				mat = new TaperMaterial();				break;
-					case "twistVert":			mat = new TwistVertMaterial();			break;
-					case "radialBlur":			mat = new RadialBlurMaterial();			break;
-					case "plasma":				mat = new PlasmaMaterial();				break;
-					case "pulse":				mat = new PulseMaterial();				break;
-					case "tunnel":				mat = new TunnelMaterial();				break;
-					case "reliefTunnel":		mat = new ReliefTunnelMaterial();		break;
-					case "squareTunnel":		mat = new SquareTunnelMaterial();		break;
-					case "flag":		        mat = new FlagMaterial();		        break;
-					case "fly":					mat = new FlyMaterial();				break;
-					case "water":				mat = new WaterMaterial();				break;
-					case "paris":				mat = new ParisMaterial();				break;
-					case "raiders":		        mat = new RaidersMaterial();		    break;
-					case "zinvert":				mat = new ZInvertMaterial();			break;
-					case "deform":				mat = new DeformMaterial();				break;
-					case "star":				mat = new StarMaterial();				break;
-					case "twist":				mat = new TwistMaterial();				break;
-					case "julia":				mat = new JuliaMaterial();				break;
-					case "keleidoscope":		mat = new KeleidoscopeMaterial();		break;
-					case "mandel":				mat = new MandelMaterial();				break;
-
-
-					default:
-						throw new Error( "Unrecognized material type: " + type );
-						break;
-				}
-
+				var mat = this.createMaterialByShaderName( type );
 				if (mat) {
 					importStr = mat.importJSON( jMatObj );
 					this.addMaterial( mat );

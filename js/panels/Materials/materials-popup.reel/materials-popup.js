@@ -19,6 +19,7 @@ exports.MaterialsPopup = Montage.create(Component, {
     },
 
 	_useSelection: {  value: false,  enumerable: true },
+	_whichMaterial: { value: "fill", enumerable: true },
 
 	captureAction: {
 		value:function(event) {
@@ -140,6 +141,20 @@ exports.MaterialsPopup = Montage.create(Component, {
 				if (this._useSelection)
 				{
 					console.log( "apply to selection" );
+
+					var selection = this.application.ninja.selectedElements;
+					if (selection && (selection.length > 0))
+					{
+						var canvas = selection[0];
+						var obj;
+						if (canvas.elementModel && canvas.elementModel.shapeModel)  obj = canvas.elementModel.shapeModel.GLGeomObj;
+						if (obj)
+						{
+							var world = obj.getWorld();
+							if (world)
+								world.restartRenderLoop();
+						}
+					}
 				}
 			}
 		}
@@ -241,6 +256,7 @@ exports.MaterialsPopup = Montage.create(Component, {
 				{
 					var canvas = selection[0];
 					var obj;
+					this._whichMaterial = whichMaterial;
 					if (canvas.elementModel && canvas.elementModel.shapeModel)  obj = canvas.elementModel.shapeModel.GLGeomObj;
 					if (obj)
 						material = (whichMaterial === 'stroke') ? obj.getStrokeMaterial() : obj.getFillMaterial();

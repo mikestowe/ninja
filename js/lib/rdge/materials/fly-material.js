@@ -106,6 +106,7 @@ var flyMaterialDef =
 				{
 					'u_tex0': { 'type' : 'tex2d' },
 					'u_time' : { 'type' : 'float' },
+					'u_speed'  : { 'type' : 'float' },
 					'u_resolution'  :   { 'type' : 'vec2' },
 				},
 

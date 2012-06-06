@@ -87,6 +87,10 @@ NinjaCvsRt.CanvasDataManager = Object.create(Object.prototype, {
 							var glRt = Object.create(NinjaCvsRt.GLRuntime, {});
 							glRt.renderWorld(canvas, jObj, this._assetPath);
 						}
+						else
+						{
+							console.log( "***** COULD NOT FIND CANVAS WITH ID " + id + " *****" );
+						}
 					}
 				}
 			}
@@ -1491,6 +1495,79 @@ NinjaCvsRt.RuntimeTwistVertMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, 
 	}
 });
 
+//////////////////////////////////////////////////////
+
+NinjaCvsRt.RuntimeTaperMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
+	_name: { value: "TaperMaterial", writable: true },
+	_shaderName: { value: "taper", writable: true },
+
+	_dTime: { value: 0.01, writable: true },
+	_twistAmount: { value: 0.0, writable: true },
+	_angle: { value: 0.0, writable: true },
+
+
+	isAnimated: { value: function() { return true; }},
+
+	importJSON: {
+		value: function(jObj) {
+			this._tex0 = jObj.tex0;
+			this._tex1 = jObj.tex1;
+
+			this._speed = jObj.speed;
+
+			this._limit1 = jObj.limit1;
+			this._limit2 = jObj.limit2;
+			this._twistAmount = jObj.angle;
+	   }
+	},
+
+	init: {
+		value: function(world) {
+			var material = this._materialNode;
+			if (material)
+			{
+				var technique = material.shaderProgram["colorMe"];
+				var renderer = RDGE.globals.engine.getContext().renderer;
+				if (renderer && technique)
+				{
+					var wrap = 'REPEAT',  mips = true;
+					var tex = renderer.getTextureByName(this._tex0, wrap, mips );
+					if (tex)  technique.u_tex0.set( tex );
+					tex = renderer.getTextureByName(this._tex1, wrap, mips );
+					if (tex)  technique.u_tex1.set( tex );
+
+					technique.u_twistAmount.set( [this._angle] );
+					technique.u_limit1.set( [this._limit1] );
+					technique.u_limit2.set( [this._limit2] );
+				}
+			}
+	   }
+	},
+
+	// several materials inherit from pulse.
+	// they may share this update method
+	update: {
+		value: function(time) {
+		   
+			var angle = this._angle;
+			angle += this._dTime * this._speed;
+			if (angle > this._twistAmount)
+			{
+				angle = this._twistAmount;
+				this._dTime = -this._dTime;
+			}
+			else if (angle < 0.0)
+			{
+				angle = 0;
+				this._dTime = -this._dTime;
+			}
+			this._angle = angle;
+			this._shader.twistMe["u_twistAmount"].set([angle]);
+	   }
+	}
+});
+
+
 NinjaCvsRt.RuntimePulseMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
 	_name: { value: "PulseMaterial", writable: true },
 	_shaderName: { value: "pulse", writable: true },
@@ -1501,7 +1578,7 @@ NinjaCvsRt.RuntimePulseMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
 
 	importJSON: {
 		value: function(jObj) {
-			this._texMap = jObj.texture;
+			this._texMap = jObj.u_tex0;
 			if (jObj.dTime)  this._dTime = jObj.dTime;
 		}
 	},
