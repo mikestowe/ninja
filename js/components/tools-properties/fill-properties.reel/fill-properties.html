@@ -11,10 +11,35 @@
 
         <script type="text/montage-serialization">
         {
-            "_fillMaterialCB": {
+            "useFillColor": {
+                "prototype": "montage/ui/checkbox.reel",
+                "properties": {
+                    "element": {"#": "useFillColor"},
+                    "identifier": "useFillColor",
+                    "checked": true
+                }
+            },
+
+            "useWebGL": {
+                "prototype": "montage/ui/checkbox.reel",
+                "properties": {
+                    "element": {"#": "useWebGL"},
+                    "identifier": "useWebGL",
+                    "checked": false
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"},
+                        "capture": false
+                    }
+                ]
+            },
+
+            "fillMaterial": {
                 "prototype": "js/components/combobox.reel",
                 "properties": {
-                    "element": {"#": "fillMaterialCB"},
+                    "element": {"#": "fillMaterial"},
                     "labelField": "_name",
                     "dataField": "_name"
                 }
@@ -24,11 +49,12 @@
                 "properties": {
                     "element": {"#": "fillProperties"},
 
+                    "useFillColor": {"@": "useFillColor"},
                     "_fillColorCtrl": {"#": "fillColorCtrl"},
 
-                    "_useWebGL": {"#": "useWebGLCH"},
+                    "useWebGL": {"@": "useWebGL"},
                     "_materialsContainer": {"#": "materialsContainer"},
-                    "_fillMaterial": {"@": "_fillMaterialCB"}
+                    "fillMaterial": {"@": "fillMaterial"}
                 }
             }
     	}
@@ -38,16 +64,17 @@
 
     <body>
         <div data-montage-id="fillProperties" class="subToolHolderPanel optionsFillTool toolOptionsFloatChildren">
+            <input data-montage-id="useFillColor" type="checkbox" name="useFillColorControl" class="nj-skinned"/>
             <div class="toolColorChipIcon FillTool"></div>
             <div data-montage-id="fillColorCtrl" class="toolColorChipCtrl"></div>
             <div class="nj-divider divider-vertical toolOptionsSpacer">&nbsp;</div>
 
-            <input data-montage-id="useWebGLCH" type="checkbox" name="useWebGLControl" class="nj-skinned"/>
+            <input data-montage-id="useWebGL" type="checkbox" name="useWebGLControl" class="nj-skinned"/>
             <label class="label">Use WebGL</label>
-            <div data-montage-id="materialsContainer" class="materialsContainerOptions toolOptionsFloatChildren">
+            <div data-montage-id="materialsContainer" class="materialsContainerOptions toolOptionsFloatChildren" style="display:none;">
                 <label class="label">Material:</label>
                 <div data-montage-id="fillIcon" class="toolColorChipIcon FillTool"></div>
-                <select data-montage-id="fillMaterialCB" class="nj-skinned">
+                <select data-montage-id="fillMaterial" class="nj-skinned">
                 </select>
             </div>
         </div>
