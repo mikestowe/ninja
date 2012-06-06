@@ -744,7 +744,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 			
 			if (this._layerEditable.value !== this.layerName) {
 				this.layerName = this._layerEditable.value;
-				this.application.ninja.documentController.activeDocument.needsSave = true;
+				this.application.ninja.currentDocument.model.needsSave = true;
 				this.layerData.stageElement.setAttribute("id",this._layerEditable.value);
 			}
 		}
@@ -782,7 +782,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 			this.layerName = newVal;
 			if (newVal !== this.layerName) {
 				this.layerName = newVal;
-				this.application.ninja.documentController.activeDocument.needsSave = true;
+				this.application.ninja.currentDocument.model.needsSave = true;
 				this.layerData.stageElement.setAttribute("id", newVal);
 			}
 		}

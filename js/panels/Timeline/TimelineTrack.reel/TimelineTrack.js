@@ -725,7 +725,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                     break;
                 }
             }
-            this.application.ninja.documentController.activeDocument.needsSave = true;
+            this.application.ninja.currentDocument.model.needsSave = true;
         }
     },
 
