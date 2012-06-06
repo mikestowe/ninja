@@ -12,6 +12,14 @@
     overflow: hidden;
 }
 
+.montage-editor-container {
+    z-index: 8;
+}
+
+.stageAndScenesContainer .montage-editor {
+    -webkit-user-select:text;
+}
+
 .codeViewContainer {
   position: absolute;
   top: 0px;
