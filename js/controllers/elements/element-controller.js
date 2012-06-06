@@ -5,7 +5,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var Montage = require("montage/core/core").Montage,
-    Component = require("montage/ui/component").Component;
+    Component = require("montage/ui/component").Component,
+    njModule = require("js/lib/NJUtils");
 
 exports.ElementController = Montage.create(Component, {
 
@@ -182,28 +183,12 @@ exports.ElementController = Montage.create(Component, {
                             el.elementModel.stroke = null;
                             return;
                         case 'gradient':
-                            if(color.borderInfo) {
-                                if(color.borderInfo.borderWidth) {
-                                    this.setProperty(el, "border-width", color.borderInfo.borderWidth + color.borderInfo.borderUnits);
-                                }
-                                if(color.borderInfo.borderStyle) {
-                                    this.setProperty(el, "border-style", color.borderInfo.borderStyle);
-                                }
-                            }
                             this.setGradientBorder(el, color.color.gradientMode, color.color.css);
                             break;
                         default:
                             this.setProperty(el, "border-image", "none");
                             this.setProperty(el, "border-image-slice", "");
                             this.setProperty(el, "border-color", color.color.css);
-                            if(color.borderInfo) {
-                                if(color.borderInfo.borderWidth) {
-                                    this.setProperty(el, "border-width", color.borderInfo.borderWidth + color.borderInfo.borderUnits);
-                                }
-                                if(color.borderInfo.borderStyle) {
-                                    this.setProperty(el, "border-style", color.borderInfo.borderStyle);
-                                }
-                            }
                     }
                 }
                 el.elementModel.stroke = color;
@@ -231,20 +216,83 @@ exports.ElementController = Montage.create(Component, {
     },
 
     getStroke: {
-        value: function(el) {
-            // TODO - Need to figure out which border side user wants
-            return this.application.ninja.stylesController.getElementStyle(el, "border");
+        value: function(el, stroke) {
+            var strokeInfo = {},
+                color,
+                borderWidth,
+                border;
+            if(stroke.colorInfo) {
+                strokeInfo.colorInfo = {};
+                color = this.getColor(el, false);
+                if(color && color.color) {
+                    strokeInfo.colorInfo.mode = color.mode;
+                    strokeInfo.colorInfo.color = color.color;
+                } else {
+                    strokeInfo.colorInfo.mode = "nocolor";
+                    strokeInfo.colorInfo.color = null;
+                }
+            }
+            if(stroke.borderInfo) {
+                // TODO - Need to figure out which border side user wants
+                strokeInfo.borderInfo = {};
+                if(stroke.borderInfo.borderWidth) {
+                    borderWidth = this.getProperty(el, "border-width");
+                    if(borderWidth) {
+                        border = njModule.NJUtils.getValueAndUnits(borderWidth);
+                        strokeInfo.borderInfo.borderWidth = border[0];
+                        strokeInfo.borderInfo.borderUnits = border[1];
+                    }
+                }
+                if(stroke.borderInfo.borderStyle) {
+                    strokeInfo.borderInfo.borderStyle = this.getProperty(el, "border-style");
+                }
+            }
+            return strokeInfo;
         }
     },
 
     setStroke: {
         value: function(el, stroke) {
-            this.application.ninja.stylesController.setElementStyle(el, "border-width", stroke.borderWidth + stroke.borderUnits);
-            this.application.ninja.stylesController.setElementStyle(el, "border-style", stroke.borderStyle);
-            this.setColor(el, stroke.color, false);
+            if(stroke.borderInfo) {
+                if(stroke.borderInfo.borderWidth) {
+                    this.application.ninja.stylesController.setElementStyle(el, "border-width", stroke.borderInfo.borderWidth + stroke.borderInfo.borderUnits);
+                }
+                if(stroke.borderInfo.borderStyle) {
+                    this.application.ninja.stylesController.setElementStyle(el, "border-style", stroke.borderInfo.borderStyle);
+                }
+            }
+            if(stroke.colorInfo) {
+                this.setColor(el, stroke.colorInfo, false);
+            }
         }
     },
 
+    getFill: {
+        value: function(el, fill) {
+            var fillInfo = {},
+                color;
+            if(fill.colorInfo) {
+                fillInfo.colorInfo = {};
+                color = this.getColor(el, true);
+                if(color && color.color) {
+                    fillInfo.colorInfo.mode = color.mode;
+                    fillInfo.colorInfo.color = color.color;
+                } else {
+                    fillInfo.colorInfo.mode = "nocolor";
+                    fillInfo.colorInfo.color = null;
+                }
+            }
+            return fillInfo;
+        }
+    },
+
+    setFill: {
+        value: function(el, fill) {
+            if(fill.colorInfo) {
+                this.setColor(el, fill.colorInfo, true);
+            }
+        }
+    },
     //--------------------------------------------------------------------------------------------------------
     // Routines to get/set 3D properties
     get3DProperty: {
