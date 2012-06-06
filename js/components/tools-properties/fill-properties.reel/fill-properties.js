@@ -10,27 +10,6 @@ var Montage = require("montage/core/core").Montage,
 
 var FillProperties = exports.FillProperties = Montage.create(ToolProperties, {
 
-    _fillColorCtrl: {
-        value: null,
-        serializable: true
-    },
-
-    _useWebGL: {
-        value: null,
-        serializable: true
-    },
-
-    _materialsContainer: {
-        value: null,
-        serializable: true
-    },
-
-    _fillMaterial: {
-        value: null,
-        serializable: true
-    },
-
-    _use3D: { value: false },
     addedColorChips: { value: false },
 
     _fill: {
@@ -79,29 +58,17 @@ var FillProperties = exports.FillProperties = Montage.create(ToolProperties, {
 
     _subPrepare: {
         value: function() {
-            Object.defineBinding(this._fillMaterial, "items", {
+            Object.defineBinding(this.fillMaterial, "items", {
                 boundObject: this.application.ninja.appModel,
                 boundObjectPropertyPath: "materials",
                 oneway: false
             });
-
-            this.handleChange(null);
-            this._useWebGL.addEventListener("change", this, false);
         }
     },
 
-    handleChange: {
+    handleAction: {
         value: function(event) {
-            if(this._useWebGL.checked)
-            {
-                this._use3D = true;
-                this._materialsContainer.style["display"] = "";
-            }
-            else
-            {
-                this._use3D = false;
-                this._materialsContainer.style["display"] = "none";
-            }
+            (this.useWebGL.checked) ? this._materialsContainer.style["display"] = "" : this._materialsContainer.style["display"] = "none";
         }
     }
 });

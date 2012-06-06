@@ -93,7 +93,7 @@ var InkBottleProperties = exports.InkBottleProperties = Montage.create(ToolPrope
         }
     },
 
-        draw: {
+    draw: {
         enumerable: false,
         value: function () {
             Object.getPrototypeOf(InkBottleProperties).draw.call(this);
@@ -123,7 +123,7 @@ var InkBottleProperties = exports.InkBottleProperties = Montage.create(ToolPrope
 
     _subPrepare: {
         value: function() {
-            Object.defineBinding(this._strokeMaterial, "items", {
+            Object.defineBinding(this.strokeMaterial, "items", {
                 boundObject: this.application.ninja.appModel,
                 boundObjectPropertyPath: "materials",
                 oneway: false
@@ -137,33 +137,19 @@ var InkBottleProperties = exports.InkBottleProperties = Montage.create(ToolPrope
                 val = event.currentTarget.identifier;
             switch(val) {
                 case "useBorderWidth":
-                    if(ch.checked) {
-                        this.borderWidthLabel.element.classList.remove("disabled");
-                        this._borderWidth.enabled = true;
-                    } else {
-                        this.borderWidthLabel.element.classList.add("disabled");
-                        this._borderWidth.enabled = false;
-                    }
+                    this.borderWidth.enabled = ch.checked;
                     break;
                 case "useBorderStyle":
                     if(ch.checked) {
-                        this.borderStyleLabel.element.classList.remove("disabled");
-                        this._borderStyle.removeAttribute("disabled")
+                        this.borderStyle.removeAttribute("disabled");
                     } else {
-                        this.borderStyleLabel.element.classList.add("disabled");
-                        this._borderStyle.setAttribute("disabled", "disabled");
+                        this.borderStyle.setAttribute("disabled", "disabled");
                     }
                     break;
                 case "useStrokeSize":
-                    if(ch.checked) {
-                        this.strokeSizeLabel.element.classList.remove("disabled");
-                        this._strokeSize.enabled = true
-                    } else {
-                        this.strokeSizeLabel.element.classList.add("disabled");
-                        this._strokeSize.enabled = false;
-                    }
+                    this.strokeSize.enabled = ch.checked;
                     break;
-                case "useWebGl":
+                case "useWebGL":
                     (ch.checked) ? this._materialsContainer.style["display"] = "" : this._materialsContainer.style["display"] = "none";
                     break;
             }
