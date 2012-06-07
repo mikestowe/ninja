@@ -155,7 +155,7 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
 			wipeAttributes(htmlTagDoc);
 			for (var m in htmlTagMem.attributes) {
 				if (htmlTagMem.attributes[m].value) {
-					htmlTagDoc.setAttribute(htmlTagMem.attributes[m].name, htmlTagMem.attributes[m].value.replace(/ montage-app-bootstrapping/gi, ''));
+					htmlTagDoc.setAttribute(htmlTagMem.attributes[m].name, htmlTagMem.attributes[m].value.replace(/montage-app-bootstrapping/gi, ''));
 				}
 			}
             //Getting list of current nodes (Ninja DOM)
@@ -609,6 +609,8 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
             } else {
             	cleanHTML = template.file.content.document.documentElement.outerHTML.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaRootUrl.bind(this));
       	    }
+      	    //TODO: Remove, this is a temp hack
+      	    cleanHTML = '<!DOCTYPE html>\n'+cleanHTML;
             //
             function parseNinjaRootUrl(url) {
                 if (url.indexOf(this.application.ninja.coreIoApi.rootUrl) !== -1) {
