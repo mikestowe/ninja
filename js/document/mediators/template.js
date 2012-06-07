@@ -8,7 +8,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 //
 var Montage = 			require("montage/core/core").Montage,
 	Component = 		require("montage/ui/component").Component,
-	TemplateCreator = 	require("node_modules/tools/template/template-creator").TemplateCreator;
+	TemplateCreator = 	require("node_modules/tools/template/template-creator").TemplateCreator,
+	ClassUuid = 		require("js/components/core/class-uuid").ClassUuid;
 ////////////////////////////////////////////////////////////////////////
 //	
 exports.TemplateDocumentMediator = Montage.create(Component, {
@@ -93,7 +94,7 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //TODO: Expand to allow more templates, clean up variables
     parseNinjaTemplateToHtml: {
-        value: function (template, ninjaWrapper, libCopyCallback) {
+        value: function (saveExternalData, template, ninjaWrapper, libCopyCallback) {
         	//TODO: Improve reference for rootUrl
             var regexRootUrl,
             	rootUrl = this.application.ninja.coreIoApi.rootUrl + escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1])),
@@ -328,7 +329,7 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
             
             
             
-            //TODO: Make proper webGL/Canvas method
+            
             
             //
             var webgltag, webgllibtag, webglrdgetag, mjstag, mjslibtag, matchingtags = [],
@@ -357,19 +358,33 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                     }
                 }
             }
+            
+            
+            
+            
+            //TODO: Make proper webGL/Canvas method
+            
+            
             //Checking for webGL elements in document
             if (template.webgl && template.webgl.length > 1) {//TODO: Should be length 0, hack for a temp fix
                 var rdgeDirName, rdgeVersion, cvsDataDir = this.getCanvasDirectory(template.file.root), fileCvsDir, fileCvsDirAppend, cvsDirCounter = 1, fileOrgDataSrc;
                 //
                 if (cvsDataDir && !matchingtags.length && !webgllibtag) {
-                	fileCvsDir = cvsDataDir+template.file.name.split('.'+template.file.extension)[0];
-                	if (!this._getUserDirectory(fileCvsDir)) {
-                		fileCvsDirAppend = fileCvsDir+cvsDirCounter;
-                		while (!this._getUserDirectory(fileCvsDirAppend)) {
-                			fileCvsDirAppend = fileCvsDir+(cvsDirCounter++);
-                		}
+                	
+                	if (template.libs.canvasId) {
+	                	libsobserver.canvasId = template.libs.canvasId;
+                	} else {
+	                	libsobserver.canvasId = ClassUuid.generate();
                 	}
-                	//TODO: Allow user overwrite
+                	
+                	//Creating data directory, will include materials at a later time
+                	fileCvsDir = cvsDataDir+template.file.name.split('.'+template.file.extension)[0]+'_'+libsobserver.canvasId;
+                	
+                	if (!this._getUserDirectory(fileCvsDir)) {
+                		//TODO: create proper logic not to overwrite files
+                		console.log('error');
+                	}
+                	
                 	fileCvsDir += '/';
                 } else if (webgllibtag && webgllibtag.getAttribute && webgllibtag.getAttribute('data-ninja-canvas-json') !== null) {
                 	fileOrgDataSrc = template.file.root+webgllibtag.getAttribute('data-ninja-canvas-json');
@@ -437,17 +452,9 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                 //Looping through data to create escaped array
                 for (var j = 0; template.webgl[j]; j++) {
                     if (j === 0) {
-                    	//if (fileCvsDir) {
-                    	//	json += '\n\t\t\t"' + template.webgl[j] + '"';
-                    	//} else {
-                    		json += '\n\t\t\t"' + escape(template.webgl[j]) + '"';
-                    	//}
+                    	json += '\n\t\t\t"' + escape(template.webgl[j]) + '"';
                     } else {
-                    	//if (fileCvsDir) {
-                    	//	json += ',\n\t\t\t"' + template.webgl[j] + '"';
-                    	//} else {
-                    		json += ',\n\t\t\t"' + escape(template.webgl[j]) + '"';
-                    	//}
+                    	json += ',\n\t\t\t"' + escape(template.webgl[j]) + '"';
                     }
                 }
                 //Closing array (make-shift JSON string to validate data in <script> tag)
@@ -590,9 +597,9 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
             }
             //
             if (libsobserver.montage || libsobserver.canvas) {
-            	return {content: this.getPrettyHtml(cleanHTML.replace(this.getAppTemplatesUrlRegEx(), '')), libs: true};
+            	return {content: this.getPrettyHtml(cleanHTML.replace(this.getAppTemplatesUrlRegEx(), '')), libs: true, montageId: libsobserver.montageId, canvasId: libsobserver.canvasId};
             } else {
-	            return {content: this.getPrettyHtml(cleanHTML.replace(this.getAppTemplatesUrlRegEx(), '')), libs: false};
+	            return {content: this.getPrettyHtml(cleanHTML.replace(this.getAppTemplatesUrlRegEx(), '')), libs: false, montageId: libsobserver.montageId, canvasId: libsobserver.canvasId};
             }
         }
     },
