@@ -68,12 +68,8 @@ exports.BaseDocumentModel = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     selection: {
-        get: function() {
-            return this._selection;
-        },
-        set: function(value) {
-            this._selection = value;
-        }
+        get: function() {return this._selection;},
+        set: function(value) {this._selection = value;}
     },
     ////////////////////////////////////////////////////////////////////
     //
@@ -88,6 +84,11 @@ exports.BaseDocumentModel = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
 	//
 	views: {
+        value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+	libs: {
         value: null
     },
     ////////////////////////////////////////////////////////////////////
@@ -167,8 +168,9 @@ exports.BaseDocumentModel = Montage.create(Component, {
         	//
         	if (this.currentView === this.views.design) {
             	//
-        		this.application.ninja.ioMediator.fileSave({
+        		var save = this.application.ninja.ioMediator.fileSave({
         			mode: 'html',
+        			libs: this.libs,
         			file: this.file,
         			webgl: this.webGlHelper.glData,
         			styles: this.getStyleSheets(),
@@ -178,6 +180,17 @@ exports.BaseDocumentModel = Montage.create(Component, {
         			body: this.views.design.iframe.contentWindow.document.body,
         			mjsTemplateCreator: this.views.design.iframe.contentWindow.mjsTemplateCreator
         		}, this.handleSaved.bind({callback: callback, model: this}), libCopyCallback);
+        		//TODO: Improve detection during save routine
+        		if (save) {
+	        		if (save.montageId) {
+		        		this.libs.montageId = save.montageId;
+		        		this.libs.montage = true;
+	        		}
+	        		if (save.canvasId) {
+		        		this.libs.canvasId = save.canvasId;
+		        		this.libs.canvas = true;
+	        		}
+        		}
         	} else {
         		//TODO: Add logic to save code view data
         	}
@@ -196,8 +209,9 @@ exports.BaseDocumentModel = Montage.create(Component, {
         	//
         	if (this.currentView === this.views.design) {
             	//
-        		this.application.ninja.ioMediator.fileSave({
+        		var save = this.application.ninja.ioMediator.fileSave({
         			mode: 'html',
+        			libs: this.libs,
         			file: this.file,
         			webgl: this.webGlHelper.glData,
         			css: this.getStyleSheets(),
@@ -207,6 +221,17 @@ exports.BaseDocumentModel = Montage.create(Component, {
         			body: this.views.design.iframe.contentWindow.document.body,
         			mjsTemplateCreator: this.views.design.iframe.contentWindow.mjsTemplateCreator
         		}, this.handleSaved.bind({callback: callback, model: this}), libCopyCallback);
+        		//TODO: Improve detection during save routine
+        		if (save) {
+	        		if (save.montageId) {
+		        		this.libs.montageId = save.montageId;
+		        		this.libs.montage = true;
+	        		}
+	        		if (save.canvasId) {
+		        		this.libs.canvasId = save.canvasId;
+		        		this.libs.canvas = true;
+	        		}
+        		}
         	} else {
         		//TODO: Add logic to save code view data
         	}
