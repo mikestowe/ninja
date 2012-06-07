@@ -113,45 +113,46 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
 
     /* ---- Bindable Properties ---- */
 
-    getPropertyList : {
-        value: function(object, excludeUnderscoreProperties) {
+    getPropertiesList : {
+        value: function(object, groupByPrototype) {
             var object_i = object,
-                prototypes = [object_i];
+                prototypes = [object_i],
+                list;
 
-            ///// Collect prototypes
-            while(Object.getPrototypeOf(object_i)) {
-                object_i = Object.getPrototypeOf(object_i);
-                prototypes.push(object_i);
+            if(groupByPrototype) {
+                ///// Collect prototypes
+                while(Object.getPrototypeOf(object_i)) {
+                    object_i = Object.getPrototypeOf(object_i);
+                    prototypes.push(object_i);
+                }
+
+                list = prototypes.map(function(proto) {
+                    var metadata = proto._montage_metadata,
+                        objectName = (metadata) ? metadata.objectName : "Object";
+
+                    return {
+                        category : objectName,
+                        properties : Montage.getSerializablePropertyNames(proto)
+                    };
+                }, this);
+            } else {
+                list = Montage.getSerializablePropertyNames(object);
             }
 
-            return prototypes.map(function(proto) {
-                var metadata = proto._montage_metadata,
-                    objectName = (metadata) ? metadata.objectName : "Object";
 
-                return {
-                    category : objectName,
-                    properties : this.getPropertiesFromObject(proto)
-                };
-            }, this);
+            return list;
 
         }
     },
 
-    getPropertiesFromObject : {
-        value: function (object, excludeUnderscoreProperties) {
-            var properties = [];
+    getBindablePropertiesFromObject : {
+        value: function (object) {
+            var serializableProperties = Montage.getSerializablePropertyNames(object),
+                properties;
 
-            for(var key in object) {
-                if(object.hasOwnProperty(key)) {
-                    properties.push(key);
-                }
-            }
-
-            if(excludeUnderscoreProperties) {
-                properties = properties.filter(function(property) {
-                    return property[0] !== '_';
-                }, this);
-            }
+            properties = serializableProperties.filter(function(prop) {
+                return object.hasOwnProperty(prop);
+            }, this);
 
             return properties.sort();
         }
