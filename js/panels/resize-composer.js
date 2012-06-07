@@ -105,6 +105,8 @@ exports.ResizeComposer = Montage.create(Composer, {
     captureMouseup: {
         value: function(e) {
             e.preventDefault();
+            e.stopImmediatePropagation();
+            e.stopPropagation();
             window.removeEventListener("mousemove", this, true);
             window.removeEventListener("mouseup", this, true);
             this._executeEvent("resizeEnd");
