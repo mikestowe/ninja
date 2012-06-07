@@ -373,78 +373,76 @@ exports.ElementMediator = Montage.create(Component, {
     },
 
     getStroke: {
-        value: function(el) {
-            if(!el.elementModel) {
-                NJUtils.makeElementModel(el, "Div", "block");
-            }
-            return el.elementModel.controller["getStroke"](el);
+        value: function(el, strokeProperties) {
+            return el.elementModel.controller["getStroke"](el, strokeProperties);
         }
     },
 
-
     /**
-     Set a property change command for an element or array of elements
+     Set stroke/border properties on an element or array of elements
      @param els: Array of elements. Can contain 1 or more elements
      @param value: Value to be set. This is the stroke info
      @param eventType: Change/Changing. Will be passed to the dispatched event
      @param source: String for the source object making the call
      @param currentValue *OPTIONAL*: current value array. If not found the current value is calculated
-     @param stageRedraw: *OPTIONAL*: True. If set to false the stage will not redraw the selection/outline
      */
     setStroke: {
         value: function(els, value, eventType, source, currentValue) {
 
-            if(eventType === "Changing") {
-                this._setStroke(els, value, isFill, eventType, source);
-            } else {
+            if(eventType !== "Changing") {
                 // Calculate currentValue if not found for each element
                 if(!currentValue) {
-                    var that = this;
+                    var that = this,
+                        val = value;
                     currentValue = els.map(function(item) {
-                        return that.getStroke(item);
+                        return that.getStroke(item, val);
                     });
                 }
-
-                var command = Montage.create(Command, {
-                    _els:               { value: els },
-                    _value:             { value: value },
-                    _previous:          { value: currentValue },
-                    _eventType:         { value: eventType},
-                    _source:            { value: "undo-redo"},
-                    description:        { value: "Set Color"},
-                    receiver:           { value: this},
-
-                    execute: {
-                        value: function(senderObject) {
-                            if(senderObject) this._source = senderObject;
-                            this.receiver._setStroke(this._els, this._value, this._eventType, this._source);
-                            this._source = "undo-redo";
-                            return "";
-                        }
-                    },
-
-                    unexecute: {
-                        value: function() {
-                            this.receiver._setStroke(this._els, this._previous, this._eventType, this._source);
-                            return "";
-                        }
-                    }
-                });
-
-                NJevent("sendToUndo", command);
-                command.execute(source);
+                document.application.undoManager.add("Set stroke", this.setStroke, this, els, currentValue, eventType, source, value);
             }
 
-        }
-    },
-
-    _setStroke: {
-        value: function(els, value, eventType, source) {
             for(var i=0, item; item = els[i]; i++) {
-                item.elementModel.controller["setStroke"](item, value);
+                item.elementModel.controller["setStroke"](item, (value[i] || value), eventType, source);
             }
 
             NJevent("element" + eventType, {type : "setStroke", source: source, data: {"els": els, "prop": "stroke", "value": value}, redraw: null});
+        }
+    },
+
+    getFill: {
+        value: function(el, fillProperties) {
+            return el.elementModel.controller["getFill"](el, fillProperties);
+        }
+    },
+
+    /**
+     Set fill/background properties for an element or array of elements
+     @param els: Array of elements. Can contain 1 or more elements
+     @param value: Value to be set. This is the fill info
+     @param eventType: Change/Changing. Will be passed to the dispatched event
+     @param source: String for the source object making the call
+     @param currentValue *OPTIONAL*: current value array. If not found the current value is calculated
+     */
+    setFill: {
+        value: function(els, value, eventType, source, currentValue) {
+
+            if(eventType !== "Changing") {
+                // Calculate currentValue if not found for each element
+                if(!currentValue) {
+                    var that = this,
+                        val = value;
+                    currentValue = els.map(function(item) {
+                        return that.getFill(item, val);
+                    });
+                }
+                document.application.undoManager.add("Set fill", this.setFill, this, els, currentValue, eventType, source, value);
+            }
+
+            for(var i=0, item; item = els[i]; i++) {
+                item.elementModel.controller["setFill"](item, (value[i] || value));
+            }
+
+            NJevent("element" + eventType, {type : "setFill", source: source, data: {"els": els, "prop": "fill", "value": value}, redraw: null});
         }
     },
 

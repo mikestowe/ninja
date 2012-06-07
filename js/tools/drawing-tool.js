@@ -64,6 +64,8 @@ exports.DrawingTool = Montage.create(ToolBase, {
         set: function (value) { this._currentY = value; }
     },
 
+    drawData: { value: null },
+
     /**
     * PUBLIC METHODS
     */
@@ -74,6 +76,7 @@ exports.DrawingTool = Montage.create(ToolBase, {
             this._isDrawing = true;
             this.mouseDownHitRec = null;
             this.mouseUpHitRec = null;
+            this.drawData = null;
 
             point = webkitConvertPointFromPageToNode(this.application.ninja.stage.canvas, new WebKitPoint(event.pageX, event.pageY));
             snapData = DrawingToolBase.getInitialSnapPoint(point.x, point.y, this._targetedElement); //event.layerX, event.layerY);
