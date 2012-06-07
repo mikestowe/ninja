@@ -2174,7 +2174,7 @@ NinjaCvsRt.RuntimeBrushStroke = Object.create(NinjaCvsRt.RuntimeGeomObj, {
     render: {
         value: function() {
             //vars for gradient code
-            var w,h;
+            var w,h,useBuildColor=false;
 
             // get the world
             var world = this.getWorld();
