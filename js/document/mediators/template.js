@@ -84,9 +84,22 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
     parseHtmlToNinjaTemplate: {
         value: function (html) {
             //Creating temp object to mimic HTML
-            var doc = window.document.implementation.createHTMLDocument(), template;
+            var doc = window.document.implementation.createHTMLDocument(), template, docHtmlTag,
+            	hackHtml = document.createElement('html'), hackTag;
             //Setting content to temp
             doc.getElementsByTagName('html')[0].innerHTML = html;
+            //TODO: Improve this, very bad way of copying attributes (in a pinch to get it working)
+            hackHtml.innerHTML = html.replace(/html/gi, 'ninjahtmlhack');
+            hackTag = hackHtml.getElementsByTagName('ninjahtmlhack')[0];
+            docHtmlTag = doc.getElementsByTagName('html')[0];
+            //Looping through the attributes to copy them
+            for (var m in hackTag.attributes) {
+				if (hackTag.attributes[m].value) {
+					docHtmlTag.setAttribute(hackTag.attributes[m].name.replace(/ninjahtmlhack/gi, 'html'), hackTag.attributes[m].value.replace(/ninjahtmlhack/gi, 'html'));
+				}
+			}
+			//Garbage collection
+            hackHtml = hackTag = null;
             //Creating return object
             return {head: doc.head.innerHTML, body: doc.body.innerHTML, document: doc};
         }
@@ -117,20 +130,34 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
             	template.file.content.document.head.innerHTML = template.head.innerHTML.replace(regexRootUrl, '');
 	            template.file.content.document.body.innerHTML = template.body.innerHTML.replace(regexRootUrl, '');
             }
+            //Removes all attributes from node
+            function wipeAttributes (node) {
+	            for (var f in node.attributes) {
+		            node.removeAttribute(node.attributes[f].name);
+			    }
+            }
             //Copying attributes to maintain same properties as the <body>
+            wipeAttributes(template.file.content.document.body);
 			for (var n in template.body.attributes) {
 				if (template.body.attributes[n].value) {
-					//
 					template.file.content.document.body.setAttribute(template.body.attributes[n].name, template.body.attributes[n].value);
 				}				
 			}
-            
-            
-            
-            //TODO: Add attribute copying for <HEAD> and <HTML>
-            
-            
-            
+			wipeAttributes(template.file.content.document.head);
+            //Copying attributes to maintain same properties as the <head>
+			for (var m in template.document.head.attributes) {
+				if (template.document.head.attributes[m].value) {
+					template.file.content.document.head.setAttribute(template.document.head.attributes[m].name, template.document.head.attributes[m].value);
+				}
+			}
+            //Copying attributes to maintain same properties as the <html>
+			var htmlTagMem = template.document.getElementsByTagName('html')[0], htmlTagDoc = template.file.content.document.getElementsByTagName('html')[0];
+			wipeAttributes(htmlTagDoc);
+			for (var m in htmlTagMem.attributes) {
+				if (htmlTagMem.attributes[m].value) {
+					htmlTagDoc.setAttribute(htmlTagMem.attributes[m].name, htmlTagMem.attributes[m].value.replace(/ montage-app-bootstrapping/gi, ''));
+				}
+			}
             //Getting list of current nodes (Ninja DOM)
             presentNodes = template.file.content.document.getElementsByTagName('*');
             //Looping through nodes to determine origin and removing if not inserted by Ninja
@@ -370,7 +397,7 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                 var rdgeDirName, rdgeVersion, cvsDataDir = this.getCanvasDirectory(template.file.root), fileCvsDir, fileCvsDirAppend, cvsDirCounter = 1, fileOrgDataSrc;
                 //
                 if (cvsDataDir && !matchingtags.length && !webgllibtag) {
-                	
+                
                 	if (template.libs.canvasId) {
 	                	libsobserver.canvasId = template.libs.canvasId;
                 	} else {
