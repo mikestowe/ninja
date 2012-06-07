@@ -143,11 +143,8 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
             var properties = [];
 
             for(var key in object) {
-                debugger;
                 if(object.hasOwnProperty(key)) {
-                    if(key.serializable) {
                         properties.push(key);
-                    }
                 }
             }
 

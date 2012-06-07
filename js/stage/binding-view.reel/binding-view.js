@@ -16,9 +16,17 @@ exports.BindingView = Montage.create(Component, {
     _selectedComponent: {
         value: null
     },
+
+    //Bindables Format: [
+    
+    //]
+
+
     _bindables: {
         value: []
     },
+
+
     _nonVisualComponents: {
         value:[]
     },
@@ -46,10 +54,12 @@ exports.BindingView = Montage.create(Component, {
             this._selectedComponent = val;
             this.application.ninja.objectsController.currentObject = this.selectedComponent;
             var arrBindings = this.application.ninja.objectsController.currentObjectBindings;
+
             debugger;
             arrBindings.forEach(function(obj) {
                  
             }.bind(this));
+            this.bindables.push(this._selectedComponent);
             // Get Bindings that exist;
 
 
