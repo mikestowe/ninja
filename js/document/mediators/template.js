@@ -155,7 +155,9 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
 			wipeAttributes(htmlTagDoc);
 			for (var m in htmlTagMem.attributes) {
 				if (htmlTagMem.attributes[m].value) {
-					htmlTagDoc.setAttribute(htmlTagMem.attributes[m].name, htmlTagMem.attributes[m].value.replace(/montage-app-bootstrapping/gi, ''));
+					if (htmlTagMem.attributes[m].value.replace(/montage-app-bootstrapping/gi, '').length>0) {
+						htmlTagDoc.setAttribute(htmlTagMem.attributes[m].name, htmlTagMem.attributes[m].value.replace(/ montage-app-bootstrapping/gi, ''));
+					}
 				}
 			}
             //Getting list of current nodes (Ninja DOM)
