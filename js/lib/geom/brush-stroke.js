@@ -45,7 +45,7 @@ var BrushStroke = function GLBrushStroke() {
     this._strokeAmountSmoothing = 0;
 
     // currently, brush does not support a fill region
-    this.canFill = false;
+    this.canFill = true;
 
     //threshold that tells us whether two samples are too far apart
     this._MAX_SAMPLE_DISTANCE_THRESHOLD = 5;
@@ -180,7 +180,7 @@ BrushStroke.prototype.setStrokeWidth = function (w) {
     }
     this._isDirty=true;
 };
-
+/*
 BrushStroke.prototype.getStrokeMaterial = function () {
     return this._strokeMaterial;
 };
@@ -188,18 +188,24 @@ BrushStroke.prototype.getStrokeMaterial = function () {
 BrushStroke.prototype.setStrokeMaterial = function (m) {
     this._strokeMaterial = m; this._isDirty = true;
 };
-
+*/
 BrushStroke.prototype.getStrokeColor = function () {
-    return this._strokeColor;
+    return null;//return this._strokeColor;
 };
 
 BrushStroke.prototype.setStrokeColor = function (c) {
-    this._strokeColor = c; this._isDirty = true;
+    //this._strokeColor = c; this._isDirty = true;
 };
 
 BrushStroke.prototype.setFillColor = function(c){
-    return;
-}; //NO-OP for now as we have no fill region
+    this._strokeColor = c; this._isDirty = true;
+};
+//sets stroke color for now as we have no fill region
+
+BrushStroke.prototype.getFillColor = function() {
+    return this._strokeColor;
+};
+//return strokeColor for now as we have no fill region
 
 BrushStroke.prototype.setSecondStrokeColor = function(c){
     this._secondStrokeColor=c; this._isDirty = true;
@@ -732,8 +738,7 @@ BrushStroke.prototype.drawToContext = function(ctx, drawStageWorldPts, stageWorl
                 ctx.strokeStyle = this.buildColor(ctx, this._strokeColor, w, h, this._strokeWidth, alphaVal);
             }
             //linearly interpolate between the two stroke colors
-            var currStrokeColor = VecUtils.vecInterpolate(4, this._strokeColor, this._secondStrokeColor, t/numTraces);
-            //ctx.strokeStyle="rgba("+parseInt(255*currStrokeColor[0])+","+parseInt(255*currStrokeColor[1])+","+parseInt(255*currStrokeColor[2])+","+alphaVal+")";
+            //var currStrokeColor = VecUtils.vecInterpolate(4, this._strokeColor, this._secondStrokeColor, t/numTraces);
             ctx.translate(disp[0],disp[1]);
             ctx.beginPath();
             if (drawStageWorldPts) {

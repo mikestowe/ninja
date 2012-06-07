@@ -703,13 +703,14 @@ exports.PiData = Montage.create( Montage, {
                         {
                             type : "color",
                             prop: "border",
-                            id : "stroke"
+                            id : "stroke",
+                            visible: false
                         },
                         {
                             type : "color",
                             id : "fill",
                             prop: "background",
-                            visible : false,
+                            visible : true,
                             divider : true
                         }
                     ],

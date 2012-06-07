@@ -138,7 +138,7 @@ exports.BrushTool = Montage.create(ShapeTool, {
                  } else {
                      colorArray = [1,1,1,0];
                  }
-                 this._selectedBrushStroke.setStrokeColor(colorArray);
+                 this._selectedBrushStroke.setFillColor(colorArray);
 
                  //add this point to the brush stroke in case the user does a mouse up before doing a mouse move
                  var currMousePos = hitRec.calculateStageWorldPoint();
