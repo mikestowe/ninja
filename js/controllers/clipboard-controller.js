@@ -227,28 +227,41 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
                       pastedElements.push(node);
                   }
               }
+
+              this.application.ninja.selectionController.selectElements(pastedElements);
+              this.application.ninja.currentDocument.model.needsSave = true;
           }
     },
 
     //paste from external applicaitons
     pasteFromExternalSource:{//todo: change to pasteNinja, pasteHTML, etc
         value: function(htmlData, textData){
-            var i=0,
+            var i=0, j=0,
                 pasteDataObject=null,
                 clipboardHelper=this.createClipboardHelper(),
                 pastedElements = null,
                 node = null,
                 styles = null,
                 divWrapper = null,
-                spanWrapper = null;
+                spanWrapper = null,
+                metaEl = null;
 
             if(htmlData){
+
                 //TODO: cleanse HTML
+
+                //TODO: remove all script tags for security
+                htmlData.replace(/[<script]/g," ");
 
                 this.application.ninja.selectedElements.length = 0;
                 NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": true} );
 
-                clipboardHelper.innerHTML = htmlData;//todo:remove html and body tags
+                try{
+                    clipboardHelper.innerHTML = htmlData;//this removes html and body tags
+                }
+                catch(e){
+                    console.log(""+e.stack);
+                }
 
                 while(clipboardHelper.hasChildNodes()){
                     if(clipboardHelper.lastChild.tagName === "META") {
