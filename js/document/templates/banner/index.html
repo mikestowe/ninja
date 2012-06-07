@@ -74,9 +74,27 @@
         </style>
         
         <script type="text/javascript" data-ninja-template="true">
-      		function getElement(x,y) {
-            	return document.elementFromPoint(x,y);
-        	}
+
+            function getElement(x,y) {
+                return document.elementFromPoint(x,y);
+            }
+
+            var njmodelGet = function njmodelGet() {
+                return (this.hasOwnProperty("_model") ? this._model: document.modelGenerator.call(this));
+            };
+
+            Object.defineProperty(Object.prototype, "_model", {
+                enumerable: false,
+                value: null,
+                writable: true
+            });
+
+            Object.defineProperty(Object.prototype, "elementModel", {
+                configurable: true,
+                get: njmodelGet,
+                set: function() {
+                }
+            });
     	</script>
     	
     	<!-- TODO: Determine if loading Montage is always needed or if it could be done author-time or on file open -->

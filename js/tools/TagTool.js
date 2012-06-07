@@ -90,9 +90,6 @@ exports.TagTool = Montage.create(DrawingTool, {
                 element = document.application.njUtils.make(this.options.selectedElement, null, this.application.ninja.currentDocument);
             }
 
-            // Create the model
-            document.application.njUtils.createModel(element);
-
             // Create the styles
             styles = document.application.njUtils.stylesFromDraw(element, ~~drawData.width, ~~drawData.height, drawData);
 

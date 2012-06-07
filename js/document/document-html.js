@@ -90,7 +90,7 @@ exports.HtmlDocument = Montage.create(Component, {
             		//Adding observer to know when template is ready
             		this._observer = new WebKitMutationObserver(this.handleTemplateReady.bind(this));
         			this._observer.observe(this.model.views.design.document.head, {childList: true});
-            	}.bind(this), template);
+            	}.bind(this), template, {viewCallback: this.handleViewReady, context: this});
             } else {
             	//TODO: Identify default view (probably code)
             }
@@ -103,9 +103,13 @@ exports.HtmlDocument = Montage.create(Component, {
     		//Removing observer, only needed on initial load
     		this._observer.disconnect();
     		this._observer = null;
-    		//Making callback after view is loaded
-    	    this.loaded.callback.call(this.loaded.context, this);
     	}
+    },
+    handleViewReady: {
+        value: function() {
+            //Making callback after view is loaded
+            this.loaded.callback.call(this.loaded.context, this);
+        }
     },
     ////////////////////////////////////////////////////////////////////
 	//

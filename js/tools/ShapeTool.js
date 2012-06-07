@@ -65,7 +65,6 @@ exports.ShapeTool = Montage.create(DrawingTool, {
                 if( (w > 0) && (h > 0) ) {
                     if(!this._useExistingCanvas()) {
                         canvas = document.application.njUtils.make("canvas", {"data-RDGE-id": NJUtils.generateRandom()}, this.application.ninja.currentDocument);
-                        document.application.njUtils.createModelWithShape(canvas);
 
                         var styles = document.application.njUtils.stylesFromDraw(canvas, w, h, this.drawData);
                         this.application.ninja.elementMediator.addElements(canvas, styles);
