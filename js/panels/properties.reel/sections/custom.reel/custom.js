@@ -400,7 +400,7 @@ exports.CustomSection = Montage.create(Component, {
             this.controls[aField.id] = obj;
 
             // TODO - Hack for now to reference the color select object to unregister color chips
-            this.controls["background"] = obj;
+            this.controls["background-color"] = obj;
 
             return obj;
         }
