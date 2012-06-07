@@ -85,7 +85,6 @@ exports.LineTool = Montage.create(ShapeTool, {
                             }
 
                             canvas = document.application.njUtils.make("canvas", {"data-RDGE-id": NJUtils.generateRandom()}, this.application.ninja.currentDocument);
-                            document.application.njUtils.createModelWithShape(canvas, "Line");
 
                             var styles = document.application.njUtils.stylesFromDraw(canvas, w, h, this.drawData);
                             this.application.ninja.elementMediator.addElements(canvas, styles);

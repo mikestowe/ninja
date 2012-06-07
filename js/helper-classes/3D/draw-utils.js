@@ -1206,7 +1206,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			// set the element to be the viewport object - temporarily
 			var tmpCanvas = this.application.ninja.stage.canvas;
 			var tmpStage = this.application.ninja.currentDocument.model.documentRoot;
-			this.viewUtils.pushViewportObj( tmpCanvas );
+//			this.viewUtils.pushViewportObj( tmpCanvas );
 
 			// save the source space object and set to the target object
 			var saveSource = this._sourceSpaceElt;
@@ -1279,7 +1279,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 			this.drawArrowHead(rO, zO);
 
 			// restore the state
-			this.viewUtils.popViewportObj();
+//			this.viewUtils.popViewportObj();
 			this._drawingContext.restore();
 			this.setDrawingSurfaceElement(saveContext);
 			this._lineColor = saveColor;

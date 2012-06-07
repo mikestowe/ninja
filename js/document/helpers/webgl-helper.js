@@ -40,7 +40,7 @@ exports.webGlDocumentHelper = Montage.create(Component, {
 			if (elt) {
 				var matLib = MaterialsModel.exportMaterials();
 				this._glData = [matLib];
-				this.collectGLData(elt, this._glData );
+				this.collectGLData(this.iframe.contentWindow.document, this._glData );
 			} else {
 				this._glData = null
 			}
@@ -96,10 +96,6 @@ exports.webGlDocumentHelper = Montage.create(Component, {
 						canvas = this.findCanvasWithID(id, elt);
 						//
 						if (canvas) {
-							//
-							if (!canvas.elementModel) {
-								NJUtils.makeElementModel(canvas, "Canvas", "shape", true);
-							}
 							//
 							if (canvas.elementModel) {
 								if (canvas.elementModel.shapeModel.GLWorld) {
@@ -194,6 +190,13 @@ exports.webGlDocumentHelper = Montage.create(Component, {
 	//
 	collectGLData: {
 		value: function( elt,  dataArray ) {
+            Array.prototype.slice.call(elt.querySelectorAll('[data-RDGE-id]'),0).forEach(function(glCanvas) {
+                dataArray.push(glCanvas.elementModel.shapeModel.GLWorld.exportJSON());
+            });
+
+            // Removing the old loop that went through all the elements.
+            // TODO: Remove the following code once QE has tested it.
+/*
 			//
 			var i, data, nKids, child;
 			//
@@ -209,6 +212,7 @@ exports.webGlDocumentHelper = Montage.create(Component, {
 					this.collectGLData( child, dataArray );
 				}
 			}
+			*/
 		}
 	}
 	////////////////////////////////////////////////////////////////////

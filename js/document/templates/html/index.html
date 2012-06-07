@@ -57,13 +57,32 @@
 
             .nj-element-highlight {
                  outline: 4px solid #ff0000;
-             }
+            }
         </style>
         
         <script type="text/javascript" data-ninja-template="true">
-      		function getElement(x,y) {
-            	return document.elementFromPoint(x,y);
-        	}
+
+            function getElement(x,y) {
+                return document.elementFromPoint(x,y);
+            }
+
+            var njmodelGet = function njmodelGet() {
+                return (this.hasOwnProperty("_model") ? this._model: document.modelGenerator.call(this));
+            };
+
+            Object.defineProperty(Object.prototype, "_model", {
+                enumerable: false,
+                value: null,
+                writable: true
+            });
+
+            Object.defineProperty(Object.prototype, "elementModel", {
+                configurable: true,
+                get: njmodelGet,
+                set: function() {
+                }
+            });
+
     	</script>
     
     	<script type="text/javascript" data-package="../app" src="../../../../node_modules/montage/montage.js" data-ninja-template="true"></script>
