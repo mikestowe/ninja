@@ -30,6 +30,7 @@ exports.BodyController = Montage.create(ElementController, {
         value: function(el, p) {
             switch(p) {
                 case "background" :
+                case "background-color":
                     return this.application.ninja.colorController.getColorObjFromCss(this.application.ninja.stylesController.getElementStyle(el, "background-color", false, true));
                 case "border":
                     return 0;
@@ -47,8 +48,8 @@ exports.BodyController = Montage.create(ElementController, {
     setProperty: {
         value: function(el, p, value) {
             switch(p) {
-                case "body-background":
                 case "background":
+                case "background-color":
                     this.application.ninja.stylesController.setElementStyle(el, "background-color", value);
                     break;
                 case "overflow":
