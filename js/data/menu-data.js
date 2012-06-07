@@ -24,9 +24,15 @@ exports.MenuData = Montage.create(Component, {
 
             this._currentDocument = value;
 
-            this.documentEnabledIndices.forEach(function(index) {
-                index.enabled = true;
-            });
+            if(!this._currentDocument) {
+                this.documentEnabledIndices.forEach(function(index) {
+                    index.enabled = false;
+                });
+            } else {
+                this.documentEnabledIndices.forEach(function(index) {
+                    index.enabled = true;
+                });
+            }
 
         }
     },

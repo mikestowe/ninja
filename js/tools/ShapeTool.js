@@ -55,24 +55,29 @@ exports.ShapeTool = Montage.create(DrawingTool, {
 
 	HandleLeftButtonUp: {
         value: function (event) {
-            var canvas, drawData = this.getDrawingData();
+            var canvas, w, h;
+            this.drawData = this.getDrawingData();
 
-            if(drawData) {
-                if(!this._useExistingCanvas()) {
-                    canvas = document.application.njUtils.make("canvas", {"data-RDGE-id": NJUtils.generateRandom()}, this.application.ninja.currentDocument);
-                    document.application.njUtils.createModelWithShape(canvas);
+            if(this.drawData) {
+                w = Math.floor(this.drawData.width);
+                h = Math.floor(this.drawData.height);
 
-                    var styles = document.application.njUtils.stylesFromDraw(canvas, ~~drawData.width, ~~drawData.height, drawData);
-                    this.application.ninja.elementMediator.addElements(canvas, styles);
-                } else {
-                    canvas = this._targetedElement;
-                    if (!canvas.getAttribute( "data-RDGE-id" ))
-                        canvas.setAttribute( "data-RDGE-id", NJUtils.generateRandom() );
-                    canvas.elementModel.controller = ShapesController;
-                    if(!canvas.elementModel.shapeModel) {
-                        canvas.elementModel.shapeModel = Montage.create(ShapeModel);
+                if( (w > 0) && (h > 0) ) {
+                    if(!this._useExistingCanvas()) {
+                        canvas = document.application.njUtils.make("canvas", {"data-RDGE-id": NJUtils.generateRandom()}, this.application.ninja.currentDocument);
+
+                        var styles = document.application.njUtils.stylesFromDraw(canvas, w, h, this.drawData);
+                        this.application.ninja.elementMediator.addElements(canvas, styles);
+                    } else {
+                        canvas = this._targetedElement;
+                        if (!canvas.getAttribute( "data-RDGE-id" ))
+                            canvas.setAttribute( "data-RDGE-id", NJUtils.generateRandom() );
+                        canvas.elementModel.controller = ShapesController;
+                        if(!canvas.elementModel.shapeModel) {
+                            canvas.elementModel.shapeModel = Montage.create(ShapeModel);
+                        }
+                        this.RenderShape(w, h, this.drawData.planeMat, this.drawData.midPt, canvas);
                     }
-                    this.RenderShape(drawData.width, drawData.height, drawData.planeMat, drawData.midPt, canvas);
                 }
             }
 
@@ -87,10 +92,8 @@ exports.ShapeTool = Montage.create(DrawingTool, {
 
     onAddElements: {
         value: function(el) {
-            var drawData;
-
-            if(drawData = this.getDrawingData()) {
-                this.RenderShape(drawData.width, drawData.height, drawData.planeMat, drawData.midPt, el);
+            if(this.drawData) {
+                this.RenderShape(this.drawData.width, this.drawData.height, this.drawData.planeMat, this.drawData.midPt, el);
             }
         }
     },

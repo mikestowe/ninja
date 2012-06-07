@@ -71,7 +71,7 @@ exports.BodyController = Montage.create(ElementController, {
 
     getPerspectiveDist: {
         value: function(el) {
-            if(el.elementModel && el.elementModel.props3D && el.elementModel.props3D.perspectiveDist) {
+            if(el.elementModel.props3D && el.elementModel.props3D.perspectiveDist) {
                 return el.elementModel.props3D.perspectiveDist;
             } else {
                 var dist = this.application.ninja.stylesController.getPerspectiveDistFromElement(el, true);
@@ -83,7 +83,7 @@ exports.BodyController = Montage.create(ElementController, {
 
     getMatrix: {
         value: function(el) {
-            if(el.elementModel && el.elementModel.props3D && el.elementModel.props3D.matrix3d)
+            if(el.elementModel.props3D && el.elementModel.props3D.matrix3d)
             {
                 return el.elementModel.props3D.matrix3d.slice(0);
             }

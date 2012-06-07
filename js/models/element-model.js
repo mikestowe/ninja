@@ -10,7 +10,99 @@ var Montage             = require("montage/core/core").Montage,
     ControllerFactory   = require("js/controllers/elements/controller-factory").ControllerFactory,
     PiData              = require("js/data/pi/pi-data").PiData;
 
-exports.ElementModel = Montage.create(Montage, {
+var modelGenerator = exports.modelGenerator = function() {
+    var info = getInfoForElement(this);
+
+    Object.defineProperty(this, "_model", {
+        configurable: true,
+        enumerable: false,
+        writable: true,
+        value: Montage.create(elmo, {
+            type:           { value: info.type},
+            selection:      { value: info.selection},
+            controller:     { value: info.controller},
+            pi:             { value: info.pi},
+            props3D:        { value: info.props3d},
+            shapeModel:     { value: info.shapeModel},
+            isShape:        { value: info.isShape}
+        })
+    });
+
+    if(this._model.selection !== "body") {
+        this._model.props3D.init(this, false);
+    }
+
+    return this._model;
+};
+
+var getInfoForElement = function(el) {
+    var elementName, controller, pi, shapeModel = null, isShape = false, isComponent = false;
+
+    elementName = el.nodeName.toLowerCase();
+    controller = elementNameToController(elementName);
+    pi = elementNameToPi(elementName);
+
+    // Element is a shape
+    if(el.getAttribute("data-RDGE-id")) {
+        controller = "shape";
+        shapeModel = Montage.create(ShapeModel);
+        isShape = true;
+    }
+
+    // TODO: Add this in case there is no controller for the component
+    /*
+    if(el.getAttribute("data-montage-id")) {
+        elementName = null;
+        this.isComponent = true;
+    }
+    */
+
+    // Element is a component
+    if(el.controller) {
+        var componentInfo = Montage.getInfoForObject(el.controller);
+        var componentName = componentInfo.objectName;//.toLowerCase();
+
+        controller = "component";
+        elementName = componentName;
+        pi = elementNameToPi(componentName.replace(/\s+/g, ''));
+        isComponent = true;
+    }
+
+    return {
+        type: el.nodeName,
+        selection: elementName,
+        controller: ControllerFactory.getController(controller),
+        pi: pi,
+        props3d: Montage.create(Properties3D),
+        shapeModel: shapeModel,
+        isShape: isShape,
+        isComponent: isComponent
+    }
+};
+
+var elementNameToController = function(name) {
+    if(name === "div" || name === "custom") {
+        return "block";
+    } else if(name === "img") {
+        return "image";
+    } else {
+        return name;
+    }
+};
+
+var elementNameToPi = function(name) {
+    if(!name) return null;
+
+    var piString = name + "Pi";
+
+    if(!PiData.hasOwnProperty(piString)) {
+        piString = "blockPi";
+    }
+
+    return piString;
+};
+
+var elmo = exports.ElementModel = Montage.create(Montage, {
     key:            { value: "_model_"},
 
     type:           { value: null },                // Tag type that was created
