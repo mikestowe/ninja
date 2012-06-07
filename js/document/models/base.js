@@ -68,12 +68,8 @@ exports.BaseDocumentModel = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     selection: {
-        get: function() {
-            return this._selection;
-        },
-        set: function(value) {
-            this._selection = value;
-        }
+        get: function() {return this._selection;},
+        set: function(value) {this._selection = value;}
     },
     ////////////////////////////////////////////////////////////////////
     //
@@ -93,7 +89,7 @@ exports.BaseDocumentModel = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
 	//
 	libs: {
-        value: {montage: false, canvas: false, montageId: null, canvasId: null}
+        value: null
     },
     ////////////////////////////////////////////////////////////////////
 	//
