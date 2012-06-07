@@ -195,11 +195,6 @@ var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(C
                     }
                 }
 
-                //disable ok
-                if(!this.okButton.hasAttribute("disabled")){
-                    this.okButton.setAttribute("disabled", "true");
-                }
-
                 //save project type selection
                 this.selectedProjectType = {"uri":evt.uri, "element":evt.target};
 

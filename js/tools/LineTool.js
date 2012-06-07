@@ -54,38 +54,45 @@ exports.LineTool = Montage.create(ShapeTool, {
 
     HandleLeftButtonUp: {
         value: function (event) {
-            var slope = this._getSlope(), drawData = this.getDrawingData();
+            var slope = this._getSlope(),
+                canvas,
+                xAdj = 0,
+                yAdj = 0,
+                w,
+                h;
 
-            if(drawData) {
-                var canvas, xAdj = 0, yAdj = 0, w, h;
-                if(!this._useExistingCanvas()) {
-                    if(drawData = this.getDrawingData()) {
-                        // set the dimensions
-                        w = ~~drawData.width;
-                        h = ~~drawData.height;
-                        if(slope === "horizontal") {
-                            h = Math.max(this._strokeSize, 1);
-                        } else if(slope === "vertical") {
-                            w = Math.max(this._strokeSize, 1);
+            if(slope) {
+                this.drawData = this.getDrawingData();
+                if(this.drawData) {
+                    w = Math.floor(this.drawData.width);
+                    h = Math.floor(this.drawData.height);
+                    if(!this._useExistingCanvas()) {
+                            // set the dimensions
+                            if(slope === "horizontal") {
+                                h = Math.max(this._strokeSize, 1);
+                                w = Math.max(w, 1);
+                            } else if(slope === "vertical") {
+                                w = Math.max(this._strokeSize, 1);
+                                h = Math.max(h, 1);
+                            } else {
+                                // else make the line's stroke fit inside the canvas by growing the canvas
+                                var theta = Math.atan(slope);
+                                xAdj = Math.abs((this._strokeSize/2)*Math.sin(theta));
+                                yAdj = Math.abs((this._strokeSize/2)*Math.cos(theta));
+
+                                w += ~~(xAdj*2);
+                                h += ~~(yAdj*2);
+                            }
+
+                            canvas = document.application.njUtils.make("canvas", {"data-RDGE-id": NJUtils.generateRandom()}, this.application.ninja.currentDocument);
+
+                            var styles = document.application.njUtils.stylesFromDraw(canvas, w, h, this.drawData);
+                            this.application.ninja.elementMediator.addElements(canvas, styles);
                         } else {
-                            // else make the line's stroke fit inside the canvas by growing the canvas
-                            var theta = Math.atan(slope);
-                            xAdj = Math.abs((this._strokeSize/2)*Math.sin(theta));
-                            yAdj = Math.abs((this._strokeSize/2)*Math.cos(theta));
-
-                            w += ~~(xAdj*2);
-                            h += ~~(yAdj*2);
-                        }
-
-                        canvas = document.application.njUtils.make("canvas", {"data-RDGE-id": NJUtils.generateRandom()}, this.application.ninja.currentDocument);
-
-                        var styles = document.application.njUtils.stylesFromDraw(canvas, w, h, drawData);
-                        this.application.ninja.elementMediator.addElements(canvas, styles);
-                    } else {
-                        canvas = this._targetedElement;
-                        canvas.elementModel.controller = ShapesController;
-                        if(!canvas.elementModel.shapeModel) {
-                            canvas.elementModel.shapeModel = Montage.create(ShapeModel);
+                            canvas = this._targetedElement;
+                            canvas.elementModel.controller = ShapesController;
+                            if(!canvas.elementModel.shapeModel) {
+                                canvas.elementModel.shapeModel = Montage.create(ShapeModel);
                         }
                     }
                 }
@@ -102,16 +109,18 @@ exports.LineTool = Montage.create(ShapeTool, {
 
     onAddElements: {
         value: function(el) {
-            var drawData, xAdj = 0, yAdj = 0, w, h, slope = this._getSlope();
+            var xAdj = 0, yAdj = 0, w, h, slope = this._getSlope();
 
-            if(drawData = this.getDrawingData()) {
+            if(this.drawData) {
                 // set the dimensions
-                w = ~~drawData.width;
-                h = ~~drawData.height;
+                w = Math.floor(this.drawData.width);
+                h = Math.floor(this.drawData.height);
                 if(slope === "horizontal") {
                     h = Math.max(this._strokeSize, 1);
+                    w = Math.max(w, 1);
                 } else if(slope === "vertical") {
                     w = Math.max(this._strokeSize, 1);
+                    h = Math.max(h, 1);
                 } else {
                     // else make the line's stroke fit inside the canvas by growing the canvas
                     var theta = Math.atan(slope);
@@ -122,7 +131,7 @@ exports.LineTool = Montage.create(ShapeTool, {
                     h += ~~(yAdj*2);
                 }
 
-                this.RenderShape(w, h, drawData.planeMat, drawData.midPt, el, slope, xAdj, yAdj);
+                this.RenderShape(w, h, this.drawData.planeMat, this.drawData.midPt, el, slope, xAdj, yAdj);
             }
         }
     },
@@ -131,28 +140,31 @@ exports.LineTool = Montage.create(ShapeTool, {
         value: function() {
             var hitRec0 = this._mouseDownHitRec,
                 hitRec1 = this._mouseUpHitRec,
-                slope;
+                slope,
+                dx,
+                dy;
             
-			if (hitRec0 && hitRec1)
-			{
+			if (hitRec0 && hitRec1) {
 				var p0 = hitRec0.getLocalPoint(),
 					p1 = hitRec1.getLocalPoint();
 
+                dx = Math.floor(p0[0] - p1[0]);
+                dy = Math.floor(p0[1] - p1[1]);
+
+                if( (dx === 0) && (dy === 0) ) {
+                    return null;
+                }
+
                 // check for divide by 0 for vertical line:
-                if( Math.round(p0[0] - p1[0]) === 0 )
-                {
+                if(dx === 0) {
                     // vertical line
                     slope = "vertical";
-                }
-                else if (Math.round(p0[1] - p1[1]) === 0 )
-                {
+                } else if (dy === 0) {
                     // horizontal line
                     slope = "horizontal";
-                }
-                else
-                {
+                } else {
                     // if slope is positive, draw a line from top-left to bottom-right
-                    slope = (p0[1] - p1[1])/(p0[0] - p1[0]);
+                    slope = dy/dx;
                 }
             }
 
