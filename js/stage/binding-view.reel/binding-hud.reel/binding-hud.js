@@ -26,9 +26,10 @@ exports.BindingHud = Montage.create(Component, {
         },
         set: function(val) {
             this._bindingArgs = val;
-            this.title = this.bindingArgs.sourceObject.identifier;
-            this.x = this._bindingArgs.sourceObject.element.offsetLeft;
-            this.y = this._bindingArgs.sourceObject.element.offsetTop;
+            this.title = this.bindingArgs.component.identifier;
+            this.x = this._bindingArgs.component.element.offsetLeft;
+            this.y = this._bindingArgs.component.element.offsetTop;
+            this.properties = this._bindingArgs.properties;
             this.needsDraw = true;
             console.log("Binding Args Set", val);
         }
@@ -62,14 +63,14 @@ exports.BindingHud = Montage.create(Component, {
 
     prepareForDraw: {
         value: function() {
-            var arrProperties = this.application.ninja.objectsController.getEnumerableProperties(this._bindingArgs.sourceObject, true);
-            arrProperties.forEach(function(obj) {
-                var objBound = false;
-                if(this._bindingArgs._boundObjectPropertyPath === obj) {
-                    objBound = true;
-                }
-                this.properties.push({"title":obj, "bound": objBound});
-            }.bind(this));
+//            var arrProperties = this.application.ninja.objectsController.getEnumerableProperties(this._bindingArgs.sourceObject, true);
+//            arrProperties.forEach(function(obj) {
+//                var objBound = false;
+//                if(this._bindingArgs._boundObjectPropertyPath === obj) {
+//                    objBound = true;
+//                }
+//                this.properties.push({"title":obj, "bound": objBound});
+//            }.bind(this));
         }
     },
 

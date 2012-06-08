@@ -17,15 +17,21 @@ exports.BindingView = Montage.create(Component, {
         value: null
     },
 
-    //Bindables Format: [
-    
-    //]
+    componentsList: {
+        value: {}
+    },
+
+    /*
+
+    Bindables Format: [
+
+    ]
+    */
 
 
     _bindables: {
         value: []
     },
-
 
     _nonVisualComponents: {
         value:[]
@@ -54,12 +60,28 @@ exports.BindingView = Montage.create(Component, {
             this._selectedComponent = val;
             this.application.ninja.objectsController.currentObject = this.selectedComponent;
             var arrBindings = this.application.ninja.objectsController.currentObjectBindings;
+            var arrProperties = this.application.ninja.objectsController.getPropertyList(this.selectedComponent, true);
 
+            //Add the first component which is the selected one to have a hud
             debugger;
+            this.componentsList[this.selectedComponent.identifier] = {"component":  this.selectedComponent, "properties": this.application.ninja.objectsController.getPropertyList(this.selectedComponent, true)};
+            console.log("components:",this.componentsList);
+            //Go through the loop and find every interacted object by bindings
             arrBindings.forEach(function(obj) {
-                 
+                if(typeof (this.componentsList[obj.boundObject.identifier]) === "undefined") {
+                    var componentListItem = {}
+                    componentListItem.component = obj.boundObject;
+                    componentListItem.properties = [];
+                    this.application.ninja.objectsController.getPropertiesFromObject(obj.boundObject, true).forEach(function(obj) {
+                        componentListItem.properties.push({"title":obj})
+                    }.bind(this));
+                    this.componentsList[obj.boundObject.identifier] = componentListItem;
+                }
             }.bind(this));
-            this.bindables.push(this._selectedComponent);
+            for(var key in this.componentsList){
+                this.bindables.push(this.componentsList[key]);
+            }
+            console.log(this.bindables);
             // Get Bindings that exist;
 
 
