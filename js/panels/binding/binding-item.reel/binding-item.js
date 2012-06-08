@@ -12,6 +12,10 @@ exports.BindingItem = Montage.create(Component, {
     sourceObjectLabel : { value: null },
     boundObjectLabel : { value: null },
 
+    bindingArgs : {
+        value: null
+    },
+
     _sourceObject : { value: null },
     sourceObject : {
         get: function() {
@@ -88,7 +92,7 @@ exports.BindingItem = Montage.create(Component, {
 
     handleEditButtonAction : {
         value: function(e) {
-            this.parentComponent.parentComponent.displayEditView();
+            this.parentComponent.parentComponent.displayEditView(this.bindingArgs);
         }
     },
 
