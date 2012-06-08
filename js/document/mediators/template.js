@@ -8,7 +8,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 //
 var Montage = 			require("montage/core/core").Montage,
 	Component = 		require("montage/ui/component").Component,
-	TemplateCreator = 	require("node_modules/tools/template/template-creator").TemplateCreator;
+	TemplateCreator = 	require("node_modules/tools/template/template-creator").TemplateCreator,
+	ClassUuid = 		require("js/components/core/class-uuid").ClassUuid;
 ////////////////////////////////////////////////////////////////////////
 //	
 exports.TemplateDocumentMediator = Montage.create(Component, {
@@ -83,9 +84,22 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
     parseHtmlToNinjaTemplate: {
         value: function (html) {
             //Creating temp object to mimic HTML
-            var doc = window.document.implementation.createHTMLDocument(), template;
+            var doc = window.document.implementation.createHTMLDocument(), template, docHtmlTag,
+            	hackHtml = document.createElement('html'), hackTag;
             //Setting content to temp
             doc.getElementsByTagName('html')[0].innerHTML = html;
+            //TODO: Improve this, very bad way of copying attributes (in a pinch to get it working)
+            hackHtml.innerHTML = html.replace(/html/gi, 'ninjahtmlhack');
+            hackTag = hackHtml.getElementsByTagName('ninjahtmlhack')[0];
+            docHtmlTag = doc.getElementsByTagName('html')[0];
+            //Looping through the attributes to copy them
+            for (var m in hackTag.attributes) {
+				if (hackTag.attributes[m].value) {
+					docHtmlTag.setAttribute(hackTag.attributes[m].name.replace(/ninjahtmlhack/gi, 'html'), hackTag.attributes[m].value.replace(/ninjahtmlhack/gi, 'html'));
+				}
+			}
+			//Garbage collection
+            hackHtml = hackTag = null;
             //Creating return object
             return {head: doc.head.innerHTML, body: doc.body.innerHTML, document: doc};
         }
@@ -93,7 +107,7 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //TODO: Expand to allow more templates, clean up variables
     parseNinjaTemplateToHtml: {
-        value: function (template, ninjaWrapper, libCopyCallback) {
+        value: function (saveExternalData, template, ninjaWrapper, libCopyCallback) {
         	//TODO: Improve reference for rootUrl
             var regexRootUrl,
             	rootUrl = this.application.ninja.coreIoApi.rootUrl + escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1])),
@@ -116,20 +130,36 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
             	template.file.content.document.head.innerHTML = template.head.innerHTML.replace(regexRootUrl, '');
 	            template.file.content.document.body.innerHTML = template.body.innerHTML.replace(regexRootUrl, '');
             }
+            //Removes all attributes from node
+            function wipeAttributes (node) {
+	            for (var f in node.attributes) {
+		            node.removeAttribute(node.attributes[f].name);
+			    }
+            }
             //Copying attributes to maintain same properties as the <body>
+            wipeAttributes(template.file.content.document.body);
 			for (var n in template.body.attributes) {
 				if (template.body.attributes[n].value) {
-					//
 					template.file.content.document.body.setAttribute(template.body.attributes[n].name, template.body.attributes[n].value);
 				}				
 			}
-            
-            
-            
-            //TODO: Add attribute copying for <HEAD> and <HTML>
-            
-            
-            
+			wipeAttributes(template.file.content.document.head);
+            //Copying attributes to maintain same properties as the <head>
+			for (var m in template.document.head.attributes) {
+				if (template.document.head.attributes[m].value) {
+					template.file.content.document.head.setAttribute(template.document.head.attributes[m].name, template.document.head.attributes[m].value);
+				}
+			}
+            //Copying attributes to maintain same properties as the <html>
+			var htmlTagMem = template.document.getElementsByTagName('html')[0], htmlTagDoc = template.file.content.document.getElementsByTagName('html')[0];
+			wipeAttributes(htmlTagDoc);
+			for (var m in htmlTagMem.attributes) {
+				if (htmlTagMem.attributes[m].value) {
+					if (htmlTagMem.attributes[m].value.replace(/montage-app-bootstrapping/gi, '').length>0) {
+						htmlTagDoc.setAttribute(htmlTagMem.attributes[m].name, htmlTagMem.attributes[m].value.replace(/ montage-app-bootstrapping/gi, ''));
+					}
+				}
+			}
             //Getting list of current nodes (Ninja DOM)
             presentNodes = template.file.content.document.getElementsByTagName('*');
             //Looping through nodes to determine origin and removing if not inserted by Ninja
@@ -328,7 +358,7 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
             
             
             
-            //TODO: Make proper webGL/Canvas method
+            
             
             //
             var webgltag, webgllibtag, webglrdgetag, mjstag, mjslibtag, matchingtags = [],
@@ -357,19 +387,33 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                     }
                 }
             }
+            
+            
+            
+            
+            //TODO: Make proper webGL/Canvas method
+            
+            
             //Checking for webGL elements in document
             if (template.webgl && template.webgl.length > 1) {//TODO: Should be length 0, hack for a temp fix
                 var rdgeDirName, rdgeVersion, cvsDataDir = this.getCanvasDirectory(template.file.root), fileCvsDir, fileCvsDirAppend, cvsDirCounter = 1, fileOrgDataSrc;
                 //
                 if (cvsDataDir && !matchingtags.length && !webgllibtag) {
-                	fileCvsDir = cvsDataDir+template.file.name.split('.'+template.file.extension)[0];
-                	if (!this._getUserDirectory(fileCvsDir)) {
-                		fileCvsDirAppend = fileCvsDir+cvsDirCounter;
-                		while (!this._getUserDirectory(fileCvsDirAppend)) {
-                			fileCvsDirAppend = fileCvsDir+(cvsDirCounter++);
-                		}
+                
+                	if (template.libs.canvasId) {
+	                	libsobserver.canvasId = template.libs.canvasId;
+                	} else {
+	                	libsobserver.canvasId = ClassUuid.generate();
                 	}
-                	//TODO: Allow user overwrite
+                	
+                	//Creating data directory, will include materials at a later time
+                	fileCvsDir = cvsDataDir+template.file.name.split('.'+template.file.extension)[0]+'_'+libsobserver.canvasId;
+                	
+                	if (!this._getUserDirectory(fileCvsDir)) {
+                		//TODO: create proper logic not to overwrite files
+                		console.log('error');
+                	}
+                	
                 	fileCvsDir += '/';
                 } else if (webgllibtag && webgllibtag.getAttribute && webgllibtag.getAttribute('data-ninja-canvas-json') !== null) {
                 	fileOrgDataSrc = template.file.root+webgllibtag.getAttribute('data-ninja-canvas-json');
@@ -437,17 +481,9 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
                 //Looping through data to create escaped array
                 for (var j = 0; template.webgl[j]; j++) {
                     if (j === 0) {
-                    	//if (fileCvsDir) {
-                    	//	json += '\n\t\t\t"' + template.webgl[j] + '"';
-                    	//} else {
-                    		json += '\n\t\t\t"' + escape(template.webgl[j]) + '"';
-                    	//}
+                    	json += '\n\t\t\t"' + escape(template.webgl[j]) + '"';
                     } else {
-                    	//if (fileCvsDir) {
-                    	//	json += ',\n\t\t\t"' + template.webgl[j] + '"';
-                    	//} else {
-                    		json += ',\n\t\t\t"' + escape(template.webgl[j]) + '"';
-                    	//}
+                    	json += ',\n\t\t\t"' + escape(template.webgl[j]) + '"';
                     }
                 }
                 //Closing array (make-shift JSON string to validate data in <script> tag)
@@ -575,6 +611,8 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
             } else {
             	cleanHTML = template.file.content.document.documentElement.outerHTML.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaRootUrl.bind(this));
       	    }
+      	    //TODO: Remove, this is a temp hack
+      	    cleanHTML = '<!DOCTYPE html>\n'+cleanHTML;
             //
             function parseNinjaRootUrl(url) {
                 if (url.indexOf(this.application.ninja.coreIoApi.rootUrl) !== -1) {
@@ -590,9 +628,9 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
             }
             //
             if (libsobserver.montage || libsobserver.canvas) {
-            	return {content: this.getPrettyHtml(cleanHTML.replace(this.getAppTemplatesUrlRegEx(), '')), libs: true};
+            	return {content: this.getPrettyHtml(cleanHTML.replace(this.getAppTemplatesUrlRegEx(), '')), libs: true, montageId: libsobserver.montageId, canvasId: libsobserver.canvasId};
             } else {
-	            return {content: this.getPrettyHtml(cleanHTML.replace(this.getAppTemplatesUrlRegEx(), '')), libs: false};
+	            return {content: this.getPrettyHtml(cleanHTML.replace(this.getAppTemplatesUrlRegEx(), '')), libs: false, montageId: libsobserver.montageId, canvasId: libsobserver.canvasId};
             }
         }
     },

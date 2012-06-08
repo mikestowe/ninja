@@ -49,6 +49,12 @@ var getInfoForElement = function(el) {
         isShape = true;
     }
 
+    if(el.nodeName.toLowerCase() === "ninja-content") {
+        elementName = "body";
+        controller = elementNameToController(elementName);
+        pi = elementNameToPi(elementName);
+    }
+
     // TODO: Add this in case there is no controller for the component
     /*
     if(el.getAttribute("data-montage-id")) {

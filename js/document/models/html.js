@@ -23,6 +23,8 @@ exports.HtmlDocumentModel = Montage.create(BaseDocumentModel, {
         value:function() {
         	//Creating instance of the webGL helper for this model
         	this.webGlHelper = webGlDocumentHelper.create();
+        	//
+        	this.libs = {montage: false, canvas: false, montageId: null, canvasId: null};
 		}           
     },
     ////////////////////////////////////////////////////////////////////
