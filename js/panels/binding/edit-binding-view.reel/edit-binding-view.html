@@ -16,27 +16,36 @@
                     "element": {"#": "edit-binding"}
                 }
             },
-            "objectsList" : {
-                "prototype": "montage/ui/controller/array-controller",
-                "bindings" : {
-                    "content": {"<-": "@owner.objectsList"}
-                }
-            },
-            "sourceObjectSelect": {
-                "prototype": "montage/ui/select-input.reel",
+            "sourceObjectField": {
+                "prototype": "js/components/hintable.reel",
                 "properties": {
-                    "element": {"#": "sourceObjectSelect"},
-                    "contentController": {"@": "objectsList"}
+                    "element": {"#": "sourceObjectField"}
 
-                }
+                },
+                "bindings": {
+                    "value": {"<-": "@owner.sourceObjectIdentifier"}
+                },
+                "listeners" : [
+                    {
+                        "type": "change",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
-            "boundObjectSelect": {
-                "prototype": "montage/ui/select-input.reel",
+            "boundObjectField": {
+                "prototype": "js/components/hintable.reel",
                 "properties": {
-                    "element": {"#": "boundObjectSelect"},
-                    "contentController": {"@": "objectsList"}
-
-                }
+                    "element": {"#": "boundObjectField"}
+                },
+                "bindings": {
+                    "value": {"<-": "@owner.boundObjectIdentifier"}
+                },
+                "listeners" : [
+                    {
+                        "type": "change",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
             "sourceObjectPropertyPathField": {
                 "prototype": "js/components/hintable.reel",
@@ -69,6 +78,28 @@
                         "listener": {"@": "owner"}
                     }
                 ]
+            },
+            "directionCheckbox": {
+                "prototype": "montage/ui/checkbox.reel",
+                "properties": {
+                    "element": {"#": "direction-checkbox"}
+                },
+                "bindings": {
+                    "checked": {"<-": "@owner.oneway"}
+                }
+            },
+            "closeButton" : {
+                "prototype": "montage/ui/button.reel",
+                "properties": {
+                    "element": {"#": "close-button" },
+                    "identifier": "closeButton"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner" }
+                    }
+                ]
             }
 
         }
@@ -79,24 +110,26 @@
 
     <ul>
         <li class="edit-source-object">
-            <label>Source Object:</label><select data-montage-id="sourceObjectSelect"  class="nj-skinned"></select>
+            <label>Source Object:</label><span data-montage-id="sourceObjectField" class="hintable-field">Test</span>
             <br>
-            <label>Source Object Property Path:</label><span data-montage-id="so-pp" class="so-pp">Test</span>
+            <label>Source Object Property Path:</label><span data-montage-id="so-pp" class="hintable-field so-pp">Test</span>
         </li>
 
         <li class="edit-bound-object">
-            <label>Bound Object:</label><select data-montage-id="boundObjectSelect"  class="nj-skinned"></select>
+            <label>Bound Object:</label><span data-montage-id="boundObjectField" class="hintable-field">Test</span>
             <br>
-            <label>Bound Object Property Path:</label><span data-montage-id="bo-pp" class="bo-pp">Test</span>
+            <label>Bound Object Property Path:</label><span data-montage-id="bo-pp" class="hintable-field bo-pp">Test</span>
         </li>
 
         <li class="edit-general-properties">
-            <input data-montage-id="oneway-checkbox" type="checkbox" class="nj-skinned"><label>Oneway</label>
+            <input data-montage-id="direction-checkbox" type="checkbox" class="nj-skinned"><label>Oneway</label>
         </li>
         <li>
             <label>Converter</label><span>Test</span>
         </li>
     </ul>
+
+    <button data-montage-id="close-button" class="nj-skinned">Close</button>
 
 </div>
 </body>

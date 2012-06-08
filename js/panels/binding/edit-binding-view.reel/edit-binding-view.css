@@ -9,11 +9,11 @@
     color: #FFF;
     font-size: 11px;
     height: 100%;
-    /*left: 100%;*/
-    /*position: absolute;*/
-    /*top: 0;*/
+    left: 100%;
+    position: absolute;
+    top: 0;
     width: 100%;
-    -webkit-transition: -webkit-transform 140ms ease-in;
+    -webkit-transition: -webkit-transform .55s cubic-bezier(.44,.19,0,.99);
 }
 
 .edit-binding-view ul {
@@ -26,11 +26,18 @@
     list-style-type: none;
 }
 
+.edit-binding-view label {
+    display: inline-block;
+    width: 50%;
+}
+
 /* hintable fields */
 
-.so-pp, .bo-pp {
-    border: 1px solid #313131;
-    padding: 1px 4px;
+.hintable-field {
     background-color: #444;
+    border: 1px solid #313131;
+    display: inline-block;
     margin-left: 5px;
+    padding: 1px 4px;
+    width: 45%;
 }
