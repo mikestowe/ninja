@@ -4,13 +4,14 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
-var MaterialParser = require("js/lib/rdge/materials/material-parser").MaterialParser;
 var Material = require("js/lib/rdge/materials/material").Material;
+
 ///////////////////////////////////////////////////////////////////////
 // Class GLMaterial
 //      RDGE representation of a material.
 ///////////////////////////////////////////////////////////////////////
-var FlatMaterial = function FlatMaterial() {
+var FlatMaterial = function FlatMaterial()
+{
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
@@ -22,36 +23,17 @@ var FlatMaterial = function FlatMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Property Accessors
     ///////////////////////////////////////////////////////////////////////
-    this.getColor = function () { return this._color; };
     this.getShaderName = function () { return this._shaderName; };
+    this.isAnimated = function ()			{ return false;		};
+	this.getTechniqueName	= function()	{  return 'colorMe' };
 
-    this.isAnimated = function () { return false; };
-	this.hasVertexDeformation	= function()	{  return false;			};
-    this._hasVertexDeformation = true;
-    this._vertexDeformationTolerance = 0.2;
-
-    //////////////////////////////////s/////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
     // duplcate method requirde
-	this.dup = function( world )
+
+    this.init = function (world)
 	{
-        // get the current values;
-        var propNames = [], propValues = [], propTypes = [], propLabels = [];
-        this.getAllProperties(propNames, propValues, propTypes, propLabels);
-        
-        // allocate a new material
-        var newMat = new FlatMaterial();
-
-		// copy over the current values;
-        var n = propNames.length;
-        for (var i = 0; i < n; i++)
-            newMat.setProperty(propNames[i], propValues[i]);
-
-        return newMat;
-	};
-
-    this.init = function (world) {
         // save the world
         if (world) {
             this.setWorld(world);
@@ -61,12 +43,11 @@ var FlatMaterial = function FlatMaterial() {
             this._shader.def = flatShaderDef;
             this._shader.init();
 
-            // set the defaults
-            this._shader.colorMe.color.set(this.getColor());
-
             // set up the material node
             this._materialNode = RDGE.createMaterialNode("flatMaterial_" + world.generateUniqueNodeID());
             this._materialNode.setShader(this._shader);
+		
+			this.setShaderValues();
         }
         else
             throw new Error("GLWorld not supplied to material initialization");
@@ -82,40 +63,6 @@ var FlatMaterial = function FlatMaterial() {
     this._propValues = [];
 
     this._propValues[this._propNames[0]] = this._color;
-
-    this.setProperty = function (prop, value) {
-        // make sure we have legitimate input
-        if (this.validateProperty(prop, value)) {
-            this._propValues[prop] = value;
-			if (prop === 'color')  this._color = value.slice();
-            if (this._shader && this._shader.colorMe) {
-                this._shader.colorMe[prop].set(value);
-            }
-        }
-    };
-    ///////////////////////////////////////////////////////////////////////
-
-    this.exportJSON = function () {
-        var jObj =
-		{
-		    'material': this.getShaderName(),
-		    'name': this.getName(),
-		    'color': this._propValues["color"]
-		};
-
-        return jObj;
-    };
-
-    this.importJSON = function (jObj) {
-        if (this.getShaderName() != jObj.material) throw new Error("ill-formed material");
-        this.setName(jObj.name);
-
-        var color = jObj.color;
-        this.setProperty("color", color);
-    };
-
-    this.update = function (time) {
-    };
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -124,31 +71,31 @@ var FlatMaterial = function FlatMaterial() {
 // shader spec (can also be loaded from a .JSON file, or constructed at runtime)
 flatShaderDef  = 
 {
-    'shaders':  { // shader files
+	'shaders':  { // shader files
 		'defaultVShader':"assets/shaders/Basic.vert.glsl",
 		'defaultFShader':"assets/shaders/Basic.frag.glsl"
-        },
-    'techniques': { // rendering control
-        'colorMe':[ // simple color pass
-            {
-                'vshader' : 'defaultVShader',
-                'fshader' : 'defaultFShader',
-           
-                // attributes
-                'attributes' :
-                 {
+		},
+	'techniques': { // rendering control
+		'colorMe':[ // simple color pass
+			{
+				'vshader' : 'defaultVShader',
+				'fshader' : 'defaultFShader',
+		   
+				// attributes
+				'attributes' :
+				 {
 						'vert'	:	{ 'type' : 'vec3' },
 						'normal' :	{ 'type' : 'vec3' },
 						'texcoord'	:	{ 'type' : 'vec2' }
-                 },
-                // attributes
-                'params' :
-                 {
-                    'color' :   { 'type' : 'vec4' }
-                 }
-            }
-        ]
-     }
+				 },
+				// attributes
+				'params' :
+				 {
+					'color' :   { 'type' : 'vec4' }
+				 }
+			}
+		]
+	 }
 };
 
 FlatMaterial.prototype = new Material();

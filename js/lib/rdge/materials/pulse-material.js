@@ -85,10 +85,6 @@ var PulseMaterial = function PulseMaterial()
 			this._shader['default'].u_time.set( [this._time] );
 		}
 
-		// set up the texture
-		//var texMapName = this._propValues[this._propNames[0]];
-		//this.setProperty( "u_tex0",  texMapName );
-
 		// set the shader values in the shader
 		this.setShaderValues();
 		this.setResolution( [world.getViewportWidth(),world.getViewportHeight()] );

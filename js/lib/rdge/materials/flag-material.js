@@ -32,7 +32,7 @@ var FlagMaterial = function FlagMaterial() {
     ///////////////////////////////////////////////////////////////////////
 	// all defined in parent PulseMaterial.js
 	// load the local default value
-	this._propNames			= ["texmap",        "wavewidth",        "waveheight",		"speed" ];
+	this._propNames			= ["u_tex0",        "u_waveWidth",      "u_waveHeight",		"u_speed" ];
 	this._propLabels		= ["Texture map",   "Wave Width",       "Wave Height",		"Speed" ];
 	this._propTypes			= ["file",          "float",            "float",			"float" ];
 	this._propValues		= [];
@@ -45,74 +45,13 @@ var FlagMaterial = function FlagMaterial() {
 
 	// a material can be animated or not. default is not.  
 	// Any material needing continuous rendering should override this method
-	this.isAnimated	= function() {  return true;  };
+	this.isAnimated	= function()			{  return true;  };
+	this.getShaderDef		= function()	{  return flagMaterialDef;	}
 
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
 	// duplcate method requirde
-
-	this.setProperty = function( prop, value )
-	{
-		// make sure we have legitimate imput
-		var ok = this.validateProperty( prop, value );
-		if (!ok) {
-			console.log( "invalid property in Radial Gradient Material:" + prop + " : " + value );
-		}
-
-		switch (prop)
-		{
-			case "texmap":
-				this.setTextureMap(value);
-				break;
-
-			case "wavewidth":
-				this._waveWidth = value;
-				this._propValues[ this._propNames[1] ] = this._waveWidth;
-				this.updateParameters();
-				break;
-
-			case "waveheight":
-				this._waveHeight = value;
-				this._propValues[ this._propNames[2] ] = this._waveHeight;
-				this.updateParameters();
-				break;
-
-			case "speed":
-				this._speed = value;
-				this._propValues[ this._propNames[3] ] = this._speed;
-				this.updateParameters();
-				break;
-
-			case "color":
-				break;
-		}
-	};
-
-
-	this.updateParameters = function()
-	{
-		this._propValues[ this._propNames[1] ] = this._waveWidth;
-		this._propValues[ this._propNames[2] ] = this._waveHeight;
-		this._propValues[ this._propNames[3] ] = this._speed;
-
-		var material = this._materialNode;
-		if (material)
-		{
-			var technique = material.shaderProgram['default'];
-			var renderer = RDGE.globals.engine.getContext().renderer;
-			if (renderer && technique)
-			{
-
-				if (this._shader && this._shader['default']) {
-					this._shader['default'].u_speed.set( [this._speed] );
-					this._shader['default'].u_waveWidth.set( [this._waveWidth] );
-					this._shader['default'].u_waveHeight.set( [this._waveHeight] );
-				}
-			}
-		}
-	};
-
 
 	this.init = function( world )
 	{
@@ -129,52 +68,13 @@ var FlagMaterial = function FlagMaterial() {
 		this._materialNode.setShader(this._shader);
 
 		this._time = 0;
-		if (this._shader && this._shader['default']) {
+		if (this._shader && this._shader['default'])
 			this._shader['default'].u_time.set( [this._time] );
-            this._shader['default'].u_waveWidth.set(  [this._propValues[ this._propNames[1] ]] );
-            this._shader['default'].u_waveHeight.set( [this._propValues[ this._propNames[2] ]] );
-        }
-
-        // set up the texture
-        var texMapName = this._propValues[this._propNames[0]];
-        this._glTex = new Texture( world, texMapName );
 
 		// set the shader values in the shader
-		this.updateParameters();
-		this.updateTexture();
+		this.setShaderValues();
 		this.update( 0 );
 	}
-
-	this.exportJSON = function () {
-		var jObj =
-		{
-			'material'		: this.getShaderName(),
-			'name'			: this.getName(),
-
-			'texMap'		: this._propValues[this._propNames[0]],
-			'waveWidth'		: this._propValues[this._propNames[1]],
-			'waveHeight'	: this._propValues[this._propNames[2]],
-			'speed'			: this._propValues[this._propNames[3]]
-		};
-
-		return jObj;
-	};
-
-	this.importJSON = function (jObj) {
-		if (this.getShaderName() != jObj.material) throw new Error("ill-formed material");
-		this.setName(jObj.name);
-
-		try {
-
-			this._texMap	 = this._propValues[this._propNames[0]] = jObj.texMap;
-			this._waveWidth  = this._propValues[this._propNames[1]] = jObj.waveWidth;
-			this._waveHeight = this._propValues[this._propNames[2]] = jObj.waveHeight;
-			this._speed		 = this._propValues[this._propNames[3]] = jObj.speed;
-		}
-		catch (e) {
-			throw new Error("could not import material: " + importStr);
-		}
-	};
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
