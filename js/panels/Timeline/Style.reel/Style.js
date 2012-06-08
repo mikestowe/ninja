@@ -376,14 +376,10 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
                     this._fillColorCtrl.props = { side: 'top', align: 'center', wheel: true, palette: true, gradient: false, image: false, nocolor: true, offset: -80 };
                     this.application.ninja.colorController.addButton("chip", this._fillColorCtrl);
                     this.abcelement = this._fillColorCtrl;
-                    var currentValue = ElementsMediator.getColor(this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement,true)
+                    var currentValue = ElementsMediator.getColor(this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement,this._isFill,this._borderSide)
                     this._fillColorCtrl.addEventListener("change", this.handleFillColorChange.bind(this), false);
-                    this.addedColorChips = true;
-                }
-
-                if (this.addedColorChips) {
                     this._fillColorCtrl.color(currentValue.colorMode, currentValue.color);
-    //                this._strokeColorCtrl.color(this._stroke.colorMode, this._stroke.color);
+                    this.addedColorChips = true;
                 }
 
 				// TODO: set up color chip here.

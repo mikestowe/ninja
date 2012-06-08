@@ -108,7 +108,7 @@ exports.ElementController = Montage.create(Component, {
             } else {
                 // Try getting border color from specific side first
                 if(borderSide) {
-                    color = this.getProperty(el, "border-" + borderSide + "-color");
+                    color = this.getProperty(el, "border-" + borderSide + "-color",true);
                     image = this.getProperty(el, "border-" + borderSide + "-image");
                 }
 
