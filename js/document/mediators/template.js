@@ -93,9 +93,11 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
             hackTag = hackHtml.getElementsByTagName('ninjahtmlhack')[0];
             docHtmlTag = doc.getElementsByTagName('html')[0];
             //Looping through the attributes to copy them
-            for (var m in hackTag.attributes) {
-				if (hackTag.attributes[m].value) {
-					docHtmlTag.setAttribute(hackTag.attributes[m].name.replace(/ninjahtmlhack/gi, 'html'), hackTag.attributes[m].value.replace(/ninjahtmlhack/gi, 'html'));
+            if (hackTag) {
+	            for (var m in hackTag.attributes) {
+					if (hackTag.attributes[m].value) {
+						docHtmlTag.setAttribute(hackTag.attributes[m].name.replace(/ninjahtmlhack/gi, 'html'), hackTag.attributes[m].value.replace(/ninjahtmlhack/gi, 'html'));
+					}
 				}
 			}
 			//Garbage collection
@@ -612,7 +614,7 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
             	cleanHTML = template.file.content.document.documentElement.outerHTML.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaRootUrl.bind(this));
       	    }
       	    //TODO: Remove, this is a temp hack
-      	    cleanHTML = '<!DOCTYPE html>\n'+cleanHTML;
+      	    cleanHTML = cleanHTML;
             //
             function parseNinjaRootUrl(url) {
                 if (url.indexOf(this.application.ninja.coreIoApi.rootUrl) !== -1) {
