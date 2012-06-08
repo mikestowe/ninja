@@ -175,6 +175,23 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
     addedColorChips:
         { value: false },
 
+    _abcelement: {
+        writable:true
+    },
+
+    abcelement: {
+        enumerable: true,
+        get: function () {
+            return this._abcelement;
+        },
+        set: function (value) {
+            if (value !== this._abcelement) {
+                this._abcelement = value;
+            }
+            console.log(this._abcelement)
+        }
+    },
+
     _fill: {
         enumerable: false,
         value: { colorMode: 'rgb', color: { r: 255, g: 255, b: 255, a: 1, css: 'rgb(255,255,255)', mode: 'rgb', wasSetByCode: true, type: 'change' }, webGlColor: [1, 1, 1, 1] }
@@ -333,7 +350,10 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 				this.valueEditorHottext.units = tweenable.units;
 				this.valueEditorHottext.minValue = tweenable.min;
 				this.valueEditorHottext.maxValue = tweenable.max;
-                this.valueEditorHottext.identifier="hottext"
+                this.valueEditorHottext.identifier="hottext";
+                el = this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement;
+                this.editorValue = parseFloat(ElementsMediator.getProperty(el, this.editorProperty));
+                this.valueEditorHottext.value = this.editorValue
                 this.valueEditorHottext.addEventListener("change",this,false);
                 this.valueEditorHottext.addEventListener("changing",this,false);
 				this.valueEditorHottext.needsDraw = true;
@@ -355,12 +375,14 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
                     // setup fill color
                     this._fillColorCtrl.props = { side: 'top', align: 'center', wheel: true, palette: true, gradient: false, image: false, nocolor: true, offset: -80 };
                     this.application.ninja.colorController.addButton("chip", this._fillColorCtrl);
+                    this.abcelement = this._fillColorCtrl;
+                    var currentValue = ElementsMediator.getColor(this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement,true)
                     this._fillColorCtrl.addEventListener("change", this.handleFillColorChange.bind(this), false);
                     this.addedColorChips = true;
                 }
 
                 if (this.addedColorChips) {
-                    this._fillColorCtrl.color(this._fill.colorMode, this._fill.color);
+                    this._fillColorCtrl.color(currentValue.colorMode, currentValue.color);
     //                this._strokeColorCtrl.color(this._stroke.colorMode, this._stroke.color);
                 }
 
@@ -629,7 +651,7 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
             {
                 "property" : "opacity",
                 "tweener" : "hottext",
-                "units" : "%",
+                "units" : "",
                 "min" : 0,
                 "max" : 100,
                 "default" : 100
@@ -688,37 +710,35 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 
     handleFillColorChange: {
         value: function (event) {
+                var fillColorObject={};
+                fillColorObject.color=event._event.color;
+                fillColorObject.mode=event._event.colorMode;
+                ElementsMediator.setColor([this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement], fillColorObject, this._isFill, "Change", "timeline",null,this._borderSide)
 
-            var fillColorObject={};
-            fillColorObject.color=event._event.color;
-            fillColorObject.mode=event._event.colorMode;
-            ElementsMediator.setColor([this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement], fillColorObject, this._isFill, "Change", "timeline",null,this._borderSide)
         }
     },
 
     handleHottextChange:{
         value:function(event){
-
-            if(this.editorValue===""){
-                this.editorValue = 0;
+            if(this.application.ninja.timeline.selectedStyle === this.editorProperty){
+                this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement], this.editorProperty, [this.editorValue + event.target._units]  , "Change", "pi");
             }
-            this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement], this.editorProperty, [this.editorValue + event.target._units] , "Change", "timeline");
         }
     },
 
     handleHottextChanging:{
         value:function(event){
-
-            if(this.editorValue===""){
-                this.editorValue = 0;
-            }
-            this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement], this.editorProperty, [this.editorValue + event.target._units ] , "Changing", "timeline");
+            if(this.application.ninja.timeline.selectedStyle === this.editorProperty){
+               this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement], this.editorProperty, [this.editorValue + event.target._units]  , "Changing", "pi");
+             }
         }
     },
 
     handleBlur:{
         value:function(event){
-            this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement], this.editorProperty, [event.target.value] , "Change", "timeline");
+            if(this.application.ninja.timeline.selectedStyle === this.editorProperty){
+                this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement], this.editorProperty, [event.target.value] , "Change", "timeline");
+            }
         }
     },
 

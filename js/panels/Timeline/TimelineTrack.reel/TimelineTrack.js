@@ -431,6 +431,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.isStyleCollapsed = this.trackData.isStyleCollapsed;
             this.trackPosition = this.trackData.trackPosition;
             this.isVisible = this.trackData.isVisible;
+            this.trackEditorProperty = "master";
             this.needsDraw = true;
         }
     },
@@ -901,15 +902,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         value:function(){
             // create track objects for position and transform tracks and push into arrays
 
-            // create 'top' track
-            var newTopTrack = {};
-            newTopTrack.propTrackData = {};
-            newTopTrack.propTrackData.propTweens = [];
-            newTopTrack.propTrackData.styleIndex = 0;
-            newTopTrack.propTrackData.trackType = "position";
-            newTopTrack.propTrackData.trackEditorProperty = "top";
-            this.arrPositionTracks.push(newTopTrack);
-
             // create 'left' track
             var newLeftTrack = {};
             newLeftTrack.propTrackData = {};
@@ -918,6 +910,15 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             newLeftTrack.propTrackData.trackType = "position";
             newLeftTrack.propTrackData.trackEditorProperty = "left";
             this.arrPositionTracks.push(newLeftTrack);
+
+             // create 'top' track
+            var newTopTrack = {};
+            newTopTrack.propTrackData = {};
+            newTopTrack.propTrackData.propTweens = [];
+            newTopTrack.propTrackData.styleIndex = 0;
+            newTopTrack.propTrackData.trackType = "position";
+            newTopTrack.propTrackData.trackEditorProperty = "top";
+            this.arrPositionTracks.push(newTopTrack);
 
             // create 'width' track
             var newWidthTrack = {};

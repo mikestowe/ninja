@@ -543,13 +543,11 @@ var Layer = exports.Layer = Montage.create(Component, {
             this.heightControl.addEventListener("changing",this,false);
             this.heightControl.addEventListener("change",this,false);
 
-//            el=this.layerData.stageElement;
-//            debugger;
-//
-//            this.dtextPositionX = parseFloat(ElementsMediator.getProperty(el, "left"));
-//            this.dtextPositionY = parseFloat(ElementsMediator.getProperty(el, "top"));
-//            this.dtextScaleY = parseFloat(ElementsMediator.getProperty(el, "height"));
-//            this.dtextScaleX= parseFloat(ElementsMediator.getProperty(el, "width"));
+            el=this.layerData.stageElement;
+            this.dtextPositionX = parseFloat(ElementsMediator.getProperty(el, "left"));
+            this.dtextPositionY = parseFloat(ElementsMediator.getProperty(el, "top"));
+            this.dtextScaleY = parseFloat(ElementsMediator.getProperty(el, "height"));
+            this.dtextScaleX= parseFloat(ElementsMediator.getProperty(el, "width"));
         }
     },
 
@@ -656,6 +654,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 			newStyle.editorValue = "";
 			newStyle.ruleTweener = false;
 			newStyle.isSelected = false;
+            newStyle.abcelement = "";
             this.arrLayerStyles.push(newStyle);
 
 			// Set up the event info and dispatch the event
@@ -915,52 +914,107 @@ var Layer = exports.Layer = Montage.create(Component, {
 		}
 	},
 
-    handleLeftChange:{
-        value:function(event){
-            debugger;
-            this.application.ninja.elementMediator.setProperty(this.layerData.stageElement, "left", [this.dtextPositionX + "px"] , "Change", "timeline");
+    handleLeftChange: {
+        value: function(event) {
+            var prevPosition;
+            if(this.application.ninja.timeline.selectedStyle==="left" ||this.application.ninja.timeline.selectedStyle==="master" ){
+                if(!event.wasSetByCode) {
+                    if(this.savedPosition) prevPosition = [this.savedPosition + "px"];
+                        this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "left", [this.leftControl.value + "px"] , "Change", "pi", prevPosition);
+                        this.savedPosition = null;
+                }
+
+            }
         }
     },
 
-    handleTopChange:{
-        value:function(){
-            this.application.ninja.elementMediator.setProperty(this.layerData.stageElement, "top", [this.dtextPositionY + "px"] , "Change", "timeline");
+    handleTopChange: {
+        value: function(event) {
+            var prevPosition;
+            if(this.application.ninja.timeline.selectedStyle==="top" ||this.application.ninja.timeline.selectedStyle==="master" ){
+                if(!event.wasSetByCode) {
+                    if(this.savedPosition) prevPosition = [this.savedPosition + "px"];
+
+                    this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "top", [this.topControl.value + "px"] , "Change", "pi", prevPosition);
+                    this.savedPosition = null;
+                }
+            }
         }
     },
 
     handleWidthChange:{
-        value:function(){
-            this.application.ninja.elementMediator.setProperty(this.layerData.stageElement, "width", [this.dtextScaleX + "px"] , "Change", "timeline");
+        value: function(event) {
+            var prevPosition;
+            if(this.application.ninja.timeline.selectedStyle==="width" ||this.application.ninja.timeline.selectedStyle==="master" ){
+                if(!event.wasSetByCode) {
+                    if(this.savedPosition) prevPosition = [this.savedPosition + "px"];
+
+                    this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "width", [this.dtextScaleX + "px"] , "Change", "pi", prevPosition);
+                    this.savedPosition = null;
+                }
+            }
         }
     },
 
     handleHeightChange:{
-        value:function(){
-            this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "height", [this.dtextScaleY + "px"] , "Change", "timeline");
+        value: function(event) {
+            var prevPosition;
+            if(this.application.ninja.timeline.selectedStyle==="height" ||this.application.ninja.timeline.selectedStyle==="master" ){
+                if(!event.wasSetByCode) {
+                    if(this.savedPosition) prevPosition = [this.savedPosition + "px"];
+
+                    this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "height", [this.dtextScaleY + "px"] , "Change", "pi", prevPosition);
+                    this.savedPosition = null;
+                }
+            }
         }
     },
 
-    handleLeftChanging:{
-        value:function(){
-            this.application.ninja.elementMediator.setProperty(this.layerData.stageElement, "left", [this.dtextPositionX + "px"] , "Changing", "timeline");
+    handleLeftChanging: {
+        value: function(event) {
+            if(this.application.ninja.timeline.selectedStyle==="left" ||this.application.ninja.timeline.selectedStyle==="master" ){
+                if(!event.wasSetByCode) {
+                    if(!this.savedPosition) this.savedPosition = this.leftPosition;
+                    this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "left", [this.leftControl.value + "px"] , "Changing", "pi");
+                }
+            }
+
         }
     },
 
-    handleTopChanging:{
-        value:function(){
-            this.application.ninja.elementMediator.setProperty(this.layerData.stageElement, "top", [this.dtextPositionY + "px"] , "Changing", "timeline");
+    handleTopChanging: {
+        value: function(event) {
+            if(this.application.ninja.timeline.selectedStyle==="top" ||this.application.ninja.timeline.selectedStyle==="master" ){
+                if(!event.wasSetByCode) {
+                    if(!this.savedPosition) this.savedPosition = this.topPosition;
+                    this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "top", [this.topControl.value + "px"] , "Changing", "pi");
+                }
+            }
+
         }
     },
 
     handleWidthChanging:{
-        value:function(){
-            this.application.ninja.elementMediator.setProperty(this.layerData.stageElement, "width", [this.dtextScaleX + "px"] , "Changing", "timeline");
+        value: function(event) {
+            if(this.application.ninja.timeline.selectedStyle==="width" ||this.application.ninja.timeline.selectedStyle==="master" ){
+                if(!event.wasSetByCode) {
+                    if(!this.savedPosition) this.savedPosition = this.dtextScaleX;
+                    this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "width", [this.dtextScaleX + "px"] , "Changing", "pi");
+                }
+            }
+
         }
     },
 
     handleHeightChanging:{
-        value:function(){
-            this.application.ninja.elementMediator.setProperty(this.layerData.stageElement, "height", [this.dtextScaleY + "px"] , "Changing", "timeline");
+        value: function(event) {
+            if(this.application.ninja.timeline.selectedStyle==="height" ||this.application.ninja.timeline.selectedStyle==="master" ){
+                if(!event.wasSetByCode) {
+                    if(!this.savedPosition) this.savedPosition = this.dtextScaleY;
+                    this.application.ninja.elementMediator.setProperty([this.layerData.stageElement], "height", [this.dtextScaleY + "px"] , "Changing", "pi");
+                }
+            }
+
         }
     },
 
@@ -970,20 +1024,29 @@ var Layer = exports.Layer = Montage.create(Component, {
             var el =this.layerData.stageElement;
             var length = this.arrLayerStyles.length , i;
 
-            if(event.detail.source && event.detail.source!== "timeline"){
                 this.dtextPositionX = parseFloat(ElementsMediator.getProperty(el, "left"));
                 this.dtextPositionY = parseFloat(ElementsMediator.getProperty(el, "top"));
                 this.dtextScaleY = parseFloat(ElementsMediator.getProperty(el, "height"));
                 this.dtextScaleX= parseFloat(ElementsMediator.getProperty(el, "width"));
 
                 for(i=0; i<length; i++){
-                    if(event.detail.data.prop === this.arrLayerStyles[i].editorProperty){
-                        this.arrLayerStyles[i].editorValue = parseFloat(ElementsMediator.getProperty(el, this.arrLayerStyles[i].editorProperty));
+                    if(event.detail.data.prop === "background-color"){
+                        var currentValue = ElementsMediator.getColor(this.layerData.stageElement,true);
+                        this.arrLayerStyles[0].abcelement.color(currentValue.colorMode, currentValue.color);
                         break;
+                    }else{
+                        this.arrLayerStyles[i].editorValue = parseFloat(ElementsMediator.getProperty(el, this.arrLayerStyles[i].editorProperty))
                     }
                 }
-            }
+        }
+    },
+    handleFillColorChange: {
+        value: function (event) {
+            var fillColorObject={};
 
+            fillColorObject.color=event._event.color;
+            fillColorObject.mode=event._event.colorMode;
+            ElementsMediator.setColor([this.layerData.stageElement], fillColorObject, this._isFill, "Change", "timeline",null,this._borderSide)
         }
     },
 
