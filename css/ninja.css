@@ -909,7 +909,7 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 
 ::-webkit-scrollbar-track:disabled { display: none; }
 
-:-webkit-scrollbar-track:vertical:disabled { display: none; }
+::-webkit-scrollbar-track:vertical:disabled { display: none; }
 
 ::-webkit-scrollbar-track:horizontal:disabled { display: none; }
 
@@ -918,18 +918,6 @@ input[type="radio"]:disabled { opacity: .3; background: #282828; border-width: 1
 ::-webkit-scrollbar-button:disabled { display: none; }
 
 ::-webkit-scrollbar-corner:disabled { display: none; }
-
-#iframeContainer::-webkit-resizer:disabled { display: block; }
-
-#iframeContainer::-webkit-scrollbar-track:vertical:disabled { display: block; }
-
-#iframeContainer::-webkit-scrollbar-track:horizontal:disabled { display: block; }
-
-#iframeContainer::-webkit-scrollbar-track-piece:disabled { display: block; }
-
-#iframeContainer::-webkit-scrollbar-corner:disabled { display: block; }
-
-#iframeContainer::-webkit-resizer:disabled { display: block; }
 
 .tree { -webkit-user-select: none; cursor: default; float: left; padding-left: 0; color: white; }
 
