@@ -24,6 +24,7 @@ exports.BindingPanel = Montage.create(Component, {
 
     displayEditView : {
         value: function(bindingArgs) {
+            this.editView.bindingArgs = bindingArgs;
             this.editing = true;
         }
     },
