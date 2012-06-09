@@ -34,6 +34,12 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
         value: null
     },
 
+    //count how many times pasted
+    //used to move multiple pastes of same copy
+    pasteCounter:{
+        value: 0
+    },
+
     copiedObjects:{
         value: {}
     },
@@ -103,15 +109,18 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
                 imageData = clipboardData.getData("image/png"),//TODO: other img types, tiff, jpeg.....
                 svgData = clipboardData.getData("image/svg");
 
+            this.pasteCounter++;
+
             if(ninjaData){
                 if(this.copiedObjects.copy){this.pasteFromCopy();}
-                else{this.pasteFromCut();}
-            }else if(imageData){
-                this.pasteImage(imageData);
+                else if(this.copiedObjects.cut){this.pasteFromCut();}
             }else{
-                this.pasteFromExternalSource(htmlData, textData);
+                try{
+                    this.pasteFromExternalSource(htmlData, textData);
+                }catch(e){
+                    console.log(""+e.stack);
+                }
             }
-
 
             clipboardEvent.preventDefault();
         }
@@ -123,7 +132,7 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
     copy:{
         value: function(clipboardEvent){
             var j=0, htmlToClipboard = "", ninjaClipboardObj = {}, textToClipboard = "";
-            this.copiedObjects = {};
+            this.copiedObjects = {}; this.pasteCounter = 0;
             this.copiedObjects["copy"] = [];
 
             if(clipboardEvent){
@@ -185,8 +194,8 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
                     if(node.removeAttribute) {node.removeAttribute("style");}//remove the computed styles attribute which is placed only for pasting to external applications
 
                     styles = {};
-                    styles.top = "" + (this.application.ninja.elementMediator.getProperty(copiedElement, "top", parseInt) - 50) + "px";
-                    styles.left = "" + (this.application.ninja.elementMediator.getProperty(copiedElement, "left", parseInt) - 50) + "px";
+                    styles.top = this.application.ninja.elementMediator.getProperty(copiedElement, "top", parseInt);
+                    styles.left = this.application.ninja.elementMediator.getProperty(copiedElement, "left", parseInt);
 
                     this.pastePositioned(node, styles);
                     pastedElements.push(node);
@@ -282,9 +291,7 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
 //                        adiv.appendChild(aspan);
 
                         divWrapper = document.application.njUtils.make("div", null, this.application.ninja.currentDocument);
-                        document.application.njUtils.createModel(divWrapper);
                         spanWrapper = document.application.njUtils.make("span", null, this.application.ninja.currentDocument);
-                        document.application.njUtils.createModel(spanWrapper);
                         spanWrapper.appendChild(node);
                         divWrapper.appendChild(spanWrapper);
                         styles = null;
@@ -319,7 +326,7 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
     cut:{
         value:function(clipboardEvent){
             var j=0, htmlToClipboard = "", ninjaClipboardObj = {}, textToClipboard = "", elObj = null;
-            this.copiedObjects = {};
+            this.copiedObjects = {}; this.pasteCounter = 0;
             this.copiedObjects["cut"] = [];
 
             if(clipboardEvent){
@@ -362,19 +369,19 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
 
     createClipboardHelper:{
         value:function(){
-            var doc = this.application.ninja.currentDocument ? this.application.ninja.currentDocument.model.views.design.document : document,
+            var doc = (this.application.ninja.currentDocument.currentView === "design") ? this.application.ninja.currentDocument.model.views.design.document : document,
                 clipboardHelper=doc.getElementById("clipboardHelper");
             if(!clipboardHelper){
-                            clipboardHelper = doc.createElement ("div");
-                            clipboardHelper.id = "clipboardHelper";
-                            clipboardHelper.style.display="none";
-                            clipboardHelper.style.position = "absolute";
-                            clipboardHelper.style.right = "-1000px";
-                            clipboardHelper.style.top = "-1000px";
+                clipboardHelper = doc.createElement ("div");
+                clipboardHelper.id = "clipboardHelper";
+                clipboardHelper.style.display="none";
+                clipboardHelper.style.position = "absolute";
+                clipboardHelper.style.right = "-1000px";
+                clipboardHelper.style.top = "-1000px";
 
-                            document.body.appendChild (clipboardHelper);
-                        }
-                        return clipboardHelper;
+                doc.body.appendChild (clipboardHelper);
+            }
+            return clipboardHelper;
         }
     },
 
@@ -415,11 +422,10 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
             //end - clone copied canvas
 
             if (!canvas.getAttribute( "data-RDGE-id" )) canvas.setAttribute( "data-RDGE-id", NJUtils.generateRandom() );
-            document.application.njUtils.createModelWithShape(canvas);
 
-            styles = canvas.elementModel.data || {};
-            styles.top = "" + (this.application.ninja.elementMediator.getProperty(sourceCanvas, "top", parseInt) - 50) + "px";
-            styles.left = "" + (this.application.ninja.elementMediator.getProperty(sourceCanvas, "left", parseInt) - 50) + "px";
+            var styles = canvas.elementModel.data || {};
+            styles.top = "" + (this.application.ninja.elementMediator.getProperty(sourceCanvas, "top", parseInt) + (25 * this.pasteCounter))+"px";
+            styles.left = "" + (this.application.ninja.elementMediator.getProperty(sourceCanvas, "left", parseInt) + (25 * this.pasteCounter)) + "px";
 
             this.application.ninja.elementMediator.addElements(canvas, styles, false);
 
@@ -453,7 +459,6 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
             canvas.height = styles.height;
 
             if (!canvas.getAttribute( "data-RDGE-id" )) canvas.setAttribute( "data-RDGE-id", NJUtils.generateRandom() );
-            document.application.njUtils.createModelWithShape(canvas);
 
             var newCanvasStyles = canvas.elementModel.data || {};
             newCanvasStyles.top = styles.top;
@@ -524,14 +529,28 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
 
     pastePositioned:{
         value: function(element, styles){// for now can wok for both in-place and centered paste
-            NJUtils.createModel(element);
-            this.application.ninja.elementMediator.addElements(element, styles);
+            var modObject = [], x,y, newX, newY, translation;
+
+            x = styles ? ("" + styles.left + "px") : "100px";
+            y = styles ? ("" + styles.top + "px") : "100px";
+            newX = styles ? ("" + (styles.left + (25 * this.pasteCounter)) + "px") : "100px";
+            newY = styles ? ("" + (styles.top + (25 * this.pasteCounter)) + "px") : "100px";
+
+            translation = {"left": newX, "top": newY};
+            //add the pasted object on top of the copied object
+            this.application.ninja.elementMediator.addElements(element, translation);
+
+//            //move the pasted object to make it visible to user
+//            modObject.push({element:element, properties:{left: newX, top:newY}, previousProperties: {left: x, top:y}});
+//            this.application.ninja.elementMediator.setProperties(modObject, "Change", "clipboard-controller" );
+//
+//            element.elementModel.setProperty("x", this.application.ninja.elementMediator.getProperty(element, "left"));
+//            element.elementModel.setProperty("y", this.application.ninja.elementMediator.getProperty(element, "top"));
         }
     },
 
     pasteInPlace:{
         value: function(element){
-            NJUtils.createModel(element);
             this.application.ninja.elementMediator.addElements(element, null);//does not work now
         }
     },
@@ -539,8 +558,8 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
     getDominantStyles:{
         value: function(el, isCanvas){
             var styles = {};
-            styles.top = "" + (this.application.ninja.elementMediator.getProperty(el, "top", parseInt) - 50) + "px";
-            styles.left = "" + (this.application.ninja.elementMediator.getProperty(el, "left", parseInt) - 50) + "px";
+            styles.top = this.application.ninja.elementMediator.getProperty(el, "top", parseInt);
+            styles.left = this.application.ninja.elementMediator.getProperty(el, "left", parseInt);
             if(isCanvas){
                 styles.width = (el.getAttribute("width") ? el.getAttribute("width") : null);
                 styles.height = (el.getAttribute("height") ? el.getAttribute("height") : null);
