@@ -204,7 +204,19 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 						this.document.body.setAttribute(this.content.document.body.attributes[n].name, this.content.document.body.attributes[n].value);
 					}
 				}
-				//TODO: Add attribute copying for <HEAD> and <HTML>
+				//Copying attributes to maintain same properties as the <head>
+				for (var m in this.content.document.head.attributes) {
+					if (this.content.document.head.attributes[m].value) {
+						this.document.head.setAttribute(this.content.document.head.attributes[m].name, this.content.document.head.attributes[m].value);
+					}
+				}
+				//Copying attributes to maintain same properties as the <html>
+				var htmlTagMem = this.content.document.getElementsByTagName('html')[0], htmlTagDoc = this.document.getElementsByTagName('html')[0];
+				for (var m in htmlTagMem.attributes) {
+					if (htmlTagMem.attributes[m].value) {
+						htmlTagDoc.setAttribute(htmlTagMem.attributes[m].name, htmlTagMem.attributes[m].value);
+					}
+				}
 			}
         }
     },
