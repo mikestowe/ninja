@@ -10,6 +10,17 @@ var Montage = require("montage/core/core").Montage,
 
 exports.EditBindingView = Montage.create(Component, {
 
+    objectIdentifiers : {
+        value: null
+    },
+    getObjectIdentifiers : {
+        value: function() {
+            return this.application.ninja.objectsController.objects.map(function(object) {
+                return object.identifier;
+            });
+        }
+    },
+
     /* -------------------
        Binding Properties
      ------------------- */
@@ -62,13 +73,48 @@ exports.EditBindingView = Montage.create(Component, {
 
             this._bindingArgs = value;
 
-            this.sourceObjectIdentifier = value.sourceObject.identifier;
-            this.sourceObjectPropertyPath = value.sourceObjectPropertyPath;
-            this.boundObjectIdentifier = value.boundObject.identifier;
-            this.boundObjectPropertyPath = value.boundObjectPropertyPath;
+            // clear form values
+            this.clearForm();
+
+            // set up hints for hintable components
+            this.objectIdentifiers = this.getObjectIdentifiers();
+            console.log("setting hints to ", this.objectIdentifiers);
+            this.boundObjectField.hints = this.objectIdentifiers;
+            this.sourceObjectField.hints = this.objectIdentifiers;
+
+            if(value.sourceObject) {
+                this.sourceObjectIdentifier = value.sourceObject.identifier || '';
+                this.sourceObjectPropertyPath = value.sourceObjectPropertyPath || '';
+            }
+
+            if(value.boundObject) {
+                this.boundObjectIdentifier = value.boundObject.identifier || '';
+                this.boundObjectPropertyPath = value.boundObjectPropertyPath || '';
+            }
+
             this.oneway = value.oneway;
 
             this.needsDraw = true;
+        }
+    },
+
+    /* -------------------
+     Save/Close button handlers
+     ------------------- */
+
+    "sourceObjectField"             : {value: null, enumerable: true },
+    "boundObjectField"              : {value: null, enumerable: true },
+    "sourceObjectPropertyPathField" : {value: null, enumerable: true },
+    "boundObjectPropertyPathField"  : {value: null, enumerable: true },
+    "directionCheckbox"             : {value: null, enumerable: true },
+
+    clearForm : {
+        value: function() {
+            for(var field in this) {
+                if(this.hasOwnProperty(field)) {
+                    field.value = '';
+                }
+            }
         }
     },
 
@@ -82,9 +128,13 @@ exports.EditBindingView = Montage.create(Component, {
         }
     },
 
-    prepareForDraw : {
+    /* -------------------
+     Draw Cycle
+     ------------------- */
+
+    willDraw : {
         value: function() {
-            console.log("Preparing to draw edit view");
+
         }
     }
 });

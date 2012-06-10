@@ -13,7 +13,10 @@
     position: absolute;
     top: 0;
     width: 100%;
-    -webkit-transition: -webkit-transform .55s cubic-bezier(.44,.19,0,.99);
+    -webkit-transition-property: -webkit-transform, box-shadow;
+    -webkit-transition-duration: .55s, .2s;
+    -webkit-transition-timing-function: cubic-bezier(.44,.19,0,.99);
+    -webkit-user-select: text;
 }
 
 .edit-binding-view ul {
@@ -37,6 +40,7 @@
     background-color: #444;
     border: 1px solid #313131;
     display: inline-block;
+    height: 13px;
     margin-left: 5px;
     padding: 1px 4px;
     width: 45%;
