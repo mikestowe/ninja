@@ -6,7 +6,6 @@ exports.BindingPanel = Montage.create(Component, {
 
     bindings : { value: null },
     editView : { value: null },
-    editingClass : { value: 'editing-binding' },
     _editing: { value: null },
     editing: {
         get: function() {
@@ -30,8 +29,20 @@ exports.BindingPanel = Montage.create(Component, {
     },
 
     /* -------------------------
-        Draw Cycle
+     Toolbar Button Actions
      ------------------------- */
+
+    handleAddAction : {
+        value: function(e) {
+            var newBindingArgs = {
+                sourceObject : this.application.ninja.objectsController.currentObject
+            };
+
+            this.displayEditView(newBindingArgs);
+        }
+    },
+
+
 
     templateDidLoad : {
         value: function() {
@@ -57,8 +68,10 @@ exports.BindingPanel = Montage.create(Component, {
 
             if(this.editing) {
                 this.editView.element.style.setProperty(transStr, 'translate3d(-'+ this._translateDistance + 'px,0,0)');
+                this.editView.element.style.setProperty('box-shadow', '0 0 10px rgba(0,0,0,0.2)')
             } else {
                 this.editView.element.style.removeProperty(transStr);
+                this.editView.element.style.removeProperty('box-shadow');
             }
         }
     }
