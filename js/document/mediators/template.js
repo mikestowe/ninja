@@ -613,8 +613,8 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
             } else {
             	cleanHTML = template.file.content.document.documentElement.outerHTML.replace(/(\b(?:(?:https?|ftp|file|[A-Za-z]+):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/gi, parseNinjaRootUrl.bind(this));
       	    }
-      	    //TODO: Remove, this is a temp hack
-      	    cleanHTML = cleanHTML;
+      	    //TODO: Remove, this is a temp hack to maintain a doc type on HTML files
+      	    cleanHTML = '<!DOCTYPE html>'+cleanHTML;
             //
             function parseNinjaRootUrl(url) {
                 if (url.indexOf(this.application.ninja.coreIoApi.rootUrl) !== -1) {
