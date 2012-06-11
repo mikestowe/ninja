@@ -88,11 +88,13 @@ exports.BindingItem = Montage.create(Component, {
 
     handleDirectionToggleButtonAction : {
         value: function(e) {
+            var controller = this.application.ninja.objectsController;
+
             this.oneway = !this.oneway;
-            this.application.ninja.objectsController.editBinding(this.bindingArgs, {
+            controller.editBinding(this.bindingArgs, {
                 oneway: !this.bindingArgs.oneway
             });
-            this.application.ninja.objectsController.
+            controller.currentItem = controller.currentItem;
         }
     },
 
