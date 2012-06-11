@@ -375,8 +375,7 @@ exports.Stage = Montage.create(Component, {
 
     handleWillChange: {
         value: function(notification) {
-            console.log("stage -> container is about to change");
-            console.log(notification.plus);
+//            console.log("stage -> container is about to change");
         }
     },
 
