@@ -5,9 +5,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 </copyright> */
 
 var Montage = require("montage/core/core").Montage;
-    Component = require("montage/ui/component").Component,
-    viewUtils = require("js/helper-classes/3D/view-utils").ViewUtils,
-    drawUtils = require("js/helper-classes/3D/draw-utils").DrawUtils;
+    Component = require("montage/ui/component").Component;
 
 exports.ThreeD = Montage.create(Component, {
 
