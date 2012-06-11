@@ -25,13 +25,17 @@ exports.BindingHud = Montage.create(Component, {
             return this._bindingArgs;
         },
         set: function(val) {
-            this._bindingArgs = val;
-            this.title = this.bindingArgs.component.identifier;
-            this.x = this._bindingArgs.component.element.offsetLeft;
-            this.y = this._bindingArgs.component.element.offsetTop;
-            this.properties = this._bindingArgs.properties;
-            this.needsDraw = true;
-            console.log("Binding Args Set", val);
+            if (typeof(val) !== "undefined") {
+                this._bindingArgs = val;
+                this.title = this.bindingArgs.component.identifier;
+                this.x = this._bindingArgs.component.element.offsetLeft;
+                this.y = this._bindingArgs.component.element.offsetTop;
+                this.properties = this._bindingArgs.properties;
+                this.needsDraw = true;
+                console.log("Binding Args Set", val);
+            } else {
+                this.properties = [];
+            }
         }
     },
 

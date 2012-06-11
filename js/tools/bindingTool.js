@@ -44,12 +44,17 @@ exports.BindingTool = Montage.create(ModifierToolBase, {
     HandleLeftButtonDown: {
         value: function(event) {
             NJevent("enableStageMove");
-            this.application.ninja.stage.bindingView.handleMousedown(event);
+            this.application.ninja.stage.bindingView.validateOverHud();
         }
     },
 
     HandleMouseMove: {
         value: function(event) {
+            /*
+                In the mouse over event we need to validate if the mouse over is over a hud.
+                If it on top of a hud bring that single hud to the top to associate with.
+
+            */
             //this.doDraw(event);
         }
     },
