@@ -829,14 +829,12 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     recreatePropertyTracks:{
         value:function(ruleSet){
-
-
             for(var i in ruleSet){
                 var styleProp = ruleSet[i][0].style[0];
                 console.log(styleProp);
-                this.application.ninja.timeline.layerRepetition.childComponents[0].addStyle(styleProp);
+                console.log(ruleSet[i]);
+                this.application.ninja.timeline.layerRepetition.childComponents[0].addStyle(styleProp, ruleSet[i]);
             }
-
         }
     },
 
@@ -881,8 +879,10 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 keyframeString += keyframePropertyString;
             }
             keyframeString += " }";
+            //console.log(keyframeString);
             // set the keyframe string as the new rule
             this.currentKeyframeRule = this.ninjaStylesContoller.addRule(keyframeString);
+            //console.log(this.currentKeyframeRule);
             this.application.ninja.currentDocument.model.needsSave = true;
         }
     },
@@ -944,8 +944,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 return;
             }
             if (layerEvent.layerEventType === "newStyle") {
-            	// TODO: Add a real track of tweens.  Probably need a method for that.
-
                 var newStyleTrack = {};
                 newStyleTrack.propTrackData = {};
                 newStyleTrack.propTrackData.styleSelection = layerEvent.styleSelection;
@@ -953,6 +951,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 newStyleTrack.propTrackData.trackType = "style";
                 newStyleTrack.propTrackData.trackEditorProperty = "";
                 newStyleTrack.propTrackData.styleIndex = layerEvent.styleIndex;
+                newStyleTrack.propTrackData.existingRule = "";
 
             	this.arrStyleTracks.push(newStyleTrack);
 
@@ -964,6 +963,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 restoredStyleTrack.propTrackData.trackType = "style";
                 restoredStyleTrack.propTrackData.trackEditorProperty = layerEvent.trackEditorProperty;
                 restoredStyleTrack.propTrackData.styleIndex = layerEvent.styleIndex;
+                restoredStyleTrack.propTrackData.existingRule = layerEvent.existingRule;
 
                 this.arrStyleTracks.push(restoredStyleTrack);
             }

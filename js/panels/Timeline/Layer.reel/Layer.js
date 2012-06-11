@@ -601,7 +601,7 @@ var Layer = exports.Layer = Montage.create(Component, {
 		}
 	},
 	addStyle : {
-		value: function(styleProperty) {
+		value: function(styleProperty, existingRule) {
 			// Add a new style rule.  It should be added above the currently selected rule, 
 			// Or at the end, if no rule is selected.
 
@@ -630,6 +630,9 @@ var Layer = exports.Layer = Montage.create(Component, {
                 newStyle.editorProperty = styleProperty;
                 newEvent.layerEventType = "restoreStyle";
                 newEvent.trackEditorProperty = styleProperty;
+                if(existingRule){
+                    newEvent.existingRule = existingRule;
+                }
             }
 			newStyle.editorValue = "";
 			newStyle.ruleTweener = false;
