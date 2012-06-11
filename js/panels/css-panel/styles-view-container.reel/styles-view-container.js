@@ -8,6 +8,29 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
 exports.StylesViewContainer = Montage.create(Component, {
+
+    _currentDocument: {
+        value : null
+    },
+
+    currentDocument : {
+        get : function() {
+            return this._currentDocument;
+        },
+        set : function(value) {
+            if (value === this._currentDocument) {
+                return;
+            }
+
+            this._currentDocument = value;
+
+            if(!value) {
+                this.hasStyles = false;
+                this.needsDraw = true;
+            }
+        }
+    },
+
     contentController : {
         value: null
     },
@@ -74,7 +97,6 @@ exports.StylesViewContainer = Montage.create(Component, {
         value: function() {
             this.eventManager.addEventListener('styleSheetsReady', this, false);
             this.eventManager.addEventListener('elementChange', this, false);
-            this.eventManager.addEventListener("closeDocument", this, false);
         }
     },
     handleStyleSheetsReady: {
@@ -147,13 +169,6 @@ exports.StylesViewContainer = Montage.create(Component, {
                 return false;
             }
 
-        }
-    },
-
-    handleCloseDocument: {
-        value: function(e) {
-            this.hasStyles = false;
-            this.needsDraw = true;
         }
     },
 

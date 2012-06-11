@@ -16,7 +16,24 @@ exports.PanelContainer = Montage.create(Component, {
         value: null
     },
 
-    // This will hold the current loaded panels.
+    _currentDocument: {
+        value : null,
+        enumerable : false
+    },
+
+    currentDocument : {
+        get : function() {
+            return this._currentDocument;
+        },
+        set : function(value) {
+            if (value === this._currentDocument) {
+                return;
+            }
+
+            this._currentDocument = value;
+        }
+    },
+
     panels: {
         value: []
     },
@@ -78,10 +95,6 @@ exports.PanelContainer = Montage.create(Component, {
             }
 
             this.application.localStorage.setItem("panels", this.currentPanelState);
-
-
-            this.eventManager.addEventListener( "onOpenDocument", this, false);
-            this.eventManager.addEventListener( "closeDocument", this, false);
         }
     },
  
@@ -103,24 +116,6 @@ exports.PanelContainer = Montage.create(Component, {
         }
     },
 
-    handleOnOpenDocument: {
-        value: function(){
-            this.panels.forEach(function(obj) {
-                obj.disabled = false;
-            });
-        }
-    },
-
-    handleCloseDocument: {
-        value: function(){
-            if(!this.application.ninja.documentController.activeDocument) {
-                this.panels.forEach(function(obj) {
-                    obj.disabled = true;
-                });
-            }
-        }
-    },
- 
     handleDropped: {
         value: function(e) {
             var draggedIndex, droppedIndex = 0, len = this.panels.length;

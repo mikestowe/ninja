@@ -45,11 +45,11 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
                 this._isBoundToModelObjects = true;
             }
 
-            Object.defineBinding(this, 'objects', {
-                boundObject: this.currentDocument.model,
-                boundObjectPropertyPath: 'objects',
-                oneway: false
-            });
+//            Object.defineBinding(this, 'objects', {
+//                boundObject: this.currentDocument.model,
+//                boundObjectPropertyPath: 'mObjects',
+//                oneway: false
+//            });
         }
     },
     

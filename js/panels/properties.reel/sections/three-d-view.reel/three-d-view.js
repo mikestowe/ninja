@@ -26,8 +26,7 @@ exports.ThreeD = Montage.create(Component, {
         set: function(value) {
             this._axisMode = value;
             
-            if(value === 0)
-            {
+            if(value === 0) {
                 this.inGlobalMode = false;
                 this.x3D = 0;
                 this.y3D = 0;
@@ -36,13 +35,10 @@ exports.ThreeD = Montage.create(Component, {
                 this.xAngle = 0;
                 this.yAngle = 0;
                 this.zAngle = 0;
-            }
-            else
-            {
+            } else {
                 this.inGlobalMode = true;
                 var item = this.item;
-                if(item)
-                {
+                if(item) {
                     this.x3D = item.elementModel.props3D.x3D;
                     this.y3D = item.elementModel.props3D.y3D;
                     this.z3D = item.elementModel.props3D.z3D;
@@ -114,8 +110,7 @@ exports.ThreeD = Montage.create(Component, {
     handleAction: {
         value: function(event) {
             if(event.currentTarget.identifier === "flatten") {
-                this.application.ninja.elementMediator.setProperty([this.item],
-                                                                    "-webkit-transform-style",
+                this.application.ninja.elementMediator.setProperty([this.item], "-webkit-transform-style",
                                                                     event.currentTarget.checked ? ["flat"] : ["preserve-3d"]);
             }
         }
@@ -127,11 +122,7 @@ exports.ThreeD = Montage.create(Component, {
                 return;
             }
 
-            this.apply3DProperties(event.currentTarget.identifier,
-                                    event.currentTarget,
-                                    this.item,
-                                    this.inGlobalMode,
-                                    false);
+            this.apply3DProperties(event.currentTarget.identifier, event.currentTarget, this.item, this.inGlobalMode, false);
 
             this._curMat = null;
             this._curProp = null;
@@ -144,28 +135,24 @@ exports.ThreeD = Montage.create(Component, {
                 return;
             }
 
-            this.apply3DProperties(event.currentTarget.identifier,
-                            event.currentTarget,
-                            this.item,
-                            this.inGlobalMode,
-                            true);
+            this.apply3DProperties(event.currentTarget.identifier, event.currentTarget, this.item, this.inGlobalMode, true);
         }
     },
 
     apply3DProperties : {
         value : function(prop, value, item, inGlobalMode, isChanging){
-            if(!this._curMat)
-            {
+            if(!this._curMat) {
                 this._curMat = this.application.ninja.elementMediator.getMatrix(item);
             }
+
             var curMat = this._curMat;
             var delta = value.value;
-            if(inGlobalMode)
-            {
-                if(!this._curProp)
-                {
+            if(inGlobalMode) {
+
+                if(!this._curProp) {
                     this._curProp = this.application.ninja.elementMediator.get3DProperty(item, prop);
                 }
+
                 delta -= this._curProp;
             }
 
@@ -193,27 +180,47 @@ exports.ThreeD = Montage.create(Component, {
             }
 
             var mat = [];
-            if(inGlobalMode)
-            {
+            if(inGlobalMode) {
                 glmat4.multiply(xFormMat, curMat, mat);
-            }
-            else
-            {
+            } else {
                 glmat4.multiply(curMat, xFormMat, mat);
             }
 
-            if(isChanging)
-            {
+            if(isChanging) {
                 this.application.ninja.elementMediator.setMatrix(item, mat, true);
-            }
-            else
-            {
+            } else {
                 this.application.ninja.elementMediator.setMatrix(item, mat, false);
 
-                if(!inGlobalMode)
-                {
+                if(!inGlobalMode) {
                     value.value = 0;
                 }
+            }
+        }
+    },
+
+    _currentDocument: {
+        value : null
+    },
+
+    currentDocument : {
+        get : function() {
+            return this._currentDocument;
+        },
+        set : function(value) {
+            if (value === this._currentDocument) {
+                return;
+            }
+
+            this._currentDocument = value;
+
+            if(this._currentDocument && this._currentDocument.currentView === "design") {
+                // Save a reference of the pi inside the document view to be able to clear
+                Object.defineBinding(this, "item", {
+                    boundObject: this,
+                    boundObjectPropertyPath: "application.ninja.selectedElements",
+                    boundValueMutator: this._getSelectedItem,
+                    oneway: true
+                });
             }
         }
     },
@@ -224,20 +231,6 @@ exports.ThreeD = Montage.create(Component, {
                 boundObject: this.axisModeGroupControl,
                 boundObjectPropertyPath: "selectedIndex",
                 oneway: false
-            });
-
-            this.eventManager.addEventListener("openDocument", this, false);
-        }
-    },
-
-    handleOpenDocument: {
-        value: function() {
-
-            Object.defineBinding(this, "item", {
-                boundObject: this,
-                boundObjectPropertyPath: "application.ninja.selectedElements",
-                boundValueMutator: this._getSelectedItem,
-                oneway: true
             });
         }
     },

@@ -90,30 +90,6 @@ exports.NJUtils = Montage.create(Component, {
         }
     },
 
-    createModel: {
-        value: function(el) {
-            el.elementModel = Montage.create(ElementModel).initialize(el);
-        }
-    },
-
-    createModelWithShape: {
-        value: function(el, selection) {
-            el.elementModel = Montage.create(ElementModel).initialize(el, true, selection);
-        }
-    },
-
-    createModelWithSelection: {
-        value: function(el, selection) {
-            el.elementModel = Montage.create(ElementModel).initialize(el, false, selection);
-        }
-    },
-
-    createModelForComponent: {
-        value: function(el, selection) {
-            el.elementModel = Montage.create(ElementModel).initialize(el, false, selection, true);
-        }
-    },
-
     // TODO: Find a better place for this method
     stylesFromDraw: {
         value: function(element, width, height, drawData, pos) {
@@ -163,102 +139,6 @@ exports.NJUtils = Montage.create(Component, {
             flatMatSafe = MathUtils.scientificToDecimal(flatMat, 10);
 
             return "matrix3d(" + flatMatSafe + ")";
-        }
-    },
-
-    ///// Element Model creation for existing elements
-    ///// TODO: find a different place for this function
-    makeElementModel: {
-        value: function(el, selection, controller, isShape) {
-            var p3d = Montage.create(Properties3D);
-
-            var shapeProps = null;
-            var pi = controller + "Pi";
-
-            if(isShape) {
-                shapeProps = Montage.create(ShapeModel);
-            }
-
-            if(el.controller) {
-
-                var componentInfo = Montage.getInfoForObject(el.controller);
-                var componentName = componentInfo.objectName.toLowerCase();
-
-                controller  = "component";
-                isShape = false;
-
-                switch(componentName) {
-                    case "feedreader":
-                        selection = "Feed Reader";
-                        pi = "FeedReaderPi";
-                        break;
-                    case "map":
-                        selection = "Map";
-                        pi = "MapPi";
-                        break;
-                    case "youtubechannel":
-                        selection = "Youtube Channel";
-                        pi = "YoutubeChannelPi";
-                        break;
-                    case "picasacarousel":
-                        selection = "Picasa Carousel";
-                        pi = "PicasaCarouselPi";
-                        break;
-                }
-            }
-
-            el.elementModel = Montage.create(ElementModel, {
-                    type:       { value: el.nodeName},
-                    selection:  { value: selection},
-                    controller: { value: ControllerFactory.getController(controller)},
-                    pi:         { value: pi},
-                    props3D:    { value: p3d},
-                    shapeModel: { value: shapeProps},
-                    isShape:    { value: isShape}
-            });
-
-
-        }
-    },
-
-    ///// Element Model creation for existing elements based on element type.
-    ///// TODO: Selection and model should be based on the element type
-    makeModelFromElement: {
-        value: function(el) {
-            var selection = "div",
-                controller = "block",
-                isShape = false;
-            switch(el.nodeName.toLowerCase())
-            {
-                case "div":
-                    break;
-                case "img":
-                    selection = "image";
-                    controller = "image";
-                    break;
-                case "video":
-                    selection = "video";
-                    controller = "video";
-                    break;
-                case "canvas":
-                    isShape = el.getAttribute("data-RDGE-id");
-                    if(isShape) {
-                        // TODO - Need more info about the shape
-                        selection = "canvas";
-                        controller = "shape";
-                        isShape = true;
-                    } else {
-                        selection = "canvas";
-                        controller = "canvas";
-                    }
-                    break;
-                case "shape":
-                    break;
-            }
-            this.makeElementModel(el, selection, controller, isShape);
-            if(el.elementModel && el.elementModel.props3D) {
-                el.elementModel.props3D.init(el, (selection === "Stage"));
-            }
         }
     },
 

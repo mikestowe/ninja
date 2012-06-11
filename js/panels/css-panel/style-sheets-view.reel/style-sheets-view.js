@@ -63,10 +63,10 @@ exports.StyleSheetsView = Montage.create(Component, {
             if(this.styleSheetList) {
                 sheetComponent = this.styleSheetList.childComponents[this.styleSheets.indexOf(sheet)];
                 if(sheetComponent) {
-                    sheetComponent.default = true;
+                    sheetComponent['default'] = true;
                     if(this._defaultStyleSheet) {
                         oldDefaultSheet = this.styleSheetList.childComponents[this.styleSheets.indexOf(this._defaultStyleSheet)];
-                        oldDefaultSheet.default = false;
+                        oldDefaultSheet['default'] = false;
                     }
                 }
             }
@@ -115,12 +115,12 @@ exports.StyleSheetsView = Montage.create(Component, {
     
     handleStyleSheetsReady : {
         value: function(e) {
-            this.documentName = this.stylesController.activeDocument.name;
+            this.documentName = this.stylesController.currentDocument.name;
             this.styleSheets = this.stylesController.userStyleSheets;
 
             Object.defineBinding(this, 'activeDocument', {
                 'boundObject': this.stylesController,
-                'boundObjectPropertyPath': 'activeDocument',
+                'boundObjectPropertyPath': 'currentDocument',
                 'oneway': true
             });
 
