@@ -23,6 +23,9 @@ exports.Ninja = Montage.create(Component, {
         value: null
     },
 
+    appData: {
+        value: AppData
+    },
 
     documentList: {
         value: null
@@ -57,9 +60,14 @@ exports.Ninja = Montage.create(Component, {
         }
     },
 
+    _isResizing: {
+        value: null
+    },
+
     _resizedHeight : {
         value: 0
     },
+
     _height: {
         value: null
     },

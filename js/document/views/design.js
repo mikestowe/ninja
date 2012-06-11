@@ -450,15 +450,17 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         		template.initWithDocument(this.iframe.contentWindow.document);
         		template.instantiateWithOwnerAndDocument(null, this.iframe.contentWindow.document, function (){
         			//TODO: Verify this is properly done, seems like a hack
+
+                    var objArray = [];
         			for (var c in template._deserializer._objects) {
         				//Forcing draw on components
 	        			template._deserializer._objects[c].needsDraw = true;
-						//this.model.objects = template.deserializer.getObjectsFromLastDeserialization();
+						objArray.push(template._deserializer._objects[c]);
         			}
 
                     // Now call the view callback
                     if(self._viewCallback) {
-                        self._viewCallback.viewCallback.call(self._viewCallback.context);
+                        self._viewCallback.viewCallback.call(self._viewCallback.context, objArray);
                     }
 
         		});

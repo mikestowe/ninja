@@ -363,7 +363,8 @@
             "objectsController" : {
                 "prototype": "js/controllers/objects-controller",
                 "bindings": {
-                    "currentDocument": {"<-": "@owner.currentDocument"}
+                    "currentDocument": {"<-": "@documentList.selectedObjects.0"},
+                    "objects": {"<-": "@documentList.selectedObjects.0.model.mObjects"}
                 }
             },
 

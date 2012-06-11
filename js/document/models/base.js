@@ -91,6 +91,19 @@ exports.BaseDocumentModel = Montage.create(Component, {
 	libs: {
         value: null
     },
+
+    _mObjects: {
+            value: []
+        },
+
+        mObjects: {
+            get: function() {
+                return this._mObjects;
+            },
+            set: function(value) {
+                this._mObjects = value;
+            }
+        },
     ////////////////////////////////////////////////////////////////////
 	//
 	switchViewTo: {

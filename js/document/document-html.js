@@ -106,7 +106,8 @@ exports.HtmlDocument = Montage.create(Component, {
     	}
     },
     handleViewReady: {
-        value: function() {
+        value: function(mObjects) {
+            this.model.mObjects = mObjects;
             //Making callback after view is loaded
             this.loaded.callback.call(this.loaded.context, this);
         }
