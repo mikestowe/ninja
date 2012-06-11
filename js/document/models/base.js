@@ -6,8 +6,9 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 
 ////////////////////////////////////////////////////////////////////////
 //
-var Montage = 	require("montage/core/core").Montage,
-	Component = require("montage/ui/component").Component;
+var Montage = 		require("montage/core/core").Montage,
+	Component = 	require("montage/ui/component").Component,
+	NinjaPrompt = 	require("js/components/prompt.reel").NinjaPrompt;
 ////////////////////////////////////////////////////////////////////////
 //	
 exports.BaseDocumentModel = Montage.create(Component, {
@@ -264,30 +265,59 @@ exports.BaseDocumentModel = Montage.create(Component, {
 			if (this.callback) this.callback(result);
 		}
 	},
+	////////////////////////////////////////////////////////////////////
+	//
+	handleSavePrompt: {
+		value: function (continueToClose, callback) {
+			//TODO: Perhaps add logic to save the file is the user wants
+			if (continueToClose) {
+				if (callback) callback();
+			} else {
+				//User canceled
+				//this.saveAll(null, callback);
+			}
+		}
+	},
     ////////////////////////////////////////////////////////////////////
 	//TODO: Implement better logic to include different views on single document
 	close: {
         value: function (view, callback) {
-        	//Outcome of close (pending on save logic)
-        	var success;
-        	//
+        	//Checking if files needs to be saved to avoid losing data
         	if (this.needsSave) {
-        		//TODO: Prompt user to save or lose data
+        		//Creating prompt to ask user to save the file
+        		var prompt = NinjaPrompt.create();
+        		prompt.initialize('confirm', {message: 'Do you want to save the changes you made in the document '+this.file.name+'?\n\nYour changes will be lost if you do not save them.'}, function (result){this.handleSavePrompt(result, callback);}.bind(this));
+        		//Showing the prompt, it will make callback with user input
+        		prompt.show();
         	} else {
-        		//Close file
-        		success = true;
+        		//TODO: Add support for other views
+        		if (!view || view === 'design') {
+        			this.closeView('design');
+        		}
+        		//Making callback
+        		if (callback) callback();
         	}
-        	//Checking for view mode to close
-        	if (this.views.design && (!view || view === 'design')) {
-        		//TODO: Create a destroy method, this is messy
-        		this.views.design.pauseAndStopVideos();
-        		this.parentContainer.removeChild(this.views.design.iframe);
-        		this.views.design = null;
-        	}
-        	//Returning result of operation
-        	return success;
+        	
         }
-    }
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+	closeView: {
+		value: function (view) {
+			//Checking for view mode to close
+        	switch (view.toLowerCase()) {
+        		case 'design':
+	        		//TODO: Make into clean method in the design view
+	        		this.views.design.pauseAndStopVideos();
+	        		this.parentContainer.removeChild(this.views.design.iframe);
+	        		this.views.design = null;
+	        		break;
+	        	default:
+	        		//TODO: Error?
+	        		break;
+        	}
+		}
+	}
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
 });
