@@ -146,17 +146,38 @@ var Span = exports.Span = Montage.create(Component, {
     
     handleEasingChoiceClick: {
     	value: function(event) {
+    		event.stopPropagation();
     		this.areChoicesVisible = true;
+    		
+    		// Possibly another menu is already open.  If so, we need to close it.
+    		if (this.application.ninja.timeline.currentOpenSpanMenu !== false) {
+    			this.application.ninja.timeline.currentOpenSpanMenu.hideEasingMenu();
+    		}
+    		
+    		// Now store a pointer to ourselves for possible future use.
+    		this.application.ninja.timeline.currentOpenSpanMenu = this;
     	}
     },
     handleEasingChoicesClick: {
     	value: function(event) {
-
+    		event.stopPropagation();
+			
+			// Remove the pointer to ourselves
+			this.application.ninja.timeline.currentOpenSpanMenu = false;
+			
+			// Un-highlight the old choice and highlight the new choice
     		this.easing_choices.querySelector(".easing-selected").classList.remove("easing-selected");
     		event.target.classList.add("easing-selected");
+    		
+    		// Set the easing 
     		this.easing = event.target.dataset.ninjaEase;
-
-    		// Which element was just 
+    		
+    		// Hide the menu.
+    		this.hideEasingMenu();	
+    	}
+    },
+    hideEasingMenu: {
+    	value: function() {
     		this.areChoicesVisible = false;
     	}
     }

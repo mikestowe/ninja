@@ -131,6 +131,18 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     _areTracksScrolling: {
     	value: false
     },
+    
+    _currentOpenSpanMenu: {
+    	value: false
+    },
+    currentOpenSpanMenu: {
+    	get: function() {
+    		return this._currentOpenSpanMenu;
+    	},
+    	set: function(newVal) {
+    		this._currentOpenSpanMenu = newVal;
+    	}
+    },
 
     // Set to false to skip array caching array sets in currentDocument
     _boolCacheArrays:{
@@ -1510,6 +1522,11 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     	value: function(event) {
     		if (this.tl_configbutton.classList.contains("checked")) {
     			this.tl_configbutton.classList.remove("checked");
+    		}
+    		// 
+    		if (this.currentOpenSpanMenu !== false) {
+    			this.currentOpenSpanMenu.hideEasingMenu();
+    			this.currentOpenSpanMenu = false;
     		}
     	}
     },
