@@ -17,17 +17,50 @@ exports.BindingView = Montage.create(Component, {
         value: null
     },
 
+    //Move variables
+    _translateX : {
+        value: 0
+    },
+
+    _translateY: {
+        value: 0
+    },
+
+    translateX : {
+        get: function() {
+            return this._translateX;
+        },
+        set: function(val) {
+            this._translateX = val;
+            console.log("x", this._translateX);
+        }
+    },
+
+    translateY: {
+        get: function() {
+            return this._translateY;
+        },
+        set: function(val) {
+            this._translateY = val;
+            console.log("y", this._translateY);
+        }
+    },
+
+    handleMousedown: {
+        value: function(e) {
+            validateOverHud(e.clientX, e.clientY);
+        }
+    },
+
+    validateOverHud: {
+        value: function() {
+
+        }
+    },
+
     componentsList: {
         value: {}
     },
-
-    /*
-
-    Bindables Format: [
-
-    ]
-    */
-
 
     _bindables: {
         value: []
@@ -58,35 +91,36 @@ exports.BindingView = Montage.create(Component, {
         },
         set: function(val) {
             this._selectedComponent = val;
-            this.application.ninja.objectsController.currentObject = this.selectedComponent;
-            var arrBindings = this.application.ninja.objectsController.currentObjectBindings;
-            var arrProperties = this.application.ninja.objectsController.getPropertyList(this.selectedComponent, true);
+            if(this._selectedComponent !== null) {
+                this.application.ninja.objectsController.currentObject = this.selectedComponent;
+                var arrBindings = this.application.ninja.objectsController.currentObjectBindings;
+                var arrProperties = this.application.ninja.objectsController.getPropertyList(this.selectedComponent, true);
 
-            //Add the first component which is the selected one to have a hud
-            debugger;
-            this.componentsList[this.selectedComponent.identifier] = {"component":  this.selectedComponent, "properties": this.application.ninja.objectsController.getPropertyList(this.selectedComponent, true)};
-            console.log("components:",this.componentsList);
-            //Go through the loop and find every interacted object by bindings
-            arrBindings.forEach(function(obj) {
-                if(typeof (this.componentsList[obj.boundObject.identifier]) === "undefined") {
-                    var componentListItem = {}
-                    componentListItem.component = obj.boundObject;
-                    componentListItem.properties = [];
-                    this.application.ninja.objectsController.getPropertiesFromObject(obj.boundObject, true).forEach(function(obj) {
-                        componentListItem.properties.push({"title":obj})
-                    }.bind(this));
-                    this.componentsList[obj.boundObject.identifier] = componentListItem;
+                //Add the first component which is the selected one to have a hud
+
+                this.componentsList[this.selectedComponent.identifier] = {"component":  this.selectedComponent, "properties": this.application.ninja.objectsController.getPropertyList(this.selectedComponent, true)};
+                console.log("components:",this.componentsList);
+                //Go through the loop and find every interacted object by bindings
+                arrBindings.forEach(function(obj) {
+                    if(typeof (this.componentsList[obj.boundObject.identifier]) === "undefined") {
+                        var componentListItem = {}
+                        componentListItem.component = obj.boundObject;
+                        componentListItem.properties = [];
+                        this.application.ninja.objectsController.getPropertiesFromObject(obj.boundObject, true).forEach(function(obj) {
+                            componentListItem.properties.push({"title":obj})
+                        }.bind(this));
+                        this.componentsList[obj.boundObject.identifier] = componentListItem;
+                    }
+                }.bind(this));
+                for(var key in this.componentsList){
+                    this.bindables.push(this.componentsList[key]);
                 }
-            }.bind(this));
-            for(var key in this.componentsList){
-                this.bindables.push(this.componentsList[key]);
+                console.log(this.bindables);
+                // Get Bindings that exist;
+
+
+                //Get Properties of Elements in bindings;
             }
-            console.log(this.bindables);
-            // Get Bindings that exist;
-
-
-            //Get Properties of Elements in bindings;
-
             this.needsDraw = true;
         }
     },
@@ -137,41 +171,14 @@ exports.BindingView = Montage.create(Component, {
     draw: {
         value: function() {
             if(this.selectedComponent !== null) {
-//                this.bindables = [
-//                    {
-//                        "title": "Input1",
-//                        "properties": [
-//                            {"title":"Value",
-//                                "bindings": [
-//                                    {"direction": "<-", "boundObject":"Checkbox1", "boundProperty": "Value"}
-//                                ]
-//                            },
-//                            {"title": "Width", "bindings": []}
-//                        ],
-//                        "x": 20,
-//                        "y": 20
-//                    },
-//                    {
-//                        "title": "Checkbox1",
-//                        "properties": [
-//                            {"title":"Group" , "bindings": []},
-//                            {"title":"Value",
-//                                "bindings": [
-//                                    {"direction": "->", "boundObject":"Input1", "boundProperty": "Value"}
-//                                ]
-//                            }
-//                        ],
-//                        "x": 120,
-//                        "y": 120
-//                    }
-//                ];
                 this.canvas.width  = this.application.ninja.stage.drawingCanvas.offsetWidth;
                 this.canvas.height = this.application.ninja.stage.drawingCanvas.offsetHeight;
                 this.clearCanvas();
                 this.drawBlueLine(110,53,210,173);
 
             } else {
-                //this.bindables = [];
+                this.bindables = [];
+                this.clearCanvas();
             }
 
         }
@@ -192,6 +199,12 @@ exports.BindingView = Montage.create(Component, {
     clearCanvas: {
         value: function() {
             this._context.clearRect(0,0,this._canvas.offsetWidth,this._canvas.offsetHeight);
+        }
+    },
+
+    handleMousemove: {
+        value: function() {
+
         }
     },
 

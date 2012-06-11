@@ -37,6 +37,17 @@
                     "bindingArgs": {"<-": "@hudRepeater.objectAtCurrentIteration"}
                 }
             },
+            "translateComposer": {
+                "prototype": "montage/ui/composer/translate-composer",
+                "properties": {
+                    "component": {"@": "owner"}
+                },
+                "bindings": {
+                    "element": {"<-": "@owner._element"},
+                    "translateX": {"->": "@owner.translateX"},
+                    "translateY": {"->": "@owner.translateY"}
+                }
+            },
             "nonVisualRepeater": {
                 "prototype": "montage/ui/repetition.reel",
                 "properties": {

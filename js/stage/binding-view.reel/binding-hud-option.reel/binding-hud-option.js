@@ -39,10 +39,15 @@ exports.BindingHudOption = Montage.create(Component, {
             return this._hudOptions;
         },
         set: function(val) {
-            this._hudOptions = val;
-            this.title = val.title;
-            this.bound = val.bound;
+            if (typeof(val) !== "undefined") {
+                this._hudOptions = val;
+                this.title = val.title;
+                this.bound = val.bound;
+            } else {
+                this._hudOptions = null;
+            }
             this.needsDraw = true;
+
         }
     },
 
