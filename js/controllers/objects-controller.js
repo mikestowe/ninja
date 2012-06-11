@@ -73,11 +73,17 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
         }
     },
 
-    editBindingPropertyPath : {
-        value: function(bindingArgs, newPropertyPath) {
+    editBinding : {
+        value: function(bindingArgs, newProperties) {
+            var property;
+
             this.removeBinding(bindingArgs);
 
-            bindingArgs.boundObjectPropertyPath = 'newPropertyPath';
+            if(newProperties) {
+                for(property in newProperties) {
+                    bindingArgs[property] = newProperties[property];
+                }
+            }
 
             this.addBinding(bindingArgs);
         }

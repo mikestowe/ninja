@@ -77,7 +77,9 @@ exports.BindingItem = Montage.create(Component, {
         },
         set: function(value) {
             if(value === this._oneway) { return; }
+
             this._oneway = value;
+
             this.needsDraw = true;
         }
     },
@@ -87,6 +89,10 @@ exports.BindingItem = Montage.create(Component, {
     handleDirectionToggleButtonAction : {
         value: function(e) {
             this.oneway = !this.oneway;
+            this.application.ninja.objectsController.editBinding(this.bindingArgs, {
+                oneway: !this.bindingArgs.oneway
+            });
+            this.application.ninja.objectsController.
         }
     },
 
