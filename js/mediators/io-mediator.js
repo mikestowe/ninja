@@ -162,9 +162,9 @@ exports.IoMediator = Montage.create(Component, {
                 case 'html':
                     //Getting content from function to properly handle saving assets (as in external if flagged)
                     if (doc.template && (doc.template.type === 'banner' || doc.template.type === 'animation')) {
-                    	parsedDoc = this.tmplt.parseNinjaTemplateToHtml(doc, true, libCopyCallback);
+                    	parsedDoc = this.tmplt.parseNinjaTemplateToHtml(true, doc, true, libCopyCallback);
                     } else {
-                    	parsedDoc = this.tmplt.parseNinjaTemplateToHtml(doc, false, libCopyCallback);
+                    	parsedDoc = this.tmplt.parseNinjaTemplateToHtml(true, doc, false, libCopyCallback);
                     }
                     break;
                 default:
@@ -176,13 +176,17 @@ exports.IoMediator = Montage.create(Component, {
             	save = this.fio.saveFile({uri: doc.file.uri, contents: parsedDoc.content});
             	//Checking for callback
             	if (callback) callback(save);
+            	//Checking for libraries, making callback if specified
+            	if (!parsedDoc.libs && libCopyCallback) libCopyCallback(true);
             	//
-            	if (!parsedDoc.libs && libCopyCallback) libCopyCallback(true); 
+            	return {montageId: parsedDoc.montageId, canvasId: parsedDoc.canvasId};
             } else {
 	            //Making call to save file
             	save = this.fio.saveFile({uri: doc.file.uri, contents: content});
             	//Checking for callback
             	if (callback) callback(save);
+            	//
+            	return null;
             }
         }
     },

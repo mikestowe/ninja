@@ -928,17 +928,18 @@ var MathUtilsClass = exports.MathUtilsClass = Object.create(Object.prototype, {
                 return 0;
             }
             //TODO testing...remove this block
-            console.log("getAxisAngleBetween3DVectors Angle: "+angle);
             if (isNaN(angle)){
-                console.log("getAxisAngleBetween3DVectors Angle is NaN");
+                console.log("Warning! getAxisAngleBetween3DVectors Angle is NaN");
             }
             //TODO end testing block
             //optionally, if axis is provided, create the axis of rotation as well
             var rotAxis = VecUtils.vecCross(3, v1n, v2n);
             rotAxis = VecUtils.vecNormalize(3, rotAxis, 1);
-            axis[0] = rotAxis[0];
-            axis[1] = rotAxis[1];
-            axis[2] = rotAxis[2];
+            if (axis){
+                axis[0] = rotAxis[0];
+                axis[1] = rotAxis[1];
+                axis[2] = rotAxis[2];
+            }
             return angle;
         }
     },

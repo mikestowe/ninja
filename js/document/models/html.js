@@ -23,6 +23,8 @@ exports.HtmlDocumentModel = Montage.create(BaseDocumentModel, {
         value:function() {
         	//Creating instance of the webGL helper for this model
         	this.webGlHelper = webGlDocumentHelper.create();
+        	//
+        	this.libs = {montage: false, canvas: false, montageId: null, canvasId: null};
 		}           
     },
     ////////////////////////////////////////////////////////////////////
@@ -40,22 +42,32 @@ exports.HtmlDocumentModel = Montage.create(BaseDocumentModel, {
     scrollLeft: {
         value: null
     },
-
+    ////////////////////////////////////////////////////////////////////
+    //
     scrollTop: {
         value: null
     },
-
+    ////////////////////////////////////////////////////////////////////
+    //
     userContentLeft: {
         value: null
     },
-
+    ////////////////////////////////////////////////////////////////////
+    //
     userContentTop: {
         value: null
     },
     ////////////////////////////////////////////////////////////////////
-	//
+	//TODO: Convert to bindings
+    documentRoot: {
+        get: function() {return this.views.design._documentRoot;},
+        set: function(value) {this.views.design._documentRoot = value;}
+    },
+    ////////////////////////////////////////////////////////////////////
+	//TODO: Convert to bindings
 	baseHref: {
-		value: null
+		get: function() {return this.views.design._baseHref;},
+        set: function(value) {this.views.design._baseHref = value;}
 	},
     ////////////////////////////////////////////////////////////////////
 	//
@@ -63,34 +75,6 @@ exports.HtmlDocumentModel = Montage.create(BaseDocumentModel, {
         value: null
     },
     ////////////////////////////////////////////////////////////////////
-	//
-    userComponents: {
-        value: {}
-    },
-    ////////////////////////////////////////////////////////////////////
-	//
-    documentRoot: {
-        value: null
-    },
-	////////////////////////////////////////////////////////////////////
-	//Add a reference to a component instance to the userComponents hash using the element UUID
-    setComponentInstance: {
-        value: function(instance, el) {
-            this.userComponents[el.uuid] = instance;
-        }
-    },
-    ////////////////////////////////////////////////////////////////////
-	//Returns the component instance obj from the element
-    getComponentFromElement: {
-        value: function(el) {
-            if(el) {
-                if(el.uuid) return this.userComponents[el.uuid];
-            } else {
-                return null;
-            }
-        }
-    }
-	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
 });
 ////////////////////////////////////////////////////////////////////////

@@ -9,6 +9,17 @@ var ToolProperties = require("js/components/tools-properties/tool-properties").T
 
 var PenProperties = exports.PenProperties = Montage.create(ToolProperties, {
     addedColorChips: { value: false },
+    _penToolRadio:     { value: null, enumerable: false },
+    _penPlusRadio:   { value: null, enumerable: false },
+    _penMinusRadio:   { value: null, enumerable: false },
+
+    _subPrepare: {
+        value: function() {
+            this._penToolRadio.addEventListener("click", this, false);
+            this._penPlusRadio.addEventListener("click", this, false);
+            this._penMinusRadio.addEventListener("click", this, false);
+        }
+    },
 
     _fill: {
         enumerable: false,
@@ -47,6 +58,22 @@ var PenProperties = exports.PenProperties = Montage.create(ToolProperties, {
     strokeSize: {
         get: function () {
             return this._strokeSize; 
+        }
+    },
+
+    _selectedSubtool: {
+        value: "pen", enumerable: false
+    },
+
+    selectedSubtool: {
+        get: function() { return this._selectedSubtool;},
+        set: function(value) { this._selectedSubtool = value; }
+    },
+
+    handleClick: {
+        value: function(event) {
+            this._selectedSubtool = event._event.target.value;
+            NJevent("penSubToolChange");
         }
     },
 

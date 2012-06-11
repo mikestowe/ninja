@@ -57,7 +57,7 @@ exports.ElementController = Montage.create(Component, {
     // Remove the element from the DOM and clear the GLWord.
     removeElement: {
         value: function(el) {
-            if(el.elementModel && el.elementModel.shapeModel && el.elementModel.shapeModel.GLWorld) {
+            if(el.elementModel.shapeModel && el.elementModel.shapeModel.GLWorld) {
                 el.elementModel.shapeModel.GLWorld.clearTree();
             }
             el.parentNode.removeChild(el);
@@ -297,7 +297,7 @@ exports.ElementController = Montage.create(Component, {
     // Routines to get/set 3D properties
     get3DProperty: {
         value: function(el, prop) {
-            if(el.elementModel && el.elementModel.props3D) {
+            if(el.elementModel.props3D) {
                 return el.elementModel.props3D[prop];
             }
         }
@@ -305,7 +305,7 @@ exports.ElementController = Montage.create(Component, {
 
     getMatrix: {
         value: function(el) {
-            if(el.elementModel && el.elementModel.props3D && el.elementModel.props3D.matrix3d) {
+            if(el.elementModel.props3D && el.elementModel.props3D.matrix3d) {
                 return el.elementModel.props3D.matrix3d.slice(0);
             } else {
                 var mat;
@@ -325,7 +325,7 @@ exports.ElementController = Montage.create(Component, {
 
     getPerspectiveDist: {
         value: function(el) {
-            if(el.elementModel && el.elementModel.props3D && el.elementModel.props3D.perspectiveDist) {
+            if(el.elementModel.props3D && el.elementModel.props3D.perspectiveDist) {
                 return el.elementModel.props3D.perspectiveDist;
             } else {
                 var dist = this.application.ninja.stylesController.getPerspectiveDistFromElement(el, false);
