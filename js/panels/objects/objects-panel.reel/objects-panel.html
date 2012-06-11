@@ -27,11 +27,7 @@
             "arrayController": {
                 "prototype": "montage/ui/controller/array-controller",
                 "bindings": {
-                    "content" : {
-                        "boundObject": {"@": "owner"},
-                        "boundObjectPropertyPath": "objects",
-                        "oneway": true
-                    }
+                    "content": {"<-": "@owner.objects"}
                 }
             },
             "objectComponent": {
@@ -40,16 +36,8 @@
                     "element": {"#": "list-item"}
                 },
                 "bindings": {
-                    "sourceObject" : {
-                        "boundObject": {"@": "repetition"},
-                        "boundObjectPropertyPath": "objectAtCurrentIteration",
-                        "oneway": true
-                    },
-                    "identifier" : {
-                        "boundObject": {"@": "repetition"},
-                        "boundObjectPropertyPath": "objectAtCurrentIteration.identifier",
-                        "oneway": true
-                    }
+                    "sourceObject" : {"<-": "@repetition.objectAtCurrentIteration"},
+                    "identifier" : {"<-": "@repetition.objectAtCurrentIteration.identifier"}
                 }
             }
 
