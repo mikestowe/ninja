@@ -27,7 +27,7 @@ exports.TextTool = Montage.create(DrawingTool, {
                 this.selectedElement.innerHTML = this.application.ninja.stage.textTool.value;
                 this.application.ninja.stage.textTool.value = "";
                 this.application.ninja.stage.textTool.element.style.display = "none";
-                ElementsMediator.setProperty(this.application.ninja.selectedElements, "color", [window.getComputedStyle(this.application.ninja.stage.textTool.element.firstChild)["color"]], "Change", "textTool");
+                ElementsMediator.setProperty(this.application.ninja.selectedElements, "color", [window.getComputedStyle(this.application.ninja.stage.textTool.element)["color"]], "Change", "textTool");
             }
             //Set Selected Element
             this._selectedElement = val;
@@ -96,6 +96,22 @@ exports.TextTool = Montage.create(DrawingTool, {
         }
     },
 
+    getSelectedElement: {
+        value: function(editor) {
+            var element = editor._selectedRange.startContainer;
+            if (element.nodeType == 3) {
+                element = element.parentNode;
+            }
+            return element;
+        }
+    },
+
+    getStyleOfSelectedElement: {
+        value: function(editor) {
+            return window.getComputedStyle(this.getSelectedElement(editor));
+        }
+    },
+
     applyElementStyles : {
         value: function(fromElement, toElement, styles) {
             styles.forEach(function(style) {
@@ -108,10 +124,10 @@ exports.TextTool = Montage.create(DrawingTool, {
     drawTextTool: {
         value: function() {
             var self = this;
-
             this.application.ninja.stage.textTool.value = this.selectedElement.innerHTML;
             if(this.application.ninja.stage.textTool.value === "") { this.application.ninja.stage.textTool.value = " "; }
             this.selectedElement.innerHTML = "";
+
 
             //Styling Options for text tool to look identical to the text you are manipulating.
             this.application.ninja.stage.textTool.element.style.display = "block";
@@ -124,14 +140,11 @@ exports.TextTool = Montage.create(DrawingTool, {
             // Set font styling (Size, Style, Weight)
             this.application.ninja.stage.textTool.didDraw = function() {
                 self.applyElementStyles(self.selectedElement, self.application.ninja.stage.textTool.element, ["overflow"]);
-                self.applyElementStyles(self.selectedElement, self.application.ninja.stage.textTool.element.firstChild, ["font","padding-left","padding-top","padding-right","padding-bottom", "color"]);
-                var range = document.createRange(),
-                sel   = window.getSelection();
-                sel.removeAllRanges();
-                range.selectNodeContents(self.application.ninja.stage.textTool.element.firstChild);
-                sel.addRange(range);
+                self.applyElementStyles(self.selectedElement, self.application.ninja.stage.textTool.element, ["font","padding-left","padding-top","padding-right","padding-bottom", "color"]);
+                this.selectAll();
                 this.didDraw = function() {};
             }
+
         }
     },
 

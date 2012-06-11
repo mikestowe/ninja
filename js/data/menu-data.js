@@ -4,9 +4,57 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var Montage =   require("montage/core/core").Montage;
+var Montage =   require("montage/core/core").Montage,
+    Component = require("montage/ui/component").Component;
 
-exports.MenuData = Montage.create( Montage, {
+exports.MenuData = Montage.create(Component, {
+
+    _currentDocument: {
+            value : null
+    },
+
+    currentDocument : {
+        get : function() {
+            return this._currentDocument;
+        },
+        set : function(value) {
+            if (value === this._currentDocument) {
+                return;
+            }
+
+            this._currentDocument = value;
+
+            if(!this._currentDocument) {
+                this.documentEnabledIndices.forEach(function(index) {
+                    index.enabled = false;
+                });
+            } else {
+                this.documentEnabledIndices.forEach(function(index) {
+                    index.enabled = true;
+                });
+            }
+
+        }
+    },
+
+    didCreate: {
+        value: function() {
+            var self = this;
+
+            this.topLevelMenu.forEach(function(item) {
+                item.entries.forEach(function(entry) {
+                    if(entry.depend && entry.depend === "document") {
+                        self.documentEnabledIndices.push(entry);
+                    }
+                });
+            });
+        }
+    },
+
+    documentEnabledIndices: {
+        value: []
+    },
+
     topLevelMenu: {
         value: [
                 {
@@ -33,65 +81,47 @@ exports.MenuData = Montage.create( Montage, {
                         {
                             "displayText" : "Close File",
                             "hasSubMenu" : false,
-                            "enabled": {
-                                "value": false,
-                                "boundObj": "documentController",
-                                "boundProperty": "_documents.count()",
-                                "oneway": true
-                            },
+                            "enabled": false,
+                            "depend": "document",
                             "action": "executeFileClose"
                         },
                         {
                             "displayText" : "Close All",
                             "hasSubMenu" : false,
-                            "enabled": {
-                                "value": false,
-                                "boundObj": "documentController",
-                                "boundProperty": "_documents.count()",
-                                "oneway": true
-                            },
+                            "enabled": false,
+                            "depend": "document",
                             "action": "executeFileCloseAll"
                         },
                         {
                             "displayText" : "",
-                            "separator":    true
+                            "separator":    true,
+                            "enabled": true
                         },
                         {
                             "displayText" : "Save",
                             "hasSubMenu" : false,
-                            "enabled": {
-                                "value": false,
-                                "boundObj": "documentController",
-                                "boundProperty": "_documents.count()",
-                                "oneway": true
-                            },
+                            "enabled": false,
+                            "depend": "document",
                             "action": "executeSave"
                         },
                         {
                             "displayText" : "Save As",
                             "hasSubMenu" : false,
-                            "enabled": {
-                                "value": false,
-                                "boundObj": "documentController",
-                                "boundProperty": "_documents.count()",
-                                "oneway": true
-                            },
+                            "enabled": false,
+                            "depend": "document",
                             "action":"executeSaveAs"
                         },
                         {
                             "displayText" : "Save All",
                             "hasSubMenu" : false,
-                            "enabled": {
-                                "value": false,
-                                "boundObj": "documentController",
-                                "boundProperty": "_documents.count()",
-                                "oneway": true
-                            },
+                            "enabled": false,
+                            "depend": "document",
                             "action": "executeSaveAll"
                         },
                         {
                             "displayText" : "",
-                            "separator":    true
+                            "separator":    true,
+                            "enabled": true
                         },
                         {
                             "displayText" : "Open Project",
@@ -107,14 +137,6 @@ exports.MenuData = Montage.create( Montage, {
                             "displayText" : "Close Project",
                             "hasSubMenu" : false,
                             "enabled": false
-                        },
-                        {
-                            "displayText" : "",
-                            "separator":    true
-                        },
-                        {
-                            "displayText" : "",
-                            "separator":    true
                         }
                     ]
                 },
@@ -124,7 +146,8 @@ exports.MenuData = Montage.create( Montage, {
                         {
                             "displayText" : "Undo",
                             "hasSubMenu" : false,
-                            "enabled": {
+                            "enabled": false,
+                            "newenabled": {
                                 "value": false,
                                 "boundObj": "undocontroller",
                                 "boundProperty": "canUndo",
@@ -135,7 +158,8 @@ exports.MenuData = Montage.create( Montage, {
                         {
                             "displayText" : "Redo",
                             "hasSubMenu" : false,
-                            "enabled": {
+                            "enabled": false,
+                            "newenabled": {
                                 "value": false,
                                 "boundObj": "undocontroller",
                                 "boundProperty": "canRedo",
@@ -166,7 +190,9 @@ exports.MenuData = Montage.create( Montage, {
                         {
                             "displayText" : "Live Preview",
                             "hasSubMenu" : false,
-                            "enabled": {
+                            "enabled": false,
+                            "depend": "document",
+                            "newenabled": {
                                 "value": false,
                                 "boundObj": "documentController",
                                 "boundProperty": "activeDocument",
@@ -183,7 +209,9 @@ exports.MenuData = Montage.create( Montage, {
                         {
                             "displayText" : "Chrome Preview",
                             "hasSubMenu" : false,
-                            "enabled": {
+                            "enabled": false,
+                            "depend": "document",
+                            "newenabled": {
                                 "value": false,
                                 "boundObj": "documentController",
                                 "boundProperty": "activeDocument",
@@ -200,7 +228,9 @@ exports.MenuData = Montage.create( Montage, {
                         {
                             "displayText" : "Layout View",
                             "hasSubMenu" : false,
-                            "enabled": {
+                            "enabled": false,
+                            "depend": "document",
+                            "newenabled": {
                                 "value": false,
                                 "boundObj": "documentController",
                                 "boundProperty": "activeDocument",
@@ -246,7 +276,9 @@ exports.MenuData = Montage.create( Montage, {
                         {
                             "displayText" : "Snap",
                             "hasSubMenu" : false,
-                            "enabled": {
+                            "enabled": false,
+                            "depend": "document",
+                            "newenabled": {
                                 "value": false,
                                 "boundObj": "documentController",
                                 "boundProperty": "activeDocument",
@@ -264,7 +296,8 @@ exports.MenuData = Montage.create( Montage, {
                         {
                             "displayText" : "Snap To",
                             "hasSubMenu" : false,
-                            "enabled": {
+                            "enabled": false,
+                            "newenabled": {
                                 "value": true,
                                 "boundObj": "appModel",
                                 "boundProperty": "snap",
@@ -304,7 +337,9 @@ exports.MenuData = Montage.create( Montage, {
                         {
                             "displayText" : "Show 3D Grid",
                             "hasSubMenu" : false,
-                            "enabled": {
+                            "enabled": false,
+                            "depend": "document",
+                            "newenabled": {
                                 "value": false,
                                 "boundObj": "documentController",
                                 "boundProperty": "activeDocument",
@@ -320,12 +355,15 @@ exports.MenuData = Montage.create( Montage, {
                         },
                         {
                             "displayText" : "",
-                            "separator":    true
+                            "separator":    true,
+                            "enabled": true
                         },
                         {
                             "displayText" : "Front View",
                             "hasSubMenu" : false,
-                            "enabled": {
+                            "enabled": false,
+                            "depend": "document",
+                            "newenabled": {
                                 "value": false,
                                 "boundObj": "documentController",
                                 "boundProperty": "activeDocument",
@@ -343,7 +381,9 @@ exports.MenuData = Montage.create( Montage, {
                         {
                             "displayText" : "Top View",
                             "hasSubMenu" : false,
-                            "enabled": {
+                            "enabled": false,
+                            "depend": "document",
+                            "newenabled": {
                                 "value": false,
                                 "boundObj": "documentController",
                                 "boundProperty": "activeDocument",
@@ -361,7 +401,9 @@ exports.MenuData = Montage.create( Montage, {
                         {
                             "displayText" : "Side View",
                             "hasSubMenu" : false,
-                            "enabled": {
+                            "enabled": false,
+                            "depend": "document",
+                            "newenabled": {
                                 "value": false,
                                 "boundObj": "documentController",
                                 "boundProperty": "activeDocument",
@@ -378,7 +420,8 @@ exports.MenuData = Montage.create( Montage, {
                         },
                         {
                             "displayText" : "",
-                            "separator":    true
+                            "separator":    true,
+                            "enabled": true
                         },
                         {
                             "displayText" : "Debug",

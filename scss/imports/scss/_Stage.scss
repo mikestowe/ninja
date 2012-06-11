@@ -151,10 +151,20 @@
     padding: 0px;
     top: 0px;
     left: 0px;
-    z-index: 5;
+    z-index: 6;
 }
 
 .layoutCanvas {
+    position: absolute;
+    margin: 0px;
+    border: none;
+    padding: 0px;
+    top: 0px;
+    left: 0px;
+    z-index: 5;
+}
+
+.gridCanvas {
     position: absolute;
     margin: 0px;
     border: none;

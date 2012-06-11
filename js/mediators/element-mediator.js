@@ -29,16 +29,13 @@ exports.ElementMediator = Montage.create(Component, {
             if(Array.isArray(elements)) {
                 elements.forEach(function(element) {
                     ElementController.addElement(element, rules);
-                    if(element.elementModel && element.elementModel.props3D) {
                         element.elementModel.props3D.init(element, false);
-                    }
                 });
             } else {
                 ElementController.addElement(elements, rules);
-                if(elements.elementModel && elements.elementModel.props3D) {
                     elements.elementModel.props3D.init(elements, false);
+
                 }
-            }
 
             if(this.addDelegate && typeof (this.addDelegate['onAddElements']) === "function") {
                 this.addDelegate['onAddElements'].call(this.addDelegate, elements);
@@ -48,7 +45,7 @@ exports.ElementMediator = Montage.create(Component, {
 
             document.application.undoManager.add(undoLabel, this.removeElements, this, elements, notify);
 
-            this.application.ninja.documentController.activeDocument.model.needsSave = true;
+            this.application.ninja.currentDocument.model.needsSave = true;
 
             if(notify || notify === undefined) {
                 NJevent("elementAdded", elements);
@@ -77,7 +74,7 @@ exports.ElementMediator = Montage.create(Component, {
 
             document.application.undoManager.add(undoLabel, this.addElements, this, elements, null, notify);
 
-            this.application.ninja.documentController.activeDocument.model.needsSave = true;
+            this.application.ninja.currentDocument.model.needsSave = true;
 
             NJevent("elementsRemoved", elements);
         }
@@ -92,7 +89,7 @@ exports.ElementMediator = Montage.create(Component, {
 
             document.application.undoManager.add(undoLabel, this.replaceElement, this, oldChild, newChild);
 
-            this.application.ninja.documentController.activeDocument.model.needsSave = true;
+            this.application.ninja.currentDocument.model.needsSave = true;
 
             if(notify || notify === undefined) {
                 NJevent("elementReplaced", {type : "replaceElement", data: {"newChild": newChild, "oldChild": oldChild}});
@@ -102,11 +99,6 @@ exports.ElementMediator = Montage.create(Component, {
 
     getProperty: {
         value: function(el, prop, valueMutator) {
-            if(!el.elementModel) {
-                console.log("Element has no Model -> One should have been created");
-                NJUtils.makeElementModel(el, "Div", "block");
-            }
-
             if(valueMutator && typeof valueMutator === "function") {
                 return valueMutator(el.elementModel.controller["getProperty"](el, prop));
             } else {
@@ -117,22 +109,12 @@ exports.ElementMediator = Montage.create(Component, {
 
     getShapeProperty: {
         value: function(el, prop) {
-            if(!el.elementModel) {
-                console.log("Element has no Model -> One should have been created");
-                NJUtils.makeElementModel(el, "Canvas", "block", true);
-            }
-
             return el.elementModel.controller["getShapeProperty"](el, prop);
         }
     },
 
     setShapeProperty: {
         value: function(el, prop, value) {
-            if(!el.elementModel) {
-                console.log("Element has no Model -> One should have been created");
-                NJUtils.makeElementModel(el, "Canvas", "block", true);
-            }
-
             return el.elementModel.controller["setShapeProperty"](el, prop, value);
         }
     },
@@ -297,9 +279,6 @@ exports.ElementMediator = Montage.create(Component, {
     // Routines to get/set color
     getColor: {
         value: function(el, isFill, borderSide) {
-            if(!el.elementModel) {
-                NJUtils.makeModelFromElement(el);
-            }
             return el.elementModel.controller["getColor"](el, isFill, borderSide);
         }
     },
@@ -373,78 +352,76 @@ exports.ElementMediator = Montage.create(Component, {
     },
 
     getStroke: {
-        value: function(el) {
-            if(!el.elementModel) {
-                NJUtils.makeElementModel(el, "Div", "block");
-            }
-            return el.elementModel.controller["getStroke"](el);
+        value: function(el, strokeProperties) {
+            return el.elementModel.controller["getStroke"](el, strokeProperties);
         }
     },
 
-
     /**
-     Set a property change command for an element or array of elements
+     Set stroke/border properties on an element or array of elements
      @param els: Array of elements. Can contain 1 or more elements
      @param value: Value to be set. This is the stroke info
      @param eventType: Change/Changing. Will be passed to the dispatched event
      @param source: String for the source object making the call
      @param currentValue *OPTIONAL*: current value array. If not found the current value is calculated
-     @param stageRedraw: *OPTIONAL*: True. If set to false the stage will not redraw the selection/outline
      */
     setStroke: {
         value: function(els, value, eventType, source, currentValue) {
 
-            if(eventType === "Changing") {
-                this._setStroke(els, value, isFill, eventType, source);
-            } else {
+            if(eventType !== "Changing") {
                 // Calculate currentValue if not found for each element
                 if(!currentValue) {
-                    var that = this;
+                    var that = this,
+                        val = value;
                     currentValue = els.map(function(item) {
-                        return that.getStroke(item);
+                        return that.getStroke(item, val);
                     });
                 }
-
-                var command = Montage.create(Command, {
-                    _els:               { value: els },
-                    _value:             { value: value },
-                    _previous:          { value: currentValue },
-                    _eventType:         { value: eventType},
-                    _source:            { value: "undo-redo"},
-                    description:        { value: "Set Color"},
-                    receiver:           { value: this},
-
-                    execute: {
-                        value: function(senderObject) {
-                            if(senderObject) this._source = senderObject;
-                            this.receiver._setStroke(this._els, this._value, this._eventType, this._source);
-                            this._source = "undo-redo";
-                            return "";
-                        }
-                    },
-
-                    unexecute: {
-                        value: function() {
-                            this.receiver._setStroke(this._els, this._previous, this._eventType, this._source);
-                            return "";
-                        }
-                    }
-                });
-
-                NJevent("sendToUndo", command);
-                command.execute(source);
+                document.application.undoManager.add("Set stroke", this.setStroke, this, els, currentValue, eventType, source, value);
             }
 
-        }
-    },
-
-    _setStroke: {
-        value: function(els, value, eventType, source) {
             for(var i=0, item; item = els[i]; i++) {
-                item.elementModel.controller["setStroke"](item, value);
+                item.elementModel.controller["setStroke"](item, (value[i] || value), eventType, source);
             }
 
             NJevent("element" + eventType, {type : "setStroke", source: source, data: {"els": els, "prop": "stroke", "value": value}, redraw: null});
+        }
+    },
+
+    getFill: {
+        value: function(el, fillProperties) {
+            return el.elementModel.controller["getFill"](el, fillProperties);
+        }
+    },
+
+    /**
+     Set fill/background properties for an element or array of elements
+     @param els: Array of elements. Can contain 1 or more elements
+     @param value: Value to be set. This is the fill info
+     @param eventType: Change/Changing. Will be passed to the dispatched event
+     @param source: String for the source object making the call
+     @param currentValue *OPTIONAL*: current value array. If not found the current value is calculated
+     */
+    setFill: {
+        value: function(els, value, eventType, source, currentValue) {
+
+            if(eventType !== "Changing") {
+                // Calculate currentValue if not found for each element
+                if(!currentValue) {
+                    var that = this,
+                        val = value;
+                    currentValue = els.map(function(item) {
+                        return that.getFill(item, val);
+                    });
+                }
+                document.application.undoManager.add("Set fill", this.setFill, this, els, currentValue, eventType, source, value);
+            }
+
+            for(var i=0, item; item = els[i]; i++) {
+                item.elementModel.controller["setFill"](item, (value[i] || value));
+            }
+
+            NJevent("element" + eventType, {type : "setFill", source: source, data: {"els": els, "prop": "fill", "value": value}, redraw: null});
         }
     },
 
@@ -452,18 +429,12 @@ exports.ElementMediator = Montage.create(Component, {
     // Routines to get/set 3D properties
     get3DProperty: {
         value: function(el, prop) {
-            if(!el.elementModel) {
-                NJUtils.makeModelFromElement(el);
-            }
             return el.elementModel.controller["get3DProperty"](el, prop);
         }
     },
 
     get3DProperties: {
         value: function(el) {
-            if(!el.elementModel) {
-                NJUtils.makeModelFromElement(el);
-            }
 //            var mat = this.getMatrix(el);
 //            var dist = this.getPerspectiveDist(el);
             var mat = el.elementModel.controller["getMatrix"](el);
@@ -474,18 +445,12 @@ exports.ElementMediator = Montage.create(Component, {
 
     getMatrix: {
         value: function(el) {
-            if(!el.elementModel) {
-                NJUtils.makeModelFromElement(el);
-            }
             return el.elementModel.controller["getMatrix"](el);
         }
     },
 
     getPerspectiveDist: {
         value: function(el) {
-            if(!el.elementModel) {
-                NJUtils.makeModelFromElement(el);
-            }
             return el.elementModel.controller["getPerspectiveDist"](el);
         }
     },

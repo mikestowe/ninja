@@ -9,21 +9,44 @@ var Montage = require("montage/core/core").Montage,
 
 exports.Breadcrumb = Montage.create(Component, {
 
-    disabled: {
-        value: true
+    _currentDocument: {
+        enumerable: false,
+        value: null
     },
 
-    handleOpenDocument: {
-        value: function(){
-            this.disabled = false;
+    currentDocument: {
+        enumerable: false,
+        get: function() {
+            return this._currentDocument;
+        },
+        set: function(value) {
+            if (value === this._currentDocument) {
+                return;
+            }
+
+            this._currentDocument = value;
+
+            if(!value) {
+                this.disabled = true;
+            } else {
+                this.disabled = this._currentDocument.currentView !== "design";
+            }
+
         }
     },
 
-    handleCloseDocument: {
-        value: function(){
-            if(!this.application.ninja.documentController.activeDocument && this.application.ninja.currentDocument.currentView !== "code") {
-                this.disabled = true;
-                this.application.ninja.currentSelectedContainer = (this.application.ninja.currentDocument ? this.application.ninja.currentDocument.model.documentRoot : null);
+
+    _disabled: {
+        value: true
+    },
+
+    disabled: {
+        get: function() {
+            return this._disabled;
+        },
+        set: function(value) {
+            if(value !== this._disabled) {
+                this._disabled = value;
             }
         }
     },
@@ -50,8 +73,6 @@ exports.Breadcrumb = Montage.create(Component, {
 
     prepareForDraw: {
         value: function() {
-            this.eventManager.addEventListener("openDocument", this, false);
-            this.eventManager.addEventListener("closeDocument", this, false);
             this.breadcrumbBt.addEventListener("action", this, false);
         }
     },
@@ -65,7 +86,7 @@ exports.Breadcrumb = Montage.create(Component, {
 
             parentNode = this.container;
 
-            while(parentNode !== this.application.ninja.currentDocument.model.documentRoot) {
+            while(parentNode !== this.currentDocument.model.documentRoot) {
                 this.containerElements.unshift({"node": parentNode, "nodeUuid":parentNode.uuid, "label": parentNode.nodeName});
                 parentNode = parentNode.parentNode;
             }
@@ -87,6 +108,7 @@ exports.Breadcrumb = Montage.create(Component, {
                 this.containerElements.pop();
             }
 
+            // TODO: This is bound 2 ways, update the internal property
             this.application.ninja.currentSelectedContainer = this.containerElements[i].node;
         }
     }

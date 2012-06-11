@@ -26,18 +26,40 @@ exports.ToolsList = Montage.create(Component, {
     RotateStageTool3D:      { value: null },
     PanTool:                { value: null },
     ZoomTool:               { value: null },
-    disabled:               { value: true},
 
-    handleOpenDocument: {
-        value: function(){
-            this.disabled = false;
+    _currentDocument: {
+        enumerable: false,
+        value: null
+    },
+
+    currentDocument: {
+        enumerable: false,
+        get: function() {
+            return this._currentDocument;
+        },
+        set: function(value) {
+            if (value === this._currentDocument) {
+                return;
+            }
+
+            this._currentDocument = value;
+
+            this.disabled = !this._currentDocument;
+
         }
     },
 
-    handleCloseDocument: {
-        value: function(){
-            if(!this.application.ninja.documentController.activeDocument) {
-                this.disabled = true;
+    _disabled: {
+        value: true
+    },
+
+    disabled: {
+        get: function() {
+            return this._disabled;
+        },
+        set: function(value) {
+            if(value !== this._disabled) {
+                this._disabled = value;
             }
         }
     },
@@ -45,8 +67,6 @@ exports.ToolsList = Montage.create(Component, {
     prepareForDraw: {
         enumerable: false,
         value: function() {
-            this.eventManager.addEventListener( "openDocument", this, false);
-            this.eventManager.addEventListener( "closeDocument", this, false);
             this.PenTool.options = this.application.ninja.toolsProperties.shapeProperties.lineProperties;//this.application.Ninja.toolsProperties.penProperties;
 
             this.SelectionTool.options = this.application.ninja.toolsProperties.selectionProperties;

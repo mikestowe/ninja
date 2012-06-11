@@ -62,10 +62,14 @@ exports.HtmlDocument = Montage.create(Component, {
             	parentContainer: {value: document.getElementById("iframeContainer")}, //Saving reference to parent container of all views (should be changed to buckets approach
             	views: {value: {'design': DesignDocumentView.create(), 'code': null}} //TODO: Add code view logic
             });
+            //Calling the any init routines in the model
+            this.model.init();
             //Initiliazing views and hiding
            	if (this.model.views.design.initialize(this.model.parentContainer)) {
            		//Hiding iFrame, just initiliazing
            		this.model.views.design.hide();
+           		//Setting the iFrame property for reference in helper class
+           		this.model.webGlHelper.iframe = this.model.views.design.iframe;
            	} else {
            		//ERROR: Design View not initialized
            	}
@@ -80,13 +84,13 @@ exports.HtmlDocument = Montage.create(Component, {
             	this.model.views.design.iframe.style.opacity = 0;
             	this.model.views.design.content = this.model.file.content;
             	//TODO: Improve reference (probably through binding values)
-            	this.model.views.design.model = this.model;
+            	this.model.views.design._webGlHelper = this.model.webGlHelper;
             	//Rendering design view, using observers to know when template is ready
             	this.model.views.design.render(function () {
             		//Adding observer to know when template is ready
             		this._observer = new WebKitMutationObserver(this.handleTemplateReady.bind(this));
         			this._observer.observe(this.model.views.design.document.head, {childList: true});
-            	}.bind(this), template);
+            	}.bind(this), template, {viewCallback: this.handleViewReady, context: this});
             } else {
             	//TODO: Identify default view (probably code)
             }
@@ -99,9 +103,13 @@ exports.HtmlDocument = Montage.create(Component, {
     		//Removing observer, only needed on initial load
     		this._observer.disconnect();
     		this._observer = null;
-    		//Making callback after view is loaded
-    	    this.loaded.callback.call(this.loaded.context, this);
     	}
+    },
+    handleViewReady: {
+        value: function() {
+            //Making callback after view is loaded
+            this.loaded.callback.call(this.loaded.context, this);
+        }
     },
     ////////////////////////////////////////////////////////////////////
 	//
@@ -117,10 +125,6 @@ exports.HtmlDocument = Montage.create(Component, {
 	//
     serializeDocument: {
     	value: function () {
-            // There are not needed for now since we cannot change them
-            //this.gridHorizontalSpacing = this.application.ninja.stage.drawUtils.gridHorizontalSpacing;
-            //this.gridVerticalSpacing = this.application.ninja.stage.drawUtils.gridVerticalSpacing;
-
             // Serialize the current scroll position
             //TODO: Move these properties to the design view class
             this.model.scrollLeft = this.application.ninja.stage._scrollLeft;
@@ -132,11 +136,6 @@ exports.HtmlDocument = Montage.create(Component, {
             // Serialize the selection, the container and grid
             //TODO: Move this property to the design view class
             this.model.selection = this.application.ninja.selectedElements.slice(0);
-            this.model.selectionContainer = this.application.ninja.currentSelectedContainer;
-            this.draw3DGrid = this.application.ninja.appModel.show3dGrid;
-
-            // Serialize the undo
-            // TODO: Save the montage undo queue
 
             // Pause the videos
             //TODO: Move these to be handled on the show/hide methods in the view
@@ -147,27 +146,15 @@ exports.HtmlDocument = Montage.create(Component, {
 	//
     deserializeDocument: {
     	value: function () {
-            // There are not needed for now since we cannot change them
-            //this.application.ninja.stage.drawUtils.gridHorizontalSpacing = this.gridHorizontalSpacing;
-            //this.application.ninja.stage.drawUtils.gridVerticalSpacing = this.gridVerticalSpacing;
-
             // Deserialize the current scroll position
              //TODO: Move these properties to the design view class
             this.application.ninja.stage._scrollLeft = this.model.scrollLeft;
             this.application.ninja.stage._scrollTop = this.model.scrollTop;
             this.application.ninja.stage._userContentLeft = this.model.userContentLeft;
             this.application.ninja.stage._userContentTop = this.model.userContentTop;
-			
-			//TODO: Move this property to the design view class
-            this.application.ninja.selectedElements = this.model.selection.slice(0);
-//            this.application.ninja.currentSelectedContainer = this.model.selectionContainer;
-            this.application.ninja.appModel.show3dGrid = this.draw3DGrid;
 
             // Serialize the undo
             // TODO: Save the montage undo queue
-			
-			//TODO: Move this to the document controller
-            this.model.isActive = true;
     	}
     }
     ////////////////////////////////////////////////////////////////////

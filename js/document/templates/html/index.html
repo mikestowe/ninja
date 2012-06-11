@@ -57,13 +57,55 @@
 
             .nj-element-highlight {
                  outline: 4px solid #ff0000;
-             }
+            }
+
+            ::-webkit-scrollbar { width: 11px; height: 11px; }
+            ::-webkit-scrollbar-button:start:decrement, ::-webkit-scrollbar-button:end:increment { display: none; }
+            ::-webkit-scrollbar-button:vertical:start:increment, body::-webkit-scrollbar-button:vertical:end:decrement { display: none; }
+            ::-webkit-scrollbar-button:horizontal:start:increment, body::-webkit-scrollbar-button:horizontal:end:decrement { display: none; }
+            ::-webkit-scrollbar-track:vertical { background-color: black; }
+            ::-webkit-scrollbar-track:horizontal { background-color: black; }
+            ::-webkit-scrollbar-track-piece:vertical:start { background-color: transparent; }
+            ::-webkit-scrollbar-track-piece:horizontal:start { background-color: transparent; }
+            ::-webkit-scrollbar-track-piece:vertical:end { background-color: transparent; }
+            ::-webkit-scrollbar-track-piece:horizontal:end { background-color: transparent; }
+            ::-webkit-scrollbar-thumb:vertical { border-color: black; border-style: solid; border-width: 2px; -webkit-border-radius: 6px; background: -webkit-gradient(linear, left top, right top, color-stop(0.16, #8c8c8c), color-stop(0.49, #adadad), color-stop(0.82, #8c8c8c)); }
+            ::-webkit-scrollbar-thumb:vertical:hover { border-color: black; border-style: solid; border-width: 2px; -webkit-border-radius: 6px; background: -webkit-gradient(linear, left top, right top, color-stop(0.1, #bebebe), color-stop(0.5, white), color-stop(0.9, #bebebe)); }
+            ::-webkit-scrollbar-thumb:horizontal { border-color: black; border-style: solid; border-width: 2px; -webkit-border-radius: 6px; background: -webkit-gradient(linear, left top, left bottom, color-stop(0.1, #8c8c8c), color-stop(0.5, #adadad), color-stop(0.9, #8c8c8c)); }
+            ::-webkit-scrollbar-thumb:horizontal:hover { border-color: black; border-style: solid; border-width: 2px; -webkit-border-radius: 6px; background: -webkit-gradient(linear, left top, left bottom, color-stop(0.16, #bebebe), color-stop(0.49, white), color-stop(0.82, #bebebe)); }
+            ::-webkit-scrollbar-corner { background-color: black; }
+            ::-webkit-scrollbar-corner:window-inactive { background-color: black; }
+            ::-webkit-scrollbar-track:vertical:disabled { display: block; }
+            ::-webkit-scrollbar-track:horizontal:disabled { display: block; }
+            ::-webkit-scrollbar-track-piece:disabled { display: block; }
+            ::-webkit-scrollbar-corner:disabled { display: block; }
+            ::-webkit-resizer:disabled { display: block; }
+
         </style>
         
         <script type="text/javascript" data-ninja-template="true">
-      		function getElement(x,y) {
-            	return document.elementFromPoint(x,y);
-        	}
+
+            function getElement(x,y) {
+                return document.elementFromPoint(x,y);
+            }
+
+            var njmodelGet = function njmodelGet() {
+                return (this.hasOwnProperty("_model") ? this._model: document.modelGenerator.call(this));
+            };
+
+            Object.defineProperty(Object.prototype, "_model", {
+                enumerable: false,
+                value: null,
+                writable: true
+            });
+
+            Object.defineProperty(Object.prototype, "elementModel", {
+                configurable: true,
+                get: njmodelGet,
+                set: function() {
+                }
+            });
+
     	</script>
     
     	<script type="text/javascript" data-package="../app" src="../../../../node_modules/montage/montage.js" data-ninja-template="true"></script>

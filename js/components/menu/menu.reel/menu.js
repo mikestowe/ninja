@@ -9,6 +9,23 @@ var Montage = require("montage/core/core").Montage,
 
 exports.Menu = Montage.create(Component, {
 
+    _currentDocument: {
+            value : null
+    },
+
+    currentDocument : {
+        get : function() {
+            return this._currentDocument;
+        },
+        set : function(value) {
+            if (value === this._currentDocument) {
+                return;
+            }
+
+            this._currentDocument = value;
+        }
+    },
+
     _active: {
         value: false
     },
