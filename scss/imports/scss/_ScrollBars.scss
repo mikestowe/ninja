@@ -131,7 +131,7 @@
 }
 
 //  These don't seem to be necessary or in some cases, they just seem to be ignored
-:-webkit-scrollbar-track:vertical:disabled {
+::-webkit-scrollbar-track:vertical:disabled {
     display: none;
 }
 
@@ -151,29 +151,5 @@
     display: none;
 }
 
-#iframeContainer::-webkit-resizer:disabled {
-    display: block;
-}
-
-#iframeContainer::-webkit-scrollbar-track:vertical:disabled {
-  display: block;
-}
-
-#iframeContainer::-webkit-scrollbar-track:horizontal:disabled {
-  display: block;
-}
-
-#iframeContainer::-webkit-scrollbar-track-piece:disabled {
-  display: block;
-}
-
-#iframeContainer::-webkit-scrollbar-corner:disabled {
-  display: block;
-}
-
-#iframeContainer::-webkit-resizer:disabled {
-  display: block;
-}
- 
 //  End: Scroll Bar Skinning  
 
