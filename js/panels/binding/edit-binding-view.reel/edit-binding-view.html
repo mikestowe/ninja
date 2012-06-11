@@ -13,34 +13,53 @@
             "owner": {
                 "prototype": "js/panels/binding/edit-binding-view.reel",
                 "properties": {
-                    "element": {"#": "edit-binding"}
+                    "element": {"#": "edit-binding"},
+                    "sourceObjectField" : {"@": "sourceObjectField" },
+                    "boundObjectField"  : {"@": "boundObjectField" },
+                    "sourceObjectPropertyPathField" : {"@": "sourceObjectPropertyPathField" },
+                    "boundObjectPropertyPathField"  : {"@": "boundObjectPropertyPathField" },
+                    "directionCheckbox"  : {"@": "directionCheckbox" },
+                    "saveButton":{ "@": "saveButton" },
+                    "cancelButton":{ "@": "cancelButton" },
+                    "deleteButton":{ "@": "deleteButton" }
                 }
             },
-            "objectsList" : {
-                "prototype": "montage/ui/controller/array-controller",
-                "bindings" : {
-                    "content": {"<-": "@owner.objectsList"}
-                }
-            },
-            "sourceObjectSelect": {
-                "prototype": "montage/ui/select-input.reel",
+            "sourceObjectField": {
+                "prototype": "js/components/hintable.reel",
                 "properties": {
-                    "element": {"#": "sourceObjectSelect"},
-                    "contentController": {"@": "objectsList"}
-
-                }
+                    "startOnEvent": "click",
+                    "element": {"#": "sourceObjectField"}
+                },
+                "bindings": {
+                    "value": {"<-": "@owner.sourceObjectIdentifier"}
+                },
+                "listeners" : [
+                    {
+                        "type": "change",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
-            "boundObjectSelect": {
-                "prototype": "montage/ui/select-input.reel",
+            "boundObjectField": {
+                "prototype": "js/components/hintable.reel",
                 "properties": {
-                    "element": {"#": "boundObjectSelect"},
-                    "contentController": {"@": "objectsList"}
-
-                }
+                    "startOnEvent": "click",
+                    "element": {"#": "boundObjectField"}
+                },
+                "bindings": {
+                    "value": {"<-": "@owner.boundObjectIdentifier"}
+                },
+                "listeners" : [
+                    {
+                        "type": "change",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
             "sourceObjectPropertyPathField": {
                 "prototype": "js/components/hintable.reel",
                 "properties": {
+                    "startOnEvent": "click",
                     "element": {"#": "so-pp"},
                     "identifier": "sourceProperty"
                 },
@@ -57,6 +76,7 @@
             "boundObjectPropertyPathField": {
                 "prototype": "js/components/hintable.reel",
                 "properties": {
+                    "startOnEvent": "click",
                     "element": {"#": "bo-pp"},
                     "identifier": "boundProperty"
                 },
@@ -69,6 +89,57 @@
                         "listener": {"@": "owner"}
                     }
                 ]
+            },
+            "directionCheckbox": {
+                "prototype": "montage/ui/checkbox.reel",
+                "properties": {
+                    "element": {"#": "direction-checkbox"}
+                },
+                "bindings": {
+                    "checked": {"<-": "@owner.oneway"}
+                }
+            },
+            "cancelButton" : {
+                "prototype": "montage/ui/button.reel",
+                "properties": {
+                    "element": {"#": "cancel-button" },
+                    "identifier": "cancelButton"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner" }
+                    }
+                ]
+            },
+            "deleteButton" : {
+                "prototype": "montage/ui/button.reel",
+                "properties": {
+                    "element": {"#": "delete-button" },
+                    "identifier": "deleteButton"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner" }
+                    }
+                ]
+            },
+            "saveButton" : {
+                "prototype": "montage/ui/button.reel",
+                "properties": {
+                    "element": {"#": "save-button" },
+                    "identifier": "saveButton"
+                },
+                "bindings" : {
+                    "enabled": {"<<->": "@owner.dirty"}
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner" }
+                    }
+                ]
             }
 
         }
@@ -78,25 +149,31 @@
 <div data-montage-id="edit-binding" class="edit-binding-view">
 
     <ul>
+        <h3>Source Object</h3>
         <li class="edit-source-object">
-            <label>Source Object:</label><select data-montage-id="sourceObjectSelect"  class="nj-skinned"></select>
+            <label>Identifier:</label><span data-montage-id="sourceObjectField" class="hintable-field">Test</span>
             <br>
-            <label>Source Object Property Path:</label><span data-montage-id="so-pp" class="so-pp">Test</span>
+            <label>Property Path:</label><span data-montage-id="so-pp" class="hintable-field so-pp">Test</span>
         </li>
-
+        <h3>Bound Object</h3>
         <li class="edit-bound-object">
-            <label>Bound Object:</label><select data-montage-id="boundObjectSelect"  class="nj-skinned"></select>
+            <label>Identifier:</label><span data-montage-id="boundObjectField" class="hintable-field">Test</span>
             <br>
-            <label>Bound Object Property Path:</label><span data-montage-id="bo-pp" class="bo-pp">Test</span>
+            <label>Property Path:</label><span data-montage-id="bo-pp" class="hintable-field bo-pp">Test</span>
         </li>
 
+        <h3>Configuration</h3>
         <li class="edit-general-properties">
-            <input data-montage-id="oneway-checkbox" type="checkbox" class="nj-skinned"><label>Oneway</label>
+            <input data-montage-id="direction-checkbox" type="checkbox" class="nj-skinned"><label>Oneway</label>
         </li>
         <li>
             <label>Converter</label><span>Test</span>
         </li>
     </ul>
+
+    <button data-montage-id="delete-button" class="nj-skinned .btn-delete">Delete</button>
+    <button data-montage-id="cancel-button" class="nj-skinned">Cancel</button>
+    <button data-montage-id="save-button" class="nj-skinned">Save</button>
 
 </div>
 </body>

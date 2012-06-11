@@ -69,15 +69,23 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
         value: function(bindingArgs) {
             if(!bindingArgs) { return; }
 
+
+
             Object.deleteBinding(bindingArgs.sourceObject, bindingArgs.sourceObjectPropertyPath);
         }
     },
 
-    editBindingPropertyPath : {
-        value: function(bindingArgs, newPropertyPath) {
+    editBinding : {
+        value: function(bindingArgs, newProperties) {
+            var property;
+
             this.removeBinding(bindingArgs);
 
-            bindingArgs.boundObjectPropertyPath = 'newPropertyPath';
+            if(newProperties) {
+                for(property in newProperties) {
+                    bindingArgs[property] = newProperties[property];
+                }
+            }
 
             this.addBinding(bindingArgs);
         }
@@ -171,7 +179,7 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
             return this._currentObject;
         },
         set: function(value) {
-            if(value === this._currentObject) { return; }
+            //if(value === this._currentObject) { return; }
 
             if(value) {
                 this.currentObjectBindings = this.getObjectBindings(value);

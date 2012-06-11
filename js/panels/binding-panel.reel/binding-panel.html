@@ -36,6 +36,7 @@
                     "element": {"#": "binding-item"}
                 },
                 "bindings": {
+                    "bindingArgs": {"<-": "@repetition.objectAtCurrentIteration"},
                     "sourceObjectPropertyPath": {"<-": "@repetition.objectAtCurrentIteration.sourceObjectPropertyPath"},
                     "sourceObject": {"<-": "@repetition.objectAtCurrentIteration.sourceObject"},
                     "boundObjectPropertyPath": {"<-": "@repetition.objectAtCurrentIteration.boundObjectPropertyPath"},
@@ -48,8 +49,20 @@
                 "properties": {
                     "element": {"#": "edit-binding-view" }
                 }
+            },
+            "toolbar": {
+                "prototype": "js/components/toolbar.reel",
+                "properties": {
+                    "element": {"#": "binding-panel-toolbar"},
+                    "delegate": {"@": "owner" },
+                    "buttons": [
+                        {
+                            "title": "Add",
+                            "identifier": "add"
+                        }
+                    ]
+                }
             }
-
     	}
 		</script>
 	</head>
@@ -58,6 +71,9 @@
         <ul data-montage-id="bindings-list" class="bindings-list">
             <li data-montage-id="binding-item" class="binding-item"></li>
         </ul>
+        <div data-montage-id="binding-panel-toolbar-container" class="binding-panel-toolbar-container">
+            <div data-montage-id="binding-panel-toolbar"></div>
+        </div>
         <div data-montage-id="edit-binding-view" class="edit-binding-view"></div>
     </div>
 </body>

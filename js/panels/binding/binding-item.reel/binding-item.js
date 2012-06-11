@@ -12,6 +12,10 @@ exports.BindingItem = Montage.create(Component, {
     sourceObjectLabel : { value: null },
     boundObjectLabel : { value: null },
 
+    bindingArgs : {
+        value: null
+    },
+
     _sourceObject : { value: null },
     sourceObject : {
         get: function() {
@@ -73,7 +77,9 @@ exports.BindingItem = Montage.create(Component, {
         },
         set: function(value) {
             if(value === this._oneway) { return; }
+
             this._oneway = value;
+
             this.needsDraw = true;
         }
     },
@@ -82,13 +88,19 @@ exports.BindingItem = Montage.create(Component, {
 
     handleDirectionToggleButtonAction : {
         value: function(e) {
+            var controller = this.application.ninja.objectsController;
+
             this.oneway = !this.oneway;
+            controller.editBinding(this.bindingArgs, {
+                oneway: !this.bindingArgs.oneway
+            });
+            controller.currentItem = controller.currentItem;
         }
     },
 
     handleEditButtonAction : {
         value: function(e) {
-            this.parentComponent.parentComponent.displayEditView();
+            this.parentComponent.parentComponent.displayEditView(this.bindingArgs);
         }
     },
 

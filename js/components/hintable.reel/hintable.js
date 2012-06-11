@@ -185,12 +185,12 @@ exports.Hintable = Montage.create(Editable, {
     handleInput : {
         value : function handleInput(e) {
             this._super(arguments);
-            
+
             var val = this.value,
                  matches, hint;
             //console.log('val = "' + val + '"');
             //// Handle auto-suggest if configured
-            if(this.hints instanceof Array) {
+            if(this.hints && this.hints.length) {
 
                 if(val.length > 0) { // content is not empty
                     
@@ -305,7 +305,8 @@ exports.Hintable = Montage.create(Editable, {
 
     /* --------- CONFIG ---------- */
     hints : {
-        value : ['Testing a hint.', 'Testing another hint.', 'Testing the last hint.']
+        value : ['Testing a hint.', 'Testing another hint.', 'Testing the last hint.'],
+        distinct: true
     },
     hintClass : {
         value : "hintable-hint"
