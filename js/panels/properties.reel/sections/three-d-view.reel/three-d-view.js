@@ -4,7 +4,7 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
 </copyright> */
 
-var Montage = require("montage/core/core").Montage;
+var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
 exports.ThreeD = Montage.create(Component, {
