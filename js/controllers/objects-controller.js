@@ -69,6 +69,8 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
         value: function(bindingArgs) {
             if(!bindingArgs) { return; }
 
+
+
             Object.deleteBinding(bindingArgs.sourceObject, bindingArgs.sourceObjectPropertyPath);
         }
     },
@@ -177,7 +179,7 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
             return this._currentObject;
         },
         set: function(value) {
-            if(value === this._currentObject) { return; }
+            //if(value === this._currentObject) { return; }
 
             if(value) {
                 this.currentObjectBindings = this.getObjectBindings(value);
