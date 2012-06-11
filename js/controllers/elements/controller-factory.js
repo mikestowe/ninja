@@ -8,7 +8,6 @@ var Montage         = require("montage/core/core").Montage;
 
 var BodyController = require("js/controllers/elements/body-controller").BodyController,
     BlockController = require("js/controllers/elements/block-controller").BlockController,
-    StageController = require("js/controllers/elements/stage-controller").StageController,
     ShapesController = require("js/controllers/elements/shapes-controller").ShapesController,
 	ImageController = require("js/controllers/elements/image-controller").ImageController,
     VideoController = require("js/controllers/elements/video-controller").VideoController,
@@ -27,7 +26,8 @@ exports.ControllerFactory = Montage.create(Montage, {
                 if(value.indexOf("block") !== -1) {
                     return BlockController;
                 } else if(value.indexOf("stage") !== -1) {
-                    return StageController;
+//                    return StageController;
+                    alert("Calling the stage controller. Should not be calling this object");
                 } else if(value.indexOf("body") !== -1) {
                     return BodyController;
                 } else if(value.indexOf("shape") !== -1) {

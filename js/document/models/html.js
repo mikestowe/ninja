@@ -23,6 +23,8 @@ exports.HtmlDocumentModel = Montage.create(BaseDocumentModel, {
         value:function() {
         	//Creating instance of the webGL helper for this model
         	this.webGlHelper = webGlDocumentHelper.create();
+        	//
+        	this.libs = {montage: false, canvas: false, montageId: null, canvasId: null};
 		}           
     },
     ////////////////////////////////////////////////////////////////////
@@ -73,29 +75,6 @@ exports.HtmlDocumentModel = Montage.create(BaseDocumentModel, {
         value: null
     },
     ////////////////////////////////////////////////////////////////////
-	//
-    userComponents: {
-        value: {}
-    },
-	////////////////////////////////////////////////////////////////////
-	//Add a reference to a component instance to the userComponents hash using the element UUID
-    setComponentInstance: {
-        value: function(instance, el) {
-            this.userComponents[el.uuid] = instance;
-        }
-    },
-    ////////////////////////////////////////////////////////////////////
-	//Returns the component instance obj from the element
-    getComponentFromElement: {
-        value: function(el) {
-            if(el) {
-                if(el.uuid) return this.userComponents[el.uuid];
-            } else {
-                return null;
-            }
-        }
-    }
-	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
 });
 ////////////////////////////////////////////////////////////////////////

@@ -376,7 +376,6 @@ exports.EyedropperTool = Montage.create(toolBase, {
                     if(worldData)
                     {
                         this._webGlDataCanvas = njModule.NJUtils.make("canvas", {"data-RDGE-id": njModule.NJUtils.generateRandom()}, this.application.ninja.currentDocument);
-                        njModule.NJUtils.createModelWithShape(this._webGlDataCanvas, "Canvas");
                         this._applyElementStyles(elt, this._webGlDataCanvas, ["display", "position", "width", "height",
                                                                     "-webkit-transform", "-webkit-transform-style"]);
                         this._webGlDataCanvas.style.left = eltCoords[0] + "px";

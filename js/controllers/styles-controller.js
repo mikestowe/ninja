@@ -154,6 +154,10 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 styles['-webkit-transform-style'] = 'preserve-3d';
                 needsRule = true;
             }
+            if(this.getElementStyle(this.currentDocument.model.documentRoot, "background-color", false, false) == null) {
+                styles['background-color'] = "transparent";
+                needsRule = true;
+            }
 
             if(needsRule) {
                 rule = this.addRule('.ninja-body{}');
