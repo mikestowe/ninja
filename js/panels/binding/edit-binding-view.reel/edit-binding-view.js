@@ -83,13 +83,16 @@ exports.EditBindingView = Montage.create(Component, {
             this.sourceObjectField.hints = this.objectIdentifiers;
 
             if(value.sourceObject) {
-                this.sourceObjectIdentifier = value.sourceObject.identifier || '';
+                this.sourceObjectIdentifier = value.sourceObject.identifier || value.sourceObject._montage_metadata.label;
                 this.sourceObjectPropertyPath = value.sourceObjectPropertyPath || '';
             }
 
             if(value.boundObject) {
                 this.boundObjectIdentifier = value.boundObject.identifier || '';
                 this.boundObjectPropertyPath = value.boundObjectPropertyPath || '';
+                this.isNewBinding = false;
+            } else {
+                this.isNewBinding = true;
             }
 
             this.oneway = value.oneway;
@@ -99,14 +102,20 @@ exports.EditBindingView = Montage.create(Component, {
     },
 
     /* -------------------
-     Save/Close button handlers
+     Form properties
      ------------------- */
+
+    dirty: { value: null },
+    isNewBinding : { value: null },
 
     "sourceObjectField"             : {value: null, enumerable: true },
     "boundObjectField"              : {value: null, enumerable: true },
     "sourceObjectPropertyPathField" : {value: null, enumerable: true },
     "boundObjectPropertyPathField"  : {value: null, enumerable: true },
     "directionCheckbox"             : {value: null, enumerable: true },
+    "deleteButton"                  : {value: null },
+    "saveButton"                    : {value: null },
+    "cancelButton"                  : {value: null },
 
     clearForm : {
         value: function() {
@@ -115,16 +124,78 @@ exports.EditBindingView = Montage.create(Component, {
                     field.value = '';
                 }
             }
+            this.dirty = false;
+        }
+    },
+
+    saveForm : {
+        value: function() {
+            var controller = this.application.ninja.objectsController,
+                newBindingArgs = {
+                sourceObject : this.getObjectFromIdentifierValue(this.sourceObjectField.value),
+                sourceObjectPropertyPath : this.sourceObjectPropertyPathField.value,
+                boundObject : this.getObjectFromIdentifierValue(this.boundObjectField.value),
+                boundObjectPropertyPath : this.boundObjectPropertyPathField.value,
+                oneway: this.oneway
+            };
+
+            if(this.isNewBinding) {
+                controller.addBinding(newBindingArgs);
+            } else {
+                controller.editBinding(this.bindingArgs, newBindingArgs);
+            }
+
+            controller.currentObject = controller.currentObject;
+        }
+    },
+
+    getObjectFromIdentifierValue : {
+        value: function(id) {
+            var identifiers = this.getObjectIdentifiers(),
+                objects = this.application.ninja.objectsController.objects;
+
+            return objects[identifiers.indexOf(id)];
         }
     },
 
     /* -------------------
-     Save/Close button handlers
+     Save/Cancel/Delete button handlers
      ------------------- */
 
-    handleCloseButtonAction : {
+    handleCancelButtonAction : {
         value: function(e) {
+            this.clearForm();
             this.parentComponent.editing = false;
+        }
+    },
+
+    handleDeleteButtonAction : {
+        value: function(e) {
+            var controller = this.application.ninja.objectsController;
+
+            controller.removeBinding(this.bindingArgs);
+            controller.currentObject = controller.currentObject;
+
+            this.parentComponent.editing = false;
+        }
+    },
+    handleSaveButtonAction : {
+        value: function(e) {
+            this.saveForm();
+            this.parentComponent.editing = false;
+        }
+    },
+
+
+    /* -------------------
+     Dirty handler
+     ------------------- */
+
+    handleEvent : {
+        value: function(e) {
+            if(e._event.type === 'change') {
+                this.dirty = true;
+            }
         }
     },
 
@@ -132,7 +203,7 @@ exports.EditBindingView = Montage.create(Component, {
      Draw Cycle
      ------------------- */
 
-    willDraw : {
+    prepareForDraw : {
         value: function() {
 
         }

@@ -18,7 +18,10 @@
                     "boundObjectField"  : {"@": "boundObjectField" },
                     "sourceObjectPropertyPathField" : {"@": "sourceObjectPropertyPathField" },
                     "boundObjectPropertyPathField"  : {"@": "boundObjectPropertyPathField" },
-                    "directionCheckbox"  : {"@": "directionCheckbox" }
+                    "directionCheckbox"  : {"@": "directionCheckbox" },
+                    "saveButton":{ "@": "saveButton" },
+                    "cancelButton":{ "@": "cancelButton" },
+                    "deleteButton":{ "@": "deleteButton" }
                 }
             },
             "sourceObjectField": {
@@ -96,11 +99,40 @@
                     "checked": {"<-": "@owner.oneway"}
                 }
             },
-            "closeButton" : {
+            "cancelButton" : {
                 "prototype": "montage/ui/button.reel",
                 "properties": {
-                    "element": {"#": "close-button" },
-                    "identifier": "closeButton"
+                    "element": {"#": "cancel-button" },
+                    "identifier": "cancelButton"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner" }
+                    }
+                ]
+            },
+            "deleteButton" : {
+                "prototype": "montage/ui/button.reel",
+                "properties": {
+                    "element": {"#": "delete-button" },
+                    "identifier": "deleteButton"
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner" }
+                    }
+                ]
+            },
+            "saveButton" : {
+                "prototype": "montage/ui/button.reel",
+                "properties": {
+                    "element": {"#": "save-button" },
+                    "identifier": "saveButton"
+                },
+                "bindings" : {
+                    "enabled": {"<<->": "@owner.dirty"}
                 },
                 "listeners": [
                     {
@@ -139,7 +171,9 @@
         </li>
     </ul>
 
-    <button data-montage-id="close-button" class="nj-skinned">Close</button>
+    <button data-montage-id="delete-button" class="nj-skinned .btn-delete">Delete</button>
+    <button data-montage-id="cancel-button" class="nj-skinned">Cancel</button>
+    <button data-montage-id="save-button" class="nj-skinned">Save</button>
 
 </div>
 </body>
