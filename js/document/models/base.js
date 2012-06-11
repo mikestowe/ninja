@@ -65,14 +65,11 @@ exports.BaseDocumentModel = Montage.create(Component, {
     _selection: {
         value: []
     },
-
+    ////////////////////////////////////////////////////////////////////
+    //
     selection: {
-        get: function() {
-            return this._selection;
-        },
-        set: function(value) {
-            this._selection = value;
-        }
+        get: function() {return this._selection;},
+        set: function(value) {this._selection = value;}
     },
     ////////////////////////////////////////////////////////////////////
     //
@@ -91,6 +88,11 @@ exports.BaseDocumentModel = Montage.create(Component, {
     },
     ////////////////////////////////////////////////////////////////////
 	//
+	libs: {
+        value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
 	switchViewTo: {
         value: function (view) {
         	//
@@ -99,11 +101,20 @@ exports.BaseDocumentModel = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
 	//TODO: Add API to allow other browser support
 	browserPreview: {
-        value: function (browser) {
+        value: function (browser, screen, context) {
+        	//Making call to show feedback screen
+        	if (screen) screen.show(context);
         	//Generating URL for document
         	var url = this.application.ninja.coreIoApi.rootUrl + this.file.uri.split(this.application.ninja.coreIoApi.cloudData.root)[1];
         	//TODO: Add logic to prompt user to save (all) before preview
-        	this.saveAll(function (result) {
+        	this.saveAll(null,function (success) {
+        		//Making call to show feedback screen
+        		if (screen) screen.hide(context);
+        		//TODO: Add error handling logic
+        		if (!success) {
+	        		console.log('Error!');
+	        		return;
+        		}
         		//Currently only supporting current browser (Chrome, obviously)
         		switch (this.browser) {
         			case 'chrome':
@@ -125,28 +136,30 @@ exports.BaseDocumentModel = Montage.create(Component, {
         }
     },
     ////////////////////////////////////////////////////////////////////
-	//
+	//Gets all stylesheets in document
 	getStyleSheets: {
 		value: function () {
-			//
+			//Array to store styles (style and link tags)
 			var styles = [];
-    		//
+    		//Looping through document sytles
     		for (var k in this.views.design.iframe.contentWindow.document.styleSheets) {
+    			//Check for styles to has proper propeties
     			if (this.views.design.iframe.contentWindow.document.styleSheets[k].ownerNode && this.views.design.iframe.contentWindow.document.styleSheets[k].ownerNode.getAttribute) {
+    				//Check for ninja-template styles, if so, exclude
             		if (this.views.design.iframe.contentWindow.document.styleSheets[k].ownerNode.getAttribute('data-ninja-template') === null) {
             			styles.push(this.views.design.iframe.contentWindow.document.styleSheets[k]);
             		}
             	}
            	}
-           	//
+           	//Returning filtered results
            	return styles;
 		}
 	},
     ////////////////////////////////////////////////////////////////////
 	//
 	save: {
-        value: function (callback) {
-        	//
+        value: function (callback, libCopyCallback) {
+        	//TODO: Implement on demand logic
         	if (this.needsSave) {
         		//Save
         	} else {
@@ -155,8 +168,9 @@ exports.BaseDocumentModel = Montage.create(Component, {
         	//
         	if (this.currentView === this.views.design) {
             	//
-        		this.application.ninja.ioMediator.fileSave({
+        		var save = this.application.ninja.ioMediator.fileSave({
         			mode: 'html',
+        			libs: this.libs,
         			file: this.file,
         			webgl: this.webGlHelper.glData,
         			styles: this.getStyleSheets(),
@@ -165,7 +179,18 @@ exports.BaseDocumentModel = Montage.create(Component, {
         			head: this.views.design.iframe.contentWindow.document.head,
         			body: this.views.design.iframe.contentWindow.document.body,
         			mjsTemplateCreator: this.views.design.iframe.contentWindow.mjsTemplateCreator
-        		}, this.handleSaved.bind({callback: callback, model: this}));
+        		}, this.handleSaved.bind({callback: callback, model: this}), libCopyCallback);
+        		//TODO: Improve detection during save routine
+        		if (save) {
+	        		if (save.montageId) {
+		        		this.libs.montageId = save.montageId;
+		        		this.libs.montage = true;
+	        		}
+	        		if (save.canvasId) {
+		        		this.libs.canvasId = save.canvasId;
+		        		this.libs.canvas = true;
+	        		}
+        		}
         	} else {
         		//TODO: Add logic to save code view data
         	}
@@ -174,8 +199,8 @@ exports.BaseDocumentModel = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
 	//
 	saveAll: {
-        value: function (callback) {
-           	//
+        value: function (callback, libCopyCallback) {
+           	//TODO: Implement on demand logic
         	if (this.needsSave) {
         		//Save
         	} else {
@@ -184,8 +209,9 @@ exports.BaseDocumentModel = Montage.create(Component, {
         	//
         	if (this.currentView === this.views.design) {
             	//
-        		this.application.ninja.ioMediator.fileSave({
+        		var save = this.application.ninja.ioMediator.fileSave({
         			mode: 'html',
+        			libs: this.libs,
         			file: this.file,
         			webgl: this.webGlHelper.glData,
         			css: this.getStyleSheets(),
@@ -194,7 +220,18 @@ exports.BaseDocumentModel = Montage.create(Component, {
         			head: this.views.design.iframe.contentWindow.document.head,
         			body: this.views.design.iframe.contentWindow.document.body,
         			mjsTemplateCreator: this.views.design.iframe.contentWindow.mjsTemplateCreator
-        		}, this.handleSaved.bind({callback: callback, model: this}));
+        		}, this.handleSaved.bind({callback: callback, model: this}), libCopyCallback);
+        		//TODO: Improve detection during save routine
+        		if (save) {
+	        		if (save.montageId) {
+		        		this.libs.montageId = save.montageId;
+		        		this.libs.montage = true;
+	        		}
+	        		if (save.canvasId) {
+		        		this.libs.canvasId = save.canvasId;
+		        		this.libs.canvas = true;
+	        		}
+        		}
         	} else {
         		//TODO: Add logic to save code view data
         	}
@@ -205,47 +242,49 @@ exports.BaseDocumentModel = Montage.create(Component, {
 	//
 	saveAs: {
         value: function (callback) {
-        	//
+        	//TODO: Implement on demand logic
         	if (this.needsSave) {
         		//Save current file on memory
         	} else {
         		//Copy file from disk
         	}
+        	//TODO: Add functionality
         }
     },
     ////////////////////////////////////////////////////////////////////
 	//
 	handleSaved: {
 		value: function (result) {
-			//
+			//Checking for success code in save
 			if (result.status === 204) {
+				//Clearing flag with successful save
 				this.model.needsSave = false;
 			}
-			//
+			//Making callback call if specifed with results of operation
 			if (this.callback) this.callback(result);
 		}
 	},
     ////////////////////////////////////////////////////////////////////
-	//
+	//TODO: Implement better logic to include different views on single document
 	close: {
         value: function (view, callback) {
         	//Outcome of close (pending on save logic)
         	var success;
         	//
         	if (this.needsSave) {
-        		//Prompt user to save of lose data
+        		//TODO: Prompt user to save or lose data
         	} else {
         		//Close file
         		success = true;
         	}
-        	//
+        	//Checking for view mode to close
         	if (this.views.design && (!view || view === 'design')) {
-        		//
+        		//TODO: Create a destroy method, this is messy
+        		this.views.design.pauseAndStopVideos();
         		this.parentContainer.removeChild(this.views.design.iframe);
-                this.views.design.pauseAndStopVideos();
         		this.views.design = null;
         	}
-        	//
+        	//Returning result of operation
         	return success;
         }
     }

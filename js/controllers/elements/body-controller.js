@@ -30,7 +30,8 @@ exports.BodyController = Montage.create(ElementController, {
         value: function(el, p) {
             switch(p) {
                 case "background" :
-                    return this.application.ninja.colorController.getColorObjFromCss(this.application.ninja.stylesController.getElementStyle(el, "background-color", false, true));
+                case "background-color":
+                    return this.application.ninja.colorController.getColorObjFromCss(this.application.ninja.stylesController.getElementStyle(el, "background-color"));
                 case "border":
                     return 0;
                 case "height":
@@ -47,8 +48,8 @@ exports.BodyController = Montage.create(ElementController, {
     setProperty: {
         value: function(el, p, value) {
             switch(p) {
-                case "body-background":
                 case "background":
+                case "background-color":
                     this.application.ninja.stylesController.setElementStyle(el, "background-color", value);
                     break;
                 case "overflow":
@@ -71,7 +72,7 @@ exports.BodyController = Montage.create(ElementController, {
 
     getPerspectiveDist: {
         value: function(el) {
-            if(el.elementModel && el.elementModel.props3D && el.elementModel.props3D.perspectiveDist) {
+            if(el.elementModel.props3D && el.elementModel.props3D.perspectiveDist) {
                 return el.elementModel.props3D.perspectiveDist;
             } else {
                 var dist = this.application.ninja.stylesController.getPerspectiveDistFromElement(el, true);
@@ -83,7 +84,7 @@ exports.BodyController = Montage.create(ElementController, {
 
     getMatrix: {
         value: function(el) {
-            if(el.elementModel && el.elementModel.props3D && el.elementModel.props3D.matrix3d)
+            if(el.elementModel.props3D && el.elementModel.props3D.matrix3d)
             {
                 return el.elementModel.props3D.matrix3d.slice(0);
             }

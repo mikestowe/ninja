@@ -7,7 +7,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
 ////////////////////////////////////////////////////////////////////////
 //
 var Montage = 			require("montage/core/core").Montage,
-	BaseDocumentView = 	require("js/document/views/base").BaseDocumentView;
+	BaseDocumentView = 	require("js/document/views/base").BaseDocumentView,
+    ElementModel =      require("js/models/element-model");
 ////////////////////////////////////////////////////////////////////////
 //	
 exports.DesignDocumentView = Montage.create(BaseDocumentView, {
@@ -23,13 +24,13 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     },
     ////////////////////////////////////////////////////////////////////
 	//
-    _template: {
-    	value: null
+    _viewCallback: {
+        value: null
     },
     ////////////////////////////////////////////////////////////////////
 	//
-	_document: {
-        value: null
+    _template: {
+    	value: null
     },
     ////////////////////////////////////////////////////////////////////
 	//
@@ -52,8 +53,29 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         value: null
     },
     ////////////////////////////////////////////////////////////////////
-	//TODO: Remove usage
-	model: {
+    //
+    _liveNodeList: {
+        value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    _webGlHelper: {
+        value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
+    _baseHref: {
+        value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+    baseHref: {
+        get: function() {return this._baseHref;},
+        set: function(value) {this._baseHref = value;}
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+	_document: {
         value: null
     },
     ////////////////////////////////////////////////////////////////////
@@ -63,9 +85,15 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         set: function(value) {this._document = value;}
     },
     ////////////////////////////////////////////////////////////////////
-    //
-    _liveNodeList: {
+	//
+    _documentRoot: {
         value: null
+    },
+    ////////////////////////////////////////////////////////////////////
+	//
+    documentRoot: {
+        get: function() {return this._documentRoot;},
+        set: function(value) {this._documentRoot = value;}
     },
     ////////////////////////////////////////////////////////////////////
     //
@@ -104,12 +132,13 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     ////////////////////////////////////////////////////////////////////
 	//
 	render: {
-        value: function (callback, template) {
+        value: function (callback, template, viewCallback) {
         	//TODO: Remove, this is a temp patch for webRequest API gate
         	this.application.ninja.documentController.redirectRequests = false;
         	//Storing callback for dispatch ready
         	this._callback = callback;
         	this._template = template;
+            this._viewCallback = viewCallback;
         	//Adding listener to know when template is loaded to then load user content
         	this.iframe.addEventListener("load", this.onTemplateLoad.bind(this), false);
         	//TODO: Add source parameter and root (optional)
@@ -142,7 +171,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
             if (basetag.length) {
             	if (basetag[basetag.length-1].getAttribute && basetag[basetag.length-1].getAttribute('href')) {
             		//Setting base HREF in model
-        			this.model.baseHref = basetag[basetag.length-1].getAttribute('href');
+        			this.baseHref = basetag[basetag.length-1].getAttribute('href');
         		}
         	}
         	//Checking to content to be template
@@ -154,7 +183,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         			this._observer.body = new WebKitMutationObserver(this.insertBannerContent.bind(this));
     	    		this._observer.body.observe(this._bodyFragment, {childList: true});
 	        		//Inserting <body> HTML and parsing URLs via mediator method
-        			this._bodyFragment.innerHTML = '<ninjaloadinghack></ninjaloadinghack>'+(this.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator));
+        			this._bodyFragment.innerHTML = '<ninjaloadinghack></ninjaloadinghack>'+(this.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.tmplt.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator.tmplt))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.tmplt.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator.tmplt));
     	    	}
         	} else {
     	    	//Creating temp code fragement to load head
@@ -163,19 +192,31 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         		this._observer.head = new WebKitMutationObserver(this.insertHeadContent.bind(this));
     	    	this._observer.head.observe(this._headFragment, {childList: true});
 	        	//Inserting <head> HTML and parsing URLs via mediator method
-        		this._headFragment.innerHTML = (this.content.head.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator));
+        		this._headFragment.innerHTML = (this.content.head.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.tmplt.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator.tmplt))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.tmplt.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator.tmplt));
         		//Adding event listener to know when the body is ready and make callback (using HTML5 new DOM Mutation Events)
     	    	this._observer.body = new WebKitMutationObserver(this.bodyContentLoaded.bind(this));
 	        	this._observer.body.observe(this.document.body, {childList: true});
         		//Inserting <body> HTML and parsing URLs via mediator method
-        		this.document.body.innerHTML += '<ninjaloadinghack></ninjaloadinghack>'+(this.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator));
+        		this.document.body.innerHTML += '<ninjaloadinghack></ninjaloadinghack>'+(this.content.body.replace(/\b(href|src)\s*=\s*"([^"]*)"/g, this.application.ninja.ioMediator.tmplt.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator.tmplt))).replace(/url\(([^"]*)(.+?)\1\)/g, this.application.ninja.ioMediator.tmplt.getNinjaPropUrlRedirect.bind(this.application.ninja.ioMediator.tmplt));
     	    	//Copying attributes to maintain same properties as the <body>
 				for (var n in this.content.document.body.attributes) {
 					if (this.content.document.body.attributes[n].value) {
 						this.document.body.setAttribute(this.content.document.body.attributes[n].name, this.content.document.body.attributes[n].value);
 					}
 				}
-				//TODO: Add attribute copying for <HEAD> and <HTML>
+				//Copying attributes to maintain same properties as the <head>
+				for (var m in this.content.document.head.attributes) {
+					if (this.content.document.head.attributes[m].value) {
+						this.document.head.setAttribute(this.content.document.head.attributes[m].name, this.content.document.head.attributes[m].value);
+					}
+				}
+				//Copying attributes to maintain same properties as the <html>
+				var htmlTagMem = this.content.document.getElementsByTagName('html')[0], htmlTagDoc = this.document.getElementsByTagName('html')[0];
+				for (var m in htmlTagMem.attributes) {
+					if (htmlTagMem.attributes[m].value) {
+						htmlTagDoc.setAttribute(htmlTagMem.attributes[m].name, htmlTagMem.attributes[m].value);
+					}
+				}
 			}
         }
     },
@@ -264,6 +305,10 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 					}
 				}
 			}
+
+            // Assign the modelGenerator reference from the template to our own modelGenerator
+            this.document.modelGenerator = ElementModel.modelGenerator;
+
            	//Checking for script tags then parsing check for montage and webgl
             if (scripttags.length > 0) {
             	//Checking and initializing webGL
@@ -272,23 +317,25 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
             	this.initMontage(scripttags);
             } else {
             	//Else there is not data to parse
+                if(this._viewCallback) {
+                    this._viewCallback.viewCallback.call(this._viewCallback.context);
+            }
             }
             //TODO: Verify appropiate location for this operation
     		if (this._template && this._template.type === 'banner') {
-    			this.model.documentRoot = this.document.body.getElementsByTagName('ninja-content')[0];
+    			this.documentRoot = this.document.body.getElementsByTagName('ninja-content')[0];
     		} else {
-    			this.model.documentRoot = this.document.body;
+    			this.documentRoot = this.document.body;
     		}
     		//Storing node list for reference (might need to store in the model)
-    		this._liveNodeList = this.model.documentRoot.getElementsByTagName('*');
+    		this._liveNodeList = this.documentRoot.getElementsByTagName('*');
     		//Getting list of original nodes
     		orgNodes = this.document.getElementsByTagName('*');
     		//TODO: Figure out if this is ideal for identifying nodes created by Ninja
     		for (var n in orgNodes) {
 	    		if (orgNodes[n].getAttribute) orgNodes[n].setAttribute('data-ninja-node', 'true');
     		}
-    		//Initiliazing document model
-    		document.application.njUtils.makeElementModel(this.model.documentRoot, "Body", "body");
+    		
     		//Makign callback if specified
     		if (this._callback) this._callback();
     	}
@@ -358,8 +405,6 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
         value: function (scripttags) {
         	//
         	var n, webgldata, fileRead;
-        	//Setting the iFrame property for reference in helper class
-        	this.model.webGlHelper.iframe = this.model.views.design.iframe;
         	//Checking for webGL Data
             for (var w in scripttags) {
             	//
@@ -385,7 +430,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
             				webgldata.data[n] = unescape(webgldata.data[n]);
             			}
             			//TODO: Improve setter of webGL and reference
-            			this.model.webGlHelper.glData = webgldata.data;
+            			this._webGlHelper.glData = webgldata.data;
             		}
             	}
             }
@@ -395,12 +440,25 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
 	//
     initMontage: {
         value: function (scripttags) {
+            var self = this;
         	//
         	this.iframe.contentWindow.document.body.addEventListener('mjsTemplateReady', function () {
         		//Initializing template with user's seriliazation
         		var template = this.iframe.contentWindow.mjsTemplate.create();
         		template.initWithDocument(this.iframe.contentWindow.document);
-        		template.instantiateWithOwnerAndDocument(null, this.iframe.contentWindow.document, function (e){/*Nothing just a required extra parameter*/});
+        		template.instantiateWithOwnerAndDocument(null, this.iframe.contentWindow.document, function (){
+        			//TODO: Verify this is properly done, seems like a hack
+        			for (var c in template._deserializer._objects) {
+        				//Forcing draw on components
+	        			template._deserializer._objects[c].needsDraw = true;
+        			}
+
+                    // Now call the view callback
+                    if(self._viewCallback) {
+                        self._viewCallback.viewCallback.call(self._viewCallback.context);
+                    }
+
+        		});
         	}.bind(this), false);
         }
     },

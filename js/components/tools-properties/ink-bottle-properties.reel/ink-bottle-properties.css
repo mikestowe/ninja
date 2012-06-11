@@ -8,18 +8,3 @@
 .inkBottleOptions select.nj-skinned {
 	margin-top: 2px;
 }
-
-.inkBottleOptions label.disabled {
-    color:#999999;
-}
-
-.inkBottleOptions label.disabled:hover {
-    color:#999999;
-    background-color: transparent;
-    cursor:default;
-}
-
-.inkBottleOptions div.disabled:hover {
-    background-color: transparent;
-    cursor:default;
-}
