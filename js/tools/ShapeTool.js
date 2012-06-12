@@ -103,8 +103,8 @@ exports.ShapeTool = Montage.create(DrawingTool, {
             if(wasSelected) {
                 this.AddCustomFeedback();
                 this.application.ninja.elementMediator.addDelegate = this;
-                if(this.application.ninja.currentSelectedContainer.nodeName === "CANVAS") {
-                    this._targetedElement = this.application.ninja.currentSelectedContainer;
+                if(this.application.ninja.currentDocument.model.domContainer.nodeName === "CANVAS") {
+                    this._targetedElement = this.application.ninja.currentDocument.model.domContainer;
                 }
             } else {
                 this.RemoveCustomFeedback();
@@ -199,7 +199,7 @@ exports.ShapeTool = Montage.create(DrawingTool, {
 				target = this._targetedElement;
 			else
 			{
-				var container = this.application.ninja.currentSelectedContainer;
+				var container = this.application.ninja.currentDocument.model.domContainer;
 				if (container && (container.nodeName === "CANVAS"))
 				{
 					target = container;

@@ -107,6 +107,12 @@ exports.HtmlDocument = Montage.create(Component, {
     },
     handleViewReady: {
         value: function() {
+            // TODO: Find a better way to initialize this property
+            // Assign the domContainer to be the document root on open
+            if(typeof this.model.domContainer !== "undefined") {
+                this.model.domContainer = this.model.documentRoot;
+            }
+
             //Making callback after view is loaded
             this.loaded.callback.call(this.loaded.context, this);
         }
