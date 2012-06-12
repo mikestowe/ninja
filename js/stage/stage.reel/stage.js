@@ -634,7 +634,7 @@ exports.Stage = Montage.create(Component, {
             point = webkitConvertPointFromPageToNode(this.canvas, new WebKitPoint(position.pageX - docView.iframe.contentWindow.pageXOffset + this.documentOffsetLeft, position.pageY - docView.iframe.contentWindow.pageYOffset + this.documentOffsetTop));
             element = this.currentDocument.model.views.design.getElementFromPoint(point.x - this.userContentLeft,point.y - this.userContentTop);
 
-            if(!element) debugger;
+//            if(!element) debugger;
             // workaround Chrome 3d bug
             if(this.application.ninja.toolsData.selectedToolInstance._canSnap && this.currentDocument.inExclusion(element) !== -1) {
                 point = webkitConvertPointFromPageToNode(this.canvas, new WebKitPoint(position.pageX, position.pageY));

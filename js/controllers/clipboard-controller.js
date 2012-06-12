@@ -76,7 +76,11 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
 
     handleCopy:{
         value:function(clipboardEvent){
-            if(this.application.ninja.currentDocument.currentView === "code") return;
+            if(!this.application.ninja.currentDocument
+                || (this.application.ninja.currentDocument && this.application.ninja.currentDocument.currentView === "code")){
+
+                return;
+            }//for design view only
 
             this.copy(clipboardEvent);
 
@@ -96,7 +100,11 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
 
     handlePaste:{
         value:function(clipboardEvent){
-            if(this.application.ninja.currentDocument.currentView === "code") return;//for design view only
+            if(!this.application.ninja.currentDocument
+                || (this.application.ninja.currentDocument && this.application.ninja.currentDocument.currentView === "code")){
+
+                return;
+            }//for design view only
 
             //TODO: return if stage is not focussed
 
@@ -172,11 +180,6 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
                 copiedElement = null;
 
             //TODO: cleanse HTML
-
-            //clear previous selections
-            this.application.ninja.selectedElements.length = 0;
-            NJevent("selectionChange", {"elements": this.application.ninja.selectedElements, "isDocument": true} );
-
 
             for(j=0; j< this.copiedObjects.copy.length; j++){
                 copiedElement = this.copiedObjects.copy[j];
@@ -280,20 +283,22 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
                         //can't paste external canvas for lack of all metadata
                         clipboardHelper.removeChild(clipboardHelper.lastChild);
                     }
-                    else if((clipboardHelper.lastChild.nodeType === 3) || (clipboardHelper.lastChild.tagName === "A")){//TextNode
+                    else if((clipboardHelper.lastChild.nodeType === 3) || (clipboardHelper.lastChild.tagName === "A")){
                         node = clipboardHelper.removeChild(clipboardHelper.lastChild);
-
-                        //todo : not working - USE styles controller to create the styles of the div and span
-//                        var doc = this.application.ninja.currentDocument ? this.application.ninja.currentDocument._document : document;
-//                        var aspan = doc.createElement("span");
-//                        aspan.appendChild(node);
-//                        var adiv = doc.createElement("div");
-//                        adiv.appendChild(aspan);
 
                         divWrapper = document.application.njUtils.make("div", null, this.application.ninja.currentDocument);
                         spanWrapper = document.application.njUtils.make("span", null, this.application.ninja.currentDocument);
                         spanWrapper.appendChild(node);
                         divWrapper.appendChild(spanWrapper);
+                        styles = null;
+                        //end - todo : not working
+
+                        this.pastePositioned(divWrapper, styles);
+                    }else if(clipboardHelper.lastChild.tagName === "SPAN"){
+                        node = clipboardHelper.removeChild(clipboardHelper.lastChild);
+
+                        divWrapper = document.application.njUtils.make("div", null, this.application.ninja.currentDocument);
+                        divWrapper.appendChild(node);
                         styles = null;
                         //end - todo : not working
 
@@ -536,16 +541,20 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
             newX = styles ? ("" + (styles.left + (25 * this.pasteCounter)) + "px") : "100px";
             newY = styles ? ("" + (styles.top + (25 * this.pasteCounter)) + "px") : "100px";
 
-            translation = {"left": newX, "top": newY};
-            //add the pasted object on top of the copied object
-            this.application.ninja.elementMediator.addElements(element, translation);
 
-//            //move the pasted object to make it visible to user
-//            modObject.push({element:element, properties:{left: newX, top:newY}, previousProperties: {left: x, top:y}});
-//            this.application.ninja.elementMediator.setProperties(modObject, "Change", "clipboard-controller" );
+
+//            //add pasted object with new position
+//            translation = {"left": newX, "top": newY};
+//            this.application.ninja.elementMediator.addElements(element, translation);
 //
-//            element.elementModel.setProperty("x", this.application.ninja.elementMediator.getProperty(element, "left"));
-//            element.elementModel.setProperty("y", this.application.ninja.elementMediator.getProperty(element, "top"));
+
+
+            //first paste on top and then move the pasted object to make it visible to user
+            this.application.ninja.elementMediator.addElements(element, null, false);
+            modObject.push({element:element, properties:{left: newX, top:newY}, previousProperties: {left: x, top:y}});
+            this.application.ninja.elementMediator.setProperties(modObject, "Change", "clipboard-controller" );
+            NJevent("elementAdded", element);
+
         }
     },
 
