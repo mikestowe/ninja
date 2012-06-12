@@ -452,8 +452,7 @@ exports.Ninja = Montage.create(Component, {
     openDocument: {
         value: function(doc) {
             this.documentList.content.push(doc);
-            // This is not needed with the latest 0.10 montage.
-            // TODO: Remove this when integrating the next montage
+            // TODO: Check why this is still needed
             this.documentList.selectedObjects = [doc];
 
         }

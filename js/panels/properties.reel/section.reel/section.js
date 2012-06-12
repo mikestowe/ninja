@@ -10,18 +10,16 @@ var Component = require("montage/ui/component").Component;
 exports.Section = Montage.create(Component, {
 
     name: {
-        value: "Panel",
-        serializable: true
+        value: "Panel"
+
     },
 
     slot: {
-        value: null,
-        serializable: true
+        value: null
     },
 
     content: {
-        value: null,
-        serializable: true
+        value: null
     },
 
     prepareForDraw: {
