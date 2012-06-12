@@ -221,7 +221,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         },
         set:function (newVal) {
             this._layerRepetition = newVal;
-        },
+        }
     },
 
     // Set to false to skip array caching array sets in current document
