@@ -11,8 +11,8 @@ var defaultEventManager = require("montage/core/event/event-manager").defaultEve
 
 var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
-    hasTemplate:{
-        value:true
+    tween: {
+        value: null
     },
 
     _trackID:{

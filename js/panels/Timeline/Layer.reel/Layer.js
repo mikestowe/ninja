@@ -15,8 +15,39 @@ var nj = require("js/lib/NJUtils").NJUtils;
 
 var Layer = exports.Layer = Montage.create(Component, {
 
-    hasTemplate:{
-        value: true
+    dynamicLayerName: {
+        value: null,
+        serializable: true
+    },
+
+    dynamicLayerTag: {
+        value: null,
+        serializable: true
+    },
+
+    positionCollapser: {
+        value: null,
+        serializable: true
+    },
+
+    transformCollapser: {
+        value: null,
+        serializable: true
+    },
+
+    styleCollapser: {
+        value: null,
+        serializable: true
+    },
+
+    clickerMain: {
+        value: null,
+        serializable: true
+    },
+
+    myLabel: {
+        value: null,
+        serializable: true
     },
     
     /* Begin: Models */
@@ -31,7 +62,8 @@ var Layer = exports.Layer = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._mainCollapser = newVal;
-    	}
+    	},
+        serializable: true
     },
     
     /* Style models: the array of styles, and the repetition that uses them */
