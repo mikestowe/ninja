@@ -34,6 +34,7 @@ exports.SelectionController = Montage.create(Component, {
             }
 
             if(this._currentDocument && this._currentDocument.currentView === "design") {
+                this.ignoreFlag = false;
                 this._currentDocument.model._selection = this.application.ninja.selectedElements;
 //                this._currentDocument.model.selectionContainer = this.application.ninja._currentSelectedContainer;
             }
@@ -48,6 +49,10 @@ exports.SelectionController = Montage.create(Component, {
             */
 
         }
+    },
+
+    ignoreFlag: {
+        value: true
     },
 
     _selectedElements: {
@@ -91,10 +96,14 @@ exports.SelectionController = Montage.create(Component, {
 
     handleChange: {
         value: function() {
-            if(this.currentDocument && this.currentDocument.model.getProperty("domContainer")) {
-                if(this.currentDocument.model.getProperty("domContainer") !== null) {
-                    this.executeSelectElement();
+            if(this.ignoreFlag) {
+                if(this.currentDocument && this.currentDocument.model.getProperty("domContainer")) {
+                    if(this.currentDocument.model.getProperty("domContainer") !== null) {
+                        this.executeSelectElement();
+                    }
                 }
+            } else {
+                this.ignoreFlag = true;
             }
         }
     },
