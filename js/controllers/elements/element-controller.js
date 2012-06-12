@@ -99,9 +99,9 @@ exports.ElementController = Montage.create(Component, {
 
             // Return cached value if one exists
             if(isFill) {
-                if(el.elementModel.fill) {
-                    return el.elementModel.fill;
-                }
+//                if(el.elementModel.fill) {
+//                    return el.elementModel.fill;
+//                }
                 //TODO: Once logic for color and gradient is established, this needs to be revised
                 color = this.getProperty(el, "background-color");
                 image = this.getProperty(el, "background-image");
@@ -114,9 +114,9 @@ exports.ElementController = Montage.create(Component, {
 
                 // If no color was found, look up the shared border color
                 if(!color && !image) {
-                    if(el.elementModel.stroke) {
-                        return el.elementModel.stroke;
-                    }
+//                    if(el.elementModel.stroke) {
+//                        return el.elementModel.stroke;
+//                    }
 
                     color = this.getProperty(el, "border-color");
                     image = this.getProperty(el, "border-image");

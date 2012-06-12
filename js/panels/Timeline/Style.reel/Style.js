@@ -175,20 +175,19 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
     addedColorChips:
         { value: false },
 
-    _abcelement: {
+    _colorelement: {
         writable:true
     },
 
-    abcelement: {
+    colorelement: {
         enumerable: true,
         get: function () {
-            return this._abcelement;
+            return this._colorelement;
         },
         set: function (value) {
-            if (value !== this._abcelement) {
-                this._abcelement = value;
+            if (value !== this._colorelement) {
+                this._colorelement = value;
             }
-            console.log(this._abcelement)
         }
     },
 
@@ -375,13 +374,13 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
                     // setup fill color
                     this._fillColorCtrl.props = { side: 'top', align: 'center', wheel: true, palette: true, gradient: false, image: false, nocolor: true, offset: -80 };
                     this.application.ninja.colorController.addButton("chip", this._fillColorCtrl);
-                    this.abcelement = this._fillColorCtrl;
+                    this.colorelement = this._fillColorCtrl;
                     var currentValue = ElementsMediator.getColor(this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement,this._isFill,this._borderSide)
+                    this.application.ninja.timeline.selectedStyle = this.editorProperty;
                     this._fillColorCtrl.addEventListener("change", this.handleFillColorChange.bind(this), false);
                     this._fillColorCtrl.color(currentValue.colorMode, currentValue.color);
                     this.addedColorChips = true;
                 }
-
 				// TODO: set up color chip here.
 			} else if (tweenable.tweener === "input"){
 				this.editorInputContainer.classList.remove("hidden");
@@ -706,26 +705,30 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 
     handleFillColorChange: {
         value: function (event) {
+
+                if(this.application.ninja.timeline.selectedStyle === "color" ||this.application.ninja.timeline.selectedStyle === this.editorProperty){
                 var fillColorObject={};
                 fillColorObject.color=event._event.color;
                 fillColorObject.mode=event._event.colorMode;
                 ElementsMediator.setColor([this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement], fillColorObject, this._isFill, "Change", "timeline",null,this._borderSide)
-
+                }
         }
     },
 
     handleHottextChange:{
         value:function(event){
+            console.log(this.application.ninja.timeline.selectedStyle)
             if(this.application.ninja.timeline.selectedStyle === this.editorProperty){
-                this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement], this.editorProperty, [this.editorValue + event.target._units]  , "Change", "pi");
+                this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement], this.editorProperty, [this.editorValue + event.target._units]  , "Change", "timeline");
             }
         }
     },
 
     handleHottextChanging:{
         value:function(event){
+            console.log(this.application.ninja.timeline.selectedStyle)
             if(this.application.ninja.timeline.selectedStyle === this.editorProperty){
-               this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement], this.editorProperty, [this.editorValue + event.target._units]  , "Changing", "pi");
+               this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement], this.editorProperty, [this.editorValue + event.target._units]  , "Changing", "timeline");
              }
         }
     },

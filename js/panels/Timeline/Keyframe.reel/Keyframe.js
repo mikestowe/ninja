@@ -60,6 +60,7 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
             if(this.isSelected){
                 this.element.classList.add("keyframeSelected");
                 this.application.ninja.timeline.selectedStyle = this.parentComponent.parentComponent.parentComponent.trackEditorProperty;
+                console.log(this.application.ninja.timeline.selectedStyle)
             }else{
                 this.element.classList.remove("keyframeSelected");
                 this.application.ninja.timeline.selectedStyle = !(this.parentComponent.parentComponent.parentComponent.trackEditorProperty);
@@ -70,17 +71,17 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
 
     deselectKeyframe:{
         value:function(){
-            debugger;
             this.isSelected=false;
             this.element.style.left = (this.position - 5) + "px";
+            this.application.ninja.timeline.selectedStyle = !(this.parentComponent.parentComponent.parentComponent.trackEditorProperty)
         }
     },
 
     selectKeyframe:{
         value:function(){
-            debugger;
             this.isSelected=true;
             this.element.style.left = (this.position - 6) + "px";
+            this.application.ninja.timeline.selectedStyle = this.parentComponent.parentComponent.parentComponent.trackEditorProperty
             this.parentComponent.selectTween();
         }
     },

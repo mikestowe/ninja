@@ -369,7 +369,7 @@ exports.ElementMediator = Montage.create(Component, {
                 item.elementModel.controller["setColor"](item, value, isFill,borderSide);
             }
 
-            NJevent("element" + eventType, {type : "setColor", source: source, data: {"els": els, "prop": "color", "value": value, "isFill": isFill}, redraw: null});
+            NJevent("element" + eventType, {type : "setColor", source: source, data: {"els": els, "prop": "color", "value": value, "isFill": isFill, "borderSide":borderSide}, redraw: null});
         }
     },
 
