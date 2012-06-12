@@ -28,6 +28,21 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
         }
     },
 
+    _isSelected:{
+        value:false
+    },
+
+    isSelected:{
+        serializable:true,
+        get:function(){
+            return this._isSelected;
+        },
+        set:function(value){
+            this._isSelected = value;
+            this.needsDraw = true;
+        }
+    },
+
     prepareForDraw:{
         value:function(){
             this.element.addEventListener("click", this, false);
@@ -42,21 +57,28 @@ var Keyframe = exports.Keyframe = Montage.create(Component, {
 
     draw:{
         value:function(){
+            if(this.isSelected){
+                this.element.classList.add("keyframeSelected");
+                this.application.ninja.timeline.selectedStyle = this.parentComponent.parentComponent.parentComponent.trackEditorProperty;
+            }else{
+                this.element.classList.remove("keyframeSelected");
+            }
             this.element.style.left = (this.position - 5) + "px";
         }
     },
 
     deselectKeyframe:{
         value:function(){
-            this.element.classList.remove("keyframeSelected");
+            this.isSelected=false;
             this.element.style.left = (this.position - 5) + "px";
         }
     },
 
     selectKeyframe:{
         value:function(){
-            this.element.classList.add("keyframeSelected");
+            this.isSelected=true;
             this.element.style.left = (this.position - 6) + "px";
+            this.application.ninja.timeline.selectedStyle = this.parentComponent.parentComponent.parentComponent.trackEditorProperty
             this.parentComponent.selectTween();
         }
     },

@@ -481,10 +481,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 				{
 					var snapRec = this._elementCache[i];
 					var elt = snapRec.getElement();
-					if (elt.elementModel)
-                        elt.elementModel.isIn2DSnapCache = false;
-					else
-						console.log( "element in the 2D cache does not have an elementModel" );
+                    elt.elementModel.isIn2DSnapCache = false;
+
 				}
 
 				this._elementCache = null;
@@ -541,10 +539,6 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 						snapRec.init( elt );
 						this._elementCache.push( snapRec );
 
-						if (!elt.elementModel)
-						{
-                            NJUtils.makeModelFromElement(elt);
-						}
 						elt.elementModel.isIn2DSnapCache = true;
 					}
 					else if (elt.elementModel)
@@ -613,10 +607,6 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 					snapRec.init( elt );
 					this._elementCache.push( snapRec );
 
-					if (!elt.elementModel)
-					{
-						NJUtils.makeModelFromElement(elt);
-					}
 					elt.elementModel.isIn2DSnapCache = true;
 				}
 				else if (elt.elementModel)

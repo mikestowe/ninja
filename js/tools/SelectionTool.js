@@ -49,6 +49,8 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
 
     startDraw: {
         value: function(event) {
+            this.drawData = null;
+
             if(!this.application.ninja.selectedElements.length)
             {
                 this._isSelecting = true;

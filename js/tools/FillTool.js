@@ -70,6 +70,7 @@ exports.FillTool = Montage.create(ModifierToolBase, {
     // Called by modifier tool base's HandleLeftButtonDown after updating selection (if needed)
     startDraw: {
         value: function(event) {
+            this.drawData = null;
             this.isDrawing = true;
 
             if(this._canColor && this.application.ninja.selectedElements.length) {

@@ -29,16 +29,13 @@ exports.ElementMediator = Montage.create(Component, {
             if(Array.isArray(elements)) {
                 elements.forEach(function(element) {
                     ElementController.addElement(element, rules);
-                    if(element.elementModel && element.elementModel.props3D) {
                         element.elementModel.props3D.init(element, false);
-                    }
                 });
             } else {
                 ElementController.addElement(elements, rules);
-                if(elements.elementModel && elements.elementModel.props3D) {
                     elements.elementModel.props3D.init(elements, false);
+
                 }
-            }
 
             if(this.addDelegate && typeof (this.addDelegate['onAddElements']) === "function") {
                 this.addDelegate['onAddElements'].call(this.addDelegate, elements);
@@ -102,11 +99,6 @@ exports.ElementMediator = Montage.create(Component, {
 
     getProperty: {
         value: function(el, prop, valueMutator) {
-            if(!el.elementModel) {
-                console.log("Element has no Model -> One should have been created");
-                NJUtils.makeElementModel(el, "Div", "block");
-            }
-
             if(valueMutator && typeof valueMutator === "function") {
                 return valueMutator(el.elementModel.controller["getProperty"](el, prop));
             } else {
@@ -117,22 +109,12 @@ exports.ElementMediator = Montage.create(Component, {
 
     getShapeProperty: {
         value: function(el, prop) {
-            if(!el.elementModel) {
-                console.log("Element has no Model -> One should have been created");
-                NJUtils.makeElementModel(el, "Canvas", "block", true);
-            }
-
             return el.elementModel.controller["getShapeProperty"](el, prop);
         }
     },
 
     setShapeProperty: {
         value: function(el, prop, value) {
-            if(!el.elementModel) {
-                console.log("Element has no Model -> One should have been created");
-                NJUtils.makeElementModel(el, "Canvas", "block", true);
-            }
-
             return el.elementModel.controller["setShapeProperty"](el, prop, value);
         }
     },
@@ -297,9 +279,6 @@ exports.ElementMediator = Montage.create(Component, {
     // Routines to get/set color
     getColor: {
         value: function(el, isFill, borderSide) {
-            if(!el.elementModel) {
-                NJUtils.makeModelFromElement(el);
-            }
             return el.elementModel.controller["getColor"](el, isFill, borderSide);
         }
     },
@@ -315,10 +294,10 @@ exports.ElementMediator = Montage.create(Component, {
      @param stageRedraw: *OPTIONAL*: True. If set to false the stage will not redraw the selection/outline
      */
     setColor: {
-        value: function(els, value, isFill, eventType, source, currentValue) {
+        value: function(els, value, isFill, eventType, source, currentValue,borderSide) {
 
             if(eventType === "Changing") {
-                this._setColor(els, value, isFill, eventType, source);
+                this._setColor(els, value, isFill, eventType, source,borderSide);
             } else {
                 // Calculate currentValue if not found for each element
                 if(!currentValue) {
@@ -337,11 +316,12 @@ exports.ElementMediator = Montage.create(Component, {
                     _source:            { value: "undo-redo"},
                     description:        { value: "Set Color"},
                     receiver:           { value: this},
+                    _borderSide:         { value: borderSide},
 
                     execute: {
                         value: function(senderObject) {
                             if(senderObject) this._source = senderObject;
-                            this.receiver._setColor(this._els, this._value, this._isFill, this._eventType, this._source);
+                            this.receiver._setColor(this._els, this._value, this._isFill, this._eventType, this._source,this._borderSide);
                             this._source = "undo-redo";
                             return "";
                         }
@@ -363,12 +343,12 @@ exports.ElementMediator = Montage.create(Component, {
     },
 
     _setColor: {
-        value: function(els, value, isFill, eventType, source) {
+        value: function(els, value, isFill, eventType, source,borderSide) {
             for(var i=0, item; item = els[i]; i++) {
-                item.elementModel.controller["setColor"](item, value, isFill);
+                item.elementModel.controller["setColor"](item, value, isFill,borderSide);
             }
 
-            NJevent("element" + eventType, {type : "setColor", source: source, data: {"els": els, "prop": "color", "value": value, "isFill": isFill}, redraw: null});
+            NJevent("element" + eventType, {type : "setColor", source: source, data: {"els": els, "prop": "color", "value": value, "isFill": isFill, "borderSide":borderSide}, redraw: null});
         }
     },
 
@@ -450,18 +430,12 @@ exports.ElementMediator = Montage.create(Component, {
     // Routines to get/set 3D properties
     get3DProperty: {
         value: function(el, prop) {
-            if(!el.elementModel) {
-                NJUtils.makeModelFromElement(el);
-            }
             return el.elementModel.controller["get3DProperty"](el, prop);
         }
     },
 
     get3DProperties: {
         value: function(el) {
-            if(!el.elementModel) {
-                NJUtils.makeModelFromElement(el);
-            }
 //            var mat = this.getMatrix(el);
 //            var dist = this.getPerspectiveDist(el);
             var mat = el.elementModel.controller["getMatrix"](el);
@@ -472,18 +446,12 @@ exports.ElementMediator = Montage.create(Component, {
 
     getMatrix: {
         value: function(el) {
-            if(!el.elementModel) {
-                NJUtils.makeModelFromElement(el);
-            }
             return el.elementModel.controller["getMatrix"](el);
         }
     },
 
     getPerspectiveDist: {
         value: function(el) {
-            if(!el.elementModel) {
-                NJUtils.makeModelFromElement(el);
-            }
             return el.elementModel.controller["getPerspectiveDist"](el);
         }
     },
