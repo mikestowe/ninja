@@ -539,7 +539,9 @@ exports.PenTool = Montage.create(ShapeTool, {
             
             //set the cursor to be the default cursor (depending on whether the selected subpath has any points yet)
             if (this._subtool===this.SUBTOOL_NONE){
-                if (this._selectedSubpath && this._selectedSubpath.getNumAnchors()>0){
+                if ((this._selectedSubpath && this._selectedSubpath.getNumAnchors()>0 && !this._selectedSubpath.getIsClosed())
+                    ||
+                    this._entryEditMode === this.ENTRY_SELECT_PATH){
                     this.application.ninja.stage.drawingCanvas.style.cursor = //"auto";
                         "url('images/cursors/penCursors/Pen_.png') 5 1, default";
                 }
