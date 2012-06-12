@@ -4,8 +4,8 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
-var Montage = require("montage/core/core").Montage;
-var Component = require("montage/ui/component").Component;
+var Montage = require("montage/core/core").Montage,
+	Component = require("montage/ui/component").Component;
 
 var Span = exports.Span = Montage.create(Component, {
 
@@ -112,12 +112,14 @@ var Span = exports.Span = Montage.create(Component, {
             	this.element.classList.remove("spanHighlight");
             }
             
+            /*
             // Hide or show the choices menu?
             if (this.areChoicesVisible === true) {
             	this.easing_choices.style.display = "block";
             } else {
             	this.easing_choices.style.display = "none";
             }
+            */
             
             // Change easing?
             if (this.easing_choice.innerText !== this.easing) {
@@ -131,7 +133,7 @@ var Span = exports.Span = Montage.create(Component, {
 	init: {
 		value: function() {
 			this.easing_choice.addEventListener("click", this.handleEasingChoiceClick.bind(this), false);
-			this.easing_choices.addEventListener("click", this.handleEasingChoicesClick.bind(this), false);
+			//this.easing_choices.addEventListener("click", this.handleEasingChoicesClick.bind(this), false);
 
 		}
 	},
@@ -147,15 +149,9 @@ var Span = exports.Span = Montage.create(Component, {
     handleEasingChoiceClick: {
     	value: function(event) {
     		event.stopPropagation();
-    		this.areChoicesVisible = true;
-    		
-    		// Possibly another menu is already open.  If so, we need to close it.
-    		if (this.application.ninja.timeline.currentOpenSpanMenu !== false) {
-    			this.application.ninja.timeline.currentOpenSpanMenu.hideEasingMenu();
-    		}
-    		
-    		// Now store a pointer to ourselves for possible future use.
-    		this.application.ninja.timeline.currentOpenSpanMenu = this;
+    		//this.areChoicesVisible = true;
+    		this.application.ninja.timeline.easingMenu.show();
+
     	}
     },
     handleEasingChoicesClick: {

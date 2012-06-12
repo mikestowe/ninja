@@ -4,9 +4,10 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
-var Montage = require("montage/core/core").Montage;
-var Component = require("montage/ui/component").Component;
-var nj = require("js/lib/NJUtils").NJUtils;
+var Montage = require("montage/core/core").Montage,
+	Component = require("montage/ui/component").Component,
+	nj = require("js/lib/NJUtils").NJUtils,
+	EasingMenuPopup = require("js/panels/Timeline/EasingMenu.reel").EasingMenu;
 
 var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
@@ -202,6 +203,18 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             this._currentLayersSelected = newVal;
             this.cacheTimeline();
         }
+    },
+    
+    _easingMenu: {
+    	value: null
+    },
+    easingMenu: {
+    	get: function() {
+    		return this._easingMenu;
+    	},
+    	set: function(newVal) {
+    		this._easingMenu = newVal;
+    	}
     },
     
     // The index of the last layer that was clicked on
@@ -481,6 +494,8 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 boundObjectPropertyPath:"currentSelectedContainer",
                 oneway:true
             });
+            this.easingMenu = EasingMenuPopup;
+            this.easingMenu.show();
 
         }
     },
