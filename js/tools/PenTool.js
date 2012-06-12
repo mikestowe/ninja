@@ -288,16 +288,35 @@ exports.PenTool = Montage.create(ShapeTool, {
 
             //assume we are not starting a new path as we will set this to true if we create a new Subpath()
             this._isNewPath = false;
-            
-            //if we had closed the selected subpath previously, or if we have not yet started anything, create a subpath
-            if (this._entryEditMode !== this.ENTRY_SELECT_PATH && this._selectedSubpath && this._selectedSubpath.getIsClosed() && this._makeMultipleSubpaths) {
-                this._selectedSubpath = null;
-            }
 
             if (this._subtool !== this.SUBTOOL_NONE && this._selectedSubpath===null) {
                 //do nothing because the pen plus and pen minus subtools need a selected subpath
                 return;
             }
+
+            //build the hit record for the current mouse position (on the stage or the plane of the path canvas)
+            var hitRec = this.getHitRecord(event.pageX, event.pageY, false);
+            var globalMousePos=null, localMousePos=null, stageWorldMousePos = null, drawingCanvas=null;
+            if (this._selectedSubpathCanvas){
+                globalMousePos = hitRec.getScreenPoint();
+                localMousePos = ViewUtils.globalToLocal(globalMousePos, this._selectedSubpathCanvas);
+            }
+
+            //if we have a selected subpath and canvas, check if the current click location hits the path
+            // todo optimize this...currently pickPath is called twice (see later in this function)
+            var hitPath = false;
+            if (this._selectedSubpath && this._selectedSubpathCanvas ) {
+                var tempSelAnchorAndParamAndCode = this._selectedSubpath.pickPath(localMousePos[0], localMousePos[1], localMousePos[2], this._PICK_POINT_RADIUS, true);
+                if (tempSelAnchorAndParamAndCode[2] !== this._selectedSubpath.SEL_NONE){     // ******* if we hit the path anywhere *********
+                    hitPath = true;
+                }
+            }
+
+            //if we had closed the selected subpath previously, or if we have not yet started anything, create a subpath
+            if (this._entryEditMode !== this.ENTRY_SELECT_PATH && this._selectedSubpath && this._selectedSubpath.getIsClosed() && this._makeMultipleSubpaths && !hitPath) {
+                this._selectedSubpath = null;
+            }
+
             if (this._selectedSubpath === null) {
                 this._selectedSubpath = new SubPath();
                 this._selectedSubpathCanvas = null;
@@ -335,9 +354,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                 this._selectedSubpath.setFillColor(colorArray);
             } //if the selectedSubpath was null and needed to be constructed
 
-            //build the hit record for the current mouse position (on the stage or the plane of the path canvas)
-            var hitRec = this.getHitRecord(event.pageX, event.pageY, false);
-            var globalMousePos=null, localMousePos=null, stageWorldMousePos = null, drawingCanvas=null;
+            //build the current mouse position in stage world space in case we don't already have a canvas
             if (!this._selectedSubpathCanvas){
                 drawingCanvas = this.application.ninja.currentDocument.model.documentRoot;//ViewUtils.getStageElement();
                 stageWorldMousePos = hitRec.calculateStageWorldPoint();
@@ -345,10 +362,7 @@ exports.PenTool = Montage.create(ShapeTool, {
                 stageWorldMousePos[1]+= snapManager.getStageHeight()*0.5;
                 localMousePos = stageWorldMousePos; //since the subpath points are in stage world space, set the 'localMousePos' to be stage world as well
             }
-            else {
-                globalMousePos = hitRec.getScreenPoint();
-                localMousePos = ViewUtils.globalToLocal(globalMousePos, this._selectedSubpathCanvas);
-            }
+
 
             if (this._selectedSubpathCanvas === null && this._subtool===this.SUBTOOL_NONE){
                 //IF this is the first anchor point of the selected subpath
@@ -358,7 +372,6 @@ exports.PenTool = Montage.create(ShapeTool, {
                 if (this._selectedSubpath.getNumAnchors()===0) {
                     this._selectedSubpathPlaneMat   = hitRec.getPlaneMatrix();
                 }
-
                 //check if the mouse click location is close to the existing anchor
                 var indexAndCode = this._selectedSubpath.pickAnchor(stageWorldMousePos[0], stageWorldMousePos[1], stageWorldMousePos[2], this._PICK_POINT_RADIUS);
                 if (indexAndCode[0]>=0){
@@ -853,9 +866,9 @@ exports.PenTool = Montage.create(ShapeTool, {
             this._editMode = this.EDIT_NONE;
 
             //if we're not in edit_path mode and we closed the selected subpath, then we are going to start a new subpath, so we nullify the selected subpath
-            if (this._selectedSubpath && this._selectedSubpath.getIsClosed() && this._entryEditMode !== this.ENTRY_SELECT_PATH){
-                this._selectedSubpath = null;
-            }
+            //if (this._selectedSubpath && this._selectedSubpath.getIsClosed() && this._entryEditMode !== this.ENTRY_SELECT_PATH){
+            //    this._selectedSubpath = null;
+            //}
             
             if (this._selectedSubpath){
                 this.DrawSubpathAnchors(this._selectedSubpath);//render the subpath anchors on canvas
