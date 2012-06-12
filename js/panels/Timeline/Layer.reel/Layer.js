@@ -1056,109 +1056,111 @@ var Layer = exports.Layer = Montage.create(Component, {
 
     handleElementChange:{
         value:function(event){
-            var el =this.layerData.stageElement;
-            var length = this.arrLayerStyles.length , i , k=0;
+            if(this.layerData){
+                var el =this.layerData.stageElement;
+                var length = this.arrLayerStyles.length , i , k=0;
 
-                this.dtextPositionX = parseFloat(ElementsMediator.getProperty(el, "left"));
-                this.dtextPositionY = parseFloat(ElementsMediator.getProperty(el, "top"));
-                this.dtextScaleY = parseFloat(ElementsMediator.getProperty(el, "height"));
-                this.dtextScaleX= parseFloat(ElementsMediator.getProperty(el, "width"));
+                    this.dtextPositionX = parseFloat(ElementsMediator.getProperty(el, "left"));
+                    this.dtextPositionY = parseFloat(ElementsMediator.getProperty(el, "top"));
+                    this.dtextScaleY = parseFloat(ElementsMediator.getProperty(el, "height"));
+                    this.dtextScaleX= parseFloat(ElementsMediator.getProperty(el, "width"));
 
 
-                for(i=0; i<length; i++){
-                    if (event.detail.data.prop === "color"){
-                        var currentValue1 = ElementsMediator.getColor(this.layerData.stageElement,event.detail.data.isFill,event.detail.data.borderSide);
-                        if(event.detail.data.isFill){
-                            while(k <length){
-                                if(this.arrLayerStyles[k].editorProperty === "background-color"){
-                                    this.arrLayerStyles[k].colorelement.color(currentValue1.colorMode, currentValue1.color);
-                                    this.application.ninja.timeline.selectedStyle = this.arrLayerStyles[k].editorProperty;
-                                    break;
-                                }
-                                k++;
-                            }
-                        }else if (event.detail.data.borderSide === "bottom"){
-                            k=0;
+                    for(i=0; i<length; i++){
+                        if (event.detail.data.prop === "color"){
+                            var currentValue1 = ElementsMediator.getColor(this.layerData.stageElement,event.detail.data.isFill,event.detail.data.borderSide);
+                            if(event.detail.data.isFill){
                                 while(k <length){
-                                    if(this.arrLayerStyles[k].editorProperty  === "bottom-border-color"){
-                                    this.arrLayerStyles[k].colorelement.color(currentValue1.colorMode, currentValue1.color);
-                                    this.application.ninja.timeline.selectedStyle = this.arrLayerStyles[k].editorProperty;
-                                    break;
+                                    if(this.arrLayerStyles[k].editorProperty === "background-color"){
+                                        this.arrLayerStyles[k].colorelement.color(currentValue1.colorMode, currentValue1.color);
+                                        this.application.ninja.timeline.selectedStyle = this.arrLayerStyles[k].editorProperty;
+                                        break;
                                     }
-                                k++;
+                                    k++;
                                 }
-                            }else if (event.detail.data.borderSide === "top"){
+                            }else if (event.detail.data.borderSide === "bottom"){
                                 k=0;
-                                while(k <length){
-                                    if(this.arrLayerStyles[k].editorProperty  === "top-border-color"){
-                                    this.arrLayerStyles[k].colorelement.color(currentValue1.colorMode, currentValue1.color);
-                                    this.application.ninja.timeline.selectedStyle = this.arrLayerStyles[k].editorProperty;
-                                    break;
+                                    while(k <length){
+                                        if(this.arrLayerStyles[k].editorProperty  === "bottom-border-color"){
+                                        this.arrLayerStyles[k].colorelement.color(currentValue1.colorMode, currentValue1.color);
+                                        this.application.ninja.timeline.selectedStyle = this.arrLayerStyles[k].editorProperty;
+                                        break;
+                                        }
+                                    k++;
                                     }
-                                k++;
-                                }
-                            }else if(event.detail.data.borderSide === "left"){
-                                k=0;
-                                while(k <length){
-                                    if(this.arrLayerStyles[k].editorProperty  === "left-border-color"){
-                                    this.arrLayerStyles[k].colorelement.color(currentValue1.colorMode, currentValue1.color);
-                                    this.application.ninja.timeline.selectedStyle = this.arrLayerStyles[k].editorProperty;
-                                    break;
+                                }else if (event.detail.data.borderSide === "top"){
+                                    k=0;
+                                    while(k <length){
+                                        if(this.arrLayerStyles[k].editorProperty  === "top-border-color"){
+                                        this.arrLayerStyles[k].colorelement.color(currentValue1.colorMode, currentValue1.color);
+                                        this.application.ninja.timeline.selectedStyle = this.arrLayerStyles[k].editorProperty;
+                                        break;
+                                        }
+                                    k++;
                                     }
-                                k++;
-                                }
-                            }else if(event.detail.data.borderSide === "right"){
-                                k=0;
-                                while(k <length){
-                                    if(this.arrLayerStyles[k].editorProperty  === "right-border-color"){
-                                    this.arrLayerStyles[k].colorelement.color(currentValue1.colorMode, currentValue1.color);
-                                    this.application.ninja.timeline.selectedStyle = this.arrLayerStyles[k].editorProperty;
-                                    break;
+                                }else if(event.detail.data.borderSide === "left"){
+                                    k=0;
+                                    while(k <length){
+                                        if(this.arrLayerStyles[k].editorProperty  === "left-border-color"){
+                                        this.arrLayerStyles[k].colorelement.color(currentValue1.colorMode, currentValue1.color);
+                                        this.application.ninja.timeline.selectedStyle = this.arrLayerStyles[k].editorProperty;
+                                        break;
+                                        }
+                                    k++;
                                     }
-                                k++;
+                                }else if(event.detail.data.borderSide === "right"){
+                                    k=0;
+                                    while(k <length){
+                                        if(this.arrLayerStyles[k].editorProperty  === "right-border-color"){
+                                        this.arrLayerStyles[k].colorelement.color(currentValue1.colorMode, currentValue1.color);
+                                        this.application.ninja.timeline.selectedStyle = this.arrLayerStyles[k].editorProperty;
+                                        break;
+                                        }
+                                    k++;
+                                    }
                                 }
-                            }
-                        break;
-                    }else if (event.detail.source === "tween" || event.detail.data.prop === "background-color" ||event.detail.data.prop === "border-top-color"|| event.detail.data.prop === "border-right-color"|| event.detail.data.prop === "border-left-color" || event.detail.data.prop === "border-bottom-color" ){
-
-                        k=0;
-                        while(k <length){
-                            if(this.arrLayerStyles[k].editorProperty === event.detail.data.prop){
-                               var tempElement = this.arrLayerStyles[k];
-
                             break;
-                            }
-                        k++;
-                        }
-                        if(event.detail.data.prop === "background-color"){
+                        }else if (event.detail.source === "tween" || event.detail.data.prop === "background-color" ||event.detail.data.prop === "border-top-color"|| event.detail.data.prop === "border-right-color"|| event.detail.data.prop === "border-left-color" || event.detail.data.prop === "border-bottom-color" ){
 
-                            var currentValue = ElementsMediator.getColor(this.layerData.stageElement,true);
-                            tempElement.colorelement.color(currentValue.colorMode, currentValue.color);
-                            this.application.ninja.timeline.selectedStyle = event.detail.data.prop;
-                        }else {
-                            if(event.detail.data.prop === "border-bottom-color"){
-                                currentValue = ElementsMediator.getColor(this.layerData.stageElement,false,"bottom");
-                                tempElement.colorelement.color(currentValue.colorMode, currentValue.color);
-                                this.application.ninja.timeline.selectedStyle = event.detail.data.prop;
-                            }else if(event.detail.data.prop === "border-top-color"){
-                                currentValue = ElementsMediator.getColor(this.layerData.stageElement,false,"top");
-                                tempElement.colorelement.color(currentValue.colorMode, currentValue.color);
-                                this.application.ninja.timeline.selectedStyle = event.detail.data.prop;
-                            }else if (event.detail.data.prop === "border-left-color"){
-                                 currentValue = ElementsMediator.getColor(this.layerData.stageElement,false,"left");
-                                 tempElement.colorelement.color(currentValue.colorMode, currentValue.color);
-                                 this.application.ninja.timeline.selectedStyle = event.detail.data.prop;
-                            }else if (event.detail.data.prop === "border-right-color"){
-                                 currentValue = ElementsMediator.getColor(this.layerData.stageElement,false,"right");
-                                 tempElement.colorelement.color(currentValue.colorMode, currentValue.color);
-                                 this.application.ninja.timeline.selectedStyle = event.detail.data.prop;
+                            k=0;
+                            while(k <length){
+                                if(this.arrLayerStyles[k].editorProperty === event.detail.data.prop){
+                                   var tempElement = this.arrLayerStyles[k];
+
+                                break;
+                                }
+                            k++;
                             }
+                            if(event.detail.data.prop === "background-color"){
+
+                                var currentValue = ElementsMediator.getColor(this.layerData.stageElement,true);
+                                tempElement.colorelement.color(currentValue.colorMode, currentValue.color);
+                                this.application.ninja.timeline.selectedStyle = event.detail.data.prop;
+                            }else {
+                                if(event.detail.data.prop === "border-bottom-color"){
+                                    currentValue = ElementsMediator.getColor(this.layerData.stageElement,false,"bottom");
+                                    tempElement.colorelement.color(currentValue.colorMode, currentValue.color);
+                                    this.application.ninja.timeline.selectedStyle = event.detail.data.prop;
+                                }else if(event.detail.data.prop === "border-top-color"){
+                                    currentValue = ElementsMediator.getColor(this.layerData.stageElement,false,"top");
+                                    tempElement.colorelement.color(currentValue.colorMode, currentValue.color);
+                                    this.application.ninja.timeline.selectedStyle = event.detail.data.prop;
+                                }else if (event.detail.data.prop === "border-left-color"){
+                                     currentValue = ElementsMediator.getColor(this.layerData.stageElement,false,"left");
+                                     tempElement.colorelement.color(currentValue.colorMode, currentValue.color);
+                                     this.application.ninja.timeline.selectedStyle = event.detail.data.prop;
+                                }else if (event.detail.data.prop === "border-right-color"){
+                                     currentValue = ElementsMediator.getColor(this.layerData.stageElement,false,"right");
+                                     tempElement.colorelement.color(currentValue.colorMode, currentValue.color);
+                                     this.application.ninja.timeline.selectedStyle = event.detail.data.prop;
+                                }
+                            }
+                        }else{
+                            this.arrLayerStyles[i].editorValue = parseFloat(ElementsMediator.getProperty(el, this.arrLayerStyles[i].editorProperty))
+                            this.application.ninja.timeline.selectedStyle = this.arrLayerStyles[k].editorProperty;
                         }
-                    }else{
-                        this.arrLayerStyles[i].editorValue = parseFloat(ElementsMediator.getProperty(el, this.arrLayerStyles[i].editorProperty))
-                        this.application.ninja.timeline.selectedStyle = this.arrLayerStyles[k].editorProperty;
                     }
-                }
+            }
         }
     },
 
