@@ -15,11 +15,6 @@ var nj = require("js/lib/NJUtils").NJUtils;
 
 var Layer = exports.Layer = Montage.create(Component, {
 
-    dynamicLayerName: {
-        value: null,
-        serializable: true
-    },
-
     dynamicLayerTag: {
         value: null,
         serializable: true
