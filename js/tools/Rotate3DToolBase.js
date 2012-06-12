@@ -98,7 +98,7 @@ exports.Rotate3DToolBase = Montage.create(ModifierToolBase, {
 //                    {
 //                        hitRec = snapManager.findHitRecordForElement(elt);
 //                    }
-//                    if(elt === this.application.ninja.currentSelectedContainer)
+//                    if(elt === this.application.ninja.currentDocument.model.domContainer)
 //                    {
 //                        this._clickedOnStage = true;
 //                    }

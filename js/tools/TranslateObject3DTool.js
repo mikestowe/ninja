@@ -89,7 +89,7 @@ exports.TranslateObject3DTool = Montage.create(Translate3DToolBase, {
                         var otherSnap = snapManager.findHitRecordForElement(elt);
 						if (otherSnap)  hitRec = otherSnap;
                     }
-                    if(elt === this.application.ninja.currentSelectedContainer)
+                    if(elt === this.application.ninja.currentDocument.model.domContainer)
                     {
                         this._clickedOnStage = true;
                     }
