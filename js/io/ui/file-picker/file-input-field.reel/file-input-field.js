@@ -9,6 +9,16 @@ var Montage = require("montage/core/core").Montage,
 
 var FileInputField = exports.FileInputField = Montage.create(Component, {
 
+    findDirectory: {
+        value: null,
+        serializable: true
+    },
+
+    newFileDirectory: {
+        value: null,
+        serializable: true
+    },
+
     didDraw: {
         enumerable: false,
         value: function() {
