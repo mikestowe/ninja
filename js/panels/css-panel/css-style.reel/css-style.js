@@ -12,6 +12,23 @@ exports.CssStyle = Montage.create(Component, {
         value: null
     },
 
+    addStyleButton: {
+        value: null,
+        serializable: true
+    },
+
+    propertyField: {
+        value: null
+    },
+
+    valueField: {
+        value: null
+    },
+
+    propertyNames: {
+        value: null
+    },
+
     delegate          : { value: null },
     disabledClass     : { value: 'style-item-disabled' },
     editingStyleClass : { value: 'edit-style-item' },
