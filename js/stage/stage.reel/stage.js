@@ -243,6 +243,8 @@ exports.Stage = Montage.create(Component, {
             if(this.currentDocument && (this.currentDocument.currentView === "design")) {
                 this.currentDocument.model.scrollLeft = this._scrollLeft;
                 this.currentDocument.model.scrollTop = this._scrollTop;
+                //call configure false with the old document on the selected tool to tear down down any temp. stuff
+                this.application.ninja.toolsData.selectedToolInstance._configure(false);
             }
 
             this._currentDocument = value;
@@ -301,7 +303,7 @@ exports.Stage = Montage.create(Component, {
 
                 // Hack for now until a full component
                 this.layout.draw();
-                if(this.currentDocument) {
+                if(this.currentDocument && (this.currentDocument.currentView === "design")) {
                     this.layout.draw3DInfo(true);
                 }
             } else if(this.updatedStage) {
@@ -336,9 +338,6 @@ exports.Stage = Montage.create(Component, {
 
             this.eventManager.addEventListener( "appMouseUp", this, false);
 
-
-            this.eventManager.addEventListener( "openDocument", this, false);
-            this.eventManager.addEventListener( "switchDocument", this, false);
             this.eventManager.addEventListener( "enableStageMove", this, false);
             this.eventManager.addEventListener( "disableStageMove", this, false);
 
@@ -346,19 +345,9 @@ exports.Stage = Montage.create(Component, {
             this.eventManager.addEventListener( "elementChanging", this, false);
             this.eventManager.addEventListener( "elementChange", this, false);
 
-        }
-    },
+            this.addPropertyChangeListener("currentDocument.model.domContainer", this, true);
+//            this.addPropertyChangeListener("currentDocument.model.domContainer", this);
 
-    // Event details will contain the active document prior to opening a new one
-    handleOpenDocument: {
-        value: function(evt) {
-            this.initWithDocument();
-        }
-    },
-
-    handleSwitchDocument: {
-        value: function(evt) {
-            this.initWithDocument(true);
         }
     },
 
@@ -412,7 +401,6 @@ exports.Stage = Montage.create(Component, {
             } else {
                 this.centerStage();
             }
-
             // TODO - We will need to modify this once we support switching between multiple documents
             this.application.ninja.toolsData.selectedToolInstance._configure(true);
         }
@@ -438,6 +426,17 @@ exports.Stage = Montage.create(Component, {
                     this.updatedStage = true;
                 }
             }
+            /*
+            else if(notification.currentPropertyPath === "currentDocument.model.domContainer") {
+                if()
+            }
+            */
+        }
+    },
+
+    handleWillChange: {
+        value: function(notification) {
+//            console.log("stage -> container is about to change");
         }
     },
 
@@ -704,10 +703,10 @@ exports.Stage = Montage.create(Component, {
             if(selectable) {
 
                 if(this.currentDocument.inExclusion(element) !== -1) {
-                    return this.application.ninja.currentSelectedContainer;
+                    return this.currentDocument.model.domContainer;
                 }
 
-                var activeContainerId = this.application.ninja.currentSelectedContainer.uuid;
+                var activeContainerId = this.currentDocument.model.domContainer.uuid;
                 if(element.parentNode.uuid === activeContainerId) {
                     return element;
                 } else {
@@ -751,9 +750,15 @@ exports.Stage = Montage.create(Component, {
 
     draw: {
         value: function() {
+            if(!this.currentDocument) return;
+
             this.clearCanvas();
 
             drawUtils.updatePlanes();
+
+            if(this.currentDocument.model.domContainer !== this.currentDocument.model.documentRoot) {
+                this.drawDomContainer(this.currentDocument.model.domContainer);
+            }
 
             //TODO Set this variable in the needs draw so that it does not have to be calculated again for each draw for selection change
             if(this.application.ninja.selectedElements.length) {
@@ -786,9 +791,6 @@ exports.Stage = Montage.create(Component, {
         }
 
     },
-
-
-
 
     /**
      * draw3DSelectionRectangle -- Draws a 3D rectangle used for marquee selection
@@ -888,6 +890,109 @@ exports.Stage = Montage.create(Component, {
 
             this.context.closePath();
             this.context.stroke();
+        }
+    },
+
+
+    drawDomContainer: {
+        value: function(elt) {
+
+
+            this.stageDeps.viewUtils.setViewportObj( elt );
+            var bounds3D = this.stageDeps.viewUtils.getElementViewBounds3D( elt );
+
+            // convert the local bounds to the world
+
+
+
+            var zoomFactor = 1;
+            if (this._viewport && this._viewport.style && this._viewport.style.zoom) {
+                zoomFactor = Number(this._viewport.style.zoom);
+            }
+
+            var tmpMat = this.stageDeps.viewUtils.getLocalToGlobalMatrix( elt );
+            for (var j=0;  j<4;  j++) {
+                var localPt = bounds3D[j];
+                var tmpPt = this.stageDeps.viewUtils.localToGlobal2(localPt, tmpMat);
+
+                if(zoomFactor !== 1) {
+                    tmpPt = vecUtils.vecScale(3, tmpPt, zoomFactor);
+
+                    tmpPt[0] += this._scrollLeft*(zoomFactor - 1);
+                    tmpPt[1] += this._scrollTop*(zoomFactor - 1);
+                }
+                bounds3D[j] = tmpPt;
+            }
+
+            // Draw 3 outlines
+//            for(var i = 0; i < 3)
+
+            this.context.save();
+            // draw it
+            this.context.strokeStyle = "#ff0000";
+            this.context.lineWidth = 1;
+
+
+            this.context.beginPath();
+
+            this.context.moveTo( bounds3D[3][0] + 0.5 ,  bounds3D[3][1] - 0.5 );
+
+            // This more granular approach lets us specify different gaps for the selection around the element
+            this.context.lineTo( bounds3D[0][0] - 0.5 ,  bounds3D[0][1] - 0.5 );
+            this.context.lineTo( bounds3D[1][0] - 0.5 ,  bounds3D[1][1] + 0.5 );
+            this.context.lineTo( bounds3D[2][0] + 0.5  ,  bounds3D[2][1] + 0.5 );
+            this.context.lineTo( bounds3D[3][0] + 0.5  ,  bounds3D[3][1] + 0.5 );
+
+            this.context.closePath();
+            this.context.stroke();
+
+            this.context.restore();
+
+/*
+
+            this.context.save();
+            // draw it
+            this.context.strokeStyle = "rgba(0,11,61,0.8)";
+            this.context.lineWidth = 1;
+
+
+            this.context.beginPath();
+
+            this.context.moveTo( bounds3D[3][0] + 1.5 ,  bounds3D[3][1] - 1.5 );
+
+            // This more granular approach lets us specify different gaps for the selection around the element
+            this.context.lineTo( bounds3D[0][0] - 1.5 ,  bounds3D[0][1] - 1.5 );
+            this.context.lineTo( bounds3D[1][0] - 1.5 ,  bounds3D[1][1] + 1.5 );
+            this.context.lineTo( bounds3D[2][0] + 1.5  ,  bounds3D[2][1] + 1.5 );
+            this.context.lineTo( bounds3D[3][0] + 1.5  ,  bounds3D[3][1] + 1.5 );
+
+            this.context.closePath();
+            this.context.stroke();
+
+            this.context.restore();
+
+
+            this.context.save();
+            // draw it
+            this.context.strokeStyle = "rgba(255,0,0,0.3)";
+            this.context.lineWidth = 1;
+
+
+            this.context.beginPath();
+
+            this.context.moveTo( bounds3D[3][0] + 2.5 ,  bounds3D[3][1] - 2.5 );
+
+            // This more granular approach lets us specify different gaps for the selection around the element
+            this.context.lineTo( bounds3D[0][0] - 2.5 ,  bounds3D[0][1] - 2.5 );
+            this.context.lineTo( bounds3D[1][0] - 2.5 ,  bounds3D[1][1] + 2.5 );
+            this.context.lineTo( bounds3D[2][0] + 2.5  ,  bounds3D[2][1] + 2.5 );
+            this.context.lineTo( bounds3D[3][0] + 2.5  ,  bounds3D[3][1] + 2.5 );
+
+            this.context.closePath();
+            this.context.stroke();
+
+            this.context.restore();
+            */
         }
     },
 

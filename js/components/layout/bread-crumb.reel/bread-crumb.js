@@ -56,22 +56,6 @@ exports.Breadcrumb = Montage.create(Component, {
         }
     },
 
-    _container:{
-        value:null
-    },
-
-    container: {
-        set: function(value) {
-            if(this._container !== value) {
-                this._container = value;
-                this.createContainerElements();
-            }
-        },
-        get: function() {
-            return this._container;
-        }
-    },
-
     containerElements: {
         value: []
     },
@@ -79,31 +63,37 @@ exports.Breadcrumb = Montage.create(Component, {
     prepareForDraw: {
         value: function() {
             this.breadcrumbBt.addEventListener("action", this, false);
+            this.addPropertyChangeListener("currentDocument.model.domContainer", this)
+        }
+    },
+
+    handleChange: {
+        value: function() {
+            if(this.currentDocument && this.currentDocument.model.getProperty("domContainer")) {
+                this.createContainerElements(this.currentDocument.model.getProperty("domContainer"));
+            }
         }
     },
 
     createContainerElements: {
-        value: function() {
-            var parentNode;
+        value: function(container) {
 
 //            delete this.containerElements;
                 this.containerElements = [];
 
-            parentNode = this.container;
-
-            while(parentNode !== this.currentDocument.model.documentRoot) {
-                this.containerElements.unshift({"node": parentNode, "nodeUuid":parentNode.uuid, "label": parentNode.nodeName});
-                parentNode = parentNode.parentNode;
+            while(container !== this.currentDocument.model.documentRoot) {
+                this.containerElements.unshift({"node": container, "nodeUuid":container.uuid, "label": container.nodeName});
+                container = container.parentNode;
             }
 
             // This is always the top container which is now hardcoded to body
-            this.containerElements.unshift({"node": parentNode, "nodeUuid":parentNode.uuid, "label": parentNode.nodeName});
+            this.containerElements.unshift({"node": container, "nodeUuid":container.uuid, "label": container.nodeName});
         }
     },
 
     handleAction: {
         value: function(evt) {
-            if(evt.target.value === this.container.uuid) {
+            if(evt.target.value === this.currentDocument.model.domContainer.uuid) {
                 return;
             }
 
@@ -114,7 +104,7 @@ exports.Breadcrumb = Montage.create(Component, {
             }
 
             // TODO: This is bound 2 ways, update the internal property
-            this.application.ninja.currentSelectedContainer = this.containerElements[i].node;
+            this.currentDocument.model.domContainer = this.containerElements[i].node;
         }
     }
 });

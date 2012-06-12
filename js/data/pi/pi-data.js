@@ -703,13 +703,14 @@ exports.PiData = Montage.create( Montage, {
                         {
                             type : "color",
                             prop: "border",
-                            id : "stroke"
+                            id : "stroke",
+                            visible: false
                         },
                         {
                             type : "color",
                             id : "fill",
                             prop: "background",
-                            visible : false,
+                            visible : true,
                             divider : true
                         }
                     ],
@@ -761,7 +762,9 @@ exports.PiData = Montage.create( Montage, {
                             valueMutator: parseFloat,
                             min :   0,
                             max :   100,
-                            value : 0
+                            value : 0,
+                            acceptableUnits: [" "],
+                            unit: " "
                         }
                     ]
                 ]
@@ -788,6 +791,7 @@ exports.PiData = Montage.create( Montage, {
                             min :   -90,
                             max :   90,
                             value : 0,
+                            acceptableUnits: ["deg."],
                             unit : "deg."
                         }
                     ]

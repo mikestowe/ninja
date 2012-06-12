@@ -256,8 +256,8 @@ exports.Properties = Montage.create(Component, {
                     controls = this.customSections[n].content.controls;
                     if(controls["colorSelect"]) {
                         controls["colorSelect"].destroy();
-                    } else if(controls["background"]) {
-                        controls["background"].destroy();
+                    } else if(controls["background-color"]) {
+                        controls["background-color"].destroy();
                     }
                 }
 

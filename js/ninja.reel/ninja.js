@@ -297,21 +297,6 @@ exports.Ninja = Montage.create(Component, {
         value: []
     },
 
-    _currentSelectedContainer: {
-        value: null
-    },
-
-    currentSelectedContainer: {
-        get: function() {
-            return this._currentSelectedContainer;
-        },
-        set: function(value) {
-            if(value !== this._currentSelectedContainer) {
-                this._currentSelectedContainer = value;
-            }
-        }
-    },
-
     templateDidLoad: {
         value: function() {
             this.ninjaVersion = window.ninjaVersion.ninja.version;
@@ -471,11 +456,6 @@ exports.Ninja = Montage.create(Component, {
             // TODO: Remove this when integrating the next montage
             this.documentList.selectedObjects = [doc];
 
-            if(doc.currentView === "design") {
-                // TODO: Bind directly to the model of the document in components instead of this property
-                this._currentSelectedContainer = null;
-                this.currentSelectedContainer = doc.model.documentRoot;
-            }
         }
     },
 

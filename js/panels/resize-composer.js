@@ -107,6 +107,8 @@ exports.ResizeComposer = Montage.create(Composer, {
     captureMouseup: {
         value: function(e) {
             e.preventDefault();
+            e.stopImmediatePropagation();
+            e.stopPropagation();
             window.removeEventListener("mousemove", this, true);
             window.removeEventListener("mouseup", this, true);
             this._executeEvent("resizeEnd");
@@ -115,6 +117,9 @@ exports.ResizeComposer = Montage.create(Composer, {
 
     captureMousemove: {
         value: function(e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            e.stopPropagation();
             if (this.xAxis) {
                 this._deltaX = e.clientX - this._startX;
             }

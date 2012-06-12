@@ -111,11 +111,11 @@ exports.Layout = Montage.create(Component, {
                 // Make an array copy of the line node list which is not an array like object
                 this.domTree = this.application.ninja.currentDocument.model.views.design.getLiveNodeList(true);
                 // Index of the current container
-                containerIndex = this.domTree.indexOf(this.application.ninja.currentSelectedContainer);
+                containerIndex = this.domTree.indexOf(this.currentDocument.model.domContainer);
 
                 if(containerIndex < 0) {
                     // Stage is the container.
-                    this.domTree = Array.prototype.slice.call(this.application.ninja.currentSelectedContainer.childNodes, 0);
+                    this.domTree = Array.prototype.slice.call(this.currentDocument.model.domContainer.childNodes, 0);
                 } else {
                     // Child nodes of the container
                     this.domTree = Array.prototype.slice.call(this.domTree[containerIndex].childNodes, 0);
@@ -213,7 +213,7 @@ exports.Layout = Montage.create(Component, {
                 bounds3D[j] = tmpPt;
             }
 
-            if(item.uuid === this.application.ninja.currentSelectedContainer.uuid) {
+            if(item.uuid === this.currentDocument.model.domContainer.uuid) {
                 this.ctx.save();
                 this.ctx.strokeStyle = "#C61F00";
 

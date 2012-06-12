@@ -9,7 +9,6 @@ var Montage = require("montage").Montage,
 
 exports.StringUnitsConverter = Montage.create(Converter, {
 
-    // convert fahrenheit to celsius (showing our non-metric heritage here)
     convert: {
         value: function(value) {
             if(value) {
@@ -20,7 +19,6 @@ exports.StringUnitsConverter = Montage.create(Converter, {
         }
     },
 
-    // revert celsius to fahrenheit
     revert: {
         value: function(value) {
             console.log("revert string to unit ", value);

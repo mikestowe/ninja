@@ -451,6 +451,8 @@ exports.ModifierToolBase = Montage.create(DrawingTool, {
 
     startDraw: {
         value: function(event) {
+            this.drawData = null;
+
             if(this._target)
             {
                 this.isDrawing = true;

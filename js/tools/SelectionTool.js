@@ -49,6 +49,8 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
 
     startDraw: {
         value: function(event) {
+            this.drawData = null;
+
             if(!this.application.ninja.selectedElements.length)
             {
                 this._isSelecting = true;
@@ -222,9 +224,9 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
     HandleDoubleClick: {
         value: function(event) {
             if(this.application.ninja.selectedElements.length > 0) {
-                this.application.ninja.currentSelectedContainer = this.application.ninja.selectedElements[0];
+                this.application.ninja.currentDocument.model.domContainer = this.application.ninja.selectedElements[0];
             } else {
-                this.application.ninja.currentSelectedContainer = this.application.ninja.currentDocument.model.documentRoot;
+                this.application.ninja.currentDocument.model.domContainer = this.application.ninja.currentDocument.model.documentRoot;
             }
         }
     },
