@@ -14,42 +14,42 @@ exports.Treeview = Montage.create(Component, {
     rootBranch        : { value : null },
 
     activationEvent: {
-        value: null,
-        serializable: true
+        value: null
+//        serializable: true
     },
 
     _hasBeenDeserialized: {
-        value: false,
-        enumerable: false
+        value: false
+//        enumerable: false
     },
 
     branchComponent : {
-        value: null,
-        serializable: true
+        value: null
+//        serializable: true
     },
     leafComponent : {
-        value: null,
-        serializable: true
+        value: null
+//        serializable: true
     },
 
     defaultBranchComponent: {
-        value: null,
-        serializable: true
+        value: null
+//        serializable: true
     },
 
     defaultLeafComponent: {
-        value: null,
-        serializable: true
+        value: null
+//        serializable: true
     },
 
     scrollview: {
-        value: null,
-        serializable: true
+        value: null
+//        serializable: true
     },
 
     slot: {
-        value: null,
-        serializable: true
+        value: null
+//        serializable: true
     },
 
     hasTemplate: {
@@ -77,18 +77,18 @@ exports.Treeview = Montage.create(Component, {
             rootBranch.hideLabel = !this.showRoot;
             rootBranch.treeView = this;
 
-//            this.slot.content = rootBranch;
-//            rootBranch.sourceObject = this.contentController.root;
-//            rootBranch.needsDraw = true;
-//            this.rootBranch = rootBranch;
-//
-//            this.needsDraw = true;
+            this.slot.content = rootBranch;
+            rootBranch.sourceObject = this.contentController.root;
+            rootBranch.needsDraw = true;
+            this.rootBranch = rootBranch;
+
+            this.needsDraw = true;
 
         }
     },
     showRoot : {
-        value: null,
-        serializable: true
+        value: null
+//        serializable: true
     },
 
     _contentController: {
@@ -135,8 +135,8 @@ exports.Treeview = Montage.create(Component, {
                 }
             }
 
-        },
-        serializable: true
+        }
+//        serializable: true
     },
 
     deserializedFromTemplate: {

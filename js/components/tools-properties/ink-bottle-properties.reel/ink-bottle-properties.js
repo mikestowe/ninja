@@ -11,7 +11,17 @@ var Montage = require("montage/core/core").Montage,
 var InkBottleProperties = exports.InkBottleProperties = Montage.create(ToolProperties, {
     addedColorChips: { value: false },
 
+    useStrokeColor: {
+        value: null,
+        serializable: true
+    },
+
     _strokeColorCtrl: {
+        value: null,
+        serializable: true
+    },
+
+    borderWidth: {
         value: null,
         serializable: true
     },
@@ -21,27 +31,12 @@ var InkBottleProperties = exports.InkBottleProperties = Montage.create(ToolPrope
         serializable: true
     },
 
-    borderWidthLabel: {
-        value: null,
-        serializable: true
-    },
-
-    _borderWidth: {
-        value: null,
-        serializable: true
-    },
-
     useBorderStyle: {
         value: null,
         serializable: true
     },
 
-    borderStyleLabel: {
-        value: null,
-        serializable: true
-    },
-
-    _borderStyle: {
+    borderStyle: {
         value: null,
         serializable: true
     },
@@ -51,17 +46,17 @@ var InkBottleProperties = exports.InkBottleProperties = Montage.create(ToolPrope
         serializable: true
     },
 
-    strokeSizeLabel: {
-        value: null,
-        serializable: true
-    },
-
-    _strokeSize: {
+    strokeSize: {
         value: null,
         serializable: true
     },
 
     _useWebGL: {
+        value: null,
+        serializable: true
+    },
+
+    useWebGL: {
         value: null,
         serializable: true
     },
@@ -72,6 +67,11 @@ var InkBottleProperties = exports.InkBottleProperties = Montage.create(ToolPrope
     },
 
     _strokeMaterial: {
+        value: null,
+        serializable: true
+    },
+
+    strokeMaterial: {
         value: null,
         serializable: true
     },

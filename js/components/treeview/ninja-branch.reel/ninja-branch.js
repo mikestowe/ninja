@@ -9,38 +9,38 @@ var Montage = require("montage").Montage,
 
 var Branch = exports.Branch = Montage.create(TreeNode, {
     label: {
-        value: null,
-        serializable: true
+        value: null
+//        serializable: true
     },
 
     branchList: {
-        value: null,
-        serializable: true
+        value: null
+//        serializable: true
     },
 
     arrayController: {
-        value: null,
-        serializable: true
+        value: null
+//        serializable: true
     },
 
     repetition:{
-        value: null,
-        serializable: true
+        value: null
+//        serializable: true
     },
 
     leafComponent: {
-        value: null,
-        serializable: true
+        value: null
+//        serializable: true
     },
 
     branchComponent: {
-        value: null,
-        serializable: true
+        value: null
+//        serializable: true
     },
 
     collapser: {
-        value: null,
-        serializable: true
+        value: null
+//        serializable: true
     },
 
     prepareForDraw : {
