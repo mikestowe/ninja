@@ -24,21 +24,14 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
 
     draw:{
         value:function(){
-            console.log(this.currentKeyframeRule);
+
         }
     },
 
     didDraw:{
         value:function () {
-            if ((!this.application.ninja.documentController.creatingNewFile) || (!this.application.ninja.currentDocument.setLevel)) {
-                if (this.application.ninja.currentDocument.model.documentRoot.children[0]) {
-                    var selectedIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
-                    if (selectedIndex !== false) {
-                        if (!this.application.ninja.timeline.arrLayers[selectedIndex].layerData.created) {
-                            this.retrieveStoredStyleTweens();
-                        }
-                    }
-                }
+            if(this.currentKeyframeRule){
+                this.retrieveStoredStyleTweens();
             }
         }
     },
@@ -317,6 +310,9 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
     retrieveStoredStyleTweens:{
         value:function(){
             console.log("retrieving style tweens");
+            console.log(this.currentKeyframeRule);
+
+
             var percentValue, fraction, splitValue;
             var currentMilliSec, currentMilliSecPerPixel, clickPosition, tempTiming, tempTimingFloat, trackTiming, i = 0;
 
@@ -326,6 +322,8 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
 
                 // build tweens for this tracks's keyframe rule
                 if (this.animationName) {
+
+
 
                     trackTiming = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-duration");
                     this.nextKeyframe = 0;

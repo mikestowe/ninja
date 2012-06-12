@@ -831,8 +831,8 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         value:function(ruleSet){
             for(var i in ruleSet){
                 var styleProp = ruleSet[i][0].style[0];
-                console.log(styleProp);
-                console.log(ruleSet[i]);
+                //console.log(styleProp);
+                //console.log(ruleSet[i]);
                 this.application.ninja.timeline.layerRepetition.childComponents[0].addStyle(styleProp, ruleSet[i]);
             }
         }
