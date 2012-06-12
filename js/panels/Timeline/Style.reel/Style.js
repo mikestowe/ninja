@@ -705,19 +705,17 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 
     handleFillColorChange: {
         value: function (event) {
-
-                if(this.application.ninja.timeline.selectedStyle === "color" ||this.application.ninja.timeline.selectedStyle === this.editorProperty){
+            if(this.application.ninja.timeline.selectedStyle === "color" ||this.application.ninja.timeline.selectedStyle === this.editorProperty){
                 var fillColorObject={};
                 fillColorObject.color=event._event.color;
                 fillColorObject.mode=event._event.colorMode;
                 ElementsMediator.setColor([this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement], fillColorObject, this._isFill, "Change", "timeline",null,this._borderSide)
-                }
+            }
         }
     },
 
     handleHottextChange:{
         value:function(event){
-            console.log(this.application.ninja.timeline.selectedStyle)
             if(this.application.ninja.timeline.selectedStyle === this.editorProperty){
                 this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement], this.editorProperty, [this.editorValue + event.target._units]  , "Change", "timeline");
             }
@@ -726,7 +724,6 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 
     handleHottextChanging:{
         value:function(event){
-            console.log(this.application.ninja.timeline.selectedStyle)
             if(this.application.ninja.timeline.selectedStyle === this.editorProperty){
                this.application.ninja.elementMediator.setProperty([this.parentComponent.parentComponent.parentComponent.parentComponent.layerData.stageElement], this.editorProperty, [this.editorValue + event.target._units]  , "Changing", "timeline");
              }
