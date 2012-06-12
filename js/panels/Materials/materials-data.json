@@ -97,19 +97,6 @@
                     "id" : "ZInvertMaterial"
                 }
             ]
-        },
-        {
-            "label": "Custom Materials",
-            "children": [
-                {
-                    "label": "Checker Board",
-                    "id" : "CheckerBoard"
-                },
-                {
-                    "label": "Shiny Metal",
-                    "id" : "ShinyMetal"
-                }
-            ]
         }
     ]
 }
