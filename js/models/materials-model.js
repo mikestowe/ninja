@@ -48,11 +48,11 @@ exports.MaterialsModel = Montage.create(Component, {
 	deserializedFromTemplate: {
 		value: function() {
 			// Load all the materials
+			this.addMaterial(new FlatMaterial());
 			this.addMaterial(new BumpMetalMaterial());
 			this.addMaterial(new CloudMaterial());
 			this.addMaterial(new DeformMaterial());
 			this.addMaterial(new FlagMaterial());
-			this.addMaterial(new FlatMaterial());
 			this.addMaterial(new FlyMaterial());
 			this.addMaterial(new JuliaMaterial());
 			this.addMaterial(new KeleidoscopeMaterial());
