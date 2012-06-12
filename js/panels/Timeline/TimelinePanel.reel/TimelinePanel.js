@@ -783,6 +783,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 var i = 0, 
                 	tlArrLayersLength = this.application.ninja.currentDocument.tlArrLayers.length;
                 
+                
+                this._ignoreNextContainerChange = true;
+                
                 // We're reading from the cache, not writing to it.
             	this._boolCacheArrays = false;
                 for (i = 0; i < tlArrLayersLength; i++) {
