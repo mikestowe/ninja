@@ -91,6 +91,8 @@ var elementNameToController = function(name) {
         return "block";
     } else if(name === "img") {
         return "image";
+    } else if(name === "embed") {
+        return "image";
     } else {
         return name;
     }
@@ -173,6 +175,8 @@ var elmo = exports.ElementModel = Montage.create(Montage, {
             if(name === "div" || name === "custom") {
                 return "block";
             } else if(name === "img") {
+                return "image";
+            } else if(name === "embed") {
                 return "image";
             } else {
                 return name;
