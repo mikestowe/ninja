@@ -11,10 +11,6 @@ var defaultEventManager = require("montage/core/event/event-manager").defaultEve
 
 var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
-    tween: {
-        value: null
-    },
-
     _trackID:{
         value:null
     },
@@ -31,6 +27,21 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         	}
         }
     },
+
+    _tween:{
+        value:[]
+    },
+
+    tween:{
+        serializable:true,
+        get:function () {
+            return this._tween;
+        },
+        set:function (newVal) {
+            this._tween = newVal;
+        }
+    },
+
     _isVisible:{
         value: true
     },
@@ -337,14 +348,50 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     _positionCollapser:{
         value:null
     },
+    positionCollapser:{
+        serializable:true,
+        get:function(){
+            return this._positionCollapser;
+        },
+        set:function(val){
+            this._positionCollapser = val;
+        }
+    },
     _mainCollapser:{
         value:null
+    },
+    mainCollapser:{
+        serializable:true,
+        get:function () {
+            return this._mainCollapser;
+        },
+        set:function (val) {
+            this._mainCollapser = val;
+        }
     },
     _transformCollapser:{
         value:null
     },
+    transformCollapser:{
+        serializable:true,
+        get:function () {
+            return this._transformCollapser;
+        },
+        set:function (val) {
+            this._transformCollapser = val;
+        }
+    },
     _styleCollapser:{
         value:null
+    },
+    styleCollapser:{
+        serializable:true,
+        get:function () {
+            return this._styleCollapser;
+        },
+        set:function (val) {
+            this._styleCollapser = val;
+        }
     },
 
     _trackData:{
