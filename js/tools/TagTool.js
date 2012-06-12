@@ -51,16 +51,20 @@ exports.TagTool = Montage.create(DrawingTool, {
 
     HandleLeftButtonUp: {
         value: function(event) {
+            var w, h;
             if(this._escape) {
                 this._escape = false;
                 return;
             }
 
             if(this._hasDraw) {
-                var drawData =  this.getDrawingData();
-
-                if(drawData) {
-                    this.insertElement(drawData);
+                this.drawData = this.getDrawingData();
+                if(this.drawData) {
+                    w = Math.floor(this.drawData.width);
+                    h = Math.floor(this.drawData.height);
+                    if( (w > 0) && (h > 0) ) {
+                        this.insertElement(this.drawData);
+                    }
                 }
 
                 this._hasDraw = false;
@@ -87,9 +91,6 @@ exports.TagTool = Montage.create(DrawingTool, {
             } else {
                 element = document.application.njUtils.make(this.options.selectedElement, null, this.application.ninja.currentDocument);
             }
-
-            // Create the model
-            document.application.njUtils.createModel(element);
 
             // Create the styles
             styles = document.application.njUtils.stylesFromDraw(element, ~~drawData.width, ~~drawData.height, drawData);

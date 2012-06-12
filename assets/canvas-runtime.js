@@ -382,6 +382,16 @@ NinjaCvsRt.GLRuntime = Object.create(Object.prototype, {
 					obj.importJSON( jObj );
 					break;
 
+                case 5:     //subpath (created by pen tool)
+                    obj = Object.create(NinjaCvsRt.RuntimeSubPath, {_materials: { value:[], writable:true}});
+                    obj.importJSON (jObj );
+                    break;
+
+                case 6:     //brushstroke (created by brush tool)
+                    obj = Object.create(NinjaCvsRt.RuntimeBrushStroke, {_materials: { value:[], writable:true}});
+                    obj.importJSON (jObj );
+                    break;
+
 				default:
 					throw new Error( "Attempting to load unrecognized object type: " + type );
 					break;
@@ -524,6 +534,7 @@ NinjaCvsRt.RuntimeGeomObj = Object.create(Object.prototype, {
 	GEOM_TYPE_LINE: { value: 3, writable: false },
 	GEOM_TYPE_PATH: { value: 4, writable: false },
 	GEOM_TYPE_CUBIC_BEZIER: { value: 5, writable: false },
+    GEOM_TYPE_BRUSH_STROKE: { value: 6, writable: false },
 	GEOM_TYPE_UNDEFINED: { value: -1, writable: false },
 
 	///////////////////////////////////////////////////////////////////////
@@ -2143,4 +2154,486 @@ NinjaCvsRt.RuntimePlasmaMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
 	}
 });
 
+
+
+// **************************************************************************
+// Runtime for the pen tool path
+// **************************************************************************
+NinjaCvsRt.AnchorPoint = Object.create(Object.prototype, {
+    /////////////////////////////////////////
+    // Instance variables
+    /////////////////////////////////////////
+    _x: {value: 0.0, writable: true},
+    _y: {value: 0.0, writable: true},
+    _z: {value: 0.0, writable: true},
+
+    _prevX: {value: 0.0, writable: true},
+    _prevY: {value: 0.0, writable: true},
+    _prevZ: {value: 0.0, writable: true},
+
+    _nextX: {value: 0.0, writable: true},
+    _nextY: {value: 0.0, writable: true},
+    _nextZ: {value: 0.0, writable: true},
+
+    // *********** setters ************
+    setPos: {
+        value: function(x,y,z){
+            this._x = x;
+            this._y = y;
+            this._z = z;
+        }
+    },
+
+    setPrevPos: {
+        value: function (x, y, z) {
+            this._prevX = x;
+            this._prevY = y;
+            this._prevZ = z;
+        }
+    },
+
+    setNextPos: {
+        value: function (x, y, z) {
+            this._nextX = x;
+            this._nextY = y;
+            this._nextZ = z;
+        }
+    },
+
+    // *************** getters ******************
+    // (add as needed)
+    getPosX: {
+        value: function () {
+            return this._x;
+        }
+    },
+
+    getPosY: {
+        value: function () {
+            return this._y;
+        }
+    },
+
+    getPosZ: {
+        value: function () {
+            return this._z;
+        }
+    },
+
+    getPrevX: {
+        value: function () {
+            return this._prevX;
+        }
+    },
+
+    getPrevY: {
+        value: function () {
+            return this._prevY;
+        }
+    },
+
+    getPrevZ: {
+        value: function () {
+            return this._prevZ;
+        }
+    },
+
+    getNextX: {
+        value: function () {
+            return this._nextX;
+        }
+    },
+
+    getNextY: {
+        value: function () {
+            return this._nextY;
+        }
+    },
+
+    getNextZ: {
+        value: function () {
+            return this._nextZ;
+        }
+    }
+});
+
+NinjaCvsRt.RuntimeSubPath = Object.create(NinjaCvsRt.RuntimeGeomObj, {
+    // array of anchor points
+    _Anchors: { value: null, writable: true },
+
+    //path properties
+    _isClosed: {value: false, writable: true},
+    _strokeWidth: {value: 0, writable: true},
+    _strokeColor: {value: null, writable: true},
+    _fillColor: {value: null, writable: true},
+
+    geomType: {
+        value: function () {
+            return this.GEOM_TYPE_CUBIC_BEZIER;
+        }
+    },
+
+    importJSON: {
+        value: function(jo) {
+            if (this.geomType()!== jo.geomType){
+                return;
+            }
+            //the geometry for this object
+            this._Anchors = [];
+            var i=0;
+            for (i=0;i<jo.anchors.length;i++){
+                var newAnchor = Object.create(NinjaCvsRt.AnchorPoint);
+                var ipAnchor = jo.anchors[i];
+                newAnchor.setPos(ipAnchor._x, ipAnchor._y, ipAnchor._z);
+                newAnchor.setPrevPos(ipAnchor._prevX, ipAnchor._prevY, ipAnchor._prevZ);
+                newAnchor.setNextPos(ipAnchor._nextX, ipAnchor._nextY, ipAnchor._nextZ);
+                this._Anchors.push(newAnchor);
+            }
+            this._isClosed = jo.isClosed;
+
+            //stroke appearance properties
+            this._strokeWidth = jo.strokeWidth;
+            this._strokeColor = jo.strokeColor;
+            this._fillColor = jo.fillColor;
+        }
+    },
+
+    //buildColor returns the fillStyle or strokeStyle for the Canvas 2D context
+    buildColor: {
+        value: function(ctx,   //the 2D rendering context (for creating gradients if necessary)
+                 ipColor,      //color string, also encodes whether there's a gradient and of what type
+                 w,            //width of the region of color
+                 h,            //height of the region of color
+                 lw)           //linewidth (i.e. stroke width/size)
+        {
+            if (ipColor.gradientMode){
+                var position, gradient, cs, inset; //vars used in gradient calculations
+                inset = Math.ceil( lw ) - 0.5;
+
+                if(ipColor.gradientMode === "radial") {
+                    var ww = w - 2*lw,  hh = h - 2*lw;
+                    gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(ww, hh)/2);
+                } else {
+                    gradient = ctx.createLinearGradient(inset, h/2, w-inset, h/2);
+                }
+                var colors = ipColor.color;
+
+                var len = colors.length;
+                for(n=0; n<len; n++) {
+                    position = colors[n].position/100;
+                    cs = colors[n].value;
+                    gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+                }
+                return gradient;
+            } else {
+                var c = "rgba(" + 255*ipColor[0] + "," + 255*ipColor[1] + "," + 255*ipColor[2] + "," + ipColor[3] + ")";
+                return c;
+            }
+        }
+    },
+
+    render: {
+        value: function() {
+            // get the world
+            var world = this.getWorld();
+            if (!world)  {
+                throw( "null world in subpath render" );
+                return;
+            }
+
+             // get the context
+            var ctx = world.get2DContext();
+            if (!ctx)  {
+                throw( "null world in subpath render" );
+                return;
+            }
+
+            //vars used for the gradient computation in buildColor
+            var w = world.getViewportWidth(), h = world.getViewportHeight();
+
+            ctx.save();
+            ctx.lineWidth = this._strokeWidth;
+            ctx.strokeStyle = "black";
+            if (this._strokeColor) {
+                ctx.strokeStyle = this.buildColor(ctx, this._strokeColor, w,h, this._strokeWidth);
+            }
+
+            ctx.fillStyle = "white";
+            if (this._fillColor){
+                ctx.fillStyle = this.buildColor(ctx, this._fillColor, w,h, this._strokeWidth);
+            }
+            var lineCap = ['butt','round','square'];
+            ctx.lineCap = lineCap[1];
+            var lineJoin = ['round','bevel','miter'];
+            ctx.lineJoin = lineJoin[0];
+
+            var numAnchors = this._Anchors.length;
+            if (numAnchors>1) {
+                ctx.beginPath();
+                var prevAnchor = this._Anchors[0];
+                ctx.moveTo(prevAnchor.getPosX(),prevAnchor.getPosY());
+                for (var i = 1; i < numAnchors; i++) {
+                    var currAnchor = this._Anchors[i];
+                    ctx.bezierCurveTo(prevAnchor.getNextX(),prevAnchor.getNextY(), currAnchor.getPrevX(), currAnchor.getPrevY(), currAnchor.getPosX(), currAnchor.getPosY());
+                    prevAnchor = currAnchor;
+                }
+                if (this._isClosed === true) {
+                    var currAnchor = this._Anchors[0];
+                    ctx.bezierCurveTo(prevAnchor.getNextX(),prevAnchor.getNextY(), currAnchor.getPrevX(), currAnchor.getPrevY(), currAnchor.getPosX(), currAnchor.getPosY());
+                    prevAnchor = currAnchor;
+                }
+                ctx.fill();
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+    }
+});
+
+// **************************************************************************
+// END runtime for the pen tool path
+// **************************************************************************
+
+
+// ***************************************************************************
+// runtime for brush tool brush stroke
+// ***************************************************************************
+
+NinjaCvsRt.RuntimeBrushStroke = Object.create(NinjaCvsRt.RuntimeGeomObj, {
+    // array of brush stroke points
+    _LocalPoints: { value: null, writable: true },
+    _OrigLocalPoints: {value: null, writable: true},
+
+    _strokeWidth: {value: 0, writable: true},
+    _strokeColor: {value: 0, writable: true},
+    _strokeHardness: {value: 0, writable: true},
+    _strokeUseCalligraphic : {value: 0, writable: true},
+    _strokeAngle : {value: 0, writable: true},
+
+    //stroke smoothing properties
+    _strokeDoSmoothing: {value: 0, writable: true},
+    _strokeAmountSmoothing : {value: 0, writable: true},
+
+    geomType: {
+        value: function () {
+            return this.GEOM_TYPE_BRUSH_STROKE;
+        }
+    },
+
+    _copyCoordinates3D: {
+        value: function(srcCoord, destCoord){
+            var i=0;
+            var numPoints = srcCoord.length;
+            for (i=0;i<numPoints;i++){
+                destCoord[i] = [srcCoord[i][0],srcCoord[i][1],srcCoord[i][2]];
+            }
+        }
+    },
+
+    _doSmoothing: {
+        value: function() {
+            var numPoints = this._LocalPoints.length;
+            if (this._strokeDoSmoothing && numPoints>1) {
+                this._copyCoordinates3D(this._OrigLocalPoints, this._LocalPoints);
+                //iterations of Laplacian smoothing (setting the points to the average of their neighbors)
+                var numLaplacianIterations = this._strokeAmountSmoothing;
+                for (var n=0;n<numLaplacianIterations;n++){
+                    var newPoints = this._LocalPoints.slice(0); //I think this performs a copy by reference, which would make the following a SOR step
+                    for (var i=1;i<numPoints-1;i++) {
+                        var avgPos = [  0.5*(this._LocalPoints[i-1][0] + this._LocalPoints[i+1][0]),
+                            0.5*(this._LocalPoints[i-1][1] + this._LocalPoints[i+1][1]),
+                            0.5*(this._LocalPoints[i-1][2] + this._LocalPoints[i+1][2])] ;
+                        newPoints[i] = avgPos;
+                    }
+                    this._LocalPoints = newPoints.slice(0);
+                }
+            }
+        }
+    },
+
+    importJSON: {
+        value: function(jo) {
+            if (this.geomType()!== jo.geomType){
+                return;
+            }
+            //the geometry for this object
+            this._LocalPoints = jo.localPoints.slice(0);
+            this._OrigLocalPoints = jo.origLocalPoints.slice(0);
+            this._copyCoordinates3D(jo.localPoints, this._LocalPoints); //todo is this necessary in addition to the slice(0) above?
+            this._copyCoordinates3D(jo.origLocalPoints, this._OrigLocalPoints); //todo <ditto>
+
+            //stroke appearance properties
+            this._strokeWidth = jo.strokeWidth;
+            this._strokeColor = jo.strokeColor;
+            this._strokeHardness = jo.strokeHardness;
+            this._strokeUseCalligraphic = jo.strokeUseCalligraphic;
+            this._strokeAngle = jo.strokeAngle;
+
+            //stroke smoothing properties
+            this._strokeDoSmoothing = jo.strokeDoSmoothing;
+            this._strokeAmountSmoothing = jo.strokeAmountSmoothing;
+
+            this._doSmoothing();      //after smoothing, the stroke is ready to be rendered
+        }
+    },
+
+    //buildColor returns the fillStyle or strokeStyle for the Canvas 2D context
+    buildColor: {
+        value: function(ctx,   //the 2D rendering context (for creating gradients if necessary)
+                 ipColor,      //color string, also encodes whether there's a gradient and of what type
+                 w,            //width of the region of color
+                 h,            //height of the region of color
+                 lw)           //linewidth (i.e. stroke width/size)
+        {
+            if (ipColor.gradientMode){
+                var position, gradient, cs, inset; //vars used in gradient calculations
+                inset = Math.ceil( lw ) - 0.5;
+
+                if(ipColor.gradientMode === "radial") {
+                    var ww = w - 2*lw,  hh = h - 2*lw;
+                    gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(ww, hh)/2);
+                } else {
+                    gradient = ctx.createLinearGradient(inset, h/2, w-inset, h/2);
+                }
+                var colors = ipColor.color;
+
+                var len = colors.length;
+                for(n=0; n<len; n++) {
+                    position = colors[n].position/100;
+                    cs = colors[n].value;
+                    gradient.addColorStop(position, "rgba(" + cs.r + "," + cs.g + "," + cs.b + "," + cs.a + ")");
+                }
+                return gradient;
+            } else {
+                var c = "rgba(" + 255*ipColor[0] + "," + 255*ipColor[1] + "," + 255*ipColor[2] + "," + ipColor[3] + ")";
+                return c;
+            }
+        }
+    },
+
+    render: {
+        value: function() {
+            //vars for gradient code
+            var w,h,useBuildColor=false;
+
+            // get the world
+            var world = this.getWorld();
+            if (!world)  {
+                throw( "null world in brush stroke render" );
+                return;
+            } else {
+
+                if (this._strokeColor.gradientMode){
+                    useBuildColor = true;
+                }
+                //vars used for the gradient computation in buildColor
+                w = world.getViewportWidth();
+                h = world.getViewportHeight();
+            }
+            // get the context
+            var ctx = world.get2DContext();
+            if (!ctx)  {
+                throw( "null world in brush stroke render" );
+                return;
+            }
+
+            ctx.save();
+
+            //**** BEGIN RENDER CODE BLOCK ****
+            var points = this._LocalPoints;
+            var numPoints = points.length;
+            var tempP, p;
+            if (this._strokeUseCalligraphic) {
+                //build the stamp for the brush stroke
+                var t=0;
+                var numTraces = this._strokeWidth;
+                var halfNumTraces = numTraces*0.5;
+                var opaqueRegionHalfWidth = 0.5*this._strokeHardness*numTraces*0.01; //the 0.01 is to convert the strokeHardness from [0,100] to [0,1]
+                var maxTransparentRegionHalfWidth = halfNumTraces-opaqueRegionHalfWidth;
+
+                //build an angled (calligraphic) brush stamp
+                var deltaDisplacement = [Math.cos(this._strokeAngle),Math.sin(this._strokeAngle)];
+                deltaDisplacement = this.vecNormalize(2, deltaDisplacement, 1);
+                var startPos = [-halfNumTraces*deltaDisplacement[0],-halfNumTraces*deltaDisplacement[1]];
+
+                var brushStamp = [];
+                for (t=0;t<numTraces;t++){
+                    var brushPt = [startPos[0]+t*deltaDisplacement[0], startPos[1]+t*deltaDisplacement[1]];
+                    brushStamp.push(brushPt);
+                }
+
+                ctx.lineJoin="bevel";
+                ctx.lineCap="butt";
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.globalAlpha = this._strokeColor[3];
+
+                for (t=0;t<numTraces;t++){
+                    var disp = [brushStamp[t][0], brushStamp[t][1]];
+                    var alphaVal = 1.0;
+                    var distFromOpaqueRegion = Math.abs(t-halfNumTraces) - opaqueRegionHalfWidth;
+                    if (distFromOpaqueRegion>0) {
+                        var transparencyFactor = distFromOpaqueRegion/maxTransparentRegionHalfWidth;
+                        alphaVal = 1.0 - transparencyFactor;//(transparencyFactor*transparencyFactor);//the square term produces nonlinearly varying alpha values
+                        alphaVal *= 0.5; //factor that accounts for lineWidth == 2
+                    }
+                    ctx.save();
+                    if (t === (numTraces-1) || t === 0){
+                        ctx.lineWidth = 1;
+                    } else {
+                        ctx.lineWidth=2;
+                    }
+                    if (!useBuildColor){
+                        ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
+                    } else {
+                        ctx.strokeStyle = this.buildColor(ctx, this._strokeColor, w, h, this._strokeWidth, alphaVal);
+                    }
+                    ctx.translate(disp[0],disp[1]);
+                    ctx.beginPath();
+                    p = points[0];
+                    ctx.moveTo(p[0],p[1]);
+                    for (var i=0;i<numPoints;i++){
+                        p = points[i];
+                        ctx.lineTo(p[0],p[1]);
+                    }
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            } else {
+                ctx.globalCompositeOperation = 'lighter'; //we wish to add up the colors
+                ctx.globalAlpha = this._strokeColor[3];
+                ctx.lineCap = "round";
+                ctx.lineJoin="round";
+                var minStrokeWidth = (this._strokeHardness*this._strokeWidth)/100; //the hardness is the percentage of the stroke width that's fully opaque
+                var numlayers = 1 + Math.ceil((this._strokeWidth-minStrokeWidth)*0.5);
+                var alphaVal = 1.0/(numlayers); //this way the alpha at the first path will be 1
+
+                if (!useBuildColor){
+                    ctx.strokeStyle="rgba("+parseInt(255*this._strokeColor[0])+","+parseInt(255*this._strokeColor[1])+","+parseInt(255*this._strokeColor[2])+","+alphaVal+")";
+                } else {
+                    ctx.strokeStyle = this.buildColor(ctx, this._strokeColor, w,h, this._strokeWidth, alphaVal);
+                }
+                
+                for (var l=0;l<numlayers;l++){
+                    ctx.beginPath();
+                    p = points[0];
+                    ctx.moveTo(p[0],p[1]);
+                    if (numPoints===1){
+                        //display a tiny segment as a single point
+                       ctx.lineTo(p[0],p[1]+0.01);
+                    }
+                    for (var i=1;i<numPoints;i++){
+                        p = points[i];
+                        ctx.lineTo(p[0],p[1]);
+                    }
+                    ctx.lineWidth=2*l+minStrokeWidth;
+                    ctx.stroke();
+                }//for every layer l
+            } //if there is no calligraphic stroke
+
+            //**** END RENDER CODE BLOCK ****
+
+            ctx.restore();
+        }
+    }
+});
 

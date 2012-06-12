@@ -481,10 +481,8 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 				{
 					var snapRec = this._elementCache[i];
 					var elt = snapRec.getElement();
-					if (elt.elementModel)
-                        elt.elementModel.isIn2DSnapCache = false;
-					else
-						console.log( "element in the 2D cache does not have an elementModel" );
+                    elt.elementModel.isIn2DSnapCache = false;
+
 				}
 
 				this._elementCache = null;
@@ -498,7 +496,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 			this._elementCache = new Array;
 
 //			var stage = this.getStage();
-			var stage = this.application.ninja.currentSelectedContainer || this.getStage();
+			var stage = this.application.ninja.currentDocument.model.domContainer || this.getStage();
 			this.hLoadElementCache( stage,  plane, 0 );
             this._isCacheInvalid = false;
 
@@ -541,10 +539,6 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 						snapRec.init( elt );
 						this._elementCache.push( snapRec );
 
-						if (!elt.elementModel)
-						{
-                            NJUtils.makeModelFromElement(elt);
-						}
 						elt.elementModel.isIn2DSnapCache = true;
 					}
 					else if (elt.elementModel)
@@ -613,10 +607,6 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 					snapRec.init( elt );
 					this._elementCache.push( snapRec );
 
-					if (!elt.elementModel)
-					{
-						NJUtils.makeModelFromElement(elt);
-					}
 					elt.elementModel.isIn2DSnapCache = true;
 				}
 				else if (elt.elementModel)
@@ -997,7 +987,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
 		value: function( screenPt,  hitRecs ) {
 			// start at the stage.
 //			var stage = this.getStage();
-            var stage = this.application.ninja.currentSelectedContainer || this.getStage();
+            var stage = this.application.ninja.currentDocument.model.domContainer || this.getStage();
 
 			// the root should be the 'view' canvas, so the first matrix is the camera
 			viewUtils.setViewportObj( stage );
@@ -1019,7 +1009,7 @@ var SnapManager = exports.SnapManager = Montage.create(Component, {
             }
 			// hit test the current object
 			var hit;
-			var snapToStage = ((depth === 0) && (elt === this.application.ninja.currentSelectedContainer) && (elt.nodeName === 'CANVAS'));
+			var snapToStage = ((depth === 0) && (elt === this.application.ninja.currentDocument.model.domContainer) && (elt.nodeName === 'CANVAS'));
 			if ((depth > 0) || snapToStage)	// don't snap to the root unles we are working inside a canvas
 			{
 				// if the element is in the 2D cache snapping is done there

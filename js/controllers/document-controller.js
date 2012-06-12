@@ -186,9 +186,9 @@ exports.DocumentController = Montage.create(Component, {
     handleExecuteSaveAs: {
         value: function(event) {
             var saveAsSettings = event._event.settings || {};
-            if((typeof this.activeDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
-                saveAsSettings.fileName = this.activeDocument.model.file.name;
-                saveAsSettings.folderUri = this.activeDocument.model.file.uri.substring(0, this.activeDocument.model.file.uri.lastIndexOf("/"));
+            if((typeof this.currentDocument !== "undefined") && this.application.ninja.coreIoApi.cloudAvailable()){
+                saveAsSettings.fileName = this.currentDocument.model.file.name;
+                saveAsSettings.folderUri = this.currentDocument.model.file.uri.substring(0, this.currentDocument.model.file.uri.lastIndexOf("/"));
                 saveAsSettings.callback = this.saveAsCallback.bind(this);
                 this.application.ninja.newFileController.showSaveAsDialog(saveAsSettings);
             }
@@ -204,9 +204,9 @@ exports.DocumentController = Montage.create(Component, {
     //TODO: Is this used, should be cleaned up
     handleExecuteFileCloseAll:{
 		value: function(event) {
-			if(this.activeDocument && this.application.ninja.coreIoApi.cloudAvailable()){
-				while(this._documents.length > 0){
-					this.closeDocument(this._documents[this._documents.length -1].uuid);
+			if(this.currentDocument && this.application.ninja.coreIoApi.cloudAvailable()){
+				while(this.currentDocument.length > 0){
+					this.closeDocument(this.currentDocument[this.currentDocument.length -1].uuid);
 				}
 			}
 		}
@@ -291,19 +291,19 @@ exports.DocumentController = Montage.create(Component, {
         value:function(saveAsDetails){
             var fileUri = null, filename = saveAsDetails.filename, destination = saveAsDetails.destination;
             //update document metadata
-            this.activeDocument.name = ""+filename;
+            this.currentDocument.model.file.name = ""+filename;
             //prepare new file uri
             if(destination && (destination.charAt(destination.length -1) !== "/")){
                 destination = destination + "/";
             }
             fileUri = destination+filename;
 
-            this.activeDocument.uri = fileUri;
+            this.currentDocument.model.file.uri = fileUri;
             //save a new file
             //use the ioMediator.fileSaveAll when implemented
-            this.activeDocument.model.file.name = filename;
-            this.activeDocument.model.file.uri = fileUri;
-            this.activeDocument.model.save();
+            this.currentDocument.model.file.name = filename;
+            this.currentDocument.model.file.uri = fileUri;
+            this.currentDocument.model.save();
         }
     },
 

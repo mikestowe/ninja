@@ -68,6 +68,8 @@ exports.HtmlDocument = Montage.create(Component, {
            	if (this.model.views.design.initialize(this.model.parentContainer)) {
            		//Hiding iFrame, just initiliazing
            		this.model.views.design.hide();
+           		//Setting the iFrame property for reference in helper class
+           		this.model.webGlHelper.iframe = this.model.views.design.iframe;
            	} else {
            		//ERROR: Design View not initialized
            	}
@@ -82,13 +84,13 @@ exports.HtmlDocument = Montage.create(Component, {
             	this.model.views.design.iframe.style.opacity = 0;
             	this.model.views.design.content = this.model.file.content;
             	//TODO: Improve reference (probably through binding values)
-            	this.model.views.design.model = this.model;
+            	this.model.views.design._webGlHelper = this.model.webGlHelper;
             	//Rendering design view, using observers to know when template is ready
             	this.model.views.design.render(function () {
             		//Adding observer to know when template is ready
             		this._observer = new WebKitMutationObserver(this.handleTemplateReady.bind(this));
         			this._observer.observe(this.model.views.design.document.head, {childList: true});
-            	}.bind(this), template);
+            	}.bind(this), template, {viewCallback: this.handleViewReady, context: this});
             } else {
             	//TODO: Identify default view (probably code)
             }
@@ -101,9 +103,19 @@ exports.HtmlDocument = Montage.create(Component, {
     		//Removing observer, only needed on initial load
     		this._observer.disconnect();
     		this._observer = null;
-    		//Making callback after view is loaded
-    	    this.loaded.callback.call(this.loaded.context, this);
     	}
+    },
+    handleViewReady: {
+        value: function() {
+            // TODO: Find a better way to initialize this property
+            // Assign the domContainer to be the document root on open
+            if(typeof this.model.domContainer !== "undefined") {
+                this.model.domContainer = this.model.documentRoot;
+            }
+
+            //Making callback after view is loaded
+            this.loaded.callback.call(this.loaded.context, this);
+        }
     },
     ////////////////////////////////////////////////////////////////////
 	//
