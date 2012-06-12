@@ -596,9 +596,9 @@ NinjaCvsRt.RuntimeGeomObj = Object.create(Object.prototype, {
 					case "bumpMetal":		mat = Object.create(NinjaCvsRt.RuntimeBumpMetalMaterial, {});		break;
 					case "uber":			mat = Object.create(NinjaCvsRt.RuntimeUberMaterial, {});			break;
 					case "plasma":			mat = Object.create(NinjaCvsRt.RuntimePlasmaMaterial, {});			break;
+					case "water":			mat = Object.create(NinjaCvsRt.RuntimeWaterMaterial, {});			break;
 
 					case "deform":
-					case "water":
 					case "paris":
 					case "raiders":
 					case "tunnel":
@@ -1438,14 +1438,14 @@ NinjaCvsRt.RuntimeTwistVertMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, 
 
 	importJSON: {
 		value: function(jObj) {
-			this._tex0 = jObj.tex0;
-			this._tex1 = jObj.tex1;
+			this._tex0 = jObj.u_tex0;
+			this._tex1 = jObj.u_tex1;
 
 			this._speed = jObj.speed;
 
-			this._limit1 = jObj.limit1;
-			this._limit2 = jObj.limit2;
-			this._twistAmount = jObj.angle;
+			this._limit1 = jObj.u_limit1;
+			this._limit2 = jObj.u_limit2;
+			this._twistAmount = jObj.u_twistAmount;
 	   }
 	},
 
@@ -1464,7 +1464,7 @@ NinjaCvsRt.RuntimeTwistVertMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, 
 					tex = renderer.getTextureByName(this._tex1, wrap, mips );
 					if (tex)  technique.u_tex1.set( tex );
 
-					technique.u_twistAmount.set( [this._angle] );
+					technique.u_twistAmount.set( [this._twistAmount] );
 					technique.u_limit1.set( [this._limit1] );
 					technique.u_limit2.set( [this._limit2] );
 				}
@@ -1580,6 +1580,7 @@ NinjaCvsRt.RuntimePulseMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
 		value: function(jObj) {
 			this._texMap = jObj.u_tex0;
 			if (jObj.dTime)  this._dTime = jObj.dTime;
+			this._speed = jObj.u_speed;
 		}
 	},
 
@@ -1595,15 +1596,18 @@ NinjaCvsRt.RuntimePulseMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
 					if (this._shader && this._shader["default"])
 					{
 						var res = [ renderer.vpWidth,  renderer.vpHeight ];
-						technique.u_resolution.set( res );
+						if (technique.u_resolution)  technique.u_resolution.set( res );
 
-						var wrap = 'REPEAT',  mips = true;
-						var tex = renderer.getTextureByName(this._texMap, wrap, mips );
-						if (tex)
-							technique.u_tex0.set( tex );
+						if (this._texMap)
+						{
+							var wrap = 'REPEAT',  mips = true;
+							var tex = renderer.getTextureByName(this._texMap, wrap, mips );
+							if (tex)
+								technique.u_tex0.set( tex );
+						}
 
-						this._shader["default"].u_speed.set( [1.0] );
-						this._shader["default"].u_time.set( [this._time] );
+						if (technique.u_speed)  this._shader["default"].u_speed.set( [this._speed] );
+						if (technique.u_time )  this._shader["default"].u_time.set( [this._time] );
 					}
 				}
 			}
@@ -1624,7 +1628,6 @@ NinjaCvsRt.RuntimePulseMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
 					if (this._shader && this._shader["default"])
 						this._shader["default"].u_time.set( [this._time] );
 					this._time += this._dTime;
-					if (this._time > 200.0)  this._time = 0.0;
 				}
 			}
 		}
@@ -1645,10 +1648,10 @@ NinjaCvsRt.RuntimeFlagMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
 
 	importJSON: {
 		value: function(jObj) {
-			this._texMap	 = jObj.texMap;
-			this._waveWidth  = jObj.waveWidth;
-			this._waveHeight = jObj.waveHeight;
-			this._speed		 = jObj.speed;
+			this._texMap	 = jObj.u_tex0;
+			this._waveWidth  = jObj.u_waveWidth;
+			this._waveHeight = jObj.u_waveHeight;
+			this._speed		 = jObj.u_speed;
 		}
 	},
 
@@ -1690,12 +1693,91 @@ NinjaCvsRt.RuntimeFlagMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
 					if (this._shader && this._shader['default']) {
 						this._shader['default'].u_time.set( [this._time] );
 					}
-					this._time += this._dTime * this._speed;
+					this._time += this._dTime;
 				}
 			}
 		}
 	}
 });
+
+
+
+NinjaCvsRt.RuntimeWaterMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
+	_name: { value: "WaterMaterial", writable: true },
+	_shaderName: { value: "water", writable: true },
+
+	// default values
+	_texMap: { value: 'assets/images/cubelight.png', writable: true },
+	_speed: { value: 1.0, writable: true },
+	_waveWidth: { value: 1.0, writable: true },
+	_waveHeight: { value: 1.0, writable: true },
+	_dTime: { value: 0.1, writable: true },
+
+	importJSON: {
+		value: function(jObj) {
+			for (var prop in jObj)
+			{
+				if ((prop != 'material') && (prop != 'name'))
+				{
+					var value = jObj[prop];
+					this[prop] = value;
+				}
+			}
+
+			this._dTime = jObj.dTime;
+		}
+	},
+
+	init: {
+		value: function(world) {
+			if (this._shader) {
+				var material = this._materialNode;
+				if (material)
+				{
+					var technique = material.shaderProgram['default'];
+					var renderer = RDGE.globals.engine.getContext().renderer;
+					if (renderer && technique)
+					{
+
+						if (this._shader && this._shader['default']) {
+							var res = [ renderer.vpWidth,  renderer.vpHeight ];
+							if (technique.u_resolution)  technique.u_resolution.set( res );
+
+
+							var wrap = 'REPEAT',  mips = true;
+							var tex = renderer.getTextureByName(this.u_tex0, wrap, mips );
+							if (tex)  technique.u_tex0.set( tex );
+
+							technique.u_speed.set( [this.u_speed] );
+							technique.u_delta.set( [this.u_delta] );
+							technique.u_emboss.set( [this.u_emboss] );
+							technique.u_intensity.set( [this.u_intensity] );
+						}
+					}
+				}
+			}
+		}
+	},
+
+	update: {
+		value: function(time) {
+			var material = this._materialNode;
+			if (material)
+			{
+				var technique = material.shaderProgram['default'];
+				var renderer = RDGE.globals.engine.getContext().renderer;
+				if (renderer && technique)
+				{
+					if (this._shader && this._shader['default']) {
+						this._shader['default'].u_time.set( [this._time] );
+					}
+					this._time += this._dTime;
+				}
+			}
+		}
+	}
+});
+
 
 NinjaCvsRt.RuntimeRadialGradientMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
 	_name: { value: "RadialGradientMaterial", writable: true },
@@ -1735,10 +1817,12 @@ NinjaCvsRt.RuntimeRadialGradientMaterial = Object.create(NinjaCvsRt.RuntimeMater
 						this._shader["default"].u_colorStop3.set( [this._colorStop3] );
 						this._shader["default"].u_colorStop4.set( [this._colorStop4] );
 
-						this._shader["default"].u_texTransform.set( this._textureTransform );
 
-						if (this._angle !== undefined)
-							this._shader["default"].u_cos_sin_angle.set([Math.cos(this._angle), Math.sin(this._angle)]);
+						if (this._textureTransform && this._shader["default"].u_texTransform)
+							this._shader["default"].u_texTransform.set( this._textureTransform );
+						
+						if (this.u_cos_sin_angle && this._shader["default"].u_cos_sin_angle)
+							this._shader["default"].u_cos_sin_angle.set( this.u_cos_sin_angle );
 					}
 				}
 			}
@@ -1747,19 +1831,25 @@ NinjaCvsRt.RuntimeRadialGradientMaterial = Object.create(NinjaCvsRt.RuntimeMater
 
 	importJSON: {
 		value: function(jObj) {
-			this._color1	= jObj.color1;
-			this._color2	= jObj.color2;
-			this._color3	= jObj.color3;
-			this._color4	= jObj.color4;
-			this._colorStop1	= jObj.colorStop1;
-			this._colorStop2	= jObj.colorStop2;
-			this._colorStop3	= jObj.colorStop3;
-			this._colorStop4	= jObj.colorStop4;
+			this._color1			= jObj.u_color1;
+			this._color2			= jObj.u_color2;
+			this._color3			= jObj.u_color3;
+			this._color4			= jObj.u_color4;
+			this._colorStop1		= jObj.u_colorStop1;
+			this._colorStop2		= jObj.u_colorStop2;
+			this._colorStop3		= jObj.u_colorStop3;
+			this._colorStop4		= jObj.u_colorStop4;
 
-			this._textureTransform = jObj.textureTransform;
+			if (jObj.u_cos_sin_angle)
+				this.u_cos_sin_angle	= jObj.u_cos_sin_angle;
+			else
+				this.u_cos_sin_angle = [1,0];
 
-			if (this._angle !== undefined)
-				this._angle = jObj.angle;
+			if (jObj.u_texTransform)
+				this._textureTransform = jObj.u_texTransform;
+			else
+				this._textureTransform = [1,0,0, 0,1,0, 0,0,1];
+
 		}
 	}
 });
@@ -1784,10 +1874,10 @@ NinjaCvsRt.RuntimeBumpMetalMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, 
 
 	importJSON: {
 		value: function(jObj) {
-			this._lightDiff			= jObj.lightDiff;
-			this._diffuseTexture	= jObj.diffuseTexture;
-			this._specularTexture	= jObj.specularTexture;
-			this._normalTexture		= jObj.normalMap;
+			this._lightDiff			= jObj.u_light0Diff;
+			this._diffuseTexture	= jObj.u_colMap;
+			this._specularTexture	= jObj.u_glowMap;
+			this._normalTexture		= jObj.u_normalMap;
 		}
 	},
 
@@ -2001,6 +2091,24 @@ NinjaCvsRt.RuntimePlasmaMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
 
 	init: {
 		value: function(world) {
+
+			var material = this._materialNode;
+			if (material)
+			{
+				var technique = material.shaderProgram['default'];
+				var renderer = RDGE.globals.engine.getContext().renderer;
+				if (renderer && technique)
+				{
+					if (this._shader)
+					{
+						technique.u_wave.set( [this.u_wave] );
+						technique.u_wave1.set( [this.u_wave1] );
+						technique.u_wave2.set( [this.u_wave2] );
+						technique.u_speed.set( [this.u_speed] );
+					}
+				}
+			}
+
 			this.update();
 		}
 	},
@@ -2009,6 +2117,10 @@ NinjaCvsRt.RuntimePlasmaMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
 		value: function(jObj) {
 			this._speed = jObj.speed;
 			this._dTime = jObj.dTime;
+			this.u_wave = jObj.u_wave;
+			this.u_wave1 = jObj.u_wave1;
+			this.u_wave2 = jObj.u_wave2;
+			this.u_speed = jObj.u_speed;
 		}
 	},
 

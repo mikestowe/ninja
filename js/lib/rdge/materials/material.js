@@ -331,6 +331,9 @@ var Material = function GLMaterial( world ) {
 			jObj[prop] = value;
 		}
 
+		if (this.customExport)
+			jObj = this.customExport( jObj );
+
 		return jObj;
 	};
 	

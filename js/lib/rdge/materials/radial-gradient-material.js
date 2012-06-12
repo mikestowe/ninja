@@ -108,6 +108,12 @@ var RadialGradientMaterial = function RadialGradientMaterial() {
 
 		}
 	};
+
+	this.customExport = function( jObj )
+	{
+		jObj.u_texTransform = this._textureTransform.slice();
+		return jObj;
+	}
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
