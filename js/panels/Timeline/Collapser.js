@@ -41,6 +41,7 @@ var Montage = require("montage/core/core").Montage,
 		value: 0
 	},
 	contentHeight: {
+        serializable: true,
 		get: function() {
 			return this._contentHeight;
 		},
@@ -59,6 +60,7 @@ var Montage = require("montage/core/core").Montage,
 		value: false
 	},
 	isAnimated: {
+        serializable: true,
 		get: function() {
 			return this._isAnimated;
 		},
@@ -71,6 +73,7 @@ var Montage = require("montage/core/core").Montage,
 		value: true
 	},
 	bypassAnimation: {
+        serializable: true,
 		get: function() {
 			return this._bypassAnimation;
 		},
@@ -102,6 +105,7 @@ var Montage = require("montage/core/core").Montage,
 		value: ""
 	},
 	isCollapsed : {
+        serializable: true,
 		get: function() {
 			return this._isCollapsed;
 		},
@@ -110,7 +114,6 @@ var Montage = require("montage/core/core").Montage,
 				this._isCollapsed = newVal;
 				//this.needsDraw = true;
 			}
-			
 		}
 	},
 	
@@ -141,6 +144,7 @@ var Montage = require("montage/core/core").Montage,
 		value: true
 	},
 	isLabelClickable : {
+        serializable: true,
 		get: function() {
 			return this._isLabelClickable;
 		},
@@ -148,6 +152,34 @@ var Montage = require("montage/core/core").Montage,
 			this._isLabelClickable = newVal;
 		}
 	},
+
+    _myContent:{
+        value:null
+    },
+
+    myContent:{
+            serializable:true,
+            get:function () {
+                return this._myContent;
+            },
+            set:function (newVal) {
+                this._myContent = newVal;
+            }
+        },
+
+        _clicker:{
+            value:null
+        },
+
+        clicker:{
+            serializable:true,
+            get:function () {
+                return this._clicker;
+            },
+            set:function (newVal) {
+                this._clicker = newVal;
+            }
+        },
 
 	// isToggling: Bindable property. Set this (to anything) to trigger a toggle.
 	_isToggling: {

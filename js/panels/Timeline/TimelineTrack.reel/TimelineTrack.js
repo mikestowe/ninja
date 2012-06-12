@@ -11,10 +11,6 @@ var defaultEventManager = require("montage/core/event/event-manager").defaultEve
 
 var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
-    hasTemplate:{
-        value:true
-    },
-
     _trackID:{
         value:null
     },
@@ -31,11 +27,21 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
         	}
         }
     },
-    
-    _isFirstDraw: {
-    	value: true
+
+    _tween:{
+        value:[]
     },
-    
+
+    tween:{
+        serializable:true,
+        get:function () {
+            return this._tween;
+        },
+        set:function (newVal) {
+            this._tween = newVal;
+        }
+    },
+
     _isVisible:{
         value: true
     },
@@ -345,14 +351,50 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     _positionCollapser:{
         value:null
     },
+    positionCollapser:{
+        serializable:true,
+        get:function(){
+            return this._positionCollapser;
+        },
+        set:function(val){
+            this._positionCollapser = val;
+        }
+    },
     _mainCollapser:{
         value:null
+    },
+    mainCollapser:{
+        serializable:true,
+        get:function () {
+            return this._mainCollapser;
+        },
+        set:function (val) {
+            this._mainCollapser = val;
+        }
     },
     _transformCollapser:{
         value:null
     },
+    transformCollapser:{
+        serializable:true,
+        get:function () {
+            return this._transformCollapser;
+        },
+        set:function (val) {
+            this._transformCollapser = val;
+        }
+    },
     _styleCollapser:{
         value:null
+    },
+    styleCollapser:{
+        serializable:true,
+        get:function () {
+            return this._styleCollapser;
+        },
+        set:function (val) {
+            this._styleCollapser = val;
+        }
     },
 
 	// Drag and Drop properties
@@ -685,7 +727,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 this.nextKeyframe += 1;
             }
 
-            this.application.ninja.documentController.activeDocument.model.needsSave = true;
+            this.application.ninja.currentDocument.model.needsSave = true;
         }
     },
 
@@ -726,7 +768,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                     break;
                 }
             }
-            this.application.ninja.documentController.activeDocument.needsSave = true;
+            this.application.ninja.currentDocument.model.needsSave = true;
         }
     },
 
@@ -740,19 +782,18 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.animatedElement = this.application.ninja.timeline.arrLayers[selectedIndex].layerData.stageElement;
             if(this.animatedElement!==undefined){
                 this.animationName = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-name");
-
-                // check for multiple animation names
-                var animationNameList = this.animationName.split(",");
-                if(animationNameList.length > 1){
-                    this.animationNamesString = this.animationName;
-                    this.animationName = animationNameList[0];
-                    this.getAllAnimationRules(animationNameList);
-                } else {
-                    this.animationNamesString = this.animationName;
-                }
-
                 // build tweens for this tracks's keyframe rule
                 if(this.animationName){
+                    // check for multiple animation names
+                    var animationNameList = this.animationName.split(",");
+                    if (animationNameList.length > 1) {
+                        this.animationNamesString = this.animationName;
+                        this.animationName = animationNameList[0];
+                        this.getAllAnimationRules(animationNameList);
+                    } else {
+                        this.animationNamesString = this.animationName;
+                    }
+
                     trackTiming = this.application.ninja.stylesController.getElementStyle(this.animatedElement, "-webkit-animation-duration");
                     this.nextKeyframe = 0;
 
@@ -831,14 +872,12 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
 
     recreatePropertyTracks:{
         value:function(ruleSet){
-
-
             for(var i in ruleSet){
                 var styleProp = ruleSet[i][0].style[0];
-                console.log(styleProp);
-                this.application.ninja.timeline.layerRepetition.childComponents[0].addStyle(styleProp);
+                //console.log(styleProp);
+                //console.log(ruleSet[i]);
+                this.application.ninja.timeline.layerRepetition.childComponents[0].addStyle(styleProp, ruleSet[i]);
             }
-
         }
     },
 
@@ -883,9 +922,11 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 keyframeString += keyframePropertyString;
             }
             keyframeString += " }";
+            //console.log(keyframeString);
             // set the keyframe string as the new rule
             this.currentKeyframeRule = this.ninjaStylesContoller.addRule(keyframeString);
-            this.application.ninja.documentController.activeDocument.model.needsSave = true;
+            //console.log(this.currentKeyframeRule);
+            this.application.ninja.currentDocument.model.needsSave = true;
         }
     },
 
@@ -946,8 +987,6 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 return;
             }
             if (layerEvent.layerEventType === "newStyle") {
-            	// TODO: Add a real track of tweens.  Probably need a method for that.
-
                 var newStyleTrack = {};
                 newStyleTrack.propTrackData = {};
                 newStyleTrack.propTrackData.styleSelection = layerEvent.styleSelection;
@@ -955,6 +994,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 newStyleTrack.propTrackData.trackType = "style";
                 newStyleTrack.propTrackData.trackEditorProperty = "";
                 newStyleTrack.propTrackData.styleIndex = layerEvent.styleIndex;
+                newStyleTrack.propTrackData.existingRule = "";
 
             	this.arrStyleTracks.push(newStyleTrack);
 
@@ -966,12 +1006,13 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
                 restoredStyleTrack.propTrackData.trackType = "style";
                 restoredStyleTrack.propTrackData.trackEditorProperty = layerEvent.trackEditorProperty;
                 restoredStyleTrack.propTrackData.styleIndex = layerEvent.styleIndex;
+                restoredStyleTrack.propTrackData.existingRule = layerEvent.existingRule;
 
                 this.arrStyleTracks.push(restoredStyleTrack);
             }
             else if (layerEvent.layerEventType === "deleteStyle") {
-                // TODO: Delete the right track.  Index can be passed in event object, use that for splice().
-                this.arrStyleTracks.pop();
+            	// We are deleting a style, so delete the associated track
+            	this.arrStyleTracks.splice(layerEvent._event.selectedStyleIndex, 1);
             }
         }
     },

@@ -11,32 +11,22 @@
 
     <script type="text/montage-serialization">
         {
-            "stageView" : {
-                "prototype": "js/stage/stage-view.reel",
-                "properties": {
-                    "element": {"#": "stageView"}
-                }
-            },
-
-            "StageDeps1": {
+            "stageDeps": {
                 "prototype": "js/stage/stage-deps",
                 "properties": {
                     "stage": {"@": "owner"}
                 }
             },
 
-            "layout1": {
+            "layout": {
                 "prototype": "js/stage/layout",
                 "properties": {
                     "canvas": {"#": "layoutCanvas"},
                     "stage": {"@": "owner"}
                 },
                 "bindings": {
-                    "layoutView": {
-                        "boundObject": {"@": "owner" },
-                        "boundObjectPropertyPath": "appModel.layoutView",
-                        "oneway": true
-                    }
+                    "layoutView": {"<-": "@owner.appModel.layoutView"},
+                    "currentDocument": {"<-": "@owner.currentDocument"}
                 }
             },
 
@@ -57,11 +47,11 @@
                     "element":          {"#": "stageAndScenesContainer"},
                     "_iframeContainer":  {"#": "iframeContainer"},
                     "_layoutCanvas":  {"#": "layoutCanvas"},
+                    "_gridCanvas":  {"#": "gridCanvas"},
                     "_canvas":  {"#": "stageCanvas"},
                     "_drawingCanvas":  {"#": "drawingCanvas"},
-                    "stageDeps": {"@": "StageDeps1"},
-                    "layout":   {"@": "layout1"},
-					"stageView": {"@": "stageView"},
+                    "stageDeps": {"@": "stageDeps"},
+                    "layout":   {"@": "layout"},
                     "textTool": {"@": "textTool"},
                     "focusManager": {"@": "focusManager"}
                 },
@@ -80,9 +70,10 @@
 <body>
 
     <section data-montage-id="stageAndScenesContainer" class="stageAndScenesContainer">
-        <section data-montage-id="stageView"></section>
+        <section id="codeViewContainer" class="codeViewContainer"></section>
         <section data-montage-id="iframeContainer" id="iframeContainer"></section>
         <section data-montage-id="textToolObject"></section>
+        <canvas data-montage-id="gridCanvas" class="gridCanvas"></canvas>
         <canvas data-montage-id="layoutCanvas" class="layoutCanvas"></canvas>
         <canvas data-montage-id="stageCanvas" class="stageCanvas"></canvas>
         <canvas data-montage-id="drawingCanvas" class="drawingCanvas"></canvas>

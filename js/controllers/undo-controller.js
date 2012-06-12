@@ -113,17 +113,9 @@ exports.UndoController = Montage.create( Component, {
 
     deserializedFromTemplate: {
         value: function(){
-            this.eventManager.addEventListener( "openDocument", this, false);
             this.eventManager.addEventListener( "sendToUndo", this, false);
             this.eventManager.addEventListener( "executeUndo", this, false);
             this.eventManager.addEventListener( "executeRedo", this, false);
-        }
-    },
-
-    handleOpenDocument: {
-        value: function(undoQueue, redoQueue) {
-//            this._undoQueue = undoQueue;
-//            this._redoQueue = redoQueue;
         }
     },
 

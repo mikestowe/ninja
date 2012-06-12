@@ -49,6 +49,8 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
 
     startDraw: {
         value: function(event) {
+            this.drawData = null;
+
             if(!this.application.ninja.selectedElements.length)
             {
                 this._isSelecting = true;
@@ -399,7 +401,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
     //Routines to modify the selected objects
     modifyElements : {
         value : function(data, event) {
-            var delta, deltaH = [], deltaW = [], modObject = [];
+            var delta, modObject = [], left, top, width, height;
 
             if(this._handleMode !== null) {
                 // 0  7  6
@@ -411,92 +413,134 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
                         // Resize North-West
                         this.application.ninja.selectedElements.forEach(function(element) {
                             delta = ~~(data.pt1[0] - data.pt0[0]);
-                            var width = parseInt(element.elementModel.getProperty("w")) - delta + "px";
-                            var left = parseInt(element.elementModel.getProperty("x")) + delta + "px";
+                            width = parseInt(element.elementModel.getProperty("w")) - delta;
+                            if(width <= 0) {
+                                width = 1;
+                                left = parseInt(element.elementModel.getProperty("x")) + parseInt(element.elementModel.getProperty("w")) - 1;
+                            } else {
+                                left = parseInt(element.elementModel.getProperty("x")) + delta;
+                            }
+
                             delta = ~~(data.pt1[1] - data.pt0[1]);
-                            var height = parseInt(element.elementModel.getProperty("h")) - delta + "px";
-                            var top = parseInt(element.elementModel.getProperty("y")) + delta + "px";
-                            modObject.push({element:element, properties:{width: width, height: height, left: left, top: top}});
+                            height = parseInt(element.elementModel.getProperty("h")) - delta;
+                            if(height <= 0) {
+                                height = 1;
+                                top = parseInt(element.elementModel.getProperty("y")) + parseInt(element.elementModel.getProperty("h")) - 1;
+                            } else {
+                                top = parseInt(element.elementModel.getProperty("y")) + delta;
+                            }
+                            modObject.push({element:element, properties:{width: width + "px", height: height + "px", left: left + "px", top: top + "px"}});
                         });
-                        ElementsMediator.setProperties(modObject, "Changing", "SelectionTool" );
                         break;
                     case 1:
                         // Resize West
                         this.application.ninja.selectedElements.forEach(function(element) {
                             delta = ~~(data.pt1[0] - data.pt0[0]);
-                            var width = parseInt(element.elementModel.getProperty("w")) - delta + "px";
-                            var left = parseInt(element.elementModel.getProperty("x")) + delta + "px";
-                            modObject.push({element:element, properties:{left: left, width: width}});
+                            width = parseInt(element.elementModel.getProperty("w")) - delta;
+                            if(width <= 0) {
+                                width = 1;
+                                left = parseInt(element.elementModel.getProperty("x")) + parseInt(element.elementModel.getProperty("w")) - 1;
+                            } else {
+                                left = parseInt(element.elementModel.getProperty("x")) + delta;
+                            }
+                            modObject.push({element:element, properties:{left: left + "px", width: width + "px"}});
                         });
-                        ElementsMediator.setProperties(modObject, "Changing", "SelectionTool");
                         break;
                     case 2:
                         // Resize South-West
                         this.application.ninja.selectedElements.forEach(function(element) {
                             delta = ~~(data.pt1[0] - data.pt0[0]);
-                            var width = parseInt(element.elementModel.getProperty("w")) - delta + "px";
-                            var left = parseInt(element.elementModel.getProperty("x")) + delta + "px";
+                            width = parseInt(element.elementModel.getProperty("w")) - delta;
+                            if(width <= 0) {
+                                width = 1;
+                                left = parseInt(element.elementModel.getProperty("x")) + parseInt(element.elementModel.getProperty("w")) - 1;
+                            } else {
+                                left = parseInt(element.elementModel.getProperty("x")) + delta;
+                            }
                             delta = ~~(data.pt1[1] - data.pt0[1]);
-                            var height = parseInt(element.elementModel.getProperty("h")) + delta + "px";
-                            modObject.push({element:element, properties:{width: width, height: height, left: left}});
+                            height = parseInt(element.elementModel.getProperty("h")) + delta;
+                            if(height <= 0) {
+                                height = 1;
+                            }
+                            modObject.push({element:element, properties:{width: width + "px", height: height + "px", left: left + "px"}});
                         });
-                        ElementsMediator.setProperties(modObject, "Changing", "SelectionTool" );
                         break;
                     case 3:
                         // Resize South
                         this.application.ninja.selectedElements.forEach(function(element) {
                             delta = ~~(data.pt1[1] - data.pt0[1]);
-                            deltaH.push(parseInt(element.elementModel.getProperty("h")) + delta + "px");
-                            // modObject.push({element:element, properties:{width: width, height: height}});
+                            height = parseInt(element.elementModel.getProperty("h")) + delta;
+                            if(height <= 0) {
+                                height = 1;
+                            }
+                            modObject.push({element:element, properties:{height: height + "px"}});
                         });
-                        ElementsMediator.setProperty(this.application.ninja.selectedElements, "height", deltaH, "Changing", "SelectionTool" );
                         break;
                     case 4:
                         // Resize South-East
                         this.application.ninja.selectedElements.forEach(function(element) {
                             delta = ~~(data.pt1[0] - data.pt0[0]);
-                            var width = parseInt(element.elementModel.getProperty("w")) + delta + "px";
+                            width = parseInt(element.elementModel.getProperty("w")) + delta;
+                            if(width <= 0) {
+                                width = 1;
+                            }
                             delta = ~~(data.pt1[1] - data.pt0[1]);
-                            var height = parseInt(element.elementModel.getProperty("h")) + delta + "px";
-                            modObject.push({element:element, properties:{width: width, height: height}});
+                            height = parseInt(element.elementModel.getProperty("h")) + delta;
+                            if(height <= 0) {
+                                height = 1;
+                            }
+                            modObject.push({element:element, properties:{width: width + "px", height: height + "px"}});
                         });
-                        ElementsMediator.setProperties(modObject, "Changing", "SelectionTool" );
                         break;
                     case 5:
                         // Resize East
                         this.application.ninja.selectedElements.forEach(function(element) {
                             delta = ~~(data.pt1[0] - data.pt0[0]);
-                            deltaW.push(parseInt(element.elementModel.getProperty("w")) + delta + "px");
-                            // modObject.push({element:element, properties:{width: width, height: height}});
+                            width = parseInt(element.elementModel.getProperty("w")) + delta;
+                            if(width <= 0) {
+                                width = 1;
+                            }
+                            modObject.push({element:element, properties:{width: width + "px"}});
                         });
-                        ElementsMediator.setProperty(this.application.ninja.selectedElements, "width", deltaW, "Changing", "SelectionTool" );
                         break;
                     case 6:
                         // Resize North-East
                         this.application.ninja.selectedElements.forEach(function(element) {
                             delta = ~~(data.pt1[0] - data.pt0[0]);
-                            var width = parseInt(element.elementModel.getProperty("w")) + delta + "px";
+                            width = parseInt(element.elementModel.getProperty("w")) + delta;
+                            if(width <= 0) {
+                                width = 1;
+                            }
                             delta = ~~(data.pt1[1] - data.pt0[1]);
-                            var height = parseInt(element.elementModel.getProperty("h")) - delta + "px";
-                            var top = parseInt(element.elementModel.getProperty("y")) + delta + "px";
-                            modObject.push({element:element, properties:{width: width, height: height, top: top}});
+                            height = parseInt(element.elementModel.getProperty("h")) - delta;
+                            if(height <= 0) {
+                                height = 1;
+                                top = parseInt(element.elementModel.getProperty("y")) + parseInt(element.elementModel.getProperty("h")) - 1;
+                            } else {
+                                top = parseInt(element.elementModel.getProperty("y")) + delta;
+                            }
+                            modObject.push({element:element, properties:{width: width + "px", height: height + "px", top: top + "px"}});
                         });
-                        ElementsMediator.setProperties(modObject, "Changing", "SelectionTool" );
                         break;
                     case 7:
                         // Resize North
                         this.application.ninja.selectedElements.forEach(function(element) {
                             delta = ~~(data.pt1[1] - data.pt0[1]);
-                            var height = parseInt(element.elementModel.getProperty("h")) - delta + "px";
-                            var top = parseInt(element.elementModel.getProperty("y")) + delta + "px";
-                            modObject.push({element:element, properties:{height: height, top: top}});
+                            height = parseInt(element.elementModel.getProperty("h")) - delta;
+                            if(height <= 0) {
+                                height = 1;
+                                top = parseInt(element.elementModel.getProperty("y")) + parseInt(element.elementModel.getProperty("h")) - 1;
+                            } else {
+                                top = parseInt(element.elementModel.getProperty("y")) + delta;
+                            }
+                            modObject.push({element:element, properties:{height: height + "px", top: top + "px"}});
                         });
-                        ElementsMediator.setProperties(modObject, "Changing", "SelectionTool" );
                         break;
                     default:
                         break;
                 }
 
+                ElementsMediator.setProperties(modObject, "Changing", "SelectionTool" );
                 this._delta = delta;
             }
             else

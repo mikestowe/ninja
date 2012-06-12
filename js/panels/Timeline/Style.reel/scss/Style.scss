@@ -77,7 +77,11 @@ div.style-row .container-propvals {
 	overflow: hidden;
 }
 
-.content-style .style-row.style-selected {
-	//background-color: red !important;
+.content-style .style-row.selected {
+  background-color: $color-panel-bg;
+  color: $color-panel-text;
 }
-
+.content-style .style-row.style-selected {
+  background-color: $color-panel-hilite-bg;
+  color: $color-panel-hilite-text;
+}

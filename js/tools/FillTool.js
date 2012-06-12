@@ -70,25 +70,32 @@ exports.FillTool = Montage.create(ModifierToolBase, {
     // Called by modifier tool base's HandleLeftButtonDown after updating selection (if needed)
     startDraw: {
         value: function(event) {
+            this.drawData = null;
             this.isDrawing = true;
 
             if(this._canColor && this.application.ninja.selectedElements.length) {
+                var fillInfo = {},
+                    color;
+                if(this.options.useFillColor.checked) {
+                    fillInfo.colorInfo = {};
+                    color = this.options.fill;
+                    if(color && color.color)
+                    {
+                        fillInfo.colorInfo.mode = color.colorMode;
+                        fillInfo.colorInfo.color = color.color;
+                    } else {
+                        fillInfo.colorInfo.mode = "nocolor";
+                        fillInfo.colorInfo.color = null;
+                    }
+                }
 
-                var color = this.options.fill,
-                    colorInfo;
-                if(color && color.color)
-                {
-                    colorInfo = { mode:color.colorMode,
-                                       color:color.color
-                                    };
+                if(this.options.useWebGL.checked) {
+                    fillInfo.webGLInfo = {};
+                    fillInfo.webGLInfo.material = this.options.fillMaterial.value;
                 }
-                else
-                {
-                    colorInfo = { mode:"nocolor",
-                                       color:color.color
-                                    };
+                if(fillInfo.colorInfo || fillInfo.webGLInfo) {
+                    ElementsMediator.setFill(this.application.ninja.selectedElements, fillInfo, "Change", "fillTool");
                 }
-                ElementsMediator.setColor(this.application.ninja.selectedElements, colorInfo, true, "Change", "fillTool");
             }
         }
     }

@@ -13,6 +13,35 @@ var ElementsMediator = require("js/mediators/element-mediator").ElementMediator;
 
 exports.Properties = Montage.create(Component, {
 
+    _currentDocument: {
+        value : null
+    },
+
+    currentDocument : {
+        get : function() {
+            return this._currentDocument;
+        },
+        set : function(value) {
+            if (value === this._currentDocument) {
+                return;
+            }
+
+            this._currentDocument = value;
+
+//            if(!value) {
+                this.clear();
+//            }
+
+            /*
+            else if(this._currentDocument.currentView === "design") {
+                // Display the default document root PI
+                //this.displayElementProperties(this._currentDocument.model.documentRoot);
+//                this.displaySelection(this._currentDocument.model.selection);
+            }
+            */
+        }
+    },
+
     elementName: {
         value: null
     },
@@ -46,9 +75,8 @@ exports.Properties = Montage.create(Component, {
 
     prepareForDraw: {
         value : function() {
-            this.eventManager.addEventListener("openDocument", this, false);
+            this.eventManager.addEventListener("elementChange", this, false);
             this.eventManager.addEventListener("selectionChange", this, false);
-            this.eventManager.addEventListener("closeDocument", this, false);
 
             // This will be a toggle option
             if(this.application.ninja.appData.PILiveUpdate) {
@@ -62,24 +90,6 @@ exports.Properties = Montage.create(Component, {
             this.elementClass.element.addEventListener("blur", this, false);
             this.elementClass.element.addEventListener("focus", this, false);
             this.elementClass.element.addEventListener("keyup", this, false);
-        }
-    },
-
-    handleOpenDocument: {
-        value: function() {
-            this.eventManager.addEventListener( "elementChange", this, false);
-
-            // Save a reference of the pi inside the document view to be able to clear
-            this.application.ninja.currentDocument.model.views.design.propertiesPanel = this;
-
-            // Display the default document root PI
-            this.displayElementProperties(this.application.ninja.currentDocument.model.documentRoot);
-        }
-    },
-
-    handleCloseDocument: {
-        value: function(){
-            this.clear();
         }
     },
 
@@ -174,6 +184,20 @@ exports.Properties = Montage.create(Component, {
         }
     },
 
+    displaySelection: {
+        value: function(selection) {
+            if(selection.length === 0) {
+                this.displayElementProperties(this._currentDocument.model.documentRoot);
+            } else {
+                if(selection.length === 1) {
+                    this.displayElementProperties(this.application.ninja.selectedElements[0]);
+                } else {
+                    this.displayGroupProperties(this.application.ninja.selectedElements);
+                }
+            }
+        }
+    },
+
     clear: {
         value: function() {
             this.elementName.value = "";
@@ -220,8 +244,8 @@ exports.Properties = Montage.create(Component, {
                     controls = this.customSections[n].content.controls;
                     if(controls["colorSelect"]) {
                         controls["colorSelect"].destroy();
-                    } else if(controls["background"]) {
-                        controls["background"].destroy();
+                    } else if(controls["background-color"]) {
+                        controls["background-color"].destroy();
                     }
                 }
 

@@ -9,13 +9,64 @@ var Component = require("montage/ui/component").Component;
 
 exports.DocumentBar = Montage.create(Component, {
 
-    designView: { value: null, enumerable: false},
-    codeView: { value: null, enumerable: false},
-    zoomControl: { value: null, enumerable: false },
-    _type: { enumerable: false, value: null },
-    disabled: { value: true },
+    _currentDocument: {
+        enumerable: false,
+        value: null
+    },
 
+    currentDocument: {
+        enumerable: false,
+        get: function() {
+            return this._currentDocument;
+        },
+        set: function(value) {
+            if (value === this._currentDocument) {
+                return;
+            }
 
+            this._currentDocument = value;
+
+            this.disabled = !this._currentDocument;
+
+            if(this._currentDocument && this._currentDocument.currentView === "design") {
+                this.visible = true;
+            } else if(this._currentDocument && this._currentDocument.currentView === "code") {
+                this.visible = false;
+            }
+        }
+    },
+
+    _visible: {
+        value: false
+    },
+
+    visible: {
+        get: function() {
+            return this._visible;
+        },
+        set: function(value) {
+            if(this._visible !== value) {
+                this._visible = value;
+                this.needsDraw = true;
+            }
+        }
+    },
+
+    designView: {
+        value: null
+    },
+
+    codeView: {
+        value: null
+    },
+
+    zoomControl: {
+        value: null
+    },
+
+    _type: {
+        value: null
+    },
 
     type: {
         enumerable: false,
@@ -31,7 +82,9 @@ exports.DocumentBar = Montage.create(Component, {
         }
     },
 
-    _currentView: { value: null, enumerable: false },
+    _currentView: {
+        value: null
+    },
 
     currentView: {
         get: function() { return this._currentView},
@@ -45,7 +98,9 @@ exports.DocumentBar = Montage.create(Component, {
         }
     },
 
-    _zoomFactor: { value: 100, enumerable: false },
+    _zoomFactor: {
+        value: 100
+    },
 
 	zoomFactor: {
 		get: function()	{ return this._zoomFactor; },
@@ -65,6 +120,7 @@ exports.DocumentBar = Montage.create(Component, {
 
     draw: {
         value: function() {
+            /*
             if(this.type === "htm" || this.type === "html") {
                 this.designView.classList.add("active");
                 this.codeView.classList.add("active");
@@ -80,19 +136,39 @@ exports.DocumentBar = Montage.create(Component, {
             } else if(this.type) {
                 this.designView.classList.remove("active");
             }
+            */
+            if(this.visible) {
+                this.element.style.display = "block";
+            } else {
+                this.element.style.display = "none";
+            }
 
         }
     },
 
     prepareForDraw: {
         value: function() {
-            this.eventManager.addEventListener( "openDocument", this, false);
-            this.eventManager.addEventListener( "closeDocument", this, false);
             this.designView.addEventListener("click", this, false);
             this.codeView.addEventListener("click", this, false);
 
         }
     },
+
+    _disabled: {
+        value: true
+    },
+
+    disabled: {
+        get: function() {
+            return this._disabled;
+        },
+        set: function(value) {
+            if(value !== this._disabled) {
+                this._disabled = value;
+            }
+        }
+    },
+
 
     handleClick: {
         value: function(event) {
@@ -100,26 +176,6 @@ exports.DocumentBar = Montage.create(Component, {
 
             this.currentView = event._event.target.id;
             this.application.ninja.documentController.stage.stageView.switchDesignDocViews(event._event.target.id);//switch between design view
-        }
-    },
-
-    handleOpenDocument: {
-        value: function() {
-            this.disabled = false;
-        }
-    },
-
-    handleCloseDocument: {
-        value: function() {
-            if(!this.application.ninja.documentController.activeDocument) {
-                this.disabled = true;
-            }
-        }
-    },
-
-    handleOnDocumentChanged:{
-        value:function(event){
-
         }
     }
 });

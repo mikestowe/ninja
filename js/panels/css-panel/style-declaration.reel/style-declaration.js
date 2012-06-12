@@ -216,7 +216,15 @@ exports.StyleDeclaration = Montage.create(Component, {
     },
 
     addNewStyle : {
-        value: function() {
+        value: function(preventAnimation) {
+            if(preventAnimation) {
+                this.element.classList.add('css-animation-prevent');
+
+                setTimeout(function() {
+                    this.element.classList.remove('css-animation-prevent');
+                }.bind(this), 1000);
+            }
+
             this.addStyle('property', 'value', {
                 isEmpty : true
             });

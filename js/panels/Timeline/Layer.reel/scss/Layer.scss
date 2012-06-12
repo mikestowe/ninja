@@ -274,10 +274,10 @@
 .content-style .item-template {
 	display: none;
 }
+.style-row {
+	height: 20px;
+}
 .content-style .layout-row.selected .layout-cell {
 	background-color: $color-panel-hilite-bg;
 	color: $color-panel-hilite-text;
-}
-.style-row {
-	height: 20px;
 }
