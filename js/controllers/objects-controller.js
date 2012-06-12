@@ -7,6 +7,10 @@
 var Montage = require("montage/core/core").Montage,
     Component        = require("montage/ui/component").Component;
 
+var CATEGORIES  = {
+
+};
+
 var objectsController = exports.ObjectsController = Montage.create(Component, {
 
     _currentDocument : {
@@ -169,6 +173,29 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
             }
 
             return prototypes;
+        }
+    },
+
+    /* ----- Category properties ----- */
+
+    getObjectCategory : {
+        value: function(object) {
+            if(this._hasPrototype(object, 'Component')) {
+                return 'Component';
+            }
+
+            return null;
+        }
+    },
+
+    _hasPrototype : {
+        value: function(object, prototypeName) {
+            var prototypes = this.getPrototypes(object).map(function(proto) {
+                var metadata = proto._montage_metadata;
+                return (metadata) ? metadata.objectName : "Object";
+            });
+
+            return prototypes.indexOf(prototypeName) !== -1;
         }
     },
 
