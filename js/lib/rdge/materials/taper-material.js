@@ -31,6 +31,8 @@ var TaperMaterial = function TaperMaterial()
     this.getShaderName = function () { return this._shaderName; };
 
     this.isAnimated = function () { return true; };
+	this.getShaderDef	= function()	{  return taperShaderDef;	};
+
     this.hasVertexDeformation = function () { return this._hasVertexDeformation; };
     this._hasVertexDeformation = true;
     this._vertexDeformationTolerance = 0.02; // should be a property
@@ -38,8 +40,6 @@ var TaperMaterial = function TaperMaterial()
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
-    // duplcate method requirde
-
     this.init = function (world) {
         this.setWorld(world);
 
@@ -50,10 +50,15 @@ var TaperMaterial = function TaperMaterial()
 
         // set up the material node
         this._materialNode = RDGE.createMaterialNode("taperMaterial" + "_" + world.generateUniqueNodeID());
-        this._materialNode.setShader(this._shader);
+ 
+        this._time = 0;
+        if (this._shader && this._shader['default']) {
+            this._shader['default'].u_time.set([this._time]);
+        }
+       this._materialNode.setShader(this._shader);
 
         // initialize the taper properties
-        this.updateShaderValues();
+        this.setShaderValues();
     };
 
 
@@ -75,54 +80,6 @@ var TaperMaterial = function TaperMaterial()
     this._propValues[this._propNames[6]] = 0.9;
     this._propValues[this._propNames[7]] = 1.0;
 
-    this.setProperty = function (prop, value)
-	{
-        // make sure we have legitimate input
-        if (this.validateProperty(prop, value))
-               this._propValues[prop] = value;
-
-        this.updateShaderValues();
-    };
-
-    this.exportJSON = function () {
-        var jObj =
-		{
-		    'material': this.getShaderName(),
-		    'name': this.getName()
-		};
-
-		var n = this._propNames.length;
-		for (var i=0;  i<n;  i++)
-		{
-			var prop = this._propNames[i],
-				val  = this._propValues[prop];
-
-			jObj[prop] = val;
-		}
-
-        return jObj;
-    };
-
-    this.importJSON = function (jObj) {
-        if (this.getShaderName() != jObj.material) throw new Error("ill-formed material");
-        this.setName(jObj.name);
-
-        try
-		{
-			for ( var prop in jObj)
-			{
-				if ((prop != 'material') && (prop != 'name'))
-				{
-					var value = jObj[prop];
-					this.setProperty( prop, value );
-				}
-			}
-        }
-        catch (e) {
-            throw new Error("could not import material: " + jObj);
-        }
-    };
-
     this.update = function (time) {
         var speed = this._propValues["u_speed"];
         this._deltaTime += 0.01 * speed;
@@ -141,19 +98,6 @@ var TaperMaterial = function TaperMaterial()
             this._shader.colorMe["u_limit1"].set([t1]);
             this._shader.colorMe["u_limit2"].set([t2]);
             this._shader.colorMe["u_limit3"].set([t3]);
-        }
-    };
-
-    this.updateShaderValues = function () {
-        if (this._shader && this._shader.colorMe) {
-            var nProps = this._propNames.length;
-            for (var i = 0; i < nProps; i++) {
-                var propName = this._propNames[i];
-                var propValue = this._propValues[propName];
-
-                if (this._shader.colorMe[propName])
-					this._shader.colorMe[propName].set([propValue]);
-            }
         }
     };
 };

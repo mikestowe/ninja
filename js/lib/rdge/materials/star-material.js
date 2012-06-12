@@ -14,37 +14,32 @@ var StarMaterial = function StarMaterial() {
     this._name = "StarMaterial";
     this._shaderName = "star";
 
-    this._texMap = 'assets/images/rocky-normal.jpg';
+    this._defaultTexMap = 'assets/images/rocky-normal.jpg';
 
     this._time = 0.0;
     this._dTime = 0.01;
 
-    ///////////////////////////////////////////////////////////////////////
-    // Properties
-    ///////////////////////////////////////////////////////////////////////
-    // all defined in parent PulseMaterial.js
-    // load the local default value
-    this._propValues[this._propNames[0]] = this._texMap.slice(0);
+	///////////////////////////////////////////////////////////////////////
+	// Property Accessors
+	///////////////////////////////////////////////////////////////////////
+	this.isAnimated			= function()			{  return true;		};
+	this.getShaderDef		= function()			{  return starMaterialDef;	}
+
+	///////////////////////////////////////////////////////////////////////
+	// Material Property Accessors
+	///////////////////////////////////////////////////////////////////////
+	var u_tex0_index	= 0,  u_speed_index = 1;
+	this._propNames			= ["u_tex0",		"u_speed" ];
+	this._propLabels		= ["Texture map",	"Speed" ];
+	this._propTypes			= ["file",			"float" ];
+	this._propValues		= [];
+    this._propValues[this._propNames[u_tex0_index]] = this._defaultTexMap.slice(0);
+    this._propValues[this._propNames[u_speed_index]] = 1.0;
+	///////////////////////////////////////////////////////////////////////
 
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
-    // duplcate method requirde
-    this.dup = function () {
-        // get the current values;
-        var propNames = [], propValues = [], propTypes = [], propLabels = [];
-        this.getAllProperties(propNames, propValues, propTypes, propLabels);
-        
-        // allocate a new material
-        var newMat = new StarMaterial();
-
-		// copy over the current values;
-        var n = propNames.length;
-        for (var i = 0; i < n; i++)
-            newMat.setProperty(propNames[i], propValues[i]);
-
-        return newMat;
-    };
 
     this.init = function (world) {
         // save the world
@@ -69,7 +64,7 @@ var StarMaterial = function StarMaterial() {
         this._glTex = new Texture( world, texMapName );
 
         // set the shader values in the shader
-        this.updateTexture();
+        this.setShaderValues();
         this.setResolution([world.getViewportWidth(), world.getViewportHeight()]);
         this.update(0);
     };
@@ -104,6 +99,7 @@ var starMaterialDef =
 				{
 				    'u_tex0': { 'type': 'tex2d' },
 				    'u_time': { 'type': 'float' },
+				    'u_speed': { 'type': 'float' },
 				    'u_resolution': { 'type': 'vec2' }
 				},
 

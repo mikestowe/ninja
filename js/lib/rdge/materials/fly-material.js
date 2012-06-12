@@ -36,7 +36,7 @@ var FlyMaterial = function FlyMaterial() {
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
 	this.isAnimated			= function()			{  return true;		};
-	this.getShaderDef		= function()			{  return flyMaterialDef;	}
+	this.getShaderDef		= function()			{  return flyMaterialDef;	};
 
     ///////////////////////////////////////////////////////////////////////
     // Methods

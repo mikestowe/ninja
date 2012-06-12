@@ -3,15 +3,14 @@ precision highp float;
 
 uniform vec2 u_resolution;
 uniform float u_time;
-uniform vec4	color;
+uniform float u_speed;
 uniform sampler2D u_tex0;
 
 vec3 deform( in vec2 p )
 {
     vec2 uv;
 
-	//float time = color.x;
-	float time = u_time;
+	float time = u_time * u_speed;
     vec2 q = vec2( sin(1.1*time+p.x),sin(1.2*time+p.y) );
 
     float a = atan(q.y,q.x);

@@ -15,37 +15,33 @@ var ZInvertMaterial = function ZInvertMaterial() {
     this._name = "ZInvertMaterial";
     this._shaderName = "zinvert";
 
-    this._texMap = 'assets/images/rocky-normal.jpg';
+    this._defaultTexMap = 'assets/images/rocky-normal.jpg';
 
     this._time = 0.0;
     this._dTime = 0.01;
 
-    ///////////////////////////////////////////////////////////////////////
-    // Properties
-    ///////////////////////////////////////////////////////////////////////
-    // all defined in parent PulseMaterial.js
-    // load the local default value
-    this._propValues[this._propNames[0]] = this._texMap.slice(0);
+	this.isAnimated			= function()			{  return true;				};
+	this.getShaderDef		= function()			{  return zInvertMaterialDef;	};
+
+	///////////////////////////////////////////////////////////////////////
+	// Properties
+	///////////////////////////////////////////////////////////////////////
+	// all defined in parent PulseMaterial.js
+	// load the local default value
+	this._propNames			= ["u_tex0",		"u_speed"];
+	this._propLabels		= ["Texture map",	"Speed"];
+	this._propTypes			= ["file",			"float"];
+
+	var u_tex_index			= 0,
+		u_speed_index		= 1;
+
+	this._propValues		= [];
+	this._propValues[ this._propNames[u_tex_index		] ]	= this._defaultTexMap.slice(0);
+	this._propValues[ this._propNames[u_speed_index		] ]	= 1.0;
 
     ///////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////
-    // duplicate method required
-    this.dup = function (world) {
-        // get the current values;
-        var propNames = [], propValues = [], propTypes = [], propLabels = [];
-        this.getAllProperties(propNames, propValues, propTypes, propLabels);
-        
-        // allocate a new material
-        var newMat = new ZInvertMaterial();
-
-		// copy over the current values;
-        var n = propNames.length;
-        for (var i = 0; i < n; i++)
-            newMat.setProperty(propNames[i], propValues[i]);
-
-        return newMat;
-    };
 
     this.init = function (world) {
         // save the world
@@ -65,12 +61,8 @@ var ZInvertMaterial = function ZInvertMaterial() {
             this._shader['default'].u_time.set([this._time]);
         }
 
-        // set up the texture
-        var texMapName = this._propValues[this._propNames[0]];
-        this._glTex = new Texture( world, texMapName );
-
         // set the shader values in the shader
-        this.updateTexture();
+		this.setShaderValues();
         this.setResolution([world.getViewportWidth(), world.getViewportHeight()]);
         this.update(0);
     };
@@ -105,6 +97,7 @@ var zInvertMaterialDef =
 				{
 				    'u_tex0': { 'type': 'tex2d' },
 				    'u_time': { 'type': 'float' },
+				    'u_speed': { 'type': 'float' },
 				    'u_resolution': { 'type': 'vec2' }
 				},
 
