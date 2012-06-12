@@ -100,6 +100,13 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
 
     handlePaste:{
         value:function(clipboardEvent){
+            var clipboardData = clipboardEvent.clipboardData,
+                ninjaData = clipboardData.getData("ninja"),
+                htmlData = clipboardData.getData("text/html"),
+                textData = clipboardData.getData("text/plain"),
+                i=0,
+                imageMime, imageData, imageElement;
+
             if(!this.application.ninja.currentDocument
                 || (this.application.ninja.currentDocument && this.application.ninja.currentDocument.currentView === "code")){
 
@@ -108,21 +115,32 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
 
             //TODO: return if stage is not focussed
 
-            //identify all types of clipboard data
-
-            var clipboardData = clipboardEvent.clipboardData,
-                ninjaData = clipboardData.getData("ninja"),
-                htmlData = clipboardData.getData("text/html"),
-                textData = clipboardData.getData("text/plain"),
-                imageData = clipboardData.getData("image/png"),//TODO: other img types, tiff, jpeg.....
-                svgData = clipboardData.getData("image/svg");
-
             this.pasteCounter++;
 
             if(ninjaData){
                 if(this.copiedObjects.copy){this.pasteFromCopy();}
                 else if(this.copiedObjects.cut){this.pasteFromCut();}
-            }else{
+            }
+            else{
+
+                //handle image blobs
+                if(clipboardData.items &&  (clipboardData.items.length > 0)){
+                    for(i=0; i < clipboardData.items.length; i++ ){
+                        if((clipboardData.items[i].kind === "file") && (clipboardData.items[i].type.indexOf("image") === 0)){//example type -> "image/png"
+                            imageMime = clipboardData.items[i].type;
+                            imageData = clipboardData.items[i].getAsFile();
+                            try{
+                                imageElement = this.generateImageElement(imageData);
+                            }catch(e){
+                                console.log(""+e.stack);
+                            }
+                            this.application.ninja.selectionController.selectElements(imageElement);
+                            this.application.ninja.currentDocument.model.needsSave = true;
+
+                        }
+                    }
+                }
+
                 try{
                     this.pasteFromExternalSource(htmlData, textData);
                 }catch(e){
@@ -432,7 +450,8 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
             styles.top = "" + (this.application.ninja.elementMediator.getProperty(sourceCanvas, "top", parseInt) + (25 * this.pasteCounter))+"px";
             styles.left = "" + (this.application.ninja.elementMediator.getProperty(sourceCanvas, "left", parseInt) + (25 * this.pasteCounter)) + "px";
 
-            this.application.ninja.elementMediator.addElements(canvas, styles, false);
+            //this.application.ninja.elementMediator.addElements(canvas, styles, false);//todo: clean up
+            this.application.ninja.elementMediator.addElements(canvas, null, false);//no displacement
 
             var world, worldData = sourceCanvas.elementModel.shapeModel.GLWorld.exportJSON();
             if(worldData)
@@ -469,7 +488,8 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
             newCanvasStyles.top = styles.top;
             newCanvasStyles.left = styles.left;
 
-            this.application.ninja.elementMediator.addElements(canvas, styles, false);
+            //this.application.ninja.elementMediator.addElements(canvas, styles, false);//todo: clean up
+            this.application.ninja.elementMediator.addElements(canvas, null, false);//no displacement
 
             var world, worldData = worldJson;
 
@@ -542,25 +562,21 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
             newY = styles ? ("" + (styles.top + (25 * this.pasteCounter)) + "px") : "100px";
 
 
+            this.application.ninja.elementMediator.addElements(element, null);
 
+
+            //todo: cleanup
 //            //add pasted object with new position
 //            translation = {"left": newX, "top": newY};
 //            this.application.ninja.elementMediator.addElements(element, translation);
 //
 
+//            //OR - first paste on top and then move the pasted object to make it visible to user
+//            this.application.ninja.elementMediator.addElements(element, null, false);
+//            modObject.push({element:element, properties:{left: newX, top:newY}, previousProperties: {left: x, top:y}});
+//            this.application.ninja.elementMediator.setProperties(modObject, "Change", "clipboard-controller" );
+//            NJevent("elementAdded", element);
 
-            //first paste on top and then move the pasted object to make it visible to user
-            this.application.ninja.elementMediator.addElements(element, null, false);
-            modObject.push({element:element, properties:{left: newX, top:newY}, previousProperties: {left: x, top:y}});
-            this.application.ninja.elementMediator.setProperties(modObject, "Change", "clipboard-controller" );
-            NJevent("elementAdded", element);
-
-        }
-    },
-
-    pasteInPlace:{
-        value: function(element){
-            this.application.ninja.elementMediator.addElements(element, null);//does not work now
         }
     },
 
@@ -574,6 +590,90 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
                 styles.height = (el.getAttribute("height") ? el.getAttribute("height") : null);
             }
             return styles;
+        }
+    },
+
+    //todo: this will be moved to a seperate api
+    generateImageElement:{
+        value: function(imageBlob){
+            var reader = new FileReader(), file = reader.readAsArrayBuffer(imageBlob), url, uri, dir, save, counter, tempName, element, rules, fileName, fileNameOverride,
+                rootUrl = this.application.ninja.coreIoApi.rootUrl+escape((this.application.ninja.documentController.documentHackReference.root.split(this.application.ninja.coreIoApi.cloudData.root)[1])),
+                rootUri = this.application.ninja.documentController.documentHackReference.root;
+
+            reader.fileName = imageBlob.name, reader.fileType = imageBlob.type, reader.rootUrl = rootUrl, reader.rootUri = rootUri;
+            reader.onload = function (e) {
+
+                if (this.application.ninja.coreIoApi.directoryExists({uri: e.currentTarget.rootUri+'images'}).status === 204) {
+                    uri = e.currentTarget.rootUri+'images';
+                    url = e.currentTarget.rootUrl+'images';
+                } else if (this.application.ninja.coreIoApi.directoryExists({uri: e.currentTarget.rootUri+'img'}).status === 204) {
+                    uri = e.currentTarget.rootUri+'img';
+                    url = e.currentTarget.rootUrl+'img';
+                } else {
+                    dir = this.application.ninja.coreIoApi.createDirectory({uri: e.currentTarget.rootUri+'images'});
+                    if (dir.success && dir.status === 201) {
+                        uri = e.currentTarget.rootUri+'images';
+                        url = e.currentTarget.rootUrl+'images';
+                    } else {
+                        //TODO: HANDLE ERROR ON CREATING FOLDER
+                    }
+                }
+                //
+
+                ////
+
+                //fileName is undefined while pasting image from clipboard
+
+                fileNameOverride = e.currentTarget.fileName ? e.currentTarget.fileName : ("image." + e.currentTarget.fileType.substring((e.currentTarget.fileType.indexOf("/")+1), e.currentTarget.fileType.length));//like image.png
+
+                ////
+
+                if (this.application.ninja.coreIoApi.fileExists({uri: uri+'/'+fileNameOverride}).status === 404) {
+                    save = this.application.ninja.coreIoApi.createFile({uri: uri+'/'+fileNameOverride, contents: e.currentTarget.result, contentType: e.currentTarget.fileType});
+                    fileName = fileNameOverride;
+                } else {
+                    counter = 1;
+                    tempName = fileNameOverride.split('.'+(fileNameOverride.split('.')[fileNameOverride.split('.').length-1]))[0];
+                    tempName += '_'+counter+'.'+(fileNameOverride.split('.')[fileNameOverride.split('.').length-1]);
+                    while (this.application.ninja.coreIoApi.fileExists({uri: uri+'/'+tempName}).status !== 404) {
+                        counter++;
+                        tempName = fileNameOverride.split('.'+(fileNameOverride.split('.')[fileNameOverride.split('.').length-1]))[0];
+                        tempName += '_'+counter+'.'+(fileNameOverride.split('.')[fileNameOverride.split('.').length-1]);
+                    }
+                    save = this.application.ninja.coreIoApi.createFile({uri: uri+'/'+tempName, contents: e.currentTarget.result, contentType: e.currentTarget.fileType});
+                    fileName = tempName;
+                }
+                if (save && save.success && save.status === 201) {
+                    var self = this;
+                    //
+                    if (e.currentTarget.fileType.indexOf('svg') !== -1) {
+                        element = NJUtils.make('embed', null, this.application.ninja.currentDocument);//TODO: Verify this is proper
+                        element.type = 'image/svg+xml';
+                        element.src = url+'/'+fileName;
+                    } else {
+                        element = NJUtils.make('image', null, this.application.ninja.currentDocument);
+                        element.src = url+'/'+fileName;
+                    }
+                    //Adding element once it is loaded
+                    element.onload = function () {
+                        element.onload = null;
+                        self.application.ninja.elementMediator.addElements(element, rules, true);
+                    };
+                    //Setting rules of element
+                    rules = {
+                                'position': 'absolute',
+                                'top' : '100px',
+                                'left' : '100px'
+                    };
+                    //
+                    self.application.ninja.elementMediator.addElements(element, rules, false);
+                } else {
+                    //TODO: HANDLE ERROR ON SAVING FILE TO BE ADDED AS ELEMENT
+                }
+            }.bind(this);
+
+            return element;
+
         }
     }
 
