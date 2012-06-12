@@ -155,7 +155,11 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._arrPositionTracks = newVal;
-            this.trackData.arrPositionTracks = newVal;
+    		if (typeof(this.trackData) === "undefined") {
+    			//this.createTrackData();
+    		}
+    		this.trackData.arrPositionTracks = newVal;
+            
     	}
     },
     _positionTracksRepetition: {
@@ -348,6 +352,7 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
     },
 
     trackData:{
+    	serializable: true,
         get:function(){
             return this._trackData;
         },
@@ -385,6 +390,27 @@ var TimelineTrack = exports.TimelineTrack = Montage.create(Component, {
             this.isVisible = this.trackData.isVisible;
             this.needsDraw = true;
         }
+    },
+    createTrackData: {
+    	value: function() {
+    		tempData = {};
+            tempData.bypassAnimation = this.bypassAnimation;
+            tempData.trackID = this.layerID;
+            tempData.tweens = this.tweens;
+            tempData.animatedElement = this.animatedElement; 
+            tempData.arrStyleTracks = this.arrStyleTracks;
+            tempData.isTrackAnimated = this.isTrackAnimated;
+            tempData.trackDuration = this.trackDuration;
+            tempData.animationName = this.animationName;
+            tempData.currentKeyframeRule = this.currentKeyframeRule;
+            tempData.isMainCollapsed = this.isMainCollapsed;
+            tempData.isPositionCollapsed = this.isPositionCollapsed;
+            tempData.isTransformCollapsed = this.isTransformCollapsed;
+            tempData.isStyleCollapsed = this.isStyleCollapsed;
+            tempData.trackPosition = this.trackPosition;
+            tempData.isVisible = this.isVisible;
+            this.trackData = tempData;
+    	}
     },
     
     // Data binding observation point and trigger method

@@ -456,6 +456,7 @@ var Layer = exports.Layer = Montage.create(Component, {
     },
 
     layerData:{
+    	serializable: true,
         get:function(){
             return this._layerData;
         },
