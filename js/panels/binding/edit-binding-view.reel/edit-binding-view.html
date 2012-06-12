@@ -148,23 +148,26 @@
 <body>
 <div data-montage-id="edit-binding" class="edit-binding-view">
 
-    <ul>
-        <h3>Source Object</h3>
-        <li class="edit-source-object">
-            <label>Identifier:</label><span data-montage-id="sourceObjectField" class="hintable-field">Test</span>
-            <br>
-            <label>Property Path:</label><span data-montage-id="so-pp" class="hintable-field so-pp">Test</span>
-        </li>
-        <h3>Bound Object</h3>
-        <li class="edit-bound-object">
-            <label>Identifier:</label><span data-montage-id="boundObjectField" class="hintable-field">Test</span>
-            <br>
-            <label>Property Path:</label><span data-montage-id="bo-pp" class="hintable-field bo-pp">Test</span>
-        </li>
 
+    <section class="edit-object-binding">
+        <div>
+            <div class="object-icon"></div>
+        </div>
+        <span data-montage-id="sourceObjectField" class="hintable-field">Test</span>
+        <span data-montage-id="so-pp" class="hintable-field so-pp"></span>
+        <div>
+            <div class="object-icon"></div>
+        </div>
+        <span data-montage-id="boundObjectField" class="hintable-field">Test</span>
+        <span data-montage-id="bo-pp" class="hintable-field po-pp"></span>
+    </section>
+
+    <input data-montage-id="direction-checkbox" type="checkbox" class="nj-skinned"><label>Oneway</label>
+
+    <ul>
         <h3>Configuration</h3>
         <li class="edit-general-properties">
-            <input data-montage-id="direction-checkbox" type="checkbox" class="nj-skinned"><label>Oneway</label>
+
         </li>
         <li>
             <label>Converter</label><span>Test</span>
