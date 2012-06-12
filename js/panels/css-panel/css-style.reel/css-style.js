@@ -8,6 +8,10 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
 exports.CssStyle = Montage.create(Component, {
+    declaration: {
+        value: null
+    },
+
     delegate          : { value: null },
     disabledClass     : { value: 'style-item-disabled' },
     editingStyleClass : { value: 'edit-style-item' },
