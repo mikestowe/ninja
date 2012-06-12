@@ -221,8 +221,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         },
         set:function (newVal) {
             this._layerRepetition = newVal;
-    },
-        serializable: true
+        },
     },
 
     // Set to false to skip array caching array sets in current document
@@ -346,8 +345,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
         },
         set:function (newVal) {
             this._trackRepetition = newVal;
-    },
-        serializable: true
+        }
     },
 
     _selectedKeyframes:{
@@ -603,11 +601,13 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 			// Store the timeline data in currentDocument...
 			if (this._boolCacheArrays) {
 				// ... but only if we're supposed to.
-	    		this.application.ninja.currentDocument.tlArrLayers = this.arrLayers;
-	    		this.application.ninja.currentDocument.tlCurrentSelectedContainer = this.currentDocument.model.domContainer;
-	    		this.application.ninja.currentDocument.tllayerNumber = this.currentLayerNumber;
-	    		this.application.ninja.currentDocument.tlCurrentLayerSelected = this.currentLayerSelected;
-	    		this.application.ninja.currentDocument.tlCurrentLayersSelected = this.currentLayersSelected;
+                if(this.currentDocument) {
+	    		    this.application.ninja.currentDocument.tlArrLayers = this.arrLayers;
+	    		    this.application.ninja.currentDocument.tlCurrentSelectedContainer = this.currentDocument.model.domContainer;
+	    		    this.application.ninja.currentDocument.tllayerNumber = this.currentLayerNumber;
+	    		    this.application.ninja.currentDocument.tlCurrentLayerSelected = this.currentLayerSelected;
+	    		    this.application.ninja.currentDocument.tlCurrentLayersSelected = this.currentLayersSelected;
+                }
 			}
     	}
     },

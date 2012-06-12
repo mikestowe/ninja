@@ -122,8 +122,8 @@ exports.Panel = Montage.create(Component, {
 
             this._currentDocument = value;
 
-            if(typeof this.panelContent.content[0].controller._currentDocument !== "undefined") {
-                this.panelContent.content[0].controller.currentDocument = this._currentDocument;
+            if(typeof this.panelContent.content._element.controller._currentDocument !== "undefined") {
+                this.panelContent.content._element.controller.currentDocument = this._currentDocument;
             }
 
             if(!value) {
