@@ -12,13 +12,6 @@ var ElementController = require("js/controllers/elements/element-controller").El
     NJUtils = require("js/lib/NJUtils").NJUtils;
 
 exports.ElementMediator = Montage.create(Component, {
-	
-    _NJUtils: {
-    	get: function() {
-			if (!NJUtils)  NJUtils = require("js/lib/NJUtils").NJUtils;
-			return NJUtils;
-		}
-	},
 
     addDelegate: {
         enumerable: false,

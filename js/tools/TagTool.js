@@ -86,7 +86,6 @@ exports.TagTool = Montage.create(DrawingTool, {
             // Create the element
             if(this.options.selectedElement === "custom") {
                 element = document.application.njUtils.make(this.options.customName.value, null, this.application.ninja.currentDocument);
-			if (!NJUtils) NJUtils = require("js/lib/NJUtils").NJUtils;
 
             } else {
                 element = document.application.njUtils.make(this.options.selectedElement, null, this.application.ninja.currentDocument);
