@@ -19,13 +19,13 @@ exports.ElementController = Montage.create(Component, {
                 var selectedLayerIndex = this.application.ninja.timeline.getLayerIndexByID(this.application.ninja.timeline.currentLayerSelected.layerData.layerID);
 
                 if(selectedLayerIndex === 0) {
-                    this.application.ninja.currentSelectedContainer.appendChild(el);
+                    this.application.ninja.currentDocument.model.domContainer.appendChild(el);
                 } else {
                     var element = this.application.ninja.timeline.arrLayers[selectedLayerIndex].layerData.elementsList[0];
                     element.parentNode.insertBefore(el, element.nextSibling);
                 }
             } else {
-                this.application.ninja.currentSelectedContainer.appendChild(el);
+                this.application.ninja.currentDocument.model.domContainer.appendChild(el);
             }
 
             if(styles) {
