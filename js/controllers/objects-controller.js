@@ -66,6 +66,7 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
             if(!bindingArgs.sourceObject || !bindingArgs.sourceObjectPropertyPath || !bindingArgs) { return; }
 
             Object.defineBinding(bindingArgs.sourceObject, bindingArgs.sourceObjectPropertyPath, bindingArgs);
+            this.currentObjectBindings = this.getObjectBindings(value);
         }
     },
 
@@ -76,6 +77,7 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
 
 
             Object.deleteBinding(bindingArgs.sourceObject, bindingArgs.sourceObjectPropertyPath);
+            this.currentObjectBindings = this.getObjectBindings(value);
         }
     },
 
@@ -92,6 +94,7 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
             }
 
             this.addBinding(bindingArgs);
+
         }
     },
     
