@@ -121,10 +121,8 @@ exports.HtmlDocument = Montage.create(Component, {
 	//
 	closeDocument: {
 		value: function (context, callback) {
-			//Closing document and getting outcome
-			var closed = this.model.close(null);
-			//Making callback if specified
-			if (callback) callback.call(context, this);
+			//Closing document (sending null to close all views)
+			this.model.close(null, function () {if (callback) callback.call(context, this);}.bind(this));
 		}
 	},
     ////////////////////////////////////////////////////////////////////
