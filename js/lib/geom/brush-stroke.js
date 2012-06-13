@@ -719,7 +719,10 @@ BrushStroke.prototype.drawToContext = function(ctx, drawStageWorldPts, stageWorl
             var disp = [brushStamp[t][0], brushStamp[t][1]];
             var alphaVal = 1.0;
             var distFromOpaqueRegion = Math.abs(t-halfNumTraces) - opaqueRegionHalfWidth;
-            if (distFromOpaqueRegion>0) {
+            if (numTraces === 1){
+                distFromOpaqueRegion = 0;
+            }
+            else if (distFromOpaqueRegion>0) {
                 var transparencyFactor = distFromOpaqueRegion/maxTransparentRegionHalfWidth;
                 alphaVal = 1.0 - transparencyFactor;//(transparencyFactor*transparencyFactor);//the square term produces nonlinearly varying alpha values
                 alphaVal *= 0.5; //factor that accounts for lineWidth == 2
