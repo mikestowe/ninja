@@ -20,10 +20,31 @@ var Component = require("montage/ui/component").Component;
 
 var LayerStyle = exports.LayerStyle = Montage.create(Component, {
 
-    hasTemplate:{
-        value: true
+    styleContainer: {
+        value: null,
+        serializable: true
     },
-    
+
+    styleHintable: {
+        value: null,
+        serializable: true
+    },
+
+    styleProperty: {
+        value: null,
+        serializable: true
+    },
+
+    valueEditorHottext: {
+        value: null,
+        serializable: true
+    },
+
+    dtextProperty: {
+        value: null,
+        serializable: true
+    },
+
     /* === BEGIN: Models === */
 	// isSelected: whether or not the style is selected
 	_isSelected: {
@@ -112,7 +133,8 @@ var LayerStyle = exports.LayerStyle = Montage.create(Component, {
     	},
     	set: function(newVal) {
     		this._myHintable = newVal;
-    	}
+    	},
+        serializable: true
     },
     _myHintableValue : {
     	value: null

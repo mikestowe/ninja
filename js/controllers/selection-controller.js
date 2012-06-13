@@ -35,11 +35,13 @@ exports.SelectionController = Montage.create(Component, {
 
             if(this._currentDocument && this._currentDocument.currentView === "design") {
                 this._currentDocument.model._selection = this.application.ninja.selectedElements;
-//                this._currentDocument.model.selectionContainer = this.application.ninja._currentSelectedContainer;
             }
 
             this._currentDocument = value;
 
+            if(this._currentDocument && this._currentDocument.currentView === "design") {
+                this.selectedElements = this._currentDocument.model.selection;
+            }
             /*
             if(!value) {
             } else if(this._currentDocument.currentView === "design") {
@@ -59,21 +61,17 @@ exports.SelectionController = Montage.create(Component, {
             return this._selectedElements;
         },
         set: function(value) {
-            if(this.currentDocument && this.currentDocument.currentView === "code") return;
 
             if(value) {
                 this._selectedElements = value;
 
                 this.application.ninja.selectedElements = this._selectedElements;
-//                this.application.ninja._currentSelectedContainer = this._selectionContainer = this.application.ninja.currentDocument.model.documentRoot;
 
                 if(this._selectedElements.length === 0) {
                     this.executeSelectElement();
                 } else {
                     this.executeSelectElement(this._selectedElements);
                 }
-
-
             }
         }
     },
@@ -84,18 +82,6 @@ exports.SelectionController = Montage.create(Component, {
             this.eventManager.addEventListener("elementsRemoved", this, false);
             this.eventManager.addEventListener("elementReplaced", this, false);
             this.eventManager.addEventListener("selectAll", this, false);
-
-            this.addPropertyChangeListener("currentDocument.model.domContainer", this);
-        }
-    },
-
-    handleChange: {
-        value: function() {
-            if(this.currentDocument && this.currentDocument.model.getProperty("domContainer")) {
-                if(this.currentDocument.model.getProperty("domContainer") !== null) {
-                    this.executeSelectElement();
-                }
-            }
         }
     },
 
@@ -125,7 +111,7 @@ exports.SelectionController = Montage.create(Component, {
         value: function(event) {
             var selected = [], childNodes = [], self = this;
 
-            childNodes = this.application.ninja.currentDocument.model.documentRoot.childNodes;
+            childNodes = this.currentDocument.model.domContainer.childNodes;
             childNodes = Array.prototype.slice.call(childNodes, 0);
             childNodes.forEach(function(item) {
                 if(self.isNodeTraversable(item)) {

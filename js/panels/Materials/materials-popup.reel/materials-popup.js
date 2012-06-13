@@ -12,6 +12,21 @@ var Montage = require("montage/core/core").Montage,
 //Exporting as MaterialsPopup
 exports.MaterialsPopup = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
+    okButton: {
+        value: null,
+        serializable: true
+    },
+
+    cancelButton: {
+        value: null,
+        serializable: true
+    },
+
+    materialTitle: {
+        value: null,
+        serializable: true
+    },
+
 	// Material Properties
     _materialName: {
         enumerable: true,

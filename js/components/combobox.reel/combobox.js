@@ -20,7 +20,8 @@ exports.Combobox = Montage.create(Component, {
     },
 
     labelField: {
-        value: null
+        value: null,
+        serializable: true
     },
 
     labelFunction: {
@@ -28,7 +29,8 @@ exports.Combobox = Montage.create(Component, {
     },
 
     dataField: {
-        value: null
+        value: null,
+        serializable: true
     },
 
     dataFunction: {

@@ -40,11 +40,14 @@ var HotTextUnit = exports.HotTextUnit = Montage.create(HotText, {
                 if(this._acceptableUnits.indexOf(value) !== -1)
                 {
                     this._units = value;
+                    this._unitsModified = true;
                     this.needsDraw = true;
 
-                    this._setEventFlags("change", false);
+                    this._setEventFlags("change", true);
                     this._dispatchActionEvent();
                 }
+            } else {
+                this._unitsModified = false;
             }
         }
     },
@@ -89,13 +92,13 @@ var HotTextUnit = exports.HotTextUnit = Montage.create(HotText, {
                 var match = (unitsString.replace(noSpaces, "$2")).toLowerCase();
                 if(match)
                 {
-                    Object.getPropertyDescriptor(this, "units").set.call(this, match);
+                    this.units = match;
                 }
             }
 
             this._setEventFlags("change", false);
             // Moving this call to after setting the value since value changes are dispatching events before units are set
-            Object.getPropertyDescriptor(this, "value").set.call(this, this.inputFunction(inputString), false);
+            this.value = this.inputFunction(inputString);
         }
     },
 

@@ -10,9 +10,97 @@ var nj = require("js/lib/NJUtils").NJUtils;
 
 var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 
-    hasTemplate:{
-        value:true
+    user_layers: {
+        value: null,
+        serializable: true
     },
+
+    track_container: {
+        value: null,
+        serializable: true
+    },
+
+    timeline_leftpane: {
+        value: null,
+        serializable: true
+    },
+
+    layer_tracks: {
+        value: null,
+        serializable: true
+    },
+
+    master_track: {
+        value: null,
+        serializable: true
+    },
+
+    time_markers: {
+        value: null,
+        serializable: true
+    },
+
+    playhead: {
+        value: null,
+        serializable: true
+    },
+
+    playheadmarker: {
+        value: null,
+        serializable: true
+    },
+
+    timetext: {
+        value: null,
+        serializable: true
+    },
+
+    timebar: {
+        value: null,
+        serializable: true
+    },
+
+    container_tracks: {
+        value: null,
+        serializable: true
+    },
+
+    end_hottext: {
+        value: null,
+        serializable: true
+    },
+
+    container_layers: {
+        value: null,
+        serializable: true
+    },
+
+    timeline_disabler: {
+        value: null,
+        serializable: true
+    },
+
+    checkable_relative: {
+        value: null,
+        serializable: true
+    },
+
+    checkable_absolute: {
+        value: null,
+        serializable: true
+    },
+
+    checkable_animated: {
+        value: null,
+        serializable: true
+    },
+
+    tl_configbutton: {
+        value: null,
+        serializable: true
+    },
+
+
 
     /* === BEGIN: Models === */
     _currentDocument: {
@@ -513,11 +601,13 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
 			// Store the timeline data in currentDocument...
 			if (this._boolCacheArrays) {
 				// ... but only if we're supposed to.
-	    		this.application.ninja.currentDocument.tlArrLayers = this.arrLayers;
-	    		this.application.ninja.currentDocument.tlCurrentSelectedContainer = this.currentDocument.model.domContainer;
-	    		this.application.ninja.currentDocument.tllayerNumber = this.currentLayerNumber;
-	    		this.application.ninja.currentDocument.tlCurrentLayerSelected = this.currentLayerSelected;
-	    		this.application.ninja.currentDocument.tlCurrentLayersSelected = this.currentLayersSelected;
+                if(this.currentDocument) {
+	    		    this.application.ninja.currentDocument.tlArrLayers = this.arrLayers;
+	    		    this.application.ninja.currentDocument.tlCurrentSelectedContainer = this.currentDocument.model.domContainer;
+	    		    this.application.ninja.currentDocument.tllayerNumber = this.currentLayerNumber;
+	    		    this.application.ninja.currentDocument.tlCurrentLayerSelected = this.currentLayerSelected;
+	    		    this.application.ninja.currentDocument.tlCurrentLayersSelected = this.currentLayersSelected;
+                }
 			}
     	}
     },
@@ -692,6 +782,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 // we do have information stored.  Use it.
                 var i = 0, 
                 	tlArrLayersLength = this.application.ninja.currentDocument.tlArrLayers.length;
+                
+                
+                this._ignoreNextContainerChange = true;
                 
                 // We're reading from the cache, not writing to it.
             	this._boolCacheArrays = false;

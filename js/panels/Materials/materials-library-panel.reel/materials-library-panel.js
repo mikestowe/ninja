@@ -69,7 +69,8 @@ exports.MaterialsLibraryPanel = Montage.create(Component, {
     },
 
     _materialInfo: {
-        enumerable:true
+        enumerable:true,
+        serializable: true
     },
     
     _showMaterialPopup: {

@@ -15,20 +15,170 @@ var NjUtils = require("js/lib/NJUtils").NJUtils;
 
 exports.Ninja = Montage.create(Component, {
 
-    ninjaVersion: {
-        value: null
+    // SERIALIZABLE Properties
+    //////////////////////////////
+    rulerTop: {
+        value: null,
+        serializable: true
+    },
+
+    rulerLeft: {
+        value: null,
+        serializable: true
+    },
+
+    appModel: {
+        value: null,
+        serializable: true
     },
 
     toolsData: {
+        value: null,
+        serializable: true
+    },
+
+    toolsList: {
+        value: null,
+        serializable: true
+    },
+
+    toolsProperties: {
+        value: null,
+        serializable: true
+    },
+
+    stage: {
+        value: null,
+        serializable: true
+    },
+
+    elementMediator: {
+        value: null,
+        serializable: true
+    },
+
+    dragDropMediator: {
+        value: null,
+        serializable: true
+    },
+
+    undocontroller: {
+        value: null,
+        serializable: true
+    },
+
+    selectionController: {
+        value: null,
+        serializable: true
+    },
+
+    documentController: {
+        value: null,
+        serializable: true
+    },
+
+    popupManager: {
+        value: null,
+        serializable: true
+    },
+
+    colorController: {
+        value: null,
+        serializable: true
+    },
+
+    stylesController: {
+        value: null,
+        serializable: true
+    },
+
+    presetsController: {
+        value: null,
+        serializable: true
+    },
+
+    filePickerController: {
+        value: null,
+        serializable: true
+    },
+
+    newFileController: {
+        value: null,
+        serializable: true
+    },
+
+    coreIoApi: {
+        value: null,
+        serializable: true
+    },
+
+    documentBar: {
+        value: null,
+        serializable: true
+    },
+
+    editorViewOptions: {
+        value: null,
+        serializable: true
+    },
+
+    ioMediator: {
+        value: null,
+        serializable: true
+    },
+
+    timeline: {
+        value: null,
+        serializable: true
+    },
+
+    mainMenuController: {
+        value: null,
+        serializable: true
+    },
+
+    codeEditorController: {
+        value: null,
+        serializable: true
+    },
+
+    rightPanelContainer: {
+        value: null,
+        serializable: true
+    },
+
+    panelSplitter: {
+        value: null,
+        serializable: true
+    },
+
+    timelineSplitter: {
+        value: null,
+        serializable: true
+    },
+
+    toolsSplitter: {
+        value: null,
+        serializable: true
+    },
+
+    optionsSplitter: {
+        value: null,
+        serializable: true
+    },
+
+    documentList: {
+        value: null,
+        serializable: true
+    },
+    //////////////////////////////
+
+    ninjaVersion: {
         value: null
     },
 
     appData: {
         value: AppData
-    },
-
-    documentList: {
-        value: null
     },
 
     currentDocument: {
@@ -306,8 +456,7 @@ exports.Ninja = Montage.create(Component, {
     openDocument: {
         value: function(doc) {
             this.documentList.content.push(doc);
-            // This is not needed with the latest 0.10 montage.
-            // TODO: Remove this when integrating the next montage
+            // TODO: Check why this is still needed
             this.documentList.selectedObjects = [doc];
 
         }

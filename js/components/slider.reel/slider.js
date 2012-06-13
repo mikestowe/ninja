@@ -9,6 +9,21 @@ var SliderBase = require("js/components/sliderbase").SliderBase;
 
 var Slider = exports.Slider = Montage.create(SliderBase, {
 
+    parentDiv: {
+        value: null,
+        serializable: true
+    },
+
+    track: {
+        value: null,
+        serializable: true
+    },
+
+    knob: {
+        value: null,
+        serializable: true
+    },
+
     // "horizontal" or "vertical"
     _direction: {
         enumerable: true,

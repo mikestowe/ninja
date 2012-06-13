@@ -9,6 +9,12 @@ var Montage = require("montage/core/core").Montage,
     Keyboard = require("js/mediators/keyboard-mediator").Keyboard;
 
 exports.StylesViewDelegate = Montage.create(Component, {
+
+    ruleListContainer: {
+        value: null,
+        serializable: true
+    },
+
     newClassPrefix      : { value: "new-class" },
     elementOutlineClass : { value: "nj-element-highlight" },
 
