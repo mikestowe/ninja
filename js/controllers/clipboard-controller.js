@@ -212,12 +212,14 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
                 else {
                     node = copiedElement.cloneNode(true);
 
-                    if(node.removeAttribute) {node.removeAttribute("style");}//remove the computed styles attribute which is placed only for pasting to external applications
-
-                    styles = {};
-                    styles.top = this.application.ninja.elementMediator.getProperty(copiedElement, "top", parseInt);
-                    styles.left = this.application.ninja.elementMediator.getProperty(copiedElement, "left", parseInt);
-
+                    if(copiedElement.ownerDocument.defaultView.getComputedStyle(copiedElement).getPropertyValue("position") === "absolute"){
+                        styles = {};
+                        styles.top = this.application.ninja.elementMediator.getProperty(copiedElement, "top", parseInt);
+                        styles.left = this.application.ninja.elementMediator.getProperty(copiedElement, "left", parseInt);
+                        styles.position = "absolute";
+                    }else{
+                        styles = null;
+                    }
                     this.pastePositioned(node, styles);
                     pastedElements.push(node);
                 }
@@ -326,7 +328,7 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
                         node = clipboardHelper.removeChild(clipboardHelper.lastChild);
 
                         //get class string while copying .... generate styles from class
-                        styles = {"top":"100px", "left":"100px"};
+                        styles = null;
 
                         this.pastePositioned(node, styles);
                     }
@@ -339,7 +341,7 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
                 //USE styles controller to create the styles of the div and span
                 clipboardHelper.innerHTML = "<div><span>"+ textData +"</span></div>";//add the copied html to generate the nodes
                 node = clipboardHelper.removeChild(clipboardHelper.lastChild);
-                styles = {"top":"100px", "left":"100px"};//get real stage center coordinates
+                styles = null;//get real stage center coordinates
                 this.pastePositioned(node, styles);
             }
 
@@ -439,21 +441,26 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
 
     cloneCanvas:{
         value: function(sourceCanvas){
-            var canvas = document.application.njUtils.make("canvas", sourceCanvas.className, this.application.ninja.currentDocument);
+            var canvas, styles, world, worldData;
+
+            canvas = document.application.njUtils.make("canvas", sourceCanvas.className, this.application.ninja.currentDocument);
             canvas.width = sourceCanvas.width;
             canvas.height = sourceCanvas.height;
             //end - clone copied canvas
 
             if (!canvas.getAttribute( "data-RDGE-id" )) canvas.setAttribute( "data-RDGE-id", NJUtils.generateRandom() );
 
-            var styles = canvas.elementModel.data || {};
-            styles.top = "" + (this.application.ninja.elementMediator.getProperty(sourceCanvas, "top", parseInt) + (25 * this.pasteCounter))+"px";
-            styles.left = "" + (this.application.ninja.elementMediator.getProperty(sourceCanvas, "left", parseInt) + (25 * this.pasteCounter)) + "px";
+            if(sourceCanvas.ownerDocument.defaultView.getComputedStyle(sourceCanvas).getPropertyValue("position") === "absolute"){
+                styles = canvas.elementModel.data || {};
+                styles.top = "" + (this.application.ninja.elementMediator.getProperty(sourceCanvas, "top", parseInt) + (25 * this.pasteCounter))+"px";
+                styles.left = "" + (this.application.ninja.elementMediator.getProperty(sourceCanvas, "left", parseInt) + (25 * this.pasteCounter)) + "px";
+            }else{
+                styles = null;
+            }
 
-            //this.application.ninja.elementMediator.addElements(canvas, styles, false);//todo: clean up
-            this.application.ninja.elementMediator.addElements(canvas, null, false);//no displacement
+            this.application.ninja.elementMediator.addElements(canvas, styles, false);
 
-            var world, worldData = sourceCanvas.elementModel.shapeModel.GLWorld.exportJSON();
+            worldData = sourceCanvas.elementModel.shapeModel.GLWorld.exportJSON();
             if(worldData)
             {
                 var jObj;
@@ -478,20 +485,17 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
 
     generateNewCanvas: {
         value: function(outerhtml, styles, className, worldJson){
-            var canvas = document.application.njUtils.make("canvas", className, this.application.ninja.currentDocument);
+            var canvas, newCanvasStyles, world, worldData;
+
+            canvas = document.application.njUtils.make("canvas", className, this.application.ninja.currentDocument);
             canvas.width = styles.width;
             canvas.height = styles.height;
 
             if (!canvas.getAttribute( "data-RDGE-id" )) canvas.setAttribute( "data-RDGE-id", NJUtils.generateRandom() );
 
-            var newCanvasStyles = canvas.elementModel.data || {};
-            newCanvasStyles.top = styles.top;
-            newCanvasStyles.left = styles.left;
+            this.application.ninja.elementMediator.addElements(canvas, null, false);
 
-            //this.application.ninja.elementMediator.addElements(canvas, styles, false);//todo: clean up
-            this.application.ninja.elementMediator.addElements(canvas, null, false);//no displacement
-
-            var world, worldData = worldJson;
+            worldData = worldJson;
 
             if(worldData)
             {
@@ -561,9 +565,11 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
             newX = styles ? ("" + (styles.left + (25 * this.pasteCounter)) + "px") : "100px";
             newY = styles ? ("" + (styles.top + (25 * this.pasteCounter)) + "px") : "100px";
 
-
-            this.application.ninja.elementMediator.addElements(element, null);
-
+            if(!styles || (styles && !styles.position)){
+                this.application.ninja.elementMediator.addElements(element, null);
+            }else if(styles && (styles.position === "absolute")){
+                this.application.ninja.elementMediator.addElements(element, {"top" : newY, "left" : newX});//displace
+            }
 
             //todo: cleanup
 //            //add pasted object with new position
@@ -585,6 +591,9 @@ var ClipboardController = exports.ClipboardController = Montage.create(Component
             var styles = {};
             styles.top = this.application.ninja.elementMediator.getProperty(el, "top", parseInt);
             styles.left = this.application.ninja.elementMediator.getProperty(el, "left", parseInt);
+            if(el.ownerDocument.defaultView.getComputedStyle(el).getPropertyValue("position") === "absolute"){
+                styles.position = "absolute";
+            }
             if(isCanvas){
                 styles.width = (el.getAttribute("width") ? el.getAttribute("width") : null);
                 styles.height = (el.getAttribute("height") ? el.getAttribute("height") : null);
