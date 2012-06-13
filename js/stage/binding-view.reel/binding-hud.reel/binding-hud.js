@@ -44,12 +44,73 @@ exports.BindingHud = Montage.create(Component, {
         ]
     },
 
-    x: {
+    _isResizing: {
+        value: null
+    },
+
+    _resizedX : {
+        value: 0
+    },
+
+    _resizedY: {
+        value: 0
+    },
+
+    handleResizeStart: {
+        value:function(e) {
+            this.isResizing = true;
+            this.x = parseInt(this.x);
+            this.y = parseInt(this.y);
+            this.needsDraw = true;
+        }
+    },
+
+    handleResizeMove: {
+        value:function(e) {
+            this._resizedY = e._event.dY;
+            this._resizedX = e._event.dX;
+            this.needsDraw = true;
+        }
+    },
+
+    handleResizeEnd: {
+        value: function(e) {
+            this.x += this._resizedX;
+            this.y += this._resizedY;
+            this._resizedX = 0;
+            this._resizedY = 0;
+            this.isResizing = false;
+            this.needsDraw = true;
+        }
+    },
+
+    _x: {
         value: 20
     },
 
-    y: {
+    _y: {
         value: 100
+    },
+
+    x: {
+        get: function() {
+            return this._x;
+        },
+        set: function(val) {
+            this._x = val;
+            console.log(this._x);
+            this.needsDraw = true;
+        }
+    },
+
+    y: {
+        get: function() {
+            return this._y;
+        },
+        set: function(val) {
+            this._y = val;
+            this.needsDraw = true;
+        }
     },
 
     _title: {
@@ -81,8 +142,13 @@ exports.BindingHud = Montage.create(Component, {
     draw: {
         value: function() {
             this.titleElement.innerHTML = this.title;
-            this.element.style.top = this.y + "px";
-            this.element.style.left = this.x + "px";
+
+//            if(this.isResizing) {
+//                    this.timelineSplitter.collapsed = this.height - this._resizedHeight < 46;
+//                    this.panelSplitter.collapsed = this.width - this._resizedWidth < 30;
+//                }
+            this.element.style.top = (this.y + this._resizedY) + "px";
+            this.element.style.left = (this.x + this._resizedX) + "px";
             console.log("hud",this);
         }
     }

@@ -13,6 +13,10 @@ var Montage = require("montage/core/core").Montage,
 
 exports.BindingView = Montage.create(Component, {
     //private Properties
+
+    hudRepeater: {
+        value: null
+    },
     _selectedComponent: {
         value: null
     },
@@ -98,7 +102,10 @@ exports.BindingView = Montage.create(Component, {
 
                 //Add the first component which is the selected one to have a hud
 
-                this.componentsList[this.selectedComponent.identifier] = {"component":  this.selectedComponent, "properties": this.application.ninja.objectsController.getPropertyList(this.selectedComponent, true)};
+                this.componentsList[this.selectedComponent.identifier] = {"component":  this.selectedComponent, properties:[] };
+                this.application.ninja.objectsController.getPropertiesFromObject(this.selectedComponent, true).forEach(function(obj) {
+                    this.componentsList[this.selectedComponent.identifier].properties.push({"title":obj})
+                }.bind(this));
                 console.log("components:",this.componentsList);
                 //Go through the loop and find every interacted object by bindings
                 arrBindings.forEach(function(obj) {
@@ -180,6 +187,12 @@ exports.BindingView = Montage.create(Component, {
                 this.bindables = [];
                 this.clearCanvas();
             }
+
+        }
+    },
+
+    didDraw: {
+        value: function() {
 
         }
     },

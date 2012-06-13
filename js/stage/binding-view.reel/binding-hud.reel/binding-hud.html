@@ -35,6 +35,27 @@
                 "bindings": {
                     "hudOptions": {"<-": "@repeater.objectAtCurrentIteration"}
                 }
+            },
+            "resizer1": {
+                "prototype": "js/panels/resize-composer",
+                "properties": {
+                    "element": {"#": "title"},
+                    "component": {"@": "owner"}
+                },
+                "listeners": [
+                    {
+                        "type": "resizeStart",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "resizeMove",
+                        "listener": {"@": "owner"}
+                    },
+                    {
+                        "type": "resizeEnd",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             }
         }
     </script>
