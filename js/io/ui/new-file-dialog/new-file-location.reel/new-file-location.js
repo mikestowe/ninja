@@ -10,6 +10,16 @@ var newFileWorkflowControllerModule = require("js/io/ui/new-file-dialog/new-file
 
 var NewFileLocation = exports.NewFileLocation = Montage.create(Component, {
 
+    fileInputField: {
+        value: null,
+        serializable: true
+    },
+
+    newFileName: {
+        value: null,
+        serializable: true
+    },
+
     templateHeight:{
         value:"25 px"
     },

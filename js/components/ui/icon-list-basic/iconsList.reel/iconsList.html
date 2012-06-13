@@ -16,16 +16,8 @@
                 "element": {"#": "icon"}
             },
             "bindings": {
-                "icondata": {
-                    "boundObject": {"@": "repetition1"},
-                    "boundObjectPropertyPath": "objectAtCurrentIteration",
-                    "oneway": true
-                },
-                "selectedUri": {
-                    "boundObject": {"@": "owner"},
-                    "boundObjectPropertyPath": "selected",
-                    "oneway": true
-                }
+                "icondata": {"<-": "@repetition1.objectAtCurrentIteration"},
+                "selectedUri": {"<-": "@owner.selected"}
             }
         },
 
@@ -35,20 +27,14 @@
                 "element": {"#": "iconsView"}
             },
             "bindings": {
-                "objects": {
-                    "boundObject": {"@": "owner"},
-                    "boundObjectPropertyPath": "iconsViewDataObject",
-                    "oneway": true
-                }
+                "objects": {"<-": "@owner.iconsViewDataObject"}
             }
-
         },
 
         "owner" : {
             "prototype" : "js/components/ui/icon-list-basic/iconsList.reel",
             "properties" : {
-                "element" : {"#": "list"},
-                "components": [{"@": "repetition1"}]
+                "element" : {"#": "list"}
             }
         }
     }

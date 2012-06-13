@@ -9,6 +9,10 @@ var Component = require("montage/ui/component").Component;
 
 var IconsList = exports.IconsList = Montage.create(Component, {
 
+    components: {
+        value: null
+    },
+
     anItemData:{
         enumerable:true,
         value: null

@@ -43,15 +43,28 @@ exports.Properties = Montage.create(Component, {
     },
 
     elementName: {
-        value: null
+        value: null,
+        serializable: true
     },
 
     elementId: {
-        value: null
+        value: null,
+        serializable: true
     },
 
     elementClass: {
-        value: null
+        value: null,
+        serializable: true
+    },
+
+    positionSize: {
+        value: null,
+        serializable: true
+    },
+
+    threeD: {
+        value: null,
+        serializable: true
     },
 
     customSections: {
