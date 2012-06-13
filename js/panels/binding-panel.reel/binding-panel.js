@@ -6,6 +6,19 @@ exports.BindingPanel = Montage.create(Component, {
 
     bindings : { value: null },
     editView : { value: null },
+
+    _dockEditView : { value: null },
+    dockEditView : {
+        get : function() { return this._dockEditView; },
+        set : function(value) {
+            if(value === this._dockEditView) { return; }
+
+            this._dockEditView = value;
+
+            this.needsDraw = true;
+        }
+    },
+
     _editing: { value: null },
     editing: {
         get: function() {
@@ -14,6 +27,11 @@ exports.BindingPanel = Montage.create(Component, {
         set: function(value) {
             if(value === this._editing) { return; }
             this._editing = value;
+
+            if(!value) {
+                this.dockEditView = false;
+            }
+
             this.needsDraw = true;
         }
     },
@@ -25,6 +43,18 @@ exports.BindingPanel = Montage.create(Component, {
         value: function(bindingArgs) {
             this.editView.bindingArgs = bindingArgs;
             this.editing = true;
+        }
+    },
+
+    /* -------------------------
+       Event handlers
+     ------------------------- */
+
+    handleWebkitTransitionEnd : {
+        value: function(e) {
+            console.log("trans end");
+
+            this.dockEditView = this.editing;
         }
     },
 
@@ -54,8 +84,16 @@ exports.BindingPanel = Montage.create(Component, {
         }
     },
 
+    prepareForDraw : {
+        value: function() {
+
+        }
+    },
+
     willDraw: {
         value: function() {
+            this.editView.element.addEventListener('webkitTransitionEnd', this, false);
+
             if(this.editing) {
                 this._translateDistance = this.element.offsetWidth;
             }
@@ -64,15 +102,21 @@ exports.BindingPanel = Montage.create(Component, {
 
     draw : {
         value: function() {
-            var transStr = '-webkit-transform';
+            var transStr = '-webkit-transform',
+                editViewEl = this.editView.element;
 
-            if(this.editing) {
-                this.editView.element.style.setProperty(transStr, 'translate3d(-'+ this._translateDistance + 'px,0,0)');
-                this.editView.element.style.setProperty('box-shadow', '0 0 10px rgba(0,0,0,0.2)')
+            if(this.dockEditView) {
+                editViewEl.classList.add('edit-view-docked');
+                editViewEl.style.removeProperty(transStr);
             } else {
-                this.editView.element.style.removeProperty(transStr);
-                this.editView.element.style.removeProperty('box-shadow');
+                editViewEl.classList.remove('edit-view-docked');
+                if(this.editing) {
+                    editViewEl.style.setProperty(transStr, 'translate3d(-'+ this._translateDistance + 'px,0,0)');
+                } else {
+                    editViewEl.style.removeProperty(transStr);
+                }
             }
+            
         }
     }
 });
