@@ -54,7 +54,7 @@ var GLSubpath = function GLSubpath() {
     //drawing context
     this._world = null;
     this._canvas = null; //todo this might be unnecessary (but faster) since we can get it from the world
-
+    
     //tool that owns this subpath
     this._drawingTool = null;
 
@@ -207,24 +207,25 @@ GLSubpath.prototype.geomType = function () {
 GLSubpath.prototype.setWidth = function (newW) {
     var strokeWidth = this._strokeWidth;
     var halfStrokeWidth = strokeWidth*0.5;
-    if (newW<1) {
-        newW=1; //clamp minimum width to 1
+    var minWidth = 1+strokeWidth;
+    if (newW<minWidth) {
+        newW=minWidth;
     }
 
     //scale the contents of this subpath to lie within this width
     //determine the scale factor by comparing with the old width
-    var oldWidth = this._BBoxMax[0]-this._BBoxMin[0];
-    if (oldWidth<1) {
-        oldWidth=1;
+    var oldCanvasWidth = this._BBoxMax[0]-this._BBoxMin[0];
+    if (oldCanvasWidth<minWidth) {
+        oldCanvasWidth=minWidth;
     }
 
-    var scaleX = newW/oldWidth;
+    var scaleX = (newW-strokeWidth)/(oldCanvasWidth-strokeWidth);
     if (scaleX===1) {
         return; //no need to do anything
     }
 
     //scale the anchor point positions such that the width of the bbox is the newW
-    var origX = this._BBoxMin[0]; //this should always be zero since we only deal with local coordinates
+    var origX = halfStrokeWidth;//this is the left edge    //this._BBoxMin[0]; //this should always be zero since we only deal with local coordinates
     var numAnchors = this._Anchors.length;
     for (var i=0;i<numAnchors;i++){
         //compute the distance from the bboxMin
@@ -241,23 +242,27 @@ GLSubpath.prototype.setWidth = function (newW) {
 };
 
 GLSubpath.prototype.setHeight = function (newH) {
-    if (newH<1) {
-        newH=1; //clamp minimum width to 1
+    var strokeWidth = this._strokeWidth;
+    var halfStrokeWidth = strokeWidth*0.5;
+    var minHeight = 1+strokeWidth;
+
+    if (newH<minHeight) {
+        newH=minHeight; //clamp minimum width to 1
     }
     //scale the contents of this subpath to lie within this height
     //determine the scale factor by comparing with the old height
     var oldHeight = this._BBoxMax[1]-this._BBoxMin[1];
-    if (oldHeight<1){
-        oldHeight=1;
+    if (oldHeight<minHeight){
+        oldHeight=minHeight;
     }
 
-    var scaleY = newH/oldHeight;
+    var scaleY = (newH-strokeWidth)/(oldHeight-strokeWidth);
     if (scaleY===1){
         return; //no need to do anything
     }
 
     //scale the anchor point positions such that the height of the bbox is the newH
-    var origY = this._BBoxMin[1];
+    var origY = halfStrokeWidth;// this._BBoxMin[1];//this is the top edge
     var numAnchors = this._Anchors.length;
     for (var i=0;i<numAnchors;i++){
         //compute the distance from the bboxMin
@@ -270,6 +275,7 @@ GLSubpath.prototype.setHeight = function (newH) {
         this._Anchors[i].setNextPos(this._Anchors[i].getNextX(), origY + nextW*scaleY,this._Anchors[i].getNextZ());
     }
     this.makeDirty();
+    this.computeBoundingBox(true, false);
 };
 
 GLSubpath.prototype.setWorld = function (world) {
