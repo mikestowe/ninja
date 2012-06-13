@@ -61,7 +61,8 @@ exports.DocumentBar = Montage.create(Component, {
     },
 
     zoomControl: {
-        value: null
+        value: null,
+        serializable: true
     },
 
     _type: {
@@ -148,8 +149,8 @@ exports.DocumentBar = Montage.create(Component, {
 
     prepareForDraw: {
         value: function() {
-            this.designView.addEventListener("click", this, false);
-            this.codeView.addEventListener("click", this, false);
+//            this.designView.addEventListener("click", this, false);
+//            this.codeView.addEventListener("click", this, false);
 
         }
     },

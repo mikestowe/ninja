@@ -9,6 +9,21 @@ var Component = require("montage/ui/component").Component;
 
 exports.MenuItem = Montage.create(Component, {
 
+    itemBackground: {
+        value: null,
+        serializable: true
+    },
+
+    itemText: {
+        value: null,
+        serializable: true
+    },
+
+    subMenu: {
+        value: null,
+        serializable: true
+    },
+
     data: {
         value: null
     },

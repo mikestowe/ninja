@@ -15,6 +15,11 @@ var Montage = 			require("montage/core/core").Montage,
 
 exports.StageDeps = Montage.create(Component, {
 
+    stage: {
+        value: null,
+        serializable: true
+    },
+
     viewUtils: {
         value: viewUtils
     },

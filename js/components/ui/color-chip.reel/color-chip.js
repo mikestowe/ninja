@@ -9,6 +9,11 @@ var Montage = require("montage/core/core").Montage,
 
 var ColorChip = exports.ColorChip = Montage.create(Component, {
 
+    icon: {
+        value: null,
+        serializable: true
+    },
+
     chip: {
         value: false
     },

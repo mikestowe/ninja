@@ -8,6 +8,37 @@ var Montage = require("montage/core/core").Montage,
     Component = require("montage/ui/component").Component;
 
 exports.StyleSheet = Montage.create(Component, {
+
+    nameText: {
+        value: null,
+        serializable: true
+    },
+
+    mediaInput: {
+        value: null,
+        serializable: true
+    },
+
+    editButton: {
+        value: null,
+        serializable: true
+    },
+
+    editView: {
+        value: null,
+        serializable: true
+    },
+
+    disableButton: {
+        value: null,
+        serializable: true
+    },
+
+    deleteButton: {
+        value: null,
+        serializable: true
+    },
+
     _translateDistance: {
         value: null
     },

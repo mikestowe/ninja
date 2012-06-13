@@ -14,6 +14,10 @@ exports.content = Montage.create(Component, {
     contentPanel : {
         value: null
     },
+    activeTabIndex: {
+        value: null,
+        serializable: true
+    },
     templateDidLoad : {
         value: function() {
             var storedTabIndex = this.application.localStorage.getItem("presetsTabIndex");
@@ -55,7 +59,16 @@ exports.content = Montage.create(Component, {
             this._activeTab = tabObject;
 
             this.needsDraw = this._needsTabSwitch = true;
-        }
+        },
+        serializable: true
+    },
+    tabBar: {
+        value: null,
+        serializable: true
+    },
+    tabs:{
+        value: null,
+        serializable: true
     },
     _tabToDeactivate : {
         value: null,

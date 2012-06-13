@@ -8,6 +8,10 @@ var Montage = require("montage/core/core").Montage;
 var Component = require("montage/ui/component").Component;
 
 exports.SingleRow = Montage.create(Component, {
+    slot: {
+        value: null
+    },
+
     id: {
         value: null
     },

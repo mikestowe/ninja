@@ -9,23 +9,95 @@ var Component = require("montage/ui/component").Component;
 
 exports.ToolsList = Montage.create(Component, {
 
-    SelectionTool:          { value: null },
-    Rotate3DTool:           { value: null },
-    Translate3DTool:        { value: null },
-    TagTool:                { value: null },
-    PenTool:                { value: null },
-    TextTool:               { value: null },
-    ShapeTool:              { value: null },
-    OvalTool:               { value: null },
-    RectTool:               { value: null },
-    LineTool:               { value: null },
-    BrushTool:              { value: null },
-    FillTool:               { value: null },
-    InkBottleTool:          { value: null },
-    EraserTool:             { value: null },
-    RotateStageTool3D:      { value: null },
-    PanTool:                { value: null },
-    ZoomTool:               { value: null },
+    toolsData: {
+        value: null,
+        serializable: true
+    },
+
+    SelectionTool: {
+        value: null,
+        serializable: true
+    },
+
+    Rotate3DTool: {
+        value: null,
+        serializable: true
+    },
+
+    Translate3DTool: {
+        value: null,
+        serializable: true
+    },
+
+    TagTool: {
+        value: null,
+        serializable: true
+    },
+
+    PenTool: {
+        value: null,
+        serializable: true
+    },
+
+    TextTool: {
+        value: null,
+        serializable: true
+    },
+
+    ShapeTool: {
+        value: null,
+        serializable: true
+    },
+
+    OvalTool: {
+        value: null,
+        serializable: true
+    },
+
+    RectTool: {
+        value: null,
+        serializable: true
+    },
+
+    LineTool: {
+        value: null,
+        serializable: true
+    },
+
+    BrushTool: {
+        value: null,
+        serializable: true
+    },
+
+    FillTool: {
+        value: null,
+        serializable: true
+    },
+
+    InkBottleTool: {
+        value: null,
+        serializable: true
+    },
+
+    EraserTool: {
+        value: null,
+        serializable: true
+    },
+
+    RotateStageTool3D: {
+        value: null,
+        serializable: true
+    },
+
+    PanTool: {
+        value: null,
+        serializable: true
+    },
+
+    ZoomTool: {
+        value: null,
+        serializable: true
+    },
 
     _currentDocument: {
         enumerable: false,

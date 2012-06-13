@@ -12,6 +12,46 @@ var Montage = require("montage/core/core").Montage,
 
 var NewFileOptionsNavigator = exports.NewFileOptionsNavigator = Montage.create(Component, {
 
+    projectTypeTree: {
+        value: null,
+        serializable: true
+    },
+
+    cancelButton: {
+        value: null,
+        serializable: true
+    },
+
+    okButton: {
+        value: null,
+        serializable: true
+    },
+
+    templateIcons: {
+        value: null,
+        serializable: true
+    },
+
+    templatesContainer: {
+        value: null,
+        serializable: true
+    },
+
+    locationSelection: {
+        value: null,
+        serializable: true
+    },
+
+    newFileLocation: {
+        value: null,
+        serializable: true
+    },
+
+    error: {
+        value: null,
+        serializable: true
+    },
+
     newFileModel: {
         writable: true,
         enumerable:false,

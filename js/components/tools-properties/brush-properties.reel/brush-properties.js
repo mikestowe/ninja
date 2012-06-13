@@ -11,6 +11,46 @@ var ToolProperties = require("js/components/tools-properties/tool-properties").T
 var BrushProperties = exports.BrushProperties = Montage.create(ToolProperties, {
     addedColorChips: { value: false },
 
+    _fillColorCtrl: {
+        value: null,
+        serializable: true
+    },
+
+    _strokeSize: {
+        value: null,
+        serializable: true
+    },
+
+    _strokeHardness: {
+        value: null,
+        serializable: true
+    },
+
+    _doSmoothing: {
+        value: null,
+        serializable: true
+    },
+
+    _smoothingAmount: {
+        value: null,
+        serializable: true
+    },
+
+    _useCalligraphic: {
+        value: null,
+        serializable: true
+    },
+
+    _strokeAngle: {
+        value: null,
+        serializable: true
+    },
+
+    _angleLabel: {
+        value: null,
+        serializable: true
+    },
+
     _fill: {
         enumerable: false,
         value: { colorMode: 'rgb', color: { r: 0, g: 0, b: 0, a: 1, css: 'rgb(0,0,0)', mode: 'rgb', wasSetByCode: true, type: 'change' }, webGlColor: [0, 0, 0, 1] }

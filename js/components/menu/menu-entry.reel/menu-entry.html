@@ -24,8 +24,10 @@
             "repetition": {
                 "prototype": "montage/ui/repetition.reel",
                 "properties": {
-                    "element": { "#": "subEntries" },
-                    "contentController": {"@": "entriesController"}
+                    "element": { "#": "subEntries" }
+                },
+                "bindings": {
+                    "objects": {"<-": "@owner.data.entries"}
                 }
             },
 
