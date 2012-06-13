@@ -426,7 +426,8 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                     ///// rule to the calling method
                     return {
                         useImportant   : useImportant,
-                        ruleToOverride : dominantRule
+                        ruleToOverride : dominantRule,
+                        singleTargetBackup : this._getFirstSingleTargetRule(matchedRules.slice(1), doc)
                     };
                 }
                 
@@ -674,6 +675,8 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                     if(sheetAIndex === sheetBIndex) {
                         ruleAIndex = this.getRuleIndex(ruleA); ruleBIndex = this.getRuleIndex(ruleB);
                         return ruleAIndex < ruleBIndex ? 1 : (ruleAIndex > ruleBIndex) ? -1 : 0;
+                    } else {
+                        return sheetAIndex < sheetBIndex ? 1 : (sheetAIndex > sheetBIndex) ? -1 : 0;
                     }
                 }
 
@@ -737,6 +740,40 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             console.error('StylesController::_getMostSpecificSelectorForElement - no matching selectors in specificity array.');
         }
     },
+
+
+    ///// Has Greater Specificity
+    ///// A method that returns true if the first argument has higher
+    ///// specificity than the second argument
+    ///// An element has to be supplied to determine which selector
+    ///// to evaluate within grouped selectors
+    hasGreaterSpecificity : {
+        value: function(rule1, rule2, element) {
+            var a = this._getMostSpecificSelectorForElement(element, rule1[this.CONST.SPECIFICITY_KEY]),
+                b = this._getMostSpecificSelectorForElement(element, rule2[this.CONST.SPECIFICITY_KEY]),
+                win = element.ownerDocument.defaultView,
+                order;
+
+              order = this.compareSpecificity(a.specificity, b.specificity);
+
+            if(order === 0) {
+                 /// Tie. Sway one way or other based on stylesheet/rule order
+                 sheetAIndex = nj.toArray(win.document.styleSheets).indexOf(rule1.parentStyleSheet);
+                 sheetBIndex = nj.toArray(win.document.styleSheets).indexOf(rule2.parentStyleSheet);
+                 /// If tied again (same sheet), determine which is further down in the sheet
+                if(sheetAIndex === sheetBIndex) {
+                     ruleAIndex = this.getRuleIndex(rule1); ruleBIndex = this.getRuleIndex(rule2);
+                   return ruleAIndex < ruleBIndex ? 1 : (ruleAIndex > ruleBIndex) ? -1 : 0;
+                 } else {
+                     return sheetAIndex < sheetBIndex ? 1 : (sheetAIndex > sheetBIndex) ? -1 : 0;
+                }
+             }
+
+            return (order < 0);
+
+        }
+     },
+
     
     ///// Get First Single Target Rule
     ///// Loops through the array of rules sequentially, returning the first
@@ -1035,8 +1072,12 @@ var stylesController = exports.StylesController = Montage.create(Component, {
 
             }
 
+            if(cacheMatchesMany) {
+                dominantRule = this.getDominantRuleForElement(element, property, true, isStageElement);
+            }
+
             ///// Did we find a dominant rule?
-            if(!dominantRule) {
+            else if(!dominantRule) {
                 ///// No. This means there was no rule with this property, and no
                 ///// single-target rule we can use to add the style to.
                 ///// There's is no chance of colliding with another rule, so we
@@ -1047,18 +1088,17 @@ var stylesController = exports.StylesController = Montage.create(Component, {
                 
             } else if(dominantRule.ruleToOverride) {
                 ///// Do we have to override a rule?
-                ////// Yes. The override object has the rule we need to override
-                override = this.createOverrideRule(dominantRule.ruleToOverride, element);
-                useImportant = dominantRule.useImportant;
-                dominantRule = override.rule;
-                this.addClass(element, override.className);
-            } else if(cacheMatchesMany) {
-                ///// Only happens when the cached rule applies to multiple
-                ///// elements - we must create override
-                override = this.createOverrideRule(dominantRule, element);
-                useImportant = !!dominantRule.style.getPropertyPriority(property);
-                dominantRule = override.rule;
-                this.addClass(element, override.className);
+                ///// Well, let's first see if a higher-specificity, single-target
+                ///// rule exists
+                if(dominantRule.singleTargetBackup && this.hasGreaterSpecificity(dominantRule.singleTargetBackup, dominantRule.ruleToOverride, element)) {
+                    dominantRule = dominantRule.singleTargetBackup;
+                } else {
+                    ///// No. The override object has the rule we need to override
+                    override = this.createOverrideRule(dominantRule.ruleToOverride, element);
+                    useImportant = dominantRule.useImportant;
+                    dominantRule = override.rule;
+                    this.addClass(element, override.className);
+                }
             }
 
 
