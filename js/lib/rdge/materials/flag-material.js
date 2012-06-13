@@ -27,6 +27,9 @@ var FlagMaterial = function FlagMaterial() {
 
 	this._hasVertexDeformation = true;
 
+    // array textures indexed by shader uniform name
+    this._glTextures = [];
+
     ///////////////////////////////////////////////////////////////////////
     // Properties
     ///////////////////////////////////////////////////////////////////////

@@ -171,7 +171,7 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 		this._srcCanvas = null;
 
 		// only load if something has changed
-		if (this._texMapName !== texMapName)	// does RDGE allow us to change wrap or mips?
+		//if (this._texMapName !== texMapName)	// does RDGE allow us to change wrap or mips?
 		{
 			var texMapName = this._texMapName;
 			var wrap = this._wrap;

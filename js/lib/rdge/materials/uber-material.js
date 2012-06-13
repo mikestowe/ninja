@@ -41,6 +41,9 @@ var UberMaterial = function UberMaterial() {
 
     this._MAX_LIGHTS = 4;
 
+    // array textures indexed by shader uniform name
+    this._glTextures = [];
+
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////

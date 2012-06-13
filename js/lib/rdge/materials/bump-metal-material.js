@@ -24,8 +24,8 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
     this._defaultSpecularTexture = "assets/images/silver.png";
 	this._defaultNormalTexture = "assets/images/normalMap.png";
 
-    // keep the array of initialized textures
-    this._textures = [];
+    // array textures indexed by shader uniform name
+    this._glTextures = [];
 
 	this._speed = 1.0;
 

@@ -19,6 +19,9 @@ var KeleidoscopeMaterial = function KeleidoscopeMaterial() {
 	this._time = 0.0;
 	this._dTime = 0.01;
 
+    // array textures indexed by shader uniform name
+    this._glTextures = [];
+
     ///////////////////////////////////////////////////////////////////////
     // Properties
     ///////////////////////////////////////////////////////////////////////
