@@ -111,37 +111,34 @@ exports.ColorWheel = Montage.create(Component, {
     draw: {
     	value: function() {
     		//
-    		var slice, i, whlctx = this.wheel.getContext("2d"), math = this._math,
-    			whlcvs = this.wheel, swhcvs = this.swatch,
-    			wslcvs = this.wheelSelect, swscvs = this.swatchSelect;
+    		var slice, i, whlctx = this.wheel.getContext("2d");
     		//Determing radius by smallest factor of width or height
     		if (this.element.offsetWidth > this.element.offsetHeight) {
-    			math.diameter = this.element.offsetWidth;
+    			this._math.diameter = this.element.offsetWidth;
     		} else {
-    			math.diameter = this.element.offsetHeight;
+    			this._math.diameter = this.element.offsetHeight;
     		}
     		//Setting the radius from diameter
-    		math.radius = math.diameter/2;
+    		this._math.radius = this._math.diameter/2;
     		//Inner radius of wheel
-    		math.innerRadius = math.radius - this.rimWidth;
+    		this._math.innerRadius = this._math.radius - this.rimWidth;
     		//Setting the widths and heights to match the container's
-    		whlcvs.width = whlcvs.height = wslcvs.width = wslcvs.height = swscvs.width = swscvs.height = math.diameter;
+    		this.wheel.width = this.wheel.height = this.wheelSelect.width = this.wheelSelect.height = this.swatchSelect.width = this.swatchSelect.height = this._math.diameter;
     		//
-    		math.swatchLength = Math.floor((math.radius - this.rimWidth - this.strokeWidth*4) * Math.sin(45 * math.RADIANS) * 2);
-    		math.swatchPosition = Math.round(math.radius - (math.swatchLength/2))+this.strokeWidth* Math.sin(45 * math.RADIANS);
+    		this._math.swatchLength = Math.floor((this._math.radius - this.rimWidth - this.strokeWidth*4) * Math.sin(45 * this._math.RADIANS) * 2);
+    		this._math.swatchPosition = Math.round(this._math.radius - (this._math.swatchLength/2))+this.strokeWidth* Math.sin(45 * this._math.RADIANS);
     		//
-    		//swhcvs.width = swhcvs.height = math.swatchLength; //TODO: Figure out why this breaks on WINDOWS ONLY
-    		swhcvs.style.top = swhcvs.style.left = math.swatchPosition+'px';
+    		this.swatch.style.top = this.swatch.style.left = this._math.swatchPosition+'px';
     		//Clearing wheel for redraw
-			whlctx.clearRect(0, 0, math.diameter, math.diameter);
+			whlctx.clearRect(0, 0, this._math.diameter, this._math.diameter);
 			////////////////////////////////////////////////////////////////
 			//Drawing color wheel circle
 			whlctx.save();
 			whlctx.beginPath();
 			whlctx.moveTo(0,0);
-			whlctx.lineTo(math.diameter,0);
-			whlctx.lineTo(math.diameter,math.diameter);
-			whlctx.lineTo(0,math.diameter);
+			whlctx.lineTo(this._math.diameter,0);
+			whlctx.lineTo(this._math.diameter,this._math.diameter);
+			whlctx.lineTo(0,this._math.diameter);
 			whlctx.closePath();
 			whlctx.clip();
 			whlctx.strokeStyle = 'rgba(0,0,0,0)';
@@ -151,7 +148,7 @@ exports.ColorWheel = Montage.create(Component, {
 			whlctx.save();
     		////////////////////////////////////////////////////////////////
 			//Looping through set intervals
-			math.radius = math.radius - this.strokeWidth/2;
+			this._math.radius = this._math.radius - this.strokeWidth/2;
 			for (i=0; i<60; i++) {
 				//Calculating slice number
 				slice = Math.round(255*i/60);
@@ -164,13 +161,19 @@ exports.ColorWheel = Montage.create(Component, {
 				this._drawWheelSlice (i+300, 255, 0, 255-slice);
 			}
 			//
-			math.radius = math.radius + this.strokeWidth/2;
+			this._math.radius = this._math.radius + this.strokeWidth/2;
+			//TODO: Add parameter to allow for color specification of this inner 'empty' circle in wheel
+			whlctx.beginPath();
+			whlctx.arc(this._math.innerRadius+this.rimWidth, this._math.innerRadius+this.rimWidth, this._math.innerRadius-this.strokeWidth/2, 0, this._math.TAU, true);
+			whlctx.fillStyle = '#494949';
+			whlctx.fill();
+			whlctx.restore();
 			//
 			whlctx.strokeStyle = this.strokeColor;
 			whlctx.lineWidth = this.strokeWidth;
 			whlctx.globalAlpha = 1;
 			whlctx.beginPath();
-			whlctx.arc(math.radius, math.radius, math.radius-this.strokeWidth/2, 0, math.TAU, true);
+			whlctx.arc(this._math.radius, this._math.radius, this._math.radius-this.strokeWidth/2, 0, this._math.TAU, true);
 			whlctx.closePath();
 			whlctx.stroke();
 			whlctx.restore();
@@ -179,23 +182,23 @@ exports.ColorWheel = Montage.create(Component, {
 			whlctx.lineWidth = this.strokeWidth;
 			whlctx.globalAlpha = 1;
 			whlctx.beginPath();
-			whlctx.arc(math.innerRadius+this.rimWidth, math.innerRadius+this.rimWidth, math.innerRadius-this.strokeWidth/2, 0, math.TAU, true);
+			whlctx.arc(this._math.innerRadius+this.rimWidth, this._math.innerRadius+this.rimWidth, this._math.innerRadius-this.strokeWidth/2, 0, this._math.TAU, true);
 			whlctx.closePath();
 			whlctx.stroke();
 			whlctx.restore();
 			//
 			whlctx.beginPath();
-			whlctx.moveTo(math.swatchPosition-this.strokeWidth/2, math.swatchPosition-this.strokeWidth/2);
-			whlctx.lineTo(math.swatchLength+math.swatchPosition-this.strokeWidth/2, math.swatchPosition-this.strokeWidth/2);
-			whlctx.lineTo(math.swatchLength+math.swatchPosition-this.strokeWidth/2, math.swatchLength+math.swatchPosition-this.strokeWidth/2);
-			whlctx.lineTo(math.swatchPosition-this.strokeWidth/2, math.swatchLength+math.swatchPosition-this.strokeWidth/2);
+			whlctx.moveTo(this._math.swatchPosition-this.strokeWidth/2, this._math.swatchPosition-this.strokeWidth/2);
+			whlctx.lineTo(this._math.swatchLength+this._math.swatchPosition-this.strokeWidth/2, this._math.swatchPosition-this.strokeWidth/2);
+			whlctx.lineTo(this._math.swatchLength+this._math.swatchPosition-this.strokeWidth/2, this._math.swatchLength+this._math.swatchPosition-this.strokeWidth/2);
+			whlctx.lineTo(this._math.swatchPosition-this.strokeWidth/2, this._math.swatchLength+this._math.swatchPosition-this.strokeWidth/2);
 			whlctx.closePath();
 			whlctx.strokeStyle = "rgba(0, 0, 0, .25)";
 			whlctx.shadowColor = "rgba(0, 0, 0, 1)";
 			whlctx.shadowBlur = 2;
 			whlctx.stroke();
 			//
-			this._wheelData = whlctx.getImageData(0, 0, math.diameter, math.diameter);
+			this._wheelData = whlctx.getImageData(0, 0, this._math.diameter, this._math.diameter);
 			//TODO: Fix redraw bug
 			if(!this.value) {
 				this.wheelSelectorAngle(0);
@@ -206,8 +209,8 @@ exports.ColorWheel = Montage.create(Component, {
 				this.drawSwatchColor(0);
 				this.drawSwatchSelector(100, 100);
 				//
-				this.wheelSelectorAngle(this.value.h/math.TAU*360);
-				this.drawSwatchColor(this.value.h/math.TAU*360);
+				this.wheelSelectorAngle(this.value.h/this._math.TAU*360);
+				this.drawSwatchColor(this.value.h/this._math.TAU*360);
 				this.drawSwatchSelector(this.value.s*100, this.value.v*100);
 			}
     	}
@@ -422,11 +425,14 @@ exports.ColorWheel = Montage.create(Component, {
     _drawWheelSlice: {
     	value: function (s, r, g, b) {
     		//
-    		var context = this.wheel.getContext("2d"), radius = this._math.radius;
+    		var context = this.wheel.getContext("2d"),
+    			radius = this._math.radius,
+    			trnslt = radius + this.strokeWidth/2;
+    		//
     		context.beginPath();
     		context.fillStyle = 'rgb('+r+','+g+','+b+')';
 			context.scale(1,1);
-			context.translate(radius + this.strokeWidth/2, radius + this.strokeWidth/2);
+			context.translate(trnslt, trnslt);
 			context.rotate(s*this._math.RADIANS);
 			context.translate(-radius, -radius);
 			context.moveTo(radius, radius);
