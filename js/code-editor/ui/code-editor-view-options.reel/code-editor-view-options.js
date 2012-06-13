@@ -52,6 +52,11 @@ exports.CodeEditorViewOptions = Montage.create(Component, {
         }
     },
 
+    autoCompleteLabel: {
+        value: null,
+        serializable: true
+    },
+
     _autocomplete: {
         value: false
     },
@@ -73,7 +78,33 @@ exports.CodeEditorViewOptions = Montage.create(Component, {
     },
 
     codeCompleteCheck: {
-        value: null
+        value: null,
+        serializable: true
+    },
+
+    zoomHottext: {
+        value: null,
+        serializable: true
+    },
+
+    comment: {
+        value: null,
+        serializable: true
+    },
+
+    uncomment: {
+        value: null,
+        serializable: true
+    },
+
+    themeSelect: {
+        value: null,
+        serializable: true
+    },
+
+    shortKeys: {
+        value: null,
+        serializable: true
     },
 
     prepareForDraw: {

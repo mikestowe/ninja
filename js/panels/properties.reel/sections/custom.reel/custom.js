@@ -233,6 +233,12 @@ exports.CustomSection = Montage.create(Component, {
               boundObjectPropertyPath: "value"
             });
 
+            //Bind object value to controls list so it can be manipulated
+            Object.defineBinding(this.controls, aField.id + "Units", {
+              boundObject: obj,
+              boundObjectPropertyPath: "units"
+            });
+
             return obj;
         }
     },

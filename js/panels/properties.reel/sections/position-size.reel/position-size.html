@@ -29,10 +29,13 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
             "properties": {
                 "element": {"#": "PosX"},
                 "maxValue": 10000,
-                "minValue": -10000
+                "minValue": -10000,
+                "acceptableUnits" : ["px", "%"],
+                "units": "px"
             },
             "bindings": {
-                "value": {"<<->": "@owner.leftPosition"}
+                "units": {"<->": "@owner.leftUnits"},
+                "value": {"<->": "@owner.leftPosition"}
             }
         },
         "PosY": {
@@ -40,20 +43,26 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
             "properties": {
                 "element": {"#": "PosY"},
                 "maxValue": 10000,
-                "minValue": -10000
+                "minValue": -10000,
+                "acceptableUnits" : ["px", "%"],
+                "units": "px"
             },
             "bindings": {
-                "value": {"<<->": "@owner.topPosition"}
+                "units": {"<->": "@owner.topUnits"},
+                "value": {"<->": "@owner.topPosition"}
             }
         },
 
         "PosH": {
             "prototype": "js/components/hottextunit.reel[HotTextUnit]",
             "properties": {
-                "element": {"#": "PosH"}
+                "element": {"#": "PosH"},
+                "acceptableUnits" : ["px", "%"],
+                "units": "px"
             },
             "bindings": {
-                "value": {"<<->": "@owner.heightSize"}
+                "units": {"<->": "@owner.heightUnits"},
+                "value": {"<->": "@owner.heightSize"}
             }
         },
 
@@ -65,7 +74,8 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
                 "units": "px"
             },
             "bindings": {
-                "value": {"<<->": "@owner.widthSize"}
+                "units": {"<->": "@owner.widthUnits"},
+                "value": {"<->": "@owner.widthSize"}
             }
 
         },
@@ -74,7 +84,6 @@ No rights, expressed or implied, whatsoever to this software are provided by Mot
             "properties": {
                 "element": {"#": "posBound"},
                 "pressedClass": "lockUp",
-                "preventFocus": true,
                 "identifier": "ratio"
             }
         }

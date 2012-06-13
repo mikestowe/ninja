@@ -30,7 +30,8 @@ var TreeController = exports.TreeController = Montage.create(ObjectController, /
         },
         set: function(value) {
             this._delegate = value;
-        }
+        },
+        serializable: true
     },
 
     rootKey : {
@@ -38,7 +39,13 @@ var TreeController = exports.TreeController = Montage.create(ObjectController, /
     },
 
     branchKey : {
-        value: null
+        value: null,
+        serializable: true
+    },
+
+    labelKey: {
+        value: null,
+        serializable: true
     },
 
     _root : {

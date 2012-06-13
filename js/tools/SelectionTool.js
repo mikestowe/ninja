@@ -228,6 +228,7 @@ var SelectionTool = exports.SelectionTool = Montage.create(ModifierToolBase, {
             } else {
                 this.application.ninja.currentDocument.model.domContainer = this.application.ninja.currentDocument.model.documentRoot;
             }
+            this.application.ninja.selectionController.executeSelectElement();
         }
     },
 

@@ -51,6 +51,61 @@ exports.ThreeD = Montage.create(Component, {
         }
     },
 
+    x3DControl: {
+        value: null,
+        serializable: true
+    },
+
+    y3DControl: {
+        value: null,
+        serializable: true
+    },
+
+    z3DControl: {
+        value: null,
+        serializable: true
+    },
+
+    x3DLabel: {
+        value: null,
+        serializable: true
+    },
+
+    y3DLabel: {
+        value: null,
+        serializable: true
+    },
+
+    z3DLabel: {
+        value: null,
+        serializable: true
+    },
+
+    xAngleControl: {
+        value: null,
+        serializable: true
+    },
+
+    yAngleControl: {
+        value: null,
+        serializable: true
+    },
+
+    zAngleControl: {
+        value: null,
+        serializable: true
+    },
+
+    axisModeGroupControl: {
+        value: null,
+        serializable: true
+    },
+
+    flattenControl: {
+        value: null,
+        serializable: true
+    },
+
     x3D: {
         value: 0
     },
