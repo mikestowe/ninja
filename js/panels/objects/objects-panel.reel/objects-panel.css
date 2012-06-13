@@ -18,20 +18,3 @@
     margin: 10px 0 0 0;
     padding: 0;
 }
-.objects-list .list-item {
-    list-style-type: none;
-    float: left;
-}
-.object-icon {
-    background-color: #fff;
-    border: 1px solid #353535;
-    border-radius: 5px;
-    height: 50px;
-    margin:  0 15px 5px;
-    width: 50px;
-}
-.object-label {
-    color: #fff;
-    display: block;
-    text-align: center;
-}

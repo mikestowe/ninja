@@ -46,14 +46,14 @@
                     "objects": {"<-": "@owner.nonVisualComponents"}
                 }
             },
-            "nonVisualComponent": {
-                "prototype": "js/stage/binding-view.reel/non-visual-component.reel",
+            "objectIcon": {
+                "prototype": "js/panels/objects/object.reel",
                 "properties": {
                     "element": {"#": "nonVisualComponent"}
                 },
                 "bindings": {
-                    "objectName": {"<-": "@hudRepeater.objectAtCurrentIteration.objectName"},
-                    "objectImage": {"<-": "@hudRepeater.objectAtCurrentIteration.objectImage"}
+                    "sourceObject": {"<-": "@nonVisualRepeater.objectAtCurrentIteration"},
+                    "identifier": {"<-": "@nonVisualRepeater.objectAtCurrentIteration.identifier"}
                 }
             }
         }

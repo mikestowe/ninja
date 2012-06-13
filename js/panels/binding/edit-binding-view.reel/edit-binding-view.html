@@ -148,33 +148,44 @@
 <body>
 <div data-montage-id="edit-binding" class="edit-binding-view">
 
-    <ul>
-        <h3>Source Object</h3>
-        <li class="edit-source-object">
-            <label>Identifier:</label><span data-montage-id="sourceObjectField" class="hintable-field">Test</span>
-            <br>
-            <label>Property Path:</label><span data-montage-id="so-pp" class="hintable-field so-pp">Test</span>
-        </li>
-        <h3>Bound Object</h3>
-        <li class="edit-bound-object">
-            <label>Identifier:</label><span data-montage-id="boundObjectField" class="hintable-field">Test</span>
-            <br>
-            <label>Property Path:</label><span data-montage-id="bo-pp" class="hintable-field bo-pp">Test</span>
-        </li>
 
-        <h3>Configuration</h3>
-        <li class="edit-general-properties">
-            <input data-montage-id="direction-checkbox" type="checkbox" class="nj-skinned"><label>Oneway</label>
-        </li>
-        <li>
-            <label>Converter</label><span>Test</span>
-        </li>
-    </ul>
+    <section class="edit-object-binding">
+        <div data-montage-id="source-object-container" class="object-container">
+            <div data-montage-id="source-object-icon-container" class="object-icon-container">
+                <div>
+                    <div class="object-icon"></div>
+                </div>
+            </div>
+            <div class="object-fields-container">
+                <span data-montage-id="sourceObjectField" class="hintable-field">Test</span>
+                <span data-montage-id="so-pp" class="hintable-field so-pp"></span>
+            </div>
+        </div>
 
-    <button data-montage-id="delete-button" class="nj-skinned .btn-delete">Delete</button>
-    <button data-montage-id="cancel-button" class="nj-skinned">Cancel</button>
-    <button data-montage-id="save-button" class="nj-skinned">Save</button>
+        <div data-montage-id="bound-object-container" class="object-container">
+            <div data-montage-id="bound-object-icon-container" class="object-icon-container">
+                <div>
+                    <div class="object-icon"></div>
+                </div>
+            </div>
+            <div class="object-fields-container">
+                <span data-montage-id="boundObjectField" class="hintable-field">Test</span>
+                <span data-montage-id="bo-pp" class="hintable-field bo-pp"></span>
+            </div>
+        </div>
+    </section>
 
+
+    <div class="checkbox-container">
+        <input data-montage-id="direction-checkbox" type="checkbox" class="nj-skinned"><label>Oneway</label>
+    </div>
+
+
+    <div class="buttons-container">
+        <button data-montage-id="delete-button" class="nj-skinned btn-delete">Delete</button>
+        <button data-montage-id="save-button" class="nj-skinned btn-save">Save</button>
+        <button data-montage-id="cancel-button" class="nj-skinned btn-cancel">Cancel</button>
+    </div>
 </div>
 </body>
 </html>

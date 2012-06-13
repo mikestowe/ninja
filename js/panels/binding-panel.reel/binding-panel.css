@@ -20,3 +20,8 @@
 .binding-panel-toolbar-container {
     -webkit-box-flex: 0;
 }
+
+.binding-panel .edit-view-docked {
+    left: 0;
+    -webkit-transition-duration: 0;
+}

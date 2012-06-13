@@ -7,6 +7,10 @@
 var Montage = require("montage/core/core").Montage,
     Component        = require("montage/ui/component").Component;
 
+var CATEGORIES  = {
+
+};
+
 var objectsController = exports.ObjectsController = Montage.create(Component, {
 
     _currentDocument : {
@@ -62,6 +66,7 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
             if(!bindingArgs.sourceObject || !bindingArgs.sourceObjectPropertyPath || !bindingArgs) { return; }
 
             Object.defineBinding(bindingArgs.sourceObject, bindingArgs.sourceObjectPropertyPath, bindingArgs);
+            this.currentObjectBindings = this.getObjectBindings(value);
         }
     },
 
@@ -72,6 +77,7 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
 
 
             Object.deleteBinding(bindingArgs.sourceObject, bindingArgs.sourceObjectPropertyPath);
+            this.currentObjectBindings = this.getObjectBindings(value);
         }
     },
 
@@ -88,6 +94,7 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
             }
 
             this.addBinding(bindingArgs);
+
         }
     },
     
@@ -119,20 +126,11 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
         }
     },
 
-    /* ---- Bindable Properties ---- */
+    /* ---- Get Bindable Properties ---- */
 
     getPropertyList : {
         value: function(object, excludeUnderscoreProperties) {
-            var object_i = object,
-                prototypes = [object_i];
-
-            ///// Collect prototypes
-            while(Object.getPrototypeOf(object_i)) {
-                object_i = Object.getPrototypeOf(object_i);
-                prototypes.push(object_i);
-            }
-
-            return prototypes.map(function(proto) {
+            return this.getPrototypes(object).map(function(proto) {
 
                 var metadata = proto._montage_metadata,
                     objectName = (metadata) ? metadata.objectName : "Object";
@@ -163,6 +161,44 @@ var objectsController = exports.ObjectsController = Montage.create(Component, {
             }
 
             return properties.sort();
+        }
+    },
+
+    getPrototypes : {
+        value: function(object) {
+            var object_i = object,
+                prototypes = [object_i];
+
+            ///// Collect prototypes
+            while(Object.getPrototypeOf(object_i)) {
+                object_i = Object.getPrototypeOf(object_i);
+                prototypes.push(object_i);
+            }
+
+            return prototypes;
+        }
+    },
+
+    /* ----- Category properties ----- */
+
+    getObjectCategory : {
+        value: function(object) {
+            if(this._hasPrototype(object, 'Component')) {
+                return 'Component';
+            }
+
+            return null;
+        }
+    },
+
+    _hasPrototype : {
+        value: function(object, prototypeName) {
+            var prototypes = this.getPrototypes(object).map(function(proto) {
+                var metadata = proto._montage_metadata;
+                return (metadata) ? metadata.objectName : "Object";
+            });
+
+            return prototypes.indexOf(prototypeName) !== -1;
         }
     },
 

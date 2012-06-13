@@ -13,11 +13,59 @@
     position: absolute;
     top: 0;
     width: 100%;
-    -webkit-transition-property: -webkit-transform, box-shadow;
-    -webkit-transition-duration: .55s, .2s;
+    -webkit-transition-property: -webkit-transform;
+    -webkit-transition-duration: .55s;
     -webkit-transition-timing-function: cubic-bezier(.44,.19,0,.99);
     -webkit-user-select: text;
 }
+
+/* -------------------
+    Object Editing Section
+ --------------------- */
+.edit-object-binding {
+    border-bottom: 1px solid #505050;
+    display: -webkit-box;
+    margin: 5px;
+    padding-bottom: 5px;
+    -webkit-box-orient: horizontal;
+}
+.object-container {
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+    -webkit-box-flex: 1;
+    overflow: hidden;
+}
+.object-container:first-child {
+    margin-right: 5px;
+}
+.object-icon-container {
+    background-color: #414141;
+    border-radius: 5px;
+    border: 1px solid #333;
+    box-shadow: inset 0 0 5px 0px #333, 0 1px 0 #585858;
+    height: 40px;
+    width: 40px;
+    -webkit-box-flex: 0;
+}
+.object-icon-container > div {
+    height: 100%;
+    width: 100%;
+}
+.edit-object-binding .object-icon {
+    -webkit-transform: scale(.75);
+    height: 100%;
+    margin: 0;
+    width: 100%;
+    position:relative;
+    top: -1px;
+    left: -1px;
+}
+.object-fields-container {
+    -webkit-box-flex: 1;
+    padding-top: 1px;
+    width: 1px;
+}
+
 
 .edit-binding-view ul {
     padding: 0;
@@ -34,14 +82,43 @@
     width: 50%;
 }
 
+.checkbox-container {
+    position: absolute;
+    left: 50%;
+}
+.checkbox-container label {
+    position: relative;
+    top: -3px;
+}
+
+.buttons-container {
+    background-color: #474747;
+    position: absolute;
+    bottom: 5px;
+    width: 100%;
+}
+
+.edit-binding-view .btn-delete, .edit-binding-view .btn-cancel, .edit-binding-view .btn-save {
+    width: 72px;
+    display: inline-block;
+    margin: 0 5px;
+}
+.edit-binding-view .btn-cancel, .edit-binding-view .btn-save {
+    float:right;
+    margin: 0 5px 0 0;
+}
 /* hintable fields */
 
 .hintable-field {
     background-color: #444;
     border: 1px solid #313131;
-    display: inline-block;
+    display: block;
     height: 13px;
-    margin-left: 5px;
+    margin: 0 0 5px 5px;
     padding: 1px 4px;
-    width: 45%;
+    width: 80%;
+}
+
+.hintable-field:focus {
+    border: 1px solid #313131;
 }
