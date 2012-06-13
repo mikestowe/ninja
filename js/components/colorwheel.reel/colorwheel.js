@@ -14,19 +14,16 @@ exports.ColorWheel = Montage.create(Component, {
 	////////////////////////////////////////////////////////////////////
 	//
 	hasTemplate: {
-		enumerable: false,
         value: true
     },
     ////////////////////////////////////////////////////////////////////
     //Value of wheel in HSV (360, 100, 100)
     _value: {
-        enumerable: false,
         value: {h: 0, s: 0, v: 0}
     },
 	////////////////////////////////////////////////////////////////////
     //Value of wheel in HSV (360, 100, 100)
     value: {
-        enumerable: false,
         get: function() {
             return this._value;
         },
@@ -34,8 +31,8 @@ exports.ColorWheel = Montage.create(Component, {
             this._value = value;
             if (this._wheelData) {
             	if (value && !value.wasSetByCode) {
-            		this.wheelSelectorAngle(value.h/this.element._component.math.TAU*360);
-					this.drawSwatchColor(value.h/this.element._component.math.TAU*360);
+            		this.wheelSelectorAngle(value.h/this._math.TAU*360);
+					this.drawSwatchColor(value.h/this._math.TAU*360);
 					this.drawSwatchSelector(value.s*100, value.v*100);
             	}
 				if (!this._isMouseDown) {
@@ -47,14 +44,12 @@ exports.ColorWheel = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //Stroke size of wheel
     _strokeWidth: {
-    	enumerable: false,
     	value: 2
     },
     ////////////////////////////////////////////////////////////////////
     //Size must be set in digits and interpreted as pixel
     strokeWidth: {
-    	enumerable: false,
-    	 get: function() {
+    	get: function() {
             return this._strokeWidth;
         },
         set: function(value) {
@@ -64,14 +59,12 @@ exports.ColorWheel = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //Stroke color of wheel
     _strokeColor: {
-    	enumerable: false,
     	value: 'rgb(255, 255, 255)'
     },
     ////////////////////////////////////////////////////////////////////
     //Stroke only apply to wheel rim
     strokeColor: {
-    	enumerable: false,
-    	 get: function() {
+    	get: function() {
             return this._strokeColor;
         },
         set: function(value) {
@@ -81,14 +74,12 @@ exports.ColorWheel = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //Width of the rim
     _rimWidth: {
-    	enumerable: false,
     	value: 2
     },
     ////////////////////////////////////////////////////////////////////
     //Width must be set using digits interpreted as pixel
     rimWidth: {
-    	enumerable: false,
-    	 get: function() {
+    	get: function() {
             return this._rimWidth;
         },
         set: function(value) {
@@ -97,47 +88,32 @@ exports.ColorWheel = Montage.create(Component, {
     },
     ////////////////////////////////////////////////////////////////////
     //
+    _math: {
+	    value: {PI: Math.PI, TAU: Math.PI*2, RADIANS: Math.PI/180}
+    },
+    ////////////////////////////////////////////////////////////////////
+    //
     prepareForDraw: {
-    	enumerable: false,
     	value: function() {
-    		//
-    		this.element._component = {wheel: {}, swatch: {}, wheel_select: {}, swatch_select: {}, math: {}};
-    		//
-    		this.element._component.math.PI = Math.PI,
-    		this.element._component.math.TAU = Math.PI*2,
-    		this.element._component.math.RADIANS = Math.PI/180;
+    		//Hidding component while it is drawn
+    		this.element.style.opacity = 0;
 		}
     },
     ////////////////////////////////////////////////////////////////////
     //
     willDraw: {
-    	enumerable: false,
     	value: function() {
     		//
-    		this.element.style.opacity = 0;
-    		//
-    		var cnvs = this.element.getElementsByTagName('canvas');
-    		//
-    		this.element._component.wheel.canvas = cnvs[0];
-    		this.element._component.swatch.canvas = cnvs[1];
-    		this.element._component.wheel_select.canvas = cnvs[3];
-    		this.element._component.swatch_select.canvas = cnvs[2];
-    		//
-    		this.element._component.wheel.context = this.element._component.wheel.canvas.getContext("2d");
-    		this.element._component.swatch.context = this.element._component.swatch.canvas.getContext("2d");
-    		this.element._component.wheel_select.context = this.element._component.wheel_select.canvas.getContext("2d");
-    		this.element._component.swatch_select.context = this.element._component.swatch_select.canvas.getContext("2d");
 		}
     },
     ////////////////////////////////////////////////////////////////////
     //
     draw: {
-    	enumerable: false,
     	value: function() {
     		//
-    		var slice, i, whlctx = this.element._component.wheel.context, math = this.element._component.math,
-    			whlcvs = this.element._component.wheel.canvas, swhcvs = this.element._component.swatch.canvas,
-    			wslcvs = this.element._component.wheel_select.canvas, swscvs = this.element._component.swatch_select.canvas;
+    		var slice, i, whlctx = this.wheel.getContext("2d"), math = this._math,
+    			whlcvs = this.wheel, swhcvs = this.swatch,
+    			wslcvs = this.wheelSelect, swscvs = this.swatchSelect;
     		//Determing radius by smallest factor of width or height
     		if (this.element.offsetWidth > this.element.offsetHeight) {
     			math.diameter = this.element.offsetWidth;
@@ -239,39 +215,35 @@ exports.ColorWheel = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
    	didDraw: {
-    	enumerable: false,
     	value: function() {
     		//
 			this.element.style.opacity = 1;
 			//
-			this.element._component.wheel_select.canvas.style.cursor = 'pointer';
+			this.wheelSelect.style.cursor = 'pointer';
 			//
-	    	this.element._component.wheel_select.canvas.addEventListener('mouseup', this, false);
-    		this.element._component.wheel_select.canvas.addEventListener('mousedown', this, false);
-    		this.element._component.wheel_select.canvas.addEventListener('mousemove', this, false);
+	    	this.wheelSelect.addEventListener('mouseup', this, false);
+    		this.wheelSelect.addEventListener('mousedown', this, false);
+    		this.wheelSelect.addEventListener('mousemove', this, false);
     	}
     },
     ////////////////////////////////////////////////////////////////////
     //
     _scanningMode: {
-    	enumerable: false,
     	value: null
     },
     ////////////////////////////////////////////////////////////////////
     //
     _isMouseDown: {
-    	enumerable: false,
     	value: false
     },
     ////////////////////////////////////////////////////////////////////
     //
     handleMousedown: {
-    	enumerable: false,
     	value: function(e) {
     		//
     		this._isMouseDown = true;
     		//
-    		if ((e.offsetY < this.element._component.math.swatchPosition || e.offsetY > this.element._component.math.swatchLength+this.element._component.math.swatchPosition) || (e.offsetX < this.element._component.math.swatchPosition || e.offsetX > this.element._component.math.swatchLength+this.element._component.math.swatchPosition)) {	
+    		if ((e.offsetY < this._math.swatchPosition || e.offsetY > this._math.swatchLength+this._math.swatchPosition) || (e.offsetX < this._math.swatchPosition || e.offsetX > this._math.swatchLength+this._math.swatchPosition)) {	
 				this._scanningMode = 'wheel';
 			} else {
 				this._scanningMode = 'swatch';
@@ -281,9 +253,8 @@ exports.ColorWheel = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     handleMouseup: {
-    	enumerable: false,
     	value: function(e) {
-    		var math = this.element._component.math;
+    		var math = this._math;
     		//
     		if ((e.offsetY < math.swatchPosition || e.offsetY > math.swatchLength+math.swatchPosition) || (e.offsetX < math.swatchPosition || e.offsetX > math.swatchLength+math.swatchPosition)) {	
 				if (this._scanningMode === 'wheel') {
@@ -302,9 +273,8 @@ exports.ColorWheel = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     handleMousemove: {
-    	enumerable: false,
     	value: function(e) {
-    		var math = this.element._component.math;
+    		var math = this._math;
     		//
     		if (this._isMouseDown) {
     			if (this._scanningMode === 'wheel') {
@@ -316,9 +286,9 @@ exports.ColorWheel = Montage.create(Component, {
     			this._dispatchEvent('changing', false);
     		} else {
     			if ((e.offsetY < math.swatchPosition || e.offsetY > math.swatchLength+math.swatchPosition) || (e.offsetX < math.swatchPosition || e.offsetX > math.swatchLength+math.swatchPosition)) {
-					this.element._component.wheel_select.canvas.style.cursor = 'pointer';
+					this.wheelSelect.style.cursor = 'pointer';
 				} else {
-					this.element._component.wheel_select.canvas.style.cursor = 'crosshair';
+					this.wheelSelect.style.cursor = 'crosshair';
 				}
     		}
     	}
@@ -326,13 +296,12 @@ exports.ColorWheel = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     mouseSetWheelAngle: {
-    	enumerable: false,
     	value: function(e) {
-    		var angle = (2 * Math.atan2(e.offsetY - (this.element._component.math.radius - Math.sqrt(Math.pow(Math.abs(e.offsetX - this.element._component.math.radius),2) + Math.pow(Math.abs(e.offsetY - this.element._component.math.radius), 2))), e.offsetX - this.element._component.math.radius))/this.element._component.math.TAU*360;
+    		var angle = (2 * Math.atan2(e.offsetY - (this._math.radius - Math.sqrt(Math.pow(Math.abs(e.offsetX - this._math.radius),2) + Math.pow(Math.abs(e.offsetY - this._math.radius), 2))), e.offsetX - this._math.radius))/this._math.TAU*360;
 			if (this._value) {
-				this.value = {h: angle*this.element._component.math.TAU/360, s: this._value.s, v: this._value.v};
+				this.value = {h: angle*this._math.TAU/360, s: this._value.s, v: this._value.v};
 			} else {
-				this.value = {h: angle*this.element._component.math.TAU/360, s: 1, v: 1};
+				this.value = {h: angle*this._math.TAU/360, s: 1, v: 1};
 			}
 			this.wheelSelectorAngle(0);
 			this.wheelSelectorAngle(angle);
@@ -342,10 +311,9 @@ exports.ColorWheel = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     mouseSetSwatch: {
-    	enumerable: false,
     	value: function(e) {
     		//
-    		var s, v, math = this.element._component.math;;
+    		var s, v, math = this._math;;
     		//
     		if (e.offsetX > math.swatchLength+math.swatchPosition) {
     			s = 100;
@@ -375,28 +343,25 @@ exports.ColorWheel = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     _wheelData: {
-    	enumerable: false,
     	value: null
     },
     ////////////////////////////////////////////////////////////////////
     //
     _previousDegree: {
-    	enumerable: false,
     	value: 0
     },
     ////////////////////////////////////////////////////////////////////
     //
     drawSwatchSelector: {
-    	enumerable: false,
     	value: function (s, v) {
-    		var context = this.element._component.swatch_select.context, strokeWidth = this.strokeWidth/2, radius = this.element._component.math.radius/28, math = this.element._component.math;
+    		var context = this.swatchSelect.getContext("2d"), strokeWidth = this.strokeWidth/2, radius = this._math.radius/28, math = this._math;
     		context.clearRect(0, 0, math.diameter, math.diameter);
 			//White outline
 			context.beginPath();
 			context.strokeStyle = '#FFF';
 			context.lineWidth = strokeWidth;
 			context.globalAlpha = 1;
-			//context.arc(this.element._component.math.swatchPosition+(this.element._component.math.swatchLength*(s/100)) - radius/2, this.element._component.math.swatchPosition+(this.element._component.math.swatchLength*(1-v/100))- radius/2, radius-strokeWidth, 0, this.element._component.math.TAU, true);
+			//context.arc(this._math.swatchPosition+(this._math.swatchLength*(s/100)) - radius/2, this._math.swatchPosition+(this._math.swatchLength*(1-v/100))- radius/2, radius-strokeWidth, 0, this._math.TAU, true);
 			context.arc(math.swatchPosition+(math.swatchLength*(s/100)), math.swatchPosition+(math.swatchLength*(1-v/100)), radius-strokeWidth, 0, math.TAU, true);
 			context.closePath();
 			context.stroke();
@@ -415,9 +380,8 @@ exports.ColorWheel = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     drawSwatchColor: {
-    	enumerable: false,
     	value: function (angle) {
-    		var context = this.element._component.swatch.context, gradient, math = this.element._component.math;
+    		var context = this.swatch.getContext("2d"), gradient, math = this._math;
     		context.clearRect(0, 0, math.swatchLength, math.swatchLength);
 			context.beginPath();
 			context.moveTo(0, 0);
@@ -456,15 +420,14 @@ exports.ColorWheel = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     _drawWheelSlice: {
-    	enumerable: false,
     	value: function (s, r, g, b) {
     		//
-    		var context = this.element._component.wheel.context, radius = this.element._component.math.radius;
+    		var context = this.wheel.getContext("2d"), radius = this._math.radius;
     		context.beginPath();
     		context.fillStyle = 'rgb('+r+','+g+','+b+')';
 			context.scale(1,1);
 			context.translate(radius + this.strokeWidth/2, radius + this.strokeWidth/2);
-			context.rotate(s*this.element._component.math.RADIANS);
+			context.rotate(s*this._math.RADIANS);
 			context.translate(-radius, -radius);
 			context.moveTo(radius, radius);
 			context.translate(radius, radius);
@@ -472,7 +435,7 @@ exports.ColorWheel = Montage.create(Component, {
 			context.translate(-radius, -radius);
 			context.lineTo(radius, this.rimWidth);
 			context.translate(radius, radius);
-			context.arc(0, 0, this.element._component.math.innerRadius, -1.53, -1.59, 1);
+			context.arc(0, 0, this._math.innerRadius, -1.53, -1.59, 1);
 			context.closePath();
 			context.fill();
 			context.stroke();
@@ -483,18 +446,17 @@ exports.ColorWheel = Montage.create(Component, {
     ////////////////////////////////////////////////////////////////////
     //
     wheelSelectorAngle: {
-    	enumerable: false,
     	value: function (angle) {
-    		angle *= this.element._component.math.RADIANS;
+    		angle *= this._math.RADIANS;
     		//
-    		var context = this.element._component.wheel_select.context, radius = this.element._component.math.radius,
-    			radiusOffsetPositive = this.element._component.math.radius+this.rimWidth/3,
+    		var context = this.wheelSelect.getContext("2d"), radius = this._math.radius,
+    			radiusOffsetPositive = this._math.radius+this.rimWidth/3,
     			rimPositiveStrokeOffset = this.rimWidth + this.strokeWidth,
     			strokeTotalWidth = this.strokeWidth*2,
     			rimNegativeStrokeOffset = this.rimWidth - this.strokeWidth,
-    			radiusOffsetNagative = this.element._component.math.radius-this.rimWidth/3;
+    			radiusOffsetNagative = this._math.radius-this.rimWidth/3;
     		//
-    		context.clearRect(0, 0, this.element._component.wheel_select.canvas.width, this.element._component.wheel_select.canvas.height);
+    		context.clearRect(0, 0, this.wheelSelect.width, this.wheelSelect.height);
     		//
     		context.beginPath();
 			context.fillStyle = "rgba(0, 0, 0, 0)";
