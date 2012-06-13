@@ -1,0 +1,73 @@
+/* <copyright>
+This file contains proprietary software owned by Motorola Mobility, Inc.<br/>
+No rights, expressed or implied, whatsoever to this software are provided by Motorola Mobility, Inc. hereunder.<br/>
+(c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
+</copyright> */
+
+////////////////////////////////////////////////////////////////////////
+//
+var Montage = 	require("montage/core/core").Montage,
+	Component = require("montage/ui/component").Component;
+////////////////////////////////////////////////////////////////////////
+//	
+exports.NinjaPrompt = Montage.create(Component, {
+	////////////////////////////////////////////////////////////////////
+	//TODO: This should have an UI template eventually
+	hasTemplate: {
+        value: false
+    },
+    ////////////////////////////////////////////////////////////////////
+	//Type of prompt window (should be confirm, prompt, alert, or input)
+	_type: {
+		value: null
+	},
+	////////////////////////////////////////////////////////////////////
+	//
+	_params: {
+		value: null
+	},
+	////////////////////////////////////////////////////////////////////
+	//
+	_callback: {
+		value: null
+	},
+    ////////////////////////////////////////////////////////////////////
+	//
+	initialize: {
+		value: function (type, params, callback) {
+			//
+			this._type = type.toLowerCase();
+			this._params = params;
+			this._callback = callback;
+		}
+	},
+	////////////////////////////////////////////////////////////////////
+	//
+	show: {
+		value: function () {
+			//
+			var input;
+			//
+			switch (this._type) {
+				case 'confirm':
+					input = confirm(this._params.message);
+					if (this._callback) this._callback(input);
+					break;
+				default:
+					//TODO: Add support for other standard box types
+					break;
+			}
+		}
+	},
+	////////////////////////////////////////////////////////////////////
+	//This is for later, need to hide if need (overwrite)
+	hide: {
+		value: function () {
+			//TODO: Add support as real UI component
+		}
+	}
+	////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////
+});
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
