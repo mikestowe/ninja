@@ -494,8 +494,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
                 boundObjectPropertyPath:"currentSelectedContainer",
                 oneway:true
             });
+            
+            // Create the easing menu for future use.
             this.easingMenu = EasingMenuPopup;
-            this.easingMenu.show();
+            //this.easingMenu.show();
 
         }
     },

@@ -150,23 +150,33 @@ var Span = exports.Span = Montage.create(Component, {
     	value: function(event) {
     		event.stopPropagation();
     		//this.areChoicesVisible = true;
+    		this.application.ninja.timeline.easingMenu.anchor = this.easing_choice;
+    		this.application.ninja.timeline.easingMenu.currentChoice = event.currentTarget.innerText;
+    		console.log(event);
+    		this.application.ninja.timeline.easingMenu.top = 100;
+    		this.application.ninja.timeline.easingMenu.left = 100;
     		this.application.ninja.timeline.easingMenu.show();
-
+    		this.application.ninja.timeline.easingMenu.callingComponent = this;
     	}
     },
     handleEasingChoicesClick: {
     	value: function(event) {
     		event.stopPropagation();
+    		
+    		console.log("span.handleEasingChoicesClick")
 			
 			// Remove the pointer to ourselves
-			this.application.ninja.timeline.currentOpenSpanMenu = false;
+			//this.application.ninja.timeline.currentOpenSpanMenu = false;
 			
 			// Un-highlight the old choice and highlight the new choice
-    		this.easing_choices.querySelector(".easing-selected").classList.remove("easing-selected");
+    		this.application.ninja.timeline.easingMenu.popup.contentEl.querySelector(".easing-selected").classList.remove("easing-selected");
     		event.target.classList.add("easing-selected");
     		
     		// Set the easing 
     		this.easing = event.target.dataset.ninjaEase;
+    		
+    		// Unbind the event handler
+    		this.application.ninja.timeline.easingMenu.popup.contentEl.removeEventListener("click");
     		
     		// Hide the menu.
     		this.hideEasingMenu();	
@@ -174,7 +184,8 @@ var Span = exports.Span = Montage.create(Component, {
     },
     hideEasingMenu: {
     	value: function() {
-    		this.areChoicesVisible = false;
+    		//this.areChoicesVisible = false;
+    		this.application.ninja.timeline.easingMenu.hide();
     	}
     }
 });
