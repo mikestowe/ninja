@@ -310,9 +310,13 @@ exports.Properties = Montage.create(Component, {
                                 if(currentValue == null) {
                                     currentValue = control.defaultValue;
                                 }
-                                currentValue = document.application.njUtils.getValueAndUnits(currentValue);
-                                this.customSections[i].content.controls[control.id + "Units"] = currentValue[1] || "px";
-                                this.customSections[i].content.controls[control.id] = currentValue[0];
+                                if(typeof(currentValue) === "string") {
+                                    currentValue = document.application.njUtils.getValueAndUnits(currentValue);
+                                    this.customSections[i].content.controls[control.id + "Units"] = currentValue[1] || "px";
+                                    this.customSections[i].content.controls[control.id] = currentValue[0];
+                                } else {
+                                    this.customSections[i].content.controls[control.id] = currentValue;
+                                }
                             } else {
                                 if(currentValue === null) {
                                     currentValue = control.defaultValue;
