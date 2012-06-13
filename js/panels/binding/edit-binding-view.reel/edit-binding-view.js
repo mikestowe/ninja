@@ -145,7 +145,6 @@ exports.EditBindingView = Montage.create(Component, {
                 controller.editBinding(this.bindingArgs, newBindingArgs);
             }
 
-            controller.currentObject = controller.currentObject;
         }
     },
 
@@ -174,7 +173,6 @@ exports.EditBindingView = Montage.create(Component, {
             var controller = this.application.ninja.objectsController;
 
             controller.removeBinding(this.bindingArgs);
-            controller.currentObject = controller.currentObject;
 
             this.parentComponent.editing = false;
         }
