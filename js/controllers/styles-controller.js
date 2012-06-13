@@ -1077,7 +1077,7 @@ var stylesController = exports.StylesController = Montage.create(Component, {
             }
 
             ///// Did we find a dominant rule?
-            else if(!dominantRule) {
+            if(!dominantRule) {
                 ///// No. This means there was no rule with this property, and no
                 ///// single-target rule we can use to add the style to.
                 ///// There's is no chance of colliding with another rule, so we
