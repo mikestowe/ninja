@@ -222,10 +222,7 @@ function Texture( dstWorld, texMapName,  wrap, mips )
 	this.render = function()
 	{
 		if (!this._srcCanvas)
-		{
-			console.log( " no source canvas in GLTexture.render" );
 			return;
-		}
 		var srcCanvas = this._srcCanvas;
 
 		if (this._isLocal)
