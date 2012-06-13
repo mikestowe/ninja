@@ -608,6 +608,7 @@ NinjaCvsRt.RuntimeGeomObj = Object.create(Object.prototype, {
 					case "uber":			mat = Object.create(NinjaCvsRt.RuntimeUberMaterial, {});			break;
 					case "plasma":			mat = Object.create(NinjaCvsRt.RuntimePlasmaMaterial, {});			break;
 					case "water":			mat = Object.create(NinjaCvsRt.RuntimeWaterMaterial, {});			break;
+					case "taper":			mat = Object.create(NinjaCvsRt.RuntimeTaperMaterial, {});			break;
 
 					case "deform":
 					case "paris":
@@ -1518,19 +1519,22 @@ NinjaCvsRt.RuntimeTaperMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
 
 
 	isAnimated: { value: function() { return true; }},
-
+	
 	importJSON: {
 		value: function(jObj) {
-			this._tex0 = jObj.tex0;
-			this._tex1 = jObj.tex1;
+			for (var prop in jObj)
+			{
+				if ((prop != 'material') && (prop != 'name'))
+				{
+					var value = jObj[prop];
+					this[prop] = value;
+				}
+			}
 
-			this._speed = jObj.speed;
-
-			this._limit1 = jObj.limit1;
-			this._limit2 = jObj.limit2;
-			this._twistAmount = jObj.angle;
-	   }
+			this._dTime = jObj.dTime;
+		}
 	},
+
 
 	init: {
 		value: function(world) {
@@ -1541,15 +1545,18 @@ NinjaCvsRt.RuntimeTaperMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
 				var renderer = RDGE.globals.engine.getContext().renderer;
 				if (renderer && technique)
 				{
-					var wrap = 'REPEAT',  mips = true;
-					var tex = renderer.getTextureByName(this._tex0, wrap, mips );
-					if (tex)  technique.u_tex0.set( tex );
-					tex = renderer.getTextureByName(this._tex1, wrap, mips );
-					if (tex)  technique.u_tex1.set( tex );
+//					var wrap = 'REPEAT',  mips = true;
+//					var tex = renderer.getTextureByName(this._tex0, wrap, mips );
+//					if (tex)  technique.u_tex0.set( tex );
+//					tex = renderer.getTextureByName(this._tex1, wrap, mips );
+//					if (tex)  technique.u_tex1.set( tex );
 
-					technique.u_twistAmount.set( [this._angle] );
-					technique.u_limit1.set( [this._limit1] );
+					technique.u_limit1.set( [this.u_limit1] );
 					technique.u_limit2.set( [this._limit2] );
+					technique.u_limit3.set( [this._limit3] );
+					technique.u_minVal.set( [this.u_minVal] );
+					technique.u_maxVal.set( [this.u_maxVal] );
+					technique.u_taperAmount.set( [this.u_taperAmount] );
 				}
 			}
 	   }
@@ -1560,21 +1567,25 @@ NinjaCvsRt.RuntimeTaperMaterial = Object.create(NinjaCvsRt.RuntimeMaterial, {
 	update: {
 		value: function(time) {
 		   
-			var angle = this._angle;
-			angle += this._dTime * this._speed;
-			if (angle > this._twistAmount)
-			{
-				angle = this._twistAmount;
-				this._dTime = -this._dTime;
-			}
-			else if (angle < 0.0)
-			{
-				angle = 0;
-				this._dTime = -this._dTime;
-			}
-			this._angle = angle;
-			this._shader.twistMe["u_twistAmount"].set([angle]);
-	   }
+			var speed = this.u_speed;
+			this._dTime += 0.01 * speed;
+
+			if (this._shader && this._shader.colorMe) {
+				var t3 = this.u_limit3 - this._dTime;
+				if (t3 < 0) {
+					this._dTime = this.u_limit1 - 1.0;
+					t3 = this.u_limit3 - this._dTime;
+				}
+
+				var t1 = this.u_limit1 - this._dTime,
+					t2 = this.u_limit2 - this._dTime;
+
+
+				this._shader.colorMe["u_limit1"].set([t1]);
+				this._shader.colorMe["u_limit2"].set([t2]);
+				this._shader.colorMe["u_limit3"].set([t3]);
+		   }
+		}
 	}
 });
 

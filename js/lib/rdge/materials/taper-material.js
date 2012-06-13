@@ -32,6 +32,7 @@ var TaperMaterial = function TaperMaterial()
 
     this.isAnimated = function () { return true; };
 	this.getShaderDef	= function()	{  return taperShaderDef;	};
+	this.getTechniqueName	= function() {  return 'colorMe'  };
 
     this.hasVertexDeformation = function () { return this._hasVertexDeformation; };
     this._hasVertexDeformation = true;
@@ -50,12 +51,12 @@ var TaperMaterial = function TaperMaterial()
 
         // set up the material node
         this._materialNode = RDGE.createMaterialNode("taperMaterial" + "_" + world.generateUniqueNodeID());
+        this._materialNode.setShader(this._shader);
  
         this._time = 0;
         if (this._shader && this._shader['default']) {
             this._shader['default'].u_time.set([this._time]);
         }
-       this._materialNode.setShader(this._shader);
 
         // initialize the taper properties
         this.setShaderValues();
@@ -133,7 +134,8 @@ taperShaderDef = {
 				     'u_minVal': { 'type': 'float' },
 				     'u_maxVal': { 'type': 'float' },
 				     'u_center': { 'type': 'float' },
-				     'u_taperAmount': { 'type': 'float' }
+				     'u_taperAmount': { 'type': 'float' },
+				     'u_speed': { 'type': 'float' }
 				 }
             }
 		]
