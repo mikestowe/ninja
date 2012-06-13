@@ -305,6 +305,20 @@ exports.Circle = Object.create(GeomObj, {
                 strokePrim1 = this.generateOvalRing(x, y, reverseRotMat, fillScaleMat, strokeScaleMat, nTriangles,  strokeMaterial2);
             }
 
+            if (strokePrim0) {
+				strokeMaterial0.fitToPrimitive( strokePrim0 );
+
+                this._primArray.push( strokePrim0 );
+                this._materialNodeArray.push( strokeMaterial0.getMaterialNode() );
+            }
+
+            if (strokePrim1) {
+				strokeMaterial2.fitToPrimitive( strokePrim1 );
+
+                this._primArray.push( strokePrim1 );
+                this._materialNodeArray.push( strokeMaterial2.getMaterialNode() );
+            }
+
             /////////////////////////////////////////////////////////////
             //  Fill
             fillMaterial = this.makeFillMaterial();
@@ -319,20 +333,6 @@ exports.Circle = Object.create(GeomObj, {
 
                 this._primArray.push( fillPrim );
                 this._materialNodeArray.push( fillMaterial.getMaterialNode() );
-            }
-
-            if (strokePrim0) {
-				strokeMaterial0.fitToPrimitive( strokePrim0 );
-
-                this._primArray.push( strokePrim0 );
-                this._materialNodeArray.push( strokeMaterial0.getMaterialNode() );
-            }
-
-            if (strokePrim1) {
-				strokeMaterial2.fitToPrimitive( strokePrim1 );
-
-                this._primArray.push( strokePrim1 );
-                this._materialNodeArray.push( strokeMaterial2.getMaterialNode() );
             }
 
             world.updateObject(this);
