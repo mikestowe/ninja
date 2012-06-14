@@ -51,6 +51,12 @@ exports.BindingHudOption = Montage.create(Component, {
         }
     },
 
+    prepareForDraw: {
+        value: function() {
+            // Set Up Listener for click and propagate up to Binding View
+        }
+    },
+
     draw: {
         value:function() {
             if(this.bound) {

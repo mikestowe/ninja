@@ -35,7 +35,13 @@
                 },
                 "bindings": {
                     "bindingArgs": {"<-": "@hudRepeater.objectAtCurrentIteration"}
-                }
+                },
+                "listeners": [
+                    {
+                        "type": "resizeMove",
+                        "listener": {"@": "owner"}
+                    }
+                ]
             },
             "nonVisualRepeater": {
                 "prototype": "montage/ui/repetition.reel",
