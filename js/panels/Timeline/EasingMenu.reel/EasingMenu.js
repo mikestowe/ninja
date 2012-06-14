@@ -92,12 +92,17 @@ var EasingMenu = exports.EasingMenu = Montage.create(Component, {
     	}
     },
     
+    _isShown: {
+    	value: false
+    },
+    
     /* End: Models */
     
     /* Begin: Draw Cycle */
     willDraw: {
     	value: function() {
     		this.element.addEventListener("click", this.handleEasingChoicesClick.bind(this), false);
+    		document.addEventListener("scroll", this.handleDocumentScroll.bind(this), false);
     	}
     },
     
@@ -131,11 +136,8 @@ var EasingMenu = exports.EasingMenu = Montage.create(Component, {
             position.left = this.left;
             this.popup.position = position;
             this.popup.show();
+            this._isShow = true;
 
-
-            
-            
-            
             // Redraw the content (needed to reflect probable changes in selection from the last time we showed it)
             this.popup.content.needsDraw = true;
 		}
@@ -152,9 +154,17 @@ var EasingMenu = exports.EasingMenu = Montage.create(Component, {
     		this.callingComponent.easing = event.target.dataset.ninjaEase;
     		
     		// Hide the menu.
-    		this.popup.hide();	
+    		this.popup.hide();
+    		this._isShow = false;
     	}
-    }
+   },
+	handleDocumentScroll: {
+		value: function(event) {
+			if (this._isShow = true) {
+				this.popup.hide();
+			}
+		}
+	}
     
     /* End: Controllers */
     

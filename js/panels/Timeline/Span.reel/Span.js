@@ -152,9 +152,25 @@ var Span = exports.Span = Montage.create(Component, {
     		//this.areChoicesVisible = true;
     		this.application.ninja.timeline.easingMenu.anchor = this.easing_choice;
     		this.application.ninja.timeline.easingMenu.currentChoice = event.currentTarget.innerText;
-    		console.log(event);
-    		this.application.ninja.timeline.easingMenu.top = 100;
-    		this.application.ninja.timeline.easingMenu.left = 100;
+
+    		function findPos(obj) {
+    			var objReturn = {};
+    			objReturn.top = 0;
+    			objReturn.left = 0;
+
+				if (obj.offsetParent) {
+
+					do {
+						objReturn.left += obj.offsetLeft;
+						objReturn.top += obj.offsetTop;
+	
+					} while (obj = obj.offsetParent);
+				}
+				return objReturn;
+			}
+			var objPos = findPos(event.target);
+    		this.application.ninja.timeline.easingMenu.top = objPos.top +38 - (this.application.ninja.timeline.layout_tracks.scrollTop);
+    		this.application.ninja.timeline.easingMenu.left = objPos.left+18 - (this.application.ninja.timeline.layout_tracks.scrollLeft);
     		this.application.ninja.timeline.easingMenu.show();
     		this.application.ninja.timeline.easingMenu.callingComponent = this;
     	}
@@ -162,8 +178,6 @@ var Span = exports.Span = Montage.create(Component, {
     handleEasingChoicesClick: {
     	value: function(event) {
     		event.stopPropagation();
-    		
-    		console.log("span.handleEasingChoicesClick")
 			
 			// Remove the pointer to ourselves
 			//this.application.ninja.timeline.currentOpenSpanMenu = false;

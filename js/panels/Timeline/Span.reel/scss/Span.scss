@@ -35,3 +35,31 @@
     opacity: 0.4;
 }
 
+.container-easing-choice {
+  position: absolute;
+  top: 2px;
+  right: 8px;
+  font-size: 10px;
+  line-height: 8px;
+  border: 1px solid $color-menu-border;
+  color: $color-menu-text;
+  background-color: $color-menu-bg;
+}
+.container-easing-choice,
+.container-easing-choice .easing-choice,
+.container-easing-choices .easing-choices {
+  font-size: 10px;
+  width: 70px;
+  white-space: nowrap;
+}
+.container-easing-choice,
+.container-easing-choice .easing-choice {
+  height: 10px;
+}
+.container-easing-choice .easing-choice {
+  position: absolute;
+  top: 0px;
+  left: 3px;
+  width: 67px;
+  cursor: pointer;
+}
