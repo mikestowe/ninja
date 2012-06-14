@@ -220,9 +220,9 @@ var Material = function GLMaterial( world ) {
 			console.log( "setting invalid material property: " + prop + ", value: " + value );
 		}
 		
-		if (!rtnVal && (prop != 'color')) {
-			console.log( "invalid material property: " + prop + " : " + value );
-        }
+//		if (!rtnVal && (prop != 'color')) {
+//			console.log( "invalid material property: " + prop + " : " + value );
+//        }
 
 		return rtnVal;
 	};
@@ -231,7 +231,7 @@ var Material = function GLMaterial( world ) {
 	{
 		var ok = this.validateProperty( prop, value );
 		if (!ok && (prop != 'color')) {
-			console.log( "invalid property in Material:" + prop + " : " + value );
+			//console.log( "invalid property in Material:" + prop + " : " + value );
 			return;
 		}
 

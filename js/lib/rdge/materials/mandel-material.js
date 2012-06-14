@@ -14,8 +14,6 @@ var MandelMaterial = function MandelMaterial() {
 	this._name = "MandelMaterial";
 	this._shaderName = "mandel";
 
-	this._defaultTexMap = 'assets/images/rocky-normal.jpg';
-
 	this._time = 0.0;
 	this._dTime = 0.01;
 
@@ -27,12 +25,11 @@ var MandelMaterial = function MandelMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Material Property Accessors
     ///////////////////////////////////////////////////////////////////////
-	var u_tex0_index	= 0,  u_speed_index = 1;
-	this._propNames			= ["u_tex0",		"u_speed" ];
-	this._propLabels		= ["Texture map",	"Speed" ];
-	this._propTypes			= ["file",			"float" ];
+	var u_speed_index = 0;
+	this._propNames			= [ "u_speed" ];
+	this._propLabels		= [ "Speed" ];
+	this._propTypes			= [	"float" ];
 	this._propValues		= [];
-    this._propValues[this._propNames[u_tex0_index]] = this._defaultTexMap.slice(0);
     this._propValues[this._propNames[u_speed_index]] = 1.0;
 
     ///////////////////////////////////////////////////////////////////////
@@ -97,7 +94,6 @@ var MandelMaterialDef =
 				// parameters
 				'params' : 
 				{
-					'u_tex0': { 'type' : 'tex2d' },
 					'u_time' : { 'type' : 'float' },
 					'u_speed' : { 'type' : 'float' },
 					'u_resolution'  :   { 'type' : 'vec2' },

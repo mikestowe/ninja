@@ -71,9 +71,9 @@ exports.MaterialsModel = Montage.create(Component, {
 			this.addMaterial(new TunnelMaterial());
 			this.addMaterial(new TwistMaterial());
 			this.addMaterial(new TwistVertMaterial());
+			this.addMaterial(new UberMaterial());
 			this.addMaterial(new WaterMaterial());
 			this.addMaterial(new ZInvertMaterial());
-			this.addMaterial(new UberMaterial());
 		}
 	},
 
