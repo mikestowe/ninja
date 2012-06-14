@@ -243,6 +243,13 @@ exports.Stage = Montage.create(Component, {
             if(this.currentDocument && (this.currentDocument.currentView === "design")) {
                 this.currentDocument.model.scrollLeft = this._scrollLeft;
                 this.currentDocument.model.scrollTop = this._scrollTop;
+                this.currentDocument.model.userPaddingLeft = this._userPaddingLeft;
+                this.currentDocument.model.userPaddingTop = this._userPaddingTop;
+                this.currentDocument.model.documentOffsetLeft = this._documentOffsetLeft;
+                this.currentDocument.model.documentOffsetTop = this._documentOffsetTop;
+                this.currentDocument.model.userContentLeft = this._userContentLeft;
+                this.currentDocument.model.userContentTop = this._userContentTop;
+
                 //call configure false with the old document on the selected tool to tear down down any temp. stuff
                 this.application.ninja.toolsData.selectedToolInstance._configure(false);
             }
@@ -359,6 +366,23 @@ exports.Stage = Montage.create(Component, {
 
             if(model.scrollLeft != null) {
                 didSwitch = true;
+                this._userPaddingLeft = this.currentDocument.model.userPaddingLeft;
+                this._userPaddingTop = this.currentDocument.model.userPaddingTop;
+                this._documentOffsetLeft = this.currentDocument.model.documentOffsetLeft;
+                this._documentOffsetTop  = this.currentDocument.model.documentOffsetTop;
+                this._userContentLeft = this.currentDocument.model.userContentLeft;
+                this._userContentTop = this.currentDocument.model.userContentTop;
+                this._scrollLeft = this.currentDocument.model.scrollLeft;
+                this._scrollTop = this.currentDocument.model.scrollTop;
+            } else {
+                this._userPaddingLeft = 0;
+                this._userPaddingTop = 0;
+                this._documentOffsetLeft = 0;
+                this._documentOffsetTop  = 0;
+                this._userContentLeft = 0;
+                this._userContentTop = 0;
+                this._scrollLeft = 0;
+                this._scrollTop = 0;
             }
 
             // Recalculate the canvas sizes because of splitter resizing
@@ -369,19 +393,7 @@ exports.Stage = Montage.create(Component, {
 
             this.addPropertyChangeListener("appModel.show3dGrid", this, false);
 
-            this._userPaddingLeft = 0;
-            this._userPaddingTop = 0;
-
-            this._documentOffsetLeft = 0;
-            this._documentOffsetTop  = 0;
-
-            this._userContentLeft = 0;
-            this._userContentTop = 0;
-
-            this._scrollLeft = 0;
-            this._scrollTop = 0;
-
-            this.initialize3DOnOpenDocument();
+            this.initialize3DOnOpenDocument(!didSwitch);
 
             if(designView._template) {
                 var initialLeft = parseInt((this.canvas.width - designView._template.size.width)/2);
@@ -1247,7 +1259,7 @@ exports.Stage = Montage.create(Component, {
     },
 
     initialize3DOnOpenDocument: {
-        value: function() {
+        value: function(adjustScrollOffsets) {
 
             workingPlane = [0,0,1,0];
 
@@ -1258,7 +1270,7 @@ exports.Stage = Montage.create(Component, {
             this.snapManager.currentStage = this.currentDocument.model.documentRoot;
             this.snapManager.setupDragPlaneFromPlane (workingPlane);
 
-            this.drawUtils.initializeFromDocument();
+            this.drawUtils.initializeFromDocument(adjustScrollOffsets);
         }
     }
 
