@@ -20,7 +20,7 @@ var TwistVertMaterial = function TwistVertMaterial()
 	///////////////////////////////////////////////////////////////////////
 	// Instance variables
 	///////////////////////////////////////////////////////////////////////
-	this._name = "TwistVertMaterial";
+	this._name = "Twist Vertex";
 	this._shaderName = "twistVert";
 
 	this._tex0 = 'assets/images/rocky-normal.jpg';

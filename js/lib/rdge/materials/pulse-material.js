@@ -22,7 +22,7 @@ var PulseMaterial = function PulseMaterial()
 	///////////////////////////////////////////////////////////////////////
 	// Instance variables
 	///////////////////////////////////////////////////////////////////////
-	this._name = "PulseMaterial";
+	this._name = "Pulse";
 	this._shaderName = "pulse";
 
 	this._texMap = 'assets/images/cubelight.png';

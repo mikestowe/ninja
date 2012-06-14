@@ -6,95 +6,95 @@
             "children": [
                 {
                     "label": "Bump Metal",
-                    "id" : "BumpMetalMaterial"
+                    "id" : "Bump Metal"
                 },
                 {
                     "label": "Deform",
-                    "id" : "DeformMaterial"
+                    "id" : "Deform"
                 },
                 {
                     "label": "Flat",
-                    "id" : "FlatMaterial"
+                    "id" : "Flat"
                 },
                 {
                     "label": "Flag",
-                    "id" : "FlagMaterial"
+                    "id" : "Flag"
                 },
                 {
                     "label": "Fly",
-                    "id" : "FlyMaterial"
+                    "id" : "Fly"
                 },
                 {
                     "label": "Julia",
-                    "id" : "JuliaMaterial"
+                    "id" : "Julia"
                 },
                 {
                     "label": "Keleidoscope",
-                    "id" : "KeleidoscopeMaterial"
+                    "id" : "Keleidoscope"
                 },
                 {
                     "label": "Linear Gradient",
-                    "id" : "LinearGradientMaterial"
+                    "id" : "Linear Gradient"
                 },
                 {
                     "label": "Mandel",
-                    "id" : "MandelMaterial"
+                    "id" : "Mandel"
                 },
                 {
                     "label": "Plasma",
-                    "id" : "PlasmaMaterial"
+                    "id" : "Plasma"
                 },
                 {
                     "label": "Pulse",
-                    "id" : "PulseMaterial"
+                    "id" : "Pulse"
                 },
                 {
                     "label": "Radial Blur",
-                    "id" : "RadialBlurMaterial"
+                    "id" : "Radial Blur"
                 },
                 {
                     "label": "Radial Gradient",
-                    "id" : "RadialGradientMaterial"
+                    "id" : "Radial Gradient"
                 },
                 {
                     "label": "Relief Tunnel",
-                    "id" : "ReliefTunnelMaterial"
+                    "id" : "Relief Tunnel"
                 },
                 {
                     "label": "Square Tunnel",
-                    "id" : "SquareTunnelMaterial"
+                    "id" : "Square Tunnel"
                 },
                 {
                     "label": "Star",
-                    "id" : "StarMaterial"
+                    "id" : "Star"
                 },
                 {
                     "label": "Taper",
-                    "id" : "TaperMaterial"
+                    "id" : "Taper"
                 },
                 {
                     "label": "Tunnel",
-                    "id" : "TunnelMaterial"
+                    "id" : "Tunnel"
                 },
                 {
                     "label": "Twist",
-                    "id" : "TwistMaterial"
+                    "id" : "Twist"
                 },
                 {
                     "label": "Twist Vertex",
-                    "id" : "TwistVertMaterial"
+                    "id" : "Twist Vertex"
                 },
                 {
                     "label": "Uber",
-                    "id" : "UberMaterial"
+                    "id" : "Uber"
                 },
                 {
                     "label": "Water",
-                    "id" : "WaterMaterial"
+                    "id" : "Water"
                 },
                 {
                     "label": "Z-Invert",
-                    "id" : "ZInvertMaterial"
+                    "id" : "Z-Invert"
                 }
             ]
         }

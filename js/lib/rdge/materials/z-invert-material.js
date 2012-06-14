@@ -12,7 +12,7 @@ var ZInvertMaterial = function ZInvertMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-    this._name = "ZInvertMaterial";
+    this._name = "Z-Invert";
     this._shaderName = "zinvert";
 
     this._defaultTexMap = 'assets/images/rocky-normal.jpg';

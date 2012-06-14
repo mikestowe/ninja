@@ -16,7 +16,7 @@ var BumpMetalMaterial = function BumpMetalMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-	this._name = "BumpMetalMaterial";
+	this._name = "Bump Metal";
 	this._shaderName = "bumpMetal";
 
 

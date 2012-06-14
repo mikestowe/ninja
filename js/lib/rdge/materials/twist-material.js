@@ -13,7 +13,7 @@ var TwistMaterial = function TwistMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-    this._name = "TwistMaterial";
+    this._name = "Twist";
     this._shaderName = "twist";
 
     this._defaultTexMap = 'assets/images/rocky-normal.jpg';

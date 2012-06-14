@@ -12,7 +12,7 @@ var UberMaterial = function UberMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-    this._name = "UberMaterial";
+    this._name = "Uber";
     this._shaderName = "uber";
     this.getShaderName = function () { return this._shaderName; };
 

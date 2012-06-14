@@ -11,7 +11,7 @@ var StarMaterial = function StarMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-    this._name = "StarMaterial";
+    this._name = "Star";
     this._shaderName = "star";
 
     this._defaultTexMap = 'assets/images/rocky-normal.jpg';

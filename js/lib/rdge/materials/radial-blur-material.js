@@ -10,7 +10,7 @@ var RadialBlurMaterial = function RadialBlurMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-    this._name = "RadialBlurMaterial";
+    this._name = "Radial Blur";
     this._shaderName = "radialBlur";
 
     this._defaultTexMap = 'assets/images/cubelight.png';
@@ -146,7 +146,7 @@ var RaidersMaterial = function RaidersMaterial() {
     this.inheritedFrom = RadialBlurMaterial;
     this.inheritedFrom();
 
-    this._name = "RaidersMaterial";
+    this._name = "Raiders Material";
     this._shaderName = "raiders";
 
     this._texMap = 'assets/images/raiders.png';

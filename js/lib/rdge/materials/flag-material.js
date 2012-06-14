@@ -13,7 +13,7 @@ var FlagMaterial = function FlagMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-	this._name = "FlagMaterial";
+	this._name = "Flag";
 	this._shaderName = "flag";
 
 	this._texMap = 'assets/images/us_flag.png';

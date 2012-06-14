@@ -61,8 +61,8 @@ exports.MaterialsModel = Montage.create(Component, {
 			this.addMaterial(new PlasmaMaterial());
 			this.addMaterial(new PulseMaterial());
 			//this.addMaterial(new ParisMaterial());
-			this.addMaterial(new RadialGradientMaterial());
 			this.addMaterial(new RadialBlurMaterial());
+			this.addMaterial(new RadialGradientMaterial());
 			this.addMaterial(new RaidersMaterial());
 			this.addMaterial(new ReliefTunnelMaterial());
 			this.addMaterial(new SquareTunnelMaterial());

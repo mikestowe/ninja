@@ -282,29 +282,29 @@ exports.MaterialsPopup = Montage.create(Component, {
 				this._useSelection = false;
 
 				if(
-						(materialID ===  "BumpMetalMaterial")		||
-						(materialID ===  "DeformMaterial")			||
-						(materialID ===  "FlatMaterial")			||
-						(materialID ===  "FlagMaterial")			||
-						(materialID ===  "FlyMaterial")				||
-						(materialID ===  "JuliaMaterial")			||
-						(materialID ===  "KeleidoscopeMaterial")	||
-						(materialID ===  "LinearGradientMaterial")	||
-						(materialID ===  "MandelMaterial")			||
-						(materialID ===  "PlasmaMaterial")			||
-						(materialID ===  "PulseMaterial")			||
-						(materialID ===  "RadialBlurMaterial")		||
-						(materialID ===  "RadialGradientMaterial")	||
-						(materialID ===  "ReliefTunnelMaterial")	||
-						(materialID ===  "SquareTunnelMaterial")	||
-						(materialID ===  "StarMaterial")			||
-						(materialID ===  "TaperMaterial")			||
-						(materialID ===  "TunnelMaterial")			||
-						(materialID ===  "TwistMaterial")			||
-						(materialID ===  "TwistVertMaterial")		||
-						(materialID ===  "UberMaterial")			||
-						(materialID ===  "WaterMaterial")			||
-						(materialID ===  "ZInvertMaterial")
+						(materialID ===  "Bump Metal")		||
+						(materialID ===  "Deform")			||
+						(materialID ===  "Flat")			||
+						(materialID ===  "Flag")			||
+						(materialID ===  "Fly")				||
+						(materialID ===  "Julia")			||
+						(materialID ===  "Keleidoscope")	||
+						(materialID ===  "Linear Gradient")	||
+						(materialID ===  "Mandel")			||
+						(materialID ===  "Plasma")			||
+						(materialID ===  "Pulse")			||
+						(materialID ===  "Radial Blur")		||
+						(materialID ===  "Radial Gradient")	||
+						(materialID ===  "Relief Tunnel")	||
+						(materialID ===  "Square Tunnel")	||
+						(materialID ===  "Star")			||
+						(materialID ===  "Taper")			||
+						(materialID ===  "Tunnel")			||
+						(materialID ===  "Twist")			||
+						(materialID ===  "Twist Vertex")	||
+						(materialID ===  "Uber")			||
+						(materialID ===  "Water")			||
+						(materialID ===  "Z-Invert")
 					)
 				{
 					material = MaterialsModel.getMaterial( materialID );

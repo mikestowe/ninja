@@ -20,7 +20,7 @@ var TaperMaterial = function TaperMaterial()
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-    this._name = "TaperMaterial";
+    this._name = "Taper";
     this._shaderName = "taper";
 
     this._deltaTime = 0.0;

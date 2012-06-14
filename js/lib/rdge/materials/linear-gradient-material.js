@@ -12,7 +12,7 @@ var LinearGradientMaterial = function LinearGradientMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-    this._name = "LinearGradientMaterial";
+    this._name = "Linear Gradient";
     this._shaderName = "linearGradient";
 
     this._color1 = [1, 0, 0, 1];

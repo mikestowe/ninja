@@ -15,7 +15,7 @@ var FlatMaterial = function FlatMaterial()
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-    this._name = "FlatMaterial";
+    this._name = "Flat";
     this._shaderName = "flat";
 
     this._color = [1, 0, 0, 1];

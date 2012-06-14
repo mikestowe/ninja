@@ -11,7 +11,7 @@ var MandelMaterial = function MandelMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-	this._name = "MandelMaterial";
+	this._name = "Mandel";
 	this._shaderName = "mandel";
 
 	this._time = 0.0;

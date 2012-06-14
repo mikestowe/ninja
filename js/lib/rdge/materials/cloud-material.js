@@ -20,7 +20,7 @@ var CloudMaterial = function CloudMaterial()
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-    this._name = "CloudMaterial";
+    this._name = "Cloud";
     this._shaderName = "cloud";
 
 	this._texMap = 'assets/images/cloud10.png';

@@ -11,7 +11,7 @@ var DeformMaterial = function DeformMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-    this._name = "DeformMaterial";
+    this._name = "Deform";
     this._shaderName = "deform";
 
     this._defaultTexMap = 'assets/images/rocky-normal.jpg';

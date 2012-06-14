@@ -11,7 +11,7 @@ var KeleidoscopeMaterial = function KeleidoscopeMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-	this._name = "KeleidoscopeMaterial";
+	this._name = "Keleidoscope";
 	this._shaderName = "keleidoscope";
 
 	this._defaultTexMap = 'assets/images/rocky-normal.jpg';

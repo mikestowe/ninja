@@ -12,7 +12,7 @@ var RadialGradientMaterial = function RadialGradientMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-    this._name = "RadialGradientMaterial";
+    this._name = "Radial Gradient";
     this._shaderName = "radialGradient";
 
     this._defaultColor1 = [1, 0, 0, 1];

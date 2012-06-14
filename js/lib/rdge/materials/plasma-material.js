@@ -10,7 +10,7 @@ var PlasmaMaterial = function PlasmaMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-	this._name = "PlasmaMaterial";
+	this._name = "Plasma";
 	this._shaderName = "plasma";
 
 	this._time = 0.0;

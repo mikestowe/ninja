@@ -11,7 +11,7 @@ var JuliaMaterial = function JuliaMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-	this._name = "JuliaMaterial";
+	this._name = "Julia";
 	this._shaderName = "julia";
 
 	this._defaultTexMap = 'assets/images/rocky-normal.jpg';

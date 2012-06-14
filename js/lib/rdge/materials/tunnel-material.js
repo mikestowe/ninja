@@ -12,7 +12,7 @@ var TunnelMaterial = function TunnelMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-    this._name = "TunnelMaterial";
+    this._name = "Tunnel";
     this._shaderName = "tunnel";
 
     this._defaultTexMap = 'assets/images/rocky-normal.jpg';

@@ -16,7 +16,7 @@ var WaterMaterial = function WaterMaterial()
 	///////////////////////////////////////////////////////////////////////
 	// Instance variables
 	///////////////////////////////////////////////////////////////////////
-	this._name = "WaterMaterial";
+	this._name = "Water";
 	this._shaderName = "water";
 
 	this._defaultTexMap = 'assets/images/rocky-normal.jpg';

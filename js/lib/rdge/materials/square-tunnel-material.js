@@ -11,7 +11,7 @@ var SquareTunnelMaterial = function SquareTunnelMaterial() {
     ///////////////////////////////////////////////////////////////////////
     // Instance variables
     ///////////////////////////////////////////////////////////////////////
-    this._name = "SquareTunnelMaterial";
+    this._name = "Square Tunnel";
     this._shaderName = "squareTunnel";
 
     this._defaultTexMap = 'assets/images/rocky-normal.jpg';
