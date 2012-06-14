@@ -145,6 +145,14 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
 					template.file.content.document.body.setAttribute(template.body.attributes[n].name, template.body.attributes[n].value);
 				}				
 			}
+			//
+			if (template.body && template.body.getAttribute('data-ninja-style') !== null) {
+		    	template.file.content.document.body.setAttribute('style', template.body.getAttribute('data-ninja-style'));
+		   		template.file.content.document.body.removeAttribute('data-ninja-style');
+			} else if (template.body && template.body.getAttribute('data-ninja-style') === null) {
+				template.file.content.document.body.removeAttribute('style');
+				template.file.content.document.body.removeAttribute('data-ninja-style');
+			}
 			wipeAttributes(template.file.content.document.head);
             //Copying attributes to maintain same properties as the <head>
 			for (var m in template.document.head.attributes) {
@@ -181,14 +189,6 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
 	    		} else if (presentNodes[n].getAttribute && presentNodes[n].getAttribute('data-ninja-node') !== null) {
 	    			//Removing attribute
 		    		presentNodes[n].removeAttribute('data-ninja-node');
-	    		}
-	    		//
-	    		if (presentNodes[n].getAttribute && presentNodes[n].getAttribute('data-ninja-style') !== null) {
-		    		presentNodes[n].setAttribute('style', presentNodes[n].getAttribute('data-ninja-style'));
-		    		presentNodes[n].removeAttribute('data-ninja-style');
-	    		} else if (presentNodes[n].getAttribute && presentNodes[n].getAttribute('data-ninja-style') === null) {
-		    		presentNodes[n].removeAttribute('style');
-		    		presentNodes[n].removeAttribute('data-ninja-style');
 	    		}
     		}
             //Getting all CSS (style or link) tags
