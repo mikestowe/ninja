@@ -280,7 +280,10 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     		//Removing loading container (should be removed)
     		this.document.body.removeChild(this.document.getElementsByTagName('ninjaloadinghack')[0]);
    			//Getting style and link tags in document
-            var stags = this.document.getElementsByTagName('style'),
+            var htags = this.document.getElementsByTagName('html'),
+                btags = this.document.getElementsByTagName('body'),
+                userStyles,
+                stags = this.document.getElementsByTagName('style'),
             	ltags = this.document.getElementsByTagName('link'), i, orgNodes,
             	scripttags = this.document.getElementsByTagName('script');
            	//Temporarily checking for disabled special case (we must enabled for Ninja to access styles)
@@ -319,7 +322,7 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
             	//Else there is not data to parse
                 if(this._viewCallback) {
                     this._viewCallback.viewCallback.call(this._viewCallback.context);
-            }
+                }
             }
             //TODO: Verify appropiate location for this operation
     		if (this._template && this._template.type === 'banner') {
@@ -335,7 +338,18 @@ exports.DesignDocumentView = Montage.create(BaseDocumentView, {
     		for (var n in orgNodes) {
 	    		if (orgNodes[n].getAttribute) orgNodes[n].setAttribute('data-ninja-node', 'true');
     		}
-    		
+
+            // Save initial HTML and Body style attributes so we don't override them on save
+            if(htags.length) {
+                if(userStyles = htags[0].getAttribute('style')) {
+                    htags[0].setAttribute('data-ninja-style', userStyles);
+                }
+            }
+            if(btags.length) {
+                if(userStyles = btags[0].getAttribute('style')) {
+                    btags[0].setAttribute('data-ninja-style', userStyles);
+                }
+            }
     		//Makign callback if specified
     		if (this._callback) this._callback();
     	}

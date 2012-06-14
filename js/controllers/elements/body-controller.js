@@ -13,7 +13,8 @@ exports.BodyController = Montage.create(ElementController, {
     set3DProperties: {
         value: function(el, props, update3DModel) {
             var dist = props["dist"], mat = props["mat"];
-            this.application.ninja.stylesController.setElementStyle(el, "-webkit-transform", "perspective(" + dist + ") " + "matrix3d(" + MathUtils.scientificToDecimal(mat, 5) + ")");
+//            this.application.ninja.stylesController.setElementStyle(el, "-webkit-transform", "perspective(" + dist + ") " + "matrix3d(" + MathUtils.scientificToDecimal(mat, 5) + ")");
+            el.style["-webkit-transform"] = "perspective(" + dist + ") " + "matrix3d(" + MathUtils.scientificToDecimal(mat, 5) + ")";
 
             el.elementModel.props3D.matrix3d = mat;
             el.elementModel.props3D.perspectiveDist = dist;
