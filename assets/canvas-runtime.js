@@ -1969,7 +1969,8 @@ NinjaCvsRt.RuntimeSubPath = Object.create(NinjaCvsRt.RuntimeGeomObj, {
             if (ipColor.gradientMode){
                 var position, gradient, cs, inset; //vars used in gradient calculations
                 inset = Math.ceil( lw ) - 0.5;
-
+                inset=0;
+                
                 if(ipColor.gradientMode === "radial") {
                     var ww = w - 2*lw,  hh = h - 2*lw;
                     gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(ww, hh)/2);
@@ -2181,6 +2182,7 @@ NinjaCvsRt.RuntimeBrushStroke = Object.create(NinjaCvsRt.RuntimeGeomObj, {
             if (ipColor.gradientMode){
                 var position, gradient, cs, inset; //vars used in gradient calculations
                 inset = Math.ceil( lw ) - 0.5;
+                inset=0;
 
                 if(ipColor.gradientMode === "radial") {
                     var ww = w - 2*lw,  hh = h - 2*lw;

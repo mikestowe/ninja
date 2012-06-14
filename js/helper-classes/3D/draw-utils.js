@@ -117,7 +117,7 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
 	},
 
     initializeFromDocument:{
-        value:function(){
+        value:function(adjustScrollOffsets){
             var i,
                 documentRootChildren = this.application.ninja.currentDocument.model.views.design.getLiveNodeList(true),
                 stage = this.application.ninja.stage,
@@ -144,13 +144,15 @@ var DrawUtils = exports.DrawUtils = Montage.create(Component, {
                 for(i=0; i<len; i++) {
                     elt = documentRootChildren[i];
                     plane = this.addElement(elt);
-                    l = plane._rect.m_left - docLeft;
-                    t = plane._rect.m_top - docTop;
-                    if(l < minLeft) {
-                        minLeft = l;
-                    }
-                    if(t < minTop) {
-                        minTop = t;
+                    if(adjustScrollOffsets) {
+                        l = plane._rect.m_left - docLeft;
+                        t = plane._rect.m_top - docTop;
+                        if(l < minLeft) {
+                            minLeft = l;
+                        }
+                        if(t < minTop) {
+                            minTop = t;
+                        }
                     }
                 }
                 if(minLeft !== initL) {

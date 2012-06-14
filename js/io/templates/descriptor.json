@@ -90,7 +90,7 @@
 		"uri":"js/io/templates/files/banner.txt",
 		"type":"file",
         "fileExtension":".html",
-        "children":["120x600", "160x600", "200x200", "250x250", "300x250", "336x280"]
+        "children":["120x600", "160x600", "200x200", "250x250", "300x250", "336x280", "728x90"]
 	},
     
     "120x600":{
@@ -121,6 +121,11 @@
     "336x280":{
         "name": "Large Rectangle",
         "uri": "336x280",
+        "type":"file"
+    },
+    "728x90":{
+        "name": "Leaderboard",
+        "uri": "728x90",
         "type":"file"
     },
     
