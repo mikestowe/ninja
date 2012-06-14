@@ -13,16 +13,8 @@ var Montage = require("montage/core/core").Montage,
 
 exports.Object = Montage.create(Component, {
     _needsPropertyInspection : { value: null },
-    type: { value: null },
-    getType : {
-        value: function() {
-            if(this._hasPrototype(this.sourceObject, 'Component')) {
-                return 'Component';
-            }
-
-            return null;
-        }
-    },
+    iconElement              : { value: null },
+    type                     : { value: null },
 
     _sourceObject : { value: null },
     sourceObject : {
@@ -36,7 +28,7 @@ exports.Object = Montage.create(Component, {
 
             if(object._montage_metadata) {
                 this.montageMetaData = object._montage_metadata;
-                this.type = this.getType();
+                this.type = this.application.ninja.objectsController.getObjectCategory(object);
             }
 
             this._needsPropertyInspection = this.needsDraw = true;
@@ -83,23 +75,12 @@ exports.Object = Montage.create(Component, {
 
     },
 
-    _hasPrototype : {
-        value: function(object, prototypeName) {
-            var prototypes = this.application.ninja.objectsController.getPrototypes(object).map(function(proto) {
-                var metadata = proto._montage_metadata;
-                return (metadata) ? metadata.objectName : "Object";
-            });
-
-            return prototypes.indexOf(prototypeName) !== -1;
-        }
-    },
-
     draw : {
         value: function() {
             if(this.type) {
-                this.element.classList.add('object-icon-'+this.type.toLowerCase());
+                this.iconElement.classList.add('object-icon-'+this.type.toLowerCase());
             } else{
-                this.element.classList.add('object-icon-default');
+                this.iconElement.classList.add('object-icon-default');
             }
 
 
