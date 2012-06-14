@@ -209,6 +209,7 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     	value: null
     },
     easingMenu: {
+    	serializable: true,
     	get: function() {
     		return this._easingMenu;
     	},
