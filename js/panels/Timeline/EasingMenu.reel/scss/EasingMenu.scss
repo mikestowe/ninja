@@ -6,8 +6,8 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
-/* Span.scss
- * Main SCSS file for Span component, compiled by SASS into the file css/Span.css.
+/* Layer.scss
+ * Main SCSS file for EasingMenu component, compiled by SASS into the file css/EasingMenu.css.
  */
  
 // Import theme settings
@@ -19,21 +19,9 @@
 @import "../../../../../scss/imports/scss/mixins";
 // @import "../../../../../scss/imports/scss/Base";
 
-.tween_span{
-    position: absolute;
-    height: 16px;
-}
-.tween_span .tween_span_bar {
-	width: 100%;
-	height: 100%;
-	background-color: #fff;
-	opacity: 0.15;
-}
-
-.tween_span.spanHighlight .tween_span_bar {
-    background-color: #a0c8ff;
-    opacity: 0.4;
-}
+/*
+ * Easing picker
+ */
 
 .container-easing-choice {
   position: absolute;
@@ -45,21 +33,53 @@
   color: $color-menu-text;
   background-color: $color-menu-bg;
 }
-.container-easing-choice,
+.container-easing,
 .container-easing-choice .easing-choice,
 .container-easing-choices .easing-choices {
   font-size: 10px;
   width: 70px;
   white-space: nowrap;
 }
-.container-easing-choice,
+.container-easing,
 .container-easing-choice .easing-choice {
   height: 10px;
 }
-.container-easing-choice .easing-choice {
+.container-easing-easing-choice .easing-choice {
   position: absolute;
   top: 0px;
   left: 3px;
   width: 67px;
   cursor: pointer;
+}
+.container-easing-choices .easing-choices {
+  position: absolute;
+  bottom: -1px;
+  left: -1px;
+  z-index: 100;
+  height: auto;
+  border: 1px solid $color-menu-border;
+  color: $color-menu-text;
+  background-color: $color-menu-bg;
+  overflow: hidden;
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+}
+.container-easing-choices .easing-choices li {
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 3px;
+  cursor: pointer;
+}
+
+.container-easing-choices .easing-choices li:hover,
+.container-easing-choices .easing-choices li.easing-selected {
+  color: $color-menu-hilite-text;
+  background-color: $color-menu-hilite-bg;
+}
+.container-easing-choices .easing-choices li.easing-selected {
+  cursor: default;
 }

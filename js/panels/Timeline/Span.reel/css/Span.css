@@ -27,11 +27,8 @@
   opacity: 0.4;
 }
 
-/*
- * Easing picker
- */
-/* line 42, ../scss/Span.scss */
-.container-easing {
+/* line 38, ../scss/Span.scss */
+.container-easing-choice {
   position: absolute;
   top: 2px;
   right: 8px;
@@ -42,65 +39,26 @@
   background-color: #474747;
 }
 
-/* line 54, ../scss/Span.scss */
-.container-easing,
-.container-easing .easing-choice,
-.container-easing .easing-choices {
+/* line 50, ../scss/Span.scss */
+.container-easing-choice,
+.container-easing-choice .easing-choice,
+.container-easing-choices .easing-choices {
+  font-size: 10px;
   width: 70px;
   white-space: nowrap;
 }
 
-/* line 59, ../scss/Span.scss */
-.container-easing,
-.container-easing .easing-choice {
+/* line 56, ../scss/Span.scss */
+.container-easing-choice,
+.container-easing-choice .easing-choice {
   height: 10px;
 }
 
-/* line 62, ../scss/Span.scss */
-.container-easing .easing-choice {
+/* line 59, ../scss/Span.scss */
+.container-easing-choice .easing-choice {
   position: absolute;
   top: 0px;
   left: 3px;
   width: 67px;
   cursor: pointer;
-}
-
-/* line 69, ../scss/Span.scss */
-.container-easing .easing-choices {
-  position: absolute;
-  display: none;
-  bottom: -1px;
-  left: -1px;
-  z-index: 100;
-  height: auto;
-  border: 1px solid black;
-  color: white;
-  background-color: #474747;
-  overflow: hidden;
-  list-style-type: none;
-  margin: 0px;
-  padding: 0px;
-}
-
-/* line 84, ../scss/Span.scss */
-.container-easing .easing-choices li {
-  list-style-type: none;
-  margin: 0px;
-  padding: 0px;
-  padding-top: 2px;
-  padding-bottom: 2px;
-  padding-left: 3px;
-  cursor: pointer;
-}
-
-/* line 95, ../scss/Span.scss */
-.container-easing .easing-choices li:hover,
-.container-easing .easing-choices li.easing-selected {
-  color: #242424;
-  background-color: #b2b2b2;
-}
-
-/* line 99, ../scss/Span.scss */
-.container-easing .easing-choices li.easing-selected {
-  cursor: default;
 }

@@ -4,8 +4,8 @@
  (c) Copyright 2011 Motorola Mobility, Inc.  All Rights Reserved.
  </copyright> */
 
-var Montage = require("montage/core/core").Montage;
-var Component = require("montage/ui/component").Component;
+var Montage = require("montage/core/core").Montage,
+	Component = require("montage/ui/component").Component;
 
 var Span = exports.Span = Montage.create(Component, {
 
@@ -112,12 +112,14 @@ var Span = exports.Span = Montage.create(Component, {
             	this.element.classList.remove("spanHighlight");
             }
             
+            /*
             // Hide or show the choices menu?
             if (this.areChoicesVisible === true) {
             	this.easing_choices.style.display = "block";
             } else {
             	this.easing_choices.style.display = "none";
             }
+            */
             
             // Change easing?
             if (this.easing_choice.innerText !== this.easing) {
@@ -131,7 +133,7 @@ var Span = exports.Span = Montage.create(Component, {
 	init: {
 		value: function() {
 			this.easing_choice.addEventListener("click", this.handleEasingChoiceClick.bind(this), false);
-			this.easing_choices.addEventListener("click", this.handleEasingChoicesClick.bind(this), false);
+			//this.easing_choices.addEventListener("click", this.handleEasingChoicesClick.bind(this), false);
 
 		}
 	},
@@ -147,15 +149,30 @@ var Span = exports.Span = Montage.create(Component, {
     handleEasingChoiceClick: {
     	value: function(event) {
     		event.stopPropagation();
-    		this.areChoicesVisible = true;
-    		
-    		// Possibly another menu is already open.  If so, we need to close it.
-    		if (this.application.ninja.timeline.currentOpenSpanMenu !== false) {
-    			this.application.ninja.timeline.currentOpenSpanMenu.hideEasingMenu();
-    		}
-    		
-    		// Now store a pointer to ourselves for possible future use.
-    		this.application.ninja.timeline.currentOpenSpanMenu = this;
+    		//this.areChoicesVisible = true;
+    		this.application.ninja.timeline.easingMenu.anchor = this.easing_choice;
+    		this.application.ninja.timeline.easingMenu.currentChoice = event.currentTarget.innerText;
+
+    		function findPos(obj) {
+    			var objReturn = {};
+    			objReturn.top = 0;
+    			objReturn.left = 0;
+
+				if (obj.offsetParent) {
+
+					do {
+						objReturn.left += obj.offsetLeft;
+						objReturn.top += obj.offsetTop;
+	
+					} while (obj = obj.offsetParent);
+				}
+				return objReturn;
+			}
+			var objPos = findPos(event.target);
+    		this.application.ninja.timeline.easingMenu.top = objPos.top +38 - (this.application.ninja.timeline.layout_tracks.scrollTop);
+    		this.application.ninja.timeline.easingMenu.left = objPos.left+18 - (this.application.ninja.timeline.layout_tracks.scrollLeft);
+    		this.application.ninja.timeline.easingMenu.show();
+    		this.application.ninja.timeline.easingMenu.callingComponent = this;
     	}
     },
     handleEasingChoicesClick: {
@@ -163,14 +180,17 @@ var Span = exports.Span = Montage.create(Component, {
     		event.stopPropagation();
 			
 			// Remove the pointer to ourselves
-			this.application.ninja.timeline.currentOpenSpanMenu = false;
+			//this.application.ninja.timeline.currentOpenSpanMenu = false;
 			
 			// Un-highlight the old choice and highlight the new choice
-    		this.easing_choices.querySelector(".easing-selected").classList.remove("easing-selected");
+    		this.application.ninja.timeline.easingMenu.popup.contentEl.querySelector(".easing-selected").classList.remove("easing-selected");
     		event.target.classList.add("easing-selected");
     		
     		// Set the easing 
     		this.easing = event.target.dataset.ninjaEase;
+    		
+    		// Unbind the event handler
+    		this.application.ninja.timeline.easingMenu.popup.contentEl.removeEventListener("click");
     		
     		// Hide the menu.
     		this.hideEasingMenu();	
@@ -178,7 +198,8 @@ var Span = exports.Span = Montage.create(Component, {
     },
     hideEasingMenu: {
     	value: function() {
-    		this.areChoicesVisible = false;
+    		//this.areChoicesVisible = false;
+    		this.application.ninja.timeline.easingMenu.hide();
     	}
     }
 });
