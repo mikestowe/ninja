@@ -155,6 +155,7 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
             //Copying attributes to maintain same properties as the <html>
 			var htmlTagMem = template.document.getElementsByTagName('html')[0], htmlTagDoc = template.file.content.document.getElementsByTagName('html')[0];
 			wipeAttributes(htmlTagDoc);
+			//
 			for (var m in htmlTagMem.attributes) {
 				if (htmlTagMem.attributes[m].value) {
 					if (htmlTagMem.attributes[m].value.replace(/montage-app-bootstrapping/gi, '').length>0) {
@@ -162,15 +163,32 @@ exports.TemplateDocumentMediator = Montage.create(Component, {
 					}
 				}
 			}
+			//
+			if (htmlTagMem && htmlTagMem.getAttribute('data-ninja-style') !== null) {
+		    	htmlTagDoc.setAttribute('style', htmlTagMem.getAttribute('data-ninja-style'));
+		   		htmlTagDoc.removeAttribute('data-ninja-style');
+			} else if (htmlTagMem && htmlTagMem.getAttribute('data-ninja-style') === null) {
+				htmlTagDoc.removeAttribute('style');
+				htmlTagDoc.removeAttribute('data-ninja-style');
+			}
             //Getting list of current nodes (Ninja DOM)
             presentNodes = template.file.content.document.getElementsByTagName('*');
             //Looping through nodes to determine origin and removing if not inserted by Ninja
             for (var n in presentNodes) {
+	    		//
 	    		if (presentNodes[n].getAttribute && presentNodes[n].getAttribute('data-ninja-node') === null) {
 		    	 	toremovetags.push(presentNodes[n]);	
 	    		} else if (presentNodes[n].getAttribute && presentNodes[n].getAttribute('data-ninja-node') !== null) {
 	    			//Removing attribute
 		    		presentNodes[n].removeAttribute('data-ninja-node');
+	    		}
+	    		//
+	    		if (presentNodes[n].getAttribute && presentNodes[n].getAttribute('data-ninja-style') !== null) {
+		    		presentNodes[n].setAttribute('style', presentNodes[n].getAttribute('data-ninja-style'));
+		    		presentNodes[n].removeAttribute('data-ninja-style');
+	    		} else if (presentNodes[n].getAttribute && presentNodes[n].getAttribute('data-ninja-style') === null) {
+		    		presentNodes[n].removeAttribute('style');
+		    		presentNodes[n].removeAttribute('data-ninja-style');
 	    		}
     		}
             //Getting all CSS (style or link) tags
