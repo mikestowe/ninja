@@ -204,10 +204,12 @@ exports.PenTool = Montage.create(ShapeTool, {
             this.application.ninja.stage.clearDrawingCanvas();//stageManagerModule.stageManager.clearDrawingCanvas();
 
             //undo/redo...go through ElementController and NJEvent
-            var els = [];
-            ElementController.removeElement(this._selectedSubpathCanvas);
-            els.push(this._selectedSubpathCanvas);
-            NJevent( "elementsRemoved", els );
+            if (this._selectedSubpathCanvas) {
+                var els = [];
+                ElementController.removeElement(this._selectedSubpathCanvas);
+                els.push(this._selectedSubpathCanvas);
+                NJevent( "elementsRemoved", els );
+            }
             this._selectedSubpathCanvas = null;
         }
     },
