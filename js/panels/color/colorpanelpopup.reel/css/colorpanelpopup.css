@@ -56,7 +56,7 @@
 
 /* line 62, colorpanelpopup.scss */
 .cp_pu_palettes {
-  background: #000;
+  background: url(../img/icon_palette.jpg) no-repeat black -1px -1px;
 }
 
 /* line 67, colorpanelpopup.scss */
