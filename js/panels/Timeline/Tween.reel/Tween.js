@@ -156,7 +156,7 @@ var Tween = exports.Tween = Montage.create(Component, {
     },
     
     _easing: {
-    	value: false
+    	value: "ease-in"
     },
     easing: {
     	serializable: true,
