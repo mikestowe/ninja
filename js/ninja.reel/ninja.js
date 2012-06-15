@@ -321,7 +321,7 @@ exports.Ninja = Montage.create(Component, {
             window.addEventListener("resize", this, false);
             //Prompting the user to make sure data was saved before closing Ninja
             window.onbeforeunload = function () {
-            	return 'Are you sure you want to close Ninja? Any unsaved data will be lost.';
+            	//return 'Are you sure you want to close Ninja? Any unsaved data will be lost.';
             };
 
             this.eventManager.addEventListener("selectTool", this, false);

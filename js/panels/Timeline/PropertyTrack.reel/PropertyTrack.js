@@ -188,14 +188,16 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
 
                     // check if there is an editor property assigned yet
                     // get this property track's editor prop name from layer data arrays
-                    var selectIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID);
+                    var selectIndex = this.application.ninja.timeline.getLayerIndexByID(this.trackID),
+                    	currentSelectedStyleIndex = this.getCurrentSelectedStyleIndex(selectIndex);
 
                     if (this.trackType == "style") {
-                        if (this.application.ninja.timeline.arrLayers[selectIndex].layerData.arrLayerStyles[this.styleIndex].editorProperty == null) {
+                    	//console.log("PropertyTrack.handleClick; selectIndex = ", selectIndex, "; styleIndex = ", currentSelectedStyleIndex)
+                        if (this.application.ninja.timeline.arrLayers[selectIndex].layerData.arrLayerStyles[currentSelectedStyleIndex].editorProperty == null) {
                             console.log("Please enter a style property for this track before adding keyframes.");
                             return;
                         } else {
-                            this.trackEditorProperty = this.application.ninja.timeline.arrLayers[selectIndex].layerData.arrLayerStyles[this.styleIndex].editorProperty;
+                            this.trackEditorProperty = this.application.ninja.timeline.arrLayers[selectIndex].layerData.arrLayerStyles[currentSelectedStyleIndex].editorProperty;
                             //console.log("Property track editorProperty set to: " + this.trackEditorProperty);
                         }
                     } else if (this.trackType == "position") {
@@ -211,6 +213,21 @@ var PropertyTrack = exports.PropertyTrack = Montage.create(Component, {
                 }
             }
         }
+    },
+    
+    getCurrentSelectedStyleIndex: {
+    	value: function(layerIndex) {
+    		var returnVal = false,
+    			i = 0,
+    			arrLayerStylesLength = this.application.ninja.timeline.arrLayers[layerIndex].layerData.arrLayerStyles.length;
+    		for (i = 0; i < arrLayerStylesLength; i++) {
+    			var currItem =  this.application.ninja.timeline.arrLayers[layerIndex].layerData.arrLayerStyles[i];
+    			if (currItem.isSelected === true) {
+    				returnVal = i;
+    			}
+    		}
+    		return returnVal;
+    	}
     },
 
     handleNewPropTween:{
