@@ -309,7 +309,7 @@ var UberMaterial = function UberMaterial() {
                     if (renderer && technique) {
                         var tex = renderer.getTextureByName(value, this._ubershaderCaps.specularMap.wrap);
                         this.registerTexture(tex);
-                        technique.s_specularMap.set(tex);
+                        technique.s_specMap.set(tex);
                     }
                 }
             }
