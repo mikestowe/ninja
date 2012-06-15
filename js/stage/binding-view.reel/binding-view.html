@@ -43,23 +43,10 @@
                     }
                 ]
             },
-            "nonVisualRepeater": {
-                "prototype": "montage/ui/repetition.reel",
+            "objectsTray" : {
+                "prototype": "js/stage/objects-tray.reel",
                 "properties": {
-                    "element": {"#": "nonVisualRepeater"}
-                },
-                "bindings": {
-                    "objects": {"<-": "@owner.nonVisualComponents"}
-                }
-            },
-            "objectIcon": {
-                "prototype": "js/panels/objects/object.reel",
-                "properties": {
-                    "element": {"#": "nonVisualComponent"}
-                },
-                "bindings": {
-                    "sourceObject": {"<-": "@nonVisualRepeater.objectAtCurrentIteration"},
-                    "identifier": {"<-": "@nonVisualRepeater.objectAtCurrentIteration.identifier"}
+                    "element": {"#": "objects-tray" }
                 }
             }
         }
@@ -75,11 +62,11 @@
 
             </div>
         </div>
-        <div data-montage-id="nonVisualRepeater">
-            <div data-montage-id="nonVisualComponent">
 
-            </div>
+        <div class="objects-tray-container">
+            <div data-montage-id="objects-tray" ></div>
         </div>
+
         <canvas data-montage-id="bindingViewCanvas" class="bindingViewCanvas"></canvas>
     </section>
 

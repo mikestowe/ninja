@@ -125,20 +125,21 @@ exports.PanelsData = Montage.create(Montage, {
             open: true,
             modulePath: "js/panels/binding-panel.reel",
             moduleName: "BindingPanel"
-        },
-        {
-            name: "Objects",
-            groups: ["ws-binding"],
-            minHeight: 100,
-            height: 100,
-            maxHeight: null,
-            flexible: true,
-            collapsed: true,
-            scrollable: true,
-            open: true,
-            modulePath: "js/panels/objects/objects-panel.reel",
-            moduleName: "ObjectsPanel"
         }
+//            ,
+//        {
+//            name: "Objects",
+//            groups: ["ws-binding"],
+//            minHeight: 100,
+//            height: 100,
+//            maxHeight: null,
+//            flexible: true,
+//            collapsed: true,
+//            scrollable: true,
+//            open: true,
+//            modulePath: "js/panels/objects/objects-panel.reel",
+//            moduleName: "ObjectsPanel"
+//        }
     ]
     }
 
