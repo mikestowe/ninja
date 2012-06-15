@@ -146,7 +146,7 @@ var RaidersMaterial = function RaidersMaterial() {
     this.inheritedFrom = RadialBlurMaterial;
     this.inheritedFrom();
 
-    this._name = "Raiders Material";
+    this._name = "Raiders";
     this._shaderName = "raiders";
 
     this._texMap = 'assets/images/raiders.png';

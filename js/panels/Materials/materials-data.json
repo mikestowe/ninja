@@ -61,6 +61,10 @@
                     "id" : "Radial Gradient"
                 },
                 {
+                    "label": "Raiders",
+                    "id" : "Raiders"
+                },
+                {
                     "label": "Relief Tunnel",
                     "id" : "Relief Tunnel"
                 },
