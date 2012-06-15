@@ -702,6 +702,9 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
     // cache Timeline data in currentDocument.
     cacheTimeline: {
     	value: function() {
+    		if (typeof(this.application.ninja) === "undefined") {
+    			return;
+    		}
 			// Store the timeline data in currentDocument...
 			if (this._boolCacheArrays) {
 				// ... but only if we're supposed to.
@@ -1397,10 +1400,10 @@ var TimelinePanel = exports.TimelinePanel = Montage.create(Component, {
             // Ordinarily we could use this.getInsertionIndex BUT the new element
             // insertion and selection has already fired, so getInsertionIndex will return 
             // incorrect info. So we need to look at the DOM.
-            var childrenLength = this.application.ninja.currentSelectedContainer.children.length,
+            var childrenLength = this.application.ninja.currentDocument.model.domContainer.children.length,
             	newIndex = childrenLength -1;
             for (i = 0; i < childrenLength; i++) {
-            	var currTest = this.application.ninja.currentSelectedContainer.children[i];
+            	var currTest = this.application.ninja.currentDocument.model.domContainer.children[i];
             	if (object == currTest) {
             		myIndex = newIndex - i;
             	}
