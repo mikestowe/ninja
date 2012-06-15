@@ -38,11 +38,15 @@
     position:relative;
     border-bottom:1px solid #505050;
     line-height:16px;
-    padding:1px 9px;
+    padding:1px 9px 1px 15px;
 }
-.hudOption.bound, .bindingHud .hudOption.bound .connectorBubble, .bindingHud .hudOption:hover, .bindingHud .hudOption .connectorBubble {
-    background: #5e9eff;
+.connectorBubble, .bindingHud .hudOption:hover, .bindingHud .hudOption .connectorBubble:hover {
+    box-shadow: inset 0px 0px 6px #5e9eff;
     display:block;
+}
+
+.hudOption.bound, .bindingHud .hudOption.bound {
+    background: #5e9eff;
 }
 
 .bindingHud .hudOption:last-child {
@@ -51,14 +55,14 @@
 
 .bindingHud .hudOption .connectorBubble {
     position: absolute;
-    right: -10px;
-    top: 1px;
-    background: rgba(0, 0, 0, 0.3);
+    right: 3px;
+    top: 3px;
     border-radius: 50%;
-    width: 16px;
-    height: 16px;
+    width: 12px;
+    height: 12px;
     border-left: 0px;
-    display: none;
+    display: block;
+    box-shadow: inset 0px 0px 6px #5e9eff;
     /*border-bottom-right-radius: 50%;
     border-top-right-radius: 50%;*/
 

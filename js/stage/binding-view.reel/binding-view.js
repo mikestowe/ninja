@@ -50,12 +50,6 @@ exports.BindingView = Montage.create(Component, {
         }
     },
 
-    handleMousedown: {
-        value: function(e) {
-            validateOverHud(e.clientX, e.clientY);
-        }
-    },
-
     validateOverHud: {
         value: function() {
 
@@ -183,6 +177,7 @@ exports.BindingView = Montage.create(Component, {
             this._canvas = this.application.ninja.stage.drawingCanvas;
             this._context = this.application.ninja.stage.drawingCanvas.getContext('2d');
             this.application.ninja.stage._iframeContainer.addEventListener("scroll", this, false);
+            this.element.addEventListener("mousedown", this, false);
         }
     },
 
@@ -193,7 +188,7 @@ exports.BindingView = Montage.create(Component, {
                 this.canvas.height = this.application.ninja.stage.drawingCanvas.offsetHeight;
                 this.clearCanvas();
                 for(var i= 0; i < this.hudRepeater.childComponents.length; i++) {
-                    this.drawBlueLine(this.hudRepeater.objects[i].component.element.offsetLeft,this.hudRepeater.objects[i].component.element.offsetTop, this.hudRepeater.childComponents[i].element.offsetLeft, this.hudRepeater.childComponents[i].element.offsetTop);
+                    this.drawLine(this.hudRepeater.objects[i].component.element.offsetLeft,this.hudRepeater.objects[i].component.element.offsetTop, this.hudRepeater.childComponents[i].element.offsetLeft +3, this.hudRepeater.childComponents[i].element.offsetTop +3);
                 }
             } else {
                 this.bindables = [];
@@ -209,10 +204,12 @@ exports.BindingView = Montage.create(Component, {
         }
     },
 
-    drawBlueLine: {
-        value: function(fromX,fromY,toX,toY) {
-            this._context.lineWidth = 4; // Set Line Thickness
-            //this._context.strokeStyle = "#5e9eff";
+    drawLine: {
+        value: function(fromX,fromY,toX,toY, color) {
+            this._context.lineWidth = 1; // Set Line Thickness
+            if (color === null) {
+                this._context.strokeStyle = "#CCCCCC";
+            }
 
             this._context.beginPath(); // Start Drawing Line
             this._context.moveTo(fromX, fromY);
@@ -223,20 +220,59 @@ exports.BindingView = Montage.create(Component, {
 
     clearCanvas: {
         value: function() {
-            debugger;
             this._context.clearRect(0,0,this._canvas.offsetWidth,this._canvas.offsetHeight);
         }
     },
 
-    handleMousemove: {
-        value: function() {
+    ///////////////////////////////////////////////////////
+    // Events & Functions to draw user selected options //
+    /////////////////////////////////////////////////////
 
+    // When a user selects a valid option this value will be switched to true and canvas
+    // will draw a line following the mouse and the start position
+    _isDrawingConnection: {
+        value: false
+    },
+
+    // When isDrawingConnection is set true this is the beginning position for the draw line
+    _connectionPositionStart: {
+        value: {x: 0, y:0}
+    },
+
+    // When isDrawingConnection is set true this is the end point for the draw line
+    _currentMousePosition: {
+        value: {x: 0, y:0}
+    },
+
+    handleMousemove: {
+        value: function(e) {
+            if(this._isDrawingConnection) {
+                this._currentMousePosition.x = e.clientX;
+                this._currentMousePosition.y = e.clientY;
+                this.needsDraw = true;
+            }
+
+        }
+    },
+
+    handleMouseup: {
+        value: function() {
+            this.element.removeEventListener("mousemove", this);
+            this.element.removeEventListener("mouseup", this);
+            this._isDrawingConnection = false;
+            this.needsDraw = true;
         }
     },
 
     handleMousedown: {
         value: function(event) {
-
+            // We are looking for a mouse down on an option to start the connection visual
+            if(event._event.target.classList.contains("hudOption")) {
+                //NOTE: Test Code Please Clean Up
+                this._isDrawingConnection = true;
+                this.element.addEventListener("mousemove", this);
+                this.element.addEventListener("mouseup", this);
+            }
         }
     },
 
