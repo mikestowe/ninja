@@ -358,12 +358,13 @@ var UberMaterial = function UberMaterial() {
         newMat._useLights = this._useLights;
         newMat._useNormalMap = this._useNormalMap;
         newMat._useSpecularMap = this._useSpecularMap;
-        newMat.rebuildShader();
 
 		// copy over the current values;
         var n = propNames.length;
         for (var i = 0; i < n; i++)
             newMat.setProperty(propNames[i], propValues[i]);
+
+        newMat.rebuildShader();
 
         return newMat;
     };
