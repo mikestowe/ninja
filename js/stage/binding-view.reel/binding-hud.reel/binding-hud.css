@@ -40,9 +40,13 @@
     line-height:16px;
     padding:1px 9px 1px 15px;
 }
-.hudOption.bound, .bindingHud .hudOption.bound .connectorBubble, .bindingHud .hudOption:hover, .bindingHud .hudOption .connectorBubble {
-    background: #5e9eff;
+.connectorBubble, .bindingHud .hudOption:hover, .bindingHud .hudOption .connectorBubble:hover {
+    box-shadow: inset 0px 0px 6px #5e9eff;
     display:block;
+}
+
+.hudOption.bound, .bindingHud .hudOption.bound {
+    background: #5e9eff;
 }
 
 .bindingHud .hudOption:last-child {
